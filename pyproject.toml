@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "rich.tui"
+version = "0.1.0"
+description = "Build Text User Interfaces with Rich"
+authors = ["Will McGugan <willmcgugan@gmail.com>"]
+license = "MIT"
+packages = [
+   { include = "rich" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+[tool.poetry.dev-dependencies]
+rich = {git = "git@github.com:willmcgugan/rich", rev = "tui"}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
