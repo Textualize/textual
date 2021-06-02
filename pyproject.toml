@@ -1,15 +1,13 @@
 [tool.poetry]
-name = "rich.tui"
+name = "textual"
 version = "0.1.0"
-description = "Build Text User Interfaces with Rich"
+description = "Rich TUI"
 authors = ["Will McGugan <willmcgugan@gmail.com>"]
 license = "MIT"
-packages = [
-   { include = "rich" }
-]
 
 [tool.poetry.dependencies]
 python = "^3.7"
+rich = "^10.2.2"
 
 [tool.poetry.dev-dependencies]
 rich = {git = "git@github.com:willmcgugan/rich", rev = "tui"}

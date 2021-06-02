@@ -9,6 +9,7 @@ from rich.repr import rich_repr, RichReprResult
 
 from . import events
 from ._context import active_app
+from .message import Message
 from .message_pump import MessagePump
 from .widget import Widget
 from .widgets.header import Header
@@ -50,6 +51,10 @@ class View(ABC, MessagePump):
     async def mount(self, widget: Widget, *, slot: str = "main") -> None:
         ...
 
+    async def mount_all(self, **widgets: Widget) -> None:
+        for slot, widget in widgets.items():
+            await self.mount(widget, slot=slot)
+
 
 class LayoutView(View):
     layout: Layout
@@ -76,6 +81,7 @@ class LayoutView(View):
             )
         self.layout = layout
         self.mouse_over: Optional[MessagePump] = None
+        self.focused: Optional[MessagePump] = None
         super().__init__()
 
     def __rich_repr__(self) -> RichReprResult:
@@ -84,10 +90,10 @@ class LayoutView(View):
     def __rich__(self) -> RenderableType:
         return self.layout
 
-    def get_widget_at(self, x: int, y: int) -> Tuple[MessagePump, Region]:
+    def get_widget_at(self, x: int, y: int) -> Tuple[Widget, Region]:
         for layout, (region, render) in self.layout.map.items():
             if region.contains(x, y):
-                if isinstance(layout.renderable, MessagePump):
+                if isinstance(layout.renderable, Widget):
                     return layout.renderable, region
                 else:
                     break
@@ -100,6 +106,21 @@ class LayoutView(View):
         self.layout[slot].update(widget)
         await self.app.add(widget)
         await widget.post_message(events.Mount(sender=self))
+
+    async def set_focus(self, widget: Optional[Widget]) -> None:
+        if widget == self.focused:
+            return
+        if widget is None:
+            if self.focused is not None:
+                focused = self.focused
+                self.focused = None
+                await focused.post_message(events.Blur(self))
+        elif widget.can_focus:
+            if self.focused is not None:
+                await self.focused.post_message(events.Blur(self))
+            if widget is not None and self.focused != widget:
+                self.focused = widget
+                await widget.post_message(events.Focus(self))
 
     async def on_startup(self, event: events.Startup) -> None:
         await self.mount(Header(self.title), slot="header")
@@ -129,3 +150,11 @@ class LayoutView(View):
             await widget.post_message(
                 events.MouseMove(self, event.x - region.x, event.y - region.y)
             )
+
+    async def on_mouse_clicked(self, event: events.MouseClicked) -> None:
+        try:
+            widget, _region = self.get_widget_at(event.x, event.y)
+        except NoWidget:
+            await self.set_focus(None)
+        else:
+            await self.set_focus(widget)

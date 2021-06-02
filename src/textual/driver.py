@@ -11,7 +11,7 @@ from threading import Event, Thread
 from typing import Optional, Tuple, TYPE_CHECKING
 
 from . import events
-from .types import MessageTarget
+from ._types import MessageTarget
 
 if TYPE_CHECKING:
     from ..console import Console

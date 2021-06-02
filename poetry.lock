@@ -35,10 +35,10 @@ python-versions = "^3.6"
 develop = false
 
 [package.dependencies]
-typing-extensions = {version = "^3.7.4", markers = "python_version < \"3.8\""}
-pygments = "^2.6.0"
 colorama = "^0.4.0"
 commonmark = "^0.9.0"
+pygments = "^2.6.0"
+typing-extensions = {version = "^3.7.4", markers = "python_version < \"3.8\""}
 
 [package.extras]
 jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
@@ -47,7 +47,7 @@ jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 type = "git"
 url = "git@github.com:willmcgugan/rich"
 reference = "tui"
-resolved_reference = "34630b02b60c1c1cce4b072410cd93f6a6385039"
+resolved_reference = "803651999e50ac2df1a60f1c0dd85729d7b556ce"
 
 [[package]]
 name = "typing-extensions"
@@ -60,7 +60,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "b5400274e471bd51f46cb352194316d479f45e3affa0d9aba926a7bbf2e0c551"
+content-hash = "8557cc8fc8af15c01c0f20b519b680fbb32f35233a0065137d288dfdf67af3f1"
 
 [metadata.files]
 colorama = [

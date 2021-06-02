@@ -1,15 +1,13 @@
-from functools import total_ordering
-from typing import AsyncIterable, Optional, NamedTuple, Set, Type, Tuple, TYPE_CHECKING
+from typing import Optional, NamedTuple, Set, Type, TYPE_CHECKING
 import asyncio
 from asyncio import PriorityQueue
 
-from functools import total_ordering
 import logging
 
 from . import events
 from .message import Message
 from ._timer import Timer, TimerCallback
-from .types import MessageHandler
+from ._types import MessageHandler
 
 log = logging.getLogger("rich")
 
@@ -18,23 +16,29 @@ class MessageQueueItem(NamedTuple):
     priority: int
     message: Message
 
-    def __lt__(self, other: "MessageQueueItem") -> bool:
-        return self.priority < other.priority
+    def __lt__(self, other: object) -> bool:
+        other_priority = other.priority if isinstance(other, MessageQueueItem) else 0
+        return self.priority < other_priority
 
-    def __le__(self, other: "MessageQueueItem") -> bool:
-        return self.priority <= other.priority
+    def __le__(self, other: object) -> bool:
+        other_priority = other.priority if isinstance(other, MessageQueueItem) else 0
+        return self.priority <= other_priority
 
-    def __gt__(self, other: "MessageQueueItem") -> bool:
-        return self.priority > other.priority
+    def __gt__(self, other: object) -> bool:
+        other_priority = other.priority if isinstance(other, MessageQueueItem) else 0
+        return self.priority > other_priority
 
-    def __ge__(self, other: "MessageQueueItem") -> bool:
-        return self.priority >= other.priority
+    def __ge__(self, other: object) -> bool:
+        other_priority = other.priority if isinstance(other, MessageQueueItem) else 0
+        return self.priority >= other_priority
 
-    def __eq__(self, other: "MessageQueueItem") -> bool:
-        return self.priority == other.priority
+    def __eq__(self, other: object) -> bool:
+        other_priority = other.priority if isinstance(other, MessageQueueItem) else 0
+        return self.priority == other_priority
 
-    def __ne__(self, other: "MessageQueueItem") -> bool:
-        return self.priority != other.priority
+    def __ne__(self, other: object) -> bool:
+        other_priority = other.priority if isinstance(other, MessageQueueItem) else 0
+        return self.priority != other_priority
 
 
 class MessagePumpClosed(Exception):
@@ -51,14 +55,14 @@ class MessagePump:
         self._parent = parent
         self._closing: bool = False
         self._closed: bool = False
-        self._disabled_messages: Set[Message] = set()
+        self._disabled_messages: Set[Type[Message]] = set()
 
     def check_message_enabled(self, message: Message) -> bool:
         return type(message) not in self._disabled_messages
 
     def disable_messages(self, *messages: Type[Message]) -> None:
         """Disable message types from being proccessed."""
-        self._disabled_messages.intersection_update(messages)
+        self._disabled_messages.update(messages)
 
     def enable_messages(self, *messages: Type[Message]) -> None:
         """Enable processing of messages types."""
@@ -117,7 +121,6 @@ class MessagePump:
             except Exception:
                 log.exception("error getting message")
                 break
-            log.debug("%r -> %r", message, self)
             await self.dispatch_message(message, priority)
             if self._message_queue.empty():
                 await self.dispatch_message(events.Idle(self))
@@ -137,7 +140,10 @@ class MessagePump:
         if dispatch_function is not None:
             await dispatch_function(event)
         if event.bubble and self._parent:
-            await self._parent.post_message(event, priority)
+            if event.sender == self._parent:
+                log.debug("bubbled event abandoned; %r", event)
+            else:
+                await self._parent.post_message(event, priority)
 
     async def on_message(self, message: Message) -> None:
         pass

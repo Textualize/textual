@@ -2,16 +2,16 @@ import asyncio
 
 import logging
 import signal
-from typing import Any, Dict, Set
+from typing import Any, ClassVar, Dict, Set, List
 
 from rich.control import Control
 from rich.repr import rich_repr, RichReprResult
 from rich.screen import Screen
+from rich import get_console
+from rich.console import Console
 
 from . import events
 from ._context import active_app
-from .. import get_console
-from ..console import Console
 from .driver import Driver, CursesDriver
 from .message_pump import MessagePump
 from .view import View, LayoutView
@@ -25,6 +25,8 @@ LayoutDefinition = Dict[str, Any]
 @rich_repr
 class App(MessagePump):
     view: View
+
+    KEYS: ClassVar[Dict[str, str]] = {}
 
     def __init__(
         self,
@@ -88,8 +90,28 @@ class App(MessagePump):
                 Screen(Control.home(), self.view, Control.home(), application_mode=True)
             )
 
-    async def on_startup(self, event: events.Startup) -> None:
-        pass
+    async def action(self, action: str) -> None:
+        if "." in action:
+            destination, action_name, *tokens = action.split(".")
+        else:
+            destination = "app"
+            action_name = action
+            tokens = []
+
+        if destination == "app":
+            method_name = f"action_{action_name}"
+            method = getattr(self, method_name, None)
+            if method is not None:
+                await method(tokens)
+
+    async def on_key(self, event: events.Key) -> None:
+        key_action = self.KEYS.get(event.key, None)
+        if key_action is not None:
+            log.debug("action %r", key_action)
+            await self.action(key_action)
+
+        # if event.key == "q":
+        #     await self.close_messages()
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         await self.close_messages()
@@ -101,6 +123,12 @@ class App(MessagePump):
 
     async def on_mouse_move(self, event: events.MouseMove) -> None:
         await self.view.post_message(event)
+
+    async def on_mouse_clicked(self, event: events.MouseClicked) -> None:
+        await self.view.post_message(event)
+
+    async def action_quit(self, tokens: List[str]) -> None:
+        await self.close_messages()
 
 
 if __name__ == "__main__":
@@ -118,14 +146,10 @@ if __name__ == "__main__":
     )
 
     class MyApp(App):
-        async def on_key(self, event: events.Key) -> None:
-            log.debug("on_key %r", event)
-            if event.key == "q":
-                await self.close_messages()
+
+        KEYS = {"q": "quit"}
 
         async def on_startup(self, event: events.Startup) -> None:
-            await self.view.mount(Header(self.title), slot="header")
-            await self.view.mount(Placeholder(), slot="body")
-            self.refresh()
+            await self.view.mount_all(header=Header(self.title), body=Placeholder())
 
     MyApp.run()

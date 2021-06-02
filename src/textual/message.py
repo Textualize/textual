@@ -3,7 +3,7 @@ from typing import ClassVar
 
 from .case import camel_to_snake
 
-from .types import MessageTarget
+from ._types import MessageTarget
 
 
 class Message:

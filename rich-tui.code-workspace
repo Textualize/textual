@@ -3,5 +3,8 @@
 		{
 			"path": "."
 		}
-	]
+	],
+	"settings": {
+		"python.pythonPath": "/Users/willmcgugan/Venvs/textual/bin/python"
+	}
 }

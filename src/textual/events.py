@@ -4,10 +4,10 @@ from enum import auto, Enum
 from time import monotonic
 from typing import ClassVar, Optional, Set, TYPE_CHECKING
 
-from ..repr import rich_repr, RichReprResult
+from rich.repr import rich_repr, RichReprResult
 
 from .message import Message
-from .types import Callback, MessageTarget
+from ._types import Callback, MessageTarget
 
 
 if TYPE_CHECKING:
@@ -28,7 +28,7 @@ class EventType(Enum):
     SHUTDOWN_REQUEST = auto()
     SHUTDOWN = auto()
     EXIT = auto()
-    REFRESH = auto()
+    UPDATED = auto()
     TIMER = auto()
     FOCUS = auto()
     BLUR = auto()
@@ -54,6 +54,7 @@ class Event(Message):
     def __init_subclass__(
         cls, type: EventType, priority: int = 0, bubble: bool = False
     ) -> None:
+        cls.type = type
         super().__init_subclass__(priority=priority, bubble=bubble)
 
     def __enter__(self) -> "Event":
@@ -79,6 +80,10 @@ class Startup(Event, type=EventType.SHUTDOWN_REQUEST):
 
 class Created(Event, type=EventType.CREATED):
     pass
+
+
+class Updated(Event, type=EventType.UPDATED):
+    """Indicates the sender was updated and needs a refresh."""
 
 
 class Idle(Event, type=EventType.IDLE):
@@ -108,10 +113,6 @@ class Unmount(Event, type=EventType.UNMOUNT):
 
 
 class Shutdown(Event, type=EventType.SHUTDOWN):
-    pass
-
-
-class Refresh(Event, type=EventType.REFRESH):
     pass
 
 
@@ -145,7 +146,7 @@ class MouseMove(Event, type=EventType.MOUSE_MOVE):
 
 
 @rich_repr
-class MousePressed(Event, type=EventType.MOUSE_PRESSED):
+class MouseBase(Event, type=EventType.MOUSE_PRESSED):
     def __init__(
         self,
         sender: MessageTarget,
@@ -173,15 +174,19 @@ class MousePressed(Event, type=EventType.MOUSE_PRESSED):
         yield "shift", self.shift, False
 
 
-class MouseReleased(MousePressed, type=EventType.MOUSE_RELEASED):
+class MousePressed(MouseBase, type=EventType.MOUSE_MOVE):
     pass
 
 
-class MouseClicked(MousePressed, type=EventType.MOUSE_CLICKED):
+class MouseReleased(MouseBase, type=EventType.MOUSE_RELEASED):
     pass
 
 
-class MouseDoubleClicked(MousePressed, type=EventType.MOUSE_DOUBLE_CLICKED):
+class MouseClicked(MouseBase, type=EventType.MOUSE_CLICKED):
+    pass
+
+
+class MouseDoubleClicked(MouseBase, type=EventType.MOUSE_DOUBLE_CLICKED):
     pass
 
 

@@ -7,7 +7,7 @@ import weakref
 from rich.repr import rich_repr, RichReprResult
 
 from . import events
-from .types import MessageTarget
+from ._types import MessageTarget
 
 
 TimerCallback = Callable[[], Awaitable[None]]
