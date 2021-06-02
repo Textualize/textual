@@ -33,7 +33,7 @@ class Widget(MessagePump):
     idle_events: bool = False
 
     def __init__(self, name: Optional[str] = None) -> None:
-        self.name = name or f"Widget#{self._count}"
+        self.name = name or f"{self.__class__.__name__}#{self._count}"
         Widget._count += 1
         self.size = WidgetDimensions(0, 0)
         self.size_changed = False
@@ -94,7 +94,7 @@ class Widget(MessagePump):
     ) -> bool:
         if not self.check_message_enabled(message):
             return True
-        log.debug("%r -> %r", message, self)
+        log.debug("%r -> %s", message, self.name)
         return await super().post_message(message, priority)
 
     async def on_event(self, event: events.Event, priority: int) -> None:
