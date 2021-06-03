@@ -33,13 +33,13 @@ class EventType(Enum):
     FOCUS = auto()
     BLUR = auto()
     KEY = auto()
-    MOUSE_MOVE = auto()
-    MOUSE_PRESSED = auto()
-    MOUSE_RELEASED = auto()
-    MOUSE_CLICKED = auto()
-    MOUSE_DOUBLE_CLICKED = auto()
-    MOUSE_ENTER = auto()
-    MOUSE_LEAVE = auto()
+    MOVE = auto()
+    PRESS = auto()
+    RELEASE = auto()
+    CLICK = auto()
+    DOUBLE_CLICK = auto()
+    ENTER = auto()
+    LEAVE = auto()
     CUSTOM = 1000
 
 
@@ -134,7 +134,7 @@ class Key(Event, type=EventType.KEY, bubble=True):
 
 
 @rich_repr
-class MouseMove(Event, type=EventType.MOUSE_MOVE):
+class Move(Event, type=EventType.MOVE):
     def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
         super().__init__(sender)
         self.x = x
@@ -146,7 +146,7 @@ class MouseMove(Event, type=EventType.MOUSE_MOVE):
 
 
 @rich_repr
-class MouseBase(Event, type=EventType.MOUSE_PRESSED):
+class _MouseBase(Event, type=EventType.PRESS):
     def __init__(
         self,
         sender: MessageTarget,
@@ -174,19 +174,19 @@ class MouseBase(Event, type=EventType.MOUSE_PRESSED):
         yield "shift", self.shift, False
 
 
-class MousePressed(MouseBase, type=EventType.MOUSE_MOVE):
+class Press(_MouseBase, type=EventType.MOVE):
     pass
 
 
-class MouseReleased(MouseBase, type=EventType.MOUSE_RELEASED):
+class Release(_MouseBase, type=EventType.RELEASE):
     pass
 
 
-class MouseClicked(MouseBase, type=EventType.MOUSE_CLICKED):
+class Click(_MouseBase, type=EventType.CLICK):
     pass
 
 
-class MouseDoubleClicked(MouseBase, type=EventType.MOUSE_DOUBLE_CLICKED):
+class DoubleClick(_MouseBase, type=EventType.DOUBLE_CLICK):
     pass
 
 
@@ -209,7 +209,7 @@ class Timer(Event, type=EventType.TIMER, priority=10):
 
 
 @rich_repr
-class MouseEnter(Event, type=EventType.MOUSE_ENTER):
+class Enter(Event, type=EventType.ENTER):
     def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
         super().__init__(sender)
         self.x = x
@@ -221,7 +221,7 @@ class MouseEnter(Event, type=EventType.MOUSE_ENTER):
 
 
 @rich_repr
-class MouseLeave(Event, type=EventType.MOUSE_LEAVE):
+class Leave(Event, type=EventType.LEAVE):
     pass
 
 

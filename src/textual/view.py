@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import logging
-from typing import Optional, Tuple, TYPE_CHECKING
+from typing import Optional, Set, Tuple, TYPE_CHECKING
 
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.layout import Layout
@@ -44,9 +44,6 @@ class View(ABC, MessagePump):
         return
         yield
 
-    async def on_resize(self, event: events.Resize) -> None:
-        pass
-
     @abstractmethod
     async def mount(self, widget: Widget, *, slot: str = "main") -> None:
         ...
@@ -82,13 +79,17 @@ class LayoutView(View):
         self.layout = layout
         self.mouse_over: Optional[MessagePump] = None
         self.focused: Optional[MessagePump] = None
+        self._widgets: Set[Widget] = set()
         super().__init__()
 
     def __rich_repr__(self) -> RichReprResult:
         yield "name", self.name
 
-    def __rich__(self) -> RenderableType:
-        return self.layout
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        segments = console.render(self.layout, options)
+        yield from segments
 
     def get_widget_at(self, x: int, y: int) -> Tuple[Widget, Region]:
         for layout, (region, render) in self.layout.map.items():
@@ -106,6 +107,7 @@ class LayoutView(View):
         self.layout[slot].update(widget)
         await self.app.add(widget)
         await widget.post_message(events.Mount(sender=self))
+        self._widgets.add(widget)
 
     async def set_focus(self, widget: Optional[Widget]) -> None:
         if widget == self.focused:
@@ -125,33 +127,43 @@ class LayoutView(View):
     async def on_startup(self, event: events.Startup) -> None:
         await self.mount(Header(self.title), slot="header")
 
-    async def on_mouse_move(self, event: events.MouseMove) -> None:
+    async def on_resize(self, event: events.Resize) -> None:
+        region_map = self.layout._make_region_map(event.width, event.height)
+        for layout, region in region_map.items():
+            if isinstance(layout.renderable, Widget):
+                await layout.renderable.post_message(
+                    events.Resize(self, region.width, region.height)
+                )
+        self.app.refresh()
+
+    async def on_idle(self, event: events.Idle) -> None:
+        pass
+
+    async def on_move(self, event: events.Move) -> None:
         try:
             widget, region = self.get_widget_at(event.x, event.y)
         except NoWidget:
             if self.mouse_over is not None:
                 try:
-                    await self.mouse_over.post_message(events.MouseLeave(self))
+                    await self.mouse_over.post_message(events.Leave(self))
                 finally:
                     self.mouse_over = None
         else:
             if self.mouse_over != widget:
                 try:
                     if self.mouse_over is not None:
-                        await self.mouse_over.post_message(events.MouseLeave(self))
+                        await self.mouse_over.post_message(events.Leave(self))
                     if widget is not None:
                         await widget.post_message(
-                            events.MouseEnter(
-                                self, event.x - region.x, event.y - region.x
-                            )
+                            events.Enter(self, event.x - region.x, event.y - region.y)
                         )
                 finally:
                     self.mouse_over = widget
             await widget.post_message(
-                events.MouseMove(self, event.x - region.x, event.y - region.y)
+                events.Move(self, event.x - region.x, event.y - region.y)
             )
 
-    async def on_mouse_clicked(self, event: events.MouseClicked) -> None:
+    async def on_click(self, event: events.Click) -> None:
         try:
             widget, _region = self.get_widget_at(event.x, event.y)
         except NoWidget:

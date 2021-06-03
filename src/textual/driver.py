@@ -14,7 +14,7 @@ from . import events
 from ._types import MessageTarget
 
 if TYPE_CHECKING:
-    from ..console import Console
+    from rich.console import Console
 
 
 log = logging.getLogger("rich")
@@ -67,10 +67,10 @@ class CursesDriver(Driver):
     ]
 
     _MOUSE = [
-        (events.MousePressed, _MOUSE_PRESSED),
-        (events.MouseReleased, _MOUSE_RELEASED),
-        (events.MouseClicked, _MOUSE_CLICKED),
-        (events.MouseDoubleClicked, _MOUSE_DOUBLE_CLICKED),
+        (events.Press, _MOUSE_PRESSED),
+        (events.Release, _MOUSE_RELEASED),
+        (events.Click, _MOUSE_CLICKED),
+        (events.DoubleClick, _MOUSE_DOUBLE_CLICKED),
     ]
 
     def __init__(self, console: "Console", target: "MessageTarget") -> None:
@@ -100,7 +100,7 @@ class CursesDriver(Driver):
         loop = asyncio.get_event_loop()
 
         def on_terminal_resize(signum, stack) -> None:
-            terminal_size = self.console.size = self._get_terminal_size()
+            terminal_size = self._get_terminal_size()
             width, height = terminal_size
             event = events.Resize(self._target, width, height)
             self.console.size = terminal_size
@@ -124,7 +124,11 @@ class CursesDriver(Driver):
             target=self.run_key_thread, args=(asyncio.get_event_loop(),)
         )
 
-        self.console.size = self._get_terminal_size()
+        width, height = self.console.size = self._get_terminal_size()
+        asyncio.run_coroutine_threadsafe(
+            self._target.post_message(events.Resize(self._target, width, height)),
+            loop=loop,
+        )
 
         self._key_thread.start()
 
@@ -164,7 +168,7 @@ class CursesDriver(Driver):
                     log.exception("error in curses.getmouse")
                 else:
                     if button_state & curses.REPORT_MOUSE_POSITION:
-                        send_event(events.MouseMove(self._target, x, y))
+                        send_event(events.Move(self._target, x, y))
                     alt = bool(button_state & curses.BUTTON_ALT)
                     ctrl = bool(button_state & curses.BUTTON_CTRL)
                     shift = bool(button_state & curses.BUTTON_SHIFT)

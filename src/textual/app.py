@@ -118,13 +118,11 @@ class App(MessagePump):
 
     async def on_resize(self, event: events.Resize) -> None:
         await self.view.post_message(event)
-        if not event.suppressed:
-            self.refresh()
 
-    async def on_mouse_move(self, event: events.MouseMove) -> None:
+    async def on_move(self, event: events.Move) -> None:
         await self.view.post_message(event)
 
-    async def on_mouse_clicked(self, event: events.MouseClicked) -> None:
+    async def on_click(self, event: events.Click) -> None:
         await self.view.post_message(event)
 
     async def action_quit(self, tokens: List[str]) -> None:
