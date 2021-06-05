@@ -121,9 +121,11 @@ class MessagePump:
             except Exception:
                 log.exception("error getting message")
                 break
-            await self.dispatch_message(message, priority)
-            if self._message_queue.empty():
-                await self.dispatch_message(events.Idle(self))
+            try:
+                await self.dispatch_message(message, priority)
+            finally:
+                if self._message_queue.empty():
+                    await self.dispatch_message(events.Idle(self))
 
     async def dispatch_message(
         self, message: Message, priority: int = 0

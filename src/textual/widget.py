@@ -2,6 +2,7 @@ from logging import getLogger
 from typing import (
     ClassVar,
     Generic,
+    Iterable,
     List,
     NamedTuple,
     Optional,
@@ -20,6 +21,7 @@ from rich.segment import Segment
 
 from . import events
 from ._context import active_app
+from ._line_cache import LineCache
 from .message import Message
 from .message_pump import MessagePump
 
@@ -44,6 +46,7 @@ class Reactive(Generic[T]):
 
     def __set__(self, obj: "Widget", value: T) -> None:
         if getattr(obj, self.internal_name) != value:
+            log.debug("%s -> %s", self.internal_name, value)
             setattr(obj, self.internal_name, value)
             obj.require_refresh()
 
@@ -66,8 +69,7 @@ class Widget(MessagePump):
         self.size = WidgetDimensions(0, 0)
         self.size_changed = False
         self._refresh_required = False
-        self._dirty_lines: List[bool] = []
-        self._line_cache: List[List[Segment]] = []
+        self._line_cache: Optional[LineCache] = None
         super().__init__()
         if not self.mouse_events:
             self.disable_messages(
@@ -94,6 +96,9 @@ class Widget(MessagePump):
     has_focus: Reactive[bool] = Reactive(False)
     mouse_over: Reactive[bool] = Reactive(False)
 
+    def __rich_repr__(self) -> RichReprResult:
+        yield "name", self.name
+
     @property
     def app(self) -> "App":
         """Get the current app."""
@@ -104,25 +109,26 @@ class Widget(MessagePump):
         """Get the current console."""
         return active_app.get().console
 
+    @property
+    def line_cache(self) -> LineCache:
+
+        if self._line_cache is None:
+            width, height = self.size
+            renderable = self.render()
+            self._line_cache = LineCache.from_renderable(
+                self.console, renderable, width, height
+            )
+        assert self._line_cache is not None
+        return self._line_cache
+
+    def __rich__(self) -> LineCache:
+        return self.line_cache
+
     def require_refresh(self) -> None:
-        self._dirty_lines[:] = [True] * len(self._line_cache)
-        self.app.refresh()
+        self._line_cache = None
 
-    async def refresh(self) -> None:
-        self.app.refresh()
-
-    def __rich_repr__(self) -> RichReprResult:
-        yield "name", self.name
-
-    def render_line_cache(self) -> None:
-        console = self.console
-        options = console.options.update_dimensions(self.size.width, self.size.height)
-        renderable = self.render()
-        self._line_cache[:] = console.render_lines(renderable, options, new_lines=False)
-        self._dirty_lines = [True] * len(self._line_cache)
-
-    def _clean_line_cache(self) -> None:
-        self._dirty_lines = [False] * len(self._line_cache)
+    def render_update(self, x: int, y: int) -> Iterable[Segment]:
+        yield from self.line_cache.render(x, y)
 
     def render(self) -> RenderableType:
         return Panel(
@@ -131,17 +137,6 @@ class Widget(MessagePump):
             border_style="green" if self.mouse_over else "blue",
             box=box.HEAVY if self.has_focus else box.ROUNDED,
         )
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        self.render_line_cache()
-        new_line = Segment.line()
-        for line in self._line_cache:
-            yield from line
-            yield new_line
-        self._clean_line_cache()
-        self._refresh_required = True
 
     async def post_message(
         self, message: Message, priority: Optional[int] = None
@@ -167,3 +162,6 @@ class Widget(MessagePump):
 
     async def on_blur(self, event: events.Focus) -> None:
         self.has_focus = False
+
+    async def on_idle(self, event: events.Idle) -> None:
+        self.app.refresh()

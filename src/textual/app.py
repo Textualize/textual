@@ -90,6 +90,9 @@ class App(MessagePump):
                 Screen(Control.home(), self.view, Control.home(), application_mode=True)
             )
 
+    async def on_idle(self, event: events.Idle) -> None:
+        await self.view.post_message(event)
+
     async def action(self, action: str) -> None:
         if "." in action:
             destination, action_name, *tokens = action.split(".")

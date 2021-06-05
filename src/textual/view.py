@@ -81,6 +81,7 @@ class LayoutView(View):
         self.focused: Optional[MessagePump] = None
         self._widgets: Set[Widget] = set()
         super().__init__()
+        self.enable_messages(events.Idle)
 
     def __rich_repr__(self) -> RichReprResult:
         yield "name", self.name
@@ -135,9 +136,6 @@ class LayoutView(View):
                     events.Resize(self, region.width, region.height)
                 )
         self.app.refresh()
-
-    async def on_idle(self, event: events.Idle) -> None:
-        pass
 
     async def on_move(self, event: events.Move) -> None:
         try:

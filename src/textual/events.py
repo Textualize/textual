@@ -220,7 +220,6 @@ class Enter(Event, type=EventType.ENTER):
         yield "y", self.y
 
 
-@rich_repr
 class Leave(Event, type=EventType.LEAVE):
     pass
 
