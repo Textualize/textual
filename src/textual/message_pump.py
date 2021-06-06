@@ -1,4 +1,6 @@
-from typing import Optional, NamedTuple, Set, Type, TYPE_CHECKING
+from __future__ import annotations
+
+from typing import NamedTuple
 import asyncio
 from asyncio import PriorityQueue, QueueEmpty
 
@@ -46,26 +48,27 @@ class MessagePumpClosed(Exception):
 
 
 class MessagePump:
-    def __init__(
-        self, queue_size: int = 10, parent: Optional["MessagePump"] = None
-    ) -> None:
-        self._message_queue: "PriorityQueue[Optional[MessageQueueItem]]" = (
-            PriorityQueue(queue_size)
+    def __init__(self, queue_size: int = 10, parent: MessagePump | None = None) -> None:
+        self._message_queue: PriorityQueue[MessageQueueItem | None] = PriorityQueue(
+            queue_size
         )
         self._parent = parent
         self._closing: bool = False
         self._closed: bool = False
-        self._disabled_messages: Set[Type[Message]] = set()
-        self._pending_message: Optional[MessageQueueItem] = None
+        self._disabled_messages: set[type[Message]] = set()
+        self._pending_message: MessageQueueItem | None = None
+
+    def set_parent(self, parent: MessagePump) -> None:
+        self._parent = parent
 
     def check_message_enabled(self, message: Message) -> bool:
         return type(message) not in self._disabled_messages
 
-    def disable_messages(self, *messages: Type[Message]) -> None:
+    def disable_messages(self, *messages: type[Message]) -> None:
         """Disable message types from being proccessed."""
         self._disabled_messages.update(messages)
 
-    def enable_messages(self, *messages: Type[Message]) -> None:
+    def enable_messages(self, *messages: type[Message]) -> None:
         """Enable processing of messages types."""
         self._disabled_messages.difference_update(messages)
 
@@ -88,7 +91,7 @@ class MessagePump:
             raise MessagePumpClosed("The message pump is now closed")
         return queue_item
 
-    def peek_message(self) -> Optional[MessageQueueItem]:
+    def peek_message(self) -> MessageQueueItem | None:
         """Peek the message at the head of the queue (does not remove it from the queue),
         or return None if the queue is empty.
 
@@ -109,7 +112,7 @@ class MessagePump:
         self,
         delay: float,
         *,
-        name: Optional[str] = None,
+        name: str | None = None,
         callback: TimerCallback = None,
     ) -> Timer:
         timer = Timer(self, delay, self, name=name, callback=callback, repeat=0)
@@ -120,7 +123,7 @@ class MessagePump:
         self,
         interval: float,
         *,
-        name: Optional[str] = None,
+        name: str | None = None,
         callback: TimerCallback = None,
         repeat: int = 0,
     ):
@@ -161,7 +164,7 @@ class MessagePump:
 
     async def dispatch_message(
         self, message: Message, priority: int = 0
-    ) -> Optional[bool]:
+    ) -> bool | None:
         if isinstance(message, events.Event):
             await self.on_event(message, priority)
         else:
@@ -185,7 +188,7 @@ class MessagePump:
     async def post_message(
         self,
         message: Message,
-        priority: Optional[int] = None,
+        priority: int | None = None,
     ) -> bool:
         if self._closing or self._closed:
             return False
@@ -197,11 +200,11 @@ class MessagePump:
         return True
 
     async def post_message_from_child(
-        self, message: Message, priority: Optional[int] = None
+        self, message: Message, priority: int | None = None
     ) -> None:
         await self.post_message(message, priority=priority)
 
-    async def emit(self, message: Message, priority: Optional[int] = None) -> bool:
+    async def emit(self, message: Message, priority: int | None = None) -> bool:
         if self._parent:
             await self._parent.post_message_from_child(message, priority=priority)
             return True

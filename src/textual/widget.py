@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 from logging import getLogger
 from typing import (
     ClassVar,
     Generic,
     Iterable,
-    List,
     NamedTuple,
     Optional,
     Type,
@@ -12,8 +13,8 @@ from typing import (
 )
 
 from rich.align import Align
-from rich import box
-from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
+
+from rich.console import Console, RenderableType
 from rich.pretty import Pretty
 from rich.panel import Panel
 from rich.repr import rich_repr, RichReprResult
@@ -33,7 +34,7 @@ log = getLogger("rich")
 T = TypeVar("T")
 
 
-class RefreshMessage(Message):
+class UpdateMessage(Message):
     pass
 
 
@@ -52,7 +53,7 @@ class Reactive(Generic[T]):
         if getattr(obj, self.internal_name) != value:
             log.debug("%s -> %s", self.internal_name, value)
             setattr(obj, self.internal_name, value)
-            obj.require_refresh()
+            obj.require_repaint()
 
 
 class WidgetDimensions(NamedTuple):
@@ -120,11 +121,15 @@ class Widget(MessagePump):
     def __rich__(self) -> LineCache:
         return self.line_cache
 
-    def require_refresh(self) -> None:
+    def require_repaint(self) -> None:
         self._line_cache = None
 
     async def refresh(self) -> None:
-        await self.emit(RefreshMessage(self))
+        self._line_cache = None
+        await self.update()
+
+    async def update(self) -> None:
+        await self.emit(UpdateMessage(self))
 
     def render_update(self, x: int, y: int) -> Iterable[Segment]:
         yield from self.line_cache.render(x, y)
@@ -134,12 +139,10 @@ class Widget(MessagePump):
             Align.center(Pretty(self), vertical="middle"), title=self.__class__.__name__
         )
 
-    async def post_message(
-        self, message: Message, priority: Optional[int] = None
-    ) -> bool:
+    async def post_message(self, message: Message, priority: int | None = None) -> bool:
         if not self.check_message_enabled(message):
             return True
-        log.debug("%r -> %s", message, self.name)
+
         return await super().post_message(message, priority)
 
     async def on_event(self, event: events.Event, priority: int) -> None:
@@ -147,11 +150,9 @@ class Widget(MessagePump):
             new_size = WidgetDimensions(event.width, event.height)
             if self.size != new_size:
                 self.size = new_size
-                self.require_refresh()
+                self.require_repaint()
         await super().on_event(event, priority)
 
-    async def on_resize(self, event: events.Resize) -> None:
-        new_size = WidgetDimensions(event.width, event.height)
-        if self.size != new_size:
-            self.size = new_size
-            self.require_refresh()
+    async def on_idle(self, event: events.Idle) -> None:
+        if self.line_cache.dirty:
+            await self.update()

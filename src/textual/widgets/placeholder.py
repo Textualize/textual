@@ -38,6 +38,3 @@ class Placeholder(Widget, can_focus=True, mouse_events=True):
 
     async def on_leave(self, event: events.Leave) -> None:
         self.mouse_over = False
-
-    async def on_idle(self, event: events.Idle) -> None:
-        self.app.refresh()

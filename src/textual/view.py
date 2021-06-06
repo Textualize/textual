@@ -1,17 +1,20 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 import logging
-from typing import Optional, Set, Tuple, TYPE_CHECKING
+from typing import Optional, Tuple, TYPE_CHECKING
 
-from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
+from rich.console import Console, ConsoleOptions, RenderResult
 from rich.layout import Layout
 from rich.region import Region
 from rich.repr import rich_repr, RichReprResult
+from rich.segment import Segments
 
 from . import events
 from ._context import active_app
 from .message import Message
 from .message_pump import MessagePump
-from .widget import Widget
+from .widget import Widget, UpdateMessage
 from .widgets.header import Header
 
 if TYPE_CHECKING:
@@ -77,9 +80,9 @@ class LayoutView(View):
                 Layout(name="right", size=30, visible=False),
             )
         self.layout = layout
-        self.mouse_over: Optional[MessagePump] = None
-        self.focused: Optional[MessagePump] = None
-        self._widgets: Set[Widget] = set()
+        self.mouse_over: MessagePump | None = None
+        self.focused: MessagePump | None = None
+        self._widgets: set[Widget] = set()
         super().__init__()
         self.enable_messages(events.Idle)
 
@@ -101,12 +104,25 @@ class LayoutView(View):
                     break
         raise NoWidget(f"No widget at ${x}, ${y}")
 
+    async def on_message(self, message: Message) -> None:
+        if isinstance(message, UpdateMessage):
+            widget = message.sender
+            if widget in self._widgets:
+                for layout, (region, render) in self.layout.map.items():
+                    if layout.renderable is widget:
+                        assert isinstance(widget, Widget)
+                        update = widget.render_update(region.x, region.y)
+                        segments = Segments(update)
+                        self.console.print(segments, end="")
+                        break
+
     async def on_create(self, event: events.Created) -> None:
         await self.mount(Header(self.title))
 
     async def mount(self, widget: Widget, *, slot: str = "main") -> None:
         self.layout[slot].update(widget)
         await self.app.add(widget)
+        widget.set_parent(self)
         await widget.post_message(events.Mount(sender=self))
         self._widgets.add(widget)
 
