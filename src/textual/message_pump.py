@@ -96,7 +96,10 @@ class MessagePump:
             Optional[Message]: The message or None.
         """
         if self._pending_message is None:
-            self._pending_message = self._message_queue.get_nowait()
+            try:
+                self._pending_message = self._message_queue.get_nowait()
+            except QueueEmpty:
+                pass
 
         if self._pending_message is not None:
             return self._pending_message
