@@ -33,6 +33,10 @@ log = getLogger("rich")
 T = TypeVar("T")
 
 
+class RefreshMessage(Message):
+    pass
+
+
 class Reactive(Generic[T]):
     def __init__(self, default: T) -> None:
         self._default = default
@@ -61,7 +65,6 @@ class Widget(MessagePump):
     _count: ClassVar[int] = 0
     can_focus: bool = False
     mouse_events: bool = False
-    idle_events: bool = False
 
     def __init__(self, name: Optional[str] = None) -> None:
         self.name = name or f"{self.__class__.__name__}#{self._count}"
@@ -79,22 +82,15 @@ class Widget(MessagePump):
                 events.Click,
                 events.DoubleClick,
             )
-        if not self.idle_events:
-            self.disable_messages(events.Idle)
 
     def __init_subclass__(
         cls,
         can_focus: bool = False,
         mouse_events: bool = True,
-        idle_events: bool = False,
     ) -> None:
         super().__init_subclass__()
         cls.can_focus = can_focus
         cls.mouse_events = mouse_events
-        cls.idle_events = idle_events
-
-    has_focus: Reactive[bool] = Reactive(False)
-    mouse_over: Reactive[bool] = Reactive(False)
 
     def __rich_repr__(self) -> RichReprResult:
         yield "name", self.name
@@ -127,15 +123,15 @@ class Widget(MessagePump):
     def require_refresh(self) -> None:
         self._line_cache = None
 
+    async def refresh(self) -> None:
+        await self.emit(RefreshMessage(self))
+
     def render_update(self, x: int, y: int) -> Iterable[Segment]:
         yield from self.line_cache.render(x, y)
 
     def render(self) -> RenderableType:
         return Panel(
-            Align.center(Pretty(self), vertical="middle"),
-            title=self.__class__.__name__,
-            border_style="green" if self.mouse_over else "blue",
-            box=box.HEAVY if self.has_focus else box.ROUNDED,
+            Align.center(Pretty(self), vertical="middle"), title=self.__class__.__name__
         )
 
     async def post_message(
@@ -147,8 +143,11 @@ class Widget(MessagePump):
         return await super().post_message(message, priority)
 
     async def on_event(self, event: events.Event, priority: int) -> None:
-        if isinstance(event, (events.Enter, events.Leave)):
-            self.mouse_over = isinstance(event, events.Enter)
+        if isinstance(event, events.Resize):
+            new_size = WidgetDimensions(event.width, event.height)
+            if self.size != new_size:
+                self.size = new_size
+                self.require_refresh()
         await super().on_event(event, priority)
 
     async def on_resize(self, event: events.Resize) -> None:
@@ -156,12 +155,3 @@ class Widget(MessagePump):
         if self.size != new_size:
             self.size = new_size
             self.require_refresh()
-
-    async def on_focus(self, event: events.Focus) -> None:
-        self.has_focus = True
-
-    async def on_blur(self, event: events.Focus) -> None:
-        self.has_focus = False
-
-    async def on_idle(self, event: events.Idle) -> None:
-        self.app.refresh()

@@ -40,6 +40,7 @@ class EventType(Enum):
     DOUBLE_CLICK = auto()
     ENTER = auto()
     LEAVE = auto()
+    UPDATE = auto()
     CUSTOM = 1000
 
 
@@ -230,3 +231,8 @@ class Focus(Event, type=EventType.FOCUS):
 
 class Blur(Event, type=EventType.BLUR):
     pass
+
+
+class Update(Event, type=EventType.UPDATE):
+    def can_batch(self, event: Event) -> bool:
+        return isinstance(event, Update) and event.sender == self.sender
