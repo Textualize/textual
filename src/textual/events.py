@@ -92,6 +92,7 @@ class Idle(Event, type=EventType.IDLE):
 
 
 class Resize(Event, type=EventType.RESIZE):
+    __slots__ = ["width", "height"]
     width: int
     height: int
 
@@ -119,7 +120,7 @@ class Shutdown(Event, type=EventType.SHUTDOWN):
 
 @rich_repr
 class Key(Event, type=EventType.KEY, bubble=True):
-    code: int = 0
+    __slots__ = ["code"]
 
     def __init__(self, sender: MessageTarget, code: int) -> None:
         super().__init__(sender)
@@ -136,6 +137,8 @@ class Key(Event, type=EventType.KEY, bubble=True):
 
 @rich_repr
 class Move(Event, type=EventType.MOVE):
+    __slots__ = ["x", "y"]
+
     def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
         super().__init__(sender)
         self.x = x
@@ -148,6 +151,8 @@ class Move(Event, type=EventType.MOVE):
 
 @rich_repr
 class _MouseBase(Event, type=EventType.PRESS):
+    __slots__ = ["x", "y", "button", "alt", "ctrl", "shift"]
+
     def __init__(
         self,
         sender: MessageTarget,
@@ -193,6 +198,8 @@ class DoubleClick(_MouseBase, type=EventType.DOUBLE_CLICK):
 
 @rich_repr
 class Timer(Event, type=EventType.TIMER, priority=10):
+    __slots__ = ["time", "count", "callback"]
+
     def __init__(
         self,
         sender: MessageTarget,
@@ -211,6 +218,8 @@ class Timer(Event, type=EventType.TIMER, priority=10):
 
 @rich_repr
 class Enter(Event, type=EventType.ENTER):
+    __slots__ = ["x", "y"]
+
     def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
         super().__init__(sender)
         self.x = x
@@ -234,5 +243,5 @@ class Blur(Event, type=EventType.BLUR):
 
 
 class Update(Event, type=EventType.UPDATE):
-    def can_batch(self, event: Event) -> bool:
+    def can_batch(self, event: Message) -> bool:
         return isinstance(event, Update) and event.sender == self.sender

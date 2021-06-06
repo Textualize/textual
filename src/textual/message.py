@@ -9,17 +9,24 @@ from ._types import MessageTarget
 class Message:
     """Base class for a message."""
 
+    __slots__ = [
+        "sender",
+        "name",
+        "time",
+        "_no_default_action",
+        "_stop_propagation",
+    ]
+
     sender: MessageTarget
     bubble: ClassVar[bool] = False
     default_priority: ClassVar[int] = 0
-
-    _no_default_action: bool = False
-    _stop_propagaton: bool = False
 
     def __init__(self, sender: MessageTarget) -> None:
         self.sender = sender
         self.name = camel_to_snake(self.__class__.__name__)
         self.time = monotonic()
+        self._no_default_action = False
+        self._stop_propagaton = False
         super().__init__()
 
     def __init_subclass__(cls, bubble: bool = False, priority: int = 0) -> None:
