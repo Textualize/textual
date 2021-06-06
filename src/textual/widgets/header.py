@@ -42,6 +42,7 @@ class Header(Widget):
             header_table.add_row("🐞", self.title, self.get_clock())
         else:
             header_table.add_row("🐞", self.title)
+        header: RenderableType
         if self.panel:
             header = Panel(header_table, style=self.style)
         else:
