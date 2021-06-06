@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import asyncio
 
 import logging
 import signal
-from typing import Any, ClassVar, Dict, Set, List
+from typing import Any, ClassVar
 
 from rich.control import Control
 from rich.repr import rich_repr, RichReprResult
@@ -19,14 +21,14 @@ from .view import View, LayoutView
 log = logging.getLogger("rich")
 
 
-LayoutDefinition = Dict[str, Any]
+LayoutDefinition = dict[str, Any]
 
 
 @rich_repr
 class App(MessagePump):
     view: View
 
-    KEYS: ClassVar[Dict[str, str]] = {}
+    KEYS: ClassVar[dict[str, str]] = {}
 
     def __init__(
         self,
@@ -40,7 +42,7 @@ class App(MessagePump):
         self._screen = screen
         self.title = title
         self.view = view or LayoutView()
-        self.children: Set[MessagePump] = set()
+        self.children: set[MessagePump] = set()
 
     def __rich_repr__(self) -> RichReprResult:
         yield "title", self.title
@@ -128,7 +130,7 @@ class App(MessagePump):
     async def on_click(self, event: events.Click) -> None:
         await self.view.post_message(event)
 
-    async def action_quit(self, tokens: List[str]) -> None:
+    async def action_quit(self, tokens: list[str]) -> None:
         await self.close_messages()
 
 

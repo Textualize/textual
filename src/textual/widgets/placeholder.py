@@ -1,12 +1,12 @@
-from .. import events
-from ..widget import Reactive, Widget
-
 from rich import box
 from rich.align import Align
 from rich.console import RenderableType
 from rich.panel import Panel
 from rich.pretty import Pretty
 from rich.repr import RichReprResult
+
+from .. import events
+from ..widget import Reactive, Widget
 
 
 class Placeholder(Widget, can_focus=True, mouse_events=True):

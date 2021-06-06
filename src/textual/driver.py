@@ -8,7 +8,7 @@ import platform
 import sys
 import shutil
 from threading import Event, Thread
-from typing import Optional, Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from . import events
 from ._types import MessageTarget
@@ -77,11 +77,11 @@ class CursesDriver(Driver):
         super().__init__(console, target)
         self._stdscr = None
         self._exit_event = Event()
-        self._key_thread: Optional[Thread] = None
+        self._key_thread: Thread | None = None
 
-    def _get_terminal_size(self) -> Tuple[int, int]:
-        width: Optional[int] = 80
-        height: Optional[int] = 25
+    def _get_terminal_size(self) -> tuple[int, int]:
+        width: int | None = 80
+        height: int | None = 25
         if WINDOWS:  # pragma: no cover
             width, height = shutil.get_terminal_size()
         else:

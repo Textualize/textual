@@ -1,4 +1,4 @@
-from typing import List, Optional
+from __future__ import annotations
 
 from rich.segment import Segment
 from rich.style import Style
@@ -9,11 +9,11 @@ def render_bar(
     size: float = 100,
     window_size: float = 25,
     position: float = 0,
-    bar_style: Optional[Style] = None,
-    back_style: Optional[Style] = None,
+    bar_style: Style | None = None,
+    back_style: Style | None = None,
     ascii_only: bool = False,
     vertical: bool = True,
-) -> List[Segment]:
+) -> list[Segment]:
     if vertical:
         if ascii_only:
             solid = "|"

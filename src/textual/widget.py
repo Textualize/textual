@@ -6,8 +6,6 @@ from typing import (
     Generic,
     Iterable,
     NamedTuple,
-    Optional,
-    Type,
     TypeVar,
     TYPE_CHECKING,
 )
@@ -46,7 +44,7 @@ class Reactive(Generic[T]):
         self.internal_name = f"_{name}"
         setattr(owner, self.internal_name, self._default)
 
-    def __get__(self, obj: "Widget", obj_type: Type[object]) -> T:
+    def __get__(self, obj: "Widget", obj_type: type[object]) -> T:
         return getattr(obj, self.internal_name)
 
     def __set__(self, obj: "Widget", value: T) -> None:
@@ -67,13 +65,13 @@ class Widget(MessagePump):
     can_focus: bool = False
     mouse_events: bool = False
 
-    def __init__(self, name: Optional[str] = None) -> None:
+    def __init__(self, name: str | None = None) -> None:
         self.name = name or f"{self.__class__.__name__}#{self._count}"
         Widget._count += 1
         self.size = WidgetDimensions(0, 0)
         self.size_changed = False
         self._refresh_required = False
-        self._line_cache: Optional[LineCache] = None
+        self._line_cache: LineCache | None = None
         super().__init__()
         if not self.mouse_events:
             self.disable_messages(

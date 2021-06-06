@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 import re
 from enum import auto, Enum
 from time import monotonic
-from typing import ClassVar, Optional, Set, TYPE_CHECKING
+from typing import ClassVar, TYPE_CHECKING
 
 from rich.repr import rich_repr, RichReprResult
 
@@ -61,7 +63,7 @@ class Event(Message):
     def __enter__(self) -> "Event":
         return self
 
-    def __exit__(self, exc_type, exc_value, exc_tb) -> Optional[bool]:
+    def __exit__(self, exc_type, exc_value, exc_tb) -> bool | None:
         if exc_type is not None:
             # Log and suppress exception
             return True
@@ -205,7 +207,7 @@ class Timer(Event, type=EventType.TIMER, priority=10):
         sender: MessageTarget,
         timer: "TimerClass",
         count: int = 0,
-        callback: Optional["TimerCallback"] = None,
+        callback: TimerCallback | None = None,
     ) -> None:
         super().__init__(sender)
         self.timer = timer
