@@ -1,6 +1,6 @@
 from rich import box
 from rich.align import Align
-from rich.console import RenderableType
+from rich.console import Console, ConsoleOptions, RenderableType
 from rich.panel import Panel
 from rich.pretty import Pretty
 from rich.repr import RichReprResult
@@ -19,7 +19,7 @@ class Placeholder(Widget, can_focus=True, mouse_events=True):
         yield "has_focus", self.has_focus
         yield "mouse_over", self.mouse_over
 
-    def render(self) -> RenderableType:
+    def render(self, console: Console, options: ConsoleOptions) -> RenderableType:
         return Panel(
             Align.center(Pretty(self), vertical="middle"),
             title=self.__class__.__name__,

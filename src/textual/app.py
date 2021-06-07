@@ -139,7 +139,10 @@ if __name__ == "__main__":
     from logging import FileHandler
 
     from .widgets.header import Header
+    from .widgets.window import Window
     from .widgets.placeholder import Placeholder
+
+    from rich.markdown import Markdown
 
     logging.basicConfig(
         level="NOTSET",
@@ -148,11 +151,18 @@ if __name__ == "__main__":
         handlers=[FileHandler("richtui.log")],
     )
 
+    with open("richreadme.md", "rt") as fh:
+        readme = Markdown(fh.read(), hyperlinks=True)
+
+    from rich import print
+
     class MyApp(App):
 
         KEYS = {"q": "quit"}
 
         async def on_startup(self, event: events.Startup) -> None:
-            await self.view.mount_all(header=Header(self.title), body=Placeholder())
+            await self.view.mount_all(
+                header=Header(self.title), left=Placeholder(), body=Window(readme)
+            )
 
     MyApp.run()

@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from time import monotonic
-from typing import Awaitable, Optional, Callable
+from typing import Awaitable, Callable
 
 from asyncio import Event, wait_for, TimeoutError
 import weakref
@@ -27,8 +29,8 @@ class Timer:
         interval: float,
         sender: MessageTarget,
         *,
-        name: Optional[str] = None,
-        callback: Optional[TimerCallback] = None,
+        name: str | None = None,
+        callback: TimerCallback | None = None,
         repeat: int = None,
     ) -> None:
         self._target_repr = repr(event_target)
@@ -62,6 +64,7 @@ class Timer:
         _interval = self._interval
         _wait = self._stop_event.wait
         start = monotonic()
+        wait_event = Event()
         while _repeat is None or count <= _repeat:
             next_timer = start + (count * _interval)
             try:

@@ -32,7 +32,7 @@ class Header(Widget):
     def get_clock(self) -> str:
         return datetime.now().time().strftime("%X")
 
-    def render(self) -> RenderableType:
+    def render(self, console, options) -> RenderableType:
         header_table = Table.grid(padding=(0, 1), expand=True)
         header_table.style = self.style
         header_table.add_column(justify="left", ratio=0)

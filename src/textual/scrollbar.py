@@ -1,13 +1,50 @@
 from __future__ import annotations
 
+from typing import Iterable
+
+from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.segment import Segment
 from rich.style import Style
 
 
+# def add_vertical_bar(lines:list[list[Segment]], size:float, window_size:float, position:float) -> None
+#     bar = render_bar(len(lines), size, window_size, po)
+
+
+class VerticalBar:
+    def __init__(
+        self,
+        lines: list[list[Segment]],
+        height: int,
+        virtual_height: int,
+        position: int,
+        overlay: bool = False,
+    ) -> None:
+        self.lines = lines
+        self.height = height
+        self.virtual_height = virtual_height
+        self.position = position
+        self.overlay = overlay
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        bar = render_bar(
+            size=self.height,
+            virtual_size=self.virtual_height,
+            position=self.position,
+        )
+        new_line = Segment.line()
+        for line, bar_segment in zip(self.lines, bar):
+            yield from line
+            yield bar_segment
+            yield new_line
+
+
 def render_bar(
-    height: int = 25,
-    size: float = 100,
-    window_size: float = 25,
+    size: int = 25,
+    virtual_size: float = 50,
+    window_size: float = 20,
     position: float = 0,
     bar_style: Style | None = None,
     back_style: Style | None = None,
@@ -42,13 +79,13 @@ def render_bar(
     end_bar_segment = _Segment(half_end, _bar_style)
     bar_segment = _Segment(solid, _bar_style)
 
-    start_back_segment = _Segment(half_end, _back_style)
+    start_back_segment = _Segment(half_end, _bar_style)
     end_back_segment = _Segment(half_end, _back_style)
     back_segment = _Segment(solid, _back_style)
 
-    segments = [back_segment] * height
+    segments = [back_segment] * size
 
-    step_size = size / height
+    step_size = virtual_size / size
 
     start = position / step_size
     end = (position + window_size) / step_size
@@ -80,6 +117,13 @@ if __name__ == "__main__":
 
     console = Console()
 
-    bar = render_bar(height=20, position=10, vertical=False, ascii_only=False)
+    bar = render_bar(
+        size=20,
+        virtual_size=100,
+        window_size=50,
+        position=0,
+        vertical=False,
+        ascii_only=False,
+    )
 
     console.print(Segments(bar, new_lines=False))
