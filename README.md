@@ -1,6 +1,6 @@
-# rich.tui
+# Textual
 
-Rich.tui is a TUI (Text User Interface) framework for Python using [Rich](https://github.com/willmcgugan/rich) as a renderer.
+Textual is a TUI (Text User Interface) framework for Python using [Rich](https://github.com/willmcgugan/rich) as a renderer.
 
 The end goal is to be able to rapidly create *rich* terminal applications that look as good as possible (within the restrictions imposed by a terminal emulator).
 
