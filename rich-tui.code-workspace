@@ -8,6 +8,9 @@
 		}
 	],
 	"settings": {
-		"python.pythonPath": "/Users/willmcgugan/Venvs/textual/bin/python"
+		"python.pythonPath": "/Users/willmcgugan/Venvs/textual/bin/python",
+		"cSpell.words": [
+			"tcgetattr"
+		]
 	}
 }

@@ -1,0 +1,160 @@
+from __future__ import annotations
+
+import asyncio
+import os
+from codecs import getincrementaldecoder
+import selectors
+import sys
+import logging
+import termios
+import tty
+from typing import Any, TYPE_CHECKING
+from threading import Event, Thread
+
+if TYPE_CHECKING:
+    from rich.console import Console
+
+
+from . import events
+from .driver import Driver
+from ._types import MessageTarget
+from ._xterm_parser import XTermParser
+
+
+log = logging.getLogger("rich")
+
+
+class LinuxDriver(Driver):
+    def __init__(self, console: "Console", target: "MessageTarget") -> None:
+        super().__init__(console, target)
+        self.fileno = sys.stdin.fileno()
+        self.attrs_before: list[Any] | None = None
+        self.exit_event = Event()
+        self._key_thread: Thread | None = None
+
+    def enable_mouse_support(self) -> None:
+        write = self.console.file.write
+        write("\x1b[?1000h")
+        write("\x1b[?1015h")
+        write("\x1b[?1006h")
+        self.console.file.flush()
+
+        # Note: E.g. lxterminal understands 1000h, but not the urxvt or sgr
+        #       extensions.
+
+    def disable_mouse_support(self) -> None:
+        write = self.console.file.write
+        write("\x1b[?1000l")
+        write("\x1b[?1015l")
+        write("\x1b[?1006l")
+        self.console.file.flush()
+
+    def start_application_mode(self):
+        self.console.set_alt_screen(True)
+        self.enable_mouse_support()
+        try:
+            self.attrs_before = termios.tcgetattr(self.fileno)
+        except termios.error:
+            # Ignore attribute errors.
+            self.attrs_before = None
+
+        try:
+            newattr = termios.tcgetattr(self.fileno)
+        except termios.error:
+            pass
+        else:
+
+            newattr[tty.LFLAG] = self._patch_lflag(newattr[tty.LFLAG])
+            newattr[tty.IFLAG] = self._patch_iflag(newattr[tty.IFLAG])
+
+            # VMIN defines the number of characters read at a time in
+            # non-canonical mode. It seems to default to 1 on Linux, but on
+            # Solaris and derived operating systems it defaults to 4. (This is
+            # because the VMIN slot is the same as the VEOF slot, which
+            # defaults to ASCII EOT = Ctrl-D = 4.)
+            newattr[tty.CC][termios.VMIN] = 1
+
+            termios.tcsetattr(self.fileno, termios.TCSANOW, newattr)
+
+        self.console.show_cursor(False)
+        self.console.file.write("\033[?1003h\n")
+
+        self._key_thread = Thread(
+            target=self.run_input_thread, args=(asyncio.get_event_loop(),)
+        )
+        self._key_thread.start()
+
+    @classmethod
+    def _patch_lflag(cls, attrs: int) -> int:
+        return attrs & ~(termios.ECHO | termios.ICANON | termios.IEXTEN | termios.ISIG)
+
+    @classmethod
+    def _patch_iflag(cls, attrs: int) -> int:
+        return attrs & ~(
+            # Disable XON/XOFF flow control on output and input.
+            # (Don't capture Ctrl-S and Ctrl-Q.)
+            # Like executing: "stty -ixon."
+            termios.IXON
+            | termios.IXOFF
+            |
+            # Don't translate carriage return into newline on input.
+            termios.ICRNL
+            | termios.INLCR
+            | termios.IGNCR
+        )
+
+    def stop_application_mode(self) -> None:
+        self.console.set_alt_screen(False)
+        self.console.show_cursor(True)
+
+        self.exit_event.set()
+        # if self._key_thread is not None:
+        #     self._key_thread.join()
+        if self.attrs_before is not None:
+            try:
+                termios.tcsetattr(self.fileno, termios.TCSANOW, self.attrs_before)
+            except termios.error:
+                pass
+        self.disable_mouse_support()
+
+    def run_input_thread(self, loop) -> None:
+        def send_event(event: events.Event) -> None:
+            asyncio.run_coroutine_threadsafe(
+                self._target.post_message(event),
+                loop=loop,
+            )
+
+        selector = selectors.DefaultSelector()
+        selector.register(self.fileno, selectors.EVENT_READ)
+
+        fileno = self.fileno
+        parser = XTermParser()
+
+        utf8_decoder = getincrementaldecoder("utf-8")().decode
+        decode = utf8_decoder
+        read = os.read
+
+        log.debug("started key thread")
+        while not self.exit_event.is_set():
+            selector_events = selector.select(0.1)
+            for _selector_key, mask in selector_events:
+                unicode_data = decode(read(fileno, 1024))
+                log.debug(repr(unicode_data))
+                for key in parser.feed(unicode_data):
+                    send_event(events.Key(self._target, key=key))
+
+
+if __name__ == "__main__":
+    from time import sleep
+    from rich.console import Console
+    from . import events
+
+    console = Console()
+
+    from .app import App
+
+    class MyApp(App):
+        async def on_startup(self, event: events.Startup) -> None:
+            self.set_timer(5, callback=self.close_messages)
+
+    MyApp.run()

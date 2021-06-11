@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 import asyncio
 import logging
@@ -28,12 +30,20 @@ class Driver(ABC):
         self._target = target
 
     @abstractmethod
-    def start_application_mode(self):
+    def start_application_mode(self) -> None:
         ...
 
     @abstractmethod
-    def stop_application_mode(self):
+    def stop_application_mode(self) -> None:
         ...
+
+
+class LinuxDriver(Driver):
+    def start_application_mode(self):
+        pass
+
+    def stop_application_mode(self):
+        pass
 
 
 class CursesDriver(Driver):

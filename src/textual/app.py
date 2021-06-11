@@ -4,7 +4,7 @@ import asyncio
 
 import logging
 import signal
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Type
 
 from rich.control import Control
 from rich.repr import rich_repr, RichReprResult
@@ -14,7 +14,8 @@ from rich.console import Console
 
 from . import events
 from ._context import active_app
-from .driver import Driver, CursesDriver
+from .driver import Driver
+from ._linux_driver import LinuxDriver
 from .message_pump import MessagePump
 from .view import View, LayoutView
 
@@ -33,13 +34,15 @@ class App(MessagePump):
     def __init__(
         self,
         console: Console = None,
-        view: View = None,
         screen: bool = True,
+        driver: Type[Driver] = None,
+        view: View = None,
         title: str = "Megasoma Application",
     ):
         super().__init__()
         self.console = console or get_console()
         self._screen = screen
+        self.driver = driver or LinuxDriver
         self.title = title
         self.view = view or LayoutView()
         self.children: set[MessagePump] = set()
@@ -48,9 +51,11 @@ class App(MessagePump):
         yield "title", self.title
 
     @classmethod
-    def run(cls, console: Console = None, screen: bool = True):
+    def run(
+        cls, console: Console = None, screen: bool = True, driver: Type[Driver] = None
+    ):
         async def run_app() -> None:
-            app = cls(console=console, screen=screen)
+            app = cls(console=console, screen=screen, driver=driver)
             await app.process_messages()
 
         asyncio.run(run_app())
@@ -61,9 +66,15 @@ class App(MessagePump):
         asyncio.run_coroutine_threadsafe(self.post_message(event), loop=loop)
 
     async def process_messages(self) -> None:
+        log.debug("driver=%r", self.driver)
         loop = asyncio.get_event_loop()
-        driver = CursesDriver(self.console, self)
-        driver.start_application_mode()
+        driver = self.driver(self.console, self)
+        try:
+            driver.start_application_mode()
+        except Exception:
+            log.exception("error starting application mode")
+            raise
+
         loop.add_signal_handler(signal.SIGINT, self.on_keyboard_interupt)
         active_app.set(self)
 

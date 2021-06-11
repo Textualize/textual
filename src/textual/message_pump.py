@@ -147,6 +147,7 @@ class MessagePump:
             except Exception:
                 log.exception("error getting message")
                 break
+            log.debug("%r -> %r", message, self)
             # Combine any pending messages that may supersede this one
             while True:
                 pending = self.peek_message()

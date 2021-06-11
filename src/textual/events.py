@@ -10,6 +10,7 @@ from rich.repr import rich_repr, RichReprResult
 
 from .message import Message
 from ._types import Callback, MessageTarget
+from .keys import Keys
 
 
 if TYPE_CHECKING:
@@ -122,19 +123,14 @@ class Shutdown(Event, type=EventType.SHUTDOWN):
 
 @rich_repr
 class Key(Event, type=EventType.KEY, bubble=True):
-    __slots__ = ["code"]
+    __slots__ = ["key"]
 
-    def __init__(self, sender: MessageTarget, code: int) -> None:
+    def __init__(self, sender: MessageTarget, key: Keys | str) -> None:
         super().__init__(sender)
-        self.code = code
+        self.key = key.value if isinstance(key, Keys) else key
 
     def __rich_repr__(self) -> RichReprResult:
-        yield "code", self.code
         yield "key", self.key
-
-    @property
-    def key(self) -> str:
-        return chr(self.code)
 
 
 @rich_repr
