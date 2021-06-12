@@ -10,8 +10,7 @@ jobs:
       - run: bandit --recursive --skip B101 .  # B101 is assert statements
       - run: black --check . || true
       - run: codespell --ignore-words-list="controle,controll,doubleclick,iterm"
-      - run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-      - run: flake8 . --count --ignore=E203,F401,F811,F841 --max-complexity=16 --max-line-length=120 --show-source --statistics
+      - run: flake8 . --count --ignore=E203,F401,F811,F841,W503,W504 --max-complexity=16 --max-line-length=120 --show-source --statistics
       - run: isort --check-only --profile black . || true
       - run: pip install rich
       - run: mypy --ignore-missing-imports . || true
