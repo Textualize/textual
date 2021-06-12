@@ -4,6 +4,7 @@ import asyncio
 import os
 from codecs import getincrementaldecoder
 import selectors
+import signal
 import sys
 import logging
 import termios
@@ -32,7 +33,21 @@ class LinuxDriver(Driver):
         self.exit_event = Event()
         self._key_thread: Thread | None = None
 
-    def enable_mouse_support(self) -> None:
+    def _get_terminal_size(self) -> tuple[int, int]:
+        width: int | None = 80
+        height: int | None = 25
+        try:
+            width, height = os.get_terminal_size(sys.stdin.fileno())
+        except (AttributeError, ValueError, OSError):
+            try:
+                width, height = os.get_terminal_size(sys.stdout.fileno())
+            except (AttributeError, ValueError, OSError):
+                pass
+        width = width or 80
+        height = height or 25
+        return width, height
+
+    def _enable_mouse_support(self) -> None:
         write = self.console.file.write
         write("\x1b[?1000h")
         write("\x1b[?1015h")
@@ -42,7 +57,7 @@ class LinuxDriver(Driver):
         # Note: E.g. lxterminal understands 1000h, but not the urxvt or sgr
         #       extensions.
 
-    def disable_mouse_support(self) -> None:
+    def _disable_mouse_support(self) -> None:
         write = self.console.file.write
         write("\x1b[?1000l")
         write("\x1b[?1015l")
@@ -50,8 +65,23 @@ class LinuxDriver(Driver):
         self.console.file.flush()
 
     def start_application_mode(self):
+
+        loop = asyncio.get_event_loop()
+
+        def on_terminal_resize(signum, stack) -> None:
+            terminal_size = self._get_terminal_size()
+            width, height = terminal_size
+            event = events.Resize(self._target, width, height)
+            self.console.size = terminal_size
+            asyncio.run_coroutine_threadsafe(
+                self._target.post_message(event),
+                loop=loop,
+            )
+
+        signal.signal(signal.SIGWINCH, on_terminal_resize)
+
         self.console.set_alt_screen(True)
-        self.enable_mouse_support()
+        self._enable_mouse_support()
         try:
             self.attrs_before = termios.tcgetattr(self.fileno)
         except termios.error:
@@ -104,6 +134,8 @@ class LinuxDriver(Driver):
         )
 
     def stop_application_mode(self) -> None:
+        signal.signal(signal.SIGWINCH, signal.SIG_DFL)
+
         self.console.set_alt_screen(False)
         self.console.show_cursor(True)
 
@@ -115,7 +147,7 @@ class LinuxDriver(Driver):
                 termios.tcsetattr(self.fileno, termios.TCSANOW, self.attrs_before)
             except termios.error:
                 pass
-        self.disable_mouse_support()
+        self._disable_mouse_support()
 
     def run_input_thread(self, loop) -> None:
         def send_event(event: events.Event) -> None:

@@ -61,13 +61,13 @@ class Event(Message):
         cls.type = type
         super().__init_subclass__(priority=priority, bubble=bubble)
 
-    def __enter__(self) -> "Event":
-        return self
+    # def __enter__(self) -> "Event":
+    #     return self
 
-    def __exit__(self, exc_type, exc_value, exc_tb) -> bool | None:
-        if exc_type is not None:
-            # Log and suppress exception
-            return True
+    # def __exit__(self, exc_type, exc_value, exc_tb) -> bool | None:
+    #     if exc_type is not None:
+    #         # Log and suppress exception
+    #         return True
 
 
 class ShutdownRequest(Event, type=EventType.SHUTDOWN_REQUEST):

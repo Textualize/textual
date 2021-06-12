@@ -22,7 +22,11 @@ class XTermParser(Parser[Keys]):
                         on_token(keys)
                         break
             else:
-                on_token(character)
+                keys = get_ansi_sequence(character, None)
+                if keys is not None:
+                    on_token(keys)
+                else:
+                    on_token(character)
 
 
 if __name__ == "__main__":

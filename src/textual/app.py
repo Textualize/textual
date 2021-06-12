@@ -68,6 +68,8 @@ class App(MessagePump):
     async def process_messages(self) -> None:
         log.debug("driver=%r", self.driver)
         loop = asyncio.get_event_loop()
+
+        loop.add_signal_handler(signal.SIGINT, self.on_keyboard_interupt)
         driver = self.driver(self.console, self)
         try:
             driver.start_application_mode()
@@ -75,7 +77,6 @@ class App(MessagePump):
             log.exception("error starting application mode")
             raise
 
-        loop.add_signal_handler(signal.SIGINT, self.on_keyboard_interupt)
         active_app.set(self)
 
         await self.add(self.view)
@@ -130,6 +131,7 @@ class App(MessagePump):
         #     await self.close_messages()
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
+        log.debug("shutdown request")
         await self.close_messages()
 
     async def on_resize(self, event: events.Resize) -> None:
@@ -169,7 +171,7 @@ if __name__ == "__main__":
 
     class MyApp(App):
 
-        KEYS = {"q": "quit"}
+        KEYS = {"q": "quit", "ctrl+c": "quit"}
 
         async def on_startup(self, event: events.Startup) -> None:
             await self.view.mount_all(
