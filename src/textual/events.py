@@ -134,48 +134,29 @@ class Key(Event, type=EventType.KEY, bubble=True):
 
 
 @rich_repr
-class Move(Event, type=EventType.MOVE):
-    __slots__ = ["x", "y"]
-
-    def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
-        super().__init__(sender)
-        self.x = x
-        self.y = y
-
-    def __rich_repr__(self) -> RichReprResult:
-        yield "x", self.x
-        yield "y", self.y
-
-
-@rich_repr
 class _MouseBase(Event, type=EventType.PRESS):
-    __slots__ = ["x", "y", "button", "alt", "ctrl", "shift"]
+    __slots__ = ["x", "y", "button"]
 
     def __init__(
         self,
         sender: MessageTarget,
         x: int,
         y: int,
-        button: int,
-        alt: bool = False,
-        ctrl: bool = False,
-        shift: bool = False,
+        buttons: frozenset[int],
     ) -> None:
         super().__init__(sender)
         self.x = x
         self.y = y
-        self.button = button
-        self.alt = alt
-        self.ctrl = ctrl
-        self.shift = shift
+        self.buttons = buttons
 
     def __rich_repr__(self) -> RichReprResult:
         yield "x", self.x
         yield "y", self.y
-        yield "button", self.button,
-        yield "alt", self.alt, False
-        yield "ctrl", self.ctrl, False
-        yield "shift", self.shift, False
+        yield "buttons", set(self.buttons)
+
+
+class Move(_MouseBase, type=EventType.MOVE):
+    pass
 
 
 class Press(_MouseBase, type=EventType.MOVE):

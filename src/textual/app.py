@@ -177,5 +177,6 @@ if __name__ == "__main__":
             await self.view.mount_all(
                 header=Header(self.title), left=Placeholder(), body=Window(readme)
             )
+            # self.set_timer(3.0, callback=self.close_messages)
 
     MyApp.run()

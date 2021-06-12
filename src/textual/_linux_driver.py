@@ -112,6 +112,11 @@ class LinuxDriver(Driver):
         self._key_thread = Thread(
             target=self.run_input_thread, args=(asyncio.get_event_loop(),)
         )
+        width, height = self.console.size = self._get_terminal_size()
+        asyncio.run_coroutine_threadsafe(
+            self._target.post_message(events.Resize(self._target, width, height)),
+            loop=loop,
+        )
         self._key_thread.start()
 
     @classmethod
@@ -160,7 +165,7 @@ class LinuxDriver(Driver):
         selector.register(self.fileno, selectors.EVENT_READ)
 
         fileno = self.fileno
-        parser = XTermParser()
+        parser = XTermParser(self)
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
@@ -172,8 +177,8 @@ class LinuxDriver(Driver):
             for _selector_key, mask in selector_events:
                 unicode_data = decode(read(fileno, 1024))
                 log.debug(repr(unicode_data))
-                for key in parser.feed(unicode_data):
-                    send_event(events.Key(self._target, key=key))
+                for event in parser.feed(unicode_data):
+                    send_event(event)
 
 
 if __name__ == "__main__":

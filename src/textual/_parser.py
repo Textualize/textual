@@ -23,9 +23,6 @@ class ParseEOF(ParseError):
 class Awaitable:
     __slots__: list[str] = []
 
-    def validate(self, chunk: bytes) -> None:
-        """Raise any ParseErrors"""
-
 
 class _Read(Awaitable):
     __slots__ = ["remaining"]
@@ -147,7 +144,7 @@ class Parser(Generic[T]):
             while tokens:
                 yield popleft()
 
-    def parse(self, on_token: Callable[[T], None]) -> Generator[Awaitable, T, None]:
+    def parse(self, on_token: Callable[[T], None]) -> Generator[Awaitable, str, None]:
         return
         yield
 
