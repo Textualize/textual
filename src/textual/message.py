@@ -1,11 +1,13 @@
 from time import monotonic
 from typing import ClassVar
 
-from .case import camel_to_snake
+from rich.repr import rich_repr
 
+from .case import camel_to_snake
 from ._types import MessageTarget
 
 
+@rich_repr
 class Message:
     """Base class for a message."""
 
@@ -28,6 +30,10 @@ class Message:
         self._no_default_action = False
         self._stop_propagaton = False
         super().__init__()
+
+    def __rich_repr__(self):
+        return
+        yield
 
     def __init_subclass__(cls, bubble: bool = False, priority: int = 0) -> None:
         super().__init_subclass__()

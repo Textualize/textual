@@ -52,6 +52,7 @@ class LinuxDriver(Driver):
         write("\x1b[?1000h")
         write("\x1b[?1015h")
         write("\x1b[?1006h")
+        # write("\x1b[?1007h")
         self.console.file.flush()
 
         # Note: E.g. lxterminal understands 1000h, but not the urxvt or sgr

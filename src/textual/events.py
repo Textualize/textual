@@ -142,17 +142,26 @@ class _MouseBase(Event, type=EventType.PRESS):
         sender: MessageTarget,
         x: int,
         y: int,
-        buttons: frozenset[int],
+        button: int,
+        shift: bool,
+        meta: bool,
+        ctrl: bool,
     ) -> None:
         super().__init__(sender)
         self.x = x
         self.y = y
-        self.buttons = buttons
+        self.button = button
+        self.shift = shift
+        self.meta = meta
+        self.ctrl = ctrl
 
     def __rich_repr__(self) -> RichReprResult:
         yield "x", self.x
         yield "y", self.y
-        yield "buttons", set(self.buttons)
+        yield "button", self.button, 0
+        yield "shift", self.shift, False
+        yield "meta", self.meta, False
+        yield "ctrl", self.ctrl, False
 
 
 class Move(_MouseBase, type=EventType.MOVE):

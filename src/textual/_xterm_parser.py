@@ -32,25 +32,23 @@ class XTermParser(Parser[events.Event]):
         if sgr_match:
             _buttons, x, y, state = sgr_match.groups()
             buttons = int(_buttons)
-            pressed: list[int] = []
-            append = pressed.append
-            if buttons:
-                if buttons & 1:
-                    append(1)
-                if buttons & 2:
-                    append(2)
-                if buttons & 4:
-                    append(3)
-                if buttons & 8:
-                    append(4)
-                if buttons & 16:
-                    append(5)
+            button = 0
+
             event_class: Type[events._MouseBase]
             if buttons & 32:
                 event_class = events.Move
             else:
                 event_class = events.Press if state == "M" else events.Release
-            event = event_class(sender, int(x) - 1, int(y) - 1, frozenset(pressed))
+                button = (4 if (buttons & 64) else 1) + (buttons & 3)
+            event = event_class(
+                sender,
+                int(x) - 1,
+                int(y) - 1,
+                button,
+                bool(buttons & 4),
+                bool(buttons & 8),
+                bool(buttons & 16),
+            )
             return event
         return None
 

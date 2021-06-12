@@ -174,7 +174,15 @@ class LayoutView(View):
                 finally:
                     self.mouse_over = widget
             await widget.post_message(
-                events.Move(self, event.x - region.x, event.y - region.y, event.buttons)
+                events.Move(
+                    self,
+                    event.x - region.x,
+                    event.y - region.y,
+                    event.button,
+                    event.shift,
+                    event.meta,
+                    event.ctrl,
+                )
             )
 
     async def on_click(self, event: events.Click) -> None:
