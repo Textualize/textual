@@ -55,6 +55,9 @@ class View(ABC, MessagePump):
         for slot, widget in widgets.items():
             await self.mount(widget, slot=slot)
 
+    async def forward_input_event(self, event: events.Event) -> None:
+        pass
+
 
 class LayoutView(View):
     layout: Layout
@@ -81,7 +84,7 @@ class LayoutView(View):
             )
         self.layout = layout
         self.mouse_over: MessagePump | None = None
-        self.focused: MessagePump | None = None
+        self.focused: Widget | None = None
         self._widgets: set[Widget] = set()
         super().__init__()
         self.enable_messages(events.Idle)
@@ -155,7 +158,7 @@ class LayoutView(View):
                 )
         self.app.refresh()
 
-    async def on_mouse_move(self, event: events.MouseMove) -> None:
+    async def _on_mouse_move(self, event: events.MouseMove) -> None:
         try:
             widget, region = self.get_widget_at(event.x, event.y)
         except NoWidget:
@@ -187,14 +190,25 @@ class LayoutView(View):
                 )
             )
 
-    async def on_mouse_down(self, event: events.Click) -> None:
-        try:
-            widget, _region = self.get_widget_at(event.x, event.y)
-        except NoWidget:
-            await self.set_focus(None)
-        else:
-            await self.set_focus(widget)
+    async def forward_input_event(self, event: events.Event) -> None:
+        if isinstance(event, (events.MouseDown)):
+            try:
+                widget, _region = self.get_widget_at(event.x, event.y)
+            except NoWidget:
+                await self.set_focus(None)
+            else:
+                await self.set_focus(widget)
 
-    async def forward_key_event(self, event: events.Key) -> None:
-        if self.focused:
-            await self.focused.post_message(event)
+        elif isinstance(event, events.MouseMove):
+            await self._on_mouse_move(event)
+
+        elif isinstance(event, events.MouseEvent):
+            try:
+                widget, region = self.get_widget_at(event.x, event.y)
+            except NoWidget:
+                pass
+            else:
+                await widget.forward_input_event(event)
+        else:
+            if self.focused is not None:
+                await self.focused.forward_input_event(event)

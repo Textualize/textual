@@ -118,6 +118,9 @@ class Widget(MessagePump):
     def require_repaint(self) -> None:
         self._line_cache = None
 
+    async def forward_input_event(self, event: events.Event) -> None:
+        await self.post_message(event)
+
     async def refresh(self) -> None:
         self._line_cache = None
         await self.repaint()

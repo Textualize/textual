@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 class EventType(Enum):
     """Event type enumeration."""
 
+    NONE = auto()
     LOAD = auto()
     STARTUP = auto()
     CREATED = auto()
@@ -39,6 +40,8 @@ class EventType(Enum):
     MOUSE_MOVE = auto()
     MOUSE_DOWN = auto()
     MOUSE_UP = auto()
+    MOUSE_SCROLL_DOWN = auto()
+    MOUSE_SCROLL_UP = auto()
     CLICK = auto()
     DOUBLE_CLICK = auto()
     ENTER = auto()
@@ -121,8 +124,12 @@ class Shutdown(Event, type=EventType.SHUTDOWN):
     pass
 
 
+class InputEvent(Event, type=EventType.NONE, bubble=True):
+    pass
+
+
 @rich_repr
-class Key(Event, type=EventType.KEY, bubble=True):
+class Key(InputEvent, type=EventType.KEY, bubble=True):
     __slots__ = ["key"]
 
     def __init__(self, sender: MessageTarget, key: Keys | str) -> None:
@@ -134,7 +141,7 @@ class Key(Event, type=EventType.KEY, bubble=True):
 
 
 @rich_repr
-class _MouseBase(Event, type=EventType.MOUSE_MOVE):
+class MouseEvent(InputEvent, type=EventType.MOUSE_MOVE):
     __slots__ = ["x", "y", "button"]
 
     def __init__(
@@ -164,23 +171,36 @@ class _MouseBase(Event, type=EventType.MOUSE_MOVE):
         yield "ctrl", self.ctrl, False
 
 
-class MouseMove(_MouseBase, type=EventType.MOUSE_MOVE):
+class MouseMove(MouseEvent, type=EventType.MOUSE_MOVE):
     pass
 
 
-class MouseDown(_MouseBase, type=EventType.MOUSE_DOWN):
+class MouseDown(MouseEvent, type=EventType.MOUSE_DOWN):
     pass
 
 
-class MouseUp(_MouseBase, type=EventType.MOUSE_UP):
+class MouseUp(MouseEvent, type=EventType.MOUSE_UP):
     pass
 
 
-class Click(_MouseBase, type=EventType.CLICK):
+class MouseScrollDown(InputEvent, type=EventType.MOUSE_SCROLL_DOWN):
+    __slots__ = ["x", "y"]
+
+    def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
+        super().__init__(sender)
+        self.x = x
+        self.y = y
+
+
+class MouseScrollUp(MouseScrollDown, type=EventType.MOUSE_SCROLL_UP):
     pass
 
 
-class DoubleClick(_MouseBase, type=EventType.DOUBLE_CLICK):
+class Click(MouseEvent, type=EventType.CLICK):
+    pass
+
+
+class DoubleClick(MouseEvent, type=EventType.DOUBLE_CLICK):
     pass
 
 

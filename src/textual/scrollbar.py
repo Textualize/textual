@@ -97,25 +97,6 @@ def render_bar(
 
     segments[start_index:end_index] = [bar_segment] * bar_height
 
-    # log.debug("f")
-    # sub_position = 1 - (start % 1.0)
-    # log.debug("*** sub_position=%r, %r", start, sub_position)
-
-    # if sub_position > 0.5:
-    #     segments[start_index - 1] = end_back_segment
-    #     segments[start_index] = start_back_segment
-    # else:
-    #     segments[start_index] = start_bar_segment
-    #     # segments[start_index + 1] = start_bar_segment
-
-    # sub_position = end % 1.0
-    # if sub_position > 0.5:
-    #     segments[end_index] = end_bar_segment
-    #     segments[end_index + 1] = back_segment
-    # else:
-    #     segments[end_index] = start_back_segment
-    # segments[end_index + 1] = start_back_segment
-
     return segments
 
 

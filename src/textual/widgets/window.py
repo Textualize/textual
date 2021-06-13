@@ -78,3 +78,9 @@ class Window(Widget):
             self.position += 1
         elif event.key == "up":
             self.position -= 1
+
+    async def on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
+        self.position += 1
+
+    async def on_mouse_scroll_down(self, event: events.MouseScrollUp) -> None:
+        self.position -= 1

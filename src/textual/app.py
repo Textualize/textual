@@ -24,6 +24,13 @@ log = logging.getLogger("rich")
 
 LayoutDefinition = dict[str, Any]
 
+try:
+    import uvloop
+except ImportError:
+    pass
+else:
+    uvloop.install()
+
 
 @rich_repr
 class App(MessagePump):
@@ -104,6 +111,19 @@ class App(MessagePump):
                 Screen(Control.home(), self.view, Control.home(), application_mode=True)
             )
 
+    async def on_event(self, event: events.Event, priority: int) -> None:
+        if isinstance(event, events.Key):
+            key_action = self.KEYS.get(event.key, None)
+            if key_action is not None:
+                log.debug("action %r", key_action)
+                await self.action(key_action)
+                return
+
+        if isinstance(event, events.InputEvent):
+            await self.view.forward_input_event(event)
+        else:
+            await super().on_event(event, priority)
+
     async def on_idle(self, event: events.Idle) -> None:
         await self.view.post_message(event)
 
@@ -121,17 +141,6 @@ class App(MessagePump):
             if method is not None:
                 await method(tokens)
 
-    async def on_key(self, event: events.Key) -> None:
-        key_action = self.KEYS.get(event.key, None)
-        if key_action is not None:
-            log.debug("action %r", key_action)
-            await self.action(key_action)
-        else:
-            await self.view.forward_key_event(event)
-
-        # if event.key == "q":
-        #     await self.close_messages()
-
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log.debug("shutdown request")
         await self.close_messages()
@@ -146,6 +155,12 @@ class App(MessagePump):
         await self.view.post_message(event)
 
     async def on_mouse_up(self, event: events.MouseUp) -> None:
+        await self.view.post_message(event)
+
+    async def on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
+        await self.view.post_message(event)
+
+    async def on_mouse_scroll_down(self, event: events.MouseScrollUp) -> None:
         await self.view.post_message(event)
 
     async def action_quit(self, tokens: list[str]) -> None:

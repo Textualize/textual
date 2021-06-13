@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Callable, Iterable, Generator, Type
+from typing import Callable, Generator
 
 from . import events
 from ._types import MessageTarget
@@ -29,25 +29,30 @@ class XTermParser(Parser[events.Event]):
 
         sgr_match = cls._re_sgr_mouse.match(code)
         if sgr_match:
-            _buttons, x, y, state = sgr_match.groups()
+            _buttons, _x, _y, state = sgr_match.groups()
             buttons = int(_buttons)
-            button = 0
-
-            event_class: Type[events._MouseBase]
-            if buttons & 32:
-                event_class = events.MouseMove
+            button = buttons & 3
+            x = int(_x) - 1
+            y = int(_y) - 1
+            event: events.Event
+            if buttons & 64:
+                event = (
+                    events.MouseScrollUp if button == 1 else events.MouseScrollDown
+                )(sender, x, y)
             else:
-                event_class = events.MouseDown if state == "M" else events.MouseUp
-                button = (4 if (buttons & 64) else 1) + (buttons & 3)
-            event = event_class(
-                sender,
-                int(x) - 1,
-                int(y) - 1,
-                button,
-                bool(buttons & 4),
-                bool(buttons & 8),
-                bool(buttons & 16),
-            )
+                event = (
+                    events.MouseMove
+                    if buttons & 32
+                    else (events.MouseDown if state == "M" else events.MouseUp)
+                )(
+                    sender,
+                    x,
+                    y,
+                    button,
+                    bool(buttons & 4),
+                    bool(buttons & 8),
+                    bool(buttons & 16),
+                )
             return event
         return None
 
