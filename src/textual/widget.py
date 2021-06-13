@@ -71,16 +71,16 @@ class Widget(MessagePump):
         super().__init__()
         if not self.mouse_events:
             self.disable_messages(
-                events.Move,
-                events.Press,
-                events.Release,
+                events.MouseMove,
+                events.MouseDown,
+                events.MouseUp,
                 events.Click,
                 events.DoubleClick,
             )
 
     def __init_subclass__(
         cls,
-        can_focus: bool = False,
+        can_focus: bool = True,
         mouse_events: bool = True,
     ) -> None:
         super().__init_subclass__()

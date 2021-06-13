@@ -36,9 +36,9 @@ class EventType(Enum):
     FOCUS = auto()
     BLUR = auto()
     KEY = auto()
-    MOVE = auto()
-    PRESS = auto()
-    RELEASE = auto()
+    MOUSE_MOVE = auto()
+    MOUSE_DOWN = auto()
+    MOUSE_UP = auto()
     CLICK = auto()
     DOUBLE_CLICK = auto()
     ENTER = auto()
@@ -134,7 +134,7 @@ class Key(Event, type=EventType.KEY, bubble=True):
 
 
 @rich_repr
-class _MouseBase(Event, type=EventType.PRESS):
+class _MouseBase(Event, type=EventType.MOUSE_MOVE):
     __slots__ = ["x", "y", "button"]
 
     def __init__(
@@ -164,15 +164,15 @@ class _MouseBase(Event, type=EventType.PRESS):
         yield "ctrl", self.ctrl, False
 
 
-class Move(_MouseBase, type=EventType.MOVE):
+class MouseMove(_MouseBase, type=EventType.MOUSE_MOVE):
     pass
 
 
-class Press(_MouseBase, type=EventType.MOVE):
+class MouseDown(_MouseBase, type=EventType.MOUSE_DOWN):
     pass
 
 
-class Release(_MouseBase, type=EventType.RELEASE):
+class MouseUp(_MouseBase, type=EventType.MOUSE_UP):
     pass
 
 

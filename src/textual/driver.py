@@ -38,163 +38,155 @@ class Driver(ABC):
         ...
 
 
-class LinuxDriver(Driver):
-    def start_application_mode(self):
-        pass
+# class CursesDriver(Driver):
 
-    def stop_application_mode(self):
-        pass
+#     _MOUSE_PRESSED = [
+#         curses.BUTTON1_PRESSED,
+#         curses.BUTTON2_PRESSED,
+#         curses.BUTTON3_PRESSED,
+#         curses.BUTTON4_PRESSED,
+#     ]
 
+#     _MOUSE_RELEASED = [
+#         curses.BUTTON1_RELEASED,
+#         curses.BUTTON2_RELEASED,
+#         curses.BUTTON3_RELEASED,
+#         curses.BUTTON4_RELEASED,
+#     ]
 
-class CursesDriver(Driver):
+#     _MOUSE_CLICKED = [
+#         curses.BUTTON1_CLICKED,
+#         curses.BUTTON2_CLICKED,
+#         curses.BUTTON3_CLICKED,
+#         curses.BUTTON4_CLICKED,
+#     ]
 
-    _MOUSE_PRESSED = [
-        curses.BUTTON1_PRESSED,
-        curses.BUTTON2_PRESSED,
-        curses.BUTTON3_PRESSED,
-        curses.BUTTON4_PRESSED,
-    ]
+#     _MOUSE_DOUBLE_CLICKED = [
+#         curses.BUTTON1_DOUBLE_CLICKED,
+#         curses.BUTTON2_DOUBLE_CLICKED,
+#         curses.BUTTON3_DOUBLE_CLICKED,
+#         curses.BUTTON4_DOUBLE_CLICKED,
+#     ]
 
-    _MOUSE_RELEASED = [
-        curses.BUTTON1_RELEASED,
-        curses.BUTTON2_RELEASED,
-        curses.BUTTON3_RELEASED,
-        curses.BUTTON4_RELEASED,
-    ]
+#     _MOUSE = [
+#         (events.MouseDown, _MOUSE_PRESSED),
+#         (events.MouseUp, _MOUSE_RELEASED),
+#         (events.Click, _MOUSE_CLICKED),
+#         (events.DoubleClick, _MOUSE_DOUBLE_CLICKED),
+#     ]
 
-    _MOUSE_CLICKED = [
-        curses.BUTTON1_CLICKED,
-        curses.BUTTON2_CLICKED,
-        curses.BUTTON3_CLICKED,
-        curses.BUTTON4_CLICKED,
-    ]
+#     def __init__(self, console: "Console", target: "MessageTarget") -> None:
+#         super().__init__(console, target)
+#         self._stdscr = None
+#         self._exit_event = Event()
+#         self._key_thread: Thread | None = None
 
-    _MOUSE_DOUBLE_CLICKED = [
-        curses.BUTTON1_DOUBLE_CLICKED,
-        curses.BUTTON2_DOUBLE_CLICKED,
-        curses.BUTTON3_DOUBLE_CLICKED,
-        curses.BUTTON4_DOUBLE_CLICKED,
-    ]
+#     def _get_terminal_size(self) -> tuple[int, int]:
+#         width: int | None = 80
+#         height: int | None = 25
+#         if WINDOWS:  # pragma: no cover
+#             width, height = shutil.get_terminal_size()
+#         else:
+#             try:
+#                 width, height = os.get_terminal_size(sys.stdin.fileno())
+#             except (AttributeError, ValueError, OSError):
+#                 try:
+#                     width, height = os.get_terminal_size(sys.stdout.fileno())
+#                 except (AttributeError, ValueError, OSError):
+#                     pass
+#         width = width or 80
+#         height = height or 25
+#         return width, height
 
-    _MOUSE = [
-        (events.Press, _MOUSE_PRESSED),
-        (events.Release, _MOUSE_RELEASED),
-        (events.Click, _MOUSE_CLICKED),
-        (events.DoubleClick, _MOUSE_DOUBLE_CLICKED),
-    ]
+#     def start_application_mode(self):
+#         loop = asyncio.get_event_loop()
 
-    def __init__(self, console: "Console", target: "MessageTarget") -> None:
-        super().__init__(console, target)
-        self._stdscr = None
-        self._exit_event = Event()
-        self._key_thread: Thread | None = None
+#         def on_terminal_resize(signum, stack) -> None:
+#             terminal_size = self._get_terminal_size()
+#             width, height = terminal_size
+#             event = events.Resize(self._target, width, height)
+#             self.console.size = terminal_size
+#             asyncio.run_coroutine_threadsafe(
+#                 self._target.post_message(event),
+#                 loop=loop,
+#             )
 
-    def _get_terminal_size(self) -> tuple[int, int]:
-        width: int | None = 80
-        height: int | None = 25
-        if WINDOWS:  # pragma: no cover
-            width, height = shutil.get_terminal_size()
-        else:
-            try:
-                width, height = os.get_terminal_size(sys.stdin.fileno())
-            except (AttributeError, ValueError, OSError):
-                try:
-                    width, height = os.get_terminal_size(sys.stdout.fileno())
-                except (AttributeError, ValueError, OSError):
-                    pass
-        width = width or 80
-        height = height or 25
-        return width, height
+#         signal.signal(signal.SIGWINCH, on_terminal_resize)
+#         self._stdscr = curses.initscr()
+#         curses.noecho()
+#         curses.cbreak()
+#         curses.halfdelay(1)
+#         curses.mousemask(curses.REPORT_MOUSE_POSITION | curses.ALL_MOUSE_EVENTS)
+#         # curses.mousemask(-1)
 
-    def start_application_mode(self):
-        loop = asyncio.get_event_loop()
+#         self._stdscr.keypad(True)
+#         self.console.show_cursor(False)
+#         self.console.file.write("\033[?1003h\n")
+#         self._key_thread = Thread(
+#             target=self.run_key_thread, args=(asyncio.get_event_loop(),)
+#         )
 
-        def on_terminal_resize(signum, stack) -> None:
-            terminal_size = self._get_terminal_size()
-            width, height = terminal_size
-            event = events.Resize(self._target, width, height)
-            self.console.size = terminal_size
-            asyncio.run_coroutine_threadsafe(
-                self._target.post_message(event),
-                loop=loop,
-            )
+#         width, height = self.console.size = self._get_terminal_size()
+#         asyncio.run_coroutine_threadsafe(
+#             self._target.post_message(events.Resize(self._target, width, height)),
+#             loop=loop,
+#         )
 
-        signal.signal(signal.SIGWINCH, on_terminal_resize)
-        self._stdscr = curses.initscr()
-        curses.noecho()
-        curses.cbreak()
-        curses.halfdelay(1)
-        curses.mousemask(curses.REPORT_MOUSE_POSITION | curses.ALL_MOUSE_EVENTS)
-        # curses.mousemask(-1)
+#         self._key_thread.start()
 
-        self._stdscr.keypad(True)
-        self.console.show_cursor(False)
-        self.console.file.write("\033[?1003h\n")
-        self._key_thread = Thread(
-            target=self.run_key_thread, args=(asyncio.get_event_loop(),)
-        )
+#     def stop_application_mode(self):
 
-        width, height = self.console.size = self._get_terminal_size()
-        asyncio.run_coroutine_threadsafe(
-            self._target.post_message(events.Resize(self._target, width, height)),
-            loop=loop,
-        )
+#         signal.signal(signal.SIGWINCH, signal.SIG_DFL)
 
-        self._key_thread.start()
+#         self._exit_event.set()
+#         self._key_thread.join()
+#         curses.nocbreak()
+#         self._stdscr.keypad(False)
+#         curses.echo()
+#         curses.endwin()
+#         self.console.show_cursor(True)
 
-    def stop_application_mode(self):
+#     def run_key_thread(self, loop) -> None:
+#         stdscr = self._stdscr
+#         assert stdscr is not None
+#         exit_event = self._exit_event
 
-        signal.signal(signal.SIGWINCH, signal.SIG_DFL)
+#         def send_event(event: events.Event) -> None:
+#             asyncio.run_coroutine_threadsafe(
+#                 self._target.post_message(event),
+#                 loop=loop,
+#             )
 
-        self._exit_event.set()
-        self._key_thread.join()
-        curses.nocbreak()
-        self._stdscr.keypad(False)
-        curses.echo()
-        curses.endwin()
-        self.console.show_cursor(True)
+#         while not exit_event.is_set():
+#             code = stdscr.getch()
+#             if code == -1:
+#                 continue
 
-    def run_key_thread(self, loop) -> None:
-        stdscr = self._stdscr
-        assert stdscr is not None
-        exit_event = self._exit_event
+#             if code == curses.KEY_MOUSE:
 
-        def send_event(event: events.Event) -> None:
-            asyncio.run_coroutine_threadsafe(
-                self._target.post_message(event),
-                loop=loop,
-            )
-
-        while not exit_event.is_set():
-            code = stdscr.getch()
-            if code == -1:
-                continue
-
-            if code == curses.KEY_MOUSE:
-
-                try:
-                    _id, x, y, _z, button_state = curses.getmouse()
-                except Exception:
-                    log.exception("error in curses.getmouse")
-                else:
-                    if button_state & curses.REPORT_MOUSE_POSITION:
-                        send_event(events.Move(self._target, x, y))
-                    alt = bool(button_state & curses.BUTTON_ALT)
-                    ctrl = bool(button_state & curses.BUTTON_CTRL)
-                    shift = bool(button_state & curses.BUTTON_SHIFT)
-                    for event_type, masks in self._MOUSE:
-                        for button, mask in enumerate(masks, 1):
-                            if button_state & mask:
-                                send_event(
-                                    event_type(
-                                        self._target,
-                                        x,
-                                        y,
-                                        button,
-                                        alt=alt,
-                                        ctrl=ctrl,
-                                        shift=shift,
-                                    )
-                                )
-            else:
-                send_event(events.Key(self._target, code=code))
+#                 try:
+#                     _id, x, y, _z, button_state = curses.getmouse()
+#                 except Exception:
+#                     log.exception("error in curses.getmouse")
+#                 else:
+#                     if button_state & curses.REPORT_MOUSE_POSITION:
+#                         send_event(events.MouseMove(self._target, x, y))
+#                     alt = bool(button_state & curses.BUTTON_ALT)
+#                     ctrl = bool(button_state & curses.BUTTON_CTRL)
+#                     shift = bool(button_state & curses.BUTTON_SHIFT)
+#                     for event_type, masks in self._MOUSE:
+#                         for button, mask in enumerate(masks, 1):
+#                             if button_state & mask:
+#                                 send_event(
+#                                     event_type(
+#                                         self._target,
+#                                         x,
+#                                         y,
+#                                         button,
+#                                         alt=alt,
+#                                         ctrl=ctrl,
+#                                         shift=shift,
+#                                     )
+#                                 )
+#             else:
+#                 send_event(events.Key(self._target, code=code))

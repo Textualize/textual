@@ -35,9 +35,9 @@ class XTermParser(Parser[events.Event]):
 
             event_class: Type[events._MouseBase]
             if buttons & 32:
-                event_class = events.Move
+                event_class = events.MouseMove
             else:
-                event_class = events.Press if state == "M" else events.Release
+                event_class = events.MouseDown if state == "M" else events.MouseUp
                 button = (4 if (buttons & 64) else 1) + (buttons & 3)
             event = event_class(
                 sender,
@@ -60,7 +60,7 @@ class XTermParser(Parser[events.Event]):
 
         while not self.is_eof:
             character = yield read1()
-            if character == ESC and ((yield self.peek_buffer())):
+            if character == ESC and ((yield self.peek_buffer()) or more_data()):
                 sequence: str = character
                 while True:
                     sequence += yield read1()

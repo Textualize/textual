@@ -157,6 +157,8 @@ class MessagePump:
 
             try:
                 await self.dispatch_message(message, priority)
+            except Exception:
+                log.exception("error dispatching %r", message)
             finally:
                 if self._message_queue.empty():
                     idle_handler = getattr(self, "on_idle", None)

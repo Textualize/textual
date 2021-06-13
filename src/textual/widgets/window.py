@@ -1,5 +1,7 @@
 from __future__ import annotations
+import logging
 
+import logging
 import sys
 
 if sys.version_info >= (3, 8):
@@ -10,9 +12,12 @@ else:
 from rich.console import Console, ConsoleOptions, RenderableType
 from rich.segment import Segment
 
+from .. import events
 from ..widget import Widget, Reactive
 from ..geometry import Point, Dimensions
 from ..scrollbar import VerticalBar
+
+log = logging.getLogger("rich")
 
 ScrollMethod = Literal["always", "never", "auto", "overlay"]
 
@@ -66,3 +71,11 @@ class Window(Widget):
             self.position,
             overlay=self.y_scroll == "overlay",
         )
+
+    async def on_key(self, event: events.Key) -> None:
+        log.debug("window.on_key; %s", event)
+        if event.key == "down":
+            self.position += 1
+        elif event.key == "up":
+            self.position -= 1
+        event.stop_propagation()

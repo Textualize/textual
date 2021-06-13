@@ -127,8 +127,10 @@ class LayoutView(View):
         self._widgets.add(widget)
 
     async def set_focus(self, widget: Optional[Widget]) -> None:
+        log.debug("set_focus %r", widget)
         if widget == self.focused:
             return
+
         if widget is None:
             if self.focused is not None:
                 focused = self.focused
@@ -153,7 +155,7 @@ class LayoutView(View):
                 )
         self.app.refresh()
 
-    async def on_move(self, event: events.Move) -> None:
+    async def on_mouse_move(self, event: events.MouseMove) -> None:
         try:
             widget, region = self.get_widget_at(event.x, event.y)
         except NoWidget:
@@ -174,7 +176,7 @@ class LayoutView(View):
                 finally:
                     self.mouse_over = widget
             await widget.post_message(
-                events.Move(
+                events.MouseMove(
                     self,
                     event.x - region.x,
                     event.y - region.y,
@@ -185,10 +187,15 @@ class LayoutView(View):
                 )
             )
 
-    async def on_click(self, event: events.Click) -> None:
+    async def on_mouse_down(self, event: events.Click) -> None:
         try:
             widget, _region = self.get_widget_at(event.x, event.y)
         except NoWidget:
             await self.set_focus(None)
         else:
             await self.set_focus(widget)
+
+    async def on_key(self, event: events.Key) -> None:
+        log.debug("view.on_key; %s, %r", event, self.focused)
+        if self.focused:
+            await self.focused.post_message(event)

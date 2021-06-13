@@ -191,7 +191,6 @@ class LinuxDriver(Driver):
             selector_events = selector.select(0.1)
             for _selector_key, mask in selector_events:
                 unicode_data = decode(read(fileno, 1024))
-                log.debug(repr(unicode_data))
                 for event in parser.feed(unicode_data):
                     send_event(event)
 

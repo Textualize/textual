@@ -126,6 +126,8 @@ class App(MessagePump):
         if key_action is not None:
             log.debug("action %r", key_action)
             await self.action(key_action)
+        else:
+            await self.view.post_message(event)
 
         # if event.key == "q":
         #     await self.close_messages()
@@ -137,10 +139,13 @@ class App(MessagePump):
     async def on_resize(self, event: events.Resize) -> None:
         await self.view.post_message(event)
 
-    async def on_move(self, event: events.Move) -> None:
+    async def on_mouse_move(self, event: events.MouseMove) -> None:
         await self.view.post_message(event)
 
-    async def on_click(self, event: events.Click) -> None:
+    async def on_mouse_down(self, event: events.MouseDown) -> None:
+        await self.view.post_message(event)
+
+    async def on_mouse_up(self, event: events.MouseUp) -> None:
         await self.view.post_message(event)
 
     async def action_quit(self, tokens: list[str]) -> None:
@@ -165,7 +170,7 @@ if __name__ == "__main__":
     )
 
     with open("richreadme.md", "rt") as fh:
-        readme = Markdown(fh.read(), hyperlinks=True)
+        readme = Markdown(fh.read(), hyperlinks=True, code_theme="fruity")
 
     from rich import print
 
@@ -177,6 +182,5 @@ if __name__ == "__main__":
             await self.view.mount_all(
                 header=Header(self.title), left=Placeholder(), body=Window(readme)
             )
-            # self.set_timer(3.0, callback=self.close_messages)
 
     MyApp.run()

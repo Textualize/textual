@@ -1,14 +1,14 @@
 from __future__ import annotations
 
+from math import ceil
+import logging
 from typing import Iterable
 
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.segment import Segment
 from rich.style import Style
 
-
-# def add_vertical_bar(lines:list[list[Segment]], size:float, window_size:float, position:float) -> None
-#     bar = render_bar(len(lines), size, window_size, po)
+log = logging.getLogger("rich")
 
 
 class VerticalBar:
@@ -88,25 +88,33 @@ def render_bar(
     step_size = virtual_size / size
 
     start = position / step_size
-    end = (position + window_size) / step_size
+    # end = (position + window_size) / step_size
+    end = start + window_size / step_size
 
     start_index = int(start)
-    end_index = int(end)
-    bar_height = (end_index - start_index) + 1
+    end_index = start_index + ceil(window_size / step_size)
+    bar_height = end_index - start_index
 
     segments[start_index:end_index] = [bar_segment] * bar_height
 
-    sub_position = start % 1.0
-    if sub_position >= 0.5:
-        segments[start_index] = start_bar_segment
-    elif start_index:
-        segments[start_index - 1] = end_back_segment
+    # log.debug("f")
+    # sub_position = 1 - (start % 1.0)
+    # log.debug("*** sub_position=%r, %r", start, sub_position)
 
-    sub_position = end % 1.0
-    if sub_position < 0.5:
-        segments[end_index] = end_bar_segment
-    elif end_index + 1 < len(segments):
-        segments[end_index + 1] = start_back_segment
+    # if sub_position > 0.5:
+    #     segments[start_index - 1] = end_back_segment
+    #     segments[start_index] = start_back_segment
+    # else:
+    #     segments[start_index] = start_bar_segment
+    #     # segments[start_index + 1] = start_bar_segment
+
+    # sub_position = end % 1.0
+    # if sub_position > 0.5:
+    #     segments[end_index] = end_bar_segment
+    #     segments[end_index + 1] = back_segment
+    # else:
+    #     segments[end_index] = start_back_segment
+    # segments[end_index + 1] = start_back_segment
 
     return segments
 

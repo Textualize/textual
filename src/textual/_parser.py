@@ -97,11 +97,12 @@ class Parser(Generic[T]):
         pos = 0
         tokens = self._tokens
         popleft = tokens.popleft
+        data_size = len(data)
 
         while tokens:
             yield popleft()
 
-        while pos < len(data) or isinstance(self._awaiting, PeekBuffer):
+        while pos < data_size or isinstance(self._awaiting, PeekBuffer):
 
             _awaiting = self._awaiting
             if isinstance(_awaiting, _Read1):
