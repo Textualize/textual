@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Iterable, Generator, Type
+from typing import Callable, Iterable, Generator, Type
 
 from . import events
-from .keys import Keys
+from ._types import MessageTarget
 from ._parser import Awaitable, Parser, TokenCallback
 from ._ansi_sequences import ANSI_SEQUENCES
 
@@ -19,14 +19,13 @@ class XTermParser(Parser[events.Event]):
 
     _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(\d+);(\d+)([Mm])")
 
-    def __init__(self, sender: "MessageTarget") -> None:
-        super().__init__()
+    def __init__(self, sender: MessageTarget, more_data: Callable[[], bool]) -> None:
         self.sender = sender
+        self.more_data = more_data
+        super().__init__()
 
     @classmethod
-    def parse_mouse_code(
-        cls, code: str, sender: "MessageTarget"
-    ) -> events.Event | None:
+    def parse_mouse_code(cls, code: str, sender: MessageTarget) -> events.Event | None:
 
         sgr_match = cls._re_sgr_mouse.match(code)
         if sgr_match:
@@ -57,15 +56,18 @@ class XTermParser(Parser[events.Event]):
         ESC = "\x1b"
         read1 = self.read1
         get_ansi_sequence = ANSI_SEQUENCES.get
+        more_data = self.more_data
+
         while not self.is_eof:
             character = yield read1()
-            if character == ESC:
-                sequence = character
+            if character == ESC and ((yield self.peek_buffer())):
+                sequence: str = character
                 while True:
                     sequence += yield read1()
-                    key = get_ansi_sequence(sequence, None)
-                    if key is not None:
-                        on_token(events.Key(self.sender, key=key))
+                    keys = get_ansi_sequence(sequence, None)
+                    if keys is not None:
+                        for key in keys:
+                            on_token(events.Key(self.sender, key=key))
                         break
                     else:
                         mouse_match = _re_mouse_event.match(sequence)
@@ -77,9 +79,10 @@ class XTermParser(Parser[events.Event]):
                             break
             else:
 
-                key = get_ansi_sequence(character, None)
-                if key is not None:
-                    on_token(events.Key(self.sender, key=character))
+                keys = get_ansi_sequence(character, None)
+                if keys is not None:
+                    for key in keys:
+                        on_token(events.Key(self.sender, key=key))
                 else:
                     on_token(events.Key(self.sender, key=character))
 

@@ -156,6 +156,12 @@ class LinuxDriver(Driver):
         self._disable_mouse_support()
 
     def run_input_thread(self, loop) -> None:
+        try:
+            self._run_input_thread(loop)
+        except Exception:
+            log.exception("error running input thread")
+
+    def _run_input_thread(self, loop) -> None:
         def send_event(event: events.Event) -> None:
             asyncio.run_coroutine_threadsafe(
                 self._target.post_message(event),
@@ -166,7 +172,15 @@ class LinuxDriver(Driver):
         selector.register(self.fileno, selectors.EVENT_READ)
 
         fileno = self.fileno
-        parser = XTermParser(self)
+
+        def more_data() -> bool:
+            """Check if there is more data to parse."""
+            for key, events in selector.select(0.1):
+                if events:
+                    return True
+            return False
+
+        parser = XTermParser(self._target, more_data)
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder

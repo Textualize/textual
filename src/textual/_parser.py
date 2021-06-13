@@ -46,6 +46,10 @@ class _ReadUntil(Awaitable):
         self.max_bytes = max_bytes
 
 
+class PeekBuffer(Awaitable):
+    __slots__: list[str] = []
+
+
 T = TypeVar("T")
 
 
@@ -56,6 +60,7 @@ class Parser(Generic[T]):
     read = _Read
     read1 = _Read1
     read_until = _ReadUntil
+    peek_buffer = PeekBuffer
 
     def __init__(self) -> None:
         self._buffer = io.StringIO()
@@ -96,12 +101,15 @@ class Parser(Generic[T]):
         while tokens:
             yield popleft()
 
-        while pos < len(data):
+        while pos < len(data) or isinstance(self._awaiting, PeekBuffer):
 
             _awaiting = self._awaiting
             if isinstance(_awaiting, _Read1):
                 self._awaiting = self._gen.send(data[pos : pos + 1])
                 pos += 1
+
+            elif isinstance(_awaiting, PeekBuffer):
+                self._awaiting = self._gen.send(data[pos:])
 
             elif isinstance(_awaiting, _Read):
                 remaining = _awaiting.remaining
@@ -156,16 +164,17 @@ if __name__ == "__main__":
         def parse(
             self, on_token: Callable[[str], None]
         ) -> Generator[Awaitable, str, None]:
-            on_token((yield self.read_until("a")))
+            # on_token((yield self.read_until("a")))
             while data := (yield self.read1()):
+                print("buffer", repr((yield self.peek_buffer())))
                 on_token(data)
 
     test_parser = TestParser()
 
     import time
 
-    for n in range(0, len(data), 2):
-        for token in test_parser.feed(data[n : n + 2]):
+    for n in range(0, len(data), 5):
+        for token in test_parser.feed(data[n : n + 5]):
             print(token)
     for token in test_parser.feed(""):
         print(token)
