@@ -195,7 +195,6 @@ class LayoutView(View):
         else:
             await self.set_focus(widget)
 
-    async def on_key(self, event: events.Key) -> None:
-        log.debug("view.on_key; %s, %r", event, self.focused)
+    async def forward_key_event(self, event: events.Key) -> None:
         if self.focused:
             await self.focused.post_message(event)

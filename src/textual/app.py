@@ -127,7 +127,7 @@ class App(MessagePump):
             log.debug("action %r", key_action)
             await self.action(key_action)
         else:
-            await self.view.post_message(event)
+            await self.view.forward_key_event(event)
 
         # if event.key == "q":
         #     await self.close_messages()

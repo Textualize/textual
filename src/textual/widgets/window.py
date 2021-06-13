@@ -78,4 +78,3 @@ class Window(Widget):
             self.position += 1
         elif event.key == "up":
             self.position -= 1
-        event.stop_propagation()
