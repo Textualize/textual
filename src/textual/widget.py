@@ -25,6 +25,8 @@ from .message import Message
 from .message_pump import MessagePump
 from .geometry import Dimensions
 
+from time import time
+
 if TYPE_CHECKING:
     from .app import App
 
@@ -34,7 +36,10 @@ T = TypeVar("T")
 
 
 class UpdateMessage(Message):
-    pass
+    default_priority = 10
+
+    def can_batch(self, message: Message) -> bool:
+        return isinstance(message, UpdateMessage) and message.sender == self.sender
 
 
 class Reactive(Generic[T]):
@@ -105,10 +110,12 @@ class Widget(MessagePump):
 
         if self._line_cache is None:
             width, height = self.size
+            start = time()
             renderable = self.render(self.console, self.console.options)
             self._line_cache = LineCache.from_renderable(
                 self.console, renderable, width, height
             )
+            log.debug("%.1fms %r render elapsed", (time() - start) * 1000, self)
         assert self._line_cache is not None
         return self._line_cache
 
@@ -151,5 +158,5 @@ class Widget(MessagePump):
         await super().on_event(event, priority)
 
     async def on_idle(self, event: events.Idle) -> None:
-        if self.line_cache.dirty:
+        if self.line_cache is None or self.line_cache.dirty:
             await self.repaint()

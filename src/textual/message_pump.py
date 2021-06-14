@@ -153,7 +153,7 @@ class MessagePump:
                 pending = self.peek_message()
                 if pending is None or not message.can_batch(pending.message):
                     break
-                priority, message = pending
+                priority, message = await self.get_message()
 
             try:
                 await self.dispatch_message(message, priority)

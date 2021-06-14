@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from time import time
 import logging
 from typing import Optional, Tuple, TYPE_CHECKING
 
@@ -12,6 +13,7 @@ from rich.segment import Segments
 
 from . import events
 from ._context import active_app
+from .geometry import Dimensions
 from .message import Message
 from .message_pump import MessagePump
 from .widget import Widget, UpdateMessage
@@ -85,6 +87,7 @@ class LayoutView(View):
         self.layout = layout
         self.mouse_over: MessagePump | None = None
         self.focused: Widget | None = None
+        self.size = Dimensions(0, 0)
         self._widgets: set[Widget] = set()
         super().__init__()
         self.enable_messages(events.Idle)
@@ -114,10 +117,15 @@ class LayoutView(View):
                 for layout, (region, render) in self.layout.map.items():
                     if layout.renderable is widget:
                         assert isinstance(widget, Widget)
+                        start = time()
                         update = widget.render_update(region.x, region.y)
                         segments = Segments(update)
+                        log.debug(
+                            "RENDER UPDATE %r rendered in %.1fms",
+                            widget,
+                            (time() - start) * 1000.0,
+                        )
                         self.console.print(segments, end="")
-                        break
 
     async def on_create(self, event: events.Created) -> None:
         await self.mount(Header(self.title))
@@ -149,14 +157,21 @@ class LayoutView(View):
     async def on_startup(self, event: events.Startup) -> None:
         await self.mount(Header(self.title), slot="header")
 
-    async def on_resize(self, event: events.Resize) -> None:
-        region_map = self.layout._make_region_map(event.width, event.height)
+    async def layout_update(self) -> None:
+        if not self.size:
+            return
+        width, height = self.size
+        region_map = self.layout._make_region_map(width, height)
         for layout, region in region_map.items():
             if isinstance(layout.renderable, Widget):
                 await layout.renderable.post_message(
                     events.Resize(self, region.width, region.height)
                 )
         self.app.refresh()
+
+    async def on_resize(self, event: events.Resize) -> None:
+        self.size = Dimensions(event.width, event.height)
+        await self.layout_update()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         try:
@@ -212,3 +227,8 @@ class LayoutView(View):
         else:
             if self.focused is not None:
                 await self.focused.forward_input_event(event)
+
+    async def action_toggle(self, layout_name: str) -> None:
+        visible = self.layout[layout_name].visible
+        self.layout[layout_name].visible = not visible
+        await self.layout_update()

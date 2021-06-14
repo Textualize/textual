@@ -13,6 +13,7 @@ from rich import get_console
 from rich.console import Console
 
 from . import events
+from . import actions
 from ._context import active_app
 from .driver import Driver
 from ._linux_driver import LinuxDriver
@@ -22,7 +23,7 @@ from .view import View, LayoutView
 log = logging.getLogger("rich")
 
 
-LayoutDefinition = dict[str, Any]
+LayoutDefinition = "dict[str, Any]"
 
 try:
     import uvloop
@@ -53,6 +54,8 @@ class App(MessagePump):
         self.title = title
         self.view = view or LayoutView()
         self.children: set[MessagePump] = set()
+
+        self._action_targets = {"app": self, "view": self.view}
 
     def __rich_repr__(self) -> RichReprResult:
         yield "title", self.title
@@ -107,9 +110,7 @@ class App(MessagePump):
     def refresh(self) -> None:
         console = self.console
         with console:
-            console.print(
-                Screen(Control.home(), self.view, Control.home(), application_mode=True)
-            )
+            console.print(Screen(Control.home(), self.view, Control.home()))
 
     async def on_event(self, event: events.Event, priority: int) -> None:
         if isinstance(event, events.Key):
@@ -128,18 +129,38 @@ class App(MessagePump):
         await self.view.post_message(event)
 
     async def action(self, action: str) -> None:
-        if "." in action:
-            destination, action_name, *tokens = action.split(".")
+        """Perform an action.
+
+        Args:
+            action (str): Action encoded in a string.
+        """
+
+        target, params = actions.parse(action)
+        if "." in target:
+            destination, action_name = target.split(".", 1)
         else:
             destination = "app"
             action_name = action
-            tokens = []
 
-        if destination == "app":
+        log.debug("ACTION %r %r", destination, action_name)
+        await self.dispatch_action(destination, action_name, params)
+
+    async def dispatch_action(
+        self, destination: str, action_name: str, params: Any
+    ) -> None:
+        action_target = self._action_targets.get(destination, None)
+        log.debug("ACTION TARGET %r", action_target)
+        if action_target is not None:
             method_name = f"action_{action_name}"
-            method = getattr(self, method_name, None)
+            method = getattr(action_target, method_name, None)
+            log.debug("ACTION METHOD %r", method)
             if method is not None:
-                await method(tokens)
+                try:
+                    await method(*params)
+                except Exception:
+                    log.exception(
+                        f"error in action {destination}.{action_name}{params!r}"
+                    )
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log.debug("shutdown request")
@@ -163,7 +184,7 @@ class App(MessagePump):
     async def on_mouse_scroll_down(self, event: events.MouseScrollUp) -> None:
         await self.view.post_message(event)
 
-    async def action_quit(self, tokens: list[str]) -> None:
+    async def action_quit(self) -> None:
         await self.close_messages()
 
 
@@ -191,7 +212,7 @@ if __name__ == "__main__":
 
     class MyApp(App):
 
-        KEYS = {"q": "quit", "ctrl+c": "quit"}
+        KEYS = {"q": "quit", "ctrl+c": "quit", "b": "view.toggle('left')"}
 
         async def on_startup(self, event: events.Startup) -> None:
             await self.view.mount_all(
