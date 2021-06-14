@@ -7,13 +7,13 @@ from typing import Optional, Tuple, TYPE_CHECKING
 
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.layout import Layout
-from rich.region import Region
+from rich.region import Region as LayoutRegion
 from rich.repr import rich_repr, RichReprResult
 from rich.segment import Segments
 
 from . import events
 from ._context import active_app
-from .geometry import Dimensions
+from .geometry import Dimensions, Region
 from .message import Message
 from .message_pump import MessagePump
 from .widget import Widget, UpdateMessage
@@ -101,9 +101,9 @@ class LayoutView(View):
         segments = console.render(self.layout, options)
         yield from segments
 
-    def get_widget_at(self, x: int, y: int) -> Tuple[Widget, Region]:
+    def get_widget_at(self, x: int, y: int) -> Tuple[Widget, LayoutRegion]:
         for layout, (region, render) in self.layout.map.items():
-            if region.contains(x, y):
+            if Region(*region).contains(x, y):
                 if isinstance(layout.renderable, Widget):
                     return layout.renderable, region
                 else:
