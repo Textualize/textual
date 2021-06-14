@@ -23,7 +23,7 @@ class LineCache:
         height: int,
     ) -> "LineCache":
         options = console.options.update_dimensions(width, height)
-        lines = console.render_lines(renderable, options, new_lines=False)
+        lines = console.render_lines(renderable, options, new_lines=True)
         return cls(lines)
 
     @property
@@ -36,7 +36,6 @@ class LineCache:
         new_line = Segment.line()
         for line in self.lines:
             yield from line
-            yield new_line
 
     def render(self, x: int, y: int) -> Iterable[Segment]:
         move_to = Control.move_to
@@ -45,5 +44,5 @@ class LineCache:
             if dirty:
                 yield move_to(x, offset_y).segment
                 yield from line
-                yield new_line
+
         self._dirty[:] = [False] * len(self.lines)
