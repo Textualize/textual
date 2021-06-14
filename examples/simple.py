@@ -12,7 +12,7 @@ with open("richreadme.md", "rt") as fh:
 
 class MyApp(App):
 
-    KEYS = {"q": "quit", "ctrl+c": "quit"}
+    KEYS = {"q": "quit", "ctrl+c": "quit", "b": "view.toggle('left')"}
 
     async def on_startup(self, event: events.Startup) -> None:
         await self.view.mount_all(
