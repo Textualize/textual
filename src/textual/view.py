@@ -117,14 +117,8 @@ class LayoutView(View):
                 for layout, (region, render) in self.layout.map.items():
                     if layout.renderable is widget:
                         assert isinstance(widget, Widget)
-                        start = time()
                         update = widget.render_update(region.x, region.y)
                         segments = Segments(update)
-                        log.debug(
-                            "RENDER UPDATE %r rendered in %.1fms",
-                            widget,
-                            (time() - start) * 1000.0,
-                        )
                         self.console.print(segments, end="")
 
     async def on_create(self, event: events.Created) -> None:

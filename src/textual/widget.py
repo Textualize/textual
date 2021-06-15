@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from logging import getLogger
 from typing import (
+    Callable,
     ClassVar,
     Generic,
     Iterable,
@@ -43,8 +44,11 @@ class UpdateMessage(Message):
 
 
 class Reactive(Generic[T]):
-    def __init__(self, default: T) -> None:
+    def __init__(
+        self, default: T, validator: Callable[[object, T], T] | None = None
+    ) -> None:
         self._default = default
+        self.validator = validator
 
     def __set_name__(self, owner: "Widget", name: str) -> None:
         self.internal_name = f"_{name}"
@@ -56,6 +60,8 @@ class Reactive(Generic[T]):
     def __set__(self, obj: "Widget", value: T) -> None:
         if getattr(obj, self.internal_name) != value:
             log.debug("%s -> %s", self.internal_name, value)
+            if self.validator:
+                value = self.validator(obj, value)
             setattr(obj, self.internal_name, value)
             obj.require_repaint()
 
@@ -129,7 +135,7 @@ class Widget(MessagePump):
         await self.post_message(event)
 
     async def refresh(self) -> None:
-        self._line_cache = None
+        # self._line_cache = None
         await self.repaint()
 
     async def repaint(self) -> None:

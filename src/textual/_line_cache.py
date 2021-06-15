@@ -9,6 +9,9 @@ from rich.control import Control
 from rich.segment import Segment
 
 
+log = logging.getLogger("rich")
+
+
 class LineCache:
     def __init__(self, lines: list[list[Segment]]) -> None:
         self.lines = lines
@@ -33,13 +36,12 @@ class LineCache:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        new_line = Segment.line()
+
         for line in self.lines:
             yield from line
 
     def render(self, x: int, y: int) -> Iterable[Segment]:
         move_to = Control.move_to
-        new_line = Segment.line()
         for offset_y, (line, dirty) in enumerate(zip(self.lines, self._dirty), y):
             if dirty:
                 yield move_to(x, offset_y).segment
