@@ -22,3 +22,7 @@ I'll be documenting progress in video form.
 ### Update 2 - Keyboard toggle
 
 [![Textual update 2](http://img.youtube.com/vi/bTYeFOVNXDI/0.jpg)](http://www.youtube.com/watch?v=bTYeFOVNXDI)
+
+### Update 3 - New scrollbars, and smooth scrolling
+
+[![Textual update 3](http://img.youtube.com/vi/4LVl3ClrXIs/0.jpg)](http://www.youtube.com/watch?v=4LVl3ClrXIs)
