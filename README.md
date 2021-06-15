@@ -15,10 +15,10 @@ This project is currently a work in progress and may not be usable for a while. 
 
 I'll be documenting progress in video form.
 
-### Update1
+### Update 1 - Basic scrolling
 
-[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/zNW7U36GHlU/0.jpg)](http://www.youtube.com/watch?v=zNW7U36GHlU)
+[![Textual update 1](http://img.youtube.com/vi/zNW7U36GHlU/0.jpg)](http://www.youtube.com/watch?v=zNW7U36GHlU)
 
-### Update2
+### Update 2 - Keyboard toggle
 
-[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/bTYeFOVNXDI/0.jpg)](http://www.youtube.com/watch?v=bTYeFOVNXDI)
+[![Textual update 2](http://img.youtube.com/vi/bTYeFOVNXDI/0.jpg)](http://www.youtube.com/watch?v=bTYeFOVNXDI)
