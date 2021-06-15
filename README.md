@@ -11,7 +11,7 @@ This project is currently a work in progress and may not be usable for a while. 
 ![screenshot](./imgs/rich-tui.png)
 
 
-## Udpates
+## Updates
 
 I'll be documenting progress in video form.
 
