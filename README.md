@@ -11,3 +11,14 @@ This project is currently a work in progress and may not be usable for a while. 
 ![screenshot](./imgs/rich-tui.png)
 
 
+## Udpates
+
+I'll be documenting progress in video form.
+
+### Update1
+
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/zNW7U36GHlU/0.jpg)](http://www.youtube.com/watch?v=zNW7U36GHlU)
+
+### Update2
+
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/bTYeFOVNXDI/0.jpg)](http://www.youtube.com/watch?v=bTYeFOVNXDI)
