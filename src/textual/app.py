@@ -5,6 +5,7 @@ import asyncio
 import logging
 import signal
 from typing import Any, ClassVar, Type
+import warnings
 
 from rich.control import Control
 from rich.repr import rich_repr, RichReprResult
@@ -21,6 +22,14 @@ from .message_pump import MessagePump
 from .view import View, LayoutView
 
 log = logging.getLogger("rich")
+
+
+# asyncio will warn against resources not being cleared
+warnings.simplefilter("always", ResourceWarning)
+# https://github.com/boto/boto3/issues/454
+warnings.filterwarnings(
+    "ignore", category=ResourceWarning, message="unclosed.*<ssl.SSLSocket.*>"
+)
 
 
 LayoutDefinition = "dict[str, Any]"
@@ -76,28 +85,36 @@ class App(MessagePump):
         asyncio.run_coroutine_threadsafe(self.post_message(event), loop=loop)
 
     async def process_messages(self) -> None:
+        try:
+            await self._process_messages()
+        except Exception:
+            self.console.print_exception(show_locals=True)
+
+    async def _process_messages(self) -> None:
         log.debug("driver=%r", self.driver)
         loop = asyncio.get_event_loop()
 
         loop.add_signal_handler(signal.SIGINT, self.on_keyboard_interupt)
         driver = self.driver(self.console, self)
-        try:
-            driver.start_application_mode()
-        except Exception:
-            log.exception("error starting application mode")
-            raise
 
         active_app.set(self)
 
         await self.add(self.view)
 
         await self.post_message(events.Startup(sender=self))
-        self.refresh()
         try:
+            driver.start_application_mode()
+        except Exception:
+            log.exception("error starting application mode")
+            raise
+        try:
+            self.refresh()
             await super().process_messages()
         finally:
-            loop.remove_signal_handler(signal.SIGINT)
-            driver.stop_application_mode()
+            try:
+                driver.stop_application_mode()
+            finally:
+                loop.remove_signal_handler(signal.SIGINT)
 
         await asyncio.gather(*(child.close_messages() for child in self.children))
         self.children.clear()
@@ -116,7 +133,6 @@ class App(MessagePump):
         if isinstance(event, events.Key):
             key_action = self.KEYS.get(event.key, None)
             if key_action is not None:
-                log.debug("action %r", key_action)
                 await self.action(key_action)
                 return
 
@@ -149,18 +165,11 @@ class App(MessagePump):
         self, destination: str, action_name: str, params: Any
     ) -> None:
         action_target = self._action_targets.get(destination, None)
-        log.debug("ACTION TARGET %r", action_target)
         if action_target is not None:
             method_name = f"action_{action_name}"
             method = getattr(action_target, method_name, None)
-            log.debug("ACTION METHOD %r", method)
             if method is not None:
-                try:
-                    await method(*params)
-                except Exception:
-                    log.exception(
-                        f"error in action {destination}.{action_name}{params!r}"
-                    )
+                await method(*params)
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log.debug("shutdown request")
@@ -187,6 +196,9 @@ class App(MessagePump):
     async def action_quit(self) -> None:
         await self.close_messages()
 
+    async def action_bang(self) -> None:
+        1 / 0
+
 
 if __name__ == "__main__":
     import asyncio
@@ -212,7 +224,7 @@ if __name__ == "__main__":
 
     class MyApp(App):
 
-        KEYS = {"q": "quit", "ctrl+c": "quit", "b": "view.toggle('left')"}
+        KEYS = {"q": "quit", "x": "bang", "ctrl+c": "quit", "b": "view.toggle('left')"}
 
         async def on_startup(self, event: events.Startup) -> None:
             await self.view.mount_all(

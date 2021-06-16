@@ -10,7 +10,7 @@ python = "^3.7"
 rich = "^10.3.0"
 
 [tool.poetry.dev-dependencies]
-#rich = {git = "git@github.com:willmcgugan/rich", rev = "tui"}
+rich = {git = "git@github.com:willmcgugan/rich", rev = "pretty-classes"}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

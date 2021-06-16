@@ -218,6 +218,11 @@ class LayoutView(View):
                 pass
             else:
                 await widget.forward_input_event(event)
+        elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
+            widget, _region = self.get_widget_at(event.x, event.y)
+            scroll_widget = widget or self.focused
+            if scroll_widget is not None:
+                await scroll_widget.forward_input_event(event)
         else:
             if self.focused is not None:
                 await self.focused.forward_input_event(event)

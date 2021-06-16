@@ -75,7 +75,7 @@ def render_bar(
     start_index, start_bar = divmod(start, 8)
     end_index, end_bar = divmod(end, 8)
 
-    if start_index == end_index:
+    if window_size / step_size <= 1:
         if start_index < len(segments):
             segments[start_index] = _Segment(" ", _Style(bgcolor=bar))
     else:

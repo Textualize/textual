@@ -144,9 +144,9 @@ class MessagePump:
                 priority, message = await self.get_message()
             except MessagePumpClosed:
                 break
-            except Exception:
-                log.exception("error getting message")
-                break
+            except Exception as error:
+                raise error from None
+
             log.debug("%r -> %r", message, self)
             # Combine any pending messages that may supersede this one
             while True:
@@ -157,8 +157,9 @@ class MessagePump:
 
             try:
                 await self.dispatch_message(message, priority)
-            except Exception:
-                log.exception("error dispatching %r", message)
+            except Exception as error:
+                raise
+
             finally:
                 if self._message_queue.empty():
                     idle_handler = getattr(self, "on_idle", None)
