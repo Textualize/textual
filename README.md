@@ -17,12 +17,12 @@ I'll be documenting progress in video form.
 
 ### Update 1 - Basic scrolling
 
-[![Textual update 1](http://img.youtube.com/vi/zNW7U36GHlU/0.jpg)](http://www.youtube.com/watch?v=zNW7U36GHlU)
+[![Textual update 1](https://yt-embed.herokuapp.com/embed?v=zNW7U36GHlU&img=0)](http://www.youtube.com/watch?v=zNW7U36GHlU)
 
 ### Update 2 - Keyboard toggle
 
-[![Textual update 2](http://img.youtube.com/vi/bTYeFOVNXDI/0.jpg)](http://www.youtube.com/watch?v=bTYeFOVNXDI)
+[![Textual update 2](https://yt-embed.herokuapp.com/embed?v=bTYeFOVNXDI&img=0)](http://www.youtube.com/watch?v=bTYeFOVNXDI)
 
 ### Update 3 - New scrollbars, and smooth scrolling
 
-[![Textual update 3](http://img.youtube.com/vi/4LVl3ClrXIs/0.jpg)](http://www.youtube.com/watch?v=4LVl3ClrXIs)
+[![Textual update 3](https://yt-embed.herokuapp.com/embed?v=4LVl3ClrXIs&img=0)](http://www.youtube.com/watch?v=4LVl3ClrXIs)
