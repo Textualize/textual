@@ -65,7 +65,7 @@ class MessagePump:
         return type(message) not in self._disabled_messages
 
     def disable_messages(self, *messages: type[Message]) -> None:
-        """Disable message types from being proccessed."""
+        """Disable message types from being processed."""
         self._disabled_messages.update(messages)
 
     def enable_messages(self, *messages: type[Message]) -> None:
