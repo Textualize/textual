@@ -126,8 +126,11 @@ class App(MessagePump):
 
     def refresh(self) -> None:
         console = self.console
-        with console:
-            console.print(Screen(Control.home(), self.view, Control.home()))
+        try:
+            with console:
+                console.print(Screen(Control.home(), self.view, Control.home()))
+        except Exception:
+            log.exception("refresh failed")
 
     async def on_event(self, event: events.Event, priority: int) -> None:
         if isinstance(event, events.Key):
@@ -207,6 +210,7 @@ if __name__ == "__main__":
     from .widgets.header import Header
     from .widgets.window import Window
     from .widgets.placeholder import Placeholder
+    from .scrollbar import ScrollBar
 
     from rich.markdown import Markdown
 
@@ -228,7 +232,7 @@ if __name__ == "__main__":
 
         async def on_startup(self, event: events.Startup) -> None:
             await self.view.mount_all(
-                header=Header(self.title), left=Placeholder(), body=Window(readme)
+                header=Header(self.title), left=ScrollBar(), body=Window(readme)
             )
 
     MyApp.run()

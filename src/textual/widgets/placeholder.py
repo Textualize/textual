@@ -9,7 +9,7 @@ from .. import events
 from ..widget import Reactive, Widget
 
 
-class Placeholder(Widget, can_focus=True, mouse_events=True):
+class Placeholder(Widget, can_focus=True):
 
     has_focus: Reactive[bool] = Reactive(False)
     mouse_over: Reactive[bool] = Reactive(False)

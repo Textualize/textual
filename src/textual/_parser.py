@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections import deque
 import io
 from typing import (
