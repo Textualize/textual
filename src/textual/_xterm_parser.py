@@ -69,6 +69,7 @@ class XTermParser(Parser[events.Event]):
                 sequence: str = character
                 while True:
                     sequence += yield read1()
+                    log.debug(f"sequence={sequence!r}")
                     keys = get_ansi_sequence(sequence, None)
                     if keys is not None:
                         for key in keys:

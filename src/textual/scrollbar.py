@@ -81,7 +81,7 @@ def render_bar(
     if ascii_only:
         bars = ["|", "|", "|", "|", "|", "|", "|", "|", "|"]
     else:
-        bars = [" ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
+        bars = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
 
     back = Color.parse(back_color)
     bar = Color.parse(bar_color)
@@ -94,27 +94,23 @@ def render_bar(
     step_size = virtual_size / size
 
     start = int(position / step_size * 8)
-    end = start + int(window_size / step_size * 8)
+    end = start + max(8, int(window_size / step_size * 8))
 
     start_index, start_bar = divmod(start, 8)
     end_index, end_bar = divmod(end, 8)
 
-    if window_size / step_size <= 1:
-        if start_index < len(segments):
-            segments[start_index] = _Segment(blank, _Style(bgcolor=bar))
-    else:
-        segments[start_index:end_index] = [_Segment(blank, _Style(bgcolor=bar))] * (
-            end_index - start_index
-        )
+    segments[start_index:end_index] = [_Segment(blank, _Style(bgcolor=bar))] * (
+        end_index - start_index
+    )
 
-        if start_index < len(segments):
-            segments[start_index] = _Segment(
-                bars[7 - start_bar] * depth, _Style(bgcolor=back, color=bar)
-            )
-        if end_index < len(segments):
-            segments[end_index] = _Segment(
-                bars[7 - end_bar] * depth, _Style(color=back, bgcolor=bar)
-            )
+    if start_index < len(segments):
+        segments[start_index] = _Segment(
+            bars[7 - start_bar] * depth, _Style(bgcolor=back, color=bar)
+        )
+    if end_index < len(segments):
+        segments[end_index] = _Segment(
+            bars[7 - end_bar] * depth, _Style(color=back, bgcolor=bar)
+        )
 
     return segments
 

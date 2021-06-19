@@ -140,20 +140,23 @@ class LinuxDriver(Driver):
         )
 
     def stop_application_mode(self) -> None:
+        log.debug("stop_application_mode()")
+
         signal.signal(signal.SIGWINCH, signal.SIG_DFL)
 
-        self.console.set_alt_screen(False)
-        self.console.show_cursor(True)
-
+        self._disable_mouse_support()
         self.exit_event.set()
-        # if self._key_thread is not None:
-        #     self._key_thread.join()
+        if self._key_thread is not None:
+            self._key_thread.join()
+
         if self.attrs_before is not None:
             try:
                 termios.tcsetattr(self.fileno, termios.TCSANOW, self.attrs_before)
             except termios.error:
                 pass
-        self._disable_mouse_support()
+
+        self.console.set_alt_screen(False)
+        self.console.show_cursor(True)
 
     def run_input_thread(self, loop) -> None:
         try:

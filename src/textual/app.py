@@ -42,6 +42,10 @@ else:
     uvloop.install()
 
 
+class ShutdownError(Exception):
+    pass
+
+
 @rich_repr
 class App(MessagePump):
     view: View
@@ -108,7 +112,6 @@ class App(MessagePump):
             log.exception("error starting application mode")
             raise
         try:
-            # self.refresh()
             await super().process_messages()
         finally:
             try:
@@ -125,8 +128,8 @@ class App(MessagePump):
 
             try:
                 await asyncio.wait_for(close_all(), timeout=5)
-            except asyncio.TimeoutError:
-                raise
+            except asyncio.TimeoutError as error:
+                raise ShutdownError("Timeout closing messages pump(s)") from None
 
             self.children.clear()
 
