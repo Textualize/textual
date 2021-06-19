@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import NamedTuple
+from typing import Any, Coroutine, Awaitable, NamedTuple
 import asyncio
-from asyncio import PriorityQueue, QueueEmpty
+from asyncio import Event, PriorityQueue, Task, QueueEmpty
 
 import logging
 
@@ -57,6 +57,12 @@ class MessagePump:
         self._closed: bool = False
         self._disabled_messages: set[type[Message]] = set()
         self._pending_message: MessageQueueItem | None = None
+        self._task: Task | None = None
+
+    @property
+    def task(self) -> Task:
+        assert self._task is not None
+        return self._task
 
     def set_parent(self, parent: MessagePump) -> None:
         self._parent = parent
@@ -133,9 +139,16 @@ class MessagePump:
         asyncio.get_event_loop().create_task(timer.run())
         return timer
 
-    async def close_messages(self) -> None:
+    async def close_messages(self, wait: bool = False) -> None:
+        """Close message queue, and optionally wait for queue to finish processing."""
         self._closing = True
         await self._message_queue.put(None)
+        if wait and self._task is not None:
+            await self._task
+
+    def start_messages(self) -> None:
+        task = asyncio.create_task(self.process_messages())
+        self._task = task
 
     async def process_messages(self) -> None:
         """Process messages until the queue is closed."""

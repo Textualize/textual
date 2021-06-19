@@ -29,7 +29,6 @@ class NoWidget(Exception):
     pass
 
 
-@rich_repr
 class View(ABC, MessagePump):
     @property
     def app(self) -> "App":
@@ -45,10 +44,6 @@ class View(ABC, MessagePump):
         return
         yield
 
-    def __rich_repr__(self) -> RichReprResult:
-        return
-        yield
-
     @abstractmethod
     async def mount(self, widget: Widget, *, slot: str = "main") -> None:
         ...
@@ -61,6 +56,7 @@ class View(ABC, MessagePump):
         pass
 
 
+@rich_repr
 class LayoutView(View):
     layout: Layout
 

@@ -108,7 +108,7 @@ class App(MessagePump):
             log.exception("error starting application mode")
             raise
         try:
-            self.refresh()
+            # self.refresh()
             await super().process_messages()
         finally:
             try:
@@ -116,12 +116,23 @@ class App(MessagePump):
             finally:
                 loop.remove_signal_handler(signal.SIGINT)
 
-        await asyncio.gather(*(child.close_messages() for child in self.children))
-        self.children.clear()
+        if self.children:
+
+            async def close_all() -> None:
+                for child in self.children:
+                    await child.close_messages()
+                await asyncio.gather(*(child.task for child in self.children))
+
+            try:
+                await asyncio.wait_for(close_all(), timeout=5)
+            except asyncio.TimeoutError:
+                raise
+
+            self.children.clear()
 
     async def add(self, child: MessagePump) -> None:
         self.children.add(child)
-        asyncio.create_task(child.process_messages())
+        child.start_messages()
         await child.post_message(events.Created(sender=self))
 
     def refresh(self) -> None:
