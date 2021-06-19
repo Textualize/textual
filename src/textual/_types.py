@@ -1,4 +1,11 @@
-from typing import Awaitable, Callable, Optional, Protocol, TYPE_CHECKING
+import sys
+from typing import Awaitable, Callable, Optional, TYPE_CHECKING
+
+if sys.version_info >= (3, 8):
+    from typing import Protocol
+else:
+    from typing_extensions import Protocol
+
 
 if TYPE_CHECKING:
     from .events import Event

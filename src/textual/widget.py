@@ -66,7 +66,6 @@ class Reactive(Generic[T]):
             obj.require_repaint()
 
 
-@rich_repr
 class Widget(MessagePump):
     _count: ClassVar[int] = 0
     can_focus: bool = False
@@ -108,7 +107,13 @@ class Widget(MessagePump):
         if self._line_cache is None:
             width, height = self.size
             start = time()
-            renderable = self.render(self.console, self.console.options)
+            try:
+                renderable = self.render(
+                    self.console, self.console.options.update_width(width)
+                )
+            except Exception:
+                log.exception("error in render")
+                raise
             self._line_cache = LineCache.from_renderable(
                 self.console, renderable, width, height
             )
@@ -126,14 +131,16 @@ class Widget(MessagePump):
         await self.post_message(event)
 
     async def refresh(self) -> None:
-        # self._line_cache = None
+        self._line_cache = None
         await self.repaint()
 
     async def repaint(self) -> None:
         await self.emit(UpdateMessage(self))
 
     def render_update(self, x: int, y: int) -> Iterable[Segment]:
-        yield from self.line_cache.render(x, y)
+        width, height = self.size
+        log.debug("widget size = %r", self.size)
+        yield from self.line_cache.render(x, y, width, height)
 
     def render(self, console: Console, options: ConsoleOptions) -> RenderableType:
         return Panel(

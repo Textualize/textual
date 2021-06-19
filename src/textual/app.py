@@ -34,12 +34,12 @@ warnings.filterwarnings(
 
 LayoutDefinition = "dict[str, Any]"
 
-try:
-    import uvloop
-except ImportError:
-    pass
-else:
-    uvloop.install()
+# try:
+#     import uvloop
+# except ImportError:
+#     pass
+# else:
+#     uvloop.install()
 
 
 class ShutdownError(Exception):
@@ -106,6 +106,7 @@ class App(MessagePump):
         await self.add(self.view)
 
         await self.post_message(events.Startup(sender=self))
+
         try:
             driver.start_application_mode()
         except Exception:
@@ -115,23 +116,26 @@ class App(MessagePump):
             await super().process_messages()
         finally:
             try:
-                driver.stop_application_mode()
+                if self.children:
+
+                    async def close_all() -> None:
+                        for child in self.children:
+                            await child.close_messages()
+                        await asyncio.gather(*(child.task for child in self.children))
+
+                    try:
+                        await asyncio.wait_for(close_all(), timeout=5)
+                    except asyncio.TimeoutError as error:
+                        raise ShutdownError(
+                            "Timeout closing messages pump(s)"
+                        ) from None
+
+                self.children.clear()
             finally:
-                loop.remove_signal_handler(signal.SIGINT)
-
-        if self.children:
-
-            async def close_all() -> None:
-                for child in self.children:
-                    await child.close_messages()
-                await asyncio.gather(*(child.task for child in self.children))
-
-            try:
-                await asyncio.wait_for(close_all(), timeout=5)
-            except asyncio.TimeoutError as error:
-                raise ShutdownError("Timeout closing messages pump(s)") from None
-
-            self.children.clear()
+                try:
+                    driver.stop_application_mode()
+                finally:
+                    loop.remove_signal_handler(signal.SIGINT)
 
     async def add(self, child: MessagePump) -> None:
         self.children.add(child)
@@ -222,11 +226,13 @@ if __name__ == "__main__":
     from logging import FileHandler
 
     from .widgets.header import Header
+    from .widgets.footer import Footer
     from .widgets.window import Window
     from .widgets.placeholder import Placeholder
-    from .scrollbar import ScrollBar
 
     from rich.markdown import Markdown
+
+    import os
 
     logging.basicConfig(
         level="NOTSET",
@@ -235,18 +241,27 @@ if __name__ == "__main__":
         handlers=[FileHandler("richtui.log")],
     )
 
-    with open("richreadme.md", "rt") as fh:
-        readme = Markdown(fh.read(), hyperlinks=True, code_theme="fruity")
-
-    from rich import print
-
     class MyApp(App):
 
         KEYS = {"q": "quit", "x": "bang", "ctrl+c": "quit", "b": "view.toggle('left')"}
 
         async def on_startup(self, event: events.Startup) -> None:
+            footer = Footer()
+            footer.add_key("b", "Toggle sidebar")
+            footer.add_key("q", "Quit")
+
+            readme_path = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), "richreadme.md"
+            )
+
+            with open(readme_path, "rt") as fh:
+                readme = Markdown(fh.read(), hyperlinks=True, code_theme="fruity")
+
             await self.view.mount_all(
-                header=Header(self.title), left=ScrollBar(), body=Window(readme)
+                header=Header(self.title),
+                left=Placeholder(),
+                body=Window(readme),
+                footer=footer,
             )
 
     MyApp.run()

@@ -94,7 +94,8 @@ class LayoutView(View):
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        segments = console.render(self.layout, options)
+        width, height = self.size
+        segments = console.render(self.layout, options.update_dimensions(width, height))
         yield from segments
 
     def get_widget_at(self, x: int, y: int) -> Tuple[Widget, LayoutRegion]:
@@ -117,8 +118,8 @@ class LayoutView(View):
                         segments = Segments(update)
                         self.console.print(segments, end="")
 
-    async def on_create(self, event: events.Created) -> None:
-        await self.mount(Header(self.title))
+    # async def on_create(self, event: events.Created) -> None:
+    #     await self.mount(Header(self.title))
 
     async def mount(self, widget: Widget, *, slot: str = "main") -> None:
         self.layout[slot].update(widget)
@@ -144,8 +145,8 @@ class LayoutView(View):
                 self.focused = widget
                 await widget.post_message(events.Focus(self))
 
-    async def on_startup(self, event: events.Startup) -> None:
-        await self.mount(Header(self.title), slot="header")
+    # async def on_startup(self, event: events.Startup) -> None:
+    #     await self.mount(Header(self.title), slot="header")
 
     async def layout_update(self) -> None:
         if not self.size:

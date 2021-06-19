@@ -27,27 +27,20 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "rich"
-version = "10.3.0"
+version = "10.4.0"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 category = "main"
 optional = false
-python-versions = "^3.6"
-develop = false
+python-versions = ">=3.6,<4.0"
 
 [package.dependencies]
-colorama = "^0.4.0"
-commonmark = "^0.9.0"
-pygments = "^2.6.0"
-typing-extensions = {version = "^3.7.4", markers = "python_version < \"3.8\""}
+colorama = ">=0.4.0,<0.5.0"
+commonmark = ">=0.9.0,<0.10.0"
+pygments = ">=2.6.0,<3.0.0"
+typing-extensions = {version = ">=3.7.4,<4.0.0", markers = "python_version < \"3.8\""}
 
 [package.extras]
 jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
-
-[package.source]
-type = "git"
-url = "git@github.com:willmcgugan/rich"
-reference = "pretty-classes"
-resolved_reference = "6ac54d06edb506e72b276a87aa630e22a89e0b3b"
 
 [[package]]
 name = "typing-extensions"
@@ -60,7 +53,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "2a225871ae82fc8777fb2c05bdbb4c4c7b4c2dbf1a4760ec96eb6d1abddd9841"
+content-hash = "dc77caac9a3b66f7665b8bc95a3f8244b78500be7a96935d06696a3f36f32c7a"
 
 [metadata.files]
 colorama = [
@@ -75,7 +68,10 @@ pygments = [
     {file = "Pygments-2.9.0-py3-none-any.whl", hash = "sha256:d66e804411278594d764fc69ec36ec13d9ae9147193a1740cd34d272ca383b8e"},
     {file = "Pygments-2.9.0.tar.gz", hash = "sha256:a18f47b506a429f6f4b9df81bb02beab9ca21d0a5fee38ed15aef65f0545519f"},
 ]
-rich = []
+rich = [
+    {file = "rich-10.4.0-py3-none-any.whl", hash = "sha256:9fb2404c4e870d4de3837c11d0cd1f26c44725865535caba1379c2343a49f6a1"},
+    {file = "rich-10.4.0.tar.gz", hash = "sha256:6e8a3e2c61e6cf6193bfcffbb89865a0973af7779d3ead913fdbbbc33f457c2c"},
+]
 typing-extensions = [
     {file = "typing_extensions-3.10.0.0-py2-none-any.whl", hash = "sha256:0ac0f89795dd19de6b97debb0c6af1c70987fd80a2d62d1958f7e56fcc31b497"},
     {file = "typing_extensions-3.10.0.0-py3-none-any.whl", hash = "sha256:779383f6086d90c99ae41cf0ff39aac8a7937a9283ce0a414e5dd782f4c94a84"},

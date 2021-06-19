@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from rich.console import RenderableType
+from rich.console import Console, ConsoleOptions, RenderableType
 from rich.panel import Panel
 from rich.repr import rich_repr, RichReprResult
 from rich.style import StyleType
@@ -32,7 +32,8 @@ class Header(Widget):
     def get_clock(self) -> str:
         return datetime.now().time().strftime("%X")
 
-    def render(self, console, options) -> RenderableType:
+    def render(self, console: Console, options: ConsoleOptions) -> RenderableType:
+
         header_table = Table.grid(padding=(0, 1), expand=True)
         header_table.style = self.style
         header_table.add_column(justify="left", ratio=0)

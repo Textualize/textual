@@ -167,9 +167,11 @@ if __name__ == "__main__":
         def parse(
             self, on_token: Callable[[str], None]
         ) -> Generator[Awaitable, str, None]:
-            # on_token((yield self.read_until("a")))
-            while data := (yield self.read1()):
-                print("buffer", repr((yield self.peek_buffer())))
+            data = yield self.read1()
+            while True:
+                data = yield self.read1()
+                if not data:
+                    break
                 on_token(data)
 
     test_parser = TestParser()
