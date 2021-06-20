@@ -8,6 +8,7 @@ from typing import Any, ClassVar, Type
 import warnings
 
 from rich.control import Control
+from rich.layout import Layout
 from rich.repr import rich_repr, RichReprResult
 from rich.screen import Screen
 from rich import get_console
@@ -65,7 +66,7 @@ class App(MessagePump):
         self._screen = screen
         self.driver_class = driver_class or LinuxDriver
         self.title = title
-        self.view = view or LayoutView()
+        self.view = view or self.create_default_view()
         self.children: set[MessagePump] = set()
         self._driver: Driver | None = None
 
@@ -83,6 +84,21 @@ class App(MessagePump):
             await app.process_messages()
 
         asyncio.run(run_app())
+
+    def create_default_view(self) -> View:
+        layout = Layout()
+        layout.split_column(
+            Layout(name="header", size=3, ratio=0),
+            Layout(name="main", ratio=1),
+            Layout(name="footer", size=1, ratio=0),
+        )
+        layout["main"].split_row(
+            Layout(name="left", size=30, visible=True),
+            Layout(name="body", ratio=1),
+            Layout(name="right", size=30, visible=False),
+        )
+        view = LayoutView(layout=layout)
+        return view
 
     def on_keyboard_interupt(self) -> None:
         loop = asyncio.get_event_loop()
@@ -148,7 +164,7 @@ class App(MessagePump):
                 return
 
         if isinstance(event, events.InputEvent):
-            await self.view.forward_input_event(event)
+            await self.view.forward_event(event)
         else:
             await super().on_event(event)
 
@@ -215,14 +231,38 @@ if __name__ == "__main__":
     import asyncio
     from logging import FileHandler
 
+    from rich.panel import Panel
+
     from .widgets.header import Header
     from .widgets.footer import Footer
     from .widgets.window import Window
     from .widgets.placeholder import Placeholder
+    from .scrollbar import ScrollBar
 
     from rich.markdown import Markdown
 
     import os
+
+    readme_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "richreadme.md"
+    )
+    scroll_view = LayoutView()
+    scroll_bar = ScrollBar()
+    with open(readme_path, "rt") as fh:
+        readme = Markdown(fh.read(), hyperlinks=True, code_theme="fruity")
+    scroll_view.layout.split_row(
+        Layout(readme, ratio=1), Layout(scroll_bar, ratio=2, size=2)
+    )
+
+    # from rich.console import Console
+
+    # console = Console()
+    # console.print(scroll_bar, height=10)
+    # console.print(scroll_view, height=20)
+
+    # import sys
+
+    # sys.exit()
 
     logging.basicConfig(
         level="NOTSET",
@@ -243,14 +283,18 @@ if __name__ == "__main__":
             readme_path = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)), "richreadme.md"
             )
-
+            scroll_view = LayoutView()
+            scroll_bar = ScrollBar()
             with open(readme_path, "rt") as fh:
                 readme = Markdown(fh.read(), hyperlinks=True, code_theme="fruity")
+            scroll_view.layout.split_column(
+                Layout(readme, ratio=1), Layout(scroll_bar, ratio=2, size=2)
+            )
 
             await self.view.mount_all(
                 header=Header(self.title),
                 left=Placeholder(),
-                body=Window(readme),
+                body=scroll_view,
                 footer=footer,
             )
 

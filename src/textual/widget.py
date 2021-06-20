@@ -13,7 +13,7 @@ from typing import (
 
 from rich.align import Align
 
-from rich.console import Console, ConsoleOptions, RenderableType
+from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.pretty import Pretty
 from rich.panel import Panel
 from rich.repr import rich_repr, RichReprResult
@@ -73,8 +73,8 @@ class Widget(MessagePump):
         Widget._count += 1
         self.size = Dimensions(0, 0)
         self.size_changed = False
-        self._refresh_required = False
-        self._line_cache: LineCache | None = None
+        self._repaint_required = False
+        self._line_cache: LineCache = LineCache()
 
         super().__init__()
         self.disable_messages(events.MouseMove)
@@ -97,39 +97,29 @@ class Widget(MessagePump):
     @property
     def console(self) -> Console:
         """Get the current console."""
-        return active_app.get().console
+        try:
+            return active_app.get().console
+        except LookupError:
+            return Console()
 
-    @property
-    def line_cache(self) -> LineCache:
+    # def __rich__(self) -> LineCache:
+    #     return self.line_cache
 
-        if self._line_cache is None:
-            width, height = self.size
-            start = time()
-            try:
-                renderable = self.render(
-                    self.console, self.console.options.update_width(width)
-                )
-            except Exception:
-                log.exception("error in render")
-                raise
-            self._line_cache = LineCache.from_renderable(
-                self.console, renderable, width, height
-            )
-            log.debug("%.1fms %r render elapsed", (time() - start) * 1000, self)
-        assert self._line_cache is not None
-        return self._line_cache
-
-    def __rich__(self) -> LineCache:
-        return self.line_cache
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        renderable = self.render(console, options)
+        self._line_cache.update(console, options, renderable)
+        yield self._line_cache
 
     def require_repaint(self) -> None:
-        self._line_cache = None
+        self._repaint_required = True
 
-    async def forward_input_event(self, event: events.Event) -> None:
+    async def forward_event(self, event: events.Event) -> None:
         await self.post_message(event)
 
     async def refresh(self) -> None:
-        self._line_cache = None
+        self._repaint_required = True
         await self.repaint()
 
     async def repaint(self) -> None:

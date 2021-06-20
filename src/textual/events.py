@@ -147,6 +147,8 @@ class MouseEvent(InputEvent, type=EventType.MOUSE_MOVE):
         shift: bool,
         meta: bool,
         ctrl: bool,
+        screen_x: int | None = None,
+        screen_y: int | None = None,
     ) -> None:
         super().__init__(sender)
         self.x = x
@@ -155,10 +157,16 @@ class MouseEvent(InputEvent, type=EventType.MOUSE_MOVE):
         self.shift = shift
         self.meta = meta
         self.ctrl = ctrl
+        self.screen_x = x if screen_x is None else screen_x
+        self.screen_y = y if screen_y is None else screen_y
 
     def __rich_repr__(self) -> RichReprResult:
         yield "x", self.x
         yield "y", self.y
+        if self.screen_x != self.x:
+            yield "screen_x", self.screen_x
+        if self.screen_y != self.y:
+            yield "screen_y", self.screen_y
         yield "button", self.button, 0
         yield "shift", self.shift, False
         yield "meta", self.meta, False

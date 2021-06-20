@@ -45,14 +45,18 @@ class View(ABC, MessagePump):
         yield
 
     @abstractmethod
-    async def mount(self, widget: Widget, *, slot: str = "main") -> None:
+    async def mount(self, widget: MessagePump, *, slot: str = "main") -> None:
         ...
 
-    async def mount_all(self, **widgets: Widget) -> None:
+    @abstractmethod
+    def get_widget_at(self, x: int, y: int) -> Tuple[Widget, Region]:
+        ...
+
+    async def mount_all(self, **widgets: MessagePump) -> None:
         for slot, widget in widgets.items():
             await self.mount(widget, slot=slot)
 
-    async def forward_input_event(self, event: events.Event) -> None:
+    async def forward_event(self, event: events.Event) -> None:
         pass
 
 
@@ -68,44 +72,47 @@ class LayoutView(View):
     ) -> None:
         self.name = name
         self.title = title
-        if layout is None:
-            layout = Layout()
-            layout.split_column(
-                Layout(name="header", size=3, ratio=0),
-                Layout(name="main", ratio=1),
-                Layout(name="footer", size=1, ratio=0),
-            )
-            layout["main"].split_row(
-                Layout(name="left", size=30, visible=True),
-                Layout(name="body", ratio=1),
-                Layout(name="right", size=30, visible=False),
-            )
-        self.layout = layout
+        self.layout = layout or Layout()
         self.mouse_over: MessagePump | None = None
         self.focused: Widget | None = None
         self.size = Dimensions(0, 0)
-        self._widgets: set[Widget] = set()
+        self._widgets: set[MessagePump] = set()
         super().__init__()
         self.enable_messages(events.Idle)
 
     def __rich_repr__(self) -> RichReprResult:
         yield "name", self.name
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        width, height = self.size
-        segments = console.render(self.layout, options.update_dimensions(width, height))
-        yield from segments
+    # def __rich_console__(
+    #     self, console: Console, options: ConsoleOptions
+    # ) -> RenderResult:
+    #     width, height = self.size
+    #     segments = console.render(self.layout, options.update_dimensions(width, height))
+    #     yield from segments
 
-    def get_widget_at(self, x: int, y: int) -> Tuple[Widget, LayoutRegion]:
-        for layout, (region, render) in self.layout.map.items():
-            if Region(*region).contains(x, y):
+    def __rich__(self) -> Layout:
+        return self.layout
+
+    def get_widget_at(self, x: int, y: int) -> Tuple[Widget, Region]:
+        for layout, (layout_region, render) in self.layout.map.items():
+            region = Region(*layout_region)
+            if region.contains(x, y):
                 if isinstance(layout.renderable, Widget):
                     return layout.renderable, region
                 else:
                     break
         raise NoWidget(f"No widget at ${x}, ${y}")
+
+    async def repaint(self) -> None:
+        await self.emit(UpdateMessage(self))
+
+    async def on_event(self, event: events.Event) -> None:
+        if isinstance(event, events.Resize):
+            new_size = Dimensions(event.width, event.height)
+            if self.size != new_size:
+                self.size = new_size
+                await self.repaint()
+        await super().on_event(event)
 
     async def on_message(self, message: Message) -> None:
         log.debug("on_message %r", repr(message))
@@ -119,10 +126,7 @@ class LayoutView(View):
                         segments = Segments(update)
                         self.console.print(segments, end="")
 
-    # async def on_create(self, event: events.Created) -> None:
-    #     await self.mount(Header(self.title))
-
-    async def mount(self, widget: Widget, *, slot: str = "main") -> None:
+    async def mount(self, widget: MessagePump, *, slot: str = "main") -> None:
         self.layout[slot].update(widget)
         await self.app.add(widget)
         widget.set_parent(self)
@@ -146,9 +150,6 @@ class LayoutView(View):
                 self.focused = widget
                 await widget.post_message(events.Focus(self))
 
-    # async def on_startup(self, event: events.Startup) -> None:
-    #     await self.mount(Header(self.title), slot="header")
-
     async def layout_update(self) -> None:
         if not self.size:
             return
@@ -159,7 +160,7 @@ class LayoutView(View):
                 await layout.renderable.post_message(
                     events.Resize(self, region.width, region.height)
                 )
-        self.app.refresh()
+        await self.repaint()
 
     async def on_resize(self, event: events.Resize) -> None:
         self.size = Dimensions(event.width, event.height)
@@ -194,10 +195,12 @@ class LayoutView(View):
                     event.shift,
                     event.meta,
                     event.ctrl,
+                    screen_x=event.screen_x,
+                    screen_y=event.screen_y,
                 )
             )
 
-    async def forward_input_event(self, event: events.Event) -> None:
+    async def forward_event(self, event: events.Event) -> None:
         if isinstance(event, (events.MouseDown)):
             try:
                 widget, _region = self.get_widget_at(event.x, event.y)
@@ -215,17 +218,20 @@ class LayoutView(View):
             except NoWidget:
                 pass
             else:
-                await widget.forward_input_event(event)
+                await widget.forward_event(event)
         elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
             widget, _region = self.get_widget_at(event.x, event.y)
             scroll_widget = widget or self.focused
             if scroll_widget is not None:
-                await scroll_widget.forward_input_event(event)
+                await scroll_widget.forward_event(event)
         else:
             if self.focused is not None:
-                await self.focused.forward_input_event(event)
+                await self.focused.forward_event(event)
 
     async def action_toggle(self, layout_name: str) -> None:
         visible = self.layout[layout_name].visible
         self.layout[layout_name].visible = not visible
         await self.layout_update()
+
+    async def on_idle(self, event: events.Idle) -> None:
+        await self.repaint()
