@@ -7,7 +7,6 @@ from .case import camel_to_snake
 from ._types import MessageTarget
 
 
-@rich_repr
 class Message:
     """Base class for a message."""
 
@@ -21,7 +20,6 @@ class Message:
 
     sender: MessageTarget
     bubble: ClassVar[bool] = False
-    default_priority: ClassVar[int] = 0
 
     def __init__(self, sender: MessageTarget) -> None:
         self.sender = sender
@@ -35,10 +33,9 @@ class Message:
         return
         yield
 
-    def __init_subclass__(cls, bubble: bool = False, priority: int = 0) -> None:
+    def __init_subclass__(cls, bubble: bool = False) -> None:
         super().__init_subclass__()
         cls.bubble = bubble
-        cls.default_priority = priority
 
     def can_batch(self, message: "Message") -> bool:
         """Check if another message may supersede this one.

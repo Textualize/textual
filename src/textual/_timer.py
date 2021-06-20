@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import weakref
-from asyncio import Event, TimeoutError, wait_for
+from asyncio import CancelledError, Event, TimeoutError, wait_for
 from time import monotonic
 from typing import Awaitable, Callable
 
@@ -62,18 +62,21 @@ class Timer:
         _interval = self._interval
         _wait = self._stop_event.wait
         start = monotonic()
-        while _repeat is None or count <= _repeat:
-            next_timer = start + (count * _interval)
-            try:
-                if await wait_for(_wait(), max(0, next_timer - monotonic())):
+        try:
+            while _repeat is None or count <= _repeat:
+                next_timer = start + (count * _interval)
+                try:
+                    if await wait_for(_wait(), max(0, next_timer - monotonic())):
+                        break
+                except TimeoutError:
+                    pass
+                event = events.Timer(
+                    self.sender, timer=self, count=count, callback=self._callback
+                )
+                try:
+                    await self.target.post_message(event)
+                except EventTargetGone:
                     break
-            except TimeoutError:
-                pass
-            event = events.Timer(
-                self.sender, timer=self, count=count, callback=self._callback
-            )
-            try:
-                await self.target.post_message(event)
-            except EventTargetGone:
-                break
-            count += 1
+                count += 1
+        except CancelledError:
+            pass

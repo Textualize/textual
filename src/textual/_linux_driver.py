@@ -139,15 +139,21 @@ class LinuxDriver(Driver):
             | termios.IGNCR
         )
 
+    def disable_input(self) -> None:
+        try:
+            if not self.exit_event.is_set():
+                signal.signal(signal.SIGWINCH, signal.SIG_DFL)
+                self._disable_mouse_support()
+                self.exit_event.set()
+                if self._key_thread is not None:
+                    self._key_thread.join()
+        except Exception:
+            log.exception("error in disable_input")
+
     def stop_application_mode(self) -> None:
         log.debug("stop_application_mode()")
 
-        signal.signal(signal.SIGWINCH, signal.SIG_DFL)
-
-        self._disable_mouse_support()
-        self.exit_event.set()
-        if self._key_thread is not None:
-            self._key_thread.join()
+        self.disable_input()
 
         if self.attrs_before is not None:
             try:
@@ -190,12 +196,18 @@ class LinuxDriver(Driver):
         read = os.read
 
         log.debug("started key thread")
-        while not self.exit_event.is_set():
-            selector_events = selector.select(0.1)
-            for _selector_key, mask in selector_events:
-                unicode_data = decode(read(fileno, 1024))
-                for event in parser.feed(unicode_data):
-                    send_event(event)
+        try:
+            while not self.exit_event.is_set():
+                selector_events = selector.select(0.1)
+                for _selector_key, mask in selector_events:
+                    if mask | selectors.EVENT_READ:
+                        unicode_data = decode(read(fileno, 1024))
+                        for event in parser.feed(unicode_data):
+                            send_event(event)
+        except Exception:
+            log.exception("error running key thread")
+        finally:
+            selector.close()
 
 
 if __name__ == "__main__":

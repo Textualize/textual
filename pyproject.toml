@@ -4,6 +4,19 @@ version = "0.1.1"
 description = "Text User Interface using Rich"
 authors = ["Will McGugan <willmcgugan@gmail.com>"]
 license = "MIT"
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+
 
 [tool.poetry.dependencies]
 python = "^3.7"

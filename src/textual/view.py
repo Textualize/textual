@@ -108,6 +108,7 @@ class LayoutView(View):
         raise NoWidget(f"No widget at ${x}, ${y}")
 
     async def on_message(self, message: Message) -> None:
+        log.debug("on_message %r", repr(message))
         if isinstance(message, UpdateMessage):
             widget = message.sender
             if widget in self._widgets:

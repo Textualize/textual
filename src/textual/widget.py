@@ -37,8 +37,6 @@ T = TypeVar("T")
 
 
 class UpdateMessage(Message):
-    default_priority = 10
-
     def can_batch(self, message: Message) -> bool:
         return isinstance(message, UpdateMessage) and message.sender == self.sender
 
@@ -139,7 +137,6 @@ class Widget(MessagePump):
 
     def render_update(self, x: int, y: int) -> Iterable[Segment]:
         width, height = self.size
-        log.debug("widget size = %r", self.size)
         yield from self.line_cache.render(x, y, width, height)
 
     def render(self, console: Console, options: ConsoleOptions) -> RenderableType:
@@ -147,19 +144,19 @@ class Widget(MessagePump):
             Align.center(Pretty(self), vertical="middle"), title=self.__class__.__name__
         )
 
-    async def post_message(self, message: Message, priority: int | None = None) -> bool:
+    async def post_message(self, message: Message) -> bool:
         if not self.check_message_enabled(message):
             return True
 
-        return await super().post_message(message, priority)
+        return await super().post_message(message)
 
-    async def on_event(self, event: events.Event, priority: int) -> None:
+    async def on_event(self, event: events.Event) -> None:
         if isinstance(event, events.Resize):
             new_size = Dimensions(event.width, event.height)
             if self.size != new_size:
                 self.size = new_size
                 self.require_repaint()
-        await super().on_event(event, priority)
+        await super().on_event(event)
 
     async def on_idle(self, event: events.Idle) -> None:
         if self.line_cache is None or self.line_cache.dirty:

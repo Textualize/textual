@@ -56,17 +56,18 @@ class App(MessagePump):
         self,
         console: Console = None,
         screen: bool = True,
-        driver: Type[Driver] = None,
+        driver_class: Type[Driver] = None,
         view: View = None,
         title: str = "Megasoma Application",
     ):
         super().__init__()
         self.console = console or get_console()
         self._screen = screen
-        self.driver = driver or LinuxDriver
+        self.driver_class = driver_class or LinuxDriver
         self.title = title
         self.view = view or LayoutView()
         self.children: set[MessagePump] = set()
+        self._driver: Driver | None = None
 
         self._action_targets = {"app": self, "view": self.view}
 
@@ -78,7 +79,7 @@ class App(MessagePump):
         cls, console: Console = None, screen: bool = True, driver: Type[Driver] = None
     ):
         async def run_app() -> None:
-            app = cls(console=console, screen=screen, driver=driver)
+            app = cls(console=console, screen=screen, driver_class=driver)
             await app.process_messages()
 
         asyncio.run(run_app())
@@ -95,11 +96,11 @@ class App(MessagePump):
             self.console.print_exception(show_locals=True)
 
     async def _process_messages(self) -> None:
-        log.debug("driver=%r", self.driver)
+        log.debug("driver=%r", self.driver_class)
         loop = asyncio.get_event_loop()
 
         loop.add_signal_handler(signal.SIGINT, self.on_keyboard_interupt)
-        driver = self.driver(self.console, self)
+        driver = self._driver = self.driver_class(self.console, self)
 
         active_app.set(self)
 
@@ -116,31 +117,52 @@ class App(MessagePump):
             await super().process_messages()
         finally:
             try:
-                if self.children:
-
-                    async def close_all() -> None:
-                        for child in self.children:
-                            await child.close_messages()
-                        await asyncio.gather(*(child.task for child in self.children))
-
-                    try:
-                        await asyncio.wait_for(close_all(), timeout=5)
-                    except asyncio.TimeoutError as error:
-                        raise ShutdownError(
-                            "Timeout closing messages pump(s)"
-                        ) from None
-
-                self.children.clear()
+                driver.stop_application_mode()
             finally:
-                try:
-                    driver.stop_application_mode()
-                finally:
-                    loop.remove_signal_handler(signal.SIGINT)
+                loop.remove_signal_handler(signal.SIGINT)
 
     async def add(self, child: MessagePump) -> None:
         self.children.add(child)
         child.start_messages()
         await child.post_message(events.Created(sender=self))
+
+    async def remove(self, child: MessagePump) -> None:
+        self.children.remove(child)
+
+    async def shutdown(self):
+        driver = self._driver
+        driver.disable_input()
+
+        async def shutdown_procedure() -> None:
+            log.debug("1")
+            await self.stop_messages()
+            log.debug("2")
+            await self.view.stop_messages()
+            log.debug("3")
+            log.debug("4")
+            await self.remove(self.view)
+            if self.children:
+                log.debug("5")
+
+                async def close_all() -> None:
+                    for child in self.children:
+                        await child.close_messages(wait=False)
+                    await asyncio.gather(*(child.task for child in self.children))
+
+                try:
+                    await asyncio.wait_for(close_all(), timeout=5)
+                    log.debug("6")
+                except asyncio.TimeoutError as error:
+                    raise ShutdownError("Timeout closing messages pump(s)") from None
+                log.debug("7")
+
+            log.debug("8")
+            await self.view.close_messages()
+            log.debug("9")
+            await self.close_messages()
+            log.debug("10")
+
+        await asyncio.create_task(shutdown_procedure())
 
     def refresh(self) -> None:
         console = self.console
@@ -150,7 +172,7 @@ class App(MessagePump):
         except Exception:
             log.exception("refresh failed")
 
-    async def on_event(self, event: events.Event, priority: int) -> None:
+    async def on_event(self, event: events.Event) -> None:
         if isinstance(event, events.Key):
             key_action = self.KEYS.get(event.key, None)
             if key_action is not None:
@@ -160,7 +182,7 @@ class App(MessagePump):
         if isinstance(event, events.InputEvent):
             await self.view.forward_input_event(event)
         else:
-            await super().on_event(event, priority)
+            await super().on_event(event)
 
     async def on_idle(self, event: events.Idle) -> None:
         await self.view.post_message(event)
@@ -215,7 +237,7 @@ class App(MessagePump):
         await self.view.post_message(event)
 
     async def action_quit(self) -> None:
-        await self.close_messages()
+        await self.shutdown()
 
     async def action_bang(self) -> None:
         1 / 0

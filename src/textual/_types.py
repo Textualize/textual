@@ -16,20 +16,12 @@ Callback = Callable[[], None]
 
 
 class MessageTarget(Protocol):
-    async def post_message(
-        self,
-        message: "Message",
-        priority: Optional[int] = None,
-    ) -> bool:
+    async def post_message(self, message: "Message") -> bool:
         ...
 
 
 class EventTarget(Protocol):
-    async def post_message(
-        self,
-        message: "Message",
-        priority: Optional[int] = None,
-    ) -> bool:
+    async def post_message(self, message: "Message") -> bool:
         ...
 
 

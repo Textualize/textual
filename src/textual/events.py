@@ -50,7 +50,6 @@ class EventType(Enum):
     CUSTOM = 1000
 
 
-@rich_repr
 class Event(Message):
     type: ClassVar[EventType]
 
@@ -58,30 +57,28 @@ class Event(Message):
         return
         yield
 
-    def __init_subclass__(
-        cls, type: EventType, priority: int = 0, bubble: bool = False
-    ) -> None:
+    def __init_subclass__(cls, type: EventType, bubble: bool = False) -> None:
         cls.type = type
-        super().__init_subclass__(priority=priority, bubble=bubble)
+        super().__init_subclass__(bubble=bubble)
 
-    # def __enter__(self) -> "Event":
-    #     return self
 
-    # def __exit__(self, exc_type, exc_value, exc_tb) -> bool | None:
-    #     if exc_type is not None:
-    #         # Log and suppress exception
-    #         return True
+class NoneEvent(Event, type=EventType.NONE):
+    pass
 
 
 class ShutdownRequest(Event, type=EventType.SHUTDOWN_REQUEST):
     pass
 
 
-class Load(Event, type=EventType.SHUTDOWN_REQUEST):
+class Shutdown(Event, type=EventType.SHUTDOWN):
     pass
 
 
-class Startup(Event, type=EventType.SHUTDOWN_REQUEST):
+class Load(Event, type=EventType.LOAD):
+    pass
+
+
+class Startup(Event, type=EventType.STARTUP):
     pass
 
 
@@ -117,10 +114,6 @@ class Mount(Event, type=EventType.MOUNT):
 
 
 class Unmount(Event, type=EventType.UNMOUNT):
-    pass
-
-
-class Shutdown(Event, type=EventType.SHUTDOWN):
     pass
 
 
@@ -205,7 +198,7 @@ class DoubleClick(MouseEvent, type=EventType.DOUBLE_CLICK):
 
 
 @rich_repr
-class Timer(Event, type=EventType.TIMER, priority=10):
+class Timer(Event, type=EventType.TIMER):
     __slots__ = ["time", "count", "callback"]
 
     def __init__(
