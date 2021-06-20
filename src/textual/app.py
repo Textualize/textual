@@ -113,13 +113,10 @@ class App(MessagePump):
         except Exception:
             log.exception("error starting application mode")
             raise
-        try:
-            await super().process_messages()
-        finally:
-            try:
-                driver.stop_application_mode()
-            finally:
-                loop.remove_signal_handler(signal.SIGINT)
+        await super().process_messages()
+
+        await self.view.close_messages()
+        driver.stop_application_mode()
 
     async def add(self, child: MessagePump) -> None:
         self.children.add(child)
@@ -132,45 +129,16 @@ class App(MessagePump):
     async def shutdown(self):
         driver = self._driver
         driver.disable_input()
-
-        async def shutdown_procedure() -> None:
-            log.debug("1")
-            await self.stop_messages()
-            log.debug("2")
-            await self.view.stop_messages()
-            log.debug("3")
-            log.debug("4")
-            await self.remove(self.view)
-            if self.children:
-                log.debug("5")
-
-                async def close_all() -> None:
-                    for child in self.children:
-                        await child.close_messages(wait=False)
-                    await asyncio.gather(*(child.task for child in self.children))
-
-                try:
-                    await asyncio.wait_for(close_all(), timeout=5)
-                    log.debug("6")
-                except asyncio.TimeoutError as error:
-                    raise ShutdownError("Timeout closing messages pump(s)") from None
-                log.debug("7")
-
-            log.debug("8")
-            await self.view.close_messages()
-            log.debug("9")
-            await self.close_messages()
-            log.debug("10")
-
-        await asyncio.create_task(shutdown_procedure())
+        await self.close_messages()
 
     def refresh(self) -> None:
-        console = self.console
-        try:
-            with console:
-                console.print(Screen(Control.home(), self.view, Control.home()))
-        except Exception:
-            log.exception("refresh failed")
+        if not self._closed:
+            console = self.console
+            try:
+                with console:
+                    console.print(Screen(Control.home(), self.view, Control.home()))
+            except Exception:
+                log.exception("refresh failed")
 
     async def on_event(self, event: events.Event) -> None:
         if isinstance(event, events.Key):

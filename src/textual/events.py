@@ -50,6 +50,7 @@ class EventType(Enum):
     CUSTOM = 1000
 
 
+@rich_repr
 class Event(Message):
     type: ClassVar[EventType]
 
