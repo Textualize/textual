@@ -228,7 +228,8 @@ class Widget(WidgetBase):
     #     return self.line_cache
 
     def render(self) -> RenderableType:
-        return self.line_cache
+        raise NotImplementedError
+        # return self.line_cache
 
     def require_repaint(self) -> None:
         self._line_cache = None
@@ -249,3 +250,12 @@ class Widget(WidgetBase):
         """
         width, height = self.size
         yield from self.line_cache.render(x, y, width, height)
+
+
+class StaticWidget(Widget):
+    def __init__(self, renderable: RenderableType, name: str | None = None) -> None:
+        super().__init__(name)
+        self.renderable = renderable
+
+    def render(self) -> RenderableType:
+        return self.renderable

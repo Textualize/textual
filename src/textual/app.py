@@ -291,6 +291,8 @@ if __name__ == "__main__":
 
     from rich.markdown import Markdown
 
+    from .widgets.scroll_view import ScrollView
+
     import os
 
     # from rich.console import Console
@@ -331,8 +333,11 @@ if __name__ == "__main__":
             # )
             layout = Layout()
             layout.split_column(Layout(name="l1"), Layout(name="l2"))
-            sub_view = LayoutView(name="Sub view", layout=layout)
-            await sub_view.mount_all(l1=Placeholder(), l2=Placeholder())
+            # sub_view = LayoutView(name="Sub view", layout=layout)
+
+            sub_view = ScrollView()
+
+            # await sub_view.mount_all(l1=Placeholder(), l2=Placeholder())
 
             await self.view.mount_all(
                 header=Header(self.title),

@@ -59,7 +59,7 @@ class View(ABC, WidgetBase):
 
 @rich.repr.auto
 class LayoutView(View):
-    def __init__(self, layout: Layout = None, name: str = "default") -> None:
+    def __init__(self, layout: Layout = None, name: str | None = "default") -> None:
         self.name = name
         self.layout = layout or Layout()
         self.mouse_over: WidgetBase | None = None
@@ -95,20 +95,24 @@ class LayoutView(View):
     def get_widget_at(
         self, x: int, y: int, offset_x: int = 0, offset_y: int = 0, deep: bool = False
     ) -> Tuple[Widget, Region]:
+
         for layout, (layout_region, render) in self.layout.map.items():
             region = Region(*layout_region)
             if region.contains(x, y):
                 widget = layout.renderable
-                if deep and isinstance(layout.renderable, WidgetBase):
-                    widget = layout.renderable
-                    if isinstance(widget, View):
+                if deep and isinstance(layout.renderable, View):
+
+                    if isinstance(layout.renderable, View):
+                        view = layout.renderable
                         translate_x = region.x
                         translate_y = region.y
-                        widget, region = widget.get_widget_at(
+                        widget, region = view.get_widget_at(
                             x - region.x, y - region.y, deep=True
                         )
                         region = region.translate(translate_x, translate_y)
-                return widget, region
+
+                if isinstance(widget, WidgetBase):
+                    return widget, region
 
         raise NoWidget(f"No widget at {x}, {y}")
 
