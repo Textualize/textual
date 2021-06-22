@@ -324,13 +324,13 @@ if __name__ == "__main__":
             footer.add_key("b", "Toggle sidebar")
             footer.add_key("q", "Quit")
 
-            # readme_path = os.path.join(
-            #     os.path.dirname(os.path.abspath(__file__)), "richreadme.md"
-            # )
+            readme_path = os.path.join(
+                os.path.dirname(os.path.abspath(__file__)), "richreadme.md"
+            )
             # scroll_view = LayoutView()
             # scroll_bar = ScrollBar()
-            # with open(readme_path, "rt") as fh:
-            #     readme = Markdown(fh.read(), hyperlinks=True, code_theme="fruity")
+            with open(readme_path, "rt") as fh:
+                readme = Markdown(fh.read(), hyperlinks=True, code_theme="fruity")
             # scroll_view.layout.split_column(
             #     Layout(readme, ratio=1), Layout(scroll_bar, ratio=2, size=2)
             # )
@@ -338,7 +338,7 @@ if __name__ == "__main__":
             layout.split_column(Layout(name="l1"), Layout(name="l2"))
             # sub_view = LayoutView(name="Sub view", layout=layout)
 
-            sub_view = ScrollView()
+            sub_view = ScrollView(readme)
 
             # await sub_view.mount_all(l1=Placeholder(), l2=Placeholder())
 

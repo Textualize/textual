@@ -1,28 +1,32 @@
 from __future__ import annotations
 
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
+from rich.padding import Padding, PaddingDimensions
 from rich.segment import Segment
 from rich.style import StyleType
 
-from .geometry import Point
+from .geometry import Dimensions, Point
 from .widget import Widget
 
 
-class Page:
+class PageRender:
     def __init__(
         self,
         renderable: RenderableType,
         width: int | None = None,
         height: int | None = None,
         style: StyleType = "",
+        padding: PaddingDimensions = 1,
     ) -> None:
         self.renderable = renderable
         self.width = width
         self.height = height
         self.style = style
+        self.padding = padding
         self.offset = Point(0, 0)
         self._render_width: int | None = None
         self._render_height: int | None = None
+        self.size = Dimensions(0, 0)
         self._lines: list[list[Segment]] = []
 
     def move_to(self, x: int = 0, y: int = 0) -> None:
@@ -38,11 +42,15 @@ class Page:
         self.refresh()
 
     def render(self, console: Console, options: ConsoleOptions) -> None:
-        width = self._render_width = self.width or options.max_width or console.width
-        height = self._render_height = self.height or options.height or None
-        options = options.update_width(width)
+        width = self.width or options.max_width or console.width
+        height = self.height or options.height or None
+        options = options.update_dimensions(width, None)
         style = console.get_style(self.style)
-        self._lines = console.render_lines(self.renderable, options, style=style)
+        renderable = self.renderable
+        if self.padding:
+            renderable = Padding(renderable, self.padding)
+        self._lines[:] = console.render_lines(renderable, options, style=style)
+        self.size = Dimensions(width, len(self._lines))
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -60,5 +68,22 @@ class Page:
             blank_line = [Segment(" " * width, style), Segment.line()]
             window_lines.extend(blank_line for _ in range(missing_lines))
 
+        new_line = Segment.line()
         for line in window_lines:
             yield from line
+            yield new_line
+
+
+class Page(Widget):
+    def __init__(
+        self, renderable: RenderableType, name: str = None, style: StyleType = ""
+    ):
+        self._page = PageRender(renderable, style=style)
+        super().__init__(name=name)
+
+    @property
+    def virtual_size(self) -> Dimensions:
+        return self._page.size
+
+    def render(self) -> RenderableType:
+        return self._page

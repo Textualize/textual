@@ -24,8 +24,14 @@ class Event(Message):
         super().__init_subclass__(bubble=bubble)
 
 
-class NoneEvent(Event):
-    pass
+class Null(Event):
+    def can_batch(self, event: Event) -> bool:
+        return isinstance(event, Null)
+
+
+class Repaint(Event):
+    def can_batch(self, event: Event) -> bool:
+        return isinstance(event, Repaint)
 
 
 class ShutdownRequest(Event):

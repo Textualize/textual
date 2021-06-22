@@ -10,7 +10,7 @@ class Reactive(Generic[ValueType]):
         self._default = default
 
     def __set_name__(self, owner: object, name: str) -> None:
-        self.internal_name = f"_{name}"
+        self.internal_name = f"__{name}"
         setattr(owner, self.internal_name, self._default)
 
     def __get__(self, obj: object, obj_type: Type[object]) -> ValueType:

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from math import ceil
+
 import logging
 
-
+from rich.repr import rich_repr, RichReprResult
 from rich.color import Color
 from rich.style import Style
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
@@ -12,10 +12,10 @@ from rich.style import Style, StyleType
 
 log = logging.getLogger("rich")
 
-from .widget import Widget
+from .widget import Reactive, Widget
 
 
-class ScrollBar:
+class ScrollBarRender:
     def __init__(
         self,
         virtual_size: int = 100,
@@ -65,34 +65,39 @@ class ScrollBar:
         _Segment = Segment
         _Style = Style
         blank = " " * width_thickness
-        segments = [_Segment(blank, _Style(bgcolor=back))] * int(size)
 
-        step_size = virtual_size / size
+        background_meta = {"background": True}
+        foreground_meta = {"background": False}
 
-        start = int(position / step_size * 8)
-        end = start + max(8, int(window_size / step_size * 8))
+        back_segment = Segment(blank, _Style(bgcolor=back, meta=background_meta))
+        segments = [back_segment] * int(size)
+        if window_size and size and virtual_size:
+            step_size = virtual_size / size
 
-        start_index, start_bar = divmod(start, 8)
-        end_index, end_bar = divmod(end, 8)
+            start = int(position / step_size * 8)
+            end = start + max(8, int(window_size / step_size * 8))
 
-        segments[start_index:end_index] = [_Segment(blank, _Style(bgcolor=bar))] * (
-            end_index - start_index
-        )
+            start_index, start_bar = divmod(start, 8)
+            end_index, end_bar = divmod(end, 8)
 
-        if start_index < len(segments):
-            segments[start_index] = _Segment(
-                bars[7 - start_bar] * width_thickness,
-                _Style(bgcolor=back, color=bar)
-                if vertical
-                else _Style(bgcolor=bar, color=back),
-            )
-        if end_index < len(segments):
-            segments[end_index] = _Segment(
-                bars[7 - end_bar] * width_thickness,
-                _Style(bgcolor=bar, color=back)
-                if vertical
-                else _Style(bgcolor=back, color=bar),
-            )
+            segments[start_index:end_index] = [
+                _Segment(blank, _Style(bgcolor=bar, meta=foreground_meta))
+            ] * (end_index - start_index)
+
+            if start_index < len(segments):
+                segments[start_index] = _Segment(
+                    bars[7 - start_bar] * width_thickness,
+                    _Style(bgcolor=back, color=bar, meta=foreground_meta)
+                    if vertical
+                    else _Style(bgcolor=bar, color=back, meta=foreground_meta),
+                )
+            if end_index < len(segments):
+                segments[end_index] = _Segment(
+                    bars[7 - end_bar] * width_thickness,
+                    _Style(bgcolor=bar, color=back, meta=foreground_meta)
+                    if vertical
+                    else _Style(bgcolor=back, color=bar, meta=foreground_meta),
+                )
         if vertical:
             return Segments(segments, new_lines=True)
         else:
@@ -127,11 +132,37 @@ class ScrollBar:
         yield bar
 
 
+@rich_repr
+class ScrollBar(Widget):
+    def __init__(self, vertical: bool = True, name: str | None = None) -> None:
+        self.vertical = vertical
+        super().__init__(name=name)
+
+    virtual_size: Reactive[int] = Reactive(100)
+    window_size: Reactive[int] = Reactive(20)
+    position: Reactive[int] = Reactive(0)
+
+    def __rich_repr__(self) -> RichReprResult:
+        yield "virtual_size", self.virtual_size
+        yield "window_size", self.window_size
+        yield "position", self.position
+
+    __rich_repr__.angular = True
+
+    def render(self) -> RenderableType:
+        return ScrollBarRender(
+            virtual_size=self.virtual_size,
+            window_size=self.window_size,
+            position=self.position,
+            vertical=self.vertical,
+        )
+
+
 if __name__ == "__main__":
     from rich.console import Console
     from rich.segment import Segments
 
     console = Console()
-    bar = ScrollBar()
+    bar = ScrollBarRender()
 
-    console.print(ScrollBar(position=15.3, thickness=5, vertical=False))
+    console.print(ScrollBarRender(position=15.3, thickness=5, vertical=False))

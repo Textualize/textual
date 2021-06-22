@@ -16,7 +16,7 @@ from ._context import active_app
 from .geometry import Dimensions, Region
 from .message import Message
 from .message_pump import MessagePump
-from .widget import Widget, WidgetBase, UpdateMessage
+from .widget import StaticWidget, Widget, WidgetBase, UpdateMessage
 from .widgets.header import Header
 
 if TYPE_CHECKING:
@@ -45,7 +45,9 @@ class View(ABC, WidgetBase):
         yield
 
     @abstractmethod
-    async def mount(self, widget: Widget, *, slot: str = "main") -> None:
+    async def mount(
+        self, widget: WidgetBase | RenderableType, *, slot: str = "main"
+    ) -> None:
         ...
 
     async def mount_all(self, **widgets: Widget) -> None:
@@ -154,7 +156,12 @@ class LayoutView(View):
     # async def on_create(self, event: events.Created) -> None:
     #     await self.mount(Header(self.title))
 
-    async def mount(self, widget: Widget, *, slot: str = "main") -> None:
+    async def mount(
+        self, widget: WidgetBase | RenderableType, *, slot: str = "main"
+    ) -> None:
+        if not isinstance(widget, WidgetBase):
+            log.debug("MOUNTED %r", widget)
+            widget = StaticWidget(widget)
         self.layout[slot].update(widget)
         await self.app.add(widget)
         widget.set_parent(self)
@@ -222,7 +229,7 @@ class LayoutView(View):
                 await widget.forward_event(event.offset(-region.x, -region.y))
 
         elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
-            widget, _region = self.get_widget_at(event.x, event.y)
+            widget, _region = self.get_widget_at(event.x, event.y, deep=True)
             scroll_widget = widget or self.focused
             if scroll_widget is not None:
                 await scroll_widget.forward_event(event)

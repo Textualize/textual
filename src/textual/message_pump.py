@@ -161,7 +161,8 @@ class MessagePump:
 
     async def dispatch_message(self, message: Message) -> bool | None:
         if isinstance(message, events.Event):
-            await self.on_event(message)
+            if not isinstance(message, events.Null):
+                await self.on_event(message)
         else:
             return await self.on_message(message)
         return False

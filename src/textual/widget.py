@@ -13,7 +13,7 @@ from typing import (
 
 from rich.align import Align
 
-from rich.console import Console, ConsoleOptions, RenderableType
+from rich.console import Console, RenderableType
 from rich.pretty import Pretty
 from rich.panel import Panel
 import rich.repr
@@ -73,7 +73,8 @@ class Reactive(Generic[ReactiveType]):
         self.validator = validator
 
     def __set_name__(self, owner: "Widget", name: str) -> None:
-        self.internal_name = f"_{name}"
+        self.name = name
+        self.internal_name = f"__{name}"
         setattr(owner, self.internal_name, self._default)
 
     def __get__(self, obj: "Widget", obj_type: type[object]) -> ReactiveType:
@@ -82,20 +83,32 @@ class Reactive(Generic[ReactiveType]):
     def __set__(self, obj: "Widget", value: ReactiveType) -> None:
         if getattr(obj, self.internal_name) != value:
             log.debug("%s -> %s", self.internal_name, value)
-            if self.validator:
-                value = self.validator(obj, value)
-            setattr(obj, self.internal_name, value)
-            obj.require_repaint()
+
+            current_value = getattr(obj, self.internal_name, None)
+            validate_function = getattr(obj, f"validate_{self.name}", None)
+            if callable(validate_function):
+                value = validate_function(value)
+
+            if current_value != value:
+                setattr(obj, self.internal_name, value)
+
+                update_function = getattr(obj, f"update_{self.name}", None)
+                if callable(update_function):
+                    update_function(current_value, value)
+
+                obj.post_message_no_wait(events.Repaint(obj))
 
 
 @rich.repr.auto
 class WidgetBase(MessagePump):
-    _count: ClassVar[int] = 0
+    _counts: ClassVar[dict[str, int]] = {}
     can_focus: bool = False
 
     def __init__(self, name: str | None = None) -> None:
-        self.name = name or f"{self.__class__.__name__}#{self._count}"
-        Widget._count += 1
+        Widget._counts.setdefault(self.__class__.__name__, 1)
+        _count = self._counts[self.__class__.__name__]
+        self.name = name or f"{self.__class__.__name__}#{_count}"
+
         self.size = Dimensions(0, 0)
         self.size_changed = False
         self._repaint_required = False
@@ -201,6 +214,9 @@ class WidgetBase(MessagePump):
             log.debug("REPAINTING")
             await self.repaint()
 
+    async def on_repaint(self, event: events.Repaint) -> None:
+        self.require_repaint()
+
 
 class Widget(WidgetBase):
     def __init__(self, name: str | None = None) -> None:
@@ -259,10 +275,9 @@ class Widget(WidgetBase):
         log.debug("%r", self.get_style_at(event.x, event.y))
 
     async def on_mouse_up(self, event: events.MouseUp) -> None:
-        log.debug("CLICKED %r", event)
         style = self.get_style_at(event.x, event.y)
-        log.debug(style.meta)
         if "@click" in style.meta:
+            log.debug(style._link_id)
             await self.app.action(style.meta["@click"])
 
 
