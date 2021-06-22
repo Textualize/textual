@@ -96,7 +96,8 @@ class Reactive(Generic[ReactiveType]):
                 if callable(update_function):
                     update_function(current_value, value)
 
-                obj.post_message_no_wait(events.Repaint(obj))
+                obj.require_repaint()
+                # obj.post_message_no_wait(events.Null(obj))
 
 
 @rich.repr.auto
@@ -145,6 +146,7 @@ class WidgetBase(MessagePump):
         Actual repaint is done by parent on idle.
         """
         self._repaint_required = True
+        self.post_message_no_wait(events.Null(self))
 
     def check_repaint(self) -> bool:
         return True
@@ -213,9 +215,6 @@ class WidgetBase(MessagePump):
         if self.check_repaint():
             log.debug("REPAINTING")
             await self.repaint()
-
-    async def on_repaint(self, event: events.Repaint) -> None:
-        self.require_repaint()
 
 
 class Widget(WidgetBase):

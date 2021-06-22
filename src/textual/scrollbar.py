@@ -12,6 +12,7 @@ from rich.style import Style, StyleType
 
 log = logging.getLogger("rich")
 
+from . import events
 from .widget import Reactive, Widget
 
 
