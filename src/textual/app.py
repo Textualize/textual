@@ -276,6 +276,9 @@ class App(MessagePump):
     async def action_bang(self) -> None:
         1 / 0
 
+    async def action_bell(self) -> None:
+        self.console.bell()
+
 
 if __name__ == "__main__":
     import asyncio

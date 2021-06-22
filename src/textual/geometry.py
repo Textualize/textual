@@ -51,7 +51,7 @@ class Region(NamedTuple):
 
     def translate(self, x: int, y: int) -> Region:
         _x, _y, width, height = self
-        return Region(self.x + _x, self.y + _y, width, height)
+        return Region(_x + x, _y + y, width, height)
 
     def __contains__(self, other: Any) -> bool:
         try:

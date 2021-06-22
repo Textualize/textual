@@ -93,7 +93,7 @@ class LayoutView(View):
     #     yield from segments
 
     def get_widget_at(
-        self, x: int, y: int, offset_x: int = 0, offset_y: int = 0, deep: bool = False
+        self, x: int, y: int, deep: bool = False
     ) -> Tuple[Widget, Region]:
 
         for layout, (layout_region, render) in self.layout.map.items():
@@ -102,14 +102,13 @@ class LayoutView(View):
                 widget = layout.renderable
                 if deep and isinstance(layout.renderable, View):
 
-                    if isinstance(layout.renderable, View):
-                        view = layout.renderable
-                        translate_x = region.x
-                        translate_y = region.y
-                        widget, region = view.get_widget_at(
-                            x - region.x, y - region.y, deep=True
-                        )
-                        region = region.translate(translate_x, translate_y)
+                    view = layout.renderable
+                    translate_x = region.x
+                    translate_y = region.y
+                    widget, region = view.get_widget_at(
+                        x - region.x, y - region.y, deep=True
+                    )
+                    region = region.translate(translate_x, translate_y)
 
                 if isinstance(widget, WidgetBase):
                     return widget, region
@@ -182,6 +181,7 @@ class LayoutView(View):
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         try:
             widget, region = self.get_widget_at(event.x, event.y, deep=True)
+            log.debug("MOVE =%r %r", widget, region)
             log.debug("mouse over %r %r", widget, region)
         except NoWidget:
             await self.app.set_mouse_over(None)
@@ -206,24 +206,20 @@ class LayoutView(View):
         if isinstance(event, (events.Enter, events.Leave)):
             await self.post_message(event)
 
-        elif isinstance(event, (events.MouseDown)):
-            try:
-                widget, _region = self.get_widget_at(event.x, event.y, deep=True)
-            except NoWidget:
-                await self.app.set_focus(None)
-            else:
-                await self.app.set_focus(widget)
-
         elif isinstance(event, events.MouseMove):
             await self._on_mouse_move(event)
 
         elif isinstance(event, events.MouseEvent):
+            log.debug("MOUSE %r", event)
             try:
-                widget, region = self.get_widget_at(event.x, event.y)
+                widget, region = self.get_widget_at(event.x, event.y, deep=True)
             except NoWidget:
-                pass
+                if isinstance(event, events.MouseDown):
+                    await self.app.set_focus(None)
             else:
-                await widget.forward_event(event)
+                if isinstance(event, events.MouseDown):
+                    await self.app.set_focus(widget)
+                await widget.forward_event(event.offset(-region.x, -region.y))
 
         elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
             widget, _region = self.get_widget_at(event.x, event.y)

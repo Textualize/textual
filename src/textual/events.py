@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-import re
-from enum import auto, Enum
-from time import monotonic
-from typing import ClassVar, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from rich.repr import rich_repr, RichReprResult
 
 from .message import Message
-from ._types import Callback, MessageTarget
+from ._types import MessageTarget
 from .keys import Keys
 
 
@@ -137,15 +133,31 @@ class MouseEvent(InputEvent):
         yield "meta", self.meta, False
         yield "ctrl", self.ctrl, False
 
+    def offset(self, x: int, y: int):
+        return self.__class__(
+            self.sender,
+            x=self.x + x,
+            y=self.y + y,
+            button=self.button,
+            shift=self.shift,
+            meta=self.meta,
+            ctrl=self.ctrl,
+            screen_x=self.screen_x,
+            screen_y=self.screen_y,
+        )
 
+
+@rich_repr
 class MouseMove(MouseEvent):
     pass
 
 
+@rich_repr
 class MouseDown(MouseEvent):
     pass
 
 
+@rich_repr
 class MouseUp(MouseEvent):
     pass
 
@@ -199,14 +211,14 @@ class Leave(Event):
     pass
 
 
-class Focus(Event, type=EventType.FOCUS):
+class Focus(Event):
     pass
 
 
-class Blur(Event, type=EventType.BLUR):
+class Blur(Event):
     pass
 
 
-class Update(Event, type=EventType.UPDATE):
+class Update(Event):
     def can_batch(self, event: Message) -> bool:
         return isinstance(event, Update) and event.sender == self.sender

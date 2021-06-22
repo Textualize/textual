@@ -18,6 +18,7 @@ from rich.pretty import Pretty
 from rich.panel import Panel
 import rich.repr
 from rich.segment import Segment
+from rich.style import Style
 
 from . import events
 from ._context import active_app
@@ -227,6 +228,9 @@ class Widget(WidgetBase):
     # def __rich__(self) -> LineCache:
     #     return self.line_cache
 
+    def get_style_at(self, x: int, y: int) -> Style:
+        return self.line_cache.get_style_at(x, y)
+
     def render(self) -> RenderableType:
         raise NotImplementedError
         # return self.line_cache
@@ -250,6 +254,16 @@ class Widget(WidgetBase):
         """
         width, height = self.size
         yield from self.line_cache.render(x, y, width, height)
+
+    async def on_mouse_move(self, event: events.MouseMove) -> None:
+        log.debug("%r", self.get_style_at(event.x, event.y))
+
+    async def on_mouse_up(self, event: events.MouseUp) -> None:
+        log.debug("CLICKED %r", event)
+        style = self.get_style_at(event.x, event.y)
+        log.debug(style.meta)
+        if "@click" in style.meta:
+            await self.app.action(style.meta["@click"])
 
 
 class StaticWidget(Widget):
