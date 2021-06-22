@@ -13,14 +13,15 @@ from typing import (
 
 from rich.align import Align
 
-from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
+from rich.console import Console, ConsoleOptions, RenderableType
 from rich.pretty import Pretty
 from rich.panel import Panel
-from rich.repr import rich_repr, RichReprResult
+import rich.repr
 from rich.segment import Segment
 
 from . import events
 from ._context import active_app
+from ._loop import loop_last
 from ._line_cache import LineCache
 from .message import Message
 from .message_pump import MessagePump
@@ -33,17 +34,39 @@ if TYPE_CHECKING:
 
 log = getLogger("rich")
 
-T = TypeVar("T")
 
-
+@rich.repr.auto
 class UpdateMessage(Message):
+    def __init__(
+        self,
+        sender: MessagePump,
+        widget: Widget,
+        offset_x: int = 0,
+        offset_y: int = 0,
+    ):
+        super().__init__(sender)
+        self.widget = widget
+        self.offset_x = offset_x
+        self.offset_y = offset_y
+
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
+        yield self.sender
+        yield "widget"
+        yield "offset_x", self.offset_x, 0
+        yield "offset_y", self.offset_y, 0
+
     def can_batch(self, message: Message) -> bool:
         return isinstance(message, UpdateMessage) and message.sender == self.sender
 
 
-class Reactive(Generic[T]):
+ReactiveType = TypeVar("ReactiveType")
+
+
+class Reactive(Generic[ReactiveType]):
     def __init__(
-        self, default: T, validator: Callable[[object, T], T] | None = None
+        self,
+        default: ReactiveType,
+        validator: Callable[[object, ReactiveType], ReactiveType] | None = None,
     ) -> None:
         self._default = default
         self.validator = validator
@@ -52,10 +75,10 @@ class Reactive(Generic[T]):
         self.internal_name = f"_{name}"
         setattr(owner, self.internal_name, self._default)
 
-    def __get__(self, obj: "Widget", obj_type: type[object]) -> T:
+    def __get__(self, obj: "Widget", obj_type: type[object]) -> ReactiveType:
         return getattr(obj, self.internal_name)
 
-    def __set__(self, obj: "Widget", value: T) -> None:
+    def __set__(self, obj: "Widget", value: ReactiveType) -> None:
         if getattr(obj, self.internal_name) != value:
             log.debug("%s -> %s", self.internal_name, value)
             if self.validator:
@@ -64,7 +87,8 @@ class Reactive(Generic[T]):
             obj.require_repaint()
 
 
-class Widget(MessagePump):
+@rich.repr.auto
+class WidgetBase(MessagePump):
     _count: ClassVar[int] = 0
     can_focus: bool = False
 
@@ -74,10 +98,9 @@ class Widget(MessagePump):
         self.size = Dimensions(0, 0)
         self.size_changed = False
         self._repaint_required = False
-        self._line_cache: LineCache = LineCache()
 
         super().__init__()
-        self.disable_messages(events.MouseMove)
+        # self.disable_messages(events.MouseMove)
 
     def __init_subclass__(
         cls,
@@ -86,8 +109,11 @@ class Widget(MessagePump):
         super().__init_subclass__()
         cls.can_focus = can_focus
 
-    def __rich_repr__(self) -> RichReprResult:
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "name", self.name
+
+    def __rich__(self) -> RenderableType:
+        return self.render()
 
     @property
     def app(self) -> "App":
@@ -97,39 +123,60 @@ class Widget(MessagePump):
     @property
     def console(self) -> Console:
         """Get the current console."""
-        try:
-            return active_app.get().console
-        except LookupError:
-            return Console()
-
-    # def __rich__(self) -> LineCache:
-    #     return self.line_cache
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        renderable = self.render(console, options)
-        self._line_cache.update(console, options, renderable)
-        yield self._line_cache
+        return active_app.get().console
 
     def require_repaint(self) -> None:
+        """Mark widget as requiring a repaint.
+
+        Actual repaint is done by parent on idle.
+        """
         self._repaint_required = True
+
+    def check_repaint(self) -> bool:
+        return True
+        return self._repaint_required
 
     async def forward_event(self, event: events.Event) -> None:
         await self.post_message(event)
 
     async def refresh(self) -> None:
-        self._repaint_required = True
+        """Re-render the window and repaint it."""
+        self.require_repaint()
         await self.repaint()
 
     async def repaint(self) -> None:
-        await self.emit(UpdateMessage(self))
+        """Instructs parent to repaint this widget."""
+        await self.emit(UpdateMessage(self, self))
 
     def render_update(self, x: int, y: int) -> Iterable[Segment]:
-        width, height = self.size
-        yield from self.line_cache.render(x, y, width, height)
+        """Render an update to a portion of the screen.
 
-    def render(self, console: Console, options: ConsoleOptions) -> RenderableType:
+        Args:
+            x (int): X offset from origin.
+            y (int): Y offset form origin.
+
+        Returns:
+            Iterable[Segment]: Partial update.
+        """
+        return
+
+        width, height = self.size
+        lines = self.console.render_lines(
+            self.render(), self.console.options.update_dimensions(width, height)
+        )
+
+        new_line = Segment.line()
+        for last, line in loop_last(lines):
+            yield from line
+            if not last:
+                yield new_line
+
+    def render(self) -> RenderableType:
+        """Get renderable for widget.
+
+        Returns:
+            RenderableType: Any renderable
+        """
         return Panel(
             Align.center(Pretty(self), vertical="middle"), title=self.__class__.__name__
         )
@@ -149,5 +196,56 @@ class Widget(MessagePump):
         await super().on_event(event)
 
     async def on_idle(self, event: events.Idle) -> None:
-        if self.line_cache is None or self.line_cache.dirty:
+        if self.check_repaint():
+            log.debug("REPAINTING")
             await self.repaint()
+
+
+class Widget(WidgetBase):
+    def __init__(self, name: str | None = None) -> None:
+        super().__init__(name)
+        self._line_cache: LineCache | None = None
+
+    @property
+    def line_cache(self) -> LineCache:
+
+        if self._line_cache is None:
+            width, height = self.size
+            start = time()
+            try:
+                renderable = self.render()
+            except Exception:
+                log.exception("error in render")
+                raise
+            self._line_cache = LineCache.from_renderable(
+                self.console, renderable, width, height
+            )
+            log.debug("%.1fms %r render elapsed", (time() - start) * 1000, self)
+        assert self._line_cache is not None
+        return self._line_cache
+
+    # def __rich__(self) -> LineCache:
+    #     return self.line_cache
+
+    def render(self) -> RenderableType:
+        return self.line_cache
+
+    def require_repaint(self) -> None:
+        self._line_cache = None
+        super().require_repaint()
+
+    def check_repaint(self) -> bool:
+        return self._line_cache is None or self.line_cache.dirty
+
+    def render_update(self, x: int, y: int) -> Iterable[Segment]:
+        """Render an update to a portion of the screen.
+
+        Args:
+            x (int): X offset from origin.
+            y (int): Y offset form origin.
+
+        Returns:
+            Iterable[Segment]: Partial update.
+        """
+        width, height = self.size
+        yield from self.line_cache.render(x, y, width, height)

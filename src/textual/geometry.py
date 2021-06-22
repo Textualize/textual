@@ -49,6 +49,10 @@ class Region(NamedTuple):
         x, y = point
         return ((self_x + width) > x >= self_x) and (((self_y + height) > y >= self_y))
 
+    def translate(self, x: int, y: int) -> Region:
+        _x, _y, width, height = self
+        return Region(self.x + _x, self.y + _y, width, height)
+
     def __contains__(self, other: Any) -> bool:
         try:
             x, y = other

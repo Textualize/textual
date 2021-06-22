@@ -152,7 +152,7 @@ class MessagePump:
                 log.exception("error in dispatch_message")
                 raise
             finally:
-                if self._message_queue.empty():
+                if isinstance(message, events.Event) and self._message_queue.empty():
                     if not self._closed:
                         idle_handler = getattr(self, "on_idle", None)
                         if idle_handler is not None and not self._closed:
@@ -203,9 +203,11 @@ class MessagePump:
 
     async def emit(self, message: Message) -> bool:
         if self._parent:
+            log.debug("EMIT %r -> %r %r", self, self._parent, message)
             await self._parent.post_message_from_child(message)
             return True
         else:
+            log.warning("NO PARENT %r %r", self, message)
             return False
 
     async def on_timer(self, event: events.Timer) -> None:

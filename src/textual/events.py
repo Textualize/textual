@@ -226,18 +226,8 @@ class Timer(Event, type=EventType.TIMER):
         yield self.timer.name
 
 
-@rich_repr
 class Enter(Event, type=EventType.ENTER):
-    __slots__ = ["x", "y"]
-
-    def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
-        super().__init__(sender)
-        self.x = x
-        self.y = y
-
-    def __rich_repr__(self) -> RichReprResult:
-        yield "x", self.x
-        yield "y", self.y
+    pass
 
 
 class Leave(Event, type=EventType.LEAVE):

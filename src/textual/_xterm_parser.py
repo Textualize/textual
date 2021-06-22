@@ -65,12 +65,12 @@ class XTermParser(Parser[events.Event]):
 
         while not self.is_eof:
             character = yield read1()
-            log.debug("character=%r", character)
+            # log.debug("character=%r", character)
             if character == ESC and ((yield self.peek_buffer()) or more_data()):
                 sequence: str = character
                 while True:
                     sequence += yield read1()
-                    log.debug(f"sequence=%r", sequence)
+                    # log.debug(f"sequence=%r", sequence)
                     keys = get_ansi_sequence(sequence, None)
                     if keys is not None:
                         for key in keys:

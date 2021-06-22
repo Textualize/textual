@@ -17,7 +17,7 @@ class Footer(Widget):
     def add_key(self, key: str, label: str) -> None:
         self.keys.append((key, label))
 
-    def render(self, console: Console, options: ConsoleOptions) -> RenderableType:
+    def render(self) -> RenderableType:
 
         text = Text(
             style="white on dark_green",

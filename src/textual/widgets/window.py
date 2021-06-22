@@ -67,7 +67,7 @@ class Window(Widget):
         self.renderable = renderable
         del self._lines[:]
 
-    def render(self, console: Console, options: ConsoleOptions) -> RenderableType:
+    def render(self) -> RenderableType:
         height = self.size.height
         lines = self.get_lines(console, options)
         position = int(self.position)

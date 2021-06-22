@@ -5,10 +5,10 @@ from time import time
 import logging
 from typing import Optional, Tuple, TYPE_CHECKING
 
-from rich.console import Console, ConsoleOptions, RenderResult
+from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.layout import Layout
 from rich.region import Region as LayoutRegion
-from rich.repr import rich_repr, RichReprResult
+import rich.repr
 from rich.segment import Segments
 
 from . import events
@@ -16,7 +16,7 @@ from ._context import active_app
 from .geometry import Dimensions, Region
 from .message import Message
 from .message_pump import MessagePump
-from .widget import Widget, UpdateMessage
+from .widget import Widget, WidgetBase, UpdateMessage
 from .widgets.header import Header
 
 if TYPE_CHECKING:
@@ -29,7 +29,7 @@ class NoWidget(Exception):
     pass
 
 
-class View(ABC, MessagePump):
+class View(ABC, WidgetBase):
     @property
     def app(self) -> "App":
         return active_app.get()
@@ -45,43 +45,45 @@ class View(ABC, MessagePump):
         yield
 
     @abstractmethod
-    async def mount(self, widget: MessagePump, *, slot: str = "main") -> None:
+    async def mount(self, widget: Widget, *, slot: str = "main") -> None:
         ...
 
-    @abstractmethod
-    def get_widget_at(self, x: int, y: int) -> Tuple[Widget, Region]:
-        ...
-
-    async def mount_all(self, **widgets: MessagePump) -> None:
+    async def mount_all(self, **widgets: Widget) -> None:
         for slot, widget in widgets.items():
             await self.mount(widget, slot=slot)
+        self.require_repaint()
 
     async def forward_event(self, event: events.Event) -> None:
         pass
 
 
-@rich_repr
+@rich.repr.auto
 class LayoutView(View):
-    layout: Layout
-
-    def __init__(
-        self,
-        layout: Layout = None,
-        name: str = "default",
-        title: str = "Layout Application",
-    ) -> None:
+    def __init__(self, layout: Layout = None, name: str = "default") -> None:
         self.name = name
-        self.title = title
         self.layout = layout or Layout()
-        self.mouse_over: MessagePump | None = None
-        self.focused: Widget | None = None
+        self.mouse_over: WidgetBase | None = None
+        self.focused: WidgetBase | None = None
         self.size = Dimensions(0, 0)
-        self._widgets: set[MessagePump] = set()
-        super().__init__()
+        self._widgets: set[WidgetBase] = set()
+        super().__init__(name)
         self.enable_messages(events.Idle)
 
-    def __rich_repr__(self) -> RichReprResult:
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "name", self.name
+
+    @property
+    def is_root_view(self) -> bool:
+        return self._parent is self.app
+
+    # def check_repaint(self) -> bool:
+    #     return True
+
+    def render(self) -> RenderableType:
+        return self.layout
+
+    # def __rich__(self) -> Layout:
+    #     return self.render()
 
     # def __rich_console__(
     #     self, console: Console, options: ConsoleOptions
@@ -90,65 +92,71 @@ class LayoutView(View):
     #     segments = console.render(self.layout, options.update_dimensions(width, height))
     #     yield from segments
 
-    def __rich__(self) -> Layout:
-        return self.layout
-
-    def get_widget_at(self, x: int, y: int) -> Tuple[Widget, Region]:
+    def get_widget_at(
+        self, x: int, y: int, offset_x: int = 0, offset_y: int = 0, deep: bool = False
+    ) -> Tuple[Widget, Region]:
         for layout, (layout_region, render) in self.layout.map.items():
             region = Region(*layout_region)
             if region.contains(x, y):
-                if isinstance(layout.renderable, Widget):
-                    return layout.renderable, region
-                else:
-                    break
-        raise NoWidget(f"No widget at ${x}, ${y}")
+                widget = layout.renderable
+                if deep and isinstance(layout.renderable, WidgetBase):
+                    widget = layout.renderable
+                    if isinstance(widget, View):
+                        translate_x = region.x
+                        translate_y = region.y
+                        widget, region = widget.get_widget_at(
+                            x - region.x, y - region.y, deep=True
+                        )
+                        region = region.translate(translate_x, translate_y)
+                return widget, region
 
-    async def repaint(self) -> None:
-        await self.emit(UpdateMessage(self))
-
-    async def on_event(self, event: events.Event) -> None:
-        if isinstance(event, events.Resize):
-            new_size = Dimensions(event.width, event.height)
-            if self.size != new_size:
-                self.size = new_size
-                await self.repaint()
-        await super().on_event(event)
+        raise NoWidget(f"No widget at {x}, {y}")
 
     async def on_message(self, message: Message) -> None:
-        log.debug("on_message %r", repr(message))
-        if isinstance(message, UpdateMessage):
-            widget = message.sender
-            if widget in self._widgets:
-                for layout, (region, render) in self.layout.map.items():
-                    if layout.renderable is widget:
-                        assert isinstance(widget, Widget)
-                        update = widget.render_update(region.x, region.y)
-                        segments = Segments(update)
-                        self.console.print(segments, end="")
 
-    async def mount(self, widget: MessagePump, *, slot: str = "main") -> None:
+        if isinstance(message, UpdateMessage):
+            widget = message.widget
+            # if widget in self._widgets:
+
+            for layout, (region, render) in self.layout.map.items():
+                if layout.renderable is message.sender:
+
+                    if not isinstance(widget, WidgetBase):
+                        continue
+
+                    log.debug("%r is_root %r", self, self.is_root_view)
+                    if self.is_root_view:
+                        log.debug("RENDERING %r %r %r", widget, message, region)
+                        try:
+                            update = widget.render_update(
+                                region.x + message.offset_x, region.y + message.offset_y
+                            )
+                        except Exception:
+                            log.exception("update error")
+                            raise
+                        self.console.print(Segments(update), end="")
+                    else:
+                        await self._parent.on_message(
+                            UpdateMessage(
+                                self,
+                                widget,
+                                offset_x=message.offset_x + region.x,
+                                offset_y=message.offset_y + region.y,
+                            )
+                        )
+                    break
+            else:
+                log.warning("Update widget not found")
+
+    # async def on_create(self, event: events.Created) -> None:
+    #     await self.mount(Header(self.title))
+
+    async def mount(self, widget: Widget, *, slot: str = "main") -> None:
         self.layout[slot].update(widget)
         await self.app.add(widget)
         widget.set_parent(self)
         await widget.post_message(events.Mount(sender=self))
         self._widgets.add(widget)
-
-    async def set_focus(self, widget: Optional[Widget]) -> None:
-        log.debug("set_focus %r", widget)
-        if widget == self.focused:
-            return
-
-        if widget is None:
-            if self.focused is not None:
-                focused = self.focused
-                self.focused = None
-                await focused.post_message(events.Blur(self))
-        elif widget.can_focus:
-            if self.focused is not None:
-                await self.focused.post_message(events.Blur(self))
-            if widget is not None and self.focused != widget:
-                self.focused = widget
-                await widget.post_message(events.Focus(self))
 
     async def layout_update(self) -> None:
         if not self.size:
@@ -156,11 +164,12 @@ class LayoutView(View):
         width, height = self.size
         region_map = self.layout._make_region_map(width, height)
         for layout, region in region_map.items():
-            if isinstance(layout.renderable, Widget):
+            if isinstance(layout.renderable, WidgetBase):
                 await layout.renderable.post_message(
                     events.Resize(self, region.width, region.height)
                 )
-        await self.repaint()
+        self.app.refresh()
+        # await self.repaint()
 
     async def on_resize(self, event: events.Resize) -> None:
         self.size = Dimensions(event.width, event.height)
@@ -168,25 +177,15 @@ class LayoutView(View):
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         try:
-            widget, region = self.get_widget_at(event.x, event.y)
+            widget, region = self.get_widget_at(event.x, event.y, deep=True)
+            log.debug("mouse over %r %r", widget, region)
         except NoWidget:
-            if self.mouse_over is not None:
-                try:
-                    await self.mouse_over.post_message(events.Leave(self))
-                finally:
-                    self.mouse_over = None
+            await self.app.set_mouse_over(None)
         else:
-            if self.mouse_over != widget:
-                try:
-                    if self.mouse_over is not None:
-                        await self.mouse_over.post_message(events.Leave(self))
-                    if widget is not None:
-                        await widget.post_message(
-                            events.Enter(self, event.x - region.x, event.y - region.y)
-                        )
-                finally:
-                    self.mouse_over = widget
-            await widget.post_message(
+            await self.app.set_mouse_over(widget)
+
+            log.debug("posting mouse move to %r", widget)
+            await widget.forward_event(
                 events.MouseMove(
                     self,
                     event.x - region.x,
@@ -195,19 +194,21 @@ class LayoutView(View):
                     event.shift,
                     event.meta,
                     event.ctrl,
-                    screen_x=event.screen_x,
-                    screen_y=event.screen_y,
                 )
             )
 
     async def forward_event(self, event: events.Event) -> None:
-        if isinstance(event, (events.MouseDown)):
+        log.debug("FORWARD %r %r", self, event)
+        if isinstance(event, (events.Enter, events.Leave)):
+            await self.post_message(event)
+
+        elif isinstance(event, (events.MouseDown)):
             try:
-                widget, _region = self.get_widget_at(event.x, event.y)
+                widget, _region = self.get_widget_at(event.x, event.y, deep=True)
             except NoWidget:
-                await self.set_focus(None)
+                await self.app.set_focus(None)
             else:
-                await self.set_focus(widget)
+                await self.app.set_focus(widget)
 
         elif isinstance(event, events.MouseMove):
             await self._on_mouse_move(event)
@@ -219,6 +220,7 @@ class LayoutView(View):
                 pass
             else:
                 await widget.forward_event(event)
+
         elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
             widget, _region = self.get_widget_at(event.x, event.y)
             scroll_widget = widget or self.focused
@@ -232,6 +234,3 @@ class LayoutView(View):
         visible = self.layout[layout_name].visible
         self.layout[layout_name].visible = not visible
         await self.layout_update()
-
-    async def on_idle(self, event: events.Idle) -> None:
-        await self.repaint()

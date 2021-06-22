@@ -9,10 +9,10 @@ import warnings
 
 from rich.control import Control
 from rich.layout import Layout
-from rich.repr import rich_repr, RichReprResult
+import rich.repr
 from rich.screen import Screen
 from rich import get_console
-from rich.console import Console
+from rich.console import Console, RenderableType
 
 from . import events
 from . import actions
@@ -21,6 +21,7 @@ from .driver import Driver
 from ._linux_driver import LinuxDriver
 from .message_pump import MessagePump
 from .view import View, LayoutView
+from .widget import Widget, WidgetBase
 
 log = logging.getLogger("rich")
 
@@ -28,9 +29,9 @@ log = logging.getLogger("rich")
 # asyncio will warn against resources not being cleared
 warnings.simplefilter("always", ResourceWarning)
 # https://github.com/boto/boto3/issues/454
-warnings.filterwarnings(
-    "ignore", category=ResourceWarning, message="unclosed.*<ssl.SSLSocket.*>"
-)
+# warnings.filterwarnings(
+#     "ignore", category=ResourceWarning, message="unclosed.*<ssl.SSLSocket.*>"
+# )
 
 
 LayoutDefinition = "dict[str, Any]"
@@ -47,7 +48,7 @@ class ShutdownError(Exception):
     pass
 
 
-@rich_repr
+@rich.repr.auto
 class App(MessagePump):
     view: View
 
@@ -68,24 +69,40 @@ class App(MessagePump):
         self.title = title
         self.view = view or self.create_default_view()
         self.children: set[MessagePump] = set()
+
+        self.focused: WidgetBase | None = None
+        self.mouse_over: WidgetBase | None = None
         self._driver: Driver | None = None
 
         self._action_targets = {"app": self, "view": self.view}
 
-    def __rich_repr__(self) -> RichReprResult:
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "title", self.title
+
+    def __rich__(self) -> RenderableType:
+        return self.view
 
     @classmethod
     def run(
         cls, console: Console = None, screen: bool = True, driver: Type[Driver] = None
     ):
+        """Run the app.
+
+        Args:
+            console (Console, optional): Console object. Defaults to None.
+            screen (bool, optional): Enable application mode. Defaults to True.
+            driver (Type[Driver], optional): Driver class or None for default. Defaults to None.
+        """
+
         async def run_app() -> None:
             app = cls(console=console, screen=screen, driver_class=driver)
+
             await app.process_messages()
 
         asyncio.run(run_app())
 
     def create_default_view(self) -> View:
+        """Create the default view."""
         layout = Layout()
         layout.split_column(
             Layout(name="header", size=3, ratio=0),
@@ -105,6 +122,40 @@ class App(MessagePump):
         event = events.ShutdownRequest(sender=self)
         asyncio.run_coroutine_threadsafe(self.post_message(event), loop=loop)
 
+    async def set_focus(self, widget: Widget | None) -> None:
+        log.debug("set_focus %r", widget)
+        if widget == self.focused:
+            return
+
+        if widget is None:
+            if self.focused is not None:
+                focused = self.focused
+                self.focused = None
+                await focused.post_message(events.Blur(self))
+        elif widget.can_focus:
+            if self.focused is not None:
+                await self.focused.post_message(events.Blur(self))
+            if widget is not None and self.focused != widget:
+                self.focused = widget
+                await widget.post_message(events.Focus(self))
+
+    async def set_mouse_over(self, widget: WidgetBase | None) -> None:
+        if widget is None:
+            if self.mouse_over is not None:
+                try:
+                    await self.mouse_over.post_message(events.Leave(self))
+                finally:
+                    self.mouse_over = None
+        else:
+            if self.mouse_over != widget:
+                try:
+                    if self.mouse_over is not None:
+                        await self.mouse_over.forward_event(events.Leave(self))
+                    if widget is not None:
+                        await widget.forward_event(events.Enter(self))
+                finally:
+                    self.mouse_over = widget
+
     async def process_messages(self) -> None:
         try:
             await self._process_messages()
@@ -119,7 +170,7 @@ class App(MessagePump):
         driver = self._driver = self.driver_class(self.console, self)
 
         active_app.set(self)
-
+        self.view.set_parent(self)
         await self.add(self.view)
 
         await self.post_message(events.Startup(sender=self))
@@ -164,12 +215,11 @@ class App(MessagePump):
                 return
 
         if isinstance(event, events.InputEvent):
+            if isinstance(event, events.Key) and self.focused is not None:
+                await self.focused.forward_event(event)
             await self.view.forward_event(event)
         else:
             await super().on_event(event)
-
-    async def on_idle(self, event: events.Idle) -> None:
-        await self.view.post_message(event)
 
     async def action(self, action: str) -> None:
         """Perform an action.
@@ -235,24 +285,13 @@ if __name__ == "__main__":
 
     from .widgets.header import Header
     from .widgets.footer import Footer
-    from .widgets.window import Window
+
     from .widgets.placeholder import Placeholder
     from .scrollbar import ScrollBar
 
     from rich.markdown import Markdown
 
     import os
-
-    readme_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "richreadme.md"
-    )
-    scroll_view = LayoutView()
-    scroll_bar = ScrollBar()
-    with open(readme_path, "rt") as fh:
-        readme = Markdown(fh.read(), hyperlinks=True, code_theme="fruity")
-    scroll_view.layout.split_row(
-        Layout(readme, ratio=1), Layout(scroll_bar, ratio=2, size=2)
-    )
 
     # from rich.console import Console
 
@@ -280,22 +319,31 @@ if __name__ == "__main__":
             footer.add_key("b", "Toggle sidebar")
             footer.add_key("q", "Quit")
 
-            readme_path = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), "richreadme.md"
-            )
-            scroll_view = LayoutView()
-            scroll_bar = ScrollBar()
-            with open(readme_path, "rt") as fh:
-                readme = Markdown(fh.read(), hyperlinks=True, code_theme="fruity")
-            scroll_view.layout.split_column(
-                Layout(readme, ratio=1), Layout(scroll_bar, ratio=2, size=2)
-            )
+            # readme_path = os.path.join(
+            #     os.path.dirname(os.path.abspath(__file__)), "richreadme.md"
+            # )
+            # scroll_view = LayoutView()
+            # scroll_bar = ScrollBar()
+            # with open(readme_path, "rt") as fh:
+            #     readme = Markdown(fh.read(), hyperlinks=True, code_theme="fruity")
+            # scroll_view.layout.split_column(
+            #     Layout(readme, ratio=1), Layout(scroll_bar, ratio=2, size=2)
+            # )
+            layout = Layout()
+            layout.split_column(Layout(name="l1"), Layout(name="l2"))
+            sub_view = LayoutView(name="Sub view", layout=layout)
+            await sub_view.mount_all(l1=Placeholder(), l2=Placeholder())
 
             await self.view.mount_all(
                 header=Header(self.title),
                 left=Placeholder(),
-                body=scroll_view,
+                body=sub_view,
                 footer=footer,
             )
 
+    # app = MyApp()
+    # from rich.console import Console
+
+    # console = Console()
+    # console.print(app, height=30)
     MyApp.run()

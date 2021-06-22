@@ -1,7 +1,7 @@
 from time import monotonic
 from typing import ClassVar
 
-from rich.repr import rich_repr
+import rich.repr
 
 from .case import camel_to_snake
 from ._types import MessageTarget
@@ -29,9 +29,8 @@ class Message:
         self._stop_propagaton = False
         super().__init__()
 
-    def __rich_repr__(self):
-        return
-        yield
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
+        yield self.sender
 
     def __init_subclass__(cls, bubble: bool = False) -> None:
         super().__init_subclass__()
