@@ -18,84 +18,49 @@ if TYPE_CHECKING:
     from ._timer import TimerCallback
 
 
-class EventType(Enum):
-    """Event type enumeration."""
-
-    NONE = auto()
-    LOAD = auto()
-    STARTUP = auto()
-    CREATED = auto()
-    IDLE = auto()
-    RESIZE = auto()
-    MOUNT = auto()
-    UNMOUNT = auto()
-    SHUTDOWN_REQUEST = auto()
-    SHUTDOWN = auto()
-    EXIT = auto()
-    UPDATED = auto()
-    TIMER = auto()
-    FOCUS = auto()
-    BLUR = auto()
-    KEY = auto()
-    MOUSE_MOVE = auto()
-    MOUSE_DOWN = auto()
-    MOUSE_UP = auto()
-    MOUSE_SCROLL_DOWN = auto()
-    MOUSE_SCROLL_UP = auto()
-    CLICK = auto()
-    DOUBLE_CLICK = auto()
-    ENTER = auto()
-    LEAVE = auto()
-    UPDATE = auto()
-    CUSTOM = 1000
-
-
 @rich_repr
 class Event(Message):
-    type: ClassVar[EventType]
-
     def __rich_repr__(self) -> RichReprResult:
         return
         yield
 
-    def __init_subclass__(cls, type: EventType, bubble: bool = False) -> None:
-        cls.type = type
+    def __init_subclass__(cls, bubble: bool = False) -> None:
         super().__init_subclass__(bubble=bubble)
 
 
-class NoneEvent(Event, type=EventType.NONE):
+class NoneEvent(Event):
     pass
 
 
-class ShutdownRequest(Event, type=EventType.SHUTDOWN_REQUEST):
+class ShutdownRequest(Event):
     pass
 
 
-class Shutdown(Event, type=EventType.SHUTDOWN):
+class Shutdown(Event):
     pass
 
 
-class Load(Event, type=EventType.LOAD):
+class Load(Event):
     pass
 
 
-class Startup(Event, type=EventType.STARTUP):
+class Startup(Event):
     pass
 
 
-class Created(Event, type=EventType.CREATED):
+class Created(Event):
     pass
 
 
-class Updated(Event, type=EventType.UPDATED):
+class Updated(Event):
     """Indicates the sender was updated and needs a refresh."""
 
 
-class Idle(Event, type=EventType.IDLE):
+class Idle(Event):
     """Sent when there are no more items in the message queue."""
 
 
-class Resize(Event, type=EventType.RESIZE):
+class Resize(Event):
     __slots__ = ["width", "height"]
     width: int
     height: int
@@ -110,20 +75,20 @@ class Resize(Event, type=EventType.RESIZE):
         yield self.height
 
 
-class Mount(Event, type=EventType.MOUNT):
+class Mount(Event):
     pass
 
 
-class Unmount(Event, type=EventType.UNMOUNT):
+class Unmount(Event):
     pass
 
 
-class InputEvent(Event, type=EventType.NONE, bubble=True):
+class InputEvent(Event, bubble=True):
     pass
 
 
 @rich_repr
-class Key(InputEvent, type=EventType.KEY, bubble=True):
+class Key(InputEvent, bubble=True):
     __slots__ = ["key"]
 
     def __init__(self, sender: MessageTarget, key: Keys | str) -> None:
@@ -135,7 +100,7 @@ class Key(InputEvent, type=EventType.KEY, bubble=True):
 
 
 @rich_repr
-class MouseEvent(InputEvent, type=EventType.MOUSE_MOVE):
+class MouseEvent(InputEvent):
     __slots__ = ["x", "y", "button"]
 
     def __init__(
@@ -173,19 +138,19 @@ class MouseEvent(InputEvent, type=EventType.MOUSE_MOVE):
         yield "ctrl", self.ctrl, False
 
 
-class MouseMove(MouseEvent, type=EventType.MOUSE_MOVE):
+class MouseMove(MouseEvent):
     pass
 
 
-class MouseDown(MouseEvent, type=EventType.MOUSE_DOWN):
+class MouseDown(MouseEvent):
     pass
 
 
-class MouseUp(MouseEvent, type=EventType.MOUSE_UP):
+class MouseUp(MouseEvent):
     pass
 
 
-class MouseScrollDown(InputEvent, type=EventType.MOUSE_SCROLL_DOWN):
+class MouseScrollDown(InputEvent):
     __slots__ = ["x", "y"]
 
     def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
@@ -194,20 +159,20 @@ class MouseScrollDown(InputEvent, type=EventType.MOUSE_SCROLL_DOWN):
         self.y = y
 
 
-class MouseScrollUp(MouseScrollDown, type=EventType.MOUSE_SCROLL_UP):
+class MouseScrollUp(MouseScrollDown):
     pass
 
 
-class Click(MouseEvent, type=EventType.CLICK):
+class Click(MouseEvent):
     pass
 
 
-class DoubleClick(MouseEvent, type=EventType.DOUBLE_CLICK):
+class DoubleClick(MouseEvent):
     pass
 
 
 @rich_repr
-class Timer(Event, type=EventType.TIMER):
+class Timer(Event):
     __slots__ = ["time", "count", "callback"]
 
     def __init__(
@@ -226,11 +191,11 @@ class Timer(Event, type=EventType.TIMER):
         yield self.timer.name
 
 
-class Enter(Event, type=EventType.ENTER):
+class Enter(Event):
     pass
 
 
-class Leave(Event, type=EventType.LEAVE):
+class Leave(Event):
     pass
 
 
