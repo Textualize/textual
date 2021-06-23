@@ -26,3 +26,9 @@ I'll be documenting progress in video form.
 ### Update 3 - New scrollbars, and smooth scrolling
 
 [![Textual update 3](https://yt-embed.herokuapp.com/embed?v=4LVl3ClrXIs&img=0)](http://www.youtube.com/watch?v=4LVl3ClrXIs)
+
+### Update 4 - Animation system with easing function
+
+Now with a system to animate a value to another value. Here applied to the scroll position. The animation system supports CSS like *easing functions*. You may be able to tell from the video that the page up / down keys cause the window to first speed up and then slow down.
+
+[![Textual update 4](https://yt-embed.herokuapp.com/embed?v=k2VwOp1YbSk&img=0)](http://www.youtube.com/watch?v=k2VwOp1YbSk)
