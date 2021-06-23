@@ -69,6 +69,6 @@ class ScrollView(LayoutView):
         elif event.key == "up":
             self.y -= 1
         elif event.key == "pagedown":
-            self._animator.animate("y", self.y + self.size.height, duration=0.5)
+            self._animator.animate("y", self.y + self.size.height, duration=1)
         elif event.key == "pageup":
-            self._animator.animate("y", self.y - self.size.height, duration=0.5)
+            self._animator.animate("y", self.y - self.size.height, duration=1)
