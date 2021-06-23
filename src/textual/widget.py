@@ -21,6 +21,7 @@ from rich.segment import Segment
 from rich.style import Style
 
 from . import events
+from .animator import Animator
 from ._context import active_app
 from ._loop import loop_last
 from ._line_cache import LineCache
@@ -41,7 +42,7 @@ class UpdateMessage(Message):
     def __init__(
         self,
         sender: MessagePump,
-        widget: Widget,
+        widget: WidgetBase,
         offset_x: int = 0,
         offset_y: int = 0,
     ):
@@ -72,15 +73,15 @@ class Reactive(Generic[ReactiveType]):
         self._default = default
         self.validator = validator
 
-    def __set_name__(self, owner: "Widget", name: str) -> None:
+    def __set_name__(self, owner: "WidgetBase", name: str) -> None:
         self.name = name
         self.internal_name = f"__{name}"
         setattr(owner, self.internal_name, self._default)
 
-    def __get__(self, obj: "Widget", obj_type: type[object]) -> ReactiveType:
+    def __get__(self, obj: "WidgetBase", obj_type: type[object]) -> ReactiveType:
         return getattr(obj, self.internal_name)
 
-    def __set__(self, obj: "Widget", value: ReactiveType) -> None:
+    def __set__(self, obj: "WidgetBase", value: ReactiveType) -> None:
         if getattr(obj, self.internal_name) != value:
             log.debug("%s -> %s", self.internal_name, value)
 
@@ -115,6 +116,7 @@ class WidgetBase(MessagePump):
         self._repaint_required = False
 
         super().__init__()
+        self._animator = Animator(self)
         # self.disable_messages(events.MouseMove)
 
     def __init_subclass__(

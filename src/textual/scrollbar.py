@@ -142,6 +142,7 @@ class ScrollBar(Widget):
     virtual_size: Reactive[int] = Reactive(100)
     window_size: Reactive[int] = Reactive(20)
     position: Reactive[int] = Reactive(0)
+    mouse_over: Reactive[bool] = Reactive(False)
 
     def __rich_repr__(self) -> RichReprResult:
         yield "virtual_size", self.virtual_size
@@ -156,7 +157,16 @@ class ScrollBar(Widget):
             window_size=self.window_size,
             position=self.position,
             vertical=self.vertical,
+            style="bright_magenta on #555555"
+            if self.mouse_over
+            else "bright_magenta on #444444",
         )
+
+    async def on_enter(self, event: events.Enter) -> None:
+        self.mouse_over = True
+
+    async def on_leave(self, event: events.Leave) -> None:
+        self.mouse_over = False
 
 
 if __name__ == "__main__":

@@ -7,6 +7,13 @@ class Point(NamedTuple):
     x: int
     y: int
 
+    def __add__(self, other: object) -> Point:
+        if isinstance(other, Point):
+            _x, _y = self
+            x, y = other
+            return Point(_x + x, _y + y)
+        raise NotImplemented
+
 
 class Dimensions(NamedTuple):
     width: int

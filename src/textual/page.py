@@ -6,7 +6,7 @@ from rich.segment import Segment
 from rich.style import StyleType
 
 from .geometry import Dimensions, Point
-from .widget import Widget
+from .widget import Widget, Reactive
 
 
 class PageRender:
@@ -80,6 +80,16 @@ class Page(Widget):
     ):
         self._page = PageRender(renderable, style=style)
         super().__init__(name=name)
+
+    x: Reactive[int] = Reactive(0)
+    y: Reactive[int] = Reactive(0)
+
+    def validate_y(self, value: int) -> int:
+        return max(0, value)
+
+    def update_y(self, old: int, new: int) -> None:
+        x, y = self._page.offset
+        self._page.offset = Point(x, new)
 
     @property
     def virtual_size(self) -> Dimensions:
