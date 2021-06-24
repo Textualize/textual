@@ -64,11 +64,12 @@ class ScrollView(LayoutView):
         self._vertical_scrollbar.position -= 1
 
     async def on_key(self, event: events.Key) -> None:
-        if event.key == "down":
+        key = event.key
+        if key == "down":
             self.y += 1
-        elif event.key == "up":
+        elif key == "up":
             self.y -= 1
-        elif event.key == "pagedown":
-            self.app.animator.animate(self, "y", self.y + self.size.height, duration=1)
-        elif event.key == "pageup":
-            self.app.animator.animate(self, "y", self.y - self.size.height, duration=1)
+        elif key == "pagedown":
+            self.animate("y", self.y + self.size.height)
+        elif key == "pageup":
+            self.animate("y", self.y - self.size.height)

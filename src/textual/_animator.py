@@ -43,6 +43,28 @@ class Animation:
         return value == self.end_value
 
 
+class BoundAnimator:
+    def __init__(self, animator: Animator, obj: object) -> None:
+        self._animator = animator
+        self._obj = obj
+
+    def __call__(
+        self,
+        attribute: str,
+        value: float,
+        *,
+        duration: float = 1,
+        easing: EasingFunction = InOutCubitEasing,
+    ) -> None:
+        self._animator.animate(
+            self._obj,
+            attribute=attribute,
+            value=value,
+            duration=duration,
+            easing=easing,
+        )
+
+
 class Animator:
     def __init__(self, target: MessageTarget) -> None:
         self._animations: dict[tuple[object, str], Animation] = {}
@@ -54,11 +76,15 @@ class Animator:
     async def stop(self) -> None:
         self._timer.stop()
 
+    def bind(self, obj: object) -> BoundAnimator:
+        return BoundAnimator(self, obj)
+
     def animate(
         self,
         obj: object,
         attribute: str,
         value: float,
+        *,
         duration: float = 1,
         easing: EasingFunction = InOutCubitEasing,
     ) -> None:
@@ -75,13 +101,16 @@ class Animator:
             easing_function=easing,
         )
         self._animations[(obj, attribute)] = animation
+        self._timer.resume()
 
     async def __call__(self) -> None:
-        log.debug("ANIMATION FRAME")
-        animation_time = time()
-        animation_keys = list(self._animations.keys())
-        for animation_key in animation_keys:
-            animation = self._animations[animation_key]
-            obj, _attribute = animation_key
-            if animation(obj, animation_time):
-                del self._animations[animation_key]
+        if not self._animations:
+            self._timer.pause()
+        else:
+            animation_time = time()
+            animation_keys = list(self._animations.keys())
+            for animation_key in animation_keys:
+                animation = self._animations[animation_key]
+                obj, _attribute = animation_key
+                if animation(obj, animation_time):
+                    del self._animations[animation_key]

@@ -40,6 +40,7 @@ class Timer:
         self._callback = callback
         self._repeat = repeat
         self._stop_event = Event()
+        self._active = Event()
 
     def __rich_repr__(self) -> RichReprResult:
         yield self._interval
@@ -54,19 +55,21 @@ class Timer:
         return target
 
     def stop(self) -> None:
+        self._active.set()
         self._stop_event.set()
 
-    async def pause(self) -> None:
-        pass
+    def pause(self) -> None:
+        self._active.clear()
 
-    async def resume(self) -> None:
-        pass
+    def resume(self) -> None:
+        self._active.set()
 
     async def run(self) -> None:
         count = 0
         _repeat = self._repeat
         _interval = self._interval
         _wait = self._stop_event.wait
+        _wait_active = self._active.wait
         start = monotonic()
         try:
             while _repeat is None or count <= _repeat:
@@ -84,5 +87,6 @@ class Timer:
                 except EventTargetGone:
                     break
                 count += 1
+                await _wait_active()
         except CancelledError:
             pass

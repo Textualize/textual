@@ -20,6 +20,7 @@ from rich.segment import Segment
 from rich.style import Style
 
 from . import events
+from ._animator import BoundAnimator
 from ._context import active_app
 from ._loop import loop_last
 from ._line_cache import LineCache
@@ -112,6 +113,7 @@ class WidgetBase(MessagePump):
         self.size = Dimensions(0, 0)
         self.size_changed = False
         self._repaint_required = False
+        self._animate: BoundAnimator | None = None
 
         super().__init__()
         # self.disable_messages(events.MouseMove)
@@ -138,6 +140,13 @@ class WidgetBase(MessagePump):
     def console(self) -> Console:
         """Get the current console."""
         return active_app.get().console
+
+    @property
+    def animate(self) -> BoundAnimator:
+        if self._animate is None:
+            self._animate = self.app.animator.bind(self)
+        assert self._animate is not None
+        return self._animate
 
     def require_repaint(self) -> None:
         """Mark widget as requiring a repaint.
