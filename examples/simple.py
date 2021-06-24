@@ -4,7 +4,7 @@ from textual import events
 from textual.app import App
 from textual.widgets.header import Header
 from textual.widgets.placeholder import Placeholder
-from textual.widgets.window import Window
+from textual.widgets.scroll_view import ScrollView
 
 with open("richreadme.md", "rt") as fh:
     readme = Markdown(fh.read(), hyperlinks=True, code_theme="fruity")
@@ -16,7 +16,7 @@ class MyApp(App):
 
     async def on_startup(self, event: events.Startup) -> None:
         await self.view.mount_all(
-            header=Header(self.title), left=Placeholder(), body=Window(readme)
+            header=Header(self.title), left=Placeholder(), body=ScrollView(readme)
         )
 
 

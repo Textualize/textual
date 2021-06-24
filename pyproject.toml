@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.1.1"
+version = "0.1.2"
 description = "Text User Interface using Rich"
 authors = ["Will McGugan <willmcgugan@gmail.com>"]
 license = "MIT"
@@ -25,6 +25,7 @@ typing-extensions = { version = "^3.10.0", python = "<3.8" }
 
 [tool.poetry.dev-dependencies]
 # rich = {git = "git@github.com:willmcgugan/rich", rev = "pretty-classes"}
+mypy = "^0.910"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

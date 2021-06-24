@@ -1,11 +1,35 @@
 from __future__ import annotations
 
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, TypeVar
+
+
+T = TypeVar("T", int, float)
+
+
+def clamp(value: T, minimum: T, maximum: T) -> T:
+    """Clamps a value between two other values.
+
+    Args:
+        value (T): A value
+        minimum (T): Minimum value
+        maximum (T): maximum value
+
+    Returns:
+        T: New value that is not less than the minimum or greater than the maximum.
+    """
+    return min(max(value, minimum), maximum)
 
 
 class Point(NamedTuple):
     x: int
     y: int
+
+    def __add__(self, other: object) -> Point:
+        if isinstance(other, Point):
+            _x, _y = self
+            x, y = other
+            return Point(_x + x, _y + y)
+        raise NotImplemented
 
 
 class Dimensions(NamedTuple):
@@ -48,6 +72,10 @@ class Region(NamedTuple):
         self_x, self_y, width, height = self
         x, y = point
         return ((self_x + width) > x >= self_x) and (((self_y + height) > y >= self_y))
+
+    def translate(self, x: int, y: int) -> Region:
+        _x, _y, width, height = self
+        return Region(_x + x, _y + y, width, height)
 
     def __contains__(self, other: Any) -> bool:
         try:

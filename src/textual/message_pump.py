@@ -135,7 +135,7 @@ class MessagePump:
                 log.exception("error in get_message()")
                 raise error from None
 
-            log.debug("%r -> %r", message, self)
+            # log.debug("%r -> %r", message, self)
             # Combine any pending messages that may supersede this one
             while not (self._closed or self._closing):
                 pending = self.peek_message()
@@ -152,7 +152,7 @@ class MessagePump:
                 log.exception("error in dispatch_message")
                 raise
             finally:
-                if self._message_queue.empty():
+                if isinstance(message, events.Event) and self._message_queue.empty():
                     if not self._closed:
                         idle_handler = getattr(self, "on_idle", None)
                         if idle_handler is not None and not self._closed:
@@ -161,7 +161,8 @@ class MessagePump:
 
     async def dispatch_message(self, message: Message) -> bool | None:
         if isinstance(message, events.Event):
-            await self.on_event(message)
+            if not isinstance(message, events.Null):
+                await self.on_event(message)
         else:
             return await self.on_message(message)
         return False
@@ -173,7 +174,8 @@ class MessagePump:
             await dispatch_function(event)
         if event.bubble and self._parent and not event._stop_propagaton:
             if event.sender == self._parent:
-                log.debug("bubbled event abandoned; %r", event)
+                pass
+                # log.debug("bubbled event abandoned; %r", event)
             elif not self._parent._closed and not self._parent._closing:
                 await self._parent.post_message(event)
 
@@ -206,6 +208,7 @@ class MessagePump:
             await self._parent.post_message_from_child(message)
             return True
         else:
+            log.warning("NO PARENT %r %r", self, message)
             return False
 
     async def on_timer(self, event: events.Timer) -> None:

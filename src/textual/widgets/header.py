@@ -32,7 +32,7 @@ class Header(Widget):
     def get_clock(self) -> str:
         return datetime.now().time().strftime("%X")
 
-    def render(self, console: Console, options: ConsoleOptions) -> RenderableType:
+    def render(self) -> RenderableType:
 
         header_table = Table.grid(padding=(0, 1), expand=True)
         header_table.style = self.style
@@ -51,5 +51,4 @@ class Header(Widget):
         return header
 
     async def on_mount(self, event: events.Mount) -> None:
-        return
         self.set_interval(1.0, callback=self.refresh)

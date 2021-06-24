@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-import re
-from enum import auto, Enum
-from time import monotonic
-from typing import ClassVar, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from rich.repr import rich_repr, RichReprResult
 
 from .message import Message
-from ._types import Callback, MessageTarget
+from ._types import MessageTarget
 from .keys import Keys
 
 
@@ -18,84 +14,66 @@ if TYPE_CHECKING:
     from ._timer import TimerCallback
 
 
-class EventType(Enum):
-    """Event type enumeration."""
-
-    NONE = auto()
-    LOAD = auto()
-    STARTUP = auto()
-    CREATED = auto()
-    IDLE = auto()
-    RESIZE = auto()
-    MOUNT = auto()
-    UNMOUNT = auto()
-    SHUTDOWN_REQUEST = auto()
-    SHUTDOWN = auto()
-    EXIT = auto()
-    UPDATED = auto()
-    TIMER = auto()
-    FOCUS = auto()
-    BLUR = auto()
-    KEY = auto()
-    MOUSE_MOVE = auto()
-    MOUSE_DOWN = auto()
-    MOUSE_UP = auto()
-    MOUSE_SCROLL_DOWN = auto()
-    MOUSE_SCROLL_UP = auto()
-    CLICK = auto()
-    DOUBLE_CLICK = auto()
-    ENTER = auto()
-    LEAVE = auto()
-    UPDATE = auto()
-    CUSTOM = 1000
-
-
 @rich_repr
 class Event(Message):
-    type: ClassVar[EventType]
-
     def __rich_repr__(self) -> RichReprResult:
         return
         yield
 
-    def __init_subclass__(cls, type: EventType, bubble: bool = False) -> None:
-        cls.type = type
+    def __init_subclass__(cls, bubble: bool = False) -> None:
         super().__init_subclass__(bubble=bubble)
 
 
-class NoneEvent(Event, type=EventType.NONE):
+class Null(Event):
+    def can_batch(self, event: Event) -> bool:
+        return isinstance(event, Null)
+
+
+class Repaint(Event):
+    def can_batch(self, event: Event) -> bool:
+        return isinstance(event, Repaint)
+
+
+class ShutdownRequest(Event):
     pass
 
 
-class ShutdownRequest(Event, type=EventType.SHUTDOWN_REQUEST):
+class Shutdown(Event):
     pass
 
 
-class Shutdown(Event, type=EventType.SHUTDOWN):
+class Load(Event):
     pass
 
 
-class Load(Event, type=EventType.LOAD):
+class Startup(Event):
     pass
 
 
-class Startup(Event, type=EventType.STARTUP):
+class Created(Event):
     pass
 
 
-class Created(Event, type=EventType.CREATED):
-    pass
-
-
-class Updated(Event, type=EventType.UPDATED):
+class Updated(Event):
     """Indicates the sender was updated and needs a refresh."""
 
 
-class Idle(Event, type=EventType.IDLE):
+class Idle(Event):
     """Sent when there are no more items in the message queue."""
 
 
-class Resize(Event, type=EventType.RESIZE):
+class Action(Event):
+    __slots__ = ["action"]
+
+    def __init__(self, sender: MessageTarget, action: str) -> None:
+        super().__init__(sender)
+        self.action = action
+
+    def __rich_repr__(self) -> RichReprResult:
+        yield "action", self.action
+
+
+class Resize(Event):
     __slots__ = ["width", "height"]
     width: int
     height: int
@@ -110,20 +88,20 @@ class Resize(Event, type=EventType.RESIZE):
         yield self.height
 
 
-class Mount(Event, type=EventType.MOUNT):
+class Mount(Event):
     pass
 
 
-class Unmount(Event, type=EventType.UNMOUNT):
+class Unmount(Event):
     pass
 
 
-class InputEvent(Event, type=EventType.NONE, bubble=True):
+class InputEvent(Event, bubble=True):
     pass
 
 
 @rich_repr
-class Key(InputEvent, type=EventType.KEY, bubble=True):
+class Key(InputEvent, bubble=True):
     __slots__ = ["key"]
 
     def __init__(self, sender: MessageTarget, key: Keys | str) -> None:
@@ -135,7 +113,7 @@ class Key(InputEvent, type=EventType.KEY, bubble=True):
 
 
 @rich_repr
-class MouseEvent(InputEvent, type=EventType.MOUSE_MOVE):
+class MouseEvent(InputEvent):
     __slots__ = ["x", "y", "button"]
 
     def __init__(
@@ -147,6 +125,8 @@ class MouseEvent(InputEvent, type=EventType.MOUSE_MOVE):
         shift: bool,
         meta: bool,
         ctrl: bool,
+        screen_x: int | None = None,
+        screen_y: int | None = None,
     ) -> None:
         super().__init__(sender)
         self.x = x
@@ -155,29 +135,51 @@ class MouseEvent(InputEvent, type=EventType.MOUSE_MOVE):
         self.shift = shift
         self.meta = meta
         self.ctrl = ctrl
+        self.screen_x = x if screen_x is None else screen_x
+        self.screen_y = y if screen_y is None else screen_y
 
     def __rich_repr__(self) -> RichReprResult:
         yield "x", self.x
         yield "y", self.y
+        if self.screen_x != self.x:
+            yield "screen_x", self.screen_x
+        if self.screen_y != self.y:
+            yield "screen_y", self.screen_y
         yield "button", self.button, 0
         yield "shift", self.shift, False
         yield "meta", self.meta, False
         yield "ctrl", self.ctrl, False
 
+    def offset(self, x: int, y: int):
+        return self.__class__(
+            self.sender,
+            x=self.x + x,
+            y=self.y + y,
+            button=self.button,
+            shift=self.shift,
+            meta=self.meta,
+            ctrl=self.ctrl,
+            screen_x=self.screen_x,
+            screen_y=self.screen_y,
+        )
 
-class MouseMove(MouseEvent, type=EventType.MOUSE_MOVE):
+
+@rich_repr
+class MouseMove(MouseEvent):
     pass
 
 
-class MouseDown(MouseEvent, type=EventType.MOUSE_DOWN):
+@rich_repr
+class MouseDown(MouseEvent):
     pass
 
 
-class MouseUp(MouseEvent, type=EventType.MOUSE_UP):
+@rich_repr
+class MouseUp(MouseEvent):
     pass
 
 
-class MouseScrollDown(InputEvent, type=EventType.MOUSE_SCROLL_DOWN):
+class MouseScrollDown(InputEvent, bubble=True):
     __slots__ = ["x", "y"]
 
     def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
@@ -186,20 +188,20 @@ class MouseScrollDown(InputEvent, type=EventType.MOUSE_SCROLL_DOWN):
         self.y = y
 
 
-class MouseScrollUp(MouseScrollDown, type=EventType.MOUSE_SCROLL_UP):
+class MouseScrollUp(MouseScrollDown, bubble=True):
     pass
 
 
-class Click(MouseEvent, type=EventType.CLICK):
+class Click(MouseEvent):
     pass
 
 
-class DoubleClick(MouseEvent, type=EventType.DOUBLE_CLICK):
+class DoubleClick(MouseEvent):
     pass
 
 
 @rich_repr
-class Timer(Event, type=EventType.TIMER):
+class Timer(Event):
     __slots__ = ["time", "count", "callback"]
 
     def __init__(
@@ -218,32 +220,22 @@ class Timer(Event, type=EventType.TIMER):
         yield self.timer.name
 
 
-@rich_repr
-class Enter(Event, type=EventType.ENTER):
-    __slots__ = ["x", "y"]
-
-    def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
-        super().__init__(sender)
-        self.x = x
-        self.y = y
-
-    def __rich_repr__(self) -> RichReprResult:
-        yield "x", self.x
-        yield "y", self.y
-
-
-class Leave(Event, type=EventType.LEAVE):
+class Enter(Event):
     pass
 
 
-class Focus(Event, type=EventType.FOCUS):
+class Leave(Event):
     pass
 
 
-class Blur(Event, type=EventType.BLUR):
+class Focus(Event):
     pass
 
 
-class Update(Event, type=EventType.UPDATE):
+class Blur(Event):
+    pass
+
+
+class Update(Event):
     def can_batch(self, event: Message) -> bool:
         return isinstance(event, Update) and event.sender == self.sender

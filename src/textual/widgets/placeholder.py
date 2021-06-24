@@ -19,7 +19,7 @@ class Placeholder(Widget, can_focus=True):
         yield "has_focus", self.has_focus
         yield "mouse_over", self.mouse_over
 
-    def render(self, console: Console, options: ConsoleOptions) -> RenderableType:
+    def render(self) -> RenderableType:
         return Panel(
             Align.center(Pretty(self), vertical="middle"),
             title=self.__class__.__name__,

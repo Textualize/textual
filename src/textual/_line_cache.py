@@ -5,9 +5,11 @@ import logging
 
 from typing import Iterable
 
+from rich.cells import cell_len
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.control import Control
 from rich.segment import Segment
+from rich.style import Style
 
 from ._loop import loop_last
 
@@ -57,3 +59,15 @@ class LineCache:
                 if not last:
                     yield new_line
         self._dirty[:] = [False] * len(self.lines)
+
+    def get_style_at(self, x: int, y: int) -> Style:
+        try:
+            line = self.lines[y]
+        except IndexError:
+            return Style.null()
+        end = 0
+        for segment in line:
+            end += cell_len(segment.text)
+            if x < end:
+                return segment.style or Style.null()
+        return Style.null()
