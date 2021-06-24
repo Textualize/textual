@@ -56,6 +56,12 @@ class Timer:
     def stop(self) -> None:
         self._stop_event.set()
 
+    async def pause(self) -> None:
+        pass
+
+    async def resume(self) -> None:
+        pass
+
     async def run(self) -> None:
         count = 0
         _repeat = self._repeat

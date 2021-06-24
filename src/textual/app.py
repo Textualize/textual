@@ -16,6 +16,7 @@ from rich.console import Console, RenderableType
 
 from . import events
 from . import actions
+from ._animator import Animator
 from ._context import active_app
 from .driver import Driver
 from ._linux_driver import LinuxDriver
@@ -75,12 +76,17 @@ class App(MessagePump):
         self._driver: Driver | None = None
 
         self._action_targets = {"app": self, "view": self.view}
+        self._animator = Animator(self)
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "title", self.title
 
     def __rich__(self) -> RenderableType:
         return self.view
+
+    @property
+    def animator(self) -> Animator:
+        return self._animator
 
     @classmethod
     def run(
@@ -180,7 +186,9 @@ class App(MessagePump):
         except Exception:
             log.exception("error starting application mode")
             raise
+        await self.animator.start()
         await super().process_messages()
+        await self.animator.stop()
 
         await self.view.close_messages()
         driver.stop_application_mode()

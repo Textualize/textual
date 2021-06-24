@@ -38,7 +38,7 @@ class ScrollView(LayoutView):
     y: Reactive[float] = Reactive(0)
 
     def validate_y(self, value: float) -> int:
-        return max(0, value)
+        return max(0, round(value))
 
     def update_y(self, old_value: float, new_value: float) -> None:
         self._page.y = int(new_value)
@@ -69,6 +69,6 @@ class ScrollView(LayoutView):
         elif event.key == "up":
             self.y -= 1
         elif event.key == "pagedown":
-            self._animator.animate("y", self.y + self.size.height, duration=1)
+            self.app.animator.animate(self, "y", self.y + self.size.height, duration=1)
         elif event.key == "pageup":
-            self._animator.animate("y", self.y - self.size.height, duration=1)
+            self.app.animator.animate(self, "y", self.y - self.size.height, duration=1)

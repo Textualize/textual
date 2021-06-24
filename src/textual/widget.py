@@ -6,7 +6,6 @@ from typing import (
     ClassVar,
     Generic,
     Iterable,
-    NamedTuple,
     TypeVar,
     TYPE_CHECKING,
 )
@@ -21,7 +20,6 @@ from rich.segment import Segment
 from rich.style import Style
 
 from . import events
-from .animator import Animator
 from ._context import active_app
 from ._loop import loop_last
 from ._line_cache import LineCache
@@ -116,7 +114,6 @@ class WidgetBase(MessagePump):
         self._repaint_required = False
 
         super().__init__()
-        self._animator = Animator(self)
         # self.disable_messages(events.MouseMove)
 
     def __init_subclass__(

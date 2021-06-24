@@ -1,15 +1,19 @@
 from __future__ import annotations
 
 import logging
-from .message_pump import MessagePump
-from ._timer import Timer
+
+import asyncio
 from time import time
 from typing import Callable
 
 from dataclasses import dataclass
 
+from ._timer import Timer
+from ._types import MessageTarget
+from .message_pump import MessagePump
 
 EasingFunction = Callable[[float], float]
+
 
 LinearEasing = lambda value: value
 
@@ -23,6 +27,7 @@ log = logging.getLogger("rich")
 
 @dataclass
 class Animation:
+    obj: object
     attribute: str
     start_time: float
     duration: float
@@ -39,22 +44,29 @@ class Animation:
 
 
 class Animator:
-    def __init__(self, obj: MessagePump) -> None:
-        self.obj = obj
-        self._animations: dict[str, Animation] = {}
-        self._timer: Timer | None = None
+    def __init__(self, target: MessageTarget) -> None:
+        self._animations: dict[tuple[object, str], Animation] = {}
+        self._timer: Timer = Timer(target, 1 / 30, target, callback=self)
+
+    async def start(self) -> None:
+        asyncio.get_event_loop().create_task(self._timer.run())
+
+    async def stop(self) -> None:
+        self._timer.stop()
 
     def animate(
         self,
+        obj: object,
         attribute: str,
         value: float,
         duration: float = 1,
         easing: EasingFunction = InOutCubitEasing,
     ) -> None:
-        start_value = getattr(self.obj, attribute)
+        start_value = getattr(obj, attribute)
         start_time = time()
 
         animation = Animation(
+            obj,
             attribute=attribute,
             start_time=start_time,
             duration=duration,
@@ -62,20 +74,14 @@ class Animator:
             end_value=value,
             easing_function=easing,
         )
-        self._animations[attribute] = animation
-        if self._timer is None:
-            self._timer = self.obj.set_interval(0.02, callback=self)
+        self._animations[(obj, attribute)] = animation
 
     async def __call__(self) -> None:
         log.debug("ANIMATION FRAME")
         animation_time = time()
-        if all(
-            animation(self.obj, animation_time)
-            for animation in self._animations.values()
-        ):
-            if self._timer is not None:
-                self._timer.stop()
-                self._timer = None
-
-        for _attribute, animation in self._animations.items():
-            animation(self.obj, animation_time)
+        animation_keys = list(self._animations.keys())
+        for animation_key in animation_keys:
+            animation = self._animations[animation_key]
+            obj, _attribute = animation_key
+            if animation(obj, animation_time):
+                del self._animations[animation_key]
