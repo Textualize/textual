@@ -82,7 +82,6 @@ class Reactive(Generic[ReactiveType]):
 
     def __set__(self, obj: "WidgetBase", value: ReactiveType) -> None:
         if getattr(obj, self.internal_name) != value:
-            log.debug("%s -> %s", self.internal_name, value)
 
             current_value = getattr(obj, self.internal_name, None)
             validate_function = getattr(obj, f"validate_{self.name}", None)
@@ -205,10 +204,12 @@ class WidgetBase(MessagePump):
             Align.center(Pretty(self), vertical="middle"), title=self.__class__.__name__
         )
 
+    async def action(self, action: str, *params) -> None:
+        await self.app.action(action, self)
+
     async def post_message(self, message: Message) -> bool:
         if not self.check_message_enabled(message):
             return True
-
         return await super().post_message(message)
 
     async def on_event(self, event: events.Event) -> None:
@@ -221,7 +222,6 @@ class WidgetBase(MessagePump):
 
     async def on_idle(self, event: events.Idle) -> None:
         if self.check_repaint():
-            log.debug("REPAINTING")
             await self.repaint()
 
 
@@ -244,12 +244,14 @@ class Widget(WidgetBase):
             self._line_cache = LineCache.from_renderable(
                 self.console, renderable, width, height
             )
-            log.debug("%.1fms %r render elapsed", (time() - start) * 1000, self)
         assert self._line_cache is not None
         return self._line_cache
 
     # def __rich__(self) -> LineCache:
     #     return self.line_cache
+
+    async def focus(self) -> None:
+        await self.app.set_focus(self)
 
     def get_style_at(self, x: int, y: int) -> Style:
         return self.line_cache.get_style_at(x, y)
@@ -279,7 +281,9 @@ class Widget(WidgetBase):
         yield from self.line_cache.render(x, y, width, height)
 
     async def on_mouse_move(self, event: events.MouseMove) -> None:
-        log.debug("%r", self.get_style_at(event.x, event.y))
+        style_under_cursor = self.get_style_at(event.x, event.y)
+        if style_under_cursor:
+            log.debug("%r", style_under_cursor)
 
     async def on_mouse_up(self, event: events.MouseUp) -> None:
         style = self.get_style_at(event.x, event.y)

@@ -50,7 +50,7 @@ class View(ABC, WidgetBase):
     ) -> None:
         ...
 
-    async def mount_all(self, **widgets: Widget) -> None:
+    async def mount_all(self, **widgets: WidgetBase) -> None:
         for slot, widget in widgets.items():
             await self.mount(widget, slot=slot)
         self.require_repaint()
@@ -129,9 +129,7 @@ class LayoutView(View):
                     if not isinstance(widget, WidgetBase):
                         continue
 
-                    log.debug("%r is_root %r", self, self.is_root_view)
                     if self.is_root_view:
-                        log.debug("RENDERING %r %r %r", widget, message, region)
                         try:
                             update = widget.render_update(
                                 region.x + message.offset_x, region.y + message.offset_y
@@ -151,7 +149,8 @@ class LayoutView(View):
                         )
                     break
             else:
-                log.warning("Update widget not found")
+                pass
+                # log.warning("Update widget not found")
 
     # async def on_create(self, event: events.Created) -> None:
     #     await self.mount(Header(self.title))
@@ -188,14 +187,11 @@ class LayoutView(View):
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         try:
             widget, region = self.get_widget_at(event.x, event.y, deep=True)
-            log.debug("MOVE =%r %r", widget, region)
-            log.debug("mouse over %r %r", widget, region)
         except NoWidget:
             await self.app.set_mouse_over(None)
         else:
             await self.app.set_mouse_over(widget)
 
-            log.debug("posting mouse move to %r", widget)
             await widget.forward_event(
                 events.MouseMove(
                     self,
@@ -209,7 +205,7 @@ class LayoutView(View):
             )
 
     async def forward_event(self, event: events.Event) -> None:
-        log.debug("FORWARD %r %r", self, event)
+
         if isinstance(event, (events.Enter, events.Leave)):
             await self.post_message(event)
 
@@ -217,7 +213,6 @@ class LayoutView(View):
             await self._on_mouse_move(event)
 
         elif isinstance(event, events.MouseEvent):
-            log.debug("MOUSE %r", event)
             try:
                 widget, region = self.get_widget_at(event.x, event.y, deep=True)
             except NoWidget:

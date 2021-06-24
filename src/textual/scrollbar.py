@@ -13,7 +13,16 @@ from rich.style import Style, StyleType
 log = logging.getLogger("rich")
 
 from . import events
+from .message import Message
 from .widget import Reactive, Widget
+
+
+class ScrollUp(Message, bubble=True):
+    pass
+
+
+class ScrollDown(Message, bubble=True):
+    pass
 
 
 class ScrollBarRender:

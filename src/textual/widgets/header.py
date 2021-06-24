@@ -51,5 +51,4 @@ class Header(Widget):
         return header
 
     async def on_mount(self, event: events.Mount) -> None:
-        return
         self.set_interval(1.0, callback=self.refresh)

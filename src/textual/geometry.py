@@ -1,6 +1,23 @@
 from __future__ import annotations
 
-from typing import Any, NamedTuple
+from typing import Any, NamedTuple, TypeVar
+
+
+T = TypeVar("T", int, float)
+
+
+def clamp(value: T, minimum: T, maximum: T) -> T:
+    """Clamps a value between two other values.
+
+    Args:
+        value (T): A value
+        minimum (T): Minimum value
+        maximum (T): maximum value
+
+    Returns:
+        T: New value that is not less than the minimum or greater than the maximum.
+    """
+    return min(max(value, minimum), maximum)
 
 
 class Point(NamedTuple):

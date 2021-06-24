@@ -135,7 +135,7 @@ class MessagePump:
                 log.exception("error in get_message()")
                 raise error from None
 
-            log.debug("%r -> %r", message, self)
+            # log.debug("%r -> %r", message, self)
             # Combine any pending messages that may supersede this one
             while not (self._closed or self._closing):
                 pending = self.peek_message()
@@ -174,7 +174,8 @@ class MessagePump:
             await dispatch_function(event)
         if event.bubble and self._parent and not event._stop_propagaton:
             if event.sender == self._parent:
-                log.debug("bubbled event abandoned; %r", event)
+                pass
+                # log.debug("bubbled event abandoned; %r", event)
             elif not self._parent._closed and not self._parent._closing:
                 await self._parent.post_message(event)
 
@@ -204,7 +205,6 @@ class MessagePump:
 
     async def emit(self, message: Message) -> bool:
         if self._parent:
-            log.debug("EMIT %r -> %r %r", self, self._parent, message)
             await self._parent.post_message_from_child(message)
             return True
         else:

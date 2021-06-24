@@ -41,6 +41,7 @@ class Timer:
         self._repeat = repeat
         self._stop_event = Event()
         self._active = Event()
+        self._active.set()
 
     def __rich_repr__(self) -> RichReprResult:
         yield self._interval

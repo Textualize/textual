@@ -62,6 +62,17 @@ class Idle(Event):
     """Sent when there are no more items in the message queue."""
 
 
+class Action(Event):
+    __slots__ = ["action"]
+
+    def __init__(self, sender: MessageTarget, action: str) -> None:
+        super().__init__(sender)
+        self.action = action
+
+    def __rich_repr__(self) -> RichReprResult:
+        yield "action", self.action
+
+
 class Resize(Event):
     __slots__ = ["width", "height"]
     width: int
@@ -168,7 +179,7 @@ class MouseUp(MouseEvent):
     pass
 
 
-class MouseScrollDown(InputEvent):
+class MouseScrollDown(InputEvent, bubble=True):
     __slots__ = ["x", "y"]
 
     def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
@@ -177,7 +188,7 @@ class MouseScrollDown(InputEvent):
         self.y = y
 
 
-class MouseScrollUp(MouseScrollDown):
+class MouseScrollUp(MouseScrollDown, bubble=True):
     pass
 
 

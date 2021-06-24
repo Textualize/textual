@@ -32,14 +32,14 @@ class PageRender:
     def move_to(self, x: int = 0, y: int = 0) -> None:
         self.offset = Point(x, y)
 
-    def refresh(self) -> None:
+    def clear(self) -> None:
         self._render_width = None
         self._render_height = None
         del self._lines[:]
 
     def update(self, renderable: RenderableType) -> None:
         self.renderable = renderable
-        self.refresh()
+        self.clear()
 
     def render(self, console: Console, options: ConsoleOptions) -> None:
         width = self.width or options.max_width or console.width
@@ -84,12 +84,23 @@ class Page(Widget):
     x: Reactive[int] = Reactive(0)
     y: Reactive[int] = Reactive(0)
 
+    @property
+    def contents_size(self) -> Dimensions:
+        return self._page.size
+
     def validate_y(self, value: int) -> int:
         return max(0, value)
 
     def update_y(self, old: int, new: int) -> None:
         x, y = self._page.offset
         self._page.offset = Point(x, new)
+
+    def update(self, renderable: RenderableType | None = None) -> None:
+
+        if renderable:
+            self._page.update(renderable)
+        else:
+            self._page.clear()
 
     @property
     def virtual_size(self) -> Dimensions:

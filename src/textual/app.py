@@ -1,4 +1,5 @@
 from __future__ import annotations
+from argparse import Action
 
 import asyncio
 
@@ -13,6 +14,7 @@ import rich.repr
 from rich.screen import Screen
 from rich import get_console
 from rich.console import Console, RenderableType
+from rich.traceback import Traceback
 
 from . import events
 from . import actions
@@ -43,6 +45,10 @@ LayoutDefinition = "dict[str, Any]"
 #     pass
 # else:
 #     uvloop.install()
+
+
+class ActionError(Exception):
+    pass
 
 
 class ShutdownError(Exception):
@@ -163,18 +169,10 @@ class App(MessagePump):
                     self.mouse_over = widget
 
     async def process_messages(self) -> None:
-        try:
-            await self._process_messages()
-        except Exception:
-            self.console.print_exception(show_locals=True)
-
-    async def _process_messages(self) -> None:
         log.debug("driver=%r", self.driver_class)
-        loop = asyncio.get_event_loop()
-
-        loop.add_signal_handler(signal.SIGINT, self.on_keyboard_interupt)
+        # loop = asyncio.get_event_loop()
+        # loop.add_signal_handler(signal.SIGINT, self.on_keyboard_interupt)
         driver = self._driver = self.driver_class(self.console, self)
-
         active_app.set(self)
         self.view.set_parent(self)
         await self.add(self.view)
@@ -184,14 +182,21 @@ class App(MessagePump):
         try:
             driver.start_application_mode()
         except Exception:
+            self.console.print_exception()
             log.exception("error starting application mode")
-            raise
-        await self.animator.start()
-        await super().process_messages()
-        await self.animator.stop()
+        else:
+            traceback: Traceback | None = None
+            await self.animator.start()
+            try:
+                await super().process_messages()
+            except Exception:
+                traceback = Traceback(show_locals=True)
 
-        await self.view.close_messages()
-        driver.stop_application_mode()
+            await self.animator.stop()
+            await self.view.close_messages()
+            driver.stop_application_mode()
+            if traceback is not None:
+                self.console.print(traceback)
 
     async def add(self, child: MessagePump) -> None:
         self.children.add(child)
@@ -229,32 +234,35 @@ class App(MessagePump):
         else:
             await super().on_event(event)
 
-    async def action(self, action: str) -> None:
+    async def action(
+        self, action: str, default_namespace: object | None = None
+    ) -> None:
         """Perform an action.
 
         Args:
             action (str): Action encoded in a string.
         """
-
+        default_target = default_namespace or self
         target, params = actions.parse(action)
         if "." in target:
             destination, action_name = target.split(".", 1)
+            action_target = self._action_targets.get(destination, None)
+            if action_target is None:
+                raise ActionError("Action namespace {destination} is not known")
         else:
-            destination = "app"
+            action_target = default_namespace or self
             action_name = action
 
-        log.debug("ACTION %r %r", destination, action_name)
-        await self.dispatch_action(destination, action_name, params)
+        log.debug("ACTION %r %r", action_target, action_name)
+        await self.dispatch_action(action_target, action_name, params)
 
     async def dispatch_action(
-        self, destination: str, action_name: str, params: Any
+        self, namespace: object, action_name: str, params: Any
     ) -> None:
-        action_target = self._action_targets.get(destination, None)
-        if action_target is not None:
-            method_name = f"action_{action_name}"
-            method = getattr(action_target, method_name, None)
-            if method is not None:
-                await method(*params)
+        method_name = f"action_{action_name}"
+        method = getattr(namespace, method_name, None)
+        if method is not None:
+            await method(*params)
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log.debug("shutdown request")
