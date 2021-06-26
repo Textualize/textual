@@ -22,6 +22,7 @@ from rich.style import Style
 from . import events
 from ._animator import BoundAnimator
 from ._context import active_app
+from .layout import LayoutOptions
 from ._loop import loop_last
 from ._line_cache import LineCache
 from .message import Message
@@ -105,14 +106,18 @@ class WidgetBase(MessagePump):
     can_focus: bool = False
 
     def __init__(self, name: str | None = None) -> None:
-        Widget._counts.setdefault(self.__class__.__name__, 1)
-        _count = self._counts[self.__class__.__name__]
-        self.name = name or f"{self.__class__.__name__}#{_count}"
+        class_name = self.__class__.__name__
+        Widget._counts.setdefault(class_name, 0)
+        Widget._counts[class_name] += 1
+        _count = self._counts[class_name]
+        self.name = name or f"{class_name}#{_count}"
 
         self.size = Dimensions(0, 0)
         self.size_changed = False
         self._repaint_required = False
         self._animate: BoundAnimator | None = None
+
+        self.layout_options = LayoutOptions()
 
         super().__init__()
         # self.disable_messages(events.MouseMove)
@@ -235,7 +240,6 @@ class Widget(WidgetBase):
 
         if self._line_cache is None:
             width, height = self.size
-            start = time()
             try:
                 renderable = self.render()
             except Exception:
@@ -252,6 +256,9 @@ class Widget(WidgetBase):
 
     async def focus(self) -> None:
         await self.app.set_focus(self)
+
+    async def capture_mouse(self, capture: bool = True) -> None:
+        await self.app.capture_mouse(self if capture else None)
 
     def get_style_at(self, x: int, y: int) -> Style:
         return self.line_cache.get_style_at(x, y)
@@ -289,7 +296,7 @@ class Widget(WidgetBase):
         style = self.get_style_at(event.x, event.y)
         if "@click" in style.meta:
             log.debug(style._link_id)
-            await self.app.action(style.meta["@click"])
+            await self.app.action(style.meta["@click"], default_namespace=self)
 
 
 class StaticWidget(Widget):

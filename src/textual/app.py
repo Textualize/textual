@@ -79,6 +79,7 @@ class App(MessagePump):
 
         self.focused: WidgetBase | None = None
         self.mouse_over: WidgetBase | None = None
+        self.mouse_captured: WidgetBase | None = None
         self._driver: Driver | None = None
 
         self._action_targets = {"app": self, "view": self.view}
@@ -168,6 +169,10 @@ class App(MessagePump):
                 finally:
                     self.mouse_over = widget
 
+    async def capture_mouse(self, widget: WidgetBase | None) -> None:
+        """Send all Mouse events to a given widget."""
+        self.mouse_captured = widget
+
     async def process_messages(self) -> None:
         log.debug("driver=%r", self.driver_class)
         # loop = asyncio.get_event_loop()
@@ -242,7 +247,6 @@ class App(MessagePump):
         Args:
             action (str): Action encoded in a string.
         """
-        default_target = default_namespace or self
         target, params = actions.parse(action)
         if "." in target:
             destination, action_name = target.split(".", 1)

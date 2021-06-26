@@ -21,8 +21,15 @@ def clamp(value: T, minimum: T, maximum: T) -> T:
 
 
 class Point(NamedTuple):
+    """A point defined by x and y coordinates."""
+
     x: int
     y: int
+
+    @property
+    def is_origin(self) -> bool:
+        x, y = self
+        return x == 0 and y == 0
 
     def __add__(self, other: object) -> Point:
         if isinstance(other, Point):
@@ -31,13 +38,58 @@ class Point(NamedTuple):
             return Point(_x + x, _y + y)
         raise NotImplemented
 
+    def __sub__(self, other: object) -> Point:
+        if isinstance(other, Point):
+            _x, _y = self
+            x, y = other
+            return Point(_x - x, _y - y)
+        raise NotImplemented
+
 
 class Dimensions(NamedTuple):
+    """An area defined by its width and height."""
+
     width: int
     height: int
 
     def __bool__(self) -> bool:
         return self.width * self.height != 0
+
+    def contains(self, x: int, y: int) -> bool:
+        """Check if a point is in the region.
+
+        Args:
+            x (int): X coordinate (column)
+            y (int): Y coordinate (row)
+
+        Returns:
+            bool: True if the point is within the region.
+        """
+        width, height = self
+        return width > x >= 0 and height > y >= 0
+
+    def contains_point(self, point: tuple[int, int]) -> bool:
+        """Check if a point is in the region.
+
+        Args:
+            point (tuple[int, int]): A tuple of x and y coordinates.
+
+        Returns:
+            bool: True if the point is within the region.
+        """
+        x, y = point
+        width, height = self
+        return width > x >= 0 and height > y >= 0
+
+    def __contains__(self, other: Any) -> bool:
+        try:
+            x, y = other
+        except Exception:
+            raise TypeError(
+                "Dimensions.__contains__ requires an iterable of two integers"
+            )
+        width, height = self
+        return width > x >= 0 and height > y >= 0
 
 
 class Region(NamedTuple):
@@ -53,7 +105,29 @@ class Region(NamedTuple):
 
     @property
     def area(self) -> int:
+        """Get the area within the region."""
         return self.width * self.height
+
+    @property
+    def origin(self) -> Point:
+        """Get the start point of the region."""
+        return Point(self.x, self.y)
+
+    @property
+    def limit(self) -> Point:
+        x, y, width, height = self
+        return Point(x + width, y + height)
+
+    @property
+    def limit_inclusive(self) -> Point:
+        """Get the end point of the region."""
+        x, y, width, height = self
+        return Point(x + width - 1, y + height - 1)
+
+    @property
+    def size(self) -> Dimensions:
+        """Get the size of the region."""
+        return Dimensions(self.width, self.height)
 
     def contains(self, x: int, y: int) -> bool:
         """Check if a point is in the region.
@@ -69,11 +143,29 @@ class Region(NamedTuple):
         return ((self_x + width) > x >= self_x) and (((self_y + height) > y >= self_y))
 
     def contains_point(self, point: tuple[int, int]) -> bool:
+        """Check if a point is in the region.
+
+        Args:
+            point (tuple[int, int]): A tuple of x and y coordinates.
+
+        Returns:
+            bool: True if the point is within the region.
+        """
         self_x, self_y, width, height = self
         x, y = point
         return ((self_x + width) > x >= self_x) and (((self_y + height) > y >= self_y))
 
     def translate(self, x: int, y: int) -> Region:
+        """Move the origin of the Region.
+
+        Args:
+            x (int): x Coordinate.
+            y (int): y Coordinate.
+
+        Returns:
+            Region: A new region shifted by x, y
+        """
+
         _x, _y, width, height = self
         return Region(_x + x, _y + y, width, height)
 

@@ -197,6 +197,8 @@ class LayoutView(View):
                     self,
                     event.x - region.x,
                     event.y - region.y,
+                    event.delta_x,
+                    event.delta_y,
                     event.button,
                     event.shift,
                     event.meta,

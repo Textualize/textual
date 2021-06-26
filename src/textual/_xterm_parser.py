@@ -22,18 +22,22 @@ class XTermParser(Parser[events.Event]):
     def __init__(self, sender: MessageTarget, more_data: Callable[[], bool]) -> None:
         self.sender = sender
         self.more_data = more_data
+        self.last_x = 0
+        self.last_y = 0
         super().__init__()
 
-    @classmethod
-    def parse_mouse_code(cls, code: str, sender: MessageTarget) -> events.Event | None:
-
-        sgr_match = cls._re_sgr_mouse.match(code)
+    def parse_mouse_code(self, code: str, sender: MessageTarget) -> events.Event | None:
+        sgr_match = self._re_sgr_mouse.match(code)
         if sgr_match:
             _buttons, _x, _y, state = sgr_match.groups()
             buttons = int(_buttons)
             button = buttons & 3
             x = int(_x) - 1
             y = int(_y) - 1
+            delta_x = x - self.last_x
+            delta_y = y - self.last_y
+            self.last_x = x
+            self.last_y = y
             event: events.Event
             if buttons & 64:
                 event = (
@@ -48,6 +52,8 @@ class XTermParser(Parser[events.Event]):
                     sender,
                     x,
                     y,
+                    delta_x,
+                    delta_y,
                     button,
                     bool(buttons & 4),
                     bool(buttons & 8),

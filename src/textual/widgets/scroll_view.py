@@ -8,7 +8,8 @@ from rich.style import StyleType
 from rich.text import Text
 
 from .. import events
-from ..scrollbar import ScrollBar
+from ..message import Message
+from ..scrollbar import ScrollBar, ScrollDown, ScrollUp
 from ..geometry import clamp
 from ..page import Page
 from ..view import LayoutView
@@ -67,12 +68,26 @@ class ScrollView(LayoutView):
         await super().on_idle(event)
 
     async def on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
+        self.scroll_up()
+
+    async def on_mouse_scroll_down(self, event: events.MouseScrollUp) -> None:
+        self.scroll_down()
+
+    def scroll_up(self) -> None:
         self.target_y += 1.5
         self.animate("y", self.target_y, easing="out_cubic", speed=80)
 
-    async def on_mouse_scroll_down(self, event: events.MouseScrollUp) -> None:
+    def scroll_down(self) -> None:
         self.target_y -= 1.5
         self.animate("y", self.target_y, easing="out_cubic", speed=80)
+
+    def page_up(self) -> None:
+        self.target_y -= self.size.height
+        self.animate("y", self.target_y, easing="out_cubic")
+
+    def page_down(self) -> None:
+        self.target_y += self.size.height
+        self.animate("y", self.target_y, easing="out_cubic")
 
     async def on_key(self, event: events.Key) -> None:
         key = event.key
@@ -93,3 +108,11 @@ class ScrollView(LayoutView):
         if self.fluid:
             self._page.update()
         await super().on_resize(event)
+
+    async def on_message(self, message: Message) -> None:
+        if isinstance(message, ScrollUp):
+            self.page_up()
+        elif isinstance(message, ScrollDown):
+            self.page_down()
+        else:
+            await super().on_message(message)

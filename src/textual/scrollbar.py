@@ -76,11 +76,8 @@ class ScrollBarRender:
         _Style = Style
         blank = " " * width_thickness
 
-        background_meta = {"background": True}
         foreground_meta = {"background": False}
 
-        back_segment = Segment(blank, _Style(bgcolor=back, meta=background_meta))
-        segments = [back_segment] * int(size)
         if window_size and size and virtual_size:
             step_size = virtual_size / size
 
@@ -89,6 +86,15 @@ class ScrollBarRender:
 
             start_index, start_bar = divmod(start, 8)
             end_index, end_bar = divmod(end, 8)
+
+            upper = {"@click": "scroll_up"}
+            lower = {"@click": "scroll_down"}
+
+            upper_back_segment = Segment(blank, _Style(bgcolor=back, meta=upper))
+            lower_back_segment = Segment(blank, _Style(bgcolor=back, meta=lower))
+
+            segments = [upper_back_segment] * int(size)
+            segments[end_index:] = [lower_back_segment] * (size - end_index)
 
             segments[start_index:end_index] = [
                 _Segment(blank, _Style(bgcolor=bar, meta=foreground_meta))
@@ -108,6 +114,8 @@ class ScrollBarRender:
                     if vertical
                     else _Style(bgcolor=back, color=bar, meta=foreground_meta),
                 )
+        else:
+            segments = [_Segment(blank)] * int(size)
         if vertical:
             return Segments(segments, new_lines=True)
         else:
@@ -176,6 +184,12 @@ class ScrollBar(Widget):
 
     async def on_leave(self, event: events.Leave) -> None:
         self.mouse_over = False
+
+    async def action_scroll_down(self) -> None:
+        await self.emit(ScrollDown(self))
+
+    async def action_scroll_up(self) -> None:
+        await self.emit(ScrollUp(self))
 
 
 if __name__ == "__main__":

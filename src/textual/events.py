@@ -62,7 +62,7 @@ class Idle(Event):
     """Sent when there are no more items in the message queue."""
 
 
-class Action(Event):
+class Action(Event, bubble=True):
     __slots__ = ["action"]
 
     def __init__(self, sender: MessageTarget, action: str) -> None:
@@ -121,6 +121,8 @@ class MouseEvent(InputEvent):
         sender: MessageTarget,
         x: int,
         y: int,
+        delta_x: int,
+        delta_y: int,
         button: int,
         shift: bool,
         meta: bool,
@@ -131,6 +133,8 @@ class MouseEvent(InputEvent):
         super().__init__(sender)
         self.x = x
         self.y = y
+        self.delta_x = delta_x
+        self.delta_y = delta_y
         self.button = button
         self.shift = shift
         self.meta = meta
@@ -141,6 +145,8 @@ class MouseEvent(InputEvent):
     def __rich_repr__(self) -> RichReprResult:
         yield "x", self.x
         yield "y", self.y
+        yield "delta_x", self.delta_x, 0
+        yield "delta_y", self.delta_y, 0
         if self.screen_x != self.x:
             yield "screen_x", self.screen_x
         if self.screen_y != self.y:
@@ -155,6 +161,8 @@ class MouseEvent(InputEvent):
             self.sender,
             x=self.x + x,
             y=self.y + y,
+            delta_x=self.delta_x,
+            delta_y=self.delta_y,
             button=self.button,
             shift=self.shift,
             meta=self.meta,
