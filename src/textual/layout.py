@@ -6,6 +6,7 @@ from itertools import chain
 from time import time
 from typing import cast, Iterable, TYPE_CHECKING
 
+import rich.repr
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.segment import Segment, SegmentLines
 from rich.style import Style
@@ -35,10 +36,13 @@ if TYPE_CHECKING:
 
 
 class LayoutBase(ABC):
-    def __init__(self, widgets: Iterable[Widget]) -> None:
-        self._widgets = list(widgets)
+    def __init__(self) -> None:
+        self._widgets: list[WidgetBase] = []
         self.map: LayoutMap = {}
-        self.window: Region = Region(0, 0, 0, 0)
+
+    @property
+    def widgets(self) -> list[WidgetBase]:
+        return self._widgets
 
     @abstractmethod
     def reflow(self, console: Console, width: int, height: int) -> None:
@@ -123,12 +127,10 @@ class LayoutBase(ABC):
 
 
 class Vertical(LayoutBase):
-    def __init__(
-        self, widgets: Iterable[WidgetBase], gutter: int = 0, padding: int = 0
-    ) -> None:
+    def __init__(self, gutter: int = 0, padding: int = 0) -> None:
         self.gutter = gutter
         self.padding = padding
-        super().__init__(widgets)
+        super().__init__()
 
     @property
     def widgets(self) -> list[WidgetBase]:
@@ -164,7 +166,8 @@ if __name__ == "__main__":
 
     console = Console()
 
-    v = Vertical([Placeholder() for _ in range(10)], 3, -1)
+    v = Vertical(3, 2)
+    v.widgets[:] = [Placeholder() for _ in range(10)]
     v.reflow(console, console.width, console.height)
 
     from rich import print
