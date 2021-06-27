@@ -117,7 +117,7 @@ class WidgetBase(MessagePump):
         self._repaint_required = False
         self._animate: BoundAnimator | None = None
 
-        self.layout_options = LayoutOptions()
+        self.layout = LayoutOptions()
 
         super().__init__()
         # self.disable_messages(events.MouseMove)

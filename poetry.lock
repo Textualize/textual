@@ -73,7 +73,7 @@ jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 type = "git"
 url = "git@github.com:willmcgugan/rich"
 reference = "auto-repr-fix"
-resolved_reference = "c54ff2a8801807709dd6cad3921e36f1db7d2bc9"
+resolved_reference = "a905b3da4cf6d5f53cfcaa076cb9d35a346e7a52"
 
 [[package]]
 name = "toml"

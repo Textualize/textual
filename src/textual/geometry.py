@@ -129,6 +129,32 @@ class Region(NamedTuple):
         """Get the size of the region."""
         return Dimensions(self.width, self.height)
 
+    @property
+    def extents(self) -> tuple[int, int, int, int]:
+        """Get the maxima and minima of region.
+
+        Returns:
+            tuple[int, int, int, int]: A tuple of (<min x>, <max x>, <min y>, <max y>)
+        """
+        x, y, width, height = self
+        return x, width + x, y, height + y
+
+    def overlaps(self, other: Region) -> bool:
+        """Check if another region overlaps this region.
+
+        Args:
+            other (Region): A Region.
+
+        Returns:
+            bool: True if other region shares any cells with this region.
+        """
+        x, x2, y, y2 = self.extents
+        ox, ox2, oy, oy2 = other.extents
+
+        return ((x2 > ox >= x) or (x2 > ox2 >= x) or (ox < x and ox2 > x2)) and (
+            (y2 > oy >= y) or (y2 > oy2 >= y) or (oy < y and oy2 > x2)
+        )
+
     def contains(self, x: int, y: int) -> bool:
         """Check if a point is in the region.
 

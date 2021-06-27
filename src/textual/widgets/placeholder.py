@@ -3,21 +3,23 @@ from rich.align import Align
 from rich.console import Console, ConsoleOptions, RenderableType
 from rich.panel import Panel
 from rich.pretty import Pretty
-from rich.repr import RichReprResult
+import rich.repr
 
 from .. import events
 from ..widget import Reactive, Widget
 
 
+@rich.repr.auto(angular=True)
 class Placeholder(Widget, can_focus=True):
 
     has_focus: Reactive[bool] = Reactive(False)
     mouse_over: Reactive[bool] = Reactive(False)
 
-    def __rich_repr__(self) -> RichReprResult:
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "name", self.name
         yield "has_focus", self.has_focus
         yield "mouse_over", self.mouse_over
+        yield "layout", self.layout
 
     def render(self) -> RenderableType:
         return Panel(
