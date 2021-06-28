@@ -115,12 +115,11 @@ if __name__ == "__main__":
         ],
     )
 
-    areas = (
-        {
-            "sidebar": "start-sidebar end-sidebar start-content end-content",
-            "footer": "start-footer end-footer 1 1",
-        },
-    )
+    areas = {
+        "sidebar": "start-sidebar end-sidebar start-content end-content",
+        "footer": "start-footer end-footer 1 1",
+    }
+
     sidebar = "start-sidebar end-sidebar start-content end-content"
 
     from rich.console import Console

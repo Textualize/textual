@@ -27,7 +27,7 @@ from ._loop import loop_last
 from ._line_cache import LineCache
 from .message import Message
 from .message_pump import MessagePump
-from .geometry import Dimensions
+from .geometry import Point, Dimensions
 
 from time import time
 
@@ -115,9 +115,8 @@ class WidgetBase(MessagePump):
         self.size = Dimensions(0, 0)
         self.size_changed = False
         self._repaint_required = False
-        self._animate: BoundAnimator | None = None
-
-        self.layout = LayoutOptions()
+        self._animate: BoundAnimator | None = None        
+        self.offset = Point(0, 0)
 
         super().__init__()
         # self.disable_messages(events.MouseMove)

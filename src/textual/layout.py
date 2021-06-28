@@ -3,8 +3,9 @@ from __future__ import annotations
 from abc import ABC, abstractmethod, abstractmethod
 from dataclasses import dataclass
 from itertools import chain
+from operator import attrgetter
 from time import time
-from typing import cast, Iterable, TYPE_CHECKING
+from typing import cast, Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
@@ -29,10 +30,16 @@ class LayoutOptions:
     offset_y: int = 0
 
 
+class RegionRender(NamedTuple):
+    region: Region
+    lines: Lines
+    order: tuple[int, int]
+
+
 if TYPE_CHECKING:
     from .widget import Widget, WidgetBase
 
-    LayoutMap = dict[WidgetBase, tuple[Region, Lines]]
+    LayoutMap = dict[WidgetBase, RegionRender]
 
 
 class LayoutBase(ABC):
@@ -44,31 +51,28 @@ class LayoutBase(ABC):
     def widgets(self) -> list[WidgetBase]:
         return self._widgets
 
+    def _get_renders(self, width: int, height: int) -> Iterable[RegionRender]:
+        screen_region = Region(0, 0, width, height)
+        renders = sorted(self.map.values(), key=attrgetter("order"), reverse=True)
+        for region_render in renders:
+            if region_render.region in screen_region:
+                yield region_render
+            elif screen_region.overlaps(region_render.region):
+                region, lines, order = region_render
+                new_region = region.clip(width, height)
+                delta_x = new_region.x - region.x
+                delta_y = new_region.y - region.y
+                region = new_region
+                lines = lines[delta_y : region.height + delta_y]
+                lines = [
+                    list(Segment.divide(line, [delta_x, delta_x + region.width]))[1]
+                    for line in lines
+                ]
+                yield RegionRender(region, lines, order)
+
     @abstractmethod
     def reflow(self, console: Console, width: int, height: int) -> None:
         ...
-
-    # @timer("render")
-    # def render(self, console: Console, width: int, height: int) -> list[list[Segment]]:
-
-    #     _Segment = Segment
-    #     back = Style.parse("on blue")
-    #     output_lines = [[_Segment(" " * width, back, None)] for _ in range(height)]
-    #     divide = _Segment.divide
-    #     simplify = _Segment.simplify
-    #     for widget, (region, lines) in self.map.items():
-
-    #         for y, line in enumerate(lines, region.y):
-    #             try:
-    #                 output_line = output_lines[y]
-    #             except IndexError:
-    #                 break
-    #             pre, _occluded, post = divide(
-    #                 output_line, (region.x, region.x + region.width, width)
-    #             )
-    #             output_line[:] = chain(pre, line, post)
-
-    #     return output_lines
 
     @timer("render")
     def render(
@@ -79,7 +83,9 @@ class LayoutBase(ABC):
         divide = _Segment.divide
         back = Style.parse("on blue")
         cuts = [{0, width} for _ in range(height)]
-        for region, lines in self.map.values():
+
+        renders = list(self._get_renders(width, height))
+        for region, lines, _order in renders:
             borders = {region.x, region.x + region.width}
             for y, line in enumerate(lines, region.y):
                 cuts[y].update(borders)
@@ -93,18 +99,17 @@ class LayoutBase(ABC):
         screen_region = Region(0, 0, width, height)
         background_render = [[Segment(" " * width, back)] for _ in range(height)]
 
-        for region, lines in chain(
-            reversed(self.map.values()), [(screen_region, background_render)]
+        for region, lines, _ in chain(
+            renders, [(screen_region, background_render, (0, 0))]
         ):
             for y, line in enumerate(lines, region.y):
                 first_cut = region.x
                 last_cut = region.x + region.width
-                cuts = [
+                final_cuts = [
                     cut for cut in ordered_cuts[y] if (last_cut >= cut >= first_cut)
                 ]
-
-                _, *cut_segments = divide(line, [cut - region.x for cut in cuts])
-                for cut, segments in zip(cuts, cut_segments):
+                _, *cut_segments = divide(line, [cut - region.x for cut in final_cuts])
+                for cut, segments in zip(final_cuts, cut_segments):
                     if buckets[y][cut] is None:
                         buckets[y][cut] = segments
 
@@ -112,7 +117,7 @@ class LayoutBase(ABC):
             render_line: list[Segment] = sum(
                 (
                     cast(list, segments)
-                    for cut, segments in sorted(bucket.items())
+                    for _, segments in sorted(bucket.items())
                     if segments
                 ),
                 start=[],
@@ -147,7 +152,7 @@ class Vertical(LayoutBase):
         for last, widget in loop_last(self.widgets):
             lines = console.render_lines(widget, options.update_width(render_width))
             region = Region(self.gutter, y, render_width, len(lines))
-            map[widget] = (region, lines)
+            map[widget] = RegionRender(region, lines, (0, 0))
             y += len(lines)
             if not last:
                 y += padding
