@@ -22,7 +22,7 @@ from rich.style import Style
 from . import events
 from ._animator import BoundAnimator
 from ._context import active_app
-from .layout import LayoutOptions
+from .layouts.dock import DockOptions
 from ._loop import loop_last
 from ._line_cache import LineCache
 from .message import Message
@@ -115,16 +115,17 @@ class WidgetBase(MessagePump):
         self.size = Dimensions(0, 0)
         self.size_changed = False
         self._repaint_required = False
-        self._animate: BoundAnimator | None = None        
-        self.offset = Point(0, 0)
+        self._animate: BoundAnimator | None = None
 
         super().__init__()
-        # self.disable_messages(events.MouseMove)
 
-    def __init_subclass__(
-        cls,
-        can_focus: bool = True,
-    ) -> None:
+    visible: Reactive[bool] = Reactive(True)
+    dock_size: Reactive[int | None] = Reactive(None)
+    dock_fraction: Reactive[int] = Reactive(1)
+    dock_minimum_size: Reactive[int] = Reactive(1)
+    dock_offset: Reactive[Point] = Reactive(Point(0, 0))
+
+    def __init_subclass__(cls, can_focus: bool = True) -> None:
         super().__init_subclass__()
         cls.can_focus = can_focus
 

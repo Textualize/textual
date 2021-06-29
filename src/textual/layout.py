@@ -63,7 +63,7 @@ class LayoutBase(ABC):
                 delta_x = new_region.x - region.x
                 delta_y = new_region.y - region.y
                 region = new_region
-                lines = lines[delta_y : region.height + delta_y]
+                lines = lines[delta_y : delta_y + region.height]
                 lines = [
                     list(Segment.divide(line, [delta_x, delta_x + region.width]))[1]
                     for line in lines
@@ -141,7 +141,6 @@ class Vertical(LayoutBase):
     def widgets(self) -> list[WidgetBase]:
         return self._widgets
 
-    @timer("reflow")
     def reflow(self, console: Console, width: int, height: int) -> None:
         self.map.clear()
         y = self.gutter

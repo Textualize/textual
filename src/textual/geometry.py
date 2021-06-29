@@ -50,6 +50,20 @@ class Point(NamedTuple):
             return Point(_x - x, _y - y)
         raise NotImplemented
 
+    def blend(self, destination: Point, factor: float) -> Point:
+        """Blend (interpolate) to a new point.
+
+        Args:
+            destination (Point): Point where progress is 1.0
+            factor (float): A value between 0 and 1.0
+
+        Returns:
+            Point: A new point on a line between self and destination
+        """
+        x1, y1 = self
+        x2, y2 = destination
+        return Point(int(x1 + (x2 - x1) * factor), int((y1 + (y2 - y1) * factor)))
+
 
 class Dimensions(NamedTuple):
     """An area defined by its width and height."""
@@ -109,6 +123,21 @@ class Region(NamedTuple):
     width: int
     height: int
 
+    @classmethod
+    def from_corners(cls, x1: int, y1: int, x2: int, y2: int) -> Region:
+        """Construct a Region form the top left and bottom right corners.
+
+        Args:
+            x1 (int): Top left x
+            y1 (int): Top left y
+            x2 (int): Bottom right x
+            y2 (int): Bottom right y
+
+        Returns:
+            Region: A new region.
+        """
+        return cls(x1, y1, x2 - x1, y2 - y1)
+
     def __bool__(self) -> bool:
         return self.width != 0 and self.height != 0
 
@@ -139,7 +168,7 @@ class Region(NamedTuple):
         return Dimensions(self.width, self.height)
 
     @property
-    def extents(self) -> tuple[int, int, int, int]:
+    def corners(self) -> tuple[int, int, int, int]:
         """Get the maxima and minima of region.
 
         Returns:
@@ -164,8 +193,8 @@ class Region(NamedTuple):
         Returns:
             bool: True if other region shares any cells with this region.
         """
-        x, y, x2, y2 = self.extents
-        ox, oy, ox2, oy2 = other.extents
+        x, y, x2, y2 = self.corners
+        ox, oy, ox2, oy2 = other.corners
 
         return ((x2 > ox >= x) or (x2 > ox2 >= x) or (ox < x and ox2 > x2)) and (
             (y2 > oy >= y) or (y2 > oy2 >= y) or (oy < y and oy2 > x2)
@@ -193,7 +222,7 @@ class Region(NamedTuple):
         Returns:
             bool: True if the point is within the region.
         """
-        x1, y1, x2, y2 = self.extents
+        x1, y1, x2, y2 = self.corners
         try:
             ox, oy = point
         except Exception:
@@ -209,25 +238,25 @@ class Region(NamedTuple):
         Returns:
             bool: True if the other region fits perfectly within this region.
         """
-        x1, y1, x2, y2 = self.extents
-        ox, oy, ox2, oy2 = other.extents
+        x1, y1, x2, y2 = self.corners
+        ox, oy, ox2, oy2 = other.corners
         return (x2 >= ox >= x1 and y2 >= oy >= y1) and (
             x2 >= ox2 >= x1 and y2 >= oy2 >= y1
         )
 
-    def translate(self, x: int, y: int) -> Region:
+    def translate(self, translate_x: int, translate_y: int) -> Region:
         """Move the origin of the Region.
 
         Args:
-            x (int): x Coordinate.
-            y (int): y Coordinate.
+            translate_x (int): Value to add to x coordinate.
+            translate_y (int): Value to add to y coordinate.
 
         Returns:
             Region: A new region shifted by x, y
         """
 
-        _x, _y, width, height = self
-        return Region(_x + x, _y + y, width, height)
+        x, y, width, height = self
+        return Region(x + translate_x, y + translate_y, width, height)
 
     def __contains__(self, other: Any) -> bool:
         """Check if a point is in this region."""
@@ -249,15 +278,34 @@ class Region(NamedTuple):
         Returns:
             Region: Clipped region.
         """
-        x, y, self_width, self_height = self
+        x1, y1, x2, y2 = self.corners
 
-        clamp_x = clamp(x, 0, width)
-        clamp_y = clamp(y, 0, height)
+        new_region = Region.from_corners(
+            clamp(x1, 0, width),
+            clamp(y1, 0, height),
+            clamp(x2, 0, width),
+            clamp(y2, 0, height),
+        )
+        return new_region
 
-        clamp_x2 = clamp(x + self_width, 0, width)
-        clamp_y2 = clamp(y + self_height, 0, height)
+    def clip_region(self, region: Region) -> Region:
+        """Clip this region to fit within another region.
 
-        new_region = Region(clamp_x, clamp_y, clamp_x2 - clamp_x, clamp_y2 - clamp_y)
+        Args:
+            region ([type]): A region that overlaps this region.
+
+        Returns:
+            Region: A new region that fits within ``region``.
+        """
+        x1, y1, x2, y2 = self.corners
+        cx1, cy1, cx2, cy2 = region.corners
+
+        new_region = Region.from_corners(
+            clamp(x1, cx1, cx2),
+            clamp(y1, cy1, cy2),
+            clamp(x2, cx2, cx2),
+            clamp(y2, cy2, cy2),
+        )
         return new_region
 
 
@@ -270,7 +318,7 @@ if __name__ == "__main__":
 
     region = Region(10, 10, 90, 90)
 
-    print(region.extents)
+    print(region.corners)
 
     print((15, 15) in region)
     print((5, 15) in region)

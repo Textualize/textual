@@ -14,6 +14,10 @@ from ._types import MessageHandler
 log = logging.getLogger("rich")
 
 
+class NoParent(Exception):
+    pass
+
+
 class MessagePumpClosed(Exception):
     pass
 
@@ -33,6 +37,12 @@ class MessagePump:
     def task(self) -> Task:
         assert self._task is not None
         return self._task
+
+    @property
+    def parent(self) -> MessagePump:
+        if self._parent is None:
+            raise NoParent(f"{self._parent} has no parent")
+        return self._parent
 
     def set_parent(self, parent: MessagePump) -> None:
         self._parent = parent
@@ -135,7 +145,7 @@ class MessagePump:
                 log.exception("error in get_message()")
                 raise error from None
 
-            # log.debug("%r -> %r", message, self)
+            log.debug("%r -> %r", message, self)
             # Combine any pending messages that may supersede this one
             while not (self._closed or self._closing):
                 pending = self.peek_message()

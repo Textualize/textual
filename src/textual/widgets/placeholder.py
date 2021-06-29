@@ -18,8 +18,8 @@ class Placeholder(Widget, can_focus=True):
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "name", self.name
-        yield "has_focus", self.has_focus
-        yield "mouse_over", self.mouse_over
+        yield "has_focus", self.has_focus, False
+        yield "mouse_over", self.mouse_over, False
 
     def render(self) -> RenderableType:
         return Panel(

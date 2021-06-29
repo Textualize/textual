@@ -24,6 +24,7 @@ class Header(Widget):
         self.panel = panel
         self.style = style
         self.clock = clock
+
         super().__init__()
 
     def __rich_repr__(self) -> RichReprResult:
