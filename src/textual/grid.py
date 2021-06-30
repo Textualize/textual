@@ -7,7 +7,7 @@ from typing import Iterable, NamedTuple, Optional, Sequence, Tuple, TYPE_CHECKIN
 from rich import print
 from rich._ratio import ratio_resolve
 
-from .layout import LayoutBase
+from .layout import Layout
 from .widget import WidgetBase
 
 
@@ -40,7 +40,7 @@ class JustifyContent(Enum):
 ItemArea = Tuple[Union[str, int], Union[str, int], Union[str, int], Union[str, int]]
 
 
-class Grid(LayoutBase):
+class Grid(Layout):
     def __init__(
         self,
         verticals: Iterable[Track],

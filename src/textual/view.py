@@ -13,7 +13,7 @@ from rich.segment import Segments
 
 from . import events
 from ._context import active_app
-from .layout import LayoutBase
+from .layout import Layout
 from .layouts.dock import DockEdge, DockLayout, Dock
 from .geometry import Dimensions, Region
 from .message import Message
@@ -33,7 +33,7 @@ class NoWidget(Exception):
 
 @rich.repr.auto
 class View(WidgetBase):
-    def __init__(self, layout: LayoutBase = None, name: str | None = None) -> None:
+    def __init__(self, layout: Layout = None, name: str | None = None) -> None:
         self.layout = layout or DockLayout()
         self.mouse_over: WidgetBase | None = None
         self.focused: WidgetBase | None = None

@@ -3,9 +3,11 @@ from __future__ import annotations
 from logging import getLogger
 from typing import (
     Callable,
+    cast,
     ClassVar,
     Generic,
     Iterable,
+    NewType,
     TypeVar,
     TYPE_CHECKING,
 )
@@ -22,17 +24,18 @@ from rich.style import Style
 from . import events
 from ._animator import BoundAnimator
 from ._context import active_app
-from .layouts.dock import DockOptions
 from ._loop import loop_last
 from ._line_cache import LineCache
 from .message import Message
 from .message_pump import MessagePump
 from .geometry import Point, Dimensions
 
-from time import time
 
 if TYPE_CHECKING:
     from .app import App
+
+
+WidgetID = NewType("WidgetID", int)
 
 log = getLogger("rich")
 
@@ -102,6 +105,7 @@ class Reactive(Generic[ReactiveType]):
 
 @rich.repr.auto
 class WidgetBase(MessagePump):
+    _id: ClassVar[int] = 0
     _counts: ClassVar[dict[str, int]] = {}
     can_focus: bool = False
 
@@ -110,6 +114,9 @@ class WidgetBase(MessagePump):
         Widget._counts.setdefault(class_name, 0)
         Widget._counts[class_name] += 1
         _count = self._counts[class_name]
+        self.id: WidgetID = cast(WidgetID, WidgetBase._id)
+        WidgetBase._id += 1
+
         self.name = name or f"{class_name}#{_count}"
 
         self.size = Dimensions(0, 0)

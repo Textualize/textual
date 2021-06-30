@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod, abstractmethod
 from dataclasses import dataclass
 from itertools import chain
-from operator import attrgetter
+from operator import itemgetter
 from time import time
 from typing import cast, Iterable, NamedTuple, TYPE_CHECKING
 
@@ -16,49 +16,80 @@ from ._loop import loop_last
 from ._profile import timer
 from ._types import Lines
 
-from .geometry import Point, Region
-
-
-@dataclass
-class LayoutOptions:
-    """Basic options for layout."""
-
-    name: str = ""
-    order: int = 0
-    z: int = 0
-    offset_x: int = 0
-    offset_y: int = 0
-
-
-class RegionRender(NamedTuple):
-    region: Region
-    lines: Lines
-    order: tuple[int, int]
+from .geometry import Region
 
 
 if TYPE_CHECKING:
-    from .widget import Widget, WidgetBase
-
-    LayoutMap = dict[WidgetBase, RegionRender]
+    from .widget import WidgetBase, WidgetID
 
 
-class LayoutBase(ABC):
-    def __init__(self) -> None:
-        self._widgets: list[WidgetBase] = []
-        self.map: LayoutMap = {}
+class MapRegion(NamedTuple):
+    region: Region
+    order: tuple[int, int]
 
-    @property
-    def widgets(self) -> list[WidgetBase]:
-        return self._widgets
 
-    def _get_renders(self, width: int, height: int) -> Iterable[RegionRender]:
+class Layout(ABC):
+    """A class responsible for arranging widgets in a given area."""
+
+    @abstractmethod
+    def __call__(
+        self, widgets: dict[WidgetID, WidgetBase], width: int, height: int
+    ) -> LayoutMap:
+        """Generate the layout.
+
+        Args:
+            width (int): width of enclosing area.
+            height (int): height of enclosing area.
+
+        Returns:
+            dict[WidgetID, MapRegion]: Map of widget on to map region.
+        """
+
+
+class LayoutMap:
+    """Responsible for rendering a layout."""
+
+    def __init__(self, map: dict[WidgetID, MapRegion], width: int, height: int) -> None:
+        """Responsible for rendering a layout
+
+        Args:
+            layout_map (dict[WidgetID, MapRegion]): A map of Widget ID on to a MapRegion.
+            width (int): Width of layout.
+            height (int): Height of layout.
+        """
+        self._layout_map = map
+        self.width = width
+        self.height = height
+
+    def _get_renders(
+        self, widgets: dict[WidgetID, WidgetBase], console: Console
+    ) -> Iterable[tuple[Region, Lines]]:
+
+        width = self.width
+        height = self.height
         screen_region = Region(0, 0, width, height)
-        renders = sorted(self.map.values(), key=attrgetter("order"), reverse=True)
-        for region_render in renders:
-            if region_render.region in screen_region:
-                yield region_render
-            elif screen_region.overlaps(region_render.region):
-                region, lines, order = region_render
+        layout_map = self._layout_map
+
+        widget_regions = sorted(
+            (
+                (widgets[widget_id], region, order)
+                for widget_id, (region, order) in layout_map.items()
+            ),
+            key=itemgetter(2),
+            reverse=True,
+        )
+
+        def render(widget: WidgetBase, width: int, height: int) -> Lines:
+            lines = console.render_lines(
+                widget, console.options.update_dimensions(width, height)
+            )
+            return lines
+
+        for widget, region, _order in widget_regions:
+            lines = render(widget, region.width, region.height)
+            if region in screen_region:
+                yield region, lines
+            elif screen_region.overlaps(region):
                 new_region = region.clip(width, height)
                 delta_x = new_region.x - region.x
                 delta_y = new_region.y - region.y
@@ -68,24 +99,34 @@ class LayoutBase(ABC):
                     list(Segment.divide(line, [delta_x, delta_x + region.width]))[1]
                     for line in lines
                 ]
-                yield RegionRender(region, lines, order)
+                yield region, lines
 
-    @abstractmethod
-    def reflow(self, console: Console, width: int, height: int) -> None:
-        ...
-
-    @timer("render")
     def render(
-        self, console: Console, width: int, height: int
-    ) -> Iterable[list[Segment]]:
+        self,
+        widgets: dict[WidgetID, WidgetBase],
+        console: Console,
+    ) -> SegmentLines:
+        """Render a layout.
 
+        Args:
+            layout_map (dict[WidgetID, MapRegion]): A layout map.
+            console (Console): Console instance.
+            width (int): Width
+            height (int): Height
+
+        Returns:
+            SegmentLines: A renderable
+        """
+        width = self.width
+        height = self.height
         _Segment = Segment
         divide = _Segment.divide
         back = Style.parse("on blue")
         cuts = [{0, width} for _ in range(height)]
 
-        renders = list(self._get_renders(width, height))
-        for region, lines, _order in renders:
+        renders = list(self._get_renders(widgets, console))
+
+        for region, lines in renders:
             borders = {region.x, region.x + region.width}
             for y, line in enumerate(lines, region.y):
                 cuts[y].update(borders)
@@ -99,9 +140,7 @@ class LayoutBase(ABC):
         screen_region = Region(0, 0, width, height)
         background_render = [[Segment(" " * width, back)] for _ in range(height)]
 
-        for region, lines, _ in chain(
-            renders, [(screen_region, background_render, (0, 0))]
-        ):
+        for region, lines in chain(renders, [(screen_region, background_render)]):
             for y, line in enumerate(lines, region.y):
                 first_cut = region.x
                 last_cut = region.x + region.width
@@ -113,6 +152,8 @@ class LayoutBase(ABC):
                     if buckets[y][cut] is None:
                         buckets[y][cut] = segments
 
+        output_lines: list[list[Segment]] = []
+        add_line = output_lines.append
         for bucket in buckets:
             render_line: list[Segment] = sum(
                 (
@@ -122,58 +163,5 @@ class LayoutBase(ABC):
                 ),
                 start=[],
             )
-            yield render_line
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        lines = self.render(console, console.width, console.height)
-        yield SegmentLines(lines, new_lines=True)
-
-
-class Vertical(LayoutBase):
-    def __init__(self, gutter: int = 0, padding: int = 0) -> None:
-        self.gutter = gutter
-        self.padding = padding
-        super().__init__()
-
-    @property
-    def widgets(self) -> list[WidgetBase]:
-        return self._widgets
-
-    def reflow(self, console: Console, width: int, height: int) -> None:
-        self.map.clear()
-        y = self.gutter
-        render_width = width - self.gutter * 2
-        options = console.options
-        map = self.map
-        padding = self.padding
-        for last, widget in loop_last(self.widgets):
-            lines = console.render_lines(widget, options.update_width(render_width))
-            region = Region(self.gutter, y, render_width, len(lines))
-            map[widget] = RegionRender(region, lines, (0, 0))
-            y += len(lines)
-            if not last:
-                y += padding
-
-
-if __name__ == "__main__":
-
-    from .widgets.placeholder import Placeholder
-    from .widget import StaticWidget
-    from rich.panel import Panel
-
-    widget1 = Placeholder()
-    widget2 = Placeholder()
-
-    from rich.console import Console
-
-    console = Console()
-
-    v = Vertical(3, 2)
-    v.widgets[:] = [Placeholder() for _ in range(10)]
-    v.reflow(console, console.width, console.height)
-
-    from rich import print
-
-    print(v)
+            add_line(render_line)
+        return SegmentLines(output_lines, new_lines=True)
