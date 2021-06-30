@@ -9,7 +9,7 @@ from rich._ratio import ratio_resolve
 
 from ..widget import WidgetID
 from ..geometry import Region
-from ..layout import Layout, LayoutMap, MapRegion
+from ..layout import Layout, MapRegion
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -43,15 +43,15 @@ class Dock:
 
 
 class DockLayout(Layout):
-    def __init__(self) -> None:
-        self.docks: list[Dock] = []
+    def __init__(self, docks: list[Dock] = None) -> None:
+        self.docks: list[Dock] = docks or []
         super().__init__()
 
-    def __call__(
+    def update(
         self, widgets: dict[WidgetID, WidgetBase], width: int, height: int
-    ) -> LayoutMap:
-        render_width = width
-        render_height = height
+    ) -> None:
+        self.width = width
+        self.height = height
         map: dict[WidgetID, MapRegion] = {}
         region = Region(0, 0, width, height)
 
@@ -152,7 +152,7 @@ class DockLayout(Layout):
 
             layers[dock.z] = region
 
-        return LayoutMap(map, render_width, render_height)
+        self._layout_map = map
 
 
 if __name__ == "__main__":
@@ -187,8 +187,7 @@ if __name__ == "__main__":
         widget6.id: widget6,
     }
 
-    layout = DockLayout()
-    layout.docks = [
+    docks = [
         Dock(
             "top",
             [
@@ -216,6 +215,7 @@ if __name__ == "__main__":
             ],
         ),
     ]
+    layout = DockLayout(docks)
 
     # fmt: on
     from rich import print
@@ -224,9 +224,10 @@ if __name__ == "__main__":
     console = Console()
 
     width, height = console.size
-    map = layout(widgets, width, height)
 
-    print(map.render(widgets, console))
+    layout.update(widgets, width, height)
+
+    print(layout.render(widgets, console))
     # print(render(map, widgets, console, width, height))
     # for widget, (region, lines) in layout.map.items():
     #     print(repr(widget), region)

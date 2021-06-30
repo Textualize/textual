@@ -29,37 +29,18 @@ class MapRegion(NamedTuple):
 
 
 class Layout(ABC):
-    """A class responsible for arranging widgets in a given area."""
-
-    @abstractmethod
-    def __call__(
-        self, widgets: dict[WidgetID, WidgetBase], width: int, height: int
-    ) -> LayoutMap:
-        """Generate the layout.
-
-        Args:
-            width (int): width of enclosing area.
-            height (int): height of enclosing area.
-
-        Returns:
-            dict[WidgetID, MapRegion]: Map of widget on to map region.
-        """
-
-
-class LayoutMap:
     """Responsible for rendering a layout."""
 
-    def __init__(self, map: dict[WidgetID, MapRegion], width: int, height: int) -> None:
-        """Responsible for rendering a layout
+    def __init__(self) -> None:
+        self._layout_map: dict[WidgetID, MapRegion] = {}
+        self.width = 0
+        self.height = 0
 
-        Args:
-            layout_map (dict[WidgetID, MapRegion]): A map of Widget ID on to a MapRegion.
-            width (int): Width of layout.
-            height (int): Height of layout.
-        """
-        self._layout_map = map
-        self.width = width
-        self.height = height
+    @abstractmethod
+    def update(
+        self, widgets: dict[WidgetID, WidgetBase], width: int, height: int
+    ) -> None:
+        ...
 
     def _get_renders(
         self, widgets: dict[WidgetID, WidgetBase], console: Console
