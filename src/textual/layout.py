@@ -105,22 +105,29 @@ class Layout(ABC):
         back = Style.parse("on blue")
         cuts = [{0, width} for _ in range(height)]
 
+        # Get a list of all regions and lines (rendered segments)
         renders = list(self._get_renders(widgets, console))
 
+        # Get the X coordinates for each line where there is an intersection of a render
         for region, lines in renders:
             borders = {region.x, region.x + region.width}
             for y, line in enumerate(lines, region.y):
                 cuts[y].update(borders)
 
+        # Maps each cut on to a list of segments
         buckets: list[dict[int, list[Segment] | None]] = [
             {cut: None for cut in cut_set} for cut_set in cuts
         ]
 
+        # Sort the cuts for each line
         ordered_cuts = [sorted(cut_set) for cut_set in cuts]
 
         screen_region = Region(0, 0, width, height)
+
+        # TODO: Provide an option to update the background
         background_render = [[Segment(" " * width, back)] for _ in range(height)]
 
+        # Go through all the renders in reverse order and fill buckets with no render
         for region, lines in chain(renders, [(screen_region, background_render)]):
             for y, line in enumerate(lines, region.y):
                 first_cut = region.x
@@ -133,6 +140,7 @@ class Layout(ABC):
                     if buckets[y][cut] is None:
                         buckets[y][cut] = segments
 
+        # Assemble the cut renders in to lists of segments
         output_lines: list[list[Segment]] = []
         add_line = output_lines.append
         for bucket in buckets:
