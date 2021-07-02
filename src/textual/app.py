@@ -364,7 +364,7 @@ if __name__ == "__main__":
             view = await self.push_view(DockView())
 
             header = Header(self.title)
-            header.dock_size = 3
+            header.layout_size = 3
             await view.dock(header, edge="top")
 
             # self.refresh()

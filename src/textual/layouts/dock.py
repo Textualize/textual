@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Mapping, Sequence
 
 from rich._ratio import ratio_resolve
 
@@ -47,12 +47,12 @@ class DockLayout(Layout):
         self.docks: list[Dock] = docks or []
         super().__init__()
 
-    def update(
-        self, widgets: dict[WidgetID, WidgetBase], width: int, height: int
-    ) -> None:
+    def reflow(self, width: int, height: int) -> None:
+        self.reset()
+        widgets = self.widgets
         self.width = width
         self.height = height
-        map: dict[WidgetID, MapRegion] = {}
+        map: dict[WidgetBase, MapRegion] = {}
         region = Region(0, 0, width, height)
 
         layers: dict[int, Region] = defaultdict(lambda: Region(0, 0, width, height))
@@ -61,7 +61,9 @@ class DockLayout(Layout):
             dock_widgets = [widgets[widget_id] for widget_id in dock.widgets]
             dock_options = [
                 DockOptions(
-                    widget.dock_size, widget.dock_fraction, widget.dock_minimum_size
+                    widget.layout_size,
+                    widget.layout_fraction,
+                    widget.laout_minimim_size,
                 )
                 for widget in dock_widgets
             ]
@@ -85,9 +87,9 @@ class DockLayout(Layout):
                         break
                     total += size
                     render_region = (
-                        Region(x, render_y, width, size) + widget.dock_offset
+                        Region(x, render_y, width, size) + widget.layout_offset
                     )
-                    map[widget.id] = MapRegion(render_region, order)
+                    map[widget] = MapRegion(render_region, order)
                     render_y += size
                     remaining = max(0, remaining - size)
                 region = Region(x, y + total, width, height - total)
@@ -104,9 +106,9 @@ class DockLayout(Layout):
                         break
                     total += size
                     render_region = (
-                        Region(x, render_y - size, width, size) + widget.dock_offset
+                        Region(x, render_y - size, width, size) + widget.layout_offset
                     )
-                    map[widget.id] = MapRegion(render_region, order)
+                    map[widget] = MapRegion(render_region, order)
                     render_y -= size
                     remaining = max(0, remaining - size)
                 region = Region(x, y, width, height - total)
@@ -122,11 +124,10 @@ class DockLayout(Layout):
                     if not size:
                         break
                     total += size
-
                     render_region = (
-                        Region(render_x, y, size, height) + widget.dock_offset
+                        Region(render_x, y, size, height) + widget.layout_offset
                     )
-                    map[widget.id] = MapRegion(render_region, order)
+                    map[widget] = MapRegion(render_region, order)
                     render_x += size
                     remaining = max(0, remaining - size)
                 region = Region(x + total, y, width - total, height)
@@ -143,9 +144,9 @@ class DockLayout(Layout):
                         break
                     total += size
                     render_region = (
-                        Region(render_x - size, y, size, height) + widget.dock_offset
+                        Region(render_x - size, y, size, height) + widget.layout_offset
                     )
-                    map[widget.id] = MapRegion(render_region, order)
+                    map[widget] = MapRegion(render_region, order)
                     render_x -= size
                     remaining = max(0, remaining - size)
                 region = Region(x, y, width - total, height)
@@ -159,24 +160,37 @@ if __name__ == "__main__":
 
     from ..widgets.placeholder import Placeholder
 
-    widget1 = Placeholder()
-    widget1.dock_size = 3
+    import os.path
 
-    widget2 = Placeholder()
+    readme_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "../richreadme.md"
+    )
+    from rich.markdown import Markdown
+    from ..widget import StaticWidget
+
+    with open(readme_path) as f:
+        markdown = Markdown(f.read())
+
+    widget1 = StaticWidget(markdown)
+    widget1.layout_size = 3
+
+    widget2 = StaticWidget(markdown)
     widget3 = Placeholder()
 
     widget3.style = "on dark_blue"
-    widget3.dock_size = 40
+    widget3.layout_size = 40
+    widget3.layout_offset_x = +10
+    widget3.layout_offset_y = +5
     # widget3.dock_offset = Point(-20, +1)
 
     widget4 = Placeholder()
-    widget4.dock_size = 1
+    widget4.layout_size = 1
 
-    widget5 = Placeholder()
-    widget5.dock_fraction = 1
+    widget5 = StaticWidget(markdown)
+    widget5.layout_fraction = 1
 
-    widget6 = Placeholder()
-    widget6.dock_fraction = 1
+    widget6 = StaticWidget(markdown)
+    widget6.layout_fraction = 1
 
     widgets: dict[WidgetID, WidgetBase] = {
         widget1.id: widget1,
@@ -220,18 +234,28 @@ if __name__ == "__main__":
     # fmt: on
     from rich import print
     from rich.console import Console
+    from rich.segment import Segments, SegmentLines
 
     console = Console()
 
     width, height = console.size
 
-    layout.update(widgets, width, height)
+    layout.reflow(widgets, width, height)
 
-    print(layout.render(widgets, console))
-    # print(render(map, widgets, console, width, height))
-    # for widget, (region, lines) in layout.map.items():
-    #     print(repr(widget), region)
+    print(
+        layout.render(
+            widgets,
+            console,
+        )
+    )
 
-    # from rich import print
+    widget3.style = "on red"
+    # print(
+    #     layout.render(
+    #         widgets,
+    #         console,
+    #     )
+    # )
+    console.clear()
 
-    # print(layout)
+    print(layout.render_update(widgets, console, widget3))

@@ -127,10 +127,11 @@ class WidgetBase(MessagePump):
         super().__init__()
 
     visible: Reactive[bool] = Reactive(True)
-    dock_size: Reactive[int | None] = Reactive(None)
-    dock_fraction: Reactive[int] = Reactive(1)
-    dock_minimum_size: Reactive[int] = Reactive(1)
-    dock_offset: Reactive[Point] = Reactive(Point(0, 0))
+    layout_size: Reactive[int | None] = Reactive(None)
+    layout_fraction: Reactive[int] = Reactive(1)
+    laout_minimim_size: Reactive[int] = Reactive(1)
+    layout_offset_x: Reactive[int] = Reactive(0)
+    layout_offset_y: Reactive[int] = Reactive(0)
 
     def __init_subclass__(cls, can_focus: bool = True) -> None:
         super().__init_subclass__()
@@ -158,6 +159,10 @@ class WidgetBase(MessagePump):
             self._animate = self.app.animator.bind(self)
         assert self._animate is not None
         return self._animate
+
+    @property
+    def layout_offset(self) -> tuple[int, int]:
+        return (self.layout_offset_x, self.layout_offset_y)
 
     def require_repaint(self) -> None:
         """Mark widget as requiring a repaint.

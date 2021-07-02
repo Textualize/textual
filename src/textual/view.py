@@ -18,7 +18,7 @@ from .layouts.dock import DockEdge, DockLayout, Dock
 from .geometry import Dimensions, Region
 from .message import Message
 
-from .widget import StaticWidget, Widget, WidgetBase, UpdateMessage
+from .widget import StaticWidget, Widget, WidgetID, WidgetBase, UpdateMessage
 from .widgets.header import Header
 
 if TYPE_CHECKING:
@@ -34,11 +34,13 @@ class NoWidget(Exception):
 @rich.repr.auto
 class View(WidgetBase):
     def __init__(self, layout: Layout = None, name: str | None = None) -> None:
-        self.layout = layout or DockLayout()
+        self.layout: Layout = layout or DockLayout()
         self.mouse_over: WidgetBase | None = None
         self.focused: WidgetBase | None = None
         self.size = Dimensions(0, 0)
-        self.widgets: dict[str, WidgetBase] = {}
+        self.widgets: dict[WidgetID, WidgetBase] = {}
+        self.named_widgets: dict[str, WidgetID] = {}
+        self.layout.widgets = self.widgets
         super().__init__(name)
         self.enable_messages(events.Idle)
 
@@ -64,7 +66,7 @@ class View(WidgetBase):
         return self.parent is self.app
 
     def is_mounted(self, widget: WidgetBase) -> bool:
-        return widget in self.widgets.values()
+        return widget.id in self.widgets
 
     def render(self) -> RenderableType:
         return self.layout
@@ -96,7 +98,7 @@ class View(WidgetBase):
             log.debug(self.layout.map)
             widget = message.widget
 
-            for widget, (region, render, _) in self.layout.map.items():
+            for widget, (region, order) in self.layout.map.items():
 
                 if widget is message.sender:
 
@@ -139,22 +141,25 @@ class View(WidgetBase):
             await self.app.register(widget)
             widget.set_parent(self)
             await widget.post_message(events.Mount(sender=self))
+            self.widgets[widget.id] = widget
             if name is not None:
-                self.widgets[name] = widget
+                self.named_widgets[widget.id] = widget
+
         self.require_repaint()
 
     async def layout_update(self) -> None:
         if not self.size:
             return
         width, height = self.size
-        region_map = self.layout.reflow(width, height)
-        for layout, region in region_map.items():
-            if isinstance(layout.renderable, WidgetBase):
-                await layout.renderable.post_message(
+        self.layout.reflow(width, height)
+
+        for widget, (region, order) in self.layout.map.items():
+            if isinstance(widget, WidgetBase):
+                await widget.post_message(
                     events.Resize(self, region.width, region.height)
                 )
-        self.app.refresh()
-        # await self.repaint()
+        # self.app.refresh()
+        await self.repaint()
 
     async def on_resize(self, event: events.Resize) -> None:
         log.debug("view.on_resize")
@@ -162,6 +167,7 @@ class View(WidgetBase):
         await self.layout_update()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
+        return
         try:
             widget, region = self.get_widget_at(event.x, event.y, deep=True)
         except NoWidget:
@@ -192,30 +198,33 @@ class View(WidgetBase):
             await self._on_mouse_move(event)
 
         elif isinstance(event, events.MouseEvent):
-            try:
-                widget, region = self.get_widget_at(event.x, event.y, deep=True)
-            except NoWidget:
-                if isinstance(event, events.MouseDown):
-                    await self.app.set_focus(None)
-            else:
-                if isinstance(event, events.MouseDown):
-                    await self.app.set_focus(widget)
-                await widget.forward_event(event.offset(-region.x, -region.y))
+            pass
+            # try:
+            #     widget, region = self.get_widget_at(event.x, event.y, deep=True)
+            # except NoWidget:
+            #     if isinstance(event, events.MouseDown):
+            #         await self.app.set_focus(None)
+            # else:
+            #     if isinstance(event, events.MouseDown):
+            #         await self.app.set_focus(widget)
+            #     await widget.forward_event(event.offset(-region.x, -region.y))
 
         elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
-            try:
-                widget, _region = self.get_widget_at(event.x, event.y, deep=True)
-            except NoWidget:
-                return
-            scroll_widget = widget or self.focused
-            if scroll_widget is not None:
-                await scroll_widget.forward_event(event)
+            pass
+            # try:
+            #     widget, _region = self.get_widget_at(event.x, event.y, deep=True)
+            # except NoWidget:
+            #     return
+            # scroll_widget = widget or self.focused
+            # if scroll_widget is not None:
+            #     await scroll_widget.forward_event(event)
         else:
             if self.focused is not None:
                 await self.focused.forward_event(event)
 
     async def action_toggle(self, name: str) -> None:
-        widget = self.widgets[name]
+        widget_id = self.named_widgets[name]
+        widget = self.widgets[widget_id]
         widget.visible = not widget.visible
         await self.layout_update()
 
@@ -228,9 +237,10 @@ class DockView(View):
         self, *widgets: WidgetBase, edge: DockEdge = "top", z: int = 0
     ) -> None:
 
-        dock = Dock(edge, widgets, z)
+        dock = Dock(edge, [widget.id for widget in widgets], z)
         assert isinstance(self.layout, DockLayout)
         self.layout.docks.append(dock)
         for widget in widgets:
             if not self.is_mounted(widget):
                 await self.mount(widget)
+        self.require_repaint()
