@@ -45,7 +45,7 @@ class UpdateMessage(Message):
     def __init__(
         self,
         sender: MessagePump,
-        widget: WidgetBase,
+        widget: Widget,
         offset_x: int = 0,
         offset_y: int = 0,
     ):
@@ -76,15 +76,15 @@ class Reactive(Generic[ReactiveType]):
         self._default = default
         self.validator = validator
 
-    def __set_name__(self, owner: "WidgetBase", name: str) -> None:
+    def __set_name__(self, owner: "Widget", name: str) -> None:
         self.name = name
         self.internal_name = f"__{name}"
         setattr(owner, self.internal_name, self._default)
 
-    def __get__(self, obj: "WidgetBase", obj_type: type[object]) -> ReactiveType:
+    def __get__(self, obj: "Widget", obj_type: type[object]) -> ReactiveType:
         return getattr(obj, self.internal_name)
 
-    def __set__(self, obj: "WidgetBase", value: ReactiveType) -> None:
+    def __set__(self, obj: "Widget", value: ReactiveType) -> None:
         if getattr(obj, self.internal_name) != value:
 
             current_value = getattr(obj, self.internal_name, None)
@@ -104,7 +104,7 @@ class Reactive(Generic[ReactiveType]):
 
 
 @rich.repr.auto
-class WidgetBase(MessagePump):
+class Widget(MessagePump):
     _id: ClassVar[int] = 0
     _counts: ClassVar[dict[str, int]] = {}
     can_focus: bool = False
@@ -114,8 +114,8 @@ class WidgetBase(MessagePump):
         Widget._counts.setdefault(class_name, 0)
         Widget._counts[class_name] += 1
         _count = self._counts[class_name]
-        self.id: WidgetID = cast(WidgetID, WidgetBase._id)
-        WidgetBase._id += 1
+        self.id: WidgetID = cast(WidgetID, Widget._id)
+        Widget._id += 1
 
         self.name = name or f"{class_name}#{_count}"
 
@@ -173,7 +173,6 @@ class WidgetBase(MessagePump):
         self.post_message_no_wait(events.Null(self))
 
     def check_repaint(self) -> bool:
-        return True
         return self._repaint_required
 
     async def forward_event(self, event: events.Event) -> None:
@@ -187,29 +186,6 @@ class WidgetBase(MessagePump):
     async def repaint(self) -> None:
         """Instructs parent to repaint this widget."""
         await self.emit(UpdateMessage(self, self))
-
-    def render_update(self, x: int, y: int) -> Iterable[Segment]:
-        """Render an update to a portion of the screen.
-
-        Args:
-            x (int): X offset from origin.
-            y (int): Y offset form origin.
-
-        Returns:
-            Iterable[Segment]: Partial update.
-        """
-        return
-
-        width, height = self.size
-        lines = self.console.render_lines(
-            self.render(), self.console.options.update_dimensions(width, height)
-        )
-
-        new_line = Segment.line()
-        for last, line in loop_last(lines):
-            yield from line
-            if not last:
-                yield new_line
 
     def render(self) -> RenderableType:
         """Get renderable for widget.
@@ -241,31 +217,6 @@ class WidgetBase(MessagePump):
         if self.check_repaint():
             await self.repaint()
 
-
-class Widget(WidgetBase):
-    def __init__(self, name: str | None = None) -> None:
-        super().__init__(name)
-        self._line_cache: LineCache | None = None
-
-    @property
-    def line_cache(self) -> LineCache:
-
-        if self._line_cache is None:
-            width, height = self.size
-            try:
-                renderable = self.render()
-            except Exception:
-                log.exception("error in render")
-                raise
-            self._line_cache = LineCache.from_renderable(
-                self.console, renderable, width, height
-            )
-        assert self._line_cache is not None
-        return self._line_cache
-
-    # def __rich__(self) -> LineCache:
-    #     return self.line_cache
-
     async def focus(self) -> None:
         await self.app.set_focus(self)
 
@@ -273,18 +224,8 @@ class Widget(WidgetBase):
         await self.app.capture_mouse(self if capture else None)
 
     def get_style_at(self, x: int, y: int) -> Style:
+        return
         return self.line_cache.get_style_at(x, y)
-
-    def render(self) -> RenderableType:
-        raise NotImplementedError
-        # return self.line_cache
-
-    def require_repaint(self) -> None:
-        self._line_cache = None
-        super().require_repaint()
-
-    def check_repaint(self) -> bool:
-        return self._line_cache is None or self.line_cache.dirty
 
     def render_update(self, x: int, y: int) -> Iterable[Segment]:
         """Render an update to a portion of the screen.
@@ -299,16 +240,16 @@ class Widget(WidgetBase):
         width, height = self.size
         yield from self.line_cache.render(x, y, width, height)
 
-    async def on_mouse_move(self, event: events.MouseMove) -> None:
-        style_under_cursor = self.get_style_at(event.x, event.y)
-        if style_under_cursor:
-            log.debug("%r", style_under_cursor)
+    # async def on_mouse_move(self, event: events.MouseMove) -> None:
+    #     style_under_cursor = self.get_style_at(event.x, event.y)
+    #     if style_under_cursor:
+    #         log.debug("%r", style_under_cursor)
 
-    async def on_mouse_up(self, event: events.MouseUp) -> None:
-        style = self.get_style_at(event.x, event.y)
-        if "@click" in style.meta:
-            log.debug(style._link_id)
-            await self.app.action(style.meta["@click"], default_namespace=self)
+    # async def on_mouse_up(self, event: events.MouseUp) -> None:
+    #     style = self.get_style_at(event.x, event.y)
+    #     if "@click" in style.meta:
+    #         log.debug(style._link_id)
+    #         await self.app.action(style.meta["@click"], default_namespace=self)
 
 
 class StaticWidget(Widget):
