@@ -8,7 +8,7 @@ from rich import print
 from rich._ratio import ratio_resolve
 
 from .layout import Layout
-from .widget import WidgetBase
+from .widget import Widget
 
 
 class Track(NamedTuple):
@@ -64,7 +64,7 @@ class Grid(Layout):
         self.areas = areas or {}
         super().__init__()
 
-    def add_widget(self, widget: WidgetBase, area: ItemArea) -> None:
+    def add_widget(self, widget: Widget, area: ItemArea) -> None:
         pass
 
     @classmethod

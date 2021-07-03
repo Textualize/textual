@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod, abstractmethod
 from dataclasses import dataclass
 from itertools import chain
+import logging
 from operator import itemgetter
 from time import time
 from typing import cast, Iterable, Mapping, NamedTuple, TYPE_CHECKING
@@ -19,9 +20,15 @@ from ._types import Lines
 
 from .geometry import clamp, Region
 
+log = logging.getLogger("rich")
+
 
 if TYPE_CHECKING:
-    from .widget import WidgetBase, WidgetID
+    from .widget import Widget, WidgetID
+
+
+class NoWidget(Exception):
+    pass
 
 
 class MapRegion(NamedTuple):
@@ -42,24 +49,26 @@ class LayoutUpdate:
         x = self.x
         new_line = Segment.line()
         move_to = Control.move_to
-        for y, line in enumerate(self.lines, self.y):
+        for last, (y, line) in loop_last(enumerate(self.lines, self.y)):
             yield move_to(x, y).segment
             yield from line
-            yield new_line
+            if not last:
+                yield new_line
 
 
 class Layout(ABC):
     """Responsible for rendering a layout."""
 
     def __init__(self) -> None:
-        self._layout_map: dict[WidgetBase, MapRegion] = {}
+        self._layout_map: dict[Widget, MapRegion] = {}
         self.width = 0
         self.height = 0
         self.renders: dict[WidgetID, tuple[Region, Lines]] = {}
         self._cuts: list[list[int]] | None = None
-        self.widgets: dict[WidgetID, WidgetBase] = {}
+        self.widgets: dict[WidgetID, Widget] = {}
 
     def reset(self) -> None:
+        self._layout_map = {}
         self.renders.clear()
         self._cuts = None
 
@@ -68,8 +77,25 @@ class Layout(ABC):
         ...
 
     @property
-    def map(self) -> dict[WidgetBase, MapRegion]:
+    def map(self) -> dict[Widget, MapRegion]:
         return self._layout_map
+
+    def get_widget_at(self, x: int, y: int, deep: bool = True) -> tuple[Widget, Region]:
+        """Get the widget under the given point or None."""
+        for widget, (region, _order) in sorted(
+            self._layout_map.items(), key=lambda item: item[1].order
+        ):
+            if region.contains(x, y):
+                if deep and hasattr(widget, "get_widget_at"):
+                    translate_x = region.x
+                    translate_y = region.y
+                    widget, region = widget.get_widget_at(
+                        x - region.x, y - region.y, deep=True
+                    )
+                    region = region.translate(translate_x, translate_y)
+                    return widget, region
+                return widget, region
+        raise NoWidget
 
     @property
     def cuts(self) -> list[list[int]]:
@@ -122,7 +148,6 @@ class Layout(ABC):
                 del delta_line[:]
 
     def _get_renders(self, console: Console) -> Iterable[tuple[Region, Lines]]:
-        widgets = self.widgets
         width = self.width
         height = self.height
         screen_region = Region(0, 0, width, height)
@@ -134,8 +159,7 @@ class Layout(ABC):
             reverse=True,
         )
 
-        @timer("render widget")
-        def render(widget: WidgetBase, width: int, height: int) -> Lines:
+        def render(widget: Widget, width: int, height: int) -> Lines:
             lines = console.render_lines(
                 widget, console.options.update_dimensions(width, height)
             )
@@ -175,7 +199,6 @@ class Layout(ABC):
                 start=[],
             )
 
-    @timer("render")
     def render(
         self,
         console: Console,
@@ -211,7 +234,7 @@ class Layout(ABC):
         # TODO: Provide an option to update the background
         background_render = [[Segment(" " * width, back)] for _ in range(height)]
         # Go through all the renders in reverse order and fill buckets with no render
-        renders = self._get_renders(widgets, console)
+        renders = self._get_renders(console)
         for region, lines in chain(renders, [(screen, background_render)]):
             for y, line in enumerate(lines, region.y):
                 if clip_y > y > clip_y2:
@@ -239,7 +262,9 @@ class Layout(ABC):
     ) -> RenderResult:
         yield self.render(console)
 
-    def render_update(self, console: Console, widget: WidgetBase) -> LayoutUpdate:
+    def update_widget(self, console: Console, widget: Widget) -> LayoutUpdate | None:
+        if widget.id not in self.renders:
+            return None
         region, lines = self.renders[widget.id]
         new_lines = console.render_lines(
             widget, console.options.update_dimensions(region.width, region.height)

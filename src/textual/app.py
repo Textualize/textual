@@ -24,8 +24,9 @@ from .driver import Driver
 from .layouts.dock import DockLayout, Dock, DockEdge, DockOptions
 from ._linux_driver import LinuxDriver
 from .message_pump import MessagePump
+from .message import Message
 from .view import DockView, View
-from .widget import Widget, WidgetBase
+from .widget import Widget, Widget
 
 log = logging.getLogger("rich")
 
@@ -79,9 +80,9 @@ class App(MessagePump):
         self._view_stack: list[View] = [View()]
         self.children: set[MessagePump] = set()
 
-        self.focused: WidgetBase | None = None
-        self.mouse_over: WidgetBase | None = None
-        self.mouse_captured: WidgetBase | None = None
+        self.focused: Widget | None = None
+        self.mouse_over: Widget | None = None
+        self.mouse_captured: Widget | None = None
         self._driver: Driver | None = None
 
         self._bindings: dict[str, Binding] = {}
@@ -133,6 +134,7 @@ class App(MessagePump):
 
     async def push_view(self, view: ViewType) -> ViewType:
         await self.register(view)
+        view.set_parent(self)
         self._view_stack[0] = view
         return view
 
@@ -158,7 +160,7 @@ class App(MessagePump):
                 self.focused = widget
                 await widget.post_message(events.Focus(self))
 
-    async def set_mouse_over(self, widget: WidgetBase | None) -> None:
+    async def set_mouse_over(self, widget: Widget | None) -> None:
         if widget is None:
             if self.mouse_over is not None:
                 try:
@@ -175,7 +177,7 @@ class App(MessagePump):
                 finally:
                     self.mouse_over = widget
 
-    async def capture_mouse(self, widget: WidgetBase | None) -> None:
+    async def capture_mouse(self, widget: Widget | None) -> None:
         """Send all Mouse events to a given widget."""
         self.mouse_captured = widget
 
@@ -218,6 +220,9 @@ class App(MessagePump):
     #     self._docks.append(dock)
     #     await self.view.mount(widgets)
 
+    async def message_update(self, message: Message) -> None:
+        self.refresh()
+
     async def register(self, child: MessagePump) -> None:
         self.children.add(child)
         child.start_messages()
@@ -239,6 +244,15 @@ class App(MessagePump):
                     console.print(Screen(Control.home(), self.view, Control.home()))
             except Exception:
                 log.exception("refresh failed")
+
+    def display(self, renderable: RenderableType) -> None:
+        if not self._closed:
+            console = self.console
+            try:
+                with console:
+                    console.print(renderable)
+            except Exception:
+                log.exception("display failed")
 
     async def on_event(self, event: events.Event) -> None:
         if isinstance(event, events.Key):
@@ -364,8 +378,15 @@ if __name__ == "__main__":
             view = await self.push_view(DockView())
 
             header = Header(self.title)
-            header.layout_size = 3
+
             await view.dock(header, edge="top")
+
+            await view.dock(Placeholder(), edge="left", size=40)
+
+            sub_view = DockView()
+            await sub_view.dock(Placeholder())
+
+            # await view.dock(sub_view, edge="left")
 
             # self.refresh()
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 import sys
 from collections import defaultdict
 from dataclasses import dataclass
+import logging
 from typing import TYPE_CHECKING, Mapping, Sequence
 
 from rich._ratio import ratio_resolve
@@ -18,7 +19,9 @@ else:
 
 
 if TYPE_CHECKING:
-    from ..widget import WidgetBase
+    from ..widget import Widget
+
+log = logging.getLogger("rich")
 
 
 DockEdge = Literal["top", "right", "bottom", "left"]
@@ -52,10 +55,12 @@ class DockLayout(Layout):
         widgets = self.widgets
         self.width = width
         self.height = height
-        map: dict[WidgetBase, MapRegion] = {}
+        map: dict[Widget, MapRegion] = {}
         region = Region(0, 0, width, height)
 
         layers: dict[int, Region] = defaultdict(lambda: Region(0, 0, width, height))
+
+        log.debug("%r", self.docks)
 
         for index, dock in enumerate(self.docks):
             dock_widgets = [widgets[widget_id] for widget_id in dock.widgets]
@@ -63,7 +68,7 @@ class DockLayout(Layout):
                 DockOptions(
                     widget.layout_size,
                     widget.layout_fraction,
-                    widget.laout_minimim_size,
+                    widget.layout_minimim_size,
                 )
                 for widget in dock_widgets
             ]
@@ -192,7 +197,7 @@ if __name__ == "__main__":
     widget6 = StaticWidget(markdown)
     widget6.layout_fraction = 1
 
-    widgets: dict[WidgetID, WidgetBase] = {
+    widgets: dict[WidgetID, Widget] = {
         widget1.id: widget1,
         widget2.id: widget2,
         widget3.id: widget3,
@@ -258,4 +263,4 @@ if __name__ == "__main__":
     # )
     console.clear()
 
-    print(layout.render_update(widgets, console, widget3))
+    print(layout.update_widget(widgets, console, widget3))

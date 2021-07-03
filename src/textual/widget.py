@@ -129,7 +129,7 @@ class Widget(MessagePump):
     visible: Reactive[bool] = Reactive(True)
     layout_size: Reactive[int | None] = Reactive(None)
     layout_fraction: Reactive[int] = Reactive(1)
-    laout_minimim_size: Reactive[int] = Reactive(1)
+    layout_minimim_size: Reactive[int] = Reactive(1)
     layout_offset_x: Reactive[int] = Reactive(0)
     layout_offset_y: Reactive[int] = Reactive(0)
 
@@ -162,6 +162,7 @@ class Widget(MessagePump):
 
     @property
     def layout_offset(self) -> tuple[int, int]:
+        """Get the layout offset as a tuple."""
         return (self.layout_offset_x, self.layout_offset_y)
 
     def require_repaint(self) -> None:
@@ -226,19 +227,6 @@ class Widget(MessagePump):
     def get_style_at(self, x: int, y: int) -> Style:
         return
         return self.line_cache.get_style_at(x, y)
-
-    def render_update(self, x: int, y: int) -> Iterable[Segment]:
-        """Render an update to a portion of the screen.
-
-        Args:
-            x (int): X offset from origin.
-            y (int): Y offset form origin.
-
-        Returns:
-            Iterable[Segment]: Partial update.
-        """
-        width, height = self.size
-        yield from self.line_cache.render(x, y, width, height)
 
     # async def on_mouse_move(self, event: events.MouseMove) -> None:
     #     style_under_cursor = self.get_style_at(event.x, event.y)

@@ -179,6 +179,7 @@ class MessagePump:
 
     async def on_event(self, event: events.Event) -> None:
         method_name = f"on_{event.name}"
+
         dispatch_function: MessageHandler = getattr(self, method_name, None)
         if dispatch_function is not None:
             await dispatch_function(event)
@@ -190,7 +191,10 @@ class MessagePump:
                 await self._parent.post_message(event)
 
     async def on_message(self, message: Message) -> None:
-        pass
+        method_name = f"message_{message.name}"
+        method = getattr(self, method_name, None)
+        if method is not None:
+            await method(message)
 
     def post_message_no_wait(self, message: Message) -> bool:
         if self._closing or self._closed:

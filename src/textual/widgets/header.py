@@ -1,4 +1,5 @@
 from datetime import datetime
+from logging import getLogger
 
 from rich.console import Console, ConsoleOptions, RenderableType
 from rich.panel import Panel
@@ -9,6 +10,8 @@ from rich.text import TextType
 
 from .. import events
 from ..widget import Widget
+
+log = getLogger("rich")
 
 
 class Header(Widget):
@@ -26,6 +29,7 @@ class Header(Widget):
         self.clock = clock
 
         super().__init__()
+        self.layout_size = 3
 
     def __rich_repr__(self) -> RichReprResult:
         yield self.title
@@ -52,4 +56,5 @@ class Header(Widget):
         return header
 
     async def on_mount(self, event: events.Mount) -> None:
+        return
         self.set_interval(1.0, callback=self.refresh)
