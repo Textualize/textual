@@ -32,3 +32,9 @@ I'll be documenting progress in video form.
 Now with a system to animate a value to another value. Here applied to the scroll position. The animation system supports CSS like *easing functions*. You may be able to tell from the video that the page up / down keys cause the window to first speed up and then slow down.
 
 [![Textual update 4](https://yt-embed.herokuapp.com/embed?v=k2VwOp1YbSk&img=0)](http://www.youtube.com/watch?v=k2VwOp1YbSk)
+
+### Update 5 - New Layout system
+
+A new update system allows for overlapping layers. Animation is now synchronized with the display which makes it very smooth!
+
+[![Textual update 5](https://yt-embed.herokuapp.com/embed?v=XxRnfx2WYRw&img=0)](http://www.youtube.com/watch?v=XxRnfx2WYRw)
