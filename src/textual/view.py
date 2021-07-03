@@ -39,14 +39,6 @@ class View(Widget):
         self.layout.widgets = self.widgets
         super().__init__(name)
 
-    @property
-    def app(self) -> "App":
-        return active_app.get()
-
-    @property
-    def console(self) -> Console:
-        return active_app.get().console
-
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
@@ -72,11 +64,9 @@ class View(Widget):
         return self.layout.get_widget_at(x, y)
 
     async def message_update(self, message: UpdateMessage) -> None:
-        log.debug("MESSAGE_UPDATE %r", message)
         widget = message.sender
         assert isinstance(widget, Widget)
-        display_update = self.app.view.layout.update_widget(self.console, widget)
-        log.debug("%r", display_update)
+        display_update = self.root_view.layout.update_widget(self.console, widget)
         if display_update is not None:
             self.app.display(display_update)
 

@@ -33,6 +33,7 @@ from .geometry import Point, Dimensions
 
 if TYPE_CHECKING:
     from .app import App
+    from .view import View
 
 
 WidgetID = NewType("WidgetID", int)
@@ -153,6 +154,11 @@ class Widget(MessagePump):
         return active_app.get().console
 
     @property
+    def root_view(self) -> "View":
+        """Return the top-most view."""
+        return active_app.get().view
+
+    @property
     def animate(self) -> BoundAnimator:
         if self._animate is None:
             self._animate = self.app.animator.bind(self)
@@ -185,7 +191,7 @@ class Widget(MessagePump):
 
     async def repaint(self) -> None:
         """Instructs parent to repaint this widget."""
-        await self.app.view.post_message(UpdateMessage(self, self))
+        await self.emit(UpdateMessage(self, self))
 
     def render(self) -> RenderableType:
         """Get renderable for widget.
