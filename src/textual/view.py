@@ -197,7 +197,7 @@ class DockView(View):
         size: int | None | DoNotSet = do_not_set,
     ) -> None:
 
-        dock = Dock(edge, [widget.id for widget in widgets], z)
+        dock = Dock(edge, widgets, z)
         assert isinstance(self.layout, DockLayout)
         self.layout.docks.append(dock)
         for widget in widgets:

@@ -41,7 +41,7 @@ class DockOptions:
 @dataclass
 class Dock:
     edge: DockEdge
-    widgets: Sequence[WidgetID]
+    widgets: Sequence[Widgets]
     z: int = 0
 
 
@@ -63,14 +63,13 @@ class DockLayout(Layout):
         log.debug("%r", self.docks)
 
         for index, dock in enumerate(self.docks):
-            dock_widgets = [widgets[widget_id] for widget_id in dock.widgets]
             dock_options = [
                 DockOptions(
                     widget.layout_size,
                     widget.layout_fraction,
                     widget.layout_minimim_size,
                 )
-                for widget in dock_widgets
+                for widget in dock.widgets
             ]
 
             region = layers[dock.z]

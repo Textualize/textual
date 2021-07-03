@@ -65,7 +65,6 @@ class Layout(ABC):
         self.height = 0
         self.renders: dict[WidgetID, tuple[Region, Lines]] = {}
         self._cuts: list[list[int]] | None = None
-        self.widgets: dict[WidgetID, Widget] = {}
 
     def reset(self) -> None:
         self._layout_map = {}
@@ -215,7 +214,6 @@ class Layout(ABC):
         Returns:
             SegmentLines: A renderable
         """
-        widgets = self.widgets
         width = self.width
         height = self.height
         screen = Region(0, 0, width, height)
