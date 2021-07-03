@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Mapping, Sequence
 from rich._ratio import ratio_resolve
 
 from ..widget import WidgetID
-from ..geometry import Region
+from ..geometry import Region, Point
 from ..layout import Layout, MapRegion
 
 if sys.version_info >= (3, 8):
@@ -41,7 +41,7 @@ class DockOptions:
 @dataclass
 class Dock:
     edge: DockEdge
-    widgets: Sequence[Widgets]
+    widgets: Sequence[Widget]
     z: int = 0
 
 
@@ -50,9 +50,8 @@ class DockLayout(Layout):
         self.docks: list[Dock] = docks or []
         super().__init__()
 
-    def reflow(self, width: int, height: int) -> None:
+    def reflow(self, width: int, height: int, offset: Point = Point(0, 0)) -> None:
         self.reset()
-        widgets = self.widgets
         self.width = width
         self.height = height
         map: dict[Widget, MapRegion] = {}
@@ -61,6 +60,16 @@ class DockLayout(Layout):
         layers: dict[int, Region] = defaultdict(lambda: Region(0, 0, width, height))
 
         log.debug("%r", self.docks)
+
+        def add_widget(widget: Widget, region: Region, order: tuple[int, int]):
+            region = region + offset
+            if hasattr(widget, "layout"):
+                widget.layout.reflow(
+                    region.width, region.height, region.origin + offset
+                )
+                map.update(widget.layout.map)
+            else:
+                map[widget] = MapRegion(region, order)
 
         for index, dock in enumerate(self.docks):
             dock_options = [
@@ -84,8 +93,7 @@ class DockLayout(Layout):
                 render_y = y
                 remaining = region.height
                 total = 0
-                for widget_id, size in zip(dock.widgets, sizes):
-                    widget = widgets[widget_id]
+                for widget, size in zip(dock.widgets, sizes):
                     size = min(remaining, size)
                     if not size:
                         break
@@ -93,7 +101,7 @@ class DockLayout(Layout):
                     render_region = (
                         Region(x, render_y, width, size) + widget.layout_offset
                     )
-                    map[widget] = MapRegion(render_region, order)
+                    add_widget(widget, render_region, order)
                     render_y += size
                     remaining = max(0, remaining - size)
                 region = Region(x, y + total, width, height - total)
@@ -103,8 +111,7 @@ class DockLayout(Layout):
                 render_y = y + height
                 remaining = region.height
                 total = 0
-                for widget_id, size in zip(dock.widgets, sizes):
-                    widget = widgets[widget_id]
+                for widget, size in zip(dock.widgets, sizes):
                     size = min(remaining, size)
                     if not size:
                         break
@@ -112,7 +119,7 @@ class DockLayout(Layout):
                     render_region = (
                         Region(x, render_y - size, width, size) + widget.layout_offset
                     )
-                    map[widget] = MapRegion(render_region, order)
+                    add_widget(widget, render_region, order)
                     render_y -= size
                     remaining = max(0, remaining - size)
                 region = Region(x, y, width, height - total)
@@ -122,8 +129,7 @@ class DockLayout(Layout):
                 render_x = x
                 remaining = region.width
                 total = 0
-                for widget_id, size in zip(dock.widgets, sizes):
-                    widget = widgets[widget_id]
+                for widget, size in zip(dock.widgets, sizes):
                     size = min(remaining, size)
                     if not size:
                         break
@@ -131,18 +137,17 @@ class DockLayout(Layout):
                     render_region = (
                         Region(render_x, y, size, height) + widget.layout_offset
                     )
-                    map[widget] = MapRegion(render_region, order)
+                    add_widget(widget, render_region, order)
                     render_x += size
                     remaining = max(0, remaining - size)
                 region = Region(x + total, y, width - total, height)
 
             elif dock.edge == "right":
-                sizes = ratio_resolve(height, dock_options)
+                sizes = ratio_resolve(width, dock_options)
                 render_x = x + width
                 remaining = region.width
                 total = 0
-                for widget_id, size in zip(dock.widgets, sizes):
-                    widget = widgets[widget_id]
+                for widget, size in zip(dock.widgets, sizes):
                     size = min(remaining, size)
                     if not size:
                         break
@@ -150,7 +155,7 @@ class DockLayout(Layout):
                     render_region = (
                         Region(render_x - size, y, size, height) + widget.layout_offset
                     )
-                    map[widget] = MapRegion(render_region, order)
+                    add_widget(widget, render_region, order)
                     render_x -= size
                     remaining = max(0, remaining - size)
                 region = Region(x, y, width - total, height)
@@ -246,12 +251,7 @@ if __name__ == "__main__":
 
     layout.reflow(widgets, width, height)
 
-    print(
-        layout.render(
-            widgets,
-            console,
-        )
-    )
+    print(layout.render(widgets, console))
 
     widget3.style = "on red"
     # print(

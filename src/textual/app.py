@@ -384,9 +384,9 @@ if __name__ == "__main__":
             await view.dock(Placeholder(), edge="left", size=40)
 
             sub_view = DockView()
-            await sub_view.dock(Placeholder())
+            await sub_view.dock(Placeholder(), Placeholder(), edge="top")
 
-            # await view.dock(sub_view, edge="left")
+            await view.dock(sub_view, edge="left")
 
             # self.refresh()
 

@@ -100,7 +100,6 @@ class Reactive(Generic[ReactiveType]):
                     update_function(current_value, value)
 
                 obj.require_repaint()
-                # obj.post_message_no_wait(events.Null(obj))
 
 
 @rich.repr.auto
@@ -186,7 +185,7 @@ class Widget(MessagePump):
 
     async def repaint(self) -> None:
         """Instructs parent to repaint this widget."""
-        await self.emit(UpdateMessage(self, self))
+        await self.app.view.post_message(UpdateMessage(self, self))
 
     def render(self) -> RenderableType:
         """Get renderable for widget.

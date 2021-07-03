@@ -63,7 +63,7 @@ class Layout(ABC):
         self._layout_map: dict[Widget, MapRegion] = {}
         self.width = 0
         self.height = 0
-        self.renders: dict[WidgetID, tuple[Region, Lines]] = {}
+        self.renders: dict[Widget, tuple[Region, Lines]] = {}
         self._cuts: list[list[int]] | None = None
 
     def reset(self) -> None:
@@ -79,20 +79,17 @@ class Layout(ABC):
     def map(self) -> dict[Widget, MapRegion]:
         return self._layout_map
 
-    def get_widget_at(self, x: int, y: int, deep: bool = True) -> tuple[Widget, Region]:
+    def __iter__(self) -> Iterable[tuple[Widget, Region]]:
+        layers = sorted(self._layout_map.items(), key=lambda item: item[1].order)
+        for widget, (region, _) in layers:
+            yield widget, region
+
+    def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given point or None."""
         for widget, (region, _order) in sorted(
             self._layout_map.items(), key=lambda item: item[1].order
         ):
             if region.contains(x, y):
-                if deep and hasattr(widget, "get_widget_at"):
-                    translate_x = region.x
-                    translate_y = region.y
-                    widget, region = widget.get_widget_at(
-                        x - region.x, y - region.y, deep=True
-                    )
-                    region = region.translate(translate_x, translate_y)
-                    return widget, region
                 return widget, region
         raise NoWidget
 
@@ -165,14 +162,14 @@ class Layout(ABC):
             return lines
 
         for widget, region, _order in widget_regions:
-            region_lines = self.renders.get(widget.id)
+            region_lines = self.renders.get(widget)
             if region_lines is not None:
                 yield region_lines
                 continue
 
             lines = render(widget, region.width, region.height)
             if region in screen_region:
-                self.renders[widget.id] = (region, lines)
+                self.renders[widget] = (region, lines)
                 yield region, lines
             elif screen_region.overlaps(region):
                 new_region = region.clip(width, height)
@@ -184,7 +181,7 @@ class Layout(ABC):
                     list(Segment.divide(line, [delta_x, delta_x + region.width]))[1]
                     for line in lines
                 ]
-                self.renders[widget.id] = (region, lines)
+                self.renders[widget] = (region, lines)
                 yield region, lines
 
     @classmethod
@@ -261,13 +258,14 @@ class Layout(ABC):
         yield self.render(console)
 
     def update_widget(self, console: Console, widget: Widget) -> LayoutUpdate | None:
-        if widget.id not in self.renders:
+        if widget not in self.renders:
+            log.debug("WIDGET %r", self.renders)
             return None
-        region, lines = self.renders[widget.id]
+        region, lines = self.renders[widget]
         new_lines = console.render_lines(
             widget, console.options.update_dimensions(region.width, region.height)
         )
-        self.renders[widget.id] = (region, new_lines)
+        self.renders[widget] = (region, new_lines)
 
         update_lines = self.render(console, region).lines
         return LayoutUpdate(update_lines, region.x, region.y)

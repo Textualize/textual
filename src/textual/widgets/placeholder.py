@@ -1,12 +1,16 @@
 from rich import box
 from rich.align import Align
-from rich.console import Console, ConsoleOptions, RenderableType
+from rich.console import RenderableType
 from rich.panel import Panel
 from rich.pretty import Pretty
 import rich.repr
 
+from logging import getLogger
+
 from .. import events
 from ..widget import Reactive, Widget
+
+log = getLogger("rich")
 
 
 @rich.repr.auto(angular=False)

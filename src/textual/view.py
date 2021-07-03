@@ -69,12 +69,14 @@ class View(Widget):
     def get_widget_at(
         self, x: int, y: int, deep: bool = False
     ) -> Tuple[Widget, Region]:
-        return self.layout.get_widget_at(x, y, deep=deep)
+        return self.layout.get_widget_at(x, y)
 
     async def message_update(self, message: UpdateMessage) -> None:
+        log.debug("MESSAGE_UPDATE %r", message)
         widget = message.sender
         assert isinstance(widget, Widget)
-        display_update = self.layout.update_widget(self.console, widget)
+        display_update = self.app.view.layout.update_widget(self.console, widget)
+        log.debug("%r", display_update)
         if display_update is not None:
             self.app.display(display_update)
 
@@ -103,13 +105,12 @@ class View(Widget):
         width, height = self.size
         self.layout.reflow(width, height)
 
-        for widget, (region, order) in self.layout.map.items():
+        for widget, region in self.layout:
             if isinstance(widget, Widget):
                 await widget.post_message(
                     events.Resize(self, region.width, region.height)
                 )
-
-        await self.repaint()
+        self.app.refresh()
 
     async def on_resize(self, event: events.Resize) -> None:
         log.debug("view.on_resize")
@@ -118,7 +119,7 @@ class View(Widget):
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         try:
-            widget, region = self.layout.get_widget_at(event.x, event.y, deep=True)
+            widget, region = self.layout.get_widget_at(event.x, event.y)
         except NoWidget:
             await self.app.set_mouse_over(None)
         else:
