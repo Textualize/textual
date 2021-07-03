@@ -3,17 +3,31 @@ from __future__ import annotations
 import logging
 
 import asyncio
+import sys
 from time import time
 from tracemalloc import start
-from typing import Callable
+from typing import Callable, TypeVar
 
 from dataclasses import dataclass
 
 from ._timer import Timer
 from ._types import MessageTarget
 
+if sys.version_info >= (3, 8):
+    from typing import Protocol
+else:
+    from typing_extensions import Protocol
+
 
 EasingFunction = Callable[[float], float]
+
+T = TypeVar("T")
+
+
+class Animatable(Protocol):
+    def blend(self: T, destination: T, factor: float) -> T:
+        ...
+
 
 # https://easings.net/
 EASING = {
@@ -25,6 +39,8 @@ EASING = {
     "out_cubic": lambda x: 1 - pow(1 - x, 3),
 }
 
+DEFAULT_EASING = "in_out_cubic"
+
 
 log = logging.getLogger("rich")
 
@@ -35,30 +51,43 @@ class Animation:
     attribute: str
     start_time: float
     duration: float
-    start_value: float
-    end_value: float
+    start_value: float | Animatable
+    end_value: float | Animatable
     easing_function: EasingFunction
 
     def __call__(self, time: float) -> bool:
+        def blend_float(start: float, end: float, factor: float) -> float:
+            return start + (end - start) * factor
+
+        AnimatableT = TypeVar("AnimatableT", bound=Animatable)
+
+        def blend(start: AnimatableT, end: AnimatableT, factor: float) -> AnimatableT:
+            return start.blend(end, factor)
+
+        blend_function = (
+            blend_float if isinstance(self.start_value, (int, float)) else blend
+        )
 
         if self.duration == 0:
             value = self.end_value
         else:
-            progress = min(1.0, (time - self.start_time) / self.duration)
+            factor = min(1.0, (time - self.start_time) / self.duration)
+            eased_factor = self.easing_function(factor)
+            # value = blend_function(self.start_value, self.end_value, eased_factor)
+
             if self.end_value > self.start_value:
-                eased_progress = self.easing_function(progress)
+                eased_factor = self.easing_function(factor)
                 value = (
                     self.start_value
-                    + (self.end_value - self.start_value) * eased_progress
+                    + (self.end_value - self.start_value) * eased_factor
                 )
             else:
-                eased_progress = 1 - self.easing_function(progress)
+                eased_factor = 1 - self.easing_function(factor)
                 value = (
-                    self.end_value
-                    + (self.start_value - self.end_value) * eased_progress
+                    self.end_value + (self.start_value - self.end_value) * eased_factor
                 )
-
         setattr(self.obj, self.attribute, value)
+        log.debug("ANIMATE %r %r -> %r", self.obj, self.attribute, value)
         return value == self.end_value
 
 
@@ -74,7 +103,7 @@ class BoundAnimator:
         *,
         duration: float | None = None,
         speed: float | None = None,
-        easing: EasingFunction | str = "in_out_cubic",
+        easing: EasingFunction | str = DEFAULT_EASING,
     ) -> None:
         easing_function = EASING[easing] if isinstance(easing, str) else easing
         self._animator.animate(
@@ -88,7 +117,7 @@ class BoundAnimator:
 
 
 class Animator:
-    def __init__(self, target: MessageTarget, frames_per_second: int = 30) -> None:
+    def __init__(self, target: MessageTarget, frames_per_second: int = 60) -> None:
         self._animations: dict[tuple[object, str], Animation] = {}
         self._timer = Timer(target, 1 / frames_per_second, target, callback=self)
 
@@ -109,7 +138,7 @@ class Animator:
         *,
         duration: float | None = None,
         speed: float | None = None,
-        easing: EasingFunction = EASING["in_out_cubic"],
+        easing: EasingFunction | str = DEFAULT_EASING,
     ) -> None:
 
         start_time = time()
@@ -123,7 +152,7 @@ class Animator:
             animation_duration = duration
         else:
             animation_duration = abs(value - start_value) / (speed or 50)
-
+        easing_function = EASING[easing] if isinstance(easing, str) else easing
         animation = Animation(
             obj,
             attribute=attribute,
@@ -131,7 +160,7 @@ class Animator:
             duration=animation_duration,
             start_value=start_value,
             end_value=value,
-            easing_function=easing,
+            easing_function=easing_function,
         )
         self._animations[animation_key] = animation
         self._timer.resume()

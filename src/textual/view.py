@@ -16,9 +16,9 @@ from ._context import active_app
 from .layout import Layout, NoWidget
 from .layouts.dock import DockEdge, DockLayout, Dock
 from .geometry import Dimensions, Region
-from .message import Message
+from .messages import UpdateMessage, LayoutMessage
 
-from .widget import StaticWidget, Widget, WidgetID, Widget, UpdateMessage
+from .widget import StaticWidget, Widget, WidgetID, Widget
 from .widgets.header import Header
 
 if TYPE_CHECKING:
@@ -34,9 +34,8 @@ class View(Widget):
         self.mouse_over: Widget | None = None
         self.focused: Widget | None = None
         self.size = Dimensions(0, 0)
-        self.widgets: dict[WidgetID, Widget] = {}
-        self.named_widgets: dict[str, WidgetID] = {}
-        self.layout.widgets = self.widgets
+        self.widgets: set[Widget] = set()
+        self.named_widgets: dict[str, Widget] = {}
         super().__init__(name)
 
     def __rich_console__(
@@ -53,22 +52,22 @@ class View(Widget):
         return self.parent is self.app
 
     def is_mounted(self, widget: Widget) -> bool:
-        return widget.id in self.widgets
+        return widget in self.widgets
 
     def render(self) -> RenderableType:
         return self.layout
 
-    def get_widget_at(
-        self, x: int, y: int, deep: bool = False
-    ) -> Tuple[Widget, Region]:
-        return self.layout.get_widget_at(x, y)
-
     async def message_update(self, message: UpdateMessage) -> None:
-        widget = message.sender
+        widget = message.widget
         assert isinstance(widget, Widget)
         display_update = self.root_view.layout.update_widget(self.console, widget)
         if display_update is not None:
             self.app.display(display_update)
+
+    async def message_layout(self, message: LayoutMessage) -> None:
+        log.debug("MESSAGE_LAYOUT %r", self.root_view)
+
+        await self.root_view.refresh_layout()
 
     # async def on_create(self, event: events.Created) -> None:
     #     await self.mount(Header(self.title))
@@ -80,32 +79,35 @@ class View(Widget):
             ((None, widget) for widget in anon_widgets), widgets.items()
         )
         for name, widget in name_widgets:
+            name = name or widget.name
+            if name:
+                self.named_widgets[name] = widget
             await self.app.register(widget)
             widget.set_parent(self)
             await widget.post_message(events.Mount(sender=self))
-            self.widgets[widget.id] = widget
-            if name is not None:
-                self.named_widgets[name] = widget.id
+            self.widgets.add(widget)
 
         self.require_repaint()
 
-    async def layout_update(self) -> None:
+    async def refresh_layout(self) -> None:
+
         if not self.size:
             return
-        width, height = self.size
+
+        width, height = self.console.size
         self.layout.reflow(width, height)
+        self.app.refresh()
 
         for widget, region in self.layout:
             if isinstance(widget, Widget):
                 await widget.post_message(
                     events.Resize(self, region.width, region.height)
                 )
-        self.app.refresh()
 
     async def on_resize(self, event: events.Resize) -> None:
         log.debug("view.on_resize")
         self.size = Dimensions(event.width, event.height)
-        await self.layout_update()
+        await self.refresh_layout()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         try:
@@ -163,10 +165,10 @@ class View(Widget):
                 await self.focused.forward_event(event)
 
     async def action_toggle(self, name: str) -> None:
-        widget_id = self.named_widgets[name]
-        widget = self.widgets[widget_id]
+        log.debug("%r", self.named_widgets)
+        widget = self.named_widgets[name]
         widget.visible = not widget.visible
-        await self.layout_update()
+        await self.refresh_layout()
 
 
 class DoNotSet:
@@ -186,7 +188,7 @@ class DockView(View):
         edge: DockEdge = "top",
         z: int = 0,
         size: int | None | DoNotSet = do_not_set,
-    ) -> None:
+    ) -> Widget | tuple[Widget, ...]:
 
         dock = Dock(edge, widgets, z)
         assert isinstance(self.layout, DockLayout)
@@ -196,4 +198,10 @@ class DockView(View):
                 widget.layout_size = cast(Optional[int], size)
             if not self.is_mounted(widget):
                 await self.mount(widget)
-        await self.layout_update()
+        await self.refresh_layout()
+
+        widget, *rest = widgets
+        if rest:
+            return widgets
+        else:
+            return widget

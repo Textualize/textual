@@ -11,6 +11,7 @@ from rich._ratio import ratio_resolve
 from ..widget import WidgetID
 from ..geometry import Region, Point
 from ..layout import Layout, MapRegion
+from .._types import Lines
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -55,21 +56,20 @@ class DockLayout(Layout):
         self.width = width
         self.height = height
         map: dict[Widget, MapRegion] = {}
-        region = Region(0, 0, width, height)
 
-        layers: dict[int, Region] = defaultdict(lambda: Region(0, 0, width, height))
-
-        log.debug("%r", self.docks)
+        layers: dict[int, Region] = defaultdict(
+            lambda: Region(0, 0, self.width, self.height)
+        )
 
         def add_widget(widget: Widget, region: Region, order: tuple[int, int]):
             region = region + offset
             if hasattr(widget, "layout"):
                 widget.layout.reflow(
-                    region.width, region.height, region.origin + offset
+                    region.width, region.height, offset=region.origin + offset
                 )
                 map.update(widget.layout.map)
             else:
-                map[widget] = MapRegion(region, order)
+                map[widget] = MapRegion(region + widget.layout_offset, order)
 
         for index, dock in enumerate(self.docks):
             dock_options = [
@@ -94,6 +94,8 @@ class DockLayout(Layout):
                 remaining = region.height
                 total = 0
                 for widget, size in zip(dock.widgets, sizes):
+                    if not widget.visible:
+                        continue
                     size = min(remaining, size)
                     if not size:
                         break
@@ -112,6 +114,8 @@ class DockLayout(Layout):
                 remaining = region.height
                 total = 0
                 for widget, size in zip(dock.widgets, sizes):
+                    if not widget.visible:
+                        continue
                     size = min(remaining, size)
                     if not size:
                         break
@@ -130,6 +134,8 @@ class DockLayout(Layout):
                 remaining = region.width
                 total = 0
                 for widget, size in zip(dock.widgets, sizes):
+                    if not widget.visible:
+                        continue
                     size = min(remaining, size)
                     if not size:
                         break
@@ -148,6 +154,8 @@ class DockLayout(Layout):
                 remaining = region.width
                 total = 0
                 for widget, size in zip(dock.widgets, sizes):
+                    if not widget.visible:
+                        continue
                     size = min(remaining, size)
                     if not size:
                         break
@@ -162,6 +170,13 @@ class DockLayout(Layout):
 
             layers[dock.z] = region
 
+        new_renders: dict[Widget, tuple[Region, Lines]] = {}
+        for widget, (region, order) in map.items():
+            if widget in self.renders and self.renders[widget][0].size == region.size:
+                new_renders[widget] = (region, self.renders[widget][1])
+
+        self.renders = new_renders
+        log.debug("DOCK")
         self._layout_map = map
 
 

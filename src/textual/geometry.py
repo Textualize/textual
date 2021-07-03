@@ -37,18 +37,18 @@ class Point(NamedTuple):
         return self == (0, 0)
 
     def __add__(self, other: object) -> Point:
-        if isinstance(other, Point):
+        if isinstance(other, tuple):
             _x, _y = self
             x, y = other
             return Point(_x + x, _y + y)
-        raise NotImplemented
+        return NotImplemented
 
     def __sub__(self, other: object) -> Point:
-        if isinstance(other, Point):
+        if isinstance(other, tuple):
             _x, _y = self
             x, y = other
             return Point(_x - x, _y - y)
-        raise NotImplemented
+        return NotImplemented
 
     def blend(self, destination: Point, factor: float) -> Point:
         """Blend (interpolate) to a new point.

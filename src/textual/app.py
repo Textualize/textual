@@ -18,6 +18,7 @@ from rich.traceback import Traceback
 from . import events
 from . import actions
 from ._animator import Animator
+from .geometry import Point
 from ._context import active_app
 from .keys import Binding
 from .driver import Driver
@@ -87,8 +88,9 @@ class App(MessagePump):
 
         self._bindings: dict[str, Binding] = {}
         self._docks: list[Dock] = []
-        self._action_targets = {"app": self, "view": self.view}
+        self._action_targets = {"app", "view"}
         self._animator = Animator(self)
+        self.animate = self._animator.bind(self)
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "title", self.title
@@ -240,8 +242,10 @@ class App(MessagePump):
         if not self._closed:
             console = self.console
             try:
+                console.file.write("\x1bP=1s\x1b\\")
                 with console:
                     console.print(Screen(Control.home(), self.view, Control.home()))
+                console.file.write("\x1bP=2s\x1b\\")
             except Exception:
                 log.exception("refresh failed")
 
@@ -279,9 +283,9 @@ class App(MessagePump):
         target, params = actions.parse(action)
         if "." in target:
             destination, action_name = target.split(".", 1)
-            action_target = self._action_targets.get(destination, None)
-            if action_target is None:
+            if destination not in self._action_targets:
                 raise ActionError("Action namespace {destination} is not known")
+            action_target = getattr(self, destination)
         else:
             action_target = default_namespace or self
             action_name = action
@@ -371,21 +375,35 @@ if __name__ == "__main__":
         async def on_load(self, event: events.Load) -> None:
             await self.bind("q,ctrl+c", "quit")
             await self.bind("x", "bang")
-            await self.bind("b", "view.toggle('left')")
+            await self.bind("b", "toggle_sidebar")
+            self.side = False
+
+        async def action_toggle_sidebar(self) -> None:
+            self.side = not self.side
+            self.animator.animate(
+                self.bar,
+                "layout_offset_x",
+                20 if self.side else 0,
+                speed=30,
+                easing="in_out_cubic",
+            )
 
         async def on_startup(self, event: events.Startup) -> None:
 
             view = await self.push_view(DockView())
 
             header = Header(self.title)
+            footer = Footer()
+            self.bar = Placeholder(name="left")
+            footer.add_key("b", "Toggle sidebar")
+            footer.add_key("q", "Quit")
 
             await view.dock(header, edge="top")
-
-            await view.dock(Placeholder(), edge="left", size=40)
+            await view.dock(footer, edge="bottom")
+            await view.dock(self.bar, edge="left", size=30, z=1)
 
             sub_view = DockView()
             await sub_view.dock(Placeholder(), Placeholder(), edge="top")
-
             await view.dock(sub_view, edge="left")
 
             # self.refresh()

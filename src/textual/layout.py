@@ -67,7 +67,6 @@ class Layout(ABC):
         self._cuts: list[list[int]] | None = None
 
     def reset(self) -> None:
-        self._layout_map = {}
         self.renders.clear()
         self._cuts = None
 
@@ -80,15 +79,15 @@ class Layout(ABC):
         return self._layout_map
 
     def __iter__(self) -> Iterable[tuple[Widget, Region]]:
-        layers = sorted(self._layout_map.items(), key=lambda item: item[1].order)
+        layers = sorted(
+            self._layout_map.items(), key=lambda item: item[1].order, reverse=True
+        )
         for widget, (region, _) in layers:
             yield widget, region
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given point or None."""
-        for widget, (region, _order) in sorted(
-            self._layout_map.items(), key=lambda item: item[1].order
-        ):
+        for widget, region in self:
             if region.contains(x, y):
                 return widget, region
         raise NoWidget
@@ -175,7 +174,7 @@ class Layout(ABC):
                 new_region = region.clip(width, height)
                 delta_x = new_region.x - region.x
                 delta_y = new_region.y - region.y
-                region = new_region
+                # region = new_region
                 lines = lines[delta_y : delta_y + region.height]
                 lines = [
                     list(Segment.divide(line, [delta_x, delta_x + region.width]))[1]
