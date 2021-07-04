@@ -57,7 +57,7 @@ class LayoutUpdate:
 
 
 class Layout(ABC):
-    """Responsible for rendering a layout."""
+    """Responsible for arranging Widgets in a view."""
 
     def __init__(self) -> None:
         self._layout_map: dict[Widget, MapRegion] = {}
@@ -70,8 +70,25 @@ class Layout(ABC):
         self.renders.clear()
         self._cuts = None
 
-    @abstractmethod
     def reflow(self, width: int, height: int) -> None:
+        self.reset()
+
+        map = self.generate_map(width, height)
+        self._layout_map = map
+        self.width = width
+        self.height = height
+
+        new_renders: dict[Widget, tuple[Region, Lines]] = {}
+        for widget, (region, order) in map.items():
+            if widget in self.renders and self.renders[widget][0].size == region.size:
+                new_renders[widget] = (region, self.renders[widget][1])
+
+        self.renders = new_renders
+
+    @abstractmethod
+    def generate_map(
+        self, width: int, height: int, offset: Point = Point(0, 0)
+    ) -> dict[Widget, MapRegion]:
         ...
 
     @property
