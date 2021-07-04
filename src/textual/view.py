@@ -10,12 +10,13 @@ from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.region import Region as LayoutRegion
 import rich.repr
 from rich.segment import Segments
+from rich.style import Style
 
 from . import events
 from ._context import active_app
 from .layout import Layout, NoWidget
 from .layouts.dock import DockEdge, DockLayout, Dock
-from .geometry import Dimensions, Region
+from .geometry import Dimensions, Point, Region
 from .messages import UpdateMessage, LayoutMessage
 
 from .widget import StaticWidget, Widget, WidgetID, Widget
@@ -56,6 +57,9 @@ class View(Widget):
 
     def render(self) -> RenderableType:
         return self.layout
+
+    def get_offset(self, widget: Widget) -> Point:
+        return self.layout.get_offset(widget)
 
     async def message_update(self, message: UpdateMessage) -> None:
         widget = message.widget
@@ -109,9 +113,15 @@ class View(Widget):
         self.size = Dimensions(event.width, event.height)
         await self.refresh_layout()
 
+    def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
+        return self.layout.get_widget_at(x, y)
+
+    def get_style_at(self, x: int, y: int) -> Style:
+        return self.layout.get_style_at(x, y)
+
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         try:
-            widget, region = self.layout.get_widget_at(event.x, event.y)
+            widget, region = self.get_widget_at(event.x, event.y)
         except NoWidget:
             await self.app.set_mouse_over(None)
         else:
@@ -140,26 +150,24 @@ class View(Widget):
             await self._on_mouse_move(event)
 
         elif isinstance(event, events.MouseEvent):
-            pass
-            # try:
-            #     widget, region = self.get_widget_at(event.x, event.y, deep=True)
-            # except NoWidget:
-            #     if isinstance(event, events.MouseDown):
-            #         await self.app.set_focus(None)
-            # else:
-            #     if isinstance(event, events.MouseDown):
-            #         await self.app.set_focus(widget)
-            #     await widget.forward_event(event.offset(-region.x, -region.y))
+
+            try:
+                widget, region = self.get_widget_at(event.x, event.y)
+            except NoWidget:
+                pass
+            else:
+                if isinstance(event, events.MouseDown) and widget.can_focus:
+                    await self.app.set_focus(widget)
+                await widget.forward_event(event.offset(-region.x, -region.y))
 
         elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
-            pass
-            # try:
-            #     widget, _region = self.get_widget_at(event.x, event.y, deep=True)
-            # except NoWidget:
-            #     return
-            # scroll_widget = widget or self.focused
-            # if scroll_widget is not None:
-            #     await scroll_widget.forward_event(event)
+            try:
+                widget, _region = self.get_widget_at(event.x, event.y)
+            except NoWidget:
+                return
+            scroll_widget = widget or self.focused
+            if scroll_widget is not None:
+                await scroll_widget.forward_event(event)
         else:
             if self.focused is not None:
                 await self.focused.forward_event(event)

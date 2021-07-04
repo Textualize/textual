@@ -18,7 +18,7 @@ from ._loop import loop_last
 from ._profile import timer
 from ._types import Lines
 
-from .geometry import clamp, Region
+from .geometry import clamp, Region, Point
 
 log = logging.getLogger("rich")
 
@@ -85,12 +85,34 @@ class Layout(ABC):
         for widget, (region, _) in layers:
             yield widget, region
 
+    def get_offset(self, widget: Widget) -> Point:
+        try:
+            return self._layout_map[widget].region.origin
+        except KeyError:
+            raise NoWidget("Widget is not in layout")
+
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given point or None."""
         for widget, region in self:
             if region.contains(x, y):
                 return widget, region
-        raise NoWidget
+        raise NoWidget(f"No widget under screen coordinate ({x}, {y})")
+
+    def get_style_at(self, x: int, y: int) -> Style:
+        try:
+            widget, region = self.get_widget_at(x, y)
+        except NoWidget:
+            return Style.null()
+        _region, lines = self.renders[widget]
+        x -= region.x
+        y -= region.y
+        line = lines[y]
+        end = 0
+        for segment in line:
+            end += segment.cell_length
+            if x < end:
+                return segment.style or Style.null()
+        return Style.null()
 
     @property
     def cuts(self) -> list[list[int]]:

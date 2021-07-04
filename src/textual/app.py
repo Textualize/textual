@@ -18,7 +18,7 @@ from rich.traceback import Traceback
 from . import events
 from . import actions
 from ._animator import Animator
-from .geometry import Point
+from .geometry import Point, Region
 from ._context import active_app
 from .keys import Binding
 from .driver import Driver
@@ -257,6 +257,9 @@ class App(MessagePump):
                     console.print(renderable)
             except Exception:
                 log.exception("display failed")
+
+    def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
+        return self.view.get_widget_at(x, y)
 
     async def on_event(self, event: events.Event) -> None:
         if isinstance(event, events.Key):

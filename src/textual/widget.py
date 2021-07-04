@@ -177,6 +177,10 @@ class Widget(MessagePump):
     def reset_check_layout(self) -> None:
         self._layout_required = False
 
+    def get_style_at(self, x: int, y: int) -> Style:
+        offset_x, offset_y = self.root_view.get_offset(self)
+        return self.root_view.get_style_at(x + offset_x, y + offset_y)
+
     async def forward_event(self, event: events.Event) -> None:
         await self.post_message(event)
 
@@ -235,14 +239,9 @@ class Widget(MessagePump):
     async def capture_mouse(self, capture: bool = True) -> None:
         await self.app.capture_mouse(self if capture else None)
 
-    def get_style_at(self, x: int, y: int) -> Style:
-        return
-        return self.line_cache.get_style_at(x, y)
-
-    # async def on_mouse_move(self, event: events.MouseMove) -> None:
-    #     style_under_cursor = self.get_style_at(event.x, event.y)
-    #     if style_under_cursor:
-    #         log.debug("%r", style_under_cursor)
+    async def on_mouse_move(self, event: events.MouseMove) -> None:
+        style_under_cursor = self.get_style_at(event.x, event.y)
+        log.debug("%r", style_under_cursor)
 
     # async def on_mouse_up(self, event: events.MouseUp) -> None:
     #     style = self.get_style_at(event.x, event.y)
