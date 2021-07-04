@@ -69,7 +69,6 @@ class View(Widget):
             self.app.display(display_update)
 
     async def message_layout(self, message: LayoutMessage) -> None:
-        log.debug("MESSAGE_LAYOUT %r", self.root_view)
 
         await self.root_view.refresh_layout()
 
@@ -102,14 +101,13 @@ class View(Widget):
         self.layout.reflow(width, height)
         self.app.refresh()
 
-        for widget, region in self.layout:
-            if isinstance(widget, Widget):
-                await widget.post_message(
-                    events.Resize(self, region.width, region.height)
-                )
+        # for widget, region in self.layout:
+        #     if isinstance(widget, Widget):
+        #         await widget.post_message(
+        #             events.Resize(self, region.width, region.height)
+        #         )
 
-    async def on_resize(self, event: events.Resize) -> None:
-        log.debug("view.on_resize")
+    async def on_resize(self, event: events.Resize) -> None:        
         self.size = Dimensions(event.width, event.height)
         await self.refresh_layout()
 

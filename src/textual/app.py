@@ -386,8 +386,8 @@ if __name__ == "__main__":
             self.animator.animate(
                 self.bar,
                 "layout_offset_x",
-                20 if self.side else 0,
-                speed=30,
+                -40 if self.side else 0,
+                speed=60,
                 easing="in_out_cubic",
             )
 
@@ -403,7 +403,9 @@ if __name__ == "__main__":
 
             await view.dock(header, edge="top")
             await view.dock(footer, edge="bottom")
-            await view.dock(self.bar, edge="left", size=30, z=1)
+            await view.dock(self.bar, edge="left", size=40, z=1)
+
+            # await view.dock(Placeholder(), Placeholder(), edge="top")
 
             sub_view = DockView()
             await sub_view.dock(Placeholder(), Placeholder(), edge="top")

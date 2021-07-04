@@ -61,14 +61,14 @@ class DockLayout(Layout):
         layers: dict[int, Region] = defaultdict(lambda: layout_region)
 
         def add_widget(widget: Widget, region: Region, order: tuple[int, int]):
-            region = region + offset
+            region = region + offset + widget.layout_offset            
             if isinstance(widget, View):
                 sub_map = widget.layout.generate_map(
                     region.width, region.height, offset=region.origin
                 )
                 map.update(sub_map)
             else:
-                map[widget] = MapRegion(region + widget.layout_offset, order)
+                map[widget] = MapRegion(region, order)
 
         for index, dock in enumerate(self.docks):
             dock_options = [
@@ -99,11 +99,7 @@ class DockLayout(Layout):
                     if not size:
                         break
                     total += size
-                    add_widget(
-                        widget,
-                        Region(x, render_y, width, size) + widget.layout_offset,
-                        order,
-                    )
+                    add_widget(widget, Region(x, render_y, width, size), order)
                     render_y += size
                     remaining = max(0, remaining - size)
                 region = Region(x, y + total, width, height - total)
@@ -120,11 +116,7 @@ class DockLayout(Layout):
                     if not size:
                         break
                     total += size
-                    add_widget(
-                        widget,
-                        Region(x, render_y - size, width, size) + widget.layout_offset,
-                        order,
-                    )
+                    add_widget(widget, Region(x, render_y - size, width, size), order)
                     render_y -= size
                     remaining = max(0, remaining - size)
                 region = Region(x, y, width, height - total)
@@ -141,11 +133,7 @@ class DockLayout(Layout):
                     if not size:
                         break
                     total += size
-                    add_widget(
-                        widget,
-                        Region(render_x, y, size, height) + widget.layout_offset,
-                        order,
-                    )
+                    add_widget(widget, Region(render_x, y, size, height), order)
                     render_x += size
                     remaining = max(0, remaining - size)
                 region = Region(x + total, y, width - total, height)
@@ -162,11 +150,7 @@ class DockLayout(Layout):
                     if not size:
                         break
                     total += size
-                    add_widget(
-                        widget,
-                        Region(render_x - size, y, size, height) + widget.layout_offset,
-                        order,
-                    )
+                    add_widget(widget, Region(render_x - size, y, size, height), order)
                     render_x -= size
                     remaining = max(0, remaining - size)
                 region = Region(x, y, width - total, height)

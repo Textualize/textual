@@ -53,7 +53,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "rich"
-version = "10.4.0"
+version = "10.4.1"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 category = "main"
 optional = false
@@ -73,7 +73,7 @@ jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 type = "git"
 url = "git@github.com:willmcgugan/rich"
 reference = "auto-repr-fix"
-resolved_reference = "a905b3da4cf6d5f53cfcaa076cb9d35a346e7a52"
+resolved_reference = "3cf97f151ddf7031cfaa84a4e48f2c3867e1829f"
 
 [[package]]
 name = "toml"

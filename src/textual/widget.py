@@ -223,8 +223,7 @@ class Widget(MessagePump):
         await super().on_event(event)
 
     async def on_idle(self, event: events.Idle) -> None:
-        if self.check_layout():
-            log.debug("LAYING OUT")
+        if self.check_layout():            
             self.reset_check_repaint()
             self.reset_check_layout()
             await self.update_layout()

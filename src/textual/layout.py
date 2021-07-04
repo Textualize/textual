@@ -36,6 +36,11 @@ class MapRegion(NamedTuple):
     order: tuple[int, int]
 
 
+class ReflowResult(NamedTuple):
+    hidden: set[Widget]
+    shown: set[Widget]
+
+
 class LayoutUpdate:
     def __init__(self, lines: Lines, x: int, y: int) -> None:
         self.lines = lines
@@ -70,10 +75,16 @@ class Layout(ABC):
         self.renders.clear()
         self._cuts = None
 
-    def reflow(self, width: int, height: int) -> None:
+    def reflow(self, width: int, height: int) -> ReflowResult:
         self.reset()
 
         map = self.generate_map(width, height)
+
+        old_widgets = set(self._layout_map.keys())
+        new_widgets = set(map.keys())
+        shown_widgets = new_widgets - old_widgets
+        hidden_widgets = old_widgets - new_widgets
+
         self._layout_map = map
         self.width = width
         self.height = height
@@ -84,6 +95,7 @@ class Layout(ABC):
                 new_renders[widget] = (region, self.renders[widget][1])
 
         self.renders = new_renders
+        return ReflowResult(hidden_widgets, shown_widgets)
 
     @abstractmethod
     def generate_map(
@@ -150,37 +162,6 @@ class Layout(ABC):
         self._cuts = [sorted(cut_set) for cut_set in cuts_sets]
         return self._cuts
 
-    @classmethod
-    def _compare_lines(cls, lines1: Lines, lines2: Lines) -> Iterable[list[Segment]]:
-        """Compares two renders and produce 'diff'"""
-        delta_line: list[Segment] = [Control.home().segment]
-        add_delta_segment = delta_line.append
-        move_to_column = Control.move_to_column
-
-        for y, (line1, line2) in enumerate(zip(lines1, lines2)):
-            if line1 == line2:
-                continue
-
-            add_delta_segment(Control.move_to(0, y).segment)
-            start_skip: int | None = None
-            x1 = 0
-            x2 = 0
-            for segment1, segment2 in zip(line1, line2):
-                if x1 == x2 and segment1 == segment2:
-                    if start_skip is None:
-                        start_skip = x1
-                else:
-                    if start_skip is not None:
-                        add_delta_segment(move_to_column(x2).segment)
-                        start_skip = None
-                    add_delta_segment(segment2)
-                x1 += segment1.cell_length
-                x2 += segment2.cell_length
-
-            if delta_line:
-                yield delta_line[:]
-                del delta_line[:]
-
     def _get_renders(self, console: Console) -> Iterable[tuple[Region, Lines]]:
         width = self.width
         height = self.height
@@ -213,11 +194,13 @@ class Layout(ABC):
                 new_region = region.clip(width, height)
                 delta_x = new_region.x - region.x
                 delta_y = new_region.y - region.y
-                # region = new_region
-                lines = lines[delta_y : delta_y + region.height]
+                region = new_region
+
+                splits = [delta_x, delta_x + region.width]
+                divide = Segment.divide
                 lines = [
-                    list(Segment.divide(line, [delta_x, delta_x + region.width]))[1]
-                    for line in lines
+                    list(divide(line, splits))[1]
+                    for line in lines[delta_y : delta_y + region.height]
                 ]
                 self.renders[widget] = (region, lines)
                 yield region, lines
@@ -279,9 +262,8 @@ class Layout(ABC):
                     if final_cuts == [region.x, region.x + region.width]:
                         cut_segments = [line]
                     else:
-                        _, *cut_segments = divide(
-                            line, [cut - region.x for cut in final_cuts]
-                        )
+                        relative_cuts = [cut - region.x for cut in final_cuts]
+                        _, *cut_segments = divide(line, relative_cuts)
                     for cut, segments in zip(final_cuts, cut_segments):
                         if chops[y][cut] is None:
                             chops[y][cut] = segments
