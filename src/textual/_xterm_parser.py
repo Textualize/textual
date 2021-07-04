@@ -31,7 +31,7 @@ class XTermParser(Parser[events.Event]):
         if sgr_match:
             _buttons, _x, _y, state = sgr_match.groups()
             buttons = int(_buttons)
-            button = buttons & 3
+            button = (buttons + 1) & 3
             x = int(_x) - 1
             y = int(_y) - 1
             delta_x = x - self.last_x

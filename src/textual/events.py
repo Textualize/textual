@@ -25,13 +25,8 @@ class Event(Message):
 
 
 class Null(Event):
-    def can_batch(self, event: Event) -> bool:
-        return isinstance(event, Null)
-
-
-class Repaint(Event):
-    def can_batch(self, event: Event) -> bool:
-        return isinstance(event, Repaint)
+    def can_batch(self, message: Message) -> bool:
+        return isinstance(message, Null)
 
 
 class ShutdownRequest(Event):
@@ -94,6 +89,14 @@ class Mount(Event):
 
 class Unmount(Event):
     pass
+
+
+class Show(Event):
+    """Widget has become visible."""
+
+
+class Hide(Event):
+    """Widget has been hidden."""
 
 
 class InputEvent(Event, bubble=True):
