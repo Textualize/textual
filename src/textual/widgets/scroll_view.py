@@ -51,7 +51,7 @@ class ScrollView(LayoutView):
     def validate_target_y(self, value: float) -> float:
         return clamp(value, 0, self._page.contents_size.height - self.size.height)
 
-    def update_y(self, new_value: float) -> None:
+    def watch_y(self, new_value: float) -> None:
         self._page.y = round(new_value)
         self._vertical_scrollbar.position = round(new_value)
 

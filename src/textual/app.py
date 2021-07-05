@@ -384,7 +384,7 @@ if __name__ == "__main__":
 
         show_bar: Reactive[bool] = Reactive(False)
 
-        def update_show_bar(self, show_bar: bool) -> None:
+        def watch_show_bar(self, show_bar: bool) -> None:
             self.animator.animate(self.bar, "layout_offset_x", -40 if show_bar else 0)
 
         async def action_toggle_sidebar(self) -> None:

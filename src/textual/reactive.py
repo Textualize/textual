@@ -54,9 +54,9 @@ class Reactive(Generic[ReactiveType]):
 
             if current_value != value:
 
-                update_function = getattr(obj, f"update_{self.name}", None)
-                if callable(update_function):
-                    update_function(value)
+                watch_function = getattr(obj, f"watch_{self.name}", None)
+                if callable(watch_function):
+                    watch_function(value)
                 setattr(obj, self.internal_name, value)
 
                 if self.layout:
