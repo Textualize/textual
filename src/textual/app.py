@@ -27,7 +27,7 @@ from ._linux_driver import LinuxDriver
 from .message_pump import MessagePump
 from .message import Message
 from .view import DockView, View
-from .widget import Widget, Widget
+from .widget import Widget, Widget, Reactive
 
 log = logging.getLogger("rich")
 
@@ -216,11 +216,11 @@ class App(MessagePump):
             if traceback is not None:
                 self.console.print(traceback)
 
-    # async def dock(self, *widgets: WidgetBase, z: int = 0) -> None:
+    def require_repaint(self) -> None:
+        self.refresh()
 
-    #     dock = Dock("top", widgets, z)
-    #     self._docks.append(dock)
-    #     await self.view.mount(widgets)
+    def require_layout(self) -> None:
+        self.view.require_layout()
 
     async def message_update(self, message: Message) -> None:
         self.refresh()
@@ -375,21 +375,20 @@ if __name__ == "__main__":
     )
 
     class MyApp(App):
+        """Just a test app."""
+
         async def on_load(self, event: events.Load) -> None:
             await self.bind("q,ctrl+c", "quit")
             await self.bind("x", "bang")
             await self.bind("b", "toggle_sidebar")
-            self.side = False
+
+        show_bar: Reactive[bool] = Reactive(False)
+
+        def update_show_bar(self, show_bar: bool) -> None:
+            self.animator.animate(self.bar, "layout_offset_x", -40 if show_bar else 0)
 
         async def action_toggle_sidebar(self) -> None:
-            self.side = not self.side
-            self.animator.animate(
-                self.bar,
-                "layout_offset_x",
-                -40 if self.side else 0,
-                speed=60,
-                easing="in_out_cubic",
-            )
+            self.show_bar = not self.show_bar
 
         async def on_startup(self, event: events.Startup) -> None:
 

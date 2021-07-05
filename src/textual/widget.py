@@ -30,6 +30,7 @@ from .message import Message
 from .messages import UpdateMessage, LayoutMessage
 from .message_pump import MessagePump
 from .geometry import Point, Dimensions
+from .reactive import Reactive
 
 
 if TYPE_CHECKING:
@@ -40,49 +41,6 @@ if TYPE_CHECKING:
 WidgetID = NewType("WidgetID", int)
 
 log = getLogger("rich")
-
-
-ReactiveType = TypeVar("ReactiveType")
-
-
-class Reactive(Generic[ReactiveType]):
-    def __init__(
-        self,
-        default: ReactiveType,
-        validator: Callable[[object, ReactiveType], ReactiveType] | None = None,
-        layout: bool = False,
-    ) -> None:
-        self._default = default
-        self.validator = validator
-        self.layout = layout
-
-    def __set_name__(self, owner: "Widget", name: str) -> None:
-        self.name = name
-        self.internal_name = f"__{name}"
-        setattr(owner, self.internal_name, self._default)
-
-    def __get__(self, obj: "Widget", obj_type: type[object]) -> ReactiveType:
-        return getattr(obj, self.internal_name)
-
-    def __set__(self, obj: "Widget", value: ReactiveType) -> None:
-        if getattr(obj, self.internal_name) != value:
-
-            current_value = getattr(obj, self.internal_name, None)
-            validate_function = getattr(obj, f"validate_{self.name}", None)
-            if callable(validate_function):
-                value = validate_function(value)
-
-            if current_value != value:
-                setattr(obj, self.internal_name, value)
-
-                update_function = getattr(obj, f"update_{self.name}", None)
-                if callable(update_function):
-                    update_function(current_value, value)
-
-                if self.layout:
-                    obj.require_layout()
-                else:
-                    obj.require_repaint()
 
 
 @rich.repr.auto
@@ -223,7 +181,7 @@ class Widget(MessagePump):
         await super().on_event(event)
 
     async def on_idle(self, event: events.Idle) -> None:
-        if self.check_layout():            
+        if self.check_layout():
             self.reset_check_repaint()
             self.reset_check_layout()
             await self.update_layout()

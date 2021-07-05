@@ -91,7 +91,7 @@ class Page(Widget):
     def validate_y(self, value: int) -> int:
         return max(0, value)
 
-    def update_y(self, old: int, new: int) -> None:
+    def update_y(self, new: int) -> None:
         x, y = self._page.offset
         self._page.offset = Point(x, new)
 
