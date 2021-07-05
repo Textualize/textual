@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.1.4"
+version = "0.1.5"
 description = "Text User Interface using Rich"
 authors = ["Will McGugan <willmcgugan@gmail.com>"]
 license = "MIT"
@@ -20,7 +20,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-rich = "^10.4.0"
+rich = "^10.5.0"
 #rich = {git = "git@github.com:willmcgugan/rich", rev = "auto-repr-fix"}
 typing-extensions = { version = "^3.10.0", python = "<3.8" }
 
