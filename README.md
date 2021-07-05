@@ -6,6 +6,8 @@ The end goal is to be able to rapidly create *rich* terminal applications that l
 
 Rich TUI will integrate tightly with its parent project, Rich. Any of the existing *renderables* can be used in a more dynamic application.
 
+Textual will be eventually be cross platform, but for now it is MacOS / Linux only. Windows support is in the pipeline.
+
 This project is currently a work in progress and may not be usable for a while. Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or post in Discussions if you have any requests / suggestions. 
 
 ![screenshot](./imgs/rich-tui.png)
