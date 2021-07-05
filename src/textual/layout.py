@@ -123,7 +123,7 @@ class Layout(ABC):
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given point or None."""
         for widget, region in self:
-            if region.contains(x, y):
+            if widget.is_visual and region.contains(x, y):
                 return widget, region
         raise NoWidget(f"No widget under screen coordinate ({x}, {y})")
 
@@ -181,6 +181,9 @@ class Layout(ABC):
             return lines
 
         for widget, region, _order in widget_regions:
+
+            if not widget.is_visual:
+                continue
             region_lines = self.renders.get(widget)
             if region_lines is not None:
                 yield region_lines
@@ -279,7 +282,6 @@ class Layout(ABC):
 
     def update_widget(self, console: Console, widget: Widget) -> LayoutUpdate | None:
         if widget not in self.renders:
-            log.debug("WIDGET %r", self.renders)
             return None
         region, lines = self.renders[widget]
         new_lines = console.render_lines(

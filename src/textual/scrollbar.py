@@ -166,8 +166,6 @@ class ScrollBar(Widget):
         yield "window_size", self.window_size
         yield "position", self.position
 
-    __rich_repr__.angular = True
-
     def render(self) -> RenderableType:
         return ScrollBarRender(
             virtual_size=self.virtual_size,

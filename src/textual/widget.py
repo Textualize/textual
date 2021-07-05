@@ -67,12 +67,12 @@ class Widget(MessagePump):
 
         super().__init__()
 
-    visible: Reactive[bool] = Reactive(True)
+    visible: Reactive[bool] = Reactive(True, layout=True)
     layout_size: Reactive[int | None] = Reactive(None)
     layout_fraction: Reactive[int] = Reactive(1)
     layout_minimim_size: Reactive[int] = Reactive(1)
     layout_offset_x: Reactive[float] = Reactive(0, layout=True)
-    layout_offset_y: Reactive[float] = Reactive(0)
+    layout_offset_y: Reactive[float] = Reactive(0, layout=True)
 
     def __init_subclass__(cls, can_focus: bool = True) -> None:
         super().__init_subclass__()
@@ -83,6 +83,10 @@ class Widget(MessagePump):
 
     def __rich__(self) -> RenderableType:
         return self.render()
+
+    @property
+    def is_visual(self) -> bool:
+        return True
 
     @property
     def app(self) -> "App":
@@ -200,17 +204,8 @@ class Widget(MessagePump):
         style_under_cursor = self.get_style_at(event.x, event.y)
         log.debug("%r", style_under_cursor)
 
-    # async def on_mouse_up(self, event: events.MouseUp) -> None:
-    #     style = self.get_style_at(event.x, event.y)
-    #     if "@click" in style.meta:
-    #         log.debug(style._link_id)
-    #         await self.app.action(style.meta["@click"], default_namespace=self)
-
-
-class StaticWidget(Widget):
-    def __init__(self, renderable: RenderableType, name: str | None = None) -> None:
-        super().__init__(name)
-        self.renderable = renderable
-
-    def render(self) -> RenderableType:
-        return self.renderable
+    async def on_mouse_up(self, event: events.MouseUp) -> None:
+        style = self.get_style_at(event.x, event.y)
+        if "@click" in style.meta:
+            log.debug(style._link_id)
+            await self.app.action(style.meta["@click"], default_namespace=self)

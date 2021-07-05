@@ -7,20 +7,17 @@ import logging
 from typing import cast, Iterable, Optional, Tuple, TYPE_CHECKING
 
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
-from rich.region import Region as LayoutRegion
 import rich.repr
-from rich.segment import Segments
 from rich.style import Style
 
 from . import events
-from ._context import active_app
 from .layout import Layout, NoWidget
 from .layouts.dock import DockEdge, DockLayout, Dock
 from .geometry import Dimensions, Point, Region
 from .messages import UpdateMessage, LayoutMessage
 
-from .widget import StaticWidget, Widget, WidgetID, Widget
-from .widgets.header import Header
+from .widget import Widget, Widget
+
 
 if TYPE_CHECKING:
     from .app import App
@@ -49,6 +46,10 @@ class View(Widget):
         yield "name", self.name
 
     @property
+    def is_visual(self) -> bool:
+        return False
+
+    @property
     def is_root_view(self) -> bool:
         return self.parent is self.app
 
@@ -69,11 +70,7 @@ class View(Widget):
             self.app.display(display_update)
 
     async def message_layout(self, message: LayoutMessage) -> None:
-
         await self.root_view.refresh_layout()
-
-    # async def on_create(self, event: events.Created) -> None:
-    #     await self.mount(Header(self.title))
 
     async def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
 
@@ -101,13 +98,13 @@ class View(Widget):
         self.layout.reflow(width, height)
         self.app.refresh()
 
-        # for widget, region in self.layout:
-        #     if isinstance(widget, Widget):
-        #         await widget.post_message(
-        #             events.Resize(self, region.width, region.height)
-        #         )
+        for widget, region in self.layout:
+            if isinstance(widget, Widget):
+                await widget.post_message(
+                    events.Resize(self, region.width, region.height)
+                )
 
-    async def on_resize(self, event: events.Resize) -> None:        
+    async def on_resize(self, event: events.Resize) -> None:
         self.size = Dimensions(event.width, event.height)
         await self.refresh_layout()
 
@@ -171,10 +168,10 @@ class View(Widget):
                 await self.focused.forward_event(event)
 
     async def action_toggle(self, name: str) -> None:
-        log.debug("%r", self.named_widgets)
         widget = self.named_widgets[name]
         widget.visible = not widget.visible
-        await self.refresh_layout()
+        await self.post_message(LayoutMessage(self))
+        # await self.refresh_layout()
 
 
 class DoNotSet:
@@ -194,6 +191,7 @@ class DockView(View):
         edge: DockEdge = "top",
         z: int = 0,
         size: int | None | DoNotSet = do_not_set,
+        name: str | None = None
     ) -> Widget | tuple[Widget, ...]:
 
         dock = Dock(edge, widgets, z)

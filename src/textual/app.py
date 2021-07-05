@@ -1,5 +1,5 @@
 from __future__ import annotations
-from argparse import Action
+import os
 
 import asyncio
 
@@ -18,7 +18,7 @@ from rich.traceback import Traceback
 from . import events
 from . import actions
 from ._animator import Animator
-from .geometry import Point, Region
+from .geometry import Region
 from ._context import active_app
 from .keys import Binding
 from .driver import Driver
@@ -239,13 +239,16 @@ class App(MessagePump):
         await self.close_messages()
 
     def refresh(self) -> None:
+        sync_available = os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal"
         if not self._closed:
             console = self.console
             try:
-                console.file.write("\x1bP=1s\x1b\\")
+                if sync_available:
+                    console.file.write("\x1bP=1s\x1b\\")
                 with console:
                     console.print(Screen(Control.home(), self.view, Control.home()))
-                console.file.write("\x1bP=2s\x1b\\")
+                if sync_available:
+                    console.file.write("\x1bP=2s\x1b\\")
             except Exception:
                 log.exception("refresh failed")
 
@@ -345,10 +348,10 @@ if __name__ == "__main__":
 
     from rich.panel import Panel
 
-    from .widgets.header import Header
-    from .widgets.footer import Footer
+    from .widgets import Header
+    from .widgets import Footer
 
-    from .widgets.placeholder import Placeholder
+    from .widgets import Placeholder
     from .scrollbar import ScrollBar
 
     from rich.markdown import Markdown

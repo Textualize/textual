@@ -61,14 +61,13 @@ class DockLayout(Layout):
         layers: dict[int, Region] = defaultdict(lambda: layout_region)
 
         def add_widget(widget: Widget, region: Region, order: tuple[int, int]):
-            region = region + offset + widget.layout_offset            
+            region = region + offset + widget.layout_offset
+            map[widget] = MapRegion(region, order)
             if isinstance(widget, View):
                 sub_map = widget.layout.generate_map(
                     region.width, region.height, offset=region.origin
                 )
                 map.update(sub_map)
-            else:
-                map[widget] = MapRegion(region, order)
 
         for index, dock in enumerate(self.docks):
             dock_options = [

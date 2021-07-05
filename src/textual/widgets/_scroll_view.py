@@ -2,43 +2,35 @@ from __future__ import annotations
 
 import logging
 
-from rich.console import Console, RenderableType
-from rich.layout import Layout
+from rich.console import RenderableType
 from rich.style import StyleType
-from rich.text import Text
+
 
 from .. import events
 from ..message import Message
 from ..scrollbar import ScrollBar, ScrollDown, ScrollUp
 from ..geometry import clamp
 from ..page import Page
-from ..view import LayoutView
-from ..widget import Reactive, StaticWidget
+from ..view import DockView
+from ..reactive import Reactive
 
 
 log = logging.getLogger("rich")
 
 
-class ScrollView(LayoutView):
+class ScrollView(DockView):
     def __init__(
         self,
         renderable: RenderableType,
+        *,
         name: str | None = None,
         style: StyleType = "",
         fluid: bool = True,
     ) -> None:
         self.fluid = fluid
-        layout = Layout(name="outer")
-        layout.split_row(
-            Layout(name="content", ratio=1), Layout(name="vertical_scrollbar", size=1)
-        )
-        # layout["main"].split_column(
-        #     Layout(name="content", ratio=1), Layout(name="horizontal_scrollbar", size=1)
-        # )
         self._vertical_scrollbar = ScrollBar(vertical=True)
-        # self._horizontal_Scrollbar = ScrollBar(vertical=False)
         self._page = Page(renderable, style=style)
-        super().__init__(layout=layout, name=name)
+        super().__init__(name="ScrollView")
 
     x: Reactive[float] = Reactive(0)
     y: Reactive[float] = Reactive(0)
@@ -56,15 +48,13 @@ class ScrollView(LayoutView):
         self._vertical_scrollbar.position = round(new_value)
 
     async def on_mount(self, event: events.Mount) -> None:
-        await self.mount_all(
-            content=self._page,
-            vertical_scrollbar=self._vertical_scrollbar,
-            # horizontal_scrollbar=self._horizontal_Scrollbar,
-        )
+        await self.dock(self._vertical_scrollbar, edge="right", size=1)
+        await self.dock(self._page, edge="top")
 
     async def on_idle(self, event: events.Idle) -> None:
         self._vertical_scrollbar.virtual_size = self._page.virtual_size.height
         self._vertical_scrollbar.window_size = self.size.height
+
         await super().on_idle(event)
 
     async def on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
@@ -98,9 +88,11 @@ class ScrollView(LayoutView):
             self.target_y -= 2
             self.animate("y", self.target_y, easing="linear", speed=100)
         elif key == "pagedown":
+            log.debug("%r", self.size)
             self.target_y += self.size.height
             self.animate("y", self.target_y, easing="out_cubic")
         elif key == "pageup":
+            log.debug("%r", self.size)
             self.target_y -= self.size.height
             self.animate("y", self.target_y, easing="out_cubic")
 

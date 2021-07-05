@@ -96,7 +96,6 @@ class Page(Widget):
         self._page.offset = Point(x, new)
 
     def update(self, renderable: RenderableType | None = None) -> None:
-
         if renderable:
             self._page.update(renderable)
         else:
