@@ -39,6 +39,7 @@ class MapRegion(NamedTuple):
 class ReflowResult(NamedTuple):
     hidden: set[Widget]
     shown: set[Widget]
+    resized: set[Widget]
 
 
 class LayoutUpdate:
@@ -78,24 +79,28 @@ class Layout(ABC):
     def reflow(self, width: int, height: int) -> ReflowResult:
         self.reset()
 
+        old_map = self._layout_map
         map = self.generate_map(width, height)
 
         old_widgets = set(self._layout_map.keys())
         new_widgets = set(map.keys())
         shown_widgets = new_widgets - old_widgets
         hidden_widgets = old_widgets - new_widgets
+        resized_widgets = set()
 
         self._layout_map = map
         self.width = width
         self.height = height
 
+        # TODO: make this more efficient
         new_renders: dict[Widget, tuple[Region, Lines]] = {}
         for widget, (region, order) in map.items():
+            if widget in old_widgets and widget.size != region.size:
+                resized_widgets.add(widget)
             if widget in self.renders and self.renders[widget][0].size == region.size:
                 new_renders[widget] = (region, self.renders[widget][1])
-
         self.renders = new_renders
-        return ReflowResult(hidden_widgets, shown_widgets)
+        return ReflowResult(hidden_widgets, shown_widgets, resized_widgets)
 
     @abstractmethod
     def generate_map(

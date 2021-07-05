@@ -30,7 +30,7 @@ class Timer:
         name: str | None = None,
         callback: TimerCallback | None = None,
         repeat: int = None,
-        skip: bool = True,
+        skip: bool = False,
     ) -> None:
         self._target_repr = repr(event_target)
         self._target = weakref.ref(event_target)
