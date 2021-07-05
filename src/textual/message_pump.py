@@ -14,6 +14,10 @@ from ._types import MessageHandler
 log = logging.getLogger("rich")
 
 
+class NoParent(Exception):
+    pass
+
+
 class MessagePumpClosed(Exception):
     pass
 
@@ -33,6 +37,12 @@ class MessagePump:
     def task(self) -> Task:
         assert self._task is not None
         return self._task
+
+    @property
+    def parent(self) -> MessagePump:
+        if self._parent is None:
+            raise NoParent(f"{self._parent} has no parent")
+        return self._parent
 
     def set_parent(self, parent: MessagePump) -> None:
         self._parent = parent
@@ -135,7 +145,7 @@ class MessagePump:
                 log.exception("error in get_message()")
                 raise error from None
 
-            # log.debug("%r -> %r", message, self)
+            log.debug("%r -> %r", message, self)
             # Combine any pending messages that may supersede this one
             while not (self._closed or self._closing):
                 pending = self.peek_message()
@@ -169,6 +179,7 @@ class MessagePump:
 
     async def on_event(self, event: events.Event) -> None:
         method_name = f"on_{event.name}"
+
         dispatch_function: MessageHandler = getattr(self, method_name, None)
         if dispatch_function is not None:
             await dispatch_function(event)
@@ -180,7 +191,10 @@ class MessagePump:
                 await self._parent.post_message(event)
 
     async def on_message(self, message: Message) -> None:
-        pass
+        method_name = f"message_{message.name}"
+        method = getattr(self, method_name, None)
+        if method is not None:
+            await method(message)
 
     def post_message_no_wait(self, message: Message) -> bool:
         if self._closing or self._closed:

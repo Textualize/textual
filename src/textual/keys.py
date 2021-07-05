@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from enum import Enum
 
 # Adapted from prompt toolkit https://github.com/prompt-toolkit/python-prompt-toolkit/blob/master/prompt_toolkit/keys.py
@@ -196,3 +197,9 @@ class Keys(str, Enum):
     ShiftControlRight = ControlShiftRight
     ShiftControlHome = ControlShiftHome
     ShiftControlEnd = ControlShiftEnd
+
+
+@dataclass
+class Binding:
+    action: str
+    description: str

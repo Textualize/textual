@@ -30,6 +30,7 @@ class Timer:
         name: str | None = None,
         callback: TimerCallback | None = None,
         repeat: int = None,
+        skip: bool = True,
     ) -> None:
         self._target_repr = repr(event_target)
         self._target = weakref.ref(event_target)
@@ -39,6 +40,7 @@ class Timer:
         self._timer_count += 1
         self._callback = callback
         self._repeat = repeat
+        self._skip = skip
         self._stop_event = Event()
         self._active = Event()
         self._active.set()
@@ -75,7 +77,11 @@ class Timer:
         try:
             while _repeat is None or count <= _repeat:
                 next_timer = start + (count * _interval)
+                if self._skip and next_timer < monotonic():
+                    count += 1
+                    continue
                 try:
+
                     if await wait_for(_wait(), max(0, next_timer - monotonic())):
                         break
                 except TimeoutError:

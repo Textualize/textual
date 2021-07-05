@@ -1,23 +1,23 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from itertools import chain
 from time import time
 import logging
-from typing import Optional, Tuple, TYPE_CHECKING
+from typing import cast, Iterable, Optional, Tuple, TYPE_CHECKING
 
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
-from rich.layout import Layout
-from rich.region import Region as LayoutRegion
 import rich.repr
-from rich.segment import Segments
+from rich.style import Style
 
 from . import events
-from ._context import active_app
-from .geometry import Dimensions, Region
-from .message import Message
-from .message_pump import MessagePump
-from .widget import StaticWidget, Widget, WidgetBase, UpdateMessage
-from .widgets.header import Header
+from .layout import Layout, NoWidget
+from .layouts.dock import DockEdge, DockLayout, Dock
+from .geometry import Dimensions, Point, Region
+from .messages import UpdateMessage, LayoutMessage
+
+from .widget import Widget, Widget
+
 
 if TYPE_CHECKING:
     from .app import App
@@ -25,18 +25,16 @@ if TYPE_CHECKING:
 log = logging.getLogger("rich")
 
 
-class NoWidget(Exception):
-    pass
-
-
-class View(ABC, WidgetBase):
-    @property
-    def app(self) -> "App":
-        return active_app.get()
-
-    @property
-    def console(self) -> Console:
-        return active_app.get().console
+@rich.repr.auto
+class View(Widget):
+    def __init__(self, layout: Layout = None, name: str | None = None) -> None:
+        self.layout: Layout = layout or DockLayout()
+        self.mouse_over: Widget | None = None
+        self.focused: Widget | None = None
+        self.size = Dimensions(0, 0)
+        self.widgets: set[Widget] = set()
+        self.named_widgets: dict[str, Widget] = {}
+        super().__init__(name)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -44,149 +42,81 @@ class View(ABC, WidgetBase):
         return
         yield
 
-    @abstractmethod
-    async def mount(
-        self, widget: WidgetBase | RenderableType, *, slot: str = "main"
-    ) -> None:
-        ...
-
-    async def mount_all(self, **widgets: WidgetBase) -> None:
-        for slot, widget in widgets.items():
-            await self.mount(widget, slot=slot)
-        self.require_repaint()
-
-    async def forward_event(self, event: events.Event) -> None:
-        pass
-
-
-@rich.repr.auto
-class LayoutView(View):
-    def __init__(self, layout: Layout = None, name: str | None = "default") -> None:
-        self.name = name
-        self.layout = layout or Layout()
-        self.mouse_over: WidgetBase | None = None
-        self.focused: WidgetBase | None = None
-        self.size = Dimensions(0, 0)
-        self._widgets: set[WidgetBase] = set()
-        super().__init__(name)
-        self.enable_messages(events.Idle)
-
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "name", self.name
 
     @property
-    def is_root_view(self) -> bool:
-        return self._parent is self.app
+    def is_visual(self) -> bool:
+        return False
 
-    # def check_repaint(self) -> bool:
-    #     return True
+    @property
+    def is_root_view(self) -> bool:
+        return self.parent is self.app
+
+    def is_mounted(self, widget: Widget) -> bool:
+        return widget in self.widgets
 
     def render(self) -> RenderableType:
         return self.layout
 
-    # def __rich__(self) -> Layout:
-    #     return self.render()
+    def get_offset(self, widget: Widget) -> Point:
+        return self.layout.get_offset(widget)
 
-    # def __rich_console__(
-    #     self, console: Console, options: ConsoleOptions
-    # ) -> RenderResult:
-    #     width, height = self.size
-    #     segments = console.render(self.layout, options.update_dimensions(width, height))
-    #     yield from segments
+    async def message_update(self, message: UpdateMessage) -> None:
+        widget = message.widget
+        assert isinstance(widget, Widget)
+        display_update = self.root_view.layout.update_widget(self.console, widget)
+        if display_update is not None:
+            self.app.display(display_update)
 
-    def get_widget_at(
-        self, x: int, y: int, deep: bool = False
-    ) -> Tuple[Widget, Region]:
+    async def message_layout(self, message: LayoutMessage) -> None:
+        await self.root_view.refresh_layout()
 
-        for layout, (layout_region, render) in self.layout.map.items():
-            region = Region(*layout_region)
-            if region.contains(x, y):
-                widget = layout.renderable
-                if deep and isinstance(layout.renderable, View):
+    async def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
 
-                    view = layout.renderable
-                    translate_x = region.x
-                    translate_y = region.y
-                    widget, region = view.get_widget_at(
-                        x - region.x, y - region.y, deep=True
-                    )
-                    region = region.translate(translate_x, translate_y)
+        name_widgets: Iterable[tuple[str | None, Widget]]
+        name_widgets = chain(
+            ((None, widget) for widget in anon_widgets), widgets.items()
+        )
+        for name, widget in name_widgets:
+            name = name or widget.name
+            if name:
+                self.named_widgets[name] = widget
+            await self.app.register(widget)
+            widget.set_parent(self)
+            await widget.post_message(events.Mount(sender=self))
+            self.widgets.add(widget)
 
-                if isinstance(widget, WidgetBase):
-                    return widget, region
+        self.require_repaint()
 
-        raise NoWidget(f"No widget at {x}, {y}")
+    async def refresh_layout(self) -> None:
 
-    async def on_message(self, message: Message) -> None:
-
-        if isinstance(message, UpdateMessage):
-            widget = message.widget
-            # if widget in self._widgets:
-
-            for layout, (region, render) in self.layout.map.items():
-                if layout.renderable is message.sender:
-
-                    if not isinstance(widget, WidgetBase):
-                        continue
-
-                    if self.is_root_view:
-                        try:
-                            update = widget.render_update(
-                                region.x + message.offset_x, region.y + message.offset_y
-                            )
-                        except Exception:
-                            log.exception("update error")
-                            raise
-                        self.console.print(Segments(update), end="")
-                    else:
-                        await self._parent.on_message(
-                            UpdateMessage(
-                                self,
-                                widget,
-                                offset_x=message.offset_x + region.x,
-                                offset_y=message.offset_y + region.y,
-                            )
-                        )
-                    break
-            else:
-                pass
-                # log.warning("Update widget not found")
-
-    # async def on_create(self, event: events.Created) -> None:
-    #     await self.mount(Header(self.title))
-
-    async def mount(
-        self, widget: WidgetBase | RenderableType, *, slot: str = "main"
-    ) -> None:
-        if not isinstance(widget, WidgetBase):
-            log.debug("MOUNTED %r", widget)
-            widget = StaticWidget(widget)
-        self.layout[slot].update(widget)
-        await self.app.add(widget)
-        widget.set_parent(self)
-        await widget.post_message(events.Mount(sender=self))
-        self._widgets.add(widget)
-
-    async def layout_update(self) -> None:
         if not self.size:
             return
-        width, height = self.size
-        region_map = self.layout._make_region_map(width, height)
-        for layout, region in region_map.items():
-            if isinstance(layout.renderable, WidgetBase):
-                await layout.renderable.post_message(
+
+        width, height = self.console.size
+        self.layout.reflow(width, height)
+        self.app.refresh()
+
+        for widget, region in self.layout:
+            if isinstance(widget, Widget):
+                await widget.post_message(
                     events.Resize(self, region.width, region.height)
                 )
-        self.app.refresh()
-        # await self.repaint()
 
     async def on_resize(self, event: events.Resize) -> None:
         self.size = Dimensions(event.width, event.height)
-        await self.layout_update()
+        await self.refresh_layout()
+
+    def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
+        return self.layout.get_widget_at(x, y)
+
+    def get_style_at(self, x: int, y: int) -> Style:
+        return self.layout.get_style_at(x, y)
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         try:
-            widget, region = self.get_widget_at(event.x, event.y, deep=True)
+            widget, region = self.get_widget_at(event.x, event.y)
         except NoWidget:
             await self.app.set_mouse_over(None)
         else:
@@ -215,18 +145,21 @@ class LayoutView(View):
             await self._on_mouse_move(event)
 
         elif isinstance(event, events.MouseEvent):
+
             try:
-                widget, region = self.get_widget_at(event.x, event.y, deep=True)
+                widget, region = self.get_widget_at(event.x, event.y)
             except NoWidget:
-                if isinstance(event, events.MouseDown):
-                    await self.app.set_focus(None)
+                pass
             else:
-                if isinstance(event, events.MouseDown):
+                if isinstance(event, events.MouseDown) and widget.can_focus:
                     await self.app.set_focus(widget)
                 await widget.forward_event(event.offset(-region.x, -region.y))
 
         elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
-            widget, _region = self.get_widget_at(event.x, event.y, deep=True)
+            try:
+                widget, _region = self.get_widget_at(event.x, event.y)
+            except NoWidget:
+                return
             scroll_widget = widget or self.focused
             if scroll_widget is not None:
                 await scroll_widget.forward_event(event)
@@ -234,7 +167,45 @@ class LayoutView(View):
             if self.focused is not None:
                 await self.focused.forward_event(event)
 
-    async def action_toggle(self, layout_name: str) -> None:
-        visible = self.layout[layout_name].visible
-        self.layout[layout_name].visible = not visible
-        await self.layout_update()
+    async def action_toggle(self, name: str) -> None:
+        widget = self.named_widgets[name]
+        widget.visible = not widget.visible
+        await self.post_message(LayoutMessage(self))
+        # await self.refresh_layout()
+
+
+class DoNotSet:
+    pass
+
+
+do_not_set = DoNotSet()
+
+
+class DockView(View):
+    def __init__(self, name: str | None = None) -> None:
+        super().__init__(layout=DockLayout(), name=name)
+
+    async def dock(
+        self,
+        *widgets: Widget,
+        edge: DockEdge = "top",
+        z: int = 0,
+        size: int | None | DoNotSet = do_not_set,
+        name: str | None = None
+    ) -> Widget | tuple[Widget, ...]:
+
+        dock = Dock(edge, widgets, z)
+        assert isinstance(self.layout, DockLayout)
+        self.layout.docks.append(dock)
+        for widget in widgets:
+            if size is not do_not_set:
+                widget.layout_size = cast(Optional[int], size)
+            if not self.is_mounted(widget):
+                await self.mount(widget)
+        await self.refresh_layout()
+
+        widget, *rest = widgets
+        if rest:
+            return widgets
+        else:
+            return widget

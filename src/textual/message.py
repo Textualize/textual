@@ -7,6 +7,7 @@ from .case import camel_to_snake
 from ._types import MessageTarget
 
 
+@rich.repr.auto
 class Message:
     """Base class for a message."""
 
@@ -23,7 +24,7 @@ class Message:
 
     def __init__(self, sender: MessageTarget) -> None:
         self.sender = sender
-        self.name = camel_to_snake(self.__class__.__name__)
+        self.name = camel_to_snake(self.__class__.__name__.replace("Message", ""))
         self.time = monotonic()
         self._no_default_action = False
         self._stop_propagaton = False

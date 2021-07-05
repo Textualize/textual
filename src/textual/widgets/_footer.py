@@ -10,6 +10,7 @@ class Footer(Widget):
     def __init__(self) -> None:
         self.keys: list[tuple[str, str]] = []
         super().__init__()
+        self.layout_size = 1
 
     def __rich_repr__(self) -> RichReprResult:
         yield "footer"

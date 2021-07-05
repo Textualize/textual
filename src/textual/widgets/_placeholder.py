@@ -1,25 +1,29 @@
 from rich import box
 from rich.align import Align
-from rich.console import Console, ConsoleOptions, RenderableType
+from rich.console import RenderableType
 from rich.panel import Panel
 from rich.pretty import Pretty
 import rich.repr
 
+from logging import getLogger
+
 from .. import events
 from ..widget import Reactive, Widget
 
+log = getLogger("rich")
 
-@rich.repr.auto(angular=True)
+
+@rich.repr.auto(angular=False)
 class Placeholder(Widget, can_focus=True):
 
     has_focus: Reactive[bool] = Reactive(False)
     mouse_over: Reactive[bool] = Reactive(False)
+    style: Reactive[str] = Reactive("")
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "name", self.name
-        yield "has_focus", self.has_focus
-        yield "mouse_over", self.mouse_over
-        yield "layout", self.layout
+        yield "has_focus", self.has_focus, False
+        yield "mouse_over", self.mouse_over, False
 
     def render(self) -> RenderableType:
         return Panel(
@@ -27,6 +31,7 @@ class Placeholder(Widget, can_focus=True):
             title=self.__class__.__name__,
             border_style="green" if self.mouse_over else "blue",
             box=box.HEAVY if self.has_focus else box.ROUNDED,
+            style=self.style,
         )
 
     async def on_focus(self, event: events.Focus) -> None:

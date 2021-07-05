@@ -17,7 +17,12 @@ def clamp(value: T, minimum: T, maximum: T) -> T:
     Returns:
         T: New value that is not less than the minimum or greater than the maximum.
     """
-    return min(max(value, minimum), maximum)
+    if value < minimum:
+        return minimum
+    elif value > maximum:
+        return maximum
+    else:
+        return value
 
 
 class Point(NamedTuple):
@@ -28,22 +33,36 @@ class Point(NamedTuple):
 
     @property
     def is_origin(self) -> bool:
-        x, y = self
-        return x == 0 and y == 0
+        """Check if the point is at the origin (0, 0)"""
+        return self == (0, 0)
 
     def __add__(self, other: object) -> Point:
-        if isinstance(other, Point):
+        if isinstance(other, tuple):
             _x, _y = self
             x, y = other
             return Point(_x + x, _y + y)
-        raise NotImplemented
+        return NotImplemented
 
     def __sub__(self, other: object) -> Point:
-        if isinstance(other, Point):
+        if isinstance(other, tuple):
             _x, _y = self
             x, y = other
             return Point(_x - x, _y - y)
-        raise NotImplemented
+        return NotImplemented
+
+    def blend(self, destination: Point, factor: float) -> Point:
+        """Blend (interpolate) to a new point.
+
+        Args:
+            destination (Point): Point where progress is 1.0
+            factor (float): A value between 0 and 1.0
+
+        Returns:
+            Point: A new point on a line between self and destination
+        """
+        x1, y1 = self
+        x2, y2 = destination
+        return Point(int(x1 + (x2 - x1) * factor), int((y1 + (y2 - y1) * factor)))
 
 
 class Dimensions(NamedTuple):
@@ -54,6 +73,10 @@ class Dimensions(NamedTuple):
 
     def __bool__(self) -> bool:
         return self.width * self.height != 0
+
+    @property
+    def area(self) -> int:
+        return self.width * self.height
 
     def contains(self, x: int, y: int) -> bool:
         """Check if a point is in the region.
@@ -100,8 +123,23 @@ class Region(NamedTuple):
     width: int
     height: int
 
+    @classmethod
+    def from_corners(cls, x1: int, y1: int, x2: int, y2: int) -> Region:
+        """Construct a Region form the top left and bottom right corners.
+
+        Args:
+            x1 (int): Top left x
+            y1 (int): Top left y
+            x2 (int): Bottom right x
+            y2 (int): Bottom right y
+
+        Returns:
+            Region: A new region.
+        """
+        return cls(x1, y1, x2 - x1, y2 - y1)
+
     def __bool__(self) -> bool:
-        return self.width * self.height != 0
+        return self.width != 0 and self.height != 0
 
     @property
     def area(self) -> int:
@@ -130,14 +168,21 @@ class Region(NamedTuple):
         return Dimensions(self.width, self.height)
 
     @property
-    def extents(self) -> tuple[int, int, int, int]:
+    def corners(self) -> tuple[int, int, int, int]:
         """Get the maxima and minima of region.
 
         Returns:
             tuple[int, int, int, int]: A tuple of (<min x>, <max x>, <min y>, <max y>)
         """
         x, y, width, height = self
-        return x, width + x, y, height + y
+        return x, y, x + width, y + height
+
+    def __add__(self, other: Any) -> Region:
+        if isinstance(other, tuple):
+            ox, oy = other
+            x, y, width, height = self
+            return Region(x + ox, y + oy, width, height)
+        return NotImplemented
 
     def overlaps(self, other: Region) -> bool:
         """Check if another region overlaps this region.
@@ -148,8 +193,8 @@ class Region(NamedTuple):
         Returns:
             bool: True if other region shares any cells with this region.
         """
-        x, x2, y, y2 = self.extents
-        ox, ox2, oy, oy2 = other.extents
+        x, y, x2, y2 = self.corners
+        ox, oy, ox2, oy2 = other.corners
 
         return ((x2 > ox >= x) or (x2 > ox2 >= x) or (ox < x and ox2 > x2)) and (
             (y2 > oy >= y) or (y2 > oy2 >= y) or (oy < y and oy2 > x2)
@@ -166,7 +211,7 @@ class Region(NamedTuple):
             bool: True if the point is within the region.
         """
         self_x, self_y, width, height = self
-        return ((self_x + width) > x >= self_x) and (((self_y + height) > y >= self_y))
+        return (self_x + width > x >= self_x) and (self_y + height > y >= self_y)
 
     def contains_point(self, point: tuple[int, int]) -> bool:
         """Check if a point is in the region.
@@ -177,28 +222,104 @@ class Region(NamedTuple):
         Returns:
             bool: True if the point is within the region.
         """
-        self_x, self_y, width, height = self
-        x, y = point
-        return ((self_x + width) > x >= self_x) and (((self_y + height) > y >= self_y))
+        x1, y1, x2, y2 = self.corners
+        try:
+            ox, oy = point
+        except Exception:
+            raise TypeError(f"a tuple of two integers is required, not {point!r}")
+        return (x2 > ox >= x1) and (y2 > oy >= y1)
 
-    def translate(self, x: int, y: int) -> Region:
+    def contains_region(self, other: Region) -> bool:
+        """Check if a region is entirely contained within this region.
+
+        Args:
+            other (Region): A region.
+
+        Returns:
+            bool: True if the other region fits perfectly within this region.
+        """
+        x1, y1, x2, y2 = self.corners
+        ox, oy, ox2, oy2 = other.corners
+        return (x2 >= ox >= x1 and y2 >= oy >= y1) and (
+            x2 >= ox2 >= x1 and y2 >= oy2 >= y1
+        )
+
+    def translate(self, translate_x: int, translate_y: int) -> Region:
         """Move the origin of the Region.
 
         Args:
-            x (int): x Coordinate.
-            y (int): y Coordinate.
+            translate_x (int): Value to add to x coordinate.
+            translate_y (int): Value to add to y coordinate.
 
         Returns:
             Region: A new region shifted by x, y
         """
 
-        _x, _y, width, height = self
-        return Region(_x + x, _y + y, width, height)
+        x, y, width, height = self
+        return Region(x + translate_x, y + translate_y, width, height)
 
     def __contains__(self, other: Any) -> bool:
-        try:
-            x, y = other
-        except Exception:
-            raise TypeError("Region.__contains__ requires an iterable of two integers")
-        self_x, self_y, width, height = self
-        return ((self_x + width) > x >= self_x) and (((self_y + height) > y >= self_y))
+        """Check if a point is in this region."""
+        if isinstance(other, Region):
+            return self.contains_region(other)
+        else:
+            try:
+                return self.contains_point(other)
+            except TypeError:
+                return False
+
+    def clip(self, width: int, height: int) -> Region:
+        """Clip this region to fit within width, height.
+
+        Args:
+            width (int): Width of bounds.
+            height (int): Height of bounds.
+
+        Returns:
+            Region: Clipped region.
+        """
+        x1, y1, x2, y2 = self.corners
+
+        new_region = Region.from_corners(
+            clamp(x1, 0, width),
+            clamp(y1, 0, height),
+            clamp(x2, 0, width),
+            clamp(y2, 0, height),
+        )
+        return new_region
+
+    def clip_region(self, region: Region) -> Region:
+        """Clip this region to fit within another region.
+
+        Args:
+            region ([type]): A region that overlaps this region.
+
+        Returns:
+            Region: A new region that fits within ``region``.
+        """
+        x1, y1, x2, y2 = self.corners
+        cx1, cy1, cx2, cy2 = region.corners
+
+        new_region = Region.from_corners(
+            clamp(x1, cx1, cx2),
+            clamp(y1, cy1, cy2),
+            clamp(x2, cx2, cx2),
+            clamp(y2, cy2, cy2),
+        )
+        return new_region
+
+
+if __name__ == "__main__":
+    from rich import print
+
+    region = Region(-5, -5, 60, 100)
+
+    print(region.clip(80, 25))
+
+    region = Region(10, 10, 90, 90)
+
+    print(region.corners)
+
+    print((15, 15) in region)
+    print((5, 15) in region)
+    print(Region(15, 15, 10, 10) in region)
