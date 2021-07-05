@@ -40,3 +40,9 @@ Now with a system to animate a value to another value. Here applied to the scrol
 A new update system allows for overlapping layers. Animation is now synchronized with the display which makes it very smooth!
 
 [![Textual update 5](https://yt-embed.herokuapp.com/embed?v=XxRnfx2WYRw&img=0)](http://www.youtube.com/watch?v=XxRnfx2WYRw)
+
+### Update 6 - New Layout API
+
+New version (0.1.4) with API updates and the new layout system.
+
+[![Textual update 5](https://yt-embed.herokuapp.com/embed?v=jddccDuVd3E&img=0)](http://www.youtube.com/watch?v=jddccDuVd3E)
