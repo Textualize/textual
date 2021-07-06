@@ -235,6 +235,7 @@ class App(MessagePump):
 
     async def shutdown(self):
         driver = self._driver
+        assert driver is not None
         driver.disable_input()
         await self.close_messages()
 

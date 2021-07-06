@@ -88,13 +88,17 @@ class ScrollView(DockView):
             self.target_y -= 2
             self.animate("y", self.target_y, easing="linear", speed=100)
         elif key == "pagedown":
-            log.debug("%r", self.size)
             self.target_y += self.size.height
             self.animate("y", self.target_y, easing="out_cubic")
         elif key == "pageup":
-            log.debug("%r", self.size)
             self.target_y -= self.size.height
             self.animate("y", self.target_y, easing="out_cubic")
+        elif key == "end":
+            self.target_y = self._page.contents_size.height - self.size.height
+            self.animate("y", self.target_y, duration=1, easing="out_cubic")
+        elif key == "home":
+            self.target_y = 0
+            self.animate("y", self.target_y, duration=1, easing="out_cubic")
 
     async def on_resize(self, event: events.Resize) -> None:
         if self.fluid:

@@ -73,34 +73,50 @@ class Layout(ABC):
         self._cuts: list[list[int]] | None = None
 
     def reset(self) -> None:
-        self.renders.clear()
         self._cuts = None
 
     def reflow(self, width: int, height: int) -> ReflowResult:
         self.reset()
 
-        old_map = self._layout_map
         map = self.generate_map(width, height)
+
+        # Filter out widgets that are off screen or zero area
+        screen_region = Region(0, 0, width, height)
+        map = {
+            widget: map_region
+            for widget, map_region in map.items()
+            if map_region.region and screen_region.overlaps(map_region.region)
+        }
 
         old_widgets = set(self._layout_map.keys())
         new_widgets = set(map.keys())
+        # Newly visible widgets
         shown_widgets = new_widgets - old_widgets
+        # Newly hidden widgets
         hidden_widgets = old_widgets - new_widgets
-        resized_widgets = set()
 
         self._layout_map = map
         self.width = width
         self.height = height
 
-        # TODO: make this more efficient
-        new_renders: dict[Widget, tuple[Region, Lines]] = {}
-        for widget, (region, order) in map.items():
-            if widget in old_widgets and widget.size != region.size:
-                resized_widgets.add(widget)
-            if widget in self.renders and self.renders[widget][0].size == region.size:
-                new_renders[widget] = (region, self.renders[widget][1])
+        # Copy renders if the size hasn't changed
+        new_renders = {
+            widget: (region, self.renders[widget][1])
+            for widget, (region, _order) in map.items()
+            if widget in self.renders and self.renders[widget][0].size == region.size
+        }
         self.renders = new_renders
-        return ReflowResult(hidden_widgets, shown_widgets, resized_widgets)
+
+        # Widgets with changed size
+        resized_widgets = {
+            widget
+            for widget, (region, _order) in map.items()
+            if widget in old_widgets and widget.size != region.size
+        }
+
+        return ReflowResult(
+            hidden=hidden_widgets, shown=shown_widgets, resized=resized_widgets
+        )
 
     @abstractmethod
     def generate_map(

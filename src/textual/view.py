@@ -98,6 +98,11 @@ class View(Widget):
         hidden, shown, resized = self.layout.reflow(width, height)
         self.app.refresh()
 
+        for widget in hidden:
+            await widget.post_message(events.Hide(self))
+        for widget in shown:
+            await widget.post_message(events.Show(self))
+
         send_resize = shown
         send_resize.update(resized)
         for widget, region in self.layout:
@@ -105,11 +110,6 @@ class View(Widget):
                 await widget.post_message(
                     events.Resize(self, region.width, region.height)
                 )
-        # for widget, region in self.layout:
-        #     if isinstance(widget, Widget):
-        #         await widget.post_message(
-        #             events.Resize(self, region.width, region.height)
-        #         )
 
     async def on_resize(self, event: events.Resize) -> None:
         self.size = Dimensions(event.width, event.height)
