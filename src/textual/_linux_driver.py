@@ -50,8 +50,10 @@ class LinuxDriver(Driver):
     def _enable_mouse_support(self) -> None:
         write = self.console.file.write
         write("\x1b[?1000h")
+
         write("\x1b[?1015h")
         write("\x1b[?1006h")
+
         # write("\x1b[?1007h")
         self.console.file.flush()
 

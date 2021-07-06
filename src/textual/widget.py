@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from functools import partial
 from logging import getLogger
 from typing import (
     Callable,
@@ -143,6 +144,9 @@ class Widget(MessagePump):
         offset_x, offset_y = self.root_view.get_offset(self)
         return self.root_view.get_style_at(x + offset_x, y + offset_y)
 
+    async def call_later(self, callback: Callable, *args, **kwargs) -> None:
+        await self.app.call_later(callback, *args, **kwargs)
+
     async def forward_event(self, event: events.Event) -> None:
         await self.post_message(event)
 
@@ -200,12 +204,15 @@ class Widget(MessagePump):
     async def capture_mouse(self, capture: bool = True) -> None:
         await self.app.capture_mouse(self if capture else None)
 
-    async def on_mouse_move(self, event: events.MouseMove) -> None:
-        style_under_cursor = self.get_style_at(event.x, event.y)
-        log.debug("%r", style_under_cursor)
+    async def release_mouse(self) -> None:
+        await self.app.capture_mouse(None)
+
+    async def on_mouse_down(self, event: events.MouseUp) -> None:
+        if "@mouse.down" in event.style.meta:
+            await self.app.action(
+                event.style.meta["@mouse.down"], default_namespace=self
+            )
 
     async def on_mouse_up(self, event: events.MouseUp) -> None:
-        style = self.get_style_at(event.x, event.y)
-        if "@click" in style.meta:
-            log.debug(style._link_id)
-            await self.app.action(style.meta["@click"], default_namespace=self)
+        if "@click" in event.style.meta:
+            await self.app.action(event.style.meta["@click"], default_namespace=self)

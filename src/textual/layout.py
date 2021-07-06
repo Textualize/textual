@@ -164,6 +164,14 @@ class Layout(ABC):
                 return segment.style or Style.null()
         return Style.null()
 
+    def get_widget_region(self, widget: Widget) -> Region:
+        try:
+            region, _ = self._layout_map[widget]
+        except KeyError:
+            raise NoWidget("Widget is not in layout")
+        else:
+            return region
+
     @property
     def cuts(self) -> list[list[int]]:
         if self._cuts is not None:

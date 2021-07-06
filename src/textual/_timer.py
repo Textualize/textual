@@ -81,7 +81,6 @@ class Timer:
                     count += 1
                     continue
                 try:
-
                     if await wait_for(_wait(), max(0, next_timer - monotonic())):
                         break
                 except TimeoutError:

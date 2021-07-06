@@ -121,9 +121,16 @@ class View(Widget):
     def get_style_at(self, x: int, y: int) -> Style:
         return self.layout.get_style_at(x, y)
 
+    def get_widget_region(self, widget: Widget) -> Region:
+        return self.layout.get_widget_region(widget)
+
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         try:
-            widget, region = self.get_widget_at(event.x, event.y)
+            if self.app.mouse_captured:
+                widget = self.app.mouse_captured
+                region = self.get_widget_region(widget)
+            else:
+                widget, region = self.get_widget_at(event.x, event.y)
         except NoWidget:
             await self.app.set_mouse_over(None)
         else:
@@ -140,6 +147,9 @@ class View(Widget):
                     event.shift,
                     event.meta,
                     event.ctrl,
+                    screen_x=event.screen_x,
+                    screen_y=event.screen_y,
+                    style=event.style,
                 )
             )
 
@@ -149,17 +159,22 @@ class View(Widget):
             await self.post_message(event)
 
         elif isinstance(event, events.MouseMove):
+            event.style = self.get_style_at(event.screen_x, event.screen_y)
             await self._on_mouse_move(event)
 
         elif isinstance(event, events.MouseEvent):
-
             try:
-                widget, region = self.get_widget_at(event.x, event.y)
+                if self.app.mouse_captured:
+                    widget = self.app.mouse_captured
+                    region = self.get_widget_region(widget)
+                else:
+                    widget, region = self.get_widget_at(event.x, event.y)
             except NoWidget:
                 pass
             else:
                 if isinstance(event, events.MouseDown) and widget.can_focus:
                     await self.app.set_focus(widget)
+                event.style = self.get_style_at(event.screen_x, event.screen_y)
                 await widget.forward_event(event.offset(-region.x, -region.y))
 
         elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
@@ -199,7 +214,7 @@ class DockView(View):
         z: int = 0,
         size: int | None | DoNotSet = do_not_set,
         name: str | None = None
-    ) -> Widget | tuple[Widget, ...]:
+    ) -> None:
 
         dock = Dock(edge, widgets, z)
         assert isinstance(self.layout, DockLayout)
@@ -208,11 +223,8 @@ class DockView(View):
             if size is not do_not_set:
                 widget.layout_size = cast(Optional[int], size)
             if not self.is_mounted(widget):
-                await self.mount(widget)
+                if name is None:
+                    await self.mount(widget)
+                else:
+                    await self.mount(**{name: widget})
         await self.refresh_layout()
-
-        widget, *rest = widgets
-        if rest:
-            return widgets
-        else:
-            return widget

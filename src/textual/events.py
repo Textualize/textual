@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Callable, TYPE_CHECKING
 
 from rich.repr import rich_repr, RichReprResult
+from rich.style import Style
 
 from .message import Message
 from ._types import MessageTarget
@@ -27,6 +28,13 @@ class Event(Message):
 class Null(Event):
     def can_batch(self, message: Message) -> bool:
         return isinstance(message, Null)
+
+
+@rich_repr
+class Callback(Event):
+    def __init__(self, sender: MessageTarget, callback: Callable[[], None]) -> None:
+        self.callback = callback
+        super().__init__(sender)
 
 
 class ShutdownRequest(Event):
@@ -99,6 +107,14 @@ class Hide(Event):
     """Widget has been hidden."""
 
 
+class MouseCaptured(Event):
+    """Mouse has been captured."""
+
+
+class MouseReleased(Event):
+    """Mouse has been released."""
+
+
 class InputEvent(Event, bubble=True):
     pass
 
@@ -132,6 +148,7 @@ class MouseEvent(InputEvent):
         ctrl: bool,
         screen_x: int | None = None,
         screen_y: int | None = None,
+        style: Style | None = None,
     ) -> None:
         super().__init__(sender)
         self.x = x
@@ -144,6 +161,7 @@ class MouseEvent(InputEvent):
         self.ctrl = ctrl
         self.screen_x = x if screen_x is None else screen_x
         self.screen_y = y if screen_y is None else screen_y
+        self._style = style or Style()
 
     def __rich_repr__(self) -> RichReprResult:
         yield "x", self.x
@@ -158,6 +176,15 @@ class MouseEvent(InputEvent):
         yield "shift", self.shift, False
         yield "meta", self.meta, False
         yield "ctrl", self.ctrl, False
+        yield "style", self._style, None
+
+    @property
+    def style(self) -> Style:
+        return self._style or Style()
+
+    @style.setter
+    def style(self, style: Style) -> None:
+        self._style = style
 
     def offset(self, x: int, y: int):
         return self.__class__(
@@ -172,6 +199,7 @@ class MouseEvent(InputEvent):
             ctrl=self.ctrl,
             screen_x=self.screen_x,
             screen_y=self.screen_y,
+            style=self.style,
         )
 
 

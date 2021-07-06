@@ -1,9 +1,20 @@
+import logging
+from logging import FileHandler
+
 from rich.markdown import Markdown
 
 from textual import events
 from textual.app import App
 from textual.view import DockView
 from textual.widgets import Header, Footer, Placeholder, ScrollView
+
+
+logging.basicConfig(
+    level="NOTSET",
+    format="%(message)s",
+    datefmt="[%X]",
+    handlers=[FileHandler("richtui.log")],
+)
 
 
 class MyApp(App):
@@ -14,25 +25,27 @@ class MyApp(App):
         await self.bind("b", "view.toggle('sidebar')")
 
     async def on_startup(self, event: events.Startup) -> None:
+
         view = await self.push_view(DockView())
-        header = Header(self.title)
+
         footer = Footer()
-        sidebar = Placeholder(name="sidebar")
-
-        with open("richreadme.md", "rt") as fh:
-            readme = Markdown(fh.read(), hyperlinks=True)
-
-        body = ScrollView(readme)
-
         footer.add_key("b", "Toggle sidebar")
         footer.add_key("q", "Quit")
+        header = Header(self.title)
+        body = ScrollView()
+        sidebar = Placeholder()
 
         await view.dock(header, edge="top")
         await view.dock(footer, edge="bottom")
-        await view.dock(sidebar, edge="left", size=30)
+        await view.dock(sidebar, edge="left", size=30, name="sidebar")
         await view.dock(body, edge="right")
-        self.require_layout()
+
+        async def get_markdown(filename: str) -> None:
+            with open(filename, "rt") as fh:
+                readme = Markdown(fh.read(), hyperlinks=True)
+            await body.update(readme)
+
+        await self.call_later(get_markdown, "richreadme.md")
 
 
-app = MyApp(title="Simple App")
-app.run()
+MyApp.run(title="Simple App")

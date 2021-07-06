@@ -8,7 +8,7 @@ from rich.style import StyleType
 
 from .. import events
 from ..message import Message
-from ..scrollbar import ScrollBar, ScrollDown, ScrollUp
+from ..scrollbar import ScrollBar, ScrollDown, ScrollUp, ScrollRelative
 from ..geometry import clamp
 from ..page import Page
 from ..view import DockView
@@ -21,7 +21,7 @@ log = logging.getLogger("rich")
 class ScrollView(DockView):
     def __init__(
         self,
-        renderable: RenderableType,
+        renderable: RenderableType | None = None,
         *,
         name: str | None = None,
         style: StyleType = "",
@@ -29,7 +29,7 @@ class ScrollView(DockView):
     ) -> None:
         self.fluid = fluid
         self._vertical_scrollbar = ScrollBar(vertical=True)
-        self._page = Page(renderable, style=style)
+        self._page = Page(renderable or "", style=style)
         super().__init__(name="ScrollView")
 
     x: Reactive[float] = Reactive(0)
@@ -46,6 +46,10 @@ class ScrollView(DockView):
     def watch_y(self, new_value: float) -> None:
         self._page.y = round(new_value)
         self._vertical_scrollbar.position = round(new_value)
+
+    async def update(self, renderabe: RenderableType) -> None:
+        self._page.update(renderabe)
+        self.require_repaint()
 
     async def on_mount(self, event: events.Mount) -> None:
         await self.dock(self._vertical_scrollbar, edge="right", size=1)
@@ -105,10 +109,15 @@ class ScrollView(DockView):
             self._page.update()
         await super().on_resize(event)
 
-    async def on_message(self, message: Message) -> None:
-        if isinstance(message, ScrollUp):
-            self.page_up()
-        elif isinstance(message, ScrollDown):
-            self.page_down()
-        else:
-            await super().on_message(message)
+    async def message_scroll_up(self, message: Message) -> None:
+        self.page_up()
+
+    async def message_scroll_down(self, message: Message) -> None:
+        self.page_down()
+
+    async def message_scroll_relative(self, message: ScrollRelative) -> None:
+        if message.x is not None:
+            self.target_x += message.x
+        if message.y is not None:
+            self.target_y += message.y
+        self.animate("y", self.target_y, speed=100, easing="out_cubic")

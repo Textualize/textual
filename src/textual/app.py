@@ -2,10 +2,10 @@ from __future__ import annotations
 import os
 
 import asyncio
-
+from functools import partial
 import logging
 import signal
-from typing import Any, ClassVar, Type, TypeVar
+from typing import Any, Callable, ClassVar, Type, TypeVar
 import warnings
 
 from rich.control import Control
@@ -78,7 +78,7 @@ class App(MessagePump):
         self.driver_class = driver_class or LinuxDriver
         self.title = title
         self._layout = DockLayout()
-        self._view_stack: list[View] = [View()]
+        self._view_stack: list[View] = []
         self.children: set[MessagePump] = set()
 
         self.focused: Widget | None = None
@@ -117,7 +117,11 @@ class App(MessagePump):
 
     @classmethod
     def run(
-        cls, console: Console = None, screen: bool = True, driver: Type[Driver] = None
+        cls,
+        console: Console = None,
+        screen: bool = True,
+        driver: Type[Driver] = None,
+        **kwargs,
     ):
         """Run the app.
 
@@ -128,8 +132,7 @@ class App(MessagePump):
         """
 
         async def run_app() -> None:
-            app = cls(console=console, screen=screen, driver_class=driver)
-
+            app = cls(console=console, screen=screen, driver_class=driver, **kwargs)
             await app.process_messages()
 
         asyncio.run(run_app())
@@ -137,7 +140,7 @@ class App(MessagePump):
     async def push_view(self, view: ViewType) -> ViewType:
         await self.register(view)
         view.set_parent(self)
-        self._view_stack[0] = view
+        self._view_stack.append(view)
         return view
 
     def on_keyboard_interupt(self) -> None:
@@ -181,7 +184,13 @@ class App(MessagePump):
 
     async def capture_mouse(self, widget: Widget | None) -> None:
         """Send all Mouse events to a given widget."""
+        if widget == self.mouse_captured:
+            return
+        if self.mouse_captured is not None:
+            await self.mouse_captured.post_message(events.MouseReleased(self))
         self.mouse_captured = widget
+        if widget is not None:
+            await widget.post_message(events.MouseCaptured(self))
 
     async def process_messages(self) -> None:
         log.debug("driver=%r", self.driver_class)
@@ -189,16 +198,18 @@ class App(MessagePump):
         # loop.add_signal_handler(signal.SIGINT, self.on_keyboard_interupt)
         driver = self._driver = self.driver_class(self.console, self)
         active_app.set(self)
+
+        await self.push_view(View())
+
         self.view.set_parent(self)
         await self.register(self.view)
 
-        if hasattr(self, "on_load"):
-            await self.on_load(events.Load(sender=self))
-
-        await self.post_message(events.Startup(sender=self))
+        await self.dispatch_message(events.Load(sender=self))
 
         try:
             driver.start_application_mode()
+            await self.post_message(events.Startup(sender=self))
+            self.require_layout()
         except Exception:
             self.console.print_exception()
             log.exception("error starting application mode")
@@ -207,11 +218,19 @@ class App(MessagePump):
             await self.animator.start()
             try:
                 await super().process_messages()
+                await self.animator.stop()
+
+                while self.children:
+                    child = self.children.pop()
+                    log.debug("closing %r", child)
+                    await child.close_messages()
+
+                while self._view_stack:
+                    view = self._view_stack.pop()
+                    await view.close_messages()
             except Exception:
                 traceback = Traceback(show_locals=True)
 
-            await self.animator.stop()
-            await self.view.close_messages()
             driver.stop_application_mode()
             if traceback is not None:
                 self.console.print(traceback)
@@ -221,6 +240,12 @@ class App(MessagePump):
 
     def require_layout(self) -> None:
         self.view.require_layout()
+
+    async def call_later(self, callback: Callable, *args, **kwargs) -> None:
+        await self.post_message(events.Idle(self))
+        await self.post_message(
+            events.Callback(self, partial(callback, *args, **kwargs))
+        )
 
     async def message_update(self, message: Message) -> None:
         self.refresh()
@@ -308,8 +333,8 @@ class App(MessagePump):
         if method is not None:
             await method(*params)
 
-    async def on_load(self, event: events.Load) -> None:
-        pass
+    async def on_callback(self, event: events.Callback) -> None:
+        await event.callback()
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log.debug("shutdown request")
