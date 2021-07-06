@@ -8,7 +8,7 @@ from rich.style import StyleType
 
 from .. import events
 from ..message import Message
-from ..scrollbar import ScrollBar, ScrollDown, ScrollUp, ScrollRelative
+from ..scrollbar import ScrollTo, ScrollBar, ScrollDown, ScrollUp
 from ..geometry import clamp
 from ..page import Page
 from ..view import DockView
@@ -58,14 +58,7 @@ class ScrollView(DockView):
     async def on_idle(self, event: events.Idle) -> None:
         self._vertical_scrollbar.virtual_size = self._page.virtual_size.height
         self._vertical_scrollbar.window_size = self.size.height
-
         await super().on_idle(event)
-
-    async def on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
-        self.scroll_up()
-
-    async def on_mouse_scroll_down(self, event: events.MouseScrollUp) -> None:
-        self.scroll_down()
 
     def scroll_up(self) -> None:
         self.target_y += 1.5
@@ -83,26 +76,38 @@ class ScrollView(DockView):
         self.target_y += self.size.height
         self.animate("y", self.target_y, easing="out_cubic")
 
+    async def on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
+        self.scroll_up()
+
+    async def on_mouse_scroll_down(self, event: events.MouseScrollUp) -> None:
+        self.scroll_down()
+
     async def on_key(self, event: events.Key) -> None:
-        key = event.key
-        if key == "down":
-            self.target_y += 2
-            self.animate("y", self.target_y, easing="linear", speed=100)
-        elif key == "up":
-            self.target_y -= 2
-            self.animate("y", self.target_y, easing="linear", speed=100)
-        elif key == "pagedown":
-            self.target_y += self.size.height
-            self.animate("y", self.target_y, easing="out_cubic")
-        elif key == "pageup":
-            self.target_y -= self.size.height
-            self.animate("y", self.target_y, easing="out_cubic")
-        elif key == "end":
-            self.target_y = self._page.contents_size.height - self.size.height
-            self.animate("y", self.target_y, duration=1, easing="out_cubic")
-        elif key == "home":
-            self.target_y = 0
-            self.animate("y", self.target_y, duration=1, easing="out_cubic")
+        await self.dispatch_key(event)
+
+    async def key_down(self) -> None:
+        self.target_y += 2
+        self.animate("y", self.target_y, easing="linear", speed=100)
+
+    async def key_up(self) -> None:
+        self.target_y -= 2
+        self.animate("y", self.target_y, easing="linear", speed=100)
+
+    async def key_pagedown(self) -> None:
+        self.target_y += self.size.height
+        self.animate("y", self.target_y, easing="out_cubic")
+
+    async def key_pageup(self) -> None:
+        self.target_y -= self.size.height
+        self.animate("y", self.target_y, easing="out_cubic")
+
+    async def key_end(self) -> None:
+        self.target_y = self._page.contents_size.height - self.size.height
+        self.animate("y", self.target_y, duration=1, easing="out_cubic")
+
+    async def key_home(self) -> None:
+        self.target_y = 0
+        self.animate("y", self.target_y, duration=1, easing="out_cubic")
 
     async def on_resize(self, event: events.Resize) -> None:
         if self.fluid:
@@ -115,9 +120,9 @@ class ScrollView(DockView):
     async def message_scroll_down(self, message: Message) -> None:
         self.page_down()
 
-    async def message_scroll_relative(self, message: ScrollRelative) -> None:
+    async def message_scroll_to(self, message: ScrollTo) -> None:
         if message.x is not None:
-            self.target_x += message.x
+            self.target_x = message.x
         if message.y is not None:
-            self.target_y += message.y
+            self.target_y = message.y
         self.animate("y", self.target_y, speed=100, easing="out_cubic")

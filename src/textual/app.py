@@ -18,7 +18,7 @@ from rich.traceback import Traceback
 from . import events
 from . import actions
 from ._animator import Animator
-from .geometry import Region
+from .geometry import Point, Region
 from ._context import active_app
 from .keys import Binding
 from .driver import Driver
@@ -91,6 +91,7 @@ class App(MessagePump):
         self._action_targets = {"app", "view"}
         self._animator = Animator(self)
         self.animate = self._animator.bind(self)
+        self.mouse_position = Point(0, 0)
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "title", self.title
@@ -187,10 +188,12 @@ class App(MessagePump):
         if widget == self.mouse_captured:
             return
         if self.mouse_captured is not None:
-            await self.mouse_captured.post_message(events.MouseReleased(self))
+            await self.mouse_captured.post_message(
+                events.MouseReleased(self, self.mouse_position)
+            )
         self.mouse_captured = widget
         if widget is not None:
-            await widget.post_message(events.MouseCaptured(self))
+            await widget.post_message(events.MouseCaptured(self, self.mouse_position))
 
     async def process_messages(self) -> None:
         log.debug("driver=%r", self.driver_class)
@@ -298,6 +301,8 @@ class App(MessagePump):
                 return
 
         if isinstance(event, events.InputEvent):
+            if isinstance(event, events.MouseEvent):
+                self.mouse_position = Point(event.x, event.y)
             if isinstance(event, events.Key) and self.focused is not None:
                 await self.focused.forward_event(event)
             await self.view.forward_event(event)
@@ -341,21 +346,6 @@ class App(MessagePump):
         await self.close_messages()
 
     async def on_resize(self, event: events.Resize) -> None:
-        await self.view.post_message(event)
-
-    async def on_mouse_move(self, event: events.MouseMove) -> None:
-        await self.view.post_message(event)
-
-    async def on_mouse_down(self, event: events.MouseDown) -> None:
-        await self.view.post_message(event)
-
-    async def on_mouse_up(self, event: events.MouseUp) -> None:
-        await self.view.post_message(event)
-
-    async def on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
-        await self.view.post_message(event)
-
-    async def on_mouse_scroll_down(self, event: events.MouseScrollUp) -> None:
         await self.view.post_message(event)
 
     async def action_quit(self) -> None:

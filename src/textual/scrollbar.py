@@ -12,6 +12,7 @@ from rich.style import Style, StyleType
 log = logging.getLogger("rich")
 
 from . import events
+from .geometry import Point
 from ._types import MessageTarget
 from .message import Message
 from .widget import Reactive, Widget
@@ -28,7 +29,7 @@ class ScrollDown(Message, bubble=True):
 
 
 @rich.repr.auto
-class ScrollRelative(Message, bubble=True):
+class ScrollTo(Message, bubble=True):
     """Message sent when click and dragging handle."""
 
     def __init__(
@@ -172,13 +173,14 @@ class ScrollBarRender:
 class ScrollBar(Widget):
     def __init__(self, vertical: bool = True, name: str | None = None) -> None:
         self.vertical = vertical
+        self.grabbed_position: float = 0
         super().__init__(name=name)
 
     virtual_size: Reactive[int] = Reactive(100)
     window_size: Reactive[int] = Reactive(20)
     position: Reactive[int] = Reactive(0)
     mouse_over: Reactive[bool] = Reactive(False)
-    grabbed: Reactive[bool] = Reactive(False)
+    grabbed: Reactive[Point | None] = Reactive(None)
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "virtual_size", self.virtual_size
@@ -222,15 +224,27 @@ class ScrollBar(Widget):
         await super().on_mouse_up(event)
 
     async def on_mouse_captured(self, event: events.MouseCaptured) -> None:
-        self.grabbed = True
+        self.grabbed = event.mouse_position
+        self.grabbed_position = self.position
 
     async def on_mouse_released(self, event: events.MouseReleased) -> None:
-        self.grabbed = False
+        self.grabbed = None
 
     async def on_mouse_move(self, event: events.MouseMove) -> None:
         if self.grabbed:
-            delta_y = event.delta_y * (self.virtual_size / self.size.height)
-            await self.emit(ScrollRelative(self, y=delta_y))
+            x: float | None = None
+            y: float | None = None
+            if self.vertical:
+                y = self.grabbed_position + (
+                    (event.screen_y - self.grabbed.y)
+                    * (self.virtual_size / self.window_size)
+                )
+            else:
+                x = self.grabbed_position + (
+                    (event.screen_x - self.grabbed.x)
+                    * (self.virtual_size / self.window_size)
+                )
+            await self.emit(ScrollTo(self, x=x, y=y))
 
 
 if __name__ == "__main__":

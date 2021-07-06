@@ -207,6 +207,11 @@ class Widget(MessagePump):
     async def release_mouse(self) -> None:
         await self.app.capture_mouse(None)
 
+    async def dispatch_key(self, event: events.Key) -> None:
+        key_method = getattr(self, f"key_{event.key}", None)
+        if key_method is not None:
+            await key_method()
+
     async def on_mouse_down(self, event: events.MouseUp) -> None:
         if "@mouse.down" in event.style.meta:
             await self.app.action(
