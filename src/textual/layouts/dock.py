@@ -4,13 +4,12 @@ import sys
 from collections import defaultdict
 from dataclasses import dataclass
 import logging
-from typing import TYPE_CHECKING, Mapping, Sequence
+from typing import TYPE_CHECKING, Sequence
 
 from rich._ratio import ratio_resolve
 
 from ..geometry import Region, Point
 from ..layout import Layout, OrderedRegion
-from .._types import Lines
 
 if sys.version_info >= (3, 8):
     from typing import Literal

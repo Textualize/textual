@@ -25,7 +25,7 @@ from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
 from .keys import Binding
 from .driver import Driver
-from .layouts.dock import DockLayout, Dock, DockEdge, DockOptions
+from .layouts.dock import DockLayout, Dock
 from ._linux_driver import LinuxDriver
 from .message_pump import MessagePump
 from .message import Message
