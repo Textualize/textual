@@ -216,15 +216,29 @@ class MessagePump:
         await self._message_queue.put(message)
         return True
 
+    def post_message_from_child_no_wait(self, message: Message) -> bool:
+        if self._closing or self._closed:
+            return False
+        return self.post_message_no_wait(message)
+
     async def post_message_from_child(self, message: Message) -> bool:
         if self._closing or self._closed:
             return False
         return await self.post_message(message)
 
+    async def on_callback(self, event: events.Callback) -> None:
+        await event.callback()
+
+    def emit_no_wait(self, message: Message) -> bool:
+        if self._parent:
+            return self._parent.post_message_from_child_no_wait(message)
+        else:
+            log.warning("NO PARENT %r %r", self, message)
+            return False
+
     async def emit(self, message: Message) -> bool:
         if self._parent:
-            await self._parent.post_message_from_child(message)
-            return True
+            return await self._parent.post_message_from_child(message)
         else:
             log.warning("NO PARENT %r %r", self, message)
             return False

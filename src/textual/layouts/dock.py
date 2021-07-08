@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Mapping, Sequence
 from rich._ratio import ratio_resolve
 
 from ..geometry import Region, Point
-from ..layout import Layout, MapRegion
+from ..layout import Layout, OrderedRegion
 from .._types import Lines
 
 if sys.version_info >= (3, 8):
@@ -52,17 +52,17 @@ class DockLayout(Layout):
 
     def generate_map(
         self, width: int, height: int, offset: Point = Point(0, 0)
-    ) -> dict[Widget, MapRegion]:
+    ) -> dict[Widget, OrderedRegion]:
         from ..view import View
 
-        map: dict[Widget, MapRegion] = {}
+        map: dict[Widget, OrderedRegion] = {}
 
         layout_region = Region(0, 0, width, height)
         layers: dict[int, Region] = defaultdict(lambda: layout_region)
 
         def add_widget(widget: Widget, region: Region, order: tuple[int, int]):
             region = region + offset + widget.layout_offset
-            map[widget] = MapRegion(region, order)
+            map[widget] = OrderedRegion(region, order)
             if isinstance(widget, View):
                 sub_map = widget.layout.generate_map(
                     region.width, region.height, offset=region.origin

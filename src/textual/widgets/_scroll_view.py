@@ -7,11 +7,12 @@ from rich.style import StyleType
 
 
 from .. import events
+from ..geometry import Dimensions
 from ..message import Message
-from ..scrollbar import ScrollTo, ScrollBar, ScrollDown, ScrollUp
+from ..scrollbar import ScrollTo, ScrollBar
 from ..geometry import clamp
 from ..page import Page
-from ..view import DockView
+from ..views import DockView
 from ..reactive import Reactive
 
 
@@ -30,7 +31,7 @@ class ScrollView(DockView):
         self.fluid = fluid
         self._vertical_scrollbar = ScrollBar(vertical=True)
         self._page = Page(renderable or "", style=style)
-        super().__init__(name="ScrollView")
+        super().__init__(name=name)
 
     x: Reactive[float] = Reactive(0)
     y: Reactive[float] = Reactive(0)
@@ -43,7 +44,7 @@ class ScrollView(DockView):
     def validate_target_y(self, value: float) -> float:
         return clamp(value, 0, self._page.contents_size.height - self.size.height)
 
-    def watch_y(self, new_value: float) -> None:
+    async def watch_y(self, new_value: float) -> None:
         self._page.y = round(new_value)
         self._vertical_scrollbar.position = round(new_value)
 
@@ -54,11 +55,6 @@ class ScrollView(DockView):
     async def on_mount(self, event: events.Mount) -> None:
         await self.dock(self._vertical_scrollbar, edge="right", size=1)
         await self.dock(self._page, edge="top")
-
-    async def on_idle(self, event: events.Idle) -> None:
-        self._vertical_scrollbar.virtual_size = self._page.virtual_size.height
-        self._vertical_scrollbar.window_size = self.size.height
-        await super().on_idle(event)
 
     def scroll_up(self) -> None:
         self.target_y += 1.5
@@ -110,9 +106,9 @@ class ScrollView(DockView):
         self.animate("y", self.target_y, duration=1, easing="out_cubic")
 
     async def on_resize(self, event: events.Resize) -> None:
+        await super().on_resize(event)
         if self.fluid:
             self._page.update()
-        await super().on_resize(event)
 
     async def message_scroll_up(self, message: Message) -> None:
         self.page_up()
@@ -125,4 +121,9 @@ class ScrollView(DockView):
             self.target_x = message.x
         if message.y is not None:
             self.target_y = message.y
-        self.animate("y", self.target_y, speed=100, easing="out_cubic")
+        self.animate("y", self.target_y, speed=150, easing="out_cubic")
+
+    async def message_page_update(self, message: Message) -> None:
+        self.y = self.validate_y(self.y)
+        self._vertical_scrollbar.virtual_size = self._page.virtual_size.height
+        self._vertical_scrollbar.window_size = self.size.height

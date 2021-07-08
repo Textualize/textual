@@ -13,20 +13,24 @@ import rich.repr
 from rich.screen import Screen
 from rich import get_console
 from rich.console import Console, RenderableType
+from rich.style import Style
 from rich.traceback import Traceback
 
 from . import events
 from . import actions
 from ._animator import Animator
+from .binding import Bindings, NoBinding
 from .geometry import Point, Region
 from ._context import active_app
+from ._event_broker import extract_handler_actions, NoHandler
 from .keys import Binding
 from .driver import Driver
 from .layouts.dock import DockLayout, Dock, DockEdge, DockOptions
 from ._linux_driver import LinuxDriver
 from .message_pump import MessagePump
 from .message import Message
-from .view import DockView, View
+from .view import View
+from .views import DockView
 from .widget import Widget, Widget, Reactive
 
 log = logging.getLogger("rich")
@@ -70,13 +74,12 @@ class App(MessagePump):
         console: Console = None,
         screen: bool = True,
         driver_class: Type[Driver] = None,
-        title: str = "Megasoma Application",
+        title: str = "Textual Application",
     ):
-        super().__init__()
         self.console = console or get_console()
         self._screen = screen
         self.driver_class = driver_class or LinuxDriver
-        self.title = title
+        self._title = title
         self._layout = DockLayout()
         self._view_stack: list[View] = []
         self.children: set[MessagePump] = set()
@@ -86,12 +89,17 @@ class App(MessagePump):
         self.mouse_captured: Widget | None = None
         self._driver: Driver | None = None
 
-        self._bindings: dict[str, Binding] = {}
         self._docks: list[Dock] = []
         self._action_targets = {"app", "view"}
         self._animator = Animator(self)
         self.animate = self._animator.bind(self)
         self.mouse_position = Point(0, 0)
+        self.bindings = Bindings()
+        self._title = title
+        super().__init__()
+
+    title: Reactive[str] = Reactive("Textual")
+    sub_title: Reactive[str] = Reactive("")
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "title", self.title
@@ -107,14 +115,10 @@ class App(MessagePump):
     def view(self) -> View:
         return self._view_stack[-1]
 
-    @property
-    def bindings(self) -> dict[str, Binding]:
-        return self._bindings
-
-    async def bind(self, keys: str, action: str, description: str = "") -> None:
-        all_keys = [key.strip() for key in keys.split(",")]
-        for key in all_keys:
-            self._bindings[key] = Binding(action, description)
+    async def bind(
+        self, keys: str, action: str, description: str = "", show: bool = False
+    ) -> None:
+        self.bindings.bind(keys, action, description, show=show)
 
     @classmethod
     def run(
@@ -211,6 +215,7 @@ class App(MessagePump):
 
         try:
             driver.start_application_mode()
+            self.title = self._title
             await self.post_message(events.Startup(sender=self))
             self.require_layout()
         except Exception:
@@ -245,7 +250,6 @@ class App(MessagePump):
         self.view.require_layout()
 
     async def call_later(self, callback: Callable, *args, **kwargs) -> None:
-        await self.post_message(events.Idle(self))
         await self.post_message(
             events.Callback(self, partial(callback, *args, **kwargs))
         )
@@ -295,8 +299,11 @@ class App(MessagePump):
 
     async def on_event(self, event: events.Event) -> None:
         if isinstance(event, events.Key):
-            binding = self._bindings.get(event.key, None)
-            if binding is not None:
+            try:
+                binding = self.bindings.get_key(event.key)
+            except NoBinding:
+                pass
+            else:
                 await self.action(binding.action)
                 return
 
@@ -310,7 +317,10 @@ class App(MessagePump):
             await super().on_event(event)
 
     async def action(
-        self, action: str, default_namespace: object | None = None
+        self,
+        action: str,
+        default_namespace: object | None = None,
+        modifiers: set[str] | None = None,
     ) -> None:
         """Perform an action.
 
@@ -338,8 +348,21 @@ class App(MessagePump):
         if method is not None:
             await method(*params)
 
-    async def on_callback(self, event: events.Callback) -> None:
-        await event.callback()
+    async def broker_event(
+        self, event_name: str, event: events.Event, default_namespace: object | None
+    ) -> bool:
+        try:
+            style = getattr(event, "style")
+        except AttributeError:
+            return False
+        try:
+            modifiers, action = extract_handler_actions(event_name, style.meta)
+        except NoHandler:
+            return False
+        await self.action(
+            action, default_namespace=default_namespace, modifiers=modifiers
+        )
+        return True
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log.debug("shutdown request")
@@ -403,7 +426,7 @@ if __name__ == "__main__":
 
         show_bar: Reactive[bool] = Reactive(False)
 
-        def watch_show_bar(self, show_bar: bool) -> None:
+        async def watch_show_bar(self, show_bar: bool) -> None:
             self.animator.animate(self.bar, "layout_offset_x", -40 if show_bar else 0)
 
         async def action_toggle_sidebar(self) -> None:
@@ -413,7 +436,7 @@ if __name__ == "__main__":
 
             view = await self.push_view(DockView())
 
-            header = Header(self.title)
+            header = Header()
             footer = Footer()
             self.bar = Placeholder(name="left")
             footer.add_key("b", "Toggle sidebar")

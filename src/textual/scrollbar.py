@@ -48,7 +48,7 @@ class ScrollBarRender:
     def __init__(
         self,
         virtual_size: int = 100,
-        window_size: int = 25,
+        window_size: int = 0,
         position: float = 0,
         thickness: int = 1,
         vertical: bool = True,
@@ -95,7 +95,7 @@ class ScrollBarRender:
         _Style = Style
         blank = " " * width_thickness
 
-        foreground_meta = {"@click": "release", "@mouse.down": "grab"}
+        foreground_meta = {"@mouse.up": "release", "@mouse.down": "grab"}
 
         if window_size and size and virtual_size:
             step_size = virtual_size / size
@@ -177,7 +177,7 @@ class ScrollBar(Widget):
         super().__init__(name=name)
 
     virtual_size: Reactive[int] = Reactive(100)
-    window_size: Reactive[int] = Reactive(20)
+    window_size: Reactive[int] = Reactive(0)
     position: Reactive[int] = Reactive(0)
     mouse_over: Reactive[bool] = Reactive(False)
     grabbed: Reactive[Point | None] = Reactive(None)

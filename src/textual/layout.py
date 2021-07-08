@@ -31,12 +31,14 @@ class NoWidget(Exception):
     pass
 
 
-class MapRegion(NamedTuple):
+class OrderedRegion(NamedTuple):
     region: Region
     order: tuple[int, int]
 
 
 class ReflowResult(NamedTuple):
+    """The result of a reflow operation. Describes the chances to widgets."""
+
     hidden: set[Widget]
     shown: set[Widget]
     resized: set[Widget]
@@ -66,7 +68,7 @@ class Layout(ABC):
     """Responsible for arranging Widgets in a view."""
 
     def __init__(self) -> None:
-        self._layout_map: dict[Widget, MapRegion] = {}
+        self._layout_map: dict[Widget, OrderedRegion] = {}
         self.width = 0
         self.height = 0
         self.renders: dict[Widget, tuple[Region, Lines]] = {}
@@ -103,7 +105,9 @@ class Layout(ABC):
         new_renders = {
             widget: (region, self.renders[widget][1])
             for widget, (region, _order) in map.items()
-            if widget in self.renders and self.renders[widget][0].size == region.size
+            if widget in self.renders
+            and self.renders[widget][0].size == region.size
+            and not widget.check_repaint()
         }
         self.renders = new_renders
 
@@ -121,17 +125,22 @@ class Layout(ABC):
     @abstractmethod
     def generate_map(
         self, width: int, height: int, offset: Point = Point(0, 0)
-    ) -> dict[Widget, MapRegion]:
+    ) -> dict[Widget, OrderedRegion]:
         ...
 
     @property
-    def map(self) -> dict[Widget, MapRegion]:
+    def map(self) -> dict[Widget, OrderedRegion]:
         return self._layout_map
 
     def __iter__(self) -> Iterable[tuple[Widget, Region]]:
         layers = sorted(
             self._layout_map.items(), key=lambda item: item[1].order, reverse=True
         )
+        for widget, (region, _) in layers:
+            yield widget, region
+
+    def __reversed__(self) -> Iterable[tuple[Widget, Region]]:
+        layers = sorted(self._layout_map.items(), key=lambda item: item[1].order)
         for widget, (region, _) in layers:
             yield widget, region
 

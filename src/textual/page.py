@@ -5,19 +5,28 @@ from rich.padding import Padding, PaddingDimensions
 from rich.segment import Segment
 from rich.style import StyleType
 
+from . import events
 from .geometry import Dimensions, Point
+from .message import Message
 from .widget import Widget, Reactive
+
+
+class PageUpdate(Message):
+    def can_batch(self, message: "Message") -> bool:
+        return isinstance(message, PageUpdate)
 
 
 class PageRender:
     def __init__(
         self,
+        page: Page,
         renderable: RenderableType,
         width: int | None = None,
         height: int | None = None,
         style: StyleType = "",
         padding: PaddingDimensions = 1,
     ) -> None:
+        self.page = page
         self.renderable = renderable
         self.width = width
         self.height = height
@@ -51,6 +60,7 @@ class PageRender:
             renderable = Padding(renderable, self.padding)
         self._lines[:] = console.render_lines(renderable, options, style=style)
         self.size = Dimensions(width, len(self._lines))
+        self.page.emit_no_wait(PageUpdate(self.page))
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -78,7 +88,7 @@ class Page(Widget):
     def __init__(
         self, renderable: RenderableType, name: str = None, style: StyleType = ""
     ):
-        self._page = PageRender(renderable, style=style)
+        self._page = PageRender(self, renderable, style=style)
         super().__init__(name=name)
 
     x: Reactive[int] = Reactive(0)
@@ -91,7 +101,7 @@ class Page(Widget):
     def validate_y(self, value: int) -> int:
         return max(0, value)
 
-    def watch_y(self, new: int) -> None:
+    async def watch_y(self, new: int) -> None:
         x, y = self._page.offset
         self._page.offset = Point(x, new)
 

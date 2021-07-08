@@ -5,7 +5,7 @@ from rich.markdown import Markdown
 
 from textual import events
 from textual.app import App
-from textual.view import DockView
+from textual.views import DockView
 from textual.widgets import Header, Footer, Placeholder, ScrollView
 
 
@@ -16,13 +16,15 @@ logging.basicConfig(
     handlers=[FileHandler("richtui.log")],
 )
 
+log = logging.getLogger("rich")
+
 
 class MyApp(App):
     """An example of a very simple Textual App"""
 
     async def on_load(self, event: events.Load) -> None:
-        await self.bind("q,ctrl+c", "quit")
-        await self.bind("b", "view.toggle('sidebar')")
+        await self.bind("q,ctrl+c", "quit", "Quit")
+        await self.bind("b", "view.toggle('sidebar')", "Toggle sidebar")
 
     async def on_startup(self, event: events.Startup) -> None:
 
@@ -31,7 +33,7 @@ class MyApp(App):
         footer = Footer()
         footer.add_key("b", "Toggle sidebar")
         footer.add_key("q", "Quit")
-        header = Header(self.title)
+        header = Header()
         body = ScrollView()
         sidebar = Placeholder()
 

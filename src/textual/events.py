@@ -1,15 +1,17 @@
 from __future__ import annotations
 
-from typing import Awaitable, Callable, TYPE_CHECKING
+from typing import Awaitable, Callable, Type, TYPE_CHECKING, TypeVar
 
 import rich.repr
 from rich.style import Style
 
-from .geometry import Point
+from .geometry import Point, Dimensions
 from .message import Message
 from ._types import MessageTarget
 from .keys import Keys
 
+
+MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
 
 if TYPE_CHECKING:
     from ._timer import Timer as TimerClass
@@ -32,12 +34,15 @@ class Null(Event):
 
 
 @rich.repr.auto
-class Callback(Event):
+class Callback(Event, bubble=False):
     def __init__(
         self, sender: MessageTarget, callback: Callable[[], Awaitable]
     ) -> None:
         self.callback = callback
         super().__init__(sender)
+
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
+        yield "callback", self.callback
 
 
 class ShutdownRequest(Event):
@@ -88,6 +93,10 @@ class Resize(Event):
         self.width = width
         self.height = height
         super().__init__(sender)
+
+    @property
+    def size(self) -> Dimensions:
+        return Dimensions(self.width, self.height)
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield self.width
@@ -182,6 +191,24 @@ class MouseEvent(InputEvent):
         self.screen_y = y if screen_y is None else screen_y
         self._style = style or Style()
 
+    @classmethod
+    def from_event(cls: Type[MouseEventT], event: MouseEvent) -> MouseEventT:
+        new_event = cls(
+            event.sender,
+            event.x,
+            event.y,
+            event.delta_x,
+            event.delta_y,
+            event.button,
+            event.shift,
+            event.meta,
+            event.ctrl,
+            event.screen_x,
+            event.screen_y,
+            event._style,
+        )
+        return new_event
+
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "x", self.x
         yield "y", self.y
@@ -195,7 +222,6 @@ class MouseEvent(InputEvent):
         yield "shift", self.shift, False
         yield "meta", self.meta, False
         yield "ctrl", self.ctrl, False
-        yield "style", self._style, None
 
     @property
     def style(self) -> Style:

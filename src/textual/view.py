@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from itertools import chain
-from time import time
 import logging
-from typing import cast, Iterable, Optional, Tuple, TYPE_CHECKING
+from typing import Iterable, TYPE_CHECKING
 
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 import rich.repr
@@ -12,7 +11,7 @@ from rich.style import Style
 
 from . import events
 from .layout import Layout, NoWidget
-from .layouts.dock import DockEdge, DockLayout, Dock
+from .layouts.dock import DockLayout
 from .geometry import Dimensions, Point, Region
 from .messages import UpdateMessage, LayoutMessage
 
@@ -91,7 +90,7 @@ class View(Widget):
 
     async def refresh_layout(self) -> None:
 
-        if not self.size:
+        if not self.size or not self.is_root_view:
             return
 
         width, height = self.console.size
@@ -99,15 +98,15 @@ class View(Widget):
         self.app.refresh()
 
         for widget in hidden:
-            await widget.post_message(events.Hide(self))
+            widget.post_message_no_wait(events.Hide(self))
         for widget in shown:
-            await widget.post_message(events.Show(self))
+            widget.post_message_no_wait(events.Show(self))
 
         send_resize = shown
         send_resize.update(resized)
         for widget, region in self.layout:
             if widget in send_resize:
-                await widget.post_message(
+                widget.post_message_no_wait(
                     events.Resize(self, region.width, region.height)
                 )
 
@@ -194,37 +193,3 @@ class View(Widget):
         widget.visible = not widget.visible
         await self.post_message(LayoutMessage(self))
         # await self.refresh_layout()
-
-
-class DoNotSet:
-    pass
-
-
-do_not_set = DoNotSet()
-
-
-class DockView(View):
-    def __init__(self, name: str | None = None) -> None:
-        super().__init__(layout=DockLayout(), name=name)
-
-    async def dock(
-        self,
-        *widgets: Widget,
-        edge: DockEdge = "top",
-        z: int = 0,
-        size: int | None | DoNotSet = do_not_set,
-        name: str | None = None
-    ) -> None:
-
-        dock = Dock(edge, widgets, z)
-        assert isinstance(self.layout, DockLayout)
-        self.layout.docks.append(dock)
-        for widget in widgets:
-            if size is not do_not_set:
-                widget.layout_size = cast(Optional[int], size)
-            if not self.is_mounted(widget):
-                if name is None:
-                    await self.mount(widget)
-                else:
-                    await self.mount(**{name: widget})
-        await self.refresh_layout()

@@ -203,3 +203,4 @@ class Keys(str, Enum):
 class Binding:
     action: str
     description: str
+    show: bool = False
