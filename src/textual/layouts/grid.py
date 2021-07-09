@@ -15,6 +15,7 @@ class GridOptions:
     size: int | None = None
     fraction: int = 1
     minimum_size: int = 1
+    maximum_size: int | None = None
     name: str | None = None
 
 
@@ -93,7 +94,10 @@ class GridLayout(Layout):
         def resolve(
             size: int, edges: list[GridOptions], gap: int
         ) -> Iterable[tuple[int, int]]:
-            tracks = layout_resolve(size, edges)
+            tracks = [
+                track if edge.maximum_size is None else min(edge.maximum_size, track)
+                for track, edge in zip(layout_resolve(size, edges), edges)
+            ]
             total = 0
             for last, track in loop_last(tracks):
                 yield total, total + track if last else total + track - gap
