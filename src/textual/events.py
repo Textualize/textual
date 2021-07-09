@@ -94,6 +94,9 @@ class Resize(Event):
         self.height = height
         super().__init__(sender)
 
+    def can_batch(self, message: "Message") -> bool:
+        return isinstance(message, Resize)
+
     @property
     def size(self) -> Dimensions:
         return Dimensions(self.width, self.height)

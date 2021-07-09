@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import NamedTuple
+from typing import Iterable, NamedTuple
 
-from rich._ratio import ratio_resolve
-
+from .._layout_resolve import layout_resolve
+from .._loop import loop_last
 from ..geometry import Point, Region
 from ..layout import Layout, OrderedRegion
 from ..widget import Widget
@@ -16,10 +16,6 @@ class GridOptions:
     fraction: int = 1
     minimum_size: int = 1
     name: str | None = None
-
-    @property
-    def ratio(self) -> int:
-        return self.fraction
 
 
 class GridArea(NamedTuple):
@@ -35,6 +31,8 @@ class GridLayout(Layout):
         self.rows: list[GridOptions] = []
         self.areas: dict[str, GridArea] = {}
         self.widgets: dict[Widget, str | None] = {}
+        self.column_gap = 1
+        self.row_gap = 1
         super().__init__()
 
     def add_column(
@@ -81,6 +79,10 @@ class GridLayout(Layout):
         area = GridArea(column_start, column_end, row_start, row_end)
         self.areas[name] = area
 
+    def set_gaps(self, column: int, row: int | None) -> None:
+        self.column_gap = column
+        self.row_gap = column if row is None else row
+
     def add_widget(self, widget: Widget, area: str | None = None) -> Widget:
         self.widgets[widget] = area
         return widget
@@ -88,51 +90,47 @@ class GridLayout(Layout):
     def generate_map(
         self, width: int, height: int, offset: Point = Point(0, 0)
     ) -> dict[Widget, OrderedRegion]:
-        def resolve(size, edges) -> list[int]:
-            sizes = ratio_resolve(size, edges)
+        def resolve(
+            size: int, edges: list[GridOptions], gap: int
+        ) -> Iterable[tuple[int, int]]:
+            tracks = layout_resolve(size, edges)
             total = 0
-            for _size in sizes:
-                total += _size
-                yield total
+            for last, track in loop_last(tracks):
+                yield total, total + track if last else total + track - gap
+                total += track
 
-        columns = [
-            ("", 0),
-            *(
-                (column.name, column_width)
-                for column, column_width in zip(
-                    self.columns, resolve(width, self.columns)
-                )
-            ),
-        ]
-        column_tracks = {}
-        for (_, track1), (name2, track2) in zip(columns, columns[1:]):
-            column_tracks[f"{name2}-end"] = track2
-            column_tracks[f"{name2}-start"] = track1
+        def resolve_tracks(
+            grid: list[GridOptions], size: int, gap: int
+        ) -> dict[str, int]:
+            spans = (
+                (options.name, span)
+                for options, span in zip(grid, resolve(size, grid, gap))
+            )
+            tracks: dict[str, int] = {}
+            for name, (start, end) in spans:
+                tracks[f"{name}-start"] = start
+                tracks[f"{name}-end"] = end
+            return tracks
 
-        rows = [
-            ("", 0),
-            *(
-                (row.name, column_height)
-                for row, column_height in zip(self.rows, resolve(height, self.rows))
-            ),
-        ]
-        row_tracks = {}
-        for (_, track1), (name2, track2) in zip(rows, rows[1:]):
-            row_tracks[f"{name2}-end"] = track2
-            row_tracks[f"{name2}-start"] = track1
+        column_tracks = resolve_tracks(self.columns, width, self.column_gap)
+        row_tracks = resolve_tracks(self.rows, height, self.row_gap)
 
-        order = 1
+        widget_areas = (
+            (widget, area)
+            for widget, area in self.widgets.items()
+            if area and widget.visible
+        )
 
         map = {}
-        for widget, area in self.widgets.items():
-            if not area:
-                continue
+        order = 1
+        from_corners = Region.from_corners
+        for widget, area in widget_areas:
             column_start, column_end, row_start, row_end = self.areas[area]
             x1 = column_tracks[column_start]
             x2 = column_tracks[column_end]
             y1 = row_tracks[row_start]
             y2 = row_tracks[row_end]
-            map[widget] = OrderedRegion(Region.from_corners(x1, y1, x2, y2), (0, order))
+            map[widget] = OrderedRegion(from_corners(x1, y1, x2, y2), (0, order))
             order += 1
 
         return map

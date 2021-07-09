@@ -6,8 +6,7 @@ from dataclasses import dataclass
 import logging
 from typing import TYPE_CHECKING, Sequence
 
-from rich._ratio import ratio_resolve
-
+from .._layout_resolve import layout_resolve
 from ..geometry import Region, Point
 from ..layout import Layout, OrderedRegion
 
@@ -31,10 +30,7 @@ class DockOptions:
     size: int | None = None
     fraction: int = 1
     minimum_size: int = 1
-
-    @property
-    def ratio(self) -> int:
-        return self.fraction
+    maximim_size: int | None = None
 
 
 @dataclass
@@ -86,7 +82,7 @@ class DockLayout(Layout):
             x, y, width, height = region
 
             if dock.edge == "top":
-                sizes = ratio_resolve(height, dock_options)
+                sizes = layout_resolve(height, dock_options)
                 render_y = y
                 remaining = region.height
                 total = 0
@@ -103,7 +99,7 @@ class DockLayout(Layout):
                 region = Region(x, y + total, width, height - total)
 
             elif dock.edge == "bottom":
-                sizes = ratio_resolve(height, dock_options)
+                sizes = layout_resolve(height, dock_options)
                 render_y = y + height
                 remaining = region.height
                 total = 0
@@ -120,7 +116,7 @@ class DockLayout(Layout):
                 region = Region(x, y, width, height - total)
 
             elif dock.edge == "left":
-                sizes = ratio_resolve(width, dock_options)
+                sizes = layout_resolve(width, dock_options)
                 render_x = x
                 remaining = region.width
                 total = 0
@@ -137,7 +133,7 @@ class DockLayout(Layout):
                 region = Region(x + total, y, width - total, height)
 
             elif dock.edge == "right":
-                sizes = ratio_resolve(width, dock_options)
+                sizes = layout_resolve(width, dock_options)
                 render_x = x + width
                 remaining = region.width
                 total = 0
