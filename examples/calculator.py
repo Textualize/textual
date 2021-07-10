@@ -43,9 +43,9 @@ class GridTest(App):
             for name in "AC,+/-,%,/,7,8,9,X,4,5,6,-,1,2,3,+,.,=".split(",")
         }
         for name in ("AC", "+/-", "%"):
-            buttons[name].style = "#000000 on rgb(165,165,165)"
+            buttons[name].style = "black on rgb(165,165,165)"
         for name in "/X-+=":
-            buttons[name].style = "#ffffff on rgb(255,159,7)"
+            buttons[name].style = "white on rgb(255,159,7)"
 
         zero_text = make_text("0")
         layout.place(
