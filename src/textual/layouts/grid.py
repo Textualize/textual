@@ -251,26 +251,33 @@ class GridLayout(Layout):
 
         def resolve_tracks(
             grid: list[GridOptions], size: int, gap: int, repeat: bool
-        ) -> tuple[dict[str, list[tuple[int, int]]], int]:
-            spans = (
+        ) -> tuple[list[str], dict[str, tuple[int, int]], int, int]:
+            spans = [
                 (options.name, span)
                 for options, span in zip(cycle(grid), resolve(size, grid, gap, repeat))
-            )
+            ]
+            names = [name for name, _span in spans]
             max_size = 0
-            tracks: dict[str, list[tuple[int, int]]] = defaultdict(list)
+            tracks: dict[str, tuple[int, int]] = {}
+            counts = defaultdict(int)
             for index, (name, (start, end)) in enumerate(spans):
                 max_size = max(max_size, end)
-                tracks[f"{name}-start"].append((index, start))
-                tracks[f"{name}-end"].append((index, end))
-            return tracks, max_size
+                counts[name] += 1
+                count = counts[name]
+                tracks[f"{name}-start"] = (index, start)
+                tracks[f"{name}-end"] = (index, end)
+                if repeat:
+                    tracks[f"{name}-{count}-start"] = (index, start)
+                    tracks[f"{name}-{count}-end"] = (index, end)
+            return names, tracks, len(spans), max_size
 
         container = Dimensions(
             width - self.column_gutter * 2, height - self.row_gutter * 2
         )
-        column_tracks, column_size = resolve_tracks(
+        column_names, column_tracks, column_count, column_size = resolve_tracks(
             self.columns, container.width, self.column_gap, self.column_repeat
         )
-        row_tracks, row_size = resolve_tracks(
+        row_names, row_tracks, row_count, row_size = resolve_tracks(
             self.rows, container.height, self.row_gap, self.row_repeat
         )
         grid_size = Dimensions(column_size, row_size)
@@ -282,8 +289,7 @@ class GridLayout(Layout):
         )
 
         free_slots = {
-            (col, row)
-            for col, row in product(range(len(self.columns)), range(len(self.rows)))
+            (col, row) for col, row in product(range(column_count), range(row_count))
         }
 
         map = {}
@@ -293,15 +299,16 @@ class GridLayout(Layout):
         for widget, area in widget_areas:
             column_start, column_end, row_start, row_end = self.areas[area]
             try:
-                col1, x1 = column_tracks[column_start][0]
-                col2, x2 = column_tracks[column_end][0]
-                row1, y1 = row_tracks[row_start][0]
-                row2, y2 = row_tracks[row_end][0]
+                col1, x1 = column_tracks[column_start]
+                col2, x2 = column_tracks[column_end]
+                row1, y1 = row_tracks[row_start]
+                row2, y2 = row_tracks[row_end]
             except (KeyError, IndexError):
                 continue
 
             free_slots -= {
-                (col, row) for col, row in product(range(col1, col2), range(row1, row2))
+                (col, row)
+                for col, row in product(range(col1, col2 + 1), range(row1, row2 + 1))
             }
 
             region = self._align(
@@ -317,10 +324,36 @@ class GridLayout(Layout):
         # Widgets with no area assigned.
         auto_widgets = [widget for widget, area in self.widgets.items() if area is None]
 
-        # for (widget, area) in widget_areas:
-        #     if widget in map:
-        #         col1, col2, row1, row2 = area
-        #         for col in range()
+        grid_refs = sorted(
+            product(range(column_count), range(row_count)), key=(lambda i: (i[1], i[0]))
+        )
+        iter_grid = iter(grid_refs)
+
+        for widget in auto_widgets:
+            try:
+                while True:
+                    col, row = next(iter_grid)
+                    if (col, row) in free_slots:
+                        break
+            except StopIteration:
+                break
+            col_name = column_names[col]
+            row_name = row_names[row]
+            col1, x1 = column_tracks[f"{col_name}-start"]
+            col2, x2 = column_tracks[f"{col_name}-end"]
+
+            row1, y1 = row_tracks[f"{row_name}-start"]
+            row2, y2 = row_tracks[f"{row_name}-end"]
+
+            region = self._align(
+                from_corners(x1, y1, x2, y2),
+                grid_size,
+                container,
+                self.column_align,
+                self.row_align,
+            )
+            map[widget] = OrderedRegion(region + gutter, (0, order))
+            order += 1
 
         return map
 
@@ -334,7 +367,12 @@ if __name__ == "__main__":
     layout.add_row(fraction=1, name="top")
     layout.add_row(fraction=2, name="bottom")
 
-    layout.add_area("center", "middle", "top")
+    layout.add_areas(center="a-start|b-end,top")
+    # layout.set_repeat(True)
+
+    from ..widgets import Placeholder
+
+    layout.place(center=Placeholder())
 
     from rich import print
 

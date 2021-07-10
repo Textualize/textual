@@ -31,9 +31,14 @@ class NoWidget(Exception):
     pass
 
 
+@rich.repr.auto
 class OrderedRegion(NamedTuple):
     region: Region
     order: tuple[int, int]
+
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
+        yield "region", self.region
+        yield "order", self.order
 
 
 class ReflowResult(NamedTuple):
@@ -284,7 +289,7 @@ class Layout(ABC):
         clip_x, clip_y, clip_x2, clip_y2 = clip.corners
 
         divide = Segment.divide
-        back = Style.parse("on blue")
+        back = Style.parse("black")
 
         # Maps each cut on to a list of segments
         cuts = self.cuts
