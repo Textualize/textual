@@ -62,15 +62,24 @@ class GridLayout(Layout):
         min_size: int = 1,
         max_size: int | None = None,
         name: str | None = None,
+        repeat: int = 1,
     ) -> None:
-        options = GridOptions(
-            size=size,
-            fraction=fraction,
-            min_size=min_size,
-            max_size=max_size,
-            name=name,
+        names = (
+            [name]
+            if repeat == 1
+            else [f"{name}{count}" for count in range(1, repeat + 1)]
         )
-        self.columns.append(options)
+        append = self.columns.append
+        for name in names:
+            append(
+                GridOptions(
+                    size=size,
+                    fraction=fraction,
+                    min_size=min_size,
+                    max_size=max_size,
+                    name=name,
+                )
+            )
 
     def add_row(
         self,
@@ -80,15 +89,24 @@ class GridLayout(Layout):
         min_size: int = 1,
         max_size: int | None = None,
         name: str | None = None,
+        repeat: int = 1,
     ) -> None:
-        options = GridOptions(
-            size=size,
-            fraction=fraction,
-            min_size=min_size,
-            max_size=max_size,
-            name=name,
+        names = (
+            [name]
+            if repeat == 1
+            else [f"{name}{count}" for count in range(1, repeat + 1)]
         )
-        self.rows.append(options)
+        append = self.rows.append
+        for name in names:
+            append(
+                GridOptions(
+                    size=size,
+                    fraction=fraction,
+                    min_size=min_size,
+                    max_size=max_size,
+                    name=name,
+                )
+            )
 
     def add_area(
         self, name: str, columns: str | tuple[str, str], rows: str | tuple[str, str]
