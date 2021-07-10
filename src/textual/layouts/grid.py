@@ -325,20 +325,17 @@ class GridLayout(Layout):
         # Widgets with no area assigned.
         auto_widgets = (widget for widget, area in self.widgets.items() if area is None)
 
-        grid_refs = sorted(
-            product(range(column_count), range(row_count)), key=itemgetter(1, 0)
+        grid_slots = sorted(
+            (
+                slot
+                for slot in product(range(column_count), range(row_count))
+                if slot in free_slots
+            ),
+            key=itemgetter(1, 0),
         )
-        iter_grid = iter(grid_refs)
 
-        for widget in auto_widgets:
-            try:
-                while True:
-                    slot = next(iter_grid)
-                    if slot in free_slots:
-                        break
-            except StopIteration:
-                break
-            col, row = slot
+        for widget, (col, row) in zip(auto_widgets, grid_slots):
+
             col_name = column_names[col]
             row_name = row_names[row]
             _col1, x1 = column_tracks[f"{col_name}-start"]
