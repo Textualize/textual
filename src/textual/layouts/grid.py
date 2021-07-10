@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass
-from itertools import cycle
+from itertools import cycle, product
 import sys
 from typing import Iterable, NamedTuple
 
@@ -23,11 +23,11 @@ GridAlign = Literal["start", "end", "center", "stretch"]
 
 @dataclass
 class GridOptions:
+    name: str
     size: int | None = None
     fraction: int = 1
     min_size: int = 1
     max_size: int | None = None
-    name: str | None = None
 
 
 class GridArea(NamedTuple):
@@ -76,7 +76,7 @@ class GridLayout(Layout):
 
     def add_column(
         self,
-        name: str | None = None,
+        name: str,
         *,
         size: int | None = None,
         fraction: int = 1,
@@ -93,17 +93,17 @@ class GridLayout(Layout):
         for name in names:
             append(
                 GridOptions(
+                    name,
                     size=size,
                     fraction=fraction,
                     min_size=min_size,
                     max_size=max_size,
-                    name=name,
                 )
             )
 
     def add_row(
         self,
-        name: str | None = None,
+        name: str,
         *,
         size: int | None = None,
         fraction: int = 1,
@@ -120,11 +120,11 @@ class GridLayout(Layout):
         for name in names:
             append(
                 GridOptions(
+                    name,
                     size=size,
                     fraction=fraction,
                     min_size=min_size,
                     max_size=max_size,
-                    name=name,
                 )
             )
 
@@ -222,6 +222,17 @@ class GridLayout(Layout):
     def generate_map(
         self, width: int, height: int, offset: Point = Point(0, 0)
     ) -> dict[Widget, OrderedRegion]:
+        """[summary]
+
+        Args:
+            width (int): [description]
+            height (int): [description]
+            offset (Point, optional): [description]. Defaults to Point(0, 0).
+
+        Returns:
+            dict[Widget, OrderedRegion]: [description]
+        """
+
         def resolve(
             size: int, edges: list[GridOptions], gap: int, repeat: bool
         ) -> Iterable[tuple[int, int]]:
@@ -240,17 +251,17 @@ class GridLayout(Layout):
 
         def resolve_tracks(
             grid: list[GridOptions], size: int, gap: int, repeat: bool
-        ) -> tuple[dict[str, list[int]], int]:
+        ) -> tuple[dict[str, list[tuple[int, int]]], int]:
             spans = (
                 (options.name, span)
                 for options, span in zip(cycle(grid), resolve(size, grid, gap, repeat))
             )
             max_size = 0
-            tracks: dict[str, list[int]] = defaultdict(list)
-            for name, (start, end) in spans:
+            tracks: dict[str, list[tuple[int, int]]] = defaultdict(list)
+            for index, (name, (start, end)) in enumerate(spans):
                 max_size = max(max_size, end)
-                tracks[f"{name}-start"].append(start)
-                tracks[f"{name}-end"].append(end)
+                tracks[f"{name}-start"].append((index, start))
+                tracks[f"{name}-end"].append((index, end))
             return tracks, max_size
 
         container = Dimensions(
@@ -270,6 +281,11 @@ class GridLayout(Layout):
             if area and widget.visible
         )
 
+        free_slots = {
+            (col, row)
+            for col, row in product(range(len(self.columns)), range(len(self.rows)))
+        }
+
         map = {}
         order = 1
         from_corners = Region.from_corners
@@ -277,12 +293,16 @@ class GridLayout(Layout):
         for widget, area in widget_areas:
             column_start, column_end, row_start, row_end = self.areas[area]
             try:
-                x1 = column_tracks[column_start][0]
-                x2 = column_tracks[column_end][0]
-                y1 = row_tracks[row_start][0]
-                y2 = row_tracks[row_end][0]
+                col1, x1 = column_tracks[column_start][0]
+                col2, x2 = column_tracks[column_end][0]
+                row1, y1 = row_tracks[row_start][0]
+                row2, y2 = row_tracks[row_end][0]
             except (KeyError, IndexError):
                 continue
+
+            free_slots -= {
+                (col, row) for col, row in product(range(col1, col2), range(row1, row2))
+            }
 
             region = self._align(
                 from_corners(x1, y1, x2, y2),
@@ -296,6 +316,11 @@ class GridLayout(Layout):
 
         # Widgets with no area assigned.
         auto_widgets = [widget for widget, area in self.widgets.items() if area is None]
+
+        # for (widget, area) in widget_areas:
+        #     if widget in map:
+        #         col1, col2, row1, row2 = area
+        #         for col in range()
 
         return map
 

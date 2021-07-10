@@ -1,8 +1,17 @@
+from rich.text import Text
+
 from textual.app import App
 from textual import events
 from textual.view import View
 from textual.widgets import Button, Placeholder
 from textual.layouts.grid import GridLayout
+
+try:
+    from pyfiglet import Figlet
+except ImportError:
+    print("Please install pyfiglet to run this example")
+
+font = Figlet(font="small")
 
 
 class GridTest(App):
@@ -25,11 +34,19 @@ class GridTest(App):
             equals="col4,row4",
         )
 
+        def make_button(text: str) -> Button:
+            label = Text(font.renderText(text).rstrip("\n"), style="bold")
+            return Button(label)
+
+        buttons = {
+            name: make_button(name)
+            for name in "AC,+/-,%,/,7,8,9,X,4,5,6,-,1,2,3,+,.,=".split(",")
+        }
+
         layout.place(
+            *buttons.values(),
             numbers=Placeholder(name="numbers"),
-            zero=Button("0"),
-            dot=Button("."),
-            equals=Button("="),
+            zero=make_button("0"),
         )
 
 
