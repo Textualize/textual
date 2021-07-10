@@ -76,12 +76,12 @@ class GridLayout(Layout):
 
     def add_column(
         self,
+        name: str | None = None,
         *,
         size: int | None = None,
         fraction: int = 1,
         min_size: int = 1,
         max_size: int | None = None,
-        name: str | None = None,
         repeat: int = 1,
     ) -> None:
         names = (
@@ -103,12 +103,12 @@ class GridLayout(Layout):
 
     def add_row(
         self,
+        name: str | None = None,
         *,
         size: int | None = None,
         fraction: int = 1,
         min_size: int = 1,
         max_size: int | None = None,
-        name: str | None = None,
         repeat: int = 1,
     ) -> None:
         names = (

@@ -14,9 +14,9 @@ class GridTest(App):
         layout = GridLayout(gap=1, gutter=1, align=("center", "center"))
         await self.push_view(View(layout=layout))
 
-        layout.add_column(name="col", max_size=20, repeat=4)
-        layout.add_row(name="numbers", max_size=10)
-        layout.add_row(name="row", max_size=10, repeat=4)
+        layout.add_column("col", max_size=20, repeat=4)
+        layout.add_row("numbers", max_size=10)
+        layout.add_row("row", max_size=10, repeat=4)
 
         layout.add_areas(
             numbers="col1-start|col4-end,numbers",
