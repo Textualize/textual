@@ -244,10 +244,11 @@ class GridLayout(Layout):
             if repeat:
                 tracks = cycle(tracks)
             total = 0
+            edge_count = len(edges)
             for index, track in enumerate(tracks):
                 yield total, total + track - gap if total + track < size else total + track
                 total += track
-                if total >= size and index >= len(edges):
+                if total >= size and index >= edge_count:
                     break
 
         def resolve_tracks(
@@ -261,15 +262,19 @@ class GridLayout(Layout):
             max_size = 0
             tracks: dict[str, tuple[int, int]] = {}
             counts = defaultdict(int)
-            for index, (name, (start, end)) in enumerate(spans):
-                max_size = max(max_size, end)
-                counts[name] += 1
-                count = counts[name]
-                tracks[f"{name}-start"] = (index, start)
-                tracks[f"{name}-end"] = (index, end)
-                if repeat:
+            if repeat:
+                for index, (name, (start, end)) in enumerate(spans):
+                    max_size = max(max_size, end)
+                    counts[name] += 1
+                    count = counts[name]
                     tracks[f"{name}-{count}-start"] = (index, start)
                     tracks[f"{name}-{count}-end"] = (index, end)
+            else:
+                for index, (name, (start, end)) in enumerate(spans):
+                    max_size = max(max_size, end)
+                    tracks[f"{name}-start"] = (index, start)
+                    tracks[f"{name}-end"] = (index, end)
+
             return names, tracks, len(spans), max_size
 
         container = Dimensions(
@@ -330,7 +335,7 @@ class GridLayout(Layout):
                 for slot in product(range(column_count), range(row_count))
                 if slot in free_slots
             ),
-            key=itemgetter(1, 0),
+            key=itemgetter(1, 0),  # TODO: other orders
         )
 
         for widget, (col, row) in zip(auto_widgets, grid_slots):
