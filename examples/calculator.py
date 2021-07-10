@@ -4,7 +4,7 @@ from rich.text import Text
 from textual.app import App
 from textual import events
 from textual.view import View
-from textual.widgets import Button, Placeholder, Static
+from textual.widgets import Button, Static
 from textual.layouts.grid import GridLayout
 
 try:
@@ -47,14 +47,10 @@ class GridTest(App):
             for name in "AC,+/-,%,/,7,8,9,X,4,5,6,-,1,2,3,+,.,=".split(",")
         }
 
-        buttons["AC"].style = "#000000 on rgb(165,165,165)"
-        buttons["+/-"].style = "#000000 on rgb(165,165,165)"
-        buttons["%"].style = "#000000 on rgb(165,165,165)"
-        buttons["/"].style = "#ffffff on rgb(255,159,7)"
-        buttons["X"].style = "#ffffff on rgb(255,159,7)"
-        buttons["-"].style = "#ffffff on rgb(255,159,7)"
-        buttons["+"].style = "#ffffff on rgb(255,159,7)"
-        buttons["="].style = "#ffffff on rgb(255,159,7)"
+        for name in ("AC", "+/-", "%"):
+            buttons[name].style = "#000000 on rgb(165,165,165)"
+        for name in "/X-+=":
+            buttons[name].style = "#ffffff on rgb(255,159,7)"
 
         zero_text = make_text("0")
         layout.place(

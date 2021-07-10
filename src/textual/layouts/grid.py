@@ -307,10 +307,9 @@ class GridLayout(Layout):
             except (KeyError, IndexError):
                 continue
 
-            free_slots -= {
-                (col, row)
-                for col, row in product(range(col1, col2 + 1), range(row1, row2 + 1))
-            }
+            free_slots.difference_update(
+                product(range(col1, col2 + 1), range(row1, row2 + 1))
+            )
 
             region = self._align(
                 from_corners(x1, y1, x2, y2),
