@@ -105,6 +105,8 @@ class View(Widget):
         send_resize = shown
         send_resize.update(resized)
         for widget, region in self.layout:
+            if not self.is_mounted(widget):
+                await self.mount(widget)
             if widget in send_resize:
                 widget.post_message_no_wait(
                     events.Resize(self, region.width, region.height)

@@ -14,7 +14,7 @@ class GridTest(App):
         layout = GridLayout()
         view = await self.push_view(View(layout=layout))
 
-        layout.add_column(fraction=1, name="left", minimum_size=20)
+        layout.add_column(fraction=1, name="left", min_size=20)
         layout.add_column(size=30, name="center")
         layout.add_column(fraction=1, name="right")
 
