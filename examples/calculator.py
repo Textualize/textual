@@ -35,8 +35,7 @@ class GridTest(App):
             return Text(font.renderText(text).rstrip("\n"), style="bold")
 
         def make_button(text: str) -> Button:
-            label = make_text(text)
-            return Button(label, style="white on rgb(51,51,51)")
+            return Button(make_text(text), style="white on rgb(51,51,51)")
 
         buttons = {
             name: make_button(name)
