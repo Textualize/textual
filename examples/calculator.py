@@ -12,21 +12,25 @@ class GridTest(App):
     async def on_startup(self, event: events.Startup) -> None:
 
         layout = GridLayout()
-        view = await self.push_view(View(layout=layout))
+        await self.push_view(View(layout=layout))
 
         layout.add_column(name="col", max_size=20, repeat=4)
         layout.add_row(name="numbers", max_size=10)
         layout.add_row(name="row", max_size=10, repeat=4)
 
-        layout.add_area("numbers", ("col1-start", "col4-end"), "numbers")
-        layout.add_area("zero", ("col1-start", "col2-end"), "row4")
-        layout.add_area("dot", "col3", "row4")
-        layout.add_area("equals", "col4", "row4")
+        layout.add_areas(
+            numbers="col1-start|col4-end,numbers",
+            zero="col1-start|col2-end,row4",
+            dot="col3,row4",
+            equals="col4,row4",
+        )
 
-        layout.add_widget(Placeholder(name="numbers"), area="numbers")
-        layout.add_widget(Placeholder(name="0"), area="zero")
-        layout.add_widget(Placeholder(name="."), area="dot")
-        layout.add_widget(Placeholder(name="="), area="equals")
+        layout.place(
+            numbers=Placeholder(name="numbers"),
+            zero=Placeholder(name="0"),
+            dot=Placeholder(name="."),
+            equals=Placeholder(name="="),
+        )
 
         layout.set_gap(1)
         layout.set_gutter(1)

@@ -108,9 +108,9 @@ class GridLayout(Layout):
                 )
             )
 
-    def add_area(
+    def _add_area(
         self, name: str, columns: str | tuple[str, str], rows: str | tuple[str, str]
-    ):
+    ) -> None:
         if isinstance(columns, str):
             column_start = f"{columns}-start"
             column_end = f"{columns}-end"
@@ -123,8 +123,21 @@ class GridLayout(Layout):
         else:
             row_start, row_end = rows
 
-        area = GridArea(column_start, column_end, row_start, row_end)
-        self.areas[name] = area
+        self.areas[name] = GridArea(column_start, column_end, row_start, row_end)
+
+    def add_areas(self, **areas: str) -> None:
+        for name, area in areas.items():
+            area = area.replace(" ", "")
+            column, _, row = area.partition(",")
+
+            column_start, column_sep, column_end = column.partition("|")
+            row_start, row_sep, row_end = row.partition("|")
+
+            self._add_area(
+                name,
+                (column_start, column_end) if column_sep else column,
+                (row_start, row_end) if row_sep else row,
+            )
 
     def set_gap(self, column: int, row: int | None = None) -> None:
         self.column_gap = column
@@ -137,6 +150,13 @@ class GridLayout(Layout):
     def add_widget(self, widget: Widget, area: str | None = None) -> Widget:
         self.widgets[widget] = area
         return widget
+
+    def place(self, *auto_widgets: Widget, **area_widgets: Widget) -> None:
+        widgets = self.widgets
+        for area, widget in area_widgets.items():
+            widgets[widget] = area
+        for widget in auto_widgets:
+            widgets[widget] = None
 
     def set_repeat(self, column: bool | None = None, row: bool | None = None) -> None:
         if column is not None:
