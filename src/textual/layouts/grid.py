@@ -38,7 +38,12 @@ class GridArea(NamedTuple):
 
 
 class GridLayout(Layout):
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        gap: tuple[int, int] | int | None = None,
+        gutter: tuple[int, int] | int | None = None,
+        align: tuple[GridAlign, GridAlign] | None = None,
+    ) -> None:
         self.columns: list[GridOptions] = []
         self.rows: list[GridOptions] = []
         self.areas: dict[str, GridArea] = {}
@@ -51,6 +56,21 @@ class GridLayout(Layout):
         self.row_align: GridAlign = "start"
         self.column_gutter: int = 0
         self.row_gutter: int = 0
+
+        if gap is not None:
+            if isinstance(gap, tuple):
+                self.set_gap(*gap)
+            else:
+                self.set_gap(gap)
+
+        if gutter is not None:
+            if isinstance(gutter, tuple):
+                self.set_gutter(*gutter)
+            else:
+                self.set_gutter(gutter)
+
+        if align is not None:
+            self.set_align(*align)
 
         super().__init__()
 

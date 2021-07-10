@@ -11,7 +11,7 @@ class GridTest(App):
 
     async def on_startup(self, event: events.Startup) -> None:
 
-        layout = GridLayout()
+        layout = GridLayout(gap=1, gutter=1, align=("center", "center"))
         await self.push_view(View(layout=layout))
 
         layout.add_column(name="col", max_size=20, repeat=4)
@@ -31,10 +31,6 @@ class GridTest(App):
             dot=Placeholder(name="."),
             equals=Placeholder(name="="),
         )
-
-        layout.set_gap(1)
-        layout.set_gutter(1)
-        layout.set_align("center", "center")
 
 
 GridTest.run(title="Calculator Test")
