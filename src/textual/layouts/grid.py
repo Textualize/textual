@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass
+from operator import itemgetter
 from itertools import cycle, product
 import sys
 from typing import Iterable, NamedTuple
@@ -322,28 +323,29 @@ class GridLayout(Layout):
             order += 1
 
         # Widgets with no area assigned.
-        auto_widgets = [widget for widget, area in self.widgets.items() if area is None]
+        auto_widgets = (widget for widget, area in self.widgets.items() if area is None)
 
         grid_refs = sorted(
-            product(range(column_count), range(row_count)), key=(lambda i: (i[1], i[0]))
+            product(range(column_count), range(row_count)), key=itemgetter(1, 0)
         )
         iter_grid = iter(grid_refs)
 
         for widget in auto_widgets:
             try:
                 while True:
-                    col, row = next(iter_grid)
-                    if (col, row) in free_slots:
+                    slot = next(iter_grid)
+                    if slot in free_slots:
                         break
             except StopIteration:
                 break
+            col, row = slot
             col_name = column_names[col]
             row_name = row_names[row]
-            col1, x1 = column_tracks[f"{col_name}-start"]
-            col2, x2 = column_tracks[f"{col_name}-end"]
+            _col1, x1 = column_tracks[f"{col_name}-start"]
+            _col2, x2 = column_tracks[f"{col_name}-end"]
 
-            row1, y1 = row_tracks[f"{row_name}-start"]
-            row2, y2 = row_tracks[f"{row_name}-end"]
+            _row1, y1 = row_tracks[f"{row_name}-start"]
+            _row2, y2 = row_tracks[f"{row_name}-end"]
 
             region = self._align(
                 from_corners(x1, y1, x2, y2),
