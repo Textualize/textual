@@ -49,6 +49,8 @@ class GridLayout(Layout):
         self.row_repeat = False
         self.column_align: GridAlign = "start"
         self.row_align: GridAlign = "start"
+        self.column_gutter: int = 0
+        self.row_gutter: int = 0
 
         super().__init__()
 
@@ -109,6 +111,10 @@ class GridLayout(Layout):
     def set_gap(self, column: int, row: int | None = None) -> None:
         self.column_gap = column
         self.row_gap = column if row is None else row
+
+    def set_gutter(self, column: int, row: int | None = None) -> None:
+        self.column_gutter = column
+        self.row_gutter = column if row is None else row
 
     def add_widget(self, widget: Widget, area: str | None = None) -> Widget:
         self.widgets[widget] = area
@@ -187,13 +193,15 @@ class GridLayout(Layout):
                 tracks[f"{name}-end"].append(end)
             return tracks, max_size
 
+        container = Dimensions(
+            width - self.column_gutter * 2, height - self.row_gutter * 2
+        )
         column_tracks, column_size = resolve_tracks(
-            self.columns, width, self.column_gap, self.column_repeat
+            self.columns, container.width, self.column_gap, self.column_repeat
         )
         row_tracks, row_size = resolve_tracks(
-            self.rows, height, self.row_gap, self.row_repeat
+            self.rows, container.height, self.row_gap, self.row_repeat
         )
-        container_size = Dimensions(width, height)
         grid_size = Dimensions(column_size, row_size)
 
         widget_areas = (
@@ -205,6 +213,7 @@ class GridLayout(Layout):
         map = {}
         order = 1
         from_corners = Region.from_corners
+        gutter = Point(self.column_gutter, self.row_gutter)
         for widget, area in widget_areas:
             column_start, column_end, row_start, row_end = self.areas[area]
             try:
@@ -215,11 +224,14 @@ class GridLayout(Layout):
             except (KeyError, IndexError):
                 continue
 
-            region = from_corners(x1, y1, x2, y2)
             region = self._align(
-                region, grid_size, container_size, self.column_align, self.row_align
+                from_corners(x1, y1, x2, y2),
+                grid_size,
+                container,
+                self.column_align,
+                self.row_align,
             )
-            map[widget] = OrderedRegion(region, (0, order))
+            map[widget] = OrderedRegion(region + gutter, (0, order))
             order += 1
 
         # Widgets with no area assigned.

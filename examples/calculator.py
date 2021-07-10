@@ -36,6 +36,7 @@ class GridTest(App):
         layout.add_widget(Placeholder(name="="), area="equals")
 
         layout.set_gap(1)
+        layout.set_gutter(1)
         layout.set_align("center", "center")
 
 
