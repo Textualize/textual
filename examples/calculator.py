@@ -27,12 +27,8 @@ class GridTest(App):
         layout.add_column("col", max_size=20, repeat=4)
         layout.add_row("numbers", min_size=3, max_size=6)
         layout.add_row("row", max_size=10, repeat=5)
-
         layout.add_areas(
-            numbers="col1-start|col4-end,numbers",
-            zero="col1-start|col2-end,row5",
-            dot="col3,row4",
-            equals="col4,row4",
+            numbers="col1-start|col4-end,numbers", zero="col1-start|col2-end,row5"
         )
 
         def make_text(text: str) -> Text:
@@ -46,7 +42,6 @@ class GridTest(App):
             name: make_button(name)
             for name in "AC,+/-,%,/,7,8,9,X,4,5,6,-,1,2,3,+,.,=".split(",")
         }
-
         for name in ("AC", "+/-", "%"):
             buttons[name].style = "#000000 on rgb(165,165,165)"
         for name in "/X-+=":
