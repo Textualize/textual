@@ -15,7 +15,7 @@ except ImportError:
 font = Figlet(font="small")
 
 
-class GridTest(App):
+class CalculatorApp(App):
     async def on_load(self, event: events.Load) -> None:
         await self.bind("q,ctrl+c", "quit", "Quit")
 
@@ -54,4 +54,4 @@ class GridTest(App):
         )
 
 
-GridTest.run(title="Calculator Test")
+CalculatorApp.run(title="Calculator Test")
