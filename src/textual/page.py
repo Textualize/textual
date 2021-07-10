@@ -110,6 +110,7 @@ class Page(Widget):
             self._page.update(renderable)
         else:
             self._page.clear()
+        self.require_repaint()
 
     @property
     def virtual_size(self) -> Dimensions:

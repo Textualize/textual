@@ -4,7 +4,7 @@ import sys
 from collections import defaultdict
 from dataclasses import dataclass
 import logging
-from typing import TYPE_CHECKING, Sequence
+from typing import Iterable, TYPE_CHECKING, Sequence
 
 from .._layout_resolve import layout_resolve
 from ..geometry import Region, Point
@@ -29,8 +29,7 @@ DockEdge = Literal["top", "right", "bottom", "left"]
 class DockOptions:
     size: int | None = None
     fraction: int = 1
-    minimum_size: int = 1
-    maximim_size: int | None = None
+    min_size: int = 1
 
 
 @dataclass
@@ -44,6 +43,10 @@ class DockLayout(Layout):
     def __init__(self, docks: list[Dock] = None) -> None:
         self.docks: list[Dock] = docks or []
         super().__init__()
+
+    def get_widgets(self) -> Iterable[Widget]:
+        for dock in self.docks:
+            yield from dock.widgets
 
     def generate_map(
         self, width: int, height: int, offset: Point = Point(0, 0)
@@ -67,9 +70,7 @@ class DockLayout(Layout):
         for index, dock in enumerate(self.docks):
             dock_options = [
                 DockOptions(
-                    widget.layout_size,
-                    widget.layout_fraction,
-                    widget.layout_minimim_size,
+                    widget.layout_size, widget.layout_fraction, widget.layout_min_size
                 )
                 for widget in dock.widgets
             ]

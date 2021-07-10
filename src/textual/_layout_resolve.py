@@ -19,7 +19,7 @@ class Edge(Protocol):
 
 
 def layout_resolve(total: int, edges: Sequence[Edge]) -> List[int]:
-    """Divide total space to satisfy size, ratio, and minimum_size, constraints.
+    """Divide total space to satisfy size, fraction, and min_size, constraints.
 
     The returned list of integers should add up to total in most cases, unless it is
     impossible to satisfy all the constraints. For instance, if there are two edges

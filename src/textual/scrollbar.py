@@ -96,7 +96,6 @@ class ScrollBarRender:
         blank = " " * width_thickness
 
         foreground_meta = {"@mouse.up": "release", "@mouse.down": "grab"}
-
         if window_size and size and virtual_size:
             step_size = virtual_size / size
 
@@ -143,6 +142,7 @@ class ScrollBarRender:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
+        log.debug("SCROLLBAR RENDER")
         size = (
             (options.height or console.height)
             if self.vertical
@@ -254,4 +254,6 @@ if __name__ == "__main__":
     console = Console()
     bar = ScrollBarRender()
 
-    console.print(ScrollBarRender(position=15.3, thickness=5, vertical=False))
+    console.print(
+        ScrollBarRender(position=15.3, window_size=100, thickness=5, vertical=True)
+    )

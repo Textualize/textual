@@ -7,7 +7,6 @@ from rich.style import StyleType
 
 
 from .. import events
-from ..geometry import Dimensions
 from ..message import Message
 from ..scrollbar import ScrollTo, ScrollBar
 from ..geometry import clamp

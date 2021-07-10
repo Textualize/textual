@@ -97,6 +97,10 @@ class View(Widget):
         hidden, shown, resized = self.layout.reflow(width, height)
         self.app.refresh()
 
+        for widget in self.layout.get_widgets():
+            if not self.is_mounted(widget):
+                await self.mount(widget)
+
         for widget in hidden:
             widget.post_message_no_wait(events.Hide(self))
         for widget in shown:
@@ -104,9 +108,8 @@ class View(Widget):
 
         send_resize = shown
         send_resize.update(resized)
+
         for widget, region in self.layout:
-            if not self.is_mounted(widget):
-                await self.mount(widget)
             if widget in send_resize:
                 widget.post_message_no_wait(
                     events.Resize(self, region.width, region.height)

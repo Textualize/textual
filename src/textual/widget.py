@@ -66,7 +66,7 @@ class Widget(MessagePump):
     visible: Reactive[bool] = Reactive(True, layout=True)
     layout_size: Reactive[int | None] = Reactive(None)
     layout_fraction: Reactive[int] = Reactive(1)
-    layout_minimim_size: Reactive[int] = Reactive(1)
+    layout_min_size: Reactive[int] = Reactive(1)
     layout_offset_x: Reactive[float] = Reactive(0, layout=True)
     layout_offset_y: Reactive[float] = Reactive(0, layout=True)
 

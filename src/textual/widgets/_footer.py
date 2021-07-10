@@ -1,18 +1,19 @@
-from rich.console import Console, ConsoleOptions, RenderableType
-from rich.repr import rich_repr, RichReprResult
+from rich.console import RenderableType
 from rich.text import Text
+import rich.repr
 
 from .. import events
 from ..widget import Widget
 
 
+@rich.repr.auto
 class Footer(Widget):
     def __init__(self) -> None:
         self.keys: list[tuple[str, str]] = []
         super().__init__()
         self.layout_size = 1
 
-    def __rich_repr__(self) -> RichReprResult:
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "footer"
 
     def add_key(self, key: str, label: str) -> None:

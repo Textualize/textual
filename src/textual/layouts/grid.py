@@ -210,12 +210,14 @@ class GridLayout(Layout):
                 offset = (container - size) // 2
             return offset
 
-        size = region.size
         offset_x = align(grid_size.width, container.width, col_align)
         offset_y = align(grid_size.height, container.height, row_align)
 
         region = region.translate(offset_x, offset_y)
         return region
+
+    def get_widgets(self) -> Iterable[Widget]:
+        return self.widgets.keys()
 
     def generate_map(
         self, width: int, height: int, offset: Point = Point(0, 0)

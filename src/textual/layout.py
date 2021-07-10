@@ -123,6 +123,10 @@ class Layout(ABC):
         )
 
     @abstractmethod
+    def get_widgets(self) -> Iterable[Widget]:
+        ...
+
+    @abstractmethod
     def generate_map(
         self, width: int, height: int, offset: Point = Point(0, 0)
     ) -> dict[Widget, OrderedRegion]:

@@ -1,7 +1,7 @@
 from textual.app import App
 from textual import events
 from textual.view import View
-from textual.widgets import Placeholder
+from textual.widgets import Button, Placeholder
 from textual.layouts.grid import GridLayout
 
 
@@ -15,7 +15,7 @@ class GridTest(App):
         await self.push_view(View(layout=layout))
 
         layout.add_column("col", max_size=20, repeat=4)
-        layout.add_row("numbers", max_size=10)
+        layout.add_row("numbers", min_size=3, max_size=10)
         layout.add_row("row", max_size=10, repeat=4)
 
         layout.add_areas(
@@ -27,9 +27,9 @@ class GridTest(App):
 
         layout.place(
             numbers=Placeholder(name="numbers"),
-            zero=Placeholder(name="0"),
-            dot=Placeholder(name="."),
-            equals=Placeholder(name="="),
+            zero=Button("0"),
+            dot=Button("."),
+            equals=Button("="),
         )
 
 
