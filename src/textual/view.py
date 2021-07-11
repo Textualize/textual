@@ -135,6 +135,7 @@ class View(Widget):
                 region = self.get_widget_region(widget)
             else:
                 widget, region = self.get_widget_at(event.x, event.y)
+                log.debug("WIDGET %r", widget)
         except NoWidget:
             await self.app.set_mouse_over(None)
         else:

@@ -25,6 +25,7 @@ log = logging.getLogger("rich")
 
 if TYPE_CHECKING:
     from .widget import Widget, WidgetID
+    from .view import View
 
 
 class NoWidget(Exception):
@@ -136,6 +137,9 @@ class Layout(ABC):
         self, width: int, height: int, offset: Point = Point(0, 0)
     ) -> dict[Widget, OrderedRegion]:
         ...
+
+    async def mount_all(self, view: "View") -> None:
+        await view.mount(*self.get_widgets())
 
     @property
     def map(self) -> dict[Widget, OrderedRegion]:

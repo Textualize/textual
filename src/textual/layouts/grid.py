@@ -11,6 +11,7 @@ from .._layout_resolve import layout_resolve
 from .._loop import loop_last
 from ..geometry import Dimensions, Point, Region
 from ..layout import Layout, OrderedRegion
+from ..view import View
 from ..widget import Widget
 
 if sys.version_info >= (3, 8):
@@ -49,14 +50,16 @@ class GridLayout(Layout):
         self.rows: list[GridOptions] = []
         self.areas: dict[str, GridArea] = {}
         self.widgets: dict[Widget, str | None] = {}
-        self.column_gap = 1
-        self.row_gap = 1
+        self.column_gap = 0
+        self.row_gap = 0
         self.column_repeat = False
         self.row_repeat = False
         self.column_align: GridAlign = "start"
         self.row_align: GridAlign = "start"
         self.column_gutter: int = 0
         self.row_gutter: int = 0
+        self.hidden_columns: set[str] = set()
+        self.hidden_rows: set[str] = set()
 
         if gap is not None:
             if isinstance(gap, tuple):
@@ -74,6 +77,18 @@ class GridLayout(Layout):
             self.set_align(*align)
 
         super().__init__()
+
+    def hide_row(self, row_name: str) -> None:
+        self.hidden_rows.add(row_name)
+
+    def show_row(self, row_name: str) -> None:
+        self.hidden_rows.discard(row_name)
+
+    def hide_column(self, column_name: str) -> None:
+        self.hidden_rows.add(column_name)
+
+    def show_column(self, column_name: str) -> None:
+        self.hidden_rows.discard(column_name)
 
     def add_column(
         self,
@@ -277,14 +292,33 @@ class GridLayout(Layout):
 
             return names, tracks, len(spans), max_size
 
+        def add_widget(widget: Widget, region: Region, order: tuple[int, int]):
+            region = region + offset + widget.layout_offset
+            map[widget] = OrderedRegion(region, order)
+            if isinstance(widget, View):
+                sub_map = widget.layout.generate_map(
+                    region.width, region.height, offset=region.origin
+                )
+                map.update(sub_map)
+
         container = Dimensions(
             width - self.column_gutter * 2, height - self.row_gutter * 2
         )
         column_names, column_tracks, column_count, column_size = resolve_tracks(
-            self.columns, container.width, self.column_gap, self.column_repeat
+            [
+                options
+                for options in self.columns
+                if options.name not in self.hidden_columns
+            ],
+            container.width,
+            self.column_gap,
+            self.column_repeat,
         )
         row_names, row_tracks, row_count, row_size = resolve_tracks(
-            self.rows, container.height, self.row_gap, self.row_repeat
+            [options for options in self.rows if options.name not in self.hidden_rows],
+            container.height,
+            self.row_gap,
+            self.row_repeat,
         )
         grid_size = Dimensions(column_size, row_size)
 
@@ -323,7 +357,8 @@ class GridLayout(Layout):
                 self.column_align,
                 self.row_align,
             )
-            map[widget] = OrderedRegion(region + gutter, (0, order))
+            # map[widget] = OrderedRegion(region + gutter + offset, (0, order))
+            add_widget(widget, region + gutter, (0, order))
             order += 1
 
         # Widgets with no area assigned.
@@ -355,7 +390,8 @@ class GridLayout(Layout):
                 self.column_align,
                 self.row_align,
             )
-            map[widget] = OrderedRegion(region + gutter, (0, order))
+            # map[widget] = OrderedRegion(region + gutter + offset, (0, order))
+            add_widget(widget, region + gutter, (0, order))
             order += 1
 
         return map

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from logging import getLogger
+
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.padding import Padding, PaddingDimensions
 from rich.segment import Segment
@@ -9,6 +11,8 @@ from . import events
 from .geometry import Dimensions, Point
 from .message import Message
 from .widget import Widget, Reactive
+
+log = getLogger("rich")
 
 
 class PageUpdate(Message):

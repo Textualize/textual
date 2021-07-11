@@ -74,7 +74,7 @@ class CalculatorApp(App):
 
         layout.place(
             *buttons.values(),
-            numbers=Static(Padding(numbers, (0, 1)), style="white on rgb(51,51,51)"),
+            numbers=Static(Padding(numbers, (0, 1), style="white on rgb(51,51,51)")),
             zero=make_button("0"),
         )
 

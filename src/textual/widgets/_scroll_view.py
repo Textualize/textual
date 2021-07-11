@@ -7,18 +7,19 @@ from rich.style import StyleType
 
 
 from .. import events
+from ..layouts.grid import GridLayout
 from ..message import Message
 from ..scrollbar import ScrollTo, ScrollBar
 from ..geometry import clamp
 from ..page import Page
-from ..views import DockView
+from ..view import View
 from ..reactive import Reactive
 
 
 log = logging.getLogger("rich")
 
 
-class ScrollView(DockView):
+class ScrollView(View):
     def __init__(
         self,
         renderable: RenderableType | None = None,
@@ -29,12 +30,23 @@ class ScrollView(DockView):
     ) -> None:
         self.fluid = fluid
         self._vertical_scrollbar = ScrollBar(vertical=True)
+        self._horizontal_scrollbar = ScrollBar(vertical=False)
         self._page = Page(renderable or "", style=style)
-        super().__init__(name=name)
+        layout = GridLayout()
+        layout.add_column("main")
+        layout.add_column("vertical", size=1)
+        layout.add_row("main")
+        layout.add_row("horizontal", size=1)
+        layout.add_areas(
+            content="main,main", vertical="vertical,main", horizontal="main,horizontal"
+        )
+        layout.hide_row("horizontal")
+        super().__init__(name=name, layout=layout)
 
     x: Reactive[float] = Reactive(0)
     y: Reactive[float] = Reactive(0)
 
+    target_x: Reactive[float] = Reactive(0)
     target_y: Reactive[float] = Reactive(0)
 
     def validate_y(self, value: float) -> float:
@@ -52,8 +64,15 @@ class ScrollView(DockView):
         self.require_repaint()
 
     async def on_mount(self, event: events.Mount) -> None:
-        await self.dock(self._vertical_scrollbar, edge="right", size=1)
-        await self.dock(self._page, edge="top")
+        assert isinstance(self.layout, GridLayout)
+        self.layout.place(
+            content=self._page,
+            vertical=self._vertical_scrollbar,
+            horizontal=self._horizontal_scrollbar,
+        )
+        await self.layout.mount_all(self)
+        # await self.dock(self._vertical_scrollbar, edge="right", size=1)
+        # await self.dock(self._page, edge="top")
 
     def scroll_up(self) -> None:
         self.target_y += 1.5
