@@ -343,6 +343,7 @@ class App(MessagePump):
     async def dispatch_action(
         self, namespace: object, action_name: str, params: Any
     ) -> None:
+        _rich_traceback_guard = True
         method_name = f"action_{action_name}"
         method = getattr(namespace, method_name, None)
         if method is not None:

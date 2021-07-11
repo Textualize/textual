@@ -174,6 +174,7 @@ class MessagePump:
         log.debug("CLOSED %r", self)
 
     async def dispatch_message(self, message: Message) -> bool | None:
+        _rich_traceback_guard = True
         if isinstance(message, events.Event):
             if not isinstance(message, events.Null):
                 await self.on_event(message)

@@ -268,7 +268,7 @@ jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 type = "git"
 url = "git@github.com:willmcgugan/rich"
 reference = "height-fixes"
-resolved_reference = "aba4c7b623f33aeebdbb6daaf0ef29b8d860dc0a"
+resolved_reference = "bf721033215da2e9906d9083ecf9a03be4722bb4"
 
 [[package]]
 name = "toml"
