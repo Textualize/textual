@@ -215,16 +215,18 @@ class App(MessagePump):
 
         try:
             driver.start_application_mode()
-            self.title = self._title
-            await self.post_message(events.Startup(sender=self))
-            self.require_layout()
         except Exception:
             self.console.print_exception()
             log.exception("error starting application mode")
         else:
             traceback: Traceback | None = None
-            await self.animator.start()
+
             try:
+                self.title = self._title
+                await self.post_message(events.Startup(sender=self))
+                self.require_layout()
+                await self.animator.start()
+
                 await super().process_messages()
                 await self.animator.stop()
 
@@ -238,10 +240,10 @@ class App(MessagePump):
                     await view.close_messages()
             except Exception:
                 traceback = Traceback(show_locals=True)
-
-            driver.stop_application_mode()
-            if traceback is not None:
-                self.console.print(traceback)
+            finally:
+                driver.stop_application_mode()
+                if traceback is not None:
+                    self.console.print(traceback)
 
     def require_repaint(self) -> None:
         self.refresh()
