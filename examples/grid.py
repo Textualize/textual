@@ -12,13 +12,13 @@ class GridTest(App):
     async def on_startup(self, event: events.Startup) -> None:
 
         layout = GridLayout()
-        view = await self.push_view(View(layout=layout))
+        await self.push_view(View(layout=layout))
 
         layout.add_column(fraction=1, name="left", min_size=20)
         layout.add_column(size=30, name="center")
         layout.add_column(fraction=1, name="right")
 
-        layout.add_row(fraction=1, name="top")
+        layout.add_row(fraction=1, name="top", min_size=2)
         layout.add_row(fraction=2, name="middle")
         layout.add_row(fraction=1, name="bottom")
 

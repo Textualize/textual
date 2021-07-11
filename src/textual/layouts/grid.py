@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass
 from operator import itemgetter
+from logging import getLogger
 from itertools import cycle, product
 import sys
 from typing import Iterable, NamedTuple
@@ -19,6 +20,7 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
+log = getLogger("rich")
 
 GridAlign = Literal["start", "end", "center", "stretch"]
 
@@ -252,19 +254,22 @@ class GridLayout(Layout):
         def resolve(
             size: int, edges: list[GridOptions], gap: int, repeat: bool
         ) -> Iterable[tuple[int, int]]:
+            total_gap = gap * (len(edges) - 1)
             tracks = [
                 track if edge.max_size is None else min(edge.max_size, track)
-                for track, edge in zip(layout_resolve(size, edges), edges)
+                for track, edge in zip(layout_resolve(size - total_gap, edges), edges)
             ]
             if repeat:
                 tracks = cycle(tracks)
             total = 0
             edge_count = len(edges)
             for index, track in enumerate(tracks):
-                yield total, total + track - gap if total + track < size else total + track
-                total += track
-                if total >= size and index >= edge_count:
+                if total + track >= size and index >= edge_count:
                     break
+                yield total, total + track
+                total += track + gap
+                # if index >= edge_count:
+                #     break
 
         def resolve_tracks(
             grid: list[GridOptions], size: int, gap: int, repeat: bool
@@ -273,18 +278,21 @@ class GridLayout(Layout):
                 (options.name, span)
                 for options, span in zip(cycle(grid), resolve(size, grid, gap, repeat))
             ]
-            names = [name for name, _span in spans]
+
             max_size = 0
             tracks: dict[str, tuple[int, int]] = {}
             counts = defaultdict(int)
             if repeat:
+                names = []
                 for index, (name, (start, end)) in enumerate(spans):
                     max_size = max(max_size, end)
                     counts[name] += 1
                     count = counts[name]
+                    names.append(f"{name}-{count}")
                     tracks[f"{name}-{count}-start"] = (index, start)
                     tracks[f"{name}-{count}-end"] = (index, end)
             else:
+                names = [name for name, _span in spans]
                 for index, (name, (start, end)) in enumerate(spans):
                     max_size = max(max_size, end)
                     tracks[f"{name}-start"] = (index, start)
@@ -320,6 +328,7 @@ class GridLayout(Layout):
             self.row_gap,
             self.row_repeat,
         )
+        log.debug("%s", column_names)
         grid_size = Dimensions(column_size, row_size)
 
         widget_areas = (
@@ -357,7 +366,6 @@ class GridLayout(Layout):
                 self.column_align,
                 self.row_align,
             )
-            # map[widget] = OrderedRegion(region + gutter + offset, (0, order))
             add_widget(widget, region + gutter, (0, order))
             order += 1
 
@@ -390,7 +398,6 @@ class GridLayout(Layout):
                 self.column_align,
                 self.row_align,
             )
-            # map[widget] = OrderedRegion(region + gutter + offset, (0, order))
             add_widget(widget, region + gutter, (0, order))
             order += 1
 
