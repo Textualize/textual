@@ -240,7 +240,7 @@ testing = ["fields", "hunter", "process-tests", "six", "pytest-xdist", "virtuale
 
 [[package]]
 name = "regex"
-version = "2021.7.1"
+version = "2021.7.6"
 description = "Alternative regular expression module, to replace re."
 category = "dev"
 optional = false
@@ -252,16 +252,23 @@ version = "10.5.0"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 category = "main"
 optional = false
-python-versions = ">=3.6,<4.0"
+python-versions = "^3.6"
+develop = false
 
 [package.dependencies]
-colorama = ">=0.4.0,<0.5.0"
-commonmark = ">=0.9.0,<0.10.0"
-pygments = ">=2.6.0,<3.0.0"
-typing-extensions = {version = ">=3.7.4,<4.0.0", markers = "python_version < \"3.8\""}
+colorama = "^0.4.0"
+commonmark = "^0.9.0"
+pygments = "^2.6.0"
+typing-extensions = {version = "^3.7.4", markers = "python_version < \"3.8\""}
 
 [package.extras]
 jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
+
+[package.source]
+type = "git"
+url = "git@github.com:willmcgugan/rich"
+reference = "height-fixes"
+resolved_reference = "aba4c7b623f33aeebdbb6daaf0ef29b8d860dc0a"
 
 [[package]]
 name = "toml"
@@ -302,7 +309,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "589e5efda3a89733fdb3564730ea0b782eb8db7a0c77b8fd72d64ece233672a3"
+content-hash = "6a7f2c55c31032fcdbde47c9f644ef1baa6250197529310a673d08813daf0161"
 
 [metadata.files]
 appdirs = [
@@ -456,48 +463,49 @@ pytest-cov = [
     {file = "pytest_cov-2.12.1-py2.py3-none-any.whl", hash = "sha256:261bb9e47e65bd099c89c3edf92972865210c36813f80ede5277dceb77a4a62a"},
 ]
 regex = [
-    {file = "regex-2021.7.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:494d0172774dc0beeea984b94c95389143db029575f7ca908edd74469321ea99"},
-    {file = "regex-2021.7.1-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:8cf6728f89b071bd3ab37cb8a0e306f4de897553a0ed07442015ee65fbf53d62"},
-    {file = "regex-2021.7.1-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:1806370b2bef4d4193eebe8ee59a9fd7547836a34917b7badbe6561a8594d9cb"},
-    {file = "regex-2021.7.1-cp36-cp36m-manylinux2010_i686.whl", hash = "sha256:d0cf2651a8804f6325747c7e55e3be0f90ee2848e25d6b817aa2728d263f9abb"},
-    {file = "regex-2021.7.1-cp36-cp36m-manylinux2010_x86_64.whl", hash = "sha256:268fe9dd1deb4a30c8593cabd63f7a241dfdc5bd9dd0233906c718db22cdd49a"},
-    {file = "regex-2021.7.1-cp36-cp36m-manylinux2014_i686.whl", hash = "sha256:7743798dfb573d006f1143d745bf17efad39775a5190b347da5d83079646be56"},
-    {file = "regex-2021.7.1-cp36-cp36m-manylinux2014_x86_64.whl", hash = "sha256:0e46c1191b2eb293a6912269ed08b4512e7e241bbf591f97e527492e04c77e93"},
-    {file = "regex-2021.7.1-cp36-cp36m-win32.whl", hash = "sha256:b1dbeef938281f240347d50f28ae53c4b046a23389cd1fc4acec5ea0eae646a1"},
-    {file = "regex-2021.7.1-cp36-cp36m-win_amd64.whl", hash = "sha256:6c72ebb72e64e9bd195cb35a9b9bbfb955fd953b295255b8ae3e4ad4a146b615"},
-    {file = "regex-2021.7.1-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:bf819c5b77ff44accc9a24e31f1f7ceaaf6c960816913ed3ef8443b9d20d81b6"},
-    {file = "regex-2021.7.1-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:e80d2851109e56420b71f9702ad1646e2f0364528adbf6af85527bc61e49f394"},
-    {file = "regex-2021.7.1-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:a1b6a3f600d6aff97e3f28c34192c9ed93fee293bd96ef327b64adb51a74b2f6"},
-    {file = "regex-2021.7.1-cp37-cp37m-manylinux2010_i686.whl", hash = "sha256:ed77b97896312bc2deafe137ca2626e8b63808f5bedb944f73665c68093688a7"},
-    {file = "regex-2021.7.1-cp37-cp37m-manylinux2010_x86_64.whl", hash = "sha256:a548bb51c4476332ce4139df8e637386730f79a92652a907d12c696b6252b64d"},
-    {file = "regex-2021.7.1-cp37-cp37m-manylinux2014_i686.whl", hash = "sha256:210c359e6ee5b83f7d8c529ba3c75ba405481d50f35a420609b0db827e2e3bb5"},
-    {file = "regex-2021.7.1-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:1d386402ae7f3c9b107ae5863f7ecccb0167762c82a687ae6526b040feaa5ac6"},
-    {file = "regex-2021.7.1-cp37-cp37m-win32.whl", hash = "sha256:5049d00dbb78f9d166d1c704e93934d42cce0570842bb1a61695123d6b01de09"},
-    {file = "regex-2021.7.1-cp37-cp37m-win_amd64.whl", hash = "sha256:361be4d311ac995a8c7ad577025a3ae3a538531b1f2cf32efd8b7e5d33a13e5a"},
-    {file = "regex-2021.7.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:f32f47fb22c988c0b35756024b61d156e5c4011cb8004aa53d93b03323c45657"},
-    {file = "regex-2021.7.1-cp38-cp38-manylinux1_i686.whl", hash = "sha256:b024ee43ee6b310fad5acaee23e6485b21468718cb792a9d1693eecacc3f0b7e"},
-    {file = "regex-2021.7.1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:b092754c06852e8a8b022004aff56c24b06310189186805800d09313c37ce1f8"},
-    {file = "regex-2021.7.1-cp38-cp38-manylinux2010_i686.whl", hash = "sha256:a8a5826d8a1b64e2ff9af488cc179e1a4d0f144d11ce486a9f34ea38ccedf4ef"},
-    {file = "regex-2021.7.1-cp38-cp38-manylinux2010_x86_64.whl", hash = "sha256:444723ebaeb7fa8125f29c01a31101a3854ac3de293e317944022ae5effa53a4"},
-    {file = "regex-2021.7.1-cp38-cp38-manylinux2014_i686.whl", hash = "sha256:fdad3122b69cdabdb3da4c2a4107875913ac78dab0117fc73f988ad589c66b66"},
-    {file = "regex-2021.7.1-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:4b1999ef60c45357598935c12508abf56edbbb9c380df6f336de38a6c3a294ae"},
-    {file = "regex-2021.7.1-cp38-cp38-win32.whl", hash = "sha256:e07e92935040c67f49571779d115ecb3e727016d42fb36ee0d8757db4ca12ee0"},
-    {file = "regex-2021.7.1-cp38-cp38-win_amd64.whl", hash = "sha256:6b8b629f93246e507287ee07e26744beaffb4c56ed520576deac8b615bd76012"},
-    {file = "regex-2021.7.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:56bef6b414949e2c9acf96cb5d78de8b529c7b99752619494e78dc76f99fd005"},
-    {file = "regex-2021.7.1-cp39-cp39-manylinux1_i686.whl", hash = "sha256:78a2a885345a2d60b5e68099e877757d5ed12e46ba1e87507175f14f80892af3"},
-    {file = "regex-2021.7.1-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:3f7a92e60930f8fca2623d9e326c173b7cf2c8b7e4fdcf984b75a1d2fb08114d"},
-    {file = "regex-2021.7.1-cp39-cp39-manylinux2010_i686.whl", hash = "sha256:4fc86b729ab88fe8ac3ec92287df253c64aa71560d76da5acd8a2e245839c629"},
-    {file = "regex-2021.7.1-cp39-cp39-manylinux2010_x86_64.whl", hash = "sha256:59845101de68fd5d3a1145df9ea022e85ecd1b49300ea68307ad4302320f6f61"},
-    {file = "regex-2021.7.1-cp39-cp39-manylinux2014_i686.whl", hash = "sha256:ce269e903b00d1ab4746793e9c50a57eec5d5388681abef074d7b9a65748fca5"},
-    {file = "regex-2021.7.1-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:c11f2fca544b5e30a0e813023196a63b1cb9869106ef9a26e9dae28bce3e4e26"},
-    {file = "regex-2021.7.1-cp39-cp39-win32.whl", hash = "sha256:1ccbd41dbee3a31e18938096510b7d4ee53aa9fce2ee3dcc8ec82ae264f6acfd"},
-    {file = "regex-2021.7.1-cp39-cp39-win_amd64.whl", hash = "sha256:18040755606b0c21281493ec309214bd61e41a170509e5014f41d6a5a586e161"},
-    {file = "regex-2021.7.1.tar.gz", hash = "sha256:849802379a660206277675aa5a5c327f5c910c690649535863ddf329b0ba8c87"},
+    {file = "regex-2021.7.6-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:e6a1e5ca97d411a461041d057348e578dc344ecd2add3555aedba3b408c9f874"},
+    {file = "regex-2021.7.6-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:6afe6a627888c9a6cfbb603d1d017ce204cebd589d66e0703309b8048c3b0854"},
+    {file = "regex-2021.7.6-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:ccb3d2190476d00414aab36cca453e4596e8f70a206e2aa8db3d495a109153d2"},
+    {file = "regex-2021.7.6-cp36-cp36m-manylinux2010_i686.whl", hash = "sha256:ed693137a9187052fc46eedfafdcb74e09917166362af4cc4fddc3b31560e93d"},
+    {file = "regex-2021.7.6-cp36-cp36m-manylinux2010_x86_64.whl", hash = "sha256:99d8ab206a5270c1002bfcf25c51bf329ca951e5a169f3b43214fdda1f0b5f0d"},
+    {file = "regex-2021.7.6-cp36-cp36m-manylinux2014_i686.whl", hash = "sha256:b85ac458354165405c8a84725de7bbd07b00d9f72c31a60ffbf96bb38d3e25fa"},
+    {file = "regex-2021.7.6-cp36-cp36m-manylinux2014_x86_64.whl", hash = "sha256:3f5716923d3d0bfb27048242a6e0f14eecdb2e2a7fac47eda1d055288595f222"},
+    {file = "regex-2021.7.6-cp36-cp36m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e5983c19d0beb6af88cb4d47afb92d96751fb3fa1784d8785b1cdf14c6519407"},
+    {file = "regex-2021.7.6-cp36-cp36m-win32.whl", hash = "sha256:c92831dac113a6e0ab28bc98f33781383fe294df1a2c3dfd1e850114da35fd5b"},
+    {file = "regex-2021.7.6-cp36-cp36m-win_amd64.whl", hash = "sha256:791aa1b300e5b6e5d597c37c346fb4d66422178566bbb426dd87eaae475053fb"},
+    {file = "regex-2021.7.6-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:59506c6e8bd9306cd8a41511e32d16d5d1194110b8cfe5a11d102d8b63cf945d"},
+    {file = "regex-2021.7.6-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:564a4c8a29435d1f2256ba247a0315325ea63335508ad8ed938a4f14c4116a5d"},
+    {file = "regex-2021.7.6-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:59c00bb8dd8775473cbfb967925ad2c3ecc8886b3b2d0c90a8e2707e06c743f0"},
+    {file = "regex-2021.7.6-cp37-cp37m-manylinux2010_i686.whl", hash = "sha256:9a854b916806c7e3b40e6616ac9e85d3cdb7649d9e6590653deb5b341a736cec"},
+    {file = "regex-2021.7.6-cp37-cp37m-manylinux2010_x86_64.whl", hash = "sha256:db2b7df831c3187a37f3bb80ec095f249fa276dbe09abd3d35297fc250385694"},
+    {file = "regex-2021.7.6-cp37-cp37m-manylinux2014_i686.whl", hash = "sha256:173bc44ff95bc1e96398c38f3629d86fa72e539c79900283afa895694229fe6a"},
+    {file = "regex-2021.7.6-cp37-cp37m-manylinux2014_x86_64.whl", hash = "sha256:15dddb19823f5147e7517bb12635b3c82e6f2a3a6b696cc3e321522e8b9308ad"},
+    {file = "regex-2021.7.6-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2ddeabc7652024803666ea09f32dd1ed40a0579b6fbb2a213eba590683025895"},
+    {file = "regex-2021.7.6-cp37-cp37m-win32.whl", hash = "sha256:f080248b3e029d052bf74a897b9d74cfb7643537fbde97fe8225a6467fb559b5"},
+    {file = "regex-2021.7.6-cp37-cp37m-win_amd64.whl", hash = "sha256:d8bbce0c96462dbceaa7ac4a7dfbbee92745b801b24bce10a98d2f2b1ea9432f"},
+    {file = "regex-2021.7.6-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:edd1a68f79b89b0c57339bce297ad5d5ffcc6ae7e1afdb10f1947706ed066c9c"},
+    {file = "regex-2021.7.6-cp38-cp38-manylinux1_i686.whl", hash = "sha256:422dec1e7cbb2efbbe50e3f1de36b82906def93ed48da12d1714cabcd993d7f0"},
+    {file = "regex-2021.7.6-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:cbe23b323988a04c3e5b0c387fe3f8f363bf06c0680daf775875d979e376bd26"},
+    {file = "regex-2021.7.6-cp38-cp38-manylinux2010_i686.whl", hash = "sha256:0eb2c6e0fcec5e0f1d3bcc1133556563222a2ffd2211945d7b1480c1b1a42a6f"},
+    {file = "regex-2021.7.6-cp38-cp38-manylinux2010_x86_64.whl", hash = "sha256:1c78780bf46d620ff4fff40728f98b8afd8b8e35c3efd638c7df67be2d5cddbf"},
+    {file = "regex-2021.7.6-cp38-cp38-manylinux2014_i686.whl", hash = "sha256:bc84fb254a875a9f66616ed4538542fb7965db6356f3df571d783f7c8d256edd"},
+    {file = "regex-2021.7.6-cp38-cp38-manylinux2014_x86_64.whl", hash = "sha256:598c0a79b4b851b922f504f9f39a863d83ebdfff787261a5ed061c21e67dd761"},
+    {file = "regex-2021.7.6-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:875c355360d0f8d3d827e462b29ea7682bf52327d500a4f837e934e9e4656068"},
+    {file = "regex-2021.7.6-cp38-cp38-win32.whl", hash = "sha256:e586f448df2bbc37dfadccdb7ccd125c62b4348cb90c10840d695592aa1b29e0"},
+    {file = "regex-2021.7.6-cp38-cp38-win_amd64.whl", hash = "sha256:2fe5e71e11a54e3355fa272137d521a40aace5d937d08b494bed4529964c19c4"},
+    {file = "regex-2021.7.6-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:6110bab7eab6566492618540c70edd4d2a18f40ca1d51d704f1d81c52d245026"},
+    {file = "regex-2021.7.6-cp39-cp39-manylinux1_i686.whl", hash = "sha256:4f64fc59fd5b10557f6cd0937e1597af022ad9b27d454e182485f1db3008f417"},
+    {file = "regex-2021.7.6-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:89e5528803566af4df368df2d6f503c84fbfb8249e6631c7b025fe23e6bd0cde"},
+    {file = "regex-2021.7.6-cp39-cp39-manylinux2010_i686.whl", hash = "sha256:2366fe0479ca0e9afa534174faa2beae87847d208d457d200183f28c74eaea59"},
+    {file = "regex-2021.7.6-cp39-cp39-manylinux2010_x86_64.whl", hash = "sha256:f9392a4555f3e4cb45310a65b403d86b589adc773898c25a39184b1ba4db8985"},
+    {file = "regex-2021.7.6-cp39-cp39-manylinux2014_i686.whl", hash = "sha256:2bceeb491b38225b1fee4517107b8491ba54fba77cf22a12e996d96a3c55613d"},
+    {file = "regex-2021.7.6-cp39-cp39-manylinux2014_x86_64.whl", hash = "sha256:f98dc35ab9a749276f1a4a38ab3e0e2ba1662ce710f6530f5b0a6656f1c32b58"},
+    {file = "regex-2021.7.6-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:319eb2a8d0888fa6f1d9177705f341bc9455a2c8aca130016e52c7fe8d6c37a3"},
+    {file = "regex-2021.7.6-cp39-cp39-win32.whl", hash = "sha256:eaf58b9e30e0e546cdc3ac06cf9165a1ca5b3de8221e9df679416ca667972035"},
+    {file = "regex-2021.7.6-cp39-cp39-win_amd64.whl", hash = "sha256:4c9c3155fe74269f61e27617529b7f09552fbb12e44b1189cebbdb24294e6e1c"},
+    {file = "regex-2021.7.6.tar.gz", hash = "sha256:8394e266005f2d8c6f0bc6780001f7afa3ef81a7a2111fa35058ded6fce79e4d"},
 ]
-rich = [
-    {file = "rich-10.5.0-py3-none-any.whl", hash = "sha256:d36d4dddbb6cb87cdcb2c02f8ffd7836e1b136e3ba45d4b5a4da057f3b5e7798"},
-    {file = "rich-10.5.0.tar.gz", hash = "sha256:f8a16484b3d70708bdafd04f659f9ca0e2c0129b33a343c10c734838d361777f"},
-]
+rich = []
 toml = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
     {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
