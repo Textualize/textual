@@ -45,4 +45,12 @@ A new update system allows for overlapping layers. Animation is now synchronized
 
 New version (0.1.4) with API updates and the new layout system.
 
-[![Textual update 5](https://yt-embed.herokuapp.com/embed?v=jddccDuVd3E&img=0)](http://www.youtube.com/watch?v=jddccDuVd3E)
+[![Textual update 6](https://yt-embed.herokuapp.com/embed?v=jddccDuVd3E&img=0)](http://www.youtube.com/watch?v=jddccDuVd3E)
+
+
+### Update 7 - New Grid Layout
+**11 July 2021**
+
+Added a new layout system modelled on CSS grid. The example demostrates how once created a grid will adapt to the available space.
+
+[![Textual update 7](https://yt-embed.herokuapp.com/embed?v=Zh9CEvu73jc&img=0)](http://www.youtube.com/watch?v=Zh9CEvu73jc)
