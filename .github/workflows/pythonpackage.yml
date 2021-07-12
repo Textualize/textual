@@ -1,4 +1,4 @@
-name: Test Rich module
+name: Test Textual module
 
 on: [pull_request]
 
