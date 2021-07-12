@@ -16,7 +16,7 @@ log = getLogger("rich")
 
 
 class PageUpdate(Message):
-    def can_batch(self, message: "Message") -> bool:
+    def can_replace(self, message: "Message") -> bool:
         return isinstance(message, PageUpdate)
 
 
@@ -56,7 +56,7 @@ class PageRender:
 
     def render(self, console: Console, options: ConsoleOptions) -> None:
         width = self.width or options.max_width or console.width
-        height = self.height or options.height or None
+        width *= 2
         options = options.update_dimensions(width, None)
         style = console.get_style(self.style)
         renderable = self.renderable
@@ -76,6 +76,14 @@ class PageRender:
         height = options.height or console.height
         x, y = self.offset
         window_lines = self._lines[y : y + height]
+
+        if x:
+
+            def width_view(line: list[Segment]) -> list[Segment]:
+                _, line = Segment.divide(line, [x, x + width])
+                return line
+
+            window_lines = [width_view(line) for line in window_lines]
 
         missing_lines = len(window_lines) - height
         if missing_lines:
@@ -102,8 +110,15 @@ class Page(Widget):
     def contents_size(self) -> Dimensions:
         return self._page.size
 
+    def validate_x(self, value: int) -> int:
+        return max(0, value)
+
     def validate_y(self, value: int) -> int:
         return max(0, value)
+
+    async def watch_x(self, new: int) -> None:
+        x, y = self._page.offset
+        self._page.offset = Point(new, y)
 
     async def watch_y(self, new: int) -> None:
         x, y = self._page.offset

@@ -30,7 +30,7 @@ class GridTest(App):
         layout.add_row("row", fraction=1, max_size=10)
         layout.set_repeat(True, True)
         layout.add_areas(center="col-2-start|col-4-end,row-2-start|row-3-end")
-        layout.set_align("center", "center")
+        layout.set_align("stretch", "center")
 
         # *(Placeholder() for _ in range(20)),
         layout.place(*(Placeholder() for _ in range(20)), center=Placeholder())

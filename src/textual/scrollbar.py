@@ -29,6 +29,16 @@ class ScrollDown(Message, bubble=True):
 
 
 @rich.repr.auto
+class ScrollLeft(Message, bubble=True):
+    """Message sent when clicking above handle."""
+
+
+@rich.repr.auto
+class ScrollRight(Message, bubble=True):
+    """Message sent when clicking below handle."""
+
+
+@rich.repr.auto
 class ScrollTo(Message, bubble=True):
     """Message sent when click and dragging handle."""
 
@@ -84,7 +94,7 @@ class ScrollBarRender:
             if ascii_only:
                 bars = ["-", "-", "-", "-", "-", "-", "-", "-"]
             else:
-                bars = ["▏", "▎", "▍", "▌", "▋", "▊", "▉", "█"]
+                bars = ["█", "▉", "▊", "▋", "▌", "▍", "▎", "▏"]
 
         back = back_color
         bar = bar_color
@@ -207,10 +217,10 @@ class ScrollBar(Widget):
         self.mouse_over = False
 
     async def action_scroll_down(self) -> None:
-        await self.emit(ScrollDown(self))
+        await self.emit(ScrollDown(self) if self.vertical else ScrollRight(self))
 
     async def action_scroll_up(self) -> None:
-        await self.emit(ScrollUp(self))
+        await self.emit(ScrollUp(self) if self.vertical else ScrollLeft(self))
 
     async def action_grab(self) -> None:
         await self.capture_mouse()

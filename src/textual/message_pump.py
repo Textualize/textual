@@ -152,7 +152,7 @@ class MessagePump:
             # Combine any pending messages that may supersede this one
             while not (self._closed or self._closing):
                 pending = self.peek_message()
-                if pending is None or not message.can_batch(pending):
+                if pending is None or not message.can_replace(pending):
                     break
                 try:
                     message = await self.get_message()

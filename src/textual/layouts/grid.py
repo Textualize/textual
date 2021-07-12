@@ -268,8 +268,6 @@ class GridLayout(Layout):
                     break
                 yield total, total + track
                 total += track + gap
-                # if index >= edge_count:
-                #     break
 
         def resolve_tracks(
             grid: list[GridOptions], size: int, gap: int, repeat: bool
@@ -328,7 +326,6 @@ class GridLayout(Layout):
             self.row_gap,
             self.row_repeat,
         )
-        log.debug("%s", column_names)
         grid_size = Dimensions(column_size, row_size)
 
         widget_areas = (

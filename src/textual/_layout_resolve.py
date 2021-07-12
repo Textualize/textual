@@ -75,5 +75,6 @@ def layout_resolve(total: int, edges: Sequence[Edge]) -> List[int]:
                 size, remainder = divmod(portion * edge.fraction + remainder, 1)
                 sizes[index] = size
             break
+
     # Sizes now contains integers only
     return cast(List[int], sizes)

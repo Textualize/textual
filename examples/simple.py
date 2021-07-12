@@ -9,16 +9,6 @@ from textual.views import DockView
 from textual.widgets import Header, Footer, Placeholder, ScrollView
 
 
-logging.basicConfig(
-    level="NOTSET",
-    format="%(message)s",
-    datefmt="[%X]",
-    handlers=[FileHandler("richtui.log")],
-)
-
-log = logging.getLogger("rich")
-
-
 class MyApp(App):
     """An example of a very simple Textual App"""
 
@@ -31,11 +21,12 @@ class MyApp(App):
         view = await self.push_view(DockView())
 
         footer = Footer()
-        footer.add_key("b", "Toggle sidebar")
-        footer.add_key("q", "Quit")
         header = Header()
         body = ScrollView()
         sidebar = Placeholder()
+
+        footer.add_key("b", "Toggle sidebar")
+        footer.add_key("q", "Quit")
 
         await view.dock(header, edge="top")
         await view.dock(footer, edge="bottom")

@@ -96,6 +96,9 @@ class App(MessagePump):
         self.mouse_position = Point(0, 0)
         self.bindings = Bindings()
         self._title = title
+
+        self.bindings.bind("ctrl+c", "quit")
+
         super().__init__()
 
     title: Reactive[str] = Reactive("Textual")
@@ -252,6 +255,7 @@ class App(MessagePump):
         self.view.require_layout()
 
     async def call_later(self, callback: Callable, *args, **kwargs) -> None:
+        await self.post_message(events.Idle(self))
         await self.post_message(
             events.Callback(self, partial(callback, *args, **kwargs))
         )

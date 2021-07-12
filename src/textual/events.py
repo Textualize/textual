@@ -29,7 +29,7 @@ class Event(Message):
 
 
 class Null(Event):
-    def can_batch(self, message: Message) -> bool:
+    def can_replace(self, message: Message) -> bool:
         return isinstance(message, Null)
 
 
@@ -94,7 +94,7 @@ class Resize(Event):
         self.height = height
         super().__init__(sender)
 
-    def can_batch(self, message: "Message") -> bool:
+    def can_replace(self, message: "Message") -> bool:
         return isinstance(message, Resize)
 
     @property
@@ -324,5 +324,5 @@ class Blur(Event):
 
 
 class Update(Event):
-    def can_batch(self, event: Message) -> bool:
+    def can_replace(self, event: Message) -> bool:
         return isinstance(event, Update) and event.sender == self.sender

@@ -1,6 +1,5 @@
 from rich.align import Align
 from rich.console import Console, ConsoleOptions, RenderResult
-from rich.padding import Padding
 from rich.text import Text
 
 from textual.app import App
@@ -14,10 +13,10 @@ try:
 except ImportError:
     print("Please install pyfiglet to run this example")
 
-font = Figlet(font="small")
-
 
 class FigletText:
+    """A renderable to generate figlet text that adapts to fit the container."""
+
     def __init__(self, text: str) -> None:
         self.text = text
 
@@ -27,25 +26,22 @@ class FigletText:
         size = min(options.max_width / 2, options.max_height)
 
         text = self.text
-        if size <= 4:
+        if size < 4:
             yield Text(text, style="bold")
-            return
-        if size < 6:
-            font_name = "mini"
-        elif size < 8:
-            font_name = "small"
-        elif size < 10:
-            font_name = "standard"
         else:
-            font_name = "big"
-        font = Figlet(font=font_name)
-        yield Text(font.renderText(text).rstrip("\n"), style="bold")
+            if size < 7:
+                font_name = "mini"
+            elif size < 8:
+                font_name = "small"
+            elif size < 10:
+                font_name = "standard"
+            else:
+                font_name = "big"
+            font = Figlet(font=font_name)
+            yield Text(font.renderText(text).rstrip("\n"), style="bold")
 
 
 class CalculatorApp(App):
-    async def on_load(self, event: events.Load) -> None:
-        await self.bind("q,ctrl+c", "quit", "Quit")
-
     async def on_startup(self, event: events.Startup) -> None:
 
         layout = GridLayout(gap=(2, 1), gutter=1, align=("center", "center"))
@@ -74,7 +70,7 @@ class CalculatorApp(App):
 
         layout.place(
             *buttons.values(),
-            numbers=Static(Padding(numbers, (0, 1), style="white on rgb(51,51,51)")),
+            numbers=Static(numbers, padding=(0, 1), style="white on rgb(51,51,51)"),
             zero=make_button("0"),
         )
 

@@ -37,7 +37,7 @@ class Message:
         super().__init_subclass__()
         cls.bubble = bubble
 
-    def can_batch(self, message: "Message") -> bool:
+    def can_replace(self, message: "Message") -> bool:
         """Check if another message may supersede this one.
 
         Args:
