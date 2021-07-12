@@ -25,18 +25,26 @@ log = logging.getLogger("rich")
 
 if TYPE_CHECKING:
     from .widget import Widget, WidgetID
+    from .view import View
 
 
 class NoWidget(Exception):
     pass
 
 
-class MapRegion(NamedTuple):
+@rich.repr.auto
+class OrderedRegion(NamedTuple):
     region: Region
     order: tuple[int, int]
 
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
+        yield "region", self.region
+        yield "order", self.order
+
 
 class ReflowResult(NamedTuple):
+    """The result of a reflow operation. Describes the chances to widgets."""
+
     hidden: set[Widget]
     shown: set[Widget]
     resized: set[Widget]
@@ -66,56 +74,86 @@ class Layout(ABC):
     """Responsible for arranging Widgets in a view."""
 
     def __init__(self) -> None:
-        self._layout_map: dict[Widget, MapRegion] = {}
+        self._layout_map: dict[Widget, OrderedRegion] = {}
         self.width = 0
         self.height = 0
         self.renders: dict[Widget, tuple[Region, Lines]] = {}
         self._cuts: list[list[int]] | None = None
 
     def reset(self) -> None:
-        self.renders.clear()
         self._cuts = None
 
     def reflow(self, width: int, height: int) -> ReflowResult:
         self.reset()
 
-        old_map = self._layout_map
         map = self.generate_map(width, height)
+
+        # Filter out widgets that are off screen or zero area
+        screen_region = Region(0, 0, width, height)
+        map = {
+            widget: map_region
+            for widget, map_region in map.items()
+            if map_region.region and screen_region.overlaps(map_region.region)
+        }
 
         old_widgets = set(self._layout_map.keys())
         new_widgets = set(map.keys())
+        # Newly visible widgets
         shown_widgets = new_widgets - old_widgets
+        # Newly hidden widgets
         hidden_widgets = old_widgets - new_widgets
-        resized_widgets = set()
 
         self._layout_map = map
         self.width = width
         self.height = height
 
-        # TODO: make this more efficient
-        new_renders: dict[Widget, tuple[Region, Lines]] = {}
-        for widget, (region, order) in map.items():
-            if widget in old_widgets and widget.size != region.size:
-                resized_widgets.add(widget)
-            if widget in self.renders and self.renders[widget][0].size == region.size:
-                new_renders[widget] = (region, self.renders[widget][1])
+        # Copy renders if the size hasn't changed
+        new_renders = {
+            widget: (region, self.renders[widget][1])
+            for widget, (region, _order) in map.items()
+            if widget in self.renders
+            and self.renders[widget][0].size == region.size
+            and not widget.check_repaint()
+        }
         self.renders = new_renders
-        return ReflowResult(hidden_widgets, shown_widgets, resized_widgets)
+
+        # Widgets with changed size
+        resized_widgets = {
+            widget
+            for widget, (region, _order) in map.items()
+            if widget in old_widgets and widget.size != region.size
+        }
+
+        return ReflowResult(
+            hidden=hidden_widgets, shown=shown_widgets, resized=resized_widgets
+        )
+
+    @abstractmethod
+    def get_widgets(self) -> Iterable[Widget]:
+        ...
 
     @abstractmethod
     def generate_map(
         self, width: int, height: int, offset: Point = Point(0, 0)
-    ) -> dict[Widget, MapRegion]:
+    ) -> dict[Widget, OrderedRegion]:
         ...
 
+    async def mount_all(self, view: "View") -> None:
+        await view.mount(*self.get_widgets())
+
     @property
-    def map(self) -> dict[Widget, MapRegion]:
+    def map(self) -> dict[Widget, OrderedRegion]:
         return self._layout_map
 
     def __iter__(self) -> Iterable[tuple[Widget, Region]]:
         layers = sorted(
             self._layout_map.items(), key=lambda item: item[1].order, reverse=True
         )
+        for widget, (region, _) in layers:
+            yield widget, region
+
+    def __reversed__(self) -> Iterable[tuple[Widget, Region]]:
+        layers = sorted(self._layout_map.items(), key=lambda item: item[1].order)
         for widget, (region, _) in layers:
             yield widget, region
 
@@ -147,6 +185,14 @@ class Layout(ABC):
             if x < end:
                 return segment.style or Style.null()
         return Style.null()
+
+    def get_widget_region(self, widget: Widget) -> Region:
+        try:
+            region, _ = self._layout_map[widget]
+        except KeyError:
+            raise NoWidget("Widget is not in layout")
+        else:
+            return region
 
     @property
     def cuts(self) -> list[list[int]]:
@@ -247,7 +293,7 @@ class Layout(ABC):
         clip_x, clip_y, clip_x2, clip_y2 = clip.corners
 
         divide = Segment.divide
-        back = Style.parse("on blue")
+        back = Style.parse("black")
 
         # Maps each cut on to a list of segments
         cuts = self.cuts

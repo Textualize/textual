@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from typing import Any, Coroutine, Awaitable, NamedTuple
 import asyncio
-from asyncio import Event, Queue, Task, QueueEmpty
-
 import logging
+from asyncio import Event, Queue, QueueEmpty, Task
+from typing import Any, Awaitable, Coroutine, NamedTuple
+from weakref import WeakSet
 
 from . import events
-from .message import Message
 from ._timer import Timer, TimerCallback
 from ._types import MessageHandler
+from .message import Message
 
 log = logging.getLogger("rich")
 
@@ -31,7 +31,7 @@ class MessagePump:
         self._disabled_messages: set[type[Message]] = set()
         self._pending_message: Message | None = None
         self._task: Task | None = None
-        self._child_tasks: set[Task] = set()
+        self._child_tasks: WeakSet[Task] = WeakSet()
 
     @property
     def task(self) -> Task:
@@ -117,7 +117,7 @@ class MessagePump:
         timer = Timer(
             self, interval, self, name=name, callback=callback, repeat=repeat or None
         )
-        asyncio.get_event_loop().create_task(timer.run())
+        self._child_tasks.add(asyncio.get_event_loop().create_task(timer.run()))
         return timer
 
     async def close_messages(self, wait: bool = True) -> None:
@@ -126,10 +126,13 @@ class MessagePump:
             return
 
         self._closing = True
+
         await self._message_queue.put(None)
 
         for task in self._child_tasks:
             task.cancel()
+            await task
+        self._child_tasks.clear()
 
     def start_messages(self) -> None:
         self._task = asyncio.create_task(self.process_messages())
@@ -149,7 +152,7 @@ class MessagePump:
             # Combine any pending messages that may supersede this one
             while not (self._closed or self._closing):
                 pending = self.peek_message()
-                if pending is None or not message.can_batch(pending):
+                if pending is None or not message.can_replace(pending):
                     break
                 try:
                     message = await self.get_message()
@@ -167,9 +170,11 @@ class MessagePump:
                         idle_handler = getattr(self, "on_idle", None)
                         if idle_handler is not None and not self._closed:
                             await idle_handler(events.Idle(self))
+
         log.debug("CLOSED %r", self)
 
     async def dispatch_message(self, message: Message) -> bool | None:
+        _rich_traceback_guard = True
         if isinstance(message, events.Event):
             if not isinstance(message, events.Null):
                 await self.on_event(message)
@@ -212,15 +217,29 @@ class MessagePump:
         await self._message_queue.put(message)
         return True
 
+    def post_message_from_child_no_wait(self, message: Message) -> bool:
+        if self._closing or self._closed:
+            return False
+        return self.post_message_no_wait(message)
+
     async def post_message_from_child(self, message: Message) -> bool:
         if self._closing or self._closed:
             return False
         return await self.post_message(message)
 
+    async def on_callback(self, event: events.Callback) -> None:
+        await event.callback()
+
+    def emit_no_wait(self, message: Message) -> bool:
+        if self._parent:
+            return self._parent.post_message_from_child_no_wait(message)
+        else:
+            log.warning("NO PARENT %r %r", self, message)
+            return False
+
     async def emit(self, message: Message) -> bool:
         if self._parent:
-            await self._parent.post_message_from_child(message)
-            return True
+            return await self._parent.post_message_from_child(message)
         else:
             log.warning("NO PARENT %r %r", self, message)
             return False

@@ -76,12 +76,11 @@ class Timer:
         start = monotonic()
         try:
             while _repeat is None or count <= _repeat:
-                next_timer = start + (count * _interval)
+                next_timer = start + ((count + 1) * _interval)
                 if self._skip and next_timer < monotonic():
                     count += 1
                     continue
                 try:
-
                     if await wait_for(_wait(), max(0, next_timer - monotonic())):
                         break
                 except TimeoutError:

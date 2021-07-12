@@ -1,37 +1,32 @@
 from __future__ import annotations
 
+from functools import partial
 from logging import getLogger
 from typing import (
-    Callable,
-    cast,
-    ClassVar,
-    Generic,
-    Iterable,
-    NewType,
-    TypeVar,
+    Any,
     TYPE_CHECKING,
+    Callable,
+    ClassVar,
+    NewType,
+    cast,
 )
+from weakref import WeakValueDictionary
 
-from rich.align import Align
-
-from rich.console import Console, RenderableType
-from rich.pretty import Pretty
-from rich.panel import Panel
 import rich.repr
-from rich.segment import Segment
+from rich.align import Align
+from rich.console import Console, RenderableType
+from rich.panel import Panel
+from rich.pretty import Pretty
 from rich.style import Style
 
 from . import events
 from ._animator import BoundAnimator
 from ._context import active_app
-from ._loop import loop_last
-from ._line_cache import LineCache
+from .geometry import Dimensions
 from .message import Message
-from .messages import UpdateMessage, LayoutMessage
 from .message_pump import MessagePump
-from .geometry import Point, Dimensions
-from .reactive import Reactive
-
+from .messages import LayoutMessage, UpdateMessage
+from .reactive import Reactive, watch
 
 if TYPE_CHECKING:
     from .app import App
@@ -64,13 +59,14 @@ class Widget(MessagePump):
         self._repaint_required = False
         self._layout_required = False
         self._animate: BoundAnimator | None = None
+        self._reactive_watches: dict[str, Callable] = {}
 
         super().__init__()
 
     visible: Reactive[bool] = Reactive(True, layout=True)
     layout_size: Reactive[int | None] = Reactive(None)
     layout_fraction: Reactive[int] = Reactive(1)
-    layout_minimim_size: Reactive[int] = Reactive(1)
+    layout_min_size: Reactive[int] = Reactive(1)
     layout_offset_x: Reactive[float] = Reactive(0, layout=True)
     layout_offset_y: Reactive[float] = Reactive(0, layout=True)
 
@@ -83,6 +79,9 @@ class Widget(MessagePump):
 
     def __rich__(self) -> RenderableType:
         return self.render()
+
+    def watch(self, attribute_name, callback: Callable[[Any], None]) -> None:
+        watch(self, attribute_name, callback)
 
     @property
     def is_visual(self) -> bool:
@@ -143,6 +142,9 @@ class Widget(MessagePump):
         offset_x, offset_y = self.root_view.get_offset(self)
         return self.root_view.get_style_at(x + offset_x, y + offset_y)
 
+    async def call_later(self, callback: Callable, *args, **kwargs) -> None:
+        await self.app.call_later(callback, *args, **kwargs)
+
     async def forward_event(self, event: events.Event) -> None:
         await self.post_message(event)
 
@@ -200,12 +202,30 @@ class Widget(MessagePump):
     async def capture_mouse(self, capture: bool = True) -> None:
         await self.app.capture_mouse(self if capture else None)
 
-    async def on_mouse_move(self, event: events.MouseMove) -> None:
-        style_under_cursor = self.get_style_at(event.x, event.y)
-        log.debug("%r", style_under_cursor)
+    async def release_mouse(self) -> None:
+        await self.app.capture_mouse(None)
+
+    async def broker_event(self, event_name: str, event: events.Event) -> bool:
+        return await self.app.broker_event(event_name, event, default_namespace=self)
+
+    async def dispatch_key(self, event: events.Key) -> None:
+        """Dispatch a key event to method.
+
+        This method will call the method named 'key_<event.key>' if it exists.
+
+        Args:
+            event (events.Key): A key event.
+        """
+
+        key_method = getattr(self, f"key_{event.key}", None)
+        if key_method is not None:
+            await key_method()
+
+    async def on_mouse_down(self, event: events.MouseUp) -> None:
+        await self.broker_event("mouse.down", event)
 
     async def on_mouse_up(self, event: events.MouseUp) -> None:
-        style = self.get_style_at(event.x, event.y)
-        if "@click" in style.meta:
-            log.debug(style._link_id)
-            await self.app.action(style.meta["@click"], default_namespace=self)
+        await self.broker_event("mouse.up", event)
+
+    async def on_click(self, event: events.Click) -> None:
+        await self.broker_event("click", event)

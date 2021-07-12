@@ -27,7 +27,9 @@ class Placeholder(Widget, can_focus=True):
 
     def render(self) -> RenderableType:
         return Panel(
-            Align.center(Pretty(self), vertical="middle"),
+            Align.center(
+                Pretty(self, no_wrap=True, overflow="ellipsis"), vertical="middle"
+            ),
             title=self.__class__.__name__,
             border_style="green" if self.mouse_over else "blue",
             box=box.HEAVY if self.has_focus else box.ROUNDED,

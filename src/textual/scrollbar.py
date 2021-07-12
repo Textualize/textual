@@ -3,9 +3,8 @@ from __future__ import annotations
 
 import logging
 
-from rich.repr import rich_repr, RichReprResult
+import rich.repr
 from rich.color import Color
-from rich.style import Style
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.segment import Segment, Segments
 from rich.style import Style, StyleType
@@ -13,23 +12,53 @@ from rich.style import Style, StyleType
 log = logging.getLogger("rich")
 
 from . import events
+from .geometry import Point
+from ._types import MessageTarget
 from .message import Message
 from .widget import Reactive, Widget
 
 
+@rich.repr.auto
 class ScrollUp(Message, bubble=True):
-    pass
+    """Message sent when clicking above handle."""
 
 
+@rich.repr.auto
 class ScrollDown(Message, bubble=True):
-    pass
+    """Message sent when clicking below handle."""
+
+
+@rich.repr.auto
+class ScrollLeft(Message, bubble=True):
+    """Message sent when clicking above handle."""
+
+
+@rich.repr.auto
+class ScrollRight(Message, bubble=True):
+    """Message sent when clicking below handle."""
+
+
+@rich.repr.auto
+class ScrollTo(Message, bubble=True):
+    """Message sent when click and dragging handle."""
+
+    def __init__(
+        self, sender: MessageTarget, x: float | None = None, y: float | None = None
+    ) -> None:
+        self.x = x
+        self.y = y
+        super().__init__(sender)
+
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
+        yield "x", self.x, None
+        yield "y", self.y, None
 
 
 class ScrollBarRender:
     def __init__(
         self,
         virtual_size: int = 100,
-        window_size: int = 25,
+        window_size: int = 0,
         position: float = 0,
         thickness: int = 1,
         vertical: bool = True,
@@ -65,7 +94,7 @@ class ScrollBarRender:
             if ascii_only:
                 bars = ["-", "-", "-", "-", "-", "-", "-", "-"]
             else:
-                bars = ["▏", "▎", "▍", "▌", "▋", "▊", "▉", "█"]
+                bars = ["█", "▉", "▊", "▋", "▌", "▍", "▎", "▏"]
 
         back = back_color
         bar = bar_color
@@ -76,8 +105,7 @@ class ScrollBarRender:
         _Style = Style
         blank = " " * width_thickness
 
-        foreground_meta = {"background": False}
-
+        foreground_meta = {"@mouse.up": "release", "@mouse.down": "grab"}
         if window_size and size and virtual_size:
             step_size = virtual_size / size
 
@@ -124,6 +152,7 @@ class ScrollBarRender:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
+        log.debug("SCROLLBAR RENDER")
         size = (
             (options.height or console.height)
             if self.vertical
@@ -150,31 +179,35 @@ class ScrollBarRender:
         yield bar
 
 
-@rich_repr
+@rich.repr.auto
 class ScrollBar(Widget):
     def __init__(self, vertical: bool = True, name: str | None = None) -> None:
         self.vertical = vertical
+        self.grabbed_position: float = 0
         super().__init__(name=name)
 
     virtual_size: Reactive[int] = Reactive(100)
-    window_size: Reactive[int] = Reactive(20)
+    window_size: Reactive[int] = Reactive(0)
     position: Reactive[int] = Reactive(0)
     mouse_over: Reactive[bool] = Reactive(False)
+    grabbed: Reactive[Point | None] = Reactive(None)
 
-    def __rich_repr__(self) -> RichReprResult:
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "virtual_size", self.virtual_size
         yield "window_size", self.window_size
         yield "position", self.position
 
     def render(self) -> RenderableType:
+        style = Style(
+            bgcolor=(Color.parse("#555555" if self.mouse_over else "#444444")),
+            color=Color.parse("bright_yellow" if self.grabbed else "bright_magenta"),
+        )
         return ScrollBarRender(
             virtual_size=self.virtual_size,
             window_size=self.window_size,
             position=self.position,
             vertical=self.vertical,
-            style="bright_magenta on #555555"
-            if self.mouse_over
-            else "bright_magenta on #444444",
+            style=style,
         )
 
     async def on_enter(self, event: events.Enter) -> None:
@@ -184,10 +217,44 @@ class ScrollBar(Widget):
         self.mouse_over = False
 
     async def action_scroll_down(self) -> None:
-        await self.emit(ScrollDown(self))
+        await self.emit(ScrollDown(self) if self.vertical else ScrollRight(self))
 
     async def action_scroll_up(self) -> None:
-        await self.emit(ScrollUp(self))
+        await self.emit(ScrollUp(self) if self.vertical else ScrollLeft(self))
+
+    async def action_grab(self) -> None:
+        await self.capture_mouse()
+
+    async def action_released(self) -> None:
+        await self.capture_mouse(False)
+
+    async def on_mouse_up(self, event: events.MouseUp) -> None:
+        if self.grabbed:
+            await self.release_mouse()
+        await super().on_mouse_up(event)
+
+    async def on_mouse_captured(self, event: events.MouseCaptured) -> None:
+        self.grabbed = event.mouse_position
+        self.grabbed_position = self.position
+
+    async def on_mouse_released(self, event: events.MouseReleased) -> None:
+        self.grabbed = None
+
+    async def on_mouse_move(self, event: events.MouseMove) -> None:
+        if self.grabbed:
+            x: float | None = None
+            y: float | None = None
+            if self.vertical:
+                y = self.grabbed_position + (
+                    (event.screen_y - self.grabbed.y)
+                    * (self.virtual_size / self.window_size)
+                )
+            else:
+                x = self.grabbed_position + (
+                    (event.screen_x - self.grabbed.x)
+                    * (self.virtual_size / self.window_size)
+                )
+            await self.emit(ScrollTo(self, x=x, y=y))
 
 
 if __name__ == "__main__":
@@ -197,4 +264,6 @@ if __name__ == "__main__":
     console = Console()
     bar = ScrollBarRender()
 
-    console.print(ScrollBarRender(position=15.3, thickness=5, vertical=False))
+    console.print(
+        ScrollBarRender(position=15.3, window_size=100, thickness=5, vertical=True)
+    )

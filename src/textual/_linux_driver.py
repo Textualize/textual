@@ -8,6 +8,7 @@ import signal
 import sys
 import logging
 import termios
+from time import time
 import tty
 from typing import Any, TYPE_CHECKING
 from threading import Event, Thread
@@ -50,8 +51,10 @@ class LinuxDriver(Driver):
     def _enable_mouse_support(self) -> None:
         write = self.console.file.write
         write("\x1b[?1000h")
+
         write("\x1b[?1015h")
         write("\x1b[?1006h")
+
         # write("\x1b[?1007h")
         self.console.file.flush()
 
@@ -195,6 +198,8 @@ class LinuxDriver(Driver):
         decode = utf8_decoder
         read = os.read
 
+        mouse_down_time = time()
+
         log.debug("started key thread")
         try:
             while not self.exit_event.is_set():
@@ -203,7 +208,7 @@ class LinuxDriver(Driver):
                     if mask | selectors.EVENT_READ:
                         unicode_data = decode(read(fileno, 1024))
                         for event in parser.feed(unicode_data):
-                            send_event(event)
+                            self.process_event(event)
         except Exception:
             log.exception("error running key thread")
         finally:

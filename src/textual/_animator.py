@@ -120,12 +120,15 @@ class Animator:
     def __init__(self, target: MessageTarget, frames_per_second: int = 60) -> None:
         self._animations: dict[tuple[object, str], Animation] = {}
         self._timer = Timer(target, 1 / frames_per_second, target, callback=self)
+        self._timer_task: asyncio.Task | None = None
 
     async def start(self) -> None:
-        asyncio.get_event_loop().create_task(self._timer.run())
+        self._timer_task = asyncio.get_event_loop().create_task(self._timer.run())
 
     async def stop(self) -> None:
         self._timer.stop()
+        if self._timer_task:
+            await self._timer_task
 
     def bind(self, obj: object) -> BoundAnimator:
         return BoundAnimator(self, obj)

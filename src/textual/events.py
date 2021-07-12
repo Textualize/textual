@@ -1,22 +1,26 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Awaitable, Callable, Type, TYPE_CHECKING, TypeVar
 
-from rich.repr import rich_repr, RichReprResult
+import rich.repr
+from rich.style import Style
 
+from .geometry import Point, Dimensions
 from .message import Message
 from ._types import MessageTarget
 from .keys import Keys
 
+
+MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
 
 if TYPE_CHECKING:
     from ._timer import Timer as TimerClass
     from ._timer import TimerCallback
 
 
-@rich_repr
+@rich.repr.auto
 class Event(Message):
-    def __rich_repr__(self) -> RichReprResult:
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
         return
         yield
 
@@ -25,8 +29,20 @@ class Event(Message):
 
 
 class Null(Event):
-    def can_batch(self, message: Message) -> bool:
+    def can_replace(self, message: Message) -> bool:
         return isinstance(message, Null)
+
+
+@rich.repr.auto
+class Callback(Event, bubble=False):
+    def __init__(
+        self, sender: MessageTarget, callback: Callable[[], Awaitable]
+    ) -> None:
+        self.callback = callback
+        super().__init__(sender)
+
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
+        yield "callback", self.callback
 
 
 class ShutdownRequest(Event):
@@ -64,7 +80,7 @@ class Action(Event, bubble=True):
         super().__init__(sender)
         self.action = action
 
-    def __rich_repr__(self) -> RichReprResult:
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "action", self.action
 
 
@@ -78,7 +94,14 @@ class Resize(Event):
         self.height = height
         super().__init__(sender)
 
-    def __rich_repr__(self) -> RichReprResult:
+    def can_replace(self, message: "Message") -> bool:
+        return isinstance(message, Resize)
+
+    @property
+    def size(self) -> Dimensions:
+        return Dimensions(self.width, self.height)
+
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield self.width
         yield self.height
 
@@ -99,11 +122,35 @@ class Hide(Event):
     """Widget has been hidden."""
 
 
+@rich.repr.auto
+class MouseCaptured(Event):
+    """Mouse has been captured."""
+
+    def __init__(self, sender: MessageTarget, mouse_position: Point) -> None:
+        super().__init__(sender)
+        self.mouse_position = mouse_position
+
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
+        yield None, self.mouse_position
+
+
+@rich.repr.auto
+class MouseReleased(Event):
+    """Mouse has been released."""
+
+    def __init__(self, sender: MessageTarget, mouse_position: Point) -> None:
+        super().__init__(sender)
+        self.mouse_position = mouse_position
+
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
+        yield None, self.mouse_position
+
+
 class InputEvent(Event, bubble=True):
     pass
 
 
-@rich_repr
+@rich.repr.auto
 class Key(InputEvent, bubble=True):
     __slots__ = ["key"]
 
@@ -111,11 +158,11 @@ class Key(InputEvent, bubble=True):
         super().__init__(sender)
         self.key = key.value if isinstance(key, Keys) else key
 
-    def __rich_repr__(self) -> RichReprResult:
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "key", self.key
 
 
-@rich_repr
+@rich.repr.auto
 class MouseEvent(InputEvent):
     __slots__ = ["x", "y", "button"]
 
@@ -132,6 +179,7 @@ class MouseEvent(InputEvent):
         ctrl: bool,
         screen_x: int | None = None,
         screen_y: int | None = None,
+        style: Style | None = None,
     ) -> None:
         super().__init__(sender)
         self.x = x
@@ -144,8 +192,27 @@ class MouseEvent(InputEvent):
         self.ctrl = ctrl
         self.screen_x = x if screen_x is None else screen_x
         self.screen_y = y if screen_y is None else screen_y
+        self._style = style or Style()
 
-    def __rich_repr__(self) -> RichReprResult:
+    @classmethod
+    def from_event(cls: Type[MouseEventT], event: MouseEvent) -> MouseEventT:
+        new_event = cls(
+            event.sender,
+            event.x,
+            event.y,
+            event.delta_x,
+            event.delta_y,
+            event.button,
+            event.shift,
+            event.meta,
+            event.ctrl,
+            event.screen_x,
+            event.screen_y,
+            event._style,
+        )
+        return new_event
+
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "x", self.x
         yield "y", self.y
         yield "delta_x", self.delta_x, 0
@@ -159,7 +226,15 @@ class MouseEvent(InputEvent):
         yield "meta", self.meta, False
         yield "ctrl", self.ctrl, False
 
-    def offset(self, x: int, y: int):
+    @property
+    def style(self) -> Style:
+        return self._style or Style()
+
+    @style.setter
+    def style(self, style: Style) -> None:
+        self._style = style
+
+    def offset(self, x: int, y: int) -> MouseEvent:
         return self.__class__(
             self.sender,
             x=self.x + x,
@@ -172,20 +247,21 @@ class MouseEvent(InputEvent):
             ctrl=self.ctrl,
             screen_x=self.screen_x,
             screen_y=self.screen_y,
+            style=self.style,
         )
 
 
-@rich_repr
+@rich.repr.auto
 class MouseMove(MouseEvent):
     pass
 
 
-@rich_repr
+@rich.repr.auto
 class MouseDown(MouseEvent):
     pass
 
 
-@rich_repr
+@rich.repr.auto
 class MouseUp(MouseEvent):
     pass
 
@@ -211,7 +287,7 @@ class DoubleClick(MouseEvent):
     pass
 
 
-@rich_repr
+@rich.repr.auto
 class Timer(Event):
     __slots__ = ["time", "count", "callback"]
 
@@ -227,7 +303,7 @@ class Timer(Event):
         self.count = count
         self.callback = callback
 
-    def __rich_repr__(self) -> RichReprResult:
+    def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield self.timer.name
 
 
@@ -248,5 +324,5 @@ class Blur(Event):
 
 
 class Update(Event):
-    def can_batch(self, event: Message) -> bool:
+    def can_replace(self, event: Message) -> bool:
         return isinstance(event, Update) and event.sender == self.sender

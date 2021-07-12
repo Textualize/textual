@@ -58,6 +58,8 @@ class XTermParser(Parser[events.Event]):
                     bool(buttons & 4),
                     bool(buttons & 8),
                     bool(buttons & 16),
+                    screen_x=x,
+                    screen_y=y,
                 )
             return event
         return None

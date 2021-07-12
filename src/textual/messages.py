@@ -34,11 +34,11 @@ class UpdateMessage(Message):
         yield "offset_y", self.offset_y, 0
         yield "reflow", self.reflow, False
 
-    def can_batch(self, message: Message) -> bool:
+    def can_replace(self, message: Message) -> bool:
         return isinstance(message, UpdateMessage) and message.sender == self.sender
 
 
 @rich.repr.auto
 class LayoutMessage(Message):
-    def can_batch(self, message: Message) -> bool:
+    def can_replace(self, message: Message) -> bool:
         return isinstance(message, LayoutMessage) and message.sender == self.sender
