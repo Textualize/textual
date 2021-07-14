@@ -1,0 +1,18 @@
+site_name: Textual
+site_url: https://example.com/
+
+
+theme:
+  name: "material"
+
+plugins:
+- search
+- mkdocstrings:
+    default_handler: python
+    handlers:
+        python:
+          rendering:
+            show_source: false
+    watch:
+      - src/textual
+
