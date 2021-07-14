@@ -44,6 +44,9 @@ class View(Widget):
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "name", self.name
 
+    def __getitem__(self, widget_name: str) -> Widget:
+        return self.named_widgets[widget_name]
+
     @property
     def is_visual(self) -> bool:
         return False

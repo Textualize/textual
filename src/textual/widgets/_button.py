@@ -7,8 +7,14 @@ from rich.panel import Panel
 import rich.repr
 from rich.style import StyleType
 
+from .. import events
+from ..message import Message
 from ..reactive import Reactive
 from ..widget import Widget
+
+
+class ButtonPressed(Message, bubble=True):
+    pass
 
 
 class Expand:
@@ -48,11 +54,15 @@ class Button(Widget):
         name: str | None = None,
         style: StyleType = "white on dark_blue",
     ):
-        self.label = label
         self.name = name or str(label)
         self.style = style
-        super().__init__()
+        super().__init__(name=name)
+        self.label = label
+
+    label: Reactive[RenderableType] = Reactive("")
 
     def render(self) -> RenderableType:
         return ButtonRenderable(self.label, style=self.style)
-        return Align.center(self.label, vertical="middle", style=self.style)
+
+    async def on_click(self, event: events.Click) -> None:
+        await self.emit(ButtonPressed(self))

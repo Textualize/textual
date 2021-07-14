@@ -7,7 +7,6 @@ from rich.padding import Padding, PaddingDimensions
 from rich.segment import Segment
 from rich.style import StyleType
 
-from . import events
 from .geometry import Dimensions, Point
 from .message import Message
 from .widget import Widget, Reactive
@@ -56,7 +55,6 @@ class PageRender:
 
     def render(self, console: Console, options: ConsoleOptions) -> None:
         width = self.width or options.max_width or console.width
-        width *= 2
         options = options.update_dimensions(width, None)
         style = console.get_style(self.style)
         renderable = self.renderable

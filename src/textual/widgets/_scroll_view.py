@@ -29,18 +29,19 @@ class ScrollView(View):
         fluid: bool = True,
     ) -> None:
         self.fluid = fluid
-        self._vertical_scrollbar = ScrollBar(vertical=True)
-        self._horizontal_scrollbar = ScrollBar(vertical=False)
-        self._page = Page(renderable or "", style=style)
+        self.vscroll = ScrollBar(vertical=True)
+        self.hscroll = ScrollBar(vertical=False)
+        self.page = Page(renderable or "", style=style)
         layout = GridLayout()
         layout.add_column("main")
-        layout.add_column("vertical", size=1)
+        layout.add_column("vscroll", size=1)
         layout.add_row("main")
-        layout.add_row("horizontal", size=1)
+        layout.add_row("hscroll", size=1)
         layout.add_areas(
-            content="main,main", vertical="vertical,main", horizontal="main,horizontal"
+            content="main,main", vscroll="vscroll,main", hscroll="main,hscroll"
         )
-        # layout.hide_row("horizontal")
+        layout.show_row("hscroll", False)
+        layout.show_row("vscroll", False)
         super().__init__(name=name, layout=layout)
 
     x: Reactive[float] = Reactive(0)
@@ -50,35 +51,35 @@ class ScrollView(View):
     target_y: Reactive[float] = Reactive(0)
 
     def validate_x(self, value: float) -> float:
-        return clamp(value, 0, self._page.contents_size.width - self.size.width)
+        return clamp(value, 0, self.page.contents_size.width - self.size.width)
 
     def validate_target_x(self, value: float) -> float:
-        return clamp(value, 0, self._page.contents_size.width - self.size.width)
+        return clamp(value, 0, self.page.contents_size.width - self.size.width)
 
     def validate_y(self, value: float) -> float:
-        return clamp(value, 0, self._page.contents_size.height - self.size.height)
+        return clamp(value, 0, self.page.contents_size.height - self.size.height)
 
     def validate_target_y(self, value: float) -> float:
-        return clamp(value, 0, self._page.contents_size.height - self.size.height)
+        return clamp(value, 0, self.page.contents_size.height - self.size.height)
 
     async def watch_x(self, new_value: float) -> None:
-        self._page.x = round(new_value)
-        self._horizontal_scrollbar.position = round(new_value)
+        self.page.x = round(new_value)
+        self.hscroll.position = round(new_value)
 
     async def watch_y(self, new_value: float) -> None:
-        self._page.y = round(new_value)
-        self._vertical_scrollbar.position = round(new_value)
+        self.page.y = round(new_value)
+        self.vscroll.position = round(new_value)
 
     async def update(self, renderabe: RenderableType) -> None:
-        self._page.update(renderabe)
+        self.page.update(renderabe)
         self.require_repaint()
 
     async def on_mount(self, event: events.Mount) -> None:
         assert isinstance(self.layout, GridLayout)
         self.layout.place(
-            content=self._page,
-            vertical=self._vertical_scrollbar,
-            horizontal=self._horizontal_scrollbar,
+            content=self.page,
+            vscroll=self.vscroll,
+            hscroll=self.hscroll,
         )
         await self.layout.mount_all(self)
 
@@ -133,7 +134,7 @@ class ScrollView(View):
 
     async def key_end(self) -> None:
         self.target_x = 0
-        self.target_y = self._page.contents_size.height - self.size.height
+        self.target_y = self.page.contents_size.height - self.size.height
         self.animate("x", self.target_x, duration=1, easing="out_cubic")
         self.animate("y", self.target_y, duration=1, easing="out_cubic")
 
@@ -146,7 +147,7 @@ class ScrollView(View):
     async def on_resize(self, event: events.Resize) -> None:
         await super().on_resize(event)
         if self.fluid:
-            self._page.update()
+            self.page.update()
 
     async def message_scroll_up(self, message: Message) -> None:
         self.page_up()
@@ -171,7 +172,17 @@ class ScrollView(View):
     async def message_page_update(self, message: Message) -> None:
         self.x = self.validate_x(self.x)
         self.y = self.validate_y(self.y)
-        self._horizontal_scrollbar.virtual_size = self._page.virtual_size.width
-        self._horizontal_scrollbar.window_size = self.size.width
-        self._vertical_scrollbar.virtual_size = self._page.virtual_size.height
-        self._vertical_scrollbar.window_size = self.size.height
+        self.vscroll.virtual_size = self.page.virtual_size.height
+        self.vscroll.window_size = self.size.height
+        if self.layout.show_column(
+            "vscroll", self.page.virtual_size.height > self.size.height
+        ):
+            self.page.update()
+
+        self.hscroll.virtual_size = self.page.virtual_size.width
+        self.hscroll.window_size = self.size.width
+
+        if self.layout.show_row(
+            "hscroll", self.page.virtual_size.width > self.size.width
+        ):
+            self.page.update()

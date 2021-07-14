@@ -152,7 +152,6 @@ class ScrollBarRender:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        log.debug("SCROLLBAR RENDER")
         size = (
             (options.height or console.height)
             if self.vertical
@@ -231,7 +230,6 @@ class ScrollBar(Widget):
     async def on_mouse_up(self, event: events.MouseUp) -> None:
         if self.grabbed:
             await self.release_mouse()
-        await super().on_mouse_up(event)
 
     async def on_mouse_captured(self, event: events.MouseCaptured) -> None:
         self.grabbed = event.mouse_position

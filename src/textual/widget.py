@@ -88,11 +88,6 @@ class Widget(MessagePump):
         return True
 
     @property
-    def app(self) -> "App":
-        """Get the current app."""
-        return active_app.get()
-
-    @property
     def console(self) -> Console:
         """Get the current console."""
         return active_app.get().console

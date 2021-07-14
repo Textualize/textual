@@ -27,7 +27,7 @@ class Message:
         self.name = camel_to_snake(self.__class__.__name__.replace("Message", ""))
         self.time = monotonic()
         self._no_default_action = False
-        self._stop_propagaton = False
+        self._stop_propagation = False
         super().__init__()
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
@@ -57,5 +57,5 @@ class Message:
         """
         self._no_default_action = prevent
 
-    def stop_propagation(self, stop: bool = True) -> None:
-        self._stop_propagaton = stop
+    def stop(self, stop: bool = True) -> None:
+        self._stop_propagation = stop

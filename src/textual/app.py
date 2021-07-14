@@ -23,7 +23,7 @@ from .binding import Bindings, NoBinding
 from .geometry import Point, Region
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
-from .keys import Binding
+from ._types import MessageTarget
 from .driver import Driver
 from .layouts.dock import DockLayout, Dock
 from ._linux_driver import LinuxDriver
@@ -56,6 +56,12 @@ ViewType = TypeVar("ViewType", bound=View)
 #     uvloop.install()
 
 
+class PanicMessage(Message):
+    def __init__(self, sender: MessageTarget, traceback: Traceback) -> None:
+        self.traceback = traceback
+        super().__init__(sender)
+
+
 class ActionError(Exception):
     pass
 
@@ -71,11 +77,19 @@ class App(MessagePump):
 
     def __init__(
         self,
-        console: Console = None,
+        console: Console | None = None,
         screen: bool = True,
-        driver_class: Type[Driver] = None,
+        driver_class: Type[Driver] | None = None,
         title: str = "Textual Application",
     ):
+        """The Textual Application base class
+
+        Args:
+            console (Console, optional): A Rich Console. Defaults to None.
+            screen (bool, optional): Enable full-screen application mode. Defaults to True.
+            driver_class (Type[Driver], optional): Driver class, or None to use default. Defaults to None.
+            title (str, optional): Title of the application. Defaults to "Textual Application".
+        """
         self.console = console or get_console()
         self._screen = screen
         self.driver_class = driver_class or LinuxDriver
@@ -88,6 +102,7 @@ class App(MessagePump):
         self.mouse_over: Widget | None = None
         self.mouse_captured: Widget | None = None
         self._driver: Driver | None = None
+        self._tracebacks: list[Traceback] = []
 
         self._docks: list[Dock] = []
         self._action_targets = {"app", "view"}
@@ -202,10 +217,12 @@ class App(MessagePump):
         if widget is not None:
             await widget.post_message(events.MouseCaptured(self, self.mouse_position))
 
+    def panic(self, traceback: Traceback) -> None:
+        self._tracebacks.append(traceback)
+        self.close_messages_no_wait()
+
     async def process_messages(self) -> None:
         log.debug("driver=%r", self.driver_class)
-        # loop = asyncio.get_event_loop()
-        # loop.add_signal_handler(signal.SIGINT, self.on_keyboard_interupt)
         driver = self._driver = self.driver_class(self.console, self)
         active_app.set(self)
 
@@ -242,10 +259,10 @@ class App(MessagePump):
                     view = self._view_stack.pop()
                     await view.close_messages()
             except Exception:
-                traceback = Traceback(show_locals=True)
+                self._tracebacks.append(Traceback(show_locals=True))
             finally:
                 driver.stop_application_mode()
-                if traceback is not None:
+                for traceback in self._tracebacks:
                     self.console.print(traceback)
 
     def require_repaint(self) -> None:
@@ -289,7 +306,7 @@ class App(MessagePump):
                 if sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
             except Exception:
-                log.exception("refresh failed")
+                self.panic(Traceback(show_locals=True))
 
     def display(self, renderable: RenderableType) -> None:
         if not self._closed:

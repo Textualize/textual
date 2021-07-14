@@ -1,17 +1,26 @@
 from __future__ import annotations
 
 import asyncio
+from asyncio import CancelledError
+from functools import partial
 import logging
-from asyncio import Event, Queue, QueueEmpty, Task
-from typing import Any, Awaitable, Coroutine, NamedTuple
+from asyncio import Queue, QueueEmpty, Task
+from typing import TYPE_CHECKING, Awaitable, Iterable, Callable
 from weakref import WeakSet
+
+from rich.traceback import Traceback
 
 from . import events
 from ._timer import Timer, TimerCallback
 from ._types import MessageHandler
+from ._context import active_app
 from .message import Message
 
 log = logging.getLogger("rich")
+
+
+if TYPE_CHECKING:
+    from .app import App
 
 
 class NoParent(Exception):
@@ -43,6 +52,15 @@ class MessagePump:
         if self._parent is None:
             raise NoParent(f"{self._parent} has no parent")
         return self._parent
+
+    @property
+    def app(self) -> "App":
+        """Get the current app."""
+        return active_app.get()
+
+    @property
+    def is_parent_active(self):
+        return self._parent and not self._parent._closed and not self._parent._closing
 
     def set_parent(self, parent: MessagePump) -> None:
         self._parent = parent
@@ -120,6 +138,9 @@ class MessagePump:
         self._child_tasks.add(asyncio.get_event_loop().create_task(timer.run()))
         return timer
 
+    def close_messages_no_wait(self) -> None:
+        self._message_queue.put_nowait(None)
+
     async def close_messages(self, wait: bool = True) -> None:
         """Close message queue, and optionally wait for queue to finish processing."""
         if self._closed:
@@ -138,12 +159,20 @@ class MessagePump:
         self._task = asyncio.create_task(self.process_messages())
 
     async def process_messages(self) -> None:
+        try:
+            return await self._process_messages()
+        except CancelledError:
+            pass
+
+    async def _process_messages(self) -> None:
         """Process messages until the queue is closed."""
         while not self._closed:
             try:
                 message = await self.get_message()
             except MessagePumpClosed:
                 break
+            except CancelledError:
+                raise
             except Exception as error:
                 log.exception("error in get_message()")
                 raise error from None
@@ -161,9 +190,11 @@ class MessagePump:
 
             try:
                 await self.dispatch_message(message)
-            except Exception as error:
-                log.exception("error in dispatch_message")
+            except CancelledError:
                 raise
+            except Exception as error:
+                self.app.panic(Traceback(show_locals=True))
+                break
             finally:
                 if isinstance(message, events.Event) and self._message_queue.empty():
                     if not self._closed:
@@ -182,24 +213,38 @@ class MessagePump:
             return await self.on_message(message)
         return False
 
-    async def on_event(self, event: events.Event) -> None:
-        method_name = f"on_{event.name}"
+    def _get_dispatch_methods(
+        self, method_name: str, message: Message
+    ) -> Iterable[Callable[[Message], Awaitable]]:
+        for cls in self.__class__.__mro__:
+            if message._no_default_action:
+                break
+            method = getattr(cls, method_name, None)
+            if method is not None:
+                yield method.__get__(self, cls)
 
-        dispatch_function: MessageHandler = getattr(self, method_name, None)
-        if dispatch_function is not None:
-            await dispatch_function(event)
-        if event.bubble and self._parent and not event._stop_propagaton:
-            if event.sender == self._parent:
-                pass
-                # log.debug("bubbled event abandoned; %r", event)
-            elif not self._parent._closed and not self._parent._closing:
+    async def on_event(self, event: events.Event) -> None:
+        _rich_traceback_guard = True
+
+        for method in self._get_dispatch_methods(f"on_{event.name}", event):
+            await method(event)
+
+        if event.bubble and self._parent and not event._stop_propagation:
+            if event.sender != self._parent and self.is_parent_active:
                 await self._parent.post_message(event)
 
     async def on_message(self, message: Message) -> None:
+        _rich_traceback_guard = True
         method_name = f"message_{message.name}"
-        method = getattr(self, method_name, None)
-        if method is not None:
+
+        for method in self._get_dispatch_methods(method_name, message):
             await method(message)
+
+        if message.bubble and self._parent and not message._stop_propagation:
+            if message.sender == self._parent:
+                pass
+            elif not self._parent._closed and not self._parent._closing:
+                await self._parent.post_message(message)
 
     def post_message_no_wait(self, message: Message) -> bool:
         if self._closing or self._closed:

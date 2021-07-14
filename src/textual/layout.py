@@ -79,6 +79,16 @@ class Layout(ABC):
         self.height = 0
         self.renders: dict[Widget, tuple[Region, Lines]] = {}
         self._cuts: list[list[int]] | None = None
+        self._require_update: bool = True
+
+    def check_update(self) -> bool:
+        return self._require_update
+
+    def require_update(self) -> None:
+        self._require_update = True
+
+    def reset_update(self) -> None:
+        self._require_update = False
 
     def reset(self) -> None:
         self._cuts = None
@@ -265,10 +275,12 @@ class Layout(ABC):
     ) -> Iterable[list[Segment]]:
 
         for bucket in chops:
-            yield sum(
-                (segments for _, segments in sorted(bucket.items()) if segments),
-                start=[],
-            )
+            line: list[Segment] = []
+            extend = line.extend
+            for _, segments in sorted(bucket.items()):
+                if segments:
+                    extend(segments)
+            yield line
 
     def render(
         self,

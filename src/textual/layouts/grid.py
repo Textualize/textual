@@ -9,7 +9,7 @@ import sys
 from typing import Iterable, NamedTuple
 
 from .._layout_resolve import layout_resolve
-from .._loop import loop_last
+
 from ..geometry import Dimensions, Point, Region
 from ..layout import Layout, OrderedRegion
 from ..view import View
@@ -80,17 +80,39 @@ class GridLayout(Layout):
 
         super().__init__()
 
-    def hide_row(self, row_name: str) -> None:
-        self.hidden_rows.add(row_name)
+    def is_row_visible(self, row_name: str) -> bool:
+        return row_name not in self.hidden_rows
 
-    def show_row(self, row_name: str) -> None:
-        self.hidden_rows.discard(row_name)
+    def is_column_visible(self, column_name: str) -> bool:
+        return column_name not in self.hidden_columns
 
-    def hide_column(self, column_name: str) -> None:
-        self.hidden_rows.add(column_name)
+    def show_row(self, row_name: str, visible: bool = True) -> bool:
+        changed = False
+        if visible:
+            if not self.is_row_visible(row_name):
+                self.require_update()
+                changed = True
+            self.hidden_rows.discard(row_name)
+        else:
+            if self.is_row_visible(row_name):
+                self.require_update()
+                changed = True
+            self.hidden_rows.add(row_name)
+        return changed
 
-    def show_column(self, column_name: str) -> None:
-        self.hidden_rows.discard(column_name)
+    def show_column(self, column_name: str, visible: bool = True) -> bool:
+        changed = False
+        if visible:
+            if not self.is_column_visible(column_name):
+                self.require_update()
+                changed = True
+            self.hidden_rows.discard(column_name)
+        else:
+            if self.is_column_visible(column_name):
+                self.require_update()
+                changed = True
+            self.hidden_rows.add(column_name)
+        return changed
 
     def add_column(
         self,
