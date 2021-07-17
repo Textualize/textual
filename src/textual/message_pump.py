@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import asyncio
 from asyncio import CancelledError
-from functools import partial
-import logging
 from asyncio import Queue, QueueEmpty, Task
 from typing import TYPE_CHECKING, Awaitable, Iterable, Callable
 from weakref import WeakSet
@@ -11,12 +9,10 @@ from weakref import WeakSet
 from rich.traceback import Traceback
 
 from . import events
+from . import log
 from ._timer import Timer, TimerCallback
-from ._types import MessageHandler
 from ._context import active_app
 from .message import Message
-
-log = logging.getLogger("rich")
 
 
 if TYPE_CHECKING:
@@ -32,7 +28,7 @@ class MessagePumpClosed(Exception):
 
 
 class MessagePump:
-    def __init__(self, queue_size: int = 10, parent: MessagePump | None = None) -> None:
+    def __init__(self, parent: MessagePump | None = None) -> None:
         self._message_queue: Queue[Message | None] = Queue()
         self._parent = parent
         self._closing: bool = False
@@ -61,6 +57,9 @@ class MessagePump:
     @property
     def is_parent_active(self):
         return self._parent and not self._parent._closed and not self._parent._closing
+
+    def log(self, *args) -> None:
+        return self.app.log(args)
 
     def set_parent(self, parent: MessagePump) -> None:
         self._parent = parent
@@ -166,6 +165,7 @@ class MessagePump:
 
     async def _process_messages(self) -> None:
         """Process messages until the queue is closed."""
+        _rich_traceback_guard = True
         while not self._closed:
             try:
                 message = await self.get_message()
@@ -174,10 +174,9 @@ class MessagePump:
             except CancelledError:
                 raise
             except Exception as error:
-                log.exception("error in get_message()")
                 raise error from None
 
-            log.debug("%r -> %r", message, self)
+            log(message, "->", self)
             # Combine any pending messages that may supersede this one
             while not (self._closed or self._closing):
                 pending = self.peek_message()
@@ -198,11 +197,11 @@ class MessagePump:
             finally:
                 if isinstance(message, events.Event) and self._message_queue.empty():
                     if not self._closed:
-                        idle_handler = getattr(self, "on_idle", None)
-                        if idle_handler is not None and not self._closed:
-                            await idle_handler(events.Idle(self))
+                        event = events.Idle(self)
+                        for method in self._get_dispatch_methods("on_idle", event):
+                            await method(event)
 
-        log.debug("CLOSED %r", self)
+        log("CLOSED", self)
 
     async def dispatch_message(self, message: Message) -> bool | None:
         _rich_traceback_guard = True
@@ -219,7 +218,7 @@ class MessagePump:
         for cls in self.__class__.__mro__:
             if message._no_default_action:
                 break
-            method = getattr(cls, method_name, None)
+            method = cls.__dict__.get(method_name, None)
             if method is not None:
                 yield method.__get__(self, cls)
 
@@ -237,7 +236,8 @@ class MessagePump:
         _rich_traceback_guard = True
         method_name = f"message_{message.name}"
 
-        for method in self._get_dispatch_methods(method_name, message):
+        method = getattr(self, method_name, None)
+        if method is not None:
             await method(message)
 
         if message.bubble and self._parent and not message._stop_propagation:
@@ -279,16 +279,16 @@ class MessagePump:
         if self._parent:
             return self._parent.post_message_from_child_no_wait(message)
         else:
-            log.warning("NO PARENT %r %r", self, message)
             return False
 
     async def emit(self, message: Message) -> bool:
         if self._parent:
             return await self._parent.post_message_from_child(message)
         else:
-            log.warning("NO PARENT %r %r", self, message)
             return False
 
     async def on_timer(self, event: events.Timer) -> None:
+        event.prevent_default()
+        event.stop()
         if event.callback is not None:
             await event.callback()

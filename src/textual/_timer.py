@@ -88,11 +88,12 @@ class Timer:
                 event = events.Timer(
                     self.sender, timer=self, count=count, callback=self._callback
                 )
+                count += 1
                 try:
                     await self.target.post_message(event)
                 except EventTargetGone:
                     break
-                count += 1
+
                 await _wait_active()
         except CancelledError:
             pass

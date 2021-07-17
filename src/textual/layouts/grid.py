@@ -93,11 +93,13 @@ class GridLayout(Layout):
                 self.require_update()
                 changed = True
             self.hidden_rows.discard(row_name)
+            self.require_update()
         else:
             if self.is_row_visible(row_name):
                 self.require_update()
                 changed = True
             self.hidden_rows.add(row_name)
+            self.require_update()
         return changed
 
     def show_column(self, column_name: str, visible: bool = True) -> bool:
@@ -107,11 +109,13 @@ class GridLayout(Layout):
                 self.require_update()
                 changed = True
             self.hidden_rows.discard(column_name)
+            self.require_update()
         else:
             if self.is_column_visible(column_name):
                 self.require_update()
                 changed = True
             self.hidden_rows.add(column_name)
+            self.require_update()
         return changed
 
     def add_column(
@@ -140,6 +144,7 @@ class GridLayout(Layout):
                     max_size=max_size,
                 )
             )
+        self.require_update()
 
     def add_row(
         self,
@@ -167,6 +172,7 @@ class GridLayout(Layout):
                     max_size=max_size,
                 )
             )
+        self.require_update()
 
     def _add_area(
         self, name: str, columns: str | tuple[str, str], rows: str | tuple[str, str]
@@ -198,17 +204,21 @@ class GridLayout(Layout):
                 (column_start, column_end) if column_sep else column,
                 (row_start, row_end) if row_sep else row,
             )
+        self.require_update()
 
     def set_gap(self, column: int, row: int | None = None) -> None:
         self.column_gap = column
         self.row_gap = column if row is None else row
+        self.require_update()
 
     def set_gutter(self, column: int, row: int | None = None) -> None:
         self.column_gutter = column
         self.row_gutter = column if row is None else row
+        self.require_update()
 
     def add_widget(self, widget: Widget, area: str | None = None) -> Widget:
         self.widgets[widget] = area
+        self.require_update()
         return widget
 
     def place(self, *auto_widgets: Widget, **area_widgets: Widget) -> None:
@@ -217,18 +227,21 @@ class GridLayout(Layout):
             widgets[widget] = area
         for widget in auto_widgets:
             widgets[widget] = None
+        self.require_update()
 
     def set_repeat(self, column: bool | None = None, row: bool | None = None) -> None:
         if column is not None:
             self.column_repeat = column
         if row is not None:
             self.row_repeat = row
+        self.require_update()
 
     def set_align(self, column: GridAlign | None = None, row: GridAlign | None = None):
         if column is not None:
             self.column_align = column
         if row is not None:
             self.row_align = row
+        self.require_update()
 
     @classmethod
     def _align(
@@ -262,7 +275,7 @@ class GridLayout(Layout):
     def generate_map(
         self, width: int, height: int, offset: Point = Point(0, 0)
     ) -> dict[Widget, OrderedRegion]:
-        """[summary]
+        """Generate a map that associates widgets with their location on screen.
 
         Args:
             width (int): [description]

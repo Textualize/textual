@@ -1,0 +1,14 @@
+h2.doc.doc-heading {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding-top: 48px;
+}
+
+h3 .doc-heading code {
+  font-size: 16px;
+}
+
+.doc-heading code {
+  font-weight: normal;
+  font-family: "Roboto Mono", "SFMono-Regular", Consolas, "Courier New", Courier,
+    monospace;
+}

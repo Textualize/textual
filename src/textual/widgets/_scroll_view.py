@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import logging
-
 from rich.console import RenderableType
 from rich.style import StyleType
 
@@ -14,9 +12,6 @@ from ..geometry import clamp
 from ..page import Page
 from ..view import View
 from ..reactive import Reactive
-
-
-log = logging.getLogger("rich")
 
 
 class ScrollView(View):
@@ -44,11 +39,11 @@ class ScrollView(View):
         layout.show_row("vscroll", False)
         super().__init__(name=name, layout=layout)
 
-    x: Reactive[float] = Reactive(0)
-    y: Reactive[float] = Reactive(0)
+    x: Reactive[float] = Reactive(0, repaint=False)
+    y: Reactive[float] = Reactive(0, repaint=False)
 
-    target_x: Reactive[float] = Reactive(0)
-    target_y: Reactive[float] = Reactive(0)
+    target_x: Reactive[float] = Reactive(0, repaint=False)
+    target_y: Reactive[float] = Reactive(0, repaint=False)
 
     def validate_x(self, value: float) -> float:
         return clamp(value, 0, self.page.contents_size.width - self.size.width)
@@ -145,7 +140,6 @@ class ScrollView(View):
         self.animate("y", self.target_y, duration=1, easing="out_cubic")
 
     async def on_resize(self, event: events.Resize) -> None:
-        await super().on_resize(event)
         if self.fluid:
             self.page.update()
 
@@ -174,10 +168,11 @@ class ScrollView(View):
         self.y = self.validate_y(self.y)
         self.vscroll.virtual_size = self.page.virtual_size.height
         self.vscroll.window_size = self.size.height
+        update = False
         if self.layout.show_column(
             "vscroll", self.page.virtual_size.height > self.size.height
         ):
-            self.page.update()
+            update = True
 
         self.hscroll.virtual_size = self.page.virtual_size.width
         self.hscroll.window_size = self.size.width
@@ -185,4 +180,8 @@ class ScrollView(View):
         if self.layout.show_row(
             "hscroll", self.page.virtual_size.width > self.size.width
         ):
+            update = True
+
+        if update:
             self.page.update()
+            self.layout.reset_update()

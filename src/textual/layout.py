@@ -3,24 +3,25 @@ from __future__ import annotations
 from abc import ABC, abstractmethod, abstractmethod
 from dataclasses import dataclass
 from itertools import chain
-import logging
 from operator import itemgetter
-from time import time
-from typing import cast, Iterable, Mapping, NamedTuple, TYPE_CHECKING
+import sys
+
+from typing import Iterable, Iterator, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 from rich.control import Control
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
-from rich.segment import Segment, Segments, SegmentLines
+from rich.segment import Segment, SegmentLines
 from rich.style import Style
 
+from . import log
 from ._loop import loop_last
-from ._profile import timer
 from ._types import Lines
 
 from .geometry import clamp, Region, Point
 
-log = logging.getLogger("rich")
+
+PY38 = sys.version_info >= (3, 8)
 
 
 if TYPE_CHECKING:
@@ -80,6 +81,7 @@ class Layout(ABC):
         self.renders: dict[Widget, tuple[Region, Lines]] = {}
         self._cuts: list[list[int]] | None = None
         self._require_update: bool = True
+        self.background = ""
 
     def check_update(self) -> bool:
         return self._require_update
@@ -155,7 +157,10 @@ class Layout(ABC):
     def map(self) -> dict[Widget, OrderedRegion]:
         return self._layout_map
 
-    def __iter__(self) -> Iterable[tuple[Widget, Region]]:
+    # def __iter__(self) -> Iterator[tuple[Widget, Region]]:
+    #     return self
+
+    def __iter__(self) -> Iterator[tuple[Widget, Region]]:
         layers = sorted(
             self._layout_map.items(), key=lambda item: item[1].order, reverse=True
         )
@@ -210,12 +215,12 @@ class Layout(ABC):
             return self._cuts
         width = self.width
         height = self.height
-        screen = Region(0, 0, width, height)
+        screen_region = Region(0, 0, width, height)
         cuts_sets = [{0, width} for _ in range(height)]
 
         for region, order in self._layout_map.values():
             region = region.clip(width, height)
-            if region and region in screen:
+            if region and (region in screen_region):  # type: ignore
                 for y in range(region.y, region.y + region.height):
                     cuts_sets[y].update({region.x, region.x + region.width})
 
@@ -239,6 +244,7 @@ class Layout(ABC):
             lines = console.render_lines(
                 widget, console.options.update_dimensions(width, height)
             )
+            log("rendered", widget)
             return lines
 
         for widget, region, _order in widget_regions:
@@ -274,13 +280,13 @@ class Layout(ABC):
         cls, chops: list[dict[int, list[Segment] | None]]
     ) -> Iterable[list[Segment]]:
 
+        from_iterable = chain.from_iterable
         for bucket in chops:
-            line: list[Segment] = []
-            extend = line.extend
-            for _, segments in sorted(bucket.items()):
-                if segments:
-                    extend(segments)
-            yield line
+            yield list(
+                from_iterable(
+                    line for _, line in sorted(bucket.items()) if line is not None
+                )
+            )
 
     def render(
         self,
@@ -305,7 +311,6 @@ class Layout(ABC):
         clip_x, clip_y, clip_x2, clip_y2 = clip.corners
 
         divide = Segment.divide
-        back = Style.parse("black")
 
         # Maps each cut on to a list of segments
         cuts = self.cuts
@@ -314,7 +319,10 @@ class Layout(ABC):
         ]
 
         # TODO: Provide an option to update the background
-        background_render = [[Segment(" " * width, back)] for _ in range(height)]
+        background_style = console.get_style(self.background)
+        background_render = [
+            [Segment(" " * width, background_style)] for _ in range(height)
+        ]
         # Go through all the renders in reverse order and fill buckets with no render
         renders = self._get_renders(console)
         for region, lines in chain(renders, [(screen, background_render)]):

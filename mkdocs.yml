@@ -2,17 +2,37 @@ site_name: Textual
 site_url: https://example.com/
 
 
+extra_css:
+  - stylesheets/custom.css
+
 theme:
   name: "material"
 
+
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.snippets
+
 plugins:
 - search
+
+
+
 - mkdocstrings:
     default_handler: python
     handlers:
         python:
           rendering:
             show_source: false
+          selection:
+            filters:
+              - "!^_"
+              - "^__init__$"
+              - "!^can_replace$"
+
     watch:
       - src/textual
-

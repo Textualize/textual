@@ -6,7 +6,6 @@ from codecs import getincrementaldecoder
 import selectors
 import signal
 import sys
-import logging
 import termios
 from time import time
 import tty
@@ -21,9 +20,6 @@ from . import events
 from .driver import Driver
 from ._types import MessageTarget
 from ._xterm_parser import XTermParser
-
-
-log = logging.getLogger("rich")
 
 
 class LinuxDriver(Driver):
@@ -50,23 +46,24 @@ class LinuxDriver(Driver):
 
     def _enable_mouse_support(self) -> None:
         write = self.console.file.write
-        write("\x1b[?1000h")
-
-        write("\x1b[?1015h")
-        write("\x1b[?1006h")
+        write("\x1b[?1000h")  # SET_VT200_MOUSE
+        write("\x1b[?1003h")  # SET_ANY_EVENT_MOUSE
+        write("\x1b[?1015h")  # SET_VT200_HIGHLIGHT_MOUSE
+        write("\x1b[?1006h")  # SET_SGR_EXT_MODE_MOUSE
 
         # write("\x1b[?1007h")
-        self.console.file.flush()
+        # self.console.file.flush()
 
         # Note: E.g. lxterminal understands 1000h, but not the urxvt or sgr
         #       extensions.
 
     def _disable_mouse_support(self) -> None:
         write = self.console.file.write
-        write("\x1b[?1000l")
+        write("\x1b[?1000l")  #
+        write("\x1b[?1003l")  #
         write("\x1b[?1015l")
         write("\x1b[?1006l")
-        self.console.file.flush()
+        # self.console.file.flush()
 
     def start_application_mode(self):
 
@@ -151,10 +148,10 @@ class LinuxDriver(Driver):
                 if self._key_thread is not None:
                     self._key_thread.join()
         except Exception:
-            log.exception("error in disable_input")
+            # TODO: log this
+            pass
 
     def stop_application_mode(self) -> None:
-        log.debug("stop_application_mode()")
 
         self.disable_input()
 
@@ -171,7 +168,7 @@ class LinuxDriver(Driver):
         try:
             self._run_input_thread(loop)
         except Exception:
-            log.exception("error running input thread")
+            pass  # TODO: log
 
     def _run_input_thread(self, loop) -> None:
         def send_event(event: events.Event) -> None:
@@ -198,19 +195,19 @@ class LinuxDriver(Driver):
         decode = utf8_decoder
         read = os.read
 
-        mouse_down_time = time()
-
-        log.debug("started key thread")
         try:
             while not self.exit_event.is_set():
                 selector_events = selector.select(0.1)
+                if self.exit_event.is_set():
+                    break
                 for _selector_key, mask in selector_events:
                     if mask | selectors.EVENT_READ:
                         unicode_data = decode(read(fileno, 1024))
                         for event in parser.feed(unicode_data):
                             self.process_event(event)
         except Exception:
-            log.exception("error running key thread")
+            pass
+            # TODO: log
         finally:
             selector.close()
 

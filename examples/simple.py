@@ -1,6 +1,3 @@
-import logging
-from logging import FileHandler
-
 from rich.markdown import Markdown
 
 from textual import events
@@ -41,4 +38,4 @@ class MyApp(App):
         await self.call_later(get_markdown, "richreadme.md")
 
 
-MyApp.run(title="Simple App")
+MyApp.run(title="Simple App", log="textual.log")

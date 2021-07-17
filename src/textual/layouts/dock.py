@@ -3,7 +3,6 @@ from __future__ import annotations
 import sys
 from collections import defaultdict
 from dataclasses import dataclass
-import logging
 from typing import Iterable, TYPE_CHECKING, Sequence
 
 from .._layout_resolve import layout_resolve
@@ -18,8 +17,6 @@ else:
 
 if TYPE_CHECKING:
     from ..widget import Widget
-
-log = logging.getLogger("rich")
 
 
 DockEdge = Literal["top", "right", "bottom", "left"]

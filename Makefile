@@ -1,8 +1,8 @@
 test:
 	pytest --cov-report term-missing --cov=textual tests/ -vv
 typecheck:
-	mypy -p rich --strict
+	mypy src/textual
 format:
-	black .
+	black src
 format-check:
 	black --check .

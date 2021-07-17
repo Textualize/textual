@@ -36,7 +36,7 @@ class Null(Event):
 @rich.repr.auto
 class Callback(Event, bubble=False):
     def __init__(
-        self, sender: MessageTarget, callback: Callable[[], Awaitable]
+        self, sender: MessageTarget, callback: Callable[[], Awaitable[None]]
     ) -> None:
         self.callback = callback
         super().__init__(sender)
@@ -54,11 +54,23 @@ class Shutdown(Event):
 
 
 class Load(Event):
-    pass
+    """
+    Sent when the App is running but *before* the terminal is in application mode.
+
+    Use this event to run any set up that doesn't require any visuals such as loading
+    configuration and binding keys.
+
+
+    """
 
 
 class Startup(Event):
-    pass
+    """
+    Sent when the app has enabled application mode.
+
+    Use this event to create views and widgets.
+
+    """
 
 
 class Created(Event):
@@ -70,7 +82,12 @@ class Updated(Event):
 
 
 class Idle(Event):
-    """Sent when there are no more items in the message queue."""
+    """Sent when there are no more items in the message queue.
+
+    This is a psuedo-event in that it is created by the Textual system and doesn't go
+    through the usual message queue.
+
+    """
 
 
 class Action(Event, bubble=True):
@@ -85,11 +102,19 @@ class Action(Event, bubble=True):
 
 
 class Resize(Event):
+    """Sent when the app or widget has been resized."""
+
     __slots__ = ["width", "height"]
     width: int
     height: int
 
     def __init__(self, sender: MessageTarget, width: int, height: int) -> None:
+        """
+        Args:
+            sender (MessageTarget): Event sender.
+            width (int): New width in terminal cells.
+            height (int): New height in terminal cells.
+        """
         self.width = width
         self.height = height
         super().__init__(sender)
@@ -107,26 +132,41 @@ class Resize(Event):
 
 
 class Mount(Event):
-    pass
+    """Sent when a widget is *mounted* and may receive messages."""
 
 
 class Unmount(Event):
-    pass
+    """Sent when a widget is unmounted, and may no longer receive messages."""
 
 
 class Show(Event):
-    """Widget has become visible."""
+    """Sent when a widget has become visible."""
 
 
 class Hide(Event):
-    """Widget has been hidden."""
+    """Send when a widget has been hidden.
+
+    A widget may be hidden by setting its `visible` flag to `False`, if it is no longer in a layout,
+    or if it has been offset beyond the edges of the terminal.
+
+    """
 
 
 @rich.repr.auto
-class MouseCaptured(Event):
-    """Mouse has been captured."""
+class MouseCapture(Event):
+    """Sent when the mouse has been captured.
+
+    When a mouse has been captures, all further mouse events will be sent to the capturing widget.
+
+    """
 
     def __init__(self, sender: MessageTarget, mouse_position: Point) -> None:
+        """
+
+        Args:
+            sender (MessageTarget): The sender of the event, (in this case the app).
+            mouse_position (Point): The position of the mouse when captured.
+        """
         super().__init__(sender)
         self.mouse_position = mouse_position
 
@@ -135,10 +175,15 @@ class MouseCaptured(Event):
 
 
 @rich.repr.auto
-class MouseReleased(Event):
+class MouseRelease(Event):
     """Mouse has been released."""
 
     def __init__(self, sender: MessageTarget, mouse_position: Point) -> None:
+        """
+        Args:
+            sender (MessageTarget): The sender of the event, (in this case the app).
+            mouse_position (Point): The position of the mouse when released.
+        """
         super().__init__(sender)
         self.mouse_position = mouse_position
 
@@ -152,9 +197,17 @@ class InputEvent(Event, bubble=True):
 
 @rich.repr.auto
 class Key(InputEvent, bubble=True):
+    """Sent when the user hits a key on the keyboard"""
+
     __slots__ = ["key"]
 
-    def __init__(self, sender: MessageTarget, key: Keys | str) -> None:
+    def __init__(self, sender: MessageTarget, key: str) -> None:
+        """
+
+        Args:
+            sender (MessageTarget): The sender of the event (the App)
+            key (str): The pressed key if a single character (or a longer string for special characters)
+        """
         super().__init__(sender)
         self.key = key.value if isinstance(key, Keys) else key
 
@@ -164,7 +217,21 @@ class Key(InputEvent, bubble=True):
 
 @rich.repr.auto
 class MouseEvent(InputEvent):
-    __slots__ = ["x", "y", "button"]
+    """Sent in response to a mouse event"""
+
+    __slots__ = [
+        "x",
+        "y",
+        "delta_x",
+        "delta_y",
+        "button",
+        "shift",
+        "meta",
+        "ctrl",
+        "screen_x",
+        "screen_y",
+        "_style",
+    ]
 
     def __init__(
         self,
@@ -181,6 +248,22 @@ class MouseEvent(InputEvent):
         screen_y: int | None = None,
         style: Style | None = None,
     ) -> None:
+        """
+
+        Args:
+            sender (MessageTarget): The sender of the event.
+            x (int): The relative x coordinate.
+            y (int): The relative y cootdinate.
+            delta_x (int): Change in x since the last message.
+            delta_y (int): Change in y since the last message.
+            button (int): Indexed of the pressed button.
+            shift (bool): True if the shift key is pressed.
+            meta (bool): True if the meta key is pressed.
+            ctrl (bool): True if the ctrl key is pressed.
+            screen_x (int, optional): The absolute x coordinate.
+            screen_y (int, optional): The absolute y coordinate.
+            style (Style, optional): The Rich Style under the mouse cursor.
+        """
         super().__init__(sender)
         self.x = x
         self.y = y
@@ -253,7 +336,7 @@ class MouseEvent(InputEvent):
 
 @rich.repr.auto
 class MouseMove(MouseEvent):
-    pass
+    """Sent when the mouse cursor moves."""
 
 
 @rich.repr.auto
@@ -305,6 +388,7 @@ class Timer(Event):
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield self.timer.name
+        yield "count", self.count
 
 
 class Enter(Event):

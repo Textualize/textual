@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 
-import logging
-
 from typing import Iterable
 
 from rich.cells import cell_len
@@ -12,8 +10,6 @@ from rich.segment import Segment
 from rich.style import Style
 
 from ._loop import loop_last
-
-log = logging.getLogger("rich")
 
 
 class LineCache:

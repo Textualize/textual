@@ -112,7 +112,7 @@ class Dimensions(NamedTuple):
                 "Dimensions.__contains__ requires an iterable of two integers"
             )
         width, height = self
-        return width > x >= 0 and height > y >= 0
+        return bool(width > x >= 0 and height > y >= 0)
 
 
 class Region(NamedTuple):
@@ -307,19 +307,3 @@ class Region(NamedTuple):
             clamp(y2, cy2, cy2),
         )
         return new_region
-
-
-if __name__ == "__main__":
-    from rich import print
-
-    region = Region(-5, -5, 60, 100)
-
-    print(region.clip(80, 25))
-
-    region = Region(10, 10, 90, 90)
-
-    print(region.corners)
-
-    print((15, 15) in region)
-    print((5, 15) in region)
-    print(Region(15, 15, 10, 10) in region)
