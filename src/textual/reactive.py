@@ -91,7 +91,7 @@ class Reactive(Generic[ReactiveType]):
 
 
 def watch(
-    obj: Reactable, attribute_name: str, callback: Callable[[Any], Awaitable]
+    obj: Reactable, attribute_name: str, callback: Callable[[Any], Awaitable[None]]
 ) -> None:
     watcher_name = f"__{attribute_name}_watchers"
     if not hasattr(obj, watcher_name):

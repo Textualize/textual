@@ -6,7 +6,7 @@ from itertools import chain
 from operator import itemgetter
 import sys
 
-from typing import Iterable, NamedTuple, TYPE_CHECKING
+from typing import Iterable, Iterator, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 from rich.control import Control
@@ -157,7 +157,10 @@ class Layout(ABC):
     def map(self) -> dict[Widget, OrderedRegion]:
         return self._layout_map
 
-    def __iter__(self) -> Iterable[tuple[Widget, Region]]:
+    # def __iter__(self) -> Iterator[tuple[Widget, Region]]:
+    #     return self
+
+    def __iter__(self) -> Iterator[tuple[Widget, Region]]:
         layers = sorted(
             self._layout_map.items(), key=lambda item: item[1].order, reverse=True
         )
@@ -212,12 +215,12 @@ class Layout(ABC):
             return self._cuts
         width = self.width
         height = self.height
-        screen = Region(0, 0, width, height)
+        screen_region = Region(0, 0, width, height)
         cuts_sets = [{0, width} for _ in range(height)]
 
         for region, order in self._layout_map.values():
             region = region.clip(width, height)
-            if region and region in screen:
+            if region and (region in screen_region):  # type: ignore
                 for y in range(region.y, region.y + region.height):
                     cuts_sets[y].update({region.x, region.x + region.width})
 

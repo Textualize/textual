@@ -43,7 +43,7 @@ class _Read1(Awaitable):
 class _ReadUntil(Awaitable):
     __slots__ = ["sep", "max_bytes"]
 
-    def __init__(self, sep, max_bytes=None):
+    def __init__(self, sep: str, max_bytes: int | None = None) -> None:
         self.sep = sep
         self.max_bytes = max_bytes
 

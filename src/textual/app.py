@@ -133,7 +133,7 @@ class App(MessagePump):
     def view(self) -> View:
         return self._view_stack[-1]
 
-    def log(self, *args, verbosity: int = 0) -> None:
+    def log(self, *args: Any, verbosity: int = 0) -> None:
         try:
             if self.log_file:
                 output = f" ".join(str(arg) for arg in args)

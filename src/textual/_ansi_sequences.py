@@ -152,12 +152,12 @@ ANSI_SEQUENCES: Dict[str, Tuple[Keys, ...]] = {
     "\x1b[3;4~": (Keys.Escape, Keys.ShiftDelete),
     "\x1b[5;4~": (Keys.Escape, Keys.ShiftPageUp),
     "\x1b[6;4~": (Keys.Escape, Keys.ShiftPageDown),
-    "\x1b[3;5~": Keys.ControlDelete,  # xterm, gnome-terminal.
-    "\x1b[5;5~": Keys.ControlPageUp,
-    "\x1b[6;5~": Keys.ControlPageDown,
-    "\x1b[3;6~": Keys.ControlShiftDelete,
-    "\x1b[5;6~": Keys.ControlShiftPageUp,
-    "\x1b[6;6~": Keys.ControlShiftPageDown,
+    "\x1b[3;5~": (Keys.ControlDelete,),  # xterm, gnome-terminal.
+    "\x1b[5;5~": (Keys.ControlPageUp,),
+    "\x1b[6;5~": (Keys.ControlPageDown,),
+    "\x1b[3;6~": (Keys.ControlShiftDelete,),
+    "\x1b[5;6~": (Keys.ControlShiftPageUp,),
+    "\x1b[6;6~": (Keys.ControlShiftPageDown,),
     "\x1b[2;7~": (Keys.Escape, Keys.ControlInsert),
     "\x1b[5;7~": (Keys.Escape, Keys.ControlPageDown),
     "\x1b[6;7~": (Keys.Escape, Keys.ControlPageDown),

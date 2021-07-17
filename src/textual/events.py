@@ -36,7 +36,7 @@ class Null(Event):
 @rich.repr.auto
 class Callback(Event, bubble=False):
     def __init__(
-        self, sender: MessageTarget, callback: Callable[[], Awaitable]
+        self, sender: MessageTarget, callback: Callable[[], Awaitable[None]]
     ) -> None:
         self.callback = callback
         super().__init__(sender)

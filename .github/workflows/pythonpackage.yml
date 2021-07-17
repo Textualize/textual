@@ -31,10 +31,10 @@ jobs:
         run: |
           source $VENV
           make format-check
-      - name: Typecheck with mypy
-        run: |
-          source $VENV
-          make typecheck
+#      - name: Typecheck with mypy
+#        run: |
+#          source $VENV
+#          make typecheck
       - name: Test with pytest
         run: |
           source $VENV
