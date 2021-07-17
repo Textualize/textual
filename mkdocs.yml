@@ -29,12 +29,10 @@ plugins:
           rendering:
             show_source: false
           selection:
-            filters: 
+            filters:
               - "!^_"
               - "^__init__$"
               - "!^can_replace$"
 
     watch:
       - src/textual
-
-
