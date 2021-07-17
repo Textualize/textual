@@ -94,11 +94,15 @@ class Layout(ABC):
 
     def reset(self) -> None:
         self._cuts = None
+        if self._require_update:
+            self.renders.clear()
+            self._layout_map.clear()
 
     def reflow(self, width: int, height: int) -> ReflowResult:
         self.reset()
 
         map = self.generate_map(width, height)
+        self._require_update = False
 
         # Filter out widgets that are off screen or zero area
         screen_region = Region(0, 0, width, height)

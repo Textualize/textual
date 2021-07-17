@@ -66,6 +66,9 @@ class View(Widget):
     def get_offset(self, widget: Widget) -> Point:
         return self.layout.get_offset(widget)
 
+    def check_layout(self) -> bool:
+        return super().check_layout() or self.layout.check_update()
+
     async def message_update(self, message: UpdateMessage) -> None:
         widget = message.widget
         assert isinstance(widget, Widget)
@@ -142,7 +145,7 @@ class View(Widget):
     async def on_idle(self, event: events.Idle) -> None:
         if self.layout.check_update():
             self.layout.reset_update()
-            self.require_layout()
+            await self.refresh_layout()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         try:
