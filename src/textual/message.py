@@ -23,6 +23,12 @@ class Message:
     bubble: ClassVar[bool] = False
 
     def __init__(self, sender: MessageTarget) -> None:
+        """
+
+        Args:
+            sender (MessageTarget): The sender of the message / event.
+        """
+
         self.sender = sender
         self.name = camel_to_snake(self.__class__.__name__.replace("Message", ""))
         self.time = monotonic()

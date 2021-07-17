@@ -12,24 +12,16 @@ from typing import (
     TypeVar,
     TYPE_CHECKING,
 )
-from weakref import WeakSet
 
 from . import events
 
-from .message_pump import MessagePump
 from ._types import MessageTarget
 
 if TYPE_CHECKING:
-    from .message import Message
     from .app import App
     from .widget import Widget
 
     Reactable = Union[Widget, App]
-
-if sys.version_info >= (3, 8):
-    from typing import Protocol
-else:
-    from typing_extensions import Protocol
 
 
 ReactiveType = TypeVar("ReactiveType")
@@ -103,7 +95,7 @@ def watch(
 ) -> None:
     watcher_name = f"__{attribute_name}_watchers"
     if not hasattr(obj, watcher_name):
-        setattr(obj, watcher_name, WeakSet())
+        setattr(obj, watcher_name, set())
     watchers = getattr(obj, watcher_name)
     watchers.add(callback)
     Reactive.check_watchers(obj, attribute_name)

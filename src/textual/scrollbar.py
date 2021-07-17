@@ -1,15 +1,10 @@
 from __future__ import annotations
 
-
-import logging
-
 import rich.repr
 from rich.color import Color
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.segment import Segment, Segments
 from rich.style import Style, StyleType
-
-log = logging.getLogger("rich")
 
 from . import events
 from .geometry import Point
@@ -231,11 +226,11 @@ class ScrollBar(Widget):
         if self.grabbed:
             await self.release_mouse()
 
-    async def on_mouse_captured(self, event: events.MouseCaptured) -> None:
+    async def on_mouse_capture(self, event: events.MouseCapture) -> None:
         self.grabbed = event.mouse_position
         self.grabbed_position = self.position
 
-    async def on_mouse_released(self, event: events.MouseReleased) -> None:
+    async def on_mouse_release(self, event: events.MouseRelease) -> None:
         self.grabbed = None
 
     async def on_mouse_move(self, event: events.MouseMove) -> None:

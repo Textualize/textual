@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import logging
-
 import asyncio
 import sys
 from time import time
@@ -40,9 +38,6 @@ EASING = {
 }
 
 DEFAULT_EASING = "in_out_cubic"
-
-
-log = logging.getLogger("rich")
 
 
 @dataclass
@@ -87,7 +82,6 @@ class Animation:
                     self.end_value + (self.start_value - self.end_value) * eased_factor
                 )
         setattr(self.obj, self.attribute, value)
-        log.debug("ANIMATE %r %r -> %r", self.obj, self.attribute, value)
         return value == self.end_value
 
 
@@ -119,16 +113,20 @@ class BoundAnimator:
 class Animator:
     def __init__(self, target: MessageTarget, frames_per_second: int = 60) -> None:
         self._animations: dict[tuple[object, str], Animation] = {}
-        self._timer = Timer(target, 1 / frames_per_second, target, callback=self)
+        self._timer = Timer(
+            target, 1 / frames_per_second, target, name="Animator", callback=self
+        )
         self._timer_task: asyncio.Task | None = None
 
     async def start(self) -> None:
-        self._timer_task = asyncio.get_event_loop().create_task(self._timer.run())
+        if self._timer_task is None:
+            self._timer_task = asyncio.get_event_loop().create_task(self._timer.run())
 
     async def stop(self) -> None:
         self._timer.stop()
         if self._timer_task:
             await self._timer_task
+        self._timer_task = None
 
     def bind(self, obj: object) -> BoundAnimator:
         return BoundAnimator(self, obj)
@@ -151,6 +149,11 @@ class Animator:
             self._animations[animation_key](start_time)
 
         start_value = getattr(obj, attribute)
+
+        if start_value == value:
+            self._animations.pop(animation_key, None)
+            return
+
         if duration is not None:
             animation_duration = duration
         else:

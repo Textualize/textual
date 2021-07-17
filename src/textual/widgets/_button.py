@@ -2,9 +2,6 @@ from __future__ import annotations
 
 from rich.align import Align
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
-from rich.padding import Padding
-from rich.panel import Panel
-import rich.repr
 from rich.style import StyleType
 
 from .. import events

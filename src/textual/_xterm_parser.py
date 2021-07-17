@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import logging
+
 import re
 from typing import Callable, Generator
 
@@ -8,8 +8,6 @@ from . import events
 from ._types import MessageTarget
 from ._parser import Awaitable, Parser, TokenCallback
 from ._ansi_sequences import ANSI_SEQUENCES
-
-log = logging.getLogger("rich")
 
 
 _re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[\d;]+[mM]|M...)\Z")

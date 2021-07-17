@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from itertools import chain
-import logging
 from typing import Iterable, TYPE_CHECKING
 
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
@@ -14,14 +12,13 @@ from .layout import Layout, NoWidget
 from .layouts.dock import DockLayout
 from .geometry import Dimensions, Point, Region
 from .messages import UpdateMessage, LayoutMessage
+from .reactive import Reactive, watch
 
 from .widget import Widget, Widget
 
 
 if TYPE_CHECKING:
     from .app import App
-
-log = logging.getLogger("rich")
 
 
 @rich.repr.auto
@@ -34,6 +31,11 @@ class View(Widget):
         self.widgets: set[Widget] = set()
         self.named_widgets: dict[str, Widget] = {}
         super().__init__(name)
+
+    background: Reactive[str] = Reactive("")
+
+    async def watch_background(self, value: str) -> None:
+        self.layout.background = value
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -131,6 +133,17 @@ class View(Widget):
     def get_widget_region(self, widget: Widget) -> Region:
         return self.layout.get_widget_region(widget)
 
+    async def on_mount(self, event: events.Mount) -> None:
+        async def watch_background(value: str) -> None:
+            self.background = value
+
+        watch(self.app, "background", watch_background)
+
+    async def on_idle(self, event: events.Idle) -> None:
+        if self.layout.check_update():
+            self.layout.reset_update()
+            self.require_layout()
+
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         try:
             if self.app.mouse_captured:
@@ -138,7 +151,6 @@ class View(Widget):
                 region = self.get_widget_region(widget)
             else:
                 widget, region = self.get_widget_at(event.x, event.y)
-                log.debug("WIDGET %r", widget)
         except NoWidget:
             await self.app.set_mouse_over(None)
         else:
@@ -201,4 +213,3 @@ class View(Widget):
         widget = self.named_widgets[name]
         widget.visible = not widget.visible
         await self.post_message(LayoutMessage(self))
-        # await self.refresh_layout()

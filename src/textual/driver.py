@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import logging
 from time import time
 import platform
 from abc import ABC, abstractmethod
@@ -13,8 +12,6 @@ from ._types import MessageTarget
 if TYPE_CHECKING:
     from rich.console import Console
 
-
-log = logging.getLogger("rich")
 
 WINDOWS = platform.system() == "Windows"
 

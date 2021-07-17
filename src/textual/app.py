@@ -3,8 +3,6 @@ import os
 
 import asyncio
 from functools import partial
-import logging
-import signal
 from typing import Any, Callable, ClassVar, Type, TypeVar
 import warnings
 
@@ -19,8 +17,10 @@ from rich.traceback import Traceback
 from . import events
 from . import actions
 from ._animator import Animator
+from ._profile import timer
 from .binding import Bindings, NoBinding
 from .geometry import Point, Region
+from . import log
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
 from ._types import MessageTarget
@@ -33,27 +33,21 @@ from .view import View
 from .views import DockView
 from .widget import Widget, Widget, Reactive
 
-log = logging.getLogger("rich")
-
 
 # asyncio will warn against resources not being cleared
 warnings.simplefilter("always", ResourceWarning)
-# https://github.com/boto/boto3/issues/454
-# warnings.filterwarnings(
-#     "ignore", category=ResourceWarning, message="unclosed.*<ssl.SSLSocket.*>"
-# )
 
 
 LayoutDefinition = "dict[str, Any]"
 
 ViewType = TypeVar("ViewType", bound=View)
 
-# try:
-#     import uvloop
-# except ImportError:
-#     pass
-# else:
-#     uvloop.install()
+try:
+    import uvloop
+except ImportError:
+    pass
+else:
+    uvloop.install()
 
 
 class PanicMessage(Message):
@@ -72,6 +66,7 @@ class ShutdownError(Exception):
 
 @rich.repr.auto
 class App(MessagePump):
+    """The base class for Textual Applications"""
 
     KEYS: ClassVar[dict[str, str]] = {}
 
@@ -80,6 +75,7 @@ class App(MessagePump):
         console: Console | None = None,
         screen: bool = True,
         driver_class: Type[Driver] | None = None,
+        log: str = "",
         title: str = "Textual Application",
     ):
         """The Textual Application base class
@@ -91,6 +87,7 @@ class App(MessagePump):
             title (str, optional): Title of the application. Defaults to "Textual Application".
         """
         self.console = console or get_console()
+        self.error_console = Console(stderr=True)
         self._screen = screen
         self.driver_class = driver_class or LinuxDriver
         self._title = title
@@ -112,12 +109,15 @@ class App(MessagePump):
         self.bindings = Bindings()
         self._title = title
 
+        self.log_file = open(log, "wt") if log else None
+
         self.bindings.bind("ctrl+c", "quit")
 
         super().__init__()
 
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
+    background: Reactive[str] = Reactive("")
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "title", self.title
@@ -132,6 +132,15 @@ class App(MessagePump):
     @property
     def view(self) -> View:
         return self._view_stack[-1]
+
+    def log(self, *args, verbosity: int = 0) -> None:
+        try:
+            if self.log_file:
+                output = f" ".join(str(arg) for arg in args)
+                self.log_file.write(output + "\n")
+                self.log_file.flush()
+        except Exception:
+            pass
 
     async def bind(
         self, keys: str, action: str, description: str = "", show: bool = False
@@ -164,6 +173,7 @@ class App(MessagePump):
         await self.register(view)
         view.set_parent(self)
         self._view_stack.append(view)
+        await view.post_message(events.Mount(sender=self))
         return view
 
     def on_keyboard_interupt(self) -> None:
@@ -172,7 +182,7 @@ class App(MessagePump):
         asyncio.run_coroutine_threadsafe(self.post_message(event), loop=loop)
 
     async def set_focus(self, widget: Widget | None) -> None:
-        log.debug("set_focus %r", widget)
+        log("set_focus", widget)
         if widget == self.focused:
             return
 
@@ -211,33 +221,37 @@ class App(MessagePump):
             return
         if self.mouse_captured is not None:
             await self.mouse_captured.post_message(
-                events.MouseReleased(self, self.mouse_position)
+                events.MouseRelease(self, self.mouse_position)
             )
         self.mouse_captured = widget
         if widget is not None:
-            await widget.post_message(events.MouseCaptured(self, self.mouse_position))
+            await widget.post_message(events.MouseCapture(self, self.mouse_position))
 
-    def panic(self, traceback: Traceback) -> None:
+    def panic(self, traceback: Traceback | None = None) -> None:
+        """Exits the app with a traceback.
+
+        Args:
+            traceback (Traceback, optional): Rich Traceback object or None to generate one
+                for the most recent exception. Defaults to None.
+        """
+        if traceback is None:
+            traceback = Traceback(show_locals=True)
         self._tracebacks.append(traceback)
         self.close_messages_no_wait()
 
     async def process_messages(self) -> None:
-        log.debug("driver=%r", self.driver_class)
-        driver = self._driver = self.driver_class(self.console, self)
         active_app.set(self)
+        driver = self._driver = self.driver_class(self.console, self)
 
-        await self.push_view(View())
-
-        self.view.set_parent(self)
-        await self.register(self.view)
+        log(f"driver={self.driver_class}")
 
         await self.dispatch_message(events.Load(sender=self))
+        await self.push_view(View())
 
         try:
             driver.start_application_mode()
         except Exception:
             self.console.print_exception()
-            log.exception("error starting application mode")
         else:
             traceback: Traceback | None = None
 
@@ -248,22 +262,28 @@ class App(MessagePump):
                 await self.animator.start()
 
                 await super().process_messages()
+                log("PROCESS END")
                 await self.animator.stop()
 
-                while self.children:
-                    child = self.children.pop()
-                    log.debug("closing %r", child)
-                    await child.close_messages()
+                await self.close_all()
 
-                while self._view_stack:
-                    view = self._view_stack.pop()
-                    await view.close_messages()
+                # while self.children:
+                #     child = self.children.pop()
+                #     log(f"closing {child}")
+                #     await child.close_messages()
+
+                # while self._view_stack:
+                #     view = self._view_stack.pop()
+                #     await view.close_messages()
             except Exception:
-                self._tracebacks.append(Traceback(show_locals=True))
+                self.panic()
             finally:
                 driver.stop_application_mode()
-                for traceback in self._tracebacks:
-                    self.console.print(traceback)
+                if self._tracebacks:
+                    for traceback in self._tracebacks:
+                        self.error_console.print(traceback)
+                if self.log_file is not None:
+                    self.log_file.close()
 
     def require_repaint(self) -> None:
         self.refresh()
@@ -285,6 +305,11 @@ class App(MessagePump):
         child.start_messages()
         await child.post_message(events.Created(sender=self))
 
+    async def close_all(self) -> None:
+        while self.children:
+            child = self.children.pop()
+            await child.close_messages()
+
     async def remove(self, child: MessagePump) -> None:
         self.children.remove(child)
 
@@ -301,10 +326,10 @@ class App(MessagePump):
             try:
                 if sync_available:
                     console.file.write("\x1bP=1s\x1b\\")
-                with console:
-                    console.print(Screen(Control.home(), self.view, Control.home()))
+                console.print(Screen(Control.home(), self.view, Control.home()))
                 if sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
+                    console.file.flush()
             except Exception:
                 self.panic(Traceback(show_locals=True))
 
@@ -315,7 +340,7 @@ class App(MessagePump):
                 with console:
                     console.print(renderable)
             except Exception:
-                log.exception("display failed")
+                self.panic()
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         return self.view.get_widget_at(x, y)
@@ -329,6 +354,7 @@ class App(MessagePump):
             else:
                 await self.action(binding.action)
                 return
+            await super().on_event(event)
 
         if isinstance(event, events.InputEvent):
             if isinstance(event, events.MouseEvent):
@@ -360,7 +386,7 @@ class App(MessagePump):
             action_target = default_namespace or self
             action_name = action
 
-        log.debug("ACTION %r %r", action_target, action_name)
+        log("ACTION", action_target, action_name)
         await self.dispatch_action(action_target, action_name, params)
 
     async def dispatch_action(
@@ -389,7 +415,7 @@ class App(MessagePump):
         return True
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
-        log.debug("shutdown request")
+        log("shutdown request")
         await self.close_messages()
 
     async def on_resize(self, event: events.Resize) -> None:
@@ -433,13 +459,6 @@ if __name__ == "__main__":
 
     # sys.exit()
 
-    logging.basicConfig(
-        level="NOTSET",
-        format="%(message)s",
-        datefmt="[%X]",
-        handlers=[FileHandler("richtui.log")],
-    )
-
     class MyApp(App):
         """Just a test app."""
 
@@ -451,7 +470,7 @@ if __name__ == "__main__":
         show_bar: Reactive[bool] = Reactive(False)
 
         async def watch_show_bar(self, show_bar: bool) -> None:
-            self.animator.animate(self.bar, "layout_offset_x", -40 if show_bar else 0)
+            self.animator.animate(self.bar, "layout_offset_x", 0 if show_bar else -40)
 
         async def action_toggle_sidebar(self) -> None:
             self.show_bar = not self.show_bar
@@ -469,6 +488,7 @@ if __name__ == "__main__":
             await view.dock(header, edge="top")
             await view.dock(footer, edge="bottom")
             await view.dock(self.bar, edge="left", size=40, z=1)
+            self.bar.layout_offset_x = -40
 
             # await view.dock(Placeholder(), Placeholder(), edge="top")
 
@@ -513,4 +533,4 @@ if __name__ == "__main__":
     # console = Console()
     # console.print(app._view_stack[0], height=30)
     # console.print(app._view_stack)
-    MyApp.run()
+    MyApp.run(log="textual.log")

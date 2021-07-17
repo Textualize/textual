@@ -10,8 +10,6 @@ from typing import (
     NewType,
     cast,
 )
-from weakref import WeakValueDictionary
-
 import rich.repr
 from rich.align import Align
 from rich.console import Console, RenderableType
@@ -64,11 +62,17 @@ class Widget(MessagePump):
         super().__init__()
 
     visible: Reactive[bool] = Reactive(True, layout=True)
-    layout_size: Reactive[int | None] = Reactive(None)
-    layout_fraction: Reactive[int] = Reactive(1)
-    layout_min_size: Reactive[int] = Reactive(1)
-    layout_offset_x: Reactive[float] = Reactive(0, layout=True)
-    layout_offset_y: Reactive[float] = Reactive(0, layout=True)
+    layout_size: Reactive[int | None] = Reactive(None, layout=True)
+    layout_fraction: Reactive[int] = Reactive(1, layout=True)
+    layout_min_size: Reactive[int] = Reactive(1, layout=True)
+    layout_offset_x: Reactive[int] = Reactive(0, layout=True)
+    layout_offset_y: Reactive[int] = Reactive(0, layout=True)
+
+    def validate_layout_offset_x(self, value) -> int:
+        return int(value)
+
+    def validate_layout_offset_y(self, value) -> int:
+        return int(value)
 
     def __init_subclass__(cls, can_focus: bool = True) -> None:
         super().__init_subclass__()
@@ -188,7 +192,6 @@ class Widget(MessagePump):
             await self.update_layout()
         elif self.check_repaint():
             self.reset_check_repaint()
-            self.reset_check_layout()
             await self.repaint()
 
     async def focus(self) -> None:

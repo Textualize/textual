@@ -35,7 +35,7 @@ class Bindings:
         try:
             return self.keys[key]
         except KeyError:
-            raise NoBinding(f"No binding for {key}")
+            raise NoBinding(f"No binding for {key}") from None
 
 
 class BindingStack:
@@ -55,4 +55,4 @@ class BindingStack:
             binding = bindings.keys.get(key, None)
             if binding is not None:
                 return binding
-        raise NoBinding(f"No binding for {key}")
+        raise NoBinding(f"No binding for {key}") from None

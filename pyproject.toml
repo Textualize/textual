@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.1.7"
+version = "0.1.8"
 homepage = "https://github.com/willmcgugan/textual"
 description = "Text User Interface using Rich"
 authors = ["Will McGugan <willmcgugan@gmail.com>"]
