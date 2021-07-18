@@ -108,22 +108,23 @@ class CalculatorApp(App):
     async def on_startup(self, event: events.Startup) -> None:
         """Sent when the app has gone full screen."""
 
-        # Create the layout which defines where our widgets will go
-        layout = GridLayout(gap=(2, 1), gutter=1, align=("center", "center"))
-        await self.push_view(View(layout=layout))
+        # Create a grid layout
+        grid = await self.view.dock_grid(
+            gap=(2, 1), gutter=1, align=("center", "center")
+        )
 
         # Create rows / columns / areas
-        layout.add_column("col", max_size=30, repeat=4)
-        layout.add_row("numbers", max_size=15)
-        layout.add_row("row", max_size=15, repeat=5)
-        layout.add_areas(
+        grid.add_column("col", max_size=30, repeat=4)
+        grid.add_row("numbers", max_size=15)
+        grid.add_row("row", max_size=15, repeat=5)
+        grid.add_areas(
             clear="col1,row1",
             numbers="col1-start|col4-end,numbers",
             zero="col1-start|col2-end,row5",
         )
         # Place out widgets in to the layout
-        layout.place(clear=self.c)
-        layout.place(
+        grid.place(clear=self.c)
+        grid.place(
             *self.buttons.values(), clear=self.ac, numbers=self.numbers, zero=self.zero
         )
 

@@ -11,13 +11,11 @@ import rich.repr
 from rich.screen import Screen
 from rich import get_console
 from rich.console import Console, RenderableType
-from rich.style import Style
 from rich.traceback import Traceback
 
 from . import events
 from . import actions
 from ._animator import Animator
-from ._profile import timer
 from .binding import Bindings, NoBinding
 from .geometry import Point, Region
 from . import log
@@ -92,7 +90,7 @@ class App(MessagePump):
         self.driver_class = driver_class or LinuxDriver
         self._title = title
         self._layout = DockLayout()
-        self._view_stack: list[View] = []
+        self._view_stack: list[DockView] = []
         self.children: set[MessagePump] = set()
 
         self.focused: Widget | None = None
@@ -111,7 +109,7 @@ class App(MessagePump):
 
         self.log_file = open(log, "wt") if log else None
 
-        self.bindings.bind("ctrl+c", "quit")
+        self.bindings.bind("ctrl+c", "quit", show=False)
 
         super().__init__()
 
@@ -130,7 +128,7 @@ class App(MessagePump):
         return self._animator
 
     @property
-    def view(self) -> View:
+    def view(self) -> DockView:
         return self._view_stack[-1]
 
     def log(self, *args: Any, verbosity: int = 0) -> None:
@@ -143,9 +141,16 @@ class App(MessagePump):
             pass
 
     async def bind(
-        self, keys: str, action: str, description: str = "", show: bool = False
+        self,
+        keys: str,
+        action: str,
+        description: str = "",
+        show: bool = True,
+        key_display: str | None = None,
     ) -> None:
-        self.bindings.bind(keys, action, description, show=show)
+        self.bindings.bind(
+            keys, action, description, show=show, key_display=key_display
+        )
 
     @classmethod
     def run(
@@ -246,7 +251,7 @@ class App(MessagePump):
         log(f"driver={self.driver_class}")
 
         await self.dispatch_message(events.Load(sender=self))
-        await self.push_view(View())
+        await self.push_view(DockView())
 
         try:
             driver.start_application_mode()
@@ -345,14 +350,18 @@ class App(MessagePump):
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         return self.view.get_widget_at(x, y)
 
+    async def press(self, key: str) -> bool:
+        try:
+            binding = self.bindings.get_key(key)
+        except NoBinding:
+            return False
+        else:
+            await self.action(binding.action)
+        return True
+
     async def on_event(self, event: events.Event) -> None:
         if isinstance(event, events.Key):
-            try:
-                binding = self.bindings.get_key(event.key)
-            except NoBinding:
-                pass
-            else:
-                await self.action(binding.action)
+            if await self.press(event.key):
                 return
             await super().on_event(event)
 
@@ -425,6 +434,9 @@ class App(MessagePump):
     async def on_resize(self, event: events.Resize) -> None:
         await self.view.post_message(event)
 
+    async def action_press(self, key: str) -> None:
+        await self.press(key)
+
     async def action_quit(self) -> None:
         await self.shutdown()
 
@@ -467,9 +479,9 @@ if __name__ == "__main__":
         """Just a test app."""
 
         async def on_load(self, event: events.Load) -> None:
-            await self.bind("q,ctrl+c", "quit")
-            await self.bind("x", "bang")
-            await self.bind("b", "toggle_sidebar")
+            await self.bind("q,ctrl+c", "quit", "Exit app")
+            await self.bind("x", "bang", "Test error handling")
+            await self.bind("b", "toggle_sidebar", "Toggle sidebar")
 
         show_bar: Reactive[bool] = Reactive(False)
 
@@ -486,8 +498,6 @@ if __name__ == "__main__":
             header = Header()
             footer = Footer()
             self.bar = Placeholder(name="left")
-            footer.add_key("b", "Toggle sidebar")
-            footer.add_key("q", "Quit")
 
             await view.dock(header, edge="top")
             await view.dock(footer, edge="bottom")

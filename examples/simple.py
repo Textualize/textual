@@ -2,7 +2,6 @@ from rich.markdown import Markdown
 
 from textual import events
 from textual.app import App
-from textual.views import DockView
 from textual.widgets import Header, Footer, Placeholder, ScrollView
 
 
@@ -10,25 +9,17 @@ class MyApp(App):
     """An example of a very simple Textual App"""
 
     async def on_load(self, event: events.Load) -> None:
-        await self.bind("q,ctrl+c", "quit", "Quit")
         await self.bind("b", "view.toggle('sidebar')", "Toggle sidebar")
+        await self.bind("q", "quit", "Quit")
 
     async def on_startup(self, event: events.Startup) -> None:
 
-        view = await self.push_view(DockView())
-
-        footer = Footer()
-        header = Header()
         body = ScrollView()
-        sidebar = Placeholder()
 
-        footer.add_key("b", "Toggle sidebar")
-        footer.add_key("q", "Quit")
-
-        await view.dock(header, edge="top")
-        await view.dock(footer, edge="bottom")
-        await view.dock(sidebar, edge="left", size=30, name="sidebar")
-        await view.dock(body, edge="right")
+        await self.view.dock(Header(), edge="top")
+        await self.view.dock(Footer(), edge="bottom")
+        await self.view.dock(Placeholder(), edge="left", size=30, name="sidebar")
+        await self.view.dock(body, edge="right")
 
         async def get_markdown(filename: str) -> None:
             with open(filename, "rt") as fh:

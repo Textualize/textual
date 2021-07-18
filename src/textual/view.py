@@ -8,6 +8,7 @@ import rich.repr
 from rich.style import Style
 
 from . import events
+from . import log
 from .layout import Layout, NoWidget
 from .layouts.dock import DockLayout
 from .geometry import Dimensions, Point, Region
@@ -30,6 +31,8 @@ class View(Widget):
         self.size = Dimensions(0, 0)
         self.widgets: set[Widget] = set()
         self.named_widgets: dict[str, Widget] = {}
+        self._mouse_style: Style = Style()
+        self._mouse_widget: Widget | None = None
         super().__init__(name)
 
     background: Reactive[str] = Reactive("")
@@ -148,6 +151,7 @@ class View(Widget):
             await self.refresh_layout()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
+
         try:
             if self.app.mouse_captured:
                 widget = self.app.mouse_captured
@@ -157,8 +161,13 @@ class View(Widget):
         except NoWidget:
             await self.app.set_mouse_over(None)
         else:
-            await self.app.set_mouse_over(widget)
+            if event.style is not self._mouse_style and self._mouse_widget:
+                await self.app.broker_event("leave", event, self._mouse_widget)
+                await self.app.broker_event("enter", event, widget)
 
+            self._mouse_style = event.style
+            self._mouse_widget = widget
+            await self.app.set_mouse_over(widget)
             await widget.forward_event(
                 events.MouseMove(
                     self,

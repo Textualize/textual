@@ -12,6 +12,7 @@ class Binding:
     action: str
     description: str
     show: bool = False
+    key_display: str | None = None
 
 
 class Bindings:
@@ -20,16 +21,24 @@ class Bindings:
     def __init__(self) -> None:
         self.keys: dict[str, Binding] = {}
 
+    @property
     def shown_keys(self) -> list[Binding]:
         keys = [binding for binding in self.keys.values() if binding.show]
         return keys
 
     def bind(
-        self, keys: str, action: str, description: str = "", show: bool = False
+        self,
+        keys: str,
+        action: str,
+        description: str = "",
+        show: bool = True,
+        key_display: str | None = None,
     ) -> None:
         all_keys = [key.strip() for key in keys.split(",")]
         for key in all_keys:
-            self.keys[key] = Binding(key, action, description, show=show)
+            self.keys[key] = Binding(
+                key, action, description, show=show, key_display=key_display
+            )
 
     def get_key(self, key: str) -> Binding:
         try:

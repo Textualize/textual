@@ -11,16 +11,15 @@ class GridTest(App):
 
     async def on_startup(self, event: events.Startup) -> None:
 
-        layout = GridLayout()
-        await self.push_view(View(layout=layout))
+        grid = await self.view.dock_grid()
 
-        layout.add_column("col", fraction=1, max_size=20)
-        layout.add_row("row", fraction=1, max_size=10)
-        layout.set_repeat(True, True)
-        layout.add_areas(center="col-2-start|col-4-end,row-2-start|row-3-end")
-        layout.set_align("stretch", "center")
+        grid.add_column("col", fraction=1, max_size=20)
+        grid.add_row("row", fraction=1, max_size=10)
+        grid.set_repeat(True, True)
+        grid.add_areas(center="col-2-start|col-4-end,row-2-start|row-3-end")
+        grid.set_align("stretch", "center")
 
-        layout.place(*(Placeholder() for _ in range(20)), center=Placeholder())
+        grid.place(*(Placeholder() for _ in range(20)), center=Placeholder())
 
 
 GridTest.run(title="Grid Test")
