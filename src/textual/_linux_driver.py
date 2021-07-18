@@ -198,8 +198,6 @@ class LinuxDriver(Driver):
         try:
             while not self.exit_event.is_set():
                 selector_events = selector.select(0.1)
-                if self.exit_event.is_set():
-                    break
                 for _selector_key, mask in selector_events:
                     if mask | selectors.EVENT_READ:
                         unicode_data = decode(read(fileno, 1024))

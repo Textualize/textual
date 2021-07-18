@@ -58,6 +58,7 @@ class Widget(MessagePump):
         self._layout_required = False
         self._animate: BoundAnimator | None = None
         self._reactive_watches: dict[str, Callable] = {}
+        self.highlight_style: Style | None = None
 
         super().__init__()
 

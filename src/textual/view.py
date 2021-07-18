@@ -161,12 +161,6 @@ class View(Widget):
         except NoWidget:
             await self.app.set_mouse_over(None)
         else:
-            if event.style is not self._mouse_style and self._mouse_widget:
-                await self.app.broker_event("leave", event, self._mouse_widget)
-                await self.app.broker_event("enter", event, widget)
-
-            self._mouse_style = event.style
-            self._mouse_widget = widget
             await self.app.set_mouse_over(widget)
             await widget.forward_event(
                 events.MouseMove(

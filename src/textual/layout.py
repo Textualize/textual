@@ -7,6 +7,7 @@ from operator import itemgetter
 import sys
 
 from typing import Iterable, Iterator, NamedTuple, TYPE_CHECKING
+from rich import segment
 
 import rich.repr
 from rich.control import Control
@@ -233,6 +234,7 @@ class Layout(ABC):
         return self._cuts
 
     def _get_renders(self, console: Console) -> Iterable[tuple[Region, Lines]]:
+        _rich_traceback_guard = True
         width = self.width
         height = self.height
         screen_region = Region(0, 0, width, height)
@@ -248,7 +250,6 @@ class Layout(ABC):
             lines = console.render_lines(
                 widget, console.options.update_dimensions(width, height)
             )
-            log("rendered", widget)
             return lines
 
         for widget, region, _order in widget_regions:
@@ -358,10 +359,12 @@ class Layout(ABC):
     def update_widget(self, console: Console, widget: Widget) -> LayoutUpdate | None:
         if widget not in self.renders:
             return None
+
         region, lines = self.renders[widget]
         new_lines = console.render_lines(
             widget, console.options.update_dimensions(region.width, region.height)
         )
+
         self.renders[widget] = (region, new_lines)
 
         update_lines = self.render(console, region).lines

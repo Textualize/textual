@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text
 import rich.repr
 
+from .. import events
+from ..reactive import Reactive
 from ..widget import Widget
 
 
@@ -12,14 +16,19 @@ class Footer(Widget):
         self.keys: list[tuple[str, str]] = []
         super().__init__()
         self.layout_size = 1
+        self._key_text: Text | None = None
+
+    highlight_key: Reactive[str | None] = Reactive(None)
+
+    async def watch_highlight_key(self, value) -> None:
+        """If highlight key changes we need to regenerate the text."""
+        self._key_text = None
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
-        yield "footer"
+        yield "keys", self.keys
 
-    def add_key(self, key: str, label: str) -> None:
-        self.keys.append((key, label))
-
-    def render(self) -> RenderableType:
+    def make_key_text(self) -> Text:
+        """Create text containing all the keys."""
         text = Text(
             style="white on dark_green",
             no_wrap=True,
@@ -33,13 +42,24 @@ class Footer(Widget):
                 if binding.key_display is None
                 else binding.key_display
             )
+            hovered = self.highlight_key == binding.key
             key_text = Text.assemble(
-                (f" {key_display} ", "default on default"), f" {binding.description} "
+                (f" {key_display} ", "reverse" if hovered else "default on default"),
+                f" {binding.description} ",
+                meta={"@click": f"app.press('{binding.key}')", "key": binding.key},
             )
-            key_text.stylize(Style(meta={"@click": f"app.press('{binding.key}')"}))
             text.append_text(key_text)
-            # text.append(f" {key_display} ", style="default on default")
-            # text.append(f" {binding.description} ")
-
-        # text.stylize(Style(meta={"@enter": "app.bell()"}))
         return text
+
+    def render(self) -> RenderableType:
+        if self._key_text is None:
+            self._key_text = self.make_key_text()
+        return self._key_text
+
+    async def on_mouse_move(self, event: events.MouseMove) -> None:
+        """Store any key we are moving over."""
+        self.highlight_key = event.style.meta.get("key")
+
+    async def on_leave(self, event: events.MouseMove) -> None:
+        """Clear any highlight when the mouse leave the widget"""
+        self.highlight_key = None
