@@ -24,6 +24,14 @@ class Footer(Widget):
         """If highlight key changes we need to regenerate the text."""
         self._key_text = None
 
+    async def on_mouse_move(self, event: events.MouseMove) -> None:
+        """Store any key we are moving over."""
+        self.highlight_key = event.style.meta.get("key")
+
+    async def on_leave(self, event: events.Leave) -> None:
+        """Clear any highlight when the mouse leave the widget"""
+        self.highlight_key = None
+
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "keys", self.keys
 
@@ -55,11 +63,3 @@ class Footer(Widget):
         if self._key_text is None:
             self._key_text = self.make_key_text()
         return self._key_text
-
-    async def on_mouse_move(self, event: events.MouseMove) -> None:
-        """Store any key we are moving over."""
-        self.highlight_key = event.style.meta.get("key")
-
-    async def on_leave(self, event: events.MouseMove) -> None:
-        """Clear any highlight when the mouse leave the widget"""
-        self.highlight_key = None

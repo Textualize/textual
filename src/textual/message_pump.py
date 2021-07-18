@@ -59,7 +59,7 @@ class MessagePump:
         return self._parent and not self._parent._closed and not self._parent._closing
 
     def log(self, *args) -> None:
-        return self.app.log(args)
+        return self.app.log(*args)
 
     def set_parent(self, parent: MessagePump) -> None:
         self._parent = parent

@@ -53,7 +53,7 @@ class DockView(View):
     ) -> GridLayout:
 
         grid = GridLayout(gap=gap, gutter=gutter, align=align)
-        view = View(layout=grid)
+        view = View(layout=grid, name=name)
         dock = Dock(edge, (view,), z)
         assert isinstance(self.layout, DockLayout)
         self.layout.docks.append(dock)
@@ -64,4 +64,5 @@ class DockView(View):
                 await self.mount(view)
             else:
                 await self.mount(**{name: view})
+        await self.refresh_layout()
         return grid
