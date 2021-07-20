@@ -33,11 +33,10 @@ class DockView(View):
         for widget in widgets:
             if size is not do_not_set:
                 widget.layout_size = cast(Optional[int], size)
-            if not self.is_mounted(widget):
-                if name is None:
-                    await self.mount(widget)
-                else:
-                    await self.mount(**{name: widget})
+            if name is None:
+                await self.mount(widget)
+            else:
+                await self.mount(**{name: widget})
         await self.refresh_layout()
 
     async def dock_grid(
@@ -59,10 +58,9 @@ class DockView(View):
         self.layout.docks.append(dock)
         if size is not do_not_set:
             view.layout_size = cast(Optional[int], size)
-        if not self.is_mounted(view):
-            if name is None:
-                await self.mount(view)
-            else:
-                await self.mount(**{name: view})
+        if name is None:
+            await self.mount(view)
+        else:
+            await self.mount(**{name: view})
         await self.refresh_layout()
         return grid

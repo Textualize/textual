@@ -31,6 +31,7 @@ class Timer:
         callback: TimerCallback | None = None,
         repeat: int = None,
         skip: bool = False,
+        pause: bool = False,
     ) -> None:
         self._target_repr = repr(event_target)
         self._target = weakref.ref(event_target)
@@ -43,7 +44,8 @@ class Timer:
         self._skip = skip
         self._stop_event = Event()
         self._active = Event()
-        self._active.set()
+        if not pause:
+            self._active.set()
 
     def __rich_repr__(self) -> RichReprResult:
         yield self._interval

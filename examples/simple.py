@@ -12,7 +12,7 @@ class MyApp(App):
         await self.bind("b", "view.toggle('sidebar')", "Toggle sidebar")
         await self.bind("q", "quit", "Quit")
 
-    async def on_startup(self, event: events.Startup) -> None:
+    async def on_mount(self, event: events.Mount) -> None:
 
         body = ScrollView()
 

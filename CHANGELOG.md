@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added hover over and mouse click to activate keys in footer
 
+### Changed
+
+- Simplified events. Remove Startup event (use Mount)
+
 ## [0.1.8] - 2021-07-17
 
 ### Fixed

@@ -220,7 +220,7 @@ if __name__ == "__main__":
     from .app import App
 
     class MyApp(App):
-        async def on_startup(self, event: events.Startup) -> None:
+        async def on_mount(self, event: events.Mount) -> None:
             self.set_timer(5, callback=self.close_messages)
 
     MyApp.run()

@@ -43,6 +43,15 @@ class Reactive(Generic[ReactiveType]):
         self._first = True
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
+
+        if hasattr(owner, f"compute_{name}"):
+            try:
+                computes = getattr(owner, "__computes")
+            except AttributeError:
+                computes = []
+                setattr(owner, "__computes", computes)
+            computes.append(name)
+
         self.name = name
         self.internal_name = f"__{name}"
         setattr(owner, self.internal_name, self._default)
@@ -76,18 +85,41 @@ class Reactive(Generic[ReactiveType]):
         internal_name = f"__{name}"
         value = getattr(obj, internal_name)
 
+        async def update_watcher(
+            obj: Reactable, watch_function: Callable, value
+        ) -> None:
+            _rich_traceback_guard = True
+            await watch_function(value)
+            await Reactive.compute(obj)
+
         watch_function = getattr(obj, f"watch_{name}", None)
         if callable(watch_function):
             obj.post_message_no_wait(
-                events.Callback(obj, callback=partial(watch_function, value))
+                events.Callback(
+                    obj, callback=partial(update_watcher, obj, watch_function, value)
+                )
             )
 
         watcher_name = f"__{name}_watchers"
         watchers = getattr(obj, watcher_name, ())
         for watcher in watchers:
             obj.post_message_no_wait(
-                events.Callback(obj, callback=partial(watcher, value))
+                events.Callback(
+                    obj, callback=partial(update_watcher, obj, watcher, value)
+                )
             )
+
+    @classmethod
+    async def compute(cls, obj: Reactable) -> None:
+        _rich_traceback_guard = True
+        computes = getattr(obj, "__computes", [])
+        for compute in computes:
+            try:
+                compute_method = getattr(obj, f"compute_{compute}")
+            except AttributeError:
+                continue
+            value = await compute_method()
+            setattr(obj, compute, value)
 
 
 def watch(

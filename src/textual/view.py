@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from itertools import chain
-from typing import Iterable, TYPE_CHECKING
+from typing import Callable, Iterable, ClassVar, TYPE_CHECKING
 
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 import rich.repr
@@ -24,8 +24,11 @@ if TYPE_CHECKING:
 
 @rich.repr.auto
 class View(Widget):
+
+    layout_factory: ClassVar[Callable[[], Layout]]
+
     def __init__(self, layout: Layout = None, name: str | None = None) -> None:
-        self.layout: Layout = layout or DockLayout()
+        self.layout: Layout = layout or self.layout_factory()
         self.mouse_over: Widget | None = None
         self.focused: Widget | None = None
         self.size = Dimensions(0, 0)
@@ -33,7 +36,14 @@ class View(Widget):
         self.named_widgets: dict[str, Widget] = {}
         self._mouse_style: Style = Style()
         self._mouse_widget: Widget | None = None
-        super().__init__(name)
+        super().__init__(name=name)
+
+    def __init_subclass__(
+        cls, layout: Callable[[], Layout] | None = None, **kwargs
+    ) -> None:
+        if layout is not None:
+            cls.layout_factory = layout
+        super().__init_subclass__(**kwargs)
 
     background: Reactive[str] = Reactive("")
 
@@ -90,12 +100,10 @@ class View(Widget):
         )
         for name, widget in name_widgets:
             name = name or widget.name
-            if name:
-                self.named_widgets[name] = widget
-            await self.app.register(widget)
-            widget.set_parent(self)
-            await widget.post_message(events.Mount(sender=self))
-            self.widgets.add(widget)
+            if self.app.register(widget, self):
+                if name:
+                    self.named_widgets[name] = widget
+                self.widgets.add(widget)
 
         self.require_repaint()
 

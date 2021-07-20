@@ -175,10 +175,9 @@ class App(MessagePump):
         asyncio.run(run_app())
 
     async def push_view(self, view: ViewType) -> ViewType:
-        await self.register(view)
-        view.set_parent(self)
+        self.register(view, self)
         self._view_stack.append(view)
-        await view.post_message(events.Mount(sender=self))
+        # await view.post_message(events.Mount(sender=self))
         return view
 
     def on_keyboard_interupt(self) -> None:
@@ -251,6 +250,7 @@ class App(MessagePump):
         log(f"driver={self.driver_class}")
 
         await self.dispatch_message(events.Load(sender=self))
+        await self.post_message(events.Mount(self))
         await self.push_view(DockView())
 
         try:
@@ -262,7 +262,6 @@ class App(MessagePump):
 
             try:
                 self.title = self._title
-                await self.post_message(events.Startup(sender=self))
                 self.require_layout()
                 await self.animator.start()
 
@@ -305,10 +304,14 @@ class App(MessagePump):
     async def message_update(self, message: Message) -> None:
         self.refresh()
 
-    async def register(self, child: MessagePump) -> None:
-        self.children.add(child)
-        child.start_messages()
-        await child.post_message(events.Created(sender=self))
+    def register(self, child: MessagePump, parent: MessagePump) -> bool:
+        if child not in self.children:
+            self.children.add(child)
+            child.set_parent(parent)
+            child.start_messages()
+            child.post_message_no_wait(events.Mount(sender=parent))
+            return True
+        return False
 
     async def close_all(self) -> None:
         while self.children:
@@ -465,21 +468,12 @@ if __name__ == "__main__":
 
     import os
 
-    # from rich.console import Console
-
-    # console = Console()
-    # console.print(scroll_bar, height=10)
-    # console.print(scroll_view, height=20)
-
-    # import sys
-
-    # sys.exit()
-
     class MyApp(App):
         """Just a test app."""
 
         async def on_load(self, event: events.Load) -> None:
-            await self.bind("q,ctrl+c", "quit", "Exit app")
+            await self.bind("ctrl+c", "quit", show=False)
+            await self.bind("q", "quit", "Quit")
             await self.bind("x", "bang", "Test error handling")
             await self.bind("b", "toggle_sidebar", "Toggle sidebar")
 
@@ -491,7 +485,7 @@ if __name__ == "__main__":
         async def action_toggle_sidebar(self) -> None:
             self.show_bar = not self.show_bar
 
-        async def on_startup(self, event: events.Startup) -> None:
+        async def on_mount(self, event: events.Mount) -> None:
 
             view = await self.push_view(DockView())
 
@@ -504,47 +498,8 @@ if __name__ == "__main__":
             await view.dock(self.bar, edge="left", size=40, z=1)
             self.bar.layout_offset_x = -40
 
-            # await view.dock(Placeholder(), Placeholder(), edge="top")
-
             sub_view = DockView()
             await sub_view.dock(Placeholder(), Placeholder(), edge="top")
             await view.dock(sub_view, edge="left")
 
-            # self.refresh()
-
-            # footer = Footer()
-            # footer.add_key("b", "Toggle sidebar")
-            # footer.add_key("q", "Quit")
-
-            # readme_path = os.path.join(
-            #     os.path.dirname(os.path.abspath(__file__)), "richreadme.md"
-            # )
-            # # scroll_view = LayoutView()
-            # # scroll_bar = ScrollBar()
-            # with open(readme_path, "rt") as fh:
-            #     readme = Markdown(fh.read(), hyperlinks=True, code_theme="fruity")
-            # # scroll_view.layout.split_column(
-            # #     Layout(readme, ratio=1), Layout(scroll_bar, ratio=2, size=2)
-            # # )
-            # layout = Layout()
-            # layout.split_column(Layout(name="l1"), Layout(name="l2"))
-            # # sub_view = LayoutView(name="Sub view", layout=layout)
-
-            # sub_view = ScrollView(readme)
-
-            # # await sub_view.mount_all(l1=Placeholder(), l2=Placeholder())
-
-            # await self.view.mount_all(
-            #     header=Header(self.title),
-            #     left=Placeholder(),
-            #     body=sub_view,
-            #     footer=footer,
-            # )
-
-    # app = MyApp()
-    # from rich.console import Console
-
-    # console = Console()
-    # console.print(app._view_stack[0], height=30)
-    # console.print(app._view_stack)
     MyApp.run(log="textual.log")

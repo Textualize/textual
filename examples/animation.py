@@ -22,7 +22,7 @@ class SmoothApp(App):
         """Called when user hits b key."""
         self.show_bar = not self.show_bar
 
-    async def on_startup(self, event: events.Startup) -> None:
+    async def on_mount(self, event: events.Mount) -> None:
         """Build layout here."""
         footer = Footer()
         self.bar = Placeholder(name="left")

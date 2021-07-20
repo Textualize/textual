@@ -13,6 +13,7 @@ from . import log
 from ._timer import Timer, TimerCallback
 from ._context import active_app
 from .message import Message
+from .reactive import Reactive
 
 
 if TYPE_CHECKING:

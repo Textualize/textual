@@ -9,7 +9,7 @@ class GridTest(App):
     async def on_load(self, event: events.Load) -> None:
         await self.bind("q,ctrl+c", "quit", "Quit")
 
-    async def on_startup(self, event: events.Startup) -> None:
+    async def on_mount(self, event: events.Mount) -> None:
 
         grid = await self.view.dock_grid()
 

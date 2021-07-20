@@ -64,23 +64,6 @@ class Load(Event):
     """
 
 
-class Startup(Event):
-    """
-    Sent when the app has enabled application mode.
-
-    Use this event to create views and widgets.
-
-    """
-
-
-class Created(Event):
-    pass
-
-
-class Updated(Event):
-    """Indicates the sender was updated and needs a refresh."""
-
-
 class Idle(Event):
     """Sent when there are no more items in the message queue.
 
