@@ -290,6 +290,7 @@ class GridLayout(Layout):
             size: int, edges: list[GridOptions], gap: int, repeat: bool
         ) -> Iterable[tuple[int, int]]:
             total_gap = gap * (len(edges) - 1)
+            tracks: Iterable[int]
             tracks = [
                 track if edge.max_size is None else min(edge.max_size, track)
                 for track, edge in zip(layout_resolve(size - total_gap, edges), edges)
@@ -314,7 +315,7 @@ class GridLayout(Layout):
 
             max_size = 0
             tracks: dict[str, tuple[int, int]] = {}
-            counts = defaultdict(int)
+            counts: dict[str, int] = defaultdict(int)
             if repeat:
                 names = []
                 for index, (name, (start, end)) in enumerate(spans):
@@ -373,7 +374,7 @@ class GridLayout(Layout):
             (col, row) for col, row in product(range(column_count), range(row_count))
         }
 
-        map = {}
+        map: dict[Widget, OrderedRegion] = {}
         order = 1
         from_corners = Region.from_corners
         gutter = Point(self.column_gutter, self.row_gutter)
