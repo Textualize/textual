@@ -20,7 +20,7 @@ class Header(Widget):
         self,
         *,
         tall: bool = True,
-        style: StyleType = "white on blue",
+        style: StyleType = "white on dark_green",
         clock: bool = True,
     ) -> None:
         super().__init__()

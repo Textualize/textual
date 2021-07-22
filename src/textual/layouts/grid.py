@@ -87,36 +87,26 @@ class GridLayout(Layout):
         return column_name not in self.hidden_columns
 
     def show_row(self, row_name: str, visible: bool = True) -> bool:
-        changed = False
+        changed = (row_name in self.hidden_rows) == visible
         if visible:
-            if not self.is_row_visible(row_name):
-                self.require_update()
-                changed = True
             self.hidden_rows.discard(row_name)
-            self.require_update()
         else:
-            if self.is_row_visible(row_name):
-                self.require_update()
-                changed = True
             self.hidden_rows.add(row_name)
+        if changed:
             self.require_update()
-        return changed
+            return True
+        return False
 
     def show_column(self, column_name: str, visible: bool = True) -> bool:
-        changed = False
+        changed = (column_name in self.hidden_columns) == visible
         if visible:
-            if not self.is_column_visible(column_name):
-                self.require_update()
-                changed = True
-            self.hidden_rows.discard(column_name)
-            self.require_update()
+            self.hidden_columns.discard(column_name)
         else:
-            if self.is_column_visible(column_name):
-                self.require_update()
-                changed = True
-            self.hidden_rows.add(column_name)
+            self.hidden_columns.add(column_name)
+        if changed:
             self.require_update()
-        return changed
+            return True
+        return False
 
     def add_column(
         self,

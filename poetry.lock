@@ -246,7 +246,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "mkdocs"
-version = "1.2.1"
+version = "1.2.2"
 description = "Project documentation with Markdown."
 category = "dev"
 optional = false
@@ -281,7 +281,7 @@ mkdocs = ">=1.1,<2.0"
 
 [[package]]
 name = "mkdocs-material"
-version = "7.1.11"
+version = "7.2.0"
 description = "A Material Design theme for MkDocs"
 category = "dev"
 optional = false
@@ -563,7 +563,7 @@ jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 type = "git"
 url = "git@github.com:willmcgugan/rich"
 reference = "link-id"
-resolved_reference = "f70eb3cac24f47443cdc571a05b255519deea9b4"
+resolved_reference = "8ae1d4ad0a36a84485acccd1768f1f2a122f2277"
 
 [[package]]
 name = "six"
@@ -815,16 +815,16 @@ mergedeep = [
     {file = "mergedeep-1.3.4.tar.gz", hash = "sha256:0096d52e9dad9939c3d975a774666af186eda617e6ca84df4c94dec30004f2a8"},
 ]
 mkdocs = [
-    {file = "mkdocs-1.2.1-py3-none-any.whl", hash = "sha256:11141126e5896dd9d279b3e4814eb488e409a0990fb638856255020406a8e2e7"},
-    {file = "mkdocs-1.2.1.tar.gz", hash = "sha256:6e0ea175366e3a50d334597b0bc042b8cebd512398cdd3f6f34842d0ef524905"},
+    {file = "mkdocs-1.2.2-py3-none-any.whl", hash = "sha256:d019ff8e17ec746afeb54eb9eb4112b5e959597aebc971da46a5c9486137f0ff"},
+    {file = "mkdocs-1.2.2.tar.gz", hash = "sha256:a334f5bd98ec960638511366eb8c5abc9c99b9083a0ed2401d8791b112d6b078"},
 ]
 mkdocs-autorefs = [
     {file = "mkdocs-autorefs-0.2.1.tar.gz", hash = "sha256:b8156d653ed91356e71675ce1fa1186d2b2c2085050012522895c9aa98fca3e5"},
     {file = "mkdocs_autorefs-0.2.1-py3-none-any.whl", hash = "sha256:f301b983a34259df90b3fcf7edc234b5e6c7065bd578781e66fd90b8cfbe76be"},
 ]
 mkdocs-material = [
-    {file = "mkdocs-material-7.1.11.tar.gz", hash = "sha256:cad3a693f1c28823370578e5b9c9aea418bddae0c7348ab734537391e9f2b1e5"},
-    {file = "mkdocs_material-7.1.11-py2.py3-none-any.whl", hash = "sha256:0bcfb788020b72b0ebf5b2722ddf89534acaed8c3feb39c2d6dda239b49dec45"},
+    {file = "mkdocs-material-7.2.0.tar.gz", hash = "sha256:9f43c5874e119b312a6f369ef363815c11f182b5cdeff4a3426615ebc4664ace"},
+    {file = "mkdocs_material-7.2.0-py2.py3-none-any.whl", hash = "sha256:8b3750857e168a9ca20be34890791817090b016248a39be45069fab5343f1dc0"},
 ]
 mkdocs-material-extensions = [
     {file = "mkdocs-material-extensions-1.0.1.tar.gz", hash = "sha256:6947fb7f5e4291e3c61405bad3539d81e0b3cd62ae0d66ced018128af509c68f"},

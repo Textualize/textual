@@ -392,6 +392,7 @@ class App(MessagePump):
         Args:
             action (str): Action encoded in a string.
         """
+        self.log(action, default_namespace)
         target, params = actions.parse(action)
         if "." in target:
             destination, action_name = target.split(".", 1)
@@ -400,7 +401,7 @@ class App(MessagePump):
             action_target = getattr(self, destination)
         else:
             action_target = default_namespace or self
-            action_name = action
+            action_name = target
 
         log("ACTION", action_target, action_name)
         await self.dispatch_action(action_target, action_name, params)
@@ -425,9 +426,14 @@ class App(MessagePump):
             modifiers, action = extract_handler_actions(event_name, style.meta)
         except NoHandler:
             return False
-        await self.action(
-            action, default_namespace=default_namespace, modifiers=modifiers
-        )
+        if isinstance(action, str):
+            await self.action(
+                action, default_namespace=default_namespace, modifiers=modifiers
+            )
+        elif isinstance(action, Callable):
+            await action()
+        else:
+            return False
         return True
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:

@@ -101,6 +101,7 @@ class Layout(ABC):
 
     def reflow(self, width: int, height: int) -> ReflowResult:
         self.reset()
+        log("   REFLOW", self)
 
         map = self.generate_map(width, height)
         self._require_update = False

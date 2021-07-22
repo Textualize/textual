@@ -27,7 +27,7 @@ class PageRender:
         width: int | None = None,
         height: int | None = None,
         style: StyleType = "",
-        padding: PaddingDimensions = 1,
+        padding: PaddingDimensions = (0, 0),
     ) -> None:
         self.page = page
         self.renderable = renderable

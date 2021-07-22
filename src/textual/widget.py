@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from functools import partial
 from logging import getLogger
 from typing import (
     Any,
+    Awaitable,
     TYPE_CHECKING,
     Callable,
     ClassVar,
@@ -85,7 +85,7 @@ class Widget(MessagePump):
     def __rich__(self) -> RenderableType:
         return self.render()
 
-    def watch(self, attribute_name, callback: Callable[[Any], None]) -> None:
+    def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
 
     @property

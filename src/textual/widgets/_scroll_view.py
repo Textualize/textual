@@ -78,6 +78,9 @@ class ScrollView(View):
         )
         await self.layout.mount_all(self)
 
+    def home(self) -> None:
+        self.x = self.y = 0
+
     def scroll_up(self) -> None:
         self.target_y += 1.5
         self.animate("y", self.target_y, easing="out_cubic", speed=80)
@@ -168,20 +171,14 @@ class ScrollView(View):
         self.y = self.validate_y(self.y)
         self.vscroll.virtual_size = self.page.virtual_size.height
         self.vscroll.window_size = self.size.height
-        update = False
+
+        assert isinstance(self.layout, GridLayout)
+
         if self.layout.show_column(
             "vscroll", self.page.virtual_size.height > self.size.height
         ):
-            update = True
-
-        self.hscroll.virtual_size = self.page.virtual_size.width
-        self.hscroll.window_size = self.size.width
-
+            self.require_layout()
         if self.layout.show_row(
             "hscroll", self.page.virtual_size.width > self.size.width
         ):
-            update = True
-
-        if update:
-            self.page.update()
-            self.layout.reset_update()
+            self.require_layout()
