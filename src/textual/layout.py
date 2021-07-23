@@ -26,7 +26,7 @@ PY38 = sys.version_info >= (3, 8)
 
 
 if TYPE_CHECKING:
-    from .widget import Widget, WidgetID
+    from .widget import Widget
     from .view import View
 
 
@@ -35,13 +35,24 @@ class NoWidget(Exception):
 
 
 @rich.repr.auto
-class OrderedRegion(NamedTuple):
+class RenderRegion(NamedTuple):
     region: Region
     order: tuple[int, int]
+    offset: Point
+    viewport: Region
+
+    def translate(self, offset: Point) -> RenderRegion:
+        region, order, self_offset, viewport = self
+        return RenderRegion(region, order, self_offset + offset, viewport)
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "region", self.region
         yield "order", self.order
+
+
+class OrderedRegion(NamedTuple):
+    region: Region
+    order: tuple[int, int]
 
 
 class ReflowResult(NamedTuple):
@@ -76,7 +87,7 @@ class Layout(ABC):
     """Responsible for arranging Widgets in a view."""
 
     def __init__(self) -> None:
-        self._layout_map: dict[Widget, OrderedRegion] = {}
+        self._layout_map: dict[Widget, RenderRegion] = {}
         self.width = 0
         self.height = 0
         self.renders: dict[Widget, tuple[Region, Lines]] = {}
@@ -99,19 +110,24 @@ class Layout(ABC):
             self.renders.clear()
             self._layout_map.clear()
 
-    def reflow(self, width: int, height: int) -> ReflowResult:
+    def reflow(self, width: int, height: int, viewport: Region) -> ReflowResult:
         self.reset()
-        log("   REFLOW", self)
 
-        map = self.generate_map(width, height)
+        map = self.generate_map(width, height, Point(0, 0), viewport)
         self._require_update = False
 
+        map = {
+            widget: OrderedRegion(region + offset, order)
+            for widget, (region, order, offset, _viewport) in map.items()
+        }
+
         # Filter out widgets that are off screen or zero area
-        screen_region = Region(0, 0, width, height)
+        log("VIEWPORT", viewport)
+        log(map)
         map = {
             widget: map_region
             for widget, map_region in map.items()
-            if map_region.region and screen_region.overlaps(map_region.region)
+            if map_region.region and viewport.overlaps(map_region.region)
         }
 
         old_widgets = set(self._layout_map.keys())
@@ -129,9 +145,11 @@ class Layout(ABC):
         new_renders = {
             widget: (region, self.renders[widget][1])
             for widget, (region, _order) in map.items()
-            if widget in self.renders
-            and self.renders[widget][0].size == region.size
-            and not widget.check_repaint()
+            if (
+                widget in self.renders
+                and self.renders[widget][0].size == region.size
+                and not widget.check_repaint()
+            )
         }
         self.renders = new_renders
 
@@ -152,19 +170,16 @@ class Layout(ABC):
 
     @abstractmethod
     def generate_map(
-        self, width: int, height: int, offset: Point = Point(0, 0)
-    ) -> dict[Widget, OrderedRegion]:
+        self, width: int, height: int, offset: Point, viewport: Region
+    ) -> dict[Widget, RenderRegion]:
         ...
 
     async def mount_all(self, view: "View") -> None:
         await view.mount(*self.get_widgets())
 
     @property
-    def map(self) -> dict[Widget, OrderedRegion]:
+    def map(self) -> dict[Widget, RenderRegion]:
         return self._layout_map
-
-    # def __iter__(self) -> Iterator[tuple[Widget, Region]]:
-    #     return self
 
     def __iter__(self) -> Iterator[tuple[Widget, Region]]:
         layers = sorted(
@@ -217,6 +232,13 @@ class Layout(ABC):
 
     @property
     def cuts(self) -> list[list[int]]:
+        """Get vertical cuts.
+
+        A cut is every point on a line where a widget starts or ends.
+
+        Returns:
+            list[list[int]]: A list of cuts for every line.
+        """
         if self._cuts is not None:
             return self._cuts
         width = self.width
@@ -302,10 +324,8 @@ class Layout(ABC):
         """Render a layout.
 
         Args:
-            layout_map (dict[WidgetID, MapRegion]): A layout map.
             console (Console): Console instance.
-            width (int): Width
-            height (int): Height
+            clip (Optional[Region]): Region to clip to.
 
         Returns:
             SegmentLines: A renderable

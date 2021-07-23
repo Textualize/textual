@@ -184,6 +184,13 @@ class Region(NamedTuple):
             return Region(x + ox, y + oy, width, height)
         return NotImplemented
 
+    def __sub__(self, other: Any) -> Region:
+        if isinstance(other, tuple):
+            ox, oy = other
+            x, y, width, height = self
+            return Region(x - ox, y - oy, width, height)
+        return NotImplemented
+
     def overlaps(self, other: Region) -> bool:
         """Check if another region overlaps this region.
 

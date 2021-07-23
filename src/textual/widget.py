@@ -30,9 +30,6 @@ if TYPE_CHECKING:
     from .app import App
     from .view import View
 
-
-WidgetID = NewType("WidgetID", int)
-
 log = getLogger("rich")
 
 
@@ -47,8 +44,6 @@ class Widget(MessagePump):
         Widget._counts.setdefault(class_name, 0)
         Widget._counts[class_name] += 1
         _count = self._counts[class_name]
-        self.id: WidgetID = cast(WidgetID, Widget._id)
-        Widget._id += 1
 
         self.name = name or f"{class_name}#{_count}"
 

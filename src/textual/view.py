@@ -46,9 +46,34 @@ class View(Widget):
         super().__init_subclass__(**kwargs)
 
     background: Reactive[str] = Reactive("")
+    offset_x: Reactive[int] = Reactive(0)
+    offset_y: Reactive[int] = Reactive(0)
+    virtual_width: Reactive[int | None] = Reactive(None)
+    virtual_height: Reactive[int | None] = Reactive(None)
 
     async def watch_background(self, value: str) -> None:
         self.layout.background = value
+
+    @property
+    def virtual_size(self) -> Dimensions:
+        virtual_width = self.virtual_width
+        virtual_height = self.virtual_height
+        return Dimensions(
+            (virtual_width if virtual_width is not None else self.size.width),
+            (virtual_height if virtual_height is not None else self.size.height),
+        )
+
+    @property
+    def offset(self) -> Point:
+        return Point(self.offset_x, self.offset_y)
+
+    @property
+    def viewport(self) -> Region:
+        virtual_width = self.virtual_width
+        virtual_height = self.virtual_height
+        width = virtual_width if virtual_width is not None else self.size.width
+        height = virtual_height if virtual_height is not None else self.size.height
+        return Region(self.offset_x, self.offset_y, width, height)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -113,7 +138,11 @@ class View(Widget):
             return
 
         width, height = self.console.size
-        hidden, shown, resized = self.layout.reflow(width, height)
+        virtual_width, virtual_height = self.virtual_size
+        viewport = Region(self.offset_x, self.offset_y, width, height)
+        hidden, shown, resized = self.layout.reflow(
+            virtual_width, virtual_height, viewport
+        )
         self.app.refresh()
 
         for widget in hidden:

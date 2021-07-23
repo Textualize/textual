@@ -11,7 +11,7 @@ from typing import Iterable, NamedTuple
 from .._layout_resolve import layout_resolve
 
 from ..geometry import Dimensions, Point, Region
-from ..layout import Layout, OrderedRegion
+from ..layout import Layout, RenderRegion
 from ..view import View
 from ..widget import Widget
 
@@ -263,8 +263,8 @@ class GridLayout(Layout):
         return self.widgets.keys()
 
     def generate_map(
-        self, width: int, height: int, offset: Point = Point(0, 0)
-    ) -> dict[Widget, OrderedRegion]:
+        self, width: int, height: int, offset: Point, viewport: Region
+    ) -> dict[Widget, RenderRegion]:
         """Generate a map that associates widgets with their location on screen.
 
         Args:
@@ -325,11 +325,11 @@ class GridLayout(Layout):
             return names, tracks, len(spans), max_size
 
         def add_widget(widget: Widget, region: Region, order: tuple[int, int]):
-            region = region + offset + widget.layout_offset
-            map[widget] = OrderedRegion(region, order)
+            region = region + widget.layout_offset
+            map[widget] = RenderRegion(region, order, offset, viewport)
             if isinstance(widget, View):
                 sub_map = widget.layout.generate_map(
-                    region.width, region.height, offset=region.origin
+                    region.width, region.height, region.origin + offset, widget.viewport
                 )
                 map.update(sub_map)
 
@@ -364,7 +364,7 @@ class GridLayout(Layout):
             (col, row) for col, row in product(range(column_count), range(row_count))
         }
 
-        map: dict[Widget, OrderedRegion] = {}
+        map: dict[Widget, RenderRegion] = {}
         order = 1
         from_corners = Region.from_corners
         gutter = Point(self.column_gutter, self.row_gutter)
