@@ -110,10 +110,12 @@ class Layout(ABC):
             self.renders.clear()
             self._layout_map.clear()
 
-    def reflow(self, width: int, height: int, viewport: Region) -> ReflowResult:
+    def reflow(
+        self, console: Console, width: int, height: int, viewport: Region
+    ) -> ReflowResult:
         self.reset()
 
-        map = self.generate_map(width, height, Point(0, 0), viewport)
+        map = self.generate_map(console, width, height, Point(0, 0), viewport)
         self._require_update = False
 
         map = {
@@ -170,7 +172,7 @@ class Layout(ABC):
 
     @abstractmethod
     def generate_map(
-        self, width: int, height: int, offset: Point, viewport: Region
+        self, console: Console, width: int, height: int, offset: Point, viewport: Region
     ) -> dict[Widget, RenderRegion]:
         ...
 

@@ -8,8 +8,9 @@ from itertools import cycle, product
 import sys
 from typing import Iterable, NamedTuple
 
-from .._layout_resolve import layout_resolve
+from rich.console import Console
 
+from .._layout_resolve import layout_resolve
 from ..geometry import Dimensions, Point, Region
 from ..layout import Layout, RenderRegion
 from ..view import View
@@ -263,7 +264,7 @@ class GridLayout(Layout):
         return self.widgets.keys()
 
     def generate_map(
-        self, width: int, height: int, offset: Point, viewport: Region
+        self, console: Console, width: int, height: int, offset: Point, viewport: Region
     ) -> dict[Widget, RenderRegion]:
         """Generate a map that associates widgets with their location on screen.
 

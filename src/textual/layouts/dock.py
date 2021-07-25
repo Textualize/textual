@@ -5,6 +5,8 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Iterable, TYPE_CHECKING, Sequence
 
+from rich.console import Console
+
 from .._layout_resolve import layout_resolve
 from ..geometry import Region, Point
 from ..layout import Layout, RenderRegion
@@ -46,7 +48,7 @@ class DockLayout(Layout):
             yield from dock.widgets
 
     def generate_map(
-        self, width: int, height: int, offset: Point, viewport: Region
+        self, console: Console, width: int, height: int, offset: Point, viewport: Region
     ) -> dict[Widget, RenderRegion]:
         from ..view import View
 
@@ -60,7 +62,11 @@ class DockLayout(Layout):
             map[widget] = RenderRegion(region, order, offset, viewport)
             if isinstance(widget, View):
                 sub_map = widget.layout.generate_map(
-                    region.width, region.height, region.origin + offset, widget.viewport
+                    console,
+                    region.width,
+                    region.height,
+                    region.origin + offset,
+                    widget.viewport,
                 )
                 map.update(sub_map)
 

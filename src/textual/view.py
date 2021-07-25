@@ -10,7 +10,6 @@ from rich.style import Style
 from . import events
 from . import log
 from .layout import Layout, NoWidget
-from .layouts.dock import DockLayout
 from .geometry import Dimensions, Point, Region
 from .messages import UpdateMessage, LayoutMessage
 from .reactive import Reactive, watch
@@ -141,7 +140,7 @@ class View(Widget):
         virtual_width, virtual_height = self.virtual_size
         viewport = Region(self.offset_x, self.offset_y, width, height)
         hidden, shown, resized = self.layout.reflow(
-            virtual_width, virtual_height, viewport
+            self.console, virtual_width, virtual_height, viewport
         )
         self.app.refresh()
 
