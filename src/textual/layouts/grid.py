@@ -264,7 +264,7 @@ class GridLayout(Layout):
         return self.widgets.keys()
 
     def generate_map(
-        self, console: Console, width: int, height: int, offset: Point, viewport: Region
+        self, console: Console, size: Dimensions, offset: Point
     ) -> dict[Widget, RenderRegion]:
         """Generate a map that associates widgets with their location on screen.
 
@@ -276,6 +276,7 @@ class GridLayout(Layout):
         Returns:
             dict[Widget, OrderedRegion]: [description]
         """
+        width, height = size
 
         def resolve(
             size: int, edges: list[GridOptions], gap: int, repeat: bool
@@ -327,10 +328,10 @@ class GridLayout(Layout):
 
         def add_widget(widget: Widget, region: Region, order: tuple[int, int]):
             region = region + widget.layout_offset
-            map[widget] = RenderRegion(region, order, offset, viewport)
+            map[widget] = RenderRegion(region, order, offset)
             if isinstance(widget, View):
                 sub_map = widget.layout.generate_map(
-                    region.width, region.height, region.origin + offset, widget.viewport
+                    region.width, region.height, region.origin + offset
                 )
                 map.update(sub_map)
 

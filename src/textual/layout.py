@@ -19,7 +19,7 @@ from . import log
 from ._loop import loop_last
 from ._types import Lines
 
-from .geometry import clamp, Region, Point
+from .geometry import clamp, Region, Point, Dimensions
 
 
 PY38 = sys.version_info >= (3, 8)
@@ -39,15 +39,20 @@ class RenderRegion(NamedTuple):
     region: Region
     order: tuple[int, int]
     offset: Point
-    viewport: Region
 
     def translate(self, offset: Point) -> RenderRegion:
-        region, order, self_offset, viewport = self
-        return RenderRegion(region, order, self_offset + offset, viewport)
+        region, order, self_offset = self
+        return RenderRegion(region, order, self_offset + offset)
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "region", self.region
         yield "order", self.order
+
+
+@dataclass
+class WidgetMap:
+    virtual_size: Dimensions
+    widgets: dict[Widget, RenderRegion]
 
 
 class OrderedRegion(NamedTuple):
@@ -115,12 +120,12 @@ class Layout(ABC):
     ) -> ReflowResult:
         self.reset()
 
-        map = self.generate_map(console, width, height, Point(0, 0), viewport)
+        map = self.generate_map(console, Dimensions(width, height), Point(0, 0))
         self._require_update = False
 
         map = {
             widget: OrderedRegion(region + offset, order)
-            for widget, (region, order, offset, _viewport) in map.items()
+            for widget, (region, order, offset) in map.items()
         }
 
         # Filter out widgets that are off screen or zero area
@@ -172,7 +177,10 @@ class Layout(ABC):
 
     @abstractmethod
     def generate_map(
-        self, console: Console, width: int, height: int, offset: Point, viewport: Region
+        self,
+        console: Console,
+        size: Dimensions,
+        offset: Point,
     ) -> dict[Widget, RenderRegion]:
         ...
 

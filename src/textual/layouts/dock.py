@@ -8,7 +8,7 @@ from typing import Iterable, TYPE_CHECKING, Sequence
 from rich.console import Console
 
 from .._layout_resolve import layout_resolve
-from ..geometry import Region, Point
+from ..geometry import Region, Point, Dimensions
 from ..layout import Layout, RenderRegion
 
 if sys.version_info >= (3, 8):
@@ -48,25 +48,23 @@ class DockLayout(Layout):
             yield from dock.widgets
 
     def generate_map(
-        self, console: Console, width: int, height: int, offset: Point, viewport: Region
+        self, console: Console, size: Dimensions, offset: Point
     ) -> dict[Widget, RenderRegion]:
         from ..view import View
 
         map: dict[Widget, RenderRegion] = {}
-
+        width, height = size
         layout_region = Region(0, 0, width, height)
         layers: dict[int, Region] = defaultdict(lambda: layout_region)
 
         def add_widget(widget: Widget, region: Region, order: tuple[int, int]):
             region = region + widget.layout_offset
-            map[widget] = RenderRegion(region, order, offset, viewport)
+            map[widget] = RenderRegion(region, order, offset)
             if isinstance(widget, View):
                 sub_map = widget.layout.generate_map(
                     console,
-                    region.width,
-                    region.height,
+                    Dimensions(region.width, region.height),
                     region.origin + offset,
-                    widget.viewport,
                 )
                 map.update(sub_map)
 
