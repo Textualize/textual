@@ -9,11 +9,6 @@ from .geometry import Region, Dimensions
 from .widget import Widget
 
 
-class Order(NamedTuple):
-    layer: int
-    z: int
-
-
 class RenderRegion(NamedTuple):
     region: Region
     order: tuple[int, ...]
@@ -22,8 +17,12 @@ class RenderRegion(NamedTuple):
 
 class LayoutMap:
     def __init__(self, size: Dimensions) -> None:
-        self.size = size
+        self.region = size.region
         self.widgets: dict[Widget, RenderRegion] = {}
+
+    @property
+    def size(self) -> Dimensions:
+        return self.region.size
 
     def __getitem__(self, widget: Widget) -> RenderRegion:
         return self.widgets[widget]
@@ -52,6 +51,7 @@ class LayoutMap:
 
         region += widget.layout_offset
         self.widgets[widget] = RenderRegion(region, order, clip)
+        self.region = self.region.union(region.intersection(clip))
 
         if isinstance(widget, View):
             sub_map = widget.layout.generate_map(console, region.size, region)

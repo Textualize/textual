@@ -8,9 +8,9 @@ from typing import Iterable, TYPE_CHECKING, Sequence
 from rich.console import Console
 
 from .._layout_resolve import layout_resolve
-from ..geometry import Region, Point, Dimensions
+from ..geometry import Region, Dimensions
 from ..layout import Layout
-from ..layout_map import LayoutMap, Order
+from ..layout_map import LayoutMap
 
 if sys.version_info >= (3, 8):
     from typing import Literal

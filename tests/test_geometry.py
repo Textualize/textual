@@ -176,3 +176,7 @@ def test_region_intersection():
     )
 
     assert not Region(10, 10, 20, 30).intersection(Region(50, 50, 100, 200))
+
+
+def test_region_union():
+    assert Region(5, 5, 10, 10).union(Region(20, 30, 10, 5)) == Region(5, 5, 25, 30)

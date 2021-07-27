@@ -45,40 +45,46 @@ class View(Widget):
         super().__init_subclass__(**kwargs)
 
     background: Reactive[str] = Reactive("")
-    offset_x: Reactive[int] = Reactive(0)
-    offset_y: Reactive[int] = Reactive(0)
-    virtual_width: Reactive[int | None] = Reactive(None)
-    virtual_height: Reactive[int | None] = Reactive(None)
 
     async def watch_background(self, value: str) -> None:
         self.layout.background = value
 
+    scroll_x: Reactive[int] = Reactive(0)
+    scroll_y: Reactive[int] = Reactive(0)
+
     @property
     def virtual_size(self) -> Dimensions:
-        virtual_width = self.virtual_width
-        virtual_height = self.virtual_height
-        return Dimensions(
-            (virtual_width if virtual_width is not None else self.size.width),
-            (virtual_height if virtual_height is not None else self.size.height),
-        )
+        return self.layout.map.size
 
-    @virtual_size.setter
-    def virtual_size(self, size: tuple[int, int]) -> None:
-        width, height = size
-        self.virtual_width = width
-        self.virtual_height = height
+    # virtual_width: Reactive[int | None] = Reactive(None)
+    # virtual_height: Reactive[int | None] = Reactive(None)
 
-    @property
-    def offset(self) -> Point:
-        return Point(self.offset_x, self.offset_y)
+    # @property
+    # def virtual_size(self) -> Dimensions:
+    #     virtual_width = self.virtual_width
+    #     virtual_height = self.virtual_height
+    #     return Dimensions(
+    #         (virtual_width if virtual_width is not None else self.size.width),
+    #         (virtual_height if virtual_height is not None else self.size.height),
+    #     )
 
-    @property
-    def viewport(self) -> Region:
-        virtual_width = self.virtual_width
-        virtual_height = self.virtual_height
-        width = virtual_width if virtual_width is not None else self.size.width
-        height = virtual_height if virtual_height is not None else self.size.height
-        return Region(self.offset_x, self.offset_y, width, height)
+    # @virtual_size.setter
+    # def virtual_size(self, size: tuple[int, int]) -> None:
+    #     width, height = size
+    #     self.virtual_width = width
+    #     self.virtual_height = height
+
+    # @property
+    # def offset(self) -> Point:
+    #     return Point(self.offset_x, self.offset_y)
+
+    # @property
+    # def viewport(self) -> Region:
+    #     virtual_width = self.virtual_width
+    #     virtual_height = self.virtual_height
+    #     width = virtual_width if virtual_width is not None else self.size.width
+    #     height = virtual_height if virtual_height is not None else self.size.height
+    #     return Region(self.offset_x, self.offset_y, width, height)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -143,10 +149,10 @@ class View(Widget):
             return
 
         width, height = self.console.size
-        virtual_width, virtual_height = self.virtual_size
-        viewport = Region(self.offset_x, self.offset_y, width, height)
+        # virtual_width, virtual_height = self.virtual_size
+        viewport = Region(self.scroll_x, self.scroll_y, width, height)
         hidden, shown, resized = self.layout.reflow(
-            self.console, virtual_width, virtual_height, viewport
+            self.console, width, height, viewport
         )
         self.app.refresh()
 

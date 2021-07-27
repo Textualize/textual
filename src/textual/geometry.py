@@ -331,3 +331,20 @@ class Region(NamedTuple):
             _clamp(y2, cy1, cy2),
         )
         return new_region
+
+    def union(self, region: Region) -> Region:
+        """Get a new region that contains both regions.
+
+        Args:
+            region (Region): [description]
+
+        Returns:
+            Region: [description]
+        """
+        x1, y1, x2, y2 = self.corners
+        ox1, oy1, ox2, oy2 = region.corners
+
+        union_region = Region.from_corners(
+            min(x1, ox1), min(y1, oy1), max(x2, ox2), max(y2, oy2)
+        )
+        return union_region

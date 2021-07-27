@@ -1,58 +1,60 @@
 from __future__ import annotations
 
+from typing import Iterable
+
 from rich.console import Console
 
 
-from ..geometry import Point, Region, Dimensions
+from ..geometry import Region, Dimensions
 from ..layout import Layout
+from ..layout_map import LayoutMap
 from ..widget import Widget
-from ..view import View
 
 
 class VerticalLayout(Layout):
-    def __init__(self, gutter: tuple[int, int] = (0, 1)):
-        self.gutter = gutter or (0, 0)
+    def __init__(self, *, z: int = 0, gutter: tuple[int, int] | None = None):
+        self.z = z
+        self.gutter = gutter or (0, 1)
         self._widgets: list[Widget] = []
         super().__init__()
 
     def add(self, widget: Widget) -> None:
         self._widgets.append(widget)
 
+    def clear(self) -> None:
+        del self._widgets[:]
+
+    def get_widgets(self) -> Iterable[Widget]:
+        return self._widgets
+
     def generate_map(
         self, console: Console, size: Dimensions, viewport: Region
-    ) -> WidgetMap:
+    ) -> LayoutMap:
         offset = viewport.origin
+        index = 0
         width, height = size
         gutter_width, gutter_height = self.gutter
         render_width = width - gutter_width * 2
         x = gutter_width
         y = gutter_height
-        map: dict[Widget, RenderRegion] = {}
+        map: LayoutMap = LayoutMap(size)
 
-        def add_widget(widget: Widget, region: Region):
-            order = (0, 0)
-            region = region + widget.layout_offset
-            map[widget] = RenderRegion(region, order, offset)
-            if isinstance(widget, View):
-                sub_map = widget.layout.generate_map(
-                    console,
-                    Dimensions(region.width, region.height),
-                    region.origin + offset,
-                )
-                map.update(sub_map)
+        def add_widget(widget: Widget, region: Region, clip: Region) -> None:
+            map.add_widget(console, widget, region, (self.z, index), clip)
 
         for widget in self._widgets:
-            region_lines = self.renders.get(widget)
-            if region_lines is None:
+
+            try:
+                region, clip, lines = self.renders[widget]
+            except KeyError:
                 renderable = widget.render()
                 lines = console.render_lines(
                     renderable, console.options.update_width(render_width)
                 )
                 region = Region(x, y, render_width, len(lines))
-                add_widget(widget, region)
+                add_widget(widget, region, viewport)
             else:
-                region, lines = region_lines
-                add_widget(widget, Region(x, y, region.width, region.height))
+                add_widget(widget, Region(x, y, region.width, region.height), clip)
                 y += region.height + gutter_height
-        widget_map = WidgetMap(Dimensions(width, y), map)
-        return widget_map
+
+        return map

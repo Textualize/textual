@@ -46,23 +46,23 @@ class ScrollView(View):
     target_y: Reactive[float] = Reactive(0, repaint=False)
 
     def validate_x(self, value: float) -> float:
-        return clamp(value, 0, self.page.contents_size.width - self.size.width)
+        return clamp(value, 0, self.page.virtual_size.width - self.size.width)
 
     def validate_target_x(self, value: float) -> float:
-        return clamp(value, 0, self.page.contents_size.width - self.size.width)
+        return clamp(value, 0, self.page.virtual_size.width - self.size.width)
 
     def validate_y(self, value: float) -> float:
-        return clamp(value, 0, self.page.contents_size.height - self.size.height)
+        return clamp(value, 0, self.page.virtual_size.height - self.size.height)
 
     def validate_target_y(self, value: float) -> float:
-        return clamp(value, 0, self.page.contents_size.height - self.size.height)
+        return clamp(value, 0, self.page.virtual_size.height - self.size.height)
 
     async def watch_x(self, new_value: float) -> None:
-        self.page.x = round(new_value)
+        self.page.scroll_x = round(new_value)
         self.hscroll.position = round(new_value)
 
     async def watch_y(self, new_value: float) -> None:
-        self.page.y = round(new_value)
+        self.page.scroll_y = round(new_value)
         self.vscroll.position = round(new_value)
 
     async def update(self, renderabe: RenderableType) -> None:
@@ -132,7 +132,7 @@ class ScrollView(View):
 
     async def key_end(self) -> None:
         self.target_x = 0
-        self.target_y = self.page.contents_size.height - self.size.height
+        self.target_y = self.page.virtual_size.height - self.size.height
         self.animate("x", self.target_x, duration=1, easing="out_cubic")
         self.animate("y", self.target_y, duration=1, easing="out_cubic")
 

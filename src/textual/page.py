@@ -101,24 +101,20 @@ class Page(Widget):
         self._page = PageRender(self, renderable, style=style)
         super().__init__(name=name)
 
-    x: Reactive[int] = Reactive(0)
-    y: Reactive[int] = Reactive(0)
+    scroll_x: Reactive[int] = Reactive(0)
+    scroll_y: Reactive[int] = Reactive(0)
 
-    @property
-    def contents_size(self) -> Dimensions:
-        return self._page.size
-
-    def validate_x(self, value: int) -> int:
+    def validate_scroll_x(self, value: int) -> int:
         return max(0, value)
 
-    def validate_y(self, value: int) -> int:
+    def validate_scroll_y(self, value: int) -> int:
         return max(0, value)
 
-    async def watch_x(self, new: int) -> None:
+    async def watch_scroll_x(self, new: int) -> None:
         x, y = self._page.offset
         self._page.offset = Point(new, y)
 
-    async def watch_y(self, new: int) -> None:
+    async def watch_scroll_y(self, new: int) -> None:
         x, y = self._page.offset
         self._page.offset = Point(x, new)
 
