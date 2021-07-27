@@ -12,8 +12,8 @@ from rich.console import Console
 
 from .._layout_resolve import layout_resolve
 from ..geometry import Dimensions, Point, Region
-from ..layout import Layout, RenderRegion
-from ..view import View
+from ..layout import Layout
+from ..layout_map import LayoutMap
 from ..widget import Widget
 
 if sys.version_info >= (3, 8):
@@ -264,8 +264,8 @@ class GridLayout(Layout):
         return self.widgets.keys()
 
     def generate_map(
-        self, console: Console, size: Dimensions, offset: Point
-    ) -> dict[Widget, RenderRegion]:
+        self, console: Console, size: Dimensions, viewport: Region
+    ) -> LayoutMap:
         """Generate a map that associates widgets with their location on screen.
 
         Args:
@@ -276,6 +276,7 @@ class GridLayout(Layout):
         Returns:
             dict[Widget, OrderedRegion]: [description]
         """
+        map: LayoutMap = LayoutMap(size)
         width, height = size
 
         def resolve(
@@ -327,13 +328,14 @@ class GridLayout(Layout):
             return names, tracks, len(spans), max_size
 
         def add_widget(widget: Widget, region: Region, order: tuple[int, int]):
-            region = region + widget.layout_offset
-            map[widget] = RenderRegion(region, order, offset)
-            if isinstance(widget, View):
-                sub_map = widget.layout.generate_map(
-                    region.width, region.height, region.origin + offset
-                )
-                map.update(sub_map)
+            map.add_widget(console, widget, region, order, viewport)
+            # region = region + widget.layout_offset
+            # map[widget] = RenderRegion(region, order, offset)
+            # if isinstance(widget, View):
+            #     sub_map = widget.layout.generate_map(
+            #         region.width, region.height, region.origin + offset
+            #     )
+            #     map.update(sub_map)
 
         container = Dimensions(
             width - self.column_gutter * 2, height - self.row_gutter * 2
@@ -365,8 +367,6 @@ class GridLayout(Layout):
         free_slots = {
             (col, row) for col, row in product(range(column_count), range(row_count))
         }
-
-        map: dict[Widget, RenderRegion] = {}
         order = 1
         from_corners = Region.from_corners
         gutter = Point(self.column_gutter, self.row_gutter)

@@ -26,11 +26,12 @@ class SmoothApp(App):
         """Build layout here."""
         footer = Footer()
         self.bar = Placeholder(name="left")
-        self.bar.layout_offset_x = -40
 
         await self.view.dock(footer, edge="bottom")
         await self.view.dock(Placeholder(), Placeholder(), edge="top")
         await self.view.dock(self.bar, edge="left", size=40, z=1)
 
+        self.bar.layout_offset_x = -40
 
-SmoothApp.run()
+
+SmoothApp.run(log="textual.log")

@@ -62,6 +62,12 @@ class View(Widget):
             (virtual_height if virtual_height is not None else self.size.height),
         )
 
+    @virtual_size.setter
+    def virtual_size(self, size: tuple[int, int]) -> None:
+        width, height = size
+        self.virtual_width = width
+        self.virtual_height = height
+
     @property
     def offset(self) -> Point:
         return Point(self.offset_x, self.offset_y)
@@ -133,7 +139,7 @@ class View(Widget):
 
     async def refresh_layout(self) -> None:
         await self.layout.mount_all(self)
-        if not self.size or not self.is_root_view:
+        if not self.size:
             return
 
         width, height = self.console.size

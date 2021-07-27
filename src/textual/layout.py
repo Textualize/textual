@@ -17,6 +17,7 @@ from rich.style import Style
 
 from . import log
 from ._loop import loop_last
+from .layout_map import LayoutMap
 from ._types import Lines
 
 from .geometry import clamp, Region, Point, Dimensions
@@ -32,27 +33,6 @@ if TYPE_CHECKING:
 
 class NoWidget(Exception):
     pass
-
-
-@rich.repr.auto
-class RenderRegion(NamedTuple):
-    region: Region
-    order: tuple[int, int]
-    offset: Point
-
-    def translate(self, offset: Point) -> RenderRegion:
-        region, order, self_offset = self
-        return RenderRegion(region, order, self_offset + offset)
-
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
-        yield "region", self.region
-        yield "order", self.order
-
-
-@dataclass
-class WidgetMap:
-    virtual_size: Dimensions
-    widgets: dict[Widget, RenderRegion]
 
 
 class OrderedRegion(NamedTuple):
@@ -92,10 +72,10 @@ class Layout(ABC):
     """Responsible for arranging Widgets in a view."""
 
     def __init__(self) -> None:
-        self._layout_map: dict[Widget, RenderRegion] = {}
+        self._layout_map: LayoutMap | None = None
         self.width = 0
         self.height = 0
-        self.renders: dict[Widget, tuple[Region, Lines]] = {}
+        self.renders: dict[Widget, tuple[Region, Region, Lines]] = {}
         self._cuts: list[list[int]] | None = None
         self._require_update: bool = True
         self.background = ""
@@ -113,31 +93,33 @@ class Layout(ABC):
         self._cuts = None
         if self._require_update:
             self.renders.clear()
-            self._layout_map.clear()
+            self._layout_map = None
 
     def reflow(
         self, console: Console, width: int, height: int, viewport: Region
     ) -> ReflowResult:
         self.reset()
 
-        map = self.generate_map(console, Dimensions(width, height), Point(0, 0))
+        map = self.generate_map(
+            console, Dimensions(width, height), Region(0, 0, width, height)
+        )
         self._require_update = False
 
-        map = {
-            widget: OrderedRegion(region + offset, order)
-            for widget, (region, order, offset) in map.items()
-        }
+        # log(map.widgets)
+        # map = {
+        #     widget: OrderedRegion(region + offset, order)
+        #     for widget, (region, order, offset) in map.items()
+        # }
 
         # Filter out widgets that are off screen or zero area
-        log("VIEWPORT", viewport)
-        log(map)
-        map = {
-            widget: map_region
-            for widget, map_region in map.items()
-            if map_region.region and viewport.overlaps(map_region.region)
-        }
 
-        old_widgets = set(self._layout_map.keys())
+        # map = {
+        #     widget: map_region
+        #     for widget, map_region in map.items()
+        #     if map_region.region and viewport.overlaps(map_region.region)
+        # }
+
+        old_widgets = set() if self.map is None else set(self.map.keys())
         new_widgets = set(map.keys())
         # Newly visible widgets
         shown_widgets = new_widgets - old_widgets
@@ -150,8 +132,8 @@ class Layout(ABC):
 
         # Copy renders if the size hasn't changed
         new_renders = {
-            widget: (region, self.renders[widget][1])
-            for widget, (region, _order) in map.items()
+            widget: (region, clip, self.renders[widget][2])
+            for widget, (region, _order, clip) in map.items()
             if (
                 widget in self.renders
                 and self.renders[widget][0].size == region.size
@@ -163,7 +145,7 @@ class Layout(ABC):
         # Widgets with changed size
         resized_widgets = {
             widget
-            for widget, (region, _order) in map.items()
+            for widget, (region, *_) in map.items()
             if widget in old_widgets and widget.size != region.size
         }
 
@@ -177,35 +159,34 @@ class Layout(ABC):
 
     @abstractmethod
     def generate_map(
-        self,
-        console: Console,
-        size: Dimensions,
-        offset: Point,
-    ) -> dict[Widget, RenderRegion]:
+        self, console: Console, size: Dimensions, viewport: Region
+    ) -> LayoutMap:
         ...
 
     async def mount_all(self, view: "View") -> None:
         await view.mount(*self.get_widgets())
 
     @property
-    def map(self) -> dict[Widget, RenderRegion]:
+    def map(self) -> LayoutMap | None:
         return self._layout_map
 
     def __iter__(self) -> Iterator[tuple[Widget, Region]]:
-        layers = sorted(
-            self._layout_map.items(), key=lambda item: item[1].order, reverse=True
-        )
-        for widget, (region, _) in layers:
-            yield widget, region
+        if self.map is not None:
+            layers = sorted(
+                self.map.widgets.items(), key=lambda item: item[1].order, reverse=True
+            )
+            for widget, (region, order, clip) in layers:
+                yield widget, region.intersection(clip)
 
     def __reversed__(self) -> Iterable[tuple[Widget, Region]]:
-        layers = sorted(self._layout_map.items(), key=lambda item: item[1].order)
-        for widget, (region, _) in layers:
-            yield widget, region
+        if self.map is not None:
+            layers = sorted(self.map.items(), key=lambda item: item[1].order)
+            for widget, (region, _order, clip) in layers:
+                yield widget, region.intersection(clip)
 
     def get_offset(self, widget: Widget) -> Point:
         try:
-            return self._layout_map[widget].region.origin
+            return self.map[widget].region.origin
         except KeyError:
             raise NoWidget("Widget is not in layout")
 
@@ -221,7 +202,9 @@ class Layout(ABC):
             widget, region = self.get_widget_at(x, y)
         except NoWidget:
             return Style.null()
-        _region, lines = self.renders[widget]
+        if widget not in self.renders:
+            return Style.null()
+        _region, clip, lines = self.renders[widget]
         x -= region.x
         y -= region.y
         line = lines[y]
@@ -234,7 +217,7 @@ class Layout(ABC):
 
     def get_widget_region(self, widget: Widget) -> Region:
         try:
-            region, _ = self._layout_map[widget]
+            region, *_ = self.map[widget]
         except KeyError:
             raise NoWidget("Widget is not in layout")
         else:
@@ -256,28 +239,35 @@ class Layout(ABC):
         screen_region = Region(0, 0, width, height)
         cuts_sets = [{0, width} for _ in range(height)]
 
-        for region, order in self._layout_map.values():
-            region = region.clip(width, height)
-            if region and (region in screen_region):  # type: ignore
-                for y in range(region.y, region.y + region.height):
-                    cuts_sets[y].update({region.x, region.x + region.width})
+        if self.map is not None:
+            for region, order, clip in self.map.values():
+                region = region.intersection(clip)
+                if region and (region in screen_region):  # type: ignore
+                    for y in range(region.y, region.y + region.height):
+                        cuts_sets[y].update({region.x, region.x + region.width})
 
         # Sort the cuts for each line
         self._cuts = [sorted(cut_set) for cut_set in cuts_sets]
         return self._cuts
 
-    def _get_renders(self, console: Console) -> Iterable[tuple[Region, Lines]]:
+    def _get_renders(self, console: Console) -> Iterable[tuple[Region, Region, Lines]]:
         _rich_traceback_guard = True
         width = self.width
         height = self.height
         screen_region = Region(0, 0, width, height)
-        layout_map = self._layout_map
+        layout_map = self.map
 
-        widget_regions = sorted(
-            ((widget, region, order) for widget, (region, order) in layout_map.items()),
-            key=itemgetter(2),
-            reverse=True,
-        )
+        if layout_map:
+            widget_regions = sorted(
+                (
+                    (widget, region, order, clip)
+                    for widget, (region, order, clip) in layout_map.items()
+                ),
+                key=itemgetter(2),
+                reverse=True,
+            )
+        else:
+            widget_regions = []
 
         def render(widget: Widget, width: int, height: int) -> Lines:
             lines = console.render_lines(
@@ -285,7 +275,7 @@ class Layout(ABC):
             )
             return lines
 
-        for widget, region, _order in widget_regions:
+        for widget, region, _order, clip in widget_regions:
 
             if not widget.is_visual:
                 continue
@@ -295,23 +285,22 @@ class Layout(ABC):
                 continue
 
             lines = render(widget, region.width, region.height)
-            if region in screen_region:
-                self.renders[widget] = (region, lines)
-                yield region, lines
-            elif screen_region.overlaps(region):
-                new_region = region.clip(width, height)
+            if region in clip:
+                self.renders[widget] = (region, clip, lines)
+                yield region, clip, lines
+            elif clip.overlaps(region):
+                new_region = region.intersection(clip)
                 delta_x = new_region.x - region.x
                 delta_y = new_region.y - region.y
-                region = new_region
+                self.renders[widget] = (region, clip, lines)
+                splits = [delta_x, delta_x + new_region.width]
 
-                splits = [delta_x, delta_x + region.width]
                 divide = Segment.divide
                 lines = [
                     list(divide(line, splits))[1]
-                    for line in lines[delta_y : delta_y + region.height]
+                    for line in lines[delta_y : delta_y + new_region.height]
                 ]
-                self.renders[widget] = (region, lines)
-                yield region, lines
+                yield region, clip, lines
 
     @classmethod
     def _assemble_chops(
@@ -361,7 +350,10 @@ class Layout(ABC):
         ]
         # Go through all the renders in reverse order and fill buckets with no render
         renders = self._get_renders(console)
-        for region, lines in chain(renders, [(screen, background_render)]):
+        for region, clip, lines in chain(
+            renders, [(screen, screen, background_render)]
+        ):
+            # region = region.intersection(clip)
             for y, line in enumerate(lines, region.y):
                 if clip_y > y > clip_y2:
                     continue
@@ -391,12 +383,12 @@ class Layout(ABC):
         if widget not in self.renders:
             return None
 
-        region, lines = self.renders[widget]
+        region, clip, lines = self.renders[widget]
         new_lines = console.render_lines(
             widget, console.options.update_dimensions(region.width, region.height)
         )
 
-        self.renders[widget] = (region, new_lines)
+        self.renders[widget] = (region, clip, new_lines)
 
         update_lines = self.render(console, region).lines
         return LayoutUpdate(update_lines, region.x, region.y)

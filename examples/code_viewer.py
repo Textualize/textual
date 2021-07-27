@@ -42,6 +42,7 @@ class MyApp(App):
         )
         self.app.sub_title = os.path.basename(message.path)
         await self.body.update(syntax)
+        # self.body.layout_offset_y = -5
         self.body.home()
 
 

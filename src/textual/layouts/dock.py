@@ -9,7 +9,8 @@ from rich.console import Console
 
 from .._layout_resolve import layout_resolve
 from ..geometry import Region, Point, Dimensions
-from ..layout import Layout, RenderRegion
+from ..layout import Layout
+from ..layout_map import LayoutMap, Order
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -48,25 +49,16 @@ class DockLayout(Layout):
             yield from dock.widgets
 
     def generate_map(
-        self, console: Console, size: Dimensions, offset: Point
-    ) -> dict[Widget, RenderRegion]:
-        from ..view import View
+        self, console: Console, size: Dimensions, viewport: Region
+    ) -> LayoutMap:
 
-        map: dict[Widget, RenderRegion] = {}
+        map: LayoutMap = LayoutMap(size)
         width, height = size
         layout_region = Region(0, 0, width, height)
         layers: dict[int, Region] = defaultdict(lambda: layout_region)
 
-        def add_widget(widget: Widget, region: Region, order: tuple[int, int]):
-            region = region + widget.layout_offset
-            map[widget] = RenderRegion(region, order, offset)
-            if isinstance(widget, View):
-                sub_map = widget.layout.generate_map(
-                    console,
-                    Dimensions(region.width, region.height),
-                    region.origin + offset,
-                )
-                map.update(sub_map)
+        def add_widget(widget: Widget, region: Region, order: tuple[int, ...]):
+            map.add_widget(console, widget, region, order, viewport)
 
         for index, dock in enumerate(self.docks):
             dock_options = [
@@ -88,16 +80,16 @@ class DockLayout(Layout):
                 render_y = y
                 remaining = region.height
                 total = 0
-                for widget, size in zip(dock.widgets, sizes):
+                for widget, layout_size in zip(dock.widgets, sizes):
                     if not widget.visible:
                         continue
-                    size = min(remaining, size)
-                    if not size:
+                    layout_size = min(remaining, layout_size)
+                    if not layout_size:
                         break
-                    total += size
-                    add_widget(widget, Region(x, render_y, width, size), order)
-                    render_y += size
-                    remaining = max(0, remaining - size)
+                    total += layout_size
+                    add_widget(widget, Region(x, render_y, width, layout_size), order)
+                    render_y += layout_size
+                    remaining = max(0, remaining - layout_size)
                 region = Region(x, y + total, width, height - total)
 
             elif dock.edge == "bottom":
@@ -105,16 +97,20 @@ class DockLayout(Layout):
                 render_y = y + height
                 remaining = region.height
                 total = 0
-                for widget, size in zip(dock.widgets, sizes):
+                for widget, layout_size in zip(dock.widgets, sizes):
                     if not widget.visible:
                         continue
-                    size = min(remaining, size)
-                    if not size:
+                    layout_size = min(remaining, layout_size)
+                    if not layout_size:
                         break
-                    total += size
-                    add_widget(widget, Region(x, render_y - size, width, size), order)
-                    render_y -= size
-                    remaining = max(0, remaining - size)
+                    total += layout_size
+                    add_widget(
+                        widget,
+                        Region(x, render_y - layout_size, width, layout_size),
+                        order,
+                    )
+                    render_y -= layout_size
+                    remaining = max(0, remaining - layout_size)
                 region = Region(x, y, width, height - total)
 
             elif dock.edge == "left":
@@ -122,16 +118,16 @@ class DockLayout(Layout):
                 render_x = x
                 remaining = region.width
                 total = 0
-                for widget, size in zip(dock.widgets, sizes):
+                for widget, layout_size in zip(dock.widgets, sizes):
                     if not widget.visible:
                         continue
-                    size = min(remaining, size)
-                    if not size:
+                    layout_size = min(remaining, layout_size)
+                    if not layout_size:
                         break
-                    total += size
-                    add_widget(widget, Region(render_x, y, size, height), order)
-                    render_x += size
-                    remaining = max(0, remaining - size)
+                    total += layout_size
+                    add_widget(widget, Region(render_x, y, layout_size, height), order)
+                    render_x += layout_size
+                    remaining = max(0, remaining - layout_size)
                 region = Region(x + total, y, width - total, height)
 
             elif dock.edge == "right":
@@ -139,16 +135,20 @@ class DockLayout(Layout):
                 render_x = x + width
                 remaining = region.width
                 total = 0
-                for widget, size in zip(dock.widgets, sizes):
+                for widget, layout_size in zip(dock.widgets, sizes):
                     if not widget.visible:
                         continue
-                    size = min(remaining, size)
-                    if not size:
+                    layout_size = min(remaining, layout_size)
+                    if not layout_size:
                         break
-                    total += size
-                    add_widget(widget, Region(render_x - size, y, size, height), order)
-                    render_x -= size
-                    remaining = max(0, remaining - size)
+                    total += layout_size
+                    add_widget(
+                        widget,
+                        Region(render_x - layout_size, y, layout_size, height),
+                        order,
+                    )
+                    render_x -= layout_size
+                    remaining = max(0, remaining - layout_size)
                 region = Region(x, y, width - total, height)
 
             layers[dock.z] = region

@@ -9,7 +9,8 @@ class GridTest(App):
 
     async def on_mount(self, event: events.Mount) -> None:
 
-        grid = await self.view.dock_grid()
+        grid = await self.view.dock_grid(edge="left", size=70, name="left")
+        left = self.view["left"]
 
         grid.add_column(fraction=1, name="left", min_size=20)
         grid.add_column(size=30, name="center")
@@ -26,11 +27,17 @@ class GridTest(App):
             area4="right,top-start|middle-end",
         )
 
+        def make_placeholder(name: str) -> Placeholder:
+            p = Placeholder(name=name)
+            p.layout_offset_x = 10
+            p.layout_offset_y = 0
+            return p
+
         grid.place(
-            area1=Placeholder(name="area1"),
-            area2=Placeholder(name="area2"),
-            area3=Placeholder(name="area3"),
-            area4=Placeholder(name="area4"),
+            area1=make_placeholder(name="area1"),
+            area2=make_placeholder(name="area2"),
+            area3=make_placeholder(name="area3"),
+            area4=make_placeholder(name="area4"),
         )
 
 

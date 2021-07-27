@@ -61,8 +61,8 @@ class Widget(MessagePump):
     layout_size: Reactive[int | None] = Reactive(None, layout=True)
     layout_fraction: Reactive[int] = Reactive(1, layout=True)
     layout_min_size: Reactive[int] = Reactive(1, layout=True)
-    layout_offset_x: Reactive[int] = Reactive(0, layout=True)
-    layout_offset_y: Reactive[int] = Reactive(0, layout=True)
+    layout_offset_x: Reactive[float] = Reactive(0.0, layout=True)
+    layout_offset_y: Reactive[float] = Reactive(0.0, layout=True)
 
     def validate_layout_offset_x(self, value) -> int:
         return int(value)

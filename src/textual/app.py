@@ -84,7 +84,7 @@ class App(MessagePump):
             driver_class (Type[Driver], optional): Driver class, or None to use default. Defaults to None.
             title (str, optional): Title of the application. Defaults to "Textual Application".
         """
-        self.console = console or get_console()
+        self.console = console or Console()
         self.error_console = Console(stderr=True)
         self._screen = screen
         self.driver_class = driver_class or LinuxDriver

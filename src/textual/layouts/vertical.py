@@ -4,7 +4,7 @@ from rich.console import Console
 
 
 from ..geometry import Point, Region, Dimensions
-from ..layout import Layout, RenderRegion, WidgetMap
+from ..layout import Layout
 from ..widget import Widget
 from ..view import View
 
@@ -19,8 +19,9 @@ class VerticalLayout(Layout):
         self._widgets.append(widget)
 
     def generate_map(
-        self, console: Console, size: Dimensions, offset: Point
+        self, console: Console, size: Dimensions, viewport: Region
     ) -> WidgetMap:
+        offset = viewport.origin
         width, height = size
         gutter_width, gutter_height = self.gutter
         render_width = width - gutter_width * 2
