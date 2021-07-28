@@ -69,7 +69,7 @@ class LayoutUpdate:
 
 
 class Layout(ABC):
-    """Responsible for arranging Widgets in a view."""
+    """Responsible for arranging Widgets in a view and rendering them."""
 
     def __init__(self) -> None:
         self._layout_map: LayoutMap | None = None
@@ -95,9 +95,7 @@ class Layout(ABC):
             self.renders.clear()
             self._layout_map = None
 
-    def reflow(
-        self, console: Console, width: int, height: int, viewport: Region
-    ) -> ReflowResult:
+    def reflow(self, console: Console, width: int, height: int) -> ReflowResult:
         self.reset()
 
         map = self.generate_map(
@@ -161,7 +159,16 @@ class Layout(ABC):
     def generate_map(
         self, console: Console, size: Dimensions, viewport: Region
     ) -> LayoutMap:
-        ...
+        """Generate a layout map that defines where on the screen the widgets will be drawn.
+
+        Args:
+            console (Console): Console instance.
+            size (Dimensions): Size of container.
+            viewport (Region): Screen relative viewport.
+
+        Returns:
+            LayoutMap: [description]
+        """
 
     async def mount_all(self, view: "View") -> None:
         await view.mount(*self.get_widgets())

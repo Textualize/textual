@@ -5,7 +5,7 @@ from typing import Iterable
 from rich.console import Console
 
 
-from ..geometry import Region, Dimensions
+from ..geometry import Point, Region, Dimensions
 from ..layout import Layout
 from ..layout_map import LayoutMap
 from ..widget import Widget
@@ -30,7 +30,6 @@ class VerticalLayout(Layout):
     def generate_map(
         self, console: Console, size: Dimensions, viewport: Region
     ) -> LayoutMap:
-        offset = viewport.origin
         index = 0
         width, height = size
         gutter_width, gutter_height = self.gutter
@@ -43,7 +42,6 @@ class VerticalLayout(Layout):
             map.add_widget(console, widget, region, (self.z, index), clip)
 
         for widget in self._widgets:
-
             try:
                 region, clip, lines = self.renders[widget]
             except KeyError:
@@ -54,7 +52,11 @@ class VerticalLayout(Layout):
                 region = Region(x, y, render_width, len(lines))
                 add_widget(widget, region, viewport)
             else:
-                add_widget(widget, Region(x, y, region.width, region.height), clip)
+                add_widget(
+                    widget,
+                    Region(x, y, region.width, region.height) - scroll_offset,
+                    clip,
+                )
                 y += region.height + gutter_height
 
         return map

@@ -53,6 +53,10 @@ class View(Widget):
     scroll_y: Reactive[int] = Reactive(0)
 
     @property
+    def scroll_offset(self) -> Point:
+        return Point(self.scroll_x, self.scroll_y)
+
+    @property
     def virtual_size(self) -> Dimensions:
         return self.layout.map.size
 
@@ -150,10 +154,7 @@ class View(Widget):
 
         width, height = self.console.size
         # virtual_width, virtual_height = self.virtual_size
-        viewport = Region(self.scroll_x, self.scroll_y, width, height)
-        hidden, shown, resized = self.layout.reflow(
-            self.console, width, height, viewport
-        )
+        hidden, shown, resized = self.layout.reflow(self.console, width, height)
         self.app.refresh()
 
         for widget in hidden:
