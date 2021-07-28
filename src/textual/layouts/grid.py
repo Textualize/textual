@@ -11,7 +11,7 @@ from typing import Iterable, NamedTuple
 from rich.console import Console
 
 from .._layout_resolve import layout_resolve
-from ..geometry import Dimensions, Point, Region
+from ..geometry import Dimensions, Offset, Region
 from ..layout import Layout
 from ..layout_map import LayoutMap
 from ..widget import Widget
@@ -369,7 +369,7 @@ class GridLayout(Layout):
         }
         order = 1
         from_corners = Region.from_corners
-        gutter = Point(self.column_gutter, self.row_gutter)
+        gutter = Offset(self.column_gutter, self.row_gutter)
         for widget, area in widget_areas:
             column_start, column_end, row_start, row_end = self.areas[area]
             try:

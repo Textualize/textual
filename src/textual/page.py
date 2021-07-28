@@ -7,7 +7,7 @@ from rich.padding import Padding, PaddingDimensions
 from rich.segment import Segment
 from rich.style import StyleType
 
-from .geometry import Dimensions, Point
+from .geometry import Dimensions, Offset
 from .message import Message
 from .widget import Widget, Reactive
 
@@ -35,14 +35,14 @@ class PageRender:
         self.height = height
         self.style = style
         self.padding = padding
-        self.offset = Point(0, 0)
+        self.offset = Offset(0, 0)
         self._render_width: int | None = None
         self._render_height: int | None = None
         self.size = Dimensions(0, 0)
         self._lines: list[list[Segment]] = []
 
     def move_to(self, x: int = 0, y: int = 0) -> None:
-        self.offset = Point(x, y)
+        self.offset = Offset(x, y)
 
     def clear(self) -> None:
         self._render_width = None
@@ -112,11 +112,11 @@ class Page(Widget):
 
     async def watch_scroll_x(self, new: int) -> None:
         x, y = self._page.offset
-        self._page.offset = Point(new, y)
+        self._page.offset = Offset(new, y)
 
     async def watch_scroll_y(self, new: int) -> None:
         x, y = self._page.offset
-        self._page.offset = Point(x, new)
+        self._page.offset = Offset(x, new)
 
     def update(self, renderable: RenderableType | None = None) -> None:
         if renderable:

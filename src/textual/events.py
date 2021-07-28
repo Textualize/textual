@@ -5,7 +5,7 @@ from typing import Awaitable, Callable, Type, TYPE_CHECKING, TypeVar
 import rich.repr
 from rich.style import Style
 
-from .geometry import Point, Dimensions
+from .geometry import Offset, Dimensions
 from .message import Message
 from ._types import MessageTarget
 from .keys import Keys
@@ -143,7 +143,7 @@ class MouseCapture(Event):
 
     """
 
-    def __init__(self, sender: MessageTarget, mouse_position: Point) -> None:
+    def __init__(self, sender: MessageTarget, mouse_position: Offset) -> None:
         """
 
         Args:
@@ -161,7 +161,7 @@ class MouseCapture(Event):
 class MouseRelease(Event):
     """Mouse has been released."""
 
-    def __init__(self, sender: MessageTarget, mouse_position: Point) -> None:
+    def __init__(self, sender: MessageTarget, mouse_position: Offset) -> None:
         """
         Args:
             sender (MessageTarget): The sender of the event, (in this case the app).

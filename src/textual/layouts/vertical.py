@@ -5,7 +5,7 @@ from typing import Iterable
 from rich.console import Console
 
 
-from ..geometry import Point, Region, Dimensions
+from ..geometry import Offset, Region, Dimensions
 from ..layout import Layout
 from ..layout_map import LayoutMap
 from ..widget import Widget

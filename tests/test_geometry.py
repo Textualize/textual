@@ -1,6 +1,6 @@
 import pytest
 
-from textual.geometry import clamp, Point, Dimensions, Region
+from textual.geometry import clamp, Offset, Dimensions, Region
 
 
 def test_dimensions_region():
@@ -18,13 +18,13 @@ def test_dimensions_contains():
 
 
 def test_dimensions_contains_point():
-    assert Dimensions(10, 10).contains_point(Point(5, 5))
-    assert Dimensions(10, 10).contains_point(Point(9, 9))
-    assert Dimensions(10, 10).contains_point(Point(0, 0))
-    assert not Dimensions(10, 10).contains_point(Point(10, 9))
-    assert not Dimensions(10, 10).contains_point(Point(9, 10))
-    assert not Dimensions(10, 10).contains_point(Point(-1, 0))
-    assert not Dimensions(10, 10).contains_point(Point(0, -1))
+    assert Dimensions(10, 10).contains_point(Offset(5, 5))
+    assert Dimensions(10, 10).contains_point(Offset(9, 9))
+    assert Dimensions(10, 10).contains_point(Offset(0, 0))
+    assert not Dimensions(10, 10).contains_point(Offset(10, 9))
+    assert not Dimensions(10, 10).contains_point(Offset(9, 10))
+    assert not Dimensions(10, 10).contains_point(Offset(-1, 0))
+    assert not Dimensions(10, 10).contains_point(Offset(0, -1))
 
 
 def test_dimensions_contains_special():
@@ -63,32 +63,32 @@ def test_clamp():
 
 
 def test_point_is_origin():
-    assert Point(0, 0).is_origin
-    assert not Point(1, 0).is_origin
+    assert Offset(0, 0).is_origin
+    assert not Offset(1, 0).is_origin
 
 
 def test_point_add():
-    assert Point(1, 1) + Point(2, 2) == Point(3, 3)
-    assert Point(1, 2) + Point(3, 4) == Point(4, 6)
+    assert Offset(1, 1) + Offset(2, 2) == Offset(3, 3)
+    assert Offset(1, 2) + Offset(3, 4) == Offset(4, 6)
     with pytest.raises(TypeError):
-        Point(1, 1) + "foo"
+        Offset(1, 1) + "foo"
 
 
 def test_point_sub():
-    assert Point(1, 1) - Point(2, 2) == Point(-1, -1)
-    assert Point(3, 4) - Point(2, 1) == Point(1, 3)
+    assert Offset(1, 1) - Offset(2, 2) == Offset(-1, -1)
+    assert Offset(3, 4) - Offset(2, 1) == Offset(1, 3)
     with pytest.raises(TypeError):
-        Point(1, 1) - "foo"
+        Offset(1, 1) - "foo"
 
 
 def test_point_blend():
-    assert Point(1, 2).blend(Point(3, 4), 0) == Point(1, 2)
-    assert Point(1, 2).blend(Point(3, 4), 1) == Point(3, 4)
-    assert Point(1, 2).blend(Point(3, 4), 0.5) == Point(2, 3)
+    assert Offset(1, 2).blend(Offset(3, 4), 0) == Offset(1, 2)
+    assert Offset(1, 2).blend(Offset(3, 4), 1) == Offset(3, 4)
+    assert Offset(1, 2).blend(Offset(3, 4), 0.5) == Offset(2, 3)
 
 
 def test_region_from_origin():
-    assert Region.from_origin(Point(3, 4), (5, 6)) == Region(3, 4, 5, 6)
+    assert Region.from_origin(Offset(3, 4), (5, 6)) == Region(3, 4, 5, 6)
 
 
 def test_region_area():
@@ -102,7 +102,7 @@ def test_region_size():
 
 
 def test_region_origin():
-    assert Region(1, 2, 3, 4).origin == Point(1, 2)
+    assert Region(1, 2, 3, 4).origin == Offset(1, 2)
 
 
 def test_region_add():

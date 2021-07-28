@@ -10,7 +10,7 @@ from rich.style import Style
 from . import events
 from . import log
 from .layout import Layout, NoWidget
-from .geometry import Dimensions, Point, Region
+from .geometry import Dimensions, Offset, Region
 from .messages import UpdateMessage, LayoutMessage
 from .reactive import Reactive, watch
 
@@ -53,8 +53,8 @@ class View(Widget):
     scroll_y: Reactive[int] = Reactive(0)
 
     @property
-    def scroll_offset(self) -> Point:
-        return Point(self.scroll_x, self.scroll_y)
+    def scroll_offset(self) -> Offset:
+        return Offset(self.scroll_x, self.scroll_y)
 
     @property
     def virtual_size(self) -> Dimensions:
@@ -116,7 +116,7 @@ class View(Widget):
     def render(self) -> RenderableType:
         return self.layout
 
-    def get_offset(self, widget: Widget) -> Point:
+    def get_offset(self, widget: Widget) -> Offset:
         return self.layout.get_offset(widget)
 
     def check_layout(self) -> bool:

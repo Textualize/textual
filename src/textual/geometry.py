@@ -25,7 +25,7 @@ def clamp(value: T, minimum: T, maximum: T) -> T:
         return value
 
 
-class Point(NamedTuple):
+class Offset(NamedTuple):
     """A point defined by x and y coordinates."""
 
     x: int
@@ -36,21 +36,21 @@ class Point(NamedTuple):
         """Check if the point is at the origin (0, 0)"""
         return self == (0, 0)
 
-    def __add__(self, other: object) -> Point:
+    def __add__(self, other: object) -> Offset:
         if isinstance(other, tuple):
             _x, _y = self
             x, y = other
-            return Point(_x + x, _y + y)
+            return Offset(_x + x, _y + y)
         return NotImplemented
 
-    def __sub__(self, other: object) -> Point:
+    def __sub__(self, other: object) -> Offset:
         if isinstance(other, tuple):
             _x, _y = self
             x, y = other
-            return Point(_x - x, _y - y)
+            return Offset(_x - x, _y - y)
         return NotImplemented
 
-    def blend(self, destination: Point, factor: float) -> Point:
+    def blend(self, destination: Offset, factor: float) -> Offset:
         """Blend (interpolate) to a new point.
 
         Args:
@@ -62,7 +62,7 @@ class Point(NamedTuple):
         """
         x1, y1 = self
         x2, y2 = destination
-        return Point(int(x1 + (x2 - x1) * factor), int((y1 + (y2 - y1) * factor)))
+        return Offset(int(x1 + (x2 - x1) * factor), int((y1 + (y2 - y1) * factor)))
 
 
 class Dimensions(NamedTuple):
@@ -173,9 +173,9 @@ class Region(NamedTuple):
         return self.width * self.height
 
     @property
-    def origin(self) -> Point:
+    def origin(self) -> Offset:
         """Get the start point of the region."""
-        return Point(self.x, self.y)
+        return Offset(self.x, self.y)
 
     @property
     def size(self) -> Dimensions:

@@ -20,7 +20,7 @@ from ._loop import loop_last
 from .layout_map import LayoutMap
 from ._types import Lines
 
-from .geometry import clamp, Region, Point, Dimensions
+from .geometry import clamp, Region, Offset, Dimensions
 
 
 PY38 = sys.version_info >= (3, 8)
@@ -191,7 +191,7 @@ class Layout(ABC):
             for widget, (region, _order, clip) in layers:
                 yield widget, region.intersection(clip)
 
-    def get_offset(self, widget: Widget) -> Point:
+    def get_offset(self, widget: Widget) -> Offset:
         try:
             return self.map[widget].region.origin
         except KeyError:

@@ -17,7 +17,7 @@ from . import events
 from . import actions
 from ._animator import Animator
 from .binding import Bindings, NoBinding
-from .geometry import Point, Region
+from .geometry import Offset, Region
 from . import log
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
@@ -103,7 +103,7 @@ class App(MessagePump):
         self._action_targets = {"app", "view"}
         self._animator = Animator(self)
         self.animate = self._animator.bind(self)
-        self.mouse_position = Point(0, 0)
+        self.mouse_position = Offset(0, 0)
         self.bindings = Bindings()
         self._title = title
 
@@ -370,7 +370,7 @@ class App(MessagePump):
 
         if isinstance(event, events.InputEvent):
             if isinstance(event, events.MouseEvent):
-                self.mouse_position = Point(event.x, event.y)
+                self.mouse_position = Offset(event.x, event.y)
             if isinstance(event, events.Key) and self.focused is not None:
                 await self.focused.forward_event(event)
             await self.view.forward_event(event)

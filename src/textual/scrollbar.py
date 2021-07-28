@@ -7,7 +7,7 @@ from rich.segment import Segment, Segments
 from rich.style import Style, StyleType
 
 from . import events
-from .geometry import Point
+from .geometry import Offset
 from ._types import MessageTarget
 from .message import Message
 from .widget import Reactive, Widget
@@ -184,7 +184,7 @@ class ScrollBar(Widget):
     window_size: Reactive[int] = Reactive(0)
     position: Reactive[int] = Reactive(0)
     mouse_over: Reactive[bool] = Reactive(False)
-    grabbed: Reactive[Point | None] = Reactive(None)
+    grabbed: Reactive[Offset | None] = Reactive(None)
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "virtual_size", self.virtual_size
