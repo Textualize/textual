@@ -2,6 +2,7 @@ import os
 import sys
 
 from rich.syntax import Syntax
+from rich.text import Text
 
 from textual import events
 from textual.app import App
@@ -33,15 +34,22 @@ class MyApp(App):
         await self.view.dock(self.body, edge="right")
 
     async def message_file_click(self, message: FileClick) -> None:
-        syntax = Syntax.from_path(
-            message.path,
-            line_numbers=True,
-            word_wrap=True,
-            indent_guides=True,
-            theme="monokai",
-        )
-        self.app.sub_title = os.path.basename(message.path)
-        await self.body.update(syntax)
+        try:
+            syntax = Syntax.from_path(
+                message.path,
+                line_numbers=True,
+                word_wrap=True,
+                indent_guides=True,
+                theme="monokai",
+            )
+            self.app.sub_title = os.path.basename(message.path)
+            await self.body.update(syntax)
+
+        except Exception as e:
+            error_msg = Text().assemble(("\nUh oh... Exception raised!", "bold magenta"), " The file you just clicked is probably not a type that's suited for text-based preview. Try a different file!\n\nException:  ")
+            error_msg.append(str(e), style="white on red")
+            await self.body.update(error_msg)
+
         self.body.home()
 
 
