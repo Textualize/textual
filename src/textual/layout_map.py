@@ -54,7 +54,9 @@ class LayoutMap:
         self.region = self.region.union(region.intersection(clip))
 
         if isinstance(widget, View):
-            sub_map = widget.layout.generate_map(console, region.size, region)
+            sub_map = widget.layout.generate_map(
+                console, region.size, region, widget.scroll
+            )
             for widget, (sub_region, sub_order, sub_clip) in sub_map.items():
                 sub_region += region.origin
                 sub_clip = sub_clip.intersection(clip)

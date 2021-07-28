@@ -28,7 +28,7 @@ class VerticalLayout(Layout):
         return self._widgets
 
     def generate_map(
-        self, console: Console, size: Dimensions, viewport: Region
+        self, console: Console, size: Dimensions, viewport: Region, scroll: Offset
     ) -> LayoutMap:
         index = 0
         width, height = size
@@ -54,7 +54,7 @@ class VerticalLayout(Layout):
             else:
                 add_widget(
                     widget,
-                    Region(x, y, region.width, region.height) - scroll_offset,
+                    Region(x, y, region.width, region.height) - scroll,
                     clip,
                 )
                 y += region.height + gutter_height

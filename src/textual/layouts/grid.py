@@ -264,7 +264,7 @@ class GridLayout(Layout):
         return self.widgets.keys()
 
     def generate_map(
-        self, console: Console, size: Dimensions, viewport: Region
+        self, console: Console, size: Dimensions, viewport: Region, scroll: Offset
     ) -> LayoutMap:
         """Generate a map that associates widgets with their location on screen.
 
@@ -328,6 +328,7 @@ class GridLayout(Layout):
             return names, tracks, len(spans), max_size
 
         def add_widget(widget: Widget, region: Region, order: tuple[int, int]):
+            region -= scroll
             map.add_widget(console, widget, region, order, viewport)
             # region = region + widget.layout_offset
             # map[widget] = RenderRegion(region, order, offset)

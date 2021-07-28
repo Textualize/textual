@@ -18,6 +18,7 @@ from rich.style import Style
 from . import log
 from ._loop import loop_last
 from .layout_map import LayoutMap
+from ._lines import crop_lines
 from ._types import Lines
 
 from .geometry import clamp, Region, Offset, Dimensions
@@ -95,11 +96,16 @@ class Layout(ABC):
             self.renders.clear()
             self._layout_map = None
 
-    def reflow(self, console: Console, width: int, height: int) -> ReflowResult:
+    def reflow(
+        self, console: Console, width: int, height: int, scroll: Offset
+    ) -> ReflowResult:
         self.reset()
 
         map = self.generate_map(
-            console, Dimensions(width, height), Region(0, 0, width, height)
+            console,
+            Dimensions(width, height),
+            Region(0, 0, width, height),
+            scroll,
         )
         self._require_update = False
 
@@ -157,7 +163,7 @@ class Layout(ABC):
 
     @abstractmethod
     def generate_map(
-        self, console: Console, size: Dimensions, viewport: Region
+        self, console: Console, size: Dimensions, viewport: Region, scroll: Offset
     ) -> LayoutMap:
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 
@@ -360,7 +366,6 @@ class Layout(ABC):
         for region, clip, lines in chain(
             renders, [(screen, screen, background_render)]
         ):
-            # region = region.intersection(clip)
             for y, line in enumerate(lines, region.y):
                 if clip_y > y > clip_y2:
                     continue
@@ -396,6 +401,9 @@ class Layout(ABC):
         )
 
         self.renders[widget] = (region, clip, new_lines)
+        update_lines = self.render(console, region.intersection(clip)).lines
 
-        update_lines = self.render(console, region).lines
-        return LayoutUpdate(update_lines, region.x, region.y)
+        clipped_region = region.intersection(clip)
+        update = LayoutUpdate(update_lines, clipped_region.x, clipped_region.y)
+
+        return update

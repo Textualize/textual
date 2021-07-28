@@ -8,7 +8,7 @@ from typing import Iterable, TYPE_CHECKING, Sequence
 from rich.console import Console
 
 from .._layout_resolve import layout_resolve
-from ..geometry import Region, Dimensions
+from ..geometry import Offset, Region, Dimensions
 from ..layout import Layout
 from ..layout_map import LayoutMap
 
@@ -49,7 +49,7 @@ class DockLayout(Layout):
             yield from dock.widgets
 
     def generate_map(
-        self, console: Console, size: Dimensions, viewport: Region
+        self, console: Console, size: Dimensions, viewport: Region, scroll: Offset
     ) -> LayoutMap:
 
         map: LayoutMap = LayoutMap(size)
@@ -90,7 +90,7 @@ class DockLayout(Layout):
                     add_widget(widget, Region(x, render_y, width, layout_size), order)
                     render_y += layout_size
                     remaining = max(0, remaining - layout_size)
-                region = Region(x, y + total, width, height - total)
+                region = Region(x, y + total, width, height - total) - scroll
 
             elif dock.edge == "bottom":
                 sizes = layout_resolve(height, dock_options)
@@ -111,7 +111,7 @@ class DockLayout(Layout):
                     )
                     render_y -= layout_size
                     remaining = max(0, remaining - layout_size)
-                region = Region(x, y, width, height - total)
+                region = Region(x, y, width, height - total) - scroll
 
             elif dock.edge == "left":
                 sizes = layout_resolve(width, dock_options)
@@ -128,7 +128,7 @@ class DockLayout(Layout):
                     add_widget(widget, Region(render_x, y, layout_size, height), order)
                     render_x += layout_size
                     remaining = max(0, remaining - layout_size)
-                region = Region(x + total, y, width - total, height)
+                region = Region(x + total, y, width - total, height) - scroll
 
             elif dock.edge == "right":
                 sizes = layout_resolve(width, dock_options)
@@ -149,7 +149,7 @@ class DockLayout(Layout):
                     )
                     render_x -= layout_size
                     remaining = max(0, remaining - layout_size)
-                region = Region(x, y, width - total, height)
+                region = Region(x, y, width - total, height) - scroll
 
             layers[dock.z] = region
 
