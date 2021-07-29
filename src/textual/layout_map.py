@@ -51,11 +51,11 @@ class LayoutMap:
 
         region += widget.layout_offset
         self.widgets[widget] = RenderRegion(region, order, clip)
-        self.region = self.region.union(region.intersection(clip))
+        self.region = self.region.union(region)
 
         if isinstance(widget, View):
             sub_map = widget.layout.generate_map(
-                console, region.size, region, widget.scroll
+                console, region.size, clip, widget.scroll
             )
             for widget, (sub_region, sub_order, sub_clip) in sub_map.items():
                 sub_region += region.origin

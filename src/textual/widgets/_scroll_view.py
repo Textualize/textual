@@ -1,4 +1,5 @@
 from __future__ import annotations
+from logging import PlaceHolder
 
 from rich.console import RenderableType
 from rich.style import StyleType
@@ -11,6 +12,7 @@ from ..scrollbar import ScrollTo, ScrollBar
 from ..geometry import clamp
 from ..page import Page
 from ..view import View
+from ..widgets import Placeholder
 
 
 from ..reactive import Reactive
@@ -30,7 +32,7 @@ class ScrollView(View):
         self.fluid = fluid
         self.vscroll = ScrollBar(vertical=True)
         self.hscroll = ScrollBar(vertical=False)
-        self.window = WindowView(renderable or "")
+        self.window = WindowView("" if renderable is None else renderable)
         layout = GridLayout()
         layout.add_column("main")
         layout.add_column("vscroll", size=1)
@@ -71,7 +73,6 @@ class ScrollView(View):
 
     async def update(self, renderabe: RenderableType) -> None:
         await self.window.update(renderabe)
-        self.require_repaint()
 
     async def on_mount(self, event: events.Mount) -> None:
         assert isinstance(self.layout, GridLayout)

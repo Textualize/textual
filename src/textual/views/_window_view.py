@@ -22,5 +22,8 @@ class WindowView(View, layout=VerticalLayout):
         super().__init__(name=name, layout=layout)
 
     async def update(self, widget: Widget | RenderableType) -> None:
-        self.layout = VerticalLayout(gutter=self.gutter)
-        self.layout.add(widget if isinstance(widget, Widget) else Static(widget))
+        layout = self.layout
+        assert isinstance(layout, VerticalLayout)
+        layout.clear()
+        layout.add(widget if isinstance(widget, Widget) else Static(widget))
+        self.require_layout()
