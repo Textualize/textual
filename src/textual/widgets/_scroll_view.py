@@ -9,11 +9,11 @@ from .. import events
 from ..layouts.grid import GridLayout
 from ..message import Message
 from ..scrollbar import ScrollTo, ScrollBar
-from ..geometry import clamp
+from ..geometry import clamp, Offset, Dimensions
 from ..page import Page
+from ..reactive import watch
 from ..view import View
-from ..widgets import Placeholder
-
+from ..widget import Widget
 
 from ..reactive import Reactive
 
@@ -21,7 +21,7 @@ from ..reactive import Reactive
 class ScrollView(View):
     def __init__(
         self,
-        renderable: RenderableType | None = None,
+        contents: RenderableType | Widget | None = None,
         *,
         name: str | None = None,
         style: StyleType = "",
@@ -32,7 +32,7 @@ class ScrollView(View):
         self.fluid = fluid
         self.vscroll = ScrollBar(vertical=True)
         self.hscroll = ScrollBar(vertical=False)
-        self.window = WindowView("" if renderable is None else renderable)
+        self.window = WindowView("" if contents is None else contents)
         layout = GridLayout()
         layout.add_column("main")
         layout.add_column("vscroll", size=1)
@@ -70,9 +70,11 @@ class ScrollView(View):
     async def watch_y(self, new_value: float) -> None:
         self.window.scroll_y = round(new_value)
         self.vscroll.position = round(new_value)
+        # self.window.require_repaint()
+        self.window.require_layout()
 
-    async def update(self, renderabe: RenderableType) -> None:
-        await self.window.update(renderabe)
+    async def update(self, renderable: RenderableType) -> None:
+        await self.window.update(renderable)
 
     async def on_mount(self, event: events.Mount) -> None:
         assert isinstance(self.layout, GridLayout)
@@ -172,19 +174,17 @@ class ScrollView(View):
         self.animate("x", self.target_x, speed=150, easing="out_cubic")
         self.animate("y", self.target_y, speed=150, easing="out_cubic")
 
-    async def message_page_update(self, message: Message) -> None:
+    async def message_virtual_size_change(self, message: Message) -> None:
+        virtual_size = self.window.virtual_size
+        self.log("VIRTUAL_SIZE", self.size, virtual_size)
         self.x = self.validate_x(self.x)
         self.y = self.validate_y(self.y)
-        self.vscroll.virtual_size = self.window.virtual_size.height
+        self.vscroll.virtual_size = virtual_size.height
         self.vscroll.window_size = self.size.height
 
         assert isinstance(self.layout, GridLayout)
 
-        if self.layout.show_column(
-            "vscroll", self.window.virtual_size.height > self.size.height
-        ):
+        if self.layout.show_column("vscroll", virtual_size.height > self.size.height):
             self.require_layout()
-        if self.layout.show_row(
-            "hscroll", self.window.virtual_size.width > self.size.width
-        ):
+        if self.layout.show_row("hscroll", virtual_size.width > self.size.width):
             self.require_layout()

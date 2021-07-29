@@ -29,7 +29,9 @@ class MyApp(App):
 
         await self.view.dock(Header(), edge="top")
         await self.view.dock(Footer(), edge="bottom")
-        await self.view.dock(self.directory, edge="left", size=32, name="sidebar")
+        await self.view.dock(
+            ScrollView(self.directory), edge="left", size=32, name="sidebar"
+        )
         await self.view.dock(self.body, edge="right")
 
     async def message_file_click(self, message: FileClick) -> None:

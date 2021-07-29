@@ -17,12 +17,13 @@ class RenderRegion(NamedTuple):
 
 class LayoutMap:
     def __init__(self, size: Dimensions) -> None:
-        self.region = size.region
+        self.size = size
+        self.contents_region = Region(0, 0, 0, 0)
         self.widgets: dict[Widget, RenderRegion] = {}
 
     @property
-    def size(self) -> Dimensions:
-        return self.region.size
+    def virtual_size(self) -> Dimensions:
+        return self.contents_region.size
 
     def __getitem__(self, widget: Widget) -> RenderRegion:
         return self.widgets[widget]
@@ -51,7 +52,7 @@ class LayoutMap:
 
         region += widget.layout_offset
         self.widgets[widget] = RenderRegion(region, order, clip)
-        self.region = self.region.union(region)
+        self.contents_region = self.contents_region.union(region)
 
         if isinstance(widget, View):
             sub_map = widget.layout.generate_map(

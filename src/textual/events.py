@@ -127,7 +127,7 @@ class Show(Event):
 
 
 class Hide(Event):
-    """Send when a widget has been hidden.
+    """Sent when a widget has been hidden.
 
     A widget may be hidden by setting its `visible` flag to `False`, if it is no longer in a layout,
     or if it has been offset beyond the edges of the terminal.
