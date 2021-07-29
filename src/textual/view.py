@@ -58,7 +58,7 @@ class View(Widget):
 
     @property
     def virtual_size(self) -> Dimensions:
-        return self.layout.map.size
+        return self.layout.map.size if self.layout.map else Dimensions(0, 0)
 
     # virtual_width: Reactive[int | None] = Reactive(None)
     # virtual_height: Reactive[int | None] = Reactive(None)

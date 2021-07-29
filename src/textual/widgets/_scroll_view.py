@@ -11,6 +11,8 @@ from ..scrollbar import ScrollTo, ScrollBar
 from ..geometry import clamp
 from ..page import Page
 from ..view import View
+
+
 from ..reactive import Reactive
 
 
@@ -23,10 +25,12 @@ class ScrollView(View):
         style: StyleType = "",
         fluid: bool = True,
     ) -> None:
+        from ..views import WindowView
+
         self.fluid = fluid
         self.vscroll = ScrollBar(vertical=True)
         self.hscroll = ScrollBar(vertical=False)
-        self.page = Page(renderable or "", style=style)
+        self.window = WindowView(renderable or "")
         layout = GridLayout()
         layout.add_column("main")
         layout.add_column("vscroll", size=1)
@@ -46,33 +50,33 @@ class ScrollView(View):
     target_y: Reactive[float] = Reactive(0, repaint=False)
 
     def validate_x(self, value: float) -> float:
-        return clamp(value, 0, self.page.virtual_size.width - self.size.width)
+        return clamp(value, 0, self.window.virtual_size.width - self.size.width)
 
     def validate_target_x(self, value: float) -> float:
-        return clamp(value, 0, self.page.virtual_size.width - self.size.width)
+        return clamp(value, 0, self.window.virtual_size.width - self.size.width)
 
     def validate_y(self, value: float) -> float:
-        return clamp(value, 0, self.page.virtual_size.height - self.size.height)
+        return clamp(value, 0, self.window.virtual_size.height - self.size.height)
 
     def validate_target_y(self, value: float) -> float:
-        return clamp(value, 0, self.page.virtual_size.height - self.size.height)
+        return clamp(value, 0, self.window.virtual_size.height - self.size.height)
 
     async def watch_x(self, new_value: float) -> None:
-        self.page.scroll_x = round(new_value)
+        self.window.scroll_x = round(new_value)
         self.hscroll.position = round(new_value)
 
     async def watch_y(self, new_value: float) -> None:
-        self.page.scroll_y = round(new_value)
+        self.window.scroll_y = round(new_value)
         self.vscroll.position = round(new_value)
 
     async def update(self, renderabe: RenderableType) -> None:
-        self.page.update(renderabe)
+        await self.window.update(renderabe)
         self.require_repaint()
 
     async def on_mount(self, event: events.Mount) -> None:
         assert isinstance(self.layout, GridLayout)
         self.layout.place(
-            content=self.page,
+            content=self.window,
             vscroll=self.vscroll,
             hscroll=self.hscroll,
         )
@@ -132,7 +136,7 @@ class ScrollView(View):
 
     async def key_end(self) -> None:
         self.target_x = 0
-        self.target_y = self.page.virtual_size.height - self.size.height
+        self.target_y = self.window.virtual_size.height - self.size.height
         self.animate("x", self.target_x, duration=1, easing="out_cubic")
         self.animate("y", self.target_y, duration=1, easing="out_cubic")
 
@@ -143,8 +147,9 @@ class ScrollView(View):
         self.animate("y", self.target_y, duration=1, easing="out_cubic")
 
     async def on_resize(self, event: events.Resize) -> None:
+        return
         if self.fluid:
-            self.page.update()
+            self.window.update()
 
     async def message_scroll_up(self, message: Message) -> None:
         self.page_up()
@@ -169,16 +174,16 @@ class ScrollView(View):
     async def message_page_update(self, message: Message) -> None:
         self.x = self.validate_x(self.x)
         self.y = self.validate_y(self.y)
-        self.vscroll.virtual_size = self.page.virtual_size.height
+        self.vscroll.virtual_size = self.window.virtual_size.height
         self.vscroll.window_size = self.size.height
 
         assert isinstance(self.layout, GridLayout)
 
         if self.layout.show_column(
-            "vscroll", self.page.virtual_size.height > self.size.height
+            "vscroll", self.window.virtual_size.height > self.size.height
         ):
             self.require_layout()
         if self.layout.show_row(
-            "hscroll", self.page.virtual_size.width > self.size.width
+            "hscroll", self.window.virtual_size.width > self.size.width
         ):
             self.require_layout()

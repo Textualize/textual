@@ -97,7 +97,7 @@ class App(MessagePump):
         self.mouse_over: Widget | None = None
         self.mouse_captured: Widget | None = None
         self._driver: Driver | None = None
-        self._tracebacks: list[Traceback] = []
+        self._exit_renderables: list[RenderableType] = []
 
         self._docks: list[Dock] = []
         self._action_targets = {"app", "view"}
@@ -231,16 +231,19 @@ class App(MessagePump):
         if widget is not None:
             await widget.post_message(events.MouseCapture(self, self.mouse_position))
 
-    def panic(self, traceback: Traceback | None = None) -> None:
+    def panic(self, *renderables: RenderableType) -> None:
         """Exits the app with a traceback.
 
         Args:
             traceback (Traceback, optional): Rich Traceback object or None to generate one
                 for the most recent exception. Defaults to None.
         """
-        if traceback is None:
-            traceback = Traceback(show_locals=True)
-        self._tracebacks.append(traceback)
+
+        if not renderables:
+            renderables = (
+                Traceback(show_locals=True, width=None, locals_max_length=5),
+            )
+        self._exit_renderables.extend(renderables)
         self.close_messages_no_wait()
 
     async def process_messages(self) -> None:
@@ -283,8 +286,8 @@ class App(MessagePump):
                 self.panic()
             finally:
                 driver.stop_application_mode()
-                if self._tracebacks:
-                    for traceback in self._tracebacks:
+                if self._exit_renderables:
+                    for traceback in self._exit_renderables:
                         self.error_console.print(traceback)
                 if self.log_file is not None:
                     self.log_file.close()
@@ -339,7 +342,7 @@ class App(MessagePump):
                     console.file.write("\x1bP=2s\x1b\\")
                     console.file.flush()
             except Exception:
-                self.panic(Traceback(show_locals=True))
+                self.panic()
 
     def display(self, renderable: RenderableType) -> None:
         if not self._closed:

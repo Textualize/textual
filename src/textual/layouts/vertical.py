@@ -14,7 +14,7 @@ from ..widget import Widget
 class VerticalLayout(Layout):
     def __init__(self, *, z: int = 0, gutter: tuple[int, int] | None = None):
         self.z = z
-        self.gutter = gutter or (0, 1)
+        self.gutter = gutter or (1, 1)
         self._widgets: list[Widget] = []
         super().__init__()
 
@@ -49,8 +49,9 @@ class VerticalLayout(Layout):
                 lines = console.render_lines(
                     renderable, console.options.update_width(render_width)
                 )
+
                 region = Region(x, y, render_width, len(lines))
-                add_widget(widget, region, viewport)
+                add_widget(widget, region - scroll, viewport)
             else:
                 add_widget(
                     widget,

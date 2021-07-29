@@ -1,17 +1,26 @@
 from __future__ import annotations
 
+from rich.console import RenderableType
+
 from ..layouts.vertical import VerticalLayout
 from ..view import View
 from ..widget import Widget
+from ..widgets import Static
 
 
 class WindowView(View, layout=VerticalLayout):
     def __init__(
-        self, *, gutter: tuple[int, int] = (1, 1), name: str | None = None
+        self,
+        widget: RenderableType | Widget,
+        *,
+        gutter: tuple[int, int] = (1, 1),
+        name: str | None = None
     ) -> None:
         self.gutter = gutter
-        super().__init__(name=name)
+        layout = VerticalLayout()
+        layout.add(widget if isinstance(widget, Widget) else Static(widget))
+        super().__init__(name=name, layout=layout)
 
-    async def update(self, widget: Widget) -> None:
+    async def update(self, widget: Widget | RenderableType) -> None:
         self.layout = VerticalLayout(gutter=self.gutter)
-        self.layout.add(widget)
+        self.layout.add(widget if isinstance(widget, Widget) else Static(widget))

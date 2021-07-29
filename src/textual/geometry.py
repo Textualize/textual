@@ -168,6 +168,22 @@ class Region(NamedTuple):
         return bool(self.width and self.height)
 
     @property
+    def x_extents(self) -> tuple[int, int]:
+        return (self.x, self.x + self.width)
+
+    @property
+    def y_extents(self) -> tuple[int, int]:
+        return (self.y, self.y + self.height)
+
+    @property
+    def x_end(self) -> int:
+        return self.x + self.width
+
+    @property
+    def y_end(self) -> int:
+        return self.y + self.height
+
+    @property
     def area(self) -> int:
         """Get the area within the region."""
         return self.width * self.height
@@ -191,6 +207,14 @@ class Region(NamedTuple):
         """
         x, y, width, height = self
         return x, y, x + width, y + height
+
+    @property
+    def x_range(self) -> range:
+        return range(self.x, self.x_end)
+
+    @property
+    def y_range(self) -> range:
+        return range(self.y, self.y_end)
 
     def __add__(self, other: Any) -> Region:
         if isinstance(other, tuple):

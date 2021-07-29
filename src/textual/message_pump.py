@@ -193,7 +193,7 @@ class MessagePump:
             except CancelledError:
                 raise
             except Exception as error:
-                self.app.panic(Traceback(show_locals=True))
+                self.app.panic()
                 break
             finally:
                 if isinstance(message, events.Event) and self._message_queue.empty():

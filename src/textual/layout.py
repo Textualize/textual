@@ -15,7 +15,7 @@ from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.segment import Segment, SegmentLines
 from rich.style import Style
 
-from . import log
+from . import log, panic
 from ._loop import loop_last
 from .layout_map import LayoutMap
 from ._lines import crop_lines
@@ -101,6 +101,9 @@ class Layout(ABC):
     ) -> ReflowResult:
         self.reset()
 
+        self.width = width
+        self.height = height
+
         map = self.generate_map(
             console,
             Dimensions(width, height),
@@ -131,8 +134,6 @@ class Layout(ABC):
         hidden_widgets = old_widgets - new_widgets
 
         self._layout_map = map
-        self.width = width
-        self.height = height
 
         # Copy renders if the size hasn't changed
         new_renders = {
@@ -255,9 +256,10 @@ class Layout(ABC):
         if self.map is not None:
             for region, order, clip in self.map.values():
                 region = region.intersection(clip)
-                if region and (region in screen_region):  # type: ignore
-                    for y in range(region.y, region.y + region.height):
-                        cuts_sets[y].update({region.x, region.x + region.width})
+                if region and (region in screen_region):
+                    region_cuts = region.x_extents
+                    for y in region.y_range:
+                        cuts_sets[y].update(region_cuts)
 
         # Sort the cuts for each line
         self._cuts = [sorted(cut_set) for cut_set in cuts_sets]
@@ -265,9 +267,6 @@ class Layout(ABC):
 
     def _get_renders(self, console: Console) -> Iterable[tuple[Region, Region, Lines]]:
         _rich_traceback_guard = True
-        width = self.width
-        height = self.height
-        screen_region = Region(0, 0, width, height)
         layout_map = self.map
 
         if layout_map:
@@ -292,12 +291,12 @@ class Layout(ABC):
 
             if not widget.is_visual:
                 continue
+
             region_lines = self.renders.get(widget)
             if region_lines is not None:
-                yield region_lines
-                continue
-
-            lines = render(widget, region.width, region.height)
+                region, clip, lines = region_lines
+            else:
+                lines = render(widget, region.width, region.height)
             if region in clip:
                 self.renders[widget] = (region, clip, lines)
                 yield region, clip, lines
@@ -308,11 +307,10 @@ class Layout(ABC):
                 self.renders[widget] = (region, clip, lines)
                 splits = [delta_x, delta_x + new_region.width]
 
+                lines = lines[delta_y : delta_y + new_region.height]
+
                 divide = Segment.divide
-                lines = [
-                    list(divide(line, splits))[1]
-                    for line in lines[delta_y : delta_y + new_region.height]
-                ]
+                lines = [list(divide(line, splits))[1] for line in lines]
                 yield region, clip, lines
 
     @classmethod
@@ -331,7 +329,7 @@ class Layout(ABC):
     def render(
         self,
         console: Console,
-        clip: Region = None,
+        crop: Region = None,
     ) -> SegmentLines:
         """Render a layout.
 
@@ -345,8 +343,10 @@ class Layout(ABC):
         width = self.width
         height = self.height
         screen = Region(0, 0, width, height)
-        clip = clip or screen
-        clip_x, clip_y, clip_x2, clip_y2 = clip.corners
+
+        crop_region = crop or Region(0, 0, self.width, self.height)
+
+        # clip_x, clip_y, clip_x2, clip_y2 = clip.corners
 
         divide = Segment.divide
 
@@ -363,27 +363,45 @@ class Layout(ABC):
         ]
         # Go through all the renders in reverse order and fill buckets with no render
         renders = self._get_renders(console)
+        clip_y, clip_y2 = crop_region.y_extents
         for region, clip, lines in chain(
             renders, [(screen, screen, background_render)]
         ):
-            for y, line in enumerate(lines, region.y):
+            # clip = clip.intersection(crop_region)
+            render_region = region.intersection(clip)
+            for y, line in enumerate(lines, render_region.y):
                 if clip_y > y > clip_y2:
                     continue
-                first_cut = clamp(region.x, clip_x, clip_x2)
-                last_cut = clamp(region.x + region.width, clip_x, clip_x2)
+                # first_cut = clamp(render_region.x, clip_x, clip_x2)
+                # last_cut = clamp(render_region.x + render_region.width, clip_x, clip_x2)
+                first_cut = render_region.x
+                last_cut = render_region.x_end
                 final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
-                if len(final_cuts) > 1:
-                    if final_cuts == [region.x, region.x + region.width]:
-                        cut_segments = [line]
-                    else:
-                        relative_cuts = [cut - region.x for cut in final_cuts]
-                        _, *cut_segments = divide(line, relative_cuts)
-                    for cut, segments in zip(final_cuts, cut_segments):
-                        if chops[y][cut] is None:
-                            chops[y][cut] = segments
+                # final_cuts = cuts[y]
+
+                if final_cuts == render_region.y_extents:
+                    cut_segments = [line]
+                else:
+                    render_x = render_region.x
+                    relative_cuts = [cut - render_x for cut in final_cuts]
+                    _, *cut_segments = divide(line, relative_cuts)
+                for cut, segments in zip(final_cuts, cut_segments):
+                    if chops[y][cut] is None:
+                        chops[y][cut] = segments
 
         # Assemble the cut renders in to lists of segments
-        output_lines = list(self._assemble_chops(chops[clip_y:clip_y2]))
+        output_lines = list(self._assemble_chops(chops))
+
+        def width_view(line: list[Segment]) -> list[Segment]:
+            if line:
+                div_lines = list(Segment.divide(line, [crop_x, crop_x2]))
+                line = div_lines[1] if len(div_lines) > 1 else div_lines[0]
+            return line
+
+        if crop is not None:
+            crop_x, crop_y, crop_x2, crop_y2 = crop_region.corners
+            output_lines = [width_view(line) for line in output_lines[crop_y:crop_y2]]
+
         return SegmentLines(output_lines, new_lines=True)
 
     def __rich_console__(
@@ -401,9 +419,9 @@ class Layout(ABC):
         )
 
         self.renders[widget] = (region, clip, new_lines)
-        update_lines = self.render(console, region.intersection(clip)).lines
 
-        clipped_region = region.intersection(clip)
-        update = LayoutUpdate(update_lines, clipped_region.x, clipped_region.y)
+        update_region = region.intersection(clip)
+        update_lines = self.render(console, update_region).lines
+        update = LayoutUpdate(update_lines, update_region.x, update_region.y)
 
         return update

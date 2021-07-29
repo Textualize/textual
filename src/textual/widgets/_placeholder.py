@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from rich import box
 from rich.align import Align
 from rich.console import RenderableType
@@ -19,6 +21,11 @@ class Placeholder(Widget, can_focus=True):
     has_focus: Reactive[bool] = Reactive(False)
     mouse_over: Reactive[bool] = Reactive(False)
     style: Reactive[str] = Reactive("")
+    height: Reactive[int | None] = Reactive(None)
+
+    def __init__(self, *, name: str | None = None, height: int | None = None) -> None:
+        super().__init__(name=name)
+        self.height = height
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield "name", self.name
@@ -34,6 +41,7 @@ class Placeholder(Widget, can_focus=True):
             border_style="green" if self.mouse_over else "blue",
             box=box.HEAVY if self.has_focus else box.ROUNDED,
             style=self.style,
+            height=self.height,
         )
 
     async def on_focus(self, event: events.Focus) -> None:
