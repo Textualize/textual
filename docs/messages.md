@@ -26,7 +26,7 @@ In our Beeper class there is a single event handler `on_key` which is called in 
 
 The `on_key` method is preceded by the keyword `async` making it an asynchronous method. Textual is an asynchronous framework so event handlers and most methods are async.
 
-Out Beeper app is missing typing information. Although completely optional, I recommend adding typing information which will help catch bugs (using tools such as [Mypy](https://mypy.readthedocs.io/en/stable/)). Here is the Beeper class with added typing:
+Our Beeper app is missing typing information. Although completely optional, I recommend adding typing information which will help catch bugs (using tools such as [Mypy](https://mypy.readthedocs.io/en/stable/)). Here is the Beeper class with added typing:
 
 ```python
 from textual.app import App
