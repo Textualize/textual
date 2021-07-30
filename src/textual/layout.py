@@ -376,7 +376,7 @@ class Layout(ABC):
                 # first_cut = clamp(render_region.x, clip_x, clip_x2)
                 # last_cut = clamp(render_region.x + render_region.width, clip_x, clip_x2)
                 first_cut = render_region.x
-                last_cut = render_region.x_end
+                last_cut = render_region.x_max
                 final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
                 # final_cuts = cuts[y]
 

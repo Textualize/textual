@@ -17,6 +17,8 @@ def clamp(value: T, minimum: T, maximum: T) -> T:
     Returns:
         T: New value that is not less than the minimum or greater than the maximum.
     """
+    if minimum > maximum:
+        maximum, minimum = minimum, maximum
     if value < minimum:
         return minimum
     elif value > maximum:
@@ -28,8 +30,8 @@ def clamp(value: T, minimum: T, maximum: T) -> T:
 class Offset(NamedTuple):
     """A point defined by x and y coordinates."""
 
-    x: int
-    y: int
+    x: int = 0
+    y: int = 0
 
     @property
     def is_origin(self) -> bool:
@@ -76,7 +78,7 @@ class Size(NamedTuple):
 
     @property
     def area(self) -> int:
-        """Get the area of the dimensions.
+        """Get the area of the size.
 
         Returns:
             int: Area in cells.
@@ -90,7 +92,7 @@ class Size(NamedTuple):
         return Region(0, 0, width, height)
 
     def contains(self, x: int, y: int) -> bool:
-        """Check if a point is in the region.
+        """Check if a point is in the size.
 
         Args:
             x (int): X coordinate (column)
@@ -103,7 +105,7 @@ class Size(NamedTuple):
         return width > x >= 0 and height > y >= 0
 
     def contains_point(self, point: tuple[int, int]) -> bool:
-        """Check if a point is in the region.
+        """Check if a point is in the size.
 
         Args:
             point (tuple[int, int]): A tuple of x and y coordinates.
@@ -127,7 +129,7 @@ class Size(NamedTuple):
 
 
 class Region(NamedTuple):
-    """Defines a rectangular region of the screen."""
+    """Defines a rectangular region."""
 
     x: int
     y: int
@@ -176,7 +178,7 @@ class Region(NamedTuple):
         return (self.y, self.y + self.height)
 
     @property
-    def x_end(self) -> int:
+    def x_max(self) -> int:
         return self.x + self.width
 
     @property
@@ -210,7 +212,7 @@ class Region(NamedTuple):
 
     @property
     def x_range(self) -> range:
-        return range(self.x, self.x_end)
+        return range(self.x, self.x_max)
 
     @property
     def y_range(self) -> range:
