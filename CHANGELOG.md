@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Simplified events. Remove Startup event (use Mount)
+- Changed geometry.Point to geometry.Offset and geometry.Dimensions to geometry.Size
 
 ## [0.1.8] - 2021-07-17
 

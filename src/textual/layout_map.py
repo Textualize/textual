@@ -4,7 +4,7 @@ from rich.console import Console
 
 from typing import ItemsView, KeysView, ValuesView, NamedTuple
 
-from .geometry import Region, Dimensions
+from .geometry import Region, Size
 
 from .widget import Widget
 
@@ -16,13 +16,13 @@ class RenderRegion(NamedTuple):
 
 
 class LayoutMap:
-    def __init__(self, size: Dimensions) -> None:
+    def __init__(self, size: Size) -> None:
         self.size = size
         self.contents_region = Region(0, 0, 0, 0)
         self.widgets: dict[Widget, RenderRegion] = {}
 
     @property
-    def virtual_size(self) -> Dimensions:
+    def virtual_size(self) -> Size:
         return self.contents_region.size
 
     def __getitem__(self, widget: Widget) -> RenderRegion:

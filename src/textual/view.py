@@ -10,7 +10,7 @@ from rich.style import Style
 from . import events
 from . import log
 from .layout import Layout, NoWidget
-from .geometry import Dimensions, Offset, Region
+from .geometry import Size, Offset, Region
 from .messages import UpdateMessage, LayoutMessage
 from .reactive import Reactive, watch
 
@@ -30,7 +30,7 @@ class View(Widget):
         self.layout: Layout = layout or self.layout_factory()
         self.mouse_over: Widget | None = None
         self.focused: Widget | None = None
-        self.size = Dimensions(0, 0)
+        self.size = Size(0, 0)
         self.widgets: set[Widget] = set()
         self.named_widgets: dict[str, Widget] = {}
         self._mouse_style: Style = Style()
@@ -56,7 +56,7 @@ class View(Widget):
     def scroll(self) -> Offset:
         return Offset(self.scroll_x, self.scroll_y)
 
-    virtual_size: Reactive[Dimensions] = Reactive(Dimensions(0, 0))
+    virtual_size: Reactive[Size] = Reactive(Size(0, 0))
 
     # @property
     # def virtual_size(self) -> Dimensions:
@@ -160,7 +160,7 @@ class View(Widget):
             self.console, width, height, self.scroll
         )
         self.virtual_size = self.layout.map.virtual_size
-        self.app.refresh()
+        # self.app.refresh()
 
         for widget in hidden:
             widget.post_message_no_wait(events.Hide(self))
@@ -177,7 +177,7 @@ class View(Widget):
                 )
 
     async def on_resize(self, event: events.Resize) -> None:
-        self.size = Dimensions(event.width, event.height)
+        self.size = Size(event.width, event.height)
         await self.refresh_layout()
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:

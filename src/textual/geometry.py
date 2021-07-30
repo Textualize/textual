@@ -65,7 +65,7 @@ class Offset(NamedTuple):
         return Offset(int(x1 + (x2 - x1) * factor), int((y1 + (y2 - y1) * factor)))
 
 
-class Dimensions(NamedTuple):
+class Size(NamedTuple):
     """An area defined by its width and height."""
 
     width: int
@@ -194,9 +194,9 @@ class Region(NamedTuple):
         return Offset(self.x, self.y)
 
     @property
-    def size(self) -> Dimensions:
+    def size(self) -> Size:
         """Get the size of the region."""
-        return Dimensions(self.width, self.height)
+        return Size(self.width, self.height)
 
     @property
     def corners(self) -> tuple[int, int, int, int]:

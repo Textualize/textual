@@ -8,7 +8,7 @@ from typing import Iterable, TYPE_CHECKING, Sequence
 from rich.console import Console
 
 from .._layout_resolve import layout_resolve
-from ..geometry import Offset, Region, Dimensions
+from ..geometry import Offset, Region, Size
 from ..layout import Layout
 from ..layout_map import LayoutMap
 
@@ -49,7 +49,7 @@ class DockLayout(Layout):
             yield from dock.widgets
 
     def generate_map(
-        self, console: Console, size: Dimensions, viewport: Region, scroll: Offset
+        self, console: Console, size: Size, viewport: Region, scroll: Offset
     ) -> LayoutMap:
 
         map: LayoutMap = LayoutMap(size)

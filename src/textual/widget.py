@@ -20,7 +20,7 @@ from rich.style import Style
 from . import events
 from ._animator import BoundAnimator
 from ._context import active_app
-from .geometry import Dimensions
+from .geometry import Size
 from .message import Message
 from .message_pump import MessagePump
 from .messages import LayoutMessage, UpdateMessage
@@ -47,7 +47,7 @@ class Widget(MessagePump):
 
         self.name = name or f"{class_name}#{_count}"
 
-        self.size = Dimensions(0, 0)
+        self.size = Size(0, 0)
         self.size_changed = False
         self._repaint_required = False
         self._layout_required = False
@@ -175,7 +175,7 @@ class Widget(MessagePump):
 
     async def on_event(self, event: events.Event) -> None:
         if isinstance(event, events.Resize):
-            new_size = Dimensions(event.width, event.height)
+            new_size = Size(event.width, event.height)
             if self.size != new_size:
                 self.size = new_size
                 self.require_repaint()

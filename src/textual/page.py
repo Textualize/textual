@@ -7,7 +7,7 @@ from rich.padding import Padding, PaddingDimensions
 from rich.segment import Segment
 from rich.style import StyleType
 
-from .geometry import Dimensions, Offset
+from .geometry import Size, Offset
 from .message import Message
 from .widget import Widget, Reactive
 
@@ -38,7 +38,7 @@ class PageRender:
         self.offset = Offset(0, 0)
         self._render_width: int | None = None
         self._render_height: int | None = None
-        self.size = Dimensions(0, 0)
+        self.size = Size(0, 0)
         self._lines: list[list[Segment]] = []
 
     def move_to(self, x: int = 0, y: int = 0) -> None:
@@ -61,7 +61,7 @@ class PageRender:
         if self.padding:
             renderable = Padding(renderable, self.padding)
         self._lines[:] = console.render_lines(renderable, options, style=style)
-        self.size = Dimensions(width, len(self._lines))
+        self.size = Size(width, len(self._lines))
         self.page.emit_no_wait(PageUpdate(self.page))
 
     def __rich_console__(
@@ -126,7 +126,7 @@ class Page(Widget):
         self.require_repaint()
 
     @property
-    def virtual_size(self) -> Dimensions:
+    def virtual_size(self) -> Size:
         return self._page.size
 
     def render(self) -> RenderableType:

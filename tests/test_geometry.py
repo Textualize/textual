@@ -1,57 +1,57 @@
 import pytest
 
-from textual.geometry import clamp, Offset, Dimensions, Region
+from textual.geometry import clamp, Offset, Size, Region
 
 
 def test_dimensions_region():
-    assert Dimensions(30, 40).region == Region(0, 0, 30, 40)
+    assert Size(30, 40).region == Region(0, 0, 30, 40)
 
 
 def test_dimensions_contains():
-    assert Dimensions(10, 10).contains(5, 5)
-    assert Dimensions(10, 10).contains(9, 9)
-    assert Dimensions(10, 10).contains(0, 0)
-    assert not Dimensions(10, 10).contains(10, 9)
-    assert not Dimensions(10, 10).contains(9, 10)
-    assert not Dimensions(10, 10).contains(-1, 0)
-    assert not Dimensions(10, 10).contains(0, -1)
+    assert Size(10, 10).contains(5, 5)
+    assert Size(10, 10).contains(9, 9)
+    assert Size(10, 10).contains(0, 0)
+    assert not Size(10, 10).contains(10, 9)
+    assert not Size(10, 10).contains(9, 10)
+    assert not Size(10, 10).contains(-1, 0)
+    assert not Size(10, 10).contains(0, -1)
 
 
 def test_dimensions_contains_point():
-    assert Dimensions(10, 10).contains_point(Offset(5, 5))
-    assert Dimensions(10, 10).contains_point(Offset(9, 9))
-    assert Dimensions(10, 10).contains_point(Offset(0, 0))
-    assert not Dimensions(10, 10).contains_point(Offset(10, 9))
-    assert not Dimensions(10, 10).contains_point(Offset(9, 10))
-    assert not Dimensions(10, 10).contains_point(Offset(-1, 0))
-    assert not Dimensions(10, 10).contains_point(Offset(0, -1))
+    assert Size(10, 10).contains_point(Offset(5, 5))
+    assert Size(10, 10).contains_point(Offset(9, 9))
+    assert Size(10, 10).contains_point(Offset(0, 0))
+    assert not Size(10, 10).contains_point(Offset(10, 9))
+    assert not Size(10, 10).contains_point(Offset(9, 10))
+    assert not Size(10, 10).contains_point(Offset(-1, 0))
+    assert not Size(10, 10).contains_point(Offset(0, -1))
 
 
 def test_dimensions_contains_special():
     with pytest.raises(TypeError):
-        (1, 2, 3) in Dimensions(10, 10)
+        (1, 2, 3) in Size(10, 10)
 
-    assert (5, 5) in Dimensions(10, 10)
-    assert (9, 9) in Dimensions(10, 10)
-    assert (0, 0) in Dimensions(10, 10)
-    assert (10, 9) not in Dimensions(10, 10)
-    assert (9, 10) not in Dimensions(10, 10)
-    assert (-1, 0) not in Dimensions(10, 10)
-    assert (0, -1) not in Dimensions(10, 10)
+    assert (5, 5) in Size(10, 10)
+    assert (9, 9) in Size(10, 10)
+    assert (0, 0) in Size(10, 10)
+    assert (10, 9) not in Size(10, 10)
+    assert (9, 10) not in Size(10, 10)
+    assert (-1, 0) not in Size(10, 10)
+    assert (0, -1) not in Size(10, 10)
 
 
 def test_dimensions_bool():
-    assert Dimensions(1, 1)
-    assert Dimensions(3, 4)
-    assert not Dimensions(0, 1)
-    assert not Dimensions(1, 0)
+    assert Size(1, 1)
+    assert Size(3, 4)
+    assert not Size(0, 1)
+    assert not Size(1, 0)
 
 
 def test_dimensions_area():
-    assert Dimensions(0, 0).area == 0
-    assert Dimensions(1, 0).area == 0
-    assert Dimensions(1, 1).area == 1
-    assert Dimensions(4, 5).area == 20
+    assert Size(0, 0).area == 0
+    assert Size(1, 0).area == 0
+    assert Size(1, 1).area == 1
+    assert Size(4, 5).area == 20
 
 
 def test_clamp():
@@ -97,8 +97,8 @@ def test_region_area():
 
 
 def test_region_size():
-    assert isinstance(Region(3, 4, 5, 6).size, Dimensions)
-    assert Region(3, 4, 5, 6).size == Dimensions(5, 6)
+    assert isinstance(Region(3, 4, 5, 6).size, Size)
+    assert Region(3, 4, 5, 6).size == Size(5, 6)
 
 
 def test_region_origin():

@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from rich.console import RenderableType
 
-from ..geometry import Offset, Dimensions
+from .. import events
+from ..geometry import Offset, Size
 from ..layouts.vertical import VerticalLayout
 from ..view import View
 from ..message import Message
@@ -24,16 +25,22 @@ class WindowView(View, layout=VerticalLayout):
     ) -> None:
         self.gutter = gutter
         layout = VerticalLayout()
-        layout.add(widget if isinstance(widget, Widget) else Static(widget))
+        self.widget = widget if isinstance(widget, Widget) else Static(widget)
+        layout.add(self.widget)
         super().__init__(name=name, layout=layout)
 
     async def update(self, widget: Widget | RenderableType) -> None:
         layout = self.layout
         assert isinstance(layout, VerticalLayout)
         layout.clear()
-        layout.add(widget if isinstance(widget, Widget) else Static(widget))
+        self.widget = widget if isinstance(widget, Widget) else Static(widget)
+        layout.add(self.widget)
         await self.refresh_layout()
-        # self.require_layout()
+        self.require_layout()
 
-    async def watch_virtual_size(self, size: Dimensions) -> None:
+    async def watch_virtual_size(self, size: Size) -> None:
         await self.emit(VirtualSizeChange(self))
+
+    # async def on_resize(self, event: events.Resize) -> None:
+    #     self.layout.renders.pop(self.widget)
+    #     self.require_repaint()

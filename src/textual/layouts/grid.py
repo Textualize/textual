@@ -11,7 +11,7 @@ from typing import Iterable, NamedTuple
 from rich.console import Console
 
 from .._layout_resolve import layout_resolve
-from ..geometry import Dimensions, Offset, Region
+from ..geometry import Size, Offset, Region
 from ..layout import Layout
 from ..layout_map import LayoutMap
 from ..widget import Widget
@@ -238,8 +238,8 @@ class GridLayout(Layout):
     def _align(
         cls,
         region: Region,
-        grid_size: Dimensions,
-        container: Dimensions,
+        grid_size: Size,
+        container: Size,
         col_align: GridAlign,
         row_align: GridAlign,
     ) -> Region:
@@ -264,7 +264,7 @@ class GridLayout(Layout):
         return self.widgets.keys()
 
     def generate_map(
-        self, console: Console, size: Dimensions, viewport: Region, scroll: Offset
+        self, console: Console, size: Size, viewport: Region, scroll: Offset
     ) -> LayoutMap:
         """Generate a map that associates widgets with their location on screen.
 
@@ -338,9 +338,7 @@ class GridLayout(Layout):
             #     )
             #     map.update(sub_map)
 
-        container = Dimensions(
-            width - self.column_gutter * 2, height - self.row_gutter * 2
-        )
+        container = Size(width - self.column_gutter * 2, height - self.row_gutter * 2)
         column_names, column_tracks, column_count, column_size = resolve_tracks(
             [
                 options
@@ -357,7 +355,7 @@ class GridLayout(Layout):
             self.row_gap,
             self.row_repeat,
         )
-        grid_size = Dimensions(column_size, row_size)
+        grid_size = Size(column_size, row_size)
 
         widget_areas = (
             (widget, area)

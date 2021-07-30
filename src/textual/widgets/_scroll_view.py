@@ -9,7 +9,7 @@ from .. import events
 from ..layouts.grid import GridLayout
 from ..message import Message
 from ..scrollbar import ScrollTo, ScrollBar
-from ..geometry import clamp, Offset, Dimensions
+from ..geometry import clamp, Offset, Size
 from ..page import Page
 from ..reactive import watch
 from ..view import View
@@ -52,16 +52,24 @@ class ScrollView(View):
     target_y: Reactive[float] = Reactive(0, repaint=False)
 
     def validate_x(self, value: float) -> float:
-        return clamp(value, 0, self.window.virtual_size.width - self.size.width)
+        return clamp(value, 0, self.max_scroll_x)
 
     def validate_target_x(self, value: float) -> float:
-        return clamp(value, 0, self.window.virtual_size.width - self.size.width)
+        return clamp(value, 0, self.max_scroll_x)
 
     def validate_y(self, value: float) -> float:
-        return clamp(value, 0, self.window.virtual_size.height - self.size.height)
+        return clamp(value, 0, self.max_scroll_y)
 
     def validate_target_y(self, value: float) -> float:
-        return clamp(value, 0, self.window.virtual_size.height - self.size.height)
+        return clamp(value, 0, self.max_scroll_y)
+
+    @property
+    def max_scroll_y(self) -> float:
+        return max(0, self.window.virtual_size.height - self.size.height)
+
+    @property
+    def max_scroll_x(self) -> float:
+        return max(0, self.window.virtual_size.width - self.size.width)
 
     async def watch_x(self, new_value: float) -> None:
         self.window.scroll_x = round(new_value)
@@ -175,12 +183,11 @@ class ScrollView(View):
         self.animate("y", self.target_y, speed=150, easing="out_cubic")
 
     async def message_virtual_size_change(self, message: Message) -> None:
-        self.log(self.y)
-        return
+
         virtual_size = self.window.virtual_size
         # self.log("VIRTUAL_SIZE", self.size, virtual_size)
-        # self.x = self.validate_x(self.x)
-        # self.y = self.validate_y(self.y)
+        self.x = self.validate_x(self.x)
+        self.y = self.validate_y(self.y)
         self.log(self.y)
         self.vscroll.virtual_size = virtual_size.height
         self.vscroll.window_size = self.size.height

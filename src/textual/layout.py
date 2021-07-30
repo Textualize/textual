@@ -21,7 +21,7 @@ from .layout_map import LayoutMap
 from ._lines import crop_lines
 from ._types import Lines
 
-from .geometry import clamp, Region, Offset, Dimensions
+from .geometry import clamp, Region, Offset, Size
 
 
 PY38 = sys.version_info >= (3, 8)
@@ -106,7 +106,7 @@ class Layout(ABC):
 
         map = self.generate_map(
             console,
-            Dimensions(width, height),
+            Size(width, height),
             Region(0, 0, width, height),
             scroll,
         )
@@ -164,7 +164,7 @@ class Layout(ABC):
 
     @abstractmethod
     def generate_map(
-        self, console: Console, size: Dimensions, viewport: Region, scroll: Offset
+        self, console: Console, size: Size, viewport: Region, scroll: Offset
     ) -> LayoutMap:
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 
@@ -297,6 +297,7 @@ class Layout(ABC):
                 region, clip, lines = region_lines
             else:
                 lines = render(widget, region.width, region.height)
+                log("RENDERING", widget)
             if region in clip:
                 self.renders[widget] = (region, clip, lines)
                 yield region, clip, lines

@@ -5,7 +5,7 @@ from typing import Awaitable, Callable, Type, TYPE_CHECKING, TypeVar
 import rich.repr
 from rich.style import Style
 
-from .geometry import Offset, Dimensions
+from .geometry import Offset, Size
 from .message import Message
 from ._types import MessageTarget
 from .keys import Keys
@@ -106,8 +106,8 @@ class Resize(Event):
         return isinstance(message, Resize)
 
     @property
-    def size(self) -> Dimensions:
-        return Dimensions(self.width, self.height)
+    def size(self) -> Size:
+        return Size(self.width, self.height)
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield self.width
