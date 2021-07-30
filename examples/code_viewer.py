@@ -32,7 +32,7 @@ class MyApp(App):
         await self.view.dock(
             ScrollView(self.directory), edge="left", size=32, name="sidebar"
         )
-        await self.view.dock(self.body, edge="right")
+        await self.view.dock(self.body, edge="top")
 
     async def message_file_click(self, message: FileClick) -> None:
         syntax = Syntax.from_path(

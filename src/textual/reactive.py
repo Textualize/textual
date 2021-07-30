@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import inspect
 from functools import partial
-import sys
 from typing import (
     Any,
     Awaitable,
@@ -25,6 +25,10 @@ if TYPE_CHECKING:
 
 
 ReactiveType = TypeVar("ReactiveType")
+
+
+def count_params(func: Callable) -> int:
+    return len(inspect.signature(func).parameters)
 
 
 class Reactive(Generic[ReactiveType]):
@@ -72,7 +76,7 @@ class Reactive(Generic[ReactiveType]):
             self._first = False
             setattr(obj, internal_name, value)
 
-            self.check_watchers(obj, name)
+            self.check_watchers(obj, name, current_value)
 
             if self.layout:
                 obj.require_layout()
@@ -80,23 +84,29 @@ class Reactive(Generic[ReactiveType]):
                 obj.require_repaint()
 
     @classmethod
-    def check_watchers(cls, obj: Reactable, name: str) -> None:
+    def check_watchers(cls, obj: Reactable, name: str, old_value: Any) -> None:
 
         internal_name = f"__{name}"
         value = getattr(obj, internal_name)
 
         async def update_watcher(
-            obj: Reactable, watch_function: Callable, value
+            obj: Reactable, watch_function: Callable, old_value: Any, value: Any
         ) -> None:
             _rich_traceback_guard = True
-            await watch_function(value)
+            if count_params(watch_function) == 2:
+                await watch_function(old_value, value)
+            else:
+                await watch_function(value)
             await Reactive.compute(obj)
 
         watch_function = getattr(obj, f"watch_{name}", None)
         if callable(watch_function):
             obj.post_message_no_wait(
                 events.Callback(
-                    obj, callback=partial(update_watcher, obj, watch_function, value)
+                    obj,
+                    callback=partial(
+                        update_watcher, obj, watch_function, old_value, value
+                    ),
                 )
             )
 
@@ -105,7 +115,8 @@ class Reactive(Generic[ReactiveType]):
         for watcher in watchers:
             obj.post_message_no_wait(
                 events.Callback(
-                    obj, callback=partial(update_watcher, obj, watcher, value)
+                    obj,
+                    callback=partial(update_watcher, obj, watcher, old_value, value),
                 )
             )
 
@@ -126,8 +137,9 @@ def watch(
     obj: Reactable, attribute_name: str, callback: Callable[[Any], Awaitable[None]]
 ) -> None:
     watcher_name = f"__{attribute_name}_watchers"
+    current_value = getattr(obj, attribute_name, None)
     if not hasattr(obj, watcher_name):
         setattr(obj, watcher_name, set())
     watchers = getattr(obj, watcher_name)
     watchers.add(callback)
-    Reactive.check_watchers(obj, attribute_name)
+    Reactive.check_watchers(obj, attribute_name, current_value)

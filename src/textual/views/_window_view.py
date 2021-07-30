@@ -33,7 +33,7 @@ class WindowView(View, layout=VerticalLayout):
         layout.clear()
         layout.add(widget if isinstance(widget, Widget) else Static(widget))
         await self.refresh_layout()
-        self.require_layout()
+        # self.require_layout()
 
     async def watch_virtual_size(self, size: Dimensions) -> None:
         await self.emit(VirtualSizeChange(self))

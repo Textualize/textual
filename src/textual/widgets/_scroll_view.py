@@ -66,11 +66,11 @@ class ScrollView(View):
     async def watch_x(self, new_value: float) -> None:
         self.window.scroll_x = round(new_value)
         self.hscroll.position = round(new_value)
+        self.window.require_layout()
 
     async def watch_y(self, new_value: float) -> None:
         self.window.scroll_y = round(new_value)
         self.vscroll.position = round(new_value)
-        # self.window.require_repaint()
         self.window.require_layout()
 
     async def update(self, renderable: RenderableType) -> None:
@@ -175,10 +175,13 @@ class ScrollView(View):
         self.animate("y", self.target_y, speed=150, easing="out_cubic")
 
     async def message_virtual_size_change(self, message: Message) -> None:
+        self.log(self.y)
+        return
         virtual_size = self.window.virtual_size
-        self.log("VIRTUAL_SIZE", self.size, virtual_size)
-        self.x = self.validate_x(self.x)
-        self.y = self.validate_y(self.y)
+        # self.log("VIRTUAL_SIZE", self.size, virtual_size)
+        # self.x = self.validate_x(self.x)
+        # self.y = self.validate_y(self.y)
+        self.log(self.y)
         self.vscroll.virtual_size = virtual_size.height
         self.vscroll.window_size = self.size.height
 
