@@ -158,9 +158,8 @@ class ScrollView(View):
         self.animate("y", self.target_y, duration=1, easing="out_cubic")
 
     async def on_resize(self, event: events.Resize) -> None:
-        return
-        if self.fluid:
-            self.window.update()
+
+        self.window.require_repaint()
 
     async def message_scroll_up(self, message: Message) -> None:
         self.page_up()
@@ -185,7 +184,7 @@ class ScrollView(View):
     async def message_virtual_size_change(self, message: Message) -> None:
 
         virtual_size = self.window.virtual_size
-        # self.log("VIRTUAL_SIZE", self.size, virtual_size)
+        self.log("VIRTUAL_SIZE", self.size, virtual_size)
         self.x = self.validate_x(self.x)
         self.y = self.validate_y(self.y)
         self.log(self.y)

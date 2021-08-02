@@ -4,7 +4,7 @@ from typing import Iterable
 
 from rich.console import Console
 
-
+from .. import log
 from ..geometry import Offset, Region, Size
 from ..layout import Layout
 from ..layout_map import LayoutMap
@@ -42,22 +42,25 @@ class VerticalLayout(Layout):
             map.add_widget(console, widget, region, (self.z, index), clip)
 
         for widget in self._widgets:
-            try:
-                region, clip, lines = self.renders[widget]
-            except KeyError:
-                renderable = widget.render()
-                lines = console.render_lines(
-                    renderable, console.options.update_width(render_width)
-                )
-                region = Region(x, y, render_width, len(lines))
-                self.renders[widget] = (region - scroll, viewport, lines)
-                add_widget(widget, region - scroll, viewport)
-            else:
-                add_widget(
-                    widget,
-                    Region(x, y, region.width, region.height) - scroll,
-                    clip,
-                )
-                y += region.height + gutter_height
+            # if widget._render_cache is not None:
+            #     lines = widget._render_cache.lines
+            # else:
+            #     lines = widget.render_lines(render_width).lines
+
+            region = Region(x, y, render_width, 100)
+            add_widget(widget, region - scroll, viewport)
+
+            # try:
+            #     region, clip = self.regions[widget]
+            # except KeyError:
+            #     lines = widget.render_lines(render_width)
+            #     log("***VERTICAL", len(lines))
+            #     region = Region(x, y, render_width, len(lines))
+            #     add_widget(widget, region - scroll, viewport)
+            # else:
+            #     add_widget(
+            #         widget, Region(x, y, region.width, region.height) - scroll, clip
+            #     )
+            #     y += region.height + gutter_height
 
         return map

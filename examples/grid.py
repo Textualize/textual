@@ -11,8 +11,8 @@ class GridTest(App):
 
         grid = await self.view.dock_grid(edge="left", size=70, name="left")
 
-        self.view["left"].scroll_y = 5
-        self.view["left"].scroll_x = 5
+        # self.view["left"].scroll_y = 5
+        # self.view["left"].scroll_x = 5
 
         grid.add_column(fraction=1, name="left", min_size=20)
         grid.add_column(size=30, name="center")
@@ -35,6 +35,7 @@ class GridTest(App):
             area3=Placeholder(name="area3"),
             area4=Placeholder(name="area4"),
         )
+        await self.view.update_layout()
 
 
 GridTest.run(title="Grid Test", log="textual.log")

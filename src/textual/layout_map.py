@@ -28,13 +28,13 @@ class LayoutMap:
     def __getitem__(self, widget: Widget) -> RenderRegion:
         return self.widgets[widget]
 
-    def items(self) -> ItemsView:
+    def items(self) -> ItemsView[Widget, RenderRegion]:
         return self.widgets.items()
 
-    def keys(self) -> KeysView:
+    def keys(self) -> KeysView[Widget]:
         return self.widgets.keys()
 
-    def values(self) -> ValuesView:
+    def values(self) -> ValuesView[RenderRegion]:
         return self.widgets.values()
 
     def clear(self) -> None:

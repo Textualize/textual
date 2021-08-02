@@ -10,7 +10,6 @@ from .message import Message
 from ._types import MessageTarget
 from .keys import Keys
 
-
 MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
 
 if TYPE_CHECKING:
@@ -53,6 +52,11 @@ class Shutdown(Event):
     pass
 
 
+class Repaint(Event, bubble=False):
+    def can_replace(self, message: "Message") -> bool:
+        return isinstance(message, Repaint)
+
+
 class Load(Event):
     """
     Sent when the App is running but *before* the terminal is in application mode.
@@ -87,27 +91,29 @@ class Action(Event, bubble=True):
 class Resize(Event):
     """Sent when the app or widget has been resized."""
 
-    __slots__ = ["width", "height"]
-    width: int
-    height: int
+    __slots__ = ["size"]
+    size: Size
 
-    def __init__(self, sender: MessageTarget, width: int, height: int) -> None:
+    def __init__(self, sender: MessageTarget, size: Size) -> None:
         """
         Args:
             sender (MessageTarget): Event sender.
             width (int): New width in terminal cells.
             height (int): New height in terminal cells.
         """
-        self.width = width
-        self.height = height
+        self.size = size
         super().__init__(sender)
 
     def can_replace(self, message: "Message") -> bool:
         return isinstance(message, Resize)
 
     @property
-    def size(self) -> Size:
-        return Size(self.width, self.height)
+    def width(self) -> int:
+        return self.size.width
+
+    @property
+    def height(self) -> int:
+        return self.size.height
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield self.width

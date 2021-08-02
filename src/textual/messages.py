@@ -17,28 +17,19 @@ class UpdateMessage(Message):
         self,
         sender: MessagePump,
         widget: Widget,
-        offset_x: int = 0,
-        offset_y: int = 0,
-        reflow: bool = False,
     ):
         super().__init__(sender)
         self.widget = widget
-        self.offset_x = offset_x
-        self.offset_y = offset_y
-        self.reflow = reflow
 
     def __rich_repr__(self) -> rich.repr.RichReprResult:
         yield self.sender
         yield "widget"
-        yield "offset_x", self.offset_x, 0
-        yield "offset_y", self.offset_y, 0
-        yield "reflow", self.reflow, False
 
     def can_replace(self, message: Message) -> bool:
-        return isinstance(message, UpdateMessage) and message.sender == self.sender
+        return isinstance(message, UpdateMessage) and self.widget is message.widget
 
 
 @rich.repr.auto
 class LayoutMessage(Message):
     def can_replace(self, message: Message) -> bool:
-        return isinstance(message, LayoutMessage) and message.sender == self.sender
+        return isinstance(message, LayoutMessage)

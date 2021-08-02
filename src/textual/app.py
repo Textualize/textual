@@ -267,7 +267,6 @@ class App(MessagePump):
                 self.title = self._title
                 self.require_layout()
                 await self.animator.start()
-
                 await super().process_messages()
                 log("PROCESS END")
                 await self.animator.stop()

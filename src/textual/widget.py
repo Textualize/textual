@@ -7,6 +7,7 @@ from typing import (
     TYPE_CHECKING,
     Callable,
     ClassVar,
+    NamedTuple,
     NewType,
     cast,
 )
@@ -15,6 +16,7 @@ from rich.align import Align
 from rich.console import Console, RenderableType
 from rich.panel import Panel
 from rich.pretty import Pretty
+from rich.segment import Segment
 from rich.style import Style
 
 from . import events
@@ -25,12 +27,18 @@ from .message import Message
 from .message_pump import MessagePump
 from .messages import LayoutMessage, UpdateMessage
 from .reactive import Reactive, watch
+from ._types import Lines
 
 if TYPE_CHECKING:
     from .app import App
     from .view import View
 
 log = getLogger("rich")
+
+
+class RenderCache(NamedTuple):
+    size: Size
+    lines: Lines
 
 
 @rich.repr.auto
@@ -47,12 +55,12 @@ class Widget(MessagePump):
 
         self.name = name or f"{class_name}#{_count}"
 
-        self.size = Size(0, 0)
-        self.size_changed = False
+        self._size = Size(0, 0)
         self._repaint_required = False
         self._layout_required = False
         self._animate: BoundAnimator | None = None
         self._reactive_watches: dict[str, Callable] = {}
+        self._render_cache: RenderCache | None = None
         self.highlight_style: Style | None = None
 
         super().__init__()
@@ -84,6 +92,10 @@ class Widget(MessagePump):
         watch(self, attribute_name, callback)
 
     @property
+    def size(self) -> Size:
+        return self._size
+
+    @property
     def is_visual(self) -> bool:
         return True
 
@@ -109,11 +121,46 @@ class Widget(MessagePump):
         """Get the layout offset as a tuple."""
         return (round(self.layout_offset_x), round(self.layout_offset_y))
 
+    def _update_size(self, size: Size) -> None:
+        self._size = size
+        # if self._render_cache and self._render_cache.size != size:
+        #     self.render_lines()
+        #     self.require_repaint()
+        # self.size = size
+
+    def render_lines(self) -> RenderCache:
+        width, height = self.size
+        renderable = self.render()
+        options = self.console.options.update_dimensions(width, height)
+        lines = self.console.render_lines(renderable, options)
+        self._render_cache = RenderCache(self.size, lines)
+        return self._render_cache
+
+    def _get_lines(self) -> Lines:
+        """Get render lines for given dimensions.
+
+        Args:
+            width (int): [description]
+            height (int): [description]
+
+        Returns:
+            Lines: [description]
+        """
+        if self._render_cache is None:
+            self._render_cache = self.render_lines()
+        lines = self._render_cache.lines
+
+        return lines
+
+    def _clear_render_cache(self) -> None:
+        self._render_cache = None
+
     def require_repaint(self) -> None:
         """Mark widget as requiring a repaint.
 
         Actual repaint is done by parent on idle.
         """
+        self._render_cache = None
         self._repaint_required = True
         self.post_message_no_wait(events.Null(self))
 
@@ -173,13 +220,15 @@ class Widget(MessagePump):
             return True
         return await super().post_message(message)
 
-    async def on_event(self, event: events.Event) -> None:
-        if isinstance(event, events.Resize):
-            new_size = Size(event.width, event.height)
-            if self.size != new_size:
-                self.size = new_size
-                self.require_repaint()
-        await super().on_event(event)
+    # async def on_event(self, event: events.Event) -> None:
+    #     if isinstance(event, events.Resize):
+    #         if self.size != event.size:
+    #             # self.size = event.size
+    #             self.require_repaint()
+    #     await super().on_event(event)
+
+    async def on_resize(self, event: events.Resize) -> None:
+        self.render_lines()
 
     async def on_idle(self, event: events.Idle) -> None:
         if self.check_layout():
@@ -214,6 +263,10 @@ class Widget(MessagePump):
         key_method = getattr(self, f"key_{event.key}", None)
         if key_method is not None:
             await key_method()
+
+    # async def on_repaint(self) -> None:
+    #     if self._render_cache is None or self._render_cache.size != self.size:
+    #         self._render_cache = self.render_lines()
 
     async def on_mouse_down(self, event: events.MouseUp) -> None:
         await self.broker_event("mouse.down", event)

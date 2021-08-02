@@ -76,7 +76,7 @@ class Layout(ABC):
         self._layout_map: LayoutMap | None = None
         self.width = 0
         self.height = 0
-        self.renders: dict[Widget, tuple[Region, Region, Lines]] = {}
+        self.regions: dict[Widget, tuple[Region, Region]] = {}
         self._cuts: list[list[int]] | None = None
         self._require_update: bool = True
         self.background = ""
@@ -92,9 +92,9 @@ class Layout(ABC):
 
     def reset(self) -> None:
         self._cuts = None
-        if self._require_update:
-            self.renders.clear()
-            self._layout_map = None
+        # if self._require_update:
+        #     self.regions.clear()
+        #     self._layout_map = None
 
     def reflow(
         self, console: Console, width: int, height: int, scroll: Offset
@@ -137,15 +137,9 @@ class Layout(ABC):
 
         # Copy renders if the size hasn't changed
         new_renders = {
-            widget: (region, clip, self.renders[widget][2])
-            for widget, (region, _order, clip) in map.items()
-            if (
-                widget in self.renders
-                and self.renders[widget][0].size == region.size
-                and not widget.check_repaint()
-            )
+            widget: (region, clip) for widget, (region, _order, clip) in map.items()
         }
-        self.renders = new_renders
+        self.regions = new_renders
 
         # Widgets with changed size
         resized_widgets = {
@@ -216,9 +210,9 @@ class Layout(ABC):
             widget, region = self.get_widget_at(x, y)
         except NoWidget:
             return Style.null()
-        if widget not in self.renders:
+        if widget not in self.regions:
             return Style.null()
-        _region, clip, lines = self.renders[widget]
+        lines = widget._get_lines()
         x -= region.x
         y -= region.y
         line = lines[y]
@@ -281,38 +275,55 @@ class Layout(ABC):
         else:
             widget_regions = []
 
-        def render(widget: Widget, width: int, height: int) -> Lines:
-            lines = console.render_lines(
-                widget, console.options.update_dimensions(width, height)
-            )
-            return lines
+        # def render(widget: Widget, width: int, height: int) -> Lines:
+        #     lines = console.render_lines(
+        #         widget, console.options.update_dimensions(width, height)
+        #     )
+        #     return lines
 
         for widget, region, _order, clip in widget_regions:
 
             if not widget.is_visual:
                 continue
 
-            region_lines = self.renders.get(widget)
-            if region_lines is not None:
-                region, clip, lines = region_lines
-            else:
-                lines = render(widget, region.width, region.height)
-                log("RENDERING", widget)
+            lines = widget._get_lines()
+            width, height = region.size
+            lines = Segment.set_shape(lines, width, height)
+            # assert Segment.get_shape(lines) == region.size
             if region in clip:
-                self.renders[widget] = (region, clip, lines)
                 yield region, clip, lines
             elif clip.overlaps(region):
                 new_region = region.intersection(clip)
                 delta_x = new_region.x - region.x
                 delta_y = new_region.y - region.y
-                self.renders[widget] = (region, clip, lines)
                 splits = [delta_x, delta_x + new_region.width]
-
                 lines = lines[delta_y : delta_y + new_region.height]
-
                 divide = Segment.divide
                 lines = [list(divide(line, splits))[1] for line in lines]
                 yield region, clip, lines
+
+            # region_lines = self.regions.get(widget)
+
+            # if region_lines is not None:
+            #     region, clip, lines = region_lines
+            # else:
+            #     lines = render(widget, region.width, region.height)
+            #     log("RENDERING", widget)
+            # if region in clip:
+            #     self.regions[widget] = (region, clip, lines)
+            #     yield region, clip, lines
+            # elif clip.overlaps(region):
+            #     new_region = region.intersection(clip)
+            #     delta_x = new_region.x - region.x
+            #     delta_y = new_region.y - region.y
+            #     self.regions[widget] = (region, clip, lines)
+            #     splits = [delta_x, delta_x + new_region.width]
+
+            #     lines = lines[delta_y : delta_y + new_region.height]
+
+            #     divide = Segment.divide
+            #     lines = [list(divide(line, splits))[1] for line in lines]
+            #     yield region, clip, lines
 
     @classmethod
     def _assemble_chops(
@@ -346,8 +357,6 @@ class Layout(ABC):
         screen = Region(0, 0, width, height)
 
         crop_region = crop or Region(0, 0, self.width, self.height)
-
-        # clip_x, clip_y, clip_x2, clip_y2 = clip.corners
 
         divide = Segment.divide
 
@@ -411,15 +420,27 @@ class Layout(ABC):
         yield self.render(console)
 
     def update_widget(self, console: Console, widget: Widget) -> LayoutUpdate | None:
-        if widget not in self.renders:
+
+        if widget not in self.regions:
             return None
 
-        region, clip, lines = self.renders[widget]
-        new_lines = console.render_lines(
-            widget, console.options.update_dimensions(region.width, region.height)
-        )
+        region, clip = self.regions[widget]
 
-        self.renders[widget] = (region, clip, new_lines)
+        if not region.size:
+            return None
+
+        widget._clear_render_cache()
+        # if not region or not clip:
+        #     return
+
+        # widget._clear_render_cache()
+        # widget.render_lines()
+
+        # new_lines = console.render_lines(
+        #     widget, console.options.update_dimensions(region.width, region.height)
+        # )
+
+        # self.regions[widget] = (region, clip, new_lines)
 
         update_region = region.intersection(clip)
         update_lines = self.render(console, update_region).lines

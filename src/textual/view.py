@@ -30,7 +30,6 @@ class View(Widget):
         self.layout: Layout = layout or self.layout_factory()
         self.mouse_over: Widget | None = None
         self.focused: Widget | None = None
-        self.size = Size(0, 0)
         self.widgets: set[Widget] = set()
         self.named_widgets: dict[str, Widget] = {}
         self._mouse_style: Style = Style()
@@ -127,6 +126,7 @@ class View(Widget):
     async def message_update(self, message: UpdateMessage) -> None:
         widget = message.widget
         assert isinstance(widget, Widget)
+
         display_update = self.root_view.layout.update_widget(self.console, widget)
         if display_update is not None:
             self.app.display(display_update)
@@ -159,8 +159,12 @@ class View(Widget):
         hidden, shown, resized = self.layout.reflow(
             self.console, width, height, self.scroll
         )
+        assert self.layout.map is not None
         self.virtual_size = self.layout.map.virtual_size
-        # self.app.refresh()
+        # for widget, region in self.layout:
+        #     widget._update_size(region.size)
+
+        self.app.refresh()
 
         for widget in hidden:
             widget.post_message_no_wait(events.Hide(self))
@@ -172,13 +176,13 @@ class View(Widget):
 
         for widget, region in self.layout:
             if widget in send_resize:
-                widget.post_message_no_wait(
-                    events.Resize(self, region.width, region.height)
-                )
+                widget._update_size(region.size)
+                widget.post_message_no_wait(events.Resize(self, region.size))
 
     async def on_resize(self, event: events.Resize) -> None:
-        self.size = Size(event.width, event.height)
-        await self.refresh_layout()
+        self._update_size(event.size)
+        if self.is_root_view:
+            await self.refresh_layout()
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         return self.layout.get_widget_at(x, y)

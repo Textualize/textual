@@ -41,6 +41,6 @@ class WindowView(View, layout=VerticalLayout):
     async def watch_virtual_size(self, size: Size) -> None:
         await self.emit(VirtualSizeChange(self))
 
-    # async def on_resize(self, event: events.Resize) -> None:
-    #     self.layout.renders.pop(self.widget)
-    #     self.require_repaint()
+    async def on_resize(self, event: events.Resize) -> None:
+        # self.layout.renders.pop(self.widget)
+        self.require_repaint()
