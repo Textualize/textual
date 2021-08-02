@@ -109,7 +109,7 @@ class View(Widget):
 
     @property
     def is_root_view(self) -> bool:
-        return self.parent is self.app
+        return self._parent and self.parent is self.app
 
     def is_mounted(self, widget: Widget) -> bool:
         return widget in self.widgets
@@ -151,6 +151,10 @@ class View(Widget):
 
     async def refresh_layout(self) -> None:
         await self.layout.mount_all(self)
+        if not self.is_root_view:
+            await self.app.view.refresh_layout()
+            return
+
         if not self.size:
             return
 
@@ -164,7 +168,7 @@ class View(Widget):
         # for widget, region in self.layout:
         #     widget._update_size(region.size)
 
-        self.app.refresh()
+        # self.app.refresh()
 
         for widget in hidden:
             widget.post_message_no_wait(events.Hide(self))
@@ -174,9 +178,9 @@ class View(Widget):
         send_resize = shown
         send_resize.update(resized)
 
-        for widget, region in self.layout:
+        for widget, region, unclipped_region in self.layout:
+            widget._update_size(unclipped_region.size)
             if widget in send_resize:
-                widget._update_size(region.size)
                 widget.post_message_no_wait(events.Resize(self, region.size))
 
     async def on_resize(self, event: events.Resize) -> None:

@@ -3,11 +3,11 @@ from typing import Any
 __all__ = ["log", "panic"]
 
 
-def log(*args: Any) -> None:
+def log(*args: Any, verbosity: int = 0) -> None:
     from ._context import active_app
 
     app = active_app.get()
-    app.log(*args)
+    app.log(*args, verbosity=verbosity)
 
 
 def panic(*args: Any) -> None:

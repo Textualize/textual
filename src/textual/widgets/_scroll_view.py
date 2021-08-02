@@ -8,6 +8,7 @@ from rich.style import StyleType
 from .. import events
 from ..layouts.grid import GridLayout
 from ..message import Message
+from ..messages import UpdateMessage
 from ..scrollbar import ScrollTo, ScrollBar
 from ..geometry import clamp, Offset, Size
 from ..page import Page
@@ -120,6 +121,9 @@ class ScrollView(View):
         self.target_x += self.size.width
         self.animate("x", self.target_x, speed=120, easing="out_cubic")
 
+    # async def message_update(self, message: UpdateMessage) -> None:
+    #     self.window.require_layout()
+
     async def on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
         self.scroll_up()
 
@@ -158,7 +162,6 @@ class ScrollView(View):
         self.animate("y", self.target_y, duration=1, easing="out_cubic")
 
     async def on_resize(self, event: events.Resize) -> None:
-
         self.window.require_repaint()
 
     async def message_scroll_up(self, message: Message) -> None:

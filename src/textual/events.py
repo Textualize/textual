@@ -23,8 +23,8 @@ class Event(Message):
         return
         yield
 
-    def __init_subclass__(cls, bubble: bool = False) -> None:
-        super().__init_subclass__(bubble=bubble)
+    def __init_subclass__(cls, bubble: bool = False, verbosity: int = 1) -> None:
+        super().__init_subclass__(bubble=bubble, verbosity=verbosity)
 
 
 class Null(Event):
@@ -324,7 +324,7 @@ class MouseEvent(InputEvent):
 
 
 @rich.repr.auto
-class MouseMove(MouseEvent):
+class MouseMove(MouseEvent, verbosity=3):
     """Sent when the mouse cursor moves."""
 
 

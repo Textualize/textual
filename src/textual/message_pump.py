@@ -32,6 +32,7 @@ class MessagePump:
     def __init__(self, parent: MessagePump | None = None) -> None:
         self._message_queue: Queue[Message | None] = Queue()
         self._parent = parent
+        self._running: bool = False
         self._closing: bool = False
         self._closed: bool = False
         self._disabled_messages: set[type[Message]] = set()
@@ -58,6 +59,10 @@ class MessagePump:
     @property
     def is_parent_active(self):
         return self._parent and not self._parent._closed and not self._parent._closing
+
+    @property
+    def is_running(self) -> bool:
+        return self._running
 
     def log(self, *args) -> None:
         return self.app.log(*args)
@@ -159,14 +164,18 @@ class MessagePump:
         self._task = asyncio.create_task(self.process_messages())
 
     async def process_messages(self) -> None:
+        self._running = True
         try:
             return await self._process_messages()
         except CancelledError:
             pass
+        finally:
+            self._runnning = False
 
     async def _process_messages(self) -> None:
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
+
         while not self._closed:
             try:
                 message = await self.get_message()
@@ -177,7 +186,7 @@ class MessagePump:
             except Exception as error:
                 raise error from None
 
-            log(message, "->", self)
+            log(message, ">>>", self, verbosity=message.verbosity)
             # Combine any pending messages that may supersede this one
             while not (self._closed or self._closing):
                 pending = self.peek_message()

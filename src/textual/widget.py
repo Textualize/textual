@@ -60,7 +60,7 @@ class Widget(MessagePump):
         self._layout_required = False
         self._animate: BoundAnimator | None = None
         self._reactive_watches: dict[str, Callable] = {}
-        self._render_cache: RenderCache | None = None
+        self.render_cache: RenderCache | None = None
         self.highlight_style: Style | None = None
 
         super().__init__()
@@ -133,8 +133,18 @@ class Widget(MessagePump):
         renderable = self.render()
         options = self.console.options.update_dimensions(width, height)
         lines = self.console.render_lines(renderable, options)
-        self._render_cache = RenderCache(self.size, lines)
-        return self._render_cache
+        self.render_cache = RenderCache(self.size, lines)
+        return self.render_cache
+
+    def render_lines_free(self, width: int) -> RenderCache:
+
+        renderable = self.render()
+
+        options = self.console.options.update(width=width, height=None)
+
+        lines = self.console.render_lines(renderable, options)
+        self.render_cache = RenderCache(Size(width, len(lines)), lines)
+        return self.render_cache
 
     def _get_lines(self) -> Lines:
         """Get render lines for given dimensions.
@@ -146,21 +156,20 @@ class Widget(MessagePump):
         Returns:
             Lines: [description]
         """
-        if self._render_cache is None:
-            self._render_cache = self.render_lines()
-        lines = self._render_cache.lines
-
+        if self.render_cache is None:
+            self.render_cache = self.render_lines()
+        lines = self.render_cache.lines
         return lines
 
     def _clear_render_cache(self) -> None:
-        self._render_cache = None
+        self.render_cache = None
 
     def require_repaint(self) -> None:
         """Mark widget as requiring a repaint.
 
         Actual repaint is done by parent on idle.
         """
-        self._render_cache = None
+        self.render_cache = None
         self._repaint_required = True
         self.post_message_no_wait(events.Null(self))
 
@@ -218,6 +227,8 @@ class Widget(MessagePump):
     async def post_message(self, message: Message) -> bool:
         if not self.check_message_enabled(message):
             return True
+        if not self.is_running:
+            self.log(self, "IS NOT RUNNING")
         return await super().post_message(message)
 
     # async def on_event(self, event: events.Event) -> None:
@@ -228,6 +239,7 @@ class Widget(MessagePump):
     #     await super().on_event(event)
 
     async def on_resize(self, event: events.Resize) -> None:
+        self.log("RESIZE", self)
         self.render_lines()
 
     async def on_idle(self, event: events.Idle) -> None:

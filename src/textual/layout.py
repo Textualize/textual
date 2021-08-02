@@ -178,19 +178,19 @@ class Layout(ABC):
     def map(self) -> LayoutMap | None:
         return self._layout_map
 
-    def __iter__(self) -> Iterator[tuple[Widget, Region]]:
+    def __iter__(self) -> Iterator[tuple[Widget, Region, Region]]:
         if self.map is not None:
             layers = sorted(
                 self.map.widgets.items(), key=lambda item: item[1].order, reverse=True
             )
             for widget, (region, order, clip) in layers:
-                yield widget, region.intersection(clip)
+                yield widget, region.intersection(clip), region
 
-    def __reversed__(self) -> Iterable[tuple[Widget, Region]]:
-        if self.map is not None:
-            layers = sorted(self.map.items(), key=lambda item: item[1].order)
-            for widget, (region, _order, clip) in layers:
-                yield widget, region.intersection(clip)
+    # def __reversed__(self) -> Iterable[tuple[Widget, Region]]:
+    #     if self.map is not None:
+    #         layers = sorted(self.map.items(), key=lambda item: item[1].order)
+    #         for widget, (region, _order, clip) in layers:
+    #             yield widget, region.intersection(clip), region
 
     def get_offset(self, widget: Widget) -> Offset:
         try:
@@ -200,7 +200,7 @@ class Layout(ABC):
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given point or None."""
-        for widget, region in self:
+        for widget, region, _ in self:
             if widget.is_visual and region.contains(x, y):
                 return widget, region
         raise NoWidget(f"No widget under screen coordinate ({x}, {y})")
@@ -421,6 +421,7 @@ class Layout(ABC):
 
     def update_widget(self, console: Console, widget: Widget) -> LayoutUpdate | None:
 
+        log("UPDATE", widget)
         if widget not in self.regions:
             return None
 

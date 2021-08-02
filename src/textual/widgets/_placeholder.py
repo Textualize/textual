@@ -51,6 +51,7 @@ class Placeholder(Widget, can_focus=True):
         self.has_focus = False
 
     async def on_enter(self, event: events.Enter) -> None:
+        self.log("ENTER", self)
         self.mouse_over = True
 
     async def on_leave(self, event: events.Leave) -> None:

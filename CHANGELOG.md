@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added hover over and mouse click to activate keys in footer
+- Added verbosity argument to Widget.log
 
 ### Changed
 

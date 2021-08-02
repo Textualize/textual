@@ -74,6 +74,7 @@ class App(MessagePump):
         screen: bool = True,
         driver_class: Type[Driver] | None = None,
         log: str = "",
+        log_verbosity: int = 1,
         title: str = "Textual Application",
     ):
         """The Textual Application base class
@@ -108,6 +109,7 @@ class App(MessagePump):
         self._title = title
 
         self.log_file = open(log, "wt") if log else None
+        self.log_verbosity = log_verbosity
 
         self.bindings.bind("ctrl+c", "quit", show=False)
 
@@ -131,9 +133,9 @@ class App(MessagePump):
     def view(self) -> DockView:
         return self._view_stack[-1]
 
-    def log(self, *args: Any, verbosity: int = 0) -> None:
+    def log(self, *args: Any, verbosity: int = 1) -> None:
         try:
-            if self.log_file:
+            if self.log_file and verbosity <= self.log_verbosity:
                 output = f" ".join(str(arg) for arg in args)
                 self.log_file.write(output + "\n")
                 self.log_file.flush()
@@ -215,6 +217,7 @@ class App(MessagePump):
                     if self.mouse_over is not None:
                         await self.mouse_over.forward_event(events.Leave(self))
                     if widget is not None:
+                        self.log("FORWARD ENTER", self, widget)
                         await widget.forward_event(events.Enter(self))
                 finally:
                     self.mouse_over = widget

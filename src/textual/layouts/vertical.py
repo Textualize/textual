@@ -32,7 +32,7 @@ class VerticalLayout(Layout):
     ) -> LayoutMap:
         index = 0
         width, height = size
-        gutter_width, gutter_height = self.gutter
+        gutter_height, gutter_width = self.gutter
         render_width = width - gutter_width * 2
         x = gutter_width
         y = gutter_height
@@ -42,25 +42,13 @@ class VerticalLayout(Layout):
             map.add_widget(console, widget, region, (self.z, index), clip)
 
         for widget in self._widgets:
-            # if widget._render_cache is not None:
-            #     lines = widget._render_cache.lines
-            # else:
-            #     lines = widget.render_lines(render_width).lines
-
-            region = Region(x, y, render_width, 100)
+            if (
+                not widget.render_cache
+                or widget.render_cache.size.width != render_width
+            ):
+                widget.render_lines_free(render_width)
+            render_height = widget.render_cache.size.height
+            region = Region(x, y, render_width, render_height)
             add_widget(widget, region - scroll, viewport)
-
-            # try:
-            #     region, clip = self.regions[widget]
-            # except KeyError:
-            #     lines = widget.render_lines(render_width)
-            #     log("***VERTICAL", len(lines))
-            #     region = Region(x, y, render_width, len(lines))
-            #     add_widget(widget, region - scroll, viewport)
-            # else:
-            #     add_widget(
-            #         widget, Region(x, y, region.width, region.height) - scroll, clip
-            #     )
-            #     y += region.height + gutter_height
 
         return map
