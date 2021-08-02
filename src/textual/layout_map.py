@@ -58,7 +58,7 @@ class LayoutMap:
             sub_map = widget.layout.generate_map(
                 console, region.size, clip, widget.scroll
             )
-            for widget, (sub_region, sub_order, sub_clip) in sub_map.items():
+            for sub_widget, (sub_region, sub_order, sub_clip) in sub_map.items():
                 sub_region += region.origin
                 sub_clip = sub_clip.intersection(clip)
-                self.add_widget(console, widget, sub_region, sub_order, sub_clip)
+                self.add_widget(console, sub_widget, sub_region, sub_order, sub_clip)

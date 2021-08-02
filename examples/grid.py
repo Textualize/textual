@@ -35,7 +35,7 @@ class GridTest(App):
             area3=Placeholder(name="area3"),
             area4=Placeholder(name="area4"),
         )
-        await self.view.update_layout()
+        self.view.refresh(layout=True)
 
 
 GridTest.run(title="Grid Test", log="textual.log")

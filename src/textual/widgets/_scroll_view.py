@@ -185,12 +185,9 @@ class ScrollView(View):
         self.animate("y", self.target_y, speed=150, easing="out_cubic")
 
     async def message_virtual_size_change(self, message: Message) -> None:
-
         virtual_size = self.window.virtual_size
-        self.log("VIRTUAL_SIZE", self.size, virtual_size)
         self.x = self.validate_x(self.x)
         self.y = self.validate_y(self.y)
-        self.log(self.y)
         self.vscroll.virtual_size = virtual_size.height
         self.vscroll.window_size = self.size.height
 

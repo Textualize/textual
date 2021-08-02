@@ -421,7 +421,6 @@ class Layout(ABC):
 
     def update_widget(self, console: Console, widget: Widget) -> LayoutUpdate | None:
 
-        log("UPDATE", widget)
         if widget not in self.regions:
             return None
 
@@ -430,18 +429,7 @@ class Layout(ABC):
         if not region.size:
             return None
 
-        widget._clear_render_cache()
-        # if not region or not clip:
-        #     return
-
-        # widget._clear_render_cache()
-        # widget.render_lines()
-
-        # new_lines = console.render_lines(
-        #     widget, console.options.update_dimensions(region.width, region.height)
-        # )
-
-        # self.regions[widget] = (region, clip, new_lines)
+        widget.clear_render_cache()
 
         update_region = region.intersection(clip)
         update_lines = self.render(console, update_region).lines

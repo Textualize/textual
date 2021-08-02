@@ -79,9 +79,9 @@ class Reactive(Generic[ReactiveType]):
             self.check_watchers(obj, name, current_value)
 
             if self.layout:
-                obj.require_layout()
+                obj.refresh(layout=True)
             elif self.repaint:
-                obj.require_repaint()
+                obj.refresh()
 
     @classmethod
     def check_watchers(cls, obj: Reactable, name: str, old_value: Any) -> None:

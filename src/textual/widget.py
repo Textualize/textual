@@ -123,10 +123,6 @@ class Widget(MessagePump):
 
     def _update_size(self, size: Size) -> None:
         self._size = size
-        # if self._render_cache and self._render_cache.size != size:
-        #     self.render_lines()
-        #     self.require_repaint()
-        # self.size = size
 
     def render_lines(self) -> RenderCache:
         width, height = self.size
@@ -161,7 +157,7 @@ class Widget(MessagePump):
         lines = self.render_cache.lines
         return lines
 
-    def _clear_render_cache(self) -> None:
+    def clear_render_cache(self) -> None:
         self.render_cache = None
 
     def require_repaint(self) -> None:
@@ -199,17 +195,22 @@ class Widget(MessagePump):
     async def forward_event(self, event: events.Event) -> None:
         await self.post_message(event)
 
-    async def refresh(self) -> None:
-        """Re-render the window and repaint it."""
-        self.require_repaint()
-        await self.repaint()
+    def refresh(self, repaint: bool = True, layout: bool = False) -> None:
+        """Initiate a refresh of the widget.
 
-    async def repaint(self) -> None:
-        """Instructs parent to repaint this widget."""
-        await self.emit(UpdateMessage(self, self))
+        This method sets an internal flag to perform a refresh, which will be done on the
+        next idle event. Only one refresh will be done even if this method is called multiple times.
 
-    async def update_layout(self) -> None:
-        await self.emit(LayoutMessage(self))
+        Args:
+            repaint (bool, optional): Repaint the widget (will call render() again). Defaults to True.
+            layout (bool, optional): Also layout widgets in the view. Defaults to False.
+        """
+        if layout:
+            self._layout_required = True
+        elif repaint:
+            self.clear_render_cache()
+            self._repaint_required = True
+        self.post_message_no_wait(events.Null(self))
 
     def render(self) -> RenderableType:
         """Get renderable for widget.
@@ -231,25 +232,17 @@ class Widget(MessagePump):
             self.log(self, "IS NOT RUNNING")
         return await super().post_message(message)
 
-    # async def on_event(self, event: events.Event) -> None:
-    #     if isinstance(event, events.Resize):
-    #         if self.size != event.size:
-    #             # self.size = event.size
-    #             self.require_repaint()
-    #     await super().on_event(event)
-
     async def on_resize(self, event: events.Resize) -> None:
-        self.log("RESIZE", self)
         self.render_lines()
 
     async def on_idle(self, event: events.Idle) -> None:
         if self.check_layout():
             self.reset_check_repaint()
             self.reset_check_layout()
-            await self.update_layout()
+            await self.emit(LayoutMessage(self))
         elif self.check_repaint():
             self.reset_check_repaint()
-            await self.repaint()
+            await self.emit(UpdateMessage(self, self))
 
     async def focus(self) -> None:
         await self.app.set_focus(self)
@@ -275,10 +268,6 @@ class Widget(MessagePump):
         key_method = getattr(self, f"key_{event.key}", None)
         if key_method is not None:
             await key_method()
-
-    # async def on_repaint(self) -> None:
-    #     if self._render_cache is None or self._render_cache.size != self.size:
-    #         self._render_cache = self.render_lines()
 
     async def on_mouse_down(self, event: events.MouseUp) -> None:
         await self.broker_event("mouse.down", event)

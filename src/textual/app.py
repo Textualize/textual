@@ -253,6 +253,7 @@ class App(MessagePump):
         active_app.set(self)
         driver = self._driver = self.driver_class(self.console, self)
 
+        log("---")
         log(f"driver={self.driver_class}")
 
         await self.dispatch_message(events.Load(sender=self))
@@ -332,7 +333,7 @@ class App(MessagePump):
         driver.disable_input()
         await self.close_messages()
 
-    def refresh(self) -> None:
+    def refresh(self, repaint: bool = True, layout: bool = False) -> None:
         sync_available = os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal"
         if not self._closed:
             console = self.console

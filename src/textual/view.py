@@ -57,40 +57,6 @@ class View(Widget):
 
     virtual_size: Reactive[Size] = Reactive(Size(0, 0))
 
-    # @property
-    # def virtual_size(self) -> Dimensions:
-    #     return self.layout.map.size if self.layout.map else Dimensions(0, 0)
-
-    # virtual_width: Reactive[int | None] = Reactive(None)
-    # virtual_height: Reactive[int | None] = Reactive(None)
-
-    # @property
-    # def virtual_size(self) -> Dimensions:
-    #     virtual_width = self.virtual_width
-    #     virtual_height = self.virtual_height
-    #     return Dimensions(
-    #         (virtual_width if virtual_width is not None else self.size.width),
-    #         (virtual_height if virtual_height is not None else self.size.height),
-    #     )
-
-    # @virtual_size.setter
-    # def virtual_size(self, size: tuple[int, int]) -> None:
-    #     width, height = size
-    #     self.virtual_width = width
-    #     self.virtual_height = height
-
-    # @property
-    # def offset(self) -> Point:
-    #     return Point(self.offset_x, self.offset_y)
-
-    # @property
-    # def viewport(self) -> Region:
-    #     virtual_width = self.virtual_width
-    #     virtual_height = self.virtual_height
-    #     width = virtual_width if virtual_width is not None else self.size.width
-    #     height = virtual_height if virtual_height is not None else self.size.height
-    #     return Region(self.offset_x, self.offset_y, width, height)
-
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
@@ -109,7 +75,7 @@ class View(Widget):
 
     @property
     def is_root_view(self) -> bool:
-        return self._parent and self.parent is self.app
+        return bool(self._parent and self.parent is self.app)
 
     def is_mounted(self, widget: Widget) -> bool:
         return widget in self.widgets
@@ -159,16 +125,12 @@ class View(Widget):
             return
 
         width, height = self.console.size
-        # virtual_width, virtual_height = self.virtual_size
         hidden, shown, resized = self.layout.reflow(
             self.console, width, height, self.scroll
         )
         assert self.layout.map is not None
-        self.virtual_size = self.layout.map.virtual_size
-        # for widget, region in self.layout:
-        #     widget._update_size(region.size)
-
-        # self.app.refresh()
+        # self.virtual_size = self.layout.map.virtual_size
+        self.log("VIRTUAL_SIZE", self, type(self.layout), self.virtual_size)
 
         for widget in hidden:
             widget.post_message_no_wait(events.Hide(self))

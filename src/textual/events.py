@@ -27,13 +27,13 @@ class Event(Message):
         super().__init_subclass__(bubble=bubble, verbosity=verbosity)
 
 
-class Null(Event):
+class Null(Event, verbosity=3):
     def can_replace(self, message: Message) -> bool:
         return isinstance(message, Null)
 
 
 @rich.repr.auto
-class Callback(Event, bubble=False):
+class Callback(Event, bubble=False, verbosity=3):
     def __init__(
         self, sender: MessageTarget, callback: Callable[[], Awaitable[None]]
     ) -> None:
@@ -88,7 +88,7 @@ class Action(Event, bubble=True):
         yield "action", self.action
 
 
-class Resize(Event):
+class Resize(Event, verbosity=2):
     """Sent when the app or widget has been resized."""
 
     __slots__ = ["size"]
@@ -360,7 +360,7 @@ class DoubleClick(MouseEvent):
 
 
 @rich.repr.auto
-class Timer(Event):
+class Timer(Event, verbosity=3):
     __slots__ = ["time", "count", "callback"]
 
     def __init__(

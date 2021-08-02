@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 from asyncio import CancelledError
 from asyncio import Queue, QueueEmpty, Task
+import inspect
 from typing import TYPE_CHECKING, Awaitable, Iterable, Callable
 from weakref import WeakSet
 
@@ -21,6 +22,10 @@ if TYPE_CHECKING:
 
 
 class NoParent(Exception):
+    pass
+
+
+class CallbackError(Exception):
     pass
 
 
@@ -301,4 +306,11 @@ class MessagePump:
         event.prevent_default()
         event.stop()
         if event.callback is not None:
-            await event.callback()
+            try:
+                callback_result = event.callback()
+                if inspect.isawaitable(callback_result):
+                    await callback_result
+            except Exception as error:
+                raise CallbackError(
+                    f"unable to run callback {event.callback!r}; {error}"
+                )
