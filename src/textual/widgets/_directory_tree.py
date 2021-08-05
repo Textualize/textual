@@ -41,6 +41,7 @@ class DirectoryTree(TreeControl[DirEntry]):
             node.tree.guide_style = (
                 "bold not dim red" if node.id == hover_node else "black"
             )
+        self.refresh(layout=True)
 
     def render_node(self, node: TreeNode[DirEntry]) -> RenderableType:
         meta = {"@click": f"click_label({node.id})", "tree_node": node.id}
