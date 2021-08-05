@@ -13,15 +13,12 @@ if TYPE_CHECKING:
 
 @rich.repr.auto
 class UpdateMessage(Message, verbosity=3):
-    def __init__(
-        self,
-        sender: MessagePump,
-        widget: Widget,
-    ):
+    def __init__(self, sender: MessagePump, widget: Widget, layout: bool = False):
         super().__init__(sender)
         self.widget = widget
+        self.layout = layout
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield self.sender
         yield "widget"
 

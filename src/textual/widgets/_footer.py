@@ -32,7 +32,7 @@ class Footer(Widget):
         """Clear any highlight when the mouse leave the widget"""
         self.highlight_key = None
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "keys", self.keys
 
     def make_key_text(self) -> Text:

@@ -82,7 +82,7 @@ class Widget(MessagePump):
         super().__init_subclass__()
         cls.can_focus = can_focus
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self.name
 
     def __rich__(self) -> RenderableType:
@@ -154,24 +154,25 @@ class Widget(MessagePump):
         """
         if self.render_cache is None:
             self.render_cache = self.render_lines()
+            self.log("RENDERING", self)
         lines = self.render_cache.lines
         return lines
 
     def clear_render_cache(self) -> None:
         self.render_cache = None
 
-    def require_repaint(self) -> None:
-        """Mark widget as requiring a repaint.
+    # def require_repaint(self) -> None:
+    #     """Mark widget as requiring a repaint.
 
-        Actual repaint is done by parent on idle.
-        """
-        self.render_cache = None
-        self._repaint_required = True
-        self.post_message_no_wait(events.Null(self))
+    #     Actual repaint is done by parent on idle.
+    #     """
+    #     self.render_cache = None
+    #     self._repaint_required = True
+    #     self.post_message_no_wait(events.Null(self))
 
-    def require_layout(self) -> None:
-        self._layout_required = True
-        self.post_message_no_wait(events.Null(self))
+    # def require_layout(self) -> None:
+    #     self._layout_required = True
+    #     self.post_message_no_wait(events.Null(self))
 
     def check_repaint(self) -> bool:
         return self._repaint_required
@@ -208,7 +209,7 @@ class Widget(MessagePump):
         if layout:
             self._layout_required = True
         elif repaint:
-            self.clear_render_cache()
+            # self.clear_render_cache()
             self._repaint_required = True
         self.post_message_no_wait(events.Null(self))
 
@@ -233,16 +234,19 @@ class Widget(MessagePump):
         return await super().post_message(message)
 
     async def on_resize(self, event: events.Resize) -> None:
-        self.render_lines()
+        self.refresh()
 
     async def on_idle(self, event: events.Idle) -> None:
         if self.check_layout():
             self.reset_check_repaint()
             self.reset_check_layout()
+            # await self.emit(UpdateMessage(self, self))
+            # await self.emit(UpdateMessage(self, self, layout=False))
             await self.emit(LayoutMessage(self))
         elif self.check_repaint():
+            self.render_cache = None
             self.reset_check_repaint()
-            await self.emit(UpdateMessage(self, self))
+            await self.emit(UpdateMessage(self, self, layout=False))
 
     async def focus(self) -> None:
         await self.app.set_focus(self)

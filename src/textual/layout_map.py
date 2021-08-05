@@ -58,6 +58,7 @@ class LayoutMap:
             sub_map = widget.layout.generate_map(
                 console, region.size, clip, widget.scroll
             )
+            widget.virtual_size = sub_map.virtual_size
             for sub_widget, (sub_region, sub_order, sub_clip) in sub_map.items():
                 sub_region += region.origin
                 sub_clip = sub_clip.intersection(clip)

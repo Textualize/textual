@@ -3,14 +3,14 @@ from __future__ import annotations
 import weakref
 from asyncio import CancelledError, Event, TimeoutError, wait_for
 from time import monotonic
-from typing import Awaitable, Callable
+from typing import Awaitable, Callable, Union
 
-from rich.repr import RichReprResult, rich_repr
+from rich.repr import Result, rich_repr
 
 from . import events
 from ._types import MessageTarget
 
-TimerCallback = Callable[[], Awaitable[None]]
+TimerCallback = Union[Callable[[], Awaitable[None]], Callable[[], None]]
 
 
 class EventTargetGone(Exception):
@@ -47,7 +47,7 @@ class Timer:
         if not pause:
             self._active.set()
 
-    def __rich_repr__(self) -> RichReprResult:
+    def __rich_repr__(self) -> Result:
         yield self._interval
         yield "name", self.name
         yield "repeat", self._repeat, None

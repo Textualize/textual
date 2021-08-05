@@ -191,7 +191,6 @@ class MessagePump:
             except Exception as error:
                 raise error from None
 
-            log(message, ">>>", self, verbosity=message.verbosity)
             # Combine any pending messages that may supersede this one
             while not (self._closed or self._closing):
                 pending = self.peek_message()
@@ -241,6 +240,7 @@ class MessagePump:
         _rich_traceback_guard = True
 
         for method in self._get_dispatch_methods(f"on_{event.name}", event):
+            log(event, ">>>", self, verbosity=event.verbosity)
             await method(event)
 
         if event.bubble and self._parent and not event._stop_propagation:
@@ -253,6 +253,7 @@ class MessagePump:
 
         method = getattr(self, method_name, None)
         if method is not None:
+            log(message, ">>>", self, verbosity=message.verbosity)
             await method(message)
 
         if message.bubble and self._parent and not message._stop_propagation:

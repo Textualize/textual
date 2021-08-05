@@ -119,7 +119,7 @@ class App(MessagePump):
     sub_title: Reactive[str] = Reactive("")
     background: Reactive[str] = Reactive("")
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "title", self.title
 
     def __rich__(self) -> RenderableType:
@@ -217,7 +217,6 @@ class App(MessagePump):
                     if self.mouse_over is not None:
                         await self.mouse_over.forward_event(events.Leave(self))
                     if widget is not None:
-                        self.log("FORWARD ENTER", self, widget)
                         await widget.forward_event(events.Enter(self))
                 finally:
                     self.mouse_over = widget
@@ -269,7 +268,7 @@ class App(MessagePump):
 
             try:
                 self.title = self._title
-                self.require_layout()
+                self.refresh()
                 await self.animator.start()
                 await super().process_messages()
                 log("PROCESS END")
@@ -295,11 +294,11 @@ class App(MessagePump):
                 if self.log_file is not None:
                     self.log_file.close()
 
-    def require_repaint(self) -> None:
-        self.refresh()
+    # def require_repaint(self) -> None:
+    #     self.refresh()
 
-    def require_layout(self) -> None:
-        self.view.require_layout()
+    # def require_layout(self) -> None:
+    #     self.view.require_layout()
 
     async def call_later(self, callback: Callable, *args, **kwargs) -> None:
         await self.post_message(events.Idle(self))
@@ -307,8 +306,8 @@ class App(MessagePump):
             events.Callback(self, partial(callback, *args, **kwargs))
         )
 
-    async def message_update(self, message: Message) -> None:
-        self.refresh()
+    # async def message_update(self, message: Message) -> None:
+    #     self.refresh()
 
     def register(self, child: MessagePump, parent: MessagePump) -> bool:
         if child not in self.children:
@@ -334,6 +333,7 @@ class App(MessagePump):
         await self.close_messages()
 
     def refresh(self, repaint: bool = True, layout: bool = False) -> None:
+        log("APP REFRESH")
         sync_available = os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal"
         if not self._closed:
             console = self.console
@@ -348,11 +348,17 @@ class App(MessagePump):
                 self.panic()
 
     def display(self, renderable: RenderableType) -> None:
+        sync_available = os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal"
         if not self._closed:
             console = self.console
             try:
-                with console:
-                    console.print(renderable)
+                # if sync_available:
+                #     console.file.write("\x1bP=1s\x1b\\")
+                # with console:
+                console.print(renderable)
+                # if sync_available:
+                #     console.file.write("\x1bP=2s\x1b\\")
+                #     console.file.flush()
             except Exception:
                 self.panic()
 
@@ -398,7 +404,6 @@ class App(MessagePump):
         Args:
             action (str): Action encoded in a string.
         """
-        self.log(action, default_namespace)
         target, params = actions.parse(action)
         if "." in target:
             destination, action_name = target.split(".", 1)

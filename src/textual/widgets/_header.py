@@ -3,7 +3,7 @@ from logging import getLogger
 
 from rich.console import Console, ConsoleOptions, RenderableType
 from rich.panel import Panel
-from rich.repr import rich_repr, RichReprResult
+from rich.repr import rich_repr, Result
 from rich.style import StyleType
 from rich.table import Table
 from rich.text import TextType
@@ -38,7 +38,7 @@ class Header(Widget):
     def full_title(self) -> str:
         return f"{self.title} - {self.sub_title}" if self.sub_title else self.title
 
-    def __rich_repr__(self) -> RichReprResult:
+    def __rich_repr__(self) -> Result:
         yield self.title
 
     async def watch_tall(self, tall: bool) -> None:

@@ -27,7 +27,7 @@ class Placeholder(Widget, can_focus=True):
         super().__init__(name=name)
         self.height = height
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self.name
         yield "has_focus", self.has_focus, False
         yield "mouse_over", self.mouse_over, False

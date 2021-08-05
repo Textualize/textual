@@ -37,7 +37,7 @@ class Message:
         self._stop_propagation = False
         super().__init__()
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield self.sender
 
     def __init_subclass__(cls, bubble: bool = False, verbosity: int = 1) -> None:

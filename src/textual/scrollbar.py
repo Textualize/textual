@@ -44,7 +44,7 @@ class ScrollTo(Message, bubble=True):
         self.y = y
         super().__init__(sender)
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "x", self.x, None
         yield "y", self.y, None
 
@@ -186,7 +186,7 @@ class ScrollBar(Widget):
     mouse_over: Reactive[bool] = Reactive(False)
     grabbed: Reactive[Offset | None] = Reactive(None)
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "virtual_size", self.virtual_size
         yield "window_size", self.window_size
         yield "position", self.position

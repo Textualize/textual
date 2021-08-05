@@ -75,12 +75,10 @@ class ScrollView(View):
     async def watch_x(self, new_value: float) -> None:
         self.window.scroll_x = round(new_value)
         self.hscroll.position = round(new_value)
-        self.window.require_layout()
 
     async def watch_y(self, new_value: float) -> None:
         self.window.scroll_y = round(new_value)
         self.vscroll.position = round(new_value)
-        self.window.require_layout()
 
     async def update(self, renderable: RenderableType) -> None:
         await self.window.update(renderable)
@@ -121,9 +119,6 @@ class ScrollView(View):
         self.target_x += self.size.width
         self.animate("x", self.target_x, speed=120, easing="out_cubic")
 
-    # async def message_update(self, message: UpdateMessage) -> None:
-    #     self.window.require_layout()
-
     async def on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
         self.scroll_up()
 
@@ -161,8 +156,8 @@ class ScrollView(View):
         self.animate("x", self.target_x, duration=1, easing="out_cubic")
         self.animate("y", self.target_y, duration=1, easing="out_cubic")
 
-    async def on_resize(self, event: events.Resize) -> None:
-        self.window.require_repaint()
+    # async def on_resize(self, event: events.Resize) -> None:
+    #     self.window.refresh()
 
     async def message_scroll_up(self, message: Message) -> None:
         self.page_up()
@@ -194,6 +189,6 @@ class ScrollView(View):
         assert isinstance(self.layout, GridLayout)
 
         if self.layout.show_column("vscroll", virtual_size.height > self.size.height):
-            self.require_layout()
+            self.refresh()
         if self.layout.show_row("hscroll", virtual_size.width > self.size.width):
-            self.require_layout()
+            self.refresh()

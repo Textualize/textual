@@ -341,22 +341,25 @@ class Region(NamedTuple):
         """Get that covers both regions.
 
         Args:
-            region ([type]): A region that overlaps this region.
+            region (Region): A region that overlaps this region.
 
         Returns:
             Region: A new region that fits within ``region``.
         """
-        x1, y1, x2, y2 = self.corners
-        cx1, cy1, cx2, cy2 = region.corners
+        # Unrolled because this method is used a lot
+        x1, y1, w1, h1 = self
+        cx1, cy1, w2, h2 = region
+        x2 = x1 + w1
+        y2 = y1 + h1
+        cx2 = cx1 + w2
+        cy2 = cy1 + h2
 
-        _clamp = clamp
-        new_region = Region.from_corners(
-            _clamp(x1, cx1, cx2),
-            _clamp(y1, cy1, cy2),
-            _clamp(x2, cx1, cx2),
-            _clamp(y2, cy1, cy2),
-        )
-        return new_region
+        rx1 = cx2 if x1 > cx2 else (cx1 if x1 < cx1 else x1)
+        ry1 = cy2 if y1 > cy2 else (cy1 if y1 < cy1 else y1)
+        rx2 = cx2 if x2 > cx2 else (cx1 if x2 < cx1 else x2)
+        ry2 = cy2 if y2 > cy2 else (cy1 if y2 < cy1 else y2)
+
+        return Region(rx1, ry1, rx2 - rx1, ry2 - ry1)
 
     def union(self, region: Region) -> Region:
         """Get a new region that contains both regions.

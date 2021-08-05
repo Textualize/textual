@@ -63,7 +63,7 @@ class View(Widget):
         return
         yield
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self.name
 
     def __getitem__(self, widget_name: str) -> Widget:
@@ -90,15 +90,21 @@ class View(Widget):
         return super().check_layout() or self.layout.check_update()
 
     async def message_update(self, message: UpdateMessage) -> None:
+        message.stop()
         widget = message.widget
         assert isinstance(widget, Widget)
 
+        if message.layout:
+            await self.root_view.refresh_layout()
+            self.log("LAYOUT")
+            # await self.app.refresh()
         display_update = self.root_view.layout.update_widget(self.console, widget)
         if display_update is not None:
             self.app.display(display_update)
 
     async def message_layout(self, message: LayoutMessage) -> None:
         await self.root_view.refresh_layout()
+        self.app.refresh()
 
     async def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
 
@@ -113,7 +119,7 @@ class View(Widget):
                     self.named_widgets[name] = widget
                 self.widgets.add(widget)
 
-        self.require_repaint()
+        self.refresh()
 
     async def refresh_layout(self) -> None:
         await self.layout.mount_all(self)
@@ -128,9 +134,9 @@ class View(Widget):
         hidden, shown, resized = self.layout.reflow(
             self.console, width, height, self.scroll
         )
+
         assert self.layout.map is not None
-        # self.virtual_size = self.layout.map.virtual_size
-        self.log("VIRTUAL_SIZE", self, type(self.layout), self.virtual_size)
+        self.virtual_size = self.layout.map.virtual_size
 
         for widget in hidden:
             widget.post_message_no_wait(events.Hide(self))
@@ -143,7 +149,7 @@ class View(Widget):
         for widget, region, unclipped_region in self.layout:
             widget._update_size(unclipped_region.size)
             if widget in send_resize:
-                widget.post_message_no_wait(events.Resize(self, region.size))
+                widget.post_message_no_wait(events.Resize(self, unclipped_region.size))
 
     async def on_resize(self, event: events.Resize) -> None:
         self._update_size(event.size)

@@ -8,6 +8,8 @@ from time import time
 import contextlib
 from typing import Generator
 
+from . import log
+
 
 @contextlib.contextmanager
 def timer(subject: str = "time") -> Generator[None, None, None]:
@@ -16,4 +18,4 @@ def timer(subject: str = "time") -> Generator[None, None, None]:
     yield
     elapsed = time() - start
     elapsed_ms = elapsed * 1000
-    print(f"{subject} elapsed {elapsed_ms:.2f}ms")
+    log(f"{subject} elapsed {elapsed_ms:.2f}ms")

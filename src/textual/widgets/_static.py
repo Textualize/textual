@@ -21,7 +21,7 @@ class Static(Widget):
         self.padding = padding
 
     def render(self) -> RenderableType:
-        # self.log("RENDERING", self.renderable)
+        self.log("RENDERING", self.renderable)
         renderable = self.renderable
         if self.padding:
             renderable = Padding(renderable, self.padding)

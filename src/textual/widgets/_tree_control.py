@@ -10,6 +10,7 @@ from rich.text import Text, TextType
 from rich.tree import Tree
 from rich.padding import Padding, PaddingDimensions
 
+from .. import log
 from ..reactive import Reactive
 from .._types import MessageTarget
 from ..widget import Widget
@@ -125,6 +126,7 @@ class TreeControl(Generic[NodeDataType], Widget):
         self.require_repaint()
 
     def render(self) -> RenderableType:
+        log("RENDERING TREE", self)
         return Padding(self._tree, self.padding)
 
     def render_node(self, node: TreeNode[NodeDataType]) -> RenderableType:

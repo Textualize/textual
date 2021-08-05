@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 @rich.repr.auto
 class Event(Message):
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         return
         yield
 
@@ -40,7 +40,7 @@ class Callback(Event, bubble=False, verbosity=3):
         self.callback = callback
         super().__init__(sender)
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "callback", self.callback
 
 
@@ -84,7 +84,7 @@ class Action(Event, bubble=True):
         super().__init__(sender)
         self.action = action
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "action", self.action
 
 
@@ -115,7 +115,7 @@ class Resize(Event, verbosity=2):
     def height(self) -> int:
         return self.size.height
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield self.width
         yield self.height
 
@@ -159,7 +159,7 @@ class MouseCapture(Event):
         super().__init__(sender)
         self.mouse_position = mouse_position
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield None, self.mouse_position
 
 
@@ -176,7 +176,7 @@ class MouseRelease(Event):
         super().__init__(sender)
         self.mouse_position = mouse_position
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield None, self.mouse_position
 
 
@@ -200,7 +200,7 @@ class Key(InputEvent, bubble=True):
         super().__init__(sender)
         self.key = key.value if isinstance(key, Keys) else key
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "key", self.key
 
 
@@ -284,7 +284,7 @@ class MouseEvent(InputEvent):
         )
         return new_event
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "x", self.x
         yield "y", self.y
         yield "delta_x", self.delta_x, 0
@@ -375,7 +375,7 @@ class Timer(Event, verbosity=3):
         self.count = count
         self.callback = callback
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield self.timer.name
         yield "count", self.count
 
