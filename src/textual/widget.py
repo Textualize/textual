@@ -154,25 +154,11 @@ class Widget(MessagePump):
         """
         if self.render_cache is None:
             self.render_cache = self.render_lines()
-            self.log("RENDERING", self)
         lines = self.render_cache.lines
         return lines
 
     def clear_render_cache(self) -> None:
         self.render_cache = None
-
-    # def require_repaint(self) -> None:
-    #     """Mark widget as requiring a repaint.
-
-    #     Actual repaint is done by parent on idle.
-    #     """
-    #     self.render_cache = None
-    #     self._repaint_required = True
-    #     self.post_message_no_wait(events.Null(self))
-
-    # def require_layout(self) -> None:
-    #     self._layout_required = True
-    #     self.post_message_no_wait(events.Null(self))
 
     def check_repaint(self) -> bool:
         return self._repaint_required
@@ -207,9 +193,10 @@ class Widget(MessagePump):
             layout (bool, optional): Also layout widgets in the view. Defaults to False.
         """
         if layout:
+            self.clear_render_cache()
             self._layout_required = True
         elif repaint:
-            # self.clear_render_cache()
+            self.clear_render_cache()
             self._repaint_required = True
         self.post_message_no_wait(events.Null(self))
 
@@ -240,8 +227,6 @@ class Widget(MessagePump):
         if self.check_layout():
             self.reset_check_repaint()
             self.reset_check_layout()
-            # await self.emit(UpdateMessage(self, self))
-            # await self.emit(UpdateMessage(self, self, layout=False))
             await self.emit(LayoutMessage(self))
         elif self.check_repaint():
             self.render_cache = None

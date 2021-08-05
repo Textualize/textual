@@ -43,7 +43,7 @@ class ScrollView(View):
             content="main,main", vscroll="vscroll,main", hscroll="main,hscroll"
         )
         layout.show_row("hscroll", False)
-        layout.show_row("vscroll", False)
+        layout.show_column("vscroll", False)
         super().__init__(name=name, layout=layout)
 
     x: Reactive[float] = Reactive(0, repaint=False)
@@ -80,7 +80,9 @@ class ScrollView(View):
         self.window.scroll_y = round(new_value)
         self.vscroll.position = round(new_value)
 
-    async def update(self, renderable: RenderableType) -> None:
+    async def update(self, renderable: RenderableType, home: bool = True) -> None:
+        if home:
+            self.home()
         await self.window.update(renderable)
 
     async def on_mount(self, event: events.Mount) -> None:
@@ -156,9 +158,6 @@ class ScrollView(View):
         self.animate("x", self.target_x, duration=1, easing="out_cubic")
         self.animate("y", self.target_y, duration=1, easing="out_cubic")
 
-    # async def on_resize(self, event: events.Resize) -> None:
-    #     self.window.refresh()
-
     async def message_scroll_up(self, message: Message) -> None:
         self.page_up()
 
@@ -179,7 +178,7 @@ class ScrollView(View):
         self.animate("x", self.target_x, speed=150, easing="out_cubic")
         self.animate("y", self.target_y, speed=150, easing="out_cubic")
 
-    async def message_virtual_size_change(self, message: Message) -> None:
+    async def message_window_change(self, message: Message) -> None:
         virtual_size = self.window.virtual_size
         self.x = self.validate_x(self.x)
         self.y = self.validate_y(self.y)

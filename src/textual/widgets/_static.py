@@ -21,7 +21,6 @@ class Static(Widget):
         self.padding = padding
 
     def render(self) -> RenderableType:
-        self.log("RENDERING", self.renderable)
         renderable = self.renderable
         if self.padding:
             renderable = Padding(renderable, self.padding)
@@ -29,4 +28,4 @@ class Static(Widget):
 
     async def update(self, renderable: RenderableType) -> None:
         self.renderable = renderable
-        self.require_repaint()
+        self.refresh()

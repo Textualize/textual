@@ -155,6 +155,8 @@ class View(Widget):
         self._update_size(event.size)
         if self.is_root_view:
             await self.refresh_layout()
+            self.app.refresh()
+        event.stop()
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         return self.layout.get_widget_at(x, y)

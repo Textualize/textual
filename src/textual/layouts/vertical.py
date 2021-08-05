@@ -47,7 +47,7 @@ class VerticalLayout(Layout):
                 or widget.render_cache.size.width != render_width
             ):
                 widget.render_lines_free(render_width)
-                log("RENDERING")
+            assert widget.render_cache is not None
             render_height = widget.render_cache.size.height
             region = Region(x, y, render_width, render_height)
             add_widget(widget, region - scroll, viewport)

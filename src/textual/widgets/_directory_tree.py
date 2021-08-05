@@ -74,7 +74,7 @@ class DirectoryTree(TreeControl[DirEntry]):
             await node.add(entry.name, DirEntry(entry.path, entry.is_dir()))
         node.loaded = True
         await node.expand()
-        self.require_repaint()
+        # self.refresh(layout=True)
 
     async def message_tree_click(self, message: TreeClick[DirEntry]) -> None:
         dir_entry = message.node.data

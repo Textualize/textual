@@ -333,7 +333,6 @@ class App(MessagePump):
         await self.close_messages()
 
     def refresh(self, repaint: bool = True, layout: bool = False) -> None:
-        log("APP REFRESH")
         sync_available = os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal"
         if not self._closed:
             console = self.console
@@ -352,13 +351,7 @@ class App(MessagePump):
         if not self._closed:
             console = self.console
             try:
-                # if sync_available:
-                #     console.file.write("\x1bP=1s\x1b\\")
-                # with console:
                 console.print(renderable)
-                # if sync_available:
-                #     console.file.write("\x1bP=2s\x1b\\")
-                #     console.file.flush()
             except Exception:
                 self.panic()
 

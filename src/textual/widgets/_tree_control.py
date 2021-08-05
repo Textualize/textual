@@ -65,13 +65,14 @@ class TreeNode(Generic[NodeDataType]):
     async def expand(self, expanded: bool = True) -> None:
         self._expanded = expanded
         self._tree.expanded = expanded
-        self._control.require_repaint()
+        self._control.refresh()
 
     async def toggle(self) -> None:
         await self.expand(not self._expanded)
 
     async def add(self, label: TextType, data: NodeDataType) -> None:
         await self._control.add(self._node_id, label, data=data)
+        self._control.refresh()
         self._empty = False
 
     def __rich__(self) -> RenderableType:
@@ -123,10 +124,9 @@ class TreeControl(Generic[NodeDataType], Widget):
         child_tree.label = child_node
         self.nodes[self._node_id] = child_node
 
-        self.require_repaint()
+        self.refresh()
 
     def render(self) -> RenderableType:
-        log("RENDERING TREE", self)
         return Padding(self._tree, self.padding)
 
     def render_node(self, node: TreeNode[NodeDataType]) -> RenderableType:

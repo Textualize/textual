@@ -87,6 +87,8 @@ class Layout(ABC):
 
     def require_update(self) -> None:
         self._require_update = True
+        self.reset()
+        self._layout_map = None
 
     def reset_update(self) -> None:
         self._require_update = False
@@ -97,7 +99,6 @@ class Layout(ABC):
         #     self.regions.clear()
         #     self._layout_map = None
 
-    @timer("reflow")
     def reflow(
         self, console: Console, width: int, height: int, scroll: Offset
     ) -> ReflowResult:
@@ -106,28 +107,13 @@ class Layout(ABC):
         self.width = width
         self.height = height
 
-        with timer("generate_map"):
-            map = self.generate_map(
-                console,
-                Size(width, height),
-                Region(0, 0, width, height),
-                scroll,
-            )
+        map = self.generate_map(
+            console,
+            Size(width, height),
+            Region(0, 0, width, height),
+            scroll,
+        )
         self._require_update = False
-
-        # log(map.widgets)
-        # map = {
-        #     widget: OrderedRegion(region + offset, order)
-        #     for widget, (region, order, offset) in map.items()
-        # }
-
-        # Filter out widgets that are off screen or zero area
-
-        # map = {
-        #     widget: map_region
-        #     for widget, map_region in map.items()
-        #     if map_region.region and viewport.overlaps(map_region.region)
-        # }
 
         old_widgets = set() if self.map is None else set(self.map.keys())
         new_widgets = set(map.keys())
@@ -189,12 +175,6 @@ class Layout(ABC):
             for widget, (region, order, clip) in layers:
                 yield widget, region.intersection(clip), region
 
-    # def __reversed__(self) -> Iterable[tuple[Widget, Region]]:
-    #     if self.map is not None:
-    #         layers = sorted(self.map.items(), key=lambda item: item[1].order)
-    #         for widget, (region, _order, clip) in layers:
-    #             yield widget, region.intersection(clip), region
-
     def get_offset(self, widget: Widget) -> Offset:
         try:
             return self.map[widget].region.origin
@@ -203,8 +183,8 @@ class Layout(ABC):
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given point or None."""
-        for widget, region, _ in self:
-            if widget.is_visual and region.contains(x, y):
+        for widget, cropped_region, region in self:
+            if widget.is_visual and cropped_region.contains(x, y):
                 return widget, region
         raise NoWidget(f"No widget under screen coordinate ({x}, {y})")
 
@@ -284,8 +264,6 @@ class Layout(ABC):
                 continue
 
             lines = widget._get_lines()
-            # width, height = region.size
-            # lines = Segment.set_shape(lines, width, height)
 
             if clip in region:
                 yield region, clip, lines
@@ -310,7 +288,6 @@ class Layout(ABC):
                 line for _, line in sorted(bucket.items()) if line is not None
             )
 
-    @timer("render")
     def render(
         self,
         console: Console,
@@ -347,38 +324,34 @@ class Layout(ABC):
             [_Segment(" " * width, background_style)] for _ in range(height)
         ]
         # Go through all the renders in reverse order and fill buckets with no render
-        with timer("renders"):
-            renders = list(self._get_renders(console))
+        renders = list(self._get_renders(console))
 
-        with timer("chops"):
-            clip_y, clip_y2 = crop_region.y_extents
-            for region, clip, lines in chain(
-                renders, [(screen, screen, background_render)]
-            ):
-                # clip = clip.intersection(crop_region)
-                render_region = region.intersection(clip)
-                for y, line in enumerate(lines, render_region.y):
-                    if clip_y > y > clip_y2:
-                        continue
-                    # first_cut = clamp(render_region.x, clip_x, clip_x2)
-                    # last_cut = clamp(render_region.x + render_region.width, clip_x, clip_x2)
-                    first_cut = render_region.x
-                    last_cut = render_region.x_max
-                    final_cuts = [
-                        cut for cut in cuts[y] if (last_cut >= cut >= first_cut)
-                    ]
-                    # final_cuts = cuts[y]
+        clip_y, clip_y2 = crop_region.y_extents
+        for region, clip, lines in chain(
+            renders, [(screen, screen, background_render)]
+        ):
+            # clip = clip.intersection(crop_region)
+            render_region = region.intersection(clip)
+            for y, line in enumerate(lines, render_region.y):
+                if clip_y > y > clip_y2:
+                    continue
+                # first_cut = clamp(render_region.x, clip_x, clip_x2)
+                # last_cut = clamp(render_region.x + render_region.width, clip_x, clip_x2)
+                first_cut = render_region.x
+                last_cut = render_region.x_max
+                final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
+                # final_cuts = cuts[y]
 
-                    # log(final_cuts, render_region.x_extents)
-                    if len(final_cuts) == 2:
-                        cut_segments = [line]
-                    else:
-                        render_x = render_region.x
-                        relative_cuts = [cut - render_x for cut in final_cuts]
-                        _, *cut_segments = divide(line, relative_cuts)
-                    for cut, segments in zip(final_cuts, cut_segments):
-                        if chops[y][cut] is None:
-                            chops[y][cut] = segments
+                # log(final_cuts, render_region.x_extents)
+                if len(final_cuts) == 2:
+                    cut_segments = [line]
+                else:
+                    render_x = render_region.x
+                    relative_cuts = [cut - render_x for cut in final_cuts]
+                    _, *cut_segments = divide(line, relative_cuts)
+                for cut, segments in zip(final_cuts, cut_segments):
+                    if chops[y][cut] is None:
+                        chops[y][cut] = segments
 
         # Assemble the cut renders in to lists of segments
         crop_x, crop_y, crop_x2, crop_y2 = crop_region.corners
