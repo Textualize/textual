@@ -161,6 +161,7 @@ class Calculator(GridView):
 
         def do_math() -> None:
             """Does the math: LEFT OPERATOR RIGHT"""
+            self.log(self.left, self.operator, self.right)
             try:
                 if self.operator == "+":
                     self.left += self.right
@@ -172,7 +173,8 @@ class Calculator(GridView):
                     self.left *= self.right
                 self.display = str(self.left)
                 self.value = ""
-            except ZeroDivisionError:
+                self.log("=", self.left)
+            except Exception:
                 self.display = "Error"
 
         if button_name.isdigit():

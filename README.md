@@ -24,7 +24,13 @@ You can install Textual via pip (`pip install textual`), or by checking out the 
 poetry install
 ```
 
+## Examples
+
+Until I've written the documentation, the examples are the best way to learn Textual. Run any of the Python files in [examples](https://github.com/willmcgugan/textual/tree/main/examples) and read the code to see how it works.
+
 ## Building Textual applications
+
+_This guide is a work in progress_
 
 Let's look at the simplest Textual app which does _something_:
 
@@ -59,15 +65,15 @@ class ColorChanger(App):
 ColorChanger.run(log="textual.log")
 ```
 
-This example also handles key events, and will set `App.background` if the key is a digit. So pressing the keys 0 to 9 will change the background color to the corresponding [ansi colors](https://rich.readthedocs.io/en/latest/appendix/colors.html).
+This example also handles key events, and will set `App.background` if the key is a digit. So pressing the keys 0 to 9 will change the background color to the corresponding [ansi color](https://rich.readthedocs.io/en/latest/appendix/colors.html).
 
-Note that we didn't need to explicitly refresh the screen or draw anything. Setting the `background` attribute is enough for Textual to update the visuals. This is an example of _reactivity_ in Textual.
+Note that we didn't need to explicitly refresh the screen or draw anything. Setting the `background` attribute is enough for Textual to update the visuals. This is an example of _reactivity_ in Textual. To make changes to the terminal interface you modify the _state_ and let Textual update the visuals.
 
-### Widgets
+## Widgets
 
 To make more interesting apps you will need to make use of _widgets_, which are independent user interface elements. Textual comes with a (growing) library of widgets, but you can also develop your own.
 
-Let's look at an app which contains widgets. We will be using the built in `Placeholder` widget which you can use to design application layouts before you implement the real content. They are also very useful for testing.
+Let's look at an app which contains widgets. We will be using the built in `Placeholder` widget which you can use to design application layouts before you implement the real content. They are very useful for testing.
 
 ```python
 from textual import events
@@ -112,6 +118,22 @@ If you run the above example, you will see something like the following:
 If you move the mouse over the terminal you will notice that widgets receive mouse events. You can click any of the placeholders to give it input focus.
 
 The dock layout feature is good enough for most purposes. For more sophisticated layouts we can use the grid API. See the [calculator.py](https://github.com/willmcgugan/textual/blob/main/examples/calculator.py) example which makes use of Grid.
+
+### Creating Widgets
+
+_TODO_
+
+### Actions
+
+_TODO_
+
+### Events
+
+_TODO_
+
+### Timers and Intervals
+
+_TODO_
 
 ## Developer VLog
 

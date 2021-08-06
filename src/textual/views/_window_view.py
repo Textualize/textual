@@ -44,14 +44,12 @@ class WindowView(View, layout=VerticalLayout):
         await self.emit(WindowChange(self))
 
     async def watch_scroll_x(self, value: int) -> None:
+        self.layout.require_update()
         self.refresh(layout=True)
 
     async def watch_scroll_y(self, value: int) -> None:
-        self.refresh(layout=True)
-
-    async def message_update(self, message: UpdateMessage) -> None:
         self.layout.require_update()
-        await self.root_view.refresh_layout()
+        self.refresh(layout=True)
 
     async def on_resize(self, event: events.Resize) -> None:
         await self.emit(WindowChange(self))
