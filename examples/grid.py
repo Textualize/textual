@@ -4,10 +4,9 @@ from textual.widgets import Placeholder
 
 
 class GridTest(App):
-    async def on_load(self, event: events.Load) -> None:
-        await self.bind("q,ctrl+c", "quit", "Quit")
 
     async def on_mount(self, event: events.Mount) -> None:
+        """Make a simple grid arrangement."""
 
         grid = await self.view.dock_grid(edge="left", size=70, name="left")
 
@@ -32,7 +31,6 @@ class GridTest(App):
             area3=Placeholder(name="area3"),
             area4=Placeholder(name="area4"),
         )
-        self.view.refresh(layout=True)
 
 
 GridTest.run(title="Grid Test", log="textual.log")

@@ -6,10 +6,9 @@ from textual.layouts.grid import GridLayout
 
 
 class GridTest(App):
-    async def on_load(self, event: events.Load) -> None:
-        await self.bind("q,ctrl+c", "quit", "Quit")
 
     async def on_mount(self, event: events.Mount) -> None:
+        """Create a grid with auto-arranging cells."""
 
         grid = await self.view.dock_grid()
 
