@@ -1,6 +1,6 @@
 """
 
-A Textual app to create a fully working Calendar.
+A Textual app to create a fully working Calculator.
 
 """
 
