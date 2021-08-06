@@ -244,8 +244,8 @@ class Region(NamedTuple):
         x, y, x2, y2 = self.corners
         ox, oy, ox2, oy2 = other.corners
 
-        return ((x2 > ox >= x) or (x2 > ox2 >= x) or (ox < x and ox2 >= x2)) and (
-            (y2 > oy >= y) or (y2 > oy2 >= y) or (oy < y and oy2 >= y2)
+        return ((x2 > ox >= x) or (x2 > ox2 > x) or (ox < x and ox2 >= x2)) and (
+            (y2 > oy >= y) or (y2 > oy2 > y) or (oy < y and oy2 >= y2)
         )
 
     def contains(self, x: int, y: int) -> bool:
