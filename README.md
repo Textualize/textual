@@ -179,6 +179,12 @@ The following `render()` method is where you set how the widget should be displa
         self.mouse_over = False
 ```
 
+The app class has a `Mount` handler where we _dock_ 10 of these custom widgets from the top edge. If you run this script you will see something like the following:
+
+![widgets](./imgs/custom.png)
+
+If you move your mouse over the terminal you should see that the widget under the mouse cursor changes to a red background.
+
 ### Actions
 
 _TODO_
