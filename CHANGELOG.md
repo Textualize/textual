@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.9] - Unreleased
+
+### Added
+
+- Added hover over and mouse click to activate keys in footer
+- Added verbosity argument to Widget.log
+
+### Changed
+
+- Simplified events. Remove Startup event (use Mount)
+- Changed geometry.Point to geometry.Offset and geometry.Dimensions to geometry.Size
+
 ## [0.1.8] - 2021-07-17
 
 ### Fixed

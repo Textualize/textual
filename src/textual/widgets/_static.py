@@ -28,4 +28,4 @@ class Static(Widget):
 
     async def update(self, renderable: RenderableType) -> None:
         self.renderable = renderable
-        self.require_repaint()
+        self.refresh()

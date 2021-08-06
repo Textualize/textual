@@ -11,15 +11,13 @@ import rich.repr
 from rich.screen import Screen
 from rich import get_console
 from rich.console import Console, RenderableType
-from rich.style import Style
 from rich.traceback import Traceback
 
 from . import events
 from . import actions
 from ._animator import Animator
-from ._profile import timer
 from .binding import Bindings, NoBinding
-from .geometry import Point, Region
+from .geometry import Offset, Region
 from . import log
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
@@ -76,6 +74,7 @@ class App(MessagePump):
         screen: bool = True,
         driver_class: Type[Driver] | None = None,
         log: str = "",
+        log_verbosity: int = 1,
         title: str = "Textual Application",
     ):
         """The Textual Application base class
@@ -86,40 +85,42 @@ class App(MessagePump):
             driver_class (Type[Driver], optional): Driver class, or None to use default. Defaults to None.
             title (str, optional): Title of the application. Defaults to "Textual Application".
         """
-        self.console = console or get_console()
+        self.console = console or Console()
         self.error_console = Console(stderr=True)
         self._screen = screen
         self.driver_class = driver_class or LinuxDriver
         self._title = title
         self._layout = DockLayout()
-        self._view_stack: list[View] = []
+        self._view_stack: list[DockView] = []
         self.children: set[MessagePump] = set()
 
         self.focused: Widget | None = None
         self.mouse_over: Widget | None = None
         self.mouse_captured: Widget | None = None
         self._driver: Driver | None = None
-        self._tracebacks: list[Traceback] = []
+        self._exit_renderables: list[RenderableType] = []
 
         self._docks: list[Dock] = []
         self._action_targets = {"app", "view"}
         self._animator = Animator(self)
         self.animate = self._animator.bind(self)
-        self.mouse_position = Point(0, 0)
+        self.mouse_position = Offset(0, 0)
         self.bindings = Bindings()
         self._title = title
 
         self.log_file = open(log, "wt") if log else None
+        self.log_verbosity = log_verbosity
 
-        self.bindings.bind("ctrl+c", "quit")
+        self.bindings.bind("ctrl+c", "quit", show=False)
+        self._refresh_required = False
 
         super().__init__()
 
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
-    background: Reactive[str] = Reactive("")
+    background: Reactive[str] = Reactive("black")
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "title", self.title
 
     def __rich__(self) -> RenderableType:
@@ -130,12 +131,12 @@ class App(MessagePump):
         return self._animator
 
     @property
-    def view(self) -> View:
+    def view(self) -> DockView:
         return self._view_stack[-1]
 
-    def log(self, *args: Any, verbosity: int = 0) -> None:
+    def log(self, *args: Any, verbosity: int = 1) -> None:
         try:
-            if self.log_file:
+            if self.log_file and verbosity <= self.log_verbosity:
                 output = f" ".join(str(arg) for arg in args)
                 self.log_file.write(output + "\n")
                 self.log_file.flush()
@@ -143,9 +144,16 @@ class App(MessagePump):
             pass
 
     async def bind(
-        self, keys: str, action: str, description: str = "", show: bool = False
+        self,
+        keys: str,
+        action: str,
+        description: str = "",
+        show: bool = True,
+        key_display: str | None = None,
     ) -> None:
-        self.bindings.bind(keys, action, description, show=show)
+        self.bindings.bind(
+            keys, action, description, show=show, key_display=key_display
+        )
 
     @classmethod
     def run(
@@ -170,10 +178,9 @@ class App(MessagePump):
         asyncio.run(run_app())
 
     async def push_view(self, view: ViewType) -> ViewType:
-        await self.register(view)
-        view.set_parent(self)
+        self.register(view, self)
         self._view_stack.append(view)
-        await view.post_message(events.Mount(sender=self))
+        # await view.post_message(events.Mount(sender=self))
         return view
 
     def on_keyboard_interupt(self) -> None:
@@ -227,26 +234,31 @@ class App(MessagePump):
         if widget is not None:
             await widget.post_message(events.MouseCapture(self, self.mouse_position))
 
-    def panic(self, traceback: Traceback | None = None) -> None:
+    def panic(self, *renderables: RenderableType) -> None:
         """Exits the app with a traceback.
 
         Args:
             traceback (Traceback, optional): Rich Traceback object or None to generate one
                 for the most recent exception. Defaults to None.
         """
-        if traceback is None:
-            traceback = Traceback(show_locals=True)
-        self._tracebacks.append(traceback)
+
+        if not renderables:
+            renderables = (
+                Traceback(show_locals=True, width=None, locals_max_length=5),
+            )
+        self._exit_renderables.extend(renderables)
         self.close_messages_no_wait()
 
     async def process_messages(self) -> None:
         active_app.set(self)
         driver = self._driver = self.driver_class(self.console, self)
 
+        log("---")
         log(f"driver={self.driver_class}")
 
         await self.dispatch_message(events.Load(sender=self))
-        await self.push_view(View())
+        await self.post_message(events.Mount(self))
+        await self.push_view(DockView())
 
         try:
             driver.start_application_mode()
@@ -257,10 +269,8 @@ class App(MessagePump):
 
             try:
                 self.title = self._title
-                await self.post_message(events.Startup(sender=self))
-                self.require_layout()
+                self.refresh()
                 await self.animator.start()
-
                 await super().process_messages()
                 log("PROCESS END")
                 await self.animator.stop()
@@ -279,31 +289,25 @@ class App(MessagePump):
                 self.panic()
             finally:
                 driver.stop_application_mode()
-                if self._tracebacks:
-                    for traceback in self._tracebacks:
+                if self._exit_renderables:
+                    for traceback in self._exit_renderables:
                         self.error_console.print(traceback)
                 if self.log_file is not None:
                     self.log_file.close()
 
-    def require_repaint(self) -> None:
-        self.refresh()
-
-    def require_layout(self) -> None:
-        self.view.require_layout()
-
     async def call_later(self, callback: Callable, *args, **kwargs) -> None:
-        await self.post_message(events.Idle(self))
         await self.post_message(
             events.Callback(self, partial(callback, *args, **kwargs))
         )
 
-    async def message_update(self, message: Message) -> None:
-        self.refresh()
-
-    async def register(self, child: MessagePump) -> None:
-        self.children.add(child)
-        child.start_messages()
-        await child.post_message(events.Created(sender=self))
+    def register(self, child: MessagePump, parent: MessagePump) -> bool:
+        if child not in self.children:
+            self.children.add(child)
+            child.set_parent(parent)
+            child.start_messages()
+            child.post_message_no_wait(events.Mount(sender=parent))
+            return True
+        return False
 
     async def close_all(self) -> None:
         while self.children:
@@ -319,7 +323,7 @@ class App(MessagePump):
         driver.disable_input()
         await self.close_messages()
 
-    def refresh(self) -> None:
+    def refresh(self, repaint: bool = True, layout: bool = False) -> None:
         sync_available = os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal"
         if not self._closed:
             console = self.console
@@ -329,41 +333,49 @@ class App(MessagePump):
                 console.print(Screen(Control.home(), self.view, Control.home()))
                 if sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
-                    console.file.flush()
+                console.file.flush()
             except Exception:
-                self.panic(Traceback(show_locals=True))
+                self.panic()
 
     def display(self, renderable: RenderableType) -> None:
+        sync_available = os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal"
         if not self._closed:
             console = self.console
             try:
-                with console:
-                    console.print(renderable)
+                console.print(renderable)
             except Exception:
                 self.panic()
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         return self.view.get_widget_at(x, y)
 
+    async def press(self, key: str) -> bool:
+        try:
+            binding = self.bindings.get_key(key)
+        except NoBinding:
+            return False
+        else:
+            await self.action(binding.action)
+        return True
+
     async def on_event(self, event: events.Event) -> None:
         if isinstance(event, events.Key):
-            try:
-                binding = self.bindings.get_key(event.key)
-            except NoBinding:
-                pass
-            else:
-                await self.action(binding.action)
+            if await self.press(event.key):
                 return
             await super().on_event(event)
 
         if isinstance(event, events.InputEvent):
             if isinstance(event, events.MouseEvent):
-                self.mouse_position = Point(event.x, event.y)
+                self.mouse_position = Offset(event.x, event.y)
             if isinstance(event, events.Key) and self.focused is not None:
                 await self.focused.forward_event(event)
             await self.view.forward_event(event)
         else:
             await super().on_event(event)
+
+    async def on_idle(self, event: events.Idle) -> None:
+        if self.view.check_layout():
+            await self.view.refresh_layout()
 
     async def action(
         self,
@@ -384,7 +396,7 @@ class App(MessagePump):
             action_target = getattr(self, destination)
         else:
             action_target = default_namespace or self
-            action_name = action
+            action_name = target
 
         log("ACTION", action_target, action_name)
         await self.dispatch_action(action_target, action_name, params)
@@ -409,9 +421,14 @@ class App(MessagePump):
             modifiers, action = extract_handler_actions(event_name, style.meta)
         except NoHandler:
             return False
-        await self.action(
-            action, default_namespace=default_namespace, modifiers=modifiers
-        )
+        if isinstance(action, str):
+            await self.action(
+                action, default_namespace=default_namespace, modifiers=modifiers
+            )
+        elif isinstance(action, Callable):
+            await action()
+        else:
+            return False
         return True
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
@@ -420,6 +437,9 @@ class App(MessagePump):
 
     async def on_resize(self, event: events.Resize) -> None:
         await self.view.post_message(event)
+
+    async def action_press(self, key: str) -> None:
+        await self.press(key)
 
     async def action_quit(self) -> None:
         await self.shutdown()
@@ -449,23 +469,14 @@ if __name__ == "__main__":
 
     import os
 
-    # from rich.console import Console
-
-    # console = Console()
-    # console.print(scroll_bar, height=10)
-    # console.print(scroll_view, height=20)
-
-    # import sys
-
-    # sys.exit()
-
     class MyApp(App):
         """Just a test app."""
 
         async def on_load(self, event: events.Load) -> None:
-            await self.bind("q,ctrl+c", "quit")
-            await self.bind("x", "bang")
-            await self.bind("b", "toggle_sidebar")
+            await self.bind("ctrl+c", "quit", show=False)
+            await self.bind("q", "quit", "Quit")
+            await self.bind("x", "bang", "Test error handling")
+            await self.bind("b", "toggle_sidebar", "Toggle sidebar")
 
         show_bar: Reactive[bool] = Reactive(False)
 
@@ -475,62 +486,21 @@ if __name__ == "__main__":
         async def action_toggle_sidebar(self) -> None:
             self.show_bar = not self.show_bar
 
-        async def on_startup(self, event: events.Startup) -> None:
+        async def on_mount(self, event: events.Mount) -> None:
 
             view = await self.push_view(DockView())
 
             header = Header()
             footer = Footer()
             self.bar = Placeholder(name="left")
-            footer.add_key("b", "Toggle sidebar")
-            footer.add_key("q", "Quit")
 
             await view.dock(header, edge="top")
             await view.dock(footer, edge="bottom")
             await view.dock(self.bar, edge="left", size=40, z=1)
             self.bar.layout_offset_x = -40
 
-            # await view.dock(Placeholder(), Placeholder(), edge="top")
-
             sub_view = DockView()
             await sub_view.dock(Placeholder(), Placeholder(), edge="top")
             await view.dock(sub_view, edge="left")
 
-            # self.refresh()
-
-            # footer = Footer()
-            # footer.add_key("b", "Toggle sidebar")
-            # footer.add_key("q", "Quit")
-
-            # readme_path = os.path.join(
-            #     os.path.dirname(os.path.abspath(__file__)), "richreadme.md"
-            # )
-            # # scroll_view = LayoutView()
-            # # scroll_bar = ScrollBar()
-            # with open(readme_path, "rt") as fh:
-            #     readme = Markdown(fh.read(), hyperlinks=True, code_theme="fruity")
-            # # scroll_view.layout.split_column(
-            # #     Layout(readme, ratio=1), Layout(scroll_bar, ratio=2, size=2)
-            # # )
-            # layout = Layout()
-            # layout.split_column(Layout(name="l1"), Layout(name="l2"))
-            # # sub_view = LayoutView(name="Sub view", layout=layout)
-
-            # sub_view = ScrollView(readme)
-
-            # # await sub_view.mount_all(l1=Placeholder(), l2=Placeholder())
-
-            # await self.view.mount_all(
-            #     header=Header(self.title),
-            #     left=Placeholder(),
-            #     body=sub_view,
-            #     footer=footer,
-            # )
-
-    # app = MyApp()
-    # from rich.console import Console
-
-    # console = Console()
-    # console.print(app._view_stack[0], height=30)
-    # console.print(app._view_stack)
     MyApp.run(log="textual.log")

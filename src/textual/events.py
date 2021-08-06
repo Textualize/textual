@@ -5,11 +5,10 @@ from typing import Awaitable, Callable, Type, TYPE_CHECKING, TypeVar
 import rich.repr
 from rich.style import Style
 
-from .geometry import Point, Dimensions
+from .geometry import Offset, Size
 from .message import Message
 from ._types import MessageTarget
 from .keys import Keys
-
 
 MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
 
@@ -20,28 +19,28 @@ if TYPE_CHECKING:
 
 @rich.repr.auto
 class Event(Message):
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         return
         yield
 
-    def __init_subclass__(cls, bubble: bool = False) -> None:
-        super().__init_subclass__(bubble=bubble)
+    def __init_subclass__(cls, bubble: bool = False, verbosity: int = 1) -> None:
+        super().__init_subclass__(bubble=bubble, verbosity=verbosity)
 
 
-class Null(Event):
+class Null(Event, verbosity=3):
     def can_replace(self, message: Message) -> bool:
         return isinstance(message, Null)
 
 
 @rich.repr.auto
-class Callback(Event, bubble=False):
+class Callback(Event, bubble=False, verbosity=3):
     def __init__(
         self, sender: MessageTarget, callback: Callable[[], Awaitable[None]]
     ) -> None:
         self.callback = callback
         super().__init__(sender)
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "callback", self.callback
 
 
@@ -53,6 +52,11 @@ class Shutdown(Event):
     pass
 
 
+class Repaint(Event, bubble=False):
+    def can_replace(self, message: "Message") -> bool:
+        return isinstance(message, Repaint)
+
+
 class Load(Event):
     """
     Sent when the App is running but *before* the terminal is in application mode.
@@ -62,23 +66,6 @@ class Load(Event):
 
 
     """
-
-
-class Startup(Event):
-    """
-    Sent when the app has enabled application mode.
-
-    Use this event to create views and widgets.
-
-    """
-
-
-class Created(Event):
-    pass
-
-
-class Updated(Event):
-    """Indicates the sender was updated and needs a refresh."""
 
 
 class Idle(Event):
@@ -97,36 +84,38 @@ class Action(Event, bubble=True):
         super().__init__(sender)
         self.action = action
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "action", self.action
 
 
-class Resize(Event):
+class Resize(Event, verbosity=2):
     """Sent when the app or widget has been resized."""
 
-    __slots__ = ["width", "height"]
-    width: int
-    height: int
+    __slots__ = ["size"]
+    size: Size
 
-    def __init__(self, sender: MessageTarget, width: int, height: int) -> None:
+    def __init__(self, sender: MessageTarget, size: Size) -> None:
         """
         Args:
             sender (MessageTarget): Event sender.
             width (int): New width in terminal cells.
             height (int): New height in terminal cells.
         """
-        self.width = width
-        self.height = height
+        self.size = size
         super().__init__(sender)
 
     def can_replace(self, message: "Message") -> bool:
         return isinstance(message, Resize)
 
     @property
-    def size(self) -> Dimensions:
-        return Dimensions(self.width, self.height)
+    def width(self) -> int:
+        return self.size.width
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    @property
+    def height(self) -> int:
+        return self.size.height
+
+    def __rich_repr__(self) -> rich.repr.Result:
         yield self.width
         yield self.height
 
@@ -144,7 +133,7 @@ class Show(Event):
 
 
 class Hide(Event):
-    """Send when a widget has been hidden.
+    """Sent when a widget has been hidden.
 
     A widget may be hidden by setting its `visible` flag to `False`, if it is no longer in a layout,
     or if it has been offset beyond the edges of the terminal.
@@ -160,7 +149,7 @@ class MouseCapture(Event):
 
     """
 
-    def __init__(self, sender: MessageTarget, mouse_position: Point) -> None:
+    def __init__(self, sender: MessageTarget, mouse_position: Offset) -> None:
         """
 
         Args:
@@ -170,7 +159,7 @@ class MouseCapture(Event):
         super().__init__(sender)
         self.mouse_position = mouse_position
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield None, self.mouse_position
 
 
@@ -178,7 +167,7 @@ class MouseCapture(Event):
 class MouseRelease(Event):
     """Mouse has been released."""
 
-    def __init__(self, sender: MessageTarget, mouse_position: Point) -> None:
+    def __init__(self, sender: MessageTarget, mouse_position: Offset) -> None:
         """
         Args:
             sender (MessageTarget): The sender of the event, (in this case the app).
@@ -187,7 +176,7 @@ class MouseRelease(Event):
         super().__init__(sender)
         self.mouse_position = mouse_position
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield None, self.mouse_position
 
 
@@ -211,7 +200,7 @@ class Key(InputEvent, bubble=True):
         super().__init__(sender)
         self.key = key.value if isinstance(key, Keys) else key
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "key", self.key
 
 
@@ -295,7 +284,7 @@ class MouseEvent(InputEvent):
         )
         return new_event
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "x", self.x
         yield "y", self.y
         yield "delta_x", self.delta_x, 0
@@ -335,7 +324,7 @@ class MouseEvent(InputEvent):
 
 
 @rich.repr.auto
-class MouseMove(MouseEvent):
+class MouseMove(MouseEvent, verbosity=3):
     """Sent when the mouse cursor moves."""
 
 
@@ -371,7 +360,7 @@ class DoubleClick(MouseEvent):
 
 
 @rich.repr.auto
-class Timer(Event):
+class Timer(Event, verbosity=3):
     __slots__ = ["time", "count", "callback"]
 
     def __init__(
@@ -386,7 +375,7 @@ class Timer(Event):
         self.count = count
         self.callback = callback
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield self.timer.name
         yield "count", self.count
 

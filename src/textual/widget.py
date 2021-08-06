@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from functools import partial
 from logging import getLogger
 from typing import (
     Any,
+    Awaitable,
     TYPE_CHECKING,
     Callable,
     ClassVar,
+    NamedTuple,
     NewType,
     cast,
 )
@@ -15,25 +16,29 @@ from rich.align import Align
 from rich.console import Console, RenderableType
 from rich.panel import Panel
 from rich.pretty import Pretty
+from rich.segment import Segment
 from rich.style import Style
 
 from . import events
 from ._animator import BoundAnimator
 from ._context import active_app
-from .geometry import Dimensions
+from .geometry import Size
 from .message import Message
 from .message_pump import MessagePump
 from .messages import LayoutMessage, UpdateMessage
 from .reactive import Reactive, watch
+from ._types import Lines
 
 if TYPE_CHECKING:
     from .app import App
     from .view import View
 
-
-WidgetID = NewType("WidgetID", int)
-
 log = getLogger("rich")
+
+
+class RenderCache(NamedTuple):
+    size: Size
+    lines: Lines
 
 
 @rich.repr.auto
@@ -47,17 +52,16 @@ class Widget(MessagePump):
         Widget._counts.setdefault(class_name, 0)
         Widget._counts[class_name] += 1
         _count = self._counts[class_name]
-        self.id: WidgetID = cast(WidgetID, Widget._id)
-        Widget._id += 1
 
         self.name = name or f"{class_name}#{_count}"
 
-        self.size = Dimensions(0, 0)
-        self.size_changed = False
+        self._size = Size(0, 0)
         self._repaint_required = False
         self._layout_required = False
         self._animate: BoundAnimator | None = None
         self._reactive_watches: dict[str, Callable] = {}
+        self.render_cache: RenderCache | None = None
+        self.highlight_style: Style | None = None
 
         super().__init__()
 
@@ -65,8 +69,8 @@ class Widget(MessagePump):
     layout_size: Reactive[int | None] = Reactive(None, layout=True)
     layout_fraction: Reactive[int] = Reactive(1, layout=True)
     layout_min_size: Reactive[int] = Reactive(1, layout=True)
-    layout_offset_x: Reactive[int] = Reactive(0, layout=True)
-    layout_offset_y: Reactive[int] = Reactive(0, layout=True)
+    layout_offset_x: Reactive[float] = Reactive(0.0, layout=True)
+    layout_offset_y: Reactive[float] = Reactive(0.0, layout=True)
 
     def validate_layout_offset_x(self, value) -> int:
         return int(value)
@@ -78,14 +82,18 @@ class Widget(MessagePump):
         super().__init_subclass__()
         cls.can_focus = can_focus
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self.name
 
     def __rich__(self) -> RenderableType:
         return self.render()
 
-    def watch(self, attribute_name, callback: Callable[[Any], None]) -> None:
+    def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
+
+    @property
+    def size(self) -> Size:
+        return self._size
 
     @property
     def is_visual(self) -> bool:
@@ -113,17 +121,44 @@ class Widget(MessagePump):
         """Get the layout offset as a tuple."""
         return (round(self.layout_offset_x), round(self.layout_offset_y))
 
-    def require_repaint(self) -> None:
-        """Mark widget as requiring a repaint.
+    def _update_size(self, size: Size) -> None:
+        self._size = size
 
-        Actual repaint is done by parent on idle.
+    def render_lines(self) -> RenderCache:
+        width, height = self.size
+        renderable = self.render()
+        options = self.console.options.update_dimensions(width, height)
+        lines = self.console.render_lines(renderable, options)
+        self.render_cache = RenderCache(self.size, lines)
+        return self.render_cache
+
+    def render_lines_free(self, width: int) -> RenderCache:
+
+        renderable = self.render()
+
+        options = self.console.options.update(width=width, height=None)
+
+        lines = self.console.render_lines(renderable, options)
+        self.render_cache = RenderCache(Size(width, len(lines)), lines)
+        return self.render_cache
+
+    def _get_lines(self) -> Lines:
+        """Get render lines for given dimensions.
+
+        Args:
+            width (int): [description]
+            height (int): [description]
+
+        Returns:
+            Lines: [description]
         """
-        self._repaint_required = True
-        self.post_message_no_wait(events.Null(self))
+        if self.render_cache is None:
+            self.render_cache = self.render_lines()
+        lines = self.render_cache.lines
+        return lines
 
-    def require_layout(self) -> None:
-        self._layout_required = True
-        self.post_message_no_wait(events.Null(self))
+    def clear_render_cache(self) -> None:
+        self.render_cache = None
 
     def check_repaint(self) -> bool:
         return self._repaint_required
@@ -147,17 +182,23 @@ class Widget(MessagePump):
     async def forward_event(self, event: events.Event) -> None:
         await self.post_message(event)
 
-    async def refresh(self) -> None:
-        """Re-render the window and repaint it."""
-        self.require_repaint()
-        await self.repaint()
+    def refresh(self, repaint: bool = True, layout: bool = False) -> None:
+        """Initiate a refresh of the widget.
 
-    async def repaint(self) -> None:
-        """Instructs parent to repaint this widget."""
-        await self.emit(UpdateMessage(self, self))
+        This method sets an internal flag to perform a refresh, which will be done on the
+        next idle event. Only one refresh will be done even if this method is called multiple times.
 
-    async def update_layout(self) -> None:
-        await self.emit(LayoutMessage(self))
+        Args:
+            repaint (bool, optional): Repaint the widget (will call render() again). Defaults to True.
+            layout (bool, optional): Also layout widgets in the view. Defaults to False.
+        """
+        if layout:
+            self.clear_render_cache()
+            self._layout_required = True
+        elif repaint:
+            self.clear_render_cache()
+            self._repaint_required = True
+        self.post_message_no_wait(events.Null(self))
 
     def render(self) -> RenderableType:
         """Get renderable for widget.
@@ -175,24 +216,22 @@ class Widget(MessagePump):
     async def post_message(self, message: Message) -> bool:
         if not self.check_message_enabled(message):
             return True
+        if not self.is_running:
+            self.log(self, "IS NOT RUNNING")
         return await super().post_message(message)
 
-    async def on_event(self, event: events.Event) -> None:
-        if isinstance(event, events.Resize):
-            new_size = Dimensions(event.width, event.height)
-            if self.size != new_size:
-                self.size = new_size
-                self.require_repaint()
-        await super().on_event(event)
+    async def on_resize(self, event: events.Resize) -> None:
+        self.refresh()
 
     async def on_idle(self, event: events.Idle) -> None:
         if self.check_layout():
             self.reset_check_repaint()
             self.reset_check_layout()
-            await self.update_layout()
+            await self.emit(LayoutMessage(self))
         elif self.check_repaint():
+            self.render_cache = None
             self.reset_check_repaint()
-            await self.repaint()
+            await self.emit(UpdateMessage(self, self, layout=False))
 
     async def focus(self) -> None:
         await self.app.set_focus(self)

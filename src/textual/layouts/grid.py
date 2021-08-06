@@ -8,11 +8,12 @@ from itertools import cycle, product
 import sys
 from typing import Iterable, NamedTuple
 
-from .._layout_resolve import layout_resolve
+from rich.console import Console
 
-from ..geometry import Dimensions, Point, Region
-from ..layout import Layout, OrderedRegion
-from ..view import View
+from .._layout_resolve import layout_resolve
+from ..geometry import Size, Offset, Region
+from ..layout import Layout
+from ..layout_map import LayoutMap
 from ..widget import Widget
 
 if sys.version_info >= (3, 8):
@@ -87,36 +88,26 @@ class GridLayout(Layout):
         return column_name not in self.hidden_columns
 
     def show_row(self, row_name: str, visible: bool = True) -> bool:
-        changed = False
+        changed = (row_name in self.hidden_rows) == visible
         if visible:
-            if not self.is_row_visible(row_name):
-                self.require_update()
-                changed = True
             self.hidden_rows.discard(row_name)
-            self.require_update()
         else:
-            if self.is_row_visible(row_name):
-                self.require_update()
-                changed = True
             self.hidden_rows.add(row_name)
+        if changed:
             self.require_update()
-        return changed
+            return True
+        return False
 
     def show_column(self, column_name: str, visible: bool = True) -> bool:
-        changed = False
+        changed = (column_name in self.hidden_columns) == visible
         if visible:
-            if not self.is_column_visible(column_name):
-                self.require_update()
-                changed = True
-            self.hidden_rows.discard(column_name)
-            self.require_update()
+            self.hidden_columns.discard(column_name)
         else:
-            if self.is_column_visible(column_name):
-                self.require_update()
-                changed = True
-            self.hidden_rows.add(column_name)
+            self.hidden_columns.add(column_name)
+        if changed:
             self.require_update()
-        return changed
+            return True
+        return False
 
     def add_column(
         self,
@@ -247,8 +238,8 @@ class GridLayout(Layout):
     def _align(
         cls,
         region: Region,
-        grid_size: Dimensions,
-        container: Dimensions,
+        grid_size: Size,
+        container: Size,
         col_align: GridAlign,
         row_align: GridAlign,
     ) -> Region:
@@ -273,8 +264,8 @@ class GridLayout(Layout):
         return self.widgets.keys()
 
     def generate_map(
-        self, width: int, height: int, offset: Point = Point(0, 0)
-    ) -> dict[Widget, OrderedRegion]:
+        self, console: Console, size: Size, viewport: Region, scroll: Offset
+    ) -> LayoutMap:
         """Generate a map that associates widgets with their location on screen.
 
         Args:
@@ -285,11 +276,14 @@ class GridLayout(Layout):
         Returns:
             dict[Widget, OrderedRegion]: [description]
         """
+        map: LayoutMap = LayoutMap(size)
+        width, height = size
 
         def resolve(
             size: int, edges: list[GridOptions], gap: int, repeat: bool
         ) -> Iterable[tuple[int, int]]:
             total_gap = gap * (len(edges) - 1)
+            tracks: Iterable[int]
             tracks = [
                 track if edge.max_size is None else min(edge.max_size, track)
                 for track, edge in zip(layout_resolve(size - total_gap, edges), edges)
@@ -314,7 +308,7 @@ class GridLayout(Layout):
 
             max_size = 0
             tracks: dict[str, tuple[int, int]] = {}
-            counts = defaultdict(int)
+            counts: dict[str, int] = defaultdict(int)
             if repeat:
                 names = []
                 for index, (name, (start, end)) in enumerate(spans):
@@ -334,17 +328,17 @@ class GridLayout(Layout):
             return names, tracks, len(spans), max_size
 
         def add_widget(widget: Widget, region: Region, order: tuple[int, int]):
-            region = region + offset + widget.layout_offset
-            map[widget] = OrderedRegion(region, order)
-            if isinstance(widget, View):
-                sub_map = widget.layout.generate_map(
-                    region.width, region.height, offset=region.origin
-                )
-                map.update(sub_map)
+            region -= scroll
+            map.add_widget(console, widget, region, order, viewport)
+            # region = region + widget.layout_offset
+            # map[widget] = RenderRegion(region, order, offset)
+            # if isinstance(widget, View):
+            #     sub_map = widget.layout.generate_map(
+            #         region.width, region.height, region.origin + offset
+            #     )
+            #     map.update(sub_map)
 
-        container = Dimensions(
-            width - self.column_gutter * 2, height - self.row_gutter * 2
-        )
+        container = Size(width - self.column_gutter * 2, height - self.row_gutter * 2)
         column_names, column_tracks, column_count, column_size = resolve_tracks(
             [
                 options
@@ -361,7 +355,7 @@ class GridLayout(Layout):
             self.row_gap,
             self.row_repeat,
         )
-        grid_size = Dimensions(column_size, row_size)
+        grid_size = Size(column_size, row_size)
 
         widget_areas = (
             (widget, area)
@@ -372,11 +366,9 @@ class GridLayout(Layout):
         free_slots = {
             (col, row) for col, row in product(range(column_count), range(row_count))
         }
-
-        map = {}
         order = 1
         from_corners = Region.from_corners
-        gutter = Point(self.column_gutter, self.row_gutter)
+        gutter = Offset(self.column_gutter, self.row_gutter)
         for widget, area in widget_areas:
             column_start, column_end, row_start, row_end = self.areas[area]
             try:

@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 
 from . import events
 from .driver import Driver
+from .geometry import Size
 from ._types import MessageTarget
 from ._xterm_parser import XTermParser
 
@@ -72,7 +73,7 @@ class LinuxDriver(Driver):
         def on_terminal_resize(signum, stack) -> None:
             terminal_size = self._get_terminal_size()
             width, height = terminal_size
-            event = events.Resize(self._target, width, height)
+            event = events.Resize(self._target, Size(width, height))
             self.console.size = terminal_size
             asyncio.run_coroutine_threadsafe(
                 self._target.post_message(event),
@@ -115,7 +116,7 @@ class LinuxDriver(Driver):
         )
         width, height = self.console.size = self._get_terminal_size()
         asyncio.run_coroutine_threadsafe(
-            self._target.post_message(events.Resize(self._target, width, height)),
+            self._target.post_message(events.Resize(self._target, Size(width, height))),
             loop=loop,
         )
         self._key_thread.start()
@@ -198,8 +199,6 @@ class LinuxDriver(Driver):
         try:
             while not self.exit_event.is_set():
                 selector_events = selector.select(0.1)
-                if self.exit_event.is_set():
-                    break
                 for _selector_key, mask in selector_events:
                     if mask | selectors.EVENT_READ:
                         unicode_data = decode(read(fileno, 1024))
@@ -222,7 +221,7 @@ if __name__ == "__main__":
     from .app import App
 
     class MyApp(App):
-        async def on_startup(self, event: events.Startup) -> None:
+        async def on_mount(self, event: events.Mount) -> None:
             self.set_timer(5, callback=self.close_messages)
 
     MyApp.run()

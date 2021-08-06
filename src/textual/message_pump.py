@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 from asyncio import CancelledError
 from asyncio import Queue, QueueEmpty, Task
+import inspect
 from typing import TYPE_CHECKING, Awaitable, Iterable, Callable
 from weakref import WeakSet
 
@@ -13,6 +14,7 @@ from . import log
 from ._timer import Timer, TimerCallback
 from ._context import active_app
 from .message import Message
+from .reactive import Reactive
 
 
 if TYPE_CHECKING:
@@ -20,6 +22,10 @@ if TYPE_CHECKING:
 
 
 class NoParent(Exception):
+    pass
+
+
+class CallbackError(Exception):
     pass
 
 
@@ -31,6 +37,7 @@ class MessagePump:
     def __init__(self, parent: MessagePump | None = None) -> None:
         self._message_queue: Queue[Message | None] = Queue()
         self._parent = parent
+        self._running: bool = False
         self._closing: bool = False
         self._closed: bool = False
         self._disabled_messages: set[type[Message]] = set()
@@ -58,8 +65,12 @@ class MessagePump:
     def is_parent_active(self):
         return self._parent and not self._parent._closed and not self._parent._closing
 
+    @property
+    def is_running(self) -> bool:
+        return self._running
+
     def log(self, *args) -> None:
-        return self.app.log(args)
+        return self.app.log(*args)
 
     def set_parent(self, parent: MessagePump) -> None:
         self._parent = parent
@@ -158,14 +169,18 @@ class MessagePump:
         self._task = asyncio.create_task(self.process_messages())
 
     async def process_messages(self) -> None:
+        self._running = True
         try:
             return await self._process_messages()
         except CancelledError:
             pass
+        finally:
+            self._runnning = False
 
     async def _process_messages(self) -> None:
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
+
         while not self._closed:
             try:
                 message = await self.get_message()
@@ -176,7 +191,6 @@ class MessagePump:
             except Exception as error:
                 raise error from None
 
-            log(message, "->", self)
             # Combine any pending messages that may supersede this one
             while not (self._closed or self._closing):
                 pending = self.peek_message()
@@ -192,7 +206,7 @@ class MessagePump:
             except CancelledError:
                 raise
             except Exception as error:
-                self.app.panic(Traceback(show_locals=True))
+                self.app.panic()
                 break
             finally:
                 if isinstance(message, events.Event) and self._message_queue.empty():
@@ -226,6 +240,7 @@ class MessagePump:
         _rich_traceback_guard = True
 
         for method in self._get_dispatch_methods(f"on_{event.name}", event):
+            log(event, ">>>", self, verbosity=event.verbosity)
             await method(event)
 
         if event.bubble and self._parent and not event._stop_propagation:
@@ -238,6 +253,7 @@ class MessagePump:
 
         method = getattr(self, method_name, None)
         if method is not None:
+            log(message, ">>>", self, verbosity=message.verbosity)
             await method(message)
 
         if message.bubble and self._parent and not message._stop_propagation:
@@ -291,4 +307,11 @@ class MessagePump:
         event.prevent_default()
         event.stop()
         if event.callback is not None:
-            await event.callback()
+            try:
+                callback_result = event.callback()
+                if inspect.isawaitable(callback_result):
+                    await callback_result
+            except Exception as error:
+                raise CallbackError(
+                    f"unable to run callback {event.callback!r}; {error}"
+                )

@@ -6,7 +6,7 @@ from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.segment import Segment, Segments
 
-from .geometry import Point
+from .geometry import Offset
 from ._loop import loop_last
 
 
@@ -18,7 +18,7 @@ class ScreenUpdate:
         self.lines = console.render_lines(
             renderable, console.options.update_dimensions(width, height)
         )
-        self.offset = Point(0, 0)
+        self.offset = Offset(0, 0)
 
     def render(self, x: int, y: int) -> Iterable[Segment]:
         move_to = Control.move_to

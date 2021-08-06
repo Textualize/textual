@@ -7,7 +7,7 @@ from rich.segment import Segment, Segments
 from rich.style import Style, StyleType
 
 from . import events
-from .geometry import Point
+from .geometry import Offset
 from ._types import MessageTarget
 from .message import Message
 from .widget import Reactive, Widget
@@ -44,7 +44,7 @@ class ScrollTo(Message, bubble=True):
         self.y = y
         super().__init__(sender)
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "x", self.x, None
         yield "y", self.y, None
 
@@ -184,9 +184,9 @@ class ScrollBar(Widget):
     window_size: Reactive[int] = Reactive(0)
     position: Reactive[int] = Reactive(0)
     mouse_over: Reactive[bool] = Reactive(False)
-    grabbed: Reactive[Point | None] = Reactive(None)
+    grabbed: Reactive[Offset | None] = Reactive(None)
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield "virtual_size", self.virtual_size
         yield "window_size", self.window_size
         yield "position", self.position

@@ -21,6 +21,7 @@ class Message:
 
     sender: MessageTarget
     bubble: ClassVar[bool] = False
+    verbosity: ClassVar[int] = 1
 
     def __init__(self, sender: MessageTarget) -> None:
         """
@@ -36,12 +37,13 @@ class Message:
         self._stop_propagation = False
         super().__init__()
 
-    def __rich_repr__(self) -> rich.repr.RichReprResult:
+    def __rich_repr__(self) -> rich.repr.Result:
         yield self.sender
 
-    def __init_subclass__(cls, bubble: bool = False) -> None:
+    def __init_subclass__(cls, bubble: bool = False, verbosity: int = 1) -> None:
         super().__init_subclass__()
         cls.bubble = bubble
+        cls.verbosity = verbosity
 
     def can_replace(self, message: "Message") -> bool:
         """Check if another message may supersede this one.

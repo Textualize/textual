@@ -9,7 +9,7 @@ class NoHandler(Exception):
 
 class HandlerArguments(NamedTuple):
     modifiers: set[str]
-    action: str
+    action: Any
 
 
 def extract_handler_actions(event_name: str, meta: dict[str, Any]) -> HandlerArguments:

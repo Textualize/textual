@@ -18,8 +18,10 @@ def parse(action: str) -> tuple[str, tuple[Any, ...]]:
         action_name, action_params_str = params_match.groups()
         try:
             action_params = ast.literal_eval(action_params_str)
-        except Exception as error:
-            raise ActionError(str(error))
+        except Exception:
+            raise ActionError(
+                f"unable to parse {action_params_str!r} in action {action!r}"
+            )
     else:
         action_name = action
         action_params = ()
@@ -31,6 +33,8 @@ def parse(action: str) -> tuple[str, tuple[Any, ...]]:
 
 
 if __name__ == "__main__":
+
+    print(parse("foo"))
 
     print(parse("view.toggle('side')"))
 

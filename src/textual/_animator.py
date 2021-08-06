@@ -114,7 +114,12 @@ class Animator:
     def __init__(self, target: MessageTarget, frames_per_second: int = 60) -> None:
         self._animations: dict[tuple[object, str], Animation] = {}
         self._timer = Timer(
-            target, 1 / frames_per_second, target, name="Animator", callback=self
+            target,
+            1 / frames_per_second,
+            target,
+            name="Animator",
+            callback=self,
+            pause=True,
         )
         self._timer_task: asyncio.Task | None = None
 
