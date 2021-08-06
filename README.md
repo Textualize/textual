@@ -93,13 +93,13 @@ SimpleApp.run(log="textual.log")
 
 This app contains a single event handler `on_mount`. The mount event is sent when the app or widget is ready to start processing events. We can use it for initializing things. In this case we are going to call `self.view.dock` to add widgets to the interface. More about the `view` object later.
 
-Here's the first line in the mount handler::
+Here's the first line in the mount handler:
 
 ```python
 await self.view.dock(Placeholder(), edge="left", size=40)
 ```
 
-Note it is asynchronous like almost all API methods in Textual. We are awaiting `self.view.dock` which takes a newly constructed Placeholder widget, and docks it on to the `"left"` edge of the terminal with a size of 40 characters. In a real app you might use this to display a side-bar of sorts.
+Note this method is asynchronous like almost all API methods in Textual. We are awaiting `self.view.dock` which takes a newly constructed Placeholder widget, and docks it on to the `"left"` edge of the terminal with a size of 40 characters. In a real app you might use this to display a side-bar.
 
 The following line is similar:
 
@@ -107,9 +107,9 @@ The following line is similar:
 await self.view.dock(Placeholder(), Placeholder(), edge="top")
 ```
 
-You will notice that this time we are docking two Placeholder objects on the top edge. We haven't set an explicit size this time, so Textual will divide the remaining size amongst the two new widgets.
+You will notice that this time we are docking _two_ Placeholder objects on _the_ top edge. We haven't set an explicit size this time so Textual will divide the remaining size amongst the two new widgets.
 
-The last line calls the `run` class method in the usual way, but with an argument we haven't seen before: `log="textual.log"` tells Textual to write log information to the given file. You can tail textual.log to see the events that are being processed and other debug information.
+The last line calls the `run` class method in the usual way, but with an argument we haven't seen before: `log="textual.log"` tells Textual to write log information to the given file. You can tail textual.log to see the events being processed and other debug information.
 
 If you run the above example, you will see something like the following:
 
@@ -121,7 +121,63 @@ The dock layout feature is good enough for most purposes. For more sophisticated
 
 ### Creating Widgets
 
-_TODO_
+You can create your own widgets by subclassing the `textual.widget.Widget` class and implementing a `render()` method which should return anything that can be rendered with [Rich](https://rich.readthedocs.io/en/latest/introduction.html), including a plain string which will be interpreted as [console markup](https://rich.readthedocs.io/en/latest/markup.html).
+
+Lets look at an example with a custom widget:
+
+```python
+from rich.panel import Panel
+
+from textual import events
+from textual.app import App
+from textual.reactive import Reactive
+from textual.widget import Widget
+
+
+class Hover(Widget):
+
+    mouse_over: Reactive[bool] = Reactive(False)
+
+    def render(self) -> Panel:
+        return Panel("Hello [b]World[/b]", style=("on red" if self.mouse_over else ""))
+
+    async def on_enter(self, event: events.Enter) -> None:
+        self.mouse_over = True
+
+    async def on_leave(self, event: events.Leave) -> None:
+        self.mouse_over = False
+
+
+class HoverApp(App):
+    """Demonstrates smooth animation"""
+
+    async def on_mount(self, event: events.Mount) -> None:
+        """Build layout here."""
+
+        hovers = (Hover() for _ in range(10))
+        await self.view.dock(*hovers, edge="top")
+
+
+HoverApp.run(log="textual.log")
+```
+
+The `Hover` class is a custom widget which displays a panel containing the classic text "Hello World". The first lin ein the Hover class may seem a little mysterious at this point:
+
+```python
+mouse_over: Reactive[bool] = Reactive(False)
+```
+
+This adds an `mouse_over` attribute to your class which is a bool which defaults to `False`. The typing part (`Reactive[bool]`) is not required, but will help you find bugs if you are using a tool like [Mypy](https://mypy.readthedocs.io/en/stable/). If you modify `self.mouse_over` Textual will update the Widget render automatically.
+
+The following `render()` method is where you set how the widget should be displayed. In the Hover widget we return a Panel containing rich text with a background that changes depending on the value of `mouse_over`. The goal here is to add a mouseover effect to the widget, which we can achieve by handling two events: `Enter` and `Leave` which are sent when the mouse enters the widget and leaves it. Here are the two event handlers again:
+
+```python
+    async def on_enter(self, event: events.Enter) -> None:
+        self.mouse_over = True
+
+    async def on_leave(self, event: events.Leave) -> None:
+        self.mouse_over = False
+```
 
 ### Actions
 
