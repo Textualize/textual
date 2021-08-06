@@ -41,7 +41,6 @@ class WindowView(View, layout=VerticalLayout):
         await self.emit(WindowChange(self))
 
     async def watch_virtual_size(self, size: Size) -> None:
-        self.log("VIRTUAL SIZE CHANGE")
         await self.emit(WindowChange(self))
 
     async def watch_scroll_x(self, value: int) -> None:
@@ -53,7 +52,6 @@ class WindowView(View, layout=VerticalLayout):
     async def message_update(self, message: UpdateMessage) -> None:
         self.layout.require_update()
         await self.root_view.refresh_layout()
-        # self.app.refresh()
 
     async def on_resize(self, event: events.Resize) -> None:
         await self.emit(WindowChange(self))

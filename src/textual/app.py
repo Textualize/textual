@@ -112,12 +112,13 @@ class App(MessagePump):
         self.log_verbosity = log_verbosity
 
         self.bindings.bind("ctrl+c", "quit", show=False)
+        self._refresh_required = False
 
         super().__init__()
 
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
-    background: Reactive[str] = Reactive("")
+    background: Reactive[str] = Reactive("black")
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "title", self.title
@@ -294,20 +295,10 @@ class App(MessagePump):
                 if self.log_file is not None:
                     self.log_file.close()
 
-    # def require_repaint(self) -> None:
-    #     self.refresh()
-
-    # def require_layout(self) -> None:
-    #     self.view.require_layout()
-
     async def call_later(self, callback: Callable, *args, **kwargs) -> None:
-        await self.post_message(events.Idle(self))
         await self.post_message(
             events.Callback(self, partial(callback, *args, **kwargs))
         )
-
-    # async def message_update(self, message: Message) -> None:
-    #     self.refresh()
 
     def register(self, child: MessagePump, parent: MessagePump) -> bool:
         if child not in self.children:
@@ -342,7 +333,7 @@ class App(MessagePump):
                 console.print(Screen(Control.home(), self.view, Control.home()))
                 if sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
-                    console.file.flush()
+                console.file.flush()
             except Exception:
                 self.panic()
 

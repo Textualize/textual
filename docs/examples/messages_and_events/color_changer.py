@@ -7,4 +7,4 @@ class ColorChanger(App):
             self.background = f"on color({event.key})"
 
 
-ColorChanger.run()
+ColorChanger.run(log="textual.log")

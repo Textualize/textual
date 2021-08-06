@@ -11,9 +11,6 @@ class GridTest(App):
 
         grid = await self.view.dock_grid(edge="left", size=70, name="left")
 
-        # self.view["left"].scroll_y = 5
-        # self.view["left"].scroll_x = 5
-
         grid.add_column(fraction=1, name="left", min_size=20)
         grid.add_column(size=30, name="center")
         grid.add_column(fraction=1, name="right")

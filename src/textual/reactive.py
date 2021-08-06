@@ -13,6 +13,7 @@ from typing import (
     TYPE_CHECKING,
 )
 
+from . import log
 from . import events
 
 from ._types import MessageTarget
@@ -66,16 +67,14 @@ class Reactive(Generic[ReactiveType]):
     def __set__(self, obj: Reactable, value: ReactiveType) -> None:
 
         name = self.name
-        internal_name = f"__{name}"
-        current_value = getattr(obj, internal_name, None)
+        current_value = getattr(obj, self.internal_name, None)
         validate_function = getattr(obj, f"validate_{name}", None)
         if callable(validate_function):
             value = validate_function(value)
 
         if current_value != value or self._first:
             self._first = False
-            setattr(obj, internal_name, value)
-
+            setattr(obj, self.internal_name, value)
             self.check_watchers(obj, name, current_value)
 
             if self.layout:

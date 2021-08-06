@@ -47,6 +47,7 @@ class View(Widget):
 
     async def watch_background(self, value: str) -> None:
         self.layout.background = value
+        self.app.refresh()
 
     scroll_x: Reactive[int] = Reactive(0)
     scroll_y: Reactive[int] = Reactive(0)

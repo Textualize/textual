@@ -22,4 +22,4 @@ class GridTest(App):
         grid.place(*(Placeholder() for _ in range(20)), center=Placeholder())
 
 
-GridTest.run(title="Grid Test")
+GridTest.run(title="Grid Test", log="textual.log")
