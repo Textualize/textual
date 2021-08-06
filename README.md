@@ -1,6 +1,6 @@
 # Textual
 
-Textual is a TUI (Text User Interface) framework for Python using [Rich](https://github.com/willmcgugan/rich) as a renderer. Currently a work in progress, but usable by brave souls who don't mind some API instability between updates.
+Textual is a TUI (Text User Interface) framework for Python using [Rich](https://github.com/willmcgugan/rich) as a renderer and inspired by modern web development. Currently a work in progress, but usable by brave souls who don't mind some API instability between updates.
 
 The end goal is to be able to rapidly create _rich_ terminal applications that look as good as possible (within the restrictions imposed by a terminal emulator).
 
@@ -12,7 +12,7 @@ Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or 
 
 ## How it works
 
-Textual has far more in common with web development than with curses. Every component has at its core a _message pump_ where it can receive and process events, a system modelled after JS in the browser. Web developers will recognize timers, intervals, propagation etc.
+Textual has far more in common with web development than with curses. Every component has at its core a _message pump_ which can receive and process events, a system modelled after JS in the browser. Web developers will recognize timers, intervals, event propagation etc.
 
 Textual borrows other technologies from the web development world; layout is done with CSS grid and (soon) the theme may be customized with CSS. Textual is also influenced by modern JS frameworks such as Vue and React where modifying the state will automatically update the display.
 
@@ -149,11 +149,9 @@ class Hover(Widget):
 
 
 class HoverApp(App):
-    """Demonstrates smooth animation"""
+    """Hover widget demonstration."""
 
     async def on_mount(self, event: events.Mount) -> None:
-        """Build layout here."""
-
         hovers = (Hover() for _ in range(10))
         await self.view.dock(*hovers, edge="top")
 
