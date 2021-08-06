@@ -6,7 +6,6 @@ from textual.layouts.grid import GridLayout
 
 
 class GridTest(App):
-
     async def on_mount(self, event: events.Mount) -> None:
         """Create a grid with auto-arranging cells."""
 
