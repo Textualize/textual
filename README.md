@@ -4,7 +4,7 @@
 
 Textual is a TUI (Text User Interface) framework for Python inspired by modern web development. Currently a work in progress, but usable by brave souls who don't mind some API instability between updates.
 
-Textual will be eventually be cross platform, but for now it is MacOS / Linux only. Windows support is in the pipeline.
+Textual will eventually be cross platform, but for now it is MacOS / Linux only. Windows support is in the pipeline.
 
 Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or post in Discussions if you have any requests / suggestions.
 
@@ -12,7 +12,7 @@ Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or 
 
 Textual uses [Rich](https://github.com/willmcgugan/rich) to render rich text and formatting and asyncio to manage asynchronous events handling.
 
-Textual has more in common with modern web development that it does curses; layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and Reactive, so that changes to the state of an application are automatically reflected in the UI.
+Textual has more in common with modern web development than it does curses; layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and React, so that changes to the state of an application are automatically reflected in the UI.
 
 ## Installation
 
@@ -24,7 +24,7 @@ poetry install
 
 ## Examples
 
-Until I've written the documentation, the [examples](https://github.com/willmcgugan/textual/tree/main/examples/) may the best way to learn Textual.
+Until I've written the documentation, the [examples](https://github.com/willmcgugan/textual/tree/main/examples/) may be the best way to learn Textual.
 
 - [animation.py](https://github.com/willmcgugan/textual/tree/main/examples/animation.py) Demonstration of 60fps animation easing function
 - [calculator.py](https://github.com/willmcgugan/textual/tree/main/examples/calculator.py) A "clone" of the MacOS calculator using Grid layout
@@ -55,7 +55,7 @@ Here we can see a textual app with a single `on_key` method which will receive k
 
 Event handlers in Textual are defined by convention, not by inheritance (so you won't find an `on_key` method in the base class). Each event has a `name` attribute which for the key event is simply `"key"`. Textual will call the method named `on_<event.name>` if it exists.
 
-Lets look at a _slightly_ more interesting example:
+Let's look at a _slightly_ more interesting example:
 
 ```python
 from textual.app import App
@@ -128,7 +128,7 @@ The dock layout feature is good enough for most purposes. For more sophisticated
 
 You can create your own widgets by subclassing the `textual.widget.Widget` class and implementing a `render()` method which should return anything that can be rendered with [Rich](https://rich.readthedocs.io/en/latest/introduction.html), including a plain string which will be interpreted as [console markup](https://rich.readthedocs.io/en/latest/markup.html).
 
-Lets look at an example with a custom widget:
+Let's look at an example with a custom widget:
 
 ```python
 from rich.panel import Panel
@@ -164,13 +164,13 @@ class HoverApp(App):
 HoverApp.run(log="textual.log")
 ```
 
-The `Hover` class is a custom widget which displays a panel containing the classic text "Hello World". The first lin ein the Hover class may seem a little mysterious at this point:
+The `Hover` class is a custom widget which displays a panel containing the classic text "Hello World". The first line in the Hover class may seem a little mysterious at this point:
 
 ```python
 mouse_over: Reactive[bool] = Reactive(False)
 ```
 
-This adds an `mouse_over` attribute to your class which is a bool with a default of `False`. The typing part (`Reactive[bool]`) is not required, but will help you find bugs if you are using a tool like [Mypy](https://mypy.readthedocs.io/en/stable/). Adding attributes like this makes them _reactive_, and any changes will result in the widget updating.
+This adds a `mouse_over` attribute to your class which is a bool with a default of `False`. The typing part (`Reactive[bool]`) is not required, but will help you find bugs if you are using a tool like [Mypy](https://mypy.readthedocs.io/en/stable/). Adding attributes like this makes them _reactive_, and any changes will result in the widget updating.
 
 The following `render()` method is where you set how the widget should be displayed. In the Hover widget we return a Panel containing rich text with a background that changes depending on the value of `mouse_over`. The goal here is to add a mouseover effect to the widget, which we can achieve by handling two events: `Enter` and `Leave` which are sent when the mouse enters or leaves the widget. Here are the two event handlers again:
 
@@ -321,6 +321,6 @@ Added a new layout system modelled on CSS grid. The example demonstrates how onc
 
 **6 Aug 2021**
 
-Added a tree control and refactored the renderer to allow for widgets within a scrollable veiew
+Added a tree control and refactored the renderer to allow for widgets within a scrollable view
 
 [![Textual update 8](https://yt-embed.herokuapp.com/embed?v=J-dzzD6NQJ4&img=0)](http://www.youtube.com/watch?v=J-dzzD6NQJ4)
