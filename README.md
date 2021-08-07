@@ -4,7 +4,7 @@
 
 Textual is a TUI (Text User Interface) framework for Python inspired by modern web development. Currently a work in progress, but usable by brave souls who don't mind some API instability between updates.
 
-Textual will be eventually be cross platform, but for now it is MacOS / Linux only. Windows support is in the pipeline.
+Textual will eventually be cross platform, but for now it is MacOS / Linux only. Windows support is in the pipeline.
 
 Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or post in Discussions if you have any requests / suggestions.
 
@@ -170,7 +170,7 @@ The `Hover` class is a custom widget which displays a panel containing the class
 mouse_over: Reactive[bool] = Reactive(False)
 ```
 
-This adds an `mouse_over` attribute to your class which is a bool with a default of `False`. The typing part (`Reactive[bool]`) is not required, but will help you find bugs if you are using a tool like [Mypy](https://mypy.readthedocs.io/en/stable/). Adding attributes like this makes them _reactive_, and any changes will result in the widget updating.
+This adds a `mouse_over` attribute to your class which is a bool with a default of `False`. The typing part (`Reactive[bool]`) is not required, but will help you find bugs if you are using a tool like [Mypy](https://mypy.readthedocs.io/en/stable/). Adding attributes like this makes them _reactive_, and any changes will result in the widget updating.
 
 The following `render()` method is where you set how the widget should be displayed. In the Hover widget we return a Panel containing rich text with a background that changes depending on the value of `mouse_over`. The goal here is to add a mouseover effect to the widget, which we can achieve by handling two events: `Enter` and `Leave` which are sent when the mouse enters or leaves the widget. Here are the two event handlers again:
 
@@ -321,6 +321,6 @@ Added a new layout system modelled on CSS grid. The example demonstrates how onc
 
 **6 Aug 2021**
 
-Added a tree control and refactored the renderer to allow for widgets within a scrollable veiew
+Added a tree control and refactored the renderer to allow for widgets within a scrollable view
 
 [![Textual update 8](https://yt-embed.herokuapp.com/embed?v=J-dzzD6NQJ4&img=0)](http://www.youtube.com/watch?v=J-dzzD6NQJ4)
