@@ -12,7 +12,7 @@ Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or 
 
 Textual uses [Rich](https://github.com/willmcgugan/rich) to render rich text and formatting and asyncio to manage asynchronous events handling.
 
-Textual borrows technologies from the web development world; layout is done with CSS grid and (soon) the theme may be customized with CSS. Textual is also influenced by modern JS frameworks such as Vue and React where modifying the state will automatically update the display.
+Textual has more in common with modern web development that it does curses; layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and Reactive, so that changes to the state of an application are automatically reflected in the UI.
 
 ## Installation
 
@@ -166,9 +166,9 @@ The `Hover` class is a custom widget which displays a panel containing the class
 mouse_over: Reactive[bool] = Reactive(False)
 ```
 
-This adds an `mouse_over` attribute to your class which is a bool which defaults to `False`. The typing part (`Reactive[bool]`) is not required, but will help you find bugs if you are using a tool like [Mypy](https://mypy.readthedocs.io/en/stable/). If you modify `self.mouse_over` Textual will update the Widget render automatically.
+This adds an `mouse_over` attribute to your class which is a bool with a default of `False`. The typing part (`Reactive[bool]`) is not required, but will help you find bugs if you are using a tool like [Mypy](https://mypy.readthedocs.io/en/stable/). Adding attributes like this makes them _reactive_, and any changes will result in the widget updating.
 
-The following `render()` method is where you set how the widget should be displayed. In the Hover widget we return a Panel containing rich text with a background that changes depending on the value of `mouse_over`. The goal here is to add a mouseover effect to the widget, which we can achieve by handling two events: `Enter` and `Leave` which are sent when the mouse enters the widget and leaves it. Here are the two event handlers again:
+The following `render()` method is where you set how the widget should be displayed. In the Hover widget we return a Panel containing rich text with a background that changes depending on the value of `mouse_over`. The goal here is to add a mouseover effect to the widget, which we can achieve by handling two events: `Enter` and `Leave` which are sent when the mouse enters or leaves the widget. Here are the two event handlers again:
 
 ```python
     async def on_enter(self, event: events.Enter) -> None:
@@ -184,9 +184,51 @@ The app class has a `Mount` handler where we _dock_ 10 of these custom widgets f
 
 If you move your mouse over the terminal you should see that the widget under the mouse cursor changes to a red background.
 
-### Actions
+### Actions and key bindings
 
-_TODO_
+Actions in Textual are white-listed functions that may be bound to keys. Let's look at a trivial example of binding a key to an action. Here is an app which exits when we hit the Q key:
+
+```python
+from textual.app import App
+
+
+class Quitter(App):
+    async def on_load(self, event):
+        await self.bind("q", "quit")
+
+
+Quitter.run()
+```
+
+If you run this you will get a blank terminal which will return to the prompt when you press Q.
+
+Binding is done in the Load event handler. The `bind` method takes the key (in this case "q") and binds it to an action ("quit"). The quit action is built in to Textual and simply exits the app.
+
+To define your own actions, add a method that begins with `action_`, which may take parameters. Let's create a simple action that changes the color of the terminal and binds keys to it:
+
+```python
+from textual.app import App
+
+
+class Colorizer(App):
+
+    async def on_load(self, event):
+        await self.bind("r", "color('red')")
+        await self.bind("g", "color('green')")
+        await self.bind("b", "color('blue')")
+
+    async def action_color(self, color:str) -> None:
+        self.background = f"on {color}"
+
+
+Colorizer.run()
+```
+
+If you run this app you can hit keys R, G, or B to change the color of the background.
+
+In the `on_load` method we have bound the keys R, G, and B to the `color` action with a single parameter. When you press any of these three keys Textual will call the method `action_color` with the appropriate parameter.
+
+You could be forgiven for thinking that `"color('red')"` is Python code which Textual evaluates. This is not the case. The action strings are parsed and may not include expressions or arbitrary code. The reason that strings are used over a callable is that (in a future update) key bindings may be loaded from a configuration file.
 
 ### Events
 
