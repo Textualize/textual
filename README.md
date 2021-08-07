@@ -1,5 +1,7 @@
 # Textual
 
+![screenshot](./imgs/textual.png)
+
 Textual is a TUI (Text User Interface) framework for Python using [Rich](https://github.com/willmcgugan/rich) as a renderer and inspired by modern web development. Currently a work in progress, but usable by brave souls who don't mind some API instability between updates.
 
 The end goal is to be able to rapidly create _rich_ terminal applications that look as good as possible (within the restrictions imposed by a terminal emulator).
@@ -7,8 +9,6 @@ The end goal is to be able to rapidly create _rich_ terminal applications that l
 Textual will be eventually be cross platform, but for now it is MacOS / Linux only. Windows support is in the pipeline.
 
 Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or post in Discussions if you have any requests / suggestions.
-
-![screenshot](./imgs/rich-tui.png)
 
 ## How it works
 
