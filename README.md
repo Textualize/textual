@@ -12,7 +12,7 @@ Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or 
 
 Textual uses [Rich](https://github.com/willmcgugan/rich) to render rich text and formatting and asyncio to manage asynchronous events handling.
 
-Textual has more in common with modern web development that it does curses; layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and Reactive, so that changes to the state of an application are automatically reflected in the UI.
+Textual has more in common with modern web development than it does with curses; layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and Reactive, so that changes to the state of an application are automatically reflected in the UI.
 
 ## Installation
 
@@ -24,7 +24,7 @@ poetry install
 
 ## Examples
 
-Until I've written the documentation, the [examples](https://github.com/willmcgugan/textual/tree/main/examples/) may the best way to learn Textual.
+Until I've written the documentation, the [examples](https://github.com/willmcgugan/textual/tree/main/examples/) may be the best way to learn Textual.
 
 - [animation.py](https://github.com/willmcgugan/textual/tree/main/examples/animation.py) Demonstration of 60fps animation easing function
 - [calculator.py](https://github.com/willmcgugan/textual/tree/main/examples/calculator.py) A "clone" of the MacOS calculator using Grid layout
@@ -51,11 +51,11 @@ class Beeper(App):
 Beeper.run()
 ```
 
-Here we can see a textual app with a single `on_key` method which will receive key events. Any key event will result in playing a beep noise. Hit ctrl+C to exit.
+Here we can see a textual app with a single `on_key` method which will receive key events. Any key event will result in playing a beep noise. Hit Ctrl+C to exit.
 
 Event handlers in Textual are defined by convention, not by inheritance (so you won't find an `on_key` method in the base class). Each event has a `name` attribute which for the key event is simply `"key"`. Textual will call the method named `on_<event.name>` if it exists.
 
-Lets look at a _slightly_ more interesting example:
+Let's look at a _slightly_ more interesting example:
 
 ```python
 from textual.app import App
@@ -112,7 +112,7 @@ The following line is similar:
 await self.view.dock(Placeholder(), Placeholder(), edge="top")
 ```
 
-You will notice that this time we are docking _two_ Placeholder objects on _the_ top edge. We haven't set an explicit size this time so Textual will divide the remaining size amongst the two new widgets.
+You will notice that this time we are docking _two_ Placeholder objects on to the `"top"` edge. We haven't set an explicit size this time so Textual will divide the remaining size amongst the two new widgets.
 
 The last line calls the `run` class method in the usual way, but with an argument we haven't seen before: `log="textual.log"` tells Textual to write log information to the given file. You can tail textual.log to see the events being processed and other debug information.
 
@@ -128,7 +128,7 @@ The dock layout feature is good enough for most purposes. For more sophisticated
 
 You can create your own widgets by subclassing the `textual.widget.Widget` class and implementing a `render()` method which should return anything that can be rendered with [Rich](https://rich.readthedocs.io/en/latest/introduction.html), including a plain string which will be interpreted as [console markup](https://rich.readthedocs.io/en/latest/markup.html).
 
-Lets look at an example with a custom widget:
+Let's look at an example with a custom widget:
 
 ```python
 from rich.panel import Panel
@@ -164,7 +164,7 @@ class HoverApp(App):
 HoverApp.run(log="textual.log")
 ```
 
-The `Hover` class is a custom widget which displays a panel containing the classic text "Hello World". The first lin ein the Hover class may seem a little mysterious at this point:
+The `Hover` class is a custom widget which displays a panel containing the classic text "Hello World". The first line in the Hover class may seem a little mysterious at this point:
 
 ```python
 mouse_over: Reactive[bool] = Reactive(False)
