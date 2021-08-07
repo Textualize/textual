@@ -236,7 +236,44 @@ _TODO_
 
 ### Timers and Intervals
 
-_TODO_
+Textual has a `set_timer` and a `set_interval` which work much like their Javascript counterparts. The `set_timer` method will invoke a callable after a given period of time, and `set_interval` will invoke a callable repeatedly.
+
+Let's create a simple terminal based clock with the `set_interval` method:
+
+```python
+from datetime import datetime
+
+from rich.align import Align
+
+from textual.app import App
+from textual.widget import Widget
+
+
+class Clock(Widget):
+    async def on_mount(self, event):
+        self.set_interval(1, callback=self.refresh)
+
+    def render(self) -> Align:
+        time = datetime.now().strftime("%X")
+        return Align.center(time, vertical="middle")
+
+class ClockApp(App):
+    async def on_mount(self, event):
+        await self.view.dock(Clock())
+
+
+ClockApp.run()
+```
+
+If you run this app you will see the current time in the center of the terminal until you hit Ctrl+C.
+
+The Clock widget displays the time using [rich.align.Align](https://rich.readthedocs.io/en/latest/reference/align.html) to position it in the center. In the clock's Mount handler there is the following call to `set_interval`:
+
+```python
+self.set_interval(1, callback=self.refresh)
+```
+
+This tells Textual to call a function (in this case `self.refresh` which updates the widget) once a second. When a widget is refreshed it calls `Clock.render` again to display the latest time.
 
 </details>
 
