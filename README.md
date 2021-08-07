@@ -112,7 +112,7 @@ The following line is similar:
 await self.view.dock(Placeholder(), Placeholder(), edge="top")
 ```
 
-You will notice that this time we are docking _two_ Placeholder objects on to the `"top"` edge. We haven't set an explicit size this time so Textual will divide the remaining size amongst the two new widgets.
+You will notice that this time we are docking _two_ Placeholder objects onto the `"top"` edge. We haven't set an explicit size this time so Textual will divide the remaining size amongst the two new widgets.
 
 The last line calls the `run` class method in the usual way, but with an argument we haven't seen before: `log="textual.log"` tells Textual to write log information to the given file. You can tail textual.log to see the events being processed and other debug information.
 
