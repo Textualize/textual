@@ -1,8 +1,6 @@
 from textual.app import App
 from textual import events
-from textual.view import View
 from textual.widgets import Placeholder
-from textual.layouts.grid import GridLayout
 
 
 class GridTest(App):
@@ -17,7 +15,8 @@ class GridTest(App):
         grid.add_areas(center="col-2-start|col-4-end,row-2-start|row-3-end")
         grid.set_align("stretch", "center")
 
-        grid.place(*(Placeholder() for _ in range(20)), center=Placeholder())
+        placeholders = [Placeholder() for _ in range(20)]
+        grid.place(*placeholders, center=Placeholder())
 
 
 GridTest.run(title="Grid Test", log="textual.log")
