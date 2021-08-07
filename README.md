@@ -24,12 +24,16 @@ poetry install
 
 ## Examples
 
-Until I've written the documentation, the examples are the best way to learn Textual. Run any of the Python files in [examples](https://github.com/willmcgugan/textual/tree/main/examples) and read the code to see how it works.
+Until I've written the documentation, the [examples](https://github.com/willmcgugan/textual/tree/main/examples/) may the best way to learn Textual.
+
+- [animation.py](https://github.com/willmcgugan/textual/tree/main/examples/animation.py) Demonstration of 60fps animation easing function
+- [calculator.py](https://github.com/willmcgugan/textual/tree/main/examples/calculator.py) A "clone" of the MacOS calculator using Grid layout
+- [code_viewer.py](https://github.com/willmcgugan/textual/tree/main/examples/code_viewer.py) A demonstration of a tree view which loads syntax highlighted code
+- [grid.py](https://github.com/willmcgugan/textual/tree/main/examples/calculator.py) A simple demonstration of adding widgets in a Grid layout
+- [grid_auto.py](https://github.com/willmcgugan/textual/tree/main/examples/grid_auto.py) A demonstration of auto matic Grid layout
+- [Simple](https://github.com/willmcgugan/textual/tree/main/examples/simple.py) A very simple Textual app with scrolling Markdown view
 
 ## Building Textual applications
-
-<details>
-<summary>Click to expand</summary>
 
 _This guide is a work in progress_
 
@@ -230,10 +234,6 @@ In the `on_load` method we have bound the keys R, G, and B to the `color` action
 
 You could be forgiven for thinking that `"color('red')"` is Python code which Textual evaluates. This is not the case. The action strings are parsed and may not include expressions or arbitrary code. The reason that strings are used over a callable is that (in a future update) key bindings may be loaded from a configuration file.
 
-### Events
-
-_TODO_
-
 ### Timers and Intervals
 
 Textual has a `set_timer` and a `set_interval` which work much like their Javascript counterparts. The `set_timer` method will invoke a callable after a given period of time, and `set_interval` will invoke a callable repeatedly.
@@ -274,8 +274,6 @@ self.set_interval(1, callback=self.refresh)
 ```
 
 This tells Textual to call a function (in this case `self.refresh` which updates the widget) once a second. When a widget is refreshed it calls `Clock.render` again to display the latest time.
-
-</details>
 
 ## Developer VLog
 
