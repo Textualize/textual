@@ -12,7 +12,7 @@ Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or 
 
 Textual uses [Rich](https://github.com/willmcgugan/rich) to render rich text and formatting and asyncio to manage asynchronous events handling.
 
-Textual has more in common with modern web development than it does curses; layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and React, so that changes to the state of an application are automatically reflected in the UI.
+Textual has more in common with modern web development than it does with curses; layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and Reactive, so that changes to the state of an application are automatically reflected in the UI.
 
 ## Installation
 
@@ -51,7 +51,7 @@ class Beeper(App):
 Beeper.run()
 ```
 
-Here we can see a textual app with a single `on_key` method which will receive key events. Any key event will result in playing a beep noise. Hit ctrl+C to exit.
+Here we can see a textual app with a single `on_key` method which will receive key events. Any key event will result in playing a beep noise. Hit Ctrl+C to exit.
 
 Event handlers in Textual are defined by convention, not by inheritance (so you won't find an `on_key` method in the base class). Each event has a `name` attribute which for the key event is simply `"key"`. Textual will call the method named `on_<event.name>` if it exists.
 
@@ -112,7 +112,7 @@ The following line is similar:
 await self.view.dock(Placeholder(), Placeholder(), edge="top")
 ```
 
-You will notice that this time we are docking _two_ Placeholder objects on _the_ top edge. We haven't set an explicit size this time so Textual will divide the remaining size amongst the two new widgets.
+You will notice that this time we are docking _two_ Placeholder objects onto the `"top"` edge. We haven't set an explicit size this time so Textual will divide the remaining size amongst the two new widgets.
 
 The last line calls the `run` class method in the usual way, but with an argument we haven't seen before: `log="textual.log"` tells Textual to write log information to the given file. You can tail textual.log to see the events being processed and other debug information.
 
