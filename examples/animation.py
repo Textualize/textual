@@ -16,7 +16,7 @@ class SmoothApp(App):
 
     async def watch_show_bar(self, show_bar: bool) -> None:
         """Called when show_bar changes."""
-        self.animator.animate(self.bar, "layout_offset_x", 0 if show_bar else -40)
+        self.bar.animate("layout_offset_x", 0 if show_bar else -40)
 
     async def action_toggle_sidebar(self) -> None:
         """Called when user hits b key."""
