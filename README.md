@@ -182,7 +182,9 @@ mouse_over: Reactive[bool] = Reactive(False)
 
 This adds a `mouse_over` attribute to your class which is a bool with a default of `False`. The typing part (`Reactive[bool]`) is not required, but will help you find bugs if you are using a tool like [Mypy](https://mypy.readthedocs.io/en/stable/). Adding attributes like this makes them _reactive_, and any changes will result in the widget updating.
 
-The following `render()` method is where you set how the widget should be displayed. In the Hover widget we return a Panel containing rich text with a background that changes depending on the value of `mouse_over`. The goal here is to add a mouse hover effect to the widget, which we can achieve by handling two events: `Enter` and `Leave`. These events are sent when the mouse enters or leaves the widget. Here are the two event handlers again:
+The following `render()` method is where you define how the widget should be displayed. In the Hover widget we return a Panel containing rich text with a background that changes depending on the value of `mouse_over`. The goal here is to add a mouse hover effect to the widget, which we can achieve by handling two events: `Enter` and `Leave`. These events are sent when the mouse enters or leaves the widget.
+
+Here are the two event handlers again:
 
 ```python
     async def on_enter(self, event: events.Enter) -> None:
@@ -194,7 +196,7 @@ The following `render()` method is where you set how the widget should be displa
 
 Both event handlers set the `mouse_over` attribute which, because it is reactive, will result in the widget's `render()` method being called.
 
-The app class has a `Mount` handler where we _dock_ 10 of these custom widgets from the top edge, which will stack them vertically. If you run this script you will see something like the following:
+The app class has a `Mount` handler where we _dock_ 10 of these custom widgets from the top edge, stacking them vertically. If you run this script you will see something like the following:
 
 ![widgets](./imgs/custom.png)
 
@@ -260,7 +262,7 @@ _TODO_
 
 ### Timers and Intervals
 
-Textual has a `set_timer` and a `set_interval` methods which work much like their Javascript counterparts. The `set_timer` method will invoke a callable after a given period of time, and `set_interval` will invoke a callable repeatedly. Unlike Javascript, these methods expect the time to be in seconds, _not_ milliseconds.
+Textual has a `set_timer` and a `set_interval` method which work much like their Javascript counterparts. The `set_timer` method will invoke a callable after a given period of time, and `set_interval` will invoke a callable repeatedly. Unlike Javascript, these methods expect the time to be in seconds, _not_ milliseconds.
 
 Let's create a simple terminal based clock with the `set_interval` method:
 
