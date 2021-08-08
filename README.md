@@ -34,7 +34,7 @@ python -m textual.app
 
 Until I've written the documentation, the [examples](https://github.com/willmcgugan/textual/tree/main/examples/) may be the best way to learn Textual.
 
-You can see some of these examples in action in the [Developer Video Log](#developer-vide-log).
+You can see some of these examples in action in the [Developer Video Log](#developer-video-log).
 
 - [animation.py](https://github.com/willmcgugan/textual/tree/main/examples/animation.py) Demonstration of 60fps animation easing function
 - [calculator.py](https://github.com/willmcgugan/textual/tree/main/examples/calculator.py) A "clone" of the MacOS calculator using Grid layout
@@ -245,6 +245,18 @@ If you run this app you can hit the keys R, G, or B to change the color of the b
 In the `on_load` method we have bound the keys R, G, and B to the `color` action with a single parameter. When you press any of these three keys Textual will call the method `action_color` with the appropriate parameter.
 
 You could be forgiven for thinking that `"color('red')"` is Python code which Textual evaluates. This is not the case. The action strings are parsed and may not include expressions or arbitrary code. The reason that strings are used over a callable is that (in a future update) key bindings may be loaded from a configuration file.
+
+### More on Events
+
+_TODO_
+
+### Watchers
+
+_TODO_
+
+### Animation
+
+_TODO_
 
 ### Timers and Intervals
 
