@@ -30,6 +30,8 @@ Once installed you can run the following command for a quick test, or see exampl
 python -m textual.app
 ```
 
+Textual requires Python 3.7 or above.
+
 ## Examples
 
 Until I've written the documentation, the [examples](https://github.com/willmcgugan/textual/tree/main/examples/) may be the best way to learn Textual.
