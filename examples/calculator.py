@@ -1,6 +1,6 @@
 """
 
-A Textual app to create a fully working Calculator.
+A Textual app to create a fully working calculator, modelled after MacOS Calculator.
 
 """
 
