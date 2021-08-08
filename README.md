@@ -12,7 +12,7 @@ Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or 
 
 Textual uses [Rich](https://github.com/willmcgugan/rich) to render rich text and formatting and asyncio to manage asynchronous events handling.
 
-Textual has more in common with modern web development than it does with curses; layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and Reactive, so that changes to the state of an application are automatically reflected in the UI.
+Textual has more in common with modern web development than it does with [curses](https://en.wikipedia.org/wiki/Curses_(programming_library)); layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and Reactive, so that changes to the state of an application are automatically reflected in the UI.
 
 ## Installation
 
@@ -72,7 +72,7 @@ ColorChanger.run(log="textual.log")
 
 This example also handles key events, and will set `App.background` if the key is a digit. So pressing the keys 0 to 9 will change the background color to the corresponding [ansi color](https://rich.readthedocs.io/en/latest/appendix/colors.html).
 
-Note that we didn't need to explicitly refresh the screen or draw anything. Setting the `background` attribute is enough for Textual to update the visuals. This is an example of _reactivity_ in Textual. To make changes to the terminal interface you modify the _state_ and let Textual update the visuals.
+Note that we didn't need to explicitly refresh the screen or draw anything. Setting the `background` attribute to a [Rich style](https://rich.readthedocs.io/en/latest/style.html) is enough for Textual to update the visuals. This is an example of _reactivity_ in Textual. To make changes to the terminal interface you modify the _state_ and let Textual update the visuals.
 
 ## Widgets
 
@@ -172,7 +172,7 @@ mouse_over: Reactive[bool] = Reactive(False)
 
 This adds a `mouse_over` attribute to your class which is a bool with a default of `False`. The typing part (`Reactive[bool]`) is not required, but will help you find bugs if you are using a tool like [Mypy](https://mypy.readthedocs.io/en/stable/). Adding attributes like this makes them _reactive_, and any changes will result in the widget updating.
 
-The following `render()` method is where you set how the widget should be displayed. In the Hover widget we return a Panel containing rich text with a background that changes depending on the value of `mouse_over`. The goal here is to add a mouseover effect to the widget, which we can achieve by handling two events: `Enter` and `Leave` which are sent when the mouse enters or leaves the widget. Here are the two event handlers again:
+The following `render()` method is where you set how the widget should be displayed. In the Hover widget we return a Panel containing rich text with a background that changes depending on the value of `mouse_over`. The goal here is to add a mouse hover effect to the widget, which we can achieve by handling two events: `Enter` and `Leave` which are sent when the mouse enters or leaves the widget. Here are the two event handlers again:
 
 ```python
     async def on_enter(self, event: events.Enter) -> None:
@@ -228,7 +228,7 @@ class Colorizer(App):
 Colorizer.run()
 ```
 
-If you run this app you can hit keys R, G, or B to change the color of the background.
+If you run this app you can hit the keys R, G, or B to change the color of the background.
 
 In the `on_load` method we have bound the keys R, G, and B to the `color` action with a single parameter. When you press any of these three keys Textual will call the method `action_color` with the appropriate parameter.
 
@@ -236,7 +236,7 @@ You could be forgiven for thinking that `"color('red')"` is Python code which Te
 
 ### Timers and Intervals
 
-Textual has a `set_timer` and a `set_interval` which work much like their Javascript counterparts. The `set_timer` method will invoke a callable after a given period of time, and `set_interval` will invoke a callable repeatedly.
+Textual has a `set_timer` and a `set_interval` methods which work much like their Javascript counterparts. The `set_timer` method will invoke a callable after a given period of time, and `set_interval` will invoke a callable repeatedly. They expect the time interval to be in seconds.
 
 Let's create a simple terminal based clock with the `set_interval` method:
 
@@ -287,13 +287,13 @@ Since Textual is a visual medium, I'll be documenting new features and milestone
 
 [![Textual update 2](https://yt-embed.herokuapp.com/embed?v=bTYeFOVNXDI&img=0)](http://www.youtube.com/watch?v=bTYeFOVNXDI)
 
-### Update 3 - New scrollbars, and smooth scrolling
+### Update 3 - New scrollbars and smooth scrolling
 
 [![Textual update 3](https://yt-embed.herokuapp.com/embed?v=4LVl3ClrXIs&img=0)](http://www.youtube.com/watch?v=4LVl3ClrXIs)
 
 ### Update 4 - Animation system with easing function
 
-Now with a system to animate a value to another value. Here applied to the scroll position. The animation system supports CSS like _easing functions_. You may be able to tell from the video that the page up / down keys cause the window to first speed up and then slow down.
+Now with a system to animate changes to values, going from the initial to the final value in small increments over time . Here applied to the scroll position. The animation system supports CSS like _easing functions_. You may be able to tell from the video that the page up / down keys cause the window to first speed up and then slow down.
 
 [![Textual update 4](https://yt-embed.herokuapp.com/embed?v=k2VwOp1YbSk&img=0)](http://www.youtube.com/watch?v=k2VwOp1YbSk)
 
