@@ -10,9 +10,11 @@ Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or 
 
 ## How it works
 
-Textual uses [Rich](https://github.com/willmcgugan/rich) to render rich text and formatting and asyncio to manage asynchronous events handling.
+Textual uses [Rich](https://github.com/willmcgugan/rich) to render rich text, so anything that Rich can render may be used in Textual.
 
-Textual has more in common with modern web development than it does with [curses](https://en.wikipedia.org/wiki/Curses_(programming_library)); layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and Reactive, so that changes to the state of an application are automatically reflected in the UI.
+Event handling in Textual is asynchronous (using `async` and `await` keywords). Widgets (UI components) can independently update and communicate with each other via message passing.
+
+Textual has more in common with modern web development than it does with [curses](<https://en.wikipedia.org/wiki/Curses_(programming_library)>); layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and Reactive.
 
 ## Installation
 
@@ -22,15 +24,23 @@ You can install Textual via pip (`pip install textual`), or by checking out the 
 poetry install
 ```
 
+Once installed you can run the following command for a quick test, or see examples (below):
+
+```
+python -m textual.app
+```
+
 ## Examples
 
 Until I've written the documentation, the [examples](https://github.com/willmcgugan/textual/tree/main/examples/) may be the best way to learn Textual.
+
+You can see some of these examples in action in the [Developer Video Log](#developer-vide-log).
 
 - [animation.py](https://github.com/willmcgugan/textual/tree/main/examples/animation.py) Demonstration of 60fps animation easing function
 - [calculator.py](https://github.com/willmcgugan/textual/tree/main/examples/calculator.py) A "clone" of the MacOS calculator using Grid layout
 - [code_viewer.py](https://github.com/willmcgugan/textual/tree/main/examples/code_viewer.py) A demonstration of a tree view which loads syntax highlighted code
 - [grid.py](https://github.com/willmcgugan/textual/tree/main/examples/calculator.py) A simple demonstration of adding widgets in a Grid layout
-- [grid_auto.py](https://github.com/willmcgugan/textual/tree/main/examples/grid_auto.py) A demonstration of auto matic Grid layout
+- [grid_auto.py](https://github.com/willmcgugan/textual/tree/main/examples/grid_auto.py) A demonstration of automatic Grid layout
 - [Simple](https://github.com/willmcgugan/textual/tree/main/examples/simple.py) A very simple Textual app with scrolling Markdown view
 
 ## Building Textual applications
@@ -51,7 +61,7 @@ class Beeper(App):
 Beeper.run()
 ```
 
-Here we can see a textual app with a single `on_key` method which will receive key events. Any key event will result in playing a beep noise. Hit Ctrl+C to exit.
+Here we can see a textual app with a single `on_key` method which will receive key events. Any key event will result in playing the terminal bell (which will generally emit an irritating beep). Hit Ctrl+C to exit.
 
 Event handlers in Textual are defined by convention, not by inheritance (so you won't find an `on_key` method in the base class). Each event has a `name` attribute which for the key event is simply `"key"`. Textual will call the method named `on_<event.name>` if it exists.
 
@@ -72,13 +82,13 @@ ColorChanger.run(log="textual.log")
 
 This example also handles key events, and will set `App.background` if the key is a digit. So pressing the keys 0 to 9 will change the background color to the corresponding [ansi color](https://rich.readthedocs.io/en/latest/appendix/colors.html).
 
-Note that we didn't need to explicitly refresh the screen or draw anything. Setting the `background` attribute to a [Rich style](https://rich.readthedocs.io/en/latest/style.html) is enough for Textual to update the visuals. This is an example of _reactivity_ in Textual. To make changes to the terminal interface you modify the _state_ and let Textual update the visuals.
+Note that we didn't need to explicitly refresh the screen or draw anything. Setting the `background` attribute to a [Rich style](https://rich.readthedocs.io/en/latest/style.html) is enough for Textual to update the visuals. This is an example of _reactivity_ in Textual. To make changes to the terminal interface you modify the _state_ and let Textual update the UI.
 
 ## Widgets
 
-To make more interesting apps you will need to make use of _widgets_, which are independent user interface elements. Textual comes with a (growing) library of widgets, but you can also develop your own.
+To make more interesting apps you will need to make use of _widgets_, which are independent user interface elements. Textual comes with a (growing) library of widgets, but you can develop your own.
 
-Let's look at an app which contains widgets. We will be using the built in `Placeholder` widget which you can use to design application layouts before you implement the real content. They are very useful for testing.
+Let's look at an app which contains widgets. We will be using the built in `Placeholder` widget which you can use to design application layouts before you implement the real content.
 
 ```python
 from textual import events
@@ -96,7 +106,7 @@ class SimpleApp(App):
 SimpleApp.run(log="textual.log")
 ```
 
-This app contains a single event handler `on_mount`. The mount event is sent when the app or widget is ready to start processing events. We can use it for initializing things. In this case we are going to call `self.view.dock` to add widgets to the interface. More about the `view` object later.
+This app contains a single event handler `on_mount`. The mount event is sent when the app or widget is ready to start processing events, and is typically used for initialization. In this case we are going to call `self.view.dock` to add widgets to the interface.
 
 Here's the first line in the mount handler:
 
@@ -114,7 +124,7 @@ await self.view.dock(Placeholder(), Placeholder(), edge="top")
 
 You will notice that this time we are docking _two_ Placeholder objects onto the `"top"` edge. We haven't set an explicit size this time so Textual will divide the remaining size amongst the two new widgets.
 
-The last line calls the `run` class method in the usual way, but with an argument we haven't seen before: `log="textual.log"` tells Textual to write log information to the given file. You can tail textual.log to see the events being processed and other debug information.
+The last line calls the `run` class method in the usual way, but with an argument we haven't seen before: `log="textual.log"` tells Textual to write log information to the given file. You can tail textual.log to see events being processed and other debug information.
 
 If you run the above example, you will see something like the following:
 
@@ -122,7 +132,7 @@ If you run the above example, you will see something like the following:
 
 If you move the mouse over the terminal you will notice that widgets receive mouse events. You can click any of the placeholders to give it input focus.
 
-The dock layout feature is good enough for most purposes. For more sophisticated layouts we can use the grid API. See the [calculator.py](https://github.com/willmcgugan/textual/blob/main/examples/calculator.py) example which makes use of Grid.
+The dock layout feature is very flexible, but for more sophisticated layouts we can use the grid API. See the [calculator.py](https://github.com/willmcgugan/textual/blob/main/examples/calculator.py) example which makes use of Grid.
 
 ### Creating Widgets
 
@@ -172,7 +182,7 @@ mouse_over: Reactive[bool] = Reactive(False)
 
 This adds a `mouse_over` attribute to your class which is a bool with a default of `False`. The typing part (`Reactive[bool]`) is not required, but will help you find bugs if you are using a tool like [Mypy](https://mypy.readthedocs.io/en/stable/). Adding attributes like this makes them _reactive_, and any changes will result in the widget updating.
 
-The following `render()` method is where you set how the widget should be displayed. In the Hover widget we return a Panel containing rich text with a background that changes depending on the value of `mouse_over`. The goal here is to add a mouse hover effect to the widget, which we can achieve by handling two events: `Enter` and `Leave` which are sent when the mouse enters or leaves the widget. Here are the two event handlers again:
+The following `render()` method is where you set how the widget should be displayed. In the Hover widget we return a Panel containing rich text with a background that changes depending on the value of `mouse_over`. The goal here is to add a mouse hover effect to the widget, which we can achieve by handling two events: `Enter` and `Leave`. These events are sent when the mouse enters or leaves the widget. Here are the two event handlers again:
 
 ```python
     async def on_enter(self, event: events.Enter) -> None:
@@ -182,7 +192,9 @@ The following `render()` method is where you set how the widget should be displa
         self.mouse_over = False
 ```
 
-The app class has a `Mount` handler where we _dock_ 10 of these custom widgets from the top edge. If you run this script you will see something like the following:
+Both event handlers set the `mouse_over` attribute which, because it is reactive, will result in the widget's `render()` method being called.
+
+The app class has a `Mount` handler where we _dock_ 10 of these custom widgets from the top edge, which will stack them vertically. If you run this script you will see something like the following:
 
 ![widgets](./imgs/custom.png)
 
@@ -236,7 +248,7 @@ You could be forgiven for thinking that `"color('red')"` is Python code which Te
 
 ### Timers and Intervals
 
-Textual has a `set_timer` and a `set_interval` methods which work much like their Javascript counterparts. The `set_timer` method will invoke a callable after a given period of time, and `set_interval` will invoke a callable repeatedly. They expect the time interval to be in seconds.
+Textual has a `set_timer` and a `set_interval` methods which work much like their Javascript counterparts. The `set_timer` method will invoke a callable after a given period of time, and `set_interval` will invoke a callable repeatedly. Unlike Javascript, these methods expect the time to be in seconds, _not_ milliseconds.
 
 Let's create a simple terminal based clock with the `set_interval` method:
 
@@ -275,7 +287,7 @@ self.set_interval(1, callback=self.refresh)
 
 This tells Textual to call a function (in this case `self.refresh` which updates the widget) once a second. When a widget is refreshed it calls `Clock.render` again to display the latest time.
 
-## Developer VLog
+## Developer Video Log
 
 Since Textual is a visual medium, I'll be documenting new features and milestones here.
 
