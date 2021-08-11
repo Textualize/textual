@@ -2,13 +2,17 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field, InitVar
 from logging import getLogger
+from platform import mac_ver
 from typing import Generic, Literal, TypeVar, TypedDict, cast
 
 from rich.console import RenderableType
 from rich.style import StyleType
+from rich.panel import Panel
+from rich.align import Align
 import rich.repr
 
 from ._button import ButtonRenderable
+from ._scroll_view import ScrollView
 from .. import events, views
 from ..widget import Reactive, Widget
 from ..view import View
@@ -40,8 +44,8 @@ class TabHandle(Widget):
             HandleStyle,
             {
                 "default": "default",
-                "default_hover": "bold",
-                "selected": "reverse",
+                "default_hover": "reverse",
+                "selected": "bold",
                 "selected_hover": "bold reverse",
             },
         )
@@ -63,7 +67,7 @@ class TabHandle(Widget):
     current_style: Reactive[StyleMode] = Reactive("default")
 
     def render(self) -> RenderableType:
-        return ButtonRenderable(self.label, style=self.styles[self.current_style])
+        return Panel(Align.center(self.label, style=self.styles[self.current_style]))
 
     async def on_click(self, event: events.Click) -> None:
         self._container.current = self.label
@@ -115,10 +119,8 @@ class Tab(Generic[ViewType]):
         self.handle.selected = new
 
 
-@rich.repr.auto(angular=False)
-class Tabs(views.GridView, can_focus=True):
-    _tabs: dict[str, Tab]
-
+@rich.repr.auto
+class Tabs(views.DockView):
     def __init__(
         self,
         tabs: list[Tab],
@@ -127,39 +129,27 @@ class Tabs(views.GridView, can_focus=True):
     ) -> None:
         if not tabs:
             raise ValueError("Tabs requires at least on Tab to function.")
-        self._tabs = {tab.name: tab for tab in tabs}
+        self._tabs = tabs
         self._init = initial_selection or tabs[0].name
         super().__init__(name=name)
 
     async def on_mount(self, event: events.Mount) -> None:
-        for tab in self._tabs.values():
+        for tab in self._tabs:
             tab.bind(self)
 
-        self.grid.set_gap(1, 2)
-        self.grid.set_gutter(1)
-
         max_column = len(self._tabs)
-        self.grid.add_column("col", fraction=1, repeat=max_column)
-        self.grid.add_row("labels", max_size=1)
-        self.grid.place(*(tab.handle for tab in self._tabs.values()))
-
-        self.grid.add_row("content", fraction=1)
-        self.grid.add_areas(content=f"col1-start|col{max_column}-end,content")
-        for tab in self._tabs.values():
-            self.grid.place(content=tab.view)
-
+        grid = await self.dock_grid(align=("center", "center"))
+        grid.add_column("col", repeat=max_column)
+        grid.add_row("bar", max_size=3)
+        grid.add_row("content")
+        grid.add_areas(content=f"col1-start|col{max_column}-end,content")
+        for tab in self._tabs:
+            grid.place(tab.handle, content=tab.view)
         await super().on_mount(event)
-
         self.current = self._init
 
     current: Reactive[str] = Reactive(INIT_TAB)
 
-    def validate_current(self, val: str) -> str:
-        if val not in self._tabs:
-            raise RuntimeError(f"Unknown tab with name: {val}.")
-        return val
-
-    async def watch_current(self, old: str, new: str) -> None:
-        if old is not INIT_TAB:
-            self._tabs[old].selected = False
-        self._tabs[new].selected = True
+    async def watch_current(self, new: str) -> None:
+        for tab in self._tabs:
+            tab.selected = tab.name == new

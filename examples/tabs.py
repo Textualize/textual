@@ -1,6 +1,9 @@
+from rich.markdown import Markdown
+from rich.syntax import Syntax
+
 from textual.app import App
 from textual import events
-from textual.widgets import Placeholder, Tabs, Tab
+from textual.widgets import DirectoryTree, Tabs, Tab, ScrollView, Header, Footer
 
 
 class TabTest(App):
@@ -9,13 +12,20 @@ class TabTest(App):
 
     async def on_mount(self, event: events.Mount) -> None:
         """Make a simple tab arrangement."""
-        tab1 = Tab("First Tab Label")
-        await tab1.view.dock(Placeholder())
+        await self.view.dock(Header())
+        await self.view.dock(Footer(), edge="bottom")
 
-        tab2 = Tab("Second Tab Label")
-        await tab2.view.dock(Placeholder())
+        tab1 = Tab("Rich Readme")
+        with open("richreadme.md", "r") as f:
+            await tab1.view.dock(ScrollView(Markdown(f.read())))
 
-        tabs = Tabs([tab1, tab2])
+        tab2 = Tab("Demo Code")
+        await tab2.view.dock(ScrollView(Syntax.from_path("tabs.py")))
+
+        tab3 = Tab("Directory")
+        await tab3.view.dock(ScrollView(DirectoryTree("..")))
+
+        tabs = Tabs([tab1, tab2, tab3])
         await self.view.dock(tabs)
 
 
