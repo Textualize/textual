@@ -134,16 +134,14 @@ class Tabs(views.DockView):
         super().__init__(name=name)
 
     async def on_mount(self, event: events.Mount) -> None:
-        for tab in self._tabs:
-            tab.bind(self)
-
         max_column = len(self._tabs)
-        grid = await self.dock_grid(align=("center", "center"))
+        grid = await self.dock_grid()
         grid.add_column("col", repeat=max_column)
         grid.add_row("bar", max_size=3)
         grid.add_row("content")
         grid.add_areas(content=f"col1-start|col{max_column}-end,content")
         for tab in self._tabs:
+            tab.bind(self)
             grid.place(tab.handle, content=tab.view)
         await super().on_mount(event)
         self.current = self._init
