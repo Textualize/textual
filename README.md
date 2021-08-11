@@ -200,7 +200,7 @@ Both event handlers set the `mouse_over` attribute which, because it is reactive
 
 The app class has a `Mount` handler where we _dock_ 10 of these custom widgets from the top edge, stacking them vertically. If you run this script you will see something like the following:
 
-![widgets](./imgs/custom.png)
+![widgets](./imgs/custom.gif)
 
 If you move your mouse over the terminal you should see that the widget under the mouse cursor changes to a red background.
 
@@ -281,7 +281,7 @@ class Clock(Widget):
     async def on_mount(self, event):
         self.set_interval(1, callback=self.refresh)
 
-    def render(self) -> Align:
+    def render(self):
         time = datetime.now().strftime("%X")
         return Align.center(time, vertical="middle")
 
