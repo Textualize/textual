@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field, InitVar
 from logging import getLogger
-from platform import mac_ver
 from typing import Generic, Literal, TypeVar, TypedDict, cast
 
 from rich.console import RenderableType
@@ -11,8 +10,6 @@ from rich.panel import Panel
 from rich.align import Align
 import rich.repr
 
-from ._button import ButtonRenderable
-from ._scroll_view import ScrollView
 from .. import events, views
 from ..widget import Reactive, Widget
 from ..view import View
@@ -57,36 +54,32 @@ class TabHandle(Widget):
             raise RuntimeError("Tab handle must be bound to container before use.")
         return self._container
 
-    @container.setter
-    def container(self, new: Tabs):
+    def bind(self, container: Tabs, idx: int):
         if hasattr(self, "_container"):
             raise RuntimeError("Can only bind tab handle to one container.")
-        self._container = new
+        self._container = container
+        self._idx = idx
 
     selected: Reactive[bool] = Reactive(False)
-    current_style: Reactive[StyleMode] = Reactive("default")
+    hover: Reactive[bool] = Reactive(False)
 
     def render(self) -> RenderableType:
-        return Panel(Align.center(self.label, style=self.styles[self.current_style]))
+        return Panel(Align.center(self.label, style=self.styles[self._current_style]))
+
+    @property
+    def _current_style(self) -> StyleMode:
+        return cast(
+            StyleMode, ("default", "selected")[self.selected] + "_hover" * self.hover
+        )
 
     async def on_click(self, event: events.Click) -> None:
-        self._container.current = self.label
+        self.container.current = self._idx
 
     async def on_enter(self, event: events.Enter) -> None:
-        self.current_style = "selected_hover" if self.selected else "default_hover"
+        self.hover = True
 
     async def on_leave(self, event: events.Leave) -> None:
-        self.current_style = "selected" if self.selected else "default"
-
-    async def watch_selected(self, selected: bool):
-        self.current_style = "selected" if selected else "default"
-
-
-class _InitTabType(str):
-    """Simple sentinel for an uninitialized tab selection."""
-
-
-INIT_TAB = _InitTabType()
+        self.hover = False
 
 
 @dataclass
@@ -106,8 +99,8 @@ class Tab(Generic[ViewType]):
         self.view = view_type()
         self.handle = TabHandle(self.name, styles=handle_styles)
 
-    def bind(self, container: Tabs):
-        self.handle.container = container
+    def bind(self, container: Tabs, idx: int):
+        self.handle.bind(container, idx)
 
     @property
     def selected(self) -> bool:
@@ -124,13 +117,13 @@ class Tabs(views.DockView):
     def __init__(
         self,
         tabs: list[Tab],
-        initial_selection: str | None = None,
+        initial_selection: int | None = None,
         name: str | None = None,
     ) -> None:
         if not tabs:
             raise ValueError("Tabs requires at least on Tab to function.")
         self._tabs = tabs
-        self._init = initial_selection or tabs[0].name
+        self._init = initial_selection or 0
         super().__init__(name=name)
 
     async def on_mount(self, event: events.Mount) -> None:
@@ -140,14 +133,14 @@ class Tabs(views.DockView):
         grid.add_row("bar", size=3)
         grid.add_row("content")
         grid.add_areas(content=f"col1-start|col{max_column}-end,content")
-        for tab in self._tabs:
-            tab.bind(self)
+        for i, tab in enumerate(self._tabs):
+            tab.bind(self, i)
             grid.place(tab.handle, content=tab.view)
         await super().on_mount(event)
         self.current = self._init
 
-    current: Reactive[str] = Reactive(INIT_TAB)
+    current: Reactive[int] = Reactive(0)
 
-    async def watch_current(self, new: str) -> None:
-        for tab in self._tabs:
-            tab.selected = tab.name == new
+    async def watch_current(self, old: int, new: int) -> None:
+        self._tabs[old].selected = False
+        self._tabs[new].selected = True
