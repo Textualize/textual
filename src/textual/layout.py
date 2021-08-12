@@ -1,36 +1,31 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod, abstractmethod
+import sys
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from itertools import chain
 from operator import itemgetter
-import sys
+from typing import TYPE_CHECKING, Iterable, Iterator, NamedTuple
 
-from typing import Iterable, Iterator, NamedTuple, TYPE_CHECKING
-from rich import segment
-
-import rich.repr
+from rich.console import Console, ConsoleOptions, RenderResult
 from rich.control import Control
-from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.segment import Segment, SegmentLines
 from rich.style import Style
 
 from . import log, panic
-from ._loop import loop_last
-from .layout_map import LayoutMap
-from ._profile import timer
 from ._lines import crop_lines
+from ._loop import loop_last
+from ._profile import timer
 from ._types import Lines
-
-from .geometry import clamp, Region, Offset, Size
-
+from .geometry import Offset, Region, Size, clamp
+from .layout_map import LayoutMap
 
 PY38 = sys.version_info >= (3, 8)
 
 
 if TYPE_CHECKING:
-    from .widget import Widget
     from .view import View
+    from .widget import Widget
 
 
 class NoWidget(Exception):
@@ -272,7 +267,7 @@ class Layout(ABC):
                 delta_x = new_region.x - region.x
                 delta_y = new_region.y - region.y
                 splits = [delta_x, delta_x + new_region.width]
-                lines = lines[delta_y : delta_y + new_region.height]
+                lines = lines[delta_y: delta_y + new_region.height]
                 divide = Segment.divide
                 lines = [list(divide(line, splits))[1] for line in lines]
                 yield region, clip, lines

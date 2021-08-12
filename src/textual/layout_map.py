@@ -1,11 +1,10 @@
 from __future__ import annotations
 
+from typing import ItemsView, KeysView, NamedTuple, ValuesView
+
 from rich.console import Console
 
-from typing import ItemsView, KeysView, ValuesView, NamedTuple
-
 from .geometry import Region, Size
-
 from .widget import Widget
 
 

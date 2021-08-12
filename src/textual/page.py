@@ -7,9 +7,9 @@ from rich.padding import Padding, PaddingDimensions
 from rich.segment import Segment
 from rich.style import StyleType
 
-from .geometry import Size, Offset
+from .geometry import Offset, Size
 from .message import Message
-from .widget import Widget, Reactive
+from .widget import Reactive, Widget
 
 log = getLogger("rich")
 
