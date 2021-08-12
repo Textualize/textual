@@ -99,9 +99,6 @@ class Tab(Generic[ViewType]):
         self.view = view_type()
         self.handle = TabHandle(self.name, styles=handle_styles)
 
-    def bind(self, container: Tabs, idx: int):
-        self.handle.bind(container, idx)
-
     @property
     def selected(self) -> bool:
         return self._selected
@@ -134,7 +131,7 @@ class Tabs(views.DockView):
         grid.add_row("content")
         grid.add_areas(content=f"col1-start|col{max_column}-end,content")
         for i, tab in enumerate(self._tabs):
-            tab.bind(self, i)
+            tab.handle.bind(self, i)
             grid.place(tab.handle, content=tab.view)
         await super().on_mount(event)
         self.current = self._init
