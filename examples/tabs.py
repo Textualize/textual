@@ -3,7 +3,15 @@ from rich.syntax import Syntax
 
 from textual.app import App
 from textual import events
-from textual.widgets import DirectoryTree, Tabs, Tab, ScrollView, Header, Footer
+from textual.widgets import (
+    DirectoryTree,
+    Tabs,
+    Tab,
+    ScrollView,
+    Header,
+    Footer,
+    Placeholder,
+)
 
 
 class TabTest(App):
@@ -25,7 +33,10 @@ class TabTest(App):
         tab3 = Tab("Directory")
         await tab3.view.dock(ScrollView(DirectoryTree("..")))
 
-        tabs = Tabs([tab1, tab2, tab3])
+        tab4 = Tab("Placeholder")
+        await tab4.view.dock(Placeholder())
+
+        tabs = Tabs([tab1, tab2, tab3, tab4])
         await self.view.dock(tabs)
 
 

@@ -137,7 +137,7 @@ class Tabs(views.DockView):
         max_column = len(self._tabs)
         grid = await self.dock_grid()
         grid.add_column("col", repeat=max_column)
-        grid.add_row("bar", max_size=3)
+        grid.add_row("bar", size=3)
         grid.add_row("content")
         grid.add_areas(content=f"col1-start|col{max_column}-end,content")
         for tab in self._tabs:
