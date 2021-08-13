@@ -16,6 +16,7 @@ from typing import (
 from . import log
 from . import events
 
+from ._callback import count_parameters
 from ._types import MessageTarget
 
 if TYPE_CHECKING:
@@ -26,10 +27,6 @@ if TYPE_CHECKING:
 
 
 ReactiveType = TypeVar("ReactiveType")
-
-
-def count_params(func: Callable) -> int:
-    return len(inspect.signature(func).parameters)
 
 
 class Reactive(Generic[ReactiveType]):
@@ -92,7 +89,7 @@ class Reactive(Generic[ReactiveType]):
             obj: Reactable, watch_function: Callable, old_value: Any, value: Any
         ) -> None:
             _rich_traceback_guard = True
-            if count_params(watch_function) == 2:
+            if count_parameters(watch_function) == 2:
                 await watch_function(old_value, value)
             else:
                 await watch_function(value)

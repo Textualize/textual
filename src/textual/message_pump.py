@@ -12,6 +12,7 @@ from rich.traceback import Traceback
 from . import events
 from . import log
 from ._timer import Timer, TimerCallback
+from ._callback import invoke
 from ._context import active_app
 from .message import Message
 from .reactive import Reactive
@@ -241,7 +242,7 @@ class MessagePump:
 
         for method in self._get_dispatch_methods(f"on_{event.name}", event):
             log(event, ">>>", self, verbosity=event.verbosity)
-            await method(event)
+            await invoke(method, event)
 
         if event.bubble and self._parent and not event._stop_propagation:
             if event.sender != self._parent and self.is_parent_active:
@@ -308,9 +309,7 @@ class MessagePump:
         event.stop()
         if event.callback is not None:
             try:
-                callback_result = event.callback()
-                if inspect.isawaitable(callback_result):
-                    await callback_result
+                await invoke(event.callback)
             except Exception as error:
                 raise CallbackError(
                     f"unable to run callback {event.callback!r}; {error}"
