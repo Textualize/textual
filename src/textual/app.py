@@ -19,6 +19,7 @@ from ._animator import Animator
 from .binding import Bindings, NoBinding
 from .geometry import Offset, Region
 from . import log
+from ._callback import invoke
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
 from ._types import MessageTarget
@@ -407,8 +408,8 @@ class App(MessagePump):
         _rich_traceback_guard = True
         method_name = f"action_{action_name}"
         method = getattr(namespace, method_name, None)
-        if method is not None:
-            await method(*params)
+        if callable(method):
+            await invoke(method, *params)
 
     async def broker_event(
         self, event_name: str, event: events.Event, default_namespace: object | None
