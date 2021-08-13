@@ -5,10 +5,10 @@ from textual.widgets import Footer, Placeholder
 
 
 class SmoothApp(App):
-    """Demonstrates smooth animation"""
+    """Demonstrates smooth animation. Press 'b' to see it in action."""
 
     async def on_load(self, event: events.Load) -> None:
-        """Bing keys here."""
+        """Bind keys here."""
         await self.bind("b", "toggle_sidebar", "Toggle sidebar")
         await self.bind("q", "quit", "Quit")
 
@@ -19,7 +19,7 @@ class SmoothApp(App):
         self.bar.animate("layout_offset_x", 0 if show_bar else -40)
 
     async def action_toggle_sidebar(self) -> None:
-        """Called when user hits b key."""
+        """Called when user hits 'b' key."""
         self.show_bar = not self.show_bar
 
     async def on_mount(self, event: events.Mount) -> None:
