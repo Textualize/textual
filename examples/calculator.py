@@ -94,7 +94,7 @@ class Calculator(GridView):
         # This allows us to write self.display = "100" to update the display
         self.numbers.value = value
 
-    async def compute_show_ac(self) -> bool:
+    def compute_show_ac(self) -> bool:
         """Compute show_ac reactive value."""
         # Condition to show AC button over C
         return self.value in ("", "0") and self.display == "0"
