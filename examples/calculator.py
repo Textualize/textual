@@ -54,7 +54,7 @@ class FigletText:
 class Numbers(Widget):
     """The digital display of the calculator."""
 
-    value: Reactive[str] = Reactive("0")
+    value = Reactive("0")
 
     def render(self) -> RenderableType:
         """Build a Rich renderable to render the calculator display."""
@@ -84,10 +84,10 @@ class Calculator(GridView):
         "=": YELLOW,
     }
 
-    display: Reactive[str] = Reactive("0")
-    show_ac: Reactive[bool] = Reactive(True)
+    display = Reactive("0")
+    show_ac = Reactive(True)
 
-    async def watch_display(self, value: str) -> None:
+    def watch_display(self, value: str) -> None:
         """Called when self.display is modified."""
         # self.numbers is a widget that displays the calculator result
         # Setting the attribute value changes the display
@@ -99,13 +99,13 @@ class Calculator(GridView):
         # Condition to show AC button over C
         return self.value in ("", "0") and self.display == "0"
 
-    async def watch_show_ac(self, show_ac: bool) -> None:
+    def watch_show_ac(self, show_ac: bool) -> None:
         """When the show_ac attribute change we need to update the buttons."""
         # Show AC and hide C or vice versa
         self.c.visible = not show_ac
         self.ac.visible = show_ac
 
-    async def on_mount(self, event: events.Mount) -> None:
+    def on_mount(self) -> None:
         """Event when widget is first mounted (added to a parent view)."""
 
         # Attributes to store the current calculation
@@ -153,7 +153,7 @@ class Calculator(GridView):
             *self.buttons.values(), clear=self.ac, numbers=self.numbers, zero=self.zero
         )
 
-    async def message_button_pressed(self, message: ButtonPressed) -> None:
+    def message_button_pressed(self, message: ButtonPressed) -> None:
         """A message sent by the button widget"""
 
         assert isinstance(message.sender, Button)

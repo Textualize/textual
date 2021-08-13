@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import inspect
+from inspect import isawaitable
 from functools import partial
 from typing import (
     Any,
@@ -16,7 +16,7 @@ from typing import (
 from . import log
 from . import events
 
-from ._callback import count_parameters
+from ._callback import count_parameters, invoke
 from ._types import MessageTarget
 
 if TYPE_CHECKING:
@@ -90,9 +90,11 @@ class Reactive(Generic[ReactiveType]):
         ) -> None:
             _rich_traceback_guard = True
             if count_parameters(watch_function) == 2:
-                await watch_function(old_value, value)
+                watch_result = watch_function(old_value, value)
             else:
-                await watch_function(value)
+                watch_result = watch_function(value)
+            if isawaitable(watch_result):
+                await watch_result
             await Reactive.compute(obj)
 
         watch_function = getattr(obj, f"watch_{name}", None)
@@ -125,7 +127,8 @@ class Reactive(Generic[ReactiveType]):
                 compute_method = getattr(obj, f"compute_{compute}")
             except AttributeError:
                 continue
-            value = await compute_method()
+            value = await invoke(compute_method)
+            # value = await compute_method()
             setattr(obj, compute, value)
 
 

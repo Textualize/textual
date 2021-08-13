@@ -4,7 +4,7 @@ from textual.widgets import Placeholder
 
 
 class GridTest(App):
-    async def on_mount(self, event: events.Mount) -> None:
+    async def on_mount(self) -> None:
         """Make a simple grid arrangement."""
 
         grid = await self.view.dock_grid(edge="left", size=70, name="left")

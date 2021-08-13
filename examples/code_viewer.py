@@ -5,7 +5,6 @@ from rich.console import RenderableType
 from rich.syntax import Syntax
 from rich.traceback import Traceback
 
-from textual import events
 from textual.app import App
 from textual.widgets import Header, Footer, FileClick, ScrollView, DirectoryTree
 
@@ -13,7 +12,7 @@ from textual.widgets import Header, Footer, FileClick, ScrollView, DirectoryTree
 class MyApp(App):
     """An example of a very simple Textual App"""
 
-    async def on_load(self, event: events.Load) -> None:
+    async def on_load(self) -> None:
         """Sent before going in to application mode."""
 
         # Bind our basic keys
@@ -28,7 +27,7 @@ class MyApp(App):
                 os.path.join(os.path.basename(__file__), "../../")
             )
 
-    async def on_mount(self, event: events.Mount) -> None:
+    async def on_mount(self) -> None:
         """Call after terminal goes in to application mode"""
 
         # Create our widgets

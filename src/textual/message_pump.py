@@ -255,7 +255,7 @@ class MessagePump:
         method = getattr(self, method_name, None)
         if method is not None:
             log(message, ">>>", self, verbosity=message.verbosity)
-            await method(message)
+            await invoke(method, message)
 
         if message.bubble and self._parent and not message._stop_propagation:
             if message.sender == self._parent:

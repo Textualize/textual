@@ -25,4 +25,5 @@ async def invoke(callback: Callable, *params: object) -> Any:
 
     result = callback(*params[:parameter_count])
     if isawaitable(result):
-        await result
+        result = await result
+    return result
