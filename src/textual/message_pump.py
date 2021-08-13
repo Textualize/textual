@@ -15,8 +15,6 @@ from ._timer import Timer, TimerCallback
 from ._callback import invoke
 from ._context import active_app
 from .message import Message
-from .reactive import Reactive
-
 
 if TYPE_CHECKING:
     from .app import App
@@ -126,9 +124,9 @@ class MessagePump:
     def set_timer(
         self,
         delay: float,
+        callback: TimerCallback = None,
         *,
         name: str | None = None,
-        callback: TimerCallback = None,
     ) -> Timer:
         timer = Timer(self, delay, self, name=name, callback=callback, repeat=0)
         timer_task = asyncio.get_event_loop().create_task(timer.run())
@@ -138,9 +136,9 @@ class MessagePump:
     def set_interval(
         self,
         interval: float,
+        callback: TimerCallback = None,
         *,
         name: str | None = None,
-        callback: TimerCallback = None,
         repeat: int = 0,
     ):
         timer = Timer(

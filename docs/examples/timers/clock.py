@@ -7,15 +7,16 @@ from textual.widget import Widget
 
 
 class Clock(Widget):
-    async def on_mount(self, event):
-        self.set_interval(1, callback=self.refresh)
+    def on_mount(self):
+        self.set_interval(1, self.refresh)
 
-    def render(self) -> Align:
-        time = datetime.now().strftime("%X")
+    def render(self):
+        time = datetime.now().strftime("%c")
         return Align.center(time, vertical="middle")
 
+
 class ClockApp(App):
-    async def on_mount(self, event):
+    async def on_mount(self):
         await self.view.dock(Clock())
 
 
