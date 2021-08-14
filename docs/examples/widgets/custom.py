@@ -1,4 +1,3 @@
-from rich.console import RenderableType
 from rich.panel import Panel
 
 from textual.app import App
@@ -10,7 +9,7 @@ class Hover(Widget):
 
     mouse_over = Reactive(False)
 
-    def render(self) -> RenderableType:
+    def render(self) -> Panel:
         return Panel("Hello [b]World[/b]", style=("on red" if self.mouse_over else ""))
 
     def on_enter(self) -> None:

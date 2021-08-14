@@ -307,7 +307,7 @@ class Layout(ABC):
         height = self.height
         screen = Region(0, 0, width, height)
 
-        crop_region = crop or Region(0, 0, self.width, self.height)
+        crop_region = crop.intersection(screen) if crop else screen
 
         _Segment = Segment
         divide = _Segment.divide
@@ -326,23 +326,15 @@ class Layout(ABC):
         # Go through all the renders in reverse order and fill buckets with no render
         renders = list(self._get_renders(console))
 
-        clip_y, clip_y2 = crop_region.y_extents
         for region, clip, lines in chain(
             renders, [(screen, screen, background_render)]
         ):
-            # clip = clip.intersection(crop_region)
             render_region = region.intersection(clip)
-            for y, line in enumerate(lines, render_region.y):
-                if clip_y > y > clip_y2:
-                    continue
-                # first_cut = clamp(render_region.x, clip_x, clip_x2)
-                # last_cut = clamp(render_region.x + render_region.width, clip_x, clip_x2)
-                first_cut = render_region.x
-                last_cut = render_region.x_max
-                final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
-                # final_cuts = cuts[y]
+            for y, line in zip(render_region.y_range, lines):
 
-                # log(final_cuts, render_region.x_extents)
+                first_cut, last_cut = render_region.x_extents
+                final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
+
                 if len(final_cuts) == 2:
                     cut_segments = [line]
                 else:

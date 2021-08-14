@@ -2,7 +2,7 @@ from textual.app import App
 
 
 class Beeper(App):
-    async def on_key(self, event):
+    def on_key(self):
         self.console.bell()
 
 

@@ -125,7 +125,7 @@ class Size(NamedTuple):
                 "Dimensions.__contains__ requires an iterable of two integers"
             )
         width, height = self
-        return bool(width > x >= 0 and height > y >= 0)
+        return width > x >= 0 and height > y >= 0
 
 
 class Region(NamedTuple):
@@ -164,7 +164,7 @@ class Region(NamedTuple):
         """
         x, y = origin
         width, height = size
-        return Region(x, y, width, height)
+        return cls(x, y, width, height)
 
     def __bool__(self) -> bool:
         return bool(self.width and self.height)
@@ -182,7 +182,7 @@ class Region(NamedTuple):
         return self.x + self.width
 
     @property
-    def y_end(self) -> int:
+    def y_max(self) -> int:
         return self.y + self.height
 
     @property
@@ -216,7 +216,7 @@ class Region(NamedTuple):
 
     @property
     def y_range(self) -> range:
-        return range(self.y, self.y_end)
+        return range(self.y, self.y_max)
 
     def __add__(self, other: Any) -> Region:
         if isinstance(other, tuple):
