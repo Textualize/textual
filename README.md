@@ -198,9 +198,9 @@ Here are the two event handlers again:
         self.mouse_over = False
 ```
 
-Both event handlers set the `mouse_over` attribute which, because it is reactive, will result in the widget's `render()` method being called.
+Both event handlers set the `mouse_over` attribute which will result in the widget's `render()` method being called.
 
-The `HoverApp` has a `on_mount` handler which creates 10 Hover widgets and docks them on the top edge, creating a vertical stack.
+The `HoverApp` has a `on_mount` handler which creates 10 Hover widgets and docks them on the top edge to create a vertical stack:
 
 ```python
     async def on_mount(self) -> None:
@@ -274,7 +274,7 @@ _TODO_
 
 ### Timers and Intervals
 
-Textual has a `set_timer` and a `set_interval` method which work much like their Javascript counterparts. The `set_timer` method will invoke a callable after a given period of time, and `set_interval` will invoke a callable repeatedly. Unlike Javascript, these methods expect the time to be in seconds, _not_ milliseconds.
+Textual has a `set_timer` and a `set_interval` method which work much like their Javascript counterparts. The `set_timer` method will invoke a callable after a given period of time, and `set_interval` will invoke a callable repeatedly. Unlike Javascript these methods expect the time to be in seconds (_not_ milliseconds).
 
 Let's create a simple terminal based clock with the `set_interval` method:
 
@@ -288,19 +288,21 @@ from textual.widget import Widget
 
 
 class Clock(Widget):
-    async def on_mount(self, event):
-        self.set_interval(1, callback=self.refresh)
+    def on_mount(self):
+        self.set_interval(1, self.refresh)
 
     def render(self):
-        time = datetime.now().strftime("%X")
+        time = datetime.now().strftime("%c")
         return Align.center(time, vertical="middle")
 
+
 class ClockApp(App):
-    async def on_mount(self, event):
+    async def on_mount(self):
         await self.view.dock(Clock())
 
 
 ClockApp.run()
+
 ```
 
 If you run this app you will see the current time in the center of the terminal until you hit Ctrl+C.
@@ -308,7 +310,7 @@ If you run this app you will see the current time in the center of the terminal 
 The Clock widget displays the time using [rich.align.Align](https://rich.readthedocs.io/en/latest/reference/align.html) to position it in the center. In the clock's Mount handler there is the following call to `set_interval`:
 
 ```python
-self.set_interval(1, callback=self.refresh)
+self.set_interval(1, self.refresh)
 ```
 
 This tells Textual to call a function (in this case `self.refresh` which updates the widget) once a second. When a widget is refreshed it calls `Clock.render` again to display the latest time.

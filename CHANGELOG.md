@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Allowed callbacks to be async or non-async, and for event to be optional.
+- Callbacks may be async or non-async.
+- Event handler event argument is optional.
 - Fixed exception in clock example https://github.com/willmcgugan/textual/issues/52
 
 ## [0.1.9] - 2021-08-06
