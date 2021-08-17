@@ -218,11 +218,14 @@ class MessagePump:
 
     async def dispatch_message(self, message: Message) -> bool | None:
         _rich_traceback_guard = True
-        if isinstance(message, events.Event):
-            if not isinstance(message, events.Null):
-                await self.on_event(message)
-        else:
-            return await self.on_message(message)
+        try:
+            if isinstance(message, events.Event):
+                if not isinstance(message, events.Null):
+                    await self.on_event(message)
+            else:
+                return await self.on_message(message)
+        finally:
+            message._done_event.set()
         return False
 
     def _get_dispatch_methods(

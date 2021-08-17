@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+from asyncio import Event
 from time import monotonic
 from typing import ClassVar
 
@@ -17,6 +20,7 @@ class Message:
         "time",
         "_no_default_action",
         "_stop_propagation",
+        "__done_event",
     ]
 
     sender: MessageTarget
@@ -35,6 +39,7 @@ class Message:
         self.time = monotonic()
         self._no_default_action = False
         self._stop_propagation = False
+        self.__done_event: Event | None = None
         super().__init__()
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -45,14 +50,20 @@ class Message:
         cls.bubble = bubble
         cls.verbosity = verbosity
 
+    @property
+    def _done_event(self) -> Event:
+        if self.__done_event is None:
+            self.__done_event = Event()
+        return self.__done_event
+
     def can_replace(self, message: "Message") -> bool:
         """Check if another message may supersede this one.
 
         Args:
-            message (Message): [description]
+            message (Message): Another message.
 
         Returns:
-            bool: [description]
+            bool: True if this message may replace the given message
         """
         return False
 
@@ -66,4 +77,13 @@ class Message:
         self._no_default_action = prevent
 
     def stop(self, stop: bool = True) -> None:
+        """Stop propagation of the message to parent.
+
+        Args:
+            stop (bool, optional): The stop flag. Defaults to True.
+        """
         self._stop_propagation = stop
+
+    async def wait(self) -> None:
+        """Wait for the message to be processed."""
+        await self._done_event.wait()

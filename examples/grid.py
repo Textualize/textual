@@ -1,5 +1,4 @@
 from textual.app import App
-from textual import events
 from textual.widgets import Placeholder
 
 

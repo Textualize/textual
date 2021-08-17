@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Callbacks may be async or non-async.
 - Event handler event argument is optional.
 - Fixed exception in clock example https://github.com/willmcgugan/textual/issues/52
+- Added Message.wait() which waits for a message to be processed
 
 ## [0.1.9] - 2021-08-06
 

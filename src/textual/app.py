@@ -28,6 +28,7 @@ from .layouts.dock import DockLayout, Dock
 from ._linux_driver import LinuxDriver
 from .message_pump import MessagePump
 from .message import Message
+from ._profile import timer
 from .view import View
 from .views import DockView
 from .widget import Widget, Widget, Reactive
@@ -181,7 +182,6 @@ class App(MessagePump):
     async def push_view(self, view: ViewType) -> ViewType:
         self.register(view, self)
         self._view_stack.append(view)
-        # await view.post_message(events.Mount(sender=self))
         return view
 
     def on_keyboard_interupt(self) -> None:
@@ -252,22 +252,24 @@ class App(MessagePump):
 
     async def process_messages(self) -> None:
         active_app.set(self)
-        driver = self._driver = self.driver_class(self.console, self)
 
         log("---")
         log(f"driver={self.driver_class}")
 
-        await self.dispatch_message(events.Load(sender=self))
+        load_event = events.Load(sender=self)
+        await self.dispatch_message(load_event)
         await self.post_message(events.Mount(self))
         await self.push_view(DockView())
 
+        # Wait for the load event to be processed, so we don't go in to application mode beforehand
+        await load_event.wait()
+
+        driver = self._driver = self.driver_class(self.console, self)
         try:
             driver.start_application_mode()
         except Exception:
             self.console.print_exception()
         else:
-            traceback: Traceback | None = None
-
             try:
                 self.title = self._title
                 self.refresh()
@@ -275,24 +277,15 @@ class App(MessagePump):
                 await super().process_messages()
                 log("PROCESS END")
                 await self.animator.stop()
-
                 await self.close_all()
 
-                # while self.children:
-                #     child = self.children.pop()
-                #     log(f"closing {child}")
-                #     await child.close_messages()
-
-                # while self._view_stack:
-                #     view = self._view_stack.pop()
-                #     await view.close_messages()
             except Exception:
                 self.panic()
             finally:
                 driver.stop_application_mode()
                 if self._exit_renderables:
-                    for traceback in self._exit_renderables:
-                        self.error_console.print(traceback)
+                    for renderable in self._exit_renderables:
+                        self.error_console.print(renderable)
                 if self.log_file is not None:
                     self.log_file.close()
 
