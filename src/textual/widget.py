@@ -115,6 +115,11 @@ class Widget(MessagePump):
         watch(self, attribute_name, callback)
 
     def render_styled(self) -> RenderableType:
+        """Applies style attributes to the default renderable.
+
+        Returns:
+            RenderableType: A new renderable.
+        """
         renderable = self.render()
         if self.style_padding is not None:
             renderable = Padding(renderable, self.style_padding)
