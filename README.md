@@ -56,14 +56,14 @@ from textual.app import App
 
 
 class Beeper(App):
-    async def on_key(self, event):
+    def on_key(self):
         self.console.bell()
 
 
 Beeper.run()
 ```
 
-Here we can see a textual app with a single `on_key` method which will receive key events. Any key event will result in playing the terminal bell (which will generally emit an irritating beep). Hit Ctrl+C to exit.
+Here we can see a textual app with a single `on_key` method which will handle key events. Pressing any key will result in playing the terminal bell (generally an irritating beep). Hit Ctrl+C to exit.
 
 Event handlers in Textual are defined by convention, not by inheritance (so you won't find an `on_key` method in the base class). Each event has a `name` attribute which for the key event is simply `"key"`. Textual will call the method named `on_<event.name>` if it exists.
 
@@ -74,7 +74,7 @@ from textual.app import App
 
 
 class ColorChanger(App):
-    async def on_key(self, event):
+    def on_key(self, event):
         if event.key.isdigit():
             self.background = f"on color({event.key})"
 
@@ -82,7 +82,9 @@ class ColorChanger(App):
 ColorChanger.run(log="textual.log")
 ```
 
-This example also handles key events, and will set `App.background` if the key is a digit. So pressing the keys 0 to 9 will change the background color to the corresponding [ansi color](https://rich.readthedocs.io/en/latest/appendix/colors.html).
+You'll notice that the `on_key` method above contains an additional `event` parameter which wasn't present on the beeper example. If the `event` argument is present, Textual will call the handler with an event object. Every event has an associated handler object, in this case it is a KeyEvent which contains additional information regarding which key was pressed.
+
+The key event handler above will set the background attribute if you press the keys 0-9, which turns the terminal to the corresponding [ansi color](https://rich.readthedocs.io/en/latest/appendix/colors.html).
 
 Note that we didn't need to explicitly refresh the screen or draw anything. Setting the `background` attribute to a [Rich style](https://rich.readthedocs.io/en/latest/style.html) is enough for Textual to update the visuals. This is an example of _reactivity_ in Textual. To make changes to the terminal interface you modify the _state_ and let Textual update the UI.
 
@@ -90,17 +92,16 @@ Note that we didn't need to explicitly refresh the screen or draw anything. Sett
 
 To make more interesting apps you will need to make use of _widgets_, which are independent user interface elements. Textual comes with a (growing) library of widgets, but you can develop your own.
 
-Let's look at an app which contains widgets. We will be using the built in `Placeholder` widget which you can use to design application layouts before you implement the real content.
+Let's look at an app which contains widgets. We will be using the built-in `Placeholder` widget which you can use to design application layouts before you implement the real content.
 
 ```python
-from textual import events
 from textual.app import App
 from textual.widgets import Placeholder
 
 
 class SimpleApp(App):
 
-    async def on_mount(self, event: events.Mount) -> None:
+    async def on_mount(self) -> None:
         await self.view.dock(Placeholder(), edge="left", size=40)
         await self.view.dock(Placeholder(), Placeholder(), edge="top")
 
@@ -108,7 +109,9 @@ class SimpleApp(App):
 SimpleApp.run(log="textual.log")
 ```
 
-This app contains a single event handler `on_mount`. The mount event is sent when the app or widget is ready to start processing events, and is typically used for initialization. In this case we are going to call `self.view.dock` to add widgets to the interface.
+This app contains a single event handler `on_mount`. The mount event is sent when the app or widget is ready to start processing events, and is typically used for initialization. You may have noticed that `on_mount` is an `async` function. Since Textual is an asynchronous framework we will need this if we need to call most other methods.
+
+The `on_mount` method makes two calls to `self.view.dock` which adds widgets to tht terminal.
 
 Here's the first line in the mount handler:
 
@@ -145,7 +148,6 @@ Let's look at an example with a custom widget:
 ```python
 from rich.panel import Panel
 
-from textual import events
 from textual.app import App
 from textual.reactive import Reactive
 from textual.widget import Widget
@@ -153,22 +155,22 @@ from textual.widget import Widget
 
 class Hover(Widget):
 
-    mouse_over: Reactive[bool] = Reactive(False)
+    mouse_over = Reactive(False)
 
     def render(self) -> Panel:
         return Panel("Hello [b]World[/b]", style=("on red" if self.mouse_over else ""))
 
-    async def on_enter(self, event: events.Enter) -> None:
+    def on_enter(self) -> None:
         self.mouse_over = True
 
-    async def on_leave(self, event: events.Leave) -> None:
+    def on_leave(self) -> None:
         self.mouse_over = False
 
 
 class HoverApp(App):
-    """Hover widget demonstration."""
+    """Demonstrates custom widgets"""
 
-    async def on_mount(self, event: events.Mount) -> None:
+    async def on_mount(self) -> None:
         hovers = (Hover() for _ in range(10))
         await self.view.dock(*hovers, edge="top")
 
@@ -179,26 +181,34 @@ HoverApp.run(log="textual.log")
 The `Hover` class is a custom widget which displays a panel containing the classic text "Hello World". The first line in the Hover class may seem a little mysterious at this point:
 
 ```python
-mouse_over: Reactive[bool] = Reactive(False)
+mouse_over = Reactive(False)
 ```
 
-This adds a `mouse_over` attribute to your class which is a bool with a default of `False`. The typing part (`Reactive[bool]`) is not required, but will help you find bugs if you are using a tool like [Mypy](https://mypy.readthedocs.io/en/stable/). Adding attributes like this makes them _reactive_, and any changes will result in the widget updating.
+This adds a `mouse_over` attribute to your class which is a bool with a default of `False`. Adding attributes like this makes them _reactive_: any changes will result in the widget updating.
 
-The following `render()` method is where you define how the widget should be displayed. In the Hover widget we return a Panel containing rich text with a background that changes depending on the value of `mouse_over`. The goal here is to add a mouse hover effect to the widget, which we can achieve by handling two events: `Enter` and `Leave`. These events are sent when the mouse enters or leaves the widget.
+The following `render()` method is where you define how the widget should be displayed. In the Hover widget we return a [Panel](https://rich.readthedocs.io/en/latest/panel.html) containing rich text with a background that changes depending on the value of `mouse_over`. The goal here is to add a mouse hover effect to the widget, which we can achieve by handling two events: `Enter` and `Leave`. These events are sent when the mouse enters or leaves the widget.
 
 Here are the two event handlers again:
 
 ```python
-    async def on_enter(self, event: events.Enter) -> None:
+    def on_enter(self) -> None:
         self.mouse_over = True
 
-    async def on_leave(self, event: events.Leave) -> None:
+    def on_leave(self) -> None:
         self.mouse_over = False
 ```
 
-Both event handlers set the `mouse_over` attribute which, because it is reactive, will result in the widget's `render()` method being called.
+Both event handlers set the `mouse_over` attribute which will result in the widget's `render()` method being called.
 
-The app class has a `Mount` handler where we _dock_ 10 of these custom widgets from the top edge, stacking them vertically. If you run this script you will see something like the following:
+The `HoverApp` has a `on_mount` handler which creates 10 Hover widgets and docks them on the top edge to create a vertical stack:
+
+```python
+    async def on_mount(self) -> None:
+        hovers = (Hover() for _ in range(10))
+        await self.view.dock(*hovers, edge="top")
+```
+
+If you run this script you will see something like the following:
 
 ![widgets](./imgs/custom.gif)
 
@@ -264,7 +274,7 @@ _TODO_
 
 ### Timers and Intervals
 
-Textual has a `set_timer` and a `set_interval` method which work much like their Javascript counterparts. The `set_timer` method will invoke a callable after a given period of time, and `set_interval` will invoke a callable repeatedly. Unlike Javascript, these methods expect the time to be in seconds, _not_ milliseconds.
+Textual has a `set_timer` and a `set_interval` method which work much like their Javascript counterparts. The `set_timer` method will invoke a callable after a given period of time, and `set_interval` will invoke a callable repeatedly. Unlike Javascript these methods expect the time to be in seconds (_not_ milliseconds).
 
 Let's create a simple terminal based clock with the `set_interval` method:
 
@@ -278,19 +288,21 @@ from textual.widget import Widget
 
 
 class Clock(Widget):
-    async def on_mount(self, event):
-        self.set_interval(1, callback=self.refresh)
+    def on_mount(self):
+        self.set_interval(1, self.refresh)
 
     def render(self):
-        time = datetime.now().strftime("%X")
+        time = datetime.now().strftime("%c")
         return Align.center(time, vertical="middle")
 
+
 class ClockApp(App):
-    async def on_mount(self, event):
+    async def on_mount(self):
         await self.view.dock(Clock())
 
 
 ClockApp.run()
+
 ```
 
 If you run this app you will see the current time in the center of the terminal until you hit Ctrl+C.
@@ -298,7 +310,7 @@ If you run this app you will see the current time in the center of the terminal 
 The Clock widget displays the time using [rich.align.Align](https://rich.readthedocs.io/en/latest/reference/align.html) to position it in the center. In the clock's Mount handler there is the following call to `set_interval`:
 
 ```python
-self.set_interval(1, callback=self.refresh)
+self.set_interval(1, self.refresh)
 ```
 
 This tells Textual to call a function (in this case `self.refresh` which updates the widget) once a second. When a widget is refreshed it calls `Clock.render` again to display the latest time.

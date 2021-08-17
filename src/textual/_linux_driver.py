@@ -35,10 +35,10 @@ class LinuxDriver(Driver):
         width: int | None = 80
         height: int | None = 25
         try:
-            width, height = os.get_terminal_size(sys.stdin.fileno())
+            width, height = os.get_terminal_size(sys.__stdin__.fileno())
         except (AttributeError, ValueError, OSError):
             try:
-                width, height = os.get_terminal_size(sys.stdout.fileno())
+                width, height = os.get_terminal_size(sys.__stdout__.fileno())
             except (AttributeError, ValueError, OSError):
                 pass
         width = width or 80

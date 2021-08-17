@@ -12,10 +12,9 @@ from rich.traceback import Traceback
 from . import events
 from . import log
 from ._timer import Timer, TimerCallback
+from ._callback import invoke
 from ._context import active_app
 from .message import Message
-from .reactive import Reactive
-
 
 if TYPE_CHECKING:
     from .app import App
@@ -125,9 +124,9 @@ class MessagePump:
     def set_timer(
         self,
         delay: float,
+        callback: TimerCallback = None,
         *,
         name: str | None = None,
-        callback: TimerCallback = None,
     ) -> Timer:
         timer = Timer(self, delay, self, name=name, callback=callback, repeat=0)
         timer_task = asyncio.get_event_loop().create_task(timer.run())
@@ -137,9 +136,9 @@ class MessagePump:
     def set_interval(
         self,
         interval: float,
+        callback: TimerCallback = None,
         *,
         name: str | None = None,
-        callback: TimerCallback = None,
         repeat: int = 0,
     ):
         timer = Timer(
@@ -219,11 +218,14 @@ class MessagePump:
 
     async def dispatch_message(self, message: Message) -> bool | None:
         _rich_traceback_guard = True
-        if isinstance(message, events.Event):
-            if not isinstance(message, events.Null):
-                await self.on_event(message)
-        else:
-            return await self.on_message(message)
+        try:
+            if isinstance(message, events.Event):
+                if not isinstance(message, events.Null):
+                    await self.on_event(message)
+            else:
+                return await self.on_message(message)
+        finally:
+            message._done_event.set()
         return False
 
     def _get_dispatch_methods(
@@ -241,7 +243,7 @@ class MessagePump:
 
         for method in self._get_dispatch_methods(f"on_{event.name}", event):
             log(event, ">>>", self, verbosity=event.verbosity)
-            await method(event)
+            await invoke(method, event)
 
         if event.bubble and self._parent and not event._stop_propagation:
             if event.sender != self._parent and self.is_parent_active:
@@ -254,7 +256,7 @@ class MessagePump:
         method = getattr(self, method_name, None)
         if method is not None:
             log(message, ">>>", self, verbosity=message.verbosity)
-            await method(message)
+            await invoke(method, message)
 
         if message.bubble and self._parent and not message._stop_propagation:
             if message.sender == self._parent:
@@ -308,9 +310,7 @@ class MessagePump:
         event.stop()
         if event.callback is not None:
             try:
-                callback_result = event.callback()
-                if inspect.isawaitable(callback_result):
-                    await callback_result
+                await invoke(event.callback)
             except Exception as error:
                 raise CallbackError(
                     f"unable to run callback {event.callback!r}; {error}"
