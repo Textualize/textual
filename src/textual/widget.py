@@ -12,12 +12,15 @@ from typing import (
     cast,
 )
 import rich.repr
+from rich import box
 from rich.align import Align
 from rich.console import Console, RenderableType
 from rich.panel import Panel
+from rich.padding import Padding, PaddingDimensions
 from rich.pretty import Pretty
-from rich.segment import Segment
 from rich.style import Style
+from rich.styled import Styled
+from rich.text import TextType
 
 from . import events
 from ._animator import BoundAnimator
@@ -72,6 +75,25 @@ class Widget(MessagePump):
     layout_offset_x: Reactive[float] = Reactive(0.0, layout=True)
     layout_offset_y: Reactive[float] = Reactive(0.0, layout=True)
 
+    style: Reactive[str | None] = Reactive(None)
+    style_padding: Reactive[PaddingDimensions | None] = Reactive(None, layout=True)
+    style_margin: Reactive[PaddingDimensions | None] = Reactive(None, layout=True)
+    style_border: Reactive[str] = Reactive("none", layout=True)
+    style_border_style: Reactive[str] = Reactive("")
+    style_border_title: Reactive[TextType] = Reactive("")
+
+    BOX_MAP = {"normal": box.SQUARE, "round": box.ROUNDED, "bold": box.HEAVY}
+
+    def validate_style_padding(
+        self, padding: PaddingDimensions
+    ) -> tuple[int, int, int, int]:
+        return Padding.unpack(padding)
+
+    def validate_style_margin(
+        self, padding: PaddingDimensions
+    ) -> tuple[int, int, int, int]:
+        return Padding.unpack(padding)
+
     def validate_layout_offset_x(self, value) -> int:
         return int(value)
 
@@ -86,10 +108,27 @@ class Widget(MessagePump):
         yield "name", self.name
 
     def __rich__(self) -> RenderableType:
-        return self.render()
+        renderable = self.render_styled()
+        return renderable
 
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
+
+    def render_styled(self) -> RenderableType:
+        renderable = self.render()
+        if self.style_padding is not None:
+            renderable = Padding(renderable, self.style_padding)
+        if self.style_border in self.BOX_MAP:
+            renderable = Panel(
+                renderable,
+                box=self.BOX_MAP.get(self.style_border) or box.SQUARE,
+                style=self.style_border_style,
+            )
+        if self.style_margin is not None:
+            renderable = Padding(renderable, self.style_margin)
+        if self.style:
+            renderable = Styled(renderable, self.style)
+        return renderable
 
     @property
     def size(self) -> Size:
@@ -126,7 +165,7 @@ class Widget(MessagePump):
 
     def render_lines(self) -> RenderCache:
         width, height = self.size
-        renderable = self.render()
+        renderable = self.render_styled()
         options = self.console.options.update_dimensions(width, height)
         lines = self.console.render_lines(renderable, options)
         self.render_cache = RenderCache(self.size, lines)
@@ -134,7 +173,7 @@ class Widget(MessagePump):
 
     def render_lines_free(self, width: int) -> RenderCache:
 
-        renderable = self.render()
+        renderable = self.render_styled()
 
         options = self.console.options.update(width=width, height=None)
 

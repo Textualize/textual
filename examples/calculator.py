@@ -116,6 +116,7 @@ class Calculator(GridView):
 
         # The calculator display
         self.numbers = Numbers()
+        self.numbers.style_border = "bold"
 
         def make_button(text: str, style: str) -> Button:
             """Create a button with the given Figlet label."""
