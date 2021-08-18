@@ -104,8 +104,8 @@ class TreeControl(Generic[NodeDataType], Widget):
         )
         self._tree.label = self.root
         self.nodes[NodeID(self._node_id)] = self.root
-        self.padding = padding
         super().__init__(name=name)
+        self.padding = padding
 
     hover_node: Reactive[NodeID | None] = Reactive(None)
 
@@ -127,7 +127,7 @@ class TreeControl(Generic[NodeDataType], Widget):
         self.refresh()
 
     def render(self) -> RenderableType:
-        return Padding(self._tree, self.padding)
+        return self._tree
 
     def render_node(self, node: TreeNode[NodeDataType]) -> RenderableType:
         meta = {"@click": f"click_label({node.id})", "tree_node": node.id}

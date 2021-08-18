@@ -18,6 +18,7 @@ class Message:
         "sender",
         "name",
         "time",
+        "_forwarded",
         "_no_default_action",
         "_stop_propagation",
         "__done_event",
@@ -37,6 +38,7 @@ class Message:
         self.sender = sender
         self.name = camel_to_snake(self.__class__.__name__.replace("Message", ""))
         self.time = monotonic()
+        self._forwarded = False
         self._no_default_action = False
         self._stop_propagation = False
         self.__done_event: Event | None = None
@@ -55,6 +57,13 @@ class Message:
         if self.__done_event is None:
             self.__done_event = Event()
         return self.__done_event
+
+    @property
+    def is_forwarded(self) -> bool:
+        return self._forwarded
+
+    def set_forwarded(self) -> None:
+        self._forwarded = True
 
     def can_replace(self, message: "Message") -> bool:
         """Check if another message may supersede this one.

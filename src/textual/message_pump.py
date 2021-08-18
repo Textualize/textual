@@ -246,7 +246,10 @@ class MessagePump:
             await invoke(method, event)
 
         if event.bubble and self._parent and not event._stop_propagation:
-            if event.sender != self._parent and self.is_parent_active:
+            if event.sender == self._parent:
+                # parent is sender, so we stop propagation after parent
+                event.stop()
+            if self.is_parent_active:
                 await self._parent.post_message(event)
 
     async def on_message(self, message: Message) -> None:
@@ -260,8 +263,9 @@ class MessagePump:
 
         if message.bubble and self._parent and not message._stop_propagation:
             if message.sender == self._parent:
-                pass
-            elif not self._parent._closed and not self._parent._closing:
+                # parent is sender, so we stop propagation after parent
+                message.stop()
+            if not self._parent._closed and not self._parent._closing:
                 await self._parent.post_message(message)
 
     def post_message_no_wait(self, message: Message) -> bool:

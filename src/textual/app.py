@@ -184,10 +184,10 @@ class App(MessagePump):
         self._view_stack.append(view)
         return view
 
-    def on_keyboard_interupt(self) -> None:
-        loop = asyncio.get_event_loop()
-        event = events.ShutdownRequest(sender=self)
-        asyncio.run_coroutine_threadsafe(self.post_message(event), loop=loop)
+    # def on_keyboard_interupt(self) -> None:
+    #     loop = asyncio.get_event_loop()
+    #     event = events.ShutdownRequest(sender=self)
+    #     asyncio.run_coroutine_threadsafe(self.post_message(event), loop=loop)
 
     async def set_focus(self, widget: Widget | None) -> None:
         log("set_focus", widget)
@@ -344,6 +344,14 @@ class App(MessagePump):
         return self.view.get_widget_at(x, y)
 
     async def press(self, key: str) -> bool:
+        """Handle a key press.
+
+        Args:
+            key (str): A key
+
+        Returns:
+            bool: True if the key was handled by a binding, otherwise False
+        """
         try:
             binding = self.bindings.get_key(key)
         except NoBinding:
@@ -353,17 +361,18 @@ class App(MessagePump):
         return True
 
     async def on_event(self, event: events.Event) -> None:
-        if isinstance(event, events.Key):
-            if await self.press(event.key):
-                return
-            await super().on_event(event)
-
-        if isinstance(event, events.InputEvent):
+        # if isinstance(event, events.Key):
+        #     if await self.press(event.key):
+        #         return
+        #     await super().on_event(event)
+        # self.log("App.on_event", event, self.view)
+        if isinstance(event, events.InputEvent) and not event.is_forwarded:
             if isinstance(event, events.MouseEvent):
                 self.mouse_position = Offset(event.x, event.y)
             if isinstance(event, events.Key) and self.focused is not None:
                 await self.focused.forward_event(event)
-            await self.view.forward_event(event)
+            else:
+                await self.view.forward_event(event)
         else:
             await super().on_event(event)
 
@@ -424,6 +433,10 @@ class App(MessagePump):
         else:
             return False
         return True
+
+    async def on_key(self, event: events.Key) -> None:
+        self.log("App.on_key")
+        await self.press(event.key)
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log("shutdown request")
