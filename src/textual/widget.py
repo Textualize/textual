@@ -76,22 +76,18 @@ class Widget(MessagePump):
     layout_offset_y: Reactive[float] = Reactive(0.0, layout=True)
 
     style: Reactive[str | None] = Reactive(None)
-    style_padding: Reactive[PaddingDimensions | None] = Reactive(None, layout=True)
-    style_margin: Reactive[PaddingDimensions | None] = Reactive(None, layout=True)
-    style_border: Reactive[str] = Reactive("none", layout=True)
-    style_border_style: Reactive[str] = Reactive("")
-    style_border_title: Reactive[TextType] = Reactive("")
+    padding: Reactive[PaddingDimensions | None] = Reactive(None, layout=True)
+    margin: Reactive[PaddingDimensions | None] = Reactive(None, layout=True)
+    border: Reactive[str] = Reactive("none", layout=True)
+    border_style: Reactive[str] = Reactive("")
+    border_title: Reactive[TextType] = Reactive("")
 
     BOX_MAP = {"normal": box.SQUARE, "round": box.ROUNDED, "bold": box.HEAVY}
 
-    def validate_style_padding(
-        self, padding: PaddingDimensions
-    ) -> tuple[int, int, int, int]:
+    def validate_padding(self, padding: PaddingDimensions) -> tuple[int, int, int, int]:
         return Padding.unpack(padding)
 
-    def validate_style_margin(
-        self, padding: PaddingDimensions
-    ) -> tuple[int, int, int, int]:
+    def validate_margin(self, padding: PaddingDimensions) -> tuple[int, int, int, int]:
         return Padding.unpack(padding)
 
     def validate_layout_offset_x(self, value) -> int:
@@ -121,16 +117,16 @@ class Widget(MessagePump):
             RenderableType: A new renderable.
         """
         renderable = self.render()
-        if self.style_padding is not None:
-            renderable = Padding(renderable, self.style_padding)
-        if self.style_border in self.BOX_MAP:
+        if self.padding is not None:
+            renderable = Padding(renderable, self.padding)
+        if self.border in self.BOX_MAP:
             renderable = Panel(
                 renderable,
-                box=self.BOX_MAP.get(self.style_border) or box.SQUARE,
-                style=self.style_border_style,
+                box=self.BOX_MAP.get(self.border) or box.SQUARE,
+                style=self.border_style,
             )
-        if self.style_margin is not None:
-            renderable = Padding(renderable, self.style_margin)
+        if self.margin is not None:
+            renderable = Padding(renderable, self.margin)
         if self.style:
             renderable = Styled(renderable, self.style)
         return renderable
