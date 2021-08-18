@@ -51,15 +51,16 @@ class Button(Widget):
         name: str | None = None,
         style: StyleType = "white on dark_blue",
     ):
-        self.name = name or str(label)
-        self.style = style
         super().__init__(name=name)
+        self.name = name or str(label)
+        self.button_style = style
+
         self.label = label
 
     label: Reactive[RenderableType] = Reactive("")
 
     def render(self) -> RenderableType:
-        return ButtonRenderable(self.label, style=self.style)
+        return ButtonRenderable(self.label, style=self.button_style)
 
     async def on_click(self, event: events.Click) -> None:
         await self.emit(ButtonPressed(self))

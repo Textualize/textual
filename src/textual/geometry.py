@@ -156,11 +156,11 @@ class Region(NamedTuple):
         """Create a region from origin and size.
 
         Args:
-            origin (Point): [description]
-            size (tuple[int, int]): [description]
+            origin (Point): Origin (top left point)
+            size (tuple[int, int]): Dimensions of region.
 
         Returns:
-            Region: [description]
+            Region: A region instance.
         """
         x, y = origin
         width, height = size
@@ -171,10 +171,25 @@ class Region(NamedTuple):
 
     @property
     def x_extents(self) -> tuple[int, int]:
+        """Get the starting and ending x coord.
+
+        The end value is non inclusive.
+
+        Returns:
+            tuple[int, int]: [description]
+        """
         return (self.x, self.x + self.width)
 
     @property
     def y_extents(self) -> tuple[int, int]:
+        """Get the starting and ending x coord.
+
+        The end value is non inclusive.
+
+        Returns:
+            tuple[int, int]: [description]
+        """
+        return (self.x, self.x + self.width)
         return (self.y, self.y + self.height)
 
     @property
@@ -212,11 +227,11 @@ class Region(NamedTuple):
 
     @property
     def x_range(self) -> range:
-        return range(self.x, self.x_max)
+        return range(self.x, self.x + self.width)
 
     @property
     def y_range(self) -> range:
-        return range(self.y, self.y_max)
+        return range(self.y, self.y + self.height)
 
     def __add__(self, other: Any) -> Region:
         if isinstance(other, tuple):
