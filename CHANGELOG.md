@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.1.10] - Unreleased
 
+### Added
+
+- Added margin, padding, and border attributes to Widget
+
 ### Changed
 
 - Callbacks may be async or non-async.
