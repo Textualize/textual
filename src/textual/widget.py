@@ -220,6 +220,7 @@ class Widget(MessagePump):
         await self.app.call_later(callback, *args, **kwargs)
 
     async def forward_event(self, event: events.Event) -> None:
+        event.set_forwarded()
         await self.post_message(event)
 
     def refresh(self, repaint: bool = True, layout: bool = False) -> None:

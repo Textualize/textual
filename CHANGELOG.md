@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Event handler event argument is optional.
 - Fixed exception in clock example https://github.com/willmcgugan/textual/issues/52
 - Added Message.wait() which waits for a message to be processed
+- Key events are now sent to widgets first, before processing bindings
 
 ## [0.1.9] - 2021-08-06
 

@@ -9,7 +9,6 @@ import warnings
 from rich.control import Control
 import rich.repr
 from rich.screen import Screen
-from rich import get_console
 from rich.console import Console, RenderableType
 from rich.traceback import Traceback
 
@@ -22,12 +21,10 @@ from . import log
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
-from ._types import MessageTarget
 from .driver import Driver
 from .layouts.dock import DockLayout, Dock
 from ._linux_driver import LinuxDriver
 from .message_pump import MessagePump
-from .message import Message
 from ._profile import timer
 from .view import View
 from .views import DockView
@@ -50,17 +47,7 @@ else:
     uvloop.install()
 
 
-class PanicMessage(Message):
-    def __init__(self, sender: MessageTarget, traceback: Traceback) -> None:
-        self.traceback = traceback
-        super().__init__(sender)
-
-
 class ActionError(Exception):
-    pass
-
-
-class ShutdownError(Exception):
     pass
 
 
@@ -113,7 +100,7 @@ class App(MessagePump):
         self.log_file = open(log, "wt") if log else None
         self.log_verbosity = log_verbosity
 
-        self.bindings.bind("ctrl+c", "quit", show=False)
+        self.bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
         self._refresh_required = False
 
         super().__init__()
@@ -137,6 +124,12 @@ class App(MessagePump):
         return self._view_stack[-1]
 
     def log(self, *args: Any, verbosity: int = 1) -> None:
+        """Write to logs.
+
+        Args:
+            *args (Any): Positional arguments are converted to string and written to logs.
+            verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
+        """
         try:
             if self.log_file and verbosity <= self.log_verbosity:
                 output = f" ".join(str(arg) for arg in args)
@@ -153,6 +146,15 @@ class App(MessagePump):
         show: bool = True,
         key_display: str | None = None,
     ) -> None:
+        """Bind a key to an action.
+
+        Args:
+            keys (str): A comma separated list of keys, i.e.
+            action (str): Action to bind to.
+            description (str, optional): Short description of action. Defaults to "".
+            show (bool, optional): Show key in UI. Defaults to True.
+            key_display (str, optional): Replacement text for key, or None to use default. Defaults to None.
+        """
         self.bindings.bind(
             keys, action, description, show=show, key_display=key_display
         )
@@ -184,14 +186,15 @@ class App(MessagePump):
         self._view_stack.append(view)
         return view
 
-    def on_keyboard_interupt(self) -> None:
-        loop = asyncio.get_event_loop()
-        event = events.ShutdownRequest(sender=self)
-        asyncio.run_coroutine_threadsafe(self.post_message(event), loop=loop)
-
     async def set_focus(self, widget: Widget | None) -> None:
+        """Focus (or unfocus) a widget. A focused widget will receive key events first.
+
+        Args:
+            widget (Widget): [description]
+        """
         log("set_focus", widget)
         if widget == self.focused:
+            # Widget is already focused
             return
 
         if widget is None:
@@ -224,7 +227,11 @@ class App(MessagePump):
                     self.mouse_over = widget
 
     async def capture_mouse(self, widget: Widget | None) -> None:
-        """Send all Mouse events to a given widget."""
+        """Send all mouse events to the given widget, disable mouse capture.
+
+        Args:
+            widget (Widget | None): If a widget, capture mouse event, or None to end mouse capture.
+        """
         if widget == self.mouse_captured:
             return
         if self.mouse_captured is not None:
@@ -341,9 +348,26 @@ class App(MessagePump):
                 self.panic()
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
+        """Get the widget under the given coordinates.
+
+        Args:
+            x (int): X Coord.
+            y (int): Y Coord.
+
+        Returns:
+            tuple[Widget, Region]: The widget and the widget's screen region.
+        """
         return self.view.get_widget_at(x, y)
 
     async def press(self, key: str) -> bool:
+        """Handle a key press.
+
+        Args:
+            key (str): A key
+
+        Returns:
+            bool: True if the key was handled by a binding, otherwise False
+        """
         try:
             binding = self.bindings.get_key(key)
         except NoBinding:
@@ -353,17 +377,22 @@ class App(MessagePump):
         return True
 
     async def on_event(self, event: events.Event) -> None:
-        if isinstance(event, events.Key):
-            if await self.press(event.key):
-                return
-            await super().on_event(event)
-
-        if isinstance(event, events.InputEvent):
+        # Handle input events that haven't been forwarded
+        # If the event has been forwaded it may have bubbled up back to the App
+        if isinstance(event, events.InputEvent) and not event.is_forwarded:
             if isinstance(event, events.MouseEvent):
+                # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
             if isinstance(event, events.Key) and self.focused is not None:
-                await self.focused.forward_event(event)
-            await self.view.forward_event(event)
+                # Key events are sent direct to focused widget
+                if self.bindings.allow_forward(event.key):
+                    await self.focused.forward_event(event)
+                else:
+                    # Key has allow_forward=False which disallows forward to focused widget
+                    await super().on_event(event)
+            else:
+                # Forward the event to the view
+                await self.view.forward_event(event)
         else:
             await super().on_event(event)
 
@@ -424,6 +453,10 @@ class App(MessagePump):
         else:
             return False
         return True
+
+    async def on_key(self, event: events.Key) -> None:
+        self.log("App.on_key")
+        await self.press(event.key)
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log("shutdown request")
