@@ -172,11 +172,6 @@ class LinuxDriver(Driver):
             pass  # TODO: log
 
     def _run_input_thread(self, loop) -> None:
-        def send_event(event: events.Event) -> None:
-            asyncio.run_coroutine_threadsafe(
-                self._target.post_message(event),
-                loop=loop,
-            )
 
         selector = selectors.DefaultSelector()
         selector.register(self.fileno, selectors.EVENT_READ)

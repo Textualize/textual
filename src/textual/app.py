@@ -184,11 +184,6 @@ class App(MessagePump):
         self._view_stack.append(view)
         return view
 
-    # def on_keyboard_interupt(self) -> None:
-    #     loop = asyncio.get_event_loop()
-    #     event = events.ShutdownRequest(sender=self)
-    #     asyncio.run_coroutine_threadsafe(self.post_message(event), loop=loop)
-
     async def set_focus(self, widget: Widget | None) -> None:
         log("set_focus", widget)
         if widget == self.focused:
@@ -361,17 +356,17 @@ class App(MessagePump):
         return True
 
     async def on_event(self, event: events.Event) -> None:
-        # if isinstance(event, events.Key):
-        #     if await self.press(event.key):
-        #         return
-        #     await super().on_event(event)
-        # self.log("App.on_event", event, self.view)
+        # Handle input events that haven't been forwarded
+        # If the event has been forwaded it may have bubbled up back to the App
         if isinstance(event, events.InputEvent) and not event.is_forwarded:
             if isinstance(event, events.MouseEvent):
+                # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
             if isinstance(event, events.Key) and self.focused is not None:
+                # Key events are sent direct to focused widget
                 await self.focused.forward_event(event)
             else:
+                # Forward the event to the view
                 await self.view.forward_event(event)
         else:
             await super().on_event(event)

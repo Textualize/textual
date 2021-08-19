@@ -63,6 +63,7 @@ class Message:
         return self._forwarded
 
     def set_forwarded(self) -> None:
+        """Mark this event as being forwarded."""
         self._forwarded = True
 
     def can_replace(self, message: "Message") -> bool:
