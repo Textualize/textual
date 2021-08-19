@@ -13,6 +13,7 @@ class Binding:
     description: str
     show: bool = False
     key_display: str | None = None
+    allow_forward: bool = True
 
 
 class Bindings:
@@ -33,11 +34,17 @@ class Bindings:
         description: str = "",
         show: bool = True,
         key_display: str | None = None,
+        allow_forward: bool = True,
     ) -> None:
         all_keys = [key.strip() for key in keys.split(",")]
         for key in all_keys:
             self.keys[key] = Binding(
-                key, action, description, show=show, key_display=key_display
+                key,
+                action,
+                description,
+                show=show,
+                key_display=key_display,
+                allow_forward=True,
             )
 
     def get_key(self, key: str) -> Binding:
@@ -45,6 +52,12 @@ class Bindings:
             return self.keys[key]
         except KeyError:
             raise NoBinding(f"No binding for {key}") from None
+
+    def allow_forward(self, key: str) -> bool:
+        binding = self.keys.get(key, None)
+        if binding is None:
+            return True
+        return binding.allow_forward
 
 
 class BindingStack:
