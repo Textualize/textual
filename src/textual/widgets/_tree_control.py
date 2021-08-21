@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from typing import Generic, NewType, TypeVar
+from typing import Generic, Iterator, NewType, TypeVar
 
 from rich.console import RenderableType
 from rich.text import Text, TextType
@@ -185,10 +185,17 @@ class TreeControl(Generic[NodeDataType], Widget):
         self.nodes[NodeID(self._node_id)] = self.root
         super().__init__(name=name)
         self.padding = padding
-        self.cursor = self.root.id
 
     hover_node: Reactive[NodeID | None] = Reactive(None)
     cursor: Reactive[NodeID] = Reactive(NodeID(0), layout=True)
+    cursor_line: Reactive[int] = Reactive(0, repaint=False)
+
+    def watch_cursor(self, value: NodeID | None) -> None:
+        self.cursor_line = self.find_cursor() or 0
+
+    def watch_cursor_line(self, value: int) -> None:
+        self.log("Cursor line change", value)
+        self.emit_no_wait(CursorMoveMessage(self, value + 1))
 
     async def add(
         self,
@@ -207,6 +214,38 @@ class TreeControl(Generic[NodeDataType], Widget):
         self.nodes[self._node_id] = child_node
 
         self.refresh(layout=True)
+
+    def find_cursor(self) -> int | None:
+        """Find the line location for the cursor node."""
+
+        node_id = self.cursor
+        node = self.root
+        line = 0
+
+        stack: list[Iterator[TreeNode[NodeDataType]]] = []
+
+        if node.id == node_id:
+            return line
+
+        if node.expanded and node.children:
+            stack.append(iter(node.children))
+
+        pop = stack.pop
+        push = stack.append
+        while stack:
+            iter_children = pop()
+            try:
+                node = next(iter_children)
+            except StopIteration:
+                continue
+            else:
+                line += 1
+                if node.id == node_id:
+                    return line
+                push(iter_children)
+                if node.expanded and node.children:
+                    push(iter(node.children))
+        return None
 
     def render(self) -> RenderableType:
         return self._tree
@@ -257,12 +296,14 @@ class TreeControl(Generic[NodeDataType], Widget):
         next_node = cursor_node.next_node
         if next_node is not None:
             self.hover_node = self.cursor = next_node.id
+        self.log("CURSOR", self.find_cursor())
 
     async def cursor_up(self) -> None:
         cursor_node = self.nodes[self.cursor]
         previous_node = cursor_node.previous_node
         if previous_node is not None:
             self.hover_node = self.cursor = previous_node.id
+        self.log("CURSOR", self.find_cursor())
 
 
 if __name__ == "__main__":

@@ -54,7 +54,6 @@ class DirectoryTree(TreeControl[DirEntry]):
         self.refresh(layout=True)
 
     def render_node(self, node: TreeNode[DirEntry]) -> RenderableType:
-        # TODO: Optimize / cache this
         return self.render_tree_label(
             node,
             node.data.is_dir,

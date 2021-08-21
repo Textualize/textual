@@ -120,9 +120,13 @@ class ScrollView(View):
 
     def scroll_in_to_view(self, line: int) -> None:
         if line < self.y:
-            self.target_y = line
-        elif line > self.y + self.size.height:
-            self.target_y = line - self.size.height
+            self.y = line
+        elif line >= self.y + self.size.height:
+            self.y = line - self.size.height + 1
+
+    def scroll_to_center(self, line: int) -> None:
+        self.y = line - self.size.height // 2
+        # self.animate("y", self.target_y, easing="out_cubic")
 
     async def on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
         self.scroll_up()
@@ -196,4 +200,4 @@ class ScrollView(View):
             self.refresh()
 
     async def message_cursor_move(self, message: CursorMoveMessage) -> None:
-        self.scroll_in_to_view(message.line)
+        self.scroll_to_center(message.line)
