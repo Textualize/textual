@@ -30,3 +30,10 @@ class UpdateMessage(Message, verbosity=3):
 class LayoutMessage(Message, verbosity=3):
     def can_replace(self, message: Message) -> bool:
         return isinstance(message, LayoutMessage)
+
+
+@rich.repr.auto
+class CursorMoveMessage(Message, bubble=True):
+    def __init__(self, sender: MessagePump, line: int) -> None:
+        self.line = line
+        super().__init__(sender)

@@ -91,7 +91,6 @@ class XTermParser(Parser[events.Event]):
                                 on_token(event)
                             break
             else:
-
                 keys = get_ansi_sequence(character, None)
                 if keys is not None:
                     for key in keys:

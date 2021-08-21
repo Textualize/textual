@@ -70,6 +70,7 @@ class Reactive(Generic[ReactiveType]):
             value = validate_function(value)
 
         if current_value != value or self._first:
+
             self._first = False
             setattr(obj, self.internal_name, value)
             self.check_watchers(obj, name, current_value)

@@ -131,10 +131,10 @@ class Size(NamedTuple):
 class Region(NamedTuple):
     """Defines a rectangular region."""
 
-    x: int
-    y: int
-    width: int
-    height: int
+    x: int = 0
+    y: int = 0
+    width: int = 0
+    height: int = 0
 
     @classmethod
     def from_corners(cls, x1: int, y1: int, x2: int, y2: int) -> Region:

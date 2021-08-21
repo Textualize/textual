@@ -87,6 +87,11 @@ def test_point_blend():
     assert Offset(1, 2).blend(Offset(3, 4), 0.5) == Offset(2, 3)
 
 
+def test_region_null():
+    assert Region() == Region(0, 0, 0, 0)
+    assert not Region()
+
+
 def test_region_from_origin():
     assert Region.from_origin(Offset(3, 4), (5, 6)) == Region(3, 4, 5, 6)
 

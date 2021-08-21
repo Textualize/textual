@@ -24,6 +24,7 @@ from rich.text import TextType
 
 from . import events
 from ._animator import BoundAnimator
+from ._callback import invoke
 from ._context import active_app
 from .geometry import Size
 from .message import Message
@@ -42,6 +43,14 @@ log = getLogger("rich")
 class RenderCache(NamedTuple):
     size: Size
     lines: Lines
+
+    @property
+    def cursor_line(self) -> int | None:
+        for index, line in enumerate(self.lines):
+            for text, style, control in line:
+                if style and style._meta and style.meta.get("cursor", False):
+                    return index
+        return None
 
 
 @rich.repr.auto
@@ -164,23 +173,18 @@ class Widget(MessagePump):
     def _update_size(self, size: Size) -> None:
         self._size = size
 
-    def render_lines(self) -> RenderCache:
+    def render_lines(self) -> None:
         width, height = self.size
         renderable = self.render_styled()
         options = self.console.options.update_dimensions(width, height)
         lines = self.console.render_lines(renderable, options)
         self.render_cache = RenderCache(self.size, lines)
-        return self.render_cache
 
-    def render_lines_free(self, width: int) -> RenderCache:
-
+    def render_lines_free(self, width: int) -> None:
         renderable = self.render_styled()
-
         options = self.console.options.update(width=width, height=None)
-
         lines = self.console.render_lines(renderable, options)
         self.render_cache = RenderCache(Size(width, len(lines)), lines)
-        return self.render_cache
 
     def _get_lines(self) -> Lines:
         """Get render lines for given dimensions.
@@ -193,7 +197,7 @@ class Widget(MessagePump):
             Lines: [description]
         """
         if self.render_cache is None:
-            self.render_cache = self.render_lines()
+            self.render_lines()
         lines = self.render_cache.lines
         return lines
 
@@ -297,7 +301,7 @@ class Widget(MessagePump):
 
         key_method = getattr(self, f"key_{event.key}", None)
         if key_method is not None:
-            await key_method()
+            await invoke(key_method, event)
 
     async def on_mouse_down(self, event: events.MouseUp) -> None:
         await self.broker_event("mouse.down", event)

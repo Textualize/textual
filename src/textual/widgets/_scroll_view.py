@@ -1,5 +1,4 @@
 from __future__ import annotations
-from logging import PlaceHolder
 
 from rich.console import RenderableType
 from rich.style import StyleType
@@ -8,11 +7,9 @@ from rich.style import StyleType
 from .. import events
 from ..layouts.grid import GridLayout
 from ..message import Message
-from ..messages import UpdateMessage
+from ..messages import CursorMoveMessage
 from ..scrollbar import ScrollTo, ScrollBar
-from ..geometry import clamp, Offset, Size
-from ..page import Page
-from ..reactive import watch
+from ..geometry import clamp
 from ..view import View
 from ..widget import Widget
 
@@ -121,6 +118,12 @@ class ScrollView(View):
         self.target_x += self.size.width
         self.animate("x", self.target_x, speed=120, easing="out_cubic")
 
+    def scroll_in_to_view(self, line: int) -> None:
+        if line < self.y:
+            self.target_y = line
+        elif line > self.y + self.size.height:
+            self.target_y = line - self.size.height
+
     async def on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
         self.scroll_up()
 
@@ -191,3 +194,6 @@ class ScrollView(View):
             self.refresh()
         if self.layout.show_row("hscroll", virtual_size.width > self.size.width):
             self.refresh()
+
+    async def message_cursor_move(self, message: CursorMoveMessage) -> None:
+        self.scroll_in_to_view(message.line)

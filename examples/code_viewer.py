@@ -41,7 +41,7 @@ class MyApp(App):
 
         # Note the directory is also in a scroll view
         await self.view.dock(
-            ScrollView(self.directory), edge="left", size=32, name="sidebar"
+            ScrollView(self.directory), edge="left", size=64, name="sidebar"
         )
         await self.view.dock(self.body, edge="top")
 
