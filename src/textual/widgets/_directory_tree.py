@@ -63,31 +63,6 @@ class DirectoryTree(TreeControl[DirEntry]):
             node.id == self.hover_node,
             self.has_focus,
         )
-        # meta = {
-        #     "@click": f"click_label({node.id})",
-        #     "tree_node": node.id,
-        #     "cursor": node.is_cursor,
-        # }
-        # label = Text(node.label) if isinstance(node.label, str) else node.label
-        # if node.id == self.hover_node:
-        #     label.stylize("underline")
-        # if node.data.is_dir:
-        #     label.stylize("bold magenta")
-        #     icon = "📂" if node.expanded else "📁"
-        # else:
-        #     label.stylize("bright_green")
-        #     icon = "📄"
-        #     label.highlight_regex(r"\..*$", "green")
-
-        # if label.plain.startswith("."):
-        #     label.stylize("dim")
-
-        # if node.is_cursor and self.has_focus:
-        #     label.stylize("reverse")
-
-        # icon_label = Text(f"{icon} ", no_wrap=True, overflow="ellipsis") + label
-        # icon_label.apply_meta(meta)
-        # return icon_label
 
     @lru_cache(maxsize=1024 * 32)
     def render_tree_label(
