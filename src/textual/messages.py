@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 @rich.repr.auto
-class UpdateMessage(Message, verbosity=1):
+class UpdateMessage(Message, verbosity=3):
     def __init__(self, sender: MessagePump, widget: Widget, layout: bool = False):
         super().__init__(sender)
         self.widget = widget
@@ -32,7 +32,7 @@ class UpdateMessage(Message, verbosity=1):
 
 
 @rich.repr.auto
-class LayoutMessage(Message, verbosity=1):
+class LayoutMessage(Message, verbosity=3):
     def can_replace(self, message: Message) -> bool:
         return isinstance(
             message, LayoutMessage
