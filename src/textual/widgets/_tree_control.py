@@ -188,16 +188,16 @@ class TreeControl(Generic[NodeDataType], Widget):
         self.padding = padding
 
     hover_node: Reactive[NodeID | None] = Reactive(None)
-    cursor: Reactive[NodeID] = Reactive(NodeID(0), layout=True)
+    cursor: Reactive[NodeID] = Reactive(NodeID(0))
     cursor_line: Reactive[int] = Reactive(0, repaint=False)
     show_cursor: Reactive[bool] = Reactive(False)
 
     def watch_show_cursor(self, value: bool) -> None:
         self.emit_no_wait(CursorMoveMessage(self, self.cursor_line))
 
-    def watch_cursor_line(self, value: int) -> None:
+    async def watch_cursor_line(self, value: int) -> None:
         if self.show_cursor:
-            self.emit_no_wait(CursorMoveMessage(self, value + self.gutter.top))
+            await self.emit(CursorMoveMessage(self, value + self.gutter.top))
 
     async def add(
         self,
@@ -277,12 +277,12 @@ class TreeControl(Generic[NodeDataType], Widget):
         await self.dispatch_key(event)
 
     async def key_down(self, event: events.Key) -> None:
-        await self.cursor_down()
         event.stop()
+        await self.cursor_down()
 
     async def key_up(self, event: events.Key) -> None:
-        await self.cursor_up()
         event.stop()
+        await self.cursor_up()
 
     async def key_enter(self, event: events.Key) -> None:
         cursor_node = self.nodes[self.cursor]
@@ -296,8 +296,8 @@ class TreeControl(Generic[NodeDataType], Widget):
         cursor_node = self.nodes[self.cursor]
         next_node = cursor_node.next_node
         if next_node is not None:
-            self.hover_node = self.cursor = next_node.id
-        self.cursor_line += 1
+            self.cursor_line += 1
+            self.cursor = next_node.id
 
     async def cursor_up(self) -> None:
         if not self.show_cursor:
@@ -306,8 +306,8 @@ class TreeControl(Generic[NodeDataType], Widget):
         cursor_node = self.nodes[self.cursor]
         previous_node = cursor_node.previous_node
         if previous_node is not None:
-            self.hover_node = self.cursor = previous_node.id
-        self.cursor_line -= 1
+            self.cursor_line -= 1
+            self.cursor = previous_node.id
 
 
 if __name__ == "__main__":
