@@ -204,5 +204,6 @@ class ScrollView(View):
         if self.layout.show_row("hscroll", virtual_size.width > self.size.width):
             self.refresh()
 
-    async def message_cursor_move(self, message: CursorMoveMessage) -> None:
+    def message_cursor_move(self, message: CursorMoveMessage) -> None:
         self.scroll_to_center(message.line)
+        message.stop()

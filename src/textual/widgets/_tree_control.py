@@ -195,9 +195,6 @@ class TreeControl(Generic[NodeDataType], Widget):
     def watch_show_cursor(self, value: bool) -> None:
         self.emit_no_wait(CursorMoveMessage(self, self.cursor_line))
 
-    # def watch_cursor(self, value: NodeID | None) -> None:
-    #     self.cursor_line = self.find_cursor() or 0
-
     def watch_cursor_line(self, value: int) -> None:
         if self.show_cursor:
             self.emit_no_wait(CursorMoveMessage(self, value + self.gutter.top))
