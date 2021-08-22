@@ -242,8 +242,6 @@ class View(Widget):
         else:
             self.log("view.forwarded", event)
             await self.post_message(event)
-            # if self.focused is not None:
-            #     await self.focused.forward_event(event)
 
     async def action_toggle(self, name: str) -> None:
         widget = self.named_widgets[name]

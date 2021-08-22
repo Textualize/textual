@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Added keyboard control of tree control
+- Added Widget.gutter to calculate space between renderable and outside edge
 - Added margin, padding, and border attributes to Widget
 
 ### Changed

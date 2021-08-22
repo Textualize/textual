@@ -24,7 +24,6 @@ class WindowView(View, layout=VerticalLayout):
         gutter: tuple[int, int] = (0, 1),
         name: str | None = None
     ) -> None:
-        self.gutter = gutter
         layout = VerticalLayout(gutter=gutter)
         self.widget = widget if isinstance(widget, Widget) else Static(widget)
         layout.add(self.widget)

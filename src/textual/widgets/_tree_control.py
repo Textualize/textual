@@ -64,7 +64,7 @@ class TreeNode(Generic[NodeDataType]):
 
     @property
     def is_cursor(self) -> bool:
-        return self.control.cursor == self.id
+        return self.control.cursor == self.id and self.control.show_cursor
 
     @property
     def tree(self) -> Tree:
@@ -124,7 +124,8 @@ class TreeNode(Generic[NodeDataType]):
                 if node is self:
                     return next(iter_siblings)
         except StopIteration:
-            return None
+            pass
+        return None
 
     @property
     def previous_sibling(self) -> TreeNode[NodeDataType] | None:
@@ -189,13 +190,18 @@ class TreeControl(Generic[NodeDataType], Widget):
     hover_node: Reactive[NodeID | None] = Reactive(None)
     cursor: Reactive[NodeID] = Reactive(NodeID(0), layout=True)
     cursor_line: Reactive[int] = Reactive(0, repaint=False)
+    show_cursor: Reactive[bool] = Reactive(False)
 
-    def watch_cursor(self, value: NodeID | None) -> None:
-        self.cursor_line = self.find_cursor() or 0
+    def watch_show_cursor(self, value: bool) -> None:
+        self.emit_no_wait(CursorMoveMessage(self, self.cursor_line))
+
+    # def watch_cursor(self, value: NodeID | None) -> None:
+    #     self.cursor_line = self.find_cursor() or 0
 
     def watch_cursor_line(self, value: int) -> None:
         self.log("Cursor line change", value)
-        self.emit_no_wait(CursorMoveMessage(self, value + 1))
+        if self.show_cursor:
+            self.emit_no_wait(CursorMoveMessage(self, value + self.gutter.top))
 
     async def add(
         self,
@@ -258,18 +264,14 @@ class TreeControl(Generic[NodeDataType], Widget):
         )
         if node.id == self.hover_node:
             label.stylize("underline")
-        label.apply_meta(
-            {
-                "@click": f"click_label({node.id})",
-                "tree_node": node.id,
-                "cursor": node.is_cursor,
-            }
-        )
+        label.apply_meta({"@click": f"click_label({node.id})", "tree_node": node.id})
         return label
 
     async def action_click_label(self, node_id: NodeID) -> None:
         node = self.nodes[node_id]
         self.cursor = node.id
+        self.cursor_line = self.find_cursor() or 0
+        self.show_cursor = False
         await self.post_message(TreeClick(self, node))
 
     async def on_mouse_move(self, event: events.MouseMove) -> None:
@@ -292,18 +294,24 @@ class TreeControl(Generic[NodeDataType], Widget):
         await self.post_message(TreeClick(self, cursor_node))
 
     async def cursor_down(self) -> None:
+        if not self.show_cursor:
+            self.show_cursor = True
+            return
         cursor_node = self.nodes[self.cursor]
         next_node = cursor_node.next_node
         if next_node is not None:
             self.hover_node = self.cursor = next_node.id
-        self.log("CURSOR", self.find_cursor())
+        self.cursor_line += 1
 
     async def cursor_up(self) -> None:
+        if not self.show_cursor:
+            self.show_cursor = True
+            return
         cursor_node = self.nodes[self.cursor]
         previous_node = cursor_node.previous_node
         if previous_node is not None:
             self.hover_node = self.cursor = previous_node.id
-        self.log("CURSOR", self.find_cursor())
+        self.cursor_line -= 1
 
 
 if __name__ == "__main__":
