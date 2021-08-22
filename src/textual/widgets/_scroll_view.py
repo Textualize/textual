@@ -125,8 +125,13 @@ class ScrollView(View):
             self.y = line - self.size.height + 1
 
     def scroll_to_center(self, line: int) -> None:
-        self.y = line - self.size.height // 2
-        # self.animate("y", self.target_y, easing="out_cubic")
+        self.target_y = line - self.size.height // 2
+        if abs(self.target_y - self.y) > 1:
+            # Animate if its more than 1
+            self.animate("y", self.target_y, easing="out_cubic")
+        else:
+            # Jump if its just one step
+            self.y = self.target_y
 
     async def on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
         self.scroll_up()

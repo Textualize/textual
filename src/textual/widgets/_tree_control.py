@@ -199,7 +199,6 @@ class TreeControl(Generic[NodeDataType], Widget):
     #     self.cursor_line = self.find_cursor() or 0
 
     def watch_cursor_line(self, value: int) -> None:
-        self.log("Cursor line change", value)
         if self.show_cursor:
             self.emit_no_wait(CursorMoveMessage(self, value + self.gutter.top))
 
