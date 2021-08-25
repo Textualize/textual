@@ -34,9 +34,7 @@ class UpdateMessage(Message, verbosity=3):
 @rich.repr.auto
 class LayoutMessage(Message, verbosity=3):
     def can_replace(self, message: Message) -> bool:
-        return isinstance(
-            message, LayoutMessage
-        )  # or isinstance(message, UpdateMessage)
+        return isinstance(message, LayoutMessage)
 
 
 @rich.repr.auto

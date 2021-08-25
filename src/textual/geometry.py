@@ -189,7 +189,6 @@ class Region(NamedTuple):
         Returns:
             tuple[int, int]: [description]
         """
-        return (self.x, self.x + self.width)
         return (self.y, self.y + self.height)
 
     @property

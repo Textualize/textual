@@ -3,11 +3,8 @@ from __future__ import annotations
 import asyncio
 from asyncio import CancelledError
 from asyncio import Queue, QueueEmpty, Task
-import inspect
 from typing import TYPE_CHECKING, Awaitable, Iterable, Callable
 from weakref import WeakSet
-
-from rich.traceback import Traceback
 
 from . import events
 from . import log
@@ -174,7 +171,7 @@ class MessagePump:
         except CancelledError:
             pass
         finally:
-            self._runnning = False
+            self._running = False
 
     async def _process_messages(self) -> None:
         """Process messages until the queue is closed."""
@@ -195,6 +192,7 @@ class MessagePump:
                 pending = self.peek_message()
                 if pending is None or not message.can_replace(pending):
                     break
+                # self.log(message, "replaced with", pending)
                 try:
                     message = await self.get_message()
                 except MessagePumpClosed:

@@ -35,7 +35,7 @@ class TreeNode(Generic[NodeDataType]):
         data: NodeDataType,
     ) -> None:
         self.parent = parent
-        self._node_id = node_id
+        self.id = node_id
         self._control = control
         self._tree = tree
         self.label = label
@@ -45,10 +45,6 @@ class TreeNode(Generic[NodeDataType]):
         self._empty = False
         self._tree.expanded = False
         self.children: list[TreeNode] = []
-
-    @property
-    def id(self) -> NodeID:
-        return self._node_id
 
     @property
     def control(self) -> TreeControl:
@@ -150,8 +146,8 @@ class TreeNode(Generic[NodeDataType]):
         await self.expand(not self._expanded)
 
     async def add(self, label: TextType, data: NodeDataType) -> None:
-        await self._control.add(self._node_id, label, data=data)
-        self._control.refresh()
+        await self._control.add(self.id, label, data=data)
+        self._control.refresh(layout=True)
         self._empty = False
 
     def __rich__(self) -> RenderableType:
@@ -175,29 +171,29 @@ class TreeControl(Generic[NodeDataType], Widget):
     ) -> None:
         self.data = data
 
-        self._node_id = NodeID(0)
+        self.id = NodeID(0)
         self.nodes: dict[NodeID, TreeNode[NodeDataType]] = {}
         self._tree = Tree(label)
         self.root: TreeNode[NodeDataType] = TreeNode(
-            None, self._node_id, self, self._tree, label, data
+            None, self.id, self, self._tree, label, data
         )
 
         self._tree.label = self.root
-        self.nodes[NodeID(self._node_id)] = self.root
+        self.nodes[NodeID(self.id)] = self.root
         super().__init__(name=name)
         self.padding = padding
 
     hover_node: Reactive[NodeID | None] = Reactive(None)
-    cursor: Reactive[NodeID] = Reactive(NodeID(0))
+    cursor: Reactive[NodeID] = Reactive(NodeID(0), layout=True)
     cursor_line: Reactive[int] = Reactive(0, repaint=False)
-    show_cursor: Reactive[bool] = Reactive(False)
+    show_cursor: Reactive[bool] = Reactive(False, layout=True)
 
     def watch_show_cursor(self, value: bool) -> None:
         self.emit_no_wait(CursorMoveMessage(self, self.cursor_line))
 
-    async def watch_cursor_line(self, value: int) -> None:
+    def watch_cursor_line(self, value: int) -> None:
         if self.show_cursor:
-            await self.emit(CursorMoveMessage(self, value + self.gutter.top))
+            self.emit_no_wait(CursorMoveMessage(self, value + self.gutter.top))
 
     async def add(
         self,
@@ -206,14 +202,14 @@ class TreeControl(Generic[NodeDataType], Widget):
         data: NodeDataType,
     ) -> None:
         parent = self.nodes[node_id]
-        self._node_id = NodeID(self._node_id + 1)
+        self.id = NodeID(self.id + 1)
         child_tree = parent._tree.add(label)
         child_node: TreeNode[NodeDataType] = TreeNode(
-            parent, self._node_id, self, child_tree, label, data
+            parent, self.id, self, child_tree, label, data
         )
         parent.children.append(child_node)
         child_tree.label = child_node
-        self.nodes[self._node_id] = child_node
+        self.nodes[self.id] = child_node
 
         self.refresh(layout=True)
 
@@ -221,16 +217,10 @@ class TreeControl(Generic[NodeDataType], Widget):
         """Find the line location for the cursor node."""
 
         node_id = self.cursor
-        node = self.root
         line = 0
 
-        stack: list[Iterator[TreeNode[NodeDataType]]] = []
-
-        if node.id == node_id:
-            return line
-
-        if node.expanded and node.children:
-            stack.append(iter(node.children))
+        stack: list[Iterator[TreeNode[NodeDataType]]]
+        stack = [iter([self.root])]
 
         pop = stack.pop
         push = stack.append
@@ -241,11 +231,11 @@ class TreeControl(Generic[NodeDataType], Widget):
             except StopIteration:
                 continue
             else:
-                line += 1
                 if node.id == node_id:
                     return line
+                line += 1
                 push(iter_children)
-                if node.expanded and node.children:
+                if node.children and node.expanded:
                     push(iter(node.children))
         return None
 

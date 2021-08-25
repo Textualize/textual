@@ -206,17 +206,10 @@ class Widget(MessagePump):
         self.render_cache = RenderCache(Size(width, len(lines)), lines)
 
     def _get_lines(self) -> Lines:
-        """Get render lines for given dimensions.
-
-        Args:
-            width (int): [description]
-            height (int): [description]
-
-        Returns:
-            Lines: [description]
-        """
+        """Get segment lines to render the widget."""
         if self.render_cache is None:
             self.render_lines()
+        assert self.render_cache is not None
         lines = self.render_cache.lines
         return lines
 

@@ -13,7 +13,8 @@ from ..widgets import Static
 
 
 class WindowChange(Message):
-    pass
+    def can_replace(self, message: Message) -> bool:
+        return isinstance(message, WindowChange)
 
 
 class WindowView(View, layout=VerticalLayout):
@@ -37,6 +38,10 @@ class WindowView(View, layout=VerticalLayout):
         layout.add(self.widget)
         await self.refresh_layout()
         self.refresh(layout=True)
+        await self.emit(WindowChange(self))
+
+    async def message_update(self, message: UpdateMessage) -> None:
+        message.prevent_default()
         await self.emit(WindowChange(self))
 
     async def watch_virtual_size(self, size: Size) -> None:
