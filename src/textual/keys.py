@@ -16,6 +16,7 @@ class Keys(str, Enum):
 
     Escape = "escape"  # Also Control-[
     ShiftEscape = "shift+escape"
+    Return = "return"
 
     ControlAt = "ctrl+@"  # Also Control-Space.
 
@@ -186,10 +187,10 @@ class Keys(str, Enum):
     Ignore = "<ignore>"
 
     # Some 'Key' aliases (for backwardshift+compatibility).
-    ControlSpace = ControlAt
-    Tab = ControlI
-    Enter = ControlM
-    Backspace = ControlH
+    ControlSpace = "ctrl-at"
+    Tab = "tab"
+    Enter = "enter"
+    Backspace = "backspace"
 
     # ShiftControl was renamed to ControlShift in
     # 888fcb6fa4efea0de8333177e1bbc792f3ff3c24 (20 Feb 2020).

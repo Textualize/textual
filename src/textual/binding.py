@@ -44,7 +44,7 @@ class Bindings:
                 description,
                 show=show,
                 key_display=key_display,
-                allow_forward=True,
+                allow_forward=allow_forward,
             )
 
     def get_key(self, key: str) -> Binding:

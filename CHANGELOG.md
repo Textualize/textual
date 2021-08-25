@@ -5,10 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.1.10] - Unreleased
+## [0.1.10] - 2021-08-25
 
 ### Added
 
+- Added keyboard control of tree control
+- Added Widget.gutter to calculate space between renderable and outside edge
 - Added margin, padding, and border attributes to Widget
 
 ### Changed

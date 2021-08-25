@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 from os import scandir
 import os.path
 
@@ -11,6 +12,7 @@ from rich.tree import Tree
 
 from .. import events
 from ..message import Message
+from ..reactive import Reactive
 from .._types import MessageTarget
 from . import TreeControl, TreeClick, TreeNode, NodeID
 
@@ -36,6 +38,14 @@ class DirectoryTree(TreeControl[DirEntry]):
         super().__init__(label, name=name, data=data)
         self.root.tree.guide_style = "black"
 
+    has_focus: Reactive[bool] = Reactive(False)
+
+    def on_focus(self) -> None:
+        self.has_focus = True
+
+    def on_blur(self) -> None:
+        self.has_focus = False
+
     async def watch_hover_node(self, hover_node: NodeID) -> None:
         for node in self.nodes.values():
             node.tree.guide_style = (
@@ -44,13 +54,36 @@ class DirectoryTree(TreeControl[DirEntry]):
         self.refresh(layout=True)
 
     def render_node(self, node: TreeNode[DirEntry]) -> RenderableType:
-        meta = {"@click": f"click_label({node.id})", "tree_node": node.id}
+        return self.render_tree_label(
+            node,
+            node.data.is_dir,
+            node.expanded,
+            node.is_cursor,
+            node.id == self.hover_node,
+            self.has_focus,
+        )
+
+    @lru_cache(maxsize=1024 * 32)
+    def render_tree_label(
+        self,
+        node: TreeNode[DirEntry],
+        is_dir: bool,
+        expanded: bool,
+        is_cursor: bool,
+        is_hover: bool,
+        has_focus: bool,
+    ) -> RenderableType:
+        meta = {
+            "@click": f"click_label({node.id})",
+            "tree_node": node.id,
+            "cursor": node.is_cursor,
+        }
         label = Text(node.label) if isinstance(node.label, str) else node.label
-        if node.id == self.hover_node:
+        if is_hover:
             label.stylize("underline")
-        if node.data.is_dir:
+        if is_dir:
             label.stylize("bold magenta")
-            icon = "📂" if node.expanded else "📁"
+            icon = "📂" if expanded else "📁"
         else:
             label.stylize("bright_green")
             icon = "📄"
@@ -58,6 +91,9 @@ class DirectoryTree(TreeControl[DirEntry]):
 
         if label.plain.startswith("."):
             label.stylize("dim")
+
+        if is_cursor and has_focus:
+            label.stylize("reverse")
 
         icon_label = Text(f"{icon} ", no_wrap=True, overflow="ellipsis") + label
         icon_label.apply_meta(meta)

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from asyncio import Event
 from typing import Awaitable, Callable, Type, TYPE_CHECKING, TypeVar
 
 import rich.repr

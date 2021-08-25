@@ -24,6 +24,7 @@ from rich.text import TextType
 
 from . import events
 from ._animator import BoundAnimator
+from ._callback import invoke
 from ._context import active_app
 from .geometry import Size
 from .message import Message
@@ -39,9 +40,26 @@ if TYPE_CHECKING:
 log = getLogger("rich")
 
 
+class Spacing(NamedTuple):
+    """The spacing around a renderable."""
+
+    top: int = 0
+    right: int = 0
+    bottom: int = 0
+    left: int = 0
+
+
 class RenderCache(NamedTuple):
     size: Size
     lines: Lines
+
+    @property
+    def cursor_line(self) -> int | None:
+        for index, line in enumerate(self.lines):
+            for text, style, control in line:
+                if style and style._meta and style.meta.get("cursor", False):
+                    return index
+        return None
 
 
 @rich.repr.auto
@@ -76,19 +94,19 @@ class Widget(MessagePump):
     layout_offset_y: Reactive[float] = Reactive(0.0, layout=True)
 
     style: Reactive[str | None] = Reactive(None)
-    padding: Reactive[PaddingDimensions | None] = Reactive(None, layout=True)
-    margin: Reactive[PaddingDimensions | None] = Reactive(None, layout=True)
+    padding: Reactive[Spacing | None] = Reactive(None, layout=True)
+    margin: Reactive[Spacing | None] = Reactive(None, layout=True)
     border: Reactive[str] = Reactive("none", layout=True)
     border_style: Reactive[str] = Reactive("")
     border_title: Reactive[TextType] = Reactive("")
 
     BOX_MAP = {"normal": box.SQUARE, "round": box.ROUNDED, "bold": box.HEAVY}
 
-    def validate_padding(self, padding: PaddingDimensions) -> tuple[int, int, int, int]:
-        return Padding.unpack(padding)
+    def validate_padding(self, padding: PaddingDimensions) -> Spacing:
+        return Spacing(*Padding.unpack(padding))
 
-    def validate_margin(self, padding: PaddingDimensions) -> tuple[int, int, int, int]:
-        return Padding.unpack(padding)
+    def validate_margin(self, padding: PaddingDimensions) -> Spacing:
+        return Spacing(*Padding.unpack(padding))
 
     def validate_layout_offset_x(self, value) -> int:
         return int(value)
@@ -161,39 +179,37 @@ class Widget(MessagePump):
         """Get the layout offset as a tuple."""
         return (round(self.layout_offset_x), round(self.layout_offset_y))
 
+    @property
+    def gutter(self) -> Spacing:
+        mt, mr, mb, bl = self.margin or (0, 0, 0, 0)
+        pt, pr, pb, pl = self.padding or (0, 0, 0, 0)
+        border = 1 if self.border else 0
+        gutter = Spacing(
+            mt + pt + border, mr + pr + border, mb + pb + border, bl + pl + border
+        )
+        return gutter
+
     def _update_size(self, size: Size) -> None:
         self._size = size
 
-    def render_lines(self) -> RenderCache:
+    def render_lines(self) -> None:
         width, height = self.size
         renderable = self.render_styled()
         options = self.console.options.update_dimensions(width, height)
         lines = self.console.render_lines(renderable, options)
         self.render_cache = RenderCache(self.size, lines)
-        return self.render_cache
 
-    def render_lines_free(self, width: int) -> RenderCache:
-
+    def render_lines_free(self, width: int) -> None:
         renderable = self.render_styled()
-
         options = self.console.options.update(width=width, height=None)
-
         lines = self.console.render_lines(renderable, options)
         self.render_cache = RenderCache(Size(width, len(lines)), lines)
-        return self.render_cache
 
     def _get_lines(self) -> Lines:
-        """Get render lines for given dimensions.
-
-        Args:
-            width (int): [description]
-            height (int): [description]
-
-        Returns:
-            Lines: [description]
-        """
+        """Get segment lines to render the widget."""
         if self.render_cache is None:
-            self.render_cache = self.render_lines()
+            self.render_lines()
+        assert self.render_cache is not None
         lines = self.render_cache.lines
         return lines
 
@@ -297,7 +313,7 @@ class Widget(MessagePump):
 
         key_method = getattr(self, f"key_{event.key}", None)
         if key_method is not None:
-            await key_method()
+            await invoke(key_method, event)
 
     async def on_mouse_down(self, event: events.MouseUp) -> None:
         await self.broker_event("mouse.down", event)
