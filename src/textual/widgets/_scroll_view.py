@@ -126,7 +126,7 @@ class ScrollView(View):
 
     def scroll_to_center(self, line: int) -> None:
         self.target_y = line - self.size.height // 2
-        if abs(self.target_y - self.y) > 1:
+        if abs(self.target_y - self.y) > 2:
             # Animate if its more than 1
             self.animate("y", self.target_y, easing="out_cubic")
         else:

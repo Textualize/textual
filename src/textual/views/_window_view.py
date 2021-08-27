@@ -36,7 +36,7 @@ class WindowView(View, layout=VerticalLayout):
         layout.clear()
         self.widget = widget if isinstance(widget, Widget) else Static(widget)
         layout.add(self.widget)
-        await self.refresh_layout()
+        self.layout.require_update()
         self.refresh(layout=True)
         await self.emit(WindowChange(self))
 
