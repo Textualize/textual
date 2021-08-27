@@ -396,9 +396,9 @@ class App(MessagePump):
         else:
             await super().on_event(event)
 
-    async def on_idle(self, event: events.Idle) -> None:
-        if self.view.check_layout():
-            await self.view.refresh_layout()
+    # async def on_idle(self, event: events.Idle) -> None:
+    #     if self.view.check_layout():
+    #         await self.view.refresh_layout()
 
     async def action(
         self,
