@@ -94,15 +94,12 @@ class View(Widget):
         widget = message.widget
         assert isinstance(widget, Widget)
 
-        if message.layout:
-            await self.root_view.refresh_layout()
-            self.log("LAYOUT")
-
         display_update = self.root_view.layout.update_widget(self.console, widget)
         if display_update is not None:
             self.app.display(display_update)
 
     async def message_layout(self, message: LayoutMessage) -> None:
+        message.stop()
         await self.root_view.refresh_layout()
         self.app.refresh()
 

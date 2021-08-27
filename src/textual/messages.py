@@ -13,10 +13,9 @@ if TYPE_CHECKING:
 
 @rich.repr.auto
 class UpdateMessage(Message, verbosity=3):
-    def __init__(self, sender: MessagePump, widget: Widget, layout: bool = False):
+    def __init__(self, sender: MessagePump, widget: Widget):
         super().__init__(sender)
         self.widget = widget
-        self.layout = layout
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.sender
@@ -24,7 +23,7 @@ class UpdateMessage(Message, verbosity=3):
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, UpdateMessage):
-            return self.widget == other.widget and self.layout == other.layout
+            return self.widget == other.widget
         return NotImplemented
 
     def can_replace(self, message: Message) -> bool:

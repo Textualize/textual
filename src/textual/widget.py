@@ -288,7 +288,7 @@ class Widget(MessagePump):
         elif self.check_repaint():
             self.render_cache = None
             self.reset_check_repaint()
-            await self.emit(UpdateMessage(self, self, layout=False))
+            await self.emit(UpdateMessage(self, self))
 
     async def focus(self) -> None:
         await self.app.set_focus(self)

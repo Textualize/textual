@@ -74,6 +74,7 @@ class Size(NamedTuple):
     height: int
 
     def __bool__(self) -> bool:
+        """A Size is Falsey if it has area 0"""
         return self.width * self.height != 0
 
     @property
@@ -193,10 +194,12 @@ class Region(NamedTuple):
 
     @property
     def x_max(self) -> int:
+        """Maximum X value (non inclusive)"""
         return self.x + self.width
 
     @property
     def y_max(self) -> int:
+        """Maximum Y value (non inclusive)"""
         return self.y + self.height
 
     @property
@@ -226,10 +229,12 @@ class Region(NamedTuple):
 
     @property
     def x_range(self) -> range:
+        """A range object for X coordinates"""
         return range(self.x, self.x + self.width)
 
     @property
     def y_range(self) -> range:
+        """A range object for Y coordinates"""
         return range(self.y, self.y + self.height)
 
     def __add__(self, other: Any) -> Region:
