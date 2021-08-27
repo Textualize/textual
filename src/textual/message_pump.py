@@ -252,7 +252,7 @@ class MessagePump:
 
     async def on_message(self, message: Message) -> None:
         _rich_traceback_guard = True
-        method_name = f"message_{message.name}"
+        method_name = f"handle_{message.name}"
 
         method = getattr(self, method_name, None)
         if method is not None:

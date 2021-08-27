@@ -7,7 +7,7 @@ from ..geometry import Offset, Size
 from ..layouts.vertical import VerticalLayout
 from ..view import View
 from ..message import Message
-from ..messages import UpdateMessage, LayoutMessage
+from ..messages import Update, Layout
 from ..widget import Widget
 from ..widgets import Static
 
@@ -40,7 +40,7 @@ class WindowView(View, layout=VerticalLayout):
         self.refresh(layout=True)
         await self.emit(WindowChange(self))
 
-    async def message_update(self, message: UpdateMessage) -> None:
+    async def handle_update(self, message: Update) -> None:
         message.prevent_default()
         await self.emit(WindowChange(self))
 

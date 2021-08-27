@@ -7,7 +7,7 @@ from rich.style import StyleType
 from .. import events
 from ..layouts.grid import GridLayout
 from ..message import Message
-from ..messages import CursorMoveMessage
+from ..messages import CursorMove
 from ..scrollbar import ScrollTo, ScrollBar
 from ..geometry import clamp
 from ..view import View
@@ -170,19 +170,19 @@ class ScrollView(View):
         self.animate("x", self.target_x, duration=1, easing="out_cubic")
         self.animate("y", self.target_y, duration=1, easing="out_cubic")
 
-    async def message_scroll_up(self, message: Message) -> None:
+    async def handle_scroll_up(self, message: Message) -> None:
         self.page_up()
 
-    async def message_scroll_down(self, message: Message) -> None:
+    async def handle_scroll_down(self, message: Message) -> None:
         self.page_down()
 
-    async def message_scroll_left(self, message: Message) -> None:
+    async def handle_scroll_left(self, message: Message) -> None:
         self.page_left()
 
-    async def message_scroll_right(self, message: Message) -> None:
+    async def handle_scroll_right(self, message: Message) -> None:
         self.page_right()
 
-    async def message_scroll_to(self, message: ScrollTo) -> None:
+    async def handle_scroll_to(self, message: ScrollTo) -> None:
         if message.x is not None:
             self.target_x = message.x
         if message.y is not None:
@@ -190,7 +190,7 @@ class ScrollView(View):
         self.animate("x", self.target_x, speed=150, easing="out_cubic")
         self.animate("y", self.target_y, speed=150, easing="out_cubic")
 
-    async def message_window_change(self, message: Message) -> None:
+    async def handle_window_change(self, message: Message) -> None:
         virtual_size = self.window.virtual_size
         self.x = self.validate_x(self.x)
         self.y = self.validate_y(self.y)
@@ -204,6 +204,6 @@ class ScrollView(View):
         if self.layout.show_row("hscroll", virtual_size.width > self.size.width):
             self.refresh()
 
-    def message_cursor_move(self, message: CursorMoveMessage) -> None:
+    def handle_cursor_move(self, message: CursorMove) -> None:
         self.scroll_to_center(message.line)
         message.stop()

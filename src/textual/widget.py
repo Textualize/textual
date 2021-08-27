@@ -30,7 +30,7 @@ from ._context import active_app
 from .geometry import Size
 from .message import Message
 from .message_pump import MessagePump
-from .messages import LayoutMessage, UpdateMessage
+from .messages import Layout, Update
 from .reactive import Reactive, watch
 from ._types import Lines
 
@@ -286,11 +286,11 @@ class Widget(MessagePump):
             self.render_cache = None
             self.reset_check_repaint()
             self.reset_check_layout()
-            await self.emit(LayoutMessage(self))
+            await self.emit(Layout(self))
         elif self.check_repaint():
             self.render_cache = None
             self.reset_check_repaint()
-            await self.emit(UpdateMessage(self, self))
+            await self.emit(Update(self, self))
 
     async def focus(self) -> None:
         await self.app.set_focus(self)

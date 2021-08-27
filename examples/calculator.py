@@ -154,7 +154,7 @@ class Calculator(GridView):
             *self.buttons.values(), clear=self.ac, numbers=self.numbers, zero=self.zero
         )
 
-    def message_button_pressed(self, message: ButtonPressed) -> None:
+    def handle_button_pressed(self, message: ButtonPressed) -> None:
         """A message sent by the button widget"""
 
         assert isinstance(message.sender, Button)

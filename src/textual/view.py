@@ -11,7 +11,7 @@ from . import events
 from . import log
 from .layout import Layout, NoWidget
 from .geometry import Size, Offset, Region
-from .messages import UpdateMessage, LayoutMessage
+from .messages import Update, Layout
 from .reactive import Reactive, watch
 
 from .widget import Widget, Widget
@@ -89,7 +89,7 @@ class View(Widget):
     # def check_layout(self) -> bool:
     #     return super().check_layout() or self.layout.check_update()
 
-    async def message_update(self, message: UpdateMessage) -> None:
+    async def handle_update(self, message: Update) -> None:
         if self.is_root_view:
             message.stop()
             widget = message.widget
@@ -99,7 +99,7 @@ class View(Widget):
             if display_update is not None:
                 self.app.display(display_update)
 
-    async def message_layout(self, message: LayoutMessage) -> None:
+    async def handle_layout(self, message: Layout) -> None:
         if self.is_root_view:
             message.stop()
             await self.refresh_layout()
@@ -245,4 +245,4 @@ class View(Widget):
     async def action_toggle(self, name: str) -> None:
         widget = self.named_widgets[name]
         widget.visible = not widget.visible
-        await self.post_message(LayoutMessage(self))
+        await self.post_message(Layout(self))
