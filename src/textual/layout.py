@@ -263,7 +263,7 @@ class Layout(ABC):
 
             lines = widget._get_lines()
 
-            if clip in region:
+            if region in clip:
                 yield region, clip, lines
             elif clip.overlaps(region):
                 new_region = region.intersection(clip)

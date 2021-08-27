@@ -126,7 +126,7 @@ class ScrollView(View):
 
     def scroll_to_center(self, line: int) -> None:
         self.target_y = line - self.size.height // 2
-        if abs(self.target_y - self.y) > 2:
+        if abs(self.target_y - self.y) > 1:
             # Animate if its more than 1
             self.animate("y", self.target_y, easing="out_cubic")
         else:
@@ -190,18 +190,24 @@ class ScrollView(View):
         self.animate("x", self.target_x, speed=150, easing="out_cubic")
         self.animate("y", self.target_y, speed=150, easing="out_cubic")
 
-    async def handle_window_change(self, message: Message) -> None:
-        virtual_size = self.window.virtual_size
+    def handle_window_change(self) -> None:
+        virtual_width, virtual_height = self.virtual_size
+        width, height = self.size
+
+        self.log(self.virtual_size, self.size)
         self.x = self.validate_x(self.x)
         self.y = self.validate_y(self.y)
-        self.vscroll.virtual_size = virtual_size.height
-        self.vscroll.window_size = self.size.height
+
+        self.hscroll.virtual_size = virtual_width
+        self.hscroll.window_size = width
+        self.vscroll.virtual_size = virtual_height
+        self.vscroll.window_size = height
 
         assert isinstance(self.layout, GridLayout)
 
-        if self.layout.show_column("vscroll", virtual_size.height > self.size.height):
+        if self.layout.show_column("vscroll", virtual_height > height):
             self.refresh()
-        if self.layout.show_row("hscroll", virtual_size.width > self.size.width):
+        if self.layout.show_row("hscroll", virtual_width > width):
             self.refresh()
 
     def handle_cursor_move(self, message: CursorMove) -> None:

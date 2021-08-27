@@ -92,6 +92,16 @@ class Size(NamedTuple):
         width, height = self
         return Region(0, 0, width, height)
 
+    def __add__(self, other: tuple[int, int]) -> Size:
+        width, height = self
+        width2, height2 = other
+        return Size(width + width2, height + height2)
+
+    def __sub__(self, other: tuple[int, int]) -> Size:
+        width, height = self
+        width2, height2 = other
+        return Size(width - width2, height - height2)
+
     def contains(self, x: int, y: int) -> bool:
         """Check if a point is in the size.
 

@@ -208,7 +208,7 @@ class Calculator(GridView):
 class CalculatorApp(App):
     """The Calculator Application"""
 
-    async def on_mount(self, event: events.Mount) -> None:
+    async def on_mount(self) -> None:
         """Mount the calculator widget."""
         await self.view.dock(Calculator())
 
