@@ -86,8 +86,8 @@ class View(Widget):
     def get_offset(self, widget: Widget) -> Offset:
         return self.layout.get_offset(widget)
 
-    def check_layout(self) -> bool:
-        return super().check_layout() or self.layout.check_update()
+    # def check_layout(self) -> bool:
+    #     return super().check_layout() or self.layout.check_update()
 
     async def message_update(self, message: UpdateMessage) -> None:
         if self.is_root_view:
