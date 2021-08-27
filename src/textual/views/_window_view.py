@@ -7,7 +7,7 @@ from ..geometry import Offset, Size
 from ..layouts.vertical import VerticalLayout
 from ..view import View
 from ..message import Message
-from ..messages import UpdateMessage
+from ..messages import UpdateMessage, LayoutMessage
 from ..widget import Widget
 from ..widgets import Static
 
@@ -49,11 +49,11 @@ class WindowView(View, layout=VerticalLayout):
 
     async def watch_scroll_x(self, value: int) -> None:
         self.layout.require_update()
-        self.refresh(layout=True)
+        self.refresh()
 
     async def watch_scroll_y(self, value: int) -> None:
         self.layout.require_update()
-        self.refresh(layout=True)
+        self.refresh()
 
     async def on_resize(self, event: events.Resize) -> None:
         await self.emit(WindowChange(self))

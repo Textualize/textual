@@ -90,18 +90,20 @@ class View(Widget):
         return super().check_layout() or self.layout.check_update()
 
     async def message_update(self, message: UpdateMessage) -> None:
-        message.stop()
-        widget = message.widget
-        assert isinstance(widget, Widget)
+        if self.is_root_view:
+            message.stop()
+            widget = message.widget
+            assert isinstance(widget, Widget)
 
-        display_update = self.root_view.layout.update_widget(self.console, widget)
-        if display_update is not None:
-            self.app.display(display_update)
+            display_update = self.layout.update_widget(self.console, widget)
+            if display_update is not None:
+                self.app.display(display_update)
 
     async def message_layout(self, message: LayoutMessage) -> None:
-        message.stop()
-        await self.root_view.refresh_layout()
-        self.app.refresh()
+        if self.is_root_view:
+            message.stop()
+            await self.refresh_layout()
+            self.app.refresh()
 
     async def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
 

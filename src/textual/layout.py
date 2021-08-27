@@ -95,9 +95,6 @@ class Layout(ABC):
 
     def reset(self) -> None:
         self._cuts = None
-        # if self._require_update:
-        #     self.regions.clear()
-        #     self._layout_map = None
 
     def reflow(
         self, console: Console, width: int, height: int, scroll: Offset
@@ -176,6 +173,7 @@ class Layout(ABC):
                 yield widget, region.intersection(clip), region
 
     def get_offset(self, widget: Widget) -> Offset:
+        """Get the offset of a widget."""
         try:
             return self.map[widget].region.origin
         except KeyError:

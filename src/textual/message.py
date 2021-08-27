@@ -25,7 +25,7 @@ class Message:
     ]
 
     sender: MessageTarget
-    bubble: ClassVar[bool] = False
+    bubble: ClassVar[bool] = True
     verbosity: ClassVar[int] = 1
 
     def __init__(self, sender: MessageTarget) -> None:
@@ -47,7 +47,7 @@ class Message:
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.sender
 
-    def __init_subclass__(cls, bubble: bool = False, verbosity: int = 1) -> None:
+    def __init_subclass__(cls, bubble: bool = True, verbosity: int = 1) -> None:
         super().__init_subclass__()
         cls.bubble = bubble
         cls.verbosity = verbosity
