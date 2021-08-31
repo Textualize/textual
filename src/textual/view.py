@@ -9,9 +9,9 @@ from rich.style import Style
 
 from . import events
 from . import log
+from . import messages
 from .layout import Layout, NoWidget
 from .geometry import Size, Offset, Region
-from .messages import Update, Layout
 from .reactive import Reactive, watch
 
 from .widget import Widget, Widget
@@ -86,10 +86,7 @@ class View(Widget):
     def get_offset(self, widget: Widget) -> Offset:
         return self.layout.get_offset(widget)
 
-    # def check_layout(self) -> bool:
-    #     return super().check_layout() or self.layout.check_update()
-
-    async def handle_update(self, message: Update) -> None:
+    async def handle_update(self, message: messages.Update) -> None:
         if self.is_root_view:
             message.stop()
             widget = message.widget
@@ -99,7 +96,7 @@ class View(Widget):
             if display_update is not None:
                 self.app.display(display_update)
 
-    async def handle_layout(self, message: Layout) -> None:
+    async def handle_layout(self, message: messages.Layout) -> None:
         if self.is_root_view:
             message.stop()
             await self.refresh_layout()
@@ -245,4 +242,4 @@ class View(Widget):
     async def action_toggle(self, name: str) -> None:
         widget = self.named_widgets[name]
         widget.visible = not widget.visible
-        await self.post_message(Layout(self))
+        await self.post_message(messages.Layout(self))

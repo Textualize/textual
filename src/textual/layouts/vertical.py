@@ -36,8 +36,6 @@ class VerticalLayout(Layout):
         gutter_height, gutter_width = self.gutter
         render_width = width - gutter_width * 2
 
-        render_width = 1000 + gutter_width * 2
-
         x = gutter_width
         y = gutter_height
         map: LayoutMap = LayoutMap(size)

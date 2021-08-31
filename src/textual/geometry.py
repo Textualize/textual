@@ -74,7 +74,7 @@ class Size(NamedTuple):
     height: int
 
     def __bool__(self) -> bool:
-        """A Size is Falsey if it has area 0"""
+        """A Size is Falsey if it has area 0."""
         return self.width * self.height != 0
 
     @property
