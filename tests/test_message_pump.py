@@ -49,7 +49,7 @@ async def test_execute_in_thread_context():
     # Test that execute_in_thread carries any contextvars
     # into the thread that the blocking call is executed in
 
-    ctxvar = contextvars.ContextVar("ctxvar")
+    ctxvar: contextvars.ContextVar[int] = contextvars.ContextVar("ctxvar")
 
     def in_thread_sync() -> int:
         return ctxvar.get()
