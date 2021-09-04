@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import asyncio
+import contextvars
+import inspect
+import functools
 from asyncio import CancelledError
 from asyncio import Queue, QueueEmpty, Task
-from typing import TYPE_CHECKING, Awaitable, Iterable, Callable
+from typing import TYPE_CHECKING, Any, Awaitable, Iterable, Callable, TypeVar, overload
 from weakref import WeakSet
 
 from . import events
@@ -27,6 +30,32 @@ class CallbackError(Exception):
 
 class MessagePumpClosed(Exception):
     pass
+
+
+T = TypeVar("T")
+
+
+def _is_coroutine_callable(call: Callable) -> bool:
+    if inspect.isroutine(call):
+        return inspect.iscoroutinefunction(call)
+    if inspect.isclass(call):
+        return False
+    call = getattr(call, "__call__", None)
+    return inspect.iscoroutinefunction(call)
+
+
+def _callable_in_thread_pool(call: Callable[..., T]) -> Callable[..., Awaitable[T]]:
+    async def inner(*args: Any, **kwargs: Any) -> T:
+        print(call)
+        loop = asyncio.get_event_loop()
+        # Ensure we run in the same context
+        child = functools.partial(call, *args, **kwargs)
+        context = contextvars.copy_context()
+        func = context.run
+        args = (child,)
+        return await loop.run_in_executor(None, func, *args)
+
+    return inner
 
 
 class MessagePump:
@@ -317,3 +346,16 @@ class MessagePump:
                 raise CallbackError(
                     f"unable to run callback {event.callback!r}; {error}"
                 )
+
+    @overload
+    async def execute_in_thread(self, call: Callable[..., Awaitable[T]], *args: Any, **kwargs: Any) -> T:
+        ...
+
+    @overload
+    async def execute_in_thread(self, call: Callable[..., T], *args: Any, **kwargs: Any) -> T:
+        ...
+
+    async def execute_in_thread(self, call: Callable[..., Any], *args: Any, **kwargs: Any) -> Callable[..., Awaitable[Any]]:
+        if not _is_coroutine_callable(call):
+            call = _callable_in_thread_pool(call)
+        return await call(*args, **kwargs)
