@@ -9,7 +9,6 @@ from typing import (
     TypeVar,
     Generic,
     Union,
-    Iterator,
     Iterable,
 )
 
