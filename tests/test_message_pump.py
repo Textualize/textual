@@ -39,5 +39,6 @@ async def test_execute_in_thread():
     # creating the threadpool, etc.
     # such that we'd have to herusitcally determine a number
     # like (end-start) < sleep_time * 1.0123
-    assert (end-start) < sleep_time * 2
+    elapsed = end-start
+    assert elapsed < sleep_time * 2, elapsed
 
