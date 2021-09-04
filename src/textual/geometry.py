@@ -3,20 +3,19 @@ from __future__ import annotations
 from typing import Any, NamedTuple, TypeVar, Iterable
 
 
-Number = TypeVar("Number", int, float)
-TwoIntTuple = tuple[int, int]
+T = TypeVar("T", int, float)
 
 
-def clamp(value: Number, minimum: Number, maximum: Number) -> Number:
+def clamp(value: T, minimum: T, maximum: T) -> T:
     """Clamps a value between two other values.
 
     Args:
-        value (Number): A value
-        minimum (Number): Minimum value
-        maximum (Number): maximum value
+        value (T): A value
+        minimum (T): Minimum value
+        maximum (T): maximum value
 
     Returns:
-        Number: New value that is not less than the minimum or greater than the maximum.
+        T: New value that is not less than the minimum or greater than the maximum.
     """
     if minimum > maximum:
         maximum, minimum = minimum, maximum
@@ -36,7 +35,7 @@ class Offset(NamedTuple):
 
     @property
     def is_origin(self) -> bool:
-        """Return True if the point is at the origin (0, 0), else False"""
+        """Check if the point is at the origin (0, 0)."""
         return self == (0, 0)
 
     def __add__(self, other: object) -> Offset:
@@ -75,7 +74,7 @@ class Size(NamedTuple):
     height: int
 
     def __bool__(self) -> bool:
-        """Return True if both width and height are nonzero, else False"""
+        """Return True if both width and height are nonzero."""
         return self.width * self.height != 0
 
     @property
@@ -110,7 +109,7 @@ class Size(NamedTuple):
         width, height = self
         return width > x >= 0 and height > y >= 0
 
-    def contains_point(self, point: TwoIntTuple) -> bool:
+    def contains_point(self, point: tuple[int, int]) -> bool:
         """Check if a point is in the size.
 
         Args:
@@ -142,31 +141,6 @@ class Size(NamedTuple):
         return width > x >= 0 and height > y >= 0
 
     
-C = TypeVar("C", bound="Corners")
-
-
-class Corners(NamedTuple):
-    """A tuple describing the four corners of a region"""
-    
-    x_min: int
-    y_min: int
-    x_max: int
-    y_max: int
-        
-    @classmethod
-    def of_region(cls: type[C], region: Region) -> C:
-        """Get the corners of a region.
-        
-        Args:
-            region (Region): a region to find the corners of.
-            
-        Returns:
-            Corners: The corners of the region.
-        """
-        x, y, width, height = region
-        return cls(x, y, (x + width), (y + height))
-
-    
 R = TypeVar("R", bound="Region")
     
 
@@ -180,7 +154,7 @@ class Region(NamedTuple):
 
     @classmethod
     def from_corners(cls: type[R], x1: int, y1: int, x2: int, y2: int) -> R:
-        """Construct a Region form the top-left and bottom-right corners.
+        """Construct a Region from the top-left and bottom-right corners.
 
         Args:
             x1 (int): Top-left x
@@ -194,7 +168,7 @@ class Region(NamedTuple):
         return cls(x1, y1, x2 - x1, y2 - y1)
 
     @classmethod
-    def from_origin(cls: type[R], origin: TwoIntTuple, size: TwoIntTuple) -> R:
+    def from_origin(cls: type[R], origin: tuple[int, int], size: tuple[int, int]) -> R:
         """Create a new region from `origin` and `size`.
 
         Args:
@@ -210,10 +184,10 @@ class Region(NamedTuple):
 
     def __bool__(self) -> bool:
         """Return True if the width and height of the region are both nonzero."""
-        return self.width and self.height
+        return bool(self.width and self.height)
 
     @property
-    def x_extents(self) -> TwoIntTuple:
+    def x_extents(self) -> tuple[int, int]:
         """Get the starting and ending x-coordinates of the region.
 
         The end value is non-inclusive.
@@ -225,7 +199,7 @@ class Region(NamedTuple):
         return (x, x + self.width)
 
     @property
-    def y_extents(self) -> TwoIntTuple:
+    def y_extents(self) -> tuple[int, int]:
         """Get the starting and ending y-coordinates of the region.
 
         The end value is non-inclusive.
@@ -262,13 +236,14 @@ class Region(NamedTuple):
         return Size(self.width, self.height)
 
     @property
-    def corners(self) -> Corners:
+    def corners(self) -> tuple[int, int, int, int]:
         """Get the maxima and minima of the region.
 
         Returns:
-            Corners: A tuple of (<min x>, <min y>, <max x>, <max y>)
+            tuple[int, int, int, int]: A tuple of (<min x>, <min y>, <max x>, <max y>)
         """
-        return Corners.of_region(self)
+        x, y, width, height = self
+        return x, y, (x + width), (y + height)
 
     @property
     def x_range(self) -> range:
@@ -337,7 +312,7 @@ class Region(NamedTuple):
         self_x, self_y, width, height = self
         return (self_x + width > x >= self_x) and (self_y + height > y >= self_y)
 
-    def contains_point(self, point: TwoIntTuple) -> bool:
+    def contains_point(self, point: tuple[int, int]) -> bool:
         """Check if a point is in the region.
 
         Args:
