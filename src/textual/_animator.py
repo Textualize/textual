@@ -42,17 +42,14 @@ def _bounce_out(x: float) -> float:
     if x < 1 / d1:
         return n1 * x * x
     if x < 2 / d1:
-        prev_x = x
         x -= 1.5 / d1
-        return n1 * prev_x * x + 0.75
+        return n1 * x * x + 0.75
     if x < 2.5 / d1:
-        prev_x = x
         x -= 2.25 / d1
-        return n1 * prev_x * x + 0.9375
+        return n1 * x * x + 0.9375
     else:
-        prev_x = x
         x -= 2.625 / d1
-        return n1 * prev_x * x + 0.984375
+        return n1 * x * x + 0.984375
 
 
 # https://easings.net/
