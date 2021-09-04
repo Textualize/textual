@@ -157,7 +157,6 @@ class Parser(Generic[T]):
 
     def parse(self, on_token: Callable[[T], None]) -> Generator[Awaitable, str, None]:
         return
-        yield
 
 
 if __name__ == "__main__":
