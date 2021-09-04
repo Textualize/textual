@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import sys
+from math import pow, sqrt, sin, cos, pi
 from time import time
 from tracemalloc import start
 from typing import Callable, TypeVar
@@ -27,6 +28,33 @@ class Animatable(Protocol):
         ...
 
 
+_c1 = 1.70158
+_c2 = _c1 * 1.525
+_c3 = _c1 + 1
+_c4 = (2 * pi) / 3
+_c5 = (2 * pi) / 4.5
+
+
+def _bounce_out(x: float) -> float:
+    n1 = 7.5625
+    d1 = 2.75
+
+    if x < 1 / d1:
+        return n1 * x * x
+    if x < 2 / d1:
+        prev_x = x
+        x -= 1.5 / d1
+        return n1 * prev_x * x + 0.75
+    if x < 2.5 / d1:
+        prev_x = x
+        x -= 2.25 / d1
+        return n1 * prev_x * x + 0.9375
+    else:
+        prev_x = x
+        x -= 2.625 / d1
+        return n1 * prev_x * x + 0.984375
+
+
 # https://easings.net/
 EASING = {
     "none": lambda x: 1.0,
@@ -35,6 +63,77 @@ EASING = {
     "in_cubic": lambda x: x * x * x,
     "in_out_cubic": lambda x: 4 * x * x * x if x < 0.5 else 1 - pow(-2 * x + 2, 3) / 2,
     "out_cubic": lambda x: 1 - pow(1 - x, 3),
+    "in_quad": lambda x: x * x,
+    "out_quad": lambda x: 1 - (1 - x) * (1 - x),
+    "in_out_quad": lambda x: 2 * x * x if x < 0.5 else 1 - pow(-2 * x + 2, 2) / 2,
+    "in_quart": lambda x: x * x * x * x,
+    "out_quart": lambda x: 1 - pow(1 - x, 4),
+    "in_out_quart": lambda x: (
+        8 * x * x * x * x if x < 0.5 else 1 - pow(-2 * x + 2, 4) / 2
+    ),
+    "in_quint": lambda x: x * x * x * x * x,
+    "out_quint": lambda x: 1 - pow(1 - x, 5),
+    "in_out_quint": lambda x: (
+        16 * x * x * x * x * x if x < 0.5 else 1 - pow(-2 * x + 2, 5) / 2
+    ),
+    "in_sine": lambda x: 1 - cos((x * pi) / 2),
+    "out_sine": lambda x: sin((x * pi) / 2),
+    "in_out_sine": lambda x: -(cos(pi * x) - 1) / 2,
+    "in_expo": lambda x: 0 if x == 0 else pow(2, 10 * x - 10),
+    "out_expo": lambda x: 1 if x == 1 else 1 - pow(2, -10 * x),
+    "in_out_expo": lambda x: (
+        0
+        if x == 0
+        else 1
+        if x == 1
+        else pow(2, 20 * x - 10) / 2
+        if x < 0.5
+        else (2 - pow(2, -20 * x + 10)) / 2
+    ),
+    "in_circ": lambda x: 1 - sqrt(1 - pow(x, 2)),
+    "out_circ": lambda x: sqrt(1 - pow(x - 1, 2)),
+    "in_out_circ": lambda x: (
+        (1 - sqrt(1 - pow(2 * x, 2))) / 2
+        if x < 0.5
+        else (sqrt(1 - pow(-2 * x + 2, 2)) + 1) / 2
+    ),
+    "in_back": lambda x: _c3 * x * x * x - _c1 * x * x,
+    "out_back": lambda x: 1 + _c3 * pow(x - 1, 3) + _c1 * pow(x - 1, 2),
+    "in_out_back": lambda x: (
+        (pow(2 * x, 2) * ((_c2 + 1) * 2 * x - _c2)) / 2
+        if x < 0.5
+        else (pow(2 * x - 2, 2) * ((_c2 + 1) * (x * 2 - 2) + _c2) + 2) / 2
+    ),
+    "in_elastic": lambda x: (
+        0
+        if x == 0
+        else 1
+        if x == 1
+        else -pow(2, 10 * x - 10) * sin((x * 10 - 10.75) * _c4)
+    ),
+    "out_elastic": lambda x: (
+        0
+        if x == 0
+        else 1
+        if x == 1
+        else pow(2, -10 * x) * sin((x * 10 - 0.75) * _c4) + 1
+    ),
+    "in_out_elastic": lambda x: (
+        0
+        if x == 0
+        else 1
+        if x == 1
+        else -(pow(2, 20 * x - 10) * sin((20 * x - 11.125) * _c5)) / 2
+        if x < 0.5
+        else (pow(2, -20 * x + 10) * sin((20 * x - 11.125) * _c5)) / 2 + 1
+    ),
+    "in_bounce": lambda x: 1 - _bounce_out(1 - x),
+    "out_bounce": _bounce_out,
+    "in_out_bounce": lambda x: (
+        (1 - _bounce_out(1 - 2 * x)) / 2
+        if x < 0.5
+        else (1 + _bounce_out(2 * x - 1)) / 2
+    ),
 }
 
 DEFAULT_EASING = "in_out_cubic"
