@@ -355,7 +355,7 @@ class MessagePump:
     async def execute_in_thread(self, call: Callable[..., T], *args: Any, **kwargs: Any) -> T:
         ...
 
-    async def execute_in_thread(self, call: Callable[..., Any], *args: Any, **kwargs: Any) -> Callable[..., Awaitable[Any]]:
+    async def execute_in_thread(self, call: Callable, *args: Any, **kwargs: Any) -> Any:
         if not _is_coroutine_callable(call):
             call = _callable_in_thread_pool(call)
         return await call(*args, **kwargs)
