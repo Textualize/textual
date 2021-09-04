@@ -28,7 +28,7 @@ class Animatable(Protocol):
         ...
 
 
-def in_out_expo(x):
+def _in_out_expo(x):
     """https://easings.net/#easeInOutExpo"""
     if 0 < x < 0.5:
         return pow(2, 20 * x - 10) / 2
@@ -38,7 +38,7 @@ def in_out_expo(x):
         return x    # x in (0, 1)
 
 
-def in_out_circ(x):
+def _in_out_circ(x):
     """https://easings.net/#easeInOutCirc"""
     if x < 0.5:
         return (1 - sqrt(1 - pow(2 * x, 2))) / 2
@@ -46,7 +46,7 @@ def in_out_circ(x):
         return (sqrt(1 - pow(-2 * x + 2, 2)) + 1) / 2
 
 
-def in_out_back(x):
+def _in_out_back(x):
     """https://easings.net/#easeInOutBack"""
     c = 1.70158 * 1.525
     if x < 0.5:
@@ -55,16 +55,16 @@ def in_out_back(x):
         return (pow(2 * x - 2, 2) * ((c + 1) * (x * 2 - 2) + c) + 2) / 2
 
 
-def in_elastic(x):
+def _in_elastic(x):
     """https://easings.net/#easeInElastic"""
     c = 2 * pi / 3;
     if 0 < x < 1:
         return -pow(2, 10 * x - 10) * sin((x * 10 - 10.75) * c)
     else:
-        return x
+        return x    # x in (0, 1)
 
 
-def in_out_elastic(x):
+def _in_out_elastic(x):
     """https://easings.net/#easeInOutElastic"""
     c = 2 * pi / 4.5
     if 0 < x < 0.5:
@@ -75,7 +75,7 @@ def in_out_elastic(x):
         return x    # x in (0, 1)
 
 
-def out_elastic(x):
+def _out_elastic(x):
     """https://easings.net/#easeInOutElastic"""
     c = 2 * pi / 4.5
     if 0 < x < 0.5:
@@ -84,6 +84,35 @@ def out_elastic(x):
         return (pow(2, -20 * x + 10) * sin((20 * x - 11.125) * c)) / 2 + 1
     else:
         return x    # x in (0, 1)
+
+
+def _out_bounce(x):
+    """https://easings.net/#easeOutBounce"""
+    n, d = 7.5625, 2.75
+    if x < 1/d:
+        return n * x * x
+    elif x < 2/d:
+        x_ = x - 1.5/d
+        return n * x_ * x_ + 0.75
+    elif x < 2.5/d:
+        x_ = x - 2.25/d
+        return n * x_ * x_ + 0.9375
+    else:
+        x_ = x - 2.625/d
+        return n * x_ * x_ + 0.984375
+
+
+def _in_bounce(x):
+    """https://easings.net/#easeInBounce"""
+    return 1 - _out_bounce(x)
+
+
+def _in_out_bounce(x):
+    """https://easings.net/#easeInOutBounce"""
+    if x < 0.5:
+        return (1 - _out_bounce(1 - 2 * x)) / 2
+    else:
+        return (1 + _out_bounce(2 * x - 1)) / 2
 
 
 # https://easings.net/
@@ -107,17 +136,20 @@ EASING = {
     "in_out_quint": lambda x: 16 * pow(x, 5) if x < 0.5 else 1 - pow(-2 * x + 2, 5) / 2,
     "out_quint": lambda x: 1 - pow(1 - x, 5),
     "in_expo": lambda x: pow(2, 10 * x - 10) if x else 0,
-    "in_out_expo": in_out_expo,
+    "in_out_expo": _in_out_expo,
     "out_expo": lambda x: 1 - pow(2, -10 * x) if x != 1 else 1,
     "in_circ": lambda x: 1 - sqrt(1 - pow(x, 2)),
-    "in_out_circ": in_out_circ,
+    "in_out_circ": _in_out_circ,
     "out_circ": lambda x: sqrt(1 - pow(x - 1, 2)),
     "in_back": lambda x: 2.70158 * pow(x, 3) - 1.70158 * pow(x, 2),
-    "in_out_back": in_out_back,
+    "in_out_back": _in_out_back,
     "out_back": lambda x: 1 + 2.70158 * pow(x - 1, 3) + 1.70158 * pow(x - 1, 2),
-    "in_elastic": in_elastic,
-    "in_out_elastic": in_out_elastic,
-    "out_elastic": out_elastic,
+    "in_elastic": _in_elastic,
+    "in_out_elastic": _in_out_elastic,
+    "out_elastic": _out_elastic,
+    "in_bounce": _in_bounce,
+    "in_out_bounce": _in_out_bounce,
+    "out_bounce": _out_bounce,
 }
 
 DEFAULT_EASING = "in_out_cubic"
