@@ -50,24 +50,31 @@ class ReflowResult(NamedTuple):
     resized: set[Widget]
 
 
+@rich.repr.auto
 class LayoutUpdate:
-    def __init__(self, lines: Lines, x: int, y: int) -> None:
+    def __init__(self, lines: Lines, region: Region) -> None:
         self.lines = lines
-        self.x = x
-        self.y = y
+        self.region = region
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         yield Control.home().segment
-        x = self.x
+        x = self.region.x
         new_line = Segment.line()
         move_to = Control.move_to
-        for last, (y, line) in loop_last(enumerate(self.lines, self.y)):
+        for last, (y, line) in loop_last(enumerate(self.lines, self.region.y)):
             yield move_to(x, y).segment
             yield from line
             if not last:
                 yield new_line
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        x, y, width, height = self.region
+        yield "x", x
+        yield "y", y
+        yield "width", width
+        yield "height", height
 
 
 class Layout(ABC):
@@ -378,6 +385,7 @@ class Layout(ABC):
 
         update_region = region.intersection(clip)
         update_lines = self.render(console, crop=update_region).lines
-        update = LayoutUpdate(update_lines, update_region.x, update_region.y)
+        update = LayoutUpdate(update_lines, update_region)
+        log(update)
 
         return update

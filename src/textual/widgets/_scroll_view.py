@@ -21,6 +21,7 @@ class ScrollView(View):
         self,
         contents: RenderableType | Widget | None = None,
         *,
+        auto_width: bool = False,
         name: str | None = None,
         style: StyleType = "",
         fluid: bool = True,
@@ -30,7 +31,9 @@ class ScrollView(View):
         self.fluid = fluid
         self.vscroll = ScrollBar(vertical=True)
         self.hscroll = ScrollBar(vertical=False)
-        self.window = WindowView("" if contents is None else contents)
+        self.window = WindowView(
+            "" if contents is None else contents, auto_width=auto_width
+        )
         layout = GridLayout()
         layout.add_column("main")
         layout.add_column("vscroll", size=1)

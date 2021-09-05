@@ -10,6 +10,7 @@ from rich.control import Control
 import rich.repr
 from rich.screen import Screen
 from rich.console import Console, RenderableType
+from rich.measure import Measurement
 from rich.traceback import Traceback
 
 from . import events
@@ -347,6 +348,21 @@ class App(MessagePump):
             except Exception:
                 self.panic()
 
+    def measure(self, renderable: RenderableType, max_width=100_000) -> int:
+        """Get the optimal width for a widget or renderable.
+
+        Args:
+            renderable (RenderableType): A renderable (including Widget)
+            max_width ([type], optional): Maximum width. Defaults to 100_000.
+
+        Returns:
+            int: Number of cells required to render.
+        """
+        measurement = Measurement.get(
+            self.console, self.console.options.update(max_width=max_width), renderable
+        )
+        return measurement.maximum
+
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given coordinates.
 
@@ -455,7 +471,7 @@ class App(MessagePump):
         return True
 
     async def on_key(self, event: events.Key) -> None:
-        self.log("App.on_key")
+        # self.log("App.on_key")
         await self.press(event.key)
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:

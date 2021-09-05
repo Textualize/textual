@@ -1,9 +1,8 @@
 from rich.table import Table
-from rich.measure import Measurement
 
 from textual import events
 from textual.app import App
-from textual.widgets import Header, Footer, ScrollView
+from textual.widgets import ScrollView
 
 
 class MyApp(App):
@@ -14,19 +13,17 @@ class MyApp(App):
 
     async def on_mount(self, event: events.Mount) -> None:
 
-        self.body = body = ScrollView()
-        #body.virtual_size.width = 300
+        self.body = body = ScrollView(auto_width=True)
 
         await self.view.dock(body)
 
         async def add_content():
-            table = Table(title="Demo", width=1000)
+            table = Table(title="Demo")
 
             for i in range(40):
-                table.add_column(f'Col {i + 1}', style='magenta')
-
+                table.add_column(f"Col {i + 1}", style="magenta")
             for i in range(200):
-                table.add_row(*[f'cell {i},{j}' for j in range(40)])
+                table.add_row(*[f"cell {i},{j}" for j in range(40)])
 
             await body.update(table)
 

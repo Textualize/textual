@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Changed message handlers to use prefix handle\_
 - Renamed messages to drop the Message suffix
 
+### Added
+
+- Added App.measure
+- Added auto_width to Vertical Layout, WindowView, an ScrollView
+- Added big_table.py example
+
 ## [0.1.10] - 2021-08-25
 
 ### Added
