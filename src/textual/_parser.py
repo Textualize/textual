@@ -14,6 +14,7 @@ from typing import (
 
 
 class ParseError(Exception):
+    """A parsing related exception."""
     pass
 
 
@@ -22,32 +23,56 @@ class ParseEOF(ParseError):
 
 
 class Awaitable:
+    """Holds the list of characters that will be processed by the parser."""
     __slots__: list[str] = []
 
 
 class _Read(Awaitable):
+    """Read the feed until a given number of characters is reached."""
+
     __slots__ = ["remaining"]
 
     def __init__(self, count: int) -> None:
+        """
+        Args:
+            count (int): The count of characters to be read from the input.
+
+        Returns:
+            None
+        """
         self.remaining = count
 
     def __repr__(self) -> str:
-        return f"_ReadBytes({self.remaining})"
+        return f"_Read({self.remaining})"
 
 
 class _Read1(Awaitable):
+    """Reads a single character from the input feed."""
+
     __slots__: list[str] = []
 
 
 class _ReadUntil(Awaitable):
+    """Reads the input feed until `max_bytes` is reached."""
+
     __slots__ = ["sep", "max_bytes"]
 
     def __init__(self, sep: str, max_bytes: int | None = None) -> None:
+        """
+        Args:
+            sep (str): Sep defines the token that is used to delimit the input feed.
+            max_bytes (int): The maxium number of bytes to read in the sequence.
+
+        Returns:
+            None
+        """
         self.sep = sep
         self.max_bytes = max_bytes
 
 
 class PeekBuffer(Awaitable):
+    """Peek the current location in the buffer without advancing to the next index."""
+
     __slots__: list[str] = []
 
 
@@ -58,6 +83,8 @@ TokenCallback = Callable[[T], None]
 
 
 class Parser(Generic[T]):
+    """Parses stdin to extract mouse codes and other input."""
+
     read = _Read
     read1 = _Read1
     read_until = _ReadUntil
@@ -72,14 +99,25 @@ class Parser(Generic[T]):
 
     @property
     def is_eof(self) -> bool:
+        """True if the end of the feed is reached."""
+
         return self._eof
 
     def reset(self) -> None:
+        """Reset the input feed back to the starting position."""
+
         self._gen = self.parse(self._tokens.append)
         self._awaiting = next(self._gen)
 
     def feed(self, data: str) -> Iterable[T]:
+        """Performs parsing on a feed of data.
 
+        Args:
+            data (str): The data that will be parsed.
+
+        Returns:
+            Iterable[T]: An Iterable of type T containing items returned by the parser.
+        """
         if self._eof:
             raise ParseError("end of file reached") from None
         if not data:
@@ -155,6 +193,28 @@ class Parser(Generic[T]):
                 yield popleft()
 
     def parse(self, on_token: Callable[[T], None]) -> Generator[Awaitable, str, None]:
+        """Parse data recieved from the input feed. This method should be overriden in
+        the subclass.
+
+        Args:
+            on_token (Callable[[T], None]): A callable that defines the action for each token received.
+
+        Returns:
+            Generator[Awaitable, str, None]: A generator of awaitable, string or None.
+
+        Example:
+
+            The following example defines a subclass that will parse string inputs from the `feed` method.::
+
+            class TestParser(Parser[str]):
+                def parse(self, on_token: Callable[[str], None]) -> Generator[Awaitable, str, None]:
+                    data = yield self.read1()
+                    while True:
+                        data = yield self.read1()
+                        if not data:
+                            break
+                        on_token(data)
+        """
         return
 
 
