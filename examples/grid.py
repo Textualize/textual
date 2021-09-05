@@ -6,7 +6,7 @@ class GridTest(App):
     async def on_mount(self) -> None:
         """Make a simple grid arrangement."""
 
-        grid = await self.view.dock_grid(edge="left",  name="left")
+        grid = await self.view.dock_grid(edge="left", name="left")
 
         grid.add_column(fraction=1, name="left", min_size=20)
         grid.add_column(size=30, name="center")
