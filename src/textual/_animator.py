@@ -8,6 +8,7 @@ from typing import Callable, TypeVar
 
 from dataclasses import dataclass
 
+from ._easing import DEFAULT_EASING, EASING
 from ._timer import Timer
 from ._types import MessageTarget
 
@@ -25,19 +26,6 @@ T = TypeVar("T")
 class Animatable(Protocol):
     def blend(self: T, destination: T, factor: float) -> T:
         ...
-
-
-# https://easings.net/
-EASING = {
-    "none": lambda x: 1.0,
-    "round": lambda x: 0.0 if x < 0.5 else 1.0,
-    "linear": lambda x: x,
-    "in_cubic": lambda x: x * x * x,
-    "in_out_cubic": lambda x: 4 * x * x * x if x < 0.5 else 1 - pow(-2 * x + 2, 3) / 2,
-    "out_cubic": lambda x: 1 - pow(1 - x, 3),
-}
-
-DEFAULT_EASING = "in_out_cubic"
 
 
 @dataclass
