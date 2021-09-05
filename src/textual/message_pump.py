@@ -46,14 +46,11 @@ def _is_coroutine_callable(call: Callable) -> bool:
 
 def _callable_in_thread_pool(call: Callable[..., T]) -> Callable[..., Awaitable[T]]:
     async def inner(*args: Any, **kwargs: Any) -> T:
-        print(call)
         loop = asyncio.get_event_loop()
         # Ensure we run in the same context
-        child = functools.partial(call, *args, **kwargs)
+        bound = functools.partial(call, *args, **kwargs)
         context = contextvars.copy_context()
-        func = context.run
-        args = (child,)
-        return await loop.run_in_executor(None, func, *args)
+        return await loop.run_in_executor(None, context.run, bound)
 
     return inner
 
