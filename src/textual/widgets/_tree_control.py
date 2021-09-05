@@ -15,7 +15,7 @@ from ..reactive import Reactive
 from .._types import MessageTarget
 from ..widget import Widget
 from ..message import Message
-from ..messages import CursorMoveMessage
+from ..messages import CursorMove
 
 
 NodeID = NewType("NodeID", int)
@@ -189,11 +189,11 @@ class TreeControl(Generic[NodeDataType], Widget):
     show_cursor: Reactive[bool] = Reactive(False, layout=True)
 
     def watch_show_cursor(self, value: bool) -> None:
-        self.emit_no_wait(CursorMoveMessage(self, self.cursor_line))
+        self.emit_no_wait(CursorMove(self, self.cursor_line))
 
     def watch_cursor_line(self, value: int) -> None:
         if self.show_cursor:
-            self.emit_no_wait(CursorMoveMessage(self, value + self.gutter.top))
+            self.emit_no_wait(CursorMove(self, value + self.gutter.top))
 
     async def add(
         self,
@@ -309,7 +309,7 @@ if __name__ == "__main__":
         async def on_mount(self, event: events.Mount) -> None:
             await self.view.dock(TreeControl("Tree Root", data="foo"))
 
-        async def message_tree_click(self, message: TreeClick) -> None:
+        async def handle_tree_click(self, message: TreeClick) -> None:
             if message.node.empty:
                 await message.node.add("foo")
                 await message.node.add("bar")

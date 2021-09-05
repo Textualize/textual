@@ -154,7 +154,7 @@ class Calculator(GridView):
             *self.buttons.values(), clear=self.ac, numbers=self.numbers, zero=self.zero
         )
 
-    def message_button_pressed(self, message: ButtonPressed) -> None:
+    def handle_button_pressed(self, message: ButtonPressed) -> None:
         """A message sent by the button widget"""
 
         assert isinstance(message.sender, Button)
@@ -208,7 +208,7 @@ class Calculator(GridView):
 class CalculatorApp(App):
     """The Calculator Application"""
 
-    async def on_mount(self, event: events.Mount) -> None:
+    async def on_mount(self) -> None:
         """Mount the calculator widget."""
         await self.view.dock(Calculator())
 

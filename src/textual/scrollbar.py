@@ -14,27 +14,26 @@ from .widget import Reactive, Widget
 
 
 @rich.repr.auto
-class ScrollUp(Message, bubble=True):
+class ScrollUp(Message):
     """Message sent when clicking above handle."""
 
 
 @rich.repr.auto
-class ScrollDown(Message, bubble=True):
+class ScrollDown(Message):
     """Message sent when clicking below handle."""
 
 
 @rich.repr.auto
-class ScrollLeft(Message, bubble=True):
+class ScrollLeft(Message):
     """Message sent when clicking above handle."""
 
 
 @rich.repr.auto
-class ScrollRight(Message, bubble=True):
+class ScrollRight(Message):
     """Message sent when clicking below handle."""
 
 
-@rich.repr.auto
-class ScrollTo(Message, bubble=True):
+class ScrollTo(Message):
     """Message sent when click and dragging handle."""
 
     def __init__(

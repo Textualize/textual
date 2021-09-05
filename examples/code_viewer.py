@@ -45,7 +45,7 @@ class MyApp(App):
         )
         await self.view.dock(self.body, edge="top")
 
-    async def message_file_click(self, message: FileClick) -> None:
+    async def handle_file_click(self, message: FileClick) -> None:
         """A message sent by the directory tree when a file is clicked."""
 
         syntax: RenderableType

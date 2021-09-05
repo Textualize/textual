@@ -9,9 +9,9 @@ from rich.style import Style
 
 from . import events
 from . import log
+from . import messages
 from .layout import Layout, NoWidget
 from .geometry import Size, Offset, Region
-from .messages import UpdateMessage, LayoutMessage
 from .reactive import Reactive, watch
 
 from .widget import Widget, Widget
@@ -86,25 +86,21 @@ class View(Widget):
     def get_offset(self, widget: Widget) -> Offset:
         return self.layout.get_offset(widget)
 
-    def check_layout(self) -> bool:
-        return super().check_layout() or self.layout.check_update()
+    async def handle_update(self, message: messages.Update) -> None:
+        if self.is_root_view:
+            message.stop()
+            widget = message.widget
+            assert isinstance(widget, Widget)
 
-    async def message_update(self, message: UpdateMessage) -> None:
-        message.stop()
-        widget = message.widget
-        assert isinstance(widget, Widget)
+            display_update = self.layout.update_widget(self.console, widget)
+            if display_update is not None:
+                self.app.display(display_update)
 
-        if message.layout:
-            await self.root_view.refresh_layout()
-            self.log("LAYOUT")
-
-        display_update = self.root_view.layout.update_widget(self.console, widget)
-        if display_update is not None:
-            self.app.display(display_update)
-
-    async def message_layout(self, message: LayoutMessage) -> None:
-        await self.root_view.refresh_layout()
-        self.app.refresh()
+    async def handle_layout(self, message: messages.Layout) -> None:
+        if self.is_root_view:
+            message.stop()
+            await self.refresh_layout()
+            self.app.refresh()
 
     async def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
 
@@ -246,4 +242,4 @@ class View(Widget):
     async def action_toggle(self, name: str) -> None:
         widget = self.named_widgets[name]
         widget.visible = not widget.visible
-        await self.post_message(LayoutMessage(self))
+        await self.post_message(messages.Layout(self))
