@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Changed message handlers to use prefix handle\_
 - Renamed messages to drop the Message suffix
+- Events now bubble by default
 
 ### Added
 

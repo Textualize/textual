@@ -52,11 +52,6 @@ class Shutdown(Event):
     pass
 
 
-# class Repaint(Event, bubble=False):
-#     def can_replace(self, message: "Message") -> bool:
-#         return isinstance(message, Repaint)
-
-
 class Load(Event, bubble=False):
     """
     Sent when the App is running but *before* the terminal is in application mode.
