@@ -18,6 +18,7 @@ from rich.console import Console, RenderableType
 from rich.panel import Panel
 from rich.padding import Padding, PaddingDimensions
 from rich.pretty import Pretty
+from rich.segment import Segment
 from rich.style import Style
 from rich.styled import Styled
 from rich.text import TextType
@@ -29,7 +30,7 @@ from ._context import active_app
 from .geometry import Size
 from .message import Message
 from .message_pump import MessagePump
-from .messages import LayoutMessage, UpdateMessage
+from .messages import Layout, Update
 from .reactive import Reactive, watch
 from ._types import Lines
 
@@ -282,13 +283,14 @@ class Widget(MessagePump):
 
     async def on_idle(self, event: events.Idle) -> None:
         if self.check_layout():
+            self.render_cache = None
             self.reset_check_repaint()
             self.reset_check_layout()
-            await self.emit(LayoutMessage(self))
+            await self.emit(Layout(self))
         elif self.check_repaint():
             self.render_cache = None
             self.reset_check_repaint()
-            await self.emit(UpdateMessage(self, self, layout=False))
+            await self.emit(Update(self, self))
 
     async def focus(self) -> None:
         await self.app.set_focus(self)

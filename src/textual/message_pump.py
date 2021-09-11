@@ -91,8 +91,8 @@ class MessagePump:
     def is_running(self) -> bool:
         return self._running
 
-    def log(self, *args) -> None:
-        return self.app.log(*args)
+    def log(self, *args, **kwargs) -> None:
+        return self.app.log(*args, **kwargs)
 
     def set_parent(self, parent: MessagePump) -> None:
         self._parent = parent
@@ -278,7 +278,7 @@ class MessagePump:
 
     async def on_message(self, message: Message) -> None:
         _rich_traceback_guard = True
-        method_name = f"message_{message.name}"
+        method_name = f"handle_{message.name}"
 
         method = getattr(self, method_name, None)
         if method is not None:

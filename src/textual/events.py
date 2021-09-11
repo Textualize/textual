@@ -23,7 +23,7 @@ class Event(Message):
         return
         yield
 
-    def __init_subclass__(cls, bubble: bool = False, verbosity: int = 1) -> None:
+    def __init_subclass__(cls, bubble: bool = True, verbosity: int = 1) -> None:
         super().__init_subclass__(bubble=bubble, verbosity=verbosity)
 
 
@@ -52,12 +52,7 @@ class Shutdown(Event):
     pass
 
 
-class Repaint(Event, bubble=False):
-    def can_replace(self, message: "Message") -> bool:
-        return isinstance(message, Repaint)
-
-
-class Load(Event):
+class Load(Event, bubble=False):
     """
     Sent when the App is running but *before* the terminal is in application mode.
 
@@ -68,7 +63,7 @@ class Load(Event):
     """
 
 
-class Idle(Event):
+class Idle(Event, bubble=False):
     """Sent when there are no more items in the message queue.
 
     This is a psuedo-event in that it is created by the Textual system and doesn't go
@@ -77,7 +72,7 @@ class Idle(Event):
     """
 
 
-class Action(Event, bubble=True):
+class Action(Event):
     __slots__ = ["action"]
 
     def __init__(self, sender: MessageTarget, action: str) -> None:
@@ -88,7 +83,7 @@ class Action(Event, bubble=True):
         yield "action", self.action
 
 
-class Resize(Event, verbosity=2):
+class Resize(Event, verbosity=2, bubble=False):
     """Sent when the app or widget has been resized."""
 
     __slots__ = ["size"]
@@ -120,19 +115,19 @@ class Resize(Event, verbosity=2):
         yield self.height
 
 
-class Mount(Event):
+class Mount(Event, bubble=False):
     """Sent when a widget is *mounted* and may receive messages."""
 
 
-class Unmount(Event):
+class Unmount(Event, bubble=False):
     """Sent when a widget is unmounted, and may no longer receive messages."""
 
 
-class Show(Event):
+class Show(Event, bubble=False):
     """Sent when a widget has become visible."""
 
 
-class Hide(Event):
+class Hide(Event, bubble=False):
     """Sent when a widget has been hidden.
 
     A widget may be hidden by setting its `visible` flag to `False`, if it is no longer in a layout,
@@ -142,7 +137,7 @@ class Hide(Event):
 
 
 @rich.repr.auto
-class MouseCapture(Event):
+class MouseCapture(Event, bubble=False):
     """Sent when the mouse has been captured.
 
     When a mouse has been captures, all further mouse events will be sent to the capturing widget.
@@ -164,7 +159,7 @@ class MouseCapture(Event):
 
 
 @rich.repr.auto
-class MouseRelease(Event):
+class MouseRelease(Event, bubble=False):
     """Mouse has been released."""
 
     def __init__(self, sender: MessageTarget, mouse_position: Offset) -> None:
@@ -180,12 +175,12 @@ class MouseRelease(Event):
         yield None, self.mouse_position
 
 
-class InputEvent(Event, bubble=True):
+class InputEvent(Event):
     pass
 
 
 @rich.repr.auto
-class Key(InputEvent, bubble=True):
+class Key(InputEvent):
     """Sent when the user hits a key on the keyboard"""
 
     __slots__ = ["key"]
@@ -205,7 +200,7 @@ class Key(InputEvent, bubble=True):
 
 
 @rich.repr.auto
-class MouseEvent(InputEvent):
+class MouseEvent(InputEvent, bubble=True):
     """Sent in response to a mouse event"""
 
     __slots__ = [
@@ -324,17 +319,17 @@ class MouseEvent(InputEvent):
 
 
 @rich.repr.auto
-class MouseMove(MouseEvent, verbosity=3):
+class MouseMove(MouseEvent, verbosity=3, bubble=True):
     """Sent when the mouse cursor moves."""
 
 
 @rich.repr.auto
-class MouseDown(MouseEvent):
+class MouseDown(MouseEvent, bubble=True):
     pass
 
 
 @rich.repr.auto
-class MouseUp(MouseEvent):
+class MouseUp(MouseEvent, bubble=True):
     pass
 
 
@@ -351,16 +346,16 @@ class MouseScrollUp(MouseScrollDown, bubble=True):
     pass
 
 
-class Click(MouseEvent):
+class Click(MouseEvent, bubble=True):
     pass
 
 
-class DoubleClick(MouseEvent):
+class DoubleClick(MouseEvent, bubble=True):
     pass
 
 
 @rich.repr.auto
-class Timer(Event, verbosity=3):
+class Timer(Event, verbosity=3, bubble=False):
     __slots__ = ["time", "count", "callback"]
 
     def __init__(
@@ -380,22 +375,22 @@ class Timer(Event, verbosity=3):
         yield "count", self.count
 
 
-class Enter(Event):
+class Enter(Event, bubble=False):
     pass
 
 
-class Leave(Event):
+class Leave(Event, bubble=False):
     pass
 
 
-class Focus(Event):
+class Focus(Event, bubble=False):
     pass
 
 
-class Blur(Event):
+class Blur(Event, bubble=False):
     pass
 
 
-class Update(Event):
-    def can_replace(self, event: Message) -> bool:
-        return isinstance(event, Update) and event.sender == self.sender
+# class Update(Event, bubble=False):
+#     def can_replace(self, event: Message) -> bool:
+#         return isinstance(event, Update) and event.sender == self.sender

@@ -9,9 +9,9 @@ from rich.style import Style
 
 from . import events
 from . import log
+from . import messages
 from .layout import Layout, NoWidget
 from .geometry import Size, Offset, Region
-from .messages import UpdateMessage, LayoutMessage
 from .reactive import Reactive, watch
 
 from .widget import Widget, Widget
@@ -43,19 +43,17 @@ class View(Widget):
         super().__init_subclass__(**kwargs)
 
     background: Reactive[str] = Reactive("")
+    scroll_x: Reactive[int] = Reactive(0)
+    scroll_y: Reactive[int] = Reactive(0)
+    virtual_size = Reactive(Size(0, 0))
 
     async def watch_background(self, value: str) -> None:
         self.layout.background = value
         self.app.refresh()
 
-    scroll_x: Reactive[int] = Reactive(0)
-    scroll_y: Reactive[int] = Reactive(0)
-
     @property
     def scroll(self) -> Offset:
         return Offset(self.scroll_x, self.scroll_y)
-
-    virtual_size: Reactive[Size] = Reactive(Size(0, 0))
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -86,25 +84,21 @@ class View(Widget):
     def get_offset(self, widget: Widget) -> Offset:
         return self.layout.get_offset(widget)
 
-    def check_layout(self) -> bool:
-        return super().check_layout() or self.layout.check_update()
+    async def handle_update(self, message: messages.Update) -> None:
+        if self.is_root_view:
+            message.stop()
+            widget = message.widget
+            assert isinstance(widget, Widget)
 
-    async def message_update(self, message: UpdateMessage) -> None:
-        message.stop()
-        widget = message.widget
-        assert isinstance(widget, Widget)
+            display_update = self.layout.update_widget(self.console, widget)
+            if display_update is not None:
+                self.app.display(display_update)
 
-        if message.layout:
-            await self.root_view.refresh_layout()
-            self.log("LAYOUT")
-
-        display_update = self.root_view.layout.update_widget(self.console, widget)
-        if display_update is not None:
-            self.app.display(display_update)
-
-    async def message_layout(self, message: LayoutMessage) -> None:
-        await self.root_view.refresh_layout()
-        self.app.refresh()
+    async def handle_layout(self, message: messages.Layout) -> None:
+        if self.is_root_view:
+            message.stop()
+            await self.refresh_layout()
+            self.app.refresh()
 
     async def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
 
@@ -122,34 +116,36 @@ class View(Widget):
         self.refresh()
 
     async def refresh_layout(self) -> None:
-        await self.layout.mount_all(self)
-        if not self.is_root_view:
-            await self.app.view.refresh_layout()
-            return
+        try:
+            await self.layout.mount_all(self)
+            if not self.is_root_view:
+                await self.app.view.refresh_layout()
+                return
 
-        if not self.size:
-            return
+            if not self.size:
+                return
 
-        width, height = self.console.size
-        hidden, shown, resized = self.layout.reflow(
-            self.console, width, height, self.scroll
-        )
+            hidden, shown, resized = self.layout.reflow(self, Size(*self.console.size))
 
-        assert self.layout.map is not None
-        self.virtual_size = self.layout.map.virtual_size
+            assert self.layout.map is not None
+            # self.virtual_size = self.layout.map.virtual_size
 
-        for widget in hidden:
-            widget.post_message_no_wait(events.Hide(self))
-        for widget in shown:
-            widget.post_message_no_wait(events.Show(self))
+            for widget in hidden:
+                widget.post_message_no_wait(events.Hide(self))
+            for widget in shown:
+                widget.post_message_no_wait(events.Show(self))
 
-        send_resize = shown
-        send_resize.update(resized)
+            send_resize = shown
+            send_resize.update(resized)
 
-        for widget, region, unclipped_region in self.layout:
-            widget._update_size(unclipped_region.size)
-            if widget in send_resize:
-                widget.post_message_no_wait(events.Resize(self, unclipped_region.size))
+            for widget, region, unclipped_region in self.layout:
+                widget._update_size(unclipped_region.size)
+                if widget in send_resize:
+                    widget.post_message_no_wait(
+                        events.Resize(self, unclipped_region.size)
+                    )
+        except:
+            self.app.panic()
 
     async def on_resize(self, event: events.Resize) -> None:
         self._update_size(event.size)
@@ -246,4 +242,4 @@ class View(Widget):
     async def action_toggle(self, name: str) -> None:
         widget = self.named_widgets[name]
         widget.visible = not widget.visible
-        await self.post_message(LayoutMessage(self))
+        await self.post_message(messages.Layout(self))

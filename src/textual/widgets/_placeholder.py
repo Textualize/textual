@@ -10,6 +10,7 @@ import rich.repr
 from logging import getLogger
 
 from .. import events
+from ..geometry import Offset
 from ..widget import Reactive, Widget
 
 log = getLogger("rich")

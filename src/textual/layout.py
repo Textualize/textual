@@ -50,24 +50,38 @@ class ReflowResult(NamedTuple):
     resized: set[Widget]
 
 
+class WidgetPlacement(NamedTuple):
+
+    region: Region
+    widget: Widget | None = None
+    order: tuple[int, ...] = ()
+
+
+@rich.repr.auto
 class LayoutUpdate:
-    def __init__(self, lines: Lines, x: int, y: int) -> None:
+    def __init__(self, lines: Lines, region: Region) -> None:
         self.lines = lines
-        self.x = x
-        self.y = y
+        self.region = region
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         yield Control.home().segment
-        x = self.x
+        x = self.region.x
         new_line = Segment.line()
         move_to = Control.move_to
-        for last, (y, line) in loop_last(enumerate(self.lines, self.y)):
+        for last, (y, line) in loop_last(enumerate(self.lines, self.region.y)):
             yield move_to(x, y).segment
             yield from line
             if not last:
                 yield new_line
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        x, y, width, height = self.region
+        yield "x", x
+        yield "y", y
+        yield "width", width
+        yield "height", height
 
 
 class Layout(ABC):
@@ -95,24 +109,16 @@ class Layout(ABC):
 
     def reset(self) -> None:
         self._cuts = None
-        # if self._require_update:
-        #     self.regions.clear()
-        #     self._layout_map = None
 
-    def reflow(
-        self, console: Console, width: int, height: int, scroll: Offset
-    ) -> ReflowResult:
+    def reflow(self, view: View, size: Size) -> ReflowResult:
         self.reset()
 
-        self.width = width
-        self.height = height
+        self.width = size.width
+        self.height = size.height
 
-        map = self.generate_map(
-            console,
-            Size(width, height),
-            Region(0, 0, width, height),
-            scroll,
-        )
+        map = LayoutMap(size)
+        map.add_widget(view, size.region, (), size.region)
+
         self._require_update = False
 
         old_widgets = set() if self.map is None else set(self.map.keys())
@@ -146,9 +152,7 @@ class Layout(ABC):
         ...
 
     @abstractmethod
-    def generate_map(
-        self, console: Console, size: Size, viewport: Region, scroll: Offset
-    ) -> LayoutMap:
+    def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 
         Args:
@@ -157,7 +161,7 @@ class Layout(ABC):
             viewport (Region): Screen relative viewport.
 
         Returns:
-            LayoutMap: [description]
+            Iterable[WidgetPlacement]: An iterable of widget location
         """
 
     async def mount_all(self, view: "View") -> None:
@@ -176,6 +180,7 @@ class Layout(ABC):
                 yield widget, region.intersection(clip), region
 
     def get_offset(self, widget: Widget) -> Offset:
+        """Get the offset of a widget."""
         try:
             return self.map[widget].region.origin
         except KeyError:
@@ -265,7 +270,7 @@ class Layout(ABC):
 
             lines = widget._get_lines()
 
-            if clip in region:
+            if region in clip:
                 yield region, clip, lines
             elif clip.overlaps(region):
                 new_region = region.intersection(clip)
@@ -380,6 +385,5 @@ class Layout(ABC):
 
         update_region = region.intersection(clip)
         update_lines = self.render(console, crop=update_region).lines
-        update = LayoutUpdate(update_lines, update_region.x, update_region.y)
-
+        update = LayoutUpdate(update_lines, update_region)
         return update

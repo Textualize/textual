@@ -1,0 +1,9 @@
+[run]
+omit =
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if TYPE_CHECKING:
+    if __name__ == "__main__":
+    @overload

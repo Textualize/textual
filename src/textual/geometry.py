@@ -74,6 +74,7 @@ class Size(NamedTuple):
     height: int
 
     def __bool__(self) -> bool:
+        """A Size is Falsey if it has area 0."""
         return self.width * self.height != 0
 
     @property
@@ -90,6 +91,16 @@ class Size(NamedTuple):
         """Get a region of the same size."""
         width, height = self
         return Region(0, 0, width, height)
+
+    def __add__(self, other: tuple[int, int]) -> Size:
+        width, height = self
+        width2, height2 = other
+        return Size(width + width2, height + height2)
+
+    def __sub__(self, other: tuple[int, int]) -> Size:
+        width, height = self
+        width2, height2 = other
+        return Size(width - width2, height - height2)
 
     def contains(self, x: int, y: int) -> bool:
         """Check if a point is in the size.
@@ -193,10 +204,12 @@ class Region(NamedTuple):
 
     @property
     def x_max(self) -> int:
+        """Maximum X value (non inclusive)"""
         return self.x + self.width
 
     @property
     def y_max(self) -> int:
+        """Maximum Y value (non inclusive)"""
         return self.y + self.height
 
     @property
@@ -226,10 +239,12 @@ class Region(NamedTuple):
 
     @property
     def x_range(self) -> range:
+        """A range object for X coordinates"""
         return range(self.x, self.x + self.width)
 
     @property
     def y_range(self) -> range:
+        """A range object for Y coordinates"""
         return range(self.y, self.y + self.height)
 
     def __add__(self, other: Any) -> Region:
@@ -245,6 +260,19 @@ class Region(NamedTuple):
             x, y, width, height = self
             return Region(x - ox, y - oy, width, height)
         return NotImplemented
+
+    def expand(self, size: tuple[int, int]) -> Region:
+        """Add additional height.
+
+        Args:
+            size (tuple[int, int]): Additional width and height.
+
+        Returns:
+            Region: A new region.
+        """
+        add_width, add_height = size
+        x, y, width, height = self
+        return Region(x, y, width + add_width, height + add_height)
 
     def overlaps(self, other: Region) -> bool:
         """Check if another region overlaps this region.
