@@ -73,7 +73,7 @@ async def test_execute_in_thread_callable_class():
 
         def __call__(self) -> int:
             return 1
-    
+
     class TargetAsync:
         async def __call__(self) -> int:
             return 1
