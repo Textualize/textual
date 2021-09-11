@@ -40,7 +40,7 @@ class VerticalLayout(Layout):
 
     def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
         index = 0
-        width, height = size
+        width, _height = size
         gutter_height, gutter_width = self.gutter
         render_width = (
             max(width, self._max_widget_width) + gutter_width * 2
@@ -65,10 +65,4 @@ class VerticalLayout(Layout):
             yield WidgetPlacement(region, widget, (self.z, index))
             total_region = total_region.union(region)
 
-        yield WidgetPlacement(total_region)
-        # x, y, width, height = map.contents_region
-        # map.contents_region = Region(
-        #     x, y, width + self.gutter[0], height + self.gutter[1]
-        # )
-
-        # return map
+        yield WidgetPlacement(total_region.expand(self.gutter))

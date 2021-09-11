@@ -261,6 +261,19 @@ class Region(NamedTuple):
             return Region(x - ox, y - oy, width, height)
         return NotImplemented
 
+    def expand(self, size: tuple[int, int]) -> Region:
+        """Add additional height.
+
+        Args:
+            size (tuple[int, int]): Additional width and height.
+
+        Returns:
+            Region: A new region.
+        """
+        add_width, add_height = size
+        x, y, width, height = self
+        return Region(x, y, width + add_width, height + add_height)
+
     def overlaps(self, other: Region) -> bool:
         """Check if another region overlaps this region.
 
