@@ -19,12 +19,7 @@ class RenderRegion(NamedTuple):
 class LayoutMap:
     def __init__(self, size: Size) -> None:
         self.size = size
-        self.contents_region = Region(0, 0, 0, 0)
         self.widgets: dict[Widget, RenderRegion] = {}
-
-    @property
-    def virtual_size(self) -> Size:
-        return self.contents_region.size
 
     def __getitem__(self, widget: Widget) -> RenderRegion:
         return self.widgets[widget]
@@ -54,21 +49,20 @@ class LayoutMap:
             return
 
         self.widgets[widget] = RenderRegion(region + widget.layout_offset, order, clip)
-        self.contents_region = self.contents_region.union(region + widget.layout_offset)
 
         if isinstance(widget, View):
-            widget_placements = list(
-                widget.layout.arrange(region.size, clip, widget.scroll)
-            )
-            total_region = Region(0, 0, 0, 0)
-            for placement in widget_placements:
-                total_region = total_region.union(placement.region)
+            scroll = widget.scroll
+            total_region = region.size.region
+            sub_clip = clip.intersection(region)
 
+            arrangement = widget.layout.arrange(region.size, scroll)
+            for sub_region, sub_widget, sub_order in arrangement:
+                total_region = total_region.union(sub_region)
+                if sub_widget is not None:
+                    self.add_widget(
+                        sub_widget,
+                        sub_region + region.origin - scroll,
+                        sub_order,
+                        sub_clip,
+                    )
             widget.virtual_size = total_region.size
-            log(widget, total_region, widget.virtual_size)
-            for sub_widget, sub_region, sub_order, sub_clip in widget_placements:
-                sub_region += region.origin
-                sub_clip = sub_clip.intersection(clip)
-                # sub_clip = (sub_clip + region.origin).intersection(clip)
-                # sub_clip = sub_clip + region.origin
-                self.add_widget(sub_widget, sub_region, sub_order, sub_clip)

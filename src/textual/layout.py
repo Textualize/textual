@@ -52,10 +52,9 @@ class ReflowResult(NamedTuple):
 
 class WidgetPlacement(NamedTuple):
 
-    widget: Widget
     region: Region
-    order: tuple[int, ...]
-    clip: Region
+    widget: Widget | None = None
+    order: tuple[int, ...] = ()
 
 
 @rich.repr.auto
@@ -111,29 +110,15 @@ class Layout(ABC):
     def reset(self) -> None:
         self._cuts = None
 
-    def build_map(self, console: Console, scroll: Offset) -> LayoutMap:
-        size = Size(console.width, console.height)
-        layout_map = LayoutMap(size)
-        for widget, region, order, clip in self.arrange(size, size.region, scroll):
-            layout_map.add_widget(widget, region, order, clip)
-        return layout_map
-
-    def reflow(
-        self, console: Console, width: int, height: int, scroll: Offset
-    ) -> ReflowResult:
+    def reflow(self, view: View, size: Size) -> ReflowResult:
         self.reset()
 
-        self.width = width
-        self.height = height
+        self.width = size.width
+        self.height = size.height
 
-        # map = self.arrange(
-        #     console,
-        #     Size(width, height),
-        #     Region(0, 0, width, height),
-        #     scroll,
-        # )
+        map = LayoutMap(size)
+        map.add_widget(view, size.region, (), size.region)
 
-        map = self.build_map(console, scroll)
         self._require_update = False
 
         old_widgets = set() if self.map is None else set(self.map.keys())
@@ -167,9 +152,7 @@ class Layout(ABC):
         ...
 
     @abstractmethod
-    def arrange(
-        self, size: Size, viewport: Region, scroll: Offset
-    ) -> Iterable[WidgetPlacement]:
+    def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 
         Args:
@@ -403,6 +386,4 @@ class Layout(ABC):
         update_region = region.intersection(clip)
         update_lines = self.render(console, crop=update_region).lines
         update = LayoutUpdate(update_lines, update_region)
-        log(update)
-
         return update

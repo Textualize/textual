@@ -38,9 +38,7 @@ class VerticalLayout(Layout):
     def get_widgets(self) -> Iterable[Widget]:
         return self._widgets
 
-    def arrange(
-        self, size: Size, viewport: Region, scroll: Offset
-    ) -> Iterable[WidgetPlacement]:
+    def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
         index = 0
         width, height = size
         gutter_height, gutter_width = self.gutter
@@ -53,6 +51,8 @@ class VerticalLayout(Layout):
         x = gutter_width
         y = gutter_height
 
+        total_region = size.region
+
         for widget in self._widgets:
             if (
                 not widget.render_cache
@@ -62,11 +62,13 @@ class VerticalLayout(Layout):
             assert widget.render_cache is not None
             render_height = widget.render_cache.size.height
             region = Region(x, y, render_width, render_height)
-            yield WidgetPlacement(widget, region - scroll, (self.z, index), viewport)
+            yield WidgetPlacement(region, widget, (self.z, index))
+            total_region = total_region.union(region)
 
+        yield WidgetPlacement(total_region)
         # x, y, width, height = map.contents_region
         # map.contents_region = Region(
         #     x, y, width + self.gutter[0], height + self.gutter[1]
         # )
 
-        return map
+        # return map

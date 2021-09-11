@@ -173,16 +173,16 @@ class ScrollView(View):
         self.animate("x", self.target_x, duration=1, easing="out_cubic")
         self.animate("y", self.target_y, duration=1, easing="out_cubic")
 
-    async def handle_scroll_up(self, message: Message) -> None:
+    async def handle_scroll_up(self) -> None:
         self.page_up()
 
-    async def handle_scroll_down(self, message: Message) -> None:
+    async def handle_scroll_down(self) -> None:
         self.page_down()
 
-    async def handle_scroll_left(self, message: Message) -> None:
+    async def handle_scroll_left(self) -> None:
         self.page_left()
 
-    async def handle_scroll_right(self, message: Message) -> None:
+    async def handle_scroll_right(self) -> None:
         self.page_right()
 
     async def handle_scroll_to(self, message: ScrollTo) -> None:
@@ -193,11 +193,10 @@ class ScrollView(View):
         self.animate("x", self.target_x, speed=150, easing="out_cubic")
         self.animate("y", self.target_y, speed=150, easing="out_cubic")
 
-    def handle_window_change(self) -> None:
-        virtual_width, virtual_height = self.virtual_size
+    def handle_window_change(self, message) -> None:
+        virtual_width, virtual_height = self.window.virtual_size
         width, height = self.size
 
-        self.log(self.virtual_size, self.size)
         self.x = self.validate_x(self.x)
         self.y = self.validate_y(self.y)
 

@@ -65,8 +65,8 @@ class MessagePump:
     def is_running(self) -> bool:
         return self._running
 
-    def log(self, *args) -> None:
-        return self.app.log(*args)
+    def log(self, *args, **kwargs) -> None:
+        return self.app.log(*args, **kwargs)
 
     def set_parent(self, parent: MessagePump) -> None:
         self._parent = parent

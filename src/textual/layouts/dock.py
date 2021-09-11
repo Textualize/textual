@@ -48,9 +48,7 @@ class DockLayout(Layout):
         for dock in self.docks:
             yield from dock.widgets
 
-    def arrange(
-        self, size: Size, viewport: Region, scroll: Offset
-    ) -> Iterable[WidgetPlacement]:
+    def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
 
         map: LayoutMap = LayoutMap(size)
         width, height = size
@@ -85,11 +83,11 @@ class DockLayout(Layout):
                         break
                     total += layout_size
                     yield WidgetPlacement(
-                        widget, Region(x, render_y, width, layout_size), order, viewport
+                        Region(x, render_y, width, layout_size), widget, order
                     )
                     render_y += layout_size
                     remaining = max(0, remaining - layout_size)
-                region = Region(x, y + total, width, height - total) - scroll
+                region = Region(x, y + total, width, height - total)
 
             elif dock.edge == "bottom":
                 sizes = layout_resolve(height, dock_options)
@@ -104,14 +102,13 @@ class DockLayout(Layout):
                         break
                     total += layout_size
                     yield WidgetPlacement(
-                        widget,
                         Region(x, render_y - layout_size, width, layout_size),
+                        widget,
                         order,
-                        viewport,
                     )
                     render_y -= layout_size
                     remaining = max(0, remaining - layout_size)
-                region = Region(x, y, width, height - total) - scroll
+                region = Region(x, y, width, height - total)
 
             elif dock.edge == "left":
                 sizes = layout_resolve(width, dock_options)
@@ -126,14 +123,13 @@ class DockLayout(Layout):
                         break
                     total += layout_size
                     yield WidgetPlacement(
-                        widget,
                         Region(render_x, y, layout_size, height),
+                        widget,
                         order,
-                        viewport,
                     )
                     render_x += layout_size
                     remaining = max(0, remaining - layout_size)
-                region = Region(x + total, y, width - total, height) - scroll
+                region = Region(x + total, y, width - total, height)
 
             elif dock.edge == "right":
                 sizes = layout_resolve(width, dock_options)
@@ -148,14 +144,13 @@ class DockLayout(Layout):
                         break
                     total += layout_size
                     yield WidgetPlacement(
-                        widget,
                         Region(render_x - layout_size, y, layout_size, height),
+                        widget,
                         order,
-                        viewport,
                     )
                     render_x -= layout_size
                     remaining = max(0, remaining - layout_size)
-                region = Region(x, y, width - total, height) - scroll
+                region = Region(x, y, width - total, height)
 
             layers[dock.z] = region
 

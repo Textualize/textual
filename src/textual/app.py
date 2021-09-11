@@ -124,7 +124,7 @@ class App(MessagePump):
     def view(self) -> DockView:
         return self._view_stack[-1]
 
-    def log(self, *args: Any, verbosity: int = 1) -> None:
+    def log(self, *args: Any, verbosity: int = 1, **kwargs) -> None:
         """Write to logs.
 
         Args:
@@ -134,6 +134,10 @@ class App(MessagePump):
         try:
             if self.log_file and verbosity <= self.log_verbosity:
                 output = f" ".join(str(arg) for arg in args)
+                if kwargs:
+                    output += " " + " ".join(
+                        f"{key}={value}" for key, value in kwargs.items()
+                    )
                 self.log_file.write(output + "\n")
                 self.log_file.flush()
         except Exception:
@@ -452,6 +456,7 @@ class App(MessagePump):
     async def broker_event(
         self, event_name: str, event: events.Event, default_namespace: object | None
     ) -> bool:
+        event.stop()
         try:
             style = getattr(event, "style")
         except AttributeError:
@@ -471,7 +476,6 @@ class App(MessagePump):
         return True
 
     async def on_key(self, event: events.Key) -> None:
-        # self.log("App.on_key")
         await self.press(event.key)
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:

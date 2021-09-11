@@ -43,19 +43,17 @@ class View(Widget):
         super().__init_subclass__(**kwargs)
 
     background: Reactive[str] = Reactive("")
+    scroll_x: Reactive[int] = Reactive(0)
+    scroll_y: Reactive[int] = Reactive(0)
+    virtual_size = Reactive(Size(0, 0))
 
     async def watch_background(self, value: str) -> None:
         self.layout.background = value
         self.app.refresh()
 
-    scroll_x: Reactive[int] = Reactive(0)
-    scroll_y: Reactive[int] = Reactive(0)
-
     @property
     def scroll(self) -> Offset:
         return Offset(self.scroll_x, self.scroll_y)
-
-    virtual_size: Reactive[Size] = Reactive(Size(0, 0))
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -127,16 +125,10 @@ class View(Widget):
             if not self.size:
                 return
 
-            # if self.layout._layout_map is not None:
-            #     self.log(self.layout._layout_map.widgets)
-
-            width, height = self.console.size
-            hidden, shown, resized = self.layout.reflow(
-                self.console, width, height, self.scroll
-            )
+            hidden, shown, resized = self.layout.reflow(self, Size(*self.console.size))
 
             assert self.layout.map is not None
-            self.virtual_size = self.layout.map.virtual_size
+            # self.virtual_size = self.layout.map.virtual_size
 
             for widget in hidden:
                 widget.post_message_no_wait(events.Hide(self))
