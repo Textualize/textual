@@ -2,11 +2,15 @@
 
 ![screenshot](./imgs/textual.png)
 
-Textual is a TUI (Text User Interface) framework for Python inspired by modern web development. Currently a work in progress, but usable by brave souls who don't mind some API instability between updates.
+Textual is a TUI (Text User Interface) framework for Python inspired by modern web development.
 
-Textual currently runs on MacOS / Linux only. Windows support is in the pipeline.
+**NOTE:** This project is urrently a work in progress, but usable by brave souls who don't mind some API instability between updates.
 
 Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or post in Discussions if you have any requests / suggestions.
+
+## Compatibility
+
+Textual currently runs on **MacOS / Linux only**. Windows support is in the pipeline.
 
 ## How it works
 
