@@ -7,7 +7,7 @@ from rich.measure import Measurement
 
 from .. import log
 from ..geometry import Offset, Region, Size
-from ..layout import Layout
+from ..layout import Layout, WidgetPlacement
 from ..layout_map import LayoutMap
 from ..widget import Widget
 
@@ -38,9 +38,9 @@ class VerticalLayout(Layout):
     def get_widgets(self) -> Iterable[Widget]:
         return self._widgets
 
-    def generate_map(
-        self, console: Console, size: Size, viewport: Region, scroll: Offset
-    ) -> LayoutMap:
+    def arrange(
+        self, size: Size, viewport: Region, scroll: Offset
+    ) -> Iterable[WidgetPlacement]:
         index = 0
         width, height = size
         gutter_height, gutter_width = self.gutter
@@ -52,10 +52,6 @@ class VerticalLayout(Layout):
 
         x = gutter_width
         y = gutter_height
-        map: LayoutMap = LayoutMap(size)
-
-        def add_widget(widget: Widget, region: Region, clip: Region) -> None:
-            map.add_widget(console, widget, region, (self.z, index), clip)
 
         for widget in self._widgets:
             if (
@@ -66,11 +62,11 @@ class VerticalLayout(Layout):
             assert widget.render_cache is not None
             render_height = widget.render_cache.size.height
             region = Region(x, y, render_width, render_height)
-            add_widget(widget, region - scroll, viewport)
+            yield WidgetPlacement(widget, region - scroll, (self.z, index), viewport)
 
-        x, y, width, height = map.contents_region
-        map.contents_region = Region(
-            x, y, width + self.gutter[0], height + self.gutter[1]
-        )
+        # x, y, width, height = map.contents_region
+        # map.contents_region = Region(
+        #     x, y, width + self.gutter[0], height + self.gutter[1]
+        # )
 
         return map

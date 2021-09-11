@@ -50,6 +50,14 @@ class ReflowResult(NamedTuple):
     resized: set[Widget]
 
 
+class WidgetPlacement(NamedTuple):
+
+    widget: Widget
+    region: Region
+    order: tuple[int, ...]
+    clip: Region
+
+
 @rich.repr.auto
 class LayoutUpdate:
     def __init__(self, lines: Lines, region: Region) -> None:
@@ -103,6 +111,13 @@ class Layout(ABC):
     def reset(self) -> None:
         self._cuts = None
 
+    def build_map(self, console: Console, scroll: Offset) -> LayoutMap:
+        size = Size(console.width, console.height)
+        layout_map = LayoutMap(size)
+        for widget, region, order, clip in self.arrange(size, size.region, scroll):
+            layout_map.add_widget(widget, region, order, clip)
+        return layout_map
+
     def reflow(
         self, console: Console, width: int, height: int, scroll: Offset
     ) -> ReflowResult:
@@ -111,12 +126,14 @@ class Layout(ABC):
         self.width = width
         self.height = height
 
-        map = self.generate_map(
-            console,
-            Size(width, height),
-            Region(0, 0, width, height),
-            scroll,
-        )
+        # map = self.arrange(
+        #     console,
+        #     Size(width, height),
+        #     Region(0, 0, width, height),
+        #     scroll,
+        # )
+
+        map = self.build_map(console, scroll)
         self._require_update = False
 
         old_widgets = set() if self.map is None else set(self.map.keys())
@@ -150,9 +167,9 @@ class Layout(ABC):
         ...
 
     @abstractmethod
-    def generate_map(
-        self, console: Console, size: Size, viewport: Region, scroll: Offset
-    ) -> LayoutMap:
+    def arrange(
+        self, size: Size, viewport: Region, scroll: Offset
+    ) -> Iterable[WidgetPlacement]:
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 
         Args:
@@ -161,7 +178,7 @@ class Layout(ABC):
             viewport (Region): Screen relative viewport.
 
         Returns:
-            LayoutMap: [description]
+            Iterable[WidgetPlacement]: An iterable of widget location
         """
 
     async def mount_all(self, view: "View") -> None:

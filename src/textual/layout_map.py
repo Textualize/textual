@@ -4,6 +4,7 @@ from rich.console import Console
 
 from typing import ItemsView, KeysView, ValuesView, NamedTuple
 
+from . import log
 from .geometry import Region, Size
 
 from .widget import Widget
@@ -42,7 +43,6 @@ class LayoutMap:
 
     def add_widget(
         self,
-        console: Console,
         widget: Widget,
         region: Region,
         order: tuple[int, ...],
@@ -50,16 +50,25 @@ class LayoutMap:
     ) -> None:
         from .view import View
 
-        region += widget.layout_offset
-        self.widgets[widget] = RenderRegion(region, order, clip)
-        self.contents_region = self.contents_region.union(region)
+        if widget in self.widgets:
+            return
+
+        self.widgets[widget] = RenderRegion(region + widget.layout_offset, order, clip)
+        self.contents_region = self.contents_region.union(region + widget.layout_offset)
 
         if isinstance(widget, View):
-            sub_map = widget.layout.generate_map(
-                console, region.size, clip, widget.scroll
+            widget_placements = list(
+                widget.layout.arrange(region.size, clip, widget.scroll)
             )
-            widget.virtual_size = sub_map.virtual_size
-            for sub_widget, (sub_region, sub_order, sub_clip) in sub_map.items():
+            total_region = Region(0, 0, 0, 0)
+            for placement in widget_placements:
+                total_region = total_region.union(placement.region)
+
+            widget.virtual_size = total_region.size
+            log(widget, total_region, widget.virtual_size)
+            for sub_widget, sub_region, sub_order, sub_clip in widget_placements:
                 sub_region += region.origin
                 sub_clip = sub_clip.intersection(clip)
-                self.add_widget(console, sub_widget, sub_region, sub_order, sub_clip)
+                # sub_clip = (sub_clip + region.origin).intersection(clip)
+                # sub_clip = sub_clip + region.origin
+                self.add_widget(sub_widget, sub_region, sub_order, sub_clip)

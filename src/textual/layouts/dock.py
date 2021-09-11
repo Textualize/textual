@@ -9,7 +9,7 @@ from rich.console import Console
 
 from .._layout_resolve import layout_resolve
 from ..geometry import Offset, Region, Size
-from ..layout import Layout
+from ..layout import Layout, WidgetPlacement
 from ..layout_map import LayoutMap
 
 if sys.version_info >= (3, 8):
@@ -48,17 +48,14 @@ class DockLayout(Layout):
         for dock in self.docks:
             yield from dock.widgets
 
-    def generate_map(
-        self, console: Console, size: Size, viewport: Region, scroll: Offset
-    ) -> LayoutMap:
+    def arrange(
+        self, size: Size, viewport: Region, scroll: Offset
+    ) -> Iterable[WidgetPlacement]:
 
         map: LayoutMap = LayoutMap(size)
         width, height = size
         layout_region = Region(0, 0, width, height)
         layers: dict[int, Region] = defaultdict(lambda: layout_region)
-
-        def add_widget(widget: Widget, region: Region, order: tuple[int, ...]):
-            map.add_widget(console, widget, region, order, viewport)
 
         for index, dock in enumerate(self.docks):
             dock_options = [
@@ -87,7 +84,9 @@ class DockLayout(Layout):
                     if not layout_size:
                         break
                     total += layout_size
-                    add_widget(widget, Region(x, render_y, width, layout_size), order)
+                    yield WidgetPlacement(
+                        widget, Region(x, render_y, width, layout_size), order, viewport
+                    )
                     render_y += layout_size
                     remaining = max(0, remaining - layout_size)
                 region = Region(x, y + total, width, height - total) - scroll
@@ -104,10 +103,11 @@ class DockLayout(Layout):
                     if not layout_size:
                         break
                     total += layout_size
-                    add_widget(
+                    yield WidgetPlacement(
                         widget,
                         Region(x, render_y - layout_size, width, layout_size),
                         order,
+                        viewport,
                     )
                     render_y -= layout_size
                     remaining = max(0, remaining - layout_size)
@@ -125,7 +125,12 @@ class DockLayout(Layout):
                     if not layout_size:
                         break
                     total += layout_size
-                    add_widget(widget, Region(render_x, y, layout_size, height), order)
+                    yield WidgetPlacement(
+                        widget,
+                        Region(render_x, y, layout_size, height),
+                        order,
+                        viewport,
+                    )
                     render_x += layout_size
                     remaining = max(0, remaining - layout_size)
                 region = Region(x + total, y, width - total, height) - scroll
@@ -142,10 +147,11 @@ class DockLayout(Layout):
                     if not layout_size:
                         break
                     total += layout_size
-                    add_widget(
+                    yield WidgetPlacement(
                         widget,
                         Region(render_x - layout_size, y, layout_size, height),
                         order,
+                        viewport,
                     )
                     render_x -= layout_size
                     remaining = max(0, remaining - layout_size)

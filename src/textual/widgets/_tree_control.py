@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from functools import lru_cache
 
 from typing import Generic, Iterator, NewType, TypeVar
 
+import rich.repr
 from rich.console import RenderableType
 from rich.text import Text, TextType
 from rich.tree import Tree
@@ -24,6 +24,7 @@ NodeID = NewType("NodeID", int)
 NodeDataType = TypeVar("NodeDataType")
 
 
+@rich.repr.auto
 class TreeNode(Generic[NodeDataType]):
     def __init__(
         self,
@@ -45,6 +46,11 @@ class TreeNode(Generic[NodeDataType]):
         self._empty = False
         self._tree.expanded = False
         self.children: list[TreeNode] = []
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "id", self.id
+        yield "label", self.label
+        yield "data", self.data
 
     @property
     def control(self) -> TreeControl:
@@ -154,10 +160,14 @@ class TreeNode(Generic[NodeDataType]):
         return self._control.render_node(self)
 
 
+@rich.repr.auto
 class TreeClick(Generic[NodeDataType], Message, bubble=True):
     def __init__(self, sender: MessageTarget, node: TreeNode[NodeDataType]) -> None:
         self.node = node
         super().__init__(sender)
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "node", self.node
 
 
 class TreeControl(Generic[NodeDataType], Widget):

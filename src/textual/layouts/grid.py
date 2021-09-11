@@ -12,7 +12,7 @@ from rich.console import Console
 
 from .._layout_resolve import layout_resolve
 from ..geometry import Size, Offset, Region
-from ..layout import Layout
+from ..layout import Layout, WidgetPlacement
 from ..layout_map import LayoutMap
 from ..widget import Widget
 
@@ -263,9 +263,9 @@ class GridLayout(Layout):
     def get_widgets(self) -> Iterable[Widget]:
         return self.widgets.keys()
 
-    def generate_map(
-        self, console: Console, size: Size, viewport: Region, scroll: Offset
-    ) -> LayoutMap:
+    def arrange(
+        self, size: Size, viewport: Region, scroll: Offset
+    ) -> Iterable[WidgetPlacement]:
         """Generate a map that associates widgets with their location on screen.
 
         Args:
@@ -276,7 +276,6 @@ class GridLayout(Layout):
         Returns:
             dict[Widget, OrderedRegion]: [description]
         """
-        map: LayoutMap = LayoutMap(size)
         width, height = size
 
         def resolve(
@@ -326,17 +325,6 @@ class GridLayout(Layout):
                     tracks[f"{name}-end"] = (index, end)
 
             return names, tracks, len(spans), max_size
-
-        def add_widget(widget: Widget, region: Region, order: tuple[int, int]):
-            region -= scroll
-            map.add_widget(console, widget, region, order, viewport)
-            # region = region + widget.layout_offset
-            # map[widget] = RenderRegion(region, order, offset)
-            # if isinstance(widget, View):
-            #     sub_map = widget.layout.generate_map(
-            #         region.width, region.height, region.origin + offset
-            #     )
-            #     map.update(sub_map)
 
         container = Size(width - self.column_gutter * 2, height - self.row_gutter * 2)
         column_names, column_tracks, column_count, column_size = resolve_tracks(
@@ -390,7 +378,9 @@ class GridLayout(Layout):
                 self.column_align,
                 self.row_align,
             )
-            add_widget(widget, region + gutter, (0, order))
+            yield WidgetPlacement(
+                widget, region + gutter - scroll, (0, order), viewport
+            )
             order += 1
 
         # Widgets with no area assigned.
@@ -422,7 +412,9 @@ class GridLayout(Layout):
                 self.column_align,
                 self.row_align,
             )
-            add_widget(widget, region + gutter, (0, order))
+            yield WidgetPlacement(
+                widget, region + gutter - scroll, (0, order), viewport
+            )
             order += 1
 
         return map
