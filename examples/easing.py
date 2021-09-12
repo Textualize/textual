@@ -25,6 +25,7 @@ class EasingApp(App):
 
         self.placeholder = Placeholder()
         self.easing_view = DockView()
+        self.placeholder.style = "white on dark_blue"
 
         tree = TreeControl("Easing", {})
         for easing_key in sorted(EASING.keys()):

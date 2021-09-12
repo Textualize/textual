@@ -10,7 +10,7 @@ from rich.style import Style
 from . import events
 from . import log
 from . import messages
-from .layout import Layout, NoWidget
+from .layout import Layout, NoWidget, WidgetPlacement
 from .geometry import Size, Offset, Region
 from .reactive import Reactive, watch
 
@@ -33,6 +33,13 @@ class View(Widget):
         self.named_widgets: dict[str, Widget] = {}
         self._mouse_style: Style = Style()
         self._mouse_widget: Widget | None = None
+
+        self._cached_arrangement: tuple[Size, Offset, list[WidgetPlacement]] = (
+            Size(),
+            Offset(),
+            [],
+        )
+
         super().__init__(name=name)
 
     def __init_subclass__(
@@ -84,6 +91,14 @@ class View(Widget):
     def get_offset(self, widget: Widget) -> Offset:
         return self.layout.get_offset(widget)
 
+    def get_arrangement(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
+        cached_size, cached_scroll, arrangement = self._cached_arrangement
+        if cached_size == size and cached_scroll == scroll:
+            return arrangement
+        arrangement = list(self.layout.arrange(size, scroll))
+        self._cached_arrangement = (size, scroll, arrangement)
+        return arrangement
+
     async def handle_update(self, message: messages.Update) -> None:
         if self.is_root_view:
             message.stop()
@@ -116,6 +131,7 @@ class View(Widget):
         self.refresh()
 
     async def refresh_layout(self) -> None:
+        self._cached_arrangement = (Size(), Offset(), [])
         try:
             await self.layout.mount_all(self)
             if not self.is_root_view:

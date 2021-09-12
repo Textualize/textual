@@ -51,11 +51,12 @@ class LayoutMap:
         self.widgets[widget] = RenderRegion(region + widget.layout_offset, order, clip)
 
         if isinstance(widget, View):
-            scroll = widget.scroll
+            view: View = widget
+            scroll = view.scroll
             total_region = region.size.region
             sub_clip = clip.intersection(region)
 
-            arrangement = widget.layout.arrange(region.size, scroll)
+            arrangement = view.get_arrangement(region.size, scroll)
             for sub_region, sub_widget, sub_order in arrangement:
                 total_region = total_region.union(sub_region)
                 if sub_widget is not None:
@@ -65,4 +66,4 @@ class LayoutMap:
                         sub_order,
                         sub_clip,
                     )
-            widget.virtual_size = total_region.size
+            view.virtual_size = total_region.size

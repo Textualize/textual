@@ -70,8 +70,8 @@ class Offset(NamedTuple):
 class Size(NamedTuple):
     """An area defined by its width and height."""
 
-    width: int
-    height: int
+    width: int = 0
+    height: int = 0
 
     def __bool__(self) -> bool:
         """A Size is Falsey if it has area 0."""

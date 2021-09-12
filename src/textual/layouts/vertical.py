@@ -2,13 +2,8 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from rich.console import Console
-from rich.measure import Measurement
-
-from .. import log
 from ..geometry import Offset, Region, Size
 from ..layout import Layout, WidgetPlacement
-from ..layout_map import LayoutMap
 from ..widget import Widget
 
 
@@ -51,8 +46,7 @@ class VerticalLayout(Layout):
         x = gutter_width
         y = gutter_height
 
-        total_region = size.region
-
+        total_region = Region()
         for widget in self._widgets:
             if (
                 not widget.render_cache
@@ -65,4 +59,4 @@ class VerticalLayout(Layout):
             yield WidgetPlacement(region, widget, (self.z, index))
             total_region = total_region.union(region)
 
-        yield WidgetPlacement(total_region.expand(self.gutter))
+        yield WidgetPlacement(total_region)
