@@ -4,7 +4,7 @@
 
 Textual is a TUI (Text User Interface) framework for Python inspired by modern web development.
 
-**NOTE:** This project is urrently a work in progress, but usable by brave souls who don't mind some API instability between updates.
+**NOTE:** This project is currently a work in progress, but usable by brave souls who don't mind some API instability between updates.
 
 Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or post in Discussions if you have any requests / suggestions.
 
