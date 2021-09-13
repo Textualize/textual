@@ -18,7 +18,7 @@ Textual uses [Rich](https://github.com/willmcgugan/rich) to render rich text, so
 
 Event handling in Textual is asynchronous (using `async` and `await` keywords). Widgets (UI components) can independently update and communicate with each other via message passing.
 
-Textual has more in common with modern web development than it does with [curses](<https://en.wikipedia.org/wiki/Curses_(programming_library)>); layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and Reactive.
+Textual has more in common with modern web development than it does with [curses](<https://en.wikipedia.org/wiki/Curses_(programming_library)>); layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and React.
 
 ## Installation
 
