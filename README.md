@@ -367,4 +367,4 @@ Added a new layout system modelled on CSS grid. The example demonstrates how onc
 
 Added a tree control and refactored the renderer to allow for widgets within a scrollable view
 
-[![Textual update 8](https://yt-embed.herokuapp.com/embed?v=J-dzzD6NQJ4&img=0)](http://www.youtube.com/watch?v=J-dzzD6NQJ4)
+[![Textual update 8](https://yt-embed.herokuapp.com/embed?v=J-dzzD6NQJ4&img=0)](http://www.youtube.com/watch?v=J-dzzD6NQJ4) [![Join the chat at https://gitter.im/textual-ui/community](https://badges.gitter.im/textual-ui/community.svg)](https://gitter.im/textual-ui/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
