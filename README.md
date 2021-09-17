@@ -8,6 +8,8 @@ Textual is a TUI (Text User Interface) framework for Python inspired by modern w
 
 Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or post in Discussions if you have any requests / suggestions.
 
+[![Join the chat at https://gitter.im/textual-ui/community](https://badges.gitter.im/textual-ui/community.svg)](https://gitter.im/textual-ui/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Compatibility
 
 Textual currently runs on **MacOS / Linux only**. Windows support is in the pipeline.
