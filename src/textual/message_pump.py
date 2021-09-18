@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 from asyncio import CancelledError
 from asyncio import Queue, QueueEmpty, Task
+from functools import partial
 from typing import TYPE_CHECKING, Awaitable, Iterable, Callable
 from weakref import WeakSet
 
@@ -144,10 +145,20 @@ class MessagePump:
         self._child_tasks.add(asyncio.get_event_loop().create_task(timer.run()))
         return timer
 
+    async def call_later(self, callback: Callable, *args, **kwargs) -> None:
+        """Run a callback after processing all messages and refreshing the screen.
+
+        Args:
+            callback (Callable): A callable.
+        """
+        await self.post_message(
+            events.Callback(self, partial(callback, *args, **kwargs))
+        )
+
     def close_messages_no_wait(self) -> None:
         self._message_queue.put_nowait(None)
 
-    async def close_messages(self, wait: bool = True) -> None:
+    async def close_messages(self) -> None:
         """Close message queue, and optionally wait for queue to finish processing."""
         if self._closed:
             return
