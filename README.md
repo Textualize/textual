@@ -71,7 +71,7 @@ Beeper.run()
 
 Here we can see a textual app with a single `on_key` method which will handle key events. Pressing any key will result in playing the terminal bell (generally an irritating beep). Hit Ctrl+C to exit.
 
-Event handlers in Textual are defined by convention, not by inheritance (so you won't find an `on_key` method in the base class). Each event has a `name` attribute which for the key event is simply `"key"`. Textual will call the method named `on_<event.name>` if it exists.
+Event handlers in Textual are defined by convention, not by inheritance (there's no base class with all the handlers defined). Each event has a `name` attribute which for the key event is simply `"key"`. Textual will call the method named `on_<event.name>` if it exists.
 
 Let's look at a _slightly_ more interesting example:
 
