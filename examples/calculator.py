@@ -12,7 +12,6 @@ from rich.padding import Padding
 from rich.text import Text
 
 from textual.app import App
-from textual import events
 from textual.reactive import Reactive
 from textual.views import GridView
 from textual.widget import Widget

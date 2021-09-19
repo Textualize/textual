@@ -3,7 +3,7 @@ from __future__ import annotations
 from rich.console import RenderableType
 
 from .. import events
-from ..geometry import Size
+from ..geometry import Size, SpacingDimensions
 from ..layouts.vertical import VerticalLayout
 from ..view import View
 from ..message import Message
@@ -23,7 +23,7 @@ class WindowView(View, layout=VerticalLayout):
         widget: RenderableType | Widget,
         *,
         auto_width: bool = False,
-        gutter: tuple[int, int] = (0, 1),
+        gutter: SpacingDimensions = (0, 0),
         name: str | None = None
     ) -> None:
         layout = VerticalLayout(gutter=gutter, auto_width=auto_width)

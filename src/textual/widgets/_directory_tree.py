@@ -8,7 +8,6 @@ import os.path
 from rich.console import RenderableType
 import rich.repr
 from rich.text import Text
-from rich.tree import Tree
 
 from .. import events
 from ..message import Message

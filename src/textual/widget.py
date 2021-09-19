@@ -16,9 +16,8 @@ from rich import box
 from rich.align import Align
 from rich.console import Console, RenderableType
 from rich.panel import Panel
-from rich.padding import Padding, PaddingDimensions
+from rich.padding import Padding
 from rich.pretty import Pretty
-from rich.segment import Segment
 from rich.style import Style
 from rich.styled import Styled
 from rich.text import TextType
@@ -27,7 +26,7 @@ from . import events
 from ._animator import BoundAnimator
 from ._callback import invoke
 from ._context import active_app
-from .geometry import Size
+from .geometry import Size, Spacing, SpacingDimensions
 from .message import Message
 from .message_pump import MessagePump
 from .messages import Layout, Update
@@ -39,15 +38,6 @@ if TYPE_CHECKING:
     from .view import View
 
 log = getLogger("rich")
-
-
-class Spacing(NamedTuple):
-    """The spacing around a renderable."""
-
-    top: int = 0
-    right: int = 0
-    bottom: int = 0
-    left: int = 0
 
 
 class RenderCache(NamedTuple):
@@ -103,11 +93,11 @@ class Widget(MessagePump):
 
     BOX_MAP = {"normal": box.SQUARE, "round": box.ROUNDED, "bold": box.HEAVY}
 
-    def validate_padding(self, padding: PaddingDimensions) -> Spacing:
-        return Spacing(*Padding.unpack(padding))
+    def validate_padding(self, padding: SpacingDimensions) -> Spacing:
+        return Spacing.unpack(padding)
 
-    def validate_margin(self, padding: PaddingDimensions) -> Spacing:
-        return Spacing(*Padding.unpack(padding))
+    def validate_margin(self, margin: SpacingDimensions) -> Spacing:
+        return Spacing.unpack(margin)
 
     def validate_layout_offset_x(self, value) -> int:
         return int(value)

@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, NamedTuple, TypeVar
+from typing import Any, cast, NamedTuple, Tuple, Union, TypeVar
+
+
+SpacingDimensions = Union[int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]]
 
 
 T = TypeVar("T", int, float)
@@ -262,7 +265,7 @@ class Region(NamedTuple):
         return NotImplemented
 
     def expand(self, size: tuple[int, int]) -> Region:
-        """Add additional height.
+        """Increase the size of the region by adding a border.
 
         Args:
             size (tuple[int, int]): Additional width and height.
@@ -270,9 +273,14 @@ class Region(NamedTuple):
         Returns:
             Region: A new region.
         """
-        add_width, add_height = size
+        expand_width, expand_height = size
         x, y, width, height = self
-        return Region(x, y, width + add_width, height + add_height)
+        return Region(
+            x - expand_width,
+            y - expand_height,
+            width + expand_width * 2,
+            height + expand_height * 2,
+        )
 
     def overlaps(self, other: Region) -> bool:
         """Check if another region overlaps this region.
@@ -419,3 +427,48 @@ class Region(NamedTuple):
             min(x1, ox1), min(y1, oy1), max(x2, ox2), max(y2, oy2)
         )
         return union_region
+
+
+class Spacing(NamedTuple):
+    """The spacing around a renderable."""
+
+    top: int = 0
+    right: int = 0
+    bottom: int = 0
+    left: int = 0
+
+    @property
+    def width(self) -> int:
+        """Total space in width."""
+        return self.left + self.right
+
+    @property
+    def height(self) -> int:
+        """Total space in height."""
+        return self.top + self.bottom
+
+    @property
+    def top_left(self) -> tuple[int, int]:
+        """Top left space."""
+        return (self.left, self.top)
+
+    @property
+    def bottom_right(self) -> tuple[int, int]:
+        """Bottom right space."""
+        return (self.right, self.bottom)
+
+    @classmethod
+    def unpack(cls, pad: SpacingDimensions) -> Spacing:
+        """Unpack padding specified in CSS style."""
+        if isinstance(pad, int):
+            return cls(pad, pad, pad, pad)
+        if len(pad) == 1:
+            _pad = pad[0]
+            return cls(_pad, _pad, _pad, _pad)
+        if len(pad) == 2:
+            pad_top, pad_right = cast(Tuple[int, int], pad)
+            return cls(pad_top, pad_right, pad_top, pad_right)
+        if len(pad) == 4:
+            top, right, bottom, left = cast(Tuple[int, int, int, int], pad)
+            return cls(top, right, bottom, left)
+        raise ValueError(f"1, 2 or 4 integers required for spacing; {len(pad)} given")
