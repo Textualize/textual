@@ -1,74 +1,106 @@
 from __future__ import annotations
 
-from rich.cells import cell_len
-from rich.segment import Segment
-from rich.style import Style
+from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
+from rich.color import Color
+from rich.measure import Measurement
+from rich.padding import Padding
+from rich.segment import Segment, SegmentLines
+from rich.style import Style, StyleType
 
 from ._types import Lines
 from .draw import DrawStyle
 
 
-def render_outline(
-    lines: Lines,
-    width: int,
-    sides: tuple[bool, bool, bool, bool],
-    draw: DrawStyle,
-    style: Style,
-) -> None:
-    top, right, bottom, left = sides
+class Outline:
 
-    top_chars, mid_chars, bottom_chars = ("┏━┓", "┃ ┃", "┗━┛")
+    STYLE_CHARS = {
+        "": ("   ", "   ", "   "),
+        "bold": ("┏━┓", "┃ ┃", "┗━┛"),
+        "inner": ("▗▄▖", "▐ ▌", "▝▀▘"),
+        "outer": ("▛▀▜", "▌ ▐", "▙▄▟"),
+    }
 
-    mid_top = 0
-    mid_end = len(lines)
+    def __init__(
+        self,
+        renderable: RenderableType,
+        sides: tuple[str, str, str, str],
+        styles: tuple[str, str, str, str],
+    ) -> None:
+        self.renderable = renderable
+        self.sides = sides
+        self.styles = styles
 
-    if len(lines) < 2 or width < 2:
-        return
+    def __rich_console__(
+        self, console: "Console", options: "ConsoleOptions"
+    ) -> "RenderResult":
+        width = options.max_width
+        renderable = Padding(self.renderable, 1)
+        lines = console.render_lines(renderable, options)
 
-    if top:
-        row = top_chars[1] * width
-        if left:
-            row = top_chars[0] + row[1:]
-        if right:
-            row = row[:-1] + top_chars[2]
-        lines[0] = [Segment(row, style)]
-        mid_top += 1
+        top, right, bottom, left = map(str, self.sides)
+        top_style, right_style, bottom_style, left_style = map(
+            console.get_style, self.styles
+        )
 
-    if bottom:
-        row = bottom_chars[1] * width
-        if left:
-            row = bottom_chars[0] + row[1:]
-        if right:
-            row = row[:-1] + bottom_chars[2]
-        lines[-1] = [Segment(row, style)]
-        mid_end -= 1
+        mid_top = 0
+        mid_end = len(lines)
 
-    if left and right:
-        left_char = mid_chars[0]
-        right_char = mid_chars[2]
-        for line in lines[mid_top:mid_end]:
-            (
-                _,
-                line_contents,
-            ) = Segment.divide(line, [1, width - 1])
-            line[:] = [
-                Segment(left_char, style),
-                *line_contents,
-                Segment(right_char, style),
-            ]
-    elif left:
-        left_char = mid_chars[0]
-        for line in lines[mid_top:mid_end]:
-            _, line_contents = Segment.divide(line, [1, width])
-            line[:] = [
-                Segment(left_char, style),
-                *line_contents,
-            ]
-    elif right:
-        right_char = mid_chars[2]
-        for line in lines[mid_top:mid_end]:
-            line_contents, _ = Segment.divide(line, [width - 1, width])
-            line[:] = [*line_contents, Segment(right_char, style)]
+        if len(lines) < 2 or width < 2:
+            yield SegmentLines(lines, new_lines=True)
+            return
+
+        if top != "none":
+            top_chars = self.STYLE_CHARS[top][0]
+            row = top_chars[1] * width
+            if left:
+                row = top_chars[0] + row[1:]
+            if right:
+                row = row[:-1] + top_chars[2]
+
+            lines[0] = [Segment(row, top_style)]
+            mid_top += 1
+
+        if bottom != "none":
+            bottom_chars = self.STYLE_CHARS[bottom][2]
+            row = bottom_chars[1] * width
+            if left:
+                row = bottom_chars[0] + row[1:]
+            if right:
+                row = row[:-1] + bottom_chars[2]
+
+            lines[-1] = [Segment(row, bottom_style)]
+            mid_end -= 1
+
+        if left != "none" and right != "none":
+            left_char = self.STYLE_CHARS[left][1][0]
+            right_char = self.STYLE_CHARS[right][1][2]
+            for line in lines[mid_top:mid_end]:
+                _, line_contents = Segment.divide(line, [1, width - 1])
+                line[:] = [
+                    Segment(left_char, left_style),
+                    *line_contents,
+                    Segment(right_char, right_style),
+                ]
+        elif left != "none":
+            left_char = self.STYLE_CHARS[left][1][0]
+            for line in lines[mid_top:mid_end]:
+                _, line_contents = Segment.divide(line, [1, width])
+                line[:] = [
+                    Segment(left_char, left_style),
+                    *line_contents,
+                ]
+        elif right != "none":
+            right_char = self.STYLE_CHARS[right][1][2]
+            for line in lines[mid_top:mid_end]:
+                line_contents, _ = Segment.divide(line, [width - 1, width])
+                line[:] = [*line_contents, Segment(right_char, right_style)]
+
+        yield SegmentLines(lines, new_lines=True)
+
+    def __rich_measure__(
+        self, console: "Console", options: ConsoleOptions
+    ) -> Measurement:
+        return Measurement.get(console, options, self.renderable)
 
 
 if __name__ == "__main__":
@@ -76,18 +108,28 @@ if __name__ == "__main__":
     from rich.segment import SegmentLines
     from rich.style import Style
     from rich.text import Text
+    from rich.traceback import install
+
+    install(show_locals=True)
 
     console = Console()
-    text = Text("Textual " * 100)
+    text = Text("Textual " * 30, style="dim")
 
-    lines = console.render_lines(text, console.options)
+    outline = Outline(text, ("", "outer", "", "outer"), ("", "red", "", "green"))
 
-    render_outline(
-        lines,
-        console.width,
-        (True, True, True, True),
-        DrawStyle.SQUARE,
-        Style(color="green"),
-    )
+    console.print(Padding(outline, 1))
 
-    console.print(SegmentLines(lines, new_lines=True))
+    outline = Outline(text, ("outer", "", "bold", ""), ("yellow", "red", "blue", "red"))
+    console.print(Padding(outline, 1))
+
+    # lines = console.render_lines(text, console.options)
+
+    # render_outline(
+    #     lines,
+    #     console.width,
+    #     (True, True, True, True),
+    #     DrawStyle.SQUARE,
+    #     Style(color="green"),
+    # )
+
+    # console.print(SegmentLines(lines, new_lines=True))
