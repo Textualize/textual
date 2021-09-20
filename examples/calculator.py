@@ -185,7 +185,7 @@ class Calculator(GridView):
             self.display = self.value = str(Decimal(self.value or "0") / Decimal(100))
         elif button_name == ".":
             if "." not in self.value:
-                self.display = self.value = self.value + "."
+                self.display = self.value = (self.value or "0") + "."
         elif button_name == "AC":
             self.value = ""
             self.left = self.right = Decimal(0)
