@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from ..geometry import Offset, Region, Size
+from ..geometry import Offset, Region, Size, Spacing, SpacingDimensions
 from ..layout import Layout, WidgetPlacement
 from ..widget import Widget
+from .._loop import loop_last
 
 
 class VerticalLayout(Layout):
@@ -13,11 +14,11 @@ class VerticalLayout(Layout):
         *,
         auto_width: bool = False,
         z: int = 0,
-        gutter: tuple[int, int] | None = None
+        gutter: SpacingDimensions = (0, 0, 0, 0)
     ):
         self.auto_width = auto_width
         self.z = z
-        self.gutter = gutter or (0, 0)
+        self.gutter = Spacing.unpack(gutter)
         self._widgets: list[Widget] = []
         self._max_widget_width = 0
         super().__init__()
@@ -36,18 +37,19 @@ class VerticalLayout(Layout):
     def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
         index = 0
         width, _height = size
-        gutter_height, gutter_width = self.gutter
+        gutter = self.gutter
+        x, y = self.gutter.top_left
         render_width = (
-            max(width, self._max_widget_width) + gutter_width * 2
+            max(width, self._max_widget_width)
             if self.auto_width
-            else width - gutter_width * 2
+            else width - gutter.width
         )
 
-        x = gutter_width
-        y = gutter_height
+        total_width = render_width
 
-        total_region = Region()
-        for widget in self._widgets:
+        gutter_height = max(gutter.top, gutter.bottom)
+
+        for last, widget in loop_last(self._widgets):
             if (
                 not widget.render_cache
                 or widget.render_cache.size.width != render_width
@@ -57,6 +59,6 @@ class VerticalLayout(Layout):
             render_height = widget.render_cache.size.height
             region = Region(x, y, render_width, render_height)
             yield WidgetPlacement(region, widget, (self.z, index))
-            total_region = total_region.union(region)
+            y += render_height + (gutter.bottom if last else gutter_height)
 
-        yield WidgetPlacement(total_region)
+        yield WidgetPlacement(Region(0, 0, total_width + gutter.width, y))

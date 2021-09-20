@@ -106,13 +106,14 @@ class View(Widget):
             assert isinstance(widget, Widget)
 
             display_update = self.layout.update_widget(self.console, widget)
+            # self.log("UPDATE", widget, display_update)
             if display_update is not None:
                 self.app.display(display_update)
 
     async def handle_layout(self, message: messages.Layout) -> None:
+        await self.refresh_layout()
         if self.is_root_view:
             message.stop()
-            await self.refresh_layout()
             self.app.refresh()
 
     async def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
@@ -142,9 +143,7 @@ class View(Widget):
                 return
 
             hidden, shown, resized = self.layout.reflow(self, Size(*self.console.size))
-
             assert self.layout.map is not None
-            # self.virtual_size = self.layout.map.virtual_size
 
             for widget in hidden:
                 widget.post_message_no_wait(events.Hide(self))

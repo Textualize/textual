@@ -5,12 +5,14 @@ from rich.style import StyleType
 
 
 from .. import events
+from ..geometry import SpacingDimensions
 from ..layouts.grid import GridLayout
 from ..message import Message
 from ..messages import CursorMove
 from ..scrollbar import ScrollTo, ScrollBar
 from ..geometry import clamp
 from ..view import View
+
 from ..widget import Widget
 
 from ..reactive import Reactive
@@ -25,6 +27,7 @@ class ScrollView(View):
         name: str | None = None,
         style: StyleType = "",
         fluid: bool = True,
+        gutter: SpacingDimensions = (0, 0)
     ) -> None:
         from ..views import WindowView
 
@@ -32,7 +35,7 @@ class ScrollView(View):
         self.vscroll = ScrollBar(vertical=True)
         self.hscroll = ScrollBar(vertical=False)
         self.window = WindowView(
-            "" if contents is None else contents, auto_width=auto_width
+            "" if contents is None else contents, auto_width=auto_width, gutter=gutter
         )
         layout = GridLayout()
         layout.add_column("main")
@@ -66,11 +69,11 @@ class ScrollView(View):
 
     @property
     def max_scroll_y(self) -> float:
-        return max(0, self.window.virtual_size.height - self.size.height)
+        return max(0, self.window.virtual_size.height - self.window.size.height)
 
     @property
     def max_scroll_x(self) -> float:
-        return max(0, self.window.virtual_size.width - self.size.width)
+        return max(0, self.window.virtual_size.width - self.window.size.width)
 
     async def watch_x(self, new_value: float) -> None:
         self.window.scroll_x = round(new_value)
@@ -193,7 +196,10 @@ class ScrollView(View):
         self.animate("x", self.target_x, speed=150, easing="out_cubic")
         self.animate("y", self.target_y, speed=150, easing="out_cubic")
 
-    def handle_window_change(self, message) -> None:
+    async def handle_window_change(self, message: Message) -> None:
+
+        message.stop()
+
         virtual_width, virtual_height = self.window.virtual_size
         width, height = self.size
 
@@ -207,10 +213,10 @@ class ScrollView(View):
 
         assert isinstance(self.layout, GridLayout)
 
-        if self.layout.show_column("vscroll", virtual_height > height):
-            self.refresh()
-        if self.layout.show_row("hscroll", virtual_width > width):
-            self.refresh()
+        vscroll_change = self.layout.show_column("vscroll", virtual_height > height)
+        hscroll_change = self.layout.show_row("hscroll", virtual_width > width)
+        if hscroll_change or vscroll_change:
+            self.refresh(layout=True)
 
     def handle_cursor_move(self, message: CursorMove) -> None:
         self.scroll_to_center(message.line)

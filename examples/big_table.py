@@ -20,10 +20,10 @@ class MyApp(App):
         async def add_content():
             table = Table(title="Demo")
 
-            for i in range(40):
+            for i in range(20):
                 table.add_column(f"Col {i + 1}", style="magenta")
-            for i in range(200):
-                table.add_row(*[f"cell {i},{j}" for j in range(40)])
+            for i in range(100):
+                table.add_row(*[f"cell {i},{j}" for j in range(20)])
 
             await body.update(table)
 

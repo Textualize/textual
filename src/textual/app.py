@@ -135,9 +135,10 @@ class App(MessagePump):
             if self.log_file and verbosity <= self.log_verbosity:
                 output = f" ".join(str(arg) for arg in args)
                 if kwargs:
-                    output += " " + " ".join(
+                    key_values = " ".join(
                         f"{key}={value}" for key, value in kwargs.items()
                     )
+                    output = " ".join((output, key_values))
                 self.log_file.write(output + "\n")
                 self.log_file.flush()
         except Exception:
@@ -300,11 +301,6 @@ class App(MessagePump):
                         self.error_console.print(renderable)
                 if self.log_file is not None:
                     self.log_file.close()
-
-    async def call_later(self, callback: Callable, *args, **kwargs) -> None:
-        await self.post_message(
-            events.Callback(self, partial(callback, *args, **kwargs))
-        )
 
     def register(self, child: MessagePump, parent: MessagePump) -> bool:
         if child not in self.children:

@@ -17,7 +17,7 @@ class MyApp(App):
         """Create and dock the widgets."""
 
         # A scrollview to contain the markdown file
-        body = ScrollView()
+        body = ScrollView(gutter=1)
 
         # Header / footer / dock
         await self.view.dock(Header(), edge="top")

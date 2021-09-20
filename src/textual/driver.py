@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from . import events
+from . import log
 from ._types import MessageTarget
 
 if TYPE_CHECKING:

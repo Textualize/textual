@@ -333,7 +333,7 @@ class MouseUp(MouseEvent, bubble=True):
     pass
 
 
-class MouseScrollDown(InputEvent, bubble=True):
+class MouseScrollDown(InputEvent, verbosity=3, bubble=True):
     __slots__ = ["x", "y"]
 
     def __init__(self, sender: MessageTarget, x: int, y: int) -> None:

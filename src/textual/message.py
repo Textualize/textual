@@ -77,7 +77,7 @@ class Message:
         """
         return False
 
-    def prevent_default(self, prevent: bool = True) -> None:
+    def prevent_default(self, prevent: bool = True) -> Message:
         """Suppress the default action.
 
         Args:
@@ -85,14 +85,16 @@ class Message:
                 or False if the default actions should be performed. Defaults to True.
         """
         self._no_default_action = prevent
+        return self
 
-    def stop(self, stop: bool = True) -> None:
+    def stop(self, stop: bool = True) -> Message:
         """Stop propagation of the message to parent.
 
         Args:
             stop (bool, optional): The stop flag. Defaults to True.
         """
         self._stop_propagation = stop
+        return self
 
     async def wait(self) -> None:
         """Wait for the message to be processed."""
