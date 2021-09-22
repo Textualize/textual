@@ -1,25 +1,14 @@
 from __future__ import annotations
 
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
-from rich.color import Color
 from rich.measure import Measurement
 from rich.padding import Padding
 from rich.segment import Segment, SegmentLines
-from rich.style import Style, StyleType
 
-from ._types import Lines
-from .draw import DrawStyle
+from ._box import BOX_STYLES
 
 
 class Outline:
-
-    STYLE_CHARS = {
-        "": ("   ", "   ", "   "),
-        "bold": ("┏━┓", "┃ ┃", "┗━┛"),
-        "inner": ("▗▄▖", "▐ ▌", "▝▀▘"),
-        "outer": ("▛▀▜", "▌ ▐", "▙▄▟"),
-    }
-
     def __init__(
         self,
         renderable: RenderableType,
@@ -37,10 +26,12 @@ class Outline:
         renderable = Padding(self.renderable, 1)
         lines = console.render_lines(renderable, options)
 
-        top, right, bottom, left = map(str, self.sides)
+        top, right, bottom, left = self.sides
         top_style, right_style, bottom_style, left_style = map(
             console.get_style, self.styles
         )
+
+        BOX = BOX_STYLES
 
         mid_top = 0
         mid_end = len(lines)
@@ -50,7 +41,7 @@ class Outline:
             return
 
         if top != "none":
-            top_chars = self.STYLE_CHARS[top][0]
+            top_chars = BOX[top][0]
             row = top_chars[1] * width
             if left:
                 row = top_chars[0] + row[1:]
@@ -61,7 +52,7 @@ class Outline:
             mid_top += 1
 
         if bottom != "none":
-            bottom_chars = self.STYLE_CHARS[bottom][2]
+            bottom_chars = BOX[bottom][2]
             row = bottom_chars[1] * width
             if left:
                 row = bottom_chars[0] + row[1:]
@@ -72,8 +63,8 @@ class Outline:
             mid_end -= 1
 
         if left != "none" and right != "none":
-            left_char = self.STYLE_CHARS[left][1][0]
-            right_char = self.STYLE_CHARS[right][1][2]
+            left_char = BOX[left][1][0]
+            right_char = BOX[right][1][2]
             for line in lines[mid_top:mid_end]:
                 _, line_contents = Segment.divide(line, [1, width - 1])
                 line[:] = [
@@ -82,7 +73,7 @@ class Outline:
                     Segment(right_char, right_style),
                 ]
         elif left != "none":
-            left_char = self.STYLE_CHARS[left][1][0]
+            left_char = BOX[left][1][0]
             for line in lines[mid_top:mid_end]:
                 _, line_contents = Segment.divide(line, [1, width])
                 line[:] = [
@@ -90,7 +81,7 @@ class Outline:
                     *line_contents,
                 ]
         elif right != "none":
-            right_char = self.STYLE_CHARS[right][1][2]
+            right_char = BOX[right][1][2]
             for line in lines[mid_top:mid_end]:
                 line_contents, _ = Segment.divide(line, [width - 1, width])
                 line[:] = [*line_contents, Segment(right_char, right_style)]
@@ -119,7 +110,11 @@ if __name__ == "__main__":
 
     console.print(Padding(outline, 1))
 
-    outline = Outline(text, ("outer", "", "bold", ""), ("yellow", "red", "blue", "red"))
+    outline = Outline(
+        text,
+        ("dashed", "dashed", "dashed", "dashed"),
+        ("green", "green", "green", "green"),
+    )
     console.print(Padding(outline, 1))
 
     # lines = console.render_lines(text, console.options)
