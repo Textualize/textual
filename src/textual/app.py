@@ -29,7 +29,7 @@ from .message_pump import MessagePump
 from ._profile import timer
 from .view import View
 from .views import DockView
-from .widget import Widget, Widget, Reactive
+from .widget import Widget, Reactive
 
 
 # asyncio will warn against resources not being cleared
