@@ -7,7 +7,7 @@ T = TypeVar("T", int, float)
 
 
 def clamp(value: T, minimum: T, maximum: T) -> T:
-    """Clamps a value between two other values.
+    """Clamp a value between two other values.
 
     Args:
         value (T): A value
@@ -91,7 +91,7 @@ class Size(NamedTuple):
         """Get a region of the same size.
         
         Returns:
-            Region: a `Region` object of the same size, with origin (0, 0).
+            Region: a `Region` instance of the same size, with origin (0, 0).
         """
         width, height = self
         return Region(0, 0, width, height)
@@ -122,15 +122,18 @@ class Size(NamedTuple):
         width, height = self
         return width > x >= 0 and height > y >= 0
 
-    def __contains__(self, other: Iterable[int]) -> bool:
+    def __contains__(self, other: Iterable[int]) -> bool:  # type: ignore[override]
         """Determine whether the dimensions of `other` are within the bounds of the size.
         
         Returns:
             bool: True if the dimensions of `other` are within the bounds of the size.
             
         Raises:
-            `TypeError` if `other` cannot be unpacked into a two-item tuple.
+            TypeError if `other` cannot be unpacked into a two-item tuple.
         """
+        # The signature of this method breaks LSP,
+        # but it is useful to keep it as it is.
+
         try:
             x, y = other
         except Exception:
@@ -140,9 +143,9 @@ class Size(NamedTuple):
         width, height = self
         return width > x >= 0 and height > y >= 0
 
-    
+
 R = TypeVar("R", bound="Region")
-    
+
 
 class Region(NamedTuple):
     """Defines a rectangular region."""
@@ -195,8 +198,7 @@ class Region(NamedTuple):
         Returns:
             tuple[int, int]: A tuple describing the minimum and maximum x-coordinates.
         """
-        x = self.x
-        return (x, x + self.width)
+        return (self.x, self.x + self.width)
 
     @property
     def y_extents(self) -> tuple[int, int]:
@@ -207,32 +209,55 @@ class Region(NamedTuple):
         Returns:
             tuple[int, int]: A tuple describing the minimum and maximum y-coordinates.
         """
-        y = self.y
-        return (y, y + self.height)
+        return (self.y, self.y + self.height)
 
     @property
     def x_max(self) -> int:
-        """Get the ending (non-inclusive) x-coordinate, an integer."""
+        """Get the ending x-coordinate.
+        
+        This value is non-inclusive.
+        
+        Returns:
+            int: The x-coordinate.
+        """
         return self.x + self.width
 
     @property
     def y_max(self) -> int:
-        """Get the ending (non-inclusive) y-coordinate, an integer."""
+        """Get the ending y-coordinate.
+        
+        This value is non-inclusive.
+        
+        Returns:
+            int: The y-coordinate.
+        """
         return self.y + self.height
 
     @property
     def area(self) -> int:
-        """Get the area within the region, an integer."""
+        """Get the area within the region.
+
+        Returns:
+            int: the size of the area.
+        """
         return self.width * self.height
 
     @property
     def origin(self) -> Offset:
-        """Get the start point of the region as an `Offset` NamedTuple."""
+        """Get the start offset of the region.
+
+        Returns:
+            Offset: an (x, y) two-integer tuple.
+        """
         return Offset(self.x, self.y)
 
     @property
     def size(self) -> Size:
-        """Get the size of the region as a `Size` NamedTuple."""
+        """Get the size of the region.
+        
+        Returns:
+            Size: a (width, height) two-integer tuple.
+        """
         return Size(self.width, self.height)
 
     @property
@@ -247,27 +272,25 @@ class Region(NamedTuple):
 
     @property
     def x_range(self) -> range:
-        """Get the range between the starting and ending x-coordinates.
+        """Get the range between the region's starting and ending x-coordinates.
         
         The end value is non-inclusive.
         
         Returns:
-            range: a `range` object with increment 1, from x-min to x-max.
+            range: a `range` instance with increment 1, from x-min to x-max.
         """
-        x = self.x
-        return range(x, (x + self.width))
+        return range(self.x, (self.x + self.width))
 
     @property
     def y_range(self) -> range:
-        """Get the range between the starting and ending y-coordinates.
+        """Get the range between the region's starting and ending y-coordinates.
         
         The end value is non-inclusive.
         
         Returns:
-            range: a `range` object with increment 1, from y-min to y-max.
+            range: a `range` instance with increment 1, from y-min to y-max.
         """
-        y = self.y
-        return range(y, (y + self.height))
+        return range(self.y, (self.y + self.height))
 
     def __add__(self, other: Any) -> Region:
         if isinstance(other, tuple):
@@ -300,11 +323,11 @@ class Region(NamedTuple):
         )
 
     def contains(self, x: int, y: int) -> bool:
-        """Check if a point is in the region.
+        """Check if an (x, y) point is in the region.
 
         Args:
-            x (int): X-coordinate (column)
-            y (int): Y-coordinate (row)
+            x (int): x-coordinate (column) of the point
+            y (int): y-coordinate (row) of the point
 
         Returns:
             bool: True if the point is within the region.
@@ -322,7 +345,7 @@ class Region(NamedTuple):
             bool: True if the point is within the region.
             
         Raises:
-            `TypeError` if `point` cannot be unpacked into a two-item tuple.
+            TypeError if `point` cannot be unpacked into a two-item tuple.
         """
         x1, y1, x2, y2 = self.corners
         try:
@@ -332,10 +355,10 @@ class Region(NamedTuple):
         return (x2 > ox >= x1) and (y2 > oy >= y1)
 
     def contains_region(self, other: Region) -> bool:
-        """Check if a region is entirely contained within this region.
+        """Check if another region is entirely contained within this region.
 
         Args:
-            other (Region): A region.
+            other (Region): Another region.
 
         Returns:
             bool: True if the other region fits perfectly within this region.
@@ -347,14 +370,14 @@ class Region(NamedTuple):
         )
 
     def translate(self, x: int = 0, y: int = 0) -> Region:
-        """Create a new instance of the same size with the origin shifted by `(x, y)`.
+        """Return a new region of the same size, with the origin shifted.
 
         Args:
             x (int): Value to add to x-coordinate for the new region. Optional; defaults to 0.
             y (int): Value to add to y-coordinate for the new region. Optional; defaults to 0.
 
         Returns:
-            Region: A new `Region` object of the same size, shifted by `(x, y)`.
+            Region: A new `Region` instance of the same size, shifted by (x, y).
         """
 
         self_x, self_y, width, height = self
@@ -363,12 +386,11 @@ class Region(NamedTuple):
     def __contains__(self, other: Any) -> bool:
         """Check if a point is in this region.
         
-        Returns:
-            If `other` is of type `Region` or `tuple[(int | float), (int| float)]`:
-               `True` if `other` is contained in this region, else `False`.
+        The return value is always False unless `other`
+        is either a `Region` instance or a tuple of two numbers.
         
-            If `other` is of any other type:
-                `False`.
+        Returns:
+            bool: True if `other` is contained in this region.
         """
         if isinstance(other, Region):
             return self.contains_region(other)
@@ -379,17 +401,17 @@ class Region(NamedTuple):
                 return False
 
     def clip(self, width: int, height: int) -> Region:
-        """Create a new instance identical to this one, but clipped within (`width`, `height`).
+        """Return a new region clipped within (width, height) bounds.
 
         Args:
-            width (int): Width of the bounds for the new, clipped region.
-            height (int): Height of the bounds for the new, clipped region.
+            width (int): Width of the bounds.
+            height (int): Height of the bounds.
 
         Returns:
-            Region: A new `Region` instance clipped to fit within (`width`, `height`).
+            Region: A new `Region` instance clipped to fit within (width, height).
         """
         x1, y1, x2, y2 = self.corners
-        
+
         # Save a local copy of `clamp` for optimisation
         _clamp = clamp
         new_region = Region.from_corners(
@@ -401,13 +423,16 @@ class Region(NamedTuple):
         return new_region
 
     def intersection(self, region: Region) -> Region:
-        """Return a new instance describing the intersection between two regions.
+        """Find the overlap between two regions.
+
+        The intersection, or overlap,
+        is the area covered by both this region and the other.
 
         Args:
-            region (Region): A region that overlaps this region.
+            region (Region): Another region that overlaps this region.
 
         Returns:
-            Region: A new region that fits within ``region``.
+            Region: A new instance describing the intersection of this region and the other.
         """
         # Unrolled because this method is used a lot
         x1, y1, w1, h1 = self
@@ -425,7 +450,7 @@ class Region(NamedTuple):
         return Region(rx1, ry1, (rx2 - rx1), (ry2 - ry1))
 
     def union(self, region: Region) -> Region:
-        """Get a new region that contains both regions.
+        """Return a new region containing this region and another.
 
         Args:
             region (Region): Another region.
