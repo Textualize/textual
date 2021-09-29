@@ -1,9 +1,12 @@
+import pathlib
+
 from rich.markdown import Markdown
 
 from textual import events
 from textual.app import App
 from textual.widgets import Header, Footer, Placeholder, ScrollView
 
+MD_PATH = pathlib.Path(__file__).parent / "richreadme.md"
 
 class MyApp(App):
     """An example of a very simple Textual App"""
@@ -27,12 +30,11 @@ class MyApp(App):
         # Dock the body in the remaining space
         await self.view.dock(body, edge="right")
 
-        async def get_markdown(filename: str) -> None:
-            with open(filename, "rt") as fh:
-                readme = Markdown(fh.read(), hyperlinks=True)
+        async def get_markdown(path: pathlib.Path) -> None:
+            readme = Markdown(path.read_text("utf-8"), hyperlinks=True)
             await body.update(readme)
 
-        await self.call_later(get_markdown, "richreadme.md")
+        await self.call_later(get_markdown, MD_PATH)
 
 
 MyApp.run(title="Simple App", log="textual.log")
