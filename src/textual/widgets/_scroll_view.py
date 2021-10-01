@@ -1,19 +1,18 @@
 from __future__ import annotations
-from logging import PlaceHolder
 
 from rich.console import RenderableType
 from rich.style import StyleType
 
 
 from .. import events
+from ..geometry import SpacingDimensions
 from ..layouts.grid import GridLayout
 from ..message import Message
-from ..messages import UpdateMessage
+from ..messages import CursorMove
 from ..scrollbar import ScrollTo, ScrollBar
-from ..geometry import clamp, Offset, Size
-from ..page import Page
-from ..reactive import watch
+from ..geometry import clamp
 from ..view import View
+
 from ..widget import Widget
 
 from ..reactive import Reactive
@@ -24,16 +23,20 @@ class ScrollView(View):
         self,
         contents: RenderableType | Widget | None = None,
         *,
+        auto_width: bool = False,
         name: str | None = None,
         style: StyleType = "",
         fluid: bool = True,
+        gutter: SpacingDimensions = (0, 0)
     ) -> None:
         from ..views import WindowView
 
         self.fluid = fluid
         self.vscroll = ScrollBar(vertical=True)
         self.hscroll = ScrollBar(vertical=False)
-        self.window = WindowView("" if contents is None else contents)
+        self.window = WindowView(
+            "" if contents is None else contents, auto_width=auto_width, gutter=gutter
+        )
         layout = GridLayout()
         layout.add_column("main")
         layout.add_column("vscroll", size=1)
@@ -66,11 +69,11 @@ class ScrollView(View):
 
     @property
     def max_scroll_y(self) -> float:
-        return max(0, self.window.virtual_size.height - self.size.height)
+        return max(0, self.window.virtual_size.height - self.window.size.height)
 
     @property
     def max_scroll_x(self) -> float:
-        return max(0, self.window.virtual_size.width - self.size.width)
+        return max(0, self.window.virtual_size.width - self.window.size.width)
 
     async def watch_x(self, new_value: float) -> None:
         self.window.scroll_x = round(new_value)
@@ -121,6 +124,21 @@ class ScrollView(View):
         self.target_x += self.size.width
         self.animate("x", self.target_x, speed=120, easing="out_cubic")
 
+    def scroll_in_to_view(self, line: int) -> None:
+        if line < self.y:
+            self.y = line
+        elif line >= self.y + self.size.height:
+            self.y = line - self.size.height + 1
+
+    def scroll_to_center(self, line: int) -> None:
+        self.target_y = line - self.size.height // 2
+        if abs(self.target_y - self.y) > 1:
+            # Animate if its more than 1
+            self.animate("y", self.target_y, easing="out_cubic")
+        else:
+            # Jump if its just one step
+            self.y = self.target_y
+
     async def on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
         self.scroll_up()
 
@@ -158,19 +176,19 @@ class ScrollView(View):
         self.animate("x", self.target_x, duration=1, easing="out_cubic")
         self.animate("y", self.target_y, duration=1, easing="out_cubic")
 
-    async def message_scroll_up(self, message: Message) -> None:
+    async def handle_scroll_up(self) -> None:
         self.page_up()
 
-    async def message_scroll_down(self, message: Message) -> None:
+    async def handle_scroll_down(self) -> None:
         self.page_down()
 
-    async def message_scroll_left(self, message: Message) -> None:
+    async def handle_scroll_left(self) -> None:
         self.page_left()
 
-    async def message_scroll_right(self, message: Message) -> None:
+    async def handle_scroll_right(self) -> None:
         self.page_right()
 
-    async def message_scroll_to(self, message: ScrollTo) -> None:
+    async def handle_scroll_to(self, message: ScrollTo) -> None:
         if message.x is not None:
             self.target_x = message.x
         if message.y is not None:
@@ -178,16 +196,28 @@ class ScrollView(View):
         self.animate("x", self.target_x, speed=150, easing="out_cubic")
         self.animate("y", self.target_y, speed=150, easing="out_cubic")
 
-    async def message_window_change(self, message: Message) -> None:
-        virtual_size = self.window.virtual_size
+    async def handle_window_change(self, message: Message) -> None:
+
+        message.stop()
+
+        virtual_width, virtual_height = self.window.virtual_size
+        width, height = self.size
+
         self.x = self.validate_x(self.x)
         self.y = self.validate_y(self.y)
-        self.vscroll.virtual_size = virtual_size.height
-        self.vscroll.window_size = self.size.height
+
+        self.hscroll.virtual_size = virtual_width
+        self.hscroll.window_size = width
+        self.vscroll.virtual_size = virtual_height
+        self.vscroll.window_size = height
 
         assert isinstance(self.layout, GridLayout)
 
-        if self.layout.show_column("vscroll", virtual_size.height > self.size.height):
-            self.refresh()
-        if self.layout.show_row("hscroll", virtual_size.width > self.size.width):
-            self.refresh()
+        vscroll_change = self.layout.show_column("vscroll", virtual_height > height)
+        hscroll_change = self.layout.show_row("hscroll", virtual_width > width)
+        if hscroll_change or vscroll_change:
+            self.refresh(layout=True)
+
+    def handle_cursor_move(self, message: CursorMove) -> None:
+        self.scroll_to_center(message.line)
+        message.stop()

@@ -10,6 +10,7 @@ from rich.control import Control
 import rich.repr
 from rich.screen import Screen
 from rich.console import Console, RenderableType
+from rich.measure import Measurement
 from rich.traceback import Traceback
 
 from . import events
@@ -28,7 +29,7 @@ from .message_pump import MessagePump
 from ._profile import timer
 from .view import View
 from .views import DockView
-from .widget import Widget, Widget, Reactive
+from .widget import Widget, Reactive
 
 
 # asyncio will warn against resources not being cleared
@@ -123,7 +124,7 @@ class App(MessagePump):
     def view(self) -> DockView:
         return self._view_stack[-1]
 
-    def log(self, *args: Any, verbosity: int = 1) -> None:
+    def log(self, *args: Any, verbosity: int = 1, **kwargs) -> None:
         """Write to logs.
 
         Args:
@@ -133,6 +134,11 @@ class App(MessagePump):
         try:
             if self.log_file and verbosity <= self.log_verbosity:
                 output = f" ".join(str(arg) for arg in args)
+                if kwargs:
+                    key_values = " ".join(
+                        f"{key}={value}" for key, value in kwargs.items()
+                    )
+                    output = " ".join((output, key_values))
                 self.log_file.write(output + "\n")
                 self.log_file.flush()
         except Exception:
@@ -296,11 +302,6 @@ class App(MessagePump):
                 if self.log_file is not None:
                     self.log_file.close()
 
-    async def call_later(self, callback: Callable, *args, **kwargs) -> None:
-        await self.post_message(
-            events.Callback(self, partial(callback, *args, **kwargs))
-        )
-
     def register(self, child: MessagePump, parent: MessagePump) -> bool:
         if child not in self.children:
             self.children.add(child)
@@ -346,6 +347,21 @@ class App(MessagePump):
                 console.print(renderable)
             except Exception:
                 self.panic()
+
+    def measure(self, renderable: RenderableType, max_width=100_000) -> int:
+        """Get the optimal width for a widget or renderable.
+
+        Args:
+            renderable (RenderableType): A renderable (including Widget)
+            max_width ([type], optional): Maximum width. Defaults to 100_000.
+
+        Returns:
+            int: Number of cells required to render.
+        """
+        measurement = Measurement.get(
+            self.console, self.console.options.update(max_width=max_width), renderable
+        )
+        return measurement.maximum
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given coordinates.
@@ -396,10 +412,6 @@ class App(MessagePump):
         else:
             await super().on_event(event)
 
-    async def on_idle(self, event: events.Idle) -> None:
-        if self.view.check_layout():
-            await self.view.refresh_layout()
-
     async def action(
         self,
         action: str,
@@ -436,6 +448,7 @@ class App(MessagePump):
     async def broker_event(
         self, event_name: str, event: events.Event, default_namespace: object | None
     ) -> bool:
+        event.stop()
         try:
             style = getattr(event, "style")
         except AttributeError:
@@ -455,7 +468,6 @@ class App(MessagePump):
         return True
 
     async def on_key(self, event: events.Key) -> None:
-        self.log("App.on_key")
         await self.press(event.key)
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:

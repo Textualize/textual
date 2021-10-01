@@ -1,10 +1,11 @@
-from typing import Dict, Tuple, Union
+from typing import Dict, Tuple
 
 from .keys import Keys
 
 # Mapping of vt100 escape codes to Keys.
 ANSI_SEQUENCES: Dict[str, Tuple[Keys, ...]] = {
     # Control keys.
+    "\r": (Keys.Enter,),
     "\x00": (Keys.ControlAt,),  # Control-At (Also for Ctrl-Space)
     "\x01": (Keys.ControlA,),  # Control-A (home)
     "\x02": (Keys.ControlB,),  # Control-B (emacs cursor left)
@@ -18,7 +19,7 @@ ANSI_SEQUENCES: Dict[str, Tuple[Keys, ...]] = {
     "\x0a": (Keys.ControlJ,),  # Control-J (10) (Identical to '\n')
     "\x0b": (Keys.ControlK,),  # Control-K (delete until end of line; vertical tab)
     "\x0c": (Keys.ControlL,),  # Control-L (clear; form feed)
-    "\x0d": (Keys.ControlM,),  # Control-M (13) (Identical to '\r')
+    # "\x0d": (Keys.ControlM,),  # Control-M (13) (Identical to '\r')
     "\x0e": (Keys.ControlN,),  # Control-N (14) (history forward)
     "\x0f": (Keys.ControlO,),  # Control-O (15)
     "\x10": (Keys.ControlP,),  # Control-P (16) (history back)

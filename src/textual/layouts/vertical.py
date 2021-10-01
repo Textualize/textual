@@ -2,46 +2,54 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from rich.console import Console
-
-from .. import log
-from ..geometry import Offset, Region, Size
-from ..layout import Layout
-from ..layout_map import LayoutMap
+from ..geometry import Offset, Region, Size, Spacing, SpacingDimensions
+from ..layout import Layout, WidgetPlacement
 from ..widget import Widget
+from .._loop import loop_last
 
 
 class VerticalLayout(Layout):
-    def __init__(self, *, z: int = 0, gutter: tuple[int, int] | None = None):
+    def __init__(
+        self,
+        *,
+        auto_width: bool = False,
+        z: int = 0,
+        gutter: SpacingDimensions = (0, 0, 0, 0)
+    ):
+        self.auto_width = auto_width
         self.z = z
-        self.gutter = gutter or (0, 0)
+        self.gutter = Spacing.unpack(gutter)
         self._widgets: list[Widget] = []
+        self._max_widget_width = 0
         super().__init__()
 
     def add(self, widget: Widget) -> None:
         self._widgets.append(widget)
+        self._max_widget_width = max(widget.app.measure(widget), self._max_widget_width)
 
     def clear(self) -> None:
         del self._widgets[:]
+        self._max_widget_width = 0
 
     def get_widgets(self) -> Iterable[Widget]:
         return self._widgets
 
-    def generate_map(
-        self, console: Console, size: Size, viewport: Region, scroll: Offset
-    ) -> LayoutMap:
+    def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
         index = 0
-        width, height = size
-        gutter_height, gutter_width = self.gutter
-        render_width = width - gutter_width * 2
-        x = gutter_width
-        y = gutter_height
-        map: LayoutMap = LayoutMap(size)
+        width, _height = size
+        gutter = self.gutter
+        x, y = self.gutter.top_left
+        render_width = (
+            max(width, self._max_widget_width)
+            if self.auto_width
+            else width - gutter.width
+        )
 
-        def add_widget(widget: Widget, region: Region, clip: Region) -> None:
-            map.add_widget(console, widget, region, (self.z, index), clip)
+        total_width = render_width
 
-        for widget in self._widgets:
+        gutter_height = max(gutter.top, gutter.bottom)
+
+        for last, widget in loop_last(self._widgets):
             if (
                 not widget.render_cache
                 or widget.render_cache.size.width != render_width
@@ -50,6 +58,7 @@ class VerticalLayout(Layout):
             assert widget.render_cache is not None
             render_height = widget.render_cache.size.height
             region = Region(x, y, render_width, render_height)
-            add_widget(widget, region - scroll, viewport)
+            yield WidgetPlacement(region, widget, (self.z, index))
+            y += render_height + (gutter.bottom if last else gutter_height)
 
-        return map
+        yield WidgetPlacement(Region(0, 0, total_width + gutter.width, y))

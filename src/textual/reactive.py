@@ -70,6 +70,7 @@ class Reactive(Generic[ReactiveType]):
             value = validate_function(value)
 
         if current_value != value or self._first:
+
             self._first = False
             setattr(obj, self.internal_name, value)
             self.check_watchers(obj, name, current_value)
@@ -128,7 +129,6 @@ class Reactive(Generic[ReactiveType]):
             except AttributeError:
                 continue
             value = await invoke(compute_method)
-            # value = await compute_method()
             setattr(obj, compute, value)
 
 

@@ -9,7 +9,7 @@ from rich.console import Console
 
 from .._layout_resolve import layout_resolve
 from ..geometry import Offset, Region, Size
-from ..layout import Layout
+from ..layout import Layout, WidgetPlacement
 from ..layout_map import LayoutMap
 
 if sys.version_info >= (3, 8):
@@ -48,17 +48,12 @@ class DockLayout(Layout):
         for dock in self.docks:
             yield from dock.widgets
 
-    def generate_map(
-        self, console: Console, size: Size, viewport: Region, scroll: Offset
-    ) -> LayoutMap:
+    def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
 
         map: LayoutMap = LayoutMap(size)
         width, height = size
         layout_region = Region(0, 0, width, height)
         layers: dict[int, Region] = defaultdict(lambda: layout_region)
-
-        def add_widget(widget: Widget, region: Region, order: tuple[int, ...]):
-            map.add_widget(console, widget, region, order, viewport)
 
         for index, dock in enumerate(self.docks):
             dock_options = [
@@ -87,10 +82,12 @@ class DockLayout(Layout):
                     if not layout_size:
                         break
                     total += layout_size
-                    add_widget(widget, Region(x, render_y, width, layout_size), order)
+                    yield WidgetPlacement(
+                        Region(x, render_y, width, layout_size), widget, order
+                    )
                     render_y += layout_size
                     remaining = max(0, remaining - layout_size)
-                region = Region(x, y + total, width, height - total) - scroll
+                region = Region(x, y + total, width, height - total)
 
             elif dock.edge == "bottom":
                 sizes = layout_resolve(height, dock_options)
@@ -104,14 +101,14 @@ class DockLayout(Layout):
                     if not layout_size:
                         break
                     total += layout_size
-                    add_widget(
-                        widget,
+                    yield WidgetPlacement(
                         Region(x, render_y - layout_size, width, layout_size),
+                        widget,
                         order,
                     )
                     render_y -= layout_size
                     remaining = max(0, remaining - layout_size)
-                region = Region(x, y, width, height - total) - scroll
+                region = Region(x, y, width, height - total)
 
             elif dock.edge == "left":
                 sizes = layout_resolve(width, dock_options)
@@ -125,10 +122,14 @@ class DockLayout(Layout):
                     if not layout_size:
                         break
                     total += layout_size
-                    add_widget(widget, Region(render_x, y, layout_size, height), order)
+                    yield WidgetPlacement(
+                        Region(render_x, y, layout_size, height),
+                        widget,
+                        order,
+                    )
                     render_x += layout_size
                     remaining = max(0, remaining - layout_size)
-                region = Region(x + total, y, width - total, height) - scroll
+                region = Region(x + total, y, width - total, height)
 
             elif dock.edge == "right":
                 sizes = layout_resolve(width, dock_options)
@@ -142,14 +143,14 @@ class DockLayout(Layout):
                     if not layout_size:
                         break
                     total += layout_size
-                    add_widget(
-                        widget,
+                    yield WidgetPlacement(
                         Region(render_x - layout_size, y, layout_size, height),
+                        widget,
                         order,
                     )
                     render_x -= layout_size
                     remaining = max(0, remaining - layout_size)
-                region = Region(x, y, width - total, height) - scroll
+                region = Region(x, y, width - total, height)
 
             layers[dock.z] = region
 

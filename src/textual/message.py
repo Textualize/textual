@@ -25,7 +25,7 @@ class Message:
     ]
 
     sender: MessageTarget
-    bubble: ClassVar[bool] = False
+    bubble: ClassVar[bool] = True
     verbosity: ClassVar[int] = 1
 
     def __init__(self, sender: MessageTarget) -> None:
@@ -47,7 +47,7 @@ class Message:
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.sender
 
-    def __init_subclass__(cls, bubble: bool = False, verbosity: int = 1) -> None:
+    def __init_subclass__(cls, bubble: bool = True, verbosity: int = 1) -> None:
         super().__init_subclass__()
         cls.bubble = bubble
         cls.verbosity = verbosity
@@ -77,7 +77,7 @@ class Message:
         """
         return False
 
-    def prevent_default(self, prevent: bool = True) -> None:
+    def prevent_default(self, prevent: bool = True) -> Message:
         """Suppress the default action.
 
         Args:
@@ -85,14 +85,16 @@ class Message:
                 or False if the default actions should be performed. Defaults to True.
         """
         self._no_default_action = prevent
+        return self
 
-    def stop(self, stop: bool = True) -> None:
+    def stop(self, stop: bool = True) -> Message:
         """Stop propagation of the message to parent.
 
         Args:
             stop (bool, optional): The stop flag. Defaults to True.
         """
         self._stop_propagation = stop
+        return self
 
     async def wait(self) -> None:
         """Wait for the message to be processed."""

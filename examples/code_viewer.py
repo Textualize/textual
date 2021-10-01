@@ -41,11 +41,11 @@ class MyApp(App):
 
         # Note the directory is also in a scroll view
         await self.view.dock(
-            ScrollView(self.directory), edge="left", size=32, name="sidebar"
+            ScrollView(self.directory), edge="left", size=48, name="sidebar"
         )
         await self.view.dock(self.body, edge="top")
 
-    async def message_file_click(self, message: FileClick) -> None:
+    async def handle_file_click(self, message: FileClick) -> None:
         """A message sent by the directory tree when a file is clicked."""
 
         syntax: RenderableType

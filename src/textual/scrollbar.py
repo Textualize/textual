@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+
 import rich.repr
 from rich.color import Color
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
@@ -14,27 +15,26 @@ from .widget import Reactive, Widget
 
 
 @rich.repr.auto
-class ScrollUp(Message, bubble=True):
+class ScrollUp(Message):
     """Message sent when clicking above handle."""
 
 
 @rich.repr.auto
-class ScrollDown(Message, bubble=True):
+class ScrollDown(Message):
     """Message sent when clicking below handle."""
 
 
 @rich.repr.auto
-class ScrollLeft(Message, bubble=True):
+class ScrollLeft(Message):
     """Message sent when clicking above handle."""
 
 
 @rich.repr.auto
-class ScrollRight(Message, bubble=True):
+class ScrollRight(Message):
     """Message sent when clicking below handle."""
 
 
-@rich.repr.auto
-class ScrollTo(Message, bubble=True):
+class ScrollTo(Message):
     """Message sent when click and dragging handle."""
 
     def __init__(
@@ -238,14 +238,20 @@ class ScrollBar(Widget):
             x: float | None = None
             y: float | None = None
             if self.vertical:
-                y = self.grabbed_position + (
-                    (event.screen_y - self.grabbed.y)
-                    * (self.virtual_size / self.window_size)
+                y = round(
+                    self.grabbed_position
+                    + (
+                        (event.screen_y - self.grabbed.y)
+                        * (self.virtual_size / self.window_size)
+                    )
                 )
             else:
-                x = self.grabbed_position + (
-                    (event.screen_x - self.grabbed.x)
-                    * (self.virtual_size / self.window_size)
+                x = round(
+                    self.grabbed_position
+                    + (
+                        (event.screen_x - self.grabbed.x)
+                        * (self.virtual_size / self.window_size)
+                    )
                 )
             await self.emit(ScrollTo(self, x=x, y=y))
 

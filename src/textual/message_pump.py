@@ -3,11 +3,9 @@ from __future__ import annotations
 import asyncio
 from asyncio import CancelledError
 from asyncio import Queue, QueueEmpty, Task
-import inspect
+from functools import partial
 from typing import TYPE_CHECKING, Awaitable, Iterable, Callable
 from weakref import WeakSet
-
-from rich.traceback import Traceback
 
 from . import events
 from . import log
@@ -68,8 +66,8 @@ class MessagePump:
     def is_running(self) -> bool:
         return self._running
 
-    def log(self, *args) -> None:
-        return self.app.log(*args)
+    def log(self, *args, **kwargs) -> None:
+        return self.app.log(*args, **kwargs)
 
     def set_parent(self, parent: MessagePump) -> None:
         self._parent = parent
@@ -147,10 +145,20 @@ class MessagePump:
         self._child_tasks.add(asyncio.get_event_loop().create_task(timer.run()))
         return timer
 
+    async def call_later(self, callback: Callable, *args, **kwargs) -> None:
+        """Run a callback after processing all messages and refreshing the screen.
+
+        Args:
+            callback (Callable): A callable.
+        """
+        await self.post_message(
+            events.Callback(self, partial(callback, *args, **kwargs))
+        )
+
     def close_messages_no_wait(self) -> None:
         self._message_queue.put_nowait(None)
 
-    async def close_messages(self, wait: bool = True) -> None:
+    async def close_messages(self) -> None:
         """Close message queue, and optionally wait for queue to finish processing."""
         if self._closed:
             return
@@ -174,7 +182,7 @@ class MessagePump:
         except CancelledError:
             pass
         finally:
-            self._runnning = False
+            self._running = False
 
     async def _process_messages(self) -> None:
         """Process messages until the queue is closed."""
@@ -195,6 +203,7 @@ class MessagePump:
                 pending = self.peek_message()
                 if pending is None or not message.can_replace(pending):
                     break
+                # self.log(message, "replaced with", pending)
                 try:
                     message = await self.get_message()
                 except MessagePumpClosed:
@@ -254,7 +263,7 @@ class MessagePump:
 
     async def on_message(self, message: Message) -> None:
         _rich_traceback_guard = True
-        method_name = f"message_{message.name}"
+        method_name = f"handle_{message.name}"
 
         method = getattr(self, method_name, None)
         if method is not None:

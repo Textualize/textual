@@ -2,11 +2,17 @@
 
 ![screenshot](./imgs/textual.png)
 
-Textual is a TUI (Text User Interface) framework for Python inspired by modern web development. Currently a work in progress, but usable by brave souls who don't mind some API instability between updates.
+Textual is a TUI (Text User Interface) framework for Python inspired by modern web development.
 
-Textual currently runs on MacOS / Linux only. Windows support is in the pipeline.
+**NOTE:** This project is currently a work in progress, but usable by brave souls who don't mind some API instability between updates.
 
 Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or post in Discussions if you have any requests / suggestions.
+
+[![Join the chat at https://gitter.im/textual-ui/community](https://badges.gitter.im/textual-ui/community.svg)](https://gitter.im/textual-ui/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+## Compatibility
+
+Textual currently runs on **MacOS / Linux only**. Windows support is in the pipeline.
 
 ## How it works
 
@@ -14,7 +20,7 @@ Textual uses [Rich](https://github.com/willmcgugan/rich) to render rich text, so
 
 Event handling in Textual is asynchronous (using `async` and `await` keywords). Widgets (UI components) can independently update and communicate with each other via message passing.
 
-Textual has more in common with modern web development than it does with [curses](<https://en.wikipedia.org/wiki/Curses_(programming_library)>); layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and Reactive.
+Textual has more in common with modern web development than it does with [curses](<https://en.wikipedia.org/wiki/Curses_(programming_library)>); layout is done with CSS grid and (soon) the theme may be customized with CSS. Other techniques are borrowed from JS frameworks such as Vue and React.
 
 ## Installation
 
@@ -65,7 +71,7 @@ Beeper.run()
 
 Here we can see a textual app with a single `on_key` method which will handle key events. Pressing any key will result in playing the terminal bell (generally an irritating beep). Hit Ctrl+C to exit.
 
-Event handlers in Textual are defined by convention, not by inheritance (so you won't find an `on_key` method in the base class). Each event has a `name` attribute which for the key event is simply `"key"`. Textual will call the method named `on_<event.name>` if it exists.
+Event handlers in Textual are defined by convention, not by inheritance (there's no base class with all the handlers defined). Each event has a `name` attribute which for the key event is simply `"key"`. Textual will call the method named `on_<event.name>` if it exists.
 
 Let's look at a _slightly_ more interesting example:
 
@@ -111,7 +117,7 @@ SimpleApp.run(log="textual.log")
 
 This app contains a single event handler `on_mount`. The mount event is sent when the app or widget is ready to start processing events, and is typically used for initialization. You may have noticed that `on_mount` is an `async` function. Since Textual is an asynchronous framework we will need this if we need to call most other methods.
 
-The `on_mount` method makes two calls to `self.view.dock` which adds widgets to tht terminal.
+The `on_mount` method makes two calls to `self.view.dock` which adds widgets to the terminal.
 
 Here's the first line in the mount handler:
 

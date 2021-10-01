@@ -60,6 +60,7 @@ def test_clamp():
     assert clamp(11, 0, 10) == 10
     assert clamp(0, 0, 10) == 0
     assert clamp(10, 0, 10) == 10
+    assert clamp(5, 10, 0) == 5
 
 
 def test_point_is_origin():
@@ -85,6 +86,11 @@ def test_point_blend():
     assert Offset(1, 2).blend(Offset(3, 4), 0) == Offset(1, 2)
     assert Offset(1, 2).blend(Offset(3, 4), 1) == Offset(3, 4)
     assert Offset(1, 2).blend(Offset(3, 4), 0.5) == Offset(2, 3)
+
+
+def test_region_null():
+    assert Region() == Region(0, 0, 0, 0)
+    assert not Region()
 
 
 def test_region_from_origin():
@@ -180,3 +186,35 @@ def test_region_intersection():
 
 def test_region_union():
     assert Region(5, 5, 10, 10).union(Region(20, 30, 10, 5)) == Region(5, 5, 25, 30)
+
+
+def test_size_add():
+    assert Size(5, 10) + Size(2, 3) == Size(7, 13)
+
+
+def test_size_sub():
+    assert Size(5, 10) - Size(2, 3) == Size(3, 7)
+
+
+def test_region_x_extents():
+    assert Region(5, 10, 20, 30).x_extents == (5, 25)
+
+
+def test_region_y_extents():
+    assert Region(5, 10, 20, 30).y_extents == (10, 40)
+
+
+def test_region_x_max():
+    assert Region(5, 10, 20, 30).x_max == 25
+
+
+def test_region_y_max():
+    assert Region(5, 10, 20, 30).y_max == 40
+
+
+def test_region_x_range():
+    assert Region(5, 10, 20, 30).x_range == range(5, 25)
+
+
+def test_region_y_range():
+    assert Region(5, 10, 20, 30).y_range == range(10, 40)

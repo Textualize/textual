@@ -5,10 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.1.10] - Unreleased
+## [0.1.12] - 2021-09-20
 
 ### Added
 
+- Added geometry.Spacing
+
+### Fixed
+
+- Fixed calculation of virtual size in scroll views
+
+## [0.1.11] - 2021-09-12
+
+### Changed
+
+- Changed message handlers to use prefix handle\_
+- Renamed messages to drop the Message suffix
+- Events now bubble by default
+- Refactor of layout
+
+### Added
+
+- Added App.measure
+- Added auto_width to Vertical Layout, WindowView, an ScrollView
+- Added big_table.py example
+- Added easing.py example
+
+## [0.1.10] - 2021-08-25
+
+### Added
+
+- Added keyboard control of tree control
+- Added Widget.gutter to calculate space between renderable and outside edge
 - Added margin, padding, and border attributes to Widget
 
 ### Changed

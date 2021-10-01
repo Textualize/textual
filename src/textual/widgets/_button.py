@@ -63,4 +63,5 @@ class Button(Widget):
         return ButtonRenderable(self.label, style=self.button_style)
 
     async def on_click(self, event: events.Click) -> None:
+        event.prevent_default().stop()
         await self.emit(ButtonPressed(self))

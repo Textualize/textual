@@ -12,7 +12,6 @@ from rich.padding import Padding
 from rich.text import Text
 
 from textual.app import App
-from textual import events
 from textual.reactive import Reactive
 from textual.views import GridView
 from textual.widget import Widget
@@ -154,7 +153,7 @@ class Calculator(GridView):
             *self.buttons.values(), clear=self.ac, numbers=self.numbers, zero=self.zero
         )
 
-    def message_button_pressed(self, message: ButtonPressed) -> None:
+    def handle_button_pressed(self, message: ButtonPressed) -> None:
         """A message sent by the button widget"""
 
         assert isinstance(message.sender, Button)
@@ -186,7 +185,7 @@ class Calculator(GridView):
             self.display = self.value = str(Decimal(self.value or "0") / Decimal(100))
         elif button_name == ".":
             if "." not in self.value:
-                self.display = self.value = self.value + "."
+                self.display = self.value = (self.value or "0") + "."
         elif button_name == "AC":
             self.value = ""
             self.left = self.right = Decimal(0)
@@ -208,7 +207,7 @@ class Calculator(GridView):
 class CalculatorApp(App):
     """The Calculator Application"""
 
-    async def on_mount(self, event: events.Mount) -> None:
+    async def on_mount(self) -> None:
         """Mount the calculator widget."""
         await self.view.dock(Calculator())
 
