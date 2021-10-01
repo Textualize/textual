@@ -21,8 +21,7 @@ if TYPE_CHECKING:
 @rich.repr.auto
 class Event(Message):
     def __rich_repr__(self) -> rich.repr.Result:
-        return
-        yield
+        yield from ()
 
     def __init_subclass__(cls, bubble: bool = False, verbosity: int = 1) -> None:
         super().__init_subclass__(bubble=bubble, verbosity=verbosity)
