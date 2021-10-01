@@ -1,7 +1,13 @@
 from __future__ import annotations
 
+from rich import print
+
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Any
+
+from .styles import Styles
+from .tokenize import Token
 
 
 class SelectorType(Enum):
@@ -24,12 +30,6 @@ class Location:
 
 
 @dataclass
-class RuleSet:
-    selectors: list[list[Selector]] = field(default_factory=list)
-    declarations: list[Declaration] = field(default_factory=list)
-
-
-@dataclass
 class Selector:
     name: str
     combinator: CombinatorType = CombinatorType.SAME
@@ -40,4 +40,13 @@ class Selector:
 @dataclass
 class Declaration:
     name: str
-    tokens: list[tuple[str, str]] = field(default_factory=list)
+    tokens: list[Token] = field(default_factory=list)
+
+    def process(self):
+        raise NotImplementedError
+
+
+@dataclass
+class RuleSet:
+    selectors: list[list[Selector]] = field(default_factory=list)
+    styles: Styles = field(default_factory=Styles)

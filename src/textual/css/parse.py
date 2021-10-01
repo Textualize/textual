@@ -65,17 +65,18 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
             continue
         if token_name == "declaration_name":
             if declaration.tokens:
-                rule_set.declarations.append(declaration)
+                rule_set.styles.add_declaration(declaration)
             declaration = Declaration("")
             declaration.name = token.value.rstrip(":")
         elif token_name == "declaration_set_end":
             break
         else:
-            declaration.tokens.append((token_name, token.value))
+            declaration.tokens.append(token)
 
     if declaration.tokens:
-        rule_set.declarations.append(declaration)
+        rule_set.styles.add_declaration(declaration)
 
+    print(rule_set)
     yield rule_set
 
 
@@ -83,9 +84,9 @@ def parse(css: str) -> Iterable[RuleSet]:
 
     tokens = iter(tokenize(css))
     while True:
-
-        token = next(tokens)
-
+        token = next(tokens, None)
+        if token is None:
+            break
         if token.name.startswith("selector_start_"):
             yield from parse_rule_set(tokens, token)
 
@@ -93,14 +94,9 @@ def parse(css: str) -> Iterable[RuleSet]:
 if __name__ == "__main__":
     test = """
 .foo.bar baz:focus, #egg {
-    color: rgb(10,20,30);
-    border: bold green;
-}
-
-* {
+    visibility: visible;
+    border: solid green !important;
     outline: red
-}
-
-    """
+}"""
     for obj in parse(test):
         print(obj)

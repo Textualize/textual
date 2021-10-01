@@ -29,14 +29,18 @@ class Expect:
         )
         self.match = self._regex.match
         self.search = self._regex.search
+        self._expect_eof = False
+
+    def expect_eof(self, eof: bool) -> Expect:
+        self._expect_eof = eof
+        return self
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from zip(self.names, self.regexes)
 
 
 class Token(NamedTuple):
-    line: int
-    col: int
+    location: tuple[int, int]
     name: str
     value: str
 
@@ -49,9 +53,12 @@ class Tokenizer:
 
     def get_token(self, expect: Expect) -> Token:
         line_no = self.line_no
-        if line_no >= len(self.lines):
-            raise EOFError()
         col_no = self.col_no
+        if line_no >= len(self.lines):
+            if expect._expect_eof:
+                return Token((line_no, col_no), "eof", "")
+            else:
+                raise EOFError()
         line = self.lines[line_no]
         match = expect.match(line, col_no)
         if match is None:
@@ -68,7 +75,7 @@ class Tokenizer:
                 break
 
         try:
-            return Token(line_no, col_no, name, value)
+            return Token((line_no, col_no), name, value)
         finally:
             col_no += len(value)
             if col_no >= len(line):

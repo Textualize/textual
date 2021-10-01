@@ -14,7 +14,7 @@ expect_selector = Expect(
     selector_start_class=r"\.[a-zA-Z_\-]+",
     selector_start_universal=r"\*",
     selector_start=r"[a-zA-Z_\-]+",
-)
+).expect_eof(True)
 
 expect_comment_end = Expect(
     comment_end=re.escape("*/"),
@@ -46,9 +46,10 @@ expect_declaration_content = Expect(
     comment_start=r"\/\*",
     percentage=r"\d+\%",
     number=r"\d+\.?\d+",
-    color=r"\#([0-9a-f]{6})|color\([0-9]{1,3}\)|rgb\([\d\s,]+\)",
+    color=r"\#[0-9a-f]{6}|color\[0-9]{1,3}\|rgb\([\d\s,]+\)",
     token="[a-zA-Z_-]+",
-    string='".*?"',
+    string=r"\".*?\"",
+    important=r"\!important",
     declaration_set_end=r"\}",
 )
 
@@ -78,8 +79,10 @@ def tokenize(code: str) -> Iterable[Token]:
         name = token.name
         if name == "comment_start":
             tokenizer.skip_to(expect_comment_end)
+        elif name == "eof":
+            break
         expect = get_state(name, expect)
-
+        print(token)
         yield token
 
 
