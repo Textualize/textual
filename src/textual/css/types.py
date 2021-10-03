@@ -9,3 +9,4 @@ else:
 
 
 Visibility = Literal["visible", "hidden", "initial", "inherit"]
+Display = Literal["block", "none"]

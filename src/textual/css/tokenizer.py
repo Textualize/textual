@@ -74,15 +74,14 @@ class Tokenizer:
             if value is not None:
                 break
 
-        try:
-            return Token((line_no, col_no), name, value)
-        finally:
-            col_no += len(value)
-            if col_no >= len(line):
-                line_no += 1
-                col_no = 0
-            self.line_no = line_no
-            self.col_no = col_no
+        token = Token((line_no, col_no), name, value)
+        col_no += len(value)
+        if col_no >= len(line):
+            line_no += 1
+            col_no = 0
+        self.line_no = line_no
+        self.col_no = col_no
+        return token
 
     def skip_to(self, expect: Expect) -> Token:
         line_no = self.line_no

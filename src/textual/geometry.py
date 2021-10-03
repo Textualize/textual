@@ -457,6 +457,16 @@ class Spacing(NamedTuple):
         """Bottom right space."""
         return (self.right, self.bottom)
 
+    @property
+    def packed(self) -> str:
+        top, right, bottom, left = self
+        if top == right == bottom == left:
+            return f"{top}"
+        if (top, right) == (bottom, left):
+            return f"{top}, {right}"
+        else:
+            return f"{top}, {right}, {bottom}, {left}"
+
     @classmethod
     def unpack(cls, pad: SpacingDimensions) -> Spacing:
         """Unpack padding specified in CSS style."""

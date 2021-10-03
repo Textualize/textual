@@ -2,7 +2,7 @@ from __future__ import annotations
 import os
 
 import asyncio
-from functools import partial
+
 from typing import Any, Callable, ClassVar, Type, TypeVar
 import warnings
 
@@ -21,6 +21,7 @@ from .geometry import Offset, Region
 from . import log
 from ._callback import invoke
 from ._context import active_app
+from .css.stylesheet import Stylesheet
 from ._event_broker import extract_handler_actions, NoHandler
 from .driver import Driver
 from .layouts.dock import DockLayout, Dock
@@ -66,6 +67,7 @@ class App(MessagePump):
         log: str = "",
         log_verbosity: int = 1,
         title: str = "Textual Application",
+        css_file: str | None = None,
     ):
         """The Textual Application base class
 
@@ -104,6 +106,10 @@ class App(MessagePump):
         self.bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
         self._refresh_required = False
 
+        self.stylesheet = Stylesheet()
+
+        self.css_file = css_file
+
         super().__init__()
 
     title: Reactive[str] = Reactive("Textual")
@@ -123,6 +129,9 @@ class App(MessagePump):
     @property
     def view(self) -> DockView:
         return self._view_stack[-1]
+
+    def load_css(self, filename: str) -> None:
+        pass
 
     def log(self, *args: Any, verbosity: int = 1, **kwargs) -> None:
         """Write to logs.
@@ -268,6 +277,13 @@ class App(MessagePump):
 
         log("---")
         log(f"driver={self.driver_class}")
+
+        try:
+            if self.css_file is not None:
+                self.stylesheet.read(self.css_file)
+                print(self.stylesheet.css)
+        except Exception:
+            self.panic()
 
         load_event = events.Load(sender=self)
         await self.dispatch_message(load_event)

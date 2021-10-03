@@ -45,7 +45,7 @@ expect_declaration_content = Expect(
     whitespace=r"\s+",
     comment_start=r"\/\*",
     percentage=r"\d+\%",
-    number=r"\d+\.?\d+",
+    number=r"\d+\.?\d*",
     color=r"\#[0-9a-f]{6}|color\[0-9]{1,3}\|rgb\([\d\s,]+\)",
     token="[a-zA-Z_-]+",
     string=r"\".*?\"",
@@ -82,7 +82,6 @@ def tokenize(code: str) -> Iterable[Token]:
         elif name == "eof":
             break
         expect = get_state(name, expect)
-        print(token)
         yield token
 
 

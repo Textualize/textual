@@ -35,4 +35,4 @@ class MyApp(App):
         await self.call_later(get_markdown, "richreadme.md")
 
 
-MyApp.run(title="Simple App", log="textual.log")
+MyApp.run(title="Simple App", log="textual.log", css_file="theme.css")
