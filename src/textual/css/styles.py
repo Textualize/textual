@@ -180,7 +180,7 @@ class Styles:
         yield "display", self.display, "block"
         yield "visibility", self.visibility, "visible"
         yield "padding", self.padding, NULL_SPACING
-        yield "margin", self.padding, NULL_SPACING
+        yield "margin", self.margin, NULL_SPACING
 
         yield "border_top", self.border_top, None
         yield "border_right", self.border_right, None
@@ -274,7 +274,6 @@ class Styles:
         raise DeclarationError(name, token, f"{msg} (line {line + 1}, col {col + 1})")
 
     def add_declaration(self, declaration: Declaration) -> None:
-
         if not declaration.tokens:
             return
         process_method = getattr(self, f"process_{declaration.name.replace('-', '_')}")

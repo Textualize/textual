@@ -93,7 +93,8 @@ def parse(css: str) -> Iterable[RuleSet]:
 if __name__ == "__main__":
     test = """
 .foo.bar baz:focus, #egg {
-    display: block
+    /* ignore me, I'm a comment */
+    display: block;
     visibility: visible;
     border: solid green !important;
     outline: red;
@@ -103,7 +104,10 @@ if __name__ == "__main__":
 
     from .stylesheet import Stylesheet
 
+    print(test)
+    print()
     stylesheet = Stylesheet()
     stylesheet.parse(test)
     print(stylesheet)
+    print()
     print(stylesheet.css)

@@ -76,9 +76,11 @@ def tokenize(code: str) -> Iterable[Token]:
     get_state = _STATES.get
     while True:
         token = get_token(expect)
+
         name = token.name
         if name == "comment_start":
             tokenizer.skip_to(expect_comment_end)
+            continue
         elif name == "eof":
             break
         expect = get_state(name, expect)
