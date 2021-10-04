@@ -6,6 +6,7 @@ from typing import cast, Sequence, TYPE_CHECKING
 from rich import print
 import rich.repr
 from rich.color import ANSI_COLOR_NAMES, Color
+from rich.style import Style
 
 from ._error_tools import friendly_list
 from ..geometry import Spacing, SpacingDimensions
@@ -66,6 +67,8 @@ class Styles:
     _display: Display | None = None
     _visibility: Visibility | None = None
 
+    _text: Style = Style()
+
     _padding: Spacing | None = None
     _margin: Spacing | None = None
 
@@ -102,6 +105,19 @@ class Styles:
                 f"visibility must be one of {friendly_list(VALID_VISIBILITY)}"
             )
         self._visibility = visibility
+
+    @property
+    def text(self) -> Style:
+        return self._text
+
+    @text.setter
+    def text(self, style: Style | str) -> Style:
+        if isinstance(style, str):
+            _style = Style.parse(style)
+        else:
+            _style = style
+        self._text = _style
+        return _style
 
     @property
     def padding(self) -> Spacing:
@@ -177,20 +193,22 @@ class Styles:
     outline_left = _BoxSetter()
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "display", self.display, "block"
-        yield "visibility", self.visibility, "visible"
-        yield "padding", self.padding, NULL_SPACING
-        yield "margin", self.margin, NULL_SPACING
-
-        yield "border_top", self.border_top, None
-        yield "border_right", self.border_right, None
         yield "border_bottom", self.border_bottom, None
         yield "border_left", self.border_left, None
-
-        yield "outline_top", self.outline_top, None
-        yield "outline_right", self.outline_right, None
+        yield "border_right", self.border_right, None
+        yield "border_top", self.border_top, None
+        yield "display", self.display, "block"
+        yield "margin", self.margin, NULL_SPACING
         yield "outline_bottom", self.outline_bottom, None
         yield "outline_left", self.outline_left, None
+        yield "outline_right", self.outline_right, None
+        yield "outline_top", self.outline_top, None
+        yield "padding", self.padding, NULL_SPACING
+        yield "text", self.text, ""
+        yield "visibility", self.visibility, "visible"
+
+        if self._important:
+            yield "important", self._important
 
     @property
     def css_lines(self) -> list[str]:
@@ -208,6 +226,9 @@ class Styles:
 
         if self._visibility is not None:
             append_declaration("visibility", self._visibility)
+
+        if self._text is not None:
+            append_declaration("text", str(self._text))
 
         if self._padding is not None:
             append_declaration("padding", self._padding.packed)
@@ -267,6 +288,7 @@ class Styles:
                 _type, color = self._outline_left
                 append_declaration("outline-left", f"{_type} {color.name}")
 
+        lines.sort()
         return lines
 
     def error(self, name: str, token: Token, msg: str) -> None:
@@ -276,13 +298,22 @@ class Styles:
     def add_declaration(self, declaration: Declaration) -> None:
         if not declaration.tokens:
             return
-        process_method = getattr(self, f"process_{declaration.name.replace('-', '_')}")
-        tokens = declaration.tokens
-        if tokens[-1].name == "important":
-            tokens = tokens[:-1]
-            self._important.add(declaration.name)
-        if process_method is not None:
-            process_method(declaration.name, tokens)
+        process_method = getattr(
+            self, f"process_{declaration.name.replace('-', '_')}", None
+        )
+        if process_method is None:
+            self.error(
+                declaration.name,
+                declaration.tokens[0],
+                f"unknown declaration {declaration.name!r}",
+            )
+        else:
+            tokens = declaration.tokens
+            if tokens[-1].name == "important":
+                tokens = tokens[:-1]
+                self._important.add(declaration.name)
+            if process_method is not None:
+                process_method(declaration.name, tokens)
 
     def process_display(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
@@ -396,6 +427,39 @@ class Styles:
 
     def process_outline_left(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("left", name, tokens)
+
+    def process_text(self, name: str, tokens: list[Token]) -> None:
+        style_definition = " ".join(token.value for token in tokens)
+        style = Style.parse(style_definition)
+        self._text = style
+
+    def process_text_color(self, name: str, tokens: list[Token]) -> None:
+        for token in tokens:
+            if token.name in ("color", "token"):
+                try:
+                    self._text += Style(color=Color.parse(token.value))
+                except Exception as error:
+                    self.error(
+                        name, token, f"failed to parse color {token.value!r}; {error}"
+                    )
+            else:
+                self.error(
+                    name, token, f"unexpected token {token.value!r} in declaration"
+                )
+
+    def process_text_background(self, name: str, tokens: list[Token]) -> None:
+        for token in tokens:
+            if token.name in ("color", "token"):
+                try:
+                    self._text += Style(bgcolor=Color.parse(token.value))
+                except Exception as error:
+                    self.error(
+                        name, token, f"failed to parse color {token.value!r}; {error}"
+                    )
+            else:
+                self.error(
+                    name, token, f"unexpected token {token.value!r} in declaration"
+                )
 
 
 if __name__ == "__main__":

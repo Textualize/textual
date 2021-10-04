@@ -85,22 +85,3 @@ def tokenize(code: str) -> Iterable[Token]:
             break
         expect = get_state(name, expect)
         yield token
-
-
-if __name__ == "__main__":
-    test = """
-foo:hover { bar: baz }
-    /*    foo */
-
-.foo.bar baz, fob   {
-    color: red "hello world" 20% 3.14;
-    background-color: red
-}
-
-* {
-    outline: bold
-}
-
-    """
-    for token in tokenize(test):
-        print(token)

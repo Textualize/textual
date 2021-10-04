@@ -99,7 +99,10 @@ if __name__ == "__main__":
     border: solid green !important;
     outline: red;
     padding: 1 2;
-    margin: 5
+    margin: 5;
+    text: bold red on magenta
+    text-color: green;
+    text-background: white
 }"""
 
     from .stylesheet import Stylesheet
