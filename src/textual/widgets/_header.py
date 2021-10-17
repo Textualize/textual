@@ -22,7 +22,7 @@ class Header(Widget):
         tall: bool = True,
         style: StyleType = "white on dark_green",
         clock: bool = True,
-        symbol: str = "🐞",
+        symbol: RenderableType = "🐞",
     ) -> None:
         super().__init__()
         self.tall = tall
