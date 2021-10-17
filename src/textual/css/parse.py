@@ -107,6 +107,9 @@ if __name__ == "__main__":
     text: bold red on magenta
     text-color: green;
     text-background: white
+    docks: foo bar bar
+    dock-group: foo
+    dock-edge: top
 }"""
 
     from .stylesheet import Stylesheet

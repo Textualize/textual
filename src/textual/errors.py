@@ -1,0 +1,2 @@
+class MissingWidget(Exception):
+    pass

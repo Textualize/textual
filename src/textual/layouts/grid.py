@@ -263,7 +263,9 @@ class GridLayout(Layout):
     def get_widgets(self) -> Iterable[Widget]:
         return self.widgets.keys()
 
-    def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
+    def arrange(
+        self, view: View, size: Size, scroll: Offset
+    ) -> Iterable[WidgetPlacement]:
         """Generate a map that associates widgets with their location on screen.
 
         Args:

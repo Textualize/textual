@@ -98,7 +98,7 @@ class View(Widget):
         cached_size, cached_scroll, arrangement = self._cached_arrangement
         if cached_size == size and cached_scroll == scroll:
             return arrangement
-        arrangement = list(self.layout.arrange(size, scroll))
+        arrangement = list(self.layout.arrange(self, size, scroll))
         self._cached_arrangement = (size, scroll, arrangement)
         return arrangement
 

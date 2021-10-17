@@ -34,7 +34,9 @@ class VerticalLayout(Layout):
     def get_widgets(self) -> Iterable[Widget]:
         return self._widgets
 
-    def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
+    def arrange(
+        self, view: View, size: Size, scroll: Offset
+    ) -> Iterable[WidgetPlacement]:
         index = 0
         width, _height = size
         gutter = self.gutter

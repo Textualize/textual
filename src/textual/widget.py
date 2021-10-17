@@ -131,7 +131,7 @@ class Widget(MessagePump):
             widget (Widget): Widget
         """
         self.app.register(widget, self)
-        self.children.append(widget)
+        self.children._append(widget)
 
     def get_child(self, name: str | None = None) -> Widget:
         for widget in self.children:

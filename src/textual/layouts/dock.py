@@ -20,6 +20,7 @@ else:
 
 if TYPE_CHECKING:
     from ..widget import Widget
+    from ..view import View
 
 
 DockEdge = Literal["top", "right", "bottom", "left"]
@@ -48,7 +49,9 @@ class DockLayout(Layout):
         for dock in self.docks:
             yield from dock.widgets
 
-    def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
+    def arrange(
+        self, view: View, size: Size, scroll: Offset
+    ) -> Iterable[WidgetPlacement]:
 
         map: LayoutMap = LayoutMap(size)
         width, height = size

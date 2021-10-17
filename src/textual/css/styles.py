@@ -23,9 +23,15 @@ class DeclarationError(Exception):
         super().__init__(message)
 
 
+class StyleValueError(ValueError):
+    pass
+
+
 VALID_VISIBILITY = {"visible", "hidden"}
 VALID_DISPLAY = {"block", "none"}
 VALID_BORDER = {"rounded", "solid", "double", "dashed", "heavy", "inner", "outer"}
+VALID_EDGE = {"", "top", "right", "bottom", "left"}
+VALID_LAYOUT = {"dock", "vertical", "grid"}
 
 
 NULL_SPACING = Spacing(0, 0, 0, 0)
@@ -69,6 +75,7 @@ class Styles:
 
     _text: Style = Style()
 
+    _layout: str = ""
     _padding: Spacing | None = None
     _margin: Spacing | None = None
 
@@ -83,6 +90,7 @@ class Styles:
     _outline_left: tuple[str, Color] | None = None
 
     _dock_group: str | None = None
+    _dock_edge: str = ""
     _docks: tuple[str, ...] | None = None
 
     _important: set[str] = field(default_factory=set)
@@ -94,7 +102,9 @@ class Styles:
     @display.setter
     def display(self, display: Display) -> None:
         if display not in VALID_DISPLAY:
-            raise ValueError(f"display must be one of {friendly_list(VALID_DISPLAY)}")
+            raise StyleValueError(
+                f"display must be one of {friendly_list(VALID_DISPLAY)}"
+            )
         self._display = display
 
     @property
@@ -104,7 +114,7 @@ class Styles:
     @visibility.setter
     def visibility(self, visibility: Visibility) -> None:
         if visibility not in VALID_VISIBILITY:
-            raise ValueError(
+            raise StyleValueError(
                 f"visibility must be one of {friendly_list(VALID_VISIBILITY)}"
             )
         self._visibility = visibility
@@ -121,6 +131,18 @@ class Styles:
             _style = style
         self._text = _style
         return _style
+
+    @property
+    def layout(self) -> str:
+        return self._layout
+
+    @layout.setter
+    def layout(self, layout: str) -> None:
+        if layout not in VALID_LAYOUT:
+            raise StyleValueError(
+                f"layout must be one of {friendly_list(VALID_LAYOUT)}"
+            )
+        self._layout = layout
 
     @property
     def padding(self) -> Spacing:
@@ -183,7 +205,7 @@ class Styles:
             self.border_bottom = bottom
             self.border_left = left
         else:
-            raise ValueError("expected 1, 2, or 4 values")
+            raise StyleValueError("expected 1, 2, or 4 values")
 
     border_top = _BoxSetter()
     border_right = _BoxSetter()
@@ -201,6 +223,9 @@ class Styles:
         yield "border_right", self.border_right, None
         yield "border_top", self.border_top, None
         yield "display", self.display, "block"
+        yield "dock_edge", self.dock_edge, ""
+        yield "dock_group", self.dock_group, ""
+        yield "docks", self.docks, ()
         yield "margin", self.margin, NULL_SPACING
         yield "outline_bottom", self.outline_bottom, None
         yield "outline_left", self.outline_left, None
@@ -291,6 +316,12 @@ class Styles:
                 _type, color = self._outline_left
                 append_declaration("outline-left", f"{_type} {color.name}")
 
+        if self._dock_group:
+            append_declaration("dock-group", self._dock_group)
+        if self._docks:
+            append_declaration("docks", " ".join(self._docks))
+        if self._dock_edge:
+            append_declaration("dock-edge", self._dock_edge)
         lines.sort()
         return lines
 
@@ -311,7 +342,17 @@ class Styles:
         if isinstance(docks, str):
             self._docks = tuple(name.lower().strip() for name in docks.split(","))
         else:
-            self._docks = tuple(docs)
+            self._docks = tuple(docks)
+
+    @property
+    def dock_edge(self) -> str:
+        return self._dock_edge
+
+    @dock_edge.setter
+    def dock_edge(self, edge: str) -> str:
+        if edge not in VALID_EDGE:
+            raise ValueError(f"dock edge must be one of {friendly_list(VALID_EDGE)}")
+        self._dock_edge = edge
 
 
 class StylesBuilder:
@@ -497,6 +538,37 @@ class StylesBuilder:
                     name, token, f"unexpected token {token.value!r} in declaration"
                 )
 
+    def process_dock_group(self, name: str, tokens: list[Token]) -> None:
+
+        if len(tokens) > 1:
+            self.error(
+                name,
+                tokens[1],
+                f"unexpected tokens in dock-group declaration",
+            )
+        self.styles._dock_group = tokens[0].value if tokens else ""
+
+    def process_docks(self, name: str, tokens: list[Token]) -> None:
+        docks: list[str] = []
+        for token in tokens:
+            if token.name == "token":
+                docks.append(token.value)
+            else:
+                self.error(
+                    name,
+                    token,
+                    f"unexpected token {token.value!r} in docks declaration",
+                )
+        self.styles._docks = tuple(docks)
+
+    def process_dock_edge(self, name: str, tokens: list[Token]) -> None:
+        if len(tokens) > 1:
+            self.error(name, tokens[1], f"unexpected tokens in dock-edge declaration")
+        try:
+            self.styles.dock_edge = tokens[0].value if tokens else ""
+        except StyleValueError as error:
+            self.error(name, tokens[0], str(error))
+
 
 if __name__ == "__main__":
     styles = Styles()
@@ -505,6 +577,7 @@ if __name__ == "__main__":
     styles.visibility = "hidden"
     styles.border = ("solid", "rgb(10,20,30)")
     styles.outline_right = ("solid", "red")
+    styles.docks = "foo, bar"
 
     from rich import print
 
