@@ -8,6 +8,7 @@ import rich.repr
 from rich.style import Style
 
 from . import events
+from . import errors
 from . import log
 from . import messages
 from .layout import Layout, NoWidget, WidgetPlacement
@@ -30,7 +31,6 @@ class View(Widget):
         self.layout: Layout = layout or self.layout_factory()
         self.mouse_over: Widget | None = None
         self.widgets: set[Widget] = set()
-        self.named_widgets: dict[str, Widget] = {}
         self._mouse_style: Style = Style()
         self._mouse_widget: Widget | None = None
 
@@ -72,7 +72,10 @@ class View(Widget):
         yield "name", self.name
 
     def __getitem__(self, widget_name: str) -> Widget:
-        return self.named_widgets[widget_name]
+        try:
+            return self.get_child(widget_name)
+        except errors.MissingWidget as error:
+            raise KeyError(str(error))
 
     @property
     def is_visual(self) -> bool:
@@ -83,7 +86,7 @@ class View(Widget):
         return bool(self._parent and self.parent is self.app)
 
     def is_mounted(self, widget: Widget) -> bool:
-        return widget in self.widgets
+        return self.app.is_mounted(widget)
 
     def render(self) -> RenderableType:
         return self.layout
@@ -123,11 +126,9 @@ class View(Widget):
             ((None, widget) for widget in anon_widgets), widgets.items()
         )
         for name, widget in name_widgets:
-            name = name or widget.name
-            if self.app.register(widget, self):
-                if name:
-                    self.named_widgets[name] = widget
-                self.widgets.add(widget)
+            if name is not None:
+                widget.name = name
+            self.add_child(widget)
 
         self.refresh()
 
@@ -255,6 +256,6 @@ class View(Widget):
             await self.post_message(event)
 
     async def action_toggle(self, name: str) -> None:
-        widget = self.named_widgets[name]
+        widget = self[name]
         widget.visible = not widget.visible
         await self.post_message(messages.Layout(self))

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import cast, Sequence, TYPE_CHECKING
+from typing import cast, Iterable, Sequence, TYPE_CHECKING
 
 from rich import print
 import rich.repr
@@ -81,6 +81,9 @@ class Styles:
     _outline_right: tuple[str, Color] | None = None
     _outline_bottom: tuple[str, Color] | None = None
     _outline_left: tuple[str, Color] | None = None
+
+    _dock_group: str | None = None
+    _docks: tuple[str, ...] | None = None
 
     _important: set[str] = field(default_factory=set)
 
@@ -291,6 +294,33 @@ class Styles:
         lines.sort()
         return lines
 
+    @property
+    def dock_group(self) -> str:
+        return self._dock_group or ""
+
+    @dock_group.setter
+    def dock_group(self, name: str | None) -> None:
+        self._dock_group = name
+
+    @property
+    def docks(self) -> tuple[str, ...]:
+        return tuple(self._docks) if self._docks else ()
+
+    @docks.setter
+    def docks(self, docks: str | Iterable[str]) -> None:
+        if isinstance(docks, str):
+            self._docks = tuple(name.lower().strip() for name in docks.split(","))
+        else:
+            self._docks = tuple(docs)
+
+
+class StylesBuilder:
+    def __init__(self) -> None:
+        self.styles = Styles()
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "styles", self.styles
+
     def error(self, name: str, token: Token, msg: str) -> None:
         line, col = token.location
         raise DeclarationError(name, token, f"{msg} (line {line + 1}, col {col + 1})")
@@ -311,7 +341,7 @@ class Styles:
             tokens = declaration.tokens
             if tokens[-1].name == "important":
                 tokens = tokens[:-1]
-                self._important.add(declaration.name)
+                self.styles._important.add(declaration.name)
             if process_method is not None:
                 process_method(declaration.name, tokens)
 
@@ -321,7 +351,7 @@ class Styles:
             if name == "token":
                 value = value.lower()
                 if value in VALID_DISPLAY:
-                    self._display = cast(Display, value)
+                    self.styles._display = cast(Display, value)
                 else:
                     self.error(
                         name,
@@ -337,7 +367,7 @@ class Styles:
             if name == "token":
                 value = value.lower()
                 if value in VALID_VISIBILITY:
-                    self._visibility = cast(Visibility, value)
+                    self.styles._visibility = cast(Visibility, value)
                 else:
                     self.error(
                         name,
@@ -360,7 +390,11 @@ class Styles:
             self.error(
                 name, tokens[0], f"1, 2, or 4 values expected (received {len(space)})"
             )
-        setattr(self, f"_{name}", Spacing.unpack(cast(SpacingDimensions, tuple(space))))
+        setattr(
+            self.styles,
+            f"_{name}",
+            Spacing.unpack(cast(SpacingDimensions, tuple(space))),
+        )
 
     def process_padding(self, name: str, tokens: list[Token]) -> None:
         self._process_space(name, tokens)
@@ -388,12 +422,13 @@ class Styles:
 
     def _process_border(self, edge: str, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("border", tokens)
-        setattr(self, f"_border_{edge}", border)
+        setattr(self.styles, f"_border_{edge}", border)
 
     def process_border(self, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("border", tokens)
-        self._border_top = self._border_right = border
-        self._border_bottom = self._border_left = border
+        styles = self.styles
+        styles._border_top = styles._border_right = border
+        styles._border_bottom = styles._border_left = border
 
     def process_border_top(self, name: str, tokens: list[Token]) -> None:
         self._process_border("top", name, tokens)
@@ -409,12 +444,13 @@ class Styles:
 
     def _process_outline(self, edge: str, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("outline", tokens)
-        setattr(self, f"_outline_{edge}", border)
+        setattr(self.styles, f"_outline_{edge}", border)
 
     def process_outline(self, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("outline", tokens)
-        self._outline_top = self._outline_right = border
-        self._outline_bottom = self._outline_left = border
+        styles = self.styles
+        styles._outline_top = styles._outline_right = border
+        styles._outline_bottom = styles._outline_left = border
 
     def process_outline_top(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("top", name, tokens)
@@ -431,13 +467,13 @@ class Styles:
     def process_text(self, name: str, tokens: list[Token]) -> None:
         style_definition = " ".join(token.value for token in tokens)
         style = Style.parse(style_definition)
-        self._text = style
+        self.styles._text = style
 
     def process_text_color(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
-                    self._text += Style(color=Color.parse(token.value))
+                    self.styles._text += Style(color=Color.parse(token.value))
                 except Exception as error:
                     self.error(
                         name, token, f"failed to parse color {token.value!r}; {error}"
@@ -451,7 +487,7 @@ class Styles:
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
-                    self._text += Style(bgcolor=Color.parse(token.value))
+                    self.styles._text += Style(bgcolor=Color.parse(token.value))
                 except Exception as error:
                     self.error(
                         name, token, f"failed to parse color {token.value!r}; {error}"

@@ -26,7 +26,6 @@ class Stylesheet:
         try:
             with open(filename, "rt") as css_file:
                 css = css_file.read()
-            del css_file
         except Exception as error:
             raise StylesheetError(f"unable to read {filename!r}; {error}") from None
         try:

@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
-from .styles import Styles
+from .styles import Styles, StylesBuilder
 from .tokenize import Token
 
 

@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from rich import print
 
-from typing import Callable, Iterator, Iterable
+from typing import Iterator, Iterable
 
 from .tokenize import tokenize, Token
 
 from .model import Declaration, RuleSet, Selector, CombinatorType, SelectorType
+from .styles import StylesBuilder
 
 
 SELECTOR_MAP = {
@@ -28,6 +29,8 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
     get_selector = SELECTOR_MAP.get
     combinator = CombinatorType.SAME
     selectors: list[Selector] = []
+    rule_selectors: list[list[Selector]] = []
+    styles_builder = StylesBuilder()
 
     while True:
         if token.name == "pseudo_class":
@@ -36,7 +39,7 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
             if combinator == CombinatorType.SAME:
                 combinator = CombinatorType.DESCENDENT
         elif token.name == "new_selector":
-            rule_set.selectors.append(selectors[:])
+            rule_selectors.append(selectors[:])
             selectors.clear()
             combinator = CombinatorType.SAME
         elif token.name == "declaration_set_start":
@@ -54,7 +57,7 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
         token = next(tokens)
 
     if selectors:
-        rule_set.selectors.append(selectors[:])
+        rule_selectors.append(selectors[:])
 
     declaration = Declaration("")
 
@@ -65,7 +68,7 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
             continue
         if token_name == "declaration_name":
             if declaration.tokens:
-                rule_set.styles.add_declaration(declaration)
+                styles_builder.add_declaration(declaration)
             declaration = Declaration("")
             declaration.name = token.value.rstrip(":")
         elif token_name == "declaration_set_end":
@@ -74,8 +77,9 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
             declaration.tokens.append(token)
 
     if declaration.tokens:
-        rule_set.styles.add_declaration(declaration)
+        styles_builder.add_declaration(declaration)
 
+    rule_set = RuleSet(rule_selectors, styles_builder.styles)
     yield rule_set
 
 

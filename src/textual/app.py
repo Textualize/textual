@@ -84,7 +84,7 @@ class App(MessagePump):
         self._title = title
         self._layout = DockLayout()
         self._view_stack: list[DockView] = []
-        self.children: set[MessagePump] = set()
+        self.children: set[Widget] = set()
 
         self.focused: Widget | None = None
         self.mouse_over: Widget | None = None
@@ -326,6 +326,9 @@ class App(MessagePump):
             child.post_message_no_wait(events.Mount(sender=parent))
             return True
         return False
+
+    def is_mounted(self, widget: Widget) -> bool:
+        return widget in self.children
 
     async def close_all(self) -> None:
         while self.children:

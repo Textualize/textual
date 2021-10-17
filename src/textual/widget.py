@@ -23,14 +23,17 @@ from rich.styled import Styled
 from rich.text import TextType
 
 from . import events
+from . import errors
 from ._animator import BoundAnimator
 from ._callback import invoke
+from ._widget_list import WidgetList
 from ._context import active_app
 from .geometry import Size, Spacing, SpacingDimensions
 from .message import Message
 from .message_pump import MessagePump
 from .messages import Layout, Update
 from .reactive import Reactive, watch
+from .css.styles import Styles
 from ._types import Lines
 
 if TYPE_CHECKING:
@@ -55,17 +58,17 @@ class RenderCache(NamedTuple):
 
 @rich.repr.auto
 class Widget(MessagePump):
-    _id: ClassVar[int] = 0
     _counts: ClassVar[dict[str, int]] = {}
     can_focus: bool = False
 
-    def __init__(self, name: str | None = None) -> None:
+    def __init__(self, name: str | None = None, id: str | None = None) -> None:
         class_name = self.__class__.__name__
         Widget._counts.setdefault(class_name, 0)
         Widget._counts[class_name] += 1
         _count = self._counts[class_name]
 
         self.name = name or f"{class_name}#{_count}"
+        self._id = id
 
         self._size = Size(0, 0)
         self._repaint_required = False
@@ -74,9 +77,14 @@ class Widget(MessagePump):
         self._reactive_watches: dict[str, Callable] = {}
         self.render_cache: RenderCache | None = None
         self.highlight_style: Style | None = None
+        self._class_names: set[str] = set()
+
+        self.styles: Styles = Styles()
+        self.children = WidgetList()
 
         super().__init__()
 
+    id: str | None = None
     visible: Reactive[bool] = Reactive(True, layout=True)
     layout_size: Reactive[int | None] = Reactive(None, layout=True)
     layout_fraction: Reactive[int] = Reactive(1, layout=True)
@@ -115,6 +123,56 @@ class Widget(MessagePump):
     def __rich__(self) -> RenderableType:
         renderable = self.render_styled()
         return renderable
+
+    def add_child(self, widget: Widget) -> None:
+        """Add a child widget.
+
+        Args:
+            widget (Widget): Widget
+        """
+        self.app.register(widget, self)
+        self.children.append(widget)
+
+    def get_child(self, name: str | None = None) -> Widget:
+        for widget in self.children:
+            if widget.name == name:
+                return widget
+        raise errors.MissingWidget(f"Widget named {name!r} was not found in {self}")
+
+    @property
+    def class_names(self) -> frozenset[str]:
+        return frozenset(self._class_names)
+
+    @property
+    def _css_path(self) -> list[tuple[MessagePump, list[Widget]]]:
+        result: list[tuple[MessagePump, list[Widget]]] = []
+
+        # TODO:
+        widget: Widget = self
+        while isinstance(widget._parent, Widget):
+            result.append((widget, widget.children[:]))
+            widget = widget._parent
+        return result[::-1]
+
+    def has_class(self, *class_names: str) -> bool:
+        return self._class_names.issuperset(class_names)
+
+    def add_class(self, *class_names: str) -> None:
+        """Add class names."""
+        self._class_names.update(class_names)
+
+    def remove_class(self, *class_names: str) -> None:
+        """Remove class names"""
+        self._class_names.difference_update(class_names)
+
+    def toggle_class(self, *class_names: str) -> None:
+        """Toggle class names"""
+        _class_names = self._class_names
+        for class_name in class_names:
+            if class_name in _class_names:
+                _class_names.discard(class_name)
+            else:
+                _class_names.add(class_name)
 
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
