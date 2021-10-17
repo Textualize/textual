@@ -22,11 +22,13 @@ class Header(Widget):
         tall: bool = True,
         style: StyleType = "white on dark_green",
         clock: bool = True,
+        symbol: str = "🐞",
     ) -> None:
         super().__init__()
         self.tall = tall
         self.style = style
         self.clock = clock
+        self.symbol = symbol
 
     tall: Reactive[bool] = Reactive(True, layout=True)
     style: Reactive[StyleType] = Reactive("white on blue")
@@ -54,7 +56,7 @@ class Header(Widget):
         header_table.add_column("title", justify="center", ratio=1)
         header_table.add_column("clock", justify="right", width=8)
         header_table.add_row(
-            "🐞", self.full_title, self.get_clock() if self.clock else ""
+            self.symbol, self.full_title, self.get_clock() if self.clock else ""
         )
         header: RenderableType
         header = Panel(header_table, style=self.style) if self.tall else header_table
