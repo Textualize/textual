@@ -7,7 +7,7 @@ def friendly_list(words: Iterable[str], joiner: str = "or") -> str:
     """Generate a list of words as readable prose.
 
     >>> friendly_list(["foo", "bar", "baz"])
-    "foo, bar, or baz"
+    "'foo', 'bar', or 'baz'"
 
     Args:
         words (Iterable[str]): A list of words.
