@@ -2,12 +2,9 @@ from __future__ import annotations
 
 import rich.repr
 
+from .errors import StylesheetError
 from .model import RuleSet
 from .parse import parse
-
-
-class StylesheetError(Exception):
-    pass
 
 
 @rich.repr.auto

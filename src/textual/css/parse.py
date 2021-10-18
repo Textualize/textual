@@ -7,7 +7,7 @@ from typing import Iterator, Iterable
 from .tokenize import tokenize, Token
 
 from .model import Declaration, RuleSet, Selector, CombinatorType, SelectorType
-from .styles import StylesBuilder
+from ._styles_builder import StylesBuilder
 
 
 SELECTOR_MAP = {
