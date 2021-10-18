@@ -266,6 +266,57 @@ In the `on_load` method we have bound the keys R, G, and B to the `color` action
 
 You could be forgiven for thinking that `"color('red')"` is Python code which Textual evaluates. This is not the case. The action strings are parsed and may not include expressions or arbitrary code. The reason that strings are used over a callable is that (in a future update) key bindings may be loaded from a configuration file.
 
+### Grid
+1. Initial grid
+```py
+grid = await self.view.dock_grid(edge="left", name="left")
+```
+
+2. Make columns and rows
+```py
+grid.add_column(fraction=1, name="left")
+grid.add_column(fraction=2, name="H-mid")
+grid.add_column(fraction=1, name="right")
+
+grid.add_row(fraction=1, name="top")
+grid.add_row(fraction=2, name="W-mid")
+grid.add_row(fraction=1, name="bot")
+```
+
+3. Make areas you can use starting and ending column or row but if area is only in one column/row you can omit end, see syntax
+```
+"COL,ROW"
+"COL,ROW-start|ROW-end"
+"COL-start|COL-end,ROW-start|ROW-end"
+```
+```py
+grid.add_areas(
+    menu = "H-mid,W-mid",
+    logo = "H-mid,top",
+    logs="H-mid,bot",
+
+    area1="left,top",
+    area2="left,W-mid",
+    area3="left,bot",
+    area4="right,top-start|bot-end",
+)
+```
+
+4. Time to place some widgets inside them
+```py
+grid.place(
+    menu=menu,
+    logo=Logo(),
+    logs=logs,
+
+    area1=keyboard,
+    area2=storage,
+    area3=Placeholder(name="area3"),
+    area4=hack_area,
+    footer=Footer(),
+)
+```
+
 ### More on Events
 
 _TODO_
