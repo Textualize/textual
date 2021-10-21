@@ -8,7 +8,8 @@ from rich.style import Style
 
 from .constants import VALID_BORDER, VALID_DISPLAY, VALID_VISIBILITY
 from .errors import DeclarationError
-from ..geometry import Spacing, SpacingDimensions
+from ._error_tools import friendly_list
+from ..geometry import Offset, Spacing, SpacingDimensions
 from .model import Declaration
 from .styles import Styles
 from .types import Display, Visibility
@@ -42,7 +43,7 @@ class StylesBuilder:
             tokens = declaration.tokens
             if tokens[-1].name == "important":
                 tokens = tokens[:-1]
-                self.styles._important.add(declaration.name)
+                self.styles.important.add(declaration.name)
             if process_method is not None:
                 process_method(declaration.name, tokens)
 
@@ -164,6 +165,41 @@ class StylesBuilder:
 
     def process_outline_left(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("left", name, tokens)
+
+    def process_offset(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        if len(tokens) != 2:
+            self.error(name, tokens[0], "expected two numbers in declaration")
+        else:
+            token1, token2 = tokens
+            if token1.name != "number":
+                self.error(name, token1, f"expected a number (found {token1.value!r})")
+            if token2.name != "number":
+                self.error(name, token2, f"expected a number (found {token1.value!r})")
+            self.styles._offset = Offset(
+                int(float(token1.value)), int(float(token2.value))
+            )
+
+    def process_offset_x(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        if len(tokens) != 1:
+            self.error(name, tokens[0], f"expected a single number")
+        else:
+            x = int(float(tokens[0].value))
+            y = self.styles.offset.y
+            self.styles._offset = Offset(x, y)
+
+    def process_offset_y(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        if len(tokens) != 1:
+            self.error(name, tokens[0], f"expected a single number")
+        else:
+            y = int(float(tokens[0].value))
+            x = self.styles.offset.x
+            self.styles._offset = Offset(x, y)
 
     def process_text(self, name: str, tokens: list[Token]) -> None:
         style_definition = " ".join(token.value for token in tokens)

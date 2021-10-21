@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import cast, Iterable, Sequence, TYPE_CHECKING
 
 from rich import print
 import rich.repr
@@ -17,12 +16,13 @@ from .constants import (
     VALID_LAYOUT,
     NULL_SPACING,
 )
-from ..geometry import Spacing, SpacingDimensions
+from ..geometry import NULL_OFFSET, Offset, Spacing
 from ._style_properties import (
     _BorderProperty,
     _BoxProperty,
     _DocksProperty,
     _DockGroupProperty,
+    _OffsetProperty,
     _SpacingProperty,
     _StyleProperty,
 )
@@ -40,6 +40,7 @@ class Styles:
     _layout: str = ""
     _padding: Spacing | None = None
     _margin: Spacing | None = None
+    _offset: Offset | None = None
 
     _border_top: tuple[str, Color] | None = None
     _border_right: tuple[str, Color] | None = None
@@ -55,7 +56,7 @@ class Styles:
     _dock_edge: str = ""
     _docks: tuple[str, ...] | None = None
 
-    _important: set[str] = field(default_factory=set)
+    important: set[str] = field(default_factory=set)
 
     @property
     def display(self) -> Display:
@@ -94,6 +95,8 @@ class Styles:
                 f"layout must be one of {friendly_list(VALID_LAYOUT)}"
             )
         self._layout = layout
+
+    offset = _OffsetProperty()
 
     padding = _SpacingProperty()
     margin = _SpacingProperty()
@@ -135,6 +138,7 @@ class Styles:
         yield "dock_group", self.dock_group, ""
         yield "docks", self.docks, ()
         yield "margin", self.margin, NULL_SPACING
+        yield "offset", self.offset, NULL_OFFSET
         yield "outline_bottom", self.outline_bottom, None
         yield "outline_left", self.outline_left, None
         yield "outline_right", self.outline_right, None
@@ -143,8 +147,8 @@ class Styles:
         yield "text", self.text, ""
         yield "visibility", self.visibility, "visible"
 
-        if self._important:
-            yield "important", self._important
+        if self.important:
+            yield "important", self.important
 
     @property
     def css_lines(self) -> list[str]:
@@ -152,28 +156,24 @@ class Styles:
         append = lines.append
 
         def append_declaration(name: str, value: str) -> None:
-            if name in self._important:
+            if name in self.important:
                 append(f"{name}: {value} !important;")
             else:
                 append(f"{name}: {value};")
 
         if self._display is not None:
             append_declaration("display", self._display)
-
         if self._visibility is not None:
             append_declaration("visibility", self._visibility)
-
         if self._text is not None:
             append_declaration("text", str(self._text))
-
         if self._padding is not None:
             append_declaration("padding", self._padding.packed)
-
         if self._margin is not None:
             append_declaration("margin", self._margin.packed)
 
         if (
-            self._border_top != None
+            self._border_top is not None
             and self._border_top == self._border_right
             and self._border_right == self._border_bottom
             and self._border_bottom == self._border_left
@@ -181,25 +181,21 @@ class Styles:
             _type, color = self._border_top
             append_declaration("border", f"{_type} {color.name}")
         else:
-
             if self._border_top is not None:
                 _type, color = self._border_top
                 append_declaration("border-top", f"{_type} {color.name}")
-
             if self._border_right is not None:
                 _type, color = self._border_right
                 append_declaration("border-right", f"{_type} {color.name}")
-
             if self._border_bottom is not None:
                 _type, color = self._border_bottom
                 append_declaration("border-bottom", f"{_type} {color.name}")
-
             if self._border_left is not None:
                 _type, color = self._border_left
                 append_declaration("border-left", f"{_type} {color.name}")
 
         if (
-            self._outline_top != None
+            self._outline_top is not None
             and self._outline_top == self._outline_right
             and self._outline_right == self._outline_bottom
             and self._outline_bottom == self._outline_left
@@ -207,23 +203,22 @@ class Styles:
             _type, color = self._outline_top
             append_declaration("outline", f"{_type} {color.name}")
         else:
-
             if self._outline_top is not None:
                 _type, color = self._outline_top
                 append_declaration("outline-top", f"{_type} {color.name}")
-
             if self._outline_right is not None:
                 _type, color = self._outline_right
                 append_declaration("outline-right", f"{_type} {color.name}")
-
             if self._outline_bottom is not None:
                 _type, color = self._outline_bottom
                 append_declaration("outline-bottom", f"{_type} {color.name}")
-
             if self._outline_left is not None:
                 _type, color = self._outline_left
                 append_declaration("outline-left", f"{_type} {color.name}")
 
+        if self.offset:
+            x, y = self.offset
+            append_declaration("offset", f"{x} {y}")
         if self._dock_group:
             append_declaration("dock-group", self._dock_group)
         if self._docks:
@@ -245,7 +240,9 @@ if __name__ == "__main__":
     styles.text = "italic blue"
     styles.dock_group = "bar"
 
-    from rich import print
+    from rich import inspect, print
 
     print(styles)
     print(styles.outline)
+
+    inspect(styles)

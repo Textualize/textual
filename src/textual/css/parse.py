@@ -110,6 +110,8 @@ if __name__ == "__main__":
     docks: foo bar bar
     dock-group: foo
     dock-edge: top
+    offset-x: 4
+    offset-y: 5
 }"""
 
     from .stylesheet import Stylesheet

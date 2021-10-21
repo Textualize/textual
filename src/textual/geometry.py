@@ -482,3 +482,6 @@ class Spacing(NamedTuple):
             top, right, bottom, left = cast(Tuple[int, int, int, int], pad)
             return cls(top, right, bottom, left)
         raise ValueError(f"1, 2 or 4 integers required for spacing; {len(pad)} given")
+
+
+NULL_OFFSET = Offset(0, 0)

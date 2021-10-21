@@ -6,7 +6,7 @@ from rich.color import Color
 from rich.style import Style
 
 
-from ..geometry import Spacing, SpacingDimensions
+from ..geometry import Offset, Spacing, SpacingDimensions
 from .constants import NULL_SPACING
 from .errors import StyleValueError
 
@@ -162,3 +162,16 @@ class _DockGroupProperty:
     def __set__(self, obj: Styles, spacing: str | None) -> str | None:
         obj._dock_group = spacing
         return spacing
+
+
+class _OffsetProperty:
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self._internal_name = f"_{name}"
+
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Offset:
+        return getattr(obj, self._internal_name) or Offset()
+
+    def __set__(self, obj: Styles, offset: tuple[int, int]) -> tuple[int, int]:
+        _offset = Offset(*offset)
+        setattr(obj, self._internal_name, _offset)
+        return offset
