@@ -31,13 +31,20 @@ class ScrollView(View):
     ) -> None:
         from ..views import WindowView
 
-        self.fluid = fluid
-        self.vscroll = ScrollBar(vertical=True)
-        self.hscroll = ScrollBar(vertical=False)
-        self.window = WindowView(
-            "" if contents is None else contents, auto_width=auto_width, gutter=gutter
-        )
         layout = GridLayout()
+        super().__init__(name=name, layout=layout)
+
+        self.fluid = fluid
+        self.vscroll = self.add_child(ScrollBar(vertical=True))
+        self.hscroll = self.add_child(ScrollBar(vertical=False))
+        self.window = self.add_child(
+            WindowView(
+                "" if contents is None else contents,
+                auto_width=auto_width,
+                gutter=gutter,
+            )
+        )
+
         layout.add_column("main")
         layout.add_column("vscroll", size=1)
         layout.add_row("main")
@@ -47,7 +54,6 @@ class ScrollView(View):
         )
         layout.show_row("hscroll", False)
         layout.show_column("vscroll", False)
-        super().__init__(name=name, layout=layout)
 
     x: Reactive[float] = Reactive(0, repaint=False)
     y: Reactive[float] = Reactive(0, repaint=False)
@@ -89,13 +95,13 @@ class ScrollView(View):
         await self.window.update(renderable)
 
     async def on_mount(self, event: events.Mount) -> None:
-        assert isinstance(self.layout, GridLayout)
-        self.layout.place(
+        assert isinstance(self._layout, GridLayout)
+        self._layout.place(
             content=self.window,
             vscroll=self.vscroll,
             hscroll=self.hscroll,
         )
-        await self.layout.mount_all(self)
+        await self._layout.mount_all(self)
 
     def home(self) -> None:
         self.x = self.y = 0
@@ -211,10 +217,10 @@ class ScrollView(View):
         self.vscroll.virtual_size = virtual_height
         self.vscroll.window_size = height
 
-        assert isinstance(self.layout, GridLayout)
+        assert isinstance(self._layout, GridLayout)
 
-        vscroll_change = self.layout.show_column("vscroll", virtual_height > height)
-        hscroll_change = self.layout.show_row("hscroll", virtual_width > width)
+        vscroll_change = self._layout.show_column("vscroll", virtual_height > height)
+        hscroll_change = self._layout.show_row("hscroll", virtual_width > width)
         if hscroll_change or vscroll_change:
             self.refresh(layout=True)
 

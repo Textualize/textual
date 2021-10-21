@@ -67,7 +67,7 @@ class Widget(MessagePump):
         Widget._counts[class_name] += 1
         _count = self._counts[class_name]
 
-        self.name = name or f"{class_name}#{_count}"
+        self.name = name or f"_{class_name}{_count}"
         self._id = id
 
         self._size = Size(0, 0)
@@ -118,13 +118,14 @@ class Widget(MessagePump):
         cls.can_focus = can_focus
 
     def __rich_repr__(self) -> rich.repr.Result:
+        yield "id", self.id, None
         yield "name", self.name
 
     def __rich__(self) -> RenderableType:
         renderable = self.render_styled()
         return renderable
 
-    def add_child(self, widget: Widget) -> None:
+    def add_child(self, widget: Widget) -> Widget:
         """Add a child widget.
 
         Args:
@@ -132,6 +133,7 @@ class Widget(MessagePump):
         """
         self.app.register(widget, self)
         self.children._append(widget)
+        return widget
 
     def get_child(self, name: str | None = None) -> Widget:
         for widget in self.children:

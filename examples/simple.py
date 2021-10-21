@@ -27,6 +27,8 @@ class MyApp(App):
         # Dock the body in the remaining space
         await self.view.dock(body, edge="right")
 
+        # self.panic(self.tree)
+
         async def get_markdown(filename: str) -> None:
             with open(filename, "rt") as fh:
                 readme = Markdown(fh.read(), hyperlinks=True)

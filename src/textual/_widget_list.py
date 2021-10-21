@@ -49,7 +49,7 @@ class WidgetList:
             ],
         )
 
-    def _append(self, widget: Widget):
+    def _append(self, widget: Widget) -> None:
         if widget not in self._widgets:
             self._widget_refs.append(ref(widget))
             self.__widgets = None

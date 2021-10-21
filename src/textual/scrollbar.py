@@ -187,6 +187,7 @@ class ScrollBar(Widget):
     grabbed: Reactive[Offset | None] = Reactive(None)
 
     def __rich_repr__(self) -> rich.repr.Result:
+        yield from super().__rich_repr__()
         yield "virtual_size", self.virtual_size
         yield "window_size", self.window_size
         yield "position", self.position

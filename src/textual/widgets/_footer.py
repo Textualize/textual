@@ -33,7 +33,7 @@ class Footer(Widget):
         self.highlight_key = None
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "keys", self.keys
+        yield from super().__rich_repr__()
 
     def make_key_text(self) -> Text:
         """Create text containing all the keys."""

@@ -6,8 +6,7 @@ from itertools import chain
 from operator import itemgetter
 import sys
 
-from typing import Iterable, Iterator, NamedTuple, TYPE_CHECKING
-from rich import segment
+from typing import ClassVar, Iterable, Iterator, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 from rich.control import Control
@@ -86,6 +85,8 @@ class LayoutUpdate:
 
 class Layout(ABC):
     """Responsible for arranging Widgets in a view and rendering them."""
+
+    name: ClassVar[str] = ""
 
     def __init__(self) -> None:
         self._layout_map: LayoutMap | None = None

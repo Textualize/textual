@@ -8,12 +8,9 @@ from itertools import cycle, product
 import sys
 from typing import Iterable, NamedTuple
 
-from rich.console import Console
-
 from .._layout_resolve import layout_resolve
 from ..geometry import Size, Offset, Region
 from ..layout import Layout, WidgetPlacement
-from ..layout_map import LayoutMap
 from ..widget import Widget
 
 if sys.version_info >= (3, 8):
