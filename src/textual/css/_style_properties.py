@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from typing import Iterable, Sequence, TYPE_CHECKING
+from typing import Iterable, NamedTuple, Sequence, TYPE_CHECKING
 
+import rich.repr
 from rich.color import Color
 from rich.style import Style
 
@@ -15,62 +16,52 @@ if TYPE_CHECKING:
 
 
 class _BoxProperty:
+
+    DEFAULT = ("", Style())
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self.internal_name = f"_{name}"
         _type, edge = name.split("_")
         self._type = _type
         self.edge = edge
 
-    def __get__(self, obj: Styles, objtype=None) -> tuple[str, str] | None:
+    def __get__(self, obj: Styles, objtype=None) -> tuple[str, Style]:
         value = getattr(obj, self.internal_name)
-        if value is None:
-            return None
-        else:
-            _type, color = value
-            return (_type, color.name)
+        return value or self.DEFAULT
 
     def __set__(
-        self, obj: Styles, border: tuple[str, str | Color] | None
-    ) -> tuple[str, Color] | None:
+        self, obj: Styles, border: tuple[str, str | Color | Style] | None
+    ) -> tuple[str, str | Color | Style] | None:
         if border is None:
             new_value = None
         else:
             _type, color = border
-            if isinstance(color, Color):
-                new_value = (_type, color)
+            if isinstance(color, str):
+                new_value = (_type, Style.parse(color))
+            elif isinstance(color, Color):
+                new_value = (_type, Style.from_color(color))
             else:
-                new_value = (_type, Color.parse(color))
+                new_value = (_type, Style.from_color(Color.parse(color)))
         setattr(obj, self.internal_name, new_value)
-        return new_value
+        return border
 
 
-class _StyleProperty:
-    def __set_name__(self, owner: Styles, name: str) -> None:
-        self._internal_name = f"_{name}"
+@rich.repr.auto
+class Edges(NamedTuple):
+    top: tuple[str, Style]
+    right: tuple[str, Style]
+    bottom: tuple[str, Style]
+    left: tuple[str, Style]
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Style:
-        return getattr(obj, self._internal_name)
-
-    def __set__(self, obj: Styles, style: Style | str) -> Style:
-        if isinstance(style, str):
-            _style = Style.parse(style)
-        else:
-            _style = style
-        setattr(obj, self._internal_name, _style)
-        return _style
-
-
-class _SpacingProperty:
-    def __set_name__(self, owner: Styles, name: str) -> None:
-        self._internal_name = f"_{name}"
-
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Spacing:
-        return getattr(obj, self._internal_name) or NULL_SPACING
-
-    def __set__(self, obj: Styles, spacing: SpacingDimensions) -> Spacing:
-        spacing = Spacing.unpack(spacing)
-        setattr(obj, self._internal_name, spacing)
-        return spacing
+    def __rich_repr__(self) -> rich.repr.Result:
+        if self.top[0]:
+            yield "top", self.top
+        if self.right[0]:
+            yield "right", self.right
+        if self.bottom[0]:
+            yield "bottom", self.bottom
+        if self.left[0]:
+            yield "left", self.left
 
 
 class _BorderProperty:
@@ -82,16 +73,9 @@ class _BorderProperty:
             f"{name}_left",
         )
 
-    def __get__(
-        self, obj: Styles, objtype: type[Styles] | None = None
-    ) -> tuple[
-        tuple[str, str] | None,
-        tuple[str, str] | None,
-        tuple[str, str] | None,
-        tuple[str, str] | None,
-    ]:
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Edges:
         top, right, bottom, left = self._properties
-        border = (
+        border = Edges(
             getattr(obj, top),
             getattr(obj, right),
             getattr(obj, bottom),
@@ -102,7 +86,9 @@ class _BorderProperty:
     def __set__(
         self,
         obj: Styles,
-        border: Sequence[tuple[str, str] | None] | tuple[str, str] | None,
+        border: Sequence[tuple[str, str | Color | Style] | None]
+        | tuple[str, str | Color | Style]
+        | None,
     ) -> None:
         top, right, bottom, left = self._properties
         if border is None:
@@ -138,6 +124,35 @@ class _BorderProperty:
             setattr(obj, left, _border4)
         else:
             raise StyleValueError("expected 1, 2, or 4 values")
+
+
+class _StyleProperty:
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self._internal_name = f"_{name}"
+
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Style:
+        return getattr(obj, self._internal_name)
+
+    def __set__(self, obj: Styles, style: Style | str) -> Style:
+        if isinstance(style, str):
+            _style = Style.parse(style)
+        else:
+            _style = style
+        setattr(obj, self._internal_name, _style)
+        return _style
+
+
+class _SpacingProperty:
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self._internal_name = f"_{name}"
+
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Spacing:
+        return getattr(obj, self._internal_name) or NULL_SPACING
+
+    def __set__(self, obj: Styles, spacing: SpacingDimensions) -> Spacing:
+        spacing = Spacing.unpack(spacing)
+        setattr(obj, self._internal_name, spacing)
+        return spacing
 
 
 class _DocksProperty:

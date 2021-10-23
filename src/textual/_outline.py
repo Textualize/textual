@@ -1,35 +1,41 @@
 from __future__ import annotations
 
+
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.measure import Measurement
-from rich.padding import Padding
 from rich.segment import Segment, SegmentLines
 
 from ._box import BOX_STYLES
+from .css.types import EdgeStyle
 
 
 class Outline:
     def __init__(
         self,
         renderable: RenderableType,
-        sides: tuple[str, str, str, str],
-        styles: tuple[str, str, str, str],
+        edge_styles: tuple[EdgeStyle, EdgeStyle, EdgeStyle, EdgeStyle],
     ) -> None:
         self.renderable = renderable
-        self.sides = sides
-        self.styles = styles
+        self.edge_styles = edge_styles
+
+    @property
+    def sides(self) -> tuple[str, str, str, str]:
+        (top, _), (right, _), (bottom, _), (left, _) = self.edge_styles
+        return (top or "none", right or "none", bottom or "none", left or "none")
+
+    @property
+    def styles(self) -> tuple[Style, Style, Style, Style]:
+        (_, top), (_, right), (_, left), (_, bottom) = self.edge_styles
+        return (top, right, left, bottom)
 
     def __rich_console__(
         self, console: "Console", options: "ConsoleOptions"
     ) -> "RenderResult":
         width = options.max_width
-        renderable = Padding(self.renderable, 1)
-        lines = console.render_lines(renderable, options)
+        lines = console.render_lines(self.renderable, options)
 
         top, right, bottom, left = self.sides
-        top_style, right_style, bottom_style, left_style = map(
-            console.get_style, self.styles
-        )
+        top_style, right_style, bottom_style, left_style = self.styles
 
         BOX = BOX_STYLES
 
@@ -106,16 +112,24 @@ if __name__ == "__main__":
     console = Console()
     text = Text("Textual " * 30, style="dim")
 
-    outline = Outline(text, ("", "outer", "", "outer"), ("", "red", "", "green"))
-
-    console.print(Padding(outline, 1))
-
     outline = Outline(
         text,
-        ("dashed", "dashed", "dashed", "dashed"),
-        ("green", "green", "green", "green"),
+        (
+            ("", Style.parse("default")),
+            ("outer", Style.parse("red")),
+            ("", Style.parse("default")),
+            ("outer", Style.parse("green")),
+        ),
     )
-    console.print(Padding(outline, 1))
+
+    console.print(outline)
+
+    # outline = Outline(
+    #     text,
+    #     ("dashed", "dashed", "dashed", "dashed"),
+    #     ("green", "green", "green", "green"),
+    # )
+    # console.print(Padding(outline, 1))
 
     # lines = console.render_lines(text, console.options)
 

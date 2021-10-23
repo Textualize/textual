@@ -42,15 +42,15 @@ class Styles:
     _margin: Spacing | None = None
     _offset: Offset | None = None
 
-    _border_top: tuple[str, Color] | None = None
-    _border_right: tuple[str, Color] | None = None
-    _border_bottom: tuple[str, Color] | None = None
-    _border_left: tuple[str, Color] | None = None
+    _border_top: tuple[str, Style] | None = None
+    _border_right: tuple[str, Style] | None = None
+    _border_bottom: tuple[str, Style] | None = None
+    _border_left: tuple[str, Style] | None = None
 
-    _outline_top: tuple[str, Color] | None = None
-    _outline_right: tuple[str, Color] | None = None
-    _outline_bottom: tuple[str, Color] | None = None
-    _outline_left: tuple[str, Color] | None = None
+    _outline_top: tuple[str, Style] | None = None
+    _outline_right: tuple[str, Style] | None = None
+    _outline_bottom: tuple[str, Style] | None = None
+    _outline_left: tuple[str, Style] | None = None
 
     _dock_group: str | None = None
     _dock_edge: str = ""
@@ -128,21 +128,27 @@ class Styles:
         self._dock_edge = edge
         return edge
 
+    @property
+    def has_border(self) -> bool:
+        """Check in a border is present."""
+        return any(edge for edge, _style in self.border)
+
+    @property
+    def has_outline(self) -> bool:
+        """Check if an outline is present."""
+        return any(edge for edge, _style in self.outline)
+
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "border_bottom", self.border_bottom, None
-        yield "border_left", self.border_left, None
-        yield "border_right", self.border_right, None
-        yield "border_top", self.border_top, None
+        if self.has_border:
+            yield "border", self.border
         yield "display", self.display, "block"
         yield "dock_edge", self.dock_edge, ""
         yield "dock_group", self.dock_group, ""
         yield "docks", self.docks, ()
         yield "margin", self.margin, NULL_SPACING
         yield "offset", self.offset, NULL_OFFSET
-        yield "outline_bottom", self.outline_bottom, None
-        yield "outline_left", self.outline_left, None
-        yield "outline_right", self.outline_right, None
-        yield "outline_top", self.outline_top, None
+        if self.has_outline:
+            yield "outline", self.outline
         yield "padding", self.padding, NULL_SPACING
         yield "text", self.text, ""
         yield "visibility", self.visibility, "visible"
@@ -178,21 +184,35 @@ class Styles:
             and self._border_right == self._border_bottom
             and self._border_bottom == self._border_left
         ):
-            _type, color = self._border_top
-            append_declaration("border", f"{_type} {color.name}")
+            _type, style = self._border_top
+            append_declaration(
+                "border", f"{_type} {style.color.name if style.color else ''}"
+            )
         else:
             if self._border_top is not None:
-                _type, color = self._border_top
-                append_declaration("border-top", f"{_type} {color.name}")
+                _type, style = self._border_top
+                append_declaration(
+                    "border-top",
+                    f"{_type} {style.color.name if style.color else ''}",
+                )
             if self._border_right is not None:
-                _type, color = self._border_right
-                append_declaration("border-right", f"{_type} {color.name}")
+                _type, style = self._border_right
+                append_declaration(
+                    "border-right",
+                    f"{_type} {style.color.name if style.color else ''}",
+                )
             if self._border_bottom is not None:
-                _type, color = self._border_bottom
-                append_declaration("border-bottom", f"{_type} {color.name}")
+                _type, style = self._border_bottom
+                append_declaration(
+                    "border-bottom",
+                    f"{_type} {style.color.name if style.color else ''}",
+                )
             if self._border_left is not None:
-                _type, color = self._border_left
-                append_declaration("border-left", f"{_type} {color.name}")
+                _type, style = self._border_left
+                append_declaration(
+                    "border-left",
+                    f"{_type} {style.color.name if style.color else ''}",
+                )
 
         if (
             self._outline_top is not None
@@ -200,21 +220,33 @@ class Styles:
             and self._outline_right == self._outline_bottom
             and self._outline_bottom == self._outline_left
         ):
-            _type, color = self._outline_top
-            append_declaration("outline", f"{_type} {color.name}")
+            _type, style = self._outline_top
+            append_declaration(
+                "outline", f"{_type} {style.color.name if style.color else ''}"
+            )
         else:
             if self._outline_top is not None:
-                _type, color = self._outline_top
-                append_declaration("outline-top", f"{_type} {color.name}")
+                _type, style = self._outline_top
+                append_declaration(
+                    "outline-top", f"{_type} {style.color.name if style.color else ''}"
+                )
             if self._outline_right is not None:
-                _type, color = self._outline_right
-                append_declaration("outline-right", f"{_type} {color.name}")
+                _type, style = self._outline_right
+                append_declaration(
+                    "outline-right",
+                    f"{_type} {style.color.name if style.color else ''}",
+                )
             if self._outline_bottom is not None:
-                _type, color = self._outline_bottom
-                append_declaration("outline-bottom", f"{_type} {color.name}")
+                _type, style = self._outline_bottom
+                append_declaration(
+                    "outline-bottom",
+                    f"{_type} {style.color.name if style.color else ''}",
+                )
             if self._outline_left is not None:
-                _type, color = self._outline_left
-                append_declaration("outline-left", f"{_type} {color.name}")
+                _type, style = self._outline_left
+                append_declaration(
+                    "outline-left", f"{_type} {style.color.name if style.color else ''}"
+                )
 
         if self.offset:
             x, y = self.offset
@@ -227,6 +259,10 @@ class Styles:
             append_declaration("dock-edge", self._dock_edge)
         lines.sort()
         return lines
+
+    @property
+    def css(self) -> str:
+        return "\n".join(self.css_lines)
 
 
 if __name__ == "__main__":
@@ -243,6 +279,9 @@ if __name__ == "__main__":
     from rich import inspect, print
 
     print(styles)
-    print(styles.outline)
+    print(styles.css)
 
-    inspect(styles)
+    # print(styles)
+    # print(styles.outline)
+
+    # inspect(styles)

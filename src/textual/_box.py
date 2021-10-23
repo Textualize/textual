@@ -5,6 +5,7 @@ from rich.segment import Segment
 
 BOX_STYLES: dict[str, tuple[str, str, str]] = {
     "": ("   ", "   ", "   "),
+    "none": ("   ", "   ", "   "),
     "rounded": ("╭─╮", "│ │", "╰─╯"),
     "solid": ("┌─┐", "│ │", "└─┘"),
     "double": ("╔═╗", "║ ║", "╚═╝"),

@@ -41,6 +41,9 @@ class Offset(NamedTuple):
         """Check if the point is at the origin (0, 0)"""
         return self == (0, 0)
 
+    def __bool__(self) -> bool:
+        return self != (0, 0)
+
     def __add__(self, other: object) -> Offset:
         if isinstance(other, tuple):
             _x, _y = self
