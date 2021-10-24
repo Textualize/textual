@@ -25,6 +25,7 @@ from rich.text import TextType
 from . import events
 from . import errors
 from ._animator import BoundAnimator
+from ._border import Border, BORDER_STYLES
 from ._callback import invoke
 from ._widget_list import WidgetList
 from ._context import active_app
@@ -96,10 +97,8 @@ class Widget(MessagePump):
     padding: Reactive[Spacing | None] = Reactive(None, layout=True)
     margin: Reactive[Spacing | None] = Reactive(None, layout=True)
     border: Reactive[str] = Reactive("none", layout=True)
-    border_style: Reactive[str] = Reactive("")
+    border_style: Reactive[str] = Reactive("green")
     border_title: Reactive[TextType] = Reactive("")
-
-    BOX_MAP = {"normal": box.SQUARE, "round": box.ROUNDED, "bold": box.HEAVY}
 
     def validate_padding(self, padding: SpacingDimensions) -> Spacing:
         return Spacing.unpack(padding)
@@ -188,11 +187,16 @@ class Widget(MessagePump):
         renderable = self.render()
         if self.padding is not None:
             renderable = Padding(renderable, self.padding)
-        if self.border in self.BOX_MAP:
-            renderable = Panel(
+        if self.border not in ("", "none"):
+            _border_style = self.console.get_style(self.border_style)
+            renderable = Border(
                 renderable,
-                box=self.BOX_MAP.get(self.border) or box.SQUARE,
-                style=self.border_style,
+                (
+                    ("heavy", _border_style),
+                    ("heavy", _border_style),
+                    ("heavy", _border_style),
+                    ("heavy", _border_style),
+                ),
             )
         if self.margin is not None:
             renderable = Padding(renderable, self.margin)

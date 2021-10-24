@@ -64,18 +64,6 @@ class View(Widget):
             cls.layout_factory = layout
         super().__init_subclass__(**kwargs)
 
-    # @property
-    # def layout(self) -> str:
-    #     return self._layout
-
-    # @layout.setter
-    # def layout(self, layout: str | Layout) -> None:
-    #     if isinstance(layout, str):
-    #         new_layout = get_layout(layout)
-    #     else:
-    #         new_layout = layout
-    #     self._layout = new_layout
-
     layout = LayoutProperty()
 
     background: Reactive[str] = Reactive("")
@@ -91,11 +79,11 @@ class View(Widget):
     def scroll(self) -> Offset:
         return Offset(self.scroll_x, self.scroll_y)
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        return
-        yield
+    # def __rich_console__(
+    #     self, console: Console, options: ConsoleOptions
+    # ) -> RenderResult:
+    #     return
+    #     yield
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self.name

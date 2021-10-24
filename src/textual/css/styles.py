@@ -4,7 +4,6 @@ from dataclasses import dataclass, field
 
 from rich import print
 import rich.repr
-from rich.color import Color
 from rich.style import Style
 
 from .errors import StyleValueError
@@ -12,7 +11,6 @@ from ._error_tools import friendly_list
 from .constants import (
     VALID_DISPLAY,
     VALID_VISIBILITY,
-    VALID_EDGE,
     VALID_LAYOUT,
     NULL_SPACING,
 )
@@ -20,6 +18,7 @@ from ..geometry import NULL_OFFSET, Offset, Spacing
 from ._style_properties import (
     _BorderProperty,
     _BoxProperty,
+    _DockEdgeProperty,
     _DocksProperty,
     _DockGroupProperty,
     _OffsetProperty,
@@ -53,7 +52,7 @@ class Styles:
     _outline_left: tuple[str, Style] | None = None
 
     _dock_group: str | None = None
-    _dock_edge: str = ""
+    _dock_edge: str | None = None
     _docks: tuple[str, ...] | None = None
 
     important: set[str] = field(default_factory=set)
@@ -102,13 +101,12 @@ class Styles:
     margin = _SpacingProperty()
 
     border = _BorderProperty()
-    outline = _BorderProperty()
-
     border_top = _BoxProperty()
     border_right = _BoxProperty()
     border_bottom = _BoxProperty()
     border_left = _BoxProperty()
 
+    outline = _BorderProperty()
     outline_top = _BoxProperty()
     outline_right = _BoxProperty()
     outline_bottom = _BoxProperty()
@@ -117,16 +115,7 @@ class Styles:
     dock_group = _DockGroupProperty()
     docks = _DocksProperty()
 
-    @property
-    def dock_edge(self) -> str:
-        return self._dock_edge
-
-    @dock_edge.setter
-    def dock_edge(self, edge: str) -> str:
-        if edge not in VALID_EDGE:
-            raise ValueError(f"dock edge must be one of {friendly_list(VALID_EDGE)}")
-        self._dock_edge = edge
-        return edge
+    dock_edge = _DockEdgeProperty()
 
     @property
     def has_border(self) -> bool:
@@ -249,13 +238,9 @@ if __name__ == "__main__":
     styles.docks = "foo bar"
     styles.text = "italic blue"
     styles.dock_group = "bar"
+    styles.dock_edge = "sdfsdf"
 
     from rich import inspect, print
 
     print(styles)
     print(styles.css)
-
-    # print(styles)
-    # print(styles.outline)
-
-    # inspect(styles)

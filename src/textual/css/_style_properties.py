@@ -6,10 +6,10 @@ import rich.repr
 from rich.color import Color
 from rich.style import Style
 
-
 from ..geometry import Offset, Spacing, SpacingDimensions
-from .constants import NULL_SPACING
+from .constants import NULL_SPACING, VALID_EDGE
 from .errors import StyleValueError
+from ._error_tools import friendly_list
 
 if TYPE_CHECKING:
     from .styles import Styles
@@ -48,20 +48,23 @@ class _BoxProperty:
 
 @rich.repr.auto
 class Edges(NamedTuple):
+    """Stores edges for border / outline."""
+
     top: tuple[str, Style]
     right: tuple[str, Style]
     bottom: tuple[str, Style]
     left: tuple[str, Style]
 
     def __rich_repr__(self) -> rich.repr.Result:
-        if self.top[0]:
-            yield "top", self.top
-        if self.right[0]:
-            yield "right", self.right
-        if self.bottom[0]:
-            yield "bottom", self.bottom
-        if self.left[0]:
-            yield "left", self.left
+        top, right, bottom, left = self
+        if top[0]:
+            yield "top", top
+        if right[0]:
+            yield "right", right
+        if bottom[0]:
+            yield "bottom", bottom
+        if left[0]:
+            yield "left", left
 
 
 class _BorderProperty:
@@ -190,3 +193,14 @@ class _OffsetProperty:
         _offset = Offset(*offset)
         setattr(obj, self._internal_name, _offset)
         return offset
+
+
+class _DockEdgeProperty:
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
+        return obj._dock_edge or ""
+
+    def __set__(self, obj: Styles, edge: str | None) -> str | None:
+        if isinstance(edge, str) and edge not in VALID_EDGE:
+            raise ValueError(f"dock edge must be one of {friendly_list(VALID_EDGE)}")
+        obj._dock_edge = edge
+        return edge

@@ -1,12 +1,23 @@
 from __future__ import annotations
 
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
-from rich.segment import Segment
+from rich.segment import Segment, SegmentLines
 from rich.style import Style
 
 from .css.types import EdgeStyle
 
-from ._box import BOX_STYLES
+
+BORDER_STYLES: dict[str, tuple[str, str, str]] = {
+    "": ("   ", "   ", "   "),
+    "none": ("   ", "   ", "   "),
+    "round": ("╭─╮", "│ │", "╰─╯"),
+    "solid": ("┌─┐", "│ │", "└─┘"),
+    "double": ("╔═╗", "║ ║", "╚═╝"),
+    "dashed": ("┏╍┓", "╏ ╏", "┗╍┛"),
+    "heavy": ("┏━┓", "┃ ┃", "┗━┛"),
+    "inner": ("▗▄▖", "▐ ▌", "▝▀▘"),
+    "outer": ("▛▀▜", "▌ ▐", "▙▄▟"),
+}
 
 
 class Border:
@@ -63,7 +74,7 @@ class Border:
     ) -> "RenderResult":
         top, right, bottom, left = self._sides
         top_style, right_style, bottom_style, left_style = self._styles
-        BOX = BOX_STYLES
+        BOX = BORDER_STYLES
 
         has_left = left != "none"
         has_right = right != "none"
@@ -71,6 +82,12 @@ class Border:
         has_bottom = bottom != "none"
 
         width = options.max_width - has_left - has_right
+
+        if width <= 2:
+            lines = console.render_lines(self.renderable, options, new_lines=True)
+            yield SegmentLines(lines)
+            return
+
         if self.outline:
             render_options = options
         else:
@@ -81,6 +98,9 @@ class Border:
                 render_options = options.update_dimensions(width, height)
 
         lines = console.render_lines(self.renderable, render_options)
+        if len(lines) <= 2:
+            yield SegmentLines(lines, new_lines=True)
+            return
         if self.outline:
             self._crop_renderable(lines, options.max_width)
 

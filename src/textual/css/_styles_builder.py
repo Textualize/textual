@@ -7,7 +7,7 @@ from rich.color import ANSI_COLOR_NAMES, Color
 from rich.style import Style
 
 from .constants import VALID_BORDER, VALID_DISPLAY, VALID_VISIBILITY
-from .errors import DeclarationError
+from .errors import DeclarationError, StyleValueError
 from ._error_tools import friendly_list
 from ..geometry import Offset, Spacing, SpacingDimensions
 from .model import Declaration

@@ -18,7 +18,7 @@ VALID_BORDER: Final = {
     "inner",
     "outer",
 }
-VALID_EDGE: Final = {"", "top", "right", "bottom", "left"}
+VALID_EDGE: Final = {"top", "right", "bottom", "left"}
 VALID_LAYOUT: Final = {"dock", "vertical", "grid"}
 
 
