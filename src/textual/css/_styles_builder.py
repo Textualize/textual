@@ -104,23 +104,28 @@ class StylesBuilder:
     def process_margin(self, name: str, tokens: list[Token]) -> None:
         self._process_space(name, tokens)
 
-    def _parse_border(self, name: str, tokens: list[Token]) -> tuple[str, Color]:
-        color = Color.default()
+    def _parse_border(self, name: str, tokens: list[Token]) -> tuple[str, Style]:
+        style = Style()
         border_type = "solid"
+        style_tokens: list[str] = []
+        append = style_tokens.append
         for token in tokens:
             location, token_name, value = token
             if token_name == "token":
-                if value in ANSI_COLOR_NAMES:
-                    color = Color.parse(value)
-                elif value in VALID_BORDER:
+                if value in VALID_BORDER:
                     border_type = value
                 else:
-                    self.error(name, token, f"unknown token {value!r} in declaration")
+                    append(value)
             elif token_name == "color":
-                color = Color.parse(value)
+                append(value)
             else:
                 self.error(name, token, f"unexpected token {value!r} in declaration")
-        return (border_type, color)
+        style_definition = " ".join(style_tokens)
+        try:
+            style = Style.parse(style_definition)
+        except Exception as error:
+            self.error(name, tokens[0], f"error in {name} declaration; {error}")
+        return (border_type, style)
 
     def _process_border(self, edge: str, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("border", tokens)

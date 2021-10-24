@@ -185,34 +185,20 @@ class Styles:
             and self._border_bottom == self._border_left
         ):
             _type, style = self._border_top
-            append_declaration(
-                "border", f"{_type} {style.color.name if style.color else ''}"
-            )
+            append_declaration("border", f"{_type} {style}")
         else:
             if self._border_top is not None:
                 _type, style = self._border_top
-                append_declaration(
-                    "border-top",
-                    f"{_type} {style.color.name if style.color else ''}",
-                )
+                append_declaration("border-top", f"{_type} {style}")
             if self._border_right is not None:
                 _type, style = self._border_right
-                append_declaration(
-                    "border-right",
-                    f"{_type} {style.color.name if style.color else ''}",
-                )
+                append_declaration("border-right", f"{_type} {style}")
             if self._border_bottom is not None:
                 _type, style = self._border_bottom
-                append_declaration(
-                    "border-bottom",
-                    f"{_type} {style.color.name if style.color else ''}",
-                )
+                append_declaration("border-bottom", f"{_type} {style}")
             if self._border_left is not None:
                 _type, style = self._border_left
-                append_declaration(
-                    "border-left",
-                    f"{_type} {style.color.name if style.color else ''}",
-                )
+                append_declaration("border-left", f"{_type} {style}")
 
         if (
             self._outline_top is not None
@@ -221,32 +207,20 @@ class Styles:
             and self._outline_bottom == self._outline_left
         ):
             _type, style = self._outline_top
-            append_declaration(
-                "outline", f"{_type} {style.color.name if style.color else ''}"
-            )
+            append_declaration("outline", f"{_type} {style}")
         else:
             if self._outline_top is not None:
                 _type, style = self._outline_top
-                append_declaration(
-                    "outline-top", f"{_type} {style.color.name if style.color else ''}"
-                )
+                append_declaration("outline-top", f"{_type} {style}")
             if self._outline_right is not None:
                 _type, style = self._outline_right
-                append_declaration(
-                    "outline-right",
-                    f"{_type} {style.color.name if style.color else ''}",
-                )
+                append_declaration("outline-right", f"{_type} {style}")
             if self._outline_bottom is not None:
                 _type, style = self._outline_bottom
-                append_declaration(
-                    "outline-bottom",
-                    f"{_type} {style.color.name if style.color else ''}",
-                )
+                append_declaration("outline-bottom", f"{_type} {style}")
             if self._outline_left is not None:
                 _type, style = self._outline_left
-                append_declaration(
-                    "outline-left", f"{_type} {style.color.name if style.color else ''}"
-                )
+                append_declaration("outline-left", f"{_type} {style}")
 
         if self.offset:
             x, y = self.offset
