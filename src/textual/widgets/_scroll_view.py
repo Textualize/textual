@@ -35,14 +35,12 @@ class ScrollView(View):
         super().__init__(name=name, layout=layout)
 
         self.fluid = fluid
-        self.vscroll = self.add_child(ScrollBar(vertical=True))
-        self.hscroll = self.add_child(ScrollBar(vertical=False))
-        self.window = self.add_child(
-            WindowView(
-                "" if contents is None else contents,
-                auto_width=auto_width,
-                gutter=gutter,
-            )
+        self.vscroll = ScrollBar(vertical=True)
+        self.hscroll = ScrollBar(vertical=False)
+        self.window = WindowView(
+            "" if contents is None else contents,
+            auto_width=auto_width,
+            gutter=gutter,
         )
 
         layout.add_column("main")

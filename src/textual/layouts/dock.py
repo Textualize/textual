@@ -41,10 +41,6 @@ class Dock:
 
 
 class DockLayout(Layout):
-    def __init__(self, docks: list[Dock] = None) -> None:
-        self.docks: list[Dock] = docks or []
-        super().__init__()
-
     def get_widgets(self) -> Iterable[Widget]:
         for dock in self.docks:
             yield from dock.widgets

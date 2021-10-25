@@ -71,6 +71,7 @@ class App(MessagePump):
         log_verbosity: int = 1,
         title: str = "Textual Application",
         css_file: str | None = None,
+        css: str | None = None,
     ):
         """The Textual Application base class
 
@@ -112,6 +113,7 @@ class App(MessagePump):
         self.stylesheet = Stylesheet()
 
         self.css_file = css_file
+        self.css = css
 
         super().__init__()
 
@@ -299,7 +301,8 @@ class App(MessagePump):
         try:
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
-                print(self.stylesheet.css)
+            if self.css is not None:
+                self.stylesheet.parse(self.css)
         except Exception:
             self.panic()
 

@@ -16,14 +16,16 @@ from .constants import (
 )
 from ..geometry import NULL_OFFSET, Offset, Spacing
 from ._style_properties import (
-    _BorderProperty,
-    _BoxProperty,
-    _DockEdgeProperty,
-    _DocksProperty,
-    _DockGroupProperty,
-    _OffsetProperty,
-    _SpacingProperty,
-    _StyleProperty,
+    BorderProperty,
+    BoxProperty,
+    DockEdgeProperty,
+    DocksProperty,
+    DockGroupProperty,
+    IntegerProperty,
+    OffsetProperty,
+    SpacingProperty,
+    StringProperty,
+    StyleProperty,
 )
 from .types import Display, Visibility
 
@@ -33,10 +35,10 @@ class Styles:
 
     _display: Display | None = None
     _visibility: Visibility | None = None
+    _layout: str | None = None
 
-    _text: Style = Style()
+    _text: Style | None = None
 
-    _layout: str = ""
     _padding: Spacing | None = None
     _margin: Spacing | None = None
     _offset: Offset | None = None
@@ -51,71 +53,45 @@ class Styles:
     _outline_bottom: tuple[str, Style] | None = None
     _outline_left: tuple[str, Style] | None = None
 
+    _size: int | None = None
+    _fraction: int | None = None
+    _min_size: int | None = None
+
     _dock_group: str | None = None
     _dock_edge: str | None = None
     _docks: tuple[str, ...] | None = None
 
     important: set[str] = field(default_factory=set)
 
-    @property
-    def display(self) -> Display:
-        return self._display or "block"
+    display = StringProperty(VALID_DISPLAY, "block")
+    visibility = StringProperty(VALID_VISIBILITY, "visible")
+    layout = StringProperty(VALID_LAYOUT, "dock")
 
-    @display.setter
-    def display(self, display: Display) -> None:
-        if display not in VALID_DISPLAY:
-            raise StyleValueError(
-                f"display must be one of {friendly_list(VALID_DISPLAY)}"
-            )
-        self._display = display
+    text = StyleProperty()
 
-    @property
-    def visibility(self) -> Visibility:
-        return self._visibility or "visible"
+    padding = SpacingProperty()
+    margin = SpacingProperty()
+    offset = OffsetProperty()
 
-    @visibility.setter
-    def visibility(self, visibility: Visibility) -> None:
-        if visibility not in VALID_VISIBILITY:
-            raise StyleValueError(
-                f"visibility must be one of {friendly_list(VALID_VISIBILITY)}"
-            )
-        self._visibility = visibility
+    border = BorderProperty()
+    border_top = BoxProperty()
+    border_right = BoxProperty()
+    border_bottom = BoxProperty()
+    border_left = BoxProperty()
 
-    text = _StyleProperty()
+    outline = BorderProperty()
+    outline_top = BoxProperty()
+    outline_right = BoxProperty()
+    outline_bottom = BoxProperty()
+    outline_left = BoxProperty()
 
-    @property
-    def layout(self) -> str:
-        return self._layout
+    size = IntegerProperty()
+    fraction = IntegerProperty()
+    min_size = IntegerProperty()
 
-    @layout.setter
-    def layout(self, layout: str) -> None:
-        if layout not in VALID_LAYOUT:
-            raise StyleValueError(
-                f"layout must be one of {friendly_list(VALID_LAYOUT)}"
-            )
-        self._layout = layout
-
-    offset = _OffsetProperty()
-
-    padding = _SpacingProperty()
-    margin = _SpacingProperty()
-
-    border = _BorderProperty()
-    border_top = _BoxProperty()
-    border_right = _BoxProperty()
-    border_bottom = _BoxProperty()
-    border_left = _BoxProperty()
-
-    outline = _BorderProperty()
-    outline_top = _BoxProperty()
-    outline_right = _BoxProperty()
-    outline_bottom = _BoxProperty()
-    outline_left = _BoxProperty()
-
-    dock_group = _DockGroupProperty()
-    docks = _DocksProperty()
-
-    dock_edge = _DockEdgeProperty()
+    dock_group = DockGroupProperty()
+    docks = DocksProperty()
+    dock_edge = DockEdgeProperty()
 
     @property
     def has_border(self) -> bool:
@@ -238,7 +214,6 @@ if __name__ == "__main__":
     styles.docks = "foo bar"
     styles.text = "italic blue"
     styles.dock_group = "bar"
-    styles.dock_edge = "sdfsdf"
 
     from rich import inspect, print
 

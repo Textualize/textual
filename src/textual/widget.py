@@ -85,7 +85,6 @@ class Widget(MessagePump):
 
         super().__init__()
 
-    id: str | None = None
     visible: Reactive[bool] = Reactive(True, layout=True)
     layout_size: Reactive[int | None] = Reactive(None, layout=True)
     layout_fraction: Reactive[int] = Reactive(1, layout=True)
@@ -124,7 +123,7 @@ class Widget(MessagePump):
         renderable = self.render_styled()
         return renderable
 
-    def add_child(self, widget: Widget) -> Widget:
+    def _add_child(self, widget: Widget) -> Widget:
         """Add a child widget.
 
         Args:
@@ -134,11 +133,20 @@ class Widget(MessagePump):
         self.children._append(widget)
         return widget
 
-    def get_child(self, name: str | None = None) -> Widget:
-        for widget in self.children:
-            if widget.name == name:
-                return widget
+    def get_child(self, name: str | None = None, id: str | None = None) -> Widget:
+        if name is not None:
+            for widget in self.children:
+                if widget.name == name:
+                    return widget
+        if id is not None:
+            for widget in self.children:
+                if widget.id == id:
+                    return widget
         raise errors.MissingWidget(f"Widget named {name!r} was not found in {self}")
+
+    @property
+    def id(self) -> str | None:
+        return self._id
 
     @property
     def class_names(self) -> frozenset[str]:
@@ -188,6 +196,7 @@ class Widget(MessagePump):
         if self.padding is not None:
             renderable = Padding(renderable, self.padding)
         if self.border not in ("", "none"):
+            1 / 0
             _border_style = self.console.get_style(self.border_style)
             renderable = Border(
                 renderable,

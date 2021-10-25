@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .styles import Styles
 
 
-class _BoxProperty:
+class BoxProperty:
 
     DEFAULT = ("", Style())
 
@@ -67,7 +67,7 @@ class Edges(NamedTuple):
             yield "left", left
 
 
-class _BorderProperty:
+class BorderProperty:
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._properties = (
             f"{name}_top",
@@ -129,14 +129,21 @@ class _BorderProperty:
             raise StyleValueError("expected 1, 2, or 4 values")
 
 
-class _StyleProperty:
+class StyleProperty:
+
+    DEFAULT_STYLE = Style()
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._internal_name = f"_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Style:
-        return getattr(obj, self._internal_name)
+        return getattr(obj, self._internal_name) or self.DEFAULT_STYLE
 
-    def __set__(self, obj: Styles, style: Style | str) -> Style:
+    def __set__(self, obj: Styles, style: Style | str | None) -> Style | str | None:
+        if style is None:
+            setattr(obj, self._internal_name, None)
+            return None
+
         if isinstance(style, str):
             _style = Style.parse(style)
         else:
@@ -145,7 +152,7 @@ class _StyleProperty:
         return _style
 
 
-class _SpacingProperty:
+class SpacingProperty:
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._internal_name = f"_{name}"
 
@@ -158,7 +165,7 @@ class _SpacingProperty:
         return spacing
 
 
-class _DocksProperty:
+class DocksProperty:
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
     ) -> tuple[str, ...]:
@@ -173,7 +180,7 @@ class _DocksProperty:
         return _docks
 
 
-class _DockGroupProperty:
+class DockGroupProperty:
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
         return obj._dock_group or ""
 
@@ -182,7 +189,7 @@ class _DockGroupProperty:
         return spacing
 
 
-class _OffsetProperty:
+class OffsetProperty:
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._internal_name = f"_{name}"
 
@@ -195,7 +202,7 @@ class _OffsetProperty:
         return offset
 
 
-class _DockEdgeProperty:
+class DockEdgeProperty:
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
         return obj._dock_edge or ""
 
@@ -204,3 +211,37 @@ class _DockEdgeProperty:
             raise ValueError(f"dock edge must be one of {friendly_list(VALID_EDGE)}")
         obj._dock_edge = edge
         return edge
+
+
+class IntegerProperty:
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self._internal_name = f"_{name}"
+
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> int:
+        return getattr(obj, self._internal_name, 0)
+
+    def __set__(self, obj: Styles, value: int | None) -> int | None:
+        setattr(obj, self._internal_name, value)
+        return value
+
+
+class StringProperty:
+    def __init__(self, valid_values: set[str], default: str) -> None:
+        self._valid_values = valid_values
+        self._default = default
+
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self._name = name
+        self._internal_name = f"_{name}"
+
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
+        return getattr(obj, self._internal_name, self._default)
+
+    def __set__(self, obj: Styles, value: str | None = None) -> str | None:
+        if value is not None:
+            if value not in self._valid_values:
+                raise StyleValueError(
+                    f"{self._name} must be one of {friendly_list(self._valid_values)}"
+                )
+        setattr(obj, self._internal_name, value)
+        return value

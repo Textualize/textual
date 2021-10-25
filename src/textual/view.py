@@ -41,7 +41,9 @@ class View(Widget):
 
     layout_factory: ClassVar[Callable[[], Layout]]
 
-    def __init__(self, layout: Layout = None, name: str | None = None) -> None:
+    def __init__(
+        self, layout: Layout = None, name: str | None = None, id: str | None = None
+    ) -> None:
         self._layout: Layout = layout or self.layout_factory()
 
         self.mouse_over: Widget | None = None
@@ -55,7 +57,7 @@ class View(Widget):
             [],
         )
 
-        super().__init__(name=name)
+        super().__init__(name=name, id=id)
 
     def __init_subclass__(
         cls, layout: Callable[[], Layout] | None = None, **kwargs
@@ -144,7 +146,7 @@ class View(Widget):
         for name, widget in name_widgets:
             if name is not None:
                 widget.name = name
-            self.add_child(widget)
+            self._add_child(widget)
 
         self.refresh()
 
