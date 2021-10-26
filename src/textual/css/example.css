@@ -1,26 +1,23 @@
-
 view.buttons {
-    layout: dock
+  layout: dock;
 }
 
 .buttons .button {
-    dock: top
-    size: 10px
+  dock: top;
+  size: 10px;
 }
 
-
 #widget {
-    visibility: visible;
-    text-style: bold;
+  visibility: visible;
+  text-style: bold;
 
-    border: dashed !important;
-    border-top: dashed green;
-    border-bottom: red;
+  border: dashed !important;
+  border-top: dashed green;
+  border-bottom: red;
 
-    padding: 1 0;
-    margin: 1;
+  padding: 1 0;
+  margin: 1;
 
-    layout: dock
-    dock-edge: left;
-
+  layout: dock;
+  dock-edge: left;
 }

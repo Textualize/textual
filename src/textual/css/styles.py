@@ -23,6 +23,8 @@ from ._style_properties import (
     DockGroupProperty,
     IntegerProperty,
     OffsetProperty,
+    NameProperty,
+    NameListProperty,
     SpacingProperty,
     StringProperty,
     StyleProperty,
@@ -61,6 +63,9 @@ class Styles:
     _dock_edge: str | None = None
     _docks: tuple[str, ...] | None = None
 
+    _layers: str | None = None
+    _layer: tuple[str, ...] | None = None
+
     important: set[str] = field(default_factory=set)
 
     display = StringProperty(VALID_DISPLAY, "block")
@@ -93,6 +98,9 @@ class Styles:
     docks = DocksProperty()
     dock_edge = DockEdgeProperty()
 
+    layer = NameProperty()
+    layers = NameListProperty()
+
     @property
     def has_border(self) -> bool:
         """Check in a border is present."""
@@ -117,6 +125,8 @@ class Styles:
         yield "padding", self.padding, NULL_SPACING
         yield "text", self.text, ""
         yield "visibility", self.visibility, "visible"
+        yield "layers", self.layers, ()
+        yield "layer", self.layer, ""
 
         if self.important:
             yield "important", self.important
@@ -196,6 +206,11 @@ class Styles:
             append_declaration("docks", " ".join(self._docks))
         if self._dock_edge:
             append_declaration("dock-edge", self._dock_edge)
+        if self._layers is not None:
+            append_declaration("layers", " ".join(self.layers))
+        if self._layer is not None:
+            append_declaration("layer", self.layer)
+
         lines.sort()
         return lines
 
@@ -214,6 +229,7 @@ if __name__ == "__main__":
     styles.docks = "foo bar"
     styles.text = "italic blue"
     styles.dock_group = "bar"
+    styles.layers = "foo bar"
 
     from rich import inspect, print
 

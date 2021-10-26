@@ -7,6 +7,10 @@ class DeclarationError(Exception):
         super().__init__(message)
 
 
+class StyleTypeError(TypeError):
+    pass
+
+
 class StyleValueError(ValueError):
     pass
 

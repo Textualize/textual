@@ -8,7 +8,7 @@ from rich.style import Style
 
 from ..geometry import Offset, Spacing, SpacingDimensions
 from .constants import NULL_SPACING, VALID_EDGE
-from .errors import StyleValueError
+from .errors import StyleTypeError, StyleValueError
 from ._error_tools import friendly_list
 
 if TYPE_CHECKING:
@@ -215,12 +215,15 @@ class DockEdgeProperty:
 
 class IntegerProperty:
     def __set_name__(self, owner: Styles, name: str) -> None:
+        self._name = name
         self._internal_name = f"_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> int:
         return getattr(obj, self._internal_name, 0)
 
     def __set__(self, obj: Styles, value: int | None) -> int | None:
+        if not isinstance(value, int):
+            raise StyleTypeError(f"{self._name} must be a str")
         setattr(obj, self._internal_name, value)
         return value
 
@@ -235,7 +238,7 @@ class StringProperty:
         self._internal_name = f"_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
-        return getattr(obj, self._internal_name, self._default)
+        return getattr(obj, self._internal_name, None) or self._default
 
     def __set__(self, obj: Styles, value: str | None = None) -> str | None:
         if value is not None:
@@ -245,3 +248,42 @@ class StringProperty:
                 )
         setattr(obj, self._internal_name, value)
         return value
+
+
+class NameProperty:
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self._name = name
+        self._internal_name = f"_{name}"
+
+    def __get__(self, obj: Styles, objtype: type[Styles] | None) -> str:
+        return getattr(obj, self._internal_name, None) or ""
+
+    def __set__(self, obj: Styles, name: str | None) -> str | None:
+        if not isinstance(name, str):
+            raise StyleTypeError(f"{self._name} must be a str")
+        setattr(obj, self._internal_name, name)
+        return name
+
+
+class NameListProperty:
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self._name = name
+        self._internal_name = f"_{name}"
+
+    def __get__(
+        self, obj: Styles, objtype: type[Styles] | None = None
+    ) -> tuple[str, ...]:
+        return getattr(obj, self._internal_name, None) or ()
+
+    def __set__(
+        self, obj: Styles, names: str | tuple[str] | None = None
+    ) -> str | tuple[str] | None:
+        names_value: tuple[str, ...] | None = None
+        if isinstance(names, str):
+            names_value = tuple(name.strip().lower() for name in names.split(" "))
+        elif isinstance(names, tuple):
+            names_value = names
+        elif names is None:
+            names_value = None
+        setattr(obj, self._internal_name, names_value)
+        return names

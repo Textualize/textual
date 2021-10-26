@@ -6,17 +6,24 @@ from operator import itemgetter
 from logging import getLogger
 from itertools import cycle, product
 import sys
-from typing import Iterable, NamedTuple
+from typing import Iterable, NamedTuple, TYPE_CHECKING
 
 from .._layout_resolve import layout_resolve
 from ..geometry import Size, Offset, Region
 from ..layout import Layout, WidgetPlacement
 from ..widget import Widget
 
+
+if TYPE_CHECKING:
+    from ..widget import Widget
+    from ..view import View
+
+
 if sys.version_info >= (3, 8):
     from typing import Literal
 else:
     from typing_extensions import Literal
+
 
 log = getLogger("rich")
 
