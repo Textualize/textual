@@ -4,7 +4,7 @@ from rich import print
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
+from typing import Iterable
 
 from .styles import Styles
 from .tokenize import Token
@@ -35,6 +35,7 @@ class Selector:
     combinator: CombinatorType = CombinatorType.SAME
     selector: SelectorType = SelectorType.TYPE
     pseudo_classes: list[str] = field(default_factory=list)
+    specificity: tuple[int, int, int] = field(default_factory=lambda: (0, 0, 0))
 
     @property
     def css(self) -> str:
@@ -59,8 +60,25 @@ class Declaration:
 
 
 @dataclass
+class SelectorSet:
+    selectors: list[Selector] = field(default_factory=list)
+    specificity: tuple[int, int, int] = (0, 0, 0)
+
+    @classmethod
+    def from_selectors(cls, selectors: list[list[Selector]]) -> Iterable[SelectorSet]:
+        for selector_list in selectors:
+            id_total = class_total = type_total = 0
+            for selector in selector_list:
+                _id, _class, _type = selector.specificity
+                id_total += _id
+                class_total += _class
+                type_total += _type
+            yield SelectorSet(selector_list, (id_total, class_total, type_total))
+
+
+@dataclass
 class RuleSet:
-    selectors: list[list[Selector]] = field(default_factory=list)
+    selector_set: list[SelectorSet] = field(default_factory=list)
     styles: Styles = field(default_factory=Styles)
 
     @classmethod
@@ -77,7 +95,8 @@ class RuleSet:
     @property
     def css(self) -> str:
         selectors = ", ".join(
-            self.selector_to_css(selector) for selector in self.selectors
+            self.selector_to_css(selector_set.selectors)
+            for selector_set in self.selector_set
         )
         declarations = "\n".join(f"    {line}" for line in self.styles.css_lines)
         css = f"{selectors} {{\n{declarations}\n}}"

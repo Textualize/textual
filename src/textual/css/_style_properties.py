@@ -20,7 +20,7 @@ class BoxProperty:
     DEFAULT = ("", Style())
 
     def __set_name__(self, owner: Styles, name: str) -> None:
-        self.internal_name = f"_{name}"
+        self.internal_name = f"_rule_{name}"
         _type, edge = name.split("_")
         self._type = _type
         self.edge = edge
@@ -134,7 +134,7 @@ class StyleProperty:
     DEFAULT_STYLE = Style()
 
     def __set_name__(self, owner: Styles, name: str) -> None:
-        self._internal_name = f"_{name}"
+        self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Style:
         return getattr(obj, self._internal_name) or self.DEFAULT_STYLE
@@ -154,7 +154,7 @@ class StyleProperty:
 
 class SpacingProperty:
     def __set_name__(self, owner: Styles, name: str) -> None:
-        self._internal_name = f"_{name}"
+        self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Spacing:
         return getattr(obj, self._internal_name) or NULL_SPACING
@@ -169,29 +169,29 @@ class DocksProperty:
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
     ) -> tuple[str, ...]:
-        return obj._docks or ()
+        return obj._rule_docks or ()
 
     def __set__(self, obj: Styles, docks: str | Iterable[str]) -> tuple[str, ...]:
         if isinstance(docks, str):
             _docks = tuple(name.lower().strip() for name in docks.split(" "))
         else:
             _docks = tuple(docks)
-        obj._docks = _docks
+        obj._rule_docks = _docks
         return _docks
 
 
 class DockGroupProperty:
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
-        return obj._dock_group or ""
+        return obj._rule_dock_group or ""
 
     def __set__(self, obj: Styles, spacing: str | None) -> str | None:
-        obj._dock_group = spacing
+        obj._rule_dock_group = spacing
         return spacing
 
 
 class OffsetProperty:
     def __set_name__(self, owner: Styles, name: str) -> None:
-        self._internal_name = f"_{name}"
+        self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Offset:
         return getattr(obj, self._internal_name) or Offset()
@@ -204,12 +204,12 @@ class OffsetProperty:
 
 class DockEdgeProperty:
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
-        return obj._dock_edge or ""
+        return obj._rule_dock_edge or ""
 
     def __set__(self, obj: Styles, edge: str | None) -> str | None:
         if isinstance(edge, str) and edge not in VALID_EDGE:
             raise ValueError(f"dock edge must be one of {friendly_list(VALID_EDGE)}")
-        obj._dock_edge = edge
+        obj._rule_dock_edge = edge
         return edge
 
 
@@ -235,7 +235,7 @@ class StringProperty:
 
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._name = name
-        self._internal_name = f"_{name}"
+        self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
         return getattr(obj, self._internal_name, None) or self._default
@@ -253,7 +253,7 @@ class StringProperty:
 class NameProperty:
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._name = name
-        self._internal_name = f"_{name}"
+        self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None) -> str:
         return getattr(obj, self._internal_name, None) or ""
@@ -268,7 +268,7 @@ class NameProperty:
 class NameListProperty:
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._name = name
-        self._internal_name = f"_{name}"
+        self._internal_name = f"_rule_{name}"
 
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None

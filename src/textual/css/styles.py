@@ -35,36 +35,36 @@ from .types import Display, Visibility
 @dataclass
 class Styles:
 
-    _display: Display | None = None
-    _visibility: Visibility | None = None
-    _layout: str | None = None
+    _rule_display: Display | None = None
+    _rule_visibility: Visibility | None = None
+    _rule_layout: str | None = None
 
-    _text: Style | None = None
+    _rule_text: Style | None = None
 
-    _padding: Spacing | None = None
-    _margin: Spacing | None = None
-    _offset: Offset | None = None
+    _rule_padding: Spacing | None = None
+    _rule_margin: Spacing | None = None
+    _rule_offset: Offset | None = None
 
-    _border_top: tuple[str, Style] | None = None
-    _border_right: tuple[str, Style] | None = None
-    _border_bottom: tuple[str, Style] | None = None
-    _border_left: tuple[str, Style] | None = None
+    _rule_border_top: tuple[str, Style] | None = None
+    _rule_border_right: tuple[str, Style] | None = None
+    _rule_border_bottom: tuple[str, Style] | None = None
+    _rule_border_left: tuple[str, Style] | None = None
 
-    _outline_top: tuple[str, Style] | None = None
-    _outline_right: tuple[str, Style] | None = None
-    _outline_bottom: tuple[str, Style] | None = None
-    _outline_left: tuple[str, Style] | None = None
+    _rule_outline_top: tuple[str, Style] | None = None
+    _rule_outline_right: tuple[str, Style] | None = None
+    _rule_outline_bottom: tuple[str, Style] | None = None
+    _rule_outline_left: tuple[str, Style] | None = None
 
-    _size: int | None = None
-    _fraction: int | None = None
-    _min_size: int | None = None
+    _rule_size: int | None = None
+    _rule_fraction: int | None = None
+    _rule_min_size: int | None = None
 
-    _dock_group: str | None = None
-    _dock_edge: str | None = None
-    _docks: tuple[str, ...] | None = None
+    _rule_dock_group: str | None = None
+    _rule_dock_edge: str | None = None
+    _rule_docks: tuple[str, ...] | None = None
 
-    _layers: str | None = None
-    _layer: tuple[str, ...] | None = None
+    _rule_layers: str | None = None
+    _rule_layer: tuple[str, ...] | None = None
 
     important: set[str] = field(default_factory=set)
 
@@ -111,6 +111,19 @@ class Styles:
         """Check if an outline is present."""
         return any(edge for edge, _style in self.outline)
 
+    def extract_rules(
+        self, specificity: tuple[int, int, int]
+    ) -> dict[str, tuple[object, tuple[int, int, int, int]]]:
+        is_important = self.important.__contains__
+        return {
+            rule_name: (
+                getattr(self, rule_name),
+                (int(is_important(rule_name)), *specificity),
+            )
+            for rule_name in RULE_NAMES
+            if getattr(self, f"_rule_{rule_name}") is not None
+        }
+
     def __rich_repr__(self) -> rich.repr.Result:
         if self.has_border:
             yield "border", self.border
@@ -142,73 +155,73 @@ class Styles:
             else:
                 append(f"{name}: {value};")
 
-        if self._display is not None:
-            append_declaration("display", self._display)
-        if self._visibility is not None:
-            append_declaration("visibility", self._visibility)
-        if self._text is not None:
-            append_declaration("text", str(self._text))
-        if self._padding is not None:
-            append_declaration("padding", self._padding.packed)
-        if self._margin is not None:
-            append_declaration("margin", self._margin.packed)
+        if self._rule_display is not None:
+            append_declaration("display", self._rule_display)
+        if self._rule_visibility is not None:
+            append_declaration("visibility", self._rule_visibility)
+        if self._rule_text is not None:
+            append_declaration("text", str(self._rule_text))
+        if self._rule_padding is not None:
+            append_declaration("padding", self._rule_padding.packed)
+        if self._rule_margin is not None:
+            append_declaration("margin", self._rule_margin.packed)
 
         if (
-            self._border_top is not None
-            and self._border_top == self._border_right
-            and self._border_right == self._border_bottom
-            and self._border_bottom == self._border_left
+            self._rule_border_top is not None
+            and self._rule_border_top == self._rule_border_right
+            and self._rule_border_right == self._rule_border_bottom
+            and self._rule_border_bottom == self._rule_border_left
         ):
-            _type, style = self._border_top
+            _type, style = self._rule_border_top
             append_declaration("border", f"{_type} {style}")
         else:
-            if self._border_top is not None:
-                _type, style = self._border_top
+            if self._rule_border_top is not None:
+                _type, style = self._rule_border_top
                 append_declaration("border-top", f"{_type} {style}")
-            if self._border_right is not None:
-                _type, style = self._border_right
+            if self._rule_border_right is not None:
+                _type, style = self._rule_border_right
                 append_declaration("border-right", f"{_type} {style}")
-            if self._border_bottom is not None:
-                _type, style = self._border_bottom
+            if self._rule_border_bottom is not None:
+                _type, style = self._rule_border_bottom
                 append_declaration("border-bottom", f"{_type} {style}")
-            if self._border_left is not None:
-                _type, style = self._border_left
+            if self._rule_border_left is not None:
+                _type, style = self._rule_border_left
                 append_declaration("border-left", f"{_type} {style}")
 
         if (
-            self._outline_top is not None
-            and self._outline_top == self._outline_right
-            and self._outline_right == self._outline_bottom
-            and self._outline_bottom == self._outline_left
+            self._rule_outline_top is not None
+            and self._rule_outline_top == self._rule_outline_right
+            and self._rule_outline_right == self._rule_outline_bottom
+            and self._rule_outline_bottom == self._rule_outline_left
         ):
-            _type, style = self._outline_top
+            _type, style = self._rule_outline_top
             append_declaration("outline", f"{_type} {style}")
         else:
-            if self._outline_top is not None:
-                _type, style = self._outline_top
+            if self._rule_outline_top is not None:
+                _type, style = self._rule_outline_top
                 append_declaration("outline-top", f"{_type} {style}")
-            if self._outline_right is not None:
-                _type, style = self._outline_right
+            if self._rule_outline_right is not None:
+                _type, style = self._rule_outline_right
                 append_declaration("outline-right", f"{_type} {style}")
-            if self._outline_bottom is not None:
-                _type, style = self._outline_bottom
+            if self._rule_outline_bottom is not None:
+                _type, style = self._rule_outline_bottom
                 append_declaration("outline-bottom", f"{_type} {style}")
-            if self._outline_left is not None:
-                _type, style = self._outline_left
+            if self._rule_outline_left is not None:
+                _type, style = self._rule_outline_left
                 append_declaration("outline-left", f"{_type} {style}")
 
         if self.offset:
             x, y = self.offset
             append_declaration("offset", f"{x} {y}")
-        if self._dock_group:
-            append_declaration("dock-group", self._dock_group)
-        if self._docks:
-            append_declaration("docks", " ".join(self._docks))
-        if self._dock_edge:
-            append_declaration("dock-edge", self._dock_edge)
-        if self._layers is not None:
+        if self._rule_dock_group:
+            append_declaration("dock-group", self._rule_dock_group)
+        if self._rule_docks:
+            append_declaration("docks", " ".join(self._rule_docks))
+        if self._rule_dock_edge:
+            append_declaration("dock-edge", self._rule_dock_edge)
+        if self._rule_layers is not None:
             append_declaration("layers", " ".join(self.layers))
-        if self._layer is not None:
+        if self._rule_layer is not None:
             append_declaration("layer", self.layer)
 
         lines.sort()
@@ -218,6 +231,8 @@ class Styles:
     def css(self) -> str:
         return "\n".join(self.css_lines)
 
+
+RULE_NAMES = {name[6:] for name in dir(Styles) if name.startswith("_rule_")}
 
 if __name__ == "__main__":
     styles = Styles()
@@ -235,3 +250,7 @@ if __name__ == "__main__":
 
     print(styles)
     print(styles.css)
+    print(dir(styles))
+    print(RULE_NAMES)
+
+    print(styles.extract_rules((0, 1, 0)))

@@ -6,19 +6,26 @@ from typing import Iterator, Iterable
 
 from .tokenize import tokenize, Token
 
-from .model import Declaration, RuleSet, Selector, CombinatorType, SelectorType
+from .model import (
+    Declaration,
+    RuleSet,
+    Selector,
+    CombinatorType,
+    SelectorSet,
+    SelectorType,
+)
 from ._styles_builder import StylesBuilder
 
 
-SELECTOR_MAP = {
-    "selector": SelectorType.TYPE,
-    "selector_start": SelectorType.TYPE,
-    "selector_class": SelectorType.CLASS,
-    "selector_start_class": SelectorType.CLASS,
-    "selector_id": SelectorType.ID,
-    "selector_start_id": SelectorType.ID,
-    "selector_universal": SelectorType.UNIVERSAL,
-    "selector_start_universal": SelectorType.UNIVERSAL,
+SELECTOR_MAP: dict[str, tuple[SelectorType, tuple[int, int, int]]] = {
+    "selector": (SelectorType.TYPE, (0, 0, 1)),
+    "selector_start": (SelectorType.TYPE, (0, 0, 1)),
+    "selector_class": (SelectorType.CLASS, (0, 1, 0)),
+    "selector_start_class": (SelectorType.CLASS, (0, 1, 0)),
+    "selector_id": (SelectorType.ID, (1, 0, 0)),
+    "selector_start_id": (SelectorType.ID, (1, 0, 0)),
+    "selector_universal": (SelectorType.UNIVERSAL, (0, 0, 0)),
+    "selector_start_universal": (SelectorType.UNIVERSAL, (0, 0, 0)),
 }
 
 
@@ -45,11 +52,15 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
         elif token.name == "declaration_set_start":
             break
         else:
+            _selector, specificity = get_selector(
+                token.name, (SelectorType.TYPE, (0, 0, 0))
+            )
             selectors.append(
                 Selector(
                     name=token.value.lstrip(".#"),
                     combinator=combinator,
-                    selector=get_selector(token.name, SelectorType.TYPE),
+                    selector=_selector,
+                    specificity=specificity,
                 )
             )
             combinator = CombinatorType.SAME
@@ -79,7 +90,9 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
     if declaration.tokens:
         styles_builder.add_declaration(declaration)
 
-    rule_set = RuleSet(rule_selectors, styles_builder.styles)
+    rule_set = RuleSet(
+        list(SelectorSet.from_selectors(rule_selectors)), styles_builder.styles
+    )
     yield rule_set
 
 
@@ -96,7 +109,7 @@ def parse(css: str) -> Iterable[RuleSet]:
 
 if __name__ == "__main__":
     test = """
-.foo.bar baz:focus, #egg {
+.foo.bar baz:focus, #egg .foo.baz {
     /* ignore me, I'm a comment */
     display: block;
     visibility: visible;
