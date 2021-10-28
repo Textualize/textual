@@ -59,7 +59,7 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
                 Selector(
                     name=token.value.lstrip(".#"),
                     combinator=combinator,
-                    selector=_selector,
+                    type=_selector,
                     specificity=specificity,
                 )
             )

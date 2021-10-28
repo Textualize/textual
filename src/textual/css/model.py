@@ -8,6 +8,7 @@ from typing import Iterable
 
 from .styles import Styles
 from .tokenize import Token
+from .types import Specificity3
 
 
 class SelectorType(Enum):
@@ -33,18 +34,18 @@ class Location:
 class Selector:
     name: str
     combinator: CombinatorType = CombinatorType.SAME
-    selector: SelectorType = SelectorType.TYPE
+    type: SelectorType = SelectorType.TYPE
     pseudo_classes: list[str] = field(default_factory=list)
-    specificity: tuple[int, int, int] = field(default_factory=lambda: (0, 0, 0))
+    specificity: Specificity3 = field(default_factory=lambda: (0, 0, 0))
 
     @property
     def css(self) -> str:
         psuedo_suffix = "".join(f":{name}" for name in self.pseudo_classes)
-        if self.selector == SelectorType.UNIVERSAL:
+        if self.type == SelectorType.UNIVERSAL:
             return "*"
-        elif self.selector == SelectorType.TYPE:
+        elif self.type == SelectorType.TYPE:
             return f"{self.name}{psuedo_suffix}"
-        elif self.selector == SelectorType.CLASS:
+        elif self.type == SelectorType.CLASS:
             return f".{self.name}{psuedo_suffix}"
         else:
             return f"#{self.name}{psuedo_suffix}"
@@ -55,14 +56,11 @@ class Declaration:
     name: str
     tokens: list[Token] = field(default_factory=list)
 
-    def process(self):
-        raise NotImplementedError
-
 
 @dataclass
 class SelectorSet:
     selectors: list[Selector] = field(default_factory=list)
-    specificity: tuple[int, int, int] = (0, 0, 0)
+    specificity: Specificity3 = (0, 0, 0)
 
     @classmethod
     def from_selectors(cls, selectors: list[list[Selector]]) -> Iterable[SelectorSet]:

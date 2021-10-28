@@ -15,3 +15,5 @@ else:
 Visibility = Literal["visible", "hidden", "initial", "inherit"]
 Display = Literal["block", "none"]
 EdgeStyle = Tuple[str, Style]
+Specificity3 = Tuple[int, int, int]
+Specificity4 = Tuple[int, int, int, int]

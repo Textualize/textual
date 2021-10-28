@@ -113,12 +113,12 @@ class Styles:
 
     def extract_rules(
         self, specificity: tuple[int, int, int]
-    ) -> dict[str, tuple[object, tuple[int, int, int, int]]]:
+    ) -> dict[str, tuple[tuple[int, int, int, int], object]]:
         is_important = self.important.__contains__
         return {
             rule_name: (
-                getattr(self, rule_name),
                 (int(is_important(rule_name)), *specificity),
+                getattr(self, rule_name),
             )
             for rule_name in RULE_NAMES
             if getattr(self, f"_rule_{rule_name}") is not None

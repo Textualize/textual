@@ -7,10 +7,11 @@ import rich.repr
 
 if TYPE_CHECKING:
     from .widget import Widget
+    from .dom import DOMNode
 
 
 @rich.repr.auto
-class WidgetList:
+class NodeList:
     """
     A container for widgets that forms one level of hierarchy.
 
@@ -19,8 +20,8 @@ class WidgetList:
     """
 
     def __init__(self) -> None:
-        self._widget_refs: list[ref[Widget]] = []
-        self.__widgets: list[Widget] | None = []
+        self._widget_refs: list[ref[DOMNode]] = []
+        self.__widgets: list[DOMNode] | None = []
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._widgets
@@ -32,7 +33,7 @@ class WidgetList:
         return widget in self._widgets
 
     @property
-    def _widgets(self) -> list[Widget]:
+    def _widgets(self) -> list[DOMNode]:
         if self.__widgets is None:
             self.__widgets = list(
                 filter(None, [widget_ref() for widget_ref in self._widget_refs])
@@ -49,7 +50,7 @@ class WidgetList:
             ],
         )
 
-    def _append(self, widget: Widget) -> None:
+    def _append(self, widget: DOMNode) -> None:
         if widget not in self._widgets:
             self._widget_refs.append(ref(widget))
             self.__widgets = None
@@ -58,21 +59,21 @@ class WidgetList:
         del self._widget_refs[:]
         self.__widgets = None
 
-    def __iter__(self) -> Iterable[Widget]:
+    def __iter__(self) -> Iterable[DOMNode]:
         for widget_ref in self._widget_refs:
             widget = widget_ref()
             if widget is not None:
                 yield widget
 
     @overload
-    def __getitem__(self, index: int) -> Widget:
+    def __getitem__(self, index: int) -> DOMNode:
         ...
 
     @overload
-    def __getitem__(self, index: slice) -> list[Widget]:
+    def __getitem__(self, index: slice) -> list[DOMNode]:
         ...
 
-    def __getitem__(self, index: int | slice) -> Widget | list[Widget]:
+    def __getitem__(self, index: int | slice) -> DOMNode | list[DOMNode]:
         self._prune()
         assert self._widgets is not None
         return self._widgets[index]

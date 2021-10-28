@@ -18,6 +18,7 @@ from rich.tree import Tree
 
 from . import events
 from . import actions
+from .dom import DOMNode
 from ._animator import Animator
 from .binding import Bindings, NoBinding
 from .geometry import Offset, Region
@@ -57,7 +58,7 @@ class ActionError(Exception):
 
 
 @rich.repr.auto
-class App(MessagePump):
+class App(DOMNode):
     """The base class for Textual Applications"""
 
     KEYS: ClassVar[dict[str, str]] = {}
@@ -88,7 +89,6 @@ class App(MessagePump):
         self._title = title
         self._layout = DockLayout()
         self._view_stack: list[DockView] = []
-        self.children: set[Widget] = set()
 
         self.focused: Widget | None = None
         self.mouse_over: Widget | None = None
@@ -114,6 +114,8 @@ class App(MessagePump):
 
         self.css_file = css_file
         self.css = css
+
+        self.registry: set[MessagePump] = set()
 
         super().__init__()
 
@@ -149,6 +151,10 @@ class App(MessagePump):
         branch = tree.add(Pretty(self.view))
         add_children(branch, self.view)
         return tree
+
+    @property
+    def css_type(self) -> str:
+        return "app"
 
     def load_css(self, filename: str) -> None:
         pass
@@ -340,8 +346,8 @@ class App(MessagePump):
                     self.log_file.close()
 
     def register(self, child: MessagePump, parent: MessagePump) -> bool:
-        if child not in self.children:
-            self.children.add(child)
+        if child not in self.registry:
+            self.registry.add(child)
             child.set_parent(parent)
             child.start_messages()
             child.post_message_no_wait(events.Mount(sender=parent))
@@ -349,15 +355,15 @@ class App(MessagePump):
         return False
 
     def is_mounted(self, widget: Widget) -> bool:
-        return widget in self.children
+        return widget in self.registry
 
     async def close_all(self) -> None:
-        while self.children:
-            child = self.children.pop()
+        while self.registry:
+            child = self.registry.pop()
             await child.close_messages()
 
     async def remove(self, child: MessagePump) -> None:
-        self.children.remove(child)
+        self.registry.remove(child)
 
     async def shutdown(self):
         driver = self._driver
