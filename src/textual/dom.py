@@ -13,7 +13,7 @@ class DOMNode(MessagePump):
         self._name = name
         self._id = id
         self._class_names: set[str] = set()
-        self.children = NodeList()
+        self.registry = NodeList()
         self.styles: Styles = Styles()
         super().__init__()
 
@@ -41,7 +41,7 @@ class DOMNode(MessagePump):
         # TODO:
         node: DOMNode = self
         while isinstance(node._parent, DOMNode):
-            append((node, node.children[:]))
+            append((node, node.registry[:]))
             node = node._parent
         return result[::-1]
 
