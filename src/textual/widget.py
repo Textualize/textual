@@ -150,7 +150,6 @@ class Widget(DOMNode):
         if self.padding is not None:
             renderable = Padding(renderable, self.padding)
         if self.border not in ("", "none"):
-            1 / 0
             _border_style = self.console.get_style(self.border_style)
             renderable = Border(
                 renderable,
