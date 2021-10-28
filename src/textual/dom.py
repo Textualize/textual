@@ -70,3 +70,13 @@ class DOMNode(MessagePump):
     def toggle_class(self, *class_names: str) -> None:
         """Toggle class names"""
         self._classes.symmetric_difference_update(class_names)
+
+    def has_psuedo_class(self, class_name: str) -> bool:
+        """Check for psuedo class (such as hover, focus etc)"""
+        classes = self.get_psuedo_classes()
+        has_psuedo_class = class_name in classes
+        return has_psuedo_class
+
+    def get_psuedo_classes(self) -> set[str]:
+        """Get a set of all psuedo classes"""
+        return set()

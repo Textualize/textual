@@ -9,8 +9,6 @@ from .parse import parse
 from .styles import Styles
 from .types import Specificity3
 
-from ..widget import Widget
-
 
 @rich.repr.auto
 class Stylesheet:
@@ -57,19 +55,24 @@ class Stylesheet:
         node_path = node.css_path
         nodes = iter(node_path)
 
-        node, siblings = next(nodes)
+        node_siblings = next(nodes, None)
+        if node_siblings is None:
+            return False
+        node, siblings = node_siblings
 
         for selector in selectors:
             if selector.type == SelectorType.UNIVERSAL:
                 continue
             elif selector.type == SelectorType.TYPE:
                 while node.css_type != selector.name:
-                    node, siblings = next(nodes)
-                    if node is None:
+                    node_siblings = next(nodes, None)
+                    if node_siblings is None:
                         return False
+                    node, siblings = node_siblings
             elif selector.type == SelectorType.CLASS:
                 while node.css_type != selector.name:
-                    node, siblings = next(nodes)
-                    if node is None:
+                    node_siblings = next(nodes, None)
+                    if node_siblings is None:
                         return False
+                    node, siblings = node_siblings
         return True
