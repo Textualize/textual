@@ -134,8 +134,8 @@ class StylesBuilder:
     def process_border(self, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("border", tokens)
         styles = self.styles
-        styles._border_top = styles._border_right = border
-        styles._border_bottom = styles._border_left = border
+        styles._rule_border_top = styles._rule_border_right = border
+        styles._rule_border_bottom = styles._rule_border_left = border
 
     def process_border_top(self, name: str, tokens: list[Token]) -> None:
         self._process_border("top", name, tokens)
@@ -156,8 +156,8 @@ class StylesBuilder:
     def process_outline(self, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("outline", tokens)
         styles = self.styles
-        styles._outline_top = styles._outline_right = border
-        styles._outline_bottom = styles._outline_left = border
+        styles._rule_outline_top = styles._rule_outline_right = border
+        styles._rule_outline_bottom = styles._rule_outline_left = border
 
     def process_outline_top(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("top", name, tokens)
@@ -182,7 +182,7 @@ class StylesBuilder:
                 self.error(name, token1, f"expected a number (found {token1.value!r})")
             if token2.name != "number":
                 self.error(name, token2, f"expected a number (found {token1.value!r})")
-            self.styles._offset = Offset(
+            self.styles._rule_offset = Offset(
                 int(float(token1.value)), int(float(token2.value))
             )
 
@@ -194,7 +194,7 @@ class StylesBuilder:
         else:
             x = int(float(tokens[0].value))
             y = self.styles.offset.y
-            self.styles._offset = Offset(x, y)
+            self.styles._rule_offset = Offset(x, y)
 
     def process_offset_y(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
@@ -204,18 +204,21 @@ class StylesBuilder:
         else:
             y = int(float(tokens[0].value))
             x = self.styles.offset.x
-            self.styles._offset = Offset(x, y)
+            self.styles._rule_offset = Offset(x, y)
 
     def process_text(self, name: str, tokens: list[Token]) -> None:
         style_definition = " ".join(token.value for token in tokens)
         style = Style.parse(style_definition)
-        self.styles._text = style
+        self.styles._rule_text = style
 
     def process_text_color(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
-                    self.styles._text += Style(color=Color.parse(token.value))
+                    new_style = (self.styles._rule_text or Style()) + Style(
+                        color=Color.parse(token.value)
+                    )
+                    self.styles._rule_text = new_style
                 except Exception as error:
                     self.error(
                         name, token, f"failed to parse color {token.value!r}; {error}"
@@ -229,7 +232,10 @@ class StylesBuilder:
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
-                    self.styles._text += Style(bgcolor=Color.parse(token.value))
+                    new_style = (self.styles._rule_text or Style()) + Style(
+                        bgcolor=Color.parse(token.value)
+                    )
+                    self.styles._rule_text = new_style
                 except Exception as error:
                     self.error(
                         name, token, f"failed to parse color {token.value!r}; {error}"

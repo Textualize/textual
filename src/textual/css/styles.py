@@ -250,7 +250,5 @@ if __name__ == "__main__":
 
     print(styles)
     print(styles.css)
-    print(dir(styles))
-    print(RULE_NAMES)
 
     print(styles.extract_rules((0, 1, 0)))

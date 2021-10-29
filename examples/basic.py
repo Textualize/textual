@@ -28,4 +28,4 @@ class BasicApp(App):
         await self.view.mount(widget1=Placeholder(), widget2=Placeholder())
 
 
-SmoothApp.run(log="textual.log")
+BasicApp.run(log="textual.log")

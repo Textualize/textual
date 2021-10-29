@@ -123,16 +123,16 @@ class Widget(DOMNode):
             widget (Widget): Widget
         """
         self.app.register(widget, self)
-        self.registry._append(widget)
+        self.children._append(widget)
         return widget
 
     def get_child(self, name: str | None = None, id: str | None = None) -> Widget:
         if name is not None:
-            for widget in self.registry:
+            for widget in self.children:
                 if widget.name == name:
                     return widget
         if id is not None:
-            for widget in self.registry:
+            for widget in self.children:
                 if widget.id == id:
                     return widget
         raise errors.MissingWidget(f"Widget named {name!r} was not found in {self}")

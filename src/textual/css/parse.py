@@ -34,7 +34,7 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
     rule_set = RuleSet()
 
     get_selector = SELECTOR_MAP.get
-    combinator = CombinatorType.SAME
+    combinator = CombinatorType.DESCENDENT
     selectors: list[Selector] = []
     rule_selectors: list[list[Selector]] = []
     styles_builder = StylesBuilder()
@@ -109,6 +109,11 @@ def parse(css: str) -> Iterable[RuleSet]:
 
 if __name__ == "__main__":
     test = """
+
+App View {
+    text: red;
+}
+
 .foo.bar baz:focus, #egg .foo.baz {
     /* ignore me, I'm a comment */
     display: block;

@@ -45,11 +45,13 @@ class Stylesheet:
         styles: list[tuple[Specificity3, Styles]] = []
 
         for rule in self.rules:
+            print(rule)
             self.apply_rule(rule, node)
 
     def apply_rule(self, rule: RuleSet, node: DOMNode) -> None:
         for selector_set in rule.selector_set:
-            self.check_selectors(selector_set.selectors, node)
+            if self.check_selectors(selector_set.selectors, node):
+                print(rule.css)
 
     def check_selectors(self, selectors: list[Selector], node: DOMNode) -> bool:
         node_path = node.css_path
@@ -60,19 +62,80 @@ class Stylesheet:
             return False
         node, siblings = node_siblings
 
-        for selector in selectors:
-            if selector.type == SelectorType.UNIVERSAL:
-                continue
-            elif selector.type == SelectorType.TYPE:
-                while node.css_type != selector.name:
-                    node_siblings = next(nodes, None)
-                    if node_siblings is None:
+        SAME = CombinatorType.SAME
+        DESCENDENT = CombinatorType.DESCENDENT
+        CHILD = CombinatorType.CHILD
+
+        try:
+            for selector in selectors:
+                if selector.combinator == SAME:
+                    if not selector.check(node):
                         return False
-                    node, siblings = node_siblings
-            elif selector.type == SelectorType.CLASS:
-                while node.css_type != selector.name:
-                    node_siblings = next(nodes, None)
-                    if node_siblings is None:
+                elif selector.combinator == DESCENDENT:
+                    while True:
+                        node, siblings = next(nodes)
+                        if selector.check(node):
+                            break
+                elif selector.combinator == CHILD:
+                    node, siblings = next(nodes)
+                    if not selector.check(node):
                         return False
-                    node, siblings = node_siblings
+        except StopIteration:
+            return False
+
         return True
+
+
+if __name__ == "__main__":
+
+    class Widget(DOMNode):
+        pass
+
+    class View(DOMNode):
+        pass
+
+    class App(DOMNode):
+        pass
+
+    app = App()
+    main_view = View(id="main")
+    help_view = View(id="help")
+    app.add_child(main_view)
+    app.add_child(help_view)
+
+    widget1 = Widget(id="widget1")
+    widget2 = Widget(id="widget2")
+    sidebar = Widget()
+    sidebar.add_class("float")
+
+    helpbar = Widget()
+    helpbar.add_class("float")
+
+    main_view.add_child(widget1)
+    main_view.add_child(widget2)
+    main_view.add_child(sidebar)
+
+    help = Widget(id="markdown")
+    help_view.add_child(help)
+    help_view.add_child(helpbar)
+
+    from rich import print
+
+    print(app.tree)
+
+    CSS = """
+
+    App > View {
+        text: red;
+    }
+
+    Widget.float {
+
+    }
+
+    """
+
+    stylesheet = Stylesheet()
+    stylesheet.parse(CSS)
+
+    stylesheet.apply(sidebar)

@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+from typing import Callable
+
 from rich import print
 
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Iterable
 
+from ..dom import DOMNode
 from .styles import Styles
 from .tokenize import Token
 from .types import Specificity3
@@ -30,13 +33,18 @@ class Location:
     column: tuple[int, int]
 
 
+def _default_check(node: DOMNode) -> bool | None:
+    return True
+
+
 @dataclass
 class Selector:
     name: str
-    combinator: CombinatorType = CombinatorType.SAME
+    combinator: CombinatorType = CombinatorType.DESCENDENT
     type: SelectorType = SelectorType.TYPE
     pseudo_classes: list[str] = field(default_factory=list)
     specificity: Specificity3 = field(default_factory=lambda: (0, 0, 0))
+    _name_lower: str = ""
 
     @property
     def css(self) -> str:
@@ -49,6 +57,42 @@ class Selector:
             return f".{self.name}{psuedo_suffix}"
         else:
             return f"#{self.name}{psuedo_suffix}"
+
+    def __post_init__(self) -> None:
+        self._name_lower = self.name.lower()
+        self._checks = {
+            SelectorType.UNIVERSAL: self._check_universal,
+            SelectorType.TYPE: self._check_type,
+            SelectorType.CLASS: self._check_class,
+            SelectorType.ID: self._check_id,
+        }
+
+    def check(self, node: DOMNode) -> bool | None:
+        return self._checks[self.type](node)
+
+    def _check_universal(self, node: DOMNode) -> bool | None:
+        return True
+
+    def _check_type(self, node: DOMNode) -> bool | None:
+        if node.css_type != self._name_lower:
+            return False
+        if self.pseudo_classes and not node.has_psuedo_class(*self.pseudo_classes):
+            return False
+        return True
+
+    def _check_class(self, node: DOMNode) -> bool | None:
+        if not node.has_class(self._name_lower):
+            return False
+        if self.pseudo_classes and not node.has_psuedo_class(*self.pseudo_classes):
+            return False
+        return True
+
+    def _check_id(self, node: DOMNode) -> bool | None:
+        if not node.id == self._name_lower:
+            return False
+        if self.pseudo_classes and not node.has_psuedo_class(*self.pseudo_classes):
+            return False
+        return True
 
 
 @dataclass

@@ -7,14 +7,14 @@ from typing import Any, Callable, ClassVar, Type, TypeVar
 import warnings
 
 from rich.control import Control
-from rich.highlighter import ReprHighlighter
+
 import rich.repr
 from rich.screen import Screen
 from rich.console import Console, RenderableType
 from rich.measure import Measurement
-from rich.pretty import Pretty
+
 from rich.traceback import Traceback
-from rich.tree import Tree
+
 
 from . import events
 from . import actions
@@ -136,21 +136,6 @@ class App(DOMNode):
     @property
     def view(self) -> DockView:
         return self._view_stack[-1]
-
-    @property
-    def tree(self) -> Tree:
-        highlighter = ReprHighlighter()
-        tree = Tree(highlighter(repr(self)))
-
-        def add_children(tree, node):
-            for child in node.children:
-                branch = tree.add(Pretty(child))
-                if tree.children:
-                    add_children(branch, child)
-
-        branch = tree.add(Pretty(self.view))
-        add_children(branch, self.view)
-        return tree
 
     @property
     def css_type(self) -> str:
