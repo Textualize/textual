@@ -34,7 +34,7 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
     rule_set = RuleSet()
 
     get_selector = SELECTOR_MAP.get
-    combinator = CombinatorType.DESCENDENT
+    combinator: CombinatorType | None = CombinatorType.DESCENDENT
     selectors: list[Selector] = []
     rule_selectors: list[list[Selector]] = []
     styles_builder = StylesBuilder()
@@ -43,14 +43,16 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
         if token.name == "pseudo_class":
             selectors[-1].pseudo_classes.append(token.value.lstrip(":"))
         elif token.name == "whitespace":
-            if combinator == CombinatorType.SAME:
+            if combinator is None or combinator == CombinatorType.SAME:
                 combinator = CombinatorType.DESCENDENT
         elif token.name == "new_selector":
             rule_selectors.append(selectors[:])
             selectors.clear()
-            combinator = CombinatorType.SAME
+            combinator = None
         elif token.name == "declaration_set_start":
             break
+        elif token.name == "combinator_child":
+            combinator = CombinatorType.CHILD
         else:
             _selector, specificity = get_selector(
                 token.name, (SelectorType.TYPE, (0, 0, 0))
@@ -58,7 +60,7 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
             selectors.append(
                 Selector(
                     name=token.value.lstrip(".#"),
-                    combinator=combinator,
+                    combinator=combinator or CombinatorType.DESCENDENT,
                     type=_selector,
                     specificity=specificity,
                 )
