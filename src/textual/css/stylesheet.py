@@ -1,13 +1,17 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import rich.repr
 
-from ..dom import DOMNode
+
 from .errors import StylesheetError
+from .match import _check_selectors
 from .model import CombinatorType, RuleSet, Selector
 from .parse import parse
 from .styles import Styles
 from .types import Specificity3
+from ..dom import DOMNode
 
 
 @rich.repr.auto
@@ -49,88 +53,8 @@ class Stylesheet:
 
     def apply_rule(self, rule: RuleSet, node: DOMNode) -> None:
         for selector_set in rule.selector_set:
-            if self.check_selectors(selector_set.selectors, node):
+            if _check_selectors(selector_set.selectors, node):
                 print(selector_set, repr(node))
-
-    def check_selectors(self, selectors: list[Selector], node: DOMNode) -> bool:
-
-        SAME = CombinatorType.SAME
-        DESCENDENT = CombinatorType.DESCENDENT
-        CHILD = CombinatorType.CHILD
-
-        css_path = node.css_path
-        path_count = len(css_path)
-        selector_count = len(selectors)
-
-        stack: list[tuple[int, int]] = [(0, 0)]
-
-        push = stack.append
-        pop = stack.pop
-        selector_index = 0
-
-        while stack:
-            selector_index, node_index = stack[-1]
-            if selector_index == selector_count:
-                return node_index + 1 == path_count
-            if node_index == path_count:
-                pop()
-                continue
-            selector = selectors[selector_index]
-            path_node = css_path[node_index]
-            combinator = selector.combinator
-            stack[-1] = (selector_index, node_index)
-
-            if combinator == SAME:
-                # Check current node again
-                if selector.check(path_node):
-                    stack[-1] = (selector_index + 1, node_index + selector.advance)
-                else:
-                    pop()
-            elif combinator == DESCENDENT:
-                # Find a matching descendent
-                if selector.check(path_node):
-                    pop()
-                    push((selector_index + 1, node_index + selector.advance + 1))
-                    push((selector_index + 1, node_index + selector.advance))
-                else:
-                    stack[-1] = (selector_index, node_index + selector.advance + 1)
-            elif combinator == CHILD:
-                # Match the next node
-                if selector.check(path_node):
-                    stack[-1] = (selector_index + 1, node_index + selector.advance)
-                else:
-                    pop()
-        return False
-
-        # def search(selector_index: int, node_index: int) -> bool:
-        #     nodes = iter(enumerate(css_path[node_index:], node_index))
-        #     try:
-        #         node_index, node = next(nodes)
-        #         for selector_index in range(selector_index, selector_count):
-        #             selector = selectors[selector_index]
-        #             combinator = selector.combinator
-        #             if combinator == SAME:
-        #                 # Check current node again
-        #                 if not selector.check(node):
-        #                     return False
-        #             elif combinator == DESCENDENT:
-        #                 # Find a matching descendent
-        #                 while True:
-        #                     node_index, node = next(nodes)
-        #                     if selector.check(node) and search(
-        #                         selector_index + 1, node_index
-        #                     ):
-        #                         break
-        #             elif combinator == CHILD:
-        #                 # Match the next node
-        #                 node_index, node = next(nodes)
-        #                 if not selector.check(node):
-        #                     return False
-        #     except StopIteration:
-        #         return False
-        #     return True
-
-        # return search(0, 0)
 
 
 if __name__ == "__main__":
@@ -171,7 +95,7 @@ if __name__ == "__main__":
     main_view.add_child(sub_view)
 
     tooltip = Widget(id="tooltip")
-    tooltip.add_class("float")
+    tooltip.add_class("float", "transient")
     sub_view.add_child(tooltip)
 
     help = Widget(id="markdown")
@@ -196,7 +120,22 @@ if __name__ == "__main__":
 
     """
 
-    print(app._all_children())
+    from .query import DOMQuery
+
+    # print(DOMQuery(selector="App", nodes=[sub_view]))
+
+    tests = [
+        "App > View",
+        "Widget.float",
+        ".float.transient",
+    ]
+
+    for test in tests:
+        print("")
+        print(f"[b]{test}")
+        print(app.query(test))
+
+    # print(app.query("View"))
 
     # stylesheet = Stylesheet()
     # stylesheet.parse(CSS)

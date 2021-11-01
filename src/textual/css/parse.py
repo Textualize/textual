@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from rich import print
 
+from functools import lru_cache
 from typing import Iterator, Iterable
 
 from .tokenize import tokenize, Token
@@ -30,7 +31,8 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, tuple[int, int, int]]] = {
 }
 
 
-def parse_selectors(css_selectors: str) -> list[SelectorSet]:
+@lru_cache(maxsize=1024)
+def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
 
     tokens = iter(tokenize(css_selectors))
 
@@ -42,7 +44,6 @@ def parse_selectors(css_selectors: str) -> list[SelectorSet]:
     while True:
         try:
             token = next(tokens)
-            print(token)
         except EOFError:
             break
         if token.name == "pseudo_class":
@@ -74,7 +75,7 @@ def parse_selectors(css_selectors: str) -> list[SelectorSet]:
     if selectors:
         rule_selectors.append(selectors[:])
 
-    selector_set = list(SelectorSet.from_selectors(rule_selectors))
+    selector_set = tuple(SelectorSet.from_selectors(rule_selectors))
     return selector_set
 
 

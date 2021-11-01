@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable
+from typing import Iterable, Iterator, TYPE_CHECKING
 
 from rich.highlighter import ReprHighlighter
 import rich.repr
@@ -10,6 +10,10 @@ from rich.tree import Tree
 from .css.styles import Styles
 from .message_pump import MessagePump
 from ._node_list import NodeList
+
+
+if TYPE_CHECKING:
+    from .css.query import DOMQuery
 
 
 @rich.repr.auto
@@ -84,11 +88,28 @@ class DOMNode(MessagePump):
         self.children._append(node)
         node.set_parent(self)
 
-    def _all_children(self) -> Iterable[DOMNode]:
-        children = {self, *self.children}
-        for child in self.children:
-            children.update(child._all_children())
-        return children
+    def walk_children(self, with_self: bool = True) -> Iterable[DOMNode]:
+
+        stack: list[Iterator[DOMNode]] = [iter(self.children)]
+        pop = stack.pop
+        push = stack.append
+
+        if with_self:
+            yield self
+
+        while stack:
+            node = next(stack[-1], None)
+            if node is None:
+                pop()
+            else:
+                yield node
+                if node.children:
+                    push(iter(node.children))
+
+    def query(self, selector: str) -> DOMQuery:
+        from .css.query import DOMQuery
+
+        return DOMQuery(self, selector)
 
     def has_class(self, *class_names: str) -> bool:
         return self._classes.issuperset(class_names)
