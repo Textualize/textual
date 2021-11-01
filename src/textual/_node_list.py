@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable, overload, TYPE_CHECKING
+from typing import Iterator, overload, TYPE_CHECKING
 from weakref import ref
 
 import rich.repr
@@ -59,7 +59,7 @@ class NodeList:
         del self._widget_refs[:]
         self.__widgets = None
 
-    def __iter__(self) -> Iterable[DOMNode]:
+    def __iter__(self) -> Iterator[DOMNode]:
         for widget_ref in self._widget_refs:
             widget = widget_ref()
             if widget is not None:

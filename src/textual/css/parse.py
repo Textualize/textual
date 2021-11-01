@@ -5,6 +5,7 @@ from rich import print
 from typing import Iterator, Iterable
 
 from .tokenize import tokenize, Token
+from .tokenizer import EOFError
 
 from .model import (
     Declaration,
@@ -27,6 +28,54 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, tuple[int, int, int]]] = {
     "selector_universal": (SelectorType.UNIVERSAL, (0, 0, 0)),
     "selector_start_universal": (SelectorType.UNIVERSAL, (0, 0, 0)),
 }
+
+
+def parse_selectors(css_selectors: str) -> list[SelectorSet]:
+
+    tokens = iter(tokenize(css_selectors))
+
+    get_selector = SELECTOR_MAP.get
+    combinator: CombinatorType | None = CombinatorType.DESCENDENT
+    selectors: list[Selector] = []
+    rule_selectors: list[list[Selector]] = []
+
+    while True:
+        try:
+            token = next(tokens)
+            print(token)
+        except EOFError:
+            break
+        if token.name == "pseudo_class":
+            selectors[-1].pseudo_classes.append(token.value.lstrip(":"))
+        elif token.name == "whitespace":
+            if combinator is None or combinator == CombinatorType.SAME:
+                combinator = CombinatorType.DESCENDENT
+        elif token.name == "new_selector":
+            rule_selectors.append(selectors[:])
+            selectors.clear()
+            combinator = None
+        elif token.name == "declaration_set_start":
+            break
+        elif token.name == "combinator_child":
+            combinator = CombinatorType.CHILD
+        else:
+            _selector, specificity = get_selector(
+                token.name, (SelectorType.TYPE, (0, 0, 0))
+            )
+            selectors.append(
+                Selector(
+                    name=token.value.lstrip(".#"),
+                    combinator=combinator or CombinatorType.DESCENDENT,
+                    type=_selector,
+                    specificity=specificity,
+                )
+            )
+            combinator = CombinatorType.SAME
+    if selectors:
+        rule_selectors.append(selectors[:])
+
+    selector_set = list(SelectorSet.from_selectors(rule_selectors))
+    return selector_set
 
 
 def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
@@ -109,37 +158,41 @@ def parse(css: str) -> Iterable[RuleSet]:
             yield from parse_rule_set(tokens, token)
 
 
+# if __name__ == "__main__":
+#     test = """
+
+# App View {
+#     text: red;
+# }
+
+# .foo.bar baz:focus, #egg .foo.baz {
+#     /* ignore me, I'm a comment */
+#     display: block;
+#     visibility: visible;
+#     border: solid green !important;
+#     outline: red;
+#     padding: 1 2;
+#     margin: 5;
+#     text: bold red on magenta
+#     text-color: green;
+#     text-background: white
+#     docks: foo bar bar
+#     dock-group: foo
+#     dock-edge: top
+#     offset-x: 4
+#     offset-y: 5
+# }"""
+
+#     from .stylesheet import Stylesheet
+
+#     print(test)
+#     print()
+#     stylesheet = Stylesheet()
+#     stylesheet.parse(test)
+#     print(stylesheet)
+#     print()
+#     print(stylesheet.css)
+
+
 if __name__ == "__main__":
-    test = """
-
-App View {
-    text: red;
-}
-
-.foo.bar baz:focus, #egg .foo.baz {
-    /* ignore me, I'm a comment */
-    display: block;
-    visibility: visible;
-    border: solid green !important;
-    outline: red;
-    padding: 1 2;
-    margin: 5;
-    text: bold red on magenta
-    text-color: green;
-    text-background: white
-    docks: foo bar bar
-    dock-group: foo
-    dock-edge: top
-    offset-x: 4
-    offset-y: 5
-}"""
-
-    from .stylesheet import Stylesheet
-
-    print(test)
-    print()
-    stylesheet = Stylesheet()
-    stylesheet.parse(test)
-    print(stylesheet)
-    print()
-    print(stylesheet.css)
+    print(parse_selectors("Foo > Bar.baz { foo: bar"))

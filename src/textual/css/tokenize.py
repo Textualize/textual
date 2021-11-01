@@ -84,5 +84,4 @@ def tokenize(code: str) -> Iterable[Token]:
         elif name == "eof":
             break
         expect = get_state(name, expect)
-        print(token)
         yield token

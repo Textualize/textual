@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from typing import Callable
 
-from rich import print
+import rich.repr
 
 from dataclasses import dataclass, field
 from enum import Enum
@@ -44,7 +43,8 @@ class Selector:
     type: SelectorType = SelectorType.TYPE
     pseudo_classes: list[str] = field(default_factory=list)
     specificity: Specificity3 = field(default_factory=lambda: (0, 0, 0))
-    _name_lower: str = ""
+    _name_lower: str = field(default="", repr=False)
+    advance: int = 0
 
     @property
     def css(self) -> str:
@@ -101,10 +101,21 @@ class Declaration:
     tokens: list[Token] = field(default_factory=list)
 
 
+@rich.repr.auto(angular=True)
 @dataclass
 class SelectorSet:
     selectors: list[Selector] = field(default_factory=list)
     specificity: Specificity3 = (0, 0, 0)
+
+    def __post_init__(self) -> None:
+        SAME = CombinatorType.SAME
+        for selector, next_selector in zip(self.selectors, self.selectors[1:]):
+            selector.advance = 0 if next_selector.combinator == SAME else 1
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        selectors = RuleSet._selector_to_css(self.selectors)
+        yield selectors
+        yield None, self.specificity
 
     @classmethod
     def from_selectors(cls, selectors: list[list[Selector]]) -> Iterable[SelectorSet]:
@@ -124,7 +135,7 @@ class RuleSet:
     styles: Styles = field(default_factory=Styles)
 
     @classmethod
-    def selector_to_css(cls, selectors: list[Selector]) -> str:
+    def _selector_to_css(cls, selectors: list[Selector]) -> str:
         tokens: list[str] = []
         for selector in selectors:
             if selector.combinator == CombinatorType.DESCENDENT:
@@ -135,11 +146,14 @@ class RuleSet:
         return "".join(tokens).strip()
 
     @property
-    def css(self) -> str:
-        selectors = ", ".join(
-            self.selector_to_css(selector_set.selectors)
+    def selectors(self):
+        return ", ".join(
+            self._selector_to_css(selector_set.selectors)
             for selector_set in self.selector_set
         )
+
+    @property
+    def css(self) -> str:
         declarations = "\n".join(f"    {line}" for line in self.styles.css_lines)
-        css = f"{selectors} {{\n{declarations}\n}}"
+        css = f"{self.selectors} {{\n{declarations}\n}}"
         return css

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Iterable
+
 from rich.highlighter import ReprHighlighter
 import rich.repr
 from rich.pretty import Pretty
@@ -54,14 +56,14 @@ class DOMNode(MessagePump):
         return self.__class__.__name__.lower()
 
     @property
-    def css_path(self) -> list[tuple[DOMNode, list[DOMNode]]]:
-        result: list[tuple[DOMNode, list[DOMNode]]] = [(self, self.children[:])]
+    def css_path(self) -> list[DOMNode]:
+        result: list[DOMNode] = [self]
         append = result.append
 
         node: DOMNode = self
         while isinstance(node._parent, DOMNode):
             node = node._parent
-            append((node, node.children[:]))
+            append(node)
         return result[::-1]
 
     @property
@@ -81,6 +83,12 @@ class DOMNode(MessagePump):
     def add_child(self, node: DOMNode) -> None:
         self.children._append(node)
         node.set_parent(self)
+
+    def _all_children(self) -> Iterable[DOMNode]:
+        children = {self, *self.children}
+        for child in self.children:
+            children.update(child._all_children())
+        return children
 
     def has_class(self, *class_names: str) -> bool:
         return self._classes.issuperset(class_names)
