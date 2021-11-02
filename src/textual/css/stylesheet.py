@@ -124,11 +124,7 @@ if __name__ == "__main__":
 
     # print(DOMQuery(selector="App", nodes=[sub_view]))
 
-    tests = [
-        "App > View",
-        "Widget.float",
-        ".float.transient",
-    ]
+    tests = ["View", "App > View", "Widget.float", ".float.transient", "*"]
 
     for test in tests:
         print("")

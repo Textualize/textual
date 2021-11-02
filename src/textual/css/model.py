@@ -44,7 +44,7 @@ class Selector:
     pseudo_classes: list[str] = field(default_factory=list)
     specificity: Specificity3 = field(default_factory=lambda: (0, 0, 0))
     _name_lower: str = field(default="", repr=False)
-    advance: int = 0
+    advance: int = 1
 
     @property
     def css(self) -> str:
@@ -109,6 +109,7 @@ class SelectorSet:
 
     def __post_init__(self) -> None:
         SAME = CombinatorType.SAME
+        # self.selectors[-1].advance = 1
         for selector, next_selector in zip(self.selectors, self.selectors[1:]):
             selector.advance = 0 if next_selector.combinator == SAME else 1
 
