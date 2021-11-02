@@ -16,6 +16,15 @@ def match(selector_sets: Iterable[SelectorSet], node: DOMNode):
 
 
 def _check_selectors(selectors: list[Selector], node: DOMNode) -> bool:
+    """Match a list of selectors against a node.
+
+    Args:
+        selectors (list[Selector]): A list of selectors.
+        node (DOMNode): A DOM node.
+
+    Returns:
+        bool: True if the node matches the selector.
+    """
 
     DESCENDENT = CombinatorType.DESCENDENT
 
@@ -33,28 +42,24 @@ def _check_selectors(selectors: list[Selector], node: DOMNode) -> bool:
         selector_index, node_index = stack[-1]
         if selector_index == selector_count or node_index == path_count:
             pop()
-            continue
-        last_selector = selector_index == selector_count - 1
-        path_node = css_path[node_index]
-        selector = selectors[selector_index]
-        advance = selector.advance
-        combinator = selector.combinator
-
-        if combinator == DESCENDENT:
-            # Find a matching descendent
-            if selector.check(path_node):
-                if path_node is node and last_selector:
-                    return True
-                stack[-1] = (selector_index + 1, node_index + advance)
-                push((selector_index, node_index + 1))
-            else:
-                stack[-1] = (selector_index, node_index + 1)
         else:
-            # Match the next node
-            if selector.check(path_node):
-                if path_node is node and last_selector:
-                    return True
-                stack[-1] = (selector_index + 1, node_index + advance)
+            path_node = css_path[node_index]
+            selector = selectors[selector_index]
+            if selector.combinator == DESCENDENT:
+                # Find a matching descendent
+                if selector.check(path_node):
+                    if path_node is node and selector_index == selector_count - 1:
+                        return True
+                    stack[-1] = (selector_index + 1, node_index + selector.advance)
+                    push((selector_index, node_index + 1))
+                else:
+                    stack[-1] = (selector_index, node_index + 1)
             else:
-                pop()
+                # Match the next node
+                if selector.check(path_node):
+                    if path_node is node and selector_index == selector_count - 1:
+                        return True
+                    stack[-1] = (selector_index + 1, node_index + selector.advance)
+                else:
+                    pop()
     return False

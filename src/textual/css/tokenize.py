@@ -10,8 +10,8 @@ from .tokenizer import Expect, Tokenizer, Token
 expect_selector = Expect(
     whitespace=r"\s+",
     comment_start=r"\/\*",
-    selector_start_id=r"\#[a-zA-Z_\-]+",
-    selector_start_class=r"\.[a-zA-Z_\-]+",
+    selector_start_id=r"\#[a-zA-Z_\-][a-zA-Z0-9_\-]*",
+    selector_start_class=r"\.[a-zA-Z_\-][a-zA-Z0-9_\-]*",
     selector_start_universal=r"\*",
     selector_start=r"[a-zA-Z_\-]+",
 ).expect_eof(True)
@@ -24,8 +24,8 @@ expect_selector_continue = Expect(
     whitespace=r"\s+",
     comment_start=r"\/\*",
     pseudo_class=r"\:[a-zA-Z_-]+",
-    selector_id=r"\#[a-zA-Z_\-]+",
-    selector_class=r"\.[a-zA-Z_\-]+",
+    selector_id=r"\#[a-zA-Z_\-][a-zA-Z0-9_\-]*",
+    selector_class=r"\.[a-zA-Z_\-][a-zA-Z0-9_\-]*",
     selector_universal=r"\*",
     selector=r"[a-zA-Z_\-]+",
     combinator_child=">",
