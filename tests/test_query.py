@@ -58,5 +58,19 @@ def test_query():
 
         assert list(app.query("App > View")) == [main_view, help_view]
         assert list(app.query("App > View#help")) == [help_view]
+        assert list(app.query("App > View#main .float ")) == [sidebar, tooltip]
+        assert list(app.query("View > View")) == [sub_view]
 
         assert list(app.query("#help *")) == [help, helpbar]
+        assert list(app.query("#main *")) == [
+            widget1,
+            widget2,
+            sidebar,
+            sub_view,
+            tooltip,
+        ]
+
+        assert list(app.query("App,View")) == [app, main_view, sub_view, help_view]
+        assert list(app.query("#widget1, #widget2")) == [widget1, widget2]
+        assert list(app.query("#widget1 , #widget2")) == [widget1, widget2]
+        assert list(app.query("#widget1, #widget2, App")) == [app, widget1, widget2]
