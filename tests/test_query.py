@@ -1,4 +1,3 @@
-from textual.css.query import DOMQuery
 from textual.dom import DOMNode
 
 

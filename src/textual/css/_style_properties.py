@@ -134,22 +134,38 @@ class StyleProperty:
     DEFAULT_STYLE = Style()
 
     def __set_name__(self, owner: Styles, name: str) -> None:
-        self._internal_name = f"_rule_{name}"
+
+        self._color_name = f"_rule_{name}_color"
+        self._bgcolor_name = f"_rule_{name}_bgcolor"
+        self._style_name = f"_rule_{name}_style"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Style:
-        return getattr(obj, self._internal_name) or self.DEFAULT_STYLE
+
+        color = getattr(obj, self._color_name) or Color.default()
+        bgcolor = getattr(obj, self._bgcolor_name) or Color.default()
+        style = Style(color=color, bgcolor=bgcolor)
+        style_flags = getattr(obj, self._style_name)
+        if style_flags is not None:
+            flags = Style.parse(style_flags)
+            style += flags
+        return style
 
     def __set__(self, obj: Styles, style: Style | str | None) -> Style | str | None:
         if style is None:
-            setattr(obj, self._internal_name, None)
-            return None
-
-        if isinstance(style, str):
-            _style = Style.parse(style)
-        else:
-            _style = style
-        setattr(obj, self._internal_name, _style)
-        return _style
+            setattr(obj, self._color_name, None)
+            setattr(obj, self._bgcolor_name, None)
+            setattr(obj, self._style_name, None)
+        elif isinstance(style, Style):
+            setattr(obj, self._color_name, style.color)
+            setattr(obj, self._bgcolor_name, style.bgcolor)
+            setattr(obj, self._style_name, str(style.without_color))
+        elif isinstance(style, str):
+            new_style = Style.parse(style)
+            setattr(obj, self._color_name, new_style.color)
+            setattr(obj, self._bgcolor_name, new_style.bgcolor)
+            style_str = str(new_style.without_color)
+            setattr(obj, self._style_name, style_str if style_str != "none" else "")
+        return style
 
 
 class SpacingProperty:
@@ -287,3 +303,46 @@ class NameListProperty:
             names_value = None
         setattr(obj, self._internal_name, names_value)
         return names
+
+
+class ColorProperty:
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self._name = name
+        self._internal_name = f"_rule_{name}"
+
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Color:
+        return getattr(obj, self._internal_name, None) or Color.default()
+
+    def __set__(self, obj: Styles, color: Color | str | None) -> Color | str | None:
+        if color is None:
+            setattr(self, self._internal_name, None)
+        else:
+            if isinstance(color, Color):
+                setattr(self, self._internal_name, color)
+            elif isinstance(color, str):
+                new_color = Color.parse(color)
+                setattr(self, self._internal_name, new_color)
+        return color
+
+
+class StyleFlagsProperty:
+
+    _VALID_PROPERTIES = {"not", "bold", "italic", "underline", "overline", "strike"}
+
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self._name = name
+        self._internal_name = f"_rule_{name}"
+
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
+        return getattr(obj, self._internal_name, None) or ""
+
+    def __set__(self, obj: Styles, style_flags: str | None) -> str | None:
+        if style_flags is None:
+            setattr(self, self._internal_name, None)
+        else:
+            # TODO: more specific error
+            words = {word.strip() for word in style_flags.split(" ")}
+            if words not in self._VALID_PROPERTIES:
+                raise StyleValueError(f"unknown style attribute(s) in {style_flags!r}")
+            setattr(self, self._internal_name, " ".join(words))
+        return style_flags

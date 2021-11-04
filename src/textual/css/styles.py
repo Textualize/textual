@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Any, Iterable
 
 from rich import print
+from rich.color import Color
 import rich.repr
 from rich.style import Style
 
@@ -18,6 +20,7 @@ from ..geometry import NULL_OFFSET, Offset, Spacing
 from ._style_properties import (
     BorderProperty,
     BoxProperty,
+    ColorProperty,
     DockEdgeProperty,
     DocksProperty,
     DockGroupProperty,
@@ -28,6 +31,7 @@ from ._style_properties import (
     SpacingProperty,
     StringProperty,
     StyleProperty,
+    StyleFlagsProperty,
 )
 from .types import Display, Visibility
 
@@ -39,7 +43,10 @@ class Styles:
     _rule_visibility: Visibility | None = None
     _rule_layout: str | None = None
 
-    _rule_text: Style | None = None
+    # _rule_text: Style | None = None
+    _rule_text_color: Color | None = None
+    _rule_text_bgcolor: Color | None = None
+    _rule_text_style: str | None = None
 
     _rule_padding: Spacing | None = None
     _rule_margin: Spacing | None = None
@@ -73,6 +80,9 @@ class Styles:
     layout = StringProperty(VALID_LAYOUT, "dock")
 
     text = StyleProperty()
+    text_color = ColorProperty()
+    text_bgcolor = ColorProperty()
+    text_style = StyleFlagsProperty()
 
     padding = SpacingProperty()
     margin = SpacingProperty()
@@ -113,16 +123,22 @@ class Styles:
 
     def extract_rules(
         self, specificity: tuple[int, int, int]
-    ) -> dict[str, tuple[tuple[int, int, int, int], object]]:
+    ) -> list[tuple[str, tuple[int, int, int, int], Any]]:
         is_important = self.important.__contains__
-        return {
-            rule_name: (
+        rules = [
+            (
+                rule_name,
                 (int(is_important(rule_name)), *specificity),
-                getattr(self, rule_name),
+                getattr(self, f"_rule_{rule_name}"),
             )
             for rule_name in RULE_NAMES
             if getattr(self, f"_rule_{rule_name}") is not None
-        }
+        ]
+        return rules
+
+    def apply_rules(self, rules: Iterable[tuple[str, Any]]):
+        for key, value in rules:
+            setattr(self, f"_rule_{key}", value)
 
     def __rich_repr__(self) -> rich.repr.Result:
         if self.has_border:
@@ -144,6 +160,22 @@ class Styles:
         if self.important:
             yield "important", self.important
 
+    @classmethod
+    def combine(cls, style1: Styles, style2: Styles) -> Styles:
+        """Combine rule with another to produce a new rule.
+
+        Args:
+            style1 (Style): A style.
+            style2 (Style): Second style.
+
+        Returns:
+            Style: New rule with attributes of style2 overriding style1
+        """
+        result = cls()
+        for name in INTERNAL_RULE_NAMES:
+            setattr(result, name, getattr(style1, name) or getattr(style2, name))
+        return result
+
     @property
     def css_lines(self) -> list[str]:
         lines: list[str] = []
@@ -159,8 +191,6 @@ class Styles:
             append_declaration("display", self._rule_display)
         if self._rule_visibility is not None:
             append_declaration("visibility", self._rule_visibility)
-        if self._rule_text is not None:
-            append_declaration("text", str(self._rule_text))
         if self._rule_padding is not None:
             append_declaration("padding", self._rule_padding.packed)
         if self._rule_margin is not None:
@@ -223,6 +253,8 @@ class Styles:
             append_declaration("layers", " ".join(self.layers))
         if self._rule_layer is not None:
             append_declaration("layer", self.layer)
+        if self._rule_text_color or self._rule_text_bgcolor or self._rule_text_style:
+            append_declaration("text", str(self.text))
 
         lines.sort()
         return lines
@@ -233,6 +265,7 @@ class Styles:
 
 
 RULE_NAMES = {name[6:] for name in dir(Styles) if name.startswith("_rule_")}
+INTERNAL_RULE_NAMES = {name for name in dir(Styles) if name.startswith("_rule_")}
 
 if __name__ == "__main__":
     styles = Styles()

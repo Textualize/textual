@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from collections import defaultdict
+from operator import itemgetter
+from typing import Iterable, TYPE_CHECKING
 
 import rich.repr
 
@@ -10,7 +12,7 @@ from .match import _check_selectors
 from .model import CombinatorType, RuleSet, Selector
 from .parse import parse
 from .styles import Styles
-from .types import Specificity3
+from .types import Specificity3, Specificity4
 from ..dom import DOMNode
 
 
@@ -42,19 +44,34 @@ class Stylesheet:
         try:
             rules = list(parse(css))
         except Exception as error:
-            raise StylesheetError(f"failed to parse css; {error}") from None
+            raise StylesheetError(f"failed to parse css; {error}")
         self.rules.extend(rules)
 
     def apply(self, node: DOMNode) -> None:
-        styles: list[tuple[Specificity3, Styles]] = []
+
+        rule_attributes: dict[str, list[tuple[Specificity4, object]]] = defaultdict(
+            list
+        )
 
         for rule in self.rules:
-            self.apply_rule(rule, node)
+            for specificity in self._check_rule(rule, node):
+                for key, rule_specificity, value in rule.styles.extract_rules(
+                    specificity
+                ):
+                    rule_attributes[key].append((rule_specificity, value))
 
-    def apply_rule(self, rule: RuleSet, node: DOMNode) -> None:
+        print(rule_attributes)
+        node_rules = [
+            (name, max(specificity_rules, key=itemgetter(0))[1])
+            for name, specificity_rules in rule_attributes.items()
+        ]
+        print(node_rules)
+        node.styles.apply_rules(node_rules)
+
+    def _check_rule(self, rule: RuleSet, node: DOMNode) -> Iterable[Specificity3]:
         for selector_set in rule.selector_set:
             if _check_selectors(selector_set.selectors, node):
-                print(selector_set, repr(node))
+                yield selector_set.specificity
 
 
 if __name__ == "__main__":
@@ -108,10 +125,24 @@ if __name__ == "__main__":
 
     CSS = """
 
-/*
+
     App > View {
         text: red;
-    }*/
+    }
+
+    * {
+        text: blue
+    }
+
+    Widget{
+        text: purple;
+
+    }
+
+    View #widget1 {
+        text: green !important;
+    }
+
 
     App > View.-subview {
         outline: heavy
@@ -120,20 +151,16 @@ if __name__ == "__main__":
 
     """
 
-    from .query import DOMQuery
+    stylesheet = Stylesheet()
+    stylesheet.parse(CSS)
 
-    # print(DOMQuery(selector="App", nodes=[sub_view]))
+    stylesheet.apply(widget1)
 
-    tests = ["View", "App > View", "Widget.float", ".float.transient", "*"]
+    # from .query import DOMQuery
 
-    for test in tests:
-        print("")
-        print(f"[b]{test}")
-        print(app.query(test))
+    # tests = ["View", "App > View", "Widget.float", ".float.transient", "*"]
 
-    # print(app.query("View"))
-
-    # stylesheet = Stylesheet()
-    # stylesheet.parse(CSS)
-
-    # stylesheet.apply(sub_view)
+    # for test in tests:
+    #     print("")
+    #     print(f"[b]{test}")
+    #     print(app.query(test))

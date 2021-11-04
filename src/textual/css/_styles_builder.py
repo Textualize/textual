@@ -209,16 +209,13 @@ class StylesBuilder:
     def process_text(self, name: str, tokens: list[Token]) -> None:
         style_definition = " ".join(token.value for token in tokens)
         style = Style.parse(style_definition)
-        self.styles._rule_text = style
+        self.styles.text = style
 
     def process_text_color(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
-                    new_style = (self.styles._rule_text or Style()) + Style(
-                        color=Color.parse(token.value)
-                    )
-                    self.styles._rule_text = new_style
+                    self.styles._rule_text_color = Color.parse(token.value)
                 except Exception as error:
                     self.error(
                         name, token, f"failed to parse color {token.value!r}; {error}"
@@ -228,14 +225,11 @@ class StylesBuilder:
                     name, token, f"unexpected token {token.value!r} in declaration"
                 )
 
-    def process_text_background(self, name: str, tokens: list[Token]) -> None:
+    def process_text_bgcolor(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
-                    new_style = (self.styles._rule_text or Style()) + Style(
-                        bgcolor=Color.parse(token.value)
-                    )
-                    self.styles._rule_text = new_style
+                    self.styles._rule_text_bgcolor = Color.parse(token.value)
                 except Exception as error:
                     self.error(
                         name, token, f"failed to parse color {token.value!r}; {error}"
