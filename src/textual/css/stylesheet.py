@@ -47,11 +47,15 @@ class Stylesheet:
             raise StylesheetError(f"failed to parse css; {error}")
         self.rules.extend(rules)
 
-    def apply(self, node: DOMNode) -> None:
+    @classmethod
+    def _check_rule(cls, rule: RuleSet, node: DOMNode) -> Iterable[Specificity3]:
+        for selector_set in rule.selector_set:
+            if _check_selectors(selector_set.selectors, node):
+                yield selector_set.specificity
 
-        rule_attributes: dict[str, list[tuple[Specificity4, object]]] = defaultdict(
-            list
-        )
+    def apply(self, node: DOMNode) -> None:
+        rule_attributes: dict[str, list[tuple[Specificity4, object]]]
+        rule_attributes = defaultdict(list)
 
         for rule in self.rules:
             for specificity in self._check_rule(rule, node):
@@ -60,18 +64,12 @@ class Stylesheet:
                 ):
                     rule_attributes[key].append((rule_specificity, value))
 
-        print(rule_attributes)
+        get_first_item = itemgetter(0)
         node_rules = [
-            (name, max(specificity_rules, key=itemgetter(0))[1])
+            (name, max(specificity_rules, key=get_first_item)[1])
             for name, specificity_rules in rule_attributes.items()
         ]
-        print(node_rules)
         node.styles.apply_rules(node_rules)
-
-    def _check_rule(self, rule: RuleSet, node: DOMNode) -> Iterable[Specificity3]:
-        for selector_set in rule.selector_set:
-            if _check_selectors(selector_set.selectors, node):
-                yield selector_set.specificity
 
 
 if __name__ == "__main__":

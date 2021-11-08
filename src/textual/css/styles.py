@@ -43,7 +43,6 @@ class Styles:
     _rule_visibility: Visibility | None = None
     _rule_layout: str | None = None
 
-    # _rule_text: Style | None = None
     _rule_text_color: Color | None = None
     _rule_text_bgcolor: Color | None = None
     _rule_text_style: str | None = None
