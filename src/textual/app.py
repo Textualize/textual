@@ -165,6 +165,65 @@ class App(MessagePump):
             keys, action, description, show=show, key_display=key_display
         )
 
+    def bind_no_wait(
+        self,
+        keys: str,
+        action: str,
+        description: str = "",
+        show: bool = True,
+        key_display: str | None = None,
+    ) -> None:
+        """Bind a key to an action.
+
+        Args:
+            keys (str): A comma separated list of keys, i.e.
+            action (str): Action to bind to.
+            description (str, optional): Short description of action. Defaults to "".
+            show (bool, optional): Show key in UI. Defaults to True.
+            key_display (str, optional): Replacement text for key, or None to use default. Defaults to None.
+        """
+        self.bindings.bind(
+            keys, action, description, show=show, key_display=key_display
+        )
+
+    async def unbind(
+        self,
+        keys: str,
+    ) -> None:
+        """Unbind keys.
+
+        Args:
+            keys (str): A comma separated list of keys, i.e.
+        """
+        self.bindings.unbind(
+            keys
+        )
+
+    def unbind_no_wait(
+        self,
+        keys: str,
+    ) -> None:
+        """Unbind keys.
+
+        Args:
+            keys (str): A comma separated list of keys, i.e.
+        """
+        self.bindings.unbind(
+            keys
+        )
+
+    async def unbind_clear(
+        self,
+    ) -> None:
+        """Unbind all keys."""
+        self.bindings.unbind_clear()
+
+    def unbind_clear_no_wait(
+        self,
+    ) -> None:
+        """Unbind all keys."""
+        self.bindings.unbind_clear()
+
     @classmethod
     def run(
         cls,
