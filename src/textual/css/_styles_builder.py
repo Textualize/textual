@@ -239,6 +239,10 @@ class StylesBuilder:
                     name, token, f"unexpected token {token.value!r} in declaration"
                 )
 
+    def process_text_style(self, name: str, tokens: list[Token]) -> None:
+        style_definition = " ".join(token.value for token in tokens)
+        self.styles.text_style = style_definition
+
     def process_dock_group(self, name: str, tokens: list[Token]) -> None:
 
         if len(tokens) > 1:

@@ -143,11 +143,10 @@ class StyleProperty:
 
         color = getattr(obj, self._color_name) or Color.default()
         bgcolor = getattr(obj, self._bgcolor_name) or Color.default()
-        style = Style(color=color, bgcolor=bgcolor)
+        style = Style.from_color(color, bgcolor)
         style_flags = getattr(obj, self._style_name)
         if style_flags is not None:
-            flags = Style.parse(style_flags)
-            style += flags
+            style += style_flags
         return style
 
     def __set__(self, obj: Styles, style: Style | str | None) -> Style | str | None:
@@ -327,22 +326,35 @@ class ColorProperty:
 
 class StyleFlagsProperty:
 
-    _VALID_PROPERTIES = {"not", "bold", "italic", "underline", "overline", "strike"}
+    _VALID_PROPERTIES = {
+        "not",
+        "bold",
+        "italic",
+        "underline",
+        "overline",
+        "strike",
+        "b",
+        "i",
+        "u",
+        "o",
+    }
 
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._name = name
         self._internal_name = f"_rule_{name}"
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
-        return getattr(obj, self._internal_name, None) or ""
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Style:
+        return getattr(obj, self._internal_name, None) or Style.null()
 
     def __set__(self, obj: Styles, style_flags: str | None) -> str | None:
         if style_flags is None:
             setattr(self, self._internal_name, None)
         else:
-            # TODO: more specific error
-            words = {word.strip() for word in style_flags.split(" ")}
-            if words not in self._VALID_PROPERTIES:
-                raise StyleValueError(f"unknown style attribute(s) in {style_flags!r}")
-            setattr(self, self._internal_name, " ".join(words))
+            words = [word.strip() for word in style_flags.split(" ")]
+            valid_word = self._VALID_PROPERTIES.__contains__
+            for word in words:
+                if not valid_word(word):
+                    raise StyleValueError(f"unknown word {word!r} in style flags")
+            style = Style.parse(" ".join(words))
+            setattr(obj, self._internal_name, style)
         return style_flags

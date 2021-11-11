@@ -44,6 +44,9 @@ class Token(NamedTuple):
     name: str
     value: str
 
+    def __str__(self) -> str:
+        return self.value
+
 
 class Tokenizer:
     def __init__(self, text: str) -> None:

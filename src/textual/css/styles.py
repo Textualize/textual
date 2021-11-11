@@ -45,7 +45,7 @@ class Styles:
 
     _rule_text_color: Color | None = None
     _rule_text_bgcolor: Color | None = None
-    _rule_text_style: str | None = None
+    _rule_text_style: Style | None = None
 
     _rule_padding: Spacing | None = None
     _rule_margin: Spacing | None = None
@@ -274,11 +274,14 @@ if __name__ == "__main__":
     styles.border = ("solid", "rgb(10,20,30)")
     styles.outline_right = ("solid", "red")
     styles.docks = "foo bar"
-    styles.text = "italic blue"
+    styles.text_style = "italic"
     styles.dock_group = "bar"
     styles.layers = "foo bar"
 
     from rich import inspect, print
+
+    print(styles.text_style)
+    print(styles.text)
 
     print(styles)
     print(styles.css)

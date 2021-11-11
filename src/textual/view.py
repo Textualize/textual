@@ -3,7 +3,7 @@ from __future__ import annotations
 from itertools import chain
 from typing import Callable, Iterable, ClassVar, TYPE_CHECKING
 
-from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
+from rich.console import RenderableType
 import rich.repr
 from rich.style import Style
 
@@ -143,9 +143,11 @@ class View(Widget):
         name_widgets = chain(
             ((None, widget) for widget in anon_widgets), widgets.items()
         )
+        stylesheet = self.app.stylesheet
         for name, widget in name_widgets:
             if name is not None:
                 widget.name = name
+            stylesheet.apply(widget)
             self._add_child(widget)
 
         self.refresh()

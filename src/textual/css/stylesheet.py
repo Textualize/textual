@@ -9,9 +9,8 @@ import rich.repr
 
 from .errors import StylesheetError
 from .match import _check_selectors
-from .model import CombinatorType, RuleSet, Selector
+from .model import RuleSet
 from .parse import parse
-from .styles import Styles
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
 
@@ -133,13 +132,15 @@ if __name__ == "__main__":
     }
 
     Widget{
-        text: purple;
-
+        text: red;
+        text-style: bold
     }
 
+    /*
     View #widget1 {
         text: green !important;
     }
+    */
 
 
     App > View.-subview {
@@ -152,7 +153,11 @@ if __name__ == "__main__":
     stylesheet = Stylesheet()
     stylesheet.parse(CSS)
 
+    print(widget1.styles)
+
     stylesheet.apply(widget1)
+
+    print(widget1.styles)
 
     # from .query import DOMQuery
 
