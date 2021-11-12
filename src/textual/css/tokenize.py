@@ -47,8 +47,10 @@ expect_declaration_content = Expect(
     percentage=r"\d+\%",
     number=r"\d+\.?\d*",
     color=r"\#[0-9a-f]{6}|color\([0-9]{1,3}\)|rgb\(\d{1,3}\,\s?\d{1,3}\,\s?\d{1,3}\)",
+    key_value=r"[a-zA-Z_-][a-zA-Z0-9_-]*=[a-zA-Z_-]+",
     token="[a-zA-Z_-]+",
     string=r"\".*?\"",
+    bar=r"\|",
     important=r"\!important",
     declaration_set_end=r"\}",
 )
@@ -69,8 +71,8 @@ _STATES = {
 }
 
 
-def tokenize(code: str) -> Iterable[Token]:
-    tokenizer = Tokenizer(code)
+def tokenize(code: str, path: str) -> Iterable[Token]:
+    tokenizer = Tokenizer(code, path=path)
     expect = expect_selector
     get_token = tokenizer.get_token
     get_state = _STATES.get

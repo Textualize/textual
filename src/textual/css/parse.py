@@ -16,7 +16,7 @@ from .model import (
     SelectorSet,
     SelectorType,
 )
-from ._styles_builder import StylesBuilder
+from ._styles_builder import StylesBuilder, DeclarationError
 
 
 SELECTOR_MAP: dict[str, tuple[SelectorType, tuple[int, int, int]]] = {
@@ -34,7 +34,7 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, tuple[int, int, int]]] = {
 @lru_cache(maxsize=1024)
 def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
 
-    tokens = iter(tokenize(css_selectors))
+    tokens = iter(tokenize(css_selectors, ""))
 
     get_selector = SELECTOR_MAP.get
     combinator: CombinatorType | None = CombinatorType.DESCENDENT
@@ -122,7 +122,9 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
     if selectors:
         rule_selectors.append(selectors[:])
 
-    declaration = Declaration("")
+    declaration = Declaration(token, "")
+
+    errors: list[tuple[Token, str]] = []
 
     while True:
         token = next(tokens)
@@ -131,8 +133,11 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
             continue
         if token_name == "declaration_name":
             if declaration.tokens:
-                styles_builder.add_declaration(declaration)
-            declaration = Declaration("")
+                try:
+                    styles_builder.add_declaration(declaration)
+                except DeclarationError as error:
+                    errors.append((error.token, error.message))
+            declaration = Declaration(token, "")
             declaration.name = token.value.rstrip(":")
         elif token_name == "declaration_set_end":
             break
@@ -140,17 +145,20 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
             declaration.tokens.append(token)
 
     if declaration.tokens:
-        styles_builder.add_declaration(declaration)
+        try:
+            styles_builder.add_declaration(declaration)
+        except DeclarationError as error:
+            errors.append((error.token, error.message))
 
     rule_set = RuleSet(
-        list(SelectorSet.from_selectors(rule_selectors)), styles_builder.styles
+        list(SelectorSet.from_selectors(rule_selectors)), styles_builder.styles, errors
     )
     yield rule_set
 
 
-def parse(css: str) -> Iterable[RuleSet]:
+def parse(css: str, path: str) -> Iterable[RuleSet]:
 
-    tokens = iter(tokenize(css))
+    tokens = iter(tokenize(css, path))
     while True:
         token = next(tokens, None)
         if token is None:

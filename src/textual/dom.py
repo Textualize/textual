@@ -42,6 +42,15 @@ class DOMNode(MessagePump):
     def id(self) -> str | None:
         return self._id
 
+    @id.setter
+    def id(self, new_id: str) -> str:
+        if self._id is not None:
+            raise ValueError(
+                "Node 'id' attribute may not be changed once set (current id={self._id!r})"
+            )
+        self._id = new_id
+        return new_id
+
     @property
     def name(self) -> str | None:
         return self._name

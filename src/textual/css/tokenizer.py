@@ -40,6 +40,8 @@ class Expect:
 
 
 class Token(NamedTuple):
+    path: str
+    code: str
     location: tuple[int, int]
     name: str
     value: str
@@ -49,7 +51,9 @@ class Token(NamedTuple):
 
 
 class Tokenizer:
-    def __init__(self, text: str) -> None:
+    def __init__(self, text: str, path: str = "") -> None:
+        self.path = path
+        self.code = text
         self.lines = text.splitlines(keepends=True)
         self.line_no = 0
         self.col_no = 0
@@ -59,7 +63,7 @@ class Tokenizer:
         col_no = self.col_no
         if line_no >= len(self.lines):
             if expect._expect_eof:
-                return Token((line_no, col_no), "eof", "")
+                return Token(self.path, self.code, (line_no, col_no), "eof", "")
             else:
                 raise EOFError()
         line = self.lines[line_no]
@@ -77,7 +81,7 @@ class Tokenizer:
             if value is not None:
                 break
 
-        token = Token((line_no, col_no), name, value)
+        token = Token(self.path, self.code, (line_no, col_no), name, value)
         col_no += len(value)
         if col_no >= len(line):
             line_no += 1

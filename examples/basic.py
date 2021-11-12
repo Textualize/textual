@@ -3,21 +3,27 @@ from textual.widgets import Placeholder
 
 
 class BasicApp(App):
-    """Demonstrates smooth animation. Press 'b' to see it in action."""
+    """A basic app demonstrating CSS"""
 
     css = """
 
     App > View {
-        layout: dock
+        layout: dock;
+        docks: sidebar=left | widgets=top;
+    }
+
+    #sidebar {
+        dock-group: sidebar;
     }
 
     #widget1 {
-        edge: top
+        text: on blue;
+        dock-group: widgets;
     }
 
     #widget2 {
-
-
+        text: on red;
+        dock-group: widgets;
     }
 
     """
@@ -25,7 +31,9 @@ class BasicApp(App):
     async def on_mount(self) -> None:
         """Build layout here."""
 
-        await self.view.mount(widget1=Placeholder(), widget2=Placeholder())
+        await self.view.mount(
+            sidebar=Placeholder(), widget1=Placeholder(), widget2=Placeholder()
+        )
 
 
 BasicApp.run(log="textual.log")

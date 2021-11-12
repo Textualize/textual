@@ -2,9 +2,16 @@ from __future__ import annotations
 
 from collections import defaultdict
 from operator import itemgetter
+import os
 from typing import Iterable, TYPE_CHECKING
 
 import rich.repr
+from rich.highlighter import ReprHighlighter
+from rich.panel import Panel
+from rich.syntax import Syntax
+from rich.table import Table
+from rich.text import TextType, Text
+from rich.console import Group, RenderableType
 
 
 from .errors import StylesheetError
@@ -13,6 +20,43 @@ from .model import RuleSet
 from .parse import parse
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
+
+
+class StylesheetErrors:
+    def __init__(self, stylesheet: "Stylesheet") -> None:
+        self.stylesheet = stylesheet
+
+    @classmethod
+    def _get_snippet(cls, code: str, line_no: int, col_no: int, length: int) -> Text:
+        lines = Text(code, style="dim").split()
+        lines[line_no].stylize("bold not dim", col_no, col_no + length - 1)
+        text = Text("\n").join(lines[max(0, line_no - 1) : line_no + 2])
+        # return Syntax(
+        #     code,
+        #     "",
+        #     line_range=(line_no - 1, line_no + 1),
+        #     line_numbers=True,
+        #     indent_guides=True,
+        # )
+        return Panel(text, border_style="red")
+
+    def __rich__(self) -> RenderableType:
+        highlighter = ReprHighlighter()
+        errors: list[RenderableType] = []
+        append = errors.append
+        for rule in self.stylesheet.rules:
+            for token, message in rule.errors:
+                line_no, col_no = token.location
+
+                append(highlighter(f"{token.path}:{line_no}"))
+                append(
+                    self._get_snippet(token.code, line_no, col_no, len(token.value) + 1)
+                )
+                append(highlighter(Text(message, "red")))
+                append("")
+        return Group(*errors)
+        error_text = Text("\n").join(errors)
+        return error_text
 
 
 @rich.repr.auto
@@ -27,21 +71,32 @@ class Stylesheet:
     def css(self) -> str:
         return "\n\n".join(rule_set.css for rule_set in self.rules)
 
+    @property
+    def any_errors(self) -> bool:
+        """Check if there are any errors."""
+        return any(rule.errors for rule in self.rules)
+
+    @property
+    def error_renderable(self) -> StylesheetErrors:
+        return StylesheetErrors(self)
+
     def read(self, filename: str) -> None:
+        filename = os.path.expanduser(filename)
         try:
             with open(filename, "rt") as css_file:
                 css = css_file.read()
+            path = os.path.abspath(filename)
         except Exception as error:
             raise StylesheetError(f"unable to read {filename!r}; {error}") from None
         try:
-            rules = list(parse(css))
+            rules = list(parse(css, path))
         except Exception as error:
             raise StylesheetError(f"failed to parse {filename!r}; {error}") from None
         self.rules.extend(rules)
 
-    def parse(self, css: str) -> None:
+    def parse(self, css: str, path: str = "") -> None:
         try:
-            rules = list(parse(css))
+            rules = list(parse(css, path))
         except Exception as error:
             raise StylesheetError(f"failed to parse css; {error}")
         self.rules.extend(rules)
@@ -119,45 +174,41 @@ if __name__ == "__main__":
     from rich import print
 
     print(app.tree)
+    print()
 
     CSS = """
-
-
     App > View {
-        text: red;
+        layout: dock;
+        docks: sidebar=left | widgets=top;
+        fart: poo
     }
 
-    * {
-        text: blue
+    #sidebar {
+        dock-group: sidebar;
     }
 
-    Widget{
-        text: red;
-        text-style: bold
+    #widget1 {
+        text: on blue;
+        dock-group: widgets;
     }
 
-    /*
-    View #widget1 {
-        text: green !important;
+    #widget2 {
+        text: on red;
+        dock-group: widgets;
     }
-    */
-
-
-    App > View.-subview {
-        outline: heavy
-    }
-
 
     """
 
     stylesheet = Stylesheet()
-    stylesheet.parse(CSS)
+    stylesheet.read("~/example.css")
 
-    print(widget1.styles)
+    print(stylesheet.error_renderable)
 
-    stylesheet.apply(widget1)
+    # print(widget1.styles)
 
-    print(widget1.styles)
+    # stylesheet.apply(widget1)
+
+    # print(widget1.styles)
 
     # from .query import DOMQuery
 

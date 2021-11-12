@@ -23,9 +23,8 @@ class StylesBuilder:
     def __rich_repr__(self) -> rich.repr.Result:
         yield "styles", self.styles
 
-    def error(self, name: str, token: Token, msg: str) -> None:
-        line, col = token.location
-        raise DeclarationError(name, token, f"{msg} (line {line + 1}, col {col + 1})")
+    def error(self, name: str, token: Token, message: str) -> None:
+        raise DeclarationError(name, token, message)
 
     def add_declaration(self, declaration: Declaration) -> None:
         if not declaration.tokens:
@@ -36,7 +35,7 @@ class StylesBuilder:
         if process_method is None:
             self.error(
                 declaration.name,
-                declaration.tokens[0],
+                declaration.token,
                 f"unknown declaration {declaration.name!r}",
             )
         else:
@@ -45,15 +44,20 @@ class StylesBuilder:
                 tokens = tokens[:-1]
                 self.styles.important.add(declaration.name)
             if process_method is not None:
-                process_method(declaration.name, tokens)
+                try:
+                    process_method(declaration.name, tokens)
+                except DeclarationError as error:
+                    self.error(error.name, error.token, error.message)
+                except Exception as error:
+                    self.error(declaration.name, declaration.token, str(error))
 
     def process_display(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
-            location, name, value = token
+            _, _, location, name, value = token
             if name == "token":
                 value = value.lower()
                 if value in VALID_DISPLAY:
-                    self.styles._display = cast(Display, value)
+                    self.styles._rule_display = cast(Display, value)
                 else:
                     self.error(
                         name,
@@ -65,11 +69,11 @@ class StylesBuilder:
 
     def process_visibility(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
-            location, name, value = token
+            _, _, location, name, value = token
             if name == "token":
                 value = value.lower()
                 if value in VALID_VISIBILITY:
-                    self.styles._visibility = cast(Visibility, value)
+                    self.styles._rule_visibility = cast(Visibility, value)
                 else:
                     self.error(
                         name,
@@ -83,7 +87,7 @@ class StylesBuilder:
         space: list[int] = []
         append = space.append
         for token in tokens:
-            location, toke_name, value = token
+            _, _, location, toke_name, value = token
             if toke_name == "number":
                 append(int(value))
             else:
@@ -110,7 +114,7 @@ class StylesBuilder:
         style_tokens: list[str] = []
         append = style_tokens.append
         for token in tokens:
-            location, token_name, value = token
+            _, _, location, token_name, value = token
             if token_name == "token":
                 if value in VALID_BORDER:
                     border_type = value
@@ -206,6 +210,13 @@ class StylesBuilder:
             x = self.styles.offset.x
             self.styles._rule_offset = Offset(x, y)
 
+    def process_layout(self, name: str, tokens: list[Token]) -> None:
+        if tokens:
+            if len(tokens) != 1:
+                self.error(name, tokens[0], "unexpected tokens in declaration")
+            else:
+                self.styles._rule_layout = tokens[0].value
+
     def process_text(self, name: str, tokens: list[Token]) -> None:
         style_definition = " ".join(token.value for token in tokens)
         style = Style.parse(style_definition)
@@ -259,6 +270,7 @@ class StylesBuilder:
             if token.name == "token":
                 docks.append(token.value)
             else:
+
                 self.error(
                     name,
                     token,

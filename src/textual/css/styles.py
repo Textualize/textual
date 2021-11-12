@@ -65,6 +65,8 @@ class Styles:
     _rule_fraction: int | None = None
     _rule_min_size: int | None = None
 
+    _rule_layout: str | None = None
+
     _rule_dock_group: str | None = None
     _rule_dock_edge: str | None = None
     _rule_docks: tuple[str, ...] | None = None

@@ -97,6 +97,7 @@ class Selector:
 
 @dataclass
 class Declaration:
+    token: Token
     name: str
     tokens: list[Token] = field(default_factory=list)
 
@@ -134,6 +135,7 @@ class SelectorSet:
 class RuleSet:
     selector_set: list[SelectorSet] = field(default_factory=list)
     styles: Styles = field(default_factory=Styles)
+    errors: list[tuple[Token, str]] = field(default_factory=list)
 
     @classmethod
     def _selector_to_css(cls, selectors: list[Selector]) -> str:

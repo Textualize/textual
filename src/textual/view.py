@@ -140,16 +140,13 @@ class View(Widget):
     async def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
 
         name_widgets: Iterable[tuple[str | None, Widget]]
-        name_widgets = chain(
-            ((None, widget) for widget in anon_widgets), widgets.items()
-        )
-        stylesheet = self.app.stylesheet
-        for name, widget in name_widgets:
-            if name is not None:
-                widget.name = name
-            stylesheet.apply(widget)
+        name_widgets = [*((None, widget) for widget in anon_widgets), *widgets.items()]
+        apply_stylesheet = self.app.stylesheet.apply
+        for widget_id, widget in name_widgets:
+            if widget_id is not None:
+                widget.id = widget_id
+            apply_stylesheet(widget)
             self._add_child(widget)
-
         self.refresh()
 
     async def refresh_layout(self) -> None:
