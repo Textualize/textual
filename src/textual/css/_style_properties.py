@@ -6,6 +6,7 @@ import rich.repr
 from rich.color import Color
 from rich.style import Style
 
+from .scalar import Scalar, ScalarParseError
 from ..geometry import Offset, Spacing, SpacingDimensions
 from .constants import NULL_SPACING, VALID_EDGE
 from .errors import StyleTypeError, StyleValueError
@@ -13,6 +14,33 @@ from ._error_tools import friendly_list
 
 if TYPE_CHECKING:
     from .styles import Styles
+
+
+class ScalarProperty:
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self.internal_name = f"_rule_{name}"
+
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Scalar:
+        value = getattr(obj, self.internal_name)
+        return value
+
+    def __set__(
+        self, obj: Styles, value: float | Scalar | str | None
+    ) -> float | Scalar | str | None:
+        if value is None:
+            setattr(obj, self.internal_name, None)
+        elif isinstance(value, float):
+            setattr(obj, self.internal_name, Scalar(value, "cells"))
+        elif isinstance(value, Scalar):
+            setattr(obj, self.internal_name, value)
+        elif isinstance(value, str):
+            try:
+                setattr(obj, self.internal_name, Scalar.parse(value))
+            except ScalarParseError:
+                raise StyleValueError("unable to parse scalar from {value!r}")
+        else:
+            raise StyleValueError("expected float, Scalar, or None")
+        return value
 
 
 class BoxProperty:
@@ -25,7 +53,9 @@ class BoxProperty:
         self._type = _type
         self.edge = edge
 
-    def __get__(self, obj: Styles, objtype=None) -> tuple[str, Style]:
+    def __get__(
+        self, obj: Styles, objtype: type[Styles] | None = None
+    ) -> tuple[str, Style]:
         value = getattr(obj, self.internal_name)
         return value or self.DEFAULT
 
@@ -141,12 +171,12 @@ class StyleProperty:
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Style:
 
-        color = getattr(obj, self._color_name) or Color.default()
-        bgcolor = getattr(obj, self._bgcolor_name) or Color.default()
+        color = getattr(obj, self._color_name)
+        bgcolor = getattr(obj, self._bgcolor_name)
         style = Style.from_color(color, bgcolor)
         style_flags = getattr(obj, self._style_name)
         if style_flags is not None:
-            style += style_flags
+            style += Style.parse(style_flags)
         return style
 
     def __set__(self, obj: Styles, style: Style | str | None) -> Style | str | None:

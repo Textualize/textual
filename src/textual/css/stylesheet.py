@@ -179,8 +179,8 @@ if __name__ == "__main__":
     CSS = """
     App > View {
         layout: dock;
-        docks: sidebar=left | widgets=top;
-        fart: poo
+        /* docks: sidebar=left | widgets=top; */
+
     }
 
     #sidebar {
@@ -190,6 +190,7 @@ if __name__ == "__main__":
     #widget1 {
         text: on blue;
         dock-group: widgets;
+        width: 10%
     }
 
     #widget2 {
@@ -200,15 +201,15 @@ if __name__ == "__main__":
     """
 
     stylesheet = Stylesheet()
-    stylesheet.read("~/example.css")
+    stylesheet.parse(CSS)
 
     print(stylesheet.error_renderable)
 
-    # print(widget1.styles)
+    print(widget1.styles)
 
-    # stylesheet.apply(widget1)
+    stylesheet.apply(widget1)
 
-    # print(widget1.styles)
+    print(widget1.styles)
 
     # from .query import DOMQuery
 

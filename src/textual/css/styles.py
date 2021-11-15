@@ -17,6 +17,7 @@ from .constants import (
     NULL_SPACING,
 )
 from ..geometry import NULL_OFFSET, Offset, Spacing
+from .scalar import Scalar
 from ._style_properties import (
     BorderProperty,
     BoxProperty,
@@ -24,10 +25,10 @@ from ._style_properties import (
     DockEdgeProperty,
     DocksProperty,
     DockGroupProperty,
-    IntegerProperty,
     OffsetProperty,
     NameProperty,
     NameListProperty,
+    ScalarProperty,
     SpacingProperty,
     StringProperty,
     StyleProperty,
@@ -61,9 +62,10 @@ class Styles:
     _rule_outline_bottom: tuple[str, Style] | None = None
     _rule_outline_left: tuple[str, Style] | None = None
 
-    _rule_size: int | None = None
-    _rule_fraction: int | None = None
-    _rule_min_size: int | None = None
+    _rule_width: Scalar | None = None
+    _rule_height: Scalar | None = None
+    _rule_min_width: Scalar | None = None
+    _rule_min_height: Scalar | None = None
 
     _rule_layout: str | None = None
 
@@ -101,9 +103,10 @@ class Styles:
     outline_bottom = BoxProperty()
     outline_left = BoxProperty()
 
-    size = IntegerProperty()
-    fraction = IntegerProperty()
-    min_size = IntegerProperty()
+    width = ScalarProperty()
+    height = ScalarProperty()
+    min_width = ScalarProperty()
+    min_height = ScalarProperty()
 
     dock_group = DockGroupProperty()
     docks = DocksProperty()
@@ -148,12 +151,16 @@ class Styles:
         yield "dock_edge", self.dock_edge, ""
         yield "dock_group", self.dock_group, ""
         yield "docks", self.docks, ()
+        yield "width", self.width, None
+        yield "height", self.height, None
+        yield "min_width", self.min_width, None
+        yield "min_height", self.min_height, None
         yield "margin", self.margin, NULL_SPACING
         yield "offset", self.offset, NULL_OFFSET
         if self.has_outline:
             yield "outline", self.outline
         yield "padding", self.padding, NULL_SPACING
-        yield "text", self.text, ""
+        yield "text", self.text, Style()
         yield "visibility", self.visibility, "visible"
         yield "layers", self.layers, ()
         yield "layer", self.layer, ""
@@ -256,6 +263,15 @@ class Styles:
             append_declaration("layer", self.layer)
         if self._rule_text_color or self._rule_text_bgcolor or self._rule_text_style:
             append_declaration("text", str(self.text))
+
+        if self._rule_width is not None:
+            append_declaration("width", str(self.width))
+        if self._rule_height is not None:
+            append_declaration("height", str(self.height))
+        if self._rule_min_width is not None:
+            append_declaration("min-width", str(self.min_width))
+        if self._rule_min_height is not None:
+            append_declaration("min-height", str(self.min_height))
 
         lines.sort()
         return lines
