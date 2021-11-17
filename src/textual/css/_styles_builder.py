@@ -6,7 +6,7 @@ import rich.repr
 from rich.color import ANSI_COLOR_NAMES, Color
 from rich.style import Style
 
-from .constants import VALID_BORDER, VALID_DISPLAY, VALID_VISIBILITY
+from .constants import VALID_BORDER, VALID_EDGE, VALID_DISPLAY, VALID_VISIBILITY
 from .errors import DeclarationError, StyleValueError
 from ._error_tools import friendly_list
 from ..geometry import Offset, Spacing, SpacingDimensions
@@ -75,7 +75,7 @@ class StylesBuilder:
         if not tokens:
             return
         if len(tokens) == 1:
-            setattr(self.styles, f"_rule_{name}", Scalar.parse(tokens[0].value))
+            setattr(self.styles, name, Scalar.parse(tokens[0].value))
         else:
             self.error(name, tokens[0], "a single scalar is expected")
 
@@ -294,8 +294,15 @@ class StylesBuilder:
             if token.name == "token":
                 docks.append((token.value, ""))
             elif token.name == "key_value":
-                key, value = token.value.split("=")
-                docks.append((key.strip(), value.strip()))
+                key, group_name = token.value.split("=")
+                group_name = group_name.strip().lower()
+                if group_name not in VALID_EDGE:
+                    self.error(
+                        name,
+                        token,
+                        f"edge must be one of 'top', 'right', 'bottom', or 'left'; found {group_name!r}",
+                    )
+                docks.append((key.strip(), group_name))
             elif token.name == "bar":
                 pass
             else:

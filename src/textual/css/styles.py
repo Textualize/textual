@@ -103,10 +103,10 @@ class Styles:
     outline_bottom = BoxProperty()
     outline_left = BoxProperty()
 
-    width = ScalarProperty()
-    height = ScalarProperty()
-    min_width = ScalarProperty()
-    min_height = ScalarProperty()
+    width = ScalarProperty({"", "fr"})
+    height = ScalarProperty({"", "fr"})
+    min_width = ScalarProperty({"", "fr"})
+    min_height = ScalarProperty({"", "fr"})
 
     dock_group = DockGroupProperty()
     docks = DocksProperty()

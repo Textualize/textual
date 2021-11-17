@@ -80,6 +80,10 @@ class DOMNode(MessagePump):
         return result[::-1]
 
     @property
+    def visible(self) -> bool:
+        return self.styles.display != "none"
+
+    @property
     def tree(self) -> Tree:
         highlighter = ReprHighlighter()
         tree = Tree(highlighter(repr(self)))

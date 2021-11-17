@@ -5,8 +5,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Iterable, TYPE_CHECKING, Sequence
 
-from rich.console import Console
-
+from ..dom import DOMNode
 from .._layout_resolve import layout_resolve
 from ..geometry import Offset, Region, Size
 from ..layout import Layout, WidgetPlacement
@@ -35,14 +34,28 @@ class DockOptions:
 
 @dataclass
 class Dock:
-    edge: DockEdge
-    widgets: Sequence[Widget]
+    edge: str
+    widgets: Sequence[DOMNode]
     z: int = 0
 
 
 class DockLayout(Layout):
-    def get_widgets(self) -> Iterable[Widget]:
-        for dock in self.docks:
+    def __init__(self) -> None:
+        super().__init__()
+        self._docks: list[Dock] | None = None
+
+    def get_docks(self, view: View) -> list[Dock]:
+        groups: dict[str, list[DOMNode]] = defaultdict(list)
+        for child in view.children:
+            groups[child.styles.dock_group].append(child)
+        docks: list[Dock] = []
+        append_dock = docks.append
+        for name, edge in view.styles.docks:
+            append_dock(Dock(edge, groups[name], 0))
+        return docks
+
+    def get_widgets(self, view: View) -> Iterable[DOMNode]:
+        for dock in self.get_docks(view):
             yield from dock.widgets
 
     def arrange(
@@ -54,10 +67,23 @@ class DockLayout(Layout):
         layout_region = Region(0, 0, width, height)
         layers: dict[int, Region] = defaultdict(lambda: layout_region)
 
-        for index, dock in enumerate(self.docks):
+        docks = self.get_docks(view)
+
+        for index, dock in enumerate(docks):
+
             dock_options = [
-                DockOptions(
-                    widget.layout_size, widget.layout_fraction, widget.layout_min_size
+                (
+                    DockOptions(
+                        widget.styles.width.cells,
+                        widget.styles.width.fraction or 1,
+                        widget.styles.min_width.cells or 1,
+                    )
+                    if dock.edge in ("left", "right")
+                    else DockOptions(
+                        widget.styles.height.cells,
+                        widget.styles.height.fraction or 1,
+                        widget.styles.min_height.cells or 1,
+                    )
                 )
                 for widget in dock.widgets
             ]

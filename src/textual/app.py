@@ -289,6 +289,7 @@ class App(DOMNode):
     def _print_error_renderables(self) -> None:
         for renderable in self._exit_renderables:
             self.error_console.print(renderable)
+        self._exit_renderables.clear()
 
     async def process_messages(self) -> None:
         active_app.set(self)
@@ -300,7 +301,6 @@ class App(DOMNode):
                 self.stylesheet.read(self.css_file)
             if self.css is not None:
                 self.stylesheet.parse(self.css, path=f"<{self.__class__.__name__}>")
-                print(self.stylesheet.css)
         except StylesheetParseError as error:
             self.panic(error)
             self._print_error_renderables()
@@ -310,20 +310,18 @@ class App(DOMNode):
             self._print_error_renderables()
             return
 
-        load_event = events.Load(sender=self)
-        await self.dispatch_message(load_event)
-        await self.post_message(events.Mount(self))
-        await self.push_view(DockView())
-
-        # Wait for the load event to be processed, so we don't go in to application mode beforehand
-        await load_event.wait()
-
-        driver = self._driver = self.driver_class(self.console, self)
         try:
+            load_event = events.Load(sender=self)
+            await self.dispatch_message(load_event)
+            await self.post_message(events.Mount(self))
+            await self.push_view(DockView())
+
+            # Wait for the load event to be processed, so we don't go in to application mode beforehand
+            await load_event.wait()
+
+            driver = self._driver = self.driver_class(self.console, self)
+
             driver.start_application_mode()
-        except Exception:
-            self.console.print_exception()
-        else:
             try:
                 self.title = self._title
                 self.refresh()
@@ -332,15 +330,17 @@ class App(DOMNode):
                 log("PROCESS END")
                 await self.animator.stop()
                 await self.close_all()
-
             except Exception:
                 self.panic()
             finally:
                 driver.stop_application_mode()
-                if self._exit_renderables:
-                    self._print_error_renderables()
-                if self.log_file is not None:
-                    self.log_file.close()
+        except:
+            self.panic()
+        finally:
+            if self._exit_renderables:
+                self._print_error_renderables()
+            if self.log_file is not None:
+                self.log_file.close()
 
     def register(self, child: MessagePump, parent: MessagePump) -> bool:
         if child not in self.registry:

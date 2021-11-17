@@ -17,6 +17,10 @@ if TYPE_CHECKING:
 
 
 class ScalarProperty:
+    def __init__(self, units: set[str]) -> None:
+        self.units = units
+        super().__init__()
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self.internal_name = f"_rule_{name}"
 
@@ -27,19 +31,23 @@ class ScalarProperty:
     def __set__(
         self, obj: Styles, value: float | Scalar | str | None
     ) -> float | Scalar | str | None:
+        new_value: Scalar | None = None
         if value is None:
-            setattr(obj, self.internal_name, None)
+            new_value = None
         elif isinstance(value, float):
-            setattr(obj, self.internal_name, Scalar(value, "cells"))
+            new_value = Scalar(value, "")
         elif isinstance(value, Scalar):
-            setattr(obj, self.internal_name, value)
+            new_value = value
         elif isinstance(value, str):
             try:
-                setattr(obj, self.internal_name, Scalar.parse(value))
+                new_value = Scalar.parse(value)
             except ScalarParseError:
                 raise StyleValueError("unable to parse scalar from {value!r}")
         else:
             raise StyleValueError("expected float, Scalar, or None")
+        if new_value is not None and new_value.unit not in self.units:
+            raise StyleValueError(f"units must be one of {friendly_list(self.units)}")
+        setattr(obj, self.internal_name, new_value)
         return value
 
 
