@@ -5,6 +5,7 @@ from operator import itemgetter
 import os
 from typing import Iterable, TYPE_CHECKING
 
+from rich.console import RenderableType
 import rich.repr
 from rich.highlighter import ReprHighlighter
 from rich.panel import Panel
@@ -22,12 +23,20 @@ from .types import Specificity3, Specificity4
 from ..dom import DOMNode
 
 
+class StylesheetParseError(Exception):
+    def __init__(self, errors: StylesheetErrors) -> None:
+        self.errors = errors
+
+    def __rich__(self) -> RenderableType:
+        return self.errors
+
+
 class StylesheetErrors:
     def __init__(self, stylesheet: "Stylesheet") -> None:
         self.stylesheet = stylesheet
 
     @classmethod
-    def _get_snippet(cls, code: str, line_no: int, col_no: int, length: int) -> Text:
+    def _get_snippet(cls, code: str, line_no: int, col_no: int, length: int) -> Panel:
         lines = Text(code, style="dim").split()
         lines[line_no].stylize("bold not dim", col_no, col_no + length - 1)
         text = Text("\n").join(lines[max(0, line_no - 1) : line_no + 2])
@@ -48,15 +57,13 @@ class StylesheetErrors:
             for token, message in rule.errors:
                 line_no, col_no = token.location
 
-                append(highlighter(f"{token.path}:{line_no}"))
+                append(highlighter(f"{token.path or '<unknown>'}:{line_no}"))
                 append(
                     self._get_snippet(token.code, line_no, col_no, len(token.value) + 1)
                 )
                 append(highlighter(Text(message, "red")))
                 append("")
         return Group(*errors)
-        error_text = Text("\n").join(errors)
-        return error_text
 
 
 @rich.repr.auto
@@ -94,12 +101,14 @@ class Stylesheet:
             raise StylesheetError(f"failed to parse {filename!r}; {error}") from None
         self.rules.extend(rules)
 
-    def parse(self, css: str, path: str = "") -> None:
+    def parse(self, css: str, *, path: str = "") -> None:
         try:
             rules = list(parse(css, path))
         except Exception as error:
             raise StylesheetError(f"failed to parse css; {error}")
         self.rules.extend(rules)
+        if self.any_errors:
+            raise StylesheetParseError(self.error_renderable)
 
     @classmethod
     def _check_rule(cls, rule: RuleSet, node: DOMNode) -> Iterable[Specificity3]:
@@ -179,8 +188,7 @@ if __name__ == "__main__":
     CSS = """
     App > View {
         layout: dock;
-        /* docks: sidebar=left | widgets=top; */
-
+        docks: sidebar=left | widgets=top;
     }
 
     #sidebar {
@@ -190,7 +198,6 @@ if __name__ == "__main__":
     #widget1 {
         text: on blue;
         dock-group: widgets;
-        width: 10%
     }
 
     #widget2 {
@@ -203,13 +210,17 @@ if __name__ == "__main__":
     stylesheet = Stylesheet()
     stylesheet.parse(CSS)
 
-    print(stylesheet.error_renderable)
+    print(stylesheet.css)
 
-    print(widget1.styles)
+    # print(stylesheet.error_renderable)
 
-    stylesheet.apply(widget1)
+    # print(widget1.styles)
 
-    print(widget1.styles)
+    # stylesheet.apply(widget1)
+
+    # print(widget1.styles)
+
+    # print(stylesheet.css)
 
     # from .query import DOMQuery
 

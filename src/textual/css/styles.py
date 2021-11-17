@@ -71,7 +71,7 @@ class Styles:
 
     _rule_dock_group: str | None = None
     _rule_dock_edge: str | None = None
-    _rule_docks: tuple[str, ...] | None = None
+    _rule_docks: tuple[tuple[str, str], ...] | None = None
 
     _rule_layers: str | None = None
     _rule_layer: tuple[str, ...] | None = None
@@ -145,26 +145,9 @@ class Styles:
             setattr(self, f"_rule_{key}", value)
 
     def __rich_repr__(self) -> rich.repr.Result:
-        if self.has_border:
-            yield "border", self.border
-        yield "display", self.display, "block"
-        yield "dock_edge", self.dock_edge, ""
-        yield "dock_group", self.dock_group, ""
-        yield "docks", self.docks, ()
-        yield "width", self.width, None
-        yield "height", self.height, None
-        yield "min_width", self.min_width, None
-        yield "min_height", self.min_height, None
-        yield "margin", self.margin, NULL_SPACING
-        yield "offset", self.offset, NULL_OFFSET
-        if self.has_outline:
-            yield "outline", self.outline
-        yield "padding", self.padding, NULL_SPACING
-        yield "text", self.text, Style()
-        yield "visibility", self.visibility, "visible"
-        yield "layers", self.layers, ()
-        yield "layer", self.layer, ""
-
+        for rule_name, internal_rule_name in zip(RULE_NAMES, INTERNAL_RULE_NAMES):
+            if getattr(self, internal_rule_name) is not None:
+                yield rule_name, getattr(self, rule_name)
         if self.important:
             yield "important", self.important
 
@@ -254,7 +237,13 @@ class Styles:
         if self._rule_dock_group:
             append_declaration("dock-group", self._rule_dock_group)
         if self._rule_docks:
-            append_declaration("docks", " ".join(self._rule_docks))
+            append_declaration(
+                "docks",
+                " ".join(
+                    (f"{key}={value}" if value else key)
+                    for key, value in self._rule_docks
+                ),
+            )
         if self._rule_dock_edge:
             append_declaration("dock-edge", self._rule_dock_edge)
         if self._rule_layers is not None:

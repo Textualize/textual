@@ -17,6 +17,10 @@ class Scalar(NamedTuple):
     value: float
     unit: str
 
+    def __str__(self) -> str:
+        value, unit = self
+        return f"{int(value) if value.is_integer() else value}{unit}"
+
     @classmethod
     def parse(cls, token: str) -> Scalar:
         """Parse a string in to a Scalar

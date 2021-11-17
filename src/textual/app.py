@@ -25,7 +25,7 @@ from .geometry import Offset, Region
 from . import log
 from ._callback import invoke
 from ._context import active_app
-from .css.stylesheet import Stylesheet
+from .css.stylesheet import Stylesheet, StylesheetParseError
 from ._event_broker import extract_handler_actions, NoHandler
 from .driver import Driver
 from .layouts.dock import DockLayout, Dock
@@ -62,6 +62,8 @@ class App(DOMNode):
     """The base class for Textual Applications"""
 
     KEYS: ClassVar[dict[str, str]] = {}
+
+    css = ""
 
     def __init__(
         self,
@@ -113,7 +115,8 @@ class App(DOMNode):
         self.stylesheet = Stylesheet()
 
         self.css_file = css_file
-        self.css = css
+        if css is not None:
+            self.css = css
 
         self.registry: set[MessagePump] = set()
 
@@ -283,9 +286,12 @@ class App(DOMNode):
         self._exit_renderables.extend(renderables)
         self.close_messages_no_wait()
 
+    def _print_error_renderables(self) -> None:
+        for renderable in self._exit_renderables:
+            self.error_console.print(renderable)
+
     async def process_messages(self) -> None:
         active_app.set(self)
-
         log("---")
         log(f"driver={self.driver_class}")
 
@@ -293,9 +299,16 @@ class App(DOMNode):
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
             if self.css is not None:
-                self.stylesheet.parse(self.css)
-        except Exception:
+                self.stylesheet.parse(self.css, path=f"<{self.__class__.__name__}>")
+                print(self.stylesheet.css)
+        except StylesheetParseError as error:
+            self.panic(error)
+            self._print_error_renderables()
+            return
+        except Exception as error:
             self.panic()
+            self._print_error_renderables()
+            return
 
         load_event = events.Load(sender=self)
         await self.dispatch_message(load_event)
@@ -325,8 +338,7 @@ class App(DOMNode):
             finally:
                 driver.stop_application_mode()
                 if self._exit_renderables:
-                    for renderable in self._exit_renderables:
-                        self.error_console.print(renderable)
+                    self._print_error_renderables()
                 if self.log_file is not None:
                     self.log_file.close()
 

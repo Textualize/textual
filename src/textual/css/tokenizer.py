@@ -39,15 +39,22 @@ class Expect:
         yield from zip(self.names, self.regexes)
 
 
+@rich.repr.auto
 class Token(NamedTuple):
+    name: str
+    value: str
     path: str
     code: str
     location: tuple[int, int]
-    name: str
-    value: str
 
     def __str__(self) -> str:
         return self.value
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "name", self.name
+        yield "value", self.value
+        yield "path", self.path
+        yield "location", self.location
 
 
 class Tokenizer:
@@ -63,7 +70,7 @@ class Tokenizer:
         col_no = self.col_no
         if line_no >= len(self.lines):
             if expect._expect_eof:
-                return Token(self.path, self.code, (line_no, col_no), "eof", "")
+                return Token("eof", "", self.path, self.code, (line_no, col_no))
             else:
                 raise EOFError()
         line = self.lines[line_no]
@@ -81,7 +88,7 @@ class Tokenizer:
             if value is not None:
                 break
 
-        token = Token(self.path, self.code, (line_no, col_no), name, value)
+        token = Token(name, value, self.path, self.code, (line_no, col_no))
         col_no += len(value)
         if col_no >= len(line):
             line_no += 1

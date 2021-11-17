@@ -213,16 +213,17 @@ class SpacingProperty:
 class DocksProperty:
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
-    ) -> tuple[str, ...]:
+    ) -> tuple[tuple[str, str], ...]:
         return obj._rule_docks or ()
 
-    def __set__(self, obj: Styles, docks: str | Iterable[str]) -> tuple[str, ...]:
-        if isinstance(docks, str):
-            _docks = tuple(name.lower().strip() for name in docks.split(" "))
+    def __set__(
+        self, obj: Styles, docks: Iterable[tuple[str, str]] | None
+    ) -> Iterable[tuple[str, str]] | None:
+        if docks is None:
+            obj._rule_docks = docks
         else:
-            _docks = tuple(docks)
-        obj._rule_docks = _docks
-        return _docks
+            obj._rule_docks = tuple(docks)
+        return docks
 
 
 class DockGroupProperty:

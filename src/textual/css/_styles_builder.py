@@ -24,6 +24,9 @@ class StylesBuilder:
     def __rich_repr__(self) -> rich.repr.Result:
         yield "styles", self.styles
 
+    def __repr__(self) -> str:
+        return "StylesBuilder()"
+
     def error(self, name: str, token: Token, message: str) -> None:
         raise DeclarationError(name, token, message)
 
@@ -33,6 +36,7 @@ class StylesBuilder:
         process_method = getattr(
             self, f"process_{declaration.name.replace('-', '_')}", None
         )
+
         if process_method is None:
             self.error(
                 declaration.name,
@@ -44,13 +48,12 @@ class StylesBuilder:
             if tokens[-1].name == "important":
                 tokens = tokens[:-1]
                 self.styles.important.add(declaration.name)
-            if process_method is not None:
-                try:
-                    process_method(declaration.name, tokens)
-                except DeclarationError as error:
-                    self.error(error.name, error.token, error.message)
-                except Exception as error:
-                    self.error(declaration.name, declaration.token, str(error))
+            try:
+                process_method(declaration.name, tokens)
+            except DeclarationError as error:
+                self.error(error.name, error.token, error.message)
+            except Exception as error:
+                self.error(declaration.name, declaration.token, str(error))
 
     def process_display(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
@@ -283,21 +286,25 @@ class StylesBuilder:
                 tokens[1],
                 f"unexpected tokens in dock-group declaration",
             )
-        self.styles._dock_group = tokens[0].value if tokens else ""
+        self.styles._rule_dock_group = tokens[0].value if tokens else ""
 
     def process_docks(self, name: str, tokens: list[Token]) -> None:
-        docks: list[str] = []
+        docks: list[tuple[str, str]] = []
         for token in tokens:
             if token.name == "token":
-                docks.append(token.value)
+                docks.append((token.value, ""))
+            elif token.name == "key_value":
+                key, value = token.value.split("=")
+                docks.append((key.strip(), value.strip()))
+            elif token.name == "bar":
+                pass
             else:
-
                 self.error(
                     name,
                     token,
                     f"unexpected token {token.value!r} in docks declaration",
                 )
-        self.styles._docks = tuple(docks)
+        self.styles._rule_docks = tuple(docks)
 
     def process_dock_edge(self, name: str, tokens: list[Token]) -> None:
         if len(tokens) > 1:
