@@ -168,7 +168,9 @@ class Layout(ABC):
         """
 
     async def mount_all(self, view: "View") -> None:
-        await view.mount(*self.get_widgets(view))
+        widgets = list(self.get_widgets(view))
+        if widgets:
+            await view.mount(*widgets)
 
     @property
     def map(self) -> LayoutMap | None:

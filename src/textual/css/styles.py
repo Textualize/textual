@@ -37,6 +37,7 @@ from ._style_properties import (
 from .types import Display, Visibility
 
 
+@rich.repr.auto
 @dataclass
 class Styles:
 
@@ -45,7 +46,7 @@ class Styles:
     _rule_layout: str | None = None
 
     _rule_text_color: Color | None = None
-    _rule_text_bgcolor: Color | None = None
+    _rule_text_background: Color | None = None
     _rule_text_style: Style | None = None
 
     _rule_padding: Spacing | None = None
@@ -84,7 +85,7 @@ class Styles:
 
     text = StyleProperty()
     text_color = ColorProperty()
-    text_bgcolor = ColorProperty()
+    text_background = ColorProperty()
     text_style = StyleFlagsProperty()
 
     padding = SpacingProperty()
@@ -250,7 +251,7 @@ class Styles:
             append_declaration("layers", " ".join(self.layers))
         if self._rule_layer is not None:
             append_declaration("layer", self.layer)
-        if self._rule_text_color or self._rule_text_bgcolor or self._rule_text_style:
+        if self._rule_text_color or self._rule_text_background or self._rule_text_style:
             append_declaration("text", str(self.text))
 
         if self._rule_width is not None:

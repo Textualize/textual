@@ -260,11 +260,11 @@ class StylesBuilder:
                     name, token, f"unexpected token {token.value!r} in declaration"
                 )
 
-    def process_text_bgcolor(self, name: str, tokens: list[Token]) -> None:
+    def process_text_background(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
-                    self.styles._rule_text_bgcolor = Color.parse(token.value)
+                    self.styles._rule_text_background = Color.parse(token.value)
                 except Exception as error:
                     self.error(
                         name, token, f"failed to parse color {token.value!r}; {error}"

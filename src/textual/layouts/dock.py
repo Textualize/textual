@@ -5,8 +5,8 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Iterable, TYPE_CHECKING, Sequence
 
-from ..app import active_app
 
+from .. import log
 from ..dom import DOMNode
 from .._layout_resolve import layout_resolve
 from ..geometry import Offset, Region, Size
@@ -48,14 +48,18 @@ class DockLayout(Layout):
         self._docks: list[Dock] | None = None
 
     def get_docks(self, view: View) -> list[Dock]:
+        log("CHILDREN", view.children)
         groups: dict[str, list[Widget]] = defaultdict(list)
         for child in view.children:
             assert isinstance(child, Widget)
             groups[child.styles.dock_group].append(child)
+        log("GROUPS", groups)
         docks: list[Dock] = []
         append_dock = docks.append
+        log("STYLES.DOCKS", view.styles)
         for name, edge in view.styles.docks:
             append_dock(Dock(edge, groups[name], 0))
+        log("DOCKS", docks)
         return docks
 
     def get_widgets(self, view: View) -> Iterable[DOMNode]:

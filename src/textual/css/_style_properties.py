@@ -174,7 +174,7 @@ class StyleProperty:
     def __set_name__(self, owner: Styles, name: str) -> None:
 
         self._color_name = f"_rule_{name}_color"
-        self._bgcolor_name = f"_rule_{name}_bgcolor"
+        self._bgcolor_name = f"_rule_{name}_background"
         self._style_name = f"_rule_{name}_style"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Style:

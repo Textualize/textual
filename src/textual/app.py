@@ -30,6 +30,7 @@ from ._event_broker import extract_handler_actions, NoHandler
 from .driver import Driver
 from .layouts.dock import DockLayout, Dock
 from ._linux_driver import LinuxDriver
+from ._types import MessageTarget
 from .message_pump import MessagePump
 from ._profile import timer
 from .view import View
@@ -51,6 +52,10 @@ except ImportError:
     pass
 else:
     uvloop.install()
+
+
+class AppError(Exception):
+    pass
 
 
 class ActionError(Exception):
@@ -90,7 +95,7 @@ class App(DOMNode):
         self.driver_class = driver_class or LinuxDriver
         self._title = title
         self._layout = DockLayout()
-        self._view_stack: list[DockView] = []
+        self._view_stack: list[View] = []
 
         self.focused: Widget | None = None
         self.mouse_over: Widget | None = None
@@ -211,7 +216,6 @@ class App(DOMNode):
         asyncio.run(run_app())
 
     async def push_view(self, view: ViewType) -> ViewType:
-        self.register(view, self)
         self._view_stack.append(view)
         return view
 
@@ -311,16 +315,18 @@ class App(DOMNode):
             self._print_error_renderables()
             return
 
+        self._running = True
         try:
             load_event = events.Load(sender=self)
             await self.dispatch_message(load_event)
-            view = DockView()
-            await self.mount(view)
-            await self.push_view(view)
-            await self.post_message(events.Mount(self))
-
             # Wait for the load event to be processed, so we don't go in to application mode beforehand
             await load_event.wait()
+
+            await self.post_message(events.Mount(sender=self))
+
+            view = DockView()
+            await self.mount(self, view)
+            await self.push_view(view)
 
             driver = self._driver = self.driver_class(self.console, self)
 
@@ -340,31 +346,42 @@ class App(DOMNode):
         except:
             self.panic()
         finally:
+            self._running = False
             if self._exit_renderables:
                 self._print_error_renderables()
             if self.log_file is not None:
                 self.log_file.close()
 
-    def register(self, child: DOMNode, parent: DOMNode) -> bool:
+    def _register(self, parent: DOMNode, child: DOMNode) -> bool:
         if child not in self.registry:
+            parent.children._append(child)
             self.registry.add(child)
             child.set_parent(parent)
             child.start_messages()
-            child.post_message_no_wait(events.Mount(sender=parent))
-            parent.children._append(child)
             return True
         return False
 
-    async def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
+    async def mount(
+        self, parent: DOMNode, *anon_widgets: Widget, **widgets: Widget
+    ) -> None:
+        """Mount widget(s) so they may receive events.
 
+        Args:
+            parent (Widget): Parent Widget
+        """
+        if not anon_widgets and not widgets:
+            raise AppError(
+                "Nothing to mount, did you forget parent as first positional arg?"
+            )
         name_widgets: Iterable[tuple[str | None, Widget]]
         name_widgets = [*((None, widget) for widget in anon_widgets), *widgets.items()]
         apply_stylesheet = self.stylesheet.apply
         for widget_id, widget in name_widgets:
-            if widget_id is not None:
-                widget.id = widget_id
-            self.register(widget, self)
-            apply_stylesheet(widget)
+            if widget not in self.registry:
+                if widget_id is not None:
+                    widget.id = widget_id
+                apply_stylesheet(widget)
+                widget.post_message_no_wait(events.Mount(sender=parent))
 
     def is_mounted(self, widget: Widget) -> bool:
         return widget in self.registry
