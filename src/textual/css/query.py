@@ -10,19 +10,19 @@ from .match import match
 from .parse import parse_selectors
 
 if TYPE_CHECKING:
-    from ..dom import DOMNode
+    from ..widget import Widget
 
 
 @rich.repr.auto(angular=True)
 class DOMQuery:
     def __init__(
         self,
-        node: DOMNode | None = None,
+        node: Widget | None = None,
         selector: str | None = None,
-        nodes: Iterable[DOMNode] | None = None,
+        nodes: Iterable[Widget] | None = None,
     ) -> None:
 
-        self._nodes: list[DOMNode]
+        self._nodes: list[Widget] = []
         if nodes is not None:
             self._nodes = list(nodes)
         elif node is not None:
@@ -34,7 +34,7 @@ class DOMQuery:
             selector_set = parse_selectors(selector)
             self._nodes = [_node for _node in self._nodes if match(selector_set, _node)]
 
-    def __iter__(self) -> Iterator[DOMNode]:
+    def __iter__(self) -> Iterator[Widget]:
         return iter(self._nodes)
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -45,3 +45,6 @@ class DOMQuery:
         query = DOMQuery()
         query._nodes = [_node for _node in self._nodes if match(selector_set, _node)]
         return query
+
+    def first(self) -> Widget:
+        return self._nodes[0]

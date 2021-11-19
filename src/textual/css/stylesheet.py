@@ -21,6 +21,7 @@ from .model import RuleSet
 from .parse import parse
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
+from .. import log
 
 
 class StylesheetParseError(Exception):
@@ -133,6 +134,7 @@ class Stylesheet:
             for name, specificity_rules in rule_attributes.items()
         ]
         node.styles.apply_rules(node_rules)
+        log(node, node_rules)
 
 
 if __name__ == "__main__":

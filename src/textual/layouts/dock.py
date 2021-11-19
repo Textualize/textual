@@ -5,11 +5,14 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Iterable, TYPE_CHECKING, Sequence
 
+from ..app import active_app
+
 from ..dom import DOMNode
 from .._layout_resolve import layout_resolve
 from ..geometry import Offset, Region, Size
 from ..layout import Layout, WidgetPlacement
 from ..layout_map import LayoutMap
+from ..widget import Widget
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -35,7 +38,7 @@ class DockOptions:
 @dataclass
 class Dock:
     edge: str
-    widgets: Sequence[DOMNode]
+    widgets: Sequence[Widget]
     z: int = 0
 
 
@@ -45,8 +48,9 @@ class DockLayout(Layout):
         self._docks: list[Dock] | None = None
 
     def get_docks(self, view: View) -> list[Dock]:
-        groups: dict[str, list[DOMNode]] = defaultdict(list)
+        groups: dict[str, list[Widget]] = defaultdict(list)
         for child in view.children:
+            assert isinstance(child, Widget)
             groups[child.styles.dock_group].append(child)
         docks: list[Dock] = []
         append_dock = docks.append

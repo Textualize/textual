@@ -8,7 +8,6 @@ from typing import (
     Callable,
     ClassVar,
     NamedTuple,
-    NewType,
     cast,
 )
 import rich.repr
@@ -116,25 +115,15 @@ class Widget(DOMNode):
         renderable = self.render_styled()
         return renderable
 
-    def _add_child(self, widget: Widget) -> Widget:
-        """Add a child widget.
-
-        Args:
-            widget (Widget): Widget
-        """
-        self.app.register(widget, self)
-        self.children._append(widget)
-        return widget
-
     def get_child(self, name: str | None = None, id: str | None = None) -> Widget:
         if name is not None:
             for widget in self.children:
                 if widget.name == name:
-                    return widget
+                    return cast(Widget, widget)
         if id is not None:
             for widget in self.children:
                 if widget.id == id:
-                    return widget
+                    return cast(Widget, widget)
         raise errors.MissingWidget(f"Widget named {name!r} was not found in {self}")
 
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:

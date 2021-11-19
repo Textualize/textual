@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable, Iterator, TYPE_CHECKING
+from typing import cast, Iterable, Iterator, TYPE_CHECKING
 
 from rich.highlighter import ReprHighlighter
 import rich.repr
@@ -14,6 +14,7 @@ from ._node_list import NodeList
 
 if TYPE_CHECKING:
     from .css.query import DOMQuery
+    from .widget import Widget
 
 
 @rich.repr.auto

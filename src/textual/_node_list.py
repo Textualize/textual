@@ -6,7 +6,6 @@ from weakref import ref
 import rich.repr
 
 if TYPE_CHECKING:
-    from .widget import Widget
     from .dom import DOMNode
 
 
@@ -20,8 +19,8 @@ class NodeList:
     """
 
     def __init__(self) -> None:
-        self._widget_refs: list[ref[DOMNode]] = []
-        self.__widgets: list[DOMNode] | None = []
+        self._node_refs: list[ref[DOMNode]] = []
+        self.__nodes: list[DOMNode] | None = []
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._widgets
@@ -29,38 +28,38 @@ class NodeList:
     def __len__(self) -> int:
         return len(self._widgets)
 
-    def __contains__(self, widget: Widget) -> bool:
+    def __contains__(self, widget: DOMNode) -> bool:
         return widget in self._widgets
 
     @property
     def _widgets(self) -> list[DOMNode]:
-        if self.__widgets is None:
-            self.__widgets = list(
-                filter(None, [widget_ref() for widget_ref in self._widget_refs])
+        if self.__nodes is None:
+            self.__nodes = list(
+                filter(None, [widget_ref() for widget_ref in self._node_refs])
             )
-        return self.__widgets
+        return self.__nodes
 
     def _prune(self) -> None:
         """Remove expired references."""
-        self._widget_refs[:] = filter(
+        self._node_refs[:] = filter(
             None,
             [
                 None if widget_ref() is None else widget_ref
-                for widget_ref in self._widget_refs
+                for widget_ref in self._node_refs
             ],
         )
 
     def _append(self, widget: DOMNode) -> None:
         if widget not in self._widgets:
-            self._widget_refs.append(ref(widget))
-            self.__widgets = None
+            self._node_refs.append(ref(widget))
+            self.__nodes = None
 
     def _clear(self) -> None:
-        del self._widget_refs[:]
-        self.__widgets = None
+        del self._node_refs[:]
+        self.__nodes = None
 
     def __iter__(self) -> Iterator[DOMNode]:
-        for widget_ref in self._widget_refs:
+        for widget_ref in self._node_refs:
             widget = widget_ref()
             if widget is not None:
                 yield widget

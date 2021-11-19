@@ -15,7 +15,6 @@ from rich.segment import Segment, SegmentLines
 from rich.style import Style
 
 from . import log, panic
-from .dom import DOMNode
 from ._loop import loop_last
 from .layout_map import LayoutMap
 from ._profile import timer
@@ -150,7 +149,7 @@ class Layout(ABC):
         )
 
     @abstractmethod
-    def get_widgets(self, view: View) -> Iterable[DOMNode]:
+    def get_widgets(self, view: View) -> Iterable[Widget]:
         ...
 
     @abstractmethod

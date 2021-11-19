@@ -7,7 +7,7 @@ class BasicApp(App):
 
     css = """
 
-    App > View {
+    App > DockView {
         layout: dock;
         docks: sidebar=left | widgets=top;
     }

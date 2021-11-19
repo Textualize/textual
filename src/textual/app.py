@@ -3,7 +3,7 @@ import os
 
 import asyncio
 
-from typing import Any, Callable, ClassVar, Type, TypeVar
+from typing import Any, Callable, ClassVar, Iterable, Type, TypeVar
 import warnings
 
 from rich.control import Control
@@ -301,6 +301,7 @@ class App(DOMNode):
                 self.stylesheet.read(self.css_file)
             if self.css is not None:
                 self.stylesheet.parse(self.css, path=f"<{self.__class__.__name__}>")
+            print(self.stylesheet.css)
         except StylesheetParseError as error:
             self.panic(error)
             self._print_error_renderables()
@@ -313,8 +314,10 @@ class App(DOMNode):
         try:
             load_event = events.Load(sender=self)
             await self.dispatch_message(load_event)
+            view = DockView()
+            await self.mount(view)
+            await self.push_view(view)
             await self.post_message(events.Mount(self))
-            await self.push_view(DockView())
 
             # Wait for the load event to be processed, so we don't go in to application mode beforehand
             await load_event.wait()
@@ -342,14 +345,26 @@ class App(DOMNode):
             if self.log_file is not None:
                 self.log_file.close()
 
-    def register(self, child: MessagePump, parent: MessagePump) -> bool:
+    def register(self, child: DOMNode, parent: DOMNode) -> bool:
         if child not in self.registry:
             self.registry.add(child)
             child.set_parent(parent)
             child.start_messages()
             child.post_message_no_wait(events.Mount(sender=parent))
+            parent.children._append(child)
             return True
         return False
+
+    async def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
+
+        name_widgets: Iterable[tuple[str | None, Widget]]
+        name_widgets = [*((None, widget) for widget in anon_widgets), *widgets.items()]
+        apply_stylesheet = self.stylesheet.apply
+        for widget_id, widget in name_widgets:
+            if widget_id is not None:
+                widget.id = widget_id
+            self.register(widget, self)
+            apply_stylesheet(widget)
 
     def is_mounted(self, widget: Widget) -> bool:
         return widget in self.registry
