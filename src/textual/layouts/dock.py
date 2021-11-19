@@ -48,18 +48,14 @@ class DockLayout(Layout):
         self._docks: list[Dock] | None = None
 
     def get_docks(self, view: View) -> list[Dock]:
-        log("CHILDREN", view.children)
         groups: dict[str, list[Widget]] = defaultdict(list)
         for child in view.children:
             assert isinstance(child, Widget)
             groups[child.styles.dock_group].append(child)
-        log("GROUPS", groups)
         docks: list[Dock] = []
         append_dock = docks.append
-        log("STYLES.DOCKS", view.styles)
         for name, edge in view.styles.docks:
             append_dock(Dock(edge, groups[name], 0))
-        log("DOCKS", docks)
         return docks
 
     def get_widgets(self, view: View) -> Iterable[DOMNode]:
@@ -77,24 +73,26 @@ class DockLayout(Layout):
 
         docks = self.get_docks(view)
 
+        def make_dock_options(widget) -> DockOptions:
+            styles = widget.styles
+
+            return (
+                DockOptions(
+                    styles.width.cells if styles.width is not None else None,
+                    styles.width.fraction if styles.width is not None else 1,
+                    styles.min_width.cells if styles.min_width is not None else 1,
+                )
+                if dock.edge in ("left", "right")
+                else DockOptions(
+                    styles.height.cells if styles.height is not None else None,
+                    styles.height.fraction if styles.height is not None else 1,
+                    styles.min_height.cells if styles.min_height is not None else 1,
+                )
+            )
+
         for index, dock in enumerate(docks):
 
-            dock_options = [
-                (
-                    DockOptions(
-                        widget.styles.width.cells,
-                        widget.styles.width.fraction or 1,
-                        widget.styles.min_width.cells or 1,
-                    )
-                    if dock.edge in ("left", "right")
-                    else DockOptions(
-                        widget.styles.height.cells,
-                        widget.styles.height.fraction or 1,
-                        widget.styles.min_height.cells or 1,
-                    )
-                )
-                for widget in dock.widgets
-            ]
+            dock_options = [make_dock_options(widget) for widget in dock.widgets]
             region = layers[dock.z]
             if not region:
                 # No space left

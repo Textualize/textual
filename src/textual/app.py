@@ -380,6 +380,7 @@ class App(DOMNode):
             if widget not in self.registry:
                 if widget_id is not None:
                     widget.id = widget_id
+                self._register(parent, widget)
                 apply_stylesheet(widget)
                 widget.post_message_no_wait(events.Mount(sender=parent))
 

@@ -135,7 +135,7 @@ class Widget(DOMNode):
         Returns:
             RenderableType: A new renderable.
         """
-        renderable = self.render()
+        renderable = Styled(self.render(), self.styles.text)
         if self.padding is not None:
             renderable = Padding(renderable, self.padding)
         if self.border not in ("", "none"):

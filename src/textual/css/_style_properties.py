@@ -24,7 +24,9 @@ class ScalarProperty:
     def __set_name__(self, owner: Styles, name: str) -> None:
         self.internal_name = f"_rule_{name}"
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Scalar:
+    def __get__(
+        self, obj: Styles, objtype: type[Styles] | None = None
+    ) -> Scalar | None:
         value = getattr(obj, self.internal_name)
         return value
 

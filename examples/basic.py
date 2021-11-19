@@ -9,32 +9,33 @@ class BasicApp(App):
 
     App > DockView {
         layout: dock;
-        docks: sidebar=left | widgets=top;
+        docks: sidebar=left widgets=top;
     }
 
     #sidebar {
         dock-group: sidebar;
+        width: 40;
     }
 
     #widget1 {
-        text-background: blue;
+        text: on blue;
         dock-group: widgets;
+        height: 1fr;
     }
 
     #widget2 {
         text: on red;
         dock-group: widgets;
+        height: 1fr;
     }
 
     """
 
     async def on_mount(self) -> None:
         """Build layout here."""
-        self.log("MOUNT")
         await self.view.mount(
             sidebar=Placeholder(), widget1=Placeholder(), widget2=Placeholder()
         )
-        self.log("MOUNTED CHILDREN", self.view.children)
 
 
 BasicApp.run(log="textual.log")
