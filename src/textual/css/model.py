@@ -32,10 +32,6 @@ class Location:
     column: tuple[int, int]
 
 
-def _default_check(node: DOMNode) -> bool | None:
-    return True
-
-
 @dataclass
 class Selector:
     name: str
@@ -67,27 +63,27 @@ class Selector:
             SelectorType.ID: self._check_id,
         }
 
-    def check(self, node: DOMNode) -> bool | None:
+    def check(self, node: DOMNode) -> bool:
         return self._checks[self.type](node)
 
-    def _check_universal(self, node: DOMNode) -> bool | None:
+    def _check_universal(self, node: DOMNode) -> bool:
         return True
 
-    def _check_type(self, node: DOMNode) -> bool | None:
+    def _check_type(self, node: DOMNode) -> bool:
         if node.css_type != self._name_lower:
             return False
         if self.pseudo_classes and not node.has_psuedo_class(*self.pseudo_classes):
             return False
         return True
 
-    def _check_class(self, node: DOMNode) -> bool | None:
+    def _check_class(self, node: DOMNode) -> bool:
         if not node.has_class(self._name_lower):
             return False
         if self.pseudo_classes and not node.has_psuedo_class(*self.pseudo_classes):
             return False
         return True
 
-    def _check_id(self, node: DOMNode) -> bool | None:
+    def _check_id(self, node: DOMNode) -> bool:
         if not node.id == self._name_lower:
             return False
         if self.pseudo_classes and not node.has_psuedo_class(*self.pseudo_classes):
@@ -110,9 +106,8 @@ class SelectorSet:
 
     def __post_init__(self) -> None:
         SAME = CombinatorType.SAME
-        # self.selectors[-1].advance = 1
         for selector, next_selector in zip(self.selectors, self.selectors[1:]):
-            selector.advance = 0 if next_selector.combinator == SAME else 1
+            selector.advance = int(next_selector.combinator != SAME)
 
     def __rich_repr__(self) -> rich.repr.Result:
         selectors = RuleSet._selector_to_css(self.selectors)
@@ -157,6 +152,11 @@ class RuleSet:
 
     @property
     def css(self) -> str:
+        """Generate the CSS this RuleSet
+
+        Returns:
+            str: A string containing CSS code.
+        """
         declarations = "\n".join(f"    {line}" for line in self.styles.css_lines)
         css = f"{self.selectors} {{\n{declarations}\n}}"
         return css

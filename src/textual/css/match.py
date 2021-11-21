@@ -8,11 +8,10 @@ if TYPE_CHECKING:
     from ..dom import DOMNode
 
 
-def match(selector_sets: Iterable[SelectorSet], node: DOMNode):
-    for selector_set in selector_sets:
-        if _check_selectors(selector_set.selectors, node):
-            return True
-    return False
+def match(selector_sets: Iterable[SelectorSet], node: DOMNode) -> bool:
+    return any(
+        _check_selectors(selector_set.selectors, node) for selector_set in selector_sets
+    )
 
 
 def _check_selectors(selectors: list[Selector], node: DOMNode) -> bool:

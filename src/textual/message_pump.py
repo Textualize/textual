@@ -48,10 +48,8 @@ class MessagePump:
         return self._task
 
     @property
-    def parent(self) -> MessagePump:
-        if self._parent is None:
-            raise NoParent(f"{self._parent} has no parent")
-        return self._parent
+    def has_parent(self) -> bool:
+        return self._parent is not None
 
     @property
     def app(self) -> "App":

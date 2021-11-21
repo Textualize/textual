@@ -17,6 +17,10 @@ if TYPE_CHECKING:
     from .widget import Widget
 
 
+class NoParent(Exception):
+    pass
+
+
 @rich.repr.auto
 class DOMNode(MessagePump):
     """A node in a hierarchy of things forming the UI.
@@ -38,6 +42,13 @@ class DOMNode(MessagePump):
         yield "id", self._id, None
         if self._classes:
             yield "classes", self._classes
+
+    @property
+    def parent(self) -> DOMNode:
+        if self._parent is None:
+            raise NoParent(f"{self._parent} has no parent")
+        assert isinstance(self._parent, DOMNode)
+        return self._parent
 
     @property
     def id(self) -> str | None:
@@ -83,6 +94,27 @@ class DOMNode(MessagePump):
     @property
     def visible(self) -> bool:
         return self.styles.display != "none"
+
+    @property
+    def z(self) -> tuple[int, ...]:
+        """Get the z index tuple for this node.
+
+        Returns:
+            tuple[int, ...]: A tuple of ints to sort layers by.
+        """
+        indexes: list[int] = []
+        append = indexes.append
+        node = self
+        while node._parent:
+            styles = node.styles
+            parent_styles = node.parent.styles
+            append(
+                parent_styles.layers.index(styles.layer)
+                if styles.layer in parent_styles.layers
+                else 0
+            )
+            node = node.parent
+        return tuple(reversed(indexes))
 
     @property
     def tree(self) -> Tree:

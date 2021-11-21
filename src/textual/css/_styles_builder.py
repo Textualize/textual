@@ -320,3 +320,16 @@ class StylesBuilder:
             self.styles.dock_edge = tokens[0].value if tokens else ""
         except StyleValueError as error:
             self.error(name, tokens[0], str(error))
+
+    def process_layer(self, name: str, tokens: list[Token]) -> None:
+        if len(tokens) > 1:
+            self.error(name, tokens[1], f"unexpected tokens in dock-edge declaration")
+        self.styles._rule_layer = tokens[0].value
+
+    def process_layers(self, name: str, tokens: list[Token]) -> None:
+        layers: list[str] = []
+        for token in tokens:
+            if token.name != "token":
+                self.error(name, token, "{token.name} not expected here")
+            layers.append(token.value)
+        self.styles._rule_layers = tuple(layers)

@@ -10,11 +10,13 @@ class BasicApp(App):
     App > DockView {
         layout: dock;
         docks: sidebar=left widgets=top;
+        layers: base panels;
     }
 
     #sidebar {
         dock-group: sidebar;
         width: 40;
+        layer: panels;
     }
 
     #widget1 {

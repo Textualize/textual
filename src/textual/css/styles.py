@@ -74,8 +74,8 @@ class Styles:
     _rule_dock_edge: str | None = None
     _rule_docks: tuple[tuple[str, str], ...] | None = None
 
-    _rule_layers: str | None = None
-    _rule_layer: tuple[str, ...] | None = None
+    _rule_layers: tuple[str, ...] | None = None
+    _rule_layer: str | None = None
 
     important: set[str] = field(default_factory=set)
 

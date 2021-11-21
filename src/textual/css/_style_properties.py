@@ -312,7 +312,7 @@ class NameProperty:
         self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None) -> str:
-        return getattr(obj, self._internal_name, None) or ""
+        return getattr(obj, self._internal_name) or ""
 
     def __set__(self, obj: Styles, name: str | None) -> str | None:
         if not isinstance(name, str):
