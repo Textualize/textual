@@ -53,7 +53,7 @@ class WidgetPlacement(NamedTuple):
 
     region: Region
     widget: Widget | None = None
-    order: tuple[int, ...] = ()
+    order: int = 0
 
 
 @rich.repr.auto

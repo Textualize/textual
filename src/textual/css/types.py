@@ -12,6 +12,7 @@ else:
     from typing_extensions import Literal
 
 
+Edge = Literal["top", "right", "bottom", "left"]
 Visibility = Literal["visible", "hidden", "initial", "inherit"]
 Display = Literal["block", "none"]
 EdgeStyle = Tuple[str, Style]

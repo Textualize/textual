@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Iterable, TYPE_CHECKING, Sequence
+from typing import Iterable, TYPE_CHECKING, NamedTuple, Sequence
 
 
 from .. import log
@@ -54,8 +54,8 @@ class DockLayout(Layout):
             groups[child.styles.dock_group].append(child)
         docks: list[Dock] = []
         append_dock = docks.append
-        for name, edge in view.styles.docks:
-            append_dock(Dock(edge, groups[name], 0))
+        for name, edge, z in view.styles.docks:
+            append_dock(Dock(edge, groups[name], z))
         return docks
 
     def get_widgets(self, view: View) -> Iterable[DOMNode]:
@@ -90,7 +90,7 @@ class DockLayout(Layout):
                 )
             )
 
-        for index, dock in enumerate(docks):
+        for dock in docks:
 
             dock_options = [make_dock_options(widget) for widget in dock.widgets]
             region = layers[dock.z]
@@ -98,7 +98,6 @@ class DockLayout(Layout):
                 # No space left
                 continue
 
-            order = (dock.z, index)
             x, y, width, height = region
 
             if dock.edge == "top":
@@ -114,7 +113,7 @@ class DockLayout(Layout):
                         break
                     total += layout_size
                     yield WidgetPlacement(
-                        Region(x, render_y, width, layout_size), widget, order
+                        Region(x, render_y, width, layout_size), widget, dock.z
                     )
                     render_y += layout_size
                     remaining = max(0, remaining - layout_size)
@@ -135,7 +134,7 @@ class DockLayout(Layout):
                     yield WidgetPlacement(
                         Region(x, render_y - layout_size, width, layout_size),
                         widget,
-                        order,
+                        dock.z,
                     )
                     render_y -= layout_size
                     remaining = max(0, remaining - layout_size)
@@ -154,9 +153,7 @@ class DockLayout(Layout):
                         break
                     total += layout_size
                     yield WidgetPlacement(
-                        Region(render_x, y, layout_size, height),
-                        widget,
-                        order,
+                        Region(render_x, y, layout_size, height), widget, dock.z
                     )
                     render_x += layout_size
                     remaining = max(0, remaining - layout_size)
@@ -177,7 +174,7 @@ class DockLayout(Layout):
                     yield WidgetPlacement(
                         Region(render_x - layout_size, y, layout_size, height),
                         widget,
-                        order,
+                        dock.z,
                     )
                     render_x -= layout_size
                     remaining = max(0, remaining - layout_size)

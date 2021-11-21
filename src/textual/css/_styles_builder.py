@@ -12,8 +12,8 @@ from ._error_tools import friendly_list
 from ..geometry import Offset, Spacing, SpacingDimensions
 from .model import Declaration
 from .scalar import Scalar
-from .styles import Styles
-from .types import Display, Visibility
+from .styles import DockSpecification, Styles
+from .types import Edge, Display, Visibility
 from .tokenize import Token
 
 
@@ -289,20 +289,26 @@ class StylesBuilder:
         self.styles._rule_dock_group = tokens[0].value if tokens else ""
 
     def process_docks(self, name: str, tokens: list[Token]) -> None:
-        docks: list[tuple[str, str]] = []
+        docks: list[DockSpecification] = []
         for token in tokens:
-            if token.name == "token":
-                docks.append((token.value, ""))
-            elif token.name == "key_value":
-                key, group_name = token.value.split("=")
-                group_name = group_name.strip().lower()
-                if group_name not in VALID_EDGE:
+            if token.name == "key_value":
+                key, edge_name = token.value.split("=")
+                edge_name = edge_name.strip().lower()
+                edge_name, _, number = edge_name.partition("/")
+                z = 0
+                if number:
+                    if not number.isdigit():
+                        self.error(
+                            name, token, f"expected integer after /, found {number!r}"
+                        )
+                    z = int(number)
+                if edge_name not in VALID_EDGE:
                     self.error(
                         name,
                         token,
-                        f"edge must be one of 'top', 'right', 'bottom', or 'left'; found {group_name!r}",
+                        f"edge must be one of 'top', 'right', 'bottom', or 'left'; found {edge_name!r}",
                     )
-                docks.append((key.strip(), group_name))
+                docks.append(DockSpecification(key.strip(), cast(Edge, edge_name), z))
             elif token.name == "bar":
                 pass
             else:
@@ -312,14 +318,6 @@ class StylesBuilder:
                     f"unexpected token {token.value!r} in docks declaration",
                 )
         self.styles._rule_docks = tuple(docks)
-
-    def process_dock_edge(self, name: str, tokens: list[Token]) -> None:
-        if len(tokens) > 1:
-            self.error(name, tokens[1], f"unexpected tokens in dock-edge declaration")
-        try:
-            self.styles.dock_edge = tokens[0].value if tokens else ""
-        except StyleValueError as error:
-            self.error(name, tokens[0], str(error))
 
     def process_layer(self, name: str, tokens: list[Token]) -> None:
         if len(tokens) > 1:

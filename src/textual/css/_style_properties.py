@@ -14,6 +14,7 @@ from ._error_tools import friendly_list
 
 if TYPE_CHECKING:
     from .styles import Styles
+    from .styles import DockSpecification
 
 
 class ScalarProperty:
@@ -223,14 +224,14 @@ class SpacingProperty:
 class DocksProperty:
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
-    ) -> tuple[tuple[str, str], ...]:
+    ) -> tuple[DockSpecification, ...]:
         return obj._rule_docks or ()
 
     def __set__(
-        self, obj: Styles, docks: Iterable[tuple[str, str]] | None
-    ) -> Iterable[tuple[str, str]] | None:
+        self, obj: Styles, docks: Iterable[DockSpecification] | None
+    ) -> Iterable[DockSpecification] | None:
         if docks is None:
-            obj._rule_docks = docks
+            obj._rule_docks = None
         else:
             obj._rule_docks = tuple(docks)
         return docks
@@ -256,17 +257,6 @@ class OffsetProperty:
         _offset = Offset(*offset)
         setattr(obj, self._internal_name, _offset)
         return offset
-
-
-class DockEdgeProperty:
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
-        return obj._rule_dock_edge or ""
-
-    def __set__(self, obj: Styles, edge: str | None) -> str | None:
-        if isinstance(edge, str) and edge not in VALID_EDGE:
-            raise ValueError(f"dock edge must be one of {friendly_list(VALID_EDGE)}")
-        obj._rule_dock_edge = edge
-        return edge
 
 
 class IntegerProperty:

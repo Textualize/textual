@@ -105,14 +105,15 @@ class DOMNode(MessagePump):
         indexes: list[int] = []
         append = indexes.append
         node = self
+        layer: str = node.styles.layer
         while node._parent:
-            styles = node.styles
             parent_styles = node.parent.styles
-            append(
-                parent_styles.layers.index(styles.layer)
-                if styles.layer in parent_styles.layers
-                else 0
-            )
+            layer = layer or node.styles.layer
+            if layer in parent_styles.layers:
+                append(parent_styles.layers.index(layer))
+                layer = ""
+            else:
+                append(0)
             node = node.parent
         return tuple(reversed(indexes))
 

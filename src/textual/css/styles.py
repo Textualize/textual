@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Iterable
+import sys
+from typing import Any, Iterable, NamedTuple
 
 from rich import print
 from rich.color import Color
@@ -22,7 +23,6 @@ from ._style_properties import (
     BorderProperty,
     BoxProperty,
     ColorProperty,
-    DockEdgeProperty,
     DocksProperty,
     DockGroupProperty,
     OffsetProperty,
@@ -34,7 +34,19 @@ from ._style_properties import (
     StyleProperty,
     StyleFlagsProperty,
 )
-from .types import Display, Visibility
+from .types import Display, Edge, Visibility
+
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
+
+
+class DockSpecification(NamedTuple):
+    name: str
+    edge: Edge
+    z: int
 
 
 @rich.repr.auto
@@ -71,8 +83,7 @@ class Styles:
     _rule_layout: str | None = None
 
     _rule_dock_group: str | None = None
-    _rule_dock_edge: str | None = None
-    _rule_docks: tuple[tuple[str, str], ...] | None = None
+    _rule_docks: tuple[DockSpecification, ...] | None = None
 
     _rule_layers: tuple[str, ...] | None = None
     _rule_layer: str | None = None
@@ -111,7 +122,6 @@ class Styles:
 
     dock_group = DockGroupProperty()
     docks = DocksProperty()
-    dock_edge = DockEdgeProperty()
 
     layer = NameProperty()
     layers = NameListProperty()
@@ -241,12 +251,10 @@ class Styles:
             append_declaration(
                 "docks",
                 " ".join(
-                    (f"{key}={value}" if value else key)
-                    for key, value in self._rule_docks
+                    (f"{key}={value}/{z}" if z else f"{key}={value}")
+                    for key, value, z in self._rule_docks
                 ),
             )
-        if self._rule_dock_edge:
-            append_declaration("dock-edge", self._rule_dock_edge)
         if self._rule_layers is not None:
             append_declaration("layers", " ".join(self.layers))
         if self._rule_layer is not None:

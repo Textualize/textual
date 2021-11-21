@@ -9,7 +9,7 @@ class BasicApp(App):
 
     App > DockView {
         layout: dock;
-        docks: sidebar=left widgets=top;
+        docks: sidebar=left/1 widgets=top;
         layers: base panels;
     }
 
