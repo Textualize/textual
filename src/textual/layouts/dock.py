@@ -110,14 +110,14 @@ class DockLayout(Layout):
                 render_y = y
                 remaining = region.height
                 total = 0
-                for widget, layout_size in zip(widgets, sizes):
-                    layout_size = min(remaining, layout_size)
-                    if not layout_size:
+                for widget, new_size in zip(widgets, sizes):
+                    new_size = min(remaining, new_size)
+                    if not new_size:
                         break
-                    total += layout_size
-                    yield Placement(Region(x, render_y, width, layout_size), widget, z)
-                    render_y += layout_size
-                    remaining = max(0, remaining - layout_size)
+                    total += new_size
+                    yield Placement(Region(x, render_y, width, new_size), widget, z)
+                    render_y += new_size
+                    remaining = max(0, remaining - new_size)
                 region = Region(x, y + total, width, height - total)
 
             elif edge == "bottom":
@@ -125,18 +125,16 @@ class DockLayout(Layout):
                 render_y = y + height
                 remaining = region.height
                 total = 0
-                for widget, layout_size in zip(widgets, sizes):
-                    layout_size = min(remaining, layout_size)
-                    if not layout_size:
+                for widget, new_size in zip(widgets, sizes):
+                    new_size = min(remaining, new_size)
+                    if not new_size:
                         break
-                    total += layout_size
+                    total += new_size
                     yield Placement(
-                        Region(x, render_y - layout_size, width, layout_size),
-                        widget,
-                        z,
+                        Region(x, render_y - new_size, width, new_size), widget, z
                     )
-                    render_y -= layout_size
-                    remaining = max(0, remaining - layout_size)
+                    render_y -= new_size
+                    remaining = max(0, remaining - new_size)
                 region = Region(x, y, width, height - total)
 
             elif edge == "left":
@@ -144,14 +142,14 @@ class DockLayout(Layout):
                 render_x = x
                 remaining = region.width
                 total = 0
-                for widget, layout_size in zip(widgets, sizes):
-                    layout_size = min(remaining, layout_size)
-                    if not layout_size:
+                for widget, new_size in zip(widgets, sizes):
+                    new_size = min(remaining, new_size)
+                    if not new_size:
                         break
-                    total += layout_size
-                    yield Placement(Region(render_x, y, layout_size, height), widget, z)
-                    render_x += layout_size
-                    remaining = max(0, remaining - layout_size)
+                    total += new_size
+                    yield Placement(Region(render_x, y, new_size, height), widget, z)
+                    render_x += new_size
+                    remaining = max(0, remaining - new_size)
                 region = Region(x + total, y, width - total, height)
 
             elif edge == "right":
@@ -159,18 +157,16 @@ class DockLayout(Layout):
                 render_x = x + width
                 remaining = region.width
                 total = 0
-                for widget, layout_size in zip(widgets, sizes):
-                    layout_size = min(remaining, layout_size)
-                    if not layout_size:
+                for widget, new_size in zip(widgets, sizes):
+                    new_size = min(remaining, new_size)
+                    if not new_size:
                         break
-                    total += layout_size
+                    total += new_size
                     yield Placement(
-                        Region(render_x - layout_size, y, layout_size, height),
-                        widget,
-                        z,
+                        Region(render_x - new_size, y, new_size, height), widget, z
                     )
-                    render_x -= layout_size
-                    remaining = max(0, remaining - layout_size)
+                    render_x -= new_size
+                    remaining = max(0, remaining - new_size)
                 region = Region(x, y, width - total, height)
 
             layers[z] = region
