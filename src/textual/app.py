@@ -394,7 +394,7 @@ class App(MessagePump):
 
     async def on_event(self, event: events.Event) -> None:
         # Handle input events that haven't been forwarded
-        # If the event has been forwaded it may have bubbled up back to the App
+        # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.InputEvent) and not event.is_forwarded:
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App

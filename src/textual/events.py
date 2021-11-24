@@ -237,7 +237,7 @@ class MouseEvent(InputEvent, bubble=True):
         Args:
             sender (MessageTarget): The sender of the event.
             x (int): The relative x coordinate.
-            y (int): The relative y cootdinate.
+            y (int): The relative y coordinate.
             delta_x (int): Change in x since the last message.
             delta_y (int): Change in y since the last message.
             button (int): Indexed of the pressed button.
