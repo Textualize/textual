@@ -67,7 +67,6 @@ class DockLayout(Layout):
         self, view: View, size: Size, scroll: Offset
     ) -> Iterable[WidgetPlacement]:
 
-        map: LayoutMap = LayoutMap(size)
         width, height = size
         layout_region = Region(0, 0, width, height)
         layers: dict[int, Region] = defaultdict(lambda: layout_region)
@@ -170,5 +169,3 @@ class DockLayout(Layout):
                 region = Region(x, y, width - total, height)
 
             layers[z] = region
-
-        return map

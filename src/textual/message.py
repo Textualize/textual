@@ -52,6 +52,9 @@ class Message:
         cls.bubble = bubble
         cls.verbosity = verbosity
 
+    def set_done(self) -> None:
+        self._done_event.set()
+
     @property
     def _done_event(self) -> Event:
         if self.__done_event is None:

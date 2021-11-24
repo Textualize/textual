@@ -12,7 +12,7 @@ from ._error_tools import friendly_list
 from ..geometry import Offset, Spacing, SpacingDimensions
 from .model import Declaration
 from .scalar import Scalar
-from .styles import DockSpecification, Styles
+from .styles import DockGroup, Styles
 from .types import Edge, Display, Visibility
 from .tokenize import Token
 
@@ -138,7 +138,7 @@ class StylesBuilder:
         style_tokens: list[str] = []
         append = style_tokens.append
         for token in tokens:
-            _, _, location, token_name, value = token
+            token_name, value, _, _, _ = token
             if token_name == "token":
                 if value in VALID_BORDER:
                     border_type = value
@@ -157,7 +157,7 @@ class StylesBuilder:
 
     def _process_border(self, edge: str, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("border", tokens)
-        setattr(self.styles, f"_border_{edge}", border)
+        setattr(self.styles, f"_rule_border_{edge}", border)
 
     def process_border(self, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("border", tokens)
@@ -179,7 +179,7 @@ class StylesBuilder:
 
     def _process_outline(self, edge: str, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("outline", tokens)
-        setattr(self.styles, f"_outline_{edge}", border)
+        setattr(self.styles, f"_rule_outline_{edge}", border)
 
     def process_outline(self, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("outline", tokens)
@@ -289,7 +289,7 @@ class StylesBuilder:
         self.styles._rule_dock_group = tokens[0].value if tokens else ""
 
     def process_docks(self, name: str, tokens: list[Token]) -> None:
-        docks: list[DockSpecification] = []
+        docks: list[DockGroup] = []
         for token in tokens:
             if token.name == "key_value":
                 key, edge_name = token.value.split("=")
@@ -308,7 +308,7 @@ class StylesBuilder:
                         token,
                         f"edge must be one of 'top', 'right', 'bottom', or 'left'; found {edge_name!r}",
                     )
-                docks.append(DockSpecification(key.strip(), cast(Edge, edge_name), z))
+                docks.append(DockGroup(key.strip(), cast(Edge, edge_name), z))
             elif token.name == "bar":
                 pass
             else:

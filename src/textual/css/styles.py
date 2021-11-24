@@ -43,7 +43,7 @@ else:
     from typing_extensions import Literal
 
 
-class DockSpecification(NamedTuple):
+class DockGroup(NamedTuple):
     name: str
     edge: Edge
     z: int
@@ -83,7 +83,7 @@ class Styles:
     _rule_layout: str | None = None
 
     _rule_dock_group: str | None = None
-    _rule_docks: tuple[DockSpecification, ...] | None = None
+    _rule_docks: tuple[DockGroup, ...] | None = None
 
     _rule_layers: tuple[str, ...] | None = None
     _rule_layer: str | None = None
@@ -115,10 +115,10 @@ class Styles:
     outline_bottom = BoxProperty()
     outline_left = BoxProperty()
 
-    width = ScalarProperty({"", "fr"})
-    height = ScalarProperty({"", "fr"})
-    min_width = ScalarProperty({"", "fr"})
-    min_height = ScalarProperty({"", "fr"})
+    width = ScalarProperty()
+    height = ScalarProperty()
+    min_width = ScalarProperty()
+    min_height = ScalarProperty()
 
     dock_group = DockGroupProperty()
     docks = DocksProperty()
@@ -251,8 +251,8 @@ class Styles:
             append_declaration(
                 "docks",
                 " ".join(
-                    (f"{key}={value}/{z}" if z else f"{key}={value}")
-                    for key, value, z in self._rule_docks
+                    (f"{name}={edge}/{z}" if z else f"{name}={edge}")
+                    for name, edge, z in self._rule_docks
                 ),
             )
         if self._rule_layers is not None:

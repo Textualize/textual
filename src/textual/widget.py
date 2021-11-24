@@ -19,7 +19,7 @@ from rich.padding import Padding
 from rich.pretty import Pretty
 from rich.style import Style
 from rich.styled import Styled
-from rich.text import TextType
+from rich.text import Text, TextType
 
 from . import events
 from . import errors
@@ -135,24 +135,28 @@ class Widget(DOMNode):
         Returns:
             RenderableType: A new renderable.
         """
-        renderable = Styled(self.render(), self.styles.text)
+
+        renderable = self.render()
+        styles = self.styles
         if self.padding is not None:
             renderable = Padding(renderable, self.padding)
-        if self.border not in ("", "none"):
-            _border_style = self.console.get_style(self.border_style)
-            renderable = Border(
-                renderable,
-                (
-                    ("heavy", _border_style),
-                    ("heavy", _border_style),
-                    ("heavy", _border_style),
-                    ("heavy", _border_style),
-                ),
-            )
+
+        if styles.has_border:
+            renderable = Border(renderable, styles.border)
+
+            # _border_style = self.console.get_style(self.border_style)
+            # renderable = Border(
+            #     renderable,
+            #     (
+            #         ("heavy", _border_style),
+            #         ("heavy", _border_style),
+            #         ("heavy", _border_style),
+            #         ("heavy", _border_style),
+            #     ),
+            # )
         if self.margin is not None:
             renderable = Padding(renderable, self.margin)
-        if self.style:
-            renderable = Styled(renderable, self.style)
+        renderable = Styled(renderable, styles.text)
         return renderable
 
     @property
@@ -269,9 +273,7 @@ class Widget(DOMNode):
         Returns:
             RenderableType: Any renderable
         """
-        return Panel(
-            Align.center(Pretty(self), vertical="middle"), title=self.__class__.__name__
-        )
+        return Align.center(Text(f"#{self.id}"), vertical="middle")
 
     async def action(self, action: str, *params) -> None:
         await self.app.action(action, self)

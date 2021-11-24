@@ -10,13 +10,15 @@ from ..geometry import Spacing
 VALID_VISIBILITY: Final = {"visible", "hidden"}
 VALID_DISPLAY: Final = {"block", "none"}
 VALID_BORDER: Final = {
-    "rounded",
+    "none" "round",
     "solid",
     "double",
     "dashed",
     "heavy",
     "inner",
     "outer",
+    "hkey",
+    "vkey",
 }
 VALID_EDGE: Final = {"top", "right", "bottom", "left"}
 VALID_LAYOUT: Final = {"dock", "vertical", "grid"}

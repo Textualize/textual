@@ -1,5 +1,5 @@
 from textual.app import App
-from textual.widgets import Placeholder
+from textual.widget import Widget
 
 
 class BasicApp(App):
@@ -9,35 +9,51 @@ class BasicApp(App):
 
     App > DockView {
         layout: dock;
-        docks: sidebar=left/1 widgets=top;
+        docks: side=left/1 header=top footer=bottom;
         layers: base panels;
     }
 
     #sidebar {
-        dock-group: sidebar;
-        width: 40;
+        text: bold #09312e on #3CAEA3;
+        /* dock-group: header; */
+        width: 30;
+        height: 1fr;
         layer: panels;
+        border-right: vkey #09312e;
     }
 
-    #widget1 {
-        text: on blue;
-        dock-group: widgets;
-        height: 1fr;
+    #header {
+        text: on #173f5f;
+        dock-group: header;
+        height: 3;
+        border: hkey white;
+
     }
 
-    #widget2 {
-        text: on red;
-        dock-group: widgets;
-        height: 1fr;
+    #footer {
+        dock-group: header;
+        height: 3;
+        border-top: hkey #0f2b41;
+        text: #3a3009 on #f6d55c;
     }
+
+    #content {
+        dock-group: header;
+        text: on #20639B;
+    }
+
 
     """
 
     async def on_mount(self) -> None:
         """Build layout here."""
         await self.view.mount(
-            sidebar=Placeholder(), widget1=Placeholder(), widget2=Placeholder()
+            header=Widget(),
+            content=Widget(),
+            footer=Widget(),
+            sidebar=Widget(),
         )
+        self.panic(self.view.styles)
 
 
 BasicApp.run(log="textual.log")

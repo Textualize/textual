@@ -305,7 +305,6 @@ class App(DOMNode):
                 self.stylesheet.read(self.css_file)
             if self.css is not None:
                 self.stylesheet.parse(self.css, path=f"<{self.__class__.__name__}>")
-            print(self.stylesheet.css)
         except StylesheetParseError as error:
             self.panic(error)
             self._print_error_renderables()
@@ -322,16 +321,14 @@ class App(DOMNode):
             # Wait for the load event to be processed, so we don't go in to application mode beforehand
             await load_event.wait()
 
-            await self.post_message(events.Mount(sender=self))
-
-            view = DockView()
-            await self.mount(self, view)
-            await self.push_view(view)
-
             driver = self._driver = self.driver_class(self.console, self)
-
             driver.start_application_mode()
+
             try:
+                mount_event = events.Mount(sender=self)
+                await self.dispatch_message(mount_event)
+                await mount_event.wait()
+
                 self.title = self._title
                 self.refresh()
                 await self.animator.start()
@@ -339,8 +336,6 @@ class App(DOMNode):
                 log("PROCESS END")
                 await self.animator.stop()
                 await self.close_all()
-            except Exception:
-                self.panic()
             finally:
                 driver.stop_application_mode()
         except:
@@ -376,13 +371,20 @@ class App(DOMNode):
         name_widgets: Iterable[tuple[str | None, Widget]]
         name_widgets = [*((None, widget) for widget in anon_widgets), *widgets.items()]
         apply_stylesheet = self.stylesheet.apply
+        widget_events = []
         for widget_id, widget in name_widgets:
             if widget not in self.registry:
                 if widget_id is not None:
                     widget.id = widget_id
                 self._register(parent, widget)
                 apply_stylesheet(widget)
-                widget.post_message_no_wait(events.Mount(sender=parent))
+                mount_event = events.Mount(sender=parent)
+                widget_events.append((widget, mount_event))
+                # await widget.post_message(mount_event)
+                # await mount_event.wait()
+        for widget, event in widget_events:
+            widget.post_message_no_wait(event)
+            # await event.wait()
 
     def is_mounted(self, widget: Widget) -> bool:
         return widget in self.registry
@@ -471,7 +473,13 @@ class App(DOMNode):
     async def on_event(self, event: events.Event) -> None:
         # Handle input events that haven't been forwarded
         # If the event has been forwaded it may have bubbled up back to the App
-        if isinstance(event, events.InputEvent) and not event.is_forwarded:
+        if isinstance(event, events.Mount):
+            view = DockView()
+            await self.mount(self, view)
+            await self.push_view(view)
+            await super().on_event(event)
+
+        elif isinstance(event, events.InputEvent) and not event.is_forwarded:
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)

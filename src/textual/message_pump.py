@@ -225,14 +225,11 @@ class MessagePump:
 
     async def dispatch_message(self, message: Message) -> bool | None:
         _rich_traceback_guard = True
-        try:
-            if isinstance(message, events.Event):
-                if not isinstance(message, events.Null):
-                    await self.on_event(message)
-            else:
-                return await self.on_message(message)
-        finally:
-            message._done_event.set()
+        if isinstance(message, events.Event):
+            if not isinstance(message, events.Null):
+                await self.on_event(message)
+        else:
+            return await self.on_message(message)
         return False
 
     def _get_dispatch_methods(
@@ -248,9 +245,12 @@ class MessagePump:
     async def on_event(self, event: events.Event) -> None:
         _rich_traceback_guard = True
 
-        for method in self._get_dispatch_methods(f"on_{event.name}", event):
-            log(event, ">>>", self, verbosity=event.verbosity)
-            await invoke(method, event)
+        try:
+            for method in self._get_dispatch_methods(f"on_{event.name}", event):
+                log(event, ">>>", self, verbosity=event.verbosity)
+                await invoke(method, event)
+        finally:
+            event.set_done()
 
         if event.bubble and self._parent and not event._stop_propagation:
             if event.sender == self._parent:
@@ -264,9 +264,12 @@ class MessagePump:
         method_name = f"handle_{message.name}"
 
         method = getattr(self, method_name, None)
-        if method is not None:
-            log(message, ">>>", self, verbosity=message.verbosity)
-            await invoke(method, message)
+        try:
+            if method is not None:
+                log(message, ">>>", self, verbosity=message.verbosity)
+                await invoke(method, message)
+        finally:
+            message.set_done()
 
         if message.bubble and self._parent and not message._stop_propagation:
             if message.sender == self._parent:

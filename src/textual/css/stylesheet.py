@@ -134,7 +134,6 @@ class Stylesheet:
             for name, specificity_rules in rule_attributes.items()
         ]
         node.styles.apply_rules(node_rules)
-        log(node, node_rules)
 
 
 if __name__ == "__main__":

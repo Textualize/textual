@@ -6,7 +6,7 @@ import rich.repr
 from rich.color import Color
 from rich.style import Style
 
-from .scalar import Scalar, ScalarParseError
+from .scalar import get_symbols, UNIT_SYMBOL, Unit, Scalar, ScalarParseError
 from ..geometry import Offset, Spacing, SpacingDimensions
 from .constants import NULL_SPACING, VALID_EDGE
 from .errors import StyleTypeError, StyleValueError
@@ -14,15 +14,16 @@ from ._error_tools import friendly_list
 
 if TYPE_CHECKING:
     from .styles import Styles
-    from .styles import DockSpecification
+    from .styles import DockGroup
 
 
 class ScalarProperty:
-    def __init__(self, units: set[str]) -> None:
-        self.units = units
+    def __init__(self, units: set[Unit] | None = None) -> None:
+        self.units: set[Unit] = units or {*UNIT_SYMBOL}
         super().__init__()
 
     def __set_name__(self, owner: Styles, name: str) -> None:
+        self.name = name
         self.internal_name = f"_rule_{name}"
 
     def __get__(
@@ -38,7 +39,7 @@ class ScalarProperty:
         if value is None:
             new_value = None
         elif isinstance(value, float):
-            new_value = Scalar(value, "")
+            new_value = Scalar(value, Unit.CELLS)
         elif isinstance(value, Scalar):
             new_value = value
         elif isinstance(value, str):
@@ -49,7 +50,9 @@ class ScalarProperty:
         else:
             raise StyleValueError("expected float, Scalar, or None")
         if new_value is not None and new_value.unit not in self.units:
-            raise StyleValueError(f"units must be one of {friendly_list(self.units)}")
+            raise StyleValueError(
+                f"{self.name} units must be one of {friendly_list(get_symbols(self.units))}"
+            )
         setattr(obj, self.internal_name, new_value)
         return value
 
@@ -224,12 +227,12 @@ class SpacingProperty:
 class DocksProperty:
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
-    ) -> tuple[DockSpecification, ...]:
+    ) -> tuple[DockGroup, ...]:
         return obj._rule_docks or ()
 
     def __set__(
-        self, obj: Styles, docks: Iterable[DockSpecification] | None
-    ) -> Iterable[DockSpecification] | None:
+        self, obj: Styles, docks: Iterable[DockGroup] | None
+    ) -> Iterable[DockGroup] | None:
         if docks is None:
             obj._rule_docks = None
         else:
