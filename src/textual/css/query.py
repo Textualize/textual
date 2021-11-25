@@ -11,7 +11,6 @@ from .parse import parse_selectors
 
 if TYPE_CHECKING:
     from ..dom import DOMNode
-    from ..widget import Widget
 
 
 @rich.repr.auto(angular=True)
@@ -65,5 +64,6 @@ class DOMQuery:
             node.remove_class(*class_names)
 
     def toggle_class(self, *class_names: str) -> None:
+
         for node in self._nodes:
             node.remove_class(*class_names)

@@ -15,11 +15,17 @@ class BasicApp(App):
 
     #sidebar {
         text: bold #09312e on #3CAEA3;
-        /* dock-group: header; */
+        dock-group: side;
         width: 30;
         height: 1fr;
         layer: panels;
         border-right: vkey #09312e;
+        display: block;
+        offset-x: -15
+    }
+
+    #sidebar.-active {
+        display: block;
     }
 
     #header {
@@ -27,7 +33,6 @@ class BasicApp(App):
         dock-group: header;
         height: 3;
         border: hkey white;
-
     }
 
     #footer {
@@ -44,6 +49,9 @@ class BasicApp(App):
 
 
     """
+
+    async def on_load(self) -> None:
+        await self.bind("t", "toggle('#sidebar', '-active')")
 
     async def on_mount(self) -> None:
         """Build layout here."""

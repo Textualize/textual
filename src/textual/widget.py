@@ -77,12 +77,12 @@ class Widget(DOMNode):
 
         super().__init__(name=name, id=id)
 
-    visible: Reactive[bool] = Reactive(True, layout=True)
+    # visible: Reactive[bool] = Reactive(True, layout=True)
     layout_size: Reactive[int | None] = Reactive(None, layout=True)
     layout_fraction: Reactive[int] = Reactive(1, layout=True)
     layout_min_size: Reactive[int] = Reactive(1, layout=True)
-    layout_offset_x: Reactive[float] = Reactive(0.0, layout=True)
-    layout_offset_y: Reactive[float] = Reactive(0.0, layout=True)
+    # layout_offset_x: Reactive[float] = Reactive(0.0, layout=True)
+    # layout_offset_y: Reactive[float] = Reactive(0.0, layout=True)
 
     style: Reactive[str | None] = Reactive(None)
     padding: Reactive[Spacing | None] = Reactive(None, layout=True)
@@ -97,11 +97,11 @@ class Widget(DOMNode):
     def validate_margin(self, margin: SpacingDimensions) -> Spacing:
         return Spacing.unpack(margin)
 
-    def validate_layout_offset_x(self, value) -> int:
-        return int(value)
+    # def validate_layout_offset_x(self, value) -> int:
+    #     return int(value)
 
-    def validate_layout_offset_y(self, value) -> int:
-        return int(value)
+    # def validate_layout_offset_y(self, value) -> int:
+    #     return int(value)
 
     def __init_subclass__(cls, can_focus: bool = True) -> None:
         super().__init_subclass__()
@@ -144,20 +144,14 @@ class Widget(DOMNode):
         if styles.has_border:
             renderable = Border(renderable, styles.border)
 
-            # _border_style = self.console.get_style(self.border_style)
-            # renderable = Border(
-            #     renderable,
-            #     (
-            #         ("heavy", _border_style),
-            #         ("heavy", _border_style),
-            #         ("heavy", _border_style),
-            #         ("heavy", _border_style),
-            #     ),
-            # )
         if self.margin is not None:
             renderable = Padding(renderable, self.margin)
         renderable = Styled(renderable, styles.text)
         return renderable
+
+    @property
+    def visible(self) -> bool:
+        return self.styles.display == "block"
 
     @property
     def size(self) -> Size:
@@ -187,7 +181,8 @@ class Widget(DOMNode):
     @property
     def layout_offset(self) -> tuple[int, int]:
         """Get the layout offset as a tuple."""
-        return (round(self.layout_offset_x), round(self.layout_offset_y))
+        x, y = self.styles.offset
+        return round(x), round(y)
 
     @property
     def gutter(self) -> Spacing:

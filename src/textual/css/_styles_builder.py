@@ -57,7 +57,8 @@ class StylesBuilder:
 
     def process_display(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
-            _, _, location, name, value = token
+            name, value, _, _, location = token
+
             if name == "token":
                 value = value.lower()
                 if value in VALID_DISPLAY:

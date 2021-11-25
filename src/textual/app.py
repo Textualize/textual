@@ -572,6 +572,9 @@ class App(DOMNode):
     async def action_bell(self) -> None:
         self.console.bell()
 
+    async def action_toggle(self, selector: str, class_name: str) -> None:
+        self.view.query(selector).toggle_class(class_name)
+
 
 if __name__ == "__main__":
     import asyncio
