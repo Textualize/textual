@@ -41,13 +41,6 @@ class StylesheetErrors:
         lines = Text(code, style="dim").split()
         lines[line_no].stylize("bold not dim", col_no, col_no + length - 1)
         text = Text("\n").join(lines[max(0, line_no - 1) : line_no + 2])
-        # return Syntax(
-        #     code,
-        #     "",
-        #     line_range=(line_no - 1, line_no + 1),
-        #     line_numbers=True,
-        #     indent_guides=True,
-        # )
         return Panel(text, border_style="red")
 
     def __rich__(self) -> RenderableType:

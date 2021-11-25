@@ -47,13 +47,13 @@ class BasicApp(App):
 
     async def on_mount(self) -> None:
         """Build layout here."""
+
         await self.view.mount(
             header=Widget(),
             content=Widget(),
             footer=Widget(),
             sidebar=Widget(),
         )
-        self.panic(self.view.styles)
 
 
 BasicApp.run(log="textual.log")

@@ -41,7 +41,6 @@ class Message:
         self._forwarded = False
         self._no_default_action = False
         self._stop_propagation = False
-        self.__done_event: Event | None = None
         super().__init__()
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -51,15 +50,6 @@ class Message:
         super().__init_subclass__()
         cls.bubble = bubble
         cls.verbosity = verbosity
-
-    def set_done(self) -> None:
-        self._done_event.set()
-
-    @property
-    def _done_event(self) -> Event:
-        if self.__done_event is None:
-            self.__done_event = Event()
-        return self.__done_event
 
     @property
     def is_forwarded(self) -> bool:
@@ -98,7 +88,3 @@ class Message:
         """
         self._stop_propagation = stop
         return self
-
-    async def wait(self) -> None:
-        """Wait for the message to be processed."""
-        await self._done_event.wait()

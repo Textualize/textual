@@ -244,13 +244,9 @@ class MessagePump:
 
     async def on_event(self, event: events.Event) -> None:
         _rich_traceback_guard = True
-
-        try:
-            for method in self._get_dispatch_methods(f"on_{event.name}", event):
-                log(event, ">>>", self, verbosity=event.verbosity)
-                await invoke(method, event)
-        finally:
-            event.set_done()
+        for method in self._get_dispatch_methods(f"on_{event.name}", event):
+            log(event, ">>>", self, verbosity=event.verbosity)
+            await invoke(method, event)
 
         if event.bubble and self._parent and not event._stop_propagation:
             if event.sender == self._parent:
@@ -262,14 +258,11 @@ class MessagePump:
     async def on_message(self, message: Message) -> None:
         _rich_traceback_guard = True
         method_name = f"handle_{message.name}"
-
         method = getattr(self, method_name, None)
-        try:
-            if method is not None:
-                log(message, ">>>", self, verbosity=message.verbosity)
-                await invoke(method, message)
-        finally:
-            message.set_done()
+
+        if method is not None:
+            log(message, ">>>", self, verbosity=message.verbosity)
+            await invoke(method, message)
 
         if message.bubble and self._parent and not message._stop_propagation:
             if message.sender == self._parent:

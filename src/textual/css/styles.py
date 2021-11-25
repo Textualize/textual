@@ -279,8 +279,8 @@ class Styles:
         return "\n".join(self.css_lines)
 
 
-RULE_NAMES = {name[6:] for name in dir(Styles) if name.startswith("_rule_")}
-INTERNAL_RULE_NAMES = {name for name in dir(Styles) if name.startswith("_rule_")}
+RULE_NAMES = [name[6:] for name in dir(Styles) if name.startswith("_rule_")]
+INTERNAL_RULE_NAMES = [f"_rule_{name}" for name in RULE_NAMES]
 
 if __name__ == "__main__":
     styles = Styles()
