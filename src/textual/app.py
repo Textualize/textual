@@ -172,7 +172,7 @@ class App(DOMNode):
         except Exception:
             pass
 
-    async def bind(
+    def bind(
         self,
         keys: str,
         action: str,
@@ -354,9 +354,7 @@ class App(DOMNode):
             return True
         return False
 
-    async def mount(
-        self, parent: DOMNode, *anon_widgets: Widget, **widgets: Widget
-    ) -> None:
+    def mount(self, parent: DOMNode, *anon_widgets: Widget, **widgets: Widget) -> None:
         """Mount widget(s) so they may receive events.
 
         Args:
@@ -377,13 +375,8 @@ class App(DOMNode):
                 self._register(parent, widget)
                 apply_stylesheet(widget)
 
-                # await widget.post_message(mount_event)
-                # await mount_event.wait()
         for _widget_id, widget in name_widgets:
             widget.post_message_no_wait(events.Mount(sender=parent))
-            # await event.wait()
-        # for widget, _ in widget_events:
-        #     apply_stylesheet(widget)
 
     def is_mounted(self, widget: Widget) -> bool:
         return widget in self.registry
@@ -474,7 +467,7 @@ class App(DOMNode):
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Mount):
             view = DockView()
-            await self.mount(self, view)
+            self.mount(self, view)
             await self.push_view(view)
             await super().on_event(event)
 

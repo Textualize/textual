@@ -138,8 +138,8 @@ class View(Widget):
             message.stop()
             self.app.refresh()
 
-    async def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
-        await self.app.mount(self, *anon_widgets, **widgets)
+    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
+        self.app.mount(self, *anon_widgets, **widgets)
         self.refresh()
 
     async def refresh_layout(self) -> None:

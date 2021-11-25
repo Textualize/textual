@@ -170,7 +170,7 @@ class Layout(ABC):
     async def mount_all(self, view: "View") -> None:
         widgets = list(self.get_widgets(view))
         if widgets:
-            await view.mount(*widgets)
+            view.mount(*widgets)
 
     @property
     def map(self) -> LayoutMap | None:

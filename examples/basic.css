@@ -1,0 +1,33 @@
+App > DockView {
+  layout: dock;
+  docks: side=left/1 header=top footer=bottom;
+  layers: base panels;
+}
+
+#sidebar {
+  text: bold #09312e on #3caea3;
+  dock-group: side;
+  width: 30;
+  height: 1fr;
+  layer: panels;
+  border-right: outer #09312e;
+}
+
+#header {
+  text: on #173f5f;
+  dock-group: header;
+  height: 3;
+  border: hkey white;
+}
+
+#footer {
+  dock-group: header;
+  height: 3;
+  border-top: hkey #0f2b41;
+  text: #3a3009 on #f6d55c;
+}
+
+#content {
+  dock-group: header;
+  text: on #20639b;
+}
