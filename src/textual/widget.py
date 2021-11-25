@@ -138,15 +138,22 @@ class Widget(DOMNode):
 
         renderable = self.render()
         styles = self.styles
-        if self.padding is not None:
-            renderable = Padding(renderable, self.padding)
+
+        if styles.has_padding:
+            renderable = Padding(renderable, styles.padding)
 
         if styles.has_border:
             renderable = Border(renderable, styles.border)
 
-        if self.margin is not None:
-            renderable = Padding(renderable, self.margin)
-        renderable = Styled(renderable, styles.text)
+        if styles.has_outline:
+            renderable = Border(renderable, styles.outline, outline=True)
+
+        if styles.has_margin:
+            renderable = Padding(renderable, styles.margin)
+
+        if styles.text:
+            renderable = Styled(renderable, styles.text)
+
         return renderable
 
     @property

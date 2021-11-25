@@ -132,6 +132,14 @@ class Styles:
         return any(edge for edge, _style in self.border)
 
     @property
+    def has_padding(self) -> bool:
+        return self._rule_padding is not None
+
+    @property
+    def has_margin(self) -> bool:
+        return self._rule_margin is not None
+
+    @property
     def has_outline(self) -> bool:
         """Check if an outline is present."""
         return any(edge for edge, _style in self.outline)

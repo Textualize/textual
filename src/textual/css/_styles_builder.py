@@ -112,8 +112,8 @@ class StylesBuilder:
         space: list[int] = []
         append = space.append
         for token in tokens:
-            _, _, location, token_name, value = token
-            if token_name == "number":
+            (token_name, value, _, _, location) = token
+            if token_name == "scalar":
                 append(int(value))
             else:
                 self.error(name, token, f"unexpected token {value!r} in declaration")
@@ -123,7 +123,7 @@ class StylesBuilder:
             )
         setattr(
             self.styles,
-            f"_{name}",
+            f"_rule_{name}",
             Spacing.unpack(cast(SpacingDimensions, tuple(space))),
         )
 

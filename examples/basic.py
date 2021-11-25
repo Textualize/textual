@@ -37,9 +37,13 @@ class BasicApp(App):
 
     #footer {
         dock-group: header;
-        height: 3;
-        border-top: hkey #0f2b41;
+
+        /* border-top: hkey #0f2b41; */
         text: #3a3009 on #f6d55c;
+        /*padding: 2;*/
+        border: heavy red;
+         margin: 2;
+
     }
 
     #content {
