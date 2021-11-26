@@ -18,8 +18,11 @@ if TYPE_CHECKING:
 
 
 class ScalarProperty:
-    def __init__(self, units: set[Unit] | None = None) -> None:
+    def __init__(
+        self, units: set[Unit] | None = None, percent_unit: Unit = Unit.WIDTH
+    ) -> None:
         self.units: set[Unit] = units or {*UNIT_SYMBOL}
+        self.percent_unit = percent_unit
         super().__init__()
 
     def __set_name__(self, owner: Styles, name: str) -> None:
@@ -53,6 +56,8 @@ class ScalarProperty:
             raise StyleValueError(
                 f"{self.name} units must be one of {friendly_list(get_symbols(self.units))}"
             )
+        if new_value is not None and new_value.is_percent:
+            new_value = Scalar(new_value.value, self.percent_unit)
         setattr(obj, self.internal_name, new_value)
         return value
 

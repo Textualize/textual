@@ -18,7 +18,7 @@ from .constants import (
     NULL_SPACING,
 )
 from ..geometry import NULL_OFFSET, Offset, Spacing
-from .scalar import Scalar
+from .scalar import Scalar, Unit
 from ._style_properties import (
     BorderProperty,
     BoxProperty,
@@ -115,10 +115,10 @@ class Styles:
     outline_bottom = BoxProperty()
     outline_left = BoxProperty()
 
-    width = ScalarProperty()
-    height = ScalarProperty()
-    min_width = ScalarProperty()
-    min_height = ScalarProperty()
+    width = ScalarProperty(percent_unit=Unit.WIDTH)
+    height = ScalarProperty(percent_unit=Unit.HEIGHT)
+    min_width = ScalarProperty(percent_unit=Unit.WIDTH)
+    min_height = ScalarProperty(percent_unit=Unit.HEIGHT)
 
     dock_group = DockGroupProperty()
     docks = DocksProperty()

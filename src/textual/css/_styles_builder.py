@@ -94,7 +94,7 @@ class StylesBuilder:
 
     def process_visibility(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
-            _, _, location, name, value = token
+            name, value, _, _, location = token
             if name == "token":
                 value = value.lower()
                 if value in VALID_VISIBILITY:
@@ -114,12 +114,15 @@ class StylesBuilder:
         for token in tokens:
             (token_name, value, _, _, location) = token
             if token_name == "scalar":
-                append(int(value))
+                try:
+                    append(int(value))
+                except ValueError:
+                    self.error(name, token, f"expected a number here; found {value!r}")
             else:
                 self.error(name, token, f"unexpected token {value!r} in declaration")
         if len(space) not in (1, 2, 4):
             self.error(
-                name, tokens[0], f"1, 2, or 4 values expected (received {len(space)})"
+                name, tokens[0], f"1, 2, or 4 values expected; received {len(space)}"
             )
         setattr(
             self.styles,

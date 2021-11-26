@@ -4,6 +4,18 @@ from enum import Enum, unique
 import re
 from typing import Iterable, NamedTuple
 
+import rich.repr
+
+from ..geometry import Offset
+
+
+class ScalarResolveError(Exception):
+    pass
+
+
+class ScalarParseError(Exception):
+    pass
+
 
 @unique
 class Unit(Enum):
@@ -31,6 +43,15 @@ SYMBOL_UNIT = {v: k for k, v in UNIT_SYMBOL.items()}
 _MATCH_SCALAR = re.compile(r"^(\d+\.?\d*)(fr|%|w|h|vw|vh)?$").match
 
 
+RESOLVE_MAP = {
+    Unit.CELLS: lambda value, size, viewport: value,
+    Unit.WIDTH: lambda value, size, viewport: size[0],
+    Unit.HEIGHT: lambda value, size, viewport: size[1],
+    Unit.VIEW_WIDTH: lambda value, size, viewport: viewport[0],
+    Unit.VIEW_HEIGHT: lambda value, size, viewport: viewport[1],
+}
+
+
 def get_symbols(units: Iterable[Unit]) -> list[str]:
     """Get symbols for an iterable of units.
 
@@ -43,10 +64,6 @@ def get_symbols(units: Iterable[Unit]) -> list[str]:
     return [UNIT_SYMBOL[unit] for unit in units]
 
 
-class ScalarParseError(Exception):
-    pass
-
-
 class Scalar(NamedTuple):
     """A numeric value and a unit."""
 
@@ -56,6 +73,10 @@ class Scalar(NamedTuple):
     def __str__(self) -> str:
         value, _unit = self
         return f"{int(value) if value.is_integer() else value}{self.symbol}"
+
+    @property
+    def is_percent(self) -> bool:
+        return self.unit == Unit.PERCENT
 
     @property
     def cells(self) -> int | None:
@@ -90,6 +111,37 @@ class Scalar(NamedTuple):
         value, unit_name = match.groups()
         scalar = cls(float(value), SYMBOL_UNIT[unit_name or ""])
         return scalar
+
+    def resolve(
+        self,
+        size: tuple[int, int],
+        viewport: tuple[int, int],
+        percent_unit: Unit = Unit.WIDTH,
+    ) -> float:
+        value, unit = self
+        if unit == Unit.PERCENT:
+            unit = percent_unit
+        try:
+            return RESOLVE_MAP[unit](value, size, viewport)
+        except KeyError:
+            raise ScalarResolveError("unable to resolve {self!r}")
+
+
+@rich.repr.auto(angular=True)
+class ScalarOffset(NamedTuple):
+    x: Scalar
+    y: Scalar
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield str(self.x)
+        yield str(self.y)
+
+    def resolve(self, size: tuple[int, int], viewport: tuple[int, int]) -> Offset:
+        x, y = self
+        return Offset(
+            round(x.resolve(size, viewport, percent_unit=Unit.WIDTH)),
+            round(y.resolve(size, viewport, percent_unit=Unit.HEIGHT)),
+        )
 
 
 if __name__ == "__main__":
