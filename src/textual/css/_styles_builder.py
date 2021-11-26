@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import cast
+from typing import cast, NoReturn
 
 import rich.repr
 from rich.color import ANSI_COLOR_NAMES, Color
@@ -11,7 +11,7 @@ from .errors import DeclarationError, StyleValueError
 from ._error_tools import friendly_list
 from ..geometry import Offset, Spacing, SpacingDimensions
 from .model import Declaration
-from .scalar import Scalar
+from .scalar import Scalar, ScalarOffset, Unit
 from .styles import DockGroup, Styles
 from .types import Edge, Display, Visibility
 from .tokenize import Token
@@ -27,7 +27,7 @@ class StylesBuilder:
     def __repr__(self) -> str:
         return "StylesBuilder()"
 
-    def error(self, name: str, token: Token, message: str) -> None:
+    def error(self, name: str, token: Token, message: str) -> NoReturn:
         raise DeclarationError(name, token, message)
 
     def add_declaration(self, declaration: Declaration) -> None:
@@ -210,13 +210,14 @@ class StylesBuilder:
             self.error(name, tokens[0], "expected two numbers in declaration")
         else:
             token1, token2 = tokens
-            if token1.name != "number":
-                self.error(name, token1, f"expected a number (found {token1.value!r})")
-            if token2.name != "number":
-                self.error(name, token2, f"expected a number (found {token1.value!r})")
-            self.styles._rule_offset = Offset(
-                int(float(token1.value)), int(float(token2.value))
-            )
+
+            if token1.name != "scalar":
+                self.error(name, token1, f"expected a scalar; found {token1.value!r}")
+            if token2.name != "scalar":
+                self.error(name, token2, f"expected a scalar; found {token1.value!r}")
+            scalar_x = Scalar.parse(token1.value, Unit.WIDTH)
+            scalar_y = Scalar.parse(token2.value, Unit.HEIGHT)
+            self.styles._rule_offset = ScalarOffset(scalar_x, scalar_y)
 
     def process_offset_x(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
@@ -224,9 +225,12 @@ class StylesBuilder:
         if len(tokens) != 1:
             self.error(name, tokens[0], f"expected a single number")
         else:
-            x = int(float(tokens[0].value))
+            token = tokens[0]
+            if token.name != "scalar":
+                self.error(name, token, f"expected a scalar; found {token.value!r}")
+            x = Scalar.parse(token.value, Unit.WIDTH)
             y = self.styles.offset.y
-            self.styles._rule_offset = Offset(x, y)
+            self.styles._rule_offset = ScalarOffset(x, y)
 
     def process_offset_y(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
@@ -234,9 +238,12 @@ class StylesBuilder:
         if len(tokens) != 1:
             self.error(name, tokens[0], f"expected a single number")
         else:
-            y = int(float(tokens[0].value))
+            token = tokens[0]
+            if token.name != "scalar":
+                self.error(name, token, f"expected a scalar; found {token.value!r}")
+            y = Scalar.parse(token.value, Unit.HEIGHT)
             x = self.styles.offset.x
-            self.styles._rule_offset = Offset(x, y)
+            self.styles._rule_offset = ScalarOffset(x, y)
 
     def process_layout(self, name: str, tokens: list[Token]) -> None:
         if tokens:
@@ -247,7 +254,10 @@ class StylesBuilder:
 
     def process_text(self, name: str, tokens: list[Token]) -> None:
         style_definition = " ".join(token.value for token in tokens)
-        style = Style.parse(style_definition)
+        try:
+            style = Style.parse(style_definition)
+        except Exception as error:
+            self.error(name, tokens[0], f"failed to parse style; {error}")
         self.styles.text = style
 
     def process_text_color(self, name: str, tokens: list[Token]) -> None:

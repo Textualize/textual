@@ -18,7 +18,7 @@ from .constants import (
     NULL_SPACING,
 )
 from ..geometry import NULL_OFFSET, Offset, Spacing
-from .scalar import Scalar, Unit
+from .scalar import Scalar, ScalarOffset, Unit
 from ._style_properties import (
     BorderProperty,
     BoxProperty,
@@ -63,7 +63,7 @@ class Styles:
 
     _rule_padding: Spacing | None = None
     _rule_margin: Spacing | None = None
-    _rule_offset: Offset | None = None
+    _rule_offset: ScalarOffset | None = None
 
     _rule_border_top: tuple[str, Style] | None = None
     _rule_border_right: tuple[str, Style] | None = None
@@ -143,6 +143,10 @@ class Styles:
     def has_outline(self) -> bool:
         """Check if an outline is present."""
         return any(edge for edge, _style in self.outline)
+
+    @property
+    def has_offset(self) -> bool:
+        return self._rule_offset is not None
 
     def extract_rules(
         self, specificity: tuple[int, int, int]

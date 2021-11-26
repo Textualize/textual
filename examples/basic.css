@@ -11,6 +11,7 @@ App > DockView {
   height: 1fr;
   layer: panels;
   border-right: outer #09312e;
+  offset-x: -50%;
 }
 
 #header {

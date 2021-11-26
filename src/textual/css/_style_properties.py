@@ -6,7 +6,14 @@ import rich.repr
 from rich.color import Color
 from rich.style import Style
 
-from .scalar import get_symbols, UNIT_SYMBOL, Unit, Scalar, ScalarParseError
+from .scalar import (
+    get_symbols,
+    UNIT_SYMBOL,
+    Unit,
+    Scalar,
+    ScalarOffset,
+    ScalarParseError,
+)
 from ..geometry import Offset, Spacing, SpacingDimensions
 from .constants import NULL_SPACING, VALID_EDGE
 from .errors import StyleTypeError, StyleValueError
@@ -42,7 +49,7 @@ class ScalarProperty:
         if value is None:
             new_value = None
         elif isinstance(value, float):
-            new_value = Scalar(value, Unit.CELLS)
+            new_value = Scalar(value, Unit.CELLS, Unit.WIDTH)
         elif isinstance(value, Scalar):
             new_value = value
         elif isinstance(value, str):
@@ -57,7 +64,7 @@ class ScalarProperty:
                 f"{self.name} units must be one of {friendly_list(get_symbols(self.units))}"
             )
         if new_value is not None and new_value.is_percent:
-            new_value = Scalar(new_value.value, self.percent_unit)
+            new_value = Scalar(new_value.value, self.percent_unit, Unit.WIDTH)
         setattr(obj, self.internal_name, new_value)
         return value
 
@@ -258,11 +265,26 @@ class OffsetProperty:
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._internal_name = f"_rule_{name}"
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Offset:
-        return getattr(obj, self._internal_name) or Offset()
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> ScalarOffset:
+        return getattr(obj, self._internal_name) or ScalarOffset(
+            Scalar.from_number(0), Scalar.from_number(0)
+        )
 
-    def __set__(self, obj: Styles, offset: tuple[int, int]) -> tuple[int, int]:
-        _offset = Offset(*offset)
+    def __set__(
+        self, obj: Styles, offset: tuple[int | str, int | str]
+    ) -> tuple[int | str, int | str]:
+        x, y = offset
+        scalar_x = (
+            Scalar.parse(x, Unit.WIDTH)
+            if isinstance(x, str)
+            else Scalar(x, Unit.CELLS, Unit.WIDTH)
+        )
+        scalar_y = (
+            Scalar.parse(y, Unit.HEIGHT)
+            if isinstance(y, str)
+            else Scalar(y, Unit.CELLS, Unit.HEIGHT)
+        )
+        _offset = ScalarOffset(scalar_x, scalar_y)
         setattr(obj, self._internal_name, _offset)
         return offset
 

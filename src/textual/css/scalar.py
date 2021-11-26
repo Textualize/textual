@@ -40,15 +40,15 @@ UNIT_SYMBOL = {
 
 SYMBOL_UNIT = {v: k for k, v in UNIT_SYMBOL.items()}
 
-_MATCH_SCALAR = re.compile(r"^(\d+\.?\d*)(fr|%|w|h|vw|vh)?$").match
+_MATCH_SCALAR = re.compile(r"^(\-?\d+\.?\d*)(fr|%|w|h|vw|vh)?$").match
 
 
 RESOLVE_MAP = {
     Unit.CELLS: lambda value, size, viewport: value,
-    Unit.WIDTH: lambda value, size, viewport: size[0],
-    Unit.HEIGHT: lambda value, size, viewport: size[1],
-    Unit.VIEW_WIDTH: lambda value, size, viewport: viewport[0],
-    Unit.VIEW_HEIGHT: lambda value, size, viewport: viewport[1],
+    Unit.WIDTH: lambda value, size, viewport: size[0] * value / 100,
+    Unit.HEIGHT: lambda value, size, viewport: size[1] * value / 100,
+    Unit.VIEW_WIDTH: lambda value, size, viewport: viewport[0] * value / 100,
+    Unit.VIEW_HEIGHT: lambda value, size, viewport: viewport[1] * value / 100,
 }
 
 
@@ -69,9 +69,10 @@ class Scalar(NamedTuple):
 
     value: float
     unit: Unit
+    percent_unit: Unit
 
     def __str__(self) -> str:
-        value, _unit = self
+        value, _unit, _ = self
         return f"{int(value) if value.is_integer() else value}{self.symbol}"
 
     @property
@@ -80,12 +81,12 @@ class Scalar(NamedTuple):
 
     @property
     def cells(self) -> int | None:
-        value, unit = self
+        value, unit, _ = self
         return int(value) if unit == Unit.CELLS else None
 
     @property
     def fraction(self) -> int | None:
-        value, unit = self
+        value, unit, _ = self
         return int(value) if unit == Unit.FRACTION else None
 
     @property
@@ -93,7 +94,11 @@ class Scalar(NamedTuple):
         return UNIT_SYMBOL[self.unit]
 
     @classmethod
-    def parse(cls, token: str) -> Scalar:
+    def from_number(cls, value: float) -> Scalar:
+        return cls(value, Unit.CELLS, Unit.WIDTH)
+
+    @classmethod
+    def parse(cls, token: str, percent_unit: Unit = Unit.WIDTH) -> Scalar:
         """Parse a string in to a Scalar
 
         Args:
@@ -109,16 +114,11 @@ class Scalar(NamedTuple):
         if match is None:
             raise ScalarParseError(f"{token!r} is not a valid scalar")
         value, unit_name = match.groups()
-        scalar = cls(float(value), SYMBOL_UNIT[unit_name or ""])
+        scalar = cls(float(value), SYMBOL_UNIT[unit_name or ""], percent_unit)
         return scalar
 
-    def resolve(
-        self,
-        size: tuple[int, int],
-        viewport: tuple[int, int],
-        percent_unit: Unit = Unit.WIDTH,
-    ) -> float:
-        value, unit = self
+    def resolve(self, size: tuple[int, int], viewport: tuple[int, int]) -> float:
+        value, unit, percent_unit = self
         if unit == Unit.PERCENT:
             unit = percent_unit
         try:
@@ -139,8 +139,7 @@ class ScalarOffset(NamedTuple):
     def resolve(self, size: tuple[int, int], viewport: tuple[int, int]) -> Offset:
         x, y = self
         return Offset(
-            round(x.resolve(size, viewport, percent_unit=Unit.WIDTH)),
-            round(y.resolve(size, viewport, percent_unit=Unit.HEIGHT)),
+            round(x.resolve(size, viewport)), round(y.resolve(size, viewport))
         )
 
 

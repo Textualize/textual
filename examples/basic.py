@@ -16,4 +16,4 @@ class BasicApp(App):
         )
 
 
-BasicApp.run(css_file="basic.css")
+BasicApp.run(log="textual.log", css_file="basic.css")

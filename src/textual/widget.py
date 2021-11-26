@@ -186,12 +186,6 @@ class Widget(DOMNode):
         return self._animate
 
     @property
-    def layout_offset(self) -> tuple[int, int]:
-        """Get the layout offset as a tuple."""
-        x, y = self.styles.offset
-        return round(x), round(y)
-
-    @property
     def gutter(self) -> Spacing:
         mt, mr, mb, bl = self.margin or (0, 0, 0, 0)
         pt, pr, pb, pl = self.padding or (0, 0, 0, 0)
