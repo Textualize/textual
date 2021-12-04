@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import cast, NoReturn
+from typing import cast, Iterable, NoReturn
 
 import rich.repr
 from rich.color import ANSI_COLOR_NAMES, Color
@@ -9,12 +9,14 @@ from rich.style import Style
 from .constants import VALID_BORDER, VALID_EDGE, VALID_DISPLAY, VALID_VISIBILITY
 from .errors import DeclarationError, StyleValueError
 from ._error_tools import friendly_list
+from .._easing import EASING
 from ..geometry import Offset, Spacing, SpacingDimensions
 from .model import Declaration
-from .scalar import Scalar, ScalarOffset, Unit
+from .scalar import Scalar, ScalarOffset, Unit, ScalarParseError
 from .styles import DockGroup, Styles
 from .types import Edge, Display, Visibility
 from .tokenize import Token
+from .transition import Transition
 
 
 class StylesBuilder:
@@ -345,3 +347,68 @@ class StylesBuilder:
                 self.error(name, token, "{token.name} not expected here")
             layers.append(token.value)
         self.styles._rule_layers = tuple(layers)
+
+    def process_transition(self, name: str, tokens: list[Token]) -> None:
+        transitions: dict[str, Transition] = {}
+
+        css_property = ""
+        duration = 1.0
+        easing = "linear"
+        delay = 0.0
+
+        iter_tokens = iter(tokens)
+
+        def make_groups() -> Iterable[list[Token]]:
+            """Batch tokens in to comma-separated groups."""
+            group: list[Token] = []
+            for token in tokens:
+                if token.name == "comma":
+                    if group:
+                        yield group
+                    group = []
+                else:
+                    group.append(token)
+            if group:
+                yield group
+
+        for tokens in make_groups():
+            css_property = ""
+            duration = 1.0
+            easing = "linear"
+            delay = 0.0
+
+            try:
+                iter_tokens = iter(tokens)
+                token = next(iter_tokens)
+                if token.name != "token":
+                    self.error(name, token, "expected property")
+                css_property = token.value
+
+                token = next(iter_tokens)
+                if token.name != "scalar":
+                    self.error(name, token, "expected time")
+                try:
+                    duration = Scalar.parse(token.value).resolve_time()
+                except ScalarParseError as error:
+                    self.error(name, token, str(error))
+
+                token = next(iter_tokens)
+                if token.name != "token":
+                    if token.value not in EASING:
+                        self.error(
+                            name,
+                            token,
+                            f"expected easing function; found {token.value!r}",
+                        )
+                    easing = token.value
+
+                token = next(iter_tokens)
+                if token.name != "scalar":
+                    self.error(name, token, "expected time")
+                try:
+                    delay = Scalar.parse(token.value).resolve_time()
+                except ScalarParseError as error:
+                    self.error(name, token, str(error))
+            except StopIteration:
+                pass
+            transitions[css_property] = Transition(duration, easing, delay)

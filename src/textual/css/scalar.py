@@ -26,6 +26,8 @@ class Unit(Enum):
     HEIGHT = 5
     VIEW_WIDTH = 6
     VIEW_HEIGHT = 7
+    MILLISECONDS = 8
+    SECONDS = 9
 
 
 UNIT_SYMBOL = {
@@ -36,11 +38,13 @@ UNIT_SYMBOL = {
     Unit.HEIGHT: "h",
     Unit.VIEW_WIDTH: "vw",
     Unit.VIEW_HEIGHT: "vh",
+    Unit.MILLISECONDS: "ms",
+    Unit.SECONDS: "s",
 }
 
 SYMBOL_UNIT = {v: k for k, v in UNIT_SYMBOL.items()}
 
-_MATCH_SCALAR = re.compile(r"^(\-?\d+\.?\d*)(fr|%|w|h|vw|vh)?$").match
+_MATCH_SCALAR = re.compile(r"^(\-?\d+\.?\d*)(fr|%|w|h|vw|vh|s|ms)?$").match
 
 
 RESOLVE_MAP = {
@@ -117,14 +121,24 @@ class Scalar(NamedTuple):
         scalar = cls(float(value), SYMBOL_UNIT[unit_name or ""], percent_unit)
         return scalar
 
-    def resolve(self, size: tuple[int, int], viewport: tuple[int, int]) -> float:
+    def resolve_dimension(
+        self, size: tuple[int, int], viewport: tuple[int, int]
+    ) -> float:
         value, unit, percent_unit = self
         if unit == Unit.PERCENT:
             unit = percent_unit
         try:
             return RESOLVE_MAP[unit](value, size, viewport)
         except KeyError:
-            raise ScalarResolveError("unable to resolve {self!r}")
+            raise ScalarResolveError(f"unable to resolve {self!r} as dimensions")
+
+    def resolve_time(self) -> float:
+        value, unit, _ = self
+        if unit == Unit.MILLISECONDS:
+            return value / 1000.0
+        elif unit == Unit.SECONDS:
+            return value
+        raise ScalarResolveError(f"unable to resolve {self!r} as time")
 
 
 @rich.repr.auto(angular=True)
@@ -139,7 +153,8 @@ class ScalarOffset(NamedTuple):
     def resolve(self, size: tuple[int, int], viewport: tuple[int, int]) -> Offset:
         x, y = self
         return Offset(
-            round(x.resolve(size, viewport)), round(y.resolve(size, viewport))
+            round(x.resolve_dimension(size, viewport)),
+            round(y.resolve_dimension(size, viewport)),
         )
 
 

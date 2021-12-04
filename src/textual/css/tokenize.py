@@ -50,6 +50,7 @@ expect_declaration_content = Expect(
     token="[a-zA-Z_-]+",
     string=r"\".*?\"",
     important=r"\!important",
+    comma=",",
     declaration_set_end=r"\}",
 )
 
