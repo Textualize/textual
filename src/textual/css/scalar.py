@@ -9,11 +9,15 @@ import rich.repr
 from ..geometry import Offset
 
 
-class ScalarResolveError(Exception):
+class ScalarError(Exception):
     pass
 
 
-class ScalarParseError(Exception):
+class ScalarResolveError(ScalarError):
+    pass
+
+
+class ScalarParseError(ScalarError):
     pass
 
 
@@ -99,7 +103,7 @@ class Scalar(NamedTuple):
 
     @classmethod
     def from_number(cls, value: float) -> Scalar:
-        return cls(value, Unit.CELLS, Unit.WIDTH)
+        return cls(float(value), Unit.CELLS, Unit.WIDTH)
 
     @classmethod
     def parse(cls, token: str, percent_unit: Unit = Unit.WIDTH) -> Scalar:
@@ -130,7 +134,7 @@ class Scalar(NamedTuple):
         try:
             return RESOLVE_MAP[unit](value, size, viewport)
         except KeyError:
-            raise ScalarResolveError(f"unable to resolve {self!r} as dimensions")
+            raise ScalarResolveError(f"expected dimensions; found {str(self)!r}")
 
     def resolve_time(self) -> float:
         value, unit, _ = self
@@ -138,7 +142,7 @@ class Scalar(NamedTuple):
             return value / 1000.0
         elif unit == Unit.SECONDS:
             return value
-        raise ScalarResolveError(f"unable to resolve {self!r} as time")
+        raise ScalarResolveError(f"expected time; found {str(self)!r}")
 
 
 @rich.repr.auto(angular=True)
@@ -147,8 +151,8 @@ class ScalarOffset(NamedTuple):
     y: Scalar
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield str(self.x)
-        yield str(self.y)
+        yield None, str(self.x)
+        yield None, str(self.y)
 
     def resolve(self, size: tuple[int, int], viewport: tuple[int, int]) -> Offset:
         x, y = self

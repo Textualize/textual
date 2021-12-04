@@ -19,6 +19,7 @@ from .constants import (
 )
 from ..geometry import NULL_OFFSET, Offset, Spacing
 from .scalar import Scalar, ScalarOffset, Unit
+from .transition import Transition
 from ._style_properties import (
     BorderProperty,
     BoxProperty,
@@ -33,6 +34,7 @@ from ._style_properties import (
     StringProperty,
     StyleProperty,
     StyleFlagsProperty,
+    TransitionsProperty,
 )
 from .types import Display, Edge, Visibility
 
@@ -88,6 +90,8 @@ class Styles:
     _rule_layers: tuple[str, ...] | None = None
     _rule_layer: str | None = None
 
+    _rule_transitions: dict[str, Transition] | None = None
+
     important: set[str] = field(default_factory=set)
 
     display = StringProperty(VALID_DISPLAY, "block")
@@ -125,6 +129,7 @@ class Styles:
 
     layer = NameProperty()
     layers = NameListProperty()
+    transitions = TransitionsProperty()
 
     @property
     def has_border(self) -> bool:
@@ -282,6 +287,14 @@ class Styles:
             append_declaration("min-width", str(self.min_width))
         if self._rule_min_height is not None:
             append_declaration("min-height", str(self.min_height))
+        if self._rule_transitions is not None:
+            append_declaration(
+                "transition",
+                ", ".join(
+                    f"{name} {transition}"
+                    for name, transition in self.transitions.items()
+                ),
+            )
 
         lines.sort()
         return lines

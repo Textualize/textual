@@ -17,6 +17,7 @@ from .scalar import (
 from ..geometry import Offset, Spacing, SpacingDimensions
 from .constants import NULL_SPACING, VALID_EDGE
 from .errors import StyleTypeError, StyleValueError
+from .transition import Transition
 from ._error_tools import friendly_list
 
 if TYPE_CHECKING:
@@ -49,7 +50,7 @@ class ScalarProperty:
         if value is None:
             new_value = None
         elif isinstance(value, float):
-            new_value = Scalar(value, Unit.CELLS, Unit.WIDTH)
+            new_value = Scalar(float(value), Unit.CELLS, Unit.WIDTH)
         elif isinstance(value, Scalar):
             new_value = value
         elif isinstance(value, str):
@@ -64,7 +65,7 @@ class ScalarProperty:
                 f"{self.name} units must be one of {friendly_list(get_symbols(self.units))}"
             )
         if new_value is not None and new_value.is_percent:
-            new_value = Scalar(new_value.value, self.percent_unit, Unit.WIDTH)
+            new_value = Scalar(float(new_value.value), self.percent_unit, Unit.WIDTH)
         setattr(obj, self.internal_name, new_value)
         return value
 
@@ -277,12 +278,12 @@ class OffsetProperty:
         scalar_x = (
             Scalar.parse(x, Unit.WIDTH)
             if isinstance(x, str)
-            else Scalar(x, Unit.CELLS, Unit.WIDTH)
+            else Scalar(float(x), Unit.CELLS, Unit.WIDTH)
         )
         scalar_y = (
             Scalar.parse(y, Unit.HEIGHT)
             if isinstance(y, str)
-            else Scalar(y, Unit.CELLS, Unit.HEIGHT)
+            else Scalar(float(y), Unit.CELLS, Unit.HEIGHT)
         )
         _offset = ScalarOffset(scalar_x, scalar_y)
         setattr(obj, self._internal_name, _offset)
@@ -419,3 +420,14 @@ class StyleFlagsProperty:
             style = Style.parse(" ".join(words))
             setattr(obj, self._internal_name, style)
         return style_flags
+
+
+class TransitionsProperty:
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self._name = name
+        self._internal_name = f"_rule_{name}"
+
+    def __get__(
+        self, obj: Styles, objtype: type[Styles] | None = None
+    ) -> dict[str, Transition]:
+        return getattr(obj, self._internal_name, None) or {}

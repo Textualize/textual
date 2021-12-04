@@ -12,6 +12,7 @@ App > DockView {
   layer: panels;
   border-right: outer #09312e;
   offset-x: -50%;
+  transition: offset-x 1.2s in_cubic 200ms, offset-y 1s linear;
 }
 
 #header {

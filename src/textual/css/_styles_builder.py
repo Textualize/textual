@@ -12,7 +12,7 @@ from ._error_tools import friendly_list
 from .._easing import EASING
 from ..geometry import Offset, Spacing, SpacingDimensions
 from .model import Declaration
-from .scalar import Scalar, ScalarOffset, Unit, ScalarParseError
+from .scalar import Scalar, ScalarOffset, Unit, ScalarError
 from .styles import DockGroup, Styles
 from .types import Edge, Display, Visibility
 from .tokenize import Token
@@ -53,7 +53,7 @@ class StylesBuilder:
             try:
                 process_method(declaration.name, tokens)
             except DeclarationError as error:
-                self.error(error.name, error.token, error.message)
+                raise
             except Exception as error:
                 self.error(declaration.name, declaration.token, str(error))
 
@@ -389,26 +389,30 @@ class StylesBuilder:
                     self.error(name, token, "expected time")
                 try:
                     duration = Scalar.parse(token.value).resolve_time()
-                except ScalarParseError as error:
+                except ScalarError as error:
                     self.error(name, token, str(error))
 
                 token = next(iter_tokens)
                 if token.name != "token":
-                    if token.value not in EASING:
-                        self.error(
-                            name,
-                            token,
-                            f"expected easing function; found {token.value!r}",
-                        )
-                    easing = token.value
+                    self.error(name, token, "easing function expected")
+
+                if token.value not in EASING:
+                    self.error(
+                        name,
+                        token,
+                        f"expected easing function; found {token.value!r}",
+                    )
+                easing = token.value
 
                 token = next(iter_tokens)
                 if token.name != "scalar":
                     self.error(name, token, "expected time")
                 try:
                     delay = Scalar.parse(token.value).resolve_time()
-                except ScalarParseError as error:
+                except ScalarError as error:
                     self.error(name, token, str(error))
             except StopIteration:
                 pass
             transitions[css_property] = Transition(duration, easing, delay)
+
+        self.styles._rule_transitions = transitions
