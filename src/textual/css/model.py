@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Iterable
 
+from .. import log
 from ..dom import DOMNode
 from .styles import Styles
 from .tokenize import Token

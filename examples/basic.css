@@ -11,8 +11,12 @@ App > DockView {
   height: 1fr;
   layer: panels;
   border-right: outer #09312e;
-  offset-x: -50%;
+  offset-x: -100%;
   transition: offset-x 1.2s in_cubic 200ms, offset-y 1s linear;
+}
+
+#sidebar.-active {
+  offset-x: 0;
 }
 
 #header {

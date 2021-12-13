@@ -285,15 +285,18 @@ class Widget(DOMNode):
         self.refresh()
 
     async def on_idle(self, event: events.Idle) -> None:
+        self.log("Widget.on_idle")
         if self.check_layout():
+            self.log("layout required")
             self.render_cache = None
             self.reset_check_repaint()
             self.reset_check_layout()
-            await self.emit(Layout(self))
+            await self.post_message(Layout(self))
         elif self.check_repaint():
+            self.log("repaint required")
             self.render_cache = None
             self.reset_check_repaint()
-            await self.emit(Update(self, self))
+            await self.post_message(Update(self, self))
 
     async def focus(self) -> None:
         await self.app.set_focus(self)

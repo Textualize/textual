@@ -172,6 +172,8 @@ class DOMNode(MessagePump):
     def toggle_class(self, *class_names: str) -> None:
         """Toggle class names"""
         self._classes.symmetric_difference_update(class_names)
+        self.app.stylesheet.apply(self)
+        self.log(self.styles.css)
 
     def has_psuedo_class(self, *class_names: str) -> bool:
         """Check for psuedo class (such as hover, focus etc)"""

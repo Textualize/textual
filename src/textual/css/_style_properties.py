@@ -14,8 +14,8 @@ from .scalar import (
     ScalarOffset,
     ScalarParseError,
 )
-from ..geometry import Offset, Spacing, SpacingDimensions
-from .constants import NULL_SPACING, VALID_EDGE
+from ..geometry import Spacing, SpacingDimensions
+from .constants import NULL_SPACING
 from .errors import StyleTypeError, StyleValueError
 from .transition import Transition
 from ._error_tools import friendly_list

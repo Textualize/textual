@@ -5,16 +5,17 @@ from textual.widget import Widget
 class BasicApp(App):
     """A basic app demonstrating CSS"""
 
-    def on_mount(self) -> None:
-        """Build layout here."""
+    def on_load(self):
+        self.bind("t", "toggle('#sidebar', '-active')")
 
-        self.view.mount(
+    def on_mount(self):
+        """Build layout here."""
+        self.mount(
             header=Widget(),
             content=Widget(),
             footer=Widget(),
             sidebar=Widget(),
         )
-        self.panic(self.query("#sidebar").first().styles)
 
 
-BasicApp.run(log="textual.log", css_file="basic.css")
+BasicApp.run(log="textual.log", css_file="basic.css", log_verbosity=3)

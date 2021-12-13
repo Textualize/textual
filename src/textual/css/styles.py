@@ -55,6 +55,7 @@ class DockGroup(NamedTuple):
 @dataclass
 class Styles:
 
+    _changed: float = 0
     _rule_display: Display | None = None
     _rule_visibility: Visibility | None = None
     _rule_layout: str | None = None

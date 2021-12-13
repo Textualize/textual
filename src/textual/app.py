@@ -31,6 +31,7 @@ from .driver import Driver
 from .layouts.dock import DockLayout, Dock
 from ._linux_driver import LinuxDriver
 from ._types import MessageTarget
+from . import messages
 from .message_pump import MessagePump
 from ._profile import timer
 from .view import View
@@ -65,8 +66,6 @@ class ActionError(Exception):
 @rich.repr.auto
 class App(DOMNode):
     """The base class for Textual Applications"""
-
-    KEYS: ClassVar[dict[str, str]] = {}
 
     css = ""
 
@@ -215,6 +214,10 @@ class App(DOMNode):
 
         asyncio.run(run_app())
 
+    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
+        self.register(self.view, *anon_widgets, **widgets)
+        self.view.refresh()
+
     async def push_view(self, view: ViewType) -> ViewType:
         self._view_stack.append(view)
         return view
@@ -354,7 +357,9 @@ class App(DOMNode):
             return True
         return False
 
-    def mount(self, parent: DOMNode, *anon_widgets: Widget, **widgets: Widget) -> None:
+    def register(
+        self, parent: DOMNode, *anon_widgets: Widget, **widgets: Widget
+    ) -> None:
         """Mount widget(s) so they may receive events.
 
         Args:
@@ -467,7 +472,7 @@ class App(DOMNode):
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Mount):
             view = DockView()
-            self.mount(self, view)
+            self.register(self, view)
             await self.push_view(view)
             await super().on_event(event)
 
@@ -567,6 +572,7 @@ class App(DOMNode):
 
     async def action_toggle(self, selector: str, class_name: str) -> None:
         self.view.query(selector).toggle_class(class_name)
+        self.view.refresh(layout=True)
 
 
 if __name__ == "__main__":

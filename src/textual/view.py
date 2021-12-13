@@ -139,7 +139,7 @@ class View(Widget):
             self.app.refresh()
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
-        self.app.mount(self, *anon_widgets, **widgets)
+        self.app.register(self, *anon_widgets, **widgets)
         self.refresh()
 
     async def refresh_layout(self) -> None:
@@ -170,7 +170,7 @@ class View(Widget):
                     widget.post_message_no_wait(
                         events.Resize(self, unclipped_region.size)
                     )
-        except:
+        except Exception:
             self.app.panic()
 
     async def on_resize(self, event: events.Resize) -> None:

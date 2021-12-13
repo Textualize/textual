@@ -64,6 +64,5 @@ class DOMQuery:
             node.remove_class(*class_names)
 
     def toggle_class(self, *class_names: str) -> None:
-
         for node in self._nodes:
-            node.remove_class(*class_names)
+            node.toggle_class(*class_names)

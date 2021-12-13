@@ -122,10 +122,14 @@ class Stylesheet:
                     rule_attributes[key].append((rule_specificity, value))
 
         get_first_item = itemgetter(0)
+
+        log(rule_attributes.get("offset"))
+
         node_rules = [
             (name, max(specificity_rules, key=get_first_item)[1])
             for name, specificity_rules in rule_attributes.items()
         ]
+
         node.styles.apply_rules(node_rules)
 
 
