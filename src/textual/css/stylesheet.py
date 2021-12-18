@@ -9,9 +9,7 @@ from rich.console import RenderableType
 import rich.repr
 from rich.highlighter import ReprHighlighter
 from rich.panel import Panel
-from rich.syntax import Syntax
-from rich.table import Table
-from rich.text import TextType, Text
+from rich.text import Text
 from rich.console import Group, RenderableType
 
 
@@ -114,8 +112,9 @@ class Stylesheet:
         rule_attributes: dict[str, list[tuple[Specificity4, object]]]
         rule_attributes = defaultdict(list)
 
+        _check_rule = self._check_rule
         for rule in self.rules:
-            for specificity in self._check_rule(rule, node):
+            for specificity in _check_rule(rule, node):
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     specificity
                 ):
@@ -123,14 +122,18 @@ class Stylesheet:
 
         get_first_item = itemgetter(0)
 
-        log(rule_attributes.get("offset"))
-
         node_rules = [
             (name, max(specificity_rules, key=get_first_item)[1])
             for name, specificity_rules in rule_attributes.items()
         ]
 
         node.styles.apply_rules(node_rules)
+
+    def update(self, root: DOMNode) -> None:
+        """Update a node and its children."""
+        apply = self.apply
+        for node in root.walk_children():
+            apply(node)
 
 
 if __name__ == "__main__":

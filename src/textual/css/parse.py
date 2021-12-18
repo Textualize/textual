@@ -153,6 +153,7 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
     rule_set = RuleSet(
         list(SelectorSet.from_selectors(rule_selectors)), styles_builder.styles, errors
     )
+    rule_set._post_parse()
     yield rule_set
 
 

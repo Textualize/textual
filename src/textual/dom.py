@@ -131,6 +131,14 @@ class DOMNode(MessagePump):
         add_children(tree, self)
         return tree
 
+    def reset_styles(self) -> None:
+        from .widget import Widget
+
+        for node in self.walk_children():
+            node.styles = Styles()
+            if isinstance(node, Widget):
+                node.clear_render_cache()
+
     def add_child(self, node: DOMNode) -> None:
         self.children._append(node)
         node.set_parent(self)
@@ -172,7 +180,7 @@ class DOMNode(MessagePump):
     def toggle_class(self, *class_names: str) -> None:
         """Toggle class names"""
         self._classes.symmetric_difference_update(class_names)
-        self.app.stylesheet.apply(self)
+        self.app.stylesheet.update(self.app)
         self.log(self.styles.css)
 
     def has_psuedo_class(self, *class_names: str) -> bool:

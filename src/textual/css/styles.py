@@ -83,8 +83,6 @@ class Styles:
     _rule_min_width: Scalar | None = None
     _rule_min_height: Scalar | None = None
 
-    _rule_layout: str | None = None
-
     _rule_dock_group: str | None = None
     _rule_docks: tuple[DockGroup, ...] | None = None
 

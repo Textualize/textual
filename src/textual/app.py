@@ -25,9 +25,11 @@ from .geometry import Offset, Region
 from . import log
 from ._callback import invoke
 from ._context import active_app
-from .css.stylesheet import Stylesheet, StylesheetParseError
+from .css.stylesheet import Stylesheet, StylesheetParseError, StylesheetError
 from ._event_broker import extract_handler_actions, NoHandler
 from .driver import Driver
+from .file_monitor import FileMonitor
+
 from .layouts.dock import DockLayout, Dock
 from ._linux_driver import LinuxDriver
 from ._types import MessageTarget
@@ -79,6 +81,7 @@ class App(DOMNode):
         title: str = "Textual Application",
         css_file: str | None = None,
         css: str | None = None,
+        watch_css: bool = True,
     ):
         """The Textual Application base class
 
@@ -119,6 +122,11 @@ class App(DOMNode):
         self.stylesheet = Stylesheet()
 
         self.css_file = css_file
+        self.css_monitor = (
+            FileMonitor(css_file, self._on_css_change)
+            if (watch_css and css_file)
+            else None
+        )
         if css is not None:
             self.css = css
 
@@ -147,9 +155,6 @@ class App(DOMNode):
     @property
     def css_type(self) -> str:
         return "app"
-
-    def load_css(self, filename: str) -> None:
-        pass
 
     def log(self, *args: Any, verbosity: int = 1, **kwargs) -> None:
         """Write to logs.
@@ -213,6 +218,24 @@ class App(DOMNode):
             await app.process_messages()
 
         asyncio.run(run_app())
+
+    async def _on_css_change(self) -> None:
+        self.log("CSS changed")
+        self.log("css_file", self.css_file)
+        if self.css_file is not None:
+            stylesheet = Stylesheet()
+            try:
+                self.log("loading", self.css_file)
+                stylesheet.read(self.css_file)
+            except StylesheetError as error:
+                self.log(error)
+                self.console.bell()
+            else:
+                self.log("reseting stylesheet")
+                self.reset_styles()
+                self.stylesheet = stylesheet
+                self.stylesheet.update(self)
+                self.view.refresh(layout=True)
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
         self.register(self.view, *anon_widgets, **widgets)
@@ -316,6 +339,10 @@ class App(DOMNode):
             self.panic()
             self._print_error_renderables()
             return
+
+        if self.css_monitor:
+            self.set_interval(0.5, self.css_monitor)
+            self.log("started", self.css_monitor)
 
         self._running = True
         try:
@@ -548,6 +575,15 @@ class App(DOMNode):
             return False
         return True
 
+    async def handle_update(self, message: messages.Update) -> None:
+        message.stop()
+        self.app.refresh()
+
+    async def handle_layout(self, message: messages.Layout) -> None:
+        message.stop()
+        await self.view.refresh_layout()
+        self.app.refresh()
+
     async def on_key(self, event: events.Key) -> None:
         await self.press(event.key)
 
@@ -570,7 +606,15 @@ class App(DOMNode):
     async def action_bell(self) -> None:
         self.console.bell()
 
-    async def action_toggle(self, selector: str, class_name: str) -> None:
+    async def action_add_class_(self, selector: str, class_name: str) -> None:
+        self.view.query(selector).add_class(class_name)
+        self.view.refresh(layout=True)
+
+    async def action_remove_class_(self, selector: str, class_name: str) -> None:
+        self.view.query(selector).remove_class(class_name)
+        self.view.refresh(layout=True)
+
+    async def action_toggle_class(self, selector: str, class_name: str) -> None:
         self.view.query(selector).toggle_class(class_name)
         self.view.refresh(layout=True)
 

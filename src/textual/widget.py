@@ -84,7 +84,7 @@ class Widget(DOMNode):
     # layout_offset_x: Reactive[float] = Reactive(0.0, layout=True)
     # layout_offset_y: Reactive[float] = Reactive(0.0, layout=True)
 
-    style: Reactive[str | None] = Reactive(None)
+    # style: Reactive[str | None] = Reactive(None)
     padding: Reactive[Spacing | None] = Reactive(None, layout=True)
     margin: Reactive[Spacing | None] = Reactive(None, layout=True)
     border: Reactive[str] = Reactive("none", layout=True)
@@ -96,12 +96,6 @@ class Widget(DOMNode):
 
     def validate_margin(self, margin: SpacingDimensions) -> Spacing:
         return Spacing.unpack(margin)
-
-    # def validate_layout_offset_x(self, value) -> int:
-    #     return int(value)
-
-    # def validate_layout_offset_y(self, value) -> int:
-    #     return int(value)
 
     def __init_subclass__(cls, can_focus: bool = True) -> None:
         super().__init_subclass__()
@@ -285,18 +279,17 @@ class Widget(DOMNode):
         self.refresh()
 
     async def on_idle(self, event: events.Idle) -> None:
-        self.log("Widget.on_idle")
         if self.check_layout():
             self.log("layout required")
             self.render_cache = None
             self.reset_check_repaint()
             self.reset_check_layout()
-            await self.post_message(Layout(self))
+            await self.emit(Layout(self))
         elif self.check_repaint():
             self.log("repaint required")
             self.render_cache = None
             self.reset_check_repaint()
-            await self.post_message(Update(self, self))
+            await self.emit(Update(self, self))
 
     async def focus(self) -> None:
         await self.app.set_focus(self)
