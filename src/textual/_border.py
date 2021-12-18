@@ -96,10 +96,15 @@ class Border:
             if options.height is None:
                 render_options = options.update_width(width)
             else:
-                height = options.height - has_top - has_bottom
-                render_options = options.update_dimensions(width, height)
+                new_height = options.height - has_top - has_bottom
+                if new_height >= 1:
+                    render_options = options.update_dimensions(width, new_height)
+                else:
+                    render_options = options
+                    has_top = has_bottom = False
 
         lines = console.render_lines(self.renderable, render_options)
+
         # if len(lines) <= 2:
         #     yield SegmentLines(lines, new_lines=True)
         #     return
