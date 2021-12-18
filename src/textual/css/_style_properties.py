@@ -67,6 +67,7 @@ class ScalarProperty:
         if new_value is not None and new_value.is_percent:
             new_value = Scalar(float(new_value.value), self.percent_unit, Unit.WIDTH)
         setattr(obj, self.internal_name, new_value)
+        obj.refresh()
         return value
 
 
@@ -100,6 +101,7 @@ class BoxProperty:
             else:
                 new_value = (_type, Style.from_color(Color.parse(color)))
         setattr(obj, self.internal_name, new_value)
+        obj.refresh()
         return border
 
 
@@ -151,6 +153,7 @@ class BorderProperty:
         | None,
     ) -> None:
         top, right, bottom, left = self._properties
+        obj.refresh()
         if border is None:
             setattr(obj, top, None)
             setattr(obj, right, None)
@@ -207,6 +210,7 @@ class StyleProperty:
         return style
 
     def __set__(self, obj: Styles, style: Style | str | None) -> Style | str | None:
+        obj.refresh()
         if style is None:
             setattr(obj, self._color_name, None)
             setattr(obj, self._bgcolor_name, None)
@@ -232,6 +236,7 @@ class SpacingProperty:
         return getattr(obj, self._internal_name) or NULL_SPACING
 
     def __set__(self, obj: Styles, spacing: SpacingDimensions) -> Spacing:
+        obj.refresh(True)
         spacing = Spacing.unpack(spacing)
         setattr(obj, self._internal_name, spacing)
         return spacing
@@ -246,6 +251,7 @@ class DocksProperty:
     def __set__(
         self, obj: Styles, docks: Iterable[DockGroup] | None
     ) -> Iterable[DockGroup] | None:
+        obj.refresh(True)
         if docks is None:
             obj._rule_docks = None
         else:
@@ -258,6 +264,7 @@ class DockGroupProperty:
         return obj._rule_dock_group or ""
 
     def __set__(self, obj: Styles, spacing: str | None) -> str | None:
+        obj.refresh(True)
         obj._rule_dock_group = spacing
         return spacing
 
@@ -274,6 +281,7 @@ class OffsetProperty:
     def __set__(
         self, obj: Styles, offset: tuple[int | str, int | str]
     ) -> tuple[int | str, int | str]:
+        obj.refresh(True)
         x, y = offset
         scalar_x = (
             Scalar.parse(x, Unit.WIDTH)
@@ -299,6 +307,7 @@ class IntegerProperty:
         return getattr(obj, self._internal_name, 0)
 
     def __set__(self, obj: Styles, value: int | None) -> int | None:
+        obj.refresh()
         if not isinstance(value, int):
             raise StyleTypeError(f"{self._name} must be a str")
         setattr(obj, self._internal_name, value)
@@ -318,6 +327,7 @@ class StringProperty:
         return getattr(obj, self._internal_name, None) or self._default
 
     def __set__(self, obj: Styles, value: str | None = None) -> str | None:
+        obj.refresh()
         if value is not None:
             if value not in self._valid_values:
                 raise StyleValueError(
@@ -336,6 +346,7 @@ class NameProperty:
         return getattr(obj, self._internal_name) or ""
 
     def __set__(self, obj: Styles, name: str | None) -> str | None:
+        obj.refresh(True)
         if not isinstance(name, str):
             raise StyleTypeError(f"{self._name} must be a str")
         setattr(obj, self._internal_name, name)
@@ -355,6 +366,7 @@ class NameListProperty:
     def __set__(
         self, obj: Styles, names: str | tuple[str] | None = None
     ) -> str | tuple[str] | None:
+        obj.refresh(True)
         names_value: tuple[str, ...] | None = None
         if isinstance(names, str):
             names_value = tuple(name.strip().lower() for name in names.split(" "))
@@ -375,6 +387,7 @@ class ColorProperty:
         return getattr(obj, self._internal_name, None) or Color.default()
 
     def __set__(self, obj: Styles, color: Color | str | None) -> Color | str | None:
+        obj.refresh()
         if color is None:
             setattr(self, self._internal_name, None)
         else:
@@ -409,6 +422,7 @@ class StyleFlagsProperty:
         return getattr(obj, self._internal_name, None) or Style.null()
 
     def __set__(self, obj: Styles, style_flags: str | None) -> str | None:
+        obj.refresh()
         if style_flags is None:
             setattr(self, self._internal_name, None)
         else:

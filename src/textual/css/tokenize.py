@@ -40,6 +40,13 @@ expect_declaration = Expect(
     declaration_set_end=r"\}",
 )
 
+expect_declaration_solo = Expect(
+    whitespace=r"\s+",
+    comment_start=r"\/\*",
+    declaration_name=r"[a-zA-Z_\-]+\:",
+    declaration_set_end=r"\}",
+).expect_eof(True)
+
 expect_declaration_content = Expect(
     declaration_end=r"\n|;",
     whitespace=r"\s+",
@@ -55,34 +62,65 @@ expect_declaration_content = Expect(
 )
 
 
-_STATES = {
-    "selector_start": expect_selector_continue,
-    "selector_start_id": expect_selector_continue,
-    "selector_start_class": expect_selector_continue,
-    "selector_start_universal": expect_selector_continue,
-    "selector_id": expect_selector_continue,
-    "selector_class": expect_selector_continue,
-    "selector_universal": expect_selector_continue,
-    "declaration_set_start": expect_declaration,
-    "declaration_name": expect_declaration_content,
-    "declaration_end": expect_declaration,
-    "declaration_set_end": expect_selector,
-}
+class StateTokenizer:
+    EXPECT = expect_selector
+    STATE_MAP = {
+        "selector_start": expect_selector_continue,
+        "selector_start_id": expect_selector_continue,
+        "selector_start_class": expect_selector_continue,
+        "selector_start_universal": expect_selector_continue,
+        "selector_id": expect_selector_continue,
+        "selector_class": expect_selector_continue,
+        "selector_universal": expect_selector_continue,
+        "declaration_set_start": expect_declaration,
+        "declaration_name": expect_declaration_content,
+        "declaration_end": expect_declaration,
+        "declaration_set_end": expect_selector,
+    }
+
+    def __call__(self, code: str, path: str) -> Iterable[Token]:
+        tokenizer = Tokenizer(code, path=path)
+        expect = self.EXPECT
+        get_token = tokenizer.get_token
+        get_state = self.STATE_MAP.get
+        while True:
+            token = get_token(expect)
+            name = token.name
+            if name == "comment_start":
+                tokenizer.skip_to(expect_comment_end)
+                continue
+            elif name == "eof":
+                break
+            expect = get_state(name, expect)
+            yield token
 
 
-def tokenize(code: str, path: str) -> Iterable[Token]:
-    tokenizer = Tokenizer(code, path=path)
-    expect = expect_selector
-    get_token = tokenizer.get_token
-    get_state = _STATES.get
-    while True:
-        token = get_token(expect)
+class DeclarationStateTokenizer(StateTokenizer):
+    EXPECT = expect_declaration_solo
+    STATE_MAP = {
+        "declaration_name": expect_declaration_content,
+        "declaration_end": expect_declaration_solo,
+    }
 
-        name = token.name
-        if name == "comment_start":
-            tokenizer.skip_to(expect_comment_end)
-            continue
-        elif name == "eof":
-            break
-        expect = get_state(name, expect)
-        yield token
+
+tokenize = StateTokenizer()
+tokenize_declarations = DeclarationStateTokenizer()
+
+
+# def tokenize(
+#     code: str, path: str, *, expect: Expect = expect_selector
+# ) -> Iterable[Token]:
+#     tokenizer = Tokenizer(code, path=path)
+#     # expect = expect_selector
+#     get_token = tokenizer.get_token
+#     get_state = _STATES.get
+#     while True:
+#         token = get_token(expect)
+#         name = token.name
+#         if name == "comment_start":
+#             tokenizer.skip_to(expect_comment_end)
+#             continue
+#         elif name == "eof":
+#             break
+#         expect = get_state(name, expect)
+#         yield token

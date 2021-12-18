@@ -48,7 +48,7 @@ class RenderCache(NamedTuple):
     @property
     def cursor_line(self) -> int | None:
         for index, line in enumerate(self.lines):
-            for text, style, control in line:
+            for _text, style, _control in line:
                 if style and style._meta and style.meta.get("cursor", False):
                     return index
         return None
@@ -58,6 +58,10 @@ class RenderCache(NamedTuple):
 class Widget(DOMNode):
     _counts: ClassVar[dict[str, int]] = {}
     can_focus: bool = False
+
+    CSS = """
+    dock-group: main;
+    """
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
         if name is None:
@@ -279,13 +283,14 @@ class Widget(DOMNode):
         self.refresh()
 
     async def on_idle(self, event: events.Idle) -> None:
-        if self.check_layout():
+        repaint, layout = self.styles.check_refresh()
+        if layout or self.check_layout():
             self.log("layout required")
             self.render_cache = None
             self.reset_check_repaint()
             self.reset_check_layout()
             await self.emit(Layout(self))
-        elif self.check_repaint():
+        elif repaint or self.check_repaint():
             self.log("repaint required")
             self.render_cache = None
             self.reset_check_repaint()

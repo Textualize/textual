@@ -1,4 +1,13 @@
-App > DockView {
+App > View {
+  docks: main=top;
+}
+
+#sidebar {
+  dock-group: main;
+}
+
+/*
+App > View {
   layout: dock;
   docks: side=left/1 header=top footer=bottom;
   layers: base panels;
@@ -37,3 +46,4 @@ App > DockView {
   dock-group: header;
   text: on #20639b;
 }
+*/

@@ -91,6 +91,9 @@ class Styles:
 
     _rule_transitions: dict[str, Transition] | None = None
 
+    _layout_required: bool = False
+    _repaint_required: bool = False
+
     important: set[str] = field(default_factory=set)
 
     display = StringProperty(VALID_DISPLAY, "block")
@@ -129,6 +132,15 @@ class Styles:
     layer = NameProperty()
     layers = NameListProperty()
     transitions = TransitionsProperty()
+
+    def refresh(self, layout: bool = False) -> None:
+        self._repaint_required = True
+        self._layout_required = layout
+
+    def check_refresh(self) -> tuple[bool, bool]:
+        result = (self._repaint_required, self._layout_required)
+        self._repaint_required = self._layout_required = False
+        return result
 
     @property
     def has_border(self) -> bool:

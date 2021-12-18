@@ -6,7 +6,7 @@ class BasicApp(App):
     """A basic app demonstrating CSS"""
 
     def on_load(self):
-        self.bind("t", "toggle_class('#sidebar', '-active')")
+        self.bind("tab", "toggle_class('#sidebar', '-active')")
 
     def on_mount(self):
         """Build layout here."""

@@ -39,12 +39,15 @@ class LayoutProperty:
 @rich.repr.auto
 class View(Widget):
 
-    layout_factory: ClassVar[Callable[[], Layout]]
+    CSS = """
+        docks: main=top
+    """
 
-    def __init__(
-        self, layout: Layout = None, name: str | None = None, id: str | None = None
-    ) -> None:
-        self._layout: Layout = layout or self.layout_factory()
+    def __init__(self, name: str | None = None, id: str | None = None) -> None:
+
+        from .layouts.dock import DockLayout
+
+        self._layout: Layout = DockLayout()
 
         self.mouse_over: Widget | None = None
         self.widgets: set[Widget] = set()
@@ -56,7 +59,6 @@ class View(Widget):
             Offset(),
             [],
         )
-
         super().__init__(name=name, id=id)
 
     def __init_subclass__(

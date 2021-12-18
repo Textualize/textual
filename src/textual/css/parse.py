@@ -5,7 +5,8 @@ from rich import print
 from functools import lru_cache
 from typing import Iterator, Iterable
 
-from .tokenize import tokenize, Token
+from .styles import Styles
+from .tokenize import tokenize, tokenize_declarations, Token
 from .tokenizer import EOFError
 
 from .model import (
@@ -157,6 +158,44 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
     yield rule_set
 
 
+def parse_declarations(css: str, path: str) -> Styles:
+
+    tokens = iter(tokenize_declarations(css, path))
+    styles_builder = StylesBuilder()
+
+    declaration: Declaration | None = None
+    errors: list[tuple[Token, str]] = []
+
+    while True:
+        token = next(tokens, None)
+        if token is None:
+            break
+        token_name = token.name
+        if token_name in ("whitespace", "declaration_end", "eof"):
+            continue
+        if token_name == "declaration_name":
+            if declaration and declaration.tokens:
+                try:
+                    styles_builder.add_declaration(declaration)
+                except DeclarationError as error:
+                    errors.append((error.token, error.message))
+            declaration = Declaration(token, "")
+            declaration.name = token.value.rstrip(":")
+        elif token_name == "declaration_set_end":
+            break
+        else:
+            if declaration:
+                declaration.tokens.append(token)
+
+    if declaration and declaration.tokens:
+        try:
+            styles_builder.add_declaration(declaration)
+        except DeclarationError as error:
+            errors.append((error.token, error.message))
+
+    return styles_builder.styles
+
+
 def parse(css: str, path: str) -> Iterable[RuleSet]:
 
     tokens = iter(tokenize(css, path))
@@ -206,3 +245,10 @@ def parse(css: str, path: str) -> Iterable[RuleSet]:
 
 if __name__ == "__main__":
     print(parse_selectors("Foo > Bar.baz { foo: bar"))
+
+    CSS = """
+text: on red;
+docks: main=top;
+    """
+
+    print(parse_declarations(CSS, "foo"))
