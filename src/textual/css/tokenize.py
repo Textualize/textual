@@ -62,7 +62,7 @@ expect_declaration_content = Expect(
 )
 
 
-class StateTokenizer:
+class TokenizerState:
     EXPECT = expect_selector
     STATE_MAP = {
         "selector_start": expect_selector_continue,
@@ -95,7 +95,7 @@ class StateTokenizer:
             yield token
 
 
-class DeclarationStateTokenizer(StateTokenizer):
+class DeclarationTokenizerState(TokenizerState):
     EXPECT = expect_declaration_solo
     STATE_MAP = {
         "declaration_name": expect_declaration_content,
@@ -103,8 +103,8 @@ class DeclarationStateTokenizer(StateTokenizer):
     }
 
 
-tokenize = StateTokenizer()
-tokenize_declarations = DeclarationStateTokenizer()
+tokenize = TokenizerState()
+tokenize_declarations = DeclarationTokenizerState()
 
 
 # def tokenize(

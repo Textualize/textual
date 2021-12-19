@@ -159,6 +159,15 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
 
 
 def parse_declarations(css: str, path: str) -> Styles:
+    """Parse declarations and return a Styles object.
+
+    Args:
+        css (str): String containing CSS.
+        path (str): Path to the CSS, or something else to identify the location.
+
+    Returns:
+        Styles: A styles object.
+    """
 
     tokens = iter(tokenize_declarations(css, path))
     styles_builder = StylesBuilder()
@@ -178,6 +187,7 @@ def parse_declarations(css: str, path: str) -> Styles:
                 try:
                     styles_builder.add_declaration(declaration)
                 except DeclarationError as error:
+                    raise
                     errors.append((error.token, error.message))
             declaration = Declaration(token, "")
             declaration.name = token.value.rstrip(":")
@@ -191,6 +201,7 @@ def parse_declarations(css: str, path: str) -> Styles:
         try:
             styles_builder.add_declaration(declaration)
         except DeclarationError as error:
+            raise
             errors.append((error.token, error.message))
 
     return styles_builder.styles
@@ -248,7 +259,7 @@ if __name__ == "__main__":
 
     CSS = """
 text: on red;
-docks: main=top;
+docksX: main=top;
     """
 
     print(parse_declarations(CSS, "foo"))

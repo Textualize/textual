@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from functools import lru_cache
 import sys
 from typing import Any, Iterable, NamedTuple
 
@@ -132,6 +133,14 @@ class Styles:
     layer = NameProperty()
     layers = NameListProperty()
     transitions = TransitionsProperty()
+
+    @classmethod
+    @lru_cache(maxsize=1024)
+    def parse(cls, css: str, path: str) -> Styles:
+        from .parse import parse_declarations
+
+        styles = parse_declarations(css, path)
+        return styles
 
     def refresh(self, layout: bool = False) -> None:
         self._repaint_required = True

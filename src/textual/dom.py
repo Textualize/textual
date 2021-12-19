@@ -29,6 +29,8 @@ class DOMNode(MessagePump):
 
     """
 
+    STYLES = ""
+
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
         self._name = name
         self._id = id
@@ -36,6 +38,8 @@ class DOMNode(MessagePump):
         self.children = NodeList()
         self.styles: Styles = Styles()
         super().__init__()
+        self.default_styles = Styles.parse(self.STYLES, repr(self))
+        self._default_rules = self.default_styles.extract_rules((0, 0, 0))
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self._name, None

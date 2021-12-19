@@ -113,6 +113,8 @@ class Stylesheet:
         rule_attributes = defaultdict(list)
 
         _check_rule = self._check_rule
+        for key, default_specificity, value in node._default_rules:
+            rule_attributes[key].append((default_specificity, value))
         for rule in self.rules:
             for specificity in _check_rule(rule, node):
                 for key, rule_specificity, value in rule.styles.extract_rules(

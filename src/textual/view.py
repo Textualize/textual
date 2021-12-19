@@ -39,7 +39,7 @@ class LayoutProperty:
 @rich.repr.auto
 class View(Widget):
 
-    CSS = """
+    STYLES = """
         docks: main=top
     """
 
