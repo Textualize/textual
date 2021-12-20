@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import cast, Iterable, Iterator, TYPE_CHECKING
+from typing import Any, cast, Iterable, Iterator, TYPE_CHECKING
 
 from rich.highlighter import ReprHighlighter
 import rich.repr
@@ -135,11 +135,14 @@ class DOMNode(MessagePump):
         add_children(tree, self)
         return tree
 
+    def apply_style_rules(self, rules: Iterable[tuple[str, Any]]) -> None:
+        self.styles.apply_rules(rules)
+
     def reset_styles(self) -> None:
         from .widget import Widget
 
         for node in self.walk_children():
-            node.styles = Styles()
+            # node.styles = Styles()
             if isinstance(node, Widget):
                 node.clear_render_cache()
 
@@ -185,7 +188,6 @@ class DOMNode(MessagePump):
         """Toggle class names"""
         self._classes.symmetric_difference_update(class_names)
         self.app.stylesheet.update(self.app)
-        self.log(self.styles.css)
 
     def has_psuedo_class(self, *class_names: str) -> bool:
         """Check for psuedo class (such as hover, focus etc)"""

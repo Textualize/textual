@@ -7,6 +7,7 @@ from typing import (
     TYPE_CHECKING,
     Callable,
     ClassVar,
+    Iterable,
     NamedTuple,
     cast,
 )
@@ -235,6 +236,30 @@ class Widget(DOMNode):
     def get_style_at(self, x: int, y: int) -> Style:
         offset_x, offset_y = self.root_view.get_offset(self)
         return self.root_view.get_style_at(x + offset_x, y + offset_y)
+
+    def apply_style_rules(self, rules: Iterable[tuple[str, Any]]) -> None:
+        styles = self.styles
+        is_animatable = styles.ANIMATABLE.__contains__
+        for key, value in rules:
+            current = getattr(styles, f"_rule_{key}")
+            if current == value:
+                continue
+            self.log(key, "=", value)
+            if is_animatable(key):
+                self.log("animatable", key)
+                transition = styles.get_transition(key)
+                self.log("transition", transition)
+                if transition is None:
+                    setattr(styles, f"_rule_{key}", value)
+                else:
+                    duration, easing, delay = transition
+                    self.log("ANIMATING")
+                    self.app.animator.animate(
+                        styles, key, value, duration=duration, easing=easing
+                    )
+            else:
+                self.log("not animatable")
+                setattr(styles, f"_rule_{key}", value)
 
     async def call_later(self, callback: Callable, *args, **kwargs) -> None:
         await self.app.call_later(callback, *args, **kwargs)

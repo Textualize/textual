@@ -8,14 +8,15 @@ from typing import Callable, TypeVar
 
 from dataclasses import dataclass
 
+from . import log
 from ._easing import DEFAULT_EASING, EASING
 from ._timer import Timer
 from ._types import MessageTarget
 
 if sys.version_info >= (3, 8):
-    from typing import Protocol
+    from typing import Protocol, runtime_checkable
 else:
-    from typing_extensions import Protocol
+    from typing_extensions import Protocol, runtime_checkable
 
 
 EasingFunction = Callable[[float], float]
@@ -23,6 +24,7 @@ EasingFunction = Callable[[float], float]
 T = TypeVar("T")
 
 
+@runtime_checkable
 class Animatable(Protocol):
     def blend(self: T, destination: T, factor: float) -> T:
         ...
@@ -47,28 +49,30 @@ class Animation:
         def blend(start: AnimatableT, end: AnimatableT, factor: float) -> AnimatableT:
             return start.blend(end, factor)
 
-        blend_function = (
-            blend_float if isinstance(self.start_value, (int, float)) else blend
-        )
-
         if self.duration == 0:
             value = self.end_value
         else:
             factor = min(1.0, (time - self.start_time) / self.duration)
             eased_factor = self.easing_function(factor)
-            # value = blend_function(self.start_value, self.end_value, eased_factor)
 
-            if self.end_value > self.start_value:
-                eased_factor = self.easing_function(factor)
-                value = (
-                    self.start_value
-                    + (self.end_value - self.start_value) * eased_factor
-                )
+            if isinstance(self.start_value, Animatable):
+                assert isinstance(self.end_value, Animatable)
+                value = self.start_value.blend(self.end_value, eased_factor)
             else:
-                eased_factor = 1 - self.easing_function(factor)
-                value = (
-                    self.end_value + (self.start_value - self.end_value) * eased_factor
-                )
+                assert isinstance(self.start_value, float)
+                assert isinstance(self.end_value, float)
+                if self.end_value > self.start_value:
+                    eased_factor = self.easing_function(factor)
+                    value = (
+                        self.start_value
+                        + (self.end_value - self.start_value) * eased_factor
+                    )
+                else:
+                    eased_factor = 1 - self.easing_function(factor)
+                    value = (
+                        self.end_value
+                        + (self.start_value - self.end_value) * eased_factor
+                    )
         setattr(self.obj, self.attribute, value)
         return value == self.end_value
 
@@ -134,7 +138,7 @@ class Animator:
         speed: float | None = None,
         easing: EasingFunction | str = DEFAULT_EASING,
     ) -> None:
-
+        log("animate", obj, attribute, value)
         start_time = time()
 
         animation_key = (obj, attribute)

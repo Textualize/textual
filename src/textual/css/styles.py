@@ -10,6 +10,7 @@ from rich.color import Color
 import rich.repr
 from rich.style import Style
 
+from .. import log
 from .errors import StyleValueError
 from ._error_tools import friendly_list
 from .constants import (
@@ -134,6 +135,18 @@ class Styles:
     layers = NameListProperty()
     transitions = TransitionsProperty()
 
+    ANIMATABLE = {
+        "offset-x",
+        "offset-y",
+        "offset",
+        "padding",
+        "margin",
+        "width",
+        "height",
+        "min_width",
+        "min_height",
+    }
+
     @classmethod
     @lru_cache(maxsize=1024)
     def parse(cls, css: str, path: str) -> Styles:
@@ -173,6 +186,12 @@ class Styles:
     def has_offset(self) -> bool:
         return self._rule_offset is not None
 
+    def get_transition(self, key: str) -> Transition | None:
+        if key in self.ANIMATABLE:
+            return self.transitions.get(key, None)
+        else:
+            return None
+
     def extract_rules(
         self, specificity: tuple[int, int, int]
     ) -> list[tuple[str, tuple[int, int, int, int], Any]]:
@@ -188,7 +207,7 @@ class Styles:
         ]
         return rules
 
-    def apply_rules(self, rules: Iterable[tuple[str, Any]]):
+    def apply_rules(self, rules: Iterable[tuple[str, object]]):
         for key, value in rules:
             setattr(self, f"_rule_{key}", value)
 
