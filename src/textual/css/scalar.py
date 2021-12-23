@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import Enum, unique
 import re
-from typing import Iterable, NamedTuple
+from typing import Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 
@@ -58,6 +58,12 @@ RESOLVE_MAP = {
     Unit.VIEW_WIDTH: lambda value, size, viewport: viewport[0] * value / 100,
     Unit.VIEW_HEIGHT: lambda value, size, viewport: viewport[1] * value / 100,
 }
+
+
+if TYPE_CHECKING:
+    from ..widget import Widget
+    from .styles import Styles
+    from .._animator import EasingFunction
 
 
 def get_symbols(units: Iterable[Unit]) -> list[str]:

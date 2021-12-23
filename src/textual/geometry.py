@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from math import sqrt
 from typing import Any, cast, NamedTuple, Tuple, Union, TypeVar
 
 
@@ -58,6 +59,12 @@ class Offset(NamedTuple):
             return Offset(_x - x, _y - y)
         return NotImplemented
 
+    def __mul__(self, other: object) -> Offset:
+        if isinstance(other, (float, int)):
+            x, y = self
+            return Offset(int(x * other), int(y * other))
+        return NotImplemented
+
     def blend(self, destination: Offset, factor: float) -> Offset:
         """Blend (interpolate) to a new point.
 
@@ -72,6 +79,20 @@ class Offset(NamedTuple):
         x2, y2 = destination
         return Offset(int(x1 + (x2 - x1) * factor), int((y1 + (y2 - y1) * factor)))
 
+    def get_distance_to(self, other: Offset) -> float:
+        """Get the distance to another offset.
+
+        Args:
+            other (Offset): An offset
+
+        Returns:
+            float: Distance to other offset
+        """
+        x1, y1 = self
+        x2, y2 = other
+        distance = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
+        return distance
+
 
 class Size(NamedTuple):
     """An area defined by its width and height."""
@@ -80,7 +101,7 @@ class Size(NamedTuple):
     height: int = 0
 
     def __bool__(self) -> bool:
-        """A Size is Falsey if it has area 0."""
+        """A Size is Falsy if it has area 0."""
         return self.width * self.height != 0
 
     @property

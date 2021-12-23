@@ -36,7 +36,7 @@ class DOMNode(MessagePump):
         self._id = id
         self._classes: set[str] = set()
         self.children = NodeList()
-        self.styles: Styles = Styles()
+        self.styles: Styles = Styles(self)
         super().__init__()
         self.default_styles = Styles.parse(self.STYLES, repr(self))
         self._default_rules = self.default_styles.extract_rules((0, 0, 0))
@@ -134,9 +134,6 @@ class DOMNode(MessagePump):
 
         add_children(tree, self)
         return tree
-
-    def apply_style_rules(self, rules: Iterable[tuple[str, Any]]) -> None:
-        self.styles.apply_rules(rules)
 
     def reset_styles(self) -> None:
         from .widget import Widget

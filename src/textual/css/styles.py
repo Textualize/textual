@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from functools import lru_cache
 import sys
-from typing import Any, Iterable, NamedTuple
+from typing import Any, Iterable, NamedTuple, TYPE_CHECKING
 
 from rich import print
 from rich.color import Color
@@ -11,7 +11,10 @@ import rich.repr
 from rich.style import Style
 
 from .. import log
+from .._animator import SimpleAnimation, Animation, EasingFunction
+from .._types import MessageTarget
 from .errors import StyleValueError
+from .. import events
 from ._error_tools import friendly_list
 from .constants import (
     VALID_DISPLAY,
@@ -19,6 +22,7 @@ from .constants import (
     VALID_LAYOUT,
     NULL_SPACING,
 )
+from .scalar_animation import ScalarAnimation
 from ..geometry import NULL_OFFSET, Offset, Spacing
 from .scalar import Scalar, ScalarOffset, Unit
 from .transition import Transition
@@ -47,6 +51,10 @@ else:
     from typing_extensions import Literal
 
 
+if TYPE_CHECKING:
+    from ..dom import DOMNode
+
+
 class DockGroup(NamedTuple):
     name: str
     edge: Edge
@@ -57,7 +65,8 @@ class DockGroup(NamedTuple):
 @dataclass
 class Styles:
 
-    _changed: float = 0
+    node: DOMNode | None = None
+
     _rule_display: Display | None = None
     _rule_visibility: Visibility | None = None
     _rule_layout: str | None = None
@@ -155,6 +164,31 @@ class Styles:
         styles = parse_declarations(css, path)
         return styles
 
+    def __textual_animation__(
+        self,
+        attribute: str,
+        value: Any,
+        start_time: float,
+        duration: float | None,
+        speed: float | None,
+        easing: EasingFunction,
+    ) -> Animation | None:
+        from ..widget import Widget
+
+        assert isinstance(self.node, Widget)
+        if isinstance(value, ScalarOffset):
+            return ScalarAnimation(
+                self.node,
+                self,
+                start_time,
+                attribute,
+                value,
+                duration=duration,
+                speed=speed,
+                easing=easing,
+            )
+        return None
+
     def refresh(self, layout: bool = False) -> None:
         self._repaint_required = True
         self._layout_required = layout
@@ -207,9 +241,36 @@ class Styles:
         ]
         return rules
 
-    def apply_rules(self, rules: Iterable[tuple[str, object]]):
-        for key, value in rules:
-            setattr(self, f"_rule_{key}", value)
+    def apply_rules(self, rules: Iterable[tuple[str, object]], animate: bool = False):
+        if animate or self.node is None:
+            for key, value in rules:
+                setattr(self, f"_rule_{key}", value)
+        else:
+            styles = self
+            is_animatable = styles.ANIMATABLE.__contains__
+            for key, value in rules:
+                current = getattr(styles, f"_rule_{key}")
+                if current == value:
+                    continue
+                log(key, "=", value)
+                if is_animatable(key):
+                    log("animatable", key)
+                    transition = styles.get_transition(key)
+                    log("transition", transition)
+                    if transition is None:
+                        setattr(styles, f"_rule_{key}", value)
+                    else:
+                        duration, easing, delay = transition
+                        log("ANIMATING")
+                        self.node.app.animator.animate(
+                            styles, key, value, duration=duration, easing=easing
+                        )
+                else:
+                    log("not animatable")
+                    setattr(styles, f"_rule_{key}", value)
+
+        if self.node is not None:
+            self.node.post_message_no_wait(events.Null(self.node))
 
     def __rich_repr__(self) -> rich.repr.Result:
         for rule_name, internal_rule_name in zip(RULE_NAMES, INTERNAL_RULE_NAMES):

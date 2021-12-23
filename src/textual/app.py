@@ -21,7 +21,7 @@ from . import actions
 from .dom import DOMNode
 from ._animator import Animator
 from .binding import Bindings, NoBinding
-from .geometry import Offset, Region
+from .geometry import Offset, Region, Size
 from . import log
 from ._callback import invoke
 from ._context import active_app
@@ -149,12 +149,17 @@ class App(DOMNode):
         return self._animator
 
     @property
-    def view(self) -> DockView:
+    def view(self) -> View:
         return self._view_stack[-1]
 
     @property
     def css_type(self) -> str:
         return "app"
+
+    @property
+    def size(self) -> Size:
+        width, height = self.console.size
+        return Size(*self.console.size)
 
     def log(self, *args: Any, verbosity: int = 1, **kwargs) -> None:
         """Write to logs.

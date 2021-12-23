@@ -129,7 +129,7 @@ class Stylesheet:
             for name, specificity_rules in rule_attributes.items()
         ]
 
-        node.apply_style_rules(node_rules)
+        node.styles.apply_rules(node_rules)
 
     def update(self, root: DOMNode) -> None:
         """Update a node and its children."""
