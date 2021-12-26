@@ -259,13 +259,13 @@ class DocksProperty:
         return docks
 
 
-class DockGroupProperty:
+class DockProperty:
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
-        return obj._rule_dock_group or ""
+        return obj._rule_dock or ""
 
     def __set__(self, obj: Styles, spacing: str | None) -> str | None:
         obj.refresh(True)
-        obj._rule_dock_group = spacing
+        obj._rule_dock = spacing
         return spacing
 
 
@@ -279,9 +279,12 @@ class OffsetProperty:
         )
 
     def __set__(
-        self, obj: Styles, offset: tuple[int | str, int | str]
-    ) -> tuple[int | str, int | str]:
+        self, obj: Styles, offset: tuple[int | str, int | str] | ScalarOffset
+    ) -> tuple[int | str, int | str] | ScalarOffset:
         obj.refresh(True)
+        if isinstance(offset, ScalarOffset):
+            setattr(obj, self._internal_name, offset)
+            return offset
         x, y = offset
         scalar_x = (
             Scalar.parse(x, Unit.WIDTH)

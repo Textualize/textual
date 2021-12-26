@@ -61,7 +61,7 @@ class Widget(DOMNode):
     can_focus: bool = False
 
     STYLES = """
-    dock-group: main;
+    dock: _default;
     """
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
@@ -194,6 +194,9 @@ class Widget(DOMNode):
         )
         return gutter
 
+    def on_style_change(self) -> None:
+        self.clear_render_cache()
+
     def _update_size(self, size: Size) -> None:
         self._size = size
 
@@ -286,14 +289,12 @@ class Widget(DOMNode):
     async def on_idle(self, event: events.Idle) -> None:
         repaint, layout = self.styles.check_refresh()
         if layout or self.check_layout():
-            self.log("layout required")
-            self.render_cache = None
+            # self.render_cache = None
             self.reset_check_repaint()
             self.reset_check_layout()
             await self.emit(Layout(self))
         elif repaint or self.check_repaint():
-            self.log("repaint required")
-            self.render_cache = None
+            # self.render_cache = None
             self.reset_check_repaint()
             await self.emit(Update(self, self))
 

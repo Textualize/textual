@@ -6,6 +6,7 @@ class BasicApp(App):
     """A basic app demonstrating CSS"""
 
     def on_load(self):
+        """Bind keys here."""
         self.bind("tab", "toggle_class('#sidebar', '-active')")
 
     def on_mount(self):
@@ -18,4 +19,4 @@ class BasicApp(App):
         )
 
 
-BasicApp.run(log="textual.log", css_file="basic.css", watch_css=True)
+BasicApp.run(css_file="basic.css", watch_css=True)

@@ -31,7 +31,7 @@ from ._style_properties import (
     BoxProperty,
     ColorProperty,
     DocksProperty,
-    DockGroupProperty,
+    DockProperty,
     OffsetProperty,
     NameProperty,
     NameListProperty,
@@ -94,7 +94,7 @@ class Styles:
     _rule_min_width: Scalar | None = None
     _rule_min_height: Scalar | None = None
 
-    _rule_dock_group: str | None = None
+    _rule_dock: str | None = None
     _rule_docks: tuple[DockGroup, ...] | None = None
 
     _rule_layers: tuple[str, ...] | None = None
@@ -137,7 +137,7 @@ class Styles:
     min_width = ScalarProperty(percent_unit=Unit.WIDTH)
     min_height = ScalarProperty(percent_unit=Unit.HEIGHT)
 
-    dock_group = DockGroupProperty()
+    dock = DockProperty()
     docks = DocksProperty()
 
     layer = NameProperty()
@@ -145,8 +145,6 @@ class Styles:
     transitions = TransitionsProperty()
 
     ANIMATABLE = {
-        "offset-x",
-        "offset-y",
         "offset",
         "padding",
         "margin",
@@ -192,6 +190,8 @@ class Styles:
     def refresh(self, layout: bool = False) -> None:
         self._repaint_required = True
         self._layout_required = layout
+        # if self.node is not None:
+        #     self.node.post_message_no_wait(events.Null(self.node))
 
     def check_refresh(self) -> tuple[bool, bool]:
         result = (self._repaint_required, self._layout_required)
@@ -252,25 +252,19 @@ class Styles:
                 current = getattr(styles, f"_rule_{key}")
                 if current == value:
                     continue
-                log(key, "=", value)
                 if is_animatable(key):
-                    log("animatable", key)
                     transition = styles.get_transition(key)
-                    log("transition", transition)
                     if transition is None:
                         setattr(styles, f"_rule_{key}", value)
                     else:
                         duration, easing, delay = transition
-                        log("ANIMATING")
                         self.node.app.animator.animate(
                             styles, key, value, duration=duration, easing=easing
                         )
                 else:
-                    log("not animatable")
                     setattr(styles, f"_rule_{key}", value)
-
         if self.node is not None:
-            self.node.post_message_no_wait(events.Null(self.node))
+            self.node.on_style_change()
 
     def __rich_repr__(self) -> rich.repr.Result:
         for rule_name, internal_rule_name in zip(RULE_NAMES, INTERNAL_RULE_NAMES):
@@ -362,8 +356,8 @@ class Styles:
         if self.offset:
             x, y = self.offset
             append_declaration("offset", f"{x} {y}")
-        if self._rule_dock_group:
-            append_declaration("dock-group", self._rule_dock_group)
+        if self._rule_dock:
+            append_declaration("dock-group", self._rule_dock)
         if self._rule_docks:
             append_declaration(
                 "docks",
@@ -416,7 +410,7 @@ if __name__ == "__main__":
     styles.outline_right = ("solid", "red")
     styles.docks = "foo bar"
     styles.text_style = "italic"
-    styles.dock_group = "bar"
+    styles.dock = "bar"
     styles.layers = "foo bar"
 
     from rich import inspect, print

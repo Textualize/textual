@@ -49,9 +49,7 @@ class LayoutMap:
 
         layout_offset = Offset(0, 0)
         if widget.styles.has_offset:
-            log("r", region, "c", clip.size)
             layout_offset = widget.styles.offset.resolve(region.size, clip.size)
-            log("layout_offset", layout_offset)
 
         self.widgets[widget] = RenderRegion(region + layout_offset, order, clip)
 
@@ -70,7 +68,7 @@ class LayoutMap:
                     self.add_widget(
                         sub_widget,
                         sub_region + region.origin - scroll,
-                        sub_widget.z,
+                        sub_widget.z + (z,),
                         sub_clip,
                     )
             view.virtual_size = total_region.size

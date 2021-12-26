@@ -16,7 +16,6 @@ App > View {
 #sidebar.-active {
   offset-x: 0;
   transition: offset 400ms in_out_cubic;
-  text: on red;
 }
 
 #header {

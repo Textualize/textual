@@ -4,8 +4,7 @@ from abc import ABC, abstractmethod
 import asyncio
 import sys
 from time import time
-from tracemalloc import start
-from typing import Callable, TypeVar
+from typing import Any, Callable, TypeVar
 
 from dataclasses import dataclass
 
@@ -62,7 +61,6 @@ class SimpleAnimation(Animation):
             factor = min(1.0, (time - self.start_time) / self.duration)
             eased_factor = self.easing(factor)
 
-            log("ANIMATE", self.start_value, self.end_value)
             if isinstance(self.start_value, Animatable):
                 assert isinstance(
                     self.end_value, Animatable, "end_value must be animatable"
@@ -117,6 +115,7 @@ class BoundAnimator:
 class Animator:
     def __init__(self, target: MessageTarget, frames_per_second: int = 60) -> None:
         self._animations: dict[tuple[object, str], SimpleAnimation] = {}
+        self.target = target
         self._timer = Timer(
             target,
             1 / frames_per_second,
@@ -144,13 +143,13 @@ class Animator:
         self,
         obj: object,
         attribute: str,
-        value: float,
+        value: Any,
         *,
         duration: float | None = None,
         speed: float | None = None,
         easing: EasingFunction | str = DEFAULT_EASING,
     ) -> None:
-        log("animate", obj, attribute, value)
+
         start_time = time()
 
         animation_key = (id(obj), attribute)
@@ -167,7 +166,7 @@ class Animator:
                 start_time,
                 duration=duration,
                 speed=speed,
-                easing=easing,
+                easing=easing_function,
             )
 
         if animation is None:
@@ -206,3 +205,4 @@ class Animator:
                 animation = self._animations[animation_key]
                 if animation(animation_time):
                     del self._animations[animation_key]
+            self.target.view.refresh(True, True)

@@ -158,7 +158,6 @@ class App(DOMNode):
 
     @property
     def size(self) -> Size:
-        width, height = self.console.size
         return Size(*self.console.size)
 
     def log(self, *args: Any, verbosity: int = 1, **kwargs) -> None:
@@ -240,7 +239,7 @@ class App(DOMNode):
                 self.reset_styles()
                 self.stylesheet = stylesheet
                 self.stylesheet.update(self)
-                self.view.refresh(layout=True)
+                self.refresh(layout=True)
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
         self.register(self.view, *anon_widgets, **widgets)

@@ -40,7 +40,8 @@ class LayoutProperty:
 class View(Widget):
 
     STYLES = """
-        docks: main=top
+        docks: main=top;
+
     """
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
@@ -120,7 +121,6 @@ class View(Widget):
         if cached_size == size and cached_scroll == scroll:
             return arrangement
         arrangement = list(self._layout.arrange(self, size, scroll))
-        self.log(arrangement)
         self._cached_arrangement = (size, scroll, arrangement)
         return arrangement
 

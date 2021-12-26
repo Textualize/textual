@@ -294,15 +294,15 @@ class StylesBuilder:
         style_definition = " ".join(token.value for token in tokens)
         self.styles.text_style = style_definition
 
-    def process_dock_group(self, name: str, tokens: list[Token]) -> None:
+    def process_dock(self, name: str, tokens: list[Token]) -> None:
 
         if len(tokens) > 1:
             self.error(
                 name,
                 tokens[1],
-                f"unexpected tokens in dock-group declaration",
+                f"unexpected tokens in dock declaration",
             )
-        self.styles._rule_dock_group = tokens[0].value if tokens else ""
+        self.styles._rule_dock = tokens[0].value if tokens else ""
 
     def process_docks(self, name: str, tokens: list[Token]) -> None:
         docks: list[DockGroup] = []
@@ -333,7 +333,7 @@ class StylesBuilder:
                     token,
                     f"unexpected token {token.value!r} in docks declaration",
                 )
-        self.styles._rule_docks = tuple(docks)
+        self.styles._rule_docks = tuple(docks + [DockGroup("_default", "top", 0)])
 
     def process_layer(self, name: str, tokens: list[Token]) -> None:
         if len(tokens) > 1:

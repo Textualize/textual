@@ -52,14 +52,14 @@ class DockLayout(Layout):
         for child in view.children:
             assert isinstance(child, Widget)
             if child.visible:
-                groups[child.styles.dock_group].append(child)
+                groups[child.styles.dock].append(child)
         docks: list[Dock] = []
         append_dock = docks.append
         for name, edge, z in view.styles.docks:
             append_dock(Dock(edge, groups[name], z))
         return docks
 
-    def get_widgets(self, view: View) -> Iterable[DOMNode]:
+    def get_widgets(self, view: View) -> Iterable[Widget]:
         for dock in self.get_docks(view):
             yield from dock.widgets
 

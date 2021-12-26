@@ -128,7 +128,6 @@ class Stylesheet:
             (name, max(specificity_rules, key=get_first_item)[1])
             for name, specificity_rules in rule_attributes.items()
         ]
-
         node.styles.apply_rules(node_rules)
 
     def update(self, root: DOMNode) -> None:

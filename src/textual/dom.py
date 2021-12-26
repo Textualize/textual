@@ -139,9 +139,14 @@ class DOMNode(MessagePump):
         from .widget import Widget
 
         for node in self.walk_children():
-            # node.styles = Styles()
+            node.styles = Styles(node=node)
             if isinstance(node, Widget):
                 node.clear_render_cache()
+                node._repaint_required = True
+                node._layout_required = True
+
+    def on_style_change(self) -> None:
+        pass
 
     def add_child(self, node: DOMNode) -> None:
         self.children._append(node)

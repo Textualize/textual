@@ -145,6 +145,7 @@ class LinuxDriver(Driver):
             if not self.exit_event.is_set():
                 signal.signal(signal.SIGWINCH, signal.SIG_DFL)
                 self._disable_mouse_support()
+                termios.tcflush(self.fileno, termios.TCIFLUSH)
                 self.exit_event.set()
                 if self._key_thread is not None:
                     self._key_thread.join()
