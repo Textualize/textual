@@ -224,8 +224,7 @@ class App(DOMNode):
         asyncio.run(run_app())
 
     async def _on_css_change(self) -> None:
-        self.log("CSS changed")
-        self.log("css_file", self.css_file)
+
         if self.css_file is not None:
             stylesheet = Stylesheet()
             try:
@@ -235,11 +234,10 @@ class App(DOMNode):
                 self.log(error)
                 self.console.bell()
             else:
-                self.log("reseting stylesheet")
                 self.reset_styles()
                 self.stylesheet = stylesheet
                 self.stylesheet.update(self)
-                self.refresh(layout=True)
+                self.view.refresh(layout=True)
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
         self.register(self.view, *anon_widgets, **widgets)

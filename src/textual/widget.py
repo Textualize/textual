@@ -65,12 +65,12 @@ class Widget(DOMNode):
     """
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
-        if name is None:
-            class_name = self.__class__.__name__
-            Widget._counts.setdefault(class_name, 0)
-            Widget._counts[class_name] += 1
-            _count = self._counts[class_name]
-            name = f"{class_name}{_count}"
+        # if name is None:
+        #     class_name = self.__class__.__name__
+        #     Widget._counts.setdefault(class_name, 0)
+        #     Widget._counts[class_name] += 1
+        #     _count = self._counts[class_name]
+        #     name = f"{class_name}{_count}"
 
         self._size = Size(0, 0)
         self._repaint_required = False
@@ -108,7 +108,10 @@ class Widget(DOMNode):
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "id", self.id, None
-        yield "name", self.name
+        if self.name:
+            yield "name", self.name
+        if self.classes:
+            yield "classes", self.classes
 
     def __rich__(self) -> RenderableType:
         renderable = self.render_styled()
@@ -138,20 +141,27 @@ class Widget(DOMNode):
         renderable = self.render()
         styles = self.styles
 
+        parent_text_style = self.parent.text_style
+        text_style = styles.text
+        renderable_text_style = parent_text_style + text_style
+        if renderable_text_style:
+            renderable = Styled(renderable, renderable_text_style)
+
         if styles.has_padding:
-            renderable = Padding(renderable, styles.padding)
+            renderable = Padding(
+                renderable, styles.padding, style=renderable_text_style
+            )
 
         if styles.has_border:
-            renderable = Border(renderable, styles.border)
+            renderable = Border(renderable, styles.border, style=renderable_text_style)
 
         if styles.has_margin:
-            renderable = Padding(renderable, styles.margin)
+            renderable = Padding(renderable, styles.margin, style=parent_text_style)
 
         if styles.has_outline:
-            renderable = Border(renderable, styles.outline, outline=True)
-
-        if styles.text:
-            renderable = Styled(renderable, styles.text)
+            renderable = Border(
+                renderable, styles.outline, outline=True, style=parent_text_style
+            )
 
         return renderable
 
@@ -263,6 +273,7 @@ class Widget(DOMNode):
         elif repaint:
             self.clear_render_cache()
             self._repaint_required = True
+        self.log("refresh", repaint, layout)
         self.post_message_no_wait(events.Null(self))
 
     def render(self) -> RenderableType:

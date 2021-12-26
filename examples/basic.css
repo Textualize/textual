@@ -1,6 +1,6 @@
 App > View {
   layout: dock;
-  docks: side=left/1 header=top footer=bottom;
+  docks: side=left/1;
 }
 
 #sidebar {
@@ -16,24 +16,21 @@ App > View {
 #sidebar.-active {
   offset-x: 0;
   transition: offset 400ms in_out_cubic;
-  text: on red;
 }
 
 #header {
   text: on #173f5f;
-  dock: header;
+
   height: 3;
   border: hkey white;
 }
 
 #footer {
-  dock: header;
   height: 3;
   border-top: hkey #0f2b41;
   text: #3a3009 on #f6d55c;
 }
 
 #content {
-  dock: header;
   text: bold on #20639b;
 }

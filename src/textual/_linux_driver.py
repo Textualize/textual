@@ -52,8 +52,8 @@ class LinuxDriver(Driver):
         write("\x1b[?1015h")  # SET_VT200_HIGHLIGHT_MOUSE
         write("\x1b[?1006h")  # SET_SGR_EXT_MODE_MOUSE
 
-        # write("\x1b[?1007h")
-        # self.console.file.flush()
+        write("\x1b[?1007h")
+        self.console.file.flush()
 
         # Note: E.g. lxterminal understands 1000h, but not the urxvt or sgr
         #       extensions.
@@ -64,7 +64,7 @@ class LinuxDriver(Driver):
         write("\x1b[?1003l")  #
         write("\x1b[?1015l")
         write("\x1b[?1006l")
-        # self.console.file.flush()
+        self.console.file.flush()
 
     def start_application_mode(self):
 

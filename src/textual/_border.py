@@ -28,10 +28,12 @@ class Border:
         renderable: RenderableType,
         edge_styles: tuple[EdgeStyle, EdgeStyle, EdgeStyle, EdgeStyle],
         outline: bool = False,
+        style: StyleType = "",
     ):
         self.renderable = renderable
         self.edge_styles = edge_styles
         self.outline = outline
+        self.style = style
 
         (
             (top, top_style),
@@ -75,7 +77,13 @@ class Border:
         self, console: "Console", options: "ConsoleOptions"
     ) -> "RenderResult":
         top, right, bottom, left = self._sides
+        style = console.get_style(self.style)
         top_style, right_style, bottom_style, left_style = self._styles
+        if style:
+            top_style = style + top_style
+            right_style = style + right_style
+            bottom_style = style + bottom_style
+            left_style = style + left_style
         BOX = BORDER_STYLES
 
         has_left = left != "none"

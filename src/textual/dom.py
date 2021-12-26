@@ -5,6 +5,7 @@ from typing import Any, cast, Iterable, Iterator, TYPE_CHECKING
 from rich.highlighter import ReprHighlighter
 import rich.repr
 from rich.pretty import Pretty
+from rich.style import Style
 from rich.tree import Tree
 
 from .css.styles import Styles
@@ -50,7 +51,7 @@ class DOMNode(MessagePump):
     @property
     def parent(self) -> DOMNode:
         if self._parent is None:
-            raise NoParent(f"{self._parent} has no parent")
+            raise NoParent(f"{self} has no parent")
         assert isinstance(self._parent, DOMNode)
         return self._parent
 
@@ -122,6 +123,19 @@ class DOMNode(MessagePump):
         return tuple(reversed(indexes))
 
     @property
+    def text_style(self) -> Style:
+        """Get the text style (added to parent style).
+
+        Returns:
+            Style: Rich Style object.
+        """
+        return (
+            self.parent.text_style + self.styles.text
+            if self.has_parent
+            else self.styles.text
+        )
+
+    @property
     def tree(self) -> Tree:
         highlighter = ReprHighlighter()
         tree = Tree(highlighter(repr(self)))
@@ -141,7 +155,7 @@ class DOMNode(MessagePump):
         for node in self.walk_children():
             node.styles = Styles(node=node)
             if isinstance(node, Widget):
-                node.clear_render_cache()
+                # node.clear_render_cache()
                 node._repaint_required = True
                 node._layout_required = True
 
