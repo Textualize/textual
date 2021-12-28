@@ -5,10 +5,7 @@ from asyncio import (
     get_event_loop,
     CancelledError,
     Event,
-    TimeoutError,
     sleep,
-    wait,
-    wait_for,
     Task,
 )
 from time import monotonic
@@ -16,8 +13,6 @@ from typing import Awaitable, Callable, Union
 
 from rich.repr import Result, rich_repr
 
-from ._profile import timer
-from . import log
 from . import events
 from ._types import MessageTarget
 
@@ -70,29 +65,33 @@ class Timer:
         return target
 
     def start(self) -> Task:
-        self._task = get_event_loop().create_task(self.run())
+        """Start the timer return the task.
+
+        Returns:
+            Task: A Task instance for the timer.
+        """
+        self._task = get_event_loop().create_task(self._run())
         return self._task
 
     async def stop(self) -> None:
+        """Stop the timer, and block until it exists."""
         self._task.cancel()
         await self._task
 
-    async def wait(self) -> None:
-        await self._task
-
     def pause(self) -> None:
+        """Pause the timer."""
         self._active.clear()
 
     def resume(self) -> None:
+        """Result a paused timer."""
         self._active.set()
 
-    async def run(self) -> None:
+    async def _run(self) -> None:
+        """Run the timer."""
         count = 0
         _repeat = self._repeat
         _interval = self._interval
-
         start = monotonic()
-
         try:
             while _repeat is None or count <= _repeat:
                 next_timer = start + ((count + 1) * _interval)
@@ -102,7 +101,6 @@ class Timer:
                 wait_time = max(0, next_timer - monotonic())
                 if wait_time:
                     await sleep(wait_time)
-
                 event = events.Timer(
                     self.sender, timer=self, count=count, callback=self._callback
                 )
@@ -112,7 +110,5 @@ class Timer:
                 except EventTargetGone:
                     break
                 await self._active.wait()
-
         except CancelledError:
             pass
-        log(timer_id=id(self))
