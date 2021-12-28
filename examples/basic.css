@@ -1,36 +1,34 @@
+/* CSS file for basic.py */
+
 App > View {
-  layout: dock;
   docks: side=left/1;
 }
 
 #sidebar {
-  text: bold #09312e on #3caea3;
+  text: #09312e on #3caea3;
   dock: side;
   width: 30;
-  height: 1fr;
-  border-right: outer #09312e;
   offset-x: -100%;
-  transition: offset 400ms in_out_cubic;
+  transition: offset 500ms in_out_cubic;
+  border-right: outer #09312e;
 }
 
 #sidebar.-active {
   offset-x: 0;
-  transition: offset 400ms in_out_cubic;
 }
 
 #header {
-  text: on #173f5f;
-
+  text: white on #173f5f;
   height: 3;
-  border: hkey white;
-}
-
-#footer {
-  height: 3;
-  border-top: hkey #0f2b41;
-  text: #3a3009 on #f6d55c;
+  border: hkey;
 }
 
 #content {
-  text: bold on #20639b;
+  text: white on #20639b;
+  border-bottom: hkey #0f2b41;
+}
+
+#footer {
+  text: #3a3009 on #f6d55c;
+  height: 3;
 }

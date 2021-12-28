@@ -52,7 +52,7 @@ class LinuxDriver(Driver):
         write("\x1b[?1015h")  # SET_VT200_HIGHLIGHT_MOUSE
         write("\x1b[?1006h")  # SET_SGR_EXT_MODE_MOUSE
 
-        write("\x1b[?1007h")
+        # write("\x1b[?1007h")
         self.console.file.flush()
 
         # Note: E.g. lxterminal understands 1000h, but not the urxvt or sgr
@@ -110,7 +110,7 @@ class LinuxDriver(Driver):
 
         self.console.show_cursor(False)
         self.console.file.write("\033[?1003h\n")
-
+        self.console.file.flush()
         self._key_thread = Thread(
             target=self.run_input_thread, args=(asyncio.get_event_loop(),)
         )
@@ -165,6 +165,7 @@ class LinuxDriver(Driver):
 
         self.console.set_alt_screen(False)
         self.console.show_cursor(True)
+        self.console.file.flush()
 
     def run_input_thread(self, loop) -> None:
         try:
