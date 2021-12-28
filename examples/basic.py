@@ -19,4 +19,4 @@ class BasicApp(App):
         )
 
 
-BasicApp.run(css_file="basic.css", watch_css=True)
+BasicApp.run(css_file="basic.css", watch_css=True, log="textual.log")

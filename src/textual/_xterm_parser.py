@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 
+import os
 import re
-from typing import Callable, Generator
+from typing import Any, Callable, Generator
 
+from . import log
 from . import events
 from ._types import MessageTarget
 from ._parser import Awaitable, Parser, TokenCallback
@@ -22,7 +24,16 @@ class XTermParser(Parser[events.Event]):
         self.more_data = more_data
         self.last_x = 0
         self.last_y = 0
+
+        self._debug_log_file = (
+            open("keys.log", "wt") if "TEXTUAL_DEBUG" in os.environ else None
+        )
+
         super().__init__()
+
+    def debug_log(self, *args: Any) -> None:
+        if self._debug_log_file is not None:
+            self._debug_log_file.write(" ".join(args) + "\n")
 
     def parse_mouse_code(self, code: str, sender: MessageTarget) -> events.Event | None:
         sgr_match = self._re_sgr_mouse.match(code)
@@ -71,12 +82,14 @@ class XTermParser(Parser[events.Event]):
 
         while not self.is_eof:
             character = yield read1()
-            # log.debug("character=%r", character)
+            self.debug_log(f"character={character!r}")
+            # The more_data is to allow the parse to distinguish between an escape sequence
+            # and the escape key pressed
             if character == ESC and ((yield self.peek_buffer()) or more_data()):
                 sequence: str = character
                 while True:
                     sequence += yield read1()
-                    # log.debug(f"sequence=%r", sequence)
+                    self.debug_log(f"sequence={sequence!r}")
                     keys = get_ansi_sequence(sequence, None)
                     if keys is not None:
                         for key in keys:

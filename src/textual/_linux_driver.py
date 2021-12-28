@@ -7,7 +7,6 @@ import selectors
 import signal
 import sys
 import termios
-from time import time
 import tty
 from typing import Any, TYPE_CHECKING
 from threading import Event, Thread
@@ -15,12 +14,14 @@ from threading import Event, Thread
 if TYPE_CHECKING:
     from rich.console import Console
 
+from . import log
 
 from . import events
 from .driver import Driver
 from .geometry import Size
 from ._types import MessageTarget
 from ._xterm_parser import XTermParser
+from ._profile import timer
 
 
 class LinuxDriver(Driver):
@@ -149,23 +150,26 @@ class LinuxDriver(Driver):
                 self.exit_event.set()
                 if self._key_thread is not None:
                     self._key_thread.join()
-        except Exception:
+        except Exception as error:
             # TODO: log this
             pass
 
     def stop_application_mode(self) -> None:
 
-        self.disable_input()
+        with timer("disable_input"):
+            self.disable_input()
 
-        if self.attrs_before is not None:
-            try:
-                termios.tcsetattr(self.fileno, termios.TCSANOW, self.attrs_before)
-            except termios.error:
-                pass
+        with timer("tcsetattr"):
+            if self.attrs_before is not None:
+                try:
+                    termios.tcsetattr(self.fileno, termios.TCSANOW, self.attrs_before)
+                except termios.error:
+                    pass
 
-        self.console.set_alt_screen(False)
-        self.console.show_cursor(True)
-        self.console.file.flush()
+        with timer("set_alt_screen False, show cursor"):
+            with self.console:
+                self.console.set_alt_screen(False)
+                self.console.show_cursor(True)
 
     def run_input_thread(self, loop) -> None:
         try:
@@ -182,7 +186,7 @@ class LinuxDriver(Driver):
 
         def more_data() -> bool:
             """Check if there is more data to parse."""
-            for key, events in selector.select(0.1):
+            for key, events in selector.select(0.01):
                 if events:
                     return True
             return False
@@ -201,11 +205,11 @@ class LinuxDriver(Driver):
                         unicode_data = decode(read(fileno, 1024))
                         for event in parser.feed(unicode_data):
                             self.process_event(event)
-        except Exception:
-            pass
-            # TODO: log
+        except Exception as error:
+            log(error)
         finally:
-            selector.close()
+            with timer("selector.close"):
+                selector.close()
 
 
 if __name__ == "__main__":

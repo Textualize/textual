@@ -364,8 +364,10 @@ class App(DOMNode):
                 await self.animator.start()
                 await super().process_messages()
                 log("PROCESS END")
-                await self.animator.stop()
-                await self.close_all()
+                with timer("animator.stop()"):
+                    await self.animator.stop()
+                with timer("self.close_all()"):
+                    await self.close_all()
             finally:
                 driver.stop_application_mode()
         except:

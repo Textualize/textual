@@ -125,8 +125,7 @@ class MessagePump:
         name: str | None = None,
     ) -> Timer:
         timer = Timer(self, delay, self, name=name, callback=callback, repeat=0)
-        timer_task = asyncio.get_event_loop().create_task(timer.run())
-        self._child_tasks.add(timer_task)
+        self._child_tasks.add(timer.start())
         return timer
 
     def set_interval(
@@ -140,7 +139,7 @@ class MessagePump:
         timer = Timer(
             self, interval, self, name=name, callback=callback, repeat=repeat or None
         )
-        self._child_tasks.add(asyncio.get_event_loop().create_task(timer.run()))
+        self._child_tasks.add(timer.start())
         return timer
 
     async def call_later(self, callback: Callable, *args, **kwargs) -> None:

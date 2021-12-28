@@ -10,6 +10,7 @@ from dataclasses import dataclass
 
 from . import log
 from ._easing import DEFAULT_EASING, EASING
+from ._profile import timer
 from ._timer import Timer
 from ._types import MessageTarget
 
@@ -124,17 +125,12 @@ class Animator:
             callback=self,
             pause=True,
         )
-        self._timer_task: asyncio.Task | None = None
 
     async def start(self) -> None:
-        if self._timer_task is None:
-            self._timer_task = asyncio.get_event_loop().create_task(self._timer.run())
+        self._timer.start()
 
     async def stop(self) -> None:
-        self._timer.stop()
-        if self._timer_task:
-            await self._timer_task
-        self._timer_task = None
+        await self._timer.stop()
 
     def bind(self, obj: object) -> BoundAnimator:
         return BoundAnimator(self, obj)

@@ -273,7 +273,6 @@ class Widget(DOMNode):
         elif repaint:
             self.clear_render_cache()
             self._repaint_required = True
-        self.log("refresh", repaint, layout)
         self.post_message_no_wait(events.Null(self))
 
     def render(self) -> RenderableType:
