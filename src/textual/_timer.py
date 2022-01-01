@@ -1,7 +1,13 @@
 from __future__ import annotations
 
 import weakref
-from asyncio import CancelledError, Event, TimeoutError, wait_for
+from asyncio import (
+    get_event_loop,
+    CancelledError,
+    Event,
+    sleep,
+    Task,
+)
 from time import monotonic
 from typing import Awaitable, Callable, Union
 
@@ -42,7 +48,6 @@ class Timer:
         self._callback = callback
         self._repeat = repeat
         self._skip = skip
-        self._stop_event = Event()
         self._active = Event()
         if not pause:
             self._active.set()
@@ -59,22 +64,33 @@ class Timer:
             raise EventTargetGone()
         return target
 
-    def stop(self) -> None:
-        self._active.set()
-        self._stop_event.set()
+    def start(self) -> Task:
+        """Start the timer return the task.
+
+        Returns:
+            Task: A Task instance for the timer.
+        """
+        self._task = get_event_loop().create_task(self._run())
+        return self._task
+
+    async def stop(self) -> None:
+        """Stop the timer, and block until it exists."""
+        self._task.cancel()
+        await self._task
 
     def pause(self) -> None:
+        """Pause the timer."""
         self._active.clear()
 
     def resume(self) -> None:
+        """Result a paused timer."""
         self._active.set()
 
-    async def run(self) -> None:
+    async def _run(self) -> None:
+        """Run the timer."""
         count = 0
         _repeat = self._repeat
         _interval = self._interval
-        _wait = self._stop_event.wait
-        _wait_active = self._active.wait
         start = monotonic()
         try:
             while _repeat is None or count <= _repeat:
@@ -82,11 +98,9 @@ class Timer:
                 if self._skip and next_timer < monotonic():
                     count += 1
                     continue
-                try:
-                    if await wait_for(_wait(), max(0, next_timer - monotonic())):
-                        break
-                except TimeoutError:
-                    pass
+                wait_time = max(0, next_timer - monotonic())
+                if wait_time:
+                    await sleep(wait_time)
                 event = events.Timer(
                     self.sender, timer=self, count=count, callback=self._callback
                 )
@@ -95,7 +109,6 @@ class Timer:
                     await self.target.post_message(event)
                 except EventTargetGone:
                     break
-
-                await _wait_active()
+                await self._active.wait()
         except CancelledError:
             pass
