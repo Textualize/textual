@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## [0.1.13] - 2022-01-01
+
+### Fixed
+
+- Fixed spurious characters when exiting app
+- Fixed increasing delay when exiting
+
 ## [0.1.12] - 2021-09-20
 
 ### Added

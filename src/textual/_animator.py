@@ -113,10 +113,10 @@ class Animator:
 
     async def start(self) -> None:
         if self._timer_task is None:
-            self._timer_task = asyncio.get_event_loop().create_task(self._timer.run())
+            self._timer_task = self._timer.start()
 
     async def stop(self) -> None:
-        self._timer.stop()
+        await self._timer.stop()
         if self._timer_task:
             await self._timer_task
         self._timer_task = None
