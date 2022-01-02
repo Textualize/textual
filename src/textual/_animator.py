@@ -127,14 +127,10 @@ class Animator:
         )
 
     async def start(self) -> None:
-        if self._timer_task is None:
-            self._timer_task = self._timer.start()
+        self._timer.start()
 
     async def stop(self) -> None:
         await self._timer.stop()
-        if self._timer_task:
-            await self._timer_task
-        self._timer_task = None
 
     def bind(self, obj: object) -> BoundAnimator:
         return BoundAnimator(self, obj)
