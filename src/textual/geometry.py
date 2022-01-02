@@ -119,15 +119,19 @@ class Size(NamedTuple):
         width, height = self
         return Region(0, 0, width, height)
 
-    def __add__(self, other: tuple[int, int]) -> Size:
-        width, height = self
-        width2, height2 = other
-        return Size(width + width2, height + height2)
+    def __add__(self, other: object) -> Size:
+        if isinstance(other, tuple):
+            width, height = self
+            width2, height2 = other
+            return Size(width + width2, height + height2)
+        return NotImplemented
 
-    def __sub__(self, other: tuple[int, int]) -> Size:
-        width, height = self
-        width2, height2 = other
-        return Size(width - width2, height - height2)
+    def __sub__(self, other: object) -> Size:
+        if isinstance(other, tuple):
+            width, height = self
+            width2, height2 = other
+            return Size(width - width2, height - height2)
+        return NotImplemented
 
     def contains(self, x: int, y: int) -> bool:
         """Check if a point is in the size.
@@ -274,14 +278,14 @@ class Region(NamedTuple):
         """A range object for Y coordinates"""
         return range(self.y, self.y + self.height)
 
-    def __add__(self, other: Any) -> Region:
+    def __add__(self, other: object) -> Region:
         if isinstance(other, tuple):
             ox, oy = other
             x, y, width, height = self
             return Region(x + ox, y + oy, width, height)
         return NotImplemented
 
-    def __sub__(self, other: Any) -> Region:
+    def __sub__(self, other: object) -> Region:
         if isinstance(other, tuple):
             ox, oy = other
             x, y, width, height = self
