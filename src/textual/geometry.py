@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from math import sqrt
 from typing import Any, cast, NamedTuple, Tuple, Union, TypeVar
 
 
@@ -41,6 +42,9 @@ class Offset(NamedTuple):
         """Check if the point is at the origin (0, 0)"""
         return self == (0, 0)
 
+    def __bool__(self) -> bool:
+        return self != (0, 0)
+
     def __add__(self, other: object) -> Offset:
         if isinstance(other, tuple):
             _x, _y = self
@@ -53,6 +57,12 @@ class Offset(NamedTuple):
             _x, _y = self
             x, y = other
             return Offset(_x - x, _y - y)
+        return NotImplemented
+
+    def __mul__(self, other: object) -> Offset:
+        if isinstance(other, (float, int)):
+            x, y = self
+            return Offset(int(x * other), int(y * other))
         return NotImplemented
 
     def blend(self, destination: Offset, factor: float) -> Offset:
@@ -69,6 +79,20 @@ class Offset(NamedTuple):
         x2, y2 = destination
         return Offset(int(x1 + (x2 - x1) * factor), int((y1 + (y2 - y1) * factor)))
 
+    def get_distance_to(self, other: Offset) -> float:
+        """Get the distance to another offset.
+
+        Args:
+            other (Offset): An offset
+
+        Returns:
+            float: Distance to other offset
+        """
+        x1, y1 = self
+        x2, y2 = other
+        distance = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
+        return distance
+
 
 class Size(NamedTuple):
     """An area defined by its width and height."""
@@ -77,7 +101,7 @@ class Size(NamedTuple):
     height: int = 0
 
     def __bool__(self) -> bool:
-        """A Size is Falsey if it has area 0."""
+        """A Size is Falsy if it has area 0."""
         return self.width * self.height != 0
 
     @property
@@ -457,6 +481,16 @@ class Spacing(NamedTuple):
         """Bottom right space."""
         return (self.right, self.bottom)
 
+    @property
+    def packed(self) -> str:
+        top, right, bottom, left = self
+        if top == right == bottom == left:
+            return f"{top}"
+        if (top, right) == (bottom, left):
+            return f"{top}, {right}"
+        else:
+            return f"{top}, {right}, {bottom}, {left}"
+
     @classmethod
     def unpack(cls, pad: SpacingDimensions) -> Spacing:
         """Unpack padding specified in CSS style."""
@@ -472,3 +506,15 @@ class Spacing(NamedTuple):
             top, right, bottom, left = cast(Tuple[int, int, int, int], pad)
             return cls(top, right, bottom, left)
         raise ValueError(f"1, 2 or 4 integers required for spacing; {len(pad)} given")
+
+    def __add__(self, other: object) -> Spacing:
+        if isinstance(other, tuple):
+            top1, right1, bottom1, left1 = self
+            top2, right2, bottom2, left2 = other
+            return Spacing(
+                top1 + top2, right1 + right2, bottom1 + bottom2, left1 + left2
+            )
+        return NotImplemented
+
+
+NULL_OFFSET = Offset(0, 0)

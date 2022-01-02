@@ -2,29 +2,38 @@ from __future__ import annotations
 import os
 
 import asyncio
-from functools import partial
-from typing import Any, Callable, ClassVar, Type, TypeVar
+
+from typing import Any, Callable, ClassVar, Iterable, Type, TypeVar
 import warnings
 
 from rich.control import Control
+
 import rich.repr
 from rich.screen import Screen
 from rich.console import Console, RenderableType
 from rich.measure import Measurement
+
 from rich.traceback import Traceback
+
 
 from . import events
 from . import actions
+from .dom import DOMNode
 from ._animator import Animator
 from .binding import Bindings, NoBinding
-from .geometry import Offset, Region
+from .geometry import Offset, Region, Size
 from . import log
 from ._callback import invoke
 from ._context import active_app
+from .css.stylesheet import Stylesheet, StylesheetParseError, StylesheetError
 from ._event_broker import extract_handler_actions, NoHandler
 from .driver import Driver
+from .file_monitor import FileMonitor
+
 from .layouts.dock import DockLayout, Dock
 from ._linux_driver import LinuxDriver
+from ._types import MessageTarget
+from . import messages
 from .message_pump import MessagePump
 from ._profile import timer
 from .view import View
@@ -48,15 +57,19 @@ else:
     uvloop.install()
 
 
+class AppError(Exception):
+    pass
+
+
 class ActionError(Exception):
     pass
 
 
 @rich.repr.auto
-class App(MessagePump):
+class App(DOMNode):
     """The base class for Textual Applications"""
 
-    KEYS: ClassVar[dict[str, str]] = {}
+    css = ""
 
     def __init__(
         self,
@@ -66,6 +79,9 @@ class App(MessagePump):
         log: str = "",
         log_verbosity: int = 1,
         title: str = "Textual Application",
+        css_file: str | None = None,
+        css: str | None = None,
+        watch_css: bool = True,
     ):
         """The Textual Application base class
 
@@ -81,8 +97,7 @@ class App(MessagePump):
         self.driver_class = driver_class or LinuxDriver
         self._title = title
         self._layout = DockLayout()
-        self._view_stack: list[DockView] = []
-        self.children: set[MessagePump] = set()
+        self._view_stack: list[View] = []
 
         self.focused: Widget | None = None
         self.mouse_over: Widget | None = None
@@ -104,6 +119,19 @@ class App(MessagePump):
         self.bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
         self._refresh_required = False
 
+        self.stylesheet = Stylesheet()
+
+        self.css_file = css_file
+        self.css_monitor = (
+            FileMonitor(css_file, self._on_css_change)
+            if (watch_css and css_file)
+            else None
+        )
+        if css is not None:
+            self.css = css
+
+        self.registry: set[MessagePump] = set()
+
         super().__init__()
 
     title: Reactive[str] = Reactive("Textual")
@@ -121,8 +149,16 @@ class App(MessagePump):
         return self._animator
 
     @property
-    def view(self) -> DockView:
+    def view(self) -> View:
         return self._view_stack[-1]
+
+    @property
+    def css_type(self) -> str:
+        return "app"
+
+    @property
+    def size(self) -> Size:
+        return Size(*self.console.size)
 
     def log(self, *args: Any, verbosity: int = 1, **kwargs) -> None:
         """Write to logs.
@@ -144,7 +180,7 @@ class App(MessagePump):
         except Exception:
             pass
 
-    async def bind(
+    def bind(
         self,
         keys: str,
         action: str,
@@ -187,8 +223,27 @@ class App(MessagePump):
 
         asyncio.run(run_app())
 
+    async def _on_css_change(self) -> None:
+
+        if self.css_file is not None:
+            stylesheet = Stylesheet()
+            try:
+                self.log("loading", self.css_file)
+                stylesheet.read(self.css_file)
+            except StylesheetError as error:
+                self.log(error)
+                self.console.bell()
+            else:
+                self.reset_styles()
+                self.stylesheet = stylesheet
+                self.stylesheet.update(self)
+                self.view.refresh(layout=True)
+
+    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
+        self.register(self.view, *anon_widgets, **widgets)
+        self.view.refresh()
+
     async def push_view(self, view: ViewType) -> ViewType:
-        self.register(view, self)
         self._view_stack.append(view)
         return view
 
@@ -263,61 +318,112 @@ class App(MessagePump):
         self._exit_renderables.extend(renderables)
         self.close_messages_no_wait()
 
+    def _print_error_renderables(self) -> None:
+        for renderable in self._exit_renderables:
+            self.error_console.print(renderable)
+        self._exit_renderables.clear()
+
     async def process_messages(self) -> None:
         active_app.set(self)
-
         log("---")
         log(f"driver={self.driver_class}")
 
-        load_event = events.Load(sender=self)
-        await self.dispatch_message(load_event)
-        await self.post_message(events.Mount(self))
-        await self.push_view(DockView())
-
-        # Wait for the load event to be processed, so we don't go in to application mode beforehand
-        await load_event.wait()
-
-        driver = self._driver = self.driver_class(self.console, self)
         try:
+            if self.css_file is not None:
+                self.stylesheet.read(self.css_file)
+            if self.css is not None:
+                self.stylesheet.parse(self.css, path=f"<{self.__class__.__name__}>")
+        except StylesheetParseError as error:
+            self.panic(error)
+            self._print_error_renderables()
+            return
+        except Exception as error:
+            self.panic()
+            self._print_error_renderables()
+            return
+
+        if self.css_monitor:
+            self.set_interval(0.5, self.css_monitor)
+            self.log("started", self.css_monitor)
+
+        self._running = True
+        try:
+            load_event = events.Load(sender=self)
+            await self.dispatch_message(load_event)
+            # Wait for the load event to be processed, so we don't go in to application mode beforehand
+            # await load_event.wait()
+
+            driver = self._driver = self.driver_class(self.console, self)
             driver.start_application_mode()
-        except Exception:
-            self.console.print_exception()
-        else:
             try:
+                mount_event = events.Mount(sender=self)
+                await self.dispatch_message(mount_event)
+
                 self.title = self._title
                 self.refresh()
                 await self.animator.start()
                 await super().process_messages()
                 log("PROCESS END")
-                await self.animator.stop()
-                await self.close_all()
-
-            except Exception:
-                self.panic()
+                with timer("animator.stop()"):
+                    await self.animator.stop()
+                with timer("self.close_all()"):
+                    await self.close_all()
             finally:
                 driver.stop_application_mode()
-                if self._exit_renderables:
-                    for renderable in self._exit_renderables:
-                        self.error_console.print(renderable)
-                if self.log_file is not None:
-                    self.log_file.close()
+        except:
+            self.panic()
+        finally:
+            self._running = False
+            if self._exit_renderables:
+                self._print_error_renderables()
+            if self.log_file is not None:
+                self.log_file.close()
 
-    def register(self, child: MessagePump, parent: MessagePump) -> bool:
-        if child not in self.children:
-            self.children.add(child)
+    def _register(self, parent: DOMNode, child: DOMNode) -> bool:
+        if child not in self.registry:
+            parent.children._append(child)
+            self.registry.add(child)
             child.set_parent(parent)
             child.start_messages()
-            child.post_message_no_wait(events.Mount(sender=parent))
             return True
         return False
 
+    def register(
+        self, parent: DOMNode, *anon_widgets: Widget, **widgets: Widget
+    ) -> None:
+        """Mount widget(s) so they may receive events.
+
+        Args:
+            parent (Widget): Parent Widget
+        """
+        if not anon_widgets and not widgets:
+            raise AppError(
+                "Nothing to mount, did you forget parent as first positional arg?"
+            )
+        name_widgets: Iterable[tuple[str | None, Widget]]
+        name_widgets = [*((None, widget) for widget in anon_widgets), *widgets.items()]
+        apply_stylesheet = self.stylesheet.apply
+
+        for widget_id, widget in name_widgets:
+            if widget not in self.registry:
+                if widget_id is not None:
+                    widget.id = widget_id
+                self._register(parent, widget)
+                apply_stylesheet(widget)
+
+        for _widget_id, widget in name_widgets:
+            widget.post_message_no_wait(events.Mount(sender=parent))
+
+    def is_mounted(self, widget: Widget) -> bool:
+        return widget in self.registry
+
     async def close_all(self) -> None:
-        while self.children:
-            child = self.children.pop()
+        while self.registry:
+            child = self.registry.pop()
             await child.close_messages()
 
     async def remove(self, child: MessagePump) -> None:
-        self.children.remove(child)
+        self.registry.remove(child)
 
     async def shutdown(self):
         driver = self._driver
@@ -394,8 +500,14 @@ class App(MessagePump):
 
     async def on_event(self, event: events.Event) -> None:
         # Handle input events that haven't been forwarded
-        # If the event has been forwaded it may have bubbled up back to the App
-        if isinstance(event, events.InputEvent) and not event.is_forwarded:
+        # If the event has been forwarded it may have bubbled up back to the App
+        if isinstance(event, events.Mount):
+            view = View()
+            self.register(self, view)
+            await self.push_view(view)
+            await super().on_event(event)
+
+        elif isinstance(event, events.InputEvent) and not event.is_forwarded:
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
@@ -467,6 +579,15 @@ class App(MessagePump):
             return False
         return True
 
+    async def handle_update(self, message: messages.Update) -> None:
+        message.stop()
+        self.app.refresh()
+
+    async def handle_layout(self, message: messages.Layout) -> None:
+        message.stop()
+        await self.view.refresh_layout()
+        self.app.refresh()
+
     async def on_key(self, event: events.Key) -> None:
         await self.press(event.key)
 
@@ -488,6 +609,18 @@ class App(MessagePump):
 
     async def action_bell(self) -> None:
         self.console.bell()
+
+    async def action_add_class_(self, selector: str, class_name: str) -> None:
+        self.view.query(selector).add_class(class_name)
+        self.view.refresh(layout=True)
+
+    async def action_remove_class_(self, selector: str, class_name: str) -> None:
+        self.view.query(selector).remove_class(class_name)
+        self.view.refresh(layout=True)
+
+    async def action_toggle_class(self, selector: str, class_name: str) -> None:
+        self.view.query(selector).toggle_class(class_name)
+        self.view.refresh(layout=True)
 
 
 if __name__ == "__main__":

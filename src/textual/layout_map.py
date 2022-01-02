@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from rich.console import Console
 
 from typing import ItemsView, KeysView, ValuesView, NamedTuple
 
 from . import log
-from .geometry import Region, Size
-
+from .geometry import Offset, Region, Size
+from operator import attrgetter
 from .widget import Widget
 
 
@@ -48,7 +47,11 @@ class LayoutMap:
         if widget in self.widgets:
             return
 
-        self.widgets[widget] = RenderRegion(region + widget.layout_offset, order, clip)
+        layout_offset = Offset(0, 0)
+        if widget.styles.has_offset:
+            layout_offset = widget.styles.offset.resolve(region.size, clip.size)
+
+        self.widgets[widget] = RenderRegion(region + layout_offset, order, clip)
 
         if isinstance(widget, View):
             view: View = widget
@@ -56,14 +59,16 @@ class LayoutMap:
             total_region = region.size.region
             sub_clip = clip.intersection(region)
 
-            arrangement = view.get_arrangement(region.size, scroll)
-            for sub_region, sub_widget, sub_order in arrangement:
+            arrangement = sorted(
+                view.get_arrangement(region.size, scroll), key=attrgetter("order")
+            )
+            for sub_region, sub_widget, z in arrangement:
                 total_region = total_region.union(sub_region)
                 if sub_widget is not None:
                     self.add_widget(
                         sub_widget,
                         sub_region + region.origin - scroll,
-                        sub_order,
+                        sub_widget.z + (z,),
                         sub_clip,
                     )
             view.virtual_size = total_region.size

@@ -21,16 +21,21 @@ class DockView(View):
     async def dock(
         self,
         *widgets: Widget,
+        name: str | None = None,
+        id: str | None = None,
         edge: DockEdge = "top",
         z: int = 0,
         size: int | None | DoNotSet = do_not_set,
-        name: str | None = None,
     ) -> None:
 
         dock = Dock(edge, widgets, z)
-        assert isinstance(self.layout, DockLayout)
-        self.layout.docks.append(dock)
+        assert isinstance(self._layout, DockLayout)
+        self._layout.docks.append(dock)
         for widget in widgets:
+            if id is not None:
+                widget._id = id
+            if name is not None:
+                widget.name = name
             if size is not do_not_set:
                 widget.layout_size = cast(Optional[int], size)
             if name is None:
@@ -42,20 +47,21 @@ class DockView(View):
     async def dock_grid(
         self,
         *,
+        name: str | None = None,
+        id: str | None = None,
         edge: DockEdge = "top",
         z: int = 0,
         size: int | None | DoNotSet = do_not_set,
-        name: str | None = None,
         gap: tuple[int, int] | int | None = None,
         gutter: tuple[int, int] | int | None = None,
         align: tuple[GridAlign, GridAlign] | None = None,
     ) -> GridLayout:
 
         grid = GridLayout(gap=gap, gutter=gutter, align=align)
-        view = View(layout=grid, name=name)
+        view = View(layout=grid, id=id, name=name)
         dock = Dock(edge, (view,), z)
-        assert isinstance(self.layout, DockLayout)
-        self.layout.docks.append(dock)
+        assert isinstance(self._layout, DockLayout)
+        self._layout.docks.append(dock)
         if size is not do_not_set:
             view.layout_size = cast(Optional[int], size)
         if name is None:

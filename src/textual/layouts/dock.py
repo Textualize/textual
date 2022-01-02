@@ -3,14 +3,17 @@ from __future__ import annotations
 import sys
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Iterable, TYPE_CHECKING, Sequence
+from typing import Iterable, TYPE_CHECKING, NamedTuple, Sequence
 
-from rich.console import Console
 
+from .. import log
+from ..dom import DOMNode
 from .._layout_resolve import layout_resolve
 from ..geometry import Offset, Region, Size
 from ..layout import Layout, WidgetPlacement
 from ..layout_map import LayoutMap
+from ..css.types import Edge
+from ..widget import Widget
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -20,6 +23,7 @@ else:
 
 if TYPE_CHECKING:
     from ..widget import Widget
+    from ..view import View
 
 
 DockEdge = Literal["top", "right", "bottom", "left"]
@@ -32,126 +36,136 @@ class DockOptions:
     min_size: int = 1
 
 
-@dataclass
-class Dock:
-    edge: DockEdge
+class Dock(NamedTuple):
+    edge: Edge
     widgets: Sequence[Widget]
     z: int = 0
 
 
 class DockLayout(Layout):
-    def __init__(self, docks: list[Dock] = None) -> None:
-        self.docks: list[Dock] = docks or []
+    def __init__(self) -> None:
         super().__init__()
+        self._docks: list[Dock] | None = None
 
-    def get_widgets(self) -> Iterable[Widget]:
-        for dock in self.docks:
+    def get_docks(self, view: View) -> list[Dock]:
+        groups: dict[str, list[Widget]] = defaultdict(list)
+        for child in view.children:
+            assert isinstance(child, Widget)
+            if child.visible:
+                groups[child.styles.dock].append(child)
+        docks: list[Dock] = []
+        append_dock = docks.append
+        for name, edge, z in view.styles.docks:
+            append_dock(Dock(edge, groups[name], z))
+        return docks
+
+    def get_widgets(self, view: View) -> Iterable[Widget]:
+        for dock in self.get_docks(view):
             yield from dock.widgets
 
-    def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
+    def arrange(
+        self, view: View, size: Size, scroll: Offset
+    ) -> Iterable[WidgetPlacement]:
 
-        map: LayoutMap = LayoutMap(size)
         width, height = size
         layout_region = Region(0, 0, width, height)
         layers: dict[int, Region] = defaultdict(lambda: layout_region)
 
-        for index, dock in enumerate(self.docks):
-            dock_options = [
+        docks = self.get_docks(view)
+
+        def make_dock_options(widget, edge: Edge) -> DockOptions:
+            styles = widget.styles
+
+            return (
                 DockOptions(
-                    widget.layout_size, widget.layout_fraction, widget.layout_min_size
+                    styles.width.cells if styles._rule_width is not None else None,
+                    styles.width.fraction if styles._rule_width is not None else 1,
+                    styles.min_width.cells if styles._rule_min_width is not None else 1,
                 )
-                for widget in dock.widgets
-            ]
-            region = layers[dock.z]
+                if edge in ("left", "right")
+                else DockOptions(
+                    styles.height.cells if styles._rule_height is not None else None,
+                    styles.height.fraction if styles._rule_height is not None else 1,
+                    styles.min_height.cells
+                    if styles._rule_min_height is not None
+                    else 1,
+                )
+            )
+
+        Placement = WidgetPlacement
+
+        for edge, widgets, z in docks:
+
+            dock_options = [make_dock_options(widget, edge) for widget in widgets]
+            region = layers[z]
             if not region:
                 # No space left
                 continue
 
-            order = (dock.z, index)
             x, y, width, height = region
 
-            if dock.edge == "top":
+            if edge == "top":
                 sizes = layout_resolve(height, dock_options)
                 render_y = y
                 remaining = region.height
                 total = 0
-                for widget, layout_size in zip(dock.widgets, sizes):
-                    if not widget.visible:
-                        continue
-                    layout_size = min(remaining, layout_size)
-                    if not layout_size:
+                for widget, new_size in zip(widgets, sizes):
+                    new_size = min(remaining, new_size)
+                    if not new_size:
                         break
-                    total += layout_size
-                    yield WidgetPlacement(
-                        Region(x, render_y, width, layout_size), widget, order
-                    )
-                    render_y += layout_size
-                    remaining = max(0, remaining - layout_size)
+                    total += new_size
+                    yield Placement(Region(x, render_y, width, new_size), widget, z)
+                    render_y += new_size
+                    remaining = max(0, remaining - new_size)
                 region = Region(x, y + total, width, height - total)
 
-            elif dock.edge == "bottom":
+            elif edge == "bottom":
                 sizes = layout_resolve(height, dock_options)
                 render_y = y + height
                 remaining = region.height
                 total = 0
-                for widget, layout_size in zip(dock.widgets, sizes):
-                    if not widget.visible:
-                        continue
-                    layout_size = min(remaining, layout_size)
-                    if not layout_size:
+                for widget, new_size in zip(widgets, sizes):
+                    new_size = min(remaining, new_size)
+                    if not new_size:
                         break
-                    total += layout_size
-                    yield WidgetPlacement(
-                        Region(x, render_y - layout_size, width, layout_size),
-                        widget,
-                        order,
+                    total += new_size
+                    yield Placement(
+                        Region(x, render_y - new_size, width, new_size), widget, z
                     )
-                    render_y -= layout_size
-                    remaining = max(0, remaining - layout_size)
+                    render_y -= new_size
+                    remaining = max(0, remaining - new_size)
                 region = Region(x, y, width, height - total)
 
-            elif dock.edge == "left":
+            elif edge == "left":
                 sizes = layout_resolve(width, dock_options)
                 render_x = x
                 remaining = region.width
                 total = 0
-                for widget, layout_size in zip(dock.widgets, sizes):
-                    if not widget.visible:
-                        continue
-                    layout_size = min(remaining, layout_size)
-                    if not layout_size:
+                for widget, new_size in zip(widgets, sizes):
+                    new_size = min(remaining, new_size)
+                    if not new_size:
                         break
-                    total += layout_size
-                    yield WidgetPlacement(
-                        Region(render_x, y, layout_size, height),
-                        widget,
-                        order,
-                    )
-                    render_x += layout_size
-                    remaining = max(0, remaining - layout_size)
+                    total += new_size
+                    yield Placement(Region(render_x, y, new_size, height), widget, z)
+                    render_x += new_size
+                    remaining = max(0, remaining - new_size)
                 region = Region(x + total, y, width - total, height)
 
-            elif dock.edge == "right":
+            elif edge == "right":
                 sizes = layout_resolve(width, dock_options)
                 render_x = x + width
                 remaining = region.width
                 total = 0
-                for widget, layout_size in zip(dock.widgets, sizes):
-                    if not widget.visible:
-                        continue
-                    layout_size = min(remaining, layout_size)
-                    if not layout_size:
+                for widget, new_size in zip(widgets, sizes):
+                    new_size = min(remaining, new_size)
+                    if not new_size:
                         break
-                    total += layout_size
-                    yield WidgetPlacement(
-                        Region(render_x - layout_size, y, layout_size, height),
-                        widget,
-                        order,
+                    total += new_size
+                    yield Placement(
+                        Region(render_x - new_size, y, new_size, height), widget, z
                     )
-                    render_x -= layout_size
-                    remaining = max(0, remaining - layout_size)
+                    render_x -= new_size
+                    remaining = max(0, remaining - new_size)
                 region = Region(x, y, width - total, height)
 
-            layers[dock.z] = region
-
-        return map
+            layers[z] = region

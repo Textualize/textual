@@ -48,10 +48,8 @@ class MessagePump:
         return self._task
 
     @property
-    def parent(self) -> MessagePump:
-        if self._parent is None:
-            raise NoParent(f"{self._parent} has no parent")
-        return self._parent
+    def has_parent(self) -> bool:
+        return self._parent is not None
 
     @property
     def app(self) -> "App":
@@ -226,14 +224,11 @@ class MessagePump:
 
     async def dispatch_message(self, message: Message) -> bool | None:
         _rich_traceback_guard = True
-        try:
-            if isinstance(message, events.Event):
-                if not isinstance(message, events.Null):
-                    await self.on_event(message)
-            else:
-                return await self.on_message(message)
-        finally:
-            message._done_event.set()
+        if isinstance(message, events.Event):
+            if not isinstance(message, events.Null):
+                await self.on_event(message)
+        else:
+            return await self.on_message(message)
         return False
 
     def _get_dispatch_methods(
@@ -248,7 +243,6 @@ class MessagePump:
 
     async def on_event(self, event: events.Event) -> None:
         _rich_traceback_guard = True
-
         for method in self._get_dispatch_methods(f"on_{event.name}", event):
             log(event, ">>>", self, verbosity=event.verbosity)
             await invoke(method, event)
@@ -263,8 +257,8 @@ class MessagePump:
     async def on_message(self, message: Message) -> None:
         _rich_traceback_guard = True
         method_name = f"handle_{message.name}"
-
         method = getattr(self, method_name, None)
+
         if method is not None:
             log(message, ">>>", self, verbosity=message.verbosity)
             await invoke(method, message)

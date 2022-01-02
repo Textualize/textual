@@ -15,7 +15,7 @@ ANSI_SEQUENCES: Dict[str, Tuple[Keys, ...]] = {
     "\x06": (Keys.ControlF,),  # Control-F (cursor forward)
     "\x07": (Keys.ControlG,),  # Control-G
     "\x08": (Keys.ControlH,),  # Control-H (8) (Identical to '\b')
-    "\x09": (Keys.ControlI,),  # Control-I (9) (Identical to '\t')
+    "\x09": (Keys.Tab,),  # Control-I (9) (Identical to '\t')
     "\x0a": (Keys.ControlJ,),  # Control-J (10) (Identical to '\n')
     "\x0b": (Keys.ControlK,),  # Control-K (delete until end of line; vertical tab)
     "\x0c": (Keys.ControlL,),  # Control-L (clear; form feed)

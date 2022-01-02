@@ -29,6 +29,9 @@ if TYPE_CHECKING:
 ReactiveType = TypeVar("ReactiveType")
 
 
+T = TypeVar("T")
+
+
 class Reactive(Generic[ReactiveType]):
     """Reactive descriptor."""
 

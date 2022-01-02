@@ -6,20 +6,24 @@ from operator import itemgetter
 from logging import getLogger
 from itertools import cycle, product
 import sys
-from typing import Iterable, NamedTuple
-
-from rich.console import Console
+from typing import Iterable, NamedTuple, TYPE_CHECKING
 
 from .._layout_resolve import layout_resolve
 from ..geometry import Size, Offset, Region
 from ..layout import Layout, WidgetPlacement
-from ..layout_map import LayoutMap
 from ..widget import Widget
+
+
+if TYPE_CHECKING:
+    from ..widget import Widget
+    from ..view import View
+
 
 if sys.version_info >= (3, 8):
     from typing import Literal
 else:
     from typing_extensions import Literal
+
 
 log = getLogger("rich")
 
@@ -263,7 +267,9 @@ class GridLayout(Layout):
     def get_widgets(self) -> Iterable[Widget]:
         return self.widgets.keys()
 
-    def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
+    def arrange(
+        self, view: View, size: Size, scroll: Offset
+    ) -> Iterable[WidgetPlacement]:
         """Generate a map that associates widgets with their location on screen.
 
         Args:

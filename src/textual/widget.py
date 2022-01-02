@@ -7,8 +7,8 @@ from typing import (
     TYPE_CHECKING,
     Callable,
     ClassVar,
+    Iterable,
     NamedTuple,
-    NewType,
     cast,
 )
 import rich.repr
@@ -20,15 +20,17 @@ from rich.padding import Padding
 from rich.pretty import Pretty
 from rich.style import Style
 from rich.styled import Styled
-from rich.text import TextType
+from rich.text import Text, TextType
 
 from . import events
+from . import errors
 from ._animator import BoundAnimator
+from ._border import Border, BORDER_STYLES
 from ._callback import invoke
+from .dom import DOMNode
 from ._context import active_app
 from .geometry import Size, Spacing, SpacingDimensions
 from .message import Message
-from .message_pump import MessagePump
 from .messages import Layout, Update
 from .reactive import Reactive, watch
 from ._types import Lines
@@ -47,25 +49,28 @@ class RenderCache(NamedTuple):
     @property
     def cursor_line(self) -> int | None:
         for index, line in enumerate(self.lines):
-            for text, style, control in line:
+            for _text, style, _control in line:
                 if style and style._meta and style.meta.get("cursor", False):
                     return index
         return None
 
 
 @rich.repr.auto
-class Widget(MessagePump):
-    _id: ClassVar[int] = 0
+class Widget(DOMNode):
     _counts: ClassVar[dict[str, int]] = {}
     can_focus: bool = False
 
-    def __init__(self, name: str | None = None) -> None:
-        class_name = self.__class__.__name__
-        Widget._counts.setdefault(class_name, 0)
-        Widget._counts[class_name] += 1
-        _count = self._counts[class_name]
+    STYLES = """
+    dock: _default;
+    """
 
-        self.name = name or f"{class_name}#{_count}"
+    def __init__(self, name: str | None = None, id: str | None = None) -> None:
+        if name is None:
+            class_name = self.__class__.__name__
+            Widget._counts.setdefault(class_name, 0)
+            Widget._counts[class_name] += 1
+            _count = self._counts[class_name]
+            name = f"{class_name}{_count}"
 
         self._size = Size(0, 0)
         self._repaint_required = False
@@ -75,46 +80,60 @@ class Widget(MessagePump):
         self.render_cache: RenderCache | None = None
         self.highlight_style: Style | None = None
 
-        super().__init__()
-
-    visible: Reactive[bool] = Reactive(True, layout=True)
-    layout_size: Reactive[int | None] = Reactive(None, layout=True)
-    layout_fraction: Reactive[int] = Reactive(1, layout=True)
-    layout_min_size: Reactive[int] = Reactive(1, layout=True)
-    layout_offset_x: Reactive[float] = Reactive(0.0, layout=True)
-    layout_offset_y: Reactive[float] = Reactive(0.0, layout=True)
-
-    style: Reactive[str | None] = Reactive(None)
-    padding: Reactive[Spacing | None] = Reactive(None, layout=True)
-    margin: Reactive[Spacing | None] = Reactive(None, layout=True)
-    border: Reactive[str] = Reactive("none", layout=True)
-    border_style: Reactive[str] = Reactive("")
-    border_title: Reactive[TextType] = Reactive("")
-
-    BOX_MAP = {"normal": box.SQUARE, "round": box.ROUNDED, "bold": box.HEAVY}
-
-    def validate_padding(self, padding: SpacingDimensions) -> Spacing:
-        return Spacing.unpack(padding)
-
-    def validate_margin(self, margin: SpacingDimensions) -> Spacing:
-        return Spacing.unpack(margin)
-
-    def validate_layout_offset_x(self, value) -> int:
-        return int(value)
-
-    def validate_layout_offset_y(self, value) -> int:
-        return int(value)
+        super().__init__(name=name, id=id)
 
     def __init_subclass__(cls, can_focus: bool = True) -> None:
         super().__init_subclass__()
         cls.can_focus = can_focus
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "name", self.name
+        yield "id", self.id, None
+        if self.name:
+            yield "name", self.name
+        if self.classes:
+            yield "classes", self.classes
 
     def __rich__(self) -> RenderableType:
         renderable = self.render_styled()
         return renderable
+
+    def get_child_by_id(self, id: str) -> Widget:
+        """Get a child with a given id.
+
+        Args:
+            id (str): A Widget id.
+
+        Raises:
+            errors.MissingWidget: If the widget was not found.
+
+        Returns:
+            Widget: A child widget.
+        """
+
+        for widget in self.children:
+            if widget.id == id:
+                return cast(Widget, widget)
+        raise errors.MissingWidget(f"Widget with id=={id!r} was not found in {self}")
+
+    def get_child_by_name(self, name: str) -> Widget:
+        """Get a child widget with a given name.
+
+        Args:
+            name (str): A name. Defaults to None.
+
+        Raises:
+            errors.MissingWidget: If no Widget is found.
+
+        Returns:
+            Widget: A Widget with the given name.
+        """
+
+        for widget in self.children:
+            if widget.name == name:
+                return cast(Widget, widget)
+        raise errors.MissingWidget(
+            f"Widget with name=={name!r} was not found in {self}"
+        )
 
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
@@ -125,20 +144,37 @@ class Widget(MessagePump):
         Returns:
             RenderableType: A new renderable.
         """
+
         renderable = self.render()
-        if self.padding is not None:
-            renderable = Padding(renderable, self.padding)
-        if self.border in self.BOX_MAP:
-            renderable = Panel(
-                renderable,
-                box=self.BOX_MAP.get(self.border) or box.SQUARE,
-                style=self.border_style,
+        styles = self.styles
+
+        parent_text_style = self.parent.text_style
+        text_style = styles.text
+        renderable_text_style = parent_text_style + text_style
+        if renderable_text_style:
+            renderable = Styled(renderable, renderable_text_style)
+
+        if styles.has_padding:
+            renderable = Padding(
+                renderable, styles.padding, style=renderable_text_style
             )
-        if self.margin is not None:
-            renderable = Padding(renderable, self.margin)
-        if self.style:
-            renderable = Styled(renderable, self.style)
+
+        if styles.has_border:
+            renderable = Border(renderable, styles.border, style=renderable_text_style)
+
+        if styles.has_margin:
+            renderable = Padding(renderable, styles.margin, style=parent_text_style)
+
+        if styles.has_outline:
+            renderable = Border(
+                renderable, styles.outline, outline=True, style=parent_text_style
+            )
+
         return renderable
+
+    @property
+    def visible(self) -> bool:
+        return self.styles.display == "block"
 
     @property
     def size(self) -> Size:
@@ -166,19 +202,17 @@ class Widget(MessagePump):
         return self._animate
 
     @property
-    def layout_offset(self) -> tuple[int, int]:
-        """Get the layout offset as a tuple."""
-        return (round(self.layout_offset_x), round(self.layout_offset_y))
-
-    @property
     def gutter(self) -> Spacing:
-        mt, mr, mb, bl = self.margin or (0, 0, 0, 0)
-        pt, pr, pb, pl = self.padding or (0, 0, 0, 0)
-        border = 1 if self.border else 0
-        gutter = Spacing(
-            mt + pt + border, mr + pr + border, mb + pb + border, bl + pl + border
-        )
+        """Get additional space reserved by margin / padding / border.
+
+        Returns:
+            Spacing: [description]
+        """
+        gutter = self.styles.gutter
         return gutter
+
+    def on_style_change(self) -> None:
+        self.clear_render_cache()
 
     def _update_size(self, size: Size) -> None:
         self._size = size
@@ -254,9 +288,7 @@ class Widget(MessagePump):
         Returns:
             RenderableType: Any renderable
         """
-        return Panel(
-            Align.center(Pretty(self), vertical="middle"), title=self.__class__.__name__
-        )
+        return Align.center(Text(f"#{self.id}"), vertical="middle")
 
     async def action(self, action: str, *params) -> None:
         await self.app.action(action, self)
@@ -272,13 +304,14 @@ class Widget(MessagePump):
         self.refresh()
 
     async def on_idle(self, event: events.Idle) -> None:
-        if self.check_layout():
-            self.render_cache = None
+        repaint, layout = self.styles.check_refresh()
+        if layout or self.check_layout():
+            # self.render_cache = None
             self.reset_check_repaint()
             self.reset_check_layout()
             await self.emit(Layout(self))
-        elif self.check_repaint():
-            self.render_cache = None
+        elif repaint or self.check_repaint():
+            # self.render_cache = None
             self.reset_check_repaint()
             await self.emit(Update(self, self))
 
@@ -286,9 +319,20 @@ class Widget(MessagePump):
         await self.app.set_focus(self)
 
     async def capture_mouse(self, capture: bool = True) -> None:
+        """Capture (or release) the mouse.
+
+        When captured, all mouse coordinates will go to this widget even when the pointer is not directly over the widget.
+
+        Args:
+            capture (bool, optional): True to capture or False to release. Defaults to True.
+        """
         await self.app.capture_mouse(self if capture else None)
 
     async def release_mouse(self) -> None:
+        """Release the mouse.
+
+        Mouse events will only be sent when the mouse is over the widget.
+        """
         await self.app.capture_mouse(None)
 
     async def broker_event(self, event_name: str, event: events.Event) -> bool:

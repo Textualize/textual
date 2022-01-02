@@ -1,21 +1,23 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 import asyncio
 import sys
 from time import time
-from tracemalloc import start
-from typing import Callable, TypeVar
+from typing import Any, Callable, TypeVar
 
 from dataclasses import dataclass
 
+from . import log
 from ._easing import DEFAULT_EASING, EASING
+from ._profile import timer
 from ._timer import Timer
 from ._types import MessageTarget
 
 if sys.version_info >= (3, 8):
-    from typing import Protocol
+    from typing import Protocol, runtime_checkable
 else:
-    from typing_extensions import Protocol
+    from typing_extensions import Protocol, runtime_checkable
 
 
 EasingFunction = Callable[[float], float]
@@ -23,20 +25,27 @@ EasingFunction = Callable[[float], float]
 T = TypeVar("T")
 
 
+@runtime_checkable
 class Animatable(Protocol):
     def blend(self: T, destination: T, factor: float) -> T:
         ...
 
 
+class Animation(ABC):
+    @abstractmethod
+    def __call__(self, time: float) -> bool:
+        raise NotImplementedError("")
+
+
 @dataclass
-class Animation:
+class SimpleAnimation(Animation):
     obj: object
     attribute: str
     start_time: float
     duration: float
     start_value: float | Animatable
     end_value: float | Animatable
-    easing_function: EasingFunction
+    easing: EasingFunction
 
     def __call__(self, time: float) -> bool:
         def blend_float(start: float, end: float, factor: float) -> float:
@@ -47,28 +56,34 @@ class Animation:
         def blend(start: AnimatableT, end: AnimatableT, factor: float) -> AnimatableT:
             return start.blend(end, factor)
 
-        blend_function = (
-            blend_float if isinstance(self.start_value, (int, float)) else blend
-        )
-
         if self.duration == 0:
             value = self.end_value
         else:
             factor = min(1.0, (time - self.start_time) / self.duration)
-            eased_factor = self.easing_function(factor)
-            # value = blend_function(self.start_value, self.end_value, eased_factor)
+            eased_factor = self.easing(factor)
 
-            if self.end_value > self.start_value:
-                eased_factor = self.easing_function(factor)
-                value = (
-                    self.start_value
-                    + (self.end_value - self.start_value) * eased_factor
+            if isinstance(self.start_value, Animatable):
+                assert isinstance(
+                    self.end_value, Animatable, "end_value must be animatable"
                 )
+                value = self.start_value.blend(self.end_value, eased_factor)
             else:
-                eased_factor = 1 - self.easing_function(factor)
-                value = (
-                    self.end_value + (self.start_value - self.end_value) * eased_factor
-                )
+                assert isinstance(
+                    self.start_value, float
+                ), "`start_value` must be float"
+                assert isinstance(self.end_value, float), "`end_value` must be float"
+                if self.end_value > self.start_value:
+                    eased_factor = self.easing(factor)
+                    value = (
+                        self.start_value
+                        + (self.end_value - self.start_value) * eased_factor
+                    )
+                else:
+                    eased_factor = 1 - self.easing(factor)
+                    value = (
+                        self.end_value
+                        + (self.start_value - self.end_value) * eased_factor
+                    )
         setattr(self.obj, self.attribute, value)
         return value == self.end_value
 
@@ -100,7 +115,8 @@ class BoundAnimator:
 
 class Animator:
     def __init__(self, target: MessageTarget, frames_per_second: int = 60) -> None:
-        self._animations: dict[tuple[object, str], Animation] = {}
+        self._animations: dict[tuple[object, str], SimpleAnimation] = {}
+        self.target = target
         self._timer = Timer(
             target,
             1 / frames_per_second,
@@ -109,7 +125,6 @@ class Animator:
             callback=self,
             pause=True,
         )
-        self._timer_task: asyncio.Task | None = None
 
     async def start(self) -> None:
         if self._timer_task is None:
@@ -128,7 +143,7 @@ class Animator:
         self,
         obj: object,
         attribute: str,
-        value: float,
+        value: Any,
         *,
         duration: float | None = None,
         speed: float | None = None,
@@ -137,30 +152,46 @@ class Animator:
 
         start_time = time()
 
-        animation_key = (obj, attribute)
+        animation_key = (id(obj), attribute)
         if animation_key in self._animations:
             self._animations[animation_key](start_time)
 
-        start_value = getattr(obj, attribute)
-
-        if start_value == value:
-            self._animations.pop(animation_key, None)
-            return
-
-        if duration is not None:
-            animation_duration = duration
-        else:
-            animation_duration = abs(value - start_value) / (speed or 50)
         easing_function = EASING[easing] if isinstance(easing, str) else easing
-        animation = Animation(
-            obj,
-            attribute=attribute,
-            start_time=start_time,
-            duration=animation_duration,
-            start_value=start_value,
-            end_value=value,
-            easing_function=easing_function,
-        )
+
+        animation: Animation | None = None
+        if hasattr(obj, "__textual_animation__"):
+            animation = getattr(obj, "__textual_animation__")(
+                attribute,
+                value,
+                start_time,
+                duration=duration,
+                speed=speed,
+                easing=easing_function,
+            )
+
+        if animation is None:
+
+            start_value = getattr(obj, attribute)
+
+            if start_value == value:
+                self._animations.pop(animation_key, None)
+                return
+
+            if duration is not None:
+                animation_duration = duration
+            else:
+                animation_duration = abs(value - start_value) / (speed or 50)
+
+            animation = SimpleAnimation(
+                obj,
+                attribute=attribute,
+                start_time=start_time,
+                duration=animation_duration,
+                start_value=start_value,
+                end_value=value,
+                easing=easing_function,
+            )
+        assert animation is not None, "animation expected to be non-None"
         self._animations[animation_key] = animation
         self._timer.resume()
 
@@ -174,3 +205,4 @@ class Animator:
                 animation = self._animations[animation_key]
                 if animation(animation_time):
                     del self._animations[animation_key]
+            self.target.view.refresh(True, True)

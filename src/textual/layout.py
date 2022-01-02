@@ -6,8 +6,7 @@ from itertools import chain
 from operator import itemgetter
 import sys
 
-from typing import Iterable, Iterator, NamedTuple, TYPE_CHECKING
-from rich import segment
+from typing import ClassVar, Iterable, Iterator, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 from rich.control import Control
@@ -54,7 +53,7 @@ class WidgetPlacement(NamedTuple):
 
     region: Region
     widget: Widget | None = None
-    order: tuple[int, ...] = ()
+    order: int = 0
 
 
 @rich.repr.auto
@@ -86,6 +85,8 @@ class LayoutUpdate:
 
 class Layout(ABC):
     """Responsible for arranging Widgets in a view and rendering them."""
+
+    name: ClassVar[str] = ""
 
     def __init__(self) -> None:
         self._layout_map: LayoutMap | None = None
@@ -148,11 +149,13 @@ class Layout(ABC):
         )
 
     @abstractmethod
-    def get_widgets(self) -> Iterable[Widget]:
+    def get_widgets(self, view: View) -> Iterable[Widget]:
         ...
 
     @abstractmethod
-    def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
+    def arrange(
+        self, view: View, size: Size, scroll: Offset
+    ) -> Iterable[WidgetPlacement]:
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 
         Args:
@@ -165,7 +168,9 @@ class Layout(ABC):
         """
 
     async def mount_all(self, view: "View") -> None:
-        await view.mount(*self.get_widgets())
+        widgets = list(self.get_widgets(view))
+        if widgets:
+            view.mount(*widgets)
 
     @property
     def map(self) -> LayoutMap | None:

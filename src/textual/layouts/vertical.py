@@ -1,11 +1,15 @@
 from __future__ import annotations
 
-from typing import Iterable
+from typing import Iterable, TYPE_CHECKING
 
 from ..geometry import Offset, Region, Size, Spacing, SpacingDimensions
 from ..layout import Layout, WidgetPlacement
 from ..widget import Widget
 from .._loop import loop_last
+
+if TYPE_CHECKING:
+    from ..widget import Widget
+    from ..view import View
 
 
 class VerticalLayout(Layout):
@@ -34,7 +38,9 @@ class VerticalLayout(Layout):
     def get_widgets(self) -> Iterable[Widget]:
         return self._widgets
 
-    def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
+    def arrange(
+        self, view: View, size: Size, scroll: Offset
+    ) -> Iterable[WidgetPlacement]:
         index = 0
         width, _height = size
         gutter = self.gutter

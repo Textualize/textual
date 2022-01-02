@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 from logging import getLogger
 
@@ -39,7 +41,8 @@ class Header(Widget):
         return f"{self.title} - {self.sub_title}" if self.sub_title else self.title
 
     def __rich_repr__(self) -> Result:
-        yield self.title
+        yield from super().__rich_repr__()
+        yield "title", self.title
 
     async def watch_tall(self, tall: bool) -> None:
         self.layout_size = 3 if tall else 1
