@@ -117,7 +117,7 @@ SimpleApp.run(log="textual.log")
 
 This app contains a single event handler `on_mount`. The mount event is sent when the app or widget is ready to start processing events, and is typically used for initialization. You may have noticed that `on_mount` is an `async` function. Since Textual is an asynchronous framework we will need this if we need to call most other methods.
 
-The `on_mount` method makes two calls to `self.view.dock` which adds widgets to tht terminal.
+The `on_mount` method makes two calls to `self.view.dock` which adds widgets to the terminal.
 
 Here's the first line in the mount handler:
 
