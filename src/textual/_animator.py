@@ -64,8 +64,8 @@ class SimpleAnimation(Animation):
 
             if isinstance(self.start_value, Animatable):
                 assert isinstance(
-                    self.end_value, Animatable, "end_value must be animatable"
-                )
+                    self.end_value, Animatable
+                ), "end_value must be animatable"
                 value = self.start_value.blend(self.end_value, eased_factor)
             else:
                 assert isinstance(
@@ -115,7 +115,7 @@ class BoundAnimator:
 
 class Animator:
     def __init__(self, target: MessageTarget, frames_per_second: int = 60) -> None:
-        self._animations: dict[tuple[object, str], SimpleAnimation] = {}
+        self._animations: dict[tuple[object, str], Animation] = {}
         self.target = target
         self._timer = Timer(
             target,
@@ -154,7 +154,7 @@ class Animator:
 
         easing_function = EASING[easing] if isinstance(easing, str) else easing
 
-        animation: Animation | None = None
+        animation: Animation
         if hasattr(obj, "__textual_animation__"):
             animation = getattr(obj, "__textual_animation__")(
                 attribute,
@@ -164,9 +164,7 @@ class Animator:
                 speed=speed,
                 easing=easing_function,
             )
-
-        if animation is None:
-
+        else:
             start_value = getattr(obj, attribute)
 
             if start_value == value:

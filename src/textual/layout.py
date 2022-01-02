@@ -290,7 +290,7 @@ class Layout(ABC):
     @classmethod
     def _assemble_chops(
         cls, chops: list[dict[int, list[Segment] | None]]
-    ) -> Iterable[list[Segment]]:
+    ) -> Iterable[Iterable[Segment]]:
 
         from_iterable = chain.from_iterable
         for bucket in chops:

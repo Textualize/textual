@@ -110,13 +110,3 @@ class XTermParser(Parser[events.Event]):
                         on_token(events.Key(self.sender, key=key))
                 else:
                     on_token(events.Key(self.sender, key=character))
-
-
-if __name__ == "__main__":
-    parser = XTermParser()
-
-    import os
-    import sys
-
-    for token in parser.feed(sys.stdin.read(20)):
-        print(token)
