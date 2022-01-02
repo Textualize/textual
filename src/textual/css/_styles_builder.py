@@ -1,16 +1,24 @@
+"""
+
+The StylesBuilder object takes tokens parsed from the CSS and converts
+to the appropriate internal types.
+
+
+"""
+
 from __future__ import annotations
 
 from typing import cast, Iterable, NoReturn
 
 import rich.repr
-from rich.color import ANSI_COLOR_NAMES, Color
+from rich.color import Color
 from rich.style import Style
 
 from .constants import VALID_BORDER, VALID_EDGE, VALID_DISPLAY, VALID_VISIBILITY
-from .errors import DeclarationError, StyleValueError
+from .errors import DeclarationError
 from ._error_tools import friendly_list
 from .._easing import EASING
-from ..geometry import Offset, Spacing, SpacingDimensions
+from ..geometry import Spacing, SpacingDimensions
 from .model import Declaration
 from .scalar import Scalar, ScalarOffset, Unit, ScalarError
 from .styles import DockGroup, Styles

@@ -84,18 +84,12 @@ class View(Widget):
     def scroll(self) -> Offset:
         return Offset(self.scroll_x, self.scroll_y)
 
-    # def __rich_console__(
-    #     self, console: Console, options: ConsoleOptions
-    # ) -> RenderResult:
-    #     return
-    #     yield
-
     def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self.name
 
-    def __getitem__(self, widget_name: str) -> Widget:
+    def __getitem__(self, widget_id: str) -> Widget:
         try:
-            return self.get_child(widget_name)
+            return self.get_child_by_id(widget_id)
         except errors.MissingWidget as error:
             raise KeyError(str(error))
 

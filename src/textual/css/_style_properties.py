@@ -1,3 +1,12 @@
+"""
+Style properties are descriptors which allow the Styles object to accept different types when
+setting attributes. This gives the developer more freedom in how to express style information.
+
+Descriptors also play nicely with Mypy, which is aware that attributes can have different types
+when setting and getting.
+
+"""
+
 from __future__ import annotations
 
 from typing import Iterable, NamedTuple, Sequence, TYPE_CHECKING
@@ -124,6 +133,20 @@ class Edges(NamedTuple):
             yield "bottom", bottom
         if left[0]:
             yield "left", left
+
+    def spacing(self) -> tuple[int, int, int, int]:
+        """Get spacing created by borders.
+
+        Returns:
+            tuple[int, int, int, int]: Spacing for top, right, bottom, and left.
+        """
+        top, right, bottom, left = self
+        return (
+            1 if top[0] else 0,
+            1 if right[0] else 0,
+            1 if bottom[0] else 0,
+            1 if left[0] else 0,
+        )
 
 
 class BorderProperty:

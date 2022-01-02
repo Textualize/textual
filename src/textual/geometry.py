@@ -507,5 +507,14 @@ class Spacing(NamedTuple):
             return cls(top, right, bottom, left)
         raise ValueError(f"1, 2 or 4 integers required for spacing; {len(pad)} given")
 
+    def __add__(self, other: object) -> Spacing:
+        if isinstance(other, tuple):
+            top1, right1, bottom1, left1 = self
+            top2, right2, bottom2, left2 = other
+            return Spacing(
+                top1 + top2, right1 + right2, bottom1 + bottom2, left1 + left2
+            )
+        return NotImplemented
+
 
 NULL_OFFSET = Offset(0, 0)

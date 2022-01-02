@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.segment import Segment, SegmentLines
-from rich.style import Style
+from rich.style import Style, StyleType
 
 from .css.types import EdgeStyle
 

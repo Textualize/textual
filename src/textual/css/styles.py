@@ -154,6 +154,16 @@ class Styles:
         "min_height",
     }
 
+    @property
+    def gutter(self) -> Spacing:
+        """Get the gutter (additional space reserved for margin / padding / border).
+
+        Returns:
+            Spacing: [description]
+        """
+        gutter = self.margin + self.padding + self.border.spacing
+        return gutter
+
     @classmethod
     @lru_cache(maxsize=1024)
     def parse(cls, css: str, path: str) -> Styles:

@@ -50,6 +50,14 @@ class DOMNode(MessagePump):
 
     @property
     def parent(self) -> DOMNode:
+        """Get the parent node.
+
+        Raises:
+            NoParent: If this is the root node.
+
+        Returns:
+            DOMNode: The node which is the direct parent of this node.
+        """
         if self._parent is None:
             raise NoParent(f"{self} has no parent")
         assert isinstance(self._parent, DOMNode)
@@ -57,10 +65,24 @@ class DOMNode(MessagePump):
 
     @property
     def id(self) -> str | None:
+        """The ID of this node, or None if the node has no ID.
+
+        Returns:
+            (str | None): A Node ID or None.
+        """
         return self._id
 
     @id.setter
     def id(self, new_id: str) -> str:
+        """Sets the ID (may only be done once).
+
+        Args:
+            new_id (str): ID for this node.
+
+        Raises:
+            ValueError: If the ID has already been set.
+
+        """
         if self._id is not None:
             raise ValueError(
                 "Node 'id' attribute may not be changed once set (current id={self._id!r})"
@@ -83,10 +105,20 @@ class DOMNode(MessagePump):
 
     @property
     def css_type(self) -> str:
+        """Gets the CSS type, used by the CSS.
+
+        Returns:
+            str: A type used in CSS (lower cased class name).
+        """
         return self.__class__.__name__.lower()
 
     @property
     def css_path(self) -> list[DOMNode]:
+        """A list of nodes from the root to this node, forming a "path".
+
+        Returns:
+            list[DOMNode]: List of Nodes, starting with the root and ending with this node.
+        """
         result: list[DOMNode] = [self]
         append = result.append
 
@@ -137,6 +169,11 @@ class DOMNode(MessagePump):
 
     @property
     def tree(self) -> Tree:
+        """Get a Rich tree object which will recursively render the structure of the node tree.
+
+        Returns:
+            Tree: A Rich object which may be printed.
+        """
         highlighter = ReprHighlighter()
         tree = Tree(highlighter(repr(self)))
 
@@ -163,6 +200,11 @@ class DOMNode(MessagePump):
         pass
 
     def add_child(self, node: DOMNode) -> None:
+        """Add a new child node.
+
+        Args:
+            node (DOMNode): A DOM node.
+        """
         self.children._append(node)
         node.set_parent(self)
 

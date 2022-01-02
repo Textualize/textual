@@ -65,12 +65,12 @@ class Widget(DOMNode):
     """
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
-        # if name is None:
-        #     class_name = self.__class__.__name__
-        #     Widget._counts.setdefault(class_name, 0)
-        #     Widget._counts[class_name] += 1
-        #     _count = self._counts[class_name]
-        #     name = f"{class_name}{_count}"
+        if name is None:
+            class_name = self.__class__.__name__
+            Widget._counts.setdefault(class_name, 0)
+            Widget._counts[class_name] += 1
+            _count = self._counts[class_name]
+            name = f"{class_name}{_count}"
 
         self._size = Size(0, 0)
         self._repaint_required = False
@@ -81,26 +81,6 @@ class Widget(DOMNode):
         self.highlight_style: Style | None = None
 
         super().__init__(name=name, id=id)
-
-    # visible: Reactive[bool] = Reactive(True, layout=True)
-    layout_size: Reactive[int | None] = Reactive(None, layout=True)
-    layout_fraction: Reactive[int] = Reactive(1, layout=True)
-    layout_min_size: Reactive[int] = Reactive(1, layout=True)
-    # layout_offset_x: Reactive[float] = Reactive(0.0, layout=True)
-    # layout_offset_y: Reactive[float] = Reactive(0.0, layout=True)
-
-    # style: Reactive[str | None] = Reactive(None)
-    padding: Reactive[Spacing | None] = Reactive(None, layout=True)
-    margin: Reactive[Spacing | None] = Reactive(None, layout=True)
-    border: Reactive[str] = Reactive("none", layout=True)
-    border_style: Reactive[str] = Reactive("green")
-    border_title: Reactive[TextType] = Reactive("")
-
-    def validate_padding(self, padding: SpacingDimensions) -> Spacing:
-        return Spacing.unpack(padding)
-
-    def validate_margin(self, margin: SpacingDimensions) -> Spacing:
-        return Spacing.unpack(margin)
 
     def __init_subclass__(cls, can_focus: bool = True) -> None:
         super().__init_subclass__()
@@ -117,16 +97,43 @@ class Widget(DOMNode):
         renderable = self.render_styled()
         return renderable
 
-    def get_child(self, name: str | None = None, id: str | None = None) -> Widget:
-        if name is not None:
-            for widget in self.children:
-                if widget.name == name:
-                    return cast(Widget, widget)
-        if id is not None:
-            for widget in self.children:
-                if widget.id == id:
-                    return cast(Widget, widget)
-        raise errors.MissingWidget(f"Widget named {name!r} was not found in {self}")
+    def get_child_by_id(self, id: str) -> Widget:
+        """Get a child with a given id.
+
+        Args:
+            id (str): A Widget id.
+
+        Raises:
+            errors.MissingWidget: If the widget was not found.
+
+        Returns:
+            Widget: A child widget.
+        """
+
+        for widget in self.children:
+            if widget.id == id:
+                return cast(Widget, widget)
+        raise errors.MissingWidget(f"Widget with id=={id!r} was not found in {self}")
+
+    def get_child_by_name(self, name: str) -> Widget:
+        """Get a child widget with a given name.
+
+        Args:
+            name (str): A name. Defaults to None.
+
+        Raises:
+            errors.MissingWidget: If no Widget is found.
+
+        Returns:
+            Widget: A Widget with the given name.
+        """
+
+        for widget in self.children:
+            if widget.name == name:
+                return cast(Widget, widget)
+        raise errors.MissingWidget(
+            f"Widget with name=={name!r} was not found in {self}"
+        )
 
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
@@ -196,12 +203,12 @@ class Widget(DOMNode):
 
     @property
     def gutter(self) -> Spacing:
-        mt, mr, mb, bl = self.margin or (0, 0, 0, 0)
-        pt, pr, pb, pl = self.padding or (0, 0, 0, 0)
-        border = 1 if self.border else 0
-        gutter = Spacing(
-            mt + pt + border, mr + pr + border, mb + pb + border, bl + pl + border
-        )
+        """Get additional space reserved by margin / padding / border.
+
+        Returns:
+            Spacing: [description]
+        """
+        gutter = self.styles.gutter
         return gutter
 
     def on_style_change(self) -> None:
@@ -312,9 +319,20 @@ class Widget(DOMNode):
         await self.app.set_focus(self)
 
     async def capture_mouse(self, capture: bool = True) -> None:
+        """Capture (or release) the mouse.
+
+        When captured, all mouse coordinates will go to this widget even when the pointer is not directly over the widget.
+
+        Args:
+            capture (bool, optional): True to capture or False to release. Defaults to True.
+        """
         await self.app.capture_mouse(self if capture else None)
 
     async def release_mouse(self) -> None:
+        """Release the mouse.
+
+        Mouse events will only be sent when the mouse is over the widget.
+        """
         await self.app.capture_mouse(None)
 
     async def broker_event(self, event_name: str, event: events.Event) -> bool:

@@ -1,3 +1,16 @@
+"""
+A DOMQuery is a set of DOM nodes associated with a given CSS selector.
+
+This set of nodes may be further filtered with the filter method. Additional methods apply
+actions to the nodes in the query.
+
+If this sounds like JQuery, a (once) popular JS library, it is no coincidence.
+
+DOMQuery objects are typically created by Widget.filter method.
+
+"""
+
+
 from __future__ import annotations
 
 
@@ -38,6 +51,7 @@ class DOMQuery:
         return len(self._nodes)
 
     def __bool__(self) -> bool:
+        """True if non-empty, otherwise False."""
         return bool(self._nodes)
 
     def __iter__(self) -> Iterator[DOMNode]:
@@ -47,22 +61,39 @@ class DOMQuery:
         yield self._nodes
 
     def filter(self, selector: str) -> DOMQuery:
+        """Filter this set by the given CSS selector.
+
+        Args:
+            selector (str): A CSS selector.
+
+        Returns:
+            DOMQuery: New DOM Query.
+        """
         selector_set = parse_selectors(selector)
         query = DOMQuery()
         query._nodes = [_node for _node in self._nodes if match(selector_set, _node)]
         return query
 
     def first(self) -> DOMNode:
+        """Get the first matched node.
+
+        Returns:
+            DOMNode: A DOM Node.
+        """
+        # TODO: Better response to empty query than an IndexError
         return self._nodes[0]
 
     def add_class(self, *class_names: str) -> None:
+        """Add the given class name(s) to nodes."""
         for node in self._nodes:
             node.add_class(*class_names)
 
     def remove_class(self, *class_names: str) -> None:
+        """Remove the given class names from the nodes."""
         for node in self._nodes:
             node.remove_class(*class_names)
 
     def toggle_class(self, *class_names: str) -> None:
+        """Toggle the given class names from matched nodes."""
         for node in self._nodes:
             node.toggle_class(*class_names)
