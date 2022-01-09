@@ -226,7 +226,15 @@ class DOMNode(MessagePump):
                 if node.children:
                     push(iter(node.children))
 
-    def query(self, selector: str) -> DOMQuery:
+    def query(self, selector: str | None = None) -> DOMQuery:
+        """Get a DOM query.
+
+        Args:
+            selector (str, optional): A CSS selector or `None` for all nodes. Defaults to None.
+
+        Returns:
+            DOMQuery: A query object.
+        """
         from .css.query import DOMQuery
 
         return DOMQuery(self, selector)
