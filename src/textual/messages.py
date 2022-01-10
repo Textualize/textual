@@ -41,3 +41,12 @@ class CursorMove(Message):
     def __init__(self, sender: MessagePump, line: int) -> None:
         self.line = line
         super().__init__(sender)
+
+
+@rich.repr.auto
+class RefreshStyles(Message):
+    def __init__(self, sender: MessagePump) -> None:
+        super().__init__(sender)
+
+    def can_replace(self, message: Message) -> bool:
+        return isinstance(message, RefreshStyles)

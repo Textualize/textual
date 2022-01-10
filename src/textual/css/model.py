@@ -45,15 +45,15 @@ class Selector:
 
     @property
     def css(self) -> str:
-        psuedo_suffix = "".join(f":{name}" for name in self.pseudo_classes)
+        pseudo_suffix = "".join(f":{name}" for name in self.pseudo_classes)
         if self.type == SelectorType.UNIVERSAL:
             return "*"
         elif self.type == SelectorType.TYPE:
-            return f"{self.name}{psuedo_suffix}"
+            return f"{self.name}{pseudo_suffix}"
         elif self.type == SelectorType.CLASS:
-            return f".{self.name}{psuedo_suffix}"
+            return f".{self.name}{pseudo_suffix}"
         else:
-            return f"#{self.name}{psuedo_suffix}"
+            return f"#{self.name}{pseudo_suffix}"
 
     def __post_init__(self) -> None:
         self._name_lower = self.name.lower()
@@ -73,21 +73,21 @@ class Selector:
     def _check_type(self, node: DOMNode) -> bool:
         if node.css_type != self._name_lower:
             return False
-        if self.pseudo_classes and not node.has_psuedo_class(*self.pseudo_classes):
+        if self.pseudo_classes and not node.has_pseudo_class(*self.pseudo_classes):
             return False
         return True
 
     def _check_class(self, node: DOMNode) -> bool:
         if not node.has_class(self._name_lower):
             return False
-        if self.pseudo_classes and not node.has_psuedo_class(*self.pseudo_classes):
+        if self.pseudo_classes and not node.has_pseudo_class(*self.pseudo_classes):
             return False
         return True
 
     def _check_id(self, node: DOMNode) -> bool:
         if not node.id == self._name_lower:
             return False
-        if self.pseudo_classes and not node.has_psuedo_class(*self.pseudo_classes):
+        if self.pseudo_classes and not node.has_pseudo_class(*self.pseudo_classes):
             return False
         return True
 

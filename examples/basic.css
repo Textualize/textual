@@ -4,6 +4,10 @@ App > View {
   docks: side=left/1;
 }
 
+Widget:hover {
+  outline: solid green;
+}
+
 #sidebar {
   text: #09312e on #3caea3;
   dock: side;
