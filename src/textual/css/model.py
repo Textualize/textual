@@ -64,6 +64,11 @@ class Selector:
             SelectorType.ID: self._check_id,
         }
 
+    def _add_pseudo_class(self, pseudo_class: str) -> None:
+        self.pseudo_classes.append(pseudo_class)
+        specificity1, specificity2, specificity3 = self.specificity
+        self.specificity = (specificity1, specificity2 + 1, specificity3)
+
     def check(self, node: DOMNode) -> bool:
         return self._checks[self.type](node)
 

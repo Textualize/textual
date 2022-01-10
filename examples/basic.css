@@ -5,7 +5,8 @@ App > View {
 }
 
 Widget:hover {
-  outline: solid green;
+  outline: heavy;
+  text: bold !important;
 }
 
 #sidebar {

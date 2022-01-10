@@ -43,9 +43,8 @@ class StylesBuilder:
     def add_declaration(self, declaration: Declaration) -> None:
         if not declaration.tokens:
             return
-        process_method = getattr(
-            self, f"process_{declaration.name.replace('-', '_')}", None
-        )
+        rule_name = declaration.name.replace("-", "_")
+        process_method = getattr(self, f"process_{rule_name}", None)
 
         if process_method is None:
             self.error(
@@ -55,17 +54,19 @@ class StylesBuilder:
             )
         else:
             tokens = declaration.tokens
-            if tokens[-1].name == "important":
+
+            important = tokens[-1].name == "important"
+            if important:
                 tokens = tokens[:-1]
-                self.styles.important.add(declaration.name)
+                self.styles.important.add(rule_name)
             try:
-                process_method(declaration.name, tokens)
+                process_method(declaration.name, tokens, important)
             except DeclarationError as error:
                 raise
             except Exception as error:
                 self.error(declaration.name, declaration.token, str(error))
 
-    def process_display(self, name: str, tokens: list[Token]) -> None:
+    def process_display(self, name: str, tokens: list[Token], important: bool) -> None:
         for token in tokens:
             name, value, _, _, location = token
 
@@ -90,19 +91,25 @@ class StylesBuilder:
         else:
             self.error(name, tokens[0], "a single scalar is expected")
 
-    def process_width(self, name: str, tokens: list[Token]) -> None:
+    def process_width(self, name: str, tokens: list[Token], important: bool) -> None:
         self._process_scalar(name, tokens)
 
-    def process_height(self, name: str, tokens: list[Token]) -> None:
+    def process_height(self, name: str, tokens: list[Token], important: bool) -> None:
         self._process_scalar(name, tokens)
 
-    def process_min_width(self, name: str, tokens: list[Token]) -> None:
+    def process_min_width(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         self._process_scalar(name, tokens)
 
-    def process_min_height(self, name: str, tokens: list[Token]) -> None:
+    def process_min_height(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         self._process_scalar(name, tokens)
 
-    def process_visibility(self, name: str, tokens: list[Token]) -> None:
+    def process_visibility(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         for token in tokens:
             name, value, _, _, location = token
             if name == "token":
@@ -140,10 +147,10 @@ class StylesBuilder:
             Spacing.unpack(cast(SpacingDimensions, tuple(space))),
         )
 
-    def process_padding(self, name: str, tokens: list[Token]) -> None:
+    def process_padding(self, name: str, tokens: list[Token], important: bool) -> None:
         self._process_space(name, tokens)
 
-    def process_margin(self, name: str, tokens: list[Token]) -> None:
+    def process_margin(self, name: str, tokens: list[Token], important: bool) -> None:
         self._process_space(name, tokens)
 
     def _parse_border(self, name: str, tokens: list[Token]) -> tuple[str, Style]:
@@ -173,47 +180,63 @@ class StylesBuilder:
         border = self._parse_border("border", tokens)
         setattr(self.styles, f"_rule_border_{edge}", border)
 
-    def process_border(self, name: str, tokens: list[Token]) -> None:
+    def process_border(self, name: str, tokens: list[Token], important: bool) -> None:
         border = self._parse_border("border", tokens)
         styles = self.styles
         styles._rule_border_top = styles._rule_border_right = border
         styles._rule_border_bottom = styles._rule_border_left = border
 
-    def process_border_top(self, name: str, tokens: list[Token]) -> None:
+    def process_border_top(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         self._process_border("top", name, tokens)
 
-    def process_border_right(self, name: str, tokens: list[Token]) -> None:
+    def process_border_right(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         self._process_border("right", name, tokens)
 
-    def process_border_bottom(self, name: str, tokens: list[Token]) -> None:
+    def process_border_bottom(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         self._process_border("bottom", name, tokens)
 
-    def process_border_left(self, name: str, tokens: list[Token]) -> None:
+    def process_border_left(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         self._process_border("left", name, tokens)
 
     def _process_outline(self, edge: str, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("outline", tokens)
         setattr(self.styles, f"_rule_outline_{edge}", border)
 
-    def process_outline(self, name: str, tokens: list[Token]) -> None:
+    def process_outline(self, name: str, tokens: list[Token], important: bool) -> None:
         border = self._parse_border("outline", tokens)
         styles = self.styles
         styles._rule_outline_top = styles._rule_outline_right = border
         styles._rule_outline_bottom = styles._rule_outline_left = border
 
-    def process_outline_top(self, name: str, tokens: list[Token]) -> None:
+    def process_outline_top(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         self._process_outline("top", name, tokens)
 
-    def process_parse_border_right(self, name: str, tokens: list[Token]) -> None:
+    def process_parse_border_right(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         self._process_outline("right", name, tokens)
 
-    def process_outline_bottom(self, name: str, tokens: list[Token]) -> None:
+    def process_outline_bottom(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         self._process_outline("bottom", name, tokens)
 
-    def process_outline_left(self, name: str, tokens: list[Token]) -> None:
+    def process_outline_left(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         self._process_outline("left", name, tokens)
 
-    def process_offset(self, name: str, tokens: list[Token]) -> None:
+    def process_offset(self, name: str, tokens: list[Token], important: bool) -> None:
         if not tokens:
             return
         if len(tokens) != 2:
@@ -229,7 +252,7 @@ class StylesBuilder:
             scalar_y = Scalar.parse(token2.value, Unit.HEIGHT)
             self.styles._rule_offset = ScalarOffset(scalar_x, scalar_y)
 
-    def process_offset_x(self, name: str, tokens: list[Token]) -> None:
+    def process_offset_x(self, name: str, tokens: list[Token], important: bool) -> None:
         if not tokens:
             return
         if len(tokens) != 1:
@@ -242,7 +265,7 @@ class StylesBuilder:
             y = self.styles.offset.y
             self.styles._rule_offset = ScalarOffset(x, y)
 
-    def process_offset_y(self, name: str, tokens: list[Token]) -> None:
+    def process_offset_y(self, name: str, tokens: list[Token], important: bool) -> None:
         if not tokens:
             return
         if len(tokens) != 1:
@@ -255,22 +278,28 @@ class StylesBuilder:
             x = self.styles.offset.x
             self.styles._rule_offset = ScalarOffset(x, y)
 
-    def process_layout(self, name: str, tokens: list[Token]) -> None:
+    def process_layout(self, name: str, tokens: list[Token], important: bool) -> None:
         if tokens:
             if len(tokens) != 1:
                 self.error(name, tokens[0], "unexpected tokens in declaration")
             else:
                 self.styles._rule_layout = tokens[0].value
 
-    def process_text(self, name: str, tokens: list[Token]) -> None:
+    def process_text(self, name: str, tokens: list[Token], important: bool) -> None:
         style_definition = " ".join(token.value for token in tokens)
         try:
             style = Style.parse(style_definition)
         except Exception as error:
             self.error(name, tokens[0], f"failed to parse style; {error}")
+        if important:
+            self.styles.important.update(
+                {"text_style", "text_background", "text_color"}
+            )
         self.styles.text = style
 
-    def process_text_color(self, name: str, tokens: list[Token]) -> None:
+    def process_text_color(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
@@ -284,7 +313,9 @@ class StylesBuilder:
                     name, token, f"unexpected token {token.value!r} in declaration"
                 )
 
-    def process_text_background(self, name: str, tokens: list[Token]) -> None:
+    def process_text_background(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
@@ -298,11 +329,13 @@ class StylesBuilder:
                     name, token, f"unexpected token {token.value!r} in declaration"
                 )
 
-    def process_text_style(self, name: str, tokens: list[Token]) -> None:
+    def process_text_style(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         style_definition = " ".join(token.value for token in tokens)
         self.styles.text_style = style_definition
 
-    def process_dock(self, name: str, tokens: list[Token]) -> None:
+    def process_dock(self, name: str, tokens: list[Token], important: bool) -> None:
 
         if len(tokens) > 1:
             self.error(
@@ -312,7 +345,7 @@ class StylesBuilder:
             )
         self.styles._rule_dock = tokens[0].value if tokens else ""
 
-    def process_docks(self, name: str, tokens: list[Token]) -> None:
+    def process_docks(self, name: str, tokens: list[Token], important: bool) -> None:
         docks: list[DockGroup] = []
         for token in tokens:
             if token.name == "key_value":
@@ -343,12 +376,12 @@ class StylesBuilder:
                 )
         self.styles._rule_docks = tuple(docks + [DockGroup("_default", "top", 0)])
 
-    def process_layer(self, name: str, tokens: list[Token]) -> None:
+    def process_layer(self, name: str, tokens: list[Token], important: bool) -> None:
         if len(tokens) > 1:
             self.error(name, tokens[1], f"unexpected tokens in dock-edge declaration")
         self.styles._rule_layer = tokens[0].value
 
-    def process_layers(self, name: str, tokens: list[Token]) -> None:
+    def process_layers(self, name: str, tokens: list[Token], important: bool) -> None:
         layers: list[str] = []
         for token in tokens:
             if token.name != "token":
@@ -356,7 +389,9 @@ class StylesBuilder:
             layers.append(token.value)
         self.styles._rule_layers = tuple(layers)
 
-    def process_transition(self, name: str, tokens: list[Token]) -> None:
+    def process_transition(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
         transitions: dict[str, Transition] = {}
 
         css_property = ""

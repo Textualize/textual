@@ -16,6 +16,7 @@ from .._types import MessageTarget
 from .errors import StyleValueError
 from .. import events
 from ._error_tools import friendly_list
+from .types import Specificity3, Specificity4
 from .constants import (
     VALID_DISPLAY,
     VALID_VISIBILITY,
@@ -159,7 +160,7 @@ class Styles:
         """Get the gutter (additional space reserved for margin / padding / border).
 
         Returns:
-            Spacing: [description]
+            Spacing: Space around edges.
         """
         gutter = self.margin + self.padding + self.border.spacing
         return gutter
@@ -200,8 +201,6 @@ class Styles:
     def refresh(self, layout: bool = False) -> None:
         self._repaint_required = True
         self._layout_required = layout
-        # if self.node is not None:
-        #     self.node.post_message_no_wait(events.Null(self.node))
 
     def check_refresh(self) -> tuple[bool, bool]:
         result = (self._repaint_required, self._layout_required)
@@ -237,8 +236,8 @@ class Styles:
             return None
 
     def extract_rules(
-        self, specificity: tuple[int, int, int]
-    ) -> list[tuple[str, tuple[int, int, int, int], Any]]:
+        self, specificity: Specificity3
+    ) -> list[tuple[str, Specificity4, Any]]:
         is_important = self.important.__contains__
         rules = [
             (

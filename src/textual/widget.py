@@ -176,7 +176,7 @@ class Widget(DOMNode):
 
         if styles.has_outline:
             renderable = Border(
-                renderable, styles.outline, outline=True, style=parent_text_style
+                renderable, styles.outline, outline=True, style=renderable_text_style
             )
 
         return renderable
@@ -221,7 +221,7 @@ class Widget(DOMNode):
         return gutter
 
     def on_style_change(self) -> None:
-        self.log("style_Change", self)
+        self.log("style_change", self)
         self.clear_render_cache()
 
     def _update_size(self, size: Size) -> None:

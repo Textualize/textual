@@ -124,10 +124,17 @@ class Stylesheet:
 
         get_first_item = itemgetter(0)
 
+        log("")
+        log(node)
+        for key, attributes in rule_attributes.items():
+            log(key, key in node.styles.important)
+            log("\t", attributes)
+
         node_rules = [
             (name, max(specificity_rules, key=get_first_item)[1])
             for name, specificity_rules in rule_attributes.items()
         ]
+
         node.styles.apply_rules(node_rules)
 
     def update(self, root: DOMNode) -> None:

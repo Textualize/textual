@@ -228,8 +228,8 @@ class StyleProperty:
         bgcolor = getattr(obj, self._bgcolor_name)
         style = Style.from_color(color, bgcolor)
         style_flags = getattr(obj, self._style_name)
-        if style_flags is not None:
-            style += Style.parse(style_flags)
+        if style_flags:
+            style += style_flags
         return style
 
     def __set__(self, obj: Styles, style: Style | str | None) -> Style | str | None:
@@ -241,13 +241,12 @@ class StyleProperty:
         elif isinstance(style, Style):
             setattr(obj, self._color_name, style.color)
             setattr(obj, self._bgcolor_name, style.bgcolor)
-            setattr(obj, self._style_name, str(style.without_color))
+            setattr(obj, self._style_name, style.without_color)
         elif isinstance(style, str):
             new_style = Style.parse(style)
             setattr(obj, self._color_name, new_style.color)
             setattr(obj, self._bgcolor_name, new_style.bgcolor)
-            style_str = str(new_style.without_color)
-            setattr(obj, self._style_name, style_str if style_str != "none" else "")
+            setattr(obj, self._style_name, new_style.without_color)
         return style
 
 
@@ -457,7 +456,7 @@ class StyleFlagsProperty:
             for word in words:
                 if not valid_word(word):
                     raise StyleValueError(f"unknown word {word!r} in style flags")
-            style = Style.parse(" ".join(words))
+            style = Style.parse(style_flags)
             setattr(obj, self._internal_name, style)
         return style_flags
 

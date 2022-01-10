@@ -102,7 +102,6 @@ class DOMNode(MessagePump):
     def pseudo_classes(self) -> frozenset[str]:
         """Get a set of all pseudo classes"""
         pseudo_classes = frozenset({*self.get_pseudo_classes()})
-        self.log(pseudo_classes)
         return pseudo_classes
 
     @property
