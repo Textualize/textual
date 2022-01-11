@@ -245,7 +245,7 @@ class App(DOMNode):
         Should be called whenever CSS classes / pseudo classes change.
 
         """
-        self.post_message_no_wait(messages.RefreshStyles(self))
+        self.post_message_no_wait(messages.StylesUpdated(self))
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
         self.register(self.view, *anon_widgets, **widgets)
@@ -630,7 +630,7 @@ class App(DOMNode):
         self.view.query(selector).toggle_class(class_name)
         self.view.refresh(layout=True)
 
-    async def handle_refresh_styles(self, message: messages.RefreshStyles) -> None:
+    async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
         self.reset_styles()
         self.stylesheet.update(self)
         self.view.refresh(layout=True)

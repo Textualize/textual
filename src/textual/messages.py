@@ -44,9 +44,9 @@ class CursorMove(Message):
 
 
 @rich.repr.auto
-class RefreshStyles(Message):
+class StylesUpdated(Message):
     def __init__(self, sender: MessagePump) -> None:
         super().__init__(sender)
 
     def can_replace(self, message: Message) -> bool:
-        return isinstance(message, RefreshStyles)
+        return isinstance(message, StylesUpdated)
