@@ -6,6 +6,7 @@ from ._scroll_view import ScrollView
 from ._static import Static
 from ._tree_control import TreeControl, TreeClick, TreeNode, NodeID
 from ._directory_tree import DirectoryTree, FileClick
+from ._text_input import TextInput
 
 __all__ = [
     "Button",
@@ -17,6 +18,7 @@ __all__ = [
     "Placeholder",
     "ScrollView",
     "Static",
+    "TextInput",
     "TreeClick",
     "TreeControl",
     "TreeNode",
