@@ -4,6 +4,11 @@ App > View {
   docks: side=left/1;
 }
 
+Widget:hover {
+  outline: heavy;
+  text: bold !important;
+}
+
 #sidebar {
   text: #09312e on #3caea3;
   dock: side;

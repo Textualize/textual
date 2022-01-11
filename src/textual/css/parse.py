@@ -48,7 +48,7 @@ def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
         except EOFError:
             break
         if token.name == "pseudo_class":
-            selectors[-1].pseudo_classes.append(token.value.lstrip(":"))
+            selectors[-1]._add_pseudo_class(token.value.lstrip(":"))
         elif token.name == "whitespace":
             if combinator is None or combinator == CombinatorType.SAME:
                 combinator = CombinatorType.DESCENDENT
@@ -92,7 +92,7 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
 
     while True:
         if token.name == "pseudo_class":
-            selectors[-1].pseudo_classes.append(token.value.lstrip(":"))
+            selectors[-1]._add_pseudo_class(token.value.lstrip(":"))
         elif token.name == "whitespace":
             if combinator is None or combinator == CombinatorType.SAME:
                 combinator = CombinatorType.DESCENDENT

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from logging import getLogger
+from logging import PercentStyle, getLogger
 from typing import (
     Any,
     Awaitable,
@@ -77,6 +77,7 @@ class Widget(DOMNode):
         self._layout_required = False
         self._animate: BoundAnimator | None = None
         self._reactive_watches: dict[str, Callable] = {}
+        self._mouse_over: bool = False
         self.render_cache: RenderCache | None = None
         self.highlight_style: Style | None = None
 
@@ -92,10 +93,20 @@ class Widget(DOMNode):
             yield "name", self.name
         if self.classes:
             yield "classes", self.classes
+        pseudo_classes = self.pseudo_classes
+        if pseudo_classes:
+            yield "pseudo_classes", pseudo_classes
+        yield "outline", self.styles.outline
 
     def __rich__(self) -> RenderableType:
         renderable = self.render_styled()
         return renderable
+
+    def get_pseudo_classes(self) -> Iterable[str]:
+        """Pseudo classes for a widget"""
+        if self._mouse_over:
+            yield "hover"
+        # TODO: focus
 
     def get_child_by_id(self, id: str) -> Widget:
         """Get a child with a given id.
@@ -167,7 +178,7 @@ class Widget(DOMNode):
 
         if styles.has_outline:
             renderable = Border(
-                renderable, styles.outline, outline=True, style=parent_text_style
+                renderable, styles.outline, outline=True, style=renderable_text_style
             )
 
         return renderable
@@ -212,6 +223,7 @@ class Widget(DOMNode):
         return gutter
 
     def on_style_change(self) -> None:
+        self.log("style_change", self)
         self.clear_render_cache()
 
     def _update_size(self, size: Size) -> None:
@@ -359,3 +371,11 @@ class Widget(DOMNode):
 
     async def on_click(self, event: events.Click) -> None:
         await self.broker_event("click", event)
+
+    async def on_enter(self, event: events.Enter) -> None:
+        self._mouse_over = True
+        self.app.update_styles()
+
+    async def on_leave(self, event: events.Leave) -> None:
+        self._mouse_over = False
+        self.app.update_styles()

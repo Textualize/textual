@@ -66,7 +66,7 @@ class Load(Event, bubble=False):
 class Idle(Event, bubble=False):
     """Sent when there are no more items in the message queue.
 
-    This is a psuedo-event in that it is created by the Textual system and doesn't go
+    This is a pseudo-event in that it is created by the Textual system and doesn't go
     through the usual message queue.
 
     """

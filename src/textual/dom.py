@@ -99,9 +99,10 @@ class DOMNode(MessagePump):
         return frozenset(self._classes)
 
     @property
-    def psuedo_classes(self) -> set[str]:
-        """Get a set of all psuedo classes"""
-        return set()
+    def pseudo_classes(self) -> frozenset[str]:
+        """Get a set of all pseudo classes"""
+        pseudo_classes = frozenset({*self.get_pseudo_classes()})
+        return pseudo_classes
 
     @property
     def css_type(self) -> str:
@@ -186,6 +187,14 @@ class DOMNode(MessagePump):
         add_children(tree, self)
         return tree
 
+    def get_pseudo_classes(self) -> Iterable[str]:
+        """Get any pseudo classes applicable to this Node, e.g. hover, focus.
+
+        Returns:
+            Iterable[str]: Iterable of strings, such as a generator.
+        """
+        return ()
+
     def reset_styles(self) -> None:
         from .widget import Widget
 
@@ -255,7 +264,7 @@ class DOMNode(MessagePump):
         self._classes.symmetric_difference_update(class_names)
         self.app.stylesheet.update(self.app)
 
-    def has_psuedo_class(self, *class_names: str) -> bool:
-        """Check for psuedo class (such as hover, focus etc)"""
-        has_psuedo_classes = self.psuedo_classes.issuperset(class_names)
-        return has_psuedo_classes
+    def has_pseudo_class(self, *class_names: str) -> bool:
+        """Check for pseudo class (such as hover, focus etc)"""
+        has_pseudo_classes = self.pseudo_classes.issuperset(class_names)
+        return has_pseudo_classes

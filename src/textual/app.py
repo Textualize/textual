@@ -239,6 +239,14 @@ class App(DOMNode):
                 self.stylesheet.update(self)
                 self.view.refresh(layout=True)
 
+    def update_styles(self) -> None:
+        """Request update of styles.
+
+        Should be called whenever CSS classes / pseudo classes change.
+
+        """
+        self.post_message_no_wait(messages.StylesUpdated(self))
+
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
         self.register(self.view, *anon_widgets, **widgets)
         self.view.refresh()
@@ -620,6 +628,11 @@ class App(DOMNode):
 
     async def action_toggle_class(self, selector: str, class_name: str) -> None:
         self.view.query(selector).toggle_class(class_name)
+        self.view.refresh(layout=True)
+
+    async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
+        self.reset_styles()
+        self.stylesheet.update(self)
         self.view.refresh(layout=True)
 
 
