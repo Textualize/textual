@@ -65,6 +65,11 @@ class Selector:
         }
 
     def _add_pseudo_class(self, pseudo_class: str) -> None:
+        """Adds a pseudo class and updates specificity.
+
+        Args:
+            pseudo_class (str): Name of pseudo class.
+        """
         self.pseudo_classes.append(pseudo_class)
         specificity1, specificity2, specificity3 = self.specificity
         self.specificity = (specificity1, specificity2 + 1, specificity3)

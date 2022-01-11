@@ -240,6 +240,11 @@ class App(DOMNode):
                 self.view.refresh(layout=True)
 
     def update_styles(self) -> None:
+        """Request update of styles.
+
+        Should be called whenever CSS classes / pseudo classes change.
+
+        """
         self.post_message_no_wait(messages.RefreshStyles(self))
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:

@@ -103,8 +103,10 @@ class Widget(DOMNode):
         return renderable
 
     def get_pseudo_classes(self) -> Iterable[str]:
+        """Pseudo classes for a widget"""
         if self._mouse_over:
             yield "hover"
+        # TODO: focus
 
     def get_child_by_id(self, id: str) -> Widget:
         """Get a child with a given id.

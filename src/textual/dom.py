@@ -188,6 +188,11 @@ class DOMNode(MessagePump):
         return tree
 
     def get_pseudo_classes(self) -> Iterable[str]:
+        """Get any pseudo classes applicable to this Node, e.g. hover, focus.
+
+        Returns:
+            Iterable[str]: Iterable of strings, such as a generator.
+        """
         return ()
 
     def reset_styles(self) -> None:
