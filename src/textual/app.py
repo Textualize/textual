@@ -3,6 +3,7 @@ import os
 
 import asyncio
 from functools import partial
+import platform
 from typing import Any, Callable, ClassVar, Type, TypeVar
 import warnings
 
@@ -24,7 +25,6 @@ from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
 from .driver import Driver
 from .layouts.dock import DockLayout, Dock
-from ._linux_driver import LinuxDriver
 from .message_pump import MessagePump
 from ._profile import timer
 from .view import View
@@ -78,7 +78,7 @@ class App(MessagePump):
         self.console = console or Console()
         self.error_console = Console(stderr=True)
         self._screen = screen
-        self.driver_class = driver_class or LinuxDriver
+        self.driver_class = driver_class or self.get_driver_class()
         self._title = title
         self._layout = DockLayout()
         self._view_stack: list[DockView] = []
@@ -109,6 +109,24 @@ class App(MessagePump):
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
     background: Reactive[str] = Reactive("black")
+
+    def get_driver_class(self) -> Type[Driver]:
+        """Get a driver class for this platform.
+
+        Called by the constructor.
+
+        Returns:
+            Driver: A Driver class which manages input and display.
+        """
+        if platform.system() == "Windows":
+            from ._windows_driver import WindowsDriver
+
+            driver_class = WindowsDriver
+        else:
+            from ._linux_driver import LinuxDriver
+
+            driver_class = LinuxDriver
+        return driver_class
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "title", self.title
