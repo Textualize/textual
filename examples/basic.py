@@ -8,6 +8,7 @@ class BasicApp(App):
     def on_load(self):
         """Bind keys here."""
         self.bind("tab", "toggle_class('#sidebar', '-active')")
+        self.bind("a", "toggle_class('#header', '-no-header')")
 
     def on_mount(self):
         """Build layout here."""
