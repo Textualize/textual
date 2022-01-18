@@ -1,8 +1,10 @@
 from __future__ import annotations
+
+import pprint
 import re
 from typing import Iterable
 
-from .tokenizer import Expect, Tokenizer, Token
+from textual.css.tokenizer import Expect, Tokenizer, Token
 
 
 expect_selector = Expect(
@@ -49,7 +51,8 @@ expect_declaration_content = Expect(
     declaration_end=r"\n|;",
     whitespace=r"\s+",
     comment_start=r"\/\*",
-    scalar=r"\-?\d+\.?\d*(?:fr|%|w|h|vw|vh|s|ms)?",
+    duration=r"\-?\d+\.?\d*(?:ms|s)?",
+    scalar=r"\-?\d+\.?\d*(?:fr|%|w|h|vw|vh)?",
     color=r"\#[0-9a-fA-F]{6}|color\([0-9]{1,3}\)|rgb\(\d{1,3}\,\s?\d{1,3}\,\s?\d{1,3}\)",
     key_value=r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+",
     token="[a-zA-Z_-]+",
@@ -122,3 +125,12 @@ tokenize_declarations = DeclarationTokenizerState()
 #             break
 #         expect = get_state(name, expect)
 #         yield token
+
+if __name__ == "__main__":
+    css = """#something {
+        text: on red;
+        transition: offset 500ms in_out_cubic;
+    }
+    """
+    tokens = tokenize(css, __name__)
+    pprint.pp(list(tokens))

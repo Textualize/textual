@@ -5,11 +5,11 @@ from rich import print
 from functools import lru_cache
 from typing import Iterator, Iterable
 
-from .styles import Styles
-from .tokenize import tokenize, tokenize_declarations, Token
-from .tokenizer import EOFError
+from textual.css.styles import Styles
+from textual.css.tokenize import tokenize, tokenize_declarations, Token
+from textual.css.tokenizer import EOFError
 
-from .model import (
+from textual.css.model import (
     Declaration,
     RuleSet,
     Selector,
@@ -17,7 +17,7 @@ from .model import (
     SelectorSet,
     SelectorType,
 )
-from ._styles_builder import StylesBuilder, DeclarationError
+from textual.css._styles_builder import StylesBuilder, DeclarationError
 
 
 SELECTOR_MAP: dict[str, tuple[SelectorType, tuple[int, int, int]]] = {
@@ -255,9 +255,20 @@ def parse(css: str, path: str) -> Iterable[RuleSet]:
 if __name__ == "__main__":
     print(parse_selectors("Foo > Bar.baz { foo: bar"))
 
-    CSS = """
-text: on red;
-docksX: main=top;
-    """
+    css = """#something {
+    text: on red;
+    transition: offset 5.51s in_out_cubic;
+}
+"""
 
-    print(parse_declarations(CSS, "foo"))
+    from textual.css.stylesheet import Stylesheet, StylesheetParseError
+    from rich.console import Console
+
+    console = Console()
+    stylesheet = Stylesheet()
+    try:
+        stylesheet.parse(css)
+    except StylesheetParseError as e:
+        console.print(e.errors)
+    print(stylesheet)
+    print(stylesheet.css)

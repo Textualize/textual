@@ -9,6 +9,8 @@ from rich.style import Style
 from .constants import VALID_BORDER, VALID_EDGE, VALID_DISPLAY, VALID_VISIBILITY
 from .errors import DeclarationError
 from ._error_tools import friendly_list
+from .. import log
+from .._duration import _duration_as_seconds
 from .._easing import EASING
 from ..geometry import Spacing, SpacingDimensions
 from .model import Declaration
@@ -392,7 +394,7 @@ class StylesBuilder:
         transitions: dict[str, Transition] = {}
 
         def make_groups() -> Iterable[list[Token]]:
-            """Batch tokens in to comma-separated groups."""
+            """Batch tokens into comma-separated groups."""
             group: list[Token] = []
             for token in tokens:
                 if token.name == "comma":
@@ -414,14 +416,14 @@ class StylesBuilder:
                 iter_tokens = iter(tokens)
                 token = next(iter_tokens)
                 if token.name != "token":
-                    self.error(name, token, "expected property")
+                    self.error(name, token, f"expected property {token.name}")
                 css_property = token.value
 
                 token = next(iter_tokens)
-                if token.name != "scalar":
-                    self.error(name, token, "expected time")
+                if token.name != "duration":
+                    self.error(name, token, "expected duration")
                 try:
-                    duration = Scalar.parse(token.value).resolve_time()
+                    duration = _duration_as_seconds(token.value)
                 except ScalarError as error:
                     self.error(name, token, str(error))
 
@@ -438,10 +440,10 @@ class StylesBuilder:
                 easing = token.value
 
                 token = next(iter_tokens)
-                if token.name != "scalar":
-                    self.error(name, token, "expected time")
+                if token.name != "duration":
+                    self.error(name, token, "expected duration")
                 try:
-                    delay = Scalar.parse(token.value).resolve_time()
+                    delay = _duration_as_seconds(token.value)
                 except ScalarError as error:
                     self.error(name, token, str(error))
             except StopIteration:

@@ -86,18 +86,18 @@ class Stylesheet:
                 css = css_file.read()
             path = os.path.abspath(filename)
         except Exception as error:
-            raise StylesheetError(f"unable to read {filename!r}; {error}") from None
+            raise StylesheetError(f"unable to read {filename!r};") from error
         try:
             rules = list(parse(css, path))
         except Exception as error:
-            raise StylesheetError(f"failed to parse {filename!r}; {error}") from None
+            raise StylesheetError(f"failed to parse {filename!r};") from error
         self.rules.extend(rules)
 
     def parse(self, css: str, *, path: str = "") -> None:
         try:
             rules = list(parse(css, path))
         except Exception as error:
-            raise StylesheetError(f"failed to parse css; {error}")
+            raise StylesheetError(f"failed to parse css;") from error
         self.rules.extend(rules)
         if self.any_errors:
             raise StylesheetParseError(self.error_renderable)
