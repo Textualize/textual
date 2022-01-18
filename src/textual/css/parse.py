@@ -82,8 +82,6 @@ def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
 
 def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
 
-    rule_set = RuleSet()
-
     get_selector = SELECTOR_MAP.get
     combinator: CombinatorType | None = CombinatorType.DESCENDENT
     selectors: list[Selector] = []
@@ -187,8 +185,8 @@ def parse_declarations(css: str, path: str) -> Styles:
                 try:
                     styles_builder.add_declaration(declaration)
                 except DeclarationError as error:
-                    raise
                     errors.append((error.token, error.message))
+                    raise
             declaration = Declaration(token, "")
             declaration.name = token.value.rstrip(":")
         elif token_name == "declaration_set_end":
@@ -201,8 +199,8 @@ def parse_declarations(css: str, path: str) -> Styles:
         try:
             styles_builder.add_declaration(declaration)
         except DeclarationError as error:
-            raise
             errors.append((error.token, error.message))
+            raise
 
     return styles_builder.styles
 

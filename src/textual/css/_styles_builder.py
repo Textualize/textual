@@ -1,11 +1,3 @@
-"""
-
-The StylesBuilder object takes tokens parsed from the CSS and converts
-to the appropriate internal types.
-
-
-"""
-
 from __future__ import annotations
 
 from typing import cast, Iterable, NoReturn
@@ -28,6 +20,11 @@ from .transition import Transition
 
 
 class StylesBuilder:
+    """
+    The StylesBuilder object takes tokens parsed from the CSS and converts
+    to the appropriate internal types.
+    """
+
     def __init__(self) -> None:
         self.styles = Styles()
 
@@ -393,13 +390,6 @@ class StylesBuilder:
         self, name: str, tokens: list[Token], important: bool
     ) -> None:
         transitions: dict[str, Transition] = {}
-
-        css_property = ""
-        duration = 1.0
-        easing = "linear"
-        delay = 0.0
-
-        iter_tokens = iter(tokens)
 
         def make_groups() -> Iterable[list[Token]]:
             """Batch tokens in to comma-separated groups."""

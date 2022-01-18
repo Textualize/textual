@@ -2,8 +2,6 @@ from __future__ import annotations
 import re
 from typing import Iterable
 
-from rich import print
-
 from .tokenizer import Expect, Tokenizer, Token
 
 
