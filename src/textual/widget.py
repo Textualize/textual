@@ -184,10 +184,6 @@ class Widget(DOMNode):
         return renderable
 
     @property
-    def visible(self) -> bool:
-        return self.styles.display == "block"
-
-    @property
     def size(self) -> Size:
         return self._size
 

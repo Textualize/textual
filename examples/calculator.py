@@ -101,8 +101,8 @@ class Calculator(GridView):
     def watch_show_ac(self, show_ac: bool) -> None:
         """When the show_ac attribute change we need to update the buttons."""
         # Show AC and hide C or vice versa
-        self.c.visible = not show_ac
-        self.ac.visible = show_ac
+        self.c.display = not show_ac
+        self.ac.display = show_ac
 
     def on_mount(self) -> None:
         """Event when widget is first mounted (added to a parent view)."""
@@ -131,7 +131,7 @@ class Calculator(GridView):
         self.zero = make_button("0", self.DARK)
         self.ac = make_button("AC", self.LIGHT)
         self.c = make_button("C", self.LIGHT)
-        self.c.visible = False
+        self.c.display = False
 
         # Set basic grid settings
         self.grid.set_gap(2, 1)

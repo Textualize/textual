@@ -8,6 +8,9 @@ from rich.pretty import Pretty
 from rich.style import Style
 from rich.tree import Tree
 
+from .css._error_tools import friendly_list
+from .css.constants import VALID_DISPLAY
+from .css.errors import StyleValueError
 from .css.styles import Styles
 from .message_pump import MessagePump
 from ._node_list import NodeList
@@ -130,8 +133,32 @@ class DOMNode(MessagePump):
         return result[::-1]
 
     @property
-    def visible(self) -> bool:
+    def display(self) -> bool:
+        """
+        Returns: ``True`` if this DOMNode is displayed (``display != "none"``), ``False`` otherwise.
+        """
         return self.styles.display != "none"
+
+    @display.setter
+    def display(self, new_val: bool | str) -> None:
+        """
+        Args:
+            new_val (bool | str): Shortcut to set the ``display`` CSS property.
+                ``False`` will set ``display: none``. ``True`` will set ``display: block``.
+                A ``False`` value will prevent the DOMNode from consuming space in the layout.
+        """
+        # TODO: This will forget what the original "display" value was, so if a user
+        #  toggles to False then True, we'll reset to the default "block", rather than
+        #  what the user initially specified.
+        if isinstance(new_val, bool):
+            self.styles.display = "block" if new_val else "none"
+        elif new_val in VALID_DISPLAY:
+            self.styles.display = new_val
+        else:
+            raise StyleValueError(
+                f"invalid value for display (received {new_val!r}, "
+                f"expected {friendly_list(VALID_DISPLAY)})",
+            )
 
     @property
     def z(self) -> tuple[int, ...]:

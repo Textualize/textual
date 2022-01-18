@@ -263,5 +263,5 @@ class View(Widget):
 
     async def action_toggle(self, name: str) -> None:
         widget = self[name]
-        widget.visible = not widget.visible
+        widget.visible = not widget.display
         await self.post_message(messages.Layout(self))

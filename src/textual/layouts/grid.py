@@ -352,7 +352,7 @@ class GridLayout(Layout):
         widget_areas = (
             (widget, area)
             for widget, area in self.widgets.items()
-            if area and widget.visible
+            if area and widget.display
         )
 
         free_slots = {
