@@ -114,7 +114,7 @@ class Stylesheet:
 
         _check_rule = self._check_rule
 
-        node.reset_styles()
+        node.styles.reset()
 
         # Get the default node CSS rules
         for key, default_specificity, value in node._default_rules:

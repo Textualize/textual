@@ -235,6 +235,10 @@ class Styles:
         else:
             return None
 
+    def reset(self) -> None:
+        for rule_name in INTERNAL_RULE_NAMES:
+            setattr(self, rule_name, None)
+
     def extract_rules(
         self, specificity: Specificity3
     ) -> list[tuple[str, Specificity4, Any]]:
