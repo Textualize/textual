@@ -30,29 +30,11 @@ def test_parse_text_background():
     assert styles.text_background == Color("red", type=ColorType.STANDARD, number=1)
 
 
-@pytest.mark.parametrize(
-    "offset_x, parsed_x, offset_y, parsed_y",
-    [
-        [
-            "-5.5%",
-            Scalar(-5.5, Unit.PERCENT, Unit.WIDTH),
-            "-30%",
-            Scalar(-30, Unit.PERCENT, Unit.HEIGHT),
-        ],
-        [
-            "5%",
-            Scalar(5, Unit.PERCENT, Unit.WIDTH),
-            "40%",
-            Scalar(40, Unit.PERCENT, Unit.HEIGHT),
-        ],
-        [
-            "10",
-            Scalar(10, Unit.CELLS, Unit.WIDTH),
-            "40",
-            Scalar(40, Unit.CELLS, Unit.HEIGHT),
-        ],
-    ],
-)
+@pytest.mark.parametrize("offset_x, parsed_x, offset_y, parsed_y", [
+    ["-5.5%", Scalar(-5.5, Unit.PERCENT, Unit.WIDTH), "-30%", Scalar(-30, Unit.PERCENT, Unit.HEIGHT)],
+    ["5%", Scalar(5, Unit.PERCENT, Unit.WIDTH), "40%", Scalar(40, Unit.PERCENT, Unit.HEIGHT)],
+    ["10", Scalar(10, Unit.CELLS, Unit.WIDTH), "40", Scalar(40, Unit.CELLS, Unit.HEIGHT)],
+])
 def test_parse_offset_composite_rule(offset_x, parsed_x, offset_y, parsed_y):
     css = f"""#some-widget {{
         offset: {offset_x} {offset_y};
@@ -69,29 +51,11 @@ def test_parse_offset_composite_rule(offset_x, parsed_x, offset_y, parsed_y):
     assert styles.offset.y == parsed_y
 
 
-@pytest.mark.parametrize(
-    "offset_x, parsed_x, offset_y, parsed_y",
-    [
-        [
-            "-5.5%",
-            Scalar(-5.5, Unit.PERCENT, Unit.WIDTH),
-            "-30%",
-            Scalar(-30, Unit.PERCENT, Unit.HEIGHT),
-        ],
-        [
-            "5%",
-            Scalar(5, Unit.PERCENT, Unit.WIDTH),
-            "40%",
-            Scalar(40, Unit.PERCENT, Unit.HEIGHT),
-        ],
-        [
-            "10",
-            Scalar(10, Unit.CELLS, Unit.WIDTH),
-            "40",
-            Scalar(40, Unit.CELLS, Unit.HEIGHT),
-        ],
-    ],
-)
+@pytest.mark.parametrize("offset_x, parsed_x, offset_y, parsed_y", [
+    ["-5.5%", Scalar(-5.5, Unit.PERCENT, Unit.WIDTH), "-30%", Scalar(-30, Unit.PERCENT, Unit.HEIGHT)],
+    ["5%", Scalar(5, Unit.PERCENT, Unit.WIDTH), "40%", Scalar(40, Unit.PERCENT, Unit.HEIGHT)],
+    ["10", Scalar(10, Unit.CELLS, Unit.WIDTH), "40", Scalar(40, Unit.CELLS, Unit.HEIGHT)],
+])
 def test_parse_offset_separate_rules(offset_x, parsed_x, offset_y, parsed_y):
     css = f"""#some-widget {{
         offset-x: {offset_x};
@@ -110,15 +74,14 @@ def test_parse_offset_separate_rules(offset_x, parsed_x, offset_y, parsed_y):
 
 
 @pytest.mark.parametrize(
-    "duration, parsed_duration",
-    [
+    "duration, parsed_duration", [
         ["5.57s", 5.57],
         ["0.5s", 0.5],
         ["1200ms", 1.2],
         ["0.5ms", 0.0005],
-        ["20", 20.0],
+        ["20", 20.],
         ["0.1", 0.1],
-    ],
+    ]
 )
 def test_parse_transition(duration, parsed_duration):
     easing = "in_out_cubic"
@@ -135,9 +98,7 @@ def test_parse_transition(duration, parsed_duration):
     assert len(stylesheet.rules) == 1
     assert stylesheet.rules[0].errors == []
     assert styles.transitions == {
-        "offset": Transition(
-            duration=parsed_duration, easing=easing, delay=parsed_duration
-        )
+        "offset": Transition(duration=parsed_duration, easing=easing, delay=parsed_duration)
     }
 
 

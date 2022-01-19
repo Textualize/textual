@@ -412,7 +412,7 @@ class StylesBuilder:
             if group:
                 yield group
 
-        valid_duration_token_types = ("duration", "number")
+        valid_duration_token_names = ("duration", "number")
         for tokens in make_groups():
             css_property = ""
             duration = 1.0
@@ -427,7 +427,7 @@ class StylesBuilder:
 
                 css_property = token.value
                 token = next(iter_tokens)
-                if token.name not in valid_duration_token_types:
+                if token.name not in valid_duration_token_names:
                     self.error(name, token, "expected duration or number")
                 try:
                     duration = _duration_as_seconds(token.value)
@@ -447,7 +447,7 @@ class StylesBuilder:
                 easing = token.value
 
                 token = next(iter_tokens)
-                if token.name not in valid_duration_token_types:
+                if token.name not in valid_duration_token_names:
                     self.error(name, token, "expected duration or number")
                 try:
                     delay = _duration_as_seconds(token.value)
