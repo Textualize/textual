@@ -54,7 +54,7 @@ class TestParseOffset:
     @pytest.mark.parametrize("offset_x, parsed_x, offset_y, parsed_y", [
         ["-5.5%", Scalar(-5.5, Unit.PERCENT, Unit.WIDTH), "-30%", Scalar(-30, Unit.PERCENT, Unit.HEIGHT)],
         ["5%", Scalar(5, Unit.PERCENT, Unit.WIDTH), "40%", Scalar(40, Unit.PERCENT, Unit.HEIGHT)],
-        ["10", Scalar(10, Unit.CELLS, Unit.WIDTH), "40", Scalar(40, Unit.CELLS, Unit.HEIGHT)],
+        ["-10", Scalar(-10, Unit.CELLS, Unit.WIDTH), "40", Scalar(40, Unit.CELLS, Unit.HEIGHT)],
     ])
     def test_separate_rules(self, offset_x, parsed_x, offset_y, parsed_y):
         css = f"""#some-widget {{
