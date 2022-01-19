@@ -51,7 +51,7 @@ class DockLayout(Layout):
         groups: dict[str, list[Widget]] = defaultdict(list)
         for child in view.children:
             assert isinstance(child, Widget)
-            if child.visible:
+            if child.display:
                 groups[child.styles.dock].append(child)
         docks: list[Dock] = []
         append_dock = docks.append
