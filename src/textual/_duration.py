@@ -4,11 +4,15 @@ _match_duration = re.compile(r"^(-?\d+\.?\d*)(s|ms)$").match
 
 
 class DurationError(Exception):
-    pass
+    """
+    Exception indicating a general issue with a CSS duration.
+    """
 
 
 class DurationParseError(DurationError):
-    pass
+    """
+    Indicates a malformed duration string that could not be parsed.
+    """
 
 
 def _duration_as_seconds(duration: str) -> float:
