@@ -6,6 +6,7 @@ from typing import Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 
+from textual.css.tokenizer import Token
 from ..geometry import Offset
 
 
@@ -30,8 +31,6 @@ class Unit(Enum):
     HEIGHT = 5
     VIEW_WIDTH = 6
     VIEW_HEIGHT = 7
-    MILLISECONDS = 8
-    SECONDS = 9
 
 
 UNIT_SYMBOL = {
@@ -42,13 +41,11 @@ UNIT_SYMBOL = {
     Unit.HEIGHT: "h",
     Unit.VIEW_WIDTH: "vw",
     Unit.VIEW_HEIGHT: "vh",
-    Unit.MILLISECONDS: "ms",
-    Unit.SECONDS: "s",
 }
 
 SYMBOL_UNIT = {v: k for k, v in UNIT_SYMBOL.items()}
 
-_MATCH_SCALAR = re.compile(r"^(\-?\d+\.?\d*)(fr|%|w|h|vw|vh|s|ms)?$").match
+_MATCH_SCALAR = re.compile(r"^(-?\d+\.?\d*)(fr|%|w|h|vw|vh)?$").match
 
 
 RESOLVE_MAP = {
@@ -141,14 +138,6 @@ class Scalar(NamedTuple):
             return RESOLVE_MAP[unit](value, size, viewport)
         except KeyError:
             raise ScalarResolveError(f"expected dimensions; found {str(self)!r}")
-
-    def resolve_time(self) -> float:
-        value, unit, _ = self
-        if unit == Unit.MILLISECONDS:
-            return value / 1000.0
-        elif unit == Unit.SECONDS:
-            return value
-        raise ScalarResolveError(f"expected time; found {str(self)!r}")
 
 
 @rich.repr.auto(angular=True)

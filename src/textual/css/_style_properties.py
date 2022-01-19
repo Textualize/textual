@@ -55,7 +55,6 @@ class ScalarProperty:
     def __set__(
         self, obj: Styles, value: float | Scalar | str | None
     ) -> float | Scalar | str | None:
-        new_value: Scalar | None = None
         if value is None:
             new_value = None
         elif isinstance(value, float):

@@ -1,11 +1,3 @@
-"""
-
-The StylesBuilder object takes tokens parsed from the CSS and converts
-to the appropriate internal types.
-
-
-"""
-
 from __future__ import annotations
 
 from typing import cast, Iterable, NoReturn
@@ -17,6 +9,7 @@ from rich.style import Style
 from .constants import VALID_BORDER, VALID_EDGE, VALID_DISPLAY, VALID_VISIBILITY
 from .errors import DeclarationError
 from ._error_tools import friendly_list
+from .._duration import _duration_as_seconds
 from .._easing import EASING
 from ..geometry import Spacing, SpacingDimensions
 from .model import Declaration
@@ -28,6 +21,11 @@ from .transition import Transition
 
 
 class StylesBuilder:
+    """
+    The StylesBuilder object takes tokens parsed from the CSS and converts
+    to the appropriate internal types.
+    """
+
     def __init__(self) -> None:
         self.styles = Styles()
 
@@ -240,14 +238,21 @@ class StylesBuilder:
         if not tokens:
             return
         if len(tokens) != 2:
-            self.error(name, tokens[0], "expected two numbers in declaration")
+            self.error(
+                name, tokens[0], "expected two scalars or numbers in declaration"
+            )
         else:
             token1, token2 = tokens
 
-            if token1.name != "scalar":
-                self.error(name, token1, f"expected a scalar; found {token1.value!r}")
-            if token2.name != "scalar":
-                self.error(name, token2, f"expected a scalar; found {token1.value!r}")
+            if token1.name not in ("scalar", "number"):
+                self.error(
+                    name, token1, f"expected a scalar or number; found {token1.value!r}"
+                )
+            if token2.name not in ("scalar", "number"):
+                self.error(
+                    name, token2, f"expected a scalar or number; found {token2.value!r}"
+                )
+
             scalar_x = Scalar.parse(token1.value, Unit.WIDTH)
             scalar_y = Scalar.parse(token2.value, Unit.HEIGHT)
             self.styles._rule_offset = ScalarOffset(scalar_x, scalar_y)
@@ -259,7 +264,7 @@ class StylesBuilder:
             self.error(name, tokens[0], f"expected a single number")
         else:
             token = tokens[0]
-            if token.name != "scalar":
+            if token.name not in ("scalar", "number"):
                 self.error(name, token, f"expected a scalar; found {token.value!r}")
             x = Scalar.parse(token.value, Unit.WIDTH)
             y = self.styles.offset.y
@@ -272,7 +277,7 @@ class StylesBuilder:
             self.error(name, tokens[0], f"expected a single number")
         else:
             token = tokens[0]
-            if token.name != "scalar":
+            if token.name not in ("scalar", "number"):
                 self.error(name, token, f"expected a scalar; found {token.value!r}")
             y = Scalar.parse(token.value, Unit.HEIGHT)
             x = self.styles.offset.x
@@ -394,15 +399,8 @@ class StylesBuilder:
     ) -> None:
         transitions: dict[str, Transition] = {}
 
-        css_property = ""
-        duration = 1.0
-        easing = "linear"
-        delay = 0.0
-
-        iter_tokens = iter(tokens)
-
         def make_groups() -> Iterable[list[Token]]:
-            """Batch tokens in to comma-separated groups."""
+            """Batch tokens into comma-separated groups."""
             group: list[Token] = []
             for token in tokens:
                 if token.name == "comma":
@@ -414,6 +412,7 @@ class StylesBuilder:
             if group:
                 yield group
 
+        valid_duration_token_names = ("duration", "number")
         for tokens in make_groups():
             css_property = ""
             duration = 1.0
@@ -425,13 +424,13 @@ class StylesBuilder:
                 token = next(iter_tokens)
                 if token.name != "token":
                     self.error(name, token, "expected property")
-                css_property = token.value
 
+                css_property = token.value
                 token = next(iter_tokens)
-                if token.name != "scalar":
-                    self.error(name, token, "expected time")
+                if token.name not in valid_duration_token_names:
+                    self.error(name, token, "expected duration or number")
                 try:
-                    duration = Scalar.parse(token.value).resolve_time()
+                    duration = _duration_as_seconds(token.value)
                 except ScalarError as error:
                     self.error(name, token, str(error))
 
@@ -448,10 +447,10 @@ class StylesBuilder:
                 easing = token.value
 
                 token = next(iter_tokens)
-                if token.name != "scalar":
-                    self.error(name, token, "expected time")
+                if token.name not in valid_duration_token_names:
+                    self.error(name, token, "expected duration or number")
                 try:
-                    delay = Scalar.parse(token.value).resolve_time()
+                    delay = _duration_as_seconds(token.value)
                 except ScalarError as error:
                     self.error(name, token, str(error))
             except StopIteration:

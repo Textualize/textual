@@ -11,3 +11,4 @@ repos:
     rev: 21.8b0
     hooks:
     -   id: black
+        exclude: ^tests/

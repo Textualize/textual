@@ -5,4 +5,4 @@ typecheck:
 format:
 	black src
 format-check:
-	black --check .
+	black --check src
