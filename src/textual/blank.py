@@ -6,6 +6,15 @@ from rich.style import StyleType
 
 
 class Blank:
+    """
+    Render an empty rectangle.
+
+    Args:
+        style (StyleType): Style to apply to the box.
+        width (int, optional): Width of the box in number of cells. Will expand to fit parent if ``None``.
+        height (int, optional): Height of the box in number of cells. Will expand to fit parent if ``None``.
+    """
+
     def __init__(
         self, style: StyleType, width: int | None = None, height: int | None = None
     ):

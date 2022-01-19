@@ -236,6 +236,9 @@ class Styles:
             return None
 
     def reset(self) -> None:
+        """
+        Reset internal style rules to ``None``, reverting to default styles.
+        """
         for rule_name in INTERNAL_RULE_NAMES:
             setattr(self, rule_name, None)
 
