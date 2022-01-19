@@ -3,9 +3,8 @@ from __future__ import annotations
 from collections import defaultdict
 from operator import itemgetter
 import os
-from typing import Iterable, TYPE_CHECKING
+from typing import Iterable
 
-from rich.console import RenderableType
 import rich.repr
 from rich.highlighter import ReprHighlighter
 from rich.panel import Panel
@@ -86,18 +85,18 @@ class Stylesheet:
                 css = css_file.read()
             path = os.path.abspath(filename)
         except Exception as error:
-            raise StylesheetError(f"unable to read {filename!r};") from error
+            raise StylesheetError(f"unable to read {filename!r}; {error}")
         try:
             rules = list(parse(css, path))
         except Exception as error:
-            raise StylesheetError(f"failed to parse {filename!r};") from error
+            raise StylesheetError(f"failed to parse {filename!r}; {error}")
         self.rules.extend(rules)
 
     def parse(self, css: str, *, path: str = "") -> None:
         try:
             rules = list(parse(css, path))
         except Exception as error:
-            raise StylesheetError(f"failed to parse css;") from error
+            raise StylesheetError(f"failed to parse css; {error}")
         self.rules.extend(rules)
         if self.any_errors:
             raise StylesheetParseError(self.error_renderable)
