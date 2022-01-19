@@ -5,11 +5,11 @@ from rich import print
 from functools import lru_cache
 from typing import Iterator, Iterable
 
-from textual.css.styles import Styles
-from textual.css.tokenize import tokenize, tokenize_declarations, Token
-from textual.css.tokenizer import EOFError
+from .styles import Styles
+from .tokenize import tokenize, tokenize_declarations, Token
+from .tokenizer import EOFError
 
-from textual.css.model import (
+from .model import (
     Declaration,
     RuleSet,
     Selector,
@@ -17,7 +17,7 @@ from textual.css.model import (
     SelectorSet,
     SelectorType,
 )
-from textual.css._styles_builder import StylesBuilder, DeclarationError
+from ._styles_builder import StylesBuilder, DeclarationError
 
 
 SELECTOR_MAP: dict[str, tuple[SelectorType, tuple[int, int, int]]] = {
