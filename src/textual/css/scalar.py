@@ -6,6 +6,7 @@ from typing import Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 
+from textual.css.tokenizer import Token
 from ..geometry import Offset
 
 

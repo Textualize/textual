@@ -258,6 +258,7 @@ if __name__ == "__main__":
     css = """#something {
     text: on red;
     transition: offset 5.51s in_out_cubic;
+    offset-x: 100%;
 }
 """
 

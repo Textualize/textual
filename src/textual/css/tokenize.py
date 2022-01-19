@@ -51,8 +51,9 @@ expect_declaration_content = Expect(
     declaration_end=r"\n|;",
     whitespace=r"\s+",
     comment_start=r"\/\*",
-    duration=r"\-?\d+\.?\d*(?:ms|s)?",
-    scalar=r"\-?\d+\.?\d*(?:fr|%|w|h|vw|vh)?",
+    scalar=r"\-?\d+\.?\d*(?:fr|%|w|h|vw|vh)",
+    duration=r"\d+\.?\d*(?:ms|s)",
+    number=r"\-?\d+\.?\d*",
     color=r"\#[0-9a-fA-F]{6}|color\([0-9]{1,3}\)|rgb\(\d{1,3}\,\s?\d{1,3}\,\s?\d{1,3}\)",
     key_value=r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+",
     token="[a-zA-Z_-]+",
@@ -129,8 +130,9 @@ tokenize_declarations = DeclarationTokenizerState()
 if __name__ == "__main__":
     css = """#something {
         text: on red;
-        transition: offset 500ms in_out_cubic;
+        offset-x: 10;
     }
     """
+    # transition: offset 500 in_out_cubic;
     tokens = tokenize(css, __name__)
     pprint.pp(list(tokens))
