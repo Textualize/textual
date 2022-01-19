@@ -14,9 +14,6 @@ if TYPE_CHECKING:
     from rich.console import Console
 
 
-WINDOWS = platform.system() == "Windows"
-
-
 class Driver(ABC):
     def __init__(self, console: "Console", target: "MessageTarget") -> None:
         self.console = console

@@ -33,4 +33,4 @@ class SmoothApp(App):
         self.bar.layout_offset_x = -40
 
 
-SmoothApp.run(log="textual.log")
+SmoothApp.run(log="textual.log", log_verbosity=3)

@@ -119,11 +119,11 @@ class App(MessagePump):
             Driver: A Driver class which manages input and display.
         """
         if platform.system() == "Windows":
-            from ._windows_driver import WindowsDriver
+            from .drivers.windows_driver import WindowsDriver
 
             driver_class = WindowsDriver
         else:
-            from ._linux_driver import LinuxDriver
+            from .drivers.linux_driver import LinuxDriver
 
             driver_class = LinuxDriver
         return driver_class
