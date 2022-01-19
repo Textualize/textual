@@ -113,8 +113,14 @@ class Stylesheet:
         rule_attributes = defaultdict(list)
 
         _check_rule = self._check_rule
+
+        node.styles.reset()
+
+        # Get the default node CSS rules
         for key, default_specificity, value in node._default_rules:
             rule_attributes[key].append((default_specificity, value))
+
+        # Apply styles on top of the default node CSS rules
         for rule in self.rules:
             for specificity in _check_rule(rule, node):
                 for key, rule_specificity, value in rule.styles.extract_rules(
@@ -123,13 +129,6 @@ class Stylesheet:
                     rule_attributes[key].append((rule_specificity, value))
 
         get_first_item = itemgetter(0)
-
-        log("")
-        log(node)
-        for key, attributes in rule_attributes.items():
-            log(key, key in node.styles.important)
-            log("\t", attributes)
-
         node_rules = [
             (name, max(specificity_rules, key=get_first_item)[1])
             for name, specificity_rules in rule_attributes.items()
