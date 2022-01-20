@@ -232,7 +232,7 @@ class Layout(ABC):
             widget (Widget): The Widget in this layout you wish to know the Region of.
 
         Raises:
-            KeyError: If the Widget is not contained in this Layout.
+            NoWidget: If the Widget is not contained in this Layout.
 
         Returns:
             Region: The Region of the Widget.

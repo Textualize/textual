@@ -15,9 +15,6 @@ from .layouts.factory import get_layout
 from .reactive import Reactive, watch
 from .widget import Widget
 
-if TYPE_CHECKING:
-    pass
-
 
 class LayoutProperty:
     def __get__(self, obj: View, objtype: type[View] | None = None) -> str:
