@@ -1,26 +1,19 @@
 from __future__ import annotations
 
-from itertools import chain
-from typing import Callable, Iterable, ClassVar, TYPE_CHECKING
+from typing import Callable, Iterable
 
-from rich.console import RenderableType
 import rich.repr
+from rich.console import RenderableType
 from rich.style import Style
 
-from . import events
 from . import errors
-from . import log
+from . import events
 from . import messages
+from .geometry import Size, Offset, Region
 from .layout import Layout, NoWidget, WidgetPlacement
 from .layouts.factory import get_layout
-from .geometry import Size, Offset, Region
 from .reactive import Reactive, watch
-
-from .widget import Widget, Widget
-
-
-if TYPE_CHECKING:
-    from .app import App
+from .widget import Widget
 
 
 class LayoutProperty:
