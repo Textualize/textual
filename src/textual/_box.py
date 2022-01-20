@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.segment import Segment
 
@@ -13,6 +15,8 @@ BOX_STYLES: dict[str, tuple[str, str, str]] = {
     "inner": ("▗▄▖", "▐ ▌", "▝▀▘"),
     "outer": ("▛▀▜", "▌ ▐", "▙▄▟"),
 }
+
+BoxType = Literal["", "rounded", "solid", "double", "dashed", "heavy", "inner", "outer"]
 
 
 class Box:

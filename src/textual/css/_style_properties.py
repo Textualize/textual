@@ -32,12 +32,11 @@ from ._error_tools import friendly_list
 if TYPE_CHECKING:
     from .styles import Styles
     from .styles import DockGroup
+    from .._box import BoxType
 
 
 class ScalarProperty:
-    """
-    Represents a numeric value and a unit.
-    """
+    """Descriptor for getting and setting scalar properties. Scalars are numeric values with a unit, e.g. "50vh"."""
 
     def __init__(
         self, units: set[Unit] | None = None, percent_unit: Unit = Unit.WIDTH
@@ -53,6 +52,14 @@ class ScalarProperty:
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
     ) -> Scalar | None:
+        """
+        Args:
+            obj (Styles): The Styles object
+            objtype (type[Styles]): The Styles class
+
+        Returns:
+            The Scalar object or ``None`` if it's not set.
+        """
         value = getattr(obj, self.internal_name)
         return value
 
@@ -60,7 +67,7 @@ class ScalarProperty:
         """
         Args:
             obj (Styles): The Styles object.
-            value (float | Scalar | str | None): The value to set the property to.
+            value (float | Scalar | str | None): The value to set the scalar property to.
                 You can directly pass a float value, which will be interpreted with
                 a default unit of Cells. You may also provide a string such as ``"50%"``,
                 as you might do when writing CSS. If a string with no units is supplied,
@@ -91,6 +98,9 @@ class ScalarProperty:
 
 
 class BoxProperty:
+    """Descriptor for getting and setting outlines and borders along a single edge.
+    For example "border-right", "outline-bottom", etc.
+    """
 
     DEFAULT = ("", Style())
 
@@ -102,13 +112,27 @@ class BoxProperty:
 
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
-    ) -> tuple[str, Style]:
+    ) -> tuple[BoxType, Style]:
+        """
+        Args:
+            obj (Styles): The Styles object
+            objtype (type[Styles]): The Styles class
+
+        Returns:
+            A ``tuple[BoxType, Style]`` containing the string type of the box and
+                it's style. Example types are "rounded", "solid", and "dashed".
+        """
         value = getattr(obj, self.internal_name)
         return value or self.DEFAULT
 
-    def __set__(
-        self, obj: Styles, border: tuple[str, str | Color | Style] | None
-    ) -> tuple[str, str | Color | Style] | None:
+    def __set__(self, obj: Styles, border: tuple[BoxType, str | Color | Style] | None):
+        """
+        Args:
+            obj (Styles): The Styles object.
+            value (tuple[BoxType, str | Color | Style], optional): A 2-tuple containing the type of box to use,
+                e.g. "dashed", and the ``Style`` to be used. You can supply the ``Style`` directly, or pass a
+                ``str`` (e.g. ``"blue on #f0f0f0"`` ) or ``Color`` instead.
+        """
         if border is None:
             new_value = None
         else:
@@ -121,17 +145,16 @@ class BoxProperty:
                 new_value = (_type, Style.from_color(Color.parse(color)))
         setattr(obj, self.internal_name, new_value)
         obj.refresh()
-        return border
 
 
 @rich.repr.auto
 class Edges(NamedTuple):
     """Stores edges for border / outline."""
 
-    top: tuple[str, Style]
-    right: tuple[str, Style]
-    bottom: tuple[str, Style]
-    left: tuple[str, Style]
+    top: tuple[BoxType, Style]
+    right: tuple[BoxType, Style]
+    bottom: tuple[BoxType, Style]
+    left: tuple[BoxType, Style]
 
     def __rich_repr__(self) -> rich.repr.Result:
         top, right, bottom, left = self
@@ -160,6 +183,8 @@ class Edges(NamedTuple):
 
 
 class BorderProperty:
+    """Descriptor for getting and setting full borders and outlines."""
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._properties = (
             f"{name}_top",
@@ -169,6 +194,14 @@ class BorderProperty:
         )
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Edges:
+        """
+        Args:
+            obj (Styles): The Styles object
+            objtype (type[Styles]): The Styles class
+
+        Returns:
+            An ``Edges`` object describing the type and style of each edge.
+        """
         top, right, bottom, left = self._properties
         border = Edges(
             getattr(obj, top),
@@ -181,10 +214,21 @@ class BorderProperty:
     def __set__(
         self,
         obj: Styles,
-        border: Sequence[tuple[str, str | Color | Style] | None]
-        | tuple[str, str | Color | Style]
+        border: Sequence[tuple[BoxType, str | Color | Style] | None]
+        | tuple[BoxType, str | Color | Style]
         | None,
     ) -> None:
+        """
+        Args:
+            obj (Styles): The Styles object.
+            border (Sequence[tuple[BoxType, str | Color | Style] | None] | tuple[BoxType, str | Color | Style] | None):
+                A ``tuple[BoxType, str | Color | Style]`` representing the type of box to use and the ``Style`` to apply
+                to the box.
+                Alternatively, you can supply a sequence of these tuples and they will be applied per-edge.
+                If the sequence is of length 1, all edges will be decorated according to the single element.
+                If the sequence is length 2, the first tuple will be applied to the top and bottom edges.
+                If the sequence is length 4, the tuples will be applied to the edges in the order: top, right, bottom, left.
+        """
         top, right, bottom, left = self._properties
         obj.refresh()
         if border is None:
