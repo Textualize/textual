@@ -114,7 +114,24 @@ class View(Widget):
         cached_size, cached_scroll, arrangement = self._cached_arrangement
         if cached_size == size and cached_scroll == scroll:
             return arrangement
-        arrangement = list(self._layout.arrange(self, size, scroll))
+
+        arrangement = []
+        placements = self._layout.arrange(self, size, scroll)
+        for placement in placements:
+            region, widget, order = placement
+            styles = widget.styles
+            if styles.has_margin:
+                margin = styles.margin
+                arrangement.append(
+                    WidgetPlacement(
+                        region=region.shrink(margin),
+                        widget=widget,
+                        order=order,
+                    )
+                )
+            else:
+                arrangement.append(placement)
+
         self._cached_arrangement = (size, scroll, arrangement)
         return arrangement
 
