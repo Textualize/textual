@@ -35,6 +35,10 @@ if TYPE_CHECKING:
 
 
 class ScalarProperty:
+    """
+    Represents a numeric value and a unit.
+    """
+
     def __init__(
         self, units: set[Unit] | None = None, percent_unit: Unit = Unit.WIDTH
     ) -> None:
@@ -52,9 +56,17 @@ class ScalarProperty:
         value = getattr(obj, self.internal_name)
         return value
 
-    def __set__(
-        self, obj: Styles, value: float | Scalar | str | None
-    ) -> float | Scalar | str | None:
+    def __set__(self, obj: Styles, value: float | Scalar | str | None) -> None:
+        """
+        Args:
+            obj (Styles): The Styles object.
+            value (float | Scalar | str | None): The value to set the property to.
+                You can directly pass a float value, which will be interpreted with
+                a default unit of Cells. You may also provide a string such as ``"50%"``,
+                as you might do when writing CSS. If a string with no units is supplied,
+                Cells will be used as the unit. Alternatively, you can directly supply
+                a ``Scalar`` object.
+        """
         if value is None:
             new_value = None
         elif isinstance(value, float):
@@ -76,7 +88,6 @@ class ScalarProperty:
             new_value = Scalar(float(new_value.value), self.percent_unit, Unit.WIDTH)
         setattr(obj, self.internal_name, new_value)
         obj.refresh()
-        return value
 
 
 class BoxProperty:
