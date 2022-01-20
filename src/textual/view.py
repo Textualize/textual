@@ -115,25 +115,13 @@ class View(Widget):
         if cached_size == size and cached_scroll == scroll:
             return arrangement
 
-        arrangement = []
-        placements = self._layout.arrange(self, size, scroll)
-        for placement in placements:
-            region, widget, order = placement
-            styles = widget.styles
-            if styles.has_margin:
-                margin = styles.margin
-                arrangement.append(
-                    WidgetPlacement(
-                        region=region.shrink(margin),
-                        widget=widget,
-                        order=order,
-                    )
-                )
-            else:
-                arrangement.append(placement)
+        placements = [
+            placement.apply_margin()
+            for placement in self._layout.arrange(self, size, scroll)
+        ]
 
-        self._cached_arrangement = (size, scroll, arrangement)
-        return arrangement
+        self._cached_arrangement = (size, scroll, placements)
+        return placements
 
     async def handle_update(self, message: messages.Update) -> None:
         if self.is_root_view:

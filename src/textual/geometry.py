@@ -426,11 +426,12 @@ class Region(NamedTuple):
         """
         _clamp = clamp
         top, right, bottom, left = margin
+        x, y, width, height = self
         return Region(
-            x=_clamp(self.x + left, 0, self.width),
-            y=_clamp(self.y + top, 0, self.height),
-            width=_clamp(self.width - left - right, 0, self.width),
-            height=_clamp(self.height - top - bottom, 0, self.height),
+            x=_clamp(x + left, 0, width),
+            y=_clamp(y + top, 0, height),
+            width=_clamp(width - left - right, 0, width),
+            height=_clamp(height - top - bottom, 0, height),
         )
 
     def intersection(self, region: Region) -> Region:
