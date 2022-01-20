@@ -13,10 +13,10 @@ class BasicApp(App):
     def on_mount(self):
         """Build layout here."""
         self.mount(
-            sidebar=Widget(),
             header=Widget(),
             content=Widget(),
             footer=Widget(),
+            sidebar=Widget(),
         )
 
 
