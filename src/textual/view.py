@@ -64,7 +64,7 @@ class View(Widget):
             new_value:
 
         Returns:
-
+            None
         """
         self.styles.layout = new_value
 
