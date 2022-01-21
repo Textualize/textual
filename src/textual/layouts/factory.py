@@ -28,5 +28,5 @@ def get_layout(name: LayoutName) -> Layout:
 
     layout_class = LAYOUT_MAP.get(name)
     if layout_class is None:
-        raise MissingLayout("no layout called {name!r}")
+        raise MissingLayout(f"no layout called {name!r}, valid layouts")
     return layout_class()

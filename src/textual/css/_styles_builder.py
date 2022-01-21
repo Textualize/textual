@@ -6,19 +6,19 @@ import rich.repr
 from rich.color import Color
 from rich.style import Style
 
+from ._error_tools import friendly_list
 from .constants import VALID_BORDER, VALID_EDGE, VALID_DISPLAY, VALID_VISIBILITY
 from .errors import DeclarationError
-from ._error_tools import friendly_list
-from .._duration import _duration_as_seconds
-from .._easing import EASING
-from ..geometry import Spacing, SpacingDimensions
 from .model import Declaration
 from .scalar import Scalar, ScalarOffset, Unit, ScalarError
 from .styles import DockGroup, Styles
-from .types import Edge, Display, Visibility
 from .tokenize import Token
 from .transition import Transition
-from ..layouts.factory import get_layout
+from .types import Edge, Display, Visibility
+from .._duration import _duration_as_seconds
+from .._easing import EASING
+from ..geometry import Spacing, SpacingDimensions
+from ..layouts.factory import get_layout, LayoutName, MissingLayout, LAYOUT_MAP
 
 
 class StylesBuilder:
@@ -60,7 +60,7 @@ class StylesBuilder:
                 self.styles.important.add(rule_name)
             try:
                 process_method(declaration.name, tokens, important)
-            except DeclarationError as error:
+            except DeclarationError:
                 raise
             except Exception as error:
                 self.error(declaration.name, declaration.token, str(error))
@@ -289,7 +289,16 @@ class StylesBuilder:
             if len(tokens) != 1:
                 self.error(name, tokens[0], "unexpected tokens in declaration")
             else:
-                self.styles._rule_layout = get_layout(tokens[0].value)
+                value = tokens[0].value
+                layout_name = cast(LayoutName, value)
+                try:
+                    self.styles._rule_layout = get_layout(layout_name)
+                except MissingLayout:
+                    self.error(
+                        name,
+                        tokens[0],
+                        f"invalid value for layout (received {value!r}, expected {friendly_list(LAYOUT_MAP.keys())})",
+                    )
 
     def process_text(self, name: str, tokens: list[Token], important: bool) -> None:
         style_definition = " ".join(token.value for token in tokens)
