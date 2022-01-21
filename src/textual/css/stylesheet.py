@@ -140,7 +140,6 @@ class Stylesheet:
             for name, specificity_rules in rule_attributes.items()
         ]
 
-        log(node.id, node_rules)
         node.styles.apply_rules(node_rules)
 
     def update(self, root: DOMNode) -> None:
