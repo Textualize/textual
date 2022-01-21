@@ -269,9 +269,6 @@ class Styles:
                 else:
                     setattr(styles, f"_rule_{key}", value)
 
-        if self.node.id == "_root":
-            log("_root.styles.layout =", self.node.styles.layout)
-
         if self.node is not None:
             self.node.on_style_change()
 
