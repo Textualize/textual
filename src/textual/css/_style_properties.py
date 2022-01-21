@@ -297,10 +297,23 @@ class LayoutProperty:
         self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Layout:
+        """
+        Args:
+            obj (Styles): The Styles object
+            objtype (type[Styles]): The Styles class
+        Returns:
+            The ``Layout`` object.
+        """
         return getattr(obj, self._internal_name)
 
     def __set__(self, obj: Styles, layout: LayoutName | Layout):
-        from ..layouts.factory import get_layout
+        """
+        Args:
+            obj (Styles): The Styles object.
+            layout (LayoutName | Layout): The layout to use. You can supply a ``LayoutName``
+                (a string literal such as ``"dock"``) or a ``Layout`` object.
+        """
+        from ..layouts.factory import get_layout  # Prevents circular import
 
         obj.refresh(True)
         if isinstance(layout, Layout):

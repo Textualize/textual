@@ -16,8 +16,8 @@ from .widget import Widget
 @rich.repr.auto
 class View(Widget):
     STYLES = """
+        layout: dock;
         docks: main=top;
-
     """
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
