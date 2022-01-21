@@ -1,6 +1,7 @@
 /* CSS file for basic.py */
 
 App > View {
+  layout: dock;
   docks: side=left/1;
   text: on #20639b;
 }

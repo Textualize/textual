@@ -108,18 +108,24 @@ class Stylesheet:
                 yield selector_set.specificity
 
     def apply(self, node: DOMNode) -> None:
+        # Dictionary of rule attribute names e.g. "text_background" to list of tuples.
+        # The tuples contain the rule specificity, and the value for that rule.
+        # We can use this to determine, for a given rule, whether we should apply it
+        # or not by examining the specificity. If we have two rules for the
+        # same attribute, then we can choose the most specific rule and use that.
         rule_attributes: dict[str, list[tuple[Specificity4, object]]]
         rule_attributes = defaultdict(list)
 
         _check_rule = self._check_rule
 
+        # TODO: The line below breaks inline styles and animations
         node.styles.reset()
 
-        # Get the default node CSS rules
+        # Collect default node CSS rules
         for key, default_specificity, value in node._default_rules:
             rule_attributes[key].append((default_specificity, value))
 
-        # Apply styles on top of the default node CSS rules
+        # Collect the rules defined in the stylesheet
         for rule in self.rules:
             for specificity in _check_rule(rule, node):
                 for key, rule_specificity, value in rule.styles.extract_rules(
@@ -127,12 +133,14 @@ class Stylesheet:
                 ):
                     rule_attributes[key].append((rule_specificity, value))
 
+        # For each rule declared for this node, keep only the most specific one
         get_first_item = itemgetter(0)
         node_rules = [
             (name, max(specificity_rules, key=get_first_item)[1])
             for name, specificity_rules in rule_attributes.items()
         ]
 
+        log(node.id, node_rules)
         node.styles.apply_rules(node_rules)
 
     def update(self, root: DOMNode) -> None:

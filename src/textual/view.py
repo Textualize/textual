@@ -16,24 +16,11 @@ from .layouts.factory import get_layout
 from .geometry import Size, Offset, Region
 from .reactive import Reactive, watch
 
-from .widget import Widget, Widget
+from .widget import Widget
 
 
 if TYPE_CHECKING:
     from .app import App
-
-
-class LayoutProperty:
-    def __get__(self, obj: View, objtype: type[View] | None = None) -> str:
-        return obj._layout.name
-
-    def __set__(self, obj: View, layout: str | Layout) -> str:
-        if isinstance(layout, str):
-            new_layout = get_layout(layout)
-        else:
-            new_layout = layout
-        self._layout = new_layout
-        return self._layout.name
 
 
 @rich.repr.auto
@@ -45,7 +32,7 @@ class View(Widget):
     """
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
-
+        # TODO: Get rid of this, replace usages with layout from Styles object
         from .layouts.dock import DockLayout
 
         self._layout: Layout = DockLayout()
@@ -68,8 +55,6 @@ class View(Widget):
         if layout is not None:
             cls.layout_factory = layout
         super().__init_subclass__(**kwargs)
-
-    layout = LayoutProperty()
 
     background: Reactive[str] = Reactive("")
     scroll_x: Reactive[int] = Reactive(0)

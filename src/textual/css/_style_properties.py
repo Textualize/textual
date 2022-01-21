@@ -28,6 +28,7 @@ from .constants import NULL_SPACING
 from .errors import StyleTypeError, StyleValueError
 from .transition import Transition
 from ._error_tools import friendly_list
+from ..layouts.factory import get_layout
 
 if TYPE_CHECKING:
     from .styles import Styles
@@ -288,6 +289,22 @@ class DockProperty:
         obj.refresh(True)
         obj._rule_dock = spacing
         return spacing
+
+
+class LayoutProperty:
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self._internal_name = f"_rule_{name}"
+
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
+        return getattr(obj, self._internal_name) or ""
+
+    def __set__(self, obj: Styles, layout: str | Styles):
+        obj.refresh(True)
+        if isinstance(layout, str):
+            new_layout = get_layout(layout)
+        else:
+            new_layout = layout
+        self._layout = new_layout
 
 
 class OffsetProperty:

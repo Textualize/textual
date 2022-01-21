@@ -42,6 +42,7 @@ from ._style_properties import (
     StyleProperty,
     StyleFlagsProperty,
     TransitionsProperty,
+    LayoutProperty,
 )
 from .types import Display, Edge, Visibility
 
@@ -110,7 +111,7 @@ class Styles:
 
     display = StringProperty(VALID_DISPLAY, "block")
     visibility = StringProperty(VALID_VISIBILITY, "visible")
-    layout = StringProperty(VALID_LAYOUT, "dock")
+    layout = LayoutProperty()
 
     text = StyleProperty()
     text_color = ColorProperty()
@@ -279,6 +280,10 @@ class Styles:
                         )
                 else:
                     setattr(styles, f"_rule_{key}", value)
+
+        if self.node.id == "_root":
+            log("_root.styles.layout =", self.node.styles.layout)
+
         if self.node is not None:
             self.node.on_style_change()
 
