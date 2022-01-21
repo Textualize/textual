@@ -27,7 +27,6 @@ from ._border import Border
 from ._callback import invoke
 from ._context import active_app
 from ._types import Lines
-from .blank import Blank
 from .dom import DOMNode
 from .geometry import Size, Spacing
 from .message import Message
@@ -158,34 +157,29 @@ class Widget(DOMNode):
         styles = self.styles
         parent_text_style = self.parent.text_style
 
-        if styles.visibility == "hidden":
-            renderable = Blank(parent_text_style)
-        else:
-            text_style = styles.text
-            renderable_text_style = parent_text_style + text_style
-            if renderable_text_style:
-                renderable = Styled(renderable, renderable_text_style)
+        text_style = styles.text
+        renderable_text_style = parent_text_style + text_style
+        if renderable_text_style:
+            renderable = Styled(renderable, renderable_text_style)
 
-            if styles.has_padding:
-                renderable = Padding(
-                    renderable, styles.padding, style=renderable_text_style
-                )
+        if styles.has_padding:
+            renderable = Padding(
+                renderable, styles.padding, style=renderable_text_style
+            )
 
-            if styles.has_border:
-                renderable = Border(
-                    renderable, styles.border, style=renderable_text_style
-                )
+        if styles.has_border:
+            renderable = Border(renderable, styles.border, style=renderable_text_style)
 
-            if styles.has_margin:
-                renderable = Padding(renderable, styles.margin, style=parent_text_style)
+        if styles.has_margin:
+            renderable = Padding(renderable, styles.margin, style=parent_text_style)
 
-            if styles.has_outline:
-                renderable = Border(
-                    renderable,
-                    styles.outline,
-                    outline=True,
-                    style=renderable_text_style,
-                )
+        if styles.has_outline:
+            renderable = Border(
+                renderable,
+                styles.outline,
+                outline=True,
+                style=renderable_text_style,
+            )
 
         return renderable
 

@@ -199,6 +199,15 @@ class Layout(ABC):
         raise NoWidget(f"No widget under screen coordinate ({x}, {y})")
 
     def get_style_at(self, x: int, y: int) -> Style:
+        """Get the Style at the given cell or Style.null()
+
+        Args:
+            x (int): X position within the Layout
+            y (int): Y position within the Layout
+
+        Returns:
+            Style: The Style at the cell (x, y) within the Layout
+        """
         try:
             widget, region = self.get_widget_at(x, y)
         except NoWidget:
@@ -217,6 +226,18 @@ class Layout(ABC):
         return Style.null()
 
     def get_widget_region(self, widget: Widget) -> Region:
+        """Get the Region of a Widget contained in this Layout.
+
+        Args:
+            widget (Widget): The Widget in this layout you wish to know the Region of.
+
+        Raises:
+            NoWidget: If the Widget is not contained in this Layout.
+
+        Returns:
+            Region: The Region of the Widget.
+
+        """
         try:
             region, *_ = self.map[widget]
         except KeyError:
@@ -270,7 +291,7 @@ class Layout(ABC):
 
         for widget, region, _order, clip in widget_regions:
 
-            if not widget.is_visual:
+            if not (widget.is_visual and widget.visible):
                 continue
 
             lines = widget._get_lines()
