@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-
 import rich.repr
 from rich.color import Color
-from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
-from rich.segment import Segment, Segments
+from rich.console import ConsoleOptions, RenderResult, RenderableType
+from rich.segment import Segment
 from rich.style import Style, StyleType
 
+from textual.reactive import Reactive
 from . import events
-from .geometry import Offset
 from ._types import MessageTarget
+from .geometry import Offset
 from .message import Message
-from .widget import Reactive, Widget
+from .widget import Widget
 
 
 @rich.repr.auto

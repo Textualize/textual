@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from logging import PercentStyle, getLogger
+from logging import getLogger
 from typing import (
     Any,
     Awaitable,
@@ -11,35 +11,30 @@ from typing import (
     NamedTuple,
     cast,
 )
-import rich.repr
-from rich import box
-from rich.align import Align
-from rich.console import Console, RenderableType, ConsoleOptions
-from rich.measure import Measurement
-from rich.panel import Panel
-from rich.padding import Padding
-from rich.pretty import Pretty
-from rich.segment import Segment
-from rich.style import Style, StyleType
-from rich.styled import Styled
-from rich.text import Text, TextType
 
-from . import events
+import rich.repr
+from rich.align import Align
+from rich.console import Console, RenderableType
+from rich.padding import Padding
+from rich.style import Style
+from rich.styled import Styled
+from rich.text import Text
+
 from . import errors
+from . import events
 from ._animator import BoundAnimator
-from ._border import Border, BORDER_STYLES
+from ._border import Border
 from ._callback import invoke
+from ._context import active_app
+from ._types import Lines
 from .blank import Blank
 from .dom import DOMNode
-from ._context import active_app
-from .geometry import Size, Spacing, SpacingDimensions
+from .geometry import Size, Spacing
 from .message import Message
 from .messages import Layout, Update
-from .reactive import Reactive, watch
-from ._types import Lines
+from .reactive import watch
 
 if TYPE_CHECKING:
-    from .app import App
     from .view import View
 
 log = getLogger("rich")

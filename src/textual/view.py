@@ -12,7 +12,6 @@ from . import errors
 from . import log
 from . import messages
 from .layout import Layout, NoWidget, WidgetPlacement
-from .layouts.factory import get_layout
 from .geometry import Size, Offset, Region
 from .reactive import Reactive, watch
 

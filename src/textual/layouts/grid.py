@@ -1,18 +1,16 @@
 from __future__ import annotations
 
+import sys
 from collections import defaultdict
 from dataclasses import dataclass
-from operator import itemgetter
-from logging import getLogger
 from itertools import cycle, product
-import sys
+from logging import getLogger
+from operator import itemgetter
 from typing import Iterable, NamedTuple, TYPE_CHECKING
 
 from .._layout_resolve import layout_resolve
 from ..geometry import Size, Offset, Region
 from ..layout import Layout, WidgetPlacement
-from ..widget import Widget
-
 
 if TYPE_CHECKING:
     from ..widget import Widget

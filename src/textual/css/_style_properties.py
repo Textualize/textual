@@ -28,7 +28,6 @@ from .constants import NULL_SPACING
 from .errors import StyleTypeError, StyleValueError
 from .transition import Transition
 from ._error_tools import friendly_list
-from ..layouts.factory import get_layout
 
 if TYPE_CHECKING:
     from .styles import Styles
@@ -299,6 +298,8 @@ class LayoutProperty:
         return getattr(obj, self._internal_name) or ""
 
     def __set__(self, obj: Styles, layout: str | Styles):
+        from ..layouts.factory import get_layout
+
         obj.refresh(True)
         if isinstance(layout, str):
             new_layout = get_layout(layout)

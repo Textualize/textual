@@ -5,14 +5,10 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Iterable, TYPE_CHECKING, NamedTuple, Sequence
 
-
-from .. import log
-from ..dom import DOMNode
 from .._layout_resolve import layout_resolve
+from ..css.types import Edge
 from ..geometry import Offset, Region, Size
 from ..layout import Layout, WidgetPlacement
-from ..layout_map import LayoutMap
-from ..css.types import Edge
 from ..widget import Widget
 
 if sys.version_info >= (3, 8):
@@ -20,11 +16,8 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
-
 if TYPE_CHECKING:
-    from ..widget import Widget
     from ..view import View
-
 
 DockEdge = Literal["top", "right", "bottom", "left"]
 
