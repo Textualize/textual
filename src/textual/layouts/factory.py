@@ -1,9 +1,14 @@
-from typing import Literal
+import sys
 
 from ..layout import Layout
 from ..layouts.dock import DockLayout
 from ..layouts.grid import GridLayout
 from ..layouts.vertical import VerticalLayout
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 LayoutName = Literal["dock", "grid", "vertical"]
 LAYOUT_MAP = {"dock": DockLayout, "grid": GridLayout, "vertical": VerticalLayout}
