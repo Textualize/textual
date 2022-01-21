@@ -39,11 +39,6 @@ from .. import log
 from .._animator import Animation, EasingFunction
 from ..geometry import Spacing
 
-if sys.version_info >= (3, 8):
-    pass
-else:
-    pass
-
 
 if TYPE_CHECKING:
     from ..layout import Layout
