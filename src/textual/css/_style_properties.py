@@ -30,9 +30,9 @@ from .transition import Transition
 from ..geometry import Spacing, SpacingDimensions
 
 if TYPE_CHECKING:
+    from ..layout import Layout
     from .styles import Styles
     from .styles import DockGroup
-    from ..layout import Layout
     from ..layouts.factory import LayoutName
 
 
@@ -313,7 +313,7 @@ class LayoutProperty:
             layout (LayoutName | Layout): The layout to use. You can supply a ``LayoutName``
                 (a string literal such as ``"dock"``) or a ``Layout`` object.
         """
-        from ..layouts.factory import get_layout  # Prevents circular import
+        from ..layouts.factory import get_layout, Layout  # Prevents circular import
 
         obj.refresh(True)
         if isinstance(layout, Layout):
