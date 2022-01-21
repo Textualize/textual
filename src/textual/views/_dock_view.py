@@ -29,8 +29,8 @@ class DockView(View):
     ) -> None:
 
         dock = Dock(edge, widgets, z)
-        assert isinstance(self._layout, DockLayout)
-        self._layout.docks.append(dock)
+        assert isinstance(self.layout, DockLayout)
+        self.layout.docks.append(dock)
         for widget in widgets:
             if id is not None:
                 widget._id = id
@@ -60,8 +60,8 @@ class DockView(View):
         grid = GridLayout(gap=gap, gutter=gutter, align=align)
         view = View(layout=grid, id=id, name=name)
         dock = Dock(edge, (view,), z)
-        assert isinstance(self._layout, DockLayout)
-        self._layout.docks.append(dock)
+        assert isinstance(self.layout, DockLayout)
+        self.layout.docks.append(dock)
         if size is not do_not_set:
             view.layout_size = cast(Optional[int], size)
         if name is None:

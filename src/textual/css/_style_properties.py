@@ -15,6 +15,9 @@ import rich.repr
 from rich.color import Color
 from rich.style import Style
 
+from ._error_tools import friendly_list
+from .constants import NULL_SPACING
+from .errors import StyleTypeError, StyleValueError
 from .scalar import (
     get_symbols,
     UNIT_SYMBOL,
@@ -23,15 +26,14 @@ from .scalar import (
     ScalarOffset,
     ScalarParseError,
 )
-from ..geometry import Spacing, SpacingDimensions
-from .constants import NULL_SPACING
-from .errors import StyleTypeError, StyleValueError
 from .transition import Transition
-from ._error_tools import friendly_list
+from ..geometry import Spacing, SpacingDimensions
 
 if TYPE_CHECKING:
     from .styles import Styles
     from .styles import DockGroup
+    from ..layout import Layout
+    from ..layouts.factory import LayoutName
 
 
 class ScalarProperty:
@@ -80,7 +82,6 @@ class ScalarProperty:
 
 
 class BoxProperty:
-
     DEFAULT = ("", Style())
 
     def __set_name__(self, owner: Styles, name: str) -> None:
@@ -212,7 +213,6 @@ class BorderProperty:
 
 
 class StyleProperty:
-
     DEFAULT_STYLE = Style()
 
     def __set_name__(self, owner: Styles, name: str) -> None:
@@ -291,21 +291,23 @@ class DockProperty:
 
 
 class LayoutProperty:
+    """Descriptor for getting and setting layout."""
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._internal_name = f"_rule_{name}"
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
-        return getattr(obj, self._internal_name) or ""
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Layout:
+        return getattr(obj, self._internal_name)
 
-    def __set__(self, obj: Styles, layout: str | Styles):
+    def __set__(self, obj: Styles, layout: LayoutName | Layout):
         from ..layouts.factory import get_layout
 
         obj.refresh(True)
-        if isinstance(layout, str):
-            new_layout = get_layout(layout)
-        else:
+        if isinstance(layout, Layout):
             new_layout = layout
-        self._layout = new_layout
+        else:
+            new_layout = get_layout(layout)
+        setattr(obj, self._internal_name, new_layout)
 
 
 class OffsetProperty:
@@ -442,7 +444,6 @@ class ColorProperty:
 
 
 class StyleFlagsProperty:
-
     _VALID_PROPERTIES = {
         "not",
         "bold",

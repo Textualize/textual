@@ -1,7 +1,11 @@
+from typing import Literal
+
+from ..layout import Layout
 from ..layouts.dock import DockLayout
 from ..layouts.grid import GridLayout
 from ..layouts.vertical import VerticalLayout
 
+LayoutName = Literal["dock", "grid", "vertical"]
 LAYOUT_MAP = {"dock": DockLayout, "grid": GridLayout, "vertical": VerticalLayout}
 
 
@@ -9,7 +13,7 @@ class MissingLayout(Exception):
     pass
 
 
-def get_layout(name: str):
+def get_layout(name: LayoutName) -> Layout:
     """Get a named layout object.
 
     Args:

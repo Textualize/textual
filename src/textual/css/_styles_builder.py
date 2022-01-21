@@ -18,6 +18,7 @@ from .styles import DockGroup, Styles
 from .types import Edge, Display, Visibility
 from .tokenize import Token
 from .transition import Transition
+from ..layouts.factory import get_layout
 
 
 class StylesBuilder:
@@ -288,7 +289,7 @@ class StylesBuilder:
             if len(tokens) != 1:
                 self.error(name, tokens[0], "unexpected tokens in declaration")
             else:
-                self.styles._rule_layout = tokens[0].value
+                self.styles._rule_layout = get_layout(tokens[0].value)
 
     def process_text(self, name: str, tokens: list[Token], important: bool) -> None:
         style_definition = " ".join(token.value for token in tokens)
