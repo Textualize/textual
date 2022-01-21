@@ -108,6 +108,18 @@ class Stylesheet:
                 yield selector_set.specificity
 
     def apply(self, node: DOMNode) -> None:
+        """
+        Args:
+            node (DOMNode): The ``DOMNode`` to apply the stylesheet to.
+                Applies the styles defined in this ``Stylesheet`` to the node.
+                If the same rule is defined multiple times for the node (e.g. multiple
+                classes modifying the same CSS property), then only the most specific
+                rule will be applied.
+
+        Returns:
+            None
+        """
+
         # Dictionary of rule attribute names e.g. "text_background" to list of tuples.
         # The tuples contain the rule specificity, and the value for that rule.
         # We can use this to determine, for a given rule, whether we should apply it
