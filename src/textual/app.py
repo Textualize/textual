@@ -90,7 +90,6 @@ class App(DOMNode):
         self._screen = screen
         self.driver_class = driver_class or LinuxDriver
         self._title = title
-        self._layout = DockLayout()
         self._view_stack: list[View] = []
 
         self.focused: Widget | None = None
