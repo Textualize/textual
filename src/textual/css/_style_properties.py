@@ -52,7 +52,8 @@ class ScalarProperty:
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
     ) -> Scalar | None:
-        """
+        """Get the scalar property
+
         Args:
             obj (Styles): The Styles object
             objtype (type[Styles]): The Styles class
@@ -64,7 +65,8 @@ class ScalarProperty:
         return value
 
     def __set__(self, obj: Styles, value: float | Scalar | str | None) -> None:
-        """
+        """Set the scalar property
+
         Args:
             obj (Styles): The Styles object.
             value (float | Scalar | str | None): The value to set the scalar property to.
@@ -113,7 +115,8 @@ class BoxProperty:
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
     ) -> tuple[BoxType, Style]:
-        """
+        """Get the box property
+
         Args:
             obj (Styles): The Styles object
             objtype (type[Styles]): The Styles class
@@ -126,7 +129,8 @@ class BoxProperty:
         return value or self.DEFAULT
 
     def __set__(self, obj: Styles, border: tuple[BoxType, str | Color | Style] | None):
-        """
+        """Set the box property
+
         Args:
             obj (Styles): The Styles object.
             value (tuple[BoxType, str | Color | Style], optional): A 2-tuple containing the type of box to use,
@@ -194,7 +198,8 @@ class BorderProperty:
         )
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Edges:
-        """
+        """Get the border
+
         Args:
             obj (Styles): The Styles object
             objtype (type[Styles]): The Styles class
@@ -218,7 +223,8 @@ class BorderProperty:
         | tuple[BoxType, str | Color | Style]
         | None,
     ) -> None:
-        """
+        """Set the border
+
         Args:
             obj (Styles): The Styles object.
             border (Sequence[tuple[BoxType, str | Color | Style] | None] | tuple[BoxType, str | Color | Style] | None):
@@ -267,17 +273,25 @@ class BorderProperty:
 
 
 class StyleProperty:
+    """Descriptor for getting and setting full borders and outlines."""
 
     DEFAULT_STYLE = Style()
 
     def __set_name__(self, owner: Styles, name: str) -> None:
-
         self._color_name = f"_rule_{name}_color"
         self._bgcolor_name = f"_rule_{name}_background"
         self._style_name = f"_rule_{name}_style"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Style:
+        """Get the Style
 
+        Args:
+            obj (Styles): The Styles object
+            objtype (type[Styles]): The Styles class
+
+        Returns:
+            A ``Style`` object.
+        """
         color = getattr(obj, self._color_name)
         bgcolor = getattr(obj, self._bgcolor_name)
         style = Style.from_color(color, bgcolor)
@@ -286,7 +300,14 @@ class StyleProperty:
             style += style_flags
         return style
 
-    def __set__(self, obj: Styles, style: Style | str | None) -> Style | str | None:
+    def __set__(self, obj: Styles, style: Style | str | None):
+        """Set the Style
+
+        Args:
+            obj (Styles): The Styles object.
+            style (Style | str, optional): You can supply the ``Style`` directly, or a
+                string (e.g. ``"blue on #f0f0f0"``).
+        """
         obj.refresh()
         if style is None:
             setattr(obj, self._color_name, None)
@@ -301,38 +322,59 @@ class StyleProperty:
             setattr(obj, self._color_name, new_style.color)
             setattr(obj, self._bgcolor_name, new_style.bgcolor)
             setattr(obj, self._style_name, new_style.without_color)
-        return style
 
 
 class SpacingProperty:
+    """Descriptor for getting and setting spacing properties (e.g. padding and margin)."""
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Spacing:
+        """Get the Spacing
+
+        Args:
+            obj (Styles): The Styles object
+            objtype (type[Styles]): The Styles class
+
+        Returns:
+            Spacing: The Spacing.
+        """
         return getattr(obj, self._internal_name) or NULL_SPACING
 
-    def __set__(self, obj: Styles, spacing: SpacingDimensions) -> Spacing:
+    def __set__(self, obj: Styles, spacing: SpacingDimensions):
+        """Set the Spacing
+
+        Args:
+            obj (Styles): The Styles object.
+            style (Style | str, optional): You can supply the ``Style`` directly, or a
+                string (e.g. ``"blue on #f0f0f0"``).
+        """
         obj.refresh(True)
         spacing = Spacing.unpack(spacing)
         setattr(obj, self._internal_name, spacing)
-        return spacing
 
 
 class DocksProperty:
+    """Descriptor for getting and setting the docks property."""
+
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
     ) -> tuple[DockGroup, ...]:
         return obj._rule_docks or ()
 
-    def __set__(
-        self, obj: Styles, docks: Iterable[DockGroup] | None
-    ) -> Iterable[DockGroup] | None:
+    def __set__(self, obj: Styles, docks: Iterable[DockGroup] | None):
+        """Set the Docks property
+
+        Args:
+            obj (Styles): The Styles object.
+            docks (Iterable[DockGroup]): Iterable of DockGroups
+        """
         obj.refresh(True)
         if docks is None:
             obj._rule_docks = None
         else:
             obj._rule_docks = tuple(docks)
-        return docks
 
 
 class DockProperty:
