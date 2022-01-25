@@ -28,9 +28,12 @@ class MyApp(App):
         await self.view.dock(body, edge="right")
 
         async def get_markdown(filename: str) -> None:
-            with open(filename, "rt") as fh:
-                readme = Markdown(fh.read(), hyperlinks=True)
-            await body.update(readme)
+            try:
+                with open(filename, "rt") as fh:
+                    readme = Markdown(fh.read(), hyperlinks=True)
+                    await body.update(readme)
+            except OSError as e:
+                self.log("Couldn't open markdown file: {}".format(e))
 
         await self.call_later(get_markdown, "richreadme.md")
 
