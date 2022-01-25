@@ -4,6 +4,27 @@ from rich.color import Color, ColorType
 from textual.css.scalar import Scalar, Unit
 from textual.css.stylesheet import Stylesheet, StylesheetParseError
 from textual.css.transition import Transition
+from textual.layouts.dock import DockLayout
+
+
+class TestParseLayout:
+    def test_valid_layout_name(self):
+        css = "#some-widget { layout: dock; }"
+
+        stylesheet = Stylesheet()
+        stylesheet.parse(css)
+
+        styles = stylesheet.rules[0].styles
+        assert isinstance(styles.layout, DockLayout)
+
+    def test_invalid_layout_name(self):
+        css = "#some-widget { layout: invalidlayout; }"
+
+        stylesheet = Stylesheet()
+        with pytest.raises(StylesheetParseError) as ex:
+            stylesheet.parse(css)
+
+        assert ex.value.errors is not None
 
 
 class TestParseText:

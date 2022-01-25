@@ -1,24 +1,22 @@
 from __future__ import annotations
 
-from typing import Any, cast, Iterable, Iterator, TYPE_CHECKING
+from typing import Iterable, Iterator, TYPE_CHECKING
 
-from rich.highlighter import ReprHighlighter
 import rich.repr
+from rich.highlighter import ReprHighlighter
 from rich.pretty import Pretty
 from rich.style import Style
 from rich.tree import Tree
 
+from ._node_list import NodeList
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from .css.errors import StyleValueError
 from .css.styles import Styles
 from .message_pump import MessagePump
-from ._node_list import NodeList
-
 
 if TYPE_CHECKING:
     from .css.query import DOMQuery
-    from .widget import Widget
 
 
 class NoParent(Exception):

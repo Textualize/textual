@@ -10,7 +10,8 @@ import rich.repr
 from logging import getLogger
 
 from .. import events
-from ..widget import Reactive, Widget
+from ..reactive import Reactive
+from ..widget import Widget
 
 log = getLogger("rich")
 

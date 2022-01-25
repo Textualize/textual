@@ -93,13 +93,13 @@ class ScrollView(View):
         await self.window.update(renderable)
 
     async def on_mount(self, event: events.Mount) -> None:
-        assert isinstance(self._layout, GridLayout)
-        self._layout.place(
+        assert isinstance(self.layout, GridLayout)
+        self.layout.place(
             content=self.window,
             vscroll=self.vscroll,
             hscroll=self.hscroll,
         )
-        await self._layout.mount_all(self)
+        await self.layout.mount_all(self)
 
     def home(self) -> None:
         self.x = self.y = 0
@@ -215,10 +215,10 @@ class ScrollView(View):
         self.vscroll.virtual_size = virtual_height
         self.vscroll.window_size = height
 
-        assert isinstance(self._layout, GridLayout)
+        assert isinstance(self.layout, GridLayout)
 
-        vscroll_change = self._layout.show_column("vscroll", virtual_height > height)
-        hscroll_change = self._layout.show_row("hscroll", virtual_width > width)
+        vscroll_change = self.layout.show_column("vscroll", virtual_height > height)
+        hscroll_change = self.layout.show_row("hscroll", virtual_width > width)
         if hscroll_change or vscroll_change:
             self.refresh(layout=True)
 
