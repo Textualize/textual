@@ -1,5 +1,5 @@
 """
-Style properties are descriptors which allow the Styles object to accept different types when
+Style properties are descriptors which allow the ``Styles`` object to accept different types when
 setting attributes. This gives the developer more freedom in how to express style information.
 
 Descriptors also play nicely with Mypy, which is aware that attributes can have different types
@@ -55,8 +55,8 @@ class ScalarProperty:
         """Get the scalar property
 
         Args:
-            obj (Styles): The Styles object
-            objtype (type[Styles]): The Styles class
+            obj (Styles): The ``Styles`` object
+            objtype (type[Styles]): The ``Styles`` class
 
         Returns:
             The Scalar object or ``None`` if it's not set.
@@ -68,13 +68,17 @@ class ScalarProperty:
         """Set the scalar property
 
         Args:
-            obj (Styles): The Styles object.
+            obj (Styles): The ``Styles`` object.
             value (float | Scalar | str | None): The value to set the scalar property to.
                 You can directly pass a float value, which will be interpreted with
                 a default unit of Cells. You may also provide a string such as ``"50%"``,
                 as you might do when writing CSS. If a string with no units is supplied,
                 Cells will be used as the unit. Alternatively, you can directly supply
                 a ``Scalar`` object.
+
+        Raises:
+            StyleValueError: If the value is of an invalid type, uses an invalid unit, or
+                cannot be parsed for any other reason.
         """
         if value is None:
             new_value = None
@@ -118,8 +122,8 @@ class BoxProperty:
         """Get the box property
 
         Args:
-            obj (Styles): The Styles object
-            objtype (type[Styles]): The Styles class
+            obj (Styles): The ``Styles`` object
+            objtype (type[Styles]): The ``Styles`` class
 
         Returns:
             A ``tuple[BoxType, Style]`` containing the string type of the box and
@@ -132,10 +136,13 @@ class BoxProperty:
         """Set the box property
 
         Args:
-            obj (Styles): The Styles object.
+            obj (Styles): The ``Styles`` object.
             value (tuple[BoxType, str | Color | Style], optional): A 2-tuple containing the type of box to use,
                 e.g. "dashed", and the ``Style`` to be used. You can supply the ``Style`` directly, or pass a
                 ``str`` (e.g. ``"blue on #f0f0f0"`` ) or ``Color`` instead.
+
+        Raises:
+            StyleSyntaxError: If the string supplied for the color has invalid syntax.
         """
         if border is None:
             new_value = None
@@ -201,8 +208,8 @@ class BorderProperty:
         """Get the border
 
         Args:
-            obj (Styles): The Styles object
-            objtype (type[Styles]): The Styles class
+            obj (Styles): The ``Styles`` object
+            objtype (type[Styles]): The ``Styles`` class
 
         Returns:
             An ``Edges`` object describing the type and style of each edge.
@@ -226,14 +233,17 @@ class BorderProperty:
         """Set the border
 
         Args:
-            obj (Styles): The Styles object.
+            obj (Styles): The ``Styles`` object.
             border (Sequence[tuple[BoxType, str | Color | Style] | None] | tuple[BoxType, str | Color | Style] | None):
                 A ``tuple[BoxType, str | Color | Style]`` representing the type of box to use and the ``Style`` to apply
                 to the box.
                 Alternatively, you can supply a sequence of these tuples and they will be applied per-edge.
                 If the sequence is of length 1, all edges will be decorated according to the single element.
-                If the sequence is length 2, the first tuple will be applied to the top and bottom edges.
+                If the sequence is length 2, the first ``tuple`` will be applied to the top and bottom edges.
                 If the sequence is length 4, the tuples will be applied to the edges in the order: top, right, bottom, left.
+
+        Raises:
+            StyleValueError: When the supplied ``tuple`` is not of valid length (1, 2, or 4).
         """
         top, right, bottom, left = self._properties
         obj.refresh()
@@ -286,8 +296,8 @@ class StyleProperty:
         """Get the Style
 
         Args:
-            obj (Styles): The Styles object
-            objtype (type[Styles]): The Styles class
+            obj (Styles): The ``Styles`` object
+            objtype (type[Styles]): The ``Styles`` class
 
         Returns:
             A ``Style`` object.
@@ -304,9 +314,12 @@ class StyleProperty:
         """Set the Style
 
         Args:
-            obj (Styles): The Styles object.
+            obj (Styles): The ``Styles`` object.
             style (Style | str, optional): You can supply the ``Style`` directly, or a
                 string (e.g. ``"blue on #f0f0f0"``).
+
+        Raises:
+            StyleSyntaxError: When the supplied style string has invalid syntax.
         """
         obj.refresh()
         if style is None:
@@ -334,11 +347,11 @@ class SpacingProperty:
         """Get the Spacing
 
         Args:
-            obj (Styles): The Styles object
-            objtype (type[Styles]): The Styles class
+            obj (Styles): The ``Styles`` object
+            objtype (type[Styles]): The ``Styles`` class
 
         Returns:
-            Spacing: The Spacing.
+            Spacing: The Spacing. If unset, returns the null spacing ``(0, 0, 0, 0)``.
         """
         return getattr(obj, self._internal_name) or NULL_SPACING
 
@@ -346,9 +359,13 @@ class SpacingProperty:
         """Set the Spacing
 
         Args:
-            obj (Styles): The Styles object.
+            obj (Styles): The ``Styles`` object.
             style (Style | str, optional): You can supply the ``Style`` directly, or a
                 string (e.g. ``"blue on #f0f0f0"``).
+
+        Raises:
+            ValueError: When the value is malformed, e.g. a ``tuple`` with a length that is
+                not 1, 2, or 4.
         """
         obj.refresh(True)
         spacing = Spacing.unpack(spacing)
@@ -366,11 +383,11 @@ class DocksProperty:
         """Get the Docks property
 
         Args:
-            obj (Styles): The Styles object.
-            objtype (type[Styles]): The Styles class.
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
 
         Returns:
-            tuple[DockGroup, ...]: A tuple containing the defined docks.
+            tuple[DockGroup, ...]: A ``tuple`` containing the defined docks.
         """
         return obj._rule_docks or ()
 
@@ -378,7 +395,7 @@ class DocksProperty:
         """Set the Docks property
 
         Args:
-            obj (Styles): The Styles object.
+            obj (Styles): The ``Styles`` object.
             docks (Iterable[DockGroup]): Iterable of DockGroups
         """
         obj.refresh(True)
@@ -399,8 +416,8 @@ class DockProperty:
         """Get the Dock property
 
         Args:
-            obj (Styles): The Styles object.
-            objtype (type[Styles]): The Styles class.
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
 
         Returns:
             str: The dock name as a string, or "" if the rule is not set.
@@ -411,7 +428,7 @@ class DockProperty:
         """Set the Dock property
 
         Args:
-            obj (Styles): The Styles object
+            obj (Styles): The ``Styles`` object
             spacing (str | None): The spacing to use.
         """
         obj.refresh(True)
@@ -431,11 +448,11 @@ class OffsetProperty:
         """Get the offset
 
         Args:
-            obj (Styles): The Styles object.
-            objtype (type[Styles]): The Styles class.
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
 
         Returns:
-            ScalarOffset: The ScalarOffset indicating the adjustment that
+            ScalarOffset: The ``ScalarOffset`` indicating the adjustment that
                 will be made to widget position prior to it being rendered.
         """
         return getattr(obj, self._internal_name) or ScalarOffset(
@@ -446,9 +463,9 @@ class OffsetProperty:
         """Set the offset
 
         Args:
-            obj: The Styles class
+            obj: The ``Styles`` class
             offset: A ScalarOffset object, or a 2-tuple of the form ``(x, y)`` indicating
-                the x and y offsets. When the tuple form is used, x and y can be specified
+                the x and y offsets. When the ``tuple`` form is used, x and y can be specified
                 as either ``int`` or ``str``. The string format allows you to also specify
                 any valid scalar unit e.g. ``("0.5vw", "0.5vh")``.
 
@@ -486,8 +503,8 @@ class IntegerProperty:
         """Get the integer property, or the default ``0`` if not set.
 
         Args:
-            obj (Styles): The Styles object.
-            objtype (type[Styles]): The Styles class.
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
 
         Returns:
             int: The integer property value
@@ -498,7 +515,7 @@ class IntegerProperty:
         """Set the integer property
 
         Args:
-            obj: The Styles object
+            obj: The ``Styles`` object
             value: The value to set the integer to
 
         Raises:
@@ -527,8 +544,8 @@ class StringEnumProperty:
         """Get the string property, or the default value if it's not set
 
         Args:
-            obj (Styles): The Styles object.
-            objtype (type[Styles]): The Styles class.
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
 
         Returns:
             str: The string property value
@@ -539,7 +556,7 @@ class StringEnumProperty:
         """Set the string property and ensure it is in the set of allowed values.
 
         Args:
-            obj (Styles): The Styles object
+            obj (Styles): The ``Styles`` object
             value (str, optional): The string value to set the property to.
 
         Raises:
@@ -565,8 +582,8 @@ class NameProperty:
         """Get the name property
 
         Args:
-            obj (Styles): The Styles object.
-            objtype (type[Styles]): The Styles class.
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
 
         Returns:
             str: The name
@@ -577,8 +594,11 @@ class NameProperty:
         """Set the name property
 
         Args:
-            obj: The Styles object
+            obj: The ``Styles`` object
             name: The name to set the property to
+
+        Raises:
+            StyleTypeError: If the value is not a ``str``.
         """
         obj.refresh(True)
         if not isinstance(name, str):
@@ -612,14 +632,36 @@ class NameListProperty:
 
 
 class ColorProperty:
+    """Descriptor for getting and setting color properties."""
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._name = name
         self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Color:
+        """Get the ``Color``, or ``Color.default()`` if no color is set.
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            Color: The Color
+        """
         return getattr(obj, self._internal_name, None) or Color.default()
 
-    def __set__(self, obj: Styles, color: Color | str | None) -> Color | str | None:
+    def __set__(self, obj: Styles, color: Color | str | None):
+        """Set the Color
+
+        Args:
+            obj (Styles): The ``Styles`` object
+            color (Color | str | None): The color to set. Pass a ``Color`` instance directly,
+                or pass a ``str`` which will be parsed into a color (e.g. ``"red""``, ``"rgb(20, 50, 80)"``,
+                ``"#f4e32d"``).
+
+        Raises:
+            ColorParseError: When the color string is invalid.
+        """
         obj.refresh()
         if color is None:
             setattr(self, self._internal_name, None)
@@ -629,10 +671,10 @@ class ColorProperty:
             elif isinstance(color, str):
                 new_color = Color.parse(color)
                 setattr(self, self._internal_name, new_color)
-        return color
 
 
 class StyleFlagsProperty:
+    """Descriptor for getting and set style flag properties (e.g. ``bold italic underline``)."""
 
     _VALID_PROPERTIES = {
         "not",
@@ -652,9 +694,28 @@ class StyleFlagsProperty:
         self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Style:
+        """Get the ``Style``
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            Style: The ``Style`` object
+        """
         return getattr(obj, self._internal_name, None) or Style.null()
 
-    def __set__(self, obj: Styles, style_flags: str | None) -> str | None:
+    def __set__(self, obj: Styles, style_flags: str | None):
+        """Set the style using a style flag string
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            style_flags (str, optional): The style flags to set as a string. For example,
+                ``"bold italic"``.
+
+        Raises:
+            StyleValueError: If the value is an invalid style flag
+        """
         obj.refresh()
         if style_flags is None:
             setattr(self, self._internal_name, None)
@@ -663,13 +724,17 @@ class StyleFlagsProperty:
             valid_word = self._VALID_PROPERTIES.__contains__
             for word in words:
                 if not valid_word(word):
-                    raise StyleValueError(f"unknown word {word!r} in style flags")
+                    raise StyleValueError(
+                        f"unknown word {word!r} in style flags, "
+                        f"valid values are {friendly_list(self._VALID_PROPERTIES)}"
+                    )
             style = Style.parse(style_flags)
             setattr(obj, self._internal_name, style)
-        return style_flags
 
 
 class TransitionsProperty:
+    """Descriptor for getting transitions properties"""
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._name = name
         self._internal_name = f"_rule_{name}"
@@ -677,4 +742,15 @@ class TransitionsProperty:
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
     ) -> dict[str, Transition]:
+        """Get a mapping of properties to the the transitions applied to them.
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            dict[str, Transition]: A ``dict`` mapping property names to the ``Transition`` applied to them.
+                e.g. ``{"offset": Transition(...), ...}``. If no transitions have been set, an empty ``dict``
+                is returned.
+        """
         return getattr(obj, self._internal_name, None) or {}
