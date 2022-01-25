@@ -4,7 +4,6 @@ from typing import Iterable, TYPE_CHECKING
 
 from ..geometry import Offset, Region, Size, Spacing, SpacingDimensions
 from ..layout import Layout, WidgetPlacement
-from ..widget import Widget
 from .._loop import loop_last
 
 if TYPE_CHECKING:

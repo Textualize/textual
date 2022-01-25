@@ -1,49 +1,43 @@
 from __future__ import annotations
-import os
 
+import os
 import asyncio
 
-from typing import Any, Callable, ClassVar, Iterable, Type, TypeVar
 import warnings
-
-from rich.control import Control
+from typing import Any, Callable, Iterable, Type, TypeVar
 
 import rich.repr
-from rich.screen import Screen
 from rich.console import Console, RenderableType
+from rich.control import Control
 from rich.measure import Measurement
-
+from rich.screen import Screen
 from rich.traceback import Traceback
 
-
-from . import events
 from . import actions
-from .dom import DOMNode
-from ._animator import Animator
-from .binding import Bindings, NoBinding
-from .geometry import Offset, Region, Size
+from . import events
 from . import log
+from . import messages
+from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
-from .css.stylesheet import Stylesheet, StylesheetParseError, StylesheetError
 from ._event_broker import extract_handler_actions, NoHandler
+from ._linux_driver import LinuxDriver
+from ._profile import timer
+from .binding import Bindings, NoBinding
+from .css.stylesheet import Stylesheet, StylesheetParseError, StylesheetError
+from .dom import DOMNode
 from .driver import Driver
 from .file_monitor import FileMonitor
-
+from .geometry import Offset, Region, Size
 from .layouts.dock import DockLayout, Dock
-from ._linux_driver import LinuxDriver
-from ._types import MessageTarget
-from . import messages
 from .message_pump import MessagePump
-from ._profile import timer
+from .reactive import Reactive
 from .view import View
 from .views import DockView
-from .widget import Widget, Reactive
-
+from .widget import Widget
 
 # asyncio will warn against resources not being cleared
 warnings.simplefilter("always", ResourceWarning)
-
 
 LayoutDefinition = "dict[str, Any]"
 
@@ -96,7 +90,6 @@ class App(DOMNode):
         self._screen = screen
         self.driver_class = driver_class or LinuxDriver
         self._title = title
-        self._layout = DockLayout()
         self._view_stack: list[View] = []
 
         self.focused: Widget | None = None
@@ -638,17 +631,11 @@ class App(DOMNode):
 
 if __name__ == "__main__":
     import asyncio
-    from logging import FileHandler
-
-    from rich.panel import Panel
 
     from .widgets import Header
     from .widgets import Footer
 
     from .widgets import Placeholder
-    from .scrollbar import ScrollBar
-
-    from rich.markdown import Markdown
 
     # from .widgets.scroll_view import ScrollView
 
@@ -672,7 +659,6 @@ if __name__ == "__main__":
             self.show_bar = not self.show_bar
 
         async def on_mount(self, event: events.Mount) -> None:
-
             view = await self.push_view(DockView())
 
             header = Header()
