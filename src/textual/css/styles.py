@@ -38,7 +38,7 @@ from ._style_properties import (
     NameListProperty,
     ScalarProperty,
     SpacingProperty,
-    StringProperty,
+    StringEnumProperty,
     StyleProperty,
     StyleFlagsProperty,
     TransitionsProperty,
@@ -102,9 +102,9 @@ class Styles:
 
     important: set[str] = field(default_factory=set)
 
-    display = StringProperty(VALID_DISPLAY, "block")
-    visibility = StringProperty(VALID_VISIBILITY, "visible")
-    layout = StringProperty(VALID_LAYOUT, "dock")
+    display = StringEnumProperty(VALID_DISPLAY, "block")
+    visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
+    layout = StringEnumProperty(VALID_LAYOUT, "dock")
 
     text = StyleProperty()
     text_color = ColorProperty()

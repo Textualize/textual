@@ -447,9 +447,14 @@ class OffsetProperty:
 
         Args:
             obj: The Styles class
-            offset: A ScalarOffset object, or a tuple of the form ``(x, y)`` indicating
+            offset: A ScalarOffset object, or a 2-tuple of the form ``(x, y)`` indicating
                 the x and y offsets. When the tuple form is used, x and y can be specified
-                as either ``int`` or ``str``.
+                as either ``int`` or ``str``. The string format allows you to also specify
+                any valid scalar unit e.g. ``("0.5vw", "0.5vh")``.
+
+        Raises:
+            ScalarParseError: If any of the string values supplied in the 2-tuple cannot
+                be parsed into a Scalar. For example, if you specify an non-existent unit.
         """
         obj.refresh(True)
         if isinstance(offset, ScalarOffset):
@@ -471,22 +476,45 @@ class OffsetProperty:
 
 
 class IntegerProperty:
+    """Descriptor for getting and setting integer properties"""
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._name = name
         self._internal_name = f"_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> int:
+        """Get the integer property, or the default ``0`` if not set.
+
+        Args:
+            obj (Styles): The Styles object.
+            objtype (type[Styles]): The Styles class.
+
+        Returns:
+            int: The integer property value
+        """
         return getattr(obj, self._internal_name, 0)
 
-    def __set__(self, obj: Styles, value: int | None) -> int | None:
+    def __set__(self, obj: Styles, value: int):
+        """Set the integer property
+
+        Args:
+            obj: The Styles object
+            value: The value to set the integer to
+
+        Raises:
+            StyleTypeError: If the supplied value is not an integer.
+        """
         obj.refresh()
         if not isinstance(value, int):
-            raise StyleTypeError(f"{self._name} must be a str")
+            raise StyleTypeError(f"{self._name} must be an integer")
         setattr(obj, self._internal_name, value)
-        return value
 
 
-class StringProperty:
+class StringEnumProperty:
+    """Descriptor for getting and setting string properties and ensuring that the set
+    value belongs in the set of valid values.
+    """
+
     def __init__(self, valid_values: set[str], default: str) -> None:
         self._valid_values = valid_values
         self._default = default
@@ -496,9 +524,27 @@ class StringProperty:
         self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
+        """Get the string property, or the default value if it's not set
+
+        Args:
+            obj (Styles): The Styles object.
+            objtype (type[Styles]): The Styles class.
+
+        Returns:
+            str: The string property value
+        """
         return getattr(obj, self._internal_name, None) or self._default
 
-    def __set__(self, obj: Styles, value: str | None = None) -> str | None:
+    def __set__(self, obj: Styles, value: str | None = None):
+        """Set the string property and ensure it is in the set of allowed values.
+
+        Args:
+            obj (Styles): The Styles object
+            value (str, optional): The string value to set the property to.
+
+        Raises:
+            StyleValueError: If the value is not in the set of valid values.
+        """
         obj.refresh()
         if value is not None:
             if value not in self._valid_values:
@@ -506,23 +552,38 @@ class StringProperty:
                     f"{self._name} must be one of {friendly_list(self._valid_values)}"
                 )
         setattr(obj, self._internal_name, value)
-        return value
 
 
 class NameProperty:
+    """Descriptor for getting and setting name properties."""
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._name = name
         self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None) -> str:
+        """Get the name property
+
+        Args:
+            obj (Styles): The Styles object.
+            objtype (type[Styles]): The Styles class.
+
+        Returns:
+            str: The name
+        """
         return getattr(obj, self._internal_name) or ""
 
-    def __set__(self, obj: Styles, name: str | None) -> str | None:
+    def __set__(self, obj: Styles, name: str | None):
+        """Set the name property
+
+        Args:
+            obj: The Styles object
+            name: The name to set the property to
+        """
         obj.refresh(True)
         if not isinstance(name, str):
             raise StyleTypeError(f"{self._name} must be a str")
         setattr(obj, self._internal_name, name)
-        return name
 
 
 class NameListProperty:
