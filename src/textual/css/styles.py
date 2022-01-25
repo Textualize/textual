@@ -46,12 +46,6 @@ from ._style_properties import (
 from .types import Display, Edge, Visibility
 
 
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
-
 if TYPE_CHECKING:
     from ..dom import DOMNode
 

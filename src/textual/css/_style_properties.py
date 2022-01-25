@@ -356,11 +356,22 @@ class SpacingProperty:
 
 
 class DocksProperty:
-    """Descriptor for getting and setting the docks property."""
+    """Descriptor for getting and setting the docks property. This property
+    is used to define docks and their location on screen.
+    """
 
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
     ) -> tuple[DockGroup, ...]:
+        """Get the Docks property
+
+        Args:
+            obj (Styles): The Styles object.
+            objtype (type[Styles]): The Styles class.
+
+        Returns:
+            tuple[DockGroup, ...]: A tuple containing the defined docks.
+        """
         return obj._rule_docks or ()
 
     def __set__(self, obj: Styles, docks: Iterable[DockGroup] | None):
@@ -378,27 +389,68 @@ class DocksProperty:
 
 
 class DockProperty:
+    """Descriptor for getting and setting the dock property. The dock property
+    allows you to specify which dock you wish a Widget to be attached to. This
+    should be used in conjunction with the "docks" property which lets you define
+    the docks themselves, and where they are located on screen.
+    """
+
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
+        """Get the Dock property
+
+        Args:
+            obj (Styles): The Styles object.
+            objtype (type[Styles]): The Styles class.
+
+        Returns:
+            str: The dock name as a string, or "" if the rule is not set.
+        """
         return obj._rule_dock or ""
 
-    def __set__(self, obj: Styles, spacing: str | None) -> str | None:
+    def __set__(self, obj: Styles, spacing: str | None):
+        """Set the Dock property
+
+        Args:
+            obj (Styles): The Styles object
+            spacing (str | None): The spacing to use.
+        """
         obj.refresh(True)
         obj._rule_dock = spacing
-        return spacing
 
 
 class OffsetProperty:
+    """Descriptor for getting and setting the offset property.
+    Offset consists of two values, x and y, that a widget's position
+    will be adjusted by before it is rendered.
+    """
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> ScalarOffset:
+        """Get the offset
+
+        Args:
+            obj (Styles): The Styles object.
+            objtype (type[Styles]): The Styles class.
+
+        Returns:
+            ScalarOffset: The ScalarOffset indicating the adjustment that
+                will be made to widget position prior to it being rendered.
+        """
         return getattr(obj, self._internal_name) or ScalarOffset(
             Scalar.from_number(0), Scalar.from_number(0)
         )
 
-    def __set__(
-        self, obj: Styles, offset: tuple[int | str, int | str] | ScalarOffset
-    ) -> tuple[int | str, int | str] | ScalarOffset:
+    def __set__(self, obj: Styles, offset: tuple[int | str, int | str] | ScalarOffset):
+        """Set the offset
+
+        Args:
+            obj: The Styles class
+            offset: A ScalarOffset object, or a tuple of the form ``(x, y)`` indicating
+                the x and y offsets. When the tuple form is used, x and y can be specified
+                as either ``int`` or ``str``.
+        """
         obj.refresh(True)
         if isinstance(offset, ScalarOffset):
             setattr(obj, self._internal_name, offset)
@@ -416,7 +468,6 @@ class OffsetProperty:
         )
         _offset = ScalarOffset(scalar_x, scalar_y)
         setattr(obj, self._internal_name, _offset)
-        return offset
 
 
 class IntegerProperty:
