@@ -503,7 +503,7 @@ class App(DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Mount):
-            view = View(id="_root")
+            view = View()
             self.register(self, view)
             await self.push_view(view)
             await super().on_event(event)

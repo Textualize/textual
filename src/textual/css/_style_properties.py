@@ -257,7 +257,7 @@ class SpacingProperty:
         return getattr(obj, self._internal_name) or NULL_SPACING
 
     def __set__(self, obj: Styles, spacing: SpacingDimensions) -> Spacing:
-        obj.refresh(True)
+        obj.refresh(layout=True)
         spacing = Spacing.unpack(spacing)
         setattr(obj, self._internal_name, spacing)
         return spacing
@@ -272,7 +272,7 @@ class DocksProperty:
     def __set__(
         self, obj: Styles, docks: Iterable[DockGroup] | None
     ) -> Iterable[DockGroup] | None:
-        obj.refresh(True)
+        obj.refresh(layout=True)
         if docks is None:
             obj._rule_docks = None
         else:
@@ -285,7 +285,7 @@ class DockProperty:
         return obj._rule_dock or ""
 
     def __set__(self, obj: Styles, spacing: str | None) -> str | None:
-        obj.refresh(True)
+        obj.refresh(layout=True)
         obj._rule_dock = spacing
         return spacing
 
@@ -315,7 +315,7 @@ class LayoutProperty:
         """
         from ..layouts.factory import get_layout, Layout  # Prevents circular import
 
-        obj.refresh(True)
+        obj.refresh(layout=True)
         if isinstance(layout, Layout):
             new_layout = layout
         else:
@@ -335,7 +335,7 @@ class OffsetProperty:
     def __set__(
         self, obj: Styles, offset: tuple[int | str, int | str] | ScalarOffset
     ) -> tuple[int | str, int | str] | ScalarOffset:
-        obj.refresh(True)
+        obj.refresh(layout=True)
         if isinstance(offset, ScalarOffset):
             setattr(obj, self._internal_name, offset)
             return offset
@@ -403,7 +403,7 @@ class NameProperty:
         return getattr(obj, self._internal_name) or ""
 
     def __set__(self, obj: Styles, name: str | None) -> str | None:
-        obj.refresh(True)
+        obj.refresh(layout=True)
         if not isinstance(name, str):
             raise StyleTypeError(f"{self._name} must be a str")
         setattr(obj, self._internal_name, name)
@@ -423,7 +423,7 @@ class NameListProperty:
     def __set__(
         self, obj: Styles, names: str | tuple[str] | None = None
     ) -> str | tuple[str] | None:
-        obj.refresh(True)
+        obj.refresh(layout=True)
         names_value: tuple[str, ...] | None = None
         if isinstance(names, str):
             names_value = tuple(name.strip().lower() for name in names.split(" "))
