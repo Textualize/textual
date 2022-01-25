@@ -22,25 +22,15 @@ class VerticalLayout(Layout):
         self.auto_width = auto_width
         self.z = z
         self.gutter = Spacing.unpack(gutter)
-        self._widgets: list[Widget] = []
         self._max_widget_width = 0
         super().__init__()
 
-    def add(self, widget: Widget) -> None:
-        self._widgets.append(widget)
-        self._max_widget_width = max(widget.app.measure(widget), self._max_widget_width)
-
-    def clear(self) -> None:
-        del self._widgets[:]
-        self._max_widget_width = 0
-
-    def get_widgets(self) -> Iterable[Widget]:
-        return self._widgets
+    def get_widgets(self, view: View) -> Iterable[Widget]:
+        return view.children
 
     def arrange(
         self, view: View, size: Size, scroll: Offset
     ) -> Iterable[WidgetPlacement]:
-        index = 0
         width, _height = size
         gutter = self.gutter
         x, y = self.gutter.top_left
@@ -51,10 +41,9 @@ class VerticalLayout(Layout):
         )
 
         total_width = render_width
-
         gutter_height = max(gutter.top, gutter.bottom)
 
-        for last, widget in loop_last(self._widgets):
+        for last, widget in loop_last(view.children):
             if (
                 not widget.render_cache
                 or widget.render_cache.size.width != render_width
@@ -63,7 +52,7 @@ class VerticalLayout(Layout):
             assert widget.render_cache is not None
             render_height = widget.render_cache.size.height
             region = Region(x, y, render_width, render_height)
-            yield WidgetPlacement(region, widget, (self.z, index))
+            yield WidgetPlacement(region, widget, self.z)
             y += render_height + (gutter.bottom if last else gutter_height)
 
         yield WidgetPlacement(Region(0, 0, total_width + gutter.width, y))

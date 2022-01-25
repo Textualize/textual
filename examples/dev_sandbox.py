@@ -7,7 +7,7 @@ from textual.widget import Widget
 
 class PanelWidget(Widget):
     def render(self) -> RenderableType:
-        return Panel("hello world!", title="Title")
+        return Panel("hello world!", title="Title", height=4)
 
 
 class BasicApp(App):
@@ -21,12 +21,8 @@ class BasicApp(App):
 
     def on_mount(self):
         """Build layout here."""
-        self.mount(
-            header=Widget(),
-            content=PanelWidget(),
-            footer=Widget(),
-            sidebar=Widget(),
-        )
+        self.mount(header=PanelWidget(), content=PanelWidget(), footer=PanelWidget())
+        self.view.refresh_layout()
 
 
-BasicApp.run(css_file="test_app.css", watch_css=True, log="textual.log")
+BasicApp.run(log="textual.log")

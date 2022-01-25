@@ -159,9 +159,9 @@ class Layout(ABC):
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 
         Args:
-            console (Console): Console instance.
-            size (Dimensions): Size of container.
-            viewport (Region): Screen relative viewport.
+            view (View): The View instance.
+            size (Size): Size of container.
+            scroll (Offset): Offset to apply to the Widget placements.
 
         Returns:
             Iterable[WidgetPlacement]: An iterable of widget location

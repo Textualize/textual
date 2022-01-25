@@ -1,8 +1,8 @@
 /* CSS file for dev_sandbox.py */
 
 App > View {
-  docks: side=left/1;
-  text: on #20639b;
+  layout: vertical;
+  text: on #6e06c2;
 }
 
 Widget:hover {
