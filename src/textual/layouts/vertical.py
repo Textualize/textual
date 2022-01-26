@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Iterable, TYPE_CHECKING
 
+from textual import log
+from ..css.styles import Styles
 from ..geometry import Offset, Region, Size, Spacing, SpacingDimensions
 from ..layout import Layout, WidgetPlacement
 from .._loop import loop_last
@@ -44,13 +46,15 @@ class VerticalLayout(Layout):
         gutter_height = max(gutter.top, gutter.bottom)
 
         for last, widget in loop_last(view.children):
-            if (
-                not widget.render_cache
-                or widget.render_cache.size.width != render_width
-            ):
-                widget.render_lines_free(render_width)
-            assert widget.render_cache is not None
-            render_height = widget.render_cache.size.height
+            styles: Styles = widget.styles
+            if styles.height:
+                render_height = int(
+                    styles.height.resolve_dimension(size, view.app.size)
+                )
+            else:
+                render_height = size.height
+            if styles.width:
+                render_width = min(styles.width.cells, render_width)
             region = Region(x, y, render_width, render_height)
             yield WidgetPlacement(region, widget, self.z)
             y += render_height + (gutter.bottom if last else gutter_height)
