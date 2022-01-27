@@ -129,7 +129,7 @@ class StylesBuilder:
         append = space.append
         for token in tokens:
             (token_name, value, _, _, location) = token
-            if token_name == "scalar":
+            if token_name in ("number", "scalar"):
                 try:
                     append(int(value))
                 except ValueError:

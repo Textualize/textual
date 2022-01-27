@@ -170,9 +170,6 @@ class Widget(DOMNode):
         if styles.has_border:
             renderable = Border(renderable, styles.border, style=renderable_text_style)
 
-        if styles.has_margin:
-            renderable = Padding(renderable, styles.margin, style=parent_text_style)
-
         if styles.has_outline:
             renderable = Border(
                 renderable,

@@ -55,6 +55,17 @@ class WidgetPlacement(NamedTuple):
     widget: Widget | None = None
     order: int = 0
 
+    def apply_margin(self) -> "WidgetPlacement":
+        region, widget, order = self
+        styles = widget.styles
+        if styles.has_margin:
+            return WidgetPlacement(
+                region=region.shrink(styles.margin),
+                widget=widget,
+                order=order,
+            )
+        return self
+
 
 @rich.repr.auto
 class LayoutUpdate:
