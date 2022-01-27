@@ -105,7 +105,7 @@ class View(Widget):
 
         placements = [
             placement.apply_margin()
-            for placement in self._layout.arrange(self, size, scroll)
+            for placement in self.layout.arrange(self, size, scroll)
         ]
 
         self._cached_arrangement = (size, scroll, placements)
