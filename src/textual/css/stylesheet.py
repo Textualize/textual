@@ -108,7 +108,8 @@ class Stylesheet:
                 yield selector_set.specificity
 
     def apply(self, node: DOMNode) -> None:
-        """
+        """Apply the stylesheet to a DOM node.
+
         Args:
             node (DOMNode): The ``DOMNode`` to apply the stylesheet to.
                 Applies the styles defined in this ``Stylesheet`` to the node.
