@@ -1,5 +1,5 @@
 """
-Style properties are descriptors which allow the Styles object to accept different types when
+Style properties are descriptors which allow the ``Styles`` object to accept different types when
 setting attributes. This gives the developer more freedom in how to express style information.
 
 Descriptors also play nicely with Mypy, which is aware that attributes can have different types
@@ -33,10 +33,13 @@ if TYPE_CHECKING:
     from ..layout import Layout
     from .styles import Styles
     from .styles import DockGroup
+    from .._box import BoxType
     from ..layouts.factory import LayoutName
 
 
 class ScalarProperty:
+    """Descriptor for getting and setting scalar properties. Scalars are numeric values with a unit, e.g. "50vh"."""
+
     def __init__(
         self, units: set[Unit] | None = None, percent_unit: Unit = Unit.WIDTH
     ) -> None:
@@ -51,12 +54,34 @@ class ScalarProperty:
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
     ) -> Scalar | None:
+        """Get the scalar property
+
+        Args:
+            obj (Styles): The ``Styles`` object
+            objtype (type[Styles]): The ``Styles`` class
+
+        Returns:
+            The Scalar object or ``None`` if it's not set.
+        """
         value = getattr(obj, self.internal_name)
         return value
 
-    def __set__(
-        self, obj: Styles, value: float | Scalar | str | None
-    ) -> float | Scalar | str | None:
+    def __set__(self, obj: Styles, value: float | Scalar | str | None) -> None:
+        """Set the scalar property
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            value (float | Scalar | str | None): The value to set the scalar property to.
+                You can directly pass a float value, which will be interpreted with
+                a default unit of Cells. You may also provide a string such as ``"50%"``,
+                as you might do when writing CSS. If a string with no units is supplied,
+                Cells will be used as the unit. Alternatively, you can directly supply
+                a ``Scalar`` object.
+
+        Raises:
+            StyleValueError: If the value is of an invalid type, uses an invalid unit, or
+                cannot be parsed for any other reason.
+        """
         if value is None:
             new_value = None
         elif isinstance(value, float):
@@ -78,10 +103,13 @@ class ScalarProperty:
             new_value = Scalar(float(new_value.value), self.percent_unit, Unit.WIDTH)
         setattr(obj, self.internal_name, new_value)
         obj.refresh()
-        return value
 
 
 class BoxProperty:
+    """Descriptor for getting and setting outlines and borders along a single edge.
+    For example "border-right", "outline-bottom", etc.
+    """
+
     DEFAULT = ("", Style())
 
     def __set_name__(self, owner: Styles, name: str) -> None:
@@ -92,13 +120,32 @@ class BoxProperty:
 
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
-    ) -> tuple[str, Style]:
+    ) -> tuple[BoxType, Style]:
+        """Get the box property
+
+        Args:
+            obj (Styles): The ``Styles`` object
+            objtype (type[Styles]): The ``Styles`` class
+
+        Returns:
+            A ``tuple[BoxType, Style]`` containing the string type of the box and
+                it's style. Example types are "rounded", "solid", and "dashed".
+        """
         value = getattr(obj, self.internal_name)
         return value or self.DEFAULT
 
-    def __set__(
-        self, obj: Styles, border: tuple[str, str | Color | Style] | None
-    ) -> tuple[str, str | Color | Style] | None:
+    def __set__(self, obj: Styles, border: tuple[BoxType, str | Color | Style] | None):
+        """Set the box property
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            value (tuple[BoxType, str | Color | Style], optional): A 2-tuple containing the type of box to use,
+                e.g. "dashed", and the ``Style`` to be used. You can supply the ``Style`` directly, or pass a
+                ``str`` (e.g. ``"blue on #f0f0f0"`` ) or ``Color`` instead.
+
+        Raises:
+            StyleSyntaxError: If the string supplied for the color has invalid syntax.
+        """
         if border is None:
             new_value = None
         else:
@@ -111,17 +158,16 @@ class BoxProperty:
                 new_value = (_type, Style.from_color(Color.parse(color)))
         setattr(obj, self.internal_name, new_value)
         obj.refresh()
-        return border
 
 
 @rich.repr.auto
 class Edges(NamedTuple):
     """Stores edges for border / outline."""
 
-    top: tuple[str, Style]
-    right: tuple[str, Style]
-    bottom: tuple[str, Style]
-    left: tuple[str, Style]
+    top: tuple[BoxType, Style]
+    right: tuple[BoxType, Style]
+    bottom: tuple[BoxType, Style]
+    left: tuple[BoxType, Style]
 
     def __rich_repr__(self) -> rich.repr.Result:
         top, right, bottom, left = self
@@ -150,6 +196,8 @@ class Edges(NamedTuple):
 
 
 class BorderProperty:
+    """Descriptor for getting and setting full borders and outlines."""
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._properties = (
             f"{name}_top",
@@ -159,6 +207,15 @@ class BorderProperty:
         )
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Edges:
+        """Get the border
+
+        Args:
+            obj (Styles): The ``Styles`` object
+            objtype (type[Styles]): The ``Styles`` class
+
+        Returns:
+            An ``Edges`` object describing the type and style of each edge.
+        """
         top, right, bottom, left = self._properties
         border = Edges(
             getattr(obj, top),
@@ -171,10 +228,25 @@ class BorderProperty:
     def __set__(
         self,
         obj: Styles,
-        border: Sequence[tuple[str, str | Color | Style] | None]
-        | tuple[str, str | Color | Style]
+        border: Sequence[tuple[BoxType, str | Color | Style] | None]
+        | tuple[BoxType, str | Color | Style]
         | None,
     ) -> None:
+        """Set the border
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            border (Sequence[tuple[BoxType, str | Color | Style] | None] | tuple[BoxType, str | Color | Style] | None):
+                A ``tuple[BoxType, str | Color | Style]`` representing the type of box to use and the ``Style`` to apply
+                to the box.
+                Alternatively, you can supply a sequence of these tuples and they will be applied per-edge.
+                If the sequence is of length 1, all edges will be decorated according to the single element.
+                If the sequence is length 2, the first ``tuple`` will be applied to the top and bottom edges.
+                If the sequence is length 4, the tuples will be applied to the edges in the order: top, right, bottom, left.
+
+        Raises:
+            StyleValueError: When the supplied ``tuple`` is not of valid length (1, 2, or 4).
+        """
         top, right, bottom, left = self._properties
         obj.refresh()
         if border is None:
@@ -213,16 +285,25 @@ class BorderProperty:
 
 
 class StyleProperty:
+    """Descriptor for getting and setting full borders and outlines."""
+
     DEFAULT_STYLE = Style()
 
     def __set_name__(self, owner: Styles, name: str) -> None:
-
         self._color_name = f"_rule_{name}_color"
         self._bgcolor_name = f"_rule_{name}_background"
         self._style_name = f"_rule_{name}_style"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Style:
+        """Get the Style
 
+        Args:
+            obj (Styles): The ``Styles`` object
+            objtype (type[Styles]): The ``Styles`` class
+
+        Returns:
+            A ``Style`` object.
+        """
         color = getattr(obj, self._color_name)
         bgcolor = getattr(obj, self._bgcolor_name)
         style = Style.from_color(color, bgcolor)
@@ -231,7 +312,17 @@ class StyleProperty:
             style += style_flags
         return style
 
-    def __set__(self, obj: Styles, style: Style | str | None) -> Style | str | None:
+    def __set__(self, obj: Styles, style: Style | str | None):
+        """Set the Style
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            style (Style | str, optional): You can supply the ``Style`` directly, or a
+                string (e.g. ``"blue on #f0f0f0"``).
+
+        Raises:
+            StyleSyntaxError: When the supplied style string has invalid syntax.
+        """
         obj.refresh()
         if style is None:
             setattr(obj, self._color_name, None)
@@ -246,48 +337,104 @@ class StyleProperty:
             setattr(obj, self._color_name, new_style.color)
             setattr(obj, self._bgcolor_name, new_style.bgcolor)
             setattr(obj, self._style_name, new_style.without_color)
-        return style
 
 
 class SpacingProperty:
+    """Descriptor for getting and setting spacing properties (e.g. padding and margin)."""
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Spacing:
+        """Get the Spacing
+
+        Args:
+            obj (Styles): The ``Styles`` object
+            objtype (type[Styles]): The ``Styles`` class
+
+        Returns:
+            Spacing: The Spacing. If unset, returns the null spacing ``(0, 0, 0, 0)``.
+        """
         return getattr(obj, self._internal_name) or NULL_SPACING
 
-    def __set__(self, obj: Styles, spacing: SpacingDimensions) -> Spacing:
+    def __set__(self, obj: Styles, spacing: SpacingDimensions):
+        """Set the Spacing
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            style (Style | str, optional): You can supply the ``Style`` directly, or a
+                string (e.g. ``"blue on #f0f0f0"``).
+
+        Raises:
+            ValueError: When the value is malformed, e.g. a ``tuple`` with a length that is
+                not 1, 2, or 4.
+        """
         obj.refresh(layout=True)
         spacing = Spacing.unpack(spacing)
         setattr(obj, self._internal_name, spacing)
-        return spacing
 
 
 class DocksProperty:
+    """Descriptor for getting and setting the docks property. This property
+    is used to define docks and their location on screen.
+    """
+
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
     ) -> tuple[DockGroup, ...]:
+        """Get the Docks property
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            tuple[DockGroup, ...]: A ``tuple`` containing the defined docks.
+        """
         return obj._rule_docks or ()
 
-    def __set__(
-        self, obj: Styles, docks: Iterable[DockGroup] | None
-    ) -> Iterable[DockGroup] | None:
+    def __set__(self, obj: Styles, docks: Iterable[DockGroup] | None):
+        """Set the Docks property
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            docks (Iterable[DockGroup]): Iterable of DockGroups
+        """
         obj.refresh(layout=True)
         if docks is None:
             obj._rule_docks = None
         else:
             obj._rule_docks = tuple(docks)
-        return docks
 
 
 class DockProperty:
+    """Descriptor for getting and setting the dock property. The dock property
+    allows you to specify which dock you wish a Widget to be attached to. This
+    should be used in conjunction with the "docks" property which lets you define
+    the docks themselves, and where they are located on screen.
+    """
+
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
+        """Get the Dock property
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            str: The dock name as a string, or "" if the rule is not set.
+        """
         return obj._rule_dock or ""
 
-    def __set__(self, obj: Styles, spacing: str | None) -> str | None:
+    def __set__(self, obj: Styles, spacing: str | None):
+        """Set the Dock property
+
+        Args:
+            obj (Styles): The ``Styles`` object
+            spacing (str | None): The spacing to use.
+        """
         obj.refresh(layout=True)
         obj._rule_dock = spacing
-        return spacing
 
 
 class LayoutProperty:
@@ -324,17 +471,43 @@ class LayoutProperty:
 
 
 class OffsetProperty:
+    """Descriptor for getting and setting the offset property.
+    Offset consists of two values, x and y, that a widget's position
+    will be adjusted by before it is rendered.
+    """
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> ScalarOffset:
+        """Get the offset
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            ScalarOffset: The ``ScalarOffset`` indicating the adjustment that
+                will be made to widget position prior to it being rendered.
+        """
         return getattr(obj, self._internal_name) or ScalarOffset(
             Scalar.from_number(0), Scalar.from_number(0)
         )
 
-    def __set__(
-        self, obj: Styles, offset: tuple[int | str, int | str] | ScalarOffset
-    ) -> tuple[int | str, int | str] | ScalarOffset:
+    def __set__(self, obj: Styles, offset: tuple[int | str, int | str] | ScalarOffset):
+        """Set the offset
+
+        Args:
+            obj: The ``Styles`` class
+            offset: A ScalarOffset object, or a 2-tuple of the form ``(x, y)`` indicating
+                the x and y offsets. When the ``tuple`` form is used, x and y can be specified
+                as either ``int`` or ``str``. The string format allows you to also specify
+                any valid scalar unit e.g. ``("0.5vw", "0.5vh")``.
+
+        Raises:
+            ScalarParseError: If any of the string values supplied in the 2-tuple cannot
+                be parsed into a Scalar. For example, if you specify an non-existent unit.
+        """
         obj.refresh(layout=True)
         if isinstance(offset, ScalarOffset):
             setattr(obj, self._internal_name, offset)
@@ -352,26 +525,48 @@ class OffsetProperty:
         )
         _offset = ScalarOffset(scalar_x, scalar_y)
         setattr(obj, self._internal_name, _offset)
-        return offset
 
 
 class IntegerProperty:
+    """Descriptor for getting and setting integer properties"""
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._name = name
         self._internal_name = f"_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> int:
+        """Get the integer property, or the default ``0`` if not set.
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            int: The integer property value
+        """
         return getattr(obj, self._internal_name, 0)
 
-    def __set__(self, obj: Styles, value: int | None) -> int | None:
+    def __set__(self, obj: Styles, value: int):
+        """Set the integer property
+
+        Args:
+            obj: The ``Styles`` object
+            value: The value to set the integer to
+
+        Raises:
+            StyleTypeError: If the supplied value is not an integer.
+        """
         obj.refresh()
         if not isinstance(value, int):
-            raise StyleTypeError(f"{self._name} must be a str")
+            raise StyleTypeError(f"{self._name} must be an integer")
         setattr(obj, self._internal_name, value)
-        return value
 
 
-class StringProperty:
+class StringEnumProperty:
+    """Descriptor for getting and setting string properties and ensuring that the set
+    value belongs in the set of valid values.
+    """
+
     def __init__(self, valid_values: set[str], default: str) -> None:
         self._valid_values = valid_values
         self._default = default
@@ -381,9 +576,27 @@ class StringProperty:
         self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
+        """Get the string property, or the default value if it's not set
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            str: The string property value
+        """
         return getattr(obj, self._internal_name, None) or self._default
 
-    def __set__(self, obj: Styles, value: str | None = None) -> str | None:
+    def __set__(self, obj: Styles, value: str | None = None):
+        """Set the string property and ensure it is in the set of allowed values.
+
+        Args:
+            obj (Styles): The ``Styles`` object
+            value (str, optional): The string value to set the property to.
+
+        Raises:
+            StyleValueError: If the value is not in the set of valid values.
+        """
         obj.refresh()
         if value is not None:
             if value not in self._valid_values:
@@ -391,23 +604,41 @@ class StringProperty:
                     f"{self._name} must be one of {friendly_list(self._valid_values)}"
                 )
         setattr(obj, self._internal_name, value)
-        return value
 
 
 class NameProperty:
+    """Descriptor for getting and setting name properties."""
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._name = name
         self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None) -> str:
+        """Get the name property
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            str: The name
+        """
         return getattr(obj, self._internal_name) or ""
 
-    def __set__(self, obj: Styles, name: str | None) -> str | None:
+    def __set__(self, obj: Styles, name: str | None):
+        """Set the name property
+
+        Args:
+            obj: The ``Styles`` object
+            name: The name to set the property to
+
+        Raises:
+            StyleTypeError: If the value is not a ``str``.
+        """
         obj.refresh(layout=True)
         if not isinstance(name, str):
             raise StyleTypeError(f"{self._name} must be a str")
         setattr(obj, self._internal_name, name)
-        return name
 
 
 class NameListProperty:
@@ -436,14 +667,36 @@ class NameListProperty:
 
 
 class ColorProperty:
+    """Descriptor for getting and setting color properties."""
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._name = name
         self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Color:
+        """Get the ``Color``, or ``Color.default()`` if no color is set.
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            Color: The Color
+        """
         return getattr(obj, self._internal_name, None) or Color.default()
 
-    def __set__(self, obj: Styles, color: Color | str | None) -> Color | str | None:
+    def __set__(self, obj: Styles, color: Color | str | None):
+        """Set the Color
+
+        Args:
+            obj (Styles): The ``Styles`` object
+            color (Color | str | None): The color to set. Pass a ``Color`` instance directly,
+                or pass a ``str`` which will be parsed into a color (e.g. ``"red""``, ``"rgb(20, 50, 80)"``,
+                ``"#f4e32d"``).
+
+        Raises:
+            ColorParseError: When the color string is invalid.
+        """
         obj.refresh()
         if color is None:
             setattr(self, self._internal_name, None)
@@ -453,10 +706,11 @@ class ColorProperty:
             elif isinstance(color, str):
                 new_color = Color.parse(color)
                 setattr(self, self._internal_name, new_color)
-        return color
 
 
 class StyleFlagsProperty:
+    """Descriptor for getting and set style flag properties (e.g. ``bold italic underline``)."""
+
     _VALID_PROPERTIES = {
         "not",
         "bold",
@@ -475,9 +729,28 @@ class StyleFlagsProperty:
         self._internal_name = f"_rule_{name}"
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Style:
+        """Get the ``Style``
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            Style: The ``Style`` object
+        """
         return getattr(obj, self._internal_name, None) or Style.null()
 
-    def __set__(self, obj: Styles, style_flags: str | None) -> str | None:
+    def __set__(self, obj: Styles, style_flags: str | None):
+        """Set the style using a style flag string
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            style_flags (str, optional): The style flags to set as a string. For example,
+                ``"bold italic"``.
+
+        Raises:
+            StyleValueError: If the value is an invalid style flag
+        """
         obj.refresh()
         if style_flags is None:
             setattr(self, self._internal_name, None)
@@ -486,13 +759,17 @@ class StyleFlagsProperty:
             valid_word = self._VALID_PROPERTIES.__contains__
             for word in words:
                 if not valid_word(word):
-                    raise StyleValueError(f"unknown word {word!r} in style flags")
+                    raise StyleValueError(
+                        f"unknown word {word!r} in style flags, "
+                        f"valid values are {friendly_list(self._VALID_PROPERTIES)}"
+                    )
             style = Style.parse(style_flags)
             setattr(obj, self._internal_name, style)
-        return style_flags
 
 
 class TransitionsProperty:
+    """Descriptor for getting transitions properties"""
+
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._name = name
         self._internal_name = f"_rule_{name}"
@@ -500,4 +777,15 @@ class TransitionsProperty:
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
     ) -> dict[str, Transition]:
+        """Get a mapping of properties to the the transitions applied to them.
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            dict[str, Transition]: A ``dict`` mapping property names to the ``Transition`` applied to them.
+                e.g. ``{"offset": Transition(...), ...}``. If no transitions have been set, an empty ``dict``
+                is returned.
+        """
         return getattr(obj, self._internal_name, None) or {}
