@@ -415,6 +415,25 @@ class Region(NamedTuple):
         )
         return new_region
 
+    def shrink(self, margin: Spacing) -> Region:
+        """Shrink a region by pushing each edge inwards.
+
+        Args:
+            margin (Spacing): Defines how many cells to shrink the Region by at each edge.
+
+        Returns:
+            Region: The new, smaller region.
+        """
+        _clamp = clamp
+        top, right, bottom, left = margin
+        x, y, width, height = self
+        return Region(
+            x=_clamp(x + left, 0, width),
+            y=_clamp(y + top, 0, height),
+            width=_clamp(width - left - right, 0, width),
+            height=_clamp(height - top - bottom, 0, height),
+        )
+
     def intersection(self, region: Region) -> Region:
         """Get that covers both regions.
 

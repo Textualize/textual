@@ -1,6 +1,6 @@
 import pytest
 
-from textual.geometry import clamp, Offset, Size, Region
+from textual.geometry import clamp, Offset, Size, Region, Spacing
 
 
 def test_dimensions_region():
@@ -171,6 +171,12 @@ def test_region_contains_special():
 
 def test_clip():
     assert Region(10, 10, 20, 30).clip(20, 25) == Region(10, 10, 10, 15)
+
+
+def test_region_shrink():
+    margin = Spacing(top=1, right=2, bottom=3, left=4)
+    region = Region(x=10, y=10, width=50, height=50)
+    assert region.shrink(margin) == Region(x=14, y=11, width=44, height=46)
 
 
 def test_region_intersection():

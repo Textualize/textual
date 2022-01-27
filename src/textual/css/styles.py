@@ -1,32 +1,14 @@
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass, field
 from functools import lru_cache
-import sys
 from typing import Any, Iterable, NamedTuple, TYPE_CHECKING
 
-from rich import print
-from rich.color import Color
 import rich.repr
+from rich.color import Color
 from rich.style import Style
 
-from .. import log
-from .._animator import SimpleAnimation, Animation, EasingFunction
-from .._types import MessageTarget
-from .errors import StyleValueError
-from .. import events
-from ._error_tools import friendly_list
-from .types import Specificity3, Specificity4
-from .constants import (
-    VALID_DISPLAY,
-    VALID_VISIBILITY,
-    VALID_LAYOUT,
-    NULL_SPACING,
-)
-from .scalar_animation import ScalarAnimation
-from ..geometry import NULL_OFFSET, Offset, Spacing
-from .scalar import Scalar, ScalarOffset, Unit
-from .transition import Transition
 from ._style_properties import (
     BorderProperty,
     BoxProperty,
@@ -42,11 +24,26 @@ from ._style_properties import (
     StyleProperty,
     StyleFlagsProperty,
     TransitionsProperty,
+    LayoutProperty,
 )
+from .constants import (
+    VALID_DISPLAY,
+    VALID_VISIBILITY,
+)
+from .scalar import Scalar, ScalarOffset, Unit
+from .scalar_animation import ScalarAnimation
+from .transition import Transition
 from .types import Display, Edge, Visibility
 
 
+from .types import Specificity3, Specificity4
+from .. import log
+from .._animator import Animation, EasingFunction
+from ..geometry import Spacing
+
+
 if TYPE_CHECKING:
+    from ..layout import Layout
     from ..dom import DOMNode
 
 
@@ -64,7 +61,7 @@ class Styles:
 
     _rule_display: Display | None = None
     _rule_visibility: Visibility | None = None
-    _rule_layout: str | None = None
+    _rule_layout: "Layout" | None = None
 
     _rule_text_color: Color | None = None
     _rule_text_background: Color | None = None
@@ -104,7 +101,7 @@ class Styles:
 
     display = StringEnumProperty(VALID_DISPLAY, "block")
     visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
-    layout = StringEnumProperty(VALID_LAYOUT, "dock")
+    layout = LayoutProperty()
 
     text = StyleProperty()
     text_color = ColorProperty()
@@ -273,6 +270,7 @@ class Styles:
                         )
                 else:
                     setattr(styles, f"_rule_{key}", value)
+
         if self.node is not None:
             self.node.on_style_change()
 
@@ -423,7 +421,7 @@ if __name__ == "__main__":
     styles.dock = "bar"
     styles.layers = "foo bar"
 
-    from rich import inspect, print
+    from rich import print
 
     print(styles.text_style)
     print(styles.text)

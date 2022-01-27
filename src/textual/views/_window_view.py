@@ -32,7 +32,7 @@ class WindowView(View, layout=VerticalLayout):
         super().__init__(name=name, layout=layout)
 
     async def update(self, widget: Widget | RenderableType) -> None:
-        layout = self._layout
+        layout = self.layout
         assert isinstance(layout, VerticalLayout)
         layout.clear()
         self.widget = widget if isinstance(widget, Widget) else Static(widget)
@@ -46,7 +46,7 @@ class WindowView(View, layout=VerticalLayout):
         await self.emit(WindowChange(self))
 
     async def handle_layout(self, message: messages.Layout) -> None:
-        self._layout.require_update()
+        self.layout.require_update()
         message.stop()
         self.refresh()
 
@@ -54,11 +54,11 @@ class WindowView(View, layout=VerticalLayout):
         await self.emit(WindowChange(self))
 
     async def watch_scroll_x(self, value: int) -> None:
-        self._layout.require_update()
+        self.layout.require_update()
         self.refresh()
 
     async def watch_scroll_y(self, value: int) -> None:
-        self._layout.require_update()
+        self.layout.require_update()
         self.refresh()
 
     async def on_resize(self, event: events.Resize) -> None:

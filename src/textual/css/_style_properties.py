@@ -15,6 +15,9 @@ import rich.repr
 from rich.color import Color
 from rich.style import Style
 
+from ._error_tools import friendly_list
+from .constants import NULL_SPACING
+from .errors import StyleTypeError, StyleValueError
 from .scalar import (
     get_symbols,
     UNIT_SYMBOL,
@@ -23,16 +26,15 @@ from .scalar import (
     ScalarOffset,
     ScalarParseError,
 )
-from ..geometry import Spacing, SpacingDimensions
-from .constants import NULL_SPACING
-from .errors import StyleTypeError, StyleValueError
 from .transition import Transition
-from ._error_tools import friendly_list
+from ..geometry import Spacing, SpacingDimensions
 
 if TYPE_CHECKING:
+    from ..layout import Layout
     from .styles import Styles
     from .styles import DockGroup
     from .._box import BoxType
+    from ..layouts.factory import LayoutName
 
 
 class ScalarProperty:
@@ -367,7 +369,7 @@ class SpacingProperty:
             ValueError: When the value is malformed, e.g. a ``tuple`` with a length that is
                 not 1, 2, or 4.
         """
-        obj.refresh(True)
+        obj.refresh(layout=True)
         spacing = Spacing.unpack(spacing)
         setattr(obj, self._internal_name, spacing)
 
@@ -398,7 +400,7 @@ class DocksProperty:
             obj (Styles): The ``Styles`` object.
             docks (Iterable[DockGroup]): Iterable of DockGroups
         """
-        obj.refresh(True)
+        obj.refresh(layout=True)
         if docks is None:
             obj._rule_docks = None
         else:
@@ -431,8 +433,41 @@ class DockProperty:
             obj (Styles): The ``Styles`` object
             spacing (str | None): The spacing to use.
         """
-        obj.refresh(True)
+        obj.refresh(layout=True)
         obj._rule_dock = spacing
+
+
+class LayoutProperty:
+    """Descriptor for getting and setting layout."""
+
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self._internal_name = f"_rule_{name}"
+
+    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Layout:
+        """
+        Args:
+            obj (Styles): The Styles object
+            objtype (type[Styles]): The Styles class
+        Returns:
+            The ``Layout`` object.
+        """
+        return getattr(obj, self._internal_name)
+
+    def __set__(self, obj: Styles, layout: LayoutName | Layout):
+        """
+        Args:
+            obj (Styles): The Styles object.
+            layout (LayoutName | Layout): The layout to use. You can supply a ``LayoutName``
+                (a string literal such as ``"dock"``) or a ``Layout`` object.
+        """
+        from ..layouts.factory import get_layout, Layout  # Prevents circular import
+
+        obj.refresh(layout=True)
+        if isinstance(layout, Layout):
+            new_layout = layout
+        else:
+            new_layout = get_layout(layout)
+        setattr(obj, self._internal_name, new_layout)
 
 
 class OffsetProperty:
@@ -473,7 +508,7 @@ class OffsetProperty:
             ScalarParseError: If any of the string values supplied in the 2-tuple cannot
                 be parsed into a Scalar. For example, if you specify an non-existent unit.
         """
-        obj.refresh(True)
+        obj.refresh(layout=True)
         if isinstance(offset, ScalarOffset):
             setattr(obj, self._internal_name, offset)
             return offset
@@ -600,7 +635,7 @@ class NameProperty:
         Raises:
             StyleTypeError: If the value is not a ``str``.
         """
-        obj.refresh(True)
+        obj.refresh(layout=True)
         if not isinstance(name, str):
             raise StyleTypeError(f"{self._name} must be a str")
         setattr(obj, self._internal_name, name)
@@ -619,7 +654,7 @@ class NameListProperty:
     def __set__(
         self, obj: Styles, names: str | tuple[str] | None = None
     ) -> str | tuple[str] | None:
-        obj.refresh(True)
+        obj.refresh(layout=True)
         names_value: tuple[str, ...] | None = None
         if isinstance(names, str):
             names_value = tuple(name.strip().lower() for name in names.split(" "))

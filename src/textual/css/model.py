@@ -5,13 +5,14 @@ import rich.repr
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Iterable
+from typing import Iterable, TYPE_CHECKING
 
-from .. import log
-from ..dom import DOMNode
 from .styles import Styles
 from .tokenize import Token
 from .types import Specificity3
+
+if TYPE_CHECKING:
+    from ..dom import DOMNode
 
 
 class SelectorType(Enum):

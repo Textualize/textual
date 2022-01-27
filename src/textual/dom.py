@@ -1,24 +1,22 @@
 from __future__ import annotations
 
-from typing import Any, cast, Iterable, Iterator, TYPE_CHECKING
+from typing import Iterable, Iterator, TYPE_CHECKING
 
-from rich.highlighter import ReprHighlighter
 import rich.repr
+from rich.highlighter import ReprHighlighter
 from rich.pretty import Pretty
 from rich.style import Style
 from rich.tree import Tree
 
+from ._node_list import NodeList
 from .css._error_tools import friendly_list
-from .css.constants import VALID_DISPLAY
+from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from .css.errors import StyleValueError
 from .css.styles import Styles
 from .message_pump import MessagePump
-from ._node_list import NodeList
-
 
 if TYPE_CHECKING:
     from .css.query import DOMQuery
-    from .widget import Widget
 
 
 class NoParent(Exception):
@@ -158,6 +156,22 @@ class DOMNode(MessagePump):
             raise StyleValueError(
                 f"invalid value for display (received {new_val!r}, "
                 f"expected {friendly_list(VALID_DISPLAY)})",
+            )
+
+    @property
+    def visible(self) -> bool:
+        return self.styles.visibility != "hidden"
+
+    @visible.setter
+    def visible(self, new_value: bool) -> None:
+        if isinstance(new_value, bool):
+            self.styles.visibility = "visible" if new_value else "hidden"
+        elif new_value in VALID_VISIBILITY:
+            self.styles.visibility = new_value
+        else:
+            raise StyleValueError(
+                f"invalid value for visibility (received {new_value!r}, "
+                f"expected {friendly_list(VALID_VISIBILITY)})"
             )
 
     @property
