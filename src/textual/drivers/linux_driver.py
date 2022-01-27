@@ -157,21 +157,17 @@ class LinuxDriver(Driver):
             pass
 
     def stop_application_mode(self) -> None:
+        self.disable_input()
 
-        with timer("disable_input"):
-            self.disable_input()
+        if self.attrs_before is not None:
+            try:
+                termios.tcsetattr(self.fileno, termios.TCSANOW, self.attrs_before)
+            except termios.error:
+                pass
 
-        with timer("tcsetattr"):
-            if self.attrs_before is not None:
-                try:
-                    termios.tcsetattr(self.fileno, termios.TCSANOW, self.attrs_before)
-                except termios.error:
-                    pass
-
-        with timer("set_alt_screen False, show cursor"):
-            with self.console:
-                self.console.set_alt_screen(False)
-                self.console.show_cursor(True)
+        with self.console:
+            self.console.set_alt_screen(False)
+            self.console.show_cursor(True)
 
     def run_input_thread(self, loop) -> None:
         try:

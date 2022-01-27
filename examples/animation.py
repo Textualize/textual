@@ -32,5 +32,7 @@ class SmoothApp(App):
 
         self.bar.layout_offset_x = -40
 
+        self.set_timer(10, lambda: self.action("quit"))
 
-SmoothApp.run(log="textual.log", log_verbosity=3)
+
+SmoothApp.run(log="textual.log", log_verbosity=2)

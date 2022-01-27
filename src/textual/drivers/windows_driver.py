@@ -7,11 +7,9 @@ from codecs import getincrementaldecoder
 
 import msvcrt
 import os
-import selectors
-import signal
 import sys
 from threading import Event, Thread
-from typing import List, Optional, TYPE_CHECKING
+from typing import Callable, List, Optional, TYPE_CHECKING
 
 from ..driver import Driver
 from ..geometry import Size
@@ -69,10 +67,8 @@ class WindowsDriver(Driver):
 
         self.exit_event = Event()
         self._key_thread: Thread | None = None
-
-    def _get_terminal_size(self) -> tuple[int, int]:
-        width, height = win32.get_terminal_size(self.out_fileno)
-        return (width, height)
+        self._event_thread: Thread | None = None
+        self._restore_console: Callable[[], None] | None = None
 
     def _enable_mouse_support(self) -> None:
         write = self.console.file.write
@@ -99,8 +95,7 @@ class WindowsDriver(Driver):
 
         loop = asyncio.get_event_loop()
 
-        win32.enable_vt_mode(msvcrt.get_osfhandle(self.out_fileno))
-        win32.setraw(msvcrt.get_osfhandle(self.in_fileno))
+        self._restore_console = win32.enable_application_mode()
 
         self.console.set_alt_screen(True)
         self._enable_mouse_support()
@@ -111,11 +106,13 @@ class WindowsDriver(Driver):
 
         app = active_app.get()
 
-        self._key_thread = Thread(
-            target=self.run_input_thread, args=(asyncio.get_event_loop(), app)
+        # self._key_thread = Thread(
+        #     target=self.run_input_thread, args=(asyncio.get_event_loop(), app)
+        # )
+        self._event_thread = win32.EventMonitor(
+            loop, app, self._target, self.exit_event, self.process_event
         )
-
-        width, height = win32.get_terminal_size(self.out_fileno)
+        width, height = os.get_terminal_size(self.out_fileno)
 
         asyncio.run_coroutine_threadsafe(
             self._target.post_message(events.Resize(self._target, Size(width, height))),
@@ -124,22 +121,26 @@ class WindowsDriver(Driver):
 
         from .._context import active_app
 
-        self._key_thread.start()
+        # self._key_thread.start()
+
+        self._event_thread.start()
 
     def disable_input(self) -> None:
         try:
             if not self.exit_event.is_set():
                 self._disable_mouse_support()
                 self.exit_event.set()
-                if self._key_thread is not None:
-                    self._key_thread.join()
+                if self._event_thread is not None:
+                    self._event_thread.join()
+                    self._event_thread = None
         except Exception as error:
             # TODO: log this
             pass
 
     def stop_application_mode(self) -> None:
         self.disable_input()
-
+        if self._restore_console:
+            self._restore_console()
         with self.console:
             self.console.set_alt_screen(False)
             self.console.show_cursor(True)
@@ -162,12 +163,29 @@ class WindowsDriver(Driver):
         input_handle = msvcrt.get_osfhandle(self.in_fileno)
         app.log("input_handle", input_handle)
         app.log("starting thread")
+        import time
+
+        terminal_size = os.get_terminal_size(self.out_fileno)
+        import shutil
+
         try:
             while not self.exit_event.is_set():
+
+                new_terminal_size = os.get_terminal_size(self.out_fileno)
+
+                if new_terminal_size != terminal_size:
+                    app.log("SIZE CHANGE", new_terminal_size)
+                    terminal_size = new_terminal_size
+                    width, height = new_terminal_size
+                    event = events.Resize(self._target, Size(width, height))
+                    app.log(event)
+                    self.console.size = (width, height)
+                    self.send_event(event)
+
                 if wait_for_handles([input_handle], 100) is None:
                     continue
                 unicode_data = decode(read(self.in_fileno, 1024))
-                app.log("key", repr(unicode_data))
+                # app.log("key", repr(unicode_data))
                 for event in parser.feed(unicode_data):
                     self.process_event(event)
         except Exception as error:
