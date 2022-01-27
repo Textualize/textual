@@ -1,5 +1,6 @@
 import sys
 
+from .horizontal import HorizontalLayout
 from ..layout import Layout
 from ..layouts.dock import DockLayout
 from ..layouts.grid import GridLayout
@@ -10,8 +11,13 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
-LayoutName = Literal["dock", "grid", "vertical"]
-LAYOUT_MAP = {"dock": DockLayout, "grid": GridLayout, "vertical": VerticalLayout}
+LayoutName = Literal["dock", "grid", "vertical", "horizontal"]
+LAYOUT_MAP = {
+    "dock": DockLayout,
+    "grid": GridLayout,
+    "vertical": VerticalLayout,
+    "horizontal": HorizontalLayout,
+}
 
 
 class MissingLayout(Exception):

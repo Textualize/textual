@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Iterable, TYPE_CHECKING
 
-from textual import log
 from ..css.styles import Styles
 from ..geometry import Offset, Region, Size, Spacing, SpacingDimensions
 from ..layout import Layout, WidgetPlacement

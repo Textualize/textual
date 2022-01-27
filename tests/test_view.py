@@ -2,6 +2,7 @@ import pytest
 
 from textual.layouts.dock import DockLayout
 from textual.layouts.grid import GridLayout
+from textual.layouts.horizontal import HorizontalLayout
 from textual.layouts.vertical import VerticalLayout
 from textual.view import View
 
@@ -10,6 +11,7 @@ from textual.view import View
     ["dock", DockLayout],
     ["grid", GridLayout],
     ["vertical", VerticalLayout],
+    ["horizontal", HorizontalLayout],
 ])
 def test_view_layout_get_and_set(layout_name, layout_type):
     view = View()
