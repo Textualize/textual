@@ -30,8 +30,7 @@ from .view import View
 from .views import DockView
 from .widget import Widget, Reactive
 
-PLATFORM = platform.system()
-WINDOWS = PLATFORM == "Windows"
+WINDOWS = (PLATFORM := platform.system()) == "Windows"
 
 # asyncio will warn against resources not being cleared
 warnings.simplefilter("always", ResourceWarning)
@@ -200,7 +199,7 @@ class App(MessagePump):
         """
 
         async def run_app() -> None:
-            app = cls(screen=screen, driver_class=driver, **kwargs)
+            app = cls(console=console, screen=screen, driver_class=driver, **kwargs)
             await app.process_messages()
 
         asyncio.run(run_app())
