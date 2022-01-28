@@ -200,7 +200,7 @@ class App(MessagePump):
         """
 
         async def run_app() -> None:
-            app = cls(console=console, screen=screen, driver_class=driver, **kwargs)
+            app = cls(screen=screen, driver_class=driver, **kwargs)
             await app.process_messages()
 
         asyncio.run(run_app())
