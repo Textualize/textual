@@ -61,7 +61,6 @@ class App(MessagePump):
 
     def __init__(
         self,
-        console: Console | None = None,
         screen: bool = True,
         driver_class: Type[Driver] | None = None,
         log: str = "",
@@ -76,7 +75,7 @@ class App(MessagePump):
             driver_class (Type[Driver], optional): Driver class, or None to use default. Defaults to None.
             title (str, optional): Title of the application. Defaults to "Textual Application".
         """
-        self.console = console or Console()
+        self.console = Console()
         self.error_console = Console(stderr=True)
         self._screen = screen
         self.driver_class = driver_class or self.get_driver_class()
