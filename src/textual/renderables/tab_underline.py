@@ -30,28 +30,19 @@ class UnderlineBar:
         half_bar_right = "╸"
         half_bar_left = "╺"
         bar = "━"
-        width = self.width or options.max_width
+        width = (self.width or options.max_width) - 1
         start, end = self.highlight_range
 
         # Round start and end to nearest half
         start = round(start * 2) / 2
         end = round(end * 2) / 2
 
-        # start = 3.6; end = 9.6
-        # full bars before = int(start) = 3
-        # half_start = .6 > 0 = True
-
-        # Bars before highlighted range
         half_start = start - int(start) > 0
         half_end = end - int(end) > 0
 
-        # Non-highlighted portion of bar
-
-        if half_start:
-            yield Segment(bar * (int(start) + 1), style=self.other_style)
-            yield Segment(half_bar_left, style=self.highlight_style)
-        else:
-            yield Segment(bar * (int(start)), style=self.other_style)
+        # Initial non-highlighted portion of bar
+        yield Segment(bar * (int(start - 0.5)), style=self.other_style)
+        if not half_start and start > 0:
             yield Segment(half_bar_right, style=self.other_style)
 
         # If we have a half bar at start and end, we need 1 less full bar
@@ -59,13 +50,18 @@ class UnderlineBar:
         if half_start and half_end:
             full_bar_width -= 1
 
-        yield Segment(bar * full_bar_width, style=self.highlight_style)
-
+        # The highlighted portion
+        if not half_start:
+            yield Segment(bar * full_bar_width, style=self.highlight_style)
+        else:
+            yield Segment(half_bar_left, style=self.highlight_style)
+            yield Segment(bar * full_bar_width, style=self.highlight_style)
         if half_end:
             yield Segment(half_bar_right, style=self.highlight_style)
-        else:
-            yield Segment(half_bar_left, style=self.other_style)
 
+        # The non-highlighted tail
+        if not half_end and end - width != 1:
+            yield Segment(half_bar_left, style=self.other_style)
         yield Segment(bar * (int(width) - int(end)), style=self.other_style)
 
 
