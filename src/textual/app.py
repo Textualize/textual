@@ -2,7 +2,6 @@ from __future__ import annotations
 import os
 
 import asyncio
-from functools import partial
 import platform
 from typing import Any, Callable, ClassVar, Type, TypeVar
 import warnings
@@ -31,6 +30,8 @@ from .view import View
 from .views import DockView
 from .widget import Widget, Reactive
 
+PLATFORM = platform.system()
+WINDOWS = PLATFORM == "Windows"
 
 # asyncio will warn against resources not being cleared
 warnings.simplefilter("always", ResourceWarning)
@@ -118,7 +119,7 @@ class App(MessagePump):
         Returns:
             Driver: A Driver class which manages input and display.
         """
-        if platform.system() == "Windows":
+        if WINDOWS:
             from .drivers.windows_driver import WindowsDriver
 
             driver_class = WindowsDriver
@@ -302,6 +303,7 @@ class App(MessagePump):
             self.console.print_exception()
         else:
             try:
+                self.console = Console()
                 self.title = self._title
                 self.refresh()
                 await self.animator.start()
@@ -344,7 +346,9 @@ class App(MessagePump):
         await self.close_messages()
 
     def refresh(self, repaint: bool = True, layout: bool = False) -> None:
-        sync_available = os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal"
+        sync_available = (
+            os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal" and not WINDOWS
+        )
         if not self._closed:
             console = self.console
             try:

@@ -1,5 +1,4 @@
 from asyncio import AbstractEventLoop, run_coroutine_threadsafe
-from codecs import getincrementaldecoder
 
 import ctypes
 from ctypes import byref, Structure, Union, wintypes
@@ -9,11 +8,10 @@ import os
 import sys
 import threading
 
-from tkinter.tix import WINDOW
 from typing import IO, Callable, List, Optional
 
 from ..geometry import Size
-from ..events import Event, Key, Resize
+from ..events import Event, Resize
 from .._types import EventTarget
 from .._xterm_parser import XTermParser
 
