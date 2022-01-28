@@ -1,19 +1,16 @@
-from asyncio import AbstractEventLoop, run_coroutine_threadsafe
-
 import ctypes
-from ctypes import byref, Structure, Union, wintypes
-from ctypes.wintypes import CHAR, HANDLE, WCHAR, BOOL, WORD, DWORD, SHORT, UINT
 import msvcrt
-import os
 import sys
 import threading
-
+from asyncio import AbstractEventLoop, run_coroutine_threadsafe
+from ctypes import Structure, Union, byref, wintypes
+from ctypes.wintypes import BOOL, CHAR, DWORD, HANDLE, SHORT, UINT, WCHAR, WORD
 from typing import IO, Callable, List, Optional
 
-from ..geometry import Size
-from ..events import Event, Resize
 from .._types import EventTarget
 from .._xterm_parser import XTermParser
+from ..events import Event, Resize
+from ..geometry import Size
 
 KERNEL32 = ctypes.WinDLL("kernel32", use_last_error=True)
 
@@ -243,33 +240,43 @@ class EventMonitor(threading.Thread):
             input_records = arrtype()
             ReadConsoleInputW = KERNEL32.ReadConsoleInputW
             keys: List[str] = []
+            append_key = keys.append
 
             while not exit_requested():
-                if _wait_for_handles([hIn], 100) is None:
+                # Wait for new events
+                if _wait_for_handles([hIn], 200) is None:
+                    # No new events
                     continue
-                del keys[:]
+
+                # Get new events
                 ReadConsoleInputW(
                     hIn, byref(input_records), MAX_EVENTS, byref(read_count)
                 )
                 read_input_records = input_records[: read_count.value]
 
-                apppend_key = keys.append
+                del keys[:]
                 new_size: Optional[tuple[int, int]] = None
+
                 for input_record in read_input_records:
                     event_type = input_record.EventType
+
                     if event_type == KEY_EVENT:
+                        # Key event, store unicode char in keys list
                         key_event = input_record.Event.KeyEvent
                         key = key_event.uChar.UnicodeChar
                         if key_event.bKeyDown or key == "\x1b":
-                            apppend_key(key)
+                            append_key(key)
                     elif event_type == WINDOW_BUFFER_SIZE_EVENT:
+                        # Window size changed, store size
                         size = input_record.Event.WindowBufferSizeEvent.dwSize
                         new_size = (size.X, size.Y)
 
                 if keys:
+                    # Process keys
                     for event in parser.feed("".join(keys)):
                         self.process_event(event)
                 if new_size is not None:
+                    # Process changed size
                     self.on_size_change(*new_size)
 
         except Exception as error:
