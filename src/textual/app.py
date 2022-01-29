@@ -4,6 +4,7 @@ import os
 
 WINDOWS = os.name == "nt"
 if WINDOWS:
+    """Code from https://stackoverflow.com/questions/5174810/how-to-turn-off-blinking-cursor-in-command-window"""
     import msvcrt
     import ctypes
     class Cursor(ctypes.Structure):
