@@ -2,7 +2,8 @@ from __future__ import annotations
 import sys
 import os
 
-if os.name == 'nt':
+WINDOWS = os.name == "nt"
+if WINDOWS:
     import msvcrt
     import ctypes
     class Cursor(ctypes.Structure):
@@ -362,14 +363,14 @@ class App(MessagePump):
         await self.close_messages()
 
     def refresh(self, repaint: bool = True, layout: bool = False) -> None:
-        sync_available = os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal"
+        sync_available = os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal" and not WINDOWS
         if not self._closed:
             console = self.console
             try:
-                if sync_available and os.name != "nt":
+                if sync_available:
                     console.file.write("\x1bP=1s\x1b\\")
                 console.print(Screen(Control.home(), self.view, Control.home()))
-                if sync_available and os.name != "nt":
+                if sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
                 console.file.flush()
             except Exception:
@@ -517,7 +518,7 @@ class App(MessagePump):
         await self.press(key)
 
     async def action_quit(self) -> None:
-        if os.name == 'nt':
+        if WINDOWS:
             showCursorWindows()
             os.system("cls")
         await self.shutdown()
