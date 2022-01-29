@@ -1,7 +1,26 @@
 from __future__ import annotations
+import sys
 import os
 
+if os.name == 'nt':
+    import msvcrt
+    import ctypes
+    class Cursor(ctypes.Structure):
+        _fields_ = [("size", ctypes.c_int), ("visible", ctypes.c_byte)]
+    cursorHandle = Cursor()
+    handle = ctypes.windll.kernel32.GetStdHandle(-11)
+    ctypes.windll.kernel32.GetConsoleCursorInfo(handle, ctypes.byref(cursorHandle))
+    cursorHandle.visible = False
+    ctypes.windll.kernel32.SetConsoleCursorInfo(handle, ctypes.byref(cursorHandle))
+    def showCursorWindows():
+        cursorHandle = Cursor()
+        handle = ctypes.windll.kernel32.GetStdHandle(-11)
+        ctypes.windll.kernel32.GetConsoleCursorInfo(handle, ctypes.byref(cursorHandle))
+        cursorHandle.visible = True
+        ctypes.windll.kernel32.SetConsoleCursorInfo(handle, ctypes.byref(cursorHandle))
+
 import asyncio
+from functools import partial
 import platform
 from typing import Any, Callable, ClassVar, Type, TypeVar
 import warnings
@@ -30,8 +49,6 @@ from .view import View
 from .views import DockView
 from .widget import Widget, Reactive
 
-PLATFORM = platform.system()
-WINDOWS = PLATFORM == "Windows"
 
 # asyncio will warn against resources not being cleared
 warnings.simplefilter("always", ResourceWarning)
@@ -61,6 +78,7 @@ class App(MessagePump):
 
     def __init__(
         self,
+        console: Console | None = None,
         screen: bool = True,
         driver_class: Type[Driver] | None = None,
         log: str = "",
@@ -75,7 +93,7 @@ class App(MessagePump):
             driver_class (Type[Driver], optional): Driver class, or None to use default. Defaults to None.
             title (str, optional): Title of the application. Defaults to "Textual Application".
         """
-        self.console = Console()
+        self.console = console or Console()
         self.error_console = Console(stderr=True)
         self._screen = screen
         self.driver_class = driver_class or self.get_driver_class()
@@ -118,7 +136,7 @@ class App(MessagePump):
         Returns:
             Driver: A Driver class which manages input and display.
         """
-        if WINDOWS:
+        if platform.system() == "Windows":
             from .drivers.windows_driver import WindowsDriver
 
             driver_class = WindowsDriver
@@ -200,7 +218,7 @@ class App(MessagePump):
         """
 
         async def run_app() -> None:
-            app = cls(screen=screen, driver_class=driver, **kwargs)
+            app = cls(console=console, screen=screen, driver_class=driver, **kwargs)
             await app.process_messages()
 
         asyncio.run(run_app())
@@ -302,7 +320,6 @@ class App(MessagePump):
             self.console.print_exception()
         else:
             try:
-                self.console = Console()
                 self.title = self._title
                 self.refresh()
                 await self.animator.start()
@@ -345,16 +362,14 @@ class App(MessagePump):
         await self.close_messages()
 
     def refresh(self, repaint: bool = True, layout: bool = False) -> None:
-        sync_available = (
-            os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal" and not WINDOWS
-        )
+        sync_available = os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal"
         if not self._closed:
             console = self.console
             try:
-                if sync_available:
+                if sync_available and os.name != "nt":
                     console.file.write("\x1bP=1s\x1b\\")
                 console.print(Screen(Control.home(), self.view, Control.home()))
-                if sync_available:
+                if sync_available and os.name != "nt":
                     console.file.write("\x1bP=2s\x1b\\")
                 console.file.flush()
             except Exception:
@@ -502,6 +517,9 @@ class App(MessagePump):
         await self.press(key)
 
     async def action_quit(self) -> None:
+        if os.name == 'nt':
+            showCursorWindows()
+            os.system("cls")
         await self.shutdown()
 
     async def action_bang(self) -> None:
