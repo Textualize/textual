@@ -4,22 +4,22 @@ import os
 
 WINDOWS = os.name == "nt"
 if WINDOWS:
-    """Code from https://stackoverflow.com/questions/5174810/how-to-turn-off-blinking-cursor-in-command-window"""
     import msvcrt
     import ctypes
-    class Cursor(ctypes.Structure):
-        _fields_ = [("size", ctypes.c_int), ("visible", ctypes.c_byte)]
-    cursorHandle = Cursor()
-    handle = ctypes.windll.kernel32.GetStdHandle(-11)
-    ctypes.windll.kernel32.GetConsoleCursorInfo(handle, ctypes.byref(cursorHandle))
-    cursorHandle.visible = False
-    ctypes.windll.kernel32.SetConsoleCursorInfo(handle, ctypes.byref(cursorHandle))
+    """Docs: https://docs.microsoft.com/en-us/windows/console/setconsolecursorinfo and https://docs.microsoft.com/en-us/windows/console/console-cursor-info-str"""
+    class CONSOLE_CURSOR_INFO(ctypes.Structure):
+        _fields_ = [("dwSize", ctypes.c_int), ("bVisible", ctypes.c_bool)]
+    hConsoleOutput = ctypes.windll.kernel32.GetStdHandle(-11)
+    lpConsoleCursorInfo = CONSOLE_CURSOR_INFO()
+    ctypes.windll.kernel32.GetConsoleCursorInfo(hConsoleOutput, ctypes.byref(lpConsoleCursorInfo))
+    lpConsoleCursorInfo.bVisible = False
+    ctypes.windll.kernel32.SetConsoleCursorInfo(hConsoleOutput, ctypes.byref(lpConsoleCursorInfo))
     def showCursorWindows():
-        cursorHandle = Cursor()
-        handle = ctypes.windll.kernel32.GetStdHandle(-11)
-        ctypes.windll.kernel32.GetConsoleCursorInfo(handle, ctypes.byref(cursorHandle))
-        cursorHandle.visible = True
-        ctypes.windll.kernel32.SetConsoleCursorInfo(handle, ctypes.byref(cursorHandle))
+        hConsoleOutput = ctypes.windll.kernel32.GetStdHandle(-11)
+        lpConsoleCursorInfo = CONSOLE_CURSOR_INFO()
+        ctypes.windll.kernel32.GetConsoleCursorInfo(hConsoleOutput, ctypes.byref(lpConsoleCursorInfo))
+        lpConsoleCursorInfo.bVisible = True
+        ctypes.windll.kernel32.SetConsoleCursorInfo(hConsoleOutput, ctypes.byref(lpConsoleCursorInfo))
 
 import asyncio
 from functools import partial
