@@ -1,8 +1,10 @@
+from rich.style import Style
+
 from tests.utilities.render import render
 from textual.renderables.underline_bar import UnderlineBar
 
-MAGENTA = "\x1b[35;49m"
-GREY = "\x1b[38;5;59;49m"
+MAGENTA = "\x1b[35m"
+GREY = "\x1b[38;5;59m"
 STOP = "\x1b[0m"
 
 
@@ -96,3 +98,25 @@ def test_highlight_out_of_bounds_end():
     assert render(bar) == (
         f"{GREY}━━{STOP}{GREY}╸{STOP}{MAGENTA}━━━{STOP}"
     )
+
+
+def test_highlight_full_range_out_of_bounds_end():
+    bar = UnderlineBar(highlight_range=(9, 10), width=6)
+    assert render(bar) == f"{GREY}━━━━━━{STOP}"
+
+
+def test_highlight_full_range_out_of_bounds_start():
+    bar = UnderlineBar(highlight_range=(-5, -2), width=6)
+    assert render(bar) == f"{GREY}━━━━━━{STOP}"
+
+
+def test_init_with_str_style():
+    bar = UnderlineBar(background_style="green", highlight_style="yellow")
+    assert bar.background_style == Style(color="green")
+    assert bar.highlight_style == Style(color="yellow")
+
+
+def test_init_with_object_style():
+    bar = UnderlineBar(background_style=Style(color="green"), highlight_style=Style(color="yellow"))
+    assert bar.background_style == Style(color="green")
+    assert bar.highlight_style == Style(color="yellow")

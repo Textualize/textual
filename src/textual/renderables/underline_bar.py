@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-import random
-
-from rich.color import Color, ANSI_COLOR_NAMES
 from rich.console import ConsoleOptions, Console, RenderResult
 from rich.segment import Segment
-from rich.style import Style
+from rich.style import Style, StyleType
 
 
 class UnderlineBar:
@@ -13,25 +10,27 @@ class UnderlineBar:
 
     Args:
         highlight_range (tuple[float, float]): The range to highlight. Defaults to ``(0, 0)`` (no highlight)
-        highlight_color (Color | str): The color of the highlighted range of the bar.
-        non_highlight_color (Color | str): The color of the non-highlighted range(s) of the bar.
-        background_color (Color | str): The background color of the entire bar.
+        highlight_style (StyleType): The style of the highlighted range of the bar.
+        background_style (StyleType): The style of the non-highlighted range(s) of the bar.
         width (int, optional): The width of the bar, or ``None`` to fill available width.
     """
 
     def __init__(
         self,
         highlight_range: tuple[float, float] = (0, 0),
-        highlight_color: Color | str = "magenta",
-        non_highlight_color: Color | str = "grey37",
-        background_color: Color | str = "default",
+        highlight_style: StyleType = "magenta",
+        background_style: StyleType = "grey37",
         width: int | None = None,
     ) -> None:
         self.highlight_range = highlight_range
-        self.highlight_style = Style(color=highlight_color, bgcolor=background_color)
-        self.non_highlight_style = Style(
-            color=non_highlight_color, bgcolor=background_color
-        )
+        if isinstance(highlight_style, str):
+            self.highlight_style = Style.parse(highlight_style)
+        else:
+            self.highlight_style = highlight_style
+        if isinstance(background_style, str):
+            self.background_style = Style.parse(background_style)
+        else:
+            self.background_style = background_style
         self.width = width
 
     def __rich_console__(
@@ -40,14 +39,15 @@ class UnderlineBar:
         half_bar_right = "╸"
         half_bar_left = "╺"
         bar = "━"
+
         width = self.width or options.max_width
         start, end = self.highlight_range
 
         start = max(start, 0)
         end = min(end, width)
 
-        if start == end == 0:
-            yield Segment(bar * width, style=self.non_highlight_style)
+        if start == end == 0 or end < 0 or start > end:
+            yield Segment(bar * width, style=self.background_style)
             return
 
         # Round start and end to nearest half
@@ -59,9 +59,9 @@ class UnderlineBar:
         half_end = end - int(end) > 0
 
         # Initial non-highlighted portion of bar
-        yield Segment(bar * (int(start - 0.5)), style=self.non_highlight_style)
+        yield Segment(bar * (int(start - 0.5)), style=self.background_style)
         if not half_start and start > 0:
-            yield Segment(half_bar_right, style=self.non_highlight_style)
+            yield Segment(half_bar_right, style=self.background_style)
 
         # The highlighted portion
         bar_width = int(end) - int(start)
@@ -76,11 +76,15 @@ class UnderlineBar:
 
         # The non-highlighted tail
         if not half_end and end - width != 0:
-            yield Segment(half_bar_left, style=self.non_highlight_style)
-        yield Segment(bar * (int(width) - int(end) - 1), style=self.non_highlight_style)
+            yield Segment(half_bar_left, style=self.background_style)
+        yield Segment(bar * (int(width) - int(end) - 1), style=self.background_style)
 
 
 if __name__ == "__main__":
+    import random
+    from time import sleep
+    from rich.color import ANSI_COLOR_NAMES
+
     console = Console()
 
     def frange(start, end, step):
@@ -93,7 +97,7 @@ if __name__ == "__main__":
             yield current
             current -= step
 
-    step = 0.5
+    step = 0.1
     start_range = frange(0.5, 10.5, step)
     end_range = frange(10, 20, step)
     ranges = zip(start_range, end_range)
@@ -105,8 +109,19 @@ if __name__ == "__main__":
         console.print(
             UnderlineBar(
                 range,
-                highlight_color=Color.parse(color),
+                highlight_style=color,
                 width=20,
             ),
             f"   {range}",
         )
+
+    from rich.live import Live
+
+    bar = UnderlineBar(width=80, highlight_range=(0, 4.5))
+    with Live(bar, refresh_per_second=60) as live:
+        while True:
+            bar.highlight_range = (
+                bar.highlight_range[0] + 0.1,
+                bar.highlight_range[1] + 0.1,
+            )
+            sleep(0.005)
