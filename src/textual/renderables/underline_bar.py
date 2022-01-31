@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from rich.console import ConsoleOptions, Console, RenderResult
 from rich.segment import Segment
-from rich.style import Style, StyleType
+from rich.style import StyleType
 
 
 class UnderlineBar:
@@ -23,19 +23,16 @@ class UnderlineBar:
         width: int | None = None,
     ) -> None:
         self.highlight_range = highlight_range
-        if isinstance(highlight_style, str):
-            self.highlight_style = Style.parse(highlight_style)
-        else:
-            self.highlight_style = highlight_style
-        if isinstance(background_style, str):
-            self.background_style = Style.parse(background_style)
-        else:
-            self.background_style = background_style
+        self.highlight_style = highlight_style
+        self.background_style = background_style
         self.width = width
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
+        highlight_style = console.get_style(self.highlight_style)
+        background_style = console.get_style(self.background_style)
+
         half_bar_right = "╸"
         half_bar_left = "╺"
         bar = "━"
@@ -47,7 +44,7 @@ class UnderlineBar:
         end = min(end, width)
 
         if start == end == 0 or end < 0 or start > end:
-            yield Segment(bar * width, style=self.background_style)
+            yield Segment(bar * width, style=background_style)
             return
 
         # Round start and end to nearest half
@@ -59,25 +56,23 @@ class UnderlineBar:
         half_end = end - int(end) > 0
 
         # Initial non-highlighted portion of bar
-        yield Segment(bar * (int(start - 0.5)), style=self.background_style)
+        yield Segment(bar * (int(start - 0.5)), style=background_style)
         if not half_start and start > 0:
-            yield Segment(half_bar_right, style=self.background_style)
+            yield Segment(half_bar_right, style=background_style)
 
         # The highlighted portion
         bar_width = int(end) - int(start)
         if half_start:
-            yield Segment(
-                half_bar_left + bar * (bar_width - 1), style=self.highlight_style
-            )
+            yield Segment(half_bar_left + bar * (bar_width - 1), style=highlight_style)
         else:
-            yield Segment(bar * bar_width, style=self.highlight_style)
+            yield Segment(bar * bar_width, style=highlight_style)
         if half_end:
-            yield Segment(half_bar_right, style=self.highlight_style)
+            yield Segment(half_bar_right, style=highlight_style)
 
         # The non-highlighted tail
         if not half_end and end - width != 0:
-            yield Segment(half_bar_left, style=self.background_style)
-        yield Segment(bar * (int(width) - int(end) - 1), style=self.background_style)
+            yield Segment(half_bar_left, style=background_style)
+        yield Segment(bar * (int(width) - int(end) - 1), style=background_style)
 
 
 if __name__ == "__main__":
