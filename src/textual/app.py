@@ -221,7 +221,7 @@ class App(DOMNode):
             console (Console, optional): Console object. Defaults to None.
             screen (bool, optional): Enable application mode. Defaults to True.
             driver (Type[Driver], optional): Driver class or None for default. Defaults to None.
-            loop (): Event loop to run the application on. If not specified, uvloop will be used.
+            loop (AbstractEventLoop): Event loop to run the application on. If not specified, uvloop will be used.
         """
 
         async def run_app() -> None:
