@@ -20,7 +20,7 @@ from ._style_properties import (
     NameListProperty,
     ScalarProperty,
     SpacingProperty,
-    StringProperty,
+    StringEnumProperty,
     StyleProperty,
     StyleFlagsProperty,
     TransitionsProperty,
@@ -34,6 +34,8 @@ from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
 from .transition import Transition
 from .types import Display, Edge, Visibility
+
+
 from .types import Specificity3, Specificity4
 from .. import log
 from .._animator import Animation, EasingFunction
@@ -97,8 +99,8 @@ class Styles:
 
     important: set[str] = field(default_factory=set)
 
-    display = StringProperty(VALID_DISPLAY, "block")
-    visibility = StringProperty(VALID_VISIBILITY, "visible")
+    display = StringEnumProperty(VALID_DISPLAY, "block")
+    visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
     layout = LayoutProperty()
 
     text = StyleProperty()

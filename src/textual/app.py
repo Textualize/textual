@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import platform
 import warnings
 from asyncio import AbstractEventLoop
 from typing import Any, Callable, Iterable, Type, TypeVar
@@ -21,7 +22,6 @@ from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
-from ._linux_driver import LinuxDriver
 from ._profile import timer
 from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet, StylesheetParseError, StylesheetError
@@ -34,6 +34,9 @@ from .message_pump import MessagePump
 from .reactive import Reactive
 from .view import View
 from .widget import Widget
+
+PLATFORM = platform.system()
+WINDOWS = PLATFORM == "Windows"
 
 # asyncio will warn against resources not being cleared
 warnings.simplefilter("always", ResourceWarning)
@@ -59,7 +62,6 @@ class App(DOMNode):
 
     def __init__(
         self,
-        console: Console | None = None,
         screen: bool = True,
         driver_class: Type[Driver] | None = None,
         log: str = "",
@@ -77,10 +79,10 @@ class App(DOMNode):
             driver_class (Type[Driver], optional): Driver class, or None to use default. Defaults to None.
             title (str, optional): Title of the application. Defaults to "Textual Application".
         """
-        self.console = console or Console()
+        self.console = Console()
         self.error_console = Console(stderr=True)
         self._screen = screen
-        self.driver_class = driver_class or LinuxDriver
+        self.driver_class = driver_class or self.get_driver_class()
         self._title = title
         self._view_stack: list[View] = []
 
@@ -122,6 +124,24 @@ class App(DOMNode):
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
     background: Reactive[str] = Reactive("black")
+
+    def get_driver_class(self) -> Type[Driver]:
+        """Get a driver class for this platform.
+
+        Called by the constructor.
+
+        Returns:
+            Driver: A Driver class which manages input and display.
+        """
+        if WINDOWS:
+            from .drivers.windows_driver import WindowsDriver
+
+            driver_class = WindowsDriver
+        else:
+            from .drivers.linux_driver import LinuxDriver
+
+            driver_class = LinuxDriver
+        return driver_class
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "title", self.title
@@ -205,7 +225,7 @@ class App(DOMNode):
         """
 
         async def run_app() -> None:
-            app = cls(console=console, screen=screen, driver_class=driver, **kwargs)
+            app = cls(screen=screen, driver_class=driver, **kwargs)
             await app.process_messages()
 
         if loop:
@@ -368,6 +388,7 @@ class App(DOMNode):
                 mount_event = events.Mount(sender=self)
                 await self.dispatch_message(mount_event)
 
+                self.console = Console()
                 self.title = self._title
                 self.refresh()
                 await self.animator.start()
@@ -441,7 +462,9 @@ class App(DOMNode):
         await self.close_messages()
 
     def refresh(self, repaint: bool = True, layout: bool = False) -> None:
-        sync_available = os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal"
+        sync_available = (
+            os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal" and not WINDOWS
+        )
         if not self._closed:
             console = self.console
             try:

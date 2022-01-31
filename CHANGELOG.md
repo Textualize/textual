@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.15] - 2022-01-31
+
+### Added
+
+- Added Windows Driver
+
+## [1.1.14] - 2022-01-09
+
+### Changed
+
+- Updated Rich dependency to 11.X
 
 ## [0.1.13] - 2022-01-01
 
