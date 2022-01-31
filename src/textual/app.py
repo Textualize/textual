@@ -236,7 +236,7 @@ class App(DOMNode):
             except ImportError:
                 pass
             else:
-                uvloop.install()
+                asyncio.set_event_loop(uvloop.new_event_loop())
 
         event_loop = asyncio.get_event_loop()
         try:
