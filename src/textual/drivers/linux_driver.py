@@ -14,17 +14,19 @@ from threading import Event, Thread
 if TYPE_CHECKING:
     from rich.console import Console
 
-from . import log
+from .. import log
 
-from . import events
-from .driver import Driver
-from .geometry import Size
-from ._types import MessageTarget
-from ._xterm_parser import XTermParser
-from ._profile import timer
+from .. import events
+from ..driver import Driver
+from ..geometry import Size
+from .._types import MessageTarget
+from .._xterm_parser import XTermParser
+from .._profile import timer
 
 
 class LinuxDriver(Driver):
+    """Powers display and input for Linux / MacOS"""
+
     def __init__(self, console: "Console", target: "MessageTarget") -> None:
         super().__init__(console, target)
         self.fileno = sys.stdin.fileno()
@@ -155,21 +157,17 @@ class LinuxDriver(Driver):
             pass
 
     def stop_application_mode(self) -> None:
+        self.disable_input()
 
-        with timer("disable_input"):
-            self.disable_input()
+        if self.attrs_before is not None:
+            try:
+                termios.tcsetattr(self.fileno, termios.TCSANOW, self.attrs_before)
+            except termios.error:
+                pass
 
-        with timer("tcsetattr"):
-            if self.attrs_before is not None:
-                try:
-                    termios.tcsetattr(self.fileno, termios.TCSANOW, self.attrs_before)
-                except termios.error:
-                    pass
-
-        with timer("set_alt_screen False, show cursor"):
-            with self.console:
-                self.console.set_alt_screen(False)
-                self.console.show_cursor(True)
+        with self.console:
+            self.console.set_alt_screen(False)
+            self.console.show_cursor(True)
 
     def run_input_thread(self, loop) -> None:
         try:
@@ -215,11 +213,11 @@ class LinuxDriver(Driver):
 if __name__ == "__main__":
     from time import sleep
     from rich.console import Console
-    from . import events
+    from .. import events
 
     console = Console()
 
-    from .app import App
+    from ..app import App
 
     class MyApp(App):
         async def on_mount(self, event: events.Mount) -> None:
