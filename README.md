@@ -14,7 +14,7 @@ Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or 
 
 ## Compatibility
 
-Textual currently runs on **MacOS / Linux only**. Windows support is in the pipeline.
+Textual currently runs on **MacOS / Linux / Window**.
 
 ## How it works
 
