@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import os
 import asyncio
+import os
 import platform
 import warnings
+from asyncio import AbstractEventLoop
 from typing import Any, Callable, Iterable, Type, TypeVar
 
 import rich.repr
@@ -28,11 +29,10 @@ from .dom import DOMNode
 from .driver import Driver
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
-from .layouts.dock import DockLayout, Dock
+from .layouts.dock import Dock
 from .message_pump import MessagePump
 from .reactive import Reactive
 from .view import View
-from .views import DockView
 from .widget import Widget
 
 PLATFORM = platform.system()
@@ -44,13 +44,6 @@ warnings.simplefilter("always", ResourceWarning)
 LayoutDefinition = "dict[str, Any]"
 
 ViewType = TypeVar("ViewType", bound=View)
-
-try:
-    import uvloop
-except ImportError:
-    pass
-else:
-    uvloop.install()
 
 
 class AppError(Exception):
@@ -219,6 +212,7 @@ class App(DOMNode):
         console: Console = None,
         screen: bool = True,
         driver: Type[Driver] = None,
+        loop: AbstractEventLoop = None,
         **kwargs,
     ):
         """Run the app.
@@ -227,13 +221,28 @@ class App(DOMNode):
             console (Console, optional): Console object. Defaults to None.
             screen (bool, optional): Enable application mode. Defaults to True.
             driver (Type[Driver], optional): Driver class or None for default. Defaults to None.
+            loop (AbstractEventLoop): Event loop to run the application on. If not specified, uvloop will be used.
         """
 
         async def run_app() -> None:
             app = cls(screen=screen, driver_class=driver, **kwargs)
             await app.process_messages()
 
-        asyncio.run(run_app())
+        if loop:
+            asyncio.set_event_loop(loop)
+        else:
+            try:
+                import uvloop
+            except ImportError:
+                pass
+            else:
+                asyncio.set_event_loop(uvloop.new_event_loop())
+
+        event_loop = asyncio.get_event_loop()
+        try:
+            asyncio.run(run_app())
+        finally:
+            event_loop.close()
 
     async def _on_css_change(self) -> None:
 
