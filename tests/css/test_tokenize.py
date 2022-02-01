@@ -19,7 +19,6 @@ VALID_VARIABLE_NAMES = [
 @pytest.mark.parametrize("name", VALID_VARIABLE_NAMES)
 def test_variable_declaration_valid_names(name):
     css = f"${name}: black on red;"
-
     assert list(tokenize(css, "")) == [
         Token(
             name="variable_declaration_start", value=f"${name}:", path="", code=css, location=(0, 0)
@@ -34,9 +33,46 @@ def test_variable_declaration_valid_names(name):
     ]
 
 
+def test_variable_declaration_multiple_values():
+    css = "$x: 2vw\t4% 6s  red;"
+    assert list(tokenize(css, "")) == [
+        Token(name='variable_declaration_start', value='$x:', path='', code=css, location=(0, 0)),
+        Token(name='whitespace', value=' ', path='', code=css, location=(0, 3)),
+        Token(name='scalar', value='2vw', path='', code=css, location=(0, 4)),
+        Token(name='whitespace', value='\t', path='', code=css, location=(0, 7)),
+        Token(name='scalar', value='4%', path='', code=css, location=(0, 8)),
+        Token(name='whitespace', value=' ', path='', code=css, location=(0, 10)),
+        Token(name='duration', value='6s', path='', code=css, location=(0, 11)),
+        Token(name='whitespace', value='  ', path='', code=css, location=(0, 13)),
+        Token(name='token', value='red', path='', code=css, location=(0, 15)),
+        Token(name='variable_declaration_end', value=';', path='', code=css, location=(0, 18))
+    ]
+
+
+def test_variable_declaration_comment_not_tokenized():
+    css = "$x: red; /* comment */"
+    assert list(tokenize(css, "")) == [
+        Token(name='variable_declaration_start', value='$x:', path='', code=css, location=(0, 0)),
+        Token(name='whitespace', value=' ', path='', code=css, location=(0, 3)),
+        Token(name='token', value='red', path='', code=css, location=(0, 4)),
+        Token(name='variable_declaration_end', value=';', path='', code=css, location=(0, 7)),
+        Token(name='whitespace', value=' ', path='', code=css, location=(0, 8))
+    ]
+
+
+def test_variable_declaration_comment_interspersed_not_tokenized():
+    css = "$x: re/* comment */d;"
+    assert list(tokenize(css, "")) == [
+        Token(name='variable_declaration_start', value='$x:', path='', code=css, location=(0, 0)),
+        Token(name='whitespace', value=' ', path='', code=css, location=(0, 3)),
+        Token(name='token', value='re', path='', code=css, location=(0, 4)),
+        Token(name='token', value='d', path='', code=css, location=(0, 19)),
+        Token(name='variable_declaration_end', value=';', path='', code=css, location=(0, 20))
+    ]
+
+
 def test_variable_declaration_no_semicolon():
     css = "$x: 1\n$y: 2"
-
     assert list(tokenize(css, "")) == [
         Token(name="variable_declaration_start", value="$x:", code=css, path="", location=(0, 0)),
         Token(name="whitespace", value=" ", code=css, path="", location=(0, 3)),
@@ -57,7 +93,6 @@ def test_variable_declaration_invalid_value():
 def test_variables_declarations_amongst_rulesets():
     css = "$x:1; .thing{text:red;} $y:2;"
     tokens = list(tokenize(css, ""))
-
     assert tokens == [
         Token(name='variable_declaration_start', value='$x:', path='', code=css, location=(0, 0)),
         Token(name='number', value='1', path='', code=css, location=(0, 3)),

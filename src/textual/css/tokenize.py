@@ -6,7 +6,7 @@ from typing import Iterable
 
 from textual.css.tokenizer import Expect, Tokenizer, Token
 
-# Things we can match at the top-most scope in the CSS file
+# Everything we can match at the top-most scope in the CSS file
 expect_root_scope = Expect(
     whitespace=r"\s+",
     comment_start=r"\/\*",
@@ -17,6 +17,8 @@ expect_root_scope = Expect(
     variable_declaration_start=r"\$[a-zA-Z0-9_\-]+\:",
 ).expect_eof(True)
 
+# After a variable declaration e.g. "$warning-text: TOKENS;"
+#              for tokenizing variable value ------^~~~~~~^
 expect_variable_declaration_continue = Expect(
     variable_declaration_end=r"\n|;",
     whitespace=r"\s+",
@@ -34,6 +36,8 @@ expect_comment_end = Expect(
     comment_end=re.escape("*/"),
 )
 
+# After we come across a selector in CSS e.g. ".my-class", we may
+# find other selectors, pseudo-classes... e.g. ".my-class :hover"
 expect_selector_continue = Expect(
     whitespace=r"\s+",
     comment_start=r"\/\*",
@@ -47,6 +51,8 @@ expect_selector_continue = Expect(
     rule_declaration_set_start=r"\{",
 )
 
+# A rule declaration e.g. "text: red;"
+#                          ^---^
 expect_rule_declaration = Expect(
     whitespace=r"\s+",
     comment_start=r"\/\*",
@@ -61,6 +67,8 @@ expect_rule_declaration_solo = Expect(
     rule_declaration_set_end=r"\}",
 ).expect_eof(True)
 
+# The value(s)/content from a rule declaration e.g. "text: red;"
+#                                                         ^---^
 expect_rule_declaration_content = Expect(
     rule_declaration_end=r"\n|;",
     whitespace=r"\s+",
