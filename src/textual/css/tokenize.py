@@ -6,17 +6,18 @@ from typing import Iterable
 
 from textual.css.tokenizer import Expect, Tokenizer, Token
 
-STRING = r"\".*?\""
-TOKEN = "[a-zA-Z_-]+"
-KEY_VALUE = r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+"
-COLOR = r"\#[0-9a-fA-F]{6}|color\([0-9]{1,3}\)|rgb\(\d{1,3}\,\s?\d{1,3}\,\s?\d{1,3}\)"
-NUMBER = r"\-?\d+\.?\d*"
-DURATION = r"\d+\.?\d*(?:ms|s)"
-SCALAR = r"\-?\d+\.?\d*(?:fr|%|w|h|vw|vh)"
 COMMENT_START = r"\/\*"
+SCALAR = r"\-?\d+\.?\d*(?:fr|%|w|h|vw|vh)"
+DURATION = r"\d+\.?\d*(?:ms|s)"
+NUMBER = r"\-?\d+\.?\d*"
+COLOR = r"\#[0-9a-fA-F]{6}|color\([0-9]{1,3}\)|rgb\(\d{1,3}\,\s?\d{1,3}\,\s?\d{1,3}\)"
+KEY_VALUE = r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+"
+TOKEN = "[a-zA-Z_-]+"
+STRING = r"\".*?\""
+VARIABLE_REF = r"\$[a-zA-Z0-9_\-]+"
 
 # Values permitted in variable and rule declarations.
-DECLARATION_CONTENT = {
+DECLARATION_VALUES = {
     "scalar": SCALAR,
     "duration": DURATION,
     "number": NUMBER,
@@ -24,9 +25,10 @@ DECLARATION_CONTENT = {
     "key_value": KEY_VALUE,
     "token": TOKEN,
     "string": STRING,
+    "variable_ref": VARIABLE_REF,
 }
 
-# The tokenisers "expectation" while at the root/highest level of scope
+# The tokenizers "expectation" while at the root/highest level of scope
 # in the CSS file. At this level we might expect to see selectors, comments,
 # variable definitions etc.
 expect_root_scope = Expect(
@@ -36,7 +38,7 @@ expect_root_scope = Expect(
     selector_start_class=r"\.[a-zA-Z_\-][a-zA-Z0-9_\-]*",
     selector_start_universal=r"\*",
     selector_start=r"[a-zA-Z_\-]+",
-    variable_declaration_start=r"\$[a-zA-Z0-9_\-]+\:",
+    variable_declaration_start=rf"{VARIABLE_REF}:",
 ).expect_eof(True)
 
 # After a variable declaration e.g. "$warning-text: TOKENS;"
@@ -45,7 +47,7 @@ expect_variable_declaration_continue = Expect(
     variable_declaration_end=r"\n|;",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
-    **DECLARATION_CONTENT,
+    **DECLARATION_VALUES,
 ).expect_eof(True)
 
 expect_comment_end = Expect(
@@ -89,7 +91,7 @@ expect_rule_declaration_content = Expect(
     rule_declaration_end=r"\n|;",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
-    **DECLARATION_CONTENT,
+    **DECLARATION_VALUES,
     important=r"\!important",
     comma=",",
     rule_declaration_set_end=r"\}",

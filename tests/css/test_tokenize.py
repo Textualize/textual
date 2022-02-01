@@ -45,7 +45,7 @@ def test_variable_declaration_multiple_values():
         Token(name='duration', value='6s', path='', code=css, location=(0, 11)),
         Token(name='whitespace', value='  ', path='', code=css, location=(0, 13)),
         Token(name='token', value='red', path='', code=css, location=(0, 15)),
-        Token(name='variable_declaration_end', value=';', path='', code=css, location=(0, 18))
+        Token(name='variable_declaration_end', value=';', path='', code=css, location=(0, 18)),
     ]
 
 
@@ -56,7 +56,7 @@ def test_variable_declaration_comment_ignored():
         Token(name='whitespace', value=' ', path='', code=css, location=(0, 3)),
         Token(name='token', value='red', path='', code=css, location=(0, 4)),
         Token(name='variable_declaration_end', value=';', path='', code=css, location=(0, 7)),
-        Token(name='whitespace', value=' ', path='', code=css, location=(0, 8))
+        Token(name='whitespace', value=' ', path='', code=css, location=(0, 8)),
     ]
 
 
@@ -67,7 +67,7 @@ def test_variable_declaration_comment_interspersed_ignored():
         Token(name='whitespace', value=' ', path='', code=css, location=(0, 3)),
         Token(name='token', value='re', path='', code=css, location=(0, 4)),
         Token(name='token', value='d', path='', code=css, location=(0, 19)),
-        Token(name='variable_declaration_end', value=';', path='', code=css, location=(0, 20))
+        Token(name='variable_declaration_end', value=';', path='', code=css, location=(0, 20)),
     ]
 
 
@@ -92,8 +92,7 @@ def test_variable_declaration_invalid_value():
 
 def test_variables_declarations_amongst_rulesets():
     css = "$x:1; .thing{text:red;} $y:2;"
-    tokens = list(tokenize(css, ""))
-    assert tokens == [
+    assert list(tokenize(css, "")) == [
         Token(name='variable_declaration_start', value='$x:', path='', code=css, location=(0, 0)),
         Token(name='number', value='1', path='', code=css, location=(0, 3)),
         Token(name='variable_declaration_end', value=';', path='', code=css, location=(0, 4)),
@@ -108,4 +107,54 @@ def test_variables_declarations_amongst_rulesets():
         Token(name='variable_declaration_start', value='$y:', path='', code=css, location=(0, 24)),
         Token(name='number', value='2', path='', code=css, location=(0, 27)),
         Token(name='variable_declaration_end', value=';', path='', code=css, location=(0, 28)),
+    ]
+
+
+def test_variables_reference_in_rule_declaration_value():
+    css = ".warn{text: $warning;}"
+    assert list(tokenize(css, "")) == [
+        Token(name='selector_start_class', value='.warn', path='', code=css, location=(0, 0)),
+        Token(name='rule_declaration_set_start', value='{', path='', code=css, location=(0, 5)),
+        Token(name='rule_declaration_name', value='text:', path='', code=css, location=(0, 6)),
+        Token(name='whitespace', value=' ', path='', code=css, location=(0, 11)),
+        Token(name='variable_ref', value='$warning', path='', code=css, location=(0, 12)),
+        Token(name='rule_declaration_end', value=';', path='', code=css, location=(0, 20)),
+        Token(name='rule_declaration_set_end', value='}', path='', code=css, location=(0, 21)),
+    ]
+
+
+def test_variables_reference_in_rule_declaration_value_multiple():
+    css = ".card{padding: $pad-y $pad-x;}"
+    assert list(tokenize(css, "")) == [
+        Token(name='selector_start_class', value='.card', path='', code=css, location=(0, 0)),
+        Token(name='rule_declaration_set_start', value='{', path='', code=css, location=(0, 5)),
+        Token(name='rule_declaration_name', value='padding:', path='', code=css, location=(0, 6)),
+        Token(name='whitespace', value=' ', path='', code=css, location=(0, 14)),
+        Token(name='variable_ref', value='$pad-y', path='', code=css, location=(0, 15)),
+        Token(name='whitespace', value=' ', path='', code=css, location=(0, 21)),
+        Token(name='variable_ref', value='$pad-x', path='', code=css, location=(0, 22)),
+        Token(name='rule_declaration_end', value=';', path='', code=css, location=(0, 28)),
+        Token(name='rule_declaration_set_end', value='}', path='', code=css, location=(0, 29)),
+    ]
+
+
+def test_variables_reference_in_variable_declaration():
+    css = "$x: $y;"
+    assert list(tokenize(css, "")) == [
+        Token(name='variable_declaration_start', value='$x:', path='', code=css, location=(0, 0)),
+        Token(name='whitespace', value=' ', path='', code=css, location=(0, 3)),
+        Token(name='variable_ref', value='$y', path='', code=css, location=(0, 4)),
+        Token(name='variable_declaration_end', value=';', path='', code=css, location=(0, 6)),
+    ]
+
+
+def test_variable_references_in_variable_declaration_multiple():
+    css = "$x: $y  $z\n"
+    assert list(tokenize(css, "")) == [
+        Token(name='variable_declaration_start', value='$x:', path='', code=css, location=(0, 0)),
+        Token(name='whitespace', value=' ', path='', code=css, location=(0, 3)),
+        Token(name='variable_ref', value='$y', path='', code=css, location=(0, 4)),
+        Token(name='whitespace', value='  ', path='', code=css, location=(0, 6)),
+        Token(name='variable_ref', value='$z', path='', code=css, location=(0, 8)),
+        Token(name='variable_declaration_end', value='\n', path='', code=css, location=(0, 10)),
     ]
