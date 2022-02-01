@@ -6,10 +6,32 @@ from typing import Iterable
 
 from textual.css.tokenizer import Expect, Tokenizer, Token
 
-# Everything we can match at the top-most scope in the CSS file
+STRING = r"\".*?\""
+TOKEN = "[a-zA-Z_-]+"
+KEY_VALUE = r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+"
+COLOR = r"\#[0-9a-fA-F]{6}|color\([0-9]{1,3}\)|rgb\(\d{1,3}\,\s?\d{1,3}\,\s?\d{1,3}\)"
+NUMBER = r"\-?\d+\.?\d*"
+DURATION = r"\d+\.?\d*(?:ms|s)"
+SCALAR = r"\-?\d+\.?\d*(?:fr|%|w|h|vw|vh)"
+COMMENT_START = r"\/\*"
+
+# Values permitted in variable and rule declarations.
+DECLARATION_CONTENT = {
+    "scalar": SCALAR,
+    "duration": DURATION,
+    "number": NUMBER,
+    "color": COLOR,
+    "key_value": KEY_VALUE,
+    "token": TOKEN,
+    "string": STRING,
+}
+
+# The tokenisers "expectation" while at the root/highest level of scope
+# in the CSS file. At this level we might expect to see selectors, comments,
+# variable definitions etc.
 expect_root_scope = Expect(
     whitespace=r"\s+",
-    comment_start=r"\/\*",
+    comment_start=COMMENT_START,
     selector_start_id=r"\#[a-zA-Z_\-][a-zA-Z0-9_\-]*",
     selector_start_class=r"\.[a-zA-Z_\-][a-zA-Z0-9_\-]*",
     selector_start_universal=r"\*",
@@ -22,14 +44,8 @@ expect_root_scope = Expect(
 expect_variable_declaration_continue = Expect(
     variable_declaration_end=r"\n|;",
     whitespace=r"\s+",
-    comment_start=r"\/\*",
-    scalar=r"\-?\d+\.?\d*(?:fr|%|w|h|vw|vh)",
-    duration=r"\d+\.?\d*(?:ms|s)",
-    number=r"\-?\d+\.?\d*",
-    color=r"\#[0-9a-fA-F]{6}|color\([0-9]{1,3}\)|rgb\(\d{1,3}\,\s?\d{1,3}\,\s?\d{1,3}\)",
-    key_value=r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+",
-    token="[a-zA-Z_-]+",
-    string=r"\".*?\"",
+    comment_start=COMMENT_START,
+    **DECLARATION_CONTENT,
 ).expect_eof(True)
 
 expect_comment_end = Expect(
@@ -40,7 +56,7 @@ expect_comment_end = Expect(
 # find other selectors, pseudo-classes... e.g. ".my-class :hover"
 expect_selector_continue = Expect(
     whitespace=r"\s+",
-    comment_start=r"\/\*",
+    comment_start=COMMENT_START,
     pseudo_class=r"\:[a-zA-Z_-]+",
     selector_id=r"\#[a-zA-Z_\-][a-zA-Z0-9_\-]*",
     selector_class=r"\.[a-zA-Z_\-][a-zA-Z0-9_\-]*",
@@ -55,14 +71,14 @@ expect_selector_continue = Expect(
 #                          ^---^
 expect_rule_declaration = Expect(
     whitespace=r"\s+",
-    comment_start=r"\/\*",
+    comment_start=COMMENT_START,
     rule_declaration_name=r"[a-zA-Z_\-]+\:",
     rule_declaration_set_end=r"\}",
 )
 
 expect_rule_declaration_solo = Expect(
     whitespace=r"\s+",
-    comment_start=r"\/\*",
+    comment_start=COMMENT_START,
     rule_declaration_name=r"[a-zA-Z_\-]+\:",
     rule_declaration_set_end=r"\}",
 ).expect_eof(True)
@@ -72,14 +88,8 @@ expect_rule_declaration_solo = Expect(
 expect_rule_declaration_content = Expect(
     rule_declaration_end=r"\n|;",
     whitespace=r"\s+",
-    comment_start=r"\/\*",
-    scalar=r"\-?\d+\.?\d*(?:fr|%|w|h|vw|vh)",
-    duration=r"\d+\.?\d*(?:ms|s)",
-    number=r"\-?\d+\.?\d*",
-    color=r"\#[0-9a-fA-F]{6}|color\([0-9]{1,3}\)|rgb\(\d{1,3}\,\s?\d{1,3}\,\s?\d{1,3}\)",
-    key_value=r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+",
-    token="[a-zA-Z_-]+",
-    string=r"\".*?\"",
+    comment_start=COMMENT_START,
+    **DECLARATION_CONTENT,
     important=r"\!important",
     comma=",",
     rule_declaration_set_end=r"\}",
@@ -140,24 +150,6 @@ class DeclarationTokenizerState(TokenizerState):
 
 tokenize = TokenizerState()
 tokenize_declarations = DeclarationTokenizerState()
-
-# def tokenize(
-#     code: str, path: str, *, expect: Expect = expect_selector
-# ) -> Iterable[Token]:
-#     tokenizer = Tokenizer(code, path=path)
-#     # expect = expect_selector
-#     get_token = tokenizer.get_token
-#     get_state = _STATES.get
-#     while True:
-#         token = get_token(expect)
-#         name = token.name
-#         if name == "comment_start":
-#             tokenizer.skip_to(expect_comment_end)
-#             continue
-#         elif name == "eof":
-#             break
-#         expect = get_state(name, expect)
-#         yield token
 
 if __name__ == "__main__":
     css = """#something {
