@@ -28,7 +28,7 @@ class MyApp(App):
         await self.view.dock(body, edge="right")
 
         async def get_markdown(filename: str) -> None:
-            with open(filename, "rt") as fh:
+            with open(filename, "r", encoding="utf8") as fh:
                 readme = Markdown(fh.read(), hyperlinks=True)
             await body.update(readme)
 
