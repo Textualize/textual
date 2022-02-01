@@ -49,7 +49,7 @@ def test_variable_declaration_multiple_values():
     ]
 
 
-def test_variable_declaration_comment_not_tokenized():
+def test_variable_declaration_comment_ignored():
     css = "$x: red; /* comment */"
     assert list(tokenize(css, "")) == [
         Token(name='variable_declaration_start', value='$x:', path='', code=css, location=(0, 0)),
@@ -60,7 +60,7 @@ def test_variable_declaration_comment_not_tokenized():
     ]
 
 
-def test_variable_declaration_comment_interspersed_not_tokenized():
+def test_variable_declaration_comment_interspersed_ignored():
     css = "$x: re/* comment */d;"
     assert list(tokenize(css, "")) == [
         Token(name='variable_declaration_start', value='$x:', path='', code=css, location=(0, 0)),
