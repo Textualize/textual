@@ -56,7 +56,7 @@ def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
             rule_selectors.append(selectors[:])
             selectors.clear()
             combinator = None
-        elif token.name == "rule_declaration_set_start":
+        elif token.name == "declaration_set_start":
             break
         elif token.name == "combinator_child":
             combinator = CombinatorType.CHILD
@@ -98,7 +98,7 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
             rule_selectors.append(selectors[:])
             selectors.clear()
             combinator = None
-        elif token.name == "rule_declaration_set_start":
+        elif token.name == "declaration_set_start":
             break
         elif token.name == "combinator_child":
             combinator = CombinatorType.CHILD
@@ -128,9 +128,9 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
     while True:
         token = next(tokens)
         token_name = token.name
-        if token_name in ("whitespace", "rule_declaration_end"):
+        if token_name in ("whitespace", "declaration_end"):
             continue
-        if token_name == "rule_declaration_name":
+        if token_name == "declaration_name":
             if declaration.tokens:
                 try:
                     styles_builder.add_declaration(declaration)
@@ -138,7 +138,7 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
                     errors.append((error.token, error.message))
             declaration = Declaration(token, "")
             declaration.name = token.value.rstrip(":")
-        elif token_name == "rule_declaration_set_end":
+        elif token_name == "declaration_set_end":
             break
         else:
             declaration.tokens.append(token)
@@ -178,9 +178,9 @@ def parse_declarations(css: str, path: str) -> Styles:
         if token is None:
             break
         token_name = token.name
-        if token_name in ("whitespace", "rule_declaration_end", "eof"):
+        if token_name in ("whitespace", "declaration_end", "eof"):
             continue
-        if token_name == "rule_declaration_name":
+        if token_name == "declaration_name":
             if declaration and declaration.tokens:
                 try:
                     styles_builder.add_declaration(declaration)
@@ -189,7 +189,7 @@ def parse_declarations(css: str, path: str) -> Styles:
                     raise
             declaration = Declaration(token, "")
             declaration.name = token.value.rstrip(":")
-        elif token_name == "rule_declaration_set_end":
+        elif token_name == "declaration_set_end":
             break
         else:
             if declaration:

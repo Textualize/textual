@@ -14,9 +14,9 @@ COLOR = r"\#[0-9a-fA-F]{6}|color\([0-9]{1,3}\)|rgb\(\d{1,3}\,\s?\d{1,3}\,\s?\d{1
 KEY_VALUE = r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+"
 TOKEN = "[a-zA-Z_-]+"
 STRING = r"\".*?\""
-VARIABLE_REF = r"\$[a-zA-Z0-9_\-]+"
+VARIABLE_REF = r"\$[a-zA-Z0-9_-]+"
 
-# Values permitted in variable and rule declarations.
+# Values permitted in declarations.
 DECLARATION_VALUES = {
     "scalar": SCALAR,
     "duration": DURATION,
@@ -38,16 +38,19 @@ expect_root_scope = Expect(
     selector_start_class=r"\.[a-zA-Z_\-][a-zA-Z0-9_\-]*",
     selector_start_universal=r"\*",
     selector_start=r"[a-zA-Z_\-]+",
-    variable_declaration_start=rf"{VARIABLE_REF}:",
+    variable_name=f"{VARIABLE_REF}:",
 ).expect_eof(True)
 
 # After a variable declaration e.g. "$warning-text: TOKENS;"
 #              for tokenizing variable value ------^~~~~~~^
-expect_variable_declaration_continue = Expect(
-    variable_declaration_end=r"\n|;",
-    whitespace=r"\s+",
+expect_variable_value = Expect(
     comment_start=COMMENT_START,
-    **DECLARATION_VALUES,
+    whitespace=r"\s+",
+    variable_value=rf"[^;\n{COMMENT_START}]+",
+)
+
+expect_variable_value_end = Expect(
+    variable_value_end=r"\n|;",
 ).expect_eof(True)
 
 expect_comment_end = Expect(
@@ -66,35 +69,35 @@ expect_selector_continue = Expect(
     selector=r"[a-zA-Z_\-]+",
     combinator_child=">",
     new_selector=r",",
-    rule_declaration_set_start=r"\{",
+    declaration_set_start=r"\{",
 )
 
-# A rule declaration e.g. "text: red;"
-#                          ^---^
-expect_rule_declaration = Expect(
+# A declaration e.g. "text: red;"
+#                     ^---^
+expect_declaration = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
-    rule_declaration_name=r"[a-zA-Z_\-]+\:",
-    rule_declaration_set_end=r"\}",
+    declaration_name=r"[a-zA-Z_\-]+\:",
+    declaration_set_end=r"\}",
 )
 
-expect_rule_declaration_solo = Expect(
+expect_declaration_solo = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
-    rule_declaration_name=r"[a-zA-Z_\-]+\:",
-    rule_declaration_set_end=r"\}",
+    declaration_name=r"[a-zA-Z_\-]+\:",
+    declaration_set_end=r"\}",
 ).expect_eof(True)
 
-# The value(s)/content from a rule declaration e.g. "text: red;"
-#                                                         ^---^
-expect_rule_declaration_content = Expect(
-    rule_declaration_end=r"\n|;",
+# The value(s)/content from a declaration e.g. "text: red;"
+#                                                    ^---^
+expect_declaration_content = Expect(
+    declaration_end=r"\n|;",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     **DECLARATION_VALUES,
     important=r"\!important",
     comma=",",
-    rule_declaration_set_end=r"\}",
+    declaration_set_end=r"\}",
 )
 
 
@@ -112,8 +115,9 @@ class TokenizerState:
 
     EXPECT = expect_root_scope
     STATE_MAP = {
-        "variable_declaration_start": expect_variable_declaration_continue,
-        "variable_declaration_end": expect_root_scope,
+        "variable_name": expect_variable_value,
+        "variable_value": expect_variable_value_end,
+        "variable_value_end": expect_root_scope,
         "selector_start": expect_selector_continue,
         "selector_start_id": expect_selector_continue,
         "selector_start_class": expect_selector_continue,
@@ -121,10 +125,10 @@ class TokenizerState:
         "selector_id": expect_selector_continue,
         "selector_class": expect_selector_continue,
         "selector_universal": expect_selector_continue,
-        "rule_declaration_set_start": expect_rule_declaration,
-        "rule_declaration_name": expect_rule_declaration_content,
-        "rule_declaration_end": expect_rule_declaration,
-        "rule_declaration_set_end": expect_root_scope,
+        "declaration_set_start": expect_declaration,
+        "declaration_name": expect_declaration_content,
+        "declaration_end": expect_declaration,
+        "declaration_set_end": expect_root_scope,
     }
 
     def __call__(self, code: str, path: str) -> Iterable[Token]:
@@ -145,10 +149,10 @@ class TokenizerState:
 
 
 class DeclarationTokenizerState(TokenizerState):
-    EXPECT = expect_rule_declaration_solo
+    EXPECT = expect_declaration_solo
     STATE_MAP = {
-        "rule_declaration_name": expect_rule_declaration_content,
-        "rule_declaration_end": expect_rule_declaration_solo,
+        "declaration_name": expect_declaration_content,
+        "declaration_end": expect_declaration_solo,
     }
 
 
