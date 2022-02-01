@@ -44,25 +44,25 @@ expect_selector_continue = Expect(
     selector=r"[a-zA-Z_\-]+",
     combinator_child=">",
     new_selector=r",",
-    declaration_set_start=r"\{",
+    rule_declaration_set_start=r"\{",
 )
 
-expect_declaration = Expect(
+expect_rule_declaration = Expect(
     whitespace=r"\s+",
     comment_start=r"\/\*",
-    declaration_name=r"[a-zA-Z_\-]+\:",
-    declaration_set_end=r"\}",
+    rule_declaration_name=r"[a-zA-Z_\-]+\:",
+    rule_declaration_set_end=r"\}",
 )
 
-expect_declaration_solo = Expect(
+expect_rule_declaration_solo = Expect(
     whitespace=r"\s+",
     comment_start=r"\/\*",
-    declaration_name=r"[a-zA-Z_\-]+\:",
-    declaration_set_end=r"\}",
+    rule_declaration_name=r"[a-zA-Z_\-]+\:",
+    rule_declaration_set_end=r"\}",
 ).expect_eof(True)
 
-expect_declaration_content = Expect(
-    declaration_end=r"\n|;",
+expect_rule_declaration_content = Expect(
+    rule_declaration_end=r"\n|;",
     whitespace=r"\s+",
     comment_start=r"\/\*",
     scalar=r"\-?\d+\.?\d*(?:fr|%|w|h|vw|vh)",
@@ -74,7 +74,7 @@ expect_declaration_content = Expect(
     string=r"\".*?\"",
     important=r"\!important",
     comma=",",
-    declaration_set_end=r"\}",
+    rule_declaration_set_end=r"\}",
 )
 
 
@@ -99,10 +99,10 @@ class TokenizerState:
         "selector_id": expect_selector_continue,
         "selector_class": expect_selector_continue,
         "selector_universal": expect_selector_continue,
-        "declaration_set_start": expect_declaration,
-        "declaration_name": expect_declaration_content,
-        "declaration_end": expect_declaration,
-        "declaration_set_end": expect_root_scope,
+        "rule_declaration_set_start": expect_rule_declaration,
+        "rule_declaration_name": expect_rule_declaration_content,
+        "rule_declaration_end": expect_rule_declaration,
+        "rule_declaration_set_end": expect_root_scope,
     }
 
     def __call__(self, code: str, path: str) -> Iterable[Token]:
@@ -123,10 +123,10 @@ class TokenizerState:
 
 
 class DeclarationTokenizerState(TokenizerState):
-    EXPECT = expect_declaration_solo
+    EXPECT = expect_rule_declaration_solo
     STATE_MAP = {
-        "declaration_name": expect_declaration_content,
-        "declaration_end": expect_declaration_solo,
+        "rule_declaration_name": expect_rule_declaration_content,
+        "rule_declaration_end": expect_rule_declaration_solo,
     }
 
 
