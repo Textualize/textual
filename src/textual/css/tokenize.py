@@ -99,13 +99,15 @@ expect_rule_declaration_content = Expect(
 
 
 class TokenizerState:
-    """State machine for the tokeniser.
+    """State machine for the tokenizer.
 
     Attributes:
-        EXPECT: The initial expectation of the tokenizer. Since we start tokenising
-            at the root scope, we'd expect to see either a variable or selector.
-        STATE_MAP: Maps token names to Expects, which are sets of regexes conveying
-            what we expect to see next in the tokenising process.
+        EXPECT: The initial expectation of the tokenizer. Since we start tokenizing
+            at the root scope, we might expect to see either a variable or selector, for example.
+        STATE_MAP: Maps token names to Expects, defines the sets of valid tokens
+            that we'd expect to see next, given the current token. For example, if
+            we've just processed a variable declaration name, we next expect to see
+            the value of that variable.
     """
 
     EXPECT = expect_root_scope
