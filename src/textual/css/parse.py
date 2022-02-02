@@ -245,27 +245,26 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
                 token = next(tokens, None)
                 if not token:
                     break
-                if token.name != "variable_value_end":
-                    # For variables referring to other variables
-                    if token.name == "variable_ref":
-                        ref_name = token.value[1:]
-                        if ref_name in variables:
-                            variables[variable_name].extend(variables[ref_name])
-                            variable_tokens = dropwhile(
-                                _is_whitespace,
-                                variables[ref_name],
-                            )
-                            yield from variable_tokens
-                        else:
-                            raise _unresolved(
-                                variable_name=ref_name, location=token.location
-                            )
-                    else:
-                        variables[variable_name].append(token)
-                        yield token
-                else:
+                if token.name == "variable_value_end":
                     yield token
                     break
+                # For variables referring to other variables
+                if token.name == "variable_ref":
+                    ref_name = token.value[1:]
+                    if ref_name in variables:
+                        variables[variable_name].extend(variables[ref_name])
+                        variable_tokens = dropwhile(
+                            _is_whitespace,
+                            variables[ref_name],
+                        )
+                        yield from variable_tokens
+                    else:
+                        raise _unresolved(
+                            variable_name=ref_name, location=token.location
+                        )
+                else:
+                    variables[variable_name].append(token)
+                    yield token
         elif token.name == "variable_ref":
             variable_name = token.value[1:]  # Trim the $, so $x -> x
             if variable_name in variables:
