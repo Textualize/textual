@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import itertools
+from collections import defaultdict
+
 from rich import print
 
 from functools import lru_cache
@@ -205,51 +208,34 @@ def parse_declarations(css: str, path: str) -> Styles:
     return styles_builder.styles
 
 
-def parse(css: str, path: str) -> Iterable[RuleSet]:
+# def _resolve_variables(tokens: Iterator[Token]):
+#     # First pass to collect variable declarations
+#     variables: dict[str, list[Token]] = defaultdict(list)
+#     while True:
+#         token = next(tokens, None)
+#         if token is None:
+#             break
+#         if token.name == "variable_name":
+#             variable_name = token.value[1:-1]  # Trim the $ and the :, i.e. "$x:" -> "x"
+#             # At this point, we need to tokenize the variable value, as when we pass
+#             # the Declarations to the style builder, types must be known (e.g. Scalar vs Duration)
+#             variables[variable_name] =
 
-    tokens = iter(tokenize(css, path))
+
+def parse(css: str, path: str) -> Iterable[RuleSet]:
+    # Make two iterators over the same tokens
+    tokens1, tokens2 = itertools.tee(iter(tokenize(css, path)))
+
+    # First pass in order to resolve variables
+    # variables = _resolve_variables(tokens1)
+
+    # Parsing rulesets
     while True:
-        token = next(tokens, None)
+        token = next(tokens2, None)
         if token is None:
             break
         if token.name.startswith("selector_start"):
-            yield from parse_rule_set(tokens, token)
-
-
-# if __name__ == "__main__":
-#     test = """
-
-# App View {
-#     text: red;
-# }
-
-# .foo.bar baz:focus, #egg .foo.baz {
-#     /* ignore me, I'm a comment */
-#     display: block;
-#     visibility: visible;
-#     border: solid green !important;
-#     outline: red;
-#     padding: 1 2;
-#     margin: 5;
-#     text: bold red on magenta
-#     text-color: green;
-#     text-background: white
-#     docks: foo bar bar
-#     dock-group: foo
-#     dock-edge: top
-#     offset-x: 4
-#     offset-y: 5
-# }"""
-
-#     from .stylesheet import Stylesheet
-
-#     print(test)
-#     print()
-#     stylesheet = Stylesheet()
-#     stylesheet.parse(test)
-#     print(stylesheet)
-#     print()
-#     print(stylesheet.css)
+            yield from parse_rule_set(tokens2, token)
 
 
 if __name__ == "__main__":

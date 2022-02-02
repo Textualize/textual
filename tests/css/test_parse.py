@@ -1,10 +1,19 @@
 import pytest
 from rich.color import Color, ColorType
 
+# from textual.css.parse import _resolve_variables
 from textual.css.scalar import Scalar, Unit
 from textual.css.stylesheet import Stylesheet, StylesheetParseError
+from textual.css.tokenize import tokenize
 from textual.css.transition import Transition
 from textual.layouts.dock import DockLayout
+
+
+# class TestVariableResolution:
+#     def test_resolve_single_variable(self):
+#         css = "$x: 1;"
+#         variables = _resolve_variables(tokenize(css, ""))
+#         assert variables == {"x": }
 
 
 class TestParseLayout:

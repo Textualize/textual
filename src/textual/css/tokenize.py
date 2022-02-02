@@ -14,9 +14,9 @@ COLOR = r"\#[0-9a-fA-F]{6}|color\([0-9]{1,3}\)|rgb\(\d{1,3}\,\s?\d{1,3}\,\s?\d{1
 KEY_VALUE = r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+"
 TOKEN = "[a-zA-Z_-]+"
 STRING = r"\".*?\""
-VARIABLE_REF = r"\$[a-zA-Z0-9_-]+"
+VARIABLE_REF = r"\$[a-zA-Z0-9_\-]+"
 
-# Values permitted in declarations.
+# Values permitted in variable and rule declarations.
 DECLARATION_VALUES = {
     "scalar": SCALAR,
     "duration": DURATION,
@@ -38,19 +38,16 @@ expect_root_scope = Expect(
     selector_start_class=r"\.[a-zA-Z_\-][a-zA-Z0-9_\-]*",
     selector_start_universal=r"\*",
     selector_start=r"[a-zA-Z_\-]+",
-    variable_name=f"{VARIABLE_REF}:",
+    variable_name=rf"{VARIABLE_REF}:",
 ).expect_eof(True)
 
 # After a variable declaration e.g. "$warning-text: TOKENS;"
 #              for tokenizing variable value ------^~~~~~~^
-expect_variable_value = Expect(
-    comment_start=COMMENT_START,
-    whitespace=r"\s+",
-    variable_value=rf"[^;\n{COMMENT_START}]+",
-)
-
-expect_variable_value_end = Expect(
+expect_variable_name_continue = Expect(
     variable_value_end=r"\n|;",
+    whitespace=r"\s+",
+    comment_start=COMMENT_START,
+    **DECLARATION_VALUES,
 ).expect_eof(True)
 
 expect_comment_end = Expect(
@@ -72,8 +69,8 @@ expect_selector_continue = Expect(
     declaration_set_start=r"\{",
 )
 
-# A declaration e.g. "text: red;"
-#                     ^---^
+# A rule declaration e.g. "text: red;"
+#                          ^---^
 expect_declaration = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
@@ -88,8 +85,8 @@ expect_declaration_solo = Expect(
     declaration_set_end=r"\}",
 ).expect_eof(True)
 
-# The value(s)/content from a declaration e.g. "text: red;"
-#                                                    ^---^
+# The value(s)/content from a rule declaration e.g. "text: red;"
+#                                                         ^---^
 expect_declaration_content = Expect(
     declaration_end=r"\n|;",
     whitespace=r"\s+",
@@ -115,8 +112,7 @@ class TokenizerState:
 
     EXPECT = expect_root_scope
     STATE_MAP = {
-        "variable_name": expect_variable_value,
-        "variable_value": expect_variable_value_end,
+        "variable_name": expect_variable_name_continue,
         "variable_value_end": expect_root_scope,
         "selector_start": expect_selector_continue,
         "selector_start_id": expect_selector_continue,
