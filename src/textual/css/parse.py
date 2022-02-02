@@ -208,10 +208,9 @@ def parse_declarations(css: str, path: str) -> Styles:
     return styles_builder.styles
 
 
-# def _resolve_variables(tokens: Iterator[Token]):
-#     # First pass to collect variable declarations
+# def _with_resolved_variables(tokens: Iterable[Token]) -> Iterable[Token]:
 #     variables: dict[str, list[Token]] = defaultdict(list)
-#     while True:
+#     for token in tokens:
 #         token = next(tokens, None)
 #         if token is None:
 #             break
@@ -223,19 +222,13 @@ def parse_declarations(css: str, path: str) -> Styles:
 
 
 def parse(css: str, path: str) -> Iterable[RuleSet]:
-    # Make two iterators over the same tokens
-    tokens1, tokens2 = itertools.tee(iter(tokenize(css, path)))
-
-    # First pass in order to resolve variables
-    # variables = _resolve_variables(tokens1)
-
-    # Parsing rulesets
+    tokens = iter((tokenize(css, path)))
     while True:
-        token = next(tokens2, None)
+        token = next(tokens, None)
         if token is None:
             break
         if token.name.startswith("selector_start"):
-            yield from parse_rule_set(tokens2, token)
+            yield from parse_rule_set(tokens, token)
 
 
 if __name__ == "__main__":
