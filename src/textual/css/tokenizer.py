@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from typing import NamedTuple
 import re
+from typing import NamedTuple
 
-from rich import print
 import rich.repr
 
 

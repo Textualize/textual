@@ -1,17 +1,14 @@
 from __future__ import annotations
 
-import itertools
 from collections import defaultdict
+from functools import lru_cache
+from itertools import dropwhile
+from typing import Iterator, Iterable
 
 from rich import print
 
-from functools import lru_cache
-from typing import Iterator, Iterable
-
-from .styles import Styles
-from .tokenize import tokenize, tokenize_declarations, Token
-from .tokenizer import EOFError
-
+from textual.css.errors import UnresolvedVariableError
+from ._styles_builder import StylesBuilder, DeclarationError
 from .model import (
     Declaration,
     RuleSet,
@@ -20,8 +17,9 @@ from .model import (
     SelectorSet,
     SelectorType,
 )
-from ._styles_builder import StylesBuilder, DeclarationError
-
+from .styles import Styles
+from .tokenize import tokenize, tokenize_declarations, Token
+from .tokenizer import EOFError
 
 SELECTOR_MAP: dict[str, tuple[SelectorType, tuple[int, int, int]]] = {
     "selector": (SelectorType.TYPE, (0, 0, 1)),
@@ -37,7 +35,6 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, tuple[int, int, int]]] = {
 
 @lru_cache(maxsize=1024)
 def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
-
     tokens = iter(tokenize(css_selectors, ""))
 
     get_selector = SELECTOR_MAP.get
@@ -84,7 +81,6 @@ def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
 
 
 def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
-
     get_selector = SELECTOR_MAP.get
     combinator: CombinatorType | None = CombinatorType.DESCENDENT
     selectors: list[Selector] = []
@@ -208,21 +204,84 @@ def parse_declarations(css: str, path: str) -> Styles:
     return styles_builder.styles
 
 
-# def _with_resolved_variables(tokens: Iterable[Token]) -> Iterable[Token]:
-#     variables: dict[str, list[Token]] = defaultdict(list)
-#     for token in tokens:
-#         token = next(tokens, None)
-#         if token is None:
-#             break
-#         if token.name == "variable_name":
-#             variable_name = token.value[1:-1]  # Trim the $ and the :, i.e. "$x:" -> "x"
-#             # At this point, we need to tokenize the variable value, as when we pass
-#             # the Declarations to the style builder, types must be known (e.g. Scalar vs Duration)
-#             variables[variable_name] =
+def _is_whitespace(token: Token) -> bool:
+    return token.name == "whitespace"
+
+
+def _unresolved(
+    variable_name: str, location: tuple[int, int]
+) -> UnresolvedVariableError:
+    return UnresolvedVariableError(
+        f"variable ${variable_name} is not defined. "
+        f"attempted reference at location {location!r}"
+    )
+
+
+def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
+    """Replace variable references with values by substituting variable reference
+    tokens with the tokens representing their values.
+
+    Args:
+        tokens (Iterator[Token]): Iterator of Tokens which may contain tokens
+            with the name "variable_ref".
+
+    Returns:
+        Iterable[Token]: Yields Tokens such that any variable references (tokens where
+            token.name == "variable_ref") have been replaced with the tokens representing
+            the value. In other words, an Iterable of Tokens similar to the original input,
+            but with variables resolved.
+    """
+    variables: dict[str, list[Token]] = defaultdict(list)
+    while tokens:
+        token = next(tokens, None)
+        if token is None:
+            break
+        if token.name == "variable_name":
+            variable_name = token.value[1:-1]  # Trim the $ and the :, i.e. "$x:" -> "x"
+            yield token
+
+            # Lookahead for the variable value tokens
+            while True:
+                token = next(tokens, None)
+                if not token:
+                    break
+                if token.name != "variable_value_end":
+                    # For variables referring to other variables
+                    if token.name == "variable_ref":
+                        ref_name = token.value[1:]
+                        if ref_name in variables:
+                            variables[variable_name].extend(variables[ref_name])
+                            variable_tokens = dropwhile(
+                                _is_whitespace,
+                                variables[ref_name],
+                            )
+                            yield from variable_tokens
+                        else:
+                            raise _unresolved(
+                                variable_name=ref_name, location=token.location
+                            )
+                    else:
+                        variables[variable_name].append(token)
+                        yield token
+                else:
+                    yield token
+                    break
+        elif token.name == "variable_ref":
+            variable_name = token.value[1:]  # Trim the $, so $x -> x
+            if variable_name in variables:
+                variable_tokens = dropwhile(
+                    _is_whitespace,
+                    variables[variable_name],
+                )
+                yield from variable_tokens
+            else:
+                raise _unresolved(variable_name=variable_name, location=token.location)
+        else:
+            yield token
 
 
 def parse(css: str, path: str) -> Iterable[RuleSet]:
-    tokens = iter((tokenize(css, path)))
+    tokens = iter(substitute_references(tokenize(css, path)))
     while True:
         token = next(tokens, None)
         if token is None:

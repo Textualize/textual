@@ -1,19 +1,61 @@
 import pytest
 from rich.color import Color, ColorType
 
-# from textual.css.parse import _resolve_variables
+from textual.css.errors import UnresolvedVariableError
+from textual.css.parse import substitute_references
 from textual.css.scalar import Scalar, Unit
 from textual.css.stylesheet import Stylesheet, StylesheetParseError
 from textual.css.tokenize import tokenize
+from textual.css.tokenizer import Token
 from textual.css.transition import Transition
 from textual.layouts.dock import DockLayout
 
 
-# class TestVariableResolution:
-#     def test_resolve_single_variable(self):
-#         css = "$x: 1;"
-#         variables = _resolve_variables(tokenize(css, ""))
-#         assert variables == {"x": }
+class TestVariableReferenceSubstitution:
+    def test_simple_reference(self):
+        css = "$x: 1; #some-widget{border: $x;}"
+        variables = substitute_references(tokenize(css, ""))
+        assert list(variables) == [
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3)),
+            Token(name='number', value='1', path='', code=css, location=(0, 4)),
+            Token(name='variable_value_end', value=';', path='', code=css, location=(0, 5)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 6)),
+            Token(name='selector_start_id', value='#some-widget', path='', code=css, location=(0, 7)),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(0, 19)),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(0, 20)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 27)),
+            Token(name='number', value='1', path='', code=css, location=(0, 4)),
+            Token(name='declaration_end', value=';', path='', code=css, location=(0, 30)),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(0, 31))
+        ]
+
+    def test_undefined_variable(self):
+        css = ".thing { border: $not-defined; }"
+        with pytest.raises(UnresolvedVariableError):
+            list(substitute_references(tokenize(css, "")))
+
+    def test_transitive_reference(self):
+        css = "$x: 1\n$y: $x\n.thing { border: $y }"
+        assert list(substitute_references(tokenize(css, ""))) == [
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3)),
+            Token(name='number', value='1', path='', code=css, location=(0, 4)),
+            Token(name='variable_value_end', value='\n', path='', code=css, location=(0, 5)),
+            Token(name='variable_name', value='$y:', path='', code=css, location=(1, 0)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 3)),
+            Token(name='number', value='1', path='', code=css, location=(0, 4)),
+            Token(name='variable_value_end', value='\n', path='', code=css, location=(1, 6)),
+            Token(name='selector_start_class', value='.thing', path='', code=css, location=(2, 0)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 6)),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(2, 7)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 8)),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(2, 9)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 16)),
+            Token(name='number', value='1', path='', code=css, location=(0, 4)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 19)),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(2, 20))
+        ]
 
 
 class TestParseLayout:
