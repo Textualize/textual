@@ -36,9 +36,15 @@ class Dock(NamedTuple):
 
 
 class DockLayout(Layout):
+
+    name = "dock"
+
     def __init__(self) -> None:
         super().__init__()
         self._docks: list[Dock] | None = None
+
+    def __repr__(self):
+        return "<DockLayout>"
 
     def get_docks(self, view: View) -> list[Dock]:
         groups: dict[str, list[Widget]] = defaultdict(list)
@@ -71,17 +77,15 @@ class DockLayout(Layout):
 
             return (
                 DockOptions(
-                    styles.width.cells if styles._rule_width is not None else None,
-                    styles.width.fraction if styles._rule_width is not None else 1,
-                    styles.min_width.cells if styles._rule_min_width is not None else 1,
+                    styles.width.cells if styles.has_rule("width") else None,
+                    styles.width.fraction if styles.has_rule("width") else 1,
+                    styles.min_width.cells if styles.has_rule("min_width") else 1,
                 )
                 if edge in ("left", "right")
                 else DockOptions(
-                    styles.height.cells if styles._rule_height is not None else None,
-                    styles.height.fraction if styles._rule_height is not None else 1,
-                    styles.min_height.cells
-                    if styles._rule_min_height is not None
-                    else 1,
+                    styles.height.cells if styles.has_rule("height") else None,
+                    styles.height.fraction if styles.has_rule("height") else 1,
+                    styles.min_height.cells if styles.has_rule("min_height") else 1,
                 )
             )
 

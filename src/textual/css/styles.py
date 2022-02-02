@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any, Iterable, NamedTuple, TYPE_CHECKING
@@ -10,6 +9,8 @@ from rich.color import Color
 from rich.style import Style
 
 from ._style_properties import (
+    Edges,
+    BorderDefinition,
     BorderProperty,
     BoxProperty,
     ColorProperty,
@@ -39,7 +40,8 @@ from .types import Display, Edge, Visibility
 from .types import Specificity3, Specificity4
 from .. import log
 from .._animator import Animation, EasingFunction
-from ..geometry import Spacing
+from ..geometry import Spacing, SpacingDimensions
+from .._box import BoxType
 
 
 if TYPE_CHECKING:
@@ -98,6 +100,10 @@ class Styles:
     _repaint_required: bool = False
 
     important: set[str] = field(default_factory=set)
+
+    def has_rule(self, rule: str) -> bool:
+        """Check if a rule has been set."""
+        return getattr(self, f"_rule_{rule}") != None
 
     display = StringEnumProperty(VALID_DISPLAY, "block")
     visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
@@ -194,31 +200,14 @@ class Styles:
         self._layout_required = layout
 
     def check_refresh(self) -> tuple[bool, bool]:
+        """Check if the Styles must be refreshed.
+
+        Returns:
+            tuple[bool, bool]: (repaint required, layout_required)
+        """
         result = (self._repaint_required, self._layout_required)
         self._repaint_required = self._layout_required = False
         return result
-
-    @property
-    def has_border(self) -> bool:
-        """Check in a border is present."""
-        return any(edge for edge, _style in self.border)
-
-    @property
-    def has_padding(self) -> bool:
-        return self._rule_padding is not None
-
-    @property
-    def has_margin(self) -> bool:
-        return self._rule_margin is not None
-
-    @property
-    def has_outline(self) -> bool:
-        """Check if an outline is present."""
-        return any(edge for edge, _style in self.outline)
-
-    @property
-    def has_offset(self) -> bool:
-        return self._rule_offset is not None
 
     def get_transition(self, key: str) -> Transition | None:
         if key in self.ANIMATABLE:
@@ -281,21 +270,16 @@ class Styles:
         if self.important:
             yield "important", self.important
 
-    @classmethod
-    def combine(cls, style1: Styles, style2: Styles) -> Styles:
-        """Combine rule with another to produce a new rule.
+    def merge(self, other: Styles) -> None:
+        """Merge values from another Styles.
 
         Args:
-            style1 (Style): A style.
-            style2 (Style): Second style.
-
-        Returns:
-            Style: New rule with attributes of style2 overriding style1
+            other (Styles): A Styles object.
         """
-        result = cls()
         for name in INTERNAL_RULE_NAMES:
-            setattr(result, name, getattr(style1, name) or getattr(style2, name))
-        return result
+            value = getattr(other, name)
+            if value is not None:
+                setattr(self, name, value)
 
     @property
     def css_lines(self) -> list[str]:
@@ -378,6 +362,8 @@ class Styles:
             append_declaration("layers", " ".join(self.layers))
         if self._rule_layer is not None:
             append_declaration("layer", self.layer)
+        if self._rule_layout is not None:
+            append_declaration("layout", self.layout.name)
         if self._rule_text_color or self._rule_text_background or self._rule_text_style:
             append_declaration("text", str(self.text))
 
@@ -408,6 +394,149 @@ class Styles:
 
 RULE_NAMES = [name[6:] for name in dir(Styles) if name.startswith("_rule_")]
 INTERNAL_RULE_NAMES = [f"_rule_{name}" for name in RULE_NAMES]
+
+
+from typing import Generic, TypeVar
+
+GetType = TypeVar("GetType")
+SetType = TypeVar("SetType")
+
+
+class StyleViewProperty(Generic[GetType, SetType]):
+    """Presents a view of a base Styles object, plus inline styles."""
+
+    def __set_name__(self, owner: StylesView, name: str) -> None:
+        self._name = name
+        self._internal_name = f"_rule_{name}"
+
+    def __set__(self, obj: StylesView, value: SetType) -> None:
+        setattr(obj._inline_styles, self._name, value)
+
+    def __get__(
+        self, obj: StylesView, objtype: type[StylesView] | None = None
+    ) -> GetType:
+        styles_value = getattr(obj._inline_styles, self._internal_name, None)
+        if styles_value is None:
+            return getattr(obj._base_styles, self._name)
+        return styles_value
+
+
+@rich.repr.auto
+class StylesView:
+    """Presents a combined view of two Styles object: a base Styles and inline Styles."""
+
+    def __init__(self, base: Styles, inline_styles: Styles) -> None:
+        self._base_styles = base
+        self._inline_styles = inline_styles
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        for rule_name in RULE_NAMES:
+            if self.has_rule(rule_name):
+                yield rule_name, getattr(self, rule_name)
+
+    @property
+    def gutter(self) -> Spacing:
+        """Get the gutter (additional space reserved for margin / padding / border).
+
+        Returns:
+            Spacing: Space around edges.
+        """
+        gutter = self.margin + self.padding + self.border.spacing
+        return gutter
+
+    def reset(self) -> None:
+        """Reset the inline styles."""
+        self._inline_styles.reset()
+
+    def check_refresh(self) -> tuple[bool, bool]:
+        """Check if the Styles must be refreshed.
+
+        Returns:
+            tuple[bool, bool]: (repaint required, layout_required)
+        """
+        base_repaint, base_layout = self._base_styles.check_refresh()
+        inline_repaint, inline_layout = self._inline_styles.check_refresh()
+        result = (base_repaint or inline_repaint, base_layout or inline_layout)
+        return result
+
+    def has_rule(self, rule: str) -> bool:
+        """Check if a rule has been set."""
+        return self._inline_styles.has_rule(rule) or self._base_styles.has_rule(rule)
+
+    @property
+    def css(self) -> str:
+        """Get the CSS for the combined styles."""
+        styles = Styles()
+        styles.merge(self._base_styles)
+        styles.merge(self._inline_styles)
+        combined_css = styles.css
+        return combined_css
+
+    display: StyleViewProperty[str, str | None] = StyleViewProperty()
+    visibility: StyleViewProperty[str, str | None] = StyleViewProperty()
+    layout: StyleViewProperty[Layout | None, str | Layout] = StyleViewProperty()
+    text: StyleViewProperty[Style, Style | str | None] = StyleViewProperty()
+    color: StyleViewProperty[Color, Color | str | None] = StyleViewProperty()
+    background: StyleViewProperty[Color, Color | str | None] = StyleViewProperty()
+    style: StyleViewProperty[Style, str | None] = StyleViewProperty()
+
+    padding: StyleViewProperty[Spacing, SpacingDimensions] = StyleViewProperty()
+    margin: StyleViewProperty[Spacing, SpacingDimensions] = StyleViewProperty()
+    offset: StyleViewProperty[
+        ScalarOffset, tuple[int | str, int | str] | ScalarOffset
+    ] = StyleViewProperty()
+
+    border: StyleViewProperty[Edges, BorderDefinition | None] = StyleViewProperty()
+    border_top: StyleViewProperty[
+        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+    ] = StyleViewProperty()
+    border_right: StyleViewProperty[
+        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+    ] = StyleViewProperty()
+    border_bottom: StyleViewProperty[
+        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+    ] = StyleViewProperty()
+    border_left: StyleViewProperty[
+        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+    ] = StyleViewProperty()
+
+    outline: StyleViewProperty[Edges, BorderDefinition | None] = StyleViewProperty()
+    outline_top: StyleViewProperty[
+        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+    ] = StyleViewProperty()
+    outline_right: StyleViewProperty[
+        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+    ] = StyleViewProperty()
+    outline_bottom: StyleViewProperty[
+        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+    ] = StyleViewProperty()
+    outline_left: StyleViewProperty[
+        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+    ] = StyleViewProperty()
+
+    width: StyleViewProperty[
+        Scalar | None, float | Scalar | str | None
+    ] = StyleViewProperty()
+    height: StyleViewProperty[
+        Scalar | None, float | Scalar | str | None
+    ] = StyleViewProperty()
+    min_width: StyleViewProperty[
+        Scalar | None, float | Scalar | str | None
+    ] = StyleViewProperty()
+    min_height: StyleViewProperty[
+        Scalar | None, float | Scalar | str | None
+    ] = StyleViewProperty()
+
+    dock: StyleViewProperty[str, str | None] = StyleViewProperty()
+    docks: StyleViewProperty[
+        tuple[DockGroup, ...], Iterable[DockGroup] | None
+    ] = StyleViewProperty()
+
+    layer: StyleViewProperty[str, str | None] = StyleViewProperty()
+    layers: StyleViewProperty[
+        tuple[str, ...], str | tuple[str] | None
+    ] = StyleViewProperty()
+
 
 if __name__ == "__main__":
     styles = Styles()

@@ -145,6 +145,10 @@ class ScalarOffset(NamedTuple):
     x: Scalar
     y: Scalar
 
+    def __bool__(self) -> bool:
+        x, y = self
+        return bool(x.value or y.value)
+
     def __rich_repr__(self) -> rich.repr.Result:
         yield None, str(self.x)
         yield None, str(self.y)

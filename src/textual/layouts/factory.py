@@ -10,7 +10,6 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
-LayoutName = Literal["dock", "grid", "vertical"]
 LAYOUT_MAP = {"dock": DockLayout, "grid": GridLayout, "vertical": VerticalLayout}
 
 
@@ -18,7 +17,7 @@ class MissingLayout(Exception):
     pass
 
 
-def get_layout(name: LayoutName) -> Layout:
+def get_layout(name: str) -> Layout:
     """Get a named layout object.
 
     Args:

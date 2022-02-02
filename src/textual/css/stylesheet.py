@@ -132,11 +132,11 @@ class Stylesheet:
         _check_rule = self._check_rule
 
         # TODO: The line below breaks inline styles and animations
-        node.styles.reset()
+        node._css_styles.reset()
 
         # Collect default node CSS rules
-        for key, default_specificity, value in node._default_rules:
-            rule_attributes[key].append((default_specificity, value))
+        # for key, default_specificity, value in node._default_rules:
+        #     rule_attributes[key].append((default_specificity, value))
 
         # Collect the rules defined in the stylesheet
         for rule in self.rules:
@@ -153,7 +153,7 @@ class Stylesheet:
             for name, specificity_rules in rule_attributes.items()
         ]
 
-        node.styles.apply_rules(node_rules)
+        node._css_styles.apply_rules(node_rules)
 
     def update(self, root: DOMNode) -> None:
         """Update a node and its children."""

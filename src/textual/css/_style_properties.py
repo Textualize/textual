@@ -33,8 +33,13 @@ if TYPE_CHECKING:
     from ..layout import Layout
     from .styles import Styles
     from .styles import DockGroup
-    from .._box import BoxType
-    from ..layouts.factory import LayoutName
+
+from .._box import BoxType
+
+BorderDefinition = (
+    Sequence[tuple[BoxType, str | Color | Style] | None]
+    | tuple[BoxType, str | Color | Style]
+)
 
 
 class ScalarProperty:
@@ -228,9 +233,7 @@ class BorderProperty:
     def __set__(
         self,
         obj: Styles,
-        border: Sequence[tuple[BoxType, str | Color | Style] | None]
-        | tuple[BoxType, str | Color | Style]
-        | None,
+        border: BorderDefinition | None,
     ) -> None:
         """Set the border
 
@@ -443,7 +446,9 @@ class LayoutProperty:
     def __set_name__(self, owner: Styles, name: str) -> None:
         self._internal_name = f"_rule_{name}"
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Layout:
+    def __get__(
+        self, obj: Styles, objtype: type[Styles] | None = None
+    ) -> Layout | None:
         """
         Args:
             obj (Styles): The Styles object
@@ -453,13 +458,14 @@ class LayoutProperty:
         """
         return getattr(obj, self._internal_name)
 
-    def __set__(self, obj: Styles, layout: LayoutName | Layout):
+    def __set__(self, obj: Styles, layout: str | Layout):
         """
         Args:
             obj (Styles): The Styles object.
-            layout (LayoutName | Layout): The layout to use. You can supply a ``LayoutName``
-                (a string literal such as ``"dock"``) or a ``Layout`` object.
+            layout (str | Layout): The layout to use. You can supply a the name of the layout
+                or a ``Layout`` object.
         """
+
         from ..layouts.factory import get_layout, Layout  # Prevents circular import
 
         obj.refresh(layout=True)

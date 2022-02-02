@@ -18,7 +18,6 @@ from .types import Edge, Display, Visibility
 from .._duration import _duration_as_seconds
 from .._easing import EASING
 from ..geometry import Spacing, SpacingDimensions
-from ..layouts.factory import get_layout, LayoutName, MissingLayout, LAYOUT_MAP
 
 
 class StylesBuilder:
@@ -285,12 +284,14 @@ class StylesBuilder:
             self.styles._rule_offset = ScalarOffset(x, y)
 
     def process_layout(self, name: str, tokens: list[Token], important: bool) -> None:
+        from ..layouts.factory import get_layout, MissingLayout, LAYOUT_MAP
+
         if tokens:
             if len(tokens) != 1:
                 self.error(name, tokens[0], "unexpected tokens in declaration")
             else:
                 value = tokens[0].value
-                layout_name = cast(LayoutName, value)
+                layout_name = value
                 try:
                     self.styles._rule_layout = get_layout(layout_name)
                 except MissingLayout:

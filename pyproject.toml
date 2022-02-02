@@ -26,7 +26,7 @@ typing-extensions = { version = "^3.10.0", python = "<3.8" }
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.3"
-black = "^21.11b1"
+black = "^22.1.0"
 mypy = "^0.910"
 pytest-cov = "^2.12.1"
 mkdocs = "^1.2.1"

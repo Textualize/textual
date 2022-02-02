@@ -12,7 +12,8 @@ from ._node_list import NodeList
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from .css.errors import StyleValueError
-from .css.styles import Styles
+from .css.styles import Styles, StylesView
+from .css.parse import parse_declarations
 from .message_pump import MessagePump
 
 if TYPE_CHECKING:
@@ -38,16 +39,20 @@ class DOMNode(MessagePump):
         self._id = id
         self._classes: set[str] = set()
         self.children = NodeList()
-        self.styles: Styles = Styles(self)
+        self._css_styles: Styles = Styles(self)
+        self._inline_styles: Styles = Styles.parse(self.STYLES, repr(self))
+        self.styles = StylesView(self._css_styles, self._inline_styles)
         super().__init__()
-        self.default_styles = Styles.parse(self.STYLES, repr(self))
-        self._default_rules = self.default_styles.extract_rules((0, 0, 0))
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self._name, None
         yield "id", self._id, None
         if self._classes:
             yield "classes", self._classes
+
+    @property
+    def inline_styles(self) -> Styles:
+        return self._inline_styles
 
     @property
     def parent(self) -> DOMNode:
@@ -240,7 +245,7 @@ class DOMNode(MessagePump):
         from .widget import Widget
 
         for node in self.walk_children():
-            node.styles = Styles(node=node)
+            node._css_styles.reset()
             if isinstance(node, Widget):
                 # node.clear_render_cache()
                 node._repaint_required = True
@@ -289,6 +294,16 @@ class DOMNode(MessagePump):
 
         return DOMQuery(self, selector)
 
+    def set_styles(self, css: str | None = None, **styles) -> None:
+        """Set custom styles on this object."""
+        kwarg_css = "\n".join(
+            f"{key.replace('_', '-')}: {value}" for key, value in styles.items()
+        )
+        apply_css = f"{css or ''}\n{kwarg_css}\n"
+        new_styles = parse_declarations(apply_css, f"<custom styles for ${self!r}>")
+        self._inline_styles.merge(new_styles)
+        self.refresh()
+
     def has_class(self, *class_names: str) -> bool:
         return self._classes.issuperset(class_names)
 
@@ -309,3 +324,6 @@ class DOMNode(MessagePump):
         """Check for pseudo class (such as hover, focus etc)"""
         has_pseudo_classes = self.pseudo_classes.issuperset(class_names)
         return has_pseudo_classes
+
+    def refresh(self, repaint: bool = True, layout: bool = False) -> None:
+        raise NotImplementedError()

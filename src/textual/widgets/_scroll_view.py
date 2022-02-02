@@ -27,7 +27,7 @@ class ScrollView(View):
         name: str | None = None,
         style: StyleType = "",
         fluid: bool = True,
-        gutter: SpacingDimensions = (0, 0)
+        gutter: SpacingDimensions = (0, 0),
     ) -> None:
         from ..views import WindowView
 

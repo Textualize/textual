@@ -33,12 +33,12 @@ class View(Widget):
         )
         super().__init__(name=name, id=id)
 
-    def __init_subclass__(
-        cls, layout: Callable[[], Layout] | None = None, **kwargs
-    ) -> None:
-        if layout is not None:
-            cls.layout_factory = layout
-        super().__init_subclass__(**kwargs)
+    # def __init_subclass__(
+    #     cls, layout: Callable[[], Layout] | None = None, **kwargs
+    # ) -> None:
+    #     if layout is not None:
+    #         cls.layout_factory = layout
+    #     super().__init_subclass__(**kwargs)
 
     background: Reactive[str] = Reactive("")
     scroll_x: Reactive[int] = Reactive(0)
@@ -51,22 +51,26 @@ class View(Widget):
 
     @property
     def layout(self) -> Layout:
-        """Convenience property for accessing ``view.styles.layout``.
+        """Convenience property for accessing ``self.styles.layout``.
 
         Returns: The Layout associated with this view
         """
+        # self.log("I", self._inline_styles)
+        # self.log("C", self._css_styles)
+        # self.log("S", self.styles)
+        assert self.styles.layout
         return self.styles.layout
 
-    @layout.setter
-    def layout(self, new_value: Layout) -> None:
-        """Convenience property setter for setting ``view.styles.layout``.
-        Args:
-            new_value:
+    # @layout.setter
+    # def layout(self, new_value: Layout) -> None:
+    #     """Convenience property setter for setting ``view.styles.layout``.
+    #     Args:
+    #         new_value:
 
-        Returns:
-            None
-        """
-        self.styles.layout = new_value
+    #     Returns:
+    #         None
+    #     """
+    #     self.styles.layout = new_value
 
     @property
     def scroll(self) -> Offset:

@@ -12,12 +12,14 @@ if TYPE_CHECKING:
 
 
 class VerticalLayout(Layout):
+    name = "vertical"
+
     def __init__(
         self,
         *,
         auto_width: bool = False,
         z: int = 0,
-        gutter: SpacingDimensions = (0, 0, 0, 0)
+        gutter: SpacingDimensions = (0, 0, 0, 0),
     ):
         self.auto_width = auto_width
         self.z = z

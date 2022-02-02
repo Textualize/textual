@@ -48,7 +48,7 @@ class LayoutMap:
             return
 
         layout_offset = Offset(0, 0)
-        if widget.styles.has_offset:
+        if any(widget.styles.offset):
             layout_offset = widget.styles.offset.resolve(region.size, clip.size)
 
         self.widgets[widget] = RenderRegion(region + layout_offset, order, clip)
