@@ -232,6 +232,8 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
             but with variables resolved.
     """
     variables: dict[str, list[Token]] = defaultdict(list)
+    # TODO: Trim whitespace before inserting into variables dict instead
+    #  of on reading from it.
     while tokens:
         token = next(tokens, None)
         if token is None:
@@ -241,22 +243,23 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
             yield token
 
             # Lookahead for the variable value tokens
+            leading_whitespace = True
             while True:
                 token = next(tokens, None)
                 if not token:
                     break
-                if token.name == "variable_value_end":
+                elif leading_whitespace and token.name == "whitespace":
+                    yield token
+                    leading_whitespace = False
+                elif token.name == "variable_value_end":
                     yield token
                     break
                 # For variables referring to other variables
-                if token.name == "variable_ref":
+                elif token.name == "variable_ref":
                     ref_name = token.value[1:]
                     if ref_name in variables:
-                        variables[variable_name].extend(variables[ref_name])
-                        variable_tokens = dropwhile(
-                            _is_whitespace,
-                            variables[ref_name],
-                        )
+                        variable_tokens = variables[variable_name]
+                        variable_tokens.extend(variables[ref_name])
                         yield from variable_tokens
                     else:
                         raise _unresolved(
@@ -268,11 +271,7 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
         elif token.name == "variable_ref":
             variable_name = token.value[1:]  # Trim the $, so $x -> x
             if variable_name in variables:
-                variable_tokens = dropwhile(
-                    _is_whitespace,
-                    variables[variable_name],
-                )
-                yield from variable_tokens
+                yield from variables[variable_name]
             else:
                 raise _unresolved(variable_name=variable_name, location=token.location)
         else:
