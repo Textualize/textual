@@ -67,7 +67,7 @@ class StylesBuilder:
 
     def process_display(self, name: str, tokens: list[Token], important: bool) -> None:
         for token in tokens:
-            name, value, _, _, location = token
+            name, value, _, _, location, _ = token
 
             if name == "token":
                 value = value.lower()
@@ -110,7 +110,7 @@ class StylesBuilder:
         self, name: str, tokens: list[Token], important: bool
     ) -> None:
         for token in tokens:
-            name, value, _, _, location = token
+            name, value, _, _, location, _ = token
             if name == "token":
                 value = value.lower()
                 if value in VALID_VISIBILITY:
@@ -128,7 +128,7 @@ class StylesBuilder:
         space: list[int] = []
         append = space.append
         for token in tokens:
-            (token_name, value, _, _, location) = token
+            token_name, value, _, _, location, _ = token
             if token_name in ("number", "scalar"):
                 try:
                     append(int(value))
@@ -158,7 +158,7 @@ class StylesBuilder:
         style_tokens: list[str] = []
         append = style_tokens.append
         for token in tokens:
-            token_name, value, _, _, _ = token
+            token_name, value, _, _, _, _ = token
             if token_name == "token":
                 if value in VALID_BORDER:
                     border_type = value

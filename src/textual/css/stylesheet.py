@@ -47,11 +47,8 @@ class StylesheetErrors:
         for rule in self.stylesheet.rules:
             for token, message in rule.errors:
                 line_no, col_no = token.location
-
                 append(highlighter(f"{token.path or '<unknown>'}:{line_no}"))
-                append(
-                    self._get_snippet(token.code, line_no, col_no, len(token.value) + 1)
-                )
+                append(self._get_snippet(token.code, line_no, col_no, token.length + 1))
                 append(highlighter(Text(message, "red")))
                 append("")
         return Group(*errors)

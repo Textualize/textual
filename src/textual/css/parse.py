@@ -260,8 +260,13 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
                         reference_tokens = variables[ref_name]
                         variable_tokens.extend(reference_tokens)
                         ref_location = token.location
+                        ref_length = token.length
                         for token in reference_tokens:
-                            yield token.with_location(location=ref_location)
+
+                            yield token.as_reference(
+                                location=ref_location,
+                                length=ref_length,
+                            )
                     else:
                         raise _unresolved(
                             variable_name=ref_name, location=token.location
@@ -274,8 +279,12 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
             if variable_name in variables:
                 variable_tokens = variables[variable_name]
                 ref_location = token.location
+                ref_length = token.length
                 for token in variable_tokens:
-                    yield token.with_location(ref_location)
+                    yield token.as_reference(
+                        location=ref_location,
+                        length=ref_length,
+                    )
             else:
                 raise _unresolved(variable_name=variable_name, location=token.location)
         else:

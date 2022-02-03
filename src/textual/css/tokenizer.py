@@ -4,6 +4,7 @@ import re
 from typing import NamedTuple
 
 import rich.repr
+from rich.cells import cell_len
 
 
 class EOFError(Exception):
@@ -45,9 +46,17 @@ class Token(NamedTuple):
     path: str
     code: str
     location: tuple[int, int]
+    length: int
 
-    def with_location(self, location: tuple[int, int]) -> "Token":
-        return Token(**self, location=location)
+    def as_reference(self, location: tuple[int, int], length: int) -> "Token":
+        return Token(
+            name=self.name,
+            value=self.value,
+            path=self.path,
+            code=self.code,
+            location=location,
+            length=length,
+        )
 
     def __str__(self) -> str:
         return self.value
@@ -57,6 +66,7 @@ class Token(NamedTuple):
         yield "value", self.value
         yield "path", self.path
         yield "location", self.location
+        yield "length", self.length
 
 
 class Tokenizer:
@@ -72,7 +82,9 @@ class Tokenizer:
         col_no = self.col_no
         if line_no >= len(self.lines):
             if expect._expect_eof:
-                return Token("eof", "", self.path, self.code, (line_no, col_no))
+                return Token(
+                    "eof", "", self.path, self.code, (line_no, col_no), length=0
+                )
             else:
                 raise EOFError()
         line = self.lines[line_no]
@@ -90,7 +102,9 @@ class Tokenizer:
             if value is not None:
                 break
 
-        token = Token(name, value, self.path, self.code, (line_no, col_no))
+        token = Token(
+            name, value, self.path, self.code, (line_no, col_no), length=cell_len(value)
+        )
         col_no += len(value)
         if col_no >= len(line):
             line_no += 1
