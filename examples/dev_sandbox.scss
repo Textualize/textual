@@ -1,0 +1,58 @@
+/* CSS file for dev_sandbox.py */
+
+$text: #f0f0f0;
+$primary: #021720;
+$secondary:#95d52a;
+$background: #262626;
+
+$primary-style: $text on $background;
+$animation-speed: 500ms;
+$animation: offset $animation-speed in_out_cubic;
+
+App > View {
+  docks: side=left/1;
+  text: on $foo;
+}
+
+Widget:hover {
+  outline: heavy;
+  text: bold !important;
+}
+
+#sidebar {
+  text: $primary-style;
+  dock: side;
+  width: 30;
+  offset-x: -100%;
+  transition: $animation;
+  border-right: outer $secondary;
+}
+
+#sidebar.-active {
+  offset-x: 0;
+}
+
+#header {
+  text: $text on $primary;
+  height: 3;
+  border-bottom: hkey $secondary;
+}
+
+#header.-visible {
+  visibility: hidden;
+}
+
+#content {
+  text: $text on $background;
+  offset-y: -3;
+}
+
+#content.-content-visible {
+  visibility: hidden;
+}
+
+#footer {
+  text: $text on $primary;
+  height: 3;
+  border-top: hkey $secondary;
+}

@@ -29,4 +29,4 @@ class BasicApp(App):
         )
 
 
-BasicApp.run(css_file="test_app.css", watch_css=True, log="textual.log")
+BasicApp.run(css_file="dev_sandbox.scss", watch_css=True, log="textual.log")

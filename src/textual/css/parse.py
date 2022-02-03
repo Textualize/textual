@@ -211,9 +211,10 @@ def _is_whitespace(token: Token) -> bool:
 def _unresolved(
     variable_name: str, location: tuple[int, int]
 ) -> UnresolvedVariableError:
+    line_no, col = location
     return UnresolvedVariableError(
         f"variable ${variable_name} is not defined. "
-        f"attempted reference at location {location!r}"
+        f"attempted reference at location on line {line_no}, column {col}."
     )
 
 
