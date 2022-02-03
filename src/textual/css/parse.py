@@ -232,8 +232,6 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
             but with variables resolved.
     """
     variables: dict[str, list[Token]] = defaultdict(list)
-    # TODO: Trim whitespace before inserting into variables dict instead
-    #  of on reading from it.
     while tokens:
         token = next(tokens, None)
         if token is None:
