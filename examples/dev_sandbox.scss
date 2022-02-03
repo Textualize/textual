@@ -11,7 +11,7 @@ $animation: offset $animation-speed in_out_cubic;
 
 App > View {
   docks: side=left/1;
-  text: on $foo;
+  text: $animation;
 }
 
 Widget:hover {

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from collections import defaultdict
 from functools import lru_cache
-from itertools import dropwhile
 from typing import Iterator, Iterable
 
 from rich import print
@@ -259,8 +258,9 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
                     ref_name = token.value[1:]
                     if ref_name in variables:
                         variable_tokens = variables[variable_name]
-                        variable_tokens.extend(variables[ref_name])
-                        yield from variable_tokens
+                        reference_tokens = variables[ref_name]
+                        variable_tokens.extend(reference_tokens)
+                        yield from reference_tokens
                     else:
                         raise _unresolved(
                             variable_name=ref_name, location=token.location

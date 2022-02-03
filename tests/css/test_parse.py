@@ -74,6 +74,42 @@ class TestVariableReferenceSubstitution:
             Token(name='declaration_set_end', value='}', path='', code=css, location=(2, 20))
         ]
 
+    def test_multi_value_variable(self):
+        css = "$x: 2 4\n$y: 6 $x 2\n.thing { border: $y }"
+        assert list(substitute_references(tokenize(css, ""))) == [
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3)),
+            Token(name='number', value='2', path='', code=css, location=(0, 4)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 5)),
+            Token(name='number', value='4', path='', code=css, location=(0, 6)),
+            Token(name='variable_value_end', value='\n', path='', code=css, location=(0, 7)),
+            Token(name='variable_name', value='$y:', path='', code=css, location=(1, 0)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 3)),
+            Token(name='number', value='6', path='', code=css, location=(1, 4)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 5)),
+            Token(name='number', value='2', path='', code=css, location=(0, 4)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 5)),
+            Token(name='number', value='4', path='', code=css, location=(0, 6)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 8)),
+            Token(name='number', value='2', path='', code=css, location=(1, 9)),
+            Token(name='variable_value_end', value='\n', path='', code=css, location=(1, 10)),
+            Token(name='selector_start_class', value='.thing', path='', code=css, location=(2, 0)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 6)),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(2, 7)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 8)),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(2, 9)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 16)),
+            Token(name='number', value='6', path='', code=css, location=(1, 4)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 5)),
+            Token(name='number', value='2', path='', code=css, location=(0, 4)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 5)),
+            Token(name='number', value='4', path='', code=css, location=(0, 6)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 8)),
+            Token(name='number', value='2', path='', code=css, location=(1, 9)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 19)),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(2, 20))
+        ]
+
 
 class TestParseLayout:
     def test_valid_layout_name(self):
