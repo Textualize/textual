@@ -6,7 +6,7 @@ from textual.css.parse import substitute_references
 from textual.css.scalar import Scalar, Unit
 from textual.css.stylesheet import Stylesheet, StylesheetParseError
 from textual.css.tokenize import tokenize
-from textual.css.tokenizer import Token
+from textual.css.tokenizer import Token, ReferencedAt
 from textual.css.transition import Transition
 from textual.layouts.dock import DockLayout
 
@@ -16,35 +16,38 @@ class TestVariableReferenceSubstitution:
         css = "$x: 1; #some-widget{border: $x;}"
         variables = substitute_references(tokenize(css, ""))
         assert list(variables) == [
-            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), length=3),
-            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3), length=1),
-            Token(name='number', value='1', path='', code=css, location=(0, 4), length=1),
-            Token(name='variable_value_end', value=';', path='', code=css, location=(0, 5), length=1),
-            Token(name='whitespace', value=' ', path='', code=css, location=(0, 6), length=1),
-            Token(name='selector_start_id', value='#some-widget', path='', code=css, location=(0, 7), length=12),
-            Token(name='declaration_set_start', value='{', path='', code=css, location=(0, 19), length=1),
-            Token(name='declaration_name', value='border:', path='', code=css, location=(0, 20), length=7),
-            Token(name='whitespace', value=' ', path='', code=css, location=(0, 27), length=1),
-            Token(name='number', value='1', path='', code=css, location=(0, 28), length=2),
-            Token(name='declaration_end', value=';', path='', code=css, location=(0, 30), length=1),
-            Token(name='declaration_set_end', value='}', path='', code=css, location=(0, 31), length=1)
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3), referenced_at=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 4), referenced_at=None),
+            Token(name='variable_value_end', value=';', path='', code=css, location=(0, 5), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 6), referenced_at=None),
+            Token(name='selector_start_id', value='#some-widget', path='', code=css, location=(0, 7),
+                  referenced_at=None),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(0, 19), referenced_at=None),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(0, 20), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 27), referenced_at=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 4),
+                  referenced_at=ReferencedAt(name='x', location=(0, 28), length=2)),
+            Token(name='declaration_end', value=';', path='', code=css, location=(0, 30), referenced_at=None),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(0, 31), referenced_at=None)
         ]
 
     def test_simple_reference_no_whitespace(self):
         css = "$x:1; #some-widget{border: $x;}"
         variables = substitute_references(tokenize(css, ""))
         assert list(variables) == [
-            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), length=3),
-            Token(name='number', value='1', path='', code=css, location=(0, 3), length=1),
-            Token(name='variable_value_end', value=';', path='', code=css, location=(0, 4), length=1),
-            Token(name='whitespace', value=' ', path='', code=css, location=(0, 5), length=1),
-            Token(name='selector_start_id', value='#some-widget', path='', code=css, location=(0, 6), length=12),
-            Token(name='declaration_set_start', value='{', path='', code=css, location=(0, 18), length=1),
-            Token(name='declaration_name', value='border:', path='', code=css, location=(0, 19), length=7),
-            Token(name='whitespace', value=' ', path='', code=css, location=(0, 26), length=1),
-            Token(name='number', value='1', path='', code=css, location=(0, 27), length=2),
-            Token(name='declaration_end', value=';', path='', code=css, location=(0, 29), length=1),
-            Token(name='declaration_set_end', value='}', path='', code=css, location=(0, 30), length=1)
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), referenced_at=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 3), referenced_at=None),
+            Token(name='variable_value_end', value=';', path='', code=css, location=(0, 4), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 5), referenced_at=None),
+            Token(name='selector_start_id', value='#some-widget', path='', code=css, location=(0, 6),
+                  referenced_at=None),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(0, 18), referenced_at=None),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(0, 19), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 26), referenced_at=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 3), referenced_at=ReferencedAt(name='x', location=(0, 27), length=2)),
+            Token(name='declaration_end', value=';', path='', code=css, location=(0, 29), referenced_at=None),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(0, 30), referenced_at=None)
         ]
 
     def test_undefined_variable(self):
@@ -55,59 +58,69 @@ class TestVariableReferenceSubstitution:
     def test_transitive_reference(self):
         css = "$x: 1\n$y: $x\n.thing { border: $y }"
         assert list(substitute_references(tokenize(css, ""))) == [
-            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), length=3),
-            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3), length=1),
-            Token(name='number', value='1', path='', code=css, location=(0, 4), length=1),
-            Token(name='variable_value_end', value='\n', path='', code=css, location=(0, 5), length=1),
-            Token(name='variable_name', value='$y:', path='', code=css, location=(1, 0), length=3),
-            Token(name='whitespace', value=' ', path='', code=css, location=(1, 3), length=1),
-            Token(name='number', value='1', path='', code=css, location=(1, 4), length=2),
-            Token(name='variable_value_end', value='\n', path='', code=css, location=(1, 6), length=1),
-            Token(name='selector_start_class', value='.thing', path='', code=css, location=(2, 0), length=6),
-            Token(name='whitespace', value=' ', path='', code=css, location=(2, 6), length=1),
-            Token(name='declaration_set_start', value='{', path='', code=css, location=(2, 7), length=1),
-            Token(name='whitespace', value=' ', path='', code=css, location=(2, 8), length=1),
-            Token(name='declaration_name', value='border:', path='', code=css, location=(2, 9), length=7),
-            Token(name='whitespace', value=' ', path='', code=css, location=(2, 16), length=1),
-            Token(name='number', value='1', path='', code=css, location=(2, 17), length=2),
-            Token(name='whitespace', value=' ', path='', code=css, location=(2, 19), length=1),
-            Token(name='declaration_set_end', value='}', path='', code=css, location=(2, 20), length=1)
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3), referenced_at=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 4), referenced_at=None),
+            Token(name='variable_value_end', value='\n', path='', code=css, location=(0, 5), referenced_at=None),
+            Token(name='variable_name', value='$y:', path='', code=css, location=(1, 0), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 3), referenced_at=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 4), referenced_at=ReferencedAt(name='x', location=(1, 4), length=2)),
+            Token(name='variable_value_end', value='\n', path='', code=css, location=(1, 6), referenced_at=None),
+            Token(name='selector_start_class', value='.thing', path='', code=css, location=(2, 0), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 6), referenced_at=None),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(2, 7), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 8), referenced_at=None),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(2, 9), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 16), referenced_at=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 4), referenced_at=ReferencedAt(name='y', location=(2, 17), length=2)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 19), referenced_at=None),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(2, 20), referenced_at=None)
         ]
 
     def test_multi_value_variable(self):
         css = "$x: 2 4\n$y: 6 $x 2\n.thing { border: $y }"
         assert list(substitute_references(tokenize(css, ""))) == [
-            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), length=3),
-            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3), length=1),
-            Token(name='number', value='2', path='', code=css, location=(0, 4), length=1),
-            Token(name='whitespace', value=' ', path='', code=css, location=(0, 5), length=1),
-            Token(name='number', value='4', path='', code=css, location=(0, 6), length=1),
-            Token(name='variable_value_end', value='\n', path='', code=css, location=(0, 7), length=1),
-            Token(name='variable_name', value='$y:', path='', code=css, location=(1, 0), length=3),
-            Token(name='whitespace', value=' ', path='', code=css, location=(1, 3), length=1),
-            Token(name='number', value='6', path='', code=css, location=(1, 4), length=1),
-            Token(name='whitespace', value=' ', path='', code=css, location=(1, 5), length=1),
-            Token(name='number', value='2', path='', code=css, location=(1, 6), length=2),
-            Token(name='whitespace', value=' ', path='', code=css, location=(1, 6), length=2),
-            Token(name='number', value='4', path='', code=css, location=(1, 6), length=2),
-            Token(name='whitespace', value=' ', path='', code=css, location=(1, 8), length=1),
-            Token(name='number', value='2', path='', code=css, location=(1, 9), length=1),
-            Token(name='variable_value_end', value='\n', path='', code=css, location=(1, 10), length=1),
-            Token(name='selector_start_class', value='.thing', path='', code=css, location=(2, 0), length=6),
-            Token(name='whitespace', value=' ', path='', code=css, location=(2, 6), length=1),
-            Token(name='declaration_set_start', value='{', path='', code=css, location=(2, 7), length=1),
-            Token(name='whitespace', value=' ', path='', code=css, location=(2, 8), length=1),
-            Token(name='declaration_name', value='border:', path='', code=css, location=(2, 9), length=7),
-            Token(name='whitespace', value=' ', path='', code=css, location=(2, 16), length=1),
-            Token(name='number', value='6', path='', code=css, location=(2, 17), length=2),
-            Token(name='whitespace', value=' ', path='', code=css, location=(2, 17), length=2),
-            Token(name='number', value='2', path='', code=css, location=(2, 17), length=2),
-            Token(name='whitespace', value=' ', path='', code=css, location=(2, 17), length=2),
-            Token(name='number', value='4', path='', code=css, location=(2, 17), length=2),
-            Token(name='whitespace', value=' ', path='', code=css, location=(2, 17), length=2),
-            Token(name='number', value='2', path='', code=css, location=(2, 17), length=2),
-            Token(name='whitespace', value=' ', path='', code=css, location=(2, 19), length=1),
-            Token(name='declaration_set_end', value='}', path='', code=css, location=(2, 20), length=1)
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3), referenced_at=None),
+            Token(name='number', value='2', path='', code=css, location=(0, 4), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 5), referenced_at=None),
+            Token(name='number', value='4', path='', code=css, location=(0, 6), referenced_at=None),
+            Token(name='variable_value_end', value='\n', path='', code=css, location=(0, 7), referenced_at=None),
+            Token(name='variable_name', value='$y:', path='', code=css, location=(1, 0), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 3), referenced_at=None),
+            Token(name='number', value='6', path='', code=css, location=(1, 4), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 5), referenced_at=None),
+            Token(name='number', value='2', path='', code=css, location=(0, 4),
+                  referenced_at=ReferencedAt(name='x', location=(1, 6), length=2)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 5),
+                  referenced_at=ReferencedAt(name='x', location=(1, 6), length=2)),
+            Token(name='number', value='4', path='', code=css, location=(0, 6),
+                  referenced_at=ReferencedAt(name='x', location=(1, 6), length=2)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 8), referenced_at=None),
+            Token(name='number', value='2', path='', code=css, location=(1, 9), referenced_at=None),
+            Token(name='variable_value_end', value='\n', path='', code=css, location=(1, 10), referenced_at=None),
+            Token(name='selector_start_class', value='.thing', path='', code=css, location=(2, 0), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 6), referenced_at=None),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(2, 7), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 8), referenced_at=None),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(2, 9), referenced_at=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 16), referenced_at=None),
+            Token(name='number', value='6', path='', code=css, location=(1, 4),
+                  referenced_at=ReferencedAt(name='y', location=(2, 17), length=2)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 5),
+                  referenced_at=ReferencedAt(name='y', location=(2, 17), length=2)),
+            Token(name='number', value='2', path='', code=css, location=(0, 4),
+                  referenced_at=ReferencedAt(name='y', location=(2, 17), length=2)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 5),
+                  referenced_at=ReferencedAt(name='y', location=(2, 17), length=2)),
+            Token(name='number', value='4', path='', code=css, location=(0, 6),
+                  referenced_at=ReferencedAt(name='y', location=(2, 17), length=2)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 8),
+                  referenced_at=ReferencedAt(name='y', location=(2, 17), length=2)),
+            Token(name='number', value='2', path='', code=css, location=(1, 9),
+                  referenced_at=ReferencedAt(name='y', location=(2, 17), length=2)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 19), referenced_at=None),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(2, 20), referenced_at=None)
         ]
 
 
