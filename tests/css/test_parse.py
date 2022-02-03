@@ -30,6 +30,23 @@ class TestVariableReferenceSubstitution:
             Token(name='declaration_set_end', value='}', path='', code=css, location=(0, 31))
         ]
 
+    def test_simple_reference_no_whitespace(self):
+        css = "$x:1; #some-widget{border: $x;}"
+        variables = substitute_references(tokenize(css, ""))
+        assert list(variables) == [
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0)),
+            Token(name='number', value='1', path='', code=css, location=(0, 3)),
+            Token(name='variable_value_end', value=';', path='', code=css, location=(0, 4)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 5)),
+            Token(name='selector_start_id', value='#some-widget', path='', code=css, location=(0, 6)),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(0, 18)),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(0, 19)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 26)),
+            Token(name='number', value='1', path='', code=css, location=(0, 3)),
+            Token(name='declaration_end', value=';', path='', code=css, location=(0, 29)),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(0, 30))
+        ]
+
     def test_undefined_variable(self):
         css = ".thing { border: $not-defined; }"
         with pytest.raises(UnresolvedVariableError):

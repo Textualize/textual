@@ -242,7 +242,8 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
             variable_name = token.value[1:-1]  # Trim the $ and the :, i.e. "$x:" -> "x"
             yield token
 
-            # Lookahead for the variable value tokens
+            # Store the tokens for any variable definitions, and substitute
+            # any variable references we encounter with them.
             leading_whitespace = True
             while True:
                 token = next(tokens, None)
