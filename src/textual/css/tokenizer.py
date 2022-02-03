@@ -46,6 +46,15 @@ class Token(NamedTuple):
     code: str
     location: tuple[int, int]
 
+    def with_location(self, location: tuple[int, int]) -> "Token":
+        return Token(
+            name=self.name,
+            value=self.value,
+            path=self.path,
+            code=self.code,
+            location=location,
+        )
+
     def __str__(self) -> str:
         return self.value
 

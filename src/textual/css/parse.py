@@ -210,10 +210,9 @@ def _is_whitespace(token: Token) -> bool:
 def _unresolved(
     variable_name: str, location: tuple[int, int]
 ) -> UnresolvedVariableError:
-    line_no, col = location
+    line_idx, col_idx = location
     return UnresolvedVariableError(
-        f"variable ${variable_name} is not defined. "
-        f"attempted reference at line {line_no}, column {col}."
+        f"reference to undefined variable '${variable_name}' at line {line_idx + 1}, column {col_idx + 1}."
     )
 
 
@@ -260,7 +259,9 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
                         variable_tokens = variables[variable_name]
                         reference_tokens = variables[ref_name]
                         variable_tokens.extend(reference_tokens)
-                        yield from reference_tokens
+                        ref_location = token.location
+                        for token in reference_tokens:
+                            yield token.with_location(location=ref_location)
                     else:
                         raise _unresolved(
                             variable_name=ref_name, location=token.location
@@ -271,7 +272,10 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
         elif token.name == "variable_ref":
             variable_name = token.value[1:]  # Trim the $, so $x -> x
             if variable_name in variables:
-                yield from variables[variable_name]
+                variable_tokens = variables[variable_name]
+                ref_location = token.location
+                for token in variable_tokens:
+                    yield token.with_location(ref_location)
             else:
                 raise _unresolved(variable_name=variable_name, location=token.location)
         else:
