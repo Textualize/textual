@@ -214,7 +214,7 @@ def _unresolved(
     line_no, col = location
     return UnresolvedVariableError(
         f"variable ${variable_name} is not defined. "
-        f"attempted reference at location on line {line_no}, column {col}."
+        f"attempted reference at line {line_no}, column {col}."
     )
 
 
