@@ -305,7 +305,9 @@ class StylesBuilder:
         try:
             style = Style.parse(style_definition)
         except Exception as error:
-            self.error(name, tokens[0], f"failed to parse style; {error}")
+            self.error(
+                name, tokens[0], f"failed to parse style {style_definition!r}; {error}"
+            )
         if important:
             self.styles.important.update(
                 {"text_style", "text_background", "text_color"}

@@ -39,6 +39,12 @@ class Expect:
         yield from zip(self.names, self.regexes)
 
 
+class ReferencedAt(NamedTuple):
+    name: str
+    location: tuple[int, int]
+    length: int
+
+
 @rich.repr.auto
 class Token(NamedTuple):
     name: str
@@ -46,16 +52,16 @@ class Token(NamedTuple):
     path: str
     code: str
     location: tuple[int, int]
-    length: int
+    referenced_at: ReferencedAt | None
 
-    def as_reference(self, location: tuple[int, int], length: int) -> "Token":
+    def ref(self, at: ReferencedAt | None) -> "Token":
         return Token(
             name=self.name,
             value=self.value,
             path=self.path,
             code=self.code,
-            location=location,
-            length=length,
+            location=self.location,
+            referenced_at=at,
         )
 
     def __str__(self) -> str:
@@ -66,7 +72,7 @@ class Token(NamedTuple):
         yield "value", self.value
         yield "path", self.path
         yield "location", self.location
-        yield "length", self.length
+        yield "referenced_at", self.referenced_at
 
 
 class Tokenizer:
@@ -82,9 +88,7 @@ class Tokenizer:
         col_no = self.col_no
         if line_no >= len(self.lines):
             if expect._expect_eof:
-                return Token(
-                    "eof", "", self.path, self.code, (line_no, col_no), length=0
-                )
+                return Token("eof", "", self.path, self.code, (line_no, col_no), None)
             else:
                 raise EOFError()
         line = self.lines[line_no]
@@ -103,7 +107,7 @@ class Tokenizer:
                 break
 
         token = Token(
-            name, value, self.path, self.code, (line_no, col_no), length=cell_len(value)
+            name, value, self.path, self.code, (line_no, col_no), referenced_at=None
         )
         col_no += len(value)
         if col_no >= len(line):

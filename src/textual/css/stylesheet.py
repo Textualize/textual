@@ -6,6 +6,7 @@ import os
 from typing import Iterable
 
 import rich.repr
+from rich.cells import cell_len
 from rich.highlighter import ReprHighlighter
 from rich.panel import Panel
 from rich.text import Text
@@ -46,9 +47,22 @@ class StylesheetErrors:
         append = errors.append
         for rule in self.stylesheet.rules:
             for token, message in rule.errors:
-                line_no, col_no = token.location
-                append(highlighter(f"{token.path or '<unknown>'}:{line_no}"))
-                append(self._get_snippet(token.code, line_no, col_no, token.length + 1))
+                if token.referenced_at:
+                    line_no, col_no = token.referenced_at.location
+                    append(highlighter(f"{token.path or '<unknown>'}:{line_no}"))
+                    append(
+                        self._get_snippet(
+                            token.code, line_no, col_no, token.referenced_at.length + 1
+                        )
+                    )
+                else:
+                    line_no, col_no = token.location
+                    append(highlighter(f"{token.path or '<unknown>'}:{line_no}"))
+                    append(
+                        self._get_snippet(
+                            token.code, line_no, col_no, cell_len(token.value) + 1
+                        )
+                    )
                 append(highlighter(Text(message, "red")))
                 append("")
         return Group(*errors)

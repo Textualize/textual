@@ -5,6 +5,7 @@ from functools import lru_cache
 from typing import Iterator, Iterable
 
 from rich import print
+from rich.cells import cell_len
 
 from textual.css.errors import UnresolvedVariableError
 from ._styles_builder import StylesBuilder, DeclarationError
@@ -18,7 +19,7 @@ from .model import (
 )
 from .styles import Styles
 from .tokenize import tokenize, tokenize_declarations, Token
-from .tokenizer import EOFError
+from .tokenizer import EOFError, ReferencedAt
 
 SELECTOR_MAP: dict[str, tuple[SelectorType, tuple[int, int, int]]] = {
     "selector": (SelectorType.TYPE, (0, 0, 1)),
@@ -260,12 +261,14 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
                         reference_tokens = variables[ref_name]
                         variable_tokens.extend(reference_tokens)
                         ref_location = token.location
-                        ref_length = token.length
+                        ref_length = cell_len(token.value)
                         for token in reference_tokens:
-
-                            yield token.as_reference(
-                                location=ref_location,
-                                length=ref_length,
+                            yield token.ref(
+                                ReferencedAt(
+                                    name=ref_name,
+                                    location=ref_location,
+                                    length=ref_length,
+                                )
                             )
                     else:
                         raise _unresolved(
@@ -279,11 +282,14 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
             if variable_name in variables:
                 variable_tokens = variables[variable_name]
                 ref_location = token.location
-                ref_length = token.length
+                ref_length = cell_len(token.value)
                 for token in variable_tokens:
-                    yield token.as_reference(
-                        location=ref_location,
-                        length=ref_length,
+                    yield token.ref(
+                        ReferencedAt(
+                            name=variable_name,
+                            location=ref_location,
+                            length=ref_length,
+                        )
                     )
             else:
                 raise _unresolved(variable_name=variable_name, location=token.location)
