@@ -15,9 +15,8 @@ from .widget import Widget
 
 @rich.repr.auto
 class View(Widget):
-    STYLES = """
+    DEFAULT_STYLES = """
         layout: dock;
-        docks: main=top;
     """
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
@@ -55,9 +54,7 @@ class View(Widget):
 
         Returns: The Layout associated with this view
         """
-        # self.log("I", self._inline_styles)
-        # self.log("C", self._css_styles)
-        # self.log("S", self.styles)
+
         assert self.styles.layout
         return self.styles.layout
 

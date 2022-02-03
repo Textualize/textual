@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from functools import lru_cache
+from operator import attrgetter
 from typing import Any, Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
@@ -47,6 +48,22 @@ from .._box import BoxType
 if TYPE_CHECKING:
     from ..layout import Layout
     from ..dom import DOMNode
+
+
+_text_getter = attrgetter(
+    "_rule_text_color", "_rule_text_background", "_rule_text_style"
+)
+
+_border_getter = attrgetter(
+    "_rule_border_top", "_rule_border_right", "_rule_border_bottom", "_rule_border_left"
+)
+
+_outline_getter = attrgetter(
+    "_rule_outline_top",
+    "_rule_outline_right",
+    "_rule_outline_bottom",
+    "_rule_outline_left",
+)
 
 
 class DockGroup(NamedTuple):
@@ -103,7 +120,15 @@ class Styles:
 
     def has_rule(self, rule: str) -> bool:
         """Check if a rule has been set."""
-        return getattr(self, f"_rule_{rule}") != None
+        if rule in RULE_NAMES and getattr(self, f"_rule_{rule}") is not None:
+            return True
+        if rule == "text":
+            return not all(rule is None for rule in _text_getter(self))
+        if rule == "border" and any(self.border):
+            return not all(rule is None for rule in _border_getter(self))
+        if rule == "outline" and any(self.outline):
+            return not all(rule is None for rule in _outline_getter(self))
+        return False
 
     display = StringEnumProperty(VALID_DISPLAY, "block")
     visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
@@ -164,10 +189,11 @@ class Styles:
 
     @classmethod
     @lru_cache(maxsize=1024)
-    def parse(cls, css: str, path: str) -> Styles:
+    def parse(cls, css: str, path: str, *, node: DOMNode = None) -> Styles:
         from .parse import parse_declarations
 
         styles = parse_declarations(css, path)
+        styles.node = node
         return styles
 
     def __textual_animation__(
@@ -345,11 +371,11 @@ class Styles:
                 _type, style = self._rule_outline_left
                 append_declaration("outline-left", f"{_type} {style}")
 
-        if self.offset:
+        if self._rule_offset is not None:
             x, y = self.offset
             append_declaration("offset", f"{x} {y}")
         if self._rule_dock:
-            append_declaration("dock-group", self._rule_dock)
+            append_declaration("dock", self._rule_dock)
         if self._rule_docks:
             append_declaration(
                 "docks",
@@ -363,6 +389,7 @@ class Styles:
         if self._rule_layer is not None:
             append_declaration("layer", self.layer)
         if self._rule_layout is not None:
+            assert self.layout is not None
             append_declaration("layout", self.layout.name)
         if self._rule_text_color or self._rule_text_background or self._rule_text_style:
             append_declaration("text", str(self.text))
@@ -415,10 +442,9 @@ class StyleViewProperty(Generic[GetType, SetType]):
     def __get__(
         self, obj: StylesView, objtype: type[StylesView] | None = None
     ) -> GetType:
-        styles_value = getattr(obj._inline_styles, self._internal_name, None)
-        if styles_value is None:
-            return getattr(obj._base_styles, self._name)
-        return styles_value
+        if obj._inline_styles.has_rule(self._name):
+            return getattr(obj._inline_styles, self._name)
+        return getattr(obj._base_styles, self._name)
 
 
 @rich.repr.auto
@@ -448,6 +474,17 @@ class StylesView:
         """Reset the inline styles."""
         self._inline_styles.reset()
 
+    def refresh(self, layout: bool = False) -> None:
+        self._inline_styles.refresh(layout=layout)
+
+    def merge(self, other: Styles) -> None:
+        """Merge values from another Styles.
+
+        Args:
+            other (Styles): A Styles object.
+        """
+        self._inline_styles.merge(other)
+
     def check_refresh(self) -> tuple[bool, bool]:
         """Check if the Styles must be refreshed.
 
@@ -475,10 +512,11 @@ class StylesView:
     display: StyleViewProperty[str, str | None] = StyleViewProperty()
     visibility: StyleViewProperty[str, str | None] = StyleViewProperty()
     layout: StyleViewProperty[Layout | None, str | Layout] = StyleViewProperty()
+
     text: StyleViewProperty[Style, Style | str | None] = StyleViewProperty()
-    color: StyleViewProperty[Color, Color | str | None] = StyleViewProperty()
-    background: StyleViewProperty[Color, Color | str | None] = StyleViewProperty()
-    style: StyleViewProperty[Style, str | None] = StyleViewProperty()
+    text_color: StyleViewProperty[Color, Color | str | None] = StyleViewProperty()
+    text_background: StyleViewProperty[Color, Color | str | None] = StyleViewProperty()
+    text_style: StyleViewProperty[Style, str | None] = StyleViewProperty()
 
     padding: StyleViewProperty[Spacing, SpacingDimensions] = StyleViewProperty()
     margin: StyleViewProperty[Spacing, SpacingDimensions] = StyleViewProperty()
@@ -536,6 +574,8 @@ class StylesView:
     layers: StyleViewProperty[
         tuple[str, ...], str | tuple[str] | None
     ] = StyleViewProperty()
+
+    transitions: StyleViewProperty[dict[str, Transition], None] = StyleViewProperty()
 
 
 if __name__ == "__main__":

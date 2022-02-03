@@ -32,6 +32,7 @@ class DOMNode(MessagePump):
 
     """
 
+    DEFAULT_STYLES = ""
     STYLES = ""
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
@@ -40,9 +41,11 @@ class DOMNode(MessagePump):
         self._classes: set[str] = set()
         self.children = NodeList()
         self._css_styles: Styles = Styles(self)
-        self._inline_styles: Styles = Styles.parse(self.STYLES, repr(self))
+        self._inline_styles: Styles = Styles.parse(self.STYLES, repr(self), node=self)
         self.styles = StylesView(self._css_styles, self._inline_styles)
         super().__init__()
+        self.default_styles = Styles.parse(self.DEFAULT_STYLES, repr(self))
+        self._default_rules = self.default_styles.extract_rules((0, 0, 0))
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self._name, None
@@ -301,7 +304,9 @@ class DOMNode(MessagePump):
         )
         apply_css = f"{css or ''}\n{kwarg_css}\n"
         new_styles = parse_declarations(apply_css, f"<custom styles for ${self!r}>")
-        self._inline_styles.merge(new_styles)
+        self.styles.merge(new_styles)
+        self.log(repr(self.styles))
+        self.log(self._inline_styles, self._css_styles, self.styles.text)
         self.refresh()
 
     def has_class(self, *class_names: str) -> bool:

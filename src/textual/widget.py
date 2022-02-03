@@ -58,7 +58,7 @@ class Widget(DOMNode):
     _counts: ClassVar[dict[str, int]] = {}
     can_focus: bool = False
 
-    STYLES = """
+    DEFAULT_STYLES = """
     dock: _default;
     """
 
@@ -360,3 +360,7 @@ class Widget(DOMNode):
     async def on_leave(self, event: events.Leave) -> None:
         self._mouse_over = False
         self.app.update_styles()
+
+    async def on_key(self, event: events.Key) -> None:
+        if await self.dispatch_key(event):
+            event.prevent_default()

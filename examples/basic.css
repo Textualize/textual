@@ -1,13 +1,9 @@
 /* CSS file for basic.py */
 
 App > View {
+  layout: dock;
   docks: side=left/1;
   text: on #20639b;
-}
-
-Widget:hover {
-  outline: heavy;
-  text: bold !important;
 }
 
 #sidebar {
@@ -27,10 +23,6 @@ Widget:hover {
   text: white on #173f5f;
   height: 3;
   border: hkey;
-}
-
-#header.-visible {
-  visibility: hidden;
 }
 
 #content {

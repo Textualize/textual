@@ -135,7 +135,6 @@ class DOMQuery:
         return self
 
     def refresh(self, repaint: bool = True, layout: bool = False) -> DOMQuery:
-
         """Refresh matched nodes.
 
         Args:

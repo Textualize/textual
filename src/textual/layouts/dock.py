@@ -36,6 +36,7 @@ class Dock(NamedTuple):
 
 
 class DockLayout(Layout):
+    """Dock Widgets to edge of screen."""
 
     name = "dock"
 

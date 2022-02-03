@@ -135,8 +135,8 @@ class Stylesheet:
         node._css_styles.reset()
 
         # Collect default node CSS rules
-        # for key, default_specificity, value in node._default_rules:
-        #     rule_attributes[key].append((default_specificity, value))
+        for key, default_specificity, value in node._default_rules:
+            rule_attributes[key].append((default_specificity, value))
 
         # Collect the rules defined in the stylesheet
         for rule in self.rules:

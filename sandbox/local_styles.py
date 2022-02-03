@@ -16,18 +16,11 @@ class BasicApp(App):
             sidebar=Widget(),
         )
 
-    async def on_key(self, event: events.Key) -> None:
-        await self.dispatch_key(event)
+    def key_a(self) -> None:
+        self.query("#footer").set_styles(text="on magenta")
 
-    def key_a(self) -> bool | None:
-        self.query("#footer").set_styles(text="on magenta").refresh()
-
-        self.log(self["#footer"].styles.css)
-        self.bell()
-        self.refresh()
-
-    def key_b(self) -> bool | None:
-        self["#content"].set_styles("text: on magenta")
+    def key_b(self) -> None:
+        self["#footer"].set_styles("text: on green")
 
 
 BasicApp.run(css_file="local_styles.css", log="textual.log")
