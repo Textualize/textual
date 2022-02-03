@@ -302,12 +302,15 @@ class StylesBuilder:
 
     def process_text(self, name: str, tokens: list[Token], important: bool) -> None:
         style_definition = " ".join(token.value for token in tokens)
+        if tokens and tokens[0].referenced_at:
+            variable_prefix = f"${tokens[0].referenced_at.name}="
+        else:
+            variable_prefix = ""
         try:
             style = Style.parse(style_definition)
         except Exception as error:
-            self.error(
-                name, tokens[0], f"failed to parse style {style_definition!r}; {error}"
-            )
+            message = f"property 'text' has invalid value {variable_prefix}{style_definition!r};\n{error}"
+            self.error(name, tokens[0], message)
         if important:
             self.styles.important.update(
                 {"text_style", "text_background", "text_color"}

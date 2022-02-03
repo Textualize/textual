@@ -8,7 +8,9 @@ from typing import Iterable
 import rich.repr
 from rich.cells import cell_len
 from rich.highlighter import ReprHighlighter
+from rich.padding import Padding
 from rich.panel import Panel
+from rich.syntax import Syntax
 from rich.text import Text
 from rich.console import Group, RenderableType
 
@@ -36,10 +38,16 @@ class StylesheetErrors:
 
     @classmethod
     def _get_snippet(cls, code: str, line_no: int, col_no: int, length: int) -> Panel:
-        lines = Text(code, style="dim").split()
-        lines[line_no].stylize("bold not dim", col_no, col_no + length - 1)
-        text = Text("\n").join(lines[max(0, line_no - 1) : line_no + 2])
-        return Panel(text, border_style="red")
+        syntax = Syntax(
+            code,
+            lexer="scss",
+            theme="ansi_light",
+            line_numbers=True,
+            indent_guides=True,
+            line_range=(max(0, line_no - 2), line_no + 1),
+            highlight_lines={line_no},
+        )
+        return Panel(syntax, border_style="red")
 
     def __rich__(self) -> RenderableType:
         highlighter = ReprHighlighter()
@@ -48,7 +56,8 @@ class StylesheetErrors:
         for rule in self.stylesheet.rules:
             for token, message in rule.errors:
                 if token.referenced_at:
-                    line_no, col_no = token.referenced_at.location
+                    line_idx, col_idx = token.referenced_at.location
+                    line_no, col_no = line_idx + 1, col_idx + 1
                     append(highlighter(f"{token.path or '<unknown>'}:{line_no}"))
                     append(
                         self._get_snippet(
@@ -56,14 +65,15 @@ class StylesheetErrors:
                         )
                     )
                 else:
-                    line_no, col_no = token.location
+                    line_idx, col_idx = token.location
+                    line_no, col_no = line_idx + 1, col_idx + 1
                     append(highlighter(f"{token.path or '<unknown>'}:{line_no}"))
                     append(
                         self._get_snippet(
                             token.code, line_no, col_no, cell_len(token.value) + 1
                         )
                     )
-                append(highlighter(Text(message, "red")))
+                append(Padding(highlighter(Text(message, "red")), pad=(0, 1)))
                 append("")
         return Group(*errors)
 
