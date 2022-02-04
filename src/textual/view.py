@@ -49,7 +49,6 @@ class View(Widget):
         Returns: The Layout associated with this view
         """
 
-        assert self.styles.layout
         return self.styles.layout
 
     # @layout.setter
@@ -180,6 +179,8 @@ class View(Widget):
         watch(self.app, "background", watch_background)
 
     async def on_idle(self, event: events.Idle) -> None:
+        if self.layout is None:
+            return
         if self.layout.check_update():
             self.layout.reset_update()
             await self.refresh_layout()

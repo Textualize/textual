@@ -170,7 +170,6 @@ class BoxProperty:
 class Edges(NamedTuple):
     """Stores edges for border / outline."""
 
-    css_name: str
     top: tuple[BoxType, Style]
     right: tuple[BoxType, Style]
     bottom: tuple[BoxType, Style]
@@ -227,7 +226,6 @@ class BorderProperty:
         top, right, bottom, left = self._properties
 
         border = Edges(
-            self.name,
             getattr(obj, top),
             getattr(obj, right),
             getattr(obj, bottom),

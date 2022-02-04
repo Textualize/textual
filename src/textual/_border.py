@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
+import rich.repr
 from rich.segment import Segment, SegmentLines
 from rich.style import Style, StyleType
 
@@ -22,6 +23,7 @@ BORDER_STYLES: dict[str, tuple[str, str, str]] = {
 }
 
 
+@rich.repr.auto
 class Border:
     def __init__(
         self,

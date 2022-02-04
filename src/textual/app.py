@@ -7,6 +7,7 @@ import warnings
 from asyncio import AbstractEventLoop
 from typing import Any, Callable, Iterable, Type, TypeVar, TYPE_CHECKING
 
+import rich
 import rich.repr
 from rich.console import Console, RenderableType
 from rich.control import Control
@@ -367,8 +368,14 @@ class App(DOMNode):
         """
 
         if not renderables:
+
             renderables = (
-                Traceback(show_locals=True, width=None, locals_max_length=5),
+                Traceback(
+                    show_locals=True,
+                    width=None,
+                    locals_max_length=5,
+                    suppress=[rich],
+                ),
             )
         self._exit_renderables.extend(renderables)
         self.close_messages_no_wait()
