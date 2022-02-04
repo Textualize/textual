@@ -307,7 +307,7 @@ class StylesBuilder:
             self.styles.important.update(
                 {"text_style", "text_background", "text_color"}
             )
-        self.styles._rules["text"] = style
+        self.styles.text = style
 
     def process_text_color(
         self, name: str, tokens: list[Token], important: bool

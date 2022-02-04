@@ -333,14 +333,20 @@ class StyleProperty:
             rules.pop("text_background")
             rules.pop("text_style")
         elif isinstance(style, Style):
-            rules_set("text_color", style.color)
-            rules_set("text_background", style.bgcolor)
-            rules_set("text_style", style.without_color)
+            if style.color:
+                rules_set("text_color", style.color)
+            if style.bgcolor:
+                rules_set("text_background", style.bgcolor)
+            if style.without_color:
+                rules_set("text_style", style.without_color)
         elif isinstance(style, str):
             new_style = Style.parse(style)
-            rules_set("text_color", new_style.color)
-            rules_set("text_background", new_style.bgcolor)
-            rules_set("text_style", new_style.without_color)
+            if new_style.color:
+                rules_set("text_color", new_style.color or Color.default())
+            if new_style.bgcolor:
+                rules_set("text_background", new_style.bgcolor or Color.default())
+            if new_style.without_color:
+                rules_set("text_style", new_style.without_color)
 
 
 class SpacingProperty:

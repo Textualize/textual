@@ -43,9 +43,9 @@ class DOMNode(MessagePump):
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles.parse(self.STYLES, repr(self), node=self)
         self.styles = StylesView(self, self._css_styles, self._inline_styles)
-        super().__init__()
         self.default_styles = Styles.parse(self.DEFAULT_STYLES, repr(self))
         self._default_rules = self.default_styles.extract_rules((0, 0, 0))
+        super().__init__()
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self._name, None

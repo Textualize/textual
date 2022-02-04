@@ -15,6 +15,7 @@ from .widget import Widget
 
 @rich.repr.auto
 class View(Widget):
+
     DEFAULT_STYLES = """
         layout: dock;
     """

@@ -352,6 +352,9 @@ class Styles:
         rules = self.get_rules()
         get_rule = rules.get
         has_rule = rules.__contains__
+        from rich import print
+
+        print(rules)
 
         if has_rule("display"):
             append_declaration("display", rules["display"])
@@ -397,9 +400,9 @@ class Styles:
             append_declaration("text", str(self.text))
         else:
             if has_rule("text_color"):
-                append_declaration("text-color", str(get_rule("text_color")))
+                append_declaration("text-color", get_rule("text_color").name)
             if has_rule("text_bgcolor"):
-                append_declaration("text-bgcolor", str(get_rule("text_bgcolor")))
+                append_declaration("text-bgcolor", str(get_rule("text_bgcolor").name))
             if has_rule("text_style"):
                 append_declaration("text-style", str(get_rule("text_style")))
 
