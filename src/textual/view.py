@@ -32,13 +32,6 @@ class View(Widget):
         )
         super().__init__(name=name, id=id)
 
-    # def __init_subclass__(
-    #     cls, layout: Callable[[], Layout] | None = None, **kwargs
-    # ) -> None:
-    #     if layout is not None:
-    #         cls.layout_factory = layout
-    #     super().__init_subclass__(**kwargs)
-
     background: Reactive[str] = Reactive("")
     scroll_x: Reactive[int] = Reactive(0)
     scroll_y: Reactive[int] = Reactive(0)

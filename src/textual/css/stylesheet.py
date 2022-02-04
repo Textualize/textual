@@ -148,10 +148,10 @@ class Stylesheet:
 
         # For each rule declared for this node, keep only the most specific one
         get_first_item = itemgetter(0)
-        node_rules = [
-            (name, max(specificity_rules, key=get_first_item)[1])
+        node_rules = {
+            name: max(specificity_rules, key=get_first_item)[1]
             for name, specificity_rules in rule_attributes.items()
-        ]
+        }
 
         node._css_styles.apply_rules(node_rules)
 

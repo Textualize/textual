@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from functools import lru_cache
-from operator import attrgetter
-from typing import Any, Iterable, NamedTuple, TYPE_CHECKING
+import sys
+from typing import Any, cast, Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 from rich.color import Color
@@ -45,25 +45,56 @@ from ..geometry import Spacing, SpacingDimensions
 from .._box import BoxType
 
 
+if sys.version_info >= (3, 8):
+    from typing import TypedDict
+else:
+    from typing_extensions import TypedDict
+
+
 if TYPE_CHECKING:
     from ..layout import Layout
     from ..dom import DOMNode
 
 
-_text_getter = attrgetter(
-    "_rule_text_color", "_rule_text_background", "_rule_text_style"
-)
+class RulesMap(TypedDict):
 
-_border_getter = attrgetter(
-    "_rule_border_top", "_rule_border_right", "_rule_border_bottom", "_rule_border_left"
-)
+    display: Display
+    visibility: Visibility
+    layout: "Layout"
 
-_outline_getter = attrgetter(
-    "_rule_outline_top",
-    "_rule_outline_right",
-    "_rule_outline_bottom",
-    "_rule_outline_left",
-)
+    text_color: Color
+    text_background: Color
+    text_style: Style
+
+    padding: Spacing
+    margin: Spacing
+    offset: ScalarOffset
+
+    border_top: tuple[str, Style]
+    border_right: tuple[str, Style]
+    border_bottom: tuple[str, Style]
+    border_left: tuple[str, Style]
+
+    outline_top: tuple[str, Style]
+    outline_right: tuple[str, Style]
+    outline_bottom: tuple[str, Style]
+    outline_left: tuple[str, Style]
+
+    width: Scalar
+    height: Scalar
+    min_width: Scalar
+    min_height: Scalar
+
+    dock: str
+    docks: tuple[DockGroup, ...]
+
+    layers: tuple[str, ...]
+    layer: str
+
+    transitions: dict[str, Transition]
+
+
+RULE_NAMES = list(RulesMap.__annotations__.keys())
 
 
 class DockGroup(NamedTuple):
@@ -78,40 +109,7 @@ class Styles:
 
     node: DOMNode | None = None
 
-    _rule_display: Display | None = None
-    _rule_visibility: Visibility | None = None
-    _rule_layout: "Layout" | None = None
-
-    _rule_text_color: Color | None = None
-    _rule_text_background: Color | None = None
-    _rule_text_style: Style | None = None
-
-    _rule_padding: Spacing | None = None
-    _rule_margin: Spacing | None = None
-    _rule_offset: ScalarOffset | None = None
-
-    _rule_border_top: tuple[str, Style] | None = None
-    _rule_border_right: tuple[str, Style] | None = None
-    _rule_border_bottom: tuple[str, Style] | None = None
-    _rule_border_left: tuple[str, Style] | None = None
-
-    _rule_outline_top: tuple[str, Style] | None = None
-    _rule_outline_right: tuple[str, Style] | None = None
-    _rule_outline_bottom: tuple[str, Style] | None = None
-    _rule_outline_left: tuple[str, Style] | None = None
-
-    _rule_width: Scalar | None = None
-    _rule_height: Scalar | None = None
-    _rule_min_width: Scalar | None = None
-    _rule_min_height: Scalar | None = None
-
-    _rule_dock: str | None = None
-    _rule_docks: tuple[DockGroup, ...] | None = None
-
-    _rule_layers: tuple[str, ...] | None = None
-    _rule_layer: str | None = None
-
-    _rule_transitions: dict[str, Transition] | None = None
+    _rules: RulesMap = field(default_factory=dict)
 
     _layout_required: bool = False
     _repaint_required: bool = False
@@ -120,15 +118,25 @@ class Styles:
 
     def has_rule(self, rule: str) -> bool:
         """Check if a rule has been set."""
-        if rule in RULE_NAMES and getattr(self, f"_rule_{rule}") is not None:
+        if rule in RULE_NAMES and rule in self._rules:
             return True
+        has_rule = self._rules.__contains__
         if rule == "text":
-            return not all(rule is None for rule in _text_getter(self))
+            return (
+                has_rule("text_color")
+                or has_rule("text_bgcolor")
+                or has_rule("text_style")
+            )
         if rule == "border" and any(self.border):
-            return not all(rule is None for rule in _border_getter(self))
+            return True
         if rule == "outline" and any(self.outline):
-            return not all(rule is None for rule in _outline_getter(self))
+            return True
         return False
+
+    def get_rules(self) -> RulesMap:
+        """Get rules as a dictionary."""
+        rules = self._rules.copy()
+        return rules
 
     display = StringEnumProperty(VALID_DISPLAY, "block")
     visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
@@ -196,31 +204,6 @@ class Styles:
         styles.node = node
         return styles
 
-    def __textual_animation__(
-        self,
-        attribute: str,
-        value: Any,
-        start_time: float,
-        duration: float | None,
-        speed: float | None,
-        easing: EasingFunction,
-    ) -> Animation | None:
-        from ..widget import Widget
-
-        assert isinstance(self.node, Widget)
-        if isinstance(value, ScalarOffset):
-            return ScalarAnimation(
-                self.node,
-                self,
-                start_time,
-                attribute,
-                value,
-                duration=duration,
-                speed=speed,
-                easing=easing,
-            )
-        return None
-
     def refresh(self, layout: bool = False) -> None:
         self._repaint_required = True
         self._layout_required = layout
@@ -245,54 +228,49 @@ class Styles:
         """
         Reset internal style rules to ``None``, reverting to default styles.
         """
-        for rule_name in INTERNAL_RULE_NAMES:
-            setattr(self, rule_name, None)
+        self._rules.clear()
 
     def extract_rules(
         self, specificity: Specificity3
     ) -> list[tuple[str, Specificity4, Any]]:
         is_important = self.important.__contains__
+
         rules = [
-            (
-                rule_name,
-                (int(is_important(rule_name)), *specificity),
-                getattr(self, f"_rule_{rule_name}"),
-            )
-            for rule_name in RULE_NAMES
-            if getattr(self, f"_rule_{rule_name}") is not None
+            (rule_name, (int(is_important(rule_name)), *specificity), rule_value)
+            for rule_name, rule_value in self._rules.items()
         ]
+
         return rules
 
-    def apply_rules(self, rules: Iterable[tuple[str, object]], animate: bool = False):
+    def apply_rules(self, rules: RulesMap, animate: bool = False):
         if animate or self.node is None:
-            for key, value in rules:
-                setattr(self, f"_rule_{key}", value)
+            self._rules.update(rules)
         else:
             styles = self
             is_animatable = styles.ANIMATABLE.__contains__
-            for key, value in rules:
-                current = getattr(styles, f"_rule_{key}")
+            _rules = self._rules
+            for key, value in rules.items():
+                current = _rules.get(key)
                 if current == value:
                     continue
                 if is_animatable(key):
                     transition = styles.get_transition(key)
                     if transition is None:
-                        setattr(styles, f"_rule_{key}", value)
+                        _rules[key] = value
                     else:
                         duration, easing, delay = transition
                         self.node.app.animator.animate(
                             styles, key, value, duration=duration, easing=easing
                         )
                 else:
-                    setattr(styles, f"_rule_{key}", value)
+                    rules[key] = value
 
         if self.node is not None:
             self.node.on_style_change()
 
     def __rich_repr__(self) -> rich.repr.Result:
-        for rule_name, internal_rule_name in zip(RULE_NAMES, INTERNAL_RULE_NAMES):
-            if getattr(self, internal_rule_name) is not None:
-                yield rule_name, getattr(self, rule_name)
+        for name, value in self._rules.items():
+            yield name, value
         if self.important:
             yield "important", self.important
 
@@ -302,10 +280,63 @@ class Styles:
         Args:
             other (Styles): A Styles object.
         """
-        for name in INTERNAL_RULE_NAMES:
-            value = getattr(other, name)
-            if value is not None:
-                setattr(self, name, value)
+
+        self._rules.update(other._rules)
+
+    def _get_border_css_lines(
+        self, rules: RulesMap, name: str
+    ) -> Iterable[tuple[str, str]]:
+        """Get CSS lines for border / outline
+
+        Args:
+            rules (RulesMap): A rules map.
+            name (str): Name of rules (border or outline)
+
+        Returns:
+            Iterable[tuple[str, str]]: An iterable of CSS declarations.
+
+        """
+
+        has_rule = rules.__contains__
+        get_rule = rules.__getitem__
+
+        has_top = has_rule(f"{name}_top")
+        has_right = has_rule(f"{name}_right")
+        has_bottom = has_rule(f"{name}_bottom")
+        has_left = has_rule(f"{name}_left")
+        if not any((has_top, has_right, has_bottom, has_left)):
+            # No border related rules
+            return
+
+        if all((has_top, has_right, has_bottom, has_left)):
+            # All rules are set
+            # See if we can set them with a single border: declaration
+            top = get_rule(f"{name}_top")
+            right = get_rule(f"{name}_right")
+            bottom = get_rule(f"{name}_bottom")
+            left = get_rule(f"{name}_left")
+
+            if top == right and right == bottom and bottom == left:
+                border_type, border_style = rules[f"{name}_top"]
+                yield name, f"{border_type} {border_style}"
+                return
+
+        # Check for edges
+        if has_top:
+            border_type, border_style = rules[f"{name}_top"]
+            yield f"{name}-top", f"{border_type} {border_style}"
+
+        if has_right:
+            border_type, border_style = rules[f"{name}_right"]
+            yield f"{name}-right", f"{border_type} {border_style}"
+
+        if has_bottom:
+            border_type, border_style = rules[f"{name}_bottom"]
+            yield f"{name}-bottom", f"{border_type} {border_style}"
+
+        if has_left:
+            border_type, border_style = rules[f"{name}_left"]
+            yield f"{name}-left", f"{border_type} {border_style}"
 
     @property
     def css_lines(self) -> list[str]:
@@ -318,91 +349,69 @@ class Styles:
             else:
                 append(f"{name}: {value};")
 
-        if self._rule_display is not None:
-            append_declaration("display", self._rule_display)
-        if self._rule_visibility is not None:
-            append_declaration("visibility", self._rule_visibility)
-        if self._rule_padding is not None:
-            append_declaration("padding", self._rule_padding.packed)
-        if self._rule_margin is not None:
-            append_declaration("margin", self._rule_margin.packed)
+        rules = self.get_rules()
+        get_rule = rules.get
+        has_rule = rules.__contains__
 
-        if (
-            self._rule_border_top is not None
-            and self._rule_border_top == self._rule_border_right
-            and self._rule_border_right == self._rule_border_bottom
-            and self._rule_border_bottom == self._rule_border_left
-        ):
-            _type, style = self._rule_border_top
-            append_declaration("border", f"{_type} {style}")
-        else:
-            if self._rule_border_top is not None:
-                _type, style = self._rule_border_top
-                append_declaration("border-top", f"{_type} {style}")
-            if self._rule_border_right is not None:
-                _type, style = self._rule_border_right
-                append_declaration("border-right", f"{_type} {style}")
-            if self._rule_border_bottom is not None:
-                _type, style = self._rule_border_bottom
-                append_declaration("border-bottom", f"{_type} {style}")
-            if self._rule_border_left is not None:
-                _type, style = self._rule_border_left
-                append_declaration("border-left", f"{_type} {style}")
+        if has_rule("display"):
+            append_declaration("display", rules["display"])
+        if has_rule("visibility"):
+            append_declaration("visibility", rules["visibility"])
+        if has_rule("padding"):
+            append_declaration("padding", rules["padding"].css)
+        if has_rule("margin"):
+            append_declaration("margin", rules["margin"].css)
 
-        if (
-            self._rule_outline_top is not None
-            and self._rule_outline_top == self._rule_outline_right
-            and self._rule_outline_right == self._rule_outline_bottom
-            and self._rule_outline_bottom == self._rule_outline_left
-        ):
-            _type, style = self._rule_outline_top
-            append_declaration("outline", f"{_type} {style}")
-        else:
-            if self._rule_outline_top is not None:
-                _type, style = self._rule_outline_top
-                append_declaration("outline-top", f"{_type} {style}")
-            if self._rule_outline_right is not None:
-                _type, style = self._rule_outline_right
-                append_declaration("outline-right", f"{_type} {style}")
-            if self._rule_outline_bottom is not None:
-                _type, style = self._rule_outline_bottom
-                append_declaration("outline-bottom", f"{_type} {style}")
-            if self._rule_outline_left is not None:
-                _type, style = self._rule_outline_left
-                append_declaration("outline-left", f"{_type} {style}")
+        for name, rule in self._get_border_css_lines(rules, "border"):
+            append_declaration(name, rule)
 
-        if self._rule_offset is not None:
+        for name, rule in self._get_border_css_lines(rules, "outline"):
+            append_declaration(name, rule)
+
+        if has_rule("offset"):
             x, y = self.offset
             append_declaration("offset", f"{x} {y}")
-        if self._rule_dock:
-            append_declaration("dock", self._rule_dock)
-        if self._rule_docks:
+        if has_rule("dock"):
+            append_declaration("dock", rules["dock"])
+        if has_rule("docks"):
             append_declaration(
                 "docks",
                 " ".join(
                     (f"{name}={edge}/{z}" if z else f"{name}={edge}")
-                    for name, edge, z in self._rule_docks
+                    for name, edge, z in rules["docks"]
                 ),
             )
-        if self._rule_layers is not None:
+        if has_rule("layers"):
             append_declaration("layers", " ".join(self.layers))
-        if self._rule_layer is not None:
+        if has_rule("layer"):
             append_declaration("layer", self.layer)
-        if self._rule_layout is not None:
+        if has_rule("layout"):
             assert self.layout is not None
             append_declaration("layout", self.layout.name)
-        if self._rule_text_color or self._rule_text_background or self._rule_text_style:
-            append_declaration("text", str(self.text))
 
-        if self._rule_width is not None:
+        if (
+            has_rule("text_color")
+            and has_rule("text_bgcolor")
+            and has_rule("text_style")
+        ):
+            append_declaration("text", str(self.text))
+        else:
+            if has_rule("text_color"):
+                append_declaration("text-color", str(get_rule("text_color")))
+            if has_rule("text_bgcolor"):
+                append_declaration("text-bgcolor", str(get_rule("text_bgcolor")))
+            if has_rule("text_style"):
+                append_declaration("text-style", str(get_rule("text_style")))
+
+        if has_rule("width"):
             append_declaration("width", str(self.width))
-        if self._rule_height is not None:
+        if has_rule("height"):
             append_declaration("height", str(self.height))
-        if self._rule_min_width is not None:
+        if has_rule("min-width"):
             append_declaration("min-width", str(self.min_width))
-        if self._rule_min_height is not None:
+        if has_rule("min_height"):
             append_declaration("min-height", str(self.min_height))
-        if self._rule_transitions is not None:
+        if has_rule("transitions"):
             append_declaration(
                 "transition",
                 ", ".join(
@@ -419,10 +428,6 @@ class Styles:
         return "\n".join(self.css_lines)
 
 
-RULE_NAMES = [name[6:] for name in dir(Styles) if name.startswith("_rule_")]
-INTERNAL_RULE_NAMES = [f"_rule_{name}" for name in RULE_NAMES]
-
-
 from typing import Generic, TypeVar
 
 GetType = TypeVar("GetType")
@@ -433,25 +438,35 @@ class StyleViewProperty(Generic[GetType, SetType]):
     """Presents a view of a base Styles object, plus inline styles."""
 
     def __set_name__(self, owner: StylesView, name: str) -> None:
-        self._name = name
-        self._internal_name = f"_rule_{name}"
+        self.name = name
 
     def __set__(self, obj: StylesView, value: SetType) -> None:
-        setattr(obj._inline_styles, self._name, value)
+        setattr(obj._inline_styles, self.name, value)
 
     def __get__(
         self, obj: StylesView, objtype: type[StylesView] | None = None
     ) -> GetType:
-        if obj._inline_styles.has_rule(self._name):
-            return getattr(obj._inline_styles, self._name)
-        return getattr(obj._base_styles, self._name)
+        if obj._inline_styles.has_rule(self.name):
+            return getattr(obj._inline_styles, self.name)
+        return getattr(obj._base_styles, self.name)
 
 
 @rich.repr.auto
 class StylesView:
     """Presents a combined view of two Styles object: a base Styles and inline Styles."""
 
-    def __init__(self, base: Styles, inline_styles: Styles) -> None:
+    ANIMATABLE = {
+        "offset",
+        "padding",
+        "margin",
+        "width",
+        "height",
+        "min_width",
+        "min_height",
+    }
+
+    def __init__(self, node: DOMNode, base: Styles, inline_styles: Styles) -> None:
+        self.node = node
         self._base_styles = base
         self._inline_styles = inline_styles
 
@@ -500,6 +515,42 @@ class StylesView:
         """Check if a rule has been set."""
         return self._inline_styles.has_rule(rule) or self._base_styles.has_rule(rule)
 
+    def get_rules(self) -> RulesMap:
+        """Get rules as a dictionary"""
+        rules = {**self._base_styles._rules, **self._inline_styles._rules}
+        return cast(RulesMap, rules)
+
+    def __textual_animation__(
+        self,
+        attribute: str,
+        value: Any,
+        start_time: float,
+        duration: float | None,
+        speed: float | None,
+        easing: EasingFunction,
+    ) -> Animation | None:
+        from ..widget import Widget
+
+        assert isinstance(self.node, Widget)
+        if isinstance(value, ScalarOffset):
+            return ScalarAnimation(
+                self.node,
+                self,
+                start_time,
+                attribute,
+                value,
+                duration=duration,
+                speed=speed,
+                easing=easing,
+            )
+        return None
+
+    def get_transition(self, key: str) -> Transition | None:
+        if key in self.ANIMATABLE:
+            return self.transitions.get(key, None)
+        else:
+            return None
+
     @property
     def css(self) -> str:
         """Get the CSS for the combined styles."""
@@ -511,7 +562,7 @@ class StylesView:
 
     display: StyleViewProperty[str, str | None] = StyleViewProperty()
     visibility: StyleViewProperty[str, str | None] = StyleViewProperty()
-    layout: StyleViewProperty[Layout | None, str | Layout] = StyleViewProperty()
+    layout: StyleViewProperty[Layout | None, str | Layout | None] = StyleViewProperty()
 
     text: StyleViewProperty[Style, Style | str | None] = StyleViewProperty()
     text_color: StyleViewProperty[Color, Color | str | None] = StyleViewProperty()

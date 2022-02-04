@@ -142,7 +142,7 @@ class DOMQuery:
             layout (bool): Layout node(s). Defaults to False.
 
         Returns:
-            [type]: [description]
+            DOMQuery: Query for chaining.
         """
         for node in self._nodes:
             node.refresh(repaint=repaint, layout=layout)

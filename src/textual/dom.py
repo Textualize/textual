@@ -42,7 +42,7 @@ class DOMNode(MessagePump):
         self.children = NodeList()
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles.parse(self.STYLES, repr(self), node=self)
-        self.styles = StylesView(self._css_styles, self._inline_styles)
+        self.styles = StylesView(self, self._css_styles, self._inline_styles)
         super().__init__()
         self.default_styles = Styles.parse(self.DEFAULT_STYLES, repr(self))
         self._default_rules = self.default_styles.extract_rules((0, 0, 0))
@@ -52,10 +52,6 @@ class DOMNode(MessagePump):
         yield "id", self._id, None
         if self._classes:
             yield "classes", self._classes
-
-    @property
-    def inline_styles(self) -> Styles:
-        return self._inline_styles
 
     @property
     def parent(self) -> DOMNode:
@@ -310,18 +306,41 @@ class DOMNode(MessagePump):
         self.refresh()
 
     def has_class(self, *class_names: str) -> bool:
+        """Check if the Node has all the given class names.
+
+        Args:
+            *class_names (str): CSS class names to check.
+
+        Returns:
+            bool: ``True`` if the node has all the given class names, otherwise ``False``.
+        """
         return self._classes.issuperset(class_names)
 
     def add_class(self, *class_names: str) -> None:
-        """Add class names."""
+        """Add class names to this Node.
+
+        Args:
+            *class_names (str): CSS class names to add.
+
+        """
         self._classes.update(class_names)
 
     def remove_class(self, *class_names: str) -> None:
-        """Remove class names"""
+        """Remove class names from this Node.
+
+        Args:
+            *class_names (str): CSS class names to remove.
+
+        """
         self._classes.difference_update(class_names)
 
     def toggle_class(self, *class_names: str) -> None:
-        """Toggle class names"""
+        """Toggle class names on this Node.
+
+        Args:
+            *class_names (str): CSS class names to toggle.
+
+        """
         self._classes.symmetric_difference_update(class_names)
         self.app.stylesheet.update(self.app)
 

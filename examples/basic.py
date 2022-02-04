@@ -17,6 +17,7 @@ class BasicApp(App):
             footer=Widget(),
             sidebar=Widget(),
         )
+        self.panic(self.stylesheet.css)
 
 
 BasicApp.run(css_file="basic.css", watch_css=True, log="textual.log")

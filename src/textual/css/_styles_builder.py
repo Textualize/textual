@@ -71,7 +71,7 @@ class StylesBuilder:
             if name == "token":
                 value = value.lower()
                 if value in VALID_DISPLAY:
-                    self.styles._rule_display = cast(Display, value)
+                    self.styles._rules["display"] = cast(Display, value)
                 else:
                     self.error(
                         name,
@@ -85,7 +85,7 @@ class StylesBuilder:
         if not tokens:
             return
         if len(tokens) == 1:
-            setattr(self.styles, name, Scalar.parse(tokens[0].value))
+            self.styles._rules[name] = Scalar.parse(tokens[0].value)
         else:
             self.error(name, tokens[0], "a single scalar is expected")
 
@@ -113,7 +113,7 @@ class StylesBuilder:
             if name == "token":
                 value = value.lower()
                 if value in VALID_VISIBILITY:
-                    self.styles._rule_visibility = cast(Visibility, value)
+                    self.styles._rules["visibility"] = cast(Visibility, value)
                 else:
                     self.error(
                         name,
@@ -139,11 +139,7 @@ class StylesBuilder:
             self.error(
                 name, tokens[0], f"1, 2, or 4 values expected; received {len(space)}"
             )
-        setattr(
-            self.styles,
-            f"_rule_{name}",
-            Spacing.unpack(cast(SpacingDimensions, tuple(space))),
-        )
+        self.styles._rules[name] = Spacing.unpack(cast(SpacingDimensions, tuple(space)))
 
     def process_padding(self, name: str, tokens: list[Token], important: bool) -> None:
         self._process_space(name, tokens)
@@ -176,13 +172,13 @@ class StylesBuilder:
 
     def _process_border(self, edge: str, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("border", tokens)
-        setattr(self.styles, f"_rule_border_{edge}", border)
+        self.styles._rules[f"border_{edge}"] = border
 
     def process_border(self, name: str, tokens: list[Token], important: bool) -> None:
         border = self._parse_border("border", tokens)
-        styles = self.styles
-        styles._rule_border_top = styles._rule_border_right = border
-        styles._rule_border_bottom = styles._rule_border_left = border
+        rules = self.styles._rules
+        rules["border_top"] = rules["border_right"] = border
+        rules["border_bottom"] = rules["border_left"] = border
 
     def process_border_top(
         self, name: str, tokens: list[Token], important: bool
@@ -206,13 +202,13 @@ class StylesBuilder:
 
     def _process_outline(self, edge: str, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("outline", tokens)
-        setattr(self.styles, f"_rule_outline_{edge}", border)
+        self.styles._rules[f"outline_{edge}"] = border
 
     def process_outline(self, name: str, tokens: list[Token], important: bool) -> None:
         border = self._parse_border("outline", tokens)
-        styles = self.styles
-        styles._rule_outline_top = styles._rule_outline_right = border
-        styles._rule_outline_bottom = styles._rule_outline_left = border
+        rules = self.styles._rules
+        rules["outline_top"] = rules["outline_right"] = border
+        rules["outline_bottom"] = rules["outline_left"] = border
 
     def process_outline_top(
         self, name: str, tokens: list[Token], important: bool
@@ -255,7 +251,7 @@ class StylesBuilder:
 
             scalar_x = Scalar.parse(token1.value, Unit.WIDTH)
             scalar_y = Scalar.parse(token2.value, Unit.HEIGHT)
-            self.styles._rule_offset = ScalarOffset(scalar_x, scalar_y)
+            self.styles._rules["offset"] = ScalarOffset(scalar_x, scalar_y)
 
     def process_offset_x(self, name: str, tokens: list[Token], important: bool) -> None:
         if not tokens:
@@ -268,7 +264,7 @@ class StylesBuilder:
                 self.error(name, token, f"expected a scalar; found {token.value!r}")
             x = Scalar.parse(token.value, Unit.WIDTH)
             y = self.styles.offset.y
-            self.styles._rule_offset = ScalarOffset(x, y)
+            self.styles._rules["offset"] = ScalarOffset(x, y)
 
     def process_offset_y(self, name: str, tokens: list[Token], important: bool) -> None:
         if not tokens:
@@ -281,7 +277,7 @@ class StylesBuilder:
                 self.error(name, token, f"expected a scalar; found {token.value!r}")
             y = Scalar.parse(token.value, Unit.HEIGHT)
             x = self.styles.offset.x
-            self.styles._rule_offset = ScalarOffset(x, y)
+            self.styles._rules["offset"] = ScalarOffset(x, y)
 
     def process_layout(self, name: str, tokens: list[Token], important: bool) -> None:
         from ..layouts.factory import get_layout, MissingLayout, LAYOUT_MAP
@@ -293,7 +289,7 @@ class StylesBuilder:
                 value = tokens[0].value
                 layout_name = value
                 try:
-                    self.styles._rule_layout = get_layout(layout_name)
+                    self.styles._rules["layout"] = get_layout(layout_name)
                 except MissingLayout:
                     self.error(
                         name,
@@ -311,7 +307,7 @@ class StylesBuilder:
             self.styles.important.update(
                 {"text_style", "text_background", "text_color"}
             )
-        self.styles.text = style
+        self.styles._rules["text"] = style
 
     def process_text_color(
         self, name: str, tokens: list[Token], important: bool
@@ -319,7 +315,7 @@ class StylesBuilder:
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
-                    self.styles._rule_text_color = Color.parse(token.value)
+                    self.styles._rules["text_color"] = Color.parse(token.value)
                 except Exception as error:
                     self.error(
                         name, token, f"failed to parse color {token.value!r}; {error}"
@@ -335,7 +331,7 @@ class StylesBuilder:
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
-                    self.styles._rule_text_background = Color.parse(token.value)
+                    self.styles._rules["text_background"] = Color.parse(token.value)
                 except Exception as error:
                     self.error(
                         name, token, f"failed to parse color {token.value!r}; {error}"
@@ -359,7 +355,7 @@ class StylesBuilder:
                 tokens[1],
                 f"unexpected tokens in dock declaration",
             )
-        self.styles._rule_dock = tokens[0].value if tokens else ""
+        self.styles._rules["dock"] = tokens[0].value if tokens else ""
 
     def process_docks(self, name: str, tokens: list[Token], important: bool) -> None:
         docks: list[DockGroup] = []
@@ -390,12 +386,12 @@ class StylesBuilder:
                     token,
                     f"unexpected token {token.value!r} in docks declaration",
                 )
-        self.styles._rule_docks = tuple(docks + [DockGroup("_default", "top", 0)])
+        self.styles._rules["docks"] = tuple(docks + [DockGroup("_default", "top", 0)])
 
     def process_layer(self, name: str, tokens: list[Token], important: bool) -> None:
         if len(tokens) > 1:
             self.error(name, tokens[1], f"unexpected tokens in dock-edge declaration")
-        self.styles._rule_layer = tokens[0].value
+        self.styles._rules["layer"] = tokens[0].value
 
     def process_layers(self, name: str, tokens: list[Token], important: bool) -> None:
         layers: list[str] = []
@@ -403,7 +399,7 @@ class StylesBuilder:
             if token.name != "token":
                 self.error(name, token, "{token.name} not expected here")
             layers.append(token.value)
-        self.styles._rule_layers = tuple(layers)
+        self.styles._rules["layers"] = tuple(layers)
 
     def process_transition(
         self, name: str, tokens: list[Token], important: bool
@@ -468,4 +464,4 @@ class StylesBuilder:
                 pass
             transitions[css_property] = Transition(duration, easing, delay)
 
-        self.styles._rule_transitions = transitions
+        self.styles._rules["transitions"] = transitions

@@ -145,6 +145,10 @@ class ScalarOffset(NamedTuple):
     x: Scalar
     y: Scalar
 
+    @classmethod
+    def null(cls) -> ScalarOffset:
+        return cls(Scalar.from_number(0), Scalar.from_number(0))
+
     def __bool__(self) -> bool:
         x, y = self
         return bool(x.value or y.value)
