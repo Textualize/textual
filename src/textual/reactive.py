@@ -13,7 +13,6 @@ from typing import (
     TYPE_CHECKING,
 )
 
-from . import log
 from . import events
 
 from ._callback import count_parameters, invoke

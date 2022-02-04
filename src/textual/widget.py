@@ -20,7 +20,7 @@ from rich.style import Style
 from rich.styled import Styled
 from rich.text import Text
 
-from . import errors
+from . import errors, log
 from . import events
 from ._animator import BoundAnimator
 from ._border import Border
@@ -35,8 +35,6 @@ from .reactive import watch
 
 if TYPE_CHECKING:
     from .view import View
-
-log = getLogger("rich")
 
 
 class RenderCache(NamedTuple):
@@ -228,12 +226,6 @@ class Widget(DOMNode):
         options = self.console.options.update_dimensions(width, height)
         lines = self.console.render_lines(renderable, options)
         self.render_cache = RenderCache(self.size, lines)
-
-    def render_lines_free(self, width: int) -> None:
-        renderable = self.render_styled()
-        options = self.console.options.update(width=width, height=None)
-        lines = self.console.render_lines(renderable, options)
-        self.render_cache = RenderCache(Size(width, len(lines)), lines)
 
     def _get_lines(self) -> Lines:
         """Get segment lines to render the widget."""

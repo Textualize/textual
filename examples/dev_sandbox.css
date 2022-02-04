@@ -1,4 +1,4 @@
-/* CSS file for dev_sandbox.py */
+/* CSS file for basic.py */
 
 App > View {
   docks: side=left/1;
@@ -36,11 +36,6 @@ Widget:hover {
 #content {
   text: white on #20639b;
   border-bottom: hkey #0f2b41;
-  offset-y: -3;
-}
-
-#content.-content-visible {
-  visibility: hidden;
 }
 
 #footer {
