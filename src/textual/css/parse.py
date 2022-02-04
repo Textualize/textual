@@ -19,7 +19,7 @@ from .model import (
 )
 from .styles import Styles
 from .tokenize import tokenize, tokenize_declarations, Token
-from .tokenizer import EOFError, ReferencedAt
+from .tokenizer import EOFError, ReferencedBy
 
 SELECTOR_MAP: dict[str, tuple[SelectorType, tuple[int, int, int]]] = {
     "selector": (SelectorType.TYPE, (0, 0, 1)),
@@ -229,7 +229,8 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
         Iterable[Token]: Yields Tokens such that any variable references (tokens where
             token.name == "variable_ref") have been replaced with the tokens representing
             the value. In other words, an Iterable of Tokens similar to the original input,
-            but with variables resolved.
+            but with variables resolved. Substituted tokens will have their referenced_by
+            attribute populated with information about where the tokens are being substituted to.
     """
     variables: dict[str, list[Token]] = defaultdict(list)
     while tokens:
@@ -264,7 +265,7 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
                         ref_length = cell_len(token.value)
                         for token in reference_tokens:
                             yield token.ref(
-                                ReferencedAt(
+                                ReferencedBy(
                                     name=ref_name,
                                     location=ref_location,
                                     length=ref_length,
@@ -285,7 +286,7 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
                 ref_length = cell_len(token.value)
                 for token in variable_tokens:
                     yield token.ref(
-                        ReferencedAt(
+                        ReferencedBy(
                             name=variable_name,
                             location=ref_location,
                             length=ref_length,

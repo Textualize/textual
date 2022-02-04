@@ -17,6 +17,7 @@ from .transition import Transition
 from .types import Edge, Display, Visibility
 from .._duration import _duration_as_seconds
 from .._easing import EASING
+from .._loop import loop_last
 from ..geometry import Spacing, SpacingDimensions
 from ..layouts.factory import get_layout, LayoutName, MissingLayout, LAYOUT_MAP
 
@@ -302,20 +303,26 @@ class StylesBuilder:
 
     def process_text(self, name: str, tokens: list[Token], important: bool) -> None:
         style_definition = " ".join(token.value for token in tokens)
-        if tokens and tokens[0].referenced_at:
-            variable_prefix = f"${tokens[0].referenced_at.name}="
+
+        # If every token in the value is a referenced by the same variable,
+        # we can display the variable name before the style definition.
+        # TODO: Factor this out to apply it to other properties too.
+        unique_references = set(t.referenced_by for t in tokens if t.referenced_by)
+        if tokens and tokens[0].referenced_by and len(unique_references) == 1:
+            variable_prefix = f"${tokens[0].referenced_by.name}="
         else:
             variable_prefix = ""
+
         try:
             style = Style.parse(style_definition)
+            self.styles.text = style
         except Exception as error:
-            message = f"property 'text' has invalid value {variable_prefix}{style_definition!r};\n{error}"
+            message = f"property 'text' has invalid value {variable_prefix}{style_definition!r}; {error}"
             self.error(name, tokens[0], message)
         if important:
             self.styles.important.update(
                 {"text_style", "text_background", "text_color"}
             )
-        self.styles.text = style
 
     def process_text_color(
         self, name: str, tokens: list[Token], important: bool

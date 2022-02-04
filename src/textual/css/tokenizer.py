@@ -39,7 +39,7 @@ class Expect:
         yield from zip(self.names, self.regexes)
 
 
-class ReferencedAt(NamedTuple):
+class ReferencedBy(NamedTuple):
     name: str
     location: tuple[int, int]
     length: int
@@ -52,16 +52,16 @@ class Token(NamedTuple):
     path: str
     code: str
     location: tuple[int, int]
-    referenced_at: ReferencedAt | None
+    referenced_by: ReferencedBy | None
 
-    def ref(self, at: ReferencedAt | None) -> "Token":
+    def ref(self, by: ReferencedBy | None) -> "Token":
         return Token(
             name=self.name,
             value=self.value,
             path=self.path,
             code=self.code,
             location=self.location,
-            referenced_at=at,
+            referenced_by=by,
         )
 
     def __str__(self) -> str:
@@ -72,7 +72,7 @@ class Token(NamedTuple):
         yield "value", self.value
         yield "path", self.path
         yield "location", self.location
-        yield "referenced_at", self.referenced_at
+        yield "referenced_by", self.referenced_by
 
 
 class Tokenizer:
@@ -107,7 +107,7 @@ class Tokenizer:
                 break
 
         token = Token(
-            name, value, self.path, self.code, (line_no, col_no), referenced_at=None
+            name, value, self.path, self.code, (line_no, col_no), referenced_by=None
         )
         col_no += len(value)
         if col_no >= len(line):
