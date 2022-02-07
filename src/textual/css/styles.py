@@ -261,6 +261,13 @@ class Styles:
         return rules
 
     def apply_rules(self, rules: RulesMap, animate: bool = False):
+        """Apply rules to this Styles object, animating as required.
+
+        Args:
+            rules (RulesMap): A map containing rules to apply.
+            animate (bool, optional): ``True`` if the rules should animate, or ``False``
+                to set rules without any animation. Defaults to ``False``.
+        """
         if not animate or self.node is None:
             self._rules.update(rules)
         else:
