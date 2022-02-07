@@ -1,10 +1,176 @@
 import pytest
 from rich.color import Color, ColorType
 
+from textual.css.errors import UnresolvedVariableError
+from textual.css.parse import substitute_references
 from textual.css.scalar import Scalar, Unit
 from textual.css.stylesheet import Stylesheet, StylesheetParseError
+from textual.css.tokenize import tokenize
+from textual.css.tokenizer import Token, ReferencedBy
 from textual.css.transition import Transition
 from textual.layouts.dock import DockLayout
+
+
+class TestVariableReferenceSubstitution:
+    def test_simple_reference(self):
+        css = "$x: 1; #some-widget{border: $x;}"
+        variables = substitute_references(tokenize(css, ""))
+        assert list(variables) == [
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3), referenced_by=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 4), referenced_by=None),
+            Token(name='variable_value_end', value=';', path='', code=css, location=(0, 5), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 6), referenced_by=None),
+            Token(name='selector_start_id', value='#some-widget', path='', code=css, location=(0, 7),
+                  referenced_by=None),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(0, 19), referenced_by=None),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(0, 20), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 27), referenced_by=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 4),
+                  referenced_by=ReferencedBy(name='x', location=(0, 28), length=2)),
+            Token(name='declaration_end', value=';', path='', code=css, location=(0, 30), referenced_by=None),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(0, 31), referenced_by=None)
+        ]
+
+    def test_simple_reference_no_whitespace(self):
+        css = "$x:1; #some-widget{border: $x;}"
+        variables = substitute_references(tokenize(css, ""))
+        assert list(variables) == [
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), referenced_by=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 3), referenced_by=None),
+            Token(name='variable_value_end', value=';', path='', code=css, location=(0, 4), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 5), referenced_by=None),
+            Token(name='selector_start_id', value='#some-widget', path='', code=css, location=(0, 6),
+                  referenced_by=None),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(0, 18), referenced_by=None),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(0, 19), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 26), referenced_by=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 3),
+                  referenced_by=ReferencedBy(name='x', location=(0, 27), length=2)),
+            Token(name='declaration_end', value=';', path='', code=css, location=(0, 29), referenced_by=None),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(0, 30), referenced_by=None)
+        ]
+
+    def test_undefined_variable(self):
+        css = ".thing { border: $not-defined; }"
+        with pytest.raises(UnresolvedVariableError):
+            list(substitute_references(tokenize(css, "")))
+
+    def test_transitive_reference(self):
+        css = "$x: 1\n$y: $x\n.thing { border: $y }"
+        assert list(substitute_references(tokenize(css, ""))) == [
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3), referenced_by=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 4), referenced_by=None),
+            Token(name='variable_value_end', value='\n', path='', code=css, location=(0, 5), referenced_by=None),
+            Token(name='variable_name', value='$y:', path='', code=css, location=(1, 0), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 3), referenced_by=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 4),
+                  referenced_by=ReferencedBy(name='x', location=(1, 4), length=2)),
+            Token(name='variable_value_end', value='\n', path='', code=css, location=(1, 6), referenced_by=None),
+            Token(name='selector_start_class', value='.thing', path='', code=css, location=(2, 0), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 6), referenced_by=None),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(2, 7), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 8), referenced_by=None),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(2, 9), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 16), referenced_by=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 4),
+                  referenced_by=ReferencedBy(name='y', location=(2, 17), length=2)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 19), referenced_by=None),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(2, 20), referenced_by=None)
+        ]
+
+    def test_multi_value_variable(self):
+        css = "$x: 2 4\n$y: 6 $x 2\n.thing { border: $y }"
+        assert list(substitute_references(tokenize(css, ""))) == [
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3), referenced_by=None),
+            Token(name='number', value='2', path='', code=css, location=(0, 4), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 5), referenced_by=None),
+            Token(name='number', value='4', path='', code=css, location=(0, 6), referenced_by=None),
+            Token(name='variable_value_end', value='\n', path='', code=css, location=(0, 7), referenced_by=None),
+            Token(name='variable_name', value='$y:', path='', code=css, location=(1, 0), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 3), referenced_by=None),
+            Token(name='number', value='6', path='', code=css, location=(1, 4), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 5), referenced_by=None),
+            Token(name='number', value='2', path='', code=css, location=(0, 4),
+                  referenced_by=ReferencedBy(name='x', location=(1, 6), length=2)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 5),
+                  referenced_by=ReferencedBy(name='x', location=(1, 6), length=2)),
+            Token(name='number', value='4', path='', code=css, location=(0, 6),
+                  referenced_by=ReferencedBy(name='x', location=(1, 6), length=2)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 8), referenced_by=None),
+            Token(name='number', value='2', path='', code=css, location=(1, 9), referenced_by=None),
+            Token(name='variable_value_end', value='\n', path='', code=css, location=(1, 10), referenced_by=None),
+            Token(name='selector_start_class', value='.thing', path='', code=css, location=(2, 0), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 6), referenced_by=None),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(2, 7), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 8), referenced_by=None),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(2, 9), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 16), referenced_by=None),
+            Token(name='number', value='6', path='', code=css, location=(1, 4),
+                  referenced_by=ReferencedBy(name='y', location=(2, 17), length=2)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 5),
+                  referenced_by=ReferencedBy(name='y', location=(2, 17), length=2)),
+            Token(name='number', value='2', path='', code=css, location=(0, 4),
+                  referenced_by=ReferencedBy(name='y', location=(2, 17), length=2)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 5),
+                  referenced_by=ReferencedBy(name='y', location=(2, 17), length=2)),
+            Token(name='number', value='4', path='', code=css, location=(0, 6),
+                  referenced_by=ReferencedBy(name='y', location=(2, 17), length=2)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 8),
+                  referenced_by=ReferencedBy(name='y', location=(2, 17), length=2)),
+            Token(name='number', value='2', path='', code=css, location=(1, 9),
+                  referenced_by=ReferencedBy(name='y', location=(2, 17), length=2)),
+            Token(name='whitespace', value=' ', path='', code=css, location=(2, 19), referenced_by=None),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(2, 20), referenced_by=None)
+        ]
+
+    def test_variable_used_inside_property_value(self):
+        css = "$x: red\n.thing { border: on $x; }"
+        assert list(substitute_references(tokenize(css, ""))) == [
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3), referenced_by=None),
+            Token(name='token', value='red', path='', code=css, location=(0, 4), referenced_by=None),
+            Token(name='variable_value_end', value='\n', path='', code=css, location=(0, 7), referenced_by=None),
+            Token(name='selector_start_class', value='.thing', path='', code=css, location=(1, 0), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 6), referenced_by=None),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(1, 7), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 8), referenced_by=None),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(1, 9), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 16), referenced_by=None),
+            Token(name='token', value='on', path='', code=css, location=(1, 17), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 19), referenced_by=None),
+            Token(name='token', value='red', path='', code=css, location=(0, 4),
+                  referenced_by=ReferencedBy(name='x', location=(1, 20), length=2)),
+            Token(name='declaration_end', value=';', path='', code=css, location=(1, 22), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(1, 23), referenced_by=None),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(1, 24), referenced_by=None)
+        ]
+
+    def test_variable_definition_eof(self):
+        css = "$x: 1"
+        assert list(substitute_references(tokenize(css, ""))) == [
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3), referenced_by=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 4), referenced_by=None)
+        ]
+
+    def test_variable_reference_whitespace_trimming(self):
+        css = "$x:    123;.thing{border: $x}"
+        assert list(substitute_references(tokenize(css, ""))) == [
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), referenced_by=None),
+            Token(name='whitespace', value='    ', path='', code=css, location=(0, 3), referenced_by=None),
+            Token(name='number', value='123', path='', code=css, location=(0, 7), referenced_by=None),
+            Token(name='variable_value_end', value=';', path='', code=css, location=(0, 10), referenced_by=None),
+            Token(name='selector_start_class', value='.thing', path='', code=css, location=(0, 11), referenced_by=None),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(0, 17), referenced_by=None),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(0, 18), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 25), referenced_by=None),
+            Token(name='number', value='123', path='', code=css, location=(0, 7),
+                  referenced_by=ReferencedBy(name='x', location=(0, 26), length=2)),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(0, 28), referenced_by=None)
+        ]
 
 
 class TestParseLayout:

@@ -1,9 +1,11 @@
 /* CSS file for basic.py */
 
+$primary: #20639b;
+
 App > View {
   layout: dock;
   docks: side=left/1;
-  text: on #20639b;
+  text: on $primary;
 }
 
 #sidebar {
@@ -26,7 +28,7 @@ App > View {
 }
 
 #content {
-  text: white on #20639b;
+  text: white on $primary;
   border-bottom: hkey #0f2b41;
 }
 

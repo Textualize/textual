@@ -36,10 +36,7 @@ from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
 from .transition import Transition
 from .types import Display, Edge, Visibility
-
-
 from .types import Specificity3, Specificity4
-from .. import log
 from .._animator import Animation, EasingFunction
 from ..geometry import Spacing, SpacingDimensions
 from .._box import BoxType
@@ -49,7 +46,6 @@ if sys.version_info >= (3, 8):
     from typing import TypedDict
 else:
     from typing_extensions import TypedDict
-
 
 if TYPE_CHECKING:
     from ..layout import Layout

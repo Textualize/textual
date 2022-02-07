@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from rich import print
-
+from collections import defaultdict
 from functools import lru_cache
-from typing import Iterator, Iterable
+from typing import Iterator, Iterable, Optional
 
-from .styles import Styles
-from .tokenize import tokenize, tokenize_declarations, Token
-from .tokenizer import EOFError
+from rich import print
+from rich.cells import cell_len
 
+from textual.css.errors import UnresolvedVariableError
+from ._styles_builder import StylesBuilder, DeclarationError
 from .model import (
     Declaration,
     RuleSet,
@@ -17,8 +17,9 @@ from .model import (
     SelectorSet,
     SelectorType,
 )
-from ._styles_builder import StylesBuilder, DeclarationError
-
+from .styles import Styles
+from .tokenize import tokenize, tokenize_declarations, Token
+from .tokenizer import EOFError, ReferencedBy
 
 SELECTOR_MAP: dict[str, tuple[SelectorType, tuple[int, int, int]]] = {
     "selector": (SelectorType.TYPE, (0, 0, 1)),
@@ -34,7 +35,6 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, tuple[int, int, int]]] = {
 
 @lru_cache(maxsize=1024)
 def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
-
     tokens = iter(tokenize(css_selectors, ""))
 
     get_selector = SELECTOR_MAP.get
@@ -81,7 +81,6 @@ def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
 
 
 def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
-
     get_selector = SELECTOR_MAP.get
     combinator: CombinatorType | None = CombinatorType.DESCENDENT
     selectors: list[Selector] = []
@@ -205,51 +204,117 @@ def parse_declarations(css: str, path: str) -> Styles:
     return styles_builder.styles
 
 
-def parse(css: str, path: str) -> Iterable[RuleSet]:
+def _unresolved(
+    variable_name: str, location: tuple[int, int]
+) -> UnresolvedVariableError:
+    line_idx, col_idx = location
+    return UnresolvedVariableError(
+        f"reference to undefined variable '${variable_name}' at line {line_idx + 1}, column {col_idx + 1}."
+    )
 
-    tokens = iter(tokenize(css, path))
+
+def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
+    """Replace variable references with values by substituting variable reference
+    tokens with the tokens representing their values.
+
+    Args:
+        tokens (Iterator[Token]): Iterator of Tokens which may contain tokens
+            with the name "variable_ref".
+
+    Returns:
+        Iterable[Token]: Yields Tokens such that any variable references (tokens where
+            token.name == "variable_ref") have been replaced with the tokens representing
+            the value. In other words, an Iterable of Tokens similar to the original input,
+            but with variables resolved. Substituted tokens will have their referenced_by
+            attribute populated with information about where the tokens are being substituted to.
+    """
+    variables: dict[str, list[Token]] = defaultdict(list)
+    while tokens:
+        token = next(tokens, None)
+        if token is None:
+            break
+        if token.name == "variable_name":
+            variable_name = token.value[1:-1]  # Trim the $ and the :, i.e. "$x:" -> "x"
+            yield token
+
+            while True:
+                token = next(tokens, None)
+                if token.name == "whitespace":
+                    yield token
+                else:
+                    break
+
+            # Store the tokens for any variable definitions, and substitute
+            # any variable references we encounter with them.
+            while True:
+                if not token:
+                    break
+                elif token.name == "whitespace":
+                    variables[variable_name].append(token)
+                    yield token
+                elif token.name == "variable_value_end":
+                    yield token
+                    break
+                # For variables referring to other variables
+                elif token.name == "variable_ref":
+                    ref_name = token.value[1:]
+                    if ref_name in variables:
+                        variable_tokens = variables[variable_name]
+                        reference_tokens = variables[ref_name]
+                        variable_tokens.extend(reference_tokens)
+                        ref_location = token.location
+                        ref_length = len(token.value)
+                        for _token in reference_tokens:
+                            yield _token.with_reference(
+                                ReferencedBy(
+                                    name=ref_name,
+                                    location=ref_location,
+                                    length=ref_length,
+                                )
+                            )
+                    else:
+                        raise _unresolved(
+                            variable_name=ref_name, location=token.location
+                        )
+                else:
+                    variables[variable_name].append(token)
+                    yield token
+                token = next(tokens, None)
+        elif token.name == "variable_ref":
+            variable_name = token.value[1:]  # Trim the $, so $x -> x
+            if variable_name in variables:
+                variable_tokens = variables[variable_name]
+                ref_location = token.location
+                ref_length = len(token.value)
+                for token in variable_tokens:
+                    yield token.with_reference(
+                        ReferencedBy(
+                            name=variable_name,
+                            location=ref_location,
+                            length=ref_length,
+                        )
+                    )
+            else:
+                raise _unresolved(variable_name=variable_name, location=token.location)
+        else:
+            yield token
+
+
+def parse(css: str, path: str) -> Iterable[RuleSet]:
+    """Parse CSS by tokenizing it, performing variable substitution,
+    and generating rule sets from it.
+
+    Args:
+        css (str): The input CSS
+        path (str): Path to the CSS
+    """
+    tokens = iter(substitute_references(tokenize(css, path)))
     while True:
         token = next(tokens, None)
         if token is None:
             break
         if token.name.startswith("selector_start"):
             yield from parse_rule_set(tokens, token)
-
-
-# if __name__ == "__main__":
-#     test = """
-
-# App View {
-#     text: red;
-# }
-
-# .foo.bar baz:focus, #egg .foo.baz {
-#     /* ignore me, I'm a comment */
-#     display: block;
-#     visibility: visible;
-#     border: solid green !important;
-#     outline: red;
-#     padding: 1 2;
-#     margin: 5;
-#     text: bold red on magenta
-#     text-color: green;
-#     text-background: white
-#     docks: foo bar bar
-#     dock-group: foo
-#     dock-edge: top
-#     offset-x: 4
-#     offset-y: 5
-# }"""
-
-#     from .stylesheet import Stylesheet
-
-#     print(test)
-#     print()
-#     stylesheet = Stylesheet()
-#     stylesheet.parse(test)
-#     print(stylesheet)
-#     print()
-#     print(stylesheet.css)
 
 
 if __name__ == "__main__":

@@ -17,6 +17,7 @@ from .transition import Transition
 from .types import Edge, Display, Visibility
 from .._duration import _duration_as_seconds
 from .._easing import EASING
+from .._loop import loop_last
 from ..geometry import Spacing, SpacingDimensions
 
 
@@ -66,7 +67,7 @@ class StylesBuilder:
 
     def process_display(self, name: str, tokens: list[Token], important: bool) -> None:
         for token in tokens:
-            name, value, _, _, location = token
+            name, value, _, _, location, _ = token
 
             if name == "token":
                 value = value.lower()
@@ -109,7 +110,7 @@ class StylesBuilder:
         self, name: str, tokens: list[Token], important: bool
     ) -> None:
         for token in tokens:
-            name, value, _, _, location = token
+            name, value, _, _, location, _ = token
             if name == "token":
                 value = value.lower()
                 if value in VALID_VISIBILITY:
@@ -127,7 +128,7 @@ class StylesBuilder:
         space: list[int] = []
         append = space.append
         for token in tokens:
-            (token_name, value, _, _, location) = token
+            token_name, value, _, _, location, _ = token
             if token_name in ("number", "scalar"):
                 try:
                     append(int(value))
@@ -153,7 +154,7 @@ class StylesBuilder:
         style_tokens: list[str] = []
         append = style_tokens.append
         for token in tokens:
-            token_name, value, _, _, _ = token
+            token_name, value, _, _, _, _ = token
             if token_name == "token":
                 if value in VALID_BORDER:
                     border_type = value
@@ -299,15 +300,26 @@ class StylesBuilder:
 
     def process_text(self, name: str, tokens: list[Token], important: bool) -> None:
         style_definition = " ".join(token.value for token in tokens)
+
+        # If every token in the value is a referenced by the same variable,
+        # we can display the variable name before the style definition.
+        # TODO: Factor this out to apply it to other properties too.
+        unique_references = {t.referenced_by for t in tokens if t.referenced_by}
+        if tokens and tokens[0].referenced_by and len(unique_references) == 1:
+            variable_prefix = f"${tokens[0].referenced_by.name}="
+        else:
+            variable_prefix = ""
+
         try:
             style = Style.parse(style_definition)
+            self.styles.text = style
         except Exception as error:
-            self.error(name, tokens[0], f"failed to parse style; {error}")
+            message = f"property 'text' has invalid value {variable_prefix}{style_definition!r}; {error}"
+            self.error(name, tokens[0], message)
         if important:
             self.styles.important.update(
                 {"text_style", "text_background", "text_color"}
             )
-        self.styles.text = style
 
     def process_text_color(
         self, name: str, tokens: list[Token], important: bool
