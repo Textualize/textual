@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from functools import lru_cache
-from typing import Iterator, Iterable
+from typing import Iterator, Iterable, Optional
 
 from rich import print
 from rich.cells import cell_len
@@ -204,10 +204,6 @@ def parse_declarations(css: str, path: str) -> Styles:
     return styles_builder.styles
 
 
-def _is_whitespace(token: Token) -> bool:
-    return token.name == "whitespace"
-
-
 def _unresolved(
     variable_name: str, location: tuple[int, int]
 ) -> UnresolvedVariableError:
@@ -241,16 +237,21 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
             variable_name = token.value[1:-1]  # Trim the $ and the :, i.e. "$x:" -> "x"
             yield token
 
-            # Store the tokens for any variable definitions, and substitute
-            # any variable references we encounter with them.
-            leading_whitespace = True
             while True:
                 token = next(tokens, None)
+                if token.name == "whitespace":
+                    yield token
+                else:
+                    break
+
+            # Store the tokens for any variable definitions, and substitute
+            # any variable references we encounter with them.
+            while True:
                 if not token:
                     break
-                elif leading_whitespace and token.name == "whitespace":
+                elif token.name == "whitespace":
+                    variables[variable_name].append(token)
                     yield token
-                    leading_whitespace = False
                 elif token.name == "variable_value_end":
                     yield token
                     break
@@ -263,8 +264,8 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
                         variable_tokens.extend(reference_tokens)
                         ref_location = token.location
                         ref_length = cell_len(token.value)
-                        for token in reference_tokens:
-                            yield token.with_reference(
+                        for _token in reference_tokens:
+                            yield _token.with_reference(
                                 ReferencedBy(
                                     name=ref_name,
                                     location=ref_location,
@@ -278,6 +279,7 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
                 else:
                     variables[variable_name].append(token)
                     yield token
+                token = next(tokens, None)
         elif token.name == "variable_ref":
             variable_name = token.value[1:]  # Trim the $, so $x -> x
             if variable_name in variables:
@@ -299,6 +301,13 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
 
 
 def parse(css: str, path: str) -> Iterable[RuleSet]:
+    """Parse CSS by tokenizing it, performing variable substitution,
+    and generating rule sets from it.
+
+    Args:
+        css (str): The input CSS
+        path (str): Path to the CSS
+    """
     tokens = iter(substitute_references(tokenize(css, path)))
     while True:
         token = next(tokens, None)

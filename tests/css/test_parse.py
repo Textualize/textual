@@ -148,6 +148,30 @@ class TestVariableReferenceSubstitution:
             Token(name='declaration_set_end', value='}', path='', code=css, location=(1, 24), referenced_by=None)
         ]
 
+    def test_variable_definition_eof(self):
+        css = "$x: 1"
+        assert list(substitute_references(tokenize(css, ""))) == [
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 3), referenced_by=None),
+            Token(name='number', value='1', path='', code=css, location=(0, 4), referenced_by=None)
+        ]
+
+    def test_variable_reference_whitespace_trimming(self):
+        css = "$x:    123;.thing{border: $x}"
+        assert list(substitute_references(tokenize(css, ""))) == [
+            Token(name='variable_name', value='$x:', path='', code=css, location=(0, 0), referenced_by=None),
+            Token(name='whitespace', value='    ', path='', code=css, location=(0, 3), referenced_by=None),
+            Token(name='number', value='123', path='', code=css, location=(0, 7), referenced_by=None),
+            Token(name='variable_value_end', value=';', path='', code=css, location=(0, 10), referenced_by=None),
+            Token(name='selector_start_class', value='.thing', path='', code=css, location=(0, 11), referenced_by=None),
+            Token(name='declaration_set_start', value='{', path='', code=css, location=(0, 17), referenced_by=None),
+            Token(name='declaration_name', value='border:', path='', code=css, location=(0, 18), referenced_by=None),
+            Token(name='whitespace', value=' ', path='', code=css, location=(0, 25), referenced_by=None),
+            Token(name='number', value='123', path='', code=css, location=(0, 7),
+                  referenced_by=ReferencedBy(name='x', location=(0, 26), length=2)),
+            Token(name='declaration_set_end', value='}', path='', code=css, location=(0, 28), referenced_by=None)
+        ]
+
 
 class TestParseLayout:
     def test_valid_layout_name(self):
