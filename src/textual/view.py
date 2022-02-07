@@ -51,16 +51,16 @@ class View(Widget):
 
         return self.styles.layout
 
-    # @layout.setter
-    # def layout(self, new_value: Layout) -> None:
-    #     """Convenience property setter for setting ``view.styles.layout``.
-    #     Args:
-    #         new_value:
+    @layout.setter
+    def layout(self, new_value: Layout) -> None:
+        """Convenience property setter for setting ``view.styles.layout``.
+        Args:
+            new_value:
 
-    #     Returns:
-    #         None
-    #     """
-    #     self.styles.layout = new_value
+        Returns:
+            None
+        """
+        self.styles.layout = new_value
 
     @property
     def scroll(self) -> Offset:
