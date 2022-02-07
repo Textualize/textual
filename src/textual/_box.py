@@ -7,8 +7,10 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal
 
+from rich.color import Color
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.segment import Segment
+from rich.style import Style
 
 BOX_STYLES: dict[str, tuple[str, str, str]] = {
     "": ("   ", "   ", "   "),
@@ -30,11 +32,22 @@ class Box:
         renderable: RenderableType,
         *,
         sides: tuple[str, str, str, str],
-        styles: tuple[str, str, str, str],
+        colors: tuple[Color, Color, Color, Color],
     ):
         self.renderable = renderable
         self.sides = sides
-        self.styles = styles
+        self.colors = colors
+
+    @property
+    def styles(self) -> tuple[Style, Style, Style, Style]:
+        color1, color2, color3, color4 = self.colors
+        from_color = Style.from_color
+        return (
+            from_color(color1),
+            from_color(color2),
+            from_color(color3),
+            from_color(color4),
+        )
 
     def __rich_console__(
         self, console: "Console", options: "ConsoleOptions"

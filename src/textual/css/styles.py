@@ -73,15 +73,15 @@ class RulesMap(TypedDict):
     margin: Spacing
     offset: ScalarOffset
 
-    border_top: tuple[str, Style]
-    border_right: tuple[str, Style]
-    border_bottom: tuple[str, Style]
-    border_left: tuple[str, Style]
+    border_top: tuple[str, Color]
+    border_right: tuple[str, Color]
+    border_bottom: tuple[str, Color]
+    border_left: tuple[str, Color]
 
-    outline_top: tuple[str, Style]
-    outline_right: tuple[str, Style]
-    outline_bottom: tuple[str, Style]
-    outline_left: tuple[str, Style]
+    outline_top: tuple[str, Color]
+    outline_right: tuple[str, Color]
+    outline_bottom: tuple[str, Color]
+    outline_left: tuple[str, Color]
 
     width: Scalar
     height: Scalar
@@ -613,30 +613,30 @@ class StylesView:
 
     border = BorderProperty()
     border_top: StyleViewProperty[
-        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
     ] = StyleViewProperty()
     border_right: StyleViewProperty[
-        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
     ] = StyleViewProperty()
     border_bottom: StyleViewProperty[
-        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
     ] = StyleViewProperty()
     border_left: StyleViewProperty[
-        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
     ] = StyleViewProperty()
 
     outline = BorderProperty()
     outline_top: StyleViewProperty[
-        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
     ] = StyleViewProperty()
     outline_right: StyleViewProperty[
-        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
     ] = StyleViewProperty()
     outline_bottom: StyleViewProperty[
-        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
     ] = StyleViewProperty()
     outline_left: StyleViewProperty[
-        tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
+        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
     ] = StyleViewProperty()
 
     width: StyleViewProperty[

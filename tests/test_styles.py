@@ -1,3 +1,4 @@
+from rich.color import Color
 from rich.style import Style
 
 from textual.css.styles import Styles, StylesView
@@ -53,8 +54,8 @@ def test_styles_view_border():
     assert styles_view.border_top == ("heavy", Style.parse("red"))
     assert styles_view.border_left == ("rounded", Style.parse("green"))
     assert styles_view.border == (
-        ("heavy", Style.parse("red")),
-        ("", Style()),
-        ("", Style()),
-        ("rounded", Style.parse("green")),
+        ("heavy", Color.parse("red")),
+        ("", Color()),
+        ("", Color()),
+        ("rounded", Color.parse("green")),
     )

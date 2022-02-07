@@ -38,13 +38,20 @@ class Border:
         self.style = style
 
         (
-            (top, top_style),
-            (right, right_style),
-            (bottom, bottom_style),
-            (left, left_style),
+            (top, top_color),
+            (right, right_color),
+            (bottom, bottom_color),
+            (left, left_color),
         ) = edge_styles
         self._sides = (top or "none", right or "none", bottom or "none", left or "none")
-        self._styles = (top_style, right_style, bottom_style, left_style)
+        from_color = Style.from_color
+
+        self._styles = (
+            from_color(top_color),
+            from_color(right_color),
+            from_color(bottom_color),
+            from_color(left_color),
+        )
 
     def _crop_renderable(self, lines: list[list[Segment]], width: int) -> None:
         """Crops a renderable in place.
@@ -167,16 +174,17 @@ class Border:
 
 if __name__ == "__main__":
     from rich import print
+    from rich.color import Color
     from rich.text import Text
 
     text = Text("Textual " * 40, style="dim")
     border = Border(
         text,
         (
-            ("outer", Style.parse("green")),
-            ("outer", Style.parse("green")),
-            ("outer", Style.parse("green")),
-            ("outer", Style.parse("green")),
+            ("outer", Color.parse("green")),
+            ("outer", Color.parse("green")),
+            ("outer", Color.parse("green")),
+            ("outer", Color.parse("green")),
         ),
     )
     print(text)

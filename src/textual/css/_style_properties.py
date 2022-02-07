@@ -37,7 +37,9 @@ if TYPE_CHECKING:
 
 from .._box import BoxType
 
-BorderDefinition = "Sequence[tuple[BoxType, str | Color | Style] | None] | tuple[BoxType, str | Color | Style]"
+BorderDefinition = (
+    "Sequence[tuple[BoxType, str | Color] | None] | tuple[BoxType, str | Color]"
+)
 
 
 class ScalarProperty:
@@ -113,7 +115,7 @@ class BoxProperty:
     For example "border-right", "outline-bottom", etc.
     """
 
-    DEFAULT = ("", Style())
+    DEFAULT = ("", Color.default())
 
     def __set_name__(self, owner: Styles, name: str) -> None:
         self.name = name
@@ -123,7 +125,7 @@ class BoxProperty:
 
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
-    ) -> tuple[BoxType, Style]:
+    ) -> tuple[BoxType, Color]:
         """Get the box property
 
         Args:
@@ -134,10 +136,10 @@ class BoxProperty:
             A ``tuple[BoxType, Style]`` containing the string type of the box and
                 it's style. Example types are "rounded", "solid", and "dashed".
         """
-        value = obj._rules.get(self.name) or self.DEFAULT
-        return value
+        box_type, color = obj._rules.get(self.name) or self.DEFAULT
+        return (box_type, color)
 
-    def __set__(self, obj: Styles, border: tuple[BoxType, str | Color | Style] | None):
+    def __set__(self, obj: Styles, border: tuple[BoxType, str | Color] | None):
         """Set the box property
 
         Args:
@@ -153,12 +155,11 @@ class BoxProperty:
             obj._rules.pop(self.name, None)
         else:
             _type, color = border
+            new_value = border
             if isinstance(color, str):
-                new_value = (_type, Style.parse(color))
+                new_value = (_type, Color.parse(color))
             elif isinstance(color, Color):
-                new_value = (_type, Style.from_color(color))
-            else:
-                new_value = (_type, Style.from_color(Color.parse(color)))
+                new_value = (_type, color)
             obj._rules[self.name] = new_value
         obj.refresh()
 
@@ -167,10 +168,10 @@ class BoxProperty:
 class Edges(NamedTuple):
     """Stores edges for border / outline."""
 
-    top: tuple[BoxType, Style]
-    right: tuple[BoxType, Style]
-    bottom: tuple[BoxType, Style]
-    left: tuple[BoxType, Style]
+    top: tuple[BoxType, Color]
+    right: tuple[BoxType, Color]
+    bottom: tuple[BoxType, Color]
+    left: tuple[BoxType, Color]
 
     def __rich_repr__(self) -> rich.repr.Result:
         top, right, bottom, left = self
