@@ -305,11 +305,15 @@ class StyleProperty:
         Returns:
             A ``Style`` object.
         """
-        rules_get = obj._rules.get
-        color = rules_get("text_color") or Color.default()
-        bgcolor = rules_get("text_background") or Color.default()
-        style = Style.from_color(color, bgcolor)
-        style += rules_get("text_style") or Style()
+        has_rule = obj.has_rule
+
+        style = Style.from_color(
+            obj.text_color if has_rule("text_color") else None,
+            obj.text_background if has_rule("text_background") else None,
+        )
+        if has_rule("text_style"):
+            style += obj.text_style
+
         return style
 
     def __set__(self, obj: Styles, style: Style | str | None):
@@ -340,9 +344,9 @@ class StyleProperty:
         elif isinstance(style, str):
             new_style = Style.parse(style)
             if new_style.color:
-                rules_set("text_color", new_style.color or Color.default())
+                rules_set("text_color", new_style.color)
             if new_style.bgcolor:
-                rules_set("text_background", new_style.bgcolor or Color.default())
+                rules_set("text_background", new_style.bgcolor)
             if new_style.without_color:
                 rules_set("text_style", new_style.without_color)
 

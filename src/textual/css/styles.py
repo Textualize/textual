@@ -582,7 +582,7 @@ class StylesView:
     visibility: StyleViewProperty[str, str | None] = StyleViewProperty()
     layout: StyleViewProperty[Layout | None, str | Layout | None] = StyleViewProperty()
 
-    text: StyleViewProperty[Style, Style | str | None] = StyleViewProperty()
+    text = StyleProperty()
     text_color: StyleViewProperty[Color, Color | str | None] = StyleViewProperty()
     text_background: StyleViewProperty[Color, Color | str | None] = StyleViewProperty()
     text_style: StyleViewProperty[Style, str | None] = StyleViewProperty()
@@ -593,7 +593,7 @@ class StylesView:
         ScalarOffset, tuple[int | str, int | str] | ScalarOffset
     ] = StyleViewProperty()
 
-    border: StyleViewProperty[Edges, BorderDefinition | None] = StyleViewProperty()
+    border = BorderProperty()
     border_top: StyleViewProperty[
         tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
     ] = StyleViewProperty()
@@ -607,7 +607,7 @@ class StylesView:
         tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
     ] = StyleViewProperty()
 
-    outline: StyleViewProperty[Edges, BorderDefinition | None] = StyleViewProperty()
+    outline = BorderProperty()
     outline_top: StyleViewProperty[
         tuple[BoxType, Style], tuple[BoxType, str | Color | Style] | None
     ] = StyleViewProperty()
