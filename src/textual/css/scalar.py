@@ -147,6 +147,7 @@ class ScalarOffset(NamedTuple):
 
     @classmethod
     def null(cls) -> ScalarOffset:
+        """Get a null scalar offset (0, 0)."""
         return cls(Scalar.from_number(0), Scalar.from_number(0))
 
     def __bool__(self) -> bool:

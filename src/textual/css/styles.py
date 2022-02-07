@@ -53,6 +53,13 @@ if TYPE_CHECKING:
 
 
 class RulesMap(TypedDict):
+    """A typed dict for CSS rules.
+
+    Any key may be absent, indiciating that rule has not been set.
+
+    Does not define composite rules, that is a rule that is made of a combination of other rules. For instance,
+    the text style is made up of text_color, text_background, and text_style.
+    """
 
     display: Display
     visibility: Visibility
@@ -117,30 +124,30 @@ class Styles:
         if rule in RULE_NAMES and rule in self._rules:
             return True
         if rule == "text":
-            return bool(
-                {"text_color", "text_background", "text_style"}.intersection(
+            return not (
+                {"text_color", "text_background", "text_style"}.isdisjoint(
                     self._rules.keys()
                 )
             )
 
         if rule == "border":
-            return bool(
+            return not (
                 {
                     "border_top",
                     "border_right",
                     "border_bottom",
                     "border_left",
-                }.intersection(self._rules.keys())
+                }.isdisjoint(self._rules.keys())
             )
 
         if rule == "outline" and any(self.outline):
-            return bool(
+            return not (
                 {
                     "outline_top",
                     "outline_right",
                     "outline_bottom",
                     "outline_left",
-                }.intersection(self._rules.keys())
+                }.isdisjoint(self._rules.keys())
             )
         return False
 
