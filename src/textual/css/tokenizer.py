@@ -54,7 +54,13 @@ class Token(NamedTuple):
     location: tuple[int, int]
     referenced_by: ReferencedBy | None
 
-    def ref(self, by: ReferencedBy | None) -> "Token":
+    def with_reference(self, by: ReferencedBy | None) -> "Token":
+        """Return a copy of the Token, with reference information attached.
+        This is used for variable substitution, where a variable reference
+        can refer to tokens which were defined elsewhere. With the additional
+        ReferencedBy data attached, we can track where the token we are referring
+        to is used.
+        """
         return Token(
             name=self.name,
             value=self.value,
