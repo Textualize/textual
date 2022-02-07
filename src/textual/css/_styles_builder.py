@@ -307,7 +307,7 @@ class StylesBuilder:
         # If every token in the value is a referenced by the same variable,
         # we can display the variable name before the style definition.
         # TODO: Factor this out to apply it to other properties too.
-        unique_references = set(t.referenced_by for t in tokens if t.referenced_by)
+        unique_references = {t.referenced_by for t in tokens if t.referenced_by}
         if tokens and tokens[0].referenced_by and len(unique_references) == 1:
             variable_prefix = f"${tokens[0].referenced_by.name}="
         else:
