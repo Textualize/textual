@@ -43,7 +43,7 @@ class View(Widget):
         self.app.refresh()
 
     @property
-    def layout(self) -> Layout:
+    def layout(self) -> Layout | None:
         """Convenience property for accessing ``self.styles.layout``.
 
         Returns: The Layout associated with this view
@@ -87,7 +87,7 @@ class View(Widget):
         return self.app.is_mounted(widget)
 
     def render(self) -> RenderableType:
-        return self.layout
+        return self.layout or ""
 
     def get_offset(self, widget: Widget) -> Offset:
         return self.layout.get_offset(widget)

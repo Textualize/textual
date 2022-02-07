@@ -18,7 +18,9 @@ class BasicApp(App):
             sidebar=Widget(),
         )
 
-        self.app.panic(repr(self.view.styles))
+        # # self.app.panic(self["#sidebar"].styles.has_rule("border"))
+
+        # self.app.panic(repr(self["#sidebar"]._inline_styles.border))
 
 
 BasicApp.run(css_file="basic.css", watch_css=True, log="textual.log")

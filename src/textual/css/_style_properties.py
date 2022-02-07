@@ -10,7 +10,7 @@ when setting and getting.
 from __future__ import annotations
 
 
-from typing import Iterable, Iterator, NamedTuple, Sequence, TYPE_CHECKING
+from typing import Iterable, NamedTuple, Sequence, TYPE_CHECKING
 
 import rich.repr
 from rich.color import Color
@@ -176,7 +176,7 @@ class Edges(NamedTuple):
     left: tuple[BoxType, Style]
 
     def __rich_repr__(self) -> rich.repr.Result:
-        _, top, right, bottom, left = self
+        top, right, bottom, left = self
         if top[0]:
             yield "top", top
         if right[0]:
@@ -192,7 +192,7 @@ class Edges(NamedTuple):
         Returns:
             tuple[int, int, int, int]: Spacing for top, right, bottom, and left.
         """
-        _, top, right, bottom, left = self
+        top, right, bottom, left = self
         return (
             1 if top[0] else 0,
             1 if right[0] else 0,
@@ -596,7 +596,7 @@ class NameProperty:
     """Descriptor for getting and setting name properties."""
 
     def __set_name__(self, owner: Styles, name: str) -> None:
-        self._name = name
+        self.name = name
 
     def __get__(self, obj: Styles, objtype: type[Styles] | None) -> str:
         """Get the name property
@@ -608,7 +608,7 @@ class NameProperty:
         Returns:
             str: The name
         """
-        return obj.get(self.name, "")
+        return obj._rules.get(self.name, "")
 
     def __set__(self, obj: Styles, name: str | None):
         """Set the name property
@@ -631,7 +631,7 @@ class NameProperty:
 
 class NameListProperty:
     def __set_name__(self, owner: Styles, name: str) -> None:
-        self._name = name
+        self.name = name
 
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None

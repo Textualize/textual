@@ -154,6 +154,7 @@ class Widget(DOMNode):
         """
 
         renderable = self.render()
+
         styles = self.styles
 
         parent_text_style = self.parent.text_style
@@ -163,15 +164,15 @@ class Widget(DOMNode):
         if renderable_text_style:
             renderable = Styled(renderable, renderable_text_style)
 
-        if any(styles.padding):
+        if styles.padding:
             renderable = Padding(
                 renderable, styles.padding, style=renderable_text_style
             )
 
-        if any(styles.border):
+        if styles.border:
             renderable = Border(renderable, styles.border, style=renderable_text_style)
 
-        if any(styles.outline):
+        if styles.outline:
             renderable = Border(
                 renderable,
                 styles.outline,

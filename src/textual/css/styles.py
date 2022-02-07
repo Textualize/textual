@@ -120,17 +120,32 @@ class Styles:
         """Check if a rule has been set."""
         if rule in RULE_NAMES and rule in self._rules:
             return True
-        has_rule = self._rules.__contains__
         if rule == "text":
-            return (
-                has_rule("text_color")
-                or has_rule("text_bgcolor")
-                or has_rule("text_style")
+            return bool(
+                {"text_color", "text_background", "text_style"}.intersection(
+                    self._rules.keys()
+                )
             )
-        if rule == "border" and any(self.border):
-            return True
+
+        if rule == "border":
+            return bool(
+                {
+                    "border_top",
+                    "border_right",
+                    "border_bottom",
+                    "border_left",
+                }.intersection(self._rules.keys())
+            )
+
         if rule == "outline" and any(self.outline):
-            return True
+            return bool(
+                {
+                    "outline_top",
+                    "outline_right",
+                    "outline_bottom",
+                    "outline_left",
+                }.intersection(self._rules.keys())
+            )
         return False
 
     def get_rules(self) -> RulesMap:
@@ -243,7 +258,7 @@ class Styles:
         return rules
 
     def apply_rules(self, rules: RulesMap, animate: bool = False):
-        if animate or self.node is None:
+        if not animate or self.node is None:
             self._rules.update(rules)
         else:
             styles = self

@@ -484,6 +484,9 @@ class Spacing(NamedTuple):
     bottom: int = 0
     left: int = 0
 
+    def __bool__(self) -> bool:
+        return self == (0, 0, 0, 0)
+
     @property
     def width(self) -> int:
         """Total space in width."""
