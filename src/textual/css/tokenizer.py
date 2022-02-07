@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import NamedTuple
 import re
+from typing import NamedTuple
 
-from rich import print
 import rich.repr
+from rich.cells import cell_len
 
 
 class EOFError(Exception):
@@ -39,6 +39,12 @@ class Expect:
         yield from zip(self.names, self.regexes)
 
 
+class ReferencedBy(NamedTuple):
+    name: str
+    location: tuple[int, int]
+    length: int
+
+
 @rich.repr.auto
 class Token(NamedTuple):
     name: str
@@ -46,6 +52,23 @@ class Token(NamedTuple):
     path: str
     code: str
     location: tuple[int, int]
+    referenced_by: ReferencedBy | None
+
+    def with_reference(self, by: ReferencedBy | None) -> "Token":
+        """Return a copy of the Token, with reference information attached.
+        This is used for variable substitution, where a variable reference
+        can refer to tokens which were defined elsewhere. With the additional
+        ReferencedBy data attached, we can track where the token we are referring
+        to is used.
+        """
+        return Token(
+            name=self.name,
+            value=self.value,
+            path=self.path,
+            code=self.code,
+            location=self.location,
+            referenced_by=by,
+        )
 
     def __str__(self) -> str:
         return self.value
@@ -55,6 +78,7 @@ class Token(NamedTuple):
         yield "value", self.value
         yield "path", self.path
         yield "location", self.location
+        yield "referenced_by", self.referenced_by
 
 
 class Tokenizer:
@@ -70,7 +94,7 @@ class Tokenizer:
         col_no = self.col_no
         if line_no >= len(self.lines):
             if expect._expect_eof:
-                return Token("eof", "", self.path, self.code, (line_no, col_no))
+                return Token("eof", "", self.path, self.code, (line_no, col_no), None)
             else:
                 raise EOFError()
         line = self.lines[line_no]
@@ -88,7 +112,9 @@ class Tokenizer:
             if value is not None:
                 break
 
-        token = Token(name, value, self.path, self.code, (line_no, col_no))
+        token = Token(
+            name, value, self.path, self.code, (line_no, col_no), referenced_by=None
+        )
         col_no += len(value)
         if col_no >= len(line):
             line_no += 1

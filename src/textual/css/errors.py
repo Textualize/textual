@@ -9,6 +9,10 @@ class DeclarationError(Exception):
         super().__init__(message)
 
 
+class UnresolvedVariableError(NameError):
+    pass
+
+
 class StyleTypeError(TypeError):
     pass
 

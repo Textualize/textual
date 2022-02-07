@@ -1,24 +1,25 @@
 from __future__ import annotations
 
+import os
 from collections import defaultdict
 from operator import itemgetter
-import os
 from typing import Iterable
 
 import rich.repr
-from rich.highlighter import ReprHighlighter
-from rich.panel import Panel
-from rich.text import Text
 from rich.console import Group, RenderableType
+from rich.highlighter import ReprHighlighter
+from rich.padding import Padding
+from rich.panel import Panel
+from rich.syntax import Syntax
+from rich.text import Text
 
-
+from textual._loop import loop_last
 from .errors import StylesheetError
 from .match import _check_selectors
 from .model import RuleSet
 from .parse import parse
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
-from .. import log
 
 
 class StylesheetParseError(Exception):
@@ -34,11 +35,17 @@ class StylesheetErrors:
         self.stylesheet = stylesheet
 
     @classmethod
-    def _get_snippet(cls, code: str, line_no: int, col_no: int, length: int) -> Panel:
-        lines = Text(code, style="dim").split()
-        lines[line_no].stylize("bold not dim", col_no, col_no + length - 1)
-        text = Text("\n").join(lines[max(0, line_no - 1) : line_no + 2])
-        return Panel(text, border_style="red")
+    def _get_snippet(cls, code: str, line_no: int) -> Panel:
+        syntax = Syntax(
+            code,
+            lexer="scss",
+            theme="ansi_light",
+            line_numbers=True,
+            indent_guides=True,
+            line_range=(max(0, line_no - 2), line_no + 1),
+            highlight_lines={line_no},
+        )
+        return Panel(syntax, border_style="red")
 
     def __rich__(self) -> RenderableType:
         highlighter = ReprHighlighter()
@@ -46,13 +53,30 @@ class StylesheetErrors:
         append = errors.append
         for rule in self.stylesheet.rules:
             for token, message in rule.errors:
-                line_no, col_no = token.location
+                append("")
+                append(Text(" Error in stylesheet:", style="bold red"))
 
-                append(highlighter(f"{token.path or '<unknown>'}:{line_no}"))
-                append(
-                    self._get_snippet(token.code, line_no, col_no, len(token.value) + 1)
-                )
-                append(highlighter(Text(message, "red")))
+                if token.referenced_by:
+                    line_idx, col_idx = token.referenced_by.location
+                    line_no, col_no = line_idx + 1, col_idx + 1
+                    append(
+                        highlighter(f" {token.path or '<unknown>'}:{line_no}:{col_no}")
+                    )
+                    append(self._get_snippet(token.code, line_no))
+                else:
+                    line_idx, col_idx = token.location
+                    line_no, col_no = line_idx + 1, col_idx + 1
+                    append(
+                        highlighter(f" {token.path or '<unknown>'}:{line_no}:{col_no}")
+                    )
+                    append(self._get_snippet(token.code, line_no))
+
+                final_message = ""
+                for is_last, message_part in loop_last(message.split(";")):
+                    end = "" if is_last else "\n"
+                    final_message += f"• {message_part.strip()};{end}"
+
+                append(Padding(highlighter(Text(final_message, "red")), pad=(0, 1)))
                 append("")
         return Group(*errors)
 
@@ -163,7 +187,6 @@ class Stylesheet:
 
 
 if __name__ == "__main__":
-
     from rich.traceback import install
 
     install(show_locals=True)

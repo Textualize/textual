@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any, Iterable, NamedTuple, TYPE_CHECKING
@@ -34,13 +33,9 @@ from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
 from .transition import Transition
 from .types import Display, Edge, Visibility
-
-
 from .types import Specificity3, Specificity4
-from .. import log
 from .._animator import Animation, EasingFunction
 from ..geometry import Spacing
-
 
 if TYPE_CHECKING:
     from ..layout import Layout
