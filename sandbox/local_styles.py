@@ -1,7 +1,7 @@
 from textual.app import App
+from textual import events
 from textual.widgets import Placeholder
 from textual.widget import Widget
-from textual import events
 
 
 class BasicApp(App):
@@ -15,6 +15,9 @@ class BasicApp(App):
             footer=Widget(),
             sidebar=Widget(),
         )
+
+    async def on_key(self, event: events.Key) -> None:
+        await self.dispatch_key(event)
 
     def key_a(self) -> None:
         self.query("#footer").set_styles(text="on magenta")

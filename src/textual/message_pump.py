@@ -311,7 +311,7 @@ class MessagePump:
         else:
             return False
 
-    async def dispatch_key(self, event: events.Key) -> bool:
+    async def dispatch_key(self, event: events.Key) -> None:
         """Dispatch a key event to method.
 
         This method will call the method named 'key_<event.key>' if it exists. This key method
@@ -324,8 +324,7 @@ class MessagePump:
         key_method = getattr(self, f"key_{event.key}", None)
         if key_method is not None:
             await invoke(key_method, event)
-            return True
-        return False
+            event.prevent_default()
 
     async def on_timer(self, event: events.Timer) -> None:
         event.prevent_default()

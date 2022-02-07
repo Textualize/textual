@@ -434,7 +434,7 @@ class DockProperty:
         Returns:
             str: The dock name as a string, or "" if the rule is not set.
         """
-        return obj._rules.get("dock") or ""
+        return obj._rules.get("dock") or "_default"
 
     def __set__(self, obj: Styles, spacing: str | None):
         """Set the Dock property

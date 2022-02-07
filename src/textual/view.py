@@ -18,6 +18,7 @@ class View(Widget):
 
     DEFAULT_STYLES = """
         layout: dock;
+        docks: _default=top;
     """
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:

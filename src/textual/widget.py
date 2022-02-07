@@ -57,7 +57,7 @@ class Widget(DOMNode):
     can_focus: bool = False
 
     DEFAULT_STYLES = """
-    dock: _default;
+
     """
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
