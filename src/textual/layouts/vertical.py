@@ -12,7 +12,6 @@ if TYPE_CHECKING:
 
 
 class VerticalLayout(Layout):
-
     def get_widgets(self, view: View) -> Iterable[Widget]:
         return view.children
 
