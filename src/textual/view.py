@@ -22,7 +22,6 @@ class View(Widget):
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
         self.mouse_over: Widget | None = None
-        self.widgets: set[Widget] = set()
         self._mouse_style: Style = Style()
         self._mouse_widget: Widget | None = None
 
