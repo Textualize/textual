@@ -151,6 +151,10 @@ class Styles:
             )
         return False
 
+    def clear_rule(self, rule_name: str) -> None:
+        """Clear a rule."""
+        self._rules.pop(rule_name, None)
+
     def get_rules(self) -> RulesMap:
         """Get rules as a dictionary."""
         rules = self._rules.copy()
@@ -542,6 +546,10 @@ class StylesView:
     def has_rule(self, rule: str) -> bool:
         """Check if a rule has been set."""
         return self._inline_styles.has_rule(rule) or self._base_styles.has_rule(rule)
+
+    def clear_rule(self, rule_name: str) -> None:
+        """Clear a rule (from inline)."""
+        self._inline_styles.clear_rule(rule_name)
 
     def get_rules(self) -> RulesMap:
         """Get rules as a dictionary"""

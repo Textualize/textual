@@ -253,10 +253,11 @@ class BorderProperty:
         top, right, bottom, left = self._properties
         obj.refresh()
         if border is None:
-            setattr(obj, top, None)
-            setattr(obj, right, None)
-            setattr(obj, bottom, None)
-            setattr(obj, left, None)
+            clear_rule = obj.clear_rule
+            clear_rule(top)
+            clear_rule(right)
+            clear_rule(bottom)
+            clear_rule(left)
             return
         if isinstance(border, tuple):
             setattr(obj, top, border)
@@ -288,7 +289,7 @@ class BorderProperty:
 
 
 class StyleProperty:
-    """Descriptor for getting and setting full borders and outlines."""
+    """Descriptor for getting and setting the text style."""
 
     DEFAULT_STYLE = Style()
 
@@ -325,27 +326,22 @@ class StyleProperty:
             StyleSyntaxError: When the supplied style string has invalid syntax.
         """
         obj.refresh()
-        rules_set = obj._rules.__setitem__
+
         if style is None:
-            rules = obj._rules
-            rules.pop("text_color")
-            rules.pop("text_background")
-            rules.pop("text_style")
-        elif isinstance(style, Style):
-            if style.color:
-                rules_set("text_color", style.color)
-            if style.bgcolor:
-                rules_set("text_background", style.bgcolor)
+            clear_rule = obj.clear_rule
+            clear_rule("text_color")
+            clear_rule("text_background")
+            clear_rule("text_style")
+        else:
+            if isinstance(style, str):
+                style = Style.parse(style)
+
+            if style.color is not None:
+                obj.text_color = style.color
+            if style.bgcolor is not None:
+                obj.text_background = style.bgcolor
             if style.without_color:
-                rules_set("text_style", style.without_color)
-        elif isinstance(style, str):
-            new_style = Style.parse(style)
-            if new_style.color:
-                rules_set("text_color", new_style.color)
-            if new_style.bgcolor:
-                rules_set("text_background", new_style.bgcolor)
-            if new_style.without_color:
-                rules_set("text_style", new_style.without_color)
+                obj.text_style = str(style.without_color)
 
 
 class SpacingProperty:
@@ -696,6 +692,7 @@ class StyleFlagsProperty:
     """Descriptor for getting and set style flag properties (e.g. ``bold italic underline``)."""
 
     _VALID_PROPERTIES = {
+        "none",
         "not",
         "bold",
         "italic",
