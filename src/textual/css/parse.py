@@ -263,7 +263,7 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
                         reference_tokens = variables[ref_name]
                         variable_tokens.extend(reference_tokens)
                         ref_location = token.location
-                        ref_length = cell_len(token.value)
+                        ref_length = len(token.value)
                         for _token in reference_tokens:
                             yield _token.with_reference(
                                 ReferencedBy(
@@ -285,7 +285,7 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
             if variable_name in variables:
                 variable_tokens = variables[variable_name]
                 ref_location = token.location
-                ref_length = cell_len(token.value)
+                ref_length = len(token.value)
                 for token in variable_tokens:
                     yield token.with_reference(
                         ReferencedBy(
