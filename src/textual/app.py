@@ -502,7 +502,9 @@ class App(DOMNode):
             try:
                 if sync_available:
                     console.file.write("\x1bP=1s\x1b\\")
-                console.print(Screen(Control.home(), self.view, Control.home()))
+                console.print(
+                    Screen(Control.home(), self.view.render_styled(), Control.home())
+                )
                 if sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
                 console.file.flush()

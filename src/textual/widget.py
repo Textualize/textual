@@ -93,10 +93,6 @@ class Widget(DOMNode):
         if pseudo_classes:
             yield "pseudo_classes", pseudo_classes
 
-    def __rich__(self) -> RenderableType:
-        renderable = self.render_styled()
-        return renderable
-
     def get_pseudo_classes(self) -> Iterable[str]:
         """Pseudo classes for a widget"""
         if self._mouse_over:
