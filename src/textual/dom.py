@@ -295,14 +295,13 @@ class DOMNode(MessagePump):
 
     def set_styles(self, css: str | None = None, **styles) -> None:
         """Set custom styles on this object."""
+        # TODO: This can be done more efficiently
         kwarg_css = "\n".join(
             f"{key.replace('_', '-')}: {value}" for key, value in styles.items()
         )
         apply_css = f"{css or ''}\n{kwarg_css}\n"
         new_styles = parse_declarations(apply_css, f"<custom styles for ${self!r}>")
         self.styles.merge(new_styles)
-        self.log(repr(self.styles))
-        self.log(self._inline_styles, self._css_styles, self.styles.text)
         self.refresh()
 
     def has_class(self, *class_names: str) -> bool:
