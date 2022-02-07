@@ -1,28 +1,21 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod, abstractmethod
-from dataclasses import dataclass
+import sys
+from abc import ABC, abstractmethod
 from itertools import chain
 from operator import itemgetter
-import sys
-
 from typing import ClassVar, Iterable, Iterator, NamedTuple, TYPE_CHECKING
 
 import rich.repr
+from rich.console import Console, ConsoleOptions, RenderResult
 from rich.control import Control
-from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.segment import Segment, SegmentLines
 from rich.style import Style
 
-from . import log, panic
 from ._loop import loop_last
-from .layout_map import LayoutMap
-from ._profile import timer
-from ._lines import crop_lines
 from ._types import Lines
-
-from .geometry import clamp, Region, Offset, Size
-
+from .geometry import Region, Offset, Size
+from .layout_map import LayoutMap
 
 PY38 = sys.version_info >= (3, 8)
 
@@ -56,6 +49,14 @@ class WidgetPlacement(NamedTuple):
     order: int = 0
 
     def apply_margin(self) -> "WidgetPlacement":
+        """Apply any margin present in the styles of the widget by shrinking the
+        region appropriately.
+
+        Returns:
+            WidgetPlacement: Returns ``self`` if no ``margin`` styles are present in
+                the widget. Otherwise, returns a copy of self with a region shrunk to
+                account for margin.
+        """
         region, widget, order = self
         styles = widget.styles
         if styles.has_margin:
@@ -170,9 +171,9 @@ class Layout(ABC):
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 
         Args:
-            console (Console): Console instance.
-            size (Dimensions): Size of container.
-            viewport (Region): Screen relative viewport.
+            view (View): The View instance.
+            size (Size): Size of container.
+            scroll (Offset): Offset to apply to the Widget placements.
 
         Returns:
             Iterable[WidgetPlacement]: An iterable of widget location

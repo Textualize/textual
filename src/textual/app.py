@@ -282,7 +282,6 @@ class App(DOMNode):
         Args:
             widget (Widget): [description]
         """
-        log("set_focus", widget)
         if widget == self.focused:
             # Widget is already focused
             return
@@ -409,7 +408,7 @@ class App(DOMNode):
             if self.log_file is not None:
                 self.log_file.close()
 
-    def _register(self, parent: DOMNode, child: DOMNode) -> bool:
+    def _register_child(self, parent: DOMNode, child: DOMNode) -> bool:
         if child not in self.registry:
             parent.children._append(child)
             self.registry.add(child)
@@ -438,7 +437,7 @@ class App(DOMNode):
             if widget not in self.registry:
                 if widget_id is not None:
                     widget.id = widget_id
-                self._register(parent, widget)
+                self._register_child(parent, child=widget)
                 apply_stylesheet(widget)
 
         for _widget_id, widget in name_widgets:
@@ -461,7 +460,7 @@ class App(DOMNode):
         driver.disable_input()
         await self.close_messages()
 
-    def refresh(self, repaint: bool = True, layout: bool = False) -> None:
+    def refresh(self) -> None:
         sync_available = (
             os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal" and not WINDOWS
         )
@@ -658,51 +657,3 @@ class App(DOMNode):
         self.reset_styles()
         self.stylesheet.update(self)
         self.view.refresh(layout=True)
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    from .widgets import Header
-    from .widgets import Footer
-
-    from .widgets import Placeholder
-
-    # from .widgets.scroll_view import ScrollView
-
-    import os
-
-    class MyApp(App):
-        """Just a test app."""
-
-        async def on_load(self, event: events.Load) -> None:
-            await self.bind("ctrl+c", "quit", show=False)
-            await self.bind("q", "quit", "Quit")
-            await self.bind("x", "bang", "Test error handling")
-            await self.bind("b", "toggle_sidebar", "Toggle sidebar")
-
-        show_bar: Reactive[bool] = Reactive(False)
-
-        async def watch_show_bar(self, show_bar: bool) -> None:
-            self.animator.animate(self.bar, "layout_offset_x", 0 if show_bar else -40)
-
-        async def action_toggle_sidebar(self) -> None:
-            self.show_bar = not self.show_bar
-
-        async def on_mount(self, event: events.Mount) -> None:
-            view = await self.push_view(DockView())
-
-            header = Header()
-            footer = Footer()
-            self.bar = Placeholder(name="left")
-
-            await view.dock(header, edge="top")
-            await view.dock(footer, edge="bottom")
-            await view.dock(self.bar, edge="left", size=40, z=1)
-            self.bar.layout_offset_x = -40
-
-            sub_view = DockView()
-            await sub_view.dock(Placeholder(), Placeholder(), edge="top")
-            await view.dock(sub_view, edge="left")
-
-    MyApp.run(log="textual.log")
