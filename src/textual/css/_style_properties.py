@@ -37,10 +37,7 @@ if TYPE_CHECKING:
 
 from .._box import BoxType
 
-BorderDefinition = (
-    Sequence[tuple[BoxType, str | Color | Style] | None]
-    | tuple[BoxType, str | Color | Style]
-)
+BorderDefinition = "Sequence[tuple[BoxType, str | Color | Style] | None] | tuple[BoxType, str | Color | Style]"
 
 
 class ScalarProperty:
