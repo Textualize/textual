@@ -119,6 +119,43 @@ class StylesBase(ABC):
         "min_height",
     }
 
+    display = StringEnumProperty(VALID_DISPLAY, "block")
+    visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
+    layout = LayoutProperty()
+
+    text = StyleProperty()
+    text_color = ColorProperty()
+    text_background = ColorProperty()
+    text_style = StyleFlagsProperty()
+
+    padding = SpacingProperty()
+    margin = SpacingProperty()
+    offset = OffsetProperty()
+
+    border = BorderProperty()
+    border_top = BoxProperty()
+    border_right = BoxProperty()
+    border_bottom = BoxProperty()
+    border_left = BoxProperty()
+
+    outline = BorderProperty()
+    outline_top = BoxProperty()
+    outline_right = BoxProperty()
+    outline_bottom = BoxProperty()
+    outline_left = BoxProperty()
+
+    width = ScalarProperty(percent_unit=Unit.WIDTH)
+    height = ScalarProperty(percent_unit=Unit.HEIGHT)
+    min_width = ScalarProperty(percent_unit=Unit.WIDTH)
+    min_height = ScalarProperty(percent_unit=Unit.HEIGHT)
+
+    dock = DockProperty()
+    docks = DocksProperty()
+
+    layer = NameProperty()
+    layers = NameListProperty()
+    transitions = TransitionsProperty()
+
     @abstractmethod
     def has_rule(self, rule: str) -> bool:
         ...
@@ -165,10 +202,6 @@ class StylesBase(ABC):
         """
 
     @abstractmethod
-    def get_transition(self, key: str) -> Transition | None:
-        """Get a transition for a given key (or ``None`` if it doesn't exist)"""
-
-    @abstractmethod
     def reset(self) -> None:
         """Reset the rules to initial state."""
 
@@ -180,9 +213,25 @@ class StylesBase(ABC):
             other (Styles): A Styles object.
         """
 
+    @abstractmethod
+    def merge_rules(self, rules: RulesMap) -> None:
+        """Merge rules in to Styles.
+
+        Args:
+            rules (RulesMap): A mapping of rules.
+        """
+
     @classmethod
-    def is_animatable(cls, rule_name: str) -> bool:
-        return rule_name in cls.ANIMATABLE
+    def is_animatable(cls, rule: str) -> bool:
+        """Check if a given rule may be animated.
+
+        Args:
+            rule (str): Name of the rule.
+
+        Returns:
+            bool: ``True`` if the rule may be animated, otherwise ``False``.
+        """
+        return rule in cls.ANIMATABLE
 
     @classmethod
     @lru_cache(maxsize=1024)
@@ -203,42 +252,11 @@ class StylesBase(ABC):
         styles.node = node
         return styles
 
-    display = StringEnumProperty(VALID_DISPLAY, "block")
-    visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
-    layout = LayoutProperty()
-
-    text = StyleProperty()
-    text_color = ColorProperty()
-    text_background = ColorProperty()
-    text_style = StyleFlagsProperty()
-
-    padding = SpacingProperty()
-    margin = SpacingProperty()
-    offset = OffsetProperty()
-
-    border = BorderProperty()
-    border_top = BoxProperty()
-    border_right = BoxProperty()
-    border_bottom = BoxProperty()
-    border_left = BoxProperty()
-
-    outline = BorderProperty()
-    outline_top = BoxProperty()
-    outline_right = BoxProperty()
-    outline_bottom = BoxProperty()
-    outline_left = BoxProperty()
-
-    width = ScalarProperty(percent_unit=Unit.WIDTH)
-    height = ScalarProperty(percent_unit=Unit.HEIGHT)
-    min_width = ScalarProperty(percent_unit=Unit.WIDTH)
-    min_height = ScalarProperty(percent_unit=Unit.HEIGHT)
-
-    dock = DockProperty()
-    docks = DocksProperty()
-
-    layer = NameProperty()
-    layers = NameListProperty()
-    transitions = TransitionsProperty()
+    def get_transition(self, key: str) -> Transition | None:
+        if key in self.ANIMATABLE:
+            return self.transitions.get(key, None)
+        else:
+            return None
 
 
 @rich.repr.auto
@@ -286,12 +304,6 @@ class Styles(StylesBase):
         self._repaint_required = self._layout_required = False
         return result
 
-    def get_transition(self, key: str) -> Transition | None:
-        if key in self.ANIMATABLE:
-            return self.transitions.get(key, None)
-        else:
-            return None
-
     def reset(self) -> None:
         """
         Reset internal style rules to ``None``, reverting to default styles.
@@ -307,6 +319,9 @@ class Styles(StylesBase):
 
         self._rules.update(other._rules)
 
+    def merge_rules(self, rules: RulesMap) -> None:
+        self._rules.update(rules)
+
     def extract_rules(
         self, specificity: Specificity3
     ) -> list[tuple[str, Specificity4, Any]]:
@@ -319,45 +334,38 @@ class Styles(StylesBase):
 
         return rules
 
-    def apply_rules(self, rules: RulesMap, animate: bool = False):
-        """Apply rules to this Styles object, animating as required.
-
-        Args:
-            rules (RulesMap): A map containing rules to apply.
-            animate (bool, optional): ``True`` if the rules should animate, or ``False``
-                to set rules without any animation. Defaults to ``False``.
-        """
-
-        if animate and self.node is not None:
-            styles = self
-            is_animatable = styles.ANIMATABLE.__contains__
-            _rules = self._rules
-            for key, value in rules.items():
-                current = _rules.get(key)
-                if current == value:
-                    continue
-                if is_animatable(key):
-                    transition = styles.get_transition(key)
-                    if transition is None:
-                        _rules[key] = value
-                    else:
-                        duration, easing, delay = transition
-                        self.node.app.animator.animate(
-                            styles, key, value, duration=duration, easing=easing
-                        )
-                else:
-                    rules[key] = value
-        else:
-            self._rules.update(rules)
-
-        if self.node is not None:
-            self.node.on_style_change()
-
     def __rich_repr__(self) -> rich.repr.Result:
-        for name, value in self._rules.items():
-            yield name, value
+        has_rule = self.has_rule
+        for name in RULE_NAMES:
+            if has_rule(name):
+                yield name, getattr(self, name)
         if self.important:
             yield "important", self.important
+
+    def __textual_animation__(
+        self,
+        attribute: str,
+        value: Any,
+        start_time: float,
+        duration: float | None,
+        speed: float | None,
+        easing: EasingFunction,
+    ) -> Animation | None:
+        from ..widget import Widget
+
+        assert isinstance(self.node, Widget)
+        if isinstance(value, ScalarOffset):
+            return ScalarAnimation(
+                self.node,
+                self,
+                start_time,
+                attribute,
+                value,
+                duration=duration,
+                speed=speed,
+                easing=easing,
+            )
+        return None
 
     def _get_border_css_lines(
         self, rules: RulesMap, name: str
@@ -393,26 +401,26 @@ class Styles(StylesBase):
             left = get_rule(f"{name}_left")
 
             if top == right and right == bottom and bottom == left:
-                border_type, border_style = rules[f"{name}_top"]
-                yield name, f"{border_type} {border_style}"
+                border_type, border_color = rules[f"{name}_top"]
+                yield name, f"{border_type} {border_color.name}"
                 return
 
         # Check for edges
         if has_top:
-            border_type, border_style = rules[f"{name}_top"]
-            yield f"{name}-top", f"{border_type} {border_style}"
+            border_type, border_color = rules[f"{name}_top"]
+            yield f"{name}-top", f"{border_type} {border_color.name}"
 
         if has_right:
-            border_type, border_style = rules[f"{name}_right"]
-            yield f"{name}-right", f"{border_type} {border_style}"
+            border_type, border_color = rules[f"{name}_right"]
+            yield f"{name}-right", f"{border_type} {border_color.name}"
 
         if has_bottom:
-            border_type, border_style = rules[f"{name}_bottom"]
-            yield f"{name}-bottom", f"{border_type} {border_style}"
+            border_type, border_color = rules[f"{name}_bottom"]
+            yield f"{name}-bottom", f"{border_type} {border_color.name}"
 
         if has_left:
-            border_type, border_style = rules[f"{name}_left"]
-            yield f"{name}-left", f"{border_type} {border_style}"
+            border_type, border_color = rules[f"{name}_left"]
+            yield f"{name}-left", f"{border_type} {border_color.name}"
 
     @property
     def css_lines(self) -> list[str]:
@@ -473,9 +481,9 @@ class Styles(StylesBase):
             append_declaration("text", str(self.text))
         else:
             if has_rule("text_color"):
-                append_declaration("text-color", get_rule("text_color").name)
-            if has_rule("text_bgcolor"):
-                append_declaration("text-bgcolor", str(get_rule("text_bgcolor").name))
+                append_declaration("text-color", self.text_color.name)
+            if has_rule("text_background"):
+                append_declaration("text-background", self.text_background.name)
             if has_rule("text_style"):
                 append_declaration("text-style", str(get_rule("text_style")))
 
@@ -504,29 +512,6 @@ class Styles(StylesBase):
         return "\n".join(self.css_lines)
 
 
-from typing import Generic, TypeVar
-
-GetType = TypeVar("GetType")
-SetType = TypeVar("SetType")
-
-
-class StyleViewProperty(Generic[GetType, SetType]):
-    """Presents a view of a base Styles object, plus inline styles."""
-
-    def __set_name__(self, owner: RenderStyles, name: str) -> None:
-        self.name = name
-
-    def __set__(self, obj: RenderStyles, value: SetType) -> None:
-        setattr(obj._inline_styles, self.name, value)
-
-    def __get__(
-        self, obj: RenderStyles, objtype: type[RenderStyles] | None = None
-    ) -> GetType:
-        if obj._inline_styles.has_rule(self.name):
-            return getattr(obj._inline_styles, self.name)
-        return getattr(obj._base_styles, self.name)
-
-
 @rich.repr.auto
 class RenderStyles(StylesBase):
     """Presents a combined view of two Styles object: a base Styles and inline Styles."""
@@ -538,10 +523,12 @@ class RenderStyles(StylesBase):
 
     @property
     def base(self) -> Styles:
+        """Quick access to base (css) style."""
         return self._base_styles
 
     @property
     def inline(self) -> Styles:
+        """Quick access to the inline styles."""
         return self._inline_styles
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -563,6 +550,9 @@ class RenderStyles(StylesBase):
             other (Styles): A Styles object.
         """
         self._inline_styles.merge(other)
+
+    def merge_rules(self, rules: RulesMap) -> None:
+        self._inline_styles.merge_rules(rules)
 
     def check_refresh(self) -> tuple[bool, bool]:
         """Check if the Styles must be refreshed.
@@ -595,37 +585,6 @@ class RenderStyles(StylesBase):
         """Get rules as a dictionary"""
         rules = {**self._base_styles._rules, **self._inline_styles._rules}
         return cast(RulesMap, rules)
-
-    def __textual_animation__(
-        self,
-        attribute: str,
-        value: Any,
-        start_time: float,
-        duration: float | None,
-        speed: float | None,
-        easing: EasingFunction,
-    ) -> Animation | None:
-        from ..widget import Widget
-
-        assert isinstance(self.node, Widget)
-        if isinstance(value, ScalarOffset):
-            return ScalarAnimation(
-                self.node,
-                self,
-                start_time,
-                attribute,
-                value,
-                duration=duration,
-                speed=speed,
-                easing=easing,
-            )
-        return None
-
-    def get_transition(self, key: str) -> Transition | None:
-        if key in self.ANIMATABLE:
-            return self.transitions.get(key, None)
-        else:
-            return None
 
     @property
     def css(self) -> str:

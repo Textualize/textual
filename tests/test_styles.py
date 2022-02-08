@@ -1,7 +1,7 @@
 from rich.color import Color
 from rich.style import Style
 
-from textual.css.styles import Styles, StylesView
+from textual.css.styles import Styles, RenderStyles
 
 
 def test_styles_reset():
@@ -16,7 +16,7 @@ def test_styles_view_text():
     """Test inline styles override base styles"""
     base = Styles()
     inline = Styles()
-    styles_view = StylesView(None, base, inline)
+    styles_view = RenderStyles(None, base, inline)
 
     # Both styles are empty
     assert styles_view.text == Style()
@@ -43,19 +43,19 @@ def test_styles_view_border():
 
     base = Styles()
     inline = Styles()
-    styles_view = StylesView(None, base, inline)
+    styles_view = RenderStyles(None, base, inline)
 
     base.border_top = ("heavy", "red")
     # Base has border-top: heavy red
-    assert styles_view.border_top == ("heavy", Style.parse("red"))
+    assert styles_view.border_top == ("heavy", Color.parse("red"))
 
     inline.border_left = ("rounded", "green")
     # Base has border-top heavy red, inline has border-left: rounded green
-    assert styles_view.border_top == ("heavy", Style.parse("red"))
-    assert styles_view.border_left == ("rounded", Style.parse("green"))
+    assert styles_view.border_top == ("heavy", Color.parse("red"))
+    assert styles_view.border_left == ("rounded", Color.parse("green"))
     assert styles_view.border == (
         ("heavy", Color.parse("red")),
-        ("", Color()),
-        ("", Color()),
+        ("", Color.default()),
+        ("", Color.default()),
         ("rounded", Color.parse("green")),
     )

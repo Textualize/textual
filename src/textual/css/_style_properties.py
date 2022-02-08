@@ -173,6 +173,10 @@ class Edges(NamedTuple):
     bottom: tuple[BoxType, Color]
     left: tuple[BoxType, Color]
 
+    def __bool__(self) -> bool:
+        (top, _), (right, _), (bottom, _), (left, _) = self
+        return bool(top or right or bottom or left)
+
     def __rich_repr__(self) -> rich.repr.Result:
         top, right, bottom, left = self
         if top[0]:
@@ -749,9 +753,6 @@ class StyleFlagsProperty:
 class TransitionsProperty:
     """Descriptor for getting transitions properties"""
 
-    def __set_name__(self, owner: Styles, name: str) -> None:
-        self.name = name
-
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
     ) -> dict[str, Transition]:
@@ -766,4 +767,10 @@ class TransitionsProperty:
                 e.g. ``{"offset": Transition(...), ...}``. If no transitions have been set, an empty ``dict``
                 is returned.
         """
-        return obj.get_rule(self.name, {})
+        return obj.get_rule("transitions", {})
+
+    def __set__(self, obj: Styles, transitions: dict[str, Transition] | None) -> None:
+        if transitions is None:
+            obj.clear_rule("transitions")
+        else:
+            obj.set_rule("transitions", transitions.copy())

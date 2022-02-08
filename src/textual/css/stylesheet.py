@@ -23,6 +23,7 @@ from .parse import parse
 from .styles import RulesMap
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
+from .. import log
 
 
 class StylesheetParseError(Exception):
@@ -135,7 +136,7 @@ class Stylesheet:
                 yield selector_set.specificity
 
     def apply(self, node: DOMNode, animate: bool = False) -> None:
-        """pply the stylesheet to a DOM node.
+        """Apply the stylesheet to a DOM node.
 
         Args:
             node (DOMNode): The ``DOMNode`` to apply the stylesheet to.
@@ -143,9 +144,6 @@ class Stylesheet:
                 If the same rule is defined multiple times for the node (e.g. multiple
                 classes modifying the same CSS property), then only the most specific
                 rule will be applied.
-
-        Returns:
-            None
         """
 
         # Dictionary of rule attribute names e.g. "text_background" to list of tuples.
@@ -159,7 +157,7 @@ class Stylesheet:
         _check_rule = self._check_rule
 
         # TODO: The line below breaks inline styles and animations
-        node._css_styles.reset()
+        # node._css_styles.reset()
 
         # Collect default node CSS rules
         for key, default_specificity, value in node._default_rules:
@@ -182,37 +180,48 @@ class Stylesheet:
                 for name, specificity_rules in rule_attributes.items()
             },
         )
-        node._css_styles.apply_rules(node_rules, animate=animate)
+
+        self.apply_rules(node, node_rules, animate=animate)
 
     @classmethod
-    def apply_rules(
-        cls, node: DOMNode | None, rules: RulesMap, animate: bool = False
-    ) -> None:
+    def apply_rules(cls, node: DOMNode, rules: RulesMap, animate: bool = False) -> None:
+        """Apply style rules to a node, animating as required.
 
-        if animate and node is not None:
+        Args:
+            node (DOMNode): A DOM node.
+            rules (RulesMap): Mapping of rules.
+            animate (bool, optional): Enable animation. Defaults to False.
+        """
+        styles = node.styles
+        if animate:
 
-            is_animatable = node._css_styles.ANIMATABLE.__contains__
-            _rules = node.styles.get_rules()
+            is_animatable = styles.is_animatable
+            current_rules = styles.get_rules()
+            set_rule = styles.base.set_rule
+
             for key, value in rules.items():
-                current = _rules.get(key)
+                current = current_rules.get(key)
                 if current == value:
                     continue
                 if is_animatable(key):
                     transition = styles.get_transition(key)
                     if transition is None:
-                        _rules[key] = value
+                        styles.base.set_rule(key, value)
                     else:
                         duration, easing, delay = transition
-                        self.node.app.animator.animate(
-                            styles, key, value, duration=duration, easing=easing
+                        node.app.animator.animate(
+                            node.styles.base,
+                            key,
+                            value,
+                            duration=duration,
+                            easing=easing,
                         )
                 else:
-                    rules[key] = value
+                    set_rule(key, value)
         else:
-            self._rules.update(rules)
+            styles.base.merge_rules(rules)
 
-        if self.node is not None:
-            self.node.on_style_change()
+        node.on_style_change()
 
     def update(self, root: DOMNode, animate: bool = False) -> None:
         """Update a node and its children."""

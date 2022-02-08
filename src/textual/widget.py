@@ -213,7 +213,6 @@ class Widget(DOMNode):
         return gutter
 
     def on_style_change(self) -> None:
-        self.log("style_change", self)
         self.clear_render_cache()
 
     def _update_size(self, size: Size) -> None:
