@@ -34,6 +34,9 @@ class Opacity:
                     yield segment
                     continue
                 fg, bg = style.color, style.bgcolor
+                # TODO: Ignore ansi colours since there will be no rgb triplet
+                #  stored on the Color for them. We could check if there's a
+                #  color.triplet to detect ansi, or maybe there's another way
                 if fg and bg:
                     style = Style.from_color(
                         color=blend_colors(bg, fg, ratio=opacity),
