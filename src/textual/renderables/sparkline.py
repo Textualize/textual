@@ -41,6 +41,13 @@ class Sparkline:
 
     @classmethod
     def _buckets(cls, data: Sequence[T], num_buckets: int) -> Iterable[list[T]]:
+        """Partition ``data`` into ``num_buckets`` buckets. For example, the data
+        [1, 2, 3, 4] partitioned into 2 buckets is [[1, 2], [3, 4]].
+
+        Args:
+            data (Sequence[T]): The data to partition.
+            num_buckets (int): The number of buckets to partition the data into.
+        """
         num_steps, remainder = divmod(len(data), num_buckets)
         for i in range(num_buckets):
             start = i * num_steps + min(i, remainder)
