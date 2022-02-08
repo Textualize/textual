@@ -10,7 +10,7 @@ when setting and getting.
 from __future__ import annotations
 
 
-from typing import Iterable, NamedTuple, Sequence, TYPE_CHECKING
+from typing import Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 from rich.color import Color
@@ -67,7 +67,7 @@ class ScalarProperty:
         Returns:
             The Scalar object or ``None`` if it's not set.
         """
-        value = obj._rules.get(self.name)
+        value = obj.get_rule(self.name)
         return value
 
     def __set__(self, obj: Styles, value: float | Scalar | str | None) -> None:
@@ -87,7 +87,7 @@ class ScalarProperty:
                 cannot be parsed for any other reason.
         """
         if value is None:
-            obj._rules.pop(self.name, None)
+            obj.clear_rule(self.name)
             return
         if isinstance(value, float):
             new_value = Scalar(float(value), Unit.CELLS, Unit.WIDTH)
@@ -106,7 +106,7 @@ class ScalarProperty:
             )
         if new_value is not None and new_value.is_percent:
             new_value = Scalar(float(new_value.value), self.percent_unit, Unit.WIDTH)
-        obj._rules[self.name] = new_value
+        obj.set_rule(self.name, new_value)
         obj.refresh()
 
 
@@ -136,7 +136,7 @@ class BoxProperty:
             A ``tuple[BoxType, Style]`` containing the string type of the box and
                 it's style. Example types are "rounded", "solid", and "dashed".
         """
-        box_type, color = obj._rules.get(self.name) or self.DEFAULT
+        box_type, color = obj.get_rule(self.name) or self.DEFAULT
         return (box_type, color)
 
     def __set__(self, obj: Styles, border: tuple[BoxType, str | Color] | None):
@@ -152,7 +152,7 @@ class BoxProperty:
             StyleSyntaxError: If the string supplied for the color has invalid syntax.
         """
         if border is None:
-            obj._rules.pop(self.name, None)
+            obj.clear_rule(self.name)
         else:
             _type, color = border
             new_value = border
@@ -160,7 +160,7 @@ class BoxProperty:
                 new_value = (_type, Color.parse(color))
             elif isinstance(color, Color):
                 new_value = (_type, color)
-            obj._rules[self.name] = new_value
+            obj.set_rule(self.name, new_value)
         obj.refresh()
 
 
@@ -361,7 +361,7 @@ class SpacingProperty:
         Returns:
             Spacing: The Spacing. If unset, returns the null spacing ``(0, 0, 0, 0)``.
         """
-        return obj._rules.get(self.name, NULL_SPACING)
+        return obj.get_rule(self.name, NULL_SPACING)
 
     def __set__(self, obj: Styles, spacing: SpacingDimensions | None):
         """Set the Spacing
@@ -377,9 +377,9 @@ class SpacingProperty:
         """
         obj.refresh(layout=True)
         if spacing is None:
-            obj._rules.pop(self.name)
+            obj.clear_rule(self.name)
         else:
-            obj._rules[self.name] = Spacing.unpack(spacing)
+            obj.set_rule(self.name, Spacing.unpack(spacing))
 
 
 class DocksProperty:
@@ -399,7 +399,7 @@ class DocksProperty:
         Returns:
             tuple[DockGroup, ...]: A ``tuple`` containing the defined docks.
         """
-        return obj._rules.get("docks") or ()
+        return obj.get_rule("docks", ())
 
     def __set__(self, obj: Styles, docks: Iterable[DockGroup] | None):
         """Set the Docks property
@@ -410,9 +410,10 @@ class DocksProperty:
         """
         obj.refresh(layout=True)
         if docks is None:
-            obj._rules.pop("docks")
+            obj.clear_rule("docks")
+
         else:
-            obj._rules["docks"] = tuple(docks)
+            obj.set_rule("docks", tuple(docks))
 
 
 class DockProperty:
@@ -432,7 +433,7 @@ class DockProperty:
         Returns:
             str: The dock name as a string, or "" if the rule is not set.
         """
-        return obj._rules.get("dock") or "_default"
+        return obj.get_rule("dock", "_default")
 
     def __set__(self, obj: Styles, spacing: str | None):
         """Set the Dock property
@@ -442,10 +443,7 @@ class DockProperty:
             spacing (str | None): The spacing to use.
         """
         obj.refresh(layout=True)
-        if spacing is None:
-            obj._rules.pop("dock")
-        else:
-            obj._rules["dock"] = spacing
+        obj.set_rule("dock", spacing)
 
 
 class LayoutProperty:
@@ -464,7 +462,7 @@ class LayoutProperty:
         Returns:
             The ``Layout`` object.
         """
-        return obj._rules.get(self.name)
+        return obj.get_rule(self.name)
 
     def __set__(self, obj: Styles, layout: str | Layout | None):
         """
@@ -479,11 +477,11 @@ class LayoutProperty:
         obj.refresh(layout=True)
 
         if layout is None:
-            obj._rules.pop("layout")
+            obj.clear_rule("layout")
         elif isinstance(layout, Layout):
-            obj._rules["layout"] = layout
+            obj.set_rule("layout", layout)
         else:
-            obj._rules["layout"] = get_layout(layout)
+            obj.set_rule("layout", get_layout(layout))
 
 
 class OffsetProperty:
@@ -506,7 +504,7 @@ class OffsetProperty:
             ScalarOffset: The ``ScalarOffset`` indicating the adjustment that
                 will be made to widget position prior to it being rendered.
         """
-        return obj._rules.get(self.name, ScalarOffset.null())
+        return obj.get_rule(self.name, ScalarOffset.null())
 
     def __set__(
         self, obj: Styles, offset: tuple[int | str, int | str] | ScalarOffset | None
@@ -526,9 +524,9 @@ class OffsetProperty:
         """
         obj.refresh(layout=True)
         if offset is None:
-            obj._rules.pop(self.name, None)
+            obj.clear_rule(self.name)
         elif isinstance(offset, ScalarOffset):
-            obj._rules[self.name] = offset
+            obj.set_rule(self.name, offset)
         else:
             x, y = offset
             scalar_x = (
@@ -542,7 +540,7 @@ class OffsetProperty:
                 else Scalar(float(y), Unit.CELLS, Unit.HEIGHT)
             )
             _offset = ScalarOffset(scalar_x, scalar_y)
-            obj._rules[self.name] = _offset
+            obj.set_rule(self.name, _offset)
 
 
 class StringEnumProperty:
@@ -567,7 +565,7 @@ class StringEnumProperty:
         Returns:
             str: The string property value
         """
-        return obj._rules.get(self.name, self._default)
+        return obj.get_rule(self.name, self._default)
 
     def __set__(self, obj: Styles, value: str | None = None):
         """Set the string property and ensure it is in the set of allowed values.
@@ -581,13 +579,13 @@ class StringEnumProperty:
         """
         obj.refresh()
         if value is None:
-            obj._rules.pop(self.name, None)
+            obj.clear_rule(self.name)
         else:
             if value not in self._valid_values:
                 raise StyleValueError(
                     f"{self.name} must be one of {friendly_list(self._valid_values)}"
                 )
-            obj._rules[self.name] = value
+            obj.set_rule(self.name, value)
 
 
 class NameProperty:
@@ -606,7 +604,7 @@ class NameProperty:
         Returns:
             str: The name
         """
-        return obj._rules.get(self.name, "")
+        return obj.get_rule(self.name, "")
 
     def __set__(self, obj: Styles, name: str | None):
         """Set the name property
@@ -620,11 +618,11 @@ class NameProperty:
         """
         obj.refresh(layout=True)
         if name is None:
-            obj._rules.pop(self.name, None)
+            obj.clear_rule(self.name)
         else:
             if not isinstance(name, str):
-                raise StyleTypeError(f"{self._name} must be a str")
-            obj._rules[self.name] = name
+                raise StyleTypeError(f"{self.name} must be a str")
+            obj.set_rule(self.name, name)
 
 
 class NameListProperty:
@@ -634,20 +632,20 @@ class NameListProperty:
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
     ) -> tuple[str, ...]:
-        return obj._rules.get(self.name, ())
+        return obj.get_rule(self.name, ())
 
     def __set__(
         self, obj: Styles, names: str | tuple[str] | None = None
     ) -> str | tuple[str] | None:
         obj.refresh(layout=True)
         if names is None:
-            obj._rules.pop(self.name, None)
+            obj.clear_rule(self.name)
         elif isinstance(names, str):
-            obj._rules[self.name] = tuple(
-                name.strip().lower() for name in names.split(" ")
+            obj.set_rule(
+                self.name, tuple(name.strip().lower() for name in names.split(" "))
             )
         elif isinstance(names, tuple):
-            obj._rules[self.name] = names
+            obj.set_rule(self.name, names)
 
 
 class ColorProperty:
@@ -666,7 +664,7 @@ class ColorProperty:
         Returns:
             Color: The Color
         """
-        return obj._rules.get(self.name) or Color.default()
+        return obj.get_rule(self.name) or Color.default()
 
     def __set__(self, obj: Styles, color: Color | str | None):
         """Set the Color
@@ -682,11 +680,11 @@ class ColorProperty:
         """
         obj.refresh()
         if color is None:
-            obj._rules.pop(self.name, None)
+            obj.clear_rule(self.name)
         elif isinstance(color, Color):
-            obj._rules[self.name] = color
+            obj.set_rule(self.name, color)
         elif isinstance(color, str):
-            obj._rules[self.name] = Color.parse(color)
+            obj.set_rule(self.name, Color.parse(color))
 
 
 class StyleFlagsProperty:
@@ -719,7 +717,7 @@ class StyleFlagsProperty:
         Returns:
             Style: The ``Style`` object
         """
-        return obj._rules.get(self.name, Style.null())
+        return obj.get_rule(self.name, Style.null())
 
     def __set__(self, obj: Styles, style_flags: str | None):
         """Set the style using a style flag string
@@ -734,7 +732,7 @@ class StyleFlagsProperty:
         """
         obj.refresh()
         if style_flags is None:
-            obj._styles.pop(self.name, None)
+            obj.clear_rule(self.name)
         else:
             words = [word.strip() for word in style_flags.split(" ")]
             valid_word = self._VALID_PROPERTIES.__contains__
@@ -745,7 +743,7 @@ class StyleFlagsProperty:
                         f"valid values are {friendly_list(self._VALID_PROPERTIES)}"
                     )
             style = Style.parse(style_flags)
-            obj._rules[self.name] = style
+            obj.set_rule(self.name, style)
 
 
 class TransitionsProperty:
@@ -768,4 +766,4 @@ class TransitionsProperty:
                 e.g. ``{"offset": Transition(...), ...}``. If no transitions have been set, an empty ``dict``
                 is returned.
         """
-        return obj._rules.get(self.name, {})
+        return obj.get_rule(self.name, {})

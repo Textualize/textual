@@ -12,7 +12,7 @@ from ._node_list import NodeList
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from .css.errors import StyleValueError
-from .css.styles import Styles, StylesView
+from .css.styles import Styles, RenderStyles
 from .css.parse import parse_declarations
 from .message_pump import MessagePump
 
@@ -42,7 +42,7 @@ class DOMNode(MessagePump):
         self.children = NodeList()
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles.parse(self.STYLES, repr(self), node=self)
-        self.styles = StylesView(self, self._css_styles, self._inline_styles)
+        self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
         self.default_styles = Styles.parse(self.DEFAULT_STYLES, repr(self))
         self._default_rules = self.default_styles.extract_rules((0, 0, 0))
         super().__init__()
@@ -341,7 +341,7 @@ class DOMNode(MessagePump):
 
         """
         self._classes.symmetric_difference_update(class_names)
-        self.app.stylesheet.update(self.app)
+        self.app.stylesheet.update(self.app, animate=True)
 
     def has_pseudo_class(self, *class_names: str) -> bool:
         """Check for pseudo class (such as hover, focus etc)"""

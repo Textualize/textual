@@ -134,8 +134,8 @@ class Stylesheet:
             if _check_selectors(selector_set.selectors, node):
                 yield selector_set.specificity
 
-    def apply(self, node: DOMNode) -> None:
-        """Apply the stylesheet to a DOM node.
+    def apply(self, node: DOMNode, animate: bool = False) -> None:
+        """pply the stylesheet to a DOM node.
 
         Args:
             node (DOMNode): The ``DOMNode`` to apply the stylesheet to.
@@ -182,14 +182,43 @@ class Stylesheet:
                 for name, specificity_rules in rule_attributes.items()
             },
         )
+        node._css_styles.apply_rules(node_rules, animate=animate)
 
-        node._css_styles.apply_rules(node_rules)
+    @classmethod
+    def apply_rules(
+        cls, node: DOMNode | None, rules: RulesMap, animate: bool = False
+    ) -> None:
 
-    def update(self, root: DOMNode) -> None:
+        if animate and node is not None:
+
+            is_animatable = node._css_styles.ANIMATABLE.__contains__
+            _rules = node.styles.get_rules()
+            for key, value in rules.items():
+                current = _rules.get(key)
+                if current == value:
+                    continue
+                if is_animatable(key):
+                    transition = styles.get_transition(key)
+                    if transition is None:
+                        _rules[key] = value
+                    else:
+                        duration, easing, delay = transition
+                        self.node.app.animator.animate(
+                            styles, key, value, duration=duration, easing=easing
+                        )
+                else:
+                    rules[key] = value
+        else:
+            self._rules.update(rules)
+
+        if self.node is not None:
+            self.node.on_style_change()
+
+    def update(self, root: DOMNode, animate: bool = False) -> None:
         """Update a node and its children."""
         apply = self.apply
         for node in root.walk_children():
-            apply(node)
+            apply(node, animate=animate)
 
 
 if __name__ == "__main__":

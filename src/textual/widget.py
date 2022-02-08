@@ -208,7 +208,8 @@ class Widget(DOMNode):
         Returns:
             Spacing: [description]
         """
-        gutter = self.styles.gutter
+        styles = self.styles
+        gutter = styles.margin + styles.padding + styles.border.spacing
         return gutter
 
     def on_style_change(self) -> None:

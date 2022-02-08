@@ -1,17 +1,17 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import lru_cache
 import sys
-from typing import Any, cast, Iterable, NamedTuple, TYPE_CHECKING
+from typing import Any, cast, Iterable, NamedTuple, TYPE_CHECKING, TypeVar
 
 import rich.repr
 from rich.color import Color
 from rich.style import Style
 
+from .. import log
 from ._style_properties import (
-    Edges,
-    BorderDefinition,
     BorderProperty,
     BoxProperty,
     ColorProperty,
@@ -106,59 +106,102 @@ class DockGroup(NamedTuple):
     z: int
 
 
-@rich.repr.auto
-@dataclass
-class Styles:
+class StylesBase(ABC):
+    """A common base class for Styles and RenderStyles"""
 
-    node: DOMNode | None = None
+    ANIMATABLE = {
+        "offset",
+        "padding",
+        "margin",
+        "width",
+        "height",
+        "min_width",
+        "min_height",
+    }
 
-    _rules: RulesMap = field(default_factory=dict)
-
-    _layout_required: bool = False
-    _repaint_required: bool = False
-
-    important: set[str] = field(default_factory=set)
-
+    @abstractmethod
     def has_rule(self, rule: str) -> bool:
-        """Check if a rule has been set."""
-        if rule in RULE_NAMES and rule in self._rules:
-            return True
-        if rule == "text":
-            return not (
-                {"text_color", "text_background", "text_style"}.isdisjoint(
-                    self._rules.keys()
-                )
-            )
+        ...
 
-        if rule == "border":
-            return not (
-                {
-                    "border_top",
-                    "border_right",
-                    "border_bottom",
-                    "border_left",
-                }.isdisjoint(self._rules.keys())
-            )
-
-        if rule == "outline" and any(self.outline):
-            return not (
-                {
-                    "outline_top",
-                    "outline_right",
-                    "outline_bottom",
-                    "outline_left",
-                }.isdisjoint(self._rules.keys())
-            )
-        return False
-
+    @abstractmethod
     def clear_rule(self, rule_name: str) -> None:
         """Clear a rule."""
-        self._rules.pop(rule_name, None)
 
+    @abstractmethod
     def get_rules(self) -> RulesMap:
         """Get rules as a dictionary."""
-        rules = self._rules.copy()
-        return rules
+
+    @abstractmethod
+    def set_rule(self, rule: str, value: object | None) -> None:
+        """Set an individual rule.
+
+        Args:
+            rule (str): Name of rule.
+            value (object): Value of rule.
+        """
+
+    @abstractmethod
+    def get_rule(self, rule: str, default: object = None) -> object:
+        """Get an individual rule.
+
+        Args:
+            rule (str): Name of rule.
+            default (object, optional): Default if rule does not exists. Defaults to None.
+
+        Returns:
+            object: Rule value or default.
+        """
+
+    @abstractmethod
+    def refresh(self, layout: bool = False) -> None:
+        """Mark the styles are requiring a refresh"""
+
+    @abstractmethod
+    def check_refresh(self) -> tuple[bool, bool]:
+        """Check if the Styles must be refreshed.
+
+        Returns:
+            tuple[bool, bool]: (repaint required, layout_required)
+        """
+
+    @abstractmethod
+    def get_transition(self, key: str) -> Transition | None:
+        """Get a transition for a given key (or ``None`` if it doesn't exist)"""
+
+    @abstractmethod
+    def reset(self) -> None:
+        """Reset the rules to initial state."""
+
+    @abstractmethod
+    def merge(self, other: StylesBase) -> None:
+        """Merge values from another Styles.
+
+        Args:
+            other (Styles): A Styles object.
+        """
+
+    @classmethod
+    def is_animatable(cls, rule_name: str) -> bool:
+        return rule_name in cls.ANIMATABLE
+
+    @classmethod
+    @lru_cache(maxsize=1024)
+    def parse(cls, css: str, path: str, *, node: DOMNode = None) -> Styles:
+        """Parse CSS and return a Styles object.
+
+        Args:
+            css (str): [description]
+            path (str): [description]
+            node (DOMNode, optional): [description]. Defaults to None.
+
+        Returns:
+            Styles: A Styles instance containing result of parsing CSS.
+        """
+        from .parse import parse_declarations
+
+        styles = parse_declarations(css, path)
+        styles.node = node
+        return styles
 
     display = StringEnumProperty(VALID_DISPLAY, "block")
     visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
@@ -197,34 +240,37 @@ class Styles:
     layers = NameListProperty()
     transitions = TransitionsProperty()
 
-    ANIMATABLE = {
-        "offset",
-        "padding",
-        "margin",
-        "width",
-        "height",
-        "min_width",
-        "min_height",
-    }
 
-    @property
-    def gutter(self) -> Spacing:
-        """Get the gutter (additional space reserved for margin / padding / border).
+@rich.repr.auto
+@dataclass
+class Styles(StylesBase):
 
-        Returns:
-            Spacing: Space around edges.
-        """
-        gutter = self.margin + self.padding + self.border.spacing
-        return gutter
+    node: DOMNode | None = None
 
-    @classmethod
-    @lru_cache(maxsize=1024)
-    def parse(cls, css: str, path: str, *, node: DOMNode = None) -> Styles:
-        from .parse import parse_declarations
+    _rules: RulesMap = field(default_factory=dict)
 
-        styles = parse_declarations(css, path)
-        styles.node = node
-        return styles
+    _layout_required: bool = False
+    _repaint_required: bool = False
+
+    important: set[str] = field(default_factory=set)
+
+    def has_rule(self, rule: str) -> bool:
+        return rule in self._rules
+
+    def clear_rule(self, rule: str) -> None:
+        self._rules.pop(rule, None)
+
+    def get_rules(self) -> RulesMap:
+        return self._rules.copy()
+
+    def set_rule(self, rule: str, value: object | None) -> None:
+        if value is None:
+            self._rules.pop(rule, None)
+        else:
+            self._rules[rule] = value
+
+    def get_rule(self, rule: str, default: object = None) -> object:
+        return self._rules.get(rule, default)
 
     def refresh(self, layout: bool = False) -> None:
         self._repaint_required = True
@@ -252,6 +298,15 @@ class Styles:
         """
         self._rules.clear()
 
+    def merge(self, other: Styles) -> None:
+        """Merge values from another Styles.
+
+        Args:
+            other (Styles): A Styles object.
+        """
+
+        self._rules.update(other._rules)
+
     def extract_rules(
         self, specificity: Specificity3
     ) -> list[tuple[str, Specificity4, Any]]:
@@ -272,9 +327,8 @@ class Styles:
             animate (bool, optional): ``True`` if the rules should animate, or ``False``
                 to set rules without any animation. Defaults to ``False``.
         """
-        if not animate or self.node is None:
-            self._rules.update(rules)
-        else:
+
+        if animate and self.node is not None:
             styles = self
             is_animatable = styles.ANIMATABLE.__contains__
             _rules = self._rules
@@ -293,6 +347,8 @@ class Styles:
                         )
                 else:
                     rules[key] = value
+        else:
+            self._rules.update(rules)
 
         if self.node is not None:
             self.node.on_style_change()
@@ -302,15 +358,6 @@ class Styles:
             yield name, value
         if self.important:
             yield "important", self.important
-
-    def merge(self, other: Styles) -> None:
-        """Merge values from another Styles.
-
-        Args:
-            other (Styles): A Styles object.
-        """
-
-        self._rules.update(other._rules)
 
     def _get_border_css_lines(
         self, rules: RulesMap, name: str
@@ -381,9 +428,6 @@ class Styles:
         rules = self.get_rules()
         get_rule = rules.get
         has_rule = rules.__contains__
-        from rich import print
-
-        print(rules)
 
         if has_rule("display"):
             append_declaration("display", rules["display"])
@@ -469,14 +513,14 @@ SetType = TypeVar("SetType")
 class StyleViewProperty(Generic[GetType, SetType]):
     """Presents a view of a base Styles object, plus inline styles."""
 
-    def __set_name__(self, owner: StylesView, name: str) -> None:
+    def __set_name__(self, owner: RenderStyles, name: str) -> None:
         self.name = name
 
-    def __set__(self, obj: StylesView, value: SetType) -> None:
+    def __set__(self, obj: RenderStyles, value: SetType) -> None:
         setattr(obj._inline_styles, self.name, value)
 
     def __get__(
-        self, obj: StylesView, objtype: type[StylesView] | None = None
+        self, obj: RenderStyles, objtype: type[RenderStyles] | None = None
     ) -> GetType:
         if obj._inline_styles.has_rule(self.name):
             return getattr(obj._inline_styles, self.name)
@@ -484,38 +528,26 @@ class StyleViewProperty(Generic[GetType, SetType]):
 
 
 @rich.repr.auto
-class StylesView:
+class RenderStyles(StylesBase):
     """Presents a combined view of two Styles object: a base Styles and inline Styles."""
-
-    ANIMATABLE = {
-        "offset",
-        "padding",
-        "margin",
-        "width",
-        "height",
-        "min_width",
-        "min_height",
-    }
 
     def __init__(self, node: DOMNode, base: Styles, inline_styles: Styles) -> None:
         self.node = node
         self._base_styles = base
         self._inline_styles = inline_styles
 
+    @property
+    def base(self) -> Styles:
+        return self._base_styles
+
+    @property
+    def inline(self) -> Styles:
+        return self._inline_styles
+
     def __rich_repr__(self) -> rich.repr.Result:
         for rule_name in RULE_NAMES:
             if self.has_rule(rule_name):
                 yield rule_name, getattr(self, rule_name)
-
-    @property
-    def gutter(self) -> Spacing:
-        """Get the gutter (additional space reserved for margin / padding / border).
-
-        Returns:
-            Spacing: Space around edges.
-        """
-        gutter = self.margin + self.padding + self.border.spacing
-        return gutter
 
     def reset(self) -> None:
         """Reset the inline styles."""
@@ -546,6 +578,14 @@ class StylesView:
     def has_rule(self, rule: str) -> bool:
         """Check if a rule has been set."""
         return self._inline_styles.has_rule(rule) or self._base_styles.has_rule(rule)
+
+    def set_rule(self, rule: str, value: object | None) -> None:
+        self._inline_styles.set_rule(rule, value)
+
+    def get_rule(self, rule: str, default: object = None) -> object:
+        if self._inline_styles.has_rule(rule):
+            return self._inline_styles.get_rule(rule, default)
+        return self._base_styles.get_rule(rule, default)
 
     def clear_rule(self, rule_name: str) -> None:
         """Clear a rule (from inline)."""
@@ -595,74 +635,6 @@ class StylesView:
         styles.merge(self._inline_styles)
         combined_css = styles.css
         return combined_css
-
-    display: StyleViewProperty[str, str | None] = StyleViewProperty()
-    visibility: StyleViewProperty[str, str | None] = StyleViewProperty()
-    layout: StyleViewProperty[Layout | None, str | Layout | None] = StyleViewProperty()
-
-    text = StyleProperty()
-    text_color: StyleViewProperty[Color, Color | str | None] = StyleViewProperty()
-    text_background: StyleViewProperty[Color, Color | str | None] = StyleViewProperty()
-    text_style: StyleViewProperty[Style, str | None] = StyleViewProperty()
-
-    padding: StyleViewProperty[Spacing, SpacingDimensions] = StyleViewProperty()
-    margin: StyleViewProperty[Spacing, SpacingDimensions] = StyleViewProperty()
-    offset: StyleViewProperty[
-        ScalarOffset, tuple[int | str, int | str] | ScalarOffset
-    ] = StyleViewProperty()
-
-    border = BorderProperty()
-    border_top: StyleViewProperty[
-        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
-    ] = StyleViewProperty()
-    border_right: StyleViewProperty[
-        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
-    ] = StyleViewProperty()
-    border_bottom: StyleViewProperty[
-        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
-    ] = StyleViewProperty()
-    border_left: StyleViewProperty[
-        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
-    ] = StyleViewProperty()
-
-    outline = BorderProperty()
-    outline_top: StyleViewProperty[
-        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
-    ] = StyleViewProperty()
-    outline_right: StyleViewProperty[
-        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
-    ] = StyleViewProperty()
-    outline_bottom: StyleViewProperty[
-        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
-    ] = StyleViewProperty()
-    outline_left: StyleViewProperty[
-        tuple[BoxType, Color], tuple[BoxType, str | Color] | None
-    ] = StyleViewProperty()
-
-    width: StyleViewProperty[
-        Scalar | None, float | Scalar | str | None
-    ] = StyleViewProperty()
-    height: StyleViewProperty[
-        Scalar | None, float | Scalar | str | None
-    ] = StyleViewProperty()
-    min_width: StyleViewProperty[
-        Scalar | None, float | Scalar | str | None
-    ] = StyleViewProperty()
-    min_height: StyleViewProperty[
-        Scalar | None, float | Scalar | str | None
-    ] = StyleViewProperty()
-
-    dock: StyleViewProperty[str, str | None] = StyleViewProperty()
-    docks: StyleViewProperty[
-        tuple[DockGroup, ...], Iterable[DockGroup] | None
-    ] = StyleViewProperty()
-
-    layer: StyleViewProperty[str, str | None] = StyleViewProperty()
-    layers: StyleViewProperty[
-        tuple[str, ...], str | tuple[str] | None
-    ] = StyleViewProperty()
-
-    transitions: StyleViewProperty[dict[str, Transition], None] = StyleViewProperty()
 
 
 if __name__ == "__main__":
