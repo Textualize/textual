@@ -1,46 +1,39 @@
 from __future__ import annotations
 
+import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import lru_cache
-import sys
-from typing import Any, cast, Iterable, NamedTuple, TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 
 import rich.repr
 from rich.color import Color
 from rich.style import Style
 
-from .. import log
+from .._animator import Animation, EasingFunction
+from ..geometry import Spacing
 from ._style_properties import (
     BorderProperty,
     BoxProperty,
     ColorProperty,
-    DocksProperty,
     DockProperty,
-    OffsetProperty,
-    NameProperty,
+    DocksProperty,
+    LayoutProperty,
     NameListProperty,
+    NameProperty,
+    OffsetProperty,
     ScalarProperty,
     SpacingProperty,
     StringEnumProperty,
-    StyleProperty,
     StyleFlagsProperty,
+    StyleProperty,
     TransitionsProperty,
-    LayoutProperty,
 )
-from .constants import (
-    VALID_DISPLAY,
-    VALID_VISIBILITY,
-)
+from .constants import VALID_DISPLAY, VALID_VISIBILITY
 from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
 from .transition import Transition
-from .types import Display, Edge, Visibility
-from .types import Specificity3, Specificity4
-from .._animator import Animation, EasingFunction
-from ..geometry import Spacing, SpacingDimensions
-from .._box import BoxType
-
+from .types import Display, Edge, Specificity3, Specificity4, Visibility
 
 if sys.version_info >= (3, 8):
     from typing import TypedDict
@@ -48,8 +41,8 @@ else:
     from typing_extensions import TypedDict
 
 if TYPE_CHECKING:
-    from ..layout import Layout
     from ..dom import DOMNode
+    from ..layout import Layout
 
 
 class RulesMap(TypedDict):
