@@ -12,7 +12,7 @@ def test_styles_reset():
     assert styles.text_style is Style.null()
 
 
-def test_styles_view_text():
+def test_render_styles_text():
     """Test inline styles override base styles"""
     base = Styles()
     inline = Styles()
@@ -39,7 +39,7 @@ def test_styles_view_text():
     assert styles_view.text == Style.parse("bold yellow")
 
 
-def test_styles_view_border():
+def test_render_styles_border():
 
     base = Styles()
     inline = Styles()
