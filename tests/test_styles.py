@@ -12,6 +12,74 @@ def test_styles_reset():
     assert styles.text_style is Style.null()
 
 
+def test_has_rule():
+    styles = Styles()
+    assert not styles.has_rule("text_style")
+    styles.text_style = "bold"
+    assert styles.has_rule("text_style")
+    styles.text_style = None
+    assert not styles.has_rule("text_style")
+
+
+def test_clear_rule():
+    styles = Styles()
+    styles.text_style = "bold"
+    assert styles.has_rule("text_style")
+    styles.clear_rule("text_style")
+    assert not styles.has_rule("text_style")
+
+
+def test_get_rules():
+    styles = Styles()
+    # Empty rules at start
+    assert styles.get_rules() == {}
+    styles.text_style = "bold"
+    assert styles.get_rules() == {"text_style": Style.parse("bold")}
+    styles.display = "none"
+    assert styles.get_rules() == {
+        "text_style": Style.parse("bold"),
+        "display": "none",
+    }
+
+
+def test_set_rule():
+    styles = Styles()
+    assert styles.get_rules() == {}
+    styles.set_rule("text_style", Style.parse("bold"))
+    assert styles.get_rules() == {"text_style": Style.parse("bold")}
+
+
+def test_reset():
+    styles = Styles()
+    assert styles.get_rules() == {}
+    styles.set_rule("text_style", Style.parse("bold"))
+    assert styles.get_rules() == {"text_style": Style.parse("bold")}
+    styles.reset()
+    assert styles.get_rules() == {}
+
+
+def test_merge():
+    styles = Styles()
+    styles.set_rule("text_style", Style.parse("bold"))
+    styles2 = Styles()
+    styles2.set_rule("display", "none")
+    styles.merge(styles2)
+    assert styles.get_rules() == {
+        "text_style": Style.parse("bold"),
+        "display": "none",
+    }
+
+
+def test_merge_rules():
+    styles = Styles()
+    styles.set_rule("text_style", Style.parse("bold"))
+    styles.merge_rules({"display": "none"})
+    assert styles.get_rules() == {
+        "text_style": Style.parse("bold"),
+        "display": "none",
+    }
+
+
 def test_render_styles_text():
     """Test inline styles override base styles"""
     base = Styles()
