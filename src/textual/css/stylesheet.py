@@ -144,6 +144,7 @@ class Stylesheet:
                 If the same rule is defined multiple times for the node (e.g. multiple
                 classes modifying the same CSS property), then only the most specific
                 rule will be applied.
+            animate (bool, optional): Animate changed rules. Defaults to ``False``.
         """
 
         # Dictionary of rule attribute names e.g. "text_background" to list of tuples.
@@ -155,9 +156,6 @@ class Stylesheet:
         rule_attributes = defaultdict(list)
 
         _check_rule = self._check_rule
-
-        # TODO: The line below breaks inline styles and animations
-        # node._css_styles.reset()
 
         # Collect default node CSS rules
         for key, default_specificity, value in node._default_rules:
@@ -173,7 +171,7 @@ class Stylesheet:
 
         # For each rule declared for this node, keep only the most specific one
         get_first_item = itemgetter(0)
-        node_rules = cast(
+        node_rules: RulesMap = cast(
             RulesMap,
             {
                 name: max(specificity_rules, key=get_first_item)[1]

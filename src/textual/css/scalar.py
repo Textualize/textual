@@ -148,7 +148,7 @@ class ScalarOffset(NamedTuple):
     @classmethod
     def null(cls) -> ScalarOffset:
         """Get a null scalar offset (0, 0)."""
-        return cls(Scalar.from_number(0), Scalar.from_number(0))
+        return NULL_SCALAR
 
     def __bool__(self) -> bool:
         x, y = self
@@ -164,6 +164,9 @@ class ScalarOffset(NamedTuple):
             round(x.resolve_dimension(size, viewport)),
             round(y.resolve_dimension(size, viewport)),
         )
+
+
+NULL_SCALAR = ScalarOffset(Scalar.from_number(0), Scalar.from_number(0))
 
 
 if __name__ == "__main__":

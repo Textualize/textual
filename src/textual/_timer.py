@@ -5,7 +5,6 @@ from asyncio import (
     get_event_loop,
     CancelledError,
     Event,
-    shield,
     sleep,
     Task,
 )

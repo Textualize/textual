@@ -33,7 +33,7 @@ class DOMNode(MessagePump):
     """
 
     DEFAULT_STYLES = ""
-    STYLES = ""
+    INLINE_STYLES = ""
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
         self._name = name
@@ -41,10 +41,12 @@ class DOMNode(MessagePump):
         self._classes: set[str] = set()
         self.children = NodeList()
         self._css_styles: Styles = Styles(self)
-        self._inline_styles: Styles = Styles.parse(self.STYLES, repr(self), node=self)
+        self._inline_styles: Styles = Styles.parse(
+            self.INLINE_STYLES, repr(self), node=self
+        )
         self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
-        self.default_styles = Styles.parse(self.DEFAULT_STYLES, repr(self))
-        self._default_rules = self.default_styles.extract_rules((0, 0, 0))
+        default_styles = Styles.parse(self.DEFAULT_STYLES, repr(self))
+        self._default_rules = default_styles.extract_rules((0, 0, 0))
         super().__init__()
 
     def __rich_repr__(self) -> rich.repr.Result:

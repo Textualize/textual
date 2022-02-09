@@ -232,9 +232,9 @@ class StylesBase(ABC):
         """Parse CSS and return a Styles object.
 
         Args:
-            css (str): [description]
-            path (str): [description]
-            node (DOMNode, optional): [description]. Defaults to None.
+            css (str): Textual CSS.
+            path (str): Path or string indicating source of CSS.
+            node (DOMNode, optional): Node to associate with the Styles. Defaults to None.
 
         Returns:
             Styles: A Styles instance containing result of parsing CSS.
@@ -318,6 +318,14 @@ class Styles(StylesBase):
     def extract_rules(
         self, specificity: Specificity3
     ) -> list[tuple[str, Specificity4, Any]]:
+        """Extract rules from Styles object, and apply !important css specificity.
+
+        Args:
+            specificity (Specificity3): A node specificity.
+
+        Returns:
+            list[tuple[str, Specificity4, Any]]]: A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
+        """
         is_important = self.important.__contains__
 
         rules = [
@@ -363,7 +371,7 @@ class Styles(StylesBase):
     def _get_border_css_lines(
         self, rules: RulesMap, name: str
     ) -> Iterable[tuple[str, str]]:
-        """Get CSS lines for border / outline
+        """Get pairs of strings containing <RULE NAME>, <RULE VALUE> for border css declarations.
 
         Args:
             rules (RulesMap): A rules map.
@@ -468,7 +476,7 @@ class Styles(StylesBase):
 
         if (
             has_rule("text_color")
-            and has_rule("text_bgcolor")
+            and has_rule("text_background")
             and has_rule("text_style")
         ):
             append_declaration("text", str(self.text))
@@ -484,7 +492,7 @@ class Styles(StylesBase):
             append_declaration("width", str(self.width))
         if has_rule("height"):
             append_declaration("height", str(self.height))
-        if has_rule("min-width"):
+        if has_rule("min_width"):
             append_declaration("min-width", str(self.min_width))
         if has_rule("min_height"):
             append_declaration("min-height", str(self.min_height))

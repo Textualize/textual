@@ -167,7 +167,7 @@ class StylesBuilder:
 
         return (border_type, border_color)
 
-    def _process_border(self, edge: str, name: str, tokens: list[Token]) -> None:
+    def _process_border_edge(self, edge: str, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("border", tokens)
         self.styles._rules[f"border_{edge}"] = border
 
@@ -180,22 +180,22 @@ class StylesBuilder:
     def process_border_top(
         self, name: str, tokens: list[Token], important: bool
     ) -> None:
-        self._process_border("top", name, tokens)
+        self._process_border_edge("top", name, tokens)
 
     def process_border_right(
         self, name: str, tokens: list[Token], important: bool
     ) -> None:
-        self._process_border("right", name, tokens)
+        self._process_border_edge("right", name, tokens)
 
     def process_border_bottom(
         self, name: str, tokens: list[Token], important: bool
     ) -> None:
-        self._process_border("bottom", name, tokens)
+        self._process_border_edge("bottom", name, tokens)
 
     def process_border_left(
         self, name: str, tokens: list[Token], important: bool
     ) -> None:
-        self._process_border("left", name, tokens)
+        self._process_border_edge("left", name, tokens)
 
     def _process_outline(self, edge: str, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("outline", tokens)

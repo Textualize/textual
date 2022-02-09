@@ -100,7 +100,6 @@ class DOMQuery:
         Returns:
             DOMNode: A DOM Node.
         """
-        # TODO: Better response to empty query than an IndexError
         if self._nodes:
             return self._nodes[0]
         else:

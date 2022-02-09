@@ -311,6 +311,7 @@ class MessagePump:
         else:
             return False
 
+    # TODO: Does dispatch_key belong on message pump?
     async def dispatch_key(self, event: events.Key) -> None:
         """Dispatch a key event to method.
 
