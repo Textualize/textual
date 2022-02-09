@@ -19,7 +19,7 @@ class Sparkline:
         width (int, optional): The width of the sparkline/the number of buckets to partition the data into.
         min_color (Color, optional): The color of values equal to the min value in data.
         max_color (Color, optional): The color of values equal to the max value in data.
-        summary_func (Callable[list[T]]): Function that will be applied to each bucket.
+        summary_function (Callable[list[T]]): Function that will be applied to each bucket.
     """
 
     BARS = "▁▂▃▄▅▆▇█"
@@ -31,13 +31,13 @@ class Sparkline:
         width: int | None,
         min_color: Color = Color.from_rgb(0, 255, 0),
         max_color: Color = Color.from_rgb(255, 0, 0),
-        summary_func: Callable[[list[T]], float] = max,
+        summary_function: Callable[[list[T]], float] = max,
     ) -> None:
         self.data = data
         self.width = width
         self.min_color = Style.from_color(min_color)
         self.max_color = Style.from_color(max_color)
-        self.summary_func = summary_func
+        self.summary_func = summary_function
 
     @classmethod
     def _buckets(cls, data: Sequence[T], num_buckets: int) -> Iterable[list[T]]:
@@ -122,6 +122,6 @@ if __name__ == "__main__":
     console.print(f"data = {nums}\n")
     for f in funcs:
         console.print(
-            f"{f.__name__}:\t", Sparkline(nums, width=12, summary_func=f), end=""
+            f"{f.__name__}:\t", Sparkline(nums, width=12, summary_function=f), end=""
         )
         console.print("\n")

@@ -34,7 +34,7 @@ def test_sparkline_shrink_data_to_width():
 
 def test_sparkline_shrink_data_to_width_non_divisible():
     assert render(
-        Sparkline([1, 2, 3, 4, 5], width=3, summary_func=min)) == f"{GREEN}▁{STOP}{BLENDED}▄{STOP}{RED}█{STOP}"
+        Sparkline([1, 2, 3, 4, 5], width=3, summary_function=min)) == f"{GREEN}▁{STOP}{BLENDED}▄{STOP}{RED}█{STOP}"
 
 
 def test_sparkline_color_blend():
