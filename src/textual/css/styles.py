@@ -45,7 +45,7 @@ if TYPE_CHECKING:
     from ..layout import Layout
 
 
-class RulesMap(TypedDict):
+class RulesMap(TypedDict, total=False):
     """A typed dict for CSS rules.
 
     Any key may be absent, indiciating that rule has not been set.
