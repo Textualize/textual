@@ -1,5 +1,7 @@
+import functools
 from time import sleep
 
+from rich.color import Color
 from rich.console import ConsoleOptions, Console, RenderResult, RenderableType
 from rich.live import Live
 from rich.panel import Panel
@@ -34,22 +36,27 @@ class Opacity:
                     yield segment
                     continue
                 fg, bg = style.color, style.bgcolor
-                # TODO: Ignore ansi colours since there will be no rgb triplet
-                #  stored on the Color for them. We could check if there's a
-                #  color.triplet to detect ansi, or maybe there's another way
-                if fg and bg:
-                    style = Style.from_color(
-                        color=blend_colors(bg, fg, ratio=opacity),
-                        bgcolor=bg,
-                    )
+                if fg and fg.triplet and bg and bg.triplet:
                     yield Segment(
                         text=segment.text,
-                        style=style,
+                        style=_get_blended_style_cached(
+                            fg_color=fg, bg_color=bg, opacity=opacity
+                        ),
                         control=segment.control,
                     )
                 else:
                     yield segment
             yield ""
+
+
+@functools.lru_cache(maxsize=1024)
+def _get_blended_style_cached(
+    fg_color: Color, bg_color: Color, opacity: float
+) -> Style:
+    return Style.from_color(
+        color=blend_colors(bg_color, fg_color, ratio=opacity),
+        bgcolor=bg_color,
+    )
 
 
 if __name__ == "__main__":
