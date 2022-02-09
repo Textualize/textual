@@ -1,13 +1,9 @@
 import functools
-from time import sleep
 
 from rich.color import Color
 from rich.console import ConsoleOptions, Console, RenderResult, RenderableType
-from rich.live import Live
-from rich.panel import Panel
 from rich.segment import Segment
 from rich.style import Style
-from rich.text import Text
 
 from textual.renderables.utilities import blend_colors
 
@@ -27,26 +23,24 @@ class Opacity:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        lines = console.render_lines(self.renderable, options)
+        segments = console.render(self.renderable, options)
         opacity = self.value
-        for line in lines:
-            for segment in line:
-                style = segment.style
-                if not style:
-                    yield segment
-                    continue
-                fg, bg = style.color, style.bgcolor
-                if fg and fg.triplet and bg and bg.triplet:
-                    yield Segment(
-                        text=segment.text,
-                        style=_get_blended_style_cached(
-                            fg_color=fg, bg_color=bg, opacity=opacity
-                        ),
-                        control=segment.control,
-                    )
-                else:
-                    yield segment
-            yield ""
+        for segment in segments:
+            style = segment.style
+            if not style:
+                yield segment
+                continue
+            fg, bg = style.color, style.bgcolor
+            if fg and fg.triplet and bg and bg.triplet:
+                yield Segment(
+                    text=segment.text,
+                    style=_get_blended_style_cached(
+                        fg_color=fg, bg_color=bg, opacity=opacity
+                    ),
+                    control=segment.control,
+                )
+            else:
+                yield segment
 
 
 @functools.lru_cache(maxsize=1024)
@@ -60,6 +54,12 @@ def _get_blended_style_cached(
 
 
 if __name__ == "__main__":
+    from rich.live import Live
+    from rich.panel import Panel
+    from rich.text import Text
+
+    from time import sleep
+
     console = Console()
 
     panel = Panel.fit(
