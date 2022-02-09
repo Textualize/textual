@@ -314,8 +314,7 @@ class MessagePump:
     async def dispatch_key(self, event: events.Key) -> None:
         """Dispatch a key event to method.
 
-        This method will call the method named 'key_<event.key>' if it exists. This key method
-        should return True if the key event was handled. Otherwise it should return False or None.
+        This method will call the method named 'key_<event.key>' if it exists.
 
         Args:
             event (events.Key): A key event.
