@@ -5,7 +5,7 @@
 Textual is a TUI (Text User Interface) framework for Python inspired by modern web development. Currently a **Work in Progress**.
 
 
-> ⚠ **NOTE:** We ([Textualize.io](https://www.textualize.io)) are hard at work on the **css** branch. We will be maintain the 0.1.0 branch for the near future but may not be able to accept API changes. If you would like to contribute code via a PR, please raise a discussion first, to avoid disapointment.
+> ⚠ **NOTE:** We ([Textualize.io](https://www.textualize.io)) are hard at work on the **css** branch. We will maintain the 0.1.0 branch for the near future but may not be able to accept API changes. If you would like to contribute code via a PR, please raise a discussion first, to avoid disapointment.
 
 
 Follow [@willmcgugan](https://twitter.com/willmcgugan) for progress updates, or post in Discussions if you have any requests / suggestions.
