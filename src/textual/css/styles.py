@@ -1,45 +1,96 @@
 from __future__ import annotations
 
+import sys
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import lru_cache
-from typing import Any, Iterable, NamedTuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 
 import rich.repr
 from rich.color import Color
 from rich.style import Style
 
+from .._animator import Animation, EasingFunction
+from ..geometry import Spacing
 from ._style_properties import (
     BorderProperty,
     BoxProperty,
     ColorProperty,
-    DocksProperty,
     DockProperty,
-    OffsetProperty,
-    NameProperty,
+    DocksProperty,
+    LayoutProperty,
     NameListProperty,
+    NameProperty,
+    OffsetProperty,
     ScalarProperty,
     SpacingProperty,
     StringEnumProperty,
-    StyleProperty,
     StyleFlagsProperty,
+    StyleProperty,
     TransitionsProperty,
-    LayoutProperty,
 )
-from .constants import (
-    VALID_DISPLAY,
-    VALID_VISIBILITY,
-)
+from .constants import VALID_DISPLAY, VALID_VISIBILITY
 from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
 from .transition import Transition
-from .types import Display, Edge, Visibility
-from .types import Specificity3, Specificity4
-from .._animator import Animation, EasingFunction
-from ..geometry import Spacing
+from .types import Display, Edge, Specificity3, Specificity4, Visibility
+
+if sys.version_info >= (3, 8):
+    from typing import TypedDict
+else:
+    from typing_extensions import TypedDict
 
 if TYPE_CHECKING:
-    from ..layout import Layout
     from ..dom import DOMNode
+    from ..layout import Layout
+
+
+class RulesMap(TypedDict, total=False):
+    """A typed dict for CSS rules.
+
+    Any key may be absent, indiciating that rule has not been set.
+
+    Does not define composite rules, that is a rule that is made of a combination of other rules. For instance,
+    the text style is made up of text_color, text_background, and text_style.
+    """
+
+    display: Display
+    visibility: Visibility
+    layout: "Layout"
+
+    text_color: Color
+    text_background: Color
+    text_style: Style
+
+    padding: Spacing
+    margin: Spacing
+    offset: ScalarOffset
+
+    border_top: tuple[str, Color]
+    border_right: tuple[str, Color]
+    border_bottom: tuple[str, Color]
+    border_left: tuple[str, Color]
+
+    outline_top: tuple[str, Color]
+    outline_right: tuple[str, Color]
+    outline_bottom: tuple[str, Color]
+    outline_left: tuple[str, Color]
+
+    width: Scalar
+    height: Scalar
+    min_width: Scalar
+    min_height: Scalar
+
+    dock: str
+    docks: tuple[DockGroup, ...]
+
+    layers: tuple[str, ...]
+    layer: str
+
+    transitions: dict[str, Transition]
+
+
+RULE_NAMES = list(RulesMap.__annotations__.keys())
 
 
 class DockGroup(NamedTuple):
@@ -48,51 +99,18 @@ class DockGroup(NamedTuple):
     z: int
 
 
-@rich.repr.auto
-@dataclass
-class Styles:
+class StylesBase(ABC):
+    """A common base class for Styles and RenderStyles"""
 
-    node: DOMNode | None = None
-
-    _rule_display: Display | None = None
-    _rule_visibility: Visibility | None = None
-    _rule_layout: "Layout" | None = None
-
-    _rule_text_color: Color | None = None
-    _rule_text_background: Color | None = None
-    _rule_text_style: Style | None = None
-
-    _rule_padding: Spacing | None = None
-    _rule_margin: Spacing | None = None
-    _rule_offset: ScalarOffset | None = None
-
-    _rule_border_top: tuple[str, Style] | None = None
-    _rule_border_right: tuple[str, Style] | None = None
-    _rule_border_bottom: tuple[str, Style] | None = None
-    _rule_border_left: tuple[str, Style] | None = None
-
-    _rule_outline_top: tuple[str, Style] | None = None
-    _rule_outline_right: tuple[str, Style] | None = None
-    _rule_outline_bottom: tuple[str, Style] | None = None
-    _rule_outline_left: tuple[str, Style] | None = None
-
-    _rule_width: Scalar | None = None
-    _rule_height: Scalar | None = None
-    _rule_min_width: Scalar | None = None
-    _rule_min_height: Scalar | None = None
-
-    _rule_dock: str | None = None
-    _rule_docks: tuple[DockGroup, ...] | None = None
-
-    _rule_layers: tuple[str, ...] | None = None
-    _rule_layer: str | None = None
-
-    _rule_transitions: dict[str, Transition] | None = None
-
-    _layout_required: bool = False
-    _repaint_required: bool = False
-
-    important: set[str] = field(default_factory=set)
+    ANIMATABLE = {
+        "offset",
+        "padding",
+        "margin",
+        "width",
+        "height",
+        "min_width",
+        "min_height",
+    }
 
     display = StringEnumProperty(VALID_DISPLAY, "block")
     visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
@@ -131,33 +149,218 @@ class Styles:
     layers = NameListProperty()
     transitions = TransitionsProperty()
 
-    ANIMATABLE = {
-        "offset",
-        "padding",
-        "margin",
-        "width",
-        "height",
-        "min_width",
-        "min_height",
-    }
+    @abstractmethod
+    def has_rule(self, rule: str) -> bool:
+        """Check if a rule is set on this Styles object.
 
-    @property
-    def gutter(self) -> Spacing:
-        """Get the gutter (additional space reserved for margin / padding / border).
+        Args:
+            rule (str): Rule name.
 
         Returns:
-            Spacing: Space around edges.
+            bool: ``True`` if the rules is present, otherwise ``False``.
         """
-        gutter = self.margin + self.padding + self.border.spacing
-        return gutter
+
+    @abstractmethod
+    def clear_rule(self, rule: str) -> None:
+        """Removes the rule from the Styles object, as if it had never been set.
+
+        Args:
+            rule (str): Rule name.
+        """
+
+    @abstractmethod
+    def get_rules(self) -> RulesMap:
+        """Get the rules in a mapping.
+
+        Returns:
+            RulesMap: A TypedDict of the rules.
+        """
+
+    @abstractmethod
+    def set_rule(self, rule: str, value: object | None) -> None:
+        """Set an individual rule.
+
+        Args:
+            rule (str): Name of rule.
+            value (object): Value of rule.
+        """
+
+    @abstractmethod
+    def get_rule(self, rule: str, default: object = None) -> object:
+        """Get an individual rule.
+
+        Args:
+            rule (str): Name of rule.
+            default (object, optional): Default if rule does not exists. Defaults to None.
+
+        Returns:
+            object: Rule value or default.
+        """
+
+    @abstractmethod
+    def refresh(self, layout: bool = False) -> None:
+        """Mark the styles are requiring a refresh.
+
+        Args:
+            layout (bool, optional): Also require a layout. Defaults to False.
+        """
+
+    @abstractmethod
+    def check_refresh(self) -> tuple[bool, bool]:
+        """Check if the Styles must be refreshed.
+
+        Returns:
+            tuple[bool, bool]: (repaint required, layout_required)
+        """
+
+    @abstractmethod
+    def reset(self) -> None:
+        """Reset the rules to initial state."""
+
+    @abstractmethod
+    def merge(self, other: StylesBase) -> None:
+        """Merge values from another Styles.
+
+        Args:
+            other (Styles): A Styles object.
+        """
+
+    @abstractmethod
+    def merge_rules(self, rules: RulesMap) -> None:
+        """Merge rules in to Styles.
+
+        Args:
+            rules (RulesMap): A mapping of rules.
+        """
+
+    @classmethod
+    def is_animatable(cls, rule: str) -> bool:
+        """Check if a given rule may be animated.
+
+        Args:
+            rule (str): Name of the rule.
+
+        Returns:
+            bool: ``True`` if the rule may be animated, otherwise ``False``.
+        """
+        return rule in cls.ANIMATABLE
 
     @classmethod
     @lru_cache(maxsize=1024)
-    def parse(cls, css: str, path: str) -> Styles:
+    def parse(cls, css: str, path: str, *, node: DOMNode = None) -> Styles:
+        """Parse CSS and return a Styles object.
+
+        Args:
+            css (str): Textual CSS.
+            path (str): Path or string indicating source of CSS.
+            node (DOMNode, optional): Node to associate with the Styles. Defaults to None.
+
+        Returns:
+            Styles: A Styles instance containing result of parsing CSS.
+        """
         from .parse import parse_declarations
 
         styles = parse_declarations(css, path)
+        styles.node = node
         return styles
+
+    def get_transition(self, key: str) -> Transition | None:
+        if key in self.ANIMATABLE:
+            return self.transitions.get(key, None)
+        else:
+            return None
+
+
+@rich.repr.auto
+@dataclass
+class Styles(StylesBase):
+
+    node: DOMNode | None = None
+
+    _rules: RulesMap = field(default_factory=dict)
+
+    _layout_required: bool = False
+    _repaint_required: bool = False
+
+    important: set[str] = field(default_factory=set)
+
+    def has_rule(self, rule: str) -> bool:
+        return rule in self._rules
+
+    def clear_rule(self, rule: str) -> None:
+        self._rules.pop(rule, None)
+
+    def get_rules(self) -> RulesMap:
+        return self._rules.copy()
+
+    def set_rule(self, rule: str, value: object | None) -> None:
+        if value is None:
+            self._rules.pop(rule, None)
+        else:
+            self._rules[rule] = value
+
+    def get_rule(self, rule: str, default: object = None) -> object:
+        return self._rules.get(rule, default)
+
+    def refresh(self, layout: bool = False) -> None:
+        self._repaint_required = True
+        self._layout_required = layout
+
+    def check_refresh(self) -> tuple[bool, bool]:
+        """Check if the Styles must be refreshed.
+
+        Returns:
+            tuple[bool, bool]: (repaint required, layout_required)
+        """
+        result = (self._repaint_required, self._layout_required)
+        self._repaint_required = self._layout_required = False
+        return result
+
+    def reset(self) -> None:
+        """
+        Reset internal style rules to ``None``, reverting to default styles.
+        """
+        self._rules.clear()
+
+    def merge(self, other: Styles) -> None:
+        """Merge values from another Styles.
+
+        Args:
+            other (Styles): A Styles object.
+        """
+
+        self._rules.update(other._rules)
+
+    def merge_rules(self, rules: RulesMap) -> None:
+        self._rules.update(rules)
+
+    def extract_rules(
+        self, specificity: Specificity3
+    ) -> list[tuple[str, Specificity4, Any]]:
+        """Extract rules from Styles object, and apply !important css specificity.
+
+        Args:
+            specificity (Specificity3): A node specificity.
+
+        Returns:
+            list[tuple[str, Specificity4, Any]]]: A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
+        """
+        is_important = self.important.__contains__
+
+        rules = [
+            (rule_name, (int(is_important(rule_name)), *specificity), rule_value)
+            for rule_name, rule_value in self._rules.items()
+        ]
+
+        return rules
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        has_rule = self.has_rule
+        for name in RULE_NAMES:
+            if has_rule(name):
+                yield name, getattr(self, name)
+        if self.important:
+            yield "important", self.important
 
     def __textual_animation__(
         self,
@@ -184,113 +387,60 @@ class Styles:
             )
         return None
 
-    def refresh(self, layout: bool = False) -> None:
-        self._repaint_required = True
-        self._layout_required = layout
-
-    def check_refresh(self) -> tuple[bool, bool]:
-        result = (self._repaint_required, self._layout_required)
-        self._repaint_required = self._layout_required = False
-        return result
-
-    @property
-    def has_border(self) -> bool:
-        """Check in a border is present."""
-        return any(edge for edge, _style in self.border)
-
-    @property
-    def has_padding(self) -> bool:
-        return self._rule_padding is not None
-
-    @property
-    def has_margin(self) -> bool:
-        return self._rule_margin is not None
-
-    @property
-    def has_outline(self) -> bool:
-        """Check if an outline is present."""
-        return any(edge for edge, _style in self.outline)
-
-    @property
-    def has_offset(self) -> bool:
-        return self._rule_offset is not None
-
-    def get_transition(self, key: str) -> Transition | None:
-        if key in self.ANIMATABLE:
-            return self.transitions.get(key, None)
-        else:
-            return None
-
-    def reset(self) -> None:
-        """
-        Reset internal style rules to ``None``, reverting to default styles.
-        """
-        for rule_name in INTERNAL_RULE_NAMES:
-            setattr(self, rule_name, None)
-
-    def extract_rules(
-        self, specificity: Specificity3
-    ) -> list[tuple[str, Specificity4, Any]]:
-        is_important = self.important.__contains__
-        rules = [
-            (
-                rule_name,
-                (int(is_important(rule_name)), *specificity),
-                getattr(self, f"_rule_{rule_name}"),
-            )
-            for rule_name in RULE_NAMES
-            if getattr(self, f"_rule_{rule_name}") is not None
-        ]
-        return rules
-
-    def apply_rules(self, rules: Iterable[tuple[str, object]], animate: bool = False):
-        if animate or self.node is None:
-            for key, value in rules:
-                setattr(self, f"_rule_{key}", value)
-        else:
-            styles = self
-            is_animatable = styles.ANIMATABLE.__contains__
-            for key, value in rules:
-                current = getattr(styles, f"_rule_{key}")
-                if current == value:
-                    continue
-                if is_animatable(key):
-                    transition = styles.get_transition(key)
-                    if transition is None:
-                        setattr(styles, f"_rule_{key}", value)
-                    else:
-                        duration, easing, delay = transition
-                        self.node.app.animator.animate(
-                            styles, key, value, duration=duration, easing=easing
-                        )
-                else:
-                    setattr(styles, f"_rule_{key}", value)
-
-        if self.node is not None:
-            self.node.on_style_change()
-
-    def __rich_repr__(self) -> rich.repr.Result:
-        for rule_name, internal_rule_name in zip(RULE_NAMES, INTERNAL_RULE_NAMES):
-            if getattr(self, internal_rule_name) is not None:
-                yield rule_name, getattr(self, rule_name)
-        if self.important:
-            yield "important", self.important
-
-    @classmethod
-    def combine(cls, style1: Styles, style2: Styles) -> Styles:
-        """Combine rule with another to produce a new rule.
+    def _get_border_css_lines(
+        self, rules: RulesMap, name: str
+    ) -> Iterable[tuple[str, str]]:
+        """Get pairs of strings containing <RULE NAME>, <RULE VALUE> for border css declarations.
 
         Args:
-            style1 (Style): A style.
-            style2 (Style): Second style.
+            rules (RulesMap): A rules map.
+            name (str): Name of rules (border or outline)
 
         Returns:
-            Style: New rule with attributes of style2 overriding style1
+            Iterable[tuple[str, str]]: An iterable of CSS declarations.
+
         """
-        result = cls()
-        for name in INTERNAL_RULE_NAMES:
-            setattr(result, name, getattr(style1, name) or getattr(style2, name))
-        return result
+
+        has_rule = rules.__contains__
+        get_rule = rules.__getitem__
+
+        has_top = has_rule(f"{name}_top")
+        has_right = has_rule(f"{name}_right")
+        has_bottom = has_rule(f"{name}_bottom")
+        has_left = has_rule(f"{name}_left")
+        if not any((has_top, has_right, has_bottom, has_left)):
+            # No border related rules
+            return
+
+        if all((has_top, has_right, has_bottom, has_left)):
+            # All rules are set
+            # See if we can set them with a single border: declaration
+            top = get_rule(f"{name}_top")
+            right = get_rule(f"{name}_right")
+            bottom = get_rule(f"{name}_bottom")
+            left = get_rule(f"{name}_left")
+
+            if top == right and right == bottom and bottom == left:
+                border_type, border_color = rules[f"{name}_top"]
+                yield name, f"{border_type} {border_color.name}"
+                return
+
+        # Check for edges
+        if has_top:
+            border_type, border_color = rules[f"{name}_top"]
+            yield f"{name}-top", f"{border_type} {border_color.name}"
+
+        if has_right:
+            border_type, border_color = rules[f"{name}_right"]
+            yield f"{name}-right", f"{border_type} {border_color.name}"
+
+        if has_bottom:
+            border_type, border_color = rules[f"{name}_bottom"]
+            yield f"{name}-bottom", f"{border_type} {border_color.name}"
+
+        if has_left:
+            border_type, border_color = rules[f"{name}_left"]
+            yield f"{name}-left", f"{border_type} {border_color.name}"
 
     @property
     def css_lines(self) -> list[str]:
@@ -303,88 +453,69 @@ class Styles:
             else:
                 append(f"{name}: {value};")
 
-        if self._rule_display is not None:
-            append_declaration("display", self._rule_display)
-        if self._rule_visibility is not None:
-            append_declaration("visibility", self._rule_visibility)
-        if self._rule_padding is not None:
-            append_declaration("padding", self._rule_padding.packed)
-        if self._rule_margin is not None:
-            append_declaration("margin", self._rule_margin.packed)
+        rules = self.get_rules()
+        get_rule = rules.get
+        has_rule = rules.__contains__
 
-        if (
-            self._rule_border_top is not None
-            and self._rule_border_top == self._rule_border_right
-            and self._rule_border_right == self._rule_border_bottom
-            and self._rule_border_bottom == self._rule_border_left
-        ):
-            _type, style = self._rule_border_top
-            append_declaration("border", f"{_type} {style}")
-        else:
-            if self._rule_border_top is not None:
-                _type, style = self._rule_border_top
-                append_declaration("border-top", f"{_type} {style}")
-            if self._rule_border_right is not None:
-                _type, style = self._rule_border_right
-                append_declaration("border-right", f"{_type} {style}")
-            if self._rule_border_bottom is not None:
-                _type, style = self._rule_border_bottom
-                append_declaration("border-bottom", f"{_type} {style}")
-            if self._rule_border_left is not None:
-                _type, style = self._rule_border_left
-                append_declaration("border-left", f"{_type} {style}")
+        if has_rule("display"):
+            append_declaration("display", rules["display"])
+        if has_rule("visibility"):
+            append_declaration("visibility", rules["visibility"])
+        if has_rule("padding"):
+            append_declaration("padding", rules["padding"].css)
+        if has_rule("margin"):
+            append_declaration("margin", rules["margin"].css)
 
-        if (
-            self._rule_outline_top is not None
-            and self._rule_outline_top == self._rule_outline_right
-            and self._rule_outline_right == self._rule_outline_bottom
-            and self._rule_outline_bottom == self._rule_outline_left
-        ):
-            _type, style = self._rule_outline_top
-            append_declaration("outline", f"{_type} {style}")
-        else:
-            if self._rule_outline_top is not None:
-                _type, style = self._rule_outline_top
-                append_declaration("outline-top", f"{_type} {style}")
-            if self._rule_outline_right is not None:
-                _type, style = self._rule_outline_right
-                append_declaration("outline-right", f"{_type} {style}")
-            if self._rule_outline_bottom is not None:
-                _type, style = self._rule_outline_bottom
-                append_declaration("outline-bottom", f"{_type} {style}")
-            if self._rule_outline_left is not None:
-                _type, style = self._rule_outline_left
-                append_declaration("outline-left", f"{_type} {style}")
+        for name, rule in self._get_border_css_lines(rules, "border"):
+            append_declaration(name, rule)
 
-        if self.offset:
+        for name, rule in self._get_border_css_lines(rules, "outline"):
+            append_declaration(name, rule)
+
+        if has_rule("offset"):
             x, y = self.offset
             append_declaration("offset", f"{x} {y}")
-        if self._rule_dock:
-            append_declaration("dock-group", self._rule_dock)
-        if self._rule_docks:
+        if has_rule("dock"):
+            append_declaration("dock", rules["dock"])
+        if has_rule("docks"):
             append_declaration(
                 "docks",
                 " ".join(
                     (f"{name}={edge}/{z}" if z else f"{name}={edge}")
-                    for name, edge, z in self._rule_docks
+                    for name, edge, z in rules["docks"]
                 ),
             )
-        if self._rule_layers is not None:
+        if has_rule("layers"):
             append_declaration("layers", " ".join(self.layers))
-        if self._rule_layer is not None:
+        if has_rule("layer"):
             append_declaration("layer", self.layer)
-        if self._rule_text_color or self._rule_text_background or self._rule_text_style:
-            append_declaration("text", str(self.text))
+        if has_rule("layout"):
+            assert self.layout is not None
+            append_declaration("layout", self.layout.name)
 
-        if self._rule_width is not None:
+        if (
+            has_rule("text_color")
+            and has_rule("text_background")
+            and has_rule("text_style")
+        ):
+            append_declaration("text", str(self.text))
+        else:
+            if has_rule("text_color"):
+                append_declaration("text-color", self.text_color.name)
+            if has_rule("text_background"):
+                append_declaration("text-background", self.text_background.name)
+            if has_rule("text_style"):
+                append_declaration("text-style", str(get_rule("text_style")))
+
+        if has_rule("width"):
             append_declaration("width", str(self.width))
-        if self._rule_height is not None:
+        if has_rule("height"):
             append_declaration("height", str(self.height))
-        if self._rule_min_width is not None:
+        if has_rule("min_width"):
             append_declaration("min-width", str(self.min_width))
-        if self._rule_min_height is not None:
+        if has_rule("min_height"):
             append_declaration("min-height", str(self.min_height))
-        if self._rule_transitions is not None:
+        if has_rule("transitions"):
             append_declaration(
                 "transition",
                 ", ".join(
@@ -401,8 +532,89 @@ class Styles:
         return "\n".join(self.css_lines)
 
 
-RULE_NAMES = [name[6:] for name in dir(Styles) if name.startswith("_rule_")]
-INTERNAL_RULE_NAMES = [f"_rule_{name}" for name in RULE_NAMES]
+@rich.repr.auto
+class RenderStyles(StylesBase):
+    """Presents a combined view of two Styles object: a base Styles and inline Styles."""
+
+    def __init__(self, node: DOMNode, base: Styles, inline_styles: Styles) -> None:
+        self.node = node
+        self._base_styles = base
+        self._inline_styles = inline_styles
+
+    @property
+    def base(self) -> Styles:
+        """Quick access to base (css) style."""
+        return self._base_styles
+
+    @property
+    def inline(self) -> Styles:
+        """Quick access to the inline styles."""
+        return self._inline_styles
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        for rule_name in RULE_NAMES:
+            if self.has_rule(rule_name):
+                yield rule_name, getattr(self, rule_name)
+
+    def reset(self) -> None:
+        """Reset the inline styles."""
+        self._inline_styles.reset()
+
+    def refresh(self, layout: bool = False) -> None:
+        self._inline_styles.refresh(layout=layout)
+
+    def merge(self, other: Styles) -> None:
+        """Merge values from another Styles.
+
+        Args:
+            other (Styles): A Styles object.
+        """
+        self._inline_styles.merge(other)
+
+    def merge_rules(self, rules: RulesMap) -> None:
+        self._inline_styles.merge_rules(rules)
+
+    def check_refresh(self) -> tuple[bool, bool]:
+        """Check if the Styles must be refreshed.
+
+        Returns:
+            tuple[bool, bool]: (repaint required, layout_required)
+        """
+        base_repaint, base_layout = self._base_styles.check_refresh()
+        inline_repaint, inline_layout = self._inline_styles.check_refresh()
+        result = (base_repaint or inline_repaint, base_layout or inline_layout)
+        return result
+
+    def has_rule(self, rule: str) -> bool:
+        """Check if a rule has been set."""
+        return self._inline_styles.has_rule(rule) or self._base_styles.has_rule(rule)
+
+    def set_rule(self, rule: str, value: object | None) -> None:
+        self._inline_styles.set_rule(rule, value)
+
+    def get_rule(self, rule: str, default: object = None) -> object:
+        if self._inline_styles.has_rule(rule):
+            return self._inline_styles.get_rule(rule, default)
+        return self._base_styles.get_rule(rule, default)
+
+    def clear_rule(self, rule_name: str) -> None:
+        """Clear a rule (from inline)."""
+        self._inline_styles.clear_rule(rule_name)
+
+    def get_rules(self) -> RulesMap:
+        """Get rules as a dictionary"""
+        rules = {**self._base_styles._rules, **self._inline_styles._rules}
+        return cast(RulesMap, rules)
+
+    @property
+    def css(self) -> str:
+        """Get the CSS for the combined styles."""
+        styles = Styles()
+        styles.merge(self._base_styles)
+        styles.merge(self._inline_styles)
+        combined_css = styles.css
+        return combined_css
+
 
 if __name__ == "__main__":
     styles = Styles()

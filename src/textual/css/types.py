@@ -4,7 +4,7 @@ import sys
 from typing import Tuple
 
 
-from rich.style import Style
+from rich.color import Color
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -15,6 +15,6 @@ else:
 Edge = Literal["top", "right", "bottom", "left"]
 Visibility = Literal["visible", "hidden", "initial", "inherit"]
 Display = Literal["block", "none"]
-EdgeStyle = Tuple[str, Style]
+EdgeStyle = Tuple[str, Color]
 Specificity3 = Tuple[int, int, int]
 Specificity4 = Tuple[int, int, int, int]

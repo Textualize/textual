@@ -12,7 +12,8 @@ from ._node_list import NodeList
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from .css.errors import StyleValueError
-from .css.styles import Styles
+from .css.styles import Styles, RenderStyles
+from .css.parse import parse_declarations
 from .message_pump import MessagePump
 
 if TYPE_CHECKING:
@@ -31,17 +32,22 @@ class DOMNode(MessagePump):
 
     """
 
-    STYLES = ""
+    DEFAULT_STYLES = ""
+    INLINE_STYLES = ""
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
         self._name = name
         self._id = id
         self._classes: set[str] = set()
         self.children = NodeList()
-        self.styles: Styles = Styles(self)
+        self._css_styles: Styles = Styles(self)
+        self._inline_styles: Styles = Styles.parse(
+            self.INLINE_STYLES, repr(self), node=self
+        )
+        self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
+        default_styles = Styles.parse(self.DEFAULT_STYLES, repr(self))
+        self._default_rules = default_styles.extract_rules((0, 0, 0))
         super().__init__()
-        self.default_styles = Styles.parse(self.STYLES, repr(self))
-        self._default_rules = self.default_styles.extract_rules((0, 0, 0))
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self._name, None
@@ -240,7 +246,7 @@ class DOMNode(MessagePump):
         from .widget import Widget
 
         for node in self.walk_children():
-            node.styles = Styles(node=node)
+            node._css_styles.reset()
             if isinstance(node, Widget):
                 # node.clear_render_cache()
                 node._repaint_required = True
@@ -289,23 +295,60 @@ class DOMNode(MessagePump):
 
         return DOMQuery(self, selector)
 
+    def set_styles(self, css: str | None = None, **styles) -> None:
+        """Set custom styles on this object."""
+        # TODO: This can be done more efficiently
+        kwarg_css = "\n".join(
+            f"{key.replace('_', '-')}: {value}" for key, value in styles.items()
+        )
+        apply_css = f"{css or ''}\n{kwarg_css}\n"
+        new_styles = parse_declarations(apply_css, f"<custom styles for ${self!r}>")
+        self.styles.merge(new_styles)
+        self.refresh()
+
     def has_class(self, *class_names: str) -> bool:
+        """Check if the Node has all the given class names.
+
+        Args:
+            *class_names (str): CSS class names to check.
+
+        Returns:
+            bool: ``True`` if the node has all the given class names, otherwise ``False``.
+        """
         return self._classes.issuperset(class_names)
 
     def add_class(self, *class_names: str) -> None:
-        """Add class names."""
+        """Add class names to this Node.
+
+        Args:
+            *class_names (str): CSS class names to add.
+
+        """
         self._classes.update(class_names)
 
     def remove_class(self, *class_names: str) -> None:
-        """Remove class names"""
+        """Remove class names from this Node.
+
+        Args:
+            *class_names (str): CSS class names to remove.
+
+        """
         self._classes.difference_update(class_names)
 
     def toggle_class(self, *class_names: str) -> None:
-        """Toggle class names"""
+        """Toggle class names on this Node.
+
+        Args:
+            *class_names (str): CSS class names to toggle.
+
+        """
         self._classes.symmetric_difference_update(class_names)
-        self.app.stylesheet.update(self.app)
+        self.app.stylesheet.update(self.app, animate=True)
 
     def has_pseudo_class(self, *class_names: str) -> bool:
         """Check for pseudo class (such as hover, focus etc)"""
         has_pseudo_classes = self.pseudo_classes.issuperset(class_names)
         return has_pseudo_classes
+
+    def refresh(self, repaint: bool = True, layout: bool = False) -> None:
+        raise NotImplementedError()

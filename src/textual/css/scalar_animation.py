@@ -60,7 +60,7 @@ class ScalarAnimation(Animation):
             return True
 
         offset = self.start + (self.destination - self.start) * eased_factor
-        current = getattr(self.styles, f"_rule_{self.attribute}")
+        current = self.styles._rules[self.attribute]
         if current != offset:
             setattr(self.styles, f"{self.attribute}", offset)
 

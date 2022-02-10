@@ -311,6 +311,21 @@ class MessagePump:
         else:
             return False
 
+    # TODO: Does dispatch_key belong on message pump?
+    async def dispatch_key(self, event: events.Key) -> None:
+        """Dispatch a key event to method.
+
+        This method will call the method named 'key_<event.key>' if it exists.
+
+        Args:
+            event (events.Key): A key event.
+        """
+
+        key_method = getattr(self, f"key_{event.key}", None)
+        if key_method is not None:
+            await invoke(key_method, event)
+            event.prevent_default()
+
     async def on_timer(self, event: events.Timer) -> None:
         event.prevent_default()
         event.stop()

@@ -33,6 +33,7 @@ from .message import Message
 from .messages import Layout, Update
 from .reactive import watch
 
+
 if TYPE_CHECKING:
     from .view import View
 
@@ -55,8 +56,8 @@ class Widget(DOMNode):
     _counts: ClassVar[dict[str, int]] = {}
     can_focus: bool = False
 
-    STYLES = """
-    dock: _default;
+    DEFAULT_STYLES = """
+
     """
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
@@ -91,11 +92,6 @@ class Widget(DOMNode):
         pseudo_classes = self.pseudo_classes
         if pseudo_classes:
             yield "pseudo_classes", pseudo_classes
-        yield "outline", self.styles.outline
-
-    def __rich__(self) -> RenderableType:
-        renderable = self.render_styled()
-        return renderable
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Pseudo classes for a widget"""
@@ -152,7 +148,9 @@ class Widget(DOMNode):
         """
 
         renderable = self.render()
+
         styles = self.styles
+
         parent_text_style = self.parent.text_style
 
         text_style = styles.text
@@ -160,15 +158,15 @@ class Widget(DOMNode):
         if renderable_text_style:
             renderable = Styled(renderable, renderable_text_style)
 
-        if styles.has_padding:
+        if styles.padding:
             renderable = Padding(
                 renderable, styles.padding, style=renderable_text_style
             )
 
-        if styles.has_border:
+        if styles.border:
             renderable = Border(renderable, styles.border, style=renderable_text_style)
 
-        if styles.has_outline:
+        if styles.outline:
             renderable = Border(
                 renderable,
                 styles.outline,
@@ -210,11 +208,11 @@ class Widget(DOMNode):
         Returns:
             Spacing: [description]
         """
-        gutter = self.styles.gutter
+        styles = self.styles
+        gutter = styles.margin + styles.padding + styles.border.spacing
         return gutter
 
     def on_style_change(self) -> None:
-        self.log("style_change", self)
         self.clear_render_cache()
 
     def _update_size(self, size: Size) -> None:
@@ -294,7 +292,7 @@ class Widget(DOMNode):
         if not self.check_message_enabled(message):
             return True
         if not self.is_running:
-            self.log(self, "IS NOT RUNNING")
+            self.log(self, f"IS NOT RUNNING, {message!r} not sent")
         return await super().post_message(message)
 
     async def on_resize(self, event: events.Resize) -> None:
@@ -335,19 +333,6 @@ class Widget(DOMNode):
     async def broker_event(self, event_name: str, event: events.Event) -> bool:
         return await self.app.broker_event(event_name, event, default_namespace=self)
 
-    async def dispatch_key(self, event: events.Key) -> None:
-        """Dispatch a key event to method.
-
-        This method will call the method named 'key_<event.key>' if it exists.
-
-        Args:
-            event (events.Key): A key event.
-        """
-
-        key_method = getattr(self, f"key_{event.key}", None)
-        if key_method is not None:
-            await invoke(key_method, event)
-
     async def on_mouse_down(self, event: events.MouseUp) -> None:
         await self.broker_event("mouse.down", event)
 
@@ -364,3 +349,7 @@ class Widget(DOMNode):
     async def on_leave(self, event: events.Leave) -> None:
         self._mouse_over = False
         self.app.update_styles()
+
+    async def on_key(self, event: events.Key) -> None:
+        if await self.dispatch_key(event):
+            event.prevent_default()

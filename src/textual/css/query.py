@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import rich.repr
 
-from typing import Iterable, Iterator, TYPE_CHECKING
+from typing import Iterator, TYPE_CHECKING
 
 
 from .match import match
@@ -24,6 +24,10 @@ from .parse import parse_selectors
 
 if TYPE_CHECKING:
     from ..dom import DOMNode
+
+
+class EmptyQueryError(Exception):
+    pass
 
 
 @rich.repr.auto(angular=True)
@@ -96,8 +100,10 @@ class DOMQuery:
         Returns:
             DOMNode: A DOM Node.
         """
-        # TODO: Better response to empty query than an IndexError
-        return self._nodes[0]
+        if self._nodes:
+            return self._nodes[0]
+        else:
+            raise EmptyQueryError("Query is empty")
 
     def add_class(self, *class_names: str) -> DOMQuery:
         """Add the given class name(s) to nodes."""
@@ -115,4 +121,28 @@ class DOMQuery:
         """Toggle the given class names from matched nodes."""
         for node in self._nodes:
             node.toggle_class(*class_names)
+        return self
+
+    def set_styles(self, css: str | None = None, **styles: str) -> DOMQuery:
+        """Set styles on matched nodes.
+
+        Args:
+            css (str, optional): CSS declarations to parser, or None. Defaults to None.
+        """
+        for node in self._nodes:
+            node.set_styles(css, **styles)
+        return self
+
+    def refresh(self, repaint: bool = True, layout: bool = False) -> DOMQuery:
+        """Refresh matched nodes.
+
+        Args:
+            repaint (bool): Repaint node(s). defaults to True.
+            layout (bool): Layout node(s). Defaults to False.
+
+        Returns:
+            DOMQuery: Query for chaining.
+        """
+        for node in self._nodes:
+            node.refresh(repaint=repaint, layout=layout)
         return self

@@ -5,8 +5,9 @@ import os
 import platform
 import warnings
 from asyncio import AbstractEventLoop
-from typing import Any, Callable, Iterable, Type, TypeVar
+from typing import Any, Callable, Iterable, Type, TypeVar, TYPE_CHECKING
 
+import rich
 import rich.repr
 from rich.console import Console, RenderableType
 from rich.control import Control
@@ -34,6 +35,11 @@ from .message_pump import MessagePump
 from .reactive import Reactive
 from .view import View
 from .widget import Widget
+
+from .css.query import EmptyQueryError
+
+if TYPE_CHECKING:
+    from .css.query import DOMQuery
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
@@ -260,6 +266,27 @@ class App(DOMNode):
                 self.stylesheet.update(self)
                 self.view.refresh(layout=True)
 
+    def query(self, selector: str | None = None) -> DOMQuery:
+        """Get a DOM query in the current view.
+
+        Args:
+            selector (str, optional): A CSS selector or `None` for all nodes. Defaults to None.
+
+        Returns:
+            DOMQuery: A query object.
+        """
+        from .css.query import DOMQuery
+
+        return DOMQuery(self.view, selector)
+
+    def __getitem__(self, selector: str) -> DOMNode:
+        from .css.query import DOMQuery
+
+        try:
+            return DOMQuery(self.view, selector).first()
+        except EmptyQueryError:
+            raise KeyError(selector)
+
     def update_styles(self) -> None:
         """Request update of styles.
 
@@ -340,8 +367,14 @@ class App(DOMNode):
         """
 
         if not renderables:
+
             renderables = (
-                Traceback(show_locals=True, width=None, locals_max_length=5),
+                Traceback(
+                    show_locals=True,
+                    width=None,
+                    locals_max_length=5,
+                    suppress=[rich],
+                ),
             )
         self._exit_renderables.extend(renderables)
         self.close_messages_no_wait()
@@ -469,7 +502,9 @@ class App(DOMNode):
             try:
                 if sync_available:
                     console.file.write("\x1bP=1s\x1b\\")
-                console.print(Screen(Control.home(), self.view, Control.home()))
+                console.print(
+                    Screen(Control.home(), self.view.render_styled(), Control.home())
+                )
                 if sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
                 console.file.flush()
@@ -511,6 +546,10 @@ class App(DOMNode):
             tuple[Widget, Region]: The widget and the widget's screen region.
         """
         return self.view.get_widget_at(x, y)
+
+    def bell(self) -> None:
+        """Play the console 'bell'."""
+        self.console.bell()
 
     async def press(self, key: str) -> bool:
         """Handle a key press.
@@ -639,7 +678,7 @@ class App(DOMNode):
         1 / 0
 
     async def action_bell(self) -> None:
-        self.console.bell()
+        self.bell()
 
     async def action_add_class_(self, selector: str, class_name: str) -> None:
         self.view.query(selector).add_class(class_name)

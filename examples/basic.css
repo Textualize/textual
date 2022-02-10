@@ -3,13 +3,9 @@
 $primary: #20639b;
 
 App > View {
+  layout: dock;
   docks: side=left/1;
   text: on $primary;
-}
-
-Widget:hover {
-  outline: heavy;
-  text: bold !important;
 }
 
 #sidebar {
@@ -29,10 +25,6 @@ Widget:hover {
   text: white on #173f5f;
   height: 3;
   border: hkey;
-}
-
-#header.-visible {
-  visibility: hidden;
 }
 
 #content {

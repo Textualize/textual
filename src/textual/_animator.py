@@ -127,12 +127,19 @@ class Animator:
         )
 
     async def start(self) -> None:
+        """Start the animator task."""
+
         self._timer.start()
 
     async def stop(self) -> None:
-        await self._timer.stop()
+        """Stop the animator task."""
+        try:
+            await self._timer.stop()
+        except asyncio.CancelledError:
+            pass
 
     def bind(self, obj: object) -> BoundAnimator:
+        """Bind the animator to a given objects."""
         return BoundAnimator(self, obj)
 
     def animate(

@@ -58,13 +58,14 @@ class WidgetPlacement(NamedTuple):
                 account for margin.
         """
         region, widget, order = self
-        styles = widget.styles
-        if styles.has_margin:
-            return WidgetPlacement(
-                region=region.shrink(styles.margin),
-                widget=widget,
-                order=order,
-            )
+        if widget is not None:
+            styles = widget.styles
+            if any(styles.margin):
+                return WidgetPlacement(
+                    region=region.shrink(styles.margin),
+                    widget=widget,
+                    order=order,
+                )
         return self
 
 

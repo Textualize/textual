@@ -3,7 +3,9 @@ from __future__ import annotations
 import os
 from collections import defaultdict
 from operator import itemgetter
-from typing import Iterable
+import os
+from typing import cast, Iterable
+
 
 import rich.repr
 from rich.console import Group, RenderableType
@@ -18,8 +20,10 @@ from .errors import StylesheetError
 from .match import _check_selectors
 from .model import RuleSet
 from .parse import parse
+from .styles import RulesMap
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
+from .. import log
 
 
 class StylesheetParseError(Exception):
@@ -131,7 +135,7 @@ class Stylesheet:
             if _check_selectors(selector_set.selectors, node):
                 yield selector_set.specificity
 
-    def apply(self, node: DOMNode) -> None:
+    def apply(self, node: DOMNode, animate: bool = False) -> None:
         """Apply the stylesheet to a DOM node.
 
         Args:
@@ -140,9 +144,7 @@ class Stylesheet:
                 If the same rule is defined multiple times for the node (e.g. multiple
                 classes modifying the same CSS property), then only the most specific
                 rule will be applied.
-
-        Returns:
-            None
+            animate (bool, optional): Animate changed rules. Defaults to ``False``.
         """
 
         # Dictionary of rule attribute names e.g. "text_background" to list of tuples.
@@ -154,9 +156,6 @@ class Stylesheet:
         rule_attributes = defaultdict(list)
 
         _check_rule = self._check_rule
-
-        # TODO: The line below breaks inline styles and animations
-        node.styles.reset()
 
         # Collect default node CSS rules
         for key, default_specificity, value in node._default_rules:
@@ -172,18 +171,61 @@ class Stylesheet:
 
         # For each rule declared for this node, keep only the most specific one
         get_first_item = itemgetter(0)
-        node_rules = [
-            (name, max(specificity_rules, key=get_first_item)[1])
-            for name, specificity_rules in rule_attributes.items()
-        ]
+        node_rules: RulesMap = cast(
+            RulesMap,
+            {
+                name: max(specificity_rules, key=get_first_item)[1]
+                for name, specificity_rules in rule_attributes.items()
+            },
+        )
 
-        node.styles.apply_rules(node_rules)
+        self.apply_rules(node, node_rules, animate=animate)
 
-    def update(self, root: DOMNode) -> None:
+    @classmethod
+    def apply_rules(cls, node: DOMNode, rules: RulesMap, animate: bool = False) -> None:
+        """Apply style rules to a node, animating as required.
+
+        Args:
+            node (DOMNode): A DOM node.
+            rules (RulesMap): Mapping of rules.
+            animate (bool, optional): Enable animation. Defaults to False.
+        """
+        styles = node.styles
+        if animate:
+
+            is_animatable = styles.is_animatable
+            current_rules = styles.get_rules()
+            set_rule = styles.base.set_rule
+
+            for key, value in rules.items():
+                current = current_rules.get(key)
+                if current == value:
+                    continue
+                if is_animatable(key):
+                    transition = styles.get_transition(key)
+                    if transition is None:
+                        styles.base.set_rule(key, value)
+                    else:
+                        duration, easing, delay = transition
+                        node.app.animator.animate(
+                            node.styles.base,
+                            key,
+                            value,
+                            duration=duration,
+                            easing=easing,
+                        )
+                else:
+                    set_rule(key, value)
+        else:
+            styles.base.merge_rules(rules)
+
+        node.on_style_change()
+
+    def update(self, root: DOMNode, animate: bool = False) -> None:
         """Update a node and its children."""
         apply = self.apply
         for node in root.walk_children():
-            apply(node)
+            apply(node, animate=animate)
 
 
 if __name__ == "__main__":

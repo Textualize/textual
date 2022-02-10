@@ -15,9 +15,10 @@ from .widget import Widget
 
 @rich.repr.auto
 class View(Widget):
-    STYLES = """
+
+    DEFAULT_STYLES = """
         layout: dock;
-        docks: main=top;
+        docks: _default=top;
     """
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
@@ -32,13 +33,6 @@ class View(Widget):
         )
         super().__init__(name=name, id=id)
 
-    def __init_subclass__(
-        cls, layout: Callable[[], Layout] | None = None, **kwargs
-    ) -> None:
-        if layout is not None:
-            cls.layout_factory = layout
-        super().__init_subclass__(**kwargs)
-
     background: Reactive[str] = Reactive("")
     scroll_x: Reactive[int] = Reactive(0)
     scroll_y: Reactive[int] = Reactive(0)
@@ -49,11 +43,12 @@ class View(Widget):
         self.app.refresh()
 
     @property
-    def layout(self) -> Layout:
-        """Convenience property for accessing ``view.styles.layout``.
+    def layout(self) -> Layout | None:
+        """Convenience property for accessing ``self.styles.layout``.
 
         Returns: The Layout associated with this view
         """
+
         return self.styles.layout
 
     @layout.setter
@@ -92,7 +87,7 @@ class View(Widget):
         return self.app.is_mounted(widget)
 
     def render(self) -> RenderableType:
-        return self.layout
+        return self.layout or ""
 
     def get_offset(self, widget: Widget) -> Offset:
         return self.layout.get_offset(widget)
@@ -184,6 +179,8 @@ class View(Widget):
         watch(self.app, "background", watch_background)
 
     async def on_idle(self, event: events.Idle) -> None:
+        if self.layout is None:
+            return
         if self.layout.check_update():
             self.layout.reset_update()
             await self.refresh_layout()

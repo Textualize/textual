@@ -484,6 +484,9 @@ class Spacing(NamedTuple):
     bottom: int = 0
     left: int = 0
 
+    def __bool__(self) -> bool:
+        return self == (0, 0, 0, 0)
+
     @property
     def width(self) -> int:
         """Total space in width."""
@@ -513,6 +516,16 @@ class Spacing(NamedTuple):
             return f"{top}, {right}"
         else:
             return f"{top}, {right}, {bottom}, {left}"
+
+    @property
+    def css(self) -> str:
+        top, right, bottom, left = self
+        if top == right == bottom == left:
+            return f"{top}"
+        if (top, right) == (bottom, left):
+            return f"{top} {right}"
+        else:
+            return f"{top} {right} {bottom} {left}"
 
     @classmethod
     def unpack(cls, pad: SpacingDimensions) -> Spacing:
