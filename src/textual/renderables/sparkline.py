@@ -37,7 +37,7 @@ class Sparkline:
         self.width = width
         self.min_color = Style.from_color(min_color)
         self.max_color = Style.from_color(max_color)
-        self.summary_func = summary_function
+        self.summary_function = summary_function
 
     @classmethod
     def _buckets(cls, data: Sequence[T], num_buckets: int) -> Iterable[list[T]]:
@@ -76,11 +76,11 @@ class Sparkline:
         bucket_index = 0
         bars_rendered = 0
         step = len(buckets) / width
-        summary_func = self.summary_func
+        summary_function = self.summary_function
         min_color, max_color = self.min_color.color, self.max_color.color
         while bars_rendered < width:
             partition = buckets[int(bucket_index)]
-            partition_summary = summary_func(partition)
+            partition_summary = summary_function(partition)
             height_ratio = (partition_summary - minimum) / extent
             bar_index = int(height_ratio * (len(self.BARS) - 1))
             bar_color = _blend_colors(min_color, max_color, height_ratio)
