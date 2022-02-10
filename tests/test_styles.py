@@ -108,7 +108,6 @@ def test_render_styles_text():
 
 
 def test_render_styles_border():
-
     base = Styles()
     inline = Styles()
     styles_view = RenderStyles(None, base, inline)
