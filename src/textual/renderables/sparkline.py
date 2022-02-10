@@ -64,10 +64,10 @@ class Sparkline:
         width = self.width or options.max_width
         len_data = len(self.data)
         if len_data == 0:
-            yield Segment("▁" * width, style=self.min_color)
+            yield Segment("▁" * width, self.min_color)
             return
         if len_data == 1:
-            yield Segment("█" * width, style=self.max_color)
+            yield Segment("█" * width, self.max_color)
             return
 
         minimum, maximum = min(self.data), max(self.data)
@@ -88,7 +88,7 @@ class Sparkline:
             bar_color = blend_colors(min_color, max_color, height_ratio)
             bars_rendered += 1
             bucket_index += step
-            yield Segment(text=self.BARS[bar_index], style=Style.from_color(bar_color))
+            yield Segment(self.BARS[bar_index], Style.from_color(bar_color))
 
 
 if __name__ == "__main__":

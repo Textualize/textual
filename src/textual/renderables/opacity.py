@@ -34,11 +34,11 @@ class Opacity:
             bg = style.bgcolor
             if fg and fg.triplet and bg and bg.triplet:
                 yield Segment(
-                    text=segment.text,
-                    style=_get_blended_style_cached(
+                    segment.text,
+                    _get_blended_style_cached(
                         fg_color=fg, bg_color=bg, opacity=opacity
                     ),
-                    control=segment.control,
+                    segment.control,
                 )
             else:
                 yield segment
