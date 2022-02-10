@@ -8,6 +8,8 @@ from rich.console import ConsoleOptions, Console, RenderResult
 from rich.segment import Segment
 from rich.style import Style
 
+from textual.renderables._blend_colors import blend_colors
+
 T = TypeVar("T", int, float)
 
 
@@ -62,10 +64,10 @@ class Sparkline:
         width = self.width or options.max_width
         len_data = len(self.data)
         if len_data == 0:
-            yield Segment("▁" * width, style=self.min_color)
+            yield Segment("▁" * width, self.min_color)
             return
         if len_data == 1:
-            yield Segment("█" * width, style=self.max_color)
+            yield Segment("█" * width, self.max_color)
             return
 
         minimum, maximum = min(self.data), max(self.data)
@@ -83,32 +85,10 @@ class Sparkline:
             partition_summary = summary_function(partition)
             height_ratio = (partition_summary - minimum) / extent
             bar_index = int(height_ratio * (len(self.BARS) - 1))
-            bar_color = _blend_colors(min_color, max_color, height_ratio)
+            bar_color = blend_colors(min_color, max_color, height_ratio)
             bars_rendered += 1
             bucket_index += step
-            yield Segment(text=self.BARS[bar_index], style=Style.from_color(bar_color))
-
-
-def _blend_colors(color1: Color, color2: Color, ratio: float) -> Color:
-    """Given two RGB colors, return a color that sits some distance between
-    them in RGB color space.
-
-    Args:
-        color1 (Color): The first color.
-        color2 (Color): The second color.
-        ratio (float): The ratio of color1 to color2.
-
-    Returns:
-        Color: A Color representing the blending of the two supplied colors.
-    """
-    r1, g1, b1 = color1.triplet
-    r2, g2, b2 = color2.triplet
-    dr = r2 - r1
-    dg = g2 - g1
-    db = b2 - b1
-    return Color.from_rgb(
-        red=r1 + dr * ratio, green=g1 + dg * ratio, blue=b1 + db * ratio
-    )
+            yield Segment(self.BARS[bar_index], Style.from_color(bar_color))
 
 
 if __name__ == "__main__":
