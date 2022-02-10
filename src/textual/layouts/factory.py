@@ -12,7 +12,6 @@ else:
     from typing_extensions import Literal
 
 
-LayoutName = Literal["dock", "grid", "vertical", "horizontal"]
 LAYOUT_MAP = {
     "dock": DockLayout,
     "grid": GridLayout,

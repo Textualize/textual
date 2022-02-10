@@ -151,15 +151,30 @@ class StylesBase(ABC):
 
     @abstractmethod
     def has_rule(self, rule: str) -> bool:
-        ...
+        """Check if a rule is set on this Styles object.
+
+        Args:
+            rule (str): Rule name.
+
+        Returns:
+            bool: ``True`` if the rules is present, otherwise ``False``.
+        """
 
     @abstractmethod
-    def clear_rule(self, rule_name: str) -> None:
-        """Clear a rule."""
+    def clear_rule(self, rule: str) -> None:
+        """Removes the rule from the Styles object, as if it had never been set.
+
+        Args:
+            rule (str): Rule name.
+        """
 
     @abstractmethod
     def get_rules(self) -> RulesMap:
-        """Get rules as a dictionary."""
+        """Get the rules in a mapping.
+
+        Returns:
+            RulesMap: A TypedDict of the rules.
+        """
 
     @abstractmethod
     def set_rule(self, rule: str, value: object | None) -> None:
@@ -184,7 +199,11 @@ class StylesBase(ABC):
 
     @abstractmethod
     def refresh(self, layout: bool = False) -> None:
-        """Mark the styles are requiring a refresh"""
+        """Mark the styles are requiring a refresh.
+
+        Args:
+            layout (bool, optional): Also require a layout. Defaults to False.
+        """
 
     @abstractmethod
     def check_refresh(self) -> tuple[bool, bool]:
