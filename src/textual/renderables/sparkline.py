@@ -54,7 +54,7 @@ class Sparkline:
             end = (i + 1) * num_steps + min(i + 1, remainder)
             partition = data[start:end]
             if partition:
-                yield data[start:end]
+                yield partition
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
