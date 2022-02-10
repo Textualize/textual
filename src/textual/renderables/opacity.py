@@ -5,7 +5,7 @@ from rich.console import ConsoleOptions, Console, RenderResult, RenderableType
 from rich.segment import Segment
 from rich.style import Style
 
-from textual.renderables.utilities import blend_colors
+from textual.renderables._blend_colors import blend_colors
 
 
 class Opacity:
@@ -13,24 +13,25 @@ class Opacity:
 
     Args:
         renderable (RenderableType): The RenderableType to manipulate.
-        value (float): The opacity as a float. A value of 1.0 means text is fully visible.
+        opacity (float): The opacity as a float. A value of 1.0 means text is fully visible.
     """
 
-    def __init__(self, renderable: RenderableType, value: float = 1.0) -> None:
+    def __init__(self, renderable: RenderableType, opacity: float = 1.0) -> None:
         self.renderable = renderable
-        self.value = value
+        self.opacity = opacity
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         segments = console.render(self.renderable, options)
-        opacity = self.value
+        opacity = self.opacity
         for segment in segments:
             style = segment.style
             if not style:
                 yield segment
                 continue
-            fg, bg = style.color, style.bgcolor
+            fg = style.color
+            bg = style.bgcolor
             if fg and fg.triplet and bg and bg.triplet:
                 yield Segment(
                     text=segment.text,
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     )
     console.print(panel)
 
-    opacity_panel = Opacity(panel, value=0.5)
+    opacity_panel = Opacity(panel, opacity=0.5)
     console.print(opacity_panel)
 
     def frange(start, end, step):

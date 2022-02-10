@@ -8,7 +8,7 @@ from rich.console import ConsoleOptions, Console, RenderResult
 from rich.segment import Segment
 from rich.style import Style
 
-from textual.renderables.utilities import blend_colors
+from textual.renderables._blend_colors import blend_colors
 
 T = TypeVar("T", int, float)
 
