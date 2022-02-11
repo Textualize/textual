@@ -18,6 +18,7 @@ class BasicApp(App):
         self.bind("tab", "toggle_class('#sidebar', '-active')")
         self.bind("a", "toggle_class('#header', '-visible')")
         self.bind("c", "toggle_class('#content', '-content-visible')")
+        self.bind("d", "toggle_class('#footer', 'dim')")
 
     def on_mount(self):
         """Build layout here."""

@@ -130,7 +130,7 @@ class StylesBuilder:
                     self.error(
                         name,
                         token,
-                        f"invalid value for visibility (received {value!r}, expected {friendly_list(VALID_VISIBILITY)})",
+                        f"property 'visibility' has invalid value {value!r}; expected {friendly_list(VALID_VISIBILITY)}",
                     )
             else:
                 self.error(name, token, f"invalid token {value!r} in this context")
@@ -152,18 +152,12 @@ class StylesBuilder:
                     self.styles.set_rule(name, opacity)
                 except ValueError:
                     error = True
-                    # self.error(
-                    #     name, token, f"unable to process value {value!r} as percentage"
-                    # )
             elif token_name == "number":
                 try:
                     opacity = clamp(float(value), 0, 1)
                     self.styles.set_rule(name, opacity)
                 except ValueError:
                     error = True
-                    # self.error(
-                    #     name, token, f"unable to process value {value!r} as float"
-                    # )
             else:
                 error = True
 
@@ -171,7 +165,9 @@ class StylesBuilder:
             self.error(
                 name,
                 token,
-                f"property 'opacity' has invalid value {_join_tokens(tokens)!r}; expected a scalar percentage or float between 0 and 1; example valid values: '0.4', '40%'",
+                f"property 'opacity' has invalid value {_join_tokens(tokens)!r}; "
+                f"expected a percentage or float between 0 and 1; "
+                f"example valid values: '0.4', '40%'",
             )
 
     def _process_space(self, name: str, tokens: list[Token]) -> None:

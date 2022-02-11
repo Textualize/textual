@@ -32,7 +32,7 @@ from .geometry import Size, Spacing
 from .message import Message
 from .messages import Layout, Update
 from .reactive import watch
-
+from .renderables.opacity import Opacity
 
 if TYPE_CHECKING:
     from .view import View
@@ -173,6 +173,9 @@ class Widget(DOMNode):
                 outline=True,
                 style=renderable_text_style,
             )
+
+        if styles.opacity:
+            renderable = Opacity(renderable, opacity=styles.opacity)
 
         return renderable
 

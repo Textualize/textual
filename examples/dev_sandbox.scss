@@ -34,7 +34,6 @@ Widget:hover {
 
 #header {
   text: $text on $primary;
-  opacity: 0.2;
   height: 3;
   border-bottom: hkey $secondary;
 }
@@ -53,7 +52,12 @@ Widget:hover {
 }
 
 #footer {
+  opacity: 1;
   text: $text on $primary;
   height: 3;
   border-top: hkey $secondary;
+}
+
+#footer.dim {
+  opacity: 0.5;
 }
