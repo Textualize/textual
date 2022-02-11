@@ -775,7 +775,7 @@ class TransitionsProperty:
             obj.set_rule("transitions", transitions.copy())
 
 
-class PercentageProperty:
+class FractionalProperty:
     """Property that can be set either as a float (e.g. 0.1) or a
     string percentage (e.g. '10%'). Values will be clamped to the range (0, 1).
     """

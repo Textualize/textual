@@ -28,7 +28,7 @@ from ._style_properties import (
     StyleFlagsProperty,
     StyleProperty,
     TransitionsProperty,
-    PercentageProperty,
+    FractionalProperty,
 )
 from .constants import VALID_DISPLAY, VALID_VISIBILITY
 from .scalar import Scalar, ScalarOffset, Unit
@@ -124,7 +124,7 @@ class StylesBase(ABC):
     text_background = ColorProperty()
     text_style = StyleFlagsProperty()
 
-    opacity = PercentageProperty()
+    opacity = FractionalProperty()
 
     padding = SpacingProperty()
     margin = SpacingProperty()
