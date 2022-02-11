@@ -20,6 +20,18 @@ from .._easing import EASING
 from ..geometry import Spacing, SpacingDimensions, clamp
 
 
+def _join_tokens(tokens: Iterable[Token], joiner: str = "") -> str:
+    """Convert tokens into a string
+
+    Args:
+        tokens (Iterable[Token]): Tokens to join
+
+    Returns:
+        str: The tokens, joined together to form a string.
+    """
+    return joiner.join(token.value for token in tokens)
+
+
 class StylesBuilder:
     """
     The StylesBuilder object takes tokens parsed from the CSS and converts
@@ -127,8 +139,9 @@ class StylesBuilder:
         if not tokens:
             return
         token = tokens[0]
+        error = False
         if len(tokens) != 1:
-            self.error(name, token, "expected a single number")
+            error = True
         else:
             token_name = token.name
             value = token.value
@@ -138,23 +151,28 @@ class StylesBuilder:
                     opacity = clamp(float(percentage) / 100, 0, 1)
                     self.styles.set_rule(name, opacity)
                 except ValueError:
-                    self.error(
-                        name, token, f"unable to process value {value!r} as percentage"
-                    )
+                    error = True
+                    # self.error(
+                    #     name, token, f"unable to process value {value!r} as percentage"
+                    # )
             elif token_name == "number":
                 try:
                     opacity = clamp(float(value), 0, 1)
                     self.styles.set_rule(name, opacity)
                 except ValueError:
-                    self.error(
-                        name, token, f"unable to process value {value!r} as float"
-                    )
+                    error = True
+                    # self.error(
+                    #     name, token, f"unable to process value {value!r} as float"
+                    # )
             else:
-                self.error(
-                    name,
-                    token,
-                    f"expected a scalar percentage or float between 0 and 1; found {token.value!r}; example valid values: '0.4', '40%'",
-                )
+                error = True
+
+        if error:
+            self.error(
+                name,
+                token,
+                f"property 'opacity' has invalid value {_join_tokens(tokens)!r}; expected a scalar percentage or float between 0 and 1; example valid values: '0.4', '40%'",
+            )
 
     def _process_space(self, name: str, tokens: list[Token]) -> None:
         space: list[int] = []
@@ -327,7 +345,7 @@ class StylesBuilder:
                     )
 
     def process_text(self, name: str, tokens: list[Token], important: bool) -> None:
-        style_definition = " ".join(token.value for token in tokens)
+        style_definition = _join_tokens(tokens, joiner=" ")
 
         # If every token in the value is a referenced by the same variable,
         # we can display the variable name before the style definition.
