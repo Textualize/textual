@@ -814,7 +814,7 @@ class FractionalProperty:
 
         if isinstance(value, float):
             float_value = value
-        elif isinstance(value, str):
+        elif isinstance(value, str) and value.endswith("%"):
             float_value = float(Scalar.parse(value).value) / 100
         else:
             raise StyleTypeError(

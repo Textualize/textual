@@ -2,6 +2,7 @@ import pytest
 from rich.color import Color
 from rich.style import Style
 
+from textual.css.errors import StyleTypeError
 from textual.css.styles import Styles, RenderStyles
 from textual.dom import DOMNode
 
@@ -147,3 +148,9 @@ def test_opacity_set_then_get(set_value, expected):
     styles = RenderStyles(DOMNode(), Styles(), Styles())
     styles.opacity = set_value
     assert styles.opacity == expected
+
+
+def test_opacity_set_invalid_type_error():
+    styles = RenderStyles(DOMNode(), Styles(), Styles())
+    with pytest.raises(StyleTypeError):
+        styles.opacity = "invalid value"
