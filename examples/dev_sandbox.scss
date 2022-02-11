@@ -34,6 +34,7 @@ Widget:hover {
 
 #header {
   text: $text on $primary;
+  opacity: 0.2;
   height: 3;
   border-bottom: hkey $secondary;
 }

@@ -9,8 +9,7 @@ when setting and getting.
 
 from __future__ import annotations
 
-
-from typing import Iterable, NamedTuple, TYPE_CHECKING
+from typing import Iterable, NamedTuple, TYPE_CHECKING, cast
 
 import rich.repr
 from rich.color import Color
@@ -28,7 +27,7 @@ from .scalar import (
     ScalarParseError,
 )
 from .transition import Transition
-from ..geometry import Spacing, SpacingDimensions
+from ..geometry import Spacing, SpacingDimensions, clamp
 
 if TYPE_CHECKING:
     from ..layout import Layout
@@ -756,7 +755,7 @@ class TransitionsProperty:
     def __get__(
         self, obj: Styles, objtype: type[Styles] | None = None
     ) -> dict[str, Transition]:
-        """Get a mapping of properties to the the transitions applied to them.
+        """Get a mapping of properties to the transitions applied to them.
 
         Args:
             obj (Styles): The ``Styles`` object.
@@ -774,3 +773,51 @@ class TransitionsProperty:
             obj.clear_rule("transitions")
         else:
             obj.set_rule("transitions", transitions.copy())
+
+
+class PercentageProperty:
+    """Property that can be set either as a float (e.g. 0.1) or a
+    string percentage (e.g. '10%'). Values will be clamped to the range (0, 1).
+    """
+
+    def __init__(self, default: float = 1.0):
+        self.default = default
+
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self.name = name
+
+    def __get__(self, obj: Styles, type: type[Styles]) -> float:
+        """Get the property value as a float between 0 and 1
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            float: The value of the property (in the range (0, 1))
+        """
+        return cast(float, obj.get_rule(self.name, self.default))
+
+    def __set__(self, obj: Styles, value: float | str | None) -> None:
+        """Set the property value, clamping it between 0 and 1.
+
+        Args:
+            obj (Styles): The Styles object.
+            value (float|str|None): The value to set as a float between 0 and 1, or
+                as a percentage string such as '10%'.
+        """
+        obj.refresh()
+        name = self.name
+        if value is None:
+            obj.clear_rule(name)
+            return
+
+        if isinstance(value, float):
+            float_value = value
+        elif isinstance(value, str):
+            float_value = float(Scalar.parse(value).value) / 100
+        else:
+            raise StyleTypeError(
+                f"{self.name} must be a str (e.g. '10%') or a float (e.g. 0.1)"
+            )
+        obj.set_rule(name, clamp(float_value, 0, 1))

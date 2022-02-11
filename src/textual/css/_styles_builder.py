@@ -17,8 +17,7 @@ from .transition import Transition
 from .types import Edge, Display, Visibility
 from .._duration import _duration_as_seconds
 from .._easing import EASING
-from .._loop import loop_last
-from ..geometry import Spacing, SpacingDimensions
+from ..geometry import Spacing, SpacingDimensions, clamp
 
 
 class StylesBuilder:
@@ -123,6 +122,39 @@ class StylesBuilder:
                     )
             else:
                 self.error(name, token, f"invalid token {value!r} in this context")
+
+    def process_opacity(self, name: str, tokens: list[Token], important: bool) -> None:
+        if not tokens:
+            return
+        token = tokens[0]
+        if len(tokens) != 1:
+            self.error(name, token, "expected a single number")
+        else:
+            token_name = token.name
+            value = token.value
+            if token_name == "scalar" and value.endswith("%"):
+                percentage = value[:-1]
+                try:
+                    opacity = clamp(float(percentage) / 100, 0, 1)
+                    self.styles.set_rule(name, opacity)
+                except ValueError:
+                    self.error(
+                        name, token, f"unable to process value {value!r} as percentage"
+                    )
+            elif token_name == "number":
+                try:
+                    opacity = clamp(float(value), 0, 1)
+                    self.styles.set_rule(name, opacity)
+                except ValueError:
+                    self.error(
+                        name, token, f"unable to process value {value!r} as float"
+                    )
+            else:
+                self.error(
+                    name,
+                    token,
+                    f"expected a scalar percentage or float between 0 and 1; found {token.value!r}; example valid values: '0.4', '40%'",
+                )
 
     def _process_space(self, name: str, tokens: list[Token]) -> None:
         space: list[int] = []

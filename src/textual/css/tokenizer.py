@@ -4,7 +4,6 @@ import re
 from typing import NamedTuple
 
 import rich.repr
-from rich.cells import cell_len
 
 
 class EOFError(Exception):
