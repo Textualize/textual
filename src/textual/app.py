@@ -3,7 +3,7 @@ import os
 
 import asyncio
 import platform
-from typing import Any, Callable, ClassVar, Type, TypeVar
+from typing import Any, Callable, ClassVar, Type, TypeVar, Optional
 import warnings
 
 from rich.control import Control
@@ -66,6 +66,7 @@ class App(MessagePump):
         log: str = "",
         log_verbosity: int = 1,
         title: str = "Textual Application",
+        console: Optional[Console] = None
     ):
         """The Textual Application base class
 
@@ -75,7 +76,7 @@ class App(MessagePump):
             driver_class (Type[Driver], optional): Driver class, or None to use default. Defaults to None.
             title (str, optional): Title of the application. Defaults to "Textual Application".
         """
-        self.console = Console()
+        self.console = console or Console()
         self.error_console = Console(stderr=True)
         self._screen = screen
         self.driver_class = driver_class or self.get_driver_class()
@@ -186,7 +187,7 @@ class App(MessagePump):
     @classmethod
     def run(
         cls,
-        console: Console = None,
+        console: Optional[Console] = None,
         screen: bool = True,
         driver: Type[Driver] = None,
         **kwargs,
@@ -200,7 +201,7 @@ class App(MessagePump):
         """
 
         async def run_app() -> None:
-            app = cls(screen=screen, driver_class=driver, **kwargs)
+            app = cls(screen=screen, driver_class=driver, console=console, **kwargs)
             await app.process_messages()
 
         asyncio.run(run_app())
