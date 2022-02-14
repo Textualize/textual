@@ -21,10 +21,11 @@ from ..geometry import Spacing, SpacingDimensions, clamp
 
 
 def _join_tokens(tokens: Iterable[Token], joiner: str = "") -> str:
-    """Convert tokens into a string
+    """Convert tokens into a string by joining their values
 
     Args:
         tokens (Iterable[Token]): Tokens to join
+        joiner (str): String to join on, defaults to ""
 
     Returns:
         str: The tokens, joined together to form a string.

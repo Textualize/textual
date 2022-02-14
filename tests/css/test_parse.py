@@ -314,3 +314,29 @@ class TestParseTransition:
         assert len(stylesheet_errors) == 1
         assert stylesheet_errors[0][0].value == invalid_func_name
         assert ex.value.errors is not None
+
+
+class TestParseOpacity:
+    @pytest.mark.parametrize("css_value, styles_value", [
+        ["-0.2", 0.0],
+        ["0.4", 0.4],
+        ["1.3", 1.0],
+        ["-20%", 0.0],
+        ["25%", 0.25],
+        ["128%", 1.0],
+    ])
+    def test_opacity_to_styles(self, css_value, styles_value):
+        css = f"#some-widget {{ opacity: {css_value} }}"
+        stylesheet = Stylesheet()
+        stylesheet.parse(css)
+
+        assert stylesheet.rules[0].styles.opacity == styles_value
+        assert not stylesheet.rules[0].errors
+
+    def test_opacity_invalid_value(self):
+        css = "#some-widget { opacity: 123x }"
+        stylesheet = Stylesheet()
+
+        with pytest.raises(StylesheetParseError):
+            stylesheet.parse(css)
+        assert stylesheet.rules[0].errors
