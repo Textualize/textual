@@ -5,3 +5,7 @@ App > View {
 Widget {
   text: on blue;
 }
+
+Widget.-highlight {
+  outline: heavy red;
+}

@@ -25,5 +25,9 @@ class BasicApp(App):
     def key_b(self) -> None:
         self["#footer"].set_styles("text: on green")
 
+    def key_c(self) -> None:
+        self["#header"].toggle_class("-highlight")
+        self.log(self["#header"].styles)
+
 
 BasicApp.run(css_file="local_styles.css", log="textual.log")

@@ -4,6 +4,7 @@ import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import lru_cache
+from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 
 import rich.repr
@@ -94,6 +95,7 @@ class RulesMap(TypedDict, total=False):
 
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
+_rule_getter = attrgetter(*RULE_NAMES)
 
 
 class DockGroup(NamedTuple):
@@ -238,6 +240,11 @@ class StylesBase(ABC):
             rules (RulesMap): A mapping of rules.
         """
 
+    def get_render_rules(self) -> RulesMap:
+        """Get rules map with defaults."""
+        rules = dict(zip(RULE_NAMES, _rule_getter(self)))
+        return cast(RulesMap, rules)
+
     @classmethod
     def is_animatable(cls, rule: str) -> bool:
         """Check if a given rule may be animated.
@@ -289,6 +296,10 @@ class Styles(StylesBase):
 
     important: set[str] = field(default_factory=set)
 
+    def copy(self) -> Styles:
+        """Get a copy of this Styles object."""
+        return Styles(node=self.node, _rules=self.get_rules(), important=self.important)
+
     def has_rule(self, rule: str) -> bool:
         return rule in self._rules
 
@@ -307,7 +318,7 @@ class Styles(StylesBase):
     def get_rule(self, rule: str, default: object = None) -> object:
         return self._rules.get(rule, default)
 
-    def refresh(self, layout: bool = False) -> None:
+    def refresh(self, *, layout: bool = False) -> None:
         self._repaint_required = True
         self._layout_required = layout
 
@@ -561,10 +572,6 @@ class RenderStyles(StylesBase):
             if self.has_rule(rule_name):
                 yield rule_name, getattr(self, rule_name)
 
-    def reset(self) -> None:
-        """Reset the inline styles."""
-        self._inline_styles.reset()
-
     def refresh(self, layout: bool = False) -> None:
         self._inline_styles.refresh(layout=layout)
 
@@ -589,6 +596,12 @@ class RenderStyles(StylesBase):
         inline_repaint, inline_layout = self._inline_styles.check_refresh()
         result = (base_repaint or inline_repaint, base_layout or inline_layout)
         return result
+
+    def reset(self) -> None:
+        """
+        Reset internal style rules to ``None``, reverting to default styles.
+        """
+        self._inline_styles.reset()
 
     def has_rule(self, rule: str) -> bool:
         """Check if a rule has been set."""

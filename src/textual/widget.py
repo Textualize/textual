@@ -217,6 +217,7 @@ class Widget(DOMNode):
 
     def on_style_change(self) -> None:
         self.clear_render_cache()
+        self.refresh()
 
     def _update_size(self, size: Size) -> None:
         self._size = size

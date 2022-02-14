@@ -16,11 +16,12 @@ from rich.syntax import Syntax
 from rich.text import Text
 
 from textual._loop import loop_last
+from .._context import active_app
 from .errors import StylesheetError
 from .match import _check_selectors
 from .model import RuleSet
 from .parse import parse
-from .styles import RulesMap
+from .styles import RULE_NAMES, Styles, RulesMap
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
 from .. import log
@@ -190,12 +191,39 @@ class Stylesheet:
             rules (RulesMap): Mapping of rules.
             animate (bool, optional): Enable animation. Defaults to False.
         """
+
+        new_styles = node._default_styles.copy()
+        new_styles.merge_rules(rules)
+        node.styles.base.reset()
+        node.styles.base.merge(new_styles)
+        return
+
+        styles = node.styles.base
+        styles = Styles()
+        current_styles = styles.get_render_rules()
+        styles.reset()
+        styles.merge_rules(rules)
+        new_styles = styles.get_render_rules()
+
+        for (key, value1), (_, value2) in zip(
+            current_styles.items(), new_styles.items()
+        ):
+            if value1 != value2:
+                setattr(styles, key, value1)
+
+        return
+
+        current_styles = styles.get_render_rules()
+
+        styles = node._default_styles.copy()
+
         styles = node.styles
+        set_rule = styles.base.set_rule
+        current_rules = styles.get_rules()
+        styles.reset()
         if animate:
 
             is_animatable = styles.is_animatable
-            current_rules = styles.get_rules()
-            set_rule = styles.base.set_rule
 
             for key, value in rules.items():
                 current = current_rules.get(key)
@@ -204,7 +232,7 @@ class Stylesheet:
                 if is_animatable(key):
                     transition = styles.get_transition(key)
                     if transition is None:
-                        styles.base.set_rule(key, value)
+                        set_rule(key, value)
                     else:
                         duration, easing, delay = transition
                         node.app.animator.animate(
@@ -217,7 +245,13 @@ class Stylesheet:
                 else:
                     set_rule(key, value)
         else:
-            styles.base.merge_rules(rules)
+            for key, value in rules.items():
+                current = current_rules.get(key)
+                if current == value:
+                    continue
+                set_rule(key, value)
+            # styles.base.merge_rules(rules)
+            # styles.refresh()
 
         node.on_style_change()
 
@@ -226,6 +260,9 @@ class Stylesheet:
         apply = self.apply
         for node in root.walk_children():
             apply(node, animate=animate)
+            if hasattr(node, "clear_render_cache"):
+                # TODO: Not ideal
+                node.clear_render_cache()
 
 
 if __name__ == "__main__":
