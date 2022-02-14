@@ -28,6 +28,7 @@ from ._style_properties import (
     StyleFlagsProperty,
     StyleProperty,
     TransitionsProperty,
+    FractionalProperty,
 )
 from .constants import VALID_DISPLAY, VALID_VISIBILITY
 from .scalar import Scalar, ScalarOffset, Unit
@@ -61,6 +62,8 @@ class RulesMap(TypedDict, total=False):
     text_color: Color
     text_background: Color
     text_style: Style
+
+    opacity: float
 
     padding: Spacing
     margin: Spacing
@@ -120,6 +123,8 @@ class StylesBase(ABC):
     text_color = ColorProperty()
     text_background = ColorProperty()
     text_style = StyleFlagsProperty()
+
+    opacity = FractionalProperty()
 
     padding = SpacingProperty()
     margin = SpacingProperty()

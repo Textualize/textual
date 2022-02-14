@@ -52,7 +52,12 @@ Widget:hover {
 }
 
 #footer {
+  opacity: 1;
   text: $text on $primary;
   height: 3;
   border-top: hkey $secondary;
+}
+
+#footer.dim {
+  opacity: 0.5;
 }

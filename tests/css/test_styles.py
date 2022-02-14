@@ -1,7 +1,10 @@
+import pytest
 from rich.color import Color
 from rich.style import Style
 
+from textual.css.errors import StyleTypeError
 from textual.css.styles import Styles, RenderStyles
+from textual.dom import DOMNode
 
 
 def test_styles_reset():
@@ -126,3 +129,28 @@ def test_render_styles_border():
         ("", Color.default()),
         ("rounded", Color.parse("green")),
     )
+
+
+def test_get_opacity_default():
+    styles = RenderStyles(DOMNode(), Styles(), Styles())
+    assert styles.opacity == 1.
+
+
+@pytest.mark.parametrize("set_value, expected", [
+    [0.2, 0.2],
+    [-0.4, 0.0],
+    [5.8, 1.0],
+    ["25%", 0.25],
+    ["-10%", 0.0],
+    ["120%", 1.0],
+])
+def test_opacity_set_then_get(set_value, expected):
+    styles = RenderStyles(DOMNode(), Styles(), Styles())
+    styles.opacity = set_value
+    assert styles.opacity == expected
+
+
+def test_opacity_set_invalid_type_error():
+    styles = RenderStyles(DOMNode(), Styles(), Styles())
+    with pytest.raises(StyleTypeError):
+        styles.opacity = "invalid value"

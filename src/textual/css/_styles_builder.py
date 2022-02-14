@@ -17,8 +17,20 @@ from .transition import Transition
 from .types import Edge, Display, Visibility
 from .._duration import _duration_as_seconds
 from .._easing import EASING
-from .._loop import loop_last
-from ..geometry import Spacing, SpacingDimensions
+from ..geometry import Spacing, SpacingDimensions, clamp
+
+
+def _join_tokens(tokens: Iterable[Token], joiner: str = "") -> str:
+    """Convert tokens into a string by joining their values
+
+    Args:
+        tokens (Iterable[Token]): Tokens to join
+        joiner (str): String to join on, defaults to ""
+
+    Returns:
+        str: The tokens, joined together to form a string.
+    """
+    return joiner.join(token.value for token in tokens)
 
 
 class StylesBuilder:
@@ -119,10 +131,45 @@ class StylesBuilder:
                     self.error(
                         name,
                         token,
-                        f"invalid value for visibility (received {value!r}, expected {friendly_list(VALID_VISIBILITY)})",
+                        f"property 'visibility' has invalid value {value!r}; expected {friendly_list(VALID_VISIBILITY)}",
                     )
             else:
                 self.error(name, token, f"invalid token {value!r} in this context")
+
+    def process_opacity(self, name: str, tokens: list[Token], important: bool) -> None:
+        if not tokens:
+            return
+        token = tokens[0]
+        error = False
+        if len(tokens) != 1:
+            error = True
+        else:
+            token_name = token.name
+            value = token.value
+            if token_name == "scalar" and value.endswith("%"):
+                percentage = value[:-1]
+                try:
+                    opacity = clamp(float(percentage) / 100, 0, 1)
+                    self.styles.set_rule(name, opacity)
+                except ValueError:
+                    error = True
+            elif token_name == "number":
+                try:
+                    opacity = clamp(float(value), 0, 1)
+                    self.styles.set_rule(name, opacity)
+                except ValueError:
+                    error = True
+            else:
+                error = True
+
+        if error:
+            self.error(
+                name,
+                token,
+                f"property 'opacity' has invalid value {_join_tokens(tokens)!r}; "
+                f"expected a percentage or float between 0 and 1; "
+                f"example valid values: '0.4', '40%'",
+            )
 
     def _process_space(self, name: str, tokens: list[Token]) -> None:
         space: list[int] = []
@@ -295,7 +342,7 @@ class StylesBuilder:
                     )
 
     def process_text(self, name: str, tokens: list[Token], important: bool) -> None:
-        style_definition = " ".join(token.value for token in tokens)
+        style_definition = _join_tokens(tokens, joiner=" ")
 
         # If every token in the value is a referenced by the same variable,
         # we can display the variable name before the style definition.
