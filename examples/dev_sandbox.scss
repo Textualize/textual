@@ -22,7 +22,7 @@ Widget:hover {
 #sidebar {
   text: $primary-style;
   dock: side;
-  width: 30;
+  width: 24;
   offset-x: -100%;
   transition: $animation;
   border-right: outer $secondary;
@@ -34,8 +34,7 @@ Widget:hover {
 
 #header {
   text: $text on $primary;
-  height: 3;
-  border-bottom: hkey $secondary;
+  height: 2;
 }
 
 #header.-visible {
@@ -44,7 +43,6 @@ Widget:hover {
 
 #content {
   text: $text on $background;
-  offset-y: -3;
 }
 
 #content.-content-visible {
@@ -54,7 +52,6 @@ Widget:hover {
 #footer {
   opacity: 1;
   text: $text on $primary;
-  height: 3;
   border-top: hkey $secondary;
 }
 

@@ -2,7 +2,9 @@ from rich.console import RenderableType
 from rich.panel import Panel
 
 from textual.app import App
+from textual.renderables._tab_headers import Tab
 from textual.widget import Widget
+from textual.widgets.tabs import Tabs
 
 
 class PanelWidget(Widget):
@@ -23,7 +25,16 @@ class BasicApp(App):
     def on_mount(self):
         """Build layout here."""
         self.mount(
-            header=Widget(),
+            header=Tabs(
+                [
+                    Tab("One", active=True),
+                    Tab("Two"),
+                    Tab("Three"),
+                    Tab("Four"),
+                    Tab("Five"),
+                    Tab("Six"),
+                ]
+            ),
             content=PanelWidget(),
             footer=Widget(),
             sidebar=Widget(),
