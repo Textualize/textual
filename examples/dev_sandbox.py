@@ -1,6 +1,7 @@
 from rich.console import RenderableType
 from rich.panel import Panel
 
+from textual import events
 from textual.app import App
 from textual.renderables._tab_headers import Tab
 from textual.widget import Widget
@@ -22,19 +23,36 @@ class BasicApp(App):
         self.bind("c", "toggle_class('#content', '-content-visible')")
         self.bind("d", "toggle_class('#footer', 'dim')")
 
+    def on_key(self, event: events.Key) -> None:
+        tab_keys = {
+            "1": "one",
+            "2": "two",
+            "3": "three",
+            "4": "four",
+            "5": "five",
+            "6": "six",
+            "7": "seven",
+            "8": "eight",
+        }
+        self.tabs.active_tab_name = tab_keys.get(event.key, "one")
+
     def on_mount(self):
+        self.tabs = Tabs(
+            [
+                Tab("One", name="one"),
+                Tab("Two", name="two"),
+                Tab("Three", name="three"),
+                Tab("Four", name="four"),
+                Tab("Five", name="five"),
+                Tab("Six", name="six"),
+                Tab("Seven", name="seven"),
+                Tab("Eight", name="eight"),
+            ],
+        )
+        self.tabs.active_tab_name = "one"
         """Build layout here."""
         self.mount(
-            header=Tabs(
-                [
-                    Tab("One", active=True),
-                    Tab("Two"),
-                    Tab("Three"),
-                    Tab("Four"),
-                    Tab("Five"),
-                    Tab("Six"),
-                ]
-            ),
+            header=self.tabs,
             content=PanelWidget(),
             footer=Widget(),
             sidebar=Widget(),
