@@ -9,7 +9,7 @@ from rich.style import Style
 from rich.text import Text
 
 from textual import log
-from textual._loop import loop_first
+from textual.renderables.opacity import Opacity
 
 
 @dataclass
@@ -32,7 +32,7 @@ class TabHeadersRenderable:
         *,
         active_tab_name: str | None = None,
         width: int | None = None,
-        tab_padding: int = 1,
+        tab_padding: int | None = None,
     ):
         self.tabs = {tab.name: tab for tab in tabs}
         self.active_tab_name = active_tab_name or next(iter(self.tabs))
@@ -51,27 +51,33 @@ class TabHeadersRenderable:
         tabs = self.tabs
         tab_values = self.tabs.values()
 
-        # There's padding at each side of a label
-        padding_len = 2 * self.tab_padding * len(tabs)
+        if self.tab_padding is None:
+            total_len = sum(cell_len(header.label) for header in tab_values)
+            free_space = width - total_len
+            label_pad = (free_space // len(tabs) + 1) // 2
+        else:
+            label_pad = self.tab_padding
 
-        # The total length of the labels, including their padding
-        total_len = sum(cell_len(header.label) for header in tab_values) + padding_len
+        pad = Text(" " * label_pad, end="")
 
-        # The amount of space left to distribute around tabs
-        free_space = width - total_len
+        # # There's padding at each side of a label
+        # padding_len = 2 * self.tab_padding * len(tabs)
+        #
+        # # The total length of the labels, including their padding
+        # total_len = sum(cell_len(header.label) for header in tab_values) + padding_len
+        #
+        # # The amount of space left to distribute around tabs
+        # free_space = width - total_len
+        #
+        # # The gap between each tab (not including padding)
+        # space_per_gap = free_space // (len(tabs) + 1)
 
-        # The gap between each tab (not including padding)
-        space_per_gap = free_space // (len(tabs) + 1)
+        # gap = Text(" " * space_per_gap, end="")
+        # lpad = rpad = Text(" " * self.tab_padding, end="")
 
-        gap = Text(" " * space_per_gap, end="")
-        lpad = rpad = Text(" " * self.tab_padding, end="")
-
-        char_index = space_per_gap + self.tab_padding
-        for tab_index, (is_first, tab) in enumerate(loop_first(tab_values)):
-            if is_first:
-                yield gap
-            yield lpad
-
+        char_index = label_pad
+        for tab_index, tab in enumerate(tab_values):
+            yield pad
             tab_content = Text(
                 tab.label,
                 end="",
@@ -83,18 +89,17 @@ class TabHeadersRenderable:
             # Cache and move to next label
             len_label = len(tab.label)
             self._range_cache[tab.name] = (char_index, char_index + len_label)
-            char_index += len_label + space_per_gap + self.tab_padding * 2
+            char_index += len_label + label_pad * 2
 
             if tab.name == self.active_tab_name:
                 yield tab_content
             else:
-                dimmed_tab_content = tab_content
+                dimmed_tab_content = Opacity(tab_content, opacity=0.5)
                 segments = list(console.render(dimmed_tab_content))
                 log(segments)
                 yield from segments
 
-            yield rpad
-            yield gap
+            yield pad
 
 
 if __name__ == "__main__":

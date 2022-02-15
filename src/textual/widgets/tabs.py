@@ -18,7 +18,9 @@ class TabsRenderable:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        headers = TabHeadersRenderable(self.tabs, active_tab_name=self.active_tab_name)
+        headers = TabHeadersRenderable(
+            self.tabs, active_tab_name=self.active_tab_name, tab_padding=1
+        )
         yield from console.render(headers)
         yield Segment.line()
         # TODO: How do we choose highlight_style?
