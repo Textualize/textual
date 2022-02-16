@@ -75,8 +75,10 @@ class Tabs(Widget):
         active_tab: str | None = None,
         active_bar_style: StyleType = "#1BB152",
         inactive_bar_style: StyleType = "#455058",
-        tab_padding: int | None = None,
         inactive_text_opacity: float = 0.5,
+        animation_duration: float = 0.3,
+        animation_function: str = "out_cubic",
+        tab_padding: int | None = None,
     ) -> None:
         super().__init__()
         self.tabs = tabs
@@ -85,8 +87,12 @@ class Tabs(Widget):
         self.active_tab_name = active_tab or tabs[0]
         self.active_bar_style = active_bar_style
         self.inactive_bar_style = inactive_bar_style
-        self.bar_offset = float(self.get_tab_index(active_tab) or 0)
         self.inactive_text_opacity = inactive_text_opacity
+
+        self.bar_offset = float(self.get_tab_index(active_tab) or 0)
+
+        self.animation_function = animation_function
+        self.animation_duration = animation_duration
 
         self._used = False
         self.tab_padding = tab_padding
@@ -97,7 +103,10 @@ class Tabs(Widget):
     def watch_active_tab_name(self, tab_name: str) -> None:
         target_tab_index = self.get_tab_index(tab_name)
         self.animate(
-            "bar_offset", float(target_tab_index), easing="out_cubic", duration=0.3
+            "bar_offset",
+            float(target_tab_index),
+            easing=self.animation_function,
+            duration=self.animation_duration,
         )
         self._used = True
 

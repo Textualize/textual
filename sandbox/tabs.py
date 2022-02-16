@@ -18,7 +18,7 @@ class Info(Widget):
 
     def render(self) -> RenderableType:
         prefix = "ℹ️  " if self.emoji else ""
-        return Padding(f"{prefix}{self.text}", pad=1)
+        return Padding(f"{prefix}{self.text}", pad=0)
 
 
 @dataclass
@@ -97,6 +97,17 @@ class BasicApp(App):
                     inactive_text_opacity=1,
                 ),
             ),
+            WidgetDescription(
+                "Change the animation duration and function (animation_duration=1, animation_function='out_quad')",
+                Tabs(
+                    tabs,
+                    active_tab="one",
+                    active_bar_style="#695CC8",
+                    inactive_text_opacity=0.2,
+                    animation_duration=1,
+                    animation_function="out_quad",
+                ),
+            ),
         ]
 
     def on_load(self):
@@ -114,6 +125,7 @@ class BasicApp(App):
         """Build layout here."""
         self.mount(
             info=Info(
+                "\n"
                 "• The examples below show customisation options for the [#1493FF]Tabs[/] widget.\n"
                 "• Press keys 1-6 on your keyboard to switch tabs, or click on a tab.",
                 emoji=False,
