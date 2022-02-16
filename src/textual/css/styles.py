@@ -168,11 +168,14 @@ class StylesBase(ABC):
         """
 
     @abstractmethod
-    def clear_rule(self, rule: str) -> None:
+    def clear_rule(self, rule: str) -> bool:
         """Removes the rule from the Styles object, as if it had never been set.
 
         Args:
             rule (str): Rule name.
+
+        Returns:
+            bool: ``True`` if a rules was clearled, or ``False`` if it was previously cleared.
         """
 
     @abstractmethod
@@ -184,12 +187,15 @@ class StylesBase(ABC):
         """
 
     @abstractmethod
-    def set_rule(self, rule: str, value: object | None) -> None:
-        """Set an individual rule.
+    def set_rule(self, rule: str, value: object | None) -> bool:
+        """Set a rule.
 
         Args:
-            rule (str): Name of rule.
-            value (object): Value of rule.
+            rule (str): Rule name.
+            value (object | None): New rule value.
+
+        Returns:
+            bool: ``True`` of the rule changed, otherwise false.
         """
 
     @abstractmethod
@@ -242,6 +248,7 @@ class StylesBase(ABC):
 
     def get_render_rules(self) -> RulesMap:
         """Get rules map with defaults."""
+        # Get a dictionary of rules, going through the properties
         rules = dict(zip(RULE_NAMES, _rule_getter(self)))
         return cast(RulesMap, rules)
 
@@ -303,24 +310,35 @@ class Styles(StylesBase):
     def has_rule(self, rule: str) -> bool:
         return rule in self._rules
 
-    def clear_rule(self, rule: str) -> None:
-        self._rules.pop(rule, None)
+    def clear_rule(self, rule: str) -> bool:
+        return self._rules.pop(rule, None) is not None
 
     def get_rules(self) -> RulesMap:
         return self._rules.copy()
 
-    def set_rule(self, rule: str, value: object | None) -> None:
+    def set_rule(self, rule: str, value: object | None) -> bool:
+        """Set a rule.
+
+        Args:
+            rule (str): Rule name.
+            value (object | None): New rule value.
+
+        Returns:
+            bool: ``True`` of the rule changed, otherwise false.
+        """
         if value is None:
-            self._rules.pop(rule, None)
+            return self._rules.pop(rule, None) is not None
         else:
+            current = self._rules.get(rule)
             self._rules[rule] = value
+            return current != value
 
     def get_rule(self, rule: str, default: object = None) -> object:
         return self._rules.get(rule, default)
 
     def refresh(self, *, layout: bool = False) -> None:
         self._repaint_required = True
-        self._layout_required = layout
+        self._layout_required = self._layout_required or layout
 
     def check_refresh(self) -> tuple[bool, bool]:
         """Check if the Styles must be refreshed.
@@ -615,9 +633,9 @@ class RenderStyles(StylesBase):
             return self._inline_styles.get_rule(rule, default)
         return self._base_styles.get_rule(rule, default)
 
-    def clear_rule(self, rule_name: str) -> None:
+    def clear_rule(self, rule_name: str) -> bool:
         """Clear a rule (from inline)."""
-        self._inline_styles.clear_rule(rule_name)
+        return self._inline_styles.clear_rule(rule_name)
 
     def get_rules(self) -> RulesMap:
         """Get rules as a dictionary"""

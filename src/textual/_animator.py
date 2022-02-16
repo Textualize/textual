@@ -45,6 +45,7 @@ class SimpleAnimation(Animation):
     duration: float
     start_value: float | Animatable
     end_value: float | Animatable
+    final_value: float | Animatable
     easing: EasingFunction
 
     def __call__(self, time: float) -> bool:
@@ -62,7 +63,9 @@ class SimpleAnimation(Animation):
             factor = min(1.0, (time - self.start_time) / self.duration)
             eased_factor = self.easing(factor)
 
-            if isinstance(self.start_value, Animatable):
+            if factor == 1.0:
+                value = self.end_value
+            elif isinstance(self.start_value, Animatable):
                 assert isinstance(
                     self.end_value, Animatable
                 ), "end_value must be animatable"
@@ -148,11 +151,14 @@ class Animator:
         attribute: str,
         value: Any,
         *,
+        final_value: Any = ...,
         duration: float | None = None,
         speed: float | None = None,
         easing: EasingFunction | str = DEFAULT_EASING,
     ) -> None:
 
+        if final_value is ...:
+            final_value = value
         start_time = time()
 
         animation_key = (id(obj), attribute)
@@ -190,6 +196,7 @@ class Animator:
                 duration=animation_duration,
                 start_value=start_value,
                 end_value=value,
+                final_value=final_value,
                 easing=easing_function,
             )
         assert animation is not None, "animation expected to be non-None"

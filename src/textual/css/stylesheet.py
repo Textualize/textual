@@ -192,11 +192,37 @@ class Stylesheet:
             animate (bool, optional): Enable animation. Defaults to False.
         """
 
-        new_styles = node._default_styles.copy()
-        new_styles.merge_rules(rules)
-        node.styles.base.reset()
-        node.styles.base.merge(new_styles)
+        styles = node.styles
+        base_styles = styles.base
+
+        # current_rules = styles.get_render_rules()
+        base_rules = list(base_styles.get_rules().keys())
+        old_rules = {key: None for key in base_rules}
+        rule_updates = {**old_rules, **rules}
+
+        set_rule = base_styles.set_rule
+        base_styles.reset()
+        base_styles.merge(node._default_styles)
+        # base_styles.merge_rules(rules)
+
+        log("*", rule_updates)
+
+        for key, value in rule_updates.items():
+            setattr(base_styles, key, value)
+
+        repaint, layout = styles.check_refresh()
+        if repaint or layout:
+            node.refresh(repaint=repaint, layout=layout)
+
         return
+
+        # repaint = False
+        # layout = False
+
+        # for (rule_name, rule1), (_, rule2) in zip(start_rules.items(), new_rules.items()):
+        #     if rule1 != rule2:
+
+        # return
 
         styles = node.styles.base
         styles = Styles()
@@ -260,9 +286,9 @@ class Stylesheet:
         apply = self.apply
         for node in root.walk_children():
             apply(node, animate=animate)
-            if hasattr(node, "clear_render_cache"):
-                # TODO: Not ideal
-                node.clear_render_cache()
+            # if hasattr(node, "clear_render_cache"):
+            #     # TODO: Not ideal
+            #     node.clear_render_cache()
 
 
 if __name__ == "__main__":
