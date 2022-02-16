@@ -195,7 +195,18 @@ class Stylesheet:
         styles = node.styles
         base_styles = styles.base
 
-        # current_rules = styles.get_render_rules()
+        modified_rule_keys = {*base_styles.get_rules().keys(), *rules.keys()}
+        current_render_rules = styles.get_render_rules()
+
+        new_styles = node._default_styles.copy()
+        new_styles.merge(rules)
+        new_render_rules = new_styles.get_render_rules()
+
+        base_styles.reset()
+        base_styles.merge(new_stylea)
+        node.refresh()
+        return
+
         base_rules = list(base_styles.get_rules().keys())
         old_rules = {key: None for key in base_rules}
         rule_updates = {**old_rules, **rules}
