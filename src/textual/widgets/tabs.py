@@ -69,11 +69,9 @@ class Tabs(Widget):
     ) -> None:
         super().__init__()
         self.tabs = tabs
-        self._initial_active_tab = active_tab or tabs[0].name
-        self._initial_bar_offset = self.get_tab_index(active_tab) or 0
 
-        self.active_tab_name = self._initial_active_tab
-        self.bar_offset = float(self._initial_bar_offset)
+        self.active_tab_name = active_tab or tabs[0].name
+        self.bar_offset = float(self.get_tab_index(active_tab) or 0)
 
         self._used = False
         self.tab_padding = tab_padding
