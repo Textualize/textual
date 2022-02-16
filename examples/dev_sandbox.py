@@ -48,8 +48,8 @@ class BasicApp(App):
                 Tab("Seven", name="seven"),
                 Tab("Eight", name="eight"),
             ],
+            active_tab="three",
         )
-        self.tabs.active_tab_name = "one"
         """Build layout here."""
         self.mount(
             header=self.tabs,

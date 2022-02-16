@@ -8,7 +8,6 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.style import Style
 from rich.text import Text
 
-from textual import log
 from textual.renderables.opacity import Opacity
 
 
@@ -44,6 +43,9 @@ class TabHeadersRenderable:
     def get_active_range(self) -> tuple[int, int]:
         return self._range_cache[self.active_tab_name]
 
+    def get_ranges(self):
+        return self._range_cache
+
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
@@ -60,21 +62,6 @@ class TabHeadersRenderable:
 
         pad = Text(" " * label_pad, end="")
 
-        # # There's padding at each side of a label
-        # padding_len = 2 * self.tab_padding * len(tabs)
-        #
-        # # The total length of the labels, including their padding
-        # total_len = sum(cell_len(header.label) for header in tab_values) + padding_len
-        #
-        # # The amount of space left to distribute around tabs
-        # free_space = width - total_len
-        #
-        # # The gap between each tab (not including padding)
-        # space_per_gap = free_space // (len(tabs) + 1)
-
-        # gap = Text(" " * space_per_gap, end="")
-        # lpad = rpad = Text(" " * self.tab_padding, end="")
-
         char_index = label_pad
         for tab_index, tab in enumerate(tab_values):
             yield pad
@@ -82,7 +69,9 @@ class TabHeadersRenderable:
                 tab.label,
                 end="",
                 style=Style(
-                    color="#f0f0f0", bgcolor="#021720", meta={"@click": "highlight"}
+                    color="#f0f0f0",
+                    bgcolor="#021720",
+                    meta={"@click": f"activate_tab('{tab.name}')"},
                 ),
             )
 
@@ -96,7 +85,6 @@ class TabHeadersRenderable:
             else:
                 dimmed_tab_content = Opacity(tab_content, opacity=0.5)
                 segments = list(console.render(dimmed_tab_content))
-                log(segments)
                 yield from segments
 
             yield pad
