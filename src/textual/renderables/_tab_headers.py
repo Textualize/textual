@@ -32,11 +32,13 @@ class TabHeadersRenderable:
         active_tab_name: str | None = None,
         width: int | None = None,
         tab_padding: int | None = None,
+        inactive_tab_opacity: float = 0.5,
     ):
         self.tabs = {tab.name: tab for tab in tabs}
         self.active_tab_name = active_tab_name or next(iter(self.tabs))
         self.width = width
         self.tab_padding = tab_padding
+        self.inactive_tab_opacity = inactive_tab_opacity
 
         self._range_cache: dict[str, tuple[int, int]] = {}
 
@@ -70,20 +72,22 @@ class TabHeadersRenderable:
                 end="",
                 style=Style(
                     color="#f0f0f0",
-                    bgcolor="#021720",
+                    bgcolor="#262626",
                     meta={"@click": f"activate_tab('{tab.name}')"},
                 ),
             )
 
             # Cache and move to next label
-            len_label = len(tab.label)
+            len_label = cell_len(tab.label)
             self._range_cache[tab.name] = (char_index, char_index + len_label)
             char_index += len_label + label_pad * 2
 
             if tab.name == self.active_tab_name:
                 yield tab_content
             else:
-                dimmed_tab_content = Opacity(tab_content, opacity=0.5)
+                dimmed_tab_content = Opacity(
+                    tab_content, opacity=self.inactive_tab_opacity
+                )
                 segments = list(console.render(dimmed_tab_content))
                 yield from segments
 

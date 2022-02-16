@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.segment import Segment
+from rich.style import StyleType
 
-from textual import log
 from textual.reactive import Reactive
 from textual.renderables._tab_headers import TabHeadersRenderable, Tab
 from textual.renderables.underline_bar import UnderlineBar
@@ -15,11 +15,17 @@ class TabsRenderable:
         self,
         tabs: list[Tab],
         active_tab_name: str,
-        tab_padding: int | None = None,
-        bar_offset: float = 0.0,
+        active_bar_style: StyleType,
+        inactive_bar_style: StyleType,
+        inactive_text_opacity: float,
+        tab_padding: int | None,
+        bar_offset: float,
     ):
         self.tabs = tabs
         self.active_tab_name = active_tab_name
+        self.active_bar_style = active_bar_style
+        self.inactive_bar_style = inactive_bar_style
+        self.inactive_text_opacity = inactive_text_opacity
         self.tab_padding = tab_padding
         self.bar_offset = bar_offset
 
@@ -30,6 +36,7 @@ class TabsRenderable:
             self.tabs,
             active_tab_name=self.active_tab_name,
             tab_padding=self.tab_padding,
+            inactive_tab_opacity=self.inactive_text_opacity,
         )
         yield from console.render(headers)
         yield Segment.line()
@@ -50,13 +57,14 @@ class TabsRenderable:
 
         underline = UnderlineBar(
             highlight_range=(bar_start, bar_end),
-            highlight_style="#95d52a",
+            highlight_style=self.active_bar_style,
+            background_style=self.inactive_bar_style,
         )
         yield from console.render(underline)
 
 
 class Tabs(Widget):
-    """Widget for displaying tab headers"""
+    """Horizontal tabs"""
 
     active_tab_name: Reactive[str] = Reactive("")
     bar_offset: Reactive[float] = Reactive(0.0)
@@ -65,13 +73,20 @@ class Tabs(Widget):
         self,
         tabs: list[Tab],
         active_tab: str | None = None,
+        active_bar_style: StyleType = "#1BB152",
+        inactive_bar_style: StyleType = "#455058",
         tab_padding: int | None = None,
+        inactive_text_opacity: float = 0.5,
     ) -> None:
         super().__init__()
         self.tabs = tabs
 
-        self.active_tab_name = active_tab or tabs[0].name
+        # TODO: Handle empty tabs
+        self.active_tab_name = active_tab or tabs[0]
+        self.active_bar_style = active_bar_style
+        self.inactive_bar_style = inactive_bar_style
         self.bar_offset = float(self.get_tab_index(active_tab) or 0)
+        self.inactive_text_opacity = inactive_text_opacity
 
         self._used = False
         self.tab_padding = tab_padding
@@ -81,7 +96,6 @@ class Tabs(Widget):
 
     def watch_active_tab_name(self, tab_name: str) -> None:
         target_tab_index = self.get_tab_index(tab_name)
-        log("bar_offset", self.bar_offset)
         self.animate(
             "bar_offset", float(target_tab_index), easing="out_cubic", duration=0.3
         )
@@ -98,5 +112,8 @@ class Tabs(Widget):
             self.tabs,
             tab_padding=self.tab_padding,
             active_tab_name=self.active_tab_name,
+            active_bar_style=self.active_bar_style,
+            inactive_bar_style=self.inactive_bar_style,
             bar_offset=self.bar_offset,
+            inactive_text_opacity=self.inactive_text_opacity,
         )
