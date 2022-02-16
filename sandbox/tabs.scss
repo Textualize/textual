@@ -1,0 +1,10 @@
+$background: #262626;
+
+App > View {
+  docks: side=left/1;
+  text: on $background;
+}
+
+#info {
+  height: 4;
+}
