@@ -101,6 +101,7 @@ class BoundAnimator:
         attribute: str,
         value: float,
         *,
+        final_value: Any = ...,
         duration: float | None = None,
         speed: float | None = None,
         easing: EasingFunction | str = DEFAULT_EASING,
@@ -110,6 +111,7 @@ class BoundAnimator:
             self._obj,
             attribute=attribute,
             value=value,
+            final_value=final_values,
             duration=duration,
             speed=speed,
             easing=easing_function,
@@ -156,6 +158,17 @@ class Animator:
         speed: float | None = None,
         easing: EasingFunction | str = DEFAULT_EASING,
     ) -> None:
+        """Animate an attribute to a new value.
+
+        Args:
+            obj (object): The object containing the attribute.
+            attribute (str): The name of the attribute.
+            value (Any): The destination value of the attribute.
+            final_value (Any, optional): The final value, or ellipsis if it is the same as ``value``. Defaults to ....
+            duration (float | None, optional): The duration of the animation, or ``None`` to use speed. Defaults to ``None``.
+            speed (float | None, optional): The speed of the animation. Defaults to None.
+            easing (EasingFunction | str, optional): An easing function. Defaults to DEFAULT_EASING.
+        """
 
         if final_value is ...:
             final_value = value
