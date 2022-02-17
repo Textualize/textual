@@ -207,6 +207,10 @@ class Stylesheet:
         new_styles = node._default_styles.copy()
         new_styles.merge_rules(rules)
 
+        if new_styles == base_styles:
+            # Nothing to change, return early
+            return
+
         # New render rules
         new_render_rules = new_styles.get_render_rules()
 

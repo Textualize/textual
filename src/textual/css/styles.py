@@ -156,6 +156,12 @@ class StylesBase(ABC):
     layers = NameListProperty()
     transitions = TransitionsProperty()
 
+    def __eq__(self, styles: object) -> bool:
+        """Check that Styles containts the same rules."""
+        if not isinstance(styles, StylesBase):
+            return NotImplemented
+        return self.get_rules() == styles.get_rules()
+
     @abstractmethod
     def has_rule(self, rule: str) -> bool:
         """Check if a rule is set on this Styles object.
