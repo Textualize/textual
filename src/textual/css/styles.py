@@ -631,8 +631,8 @@ class RenderStyles(StylesBase):
         """Check if a rule has been set."""
         return self._inline_styles.has_rule(rule) or self._base_styles.has_rule(rule)
 
-    def set_rule(self, rule: str, value: object | None) -> None:
-        self._inline_styles.set_rule(rule, value)
+    def set_rule(self, rule: str, value: object | None) -> bool:
+        return self._inline_styles.set_rule(rule, value)
 
     def get_rule(self, rule: str, default: object = None) -> object:
         if self._inline_styles.has_rule(rule):
