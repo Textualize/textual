@@ -3,6 +3,7 @@ from __future__ import annotations
 from rich.console import ConsoleOptions, Console, RenderResult
 from rich.segment import Segment
 from rich.style import StyleType
+from rich.text import Text
 
 
 class UnderlineBar:
@@ -20,11 +21,13 @@ class UnderlineBar:
         highlight_range: tuple[float, float] = (0, 0),
         highlight_style: StyleType = "magenta",
         background_style: StyleType = "grey37",
+        clickable_ranges: dict[str, tuple[int, int]] | None = None,
         width: int | None = None,
     ) -> None:
         self.highlight_range = highlight_range
         self.highlight_style = highlight_style
         self.background_style = background_style
+        self.clickable_ranges = clickable_ranges
         self.width = width
 
     def __rich_console__(
@@ -102,17 +105,13 @@ if __name__ == "__main__":
     for range in ranges:
         color = random.choice(list(ANSI_COLOR_NAMES.keys()))
         console.print(
-            UnderlineBar(
-                range,
-                highlight_style=color,
-                width=20,
-            ),
+            UnderlineBar(range, highlight_style=color, width=20),
             f"   {range}",
         )
 
     from rich.live import Live
 
-    bar = UnderlineBar(width=80, highlight_range=(0, 4.5))
+    bar = UnderlineBar(highlight_range=(0, 4.5), width=80)
     with Live(bar, refresh_per_second=60) as live:
         while True:
             bar.highlight_range = (

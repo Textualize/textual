@@ -36,11 +36,9 @@ class Opacity:
                 color_style = _get_blended_style_cached(
                     fg_color=fg, bg_color=bg, opacity=opacity
                 )
-                meta_style = Style.from_meta(style.meta)
-                new_style = color_style + meta_style
                 yield Segment(
                     segment.text,
-                    new_style,
+                    style + color_style,
                     segment.control,
                 )
             else:

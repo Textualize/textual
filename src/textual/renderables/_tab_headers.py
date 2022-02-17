@@ -5,10 +5,11 @@ from typing import Iterable
 
 from rich.cells import cell_len
 from rich.console import Console, ConsoleOptions, RenderResult
-from rich.style import Style
+from rich.style import Style, StyleType
 from rich.text import Text
 
 from textual.renderables.opacity import Opacity
+from textual.renderables.underline_bar import UnderlineBar
 
 
 @dataclass
@@ -29,16 +30,22 @@ class TabHeadersRenderable:
         self,
         tabs: Iterable[Tab],
         *,
-        active_tab_name: str | None = None,
+        active_tab_name: str,
+        active_bar_style: StyleType,
+        inactive_bar_style: StyleType,
+        inactive_text_opacity: float,
+        tab_padding: int | None,
+        bar_offset: float,
         width: int | None = None,
-        tab_padding: int | None = None,
-        inactive_tab_opacity: float = 0.5,
     ):
         self.tabs = {tab.name: tab for tab in tabs}
         self.active_tab_name = active_tab_name or next(iter(self.tabs))
+        self.active_bar_style = active_bar_style
+        self.inactive_bar_style = inactive_bar_style
+        self.bar_offset = bar_offset
         self.width = width
         self.tab_padding = tab_padding
-        self.inactive_tab_opacity = inactive_tab_opacity
+        self.inactive_text_opacity = inactive_text_opacity
 
         self._range_cache: dict[str, tuple[int, int]] = {}
 
@@ -86,23 +93,30 @@ class TabHeadersRenderable:
                 yield tab_content
             else:
                 dimmed_tab_content = Opacity(
-                    tab_content, opacity=self.inactive_tab_opacity
+                    tab_content, opacity=self.inactive_text_opacity
                 )
                 segments = list(console.render(dimmed_tab_content))
                 yield from segments
 
             yield pad
 
+        ranges = self.get_ranges()
+        tab_index = int(self.bar_offset)
+        next_tab_index = (tab_index + 1) % len(ranges)
 
-if __name__ == "__main__":
-    console = Console()
+        range_values = list(ranges.values())
 
-    h = TabHeadersRenderable(
-        [
-            Tab("One"),
-            Tab("Two"),
-            Tab("Three"),
-        ]
-    )
+        tab1_start, tab1_end = range_values[tab_index]
+        tab2_start, tab2_end = range_values[next_tab_index]
 
-    console.print(h)
+        bar_start = tab1_start + (tab2_start - tab1_start) * (
+            self.bar_offset - tab_index
+        )
+        bar_end = tab1_end + (tab2_end - tab1_end) * (self.bar_offset - tab_index)
+
+        underline = UnderlineBar(
+            highlight_range=(bar_start, bar_end),
+            highlight_style=self.active_bar_style,
+            background_style=self.inactive_bar_style,
+        )
+        yield from console.render(underline)

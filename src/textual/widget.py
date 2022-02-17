@@ -174,8 +174,8 @@ class Widget(DOMNode):
                 style=renderable_text_style,
             )
 
-        if styles.opacity:
-            renderable = Opacity(renderable, opacity=styles.opacity)
+        # if styles.opacity:
+        #     renderable = Opacity(renderable, opacity=styles.opacity)
 
         return renderable
 

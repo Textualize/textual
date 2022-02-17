@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from rich.console import RenderableType
 from rich.padding import Padding
+from rich.text import Text
 
 from textual import events
 from textual.app import App
@@ -11,14 +12,14 @@ from textual.widgets.tabs import Tabs
 
 
 class Info(Widget):
-    def __init__(self, text: str, emoji: bool = True) -> None:
+    DEFAULT_STYLES = "height: 1;"
+
+    def __init__(self, text: str) -> None:
         super().__init__()
         self.text = text
-        self.emoji = emoji
 
     def render(self) -> RenderableType:
-        prefix = "ℹ️  " if self.emoji else ""
-        return Padding(f"{prefix}{self.text}", pad=0)
+        return Padding(f"{self.text}", pad=(0, 1))
 
 
 @dataclass
@@ -32,27 +33,15 @@ class BasicApp(App):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.tab_keys = {
-            "1": "one",
-            "2": "two",
-            "3": "three",
-            "4": "four",
-            "5": "five",
-            "6": "six",
+        self.keys_to_tabs = {
+            "1": Tab("January", name="one"),
+            "2": Tab("に月", name="two"),
+            "3": Tab("March", name="three"),
+            "4": Tab("April", name="four"),
+            "5": Tab("May", name="five"),
+            "6": Tab("And a really long tab!", name="six"),
         }
-        tabs = [
-            Tab("January", name="one"),
-            Tab("に月", name="two"),
-            Tab("March", name="three"),
-            Tab("April", name="four"),
-            Tab("May", name="five"),
-            Tab("And a really long tab!", name="six"),
-            # Tab("Four", name="five"),
-            # Tab("Four", name="six"),
-            # Tab("Four", name="seven"),
-            # Tab("Four", name="eight"),
-            # Tab("Four", name="nine"),
-        ]
+        tabs = list(self.keys_to_tabs.values())
         self.examples = [
             WidgetDescription(
                 "Customise the spacing between tabs, e.g. tab_padding=1",
@@ -69,15 +58,6 @@ class BasicApp(App):
                     active_bar_style="#1493FF",
                     inactive_text_opacity=0.2,
                     tab_padding=2,
-                ),
-            ),
-            WidgetDescription(
-                "Choose which tab to start on by name, e.g. active_tab='three'",
-                Tabs(
-                    tabs,
-                    active_tab="three",
-                    active_bar_style="#FFCB4D",
-                    tab_padding=3,
                 ),
             ),
             WidgetDescription(
@@ -98,14 +78,35 @@ class BasicApp(App):
                 ),
             ),
             WidgetDescription(
+                "Change the styling of active and inactive labels (active_tab_style, inactive_tab_style)",
+                Tabs(
+                    tabs,
+                    active_tab="one",
+                    active_bar_style="#DA812D",
+                    active_tab_style="bold #FFCB4D on #021720",
+                    inactive_tab_style="italic #887AEF on #021720",
+                    inactive_bar_style="#695CC8",
+                    inactive_text_opacity=0.6,
+                ),
+            ),
+            WidgetDescription(
                 "Change the animation duration and function (animation_duration=1, animation_function='out_quad')",
                 Tabs(
                     tabs,
                     active_tab="one",
-                    active_bar_style="#695CC8",
+                    active_bar_style="#887AEF",
                     inactive_text_opacity=0.2,
                     animation_duration=1,
                     animation_function="out_quad",
+                ),
+            ),
+            WidgetDescription(
+                "Choose which tab to start on by name, e.g. active_tab='three'",
+                Tabs(
+                    tabs,
+                    active_tab="three",
+                    active_bar_style="#FFCB4D",
+                    tab_padding=3,
                 ),
             ),
         ]
@@ -119,7 +120,9 @@ class BasicApp(App):
 
     def on_key(self, event: events.Key) -> None:
         for example in self.examples:
-            example.widget.active_tab_name = self.tab_keys.get(event.key, "one")
+            tab = self.keys_to_tabs.get(event.key)
+            if tab:
+                example.widget.active_tab_name = tab.name
 
     def on_mount(self):
         """Build layout here."""
@@ -128,11 +131,11 @@ class BasicApp(App):
                 "\n"
                 "• The examples below show customisation options for the [#1493FF]Tabs[/] widget.\n"
                 "• Press keys 1-6 on your keyboard to switch tabs, or click on a tab.",
-                emoji=False,
             )
         )
         for example in self.examples:
-            self.mount(Info(example.description))
+            info = Info(example.description)
+            self.mount(info)
             self.mount(example.widget)
 
 
