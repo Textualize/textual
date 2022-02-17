@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import string
 from dataclasses import dataclass
 from typing import Iterable
 
@@ -9,6 +10,8 @@ from rich.segment import Segment
 from rich.style import StyleType, Style
 from rich.text import Text
 
+from textual import events
+from textual.keys import Keys
 from textual.reactive import Reactive
 from textual.renderables._tab_headers import Tab
 from textual.renderables.opacity import Opacity
@@ -169,6 +172,7 @@ class Tabs(Widget):
         animation_duration: float = 0.3,
         animation_function: str = "out_cubic",
         tab_padding: int | None = None,
+        search_by_first_character: bool = True,
     ) -> None:
         super().__init__()
         self.tabs = tabs
@@ -186,8 +190,62 @@ class Tabs(Widget):
         self.animation_function = animation_function
         self.animation_duration = animation_duration
 
-        self._used = False
         self.tab_padding = tab_padding
+
+        self.search_by_first_character = search_by_first_character
+
+    def on_key(self, event: events.Key) -> None:
+        if not self.tabs:
+            event.prevent_default()
+            return
+
+        if event.key == Keys.Right:
+            self.activate_next_tab()
+        elif event.key == Keys.Left:
+            self.activate_previous_tab()
+        elif event.key in string.digits:
+            self.activate_tab_by_number(int(event.key))
+        elif self.search_by_first_character:
+            self.activate_tab_by_first_char(event.key)
+
+        event.prevent_default()
+
+    def activate_next_tab(self) -> None:
+        current_tab_index = self.get_tab_index(self.active_tab_name)
+        next_tab_index = (current_tab_index + 1) % len(self.tabs)
+        next_tab_name = self.tabs[next_tab_index].name
+        self.active_tab_name = next_tab_name
+
+    def activate_previous_tab(self) -> None:
+        current_tab_index = self.get_tab_index(self.active_tab_name)
+        previous_tab_index = current_tab_index - 1
+        previous_tab_name = self.tabs[previous_tab_index].name
+        self.active_tab_name = previous_tab_name
+
+    def activate_tab_by_first_char(self, char: str) -> None:
+        def find_next_matching_tab(
+            char: str, start: int | None, end: int | None
+        ) -> Tab | None:
+            for tab in self.tabs[start:end]:
+                if tab.label.lower().startswith(char.lower()):
+                    return tab
+
+        current_tab_index = self.get_tab_index(self.active_tab_name)
+        next_tab_index = (current_tab_index + 1) % len(self.tabs)
+
+        next_matching_tab = find_next_matching_tab(char, next_tab_index, None)
+        if not next_matching_tab:
+            next_matching_tab = find_next_matching_tab(char, None, current_tab_index)
+
+        if next_matching_tab:
+            self.active_tab_name = next_matching_tab.name
+
+    def activate_tab_by_number(self, tab_number: int) -> None:
+        if tab_number > len(self.tabs):
+            return
+        if tab_number == 0 and len(self.tabs) >= 10:
+            tab_number = 10
+        self.active_tab_name = self.tabs[tab_number - 1].name
 
     def action_range_clicked(self, target_tab_name: str) -> None:
         self.active_tab_name = target_tab_name
@@ -203,10 +261,7 @@ class Tabs(Widget):
         self._used = True
 
     def get_tab_index(self, tab_name: str) -> int:
-        target_tab_index = next(
-            (i for i, tab in enumerate(self.tabs) if tab.name == tab_name), 0
-        )
-        return target_tab_index
+        return next((i for i, tab in enumerate(self.tabs) if tab.name == tab_name), 0)
 
     def render(self) -> RenderableType:
         return TabsRenderable(
