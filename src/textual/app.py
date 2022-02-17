@@ -683,17 +683,12 @@ class App(DOMNode):
 
     async def action_add_class_(self, selector: str, class_name: str) -> None:
         self.view.query(selector).add_class(class_name)
-        self.view.refresh(layout=True)
 
     async def action_remove_class_(self, selector: str, class_name: str) -> None:
         self.view.query(selector).remove_class(class_name)
-        self.view.refresh(layout=True)
 
     async def action_toggle_class(self, selector: str, class_name: str) -> None:
         self.view.query(selector).toggle_class(class_name)
-        self.view.refresh(layout=True)
 
     async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
-        self.reset_styles()
         self.stylesheet.update(self)
-        self.view.refresh(layout=True)

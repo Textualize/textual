@@ -344,7 +344,6 @@ class DOMNode(MessagePump):
         """
         self._classes.symmetric_difference_update(class_names)
         self.app.stylesheet.update(self.app, animate=True)
-        self.app.refresh()
 
     def has_pseudo_class(self, *class_names: str) -> bool:
         """Check for pseudo class (such as hover, focus etc)"""

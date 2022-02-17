@@ -11,9 +11,9 @@ class BasicApp(App):
         """Build layout here."""
         self.mount(
             header=Widget(),
-            # content=Placeholder(),
-            # footer=Widget(),
-            # sidebar=Widget(),
+            content=Placeholder(),
+            footer=Widget(),
+            sidebar=Widget(),
         )
 
     async def on_key(self, event: events.Key) -> None:
