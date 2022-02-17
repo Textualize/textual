@@ -508,7 +508,6 @@ class App(DOMNode):
                 if sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
                 console.file.flush()
-                self.log("APP REFRESH")
             except Exception:
                 self.panic()
 
