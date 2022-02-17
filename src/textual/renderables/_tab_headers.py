@@ -80,7 +80,7 @@ class TabHeadersRenderable:
                 style=Style(
                     color="#f0f0f0",
                     bgcolor="#262626",
-                    meta={"@click": f"activate_tab('{tab.name}')"},
+                    meta={"@click": f"range_clicked('{tab.name}')"},
                 ),
             )
 

@@ -140,7 +140,7 @@ class TabsRenderable:
                     f"{pad}{tab.label}{pad}",
                     end="",
                     style=inactive_tab_style
-                    + Style.from_meta({"@click": f"activate_tab('{tab.name}')"}),
+                    + Style.from_meta({"@click": f"range_clicked('{tab.name}')"}),
                 )
                 dimmed_tab_content = Opacity(
                     tab_content, opacity=self.inactive_text_opacity
@@ -189,7 +189,7 @@ class Tabs(Widget):
         self._used = False
         self.tab_padding = tab_padding
 
-    def action_activate_tab(self, target_tab_name: str) -> None:
+    def action_range_clicked(self, target_tab_name: str) -> None:
         self.active_tab_name = target_tab_name
 
     def watch_active_tab_name(self, tab_name: str) -> None:
