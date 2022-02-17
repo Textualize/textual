@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from rich.console import ConsoleOptions, Console, RenderResult
-from rich.segment import Segment
-from rich.style import StyleType, Style
+from rich.style import StyleType
 from rich.text import Text
 
 
@@ -27,7 +26,7 @@ class UnderlineBar:
         self.highlight_range = highlight_range
         self.highlight_style = highlight_style
         self.background_style = background_style
-        self.clickable_ranges = clickable_ranges
+        self.clickable_ranges = clickable_ranges or {}
         self.width = width
 
     def __rich_console__(
@@ -50,7 +49,8 @@ class UnderlineBar:
 
         if start == end == 0 or end < 0 or start > end:
             output_bar.append(Text(bar * width, style=background_style, end=""))
-            return output_bar
+            yield output_bar
+            return
 
         # Round start and end to nearest half
         start = round(start * 2) / 2

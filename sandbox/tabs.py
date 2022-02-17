@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from rich.console import RenderableType
 from rich.padding import Padding
-from rich.text import Text
+from rich.rule import Rule
 
 from textual import events
 from textual.app import App
@@ -11,8 +11,13 @@ from textual.widget import Widget
 from textual.widgets.tabs import Tabs
 
 
+class Hr(Widget):
+    def render(self) -> RenderableType:
+        return Rule()
+
+
 class Info(Widget):
-    DEFAULT_STYLES = "height: 1;"
+    DEFAULT_STYLES = "height: 2;"
 
     def __init__(self, text: str) -> None:
         super().__init__()
@@ -129,12 +134,13 @@ class BasicApp(App):
         self.mount(
             info=Info(
                 "\n"
-                "• The examples below show customisation options for the [#1493FF]Tabs[/] widget.\n"
+                "• The examples below show customisation options for the [bold #1493FF]Tabs[/] widget.\n"
                 "• Press keys 1-6 on your keyboard to switch tabs, or click on a tab.",
             )
         )
         for example in self.examples:
             info = Info(example.description)
+            self.mount(Hr())
             self.mount(info)
             self.mount(example.widget)
 
