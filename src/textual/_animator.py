@@ -213,4 +213,5 @@ class Animator:
                 animation = self._animations[animation_key]
                 if animation(animation_time):
                     del self._animations[animation_key]
+            # TODO: We should be able to do animation without refreshing everything
             self.target.view.refresh(True, True)
