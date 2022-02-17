@@ -153,12 +153,29 @@ class TabsRenderable:
 
 
 class Tabs(Widget):
-    """Horizontal tabs"""
+    """Widget which displays a set of horizontal tabs.
+
+    Args:
+        tabs (list[Tab]): A list of Tab objects defining the tabs which should be rendered.
+        active_tab (str | None): The name of the tab that should be active on first render.
+        active_tab_style (StyleType): Style to apply to the label of the active tab.
+        active_bar_style (StyleType): Style to apply to the underline of the active tab.
+        inactive_tab_style (StyleType): Style to apply to the label of inactive tabs.
+        inactive_bar_style (StyleType): Style to apply to the underline of inactive tabs.
+        inactive_text_opacity (float): Opacity of the labels of inactive tabs.
+        animation_duration (float): The duration of the tab change animation, in seconds.
+        animation_function (str): The easing function to use for the tab change animation.
+        tab_padding (int | None): The horizontal padding at the side of each tab. If None,
+            tabs will automatically receive padding such that they fit available space.
+        search_by_first_character (bool): If True, entering a character on your keyboard
+            will activate the next tab (in left-to-right order) with a label starting with
+            that character.
+    """
 
     DEFAULT_STYLES = "height: 2;"
 
-    active_tab_name: Reactive[str | None] = Reactive("")
-    bar_offset: Reactive[float] = Reactive(0.0)
+    _active_tab_name: Reactive[str | None] = Reactive("")
+    _bar_offset: Reactive[float] = Reactive(0.0)
 
     def __init__(
         self,
@@ -177,7 +194,7 @@ class Tabs(Widget):
         super().__init__()
         self.tabs = tabs
 
-        self.active_tab_name = active_tab or next(iter(self.tabs), None)
+        self._active_tab_name = active_tab or next(iter(self.tabs), None)
         self.active_tab_style = active_tab_style
         self.active_bar_style = active_bar_style
 
@@ -185,7 +202,7 @@ class Tabs(Widget):
         self.inactive_tab_style = inactive_tab_style
         self.inactive_text_opacity = inactive_text_opacity
 
-        self.bar_offset = float(self.get_tab_index(active_tab) or 0)
+        self._bar_offset = float(self.get_tab_index(active_tab) or 0)
 
         self.animation_function = animation_function
         self.animation_duration = animation_duration
@@ -211,16 +228,16 @@ class Tabs(Widget):
         event.prevent_default()
 
     def activate_next_tab(self) -> None:
-        current_tab_index = self.get_tab_index(self.active_tab_name)
+        current_tab_index = self.get_tab_index(self._active_tab_name)
         next_tab_index = (current_tab_index + 1) % len(self.tabs)
         next_tab_name = self.tabs[next_tab_index].name
-        self.active_tab_name = next_tab_name
+        self._active_tab_name = next_tab_name
 
     def activate_previous_tab(self) -> None:
-        current_tab_index = self.get_tab_index(self.active_tab_name)
+        current_tab_index = self.get_tab_index(self._active_tab_name)
         previous_tab_index = current_tab_index - 1
         previous_tab_name = self.tabs[previous_tab_index].name
-        self.active_tab_name = previous_tab_name
+        self._active_tab_name = previous_tab_name
 
     def activate_tab_by_first_char(self, char: str) -> None:
         def find_next_matching_tab(
@@ -230,7 +247,7 @@ class Tabs(Widget):
                 if tab.label.lower().startswith(char.lower()):
                     return tab
 
-        current_tab_index = self.get_tab_index(self.active_tab_name)
+        current_tab_index = self.get_tab_index(self._active_tab_name)
         next_tab_index = (current_tab_index + 1) % len(self.tabs)
 
         next_matching_tab = find_next_matching_tab(char, next_tab_index, None)
@@ -238,22 +255,22 @@ class Tabs(Widget):
             next_matching_tab = find_next_matching_tab(char, None, current_tab_index)
 
         if next_matching_tab:
-            self.active_tab_name = next_matching_tab.name
+            self._active_tab_name = next_matching_tab.name
 
     def activate_tab_by_number(self, tab_number: int) -> None:
         if tab_number > len(self.tabs):
             return
         if tab_number == 0 and len(self.tabs) >= 10:
             tab_number = 10
-        self.active_tab_name = self.tabs[tab_number - 1].name
+        self._active_tab_name = self.tabs[tab_number - 1].name
 
     def action_range_clicked(self, target_tab_name: str) -> None:
-        self.active_tab_name = target_tab_name
+        self._active_tab_name = target_tab_name
 
-    def watch_active_tab_name(self, tab_name: str) -> None:
+    def watch__active_tab_name(self, tab_name: str) -> None:
         target_tab_index = self.get_tab_index(tab_name)
         self.animate(
-            "bar_offset",
+            "_bar_offset",
             float(target_tab_index),
             easing=self.animation_function,
             duration=self.animation_duration,
@@ -267,11 +284,11 @@ class Tabs(Widget):
         return TabsRenderable(
             self.tabs,
             tab_padding=self.tab_padding,
-            active_tab_name=self.active_tab_name,
+            active_tab_name=self._active_tab_name,
             active_tab_style=self.active_tab_style,
             active_bar_style=self.active_bar_style,
             inactive_tab_style=self.inactive_tab_style,
             inactive_bar_style=self.inactive_bar_style,
-            bar_offset=self.bar_offset,
+            bar_offset=self._bar_offset,
             inactive_text_opacity=self.inactive_text_opacity,
         )

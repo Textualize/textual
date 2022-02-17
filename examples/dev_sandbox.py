@@ -51,7 +51,7 @@ class BasicApp(App):
         self.bind("d", "toggle_class('#footer', 'dim')")
 
     def on_key(self, event: events.Key) -> None:
-        self.tabs.active_tab_name = self.tab_keys.get(event.key, "one")
+        self.tabs._active_tab_name = self.tab_keys.get(event.key, "one")
 
     def on_mount(self):
         """Build layout here."""

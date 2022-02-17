@@ -127,7 +127,7 @@ class BasicApp(App):
         for example in self.examples:
             tab = self.keys_to_tabs.get(event.key)
             if tab:
-                example.widget.active_tab_name = tab.name
+                example.widget._active_tab_name = tab.name
 
     def on_mount(self):
         """Build layout here."""
