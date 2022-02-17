@@ -217,8 +217,8 @@ class StylesBase(ABC):
         """
 
     @abstractmethod
-    def refresh(self, layout: bool = False) -> None:
-        """Mark the styles are requiring a refresh.
+    def refresh(self, *, layout: bool = False) -> None:
+        """Mark the styles as requiring a refresh.
 
         Args:
             layout (bool, optional): Also require a layout. Defaults to False.
@@ -317,6 +317,14 @@ class Styles(StylesBase):
         return rule in self._rules
 
     def clear_rule(self, rule: str) -> bool:
+        """Removes the rule from the Styles object, as if it had never been set.
+
+        Args:
+            rule (str): Rule name.
+
+        Returns:
+            bool: ``True`` if a rules was clearled, or ``False`` if it was previously cleared.
+        """
         return self._rules.pop(rule, None) is not None
 
     def get_rules(self) -> RulesMap:
@@ -330,7 +338,7 @@ class Styles(StylesBase):
             value (object | None): New rule value.
 
         Returns:
-            bool: ``True`` of the rule changed, otherwise false.
+            bool: ``True`` of the rule changed, otherwise ``False``.
         """
         if value is None:
             return self._rules.pop(rule, None) is not None
@@ -357,9 +365,7 @@ class Styles(StylesBase):
         return result
 
     def reset(self) -> None:
-        """
-        Reset internal style rules to ``None``, reverting to default styles.
-        """
+        """Reset the rules to initial state."""
         self._rules.clear()
 
     def merge(self, other: Styles) -> None:
@@ -596,7 +602,7 @@ class RenderStyles(StylesBase):
             if self.has_rule(rule_name):
                 yield rule_name, getattr(self, rule_name)
 
-    def refresh(self, layout: bool = False) -> None:
+    def refresh(self, *, layout: bool = False) -> None:
         self._inline_styles.refresh(layout=layout)
 
     def merge(self, other: Styles) -> None:
@@ -622,9 +628,7 @@ class RenderStyles(StylesBase):
         return result
 
     def reset(self) -> None:
-        """
-        Reset internal style rules to ``None``, reverting to default styles.
-        """
+        """Reset the rules to initial state."""
         self._inline_styles.reset()
 
     def has_rule(self, rule: str) -> bool:
