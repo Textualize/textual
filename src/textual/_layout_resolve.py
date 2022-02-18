@@ -56,7 +56,7 @@ def layout_resolve(total: int, edges: Sequence[Edge]) -> list[int]:
         ]
 
     _Fraction = Fraction
-    while None in sizes:
+    while flexible_edges:
         # Calculate number of characters in a ratio portion
         portion = _Fraction(
             remaining, sum((edge.fraction or 1) for _, edge in flexible_edges)

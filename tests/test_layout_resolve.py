@@ -60,6 +60,7 @@ def test_two():
             [Edge(None, 4), Edge(None, 1), Edge(None, 1), Edge(None, 1)],
             [5, 2, 1, 2],
         ),
+        (2, [Edge(None, 1), Edge(None, 1), Edge(None, 1)], [1, 1, 1]),
     ],
 )
 def test_multiple(size, edges, result):
