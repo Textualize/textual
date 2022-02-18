@@ -14,8 +14,8 @@ class Edge(Protocol):
     """Any object that defines an edge (such as Layout)."""
 
     size: int | None
-    fraction: int = 1
-    min_size: int = 1
+    fraction: int
+    min_size: int
 
 
 def layout_resolve(total: int, edges: Sequence[Edge]) -> list[int]:
