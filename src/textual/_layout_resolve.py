@@ -38,7 +38,7 @@ def layout_resolve(total: int, edges: Sequence[Edge]) -> list[int]:
     sizes = [(edge.size or None) for edge in edges]
 
     if None not in sizes:
-        return cast(list[int], sizes)
+        return cast("list[int]", sizes)
 
     # Get flexible edges and index to map these back on to sizes list
     flexible_edges = [
@@ -80,4 +80,4 @@ def layout_resolve(total: int, edges: Sequence[Edge]) -> list[int]:
             break
 
     # Sizes now contains integers only
-    return cast(list[int], sizes)
+    return cast("list[int]", sizes)
