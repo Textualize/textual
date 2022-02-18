@@ -3,7 +3,7 @@ from __future__ import annotations
 import string
 from dataclasses import dataclass
 from types import SimpleNamespace
-from typing import Iterable
+from typing import Iterable, cast
 
 from rich.cells import cell_len
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -12,12 +12,15 @@ from rich.style import StyleType, Style
 from rich.text import Text
 
 from textual import events
-from textual._layout_resolve import layout_resolve
+from textual._layout_resolve import layout_resolve, Edge
 from textual.keys import Keys
 from textual.reactive import Reactive
 from textual.renderables.opacity import Opacity
 from textual.renderables.underline_bar import UnderlineBar
 from textual.widget import Widget
+
+
+__all__ = ["Tab", "Tabs"]
 
 
 @dataclass
@@ -77,15 +80,9 @@ class TabsRenderable:
         yield Segment.line()
         yield from self.get_underline_bar(console)
 
-    def get_active_range(self) -> tuple[int, int]:
-        return self._label_range_cache[self.active_tab_name]
-
-    def get_ranges(self):
-        return self._label_range_cache
-
     def get_underline_bar(self, console):
         if self.tabs:
-            ranges = self.get_ranges()
+            ranges = self._label_range_cache
             tab_index = int(self.bar_offset)
             next_tab_index = (tab_index + 1) % len(ranges)
             range_values = list(ranges.values())
@@ -111,10 +108,15 @@ class TabsRenderable:
         width = self.width or options.max_width
         tab_values = self.tabs.values()
 
-        space = SimpleNamespace(min_size=1, size=self.tab_padding or None, fraction=1)
+        space = cast(
+            Edge, SimpleNamespace(min_size=1, size=self.tab_padding or None, fraction=1)
+        )
         edges = []
         for tab in tab_values:
-            tab = SimpleNamespace(size=cell_len(tab.label), min_size=1, fraction=None)
+            tab = cast(
+                Edge,
+                SimpleNamespace(size=cell_len(tab.label), min_size=1, fraction=None),
+            )
             edges.extend([space, tab, space])
 
         spacing = layout_resolve(width, edges=edges)
@@ -149,7 +151,7 @@ class TabsRenderable:
                 segments = console.render(dimmed_tab_content)
                 yield from segments
 
-            # Cache the position of the label text
+            # Cache the position of the label text within this tab
             label_cell_cursor += lpad
             self._label_range_cache[tab.name] = (
                 label_cell_cursor,
@@ -157,7 +159,7 @@ class TabsRenderable:
             )
             label_cell_cursor += len_label_text + rpad
 
-            # Cache the position of the whole tab - the range that can be clicked
+            # Cache the position of the whole tab, i.e. the range that can be clicked
             self._selection_range_cache[tab.name] = (
                 label_cell_cursor - lpad,
                 label_cell_cursor + len_label_text + rpad,
@@ -206,15 +208,15 @@ class Tabs(Widget):
         super().__init__()
         self.tabs = tabs
 
+        self._bar_offset = float(self.get_tab_index(active_tab) or 0)
         self._active_tab_name = active_tab or next(iter(self.tabs), None)
+
         self.active_tab_style = active_tab_style
         self.active_bar_style = active_bar_style
 
         self.inactive_bar_style = inactive_bar_style
         self.inactive_tab_style = inactive_tab_style
         self.inactive_text_opacity = inactive_text_opacity
-
-        self._bar_offset = float(self.get_tab_index(active_tab) or 0)
 
         self.animation_function = animation_function
         self.animation_duration = animation_duration
@@ -287,7 +289,6 @@ class Tabs(Widget):
             easing=self.animation_function,
             duration=self.animation_duration,
         )
-        self._used = True
 
     def get_tab_index(self, tab_name: str) -> int:
         return next((i for i, tab in enumerate(self.tabs) if tab.name == tab_name), 0)
