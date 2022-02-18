@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from fractions import Fraction
-from typing import cast, List, Optional, Sequence
+from typing import cast, Sequence
 
 if sys.version_info >= (3, 8):
     from typing import Protocol
@@ -13,12 +13,12 @@ else:
 class Edge(Protocol):
     """Any object that defines an edge (such as Layout)."""
 
-    size: Optional[int] = None
+    size: int | None
     fraction: int = 1
     min_size: int = 1
 
 
-def layout_resolve(total: int, edges: Sequence[Edge]) -> List[int]:
+def layout_resolve(total: int, edges: Sequence[Edge]) -> list[int]:
     """Divide total space to satisfy size, fraction, and min_size, constraints.
 
     The returned list of integers should add up to total in most cases, unless it is
@@ -37,33 +37,37 @@ def layout_resolve(total: int, edges: Sequence[Edge]) -> List[int]:
     # Size of edge or None for yet to be determined
     sizes = [(edge.size or None) for edge in edges]
 
-    _Fraction = Fraction
+    if None not in sizes:
+        return cast(list[int], sizes)
 
-    # While any edges haven't been calculated
-    while None in sizes:
-        # Get flexible edges and index to map these back on to sizes list
-        flexible_edges = [
-            (index, edge)
-            for index, (size, edge) in enumerate(zip(sizes, edges))
-            if size is None
+    # Get flexible edges and index to map these back on to sizes list
+    flexible_edges = [
+        (index, edge)
+        for index, (size, edge) in enumerate(zip(sizes, edges))
+        if size is None
+    ]
+    # Remaining space in total
+    remaining = total - sum(size or 0 for size in sizes)
+    if remaining <= 0:
+        # No room for flexible edges
+        return [
+            ((edge.min_size or 1) if size is None else size)
+            for size, edge in zip(sizes, edges)
         ]
-        # Remaining space in total
-        remaining = total - sum(size or 0 for size in sizes)
-        if remaining <= 0:
-            # No room for flexible edges
-            return [
-                ((edge.min_size or 1) if size is None else size)
-                for size, edge in zip(sizes, edges)
-            ]
+
+    _Fraction = Fraction
+    while None in sizes:
         # Calculate number of characters in a ratio portion
         portion = _Fraction(
             remaining, sum((edge.fraction or 1) for _, edge in flexible_edges)
         )
 
         # If any edges will be less than their minimum, replace size with the minimum
-        for index, edge in flexible_edges:
+        for flexible_index, (index, edge) in enumerate(flexible_edges):
             if portion * edge.fraction <= edge.min_size:
                 sizes[index] = edge.min_size
+                remaining -= edge.min_size
+                del flexible_edges[flexible_index]
                 # New fixed size will invalidate calculations, so we need to repeat the process
                 break
         else:
@@ -72,9 +76,8 @@ def layout_resolve(total: int, edges: Sequence[Edge]) -> List[int]:
             # to the following line
             remainder = _Fraction(0)
             for index, edge in flexible_edges:
-                size, remainder = divmod(portion * edge.fraction + remainder, 1)
-                sizes[index] = size
+                sizes[index], remainder = divmod(portion * edge.fraction + remainder, 1)
             break
 
     # Sizes now contains integers only
-    return cast(List[int], sizes)
+    return cast(list[int], sizes)
