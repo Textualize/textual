@@ -6,9 +6,8 @@ from rich.rule import Rule
 
 from textual import events
 from textual.app import App
-from textual.renderables._tab_headers import Tab
 from textual.widget import Widget
-from textual.widgets.tabs import Tabs
+from textual.widgets.tabs import Tabs, Tab
 
 
 class Hr(Widget):

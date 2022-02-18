@@ -11,13 +11,10 @@ from rich.segment import Segment
 from rich.style import StyleType, Style
 from rich.text import Text
 
-from textual import events, log
+from textual import events
 from textual._layout_resolve import layout_resolve
-from textual._loop import loop_first_last
-from textual.css.types import Edge
 from textual.keys import Keys
 from textual.reactive import Reactive
-from textual.renderables._tab_headers import Tab
 from textual.renderables.opacity import Opacity
 from textual.renderables.underline_bar import UnderlineBar
 from textual.widget import Widget
