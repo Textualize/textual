@@ -13,8 +13,11 @@ else:
 class Edge(Protocol):
     """Any object that defines an edge (such as Layout)."""
 
+    # Size of edge in cells, or None for no fixed size
     size: int | None
+    # Portion of flexible space to use if size is None
     fraction: int
+    # Minimim size for edge, in cells
     min_size: int
 
 
