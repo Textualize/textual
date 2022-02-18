@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import string
 from dataclasses import dataclass
+from types import SimpleNamespace
 from typing import Iterable
 
 from rich.cells import cell_len
@@ -10,7 +11,10 @@ from rich.segment import Segment
 from rich.style import StyleType, Style
 from rich.text import Text
 
-from textual import events
+from textual import events, log
+from textual._layout_resolve import layout_resolve
+from textual._loop import loop_first_last
+from textual.css.types import Edge
 from textual.keys import Keys
 from textual.reactive import Reactive
 from textual.renderables._tab_headers import Tab
@@ -108,39 +112,36 @@ class TabsRenderable:
 
     def get_tab_headers(self, console, options):
         width = self.width or options.max_width
-        tabs = self.tabs
         tab_values = self.tabs.values()
-        if self.tab_padding is None:
-            total_len = sum(cell_len(header.label) for header in tab_values)
-            free_space = width - total_len
-            label_pad = (free_space // len(tabs) + 1) // 2
-        else:
-            label_pad = self.tab_padding
-        pad = Text(" " * label_pad, end="")
-        char_index = label_pad
+
+        space = SimpleNamespace(min_size=1, size=self.tab_padding or None, fraction=1)
+        edges = []
+        for tab in tab_values:
+            tab = SimpleNamespace(size=cell_len(tab.label), min_size=1, fraction=None)
+            edges.extend([space, tab, space])
+
+        spacing = layout_resolve(width, edges=edges)
+
         active_tab_style = console.get_style(self.active_tab_style)
         inactive_tab_style = console.get_style(self.inactive_tab_style)
+
+        label_cell_cursor = 0
         for tab_index, tab in enumerate(tab_values):
-            # Cache and move to next label
-            len_label = cell_len(tab.label)
-            self._label_range_cache[tab.name] = (char_index, char_index + len_label)
-            self._selection_range_cache[tab.name] = (
-                char_index - label_pad,
-                char_index + len_label + label_pad,
-            )
+            tab_edge_index = tab_index * 3 + 1
 
-            char_index += len_label + label_pad * 2
+            len_label_text = spacing[tab_edge_index]
+            lpad = spacing[tab_edge_index - 1]
+            rpad = spacing[tab_edge_index + 1]
 
+            label_left_padding = Text(" " * lpad, end="")
+            label_right_padding = Text(" " * rpad, end="")
+
+            padded_label = f"{label_left_padding}{tab.label}{label_right_padding}"
             if tab.name == self.active_tab_name:
-                tab_content = Text(
-                    f"{pad}{tab.label}{pad}",
-                    end="",
-                    style=active_tab_style,
-                )
-                yield tab_content
+                yield Text(padded_label, end="", style=active_tab_style)
             else:
                 tab_content = Text(
-                    f"{pad}{tab.label}{pad}",
+                    padded_label,
                     end="",
                     style=inactive_tab_style
                     + Style.from_meta({"@click": f"range_clicked('{tab.name}')"}),
@@ -148,8 +149,22 @@ class TabsRenderable:
                 dimmed_tab_content = Opacity(
                     tab_content, opacity=self.inactive_text_opacity
                 )
-                segments = list(console.render(dimmed_tab_content))
+                segments = console.render(dimmed_tab_content)
                 yield from segments
+
+            # Cache the position of the label text
+            label_cell_cursor += lpad
+            self._label_range_cache[tab.name] = (
+                label_cell_cursor,
+                label_cell_cursor + len_label_text,
+            )
+            label_cell_cursor += len_label_text + rpad
+
+            # Cache the position of the whole tab - the range that can be clicked
+            self._selection_range_cache[tab.name] = (
+                label_cell_cursor - lpad,
+                label_cell_cursor + len_label_text + rpad,
+            )
 
 
 class Tabs(Widget):
