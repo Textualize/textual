@@ -111,7 +111,7 @@ class BoundAnimator:
             self._obj,
             attribute=attribute,
             value=value,
-            final_value=final_values,
+            final_value=final_value,
             duration=duration,
             speed=speed,
             easing=easing_function,
