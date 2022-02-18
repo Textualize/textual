@@ -28,6 +28,8 @@ def test_single():
 def test_two():
     # Two edges fixed size
     assert layout_resolve(100, [Edge(10), Edge(20)]) == [10, 20]
+    # Two edges, fixed size of one exceeds total
+    assert layout_resolve(100, [Edge(120), Edge(None, 1)]) == [120, 1]
     # Two edges, fraction 1 each
     assert layout_resolve(100, [Edge(None, 1), Edge(None, 1)]) == [50, 50]
     # Two edges, one with fraction 2, one with fraction 1
@@ -46,6 +48,7 @@ def test_two():
 @pytest.mark.parametrize(
     "size, edges, result",
     [
+        (10, [Edge(8), Edge(None, 0, 2), Edge(4)], [8, 2, 4]),
         (10, [Edge(None, 1), Edge(None, 1), Edge(None, 1)], [3, 3, 4]),
         (10, [Edge(5), Edge(None, 1), Edge(None, 1)], [5, 2, 3]),
         (10, [Edge(None, 2), Edge(None, 1), Edge(None, 1)], [5, 2, 3]),
