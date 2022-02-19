@@ -69,7 +69,7 @@ def layout_resolve(total: int, edges: Sequence[Edge]) -> list[int]:
             if portion * edge.fraction <= edge.min_size:
                 sizes[index] = edge.min_size
                 remaining -= edge.min_size
-                total_flexible -= edge.fraction
+                total_flexible -= edge.fraction or 1
                 del flexible_edges[flexible_index]
                 # New fixed size will invalidate calculations, so we need to repeat the process
                 break
