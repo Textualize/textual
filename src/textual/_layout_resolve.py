@@ -59,10 +59,9 @@ def layout_resolve(total: int, edges: Sequence[Edge]) -> list[int]:
         ]
 
     total_flexible = sum((edge.fraction or 1) for _, edge in flexible_edges)
-    _Fraction = Fraction
     while flexible_edges:
         # Calculate number of characters in a ratio portion
-        portion = _Fraction(remaining, total_flexible)
+        portion = Fraction(remaining, total_flexible)
 
         # If any edges will be less than their minimum, replace size with the minimum
         for flexible_index, (index, edge) in enumerate(flexible_edges):
@@ -77,7 +76,7 @@ def layout_resolve(total: int, edges: Sequence[Edge]) -> list[int]:
             # Distribute flexible space and compensate for rounding error
             # Since edge sizes can only be integers we need to add the remainder
             # to the following line
-            remainder = _Fraction(0)
+            remainder = Fraction(0)
             for index, edge in flexible_edges:
                 sizes[index], remainder = divmod(portion * edge.fraction + remainder, 1)
             break
