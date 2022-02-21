@@ -98,7 +98,7 @@ class BoundAnimator:
         easing: EasingFunction | str = DEFAULT_EASING,
     ) -> None:
         easing_function = EASING[easing] if isinstance(easing, str) else easing
-        self._animator.animate(
+        return self._animator.animate(
             self._obj,
             attribute=attribute,
             value=value,
@@ -121,6 +121,10 @@ class Animator:
             callback=self,
             pause=True,
         )
+
+    def get_time(self) -> float:
+        """Get the current wall clock time."""
+        return time()
 
     async def start(self) -> None:
         """Start the animator task."""
@@ -163,7 +167,7 @@ class Animator:
 
         if final_value is ...:
             final_value = value
-        start_time = time()
+        start_time = self.get_time()
 
         animation_key = (id(obj), attribute)
         if animation_key in self._animations:
@@ -207,15 +211,18 @@ class Animator:
         self._animations[animation_key] = animation
         self._timer.resume()
 
-    async def __call__(self) -> None:
+    def __call__(self) -> None:
         if not self._animations:
             self._timer.pause()
         else:
-            animation_time = time()
+            animation_time = self.get_time()
             animation_keys = list(self._animations.keys())
             for animation_key in animation_keys:
                 animation = self._animations[animation_key]
                 if animation(animation_time):
                     del self._animations[animation_key]
-            # TODO: We should be able to do animation without refreshing everything
-            self.target.view.refresh(True, True)
+            self.on_animation_frame()
+
+    def on_animation_frame(self) -> None:
+        # TODO: We should be able to do animation without refreshing everything
+        self.target.view.refresh(True, True)

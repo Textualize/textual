@@ -7,7 +7,8 @@ from unittest.mock import Mock
 import pytest
 
 
-from textual._animator import SimpleAnimation
+from textual._animator import Animator, SimpleAnimation
+from textual._easing import EASING, DEFAULT_EASING
 
 
 class Animatable:
@@ -24,7 +25,7 @@ class Animatable:
 class AnimateTest:
     """An object with animatable properties."""
 
-    foo: float | None = 0  # Plain float that may be set to None on final_value
+    foo: float | None = 0.0  # Plain float that may be set to None on final_value
     bar: Animatable = Animatable(0)  # A mock object supporting the animatable protocol
 
 
@@ -32,14 +33,14 @@ def test_simple_animation():
     """Test an animation from one float to another."""
 
     # Thing that may be animated
-    animatable = AnimateTest()
+    animate_test = AnimateTest()
 
     # Fake wall-clock time
     time = 100.0
 
     # Object that does the animation
     animation = SimpleAnimation(
-        animatable,
+        animate_test,
         "foo",
         time,
         3.0,
@@ -49,25 +50,25 @@ def test_simple_animation():
         easing=lambda x: x,
     )
 
-    assert animatable.foo == 0.0
+    assert animate_test.foo == 0.0
 
     assert animation(time) is False
-    assert animatable.foo == 20.0
+    assert animate_test.foo == 20.0
 
     assert animation(time + 1.0) is False
-    assert animatable.foo == 30.0
+    assert animate_test.foo == 30.0
 
     assert animation(time + 2.0) is False
-    assert animatable.foo == 40.0
+    assert animate_test.foo == 40.0
 
     assert animation(time + 2.9) is False  # Not quite final value
-    assert pytest.approx(animatable.foo, 49.0)
+    assert pytest.approx(animate_test.foo, 49.0)
 
     assert animation(time + 3.0) is True  # True to indicate animation is complete
-    assert animatable.foo is None  # This is final_value
+    assert animate_test.foo is None  # This is final_value
 
     assert animation(time + 3.0) is True
-    assert animatable.foo is None
+    assert animate_test.foo is None
 
 
 def test_simple_animation_duration_zero():
@@ -102,14 +103,14 @@ def test_simple_animation_reverse():
     """Test an animation from one float to another, where the end value is less than the start."""
 
     # Thing that may be animated
-    animatable = AnimateTest()
+    animate_Test = AnimateTest()
 
     # Fake wall-clock time
     time = 100.0
 
     # Object that does the animation
     animation = SimpleAnimation(
-        animatable,
+        animate_Test,
         "foo",
         time,
         3.0,
@@ -120,29 +121,29 @@ def test_simple_animation_reverse():
     )
 
     assert animation(time) is False
-    assert animatable.foo == 50.0
+    assert animate_Test.foo == 50.0
 
     assert animation(time + 1.0) is False
-    assert animatable.foo == 40.0
+    assert animate_Test.foo == 40.0
 
     assert animation(time + 2.0) is False
-    assert animatable.foo == 30.0
+    assert animate_Test.foo == 30.0
 
     assert animation(time + 3.0) is True
-    assert animatable.foo == 20.0
+    assert animate_Test.foo == 20.0
 
 
 def test_animatable():
     """Test SimpleAnimation works with the Animatable protocol"""
 
-    animatable = AnimateTest()
+    animate_test = AnimateTest()
 
     # Fake wall-clock time
     time = 100.0
 
     # Object that does the animation
     animation = SimpleAnimation(
-        animatable,
+        animate_test,
         "bar",
         time,
         3.0,
@@ -153,16 +154,99 @@ def test_animatable():
     )
 
     assert animation(time) is False
-    assert animatable.bar.value == 20.0
+    assert animate_test.bar.value == 20.0
 
     assert animation(time + 1.0) is False
-    assert animatable.bar.value == 30.0
+    assert animate_test.bar.value == 30.0
 
     assert animation(time + 2.0) is False
-    assert animatable.bar.value == 40.0
+    assert animate_test.bar.value == 40.0
 
     assert animation(time + 2.9) is False
-    assert pytest.approx(animatable.bar.value, 49.0)
+    assert pytest.approx(animate_test.bar.value, 49.0)
 
     assert animation(time + 3.0) is True  # True to indicate animation is complete
-    assert animatable.bar.value == 50.0
+    assert animate_test.bar.value == 50.0
+
+
+class TestAnimator(Animator):
+    """A mock animator."""
+
+    def __init__(self, *args) -> None:
+        super().__init__(*args)
+        self._time = 0.0
+
+    def get_time(self):
+        return self._time
+
+    def on_animation_frame(self):
+        self._on_animation_frame_called = True
+
+
+def test_animator():
+
+    target = Mock()
+    animator = TestAnimator(target)
+    animate_test = AnimateTest()
+
+    # Animate attribute "foo" on animate_test to 100.0 in 10 seconds
+    animator.animate(animate_test, "foo", 100.0, duration=10.0)
+
+    expected = SimpleAnimation(
+        animate_test,
+        "foo",
+        0.0,
+        duration=10.0,
+        start_value=0.0,
+        end_value=100.0,
+        final_value=100.0,
+        easing=EASING[DEFAULT_EASING],
+    )
+    assert animator._animations[(id(animate_test), "foo")] == expected
+
+    animator()
+    assert animate_test.foo == 0
+
+    animator._time = 5
+    animator()
+    assert animate_test.foo == 50
+
+    # New animation in the middle of an existing one
+    animator.animate(animate_test, "foo", 200, duration=1)
+    assert animate_test.foo == 50
+
+    animator._time = 6
+    animator()
+    assert animate_test.foo == 200
+
+
+def test_bound_animator():
+
+    target = Mock()
+    animator = TestAnimator(target)
+    animate_test = AnimateTest()
+
+    # Bind an animator so it animates attributes on the given object
+    bound_animator = animator.bind(animate_test)
+
+    # Animate attribute "foo" on animate_test to 100.0 in 10 seconds
+    bound_animator("foo", 100.0, duration=10)
+
+    expected = SimpleAnimation(
+        animate_test,
+        "foo",
+        0,
+        duration=10,
+        start_value=0,
+        end_value=100,
+        final_value=100,
+        easing=EASING[DEFAULT_EASING],
+    )
+    assert animator._animations[(id(animate_test), "foo")] == expected
+
+
+def test_animator_get_time():
+    target = Mock()
+    animator = Animator(target)
+    assert isinstance(animator.get_time(), float)
+    assert animator.get_time() <= animator.get_time()
