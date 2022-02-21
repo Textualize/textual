@@ -17,7 +17,7 @@ class Edge(Protocol):
     size: int | None
     # Portion of flexible space to use if size is None
     fraction: int
-    # Minimim size for edge, in cells
+    # Minimum size for edge, in cells
     min_size: int
 
 
