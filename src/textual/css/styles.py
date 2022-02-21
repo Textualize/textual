@@ -201,7 +201,7 @@ class StylesBase(ABC):
             value (object | None): New rule value.
 
         Returns:
-            bool: ``True`` of the rule changed, otherwise false.
+            bool: ``True`` if the rule changed, otherwise ``False``.
         """
 
     @abstractmethod
