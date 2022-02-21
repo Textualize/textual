@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import string
 from dataclasses import dataclass
-from types import SimpleNamespace
-from typing import Iterable, cast
+from typing import Iterable
 
 from rich.cells import cell_len
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -94,15 +93,10 @@ class TabsRenderable:
         width = self.width or options.max_width
         tab_values = self.tabs.values()
 
-        space = cast(
-            Edge, SimpleNamespace(min_size=1, size=self.tab_padding or None, fraction=1)
-        )
+        space = Edge(size=self.tab_padding or None, min_size=1, fraction=1)
         edges = []
         for tab in tab_values:
-            tab = cast(
-                Edge,
-                SimpleNamespace(size=cell_len(tab.label), min_size=1, fraction=None),
-            )
+            tab = Edge(size=cell_len(tab.label), min_size=1, fraction=None)
             edges.extend([space, tab, space])
 
         spacing = layout_resolve(width, edges=edges)
