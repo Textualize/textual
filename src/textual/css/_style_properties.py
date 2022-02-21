@@ -105,8 +105,8 @@ class ScalarProperty:
             )
         if new_value is not None and new_value.is_percent:
             new_value = Scalar(float(new_value.value), self.percent_unit, Unit.WIDTH)
-        obj.set_rule(self.name, new_value)
-        obj.refresh()
+        if obj.set_rule(self.name, new_value):
+            obj.refresh()
 
 
 class BoxProperty:
@@ -151,7 +151,8 @@ class BoxProperty:
             StyleSyntaxError: If the string supplied for the color has invalid syntax.
         """
         if border is None:
-            obj.clear_rule(self.name)
+            if obj.clear_rule(self.name):
+                obj.refresh()
         else:
             _type, color = border
             new_value = border
@@ -159,8 +160,8 @@ class BoxProperty:
                 new_value = (_type, Color.parse(color))
             elif isinstance(color, Color):
                 new_value = (_type, color)
-            obj.set_rule(self.name, new_value)
-        obj.refresh()
+            if obj.set_rule(self.name, new_value):
+                obj.refresh()
 
 
 @rich.repr.auto
@@ -378,11 +379,13 @@ class SpacingProperty:
             ValueError: When the value is malformed, e.g. a ``tuple`` with a length that is
                 not 1, 2, or 4.
         """
-        obj.refresh(layout=True)
+
         if spacing is None:
-            obj.clear_rule(self.name)
+            if obj.clear_rule(self.name):
+                obj.refresh(layout=True)
         else:
-            obj.set_rule(self.name, Spacing.unpack(spacing))
+            if obj.set_rule(self.name, Spacing.unpack(spacing)):
+                obj.refresh(layout=True)
 
 
 class DocksProperty:
@@ -411,12 +414,12 @@ class DocksProperty:
             obj (Styles): The ``Styles`` object.
             docks (Iterable[DockGroup]): Iterable of DockGroups
         """
-        obj.refresh(layout=True)
         if docks is None:
-            obj.clear_rule("docks")
-
+            if obj.clear_rule("docks"):
+                obj.refresh(layout=True)
         else:
-            obj.set_rule("docks", tuple(docks))
+            if obj.set_rule("docks", tuple(docks)):
+                obj.refresh(layout=True)
 
 
 class DockProperty:
@@ -445,8 +448,8 @@ class DockProperty:
             obj (Styles): The ``Styles`` object
             spacing (str | None): The spacing to use.
         """
-        obj.refresh(layout=True)
-        obj.set_rule("dock", spacing)
+        if obj.set_rule("dock", spacing):
+            obj.refresh(layout=True)
 
 
 class LayoutProperty:
@@ -477,14 +480,15 @@ class LayoutProperty:
 
         from ..layouts.factory import get_layout, Layout  # Prevents circular import
 
-        obj.refresh(layout=True)
-
         if layout is None:
-            obj.clear_rule("layout")
+            if obj.clear_rule("layout"):
+                obj.refresh(layout=True)
         elif isinstance(layout, Layout):
-            obj.set_rule("layout", layout)
+            if obj.set_rule("layout", layout):
+                obj.refresh(layout=True)
         else:
-            obj.set_rule("layout", get_layout(layout))
+            if obj.set_rule("layout", get_layout(layout)):
+                obj.refresh(layout=True)
 
 
 class OffsetProperty:
@@ -525,11 +529,13 @@ class OffsetProperty:
             ScalarParseError: If any of the string values supplied in the 2-tuple cannot
                 be parsed into a Scalar. For example, if you specify an non-existent unit.
         """
-        obj.refresh(layout=True)
+
         if offset is None:
-            obj.clear_rule(self.name)
+            if obj.clear_rule(self.name):
+                obj.refresh(layout=True)
         elif isinstance(offset, ScalarOffset):
-            obj.set_rule(self.name, offset)
+            if obj.set_rule(self.name, offset):
+                obj.refresh(layout=True)
         else:
             x, y = offset
             scalar_x = (
@@ -543,7 +549,8 @@ class OffsetProperty:
                 else Scalar(float(y), Unit.CELLS, Unit.HEIGHT)
             )
             _offset = ScalarOffset(scalar_x, scalar_y)
-            obj.set_rule(self.name, _offset)
+            if obj.set_rule(self.name, _offset):
+                obj.refresh(layout=True)
 
 
 class StringEnumProperty:
@@ -580,15 +587,17 @@ class StringEnumProperty:
         Raises:
             StyleValueError: If the value is not in the set of valid values.
         """
-        obj.refresh()
+
         if value is None:
-            obj.clear_rule(self.name)
+            if obj.clear_rule(self.name):
+                obj.refresh()
         else:
             if value not in self._valid_values:
                 raise StyleValueError(
                     f"{self.name} must be one of {friendly_list(self._valid_values)}"
                 )
-            obj.set_rule(self.name, value)
+            if obj.set_rule(self.name, value):
+                obj.refresh()
 
 
 class NameProperty:
@@ -619,13 +628,15 @@ class NameProperty:
         Raises:
             StyleTypeError: If the value is not a ``str``.
         """
-        obj.refresh(layout=True)
+
         if name is None:
-            obj.clear_rule(self.name)
+            if obj.clear_rule(self.name):
+                obj.refresh(layout=True)
         else:
             if not isinstance(name, str):
                 raise StyleTypeError(f"{self.name} must be a str")
-            obj.set_rule(self.name, name)
+            if obj.set_rule(self.name, name):
+                obj.refresh(layout=True)
 
 
 class NameListProperty:
@@ -640,15 +651,18 @@ class NameListProperty:
     def __set__(
         self, obj: Styles, names: str | tuple[str] | None = None
     ) -> str | tuple[str] | None:
-        obj.refresh(layout=True)
+
         if names is None:
-            obj.clear_rule(self.name)
+            if obj.clear_rule(self.name):
+                obj.refresh(layout=True)
         elif isinstance(names, str):
-            obj.set_rule(
+            if obj.set_rule(
                 self.name, tuple(name.strip().lower() for name in names.split(" "))
-            )
+            ):
+                obj.refresh(layout=True)
         elif isinstance(names, tuple):
-            obj.set_rule(self.name, names)
+            if obj.set_rule(self.name, names):
+                obj.refresh(layout=True)
 
 
 class ColorProperty:
@@ -681,13 +695,16 @@ class ColorProperty:
         Raises:
             ColorParseError: When the color string is invalid.
         """
-        obj.refresh()
+
         if color is None:
-            obj.clear_rule(self.name)
+            if obj.clear_rule(self.name):
+                obj.refresh()
         elif isinstance(color, Color):
-            obj.set_rule(self.name, color)
+            if obj.set_rule(self.name, color):
+                obj.refresh()
         elif isinstance(color, str):
-            obj.set_rule(self.name, Color.parse(color))
+            if obj.set_rule(self.name, Color.parse(color)):
+                obj.refresh()
 
 
 class StyleFlagsProperty:
@@ -722,7 +739,7 @@ class StyleFlagsProperty:
         """
         return obj.get_rule(self.name, Style.null())
 
-    def __set__(self, obj: Styles, style_flags: str | None):
+    def __set__(self, obj: Styles, style_flags: Style | str | None):
         """Set the style using a style flag string
 
         Args:
@@ -733,9 +750,12 @@ class StyleFlagsProperty:
         Raises:
             StyleValueError: If the value is an invalid style flag
         """
-        obj.refresh()
         if style_flags is None:
-            obj.clear_rule(self.name)
+            if obj.clear_rule(self.name):
+                obj.refresh()
+        elif isinstance(style_flags, Style):
+            if obj.set_rule(self.name, style_flags):
+                obj.refresh()
         else:
             words = [word.strip() for word in style_flags.split(" ")]
             valid_word = self._VALID_PROPERTIES.__contains__
@@ -746,7 +766,8 @@ class StyleFlagsProperty:
                         f"valid values are {friendly_list(self._VALID_PROPERTIES)}"
                     )
             style = Style.parse(style_flags)
-            obj.set_rule(self.name, style)
+            if obj.set_rule(self.name, style):
+                obj.refresh()
 
 
 class TransitionsProperty:
@@ -806,10 +827,10 @@ class FractionalProperty:
             value (float|str|None): The value to set as a float between 0 and 1, or
                 as a percentage string such as '10%'.
         """
-        obj.refresh()
         name = self.name
         if value is None:
-            obj.clear_rule(name)
+            if obj.clear_rule(name):
+                obj.refresh()
             return
 
         if isinstance(value, float):
@@ -820,4 +841,5 @@ class FractionalProperty:
             raise StyleTypeError(
                 f"{self.name} must be a str (e.g. '10%') or a float (e.g. 0.1)"
             )
-        obj.set_rule(name, clamp(float_value, 0, 1))
+        if obj.set_rule(name, clamp(float_value, 0, 1)):
+            obj.refresh()

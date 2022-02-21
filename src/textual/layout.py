@@ -12,6 +12,7 @@ from rich.control import Control
 from rich.segment import Segment, SegmentLines
 from rich.style import Style
 
+from . import log
 from ._loop import loop_last
 from ._types import Lines
 from .geometry import Region, Offset, Size
@@ -425,4 +426,5 @@ class Layout(ABC):
         update_region = region.intersection(clip)
         update_lines = self.render(console, crop=update_region).lines
         update = LayoutUpdate(update_lines, update_region)
+        log(update)
         return update

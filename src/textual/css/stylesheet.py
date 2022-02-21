@@ -16,11 +16,12 @@ from rich.syntax import Syntax
 from rich.text import Text
 
 from textual._loop import loop_last
+from .._context import active_app
 from .errors import StylesheetError
 from .match import _check_selectors
 from .model import RuleSet
 from .parse import parse
-from .styles import RulesMap
+from .styles import RULE_NAMES, Styles, RulesMap
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
 from .. import log
@@ -179,47 +180,79 @@ class Stylesheet:
             },
         )
 
-        self.apply_rules(node, node_rules, animate=animate)
+        self.replace_rules(node, node_rules, animate=animate)
 
     @classmethod
-    def apply_rules(cls, node: DOMNode, rules: RulesMap, animate: bool = False) -> None:
-        """Apply style rules to a node, animating as required.
+    def replace_rules(
+        cls, node: DOMNode, rules: RulesMap, animate: bool = False
+    ) -> None:
+        """Replace style rules on a node, animating as required.
 
         Args:
             node (DOMNode): A DOM node.
             rules (RulesMap): Mapping of rules.
             animate (bool, optional): Enable animation. Defaults to False.
         """
+
+        # Alias styles and base styles
         styles = node.styles
+        base_styles = styles.base
+
+        # Styles currently used an new rules
+        modified_rule_keys = {*base_styles.get_rules().keys(), *rules.keys()}
+        # Current render rules (missing rules are filled with default)
+        current_render_rules = styles.get_render_rules()
+
+        # Calculate replacement rules (defaults + new rules)
+        new_styles = node._default_styles.copy()
+        new_styles.merge_rules(rules)
+
+        if new_styles == base_styles:
+            # Nothing to change, return early
+            return
+
+        # New render rules
+        new_render_rules = new_styles.get_render_rules()
+
+        # Some aliases
+        is_animatable = styles.is_animatable
+        get_current_render_rule = current_render_rules.get
+        get_new_render_rule = new_render_rules.get
+
         if animate:
+            for key in modified_rule_keys:
+                # Get old and new render rules
+                old_render_value = get_current_render_rule(key)
+                new_render_value = get_new_render_rule(key)
+                # Get new rule value (may be None)
+                new_value = rules.get(key)
 
-            is_animatable = styles.is_animatable
-            current_rules = styles.get_rules()
-            set_rule = styles.base.set_rule
-
-            for key, value in rules.items():
-                current = current_rules.get(key)
-                if current == value:
-                    continue
-                if is_animatable(key):
-                    transition = styles.get_transition(key)
-                    if transition is None:
-                        styles.base.set_rule(key, value)
-                    else:
+                # Check if this can / should be animated
+                if is_animatable(key) and new_render_value != old_render_value:
+                    transition = new_styles.get_transition(key)
+                    if transition is not None:
                         duration, easing, delay = transition
                         node.app.animator.animate(
                             node.styles.base,
                             key,
-                            value,
+                            new_render_value,
+                            final_value=new_value,
                             duration=duration,
                             easing=easing,
                         )
-                else:
-                    set_rule(key, value)
+                        continue
+                # Default is to set value (if new_value is None, rule will be removed)
+                setattr(base_styles, key, new_value)
         else:
-            styles.base.merge_rules(rules)
+            # Not animated, so we apply the rules directly
+            for key in modified_rule_keys:
+                setattr(base_styles, key, rules.get(key))
 
-        node.on_style_change()
+        # The styles object may have requested a refresh / layout
+        # It's the style properties that set these flags
+        repaint, layout = styles.check_refresh()
+        if repaint:
+            node.refresh(layout=layout)
 
     def update(self, root: DOMNode, animate: bool = False) -> None:
         """Update a node and its children."""

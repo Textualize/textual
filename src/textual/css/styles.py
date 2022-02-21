@@ -4,6 +4,7 @@ import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import lru_cache
+from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 
 import rich.repr
@@ -94,6 +95,7 @@ class RulesMap(TypedDict, total=False):
 
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
+_rule_getter = attrgetter(*RULE_NAMES)
 
 
 class DockGroup(NamedTuple):
@@ -154,6 +156,12 @@ class StylesBase(ABC):
     layers = NameListProperty()
     transitions = TransitionsProperty()
 
+    def __eq__(self, styles: object) -> bool:
+        """Check that Styles containts the same rules."""
+        if not isinstance(styles, StylesBase):
+            return NotImplemented
+        return self.get_rules() == styles.get_rules()
+
     @abstractmethod
     def has_rule(self, rule: str) -> bool:
         """Check if a rule is set on this Styles object.
@@ -166,11 +174,14 @@ class StylesBase(ABC):
         """
 
     @abstractmethod
-    def clear_rule(self, rule: str) -> None:
+    def clear_rule(self, rule: str) -> bool:
         """Removes the rule from the Styles object, as if it had never been set.
 
         Args:
             rule (str): Rule name.
+
+        Returns:
+            bool: ``True`` if a rule was cleared, or ``False`` if the rule is already not set.
         """
 
     @abstractmethod
@@ -182,12 +193,15 @@ class StylesBase(ABC):
         """
 
     @abstractmethod
-    def set_rule(self, rule: str, value: object | None) -> None:
-        """Set an individual rule.
+    def set_rule(self, rule: str, value: object | None) -> bool:
+        """Set a rule.
 
         Args:
-            rule (str): Name of rule.
-            value (object): Value of rule.
+            rule (str): Rule name.
+            value (object | None): New rule value.
+
+        Returns:
+            bool: ``True`` if the rule changed, otherwise ``False``.
         """
 
     @abstractmethod
@@ -203,8 +217,8 @@ class StylesBase(ABC):
         """
 
     @abstractmethod
-    def refresh(self, layout: bool = False) -> None:
-        """Mark the styles are requiring a refresh.
+    def refresh(self, *, layout: bool = False) -> None:
+        """Mark the styles as requiring a refresh.
 
         Args:
             layout (bool, optional): Also require a layout. Defaults to False.
@@ -237,6 +251,12 @@ class StylesBase(ABC):
         Args:
             rules (RulesMap): A mapping of rules.
         """
+
+    def get_render_rules(self) -> RulesMap:
+        """Get rules map with defaults."""
+        # Get a dictionary of rules, going through the properties
+        rules = dict(zip(RULE_NAMES, _rule_getter(self)))
+        return cast(RulesMap, rules)
 
     @classmethod
     def is_animatable(cls, rule: str) -> bool:
@@ -289,27 +309,50 @@ class Styles(StylesBase):
 
     important: set[str] = field(default_factory=set)
 
+    def copy(self) -> Styles:
+        """Get a copy of this Styles object."""
+        return Styles(node=self.node, _rules=self.get_rules(), important=self.important)
+
     def has_rule(self, rule: str) -> bool:
         return rule in self._rules
 
-    def clear_rule(self, rule: str) -> None:
-        self._rules.pop(rule, None)
+    def clear_rule(self, rule: str) -> bool:
+        """Removes the rule from the Styles object, as if it had never been set.
+
+        Args:
+            rule (str): Rule name.
+
+        Returns:
+            bool: ``True`` if a rule was cleared, or ``False`` if it was already not set.
+        """
+        return self._rules.pop(rule, None) is not None
 
     def get_rules(self) -> RulesMap:
         return self._rules.copy()
 
-    def set_rule(self, rule: str, value: object | None) -> None:
+    def set_rule(self, rule: str, value: object | None) -> bool:
+        """Set a rule.
+
+        Args:
+            rule (str): Rule name.
+            value (object | None): New rule value.
+
+        Returns:
+            bool: ``True`` if the rule changed, otherwise ``False``.
+        """
         if value is None:
-            self._rules.pop(rule, None)
+            return self._rules.pop(rule, None) is not None
         else:
+            current = self._rules.get(rule)
             self._rules[rule] = value
+            return current != value
 
     def get_rule(self, rule: str, default: object = None) -> object:
         return self._rules.get(rule, default)
 
-    def refresh(self, layout: bool = False) -> None:
+    def refresh(self, *, layout: bool = False) -> None:
         self._repaint_required = True
-        self._layout_required = layout
+        self._layout_required = self._layout_required or layout
 
     def check_refresh(self) -> tuple[bool, bool]:
         """Check if the Styles must be refreshed.
@@ -322,9 +365,7 @@ class Styles(StylesBase):
         return result
 
     def reset(self) -> None:
-        """
-        Reset internal style rules to ``None``, reverting to default styles.
-        """
+        """Reset the rules to initial state."""
         self._rules.clear()
 
     def merge(self, other: Styles) -> None:
@@ -561,11 +602,7 @@ class RenderStyles(StylesBase):
             if self.has_rule(rule_name):
                 yield rule_name, getattr(self, rule_name)
 
-    def reset(self) -> None:
-        """Reset the inline styles."""
-        self._inline_styles.reset()
-
-    def refresh(self, layout: bool = False) -> None:
+    def refresh(self, *, layout: bool = False) -> None:
         self._inline_styles.refresh(layout=layout)
 
     def merge(self, other: Styles) -> None:
@@ -590,21 +627,25 @@ class RenderStyles(StylesBase):
         result = (base_repaint or inline_repaint, base_layout or inline_layout)
         return result
 
+    def reset(self) -> None:
+        """Reset the rules to initial state."""
+        self._inline_styles.reset()
+
     def has_rule(self, rule: str) -> bool:
         """Check if a rule has been set."""
         return self._inline_styles.has_rule(rule) or self._base_styles.has_rule(rule)
 
-    def set_rule(self, rule: str, value: object | None) -> None:
-        self._inline_styles.set_rule(rule, value)
+    def set_rule(self, rule: str, value: object | None) -> bool:
+        return self._inline_styles.set_rule(rule, value)
 
     def get_rule(self, rule: str, default: object = None) -> object:
         if self._inline_styles.has_rule(rule):
             return self._inline_styles.get_rule(rule, default)
         return self._base_styles.get_rule(rule, default)
 
-    def clear_rule(self, rule_name: str) -> None:
+    def clear_rule(self, rule_name: str) -> bool:
         """Clear a rule (from inline)."""
-        self._inline_styles.clear_rule(rule_name)
+        return self._inline_styles.clear_rule(rule_name)
 
     def get_rules(self) -> RulesMap:
         """Get rules as a dictionary"""

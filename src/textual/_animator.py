@@ -45,6 +45,7 @@ class SimpleAnimation(Animation):
     duration: float
     start_value: float | Animatable
     end_value: float | Animatable
+    final_value: float | Animatable
     easing: EasingFunction
 
     def __call__(self, time: float) -> bool:
@@ -62,7 +63,9 @@ class SimpleAnimation(Animation):
             factor = min(1.0, (time - self.start_time) / self.duration)
             eased_factor = self.easing(factor)
 
-            if isinstance(self.start_value, Animatable):
+            if factor == 1.0:
+                value = self.end_value
+            elif isinstance(self.start_value, Animatable):
                 assert isinstance(
                     self.end_value, Animatable
                 ), "end_value must be animatable"
@@ -98,6 +101,7 @@ class BoundAnimator:
         attribute: str,
         value: float,
         *,
+        final_value: Any = ...,
         duration: float | None = None,
         speed: float | None = None,
         easing: EasingFunction | str = DEFAULT_EASING,
@@ -107,6 +111,7 @@ class BoundAnimator:
             self._obj,
             attribute=attribute,
             value=value,
+            final_value=final_value,
             duration=duration,
             speed=speed,
             easing=easing_function,
@@ -148,11 +153,25 @@ class Animator:
         attribute: str,
         value: Any,
         *,
+        final_value: Any = ...,
         duration: float | None = None,
         speed: float | None = None,
         easing: EasingFunction | str = DEFAULT_EASING,
     ) -> None:
+        """Animate an attribute to a new value.
 
+        Args:
+            obj (object): The object containing the attribute.
+            attribute (str): The name of the attribute.
+            value (Any): The destination value of the attribute.
+            final_value (Any, optional): The final value, or ellipsis if it is the same as ``value``. Defaults to ....
+            duration (float | None, optional): The duration of the animation, or ``None`` to use speed. Defaults to ``None``.
+            speed (float | None, optional): The speed of the animation. Defaults to None.
+            easing (EasingFunction | str, optional): An easing function. Defaults to DEFAULT_EASING.
+        """
+
+        if final_value is ...:
+            final_value = value
         start_time = time()
 
         animation_key = (id(obj), attribute)
@@ -190,6 +209,7 @@ class Animator:
                 duration=animation_duration,
                 start_value=start_value,
                 end_value=value,
+                final_value=final_value,
                 easing=easing_function,
             )
         assert animation is not None, "animation expected to be non-None"
@@ -206,4 +226,5 @@ class Animator:
                 animation = self._animations[animation_key]
                 if animation(animation_time):
                     del self._animations[animation_key]
+            # TODO: We should be able to do animation without refreshing everything
             self.target.view.refresh(True, True)
