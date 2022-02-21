@@ -338,7 +338,7 @@ class Styles(StylesBase):
             value (object | None): New rule value.
 
         Returns:
-            bool: ``True`` of the rule changed, otherwise ``False``.
+            bool: ``True`` if the rule changed, otherwise ``False``.
         """
         if value is None:
             return self._rules.pop(rule, None) is not None
