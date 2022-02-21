@@ -323,7 +323,7 @@ class Styles(StylesBase):
             rule (str): Rule name.
 
         Returns:
-            bool: ``True`` if a rules was clearled, or ``False`` if it was previously cleared.
+            bool: ``True`` if a rule was cleared, or ``False`` if it was already not set.
         """
         return self._rules.pop(rule, None) is not None
 
