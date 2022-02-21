@@ -175,6 +175,7 @@ class TestAnimator(Animator):
     def __init__(self, *args) -> None:
         super().__init__(*args)
         self._time = 0.0
+        self._on_animation_frame_called = False
 
     def get_time(self):
         return self._time
@@ -203,9 +204,11 @@ def test_animator():
         easing=EASING[DEFAULT_EASING],
     )
     assert animator._animations[(id(animate_test), "foo")] == expected
+    assert not animator._on_animation_frame_called
 
     animator()
     assert animate_test.foo == 0
+    assert animator._on_animation_frame_called
 
     animator._time = 5
     animator()
