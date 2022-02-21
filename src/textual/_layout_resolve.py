@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 import sys
 from fractions import Fraction
 from typing import cast, Sequence
+
 
 if sys.version_info >= (3, 8):
     from typing import Protocol
@@ -10,7 +12,7 @@ else:
     from typing_extensions import Protocol  # pragma: no cover
 
 
-class Edge(Protocol):
+class EdgeProtocol(Protocol):
     """Any object that defines an edge (such as Layout)."""
 
     # Size of edge in cells, or None for no fixed size
@@ -21,7 +23,14 @@ class Edge(Protocol):
     min_size: int
 
 
-def layout_resolve(total: int, edges: Sequence[Edge]) -> list[int]:
+@dataclass
+class Edge(NamedTuple):
+    size: int | None = None
+    fraction: int | None = 1
+    min_size: int = 1
+   
+
+def layout_resolve(total: int, edges: Sequence[EdgeProtocol]) -> List[int]:
     """Divide total space to satisfy size, fraction, and min_size, constraints.
 
     The returned list of integers should add up to total in most cases, unless it is

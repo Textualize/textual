@@ -1,15 +1,6 @@
 site_name: Textual
 site_url: https://example.com/
 
-
-extra_css:
-  - stylesheets/custom.css
-
-theme:
-  name: "material"
-
-
-
 markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
@@ -17,11 +8,24 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.snippets
 
+theme:
+  name: material
+  palette:
+  - media: "(prefers-color-scheme: light)"
+    scheme: default
+    accent: purple
+    toggle:
+      icon: material/weather-sunny
+      name: Switch to dark mode
+  - media: "(prefers-color-scheme: dark)"
+    scheme: slate
+    primary: black
+    toggle:
+      icon: material/weather-night
+      name: Switch to light mode
+
 plugins:
-- search
-
-
-
+- search:
 - mkdocstrings:
     default_handler: python
     handlers:
@@ -36,3 +40,7 @@ plugins:
 
     watch:
       - src/textual
+
+
+extra_css:
+  - stylesheets/custom.css

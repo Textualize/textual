@@ -3,16 +3,15 @@ from __future__ import annotations
 from datetime import datetime
 from logging import getLogger
 
-from rich.console import Console, ConsoleOptions, RenderableType
+from rich.console import RenderableType
 from rich.panel import Panel
-from rich.repr import rich_repr, Result
+from rich.repr import Result
 from rich.style import StyleType
 from rich.table import Table
-from rich.text import TextType
 
 from .. import events
-from ..widget import Widget
 from ..reactive import watch, Reactive
+from ..widget import Widget
 
 log = getLogger("rich")
 
