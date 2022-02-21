@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from fractions import Fraction
-from typing import cast, List, Optional, Sequence
+from typing import cast, List, Sequence, NamedTuple
 
 if sys.version_info >= (3, 8):
     from typing import Protocol
@@ -10,15 +10,21 @@ else:
     from typing_extensions import Protocol  # pragma: no cover
 
 
-class Edge(Protocol):
+class EdgeProtocol(Protocol):
     """Any object that defines an edge (such as Layout)."""
 
-    size: Optional[int] = None
-    fraction: int = 1
+    size: int | None
+    min_size: int
+    fraction: int | None
+
+
+class Edge(NamedTuple):
+    size: int | None = None
     min_size: int = 1
+    fraction: int | None = 1
 
 
-def layout_resolve(total: int, edges: Sequence[Edge]) -> List[int]:
+def layout_resolve(total: int, edges: Sequence[EdgeProtocol]) -> List[int]:
     """Divide total space to satisfy size, fraction, and min_size, constraints.
 
     The returned list of integers should add up to total in most cases, unless it is
@@ -29,7 +35,7 @@ def layout_resolve(total: int, edges: Sequence[Edge]) -> List[int]:
 
     Args:
         total (int): Total number of characters.
-        edges (List[Edge]): Edges within total space.
+        edges (List[EdgeProtocol]): Edges within total space.
 
     Returns:
         List[int]: Number of characters for each edge.
