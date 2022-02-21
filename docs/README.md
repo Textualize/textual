@@ -1,8 +1,8 @@
 # Documentation Workflow
 
-* Ensure you're inside the virtual environment `poetry shell`
-* Run the live-reload server using `mkdocs serve`
-* Create new pages by adding new Markdown files
+* Ensure you're inside a *Python 3.10+* virtual environment
+* Run the live-reload server using `mkdocs serve` from the project root
+* Create new pages by adding new directories and Markdown files inside `docs/*`
 
 ## Commands
 
