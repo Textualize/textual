@@ -186,7 +186,7 @@ class Stylesheet:
     def replace_rules(
         cls, node: DOMNode, rules: RulesMap, animate: bool = False
     ) -> None:
-        """Replace style rules to a node, animating as required.
+        """Replace style rules on a node, animating as required.
 
         Args:
             node (DOMNode): A DOM node.
