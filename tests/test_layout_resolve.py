@@ -12,6 +12,14 @@ class Edge(NamedTuple):
     min_size: int = 1
 
 
+def test_empty():
+    assert layout_resolve(10, []) == []
+
+
+def test_total_zero():
+    assert layout_resolve(0, [Edge(10)]) == [10]
+
+
 def test_single():
     # One edge fixed size
     assert layout_resolve(100, [Edge(10)]) == [10]
