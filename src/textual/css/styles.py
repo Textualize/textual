@@ -181,7 +181,7 @@ class StylesBase(ABC):
             rule (str): Rule name.
 
         Returns:
-            bool: ``True`` if a rules was clearled, or ``False`` if it was previously cleared.
+            bool: ``True`` if a rule was cleared, or ``False`` if the rule is already not set.
         """
 
     @abstractmethod
