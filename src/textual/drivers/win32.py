@@ -41,6 +41,8 @@ GetStdHandle = KERNEL32.GetStdHandle
 GetStdHandle.argtypes = [wintypes.DWORD]
 GetStdHandle.restype = wintypes.HANDLE
 
+PeekConsoleInput = KERNEL32.PeekConsoleInputW
+
 
 class COORD(Structure):
     """https://docs.microsoft.com/en-us/windows/console/coord-str"""
@@ -226,7 +228,19 @@ class EventMonitor(threading.Thread):
     def run(self) -> None:
         self.app.log("event monitor thread started")
         exit_requested = self.exit_event.is_set
-        parser = XTermParser(self.target, lambda: False)
+
+        def more_data() -> bool:
+            read_count = wintypes.DWORD(0)
+            records = arrtype()
+            PeekConsoleInput(
+                GetStdHandle(STD_INPUT_HANDLE),
+                byref(records),
+                MAX_EVENTS,
+                byref(read_count)
+            )
+            return read_count.value > 0
+
+        parser = XTermParser(self.target, more_data)
 
         try:
             read_count = wintypes.DWORD(0)

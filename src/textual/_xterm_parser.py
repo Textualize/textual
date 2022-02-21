@@ -34,6 +34,7 @@ class XTermParser(Parser[events.Event]):
     def debug_log(self, *args: Any) -> None:
         if self._debug_log_file is not None:
             self._debug_log_file.write(" ".join(args) + "\n")
+            self._debug_log_file.flush()
 
     def parse_mouse_code(self, code: str, sender: MessageTarget) -> events.Event | None:
         sgr_match = self._re_sgr_mouse.match(code)
@@ -85,12 +86,14 @@ class XTermParser(Parser[events.Event]):
             self.debug_log(f"character={character!r}")
             # The more_data is to allow the parse to distinguish between an escape sequence
             # and the escape key pressed
-            if character == ESC and ((yield self.peek_buffer()) or more_data()):
+            has_more_data = more_data()
+            if character == ESC:
                 sequence: str = character
-                while True:
+                while (yield self.peek_buffer() or has_more_data):
                     sequence += yield read1()
                     self.debug_log(f"sequence={sequence!r}")
                     keys = get_ansi_sequence(sequence, None)
+                    self.debug_log(f"matched ansi sequences: {keys}")
                     if keys is not None:
                         for key in keys:
                             on_token(events.Key(self.sender, key=key))
