@@ -16,7 +16,7 @@ from ._types import MessageTarget
 
 if sys.version_info >= (3, 8):
     from typing import Protocol, runtime_checkable
-else:
+else:  # pragma: no cover
     from typing_extensions import Protocol, runtime_checkable
 
 
@@ -27,13 +27,13 @@ T = TypeVar("T")
 
 @runtime_checkable
 class Animatable(Protocol):
-    def blend(self: T, destination: T, factor: float) -> T:
+    def blend(self: T, destination: T, factor: float) -> T:  # pragma: no cover
         ...
 
 
 class Animation(ABC):
     @abstractmethod
-    def __call__(self, time: float) -> bool:
+    def __call__(self, time: float) -> bool:  # pragma: no cover
         raise NotImplementedError("")
 
 
@@ -45,26 +45,19 @@ class SimpleAnimation(Animation):
     duration: float
     start_value: float | Animatable
     end_value: float | Animatable
-    final_value: float | Animatable
+    final_value: object
     easing: EasingFunction
 
     def __call__(self, time: float) -> bool:
-        def blend_float(start: float, end: float, factor: float) -> float:
-            return start + (end - start) * factor
-
-        AnimatableT = TypeVar("AnimatableT", bound=Animatable)
-
-        def blend(start: AnimatableT, end: AnimatableT, factor: float) -> AnimatableT:
-            return start.blend(end, factor)
 
         if self.duration == 0:
-            value = self.end_value
+            value = self.final_value
         else:
             factor = min(1.0, (time - self.start_time) / self.duration)
             eased_factor = self.easing(factor)
 
             if factor == 1.0:
-                value = self.end_value
+                value = self.final_value
             elif isinstance(self.start_value, Animatable):
                 assert isinstance(
                     self.end_value, Animatable
@@ -88,7 +81,7 @@ class SimpleAnimation(Animation):
                         + (self.start_value - self.end_value) * eased_factor
                     )
         setattr(self.obj, self.attribute, value)
-        return value == self.end_value
+        return value == self.final_value
 
 
 class BoundAnimator:
@@ -101,7 +94,7 @@ class BoundAnimator:
         attribute: str,
         value: float,
         *,
-        final_value: Any = ...,
+        final_value: object = ...,
         duration: float | None = None,
         speed: float | None = None,
         easing: EasingFunction | str = DEFAULT_EASING,
@@ -153,7 +146,7 @@ class Animator:
         attribute: str,
         value: Any,
         *,
-        final_value: Any = ...,
+        final_value: object = ...,
         duration: float | None = None,
         speed: float | None = None,
         easing: EasingFunction | str = DEFAULT_EASING,
