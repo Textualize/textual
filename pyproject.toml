@@ -29,9 +29,9 @@ pytest = "^6.2.3"
 black = "^22.1.0"
 mypy = "^0.910"
 pytest-cov = "^2.12.1"
-mkdocs = "^1.2.1"
-mkdocstrings = "^0.15.2"
-mkdocs-material = "^7.1.10"
+mkdocs = "^1.2.3"
+mkdocstrings = "^0.17.0"
+mkdocs-material = "^7.3.6"
 pre-commit = "^2.13.0"
 
 [tool.black]
