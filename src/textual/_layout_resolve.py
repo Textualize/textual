@@ -24,11 +24,11 @@ class EdgeProtocol(Protocol):
 
 
 @dataclass
-class Edge(NamedTuple):
+class Edge:
     size: int | None = None
     fraction: int | None = 1
     min_size: int = 1
-   
+
 
 def layout_resolve(total: int, edges: Sequence[EdgeProtocol]) -> List[int]:
     """Divide total space to satisfy size, fraction, and min_size, constraints.
