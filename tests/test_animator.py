@@ -22,7 +22,7 @@ class Animatable:
 
 @dataclass
 class AnimateTest:
-    """An object to animate."""
+    """An object with animatable properties."""
 
     foo: float | None = 0  # Plain float that may be set to None on final_value
     bar: Animatable = Animatable(0)  # A mock object supporting the animatable protocol
@@ -49,6 +49,8 @@ def test_simple_animation():
         easing=lambda x: x,
     )
 
+    assert animatable.foo == 0.0
+
     assert animation(time) is False
     assert animatable.foo == 20.0
 
@@ -58,7 +60,7 @@ def test_simple_animation():
     assert animation(time + 2.0) is False
     assert animatable.foo == 40.0
 
-    assert animation(time + 2.9) is False
+    assert animation(time + 2.9) is False  # Not quite final value
     assert pytest.approx(animatable.foo, 49.0)
 
     assert animation(time + 3.0) is True  # True to indicate animation is complete
@@ -89,7 +91,7 @@ def test_simple_animation_duration_zero():
         easing=lambda x: x,
     )
 
-    assert animation(time) is True
+    assert animation(time) is True  # Duration is 0, so this is last value
     assert animatable.foo == 50.0
 
     assert animation(time + 1.0) is True

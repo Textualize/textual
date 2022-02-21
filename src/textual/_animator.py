@@ -51,37 +51,35 @@ class SimpleAnimation(Animation):
     def __call__(self, time: float) -> bool:
 
         if self.duration == 0:
-            value = self.final_value
-        else:
-            factor = min(1.0, (time - self.start_time) / self.duration)
-            eased_factor = self.easing(factor)
+            setattr(self.obj, self.attribute, self.final_value)
+            return True
 
-            if factor == 1.0:
-                value = self.final_value
-            elif isinstance(self.start_value, Animatable):
-                assert isinstance(
-                    self.end_value, Animatable
-                ), "end_value must be animatable"
-                value = self.start_value.blend(self.end_value, eased_factor)
+        factor = min(1.0, (time - self.start_time) / self.duration)
+        eased_factor = self.easing(factor)
+
+        if factor == 1.0:
+            value = self.final_value
+        elif isinstance(self.start_value, Animatable):
+            assert isinstance(
+                self.end_value, Animatable
+            ), "end_value must be animatable"
+            value = self.start_value.blend(self.end_value, eased_factor)
+        else:
+            assert isinstance(self.start_value, float), "`start_value` must be float"
+            assert isinstance(self.end_value, float), "`end_value` must be float"
+            if self.end_value > self.start_value:
+                eased_factor = self.easing(factor)
+                value = (
+                    self.start_value
+                    + (self.end_value - self.start_value) * eased_factor
+                )
             else:
-                assert isinstance(
-                    self.start_value, float
-                ), "`start_value` must be float"
-                assert isinstance(self.end_value, float), "`end_value` must be float"
-                if self.end_value > self.start_value:
-                    eased_factor = self.easing(factor)
-                    value = (
-                        self.start_value
-                        + (self.end_value - self.start_value) * eased_factor
-                    )
-                else:
-                    eased_factor = 1 - self.easing(factor)
-                    value = (
-                        self.end_value
-                        + (self.start_value - self.end_value) * eased_factor
-                    )
+                eased_factor = 1 - self.easing(factor)
+                value = (
+                    self.end_value + (self.start_value - self.end_value) * eased_factor
+                )
         setattr(self.obj, self.attribute, value)
-        return value == self.final_value
+        return factor >= 1
 
 
 class BoundAnimator:
