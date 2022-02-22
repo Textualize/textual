@@ -69,12 +69,6 @@ class View(Widget):
     def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self.name
 
-    def __getitem__(self, widget_id: str) -> Widget:
-        try:
-            return self.get_child_by_id(widget_id)
-        except errors.MissingWidget as error:
-            raise KeyError(str(error))
-
     @property
     def is_visual(self) -> bool:
         return False

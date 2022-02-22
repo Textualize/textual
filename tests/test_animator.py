@@ -169,7 +169,7 @@ def test_animatable():
     assert animate_test.bar.value == 50.0
 
 
-class TestAnimator(Animator):
+class MockAnimator(Animator):
     """A mock animator."""
 
     def __init__(self, *args) -> None:
@@ -187,7 +187,7 @@ class TestAnimator(Animator):
 def test_animator():
 
     target = Mock()
-    animator = TestAnimator(target)
+    animator = MockAnimator(target)
     animate_test = AnimateTest()
 
     # Animate attribute "foo" on animate_test to 100.0 in 10 seconds
@@ -226,7 +226,7 @@ def test_animator():
 def test_bound_animator():
 
     target = Mock()
-    animator = TestAnimator(target)
+    animator = MockAnimator(target)
     animate_test = AnimateTest()
 
     # Bind an animator so it animates attributes on the given object
