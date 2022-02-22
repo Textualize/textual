@@ -236,7 +236,7 @@ class EventMonitor(threading.Thread):
                 GetStdHandle(STD_INPUT_HANDLE),
                 byref(records),
                 MAX_EVENTS,
-                byref(read_count)
+                byref(read_count),
             )
             return read_count.value > 0
 
