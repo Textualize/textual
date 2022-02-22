@@ -282,6 +282,20 @@ class DOMNode(MessagePump):
                 if node.children:
                     push(iter(node.children))
 
+    def get_child(self, selector: str) -> DOMNode:
+        """Return the first child (immediate descendent) of this DOMNode matching a selector.
+
+        Args:
+            selector (str): A CSS selector.
+
+        Returns:
+            DOMNode: The first child of this node which matches the selector.
+        """
+        from .css.query import DOMQuery
+
+        query = DOMQuery(selector=selector, nodes=list(self.children))
+        return query.first()
+
     def query(self, selector: str | None = None) -> DOMQuery:
         """Get a DOM query.
 

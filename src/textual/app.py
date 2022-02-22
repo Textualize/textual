@@ -36,7 +36,7 @@ from .reactive import Reactive
 from .view import View
 from .widget import Widget
 
-from .css.query import EmptyQueryError
+from .css.query import NoMatchingNodesError
 
 if TYPE_CHECKING:
     from .css.query import DOMQuery
@@ -279,13 +279,18 @@ class App(DOMNode):
 
         return DOMQuery(self.view, selector)
 
-    def __getitem__(self, selector: str) -> DOMNode:
-        from .css.query import DOMQuery
+    def get_child(self, selector: str) -> DOMNode:
+        """Shorthand for self.view.get_child(selector: str)
+        Returns the first child (immediate descendent) of this DOMNode
+        matching the selector.
 
-        try:
-            return DOMQuery(self.view, selector).first()
-        except EmptyQueryError:
-            raise KeyError(selector)
+        Args:
+            selector (str): A CSS selector.
+
+        Returns:
+            DOMNode: The first child of this node which matches the selector.
+        """
+        return self.view.get_child(selector)
 
     def update_styles(self) -> None:
         """Request update of styles.
