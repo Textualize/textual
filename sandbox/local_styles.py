@@ -20,15 +20,15 @@ class BasicApp(App):
         await self.dispatch_key(event)
 
     def key_a(self) -> None:
-        footer = self.get_child("#footer")
+        footer = self.get_child("footer")
         footer.set_styles(text="on magenta")
 
     def key_b(self) -> None:
-        footer = self.get_child("#footer")
+        footer = self.get_child("footer")
         footer.set_styles("text: on green")
 
     def key_c(self) -> None:
-        header = self.get_child("#header")
+        header = self.get_child("header")
         header.toggle_class("-highlight")
         self.log(header.styles)
 
