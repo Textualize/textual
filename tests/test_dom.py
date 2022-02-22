@@ -29,12 +29,8 @@ def test_display_set_invalid_value():
 @pytest.fixture
 def parent():
     parent = DOMNode(id="parent")
-
     child1 = DOMNode(id="child1")
-    child1.add_class("foo")
     child2 = DOMNode(id="child2")
-    child2.add_class("bar")
-
     grandchild1 = DOMNode(id="grandchild1")
     child1.add_child(grandchild1)
 
@@ -45,17 +41,17 @@ def parent():
 
 
 def test_get_child_gets_first_child(parent):
-    child = parent.get_child(".foo")
+    child = parent.get_child(id="child1")
     assert child.id == "child1"
-    assert child.get_child("#grandchild1").id == "grandchild1"
-    assert parent.get_child(".bar").id == "child2"
+    assert child.get_child(id="grandchild1").id == "grandchild1"
+    assert parent.get_child(id="child2").id == "child2"
 
 
 def test_get_child_no_matching_child(parent):
     with pytest.raises(NoMatchingNodesError):
-        parent.get_child("#doesnt-exist")
+        parent.get_child(id="doesnt-exist")
 
 
 def test_get_child_only_immediate_descendents(parent):
     with pytest.raises(NoMatchingNodesError):
-        parent.get_child("#grandchild1")
+        parent.get_child(id="grandchild1")

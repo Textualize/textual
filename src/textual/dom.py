@@ -12,8 +12,9 @@ from ._node_list import NodeList
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from .css.errors import StyleValueError
-from .css.styles import Styles, RenderStyles
 from .css.parse import parse_declarations
+from .css.styles import Styles, RenderStyles
+from .css.query import NoMatchingNodesError
 from .message_pump import MessagePump
 
 if TYPE_CHECKING:
@@ -282,19 +283,19 @@ class DOMNode(MessagePump):
                 if node.children:
                     push(iter(node.children))
 
-    def get_child(self, selector: str) -> DOMNode:
-        """Return the first child (immediate descendent) of this DOMNode matching a selector.
+    def get_child(self, id: str) -> DOMNode:
+        """Return the first child (immediate descendent) of this node with the given ID.
 
         Args:
-            selector (str): A CSS selector.
+            id (str): The ID of the child.
 
         Returns:
-            DOMNode: The first child of this node which matches the selector.
+            DOMNode: The first child of this node with the ID.
         """
-        from .css.query import DOMQuery
-
-        query = DOMQuery(selector=selector, nodes=list(self.children))
-        return query.first()
+        for child in self.children:
+            if child.id == id:
+                return child
+        raise NoMatchingNodesError(f"No child found with id={id!r}")
 
     def query(self, selector: str | None = None) -> DOMQuery:
         """Get a DOM query.

@@ -279,18 +279,18 @@ class App(DOMNode):
 
         return DOMQuery(self.view, selector)
 
-    def get_child(self, selector: str) -> DOMNode:
-        """Shorthand for self.view.get_child(selector: str)
+    def get_child(self, id: str) -> DOMNode:
+        """Shorthand for self.view.get_child(id: str)
         Returns the first child (immediate descendent) of this DOMNode
-        matching the selector.
+        with the given ID.
 
         Args:
-            selector (str): A CSS selector.
+            id (str): The ID of the node to search for.
 
         Returns:
-            DOMNode: The first child of this node which matches the selector.
+            DOMNode: The first child of this node with the specified ID.
         """
-        return self.view.get_child(selector)
+        return self.view.get_child(id)
 
     def update_styles(self) -> None:
         """Request update of styles.
