@@ -99,44 +99,6 @@ class Widget(DOMNode):
             yield "hover"
         # TODO: focus
 
-    def get_child_by_id(self, id: str) -> Widget:
-        """Get a child with a given id.
-
-        Args:
-            id (str): A Widget id.
-
-        Raises:
-            errors.MissingWidget: If the widget was not found.
-
-        Returns:
-            Widget: A child widget.
-        """
-
-        for widget in self.children:
-            if widget.id == id:
-                return cast(Widget, widget)
-        raise errors.MissingWidget(f"Widget with id=={id!r} was not found in {self}")
-
-    def get_child_by_name(self, name: str) -> Widget:
-        """Get a child widget with a given name.
-
-        Args:
-            name (str): A name. Defaults to None.
-
-        Raises:
-            errors.MissingWidget: If no Widget is found.
-
-        Returns:
-            Widget: A Widget with the given name.
-        """
-
-        for widget in self.children:
-            if widget.name == name:
-                return cast(Widget, widget)
-        raise errors.MissingWidget(
-            f"Widget with name=={name!r} was not found in {self}"
-        )
-
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
 

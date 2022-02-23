@@ -27,12 +27,7 @@ if TYPE_CHECKING:
 
 
 class NoWidget(Exception):
-    pass
-
-
-class OrderedRegion(NamedTuple):
-    region: Region
-    order: tuple[int, int]
+    """Raised when there is no widget at the requested coordinate."""
 
 
 class ReflowResult(NamedTuple):
@@ -44,9 +39,10 @@ class ReflowResult(NamedTuple):
 
 
 class WidgetPlacement(NamedTuple):
+    """The position, size, and relative order of a widget within its parent."""
 
     region: Region
-    widget: Widget | None = None
+    widget: Widget | None = None  # A widget of None means empty space
     order: int = 0
 
     def apply_margin(self) -> "WidgetPlacement":
@@ -61,7 +57,7 @@ class WidgetPlacement(NamedTuple):
         region, widget, order = self
         if widget is not None:
             styles = widget.styles
-            if any(styles.margin):
+            if styles.margin:
                 return WidgetPlacement(
                     region=region.shrink(styles.margin),
                     widget=widget,
@@ -72,6 +68,8 @@ class WidgetPlacement(NamedTuple):
 
 @rich.repr.auto
 class LayoutUpdate:
+    """A renderable containing the result of a render for a given region."""
+
     def __init__(self, lines: Lines, region: Region) -> None:
         self.lines = lines
         self.region = region
@@ -79,12 +77,12 @@ class LayoutUpdate:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        yield Control.home().segment
+        yield Control.home()
         x = self.region.x
         new_line = Segment.line()
         move_to = Control.move_to
         for last, (y, line) in loop_last(enumerate(self.lines, self.region.y)):
-            yield move_to(x, y).segment
+            yield move_to(x, y)
             yield from line
             if not last:
                 yield new_line
@@ -187,7 +185,8 @@ class Layout(ABC):
             view.mount(*widgets)
 
     @property
-    def map(self) -> LayoutMap | None:
+    def map(self) -> LayoutMap:
+        assert self._layout_map is not None
         return self._layout_map
 
     def __iter__(self) -> Iterator[tuple[Widget, Region, Region]]:

@@ -485,7 +485,7 @@ class Spacing(NamedTuple):
     left: int = 0
 
     def __bool__(self) -> bool:
-        return self == (0, 0, 0, 0)
+        return self != (0, 0, 0, 0)
 
     @property
     def width(self) -> int:
@@ -508,16 +508,6 @@ class Spacing(NamedTuple):
         return (self.right, self.bottom)
 
     @property
-    def packed(self) -> str:
-        top, right, bottom, left = self
-        if top == right == bottom == left:
-            return f"{top}"
-        if (top, right) == (bottom, left):
-            return f"{top}, {right}"
-        else:
-            return f"{top}, {right}, {bottom}, {left}"
-
-    @property
     def css(self) -> str:
         top, right, bottom, left = self
         if top == right == bottom == left:
@@ -532,16 +522,17 @@ class Spacing(NamedTuple):
         """Unpack padding specified in CSS style."""
         if isinstance(pad, int):
             return cls(pad, pad, pad, pad)
-        if len(pad) == 1:
+        pad_len = len(pad)
+        if pad_len == 1:
             _pad = pad[0]
             return cls(_pad, _pad, _pad, _pad)
-        if len(pad) == 2:
+        if pad_len == 2:
             pad_top, pad_right = cast(Tuple[int, int], pad)
             return cls(pad_top, pad_right, pad_top, pad_right)
-        if len(pad) == 4:
+        if pad_len == 4:
             top, right, bottom, left = cast(Tuple[int, int, int, int], pad)
             return cls(top, right, bottom, left)
-        raise ValueError(f"1, 2 or 4 integers required for spacing; {len(pad)} given")
+        raise ValueError(f"1, 2 or 4 integers required for spacing; {pad_len} given")
 
     def __add__(self, other: object) -> Spacing:
         if isinstance(other, tuple):
