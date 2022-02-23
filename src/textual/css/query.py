@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from ..dom import DOMNode
 
 
-class EmptyQueryError(Exception):
+class NoMatchingNodesError(Exception):
     pass
 
 
@@ -38,7 +38,7 @@ class DOMQuery:
         selector: str | None = None,
         nodes: list[DOMNode] | None = None,
     ) -> None:
-
+        self._selector = selector
         self._nodes: list[DOMNode] = []
         if nodes is not None:
             self._nodes = nodes
@@ -103,7 +103,9 @@ class DOMQuery:
         if self._nodes:
             return self._nodes[0]
         else:
-            raise EmptyQueryError("Query is empty")
+            raise NoMatchingNodesError(
+                f"No nodes match the selector {self._selector!r}"
+            )
 
     def add_class(self, *class_names: str) -> DOMQuery:
         """Add the given class name(s) to nodes."""

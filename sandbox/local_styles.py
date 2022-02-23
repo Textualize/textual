@@ -1,7 +1,7 @@
-from textual.app import App
 from textual import events
-from textual.widgets import Placeholder
+from textual.app import App
 from textual.widget import Widget
+from textual.widgets import Placeholder
 
 
 class BasicApp(App):
@@ -20,14 +20,17 @@ class BasicApp(App):
         await self.dispatch_key(event)
 
     def key_a(self) -> None:
-        self.query("#footer").set_styles(text="on magenta")
+        footer = self.get_child("footer")
+        footer.set_styles(text="on magenta")
 
     def key_b(self) -> None:
-        self["#footer"].set_styles("text: on green")
+        footer = self.get_child("footer")
+        footer.set_styles("text: on green")
 
     def key_c(self) -> None:
-        self["#header"].toggle_class("-highlight")
-        self.log(self["#header"].styles)
+        header = self.get_child("header")
+        header.toggle_class("-highlight")
+        self.log(header.styles)
 
 
 BasicApp.run(css_file="local_styles.css", log="textual.log")

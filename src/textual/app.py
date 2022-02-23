@@ -37,7 +37,7 @@ from .renderables.gradient import VerticalGradient
 from .view import View
 from .widget import Widget
 
-from .css.query import EmptyQueryError
+from .css.query import NoMatchingNodesError
 
 if TYPE_CHECKING:
     from .css.query import DOMQuery
@@ -277,13 +277,18 @@ class App(DOMNode):
 
         return DOMQuery(self.view, selector)
 
-    def __getitem__(self, selector: str) -> DOMNode:
-        from .css.query import DOMQuery
+    def get_child(self, id: str) -> DOMNode:
+        """Shorthand for self.view.get_child(id: str)
+        Returns the first child (immediate descendent) of this DOMNode
+        with the given ID.
 
-        try:
-            return DOMQuery(self.view, selector).first()
-        except EmptyQueryError:
-            raise KeyError(selector)
+        Args:
+            id (str): The ID of the node to search for.
+
+        Returns:
+            DOMNode: The first child of this node with the specified ID.
+        """
+        return self.view.get_child(id)
 
     def render_background(self) -> RenderableType:
         gradient = VerticalGradient("red", "blue")
