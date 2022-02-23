@@ -75,18 +75,19 @@ class DockLayout(Layout):
 
         def make_dock_options(widget, edge: Edge) -> DockOptions:
             styles = widget.styles
+            has_rule = styles.has_rule
 
             return (
                 DockOptions(
-                    styles.width.cells if styles.has_rule("width") else None,
-                    styles.width.fraction if styles.has_rule("width") else 1,
-                    styles.min_width.cells if styles.has_rule("min_width") else 1,
+                    styles.width.cells if has_rule("width") else None,
+                    styles.width.fraction if has_rule("width") else 1,
+                    styles.min_width.cells if has_rule("min_width") else 1,
                 )
                 if edge in ("left", "right")
                 else DockOptions(
-                    styles.height.cells if styles.has_rule("height") else None,
-                    styles.height.fraction if styles.has_rule("height") else 1,
-                    styles.min_height.cells if styles.has_rule("min_height") else 1,
+                    styles.height.cells if has_rule("height") else None,
+                    styles.height.fraction if has_rule("height") else 1,
+                    styles.min_height.cells if has_rule("min_height") else 1,
                 )
             )
 

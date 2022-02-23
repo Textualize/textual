@@ -33,6 +33,7 @@ from .geometry import Offset, Region, Size
 from .layouts.dock import Dock
 from .message_pump import MessagePump
 from .reactive import Reactive
+from .renderables.gradient import VerticalGradient
 from .view import View
 from .widget import Widget
 
@@ -151,9 +152,6 @@ class App(DOMNode):
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "title", self.title
-
-    def __rich__(self) -> RenderableType:
-        return self.view
 
     @property
     def animator(self) -> Animator:
@@ -286,6 +284,10 @@ class App(DOMNode):
             return DOMQuery(self.view, selector).first()
         except EmptyQueryError:
             raise KeyError(selector)
+
+    def render_background(self) -> RenderableType:
+        gradient = VerticalGradient("red", "blue")
+        return gradient
 
     def update_styles(self) -> None:
         """Request update of styles.

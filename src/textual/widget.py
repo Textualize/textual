@@ -204,17 +204,6 @@ class Widget(DOMNode):
         assert self._animate is not None
         return self._animate
 
-    @property
-    def gutter(self) -> Spacing:
-        """Get additional space reserved by margin / padding / border.
-
-        Returns:
-            Spacing: [description]
-        """
-        styles = self.styles
-        gutter = styles.margin + styles.padding + styles.border.spacing
-        return gutter
-
     def on_style_change(self) -> None:
         self.clear_render_cache()
 

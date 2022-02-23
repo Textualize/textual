@@ -162,6 +162,16 @@ class StylesBase(ABC):
             return NotImplemented
         return self.get_rules() == styles.get_rules()
 
+    @property
+    def gutter(self) -> Spacing:
+        """Get space around widget.
+
+        Returns:
+            Spacing: Space around widget.
+        """
+
+        return self.margin
+
     @abstractmethod
     def has_rule(self, rule: str) -> bool:
         """Check if a rule is set on this Styles object.

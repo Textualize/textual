@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from asyncio import Event
 from time import monotonic
 from typing import ClassVar
 
