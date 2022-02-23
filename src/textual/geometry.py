@@ -1,3 +1,10 @@
+"""
+
+Functions and classes to manage terminal geometry (anything involving coordinates or dimensions).
+
+"""
+
+
 from __future__ import annotations
 
 from math import sqrt
@@ -209,6 +216,7 @@ class Region(NamedTuple):
         return cls(x, y, width, height)
 
     def __bool__(self) -> bool:
+        """A Region is considered False when it has no area."""
         return bool(self.width and self.height)
 
     @property
@@ -509,6 +517,7 @@ class Spacing(NamedTuple):
 
     @property
     def css(self) -> str:
+        """Gets a string containing the spacing in CSS format."""
         top, right, bottom, left = self
         if top == right == bottom == left:
             return f"{top}"
