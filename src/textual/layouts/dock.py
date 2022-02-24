@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Iterable, TYPE_CHECKING, NamedTuple, Sequence
+from typing import Generator, Iterable, TYPE_CHECKING, NamedTuple, Sequence
 
 from .._layout_resolve import layout_resolve
 from ..css.types import Edge
@@ -47,31 +47,27 @@ class DockLayout(Layout):
     def __repr__(self):
         return "<DockLayout>"
 
-    def get_docks(self, view: View) -> list[Dock]:
+    def get_docks(self, parent: Widget) -> list[Dock]:
         groups: dict[str, list[Widget]] = defaultdict(list)
-        for child in view.children:
+        for child in parent.children:
             assert isinstance(child, Widget)
             if child.display:
                 groups[child.styles.dock].append(child)
         docks: list[Dock] = []
         append_dock = docks.append
-        for name, edge, z in view.styles.docks:
+        for name, edge, z in parent.styles.docks:
             append_dock(Dock(edge, groups[name], z))
         return docks
 
-    def get_widgets(self, view: View) -> Iterable[Widget]:
-        for dock in self.get_docks(view):
-            yield from dock.widgets
-
     def arrange(
-        self, view: View, size: Size, scroll: Offset
-    ) -> Iterable[WidgetPlacement]:
+        self, parent: Widget, size: Size, scroll: Offset
+    ) -> Generator[WidgetPlacement, None, set[Widget]]:
 
         width, height = size
         layout_region = Region(0, 0, width, height)
         layers: dict[int, Region] = defaultdict(lambda: layout_region)
 
-        docks = self.get_docks(view)
+        docks = self.get_docks(parent)
 
         def make_dock_options(widget, edge: Edge) -> DockOptions:
             styles = widget.styles
@@ -93,11 +89,14 @@ class DockLayout(Layout):
 
         Placement = WidgetPlacement
 
+        arranged_widgets: set[Widget] = set()
+
         for edge, widgets, z in docks:
 
+            arranged_widgets.update(widgets)
             dock_options = [make_dock_options(widget, edge) for widget in widgets]
             region = layers[z]
-            if not region:
+            if not region.area:
                 # No space left
                 continue
 
@@ -168,3 +167,5 @@ class DockLayout(Layout):
                 region = Region(x, y, width - total, height)
 
             layers[z] = region
+
+        return arranged_widgets

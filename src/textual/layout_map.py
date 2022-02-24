@@ -1,3 +1,9 @@
+"""
+
+Planned for deprecation
+
+"""
+
 from __future__ import annotations
 
 
@@ -10,12 +16,16 @@ from .widget import Widget
 
 
 class RenderRegion(NamedTuple):
+    """Defines the absolute location of a Widget."""
+
     region: Region
     order: tuple[int, ...]
     clip: Region
 
 
 class LayoutMap:
+    """A container that maps widgets on to their absolute location."""
+
     def __init__(self, size: Size) -> None:
         self.size = size
         self.widgets: dict[Widget, RenderRegion] = {}
@@ -52,6 +62,8 @@ class LayoutMap:
             layout_offset = widget.styles.offset.resolve(region.size, clip.size)
 
         self.widgets[widget] = RenderRegion(region + layout_offset, order, clip)
+
+        # TODO: replace with widget.layout
 
         if isinstance(widget, View):
             view: View = widget

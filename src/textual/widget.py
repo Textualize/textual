@@ -16,6 +16,7 @@ import rich.repr
 from rich.align import Align
 from rich.console import Console, RenderableType
 from rich.padding import Padding
+from rich.pretty import Pretty
 from rich.style import Style
 from rich.styled import Styled
 from rich.text import Text
@@ -28,10 +29,11 @@ from ._callback import invoke
 from ._context import active_app
 from ._types import Lines
 from .dom import DOMNode
-from .geometry import Size, Spacing
+from .geometry import Offset, Size
 from .message import Message
-from .messages import Layout, Update
-from .reactive import watch
+from . import messages
+from .layout import Layout
+from .reactive import Reactive, watch
 from .renderables.opacity import Opacity
 
 if TYPE_CHECKING:
@@ -78,6 +80,10 @@ class Widget(DOMNode):
         self.highlight_style: Style | None = None
 
         super().__init__(name=name, id=id)
+
+    scroll_x = Reactive(0)
+    scroll_y = Reactive(0)
+    virtual_size = Reactive(Size(0, 0))
 
     def __init_subclass__(cls, can_focus: bool = True) -> None:
         super().__init_subclass__()
@@ -146,6 +152,10 @@ class Widget(DOMNode):
         return self._size
 
     @property
+    def scroll(self) -> Offset:
+        return Offset(self.scroll_x, self.scroll_y)
+
+    @property
     def is_visual(self) -> bool:
         return True
 
@@ -165,6 +175,10 @@ class Widget(DOMNode):
             self._animate = self.app.animator.bind(self)
         assert self._animate is not None
         return self._animate
+
+    @property
+    def layout(self) -> Layout | None:
+        return self.styles.layout
 
     def on_style_change(self) -> None:
         self.clear_render_cache()
@@ -237,7 +251,11 @@ class Widget(DOMNode):
         Returns:
             RenderableType: Any renderable
         """
-        return Align.center(Text(f"#{self.id}"), vertical="middle")
+
+        # Default displays a pretty repr in the center of the screen
+        return Align.center(
+            Pretty(self, no_wrap=True, overflow="ellipsis"), vertical="middle"
+        )
 
     async def action(self, action: str, *params) -> None:
         await self.app.action(action, self)
@@ -258,11 +276,11 @@ class Widget(DOMNode):
             # self.render_cache = None
             self.reset_check_repaint()
             self.reset_check_layout()
-            await self.emit(Layout(self))
+            await self.emit(messages.Layout(self))
         elif repaint or self.check_repaint():
             # self.render_cache = None
             self.reset_check_repaint()
-            await self.emit(Update(self, self))
+            await self.emit(messages.Update(self, self))
 
     async def focus(self) -> None:
         await self.app.set_focus(self)

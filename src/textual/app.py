@@ -662,7 +662,7 @@ class App(DOMNode):
 
     async def handle_layout(self, message: messages.Layout) -> None:
         message.stop()
-        await self.view.refresh_layout()
+        # await self.view.refresh_layout()
         self.app.refresh()
 
     async def on_key(self, event: events.Key) -> None:
