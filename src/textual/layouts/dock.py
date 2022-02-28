@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Generator, Iterable, TYPE_CHECKING, NamedTuple, Sequence
+from typing import TYPE_CHECKING, NamedTuple, Sequence
 
 from .._layout_resolve import layout_resolve
 from ..css.types import Edge
@@ -61,7 +61,7 @@ class DockLayout(Layout):
 
     def arrange(
         self, parent: Widget, size: Size, scroll: Offset
-    ) -> Generator[WidgetPlacement, None, set[Widget]]:
+    ) -> tuple[list[WidgetPlacement], set[Widget]]:
 
         width, height = size
         layout_region = Region(0, 0, width, height)
@@ -87,8 +87,8 @@ class DockLayout(Layout):
                 )
             )
 
-        Placement = WidgetPlacement
-
+        placements: list[WidgetPlacement] = []
+        add_placement = placements.append
         arranged_widgets: set[Widget] = set()
 
         for edge, widgets, z in docks:
@@ -112,7 +112,9 @@ class DockLayout(Layout):
                     if not new_size:
                         break
                     total += new_size
-                    yield Placement(Region(x, render_y, width, new_size), widget, z)
+                    add_placement(
+                        WidgetPlacement(Region(x, render_y, width, new_size), widget, z)
+                    )
                     render_y += new_size
                     remaining = max(0, remaining - new_size)
                 region = Region(x, y + total, width, height - total)
@@ -127,8 +129,10 @@ class DockLayout(Layout):
                     if not new_size:
                         break
                     total += new_size
-                    yield Placement(
-                        Region(x, render_y - new_size, width, new_size), widget, z
+                    add_placement(
+                        WidgetPlacement(
+                            Region(x, render_y - new_size, width, new_size), widget, z
+                        )
                     )
                     render_y -= new_size
                     remaining = max(0, remaining - new_size)
@@ -144,7 +148,11 @@ class DockLayout(Layout):
                     if not new_size:
                         break
                     total += new_size
-                    yield Placement(Region(render_x, y, new_size, height), widget, z)
+                    add_placement(
+                        WidgetPlacement(
+                            Region(render_x, y, new_size, height), widget, z
+                        )
+                    )
                     render_x += new_size
                     remaining = max(0, remaining - new_size)
                 region = Region(x + total, y, width - total, height)
@@ -159,8 +167,10 @@ class DockLayout(Layout):
                     if not new_size:
                         break
                     total += new_size
-                    yield Placement(
-                        Region(render_x - new_size, y, new_size, height), widget, z
+                    add_placement(
+                        WidgetPlacement(
+                            Region(render_x - new_size, y, new_size, height), widget, z
+                        )
                     )
                     render_x -= new_size
                     remaining = max(0, remaining - new_size)
@@ -168,4 +178,4 @@ class DockLayout(Layout):
 
             layers[z] = region
 
-        return arranged_widgets
+        return placements, arranged_widgets

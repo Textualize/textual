@@ -9,7 +9,7 @@ class BasicApp(App):
 
     def on_mount(self):
         """Build layout here."""
-        self.mount(uber=Widget())
+        self.mount(uber=Placeholder())
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)

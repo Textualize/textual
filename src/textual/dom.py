@@ -19,6 +19,7 @@ from .message_pump import MessagePump
 
 if TYPE_CHECKING:
     from .css.query import DOMQuery
+    from .view import View
 
 
 class NoParent(Exception):
@@ -70,6 +71,19 @@ class DOMNode(MessagePump):
             raise NoParent(f"{self} has no parent")
         assert isinstance(self._parent, DOMNode)
         return self._parent
+
+    @property
+    def view(self) -> "View":
+        """Get the current view."""
+        # Get the node by looking up a chain of parents
+        # Note that self.view may not be the same as self.app.view
+        from .view import View
+
+        node = self
+        while node and not isinstance(node, View):
+            node = node._parent
+        assert isinstance(node, View)
+        return node
 
     @property
     def id(self) -> str | None:

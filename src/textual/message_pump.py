@@ -16,6 +16,7 @@ from .message import Message
 
 if TYPE_CHECKING:
     from .app import App
+    from .view import View
 
 
 class NoParent(Exception):

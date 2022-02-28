@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import ClassVar, Generator, Iterable, NamedTuple, TYPE_CHECKING
+from typing import ClassVar, Generator, Iterable, NamedTuple, Sequence, TYPE_CHECKING
 
 
 from .geometry import Region, Offset, Size
@@ -48,7 +48,7 @@ class Layout(ABC):
     @abstractmethod
     def arrange(
         self, parent: View, size: Size, scroll: Offset
-    ) -> Generator[WidgetPlacement, None, set[Widget]]:
+    ) -> tuple[list[WidgetPlacement], set[Widget]]:
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 
         Args:

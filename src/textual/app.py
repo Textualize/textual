@@ -213,10 +213,10 @@ class App(DOMNode):
     @classmethod
     def run(
         cls,
-        console: Console = None,
+        console: Console | None = None,
         screen: bool = True,
-        driver: Type[Driver] = None,
-        loop: AbstractEventLoop = None,
+        driver: Type[Driver] | None = None,
+        loop: AbstractEventLoop | None = None,
         **kwargs,
     ):
         """Run the app.
@@ -519,7 +519,6 @@ class App(DOMNode):
                 self.panic()
 
     def display(self, renderable: RenderableType) -> None:
-        sync_available = os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal"
         if not self._closed:
             console = self.console
             try:
