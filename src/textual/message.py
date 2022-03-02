@@ -24,8 +24,11 @@ class Message:
     ]
 
     sender: MessageTarget
-    bubble: ClassVar[bool] = True
-    verbosity: ClassVar[int] = 1
+    bubble: ClassVar[bool] = True  # Message will bubble to parent
+    verbosity: ClassVar[int] = 1  # Verbosity (higher the more verbose)
+    system: ClassVar[
+        bool
+    ] = False  # Message is system related and may not be handled by client code
 
     def __init__(self, sender: MessageTarget) -> None:
         """
@@ -45,10 +48,13 @@ class Message:
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.sender
 
-    def __init_subclass__(cls, bubble: bool = True, verbosity: int = 1) -> None:
+    def __init_subclass__(
+        cls, bubble: bool = True, verbosity: int = 1, system: bool = False
+    ) -> None:
         super().__init_subclass__()
         cls.bubble = bubble
         cls.verbosity = verbosity
+        cls.system = system
 
     @property
     def is_forwarded(self) -> bool:

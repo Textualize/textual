@@ -26,9 +26,9 @@ class SmoothApp(App):
         footer = Footer()
         self.bar = Placeholder(name="left")
 
-        await self.view.dock(footer, edge="bottom")
-        await self.view.dock(Placeholder(), Placeholder(), edge="top")
-        await self.view.dock(self.bar, edge="left", size=40, z=1)
+        await self.screen.dock(footer, edge="bottom")
+        await self.screen.dock(Placeholder(), Placeholder(), edge="top")
+        await self.screen.dock(self.bar, edge="left", size=40, z=1)
 
         self.bar.layout_offset_x = -40
 

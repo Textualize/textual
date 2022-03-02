@@ -35,7 +35,7 @@ class Timer:
         *,
         name: str | None = None,
         callback: TimerCallback | None = None,
-        repeat: int = None,
+        repeat: int | None = None,
         skip: bool = False,
         pause: bool = False,
     ) -> None:

@@ -8,8 +8,8 @@ class SimpleApp(App):
     async def on_mount(self) -> None:
         """Build layout here."""
 
-        await self.view.dock(Placeholder(), edge="left", size=40)
-        await self.view.dock(Placeholder(), Placeholder(), edge="top")
+        await self.screen.dock(Placeholder(), edge="left", size=40)
+        await self.screen.dock(Placeholder(), Placeholder(), edge="top")
 
 
 SimpleApp.run(log="textual.log")

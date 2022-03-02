@@ -5,6 +5,7 @@ from typing import Awaitable, Callable, Type, TYPE_CHECKING, TypeVar
 import rich.repr
 from rich.style import Style
 
+from . import log
 from .geometry import Offset, Size
 from .message import Message
 from ._types import MessageTarget
@@ -389,8 +390,3 @@ class Focus(Event, bubble=False):
 
 class Blur(Event, bubble=False):
     pass
-
-
-# class Update(Event, bubble=False):
-#     def can_replace(self, event: Message) -> bool:
-#         return isinstance(event, Update) and event.sender == self.sender

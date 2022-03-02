@@ -6,6 +6,7 @@ import rich.repr
 from rich.highlighter import ReprHighlighter
 from rich.pretty import Pretty
 from rich.style import Style
+from rich.text import Text
 from rich.tree import Tree
 
 from ._node_list import NodeList
@@ -19,7 +20,7 @@ from .message_pump import MessagePump
 
 if TYPE_CHECKING:
     from .css.query import DOMQuery
-    from .view import View
+    from .screen import Screen
 
 
 class NoParent(Exception):
@@ -37,11 +38,16 @@ class DOMNode(MessagePump):
     DEFAULT_STYLES = ""
     INLINE_STYLES = ""
 
-    def __init__(self, name: str | None = None, id: str | None = None) -> None:
+    def __init__(
+        self,
+        name: str | None = None,
+        id: str | None = None,
+        classes: Iterable[str] | None = None,
+    ) -> None:
         self._name = name
         self._id = id
-        self._classes: set[str] = set()
-        self.children = NodeList()
+        self._classes: set[str] = set(classes) if classes else set()
+        self.node_list = NodeList()
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles.parse(
             self.INLINE_STYLES, repr(self), node=self
@@ -73,17 +79,22 @@ class DOMNode(MessagePump):
         return self._parent
 
     @property
-    def view(self) -> "View":
-        """Get the current view."""
+    def screen(self) -> "Screen":
+        """Get the current screen."""
         # Get the node by looking up a chain of parents
-        # Note that self.view may not be the same as self.app.view
-        from .view import View
+        # Note that self.screen may not be the same as self.app.screen
+        from .screen import Screen
 
         node = self
-        while node and not isinstance(node, View):
+        while node and not isinstance(node, Screen):
             node = node._parent
-        assert isinstance(node, View)
+        assert isinstance(node, Screen)
         return node
+
+    @property
+    def is_visual(self) -> bool:
+        """Check if the widget is visual (i.e. draws something on Screen)."""
+        return True
 
     @property
     def id(self) -> str | None:
@@ -115,6 +126,22 @@ class DOMNode(MessagePump):
     @property
     def name(self) -> str | None:
         return self._name
+
+    @property
+    def css_identifier(self) -> str:
+        tokens = [self.__class__.__name__]
+        if self.id is not None:
+            tokens.append(f"#{self.id}")
+        return "".join(tokens)
+
+    @property
+    def css_identifier_styled(self) -> Text:
+        tokens = Text(self.__class__.__name__)
+        if self.id is not None:
+            tokens.append(f"#{self.id}", style="bold")
+        if self.name:
+            tokens.append(f"[name={self.name}]", style="underline")
+        return tokens
 
     @property
     def classes(self) -> frozenset[str]:
@@ -237,12 +264,25 @@ class DOMNode(MessagePump):
         Returns:
             Tree: A Rich object which may be printed.
         """
+        from rich.columns import Columns
+        from rich.panel import Panel
+
         highlighter = ReprHighlighter()
         tree = Tree(highlighter(repr(self)))
 
         def add_children(tree, node):
-            for child in node.children:
-                branch = tree.add(Pretty(child))
+            for child in node.node_list:
+                branch = tree.add(
+                    Columns(
+                        [
+                            Pretty(child),
+                            Text(
+                                f"{child.size.width} X {child.size.height}", style="dim"
+                            ),
+                            Panel(Text(child.styles.css), border_style="dim"),
+                        ]
+                    )
+                )
                 if tree.children:
                     add_children(branch, child)
 
@@ -276,12 +316,20 @@ class DOMNode(MessagePump):
         Args:
             node (DOMNode): A DOM node.
         """
-        self.children._append(node)
+        self.node_list._append(node)
         node.set_parent(self)
+
+    def add_children(self, *nodes: DOMNode, **named_nodes: DOMNode) -> None:
+        _append = self.node_list._append
+        for node in nodes:
+            _append(node)
+        for node_id, node in named_nodes.items():
+            _append(node)
+            node.id = node_id
 
     def walk_children(self, with_self: bool = True) -> Iterable[DOMNode]:
 
-        stack: list[Iterator[DOMNode]] = [iter(self.children)]
+        stack: list[Iterator[DOMNode]] = [iter(self.node_list)]
         pop = stack.pop
         push = stack.append
 
@@ -294,8 +342,8 @@ class DOMNode(MessagePump):
                 pop()
             else:
                 yield node
-                if node.children:
-                    push(iter(node.children))
+                if node.node_list:
+                    push(iter(node.node_list))
 
     def get_child(self, id: str) -> DOMNode:
         """Return the first child (immediate descendent) of this node with the given ID.
@@ -306,7 +354,7 @@ class DOMNode(MessagePump):
         Returns:
             DOMNode: The first child of this node with the ID.
         """
-        for child in self.children:
+        for child in self.node_list:
             if child.id == id:
                 return child
         raise NoMatchingNodesError(f"No child found with id={id!r}")
@@ -379,5 +427,5 @@ class DOMNode(MessagePump):
         has_pseudo_classes = self.pseudo_classes.issuperset(class_names)
         return has_pseudo_classes
 
-    def refresh(self, repaint: bool = True, layout: bool = False) -> None:
+    def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         raise NotImplementedError()

@@ -15,7 +15,7 @@ class MyApp(App):
 
         self.body = body = ScrollView(auto_width=True)
 
-        await self.view.dock(body)
+        await self.screen.dock(body)
 
         async def add_content():
             table = Table(title="Demo")

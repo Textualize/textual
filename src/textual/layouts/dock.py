@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, NamedTuple, Sequence
+from typing import Iterable, TYPE_CHECKING, NamedTuple, Sequence
 
 from .._layout_resolve import layout_resolve
 from ..css.types import Edge
@@ -17,7 +17,7 @@ else:
     from typing_extensions import Literal
 
 if TYPE_CHECKING:
-    from ..view import View
+    from ..screen import Screen
 
 DockEdge = Literal["top", "right", "bottom", "left"]
 
@@ -61,7 +61,7 @@ class DockLayout(Layout):
 
     def arrange(
         self, parent: Widget, size: Size, scroll: Offset
-    ) -> tuple[list[WidgetPlacement], set[Widget]]:
+    ) -> tuple[Iterable[WidgetPlacement], set[Widget]]:
 
         width, height = size
         layout_region = Region(0, 0, width, height)
@@ -69,7 +69,7 @@ class DockLayout(Layout):
 
         docks = self.get_docks(parent)
 
-        def make_dock_options(widget, edge: Edge) -> DockOptions:
+        def make_dock_options(widget: Widget, edge: Edge) -> DockOptions:
             styles = widget.styles
             has_rule = styles.has_rule
 

@@ -11,14 +11,14 @@ from ..message import Message
 from ..messages import CursorMove
 from ..scrollbar import ScrollTo, ScrollBar
 from ..geometry import clamp
-from ..view import View
+from ..screen import Screen
 
 from ..widget import Widget
 
 from ..reactive import Reactive
 
 
-class ScrollView(View):
+class ScrollView(Screen):
     def __init__(
         self,
         contents: RenderableType | Widget | None = None,

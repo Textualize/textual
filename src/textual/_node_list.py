@@ -22,6 +22,13 @@ class NodeList:
         self._node_refs: list[ref[DOMNode]] = []
         self.__nodes: list[DOMNode] | None = []
 
+    def __bool__(self) -> bool:
+        self._prune()
+        return bool(self._node_refs)
+
+    def __length_hint__(self) -> int:
+        return len(self._node_refs)
+
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._widgets
 

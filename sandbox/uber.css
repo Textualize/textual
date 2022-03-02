@@ -1,4 +1,24 @@
 #uber {
-  border: heavy green;
-  margin: 5;
+  /* border: heavy green; */
+  margin: 2;
+  layout: dock;
+  docks: panels=top;
+}
+
+#child1 {
+  dock: panels;
+}
+
+#child2 {
+  dock: panels;
+}
+
+#child3 {
+  dock: panels;
+}
+
+#uber2 {
+  margin: 3;
+  layout: dock;
+  docks: _default=left;
 }

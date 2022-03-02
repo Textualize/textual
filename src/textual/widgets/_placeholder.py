@@ -24,9 +24,9 @@ class Placeholder(Widget, can_focus=True):
     style: Reactive[str] = Reactive("")
     height: Reactive[int | None] = Reactive(None)
 
-    def __init__(self, *, name: str | None = None, height: int | None = None) -> None:
-        super().__init__(name=name)
-        self.height = height
+    # def __init__(self, *, name: str | None = None, height: int | None = None) -> None:
+    #     super().__init__(name=name)
+    #     self.height = height
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()

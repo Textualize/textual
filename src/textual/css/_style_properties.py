@@ -15,6 +15,7 @@ import rich.repr
 from rich.color import Color
 from rich.style import Style
 
+from .. import log
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING
 from .errors import StyleTypeError, StyleValueError
@@ -537,7 +538,6 @@ class OffsetProperty:
             ScalarParseError: If any of the string values supplied in the 2-tuple cannot
                 be parsed into a Scalar. For example, if you specify an non-existent unit.
         """
-
         if offset is None:
             if obj.clear_rule(self.name):
                 obj.refresh(layout=True)
@@ -557,6 +557,7 @@ class OffsetProperty:
                 else Scalar(float(y), Unit.CELLS, Unit.HEIGHT)
             )
             _offset = ScalarOffset(scalar_x, scalar_y)
+
             if obj.set_rule(self.name, _offset):
                 obj.refresh(layout=True)
 

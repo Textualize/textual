@@ -3,7 +3,7 @@ from typing import cast, Optional
 
 from ..layouts.dock import DockLayout, Dock, DockEdge
 from ..layouts.grid import GridLayout, GridAlign
-from ..view import View
+from ..screen import Screen
 from ..widget import Widget
 
 
@@ -14,7 +14,7 @@ class DoNotSet:
 do_not_set = DoNotSet()
 
 
-class DockView(View):
+class DockView(Screen):
     def __init__(self, name: str | None = None) -> None:
         super().__init__(layout=DockLayout(), name=name)
 
@@ -58,7 +58,7 @@ class DockView(View):
     ) -> GridLayout:
 
         grid = GridLayout(gap=gap, gutter=gutter, align=align)
-        view = View(layout=grid, id=id, name=name)
+        view = Screen(layout=grid, id=id, name=name)
         dock = Dock(edge, (view,), z)
         assert isinstance(self.layout, DockLayout)
         self.layout.docks.append(dock)

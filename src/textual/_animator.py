@@ -110,6 +110,8 @@ class BoundAnimator:
 
 
 class Animator:
+    """An object to manage updates to a given attributed over a period of time."""
+
     def __init__(self, target: MessageTarget, frames_per_second: int = 60) -> None:
         self._animations: dict[tuple[object, str], Animation] = {}
         self.target = target
@@ -225,4 +227,6 @@ class Animator:
 
     def on_animation_frame(self) -> None:
         # TODO: We should be able to do animation without refreshing everything
-        self.target.view.refresh(True, True)
+
+        self.target.screen.refresh(layout=True)
+        # self.target.screen.app.refresh()

@@ -2,7 +2,7 @@
 
 $primary: #20639b;
 
-App > View {
+App > Screen {
   layout: dock;
   docks: side=left/1;
   text: on $primary;
@@ -13,6 +13,7 @@ App > View {
   dock: side;
   width: 30;
   offset-x: -100%;
+
   transition: offset 500ms in_out_cubic;
   border-right: outer #09312e;
 }

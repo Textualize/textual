@@ -130,6 +130,6 @@ if __name__ == "__main__":
 
     class TreeApp(App):
         async def on_mount(self, event: events.Mount) -> None:
-            await self.view.dock(DirectoryTree("/Users/willmcgugan/projects"))
+            await self.screen.dock(DirectoryTree("/Users/willmcgugan/projects"))
 
     TreeApp.run(log="textual.log")

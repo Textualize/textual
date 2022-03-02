@@ -5,7 +5,7 @@ import rich.repr
 from rich.style import Style
 
 
-from . import events, messages
+from . import events, messages, errors
 
 from .geometry import Offset, Region
 from ._compositor import Compositor
@@ -14,7 +14,7 @@ from .renderables.gradient import VerticalGradient
 
 
 @rich.repr.auto
-class View(Widget):
+class Screen(Widget):
     """A widget for the root of the app."""
 
     DEFAULT_STYLES = """
@@ -33,7 +33,7 @@ class View(Widget):
         return False
 
     def render(self) -> RenderableType:
-        return VerticalGradient("#11998e", "#38ef7d")
+        return self._compositor
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the absolute offset of a given Widget.
@@ -58,7 +58,7 @@ class View(Widget):
         """
         return self._compositor.get_widget_at(x, y)
 
-    def get_style_add(self, x: int, y: int) -> Style:
+    def get_style_at(self, x: int, y: int) -> Style:
         """Get the style under a given coordinate.
 
         Args:
@@ -96,8 +96,7 @@ class View(Widget):
             for widget in shown:
                 widget.post_message_no_wait(events.Show(self))
 
-            send_resize = shown
-            send_resize.update(resized)
+            send_resize = shown | resized
 
             for widget, region, unclipped_region in self._compositor:
                 widget._update_size(unclipped_region.size)
@@ -123,12 +122,11 @@ class View(Widget):
     async def handle_layout(self, message: messages.Layout) -> None:
         message.stop()
         await self.refresh_layout()
-        self.app.refresh()
 
     async def on_resize(self, event: events.Resize) -> None:
-        event.stop()
         self._update_size(event.size)
         await self.refresh_layout()
+        event.stop()
 
     async def on_idle(self, event: events.Idle) -> None:
         if self._compositor.check_update():
@@ -143,23 +141,61 @@ class View(Widget):
                 region = self.get_widget_region(widget)
             else:
                 widget, region = self.get_widget_at(event.x, event.y)
-        except NoWidget:
+        except errors.NoWidget:
             await self.app.set_mouse_over(None)
         else:
             await self.app.set_mouse_over(widget)
-            await widget.forward_event(
-                events.MouseMove(
-                    self,
-                    event.x - region.x,
-                    event.y - region.y,
-                    event.delta_x,
-                    event.delta_y,
-                    event.button,
-                    event.shift,
-                    event.meta,
-                    event.ctrl,
-                    screen_x=event.screen_x,
-                    screen_y=event.screen_y,
-                    style=event.style,
-                )
+            mouse_event = events.MouseMove(
+                self,
+                event.x - region.x,
+                event.y - region.y,
+                event.delta_x,
+                event.delta_y,
+                event.button,
+                event.shift,
+                event.meta,
+                event.ctrl,
+                screen_x=event.screen_x,
+                screen_y=event.screen_y,
+                style=event.style,
             )
+            mouse_event.set_forwarded()
+            await widget.forward_event(mouse_event)
+
+    async def forward_event(self, event: events.Event) -> None:
+        if event.is_forwarded:
+            return
+        event.set_forwarded()
+        if isinstance(event, (events.Enter, events.Leave)):
+            await self.post_message(event)
+
+        elif isinstance(event, events.MouseMove):
+            event.style = self.get_style_at(event.screen_x, event.screen_y)
+            await self._on_mouse_move(event)
+
+        elif isinstance(event, events.MouseEvent):
+            try:
+                if self.app.mouse_captured:
+                    widget = self.app.mouse_captured
+                    region = self.get_widget_region(widget)
+                else:
+                    widget, region = self.get_widget_at(event.x, event.y)
+            except errors.NoWidget:
+                await self.app.set_focus(None)
+            else:
+                if isinstance(event, events.MouseDown) and widget.can_focus:
+                    await self.app.set_focus(widget)
+                event.style = self.get_style_at(event.screen_x, event.screen_y)
+                await widget.forward_event(event.offset(-region.x, -region.y))
+
+        elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
+            try:
+                widget, _region = self.get_widget_at(event.x, event.y)
+            except errors.NoWidget:
+                return
+            scroll_widget = widget
+            if scroll_widget is not None:
+                await scroll_widget.forward_event(event)
+        else:
+            self.log("view.forwarded", event)
+            await self.post_message(event)

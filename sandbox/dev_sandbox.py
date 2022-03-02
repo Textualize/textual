@@ -19,6 +19,7 @@ class BasicApp(App):
         self.bind("a", "toggle_class('#header', '-visible')")
         self.bind("c", "toggle_class('#content', '-content-visible')")
         self.bind("d", "toggle_class('#footer', 'dim')")
+        self.bind("x", "dump")
 
     def on_mount(self):
         """Build layout here."""
@@ -28,6 +29,9 @@ class BasicApp(App):
             footer=Widget(),
             sidebar=Widget(),
         )
+
+    def action_dump(self):
+        self.panic(self.tree)
 
 
 BasicApp.run(css_file="dev_sandbox.scss", watch_css=True, log="textual.log")

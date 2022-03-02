@@ -11,10 +11,9 @@ from rich.control import Control
 from rich.segment import Segment, SegmentLines
 from rich.style import Style
 
-from . import log
+from . import errors, log
 from .geometry import Region, Offset, Size
 
-from .layout import WidgetPlacement
 from ._loop import loop_last
 from ._types import Lines
 from .widget import Widget
@@ -26,11 +25,8 @@ else:  # pragma: no cover
 
 
 if TYPE_CHECKING:
+    from .screen import Screen
     from .widget import Widget
-
-
-class NoWidget(Exception):
-    """Raised when there is no widget at the requested coordinate."""
 
 
 class ReflowResult(NamedTuple):
@@ -137,8 +133,8 @@ class Compositor:
         self.width = size.width
         self.height = size.height
 
-        map, virtual_size = self._arrange_root(parent)
-        log(map)
+        map, virtual_size, widgets = self._arrange_root(parent)
+
         self._require_update = False
 
         old_widgets = set(self.map.keys())
@@ -165,12 +161,13 @@ class Compositor:
         }
 
         parent.virtual_size = virtual_size
-
+        self.widgets.clear()
+        self.widgets.update(widgets)
         return ReflowResult(
             hidden=hidden_widgets, shown=shown_widgets, resized=resized_widgets
         )
 
-    def _arrange_root(self, root: Widget) -> tuple[RenderRegionMap, Size]:
+    def _arrange_root(self, root: Widget) -> tuple[RenderRegionMap, Size, set[Widget]]:
         """Arrange a widgets children based on its layout attribute.
 
         Args:
@@ -192,7 +189,7 @@ class Compositor:
             order: tuple[int, ...],
             clip: Region,
         ):
-            widgets: set[Widget] = set()
+            widgets.add(widget)
             styles_offset = widget.styles.offset
             total_region = region
             layout_offset = (
@@ -200,7 +197,6 @@ class Compositor:
                 if styles_offset
                 else ORIGIN
             )
-
             map[widget] = RenderRegion(region + layout_offset, order, clip)
 
             if widget.layout is not None:
@@ -227,12 +223,10 @@ class Compositor:
             return total_region.size
 
         virtual_size = add_widget(root, size.region, (), size.region)
-        self.widgets.clear()
-        self.widgets.update(widgets)
-        return map, virtual_size
+        return map, virtual_size, widgets
 
-    async def mount_all(self, view: "View") -> None:
-        view.mount(*self.widgets)
+    async def mount_all(self, screen: Screen) -> None:
+        screen.app.mount(*self.widgets)
 
     def __iter__(self) -> Iterator[tuple[Widget, Region, Region]]:
         layers = sorted(self.map.items(), key=lambda item: item[1].order, reverse=True)
@@ -244,14 +238,14 @@ class Compositor:
         try:
             return self.map[widget].region.origin
         except KeyError:
-            raise NoWidget("Widget is not in layout")
+            raise errors.NoWidget("Widget is not in layout")
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given point or None."""
         for widget, cropped_region, region in self:
-            if widget.is_visual and cropped_region.contains(x, y):
+            if cropped_region.contains(x, y):
                 return widget, region
-        raise NoWidget(f"No widget under screen coordinate ({x}, {y})")
+        raise errors.NoWidget(f"No widget under screen coordinate ({x}, {y})")
 
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the Style at the given cell or Style.null()
@@ -265,13 +259,15 @@ class Compositor:
         """
         try:
             widget, region = self.get_widget_at(x, y)
-        except NoWidget:
+        except errors.NoWidget:
             return Style.null()
         if widget not in self.regions:
             return Style.null()
         lines = widget._get_lines()
         x -= region.x
         y -= region.y
+        if y > len(lines):
+            return Style.null()
         line = lines[y]
         end = 0
         for segment in line:
@@ -296,7 +292,7 @@ class Compositor:
         try:
             region, *_ = self.map[widget]
         except KeyError:
-            raise NoWidget("Widget is not in layout")
+            raise errors.NoWidget("Widget is not in layout")
         else:
             return region
 
@@ -344,7 +340,7 @@ class Compositor:
 
         for widget, region, _order, clip in widget_regions:
 
-            if not (widget.is_visual and widget.visible):
+            if not (widget.visible and widget.is_visual):
                 continue
 
             lines = widget._get_lines()
@@ -465,5 +461,4 @@ class Compositor:
         update_region = region.intersection(clip)
         update_lines = self.render(console, crop=update_region).lines
         update = LayoutUpdate(update_lines, update_region)
-        log(update)
         return update

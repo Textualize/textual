@@ -36,14 +36,14 @@ class MyApp(App):
         self.directory = DirectoryTree(self.path, "Code")
 
         # Dock our widgets
-        await self.view.dock(Header(), edge="top")
-        await self.view.dock(Footer(), edge="bottom")
+        await self.screen.dock(Header(), edge="top")
+        await self.screen.dock(Footer(), edge="bottom")
 
         # Note the directory is also in a scroll view
-        await self.view.dock(
+        await self.screen.dock(
             ScrollView(self.directory), edge="left", size=48, name="sidebar"
         )
-        await self.view.dock(self.body, edge="top")
+        await self.screen.dock(self.body, edge="top")
 
     async def handle_file_click(self, message: FileClick) -> None:
         """A message sent by the directory tree when a file is clicked."""

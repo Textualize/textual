@@ -127,7 +127,7 @@ class View(Widget):
         try:
             await self.layout.mount_all(self)
             if not self.is_root_view:
-                await self.app.view.refresh_layout()
+                await self.app.screen.refresh_layout()
                 return
 
             if not self.size:
@@ -247,7 +247,7 @@ class View(Widget):
             self.log("view.forwarded", event)
             await self.post_message(event)
 
-    async def action_toggle(self, name: str) -> None:
-        widget = self[name]
-        widget.visible = not widget.display
-        await self.post_message(messages.Layout(self))
+    # async def action_toggle(self, name: str) -> None:
+    #     widget = self[name]
+    #     widget.visible = not widget.display
+    #     await self.post_message(messages.Layout(self))

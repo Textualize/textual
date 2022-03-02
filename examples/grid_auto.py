@@ -7,7 +7,7 @@ class GridTest(App):
     async def on_mount(self, event: events.Mount) -> None:
         """Create a grid with auto-arranging cells."""
 
-        grid = await self.view.dock_grid()
+        grid = await self.screen.dock_grid()
 
         grid.add_column("col", fraction=1, max_size=20)
         grid.add_row("row", fraction=1, max_size=10)

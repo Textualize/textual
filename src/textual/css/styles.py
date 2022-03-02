@@ -11,6 +11,7 @@ import rich.repr
 from rich.color import Color
 from rich.style import Style
 
+from .. import log
 from .._animator import Animation, EasingFunction
 from ..geometry import Spacing
 from ._style_properties import (
@@ -361,6 +362,7 @@ class Styles(StylesBase):
         return self._rules.get(rule, default)
 
     def refresh(self, *, layout: bool = False) -> None:
+        return
         self._repaint_required = True
         self._layout_required = self._layout_required or layout
 

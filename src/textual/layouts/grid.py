@@ -14,7 +14,7 @@ from ..layout import Layout, WidgetPlacement
 
 if TYPE_CHECKING:
     from ..widget import Widget
-    from ..view import View
+    from ..screen import Screen
 
 
 if sys.version_info >= (3, 8):
@@ -266,7 +266,7 @@ class GridLayout(Layout):
         return self.widgets.keys()
 
     def arrange(
-        self, view: View, size: Size, scroll: Offset
+        self, view: Screen, size: Size, scroll: Offset
     ) -> Iterable[WidgetPlacement]:
         """Generate a map that associates widgets with their location on screen.
 

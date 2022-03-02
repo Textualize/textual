@@ -33,7 +33,7 @@ class MyApp(App):
         """Create and dock the widgets."""
 
         body = ScrollView()
-        await self.view.mount(
+        await self.screen.mount(
             Header(),
             Footer(),
             body=body,

@@ -37,7 +37,7 @@ from .reactive import Reactive, watch
 from .renderables.opacity import Opacity
 
 if TYPE_CHECKING:
-    from .view import View
+    from .screen import Screen
 
 
 class RenderCache(NamedTuple):
@@ -55,20 +55,20 @@ class RenderCache(NamedTuple):
 
 @rich.repr.auto
 class Widget(DOMNode):
-    _counts: ClassVar[dict[str, int]] = {}
+
     can_focus: bool = False
 
     DEFAULT_STYLES = """
         dock: _default
     """
 
-    def __init__(self, name: str | None = None, id: str | None = None) -> None:
-        if name is None:
-            class_name = self.__class__.__name__
-            Widget._counts.setdefault(class_name, 0)
-            Widget._counts[class_name] += 1
-            _count = self._counts[class_name]
-            name = f"{class_name}{_count}"
+    def __init__(
+        self,
+        *children: Widget,
+        name: str | None = None,
+        id: str | None = None,
+        classes: Iterable[str] | None = None,
+    ) -> None:
 
         self._size = Size(0, 0)
         self._repaint_required = False
@@ -79,8 +79,11 @@ class Widget(DOMNode):
         self.render_cache: RenderCache | None = None
         self.highlight_style: Style | None = None
 
-        super().__init__(name=name, id=id)
+        super().__init__(name=name, id=id, classes=classes)
+        self.add_children(*children)
 
+    has_focus = Reactive(False)
+    mouse_over = Reactive(False)
     scroll_x = Reactive(0)
     scroll_y = Reactive(0)
     virtual_size = Reactive(Size(0, 0))
@@ -103,6 +106,8 @@ class Widget(DOMNode):
         """Pseudo classes for a widget"""
         if self._mouse_over:
             yield "hover"
+        if self.has_focus:
+            yield "focus"
         # TODO: focus
 
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
@@ -149,6 +154,10 @@ class Widget(DOMNode):
         return renderable
 
     @property
+    def children(self) -> list[Widget]:
+        return list(self.node_list)
+
+    @property
     def size(self) -> Size:
         return self._size
 
@@ -166,11 +175,6 @@ class Widget(DOMNode):
         return active_app.get().console
 
     @property
-    def root_view(self) -> "View":
-        """Return the top-most view."""
-        return active_app.get().view
-
-    @property
     def animate(self) -> BoundAnimator:
         if self._animate is None:
             self._animate = self.app.animator.bind(self)
@@ -180,6 +184,14 @@ class Widget(DOMNode):
     @property
     def layout(self) -> Layout | None:
         return self.styles.layout
+
+    def watch_mouse_over(self, value: bool) -> None:
+        """Update from CSS if mouse over state changes."""
+        self.app.update_styles()
+
+    def watch_has_focus(self, value: bool) -> None:
+        """Update from CSS if has focus state changes."""
+        self.app.update_styles()
 
     def on_style_change(self) -> None:
         self.clear_render_cache()
@@ -218,8 +230,8 @@ class Widget(DOMNode):
         self._layout_required = False
 
     def get_style_at(self, x: int, y: int) -> Style:
-        offset_x, offset_y = self.root_view.get_offset(self)
-        return self.root_view.get_style_at(x + offset_x, y + offset_y)
+        offset_x, offset_y = self.screen.get_offset(self)
+        return self.screen.get_style_at(x + offset_x, y + offset_y)
 
     async def call_later(self, callback: Callable, *args, **kwargs) -> None:
         await self.app.call_later(callback, *args, **kwargs)
@@ -228,7 +240,7 @@ class Widget(DOMNode):
         event.set_forwarded()
         await self.post_message(event)
 
-    def refresh(self, repaint: bool = True, layout: bool = False) -> None:
+    def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         """Initiate a refresh of the widget.
 
         This method sets an internal flag to perform a refresh, which will be done on the
@@ -244,7 +256,7 @@ class Widget(DOMNode):
         elif repaint:
             self.clear_render_cache()
             self._repaint_required = True
-        self.post_message_no_wait(events.Null(self))
+        self.check_idle()
 
     def render(self) -> RenderableType:
         """Get renderable for widget.
@@ -254,9 +266,8 @@ class Widget(DOMNode):
         """
 
         # Default displays a pretty repr in the center of the screen
-        return Align.center(
-            Pretty(self, no_wrap=True, overflow="ellipsis"), vertical="middle"
-        )
+
+        return Align.center(self.css_identifier_styled, vertical="middle")
 
     async def action(self, action: str, *params) -> None:
         await self.app.action(action, self)
@@ -269,6 +280,7 @@ class Widget(DOMNode):
         return await super().post_message(message)
 
     async def on_resize(self, event: events.Resize) -> None:
+        self._update_size(event.size)
         self.refresh()
 
     async def on_idle(self, event: events.Idle) -> None:
@@ -277,13 +289,14 @@ class Widget(DOMNode):
             # self.render_cache = None
             self.reset_check_repaint()
             self.reset_check_layout()
-            await self.emit(messages.Layout(self))
+            await self.screen.post_message(messages.Layout(self))
         elif repaint or self.check_repaint():
             # self.render_cache = None
             self.reset_check_repaint()
             await self.emit(messages.Update(self, self))
 
     async def focus(self) -> None:
+        """Give input focus to this widget."""
         await self.app.set_focus(self)
 
     async def capture_mouse(self, capture: bool = True) -> None:
@@ -314,14 +327,6 @@ class Widget(DOMNode):
 
     async def on_click(self, event: events.Click) -> None:
         await self.broker_event("click", event)
-
-    async def on_enter(self, event: events.Enter) -> None:
-        self._mouse_over = True
-        self.app.update_styles()
-
-    async def on_leave(self, event: events.Leave) -> None:
-        self._mouse_over = False
-        self.app.update_styles()
 
     async def on_key(self, event: events.Key) -> None:
         if await self.dispatch_key(event):
