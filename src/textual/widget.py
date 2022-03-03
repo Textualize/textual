@@ -59,7 +59,7 @@ class Widget(DOMNode):
     can_focus: bool = False
 
     DEFAULT_STYLES = """
-        dock: _default
+        
     """
 
     def __init__(
@@ -67,7 +67,7 @@ class Widget(DOMNode):
         *children: Widget,
         name: str | None = None,
         id: str | None = None,
-        classes: Iterable[str] | None = None,
+        classes: set[str] | None = None,
     ) -> None:
 
         self._size = Size(0, 0)

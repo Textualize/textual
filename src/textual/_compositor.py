@@ -184,7 +184,7 @@ class Compositor:
         widgets: set[Widget] = set()
 
         def add_widget(
-            widget,
+            widget: Widget,
             region: Region,
             order: tuple[int, ...],
             clip: Region,
@@ -210,6 +210,7 @@ class Compositor:
                 widgets.update(arranged_widgets)
                 placements = [placement.apply_margin() for placement in placements]
                 placements.sort(key=attrgetter("order"))
+                log("---", placements)
 
                 for sub_region, sub_widget, z in placements:
                     total_region = total_region.union(sub_region)
@@ -223,6 +224,8 @@ class Compositor:
             return total_region.size
 
         virtual_size = add_widget(root, size.region, (), size.region)
+        for widget, placement in map.items():
+            log("*", widget, placement)
         return map, virtual_size, widgets
 
     async def mount_all(self, screen: Screen) -> None:
@@ -323,15 +326,23 @@ class Compositor:
         self._cuts = [sorted(set(cut_set)) for cut_set in cuts]
         return self._cuts
 
-    def _get_renders(self, console: Console) -> Iterable[tuple[Region, Region, Lines]]:
+    def _get_renders(self) -> Iterable[tuple[Region, Region, Lines]]:
+        """Get rendered widgets (lists of segments) in the composition.
+
+        Returns:
+            Iterable[tuple[Region, Region, Lines]]: An interable of <region>, <clip region>, and <lines>
+        """
+        # If a renderable throws an error while rendering, the user likely doesn't care about the traceback
+        # up to this point.
         _rich_traceback_guard = True
 
         if self.map:
             widget_regions = sorted(
-                (
+                [
                     (widget, region, order, clip)
                     for widget, (region, order, clip) in self.map.items()
-                ),
+                    if widget.is_visual and widget.visible
+                ],
                 key=itemgetter(2),
                 reverse=True,
             )
@@ -339,9 +350,6 @@ class Compositor:
             widget_regions = []
 
         for widget, region, _order, clip in widget_regions:
-
-            if not (widget.visible and widget.is_visual):
-                continue
 
             lines = widget._get_lines()
 
@@ -404,7 +412,7 @@ class Compositor:
             [_Segment(" " * width, background_style)] for _ in range(height)
         ]
         # Go through all the renders in reverse order and fill buckets with no render
-        renders = self._get_renders(console)
+        renders = self._get_renders()
 
         for region, clip, lines in chain(
             renders, [(screen, screen, background_render)]

@@ -7,14 +7,20 @@ from rich.color import Color
 from rich.style import Style
 
 from ._error_tools import friendly_list
-from .constants import VALID_BORDER, VALID_EDGE, VALID_DISPLAY, VALID_VISIBILITY
+from .constants import (
+    VALID_BORDER,
+    VALID_BOX_SIZING,
+    VALID_EDGE,
+    VALID_DISPLAY,
+    VALID_VISIBILITY,
+)
 from .errors import DeclarationError
 from .model import Declaration
 from .scalar import Scalar, ScalarOffset, Unit, ScalarError
 from .styles import DockGroup, Styles
 from .tokenize import Token
 from .transition import Transition
-from .types import Edge, Display, Visibility
+from .types import BoxSizing, Edge, Display, Visibility
 from .._duration import _duration_as_seconds
 from .._easing import EASING
 from ..geometry import Spacing, SpacingDimensions, clamp
@@ -102,6 +108,25 @@ class StylesBuilder:
         else:
             self.error(name, tokens[0], "a single scalar is expected")
 
+    def process_box_sizing(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
+        for token in tokens:
+            name, value, _, _, location, _ = token
+
+            if name == "token":
+                value = value.lower()
+                if value in VALID_BOX_SIZING:
+                    self.styles._rules["box_sizing"] = cast(BoxSizing, value)
+                else:
+                    self.error(
+                        name,
+                        token,
+                        f"invalid value for box-sizing (received {value!r}, expected {friendly_list(VALID_BOX_SIZING)})",
+                    )
+            else:
+                self.error(name, token, f"invalid token {value!r} in this context")
+
     def process_width(self, name: str, tokens: list[Token], important: bool) -> None:
         self._process_scalar(name, tokens)
 
@@ -114,6 +139,16 @@ class StylesBuilder:
         self._process_scalar(name, tokens)
 
     def process_min_height(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
+        self._process_scalar(name, tokens)
+
+    def process_max_width(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
+        self._process_scalar(name, tokens)
+
+    def process_max_height(
         self, name: str, tokens: list[Token], important: bool
     ) -> None:
         self._process_scalar(name, tokens)

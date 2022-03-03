@@ -13,19 +13,18 @@ class BasicApp(App):
 
         uber2 = Widget()
         uber2.add_children(
-            Placeholder(id="uber2-child1"),
-            Placeholder(id="uber2-child2"),
+            Widget(id="uber2-child1"),
+            Widget(id="uber2-child2"),
         )
 
         self.mount(
-            uber=Widget(
-                Placeholder(id="child1"),
-                Placeholder(id="child2"),
-                Placeholder(id="child3"),
+            uber1=Widget(
+                Placeholder(id="child1", classes={"list-item"}),
+                Widget(id="child2", classes={"list-item"}),
+                # Placeholder(id="child3", classes={"list-item"}),
             ),
-            uber2=uber2,
+            # uber2=uber2,
         )
-        # self.panic(self.tree)
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)

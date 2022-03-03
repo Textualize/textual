@@ -8,7 +8,6 @@ from .geometry import Region, Offset, Size
 
 
 if TYPE_CHECKING:
-    from .dom import DOMNode
     from .widget import Widget
     from .screen import Screen
 
@@ -48,7 +47,7 @@ class Layout(ABC):
 
     @abstractmethod
     def arrange(
-        self, parent: Screen, size: Size, scroll: Offset
+        self, parent: Widget, size: Size, scroll: Offset
     ) -> tuple[Iterable[WidgetPlacement], set[Widget]]:
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 

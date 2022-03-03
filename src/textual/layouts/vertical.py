@@ -1,17 +1,21 @@
 from __future__ import annotations
 
-from typing import Iterable, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from ..css.styles import Styles
+from .. import log
+
 from ..geometry import Offset, Region, Size
 from ..layout import Layout, WidgetPlacement
 
 if TYPE_CHECKING:
     from ..widget import Widget
-    from ..screen import Screen
 
 
 class VerticalLayout(Layout):
+    """Simple vertical layout."""
+
+    name = "vertical"
+
     def arrange(
         self, parent: Widget, size: Size, scroll: Offset
     ) -> tuple[list[WidgetPlacement], set[Widget]]:
@@ -19,24 +23,25 @@ class VerticalLayout(Layout):
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
 
-        parent_width, parent_height = size
         x = y = 0
-        app = parent.app
+        parent_size = parent.size
+
         for widget in parent.children:
             styles = widget.styles
+            render_width, render_height = parent.size
 
-            if styles.height:
-                render_height = int(styles.height.resolve_dimension(size, app.size))
-            else:
-                render_height = size.height
+            render_size, spacing = styles.get_box_model(size, parent_size)
 
-            if styles.width:
-                render_width = int(styles.width.resolve_dimension(size, app.size))
-            else:
-                render_width = parent_width
+            # TODO:
 
+            if styles.has_rule("width"):
+                render_width = int(styles.width.resolve_dimension(size, parent_size))
+            if styles.has_rule("height"):
+                render_height = int(styles.height.resolve_dimension(size, parent_size))
             region = Region(x, y, render_width, render_height)
             add_placement(WidgetPlacement(region, widget, 0))
             y += render_height
 
+        for placement in placements:
+            log(placement)
         return placements, set(parent.children)

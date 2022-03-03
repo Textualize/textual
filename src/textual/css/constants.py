@@ -24,5 +24,7 @@ VALID_BORDER: Final = {
 VALID_EDGE: Final = {"top", "right", "bottom", "left"}
 VALID_LAYOUT: Final = {"dock", "vertical", "grid"}
 
+VALID_BOX_SIZING: Final = {"border-box", "content-box"}
+
 
 NULL_SPACING: Final = Spacing(0, 0, 0, 0)

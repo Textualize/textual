@@ -471,7 +471,7 @@ class App(DOMNode):
         apply_stylesheet = self.stylesheet.apply
 
         # Register children
-        for _widget_id, widget in name_widgets:
+        for widget_id, widget in name_widgets:
             if widget.node_list:
                 self.register(widget, *widget.children)
 

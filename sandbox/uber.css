@@ -1,20 +1,20 @@
-#uber {
+#uber1 {
   /* border: heavy green; */
+  layout: vertical;
+  text: on green;
+}
+
+.list-item {
+  height: 8;
   margin: 2;
-  layout: dock;
-  docks: panels=top;
 }
 
 #child1 {
-  dock: panels;
+  text: on blue;
 }
 
 #child2 {
-  dock: panels;
-}
-
-#child3 {
-  dock: panels;
+  text: on magenta;
 }
 
 #uber2 {

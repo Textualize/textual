@@ -42,11 +42,11 @@ class DOMNode(MessagePump):
         self,
         name: str | None = None,
         id: str | None = None,
-        classes: Iterable[str] | None = None,
+        classes: set[str] | None = None,
     ) -> None:
         self._name = name
         self._id = id
-        self._classes: set[str] = set(classes) if classes else set()
+        self._classes: set[str] = set() if classes is None else classes
         self.node_list = NodeList()
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles.parse(
@@ -118,7 +118,7 @@ class DOMNode(MessagePump):
         """
         if self._id is not None:
             raise ValueError(
-                "Node 'id' attribute may not be changed once set (current id={self._id!r})"
+                f"Node 'id' attribute may not be changed once set (current id={self._id!r})"
             )
         self._id = new_id
         return new_id
@@ -272,17 +272,21 @@ class DOMNode(MessagePump):
 
         def add_children(tree, node):
             for child in node.node_list:
-                branch = tree.add(
-                    Columns(
-                        [
-                            Pretty(child),
-                            Text(
-                                f"{child.size.width} X {child.size.height}", style="dim"
-                            ),
-                            Panel(Text(child.styles.css), border_style="dim"),
-                        ]
-                    )
-                )
+                cols = [
+                    Pretty(child),
+                    Text(f"{child.size.width} X {child.size.height}", style="dim"),
+                ]
+                css = child.styles.css
+                if css:
+                    cols.append(
+                        Panel(
+                            Text(child.styles.css),
+                            border_style="dim",
+                            title="css",
+                            title_align="left",
+                        )
+                    ),
+                branch = tree.add(Columns(cols))
                 if tree.children:
                     add_children(branch, child)
 
