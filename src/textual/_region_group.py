@@ -15,7 +15,7 @@ class InlineRange(NamedTuple):
     end: int
 
 
-class RegionSet:
+class RegionGroup:
     """Container which wraps regions and offers utility operations over them.
 
     Args:
@@ -48,7 +48,7 @@ class RegionSet:
             sorted_ranges = sorted(ranges, key=attrgetter("start"))
             _, start, end = sorted_ranges[0]
             for next_line_index, next_start, next_end in sorted_ranges[1:]:
-                if next_start <= end:
+                if next_start <= end + 1:
                     end = max(end, next_end)
                 else:
                     yield InlineRange(line_index, start, end)
