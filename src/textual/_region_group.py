@@ -15,7 +15,7 @@ class InlineRange(NamedTuple):
     end: int
 
 
-def inline_ranges(regions: Iterable[Region]) -> Iterable[InlineRange]:
+def regions_to_ranges(regions: Iterable[Region]) -> Iterable[InlineRange]:
     """Converts the regions to non-overlapping horizontal strips, where each strip
     represents the region on a single line. Combining the resulting strips therefore
     results in a shape identical to the combined original regions.
