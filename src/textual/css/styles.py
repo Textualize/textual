@@ -324,49 +324,60 @@ class StylesBase(ABC):
             terminal_size (Size): The size of the terminal.
 
         Returns:
-            tuple[Size, Spacing]: A tuple with the size of the renderable area, and the space around it.
+            tuple[Size, Spacing]: A tuple with the size of the content area and margin.
         """
-        width, height = container_size
         has_rule = self.has_rule
-        if styles.width:
-            width = styles.width.resolve_dimension(container_size, parent_size)
+        width, height = container_size
 
-        if styles.min_width:
-            min_width = styles.min_width.resolve_dimension(container_size, parent_size)
+        if has_rule("width"):
+            width = self.width.resolve_dimension(container_size, parent_size)
+        else:
+            width = max(0, width - self.margin.width)
+
+        if self.min_width:
+            min_width = self.min_width.resolve_dimension(container_size, parent_size)
             width = max(width, min_width)
 
-        if styles.max_width:
-            max_width = styles.max_width.resolve_dimension(container_size, parent_size)
+        if self.max_width:
+            max_width = self.max_width.resolve_dimension(container_size, parent_size)
             width = min(width, max_width)
 
-        if styles.height:
-            height = styles.height.resolve_dimension(container_size, parent_size)
+        if has_rule("height"):
+            height = self.height.resolve_dimension(container_size, parent_size)
+        else:
+            height = max(0, height - self.margin.height)
 
-        if styles.min_height:
-            min_height = styles.min_height.resolve_dimension(
-                container_size, parent_size
-            )
+        if self.min_height:
+            min_height = self.min_height.resolve_dimension(container_size, parent_size)
             height = max(height, min_height)
 
-        if styles.max_height:
-            max_height = styles.max_height.resolve_dimension(
-                container_size, parent_size
-            )
+        if self.max_height:
+            max_height = self.max_height.resolve_dimension(container_size, parent_size)
             height = min(width, max_height)
 
         # TODO: box sizing
 
         size = Size(width, height)
+        margin = Spacing(0, 0, 0, 0)
 
-        spacing = Spacing(0, 0, 0, 0)
-        if has_rule("padding"):
-            spacing += styles.padding
-        if has_rule("border"):
-            spacing += styles.border.spacing
-        if has_rule("margin"):
-            spacing += styles.margin
+        if self.box_sizing == "content-box":
 
-        return size, spacing
+            if has_rule("padding"):
+                size += self.padding
+            if has_rule("border"):
+                size += self.border.spacing.totals
+            if has_rule("margin"):
+                margin = self.margin
+
+        else:  # border-box
+            if has_rule("padding"):
+                size -= self.padding
+            if has_rule("border"):
+                size -= self.border.spacing.totals
+            if has_rule("margin"):
+                margin = self.margin
+
+        return size, margin
 
 
 @rich.repr.auto

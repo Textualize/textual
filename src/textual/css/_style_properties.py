@@ -189,14 +189,15 @@ class Edges(NamedTuple):
         if left[0]:
             yield "left", left
 
-    def spacing(self) -> tuple[int, int, int, int]:
+    @property
+    def spacing(self) -> Spacing:
         """Get spacing created by borders.
 
         Returns:
             tuple[int, int, int, int]: Spacing for top, right, bottom, and left.
         """
         top, right, bottom, left = self
-        return (
+        return Spacing(
             1 if top[0] else 0,
             1 if right[0] else 0,
             1 if bottom[0] else 0,

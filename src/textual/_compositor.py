@@ -208,9 +208,7 @@ class Compositor:
                     widget, region.size, scroll
                 )
                 widgets.update(arranged_widgets)
-                placements = [placement.apply_margin() for placement in placements]
-                placements.sort(key=attrgetter("order"))
-                log("---", placements)
+                placements = sorted(placements, key=attrgetter("order"))
 
                 for sub_region, sub_widget, z in placements:
                     total_region = total_region.union(sub_region)

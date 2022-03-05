@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum, unique
+from functools import lru_cache
 import re
 from typing import Iterable, NamedTuple, TYPE_CHECKING
 
@@ -130,6 +131,7 @@ class Scalar(NamedTuple):
         scalar = cls(float(value), SYMBOL_UNIT[unit_name or ""], percent_unit)
         return scalar
 
+    @lru_cache(maxsize=4096)
     def resolve_dimension(
         self, size: tuple[int, int], viewport: tuple[int, int]
     ) -> int:

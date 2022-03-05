@@ -112,6 +112,11 @@ class Size(NamedTuple):
         return self.width * self.height != 0
 
     @property
+    def clamped(self) -> Size:
+        width, height = self
+        return Size(max(0, width), max(0, height))
+
+    @property
     def area(self) -> int:
         """Get the area of the size.
 
@@ -127,17 +132,22 @@ class Size(NamedTuple):
         return Region(0, 0, width, height)
 
     def __add__(self, other: object) -> Size:
+        if isinstance(other, Spacing):
+            width, height = self
+            other_width, other_height = other.totals
+            return Size(width + other_width, height + other_height)
+
         if isinstance(other, tuple):
             width, height = self
             width2, height2 = other
-            return Size(width + width2, height + height2)
+            return Size(max(0, width + width2), max(0, height + height2))
         return NotImplemented
 
     def __sub__(self, other: object) -> Size:
         if isinstance(other, tuple):
             width, height = self
             width2, height2 = other
-            return Size(width - width2, height - height2)
+            return Size(max(0, width - width2), max(0, height - height2))
         return NotImplemented
 
     def contains(self, x: int, y: int) -> bool:
@@ -514,6 +524,11 @@ class Spacing(NamedTuple):
     def bottom_right(self) -> tuple[int, int]:
         """Bottom right space."""
         return (self.right, self.bottom)
+
+    @property
+    def totals(self) -> tuple[int, int]:
+        top, right, bottom, left = self
+        return (left + right, top + bottom)
 
     @property
     def css(self) -> str:

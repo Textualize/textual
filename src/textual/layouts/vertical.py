@@ -23,24 +23,23 @@ class VerticalLayout(Layout):
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
 
-        x = y = 0
+        y = max_width = max_height = 0
         parent_size = parent.size
 
         for widget in parent.children:
-            styles = widget.styles
-            render_width, render_height = parent.size
 
-            render_size, spacing = styles.get_box_model(size, parent_size)
+            (content_width, content_height), margin = widget.styles.get_box_model(
+                size, parent_size
+            )
 
-            # TODO:
-
-            if styles.has_rule("width"):
-                render_width = int(styles.width.resolve_dimension(size, parent_size))
-            if styles.has_rule("height"):
-                render_height = int(styles.height.resolve_dimension(size, parent_size))
-            region = Region(x, y, render_width, render_height)
+            region = Region(margin.left, y + margin.top, content_width, content_height)
+            max_width = max(max_width, content_width + margin.width)
             add_placement(WidgetPlacement(region, widget, 0))
-            y += render_height
+            y += region.y_max
+            max_height = y + margin.bottom
+
+        total_region = Region(0, 0, max_width, max_height)
+        add_placement(WidgetPlacement(total_region, None, 0))
 
         for placement in placements:
             log(placement)
