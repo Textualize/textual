@@ -4,7 +4,7 @@ from collections import defaultdict
 from operator import attrgetter
 from typing import NamedTuple, Iterable
 
-from src.textual.geometry import Region
+from .geometry import Region
 
 
 class InlineRange(NamedTuple):
@@ -27,9 +27,6 @@ def regions_to_ranges(regions: Iterable[Region]) -> Iterable[InlineRange]:
         Iterable[InlineRange]: Yields InlineRange objects representing the content on
             a single line, with overlaps removed.
     """
-    if not regions:
-        return
-
     inline_ranges: dict[int, list[InlineRange]] = defaultdict(list)
     for region_x, region_y, width, height in regions:
         for y in range(region_y, region_y + height):
@@ -37,10 +34,11 @@ def regions_to_ranges(regions: Iterable[Region]) -> Iterable[InlineRange]:
                 InlineRange(line_index=y, start=region_x, end=region_x + width - 1)
             )
 
+    get_start = attrgetter("start")
     for line_index, ranges in inline_ranges.items():
-        sorted_ranges = sorted(ranges, key=attrgetter("start"))
-        _, start, end = sorted_ranges[0]
-        for next_line_index, next_start, next_end in sorted_ranges[1:]:
+        sorted_ranges = iter(sorted(ranges, key=get_start))
+        _, start, end = next(sorted_ranges)
+        for next_line_index, next_start, next_end in sorted_ranges:
             if next_start <= end + 1:
                 end = max(end, next_end)
             else:
