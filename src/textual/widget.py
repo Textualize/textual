@@ -267,7 +267,9 @@ class Widget(DOMNode):
 
         # Default displays a pretty repr in the center of the screen
 
-        return Align.center(self.css_identifier_styled, vertical="middle")
+        label = f"{self.css_identifier_styled} {self.size}"
+
+        return Align.center(label, vertical="middle")
 
     async def action(self, action: str, *params) -> None:
         await self.app.action(action, self)

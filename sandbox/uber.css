@@ -1,11 +1,13 @@
 #uber1 {
   /* border: heavy green; */
-  layout: vertical;
+  layout: horizontal;
   text: on green;
 }
 
 .list-item {
   height: 8;
+
+  /* height: 8; */
   margin: 1 2;
 }
 

@@ -513,7 +513,11 @@ class App(DOMNode):
             try:
                 if sync_available:
                     console.file.write("\x1bP=1s\x1b\\")
-                console.print(ScreenRenderable(Control.home(), self.screen.render()))
+                console.print(
+                    ScreenRenderable(
+                        Control.home(), self.screen.render(), Control.home()
+                    ),
+                )
                 if sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
                 console.file.flush()

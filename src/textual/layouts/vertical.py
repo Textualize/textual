@@ -41,6 +41,4 @@ class VerticalLayout(Layout):
         total_region = Region(0, 0, max_width, max_height)
         add_placement(WidgetPlacement(total_region, None, 0))
 
-        for placement in placements:
-            log(placement)
         return placements, set(parent.children)

@@ -3,7 +3,7 @@ from __future__ import annotations
 from itertools import chain
 from operator import attrgetter, itemgetter
 import sys
-from typing import Iterator, Iterable, NamedTuple, TYPE_CHECKING
+from typing import cast, Callable, Iterator, Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderResult
@@ -207,6 +207,10 @@ class Compositor:
                 placements, arranged_widgets = widget.layout.arrange(
                     widget, region.size, scroll
                 )
+                for placement in placements:
+                    log(placement=placement)
+
+                log(arranged=arranged_widgets)
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=attrgetter("order"))
 
@@ -222,8 +226,8 @@ class Compositor:
             return total_region.size
 
         virtual_size = add_widget(root, size.region, (), size.region)
-        for widget, placement in map.items():
-            log("*", widget, placement)
+        # for widget, placement in map.items():
+        #     log("*", widget, placement)
         return map, virtual_size, widgets
 
     async def mount_all(self, screen: Screen) -> None:
@@ -315,7 +319,9 @@ class Compositor:
 
         for region, order, clip in self.map.values():
             region = region.intersection(clip)
+            log(clipped=region, bool=bool(region and (region in screen_region)))
             if region and (region in screen_region):
+                log(1)
                 region_cuts = (region.x, region.x + region.width)
                 for cut in cuts[region.y : region.y + region.height]:
                     cut.extend(region_cuts)
@@ -400,8 +406,11 @@ class Compositor:
 
         # Maps each cut on to a list of segments
         cuts = self.cuts
+        fromkeys = cast(
+            Callable[[list[int]], dict[int, list[Segment] | None]], dict.fromkeys
+        )
         chops: list[dict[int, list[Segment] | None]] = [
-            {cut: None for cut in cut_set} for cut_set in cuts
+            fromkeys(cut_set) for cut_set in cuts
         ]
 
         # TODO: Provide an option to update the background
@@ -462,9 +471,10 @@ class Compositor:
         if not region.size:
             return None
 
-        widget.clear_render_cache()
-
         update_region = region.intersection(clip)
+        if not update_region:
+            return None
+        widget.clear_render_cache()
         update_lines = self.render(console, crop=update_region).lines
         update = LayoutUpdate(update_lines, update_region)
         return update
