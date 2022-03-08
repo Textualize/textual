@@ -1,7 +1,8 @@
 #uber1 {
   /* border: heavy green; */
-  layout: horizontal;
-  text: on green;
+  layout: vertical;
+  text: on dark_green;
+  overflow-y: scroll;
 }
 
 .list-item {
@@ -9,18 +10,17 @@
 
   /* height: 8; */
   margin: 1 2;
+  text: on dark_blue;
 }
 
 #child1 {
-  text: on blue;
 }
 
 #child2 {
-  text: on magenta;
 }
 
-#uber2 {
+/* #uber2 {
   margin: 3;
   layout: dock;
   docks: _default=left;
-}
+} */

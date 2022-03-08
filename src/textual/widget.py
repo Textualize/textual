@@ -121,8 +121,6 @@ class Widget(DOMNode):
         """
 
         renderable = self.render()
-        self.log(renderable)
-
         styles = self.styles
 
         parent_text_style = self.parent.text_style

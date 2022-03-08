@@ -35,7 +35,7 @@ class VerticalLayout(Layout):
             region = Region(margin.left, y + margin.top, content_width, content_height)
             max_width = max(max_width, content_width + margin.width)
             add_placement(WidgetPlacement(region, widget, 0))
-            y += region.y_max
+            y += region.height + margin.top
             max_height = y + margin.bottom
 
         total_region = Region(0, 0, max_width, max_height)

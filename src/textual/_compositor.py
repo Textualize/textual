@@ -207,10 +207,7 @@ class Compositor:
                 placements, arranged_widgets = widget.layout.arrange(
                     widget, region.size, scroll
                 )
-                for placement in placements:
-                    log(placement=placement)
 
-                log(arranged=arranged_widgets)
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=attrgetter("order"))
 
@@ -226,8 +223,6 @@ class Compositor:
             return total_region.size
 
         virtual_size = add_widget(root, size.region, (), size.region)
-        # for widget, placement in map.items():
-        #     log("*", widget, placement)
         return map, virtual_size, widgets
 
     async def mount_all(self, screen: Screen) -> None:
@@ -319,9 +314,7 @@ class Compositor:
 
         for region, order, clip in self.map.values():
             region = region.intersection(clip)
-            log(clipped=region, bool=bool(region and (region in screen_region)))
             if region and (region in screen_region):
-                log(1)
                 region_cuts = (region.x, region.x + region.width)
                 for cut in cuts[region.y : region.y + region.height]:
                     cut.extend(region_cuts)
@@ -372,13 +365,17 @@ class Compositor:
     @classmethod
     def _assemble_chops(
         cls, chops: list[dict[int, list[Segment] | None]]
-    ) -> Iterable[Iterable[Segment]]:
+    ) -> list[list[Segment]]:
 
-        from_iterable = chain.from_iterable
-        for bucket in chops:
-            yield from_iterable(
-                line for _, line in sorted(bucket.items()) if line is not None
+        # Pretty sure we don't need to sort the buck items
+        segment_lines = [
+            sum(
+                (line for _, line in bucket.items() if line is not None),
+                start=[],
             )
+            for bucket in chops
+        ]
+        return segment_lines
 
     def render(
         self,
@@ -406,9 +403,11 @@ class Compositor:
 
         # Maps each cut on to a list of segments
         cuts = self.cuts
+        # dict.fromkeys is a callable which takes a list of ints returns a dict which maps ints on to a list of Segments or None.
         fromkeys = cast(
             Callable[[list[int]], dict[int, list[Segment] | None]], dict.fromkeys
         )
+        # A mapping of cut index to a list of segments for each line
         chops: list[dict[int, list[Segment] | None]] = [
             fromkeys(cut_set) for cut_set in cuts
         ]
@@ -431,18 +430,21 @@ class Compositor:
                 final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
 
                 if len(final_cuts) == 2:
+                    # Two cuts, which means the entire line
                     cut_segments = [line]
                 else:
+                    # More than one cut, which means we need to divide the line
                     render_x = render_region.x
                     relative_cuts = [cut - render_x for cut in final_cuts]
                     _, *cut_segments = divide(line, relative_cuts)
+                # Since we are painting front to back, the first segments for a cut "wins"
                 for cut, segments in zip(final_cuts, cut_segments):
                     if chops[y][cut] is None:
                         chops[y][cut] = segments
 
         # Assemble the cut renders in to lists of segments
         crop_x, crop_y, crop_x2, crop_y2 = crop_region.corners
-        output_lines = self._assemble_chops(chops[crop_y:crop_y2])
+        render_lines = self._assemble_chops(chops[crop_y:crop_y2])
 
         def width_view(line: list[Segment]) -> list[Segment]:
             if line:
@@ -451,9 +453,7 @@ class Compositor:
             return line
 
         if crop is not None and (crop_x, crop_x2) != (0, self.width):
-            render_lines = [width_view(line) for line in output_lines]
-        else:
-            render_lines = list(output_lines)
+            render_lines = [width_view(line) for line in render_lines]
 
         return SegmentLines(render_lines, new_lines=True)
 
@@ -463,14 +463,21 @@ class Compositor:
         yield self.render(console)
 
     def update_widget(self, console: Console, widget: Widget) -> LayoutUpdate | None:
+        """Update a given widget in the composition.
+
+        Args:
+            console (Console): Console instance.
+            widget (Widget): Widget to update.
+
+        Returns:
+            LayoutUpdate | None: A renderable or None if nothing to render.
+        """
         if widget not in self.regions:
             return None
 
         region, clip = self.regions[widget]
-
-        if not region.size:
+        if not region:
             return None
-
         update_region = region.intersection(clip)
         if not update_region:
             return None

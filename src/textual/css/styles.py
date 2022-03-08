@@ -13,7 +13,7 @@ from rich.style import Style
 
 from .. import log
 from .._animator import Animation, EasingFunction
-from ..geometry import Region, Size, Spacing
+from ..geometry import Size, Spacing
 from ._style_properties import (
     BorderProperty,
     BoxProperty,
@@ -32,11 +32,19 @@ from ._style_properties import (
     TransitionsProperty,
     FractionalProperty,
 )
-from .constants import VALID_BOX_SIZING, VALID_DISPLAY, VALID_VISIBILITY
+from .constants import VALID_BOX_SIZING, VALID_DISPLAY, VALID_VISIBILITY, VALID_OVERFLOW
 from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
 from .transition import Transition
-from .types import BoxSizing, Display, Edge, Specificity3, Specificity4, Visibility
+from .types import (
+    BoxSizing,
+    Display,
+    Edge,
+    Overflow,
+    Specificity3,
+    Specificity4,
+    Visibility,
+)
 
 if sys.version_info >= (3, 8):
     from typing import TypedDict
@@ -91,6 +99,9 @@ class RulesMap(TypedDict, total=False):
 
     dock: str
     docks: tuple[DockGroup, ...]
+
+    overflow_x: Overflow
+    overflow_y: Overflow
 
     layers: tuple[str, ...]
     layer: str
@@ -160,6 +171,9 @@ class StylesBase(ABC):
 
     dock = DockProperty()
     docks = DocksProperty()
+
+    overflow_x = StringEnumProperty(VALID_OVERFLOW, "hidden")
+    overflow_y = StringEnumProperty(VALID_OVERFLOW, "hidden")
 
     layer = NameProperty()
     layers = NameListProperty()
@@ -637,6 +651,11 @@ class Styles(StylesBase):
                 append_declaration("text-background", self.text_background.name)
             if has_rule("text_style"):
                 append_declaration("text-style", str(get_rule("text_style")))
+
+        if has_rule("overflow-x"):
+            append_declaration("overflow-x", self.overflow_x)
+        if has_rule("overflow-y"):
+            append_declaration("overflow-y", self.overflow_y)
 
         if has_rule("box-sizing"):
             append_declaration("box-sizing", self.box_sizing)

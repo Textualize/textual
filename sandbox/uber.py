@@ -20,7 +20,12 @@ class BasicApp(App):
         self.mount(
             uber1=Widget(
                 Placeholder(id="child1", classes={"list-item"}),
-                Widget(id="child2", classes={"list-item"}),
+                Placeholder(id="child2", classes={"list-item"}),
+                Placeholder(id="child3", classes={"list-item"}),
+                Placeholder(classes={"list-item"}),
+                Placeholder(classes={"list-item"}),
+                Placeholder(classes={"list-item"}),
+                Placeholder(classes={"list-item"}),
                 # Placeholder(id="child3", classes={"list-item"}),
             ),
             # uber2=uber2,
