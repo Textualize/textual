@@ -11,7 +11,7 @@ class MyApp(App):
     async def on_load(self, event: events.Load) -> None:
         """Bind keys with the app loads (but before entering application mode)"""
         await self.bind("b", "view.toggle('sidebar')", "Toggle sidebar")
-        await self.bind("q", "quit", "Quit")
+        await self.bind("q,escape", "quit", "Quit")
 
     async def on_mount(self, event: events.Mount) -> None:
         """Create and dock the widgets."""
