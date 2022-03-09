@@ -43,6 +43,7 @@ class RenderRegion(NamedTuple):
     region: Region
     order: tuple[int, ...]
     clip: Region
+    virtual_size: Size
 
 
 RenderRegionMap: TypeAlias = dict[Widget, RenderRegion]
@@ -133,7 +134,10 @@ class Compositor:
         self.width = size.width
         self.height = size.height
 
-        map, virtual_size, widgets = self._arrange_root(parent)
+        # TODO: Handle virtual size
+        map, widgets = self._arrange_root(parent)
+
+        log(map)
 
         self._require_update = False
 
@@ -149,7 +153,7 @@ class Compositor:
 
         # Copy renders if the size hasn't changed
         new_renders = {
-            widget: (region, clip) for widget, (region, _order, clip) in map.items()
+            widget: (region, clip) for widget, (region, _order, clip, _) in map.items()
         }
         self.regions = new_renders
 
@@ -160,14 +164,13 @@ class Compositor:
             if widget in old_widgets and widget.size != region.size
         }
 
-        parent.virtual_size = virtual_size
         self.widgets.clear()
         self.widgets.update(widgets)
         return ReflowResult(
             hidden=hidden_widgets, shown=shown_widgets, resized=resized_widgets
         )
 
-    def _arrange_root(self, root: Widget) -> tuple[RenderRegionMap, Size, set[Widget]]:
+    def _arrange_root(self, root: Widget) -> tuple[RenderRegionMap, set[Widget]]:
         """Arrange a widgets children based on its layout attribute.
 
         Args:
@@ -177,9 +180,9 @@ class Compositor:
             map[dict[Widget, RenderRegion], Size]: A mapping of widget on to render region
                 and the "virtual size" (scrollable reason)
         """
-        size = Size(self.width, self.height)
-        ORIGIN = Offset(0, 0)
 
+        ORIGIN = Offset(0, 0)
+        size = root.size
         map: dict[Widget, RenderRegion] = {}
         widgets: set[Widget] = set()
 
@@ -188,7 +191,7 @@ class Compositor:
             region: Region,
             order: tuple[int, ...],
             clip: Region,
-        ):
+        ) -> None:
             widgets.add(widget)
             styles_offset = widget.styles.offset
             total_region = region
@@ -197,7 +200,6 @@ class Compositor:
                 if styles_offset
                 else ORIGIN
             )
-            map[widget] = RenderRegion(region + layout_offset, order, clip)
 
             if widget.layout is not None:
                 scroll = widget.scroll
@@ -220,17 +222,21 @@ class Compositor:
                             sub_widget.z + (z,),
                             sub_clip,
                         )
-            return total_region.size
 
-        virtual_size = add_widget(root, size.region, (), size.region)
-        return map, virtual_size, widgets
+            map[widget] = RenderRegion(
+                region + layout_offset, order, clip, total_region.size
+            )
+
+        add_widget(root, size.region, (), size.region)
+
+        return map, widgets
 
     async def mount_all(self, screen: Screen) -> None:
         screen.app.mount(*self.widgets)
 
     def __iter__(self) -> Iterator[tuple[Widget, Region, Region]]:
         layers = sorted(self.map.items(), key=lambda item: item[1].order, reverse=True)
-        for widget, (region, order, clip) in layers:
+        for widget, (region, _order, clip, _) in layers:
             yield widget, region.intersection(clip), region
 
     def get_offset(self, widget: Widget) -> Offset:
@@ -312,7 +318,7 @@ class Compositor:
         screen_region = Region(0, 0, width, height)
         cuts = [[0, width] for _ in range(height)]
 
-        for region, order, clip in self.map.values():
+        for region, order, clip, _ in self.map.values():
             region = region.intersection(clip)
             if region and (region in screen_region):
                 region_cuts = (region.x, region.x + region.width)
@@ -337,7 +343,7 @@ class Compositor:
             widget_regions = sorted(
                 [
                     (widget, region, order, clip)
-                    for widget, (region, order, clip) in self.map.items()
+                    for widget, (region, order, clip, _) in self.map.items()
                     if widget.is_visual and widget.visible
                 ],
                 key=itemgetter(2),
@@ -347,12 +353,11 @@ class Compositor:
             widget_regions = []
 
         for widget, region, _order, clip in widget_regions:
-
-            lines = widget._get_lines()
-
             if region in clip:
+                lines = widget._get_lines()
                 yield region, clip, lines
             elif clip.overlaps(region):
+                lines = widget._get_lines()
                 new_region = region.intersection(clip)
                 delta_x = new_region.x - region.x
                 delta_y = new_region.y - region.y

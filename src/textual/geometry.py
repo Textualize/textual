@@ -112,11 +112,6 @@ class Size(NamedTuple):
         return self.width * self.height != 0
 
     @property
-    def clamped(self) -> Size:
-        width, height = self
-        return Size(max(0, width), max(0, height))
-
-    @property
     def area(self) -> int:
         """Get the area of the size.
 

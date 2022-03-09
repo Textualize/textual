@@ -29,7 +29,7 @@ from ._callback import invoke
 from ._context import active_app
 from ._types import Lines
 from .dom import DOMNode
-from .geometry import Offset, Size
+from .geometry import Offset, Region, Size
 from .message import Message
 from . import messages
 from .layout import Layout
@@ -97,7 +97,7 @@ class Widget(DOMNode):
         if self.name:
             yield "name", self.name
         if self.classes:
-            yield "classes", self.classes
+            yield "classes", set(self.classes)
         pseudo_classes = self.pseudo_classes
         if pseudo_classes:
             yield "pseudo_classes", pseudo_classes
@@ -158,6 +158,10 @@ class Widget(DOMNode):
     @property
     def size(self) -> Size:
         return self._size
+
+    @property
+    def region(self) -> Region:
+        return self.screen._compositor.get_widget_region(self)
 
     @property
     def scroll(self) -> Offset:
@@ -265,7 +269,7 @@ class Widget(DOMNode):
 
         # Default displays a pretty repr in the center of the screen
 
-        label = f"{self.css_identifier_styled} {self.size}"
+        label = f"{self.css_identifier_styled} {self.size} {self.virtual_size}"
 
         return Align.center(label, vertical="middle")
 

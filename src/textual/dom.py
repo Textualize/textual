@@ -265,6 +265,7 @@ class DOMNode(MessagePump):
             Tree: A Rich object which may be printed.
         """
         from rich.columns import Columns
+        from rich.console import Group
         from rich.panel import Panel
 
         highlighter = ReprHighlighter()
@@ -272,21 +273,27 @@ class DOMNode(MessagePump):
 
         def add_children(tree, node):
             for child in node.node_list:
-                cols = [
-                    Pretty(child),
-                    Text(f"{child.size.width} X {child.size.height}", style="dim"),
-                ]
+                info = Columns(
+                    [
+                        Pretty(child),
+                        highlighter(f"region={child.region!r}"),
+                        highlighter(
+                            f"virtual_size={child.virtual_size!r}",
+                        ),
+                    ]
+                )
                 css = child.styles.css
                 if css:
-                    cols.append(
-                        Panel(
+                    info = Group(
+                        info,
+                        Panel.fit(
                             Text(child.styles.css),
                             border_style="dim",
                             title="css",
                             title_align="left",
-                        )
-                    ),
-                branch = tree.add(Columns(cols))
+                        ),
+                    )
+                branch = tree.add(info)
                 if tree.children:
                     add_children(branch, child)
 

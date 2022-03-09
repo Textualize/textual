@@ -8,6 +8,9 @@ from textual.widget import Widget
 class BasicApp(App):
     """Sandbox application used for testing/development by Textual developers"""
 
+    def on_load(self):
+        self.bind("q", "quit", "Quit")
+
     def on_mount(self):
         """Build layout here."""
 
@@ -33,6 +36,9 @@ class BasicApp(App):
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)
+
+    def action_quit(self):
+        self.panic(self.screen.tree)
 
 
 BasicApp.run(css_file="uber.css", log="textual.log")

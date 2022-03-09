@@ -10,7 +10,7 @@
 
   /* height: 8; */
   margin: 1 2;
-  text: on dark_blue;
+  text-background: dark_blue;
 }
 
 #child1 {
