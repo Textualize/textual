@@ -34,6 +34,9 @@ ANSI_SEQUENCES: Dict[str, Tuple[Keys, ...]] = {
     "\x19": (Keys.ControlY,),  # Control-Y (25)
     "\x1a": (Keys.ControlZ,),  # Control-Z
     "\x1b": (Keys.Escape,),  # Also Control-[
+    "\x1b\x1b": (
+        Keys.Escape,
+    ),  # Windows issues esc esc for a single press of escape key
     "\x9b": (Keys.ShiftEscape,),
     "\x1c": (Keys.ControlBackslash,),  # Both Control-\ (also Ctrl-| )
     "\x1d": (Keys.ControlSquareClose,),  # Control-]

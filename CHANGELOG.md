@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.16] - Unreleased
+
+### Fixed
+
+- Fixed escape key hanging on Windows
+
 ## [1.1.15] - 2022-01-31
 
 ### Added
