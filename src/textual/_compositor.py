@@ -91,8 +91,7 @@ class Compositor:
         self.root: Widget | None = None
 
         # Dimensions of the arrangement
-        self.width = 0
-        self.height = 0
+        self.size = Size(0, 0)
 
         self.regions: dict[Widget, tuple[Region, Region]] = {}
         self._cuts: list[list[int]] | None = None
@@ -100,8 +99,7 @@ class Compositor:
         self.background = ""
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "width", self.width
-        yield "height", self.height
+        yield "size", self.size
         yield "widgets", self.widgets
 
     def check_update(self) -> bool:
@@ -132,8 +130,7 @@ class Compositor:
         self.reset()
 
         self.root = parent
-        self.width = size.width
-        self.height = size.height
+        self.size = size
 
         # TODO: Handle virtual size
         map, widgets = self._arrange_root(parent)
@@ -312,16 +309,17 @@ class Compositor:
         """
         if self._cuts is not None:
             return self._cuts
-        width = self.width
-        height = self.height
-        screen_region = Region(0, 0, width, height)
+
+        width, height = self.size
+        screen_region = self.size.region
         cuts = [[0, width] for _ in range(height)]
 
         for region, order, clip, _ in self.map.values():
             region = region.intersection(clip)
             if region and (region in screen_region):
-                region_cuts = (region.x, region.x + region.width)
-                for cut in cuts[region.y : region.y + region.height]:
+                x, y, region_width, region_height = region
+                region_cuts = (x, x + region_width)
+                for cut in cuts[y : y + region_height]:
                     cut.extend(region_cuts)
 
         # Sort the cuts for each line
@@ -398,8 +396,7 @@ class Compositor:
         Returns:
             SegmentLines: A renderable
         """
-        width = self.width
-        height = self.height
+        width, height = self.size
         screen_region = Region(0, 0, width, height)
 
         crop_region = crop.intersection(screen_region) if crop else screen_region
@@ -417,12 +414,6 @@ class Compositor:
         chops: list[dict[int, list[Segment] | None]] = [
             fromkeys(cut_set) for cut_set in cuts
         ]
-
-        # # TODO: Provide an option to update the background
-        # background_style = console.get_style(self.background)
-        # background_render = [
-        #     [_Segment("X" * width, "background_style")] for _ in range(height)
-        # ]
 
         # Go through all the renders in reverse order and fill buckets with no render
         renders = self._get_renders()
@@ -459,7 +450,7 @@ class Compositor:
                 line = div_lines[1] if len(div_lines) > 1 else div_lines[0]
             return line
 
-        if crop is not None and (crop_x, crop_x2) != (0, self.width):
+        if crop is not None and (crop_x, crop_x2) != (0, width):
             render_lines = [width_view(line) for line in render_lines]
 
         return SegmentLines(render_lines, new_lines=True)
