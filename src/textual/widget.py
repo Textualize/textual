@@ -172,6 +172,15 @@ class Widget(DOMNode):
         return True
 
     @property
+    def is_transparent(self) -> bool:
+        """Check if the background styles is not set.
+
+        Returns:
+            bool: ``True`` if there is background color, otherwise ``False``.
+        """
+        return self.layout is not None or self.styles.text.bgcolor is None
+
+    @property
     def console(self) -> Console:
         """Get the current console."""
         return active_app.get().console

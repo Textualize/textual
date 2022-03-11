@@ -32,8 +32,16 @@ class Screen(Widget):
     def is_visual(self) -> bool:
         return False
 
+    @property
+    def is_transparent(self) -> bool:
+        return False
+
     def render(self) -> RenderableType:
+        return VerticalGradient("red", "blue")
         return self._compositor
+
+    def render_background(self) -> RenderableType:
+        return VerticalGradient("#000000", "#00ff00")
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the absolute offset of a given Widget.
@@ -98,11 +106,11 @@ class Screen(Widget):
 
             send_resize = shown | resized
 
-            for widget, region, unclipped_region in self._compositor:
+            for widget, region, unclipped_region, virtual_size in self._compositor:
                 widget._update_size(unclipped_region.size)
                 if widget in send_resize:
                     widget.post_message_no_wait(
-                        events.Resize(self, unclipped_region.size)
+                        events.Resize(self, unclipped_region.size, virtual_size)
                     )
 
         except Exception:

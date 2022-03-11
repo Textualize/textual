@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from itertools import chain
 from operator import attrgetter, itemgetter
 import sys
 from typing import cast, Callable, Iterator, Iterable, NamedTuple, TYPE_CHECKING
@@ -89,6 +88,7 @@ class Compositor:
         # All widgets considered in the arrangement
         # Not this may be a supperset of self.map.keys() as some widgets may be invisible for various reasons
         self.widgets: set[Widget] = set()
+        self.root: Widget | None = None
 
         # Dimensions of the arrangement
         self.width = 0
@@ -131,13 +131,12 @@ class Compositor:
         """
         self.reset()
 
+        self.root = parent
         self.width = size.width
         self.height = size.height
 
         # TODO: Handle virtual size
         map, widgets = self._arrange_root(parent)
-
-        log(map)
 
         self._require_update = False
 
@@ -234,10 +233,10 @@ class Compositor:
     async def mount_all(self, screen: Screen) -> None:
         screen.app.mount(*self.widgets)
 
-    def __iter__(self) -> Iterator[tuple[Widget, Region, Region]]:
+    def __iter__(self) -> Iterator[tuple[Widget, Region, Region, Size]]:
         layers = sorted(self.map.items(), key=lambda item: item[1].order, reverse=True)
-        for widget, (region, _order, clip, _) in layers:
-            yield widget, region.intersection(clip), region
+        for widget, (region, _order, clip, virtual_size) in layers:
+            yield widget, region.intersection(clip), region, virtual_size
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the offset of a widget."""
@@ -248,7 +247,7 @@ class Compositor:
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given point or None."""
-        for widget, cropped_region, region in self:
+        for widget, cropped_region, region, _ in self:
             if cropped_region.contains(x, y):
                 return widget, region
         raise errors.NoWidget(f"No widget under screen coordinate ({x}, {y})")
@@ -344,7 +343,7 @@ class Compositor:
                 [
                     (widget, region, order, clip)
                     for widget, (region, order, clip, _) in self.map.items()
-                    if widget.is_visual and widget.visible
+                    if widget.visible
                 ],
                 key=itemgetter(2),
                 reverse=True,
@@ -353,6 +352,8 @@ class Compositor:
             widget_regions = []
 
         for widget, region, _order, clip in widget_regions:
+            if widget.is_transparent:
+                continue
             if region in clip:
                 lines = widget._get_lines()
                 yield region, clip, lines
@@ -375,7 +376,7 @@ class Compositor:
         # Pretty sure we don't need to sort the buck items
         segment_lines = [
             sum(
-                (line for _, line in bucket.items() if line is not None),
+                [line for line in bucket.values() if line is not None],
                 start=[],
             )
             for bucket in chops
@@ -399,9 +400,9 @@ class Compositor:
         """
         width = self.width
         height = self.height
-        screen = Region(0, 0, width, height)
+        screen_region = Region(0, 0, width, height)
 
-        crop_region = crop.intersection(screen) if crop else screen
+        crop_region = crop.intersection(screen_region) if crop else screen_region
 
         _Segment = Segment
         divide = _Segment.divide
@@ -417,17 +418,16 @@ class Compositor:
             fromkeys(cut_set) for cut_set in cuts
         ]
 
-        # TODO: Provide an option to update the background
-        background_style = console.get_style(self.background)
-        background_render = [
-            [_Segment(" " * width, background_style)] for _ in range(height)
-        ]
+        # # TODO: Provide an option to update the background
+        # background_style = console.get_style(self.background)
+        # background_render = [
+        #     [_Segment("X" * width, "background_style")] for _ in range(height)
+        # ]
+
         # Go through all the renders in reverse order and fill buckets with no render
         renders = self._get_renders()
 
-        for region, clip, lines in chain(
-            renders, [(screen, screen, background_render)]
-        ):
+        for region, clip, lines in renders:
             render_region = region.intersection(clip)
             for y, line in zip(render_region.y_range, lines):
 
@@ -443,9 +443,11 @@ class Compositor:
                     relative_cuts = [cut - render_x for cut in final_cuts]
                     _, *cut_segments = divide(line, relative_cuts)
                 # Since we are painting front to back, the first segments for a cut "wins"
+
+                chops_line = chops[y]
                 for cut, segments in zip(final_cuts, cut_segments):
-                    if chops[y][cut] is None:
-                        chops[y][cut] = segments
+                    if chops_line[cut] is None:
+                        chops_line[cut] = segments
 
         # Assemble the cut renders in to lists of segments
         crop_x, crop_y, crop_x2, crop_y2 = crop_region.corners

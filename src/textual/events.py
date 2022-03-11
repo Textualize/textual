@@ -90,7 +90,7 @@ class Resize(Event, verbosity=2, bubble=False):
     __slots__ = ["size"]
     size: Size
 
-    def __init__(self, sender: MessageTarget, size: Size) -> None:
+    def __init__(self, sender: MessageTarget, size: Size, virtual_size: Size) -> None:
         """
         Args:
             sender (MessageTarget): Event sender.
@@ -98,22 +98,15 @@ class Resize(Event, verbosity=2, bubble=False):
             height (int): New height in terminal cells.
         """
         self.size = size
+        self.virtual_size = virtual_size
         super().__init__(sender)
 
     def can_replace(self, message: "Message") -> bool:
         return isinstance(message, Resize)
 
-    @property
-    def width(self) -> int:
-        return self.size.width
-
-    @property
-    def height(self) -> int:
-        return self.size.height
-
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self.width
-        yield self.height
+        yield "size", self.size
+        yield "virtual_size", self.virtual_size
 
 
 class Mount(Event, bubble=False):
