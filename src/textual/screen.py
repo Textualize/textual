@@ -29,10 +29,6 @@ class Screen(Widget):
         self._compositor = Compositor()
 
     @property
-    def is_visual(self) -> bool:
-        return False
-
-    @property
     def is_transparent(self) -> bool:
         return False
 

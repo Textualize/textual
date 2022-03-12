@@ -168,10 +168,6 @@ class Widget(DOMNode):
         return Offset(self.scroll_x, self.scroll_y)
 
     @property
-    def is_visual(self) -> bool:
-        return True
-
-    @property
     def is_transparent(self) -> bool:
         """Check if the background styles is not set.
 

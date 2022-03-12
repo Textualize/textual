@@ -92,11 +92,6 @@ class DOMNode(MessagePump):
         return node
 
     @property
-    def is_visual(self) -> bool:
-        """Check if the widget is visual (i.e. draws something on Screen)."""
-        return True
-
-    @property
     def id(self) -> str | None:
         """The ID of this node, or None if the node has no ID.
 
