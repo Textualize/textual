@@ -153,7 +153,7 @@ class Widget(DOMNode):
 
     @property
     def children(self) -> list[Widget]:
-        return list(self.node_list)
+        return cast(list[Widget], list(self.node_list))
 
     @property
     def size(self) -> Size:

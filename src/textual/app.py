@@ -83,7 +83,7 @@ class App(DOMNode):
             driver_class (Type[Driver], optional): Driver class, or None to use default. Defaults to None.
             title (str, optional): Title of the application. Defaults to "Textual Application".
         """
-        self.console = Console(markup=False)
+        self.console = Console(markup=False, highlight=False)
         self.error_console = Console(markup=False, stderr=True)
         self._screen = screen
         self.driver_class = driver_class or self.get_driver_class()
