@@ -160,6 +160,10 @@ class Widget(DOMNode):
         return self._size
 
     @property
+    def virtual_size(self) -> Size:
+        return self._virtual_size
+
+    @property
     def region(self) -> Region:
         return self.screen._compositor.get_widget_region(self)
 
@@ -203,8 +207,9 @@ class Widget(DOMNode):
     def on_style_change(self) -> None:
         self.clear_render_cache()
 
-    def _update_size(self, size: Size) -> None:
+    def _update_size(self, size: Size, virtual_size: Size) -> None:
         self._size = size
+        self._virtual_size = virtual_size
 
     def render_lines(self) -> None:
         width, height = self.size
@@ -289,7 +294,7 @@ class Widget(DOMNode):
         return await super().post_message(message)
 
     async def on_resize(self, event: events.Resize) -> None:
-        self._update_size(event.size)
+        self._update_size(event.size, event.virtual_size)
         self.refresh()
 
     async def on_idle(self, event: events.Idle) -> None:

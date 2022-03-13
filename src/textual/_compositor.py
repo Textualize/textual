@@ -189,8 +189,8 @@ class Compositor:
             clip: Region,
         ) -> None:
             widgets.add(widget)
-            styles_offset = widget.styles.offset
             total_region = region
+            styles_offset = widget.styles.offset
             layout_offset = (
                 styles_offset.resolve(region.size, clip.size)
                 if styles_offset
