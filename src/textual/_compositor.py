@@ -232,8 +232,9 @@ class Compositor:
 
     def __iter__(self) -> Iterator[tuple[Widget, Region, Region, Size]]:
         layers = sorted(self.map.items(), key=lambda item: item[1].order, reverse=True)
+        intersection = Region.intersection
         for widget, (region, _order, clip, virtual_size) in layers:
-            yield widget, region.intersection(clip), region, virtual_size
+            yield widget, intersection(region, clip), region, virtual_size
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the offset of a widget."""
@@ -314,16 +315,19 @@ class Compositor:
         screen_region = self.size.region
         cuts = [[0, width] for _ in range(height)]
 
+        intersection = Region.intersection
+        extend = list.extend
+
         for region, order, clip, _ in self.map.values():
-            region = region.intersection(clip)
+            region = intersection(region, clip)
             if region and (region in screen_region):
                 x, y, region_width, region_height = region
                 region_cuts = (x, x + region_width)
                 for cut in cuts[y : y + region_height]:
-                    cut.extend(region_cuts)
+                    extend(cut, region_cuts)
 
         # Sort the cuts for each line
-        self._cuts = [sorted(set(cut_set)) for cut_set in cuts]
+        self._cuts = [sorted(set(line_cuts)) for line_cuts in cuts]
         return self._cuts
 
     def _get_renders(self) -> Iterable[tuple[Region, Region, Lines]]:
@@ -349,6 +353,9 @@ class Compositor:
         else:
             widget_regions = []
 
+        divide = Segment.divide
+        intersection = Region.intersection
+
         for widget, region, _order, clip in widget_regions:
             if widget.is_transparent:
                 continue
@@ -357,12 +364,11 @@ class Compositor:
                 yield region, clip, lines
             elif clip.overlaps(region):
                 lines = widget._get_lines()
-                new_region = region.intersection(clip)
-                delta_x = new_region.x - region.x
-                delta_y = new_region.y - region.y
-                splits = [delta_x, delta_x + new_region.width]
-                lines = lines[delta_y : delta_y + new_region.height]
-                divide = Segment.divide
+                new_x, new_y, new_width, new_height = intersection(region, clip)
+                delta_x = new_x - region.x
+                delta_y = new_y - region.y
+                splits = [delta_x, delta_x + new_width]
+                lines = lines[delta_y : delta_y + new_height]
                 lines = [list(divide(line, splits))[1] for line in lines]
                 yield region, clip, lines
 
@@ -417,9 +423,10 @@ class Compositor:
 
         # Go through all the renders in reverse order and fill buckets with no render
         renders = self._get_renders()
+        intersection = Region.intersection
 
         for region, clip, lines in renders:
-            render_region = region.intersection(clip)
+            render_region = intersection(region, clip)
             for y, line in zip(render_region.y_range, lines):
 
                 first_cut, last_cut = render_region.x_extents

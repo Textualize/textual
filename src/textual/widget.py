@@ -100,7 +100,7 @@ class Widget(DOMNode):
             yield "classes", set(self.classes)
         pseudo_classes = self.pseudo_classes
         if pseudo_classes:
-            yield "pseudo_classes", pseudo_classes
+            yield "pseudo_classes", set(pseudo_classes)
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Pseudo classes for a widget"""
