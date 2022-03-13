@@ -45,7 +45,7 @@ class RenderRegion(NamedTuple):
     virtual_size: Size
 
 
-RenderRegionMap: TypeAlias = dict[Widget, RenderRegion]
+RenderRegionMap: TypeAlias = "dict[Widget, RenderRegion]"
 
 
 @rich.repr.auto
