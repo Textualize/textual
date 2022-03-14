@@ -307,3 +307,49 @@ def test_spacing_add():
 
     with pytest.raises(TypeError):
         Spacing(1, 2, 3, 4) + "foo"
+
+
+def test_split():
+    assert Region(10, 5, 22, 15).split(10, 5) == (
+        Region(10, 5, 10, 5),
+        Region(20, 5, 12, 10),
+        Region(10, 10, 10, 10),
+        Region(20, 10, 10, 5),
+    )
+
+
+def test_split_negative():
+    assert Region(10, 5, 22, 15).split(-1, -1) == (
+        Region(10, 5, 21, 14),
+        Region(31, 5, 1, 14),
+        Region(10, 19, 21, 1),
+        Region(31, 19, 1, 1),
+    )
+
+
+def test_split_vertical():
+    assert Region(10, 5, 22, 15).split_vertical(10) == (
+        Region(10, 5, 10, 15),
+        Region(20, 5, 12, 15),
+    )
+
+
+def test_split_vertical_negative():
+    assert Region(10, 5, 22, 15).split_vertical(-1) == (
+        Region(10, 5, 21, 15),
+        Region(31, 5, 1, 15),
+    )
+
+
+def test_split_horizontal():
+    assert Region(10, 5, 22, 15).split_horizontal(5) == (
+        Region(10, 5, 22, 5),
+        Region(10, 10, 22, 10),
+    )
+
+
+def test_split_horizontal_negative():
+    assert Region(10, 5, 22, 15).split_horizontal(-1) == (
+        Region(10, 5, 22, 14),
+        Region(10, 19, 22, 1),
+    )

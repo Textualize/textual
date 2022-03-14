@@ -36,8 +36,10 @@ from .layout import Layout
 from .reactive import Reactive, watch
 from .renderables.opacity import Opacity
 
+
 if TYPE_CHECKING:
     from .screen import Screen
+    from .scrollbar import ScrollBar
 
 
 class RenderCache(NamedTuple):
@@ -79,6 +81,9 @@ class Widget(DOMNode):
         self.render_cache: RenderCache | None = None
         self.highlight_style: Style | None = None
 
+        self._vertical_scrollbar: ScrollBar | None = None
+        self._horizontal_scrollbar: ScrollBar | None = None
+
         super().__init__(name=name, id=id, classes=classes)
         self.add_children(*children)
 
@@ -87,6 +92,54 @@ class Widget(DOMNode):
     scroll_x = Reactive(0)
     scroll_y = Reactive(0)
     virtual_size = Reactive(Size(0, 0))
+    show_vertical_scrollbar = Reactive(False)
+    show_horizontal_scrollbar = Reactive(False)
+
+    @property
+    def vertical_scrollbar(self) -> ScrollBar:
+        """Get a vertical scrollbar (create if necessary)
+
+        Returns:
+            ScrollBar: ScrollBar Widget.
+        """
+        from .scrollbar import ScrollBar
+
+        if self._vertical_scrollbar is not None:
+            return self._vertical_scrollbar
+        self._vertical_scrollbar = scroll_bar = ScrollBar(
+            vertical=True, name="vertical"
+        )
+        self.app.register(self, scroll_bar)
+        return scroll_bar
+
+    @property
+    def horizontal_scrollbar(self) -> ScrollBar:
+        """Get a vertical scrollbar (create if necessary)
+
+        Returns:
+            ScrollBar: ScrollBar Widget.
+        """
+        from .scrollbar import ScrollBar
+
+        if self._horizontal_scrollbar is not None:
+            return self._horizontal_scrollbar
+        self._horizontal_scrollbar = scroll_bar = ScrollBar(
+            vertical=True, name="vertical"
+        )
+        self.app.register(self, scroll_bar)
+        return scroll_bar
+
+    @property
+    def scrollbars_enabled(self) -> tuple[bool, bool]:
+        """A tuple of booleans that indicate if scrollbars are enabled.
+
+        Returns:
+            tuple[bool, bool]: A tuple of (<vertical scrollbar enabled>, <horizontal scrollbar enabled>)
+
+        """
+        if self.layout is None:
+            return False, False
+        return self.show_vertical_scrollbar, self.show_horizontal_scrollbar
 
     def __init_subclass__(cls, can_focus: bool = True) -> None:
         super().__init_subclass__()
@@ -101,6 +154,30 @@ class Widget(DOMNode):
         pseudo_classes = self.pseudo_classes
         if pseudo_classes:
             yield "pseudo_classes", set(pseudo_classes)
+
+    def arrange_chrome(self, size: Size) -> Iterable[tuple[Widget, Region]]:
+        region = size.region
+        show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
+
+        if show_horizontal_scrollbar and show_vertical_scrollbar:
+            (
+                region,
+                vertical_scrollbar_region,
+                horizontal_scrollbar_region,
+                _,
+            ) = region.split(-1, -1)
+            if vertical_scrollbar_region:
+                yield self.vertical_scrollbar, vertical_scrollbar_region
+            if horizontal_scrollbar_region:
+                yield self.horizontal_scrollbar, horizontal_scrollbar_region
+        elif show_vertical_scrollbar:
+            region, scrollbar_region = region.split_vertical(-1)
+            if scrollbar_region:
+                yield self.vertical_scrollbar, scrollbar_region
+        elif show_horizontal_scrollbar:
+            region, scrollbar_region = region.split_horizontal(-1)
+            if scrollbar_region:
+                yield self.horizontal_scrollbar, scrollbar_region
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Pseudo classes for a widget"""

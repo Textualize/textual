@@ -48,7 +48,7 @@ class Layout(ABC):
     @abstractmethod
     def arrange(
         self, parent: Widget, size: Size, scroll: Offset
-    ) -> tuple[Iterable[WidgetPlacement], set[Widget]]:
+    ) -> tuple[list[WidgetPlacement], set[Widget]]:
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 
         Args:

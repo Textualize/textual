@@ -95,10 +95,12 @@ class Screen(Widget):
         try:
             hidden, shown, resized = self._compositor.reflow(self, self.size)
 
+            Hide = events.Hide
+            Show = events.Show
             for widget in hidden:
-                widget.post_message_no_wait(events.Hide(self))
+                widget.post_message_no_wait(Hide(self))
             for widget in shown:
-                widget.post_message_no_wait(events.Show(self))
+                widget.post_message_no_wait(Show(self))
 
             send_resize = shown | resized
 

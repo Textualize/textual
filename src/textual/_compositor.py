@@ -13,6 +13,7 @@ from rich.style import Style
 from . import errors, log
 from .geometry import Region, Offset, Size
 
+from ._arrange import arrange
 from ._loop import loop_last
 from ._types import Lines
 from .widget import Widget
@@ -88,15 +89,20 @@ class Compositor:
         # All widgets considered in the arrangement
         # Not this may be a supperset of self.map.keys() as some widgets may be invisible for various reasons
         self.widgets: set[Widget] = set()
+
+        # The top level widget
         self.root: Widget | None = None
 
         # Dimensions of the arrangement
         self.size = Size(0, 0)
 
+        # A mapping of Widget on to region, and clip region
+        # The clip region can be considered the window through which a widget is viewed
         self.regions: dict[Widget, tuple[Region, Region]] = {}
+
+        # The points in each line where the line bisects the left and right edges of the widget
         self._cuts: list[list[int]] | None = None
         self._require_update: bool = True
-        self.background = ""
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "size", self.size
@@ -202,9 +208,15 @@ class Compositor:
                 total_region = region.size.region
                 sub_clip = clip.intersection(region)
 
-                placements, arranged_widgets = widget.layout.arrange(
-                    widget, region.size, scroll
-                )
+                # for chrome_widget, chrome_region in widget.arrange_chrome(region.size):
+                #     map[chrome_widget] = RenderRegion(
+                #         chrome_region + layout_offset,
+                #         order,
+                #         clip,
+                #         total_region.size,
+                #     )
+
+                placements, arranged_widgets = arrange(widget, region.size, scroll)
 
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=attrgetter("order"))
@@ -218,6 +230,16 @@ class Compositor:
                             sub_widget.z + (z,),
                             sub_clip,
                         )
+
+                for chrome_widget, chrome_region in widget.arrange_chrome(region.size):
+                    render_region = RenderRegion(
+                        chrome_region + region.origin + layout_offset,
+                        order,
+                        clip,
+                        total_region.size,
+                    )
+                    log(render_region)
+                    map[chrome_widget] = render_region
 
             map[widget] = RenderRegion(
                 region + layout_offset, order, clip, total_region.size
@@ -245,8 +267,9 @@ class Compositor:
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given point or None."""
+        contains = Region.contains
         for widget, cropped_region, region, _ in self:
-            if cropped_region.contains(x, y):
+            if contains(cropped_region, x, y):
                 return widget, region
         raise errors.NoWidget(f"No widget under screen coordinate ({x}, {y})")
 
@@ -345,7 +368,7 @@ class Compositor:
                 [
                     (widget, region, order, clip)
                     for widget, (region, order, clip, _) in self.map.items()
-                    if widget.visible
+                    if widget.visible and not widget.is_transparent
                 ],
                 key=itemgetter(2),
                 reverse=True,
@@ -355,14 +378,12 @@ class Compositor:
 
         divide = Segment.divide
         intersection = Region.intersection
+        overlaps = Region.overlaps
 
         for widget, region, _order, clip in widget_regions:
-            if widget.is_transparent:
-                continue
             if region in clip:
-                lines = widget._get_lines()
-                yield region, clip, lines
-            elif clip.overlaps(region):
+                yield region, clip, widget._get_lines()
+            elif overlaps(clip, region):
                 lines = widget._get_lines()
                 new_x, new_y, new_width, new_height = intersection(region, clip)
                 delta_x = new_x - region.x
@@ -377,7 +398,7 @@ class Compositor:
         cls, chops: list[dict[int, list[Segment] | None]]
     ) -> list[list[Segment]]:
 
-        # Pretty sure we don't need to sort the buck items
+        # Pretty sure we don't need to sort the bucket items
         segment_lines = [
             sum(
                 [line for line in bucket.values() if line is not None],
@@ -432,6 +453,7 @@ class Compositor:
                 first_cut, last_cut = render_region.x_extents
                 final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
 
+                # TODO: Suspect this may break for region not on cut boundaries
                 if len(final_cuts) == 2:
                     # Two cuts, which means the entire line
                     cut_segments = [line]
@@ -440,8 +462,8 @@ class Compositor:
                     render_x = render_region.x
                     relative_cuts = [cut - render_x for cut in final_cuts]
                     _, *cut_segments = divide(line, relative_cuts)
-                # Since we are painting front to back, the first segments for a cut "wins"
 
+                # Since we are painting front to back, the first segments for a cut "wins"
                 chops_line = chops[y]
                 for cut, segments in zip(final_cuts, cut_segments):
                     if chops_line[cut] is None:

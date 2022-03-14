@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Iterable
-
 
 from textual.geometry import Size, Offset, Region
 from textual.layout import Layout, WidgetPlacement
@@ -27,11 +25,9 @@ class HorizontalLayout(Layout):
         parent_size = parent.size
 
         for widget in parent.children:
-
             (content_width, content_height), margin = widget.styles.get_box_model(
                 size, parent_size
             )
-
             region = Region(margin.left + x, margin.top, content_width, content_height)
             max_height = max(max_height, content_height + margin.height)
             add_placement(WidgetPlacement(region, widget, 0))

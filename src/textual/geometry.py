@@ -488,6 +488,95 @@ class Region(NamedTuple):
         )
         return union_region
 
+    def split(self, cut_x: int, cut_y: int) -> tuple[Region, Region, Region, Region]:
+        """Split a region in to 4 from given x and y offsets (cuts).
+
+                   cut_x ↓
+                ┌────────┐┌───┐
+                │        ││   │
+                │        ││   │
+                │        ││   │
+        cut_y → └────────┘└───┘
+                ┌────────┐┌───┐
+                │        ││   │
+                └────────┘└───┘
+
+        Args:
+            cut_x (int): Offset from self.x where the cut should be made. If negative, the cut
+                is taken from the right edge.
+            cut_y (int): Offset from self.y where the cut should be made. If negative, the cut
+                is taken from the lower edge.
+
+        Returns:
+            tuple[Region, Region, Region, Region]: Four new regions which add up to the original (self).
+        """
+
+        x, y, width, height = self
+        if cut_x < 0:
+            cut_x = width + cut_x
+        if cut_y < 0:
+            cut_y = height + cut_y
+
+        _Region = Region
+        return (
+            _Region(x, y, cut_x, cut_y),
+            _Region(x + cut_x, y, width - cut_x, cut_y),
+            _Region(x, y + cut_y, cut_x, height - cut_y),
+            _Region(x + cut_x, y + cut_y, width - cut_x, height - cut_y),
+        )
+
+    def split_vertical(self, cut: int) -> tuple[Region, Region]:
+        """Split a region in to two, from a given x offset.
+
+                 cut ↓
+            ┌────────┐┌───┐
+            │        ││   │
+            │        ││   │
+            └────────┘└───┘
+
+        Args:
+            cut (int): An offset from self.x where the cut should be made. If cut is negative,
+                it is taken from the right edge.
+
+        Returns:
+            tuple[Region, Region]: Two regions, which add up to the original (self).
+        """
+
+        x, y, width, height = self
+        if cut < 0:
+            cut = width + cut
+
+        return (
+            Region(x, y, cut, height),
+            Region(x + cut, y, width - cut, height),
+        )
+
+    def split_horizontal(self, cut: int) -> tuple[Region, Region]:
+        """Split a region in to two, from a given x offset.
+
+                    ┌─────────┐
+                    │         │
+                    │         │
+            cut →   └─────────┘
+                    ┌─────────┐
+                    └─────────┘
+
+        Args:
+            cut (int): An offset from self.x where the cut should be made. May be negative,
+                for the offset to start from the right edge.
+
+        Returns:
+            tuple[Region, Region]: Two regions, which add up to the original (self).
+        """
+        x, y, width, height = self
+        if cut < 0:
+            cut = height + cut
+
+        return (
+            Region(x, y, width, cut),
+            Region(x, y + cut, width, height - cut),
+        )
+
 
 class Spacing(NamedTuple):
     """The spacing around a renderable."""

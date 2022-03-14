@@ -61,7 +61,7 @@ class DockLayout(Layout):
 
     def arrange(
         self, parent: Widget, size: Size, scroll: Offset
-    ) -> tuple[Iterable[WidgetPlacement], set[Widget]]:
+    ) -> tuple[list[WidgetPlacement], set[Widget]]:
 
         width, height = size
         layout_region = Region(0, 0, width, height)
