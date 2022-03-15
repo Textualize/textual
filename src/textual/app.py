@@ -485,6 +485,17 @@ class App(DOMNode):
         for _widget_id, widget in name_widgets:
             widget.post_message_no_wait(events.Mount(sender=parent))
 
+    def start_widget(self, parent: Widget, widget: Widget) -> None:
+        """Start a widget (run it's task) so that it can receive messages.
+
+        Args:
+            parent (Widget): The parent of the Widget.
+            widget (Widget): The Widget to start.
+        """
+        widget.set_parent(parent)
+        widget.start_messages()
+        widget.post_message_no_wait(events.Mount(sender=parent))
+
     def is_mounted(self, widget: Widget) -> bool:
         return widget in self.registry
 

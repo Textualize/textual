@@ -130,7 +130,7 @@ class Screen(Widget):
         await self.refresh_layout()
 
     async def on_resize(self, event: events.Resize) -> None:
-        self._update_size(event.size, event.virtual_size)
+        self.size_updated(event.size, event.virtual_size)
         await self.refresh_layout()
         event.stop()
 

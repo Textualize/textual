@@ -208,14 +208,6 @@ class Compositor:
                 total_region = region.size.region
                 sub_clip = clip.intersection(region)
 
-                # for chrome_widget, chrome_region in widget.arrange_chrome(region.size):
-                #     map[chrome_widget] = RenderRegion(
-                #         chrome_region + layout_offset,
-                #         order,
-                #         clip,
-                #         total_region.size,
-                #     )
-
                 placements, arranged_widgets = arrange(widget, region.size, scroll)
 
                 widgets.update(arranged_widgets)
@@ -232,13 +224,14 @@ class Compositor:
                         )
 
                 for chrome_widget, chrome_region in widget.arrange_chrome(region.size):
+
                     render_region = RenderRegion(
                         chrome_region + region.origin + layout_offset,
                         order,
                         clip,
                         total_region.size,
                     )
-                    log(render_region)
+
                     map[chrome_widget] = render_region
 
             map[widget] = RenderRegion(

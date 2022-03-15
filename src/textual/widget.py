@@ -29,7 +29,7 @@ from ._callback import invoke
 from ._context import active_app
 from ._types import Lines
 from .dom import DOMNode
-from .geometry import Offset, Region, Size
+from .geometry import clamp, Offset, Region, Size
 from .message import Message
 from . import messages
 from .layout import Layout
@@ -38,8 +38,7 @@ from .renderables.opacity import Opacity
 
 
 if TYPE_CHECKING:
-    from .screen import Screen
-    from .scrollbar import ScrollBar
+    from .scrollbar import ScrollBar, ScrollTo
 
 
 class RenderCache(NamedTuple):
@@ -89,14 +88,42 @@ class Widget(DOMNode):
 
     has_focus = Reactive(False)
     mouse_over = Reactive(False)
-    scroll_x = Reactive(0)
-    scroll_y = Reactive(0)
+    scroll_x = Reactive(0.0)
+    scroll_y = Reactive(0.0)
+    scroll_target_x = Reactive(0.0)
+    scroll_target_y = Reactive(0.0)
     virtual_size = Reactive(Size(0, 0))
     show_vertical_scrollbar = Reactive(False)
     show_horizontal_scrollbar = Reactive(False)
 
+    async def watch_scroll_x(self, new_value: float) -> None:
+        self.hscroll.position = round(new_value)
+
+    async def watch_scroll_y(self, new_value: float) -> None:
+        self.vscroll.position = round(new_value)
+
+    def validate_scroll_x(self, value: float) -> float:
+        return clamp(value, 0, self.max_scroll_x)
+
+    def validate_scroll_target_x(self, value: float) -> float:
+        return clamp(value, 0, self.max_scroll_x)
+
+    def validate_scroll_y(self, value: float) -> float:
+        return clamp(value, 0, self.max_scroll_y)
+
+    def validate_scroll_target_y(self, value: float) -> float:
+        return clamp(value, 0, self.max_scroll_y)
+
     @property
-    def vertical_scrollbar(self) -> ScrollBar:
+    def max_scroll_y(self) -> float:
+        return max(0, self.virtual_size.height - self.size.height)
+
+    @property
+    def max_scroll_x(self) -> float:
+        return max(0, self.virtual_size.width - self.size.width)
+
+    @property
+    def vscroll(self) -> ScrollBar:
         """Get a vertical scrollbar (create if necessary)
 
         Returns:
@@ -109,11 +136,11 @@ class Widget(DOMNode):
         self._vertical_scrollbar = scroll_bar = ScrollBar(
             vertical=True, name="vertical"
         )
-        self.app.register(self, scroll_bar)
+        self.app.start_widget(self, scroll_bar)
         return scroll_bar
 
     @property
-    def horizontal_scrollbar(self) -> ScrollBar:
+    def hscroll(self) -> ScrollBar:
         """Get a vertical scrollbar (create if necessary)
 
         Returns:
@@ -127,6 +154,7 @@ class Widget(DOMNode):
             vertical=True, name="vertical"
         )
         self.app.register(self, scroll_bar)
+        self.app.start_widget(self, scroll_bar)
         return scroll_bar
 
     @property
@@ -167,17 +195,17 @@ class Widget(DOMNode):
                 _,
             ) = region.split(-1, -1)
             if vertical_scrollbar_region:
-                yield self.vertical_scrollbar, vertical_scrollbar_region
+                yield self.vscroll, vertical_scrollbar_region
             if horizontal_scrollbar_region:
-                yield self.horizontal_scrollbar, horizontal_scrollbar_region
+                yield self.hscroll, horizontal_scrollbar_region
         elif show_vertical_scrollbar:
             region, scrollbar_region = region.split_vertical(-1)
             if scrollbar_region:
-                yield self.vertical_scrollbar, scrollbar_region
+                yield self.vscroll, scrollbar_region
         elif show_horizontal_scrollbar:
             region, scrollbar_region = region.split_horizontal(-1)
             if scrollbar_region:
-                yield self.horizontal_scrollbar, scrollbar_region
+                yield self.hscroll, scrollbar_region
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Pseudo classes for a widget"""
@@ -246,7 +274,7 @@ class Widget(DOMNode):
 
     @property
     def scroll(self) -> Offset:
-        return Offset(self.scroll_x, self.scroll_y)
+        return Offset(int(self.scroll_x), int(self.scroll_y))
 
     @property
     def is_transparent(self) -> bool:
@@ -255,7 +283,7 @@ class Widget(DOMNode):
         Returns:
             bool: ``True`` if there is background color, otherwise ``False``.
         """
-        return self.layout is not None or self.styles.text.bgcolor is None
+        return self.layout is not None and self.styles.text.bgcolor is None
 
     @property
     def console(self) -> Console:
@@ -284,9 +312,14 @@ class Widget(DOMNode):
     def on_style_change(self) -> None:
         self.clear_render_cache()
 
-    def _update_size(self, size: Size, virtual_size: Size) -> None:
+    def size_updated(self, size: Size, virtual_size: Size) -> None:
         self._size = size
         self._virtual_size = virtual_size
+        if self.show_vertical_scrollbar:
+            self.vscroll.virtual_size = virtual_size.height
+            self.vscroll.window_size = size.height
+            self.vscroll.refresh()
+            self.log(virtual_size.height, size.height)
 
     def render_lines(self) -> None:
         width, height = self.size
@@ -371,7 +404,7 @@ class Widget(DOMNode):
         return await super().post_message(message)
 
     async def on_resize(self, event: events.Resize) -> None:
-        self._update_size(event.size, event.virtual_size)
+        self.size_updated(event.size, event.virtual_size)
         self.refresh()
 
     async def on_idle(self, event: events.Idle) -> None:
@@ -422,3 +455,13 @@ class Widget(DOMNode):
     async def on_key(self, event: events.Key) -> None:
         if await self.dispatch_key(event):
             event.prevent_default()
+
+    async def handle_scroll_to(self, message: ScrollTo) -> None:
+        if message.x is not None:
+            self.scroll_target_x = message.x
+        if message.y is not None:
+            self.scroll_target_y = message.y
+        message.stop()
+        # self.refresh(layout=True)
+        self.animate("scroll_x", self.scroll_target_x, speed=150, easing="out_cubic")
+        self.animate("scroll_y", self.scroll_target_y, speed=150, easing="out_cubic")

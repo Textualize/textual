@@ -205,6 +205,9 @@ class ScrollBar(Widget):
             style=style,
         )
 
+    async def on_event(self, event) -> None:
+        await super().on_event(event)
+
     async def on_enter(self, event: events.Enter) -> None:
         self.mouse_over = True
 
@@ -235,7 +238,7 @@ class ScrollBar(Widget):
         self.grabbed = None
 
     async def on_mouse_move(self, event: events.MouseMove) -> None:
-        if self.grabbed:
+        if self.grabbed and self.window_size:
             x: float | None = None
             y: float | None = None
             if self.vertical:
