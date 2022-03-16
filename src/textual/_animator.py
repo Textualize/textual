@@ -171,6 +171,11 @@ class Animator:
             easing (EasingFunction | str, optional): An easing function. Defaults to DEFAULT_EASING.
         """
 
+        if not hasattr(obj, attribute):
+            raise AttributeError(
+                f"Can't animate attribute {attribute!r} on {obj!r}; attribute does not exist"
+            )
+
         if final_value is ...:
             final_value = value
         start_time = self.get_time()

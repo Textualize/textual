@@ -28,6 +28,10 @@ class BasicApp(App):
             Placeholder(classes={"list-item"}),
             Placeholder(classes={"list-item"}),
             Placeholder(classes={"list-item"}),
+            Placeholder(classes={"list-item"}),
+            Placeholder(classes={"list-item"}),
+            Placeholder(classes={"list-item"}),
+            Placeholder(classes={"list-item"}),
             # Placeholder(id="child3", classes={"list-item"}),
         )
         uber1.show_vertical_scrollbar = True
@@ -44,4 +48,4 @@ class BasicApp(App):
         self.panic(self.screen.tree)
 
 
-BasicApp.run(css_file="uber.css", log="textual.log")
+BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=0)

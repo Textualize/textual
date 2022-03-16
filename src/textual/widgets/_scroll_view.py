@@ -210,9 +210,9 @@ class ScrollView(Screen):
         self.x = self.validate_x(self.x)
         self.y = self.validate_y(self.y)
 
-        self.hscroll.virtual_size = virtual_width
+        self.hscroll.window_virtual_size = virtual_width
         self.hscroll.window_size = width
-        self.vscroll.virtual_size = virtual_height
+        self.vscroll.window_virtual_size = virtual_height
         self.vscroll.window_size = height
 
         assert isinstance(self.layout, GridLayout)

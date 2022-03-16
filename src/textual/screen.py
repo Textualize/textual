@@ -34,10 +34,6 @@ class Screen(Widget):
 
     def render(self) -> RenderableType:
         return VerticalGradient("red", "blue")
-        return self._compositor
-
-    def render_background(self) -> RenderableType:
-        return VerticalGradient("#000000", "#00ff00")
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the absolute offset of a given Widget.
@@ -199,6 +195,7 @@ class Screen(Widget):
                 widget, _region = self.get_widget_at(event.x, event.y)
             except errors.NoWidget:
                 return
+            self.log("forward", widget, event)
             scroll_widget = widget
             if scroll_widget is not None:
                 await scroll_widget.forward_event(event)

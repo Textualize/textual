@@ -72,6 +72,7 @@ class Widget(DOMNode):
     ) -> None:
 
         self._size = Size(0, 0)
+        self._virtual_size = Size(0, 0)
         self._repaint_required = False
         self._layout_required = False
         self._animate: BoundAnimator | None = None
@@ -92,7 +93,7 @@ class Widget(DOMNode):
     scroll_y = Reactive(0.0)
     scroll_target_x = Reactive(0.0)
     scroll_target_y = Reactive(0.0)
-    virtual_size = Reactive(Size(0, 0))
+    # virtual_size = Reactive(Size(0, 0))
     show_vertical_scrollbar = Reactive(False)
     show_horizontal_scrollbar = Reactive(False)
 
@@ -115,12 +116,12 @@ class Widget(DOMNode):
         return clamp(value, 0, self.max_scroll_y)
 
     @property
-    def max_scroll_y(self) -> float:
-        return max(0, self.virtual_size.height - self.size.height)
-
-    @property
     def max_scroll_x(self) -> float:
         return max(0, self.virtual_size.width - self.size.width)
+
+    @property
+    def max_scroll_y(self) -> float:
+        return max(0, self.virtual_size.height - self.size.height)
 
     @property
     def vscroll(self) -> ScrollBar:
@@ -169,6 +170,66 @@ class Widget(DOMNode):
             return False, False
         return self.show_vertical_scrollbar, self.show_horizontal_scrollbar
 
+    def scroll_to(
+        self,
+        x: float | None = None,
+        y: float | None = None,
+        *,
+        animate: bool = True,
+    ):
+        """Scroll to a given (absolute) coordinate, optionally animating.
+
+        Args:
+            scroll_x (int | None, optional): X coordinate (column) to scroll to, or ``None`` for no change. Defaults to None.
+            scroll_y (int | None, optional): Y coordinate (row) to scroll to, or ``None`` for no change. Defaults to None.
+            animate (bool, optional): Animate to new scroll position. Defaults to False.
+        """
+
+        scroll_limit = False
+
+        if animate:
+            if x is not None:
+                self.scroll_target_x = x
+            if y is not None:
+                self.scroll_target_y = y
+            # TODO: Speed to be configurable or a setting
+            self.animate(
+                "scroll_x", self.scroll_target_x, speed=100, easing="out_cubic"
+            )
+            self.animate(
+                "scroll_y", self.scroll_target_y, speed=100, easing="out_cubic"
+            )
+        else:
+            if x is not None:
+                self.scroll_x = x
+            if y is not None:
+                self.scroll_y = y
+            self.refresh(layout=True)
+
+    def scroll_home(self, animate: bool = True) -> None:
+        self.scroll_to(0, 0, animate=animate)
+
+    def scroll_end(self, animate: bool = True) -> None:
+        self.scroll_to(0, self.max_scroll_y, animate=animate)
+
+    def scroll_up(self, animate: bool = True) -> None:
+        self.scroll_to(y=self.scroll_target_y + 1.5, animate=animate)
+
+    def scroll_down(self, animate: bool = True) -> None:
+        self.scroll_to(y=self.scroll_target_y - 1.5, animate=animate)
+
+    def scroll_page_up(self, animate: bool = True) -> None:
+        self.scroll_to(y=self.scroll_target_y - self.size.height, animate=animate)
+
+    def scroll_page_down(self, animate: bool = True) -> None:
+        self.scroll_to(y=self.scroll_target_y + self.size.height, animate=animate)
+
+    def scroll_page_left(self, animate: bool = True) -> None:
+        self.scroll_to(x=self.scroll_target_x - self.size.width, animate=animate)
+
+    def scroll_page_right(self, animate: bool = True) -> None:
+        self.scroll_to(x=self.scroll_target_x + self.size.width, animate=animate)
+
     def __init_subclass__(cls, can_focus: bool = True) -> None:
         super().__init_subclass__()
         cls.can_focus = can_focus
@@ -213,7 +274,6 @@ class Widget(DOMNode):
             yield "hover"
         if self.has_focus:
             yield "focus"
-        # TODO: focus
 
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
@@ -301,6 +361,15 @@ class Widget(DOMNode):
     def layout(self) -> Layout | None:
         return self.styles.layout
 
+    @property
+    def is_container(self) -> bool:
+        """Check if this widget is a container (contains other widgets)
+
+        Returns:
+            bool: True if this widget is a container.
+        """
+        return self.styles.layout is not None
+
     def watch_mouse_over(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
         self.app.update_styles()
@@ -313,13 +382,19 @@ class Widget(DOMNode):
         self.clear_render_cache()
 
     def size_updated(self, size: Size, virtual_size: Size) -> None:
-        self._size = size
-        self._virtual_size = virtual_size
-        if self.show_vertical_scrollbar:
-            self.vscroll.virtual_size = virtual_size.height
-            self.vscroll.window_size = size.height
-            self.vscroll.refresh()
-            self.log(virtual_size.height, size.height)
+        if self._size != size or self._virtual_size != virtual_size:
+            self._size = size
+            self._virtual_size = virtual_size
+            if self.show_vertical_scrollbar:
+                self.vscroll.window_virtual_size = virtual_size.height
+                self.vscroll.window_size = size.height
+                self.vscroll.refresh()
+            if self.show_horizontal_scrollbar:
+                self.hscroll.window_virtual_size = virtual_size.width
+                self.hscroll.window_size = size.width
+                self.hscroll.refresh()
+
+            self.refresh()
 
     def render_lines(self) -> None:
         width, height = self.size
@@ -405,7 +480,6 @@ class Widget(DOMNode):
 
     async def on_resize(self, event: events.Resize) -> None:
         self.size_updated(event.size, event.virtual_size)
-        self.refresh()
 
     async def on_idle(self, event: events.Idle) -> None:
         repaint, layout = self.styles.check_refresh()
@@ -453,15 +527,61 @@ class Widget(DOMNode):
         await self.broker_event("click", event)
 
     async def on_key(self, event: events.Key) -> None:
-        if await self.dispatch_key(event):
-            event.prevent_default()
+        await self.dispatch_key(event)
 
-    async def handle_scroll_to(self, message: ScrollTo) -> None:
-        if message.x is not None:
-            self.scroll_target_x = message.x
-        if message.y is not None:
-            self.scroll_target_y = message.y
-        message.stop()
-        # self.refresh(layout=True)
-        self.animate("scroll_x", self.scroll_target_x, speed=150, easing="out_cubic")
-        self.animate("scroll_y", self.scroll_target_y, speed=150, easing="out_cubic")
+    def on_mouse_scroll_down(self) -> None:
+        self.scroll_down()
+
+    def on_mouse_scroll_up(self) -> None:
+        self.scroll_up()
+
+    def handle_scroll_to(self, message: ScrollTo) -> None:
+        self.scroll_to(message.x, message.y, animate=message.animate)
+
+    def handle_scroll_up(self, event) -> None:
+        self.scroll_page_up()
+
+    def handle_scroll_down(self) -> None:
+        self.scroll_page_down()
+
+    def handle_scroll_left(self) -> None:
+        self.scroll_page_left()
+
+    def handle_scroll_right(self) -> None:
+        self.scroll_page_right()
+
+    def key_home(self) -> bool:
+        if self.is_container:
+            self.scroll_home()
+            return True
+        return False
+
+    def key_end(self) -> bool:
+        if self.is_container:
+            self.scroll_end()
+            return True
+        return False
+
+    def key_down(self) -> bool:
+        if self.is_container:
+            self.scroll_down()
+            return True
+        return False
+
+    def key_up(self) -> bool:
+        if self.is_container:
+            self.scroll_up()
+            return True
+        return False
+
+    def key_pagedown(self) -> bool:
+        if self.is_container:
+            self.scroll_page_down()
+            return True
+        return False
+
+    def key_pageup(self) -> bool:
+        if self.is_container:
+            self.scroll_page_up()
+            return True
+        return False

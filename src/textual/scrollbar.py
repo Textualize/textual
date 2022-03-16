@@ -14,39 +14,49 @@ from .message import Message
 from .widget import Widget
 
 
+class ScrollMessage(Message, bubble=False):
+    pass
+
+
 @rich.repr.auto
-class ScrollUp(Message):
+class ScrollUp(ScrollMessage):
     """Message sent when clicking above handle."""
 
 
 @rich.repr.auto
-class ScrollDown(Message):
+class ScrollDown(ScrollMessage):
     """Message sent when clicking below handle."""
 
 
 @rich.repr.auto
-class ScrollLeft(Message):
+class ScrollLeft(ScrollMessage):
     """Message sent when clicking above handle."""
 
 
 @rich.repr.auto
-class ScrollRight(Message):
+class ScrollRight(ScrollMessage):
     """Message sent when clicking below handle."""
 
 
-class ScrollTo(Message):
+class ScrollTo(ScrollMessage):
     """Message sent when click and dragging handle."""
 
     def __init__(
-        self, sender: MessageTarget, x: float | None = None, y: float | None = None
+        self,
+        sender: MessageTarget,
+        x: float | None = None,
+        y: float | None = None,
+        animate: bool = True,
     ) -> None:
         self.x = x
         self.y = y
+        self.animate = animate
         super().__init__(sender)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "x", self.x, None
         yield "y", self.y, None
+        yield "animate", self.animate, True
 
 
 class ScrollBarRender:
@@ -180,7 +190,7 @@ class ScrollBar(Widget):
         self.grabbed_position: float = 0
         super().__init__(name=name)
 
-    virtual_size: Reactive[int] = Reactive(100)
+    window_virtual_size: Reactive[int] = Reactive(100)
     window_size: Reactive[int] = Reactive(0)
     position: Reactive[int] = Reactive(0)
     mouse_over: Reactive[bool] = Reactive(False)
@@ -188,7 +198,7 @@ class ScrollBar(Widget):
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
-        yield "virtual_size", self.virtual_size
+        yield "window_virtual_size", self.window_virtual_size
         yield "window_size", self.window_size
         yield "position", self.position
 
@@ -198,7 +208,7 @@ class ScrollBar(Widget):
             color=Color.parse("bright_yellow" if self.grabbed else "bright_magenta"),
         )
         return ScrollBarRender(
-            virtual_size=self.virtual_size,
+            virtual_size=self.window_virtual_size,
             window_size=self.window_size,
             position=self.position,
             vertical=self.vertical,
@@ -246,7 +256,7 @@ class ScrollBar(Widget):
                     self.grabbed_position
                     + (
                         (event.screen_y - self.grabbed.y)
-                        * (self.virtual_size / self.window_size)
+                        * (self.window_virtual_size / self.window_size)
                     )
                 )
             else:
@@ -254,10 +264,10 @@ class ScrollBar(Widget):
                     self.grabbed_position
                     + (
                         (event.screen_x - self.grabbed.x)
-                        * (self.virtual_size / self.window_size)
+                        * (self.window_virtual_size / self.window_size)
                     )
                 )
-            await self.emit(ScrollTo(self, x=x, y=y))
+            await self.emit(ScrollTo(self, x=x, y=y, animate=False))
 
 
 if __name__ == "__main__":

@@ -416,10 +416,12 @@ class Compositor:
         Returns:
             SegmentLines: A renderable
         """
+
         width, height = self.size
         screen_region = Region(0, 0, width, height)
 
         crop_region = crop.intersection(screen_region) if crop else screen_region
+        # log("RENDER", crop=crop_region)
 
         _Segment = Segment
         divide = _Segment.divide

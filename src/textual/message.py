@@ -49,12 +49,18 @@ class Message:
         yield self.sender
 
     def __init_subclass__(
-        cls, bubble: bool = True, verbosity: int = 1, system: bool = False
+        cls,
+        bubble: bool | None = True,
+        verbosity: int | None = 1,
+        system: bool | None = False,
     ) -> None:
         super().__init_subclass__()
-        cls.bubble = bubble
-        cls.verbosity = verbosity
-        cls.system = system
+        if bubble is not None:
+            cls.bubble = bubble
+        if verbosity is not None:
+            cls.verbosity = verbosity
+        if system is not None:
+            cls.system = system
 
     @property
     def is_forwarded(self) -> bool:

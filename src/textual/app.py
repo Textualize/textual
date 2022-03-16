@@ -287,10 +287,6 @@ class App(DOMNode):
         """
         return self.screen.get_child(id)
 
-    def render_background(self) -> RenderableType:
-        gradient = VerticalGradient("red", "blue")
-        return gradient
-
     def update_styles(self) -> None:
         """Request update of styles.
 
@@ -408,7 +404,7 @@ class App(DOMNode):
             return
 
         if self.css_monitor:
-            self.set_interval(0.5, self.css_monitor)
+            self.set_interval(0.5, self.css_monitor, name="css monitor")
             self.log("started", self.css_monitor)
 
         self._running = True
@@ -524,9 +520,11 @@ class App(DOMNode):
             try:
                 if sync_available:
                     console.file.write("\x1bP=1s\x1b\\")
+                # renderable = self.screen._compositor.render(console)
+                # console.print(renderable)
                 console.print(
                     ScreenRenderable(
-                        Control.home(), self.screen.render(), Control.home()
+                        Control.home(), self.screen._compositor, Control.home()
                     ),
                 )
                 if sync_available:
