@@ -448,7 +448,7 @@ class App(MessagePump):
         if "." in target:
             destination, action_name = target.split(".", 1)
             if destination not in self._action_targets:
-                raise ActionError("Action namespace {destination} is not known")
+                raise ActionError(f"Action namespace {destination} is not known")
             action_target = getattr(self, destination)
         else:
             action_target = default_namespace or self
