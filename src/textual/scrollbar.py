@@ -267,7 +267,7 @@ class ScrollBar(Widget):
                         * (self.window_virtual_size / self.window_size)
                     )
                 )
-            await self.emit(ScrollTo(self, x=x, y=y, animate=False))
+            await self.emit(ScrollTo(self, x=x, y=y))
 
 
 if __name__ == "__main__":

@@ -107,9 +107,10 @@ class Box:
 if __name__ == "__main__":
     from rich import print
 
+    green = Color.parse("green")
     box = Box(
         "foo",
         sides=("rounded", "rounded", "rounded", "rounded"),
-        styles=("green", "green", "green", "on green"),
+        colors=(green, green, green, green),
     )
     print(box)

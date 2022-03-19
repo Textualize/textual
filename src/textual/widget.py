@@ -193,12 +193,8 @@ class Widget(DOMNode):
             if y is not None:
                 self.scroll_target_y = y
             # TODO: Speed to be configurable or a setting
-            self.animate(
-                "scroll_x", self.scroll_target_x, speed=100, easing="out_cubic"
-            )
-            self.animate(
-                "scroll_y", self.scroll_target_y, speed=100, easing="out_cubic"
-            )
+            self.animate("scroll_x", self.scroll_target_x, speed=80, easing="out_cubic")
+            self.animate("scroll_y", self.scroll_target_y, speed=80, easing="out_cubic")
         else:
             if x is not None:
                 self.scroll_x = x
@@ -301,14 +297,20 @@ class Widget(DOMNode):
             )
 
         if styles.border:
-            renderable = Border(renderable, styles.border, style=renderable_text_style)
+            renderable = Border(
+                renderable,
+                styles.border,
+                inner_color=renderable_text_style.bgcolor,
+                outer_color=renderable_text_style.bgcolor,
+            )
 
         if styles.outline:
             renderable = Border(
                 renderable,
                 styles.outline,
                 outline=True,
-                style=renderable_text_style,
+                inner_color=renderable_text_style.bgcolor,
+                outer_color=renderable_text_style.bgcolor,
             )
 
         if styles.opacity:

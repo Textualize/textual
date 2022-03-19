@@ -196,12 +196,12 @@ class Edges(NamedTuple):
         Returns:
             tuple[int, int, int, int]: Spacing for top, right, bottom, and left.
         """
-        top, right, bottom, left = self
+        (top, _), (right, _), (bottom, _), (left, _) = self
         return Spacing(
-            1 if top[0] else 0,
-            1 if right[0] else 0,
-            1 if bottom[0] else 0,
-            1 if left[0] else 0,
+            1 if top else 0,
+            1 if right else 0,
+            1 if bottom else 0,
+            1 if left else 0,
         )
 
 
