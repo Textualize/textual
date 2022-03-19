@@ -312,9 +312,9 @@ def test_spacing_add():
 def test_split():
     assert Region(10, 5, 22, 15).split(10, 5) == (
         Region(10, 5, 10, 5),
-        Region(20, 5, 12, 10),
+        Region(20, 5, 12, 5),
         Region(10, 10, 10, 10),
-        Region(20, 10, 10, 5),
+        Region(20, 10, 12, 10),
     )
 
 
