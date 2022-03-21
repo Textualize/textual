@@ -131,9 +131,12 @@ class DOMNode(MessagePump):
 
     @property
     def css_identifier_styled(self) -> Text:
-        tokens = Text(self.__class__.__name__)
+        tokens = Text.styled(self.__class__.__name__)
         if self.id is not None:
             tokens.append(f"#{self.id}", style="bold")
+        if self.classes:
+            tokens.append(".")
+            tokens.append(".".join(class_name for class_name in self.classes), "italic")
         if self.name:
             tokens.append(f"[name={self.name}]", style="underline")
         return tokens

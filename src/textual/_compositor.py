@@ -13,7 +13,7 @@ from rich.style import Style
 from . import errors, log
 from .geometry import Region, Offset, Size
 
-from ._arrange import arrange
+
 from ._loop import loop_last
 from ._types import Lines
 from .widget import Widget
@@ -194,6 +194,7 @@ class Compositor:
             order: tuple[int, ...],
             clip: Region,
         ) -> None:
+            widget.pre_render()
             widgets.add(widget)
             total_region = region
             styles_offset = widget.styles.offset
@@ -205,11 +206,18 @@ class Compositor:
 
             if widget.layout is not None:
                 scroll = widget.scroll
-                total_region = region.size.region
-                sub_clip = clip.intersection(region)
 
-                placements, arranged_widgets = arrange(widget, region.size, scroll)
+                # Container region is minus border
+                container_region = region.shrink(widget.styles.gutter)
 
+                child_region = widget._arrange_container(container_region)
+                sub_clip = clip.intersection(child_region)
+
+                total_region = child_region.reset_origin
+
+                placements, arranged_widgets = widget.layout.arrange(
+                    widget, child_region.size, scroll
+                )
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=attrgetter("order"))
 
@@ -218,21 +226,20 @@ class Compositor:
                     if sub_widget is not None:
                         add_widget(
                             sub_widget,
-                            sub_region + region.origin - scroll,
+                            sub_region + child_region.origin - scroll,
                             sub_widget.z + (z,),
                             sub_clip,
                         )
 
-                for chrome_widget, chrome_region in widget.arrange_chrome(region.size):
-
-                    render_region = RenderRegion(
-                        chrome_region + region.origin + layout_offset,
+                for chrome_widget, chrome_region in widget._arrange_scrollbars(
+                    container_region.size
+                ):
+                    map[chrome_widget] = RenderRegion(
+                        chrome_region + container_region.origin + layout_offset,
                         order,
                         clip,
-                        total_region.size,
+                        chrome_region.size,
                     )
-
-                    map[chrome_widget] = render_region
 
             map[widget] = RenderRegion(
                 region + layout_offset, order, clip, total_region.size
@@ -374,6 +381,9 @@ class Compositor:
         overlaps = Region.overlaps
 
         for widget, region, _order, clip in widget_regions:
+            if not region:
+                # log(widget, region)
+                continue
             if region in clip:
                 yield region, clip, widget._get_lines()
             elif overlaps(clip, region):
@@ -421,7 +431,6 @@ class Compositor:
         screen_region = Region(0, 0, width, height)
 
         crop_region = crop.intersection(screen_region) if crop else screen_region
-        # log("RENDER", crop=crop_region)
 
         _Segment = Segment
         divide = _Segment.divide
@@ -443,8 +452,9 @@ class Compositor:
 
         for region, clip, lines in renders:
             render_region = intersection(region, clip)
+            # if not render_region:
+            #     continue
             for y, line in zip(render_region.y_range, lines):
-
                 first_cut, last_cut = render_region.x_extents
                 final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
 

@@ -10,6 +10,7 @@ class BasicApp(App):
 
     def on_load(self):
         self.bind("q", "quit", "Quit")
+        self.bind("d", "dump")
 
     def on_mount(self):
         """Build layout here."""
@@ -26,15 +27,15 @@ class BasicApp(App):
             Placeholder(id="child3", classes={"list-item"}),
             Placeholder(classes={"list-item"}),
             Placeholder(classes={"list-item"}),
-            Placeholder(classes={"list-item"}),
-            Placeholder(classes={"list-item"}),
-            Placeholder(classes={"list-item"}),
-            Placeholder(classes={"list-item"}),
-            Placeholder(classes={"list-item"}),
-            Placeholder(classes={"list-item"}),
+            # Placeholder(classes={"list-item"}),
+            # Placeholder(classes={"list-item"}),
+            # Placeholder(classes={"list-item"}),
+            # Placeholder(classes={"list-item"}),
+            # Placeholder(classes={"list-item"}),
+            # Placeholder(classes={"list-item"}),
             # Placeholder(id="child3", classes={"list-item"}),
         )
-        uber1.show_vertical_scrollbar = True
+        uber1.show_horizontal_scrollbar = True
 
         self.mount(
             uber1=uber1
@@ -47,5 +48,8 @@ class BasicApp(App):
     def action_quit(self):
         self.panic(self.screen.tree)
 
+    def action_dump(self):
+        self.panic(str(self.app.registry))
 
-BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=0)
+
+BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=1)

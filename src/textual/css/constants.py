@@ -20,6 +20,8 @@ VALID_BORDER: Final = {
     "outer",
     "hkey",
     "vkey",
+    "tall",
+    "wide",
 }
 VALID_EDGE: Final = {"top", "right", "bottom", "left"}
 VALID_LAYOUT: Final = {"dock", "vertical", "grid"}

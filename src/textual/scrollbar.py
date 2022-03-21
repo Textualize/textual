@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from math import ceil
+
 import rich.repr
 from rich.color import Color
 from rich.console import ConsoleOptions, RenderResult, RenderableType
@@ -115,7 +117,7 @@ class ScrollBarRender:
             step_size = virtual_size / size
 
             start = int(position / step_size * 8)
-            end = start + max(8, int(window_size / step_size * 8))
+            end = start + max(8, int(ceil(window_size / step_size * 8)))
 
             start_index, start_bar = divmod(start, 8)
             end_index, end_bar = divmod(end, 8)
@@ -148,7 +150,8 @@ class ScrollBarRender:
                     else _Style(bgcolor=back, color=bar, meta=foreground_meta),
                 )
         else:
-            segments = [_Segment(blank)] * int(size)
+            style = _Style(bgcolor=back)
+            segments = [_Segment(blank, style=style)] * int(size)
         if vertical:
             return Segments(segments, new_lines=True)
         else:

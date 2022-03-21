@@ -291,6 +291,12 @@ class Region(NamedTuple):
         """A range object for Y coordinates"""
         return range(self.y, self.y + self.height)
 
+    @property
+    def reset_origin(self) -> Region:
+        """An region of the same size at the origin."""
+        _, _, width, height = self
+        return Region(0, 0, width, height)
+
     def __add__(self, other: object) -> Region:
         if isinstance(other, tuple):
             ox, oy = other
@@ -428,7 +434,7 @@ class Region(NamedTuple):
         )
         return new_region
 
-    def shrink(self, margin: Spacing) -> Region:
+    def shrink(self, margin: tuple[int, int, int, int]) -> Region:
         """Shrink a region by pushing each edge inwards.
 
         Args:

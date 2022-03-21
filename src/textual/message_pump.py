@@ -144,13 +144,13 @@ class MessagePump:
         self._child_tasks.add(timer.start())
         return timer
 
-    async def call_later(self, callback: Callable, *args, **kwargs) -> None:
+    def call_later(self, callback: Callable, *args, **kwargs) -> None:
         """Run a callback after processing all messages and refreshing the screen.
 
         Args:
             callback (Callable): A callable.
         """
-        await self.post_message(
+        self.post_message_no_wait(
             events.Callback(self, partial(callback, *args, **kwargs))
         )
 
@@ -306,7 +306,8 @@ class MessagePump:
         return self.post_message_no_wait(message)
 
     async def on_callback(self, event: events.Callback) -> None:
-        await event.callback()
+        await invoke(event.callback)
+        # await event.callback()
 
     def emit_no_wait(self, message: Message) -> bool:
         if self._parent:

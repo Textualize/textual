@@ -1,15 +1,18 @@
 #uber1 {
   /* border: heavy green;*/
   layout: vertical;
-  /*  text: on dark_green;*/
-  overflow-y: scroll;
+  text: on dark_green;
+  overflow: hidden auto;
+  border: heavy white;
 }
 
 .list-item {
   height: 8;
 
+  min-width: 80;
+
   /* height: 8; */
-  margin: 1 2;
+  /* margin: 1 2; */
   text-background: dark_blue;
 }
 

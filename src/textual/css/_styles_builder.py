@@ -84,6 +84,31 @@ class StylesBuilder:
             except Exception as error:
                 self.error(declaration.name, declaration.token, str(error))
 
+    def _process_enum_multiple(
+        self, name, tokens: list[Token], valid_values: set[str], count: int
+    ) -> tuple[str, ...]:
+        if len(tokens) > count or not tokens:
+            self.error(name, tokens[0], f"expected 1 to {count} tokens here")
+        results = []
+        append = results.append
+        for token in tokens:
+            token_name, value, _, _, location, _ = token
+            if token_name != "token":
+                self.error(
+                    name,
+                    token,
+                    f"invalid token {value!r}; expected {friendly_list(valid_values)}",
+                )
+            append(value)
+
+        short_results = results[:]
+
+        while len(results) < count:
+            results.extend(short_results)
+        results = results[:count]
+
+        return tuple(results)
+
     def _process_enum(
         self, name: str, tokens: list[Token], valid_values: set[str]
     ) -> str:
@@ -139,7 +164,7 @@ class StylesBuilder:
         if not tokens:
             return
         if len(tokens) == 1:
-            self.styles._rules[name] = Scalar.parse(tokens[0].value)
+            self.styles._rules[name.replace("-", "_")] = Scalar.parse(tokens[0].value)
         else:
             self.error(name, tokens[0], "a single scalar is expected")
 
@@ -187,6 +212,14 @@ class StylesBuilder:
         self, name: str, tokens: list[Token], important: bool
     ) -> None:
         self._process_scalar(name, tokens)
+
+    def process_overflow(self, name: str, tokens: list[Token], important: bool) -> None:
+        rules = self.styles._rules
+        overflow_x, overflow_y = self._process_enum_multiple(
+            name, tokens, VALID_OVERFLOW, 2
+        )
+        rules["overflow_x"] = cast(Overflow, overflow_x)
+        rules["overflow_y"] = cast(Overflow, overflow_y)
 
     def process_overflow_x(
         self, name: str, tokens: list[Token], important: bool

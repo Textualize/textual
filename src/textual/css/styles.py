@@ -192,8 +192,13 @@ class StylesBase(ABC):
         Returns:
             Spacing: Space around widget.
         """
+        has_rule = self.has_rule
+        spacing = Spacing()
 
-        return self.margin
+        spacing += self.padding
+        spacing += self.border.spacing
+
+        return spacing
 
     @abstractmethod
     def has_rule(self, rule: str) -> bool:
