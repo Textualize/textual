@@ -2,7 +2,7 @@
   /* border: heavy green;*/
   layout: vertical;
   text: on dark_green;
-  overflow: hidden auto;
+  overflow: auto auto;
   border: heavy white;
 }
 

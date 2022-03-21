@@ -113,7 +113,7 @@ class ScrollBarRender:
         blank = " " * width_thickness
 
         foreground_meta = {"@mouse.up": "release", "@mouse.down": "grab"}
-        if window_size and size and virtual_size:
+        if window_size and size and virtual_size and size != virtual_size:
             step_size = virtual_size / size
 
             start = int(position / step_size * 8)

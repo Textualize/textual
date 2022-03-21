@@ -172,28 +172,28 @@ class Widget(DOMNode):
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
 
+        width, height = self.scroll_size
+
         if overflow_x == "hidden":
             self.show_horizontal_scrollbar = False
         elif overflow_x == "scroll":
             self.show_horizontal_scrollbar = True
         elif overflow_x == "auto":
-            self.show_horizontal_scrollbar = (
-                self.virtual_size.width > self.scroll_size.width
-            )
+            self.show_horizontal_scrollbar = self.virtual_size.width > width
+        # height -= self.show_horizontal_scrollbar
 
         if overflow_y == "hidden":
             self.show_vertical_scrollbar = False
         elif overflow_y == "scroll":
             self.show_vertical_scrollbar = True
         elif overflow_y == "auto":
-            self.show_vertical_scrollbar = (
-                self.virtual_size.height > self.scroll_size.height
-            )
+            self.show_vertical_scrollbar = self.virtual_size.height > height
+
         self.log(
             "REFRESH_SCROLLBARS",
             self,
-            self.virtual_size.height,
-            self.scroll_size.height,
+            self.virtual_size,
+            self.scroll_size,
         )
 
     @property
@@ -413,7 +413,9 @@ class Widget(DOMNode):
 
     @property
     def scroll_size(self) -> Size:
-        return self._size - self.styles.gutter.totals
+        scroll_size = self._size - self.styles.gutter.totals
+        scroll_size -= (self.show_vertical_scrollbar, self.show_horizontal_scrollbar)
+        return scroll_size
 
     @property
     def virtual_size(self) -> Size:
@@ -476,7 +478,7 @@ class Widget(DOMNode):
         if self._size != size or self._virtual_size != virtual_size:
             self._size = size
             self._virtual_size = virtual_size
-            self._refresh_scrollbars()
+            # self._refresh_scrollbars()
             width, height = self.scroll_size
             if self.show_vertical_scrollbar:
                 self.vscroll.window_virtual_size = virtual_size.height
@@ -577,8 +579,8 @@ class Widget(DOMNode):
             self.log(self, f"IS NOT RUNNING, {message!r} not sent")
         return await super().post_message(message)
 
-    async def on_resize(self, event: events.Resize) -> None:
-        self.size_updated(event.size, event.virtual_size)
+    # async def on_resize(self, event: events.Resize) -> None:
+    #     self.size_updated(event.size, event.virtual_size)
 
     async def on_idle(self, event: events.Idle) -> None:
         repaint, layout = self.styles.check_refresh()
