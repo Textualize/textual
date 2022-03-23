@@ -14,13 +14,6 @@ from ..reactive import Reactive
 from ..widget import Widget
 
 
-class TPanel(Panel):
-    def __rich_console__(self, console, options):
-
-        log("*", options)
-        return super().__rich_console__(console, options)
-
-
 @rich.repr.auto(angular=False)
 class Placeholder(Widget, can_focus=True):
 
@@ -34,7 +27,7 @@ class Placeholder(Widget, can_focus=True):
         yield "mouse_over", self.mouse_over, False
 
     def render(self) -> RenderableType:
-        return TPanel(
+        return Panel(
             Align.center(
                 Pretty(self, no_wrap=True, overflow="ellipsis"), vertical="middle"
             ),

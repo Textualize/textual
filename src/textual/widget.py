@@ -124,11 +124,11 @@ class Widget(DOMNode):
 
     @property
     def max_scroll_x(self) -> float:
-        return max(0, self.virtual_size.width - self.size.width)
+        return max(0, self.virtual_size.width - self.container_size.width)
 
     @property
     def max_scroll_y(self) -> float:
-        return max(0, self.virtual_size.height - self.size.height)
+        return max(0, self.virtual_size.height - self.container_size.height)
 
     @property
     def vscroll(self) -> ScrollBar:
@@ -174,6 +174,8 @@ class Widget(DOMNode):
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
 
+        self.log(virtual=self.virtual_size, container=self.container_size)
+
         width, height = self.container_size
 
         show_horizontal = self.show_horizontal_scrollbar
@@ -192,16 +194,18 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
+        self.log(horizontal=show_horizontal, vertical=show_vertical)
+
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
 
-        self.log(
-            "REFRESH_SCROLLBARS",
-            widget=self,
-            virtual_size=self.virtual_size,
-            size=self.size,
-            container_size=self.container_size,
-        )
+        # self.log(
+        #     "REFRESH_SCROLLBARS",
+        #     widget=self,
+        #     virtual_size=self.virtual_size,
+        #     size=self.size,
+        #     container_size=self.container_size,
+        # )
         # return changed
 
     @property
@@ -216,7 +220,6 @@ class Widget(DOMNode):
             return False, False
 
         enabled = self.show_vertical_scrollbar, self.show_horizontal_scrollbar
-        self.log(enabled)
         return enabled
 
     def scroll_to(
@@ -233,10 +236,6 @@ class Widget(DOMNode):
             scroll_y (int | None, optional): Y coordinate (row) to scroll to, or ``None`` for no change. Defaults to None.
             animate (bool, optional): Animate to new scroll position. Defaults to False.
         """
-
-        self.log(
-            "scroll_to", x=x, y=y, max_x=self.max_scroll_x, max_y=self.max_scroll_y
-        )
 
         if animate:
             # TODO: configure animation speed
@@ -277,16 +276,24 @@ class Widget(DOMNode):
         self.scroll_to(y=self.scroll_target_y - 1.5, animate=animate)
 
     def scroll_page_up(self, animate: bool = True) -> None:
-        self.scroll_to(y=self.scroll_target_y - self.size.height, animate=animate)
+        self.scroll_to(
+            y=self.scroll_target_y - self.container_size.height, animate=animate
+        )
 
     def scroll_page_down(self, animate: bool = True) -> None:
-        self.scroll_to(y=self.scroll_target_y + self.size.height, animate=animate)
+        self.scroll_to(
+            y=self.scroll_target_y + self.container_size.height, animate=animate
+        )
 
     def scroll_page_left(self, animate: bool = True) -> None:
-        self.scroll_to(x=self.scroll_target_x - self.size.width, animate=animate)
+        self.scroll_to(
+            x=self.scroll_target_x - self.container_size.width, animate=animate
+        )
 
     def scroll_page_right(self, animate: bool = True) -> None:
-        self.scroll_to(x=self.scroll_target_x + self.size.width, animate=animate)
+        self.scroll_to(
+            x=self.scroll_target_x + self.container_size.width, animate=animate
+        )
 
     def __init_subclass__(cls, can_focus: bool = True) -> None:
         super().__init_subclass__()
@@ -491,16 +498,16 @@ class Widget(DOMNode):
                 if self.show_vertical_scrollbar:
                     self.vscroll.window_virtual_size = virtual_size.height
                     self.vscroll.window_size = height
-                    self.vscroll.refresh()
+                    # self.vscroll.refresh()
                 if self.show_horizontal_scrollbar:
                     self.hscroll.window_virtual_size = virtual_size.width
                     self.hscroll.window_size = width
-                    self.hscroll.refresh()
+                    # self.hscroll.refresh()
 
                 # self.scroll_to(self.scroll_x, self.scroll_y)
                 self.refresh(layout=True)
                 self._refresh_scrollbars()
-                self.call_later(self.scroll_to, 0, 0)
+                self.call_later(self.scroll_to, self.scroll_x, self.scroll_y)
                 # self.call_later(self._refresh_scrollbars)
             else:
                 self.refresh()
@@ -566,9 +573,6 @@ class Widget(DOMNode):
             self.clear_render_cache()
             self._repaint_required = True
         self.check_idle()
-
-    def pre_render(self) -> None:
-        self._refresh_scrollbars()
 
     def render(self) -> RenderableType:
         """Get renderable for widget.

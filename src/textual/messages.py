@@ -27,6 +27,7 @@ class Update(Message, verbosity=3):
         return NotImplemented
 
     def can_replace(self, message: Message) -> bool:
+        # Update messages can replace update for the same widget
         return isinstance(message, Update) and self == message
 
 

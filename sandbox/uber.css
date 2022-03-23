@@ -2,8 +2,8 @@
   /* border: heavy green;*/
   layout: vertical;
   text: on dark_green;
-  overflow: auto auto;
-  /*border: heavy white;*/
+  overflow: hidden auto;
+  border: heavy white;
 }
 
 .list-item {
