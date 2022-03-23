@@ -219,7 +219,7 @@ class Compositor:
                 total_region = child_region.reset_origin
 
                 placements, arranged_widgets = widget.layout.arrange(
-                    widget, child_region.size, scroll
+                    widget, container_region.size, scroll
                 )
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=attrgetter("order"))
