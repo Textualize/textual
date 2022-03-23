@@ -26,7 +26,7 @@ class BasicApp(App):
             Placeholder(id="child2", classes={"list-item"}),
             Placeholder(id="child3", classes={"list-item"}),
             Placeholder(classes={"list-item"}),
-            Placeholder(classes={"list-item"}),
+            # Placeholder(classes={"list-item"}),
             # Placeholder(classes={"list-item"}),
             # Placeholder(classes={"list-item"}),
             # Placeholder(classes={"list-item"}),

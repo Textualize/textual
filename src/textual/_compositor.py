@@ -44,6 +44,7 @@ class RenderRegion(NamedTuple):
     order: tuple[int, ...]
     clip: Region
     virtual_size: Size
+    container_size: Size
 
 
 RenderRegionMap: TypeAlias = "dict[Widget, RenderRegion]"
@@ -155,7 +156,8 @@ class Compositor:
 
         # Copy renders if the size hasn't changed
         new_renders = {
-            widget: (region, clip) for widget, (region, _order, clip, _) in map.items()
+            widget: (region, clip)
+            for widget, (region, _order, clip, _, _) in map.items()
         }
         self.regions = new_renders
 
@@ -196,7 +198,6 @@ class Compositor:
         ) -> None:
             widget.pre_render()
             widgets.add(widget)
-            total_region = region
             styles_offset = widget.styles.offset
             layout_offset = (
                 styles_offset.resolve(region.size, clip.size)
@@ -210,7 +211,9 @@ class Compositor:
                 # Container region is minus border
                 container_region = region.shrink(widget.styles.gutter)
 
+                # The region that contains the content (container region minus scrollbars)
                 child_region = widget._arrange_container(container_region)
+
                 sub_clip = clip.intersection(child_region)
 
                 total_region = child_region.reset_origin
@@ -231,6 +234,14 @@ class Compositor:
                             sub_clip,
                         )
 
+                map[widget] = RenderRegion(
+                    child_region + layout_offset,
+                    order,
+                    sub_clip,
+                    total_region.size,
+                    container_region.size,
+                )
+
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(
                     container_region.size
                 ):
@@ -239,11 +250,18 @@ class Compositor:
                         order,
                         clip,
                         chrome_region.size,
+                        chrome_region.size,
                     )
 
-            map[widget] = RenderRegion(
-                region + layout_offset, order, clip, total_region.size
-            )
+            else:
+
+                map[widget] = RenderRegion(
+                    region + layout_offset,
+                    order,
+                    clip,
+                    region.size,
+                    region.size,
+                )
 
         add_widget(root, size.region, (), size.region)
 
@@ -252,11 +270,17 @@ class Compositor:
     async def mount_all(self, screen: Screen) -> None:
         screen.app.mount(*self.widgets)
 
-    def __iter__(self) -> Iterator[tuple[Widget, Region, Region, Size]]:
+    def __iter__(self) -> Iterator[tuple[Widget, Region, Region, Size, Size]]:
         layers = sorted(self.map.items(), key=lambda item: item[1].order, reverse=True)
         intersection = Region.intersection
-        for widget, (region, _order, clip, virtual_size) in layers:
-            yield widget, intersection(region, clip), region, virtual_size
+        for widget, (region, _order, clip, virtual_size, container_size) in layers:
+            yield (
+                widget,
+                intersection(region, clip),
+                region,
+                virtual_size,
+                container_size,
+            )
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the offset of a widget."""
@@ -268,7 +292,7 @@ class Compositor:
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given point or None."""
         contains = Region.contains
-        for widget, cropped_region, region, _ in self:
+        for widget, cropped_region, region, *_ in self:
             if contains(cropped_region, x, y):
                 return widget, region
         raise errors.NoWidget(f"No widget under screen coordinate ({x}, {y})")
@@ -341,7 +365,7 @@ class Compositor:
         intersection = Region.intersection
         extend = list.extend
 
-        for region, order, clip, _ in self.map.values():
+        for region, order, clip, _, _ in self.map.values():
             region = intersection(region, clip)
             if region and (region in screen_region):
                 x, y, region_width, region_height = region
@@ -367,7 +391,7 @@ class Compositor:
             widget_regions = sorted(
                 [
                     (widget, region, order, clip)
-                    for widget, (region, order, clip, _) in self.map.items()
+                    for widget, (region, order, clip, _, _) in self.map.items()
                     if widget.visible and not widget.is_transparent
                 ],
                 key=itemgetter(2),
@@ -479,6 +503,7 @@ class Compositor:
         render_lines = self._assemble_chops(chops[crop_y:crop_y2])
 
         def width_view(line: list[Segment]) -> list[Segment]:
+
             if line:
                 div_lines = list(divide(line, [crop_x, crop_x2]))
                 line = div_lines[1] if len(div_lines) > 1 else div_lines[0]

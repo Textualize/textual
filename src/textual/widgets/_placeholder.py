@@ -7,13 +7,18 @@ from rich.panel import Panel
 from rich.pretty import Pretty
 import rich.repr
 
-from logging import getLogger
 
+from .. import log
 from .. import events
 from ..reactive import Reactive
 from ..widget import Widget
 
-log = getLogger("rich")
+
+class TPanel(Panel):
+    def __rich_console__(self, console, options):
+
+        log("*", options)
+        return super().__rich_console__(console, options)
 
 
 @rich.repr.auto(angular=False)
@@ -29,7 +34,7 @@ class Placeholder(Widget, can_focus=True):
         yield "mouse_over", self.mouse_over, False
 
     def render(self) -> RenderableType:
-        return Panel(
+        return TPanel(
             Align.center(
                 Pretty(self, no_wrap=True, overflow="ellipsis"), vertical="middle"
             ),

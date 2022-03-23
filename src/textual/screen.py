@@ -100,11 +100,19 @@ class Screen(Widget):
 
             send_resize = shown | resized
 
-            for widget, region, unclipped_region, virtual_size in self._compositor:
-                widget.size_updated(unclipped_region.size, virtual_size)
+            for (
+                widget,
+                region,
+                unclipped_region,
+                virtual_size,
+                container_size,
+            ) in self._compositor:
+                widget.size_updated(unclipped_region.size, virtual_size, container_size)
                 if widget in send_resize:
                     widget.post_message_no_wait(
-                        events.Resize(self, unclipped_region.size, virtual_size)
+                        events.Resize(
+                            self, unclipped_region.size, virtual_size, container_size
+                        )
                     )
 
         except Exception:
@@ -126,7 +134,7 @@ class Screen(Widget):
         await self.refresh_layout()
 
     async def on_resize(self, event: events.Resize) -> None:
-        self.size_updated(event.size, event.virtual_size)
+        self.size_updated(event.size, event.virtual_size, event.container_size)
         await self.refresh_layout()
         event.stop()
 

@@ -90,7 +90,13 @@ class Resize(Event, verbosity=2, bubble=False):
     __slots__ = ["size"]
     size: Size
 
-    def __init__(self, sender: MessageTarget, size: Size, virtual_size: Size) -> None:
+    def __init__(
+        self,
+        sender: MessageTarget,
+        size: Size,
+        virtual_size: Size,
+        container_size: Size | None = None,
+    ) -> None:
         """
         Args:
             sender (MessageTarget): Event sender.
@@ -99,6 +105,7 @@ class Resize(Event, verbosity=2, bubble=False):
         """
         self.size = size
         self.virtual_size = virtual_size
+        self.container_size = size if container_size is None else container_size
         super().__init__(sender)
 
     def can_replace(self, message: "Message") -> bool:
@@ -107,6 +114,7 @@ class Resize(Event, verbosity=2, bubble=False):
     def __rich_repr__(self) -> rich.repr.Result:
         yield "size", self.size
         yield "virtual_size", self.virtual_size
+        yield "container_size", self.container_size, self.size
 
 
 class Mount(Event, bubble=False):

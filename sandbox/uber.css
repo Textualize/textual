@@ -3,7 +3,7 @@
   layout: vertical;
   text: on dark_green;
   overflow: auto auto;
-  border: heavy white;
+  /*border: heavy white;*/
 }
 
 .list-item {
