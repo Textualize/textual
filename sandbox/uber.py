@@ -20,27 +20,15 @@ class BasicApp(App):
             Widget(id="uber2-child1"),
             Widget(id="uber2-child2"),
         )
-
         uber1 = Widget(
             Placeholder(id="child1", classes={"list-item"}),
             Placeholder(id="child2", classes={"list-item"}),
             Placeholder(id="child3", classes={"list-item"}),
             Placeholder(classes={"list-item"}),
-            # Placeholder(classes={"list-item"}),
-            # Placeholder(classes={"list-item"}),
-            # Placeholder(classes={"list-item"}),
-            # Placeholder(classes={"list-item"}),
-            # Placeholder(classes={"list-item"}),
-            # Placeholder(classes={"list-item"}),
-            # Placeholder(classes={"list-item"}),
-            # Placeholder(id="child3", classes={"list-item"}),
+            Placeholder(classes={"list-item"}),
+            Placeholder(classes={"list-item"}),
         )
-        uber1.show_horizontal_scrollbar = True
-
-        self.mount(
-            uber1=uber1
-            # uber2=uber2,
-        )
+        self.mount(uber1=uber1)
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)

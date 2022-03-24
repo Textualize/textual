@@ -28,6 +28,8 @@ BORDER_CHARS: dict[str, tuple[str, str, str]] = {
     "wide": ("▁▁▁", "▏ ▕", "▔▔▔"),
 }
 
+# Some of the borders are on the widget background and some are on the background of the parent
+# This table selects which for each character, 0 indicates the widget, 1 selects the parent
 BORDER_LOCATIONS: dict[
     str, tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]]
 ] = {

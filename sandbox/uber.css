@@ -1,5 +1,4 @@
 #uber1 {
-  /* border: heavy green;*/
   layout: vertical;
   text: on dark_green;
   overflow: hidden auto;
@@ -8,22 +7,6 @@
 
 .list-item {
   height: 8;
-
   min-width: 80;
-
-  /* height: 8; */
-  /* margin: 1 2; */
   text-background: dark_blue;
 }
-
-#child1 {
-}
-
-#child2 {
-}
-
-/* #uber2 {
-  margin: 3;
-  layout: dock;
-  docks: _default=left;
-} */
