@@ -35,10 +35,11 @@ if TYPE_CHECKING:
     from .styles import Styles, StylesBase
     from .styles import DockGroup
 
-from .._box import BoxType
+from .types import EdgeType
+
 
 BorderDefinition = (
-    "Sequence[tuple[BoxType, str | Color] | None] | tuple[BoxType, str | Color]"
+    "Sequence[tuple[EdgeType, str | Color] | None] | tuple[EdgeType, str | Color]"
 )
 
 
@@ -125,7 +126,7 @@ class BoxProperty:
 
     def __get__(
         self, obj: StylesBase, objtype: type[StylesBase] | None = None
-    ) -> tuple[BoxType, Color]:
+    ) -> tuple[EdgeType, Color]:
         """Get the box property
 
         Args:
@@ -133,18 +134,18 @@ class BoxProperty:
             objtype (type[Styles]): The ``Styles`` class
 
         Returns:
-            A ``tuple[BoxType, Style]`` containing the string type of the box and
+            A ``tuple[EdgeType, Style]`` containing the string type of the box and
                 it's style. Example types are "rounded", "solid", and "dashed".
         """
         box_type, color = obj.get_rule(self.name) or self.DEFAULT
         return (box_type, color)
 
-    def __set__(self, obj: Styles, border: tuple[BoxType, str | Color] | None):
+    def __set__(self, obj: Styles, border: tuple[EdgeType, str | Color] | None):
         """Set the box property
 
         Args:
             obj (Styles): The ``Styles`` object.
-            value (tuple[BoxType, str | Color | Style], optional): A 2-tuple containing the type of box to use,
+            value (tuple[EdgeType, str | Color | Style], optional): A 2-tuple containing the type of box to use,
                 e.g. "dashed", and the ``Style`` to be used. You can supply the ``Style`` directly, or pass a
                 ``str`` (e.g. ``"blue on #f0f0f0"`` ) or ``Color`` instead.
 
@@ -169,10 +170,10 @@ class BoxProperty:
 class Edges(NamedTuple):
     """Stores edges for border / outline."""
 
-    top: tuple[BoxType, Color]
-    right: tuple[BoxType, Color]
-    bottom: tuple[BoxType, Color]
-    left: tuple[BoxType, Color]
+    top: tuple[EdgeType, Color]
+    right: tuple[EdgeType, Color]
+    bottom: tuple[EdgeType, Color]
+    left: tuple[EdgeType, Color]
 
     def __bool__(self) -> bool:
         (top, _), (right, _), (bottom, _), (left, _) = self
@@ -248,8 +249,8 @@ class BorderProperty:
 
         Args:
             obj (Styles): The ``Styles`` object.
-            border (Sequence[tuple[BoxType, str | Color | Style] | None] | tuple[BoxType, str | Color | Style] | None):
-                A ``tuple[BoxType, str | Color | Style]`` representing the type of box to use and the ``Style`` to apply
+            border (Sequence[tuple[EdgeType, str | Color | Style] | None] | tuple[EdgeType, str | Color | Style] | None):
+                A ``tuple[EdgeType, str | Color | Style]`` representing the type of box to use and the ``Style`` to apply
                 to the box.
                 Alternatively, you can supply a sequence of these tuples and they will be applied per-edge.
                 If the sequence is of length 1, all edges will be decorated according to the single element.

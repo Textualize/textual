@@ -194,20 +194,15 @@ class Border:
             box1, box2, box3 = get_box(top, style, outer_style, top_style)[0]
             if has_left:
                 yield box1 if top == left else _Segment(" ", box2.style)
-                # yield _Segment(box1 if top == left else " ", top_style)
             yield _Segment(box2.text * width, box2.style)
-            # yield _Segment(box2 * width, top_style)
             if has_right:
                 yield box3 if top == left else _Segment(" ", box3.style)
-                # yield _Segment(box3 if top == right else " ", top_style)
             yield new_line
 
         left_segment = get_box(left, style, outer_style, left_style)[1][0]
         _right_segment = get_box(right, style, outer_style, right_style)[1][2]
         right_segment = _Segment(_right_segment.text + "\n", _right_segment.style)
-        # box_right = BOX[right][1][2]
-        # left_segment = _Segment(box_left, left_style)
-        # right_segment = _Segment(box_right + "\n", right_style)
+
         if has_left and has_right:
             for line in lines:
                 yield left_segment
@@ -231,12 +226,9 @@ class Border:
             box1, box2, box3 = get_box(top, style, outer_style, bottom_style)[2]
             if has_left:
                 yield box1 if bottom == left else _Segment(" ", box1.style)
-                # yield _Segment(box1 if bottom == left else " ", bottom_style)
-            # yield _Segment(box2 * width, bottom_style)
             yield _Segment(box2.text * width, box2.style)
             if has_right:
                 yield box3 if bottom == right else _Segment(" ", box3.style)
-                # yield _Segment(box3 if bottom == right else " ", bottom_style)
             yield new_line
 
 

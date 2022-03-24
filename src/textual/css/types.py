@@ -13,6 +13,20 @@ else:
 
 
 Edge = Literal["top", "right", "bottom", "left"]
+EdgeType = Literal[
+    "none",
+    "round",
+    "solid",
+    "double",
+    "dashed",
+    "heavy",
+    "inner",
+    "outer",
+    "hkey",
+    "vkey",
+    "tall",
+    "wide",
+]
 Visibility = Literal["visible", "hidden", "initial", "inherit"]
 Display = Literal["block", "none"]
 BoxSizing = Literal["border-box", "content-box"]
