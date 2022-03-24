@@ -196,6 +196,14 @@ class Compositor:
             order: tuple[int, ...],
             clip: Region,
         ) -> None:
+            """Called recursively to place a widget and its children in the map.
+
+            Args:
+                widget (Widget): The widget to add.
+                region (Region): The region the widget will occupy.
+                order (tuple[int, ...]): A tuple of ints to define the order.
+                clip (Region): The clipping region (i.e. the viewport which contains it).
+            """
             widgets.add(widget)
             styles_offset = widget.styles.offset
             layout_offset = (
@@ -207,6 +215,7 @@ class Compositor:
             # Container region is minus border
             container_region = region.shrink(widget.styles.gutter)
 
+            # Containers (widgets with layout) require adding children
             if widget.layout is not None:
                 scroll = widget.scroll
 
@@ -226,7 +235,9 @@ class Compositor:
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=attrgetter("order"))
 
+                # Add all the widgets
                 for sub_region, sub_widget, z in placements:
+                    # Combine regions with children to calculate the "virtual size"
                     total_region = total_region.union(sub_region)
                     if sub_widget is not None:
                         add_widget(
@@ -236,6 +247,7 @@ class Compositor:
                             sub_clip,
                         )
 
+                # Add any scrollbars
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(
                     container_region.size
                 ):
@@ -247,6 +259,7 @@ class Compositor:
                         container_region.size,
                     )
 
+                # Add the container widget, which will render a background
                 map[widget] = RenderRegion(
                     region + layout_offset,
                     order,
@@ -256,7 +269,7 @@ class Compositor:
                 )
 
             else:
-
+                # Add the widget to the map
                 map[widget] = RenderRegion(
                     region + layout_offset,
                     order,
@@ -265,6 +278,7 @@ class Compositor:
                     container_region.size,
                 )
 
+        # Add top level (root) widget
         add_widget(root, size.region, (), size.region)
 
         return map, widgets
@@ -273,6 +287,12 @@ class Compositor:
         screen.app.mount(*self.widgets)
 
     def __iter__(self) -> Iterator[tuple[Widget, Region, Region, Size, Size]]:
+        """Iterate map with information regarding each widget and is position
+
+        Yields:
+            Iterator[tuple[Widget, Region, Region, Size, Size]]: Iterates a tuple of
+                Widget, clip region, region, virtual size, and container size.
+        """
         layers = sorted(self.map.items(), key=lambda item: item[1].order, reverse=True)
         intersection = Region.intersection
         for widget, (region, _order, clip, virtual_size, container_size) in layers:
