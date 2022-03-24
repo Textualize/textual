@@ -597,9 +597,6 @@ class Widget(DOMNode):
             self.log(self, f"IS NOT RUNNING, {message!r} not sent")
         return await super().post_message(message)
 
-    # async def on_resize(self, event: events.Resize) -> None:
-    #     self.size_updated(event.size, event.virtual_size, event.container_size)
-
     async def on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.
 

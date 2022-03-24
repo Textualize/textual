@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import ClassVar, Iterable, NamedTuple, TYPE_CHECKING
+from typing import ClassVar, NamedTuple, TYPE_CHECKING
 
 
 from .geometry import Region, Offset, Size

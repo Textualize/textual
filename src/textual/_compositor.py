@@ -213,10 +213,13 @@ class Compositor:
                 # The region that contains the content (container region minus scrollbars)
                 child_region = widget._arrange_container(container_region)
 
+                # Adjust the clip region accordingly
                 sub_clip = clip.intersection(child_region)
 
                 arrange_region = child_region
                 total_region = arrange_region.reset_origin
+
+                # Arrange the layout
                 placements, arranged_widgets = widget.layout.arrange(
                     widget, arrange_region.size, scroll
                 )
@@ -232,14 +235,6 @@ class Compositor:
                             sub_widget.z + (z,),
                             sub_clip,
                         )
-
-                # map[widget] = RenderRegion(
-                #     child_region + layout_offset,
-                #     order,
-                #     sub_clip,
-                #     total_region.size,
-                #     container_region.size,
-                # )
 
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(
                     container_region.size
