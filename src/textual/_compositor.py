@@ -478,8 +478,6 @@ class Compositor:
 
         for region, clip, lines in renders:
             render_region = intersection(region, clip)
-            # if not render_region:
-            #     continue
             for y, line in zip(render_region.y_range, lines):
                 first_cut, last_cut = render_region.x_extents
                 final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
