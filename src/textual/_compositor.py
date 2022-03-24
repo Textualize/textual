@@ -132,15 +132,15 @@ class Compositor:
         # Newly hidden widgets
         hidden_widgets = old_widgets - new_widgets
 
-        self.map.clear()
-        self.map.update(map)
+        # Replace map and widgets
+        self.map = map
+        self.widgets = widgets
 
         # Copy renders if the size hasn't changed
-        new_renders = {
+        self.regions = {
             widget: (region, clip)
             for widget, (region, _order, clip, _, _) in map.items()
         }
-        self.regions = new_renders
 
         # Widgets with changed size
         resized_widgets = {
@@ -149,10 +149,10 @@ class Compositor:
             if widget in old_widgets and widget.size != region.size
         }
 
-        self.widgets.clear()
-        self.widgets.update(widgets)
         return ReflowResult(
-            hidden=hidden_widgets, shown=shown_widgets, resized=resized_widgets
+            hidden=hidden_widgets,
+            shown=shown_widgets,
+            resized=resized_widgets,
         )
 
     def _arrange_root(self, root: Widget) -> tuple[RenderRegionMap, set[Widget]]:
