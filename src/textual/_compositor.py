@@ -429,7 +429,7 @@ class Compositor:
     ) -> list[list[Segment]]:
 
         # Pretty sure we don't need to sort the bucket items
-        segment_lines = [
+        segment_lines: list[list[Segment]] = [
             sum(
                 [line for line in bucket.values() if line is not None],
                 start=[],
@@ -440,7 +440,6 @@ class Compositor:
 
     def render(
         self,
-        console: Console,
         *,
         crop: Region | None = None,
     ) -> SegmentLines:
@@ -520,7 +519,7 @@ class Compositor:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        yield self.render(console)
+        yield self.render()
 
     def update_widget(self, console: Console, widget: Widget) -> LayoutUpdate | None:
         """Update a given widget in the composition.
@@ -542,6 +541,6 @@ class Compositor:
         if not update_region:
             return None
         widget.clear_render_cache()
-        update_lines = self.render(console, crop=update_region).lines
+        update_lines = self.render(crop=update_region).lines
         update = LayoutUpdate(update_lines, update_region)
         return update
