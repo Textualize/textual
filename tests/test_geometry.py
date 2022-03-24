@@ -251,6 +251,10 @@ def test_region_y_range():
     assert Region(5, 10, 20, 30).y_range == range(10, 40)
 
 
+def test_region_reset_origin():
+    assert Region(5, 10, 20, 30).reset_origin == Region(0, 0, 20, 30)
+
+
 def test_region_expand():
     assert Region(50, 10, 10, 5).expand((2, 3)) == Region(48, 7, 14, 11)
 
@@ -278,6 +282,10 @@ def test_spacing_top_left():
 
 def test_spacing_bottom_right():
     assert Spacing(2, 3, 4, 5).bottom_right == (3, 4)
+
+
+def test_spacing_totals():
+    assert Spacing(2, 3, 4, 5).totals == (8, 6)
 
 
 def test_spacing_css():

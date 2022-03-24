@@ -127,11 +127,6 @@ class Size(NamedTuple):
         return Region(0, 0, width, height)
 
     def __add__(self, other: object) -> Size:
-        if isinstance(other, Spacing):
-            width, height = self
-            other_width, other_height = other.totals
-            return Size(width + other_width, height + other_height)
-
         if isinstance(other, tuple):
             width, height = self
             width2, height2 = other
@@ -617,6 +612,7 @@ class Spacing(NamedTuple):
 
     @property
     def totals(self) -> tuple[int, int]:
+        """Total spacing for horizontal and vertical spacing."""
         top, right, bottom, left = self
         return (left + right, top + bottom)
 
