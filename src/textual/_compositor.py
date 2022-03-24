@@ -103,26 +103,10 @@ class Compositor:
 
         # The points in each line where the line bisects the left and right edges of the widget
         self._cuts: list[list[int]] | None = None
-        self._require_update: bool = True
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "size", self.size
         yield "widgets", self.widgets
-
-    def check_update(self) -> bool:
-        return self._require_update
-
-    def require_update(self) -> None:
-        self._require_update = True
-        self.reset()
-        self.map.clear()
-        self.widgets.clear()
-
-    def reset_update(self) -> None:
-        self._require_update = False
-
-    def reset(self) -> None:
-        self._cuts = None
 
     def reflow(self, parent: Widget, size: Size) -> ReflowResult:
         """Reflow (layout) widget and its children.
@@ -134,15 +118,12 @@ class Compositor:
         Returns:
             ReflowResult: Hidden shown and resized widgets
         """
-        self.reset()
-
+        self._cuts = None
         self.root = parent
         self.size = size
 
         # TODO: Handle virtual size
         map, widgets = self._arrange_root(parent)
-
-        self._require_update = False
 
         old_widgets = set(self.map.keys())
         new_widgets = set(map.keys())

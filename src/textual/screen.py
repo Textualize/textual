@@ -138,11 +138,6 @@ class Screen(Widget):
         await self.refresh_layout()
         event.stop()
 
-    async def on_idle(self, event: events.Idle) -> None:
-        if self._compositor.check_update():
-            self._compositor.reset_update()
-            await self.refresh_layout()
-
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
 
         try:
