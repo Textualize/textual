@@ -505,14 +505,12 @@ class Compositor:
         render_lines = self._assemble_chops(chops[crop_y:crop_y2])
 
         def width_view(line: list[Segment]) -> list[Segment]:
-
-            if line:
-                div_lines = list(divide(line, [crop_x, crop_x2]))
-                line = div_lines[1] if len(div_lines) > 1 else div_lines[0]
+            div_lines = list(divide(line, [crop_x, crop_x2]))
+            line = div_lines[1] if len(div_lines) > 1 else div_lines[0]
             return line
 
         if crop is not None and (crop_x, crop_x2) != (0, width):
-            render_lines = [width_view(line) for line in render_lines]
+            render_lines = [width_view(line) if line else line for line in render_lines]
 
         return SegmentLines(render_lines, new_lines=True)
 
