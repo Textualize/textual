@@ -520,12 +520,10 @@ class App(DOMNode):
             try:
                 if sync_available:
                     console.file.write("\x1bP=1s\x1b\\")
-                # renderable = self.screen._compositor.render(console)
-                # console.print(renderable)
                 console.print(
                     ScreenRenderable(
                         Control.home(), self.screen._compositor, Control.home()
-                    ),
+                    )
                 )
                 if sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
