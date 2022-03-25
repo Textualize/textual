@@ -108,7 +108,7 @@ class Widget(DOMNode):
         self.hscroll.position = int(new_value)
 
     async def watch_scroll_y(self, new_value: float) -> None:
-        self.vscroll.position = int(new_value)
+        self.vertical_scrollbar.position = int(new_value)
 
     def validate_scroll_x(self, value: float) -> float:
         return clamp(value, 0, self.max_scroll_x)
@@ -131,7 +131,7 @@ class Widget(DOMNode):
         return max(0, self.virtual_size.height - self.container_size.height)
 
     @property
-    def vscroll(self) -> ScrollBar:
+    def vertical_scrollbar(self) -> ScrollBar:
         """Get a vertical scrollbar (create if necessary)
 
         Returns:
@@ -198,15 +198,6 @@ class Widget(DOMNode):
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
-
-        # self.log(
-        #     "REFRESH_SCROLLBARS",
-        #     widget=self,
-        #     virtual_size=self.virtual_size,
-        #     size=self.size,
-        #     container_size=self.container_size,
-        # )
-        # return changed
 
     @property
     def scrollbars_enabled(self) -> tuple[bool, bool]:
@@ -350,13 +341,13 @@ class Widget(DOMNode):
                 _,
             ) = region.split(-1, -1)
             if vertical_scrollbar_region:
-                yield self.vscroll, vertical_scrollbar_region
+                yield self.vertical_scrollbar, vertical_scrollbar_region
             if horizontal_scrollbar_region:
                 yield self.hscroll, horizontal_scrollbar_region
         elif show_vertical_scrollbar:
             region, scrollbar_region = region.split_vertical(-1)
             if scrollbar_region:
-                yield self.vscroll, scrollbar_region
+                yield self.vertical_scrollbar, scrollbar_region
         elif show_horizontal_scrollbar:
             region, scrollbar_region = region.split_horizontal(-1)
             if scrollbar_region:
@@ -496,8 +487,8 @@ class Widget(DOMNode):
             if self.is_container:
                 width, height = self.container_size
                 if self.show_vertical_scrollbar:
-                    self.vscroll.window_virtual_size = virtual_size.height
-                    self.vscroll.window_size = height
+                    self.vertical_scrollbar.window_virtual_size = virtual_size.height
+                    self.vertical_scrollbar.window_size = height
                     # self.vscroll.refresh()
                 if self.show_horizontal_scrollbar:
                     self.hscroll.window_virtual_size = virtual_size.width
