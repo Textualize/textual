@@ -105,7 +105,7 @@ class Widget(DOMNode):
     show_horizontal_scrollbar = Reactive(False, layout=True)
 
     async def watch_scroll_x(self, new_value: float) -> None:
-        self.hscroll.position = int(new_value)
+        self.horizontal_scrollbar.position = int(new_value)
 
     async def watch_scroll_y(self, new_value: float) -> None:
         self.vertical_scrollbar.position = int(new_value)
@@ -148,7 +148,7 @@ class Widget(DOMNode):
         return scroll_bar
 
     @property
-    def hscroll(self) -> ScrollBar:
+    def horizontal_scrollbar(self) -> ScrollBar:
         """Get a vertical scrollbar (create if necessary)
 
         Returns:
@@ -343,7 +343,7 @@ class Widget(DOMNode):
             if vertical_scrollbar_region:
                 yield self.vertical_scrollbar, vertical_scrollbar_region
             if horizontal_scrollbar_region:
-                yield self.hscroll, horizontal_scrollbar_region
+                yield self.horizontal_scrollbar, horizontal_scrollbar_region
         elif show_vertical_scrollbar:
             region, scrollbar_region = region.split_vertical(-1)
             if scrollbar_region:
@@ -351,7 +351,7 @@ class Widget(DOMNode):
         elif show_horizontal_scrollbar:
             region, scrollbar_region = region.split_horizontal(-1)
             if scrollbar_region:
-                yield self.hscroll, scrollbar_region
+                yield self.horizontal_scrollbar, scrollbar_region
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Pseudo classes for a widget"""
@@ -491,8 +491,8 @@ class Widget(DOMNode):
                     self.vertical_scrollbar.window_size = height
                     # self.vscroll.refresh()
                 if self.show_horizontal_scrollbar:
-                    self.hscroll.window_virtual_size = virtual_size.width
-                    self.hscroll.window_size = width
+                    self.horizontal_scrollbar.window_virtual_size = virtual_size.width
+                    self.horizontal_scrollbar.window_size = width
                     # self.hscroll.refresh()
 
                 # self.scroll_to(self.scroll_x, self.scroll_y)
