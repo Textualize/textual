@@ -87,6 +87,7 @@ class Screen(Widget):
         if self._dirty_widgets:
             for widget in self._dirty_widgets:
                 # Repaint widgets
+                # TODO: Combine these in to a single update.
                 display_update = self._compositor.update_widget(self.console, widget)
                 if display_update is not None:
                     self.app.display(display_update)
