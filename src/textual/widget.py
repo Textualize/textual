@@ -501,6 +501,7 @@ class Widget(DOMNode):
             self.call_later(self._refresh_scrollbars)
 
     def _render_lines(self) -> None:
+        """Render all lines."""
         width, height = self.size
         renderable = self.render_styled()
         options = self.console.options.update_dimensions(width, height)
@@ -520,7 +521,7 @@ class Widget(DOMNode):
         """Check if a layout has been requested."""
         return self._layout_required
 
-    def reset_check_layout(self) -> None:
+    def _reset_check_layout(self) -> None:
         self._layout_required = False
 
     def get_style_at(self, x: int, y: int) -> Style:
@@ -584,7 +585,7 @@ class Widget(DOMNode):
             repaint = True
 
         if layout or self.check_layout():
-            self.reset_check_layout()
+            self._reset_check_layout()
             self.screen.post_message_no_wait(messages.Layout(self))
         elif repaint:
             self.emit_no_wait(messages.Update(self, self))
