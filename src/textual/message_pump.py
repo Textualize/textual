@@ -133,7 +133,7 @@ class MessagePump:
     def set_interval(
         self,
         interval: float,
-        callback: TimerCallback = None,
+        callback: TimerCallback | None = None,
         *,
         name: str | None = None,
         repeat: int = 0,
