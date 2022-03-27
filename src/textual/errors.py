@@ -2,8 +2,8 @@ from __future__ import annotations
 
 
 class TextualError(Exception):
-    pass
+    """Base class for Textual errors."""
 
 
 class NoWidget(TextualError):
-    pass
+    """Specified widget was not found."""
