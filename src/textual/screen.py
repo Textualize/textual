@@ -126,6 +126,7 @@ class Screen(Widget):
         except Exception:
             self.app.panic()
         self.app.refresh()
+        self._dirty_widgets.clear()
 
     async def handle_update(self, message: messages.Update) -> None:
         message.stop()
