@@ -454,4 +454,4 @@ class DOMNode(MessagePump):
         return has_pseudo_classes
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
-        raise NotImplementedError()
+        pass
