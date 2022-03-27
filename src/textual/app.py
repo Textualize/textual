@@ -656,10 +656,10 @@ class App(DOMNode):
         Args:
             event_name (str): _description_
             event (events.Event): An event object.
-            default_namespace (object | None): _description_
+            default_namespace (object | None): TODO: _description_
 
         Returns:
-            bool: _description_
+            bool: True if an action was processed.
         """
         event.stop()
         try:
@@ -686,7 +686,6 @@ class App(DOMNode):
 
     async def handle_layout(self, message: messages.Layout) -> None:
         message.stop()
-        # await self.screen.refresh_layout()
         self.app.refresh()
 
     async def on_key(self, event: events.Key) -> None:
