@@ -349,9 +349,7 @@ class GridLayout(Layout):
             if area and widget.visible
         )
 
-        free_slots = {
-            (col, row) for col, row in product(range(column_count), range(row_count))
-        }
+        free_slots = set(product(range(column_count), range(row_count)))
         order = 1
         from_corners = Region.from_corners
         gutter = Offset(self.column_gutter, self.row_gutter)
