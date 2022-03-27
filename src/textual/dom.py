@@ -124,6 +124,7 @@ class DOMNode(MessagePump):
 
     @property
     def css_identifier(self) -> str:
+        """A CSS selector that identifies this DOM node."""
         tokens = [self.__class__.__name__]
         if self.id is not None:
             tokens.append(f"#{self.id}")
@@ -131,6 +132,7 @@ class DOMNode(MessagePump):
 
     @property
     def css_identifier_styled(self) -> Text:
+        """A stylized CSS identifier."""
         tokens = Text.styled(self.__class__.__name__)
         if self.id is not None:
             tokens.append(f"#{self.id}", style="bold")
@@ -329,6 +331,12 @@ class DOMNode(MessagePump):
         node.set_parent(self)
 
     def add_children(self, *nodes: DOMNode, **named_nodes: DOMNode) -> None:
+        """Add multiple children to this node.
+
+        Args:
+            *nodes (DOMNode): Positional args should be new DOM nodes.
+            **named_nodes (DOMNode): Keyword args will be assigned the argument name as an ID.
+        """
         _append = self.node_list._append
         for node in nodes:
             _append(node)
@@ -337,6 +345,12 @@ class DOMNode(MessagePump):
             node.id = node_id
 
     def walk_children(self, with_self: bool = True) -> Iterable[DOMNode]:
+        """Generate all descendents of this node.
+
+        Args:
+            with_self (bool, optional): Also include self in the results. Defaults to True.
+
+        """
 
         stack: list[Iterator[DOMNode]] = [iter(self.node_list)]
         pop = stack.pop
