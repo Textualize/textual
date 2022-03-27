@@ -27,6 +27,7 @@ class Screen(Widget):
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
         super().__init__(name=name, id=id)
         self._compositor = Compositor()
+        self._dirty_widgets: list[Widget] = []
 
     @property
     def is_transparent(self) -> bool:
@@ -81,11 +82,21 @@ class Screen(Widget):
         """
         return self._compositor.get_widget_region(widget)
 
-    async def refresh_layout(self) -> None:
+    def on_idle(self, event: events.Idle) -> None:
+        # Check for any widgets marked as 'dirty' (needs a repaint)
+        if self._dirty_widgets:
+            for widget in self._dirty_widgets:
+                # Repaint widgets
+                display_update = self._compositor.update_widget(self.console, widget)
+                if display_update is not None:
+                    self.app.display(display_update)
+            # Reset dirty list
+            self._dirty_widgets.clear()
 
+    async def refresh_layout(self) -> None:
+        """Refresh the layout (can change size and positions of widgets)."""
         if not self.size:
             return
-
         try:
             hidden, shown, resized = self._compositor.reflow(self, self.size)
 
@@ -100,7 +111,7 @@ class Screen(Widget):
 
             for (
                 widget,
-                region,
+                _region,
                 unclipped_region,
                 virtual_size,
                 container_size,
@@ -112,20 +123,15 @@ class Screen(Widget):
                             self, unclipped_region.size, virtual_size, container_size
                         )
                     )
-
         except Exception:
             self.app.panic()
-
         self.app.refresh()
 
     async def handle_update(self, message: messages.Update) -> None:
         message.stop()
         widget = message.widget
         assert isinstance(widget, Widget)
-
-        display_update = self._compositor.update_widget(self.console, widget)
-        if display_update is not None:
-            self.app.display(display_update)
+        self._dirty_widgets.append(widget)
 
     async def handle_layout(self, message: messages.Layout) -> None:
         message.stop()

@@ -220,7 +220,7 @@ class MessagePump:
                     if not self._closed:
                         event = events.Idle(self)
                         for method in self._get_dispatch_methods("on_idle", event):
-                            await method(event)
+                            await invoke(method, event)
 
         log("CLOSED", self)
 

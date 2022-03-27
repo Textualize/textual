@@ -81,26 +81,27 @@ class Widget(DOMNode):
         self._size = Size(0, 0)
         self._virtual_size = Size(0, 0)
         self._container_size = Size(0, 0)
-        self._repaint_required = False
         self._layout_required = False
         self._animate: BoundAnimator | None = None
         self._reactive_watches: dict[str, Callable] = {}
         self._mouse_over: bool = False
-        self.render_cache: RenderCache | None = None
         self.highlight_style: Style | None = None
 
         self._vertical_scrollbar: ScrollBar | None = None
         self._horizontal_scrollbar: ScrollBar | None = None
+
+        self._render_cache = RenderCache(Size(0, 0), [])
+        self._dirty_regions: list[Region] = []
 
         super().__init__(name=name, id=id, classes=classes)
         self.add_children(*children)
 
     has_focus = Reactive(False)
     mouse_over = Reactive(False)
-    scroll_x = Reactive(0.0)
-    scroll_y = Reactive(0.0)
-    scroll_target_x = Reactive(0.0)
-    scroll_target_y = Reactive(0.0)
+    scroll_x = Reactive(0.0, repaint=False)
+    scroll_y = Reactive(0.0, repaint=False)
+    scroll_target_x = Reactive(0.0, repaint=False)
+    scroll_target_y = Reactive(0.0, repaint=False)
     show_vertical_scrollbar = Reactive(False, layout=True)
     show_horizontal_scrollbar = Reactive(False, layout=True)
 
@@ -207,6 +208,11 @@ class Widget(DOMNode):
 
         enabled = self.show_vertical_scrollbar, self.show_horizontal_scrollbar
         return enabled
+
+    def set_dirty(self) -> None:
+        """Set the Widget as 'dirty' (requiring re-render)."""
+        self._dirty_regions.clear()
+        self._dirty_regions.append(self.size.region)
 
     def scroll_to(
         self,
@@ -469,7 +475,7 @@ class Widget(DOMNode):
         self.app.update_styles()
 
     def on_style_change(self) -> None:
-        self.clear_render_cache()
+        self.set_dirty()
 
     def size_updated(
         self, size: Size, virtual_size: Size, container_size: Size
@@ -494,35 +500,25 @@ class Widget(DOMNode):
                 self.refresh()
             self.call_later(self._refresh_scrollbars)
 
-    def render_lines(self) -> None:
+    def _render_lines(self) -> None:
         width, height = self.size
         renderable = self.render_styled()
         options = self.console.options.update_dimensions(width, height)
 
         lines = self.console.render_lines(renderable, options)
-        self.render_cache = RenderCache(self.size, lines)
+        self._render_cache = RenderCache(self.size, lines)
+        self._dirty_regions.clear()
 
-    def _get_lines(self) -> Lines:
+    def get_render_lines(self) -> Lines:
         """Get segment lines to render the widget."""
-        if self.render_cache is None:
-            self.render_lines()
-        assert self.render_cache is not None
-        lines = self.render_cache.lines
+        if self._dirty_regions:
+            self._render_lines()
+        lines = self._render_cache.lines
         return lines
-
-    def clear_render_cache(self) -> None:
-        self.render_cache = None
-
-    def check_repaint(self) -> bool:
-        """Check if a repaint has been requested."""
-        return self._repaint_required
 
     def check_layout(self) -> bool:
         """Check if a layout has been requested."""
         return self._layout_required
-
-    def reset_check_repaint(self) -> None:
-        self._repaint_required = False
 
     def reset_check_layout(self) -> None:
         self._layout_required = False
@@ -549,11 +545,9 @@ class Widget(DOMNode):
             layout (bool, optional): Also layout widgets in the view. Defaults to False.
         """
         if layout:
-            self.clear_render_cache()
             self._layout_required = True
-        elif repaint:
-            self.clear_render_cache()
-            self._repaint_required = True
+        if repaint:
+            self.set_dirty()
         self.check_idle()
 
     def render(self) -> RenderableType:
@@ -566,7 +560,6 @@ class Widget(DOMNode):
         # Default displays a pretty repr in the center of the screen
 
         label = self.css_identifier_styled
-
         return Align.center(label, vertical="middle")
 
     async def action(self, action: str, *params) -> None:
@@ -579,24 +572,22 @@ class Widget(DOMNode):
             self.log(self, f"IS NOT RUNNING, {message!r} not sent")
         return await super().post_message(message)
 
-    async def on_idle(self, event: events.Idle) -> None:
+    def on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.
 
         Args:
             event (events.Idle): Idle event.
         """
-        # Check if the styles have chained
+        # Check if the styles have changed
         repaint, layout = self.styles.check_refresh()
+        if self._dirty_regions:
+            repaint = True
 
         if layout or self.check_layout():
-            # self.render_cache = None
-            self.reset_check_repaint()
             self.reset_check_layout()
-            await self.screen.post_message(messages.Layout(self))
-        elif repaint or self.check_repaint():
-            # self.render_cache = None
-            self.reset_check_repaint()
-            await self.emit(messages.Update(self, self))
+            self.screen.post_message_no_wait(messages.Layout(self))
+        elif repaint:
+            self.emit_no_wait(messages.Update(self, self))
 
     async def focus(self) -> None:
         """Give input focus to this widget."""
