@@ -425,6 +425,7 @@ class DOMNode(MessagePump):
 
         """
         self._classes.update(class_names)
+        self.refresh()
 
     def remove_class(self, *class_names: str) -> None:
         """Remove class names from this Node.
@@ -434,6 +435,7 @@ class DOMNode(MessagePump):
 
         """
         self._classes.difference_update(class_names)
+        self.refresh()
 
     def toggle_class(self, *class_names: str) -> None:
         """Toggle class names on this Node.
@@ -444,6 +446,7 @@ class DOMNode(MessagePump):
         """
         self._classes.symmetric_difference_update(class_names)
         self.app.stylesheet.update(self.app, animate=True)
+        self.refresh()
 
     def has_pseudo_class(self, *class_names: str) -> bool:
         """Check for pseudo class (such as hover, focus etc)"""

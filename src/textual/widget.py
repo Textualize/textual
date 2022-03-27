@@ -302,7 +302,7 @@ class Widget(DOMNode):
             yield "pseudo_classes", set(pseudo_classes)
 
     def _arrange_container(self, region: Region) -> Region:
-        """Adjusts the Windget region to accomodate scrollbars.
+        """Adjusts the Widget region to accommodate scrollbars.
 
         Args:
             region (Region): A region for the widget.
