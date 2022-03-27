@@ -7,12 +7,13 @@ import rich.repr
 from rich.segment import Segment, SegmentLines
 from rich.style import Style, StyleType
 
-from .css.types import EdgeStyle
+from .css.types import EdgeStyle, EdgeType
+
 
 INNER = 1
 OUTER = 2
 
-BORDER_CHARS: dict[str, tuple[str, str, str]] = {
+BORDER_CHARS: dict[EdgeType, tuple[str, str, str]] = {
     "": ("   ", "   ", "   "),
     "none": ("   ", "   ", "   "),
     "round": ("╭─╮", "│ │", "╰─╯"),
@@ -31,7 +32,7 @@ BORDER_CHARS: dict[str, tuple[str, str, str]] = {
 # Some of the borders are on the widget background and some are on the background of the parent
 # This table selects which for each character, 0 indicates the widget, 1 selects the parent
 BORDER_LOCATIONS: dict[
-    str, tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]]
+    EdgeType, tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]]
 ] = {
     "": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "none": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
@@ -51,12 +52,23 @@ BORDER_LOCATIONS: dict[
 
 @lru_cache(maxsize=1024)
 def get_box(
-    name: str, inner_style: Style, outer_style: Style, style: Style
+    name: EdgeType, inner_style: Style, outer_style: Style, style: Style
 ) -> tuple[
     tuple[Segment, Segment, Segment],
     tuple[Segment, Segment, Segment],
     tuple[Segment, Segment, Segment],
 ]:
+    """Get segments used to render a box.
+
+    Args:
+        name (str): Name of the box type.
+        inner_style (Style): The inner style (widget background)
+        outer_style (Style): The outer style (parent background)
+        style (Style): Widget style
+
+    Returns:
+        tuple: A tuple of 3 Segment triplets.
+    """
     _Segment = Segment
     (
         (top1, top2, top3),
@@ -93,6 +105,14 @@ def get_box(
 
 @rich.repr.auto
 class Border:
+    """Renders Textual CSS borders.
+
+    This is analogous to Rich's `Box` but more flexible. Different borders may be
+    applied to each of the four edges, and more advanced borders can be achieved through
+    varions combinations of Widget and parent background colors.
+
+    """
+
     def __init__(
         self,
         renderable: RenderableType,

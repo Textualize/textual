@@ -14,6 +14,7 @@ else:
 
 Edge = Literal["top", "right", "bottom", "left"]
 EdgeType = Literal[
+    "",
     "none",
     "round",
     "solid",
