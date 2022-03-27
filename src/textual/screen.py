@@ -83,8 +83,6 @@ class Screen(Widget):
 
     async def refresh_layout(self) -> None:
 
-        # await self._compositor.mount_all(self)
-
         if not self.size:
             return
 

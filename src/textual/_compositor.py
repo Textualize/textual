@@ -1,3 +1,16 @@
+"""
+
+The compositor handles combining widgets in to a single screen (i.e. compositing).
+
+It also stores the results of that process, so that Textual knows the widgets on
+the screen and their locations. The compositor uses this information to answer
+queries regarding the widget under an office, or the style under an offset.
+
+Additionally, the compositor can render portions of the screen which may have updated,
+without having to render the entire screen.
+
+"""
+
 from __future__ import annotations
 
 from operator import attrgetter, itemgetter
@@ -32,19 +45,19 @@ if TYPE_CHECKING:
 class ReflowResult(NamedTuple):
     """The result of a reflow operation. Describes the chances to widgets."""
 
-    hidden: set[Widget]
-    shown: set[Widget]
-    resized: set[Widget]
+    hidden: set[Widget]  # Widgets that are hidden
+    shown: set[Widget]  # Widgets that are shown
+    resized: set[Widget]  # Widgets that have been resized
 
 
 class RenderRegion(NamedTuple):
     """Defines the absolute location of a Widget."""
 
-    region: Region
-    order: tuple[int, ...]
-    clip: Region
-    virtual_size: Size
-    container_size: Size
+    region: Region  # The region occupied by the widget
+    order: tuple[int, ...]  # A tuple of ints defining the painting order
+    clip: Region  # A region to clip the widget by (if a Widget is within a container)
+    virtual_size: Size  # The virtual size  (scrollable region) of a widget if it is a container
+    container_size: Size  # The container size (area no occupied by scrollbars)
 
 
 RenderRegionMap: TypeAlias = "dict[Widget, RenderRegion]"
@@ -261,11 +274,7 @@ class Compositor:
 
         # Add top level (root) widget
         add_widget(root, size.region, (), size.region)
-
         return map, widgets
-
-    async def mount_all(self, screen: Screen) -> None:
-        screen.app.mount(*self.widgets)
 
     def __iter__(self) -> Iterator[tuple[Widget, Region, Region, Size, Size]]:
         """Iterate map with information regarding each widget and is position

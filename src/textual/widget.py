@@ -173,9 +173,6 @@ class Widget(DOMNode):
         styles = self.styles
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
-
-        self.log(virtual=self.virtual_size, container=self.container_size)
-
         width, height = self.container_size
 
         show_horizontal = self.show_horizontal_scrollbar
@@ -193,8 +190,6 @@ class Widget(DOMNode):
             show_vertical = True
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
-
-        self.log(horizontal=show_horizontal, vertical=show_vertical)
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
@@ -489,19 +484,15 @@ class Widget(DOMNode):
                 if self.show_vertical_scrollbar:
                     self.vertical_scrollbar.window_virtual_size = virtual_size.height
                     self.vertical_scrollbar.window_size = height
-                    # self.vscroll.refresh()
                 if self.show_horizontal_scrollbar:
                     self.horizontal_scrollbar.window_virtual_size = virtual_size.width
                     self.horizontal_scrollbar.window_size = width
-                    # self.hscroll.refresh()
 
-                # self.scroll_to(self.scroll_x, self.scroll_y)
                 self.refresh(layout=True)
-                self._refresh_scrollbars()
                 self.call_later(self.scroll_to, self.scroll_x, self.scroll_y)
-                # self.call_later(self._refresh_scrollbars)
             else:
                 self.refresh()
+            self.call_later(self._refresh_scrollbars)
 
     def render_lines(self) -> None:
         width, height = self.size
