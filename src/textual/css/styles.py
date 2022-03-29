@@ -454,7 +454,6 @@ class Styles(StylesBase):
         return self._rules.get(rule, default)
 
     def refresh(self, *, layout: bool = False) -> None:
-        return
         self._repaint_required = True
         self._layout_required = self._layout_required or layout
 
