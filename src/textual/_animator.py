@@ -114,7 +114,7 @@ class BoundAnimator:
 
 
 class Animator:
-    """An object to manage updates to a given attributed over a period of time."""
+    """An object to manage updates to a given attribute over a period of time."""
 
     def __init__(self, target: MessageTarget, frames_per_second: int = 60) -> None:
         self._animations: dict[tuple[object, str], Animation] = {}
