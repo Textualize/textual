@@ -80,7 +80,7 @@ class DOMNode(MessagePump):
 
     @property
     def screen(self) -> "Screen":
-        """Get the current screen."""
+        """Get the screen that this node is contained within. Note that this may not be the currently active screen within the app."""
         # Get the node by looking up a chain of parents
         # Note that self.screen may not be the same as self.app.screen
         from .screen import Screen
