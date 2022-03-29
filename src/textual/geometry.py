@@ -612,7 +612,7 @@ class Spacing(NamedTuple):
 
     @property
     def totals(self) -> tuple[int, int]:
-        """Total spacing for horizontal and vertical spacing."""
+        """Returns a tuple of (<HORIZONTAL SPACE>, <VERTICAL SPACE>)."""
         top, right, bottom, left = self
         return (left + right, top + bottom)
 
