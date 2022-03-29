@@ -100,7 +100,7 @@ class Compositor:
         self.map: RenderRegionMap = {}
 
         # All widgets considered in the arrangement
-        # Not this may be a supperset of self.map.keys() as some widgets may be invisible for various reasons
+        # Note this may be a superset of self.map.keys() as some widgets may be invisible for various reasons
         self.widgets: set[Widget] = set()
 
         # The top level widget
