@@ -471,7 +471,7 @@ class Compositor:
         cuts = self.cuts
         # dict.fromkeys is a callable which takes a list of ints returns a dict which maps ints on to a list of Segments or None.
         fromkeys = cast(
-            'Callable[[list[int]], dict[int, list[Segment] | None]]', dict.fromkeys
+            "Callable[[list[int]], dict[int, list[Segment] | None]]", dict.fromkeys
         )
         # A mapping of cut index to a list of segments for each line
         chops: list[dict[int, list[Segment] | None]] = [
