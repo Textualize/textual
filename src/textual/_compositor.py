@@ -4,7 +4,7 @@ The compositor handles combining widgets in to a single screen (i.e. compositing
 
 It also stores the results of that process, so that Textual knows the widgets on
 the screen and their locations. The compositor uses this information to answer
-queries regarding the widget under an office, or the style under an offset.
+queries regarding the widget under an offset, or the style under an offset.
 
 Additionally, the compositor can render portions of the screen which may have updated,
 without having to render the entire screen.
