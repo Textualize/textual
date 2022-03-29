@@ -409,10 +409,6 @@ class Widget(DOMNode):
         return renderable
 
     @property
-    def children(self) -> list[Widget]:
-        return cast(list[Widget], list(self.node_list))
-
-    @property
     def size(self) -> Size:
         return self._size
 

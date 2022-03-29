@@ -443,7 +443,7 @@ class App(DOMNode):
 
     def _register_child(self, parent: DOMNode, child: DOMNode) -> bool:
         if child not in self.registry:
-            parent.node_list._append(child)
+            parent.children._append(child)
             self.registry.add(child)
             child.set_parent(parent)
             child.start_messages()
@@ -468,7 +468,7 @@ class App(DOMNode):
 
         # Register children
         for widget_id, widget in name_widgets:
-            if widget.node_list:
+            if widget.children:
                 self.register(widget, *widget.children)
 
         for widget_id, widget in name_widgets:
