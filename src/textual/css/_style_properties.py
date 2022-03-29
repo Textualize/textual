@@ -12,10 +12,10 @@ from __future__ import annotations
 from typing import Iterable, NamedTuple, TYPE_CHECKING, cast
 
 import rich.repr
-from rich.color import Color
 from rich.style import Style
 
 from .. import log
+from ..color import Color
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING
 from .errors import StyleTypeError, StyleValueError
@@ -116,7 +116,8 @@ class BoxProperty:
     For example "border-right", "outline-bottom", etc.
     """
 
-    DEFAULT = ("", Color.default())
+    def __init__(self, default_color: Color) -> None:
+        self._default_color = default_color
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
@@ -137,7 +138,7 @@ class BoxProperty:
             A ``tuple[EdgeType, Style]`` containing the string type of the box and
                 it's style. Example types are "rounded", "solid", and "dashed".
         """
-        box_type, color = obj.get_rule(self.name) or self.DEFAULT
+        box_type, color = obj.get_rule(self.name) or ("", self._default_color)
         return (box_type, color)
 
     def __set__(self, obj: Styles, border: tuple[EdgeType, str | Color] | None):
@@ -679,12 +680,13 @@ class NameListProperty:
 class ColorProperty:
     """Descriptor for getting and setting color properties."""
 
+    def __init__(self, default_color: Color) -> None:
+        self._default_color = default_color
+
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
-    def __get__(
-        self, obj: StylesBaseStylesBase, objtype: type[Styles] | None = None
-    ) -> Color:
+    def __get__(self, obj: StylesBase, objtype: type[Styles] | None = None) -> Color:
         """Get the ``Color``, or ``Color.default()`` if no color is set.
 
         Args:
@@ -694,7 +696,7 @@ class ColorProperty:
         Returns:
             Color: The Color
         """
-        return obj.get_rule(self.name) or Color.default()
+        return obj.get_rule(self.name) or self._default_color
 
     def __set__(self, obj: StylesBase, color: Color | str | None):
         """Set the Color

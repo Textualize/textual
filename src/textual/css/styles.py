@@ -8,11 +8,11 @@ from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 
 import rich.repr
-from rich.color import Color
 from rich.style import Style
 
 from .. import log
 from .._animator import Animation, EasingFunction
+from ..color import Color
 from ..geometry import Size, Spacing
 from ._style_properties import (
     BorderProperty,
@@ -139,8 +139,8 @@ class StylesBase(ABC):
     layout = LayoutProperty()
 
     text = StyleProperty()
-    text_color = ColorProperty()
-    text_background = ColorProperty()
+    text_color = ColorProperty(Color(255, 255, 255))
+    text_background = ColorProperty(Color(255, 255, 255))
     text_style = StyleFlagsProperty()
 
     opacity = FractionalProperty()
@@ -150,16 +150,16 @@ class StylesBase(ABC):
     offset = OffsetProperty()
 
     border = BorderProperty()
-    border_top = BoxProperty()
-    border_right = BoxProperty()
-    border_bottom = BoxProperty()
-    border_left = BoxProperty()
+    border_top = BoxProperty(Color(0, 255, 0))
+    border_right = BoxProperty(Color(0, 255, 0))
+    border_bottom = BoxProperty(Color(0, 255, 0))
+    border_left = BoxProperty(Color(0, 255, 0))
 
     outline = BorderProperty()
-    outline_top = BoxProperty()
-    outline_right = BoxProperty()
-    outline_bottom = BoxProperty()
-    outline_left = BoxProperty()
+    outline_top = BoxProperty(Color(0, 255, 0))
+    outline_right = BoxProperty(Color(0, 255, 0))
+    outline_bottom = BoxProperty(Color(0, 255, 0))
+    outline_left = BoxProperty(Color(0, 255, 0))
 
     box_sizing = StringEnumProperty(VALID_BOX_SIZING, "border-box")
     width = ScalarProperty(percent_unit=Unit.WIDTH)
@@ -578,19 +578,19 @@ class Styles(StylesBase):
         # Check for edges
         if has_top:
             border_type, border_color = rules[f"{name}_top"]
-            yield f"{name}-top", f"{border_type} {border_color.name}"
+            yield f"{name}-top", f"{border_type} {border_color.hex}"
 
         if has_right:
             border_type, border_color = rules[f"{name}_right"]
-            yield f"{name}-right", f"{border_type} {border_color.name}"
+            yield f"{name}-right", f"{border_type} {border_color.hex}"
 
         if has_bottom:
             border_type, border_color = rules[f"{name}_bottom"]
-            yield f"{name}-bottom", f"{border_type} {border_color.name}"
+            yield f"{name}-bottom", f"{border_type} {border_color.hex}"
 
         if has_left:
             border_type, border_color = rules[f"{name}_left"]
-            yield f"{name}-left", f"{border_type} {border_color.name}"
+            yield f"{name}-left", f"{border_type} {border_color.hex}"
 
     @property
     def css_lines(self) -> list[str]:
@@ -651,9 +651,9 @@ class Styles(StylesBase):
             append_declaration("text", str(self.text))
         else:
             if has_rule("text_color"):
-                append_declaration("text-color", self.text_color.name)
+                append_declaration("text-color", self.text_color.hex)
             if has_rule("text_background"):
-                append_declaration("text-background", self.text_background.name)
+                append_declaration("text-background", self.text_background.hex)
             if has_rule("text_style"):
                 append_declaration("text-style", str(get_rule("text_style")))
 
