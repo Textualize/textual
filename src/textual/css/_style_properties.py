@@ -15,6 +15,7 @@ import rich.repr
 from rich.color import Color
 from rich.style import Style
 
+from .. import log
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING
 from .errors import StyleTypeError, StyleValueError
@@ -31,13 +32,14 @@ from ..geometry import Spacing, SpacingDimensions, clamp
 
 if TYPE_CHECKING:
     from ..layout import Layout
-    from .styles import Styles
+    from .styles import Styles, StylesBase
     from .styles import DockGroup
 
-from .._box import BoxType
+from .types import EdgeType
+
 
 BorderDefinition = (
-    "Sequence[tuple[BoxType, str | Color] | None] | tuple[BoxType, str | Color]"
+    "Sequence[tuple[EdgeType, str | Color] | None] | tuple[EdgeType, str | Color]"
 )
 
 
@@ -55,7 +57,7 @@ class ScalarProperty:
         self.name = name
 
     def __get__(
-        self, obj: Styles, objtype: type[Styles] | None = None
+        self, obj: StylesBase, objtype: type[Styles] | None = None
     ) -> Scalar | None:
         """Get the scalar property
 
@@ -69,7 +71,7 @@ class ScalarProperty:
         value = obj.get_rule(self.name)
         return value
 
-    def __set__(self, obj: Styles, value: float | Scalar | str | None) -> None:
+    def __set__(self, obj: StylesBase, value: float | Scalar | str | None) -> None:
         """Set the scalar property
 
         Args:
@@ -116,15 +118,15 @@ class BoxProperty:
 
     DEFAULT = ("", Color.default())
 
-    def __set_name__(self, owner: Styles, name: str) -> None:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
         _type, edge = name.split("_")
         self._type = _type
         self.edge = edge
 
     def __get__(
-        self, obj: Styles, objtype: type[Styles] | None = None
-    ) -> tuple[BoxType, Color]:
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> tuple[EdgeType, Color]:
         """Get the box property
 
         Args:
@@ -132,18 +134,18 @@ class BoxProperty:
             objtype (type[Styles]): The ``Styles`` class
 
         Returns:
-            A ``tuple[BoxType, Style]`` containing the string type of the box and
+            A ``tuple[EdgeType, Style]`` containing the string type of the box and
                 it's style. Example types are "rounded", "solid", and "dashed".
         """
         box_type, color = obj.get_rule(self.name) or self.DEFAULT
         return (box_type, color)
 
-    def __set__(self, obj: Styles, border: tuple[BoxType, str | Color] | None):
+    def __set__(self, obj: Styles, border: tuple[EdgeType, str | Color] | None):
         """Set the box property
 
         Args:
             obj (Styles): The ``Styles`` object.
-            value (tuple[BoxType, str | Color | Style], optional): A 2-tuple containing the type of box to use,
+            value (tuple[EdgeType, str | Color | Style], optional): A 2-tuple containing the type of box to use,
                 e.g. "dashed", and the ``Style`` to be used. You can supply the ``Style`` directly, or pass a
                 ``str`` (e.g. ``"blue on #f0f0f0"`` ) or ``Color`` instead.
 
@@ -168,10 +170,10 @@ class BoxProperty:
 class Edges(NamedTuple):
     """Stores edges for border / outline."""
 
-    top: tuple[BoxType, Color]
-    right: tuple[BoxType, Color]
-    bottom: tuple[BoxType, Color]
-    left: tuple[BoxType, Color]
+    top: tuple[EdgeType, Color]
+    right: tuple[EdgeType, Color]
+    bottom: tuple[EdgeType, Color]
+    left: tuple[EdgeType, Color]
 
     def __bool__(self) -> bool:
         (top, _), (right, _), (bottom, _), (left, _) = self
@@ -188,25 +190,26 @@ class Edges(NamedTuple):
         if left[0]:
             yield "left", left
 
-    def spacing(self) -> tuple[int, int, int, int]:
+    @property
+    def spacing(self) -> Spacing:
         """Get spacing created by borders.
 
         Returns:
             tuple[int, int, int, int]: Spacing for top, right, bottom, and left.
         """
-        top, right, bottom, left = self
-        return (
-            1 if top[0] else 0,
-            1 if right[0] else 0,
-            1 if bottom[0] else 0,
-            1 if left[0] else 0,
+        (top, _), (right, _), (bottom, _), (left, _) = self
+        return Spacing(
+            1 if top else 0,
+            1 if right else 0,
+            1 if bottom else 0,
+            1 if left else 0,
         )
 
 
 class BorderProperty:
     """Descriptor for getting and setting full borders and outlines."""
 
-    def __set_name__(self, owner: Styles, name: str) -> None:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
         self._properties = (
             f"{name}_top",
@@ -215,7 +218,9 @@ class BorderProperty:
             f"{name}_left",
         )
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Edges:
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> Edges:
         """Get the border
 
         Args:
@@ -237,15 +242,15 @@ class BorderProperty:
 
     def __set__(
         self,
-        obj: Styles,
+        obj: StylesBase,
         border: BorderDefinition | None,
     ) -> None:
         """Set the border
 
         Args:
             obj (Styles): The ``Styles`` object.
-            border (Sequence[tuple[BoxType, str | Color | Style] | None] | tuple[BoxType, str | Color | Style] | None):
-                A ``tuple[BoxType, str | Color | Style]`` representing the type of box to use and the ``Style`` to apply
+            border (Sequence[tuple[EdgeType, str | Color | Style] | None] | tuple[EdgeType, str | Color | Style] | None):
+                A ``tuple[EdgeType, str | Color | Style]`` representing the type of box to use and the ``Style`` to apply
                 to the box.
                 Alternatively, you can supply a sequence of these tuples and they will be applied per-edge.
                 If the sequence is of length 1, all edges will be decorated according to the single element.
@@ -298,7 +303,9 @@ class StyleProperty:
 
     DEFAULT_STYLE = Style()
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Style:
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> Style:
         """Get the Style
 
         Args:
@@ -319,7 +326,7 @@ class StyleProperty:
 
         return style
 
-    def __set__(self, obj: Styles, style: Style | str | None):
+    def __set__(self, obj: StylesBase, style: Style | str | None):
         """Set the Style
 
         Args:
@@ -352,10 +359,12 @@ class StyleProperty:
 class SpacingProperty:
     """Descriptor for getting and setting spacing properties (e.g. padding and margin)."""
 
-    def __set_name__(self, owner: Styles, name: str) -> None:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Spacing:
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> Spacing:
         """Get the Spacing
 
         Args:
@@ -367,7 +376,7 @@ class SpacingProperty:
         """
         return obj.get_rule(self.name, NULL_SPACING)
 
-    def __set__(self, obj: Styles, spacing: SpacingDimensions | None):
+    def __set__(self, obj: StylesBase, spacing: SpacingDimensions | None):
         """Set the Spacing
 
         Args:
@@ -394,7 +403,7 @@ class DocksProperty:
     """
 
     def __get__(
-        self, obj: Styles, objtype: type[Styles] | None = None
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> tuple[DockGroup, ...]:
         """Get the Docks property
 
@@ -407,7 +416,7 @@ class DocksProperty:
         """
         return obj.get_rule("docks", ())
 
-    def __set__(self, obj: Styles, docks: Iterable[DockGroup] | None):
+    def __set__(self, obj: StylesBase, docks: Iterable[DockGroup] | None):
         """Set the Docks property
 
         Args:
@@ -429,7 +438,7 @@ class DockProperty:
     the docks themselves, and where they are located on screen.
     """
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
+    def __get__(self, obj: StylesBase, objtype: type[StylesBase] | None = None) -> str:
         """Get the Dock property
 
         Args:
@@ -455,11 +464,11 @@ class DockProperty:
 class LayoutProperty:
     """Descriptor for getting and setting layout."""
 
-    def __set_name__(self, owner: Styles, name: str) -> None:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
     def __get__(
-        self, obj: Styles, objtype: type[Styles] | None = None
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> Layout | None:
         """
         Args:
@@ -470,7 +479,7 @@ class LayoutProperty:
         """
         return obj.get_rule(self.name)
 
-    def __set__(self, obj: Styles, layout: str | Layout | None):
+    def __set__(self, obj: StylesBase, layout: str | Layout | None):
         """
         Args:
             obj (Styles): The Styles object.
@@ -497,10 +506,12 @@ class OffsetProperty:
     will be adjusted by before it is rendered.
     """
 
-    def __set_name__(self, owner: Styles, name: str) -> None:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> ScalarOffset:
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> ScalarOffset:
         """Get the offset
 
         Args:
@@ -514,7 +525,7 @@ class OffsetProperty:
         return obj.get_rule(self.name, ScalarOffset.null())
 
     def __set__(
-        self, obj: Styles, offset: tuple[int | str, int | str] | ScalarOffset | None
+        self, obj: StylesBase, offset: tuple[int | str, int | str] | ScalarOffset | None
     ):
         """Set the offset
 
@@ -529,7 +540,6 @@ class OffsetProperty:
             ScalarParseError: If any of the string values supplied in the 2-tuple cannot
                 be parsed into a Scalar. For example, if you specify an non-existent unit.
         """
-
         if offset is None:
             if obj.clear_rule(self.name):
                 obj.refresh(layout=True)
@@ -549,6 +559,7 @@ class OffsetProperty:
                 else Scalar(float(y), Unit.CELLS, Unit.HEIGHT)
             )
             _offset = ScalarOffset(scalar_x, scalar_y)
+
             if obj.set_rule(self.name, _offset):
                 obj.refresh(layout=True)
 
@@ -562,10 +573,10 @@ class StringEnumProperty:
         self._valid_values = valid_values
         self._default = default
 
-    def __set_name__(self, owner: Styles, name: str) -> None:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> str:
+    def __get__(self, obj: StylesBase, objtype: type[StylesBase] | None = None) -> str:
         """Get the string property, or the default value if it's not set
 
         Args:
@@ -577,7 +588,7 @@ class StringEnumProperty:
         """
         return obj.get_rule(self.name, self._default)
 
-    def __set__(self, obj: Styles, value: str | None = None):
+    def __set__(self, obj: StylesBase, value: str | None = None):
         """Set the string property and ensure it is in the set of allowed values.
 
         Args:
@@ -603,10 +614,10 @@ class StringEnumProperty:
 class NameProperty:
     """Descriptor for getting and setting name properties."""
 
-    def __set_name__(self, owner: Styles, name: str) -> None:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None) -> str:
+    def __get__(self, obj: StylesBase, objtype: type[StylesBase] | None) -> str:
         """Get the name property
 
         Args:
@@ -618,7 +629,7 @@ class NameProperty:
         """
         return obj.get_rule(self.name, "")
 
-    def __set__(self, obj: Styles, name: str | None):
+    def __set__(self, obj: StylesBase, name: str | None):
         """Set the name property
 
         Args:
@@ -640,16 +651,16 @@ class NameProperty:
 
 
 class NameListProperty:
-    def __set_name__(self, owner: Styles, name: str) -> None:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
     def __get__(
-        self, obj: Styles, objtype: type[Styles] | None = None
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> tuple[str, ...]:
         return obj.get_rule(self.name, ())
 
     def __set__(
-        self, obj: Styles, names: str | tuple[str] | None = None
+        self, obj: StylesBase, names: str | tuple[str] | None = None
     ) -> str | tuple[str] | None:
 
         if names is None:
@@ -668,10 +679,12 @@ class NameListProperty:
 class ColorProperty:
     """Descriptor for getting and setting color properties."""
 
-    def __set_name__(self, owner: Styles, name: str) -> None:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Color:
+    def __get__(
+        self, obj: StylesBaseStylesBase, objtype: type[Styles] | None = None
+    ) -> Color:
         """Get the ``Color``, or ``Color.default()`` if no color is set.
 
         Args:
@@ -683,7 +696,7 @@ class ColorProperty:
         """
         return obj.get_rule(self.name) or Color.default()
 
-    def __set__(self, obj: Styles, color: Color | str | None):
+    def __set__(self, obj: StylesBase, color: Color | str | None):
         """Set the Color
 
         Args:
@@ -727,7 +740,9 @@ class StyleFlagsProperty:
     def __set_name__(self, owner: Styles, name: str) -> None:
         self.name = name
 
-    def __get__(self, obj: Styles, objtype: type[Styles] | None = None) -> Style:
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> Style:
         """Get the ``Style``
 
         Args:
@@ -739,7 +754,7 @@ class StyleFlagsProperty:
         """
         return obj.get_rule(self.name, Style.null())
 
-    def __set__(self, obj: Styles, style_flags: Style | str | None):
+    def __set__(self, obj: StylesBase, style_flags: Style | str | None):
         """Set the style using a style flag string
 
         Args:
@@ -774,7 +789,7 @@ class TransitionsProperty:
     """Descriptor for getting transitions properties"""
 
     def __get__(
-        self, obj: Styles, objtype: type[Styles] | None = None
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> dict[str, Transition]:
         """Get a mapping of properties to the transitions applied to them.
 
@@ -804,10 +819,10 @@ class FractionalProperty:
     def __init__(self, default: float = 1.0):
         self.default = default
 
-    def __set_name__(self, owner: Styles, name: str) -> None:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
-    def __get__(self, obj: Styles, type: type[Styles]) -> float:
+    def __get__(self, obj: StylesBase, type: type[StylesBase]) -> float:
         """Get the property value as a float between 0 and 1
 
         Args:
@@ -819,7 +834,7 @@ class FractionalProperty:
         """
         return cast(float, obj.get_rule(self.name, self.default))
 
-    def __set__(self, obj: Styles, value: float | str | None) -> None:
+    def __set__(self, obj: StylesBase, value: float | str | None) -> None:
         """Set the property value, clamping it between 0 and 1.
 
         Args:

@@ -1,3 +1,10 @@
+"""
+
+Functions and classes to manage terminal geometry (anything involving coordinates or dimensions).
+
+"""
+
+
 from __future__ import annotations
 
 from math import sqrt
@@ -123,14 +130,14 @@ class Size(NamedTuple):
         if isinstance(other, tuple):
             width, height = self
             width2, height2 = other
-            return Size(width + width2, height + height2)
+            return Size(max(0, width + width2), max(0, height + height2))
         return NotImplemented
 
     def __sub__(self, other: object) -> Size:
         if isinstance(other, tuple):
             width, height = self
             width2, height2 = other
-            return Size(width - width2, height - height2)
+            return Size(max(0, width - width2), max(0, height - height2))
         return NotImplemented
 
     def contains(self, x: int, y: int) -> bool:
@@ -209,6 +216,7 @@ class Region(NamedTuple):
         return cls(x, y, width, height)
 
     def __bool__(self) -> bool:
+        """A Region is considered False when it has no area."""
         return bool(self.width and self.height)
 
     @property
@@ -277,6 +285,12 @@ class Region(NamedTuple):
     def y_range(self) -> range:
         """A range object for Y coordinates"""
         return range(self.y, self.y + self.height)
+
+    @property
+    def reset_origin(self) -> Region:
+        """An region of the same size at the origin."""
+        _, _, width, height = self
+        return Region(0, 0, width, height)
 
     def __add__(self, other: object) -> Region:
         if isinstance(other, tuple):
@@ -415,7 +429,7 @@ class Region(NamedTuple):
         )
         return new_region
 
-    def shrink(self, margin: Spacing) -> Region:
+    def shrink(self, margin: tuple[int, int, int, int]) -> Region:
         """Shrink a region by pushing each edge inwards.
 
         Args:
@@ -470,10 +484,99 @@ class Region(NamedTuple):
         x1, y1, x2, y2 = self.corners
         ox1, oy1, ox2, oy2 = region.corners
 
-        union_region = Region.from_corners(
+        union_region = self.from_corners(
             min(x1, ox1), min(y1, oy1), max(x2, ox2), max(y2, oy2)
         )
         return union_region
+
+    def split(self, cut_x: int, cut_y: int) -> tuple[Region, Region, Region, Region]:
+        """Split a region in to 4 from given x and y offsets (cuts).
+
+                   cut_x ↓
+                ┌────────┐┌───┐
+                │        ││   │
+                │        ││   │
+                │        ││   │
+        cut_y → └────────┘└───┘
+                ┌────────┐┌───┐
+                │        ││   │
+                └────────┘└───┘
+
+        Args:
+            cut_x (int): Offset from self.x where the cut should be made. If negative, the cut
+                is taken from the right edge.
+            cut_y (int): Offset from self.y where the cut should be made. If negative, the cut
+                is taken from the lower edge.
+
+        Returns:
+            tuple[Region, Region, Region, Region]: Four new regions which add up to the original (self).
+        """
+
+        x, y, width, height = self
+        if cut_x < 0:
+            cut_x = width + cut_x
+        if cut_y < 0:
+            cut_y = height + cut_y
+
+        _Region = Region
+        return (
+            _Region(x, y, cut_x, cut_y),
+            _Region(x + cut_x, y, width - cut_x, cut_y),
+            _Region(x, y + cut_y, cut_x, height - cut_y),
+            _Region(x + cut_x, y + cut_y, width - cut_x, height - cut_y),
+        )
+
+    def split_vertical(self, cut: int) -> tuple[Region, Region]:
+        """Split a region in to two, from a given x offset.
+
+                 cut ↓
+            ┌────────┐┌───┐
+            │        ││   │
+            │        ││   │
+            └────────┘└───┘
+
+        Args:
+            cut (int): An offset from self.x where the cut should be made. If cut is negative,
+                it is taken from the right edge.
+
+        Returns:
+            tuple[Region, Region]: Two regions, which add up to the original (self).
+        """
+
+        x, y, width, height = self
+        if cut < 0:
+            cut = width + cut
+
+        return (
+            Region(x, y, cut, height),
+            Region(x + cut, y, width - cut, height),
+        )
+
+    def split_horizontal(self, cut: int) -> tuple[Region, Region]:
+        """Split a region in to two, from a given x offset.
+
+                    ┌─────────┐
+                    │         │
+                    │         │
+            cut →   └─────────┘
+                    ┌─────────┐
+                    └─────────┘
+
+        Args:
+            cut (int): An offset from self.x where the cut should be made. May be negative,
+                for the offset to start from the right edge.
+
+        Returns:
+            tuple[Region, Region]: Two regions, which add up to the original (self).
+        """
+        x, y, width, height = self
+        if cut < 0:
+            cut = height + cut
+
+        return (
+            Region(x, y, width, cut),
+            Region(x, y + cut, width, height - cut),
+        )
 
 
 class Spacing(NamedTuple):
@@ -485,7 +588,7 @@ class Spacing(NamedTuple):
     left: int = 0
 
     def __bool__(self) -> bool:
-        return self == (0, 0, 0, 0)
+        return self != (0, 0, 0, 0)
 
     @property
     def width(self) -> int:
@@ -508,17 +611,14 @@ class Spacing(NamedTuple):
         return (self.right, self.bottom)
 
     @property
-    def packed(self) -> str:
+    def totals(self) -> tuple[int, int]:
+        """Total spacing for horizontal and vertical spacing."""
         top, right, bottom, left = self
-        if top == right == bottom == left:
-            return f"{top}"
-        if (top, right) == (bottom, left):
-            return f"{top}, {right}"
-        else:
-            return f"{top}, {right}, {bottom}, {left}"
+        return (left + right, top + bottom)
 
     @property
     def css(self) -> str:
+        """Gets a string containing the spacing in CSS format."""
         top, right, bottom, left = self
         if top == right == bottom == left:
             return f"{top}"
@@ -532,16 +632,17 @@ class Spacing(NamedTuple):
         """Unpack padding specified in CSS style."""
         if isinstance(pad, int):
             return cls(pad, pad, pad, pad)
-        if len(pad) == 1:
+        pad_len = len(pad)
+        if pad_len == 1:
             _pad = pad[0]
             return cls(_pad, _pad, _pad, _pad)
-        if len(pad) == 2:
+        if pad_len == 2:
             pad_top, pad_right = cast(Tuple[int, int], pad)
             return cls(pad_top, pad_right, pad_top, pad_right)
-        if len(pad) == 4:
+        if pad_len == 4:
             top, right, bottom, left = cast(Tuple[int, int, int, int], pad)
             return cls(top, right, bottom, left)
-        raise ValueError(f"1, 2 or 4 integers required for spacing; {len(pad)} given")
+        raise ValueError(f"1, 2 or 4 integers required for spacing; {pad_len} given")
 
     def __add__(self, other: object) -> Spacing:
         if isinstance(other, tuple):

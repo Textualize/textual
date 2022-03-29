@@ -5,7 +5,7 @@ from rich.console import RenderableType
 from .. import events
 from ..geometry import Size, SpacingDimensions
 from ..layouts.vertical import VerticalLayout
-from ..view import View
+from ..screen import Screen
 from ..message import Message
 from .. import messages
 from ..widget import Widget
@@ -17,7 +17,7 @@ class WindowChange(Message):
         return isinstance(message, WindowChange)
 
 
-class WindowView(View, layout=VerticalLayout):
+class WindowView(Screen, layout=VerticalLayout):
     def __init__(
         self,
         widget: RenderableType | Widget,

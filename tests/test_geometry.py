@@ -63,29 +63,50 @@ def test_clamp():
     assert clamp(5, 10, 0) == 5
 
 
-def test_point_is_origin():
+def test_offset_bool():
+    assert Offset(1, 0)
+    assert Offset(0, 1)
+    assert Offset(0, -1)
+    assert not Offset(0, 0)
+
+
+def test_offset_is_origin():
     assert Offset(0, 0).is_origin
     assert not Offset(1, 0).is_origin
 
 
-def test_point_add():
+def test_offset_add():
     assert Offset(1, 1) + Offset(2, 2) == Offset(3, 3)
     assert Offset(1, 2) + Offset(3, 4) == Offset(4, 6)
     with pytest.raises(TypeError):
         Offset(1, 1) + "foo"
 
 
-def test_point_sub():
+def test_offset_sub():
     assert Offset(1, 1) - Offset(2, 2) == Offset(-1, -1)
     assert Offset(3, 4) - Offset(2, 1) == Offset(1, 3)
     with pytest.raises(TypeError):
         Offset(1, 1) - "foo"
 
 
-def test_point_blend():
+def test_offset_mul():
+    assert Offset(2, 1) * 2 == Offset(4, 2)
+    assert Offset(2, 1) * -2 == Offset(-4, -2)
+    assert Offset(2, 1) * 0 == Offset(0, 0)
+    with pytest.raises(TypeError):
+        Offset(10, 20) * "foo"
+
+
+def test_offset_blend():
     assert Offset(1, 2).blend(Offset(3, 4), 0) == Offset(1, 2)
     assert Offset(1, 2).blend(Offset(3, 4), 1) == Offset(3, 4)
     assert Offset(1, 2).blend(Offset(3, 4), 0.5) == Offset(2, 3)
+
+
+def test_offset_get_distance_to():
+    assert Offset(20, 30).get_distance_to(Offset(20, 30)) == 0
+    assert Offset(0, 0).get_distance_to(Offset(1, 0)) == 1.0
+    assert Offset(2, 1).get_distance_to(Offset(5, 5)) == 5.0
 
 
 def test_region_null():
@@ -196,10 +217,14 @@ def test_region_union():
 
 def test_size_add():
     assert Size(5, 10) + Size(2, 3) == Size(7, 13)
+    with pytest.raises(TypeError):
+        Size(1, 2) + "foo"
 
 
 def test_size_sub():
     assert Size(5, 10) - Size(2, 3) == Size(3, 7)
+    with pytest.raises(TypeError):
+        Size(1, 2) - "foo"
 
 
 def test_region_x_extents():
@@ -224,3 +249,115 @@ def test_region_x_range():
 
 def test_region_y_range():
     assert Region(5, 10, 20, 30).y_range == range(10, 40)
+
+
+def test_region_reset_origin():
+    assert Region(5, 10, 20, 30).reset_origin == Region(0, 0, 20, 30)
+
+
+def test_region_expand():
+    assert Region(50, 10, 10, 5).expand((2, 3)) == Region(48, 7, 14, 11)
+
+
+def test_spacing_bool():
+    assert Spacing(1, 0, 0, 0)
+    assert Spacing(0, 1, 0, 0)
+    assert Spacing(0, 1, 0, 0)
+    assert Spacing(0, 0, 1, 0)
+    assert Spacing(0, 0, 0, 1)
+    assert not Spacing(0, 0, 0, 0)
+
+
+def test_spacing_width():
+    assert Spacing(2, 3, 4, 5).width == 8
+
+
+def test_spacing_height():
+    assert Spacing(2, 3, 4, 5).height == 6
+
+
+def test_spacing_top_left():
+    assert Spacing(2, 3, 4, 5).top_left == (5, 2)
+
+
+def test_spacing_bottom_right():
+    assert Spacing(2, 3, 4, 5).bottom_right == (3, 4)
+
+
+def test_spacing_totals():
+    assert Spacing(2, 3, 4, 5).totals == (8, 6)
+
+
+def test_spacing_css():
+    assert Spacing(1, 1, 1, 1).css == "1"
+    assert Spacing(1, 2, 1, 2).css == "1 2"
+    assert Spacing(1, 2, 3, 4).css == "1 2 3 4"
+
+
+def test_spacing_unpack():
+    assert Spacing.unpack(1) == Spacing(1, 1, 1, 1)
+    assert Spacing.unpack((1,)) == Spacing(1, 1, 1, 1)
+    assert Spacing.unpack((1, 2)) == Spacing(1, 2, 1, 2)
+    assert Spacing.unpack((1, 2, 3, 4)) == Spacing(1, 2, 3, 4)
+
+    with pytest.raises(ValueError):
+        assert Spacing.unpack(()) == Spacing(1, 2, 1, 2)
+
+    with pytest.raises(ValueError):
+        assert Spacing.unpack((1, 2, 3)) == Spacing(1, 2, 1, 2)
+
+    with pytest.raises(ValueError):
+        assert Spacing.unpack((1, 2, 3, 4, 5)) == Spacing(1, 2, 1, 2)
+
+
+def test_spacing_add():
+    assert Spacing(1, 2, 3, 4) + Spacing(5, 6, 7, 8) == Spacing(6, 8, 10, 12)
+
+    with pytest.raises(TypeError):
+        Spacing(1, 2, 3, 4) + "foo"
+
+
+def test_split():
+    assert Region(10, 5, 22, 15).split(10, 5) == (
+        Region(10, 5, 10, 5),
+        Region(20, 5, 12, 5),
+        Region(10, 10, 10, 10),
+        Region(20, 10, 12, 10),
+    )
+
+
+def test_split_negative():
+    assert Region(10, 5, 22, 15).split(-1, -1) == (
+        Region(10, 5, 21, 14),
+        Region(31, 5, 1, 14),
+        Region(10, 19, 21, 1),
+        Region(31, 19, 1, 1),
+    )
+
+
+def test_split_vertical():
+    assert Region(10, 5, 22, 15).split_vertical(10) == (
+        Region(10, 5, 10, 15),
+        Region(20, 5, 12, 15),
+    )
+
+
+def test_split_vertical_negative():
+    assert Region(10, 5, 22, 15).split_vertical(-1) == (
+        Region(10, 5, 21, 15),
+        Region(31, 5, 1, 15),
+    )
+
+
+def test_split_horizontal():
+    assert Region(10, 5, 22, 15).split_horizontal(5) == (
+        Region(10, 5, 22, 5),
+        Region(10, 10, 22, 10),
+    )
+
+
+def test_split_horizontal_negative():
+    assert Region(10, 5, 22, 15).split_horizontal(-1) == (
+        Region(10, 5, 22, 14),
+        Region(10, 19, 22, 1),
+    )

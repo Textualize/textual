@@ -1,14 +1,19 @@
 from __future__ import annotations
 
+from functools import lru_cache
+
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 import rich.repr
 from rich.segment import Segment, SegmentLines
 from rich.style import Style, StyleType
 
-from .css.types import EdgeStyle
+from .css.types import EdgeStyle, EdgeType
 
 
-BORDER_STYLES: dict[str, tuple[str, str, str]] = {
+INNER = 1
+OUTER = 2
+
+BORDER_CHARS: dict[EdgeType, tuple[str, str, str]] = {
     "": ("   ", "   ", "   "),
     "none": ("   ", "   ", "   "),
     "round": ("╭─╮", "│ │", "╰─╯"),
@@ -20,22 +25,105 @@ BORDER_STYLES: dict[str, tuple[str, str, str]] = {
     "outer": ("▛▀▜", "▌ ▐", "▙▄▟"),
     "hkey": ("▔▔▔", "   ", "▁▁▁"),
     "vkey": ("▏ ▕", "▏ ▕", "▏ ▕"),
+    "tall": ("▕▔▏", "▕ ▏", "▕▁▏"),
+    "wide": ("▁▁▁", "▏ ▕", "▔▔▔"),
 }
+
+# Some of the borders are on the widget background and some are on the background of the parent
+# This table selects which for each character, 0 indicates the widget, 1 selects the parent
+BORDER_LOCATIONS: dict[
+    EdgeType, tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]]
+] = {
+    "": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+    "none": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+    "round": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+    "solid": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+    "double": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+    "dashed": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+    "heavy": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+    "inner": ((1, 1, 1), (1, 1, 1), (1, 1, 1)),
+    "outer": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+    "hkey": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+    "vkey": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+    "tall": ((1, 0, 1), (1, 0, 1), (1, 0, 1)),
+    "wide": ((1, 1, 1), (0, 1, 0), (1, 1, 1)),
+}
+
+
+@lru_cache(maxsize=1024)
+def get_box(
+    name: EdgeType, inner_style: Style, outer_style: Style, style: Style
+) -> tuple[
+    tuple[Segment, Segment, Segment],
+    tuple[Segment, Segment, Segment],
+    tuple[Segment, Segment, Segment],
+]:
+    """Get segments used to render a box.
+
+    Args:
+        name (str): Name of the box type.
+        inner_style (Style): The inner style (widget background)
+        outer_style (Style): The outer style (parent background)
+        style (Style): Widget style
+
+    Returns:
+        tuple: A tuple of 3 Segment triplets.
+    """
+    _Segment = Segment
+    (
+        (top1, top2, top3),
+        (mid1, mid2, mid3),
+        (bottom1, bottom2, bottom3),
+    ) = BORDER_CHARS[name]
+
+    (
+        (ltop1, ltop2, ltop3),
+        (lmid1, lmid2, lmid3),
+        (lbottom1, lbottom2, lbottom3),
+    ) = BORDER_LOCATIONS[name]
+
+    styles = (inner_style, outer_style)
+
+    return (
+        (
+            _Segment(top1, styles[ltop1] + style),
+            _Segment(top2, styles[ltop2] + style),
+            _Segment(top3, styles[ltop3] + style),
+        ),
+        (
+            _Segment(mid1, styles[lmid1] + style),
+            _Segment(mid2, styles[lmid2] + style),
+            _Segment(mid3, styles[lmid3] + style),
+        ),
+        (
+            _Segment(bottom1, styles[lbottom1] + style),
+            _Segment(bottom2, styles[lbottom2] + style),
+            _Segment(bottom3, styles[lbottom3] + style),
+        ),
+    )
 
 
 @rich.repr.auto
 class Border:
+    """Renders Textual CSS borders.
+
+    This is analogous to Rich's `Box` but more flexible. Different borders may be
+    applied to each of the four edges, and more advanced borders can be achieved through
+    varions combinations of Widget and parent background colors.
+
+    """
+
     def __init__(
         self,
         renderable: RenderableType,
         edge_styles: tuple[EdgeStyle, EdgeStyle, EdgeStyle, EdgeStyle],
         outline: bool = False,
-        style: StyleType = "",
+        inner_color: Color | None = None,
+        outer_color: Color | None = None,
     ):
         self.renderable = renderable
         self.edge_styles = edge_styles
         self.outline = outline
-        self.style = style
 
         (
             (top, top_color),
@@ -52,6 +140,8 @@ class Border:
             from_color(bottom_color),
             from_color(left_color),
         )
+        self.inner_style = from_color(bgcolor=inner_color)
+        self.outer_style = from_color(bgcolor=outer_color)
 
     def _crop_renderable(self, lines: list[list[Segment]], width: int) -> None:
         """Crops a renderable in place.
@@ -86,14 +176,9 @@ class Border:
         self, console: "Console", options: "ConsoleOptions"
     ) -> "RenderResult":
         top, right, bottom, left = self._sides
-        style = console.get_style(self.style)
+        style = console.get_style(self.inner_style)
+        outer_style = console.get_style(self.outer_style)
         top_style, right_style, bottom_style, left_style = self._styles
-        if style:
-            top_style = style + top_style
-            right_style = style + right_style
-            bottom_style = style + bottom_style
-            left_style = style + left_style
-        BOX = BORDER_STYLES
 
         has_left = left != "none"
         has_right = right != "none"
@@ -122,27 +207,24 @@ class Border:
 
         lines = console.render_lines(self.renderable, render_options)
 
-        # if len(lines) <= 2:
-        #     yield SegmentLines(lines, new_lines=True)
-        #     return
         if self.outline:
             self._crop_renderable(lines, options.max_width)
 
         _Segment = Segment
         new_line = _Segment.line()
         if has_top:
-            box1, box2, box3 = iter(BOX[top][0])
+            box1, box2, box3 = get_box(top, style, outer_style, top_style)[0]
             if has_left:
-                yield _Segment(box1 if top == left else " ", top_style)
-            yield _Segment(box2 * width, top_style)
+                yield box1 if top == left else _Segment(" ", box2.style)
+            yield _Segment(box2.text * width, box2.style)
             if has_right:
-                yield _Segment(box3 if top == right else " ", top_style)
+                yield box3 if top == left else _Segment(" ", box3.style)
             yield new_line
 
-        box_left = BOX[left][1][0]
-        box_right = BOX[right][1][2]
-        left_segment = _Segment(box_left, left_style)
-        right_segment = _Segment(box_right + "\n", right_style)
+        left_segment = get_box(left, style, outer_style, left_style)[1][0]
+        _right_segment = get_box(right, style, outer_style, right_style)[1][2]
+        right_segment = _Segment(_right_segment.text + "\n", _right_segment.style)
+
         if has_left and has_right:
             for line in lines:
                 yield left_segment
@@ -163,12 +245,12 @@ class Border:
                 yield new_line
 
         if has_bottom:
-            box1, box2, box3 = iter(BOX[bottom][2])
+            box1, box2, box3 = get_box(top, style, outer_style, bottom_style)[2]
             if has_left:
-                yield _Segment(box1 if bottom == left else " ", bottom_style)
-            yield _Segment(box2 * width, bottom_style)
+                yield box1 if bottom == left else _Segment(" ", box1.style)
+            yield _Segment(box2.text * width, box2.style)
             if has_right:
-                yield _Segment(box3 if bottom == right else " ", bottom_style)
+                yield box3 if bottom == right else _Segment(" ", box3.style)
             yield new_line
 
 
@@ -176,20 +258,42 @@ if __name__ == "__main__":
     from rich import print
     from rich.color import Color
     from rich.text import Text
+    from rich.padding import Padding
 
-    text = Text("Textual " * 40, style="dim")
+    inner = Color.parse("#303F9F")
+    outer = Color.parse("#212121")
+
+    lorem = """[#C5CAE9]Lorem ipsum dolor sit amet, consectetur adipiscing elit. In velit libero, volutpat nec hendrerit at, faucibus in odio. Aliquam hendrerit nibh sed quam volutpat maximus. Nullam suscipit convallis lorem quis sodales. In tristique lobortis ante et dictum. Ut at finibus ipsum. In urna dolor, placerat et mi facilisis, congue sollicitudin massa. Phasellus felis turpis, cursus eu lectus et, porttitor malesuada augue. Sed feugiat volutpat velit, sollicitudin fringilla velit bibendum faucibus."""
+    text = Text.from_markup(lorem)
     border = Border(
-        text,
+        Padding(text, 1, style="on #303F9F"),
         (
-            ("outer", Color.parse("green")),
-            ("outer", Color.parse("green")),
-            ("outer", Color.parse("green")),
-            ("outer", Color.parse("green")),
+            ("wide", Color.parse("#C5CAE9")),
+            ("wide", Color.parse("#C5CAE9")),
+            ("wide", Color.parse("#C5CAE9")),
+            ("wide", Color.parse("#C5CAE9")),
         ),
+        inner_color=inner,
+        outer_color=outer,
     )
-    print(text)
+
+    print(
+        Padding(border, (1, 2), style="on #212121"),
+    )
     print()
-    print(border)
-    print()
-    border.outline = True
-    print(border)
+
+    border = Border(
+        Padding(text, 1, style="on #303F9F"),
+        (
+            ("hkey", Color.parse("#8BC34A")),
+            ("hkey", Color.parse("#8BC34A")),
+            ("hkey", Color.parse("#8BC34A")),
+            ("hkey", Color.parse("#8BC34A")),
+        ),
+        inner_color=inner,
+        outer_color=outer,
+    )
+
+    print(
+        Padding(border, (1, 2), style="on #212121"),
+    )

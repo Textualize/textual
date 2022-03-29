@@ -135,7 +135,7 @@ class DOMQuery:
             node.set_styles(css, **styles)
         return self
 
-    def refresh(self, repaint: bool = True, layout: bool = False) -> DOMQuery:
+    def refresh(self, *, repaint: bool = True, layout: bool = False) -> DOMQuery:
         """Refresh matched nodes.
 
         Args:

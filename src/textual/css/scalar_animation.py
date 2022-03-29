@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .. import events
+from .. import events, log
 from ..geometry import Offset
 from .._animator import Animation
 from .scalar import ScalarOffset

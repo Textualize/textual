@@ -6,6 +6,7 @@ import rich.repr
 from rich.highlighter import ReprHighlighter
 from rich.pretty import Pretty
 from rich.style import Style
+from rich.text import Text
 from rich.tree import Tree
 
 from ._node_list import NodeList
@@ -19,6 +20,7 @@ from .message_pump import MessagePump
 
 if TYPE_CHECKING:
     from .css.query import DOMQuery
+    from .screen import Screen
 
 
 class NoParent(Exception):
@@ -36,10 +38,15 @@ class DOMNode(MessagePump):
     DEFAULT_STYLES = ""
     INLINE_STYLES = ""
 
-    def __init__(self, name: str | None = None, id: str | None = None) -> None:
+    def __init__(
+        self,
+        name: str | None = None,
+        id: str | None = None,
+        classes: set[str] | None = None,
+    ) -> None:
         self._name = name
         self._id = id
-        self._classes: set[str] = set()
+        self._classes: set[str] = set() if classes is None else classes
         self.children = NodeList()
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles.parse(
@@ -72,6 +79,19 @@ class DOMNode(MessagePump):
         return self._parent
 
     @property
+    def screen(self) -> "Screen":
+        """Get the screen that this node is contained within. Note that this may not be the currently active screen within the app."""
+        # Get the node by looking up a chain of parents
+        # Note that self.screen may not be the same as self.app.screen
+        from .screen import Screen
+
+        node = self
+        while node and not isinstance(node, Screen):
+            node = node._parent
+        assert isinstance(node, Screen)
+        return node
+
+    @property
     def id(self) -> str | None:
         """The ID of this node, or None if the node has no ID.
 
@@ -93,7 +113,7 @@ class DOMNode(MessagePump):
         """
         if self._id is not None:
             raise ValueError(
-                "Node 'id' attribute may not be changed once set (current id={self._id!r})"
+                f"Node 'id' attribute may not be changed once set (current id={self._id!r})"
             )
         self._id = new_id
         return new_id
@@ -101,6 +121,27 @@ class DOMNode(MessagePump):
     @property
     def name(self) -> str | None:
         return self._name
+
+    @property
+    def css_identifier(self) -> str:
+        """A CSS selector that identifies this DOM node."""
+        tokens = [self.__class__.__name__]
+        if self.id is not None:
+            tokens.append(f"#{self.id}")
+        return "".join(tokens)
+
+    @property
+    def css_identifier_styled(self) -> Text:
+        """A stylized CSS identifier."""
+        tokens = Text.styled(self.__class__.__name__)
+        if self.id is not None:
+            tokens.append(f"#{self.id}", style="bold")
+        if self.classes:
+            tokens.append(".")
+            tokens.append(".".join(class_name for class_name in self.classes), "italic")
+        if self.name:
+            tokens.append(f"[name={self.name}]", style="underline")
+        return tokens
 
     @property
     def classes(self) -> frozenset[str]:
@@ -223,12 +264,36 @@ class DOMNode(MessagePump):
         Returns:
             Tree: A Rich object which may be printed.
         """
+        from rich.columns import Columns
+        from rich.console import Group
+        from rich.panel import Panel
+
         highlighter = ReprHighlighter()
         tree = Tree(highlighter(repr(self)))
 
         def add_children(tree, node):
             for child in node.children:
-                branch = tree.add(Pretty(child))
+                info = Columns(
+                    [
+                        Pretty(child),
+                        highlighter(f"region={child.region!r}"),
+                        highlighter(
+                            f"virtual_size={child.virtual_size!r}",
+                        ),
+                    ]
+                )
+                css = child.styles.css
+                if css:
+                    info = Group(
+                        info,
+                        Panel.fit(
+                            Text(child.styles.css),
+                            border_style="dim",
+                            title="css",
+                            title_align="left",
+                        ),
+                    )
+                branch = tree.add(info)
                 if tree.children:
                     add_children(branch, child)
 
@@ -265,7 +330,27 @@ class DOMNode(MessagePump):
         self.children._append(node)
         node.set_parent(self)
 
+    def add_children(self, *nodes: DOMNode, **named_nodes: DOMNode) -> None:
+        """Add multiple children to this node.
+
+        Args:
+            *nodes (DOMNode): Positional args should be new DOM nodes.
+            **named_nodes (DOMNode): Keyword args will be assigned the argument name as an ID.
+        """
+        _append = self.children._append
+        for node in nodes:
+            _append(node)
+        for node_id, node in named_nodes.items():
+            _append(node)
+            node.id = node_id
+
     def walk_children(self, with_self: bool = True) -> Iterable[DOMNode]:
+        """Generate all descendents of this node.
+
+        Args:
+            with_self (bool, optional): Also include self in the results. Defaults to True.
+
+        """
 
         stack: list[Iterator[DOMNode]] = [iter(self.children)]
         pop = stack.pop
@@ -340,6 +425,7 @@ class DOMNode(MessagePump):
 
         """
         self._classes.update(class_names)
+        self.refresh()
 
     def remove_class(self, *class_names: str) -> None:
         """Remove class names from this Node.
@@ -349,6 +435,7 @@ class DOMNode(MessagePump):
 
         """
         self._classes.difference_update(class_names)
+        self.refresh()
 
     def toggle_class(self, *class_names: str) -> None:
         """Toggle class names on this Node.
@@ -359,11 +446,12 @@ class DOMNode(MessagePump):
         """
         self._classes.symmetric_difference_update(class_names)
         self.app.stylesheet.update(self.app, animate=True)
+        self.refresh()
 
     def has_pseudo_class(self, *class_names: str) -> bool:
         """Check for pseudo class (such as hover, focus etc)"""
         has_pseudo_classes = self.pseudo_classes.issuperset(class_names)
         return has_pseudo_classes
 
-    def refresh(self, repaint: bool = True, layout: bool = False) -> None:
-        raise NotImplementedError()
+    def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
+        pass

@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from math import ceil
+
 import rich.repr
 from rich.color import Color
 from rich.console import ConsoleOptions, RenderResult, RenderableType
-from rich.segment import Segment
+from rich.segment import Segment, Segments
 from rich.style import Style, StyleType
 
 from textual.reactive import Reactive
@@ -14,39 +16,49 @@ from .message import Message
 from .widget import Widget
 
 
+class ScrollMessage(Message, bubble=False):
+    pass
+
+
 @rich.repr.auto
-class ScrollUp(Message):
+class ScrollUp(ScrollMessage):
     """Message sent when clicking above handle."""
 
 
 @rich.repr.auto
-class ScrollDown(Message):
+class ScrollDown(ScrollMessage):
     """Message sent when clicking below handle."""
 
 
 @rich.repr.auto
-class ScrollLeft(Message):
+class ScrollLeft(ScrollMessage):
     """Message sent when clicking above handle."""
 
 
 @rich.repr.auto
-class ScrollRight(Message):
+class ScrollRight(ScrollMessage):
     """Message sent when clicking below handle."""
 
 
-class ScrollTo(Message):
+class ScrollTo(ScrollMessage):
     """Message sent when click and dragging handle."""
 
     def __init__(
-        self, sender: MessageTarget, x: float | None = None, y: float | None = None
+        self,
+        sender: MessageTarget,
+        x: float | None = None,
+        y: float | None = None,
+        animate: bool = True,
     ) -> None:
         self.x = x
         self.y = y
+        self.animate = animate
         super().__init__(sender)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "x", self.x, None
         yield "y", self.y, None
+        yield "animate", self.animate, True
 
 
 class ScrollBarRender:
@@ -101,11 +113,11 @@ class ScrollBarRender:
         blank = " " * width_thickness
 
         foreground_meta = {"@mouse.up": "release", "@mouse.down": "grab"}
-        if window_size and size and virtual_size:
+        if window_size and size and virtual_size and size != virtual_size:
             step_size = virtual_size / size
 
             start = int(position / step_size * 8)
-            end = start + max(8, int(window_size / step_size * 8))
+            end = start + max(8, int(ceil(window_size / step_size * 8)))
 
             start_index, start_bar = divmod(start, 8)
             end_index, end_bar = divmod(end, 8)
@@ -138,7 +150,8 @@ class ScrollBarRender:
                     else _Style(bgcolor=back, color=bar, meta=foreground_meta),
                 )
         else:
-            segments = [_Segment(blank)] * int(size)
+            style = _Style(bgcolor=back)
+            segments = [_Segment(blank, style=style)] * int(size)
         if vertical:
             return Segments(segments, new_lines=True)
         else:
@@ -180,7 +193,7 @@ class ScrollBar(Widget):
         self.grabbed_position: float = 0
         super().__init__(name=name)
 
-    virtual_size: Reactive[int] = Reactive(100)
+    window_virtual_size: Reactive[int] = Reactive(100)
     window_size: Reactive[int] = Reactive(0)
     position: Reactive[int] = Reactive(0)
     mouse_over: Reactive[bool] = Reactive(False)
@@ -188,7 +201,7 @@ class ScrollBar(Widget):
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
-        yield "virtual_size", self.virtual_size
+        yield "window_virtual_size", self.window_virtual_size
         yield "window_size", self.window_size
         yield "position", self.position
 
@@ -198,12 +211,15 @@ class ScrollBar(Widget):
             color=Color.parse("bright_yellow" if self.grabbed else "bright_magenta"),
         )
         return ScrollBarRender(
-            virtual_size=self.virtual_size,
+            virtual_size=self.window_virtual_size,
             window_size=self.window_size,
             position=self.position,
             vertical=self.vertical,
             style=style,
         )
+
+    async def on_event(self, event) -> None:
+        await super().on_event(event)
 
     async def on_enter(self, event: events.Enter) -> None:
         self.mouse_over = True
@@ -235,7 +251,7 @@ class ScrollBar(Widget):
         self.grabbed = None
 
     async def on_mouse_move(self, event: events.MouseMove) -> None:
-        if self.grabbed:
+        if self.grabbed and self.window_size:
             x: float | None = None
             y: float | None = None
             if self.vertical:
@@ -243,7 +259,7 @@ class ScrollBar(Widget):
                     self.grabbed_position
                     + (
                         (event.screen_y - self.grabbed.y)
-                        * (self.virtual_size / self.window_size)
+                        * (self.window_virtual_size / self.window_size)
                     )
                 )
             else:
@@ -251,7 +267,7 @@ class ScrollBar(Widget):
                     self.grabbed_position
                     + (
                         (event.screen_x - self.grabbed.x)
-                        * (self.virtual_size / self.window_size)
+                        * (self.window_virtual_size / self.window_size)
                     )
                 )
             await self.emit(ScrollTo(self, x=x, y=y))

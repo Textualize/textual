@@ -1,41 +1,42 @@
 from __future__ import annotations
 
-from typing import Iterable, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
-from ..css.styles import Styles
+from .. import log
+
 from ..geometry import Offset, Region, Size
 from ..layout import Layout, WidgetPlacement
 
 if TYPE_CHECKING:
     from ..widget import Widget
-    from ..view import View
 
 
 class VerticalLayout(Layout):
-    def get_widgets(self, view: View) -> Iterable[Widget]:
-        return view.children
+    """Simple vertical layout."""
+
+    name = "vertical"
 
     def arrange(
-        self, view: View, size: Size, scroll: Offset
-    ) -> Iterable[WidgetPlacement]:
-        parent_width, parent_height = size
-        x, y = 0, 0
+        self, parent: Widget, size: Size, scroll: Offset
+    ) -> tuple[list[WidgetPlacement], set[Widget]]:
 
-        for widget in view.children:
-            styles: Styles = widget.styles
+        placements: list[WidgetPlacement] = []
+        add_placement = placements.append
 
-            if styles.height:
-                render_height = int(
-                    styles.height.resolve_dimension(size, view.app.size)
-                )
-            else:
-                render_height = size.height
+        y = max_width = max_height = 0
+        parent_size = parent.size
 
-            if styles.width:
-                render_width = int(styles.width.resolve_dimension(size, view.app.size))
-            else:
-                render_width = parent_width
+        for widget in parent.children:
+            (content_width, content_height), margin = widget.styles.get_box_model(
+                size, parent_size
+            )
+            region = Region(margin.left, y + margin.top, content_width, content_height)
+            max_width = max(max_width, content_width + margin.width)
+            add_placement(WidgetPlacement(region, widget, 0))
+            y += region.height + margin.top
+            max_height = y + margin.bottom
 
-            region = Region(x, y, render_width, render_height)
-            yield WidgetPlacement(region, widget, 0)
-            y += render_height
+        total_region = Region(0, 0, max_width, max_height)
+        add_placement(WidgetPlacement(total_region, None, 0))
+
+        return placements, set(parent.children)

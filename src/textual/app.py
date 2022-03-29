@@ -12,7 +12,7 @@ import rich.repr
 from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.measure import Measurement
-from rich.screen import Screen
+from rich.screen import Screen as ScreenRenderable
 from rich.traceback import Traceback
 
 from . import actions
@@ -33,10 +33,10 @@ from .geometry import Offset, Region, Size
 from .layouts.dock import Dock
 from .message_pump import MessagePump
 from .reactive import Reactive
-from .view import View
+from .renderables.gradient import VerticalGradient
+from .screen import Screen
 from .widget import Widget
 
-from .css.query import NoMatchingNodesError
 
 if TYPE_CHECKING:
     from .css.query import DOMQuery
@@ -48,8 +48,6 @@ WINDOWS = PLATFORM == "Windows"
 warnings.simplefilter("always", ResourceWarning)
 
 LayoutDefinition = "dict[str, Any]"
-
-ViewType = TypeVar("ViewType", bound=View)
 
 
 class AppError(Exception):
@@ -85,12 +83,12 @@ class App(DOMNode):
             driver_class (Type[Driver], optional): Driver class, or None to use default. Defaults to None.
             title (str, optional): Title of the application. Defaults to "Textual Application".
         """
-        self.console = Console()
-        self.error_console = Console(stderr=True)
+        self.console = Console(markup=False, highlight=False)
+        self.error_console = Console(markup=False, stderr=True)
         self._screen = screen
         self.driver_class = driver_class or self.get_driver_class()
         self._title = title
-        self._view_stack: list[View] = []
+        self._screen_stack: list[Screen] = []
 
         self.focused: Widget | None = None
         self.mouse_over: Widget | None = None
@@ -99,7 +97,7 @@ class App(DOMNode):
         self._exit_renderables: list[RenderableType] = []
 
         self._docks: list[Dock] = []
-        self._action_targets = {"app", "view"}
+        self._action_targets = {"app", "screen"}
         self._animator = Animator(self)
         self.animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
@@ -152,16 +150,13 @@ class App(DOMNode):
     def __rich_repr__(self) -> rich.repr.Result:
         yield "title", self.title
 
-    def __rich__(self) -> RenderableType:
-        return self.view
-
     @property
     def animator(self) -> Animator:
         return self._animator
 
     @property
-    def view(self) -> View:
-        return self._view_stack[-1]
+    def screen(self) -> Screen:
+        return self._screen_stack[-1]
 
     @property
     def css_type(self) -> str:
@@ -215,10 +210,10 @@ class App(DOMNode):
     @classmethod
     def run(
         cls,
-        console: Console = None,
+        console: Console | None = None,
         screen: bool = True,
-        driver: Type[Driver] = None,
-        loop: AbstractEventLoop = None,
+        driver: Type[Driver] | None = None,
+        loop: AbstractEventLoop | None = None,
         **kwargs,
     ):
         """Run the app.
@@ -264,10 +259,10 @@ class App(DOMNode):
                 self.reset_styles()
                 self.stylesheet = stylesheet
                 self.stylesheet.update(self)
-                self.view.refresh(layout=True)
+                self.screen.refresh(layout=True)
 
     def query(self, selector: str | None = None) -> DOMQuery:
-        """Get a DOM query in the current view.
+        """Get a DOM query in the current screen.
 
         Args:
             selector (str, optional): A CSS selector or `None` for all nodes. Defaults to None.
@@ -277,10 +272,10 @@ class App(DOMNode):
         """
         from .css.query import DOMQuery
 
-        return DOMQuery(self.view, selector)
+        return DOMQuery(self.screen, selector)
 
     def get_child(self, id: str) -> DOMNode:
-        """Shorthand for self.view.get_child(id: str)
+        """Shorthand for self.screen.get_child(id: str)
         Returns the first child (immediate descendent) of this DOMNode
         with the given ID.
 
@@ -290,7 +285,7 @@ class App(DOMNode):
         Returns:
             DOMNode: The first child of this node with the specified ID.
         """
-        return self.view.get_child(id)
+        return self.screen.get_child(id)
 
     def update_styles(self) -> None:
         """Request update of styles.
@@ -301,12 +296,12 @@ class App(DOMNode):
         self.post_message_no_wait(messages.StylesUpdated(self))
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
-        self.register(self.view, *anon_widgets, **widgets)
-        self.view.refresh()
+        self.register(self.screen, *anon_widgets, **widgets)
+        self.screen.refresh()
 
-    async def push_view(self, view: ViewType) -> ViewType:
-        self._view_stack.append(view)
-        return view
+    async def push_screen(self, screen: Screen) -> Screen:
+        self._screen_stack.append(screen)
+        return screen
 
     async def set_focus(self, widget: Widget | None) -> None:
         """Focus (or unfocus) a widget. A focused widget will receive key events first.
@@ -367,8 +362,8 @@ class App(DOMNode):
         """Exits the app with a traceback.
 
         Args:
-            traceback (Traceback, optional): Rich Traceback object or None to generate one
-                for the most recent exception. Defaults to None.
+            *renderables (RenderableType, optional): A rich renderable, such as a Traceback to
+                display on exit.
         """
 
         if not renderables:
@@ -409,7 +404,7 @@ class App(DOMNode):
             return
 
         if self.css_monitor:
-            self.set_interval(0.5, self.css_monitor)
+            self.set_interval(0.5, self.css_monitor, name="css monitor")
             self.log("started", self.css_monitor)
 
         self._running = True
@@ -471,6 +466,11 @@ class App(DOMNode):
         name_widgets = [*((None, widget) for widget in anon_widgets), *widgets.items()]
         apply_stylesheet = self.stylesheet.apply
 
+        # Register children
+        for widget_id, widget in name_widgets:
+            if widget.children:
+                self.register(widget, *widget.children)
+
         for widget_id, widget in name_widgets:
             if widget not in self.registry:
                 if widget_id is not None:
@@ -480,6 +480,17 @@ class App(DOMNode):
 
         for _widget_id, widget in name_widgets:
             widget.post_message_no_wait(events.Mount(sender=parent))
+
+    def start_widget(self, parent: Widget, widget: Widget) -> None:
+        """Start a widget (run it's task) so that it can receive messages.
+
+        Args:
+            parent (Widget): The parent of the Widget.
+            widget (Widget): The Widget to start.
+        """
+        widget.set_parent(parent)
+        widget.start_messages()
+        widget.post_message_no_wait(events.Mount(sender=parent))
 
     def is_mounted(self, widget: Widget) -> bool:
         return widget in self.registry
@@ -498,7 +509,9 @@ class App(DOMNode):
         driver.disable_input()
         await self.close_messages()
 
-    def refresh(self) -> None:
+    def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
+        if not self._running:
+            return
         sync_available = (
             os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal" and not WINDOWS
         )
@@ -508,7 +521,9 @@ class App(DOMNode):
                 if sync_available:
                     console.file.write("\x1bP=1s\x1b\\")
                 console.print(
-                    Screen(Control.home(), self.view.render_styled(), Control.home())
+                    ScreenRenderable(
+                        Control.home(), self.screen._compositor, Control.home()
+                    )
                 )
                 if sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
@@ -517,7 +532,8 @@ class App(DOMNode):
                 self.panic()
 
     def display(self, renderable: RenderableType) -> None:
-        sync_available = os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal"
+        if not self._running:
+            return
         if not self._closed:
             console = self.console
             try:
@@ -550,7 +566,7 @@ class App(DOMNode):
         Returns:
             tuple[Widget, Region]: The widget and the widget's screen region.
         """
-        return self.view.get_widget_at(x, y)
+        return self.screen.get_widget_at(x, y)
 
     def bell(self) -> None:
         """Play the console 'bell'."""
@@ -577,9 +593,9 @@ class App(DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Mount):
-            view = View()
-            self.register(self, view)
-            await self.push_view(view)
+            screen = Screen()
+            self.register(self, screen)
+            await self.push_screen(screen)
             await super().on_event(event)
 
         elif isinstance(event, events.InputEvent) and not event.is_forwarded:
@@ -595,7 +611,7 @@ class App(DOMNode):
                     await super().on_event(event)
             else:
                 # Forward the event to the view
-                await self.view.forward_event(event)
+                await self.screen.forward_event(event)
         else:
             await super().on_event(event)
 
@@ -635,6 +651,16 @@ class App(DOMNode):
     async def broker_event(
         self, event_name: str, event: events.Event, default_namespace: object | None
     ) -> bool:
+        """Allow the app an opportunity to dispatch events to action system.
+
+        Args:
+            event_name (str): _description_
+            event (events.Event): An event object.
+            default_namespace (object | None): TODO: _description_
+
+        Returns:
+            bool: True if an action was processed.
+        """
         event.stop()
         try:
             style = getattr(event, "style")
@@ -660,7 +686,6 @@ class App(DOMNode):
 
     async def handle_layout(self, message: messages.Layout) -> None:
         message.stop()
-        await self.view.refresh_layout()
         self.app.refresh()
 
     async def on_key(self, event: events.Key) -> None:
@@ -671,7 +696,7 @@ class App(DOMNode):
         await self.close_messages()
 
     async def on_resize(self, event: events.Resize) -> None:
-        await self.view.post_message(event)
+        await self.screen.post_message(event)
 
     async def action_press(self, key: str) -> None:
         await self.press(key)
@@ -686,13 +711,13 @@ class App(DOMNode):
         self.bell()
 
     async def action_add_class_(self, selector: str, class_name: str) -> None:
-        self.view.query(selector).add_class(class_name)
+        self.screen.query(selector).add_class(class_name)
 
     async def action_remove_class_(self, selector: str, class_name: str) -> None:
-        self.view.query(selector).remove_class(class_name)
+        self.screen.query(selector).remove_class(class_name)
 
     async def action_toggle_class(self, selector: str, class_name: str) -> None:
-        self.view.query(selector).toggle_class(class_name)
+        self.screen.query(selector).toggle_class(class_name)
 
     async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
         self.stylesheet.update(self)

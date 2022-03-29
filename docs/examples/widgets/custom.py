@@ -26,7 +26,7 @@ class HoverApp(App):
         """Build layout here."""
 
         hovers = (Hover() for _ in range(10))
-        await self.view.dock(*hovers, edge="top")
+        await self.screen.dock(*hovers, edge="top")
 
 
 HoverApp.run(log="textual.log")

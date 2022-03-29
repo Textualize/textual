@@ -57,7 +57,7 @@ class Reactive(Generic[ReactiveType]):
             computes.append(name)
 
         self.name = name
-        self.internal_name = f"__{name}"
+        self.internal_name = f"_reactive_{name}"
         setattr(owner, self.internal_name, self._default)
 
     def __get__(self, obj: Reactable, obj_type: type[object]) -> ReactiveType:
@@ -77,15 +77,13 @@ class Reactive(Generic[ReactiveType]):
             setattr(obj, self.internal_name, value)
             self.check_watchers(obj, name, current_value)
 
-            if self.layout:
-                obj.refresh(layout=True)
-            elif self.repaint:
-                obj.refresh()
+            if self.layout or self.repaint:
+                obj.refresh(repaint=self.repaint, layout=self.layout)
 
     @classmethod
     def check_watchers(cls, obj: Reactable, name: str, old_value: Any) -> None:
 
-        internal_name = f"__{name}"
+        internal_name = f"_reactive_{name}"
         value = getattr(obj, internal_name)
 
         async def update_watcher(

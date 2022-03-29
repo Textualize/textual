@@ -13,9 +13,11 @@ from ._timer import Timer, TimerCallback
 from ._callback import invoke
 from ._context import active_app
 from .message import Message
+from . import messages
 
 if TYPE_CHECKING:
     from .app import App
+    from .screen import Screen
 
 
 class NoParent(Exception):
@@ -131,7 +133,7 @@ class MessagePump:
     def set_interval(
         self,
         interval: float,
-        callback: TimerCallback = None,
+        callback: TimerCallback | None = None,
         *,
         name: str | None = None,
         repeat: int = 0,
@@ -142,13 +144,13 @@ class MessagePump:
         self._child_tasks.add(timer.start())
         return timer
 
-    async def call_later(self, callback: Callable, *args, **kwargs) -> None:
+    def call_later(self, callback: Callable, *args, **kwargs) -> None:
         """Run a callback after processing all messages and refreshing the screen.
 
         Args:
             callback (Callable): A callable.
         """
-        await self.post_message(
+        self.post_message_no_wait(
             events.Callback(self, partial(callback, *args, **kwargs))
         )
 
@@ -214,16 +216,18 @@ class MessagePump:
                 self.app.panic()
                 break
             finally:
-                if isinstance(message, events.Event) and self._message_queue.empty():
+                if self._message_queue.empty():
                     if not self._closed:
                         event = events.Idle(self)
                         for method in self._get_dispatch_methods("on_idle", event):
-                            await method(event)
+                            await invoke(method, event)
 
         log("CLOSED", self)
 
     async def dispatch_message(self, message: Message) -> bool | None:
         _rich_traceback_guard = True
+        if message.system:
+            return False
         if isinstance(message, events.Event):
             if not isinstance(message, events.Null):
                 await self.on_event(message)
@@ -270,13 +274,10 @@ class MessagePump:
             if not self._parent._closed and not self._parent._closing:
                 await self._parent.post_message(message)
 
-    def post_message_no_wait(self, message: Message) -> bool:
-        if self._closing or self._closed:
-            return False
-        if not self.check_message_enabled(message):
-            return True
-        self._message_queue.put_nowait(message)
-        return True
+    def check_idle(self):
+        """Prompt the message pump to call idle if the queue is empty."""
+        if self._message_queue.empty():
+            self.post_message_no_wait(messages.Prompt(sender=self))
 
     async def post_message(self, message: Message) -> bool:
         if self._closing or self._closed:
@@ -286,18 +287,27 @@ class MessagePump:
         await self._message_queue.put(message)
         return True
 
-    def post_message_from_child_no_wait(self, message: Message) -> bool:
+    def post_message_no_wait(self, message: Message) -> bool:
         if self._closing or self._closed:
             return False
-        return self.post_message_no_wait(message)
+        if not self.check_message_enabled(message):
+            return True
+        self._message_queue.put_nowait(message)
+        return True
 
     async def post_message_from_child(self, message: Message) -> bool:
         if self._closing or self._closed:
             return False
         return await self.post_message(message)
 
+    def post_message_from_child_no_wait(self, message: Message) -> bool:
+        if self._closing or self._closed:
+            return False
+        return self.post_message_no_wait(message)
+
     async def on_callback(self, event: events.Callback) -> None:
-        await event.callback()
+        await invoke(event.callback)
+        # await event.callback()
 
     def emit_no_wait(self, message: Message) -> bool:
         if self._parent:
@@ -323,8 +333,8 @@ class MessagePump:
 
         key_method = getattr(self, f"key_{event.key}", None)
         if key_method is not None:
-            await invoke(key_method, event)
-            event.prevent_default()
+            if await invoke(key_method, event):
+                event.prevent_default()
 
     async def on_timer(self, event: events.Timer) -> None:
         event.prevent_default()

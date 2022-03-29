@@ -9,11 +9,9 @@ else:
 
 
 if TYPE_CHECKING:
-    from .events import Event
     from .message import Message
 
 Callback = Callable[[], None]
-# IntervalID = int
 
 
 class MessageTarget(Protocol):

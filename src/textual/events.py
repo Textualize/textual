@@ -5,6 +5,7 @@ from typing import Awaitable, Callable, Type, TYPE_CHECKING, TypeVar
 import rich.repr
 from rich.style import Style
 
+from . import log
 from .geometry import Offset, Size
 from .message import Message
 from ._types import MessageTarget
@@ -89,7 +90,13 @@ class Resize(Event, verbosity=2, bubble=False):
     __slots__ = ["size"]
     size: Size
 
-    def __init__(self, sender: MessageTarget, size: Size) -> None:
+    def __init__(
+        self,
+        sender: MessageTarget,
+        size: Size,
+        virtual_size: Size,
+        container_size: Size | None = None,
+    ) -> None:
         """
         Args:
             sender (MessageTarget): Event sender.
@@ -97,22 +104,17 @@ class Resize(Event, verbosity=2, bubble=False):
             height (int): New height in terminal cells.
         """
         self.size = size
+        self.virtual_size = virtual_size
+        self.container_size = size if container_size is None else container_size
         super().__init__(sender)
 
     def can_replace(self, message: "Message") -> bool:
         return isinstance(message, Resize)
 
-    @property
-    def width(self) -> int:
-        return self.size.width
-
-    @property
-    def height(self) -> int:
-        return self.size.height
-
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self.width
-        yield self.height
+        yield "size", self.size
+        yield "virtual_size", self.virtual_size
+        yield "container_size", self.container_size, self.size
 
 
 class Mount(Event, bubble=False):
@@ -389,8 +391,3 @@ class Focus(Event, bubble=False):
 
 class Blur(Event, bubble=False):
     pass
-
-
-# class Update(Event, bubble=False):
-#     def can_replace(self, event: Message) -> bool:
-#         return isinstance(event, Update) and event.sender == self.sender

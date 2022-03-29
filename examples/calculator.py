@@ -209,7 +209,7 @@ class CalculatorApp(App):
 
     async def on_mount(self) -> None:
         """Mount the calculator widget."""
-        await self.view.dock(Calculator())
+        await self.screen.dock(Calculator())
 
 
 CalculatorApp.run(title="Calculator Test", log="textual.log")

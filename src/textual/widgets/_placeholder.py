@@ -7,13 +7,11 @@ from rich.panel import Panel
 from rich.pretty import Pretty
 import rich.repr
 
-from logging import getLogger
 
+from .. import log
 from .. import events
 from ..reactive import Reactive
 from ..widget import Widget
-
-log = getLogger("rich")
 
 
 @rich.repr.auto(angular=False)
@@ -22,11 +20,6 @@ class Placeholder(Widget, can_focus=True):
     has_focus: Reactive[bool] = Reactive(False)
     mouse_over: Reactive[bool] = Reactive(False)
     style: Reactive[str] = Reactive("")
-    height: Reactive[int | None] = Reactive(None)
-
-    def __init__(self, *, name: str | None = None, height: int | None = None) -> None:
-        super().__init__(name=name)
-        self.height = height
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
@@ -42,7 +35,6 @@ class Placeholder(Widget, can_focus=True):
             border_style="green" if self.mouse_over else "blue",
             box=box.HEAVY if self.has_focus else box.ROUNDED,
             style=self.style,
-            height=self.height,
         )
 
     async def on_focus(self, event: events.Focus) -> None:

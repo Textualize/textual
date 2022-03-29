@@ -22,17 +22,24 @@ class NodeList:
         self._node_refs: list[ref[DOMNode]] = []
         self.__nodes: list[DOMNode] | None = []
 
+    def __bool__(self) -> bool:
+        self._prune()
+        return bool(self._node_refs)
+
+    def __length_hint__(self) -> int:
+        return len(self._node_refs)
+
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self._widgets
+        yield self._nodes
 
     def __len__(self) -> int:
-        return len(self._widgets)
+        return len(self._nodes)
 
     def __contains__(self, widget: DOMNode) -> bool:
-        return widget in self._widgets
+        return widget in self._nodes
 
     @property
-    def _widgets(self) -> list[DOMNode]:
+    def _nodes(self) -> list[DOMNode]:
         if self.__nodes is None:
             self.__nodes = list(
                 filter(None, [widget_ref() for widget_ref in self._node_refs])
@@ -50,7 +57,7 @@ class NodeList:
         )
 
     def _append(self, widget: DOMNode) -> None:
-        if widget not in self._widgets:
+        if widget not in self._nodes:
             self._node_refs.append(ref(widget))
             self.__nodes = None
 
@@ -59,10 +66,7 @@ class NodeList:
         self.__nodes = None
 
     def __iter__(self) -> Iterator[DOMNode]:
-        for widget_ref in self._node_refs:
-            widget = widget_ref()
-            if widget is not None:
-                yield widget
+        return iter(self._nodes)
 
     @overload
     def __getitem__(self, index: int) -> DOMNode:
@@ -74,5 +78,5 @@ class NodeList:
 
     def __getitem__(self, index: int | slice) -> DOMNode | list[DOMNode]:
         self._prune()
-        assert self._widgets is not None
-        return self._widgets[index]
+        assert self._nodes is not None
+        return self._nodes[index]

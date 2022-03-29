@@ -14,7 +14,7 @@ else:
 
 LAYOUT_MAP = {
     "dock": DockLayout,
-    "grid": GridLayout,
+    # "grid": GridLayout,
     "vertical": VerticalLayout,
     "horizontal": HorizontalLayout,
 }

@@ -11,8 +11,9 @@ import rich.repr
 from rich.color import Color
 from rich.style import Style
 
+from .. import log
 from .._animator import Animation, EasingFunction
-from ..geometry import Spacing
+from ..geometry import Size, Spacing
 from ._style_properties import (
     BorderProperty,
     BoxProperty,
@@ -31,11 +32,19 @@ from ._style_properties import (
     TransitionsProperty,
     FractionalProperty,
 )
-from .constants import VALID_DISPLAY, VALID_VISIBILITY
+from .constants import VALID_BOX_SIZING, VALID_DISPLAY, VALID_VISIBILITY, VALID_OVERFLOW
 from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
 from .transition import Transition
-from .types import Display, Edge, Specificity3, Specificity4, Visibility
+from .types import (
+    BoxSizing,
+    Display,
+    Edge,
+    Overflow,
+    Specificity3,
+    Specificity4,
+    Visibility,
+)
 
 if sys.version_info >= (3, 8):
     from typing import TypedDict
@@ -80,13 +89,19 @@ class RulesMap(TypedDict, total=False):
     outline_bottom: tuple[str, Color]
     outline_left: tuple[str, Color]
 
+    box_sizing: BoxSizing
     width: Scalar
     height: Scalar
     min_width: Scalar
     min_height: Scalar
+    max_width: Scalar
+    max_height: Scalar
 
     dock: str
     docks: tuple[DockGroup, ...]
+
+    overflow_x: Overflow
+    overflow_y: Overflow
 
     layers: tuple[str, ...]
     layer: str
@@ -115,6 +130,8 @@ class StylesBase(ABC):
         "height",
         "min_width",
         "min_height",
+        "max_width",
+        "max_height",
     }
 
     display = StringEnumProperty(VALID_DISPLAY, "block")
@@ -144,13 +161,19 @@ class StylesBase(ABC):
     outline_bottom = BoxProperty()
     outline_left = BoxProperty()
 
+    box_sizing = StringEnumProperty(VALID_BOX_SIZING, "border-box")
     width = ScalarProperty(percent_unit=Unit.WIDTH)
     height = ScalarProperty(percent_unit=Unit.HEIGHT)
     min_width = ScalarProperty(percent_unit=Unit.WIDTH)
     min_height = ScalarProperty(percent_unit=Unit.HEIGHT)
+    max_width = ScalarProperty(percent_unit=Unit.WIDTH)
+    max_height = ScalarProperty(percent_unit=Unit.HEIGHT)
 
     dock = DockProperty()
     docks = DocksProperty()
+
+    overflow_x = StringEnumProperty(VALID_OVERFLOW, "hidden")
+    overflow_y = StringEnumProperty(VALID_OVERFLOW, "hidden")
 
     layer = NameProperty()
     layers = NameListProperty()
@@ -161,6 +184,16 @@ class StylesBase(ABC):
         if not isinstance(styles, StylesBase):
             return NotImplemented
         return self.get_rules() == styles.get_rules()
+
+    @property
+    def gutter(self) -> Spacing:
+        """Get space around widget.
+
+        Returns:
+            Spacing: Space around widget.
+        """
+        spacing = Spacing() + self.padding + self.border.spacing
+        return spacing
 
     @abstractmethod
     def has_rule(self, rule: str) -> bool:
@@ -294,6 +327,71 @@ class StylesBase(ABC):
             return self.transitions.get(key, None)
         else:
             return None
+
+    def get_box_model(
+        self, container_size: Size, parent_size: Size
+    ) -> tuple[Size, Spacing]:
+        """Resolve the box model for this Styles.
+
+        Args:
+            container_size (Size): The size of the widget container.
+            parent_size (Size): The size widget's parent.
+
+        Returns:
+            tuple[Size, Spacing]: A tuple with the size of the content area and margin.
+        """
+        has_rule = self.has_rule
+        width, height = container_size
+
+        if has_rule("width"):
+            width = self.width.resolve_dimension(container_size, parent_size)
+        else:
+            width = max(0, width - self.margin.width)
+
+        if self.min_width:
+            min_width = self.min_width.resolve_dimension(container_size, parent_size)
+            width = max(width, min_width)
+
+        if self.max_width:
+            max_width = self.max_width.resolve_dimension(container_size, parent_size)
+            width = min(width, max_width)
+
+        if has_rule("height"):
+            height = self.height.resolve_dimension(container_size, parent_size)
+        else:
+            height = max(0, height - self.margin.height)
+
+        if self.min_height:
+            min_height = self.min_height.resolve_dimension(container_size, parent_size)
+            height = max(height, min_height)
+
+        if self.max_height:
+            max_height = self.max_height.resolve_dimension(container_size, parent_size)
+            height = min(width, max_height)
+
+        # TODO: box sizing
+
+        size = Size(width, height)
+        margin = Spacing(0, 0, 0, 0)
+
+        if self.box_sizing == "content-box":
+
+            if has_rule("padding"):
+                size += self.padding
+            if has_rule("border"):
+                size += self.border.spacing.totals
+            if has_rule("margin"):
+                margin = self.margin
+
+        else:  # border-box
+            if has_rule("padding"):
+                size -= self.padding
+            if has_rule("border"):
+                size -= self.border.spacing.totals
+            if has_rule("margin"):
+                margin = self.margin
+
+        return size, margin
 
 
 @rich.repr.auto
@@ -553,6 +651,13 @@ class Styles(StylesBase):
             if has_rule("text_style"):
                 append_declaration("text-style", str(get_rule("text_style")))
 
+        if has_rule("overflow-x"):
+            append_declaration("overflow-x", self.overflow_x)
+        if has_rule("overflow-y"):
+            append_declaration("overflow-y", self.overflow_y)
+
+        if has_rule("box-sizing"):
+            append_declaration("box-sizing", self.box_sizing)
         if has_rule("width"):
             append_declaration("width", str(self.width))
         if has_rule("height"):
@@ -561,6 +666,10 @@ class Styles(StylesBase):
             append_declaration("min-width", str(self.min_width))
         if has_rule("min_height"):
             append_declaration("min-height", str(self.min_height))
+        if has_rule("max_width"):
+            append_declaration("max-width", str(self.min_width))
+        if has_rule("max_height"):
+            append_declaration("max-height", str(self.min_height))
         if has_rule("transitions"):
             append_declaration(
                 "transition",

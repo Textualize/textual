@@ -7,14 +7,21 @@ from rich.color import Color
 from rich.style import Style
 
 from ._error_tools import friendly_list
-from .constants import VALID_BORDER, VALID_EDGE, VALID_DISPLAY, VALID_VISIBILITY
+from .constants import (
+    VALID_BORDER,
+    VALID_BOX_SIZING,
+    VALID_EDGE,
+    VALID_DISPLAY,
+    VALID_OVERFLOW,
+    VALID_VISIBILITY,
+)
 from .errors import DeclarationError
 from .model import Declaration
 from .scalar import Scalar, ScalarOffset, Unit, ScalarError
 from .styles import DockGroup, Styles
 from .tokenize import Token
 from .transition import Transition
-from .types import Edge, Display, Visibility
+from .types import BoxSizing, Edge, Display, Overflow, Visibility
 from .._duration import _duration_as_seconds
 from .._easing import EASING
 from ..geometry import Spacing, SpacingDimensions, clamp
@@ -77,6 +84,66 @@ class StylesBuilder:
             except Exception as error:
                 self.error(declaration.name, declaration.token, str(error))
 
+    def _process_enum_multiple(
+        self, name: str, tokens: list[Token], valid_values: set[str], count: int
+    ) -> tuple[str, ...]:
+        """Generic code to process a declaration with two enumerations, like overflow: auto auto"""
+        if len(tokens) > count or not tokens:
+            self.error(name, tokens[0], f"expected 1 to {count} tokens here")
+        results = []
+        append = results.append
+        for token in tokens:
+            token_name, value, _, _, location, _ = token
+            if token_name != "token":
+                self.error(
+                    name,
+                    token,
+                    f"invalid token {value!r}; expected {friendly_list(valid_values)}",
+                )
+            append(value)
+
+        short_results = results[:]
+
+        while len(results) < count:
+            results.extend(short_results)
+        results = results[:count]
+
+        return tuple(results)
+
+    def _process_enum(
+        self, name: str, tokens: list[Token], valid_values: set[str]
+    ) -> str:
+        """Process a declaration that expects an enum.
+
+        Args:
+            name (str): Name of declaration.
+            tokens (list[Token]): Tokens from parser.
+            valid_values (list[str]): A set of valid values.
+
+        Returns:
+            bool: True if the value is valid or False if it is invalid (also generates an error)
+        """
+
+        if len(tokens) != 1:
+            self.error(name, tokens[0], "expected a single token here")
+            return False
+
+        token = tokens[0]
+        token_name, value, _, _, location, _ = token
+        if token_name != "token":
+            self.error(
+                name,
+                token,
+                f"invalid token {value!r}, expected {friendly_list(valid_values)}",
+            )
+        if value not in valid_values:
+            self.error(
+                name,
+                token,
+                f"invalid value {value!r} for {name}, expected {friendly_list(valid_values)}",
+            )
+        return value
+
     def process_display(self, name: str, tokens: list[Token], important: bool) -> None:
         for token in tokens:
             name, value, _, _, location, _ = token
@@ -98,9 +165,28 @@ class StylesBuilder:
         if not tokens:
             return
         if len(tokens) == 1:
-            self.styles._rules[name] = Scalar.parse(tokens[0].value)
+            self.styles._rules[name.replace("-", "_")] = Scalar.parse(tokens[0].value)
         else:
             self.error(name, tokens[0], "a single scalar is expected")
+
+    def process_box_sizing(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
+        for token in tokens:
+            name, value, _, _, location, _ = token
+
+            if name == "token":
+                value = value.lower()
+                if value in VALID_BOX_SIZING:
+                    self.styles._rules["box_sizing"] = cast(BoxSizing, value)
+                else:
+                    self.error(
+                        name,
+                        token,
+                        f"invalid value for box-sizing (received {value!r}, expected {friendly_list(VALID_BOX_SIZING)})",
+                    )
+            else:
+                self.error(name, token, f"invalid token {value!r} in this context")
 
     def process_width(self, name: str, tokens: list[Token], important: bool) -> None:
         self._process_scalar(name, tokens)
@@ -117,6 +203,38 @@ class StylesBuilder:
         self, name: str, tokens: list[Token], important: bool
     ) -> None:
         self._process_scalar(name, tokens)
+
+    def process_max_width(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
+        self._process_scalar(name, tokens)
+
+    def process_max_height(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
+        self._process_scalar(name, tokens)
+
+    def process_overflow(self, name: str, tokens: list[Token], important: bool) -> None:
+        rules = self.styles._rules
+        overflow_x, overflow_y = self._process_enum_multiple(
+            name, tokens, VALID_OVERFLOW, 2
+        )
+        rules["overflow_x"] = cast(Overflow, overflow_x)
+        rules["overflow_y"] = cast(Overflow, overflow_y)
+
+    def process_overflow_x(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
+        self.styles._rules["overflow_x"] = cast(
+            Overflow, self._process_enum(name, tokens, VALID_OVERFLOW)
+        )
+
+    def process_overflow_y(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
+        self.styles._rules["overflow_y"] = cast(
+            Overflow, self._process_enum(name, tokens, VALID_OVERFLOW)
+        )
 
     def process_visibility(
         self, name: str, tokens: list[Token], important: bool

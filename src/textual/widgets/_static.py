@@ -11,11 +11,14 @@ class Static(Widget):
     def __init__(
         self,
         renderable: RenderableType,
+        *,
         name: str | None = None,
+        id: str | None = None,
+        classes: set[str] | None = None,
         style: StyleType = "",
         padding: PaddingDimensions = 0,
     ) -> None:
-        super().__init__(name)
+        super().__init__(name=name, id=id, classes=classes)
         self.renderable = renderable
         self.style = style
         self.padding = padding

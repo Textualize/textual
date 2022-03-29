@@ -317,7 +317,7 @@ if __name__ == "__main__":
 
     class TreeApp(App):
         async def on_mount(self, event: events.Mount) -> None:
-            await self.view.dock(TreeControl("Tree Root", data="foo"))
+            await self.screen.dock(TreeControl("Tree Root", data="foo"))
 
         async def handle_tree_click(self, message: TreeClick) -> None:
             if message.node.empty:

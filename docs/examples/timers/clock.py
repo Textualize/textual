@@ -17,7 +17,7 @@ class Clock(Widget):
 
 class ClockApp(App):
     async def on_mount(self):
-        await self.view.dock(Clock())
+        await self.screen.dock(Clock())
 
 
 ClockApp.run()

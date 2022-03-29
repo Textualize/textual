@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from enum import Enum, unique
+from functools import lru_cache
 import re
 from typing import Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 
 from textual.css.tokenizer import Token
+
+from .. import log
 from ..geometry import Offset
 
 
@@ -128,16 +131,30 @@ class Scalar(NamedTuple):
         scalar = cls(float(value), SYMBOL_UNIT[unit_name or ""], percent_unit)
         return scalar
 
+    @lru_cache(maxsize=4096)
     def resolve_dimension(
         self, size: tuple[int, int], viewport: tuple[int, int]
-    ) -> float:
+    ) -> int:
+        """Resolve scalar with units in to a dimensions.
+
+        Args:
+            size (tuple[int, int]): Size of the container.
+            viewport (tuple[int, int]): Size of the viewport (typically terminal size)
+
+        Raises:
+            ScalarResolveError: _description_
+
+        Returns:
+            float: _description_
+        """
         value, unit, percent_unit = self
         if unit == Unit.PERCENT:
             unit = percent_unit
         try:
-            return RESOLVE_MAP[unit](value, size, viewport)
+            dimension = int(RESOLVE_MAP[unit](value, size, viewport))
         except KeyError:
             raise ScalarResolveError(f"expected dimensions; found {str(self)!r}")
+        return dimension
 
 
 @rich.repr.auto(angular=True)

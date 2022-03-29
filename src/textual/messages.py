@@ -27,6 +27,7 @@ class Update(Message, verbosity=3):
         return NotImplemented
 
     def can_replace(self, message: Message) -> bool:
+        # Update messages can replace update for the same widget
         return isinstance(message, Update) and self == message
 
 
@@ -47,6 +48,13 @@ class CursorMove(Message):
 class StylesUpdated(Message):
     def __init__(self, sender: MessagePump) -> None:
         super().__init__(sender)
+
+    def can_replace(self, message: Message) -> bool:
+        return isinstance(message, StylesUpdated)
+
+
+class Prompt(Message, system=True):
+    """Used to 'wake up' an event loop."""
 
     def can_replace(self, message: Message) -> bool:
         return isinstance(message, StylesUpdated)

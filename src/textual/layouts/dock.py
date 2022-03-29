@@ -17,7 +17,7 @@ else:
     from typing_extensions import Literal
 
 if TYPE_CHECKING:
-    from ..view import View
+    from ..screen import Screen
 
 DockEdge = Literal["top", "right", "bottom", "left"]
 
@@ -47,56 +47,56 @@ class DockLayout(Layout):
     def __repr__(self):
         return "<DockLayout>"
 
-    def get_docks(self, view: View) -> list[Dock]:
+    def get_docks(self, parent: Widget) -> list[Dock]:
         groups: dict[str, list[Widget]] = defaultdict(list)
-        for child in view.children:
+        for child in parent.children:
             assert isinstance(child, Widget)
             if child.display:
                 groups[child.styles.dock].append(child)
         docks: list[Dock] = []
         append_dock = docks.append
-        for name, edge, z in view.styles.docks:
+        for name, edge, z in parent.styles.docks:
             append_dock(Dock(edge, groups[name], z))
         return docks
 
-    def get_widgets(self, view: View) -> Iterable[Widget]:
-        for dock in self.get_docks(view):
-            yield from dock.widgets
-
     def arrange(
-        self, view: View, size: Size, scroll: Offset
-    ) -> Iterable[WidgetPlacement]:
+        self, parent: Widget, size: Size, scroll: Offset
+    ) -> tuple[list[WidgetPlacement], set[Widget]]:
 
         width, height = size
         layout_region = Region(0, 0, width, height)
         layers: dict[int, Region] = defaultdict(lambda: layout_region)
 
-        docks = self.get_docks(view)
+        docks = self.get_docks(parent)
 
-        def make_dock_options(widget, edge: Edge) -> DockOptions:
+        def make_dock_options(widget: Widget, edge: Edge) -> DockOptions:
             styles = widget.styles
+            has_rule = styles.has_rule
 
             return (
                 DockOptions(
-                    styles.width.cells if styles.has_rule("width") else None,
-                    styles.width.fraction if styles.has_rule("width") else 1,
-                    styles.min_width.cells if styles.has_rule("min_width") else 1,
+                    styles.width.cells if has_rule("width") else None,
+                    styles.width.fraction if has_rule("width") else 1,
+                    styles.min_width.cells if has_rule("min_width") else 1,
                 )
                 if edge in ("left", "right")
                 else DockOptions(
-                    styles.height.cells if styles.has_rule("height") else None,
-                    styles.height.fraction if styles.has_rule("height") else 1,
-                    styles.min_height.cells if styles.has_rule("min_height") else 1,
+                    styles.height.cells if has_rule("height") else None,
+                    styles.height.fraction if has_rule("height") else 1,
+                    styles.min_height.cells if has_rule("min_height") else 1,
                 )
             )
 
-        Placement = WidgetPlacement
+        placements: list[WidgetPlacement] = []
+        add_placement = placements.append
+        arranged_widgets: set[Widget] = set()
 
         for edge, widgets, z in docks:
 
+            arranged_widgets.update(widgets)
             dock_options = [make_dock_options(widget, edge) for widget in widgets]
             region = layers[z]
-            if not region:
+            if not region.area:
                 # No space left
                 continue
 
@@ -112,7 +112,9 @@ class DockLayout(Layout):
                     if not new_size:
                         break
                     total += new_size
-                    yield Placement(Region(x, render_y, width, new_size), widget, z)
+                    add_placement(
+                        WidgetPlacement(Region(x, render_y, width, new_size), widget, z)
+                    )
                     render_y += new_size
                     remaining = max(0, remaining - new_size)
                 region = Region(x, y + total, width, height - total)
@@ -127,8 +129,10 @@ class DockLayout(Layout):
                     if not new_size:
                         break
                     total += new_size
-                    yield Placement(
-                        Region(x, render_y - new_size, width, new_size), widget, z
+                    add_placement(
+                        WidgetPlacement(
+                            Region(x, render_y - new_size, width, new_size), widget, z
+                        )
                     )
                     render_y -= new_size
                     remaining = max(0, remaining - new_size)
@@ -144,7 +148,11 @@ class DockLayout(Layout):
                     if not new_size:
                         break
                     total += new_size
-                    yield Placement(Region(render_x, y, new_size, height), widget, z)
+                    add_placement(
+                        WidgetPlacement(
+                            Region(render_x, y, new_size, height), widget, z
+                        )
+                    )
                     render_x += new_size
                     remaining = max(0, remaining - new_size)
                 region = Region(x + total, y, width - total, height)
@@ -159,11 +167,15 @@ class DockLayout(Layout):
                     if not new_size:
                         break
                     total += new_size
-                    yield Placement(
-                        Region(render_x - new_size, y, new_size, height), widget, z
+                    add_placement(
+                        WidgetPlacement(
+                            Region(render_x - new_size, y, new_size, height), widget, z
+                        )
                     )
                     render_x -= new_size
                     remaining = max(0, remaining - new_size)
                 region = Region(x, y, width - total, height)
 
             layers[z] = region
+
+        return placements, arranged_widgets

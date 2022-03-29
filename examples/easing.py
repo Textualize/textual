@@ -32,8 +32,8 @@ class EasingApp(App):
             await tree.add(tree.root.id, easing_key, {"easing": easing_key})
         await tree.root.expand()
 
-        await self.view.dock(ScrollView(tree), edge="left", size=32)
-        await self.view.dock(self.easing_view)
+        await self.screen.dock(ScrollView(tree), edge="left", size=32)
+        await self.screen.dock(self.easing_view)
         await self.easing_view.dock(self.placeholder, edge="left", size=32)
 
     async def handle_tree_click(self, message: TreeClick[dict]) -> None:

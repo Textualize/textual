@@ -65,8 +65,12 @@ class SimpleAnimation(Animation):
             ), "end_value must be animatable"
             value = self.start_value.blend(self.end_value, eased_factor)
         else:
-            assert isinstance(self.start_value, float), "`start_value` must be float"
-            assert isinstance(self.end_value, float), "`end_value` must be float"
+            assert isinstance(
+                self.start_value, (int, float)
+            ), f"`start_value` must be float, not {self.start_value!r}"
+            assert isinstance(
+                self.end_value, (int, float)
+            ), f"`end_value` must be float, not {self.end_value!r}"
             if self.end_value > self.start_value:
                 eased_factor = self.easing(factor)
                 value = (
@@ -110,6 +114,8 @@ class BoundAnimator:
 
 
 class Animator:
+    """An object to manage updates to a given attribute over a period of time."""
+
     def __init__(self, target: MessageTarget, frames_per_second: int = 60) -> None:
         self._animations: dict[tuple[object, str], Animation] = {}
         self.target = target
@@ -164,6 +170,11 @@ class Animator:
             speed (float | None, optional): The speed of the animation. Defaults to None.
             easing (EasingFunction | str, optional): An easing function. Defaults to DEFAULT_EASING.
         """
+
+        if not hasattr(obj, attribute):
+            raise AttributeError(
+                f"Can't animate attribute {attribute!r} on {obj!r}; attribute does not exist"
+            )
 
         if final_value is ...:
             final_value = value
@@ -221,8 +232,8 @@ class Animator:
                 animation = self._animations[animation_key]
                 if animation(animation_time):
                     del self._animations[animation_key]
-            self.on_animation_frame()
+        self.on_animation_frame()
 
     def on_animation_frame(self) -> None:
         # TODO: We should be able to do animation without refreshing everything
-        self.target.view.refresh(True, True)
+        self.target.screen.refresh(layout=True)

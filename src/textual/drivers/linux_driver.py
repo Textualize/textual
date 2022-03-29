@@ -73,15 +73,19 @@ class LinuxDriver(Driver):
 
         loop = asyncio.get_event_loop()
 
-        def on_terminal_resize(signum, stack) -> None:
+        def send_size_event():
             terminal_size = self._get_terminal_size()
             width, height = terminal_size
-            event = events.Resize(self._target, Size(width, height))
+            textual_size = Size(width, height)
+            event = events.Resize(self._target, textual_size, textual_size)
             self.console.size = terminal_size
             asyncio.run_coroutine_threadsafe(
                 self._target.post_message(event),
                 loop=loop,
             )
+
+        def on_terminal_resize(signum, stack) -> None:
+            send_size_event()
 
         signal.signal(signal.SIGWINCH, on_terminal_resize)
 
@@ -117,11 +121,7 @@ class LinuxDriver(Driver):
         self._key_thread = Thread(
             target=self.run_input_thread, args=(asyncio.get_event_loop(),)
         )
-        width, height = self.console.size = self._get_terminal_size()
-        asyncio.run_coroutine_threadsafe(
-            self._target.post_message(events.Resize(self._target, Size(width, height))),
-            loop=loop,
-        )
+        send_size_event()
         self._key_thread.start()
 
     @classmethod
