@@ -429,7 +429,7 @@ class Widget(DOMNode):
         return self.screen._compositor.get_widget_region(self)
 
     @property
-    def scroll(self) -> Offset:
+    def scroll_offset(self) -> Offset:
         return Offset(int(self.scroll_x), int(self.scroll_y))
 
     @property

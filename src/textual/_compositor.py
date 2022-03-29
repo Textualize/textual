@@ -210,7 +210,7 @@ class Compositor:
 
             # Containers (widgets with layout) require adding children
             if widget.layout is not None:
-                scroll = widget.scroll
+                scroll_offset = widget.scroll_offset
 
                 # The region that contains the content (container region minus scrollbars)
                 child_region = widget._arrange_container(container_region)
@@ -223,7 +223,7 @@ class Compositor:
 
                 # Arrange the layout
                 placements, arranged_widgets = widget.layout.arrange(
-                    widget, arrange_region.size, scroll
+                    widget, arrange_region.size, scroll_offset
                 )
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=attrgetter("order"))
@@ -235,7 +235,7 @@ class Compositor:
                     if sub_widget is not None:
                         add_widget(
                             sub_widget,
-                            sub_region + child_region.origin - scroll,
+                            sub_region + child_region.origin - scroll_offset,
                             sub_widget.z + (z,),
                             sub_clip,
                         )
