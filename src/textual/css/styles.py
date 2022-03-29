@@ -566,7 +566,7 @@ class Styles(StylesBase):
 
             if top == right and right == bottom and bottom == left:
                 border_type, border_color = rules[f"{name}_top"]
-                yield name, f"{border_type} {border_color.name}"
+                yield name, f"{border_type} {border_color.hex}"
                 return
 
         # Check for edges

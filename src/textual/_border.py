@@ -7,6 +7,7 @@ import rich.repr
 from rich.segment import Segment, SegmentLines
 from rich.style import Style, StyleType
 
+from .color import Color
 from .css.types import EdgeStyle, EdgeType
 
 
@@ -135,13 +136,17 @@ class Border:
         from_color = Style.from_color
 
         self._styles = (
-            from_color(top_color),
-            from_color(right_color),
-            from_color(bottom_color),
-            from_color(left_color),
+            from_color(top_color.rich_color),
+            from_color(right_color.rich_color),
+            from_color(bottom_color.rich_color),
+            from_color(left_color.rich_color),
         )
         self.inner_style = from_color(bgcolor=inner_color)
         self.outer_style = from_color(bgcolor=outer_color)
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self.renderable
+        yield self.edge_styles
 
     def _crop_renderable(self, lines: list[list[Segment]], width: int) -> None:
         """Crops a renderable in place.
@@ -256,9 +261,10 @@ class Border:
 
 if __name__ == "__main__":
     from rich import print
-    from rich.color import Color
     from rich.text import Text
     from rich.padding import Padding
+
+    from .color import Color
 
     inner = Color.parse("#303F9F")
     outer = Color.parse("#212121")

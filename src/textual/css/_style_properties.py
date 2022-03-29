@@ -319,8 +319,8 @@ class StyleProperty:
         has_rule = obj.has_rule
 
         style = Style.from_color(
-            obj.text_color if has_rule("text_color") else None,
-            obj.text_background if has_rule("text_background") else None,
+            obj.text_color.rich_color if has_rule("text_color") else None,
+            obj.text_background.rich_color if has_rule("text_background") else None,
         )
         if has_rule("text_style"):
             style += obj.text_style

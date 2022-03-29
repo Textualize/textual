@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import cast, Iterable, NoReturn
 
 import rich.repr
-from rich.color import Color
 from rich.style import Style
 
 from ._error_tools import friendly_list
@@ -22,6 +21,7 @@ from .styles import DockGroup, Styles
 from .tokenize import Token
 from .transition import Transition
 from .types import BoxSizing, Edge, Display, Overflow, Visibility
+from ..color import Color
 from .._duration import _duration_as_seconds
 from .._easing import EASING
 from ..geometry import Spacing, SpacingDimensions, clamp
@@ -315,7 +315,7 @@ class StylesBuilder:
 
     def _parse_border(self, name: str, tokens: list[Token]) -> tuple[str, Color]:
         border_type = "solid"
-        border_color = Color.default()
+        border_color = Color(0, 255, 0)
 
         for token in tokens:
             token_name, value, _, _, _, _ = token

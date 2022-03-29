@@ -10,8 +10,8 @@ COMMENT_START = r"\/\*"
 SCALAR = r"\-?\d+\.?\d*(?:fr|%|w|h|vw|vh)"
 DURATION = r"\d+\.?\d*(?:ms|s)"
 NUMBER = r"\-?\d+\.?\d*"
-COLOR = r"\#[0-9a-fA-F]{6}|color\([0-9]{1,3}\)|rgb\(\d{1,3}\,\s?\d{1,3}\,\s?\d{1,3}\)"
-# COLOR = r"\#([0-9a-fA-F]{8})|\#([0-9a-fA-F]{6})|rgb\((\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*)\)|rgba\((\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*)\)"
+# COLOR = r"\#[0-9a-fA-F]{6}|color\([0-9]{1,3}\)|rgb\(\d{1,3}\,\s?\d{1,3}\,\s?\d{1,3}\)"
+COLOR = r"\#[0-9a-fA-F]{8}|\#[0-9a-fA-F]{6}|rgb\(\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*\)|rgba\(\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*\)"
 KEY_VALUE = r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+"
 TOKEN = "[a-zA-Z_-]+"
 STRING = r"\".*?\""
@@ -158,8 +158,8 @@ tokenize_declarations = DeclarationTokenizerState()
 
 if __name__ == "__main__":
     css = """#something {
-        text: on red;
-        offset-x: 10;
+
+        color: rgb(10,12,23)
     }
     """
     # transition: offset 500 in_out_cubic;

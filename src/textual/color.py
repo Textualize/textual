@@ -532,6 +532,11 @@ class Color(NamedTuple):
     b: int
     a: float = 1.0
 
+    @classmethod
+    def from_rich_color(cls, rich_color: RichColor) -> Color:
+        r, g, b = rich_color.get_truecolor()
+        return cls(r, g, b)
+
     @property
     def rich_color(self) -> RichColor:
         r, g, b, _a = self
@@ -574,8 +579,7 @@ class Color(NamedTuple):
         """
         if color_text in ANSI_COLOR_NAMES:
             color_number = ANSI_COLOR_NAMES[color_text]
-            r, g, b = ANSI_COLORS[color_number]
-            return cls(r, g, b)
+            return cls(*ANSI_COLORS[color_number])
         color_match = RE_COLOR.match(color_text)
         if color_match is None:
             raise ColorParseError(f"failed to parse {color_text!r} as a color")

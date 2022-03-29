@@ -403,7 +403,7 @@ class Widget(DOMNode):
                 outer_color=parent_text_style.bgcolor,
             )
 
-        if styles.opacity:
+        if styles.opacity != 1.0:
             renderable = Opacity(renderable, opacity=styles.opacity)
 
         return renderable
