@@ -180,7 +180,7 @@ class Compositor:
 
         ORIGIN = Offset(0, 0)
         size = root.size
-        map: dict[Widget, RenderRegion] = {}
+        map: RenderRegionMap = {}
         widgets: set[Widget] = set()
 
         def add_widget(
