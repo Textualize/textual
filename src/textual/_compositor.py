@@ -217,13 +217,11 @@ class Compositor:
 
                 # Adjust the clip region accordingly
                 sub_clip = clip.intersection(child_region)
-
-                arrange_region = child_region
-                total_region = arrange_region.reset_origin
+                total_region = child_region.reset_origin
 
                 # Arrange the layout
                 placements, arranged_widgets = widget.layout.arrange(
-                    widget, arrange_region.size, scroll_offset
+                    widget, child_region.size, scroll_offset
                 )
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=attrgetter("order"))
