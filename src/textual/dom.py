@@ -47,7 +47,7 @@ class DOMNode(MessagePump):
         self._name = name
         self._id = id
         self._classes: set[str] = set() if classes is None else classes
-        self.node_list = NodeList()
+        self.children = NodeList()
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles.parse(
             self.INLINE_STYLES, repr(self), node=self
@@ -80,7 +80,7 @@ class DOMNode(MessagePump):
 
     @property
     def screen(self) -> "Screen":
-        """Get the current screen."""
+        """Get the screen that this node is contained within. Note that this may not be the currently active screen within the app."""
         # Get the node by looking up a chain of parents
         # Note that self.screen may not be the same as self.app.screen
         from .screen import Screen
@@ -272,7 +272,7 @@ class DOMNode(MessagePump):
         tree = Tree(highlighter(repr(self)))
 
         def add_children(tree, node):
-            for child in node.node_list:
+            for child in node.children:
                 info = Columns(
                     [
                         Pretty(child),
@@ -327,7 +327,7 @@ class DOMNode(MessagePump):
         Args:
             node (DOMNode): A DOM node.
         """
-        self.node_list._append(node)
+        self.children._append(node)
         node.set_parent(self)
 
     def add_children(self, *nodes: DOMNode, **named_nodes: DOMNode) -> None:
@@ -337,7 +337,7 @@ class DOMNode(MessagePump):
             *nodes (DOMNode): Positional args should be new DOM nodes.
             **named_nodes (DOMNode): Keyword args will be assigned the argument name as an ID.
         """
-        _append = self.node_list._append
+        _append = self.children._append
         for node in nodes:
             _append(node)
         for node_id, node in named_nodes.items():
@@ -352,7 +352,7 @@ class DOMNode(MessagePump):
 
         """
 
-        stack: list[Iterator[DOMNode]] = [iter(self.node_list)]
+        stack: list[Iterator[DOMNode]] = [iter(self.children)]
         pop = stack.pop
         push = stack.append
 
@@ -365,8 +365,8 @@ class DOMNode(MessagePump):
                 pop()
             else:
                 yield node
-                if node.node_list:
-                    push(iter(node.node_list))
+                if node.children:
+                    push(iter(node.children))
 
     def get_child(self, id: str) -> DOMNode:
         """Return the first child (immediate descendent) of this node with the given ID.
@@ -377,7 +377,7 @@ class DOMNode(MessagePump):
         Returns:
             DOMNode: The first child of this node with the ID.
         """
-        for child in self.node_list:
+        for child in self.children:
             if child.id == id:
                 return child
         raise NoMatchingNodesError(f"No child found with id={id!r}")

@@ -4,7 +4,7 @@ The compositor handles combining widgets in to a single screen (i.e. compositing
 
 It also stores the results of that process, so that Textual knows the widgets on
 the screen and their locations. The compositor uses this information to answer
-queries regarding the widget under an office, or the style under an offset.
+queries regarding the widget under an offset, or the style under an offset.
 
 Additionally, the compositor can render portions of the screen which may have updated,
 without having to render the entire screen.
@@ -74,7 +74,6 @@ class LayoutUpdate:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        yield Control.home()
         x = self.region.x
         new_line = Segment.line()
         move_to = Control.move_to
@@ -101,7 +100,7 @@ class Compositor:
         self.map: RenderRegionMap = {}
 
         # All widgets considered in the arrangement
-        # Not this may be a supperset of self.map.keys() as some widgets may be invisible for various reasons
+        # Note this may be a superset of self.map.keys() as some widgets may be invisible for various reasons
         self.widgets: set[Widget] = set()
 
         # The top level widget
@@ -176,12 +175,12 @@ class Compositor:
 
         Returns:
             map[dict[Widget, RenderRegion], Size]: A mapping of widget on to render region
-                and the "virtual size" (scrollable reason)
+                and the "virtual size" (scrollable region)
         """
 
         ORIGIN = Offset(0, 0)
         size = root.size
-        map: dict[Widget, RenderRegion] = {}
+        map: RenderRegionMap = {}
         widgets: set[Widget] = set()
 
         def add_widget(
@@ -211,20 +210,18 @@ class Compositor:
 
             # Containers (widgets with layout) require adding children
             if widget.layout is not None:
-                scroll = widget.scroll
+                scroll_offset = widget.scroll_offset
 
                 # The region that contains the content (container region minus scrollbars)
                 child_region = widget._arrange_container(container_region)
 
                 # Adjust the clip region accordingly
                 sub_clip = clip.intersection(child_region)
-
-                arrange_region = child_region
-                total_region = arrange_region.reset_origin
+                total_region = child_region.reset_origin
 
                 # Arrange the layout
                 placements, arranged_widgets = widget.layout.arrange(
-                    widget, arrange_region.size, scroll
+                    widget, child_region.size, scroll_offset
                 )
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=attrgetter("order"))
@@ -236,7 +233,7 @@ class Compositor:
                     if sub_widget is not None:
                         add_widget(
                             sub_widget,
-                            sub_region + child_region.origin - scroll,
+                            sub_region + child_region.origin - scroll_offset,
                             sub_widget.z + (z,),
                             sub_clip,
                         )

@@ -192,12 +192,7 @@ class StylesBase(ABC):
         Returns:
             Spacing: Space around widget.
         """
-        has_rule = self.has_rule
-        spacing = Spacing()
-
-        spacing += self.padding
-        spacing += self.border.spacing
-
+        spacing = Spacing() + self.padding + self.border.spacing
         return spacing
 
     @abstractmethod
@@ -339,8 +334,8 @@ class StylesBase(ABC):
         """Resolve the box model for this Styles.
 
         Args:
-            parent_size (Size): The size of the widget container.
-            terminal_size (Size): The size of the terminal.
+            container_size (Size): The size of the widget container.
+            parent_size (Size): The size widget's parent.
 
         Returns:
             tuple[Size, Spacing]: A tuple with the size of the content area and margin.
@@ -454,7 +449,6 @@ class Styles(StylesBase):
         return self._rules.get(rule, default)
 
     def refresh(self, *, layout: bool = False) -> None:
-        return
         self._repaint_required = True
         self._layout_required = self._layout_required or layout
 
