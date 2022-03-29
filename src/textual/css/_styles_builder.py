@@ -85,7 +85,7 @@ class StylesBuilder:
                 self.error(declaration.name, declaration.token, str(error))
 
     def _process_enum_multiple(
-        self, name, tokens: list[Token], valid_values: set[str], count: int
+        self, name: str, tokens: list[Token], valid_values: set[str], count: int
     ) -> tuple[str, ...]:
         """Generic code to process a declaration with two enumerations, like overflow: auto auto"""
         if len(tokens) > count or not tokens:
