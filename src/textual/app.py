@@ -362,8 +362,8 @@ class App(DOMNode):
         """Exits the app with a traceback.
 
         Args:
-            traceback (Traceback, optional): Rich Traceback object or None to generate one
-                for the most recent exception. Defaults to None.
+            *renderables (RenderableType, optional): A rich renderable, such as a Traceback to
+                display on exit.
         """
 
         if not renderables:
