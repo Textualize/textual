@@ -633,11 +633,13 @@ class ColorPair(NamedTuple):
         r, g, b, a = self.foreground
         if a == 0:
             return Style(
-                color=self.background.rich_color, bgcolor=self.background.rich_color
+                color=self.background.rich_color,
+                bgcolor=self.background.rich_color,
             )
         elif a == 1:
             return Style(
-                color=self.foreground.rich_color, bgcolor=self.background.rich_color
+                color=self.foreground.rich_color,
+                bgcolor=self.background.rich_color,
             )
         else:
             r2, g2, b2, _ = self.background
