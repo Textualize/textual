@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import re
-from .geometry import clamp
 from typing import NamedTuple
 
+from .geometry import clamp
 import rich.repr
 from rich.color import Color as RichColor
 from rich.style import Style
@@ -251,8 +251,8 @@ RE_COLOR = re.compile(
     r"""^
 \#([0-9a-fA-F]{6})$|
 \#([0-9a-fA-F]{8})$|
-rgb\(\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*)$|
-rgba\(\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*\)$
+rgb\((\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*)\)$|
+rgba\((\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*)\)$
 """,
     re.VERBOSE,
 )
@@ -274,12 +274,26 @@ class Color(NamedTuple):
         r, g, b, _a = self
         return RichColor.from_rgb(r, g, b)
 
+    @property
+    def hex(self) -> str:
+        r, g, b, a = self
+        return (
+            f"#{r:02X}{g:02X}{b:02X}"
+            if a == 1
+            else f"#{r:02X}{g:02X}{b:02X}{int(a*255):02X}"
+        )
+
+    @property
+    def css(self) -> str:
+        r, g, b, a = self
+        return f"rgb({r},{g},{b})" if a == 1 else f"rgba({r},{g},{b},{a})"
+
     def __rich_repr__(self) -> rich.repr.Result:
         r, g, b, a = self
         yield r
         yield g
         yield b
-        yield a, 1.0
+        yield "a", a
 
     @classmethod
     def parse(cls, color_text: str) -> Color:
@@ -289,23 +303,21 @@ class Color(NamedTuple):
         rgb_hex, rgba_hex, rgb, rgba = color_match.groups()
 
         if rgb_hex is not None:
-            color = cls(int(rgb_hex[0:2]), int(rgb_hex[2:4]), int(rgb_hex[4:6]), 1)
+            color = cls(
+                int(rgb_hex[0:2], 16), int(rgb_hex[2:4], 16), int(rgb_hex[4:6], 16), 1
+            )
         elif rgba_hex is not None:
             color = cls(
-                int(rgba_hex[0:2]),
-                int(rgba_hex[2:4]),
-                int(rgba_hex[4:6]),
+                int(rgba_hex[0:2], 16),
+                int(rgba_hex[2:4], 16),
+                int(rgba_hex[4:6], 16),
                 float(int(rgba_hex[6:8], 16)) / 255.0,
             )
         elif rgb is not None:
-            if rgb.count(",") != 3:
-                raise ColorParseError(
-                    f"failed to parse {color_text!r} as a color; expected 3 comma separated integers"
-                )
             r, g, b = [clamp(float(value), 0, 255) for value in rgb.split(",")]
             color = cls(int(r), int(g), int(b), 1.0)
         elif rgba is not None:
-            r, g, b, a = [clamp(float(value), 0, 255) for value in rgba.split(",")]
+            r, g, b, a = [float(value) for value in rgba.split(",")]
             color = Color(
                 clamp(int(r), 0, 255),
                 clamp(int(g), 0, 255),
@@ -321,9 +333,13 @@ class ColorPair(NamedTuple):
     foreground: Color
     background: Color
 
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "foreground", self.foreground
+        yield "background", self.background
+
     @property
     def style(self) -> Style:
-        """A Rich style with foreground and backgrounf"""
+        """A Rich style with foreground and background"""
         r, g, b, a = self.foreground
         if a == 0:
             return Style(
@@ -345,7 +361,21 @@ class ColorPair(NamedTuple):
 
 if __name__ == "__main__":
 
+    from rich import print
+
     c1 = Color.parse("#112233")
+    print(c1, c1.hex, c1.css)
+
     c2 = Color.parse("#11223344")
+    print(c2)
+
     c3 = Color.parse("rgb(10,20,30)")
-    c4 = Color.parse("rgba(10,20,30,0.7)")
+    print(c3)
+
+    c4 = Color.parse("rgba(10,20,30,0.5)")
+    print(c4, c4.hex, c4.css)
+
+    p1 = ColorPair(c4, c1)
+    print(p1)
+
+    print(p1.style)
