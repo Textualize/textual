@@ -74,7 +74,6 @@ class LayoutUpdate:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        yield Control.home()
         x = self.region.x
         new_line = Segment.line()
         move_to = Control.move_to
