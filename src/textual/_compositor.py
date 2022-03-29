@@ -175,7 +175,7 @@ class Compositor:
 
         Returns:
             map[dict[Widget, RenderRegion], Size]: A mapping of widget on to render region
-                and the "virtual size" (scrollable reason)
+                and the "virtual size" (scrollable region)
         """
 
         ORIGIN = Offset(0, 0)
