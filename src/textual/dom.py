@@ -314,8 +314,7 @@ class DOMNode(MessagePump):
         for node in self.walk_children():
             node._css_styles.reset()
             if isinstance(node, Widget):
-                # node.clear_render_cache()
-                node._repaint_required = True
+                node.set_dirty()
                 node._layout_required = True
 
     def on_style_change(self) -> None:

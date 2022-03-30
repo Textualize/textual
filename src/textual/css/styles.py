@@ -61,16 +61,16 @@ class RulesMap(TypedDict, total=False):
 
     Any key may be absent, indiciating that rule has not been set.
 
-    Does not define composite rules, that is a rule that is made of a combination of other rules. For instance,
-    the text style is made up of text_color, text_background, and text_style.
+    Does not define composite rules, that is a rule that is made of a combination of other rules.
+
     """
 
     display: Display
     visibility: Visibility
     layout: "Layout"
 
-    text_color: Color
-    text_background: Color
+    color: Color
+    background: Color
     text_style: Style
 
     opacity: float
@@ -132,6 +132,8 @@ class StylesBase(ABC):
         "min_height",
         "max_width",
         "max_height",
+        "color",
+        "background",
     }
 
     display = StringEnumProperty(VALID_DISPLAY, "block")
@@ -139,8 +141,8 @@ class StylesBase(ABC):
     layout = LayoutProperty()
 
     text = StyleProperty()
-    text_color = ColorProperty(Color(255, 255, 255))
-    text_background = ColorProperty(Color(255, 255, 255))
+    color = ColorProperty(Color(255, 255, 255))
+    background = ColorProperty(Color(255, 255, 255))
     text_style = StyleFlagsProperty()
 
     opacity = FractionalProperty()
@@ -255,14 +257,6 @@ class StylesBase(ABC):
 
         Args:
             layout (bool, optional): Also require a layout. Defaults to False.
-        """
-
-    @abstractmethod
-    def check_refresh(self) -> tuple[bool, bool]:
-        """Check if the Styles must be refreshed.
-
-        Returns:
-            tuple[bool, bool]: (repaint required, layout_required)
         """
 
     @abstractmethod
@@ -402,9 +396,6 @@ class Styles(StylesBase):
 
     _rules: RulesMap = field(default_factory=dict)
 
-    _layout_required: bool = False
-    _repaint_required: bool = False
-
     important: set[str] = field(default_factory=set)
 
     def copy(self) -> Styles:
@@ -449,18 +440,8 @@ class Styles(StylesBase):
         return self._rules.get(rule, default)
 
     def refresh(self, *, layout: bool = False) -> None:
-        self._repaint_required = True
-        self._layout_required = self._layout_required or layout
-
-    def check_refresh(self) -> tuple[bool, bool]:
-        """Check if the Styles must be refreshed.
-
-        Returns:
-            tuple[bool, bool]: (repaint required, layout_required)
-        """
-        result = (self._repaint_required, self._layout_required)
-        self._repaint_required = self._layout_required = False
-        return result
+        if self.node is not None:
+            self.node.refresh(layout=layout)
 
     def reset(self) -> None:
         """Reset the rules to initial state."""
@@ -637,19 +618,12 @@ class Styles(StylesBase):
             assert self.layout is not None
             append_declaration("layout", self.layout.name)
 
-        if (
-            has_rule("text_color")
-            and has_rule("text_background")
-            and has_rule("text_style")
-        ):
-            append_declaration("text", str(self.text))
-        else:
-            if has_rule("text_color"):
-                append_declaration("text-color", self.text_color.hex)
-            if has_rule("text_background"):
-                append_declaration("text-background", self.text_background.hex)
-            if has_rule("text_style"):
-                append_declaration("text-style", str(get_rule("text_style")))
+        if has_rule("color"):
+            append_declaration("color", self.color.hex)
+        if has_rule("background"):
+            append_declaration("background", self.background.hex)
+        if has_rule("text_style"):
+            append_declaration("text-style", str(get_rule("text_style")))
 
         if has_rule("overflow-x"):
             append_declaration("overflow-x", self.overflow_x)
@@ -724,17 +698,6 @@ class RenderStyles(StylesBase):
 
     def merge_rules(self, rules: RulesMap) -> None:
         self._inline_styles.merge_rules(rules)
-
-    def check_refresh(self) -> tuple[bool, bool]:
-        """Check if the Styles must be refreshed.
-
-        Returns:
-            tuple[bool, bool]: (repaint required, layout_required)
-        """
-        base_repaint, base_layout = self._base_styles.check_refresh()
-        inline_repaint, inline_layout = self._inline_styles.check_refresh()
-        result = (base_repaint or inline_repaint, base_layout or inline_layout)
-        return result
 
     def reset(self) -> None:
         """Reset the rules to initial state."""

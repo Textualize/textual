@@ -495,11 +495,11 @@ class Region(NamedTuple):
                    cut_x ↓
                 ┌────────┐┌───┐
                 │        ││   │
-                │        ││   │
+                │    0   ││ 1 │
                 │        ││   │
         cut_y → └────────┘└───┘
                 ┌────────┐┌───┐
-                │        ││   │
+                │    2   ││ 3 │
                 └────────┘└───┘
 
         Args:
@@ -531,7 +531,7 @@ class Region(NamedTuple):
 
                  cut ↓
             ┌────────┐┌───┐
-            │        ││   │
+            │    0   ││ 1 │
             │        ││   │
             └────────┘└───┘
 
@@ -556,10 +556,11 @@ class Region(NamedTuple):
         """Split a region in to two, from a given x offset.
 
                     ┌─────────┐
-                    │         │
+                    │    0    │
                     │         │
             cut →   └─────────┘
                     ┌─────────┐
+                    │    1    │
                     └─────────┘
 
         Args:

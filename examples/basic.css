@@ -5,15 +5,12 @@ $primary: #20639b;
 App > Screen {
   layout: dock;
   docks: side=left/1;
-  text: on $primary;
-}
-
-Widget:hover {
-  outline: solid green;
+  background: $primary;
 }
 
 #sidebar {
-  text: #09312e on #3caea3;
+  color: #09312e;
+  background: #3caea3;
   dock: side;
   width: 30;
   offset-x: -100%;
@@ -27,17 +24,21 @@ Widget:hover {
 }
 
 #header {
-  text: white on #173f5f;
+  color: white;
+  background: #173f5f;
   height: 3;
-  border: hkey;
+  border: hkey white;
 }
 
 #content {
-  text: white on $primary;
+  color: white;
+  background: $primary;
   border-bottom: hkey #0f2b41;
 }
 
 #footer {
-  text: #3a3009 on #f6d55c;
+  color: #3a3009;
+  background: #f6d55c;
+
   height: 3;
 }

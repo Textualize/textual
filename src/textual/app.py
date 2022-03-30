@@ -720,4 +720,4 @@ class App(DOMNode):
         self.screen.query(selector).toggle_class(class_name)
 
     async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
-        self.stylesheet.update(self)
+        self.stylesheet.update(self, animate=True)

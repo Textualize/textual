@@ -1,7 +1,8 @@
 import pytest
-from rich.color import Color
+
 from rich.style import Style
 
+from textual.color import Color
 from textual.css.errors import StyleTypeError
 from textual.css.styles import Styles, RenderStyles
 from textual.dom import DOMNode
@@ -93,20 +94,20 @@ def test_render_styles_text():
     assert styles_view.text == Style()
 
     # Base is bold blue
-    base.text_color = "blue"
+    base.color = "blue"
     base.text_style = "bold"
     assert styles_view.text == Style.parse("bold blue")
 
     # Base is bold blue, inline is red
-    inline.text_color = "red"
+    inline.color = "red"
     assert styles_view.text == Style.parse("bold red")
 
     # Base is bold yellow, inline is red
-    base.text_color = "yellow"
+    base.color = "yellow"
     assert styles_view.text == Style.parse("bold red")
 
     # Base is bold blue
-    inline.text_color = None
+    inline.color = None
     assert styles_view.text == Style.parse("bold yellow")
 
 
@@ -125,25 +126,28 @@ def test_render_styles_border():
     assert styles_view.border_left == ("rounded", Color.parse("green"))
     assert styles_view.border == (
         ("heavy", Color.parse("red")),
-        ("", Color.default()),
-        ("", Color.default()),
+        ("", Color(0, 255, 0)),
+        ("", Color(0, 255, 0)),
         ("rounded", Color.parse("green")),
     )
 
 
 def test_get_opacity_default():
     styles = RenderStyles(DOMNode(), Styles(), Styles())
-    assert styles.opacity == 1.
+    assert styles.opacity == 1.0
 
 
-@pytest.mark.parametrize("set_value, expected", [
-    [0.2, 0.2],
-    [-0.4, 0.0],
-    [5.8, 1.0],
-    ["25%", 0.25],
-    ["-10%", 0.0],
-    ["120%", 1.0],
-])
+@pytest.mark.parametrize(
+    "set_value, expected",
+    [
+        [0.2, 0.2],
+        [-0.4, 0.0],
+        [5.8, 1.0],
+        ["25%", 0.25],
+        ["-10%", 0.0],
+        ["120%", 1.0],
+    ],
+)
 def test_opacity_set_then_get(set_value, expected):
     styles = RenderStyles(DOMNode(), Styles(), Styles())
     styles.opacity = set_value

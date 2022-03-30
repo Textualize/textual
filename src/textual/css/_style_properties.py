@@ -15,7 +15,7 @@ import rich.repr
 from rich.style import Style
 
 from .. import log
-from ..color import Color
+from ..color import Color, ColorPair
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING
 from .errors import StyleTypeError, StyleValueError
@@ -316,45 +316,8 @@ class StyleProperty:
         Returns:
             A ``Style`` object.
         """
-        has_rule = obj.has_rule
-
-        style = Style.from_color(
-            obj.text_color.rich_color if has_rule("text_color") else None,
-            obj.text_background.rich_color if has_rule("text_background") else None,
-        )
-        if has_rule("text_style"):
-            style += obj.text_style
-
+        style = ColorPair(obj.color, obj.background).style
         return style
-
-    def __set__(self, obj: StylesBase, style: Style | str | None):
-        """Set the Style
-
-        Args:
-            obj (Styles): The ``Styles`` object.
-            style (Style | str, optional): You can supply the ``Style`` directly, or a
-                string (e.g. ``"blue on #f0f0f0"``).
-
-        Raises:
-            StyleSyntaxError: When the supplied style string has invalid syntax.
-        """
-        obj.refresh()
-
-        if style is None:
-            clear_rule = obj.clear_rule
-            clear_rule("text_color")
-            clear_rule("text_background")
-            clear_rule("text_style")
-        else:
-            if isinstance(style, str):
-                style = Style.parse(style)
-
-            if style.color is not None:
-                obj.text_color = style.color
-            if style.bgcolor is not None:
-                obj.text_background = style.bgcolor
-            if style.without_color:
-                obj.text_style = str(style.without_color)
 
 
 class SpacingProperty:
@@ -660,9 +623,7 @@ class NameListProperty:
     ) -> tuple[str, ...]:
         return obj.get_rule(self.name, ())
 
-    def __set__(
-        self, obj: StylesBase, names: str | tuple[str] | None = None
-    ) -> str | tuple[str] | None:
+    def __set__(self, obj: StylesBase, names: str | tuple[str] | None = None):
 
         if names is None:
             if obj.clear_rule(self.name):
@@ -687,7 +648,7 @@ class ColorProperty:
         self.name = name
 
     def __get__(self, obj: StylesBase, objtype: type[Styles] | None = None) -> Color:
-        """Get the ``Color``, or ``Color.default()`` if no color is set.
+        """Get a ``Color``.
 
         Args:
             obj (Styles): The ``Styles`` object.
@@ -696,7 +657,7 @@ class ColorProperty:
         Returns:
             Color: The Color
         """
-        return obj.get_rule(self.name) or self._default_color
+        return obj.get_rule(self.name, self._default_color)
 
     def __set__(self, obj: StylesBase, color: Color | str | None):
         """Set the Color

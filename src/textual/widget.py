@@ -84,7 +84,6 @@ class Widget(DOMNode):
         self._layout_required = False
         self._animate: BoundAnimator | None = None
         self._reactive_watches: dict[str, Callable] = {}
-        self._mouse_over: bool = False
         self.highlight_style: Style | None = None
 
         self._vertical_scrollbar: ScrollBar | None = None
@@ -356,7 +355,7 @@ class Widget(DOMNode):
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Pseudo classes for a widget"""
-        if self._mouse_over:
+        if self.mouse_over:
             yield "hover"
         if self.has_focus:
             yield "focus"
@@ -472,6 +471,7 @@ class Widget(DOMNode):
 
     def on_style_change(self) -> None:
         self.set_dirty()
+        self.check_idle()
 
     def size_updated(
         self, size: Size, virtual_size: Size, container_size: Size
@@ -575,15 +575,11 @@ class Widget(DOMNode):
         Args:
             event (events.Idle): Idle event.
         """
-        # Check if the styles have changed
-        repaint, layout = self.styles.check_refresh()
-        if self._dirty_regions:
-            repaint = True
 
-        if layout or self.check_layout():
+        if self.check_layout():
             self._reset_check_layout()
             self.screen.post_message_no_wait(messages.Layout(self))
-        elif repaint:
+        elif self._dirty_regions:
             self.emit_no_wait(messages.Update(self, self))
 
     async def focus(self) -> None:
@@ -621,6 +617,12 @@ class Widget(DOMNode):
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)
+
+    def on_leave(self) -> None:
+        self.mouse_over = False
+
+    def on_enter(self) -> None:
+        self.mouse_over = True
 
     def on_mouse_scroll_down(self) -> None:
         self.scroll_down(animate=True)

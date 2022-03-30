@@ -248,12 +248,6 @@ class Stylesheet:
             for key in modified_rule_keys:
                 setattr(base_styles, key, rules.get(key))
 
-        # The styles object may have requested a refresh / layout
-        # It's the style properties that set these flags
-        repaint, layout = styles.check_refresh()
-        if repaint:
-            node.refresh(layout=layout)
-
     def update(self, root: DOMNode, animate: bool = False) -> None:
         """Update a node and its children."""
         apply = self.apply

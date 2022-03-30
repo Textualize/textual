@@ -4,10 +4,13 @@ from functools import lru_cache
 import re
 from typing import NamedTuple
 
-from .geometry import clamp
 import rich.repr
 from rich.color import Color as RichColor
 from rich.style import Style
+
+from . import log
+from .geometry import clamp
+
 
 ANSI_COLOR_NAMES = {
     "black": 0,
@@ -534,16 +537,29 @@ class Color(NamedTuple):
 
     @classmethod
     def from_rich_color(cls, rich_color: RichColor) -> Color:
+        """Create color from Rich's color class."""
         r, g, b = rich_color.get_truecolor()
         return cls(r, g, b)
 
     @property
     def rich_color(self) -> RichColor:
+        """This color encoded in Rich's Color class."""
         r, g, b, _a = self
         return RichColor.from_rgb(r, g, b)
 
     @property
+    def is_transparent(self) -> bool:
+        """Check if the color is transparent."""
+        return self.a == 0
+
+    @property
     def hex(self) -> str:
+        """The color in CSS hex form, with 6 digits for RGB, and 8 digits for RGBA.
+
+        Returns:
+            str: A CSS hex-style color, e.g. "#46b3de" or "#3342457f"
+
+        """
         r, g, b, a = self
         return (
             f"#{r:02X}{g:02X}{b:02X}"
@@ -553,6 +569,12 @@ class Color(NamedTuple):
 
     @property
     def css(self) -> str:
+        """The color in CSS rgb or rgba form.
+
+        Returns:
+            str: A CSS color, e.g. "rgb(10,20,30)" or "(rgb(50,70,80,0.5)"
+
+        """
         r, g, b, a = self
         return f"rgb({r},{g},{b})" if a == 1 else f"rgba({r},{g},{b},{a})"
 
@@ -562,6 +584,25 @@ class Color(NamedTuple):
         yield g
         yield b
         yield "a", a
+
+    def blend(self, destination: Color, factor: float) -> Color:
+        """Generate a new color between two colors.
+
+        Args:
+            destination (Color): Another color.
+            factor (float): A blend factor, 0 -> 1
+
+        Returns:
+            Color: A new color.
+        """
+        r1, g1, b1, a1 = self
+        r2, g2, b2, a2 = destination
+        return Color(
+            int(r1 + (r2 - r1) * factor),
+            int(g1 + (g2 - g1) * factor),
+            int(b1 + (b2 - b1) * factor),
+            a1 + (a2 - a1) * factor,
+        )
 
     @classmethod
     @lru_cache(maxsize=1024 * 4)
@@ -587,7 +628,10 @@ class Color(NamedTuple):
 
         if rgb_hex is not None:
             color = cls(
-                int(rgb_hex[0:2], 16), int(rgb_hex[2:4], 16), int(rgb_hex[4:6], 16), 1
+                int(rgb_hex[0:2], 16),
+                int(rgb_hex[2:4], 16),
+                int(rgb_hex[4:6], 16),
+                1.0,
             )
         elif rgba_hex is not None:
             color = cls(
