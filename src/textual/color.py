@@ -1,15 +1,30 @@
 from __future__ import annotations
-from functools import lru_cache
 
+import colorsys
+from functools import lru_cache
 import re
 from typing import NamedTuple
 
 import rich.repr
 from rich.color import Color as RichColor
 from rich.style import Style
+from rich.text import Text
+
 
 from . import log
 from .geometry import clamp
+
+
+class HLS(NamedTuple):
+    h: float
+    l: float
+    s: float
+
+
+class HSV(NamedTuple):
+    h: float
+    s: float
+    v: float
 
 
 ANSI_COLOR_NAMES = {
@@ -541,11 +556,54 @@ class Color(NamedTuple):
         r, g, b = rich_color.get_truecolor()
         return cls(r, g, b)
 
+    @classmethod
+    def from_hls(cls, h: float, l: float, s: float) -> Color:
+        r, g, b = colorsys.hls_to_rgb(h, l, s)
+        return cls(int(r * 255), int(g * 255), int(b * 255))
+
+    @classmethod
+    def from_hsv(cls, h: float, s: float, v: float) -> Color:
+        r, g, b = colorsys.hsv_to_rgb(h, s, v)
+        return cls(int(r * 255), int(g * 255), int(b * 255))
+
+    def __rich__(self) -> Text:
+        r, g, b, _ = self
+        return Text(
+            " " * 10,
+            style=Style.from_color(RichColor.default(), RichColor.from_rgb(r, g, b)),
+        )
+
+    @property
+    def saturate(self) -> Color:
+        r, g, b, a = self
+        color = Color(
+            clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255), clamp(a, 0.0, 1.0)
+        )
+        return color
+
     @property
     def rich_color(self) -> RichColor:
         """This color encoded in Rich's Color class."""
         r, g, b, _a = self
         return RichColor.from_rgb(r, g, b)
+
+    @property
+    def normalized(self) -> tuple[float, float, float]:
+        """A tuple of the color components normalized to between 0 and 1."""
+        r, g, b, _a = self
+        return (r / 255, g / 255, b / 255)
+
+    @property
+    def hls(self) -> HLS:
+        r, g, b = self.normalized
+        hls = colorsys.rgb_to_hls(r, g, b)
+        return HLS(*hls)
+
+    @property
+    def hsv(self) -> HSV:
+        r, g, b = self.normalized
+        hsv = colorsys.rgb_to_hsv(r, g, b)
+        return HSV(*hsv)
 
     @property
     def is_transparent(self) -> bool:
@@ -585,6 +643,10 @@ class Color(NamedTuple):
         yield b
         yield "a", a
 
+    def with_alpha(self, alpha: float) -> Color:
+        r, g, b, a = self
+        return Color(r, g, b, alpha)
+
     def blend(self, destination: Color, factor: float) -> Color:
         """Generate a new color between two colors.
 
@@ -595,14 +657,23 @@ class Color(NamedTuple):
         Returns:
             Color: A new color.
         """
+        if factor == 0:
+            return self
+        elif factor == 1:
+            return destination
         r1, g1, b1, a1 = self
         r2, g2, b2, a2 = destination
         return Color(
             int(r1 + (r2 - r1) * factor),
             int(g1 + (g2 - g1) * factor),
             int(b1 + (b2 - b1) * factor),
-            a1 + (a2 - a1) * factor,
         )
+
+    def __add__(self, other: object) -> Color:
+        if isinstance(other, Color):
+            new_color = self.blend(other, other.a)
+            return new_color
+        return NotImplemented
 
     @classmethod
     @lru_cache(maxsize=1024 * 4)
@@ -654,6 +725,41 @@ class Color(NamedTuple):
         else:
             raise AssertionError("Can't get here if RE_COLOR matches")
         return color
+
+    def darken(self, amount: float) -> Color:
+        h, l, s = self.hls
+        color = Color.from_hls(h, l - amount, s)
+        return color.saturate
+
+    def lighten(self, amount: float) -> Color:
+        return self.darken(-amount).saturate
+
+    @property
+    def brightness(self) -> float:
+        r, g, b = self.normalized
+        brightness = (299 * r + 587 * g + 114 * b) / 1000
+        return brightness
+
+    def calculate_contrast(self, color: Color) -> float:
+        return abs(self.brightness - color.brightness)
+        # brightness = (299 * R + 587 * G + 114 * B) / 1000
+
+        # l1 = self.hls.l
+        # l2 = color.hls.l
+        # l1, l2 = sorted([l1, l2])
+        # return (l1 + 0.05) / (l2 + 0.05)
+
+    def get_contrast_text(self, alpha=0.95) -> Color:
+        white = self.blend(Color(255, 255, 255), alpha)
+        black = self.blend(Color(0, 0, 0), alpha)
+
+        white_contrast = self.calculate_contrast(white)
+        black_contrast = self.calculate_contrast(black)
+
+        if white_contrast > black_contrast:
+            return white
+        else:
+            return black
 
 
 class ColorPair(NamedTuple):
