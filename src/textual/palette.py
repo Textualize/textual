@@ -132,9 +132,10 @@ if __name__ == "__main__":
         primary=Color.parse("#4caf50"),
         secondary=Color.parse("#ffa000"),
         warning=Color.parse("#ffa000"),
-        error=Color.parse("#D32F2F"),
+        error=Color.parse("#C62828"),
         success=Color.parse("#558B2F"),
         accent1=Color.parse("#1976D2"),
+        accent3=Color.parse("#512DA8"),
         dark=True,
     )
 
