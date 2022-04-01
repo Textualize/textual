@@ -552,32 +552,67 @@ class Color(NamedTuple):
 
     @classmethod
     def from_rich_color(cls, rich_color: RichColor) -> Color:
-        """Create color from Rich's color class."""
+        """Create a new color from Rich's Color class.
+
+        Args:
+            rich_color (RichColor): An instance of rich.color.Color.
+
+        Returns:
+            Color: A new Color.
+        """
         r, g, b = rich_color.get_truecolor()
         return cls(r, g, b)
 
     @classmethod
     def from_hls(cls, h: float, l: float, s: float) -> Color:
+        """Create a color from HLS components.
+
+        Args:
+            h (float): Hue.
+            l (float): Lightness.
+            s (float): Saturation.
+
+        Returns:
+            Color: A new color.
+        """
         r, g, b = colorsys.hls_to_rgb(h, l, s)
         return cls(int(r * 255), int(g * 255), int(b * 255))
 
     @classmethod
     def from_hsv(cls, h: float, s: float, v: float) -> Color:
+        """Create a color from HSV components.
+
+        Args:
+            h (float): Hue
+            s (float): Saturation
+            v (float): Value
+
+        Returns:
+            Color: A new Color.
+        """
         r, g, b = colorsys.hsv_to_rgb(h, s, v)
         return cls(int(r * 255), int(g * 255), int(b * 255))
 
     def __rich__(self) -> Text:
+        """A Rich method to show the color."""
         r, g, b, _ = self
         return Text(
-            " " * 10,
-            style=Style.from_color(RichColor.default(), RichColor.from_rgb(r, g, b)),
+            f" {self!r} ",
+            style=Style.from_color(
+                self.get_contrast_text().rich_color, RichColor.from_rgb(r, g, b)
+            ),
         )
 
     @property
     def saturate(self) -> Color:
+        """Get a color with all components saturated to maximum and minimum values."""
         r, g, b, a = self
+        _clamp = clamp
         color = Color(
-            clamp(r, 0, 255), clamp(g, 0, 255), clamp(b, 0, 255), clamp(a, 0.0, 1.0)
+            _clamp(r, 0, 255),
+            _clamp(g, 0, 255),
+            _clamp(b, 0, 255),
+            _clamp(a, 0.0, 1.0),
         )
         return color
 
@@ -595,19 +630,21 @@ class Color(NamedTuple):
 
     @property
     def hls(self) -> HLS:
+        """Get the color as HLS."""
         r, g, b = self.normalized
         hls = colorsys.rgb_to_hls(r, g, b)
         return HLS(*hls)
 
     @property
     def hsv(self) -> HSV:
+        """Get the color as HSV."""
         r, g, b = self.normalized
         hsv = colorsys.rgb_to_hsv(r, g, b)
         return HSV(*hsv)
 
     @property
     def is_transparent(self) -> bool:
-        """Check if the color is transparent."""
+        """Check if the color is transparent (alpha == 0)."""
         return self.a == 0
 
     @property
@@ -630,7 +667,7 @@ class Color(NamedTuple):
         """The color in CSS rgb or rgba form.
 
         Returns:
-            str: A CSS color, e.g. "rgb(10,20,30)" or "(rgb(50,70,80,0.5)"
+            str: A CSS style color, e.g. "rgb(10,20,30)" or "rgb(50,70,80,0.5)"
 
         """
         r, g, b, a = self
@@ -644,9 +681,18 @@ class Color(NamedTuple):
         yield "a", a
 
     def with_alpha(self, alpha: float) -> Color:
+        """Create a new color with the given alpha.
+
+        Args:
+            alpha (float): New value for alpha.
+
+        Returns:
+            Color: A new color.
+        """
         r, g, b, a = self
         return Color(r, g, b, alpha)
 
+    @lru_cache(maxsize=2048)
     def blend(self, destination: Color, factor: float) -> Color:
         """Generate a new color between two colors.
 
@@ -727,39 +773,52 @@ class Color(NamedTuple):
         return color
 
     def darken(self, amount: float) -> Color:
+        """Darken the color by a given amount.
+
+        Args:
+            amount (float): Value between 0-1 to reduce luminance by.
+
+        Returns:
+            Color: New color.
+        """
         h, l, s = self.hls
         color = Color.from_hls(h, l - amount, s)
         return color.saturate
 
     def lighten(self, amount: float) -> Color:
+        """Lighten the color by a given amount.
+
+        Args:
+            amount (float): Value between 0-1 to increase luminance by.
+
+        Returns:
+            Color: New color.
+        """
         return self.darken(-amount).saturate
 
     @property
     def brightness(self) -> float:
+        """Get the human perceptual brightness."""
         r, g, b = self.normalized
         brightness = (299 * r + 587 * g + 114 * b) / 1000
         return brightness
 
-    def calculate_contrast(self, color: Color) -> float:
-        return abs(self.brightness - color.brightness)
-        # brightness = (299 * R + 587 * G + 114 * B) / 1000
-
-        # l1 = self.hls.l
-        # l2 = color.hls.l
-        # l1, l2 = sorted([l1, l2])
-        # return (l1 + 0.05) / (l2 + 0.05)
-
     def get_contrast_text(self, alpha=0.95) -> Color:
+        """Get a light or dark color that best contrasts this color, for use with text.
+
+        Args:
+            alpha (float, optional): An alpha value to adjust the pure white / black by.
+                Defaults to 0.95.
+
+        Returns:
+            Color: A new color, either an off-white or off-black
+        """
         white = self.blend(Color(255, 255, 255), alpha)
         black = self.blend(Color(0, 0, 0), alpha)
-
-        white_contrast = self.calculate_contrast(white)
-        black_contrast = self.calculate_contrast(black)
-
-        if white_contrast > black_contrast:
-            return white
-        else:
-            return black
+        brightness = self.brightness
+        white_contrast = abs(brightness - white.brightness)
+        black_contrast = abs(brightness - black.brightness)
+        return white if white_contrast > black_contrast else black
 
 
 class ColorPair(NamedTuple):
@@ -782,22 +841,20 @@ class ColorPair(NamedTuple):
         """Get a Rich style, foreground adjusted for transparency."""
         r, g, b, a = self.foreground
         if a == 0:
-            return Style(
-                color=self.background.rich_color,
-                bgcolor=self.background.rich_color,
+            return Style.from_color(
+                self.background.rich_color, self.background.rich_color
             )
         elif a == 1:
-            return Style(
-                color=self.foreground.rich_color,
-                bgcolor=self.background.rich_color,
+            return Style.from_color(
+                self.foreground.rich_color, self.background.rich_color
             )
         else:
             r2, g2, b2, _ = self.background
-            return Style(
-                color=RichColor.from_rgb(
+            return Style.from_color(
+                RichColor.from_rgb(
                     r + (r2 - r) * a, g + (g2 - g) * a, b + (b2 - b) * a
                 ),
-                bgcolor=self.background.rich_color,
+                self.background.rich_color,
             )
 
 

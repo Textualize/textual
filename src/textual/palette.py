@@ -26,6 +26,7 @@ def generate_light(
     secondary: Color | None = None,
     warning: Color | None = None,
     error: Color | None = None,
+    success: Color | None = None,
     accent1: Color | None = None,
     accent2: Color | None = None,
     accent3: Color | None = None,
@@ -33,6 +34,7 @@ def generate_light(
     surface: Color | None = None,
     luminosity_spread: float = 0.2,
     text_alpha: float = 0.98,
+    dark: bool = False,
 ) -> tuple[dict[str, Color], dict[str, Color]]:
 
     if secondary is None:
@@ -44,6 +46,9 @@ def generate_light(
     if error is None:
         error = secondary
 
+    if success is None:
+        success = secondary
+
     if accent1 is None:
         accent1 = primary
 
@@ -54,19 +59,16 @@ def generate_light(
         accent3 = accent2
 
     if background is None:
-        background = Color(245, 245, 245)
+        background = Color(0, 0, 0) if dark else Color(245, 245, 245)
 
     if surface is None:
-        surface = Color(229, 229, 229)
+        surface = Color.parse("#121212") if dark else Color(229, 229, 229)
 
     backgrounds: dict[str, Color] = {"background": background, "surface": surface}
-    foregrounds: dict[str, Color] = {
-        "on-background": background.get_contrast_text(text_alpha),
-        "on-surface": surface.get_contrast_text(text_alpha),
-    }
+    foregrounds: dict[str, Color] = {}
 
-    def luminosity_range() -> Iterable[tuple[str, float]]:
-        luminosity_step = luminosity_spread / 2
+    def luminosity_range(spread) -> Iterable[tuple[str, float]]:
+        luminosity_step = spread / 2
         for n in range(-2, +3):
             if n < 0:
                 label = "-darken"
@@ -78,27 +80,37 @@ def generate_light(
             yield (f"{label}{abs(n) if n else ''}"), n * luminosity_step
 
     COLORS = [
-        ("background", background),
-        ("surface", surface),
         ("primary", primary),
         ("secondary", secondary),
+        ("background", background),
+        ("surface", surface),
         ("warning", warning),
         ("error", error),
+        ("success", success),
         ("accent1", accent1),
         ("accent2", accent2),
         ("accent3", accent3),
     ]
 
+    DARK_SHADES = {"primary", "secondary"}
+
     for name, color in COLORS:
-        for shade_name, luminosity_delta in luminosity_range():
-
-            shade_color = color.lighten(luminosity_delta)
-            backgrounds[f"{name}{shade_name}"] = shade_color
-
+        is_dark_shade = name in DARK_SHADES
+        spread = luminosity_spread / 2 if is_dark_shade else luminosity_spread
+        for shade_name, luminosity_delta in luminosity_range(spread):
+            if dark and is_dark_shade:
+                dark_background = background.blend(color, 8 / 100)
+                shade_color = dark_background.blend(
+                    Color(255, 255, 255), spread + luminosity_delta
+                )
+                backgrounds[f"{name}{shade_name}"] = shade_color
+            else:
+                shade_color = color.lighten(luminosity_delta)
+                backgrounds[f"{name}{shade_name}"] = shade_color
             for fade in range(3):
                 text_color = shade_color.get_contrast_text(text_alpha)
                 if fade > 0:
-                    text_color = text_color.blend(shade_color, fade * 0.2)
+                    text_color = text_color.blend(shade_color, fade * 0.20 + 0.25)
                     on_name = f"on-{name}{shade_name}-fade{fade}"
                 else:
                     on_name = f"on-{name}{shade_name}"
@@ -119,22 +131,31 @@ if __name__ == "__main__":
     backgrounds, foregrounds = generate_light(
         primary=Color.parse("#4caf50"),
         secondary=Color.parse("#ffa000"),
+        warning=Color.parse("#FDD835"),
         error=Color.parse("#ff5722"),
+        success=Color.parse("#558B2F"),
+        accent1=Color.parse("#1976D2"),
+        dark=True,
     )
-
-    print(foregrounds)
 
     for name, background in backgrounds.items():
 
+        foreground = foregrounds[f"on-{name}"]
+        text = Text(f"{background.hex} ", style=f"{foreground.hex} on {background.hex}")
         for fade in range(3):
             if fade:
                 foreground = foregrounds[f"on-{name}-fade{fade}"]
             else:
                 foreground = foregrounds[f"on-{name}"]
 
-            console.print(
-                Padding(f"{background.hex} - {name}", 0),
-                justify="left",
+            text.append(
+                f"{name} ",
                 style=f"{foreground.hex} on {background.hex}",
-                highlight=False,
             )
+
+        console.print(
+            Padding(text, 1),
+            justify="left",
+            style=f"on {background.hex}",
+            highlight=False,
+        )
