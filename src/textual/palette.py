@@ -95,7 +95,7 @@ def generate_light(
     DARK_SHADES = {"primary", "secondary"}
 
     for name, color in COLORS:
-        is_dark_shade = name in DARK_SHADES
+        is_dark_shade = dark and name in DARK_SHADES
         spread = luminosity_spread / 2 if is_dark_shade else luminosity_spread
         for shade_name, luminosity_delta in luminosity_range(spread):
             if dark and is_dark_shade:
@@ -110,7 +110,7 @@ def generate_light(
             for fade in range(3):
                 text_color = shade_color.get_contrast_text(text_alpha)
                 if fade > 0:
-                    text_color = text_color.blend(shade_color, fade * 0.20 + 0.25)
+                    text_color = text_color.blend(shade_color, fade * 0.20 + 0.20)
                     on_name = f"on-{name}{shade_name}-fade{fade}"
                 else:
                     on_name = f"on-{name}{shade_name}"
@@ -131,8 +131,8 @@ if __name__ == "__main__":
     backgrounds, foregrounds = generate_light(
         primary=Color.parse("#4caf50"),
         secondary=Color.parse("#ffa000"),
-        warning=Color.parse("#FDD835"),
-        error=Color.parse("#ff5722"),
+        warning=Color.parse("#ffa000"),
+        error=Color.parse("#D32F2F"),
         success=Color.parse("#558B2F"),
         accent1=Color.parse("#1976D2"),
         dark=True,
