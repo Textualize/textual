@@ -21,7 +21,7 @@ DARK = {
 }
 
 
-def generate_light(
+def generate(
     primary: Color,
     secondary: Color | None = None,
     warning: Color | None = None,
@@ -64,7 +64,7 @@ def generate_light(
     if surface is None:
         surface = Color.parse("#121212") if dark else Color(229, 229, 229)
 
-    backgrounds: dict[str, Color] = {"background": background, "surface": surface}
+    backgrounds: dict[str, Color] = {}
     foregrounds: dict[str, Color] = {}
 
     def luminosity_range(spread) -> Iterable[tuple[str, float]]:
@@ -76,7 +76,6 @@ def generate_light(
                 label = "-lighten"
             else:
                 label = ""
-
             yield (f"{label}{abs(n) if n else ''}"), n * luminosity_step
 
     COLORS = [
@@ -128,7 +127,7 @@ if __name__ == "__main__":
 
     console = Console()
 
-    backgrounds, foregrounds = generate_light(
+    backgrounds, foregrounds = generate(
         primary=Color.parse("#4caf50"),
         secondary=Color.parse("#ffa000"),
         warning=Color.parse("#ffa000"),

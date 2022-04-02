@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import colorsys
+from colorsys import rgb_to_hls, rgb_to_hsv, hls_to_rgb, hsv_to_rgb
 from functools import lru_cache
 import re
 from typing import NamedTuple
@@ -12,518 +12,24 @@ from rich.text import Text
 
 
 from . import log
+from ._color_constants import ANSI_COLOR_TO_RGB
 from .geometry import clamp
 
 
 class HLS(NamedTuple):
+    """A color in HLS format."""
+
     h: float
     l: float
     s: float
 
 
 class HSV(NamedTuple):
+    """A color in HSV format."""
+
     h: float
     s: float
     v: float
-
-
-ANSI_COLOR_NAMES = {
-    "black": 0,
-    "red": 1,
-    "green": 2,
-    "yellow": 3,
-    "blue": 4,
-    "magenta": 5,
-    "cyan": 6,
-    "white": 7,
-    "bright_black": 8,
-    "bright_red": 9,
-    "bright_green": 10,
-    "bright_yellow": 11,
-    "bright_blue": 12,
-    "bright_magenta": 13,
-    "bright_cyan": 14,
-    "bright_white": 15,
-    "grey0": 16,
-    "gray0": 16,
-    "navy_blue": 17,
-    "dark_blue": 18,
-    "blue3": 20,
-    "blue1": 21,
-    "dark_green": 22,
-    "deep_sky_blue4": 25,
-    "dodger_blue3": 26,
-    "dodger_blue2": 27,
-    "green4": 28,
-    "spring_green4": 29,
-    "turquoise4": 30,
-    "deep_sky_blue3": 32,
-    "dodger_blue1": 33,
-    "green3": 40,
-    "spring_green3": 41,
-    "dark_cyan": 36,
-    "light_sea_green": 37,
-    "deep_sky_blue2": 38,
-    "deep_sky_blue1": 39,
-    "spring_green2": 47,
-    "cyan3": 43,
-    "dark_turquoise": 44,
-    "turquoise2": 45,
-    "green1": 46,
-    "spring_green1": 48,
-    "medium_spring_green": 49,
-    "cyan2": 50,
-    "cyan1": 51,
-    "dark_red": 88,
-    "deep_pink4": 125,
-    "purple4": 55,
-    "purple3": 56,
-    "blue_violet": 57,
-    "orange4": 94,
-    "grey37": 59,
-    "gray37": 59,
-    "medium_purple4": 60,
-    "slate_blue3": 62,
-    "royal_blue1": 63,
-    "chartreuse4": 64,
-    "dark_sea_green4": 71,
-    "pale_turquoise4": 66,
-    "steel_blue": 67,
-    "steel_blue3": 68,
-    "cornflower_blue": 69,
-    "chartreuse3": 76,
-    "cadet_blue": 73,
-    "sky_blue3": 74,
-    "steel_blue1": 81,
-    "pale_green3": 114,
-    "sea_green3": 78,
-    "aquamarine3": 79,
-    "medium_turquoise": 80,
-    "chartreuse2": 112,
-    "sea_green2": 83,
-    "sea_green1": 85,
-    "aquamarine1": 122,
-    "dark_slate_gray2": 87,
-    "dark_magenta": 91,
-    "dark_violet": 128,
-    "purple": 129,
-    "light_pink4": 95,
-    "plum4": 96,
-    "medium_purple3": 98,
-    "slate_blue1": 99,
-    "yellow4": 106,
-    "wheat4": 101,
-    "grey53": 102,
-    "gray53": 102,
-    "light_slate_grey": 103,
-    "light_slate_gray": 103,
-    "medium_purple": 104,
-    "light_slate_blue": 105,
-    "dark_olive_green3": 149,
-    "dark_sea_green": 108,
-    "light_sky_blue3": 110,
-    "sky_blue2": 111,
-    "dark_sea_green3": 150,
-    "dark_slate_gray3": 116,
-    "sky_blue1": 117,
-    "chartreuse1": 118,
-    "light_green": 120,
-    "pale_green1": 156,
-    "dark_slate_gray1": 123,
-    "red3": 160,
-    "medium_violet_red": 126,
-    "magenta3": 164,
-    "dark_orange3": 166,
-    "indian_red": 167,
-    "hot_pink3": 168,
-    "medium_orchid3": 133,
-    "medium_orchid": 134,
-    "medium_purple2": 140,
-    "dark_goldenrod": 136,
-    "light_salmon3": 173,
-    "rosy_brown": 138,
-    "grey63": 139,
-    "gray63": 139,
-    "medium_purple1": 141,
-    "gold3": 178,
-    "dark_khaki": 143,
-    "navajo_white3": 144,
-    "grey69": 145,
-    "gray69": 145,
-    "light_steel_blue3": 146,
-    "light_steel_blue": 147,
-    "yellow3": 184,
-    "dark_sea_green2": 157,
-    "light_cyan3": 152,
-    "light_sky_blue1": 153,
-    "green_yellow": 154,
-    "dark_olive_green2": 155,
-    "dark_sea_green1": 193,
-    "pale_turquoise1": 159,
-    "deep_pink3": 162,
-    "magenta2": 200,
-    "hot_pink2": 169,
-    "orchid": 170,
-    "medium_orchid1": 207,
-    "orange3": 172,
-    "light_pink3": 174,
-    "pink3": 175,
-    "plum3": 176,
-    "violet": 177,
-    "light_goldenrod3": 179,
-    "tan": 180,
-    "misty_rose3": 181,
-    "thistle3": 182,
-    "plum2": 183,
-    "khaki3": 185,
-    "light_goldenrod2": 222,
-    "light_yellow3": 187,
-    "grey84": 188,
-    "gray84": 188,
-    "light_steel_blue1": 189,
-    "yellow2": 190,
-    "dark_olive_green1": 192,
-    "honeydew2": 194,
-    "light_cyan1": 195,
-    "red1": 196,
-    "deep_pink2": 197,
-    "deep_pink1": 199,
-    "magenta1": 201,
-    "orange_red1": 202,
-    "indian_red1": 204,
-    "hot_pink": 206,
-    "dark_orange": 208,
-    "salmon1": 209,
-    "light_coral": 210,
-    "pale_violet_red1": 211,
-    "orchid2": 212,
-    "orchid1": 213,
-    "orange1": 214,
-    "sandy_brown": 215,
-    "light_salmon1": 216,
-    "light_pink1": 217,
-    "pink1": 218,
-    "plum1": 219,
-    "gold1": 220,
-    "navajo_white1": 223,
-    "misty_rose1": 224,
-    "thistle1": 225,
-    "yellow1": 226,
-    "light_goldenrod1": 227,
-    "khaki1": 228,
-    "wheat1": 229,
-    "cornsilk1": 230,
-    "grey100": 231,
-    "gray100": 231,
-    "grey3": 232,
-    "gray3": 232,
-    "grey7": 233,
-    "gray7": 233,
-    "grey11": 234,
-    "gray11": 234,
-    "grey15": 235,
-    "gray15": 235,
-    "grey19": 236,
-    "gray19": 236,
-    "grey23": 237,
-    "gray23": 237,
-    "grey27": 238,
-    "gray27": 238,
-    "grey30": 239,
-    "gray30": 239,
-    "grey35": 240,
-    "gray35": 240,
-    "grey39": 241,
-    "gray39": 241,
-    "grey42": 242,
-    "gray42": 242,
-    "grey46": 243,
-    "gray46": 243,
-    "grey50": 244,
-    "gray50": 244,
-    "grey54": 245,
-    "gray54": 245,
-    "grey58": 246,
-    "gray58": 246,
-    "grey62": 247,
-    "gray62": 247,
-    "grey66": 248,
-    "gray66": 248,
-    "grey70": 249,
-    "gray70": 249,
-    "grey74": 250,
-    "gray74": 250,
-    "grey78": 251,
-    "gray78": 251,
-    "grey82": 252,
-    "gray82": 252,
-    "grey85": 253,
-    "gray85": 253,
-    "grey89": 254,
-    "gray89": 254,
-    "grey93": 255,
-    "gray93": 255,
-}
-
-
-ANSI_COLORS = [
-    (0, 0, 0),
-    (128, 0, 0),
-    (0, 128, 0),
-    (128, 128, 0),
-    (0, 0, 128),
-    (128, 0, 128),
-    (0, 128, 128),
-    (192, 192, 192),
-    (128, 128, 128),
-    (255, 0, 0),
-    (0, 255, 0),
-    (255, 255, 0),
-    (0, 0, 255),
-    (255, 0, 255),
-    (0, 255, 255),
-    (255, 255, 255),
-    (0, 0, 0),
-    (0, 0, 95),
-    (0, 0, 135),
-    (0, 0, 175),
-    (0, 0, 215),
-    (0, 0, 255),
-    (0, 95, 0),
-    (0, 95, 95),
-    (0, 95, 135),
-    (0, 95, 175),
-    (0, 95, 215),
-    (0, 95, 255),
-    (0, 135, 0),
-    (0, 135, 95),
-    (0, 135, 135),
-    (0, 135, 175),
-    (0, 135, 215),
-    (0, 135, 255),
-    (0, 175, 0),
-    (0, 175, 95),
-    (0, 175, 135),
-    (0, 175, 175),
-    (0, 175, 215),
-    (0, 175, 255),
-    (0, 215, 0),
-    (0, 215, 95),
-    (0, 215, 135),
-    (0, 215, 175),
-    (0, 215, 215),
-    (0, 215, 255),
-    (0, 255, 0),
-    (0, 255, 95),
-    (0, 255, 135),
-    (0, 255, 175),
-    (0, 255, 215),
-    (0, 255, 255),
-    (95, 0, 0),
-    (95, 0, 95),
-    (95, 0, 135),
-    (95, 0, 175),
-    (95, 0, 215),
-    (95, 0, 255),
-    (95, 95, 0),
-    (95, 95, 95),
-    (95, 95, 135),
-    (95, 95, 175),
-    (95, 95, 215),
-    (95, 95, 255),
-    (95, 135, 0),
-    (95, 135, 95),
-    (95, 135, 135),
-    (95, 135, 175),
-    (95, 135, 215),
-    (95, 135, 255),
-    (95, 175, 0),
-    (95, 175, 95),
-    (95, 175, 135),
-    (95, 175, 175),
-    (95, 175, 215),
-    (95, 175, 255),
-    (95, 215, 0),
-    (95, 215, 95),
-    (95, 215, 135),
-    (95, 215, 175),
-    (95, 215, 215),
-    (95, 215, 255),
-    (95, 255, 0),
-    (95, 255, 95),
-    (95, 255, 135),
-    (95, 255, 175),
-    (95, 255, 215),
-    (95, 255, 255),
-    (135, 0, 0),
-    (135, 0, 95),
-    (135, 0, 135),
-    (135, 0, 175),
-    (135, 0, 215),
-    (135, 0, 255),
-    (135, 95, 0),
-    (135, 95, 95),
-    (135, 95, 135),
-    (135, 95, 175),
-    (135, 95, 215),
-    (135, 95, 255),
-    (135, 135, 0),
-    (135, 135, 95),
-    (135, 135, 135),
-    (135, 135, 175),
-    (135, 135, 215),
-    (135, 135, 255),
-    (135, 175, 0),
-    (135, 175, 95),
-    (135, 175, 135),
-    (135, 175, 175),
-    (135, 175, 215),
-    (135, 175, 255),
-    (135, 215, 0),
-    (135, 215, 95),
-    (135, 215, 135),
-    (135, 215, 175),
-    (135, 215, 215),
-    (135, 215, 255),
-    (135, 255, 0),
-    (135, 255, 95),
-    (135, 255, 135),
-    (135, 255, 175),
-    (135, 255, 215),
-    (135, 255, 255),
-    (175, 0, 0),
-    (175, 0, 95),
-    (175, 0, 135),
-    (175, 0, 175),
-    (175, 0, 215),
-    (175, 0, 255),
-    (175, 95, 0),
-    (175, 95, 95),
-    (175, 95, 135),
-    (175, 95, 175),
-    (175, 95, 215),
-    (175, 95, 255),
-    (175, 135, 0),
-    (175, 135, 95),
-    (175, 135, 135),
-    (175, 135, 175),
-    (175, 135, 215),
-    (175, 135, 255),
-    (175, 175, 0),
-    (175, 175, 95),
-    (175, 175, 135),
-    (175, 175, 175),
-    (175, 175, 215),
-    (175, 175, 255),
-    (175, 215, 0),
-    (175, 215, 95),
-    (175, 215, 135),
-    (175, 215, 175),
-    (175, 215, 215),
-    (175, 215, 255),
-    (175, 255, 0),
-    (175, 255, 95),
-    (175, 255, 135),
-    (175, 255, 175),
-    (175, 255, 215),
-    (175, 255, 255),
-    (215, 0, 0),
-    (215, 0, 95),
-    (215, 0, 135),
-    (215, 0, 175),
-    (215, 0, 215),
-    (215, 0, 255),
-    (215, 95, 0),
-    (215, 95, 95),
-    (215, 95, 135),
-    (215, 95, 175),
-    (215, 95, 215),
-    (215, 95, 255),
-    (215, 135, 0),
-    (215, 135, 95),
-    (215, 135, 135),
-    (215, 135, 175),
-    (215, 135, 215),
-    (215, 135, 255),
-    (215, 175, 0),
-    (215, 175, 95),
-    (215, 175, 135),
-    (215, 175, 175),
-    (215, 175, 215),
-    (215, 175, 255),
-    (215, 215, 0),
-    (215, 215, 95),
-    (215, 215, 135),
-    (215, 215, 175),
-    (215, 215, 215),
-    (215, 215, 255),
-    (215, 255, 0),
-    (215, 255, 95),
-    (215, 255, 135),
-    (215, 255, 175),
-    (215, 255, 215),
-    (215, 255, 255),
-    (255, 0, 0),
-    (255, 0, 95),
-    (255, 0, 135),
-    (255, 0, 175),
-    (255, 0, 215),
-    (255, 0, 255),
-    (255, 95, 0),
-    (255, 95, 95),
-    (255, 95, 135),
-    (255, 95, 175),
-    (255, 95, 215),
-    (255, 95, 255),
-    (255, 135, 0),
-    (255, 135, 95),
-    (255, 135, 135),
-    (255, 135, 175),
-    (255, 135, 215),
-    (255, 135, 255),
-    (255, 175, 0),
-    (255, 175, 95),
-    (255, 175, 135),
-    (255, 175, 175),
-    (255, 175, 215),
-    (255, 175, 255),
-    (255, 215, 0),
-    (255, 215, 95),
-    (255, 215, 135),
-    (255, 215, 175),
-    (255, 215, 215),
-    (255, 215, 255),
-    (255, 255, 0),
-    (255, 255, 95),
-    (255, 255, 135),
-    (255, 255, 175),
-    (255, 255, 215),
-    (255, 255, 255),
-    (8, 8, 8),
-    (18, 18, 18),
-    (28, 28, 28),
-    (38, 38, 38),
-    (48, 48, 48),
-    (58, 58, 58),
-    (68, 68, 68),
-    (78, 78, 78),
-    (88, 88, 88),
-    (98, 98, 98),
-    (108, 108, 108),
-    (118, 118, 118),
-    (128, 128, 128),
-    (138, 138, 138),
-    (148, 148, 148),
-    (158, 158, 158),
-    (168, 168, 168),
-    (178, 178, 178),
-    (188, 188, 188),
-    (198, 198, 198),
-    (208, 208, 208),
-    (218, 218, 218),
-    (228, 228, 228),
-    (238, 238, 238),
-]
 
 
 RE_COLOR = re.compile(
@@ -575,7 +81,7 @@ class Color(NamedTuple):
         Returns:
             Color: A new color.
         """
-        r, g, b = colorsys.hls_to_rgb(h, l, s)
+        r, g, b = hls_to_rgb(h, l, s)
         return cls(int(r * 255), int(g * 255), int(b * 255))
 
     @classmethod
@@ -590,7 +96,7 @@ class Color(NamedTuple):
         Returns:
             Color: A new Color.
         """
-        r, g, b = colorsys.hsv_to_rgb(h, s, v)
+        r, g, b = hsv_to_rgb(h, s, v)
         return cls(int(r * 255), int(g * 255), int(b * 255))
 
     def __rich__(self) -> Text:
@@ -632,15 +138,20 @@ class Color(NamedTuple):
     def hls(self) -> HLS:
         """Get the color as HLS."""
         r, g, b = self.normalized
-        hls = colorsys.rgb_to_hls(r, g, b)
-        return HLS(*hls)
+        return HLS(*rgb_to_hls(r, g, b))
 
     @property
     def hsv(self) -> HSV:
         """Get the color as HSV."""
         r, g, b = self.normalized
-        hsv = colorsys.rgb_to_hsv(r, g, b)
-        return HSV(*hsv)
+        return HSV(*rgb_to_hsv(r, g, b))
+
+    @property
+    def brightness(self) -> float:
+        """Get the human perceptual brightness."""
+        r, g, b = self.normalized
+        brightness = (299 * r + 587 * g + 114 * b) / 1000
+        return brightness
 
     @property
     def is_transparent(self) -> bool:
@@ -689,7 +200,7 @@ class Color(NamedTuple):
         Returns:
             Color: A new color.
         """
-        r, g, b, a = self
+        r, g, b, _ = self
         return Color(r, g, b, alpha)
 
     @lru_cache(maxsize=2048)
@@ -707,8 +218,8 @@ class Color(NamedTuple):
             return self
         elif factor == 1:
             return destination
-        r1, g1, b1, a1 = self
-        r2, g2, b2, a2 = destination
+        r1, g1, b1, _ = self
+        r2, g2, b2, _ = destination
         return Color(
             int(r1 + (r2 - r1) * factor),
             int(g1 + (g2 - g1) * factor),
@@ -735,9 +246,10 @@ class Color(NamedTuple):
         Returns:
             Color: New color object.
         """
-        if color_text in ANSI_COLOR_NAMES:
-            color_number = ANSI_COLOR_NAMES[color_text]
-            return cls(*ANSI_COLORS[color_number])
+
+        ansi_color = ANSI_COLOR_TO_RGB.get(color_text)
+        if ansi_color is not None:
+            return cls(*ansi_color)
         color_match = RE_COLOR.match(color_text)
         if color_match is None:
             raise ColorParseError(f"failed to parse {color_text!r} as a color")
@@ -782,7 +294,7 @@ class Color(NamedTuple):
             Color: New color.
         """
         h, l, s = self.hls
-        color = Color.from_hls(h, l - amount, s)
+        color = self.from_hls(h, l - amount, s)
         return color.saturate
 
     def lighten(self, amount: float) -> Color:
@@ -796,13 +308,6 @@ class Color(NamedTuple):
         """
         return self.darken(-amount).saturate
 
-    @property
-    def brightness(self) -> float:
-        """Get the human perceptual brightness."""
-        r, g, b = self.normalized
-        brightness = (299 * r + 587 * g + 114 * b) / 1000
-        return brightness
-
     def get_contrast_text(self, alpha=0.95) -> Color:
         """Get a light or dark color that best contrasts this color, for use with text.
 
@@ -813,12 +318,17 @@ class Color(NamedTuple):
         Returns:
             Color: A new color, either an off-white or off-black
         """
-        white = self.blend(Color(255, 255, 255), alpha)
-        black = self.blend(Color(0, 0, 0), alpha)
+        white = self.blend(WHITE, alpha)
+        black = self.blend(BLACK, alpha)
         brightness = self.brightness
         white_contrast = abs(brightness - white.brightness)
         black_contrast = abs(brightness - black.brightness)
         return white if white_contrast > black_contrast else black
+
+
+# Color constants
+WHITE = Color(255, 255, 255)
+BLACK = Color(0, 0, 0)
 
 
 class ColorPair(NamedTuple):
