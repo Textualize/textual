@@ -16,12 +16,11 @@ from rich.syntax import Syntax
 from rich.text import Text
 
 from textual._loop import loop_last
-from .._context import active_app
 from .errors import StylesheetError
 from .match import _check_selectors
 from .model import RuleSet
 from .parse import parse
-from .styles import RULE_NAMES, Styles, RulesMap
+from .styles import RulesMap
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
 from .. import log

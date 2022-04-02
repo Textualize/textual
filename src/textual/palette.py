@@ -2,23 +2,7 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from .color import Color
-
-DARK = {
-    "primary": "#344955",
-    "primary-light": "#4A6572",
-    "primary-dark": "#232F3F",
-    "secondary": "#F9AA33",
-    "secondary-light": "",
-    "secondary-dark": "",
-    "background": "",
-    "surface": "#121212",
-    "on-primary": "#FFFFFF",
-    "on-secondary": "#FFFFFF",
-    "on-background": "#B00020",
-    "on-surface": "#B00020",
-    "on-error": "#B00020",
-}
+from .color import Color, BLACK, WHITE
 
 
 def generate(
@@ -33,36 +17,23 @@ def generate(
     background: Color | None = None,
     surface: Color | None = None,
     luminosity_spread: float = 0.2,
-    text_alpha: float = 0.98,
+    text_alpha: float = 0.95,
     dark: bool = False,
 ) -> tuple[dict[str, Color], dict[str, Color]]:
 
-    if secondary is None:
-        secondary = primary
-
-    if warning is None:
-        warning = primary
-
-    if error is None:
-        error = secondary
-
-    if success is None:
-        success = secondary
-
-    if accent1 is None:
-        accent1 = primary
-
-    if accent2 is None:
-        accent2 = secondary
-
-    if accent3 is None:
-        accent3 = accent2
+    secondary = secondary or primary
+    warning = warning or primary
+    error = error or secondary
+    success = success or secondary
+    accent1 = accent1 or primary
+    accent2 = accent2 or secondary
+    accent3 = accent3 or accent2
 
     if background is None:
-        background = Color(0, 0, 0) if dark else Color(245, 245, 245)
+        background = BLACK if dark else Color.parse("#f5f5f5")
 
     if surface is None:
-        surface = Color.parse("#121212") if dark else Color(229, 229, 229)
+        surface = Color.parse("#121212") if dark else Color.parse("#efefef")
 
     backgrounds: dict[str, Color] = {}
     foregrounds: dict[str, Color] = {}
@@ -99,9 +70,7 @@ def generate(
         for shade_name, luminosity_delta in luminosity_range(spread):
             if dark and is_dark_shade:
                 dark_background = background.blend(color, 8 / 100)
-                shade_color = dark_background.blend(
-                    Color(255, 255, 255), spread + luminosity_delta
-                )
+                shade_color = dark_background.blend(WHITE, spread + luminosity_delta)
                 backgrounds[f"{name}{shade_name}"] = shade_color
             else:
                 shade_color = color.lighten(luminosity_delta)
@@ -119,11 +88,10 @@ def generate(
 
 
 if __name__ == "__main__":
-    from rich import print
+
     from rich.text import Text
     from rich.padding import Padding
     from rich.console import Console
-    from rich.columns import Columns
 
     console = Console()
 
