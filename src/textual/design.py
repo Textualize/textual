@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from rich.console import Console, ConsoleOptions, RenderResult
+from rich.console import group
 from rich.padding import Padding
+from rich.table import Table
 from rich.text import Text
 
 from .color import Color, BLACK, WHITE
@@ -32,7 +33,7 @@ class ColorProperty:
 class ColorSystem:
     """Defines a standard set of colors and variations for building a UI."""
 
-    COLORS = [
+    COLOR_NAMES = [
         "primary",
         "secondary",
         "background",
@@ -57,10 +58,6 @@ class ColorSystem:
         accent3: str | None = None,
         background: str | None = None,
         surface: str | None = None,
-        luminosity_spread: float = 0.2,
-        dark_alpha: float = 0.85,
-        light_alpha: float = 0.95,
-        dark: bool = False,
     ):
         self._primary = primary
         self._secondary = secondary
@@ -72,10 +69,6 @@ class ColorSystem:
         self._accent3 = accent3
         self._background = background
         self._surface = surface
-        self.luminosity_spread = luminosity_spread
-        self.dark_alpha = dark_alpha
-        self.light_alpha = light_alpha
-        self.dark = dark
 
     @property
     def primary(self) -> Color:
@@ -93,15 +86,31 @@ class ColorSystem:
 
     @property
     def shades(self) -> Iterable[str]:
-        for color in self.COLORS:
+        for color in self.COLOR_NAMES:
             yield f"{color}-darken2"
             yield f"{color}-darken1"
             yield color
             yield f"{color}-lighten1"
             yield f"{color}-lighten2"
 
-    def generate(self) -> dict[str, Color]:
-        """Generate a mapping of names to colors."""
+    def generate(
+        self,
+        dark: bool = False,
+        luminosity_spread: float = 0.2,
+        text_alpha: float = 0.9,
+    ) -> dict[str, str]:
+        """Generate a mapping of color name on to a CSS color.
+
+        Args:
+            dark (bool, optional): Enable dark mode. Defaults to False.
+            luminosity_spread (float, optional): Amount of luminosity to subtract and add to generate
+                shades. Defaults to 0.2.
+            text_alpha (float, optional): Alpha value for text. Defaults to 0.9.
+
+        Returns:
+            dict[str, str]: A mapping of color name on to a CSS-style encoded color
+
+        """
 
         primary = self.primary
         secondary = self.secondary or primary
@@ -111,15 +120,12 @@ class ColorSystem:
         accent1 = self.accent1 or primary
         accent2 = self.accent2 or secondary
         accent3 = self.accent3 or accent2
-        text_alpha = self.dark_alpha if self.dark else self.light_alpha
-        background = self.background or (BLACK if self.dark else Color.parse("#f5f5f5"))
-        luminosity_spread = self.luminosity_spread
-        dark = self.dark
+        background = self.background or (BLACK if dark else Color.parse("#f5f5f5"))
         surface = self.surface or (
-            Color.parse("#121212") if self.dark else Color.parse("#efefef")
+            Color.parse("#121212") if dark else Color.parse("#efefef")
         )
 
-        colors: dict[str, Color] = {}
+        colors: dict[str, str] = {}
 
         def luminosity_range(spread) -> Iterable[tuple[str, float]]:
             luminosity_step = spread / 2
@@ -151,17 +157,15 @@ class ColorSystem:
             is_dark_shade = dark and name in DARK_SHADES
             spread = luminosity_spread / 1.5 if is_dark_shade else luminosity_spread
             for shade_name, luminosity_delta in luminosity_range(spread):
-                if dark and is_dark_shade:
-                    dark_background = background.blend(
-                        color.lighten(luminosity_delta), 8 / 100
-                    )
+                if is_dark_shade:
+                    dark_background = background.blend(color, 8 / 100)
                     shade_color = dark_background.blend(
                         WHITE, spread + luminosity_delta
                     )
-                    colors[f"{name}{shade_name}"] = shade_color
+                    colors[f"{name}{shade_name}"] = shade_color.hex
                 else:
                     shade_color = color.lighten(luminosity_delta)
-                    colors[f"{name}{shade_name}"] = shade_color
+                    colors[f"{name}{shade_name}"] = shade_color.hex
                 for fade in range(3):
                     text_color = shade_color.get_contrast_text(text_alpha)
                     if fade > 0:
@@ -169,30 +173,31 @@ class ColorSystem:
                         on_name = f"on-{name}{shade_name}-fade{fade}"
                     else:
                         on_name = f"on-{name}{shade_name}"
-                    colors[on_name] = text_color
+                    colors[on_name] = text_color.hex
 
         return colors
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        colors = self.generate()
+    def __rich__(self) -> Table:
+        @group()
+        def make_shades(dark: bool):
+            colors = self.generate(dark)
+            for name in self.shades:
+                background = colors[name]
+                foreground = colors[f"on-{name}"]
+                text = Text(f"{background} ", style=f"{foreground} on {background}")
+                for fade in range(3):
+                    foreground = colors[
+                        f"on-{name}-fade{fade}" if fade else f"on-{name}"
+                    ]
+                    text.append(f"{name} ", style=f"{foreground} on {background}")
 
-        for name in self.shades:
-            background = colors[name]
-            foreground = colors[f"on-{name}"]
-            text = Text(
-                f"{background.hex} ", style=f"{foreground.hex} on {background.hex}"
-            )
-            for fade in range(3):
-                if fade:
-                    foreground = colors[f"on-{name}-fade{fade}"]
-                else:
-                    foreground = colors[f"on-{name}"]
+                yield Padding(text, 1, style=f"{foreground} on {background}")
 
-                text.append(f"{name} ", style=f"{foreground.hex} on {background.hex}")
-
-            yield Padding(text, 1, style=f"{foreground.hex} on {background.hex}")
+        table = Table(box=None, expand=True)
+        table.add_column("Light", justify="center")
+        table.add_column("Dark", justify="center")
+        table.add_row(make_shades(False), make_shades(True))
+        return table
 
 
 if __name__ == "__main__":
@@ -204,7 +209,6 @@ if __name__ == "__main__":
         success="#558B2F",
         accent1="#1976D2",
         accent3="#512DA8",
-        dark=True,
     )
 
     from rich import print
