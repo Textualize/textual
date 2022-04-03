@@ -43,9 +43,11 @@ rgba\((\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*)\)$
     re.VERBOSE,
 )
 
+# Fast way to split a string of 8 characters in to 3 pairs of 2 characters
 split_pairs3: Callable[[str], tuple[str, str, str]] = itemgetter(
     slice(0, 2), slice(2, 4), slice(4, 6)
 )
+# Fast way to split a string of 8 characters in to 4 pairs of 2 characters
 split_pairs4: Callable[[str], tuple[str, str, str, str]] = itemgetter(
     slice(0, 2), slice(2, 4), slice(4, 6), slice(6, 8)
 )
