@@ -84,33 +84,6 @@ def test_merge_rules():
     }
 
 
-def test_render_styles_text():
-    """Test inline styles override base styles"""
-    base = Styles()
-    inline = Styles()
-    styles_view = RenderStyles(None, base, inline)
-
-    # Both styles are empty
-    assert styles_view.text == Style()
-
-    # Base is bold blue
-    base.color = "blue"
-    base.text_style = "bold"
-    assert styles_view.text == Style.parse("bold blue")
-
-    # Base is bold blue, inline is red
-    inline.color = "red"
-    assert styles_view.text == Style.parse("bold red")
-
-    # Base is bold yellow, inline is red
-    base.color = "yellow"
-    assert styles_view.text == Style.parse("bold red")
-
-    # Base is bold blue
-    inline.color = None
-    assert styles_view.text == Style.parse("bold yellow")
-
-
 def test_render_styles_border():
     base = Styles()
     inline = Styles()

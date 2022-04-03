@@ -118,7 +118,7 @@ class Color(NamedTuple):
         )
 
     @property
-    def saturate(self) -> Color:
+    def clamped(self) -> Color:
         """Get a color with all components saturated to maximum and minimum values."""
         r, g, b, a = self
         _clamp = clamp
@@ -160,11 +160,6 @@ class Color(NamedTuple):
         r, g, b = self.normalized
         brightness = (299 * r + 587 * g + 114 * b) / 1000
         return brightness
-
-    @property
-    def is_transparent(self) -> bool:
-        """Check if the color is transparent (alpha == 0)."""
-        return self.a == 0
 
     @property
     def hex(self) -> str:
@@ -267,7 +262,7 @@ class Color(NamedTuple):
             r, g, b = [int(pair, 16) for pair in split_pairs3(rgb_hex)]
             color = cls(r, g, b, 1.0)
         elif rgba_hex is not None:
-            r, g, b, a = [int(pair, 16) for pair in split_pairs3(rgba_hex)]
+            r, g, b, a = [int(pair, 16) for pair in split_pairs4(rgba_hex)]
             color = cls(r, g, b, a / 255.0)
         elif rgb is not None:
             r, g, b = [clamp(int(float(value)), 0, 255) for value in rgb.split(",")]
@@ -297,7 +292,7 @@ class Color(NamedTuple):
         """
         h, l, s = self.hls
         color = self.from_hls(h, l - amount, s)
-        return color.saturate
+        return color.clamped
 
     def lighten(self, amount: float) -> Color:
         """Lighten the color by a given amount.
@@ -308,7 +303,7 @@ class Color(NamedTuple):
         Returns:
             Color: New color.
         """
-        return self.darken(-amount).saturate
+        return self.darken(-amount).clamped
 
     def get_contrast_text(self, alpha=0.95) -> Color:
         """Get a light or dark color that best contrasts this color, for use with text.

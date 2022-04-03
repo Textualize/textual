@@ -142,7 +142,7 @@ class StylesBase(ABC):
 
     text = StyleProperty()
     color = ColorProperty(Color(255, 255, 255))
-    background = ColorProperty(Color(255, 255, 255))
+    background = ColorProperty(Color(0, 0, 0))
     text_style = StyleFlagsProperty()
 
     opacity = FractionalProperty()

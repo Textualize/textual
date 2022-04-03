@@ -1,6 +1,8 @@
 import pytest
 
 from rich.color import Color as RichColor
+from rich.text import Text
+
 from textual.color import Color, ColorPair
 
 
@@ -28,6 +30,21 @@ def test_parse(text, expected):
 def test_rich_color():
     """Check conversion to Rich color."""
     assert Color(10, 20, 30, 1.0).rich_color == RichColor.from_rgb(10, 20, 30)
+    assert Color.from_rich_color(RichColor.from_rgb(10, 20, 30)) == Color(
+        10, 20, 30, 1.0
+    )
+
+
+def test_rich_color_rich_output():
+    assert isinstance(Color(10, 20, 30).__rich__(), Text)
+
+
+def test_normalized():
+    assert Color(255, 128, 64).normalized == pytest.approx((1.0, 128 / 255, 64 / 255))
+
+
+def test_clamped():
+    assert Color(300, 100, -20, 1.5).clamped == Color(255, 100, 0, 1.0)
 
 
 def test_css():
@@ -49,4 +66,13 @@ def test_colorpair_style():
     assert (
         str(ColorPair(Color.parse("rgba(0,0,0,0.5)"), Color.parse("#ffffff")).style)
         == "#7f7f7f on #ffffff"
+    )
+
+
+def test_hls():
+
+    red = Color(200, 20, 32)
+    print(red.hls)
+    assert red.hls == pytest.approx(
+        (0.9888888888888889, 0.43137254901960786, 0.818181818181818)
     )

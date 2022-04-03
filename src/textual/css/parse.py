@@ -261,7 +261,7 @@ def substitute_references(
                 elif token.name == "variable_ref":
                     ref_name = token.value[1:]
                     if ref_name in variables:
-                        variable_tokens = variables[variable_name]
+                        variable_tokens = variables.setdefault(variable_name, [])
                         reference_tokens = variables[ref_name]
                         variable_tokens.extend(reference_tokens)
                         ref_location = token.location

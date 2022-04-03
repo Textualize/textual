@@ -86,6 +86,7 @@ class ColorSystem:
 
     @property
     def shades(self) -> Iterable[str]:
+        """The names of the colors and derived shades."""
         for color in self.COLOR_NAMES:
             yield f"{color}-darken2"
             yield f"{color}-darken1"
