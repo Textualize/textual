@@ -21,6 +21,7 @@ from .match import _check_selectors
 from .model import RuleSet
 from .parse import parse
 from .styles import RulesMap
+from .tokenize import tokenize_values, Token
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
 from .. import log
@@ -37,6 +38,8 @@ class StylesheetParseError(Exception):
 class StylesheetErrors:
     def __init__(self, stylesheet: "Stylesheet") -> None:
         self.stylesheet = stylesheet
+        self.variables: dict[str, object] = {}
+        self._css_variables: dict[str, list[Token]] = {}
 
     @classmethod
     def _get_snippet(cls, code: str, line_no: int) -> Panel:
@@ -50,6 +53,11 @@ class StylesheetErrors:
             highlight_lines={line_no},
         )
         return Panel(syntax, border_style="red")
+
+    def add_variables(self, **variable_map: object) -> None:
+        """Pre-populate CSS variables."""
+        self.variables.update(variable_map)
+        self._css_variables = tokenize_values(self.variables)
 
     def __rich__(self) -> RenderableType:
         highlighter = ReprHighlighter()

@@ -3,7 +3,8 @@ from __future__ import annotations
 from colorsys import rgb_to_hls, rgb_to_hsv, hls_to_rgb, hsv_to_rgb
 from functools import lru_cache
 import re
-from typing import NamedTuple
+from operator import itemgetter
+from typing import Callable, NamedTuple
 
 import rich.repr
 from rich.color import Color as RichColor
@@ -40,6 +41,13 @@ rgb\((\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*)\)$|
 rgba\((\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*)\)$
 """,
     re.VERBOSE,
+)
+
+split_pairs3: Callable[[str], tuple[str, str, str]] = itemgetter(
+    slice(0, 2), slice(2, 4), slice(4, 6)
+)
+split_pairs4: Callable[[str], tuple[str, str, str, str]] = itemgetter(
+    slice(0, 2), slice(2, 4), slice(4, 6), slice(6, 8)
 )
 
 
@@ -256,29 +264,23 @@ class Color(NamedTuple):
         rgb_hex, rgba_hex, rgb, rgba = color_match.groups()
 
         if rgb_hex is not None:
-            color = cls(
-                int(rgb_hex[0:2], 16),
-                int(rgb_hex[2:4], 16),
-                int(rgb_hex[4:6], 16),
-                1.0,
-            )
+            r, g, b = [int(pair, 16) for pair in split_pairs3(rgb_hex)]
+            color = cls(r, g, b, 1.0)
         elif rgba_hex is not None:
-            color = cls(
-                int(rgba_hex[0:2], 16),
-                int(rgba_hex[2:4], 16),
-                int(rgba_hex[4:6], 16),
-                int(rgba_hex[6:8], 16) / 255.0,
-            )
+            r, g, b, a = [int(pair, 16) for pair in split_pairs3(rgba_hex)]
+            color = cls(r, g, b, a / 255.0)
         elif rgb is not None:
-            r, g, b = [clamp(float(value), 0, 255) for value in rgb.split(",")]
-            color = cls(int(r), int(g), int(b), 1.0)
+            r, g, b = [clamp(int(float(value)), 0, 255) for value in rgb.split(",")]
+            color = cls(r, g, b, 1.0)
         elif rgba is not None:
-            r, g, b, a = [float(value) for value in rgba.split(",")]
+            float_r, float_g, float_b, float_a = [
+                float(value) for value in rgba.split(",")
+            ]
             color = cls(
-                clamp(int(r), 0, 255),
-                clamp(int(g), 0, 255),
-                clamp(int(b), 0, 255),
-                clamp(a, 0.0, 1.0),
+                clamp(int(float_r), 0, 255),
+                clamp(int(float_g), 0, 255),
+                clamp(int(float_b), 0, 255),
+                clamp(float_a, 0.0, 1.0),
             )
         else:
             raise AssertionError("Can't get here if RE_COLOR matches")

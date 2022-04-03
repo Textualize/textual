@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import pprint
 import re
 from typing import Iterable
 
@@ -98,6 +97,16 @@ expect_declaration_content = Expect(
     declaration_set_end=r"\}",
 )
 
+expect_declaration_content_solo = Expect(
+    declaration_end=r"\n|;",
+    whitespace=r"\s+",
+    comment_start=COMMENT_START,
+    **DECLARATION_VALUES,
+    important=r"\!important",
+    comma=",",
+    declaration_set_end=r"\}",
+).expect_eof(True)
+
 
 class TokenizerState:
     """State machine for the tokenizer.
@@ -153,10 +162,33 @@ class DeclarationTokenizerState(TokenizerState):
     }
 
 
+class ValueTokenizerState(TokenizerState):
+    EXPECT = expect_declaration_content_solo
+
+
 tokenize = TokenizerState()
 tokenize_declarations = DeclarationTokenizerState()
+tokenize_value = ValueTokenizerState()
+
+
+def tokenize_values(values: dict[str, str]) -> dict[str, list[Token]]:
+    """Tokens the values in a dict of strings.
+
+    Args:
+        values (dict[str, str]): A mapping of name on to a CSS value.
+
+    Returns:
+        dict[str, list[Token]]: A mapping of name on to a list of tokens,
+    """
+    value_tokens = {
+        name: list(tokenize_value(value, "__name__")) for name, value in values.items()
+    }
+    return value_tokens
+
 
 if __name__ == "__main__":
+    from rich import print
+
     css = """#something {
 
         color: rgb(10,12,23)
@@ -164,4 +196,6 @@ if __name__ == "__main__":
     """
     # transition: offset 500 in_out_cubic;
     tokens = tokenize(css, __name__)
-    pprint.pp(list(tokens))
+    print(list(tokens))
+
+    print(tokenize_values({"primary": "rgb(10,20,30)", "secondary": "#ff00ff"}))

@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-from collections import defaultdict
 from functools import lru_cache
-from typing import Iterator, Iterable, Optional
+from typing import Iterator, Iterable
 
 from rich import print
-from rich.cells import cell_len
 
 from textual.css.errors import UnresolvedVariableError
 from ._styles_builder import StylesBuilder, DeclarationError
@@ -213,7 +211,9 @@ def _unresolved(
     )
 
 
-def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
+def substitute_references(
+    tokens: Iterator[Token], css_variables: dict[str, list[Token]] | None = None
+) -> Iterable[Token]:
     """Replace variable references with values by substituting variable reference
     tokens with the tokens representing their values.
 
@@ -228,7 +228,8 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
             but with variables resolved. Substituted tokens will have their referenced_by
             attribute populated with information about where the tokens are being substituted to.
     """
-    variables: dict[str, list[Token]] = defaultdict(list)
+    variables: dict[str, list[Token]] = css_variables.copy() if css_variables else {}
+
     while tokens:
         token = next(tokens, None)
         if token is None:
@@ -239,6 +240,7 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
 
             while True:
                 token = next(tokens, None)
+                # TODO: Mypy error looks legit
                 if token.name == "whitespace":
                     yield token
                 else:
@@ -250,7 +252,7 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
                 if not token:
                     break
                 elif token.name == "whitespace":
-                    variables[variable_name].append(token)
+                    variables.setdefault(variable_name, []).append(token)
                     yield token
                 elif token.name == "variable_value_end":
                     yield token
@@ -277,7 +279,7 @@ def substitute_references(tokens: Iterator[Token]) -> Iterable[Token]:
                             variable_name=ref_name, location=token.location
                         )
                 else:
-                    variables[variable_name].append(token)
+                    variables.setdefault(variable_name, []).append(token)
                     yield token
                 token = next(tokens, None)
         elif token.name == "variable_ref":
