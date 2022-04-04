@@ -3,7 +3,7 @@ import pytest
 from rich.color import Color as RichColor
 from rich.text import Text
 
-from textual.color import Color, ColorPair
+from textual.color import Color, ColorPair, Lab, rgb_to_lab
 
 
 @pytest.mark.parametrize(
@@ -76,3 +76,12 @@ def test_hls():
     assert red.hls == pytest.approx(
         (0.9888888888888889, 0.43137254901960786, 0.818181818181818)
     )
+
+
+def test_rgb_to_lab():
+    r, g, b = 10, 23, 73
+    rgb = Color(r, g, b)
+    lab = rgb_to_lab(rgb)
+    assert lab.L == pytest.approx(10.245)
+    assert lab.a == pytest.approx(15.913)
+    assert lab.b == pytest.approx(-32.672)

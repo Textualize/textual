@@ -33,6 +33,14 @@ class HSV(NamedTuple):
     v: float
 
 
+class Lab(NamedTuple):
+    """A color in CIE-L*ab format."""
+
+    L: float
+    a: float
+    b: float
+
+
 RE_COLOR = re.compile(
     r"""^
 \#([0-9a-fA-F]{6})$|
@@ -365,6 +373,55 @@ class ColorPair(NamedTuple):
                 ),
                 self.background.rich_color,
             )
+
+
+def rgb_to_lab(rgb: Color) -> Lab:
+    """Convert an RGB color to the CIE-L*ab format.
+
+    See https://stackoverflow.com/a/8433985/2828287."""
+
+    r, g, b = rgb.r / 255, rgb.g / 255, rgb.b / 255
+
+    r = pow((r + 0.055) / 1.055, 2.4) if r > 0.04045 else r / 12.92
+    g = pow((g + 0.055) / 1.055, 2.4) if g > 0.04045 else g / 12.92
+    b = pow((b + 0.055) / 1.055, 2.4) if b > 0.04045 else b / 12.92
+
+    x = (r * 41.24 + g * 35.76 + b * 18.05) / 95.047
+    y = (r * 21.26 + g * 71.52 + b * 7.22) / 100
+    z = (r * 1.93 + g * 11.92 + b * 95.05) / 108.883
+
+    off = 16 / 116
+    x = pow(x, 1 / 3) if x > 0.008856 else 7.787 * x + off
+    y = pow(y, 1 / 3) if y > 0.008856 else 7.787 * y + off
+    z = pow(z, 1 / 3) if z > 0.008856 else 7.787 * z + off
+
+    return Lab(116 * y - 16, 500 * (x - y), 200 * (y - z))
+
+
+def lab_to_rgb(lab: Lab) -> Color:
+    """Convert a CIE-L*ab color to RGB.
+
+    See https://stackoverflow.com/a/8433985/2828287
+    """
+
+    y = (lab.L + 16) / 116
+    x = lab.a / 500 + y
+    z = y - lab.b / 200
+
+    off = 16 / 116
+    y = pow(y, 3) if y > 0.2068930344 else (y - off) / 7.787
+    x = 0.95047 * pow(x, 3) if x > 0.2068930344 else 0.122059 * (x - off)
+    z = 1.08883 * pow(z, 3) if z > 0.2068930344 else 0.139827 * (z - off)
+
+    r = x * 3.2406 + y * -1.5372 + z * -0.4986
+    g = x * -0.9689 + y * 1.8758 + z * 0.0415
+    b = x * 0.0557 + y * -0.2040 + z * 1.0570
+
+    r = 1.055 * pow(r, 1 / 2.4) - 0.055 if r > 0.0031308 else 12.92 * r
+    g = 1.055 * pow(g, 1 / 2.4) - 0.055 if g > 0.0031308 else 12.92 * g
+    b = 1.055 * pow(b, 1 / 2.4) - 0.055 if b > 0.0031308 else 12.92 * b
+
+    return Color(int(r * 255), int(g * 255), int(b * 255))
 
 
 if __name__ == "__main__":
