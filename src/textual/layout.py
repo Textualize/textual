@@ -19,26 +19,6 @@ class WidgetPlacement(NamedTuple):
     widget: Widget | None = None  # A widget of None means empty space
     order: int = 0
 
-    def apply_margin(self) -> "WidgetPlacement":
-        """Apply any margin present in the styles of the widget by shrinking the
-        region appropriately.
-
-        Returns:
-            WidgetPlacement: Returns ``self`` if no ``margin`` styles are present in
-                the widget. Otherwise, returns a copy of self with a region shrunk to
-                account for margin.
-        """
-        region, widget, order = self
-        if widget is not None:
-            styles = widget.styles
-            if styles.margin:
-                return WidgetPlacement(
-                    region=region.shrink(styles.margin),
-                    widget=widget,
-                    order=order,
-                )
-        return self
-
 
 class Layout(ABC):
     """Responsible for arranging Widgets in a view and rendering them."""

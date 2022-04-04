@@ -205,6 +205,8 @@ class Compositor:
                 else ORIGIN
             )
 
+            # region += layout_offset
+
             # Container region is minus border
             container_region = region.shrink(widget.styles.gutter)
 
@@ -233,8 +235,13 @@ class Compositor:
                     if sub_widget is not None:
                         add_widget(
                             sub_widget,
-                            sub_region + child_region.origin - scroll_offset,
-                            sub_widget.z + (z,),
+                            (
+                                sub_region
+                                + child_region.origin
+                                - scroll_offset
+                                + layout_offset
+                            ),
+                            (z,) + sub_widget.z,
                             sub_clip,
                         )
 

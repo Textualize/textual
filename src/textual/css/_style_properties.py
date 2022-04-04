@@ -32,8 +32,8 @@ from ..geometry import Spacing, SpacingDimensions, clamp
 
 if TYPE_CHECKING:
     from ..layout import Layout
-    from .styles import Styles, StylesBase
-    from .styles import DockGroup
+    from .styles import DockGroup, Styles, StylesBase
+
 
 from .types import EdgeType
 
@@ -378,7 +378,11 @@ class DocksProperty:
         Returns:
             tuple[DockGroup, ...]: A ``tuple`` containing the defined docks.
         """
-        return obj.get_rule("docks", ())
+        if obj.has_rule("docks"):
+            return obj.get_rule("docks")
+        from .styles import DockGroup
+
+        return (DockGroup("_default", "top", 1),)
 
     def __set__(self, obj: StylesBase, docks: Iterable[DockGroup] | None):
         """Set the Docks property

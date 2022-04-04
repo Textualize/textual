@@ -15,8 +15,21 @@ class BasicApp(App):
             header=Widget(),
             content=Widget(),
             footer=Widget(),
-            sidebar=Widget(),
+            sidebar=Widget(
+                Widget(classes={"title"}),
+                Widget(classes={"user"}),
+                Widget(classes={"content"}),
+            ),
         )
+
+    async def on_key(self, event) -> None:
+        await self.dispatch_key(event)
+
+    def key_d(self):
+        self.dark = not self.dark
+
+    def key_x(self):
+        self.panic(self.tree)
 
 
 BasicApp.run(css_file="basic.css", watch_css=True, log="textual.log")

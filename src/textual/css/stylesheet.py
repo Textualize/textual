@@ -36,10 +36,14 @@ class StylesheetParseError(Exception):
 
 
 class StylesheetErrors:
-    def __init__(self, stylesheet: "Stylesheet") -> None:
+    def __init__(
+        self, stylesheet: "Stylesheet", variables: dict[str, str] | None = None
+    ) -> None:
         self.stylesheet = stylesheet
-        self.variables: dict[str, object] = {}
+        self.variables: dict[str, str] = {}
         self._css_variables: dict[str, list[Token]] = {}
+        if variables:
+            self.set_variables(variables)
 
     @classmethod
     def _get_snippet(cls, code: str, line_no: int) -> Panel:
@@ -54,7 +58,7 @@ class StylesheetErrors:
         )
         return Panel(syntax, border_style="red")
 
-    def add_variables(self, **variable_map: object) -> None:
+    def set_variables(self, variable_map: dict[str, str]) -> None:
         """Pre-populate CSS variables."""
         self.variables.update(variable_map)
         self._css_variables = tokenize_values(self.variables)
@@ -95,8 +99,9 @@ class StylesheetErrors:
 
 @rich.repr.auto
 class Stylesheet:
-    def __init__(self) -> None:
+    def __init__(self, *, variables: dict[str, str] | None = None) -> None:
         self.rules: list[RuleSet] = []
+        self.variables = variables or {}
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.rules
@@ -114,6 +119,9 @@ class Stylesheet:
     def error_renderable(self) -> StylesheetErrors:
         return StylesheetErrors(self)
 
+    def set_variables(self, variables: dict[str, str]) -> None:
+        self.variables = variables
+
     def read(self, filename: str) -> None:
         filename = os.path.expanduser(filename)
         try:
@@ -123,14 +131,14 @@ class Stylesheet:
         except Exception as error:
             raise StylesheetError(f"unable to read {filename!r}; {error}")
         try:
-            rules = list(parse(css, path))
+            rules = list(parse(css, path, variables=self.variables))
         except Exception as error:
             raise StylesheetError(f"failed to parse {filename!r}; {error}")
         self.rules.extend(rules)
 
     def parse(self, css: str, *, path: str = "") -> None:
         try:
-            rules = list(parse(css, path))
+            rules = list(parse(css, path, variables=self.variables))
         except Exception as error:
             raise StylesheetError(f"failed to parse css; {error}")
         self.rules.extend(rules)

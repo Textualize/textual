@@ -67,7 +67,7 @@ class Widget(DOMNode):
     can_focus: bool = False
 
     DEFAULT_STYLES = """
-        
+
     """
 
     def __init__(
@@ -421,7 +421,10 @@ class Widget(DOMNode):
 
     @property
     def region(self) -> Region:
-        return self.screen._compositor.get_widget_region(self)
+        try:
+            return self.screen._compositor.get_widget_region(self)
+        except errors.NoWidget:
+            return Region()
 
     @property
     def scroll_offset(self) -> Offset:

@@ -1,44 +1,62 @@
 /* CSS file for basic.py */
 
-$primary: #20639b;
-
 App > Screen {
   layout: dock;
   docks: side=left/1;
-  background: $primary;
+  background: $background;
+  color: $on-background;
 }
 
 #sidebar {
-  color: #09312e;
-  background: #3caea3;
+  color: $on-primary;
+  background: $primary;
   dock: side;
   width: 30;
   offset-x: -100%;
-
+  layout: dock;
   transition: offset 500ms in_out_cubic;
-  border-right: outer #09312e;
 }
 
 #sidebar.-active {
   offset-x: 0;
 }
 
+#sidebar .title {
+  height: 1;
+  background: $secondary-darken1;
+  color: $on-secondary-darken1;
+  border-right: vkey $secondary-darken2;
+}
+
+#sidebar .user {
+  height: 8;
+  background: $secondary;
+  color: $on-secondary;
+  border-right: vkey $secondary-darken2;
+}
+
+#sidebar .content {
+  background: $secondary-lighten1;
+  color: $on-secondary-lighten1;
+  border-right: vkey $secondary-darken2;
+}
+
 #header {
-  color: white;
-  background: #173f5f;
+  color: $on-primary;
+  background: $primary;
   height: 3;
-  border: hkey white;
+  border: hkey $primary-darken2;
 }
 
 #content {
-  color: white;
-  background: $primary;
+  color: $on-background;
+  background: $background;
   border-bottom: hkey #0f2b41;
 }
 
 #footer {
-  color: #3a3009;
-  background: #f6d55c;
+  color: $on-accent1;
+  background: $accent1;
 
-  height: 3;
+  height: 1;
 }

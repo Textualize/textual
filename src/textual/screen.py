@@ -9,6 +9,7 @@ from . import events, messages, errors
 
 from .geometry import Offset, Region
 from ._compositor import Compositor
+from .reactive import Reactive
 from .widget import Widget
 from .renderables.gradient import VerticalGradient
 
@@ -24,10 +25,15 @@ class Screen(Widget):
 
     """
 
+    dark = Reactive(False)
+
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
         super().__init__(name=name, id=id)
         self._compositor = Compositor()
         self._dirty_widgets: list[Widget] = []
+
+    def watch_dark(self, dark: bool) -> None:
+        pass
 
     @property
     def is_transparent(self) -> bool:

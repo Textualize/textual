@@ -31,7 +31,13 @@ class ColorProperty:
 
 
 class ColorSystem:
-    """Defines a standard set of colors and variations for building a UI."""
+    """Defines a standard set of colors and variations for building a UI.
+
+    Primary is the main theme color
+    Secondary is a second theme color
+
+
+    """
 
     COLOR_NAMES = [
         "primary",
@@ -97,7 +103,7 @@ class ColorSystem:
     def generate(
         self,
         dark: bool = False,
-        luminosity_spread: float = 0.2,
+        luminosity_spread: float = 0.15,
         text_alpha: float = 0.9,
     ) -> dict[str, str]:
         """Generate a mapping of color name on to a CSS color.
@@ -129,6 +135,12 @@ class ColorSystem:
         colors: dict[str, str] = {}
 
         def luminosity_range(spread) -> Iterable[tuple[str, float]]:
+            """Get the range of shades from darken2 to lighten2.
+
+            Returns:
+                Iterable of tuples (<SHADE SUFFIX, LUMINOSITY DELTA>)
+
+            """
             luminosity_step = spread / 2
             for n in range(-2, +3):
                 if n < 0:
@@ -139,6 +151,7 @@ class ColorSystem:
                     label = ""
                 yield (f"{label}{abs(n) if n else ''}"), n * luminosity_step
 
+        # Color names and color
         COLORS = [
             ("primary", primary),
             ("secondary", secondary),
@@ -152,6 +165,7 @@ class ColorSystem:
             ("accent3", accent3),
         ]
 
+        # Colors names that have a dark varient
         DARK_SHADES = {"primary", "secondary"}
 
         for name, color in COLORS:
@@ -203,8 +217,8 @@ class ColorSystem:
 
 if __name__ == "__main__":
     color_system = ColorSystem(
-        primary="#4caf50",
-        secondary="#ffa000",
+        primary="#1b5e20",
+        secondary="#263238",
         warning="#ffa000",
         error="#C62828",
         success="#558B2F",
