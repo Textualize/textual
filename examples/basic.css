@@ -23,27 +23,27 @@ App > Screen {
 
 #sidebar .title {
   height: 1;
-  background: $secondary-darken1;
-  color: $on-secondary-darken1;
+  background: $secondary-darken2;
+  color: $on-secondary-darken2;
   border-right: vkey $secondary-darken2;
 }
 
 #sidebar .user {
   height: 8;
+  background: $secondary-darken1;
+  color: $on-secondary-darken1;
+  border-right: vkey $secondary-darken2;
+}
+
+#sidebar .content {
   background: $secondary;
   color: $on-secondary;
   border-right: vkey $secondary-darken2;
 }
 
-#sidebar .content {
-  background: $secondary-lighten1;
-  color: $on-secondary-lighten1;
-  border-right: vkey $secondary-darken2;
-}
-
 #header {
-  color: $on-primary;
-  background: $primary;
+  color: $on-primary-darken1;
+  background: $primary-darken1;
   height: 3;
   border: hkey $primary-darken2;
 }
@@ -51,7 +51,6 @@ App > Screen {
 #content {
   color: $on-background;
   background: $background;
-  border-bottom: hkey #0f2b41;
 }
 
 #footer {
@@ -59,4 +58,6 @@ App > Screen {
   background: $accent1;
 
   height: 1;
+
+  border-top: hkey $accent1-darken2;
 }
