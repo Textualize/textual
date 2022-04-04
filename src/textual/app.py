@@ -113,12 +113,12 @@ class App(DOMNode):
         self._refresh_required = False
 
         self.design = ColorSystem(
-            primary="#1565c0",
-            secondary="#00695c",
+            primary="#3F51B5",
+            secondary="#3F51B5",
             warning="#ffa000",
             error="#C62828",
             success="#558B2F",
-            accent1="#ff6f00",
+            accent1="#FFC107",
             accent3="#512DA8",
         )
 

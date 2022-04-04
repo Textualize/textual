@@ -25,27 +25,27 @@ App > Screen {
   height: 1;
   background: $secondary-darken2;
   color: $on-secondary-darken2;
-  border-right: vkey $secondary-darken2;
+  border-right: outer $secondary-darken3;
 }
 
 #sidebar .user {
   height: 8;
   background: $secondary-darken1;
   color: $on-secondary-darken1;
-  border-right: vkey $secondary-darken2;
+  border-right: outer $secondary-darken3;
 }
 
 #sidebar .content {
   background: $secondary;
   color: $on-secondary;
-  border-right: vkey $secondary-darken2;
+  border-right: outer $secondary-darken3;
 }
 
 #header {
-  color: $on-primary-darken1;
-  background: $primary-darken1;
+  color: $on-primary;
+  background: $primary;
   height: 3;
-  border: hkey $primary-darken2;
+  border-right: outer $secondary-darken3;
 }
 
 #content {

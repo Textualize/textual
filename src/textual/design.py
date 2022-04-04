@@ -9,6 +9,8 @@ from rich.text import Text
 
 from .color import Color, BLACK, WHITE
 
+NUMBER_OF_SHADES = 3
+
 
 class ColorProperty:
     def __set_name__(self, owner: ColorSystem, name: str) -> None:
@@ -94,11 +96,13 @@ class ColorSystem:
     def shades(self) -> Iterable[str]:
         """The names of the colors and derived shades."""
         for color in self.COLOR_NAMES:
-            yield f"{color}-darken2"
-            yield f"{color}-darken1"
-            yield color
-            yield f"{color}-lighten1"
-            yield f"{color}-lighten2"
+            for shade_number in range(-NUMBER_OF_SHADES, NUMBER_OF_SHADES + 1):
+                if shade_number < 0:
+                    yield f"{color}-darken{abs(shade_number)}"
+                elif shade_number > 0:
+                    yield f"{color}-lighten{shade_number}"
+                else:
+                    yield color
 
     def generate(
         self,
@@ -142,7 +146,7 @@ class ColorSystem:
 
             """
             luminosity_step = spread / 2
-            for n in range(-2, +3):
+            for n in range(-NUMBER_OF_SHADES, +NUMBER_OF_SHADES + 1):
                 if n < 0:
                     label = "-darken"
                 elif n > 0:
@@ -176,7 +180,7 @@ class ColorSystem:
                     dark_background = background.blend(color, 8 / 100)
                     shade_color = dark_background.blend(
                         WHITE, spread + luminosity_delta
-                    )
+                    ).clamped
                     colors[f"{name}{shade_name}"] = shade_color.hex
                 else:
                     shade_color = color.lighten(luminosity_delta)
