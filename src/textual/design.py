@@ -51,7 +51,6 @@ class ColorSystem:
         "success",
         "accent1",
         "accent2",
-        "accent3",
     ]
 
     def __init__(
@@ -63,7 +62,6 @@ class ColorSystem:
         success: str | None = None,
         accent1: str | None = None,
         accent2: str | None = None,
-        accent3: str | None = None,
         background: str | None = None,
         surface: str | None = None,
     ):
@@ -74,7 +72,6 @@ class ColorSystem:
         self._success = success
         self._accent1 = accent1
         self._accent2 = accent2
-        self._accent3 = accent3
         self._background = background
         self._surface = surface
 
@@ -88,7 +85,6 @@ class ColorSystem:
     success = ColorProperty()
     accent1 = ColorProperty()
     accent2 = ColorProperty()
-    accent3 = ColorProperty()
     surface = ColorProperty()
     background = ColorProperty()
 
@@ -130,7 +126,7 @@ class ColorSystem:
         success = self.success or secondary
         accent1 = self.accent1 or primary
         accent2 = self.accent2 or secondary
-        accent3 = self.accent3 or accent2
+
         background = self.background or (BLACK if dark else Color.parse("#f5f5f5"))
         surface = self.surface or (
             Color.parse("#121212") if dark else Color.parse("#efefef")
@@ -166,7 +162,6 @@ class ColorSystem:
             ("success", success),
             ("accent1", accent1),
             ("accent2", accent2),
-            ("accent3", accent3),
         ]
 
         # Colors names that have a dark varient
@@ -221,13 +216,11 @@ class ColorSystem:
 
 if __name__ == "__main__":
     color_system = ColorSystem(
-        primary="#00838f",
-        secondary="#00796b",
+        primary="#005EA8",
+        secondary="#F59402",
         warning="#ffa000",
         error="#C62828",
         success="#558B2F",
-        accent1="#1976D2",
-        accent3="#512DA8",
     )
 
     from rich import print

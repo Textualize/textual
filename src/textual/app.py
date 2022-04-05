@@ -118,8 +118,6 @@ class App(DOMNode):
             warning="#ffa000",
             error="#C62828",
             success="#558B2F",
-            accent1="#1976D2",
-            accent3="#512DA8",
         )
 
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
@@ -140,7 +138,7 @@ class App(DOMNode):
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
     background: Reactive[str] = Reactive("black")
-    dark = Reactive(True)
+    dark = Reactive(False)
 
     def get_css_variables(self) -> dict[str, str]:
         variables = self.design.generate(self.dark)

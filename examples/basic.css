@@ -43,8 +43,8 @@ App > Screen {
 }
 
 #header {
-  color: $on-primary;
-  background: $primary;
+  color: $on-primary-darken2;
+  background: $primary-darken2;
   height: 3;
 
   border: hkey $primary-darken3;
