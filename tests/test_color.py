@@ -3,7 +3,7 @@ import pytest
 from rich.color import Color as RichColor
 from rich.text import Text
 
-from textual.color import Color, ColorPair, Lab, rgb_to_lab
+from textual.color import Color, ColorPair, Lab, lab_to_rgb, rgb_to_lab
 
 
 @pytest.mark.parametrize(
@@ -78,10 +78,50 @@ def test_hls():
     )
 
 
-def test_rgb_to_lab():
-    r, g, b = 10, 23, 73
+# Computed with http://www.easyrgb.com/en/convert.php,
+# (r, g, b) values in sRGB to (L*, a*, b*) values in CIE-L*ab.
+RGB_LAB_DATA = [
+    (10, 23, 73, 10.245, 15.913, -32.672),
+    (200, 34, 123, 45.438, 67.750, -8.008),
+    (0, 0, 0, 0, 0, 0),
+    (255, 255, 255, 100, 0, 0),
+]
+
+
+@pytest.mark.parametrize(
+    "r, g, b, L_, a_, b_",
+    RGB_LAB_DATA,
+)
+def test_rgb_to_lab(r, g, b, L_, a_, b_):
+    """Test conversion from the RGB color space to CIE-L*ab."""
     rgb = Color(r, g, b)
     lab = rgb_to_lab(rgb)
-    assert lab.L == pytest.approx(10.245)
-    assert lab.a == pytest.approx(15.913)
-    assert lab.b == pytest.approx(-32.672)
+    assert lab.L == pytest.approx(L_, abs=0.1)
+    assert lab.a == pytest.approx(a_, abs=0.1)
+    assert lab.b == pytest.approx(b_, abs=0.1)
+
+
+@pytest.mark.parametrize(
+    "r, g, b, L_, a_, b_",
+    RGB_LAB_DATA,
+)
+def test_lab_to_rgb(r, g, b, L_, a_, b_):
+    """Test conversion from the CIE-L*ab color space to RGB."""
+
+    lab = Lab(L_, a_, b_)
+    rgb = lab_to_rgb(lab)
+    assert rgb.r == pytest.approx(r, abs=1)
+    assert rgb.g == pytest.approx(g, abs=1)
+    assert rgb.b == pytest.approx(b, abs=1)
+
+
+def test_rgb_lab_rgb_roundtrip():
+    """Test RGB -> CIE-L*ab -> RGB color conversion roundtripping."""
+
+    for r in range(0, 256, 4):
+        for g in range(0, 256, 4):
+            for b in range(0, 256, 4):
+                c_ = lab_to_rgb(rgb_to_lab(Color(r, g, b)))
+                assert c_.r == pytest.approx(r, abs=1)
+                assert c_.g == pytest.approx(g, abs=1)
+                assert c_.b == pytest.approx(b, abs=1)
