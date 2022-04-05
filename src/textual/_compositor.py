@@ -210,10 +210,9 @@ class Compositor:
 
             log("  " * indent, widget, region)
 
-            # region += layout_offset
-
             # Container region is minus border
             container_region = region.shrink(widget.styles.gutter)
+            container_size = container_region.size
 
             # Containers (widgets with layout) require adding children
             if widget.layout is not None:
@@ -254,14 +253,14 @@ class Compositor:
 
                 # Add any scrollbars
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(
-                    container_region.size
+                    container_size
                 ):
                     map[chrome_widget] = RenderRegion(
                         chrome_region + container_region.origin + layout_offset,
                         order,
                         clip,
-                        container_region.size,
-                        container_region.size,
+                        container_size,
+                        container_size,
                     )
 
                 # Add the container widget, which will render a background
@@ -270,17 +269,13 @@ class Compositor:
                     order,
                     clip,
                     total_region.size,
-                    container_region.size,
+                    container_size,
                 )
 
             else:
                 # Add the widget to the map
                 map[widget] = RenderRegion(
-                    region + layout_offset,
-                    order,
-                    clip,
-                    region.size,
-                    container_region.size,
+                    region + layout_offset, order, clip, region.size, container_size
                 )
             indent -= 1
 

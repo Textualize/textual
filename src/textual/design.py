@@ -164,7 +164,7 @@ class ColorSystem:
             ("accent2", accent2),
         ]
 
-        # Colors names that have a dark varient
+        # Colors names that have a dark variant
         DARK_SHADES = {"primary", "secondary"}
 
         for name, color in COLORS:
@@ -183,7 +183,7 @@ class ColorSystem:
                 for fade in range(3):
                     text_color = shade_color.get_contrast_text(text_alpha)
                     if fade > 0:
-                        text_color = text_color.blend(shade_color, fade * 0.2 + 0.15)
+                        text_color = text_color.blend(shade_color, fade * 0.1 + 0.15)
                         on_name = f"on-{name}{shade_name}-fade{fade}"
                     else:
                         on_name = f"on-{name}{shade_name}"

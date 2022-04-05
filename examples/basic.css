@@ -32,7 +32,6 @@ App > Screen {
   height: 8;
   background: $primary-darken1;
   color: $on-primary-darken1;
-
   border-right: outer $primary-darken3;
 }
 
@@ -46,7 +45,6 @@ App > Screen {
   color: $on-primary-darken2;
   background: $primary-darken2;
   height: 3;
-
   border: hkey $primary-darken3;
 }
 
@@ -57,9 +55,8 @@ App > Screen {
 }
 
 Tweet {
-  height: 7;
+  height: 8;
   max-width: 80;
-  
   margin: 1 2;
   background: $background;
   color: $on-background;
@@ -81,8 +78,6 @@ TweetBody {
 #footer {
   color: $on-accent2;
   background: $accent2;
-
   height: 1;
-
   border-top: hkey $accent2-darken2;
 }
