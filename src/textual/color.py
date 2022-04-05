@@ -378,7 +378,10 @@ class ColorPair(NamedTuple):
 def rgb_to_lab(rgb: Color) -> Lab:
     """Convert an RGB color to the CIE-L*ab format.
 
-    See https://stackoverflow.com/a/8433985/2828287."""
+    Uses the standard RGB color space with a D65/2⁰ standard illuminant.
+    Conversion passes through the XYZ color space.
+    Cf. http://www.easyrgb.com/en/math.php.
+    """
 
     r, g, b = rgb.r / 255, rgb.g / 255, rgb.b / 255
 
@@ -401,7 +404,9 @@ def rgb_to_lab(rgb: Color) -> Lab:
 def lab_to_rgb(lab: Lab) -> Color:
     """Convert a CIE-L*ab color to RGB.
 
-    See https://stackoverflow.com/a/8433985/2828287
+    Uses the standard RGB color space with a D65/2⁰ standard illuminant.
+    Conversion passes through the XYZ color space.
+    Cf. http://www.easyrgb.com/en/math.php.
     """
 
     y = (lab.L + 16) / 116
