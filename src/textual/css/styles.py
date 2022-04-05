@@ -140,7 +140,6 @@ class StylesBase(ABC):
     visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
     layout = LayoutProperty()
 
-    text = StyleProperty()
     color = ColorProperty(Color(255, 255, 255))
     background = ColorProperty(Color(0, 0, 0))
     text_style = StyleFlagsProperty()
@@ -180,6 +179,8 @@ class StylesBase(ABC):
     layer = NameProperty()
     layers = NameListProperty()
     transitions = TransitionsProperty()
+
+    rich_style = StyleProperty()
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles containts the same rules."""
@@ -371,7 +372,7 @@ class StylesBase(ABC):
         if self.box_sizing == "content-box":
 
             if has_rule("padding"):
-                size += self.padding
+                size += self.padding.totals
             if has_rule("border"):
                 size += self.border.spacing.totals
             if has_rule("margin"):
@@ -379,7 +380,7 @@ class StylesBase(ABC):
 
         else:  # border-box
             if has_rule("padding"):
-                size -= self.padding
+                size -= self.padding.totals
             if has_rule("border"):
                 size -= self.border.spacing.totals
             if has_rule("margin"):

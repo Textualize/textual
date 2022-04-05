@@ -1,5 +1,27 @@
+from rich.console import RenderableType
+from rich.text import Text
+
 from textual.app import App
 from textual.widget import Widget
+
+
+lorem = Text.from_markup(
+    """Lorem ipsum dolor sit amet, consectetur adipiscing elit. In velit libero, volutpat nec hendrerit at, faucibus in odio. Aliquam hendrerit nibh sed quam volutpat maximus. Nullam suscipit convallis lorem quis sodales. In tristique lobortis ante et dictum. Ut at finibus ipsum. In urna dolor, placerat et mi facilisis, congue sollicitudin massa. Phasellus felis turpis, cursus eu lectus et, porttitor malesuada augue. Sed feugiat volutpat velit, sollicitudin fringilla velit bibendum faucibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In velit libero, volutpat nec hendrerit at, faucibus in odio. Aliquam hendrerit nibh sed quam volutpat maximus. Nullam suscipit convallis lorem quis sodales. In tristique lobortis ante et dictum. Ut at finibus ipsum. In urna dolor, placerat et mi facilisis, congue sollicitudin massa. Phasellus felis turpis, cursus eu lectus et, porttitor malesuada augue. Sed feugiat volutpat velit, sollicitudin fringilla velit bibendum faucibus. """,
+)
+
+
+class TweetHeader(Widget):
+    def render(self) -> RenderableType:
+        return Text("Lorem Impsum", justify="center")
+
+
+class TweetBody(Widget):
+    def render(self) -> Text:
+        return lorem
+
+
+class Tweet(Widget):
+    pass
 
 
 class BasicApp(App):
@@ -13,7 +35,16 @@ class BasicApp(App):
         """Build layout here."""
         self.mount(
             header=Widget(),
-            content=Widget(),
+            content=Widget(
+                Tweet(TweetHeader(), TweetBody()),
+                Tweet(TweetHeader(), TweetBody()),
+                Tweet(TweetHeader(), TweetBody())
+                # Tweet(TweetHeader(), TweetBody()),
+                # Tweet(TweetHeader(), TweetBody()),
+                # Tweet(TweetHeader(), TweetBody()),
+                # Tweet(TweetHeader(), TweetBody()),
+                # Tweet(TweetHeader(), TweetBody()),
+            ),
             footer=Widget(),
             sidebar=Widget(
                 Widget(classes={"title"}),

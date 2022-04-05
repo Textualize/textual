@@ -26,6 +26,7 @@ from . import events
 from ._animator import BoundAnimator
 from ._border import Border
 from ._callback import invoke
+from .color import Color
 from ._context import active_app
 from ._types import Lines
 from .dom import DOMNode
@@ -372,10 +373,11 @@ class Widget(DOMNode):
 
         renderable = self.render()
         styles = self.styles
+        parent_styles = self.parent.styles
 
-        parent_text_style = self.parent.text_style
+        parent_text_style = self.parent.rich_text_style
+        text_style = styles.rich_style
 
-        text_style = styles.text
         renderable_text_style = parent_text_style + text_style
         if renderable_text_style:
             renderable = Styled(renderable, renderable_text_style)
@@ -389,17 +391,17 @@ class Widget(DOMNode):
             renderable = Border(
                 renderable,
                 styles.border,
-                inner_color=renderable_text_style.bgcolor,
-                outer_color=parent_text_style.bgcolor,
+                inner_color=styles.background,
+                outer_color=Color.from_rich_color(parent_text_style.bgcolor),
             )
 
         if styles.outline:
             renderable = Border(
                 renderable,
                 styles.outline,
+                inner_color=styles.background,
+                outer_color=parent_styles.background,
                 outline=True,
-                inner_color=renderable_text_style.bgcolor,
-                outer_color=parent_text_style.bgcolor,
             )
 
         if styles.opacity != 1.0:
@@ -437,7 +439,8 @@ class Widget(DOMNode):
         Returns:
             bool: ``True`` if there is background color, otherwise ``False``.
         """
-        return self.layout is not None and self.styles.text.bgcolor is None
+        return False
+        return self.layout is not None
 
     @property
     def console(self) -> Console:

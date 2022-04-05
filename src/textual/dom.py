@@ -245,16 +245,16 @@ class DOMNode(MessagePump):
         return tuple(reversed(indexes))
 
     @property
-    def text_style(self) -> Style:
+    def rich_text_style(self) -> Style:
         """Get the text style (added to parent style).
 
         Returns:
             Style: Rich Style object.
         """
         return (
-            self.parent.text_style + self.styles.text
+            self.parent.rich_text_style + self.styles.rich_style
             if self.has_parent
-            else self.styles.text
+            else self.styles.rich_style
         )
 
     @property

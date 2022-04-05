@@ -316,7 +316,7 @@ class StyleProperty:
         Returns:
             A ``Style`` object.
         """
-        style = ColorPair(obj.color, obj.background).style
+        style = ColorPair(obj.color, obj.background).style + obj.text_style
         return style
 
 

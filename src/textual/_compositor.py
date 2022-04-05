@@ -178,6 +178,7 @@ class Compositor:
                 and the "virtual size" (scrollable region)
         """
 
+        indent = 0
         ORIGIN = Offset(0, 0)
         size = root.size
         map: RenderRegionMap = {}
@@ -197,6 +198,8 @@ class Compositor:
                 order (tuple[int, ...]): A tuple of ints to define the order.
                 clip (Region): The clipping region (i.e. the viewport which contains it).
             """
+            nonlocal indent
+            indent += 1
             widgets.add(widget)
             styles_offset = widget.styles.offset
             layout_offset = (
@@ -204,6 +207,8 @@ class Compositor:
                 if styles_offset
                 else ORIGIN
             )
+
+            log("  " * indent, widget, region)
 
             # region += layout_offset
 
@@ -228,6 +233,10 @@ class Compositor:
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=attrgetter("order"))
 
+                for sub_region, sub_widget, z in placements:
+                    if sub_widget:
+                        log("  " * indent, sub_region)
+
                 # Add all the widgets
                 for sub_region, sub_widget, z in placements:
                     # Combine regions with children to calculate the "virtual size"
@@ -235,15 +244,24 @@ class Compositor:
                     if sub_widget is not None:
                         add_widget(
                             sub_widget,
-                            (
-                                sub_region
-                                + child_region.origin
-                                - scroll_offset
-                                + layout_offset
-                            ),
+                            sub_region
+                            + container_region.origin
+                            + layout_offset
+                            - scroll_offset,
                             (z,) + sub_widget.z,
                             sub_clip,
                         )
+                        # add_widget(
+                        #     sub_widget,
+                        #     (
+                        #         sub_region
+                        #         + child_region.origin
+                        #         - scroll_offset
+                        #         + layout_offset
+                        #     ),
+                        #     (z,) + sub_widget.z,
+                        #     sub_clip,
+                        # )
 
                 # Add any scrollbars
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(
@@ -275,6 +293,7 @@ class Compositor:
                     region.size,
                     container_region.size,
                 )
+            indent -= 1
 
         # Add top level (root) widget
         add_widget(root, size.region, (), size.region)

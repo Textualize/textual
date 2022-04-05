@@ -3,8 +3,8 @@
 App > Screen {
   layout: dock;
   docks: side=left/1;
-  background: $background;
-  color: $on-background;
+  background: $surface;
+  color: $on-surface;
 }
 
 #sidebar {
@@ -32,6 +32,7 @@ App > Screen {
   height: 8;
   background: $secondary-darken1;
   color: $on-secondary-darken1;
+
   border-right: outer $secondary-darken3;
 }
 
@@ -45,13 +46,37 @@ App > Screen {
   color: $on-primary;
   background: $primary;
   height: 3;
-  border-right: outer $secondary-darken3;
+
+  border: hkey $secondary-darken3;
 }
 
 #content {
-  color: $on-background;
-  background: $background;
+  color: $on-surface;
+  background: $surface;
+  layout: vertical;
 }
+
+Tweet {
+  height: 7;
+  max-width: 80;
+  
+  margin: 1 2;
+  background: $background;
+  color: $on-background;
+  layout: vertical
+}
+
+TweetHeader {
+  height:1
+  background: $secondary
+  color: $on-secondary
+}
+
+TweetBody {  
+  background: $background
+  color: $on-background
+}
+
 
 #footer {
   color: $on-accent1;

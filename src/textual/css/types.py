@@ -15,6 +15,7 @@ Edge = Literal["top", "right", "bottom", "left"]
 EdgeType = Literal[
     "",
     "none",
+    "hidden",
     "round",
     "solid",
     "double",

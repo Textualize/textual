@@ -17,6 +17,7 @@ OUTER = 2
 BORDER_CHARS: dict[EdgeType, tuple[str, str, str]] = {
     "": ("   ", "   ", "   "),
     "none": ("   ", "   ", "   "),
+    "hidden": ("   ", "   ", "   "),
     "round": ("╭─╮", "│ │", "╰─╯"),
     "solid": ("┌─┐", "│ │", "└─┘"),
     "double": ("╔═╗", "║ ║", "╚═╝"),
@@ -37,6 +38,7 @@ BORDER_LOCATIONS: dict[
 ] = {
     "": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "none": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+    "hidden": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "round": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "solid": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "double": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
@@ -118,9 +120,9 @@ class Border:
         self,
         renderable: RenderableType,
         edge_styles: tuple[EdgeStyle, EdgeStyle, EdgeStyle, EdgeStyle],
+        inner_color: Color,
+        outer_color: Color,
         outline: bool = False,
-        inner_color: Color | None = None,
-        outer_color: Color | None = None,
     ):
         self.renderable = renderable
         self.edge_styles = edge_styles
@@ -141,8 +143,8 @@ class Border:
             from_color(bottom_color.rich_color),
             from_color(left_color.rich_color),
         )
-        self.inner_style = from_color(bgcolor=inner_color)
-        self.outer_style = from_color(bgcolor=outer_color)
+        self.inner_style = from_color(bgcolor=inner_color.rich_color)
+        self.outer_style = from_color(bgcolor=outer_color.rich_color)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.renderable
@@ -250,7 +252,7 @@ class Border:
                 yield new_line
 
         if has_bottom:
-            box1, box2, box3 = get_box(top, style, outer_style, bottom_style)[2]
+            box1, box2, box3 = get_box(bottom, style, outer_style, bottom_style)[2]
             if has_left:
                 yield box1 if bottom == left else _Segment(" ", box1.style)
             yield _Segment(box2.text * width, box2.style)
@@ -274,10 +276,10 @@ if __name__ == "__main__":
     border = Border(
         Padding(text, 1, style="on #303F9F"),
         (
+            ("none", Color.parse("#C5CAE9")),
+            ("none", Color.parse("#C5CAE9")),
             ("wide", Color.parse("#C5CAE9")),
-            ("wide", Color.parse("#C5CAE9")),
-            ("wide", Color.parse("#C5CAE9")),
-            ("wide", Color.parse("#C5CAE9")),
+            ("none", Color.parse("#C5CAE9")),
         ),
         inner_color=inner,
         outer_color=outer,
