@@ -113,12 +113,12 @@ class App(DOMNode):
         self._refresh_required = False
 
         self.design = ColorSystem(
-            primary="#3F51B5",
-            secondary="#3F51B5",
+            primary="#005EA8",
+            secondary="#F59402",
             warning="#ffa000",
             error="#C62828",
             success="#558B2F",
-            accent1="#FFC107",
+            accent1="#1976D2",
             accent3="#512DA8",
         )
 
@@ -140,7 +140,7 @@ class App(DOMNode):
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
     background: Reactive[str] = Reactive("black")
-    dark = Reactive(False)
+    dark = Reactive(True)
 
     def get_css_variables(self) -> dict[str, str]:
         variables = self.design.generate(self.dark)

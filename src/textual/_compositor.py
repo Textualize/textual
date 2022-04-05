@@ -251,17 +251,6 @@ class Compositor:
                             (z,) + sub_widget.z,
                             sub_clip,
                         )
-                        # add_widget(
-                        #     sub_widget,
-                        #     (
-                        #         sub_region
-                        #         + child_region.origin
-                        #         - scroll_offset
-                        #         + layout_offset
-                        #     ),
-                        #     (z,) + sub_widget.z,
-                        #     sub_clip,
-                        # )
 
                 # Add any scrollbars
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(

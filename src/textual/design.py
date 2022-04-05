@@ -221,8 +221,8 @@ class ColorSystem:
 
 if __name__ == "__main__":
     color_system = ColorSystem(
-        primary="#1b5e20",
-        secondary="#263238",
+        primary="#00838f",
+        secondary="#00796b",
         warning="#ffa000",
         error="#C62828",
         success="#558B2F",
