@@ -198,8 +198,6 @@ class Compositor:
                 order (tuple[int, ...]): A tuple of ints to define the order.
                 clip (Region): The clipping region (i.e. the viewport which contains it).
             """
-            nonlocal indent
-            indent += 1
             widgets.add(widget)
             styles_offset = widget.styles.offset
             layout_offset = (
@@ -207,8 +205,6 @@ class Compositor:
                 if styles_offset
                 else ORIGIN
             )
-
-            log("  " * indent, widget, region)
 
             # Container region is minus border
             container_region = region.shrink(widget.styles.gutter)
@@ -231,11 +227,6 @@ class Compositor:
                 )
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=attrgetter("order"))
-
-                for sub_region, sub_widget, z in placements:
-                    if sub_widget:
-                        log("  " * indent, sub_region)
-
                 container_offset = container_region.origin
 
                 # Add all the widgets
@@ -281,7 +272,6 @@ class Compositor:
                 map[widget] = RenderRegion(
                     region + layout_offset, order, clip, region.size, container_size
                 )
-            indent -= 1
 
         # Add top level (root) widget
         add_widget(root, size.region, (0,), size.region)
