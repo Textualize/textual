@@ -38,12 +38,7 @@ class BasicApp(App):
             content=Widget(
                 Tweet(TweetHeader(), TweetBody(), Widget(classes={"button"})),
                 Tweet(TweetHeader(), TweetBody()),
-                Tweet(TweetHeader(), TweetBody())
-                # Tweet(TweetHeader(), TweetBody()),
-                # Tweet(TweetHeader(), TweetBody()),
-                # Tweet(TweetHeader(), TweetBody()),
-                # Tweet(TweetHeader(), TweetBody()),
-                # Tweet(TweetHeader(), TweetBody()),
+                Tweet(TweetHeader(), TweetBody()),
             ),
             footer=Widget(),
             sidebar=Widget(

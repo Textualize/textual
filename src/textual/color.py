@@ -300,9 +300,9 @@ class Color(NamedTuple):
         Returns:
             Color: New color.
         """
-        h, l, s = self.hls
-        color = self.from_hls(h, l - amount, s)
-        return color.clamped
+        l, a, b = rgb_to_lab(self)
+        l -= amount * 100
+        return lab_to_rgb(Lab(l, a, b))
 
     def lighten(self, amount: float) -> Color:
         """Lighten the color by a given amount.
