@@ -100,22 +100,7 @@ class Color(NamedTuple):
             Color: A new color.
         """
         r, g, b = hls_to_rgb(h, l, s)
-        return cls(int(r * 255), int(g * 255), int(b * 255))
-
-    @classmethod
-    def from_hsv(cls, h: float, s: float, v: float) -> Color:
-        """Create a color from HSV components.
-
-        Args:
-            h (float): Hue
-            s (float): Saturation
-            v (float): Value
-
-        Returns:
-            Color: A new Color.
-        """
-        r, g, b = hsv_to_rgb(h, s, v)
-        return cls(int(r * 255), int(g * 255), int(b * 255))
+        return cls(int(r * 255 + 0.5), int(g * 255 + 0.5), int(b * 255 + 0.5))
 
     def __rich__(self) -> Text:
         """A Rich method to show the color."""
@@ -157,12 +142,6 @@ class Color(NamedTuple):
         """Get the color as HLS."""
         r, g, b = self.normalized
         return HLS(*rgb_to_hls(r, g, b))
-
-    @property
-    def hsv(self) -> HSV:
-        """Get the color as HSV."""
-        r, g, b = self.normalized
-        return HSV(*rgb_to_hsv(r, g, b))
 
     @property
     def brightness(self) -> float:

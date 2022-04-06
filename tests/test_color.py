@@ -76,6 +76,36 @@ def test_hls():
     assert red.hls == pytest.approx(
         (0.9888888888888889, 0.43137254901960786, 0.818181818181818)
     )
+    assert Color.from_hls(
+        0.9888888888888889, 0.43137254901960786, 0.818181818181818
+    ).normalized == pytest.approx(red.normalized, rel=1e-5)
+
+
+def test_color_brightness():
+    assert Color(255, 255, 255).brightness == 1
+    assert Color(0, 0, 0).brightness == 0
+    assert Color(127, 127, 127).brightness == pytest.approx(0.49803921568627446)
+    assert Color(255, 127, 64).brightness == pytest.approx(0.6199607843137255)
+
+
+def test_color_hex():
+    assert Color(255, 0, 127).hex == "#FF007F"
+    assert Color(255, 0, 127, 0.5).hex == "#FF007F7F"
+
+
+def test_color_css():
+    assert Color(255, 0, 127).css == "rgb(255,0,127)"
+    assert Color(255, 0, 127, 0.5).css == "rgba(255,0,127,0.5)"
+
+
+def test_color_with_alpha():
+    assert Color(255, 50, 100).with_alpha(0.25) == Color(255, 50, 100, 0.25)
+
+
+def test_color_blend():
+    assert Color(0, 0, 0).blend(Color(255, 255, 255), 0) == Color(0, 0, 0)
+    assert Color(0, 0, 0).blend(Color(255, 255, 255), 1.0) == Color(255, 255, 255)
+    assert Color(0, 0, 0).blend(Color(255, 255, 255), 0.5) == Color(127, 127, 127)
 
 
 # Computed with http://www.easyrgb.com/en/convert.php,
