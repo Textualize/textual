@@ -236,6 +236,8 @@ class Compositor:
                     if sub_widget:
                         log("  " * indent, sub_region)
 
+                container_offset = container_region.origin
+
                 # Add all the widgets
                 for sub_region, sub_widget, z in placements:
                     # Combine regions with children to calculate the "virtual size"
@@ -243,11 +245,13 @@ class Compositor:
                     if sub_widget is not None:
                         add_widget(
                             sub_widget,
-                            sub_region
-                            + container_region.origin
-                            + layout_offset
-                            - scroll_offset,
-                            (z,) + sub_widget.z,
+                            (
+                                sub_region
+                                + container_offset
+                                + layout_offset
+                                - scroll_offset
+                            ),
+                            order + (z,),
                             sub_clip,
                         )
 
@@ -256,7 +260,7 @@ class Compositor:
                     container_size
                 ):
                     map[chrome_widget] = RenderRegion(
-                        chrome_region + container_region.origin + layout_offset,
+                        chrome_region + container_offset + layout_offset,
                         order,
                         clip,
                         container_size,
@@ -280,7 +284,7 @@ class Compositor:
             indent -= 1
 
         # Add top level (root) widget
-        add_widget(root, size.region, (), size.region)
+        add_widget(root, size.region, (0,), size.region)
         return map, widgets
 
     def __iter__(self) -> Iterator[tuple[Widget, Region, Region, Size, Size]]:

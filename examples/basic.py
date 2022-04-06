@@ -36,7 +36,7 @@ class BasicApp(App):
         self.mount(
             header=Widget(),
             content=Widget(
-                Tweet(TweetHeader(), TweetBody()),
+                Tweet(TweetHeader(), TweetBody(), Widget(classes={"button"})),
                 Tweet(TweetHeader(), TweetBody()),
                 Tweet(TweetHeader(), TweetBody())
                 # Tweet(TweetHeader(), TweetBody()),

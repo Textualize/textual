@@ -102,6 +102,7 @@ class Stylesheet:
     def __init__(self, *, variables: dict[str, str] | None = None) -> None:
         self.rules: list[RuleSet] = []
         self.variables = variables or {}
+        self.source: list[tuple[str, str]] = []
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.rules
@@ -120,9 +121,23 @@ class Stylesheet:
         return StylesheetErrors(self)
 
     def set_variables(self, variables: dict[str, str]) -> None:
+        """Set CSS variables.
+
+        Args:
+            variables (dict[str, str]): A mapping of name to variable.
+        """
         self.variables = variables
 
     def read(self, filename: str) -> None:
+        """Read Textual CSS file.
+
+        Args:
+            filename (str): filename of CSS.
+
+        Raises:
+            StylesheetError: If the CSS could not be read.
+            StylesheetParseError: If the CSS is invalid.
+        """
         filename = os.path.expanduser(filename)
         try:
             with open(filename, "rt") as css_file:
@@ -134,16 +149,55 @@ class Stylesheet:
             rules = list(parse(css, path, variables=self.variables))
         except Exception as error:
             raise StylesheetError(f"failed to parse {filename!r}; {error}")
+        else:
+            self.source.append((css, path))
         self.rules.extend(rules)
+        if self.any_errors:
+            raise StylesheetParseError(self.error_renderable)
 
     def parse(self, css: str, *, path: str = "") -> None:
+        """Parse CSS from a string.
+
+        Args:
+            css (str): String with CSS source.
+            path (str, optional): The path of the source if a file, or some other identifier. Defaults to "".
+
+        Raises:
+            StylesheetError: If the CSS could not be read.
+            StylesheetParseError: If the CSS is invalid.
+        """
         try:
             rules = list(parse(css, path, variables=self.variables))
         except Exception as error:
             raise StylesheetError(f"failed to parse css; {error}")
+        else:
+            self.source.append((css, path))
         self.rules.extend(rules)
         if self.any_errors:
             raise StylesheetParseError(self.error_renderable)
+
+    def _clone(self, stylesheet: Stylesheet) -> None:
+        """Replace this stylesheet contents with another.
+
+        Args:
+            stylesheet (Stylesheet): A Stylesheet.
+        """
+        self.rules = stylesheet.rules.copy()
+        self.source = stylesheet.source.copy()
+
+    def reparse(self) -> None:
+        """Re-parse source, applying new variables.
+
+        Raises:
+            StylesheetError: If the CSS could not be read.
+            StylesheetParseError: If the CSS is invalid.
+
+        """
+        # Do this in a fresh Stylesheet so if there are errors we don't break self.
+        stylesheet = Stylesheet(variables=self.variables)
+        for css, path in self.source:
+            stylesheet.parse(css, path=path)
+        self._clone(stylesheet)
 
     @classmethod
     def _check_rule(cls, rule: RuleSet, node: DOMNode) -> Iterable[Specificity3]:

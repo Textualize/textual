@@ -1,5 +1,10 @@
 /* CSS file for basic.py */
 
+
+* {
+    transition: color 500ms linear, background 500ms linear;
+}
+
 App > Screen {
   layout: dock;
   docks: side=left/1;
@@ -42,10 +47,10 @@ App > Screen {
 }
 
 #header {
-  color: $on-primary-darken2;
-  background: $primary-darken2;
+  color: $on-primary-darken1;
+  background: $primary-darken1;
   height: 3;
-  border: hkey $primary-darken3;
+
 }
 
 #content {
@@ -55,12 +60,13 @@ App > Screen {
 }
 
 Tweet {
-  height: 8;
+  height: 10;
   max-width: 80;
   margin: 1 2;
   background: $background;
   color: $on-background;
   layout: vertical
+  
 }
 
 TweetHeader {
@@ -71,9 +77,35 @@ TweetHeader {
 
 TweetBody {  
   background: $background
-  color: $on-background
+  color: $on-background-fade1
+  height:6;
 }
 
+.button {
+  background: $accent2;
+  color: $on-accent2;
+  width:20;
+  height: 3
+  border: tall $on-background;
+ 
+  margin: 0 1 1 1;
+
+  transition: background 200ms in_out_cubic, color 300ms in_out_cubic;
+ 
+}
+
+.button:hover {
+  background: $accent1-darken1;
+  color: $on-accent1-darken1;
+  width:20;
+  height: 3
+  border: tall $on-background;
+ 
+  margin: 0 1 1 1;
+ 
+
+ 
+}
 
 #footer {
   color: $on-accent2;

@@ -119,6 +119,15 @@ class App(DOMNode):
             error="#C62828",
             success="#558B2F",
         )
+        self.design = ColorSystem(
+            primary="#1b72b1",  # blueish
+            secondary="#471EC2",  # purplesis
+            warning="#ffa629",  # orange
+            error="#db1a4a",  # error
+            success="#38d645",  # green
+            accent1="#1b72b1",
+            accent2="#ffa629",
+        )
 
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
 
@@ -567,8 +576,10 @@ class App(DOMNode):
             animate (bool, optional): Also execute CSS animations. Defaults to True.
         """
         # TODO: This doesn't update variables
-        self.app.stylesheet.set_variables(self.get_css_variables())
-        self.app.stylesheet.update(self.app, animate=animate)
+        stylesheet = self.app.stylesheet
+        stylesheet.set_variables(self.get_css_variables())
+        stylesheet.reparse()
+        stylesheet.update(self.app, animate=animate)
         self.refresh(layout=True)
 
     def display(self, renderable: RenderableType) -> None:

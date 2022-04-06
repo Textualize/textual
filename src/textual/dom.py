@@ -223,28 +223,6 @@ class DOMNode(MessagePump):
             )
 
     @property
-    def z(self) -> tuple[int, ...]:
-        """Get the z index tuple for this node.
-
-        Returns:
-            tuple[int, ...]: A tuple of ints to sort layers by.
-        """
-        indexes: list[int] = []
-        append = indexes.append
-        node = self
-        layer: str = node.styles.layer
-        while node._parent:
-            parent_styles = node.parent.styles
-            layer = layer or node.styles.layer
-            if layer in parent_styles.layers:
-                append(parent_styles.layers.index(layer))
-                layer = ""
-            else:
-                append(0)
-            node = node.parent
-        return tuple(reversed(indexes))
-
-    @property
     def rich_text_style(self) -> Style:
         """Get the text style (added to parent style).
 
