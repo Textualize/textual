@@ -225,11 +225,10 @@ class Compositor:
                 )
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=get_order)
-                container_offset = container_region.origin
 
                 # An offset added to all placements
                 placement_offset = (
-                    container_offset + layout_offset - widget.scroll_offset
+                    container_region.origin + layout_offset - widget.scroll_offset
                 )
 
                 # Add all the widgets
@@ -249,7 +248,7 @@ class Compositor:
                     container_size
                 ):
                     map[chrome_widget] = RenderRegion(
-                        chrome_region + container_offset + layout_offset,
+                        chrome_region + container_region.origin + layout_offset,
                         order,
                         clip,
                         container_size,
