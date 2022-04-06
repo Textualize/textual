@@ -7,7 +7,7 @@ from rich.padding import Padding
 from rich.table import Table
 from rich.text import Text
 
-from .color import Color, BLACK, WHITE
+from .color import Color, WHITE
 
 NUMBER_OF_SHADES = 3
 

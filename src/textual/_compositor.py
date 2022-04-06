@@ -217,6 +217,8 @@ class Compositor:
 
                 # Adjust the clip region accordingly
                 sub_clip = clip.intersection(child_region)
+
+                # The region covered by children relative to parent widget
                 total_region = child_region.reset_origin
 
                 # Arrange the layout
