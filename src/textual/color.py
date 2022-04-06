@@ -281,7 +281,7 @@ class Color(NamedTuple):
         """
         l, a, b = rgb_to_lab(self)
         l -= amount * 100
-        return lab_to_rgb(Lab(l, a, b))
+        return lab_to_rgb(Lab(l, a, b)).clamped
 
     def lighten(self, amount: float) -> Color:
         """Lighten the color by a given amount.

@@ -6,27 +6,6 @@ from rich.text import Text
 from textual.color import Color, ColorPair, Lab, lab_to_rgb, rgb_to_lab
 
 
-@pytest.mark.parametrize(
-    "text,expected",
-    [
-        ("#000000", Color(0, 0, 0, 1.0)),
-        ("#ffffff", Color(255, 255, 255, 1.0)),
-        ("#FFFFFF", Color(255, 255, 255, 1.0)),
-        ("#020304ff", Color(2, 3, 4, 1.0)),
-        ("#02030400", Color(2, 3, 4, 0.0)),
-        ("#0203040f", Color(2, 3, 4, 0.058823529411764705)),
-        ("rgb(0,0,0)", Color(0, 0, 0, 1.0)),
-        ("rgb(255,255,255)", Color(255, 255, 255, 1.0)),
-        ("rgba(255,255,255,1)", Color(255, 255, 255, 1.0)),
-        ("rgb(2,3,4)", Color(2, 3, 4, 1.0)),
-        ("rgba(2,3,4,1.0)", Color(2, 3, 4, 1.0)),
-        ("rgba(2,3,4,0.058823529411764705)", Color(2, 3, 4, 0.058823529411764705)),
-    ],
-)
-def test_parse(text, expected):
-    assert Color.parse(text) == expected
-
-
 def test_rich_color():
     """Check conversion to Rich color."""
     assert Color(10, 20, 30, 1.0).rich_color == RichColor.from_rgb(10, 20, 30)
@@ -108,6 +87,31 @@ def test_color_blend():
     assert Color(0, 0, 0).blend(Color(255, 255, 255), 0.5) == Color(127, 127, 127)
 
 
+@pytest.mark.parametrize(
+    "text,expected",
+    [
+        ("#000000", Color(0, 0, 0, 1.0)),
+        ("#ffffff", Color(255, 255, 255, 1.0)),
+        ("#FFFFFF", Color(255, 255, 255, 1.0)),
+        ("#020304ff", Color(2, 3, 4, 1.0)),
+        ("#02030400", Color(2, 3, 4, 0.0)),
+        ("#0203040f", Color(2, 3, 4, 0.058823529411764705)),
+        ("rgb(0,0,0)", Color(0, 0, 0, 1.0)),
+        ("rgb(255,255,255)", Color(255, 255, 255, 1.0)),
+        ("rgba(255,255,255,1)", Color(255, 255, 255, 1.0)),
+        ("rgb(2,3,4)", Color(2, 3, 4, 1.0)),
+        ("rgba(2,3,4,1.0)", Color(2, 3, 4, 1.0)),
+        ("rgba(2,3,4,0.058823529411764705)", Color(2, 3, 4, 0.058823529411764705)),
+    ],
+)
+def test_color_parse(text, expected):
+    assert Color.parse(text) == expected
+
+
+def test_color_add():
+    assert Color(50, 100, 200) + Color(10, 20, 30, 0.9) == Color(14, 28, 47)
+
+
 # Computed with http://www.easyrgb.com/en/convert.php,
 # (r, g, b) values in sRGB to (L*, a*, b*) values in CIE-L*ab.
 RGB_LAB_DATA = [
@@ -116,6 +120,19 @@ RGB_LAB_DATA = [
     (0, 0, 0, 0, 0, 0),
     (255, 255, 255, 100, 0, 0),
 ]
+
+
+def test_color_darken():
+    assert Color(200, 210, 220).darken(1) == Color(0, 0, 0)
+    assert Color(200, 210, 220).darken(-1) == Color(255, 255, 255)
+    assert Color(200, 210, 220).darken(0.1) == Color(172, 182, 192)
+    assert Color(200, 210, 220).darken(0.5) == Color(71, 80, 88)
+
+
+def test_color_lighten():
+    assert Color(200, 210, 220).lighten(1) == Color(255, 255, 255)
+    assert Color(200, 210, 220).lighten(-1) == Color(0, 0, 0)
+    assert Color(200, 210, 220).lighten(0.1) == Color(228, 238, 248)
 
 
 @pytest.mark.parametrize(
@@ -155,3 +172,8 @@ def test_rgb_lab_rgb_roundtrip():
                 assert c_.r == pytest.approx(r, abs=1)
                 assert c_.g == pytest.approx(g, abs=1)
                 assert c_.b == pytest.approx(b, abs=1)
+
+
+def test_color_pair_style():
+    pair = ColorPair(Color(220, 220, 220), Color(10, 20, 30))
+    assert str(pair.style) == "#dcdcdc on #0a141e"
