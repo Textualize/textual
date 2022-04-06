@@ -11,6 +11,11 @@ from .color import Color, BLACK, WHITE
 
 NUMBER_OF_SHADES = 3
 
+DEFAULT_DARK_BACKGROUND = "#000000"
+DEFAULT_DARK_SURFACE = "#121212"
+DEFAULT_LIGHT_BACKGROUND = "#f5f5f5"
+DEFAULT_LIGHT_SURFACE = "#efefef"
+
 
 class ColorProperty:
     """Descriptor to parse colors."""
@@ -129,9 +134,12 @@ class ColorSystem:
         accent1 = self.accent1 or primary
         accent2 = self.accent2 or secondary
 
-        background = self.background or (BLACK if dark else Color.parse("#f5f5f5"))
-        surface = self.surface or (
-            Color.parse("#121212") if dark else Color.parse("#efefef")
+        background = self.background or Color.parse(
+            DEFAULT_DARK_BACKGROUND if dark else DEFAULT_LIGHT_BACKGROUND
+        )
+
+        surface = self.surface or Color.parse(
+            DEFAULT_DARK_SURFACE if dark else DEFAULT_LIGHT_SURFACE
         )
 
         colors: dict[str, str] = {}
