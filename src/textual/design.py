@@ -13,6 +13,8 @@ NUMBER_OF_SHADES = 3
 
 
 class ColorProperty:
+    """Descriptor to parse colors."""
+
     def __set_name__(self, owner: ColorSystem, name: str) -> None:
         self._name = f"_{name}"
 
