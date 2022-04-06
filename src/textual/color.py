@@ -1,6 +1,18 @@
+"""
+Manages Color in Textual.
+
+All instances where the developer is presented with a color should use this class. The only 
+exception should be when passing things to a Rich renderable, which will need to use the
+`rich_color` attribute to perform a conversion.
+
+I'm not entirely happy with burdening the user with two similar color classes. In a future
+update we might add a protocol to convert automatically so the dev could use them interchangably.
+
+"""
+
 from __future__ import annotations
 
-from colorsys import rgb_to_hls, rgb_to_hsv, hls_to_rgb, hsv_to_rgb
+from colorsys import rgb_to_hls, hls_to_rgb
 from functools import lru_cache
 import re
 from operator import itemgetter
@@ -12,7 +24,6 @@ from rich.style import Style
 from rich.text import Text
 
 
-from . import log
 from ._color_constants import ANSI_COLOR_TO_RGB
 from .geometry import clamp
 
