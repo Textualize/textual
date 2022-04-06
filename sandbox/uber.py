@@ -10,6 +10,7 @@ class BasicApp(App):
     def on_load(self):
         self.bind("q", "quit", "Quit")
         self.bind("d", "dump")
+        self.bind("t", "log_tree")
 
     def on_mount(self):
         """Build layout here."""
@@ -37,6 +38,9 @@ class BasicApp(App):
 
     def action_dump(self):
         self.panic(str(self.app.registry))
+
+    def action_log_tree(self):
+        self.log(self.screen.tree)
 
 
 BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=1)

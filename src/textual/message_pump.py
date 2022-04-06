@@ -212,7 +212,7 @@ class MessagePump:
                 await self.dispatch_message(message)
             except CancelledError:
                 raise
-            except Exception as error:
+            except Exception:
                 self.app.panic()
                 break
             finally:

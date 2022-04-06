@@ -33,9 +33,14 @@ mkdocs = "^1.2.3"
 mkdocstrings = "^0.17.0"
 mkdocs-material = "^7.3.6"
 pre-commit = "^2.13.0"
+pytest-aiohttp = "^1.0.4"
+time-machine = "^2.6.0"
 
 [tool.black]
 includes = "src"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
