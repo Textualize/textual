@@ -143,11 +143,16 @@ class App(DOMNode):
     dark = Reactive(False)
 
     def get_css_variables(self) -> dict[str, str]:
+        """Get a mapping of variables used to pre-populate CSS.
+
+        Returns:
+            dict[str, str]: A mapping of variable name to value.
+        """
         variables = self.design.generate(self.dark)
         return variables
 
     def watch_dark(self, dark: bool) -> None:
-        self.log(dark=dark)
+        """Watches the dark bool."""
         self.screen.dark = dark
         self.refresh_css()
 
