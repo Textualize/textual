@@ -108,9 +108,7 @@ async def enqueue_server_info(outgoing_queue: Queue, width: int, height: int) ->
     )
 
 
-async def consume_incoming(
-    console: Console, incoming_queue: Queue[dict], websocket: WebSocketResponse
-) -> None:
+async def consume_incoming(console: Console, incoming_queue: Queue[dict]) -> None:
     while True:
         message_json = await incoming_queue.get()
         type = message_json["type"]
@@ -140,7 +138,7 @@ async def consume_incoming(
 
 
 async def consume_outgoing(
-    console: Console, outgoing_queue: Queue[dict], websocket: WebSocketResponse
+    outgoing_queue: Queue[dict], websocket: WebSocketResponse
 ) -> None:
     while True:
         message_json = await outgoing_queue.get()
@@ -161,9 +159,9 @@ async def websocket_handler(request: Request):
 
     request.app["tasks"].extend(
         (
-            asyncio.create_task(consume_outgoing(console, outgoing_queue, websocket)),
+            asyncio.create_task(consume_outgoing(outgoing_queue, websocket)),
             asyncio.create_task(enqueue_size_changes(console, outgoing_queue)),
-            asyncio.create_task(consume_incoming(console, incoming_queue, websocket)),
+            asyncio.create_task(consume_incoming(console, incoming_queue)),
         )
     )
 

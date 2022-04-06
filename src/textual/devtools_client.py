@@ -86,20 +86,23 @@ class DevtoolsClient:
         self.update_console_task = asyncio.create_task(update_console())
 
     async def cancel_tasks(self):
+        await self.cancel_log_queue_processing()
+        await self.cancel_console_size_updates()
+
+    async def cancel_log_queue_processing(self) -> None:
         if self.log_queue_task:
             self.log_queue_task.cancel()
             with suppress(asyncio.CancelledError):
                 await self.log_queue_task
 
+    async def cancel_console_size_updates(self) -> None:
         if self.update_console_task:
             self.update_console_task.cancel()
             with suppress(asyncio.CancelledError):
                 await self.update_console_task
 
     async def disconnect(self) -> None:
-        """Handle remaining log messages and then trigger disconnection
-        process by placing `None` on the log queue.
-        """
+        """Disconnect from the devtools server by cancelling tasks and closing connections"""
         await self.cancel_tasks()
         await self._close_connections()
 
@@ -131,7 +134,7 @@ class DevtoolsClient:
         )
         try:
             self.log_queue.put_nowait(message)
-            if self.spillover > 0:
+            if self.spillover > 0 and self.log_queue.qsize() < LOG_QUEUE_MAXSIZE:
                 # Tell the server how many messages we had to discard due
                 # to the log queue filling to capacity on the client.
                 spillover_message = json.dumps(
