@@ -459,29 +459,6 @@ class StylesBuilder:
                         f"invalid value for layout (received {value!r}, expected {friendly_list(LAYOUT_MAP.keys())})",
                     )
 
-    # def process_text(self, name: str, tokens: list[Token], important: bool) -> None:
-    #     style_definition = _join_tokens(tokens, joiner=" ")
-
-    #     # If every token in the value is a referenced by the same variable,
-    #     # we can display the variable name before the style definition.
-    #     # TODO: Factor this out to apply it to other properties too.
-    #     unique_references = {t.referenced_by for t in tokens if t.referenced_by}
-    #     if tokens and tokens[0].referenced_by and len(unique_references) == 1:
-    #         variable_prefix = f"${tokens[0].referenced_by.name}="
-    #     else:
-    #         variable_prefix = ""
-
-    #     try:
-    #         style = Style.parse(style_definition)
-    #         self.styles.text = style
-    #     except Exception as error:
-    #         message = f"property 'text' has invalid value {variable_prefix}{style_definition!r}; {error}"
-    #         self.error(name, tokens[0], message)
-    #     if important:
-    #         self.styles.important.update(
-    #             {"text_style", "text_background", "text_color"}
-    #         )
-
     def process_color(self, name: str, tokens: list[Token], important: bool) -> None:
         for token in tokens:
             if token.name in ("color", "token"):
