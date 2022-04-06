@@ -1,7 +1,8 @@
-import asyncio
+from datetime import datetime, timezone
 
 import pytest
 import time_machine
+from dateutil.tz import tz
 from rich.align import Align
 from rich.console import Console
 from rich.segment import Segment
@@ -47,7 +48,16 @@ def test_log_message_render(console):
     right_cells = list(columns[1].cells)
     right: Align = right_cells[0]
 
-    assert left == " [#888177]15:53:39 [dim]BST[/]"
+    # Since we can't guarantee the timezone the tests will run in...
+    local_time = (
+        datetime.fromtimestamp(TIMESTAMP)
+            .replace(tzinfo=timezone.utc)
+            .astimezone(tz=tz.tzlocal())
+    )
+    timezone_name = local_time.tzname()
+    string_timestamp = local_time.time()
+
+    assert left == f" [#888177]{string_timestamp} [dim]{timezone_name}[/]"
     assert right.align == "right"
     assert "hello.py:123" in right.renderable
 
