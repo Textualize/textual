@@ -44,6 +44,7 @@ class DevtoolsConnectionError(Exception):
 class DevtoolsClient:
     def __init__(self, address: str = "127.0.0.1", port: int = DEFAULT_PORT):
         self.url: str = f"ws://{address}:{port}"
+        self.session: aiohttp.ClientSession | None = None
         self.log_queue_task: Task | None = None
         self.update_console_task: Task | None = None
         self.console: DevtoolsConsole = DevtoolsConsole(file=StringIO())
@@ -52,7 +53,7 @@ class DevtoolsClient:
         self.spillover: int = 0
 
     async def connect(self) -> None:
-        self.session: aiohttp.ClientSession = aiohttp.ClientSession()
+        self.session = aiohttp.ClientSession()
         self.log_queue: Queue[str | Type[DetachDevtools]] = Queue(
             maxsize=LOG_QUEUE_MAXSIZE
         )

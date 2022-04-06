@@ -30,7 +30,7 @@ from ._event_broker import extract_handler_actions, NoHandler
 from ._profile import timer
 from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet, StylesheetParseError, StylesheetError
-from .devtools_client import DevtoolsClient
+from .devtools_client import DevtoolsClient, DevtoolsConnectionError
 from .dom import DOMNode
 from .driver import Driver
 from .file_monitor import FileMonitor
@@ -415,10 +415,15 @@ class App(DOMNode):
         log(f"driver={self.driver_class}")
 
         if os.getenv("TEXTUAL_DEVTOOLS") == "1":
-            await self.devtools.connect()
-            self.log_file.write(f"Connected to devtools ({self.devtools.url})\n")
-            self.log_file.flush()
-
+            try:
+                await self.devtools.connect()
+                self.log_file.write(f"Connected to devtools ({self.devtools.url})\n")
+                self.log_file.flush()
+            except DevtoolsConnectionError:
+                self.log_file.write(
+                    f"Couldn't connect to devtools ({self.devtools.url})\n"
+                )
+                self.log_file.flush()
         try:
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
@@ -456,7 +461,8 @@ class App(DOMNode):
                 await self.animator.start()
                 await super().process_messages()
                 log("PROCESS END")
-                await self._disconnect_devtools()
+                if self.devtools.is_connected:
+                    await self._disconnect_devtools()
                 with timer("animator.stop()"):
                     await self.animator.stop()
                 with timer("self.close_all()"):

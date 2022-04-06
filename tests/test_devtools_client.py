@@ -9,27 +9,10 @@ from aiohttp.web_ws import WebSocketResponse
 from rich.console import ConsoleDimensions
 from rich.panel import Panel
 
-from textual.devtools import make_aiohttp_app
+from tests.utilities.render import wait_for_predicate
 from textual.devtools_client import DevtoolsClient
 
 TIMESTAMP = 1649166819
-
-
-@pytest.fixture
-async def server(aiohttp_server, unused_tcp_port):
-    server = await aiohttp_server(make_aiohttp_app(), port=unused_tcp_port)
-    yield server
-    await server.close()
-
-
-@pytest.fixture
-async def devtools(aiohttp_client, server):
-    client = await aiohttp_client(server)
-    devtools = DevtoolsClient(address=client.host, port=client.port)
-    await devtools.connect()
-    yield devtools
-    await devtools.disconnect()
-    await client.close()
 
 
 def test_devtools_client_initialize_defaults():
@@ -50,7 +33,7 @@ async def test_devtools_log_places_encodes_and_queues_message(devtools):
     assert queued_log_json == {
         "payload": {
             "encoded_segments": "gASVQgAAAAAAAABdlCiMDHJpY2guc2VnbWVudJSMB1NlZ"
-                                "21lbnSUk5SMDUhlbGxvLCB3b3JsZCGUTk6HlIGUaAOMAQqUTk6HlIGUZS4=",
+            "21lbnSUk5SMDUhlbGxvLCB3b3JsZCGUTk6HlIGUaAOMAQqUTk6HlIGUZS4=",
             "line_number": 0,
             "path": "",
             "timestamp": TIMESTAMP,
@@ -99,12 +82,17 @@ async def test_devtools_log_spillover(devtools):
 
     # Ensure we're informing the server of spillover rate-limiting
     spillover_message = await devtools.log_queue.get()
-    assert json.loads(spillover_message) == {"type": "client_spillover", "payload": {"spillover": 2}}
+    assert json.loads(spillover_message) == {
+        "type": "client_spillover",
+        "payload": {"spillover": 2},
+    }
 
 
 async def test_devtools_client_update_console_dimensions(devtools, server):
-    server_websocket: WebSocketResponse = next(iter(server.app["websockets"]))
-    # Send new server information from the server via the websocket
+    """Sending new server info through websocket from server to client should (eventually)
+    result in the dimensions of the devtools client console being updated to match.
+    """
+    server_to_client: WebSocketResponse = next(iter(server.app["websockets"]))
     server_info = {
         "type": "server_info",
         "payload": {
@@ -112,13 +100,7 @@ async def test_devtools_client_update_console_dimensions(devtools, server):
             "height": 456,
         },
     }
-    await server_websocket.send_json(server_info)
-    timer = 0
-    poll_period = .1
-    while True:
-        if timer > 3:
-            pytest.fail("The devtools client dimensions did not update")
-        if devtools.console.size == ConsoleDimensions(123, 456):
-            break
-        await asyncio.sleep(.1)
-        timer += poll_period
+    await server_to_client.send_json(server_info)
+    await wait_for_predicate(
+        lambda: devtools.console.size == ConsoleDimensions(123, 456)
+    )

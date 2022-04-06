@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import base64
 import json
@@ -20,12 +22,13 @@ from aiohttp.web_ws import WebSocketResponse
 from dateutil.tz import tz
 from rich.align import Align
 from rich.console import Console, ConsoleOptions, RenderResult
+from rich.markup import escape
 from rich.rule import Rule
 from rich.segment import Segments, Segment
 from rich.table import Table
 
 DEFAULT_PORT = 8081
-SIZE_CHANGE_POLL_DELAY_SECONDS = 2
+DEFAULT_SIZE_CHANGE_POLL_DELAY_SECONDS = 2
 QUEUEABLE_TYPES = {"client_log", "client_spillover"}
 
 
@@ -82,7 +85,9 @@ class DevtoolsInternalMessage:
         yield Rule(self.message, style=level_to_style.get(self.level, "dim"))
 
 
-async def enqueue_size_changes(console: Console, outgoing_queue: Queue):
+async def _enqueue_size_changes(
+    console: Console, outgoing_queue: Queue, poll_delay: int
+):
     current_width = console.width
     current_height = console.height
     while True:
@@ -90,13 +95,13 @@ async def enqueue_size_changes(console: Console, outgoing_queue: Queue):
         height = console.height
         dimensions_changed = width != current_width or height != current_height
         if dimensions_changed:
-            await enqueue_server_info(outgoing_queue, width, height)
+            await _enqueue_server_info(outgoing_queue, width, height)
             current_width = width
             current_height = height
-        await asyncio.sleep(SIZE_CHANGE_POLL_DELAY_SECONDS)
+        await asyncio.sleep(poll_delay)
 
 
-async def enqueue_server_info(outgoing_queue: Queue, width: int, height: int) -> None:
+async def _enqueue_server_info(outgoing_queue: Queue, width: int, height: int) -> None:
     await outgoing_queue.put(
         {
             "type": "server_info",
@@ -108,7 +113,7 @@ async def enqueue_server_info(outgoing_queue: Queue, width: int, height: int) ->
     )
 
 
-async def consume_incoming(console: Console, incoming_queue: Queue[dict]) -> None:
+async def _consume_incoming(console: Console, incoming_queue: Queue[dict]) -> None:
     while True:
         message_json = await incoming_queue.get()
         type = message_json["type"]
@@ -137,7 +142,7 @@ async def consume_incoming(console: Console, incoming_queue: Queue[dict]) -> Non
         incoming_queue.task_done()
 
 
-async def consume_outgoing(
+async def _consume_outgoing(
     outgoing_queue: Queue[dict], websocket: WebSocketResponse
 ) -> None:
     while True:
@@ -153,21 +158,28 @@ async def websocket_handler(request: Request):
     request.app["websockets"].add(websocket)
 
     console = request.app["console"]
+    size_change_poll_delay = request.app["size_change_poll_delay_secs"]
 
     incoming_queue: Queue[dict] = Queue()
     outgoing_queue: Queue[dict] = Queue()
 
     request.app["tasks"].extend(
         (
-            asyncio.create_task(consume_outgoing(outgoing_queue, websocket)),
-            asyncio.create_task(enqueue_size_changes(console, outgoing_queue)),
-            asyncio.create_task(consume_incoming(console, incoming_queue)),
+            asyncio.create_task(_consume_outgoing(outgoing_queue, websocket)),
+            asyncio.create_task(
+                _enqueue_size_changes(
+                    console, outgoing_queue, poll_delay=size_change_poll_delay
+                )
+            ),
+            asyncio.create_task(_consume_incoming(console, incoming_queue)),
         )
     )
 
-    console.print(DevtoolsInternalMessage(f"Client '{request.remote}' connected"))
+    console.print(
+        DevtoolsInternalMessage(f"Client '{escape(request.remote)}' connected")
+    )
 
-    await enqueue_server_info(
+    await _enqueue_server_info(
         outgoing_queue, width=console.width, height=console.height
     )
     try:
@@ -177,7 +189,7 @@ async def websocket_handler(request: Request):
                 try:
                     message_json = json.loads(message.data)
                 except JSONDecodeError:
-                    console.print(f"{message.data}")
+                    console.print(escape(str(message.data)))
                     continue
 
                 type = message_json.get("type")
@@ -196,13 +208,13 @@ async def websocket_handler(request: Request):
         request.app["websockets"].discard(websocket)
         console.print()
         console.print(
-            DevtoolsInternalMessage(f"Client '{request.remote}' disconnected")
+            DevtoolsInternalMessage(f"Client '{escape(request.remote)}' disconnected")
         )
 
     return websocket
 
 
-async def on_shutdown(app: Application) -> None:
+async def _on_shutdown(app: Application) -> None:
     for task in app["tasks"]:
         task.cancel()
         with suppress(CancelledError):
@@ -214,13 +226,16 @@ async def on_shutdown(app: Application) -> None:
         )
 
 
-def run_devtools(port: int) -> None:
-    app = make_aiohttp_app()
+def _run_devtools(port: int) -> None:
+    app = _make_devtools_aiohttp_app()
     run_app(app, port=port)
 
 
-def make_aiohttp_app():
+def _make_devtools_aiohttp_app(
+    size_change_poll_delay_secs: float = DEFAULT_SIZE_CHANGE_POLL_DELAY_SECONDS,
+):
     app = Application()
+    app["size_change_poll_delay_secs"] = size_change_poll_delay_secs
     app["console"] = Console()
     app["websockets"] = weakref.WeakSet()
     app["tasks"] = []
@@ -229,7 +244,7 @@ def make_aiohttp_app():
             get("/textual-devtools-websocket", websocket_handler),
         ]
     )
-    app.on_shutdown.append(on_shutdown)
+    app.on_shutdown.append(_on_shutdown)
     return app
 
 
@@ -238,4 +253,4 @@ if __name__ == "__main__":
         port = int(sys.argv[1])
     else:
         port = DEFAULT_PORT
-    run_devtools(port)
+    _run_devtools(port)
