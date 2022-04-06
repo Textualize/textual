@@ -84,6 +84,7 @@ class ColorSystem:
 
     @property
     def primary(self) -> Color:
+        """Get the primary color."""
         return Color.parse(self._primary)
 
     secondary = ColorProperty()

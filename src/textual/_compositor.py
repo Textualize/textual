@@ -418,7 +418,6 @@ class Compositor:
 
         for widget, region, _order, clip in widget_regions:
             if not region:
-                # log(widget, region)
                 continue
             if region in clip:
                 yield region, clip, widget.get_render_lines()
