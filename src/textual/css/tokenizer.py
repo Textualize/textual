@@ -111,7 +111,7 @@ class Tokenizer:
             if value is not None:
                 break
         else:
-            # For MyPy's benefiy
+            # For MyPy's benefit
             raise AssertionError("can't reach here")
 
         token = Token(
