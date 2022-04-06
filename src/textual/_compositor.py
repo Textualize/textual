@@ -178,6 +178,7 @@ class Compositor:
                 and the "virtual size" (scrollable region)
         """
 
+        indent = 0
         ORIGIN = Offset(0, 0)
         size = root.size
         map: RenderRegionMap = {}
@@ -211,8 +212,6 @@ class Compositor:
 
             # Containers (widgets with layout) require adding children
             if widget.layout is not None:
-                scroll_offset = widget.scroll_offset
-
                 # The region that contains the content (container region minus scrollbars)
                 child_region = widget._arrange_container(container_region)
 
@@ -222,21 +221,22 @@ class Compositor:
 
                 # Arrange the layout
                 placements, arranged_widgets = widget.layout.arrange(
-                    widget, child_region.size, scroll_offset
+                    widget, child_region.size, widget.scroll_offset
                 )
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=attrgetter("order"))
                 container_offset = container_region.origin
 
                 # An offset added to all placements
-                placement_offset = container_offset + layout_offset - scroll_offset
+                placement_offset = (
+                    container_offset + layout_offset - widget.scroll_offset
+                )
 
                 # Add all the widgets
-                total_region_union = total_region.union
                 for sub_region, sub_widget, z in placements:
                     # Combine regions with children to calculate the "virtual size"
-                    total_region = total_region_union(sub_region)
-                    if sub_widget is None:
+                    total_region = total_region.union(sub_region)
+                    if sub_widget is not None:
                         add_widget(
                             sub_widget,
                             sub_region + placement_offset,
