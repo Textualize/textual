@@ -178,11 +178,11 @@ class Compositor:
                 and the "virtual size" (scrollable region)
         """
 
-        indent = 0
         ORIGIN = Offset(0, 0)
         size = root.size
         map: RenderRegionMap = {}
         widgets: set[Widget] = set()
+        get_order = attrgetter("order")
 
         def add_widget(
             widget: Widget,
@@ -224,7 +224,7 @@ class Compositor:
                     widget, child_region.size, widget.scroll_offset
                 )
                 widgets.update(arranged_widgets)
-                placements = sorted(placements, key=attrgetter("order"))
+                placements = sorted(placements, key=get_order)
                 container_offset = container_region.origin
 
                 # An offset added to all placements
