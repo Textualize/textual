@@ -497,7 +497,6 @@ class App(DOMNode):
         apply_stylesheet = self.stylesheet.apply
 
         for widget_id, widget in name_widgets:
-            self.log(widget_id=widget_id, widget=widget, _in=widget in self.registry)
             if widget not in self.registry:
                 if widget_id is not None:
                     widget.id = widget_id
