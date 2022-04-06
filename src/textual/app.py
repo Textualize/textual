@@ -488,21 +488,13 @@ class App(DOMNode):
         Args:
             parent (Widget): Parent Widget
         """
-        self.log("app.register", parent, anon_widgets)
         if not anon_widgets and not widgets:
             raise AppError(
                 "Nothing to mount, did you forget parent as first positional arg?"
             )
         name_widgets: Iterable[tuple[str | None, Widget]]
         name_widgets = [*((None, widget) for widget in anon_widgets), *widgets.items()]
-        self.log("name_widgets", name_widgets, bool(name_widgets))
         apply_stylesheet = self.stylesheet.apply
-
-        # Register children
-        # for widget_id, widget in name_widgets:
-        #     if widget.children:
-        #         for child in widget.children:
-        #             self.register(child, *child.children)
 
         for widget_id, widget in name_widgets:
             self.log(widget_id=widget_id, widget=widget, _in=widget in self.registry)
