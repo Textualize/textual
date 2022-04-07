@@ -507,16 +507,25 @@ class Widget(DOMNode):
         width, height = self.size
         renderable = self.render_styled()
         options = self.console.options.update_dimensions(width, height)
-
         lines = self.console.render_lines(renderable, options)
         self._render_cache = RenderCache(self.size, lines)
         self._dirty_regions.clear()
 
-    def get_render_lines(self) -> Lines:
-        """Get segment lines to render the widget."""
+    def get_render_lines(
+        self, start: int | None = None, end: int | None = None
+    ) -> Lines:
+        """Get segment lines to render the widget.
+
+        Args:
+            start (int | None, optional): line start index, or None for first line. Defaults to None.
+            end (int | None, optional): line end index, or None for last line. Defaults to None.
+
+        Returns:
+            Lines: A list of lists of segments.
+        """
         if self._dirty_regions:
             self._render_lines()
-        lines = self._render_cache.lines
+        lines = self._render_cache.lines[start:end]
         return lines
 
     def check_layout(self) -> bool:

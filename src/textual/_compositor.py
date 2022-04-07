@@ -325,14 +325,14 @@ class Compositor:
             return Style.null()
         if widget not in self.regions:
             return Style.null()
-        lines = widget.get_render_lines()
+
         x -= region.x
         y -= region.y
-        if y > len(lines):
+        lines = widget.get_render_lines(y, y + 1)
+        if not lines:
             return Style.null()
-        line = lines[y]
         end = 0
-        for segment in line:
+        for segment in lines[0]:
             end += segment.cell_length
             if x < end:
                 return segment.style or Style.null()
@@ -422,12 +422,11 @@ class Compositor:
             if region in clip:
                 yield region, clip, widget.get_render_lines()
             elif overlaps(clip, region):
-                lines = widget.get_render_lines()
                 new_x, new_y, new_width, new_height = intersection(region, clip)
                 delta_x = new_x - region.x
                 delta_y = new_y - region.y
                 splits = [delta_x, delta_x + new_width]
-                lines = lines[delta_y : delta_y + new_height]
+                lines = widget.get_render_lines(delta_y, delta_y + new_height)
                 lines = [list(divide(line, splits))[1] for line in lines]
                 yield region, clip, lines
 
