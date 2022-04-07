@@ -51,8 +51,8 @@ def test_log_message_render(console):
     # Since we can't guarantee the timezone the tests will run in...
     local_time = (
         datetime.fromtimestamp(TIMESTAMP)
-            .replace(tzinfo=timezone.utc)
-            .astimezone(tz=tz.tzlocal())
+        .replace(tzinfo=timezone.utc)
+        .astimezone(tz=tz.tzlocal())
     )
     timezone_name = local_time.tzname()
     string_timestamp = local_time.time()

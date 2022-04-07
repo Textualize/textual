@@ -31,14 +31,13 @@ async def test_devtools_log_places_encodes_and_queues_message(devtools):
     queued_log = await devtools.log_queue.get()
     queued_log_json = json.loads(queued_log)
     assert queued_log_json == {
-        "payload": {
-            "encoded_segments": "gASVQgAAAAAAAABdlCiMDHJpY2guc2VnbWVudJSMB1NlZ"
-            "21lbnSUk5SMDUhlbGxvLCB3b3JsZCGUTk6HlIGUaAOMAQqUTk6HlIGUZS4=",
-            "line_number": 0,
-            "path": "",
-            "timestamp": TIMESTAMP,
-        },
         "type": "client_log",
+        "payload": {
+            "timestamp": TIMESTAMP,
+            "path": "",
+            "line_number": 0,
+            "encoded_segments": "gANdcQAoY3JpY2guc2VnbWVudApTZWdtZW50CnEBWA0AAABIZWxsbywgd29ybGQhcQJOTodxA4FxBGgBWAEAAAAKcQVOTodxBoFxB2Uu",
+        },
     }
 
 
@@ -54,7 +53,7 @@ async def test_devtools_log_places_encodes_and_queues_many_logs_as_string(devtoo
             "timestamp": TIMESTAMP,
             "path": "",
             "line_number": 0,
-            "encoded_segments": "gASVQAAAAAAAAABdlCiMDHJpY2guc2VnbWVudJSMB1NlZ21lbnSUk5SMC2hlbGxvIHdvcmxklE5Oh5SBlGgDjAEKlE5Oh5SBlGUu",
+            "encoded_segments": "gANdcQAoY3JpY2guc2VnbWVudApTZWdtZW50CnEBWAsAAABoZWxsbyB3b3JsZHECTk6HcQOBcQRoAVgBAAAACnEFTk6HcQaBcQdlLg==",
         },
     }
 

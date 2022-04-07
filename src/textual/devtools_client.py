@@ -153,6 +153,6 @@ class DevtoolsClient:
 
     def _encode_segments(self, segments: list[Segment]) -> str:
         """Pickle and Base64 encode the list of Segments"""
-        pickled = pickle.dumps(segments)
+        pickled = pickle.dumps(segments, protocol=3)
         encoded = base64.b64encode(pickled)
         return str(encoded, encoding="utf-8")
