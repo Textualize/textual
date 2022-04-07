@@ -174,7 +174,8 @@ def tokenize_values(values: dict[str, str]) -> dict[str, list[Token]]:
     """Tokens the values in a dict of strings.
 
     Args:
-        values (dict[str, str]): A mapping of name on to a CSS value.
+        values (dict[str, str]): A mapping of CSS variable name on to a value, to be
+            added to the CSS context.
 
     Returns:
         dict[str, list[Token]]: A mapping of name on to a list of tokens,
