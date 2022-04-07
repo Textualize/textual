@@ -2,7 +2,6 @@ from datetime import datetime, timezone
 
 import pytest
 import time_machine
-from dateutil.tz import tz
 from rich.align import Align
 from rich.console import Console
 from rich.segment import Segment
@@ -52,7 +51,7 @@ def test_log_message_render(console):
     local_time = (
         datetime.fromtimestamp(TIMESTAMP)
         .replace(tzinfo=timezone.utc)
-        .astimezone(tz=tz.tzlocal())
+        .astimezone(tz=datetime.now().astimezone().tzinfo)
     )
     timezone_name = local_time.tzname()
     string_timestamp = local_time.time()
