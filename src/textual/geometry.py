@@ -438,14 +438,14 @@ class Region(NamedTuple):
         Returns:
             Region: The new, smaller region.
         """
-        _clamp = clamp
+
         top, right, bottom, left = margin
         x, y, width, height = self
         return Region(
-            x=_clamp(x + left, 0, width),
-            y=_clamp(y + top, 0, height),
-            width=_clamp(width - left - right, 0, width),
-            height=_clamp(height - top - bottom, 0, height),
+            x=x + left,
+            y=y + top,
+            width=max(0, width - left - right),
+            height=max(0, height - top - bottom),
         )
 
     def intersection(self, region: Region) -> Region:
@@ -495,11 +495,11 @@ class Region(NamedTuple):
                    cut_x ↓
                 ┌────────┐┌───┐
                 │        ││   │
-                │        ││   │
+                │    0   ││ 1 │
                 │        ││   │
         cut_y → └────────┘└───┘
                 ┌────────┐┌───┐
-                │        ││   │
+                │    2   ││ 3 │
                 └────────┘└───┘
 
         Args:
@@ -531,7 +531,7 @@ class Region(NamedTuple):
 
                  cut ↓
             ┌────────┐┌───┐
-            │        ││   │
+            │    0   ││ 1 │
             │        ││   │
             └────────┘└───┘
 
@@ -556,10 +556,11 @@ class Region(NamedTuple):
         """Split a region in to two, from a given x offset.
 
                     ┌─────────┐
-                    │         │
+                    │    0    │
                     │         │
             cut →   └─────────┘
                     ┌─────────┐
+                    │    1    │
                     └─────────┘
 
         Args:
@@ -612,7 +613,7 @@ class Spacing(NamedTuple):
 
     @property
     def totals(self) -> tuple[int, int]:
-        """Total spacing for horizontal and vertical spacing."""
+        """Returns a tuple of (<HORIZONTAL SPACE>, <VERTICAL SPACE>)."""
         top, right, bottom, left = self
         return (left + right, top + bottom)
 

@@ -223,38 +223,16 @@ class DOMNode(MessagePump):
             )
 
     @property
-    def z(self) -> tuple[int, ...]:
-        """Get the z index tuple for this node.
-
-        Returns:
-            tuple[int, ...]: A tuple of ints to sort layers by.
-        """
-        indexes: list[int] = []
-        append = indexes.append
-        node = self
-        layer: str = node.styles.layer
-        while node._parent:
-            parent_styles = node.parent.styles
-            layer = layer or node.styles.layer
-            if layer in parent_styles.layers:
-                append(parent_styles.layers.index(layer))
-                layer = ""
-            else:
-                append(0)
-            node = node.parent
-        return tuple(reversed(indexes))
-
-    @property
-    def text_style(self) -> Style:
+    def rich_text_style(self) -> Style:
         """Get the text style (added to parent style).
 
         Returns:
             Style: Rich Style object.
         """
         return (
-            self.parent.text_style + self.styles.text
+            self.parent.rich_text_style + self.styles.rich_style
             if self.has_parent
-            else self.styles.text
+            else self.styles.rich_style
         )
 
     @property
@@ -314,8 +292,7 @@ class DOMNode(MessagePump):
         for node in self.walk_children():
             node._css_styles.reset()
             if isinstance(node, Widget):
-                # node.clear_render_cache()
-                node._repaint_required = True
+                node.set_dirty()
                 node._layout_required = True
 
     def on_style_change(self) -> None:

@@ -110,9 +110,17 @@ class Tokenizer:
         for name, value in zip(expect.names, iter_groups):
             if value is not None:
                 break
+        else:
+            # For MyPy's benefit
+            raise AssertionError("can't reach here")
 
         token = Token(
-            name, value, self.path, self.code, (line_no, col_no), referenced_by=None
+            name,
+            value,
+            self.path,
+            self.code,
+            (line_no, col_no),
+            referenced_by=None,
         )
         col_no += len(value)
         if col_no >= len(line):

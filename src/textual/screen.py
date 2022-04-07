@@ -9,6 +9,7 @@ from . import events, messages, errors
 
 from .geometry import Offset, Region
 from ._compositor import Compositor
+from .reactive import Reactive
 from .widget import Widget
 from .renderables.gradient import VerticalGradient
 
@@ -24,10 +25,15 @@ class Screen(Widget):
 
     """
 
+    dark = Reactive(False)
+
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
         super().__init__(name=name, id=id)
         self._compositor = Compositor()
         self._dirty_widgets: list[Widget] = []
+
+    def watch_dark(self, dark: bool) -> None:
+        pass
 
     @property
     def is_transparent(self) -> bool:
@@ -134,6 +140,7 @@ class Screen(Widget):
         widget = message.widget
         assert isinstance(widget, Widget)
         self._dirty_widgets.append(widget)
+        self.check_idle()
 
     async def handle_layout(self, message: messages.Layout) -> None:
         message.stop()
@@ -204,10 +211,8 @@ class Screen(Widget):
                 widget, _region = self.get_widget_at(event.x, event.y)
             except errors.NoWidget:
                 return
-            self.log("forward", widget, event)
             scroll_widget = widget
             if scroll_widget is not None:
                 await scroll_widget.forward_event(event)
         else:
-            self.log("view.forwarded", event)
             await self.post_message(event)

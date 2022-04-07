@@ -28,6 +28,7 @@ from .geometry import Region, Offset, Size
 
 
 from ._loop import loop_last
+from ._segment_tools import line_crop
 from ._types import Lines
 from .widget import Widget
 
@@ -182,6 +183,7 @@ class Compositor:
         size = root.size
         map: RenderRegionMap = {}
         widgets: set[Widget] = set()
+        get_order = attrgetter("order")
 
         def add_widget(
             widget: Widget,
@@ -207,24 +209,30 @@ class Compositor:
 
             # Container region is minus border
             container_region = region.shrink(widget.styles.gutter)
+            container_size = container_region.size
 
             # Containers (widgets with layout) require adding children
             if widget.layout is not None:
-                scroll_offset = widget.scroll_offset
-
                 # The region that contains the content (container region minus scrollbars)
                 child_region = widget._arrange_container(container_region)
 
                 # Adjust the clip region accordingly
                 sub_clip = clip.intersection(child_region)
+
+                # The region covered by children relative to parent widget
                 total_region = child_region.reset_origin
 
                 # Arrange the layout
                 placements, arranged_widgets = widget.layout.arrange(
-                    widget, child_region.size, scroll_offset
+                    widget, child_region.size, widget.scroll_offset
                 )
                 widgets.update(arranged_widgets)
-                placements = sorted(placements, key=attrgetter("order"))
+                placements = sorted(placements, key=get_order)
+
+                # An offset added to all placements
+                placement_offset = (
+                    container_region.origin + layout_offset - widget.scroll_offset
+                )
 
                 # Add all the widgets
                 for sub_region, sub_widget, z in placements:
@@ -233,21 +241,21 @@ class Compositor:
                     if sub_widget is not None:
                         add_widget(
                             sub_widget,
-                            sub_region + child_region.origin - scroll_offset,
-                            sub_widget.z + (z,),
+                            sub_region + placement_offset,
+                            order + (z,),
                             sub_clip,
                         )
 
                 # Add any scrollbars
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(
-                    container_region.size
+                    container_size
                 ):
                     map[chrome_widget] = RenderRegion(
                         chrome_region + container_region.origin + layout_offset,
                         order,
                         clip,
-                        container_region.size,
-                        container_region.size,
+                        container_size,
+                        container_size,
                     )
 
                 # Add the container widget, which will render a background
@@ -256,21 +264,17 @@ class Compositor:
                     order,
                     clip,
                     total_region.size,
-                    container_region.size,
+                    container_size,
                 )
 
             else:
                 # Add the widget to the map
                 map[widget] = RenderRegion(
-                    region + layout_offset,
-                    order,
-                    clip,
-                    region.size,
-                    container_region.size,
+                    region + layout_offset, order, clip, region.size, container_size
                 )
 
         # Add top level (root) widget
-        add_widget(root, size.region, (), size.region)
+        add_widget(root, size.region, (0,), size.region)
         return map, widgets
 
     def __iter__(self) -> Iterator[tuple[Widget, Region, Region, Size, Size]]:
@@ -322,14 +326,14 @@ class Compositor:
             return Style.null()
         if widget not in self.regions:
             return Style.null()
-        lines = widget.get_render_lines()
+
         x -= region.x
         y -= region.y
-        if y > len(lines):
+        lines = widget.get_render_lines(y, y + 1)
+        if not lines:
             return Style.null()
-        line = lines[y]
         end = 0
-        for segment in line:
+        for segment in lines[0]:
             end += segment.cell_length
             if x < end:
                 return segment.style or Style.null()
@@ -409,24 +413,21 @@ class Compositor:
         else:
             widget_regions = []
 
-        divide = Segment.divide
         intersection = Region.intersection
         overlaps = Region.overlaps
 
         for widget, region, _order, clip in widget_regions:
             if not region:
-                # log(widget, region)
                 continue
             if region in clip:
                 yield region, clip, widget.get_render_lines()
             elif overlaps(clip, region):
-                lines = widget.get_render_lines()
                 new_x, new_y, new_width, new_height = intersection(region, clip)
                 delta_x = new_x - region.x
                 delta_y = new_y - region.y
-                splits = [delta_x, delta_x + new_width]
-                lines = lines[delta_y : delta_y + new_height]
-                lines = [list(divide(line, splits))[1] for line in lines]
+                crop_x = delta_x + new_width
+                lines = widget.get_render_lines(delta_y, delta_y + new_height)
+                lines = [line_crop(line, delta_x, crop_x) for line in lines]
                 yield region, clip, lines
 
     @classmethod
@@ -508,13 +509,11 @@ class Compositor:
         crop_x, crop_y, crop_x2, crop_y2 = crop_region.corners
         render_lines = self._assemble_chops(chops[crop_y:crop_y2])
 
-        def width_view(line: list[Segment]) -> list[Segment]:
-            div_lines = list(divide(line, [crop_x, crop_x2]))
-            line = div_lines[1] if len(div_lines) > 1 else div_lines[0]
-            return line
-
         if crop is not None and (crop_x, crop_x2) != (0, width):
-            render_lines = [width_view(line) if line else line for line in render_lines]
+            render_lines = [
+                line_crop(line, crop_x, crop_x2) if line else line
+                for line in render_lines
+            ]
 
         return SegmentLines(render_lines, new_lines=True)
 

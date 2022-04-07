@@ -4,14 +4,14 @@ Screen {
 
 #borders {
   layout: vertical;
-  text-background: #212121;
+  background: #212121;
   overflow-y: scroll;
 }
 
 Lorem.border {
   height: 12;
   margin: 2 4;
-  text-background: #303f9f;
+  background: #303f9f;
 }
 
 Lorem.round {

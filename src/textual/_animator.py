@@ -186,7 +186,7 @@ class Animator:
 
         easing_function = EASING[easing] if isinstance(easing, str) else easing
 
-        animation: Animation
+        animation: Animation | None = None
         if hasattr(obj, "__textual_animation__"):
             animation = getattr(obj, "__textual_animation__")(
                 attribute,
@@ -196,7 +196,7 @@ class Animator:
                 speed=speed,
                 easing=easing_function,
             )
-        else:
+        if animation is None:
             start_value = getattr(obj, attribute)
 
             if start_value == value:

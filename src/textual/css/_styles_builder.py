@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import cast, Iterable, NoReturn
 
 import rich.repr
-from rich.color import Color
 from rich.style import Style
 
 from ._error_tools import friendly_list
@@ -22,6 +21,7 @@ from .styles import DockGroup, Styles
 from .tokenize import Token
 from .transition import Transition
 from .types import BoxSizing, Edge, Display, Overflow, Visibility
+from ..color import Color
 from .._duration import _duration_as_seconds
 from .._easing import EASING
 from ..geometry import Spacing, SpacingDimensions, clamp
@@ -315,7 +315,7 @@ class StylesBuilder:
 
     def _parse_border(self, name: str, tokens: list[Token]) -> tuple[str, Color]:
         border_type = "solid"
-        border_color = Color.default()
+        border_color = Color(0, 255, 0)
 
         for token in tokens:
             token_name, value, _, _, _, _ = token
@@ -459,36 +459,11 @@ class StylesBuilder:
                         f"invalid value for layout (received {value!r}, expected {friendly_list(LAYOUT_MAP.keys())})",
                     )
 
-    def process_text(self, name: str, tokens: list[Token], important: bool) -> None:
-        style_definition = _join_tokens(tokens, joiner=" ")
-
-        # If every token in the value is a referenced by the same variable,
-        # we can display the variable name before the style definition.
-        # TODO: Factor this out to apply it to other properties too.
-        unique_references = {t.referenced_by for t in tokens if t.referenced_by}
-        if tokens and tokens[0].referenced_by and len(unique_references) == 1:
-            variable_prefix = f"${tokens[0].referenced_by.name}="
-        else:
-            variable_prefix = ""
-
-        try:
-            style = Style.parse(style_definition)
-            self.styles.text = style
-        except Exception as error:
-            message = f"property 'text' has invalid value {variable_prefix}{style_definition!r}; {error}"
-            self.error(name, tokens[0], message)
-        if important:
-            self.styles.important.update(
-                {"text_style", "text_background", "text_color"}
-            )
-
-    def process_text_color(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_color(self, name: str, tokens: list[Token], important: bool) -> None:
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
-                    self.styles._rules["text_color"] = Color.parse(token.value)
+                    self.styles._rules["color"] = Color.parse(token.value)
                 except Exception as error:
                     self.error(
                         name, token, f"failed to parse color {token.value!r}; {error}"
@@ -498,13 +473,13 @@ class StylesBuilder:
                     name, token, f"unexpected token {token.value!r} in declaration"
                 )
 
-    def process_text_background(
+    def process_background(
         self, name: str, tokens: list[Token], important: bool
     ) -> None:
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
-                    self.styles._rules["text_background"] = Color.parse(token.value)
+                    self.styles._rules["background"] = Color.parse(token.value)
                 except Exception as error:
                     self.error(
                         name, token, f"failed to parse color {token.value!r}; {error}"

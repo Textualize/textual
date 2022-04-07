@@ -11,6 +11,7 @@ VALID_VISIBILITY: Final = {"visible", "hidden"}
 VALID_DISPLAY: Final = {"block", "none"}
 VALID_BORDER: Final = {
     "none",
+    "hidden",
     "round",
     "solid",
     "double",

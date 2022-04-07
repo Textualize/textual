@@ -5,22 +5,22 @@ $primary: #021720;
 $secondary: #95d52a;
 $background: #262626;
 
-$primary-style: $text on $background;
-$animation-speed: 500ms;
-$animation: offset $animation-speed in_out_cubic;
+$animatitext-speed: 500ms;
+$animation: offset $animatitext-speed in_out_cubic;
 
 App > View {
   docks: side=left/1;
-  text: on $background;
+  background: $background;
 }
 
 Widget:hover {
   outline: heavy;
-  text: bold !important;
+  text-style: bold !important;
 }
 
 #sidebar {
-  text: $primary-style;
+  color: $text;
+  background: $background;
   dock: side;
   width: 30;
   offset-x: -100%;
@@ -33,7 +33,8 @@ Widget:hover {
 }
 
 #header {
-  text: $text on $primary;
+  color: $text;
+  background: $primary;
   height: 3;
   border-bottom: hkey $secondary;
 }
@@ -43,7 +44,8 @@ Widget:hover {
 }
 
 #content {
-  text: $text on $background;
+  color: $text;
+  background: $background;
   offset-y: -3;
 }
 
@@ -53,7 +55,8 @@ Widget:hover {
 
 #footer {
   opacity: 1;
-  text: $text on $primary;
+  color: $text;
+  background: $background;
   height: 3;
   border-top: hkey $secondary;
 }
