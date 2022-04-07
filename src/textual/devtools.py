@@ -11,7 +11,12 @@ from contextlib import suppress
 from datetime import datetime, timezone
 from json import JSONDecodeError
 from pathlib import Path
-from typing import cast, Iterable, Literal
+from typing import cast, Iterable
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 from aiohttp import WSMessage, WSMsgType, WSCloseCode
 from aiohttp.web import run_app
