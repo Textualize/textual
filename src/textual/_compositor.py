@@ -28,6 +28,7 @@ from .geometry import Region, Offset, Size
 
 
 from ._loop import loop_last
+from ._segment_tools import line_crop
 from ._types import Lines
 from .widget import Widget
 
@@ -412,7 +413,6 @@ class Compositor:
         else:
             widget_regions = []
 
-        divide = Segment.divide
         intersection = Region.intersection
         overlaps = Region.overlaps
 
@@ -425,9 +425,9 @@ class Compositor:
                 new_x, new_y, new_width, new_height = intersection(region, clip)
                 delta_x = new_x - region.x
                 delta_y = new_y - region.y
-                splits = [delta_x, delta_x + new_width]
+                crop_x = delta_x + new_width
                 lines = widget.get_render_lines(delta_y, delta_y + new_height)
-                lines = [list(divide(line, splits))[1] for line in lines]
+                lines = [line_crop(line, delta_x, crop_x) for line in lines]
                 yield region, clip, lines
 
     @classmethod
@@ -509,13 +509,11 @@ class Compositor:
         crop_x, crop_y, crop_x2, crop_y2 = crop_region.corners
         render_lines = self._assemble_chops(chops[crop_y:crop_y2])
 
-        def width_view(line: list[Segment]) -> list[Segment]:
-            div_lines = list(divide(line, [crop_x, crop_x2]))
-            line = div_lines[1] if len(div_lines) > 1 else div_lines[0]
-            return line
-
         if crop is not None and (crop_x, crop_x2) != (0, width):
-            render_lines = [width_view(line) if line else line for line in render_lines]
+            render_lines = [
+                line_crop(line, crop_x, crop_x2) if line else line
+                for line in render_lines
+            ]
 
         return SegmentLines(render_lines, new_lines=True)
 
