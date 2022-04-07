@@ -102,9 +102,9 @@ class ColorSystem:
         for color in self.COLOR_NAMES:
             for shade_number in range(-NUMBER_OF_SHADES, NUMBER_OF_SHADES + 1):
                 if shade_number < 0:
-                    yield f"{color}-darken{abs(shade_number)}"
+                    yield f"{color}-darken-{abs(shade_number)}"
                 elif shade_number > 0:
-                    yield f"{color}-lighten{shade_number}"
+                    yield f"{color}-lighten-{shade_number}"
                 else:
                     yield color
 
@@ -160,7 +160,7 @@ class ColorSystem:
                     label = "-lighten"
                 else:
                     label = ""
-                yield (f"{label}{abs(n) if n else ''}"), n * luminosity_step
+                yield (f"{label}{'-' + str(abs(n)) if n else ''}"), n * luminosity_step
 
         # Color names and color
         COLORS = [
@@ -195,7 +195,7 @@ class ColorSystem:
                     text_color = shade_color.get_contrast_text(text_alpha)
                     if fade > 0:
                         text_color = text_color.blend(shade_color, fade * 0.1 + 0.15)
-                        on_name = f"on-{name}{shade_name}-fade{fade}"
+                        on_name = f"on-{name}{shade_name}-fade-{fade}"
                     else:
                         on_name = f"on-{name}{shade_name}"
                     colors[on_name] = text_color.hex
@@ -212,7 +212,7 @@ class ColorSystem:
                 text = Text(f"{background} ", style=f"{foreground} on {background}")
                 for fade in range(3):
                     foreground = colors[
-                        f"on-{name}-fade{fade}" if fade else f"on-{name}"
+                        f"on-{name}-fade-{fade}" if fade else f"on-{name}"
                     ]
                     text.append(f"{name} ", style=f"{foreground} on {background}")
 
@@ -236,4 +236,4 @@ if __name__ == "__main__":
 
     from rich import print
 
-    print(color_system)
+    print(color_system.generate(dark=True))

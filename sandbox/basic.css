@@ -28,27 +28,27 @@ App > Screen {
 
 #sidebar .title {
   height: 1;
-  background: $primary-darken2;
-  color: $on-primary-darken2;
-  border-right: outer $primary-darken3;
+  background: $primary-darken-2;
+  color: $on-primary-darken-2;
+  border-right: outer $primary-darken-3;
 }
 
 #sidebar .user {
   height: 8;
-  background: $primary-darken1;
-  color: $on-primary-darken1;
-  border-right: outer $primary-darken3;
+  background: $primary-darken-1;
+  color: $on-primary-darken-1;
+  border-right: outer $primary-darken-3;
 }
 
 #sidebar .content {
   background: $primary;
   color: $on-primary;
-  border-right: outer $primary-darken3;
+  border-right: outer $primary-darken-3;
 }
 
 #header {
-  color: $on-primary-darken1;
-  background: $primary-darken1;
+  color: $on-primary-darken-1;
+  background: $primary-darken-1;
   height: 3;
 
 }
@@ -77,7 +77,7 @@ TweetHeader {
 
 TweetBody {  
   background: $background
-  color: $on-background-fade1
+  color: $on-background-fade-1
   height:6;
 }
 
@@ -95,14 +95,13 @@ TweetBody {
 }
 
 .button:hover {
-  background: $accent1-darken1;
-  color: $on-accent1-darken1;
+  background: $accent1-darken-1;
+  color: $on-accent1-darken-1;
   width:20;
   height: 3
   border: tall $on-background;
  
   margin: 0 1 1 1;
- 
 
  
 }
@@ -111,5 +110,5 @@ TweetBody {
   color: $on-accent2;
   background: $accent2;
   height: 1;
-  border-top: hkey $accent2-darken2;
+  border-top: hkey $accent2-darken-2;
 }
