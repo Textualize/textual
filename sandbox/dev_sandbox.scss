@@ -5,8 +5,8 @@ $primary: #021720;
 $secondary: #95d52a;
 $background: #262626;
 
-$animation-speed: 500ms;
-$animation: offset $animation-speed in_out_cubic;
+$animatitext-speed: 500ms;
+$animation: offset $animatitext-speed in_out_cubic;
 
 App > View {
   docks: side=left/1;

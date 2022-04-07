@@ -9,11 +9,11 @@ App > Screen {
   layout: dock;
   docks: side=left/1;
   background: $surface;
-  color: $on-surface;
+  color: $text-surface;
 }
 
 #sidebar {
-  color: $on-primary;
+  color: $text-primary;
   background: $primary;
   dock: side;
   width: 30;
@@ -29,32 +29,32 @@ App > Screen {
 #sidebar .title {
   height: 1;
   background: $primary-darken-2;
-  color: $on-primary-darken-2;
+  color: $text-primary-darken-2;
   border-right: outer $primary-darken-3;
 }
 
 #sidebar .user {
   height: 8;
   background: $primary-darken-1;
-  color: $on-primary-darken-1;
+  color: $text-primary-darken-1;
   border-right: outer $primary-darken-3;
 }
 
 #sidebar .content {
   background: $primary;
-  color: $on-primary;
+  color: $text-primary;
   border-right: outer $primary-darken-3;
 }
 
 #header {
-  color: $on-primary-darken-1;
+  color: $text-primary-darken-1;
   background: $primary-darken-1;
   height: 3;
 
 }
 
 #content {
-  color: $on-surface;
+  color: $text-surface;
   background: $surface;
   layout: vertical;
 }
@@ -64,7 +64,7 @@ Tweet {
   max-width: 80;
   margin: 1 2;
   background: $background;
-  color: $on-background;
+  color: $text-background;
   layout: vertical
   
 }
@@ -72,21 +72,21 @@ Tweet {
 TweetHeader {
   height:1
   background: $accent1
-  color: $on-accent1
+  color: $text-accent1
 }
 
 TweetBody {  
   background: $background
-  color: $on-background-fade-1
+  color: $text-background-fade-1
   height:6;
 }
 
 .button {
   background: $accent2;
-  color: $on-accent2;
+  color: $text-accent2;
   width:20;
   height: 3
-  border: tall $on-background;
+  border: tall $text-background;
  
   margin: 0 1 1 1;
 
@@ -96,10 +96,10 @@ TweetBody {
 
 .button:hover {
   background: $accent1-darken-1;
-  color: $on-accent1-darken-1;
+  color: $text-accent1-darken-1;
   width:20;
   height: 3
-  border: tall $on-background;
+  border: tall $text-background;
  
   margin: 0 1 1 1;
 
@@ -107,7 +107,7 @@ TweetBody {
 }
 
 #footer {
-  color: $on-accent2;
+  color: $text-accent2;
   background: $accent2;
   height: 1;
   border-top: hkey $accent2-darken-2;

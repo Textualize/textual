@@ -195,9 +195,9 @@ class ColorSystem:
                     text_color = shade_color.get_contrast_text(text_alpha)
                     if fade > 0:
                         text_color = text_color.blend(shade_color, fade * 0.1 + 0.15)
-                        on_name = f"on-{name}{shade_name}-fade-{fade}"
+                        on_name = f"text-{name}{shade_name}-fade-{fade}"
                     else:
-                        on_name = f"on-{name}{shade_name}"
+                        on_name = f"text-{name}{shade_name}"
                     colors[on_name] = text_color.hex
 
         return colors
@@ -208,11 +208,11 @@ class ColorSystem:
             colors = self.generate(dark)
             for name in self.shades:
                 background = colors[name]
-                foreground = colors[f"on-{name}"]
+                foreground = colors[f"text-{name}"]
                 text = Text(f"{background} ", style=f"{foreground} on {background}")
                 for fade in range(3):
                     foreground = colors[
-                        f"on-{name}-fade-{fade}" if fade else f"on-{name}"
+                        f"text-{name}-fade-{fade}" if fade else f"text-{name}"
                     ]
                     text.append(f"{name} ", style=f"{foreground} on {background}")
 
@@ -236,4 +236,4 @@ if __name__ == "__main__":
 
     from rich import print
 
-    print(color_system.generate(dark=True))
+    print(color_system)
