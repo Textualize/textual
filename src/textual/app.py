@@ -418,12 +418,10 @@ class App(DOMNode):
             try:
                 await self.devtools.connect()
                 self.log_file.write(f"Connected to devtools ({self.devtools.url})\n")
-                self.log_file.flush()
             except DevtoolsConnectionError:
                 self.log_file.write(
                     f"Couldn't connect to devtools ({self.devtools.url})\n"
                 )
-                self.log_file.flush()
         try:
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
@@ -463,6 +461,9 @@ class App(DOMNode):
                 log("PROCESS END")
                 if self.devtools.is_connected:
                     await self._disconnect_devtools()
+                    self.log_file.write(
+                        f"Disconnected from devtools ({self.devtools.url})\n"
+                    )
                 with timer("animator.stop()"):
                     await self.animator.stop()
                 with timer("self.close_all()"):

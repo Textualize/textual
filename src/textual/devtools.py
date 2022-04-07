@@ -38,6 +38,15 @@ QUEUEABLE_TYPES = {"client_log", "client_spillover"}
 
 
 class DevtoolsLogMessage:
+    """Renderable representing a single log message
+
+    Args:
+        segments (Iterable[Segment]): The segments to display
+        path (str): The path of the file on the client that the log call was made from
+        line_number (int): The line number of the file on the client the log call was made from
+        unix_timestamp (int): Seconds since January 1st 1970
+    """
+
     def __init__(
         self,
         segments: Iterable[Segment],
@@ -62,8 +71,8 @@ class DevtoolsLogMessage:
         table = Table.grid(expand=True)
         table.add_column()
         table.add_column()
-        file_link = f"file://{Path(self.path).absolute()}"
-        file_and_line = f"{Path(self.path).name}:{self.line_number}"
+        file_link = escape(f"file://{Path(self.path).absolute()}")
+        file_and_line = escape(f"{Path(self.path).name}:{self.line_number}")
         table.add_row(
             f" [#888177]{local_time.time()} [dim]{timezone_name}[/]",
             Align.right(f"[#888177][link={file_link}]{file_and_line} "),
@@ -77,6 +86,8 @@ DevtoolsMessageLevel = Literal["info", "warning", "error"]
 
 
 class DevtoolsInternalMessage:
+    """Renderable for messages written by the devtools server itself"""
+
     def __init__(self, message: str, *, level: str = "info") -> None:
         self.message = message
         self.level = level
@@ -93,8 +104,16 @@ class DevtoolsInternalMessage:
 
 
 async def _enqueue_size_changes(
-    console: Console, outgoing_queue: Queue, poll_delay: int
+    console: Console, outgoing_queue: Queue[dict], poll_delay: int
 ) -> None:
+    """Poll console dimensions, and add a `server_info` message to the Queue
+    any time a change occurs
+
+    Args:
+        console (Console): The Console instance to poll for size changes on
+        outgoing_queue (Queue): The Queue to add to when a size change occurs
+        poll_delay (int): Time between polls
+    """
     current_width = console.width
     current_height = console.height
     while True:
@@ -108,7 +127,16 @@ async def _enqueue_size_changes(
         await asyncio.sleep(poll_delay)
 
 
-async def _enqueue_server_info(outgoing_queue: Queue, width: int, height: int) -> None:
+async def _enqueue_server_info(
+    outgoing_queue: Queue[dict], width: int, height: int
+) -> None:
+    """Add `server_info` message to the queue
+
+    Args:
+        outgoing_queue (Queue[dict]): The Queue to add the message to
+        width (int): The new width of the server Console
+        height (int): The new height of the server Console
+    """
     await outgoing_queue.put(
         {
             "type": "server_info",
@@ -121,6 +149,13 @@ async def _enqueue_server_info(outgoing_queue: Queue, width: int, height: int) -
 
 
 async def _consume_incoming(console: Console, incoming_queue: Queue[dict]) -> None:
+    """Consume messages from the incoming (client -> server) Queue, and print
+    the corresponding renderables to the console for each message.
+
+    Args:
+        console (Console): The Console instance to print to
+        incoming_queue (Queue[dict]): The Queue containing messages to process
+    """
     while True:
         message_json = await incoming_queue.get()
         type = message_json["type"]
@@ -152,6 +187,12 @@ async def _consume_incoming(console: Console, incoming_queue: Queue[dict]) -> No
 async def _consume_outgoing(
     outgoing_queue: Queue[dict], websocket: WebSocketResponse
 ) -> None:
+    """Consume messages from the outgoing (server -> client) Queue.
+
+    Args:
+        outgoing_queue (Queue[dict]): The queue to consume from
+        websocket (WebSocketResponse): The websocket to write to
+    """
     while True:
         message_json = await outgoing_queue.get()
         type = message_json["type"]
@@ -159,9 +200,15 @@ async def _consume_outgoing(
             await websocket.send_json(message_json)
 
 
-async def websocket_handler(request: Request):
-    """aiohttp websocket handler for sending data between devtools client and server"""
+async def websocket_handler(request: Request) -> WebSocketResponse:
+    """aiohttp websocket handler for sending data between devtools client and server
 
+    Args:
+        request (Request): The request to the websocket endpoint
+
+    Returns:
+        WebSocketResponse: The websocket response
+    """
     websocket = WebSocketResponse()
     await websocket.prepare(request)
     request.app["websockets"].add(websocket)
