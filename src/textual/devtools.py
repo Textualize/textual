@@ -110,7 +110,10 @@ class DevtoolsInternalMessage:
 
 
 async def _enqueue_size_changes(
-    console: Console, outgoing_queue: Queue[dict], poll_delay: int
+    console: Console,
+    outgoing_queue: Queue[dict],
+    poll_delay: int,
+    shutdown_event: asyncio.Event,
 ) -> None:
     """Poll console dimensions, and add a `server_info` message to the Queue
     any time a change occurs
@@ -119,10 +122,12 @@ async def _enqueue_size_changes(
         console (Console): The Console instance to poll for size changes on
         outgoing_queue (Queue): The Queue to add to when a size change occurs
         poll_delay (int): Time between polls
+        shutdown_event (asyncio.Event): When set, this coroutine will stop polling
+            and will eventually return (after the current poll)
     """
     current_width = console.width
     current_height = console.height
-    while True:
+    while not shutdown_event.is_set():
         width = console.width
         height = console.height
         dimensions_changed = width != current_width or height != current_height
@@ -164,8 +169,10 @@ async def _consume_incoming(console: Console, incoming_queue: Queue[dict]) -> No
     """
     while True:
         message_json = await incoming_queue.get()
-        type = message_json["type"]
+        if message_json is None:
+            break
 
+        type = message_json["type"]
         if type == "client_log":
             path = message_json["payload"]["path"]
             line_number = message_json["payload"]["line_number"]
@@ -173,14 +180,14 @@ async def _consume_incoming(console: Console, incoming_queue: Queue[dict]) -> No
             encoded_segments = message_json["payload"]["encoded_segments"]
             decoded_segments = base64.b64decode(encoded_segments)
             segments = pickle.loads(decoded_segments)
-
-            log_message = DevtoolsLogMessage(
-                segments=segments,
-                path=path,
-                line_number=line_number,
-                unix_timestamp=timestamp,
+            console.print(
+                DevtoolsLogMessage(
+                    segments=segments,
+                    path=path,
+                    line_number=line_number,
+                    unix_timestamp=timestamp,
+                )
             )
-            console.print(log_message)
         elif type == "client_spillover":
             spillover = int(message_json["payload"]["spillover"])
             info_renderable = DevtoolsInternalMessage(
@@ -201,6 +208,8 @@ async def _consume_outgoing(
     """
     while True:
         message_json = await outgoing_queue.get()
+        if message_json is None:
+            break
         type = message_json["type"]
         if type == "server_info":
             await websocket.send_json(message_json)
@@ -220,17 +229,24 @@ async def websocket_handler(request: Request) -> WebSocketResponse:
     request.app["websockets"].add(websocket)
 
     console = request.app["console"]
-    size_change_poll_delay = request.app["size_change_poll_delay_secs"]
 
-    incoming_queue: Queue[dict] = Queue()
-    outgoing_queue: Queue[dict] = Queue()
+    size_change_poll_delay = request.app["size_change_poll_delay_secs"]
+    size_change_poll_shutdown_event: asyncio.Event = request.app[
+        "size_change_poll_shutdown_event"
+    ]
+
+    outgoing_queue: Queue[dict | None] = request.app["outgoing_queue"]
+    incoming_queue: Queue[dict | None] = request.app["incoming_queue"]
 
     request.app["tasks"].extend(
         (
             asyncio.create_task(_consume_outgoing(outgoing_queue, websocket)),
             asyncio.create_task(
                 _enqueue_size_changes(
-                    console, outgoing_queue, poll_delay=size_change_poll_delay
+                    console,
+                    outgoing_queue,
+                    poll_delay=size_change_poll_delay,
+                    shutdown_event=size_change_poll_shutdown_event,
                 )
             ),
             asyncio.create_task(_consume_incoming(console, incoming_queue)),
@@ -277,15 +293,27 @@ async def websocket_handler(request: Request) -> WebSocketResponse:
 
 
 async def _on_shutdown(app: Application) -> None:
-    for task in app["tasks"]:
-        task.cancel()
-        with suppress(CancelledError):
-            await task
-
+    # Close the websockets to stop most writes to the incoming queue
     for websocket in set(app["websockets"]):
         await websocket.close(
             code=WSCloseCode.GOING_AWAY, message="Shutting down server"
         )
+
+    # This task needs to shut down first as it writes to the outgoing queue
+    size_change_poll_shutdown_event: asyncio.Event = app[
+        "size_change_poll_shutdown_event"
+    ]
+    size_change_poll_shutdown_event.set()
+
+    # Now stop the tasks which read from the queues
+    incoming_queue: Queue[dict | None] = app["incoming_queue"]
+    await incoming_queue.put(None)
+
+    outgoing_queue: Queue[dict | None] = app["outgoing_queue"]
+    await outgoing_queue.put(None)
+
+    for task in app["tasks"]:
+        await task
 
 
 def _run_devtools(port: int) -> None:
@@ -298,7 +326,10 @@ def _make_devtools_aiohttp_app(
 ):
     app = Application()
     app["size_change_poll_delay_secs"] = size_change_poll_delay_secs
+    app["size_change_poll_shutdown_event"] = asyncio.Event()
     app["console"] = Console()
+    app["incoming_queue"] = Queue()
+    app["outgoing_queue"] = Queue()
     app["websockets"] = weakref.WeakSet()
     app["tasks"] = []
     app.add_routes(
