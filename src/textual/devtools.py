@@ -44,13 +44,15 @@ class DevtoolsLogMessage:
         path: str,
         line_number: int,
         unix_timestamp: int,
-    ):
+    ) -> None:
         self.segments = segments
         self.path = path
         self.line_number = line_number
         self.unix_timestamp = unix_timestamp
 
-    def __rich_console__(self, console: Console, options: ConsoleOptions):
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
         local_time = (
             datetime.fromtimestamp(self.unix_timestamp)
             .replace(tzinfo=timezone.utc)
@@ -75,7 +77,7 @@ DevtoolsMessageLevel = Literal["info", "warning", "error"]
 
 
 class DevtoolsInternalMessage:
-    def __init__(self, message: str, *, level: str = "info"):
+    def __init__(self, message: str, *, level: str = "info") -> None:
         self.message = message
         self.level = level
 
@@ -92,7 +94,7 @@ class DevtoolsInternalMessage:
 
 async def _enqueue_size_changes(
     console: Console, outgoing_queue: Queue, poll_delay: int
-):
+) -> None:
     current_width = console.width
     current_height = console.height
     while True:
@@ -158,6 +160,8 @@ async def _consume_outgoing(
 
 
 async def websocket_handler(request: Request):
+    """aiohttp websocket handler for sending data between devtools client and server"""
+
     websocket = WebSocketResponse()
     await websocket.prepare(request)
     request.app["websockets"].add(websocket)

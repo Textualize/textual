@@ -17,7 +17,7 @@ async def server(aiohttp_server, unused_tcp_port):
 @pytest.fixture
 async def devtools(aiohttp_client, server):
     client = await aiohttp_client(server)
-    devtools = DevtoolsClient(address=client.host, port=client.port)
+    devtools = DevtoolsClient(host=client.host, port=client.port)
     await devtools.connect()
     yield devtools
     await devtools.disconnect()
