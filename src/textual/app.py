@@ -564,7 +564,6 @@ class App(DOMNode):
         Args:
             animate (bool, optional): Also execute CSS animations. Defaults to True.
         """
-        # TODO: This doesn't update variables
         stylesheet = self.app.stylesheet
         stylesheet.set_variables(self.get_css_variables())
         stylesheet.reparse()
