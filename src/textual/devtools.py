@@ -86,9 +86,15 @@ DevtoolsMessageLevel = Literal["info", "warning", "error"]
 
 
 class DevtoolsInternalMessage:
-    """Renderable for messages written by the devtools server itself"""
+    """Renderable for messages written by the devtools server itself
 
-    def __init__(self, message: str, *, level: str = "info") -> None:
+    Args:
+        message (str): The message to display
+        level (DevtoolsMessageLevel): The message level ("info", "warning", or "error").
+            Determines colors used to render the message and the perceived importance.
+    """
+
+    def __init__(self, message: str, *, level: DevtoolsMessageLevel = "info") -> None:
         self.message = message
         self.level = level
 
