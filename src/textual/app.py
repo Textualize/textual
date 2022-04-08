@@ -12,7 +12,6 @@ from typing import Any, Callable, Iterable, Type, TypeVar, TYPE_CHECKING
 import aiohttp
 import rich
 import rich.repr
-from aiohttp import ClientWebSocketResponse
 from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.measure import Measurement
@@ -30,7 +29,7 @@ from ._event_broker import extract_handler_actions, NoHandler
 from ._profile import timer
 from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet, StylesheetParseError, StylesheetError
-from .devtools_client import DevtoolsClient, DevtoolsConnectionError
+from .devtools.client import DevtoolsClient, DevtoolsConnectionError
 from .dom import DOMNode
 from .driver import Driver
 from .file_monitor import FileMonitor

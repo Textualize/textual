@@ -7,7 +7,7 @@ from rich.console import Console
 from rich.segment import Segment
 
 from tests.utilities.render import wait_for_predicate
-from textual.devtools import DevtoolsLogMessage, DevtoolsInternalMessage
+from textual.devtools.server import DevtoolsLogMessage, DevtoolsInternalMessage
 
 TIMESTAMP = 1649166819
 WIDTH = 40

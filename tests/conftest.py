@@ -1,7 +1,7 @@
 import pytest
 
-from textual.devtools import _make_devtools_aiohttp_app
-from textual.devtools_client import DevtoolsClient
+from textual.devtools.server import _make_devtools_aiohttp_app
+from textual.devtools.client import DevtoolsClient
 
 
 @pytest.fixture

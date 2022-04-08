@@ -1,16 +1,14 @@
-import asyncio
 import json
 from asyncio import Queue
 from datetime import datetime
 
-import pytest
 import time_machine
 from aiohttp.web_ws import WebSocketResponse
 from rich.console import ConsoleDimensions
 from rich.panel import Panel
 
 from tests.utilities.render import wait_for_predicate
-from textual.devtools_client import DevtoolsClient
+from textual.devtools.client import DevtoolsClient
 
 TIMESTAMP = 1649166819
 
