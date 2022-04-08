@@ -6,7 +6,7 @@ import json
 import pickle
 import sys
 import weakref
-from asyncio import Queue
+from asyncio import Queue, Task
 from datetime import datetime, timezone
 from json import JSONDecodeError
 from pathlib import Path
@@ -121,7 +121,7 @@ async def _enqueue_size_changes(
         outgoing_queue (Queue): The Queue to add to when a size change occurs
         poll_delay (int): Time between polls
         shutdown_event (asyncio.Event): When set, this coroutine will stop polling
-            and will eventually return (after the current poll)
+            and will eventually return (after the current poll completes)
     """
     current_width = console.width
     current_height = console.height
@@ -133,10 +133,10 @@ async def _enqueue_size_changes(
             await _enqueue_server_info(outgoing_queue, width, height)
             current_width = width
             current_height = height
-        await asyncio.wait(
-            [shutdown_event.wait(), asyncio.sleep(poll_delay)],
-            return_when=asyncio.FIRST_COMPLETED,
-        )
+        try:
+            await asyncio.wait_for(shutdown_event.wait(), timeout=poll_delay)
+        except asyncio.TimeoutError:
+            pass
 
 
 async def _enqueue_server_info(
@@ -173,6 +173,7 @@ async def _consume_incoming(
     while True:
         message_json = await incoming_queue.get()
         if message_json is None:
+            incoming_queue.task_done()
             break
 
         type = message_json["type"]
@@ -212,10 +213,12 @@ async def _consume_outgoing(
     while True:
         message_json = await outgoing_queue.get()
         if message_json is None:
+            outgoing_queue.task_done()
             break
         type = message_json["type"]
         if type == "server_info":
             await websocket.send_json(message_json)
+        outgoing_queue.task_done()
 
 
 async def websocket_handler(request: Request) -> WebSocketResponse:
@@ -254,13 +257,13 @@ async def websocket_handler(request: Request) -> WebSocketResponse:
         _consume_incoming(console, incoming_queue)
     )
 
-    request.app["tasks"].extend(
-        (
-            consume_incoming_task,
-            consume_outgoing_task,
-        )
+    request.app["tasks"].update(
+        {
+            "consume_incoming_task": consume_incoming_task,
+            "consume_outgoing_task": consume_outgoing_task,
+            "size_change_task": size_change_task,
+        }
     )
-    request.app["size_change_task"] = size_change_task
 
     if request.remote:
         console.print(
@@ -307,6 +310,7 @@ async def websocket_handler(request: Request) -> WebSocketResponse:
 
 async def _on_shutdown(app: Application) -> None:
     """aiohttp shutdown handler, called when the aiohttp server is stopped"""
+    tasks: dict[str, Task] = app["tasks"]
 
     # Close the websockets to stop most writes to the incoming queue
     for websocket in set(app["websockets"]):
@@ -317,7 +321,7 @@ async def _on_shutdown(app: Application) -> None:
     # This task needs to shut down first as it writes to the outgoing queue
     shutdown_event: asyncio.Event = app["shutdown_event"]
     shutdown_event.set()
-    size_change_task = app.get("size_change_task")
+    size_change_task = tasks.get("size_change_task")
     if size_change_task:
         await size_change_task
 
@@ -328,8 +332,13 @@ async def _on_shutdown(app: Application) -> None:
     outgoing_queue: Queue[dict | None] = app["outgoing_queue"]
     await outgoing_queue.put(None)
 
-    for task in app["tasks"]:
-        await task
+    consume_incoming_task = tasks.get("consume_incoming_task")
+    if consume_incoming_task:
+        await consume_incoming_task
+
+    consume_outgoing_task = tasks.get("consume_outgoing_task")
+    if consume_outgoing_task:
+        await consume_outgoing_task
 
 
 def _run_devtools(port: int) -> None:
@@ -347,8 +356,7 @@ def _make_devtools_aiohttp_app(
     app["incoming_queue"] = Queue()
     app["outgoing_queue"] = Queue()
     app["websockets"] = weakref.WeakSet()
-    app["tasks"] = []
-    app["size_change_task"] = None
+    app["tasks"] = {}
     app.add_routes(
         [
             get("/textual-devtools-websocket", websocket_handler),

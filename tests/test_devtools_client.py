@@ -26,7 +26,7 @@ async def test_devtools_client_is_connected(devtools):
 
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
 async def test_devtools_log_places_encodes_and_queues_message(devtools):
-    await devtools._cancel_log_queue_processing()
+    await devtools._stop_log_queue_processing()
     devtools.log("Hello, world!")
     queued_log = await devtools.log_queue.get()
     queued_log_json = json.loads(queued_log)
@@ -43,7 +43,7 @@ async def test_devtools_log_places_encodes_and_queues_message(devtools):
 
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
 async def test_devtools_log_places_encodes_and_queues_many_logs_as_string(devtools):
-    await devtools._cancel_log_queue_processing()
+    await devtools._stop_log_queue_processing()
     devtools.log("hello", "world")
     queued_log = await devtools.log_queue.get()
     queued_log_json = json.loads(queued_log)
@@ -60,8 +60,8 @@ async def test_devtools_log_places_encodes_and_queues_many_logs_as_string(devtoo
 
 async def test_devtools_log_spillover(devtools):
     # Give the devtools an intentionally small max queue size
+    await devtools._stop_log_queue_processing()
     devtools.log_queue = Queue(maxsize=2)
-    await devtools._cancel_log_queue_processing()
 
     # Force spillover of 2
     devtools.log(Panel("hello, world"))

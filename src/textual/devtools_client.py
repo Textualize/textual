@@ -6,7 +6,6 @@ import datetime
 import json
 import pickle
 from asyncio import Queue, Task, QueueFull
-from contextlib import suppress
 from io import StringIO
 from typing import Type, Any
 
@@ -41,6 +40,10 @@ class DevtoolsConsole(Console):
 class DevtoolsConnectionError(Exception):
     """Raise when the devtools client is unable to connect to the server"""
 
+    pass
+
+
+class ClientShutdown:
     pass
 
 
@@ -79,7 +82,7 @@ class DevtoolsClient:
         self.update_console_task: Task | None = None
         self.console: DevtoolsConsole = DevtoolsConsole(file=StringIO())
         self.websocket: ClientWebSocketResponse | None = None
-        self.log_queue: Queue | None = None
+        self.log_queue: Queue[str | Type[ClientShutdown]] | None = None
         self.spillover: int = 0
 
     async def connect(self) -> None:
@@ -90,7 +93,7 @@ class DevtoolsClient:
                 a connection to the server for any reason.
         """
         self.session = aiohttp.ClientSession()
-        self.log_queue: Queue[str] = Queue(maxsize=LOG_QUEUE_MAXSIZE)
+        self.log_queue = Queue(maxsize=LOG_QUEUE_MAXSIZE)
         try:
             self.websocket = await self.session.ws_connect(
                 f"{self.url}/textual-devtools-websocket",
@@ -123,42 +126,42 @@ class DevtoolsClient:
             """
             while True:
                 log = await log_queue.get()
+                if log is ClientShutdown:
+                    log_queue.task_done()
+                    break
                 await websocket.send_str(log)
                 log_queue.task_done()
 
         self.log_queue_task = asyncio.create_task(send_queued_logs())
         self.update_console_task = asyncio.create_task(update_console())
 
-    async def cancel_tasks(self) -> None:
-        """Cancel client asyncio Tasks."""
-        await self._cancel_log_queue_processing()
-        await self._cancel_console_size_updates()
-
-    async def _cancel_log_queue_processing(self) -> None:
-        """Cancel processing of the log queue, meaning that any messages a
+    async def _stop_log_queue_processing(self) -> None:
+        """Schedule end of processing of the log queue, meaning that any messages a
         user logs will be added to the queue, but not consumed and sent to
-        the server. Used for testing.
+        the server.
         """
+        if self.log_queue is not None:
+            await self.log_queue.put(ClientShutdown)
         if self.log_queue_task:
-            self.log_queue_task.cancel()
-            with suppress(asyncio.CancelledError):
-                await self.log_queue_task
+            await self.log_queue_task
 
-    async def _cancel_console_size_updates(self) -> None:
-        """Cancels the task which listens for incoming messages from the
-        server around changes in the server console size. Used for testing.
+    async def _stop_incoming_message_processing(self) -> None:
+        """Schedule stop of the task which listens for incoming messages from the
+        server around changes in the server console size.
         """
+        if self.websocket:
+            await self.websocket.close()
         if self.update_console_task:
-            self.update_console_task.cancel()
-            with suppress(asyncio.CancelledError):
-                await self.update_console_task
+            await self.update_console_task
+        if self.session:
+            await self.session.close()
 
     async def disconnect(self) -> None:
-        """Disconnect from the devtools server by cancelling tasks and
+        """Disconnect from the devtools server by stopping tasks and
         closing connections.
         """
-        await self.cancel_tasks()
-        await self._close_connections()
+        await self._stop_log_queue_processing()
+        await self._stop_incoming_message_processing()
 
     @property
     def is_connected(self) -> bool:
@@ -170,11 +173,6 @@ class DevtoolsClient:
         if not self.session or not self.websocket:
             return False
         return not (self.session.closed or self.websocket.closed)
-
-    async def _close_connections(self) -> None:
-        """Closes connect to the server"""
-        await self.websocket.close()
-        await self.session.close()
 
     def log(self, *objects: Any, path: str = "", lineno: int = 0) -> None:
         """Queue a log to be sent to the devtools server for display.
@@ -201,20 +199,21 @@ class DevtoolsClient:
             }
         )
         try:
-            self.log_queue.put_nowait(message)
-            if self.spillover > 0 and self.log_queue.qsize() < LOG_QUEUE_MAXSIZE:
-                # Tell the server how many messages we had to discard due
-                # to the log queue filling to capacity on the client.
-                spillover_message = json.dumps(
-                    {
-                        "type": "client_spillover",
-                        "payload": {
-                            "spillover": self.spillover,
-                        },
-                    }
-                )
-                self.log_queue.put_nowait(spillover_message)
-                self.spillover = 0
+            if self.log_queue:
+                self.log_queue.put_nowait(message)
+                if self.spillover > 0 and self.log_queue.qsize() < LOG_QUEUE_MAXSIZE:
+                    # Tell the server how many messages we had to discard due
+                    # to the log queue filling to capacity on the client.
+                    spillover_message = json.dumps(
+                        {
+                            "type": "client_spillover",
+                            "payload": {
+                                "spillover": self.spillover,
+                            },
+                        }
+                    )
+                    self.log_queue.put_nowait(spillover_message)
+                    self.spillover = 0
         except QueueFull:
             self.spillover += 1
 
