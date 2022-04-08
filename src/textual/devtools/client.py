@@ -14,8 +14,8 @@ from aiohttp import ClientResponseError, ClientConnectorError, ClientWebSocketRe
 from rich.console import Console
 from rich.segment import Segment
 
-from textual.devtools.server import DEFAULT_PORT
 
+DEFAULT_PORT = 8081
 WEBSOCKET_CONNECT_TIMEOUT = 3
 LOG_QUEUE_MAXSIZE = 512
 

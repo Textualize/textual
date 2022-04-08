@@ -7,15 +7,12 @@ import pickle
 import sys
 import weakref
 from asyncio import Queue, Task
-from datetime import datetime, timezone
 from json import JSONDecodeError
-from pathlib import Path
-from typing import cast, Iterable
+from typing import cast
 
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
+from textual.devtools.client import DEFAULT_PORT
+from textual.devtools.renderables import DevtoolsLogMessage, DevtoolsInternalMessage
+
 
 from aiohttp import WSMessage, WSMsgType, WSCloseCode
 from aiohttp.web import run_app
@@ -23,88 +20,12 @@ from aiohttp.web_app import Application
 from aiohttp.web_request import Request
 from aiohttp.web_routedef import get
 from aiohttp.web_ws import WebSocketResponse
-from rich.align import Align
-from rich.console import Console, ConsoleOptions, RenderResult
+from rich.console import Console
 from rich.markup import escape
-from rich.rule import Rule
-from rich.segment import Segments, Segment
-from rich.table import Table
 
-DEFAULT_PORT = 8081
+
 DEFAULT_SIZE_CHANGE_POLL_DELAY_SECONDS = 2
 QUEUEABLE_TYPES = {"client_log", "client_spillover"}
-
-
-class DevtoolsLogMessage:
-    """Renderable representing a single log message
-
-    Args:
-        segments (Iterable[Segment]): The segments to display
-        path (str): The path of the file on the client that the log call was made from
-        line_number (int): The line number of the file on the client the log call was made from
-        unix_timestamp (int): Seconds since January 1st 1970
-    """
-
-    def __init__(
-        self,
-        segments: Iterable[Segment],
-        path: str,
-        line_number: int,
-        unix_timestamp: int,
-    ) -> None:
-        self.segments = segments
-        self.path = path
-        self.line_number = line_number
-        self.unix_timestamp = unix_timestamp
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        local_time = (
-            datetime.fromtimestamp(self.unix_timestamp)
-            .replace(tzinfo=timezone.utc)
-            .astimezone(tz=datetime.now().astimezone().tzinfo)
-        )
-        timezone_name = local_time.tzname()
-        table = Table.grid(expand=True)
-        table.add_column()
-        table.add_column()
-        file_link = escape(f"file://{Path(self.path).absolute()}")
-        file_and_line = escape(f"{Path(self.path).name}:{self.line_number}")
-        table.add_row(
-            f" [#888177]{local_time.time()} [dim]{timezone_name}[/]",
-            Align.right(f"[#888177][link={file_link}]{file_and_line} "),
-            style="on #292724",
-        )
-        yield table
-        yield Segments(self.segments)
-
-
-DevtoolsMessageLevel = Literal["info", "warning", "error"]
-
-
-class DevtoolsInternalMessage:
-    """Renderable for messages written by the devtools server itself
-
-    Args:
-        message (str): The message to display
-        level (DevtoolsMessageLevel): The message level ("info", "warning", or "error").
-            Determines colors used to render the message and the perceived importance.
-    """
-
-    def __init__(self, message: str, *, level: DevtoolsMessageLevel = "info") -> None:
-        self.message = message
-        self.level = level
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        level_to_style = {
-            "info": "dim",
-            "warning": "#FFA000",
-            "error": "#C52828",
-        }
-        yield Rule(self.message, style=level_to_style.get(self.level, "dim"))
 
 
 async def _enqueue_size_changes(
