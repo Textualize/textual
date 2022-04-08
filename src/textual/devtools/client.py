@@ -44,6 +44,8 @@ class DevtoolsConnectionError(Exception):
 
 
 class ClientShutdown:
+    """Sentinel type sent to client queue(s) to indicate shutdown"""
+
     pass
 
 
