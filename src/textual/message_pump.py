@@ -34,6 +34,8 @@ class MessagePumpClosed(Exception):
 
 @total_ordering
 class MessagePriority:
+    """Wraps a messages with a priority, and provides equality."""
+
     __slots__ = ["message", "priority"]
 
     def __init__(self, message: Message | None = None, priority: int = 0):
