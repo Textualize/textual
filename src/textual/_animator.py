@@ -36,6 +36,9 @@ class Animation(ABC):
     def __call__(self, time: float) -> bool:  # pragma: no cover
         raise NotImplementedError("")
 
+    def __eq__(self, other: object) -> bool:
+        return False
+
 
 @dataclass
 class SimpleAnimation(Animation):
@@ -85,6 +88,14 @@ class SimpleAnimation(Animation):
         setattr(self.obj, self.attribute, value)
         return factor >= 1
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, SimpleAnimation):
+            return (
+                self.final_value == other.final_value
+                and self.duration == other.duration
+            )
+        return False
+
 
 class BoundAnimator:
     def __init__(self, animator: Animator, obj: object) -> None:
@@ -117,7 +128,7 @@ class Animator:
     """An object to manage updates to a given attribute over a period of time."""
 
     def __init__(self, target: MessageTarget, frames_per_second: int = 60) -> None:
-        self._animations: dict[tuple[object, str, object], Animation] = {}
+        self._animations: dict[tuple[object, str], Animation] = {}
         self.target = target
         self._timer = Timer(
             target,
@@ -180,10 +191,7 @@ class Animator:
             final_value = value
         start_time = self.get_time()
 
-        animation_key = (id(obj), attribute, final_value)
-
-        if animation_key in self._animations:
-            return
+        animation_key = (id(obj), attribute)
 
         easing_function = EASING[easing] if isinstance(easing, str) else easing
 
@@ -220,6 +228,10 @@ class Animator:
                 easing=easing_function,
             )
         assert animation is not None, "animation expected to be non-None"
+
+        current_animation = self._animations.get(animation_key)
+        if current_animation is not None and current_animation == animation:
+            return
 
         self._animations[animation_key] = animation
         self._timer.resume()
