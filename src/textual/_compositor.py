@@ -28,6 +28,7 @@ from .geometry import Region, Offset, Size
 
 
 from ._loop import loop_last
+from ._profile import timer
 from ._segment_tools import line_crop
 from ._types import Lines
 from .widget import Widget
@@ -459,7 +460,6 @@ class Compositor:
         Returns:
             SegmentLines: A renderable
         """
-
         width, height = self.size
         screen_region = Region(0, 0, width, height)
 
@@ -495,6 +495,8 @@ class Compositor:
                     cut_segments = [line]
                 else:
                     # More than one cut, which means we need to divide the line
+                    if not final_cuts:
+                        continue
                     render_x = render_region.x
                     relative_cuts = [cut - render_x for cut in final_cuts]
                     _, *cut_segments = divide(line, relative_cuts)

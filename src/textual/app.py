@@ -35,6 +35,7 @@ from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
 from .layouts.dock import Dock
 from .message_pump import MessagePump
+from ._profile import timer
 from .reactive import Reactive
 from .screen import Screen
 from .widget import Widget
@@ -113,16 +114,17 @@ class App(DOMNode):
         self._refresh_required = False
 
         self.design = ColorSystem(
-            primary="#1b72b1",  # blueish
-            secondary="#471EC2",  # purplesis
-            warning="#ffa629",  # orange
-            error="#db1a4a",  # error
-            success="#38d645",  # green
-            accent1="#1b72b1",
-            accent2="#ffa629",
+            primary="#406e8e",  # blueish
+            secondary="#6d9f71",  # purplesis
+            warning="#ffa62b",  # orange
+            error="#ba3c5b",  # error
+            success="#6d9f71",  # green
+            accent1="#ffa62b",
+            accent2="#5a4599",
         )
 
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
+        self._require_styles_update = False
 
         self.css_file = css_file
         self.css_monitor = (
@@ -321,7 +323,8 @@ class App(DOMNode):
         Should be called whenever CSS classes / pseudo classes change.
 
         """
-        self.post_message_no_wait(messages.StylesUpdated(self))
+        self._require_styles_update = True
+        self.check_idle()
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
         self.register(self.screen, *anon_widgets, **widgets)
@@ -470,6 +473,11 @@ class App(DOMNode):
                 self._print_error_renderables()
             if self.log_file is not None:
                 self.log_file.close()
+
+    async def on_idle(self) -> None:
+        if self._require_styles_update:
+            await self.post_message(messages.StylesUpdated(self))
+            self._require_styles_update = False
 
     def _register_child(self, parent: DOMNode, child: DOMNode) -> bool:
         if child not in self.registry:
@@ -713,7 +721,7 @@ class App(DOMNode):
             await self.action(
                 action, default_namespace=default_namespace, modifiers=modifiers
             )
-        elif isinstance(action, Callable):
+        elif callable(action):
             await action()
         else:
             return False

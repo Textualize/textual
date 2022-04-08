@@ -1,3 +1,4 @@
+from rich.align import Align
 from rich.console import RenderableType
 from rich.text import Text
 
@@ -24,6 +25,26 @@ class Tweet(Widget):
     pass
 
 
+class OptionItem(Widget):
+    def render(self) -> Text:
+        return Align.center(Text("Option", justify="center"), vertical="middle")
+
+
+class Error(Widget):
+    def render(self) -> Text:
+        return Text("This is an error message", justify="center")
+
+
+class Warning(Widget):
+    def render(self) -> Text:
+        return Text("This is a warning message", justify="center")
+
+
+class Success(Widget):
+    def render(self) -> Text:
+        return Text("This is a success message", justify="center")
+
+
 class BasicApp(App):
     """A basic app demonstrating CSS"""
 
@@ -36,14 +57,20 @@ class BasicApp(App):
         self.mount(
             header=Widget(),
             content=Widget(
-                Tweet(TweetHeader(), TweetBody(), Widget(classes={"button"})),
-                Tweet(TweetHeader(), TweetBody()),
-                Tweet(TweetHeader(), TweetBody()),
+                Tweet(TweetBody(), Widget(classes={"button"})),
+                Error(),
+                Tweet(TweetBody()),
+                Warning(),
+                Tweet(TweetBody()),
+                Success(),
             ),
             footer=Widget(),
             sidebar=Widget(
                 Widget(classes={"title"}),
                 Widget(classes={"user"}),
+                OptionItem(),
+                OptionItem(),
+                OptionItem(),
                 Widget(classes={"content"}),
             ),
         )

@@ -1,15 +1,17 @@
 /* CSS file for basic.py */
 
 
+/*
 * {
     transition: color 500ms linear, background 500ms linear;
 }
+*/
 
 App > Screen {
   layout: dock;
   docks: side=left/1;
-  background: $surface;
-  color: $text-surface;
+  background: $background;
+  color: $text-background;
 }
 
 #sidebar {
@@ -27,7 +29,7 @@ App > Screen {
 }
 
 #sidebar .title {
-  height: 1;
+  height: 3;
   background: $primary-darken-2;
   color: $text-primary-darken-2;
   border-right: outer $primary-darken-3;
@@ -54,20 +56,23 @@ App > Screen {
 }
 
 #content {
-  color: $text-surface;
-  background: $surface;
+  color: $text-background;
+  background: $background;
   layout: vertical;
 }
 
 Tweet {
-  height: 10;
+  height: 16;
   max-width: 80;
-  margin: 1 2;
-  background: $background;
-  color: $text-background;
-  layout: vertical
+  margin: 1 3;
+  background: $surface;
+  color: $text-surface;
+  layout: vertical;
+  border: outer $accent2;
+  padding: 1;
   
 }
+
 
 TweetHeader {
   height:1
@@ -76,8 +81,8 @@ TweetHeader {
 }
 
 TweetBody {  
-  background: $background
-  color: $text-background-fade-1
+  background: $surface
+  color: $text-surface-fade-1
   height:6;
 }
 
@@ -88,7 +93,7 @@ TweetBody {
   height: 3
   border: tall $text-background;
  
-  margin: 0 1 1 1;
+  margin: 1 1 1 1;
 
   transition: background 200ms in_out_cubic, color 300ms in_out_cubic;
  
@@ -97,11 +102,11 @@ TweetBody {
 .button:hover {
   background: $accent1-darken-1;
   color: $text-accent1-darken-1;
-  width:20;
+  width: 20;
   height: 3
   border: tall $text-background;
  
-  margin: 0 1 1 1;
+  margin: 1 1 1 1;
 
  
 }
@@ -111,4 +116,58 @@ TweetBody {
   background: $accent2;
   height: 1;
   border-top: hkey $accent2-darken-2;
+}
+
+
+#sidebar .content {
+  layout: vertical
+}
+
+OptionItem {
+  height: 3;
+  background: $primary;
+  transition: background 100ms linear;
+  border-right: outer $primary-darken-3;
+}
+
+OptionItem:hover {
+  height: 3;
+  background: $accent1-darken-2;
+  /* border-top: hkey $accent2-darken-3;
+  border-bottom: hkey $accent2-darken-3; */
+  text-style: bold;
+  border-right: outer $accent1-darken-3;
+}
+
+Error {
+  max-width: 78;
+  height:3;
+  background: $error;
+  color: $text-error;
+  border-top: hkey $error-darken-3;
+  border-bottom: hkey $error-darken-3; 
+  margin: 1 3;
+  text-style: bold;
+}
+
+Warning {
+  max-width: 80;
+  height:3;
+  background: $warning;
+  color: $text-warning-fade-1;
+  border-top: hkey $warning-darken-3;
+  border-bottom: hkey $warning-darken-3; 
+  margin: 1 2;
+  text-style: bold;
+}
+
+Success {
+  max-width: 80;
+  height:3;
+  background: $success-lighten-2;
+  color: $text-success-lighten-2-fade-1;
+  border-top: hkey $success-darken-3;
+  border-bottom: hkey $success-darken-3; 
+  margin: 1 2;
+  text-style: bold;
 }

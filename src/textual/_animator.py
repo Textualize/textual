@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import asyncio
 import sys
-from time import time
+from time import monotonic
 from typing import Any, Callable, TypeVar
 
 from dataclasses import dataclass
@@ -117,7 +117,7 @@ class Animator:
     """An object to manage updates to a given attribute over a period of time."""
 
     def __init__(self, target: MessageTarget, frames_per_second: int = 60) -> None:
-        self._animations: dict[tuple[object, str], Animation] = {}
+        self._animations: dict[tuple[object, str, object], Animation] = {}
         self.target = target
         self._timer = Timer(
             target,
@@ -130,7 +130,7 @@ class Animator:
 
     def get_time(self) -> float:
         """Get the current wall clock time."""
-        return time()
+        return monotonic()
 
     async def start(self) -> None:
         """Start the animator task."""
@@ -180,9 +180,10 @@ class Animator:
             final_value = value
         start_time = self.get_time()
 
-        animation_key = (id(obj), attribute)
+        animation_key = (id(obj), attribute, final_value)
+
         if animation_key in self._animations:
-            self._animations[animation_key](start_time)
+            return
 
         easing_function = EASING[easing] if isinstance(easing, str) else easing
 
@@ -219,10 +220,11 @@ class Animator:
                 easing=easing_function,
             )
         assert animation is not None, "animation expected to be non-None"
+
         self._animations[animation_key] = animation
         self._timer.resume()
 
-    def __call__(self) -> None:
+    def __call__(self, time: float) -> None:
         if not self._animations:
             self._timer.pause()
         else:
@@ -236,4 +238,4 @@ class Animator:
 
     def on_animation_frame(self) -> None:
         # TODO: We should be able to do animation without refreshing everything
-        self.target.screen.refresh(layout=True)
+        self.target.screen.refresh_layout()
