@@ -475,6 +475,7 @@ class App(DOMNode):
                 self.log_file.close()
 
     async def on_idle(self) -> None:
+        """Perform actions when there are no messages in the queue."""
         if self._require_styles_update:
             await self.post_message(messages.StylesUpdated(self))
             self._require_styles_update = False
