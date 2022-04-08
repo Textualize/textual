@@ -236,7 +236,7 @@ class Animator:
         self._animations[animation_key] = animation
         self._timer.resume()
 
-    def __call__(self, time: float) -> None:
+    def __call__(self) -> None:
         if not self._animations:
             self._timer.pause()
         else:

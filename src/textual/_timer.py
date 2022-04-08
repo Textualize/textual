@@ -18,7 +18,7 @@ from . import events
 from ._callback import invoke
 from ._types import MessageTarget
 
-TimerCallback = Union[Callable[[float], Awaitable[None]], Callable[[float], None]]
+TimerCallback = Union[Callable[[], Awaitable[None]], Callable[[], None]]
 
 
 class EventTargetGone(Exception):
@@ -125,7 +125,7 @@ class Timer:
                 count += 1
                 try:
                     if self._callback is not None:
-                        await invoke(self._callback, next_timer)
+                        await invoke(self._callback)
                     else:
                         await self.target.post_priority_message(event)
 
