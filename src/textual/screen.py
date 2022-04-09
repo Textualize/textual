@@ -91,6 +91,7 @@ class Screen(Widget):
     def on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         if self._dirty_widgets:
+            self.log(dirty=len(self._dirty_widgets))
             for widget in self._dirty_widgets:
                 # Repaint widgets
                 # TODO: Combine these in to a single update.
@@ -100,7 +101,7 @@ class Screen(Widget):
             # Reset dirty list
             self._dirty_widgets.clear()
 
-    async def refresh_layout(self) -> None:
+    def refresh_layout(self) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
         if not self.size:
             return
@@ -144,11 +145,11 @@ class Screen(Widget):
 
     async def handle_layout(self, message: messages.Layout) -> None:
         message.stop()
-        await self.refresh_layout()
+        self.refresh_layout()
 
     async def on_resize(self, event: events.Resize) -> None:
         self.size_updated(event.size, event.virtual_size, event.container_size)
-        await self.refresh_layout()
+        self.refresh_layout()
         event.stop()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:

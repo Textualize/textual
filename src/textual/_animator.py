@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import asyncio
 import sys
-from time import time
+from time import monotonic
 from typing import Any, Callable, TypeVar
 
 from dataclasses import dataclass
@@ -35,6 +35,9 @@ class Animation(ABC):
     @abstractmethod
     def __call__(self, time: float) -> bool:  # pragma: no cover
         raise NotImplementedError("")
+
+    def __eq__(self, other: object) -> bool:
+        return False
 
 
 @dataclass
@@ -85,6 +88,14 @@ class SimpleAnimation(Animation):
         setattr(self.obj, self.attribute, value)
         return factor >= 1
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, SimpleAnimation):
+            return (
+                self.final_value == other.final_value
+                and self.duration == other.duration
+            )
+        return False
+
 
 class BoundAnimator:
     def __init__(self, animator: Animator, obj: object) -> None:
@@ -130,7 +141,7 @@ class Animator:
 
     def get_time(self) -> float:
         """Get the current wall clock time."""
-        return time()
+        return monotonic()
 
     async def start(self) -> None:
         """Start the animator task."""
@@ -181,8 +192,6 @@ class Animator:
         start_time = self.get_time()
 
         animation_key = (id(obj), attribute)
-        if animation_key in self._animations:
-            self._animations[animation_key](start_time)
 
         easing_function = EASING[easing] if isinstance(easing, str) else easing
 
@@ -219,6 +228,11 @@ class Animator:
                 easing=easing_function,
             )
         assert animation is not None, "animation expected to be non-None"
+
+        current_animation = self._animations.get(animation_key)
+        if current_animation is not None and current_animation == animation:
+            return
+
         self._animations[animation_key] = animation
         self._timer.resume()
 
@@ -236,4 +250,4 @@ class Animator:
 
     def on_animation_frame(self) -> None:
         # TODO: We should be able to do animation without refreshing everything
-        self.target.screen.refresh(layout=True)
+        self.target.screen.refresh_layout()

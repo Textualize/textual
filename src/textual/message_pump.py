@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import asyncio
 from asyncio import CancelledError
-from asyncio import Queue, QueueEmpty, Task
-from functools import partial
-from typing import TYPE_CHECKING, Awaitable, Iterable, Callable
+from asyncio import PriorityQueue, QueueEmpty, Task
+from functools import partial, total_ordering
+from typing import TYPE_CHECKING, Awaitable, Iterable, Callable, NamedTuple
 from weakref import WeakSet
 
 from . import events
@@ -32,9 +32,28 @@ class MessagePumpClosed(Exception):
     pass
 
 
+@total_ordering
+class MessagePriority:
+    """Wraps a messages with a priority, and provides equality."""
+
+    __slots__ = ["message", "priority"]
+
+    def __init__(self, message: Message | None = None, priority: int = 0):
+        self.message = message
+        self.priority = priority
+
+    def __eq__(self, other: object) -> bool:
+        assert isinstance(other, MessagePriority)
+        return self.priority == other.priority
+
+    def __gt__(self, other: object) -> bool:
+        assert isinstance(other, MessagePriority)
+        return self.priority > other.priority
+
+
 class MessagePump:
     def __init__(self, parent: MessagePump | None = None) -> None:
-        self._message_queue: Queue[Message | None] = Queue()
+        self._message_queue: PriorityQueue[MessagePriority] = PriorityQueue()
         self._parent = parent
         self._running: bool = False
         self._closing: bool = False
@@ -96,7 +115,7 @@ class MessagePump:
                 return self._pending_message
             finally:
                 self._pending_message = None
-        message = await self._message_queue.get()
+        message = (await self._message_queue.get()).message
         if message is None:
             self._closed = True
             raise MessagePumpClosed("The message pump is now closed")
@@ -111,7 +130,7 @@ class MessagePump:
         """
         if self._pending_message is None:
             try:
-                self._pending_message = self._message_queue.get_nowait()
+                self._pending_message = self._message_queue.get_nowait().message
             except QueueEmpty:
                 pass
 
@@ -155,7 +174,7 @@ class MessagePump:
         )
 
     def close_messages_no_wait(self) -> None:
-        self._message_queue.put_nowait(None)
+        self._message_queue.put_nowait(MessagePriority(None))
 
     async def close_messages(self) -> None:
         """Close message queue, and optionally wait for queue to finish processing."""
@@ -164,7 +183,7 @@ class MessagePump:
 
         self._closing = True
 
-        await self._message_queue.put(None)
+        await self._message_queue.put(MessagePriority(None))
 
         for task in self._child_tasks:
             task.cancel()
@@ -284,7 +303,25 @@ class MessagePump:
             return False
         if not self.check_message_enabled(message):
             return True
-        await self._message_queue.put(message)
+        await self._message_queue.put(MessagePriority(message))
+        return True
+
+    # TODO: This may not be needed, or may only be needed by the timer
+    # Consider removing or making private
+    async def post_priority_message(self, message: Message) -> bool:
+        """Post a "priority" messages which will be processes prior to regular messages.
+
+        Args:
+            message (Message): A message.
+
+        Returns:
+            bool: True if the messages was processed.
+        """
+        if self._closing or self._closed:
+            return False
+        if not self.check_message_enabled(message):
+            return True
+        await self._message_queue.put(MessagePriority(message, -1))
         return True
 
     def post_message_no_wait(self, message: Message) -> bool:
@@ -292,7 +329,7 @@ class MessagePump:
             return False
         if not self.check_message_enabled(message):
             return True
-        self._message_queue.put_nowait(message)
+        self._message_queue.put_nowait(MessagePriority(message))
         return True
 
     async def post_message_from_child(self, message: Message) -> bool:

@@ -165,9 +165,9 @@ def test_lab_to_rgb(r, g, b, L_, a_, b_):
 def test_rgb_lab_rgb_roundtrip():
     """Test RGB -> CIE-L*ab -> RGB color conversion roundtripping."""
 
-    for r in range(0, 256, 4):
-        for g in range(0, 256, 4):
-            for b in range(0, 256, 4):
+    for r in range(0, 256, 32):
+        for g in range(0, 256, 32):
+            for b in range(0, 256, 32):
                 c_ = lab_to_rgb(rgb_to_lab(Color(r, g, b)))
                 assert c_.r == pytest.approx(r, abs=1)
                 assert c_.g == pytest.approx(g, abs=1)

@@ -364,11 +364,13 @@ class Timer(Event, verbosity=3, bubble=False):
         self,
         sender: MessageTarget,
         timer: "TimerClass",
+        time: float,
         count: int = 0,
         callback: TimerCallback | None = None,
     ) -> None:
         super().__init__(sender)
         self.timer = timer
+        self.time = time
         self.count = count
         self.callback = callback
 

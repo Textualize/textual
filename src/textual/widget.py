@@ -640,10 +640,10 @@ class Widget(DOMNode):
         self.mouse_over = True
 
     def on_mouse_scroll_down(self) -> None:
-        self.scroll_down(animate=True)
+        self.scroll_down(animate=False)
 
     def on_mouse_scroll_up(self) -> None:
-        self.scroll_up(animate=True)
+        self.scroll_up(animate=False)
 
     def handle_scroll_to(self, message: ScrollTo) -> None:
         self.scroll_to(message.x, message.y, animate=message.animate)

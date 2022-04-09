@@ -65,3 +65,11 @@ class ScalarAnimation(Animation):
             setattr(self.styles, f"{self.attribute}", offset)
 
         return False
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, ScalarAnimation):
+            return (
+                self.final_value == other.final_value
+                and self.duration == other.duration
+            )
+        return False
