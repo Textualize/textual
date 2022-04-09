@@ -495,8 +495,8 @@ class Compositor:
                     cut_segments = [line]
                 else:
                     # More than one cut, which means we need to divide the line
-                    if not final_cuts:
-                        continue
+                    # if not final_cuts:
+                    #     continue
                     render_x = render_region.x
                     relative_cuts = [cut - render_x for cut in final_cuts]
                     _, *cut_segments = divide(line, relative_cuts)
