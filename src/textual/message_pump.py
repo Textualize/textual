@@ -311,6 +311,9 @@ class MessagePump:
     async def post_priority_message(self, message: Message) -> bool:
         """Post a "priority" messages which will be processes prior to regular messages.
 
+        Note that you should rarely need this in a regular app. It exists primarily to allow
+        timer messages to skip the queue, so that they can be more regular.
+
         Args:
             message (Message): A message.
 
@@ -344,7 +347,6 @@ class MessagePump:
 
     async def on_callback(self, event: events.Callback) -> None:
         await invoke(event.callback)
-        # await event.callback()
 
     def emit_no_wait(self, message: Message) -> bool:
         if self._parent:

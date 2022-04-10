@@ -108,6 +108,14 @@ class RulesMap(TypedDict, total=False):
 
     transitions: dict[str, Transition]
 
+    scrollbar_color: Color
+    scrollbar_color_hover: Color
+    scrollbar_color_active: Color
+
+    scrollbar_background: Color
+    scrollbar_background_hover: Color
+    scrollbar_background_active: Color
+
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
 _rule_getter = attrgetter(*RULE_NAMES)
@@ -134,6 +142,12 @@ class StylesBase(ABC):
         "max_height",
         "color",
         "background",
+        "scrollbar_color",
+        "scrollbar_color_hover",
+        "scrollbar_color_active",
+        "scrollbar_background",
+        "scrollbar_background_hover",
+        "scrollbar_background_active",
     }
 
     display = StringEnumProperty(VALID_DISPLAY, "block")
@@ -181,6 +195,14 @@ class StylesBase(ABC):
     transitions = TransitionsProperty()
 
     rich_style = StyleProperty()
+
+    scrollbar_color = ColorProperty("bright_magenta")
+    scrollbar_color_hover = ColorProperty("yellow")
+    scrollbar_color_active = ColorProperty("bright_yellow")
+
+    scrollbar_background = ColorProperty("#555555")
+    scrollbar_background_hover = ColorProperty("#444444")
+    scrollbar_background_active = ColorProperty("black")
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles containts the same rules."""

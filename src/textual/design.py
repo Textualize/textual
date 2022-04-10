@@ -11,10 +11,13 @@ from .color import Color, WHITE
 
 NUMBER_OF_SHADES = 3
 
+# Where no content exists
 DEFAULT_DARK_BACKGROUND = "#000000"
+# What text usually goes on top off
 DEFAULT_DARK_SURFACE = "#121212"
-DEFAULT_LIGHT_BACKGROUND = "#f5f5f5"
-DEFAULT_LIGHT_SURFACE = "#efefef"
+
+DEFAULT_LIGHT_SURFACE = "#f5f5f5"
+DEFAULT_LIGHT_BACKGROUND = "#efefef"
 
 
 class ColorProperty:
@@ -56,8 +59,9 @@ class ColorSystem:
         "warning",
         "error",
         "success",
-        "accent1",
-        "accent2",
+        "accent",
+        "panel",
+        "system",
     ]
 
     def __init__(
@@ -67,20 +71,22 @@ class ColorSystem:
         warning: str | None = None,
         error: str | None = None,
         success: str | None = None,
-        accent1: str | None = None,
-        accent2: str | None = None,
+        accent: str | None = None,
+        system: str | None = None,
         background: str | None = None,
         surface: str | None = None,
+        panel: str | None = None,
     ):
         self._primary = primary
         self._secondary = secondary
         self._warning = warning
         self._error = error
         self._success = success
-        self._accent1 = accent1
-        self._accent2 = accent2
+        self._accent = accent
+        self._system = system
         self._background = background
         self._surface = surface
+        self._panel = panel
 
     @property
     def primary(self) -> Color:
@@ -91,10 +97,11 @@ class ColorSystem:
     warning = ColorProperty()
     error = ColorProperty()
     success = ColorProperty()
-    accent1 = ColorProperty()
-    accent2 = ColorProperty()
+    accent = ColorProperty()
+    system = ColorProperty()
     surface = ColorProperty()
     background = ColorProperty()
+    panel = ColorProperty()
 
     @property
     def shades(self) -> Iterable[str]:
@@ -132,8 +139,8 @@ class ColorSystem:
         warning = self.warning or primary
         error = self.error or secondary
         success = self.success or secondary
-        accent1 = self.accent1 or primary
-        accent2 = self.accent2 or secondary
+        accent = self.accent or primary
+        system = self.system or accent
 
         background = self.background or Color.parse(
             DEFAULT_DARK_BACKGROUND if dark else DEFAULT_LIGHT_BACKGROUND
@@ -142,6 +149,15 @@ class ColorSystem:
         surface = self.surface or Color.parse(
             DEFAULT_DARK_SURFACE if dark else DEFAULT_LIGHT_SURFACE
         )
+
+        text = background.get_contrast_text(1.0)
+        if self.panel is None:
+            if dark:
+                panel = background.blend(text, luminosity_spread)
+            else:
+                panel = background.blend(text, luminosity_spread / 2)
+        else:
+            panel = self.panel
 
         colors: dict[str, str] = {}
 
@@ -167,12 +183,13 @@ class ColorSystem:
             ("primary", primary),
             ("secondary", secondary),
             ("background", background),
+            ("panel", panel),
             ("surface", surface),
             ("warning", warning),
             ("error", error),
             ("success", success),
-            ("accent1", accent1),
-            ("accent2", accent2),
+            ("accent", accent),
+            ("system", system),
         ]
 
         # Colors names that have a dark variant
@@ -181,9 +198,11 @@ class ColorSystem:
         for name, color in COLORS:
             is_dark_shade = dark and name in DARK_SHADES
             spread = luminosity_spread / 1.5 if is_dark_shade else luminosity_spread
+            if name == "panel":
+                spread /= 2
             for shade_name, luminosity_delta in luminosity_range(spread):
                 if is_dark_shade:
-                    dark_background = background.blend(color, 12 / 100)
+                    dark_background = background.blend(color, 0.15)
                     shade_color = dark_background.blend(
                         WHITE, spread + luminosity_delta
                     ).clamped
@@ -227,11 +246,13 @@ class ColorSystem:
 
 if __name__ == "__main__":
     color_system = ColorSystem(
-        primary="#005EA8",
-        secondary="#F59402",
-        warning="#ffa000",
-        error="#C62828",
-        success="#558B2F",
+        primary="#406e8e",  # blueish
+        secondary="#6d9f71",  # purpleish
+        warning="#ffa62b",  # orange
+        error="#ba3c5b",  # error
+        success="#6d9f71",  # green
+        accent="#ffa62b",
+        system="#5a4599",
     )
 
     from rich import print

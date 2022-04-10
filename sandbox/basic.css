@@ -7,6 +7,13 @@
 }
 */
 
+* {
+  scrollbar-background: $panel-darken-2;
+  scrollbar-background-hover: $panel-darken-3;
+  scrollbar-color: $system;
+  scrollbar-color-active: $accent-darken-1;
+}
+
 App > Screen {
   layout: dock;
   docks: side=left/1;
@@ -31,7 +38,7 @@ App > Screen {
 #sidebar .title {
   height: 3;
   background: $primary-darken-2;
-  color: $text-primary-darken-2;
+  color: $text-primary-darken-2 ;
   border-right: outer $primary-darken-3;
 }
 
@@ -59,36 +66,42 @@ App > Screen {
   color: $text-background;
   background: $background;
   layout: vertical;
+  overflow-y:scroll;  
+
 }
+
 
 Tweet {
   height: 16;
   max-width: 80;
   margin: 1 3;
-  background: $surface;
-  color: $text-surface;
+  background: $panel;
+  color: $text-panel;
   layout: vertical;
-  border: outer $accent2;
+  /* border: outer $primary; */
   padding: 1;
-  
+  border: wide $panel-darken-2;
+  overflow-y: scroll
 }
 
 
 TweetHeader {
   height:1
-  background: $accent1
-  color: $text-accent1
+  background: $accent
+  color: $text-accent
 }
 
 TweetBody {  
-  background: $surface
-  color: $text-surface-fade-1
-  height:6;
+  background: $panel;
+  color: $text-panel;
+  height:20;
+  padding: 0 1 0 0;
+ 
 }
 
 .button {
-  background: $accent2;
-  color: $text-accent2;
+  background: $accent;
+  color: $text-accent;
   width:20;
   height: 3
   border: tall $text-background;
@@ -100,8 +113,8 @@ TweetBody {
 }
 
 .button:hover {
-  background: $accent1-darken-1;
-  color: $text-accent1-darken-1;
+  background: $success-darken-1;
+  color: $text-success-darken-1;
   width: 20;
   height: 3
   border: tall $text-background;
@@ -112,10 +125,10 @@ TweetBody {
 }
 
 #footer {
-  color: $text-accent2;
-  background: $accent2;
+  color: $text-accent;
+  background: $accent;
   height: 1;
-  border-top: hkey $accent2-darken-2;
+  border-top: hkey $accent-darken-2;
 }
 
 
@@ -127,26 +140,29 @@ OptionItem {
   height: 3;
   background: $primary;
   transition: background 100ms linear;
-  border-right: outer $primary-darken-3;
+  border-right: outer $primary-darken-2;
+  border-left: hidden;
 }
 
 OptionItem:hover {
   height: 3;
-  background: $accent1-darken-2;
+  color: $accent;
+  background: $primary-darken-1;
   /* border-top: hkey $accent2-darken-3;
   border-bottom: hkey $accent2-darken-3; */
   text-style: bold;
-  border-right: outer $accent1-darken-3;
+  border-left: outer $accent-darken-2;
 }
 
 Error {
-  max-width: 78;
+  max-width: 80;
   height:3;
   background: $error;
   color: $text-error;
-  border-top: hkey $error-darken-3;
-  border-bottom: hkey $error-darken-3; 
+  border-top: hkey $error-darken-2;
+  border-bottom: hkey $error-darken-2; 
   margin: 1 3;
+  
   text-style: bold;
 }
 
@@ -155,8 +171,8 @@ Warning {
   height:3;
   background: $warning;
   color: $text-warning-fade-1;
-  border-top: hkey $warning-darken-3;
-  border-bottom: hkey $warning-darken-3; 
+  border-top: hkey $warning-darken-2;
+  border-bottom: hkey $warning-darken-2; 
   margin: 1 2;
   text-style: bold;
 }
@@ -164,10 +180,10 @@ Warning {
 Success {
   max-width: 80;
   height:3;
-  background: $success-lighten-2;
-  color: $text-success-lighten-2-fade-1;
-  border-top: hkey $success-darken-3;
-  border-bottom: hkey $success-darken-3; 
+  background: $success-lighten-3;
+  color: $text-success-lighten-3-fade-1;
+  border-top: hkey $success;
+  border-bottom: hkey $success; 
   margin: 1 2;
   text-style: bold;
 }

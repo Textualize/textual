@@ -237,7 +237,7 @@ class Color(NamedTuple):
 
     @classmethod
     @lru_cache(maxsize=1024 * 4)
-    def parse(cls, color_text: str) -> Color:
+    def parse(cls, color_text: str | Color) -> Color:
         """Parse a string containing a CSS-style color.
 
         Args:
@@ -249,7 +249,8 @@ class Color(NamedTuple):
         Returns:
             Color: New color object.
         """
-
+        if isinstance(color_text, Color):
+            return color_text
         ansi_color = ANSI_COLOR_TO_RGB.get(color_text)
         if ansi_color is not None:
             return cls(*ansi_color)

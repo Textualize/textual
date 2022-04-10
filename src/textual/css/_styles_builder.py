@@ -460,10 +460,11 @@ class StylesBuilder:
                     )
 
     def process_color(self, name: str, tokens: list[Token], important: bool) -> None:
+        name = name.replace("-", "_")
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
-                    self.styles._rules["color"] = Color.parse(token.value)
+                    self.styles._rules[name] = Color.parse(token.value)
                 except Exception as error:
                     self.error(
                         name, token, f"failed to parse color {token.value!r}; {error}"
@@ -476,18 +477,37 @@ class StylesBuilder:
     def process_background(
         self, name: str, tokens: list[Token], important: bool
     ) -> None:
-        for token in tokens:
-            if token.name in ("color", "token"):
-                try:
-                    self.styles._rules["background"] = Color.parse(token.value)
-                except Exception as error:
-                    self.error(
-                        name, token, f"failed to parse color {token.value!r}; {error}"
-                    )
-            else:
-                self.error(
-                    name, token, f"unexpected token {token.value!r} in declaration"
-                )
+        self.process_color(name, tokens, important)
+
+    def process_scrollbar_color(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
+        self.process_color(name, tokens, important)
+
+    def process_scrollbar_color_hover(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
+        self.process_color(name, tokens, important)
+
+    def process_scrollbar_color_active(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
+        self.process_color(name, tokens, important)
+
+    def process_scrollbar_background(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
+        self.process_color(name, tokens, important)
+
+    def process_scrollbar_background_hover(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
+        self.process_color(name, tokens, important)
+
+    def process_scrollbar_background_active(
+        self, name: str, tokens: list[Token], important: bool
+    ) -> None:
+        self.process_color(name, tokens, important)
 
     def process_text_style(
         self, name: str, tokens: list[Token], important: bool

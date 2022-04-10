@@ -115,12 +115,13 @@ class App(DOMNode):
 
         self.design = ColorSystem(
             primary="#406e8e",  # blueish
-            secondary="#6d9f71",  # purplesis
+            secondary="#6d9f71",  # purpleish
             warning="#ffa62b",  # orange
             error="#ba3c5b",  # error
             success="#6d9f71",  # green
-            accent1="#ffa62b",
-            accent2="#5a4599",
+            accent="#ffa62b",
+            system="#5a4599"
+            # accent2="#5a4599",
         )
 
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
