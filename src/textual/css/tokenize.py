@@ -87,7 +87,7 @@ expect_declaration_solo = Expect(
 # The value(s)/content from a rule declaration e.g. "text: red;"
 #                                                         ^---^
 expect_declaration_content = Expect(
-    declaration_end=r"\n|;",
+    declaration_end=r";",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     **DECLARATION_VALUES,
@@ -97,7 +97,7 @@ expect_declaration_content = Expect(
 )
 
 expect_declaration_content_solo = Expect(
-    declaration_end=r"\n|;",
+    declaration_end=r";",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     **DECLARATION_VALUES,
