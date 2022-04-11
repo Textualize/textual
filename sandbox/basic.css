@@ -76,7 +76,7 @@ Tweet {
   max-width: 80;
   margin: 1 3;
   background: $panel;
-  color: $text-panel;
+  color: $text-panel
   layout: vertical;
   /* border: outer $primary; */
   padding: 1;
@@ -86,8 +86,8 @@ Tweet {
 
 
 TweetHeader {
-  height:1
-  background: $accent
+  height:1;
+  background: $accent;
   color: $text-accent
 }
 
@@ -103,7 +103,7 @@ TweetBody {
   background: $accent;
   color: $text-accent;
   width:20;
-  height: 3
+  height: 3;
   /* border-top: hidden  $accent-darken-3;  */
   border: tall $accent-darken-2;
   /* border-left: tall $accent-darken-1; */
@@ -119,7 +119,7 @@ TweetBody {
   background: $accent-lighten-1;
   color: $text-accent-lighten-1;
   width: 20;
-  height: 3
+  height: 3;
   border: tall $accent-darken-1;
   /* border-left: tall $accent-darken-3; */
  

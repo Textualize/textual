@@ -34,7 +34,7 @@ The _panel_ color is typically used as a background to emphasize text on the def
 
 The default panel color is derived from the surface color by blending it towards either white or black text (depending on mode).
 
-Unlike background and surface, the panel color is automatically selected so that it can always be lightened or darkened by the full degree.
+Unlike background and surface, the panel color is automatically selected so that it can always be lightened or darkened by the full range.
 
 ### Accent
 

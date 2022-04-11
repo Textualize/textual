@@ -53,7 +53,7 @@ class DOMNode(MessagePump):
             self.INLINE_STYLES, repr(self), node=self
         )
         self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
-        self._default_styles = Styles.parse(self.DEFAULT_STYLES, repr(self))
+        self._default_styles = Styles.parse(self.DEFAULT_STYLES, f"{self.__class__}")
         self._default_rules = self._default_styles.extract_rules((0, 0, 0))
         super().__init__()
 

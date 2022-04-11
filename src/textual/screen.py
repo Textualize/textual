@@ -20,7 +20,7 @@ class Screen(Widget):
 
     DEFAULT_STYLES = """
 
-    layout: dock
+    layout: dock;
     docks: _default=top;
 
     """
@@ -131,8 +131,8 @@ class Screen(Widget):
                             self, unclipped_region.size, virtual_size, container_size
                         )
                     )
-        except Exception:
-            self.app.panic()
+        except Exception as error:
+            self.app.panic(error)
         self.app.refresh()
         self._dirty_widgets.clear()
 
