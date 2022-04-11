@@ -52,7 +52,7 @@ def _make_devtools_aiohttp_app(
     app.on_startup.append(_on_startup)
 
     app["service"] = DevtoolsService(
-        poll_delay_seconds=size_change_poll_delay_secs,
+        update_frequency=size_change_poll_delay_secs,
     )
 
     app.add_routes(

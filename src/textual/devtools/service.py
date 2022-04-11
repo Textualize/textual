@@ -20,17 +20,28 @@ QUEUEABLE_TYPES = {"client_log", "client_spillover"}
 
 
 class DevtoolsService:
-    def __init__(self, poll_delay_seconds: float) -> None:
-        self.clients: list[ClientHandler] = []
-        self.poll_delay_seconds = poll_delay_seconds
-        self.shutdown_event = asyncio.Event()
+    """A running instance of devtools has a single DevtoolsService which is
+    responsible for tracking connected client applications.
+    """
+
+    def __init__(self, update_frequency: float) -> None:
+        """
+        Args:
+            update_frequency (float): The number of seconds to wait between
+                sending updates of the console size to connected clients.
+        """
+        self.update_frequency = update_frequency
         self.console = Console()
+        self.shutdown_event = asyncio.Event()
+        self.clients: list[ClientHandler] = []
 
     async def start(self):
+        """Starts devtools tasks"""
         self.size_poll_task = asyncio.create_task(self._console_size_poller())
 
     @property
-    def clients_connected(self):
+    def clients_connected(self) -> bool:
+        """Returns True if there are connected clients, False otherwise."""
         return len(self.clients) > 0
 
     async def _console_size_poller(self) -> None:
@@ -50,7 +61,7 @@ class DevtoolsService:
                 current_height = height
             try:
                 await asyncio.wait_for(
-                    self.shutdown_event.wait(), timeout=self.poll_delay_seconds
+                    self.shutdown_event.wait(), timeout=self.update_frequency
                 )
             except asyncio.TimeoutError:
                 pass
@@ -61,6 +72,12 @@ class DevtoolsService:
             await self.send_server_info(client_handler)
 
     async def send_server_info(self, client_handler: ClientHandler) -> None:
+        """Send information about the server e.g. width and height of Console to
+        a connected client.
+
+        Args:
+            client_handler (ClientHandler): The client to send information to
+        """
         await client_handler.send_message(
             {
                 "type": "server_info",
@@ -72,18 +89,19 @@ class DevtoolsService:
         )
 
     async def handle(self, request: Request) -> WebSocketResponse:
+        """Handles a single client connection"""
         client = ClientHandler(request, service=self)
         self.clients.append(client)
         websocket = await client.start()
         self.clients.remove(client)
         return websocket
 
-    async def shutdown(self):
-        # Stop polling Console dimensions
+    async def shutdown(self) -> None:
+        # Stop polling/writing Console dimensions to clients
         self.shutdown_event.set()
         await self.size_poll_task
 
-        # Close the websockets
+        # We're shutting down the server, so inform all connected clients
         for client in self.clients:
             await client.close()
         self.clients.clear()
@@ -92,15 +110,28 @@ class DevtoolsService:
 class ClientHandler:
     """Handles a single client connection to the devtools.
     A single DevtoolsService managers many ClientHandlers. A single ClientHandler
-    corresponds to a single running Textual application instance.
+    corresponds to a single running Textual application instance, and is responsible
+    for communication with that Textual app.
     """
 
-    def __init__(self, request: Request, service: DevtoolsService):
+    def __init__(self, request: Request, service: DevtoolsService) -> None:
+        """
+        Args:
+            request (Request): The aiohttp.Request associated with this client
+            service (DevtoolsService): The parent DevtoolsService which is responsible
+                for the handling of this client.
+        """
         self.request = request
         self.service = service
         self.websocket = WebSocketResponse()
 
     async def send_message(self, message: dict[str, object]) -> None:
+        """Send a message to a client
+
+        Args:
+            message (dict[str, object]): The dict which will be sent
+                to the client.
+        """
         await self.outgoing_queue.put(message)
 
     async def _consume_outgoing(self) -> None:
@@ -150,15 +181,25 @@ class ClientHandler:
             self.incoming_queue.task_done()
 
     async def start(self) -> WebSocketResponse:
+        """Prepare the websocket and communication queues, and continuously
+        read messages from the queues.
+
+        Returns:
+            WebSocketResponse: The WebSocketResponse associated with this client.
+        """
+
         await self.websocket.prepare(self.request)
         self.incoming_queue: asyncio.Queue[dict | None] = asyncio.Queue()
         self.outgoing_queue: asyncio.Queue[dict | None] = asyncio.Queue()
         self.outgoing_messages_task = asyncio.create_task(self._consume_outgoing())
         self.incoming_messages_task = asyncio.create_task(self._consume_incoming())
 
-        self.service.console.print(
-            DevtoolsInternalMessage(f"Client '{escape(self.request.remote)}' connected")
-        )
+        if self.request.remote:
+            self.service.console.print(
+                DevtoolsInternalMessage(
+                    f"Client '{escape(self.request.remote)}' connected"
+                )
+            )
         try:
             await self.service.send_server_info(client_handler=self)
             async for message in self.websocket:
@@ -190,18 +231,23 @@ class ClientHandler:
                 DevtoolsInternalMessage(str(error), level="error")
             )
         finally:
-            self.service.console.print()
             if self.request.remote:
                 self.service.console.print(
+                    "\n",
                     DevtoolsInternalMessage(
                         f"Client '{escape(self.request.remote)}' disconnected"
-                    )
+                    ),
                 )
             await self.close()
 
         return self.websocket
 
     async def close(self) -> None:
+        """Stop all incoming/outgoing message processing,
+        and shutdown the websocket connection associated with this
+        client.
+        """
+
         # Stop any writes to the websocket first
         await self.outgoing_queue.put(None)
         await self.outgoing_messages_task
