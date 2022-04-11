@@ -1,7 +1,7 @@
 $background: #021720;
 
 App > View {
-  text: on $background;
+  background: $background;
 }
 
 #info {

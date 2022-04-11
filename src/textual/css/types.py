@@ -3,8 +3,7 @@ from __future__ import annotations
 import sys
 from typing import Tuple
 
-
-from rich.color import Color
+from ..color import Color
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -16,6 +15,7 @@ Edge = Literal["top", "right", "bottom", "left"]
 EdgeType = Literal[
     "",
     "none",
+    "hidden",
     "round",
     "solid",
     "double",

@@ -8,11 +8,11 @@ from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 
 import rich.repr
-from rich.color import Color
 from rich.style import Style
 
 from .. import log
 from .._animator import Animation, EasingFunction
+from ..color import Color
 from ..geometry import Size, Spacing
 from ._style_properties import (
     BorderProperty,
@@ -61,16 +61,16 @@ class RulesMap(TypedDict, total=False):
 
     Any key may be absent, indiciating that rule has not been set.
 
-    Does not define composite rules, that is a rule that is made of a combination of other rules. For instance,
-    the text style is made up of text_color, text_background, and text_style.
+    Does not define composite rules, that is a rule that is made of a combination of other rules.
+
     """
 
     display: Display
     visibility: Visibility
     layout: "Layout"
 
-    text_color: Color
-    text_background: Color
+    color: Color
+    background: Color
     text_style: Style
 
     opacity: float
@@ -108,6 +108,14 @@ class RulesMap(TypedDict, total=False):
 
     transitions: dict[str, Transition]
 
+    scrollbar_color: Color
+    scrollbar_color_hover: Color
+    scrollbar_color_active: Color
+
+    scrollbar_background: Color
+    scrollbar_background_hover: Color
+    scrollbar_background_active: Color
+
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
 _rule_getter = attrgetter(*RULE_NAMES)
@@ -132,15 +140,22 @@ class StylesBase(ABC):
         "min_height",
         "max_width",
         "max_height",
+        "color",
+        "background",
+        "scrollbar_color",
+        "scrollbar_color_hover",
+        "scrollbar_color_active",
+        "scrollbar_background",
+        "scrollbar_background_hover",
+        "scrollbar_background_active",
     }
 
     display = StringEnumProperty(VALID_DISPLAY, "block")
     visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
     layout = LayoutProperty()
 
-    text = StyleProperty()
-    text_color = ColorProperty()
-    text_background = ColorProperty()
+    color = ColorProperty(Color(255, 255, 255))
+    background = ColorProperty(Color(0, 0, 0))
     text_style = StyleFlagsProperty()
 
     opacity = FractionalProperty()
@@ -150,16 +165,16 @@ class StylesBase(ABC):
     offset = OffsetProperty()
 
     border = BorderProperty()
-    border_top = BoxProperty()
-    border_right = BoxProperty()
-    border_bottom = BoxProperty()
-    border_left = BoxProperty()
+    border_top = BoxProperty(Color(0, 255, 0))
+    border_right = BoxProperty(Color(0, 255, 0))
+    border_bottom = BoxProperty(Color(0, 255, 0))
+    border_left = BoxProperty(Color(0, 255, 0))
 
     outline = BorderProperty()
-    outline_top = BoxProperty()
-    outline_right = BoxProperty()
-    outline_bottom = BoxProperty()
-    outline_left = BoxProperty()
+    outline_top = BoxProperty(Color(0, 255, 0))
+    outline_right = BoxProperty(Color(0, 255, 0))
+    outline_bottom = BoxProperty(Color(0, 255, 0))
+    outline_left = BoxProperty(Color(0, 255, 0))
 
     box_sizing = StringEnumProperty(VALID_BOX_SIZING, "border-box")
     width = ScalarProperty(percent_unit=Unit.WIDTH)
@@ -178,6 +193,16 @@ class StylesBase(ABC):
     layer = NameProperty()
     layers = NameListProperty()
     transitions = TransitionsProperty()
+
+    rich_style = StyleProperty()
+
+    scrollbar_color = ColorProperty("bright_magenta")
+    scrollbar_color_hover = ColorProperty("yellow")
+    scrollbar_color_active = ColorProperty("bright_yellow")
+
+    scrollbar_background = ColorProperty("#555555")
+    scrollbar_background_hover = ColorProperty("#444444")
+    scrollbar_background_active = ColorProperty("black")
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles containts the same rules."""
@@ -255,14 +280,6 @@ class StylesBase(ABC):
 
         Args:
             layout (bool, optional): Also require a layout. Defaults to False.
-        """
-
-    @abstractmethod
-    def check_refresh(self) -> tuple[bool, bool]:
-        """Check if the Styles must be refreshed.
-
-        Returns:
-            tuple[bool, bool]: (repaint required, layout_required)
         """
 
     @abstractmethod
@@ -377,7 +394,7 @@ class StylesBase(ABC):
         if self.box_sizing == "content-box":
 
             if has_rule("padding"):
-                size += self.padding
+                size += self.padding.totals
             if has_rule("border"):
                 size += self.border.spacing.totals
             if has_rule("margin"):
@@ -385,7 +402,7 @@ class StylesBase(ABC):
 
         else:  # border-box
             if has_rule("padding"):
-                size -= self.padding
+                size -= self.padding.totals
             if has_rule("border"):
                 size -= self.border.spacing.totals
             if has_rule("margin"):
@@ -401,9 +418,6 @@ class Styles(StylesBase):
     node: DOMNode | None = None
 
     _rules: RulesMap = field(default_factory=dict)
-
-    _layout_required: bool = False
-    _repaint_required: bool = False
 
     important: set[str] = field(default_factory=set)
 
@@ -449,18 +463,8 @@ class Styles(StylesBase):
         return self._rules.get(rule, default)
 
     def refresh(self, *, layout: bool = False) -> None:
-        self._repaint_required = True
-        self._layout_required = self._layout_required or layout
-
-    def check_refresh(self) -> tuple[bool, bool]:
-        """Check if the Styles must be refreshed.
-
-        Returns:
-            tuple[bool, bool]: (repaint required, layout_required)
-        """
-        result = (self._repaint_required, self._layout_required)
-        self._repaint_required = self._layout_required = False
-        return result
+        if self.node is not None:
+            self.node.refresh(layout=layout)
 
     def reset(self) -> None:
         """Reset the rules to initial state."""
@@ -566,25 +570,25 @@ class Styles(StylesBase):
 
             if top == right and right == bottom and bottom == left:
                 border_type, border_color = rules[f"{name}_top"]
-                yield name, f"{border_type} {border_color.name}"
+                yield name, f"{border_type} {border_color.hex}"
                 return
 
         # Check for edges
         if has_top:
             border_type, border_color = rules[f"{name}_top"]
-            yield f"{name}-top", f"{border_type} {border_color.name}"
+            yield f"{name}-top", f"{border_type} {border_color.hex}"
 
         if has_right:
             border_type, border_color = rules[f"{name}_right"]
-            yield f"{name}-right", f"{border_type} {border_color.name}"
+            yield f"{name}-right", f"{border_type} {border_color.hex}"
 
         if has_bottom:
             border_type, border_color = rules[f"{name}_bottom"]
-            yield f"{name}-bottom", f"{border_type} {border_color.name}"
+            yield f"{name}-bottom", f"{border_type} {border_color.hex}"
 
         if has_left:
             border_type, border_color = rules[f"{name}_left"]
-            yield f"{name}-left", f"{border_type} {border_color.name}"
+            yield f"{name}-left", f"{border_type} {border_color.hex}"
 
     @property
     def css_lines(self) -> list[str]:
@@ -637,19 +641,12 @@ class Styles(StylesBase):
             assert self.layout is not None
             append_declaration("layout", self.layout.name)
 
-        if (
-            has_rule("text_color")
-            and has_rule("text_background")
-            and has_rule("text_style")
-        ):
-            append_declaration("text", str(self.text))
-        else:
-            if has_rule("text_color"):
-                append_declaration("text-color", self.text_color.name)
-            if has_rule("text_background"):
-                append_declaration("text-background", self.text_background.name)
-            if has_rule("text_style"):
-                append_declaration("text-style", str(get_rule("text_style")))
+        if has_rule("color"):
+            append_declaration("color", self.color.hex)
+        if has_rule("background"):
+            append_declaration("background", self.background.hex)
+        if has_rule("text_style"):
+            append_declaration("text-style", str(get_rule("text_style")))
 
         if has_rule("overflow-x"):
             append_declaration("overflow-x", self.overflow_x)
@@ -724,17 +721,6 @@ class RenderStyles(StylesBase):
 
     def merge_rules(self, rules: RulesMap) -> None:
         self._inline_styles.merge_rules(rules)
-
-    def check_refresh(self) -> tuple[bool, bool]:
-        """Check if the Styles must be refreshed.
-
-        Returns:
-            tuple[bool, bool]: (repaint required, layout_required)
-        """
-        base_repaint, base_layout = self._base_styles.check_refresh()
-        inline_repaint, inline_layout = self._inline_styles.check_refresh()
-        result = (base_repaint or inline_repaint, base_layout or inline_layout)
-        return result
 
     def reset(self) -> None:
         """Reset the rules to initial state."""

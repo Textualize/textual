@@ -3,8 +3,6 @@ from __future__ import annotations
 from typing import cast, Iterable, NoReturn
 
 import rich.repr
-from rich.color import Color
-from rich.style import Style
 
 from ._error_tools import friendly_list
 from .constants import (
@@ -22,6 +20,7 @@ from .styles import DockGroup, Styles
 from .tokenize import Token
 from .transition import Transition
 from .types import BoxSizing, Edge, Display, Overflow, Visibility
+from ..color import Color
 from .._duration import _duration_as_seconds
 from .._easing import EASING
 from ..geometry import Spacing, SpacingDimensions, clamp
@@ -78,7 +77,7 @@ class StylesBuilder:
                 tokens = tokens[:-1]
                 self.styles.important.add(rule_name)
             try:
-                process_method(declaration.name, tokens, important)
+                process_method(declaration.name, tokens)
             except DeclarationError:
                 raise
             except Exception as error:
@@ -90,7 +89,7 @@ class StylesBuilder:
         """Generic code to process a declaration with two enumerations, like overflow: auto auto"""
         if len(tokens) > count or not tokens:
             self.error(name, tokens[0], f"expected 1 to {count} tokens here")
-        results = []
+        results: list[str] = []
         append = results.append
         for token in tokens:
             token_name, value, _, _, location, _ = token
@@ -126,7 +125,6 @@ class StylesBuilder:
 
         if len(tokens) != 1:
             self.error(name, tokens[0], "expected a single token here")
-            return False
 
         token = tokens[0]
         token_name, value, _, _, location, _ = token
@@ -144,7 +142,7 @@ class StylesBuilder:
             )
         return value
 
-    def process_display(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_display(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
             name, value, _, _, location, _ = token
 
@@ -169,9 +167,7 @@ class StylesBuilder:
         else:
             self.error(name, tokens[0], "a single scalar is expected")
 
-    def process_box_sizing(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_box_sizing(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
             name, value, _, _, location, _ = token
 
@@ -188,33 +184,25 @@ class StylesBuilder:
             else:
                 self.error(name, token, f"invalid token {value!r} in this context")
 
-    def process_width(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_width(self, name: str, tokens: list[Token]) -> None:
         self._process_scalar(name, tokens)
 
-    def process_height(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_height(self, name: str, tokens: list[Token]) -> None:
         self._process_scalar(name, tokens)
 
-    def process_min_width(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_min_width(self, name: str, tokens: list[Token]) -> None:
         self._process_scalar(name, tokens)
 
-    def process_min_height(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_min_height(self, name: str, tokens: list[Token]) -> None:
         self._process_scalar(name, tokens)
 
-    def process_max_width(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_max_width(self, name: str, tokens: list[Token]) -> None:
         self._process_scalar(name, tokens)
 
-    def process_max_height(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_max_height(self, name: str, tokens: list[Token]) -> None:
         self._process_scalar(name, tokens)
 
-    def process_overflow(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_overflow(self, name: str, tokens: list[Token]) -> None:
         rules = self.styles._rules
         overflow_x, overflow_y = self._process_enum_multiple(
             name, tokens, VALID_OVERFLOW, 2
@@ -222,23 +210,17 @@ class StylesBuilder:
         rules["overflow_x"] = cast(Overflow, overflow_x)
         rules["overflow_y"] = cast(Overflow, overflow_y)
 
-    def process_overflow_x(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_overflow_x(self, name: str, tokens: list[Token]) -> None:
         self.styles._rules["overflow_x"] = cast(
             Overflow, self._process_enum(name, tokens, VALID_OVERFLOW)
         )
 
-    def process_overflow_y(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_overflow_y(self, name: str, tokens: list[Token]) -> None:
         self.styles._rules["overflow_y"] = cast(
             Overflow, self._process_enum(name, tokens, VALID_OVERFLOW)
         )
 
-    def process_visibility(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_visibility(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
             name, value, _, _, location, _ = token
             if name == "token":
@@ -254,7 +236,7 @@ class StylesBuilder:
             else:
                 self.error(name, token, f"invalid token {value!r} in this context")
 
-    def process_opacity(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_opacity(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
             return
         token = tokens[0]
@@ -307,15 +289,15 @@ class StylesBuilder:
             )
         self.styles._rules[name] = Spacing.unpack(cast(SpacingDimensions, tuple(space)))
 
-    def process_padding(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_padding(self, name: str, tokens: list[Token]) -> None:
         self._process_space(name, tokens)
 
-    def process_margin(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_margin(self, name: str, tokens: list[Token]) -> None:
         self._process_space(name, tokens)
 
     def _parse_border(self, name: str, tokens: list[Token]) -> tuple[str, Color]:
         border_type = "solid"
-        border_color = Color.default()
+        border_color = Color(0, 255, 0)
 
         for token in tokens:
             token_name, value, _, _, _, _ = token
@@ -336,63 +318,47 @@ class StylesBuilder:
         border = self._parse_border("border", tokens)
         self.styles._rules[f"border_{edge}"] = border
 
-    def process_border(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_border(self, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("border", tokens)
         rules = self.styles._rules
         rules["border_top"] = rules["border_right"] = border
         rules["border_bottom"] = rules["border_left"] = border
 
-    def process_border_top(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_border_top(self, name: str, tokens: list[Token]) -> None:
         self._process_border_edge("top", name, tokens)
 
-    def process_border_right(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_border_right(self, name: str, tokens: list[Token]) -> None:
         self._process_border_edge("right", name, tokens)
 
-    def process_border_bottom(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_border_bottom(self, name: str, tokens: list[Token]) -> None:
         self._process_border_edge("bottom", name, tokens)
 
-    def process_border_left(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_border_left(self, name: str, tokens: list[Token]) -> None:
         self._process_border_edge("left", name, tokens)
 
     def _process_outline(self, edge: str, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("outline", tokens)
         self.styles._rules[f"outline_{edge}"] = border
 
-    def process_outline(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_outline(self, name: str, tokens: list[Token]) -> None:
         border = self._parse_border("outline", tokens)
         rules = self.styles._rules
         rules["outline_top"] = rules["outline_right"] = border
         rules["outline_bottom"] = rules["outline_left"] = border
 
-    def process_outline_top(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_outline_top(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("top", name, tokens)
 
-    def process_parse_border_right(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_parse_border_right(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("right", name, tokens)
 
-    def process_outline_bottom(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_outline_bottom(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("bottom", name, tokens)
 
-    def process_outline_left(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_outline_left(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("left", name, tokens)
 
-    def process_offset(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_offset(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
             return
         if len(tokens) != 2:
@@ -415,7 +381,7 @@ class StylesBuilder:
             scalar_y = Scalar.parse(token2.value, Unit.HEIGHT)
             self.styles._rules["offset"] = ScalarOffset(scalar_x, scalar_y)
 
-    def process_offset_x(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_offset_x(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
             return
         if len(tokens) != 1:
@@ -428,7 +394,7 @@ class StylesBuilder:
             y = self.styles.offset.y
             self.styles._rules["offset"] = ScalarOffset(x, y)
 
-    def process_offset_y(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_offset_y(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
             return
         if len(tokens) != 1:
@@ -441,7 +407,7 @@ class StylesBuilder:
             x = self.styles.offset.x
             self.styles._rules["offset"] = ScalarOffset(x, y)
 
-    def process_layout(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_layout(self, name: str, tokens: list[Token]) -> None:
         from ..layouts.factory import get_layout, MissingLayout, LAYOUT_MAP
 
         if tokens:
@@ -459,36 +425,13 @@ class StylesBuilder:
                         f"invalid value for layout (received {value!r}, expected {friendly_list(LAYOUT_MAP.keys())})",
                     )
 
-    def process_text(self, name: str, tokens: list[Token], important: bool) -> None:
-        style_definition = _join_tokens(tokens, joiner=" ")
-
-        # If every token in the value is a referenced by the same variable,
-        # we can display the variable name before the style definition.
-        # TODO: Factor this out to apply it to other properties too.
-        unique_references = {t.referenced_by for t in tokens if t.referenced_by}
-        if tokens and tokens[0].referenced_by and len(unique_references) == 1:
-            variable_prefix = f"${tokens[0].referenced_by.name}="
-        else:
-            variable_prefix = ""
-
-        try:
-            style = Style.parse(style_definition)
-            self.styles.text = style
-        except Exception as error:
-            message = f"property 'text' has invalid value {variable_prefix}{style_definition!r}; {error}"
-            self.error(name, tokens[0], message)
-        if important:
-            self.styles.important.update(
-                {"text_style", "text_background", "text_color"}
-            )
-
-    def process_text_color(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_color(self, name: str, tokens: list[Token]) -> None:
+        """Processes a simple color declaration."""
+        name = name.replace("-", "_")
         for token in tokens:
             if token.name in ("color", "token"):
                 try:
-                    self.styles._rules["text_color"] = Color.parse(token.value)
+                    self.styles._rules[name] = Color.parse(token.value)
                 except Exception as error:
                     self.error(
                         name, token, f"failed to parse color {token.value!r}; {error}"
@@ -498,29 +441,19 @@ class StylesBuilder:
                     name, token, f"unexpected token {token.value!r} in declaration"
                 )
 
-    def process_text_background(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
-        for token in tokens:
-            if token.name in ("color", "token"):
-                try:
-                    self.styles._rules["text_background"] = Color.parse(token.value)
-                except Exception as error:
-                    self.error(
-                        name, token, f"failed to parse color {token.value!r}; {error}"
-                    )
-            else:
-                self.error(
-                    name, token, f"unexpected token {token.value!r} in declaration"
-                )
+    process_background = process_color
+    process_scrollbar_color = process_color
+    process_scrollbar_color_hover = process_color
+    process_scrollbar_color_active = process_color
+    process_scrollbar_background = process_color
+    process_scrollbar_background_hover = process_color
+    process_scrollbar_background_active = process_color
 
-    def process_text_style(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_text_style(self, name: str, tokens: list[Token]) -> None:
         style_definition = " ".join(token.value for token in tokens)
         self.styles.text_style = style_definition
 
-    def process_dock(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_dock(self, name: str, tokens: list[Token]) -> None:
 
         if len(tokens) > 1:
             self.error(
@@ -530,7 +463,7 @@ class StylesBuilder:
             )
         self.styles._rules["dock"] = tokens[0].value if tokens else ""
 
-    def process_docks(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_docks(self, name: str, tokens: list[Token]) -> None:
         docks: list[DockGroup] = []
         for token in tokens:
             if token.name == "key_value":
@@ -561,12 +494,12 @@ class StylesBuilder:
                 )
         self.styles._rules["docks"] = tuple(docks + [DockGroup("_default", "top", 0)])
 
-    def process_layer(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_layer(self, name: str, tokens: list[Token]) -> None:
         if len(tokens) > 1:
             self.error(name, tokens[1], f"unexpected tokens in dock-edge declaration")
         self.styles._rules["layer"] = tokens[0].value
 
-    def process_layers(self, name: str, tokens: list[Token], important: bool) -> None:
+    def process_layers(self, name: str, tokens: list[Token]) -> None:
         layers: list[str] = []
         for token in tokens:
             if token.name != "token":
@@ -574,9 +507,7 @@ class StylesBuilder:
             layers.append(token.value)
         self.styles._rules["layers"] = tuple(layers)
 
-    def process_transition(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
+    def process_transition(self, name: str, tokens: list[Token]) -> None:
         transitions: dict[str, Transition] = {}
 
         def make_groups() -> Iterable[list[Token]]:

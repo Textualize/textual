@@ -29,13 +29,16 @@ class CombinatorType(Enum):
 
 
 @dataclass
-class Location:
-    line: tuple[int, int]
-    column: tuple[int, int]
-
-
-@dataclass
 class Selector:
+    """Represents a CSS selector.
+
+    Some examples of selectors:
+
+    *
+    Header.title
+    App > Content
+    """
+
     name: str
     combinator: CombinatorType = CombinatorType.DESCENDENT
     type: SelectorType = SelectorType.TYPE
@@ -46,6 +49,7 @@ class Selector:
 
     @property
     def css(self) -> str:
+        """Rebuilds the selector as it would appear in CSS."""
         pseudo_suffix = "".join(f":{name}" for name in self.pseudo_classes)
         if self.type == SelectorType.UNIVERSAL:
             return "*"

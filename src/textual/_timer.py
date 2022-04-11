@@ -8,12 +8,14 @@ from asyncio import (
     sleep,
     Task,
 )
+from functools import partial
 from time import monotonic
 from typing import Awaitable, Callable, Union
 
 from rich.repr import Result, rich_repr
 
 from . import events
+from ._callback import invoke
 from ._types import MessageTarget
 
 TimerCallback = Union[Callable[[], Awaitable[None]], Callable[[], None]]
@@ -36,9 +38,21 @@ class Timer:
         name: str | None = None,
         callback: TimerCallback | None = None,
         repeat: int | None = None,
-        skip: bool = False,
+        skip: bool = True,
         pause: bool = False,
     ) -> None:
+        """A class to send timer-based events.
+
+        Args:
+            event_target (MessageTarget): The object which will receive the timer events.
+            interval (float): The time between timer events.
+            sender (MessageTarget): The sender of the event.s
+            name (str | None, optional): A name to assign the event (for debugging). Defaults to None.
+            callback (TimerCallback | None, optional): A optional callback to invoke when the event is handled. Defaults to None.
+            repeat (int | None, optional): The number of times to repeat the timer, or None for no repeat. Defaults to None.
+            skip (bool, optional): Enable skipping of scheduled events that couldn't be sent in time. Defaults to True.
+            pause (bool, optional): Start the timer paused. Defaults to False.
+        """
         self._target_repr = repr(event_target)
         self._target = weakref.ref(event_target)
         self._interval = interval
@@ -102,11 +116,19 @@ class Timer:
                 if wait_time:
                     await sleep(wait_time)
                 event = events.Timer(
-                    self.sender, timer=self, count=count, callback=self._callback
+                    self.sender,
+                    timer=self,
+                    time=next_timer,
+                    count=count,
+                    callback=self._callback,
                 )
                 count += 1
                 try:
-                    await self.target.post_message(event)
+                    if self._callback is not None:
+                        await invoke(self._callback)
+                    else:
+                        await self.target.post_priority_message(event)
+
                 except EventTargetGone:
                     break
                 await self._active.wait()

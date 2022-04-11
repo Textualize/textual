@@ -15,10 +15,12 @@ import rich.repr
 from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.measure import Measurement
+from rich.segment import Segments
 from rich.screen import Screen as ScreenRenderable
 from rich.traceback import Traceback
 
 from . import actions
+
 from . import events
 from . import log
 from . import messages
@@ -26,16 +28,17 @@ from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
-from ._profile import timer
 from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet, StylesheetParseError, StylesheetError
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError
+from .design import ColorSystem
 from .dom import DOMNode
 from .driver import Driver
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
 from .layouts.dock import Dock
 from .message_pump import MessagePump
+from ._profile import timer
 from .reactive import Reactive
 from .screen import Screen
 from .widget import Widget
@@ -51,6 +54,17 @@ WINDOWS = PLATFORM == "Windows"
 warnings.simplefilter("always", ResourceWarning)
 
 LayoutDefinition = "dict[str, Any]"
+
+
+DEFAULT_COLORS = ColorSystem(
+    primary="#406e8e",
+    secondary="#ffa62b",
+    warning="#ffa62b",
+    error="#ba3c5b",
+    success="#6d9f71",
+    accent="#ffa62b",
+    system="#5a4599",
+)
 
 
 class AppError(Exception):
@@ -113,7 +127,10 @@ class App(DOMNode):
         self.bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
         self._refresh_required = False
 
-        self.stylesheet = Stylesheet()
+        self.design = DEFAULT_COLORS
+
+        self.stylesheet = Stylesheet(variables=self.get_css_variables())
+        self._require_styles_update = False
 
         self.css_file = css_file
         self.css_monitor = (
@@ -133,6 +150,21 @@ class App(DOMNode):
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
     background: Reactive[str] = Reactive("black")
+    dark = Reactive(False)
+
+    def get_css_variables(self) -> dict[str, str]:
+        """Get a mapping of variables used to pre-populate CSS.
+
+        Returns:
+            dict[str, str]: A mapping of variable name to value.
+        """
+        variables = self.design.generate(self.dark)
+        return variables
+
+    def watch_dark(self, dark: bool) -> None:
+        """Watches the dark bool."""
+        self.screen.dark = dark
+        self.refresh_css()
 
     def get_driver_class(self) -> Type[Driver]:
         """Get a driver class for this platform.
@@ -142,6 +174,7 @@ class App(DOMNode):
         Returns:
             Driver: A Driver class which manages input and display.
         """
+        driver_class: Type[Driver]
         if WINDOWS:
             from .drivers.windows_driver import WindowsDriver
 
@@ -272,7 +305,7 @@ class App(DOMNode):
     async def _on_css_change(self) -> None:
 
         if self.css_file is not None:
-            stylesheet = Stylesheet()
+            stylesheet = Stylesheet(variables=self.get_css_variables())
             try:
                 self.log("loading", self.css_file)
                 stylesheet.read(self.css_file)
@@ -317,7 +350,8 @@ class App(DOMNode):
         Should be called whenever CSS classes / pseudo classes change.
 
         """
-        self.post_message_no_wait(messages.StylesUpdated(self))
+        self._require_styles_update = True
+        self.check_idle()
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
         self.register(self.screen, *anon_widgets, **widgets)
@@ -391,16 +425,18 @@ class App(DOMNode):
         """
 
         if not renderables:
-
             renderables = (
                 Traceback(
-                    show_locals=True,
-                    width=None,
-                    locals_max_length=5,
-                    suppress=[rich],
+                    show_locals=True, width=None, locals_max_length=5, suppress=[rich]
                 ),
             )
-        self._exit_renderables.extend(renderables)
+
+        prerendered = [
+            Segments(self.console.render(renderable, self.console.options))
+            for renderable in renderables
+        ]
+
+        self._exit_renderables.extend(prerendered)
         self.close_messages_no_wait()
 
     def _print_error_renderables(self) -> None:
@@ -478,6 +514,12 @@ class App(DOMNode):
             if self.log_file is not None:
                 self.log_file.close()
 
+    async def on_idle(self) -> None:
+        """Perform actions when there are no messages in the queue."""
+        if self._require_styles_update:
+            await self.post_message(messages.StylesUpdated(self))
+            self._require_styles_update = False
+
     def _register_child(self, parent: DOMNode, child: DOMNode) -> bool:
         if child not in self.registry:
             parent.children._append(child)
@@ -503,16 +545,13 @@ class App(DOMNode):
         name_widgets = [*((None, widget) for widget in anon_widgets), *widgets.items()]
         apply_stylesheet = self.stylesheet.apply
 
-        # Register children
-        for widget_id, widget in name_widgets:
-            if widget.children:
-                self.register(widget, *widget.children)
-
         for widget_id, widget in name_widgets:
             if widget not in self.registry:
                 if widget_id is not None:
                     widget.id = widget_id
-                self._register_child(parent, child=widget)
+                self._register_child(parent, widget)
+                if widget.children:
+                    self.register(widget, *widget.children)
                 apply_stylesheet(widget)
 
         for _widget_id, widget in name_widgets:
@@ -571,6 +610,18 @@ class App(DOMNode):
                 console.file.flush()
             except Exception:
                 self.panic()
+
+    def refresh_css(self, animate: bool = True) -> None:
+        """Refresh CSS.
+
+        Args:
+            animate (bool, optional): Also execute CSS animations. Defaults to True.
+        """
+        stylesheet = self.app.stylesheet
+        stylesheet.set_variables(self.get_css_variables())
+        stylesheet.reparse()
+        stylesheet.update(self.app, animate=animate)
+        self.refresh(layout=True)
 
     def display(self, renderable: RenderableType) -> None:
         if not self._running:
@@ -715,7 +766,7 @@ class App(DOMNode):
             await self.action(
                 action, default_namespace=default_namespace, modifiers=modifiers
             )
-        elif isinstance(action, Callable):
+        elif callable(action):
             await action()
         else:
             return False
@@ -761,4 +812,4 @@ class App(DOMNode):
         self.screen.query(selector).toggle_class(class_name)
 
     async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
-        self.stylesheet.update(self)
+        self.stylesheet.update(self, animate=True)

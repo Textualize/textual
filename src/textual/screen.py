@@ -9,6 +9,7 @@ from . import events, messages, errors
 
 from .geometry import Offset, Region
 from ._compositor import Compositor
+from .reactive import Reactive
 from .widget import Widget
 from .renderables.gradient import VerticalGradient
 
@@ -24,10 +25,15 @@ class Screen(Widget):
 
     """
 
+    dark = Reactive(False)
+
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
         super().__init__(name=name, id=id)
         self._compositor = Compositor()
         self._dirty_widgets: list[Widget] = []
+
+    def watch_dark(self, dark: bool) -> None:
+        pass
 
     @property
     def is_transparent(self) -> bool:
@@ -85,6 +91,7 @@ class Screen(Widget):
     def on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         if self._dirty_widgets:
+            self.log(dirty=len(self._dirty_widgets))
             for widget in self._dirty_widgets:
                 # Repaint widgets
                 # TODO: Combine these in to a single update.
@@ -94,7 +101,7 @@ class Screen(Widget):
             # Reset dirty list
             self._dirty_widgets.clear()
 
-    async def refresh_layout(self) -> None:
+    def refresh_layout(self) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
         if not self.size:
             return
@@ -134,14 +141,15 @@ class Screen(Widget):
         widget = message.widget
         assert isinstance(widget, Widget)
         self._dirty_widgets.append(widget)
+        self.check_idle()
 
     async def handle_layout(self, message: messages.Layout) -> None:
         message.stop()
-        await self.refresh_layout()
+        self.refresh_layout()
 
     async def on_resize(self, event: events.Resize) -> None:
         self.size_updated(event.size, event.virtual_size, event.container_size)
-        await self.refresh_layout()
+        self.refresh_layout()
         event.stop()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
@@ -204,10 +212,8 @@ class Screen(Widget):
                 widget, _region = self.get_widget_at(event.x, event.y)
             except errors.NoWidget:
                 return
-            self.log("forward", widget, event)
             scroll_widget = widget
             if scroll_widget is not None:
                 await scroll_widget.forward_event(event)
         else:
-            self.log("view.forwarded", event)
             await self.post_message(event)

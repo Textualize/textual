@@ -19,15 +19,13 @@ class NodeList:
     """
 
     def __init__(self) -> None:
-        self._node_refs: list[ref[DOMNode]] = []
-        self.__nodes: list[DOMNode] | None = []
+        self._nodes: list[DOMNode] = []
 
     def __bool__(self) -> bool:
-        self._prune()
-        return bool(self._node_refs)
+        return bool(self._nodes)
 
     def __length_hint__(self) -> int:
-        return len(self._node_refs)
+        return len(self._nodes)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._nodes
@@ -38,32 +36,12 @@ class NodeList:
     def __contains__(self, widget: DOMNode) -> bool:
         return widget in self._nodes
 
-    @property
-    def _nodes(self) -> list[DOMNode]:
-        if self.__nodes is None:
-            self.__nodes = list(
-                filter(None, [widget_ref() for widget_ref in self._node_refs])
-            )
-        return self.__nodes
-
-    def _prune(self) -> None:
-        """Remove expired references."""
-        self._node_refs[:] = filter(
-            None,
-            [
-                None if widget_ref() is None else widget_ref
-                for widget_ref in self._node_refs
-            ],
-        )
-
     def _append(self, widget: DOMNode) -> None:
         if widget not in self._nodes:
-            self._node_refs.append(ref(widget))
-            self.__nodes = None
+            self._nodes.append(widget)
 
     def _clear(self) -> None:
-        del self._node_refs[:]
-        self.__nodes = None
+        del self._nodes[:]
 
     def __iter__(self) -> Iterator[DOMNode]:
         return iter(self._nodes)
@@ -77,6 +55,5 @@ class NodeList:
         ...
 
     def __getitem__(self, index: int | slice) -> DOMNode | list[DOMNode]:
-        self._prune()
         assert self._nodes is not None
         return self._nodes[index]

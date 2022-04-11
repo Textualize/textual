@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import pprint
 import re
 from typing import Iterable
 
@@ -10,7 +9,7 @@ COMMENT_START = r"\/\*"
 SCALAR = r"\-?\d+\.?\d*(?:fr|%|w|h|vw|vh)"
 DURATION = r"\d+\.?\d*(?:ms|s)"
 NUMBER = r"\-?\d+\.?\d*"
-COLOR = r"\#[0-9a-fA-F]{6}|color\([0-9]{1,3}\)|rgb\(\d{1,3}\,\s?\d{1,3}\,\s?\d{1,3}\)"
+COLOR = r"\#[0-9a-fA-F]{8}|\#[0-9a-fA-F]{6}|rgb\(\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*\)|rgba\(\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*\)"
 KEY_VALUE = r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+"
 TOKEN = "[a-zA-Z_-]+"
 STRING = r"\".*?\""
@@ -97,6 +96,16 @@ expect_declaration_content = Expect(
     declaration_set_end=r"\}",
 )
 
+expect_declaration_content_solo = Expect(
+    declaration_end=r"\n|;",
+    whitespace=r"\s+",
+    comment_start=COMMENT_START,
+    **DECLARATION_VALUES,
+    important=r"\!important",
+    comma=",",
+    declaration_set_end=r"\}",
+).expect_eof(True)
+
 
 class TokenizerState:
     """State machine for the tokenizer.
@@ -152,15 +161,41 @@ class DeclarationTokenizerState(TokenizerState):
     }
 
 
+class ValueTokenizerState(TokenizerState):
+    EXPECT = expect_declaration_content_solo
+
+
 tokenize = TokenizerState()
 tokenize_declarations = DeclarationTokenizerState()
+tokenize_value = ValueTokenizerState()
+
+
+def tokenize_values(values: dict[str, str]) -> dict[str, list[Token]]:
+    """Tokens the values in a dict of strings.
+
+    Args:
+        values (dict[str, str]): A mapping of CSS variable name on to a value, to be
+            added to the CSS context.
+
+    Returns:
+        dict[str, list[Token]]: A mapping of name on to a list of tokens,
+    """
+    value_tokens = {
+        name: list(tokenize_value(value, "__name__")) for name, value in values.items()
+    }
+    return value_tokens
+
 
 if __name__ == "__main__":
+    from rich import print
+
     css = """#something {
-        text: on red;
-        offset-x: 10;
+
+        color: rgb(10,12,23)
     }
     """
     # transition: offset 500 in_out_cubic;
     tokens = tokenize(css, __name__)
-    pprint.pp(list(tokens))
+    print(list(tokens))
+
+    print(tokenize_values({"primary": "rgb(10,20,30)", "secondary": "#ff00ff"}))
