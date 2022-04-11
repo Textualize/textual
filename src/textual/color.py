@@ -241,7 +241,8 @@ class Color(NamedTuple):
         """Parse a string containing a CSS-style color.
 
         Args:
-            color_text (str): Text with a valid color format.
+            color_text (str | Color): Text with a valid color format. Color objects will
+                be returned unmodified.
 
         Raises:
             ColorParseError: If the color is not encoded correctly.

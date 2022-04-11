@@ -460,6 +460,7 @@ class StylesBuilder:
                     )
 
     def process_color(self, name: str, tokens: list[Token], important: bool) -> None:
+        """Processes a simple color declaration."""
         name = name.replace("-", "_")
         for token in tokens:
             if token.name in ("color", "token"):
@@ -474,40 +475,13 @@ class StylesBuilder:
                     name, token, f"unexpected token {token.value!r} in declaration"
                 )
 
-    def process_background(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
-        self.process_color(name, tokens, important)
-
-    def process_scrollbar_color(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
-        self.process_color(name, tokens, important)
-
-    def process_scrollbar_color_hover(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
-        self.process_color(name, tokens, important)
-
-    def process_scrollbar_color_active(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
-        self.process_color(name, tokens, important)
-
-    def process_scrollbar_background(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
-        self.process_color(name, tokens, important)
-
-    def process_scrollbar_background_hover(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
-        self.process_color(name, tokens, important)
-
-    def process_scrollbar_background_active(
-        self, name: str, tokens: list[Token], important: bool
-    ) -> None:
-        self.process_color(name, tokens, important)
+    process_background = process_color
+    process_scrollbar_color = process_color
+    process_scrollbar_color_hover = process_color
+    process_scrollbar_color_active = process_color
+    process_scrollbar_background = process_color
+    process_scrollbar_background_hover = process_color
+    process_scrollbar_background_active = process_color
 
     def process_text_style(
         self, name: str, tokens: list[Token], important: bool
