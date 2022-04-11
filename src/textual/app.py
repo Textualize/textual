@@ -220,28 +220,29 @@ class App(DOMNode):
         output = ""
         try:
             output = f" ".join(str(arg) for arg in objects)
-            if self.log_file and verbosity <= self.log_verbosity:
-                if kwargs:
-                    key_values = " ".join(
-                        f"{key}={value}" for key, value in kwargs.items()
+            if kwargs:
+                key_values = " ".join(f"{key}={value}" for key, value in kwargs.items())
+                output = " ".join((output, key_values))
+
+            if not caller:
+                caller = inspect.stack()[1]
+
+            calling_path = caller.filename
+            calling_lineno = caller.lineno
+
+            if self.devtools.is_connected and verbosity <= self.log_verbosity:
+                if len(objects) > 1 or len(kwargs) >= 1 and output:
+                    self.devtools.log(output, path=calling_path, lineno=calling_lineno)
+                else:
+                    self.devtools.log(
+                        *objects, path=calling_path, lineno=calling_lineno
                     )
-                    output = " ".join((output, key_values))
+
+            if self.log_file and verbosity <= self.log_verbosity:
                 self.log_file.write(output + "\n")
                 self.log_file.flush()
         except Exception:
             pass
-
-        if not caller:
-            caller = inspect.stack()[1]
-
-        calling_path = caller.filename
-        calling_lineno = caller.lineno
-
-        if self.devtools.is_connected and verbosity <= self.log_verbosity:
-            if len(objects) > 1 and output:
-                self.devtools.log(output, path=calling_path, lineno=calling_lineno)
-            else:
-                self.devtools.log(*objects, path=calling_path, lineno=calling_lineno)
 
     def bind(
         self,
