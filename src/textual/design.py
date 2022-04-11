@@ -208,7 +208,7 @@ class ColorSystem:
                 spread /= 2
             for shade_name, luminosity_delta in luminosity_range(spread):
                 if is_dark_shade:
-                    dark_background = background.blend(color, 0.2)
+                    dark_background = background.blend(color, 0.15)
                     shade_color = dark_background.blend(
                         WHITE, spread + luminosity_delta
                     ).clamped

@@ -6,7 +6,7 @@ Textual's color system is a palette of colors for building TUIs, and a set of gu
 
 ## The colors
 
-There are 10 base colors specified in the Textual Color System. Although some can be derived from other colors, and some defaults are unlikely to be changed.
+There are 10 base colors specified in the Textual Color System. Although it is unlikely that all will need to be specified, since some may be derived from others, and some defaults may not need to be changed.
 
 ### Shades
 
