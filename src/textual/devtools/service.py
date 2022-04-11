@@ -92,11 +92,13 @@ class DevtoolsService:
         """Handles a single client connection"""
         client = ClientHandler(request, service=self)
         self.clients.append(client)
-        websocket = await client.start()
+        websocket = await client.run()
         self.clients.remove(client)
         return websocket
 
     async def shutdown(self) -> None:
+        """Stop server async tasks and clean up all client handlers"""
+
         # Stop polling/writing Console dimensions to clients
         self.shutdown_event.set()
         await self.size_poll_task
@@ -180,7 +182,7 @@ class ClientHandler:
                 self.service.console.print(info_renderable)
             self.incoming_queue.task_done()
 
-    async def start(self) -> WebSocketResponse:
+    async def run(self) -> WebSocketResponse:
         """Prepare the websocket and communication queues, and continuously
         read messages from the queues.
 

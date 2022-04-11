@@ -5,6 +5,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
 
+from rich.style import Style
+from rich.text import Text
+
 if sys.version_info >= (3, 8):
     from typing import Literal
 else:
@@ -59,7 +62,9 @@ class DevtoolsLogMessage:
         file_and_line = escape(f"{Path(self.path).name}:{self.line_number}")
         table.add_row(
             f" [#888177]{local_time.time()} [dim]{timezone_name}[/]",
-            Align.right(f"[#888177][link={file_link}]{file_and_line} "),
+            Align.right(
+                Text(f"{file_and_line} ", style=Style(color="#888177", link=file_link))
+            ),
             style="on #292724",
         )
         yield table

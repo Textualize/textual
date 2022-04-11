@@ -14,7 +14,6 @@ from aiohttp import ClientResponseError, ClientConnectorError, ClientWebSocketRe
 from rich.console import Console
 from rich.segment import Segment
 
-
 DEFAULT_PORT = 8081
 WEBSOCKET_CONNECT_TIMEOUT = 3
 LOG_QUEUE_MAXSIZE = 512
@@ -40,13 +39,9 @@ class DevtoolsConsole(Console):
 class DevtoolsConnectionError(Exception):
     """Raise when the devtools client is unable to connect to the server"""
 
-    pass
-
 
 class ClientShutdown:
     """Sentinel type sent to client queue(s) to indicate shutdown"""
-
-    pass
 
 
 class DevtoolsClient:
