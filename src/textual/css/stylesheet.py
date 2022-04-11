@@ -22,6 +22,7 @@ from .model import RuleSet
 from .parse import parse
 from .styles import RulesMap
 from .tokenize import tokenize_values, Token
+from .tokenizer import TokenizeError
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
 from .. import log
@@ -53,7 +54,7 @@ class StylesheetErrors:
             theme="ansi_light",
             line_numbers=True,
             indent_guides=True,
-            line_range=(max(0, line_no - 2), line_no + 1),
+            line_range=(max(0, line_no - 2), line_no + 2),
             highlight_lines={line_no},
         )
         return Panel(syntax, border_style="red")
@@ -147,8 +148,10 @@ class Stylesheet:
             raise StylesheetError(f"unable to read {filename!r}; {error}")
         try:
             rules = list(parse(css, path, variables=self.variables))
+        except TokenizeError:
+            raise
         except Exception as error:
-            raise StylesheetError(f"failed to parse {filename!r}; {error}")
+            raise StylesheetError(f"failed to parse {filename!r}; {error!r}")
         else:
             self.source.append((css, path))
         self.rules.extend(rules)
@@ -168,6 +171,8 @@ class Stylesheet:
         """
         try:
             rules = list(parse(css, path, variables=self.variables))
+        except TokenizeError:
+            raise
         except Exception as error:
             raise StylesheetError(f"failed to parse css; {error}")
         else:

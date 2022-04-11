@@ -3,18 +3,61 @@ from __future__ import annotations
 import re
 from typing import NamedTuple
 
+from rich.console import Group, RenderableType
+from rich.highlighter import ReprHighlighter
+from rich.padding import Padding
+from rich.panel import Panel
 import rich.repr
+from rich.syntax import Syntax
+from rich.text import Text
 
-
-class EOFError(Exception):
-    pass
+from .._loop import loop_last
 
 
 class TokenizeError(Exception):
-    def __init__(self, col_no: int, row_no: int, message: str) -> None:
+    def __init__(
+        self, path: str, code: str, line_no: int, col_no: int, message: str
+    ) -> None:
+        self.path = path
+        self.code = code
+        self.line_no = line_no
         self.col_no = col_no
-        self.row_no = row_no
         super().__init__(message)
+
+    @classmethod
+    def _get_snippet(cls, code: str, line_no: int) -> Panel:
+        syntax = Syntax(
+            code,
+            lexer="scss",
+            theme="ansi_light",
+            line_numbers=True,
+            indent_guides=True,
+            line_range=(max(0, line_no - 2), line_no + 2),
+            highlight_lines={line_no},
+        )
+        return Panel(syntax, border_style="red")
+
+    def __rich__(self) -> RenderableType:
+        highlighter = ReprHighlighter()
+        errors: list[RenderableType] = []
+        append = errors.append
+
+        message = str(self)
+        append(Text(" Tokenizer error in stylesheet:", style="bold red"))
+
+        append(highlighter(f" {self.path or '<unknown>'}:{self.line_no}:{self.col_no}"))
+        append(self._get_snippet(self.code, self.line_no))
+        final_message = ""
+        for is_last, message_part in loop_last(message.split(";")):
+            end = "" if is_last else "\n"
+            final_message += f"• {message_part.strip()};{end}"
+        append(Padding(highlighter(Text(final_message, "red")), pad=(0, 1)))
+
+        return Group(*errors)
+
+
+class EOFError(TokenizeError):
+    pass
 
 
 class Expect:
@@ -51,7 +94,7 @@ class Token(NamedTuple):
     path: str
     code: str
     location: tuple[int, int]
-    referenced_by: ReferencedBy | None
+    referenced_by: ReferencedBy | None = None
 
     def with_reference(self, by: ReferencedBy | None) -> "Token":
         """Return a copy of the Token, with reference information attached.
@@ -76,8 +119,9 @@ class Token(NamedTuple):
         yield "name", self.name
         yield "value", self.value
         yield "path", self.path
+        yield "code", self.code
         yield "location", self.location
-        yield "referenced_by", self.referenced_by
+        yield "referenced_by", self.referenced_by, None
 
 
 class Tokenizer:
@@ -95,11 +139,15 @@ class Tokenizer:
             if expect._expect_eof:
                 return Token("eof", "", self.path, self.code, (line_no, col_no), None)
             else:
-                raise EOFError()
+                raise EOFError(
+                    self.path, self.code, line_no, col_no, "Unexpected end of file"
+                )
         line = self.lines[line_no]
         match = expect.match(line, col_no)
         if match is None:
             raise TokenizeError(
+                self.path,
+                self.code,
                 line_no,
                 col_no,
                 "expected " + ", ".join(name.upper() for name in expect.names),
@@ -136,7 +184,9 @@ class Tokenizer:
 
         while True:
             if line_no >= len(self.lines):
-                raise EOFError()
+                raise EOFError(
+                    self.path, self.code, line_no, col_no, "Unexpected end of file"
+                )
             line = self.lines[line_no]
             match = expect.search(line, col_no)
 

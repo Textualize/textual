@@ -393,19 +393,11 @@ class App(DOMNode):
             await widget.post_message(events.MouseCapture(self, self.mouse_position))
 
     def panic(self, *renderables: RenderableType) -> None:
-        """Exits the app with a traceback.
+        """Exits the app after displaying a message.
 
         Args:
-            *renderables (RenderableType, optional): A rich renderable, such as a Traceback to
-                display on exit.
+            *renderables (RenderableType, optional): Rich renderables to display on exit.
         """
-
-        if not renderables:
-            renderables = (
-                Traceback(
-                    show_locals=True, width=None, locals_max_length=5, suppress=[rich]
-                ),
-            )
 
         prerendered = [
             Segments(self.console.render(renderable, self.console.options))
@@ -413,6 +405,29 @@ class App(DOMNode):
         ]
 
         self._exit_renderables.extend(prerendered)
+        self.close_messages_no_wait()
+
+    def on_exception(self, error: Exception) -> None:
+        """Called with an unhandled exception.
+
+        Args:
+            error (Exception): An exception instance.
+        """
+        if hasattr(error, "__rich__"):
+            # Exception has a rich method, so we can defer to that for the rendering
+            self.panic(error)
+        else:
+            # Use default exception rendering
+            self.fatal_error()
+
+    def fatal_error(self) -> None:
+        """Exits the app after an unhandled exception."""
+        traceback = Traceback(
+            show_locals=True, width=None, locals_max_length=5, suppress=[rich]
+        )
+        self._exit_renderables.append(
+            Segments(self.console.render(traceback, self.console.options))
+        )
         self.close_messages_no_wait()
 
     def _print_error_renderables(self) -> None:
@@ -430,12 +445,9 @@ class App(DOMNode):
                 self.stylesheet.read(self.css_file)
             if self.css is not None:
                 self.stylesheet.parse(self.css, path=f"<{self.__class__.__name__}>")
-        except StylesheetParseError as error:
-            self.panic(error)
-            self._print_error_renderables()
-            return
+
         except Exception as error:
-            self.panic()
+            self.on_exception(error)
             self._print_error_renderables()
             return
 
@@ -468,8 +480,8 @@ class App(DOMNode):
                     await self.close_all()
             finally:
                 driver.stop_application_mode()
-        except:
-            self.panic()
+        except Exception as error:
+            self.on_exception(error)
         finally:
             self._running = False
             if self._exit_renderables:
@@ -567,8 +579,8 @@ class App(DOMNode):
                 if sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
                 console.file.flush()
-            except Exception:
-                self.panic()
+            except Exception as error:
+                self.on_exception(error)
 
     def refresh_css(self, animate: bool = True) -> None:
         """Refresh CSS.
@@ -589,8 +601,8 @@ class App(DOMNode):
             console = self.console
             try:
                 console.print(renderable)
-            except Exception:
-                self.panic()
+            except Exception as error:
+                self.on_exception(error)
 
     def measure(self, renderable: RenderableType, max_width=100_000) -> int:
         """Get the optimal width for a widget or renderable.
