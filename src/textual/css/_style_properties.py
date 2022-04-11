@@ -625,7 +625,7 @@ class NameListProperty:
     def __get__(
         self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> tuple[str, ...]:
-        return obj.get_rule(self.name, ())
+        return cast(tuple[str, ...], obj.get_rule(self.name, ()))
 
     def __set__(self, obj: StylesBase, names: str | tuple[str] | None = None):
 
@@ -645,13 +645,15 @@ class NameListProperty:
 class ColorProperty:
     """Descriptor for getting and setting color properties."""
 
-    def __init__(self, default_color: Color) -> None:
-        self._default_color = default_color
+    def __init__(self, default_color: Color | str) -> None:
+        self._default_color = Color.parse(default_color)
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
 
-    def __get__(self, obj: StylesBase, objtype: type[Styles] | None = None) -> Color:
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> Color:
         """Get a ``Color``.
 
         Args:
@@ -661,7 +663,7 @@ class ColorProperty:
         Returns:
             Color: The Color
         """
-        return obj.get_rule(self.name, self._default_color)
+        return cast(Color, obj.get_rule(self.name, self._default_color))
 
     def __set__(self, obj: StylesBase, color: Color | str | None):
         """Set the Color

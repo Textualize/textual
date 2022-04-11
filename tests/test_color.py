@@ -108,6 +108,12 @@ def test_color_parse(text, expected):
     assert Color.parse(text) == expected
 
 
+def test_color_parse_color():
+    # as a convenience, if Color.parse is passed a color object, it will return it
+    color = Color(20, 30, 40, 0.5)
+    assert Color.parse(color) is color
+
+
 def test_color_add():
     assert Color(50, 100, 200) + Color(10, 20, 30, 0.9) == Color(14, 28, 47)
 

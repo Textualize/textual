@@ -206,9 +206,18 @@ class ScrollBar(Widget):
         yield "position", self.position
 
     def render(self) -> RenderableType:
+        styles = self.parent.styles
         style = Style(
-            bgcolor=(Color.parse("#555555" if self.mouse_over else "#444444")),
-            color=Color.parse("bright_yellow" if self.grabbed else "bright_magenta"),
+            bgcolor=(
+                styles.scrollbar_background_hover.rich_color
+                if self.mouse_over
+                else styles.scrollbar_background.rich_color
+            ),
+            color=(
+                styles.scrollbar_color_active.rich_color
+                if self.grabbed
+                else styles.scrollbar_color.rich_color
+            ),
         )
         return ScrollBarRender(
             virtual_size=self.window_virtual_size,
