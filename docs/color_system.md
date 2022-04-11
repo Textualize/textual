@@ -2,15 +2,17 @@ _Note: This is kind of a living document, which might not form part of the user-
 
 # Textual Color System
 
-Textual's color system is a palette of colors for building TUIs, and a set of guidelines for how they should be used. Based loosely on Google's Material color system, the Textual color system ensures that elements in the TUI look aesthetically pleasing and that they will appear consistent next to each other.
+Textual's color system is a palette of colors for building TUIs, and a set of guidelines for how they should be used. Based loosely on Google's Material color system, the Textual color system ensures that elements in the TUI look aesthetically pleasing while maximizing legibility
 
 ## The colors
 
 There are 10 base colors specified in the Textual Color System. Although it is unlikely that all will need to be specified, since some may be derived from others, and some defaults may not need to be changed.
 
+A dark mode is automatically derived from the base colors. See Dark Mode below.
+
 ### Shades
 
-Each color has 6 additional shades (3 darker and 3 lighter), giving a total of 7 shades per color.
+Each color has 6 additional shades (3 darker and 3 lighter), giving a total of 7 shades per color. These are calculated automatically from the base colors.
 
 ### Primary and Secondary
 
@@ -20,11 +22,11 @@ The _primary_ and _secondary_ colors are used as a background for large areas of
 
 The _surface_ colors is the base color which goes behind text. The _background_ color is typically the negative space where there is no content.
 
-These two colors tend to be very similar, with just enough difference in lightness to tell them apart. They should be chosen for good contrast with light or dark, depending on the
+These two colors tend to be very similar, with just enough difference in lightness to tell them apart. They should be chosen for good contrast with the text.
 
 In light mode the default background is #efefef (a bright grey) and the surface is #f5f5f5 (off white). In dark mode the default background is 100% black, and the default surface is #121212 (very dark grey).
 
-Note that, although both background and surface support the full range of shades, because they are close to the extremes, it map not be possible to darken or lighten them further. i.e. you can't get any lighter than 100% white or darken than 100% black.
+Note that, although both background and surface support the full range of shades, it may not be possible to darken or lighten them further. i.e. you can't get any lighter than 100% white or darken than 100% black.
 
 ### Panel
 
