@@ -89,7 +89,7 @@ async def test_devtools_client_update_console_dimensions(devtools, server):
     """Sending new server info through websocket from server to client should (eventually)
     result in the dimensions of the devtools client console being updated to match.
     """
-    server_to_client: WebSocketResponse = next(iter(server.app["websockets"]))
+    server_to_client: WebSocketResponse = next(iter(server.app["service"].clients)).websocket
     server_info = {
         "type": "server_info",
         "payload": {

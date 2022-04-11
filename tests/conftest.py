@@ -2,6 +2,7 @@ import pytest
 
 from textual.devtools.server import _make_devtools_aiohttp_app
 from textual.devtools.client import DevtoolsClient
+from textual.devtools.service import DevtoolsService
 
 
 @pytest.fixture
@@ -10,7 +11,9 @@ async def server(aiohttp_server, unused_tcp_port):
         size_change_poll_delay_secs=0.001,
     )
     server = await aiohttp_server(app, port=unused_tcp_port)
+    service: DevtoolsService = app["service"]
     yield server
+    await service.shutdown()
     await server.close()
 
 

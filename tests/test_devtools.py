@@ -92,6 +92,6 @@ async def test_devtools_spillover_message(devtools):
 
 async def test_devtools_console_size_change(server, devtools):
     # Update the width of the console on the server-side
-    server.app["console"].width = 124
+    server.app["service"].console.width = 124
     # Wait for the client side to update the console on their end
     await wait_for_predicate(lambda: devtools.console.width == 124)
