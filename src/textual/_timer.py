@@ -38,7 +38,7 @@ class Timer:
         name: str | None = None,
         callback: TimerCallback | None = None,
         repeat: int | None = None,
-        skip: bool = False,
+        skip: bool = True,
         pause: bool = False,
     ) -> None:
         """A class to send timer-based events.
