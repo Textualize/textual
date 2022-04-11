@@ -56,11 +56,11 @@ class ColorSystem:
         "secondary",
         "background",
         "surface",
+        "panel",
         "warning",
         "error",
         "success",
         "accent",
-        "panel",
         "system",
     ]
 
@@ -75,6 +75,8 @@ class ColorSystem:
         system: str | None = None,
         background: str | None = None,
         surface: str | None = None,
+        dark_background: str | None = None,
+        dark_surface: str | None = None,
         panel: str | None = None,
     ):
         self._primary = primary
@@ -86,6 +88,8 @@ class ColorSystem:
         self._system = system
         self._background = background
         self._surface = surface
+        self._dark_background = dark_background
+        self._dark_surface = dark_surface
         self._panel = panel
 
     @property
@@ -101,6 +105,8 @@ class ColorSystem:
     system = ColorProperty()
     surface = ColorProperty()
     background = ColorProperty()
+    dark_surface = ColorProperty()
+    dark_background = ColorProperty()
     panel = ColorProperty()
 
     @property
@@ -142,20 +148,20 @@ class ColorSystem:
         accent = self.accent or primary
         system = self.system or accent
 
-        background = self.background or Color.parse(
-            DEFAULT_DARK_BACKGROUND if dark else DEFAULT_LIGHT_BACKGROUND
-        )
+        light_background = self.background or Color.parse(DEFAULT_LIGHT_BACKGROUND)
+        dark_background = self.dark_background or Color.parse(DEFAULT_DARK_BACKGROUND)
 
-        surface = self.surface or Color.parse(
-            DEFAULT_DARK_SURFACE if dark else DEFAULT_LIGHT_SURFACE
-        )
+        light_surface = self.surface or Color.parse(DEFAULT_LIGHT_SURFACE)
+        dark_surface = self.dark_surface or Color.parse(DEFAULT_DARK_SURFACE)
+
+        background = dark_background if dark else light_background
+        surface = dark_surface if dark else light_surface
 
         text = background.get_contrast_text(1.0)
         if self.panel is None:
-            if dark:
-                panel = background.blend(text, luminosity_spread)
-            else:
-                panel = background.blend(text, luminosity_spread / 2)
+            panel = background.blend(
+                text, luminosity_spread if dark else luminosity_spread
+            )
         else:
             panel = self.panel
 
@@ -202,7 +208,7 @@ class ColorSystem:
                 spread /= 2
             for shade_name, luminosity_delta in luminosity_range(spread):
                 if is_dark_shade:
-                    dark_background = background.blend(color, 0.15)
+                    dark_background = background.blend(color, 0.2)
                     shade_color = dark_background.blend(
                         WHITE, spread + luminosity_delta
                     ).clamped
@@ -245,16 +251,8 @@ class ColorSystem:
 
 
 if __name__ == "__main__":
-    color_system = ColorSystem(
-        primary="#406e8e",  # blueish
-        secondary="#6d9f71",  # purpleish
-        warning="#ffa62b",  # orange
-        error="#ba3c5b",  # error
-        success="#6d9f71",  # green
-        accent="#ffa62b",
-        system="#5a4599",
-    )
+    from .app import DEFAULT_COLORS
 
     from rich import print
 
-    print(color_system)
+    print(DEFAULT_COLORS)

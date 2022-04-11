@@ -1,11 +1,11 @@
 /* CSS file for basic.py */
 
 
-/*
+
 * {
-    transition: color 500ms linear, background 500ms linear;
+    transition: color 300ms linear, background 300ms linear;
 }
-*/
+
 
 * {
   scrollbar-background: $panel-darken-2;
@@ -72,7 +72,7 @@ App > Screen {
 
 
 Tweet {
-  height: 16;
+  height: 22;
   max-width: 80;
   margin: 1 3;
   background: $panel;
@@ -104,22 +104,26 @@ TweetBody {
   color: $text-accent;
   width:20;
   height: 3
-  border: tall $text-background;
+  /* border-top: hidden  $accent-darken-3;  */
+  border: tall $accent-darken-2;
+  /* border-left: tall $accent-darken-1; */
  
-  margin: 1 1 1 1;
+
+  /* padding: 1 0 0 0 ; */
 
   transition: background 200ms in_out_cubic, color 300ms in_out_cubic;
  
 }
 
 .button:hover {
-  background: $success-darken-1;
-  color: $text-success-darken-1;
+  background: $accent-lighten-1;
+  color: $text-accent-lighten-1;
   width: 20;
   height: 3
-  border: tall $text-background;
+  border: tall $accent-darken-1;
+  /* border-left: tall $accent-darken-3; */
  
-  margin: 1 1 1 1;
+
 
  
 }

@@ -53,6 +53,17 @@ warnings.simplefilter("always", ResourceWarning)
 LayoutDefinition = "dict[str, Any]"
 
 
+DEFAULT_COLORS = ColorSystem(
+    primary="#406e8e",
+    secondary="#ffa62b",
+    warning="#ffa62b",
+    error="#ba3c5b",
+    success="#6d9f71",
+    accent="#ffa62b",
+    system="#5a4599",
+)
+
+
 class AppError(Exception):
     pass
 
@@ -113,16 +124,7 @@ class App(DOMNode):
         self.bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
         self._refresh_required = False
 
-        self.design = ColorSystem(
-            primary="#406e8e",  # blueish
-            secondary="#6d9f71",  # purpleish
-            warning="#ffa62b",  # orange
-            error="#ba3c5b",  # error
-            success="#6d9f71",  # green
-            accent="#ffa62b",
-            system="#5a4599"
-            # accent2="#5a4599",
-        )
+        self.design = DEFAULT_COLORS
 
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
         self._require_styles_update = False
