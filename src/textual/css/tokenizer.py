@@ -15,9 +15,19 @@ from .._loop import loop_last
 
 
 class TokenizeError(Exception):
+    """Error raised when the CSS cannot be tokenized (syntax error)."""
+
     def __init__(
         self, path: str, code: str, line_no: int, col_no: int, message: str
     ) -> None:
+        """
+        Args:
+            path (str): Path to source or "<object>" if source is parsed from a literal.
+            code (str): The code being parsed.
+            line_no (int): Line number of the error.
+            col_no (int): Column number of the error.
+            message (str): A message associated with the error.
+        """
         self.path = path
         self.code = code
         self.line_no = line_no
@@ -26,6 +36,16 @@ class TokenizeError(Exception):
 
     @classmethod
     def _get_snippet(cls, code: str, line_no: int) -> Panel:
+        """Get a short snippet of code around a given line number.
+
+        Args:
+            code (str): The code.
+            line_no (int): Line number.
+
+        Returns:
+            Panel: A renderable.
+        """
+        # TODO: Highlight column number
         syntax = Syntax(
             code,
             lexer="scss",
@@ -40,18 +60,19 @@ class TokenizeError(Exception):
     def __rich__(self) -> RenderableType:
         highlighter = ReprHighlighter()
         errors: list[RenderableType] = []
-        append = errors.append
 
         message = str(self)
-        append(Text(" Tokenizer error in stylesheet:", style="bold red"))
+        errors.append(Text(" Tokenizer error in stylesheet:", style="bold red"))
 
-        append(highlighter(f" {self.path or '<unknown>'}:{self.line_no}:{self.col_no}"))
-        append(self._get_snippet(self.code, self.line_no))
+        errors.append(
+            highlighter(f" {self.path or '<unknown>'}:{self.line_no}:{self.col_no}")
+        )
+        errors.append(self._get_snippet(self.code, self.line_no))
         final_message = ""
         for is_last, message_part in loop_last(message.split(";")):
             end = "" if is_last else "\n"
             final_message += f"• {message_part.strip()};{end}"
-        append(Padding(highlighter(Text(final_message, "red")), pad=(0, 1)))
+        errors.append(Padding(highlighter(Text(final_message, "red")), pad=(0, 1)))
 
         return Group(*errors)
 
