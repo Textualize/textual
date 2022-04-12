@@ -87,7 +87,7 @@ class MessagePump:
         return self._running
 
     def log(self, *args, **kwargs) -> None:
-        return self.app.log(*args, **kwargs, caller=inspect.stack()[1])
+        return self.app.log(*args, **kwargs, _textual_calling_frame=inspect.stack()[1])
 
     def set_parent(self, parent: MessagePump) -> None:
         self._parent = parent

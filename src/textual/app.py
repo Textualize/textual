@@ -208,7 +208,7 @@ class App(DOMNode):
         self,
         *objects: Any,
         verbosity: int = 1,
-        caller: inspect.FrameInfo | None = None,
+        _textual_calling_frame: inspect.FrameInfo | None = None,
         **kwargs,
     ) -> None:
         """Write to logs.
@@ -216,6 +216,8 @@ class App(DOMNode):
         Args:
             *objects (Any): Positional arguments are converted to string and written to logs.
             verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
+            _textual_calling_frame (inspect.FrameInfo | None): The frame info to include in
+                the log message sent to the devtools server.
         """
         output = ""
         try:
@@ -224,11 +226,11 @@ class App(DOMNode):
                 key_values = " ".join(f"{key}={value}" for key, value in kwargs.items())
                 output = " ".join((output, key_values))
 
-            if not caller:
-                caller = inspect.stack()[1]
+            if not _textual_calling_frame:
+                _textual_calling_frame = inspect.stack()[1]
 
-            calling_path = caller.filename
-            calling_lineno = caller.lineno
+            calling_path = _textual_calling_frame.filename
+            calling_lineno = _textual_calling_frame.lineno
 
             if self.devtools.is_connected and verbosity <= self.log_verbosity:
                 if len(objects) > 1 or len(kwargs) >= 1 and output:
