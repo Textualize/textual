@@ -290,6 +290,7 @@ class StylesBuilder:
         self.styles._rules[name] = Spacing.unpack(cast(SpacingDimensions, tuple(space)))
 
     def _process_space_partial(self, name: str, tokens: list[Token]) -> None:
+        """Process granular margin / padding declarations."""
         if len(tokens) != 1:
             self.error(name, tokens[0], "expected a single token here")
 
@@ -311,11 +312,8 @@ class StylesBuilder:
 
         self.styles._rules[style_name] = Spacing(*spacing_list)
 
-    def process_padding(self, name: str, tokens: list[Token]) -> None:
-        self._process_space(name, tokens)
-
-    def process_margin(self, name: str, tokens: list[Token]) -> None:
-        self._process_space(name, tokens)
+    process_padding = _process_space
+    process_margin = _process_space
 
     process_margin_top = _process_space_partial
     process_margin_right = _process_space_partial
