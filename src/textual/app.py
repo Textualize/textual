@@ -332,6 +332,7 @@ class App(DOMNode):
                 elapsed = (perf_counter() - time) * 1000
                 self.log(f"loaded {self.css_file} in {elapsed:.0f}ms")
             except Exception as error:
+                # TODO: catch specific exceptions
                 self.console.bell()
                 self.log(error)
             else:
