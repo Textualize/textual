@@ -51,10 +51,9 @@ class DevtoolsRedirector:
         """
         log_batch: list[DevtoolsLog] = []
         for log in self._buffer:
-            end_of_batch = (
-                log_batch
-                and log_batch[-1].caller.filename != log.caller.filename
-                and log_batch[-1].caller.lineno != log.caller.lineno
+            end_of_batch = log_batch and (
+                log_batch[-1].caller.filename != log.caller.filename
+                or log_batch[-1].caller.lineno != log.caller.lineno
             )
             if end_of_batch:
                 self._log_batched(log_batch)

@@ -1,9 +1,7 @@
-import time
-
-from textual.app import App
 from textual import events
-from textual.widgets import Placeholder
+from textual.app import App
 from textual.widget import Widget
+from textual.widgets import Placeholder
 
 
 class BasicApp(App):
