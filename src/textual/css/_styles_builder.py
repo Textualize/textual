@@ -304,7 +304,8 @@ class StylesBuilder:
         style_name, _, edge = name.replace("-", "_").partition("_")
 
         current_spacing = cast(
-            tuple[int, int, int, int], self.styles._rules.get(style_name, (0, 0, 0, 0))
+            "tuple[int, int, int, int]",
+            self.styles._rules.get(style_name, (0, 0, 0, 0)),
         )
 
         spacing_list = list(current_spacing)
