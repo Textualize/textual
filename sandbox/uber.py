@@ -1,3 +1,5 @@
+import sys
+
 from textual import events
 from textual.app import App
 from textual.widget import Widget
@@ -50,6 +52,8 @@ class BasicApp(App):
             sep=" - ",
         )
         print(1234, 5678)
+
+        sys.stdout.write("abcdef")
 
 
 BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=1)

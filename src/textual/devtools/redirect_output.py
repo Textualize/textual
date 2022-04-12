@@ -10,9 +10,9 @@ if TYPE_CHECKING:
 
 class DevtoolsRedirector:
     """
-    A file-like object which redirects anything written to it to the devtools instance
-    associated with the given Textual application. Used within Textual to redirect data
-    written using `print` to the devtools.
+    A write-only file-like object which redirects anything written to it to the devtools
+    instance associated with the given Textual application. Used within Textual to redirect
+    data written using `print` (or any other stdout writes) to the devtools.
     """
 
     def __init__(self, devtools: DevtoolsClient) -> None:
