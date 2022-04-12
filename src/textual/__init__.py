@@ -9,8 +9,9 @@ def log(*args: object, verbosity: int = 0, **kwargs) -> None:
     from ._context import active_app
 
     app = active_app.get()
+
     caller = inspect.stack()[1]
-    app.log(*args, verbosity=verbosity, caller=caller, **kwargs)
+    app.log(*args, verbosity=verbosity, _textual_calling_frame=caller, **kwargs)
 
 
 def panic(*args: RenderableType) -> None:
