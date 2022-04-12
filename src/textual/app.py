@@ -31,8 +31,8 @@ from ._profile import timer
 from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet, StylesheetError
 from .design import ColorSystem
-from .devtools.client import DevtoolsClient, DevtoolsConnectionError
-from .devtools.redirect_output import DevtoolsRedirector, DevtoolsLog
+from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
+from .devtools.redirect_output import DevtoolsRedirector
 from .dom import DOMNode
 from .driver import Driver
 from .file_monitor import FileMonitor

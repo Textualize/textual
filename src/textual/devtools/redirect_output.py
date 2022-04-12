@@ -1,26 +1,11 @@
 from __future__ import annotations
 
 import inspect
-from typing import NamedTuple, Any, TYPE_CHECKING
+from typing import TYPE_CHECKING
+from textual.devtools.client import DevtoolsLog
 
 if TYPE_CHECKING:
     from textual.devtools.client import DevtoolsClient
-
-
-class DevtoolsLog(NamedTuple):
-    """A devtools log message.
-
-    Attributes:
-        objects_or_string (tuple[Any, ...]): Corresponds to the data that will
-            ultimately be passed to Console.print in order to generate the log
-            Segments.
-        caller (inspect.FrameInfo): Information about where this log message was
-            created. In other words, where did the user call `print` or `App.log`
-            from. Used to display line number and file name in the devtools window.
-    """
-
-    objects_or_string: tuple[Any, ...] | str
-    caller: inspect.FrameInfo | None = None
 
 
 class DevtoolsRedirector:

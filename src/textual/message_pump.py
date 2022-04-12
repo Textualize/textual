@@ -18,7 +18,6 @@ from . import messages
 
 if TYPE_CHECKING:
     from .app import App
-    from .screen import Screen
 
 
 class NoParent(Exception):

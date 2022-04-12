@@ -3,22 +3,38 @@ from __future__ import annotations
 import asyncio
 import base64
 import datetime
+import inspect
 import json
 import pickle
 from asyncio import Queue, Task, QueueFull
 from io import StringIO
-from typing import Type, Any
+from typing import Type, Any, NamedTuple
 
 import aiohttp
 from aiohttp import ClientResponseError, ClientConnectorError, ClientWebSocketResponse
 from rich.console import Console
 from rich.segment import Segment
 
-from textual.devtools.redirect_output import DevtoolsLog
 
 DEFAULT_PORT = 8081
 WEBSOCKET_CONNECT_TIMEOUT = 3
 LOG_QUEUE_MAXSIZE = 512
+
+
+class DevtoolsLog(NamedTuple):
+    """A devtools log message.
+
+    Attributes:
+        objects_or_string (tuple[Any, ...]): Corresponds to the data that will
+            ultimately be passed to Console.print in order to generate the log
+            Segments.
+        caller (inspect.FrameInfo): Information about where this log message was
+            created. In other words, where did the user call `print` or `App.log`
+            from. Used to display line number and file name in the devtools window.
+    """
+
+    objects_or_string: tuple[Any, ...] | str
+    caller: inspect.FrameInfo | None = None
 
 
 class DevtoolsConsole(Console):
