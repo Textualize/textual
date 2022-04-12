@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import inspect
 from asyncio import CancelledError
 from asyncio import PriorityQueue, QueueEmpty, Task
 from functools import partial, total_ordering
@@ -86,7 +87,7 @@ class MessagePump:
         return self._running
 
     def log(self, *args, **kwargs) -> None:
-        return self.app.log(*args, **kwargs)
+        return self.app.log(*args, **kwargs, caller=inspect.stack()[1])
 
     def set_parent(self, parent: MessagePump) -> None:
         self._parent = parent

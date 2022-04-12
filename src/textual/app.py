@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import asyncio
+import inspect
 import os
 import platform
 import warnings
 from asyncio import AbstractEventLoop
+from pathlib import Path
 from typing import Any, Callable, Iterable, Type, TypeVar, TYPE_CHECKING
 
+import aiohttp
 import rich
 import rich.repr
 from rich.console import Console, RenderableType
@@ -25,9 +28,9 @@ from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
-from ._profile import timer
 from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet, StylesheetParseError, StylesheetError
+from .devtools.client import DevtoolsClient, DevtoolsConnectionError
 from .design import ColorSystem
 from .dom import DOMNode
 from .driver import Driver
@@ -140,6 +143,8 @@ class App(DOMNode):
 
         self.registry: set[MessagePump] = set()
 
+        self.devtools = DevtoolsClient()
+
         super().__init__()
 
     title: Reactive[str] = Reactive("Textual")
@@ -199,21 +204,41 @@ class App(DOMNode):
     def size(self) -> Size:
         return Size(*self.console.size)
 
-    def log(self, *args: Any, verbosity: int = 1, **kwargs) -> None:
+    def log(
+        self,
+        *objects: Any,
+        verbosity: int = 1,
+        caller: inspect.FrameInfo | None = None,
+        **kwargs,
+    ) -> None:
         """Write to logs.
 
         Args:
-            *args (Any): Positional arguments are converted to string and written to logs.
+            *objects (Any): Positional arguments are converted to string and written to logs.
             verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
         """
+        output = ""
         try:
-            if self.log_file and verbosity <= self.log_verbosity:
-                output = f" ".join(str(arg) for arg in args)
-                if kwargs:
-                    key_values = " ".join(
-                        f"{key}={value}" for key, value in kwargs.items()
+            output = f" ".join(str(arg) for arg in objects)
+            if kwargs:
+                key_values = " ".join(f"{key}={value}" for key, value in kwargs.items())
+                output = " ".join((output, key_values))
+
+            if not caller:
+                caller = inspect.stack()[1]
+
+            calling_path = caller.filename
+            calling_lineno = caller.lineno
+
+            if self.devtools.is_connected and verbosity <= self.log_verbosity:
+                if len(objects) > 1 or len(kwargs) >= 1 and output:
+                    self.devtools.log(output, path=calling_path, lineno=calling_lineno)
+                else:
+                    self.devtools.log(
+                        *objects, path=calling_path, lineno=calling_lineno
                     )
-                    output = " ".join((output, key_values))
+
+            if self.log_file and verbosity <= self.log_verbosity:
                 self.log_file.write(output + "\n")
                 self.log_file.flush()
         except Exception:
@@ -440,12 +465,19 @@ class App(DOMNode):
         log("---")
         log(f"driver={self.driver_class}")
 
+        if os.getenv("TEXTUAL_DEVTOOLS") == "1":
+            try:
+                await self.devtools.connect()
+                self.log_file.write(f"Connected to devtools ({self.devtools.url})\n")
+            except DevtoolsConnectionError:
+                self.log_file.write(
+                    f"Couldn't connect to devtools ({self.devtools.url})\n"
+                )
         try:
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
             if self.css is not None:
                 self.stylesheet.parse(self.css, path=f"<{self.__class__.__name__}>")
-
         except Exception as error:
             self.on_exception(error)
             self._print_error_renderables()
@@ -474,6 +506,11 @@ class App(DOMNode):
                 await self.animator.start()
                 await super().process_messages()
                 log("PROCESS END")
+                if self.devtools.is_connected:
+                    await self._disconnect_devtools()
+                    self.log_file.write(
+                        f"Disconnected from devtools ({self.devtools.url})\n"
+                    )
                 with timer("animator.stop()"):
                     await self.animator.stop()
                 with timer("self.close_all()"):
@@ -532,6 +569,9 @@ class App(DOMNode):
         for _widget_id, widget in name_widgets:
             widget.post_message_no_wait(events.Mount(sender=parent))
 
+    async def _disconnect_devtools(self):
+        await self.devtools.disconnect()
+
     def start_widget(self, parent: Widget, widget: Widget) -> None:
         """Start a widget (run it's task) so that it can receive messages.
 
@@ -555,6 +595,7 @@ class App(DOMNode):
         self.registry.remove(child)
 
     async def shutdown(self):
+        await self._disconnect_devtools()
         driver = self._driver
         assert driver is not None
         driver.disable_input()
