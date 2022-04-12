@@ -275,8 +275,8 @@ class StylesBuilder:
         space: list[int] = []
         append = space.append
         for token in tokens:
-            token_name, value, _, _, location, _ = token
-            if token_name in ("number", "scalar"):
+            token_name, value, _, _, _, _ = token
+            if token_name == "number":
                 try:
                     append(int(value))
                 except ValueError:
@@ -289,11 +289,43 @@ class StylesBuilder:
             )
         self.styles._rules[name] = Spacing.unpack(cast(SpacingDimensions, tuple(space)))
 
+    def _process_space_partial(self, name: str, tokens: list[Token]) -> None:
+        if len(tokens) != 1:
+            self.error(name, tokens[0], "expected a single token here")
+
+        _EDGE_SPACING_MAP = {"top": 0, "right": 1, "bottom": 2, "left": 3}
+        token = tokens[0]
+        token_name, value, _, _, _, _ = token
+        if token_name == "number":
+            space = int(value)
+        else:
+            self.error(name, token, f"expected a number here; found {value!r}")
+        style_name, _, edge = name.replace("-", "_").partition("_")
+
+        current_spacing = cast(
+            tuple[int, int, int, int], self.styles._rules.get(style_name, (0, 0, 0, 0))
+        )
+
+        spacing_list = list(current_spacing)
+        spacing_list[_EDGE_SPACING_MAP[edge]] = space
+
+        self.styles._rules[style_name] = Spacing(*spacing_list)
+
     def process_padding(self, name: str, tokens: list[Token]) -> None:
         self._process_space(name, tokens)
 
     def process_margin(self, name: str, tokens: list[Token]) -> None:
         self._process_space(name, tokens)
+
+    process_margin_top = _process_space_partial
+    process_margin_right = _process_space_partial
+    process_margin_bottom = _process_space_partial
+    process_margin_left = _process_space_partial
+
+    process_padding_top = _process_space_partial
+    process_padding_right = _process_space_partial
+    process_padding_bottom = _process_space_partial
+    process_padding_left = _process_space_partial
 
     def _parse_border(self, name: str, tokens: list[Token]) -> tuple[str, Color]:
         border_type = "solid"

@@ -4,6 +4,7 @@ import asyncio
 import inspect
 import os
 import platform
+from time import perf_counter
 import warnings
 from asyncio import AbstractEventLoop
 from pathlib import Path
@@ -29,7 +30,7 @@ from ._callback import invoke
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
 from .binding import Bindings, NoBinding
-from .css.stylesheet import Stylesheet, StylesheetParseError, StylesheetError
+from .css.stylesheet import Stylesheet
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError
 from .design import ColorSystem
 from .dom import DOMNode
@@ -102,6 +103,7 @@ class App(DOMNode):
         """
         self.console = Console(markup=False, highlight=False)
         self.error_console = Console(markup=False, stderr=True)
+
         self._screen = screen
         self.driver_class = driver_class or self.get_driver_class()
         self._title = title
@@ -121,7 +123,16 @@ class App(DOMNode):
         self.bindings = Bindings()
         self._title = title
 
-        self.log_file = open(log, "wt") if log else None
+        self._log_console: Console | None = None
+        if log:
+            self.log_file = open(log, "wt")
+            self._log_console = Console(
+                file=self.log_file, markup=False, emoji=False, highlight=False
+            )
+        else:
+            self._log_console = None
+            self._log_file = None
+
         self.log_verbosity = log_verbosity
 
         self.bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
@@ -219,30 +230,36 @@ class App(DOMNode):
             _textual_calling_frame (inspect.FrameInfo | None): The frame info to include in
                 the log message sent to the devtools server.
         """
-        output = ""
+        if verbosity > self.log_verbosity:
+            return
+
         try:
-            output = f" ".join(str(arg) for arg in objects)
-            if kwargs:
-                key_values = " ".join(f"{key}={value}" for key, value in kwargs.items())
-                output = " ".join((output, key_values))
-
-            if not _textual_calling_frame:
-                _textual_calling_frame = inspect.stack()[1]
-
-            calling_path = _textual_calling_frame.filename
-            calling_lineno = _textual_calling_frame.lineno
-
-            if self.devtools.is_connected and verbosity <= self.log_verbosity:
-                if len(objects) > 1 or len(kwargs) >= 1 and output:
-                    self.devtools.log(output, path=calling_path, lineno=calling_lineno)
-                else:
+            if len(objects) == 1:
+                if self._log_console is not None:
+                    self._log_console.print(objects[0])
+                if self.devtools.is_connected:
+                    if not _textual_calling_frame:
+                        _textual_calling_frame = inspect.stack()[1]
+                    calling_path = _textual_calling_frame.filename
+                    calling_lineno = _textual_calling_frame.lineno
                     self.devtools.log(
-                        *objects, path=calling_path, lineno=calling_lineno
+                        objects[0], path=calling_path, lineno=calling_lineno
                     )
-
-            if self.log_file and verbosity <= self.log_verbosity:
-                self.log_file.write(output + "\n")
-                self.log_file.flush()
+            else:
+                output = f" ".join(str(arg) for arg in objects)
+                if kwargs:
+                    key_values = " ".join(
+                        f"{key}={value}" for key, value in kwargs.items()
+                    )
+                    output = " ".join((output, key_values))
+                if self._log_console is not None:
+                    self._log_console.print(output, soft_wrap=True)
+                if self.devtools.is_connected:
+                    if not _textual_calling_frame:
+                        _textual_calling_frame = inspect.stack()[1]
+                    calling_path = _textual_calling_frame.filename
+                    calling_lineno = _textual_calling_frame.lineno
+                    self.devtools.log(output, path=calling_path, lineno=calling_lineno)
         except Exception:
             pass
 
@@ -310,11 +327,13 @@ class App(DOMNode):
         if self.css_file is not None:
             stylesheet = Stylesheet(variables=self.get_css_variables())
             try:
-                self.log("loading", self.css_file)
+                time = perf_counter()
                 stylesheet.read(self.css_file)
-            except StylesheetError as error:
-                self.log(error)
+                elapsed = (perf_counter() - time) * 1000
+                self.log(f"loaded {self.css_file} in {elapsed:.0f}ms")
+            except Exception as error:
                 self.console.bell()
+                self.log(error)
             else:
                 self.reset_styles()
                 self.stylesheet = stylesheet
