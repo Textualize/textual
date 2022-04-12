@@ -1,3 +1,5 @@
+import time
+
 from textual.app import App
 from textual import events
 from textual.widgets import Placeholder
@@ -11,6 +13,7 @@ class BasicApp(App):
         self.bind("q", "quit", "Quit")
         self.bind("d", "dump")
         self.bind("t", "log_tree")
+        self.bind("p", "print")
 
     def on_mount(self):
         """Build layout here."""
@@ -42,5 +45,13 @@ class BasicApp(App):
     def action_log_tree(self):
         self.log(self.screen.tree)
 
+    def action_print(self):
+        print("Hello, world!", "another", self.screen.tree)
+        print("A new print statement")
+
 
 BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=1)
+
+# if __name__ == '__main__':
+#     print(b"Hello, world!", "another", end="")
+#     time.sleep(5)

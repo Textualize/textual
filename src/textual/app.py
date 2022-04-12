@@ -4,23 +4,22 @@ import asyncio
 import inspect
 import os
 import platform
+import sys
 import warnings
 from asyncio import AbstractEventLoop
-from pathlib import Path
-from typing import Any, Callable, Iterable, Type, TypeVar, TYPE_CHECKING
+from contextlib import redirect_stdout
+from typing import Any, Iterable, Type, TYPE_CHECKING
 
-import aiohttp
 import rich
 import rich.repr
 from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.measure import Measurement
-from rich.segment import Segments
 from rich.screen import Screen as ScreenRenderable
+from rich.segment import Segments
 from rich.traceback import Traceback
 
 from . import actions
-
 from . import events
 from . import log
 from . import messages
@@ -28,21 +27,21 @@ from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
+from ._profile import timer
 from .binding import Bindings, NoBinding
-from .css.stylesheet import Stylesheet, StylesheetParseError, StylesheetError
-from .devtools.client import DevtoolsClient, DevtoolsConnectionError
+from .css.stylesheet import Stylesheet, StylesheetError
 from .design import ColorSystem
+from .devtools.client import DevtoolsClient, DevtoolsConnectionError
+from .devtools.redirect_output import DevtoolsWritable, DevtoolsLog
 from .dom import DOMNode
 from .driver import Driver
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
 from .layouts.dock import Dock
 from .message_pump import MessagePump
-from ._profile import timer
 from .reactive import Reactive
 from .screen import Screen
 from .widget import Widget
-
 
 if TYPE_CHECKING:
     from .css.query import DOMQuery
@@ -217,26 +216,25 @@ class App(DOMNode):
             *objects (Any): Positional arguments are converted to string and written to logs.
             verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
         """
-        output = ""
         try:
             output = f" ".join(str(arg) for arg in objects)
             if kwargs:
                 key_values = " ".join(f"{key}={value}" for key, value in kwargs.items())
                 output = " ".join((output, key_values))
 
-            if not caller:
-                caller = inspect.stack()[1]
-
-            calling_path = caller.filename
-            calling_lineno = caller.lineno
-
             if self.devtools.is_connected and verbosity <= self.log_verbosity:
                 if len(objects) > 1 or len(kwargs) >= 1 and output:
-                    self.devtools.log(output, path=calling_path, lineno=calling_lineno)
+                    log_content = output
                 else:
-                    self.devtools.log(
-                        *objects, path=calling_path, lineno=calling_lineno
-                    )
+                    log_content = objects
+
+                if not caller:
+                    caller = inspect.stack()[1]
+
+                try:
+                    self.devtools.log(DevtoolsLog(log_content, caller=caller))
+                except Exception as e:
+                    self.log_file.write(str(e) + "\n")
 
             if self.log_file and verbosity <= self.log_verbosity:
                 self.log_file.write(output + "\n")
@@ -500,11 +498,17 @@ class App(DOMNode):
                 mount_event = events.Mount(sender=self)
                 await self.dispatch_message(mount_event)
 
-                self.console = Console()
+                self.console = Console(file=sys.__stdout__)
                 self.title = self._title
                 self.refresh()
                 await self.animator.start()
-                await super().process_messages()
+
+                if self.devtools.is_connected:
+                    with redirect_stdout(DevtoolsWritable(self)):
+                        await super().process_messages()
+                else:
+                    await super().process_messages()
+
                 log("PROCESS END")
                 if self.devtools.is_connected:
                     await self._disconnect_devtools()

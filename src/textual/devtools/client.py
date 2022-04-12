@@ -14,6 +14,8 @@ from aiohttp import ClientResponseError, ClientConnectorError, ClientWebSocketRe
 from rich.console import Console
 from rich.segment import Segment
 
+from textual.devtools.redirect_output import DevtoolsLog
+
 DEFAULT_PORT = 8081
 WEBSOCKET_CONNECT_TIMEOUT = 3
 LOG_QUEUE_MAXSIZE = 512
@@ -171,16 +173,17 @@ class DevtoolsClient:
             return False
         return not (self.session.closed or self.websocket.closed)
 
-    def log(self, *objects: Any, path: str = "", lineno: int = 0) -> None:
+    def log(self, log: DevtoolsLog):
         """Queue a log to be sent to the devtools server for display.
 
         Args:
-            *objects (Any): Objects to be logged.
-            path (str): The path of the Python file that this log is associated with (and
-                where the call to this method was made from).
-            lineno (int): The line number this log call was made from.
+            log (DevtoolsLog): The log to write to devtools
         """
-        self.console.print(*objects)
+        if isinstance(log.objects_or_string, str):
+            self.console.print(log.objects_or_string)
+        else:
+            self.console.print(*log.objects_or_string)
+
         segments = self.console.export_segments()
 
         encoded_segments = self._encode_segments(segments)
@@ -189,8 +192,8 @@ class DevtoolsClient:
                 "type": "client_log",
                 "payload": {
                     "timestamp": int(datetime.datetime.utcnow().timestamp()),
-                    "path": path,
-                    "line_number": lineno,
+                    "path": getattr(log.caller, "filename", None),
+                    "line_number": getattr(log.caller, "lineno", None),
                     "encoded_segments": encoded_segments,
                 },
             }
