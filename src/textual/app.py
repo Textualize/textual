@@ -216,6 +216,8 @@ class App(DOMNode):
         Args:
             *objects (Any): Positional arguments are converted to string and written to logs.
             verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
+            _textual_calling_frame (inspect.FrameInfo | None): The frame info to include in
+                the log message sent to the devtools server.
         """
         output = ""
         try:
