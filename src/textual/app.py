@@ -323,7 +323,7 @@ class App(DOMNode):
             event_loop.close()
 
     async def _on_css_change(self) -> None:
-
+        """Called when the CSS changes (if watch_css is True)."""
         if self.css_file is not None:
             stylesheet = Stylesheet(variables=self.get_css_variables())
             try:
