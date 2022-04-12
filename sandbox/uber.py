@@ -51,6 +51,7 @@ class BasicApp(App):
             self.screen.tree,
             sep=" - ",
         )
+        print(1234, 5678)
 
 
 BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=1)

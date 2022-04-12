@@ -4,20 +4,48 @@ import inspect
 from typing import NamedTuple, Any, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from textual.app import App
+    from textual.devtools.client import DevtoolsClient
 
 
 class DevtoolsLog(NamedTuple):
+    """A devtools log message.
+
+    Attributes:
+        objects_or_string (tuple[Any, ...]): Corresponds to the data that will
+            ultimately be passed to Console.print in order to generate the log
+            Segments.
+        caller (inspect.FrameInfo): Information about where this log message was
+            created. In other words, where did the user call `print` or `App.log`
+            from. Used to display line number and file name in the devtools window.
+    """
+
     objects_or_string: tuple[Any, ...] | str
     caller: inspect.FrameInfo | None = None
 
 
-class DevtoolsWritable:
-    def __init__(self, app: App):
-        self.app = app
+class DevtoolsRedirector:
+    """
+    A file-like object which redirects anything written to it to the devtools instance
+    associated with the given Textual application. Used within Textual to redirect data
+    written using `print` to the devtools.
+    """
+
+    def __init__(self, devtools: DevtoolsClient) -> None:
+        """
+        Args:
+            devtools (DevtoolsClient): The running Textual app instance.
+        """
+        self.devtools = devtools
         self._buffer: list[DevtoolsLog] = []
 
     def write(self, string: str) -> None:
+        """Write the log string to the internal buffer. If the string contains
+        a newline character `\n`, the whole string will be buffered and then the
+        buffer will be flushed immediately after.
+
+        Args:
+            string (str): The string to write to the buffer.
+        """
         caller = inspect.stack()[1]
         self._buffer.append(DevtoolsLog(string, caller=caller))
 
@@ -31,11 +59,17 @@ class DevtoolsWritable:
         if "\n" in string:
             self.flush()
 
-    def flush(self):
+    def flush(self) -> None:
+        """Flush the buffer. This will send all buffered log messages to
+        the devtools server. Where possible, log messages will be batched
+        and sent as one.
+        """
         log_batch: list[DevtoolsLog] = []
         for log in self._buffer:
             end_of_batch = (
-                log_batch and log_batch[-1].caller.filename != log.caller.filename
+                log_batch
+                and log_batch[-1].caller.filename != log.caller.filename
+                and log_batch[-1].caller.lineno != log.caller.lineno
             )
             if end_of_batch:
                 self._log_batched(log_batch)
@@ -48,7 +82,20 @@ class DevtoolsWritable:
         self._buffer.clear()
 
     def _log_batched(self, log_batch: list[DevtoolsLog]) -> None:
+        """Write a single batch of logs. A batch means contiguous logs
+        which have been written from the same line number and file path.
+        A single `print` call may correspond to multiple writes.
+        e.g. `print("a", "b", "c")` is 3 calls to `write`, so we batch
+        up these calls if they come from the same location in code, so that
+        they appear inside the same log message in the devtools window
+        rather than a single `print` statement resulting in 3 separate
+        logs being displayed.
+
+        Args:
+            log_batch (list[DevtoolsLog]): A batch of logs to send to the
+                devtools server as one. Log content will be joined together.
+        """
         batched_log = "".join(log.objects_or_string for log in log_batch)
         batched_log = batched_log.rstrip()
-        if self.app.devtools.is_connected:
-            self.app.devtools.log(DevtoolsLog(batched_log, caller=log_batch[-1].caller))
+        if self.devtools.is_connected:
+            self.devtools.log(DevtoolsLog(batched_log, caller=log_batch[-1].caller))

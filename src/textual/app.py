@@ -32,7 +32,7 @@ from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet, StylesheetError
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError
-from .devtools.redirect_output import DevtoolsWritable, DevtoolsLog
+from .devtools.redirect_output import DevtoolsRedirector, DevtoolsLog
 from .dom import DOMNode
 from .driver import Driver
 from .file_monitor import FileMonitor
@@ -504,7 +504,7 @@ class App(DOMNode):
                 await self.animator.start()
 
                 if self.devtools.is_connected:
-                    with redirect_stdout(DevtoolsWritable(self)):
+                    with redirect_stdout(DevtoolsRedirector(self.devtools)):  # type: ignore
                         await super().process_messages()
                 else:
                     await super().process_messages()
