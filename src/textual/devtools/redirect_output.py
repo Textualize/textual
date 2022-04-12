@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import inspect
-from typing import NamedTuple, Any
+from typing import NamedTuple, Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from textual.app import App
 
 
 class DevtoolsLog(NamedTuple):
@@ -10,7 +13,7 @@ class DevtoolsLog(NamedTuple):
 
 
 class DevtoolsWritable:
-    def __init__(self, app):
+    def __init__(self, app: App):
         self.app = app
         self._buffer: list[DevtoolsLog] = []
 
@@ -46,5 +49,6 @@ class DevtoolsWritable:
 
     def _log_batched(self, log_batch: list[DevtoolsLog]) -> None:
         batched_log = "".join(log.objects_or_string for log in log_batch)
+        batched_log = batched_log.rstrip()
         if self.app.devtools.is_connected:
             self.app.devtools.log(DevtoolsLog(batched_log, caller=log_batch[-1].caller))

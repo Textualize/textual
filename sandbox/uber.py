@@ -46,12 +46,11 @@ class BasicApp(App):
         self.log(self.screen.tree)
 
     def action_print(self):
-        print("Hello, world!", "another", self.screen.tree)
-        print("A new print statement")
+        print(
+            "Printed using builtin [b blue]print[/] function:",
+            self.screen.tree,
+            sep=" - ",
+        )
 
 
 BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=1)
-
-# if __name__ == '__main__':
-#     print(b"Hello, world!", "another", end="")
-#     time.sleep(5)

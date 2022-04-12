@@ -192,8 +192,8 @@ class DevtoolsClient:
                 "type": "client_log",
                 "payload": {
                     "timestamp": int(datetime.datetime.utcnow().timestamp()),
-                    "path": getattr(log.caller, "filename", None),
-                    "line_number": getattr(log.caller, "lineno", None),
+                    "path": getattr(log.caller, "filename", ""),
+                    "line_number": getattr(log.caller, "lineno", 0),
                     "encoded_segments": encoded_segments,
                 },
             }

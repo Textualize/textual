@@ -9,6 +9,7 @@ from rich.panel import Panel
 
 from tests.utilities.render import wait_for_predicate
 from textual.devtools.client import DevtoolsClient
+from textual.devtools.redirect_output import DevtoolsLog
 
 TIMESTAMP = 1649166819
 
@@ -25,7 +26,7 @@ async def test_devtools_client_is_connected(devtools):
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
 async def test_devtools_log_places_encodes_and_queues_message(devtools):
     await devtools._stop_log_queue_processing()
-    devtools.log("Hello, world!")
+    devtools.log(DevtoolsLog("Hello, world!"))
     queued_log = await devtools.log_queue.get()
     queued_log_json = json.loads(queued_log)
     assert queued_log_json == {
@@ -42,7 +43,7 @@ async def test_devtools_log_places_encodes_and_queues_message(devtools):
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
 async def test_devtools_log_places_encodes_and_queues_many_logs_as_string(devtools):
     await devtools._stop_log_queue_processing()
-    devtools.log("hello", "world")
+    devtools.log(DevtoolsLog(("hello", "world")))
     queued_log = await devtools.log_queue.get()
     queued_log_json = json.loads(queued_log)
     assert queued_log_json == {
@@ -62,10 +63,10 @@ async def test_devtools_log_spillover(devtools):
     devtools.log_queue = Queue(maxsize=2)
 
     # Force spillover of 2
-    devtools.log(Panel("hello, world"))
-    devtools.log("second message")
-    devtools.log("third message")  # Discarded by rate-limiting
-    devtools.log("fourth message")  # Discarded by rate-limiting
+    devtools.log(DevtoolsLog((Panel("hello, world"),)))
+    devtools.log(DevtoolsLog("second message"))
+    devtools.log(DevtoolsLog("third message"))  # Discarded by rate-limiting
+    devtools.log(DevtoolsLog("fourth message"))  # Discarded by rate-limiting
 
     assert devtools.spillover == 2
 
@@ -74,7 +75,7 @@ async def test_devtools_log_spillover(devtools):
         await devtools.log_queue.get()
 
     # Add another message now that we're under spillover threshold
-    devtools.log("another message")
+    devtools.log(DevtoolsLog("another message"))
     await devtools.log_queue.get()
 
     # Ensure we're informing the server of spillover rate-limiting

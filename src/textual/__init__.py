@@ -1,3 +1,4 @@
+import inspect
 from typing import Any
 
 from rich.console import RenderableType
@@ -9,7 +10,8 @@ def log(*args: object, verbosity: int = 0, **kwargs) -> None:
     from ._context import active_app
 
     app = active_app.get()
-    app.log(*args, verbosity=verbosity, **kwargs)
+    caller = inspect.stack()[1]
+    app.log(*args, verbosity=verbosity, caller=caller, **kwargs)
 
 
 def panic(*args: RenderableType) -> None:
