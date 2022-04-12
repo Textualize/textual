@@ -234,7 +234,7 @@ class App(DOMNode):
             return
 
         try:
-            if len(objects) == 1:
+            if len(objects) == 1 and not kwargs:
                 if self._log_console is not None:
                     self._log_console.print(objects[0])
                 if self.devtools.is_connected:
