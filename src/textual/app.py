@@ -101,7 +101,7 @@ class App(DOMNode):
             driver_class (Type[Driver], optional): Driver class, or None to use default. Defaults to None.
             title (str, optional): Title of the application. Defaults to "Textual Application".
         """
-        self.console = Console(markup=False, highlight=False)
+        self.console = Console(markup=False, highlight=False, emoji=False)
         self.error_console = Console(markup=False, stderr=True)
 
         self._screen = screen
@@ -127,7 +127,11 @@ class App(DOMNode):
         if log:
             self.log_file = open(log, "wt")
             self._log_console = Console(
-                file=self.log_file, markup=False, emoji=False, highlight=False
+                file=self.log_file,
+                markup=False,
+                emoji=False,
+                highlight=False,
+                width=100,
             )
         else:
             self._log_console = None
