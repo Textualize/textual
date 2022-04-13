@@ -28,7 +28,7 @@ from ..dom import DOMNode
 from .. import log
 
 
-class StylesheetParseError(Exception):
+class StylesheetParseError(StylesheetError):
     def __init__(self, errors: StylesheetErrors) -> None:
         self.errors = errors
 
