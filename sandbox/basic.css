@@ -58,7 +58,7 @@ App > Screen {
 #header {
   color: $text-primary-darken-1;
   background: $primary-darken-1;
-  height: 3;
+  height: 3
 
 }
 
@@ -76,7 +76,7 @@ Tweet {
   max-width: 80;
   margin: 1 3;
   background: $panel;
-  color: $text-panel
+  color: $text-panel;
   layout: vertical;
   /* border: outer $primary; */
   padding: 1;

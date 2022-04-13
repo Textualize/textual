@@ -202,7 +202,7 @@ class Key(InputEvent):
 
 
 @rich.repr.auto
-class MouseEvent(InputEvent, bubble=True):
+class MouseEvent(InputEvent, bubble=True, verbosity=2):
     """Sent in response to a mouse event"""
 
     __slots__ = [
@@ -344,7 +344,7 @@ class MouseScrollDown(InputEvent, verbosity=3, bubble=True):
         self.y = y
 
 
-class MouseScrollUp(MouseScrollDown, bubble=True):
+class MouseScrollUp(MouseScrollDown, verbosity=3, bubble=True):
     pass
 
 

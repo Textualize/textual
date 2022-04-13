@@ -91,7 +91,6 @@ class Screen(Widget):
     def on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         if self._dirty_widgets:
-            self.log(dirty=len(self._dirty_widgets))
             for widget in self._dirty_widgets:
                 # Repaint widgets
                 # TODO: Combine these in to a single update.

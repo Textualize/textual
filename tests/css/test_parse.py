@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 
 
@@ -9,6 +11,7 @@ from textual.css.stylesheet import Stylesheet, StylesheetParseError
 from textual.css.tokenize import tokenize
 from textual.css.tokenizer import Token, ReferencedBy
 from textual.css.transition import Transition
+from textual.geometry import Spacing
 from textual.layouts.dock import DockLayout
 
 
@@ -1065,3 +1068,19 @@ class TestParseOpacity:
         with pytest.raises(StylesheetParseError):
             stylesheet.parse(css)
         assert stylesheet.rules[0].errors
+
+
+class TestParseMargin:
+    def test_margin_partial(self):
+        css = "#foo {margin: 1; margin-top: 2; margin-right: 3; margin-bottom: -1;}"
+        stylesheet = Stylesheet()
+        stylesheet.parse(css)
+        assert stylesheet.rules[0].styles.margin == Spacing(2, 3, -1, 1)
+
+
+class TestParsePadding:
+    def test_padding_partial(self):
+        css = "#foo {padding: 1; padding-top: 2; padding-right: 3; padding-bottom: -1;}"
+        stylesheet = Stylesheet()
+        stylesheet.parse(css)
+        assert stylesheet.rules[0].styles.padding == Spacing(2, 3, -1, 1)
