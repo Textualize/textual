@@ -250,7 +250,7 @@ class App(DOMNode):
                         objects[0], path=calling_path, lineno=calling_lineno
                     )
             else:
-                output = f" ".join(str(arg) for arg in objects)
+                output = " ".join(str(arg) for arg in objects)
                 if kwargs:
                     key_values = " ".join(
                         f"{key}={value}" for key, value in kwargs.items()
