@@ -261,34 +261,6 @@ class App(DOMNode):
         except Exception:
             pass
 
-        # try:
-        #     output = f" ".join(str(arg) for arg in objects)
-        #     if kwargs:
-        #         key_values = " ".join(f"{key}={value}" for key, value in kwargs.items())
-        #         output = " ".join((output, key_values))
-        #
-        #     if self.devtools.is_connected and verbosity <= self.log_verbosity:
-        #         if len(objects) > 1 or len(kwargs) >= 1 and output:
-        #             log_content = output
-        #         else:
-        #             log_content = objects
-        #
-        #         if not _textual_calling_frame:
-        #             _textual_calling_frame = inspect.stack()[1]
-        #
-        #         try:
-        #             self.devtools.log(
-        #                 DevtoolsLog(log_content, caller=_textual_calling_frame)
-        #             )
-        #         except Exception as e:
-        #             self.log_file.write(str(e) + "\n")
-        #
-        #     if self.log_file and verbosity <= self.log_verbosity:
-        #         self.log_file.write(output + "\n")
-        #         self.log_file.flush()
-        # except Exception:
-        #     pass
-
     def bind(
         self,
         keys: str,
