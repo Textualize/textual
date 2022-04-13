@@ -99,7 +99,7 @@ class App(DOMNode):
             driver_class (Type[Driver], optional): Driver class, or None to use default. Defaults to None.
             title (str, optional): Title of the application. Defaults to "Textual Application".
         """
-        self.console = Console(markup=False, highlight=False)
+        self.console = Console(markup=False, highlight=False, emoji=False)
         self.error_console = Console(markup=False, stderr=True)
         self._screen = screen
         self.driver_class = driver_class or self.get_driver_class()
@@ -120,7 +120,20 @@ class App(DOMNode):
         self.bindings = Bindings()
         self._title = title
 
-        self.log_file = open(log, "wt") if log else None
+        self._log_console: Console | None = None
+        if log:
+            self.log_file = open(log, "wt")
+            self._log_console = Console(
+                file=self.log_file,
+                markup=False,
+                emoji=False,
+                highlight=False,
+                width=100,
+            )
+        else:
+            self._log_console = None
+            self._log_file = None
+
         self.log_verbosity = log_verbosity
 
         self.bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
@@ -218,33 +231,63 @@ class App(DOMNode):
             _textual_calling_frame (inspect.FrameInfo | None): The frame info to include in
                 the log message sent to the devtools server.
         """
+        if verbosity > self.log_verbosity:
+            return
+
+        if self.devtools.is_connected and not _textual_calling_frame:
+            _textual_calling_frame = inspect.stack()[1]
+
         try:
-            output = f" ".join(str(arg) for arg in objects)
-            if kwargs:
-                key_values = " ".join(f"{key}={value}" for key, value in kwargs.items())
-                output = " ".join((output, key_values))
-
-            if self.devtools.is_connected and verbosity <= self.log_verbosity:
-                if len(objects) > 1 or len(kwargs) >= 1 and output:
-                    log_content = output
-                else:
-                    log_content = objects
-
-                if not _textual_calling_frame:
-                    _textual_calling_frame = inspect.stack()[1]
-
-                try:
+            if len(objects) == 1 and not kwargs:
+                if self._log_console is not None:
+                    self._log_console.print(objects[0])
+                if self.devtools.is_connected:
                     self.devtools.log(
-                        DevtoolsLog(log_content, caller=_textual_calling_frame)
+                        DevtoolsLog(objects, caller=_textual_calling_frame)
                     )
-                except Exception as e:
-                    self.log_file.write(str(e) + "\n")
-
-            if self.log_file and verbosity <= self.log_verbosity:
-                self.log_file.write(output + "\n")
-                self.log_file.flush()
+            else:
+                output = " ".join(str(arg) for arg in objects)
+                if kwargs:
+                    key_values = " ".join(
+                        f"{key}={value}" for key, value in kwargs.items()
+                    )
+                    output = " ".join((output, key_values))
+                if self._log_console is not None:
+                    self._log_console.print(output, soft_wrap=True)
+                if self.devtools.is_connected:
+                    self.devtools.log(
+                        DevtoolsLog(output, caller=_textual_calling_frame)
+                    )
         except Exception:
             pass
+
+        # try:
+        #     output = f" ".join(str(arg) for arg in objects)
+        #     if kwargs:
+        #         key_values = " ".join(f"{key}={value}" for key, value in kwargs.items())
+        #         output = " ".join((output, key_values))
+        #
+        #     if self.devtools.is_connected and verbosity <= self.log_verbosity:
+        #         if len(objects) > 1 or len(kwargs) >= 1 and output:
+        #             log_content = output
+        #         else:
+        #             log_content = objects
+        #
+        #         if not _textual_calling_frame:
+        #             _textual_calling_frame = inspect.stack()[1]
+        #
+        #         try:
+        #             self.devtools.log(
+        #                 DevtoolsLog(log_content, caller=_textual_calling_frame)
+        #             )
+        #         except Exception as e:
+        #             self.log_file.write(str(e) + "\n")
+        #
+        #     if self.log_file and verbosity <= self.log_verbosity:
+        #         self.log_file.write(output + "\n")
+        #         self.log_file.flush()
+        # except Exception:
+        #     pass
 
     def bind(
         self,
