@@ -459,6 +459,7 @@ class App(DOMNode):
         Args:
             error (Exception): An exception instance.
         """
+
         if hasattr(error, "__rich__"):
             # Exception has a rich method, so we can defer to that for the rendering
             self.panic(error)
@@ -489,15 +490,9 @@ class App(DOMNode):
         if os.getenv("TEXTUAL_DEVTOOLS") == "1":
             try:
                 await self.devtools.connect()
-                if self._log_console:
-                    self._log_console.print(
-                        f"Connected to devtools ({self.devtools.url})"
-                    )
+                self.log(f"Connected to devtools ({self.devtools.url})")
             except DevtoolsConnectionError:
-                if self._log_console:
-                    self._log_console.print(
-                        f"Couldn't connect to devtools ({self.devtools.url})"
-                    )
+                self.log(f"Couldn't connect to devtools ({self.devtools.url})")
         try:
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
@@ -529,14 +524,15 @@ class App(DOMNode):
                 self.title = self._title
                 self.refresh()
                 await self.animator.start()
-
-                with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
-                    await super().process_messages()
-                    log("Message processing stopped")
-                    with timer("animator.stop()"):
-                        await self.animator.stop()
-                    with timer("self.close_all()"):
-                        await self.close_all()
+                await super().process_messages()
+                log("PROCESS END")
+                if self.devtools.is_connected:
+                    await self._disconnect_devtools()
+                    self.log(f"Disconnected from devtools ({self.devtools.url})")
+                with timer("animator.stop()"):
+                    await self.animator.stop()
+                with timer("self.close_all()"):
+                    await self.close_all()
             finally:
                 driver.stop_application_mode()
         except Exception as error:
@@ -545,12 +541,6 @@ class App(DOMNode):
             self._running = False
             if self._exit_renderables:
                 self._print_error_renderables()
-            if self.devtools.is_connected:
-                await self._disconnect_devtools()
-                if self._log_console is not None:
-                    self._log_console.print(
-                        f"Disconnected from devtools ({self.devtools.url})"
-                    )
             if self._log_file is not None:
                 self._log_file.close()
 

@@ -204,7 +204,11 @@ class Screen(Widget):
                 if isinstance(event, events.MouseDown) and widget.can_focus:
                     await self.app.set_focus(widget)
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
-                await widget.forward_event(event.offset(-region.x, -region.y))
+                if widget is self:
+                    event.set_forwarded()
+                    await self.post_message(event)
+                else:
+                    await widget.forward_event(event.offset(-region.x, -region.y))
 
         elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
             try:

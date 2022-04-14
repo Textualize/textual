@@ -13,7 +13,7 @@ from rich.style import Style
 from .. import log
 from .._animator import Animation, EasingFunction
 from ..color import Color
-from ..geometry import Size, Spacing
+from ..geometry import Offset, Size, Spacing
 from ._style_properties import (
     BorderProperty,
     BoxProperty,
@@ -32,17 +32,28 @@ from ._style_properties import (
     TransitionsProperty,
     FractionalProperty,
 )
-from .constants import VALID_BOX_SIZING, VALID_DISPLAY, VALID_VISIBILITY, VALID_OVERFLOW
+from .constants import (
+    VALID_ALIGN_HORIZONTAL,
+    VALID_ALIGN_VERTICAL,
+    VALID_BOX_SIZING,
+    VALID_DISPLAY,
+    VALID_VISIBILITY,
+    VALID_OVERFLOW,
+)
 from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
 from .transition import Transition
 from .types import (
     BoxSizing,
     Display,
+    AlignHorizontal,
+    AlignVertical,
     Edge,
+    AlignHorizontal,
     Overflow,
     Specificity3,
     Specificity4,
+    AlignVertical,
     Visibility,
 )
 
@@ -115,6 +126,9 @@ class RulesMap(TypedDict, total=False):
     scrollbar_background: Color
     scrollbar_background_hover: Color
     scrollbar_background_active: Color
+
+    align_horizontal: AlignHorizontal
+    align_vertical: AlignVertical
 
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
@@ -203,6 +217,9 @@ class StylesBase(ABC):
     scrollbar_background = ColorProperty("#555555")
     scrollbar_background_hover = ColorProperty("#444444")
     scrollbar_background_active = ColorProperty("black")
+
+    align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
+    align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles containts the same rules."""
@@ -409,6 +426,44 @@ class StylesBase(ABC):
                 margin = self.margin
 
         return size, margin
+
+    def align_width(self, width: int, parent_width: int) -> int:
+        """Align the width dimension.
+
+        Args:
+            width (int): Width of the content.
+            parent_width (int): Width of the parent container.
+
+        Returns:
+            int: An offset to add to the X coordinate.
+        """
+        offset_x = 0
+        align_horizontal = self.align_horizontal
+        if align_horizontal != "left":
+            if align_horizontal == "center":
+                offset_x = (parent_width - width) // 2
+            else:
+                offset_x = parent_width - width
+        return offset_x
+
+    def align_height(self, height: int, parent_height: int) -> int:
+        """Align the height dimensions
+
+        Args:
+            height (int): Height of the content.
+            parent_height (int): Height of the parent container.
+
+        Returns:
+            int: An offset to add to the Y coordinate.
+        """
+        offset_y = 0
+        align_vertical = self.align_vertical
+        if align_vertical != "left":
+            if align_vertical == "middle":
+                offset_y = (parent_height - height) // 2
+            else:
+                offset_y = parent_height - height
+        return offset_y
 
 
 @rich.repr.auto
@@ -675,6 +730,15 @@ class Styles(StylesBase):
                     for name, transition in self.transitions.items()
                 ),
             )
+
+        if has_rule("align_horizontal") and has_rule("align_vertical"):
+            append_declaration(
+                "align", f"{self.align_horizontal} {self.align_vertical}"
+            )
+        elif has_rule("align_horizontal"):
+            append_declaration("align-horizontal", self.align_horizontal)
+        elif has_rule("align_horizontal"):
+            append_declaration("align-vertical", self.align_vertical)
 
         lines.sort()
         return lines

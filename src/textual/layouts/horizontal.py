@@ -25,10 +25,14 @@ class HorizontalLayout(Layout):
         parent_size = parent.size
 
         for widget in parent.children:
+            styles = widget.styles
             (content_width, content_height), margin = widget.styles.get_box_model(
                 size, parent_size
             )
-            region = Region(margin.left + x, margin.top, content_width, content_height)
+            offset_y = styles.align_height(content_height, parent_size.height)
+            region = Region(
+                margin.left + x, margin.top + offset_y, content_width, content_height
+            )
             max_height = max(max_height, content_height + margin.height)
             add_placement(WidgetPlacement(region, widget, 0))
             x += region.width + margin.left

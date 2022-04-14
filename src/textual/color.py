@@ -139,6 +139,7 @@ class Color(NamedTuple):
     @property
     def rich_color(self) -> RichColor:
         """This color encoded in Rich's Color class."""
+        # TODO: This isn't cheap as I'd like - cache in a LRUCache ?
         r, g, b, _a = self
         return RichColor.from_rgb(r, g, b)
 

@@ -27,10 +27,15 @@ class VerticalLayout(Layout):
         parent_size = parent.size
 
         for widget in parent.children:
-            (content_width, content_height), margin = widget.styles.get_box_model(
+            styles = widget.styles
+            (content_width, content_height), margin = styles.get_box_model(
                 size, parent_size
             )
-            region = Region(margin.left, y + margin.top, content_width, content_height)
+            offset_x = styles.align_width(content_width, parent_size.width)
+
+            region = Region(
+                margin.left + offset_x, y + margin.top, content_width, content_height
+            )
             max_width = max(max_width, content_width + margin.width)
             add_placement(WidgetPlacement(region, widget, 0))
             y += region.height + margin.top

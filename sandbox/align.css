@@ -1,0 +1,19 @@
+
+Screen {
+    layout: horizontal;
+    
+}
+
+Widget#thing {
+    width: 20;
+    height: 10;
+    align: center middle;
+}
+
+
+Widget#thing2 {
+    width: 30;
+    height: 8;
+    align: center middle;
+    background: green;
+}

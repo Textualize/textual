@@ -34,6 +34,7 @@ class Unit(Enum):
     HEIGHT = 5
     VIEW_WIDTH = 6
     VIEW_HEIGHT = 7
+    AUTO = 8
 
 
 UNIT_SYMBOL = {
@@ -124,11 +125,14 @@ class Scalar(NamedTuple):
         Returns:
             Scalar: New scalar
         """
-        match = _MATCH_SCALAR(token)
-        if match is None:
-            raise ScalarParseError(f"{token!r} is not a valid scalar")
-        value, unit_name = match.groups()
-        scalar = cls(float(value), SYMBOL_UNIT[unit_name or ""], percent_unit)
+        if token.lower() == "auto":
+            scalar = cls(1.0, Unit.AUTO, Unit.AUTO)
+        else:
+            match = _MATCH_SCALAR(token)
+            if match is None:
+                raise ScalarParseError(f"{token!r} is not a valid scalar")
+            value, unit_name = match.groups()
+            scalar = cls(float(value), SYMBOL_UNIT[unit_name or ""], percent_unit)
         return scalar
 
     @lru_cache(maxsize=4096)
