@@ -1,5 +1,4 @@
 import inspect
-from typing import Any
 
 from rich.console import RenderableType
 

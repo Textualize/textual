@@ -1,7 +1,9 @@
-from textual.app import App
+import sys
+
 from textual import events
-from textual.widgets import Placeholder
+from textual.app import App
 from textual.widget import Widget
+from textual.widgets import Placeholder
 
 
 class BasicApp(App):
@@ -11,6 +13,7 @@ class BasicApp(App):
         self.bind("q", "quit", "Quit")
         self.bind("d", "dump")
         self.bind("t", "log_tree")
+        self.bind("p", "print")
 
     def on_mount(self):
         """Build layout here."""
@@ -41,6 +44,16 @@ class BasicApp(App):
 
     def action_log_tree(self):
         self.log(self.screen.tree)
+
+    def action_print(self):
+        print(
+            "Printed using builtin [b blue]print[/] function:",
+            self.screen.tree,
+            sep=" - ",
+        )
+        print(1234, 5678)
+
+        sys.stdout.write("abcdef")
 
 
 BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=1)

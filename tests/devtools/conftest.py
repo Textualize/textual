@@ -1,3 +1,5 @@
+from io import StringIO
+
 import pytest
 
 from textual.devtools.server import _make_devtools_aiohttp_app
@@ -25,3 +27,8 @@ async def devtools(aiohttp_client, server):
     yield devtools
     await devtools.disconnect()
     await client.close()
+
+
+@pytest.fixture
+def in_memory_logfile():
+    yield StringIO()

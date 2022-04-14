@@ -1,4 +1,5 @@
 import json
+import types
 from asyncio import Queue
 from datetime import datetime
 
@@ -9,7 +10,11 @@ from rich.panel import Panel
 
 from tests.utilities.render import wait_for_predicate
 from textual.devtools.client import DevtoolsClient
+from textual.devtools.redirect_output import DevtoolsLog
 
+CALLER_LINENO = 123
+CALLER_PATH = "a/b/c.py"
+CALLER = types.SimpleNamespace(filename=CALLER_PATH, lineno=CALLER_LINENO)
 TIMESTAMP = 1649166819
 
 
@@ -25,15 +30,15 @@ async def test_devtools_client_is_connected(devtools):
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
 async def test_devtools_log_places_encodes_and_queues_message(devtools):
     await devtools._stop_log_queue_processing()
-    devtools.log("Hello, world!")
+    devtools.log(DevtoolsLog("Hello, world!", CALLER))
     queued_log = await devtools.log_queue.get()
     queued_log_json = json.loads(queued_log)
     assert queued_log_json == {
         "type": "client_log",
         "payload": {
             "timestamp": TIMESTAMP,
-            "path": "",
-            "line_number": 0,
+            "path": CALLER_PATH,
+            "line_number": CALLER_LINENO,
             "encoded_segments": "gANdcQAoY3JpY2guc2VnbWVudApTZWdtZW50CnEBWA0AAABIZWxsbywgd29ybGQhcQJOTodxA4FxBGgBWAEAAAAKcQVOTodxBoFxB2Uu",
         },
     }
@@ -42,15 +47,15 @@ async def test_devtools_log_places_encodes_and_queues_message(devtools):
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
 async def test_devtools_log_places_encodes_and_queues_many_logs_as_string(devtools):
     await devtools._stop_log_queue_processing()
-    devtools.log("hello", "world")
+    devtools.log(DevtoolsLog(("hello", "world"), CALLER))
     queued_log = await devtools.log_queue.get()
     queued_log_json = json.loads(queued_log)
     assert queued_log_json == {
         "type": "client_log",
         "payload": {
             "timestamp": TIMESTAMP,
-            "path": "",
-            "line_number": 0,
+            "path": CALLER_PATH,
+            "line_number": CALLER_LINENO,
             "encoded_segments": "gANdcQAoY3JpY2guc2VnbWVudApTZWdtZW50CnEBWAsAAABoZWxsbyB3b3JsZHECTk6HcQOBcQRoAVgBAAAACnEFTk6HcQaBcQdlLg==",
         },
     }
@@ -62,10 +67,10 @@ async def test_devtools_log_spillover(devtools):
     devtools.log_queue = Queue(maxsize=2)
 
     # Force spillover of 2
-    devtools.log(Panel("hello, world"))
-    devtools.log("second message")
-    devtools.log("third message")  # Discarded by rate-limiting
-    devtools.log("fourth message")  # Discarded by rate-limiting
+    devtools.log(DevtoolsLog((Panel("hello, world"),), CALLER))
+    devtools.log(DevtoolsLog("second message", CALLER))
+    devtools.log(DevtoolsLog("third message", CALLER))  # Discarded by rate-limiting
+    devtools.log(DevtoolsLog("fourth message", CALLER))  # Discarded by rate-limiting
 
     assert devtools.spillover == 2
 
@@ -74,7 +79,7 @@ async def test_devtools_log_spillover(devtools):
         await devtools.log_queue.get()
 
     # Add another message now that we're under spillover threshold
-    devtools.log("another message")
+    devtools.log(DevtoolsLog("another message", CALLER))
     await devtools.log_queue.get()
 
     # Ensure we're informing the server of spillover rate-limiting
@@ -89,7 +94,9 @@ async def test_devtools_client_update_console_dimensions(devtools, server):
     """Sending new server info through websocket from server to client should (eventually)
     result in the dimensions of the devtools client console being updated to match.
     """
-    server_to_client: WebSocketResponse = next(iter(server.app["service"].clients)).websocket
+    server_to_client: WebSocketResponse = next(
+        iter(server.app["service"].clients)
+    ).websocket
     server_info = {
         "type": "server_info",
         "payload": {

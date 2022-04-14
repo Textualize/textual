@@ -4,24 +4,23 @@ import asyncio
 import inspect
 import os
 import platform
-from time import perf_counter
+import sys
 import warnings
 from asyncio import AbstractEventLoop
-from pathlib import Path
-from typing import Any, Callable, Iterable, Type, TypeVar, TYPE_CHECKING
+from contextlib import redirect_stdout
+from time import perf_counter
+from typing import Any, Iterable, Type, TYPE_CHECKING
 
-import aiohttp
 import rich
 import rich.repr
 from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.measure import Measurement
-from rich.segment import Segments
 from rich.screen import Screen as ScreenRenderable
+from rich.segment import Segments
 from rich.traceback import Traceback
 
 from . import actions
-
 from . import events
 from . import log
 from . import messages
@@ -29,21 +28,21 @@ from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
+from ._profile import timer
 from .binding import Bindings, NoBinding
-from .css.stylesheet import Stylesheet
-from .devtools.client import DevtoolsClient, DevtoolsConnectionError
+from .css.stylesheet import Stylesheet, StylesheetError
 from .design import ColorSystem
+from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
+from .devtools.redirect_output import StdoutRedirector
 from .dom import DOMNode
 from .driver import Driver
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
 from .layouts.dock import Dock
 from .message_pump import MessagePump
-from ._profile import timer
 from .reactive import Reactive
 from .screen import Screen
 from .widget import Widget
-
 
 if TYPE_CHECKING:
     from .css.query import DOMQuery
@@ -103,7 +102,6 @@ class App(DOMNode):
         """
         self.console = Console(markup=False, highlight=False, emoji=False)
         self.error_console = Console(markup=False, stderr=True)
-
         self._screen = screen
         self.driver_class = driver_class or self.get_driver_class()
         self._title = title
@@ -125,9 +123,9 @@ class App(DOMNode):
 
         self._log_console: Console | None = None
         if log:
-            self.log_file = open(log, "wt")
+            self._log_file = open(log, "wt")
             self._log_console = Console(
-                file=self.log_file,
+                file=self._log_file,
                 markup=False,
                 emoji=False,
                 highlight=False,
@@ -237,17 +235,16 @@ class App(DOMNode):
         if verbosity > self.log_verbosity:
             return
 
+        if self.devtools.is_connected and not _textual_calling_frame:
+            _textual_calling_frame = inspect.stack()[1]
+
         try:
             if len(objects) == 1 and not kwargs:
                 if self._log_console is not None:
                     self._log_console.print(objects[0])
                 if self.devtools.is_connected:
-                    if not _textual_calling_frame:
-                        _textual_calling_frame = inspect.stack()[1]
-                    calling_path = _textual_calling_frame.filename
-                    calling_lineno = _textual_calling_frame.lineno
                     self.devtools.log(
-                        objects[0], path=calling_path, lineno=calling_lineno
+                        DevtoolsLog(objects, caller=_textual_calling_frame)
                     )
             else:
                 output = " ".join(str(arg) for arg in objects)
@@ -259,11 +256,9 @@ class App(DOMNode):
                 if self._log_console is not None:
                     self._log_console.print(output, soft_wrap=True)
                 if self.devtools.is_connected:
-                    if not _textual_calling_frame:
-                        _textual_calling_frame = inspect.stack()[1]
-                    calling_path = _textual_calling_frame.filename
-                    calling_lineno = _textual_calling_frame.lineno
-                    self.devtools.log(output, path=calling_path, lineno=calling_lineno)
+                    self.devtools.log(
+                        DevtoolsLog(output, caller=_textual_calling_frame)
+                    )
         except Exception:
             pass
 
@@ -336,7 +331,7 @@ class App(DOMNode):
                 elapsed = (perf_counter() - time) * 1000
                 self.log(f"loaded {self.css_file} in {elapsed:.0f}ms")
             except Exception as error:
-                # TODO: catch specific exceptions
+                # TODO: Catch specific exceptions
                 self.console.bell()
                 self.log(error)
             else:
@@ -494,11 +489,15 @@ class App(DOMNode):
         if os.getenv("TEXTUAL_DEVTOOLS") == "1":
             try:
                 await self.devtools.connect()
-                self.log_file.write(f"Connected to devtools ({self.devtools.url})\n")
+                if self._log_console:
+                    self._log_console.print(
+                        f"Connected to devtools ({self.devtools.url})"
+                    )
             except DevtoolsConnectionError:
-                self.log_file.write(
-                    f"Couldn't connect to devtools ({self.devtools.url})\n"
-                )
+                if self._log_console:
+                    self._log_console.print(
+                        f"Couldn't connect to devtools ({self.devtools.url})"
+                    )
         try:
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
@@ -526,21 +525,18 @@ class App(DOMNode):
                 mount_event = events.Mount(sender=self)
                 await self.dispatch_message(mount_event)
 
-                self.console = Console()
+                self.console = Console(file=sys.__stdout__)
                 self.title = self._title
                 self.refresh()
                 await self.animator.start()
-                await super().process_messages()
-                log("PROCESS END")
-                if self.devtools.is_connected:
-                    await self._disconnect_devtools()
-                    self.log_file.write(
-                        f"Disconnected from devtools ({self.devtools.url})\n"
-                    )
-                with timer("animator.stop()"):
-                    await self.animator.stop()
-                with timer("self.close_all()"):
-                    await self.close_all()
+
+                with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
+                    await super().process_messages()
+                    log("Message processing stopped")
+                    with timer("animator.stop()"):
+                        await self.animator.stop()
+                    with timer("self.close_all()"):
+                        await self.close_all()
             finally:
                 driver.stop_application_mode()
         except Exception as error:
@@ -549,8 +545,14 @@ class App(DOMNode):
             self._running = False
             if self._exit_renderables:
                 self._print_error_renderables()
-            if self.log_file is not None:
-                self.log_file.close()
+            if self.devtools.is_connected:
+                await self._disconnect_devtools()
+                if self._log_console is not None:
+                    self._log_console.print(
+                        f"Disconnected from devtools ({self.devtools.url})"
+                    )
+            if self._log_file is not None:
+                self._log_file.close()
 
     async def on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
