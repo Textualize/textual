@@ -16,7 +16,7 @@ from rich.console import Console
 from rich.segment import Segment
 
 
-DEFAULT_PORT = 8081
+DEVTOOLS_PORT = 8081
 WEBSOCKET_CONNECT_TIMEOUT = 3
 LOG_QUEUE_MAXSIZE = 512
 
@@ -90,7 +90,7 @@ class DevtoolsClient:
         port (int): The port the devtools server is accessed via, defaults to 8081
     """
 
-    def __init__(self, host: str = "127.0.0.1", port: int = DEFAULT_PORT) -> None:
+    def __init__(self, host: str = "127.0.0.1", port: int = DEVTOOLS_PORT) -> None:
         self.url: str = f"ws://{host}:{port}"
         self.session: aiohttp.ClientSession | None = None
         self.log_queue_task: Task | None = None
