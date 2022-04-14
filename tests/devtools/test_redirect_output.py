@@ -1,5 +1,4 @@
 import json
-import pprint
 from contextlib import redirect_stdout
 from datetime import datetime
 
@@ -11,10 +10,10 @@ TIMESTAMP = 1649166819
 
 
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
-async def test_print_is_redirected_to_devtools(devtools, in_memory_logfile):
+async def test_print_redirect_to_devtools_only(devtools):
     await devtools._stop_log_queue_processing()
 
-    with redirect_stdout(StdoutRedirector(devtools, in_memory_logfile)):  # type: ignore
+    with redirect_stdout(StdoutRedirector(devtools, None)):  # type: ignore
         print("Hello, world!")
 
     assert devtools.log_queue.qsize() == 1
@@ -29,6 +28,23 @@ async def test_print_is_redirected_to_devtools(devtools, in_memory_logfile):
             payload["encoded_segments"]
             == "gANdcQAoY3JpY2guc2VnbWVudApTZWdtZW50CnEBWA0AAABIZWxsbywgd29ybGQhcQJOTodxA4FxBGgBWAEAAAAKcQVOTodxBoFxB2Uu"
     )
+
+
+async def test_print_redirect_to_logfile_only(devtools, in_memory_logfile):
+    await devtools.disconnect()
+    with redirect_stdout(StdoutRedirector(devtools, in_memory_logfile)):  # type: ignore
+        print("Hello, world!")
+    assert in_memory_logfile.getvalue() == "Hello, world!\n"
+
+
+async def test_print_redirect_to_devtools_and_logfile(devtools, in_memory_logfile):
+    await devtools._stop_log_queue_processing()
+
+    with redirect_stdout(StdoutRedirector(devtools, in_memory_logfile)):  # type: ignore
+        print("Hello, world!")
+
+    assert devtools.log_queue.qsize() == 1
+    assert in_memory_logfile.getvalue() == "Hello, world!\n"
 
 
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
