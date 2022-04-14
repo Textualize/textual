@@ -8,6 +8,7 @@ import sys
 import warnings
 from asyncio import AbstractEventLoop
 from contextlib import redirect_stdout
+from time import perf_counter
 from typing import Any, Iterable, Type, TYPE_CHECKING
 
 import rich
@@ -321,15 +322,18 @@ class App(DOMNode):
             event_loop.close()
 
     async def _on_css_change(self) -> None:
-
+        """Called when the CSS changes (if watch_css is True)."""
         if self.css_file is not None:
             stylesheet = Stylesheet(variables=self.get_css_variables())
             try:
-                self.log("loading", self.css_file)
+                time = perf_counter()
                 stylesheet.read(self.css_file)
-            except StylesheetError as error:
-                self.log(error)
+                elapsed = (perf_counter() - time) * 1000
+                self.log(f"loaded {self.css_file} in {elapsed:.0f}ms")
+            except Exception as error:
+                # TODO: Catch specific exceptions
                 self.console.bell()
+                self.log(error)
             else:
                 self.reset_styles()
                 self.stylesheet = stylesheet
