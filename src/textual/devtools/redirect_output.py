@@ -1,26 +1,32 @@
 from __future__ import annotations
 
 import inspect
-from typing import TYPE_CHECKING
+from io import TextIOWrapper
+from typing import TYPE_CHECKING, cast
 from textual.devtools.client import DevtoolsLog
 
 if TYPE_CHECKING:
     from textual.devtools.client import DevtoolsClient
 
 
-class DevtoolsRedirector:
+class StdoutRedirector:
     """
     A write-only file-like object which redirects anything written to it to the devtools
     instance associated with the given Textual application. Used within Textual to redirect
-    data written using `print` (or any other stdout writes) to the devtools.
+    data written using `print` (or any other stdout writes) to the devtools and/or to the
+    log file.
     """
 
-    def __init__(self, devtools: DevtoolsClient) -> None:
+    def __init__(
+        self, devtools: DevtoolsClient, log_file: TextIOWrapper | None
+    ) -> None:
         """
         Args:
             devtools (DevtoolsClient): The running Textual app instance.
+            log_file (TextIOWrapper): The log file for the Textual App.
         """
         self.devtools = devtools
+        self.log_file = log_file
         self._buffer: list[DevtoolsLog] = []
 
     def write(self, string: str) -> None:
@@ -31,6 +37,10 @@ class DevtoolsRedirector:
         Args:
             string (str): The string to write to the buffer.
         """
+
+        if not (self.devtools.is_connected or self.log_file is not None):
+            return
+
         caller = inspect.stack()[1]
         self._buffer.append(DevtoolsLog(string, caller=caller))
 
@@ -46,9 +56,18 @@ class DevtoolsRedirector:
 
     def flush(self) -> None:
         """Flush the buffer. This will send all buffered log messages to
-        the devtools server. Where possible, log messages will be batched
-        and sent as one.
+        the devtools server and the log file. In the case of the devtools,
+        where possible, log messages will be batched and sent as one.
         """
+        self._write_to_log_file()
+        self._write_to_devtools()
+        self._buffer.clear()
+
+    def _write_to_devtools(self) -> None:
+        """Send the contents of the buffer to the devtools."""
+        if not self.devtools.is_connected:
+            return
+
         log_batch: list[DevtoolsLog] = []
         for log in self._buffer:
             end_of_batch = log_batch and (
@@ -56,21 +75,32 @@ class DevtoolsRedirector:
                 or log_batch[-1].caller.lineno != log.caller.lineno
             )
             if end_of_batch:
-                self._log_batched(log_batch)
+                self._log_devtools_batched(log_batch)
                 log_batch.clear()
             log_batch.append(log)
-
         if log_batch:
-            self._log_batched(log_batch)
+            self._log_devtools_batched(log_batch)
 
-        self._buffer.clear()
+    def _write_to_log_file(self) -> None:
+        """Write the contents of the buffer to the log file."""
+        if not self.log_file:
+            return
 
-    def _log_batched(self, log_batch: list[DevtoolsLog]) -> None:
-        """Write a single batch of logs. A batch means contiguous logs
+        try:
+            log_text = "".join(str(log.objects_or_string) for log in self._buffer)
+            self.log_file.write(log_text)
+            self.log_file.flush()
+        except OSError:
+            # An error writing to the log file should not be
+            # considered fatal.
+            pass
+
+    def _log_devtools_batched(self, log_batch: list[DevtoolsLog]) -> None:
+        """Write a single batch of logs to devtools. A batch means contiguous logs
         which have been written from the same line number and file path.
         A single `print` call may correspond to multiple writes.
         e.g. `print("a", "b", "c")` is 3 calls to `write`, so we batch
-        up these calls if they come from the same location in code, so that
+        up these 3 write calls since they come from the same location, so that
         they appear inside the same log message in the devtools window
         rather than a single `print` statement resulting in 3 separate
         logs being displayed.
@@ -79,7 +109,9 @@ class DevtoolsRedirector:
             log_batch (list[DevtoolsLog]): A batch of logs to send to the
                 devtools server as one. Log content will be joined together.
         """
-        batched_log = "".join(log.objects_or_string for log in log_batch)
+
+        # This code is only called via stdout.write, and so by this point we know
+        # that the log message content is a string. The cast below tells mypy this.
+        batched_log = "".join(cast(str, log.objects_or_string) for log in log_batch)
         batched_log = batched_log.rstrip()
-        if self.devtools.is_connected:
-            self.devtools.log(DevtoolsLog(batched_log, caller=log_batch[-1].caller))
+        self.devtools.log(DevtoolsLog(batched_log, caller=log_batch[-1].caller))

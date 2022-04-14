@@ -32,7 +32,7 @@ from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet, StylesheetError
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
-from .devtools.redirect_output import DevtoolsRedirector
+from .devtools.redirect_output import StdoutRedirector
 from .dom import DOMNode
 from .driver import Driver
 from .file_monitor import FileMonitor
@@ -522,22 +522,13 @@ class App(DOMNode):
                 self.refresh()
                 await self.animator.start()
 
-                if self.devtools.is_connected:
-                    with redirect_stdout(DevtoolsRedirector(self.devtools)):  # type: ignore
-                        await super().process_messages()
-                else:
+                with redirect_stdout(StdoutRedirector(self.devtools, self.log_file)):  # type: ignore
                     await super().process_messages()
-
-                log("PROCESS END")
-                if self.devtools.is_connected:
-                    await self._disconnect_devtools()
-                    self.log_file.write(
-                        f"Disconnected from devtools ({self.devtools.url})\n"
-                    )
-                with timer("animator.stop()"):
-                    await self.animator.stop()
-                with timer("self.close_all()"):
-                    await self.close_all()
+                    log("Message processing stopped")
+                    with timer("animator.stop()"):
+                        await self.animator.stop()
+                    with timer("self.close_all()"):
+                        await self.close_all()
             finally:
                 driver.stop_application_mode()
         except Exception as error:
@@ -546,6 +537,12 @@ class App(DOMNode):
             self._running = False
             if self._exit_renderables:
                 self._print_error_renderables()
+            if self.devtools.is_connected:
+                await self._disconnect_devtools()
+                if self.log_file is not None:
+                    self.log_file.write(
+                        f"Disconnected from devtools ({self.devtools.url})\n"
+                    )
             if self.log_file is not None:
                 self.log_file.close()
 

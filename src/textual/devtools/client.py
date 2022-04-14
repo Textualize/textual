@@ -34,7 +34,7 @@ class DevtoolsLog(NamedTuple):
     """
 
     objects_or_string: tuple[Any, ...] | str
-    caller: inspect.FrameInfo | None = None
+    caller: inspect.FrameInfo
 
 
 class DevtoolsConsole(Console):
@@ -189,7 +189,7 @@ class DevtoolsClient:
             return False
         return not (self.session.closed or self.websocket.closed)
 
-    def log(self, log: DevtoolsLog):
+    def log(self, log: DevtoolsLog) -> None:
         """Queue a log to be sent to the devtools server for display.
 
         Args:

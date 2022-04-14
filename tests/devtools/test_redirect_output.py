@@ -5,16 +5,16 @@ from datetime import datetime
 
 import time_machine
 
-from textual.devtools.redirect_output import DevtoolsRedirector
+from textual.devtools.redirect_output import StdoutRedirector
 
 TIMESTAMP = 1649166819
 
 
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
-async def test_print_is_redirected_to_devtools(devtools):
+async def test_print_is_redirected_to_devtools(devtools, in_memory_logfile):
     await devtools._stop_log_queue_processing()
 
-    with redirect_stdout(DevtoolsRedirector(devtools)):
+    with redirect_stdout(StdoutRedirector(devtools, in_memory_logfile)):  # type: ignore
         print("Hello, world!")
 
     assert devtools.log_queue.qsize() == 1
@@ -32,10 +32,10 @@ async def test_print_is_redirected_to_devtools(devtools):
 
 
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
-async def test_print_without_flush_not_sent_to_devtools(devtools):
+async def test_print_without_flush_not_sent_to_devtools(devtools, in_memory_logfile):
     await devtools._stop_log_queue_processing()
 
-    with redirect_stdout(DevtoolsRedirector(devtools)):
+    with redirect_stdout(StdoutRedirector(devtools, in_memory_logfile)):  # type: ignore
         # End is no longer newline character, so print will no longer
         # flush the output buffer by default.
         print("Hello, world!", end="")
@@ -44,20 +44,20 @@ async def test_print_without_flush_not_sent_to_devtools(devtools):
 
 
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
-async def test_print_forced_flush_sent_to_devtools(devtools):
+async def test_print_forced_flush_sent_to_devtools(devtools, in_memory_logfile):
     await devtools._stop_log_queue_processing()
 
-    with redirect_stdout(DevtoolsRedirector(devtools)):
+    with redirect_stdout(StdoutRedirector(devtools, in_memory_logfile)):  # type: ignore
         print("Hello, world!", end="", flush=True)
 
     assert devtools.log_queue.qsize() == 1
 
 
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
-async def test_print_multiple_args_batched_as_one_log(devtools):
+async def test_print_multiple_args_batched_as_one_log(devtools, in_memory_logfile):
     await devtools._stop_log_queue_processing()
 
-    with redirect_stdout(DevtoolsRedirector(devtools)):
+    with redirect_stdout(StdoutRedirector(devtools, in_memory_logfile)):  # type: ignore
         # We call print with multiple arguments here, but it
         # results in a single log added to the log queue.
         print("Hello", "world", "multiple")
@@ -77,10 +77,10 @@ async def test_print_multiple_args_batched_as_one_log(devtools):
 
 
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
-async def test_print_multiple_args_batched_as_one_log(devtools):
+async def test_print_multiple_args_batched_as_one_log(devtools, in_memory_logfile):
     await devtools._stop_log_queue_processing()
-    redirector = DevtoolsRedirector(devtools)
-    with redirect_stdout(redirector):
+    redirector = StdoutRedirector(devtools, in_memory_logfile)
+    with redirect_stdout(redirector):  # type: ignore
         # This print adds 3 messages to the buffer that can be batched
         print("The first", "batch", "of logs", end="")
         # This message cannot be batched with the previous message,
@@ -91,10 +91,10 @@ async def test_print_multiple_args_batched_as_one_log(devtools):
 
 
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
-async def test_print_strings_containing_newline_flushed(devtools):
+async def test_print_strings_containing_newline_flushed(devtools, in_memory_logfile):
     await devtools._stop_log_queue_processing()
 
-    with redirect_stdout(DevtoolsRedirector(devtools)):
+    with redirect_stdout(StdoutRedirector(devtools, in_memory_logfile)):  # type: ignore
         # Flushing is disabled since end="", but the first
         # string will be flushed since it contains a newline
         print("Hel\nlo", end="")
@@ -104,11 +104,11 @@ async def test_print_strings_containing_newline_flushed(devtools):
 
 
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
-async def test_flush_flushes_buffered_logs(devtools):
+async def test_flush_flushes_buffered_logs(devtools, in_memory_logfile):
     await devtools._stop_log_queue_processing()
 
-    redirector = DevtoolsRedirector(devtools)
-    with redirect_stdout(redirector):
+    redirector = StdoutRedirector(devtools, in_memory_logfile)
+    with redirect_stdout(redirector):  # type: ignore
         print("x", end="")
 
     assert devtools.log_queue.qsize() == 0
