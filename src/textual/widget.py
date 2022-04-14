@@ -6,7 +6,6 @@ from typing import (
     Awaitable,
     TYPE_CHECKING,
     Callable,
-    ClassVar,
     Iterable,
     NamedTuple,
     cast,
@@ -16,10 +15,9 @@ import rich.repr
 from rich.align import Align
 from rich.console import Console, RenderableType
 from rich.padding import Padding
-from rich.pretty import Pretty
 from rich.style import Style
 from rich.styled import Styled
-from rich.text import Text
+
 
 from . import errors, log
 from . import events
@@ -394,10 +392,7 @@ class Widget(DOMNode):
         if renderable_text_style:
             renderable = Styled(renderable, renderable_text_style)
 
-        if styles.padding:
-            renderable = Padding(
-                renderable, styles.padding, style=renderable_text_style
-            )
+        renderable = Padding(renderable, styles.padding, style=renderable_text_style)
 
         if styles.border:
             renderable = Border(

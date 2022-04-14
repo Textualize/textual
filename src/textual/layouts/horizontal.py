@@ -29,7 +29,9 @@ class HorizontalLayout(Layout):
             (content_width, content_height), margin = widget.styles.get_box_model(
                 size, parent_size
             )
-            offset_y = styles.align_height(content_height, parent_size.height)
+            offset_y = styles.align_height(
+                content_height + margin.height, parent_size.height
+            )
             region = Region(
                 margin.left + x, margin.top + offset_y, content_width, content_height
             )

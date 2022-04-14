@@ -625,7 +625,9 @@ class StylesBuilder:
         self.styles._rules["align_vertical"] = token_vertical.value
 
     def process_align_horizontal(self, name: str, tokens: list[Token]) -> None:
-        self._process_enum(name, tokens, VALID_ALIGN_HORIZONTAL)
+        value = self._process_enum(name, tokens, VALID_ALIGN_HORIZONTAL)
+        self.styles._rules["align_horizontal"] = value
 
     def process_align_vertical(self, name: str, tokens: list[Token]) -> None:
-        self._process_enum(name, tokens, VALID_ALIGN_VERTICAL)
+        value = self._process_enum(name, tokens, VALID_ALIGN_VERTICAL)
+        self.styles._rules["align_vertical"] = value

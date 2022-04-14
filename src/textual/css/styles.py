@@ -418,8 +418,8 @@ class StylesBase(ABC):
                 margin = self.margin
 
         else:  # border-box
-            if has_rule("padding"):
-                size -= self.padding.totals
+            # if has_rule("padding"):
+            #     size -= self.padding.totals
             if has_rule("border"):
                 size -= self.border.spacing.totals
             if has_rule("margin"):
@@ -458,7 +458,7 @@ class StylesBase(ABC):
         """
         offset_y = 0
         align_vertical = self.align_vertical
-        if align_vertical != "left":
+        if align_vertical != "top":
             if align_vertical == "middle":
                 offset_y = (parent_height - height) // 2
             else:

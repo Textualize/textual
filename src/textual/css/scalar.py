@@ -152,6 +152,7 @@ class Scalar(NamedTuple):
             float: _description_
         """
         value, unit, percent_unit = self
+
         if unit == Unit.PERCENT:
             unit = percent_unit
         try:

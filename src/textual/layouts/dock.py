@@ -3,6 +3,7 @@ from __future__ import annotations
 import sys
 from collections import defaultdict
 from dataclasses import dataclass
+from operator import attrgetter
 from typing import Iterable, TYPE_CHECKING, NamedTuple, Sequence
 
 from .._layout_resolve import layout_resolve
@@ -91,7 +92,7 @@ class DockLayout(Layout):
         add_placement = placements.append
         arranged_widgets: set[Widget] = set()
 
-        for edge, widgets, z in docks:
+        for z, (edge, widgets, _z) in enumerate(sorted(docks, key=attrgetter("z"))):
 
             arranged_widgets.update(widgets)
             dock_options = [make_dock_options(widget, edge) for widget in widgets]

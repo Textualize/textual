@@ -1,5 +1,12 @@
+from rich.text import Text
+
 from textual.app import App
 from textual.widget import Widget
+
+
+class Thing(Widget):
+    def render(self):
+        return Text.from_markup("Hello, World. [b magenta]Lorem impsum.")
 
 
 class AlignApp(App):
@@ -8,7 +15,7 @@ class AlignApp(App):
 
     def on_mount(self) -> None:
         self.log("MOUNTED")
-        self.mount(thing=Widget(), thing2=Widget())
+        self.mount(thing=Thing(), thing2=Widget(), thing3=Widget())
 
     def action_log_tree(self):
         self.log(self.screen.tree)

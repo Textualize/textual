@@ -31,7 +31,9 @@ class VerticalLayout(Layout):
             (content_width, content_height), margin = styles.get_box_model(
                 size, parent_size
             )
-            offset_x = styles.align_width(content_width, parent_size.width)
+            offset_x = styles.align_width(
+                content_width + margin.width, parent_size.width
+            )
 
             region = Region(
                 margin.left + offset_x, y + margin.top, content_width, content_height

@@ -8,6 +8,7 @@ when setting and getting.
 """
 
 from __future__ import annotations
+from tkinter.tix import AUTO
 
 from typing import Iterable, NamedTuple, TYPE_CHECKING, cast
 
@@ -47,10 +48,14 @@ class ScalarProperty:
     """Descriptor for getting and setting scalar properties. Scalars are numeric values with a unit, e.g. "50vh"."""
 
     def __init__(
-        self, units: set[Unit] | None = None, percent_unit: Unit = Unit.WIDTH
+        self,
+        units: set[Unit] | None = None,
+        percent_unit: Unit = Unit.WIDTH,
+        allow_auto: bool = True,
     ) -> None:
         self.units: set[Unit] = units or {*UNIT_SYMBOL}
         self.percent_unit = percent_unit
+        self.allow_auto = allow_auto
         super().__init__()
 
     def __set_name__(self, owner: Styles, name: str) -> None:
@@ -90,7 +95,7 @@ class ScalarProperty:
         if value is None:
             obj.clear_rule(self.name)
             return
-        if isinstance(value, float):
+        if isinstance(value, (int, float)):
             new_value = Scalar(float(value), Unit.CELLS, Unit.WIDTH)
         elif isinstance(value, Scalar):
             new_value = value
@@ -101,12 +106,23 @@ class ScalarProperty:
                 raise StyleValueError("unable to parse scalar from {value!r}")
         else:
             raise StyleValueError("expected float, Scalar, or None")
-        if new_value is not None and new_value.unit not in self.units:
-            raise StyleValueError(
-                f"{self.name} units must be one of {friendly_list(get_symbols(self.units))}"
-            )
-        if new_value is not None and new_value.is_percent:
-            new_value = Scalar(float(new_value.value), self.percent_unit, Unit.WIDTH)
+
+        if (
+            new_value is not None
+            and new_value.unit == Unit.AUTO
+            and not self.allow_auto
+        ):
+            raise StyleValueError("'auto' not allowed here")
+
+        if new_value.unit != Unit.AUTO:
+            if new_value is not None and new_value.unit not in self.units:
+                raise StyleValueError(
+                    f"{self.name} units must be one of {friendly_list(get_symbols(self.units))}"
+                )
+            if new_value is not None and new_value.is_percent:
+                new_value = Scalar(
+                    float(new_value.value), self.percent_unit, Unit.WIDTH
+                )
         if obj.set_rule(self.name, new_value):
             obj.refresh()
 

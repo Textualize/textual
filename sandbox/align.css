@@ -1,19 +1,39 @@
 
+
 Screen {
     layout: horizontal;
     
 }
 
-Widget#thing {
+Widget {
+    margin:1;
+}
+
+#thing {
     width: 20;
     height: 10;
-    align: center middle;
+    
+    background:magenta;
+    margin: 1;
+    padding: 1;
+    /* border: solid white; */
+    align-vertical: middle;    
 }
 
 
-Widget#thing2 {
-    width: 30;
-    height: 8;
-    align: center middle;
-    background: green;
+#thing2 {
+    width: 20;
+    height: 10;
+    
+    background:green;
+    align-vertical: middle;
+}
+
+
+#thing3 {
+    width: 20;
+    height: 10;
+    
+    background:blue;
+    align-vertical: bottom;
 }

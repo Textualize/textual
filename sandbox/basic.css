@@ -21,6 +21,7 @@ App > Screen {
   color: $text-background;
 }
 
+
 #sidebar {
   color: $text-primary;
   background: $primary;
@@ -81,7 +82,8 @@ Tweet {
   /* border: outer $primary; */
   padding: 1;
   border: wide $panel-darken-2;
-  overflow-y: scroll
+  overflow-y: scroll; 
+  align-horizontal: center;
 }
 
 
@@ -168,6 +170,7 @@ Error {
   margin: 1 3;
   
   text-style: bold;
+  align-horizontal: center;
 }
 
 Warning {
@@ -179,6 +182,7 @@ Warning {
   border-bottom: hkey $warning-darken-2; 
   margin: 1 2;
   text-style: bold;
+  align-horizontal: center;
 }
 
 Success {
@@ -190,4 +194,5 @@ Success {
   border-bottom: hkey $success; 
   margin: 1 2;
   text-style: bold;
+  align-horizontal: center;
 }
