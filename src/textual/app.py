@@ -122,9 +122,9 @@ class App(DOMNode):
 
         self._log_console: Console | None = None
         if log:
-            self.log_file = open(log, "wt")
+            self._log_file = open(log, "wt")
             self._log_console = Console(
-                file=self.log_file,
+                file=self._log_file,
                 markup=False,
                 emoji=False,
                 highlight=False,
@@ -485,11 +485,15 @@ class App(DOMNode):
         if os.getenv("TEXTUAL_DEVTOOLS") == "1":
             try:
                 await self.devtools.connect()
-                self.log_file.write(f"Connected to devtools ({self.devtools.url})\n")
+                if self._log_console:
+                    self._log_console.print(
+                        f"Connected to devtools ({self.devtools.url})"
+                    )
             except DevtoolsConnectionError:
-                self.log_file.write(
-                    f"Couldn't connect to devtools ({self.devtools.url})\n"
-                )
+                if self._log_console:
+                    self._log_console.print(
+                        f"Couldn't connect to devtools ({self.devtools.url})"
+                    )
         try:
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
@@ -522,7 +526,7 @@ class App(DOMNode):
                 self.refresh()
                 await self.animator.start()
 
-                with redirect_stdout(StdoutRedirector(self.devtools, self.log_file)):  # type: ignore
+                with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
                     await super().process_messages()
                     log("Message processing stopped")
                     with timer("animator.stop()"):
@@ -539,12 +543,12 @@ class App(DOMNode):
                 self._print_error_renderables()
             if self.devtools.is_connected:
                 await self._disconnect_devtools()
-                if self.log_file is not None:
-                    self.log_file.write(
-                        f"Disconnected from devtools ({self.devtools.url})\n"
+                if self._log_console is not None:
+                    self._log_console.print(
+                        f"Disconnected from devtools ({self.devtools.url})"
                     )
-            if self.log_file is not None:
-                self.log_file.close()
+            if self._log_file is not None:
+                self._log_file.close()
 
     async def on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
