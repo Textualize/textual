@@ -32,15 +32,15 @@ class DevConsoleHeader:
     ) -> RenderResult:
         lines = Renderables(
             [
-                f"[bold]Textual Development Console [#b169dd]v{version('textual')}",
-                "[#967fa3]Run a Textual app with the environment variable [b]TEXTUAL_DEVTOOLS=1[/] to connect.",
-                "[#967fa3]Press [b]Ctrl+C[/] to quit.",
+                f"[bold]Textual Development Console [magenta]v{version('textual')}",
+                "[magenta]Run a Textual app with the environment variable [b]TEXTUAL_DEVTOOLS=1[/] to connect.",
+                "[magenta]Press [b]Ctrl+C[/] to quit.",
             ]
         )
         render_options = options.update(width=options.max_width - 4)
         lines = console.render_lines(lines, render_options)
         new_line = Segment("\n")
-        padding = Segment("▌", Style.parse("#b169dd"))
+        padding = Segment("▌", Style.parse("bright_magenta"))
         for line in lines:
             yield padding
             yield from line
@@ -84,11 +84,10 @@ class DevConsoleLog:
         file_link = escape(f"file://{Path(self.path).absolute()}")
         file_and_line = escape(f"{Path(self.path).name}:{self.line_number}")
         table.add_row(
-            f" [#888177]{local_time.time()} [dim]{timezone_name}[/]",
+            f"[dim]{local_time.time()} {timezone_name}",
             Align.right(
-                Text(f"{file_and_line} ", style=Style(color="#888177", link=file_link))
+                Text(f"{file_and_line}", style=Style(dim=True, link=file_link))
             ),
-            style="on #292724",
         )
         yield table
         yield Segments(self.segments)
@@ -112,7 +111,7 @@ class DevConsoleNotice:
     ) -> RenderResult:
         level_to_style = {
             "info": "dim",
-            "warning": "#FFA000",
-            "error": "#C52828",
+            "warning": "yellow",
+            "error": "red",
         }
         yield Rule(self.message, style=level_to_style.get(self.level, "dim"))
