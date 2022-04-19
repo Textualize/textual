@@ -3,7 +3,6 @@ import inspect
 from rich.console import RenderableType
 
 __all__ = ["log", "panic"]
-__version__ = "0.1.15"
 
 
 def log(*args: object, verbosity: int = 0, **kwargs) -> None:

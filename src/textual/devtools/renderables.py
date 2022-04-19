@@ -5,11 +5,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
 
+from importlib_metadata import version
 from rich.containers import Renderables
 from rich.style import Style
 from rich.text import Text
-
-import textual
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -33,7 +32,7 @@ class DevConsoleHeader:
     ) -> RenderResult:
         lines = Renderables(
             [
-                f"[bold]Textual Development Console [#b169dd]v{textual.__version__}",
+                f"[bold]Textual Development Console [#b169dd]v{version('textual')}",
                 "[#967fa3]Run a Textual app with the environment variable [b]TEXTUAL_DEVTOOLS=1[/] to connect.",
                 "[#967fa3]Press [b]Ctrl+C[/] to quit.",
             ]
