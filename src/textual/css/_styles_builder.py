@@ -282,10 +282,12 @@ class StylesBuilder:
                 except ValueError:
                     self.error(name, token, f"expected a number here; found {value!r}")
             else:
-                self.error(name, token, f"unexpected token {value!r} in declaration")
+                self.error(name, token, f"expected a number here; found {value!r}")
         if len(space) not in (1, 2, 4):
             self.error(
-                name, tokens[0], f"1, 2, or 4 values expected; received {len(space)}"
+                name,
+                tokens[0],
+                f"1, 2, or 4 values expected; received {len(space)} values",
             )
         self.styles._rules[name] = Spacing.unpack(cast(SpacingDimensions, tuple(space)))
 
