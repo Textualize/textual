@@ -307,7 +307,7 @@ class Widget(MessagePump):
         if key_method is not None:
             await invoke(key_method, event)
 
-    async def on_mouse_down(self, event: events.MouseUp) -> None:
+    async def on_mouse_down(self, event: events.MouseDown) -> None:
         await self.broker_event("mouse.down", event)
 
     async def on_mouse_up(self, event: events.MouseUp) -> None:
