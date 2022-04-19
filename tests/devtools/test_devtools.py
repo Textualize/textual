@@ -56,7 +56,7 @@ def test_log_message_render(console):
     timezone_name = local_time.tzname()
     string_timestamp = local_time.time()
 
-    assert left == f" [#888177]{string_timestamp} [dim]{timezone_name}[/]"
+    assert left == f"[dim]{string_timestamp} {timezone_name}"
     assert right.align == "right"
     assert "hello.py:123" in right.renderable
 
