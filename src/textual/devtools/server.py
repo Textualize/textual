@@ -38,7 +38,11 @@ async def _on_startup(app: Application) -> None:
 
 def _run_devtools() -> None:
     app = _make_devtools_aiohttp_app()
-    run_app(app, port=DEVTOOLS_PORT)
+
+    def noop_print(_: str):
+        return None
+
+    run_app(app, port=DEVTOOLS_PORT, print=noop_print)
 
 
 def _make_devtools_aiohttp_app(
