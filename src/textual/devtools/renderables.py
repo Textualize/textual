@@ -5,6 +5,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
 
+from importlib_metadata import version
+from rich.containers import Renderables
 from rich.style import Style
 from rich.text import Text
 
@@ -21,10 +23,31 @@ from rich.rule import Rule
 from rich.segment import Segment, Segments
 from rich.table import Table
 
-DevtoolsMessageLevel = Literal["info", "warning", "error"]
+DevConsoleMessageLevel = Literal["info", "warning", "error"]
 
 
-class DevtoolsLogMessage:
+class DevConsoleHeader:
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        lines = Renderables(
+            [
+                f"[bold]Textual Development Console [magenta]v{version('textual')}",
+                "[magenta]Run a Textual app with the environment variable [b]TEXTUAL_DEVTOOLS=1[/] to connect.",
+                "[magenta]Press [b]Ctrl+C[/] to quit.",
+            ]
+        )
+        render_options = options.update(width=options.max_width - 4)
+        lines = console.render_lines(lines, render_options)
+        new_line = Segment("\n")
+        padding = Segment("▌", Style.parse("bright_magenta"))
+        for line in lines:
+            yield padding
+            yield from line
+            yield new_line
+
+
+class DevConsoleLog:
     """Renderable representing a single log message
 
     Args:
@@ -61,18 +84,17 @@ class DevtoolsLogMessage:
         file_link = escape(f"file://{Path(self.path).absolute()}")
         file_and_line = escape(f"{Path(self.path).name}:{self.line_number}")
         table.add_row(
-            f" [#888177]{local_time.time()} [dim]{timezone_name}[/]",
+            f"[dim]{local_time.time()} {timezone_name}",
             Align.right(
-                Text(f"{file_and_line} ", style=Style(color="#888177", link=file_link))
+                Text(f"{file_and_line}", style=Style(dim=True, link=file_link))
             ),
-            style="on #292724",
         )
         yield table
         yield Segments(self.segments)
 
 
-class DevtoolsInternalMessage:
-    """Renderable for messages written by the devtools server itself
+class DevConsoleNotice:
+    """Renderable for messages written by the devtools console itself
 
     Args:
         message (str): The message to display
@@ -80,7 +102,7 @@ class DevtoolsInternalMessage:
             Determines colors used to render the message and the perceived importance.
     """
 
-    def __init__(self, message: str, *, level: DevtoolsMessageLevel = "info") -> None:
+    def __init__(self, message: str, *, level: DevConsoleMessageLevel = "info") -> None:
         self.message = message
         self.level = level
 
@@ -89,7 +111,7 @@ class DevtoolsInternalMessage:
     ) -> RenderResult:
         level_to_style = {
             "info": "dim",
-            "warning": "#FFA000",
-            "error": "#C52828",
+            "warning": "yellow",
+            "error": "red",
         }
         yield Rule(self.message, style=level_to_style.get(self.level, "dim"))

@@ -7,7 +7,7 @@ from rich.console import Console
 from rich.segment import Segment
 
 from tests.utilities.render import wait_for_predicate
-from textual.devtools.renderables import DevtoolsLogMessage, DevtoolsInternalMessage
+from textual.devtools.renderables import DevConsoleLog, DevConsoleNotice
 
 TIMESTAMP = 1649166819
 WIDTH = 40
@@ -31,7 +31,7 @@ def console():
 
 @time_machine.travel(TIMESTAMP)
 def test_log_message_render(console):
-    message = DevtoolsLogMessage(
+    message = DevConsoleLog(
         [Segment("content")],
         path="abc/hello.py",
         line_number=123,
@@ -56,13 +56,13 @@ def test_log_message_render(console):
     timezone_name = local_time.tzname()
     string_timestamp = local_time.time()
 
-    assert left == f" [#888177]{string_timestamp} [dim]{timezone_name}[/]"
+    assert left == f"[dim]{string_timestamp} {timezone_name}"
     assert right.align == "right"
     assert "hello.py:123" in right.renderable
 
 
 def test_internal_message_render(console):
-    message = DevtoolsInternalMessage("hello")
+    message = DevConsoleNotice("hello")
     rule = next(iter(message.__rich_console__(console, console.options)))
     assert rule.title == "hello"
     assert rule.characters == "─"

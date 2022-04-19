@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-import sys
-
 from aiohttp.web import run_app
 from aiohttp.web_app import Application
 from aiohttp.web_request import Request
 from aiohttp.web_routedef import get
 from aiohttp.web_ws import WebSocketResponse
 
-from textual.devtools.client import DEFAULT_PORT
+from textual.devtools.client import DEVTOOLS_PORT
 from textual.devtools.service import DevtoolsService
 
 DEFAULT_SIZE_CHANGE_POLL_DELAY_SECONDS = 2
@@ -38,9 +36,13 @@ async def _on_startup(app: Application) -> None:
     await service.start()
 
 
-def _run_devtools(port: int) -> None:
+def _run_devtools() -> None:
     app = _make_devtools_aiohttp_app()
-    run_app(app, port=port)
+
+    def noop_print(_: str):
+        return None
+
+    run_app(app, port=DEVTOOLS_PORT, print=noop_print)
 
 
 def _make_devtools_aiohttp_app(
@@ -65,8 +67,4 @@ def _make_devtools_aiohttp_app(
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        port = int(sys.argv[1])
-    else:
-        port = DEFAULT_PORT
-    _run_devtools(port)
+    _run_devtools()
