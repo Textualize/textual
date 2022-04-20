@@ -36,7 +36,7 @@ class Bindings:
         key_display: str | None = None,
         allow_forward: bool = True,
     ) -> None:
-        all_keys = [key.strip() for key in keys.split(",")]
+        all_keys = [key.strip() or ' ' for key in keys.split(",")]
         for key in all_keys:
             self.keys[key] = Binding(
                 key,
