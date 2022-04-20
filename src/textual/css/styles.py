@@ -132,6 +132,7 @@ class RulesMap(TypedDict, total=False):
 
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
+RULE_NAMES_SET = frozenset(RULE_NAMES)
 _rule_getter = attrgetter(*RULE_NAMES)
 
 
@@ -416,6 +417,7 @@ class Styles(StylesBase):
         return Styles(node=self.node, _rules=self.get_rules(), important=self.important)
 
     def has_rule(self, rule: str) -> bool:
+        assert rule in RULE_NAMES_SET, f"no such rule {rule!r}"
         return rule in self._rules
 
     def clear_rule(self, rule: str) -> bool:

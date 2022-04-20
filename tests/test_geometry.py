@@ -317,6 +317,13 @@ def test_spacing_add():
         Spacing(1, 2, 3, 4) + "foo"
 
 
+def test_spacing_sub():
+    assert Spacing(1, 2, 3, 4) - Spacing(5, 6, 7, 8) == Spacing(-4, -4, -4, -4)
+
+    with pytest.raises(TypeError):
+        Spacing(1, 2, 3, 4) - "foo"
+
+
 def test_split():
     assert Region(10, 5, 22, 15).split(10, 5) == (
         Region(10, 5, 10, 5),

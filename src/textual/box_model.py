@@ -54,11 +54,11 @@ def get_box_model(
     else:
         width = max(0, width - styles.margin.width)
 
-    if styles.min_width:
+    if has_rule("min_width"):
         min_width = styles.min_width.resolve_dimension(container_size, parent_size)
         width = max(width, min_width)
 
-    if styles.max_width:
+    if has_rule("max_width"):
         max_width = styles.max_width.resolve_dimension(container_size, parent_size)
         width = min(width, max_width)
 
@@ -70,11 +70,11 @@ def get_box_model(
     else:
         height = max(0, height - styles.margin.height)
 
-    if styles.min_height:
+    if has_rule("min_height"):
         min_height = styles.min_height.resolve_dimension(container_size, parent_size)
         height = max(height, min_height)
 
-    if styles.max_height:
+    if has_rule("max_height"):
         max_height = styles.max_height.resolve_dimension(container_size, parent_size)
         height = min(width, max_height)
 
