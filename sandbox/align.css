@@ -1,8 +1,8 @@
 
 
 Screen {
-    layout: horizontal;
-    
+    layout: vertical;
+    overflow: auto;
 }
 
 Widget {
@@ -11,15 +11,15 @@ Widget {
 
 #thing {
     width: auto;
-    height: 10;
+    height: auto;
     
     background:magenta;
-    margin: 1;
+    margin: 3;
     padding: 1;
     border: solid white;
     box-sizing: content-box;
     /* border: solid white; */
-    align-vertical: middle;    
+    align-horizontal: center;    
 }
 
 
@@ -33,7 +33,7 @@ Widget {
     box-sizing: content-box;
 
     background:green;
-    align-vertical: middle;
+    align-horizontal: center;
     color:white;
 }
 
@@ -41,7 +41,7 @@ Widget {
 #thing3 {
     width: 20;
     height: 10;
-    
+    margin: 1;
     background:blue;
-    align-vertical: bottom;
+    align-horizontal: center;
 }

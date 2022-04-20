@@ -24,7 +24,7 @@ from . import errors, log
 from . import events
 from ._animator import BoundAnimator
 from ._border import Border
-from ._box_model import get_box_model
+from .box_model import BoxModel, get_box_model
 from ._callback import invoke
 from .color import Color
 from ._context import active_app
@@ -107,7 +107,7 @@ class Widget(DOMNode):
     show_vertical_scrollbar = Reactive(False, layout=True)
     show_horizontal_scrollbar = Reactive(False, layout=True)
 
-    def get_box_model(self, container_size, parent_size) -> tuple[Size, Spacing]:
+    def get_box_model(self, container_size, parent_size) -> BoxModel:
         box_model = get_box_model(
             self.styles,
             container_size,
@@ -260,7 +260,7 @@ class Widget(DOMNode):
                 self.scroll_target_x = x
                 if x != self.scroll_x:
                     self.animate(
-                        "scroll_x", self.scroll_target_x, speed=80, easing="out_cubic"
+                        "scroll_x", self.scroll_target_x, speed=80, easing="lineary"
                     )
                     scrolled_x = True
             if y is not None:

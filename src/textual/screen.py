@@ -217,6 +217,9 @@ class Screen(Widget):
                 return
             scroll_widget = widget
             if scroll_widget is not None:
-                await scroll_widget.forward_event(event)
+                if scroll_widget is self:
+                    await self.post_message(event)
+                else:
+                    await scroll_widget.forward_event(event)
         else:
             await self.post_message(event)

@@ -1,10 +1,15 @@
 from __future__ import annotations
 
 
-from typing import Callable, TYPE_CHECKING
+from typing import Callable, NamedTuple, TYPE_CHECKING
 
 from .geometry import Size, Spacing
 from .css.styles import StylesBase
+
+
+class BoxModel(NamedTuple):
+    content: Size
+    margin: Spacing
 
 
 def get_box_model(
@@ -13,15 +18,18 @@ def get_box_model(
     parent_size: Size,
     get_auto_width: Callable[[Size, Size], int],
     get_auto_height: Callable[[Size, Size], int],
-) -> tuple[Size, Spacing]:
+) -> BoxModel:
     """Resolve the box model for this Styles.
 
     Args:
+        styles (StylesBase): Styles object.
         container_size (Size): The size of the widget container.
         parent_size (Size): The size widget's parent.
+        get_auto_width (Callable): A callable which accepts container size and parent size and returns a width.
+        get_auto_height (Callable): A callable which accepts container size and parent size and returns a height.
 
     Returns:
-        tuple[Size, Spacing]: A tuple with the size of the content area and margin.
+        BoxModel: A tuple with the size of the content area and margin.
     """
 
     has_rule = styles.has_rule
@@ -73,4 +81,4 @@ def get_box_model(
     size = Size(width, height) + extra
     margin = styles.margin if has_rule("margin") else Spacing(0, 0, 0, 0)
 
-    return size, margin
+    return BoxModel(size, margin)
