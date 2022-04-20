@@ -40,7 +40,7 @@ class VerticalLayout(Layout):
         y = box_models[0].margin.top
 
         for widget, box_model, margin in zip(parent.children, box_models, margins):
-            content_width, content_height = box_model.content
+            content_width, content_height = box_model.size
             offset_x = widget.styles.align_width(content_width, parent_size.width)
             region = Region(offset_x, y, content_width, content_height)
             max_height = max(max_height, content_height)

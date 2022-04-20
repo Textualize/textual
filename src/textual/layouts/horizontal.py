@@ -39,7 +39,7 @@ class HorizontalLayout(Layout):
         x = box_models[0].margin.left
 
         for widget, box_model, margin in zip(parent.children, box_models, margins):
-            content_width, content_height = box_model.content
+            content_width, content_height = box_model.size
             offset_y = widget.styles.align_height(content_height, parent_size.height)
             region = Region(x, offset_y, content_width, content_height)
             max_height = max(max_height, content_height)

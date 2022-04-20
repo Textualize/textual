@@ -107,7 +107,7 @@ class Widget(DOMNode):
     show_vertical_scrollbar = Reactive(False, layout=True)
     show_horizontal_scrollbar = Reactive(False, layout=True)
 
-    def get_box_model(self, container_size, parent_size) -> BoxModel:
+    def get_box_model(self, container_size: Size, parent_size: Size) -> BoxModel:
         box_model = get_box_model(
             self.styles,
             container_size,
@@ -118,14 +118,18 @@ class Widget(DOMNode):
         self.log(self, self.styles.padding, self.styles.border.spacing)
         return box_model
 
-    def get_content_width(self, container_size: Size, parent_size: Size) -> int:
+    def get_content_width(
+        self, container_size: Size, parent_size: Size, gutter: Spacing
+    ) -> int:
         console = self.app.console
         renderable = self.render()
         measurement = Measurement.get(console, console.options, renderable)
         return measurement.maximum
 
-    def get_content_height(self, container_size: Size, parent_size: Size) -> int:
-        return container_size.height
+    def get_content_height(
+        self, container_size: Size, parent_size: Size, gutter: Spacing
+    ) -> int:
+        return container_size.height - gutter.height
 
     async def watch_scroll_x(self, new_value: float) -> None:
         self.horizontal_scrollbar.position = int(new_value)
@@ -260,7 +264,7 @@ class Widget(DOMNode):
                 self.scroll_target_x = x
                 if x != self.scroll_x:
                     self.animate(
-                        "scroll_x", self.scroll_target_x, speed=80, easing="lineary"
+                        "scroll_x", self.scroll_target_x, speed=80, easing="out_cubic"
                     )
                     scrolled_x = True
             if y is not None:
@@ -537,7 +541,9 @@ class Widget(DOMNode):
         """Render all lines."""
         width, height = self.size
         renderable = self.render_styled()
-        options = self.console.options.update_dimensions(width, height)
+        options = self.console.options.update_dimensions(width, height).update(
+            highlight=False
+        )
         lines = self.console.render_lines(renderable, options)
         self._render_cache = RenderCache(self.size, lines)
         self._dirty_regions.clear()

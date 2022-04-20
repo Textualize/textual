@@ -8,16 +8,18 @@ from .css.styles import StylesBase
 
 
 class BoxModel(NamedTuple):
-    content: Size
-    margin: Spacing
+    """The result of `get_box_model`."""
+
+    size: Size  # Content + padding + border
+    margin: Spacing  # Additional margin
 
 
 def get_box_model(
     styles: StylesBase,
     container_size: Size,
     parent_size: Size,
-    get_auto_width: Callable[[Size, Size], int],
-    get_auto_height: Callable[[Size, Size], int],
+    get_auto_width: Callable[[Size, Size, Spacing], int],
+    get_auto_height: Callable[[Size, Size, Spacing], int],
 ) -> BoxModel:
     """Resolve the box model for this Styles.
 
@@ -35,19 +37,18 @@ def get_box_model(
     has_rule = styles.has_rule
     width, height = container_size
 
-    extra = Size(0, 0)
+    gutter = Spacing(0, 0, 0, 0)
     if styles.box_sizing == "content-box":
         if has_rule("padding"):
-            extra += styles.padding.totals
-        extra += styles.border.spacing.totals
+            gutter += styles.padding
+        gutter += styles.border.spacing
 
     else:  # border-box
-        extra -= styles.border.spacing.totals
+        gutter -= styles.border.spacing
 
     if has_rule("width"):
         if styles.width.is_auto:
-            # extra_width = styles.padding.width + styles.border.spacing.width
-            width = get_auto_width(container_size, parent_size)
+            width = get_auto_width(container_size, parent_size, gutter)
         else:
             width = styles.width.resolve_dimension(container_size, parent_size)
     else:
@@ -63,8 +64,7 @@ def get_box_model(
 
     if has_rule("height"):
         if styles.height.is_auto:
-            extra_height = styles.padding.height + styles.border.spacing.height
-            height = get_auto_height(container_size, parent_size) + extra_height
+            height = get_auto_height(container_size, parent_size, gutter)
         else:
             height = styles.height.resolve_dimension(container_size, parent_size)
     else:
@@ -78,7 +78,7 @@ def get_box_model(
         max_height = styles.max_height.resolve_dimension(container_size, parent_size)
         height = min(width, max_height)
 
-    size = Size(width, height) + extra
+    size = Size(width, height) + gutter.totals
     margin = styles.margin if has_rule("margin") else Spacing(0, 0, 0, 0)
 
     return BoxModel(size, margin)
