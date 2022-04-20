@@ -31,4 +31,4 @@ VALID_BOX_SIZING: Final = {"border-box", "content-box"}
 VALID_OVERFLOW: Final = {"scroll", "hidden", "auto"}
 
 
-NULL_SPACING: Final = Spacing(0, 0, 0, 0)
+NULL_SPACING: Final = Spacing.all(0)

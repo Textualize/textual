@@ -640,7 +640,9 @@ class Spacing(NamedTuple):
         if pad_len == 4:
             top, right, bottom, left = cast(Tuple[int, int, int, int], pad)
             return cls(top, right, bottom, left)
-        raise ValueError(f"1, 2 or 4 integers required for spacing; {pad_len} given")
+        raise ValueError(
+            f"1, 2 or 4 integers required for spacing properties; {pad_len} given"
+        )
 
     @classmethod
     def vertical(cls, amount: int) -> Spacing:

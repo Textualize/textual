@@ -9,11 +9,13 @@ when setting and getting.
 
 from __future__ import annotations
 
+import inspect
 from typing import Iterable, NamedTuple, TYPE_CHECKING, cast
 
 import rich.repr
 from rich.style import Style
 
+from ._help_text import spacing_help_text, scalar_help_text
 from ..color import Color, ColorPair
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING
@@ -98,7 +100,10 @@ class ScalarProperty:
             try:
                 new_value = Scalar.parse(value)
             except ScalarParseError:
-                raise StyleValueError("unable to parse scalar from {value!r}")
+                raise StyleValueError(
+                    "unable to parse scalar from {value!r}",
+                    help_text=scalar_help_text(property_name=self.name),
+                )
         else:
             raise StyleValueError("expected float, int, Scalar, or None")
         if new_value is not None and new_value.unit not in self.units:
@@ -368,7 +373,16 @@ class SpacingProperty:
             if obj.clear_rule(self.name):
                 obj.refresh(layout=True)
         else:
-            if obj.set_rule(self.name, Spacing.unpack(spacing)):
+            try:
+                unpacked_spacing = Spacing.unpack(spacing)
+            except ValueError as error:
+                raise StyleValueError(
+                    str(error),
+                    help_text=spacing_help_text(
+                        property_name=self.name, num_values_supplied=len(spacing)
+                    ),
+                )
+            if obj.set_rule(self.name, unpacked_spacing):
                 obj.refresh(layout=True)
 
 

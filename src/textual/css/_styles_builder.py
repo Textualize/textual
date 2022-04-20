@@ -5,6 +5,7 @@ from typing import cast, Iterable, NoReturn
 import rich.repr
 
 from ._error_tools import friendly_list
+from ._help_text import spacing_help_text, scalar_help_text
 from .constants import (
     VALID_BORDER,
     VALID_BOX_SIZING,
@@ -15,7 +16,7 @@ from .constants import (
 )
 from .errors import DeclarationError
 from .model import Declaration
-from .scalar import Scalar, ScalarOffset, Unit, ScalarError
+from .scalar import Scalar, ScalarOffset, Unit, ScalarError, ScalarParseError
 from .styles import DockGroup, Styles
 from .tokenize import Token
 from .transition import Transition
@@ -160,12 +161,20 @@ class StylesBuilder:
                 self.error(name, token, f"invalid token {value!r} in this context")
 
     def _process_scalar(self, name: str, tokens: list[Token]) -> None:
+        def scalar_error():
+            self.error(name, tokens[0], scalar_help_text(property_name=name))
+
         if not tokens:
             return
         if len(tokens) == 1:
-            self.styles._rules[name.replace("-", "_")] = Scalar.parse(tokens[0].value)
+            try:
+                self.styles._rules[name.replace("-", "_")] = Scalar.parse(
+                    tokens[0].value
+                )
+            except ScalarParseError:
+                scalar_error()
         else:
-            self.error(name, tokens[0], "a single scalar is expected")
+            scalar_error()
 
     def process_box_sizing(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
@@ -287,7 +296,7 @@ class StylesBuilder:
             self.error(
                 name,
                 tokens[0],
-                f"1, 2, or 4 values expected; received {len(space)} values",
+                spacing_help_text(name, num_values_supplied=len(space)),
             )
         self.styles._rules[name] = Spacing.unpack(cast(SpacingDimensions, tuple(space)))
 

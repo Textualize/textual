@@ -10,6 +10,7 @@ from typing import cast, Iterable
 import rich.repr
 from rich.console import Group, RenderableType
 from rich.highlighter import ReprHighlighter
+from rich.markup import render
 from rich.padding import Padding
 from rich.panel import Panel
 from rich.syntax import Syntax
@@ -88,13 +89,7 @@ class StylesheetErrors:
                     )
                     append(self._get_snippet(token.code, line_no))
 
-                final_message = ""
-                for is_last, message_part in loop_last(message.split(";")):
-                    end = "" if is_last else "\n"
-                    final_message += f"• {message_part.strip()};{end}"
-
-                append(Padding(highlighter(Text(final_message, "red")), pad=(0, 1)))
-                append("")
+                append(Padding(highlighter(render(message)), pad=(0, 1)))
         return Group(*errors)
 
 
