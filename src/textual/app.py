@@ -439,7 +439,7 @@ class App(DOMNode):
             await widget.post_message(events.MouseCapture(self, self.mouse_position))
 
     def panic(self, *renderables: RenderableType) -> None:
-        """Exits the app after displaying a message.
+        """Exits the app then displays a message.
 
         Args:
             *renderables (RenderableType, optional): Rich renderables to display on exit.

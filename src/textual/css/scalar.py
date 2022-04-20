@@ -156,6 +156,25 @@ class Scalar(NamedTuple):
             raise ScalarResolveError(f"expected dimensions; found {str(self)!r}")
         return dimension
 
+    def copy_with(
+        self,
+        value: float | None = None,
+        unit: Unit | None = None,
+        percent_unit: Unit | None = None,
+    ) -> Scalar:
+        """Get a copy of this Scalar, with values optionally modified
+
+        Args:
+            value (float | None): The new value, or None to keep the same value
+            unit (Unit | None): The new unit, or None to keep the same unit
+            percent_unit (Unit | None): The new percent_unit, or None to keep the same unit
+        """
+        return Scalar(
+            value if value is not None else self.value,
+            unit if unit is not None else self.unit,
+            percent_unit if percent_unit is not None else self.percent_unit,
+        )
+
 
 @rich.repr.auto(angular=True)
 class ScalarOffset(NamedTuple):

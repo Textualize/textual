@@ -4,15 +4,12 @@ Functions and classes to manage terminal geometry (anything involving coordinate
 
 """
 
-
 from __future__ import annotations
 
 from math import sqrt
 from typing import Any, cast, NamedTuple, Tuple, Union, TypeVar
 
-
 SpacingDimensions = Union[int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]]
-
 
 T = TypeVar("T", int, float)
 
@@ -632,11 +629,11 @@ class Spacing(NamedTuple):
     def unpack(cls, pad: SpacingDimensions) -> Spacing:
         """Unpack padding specified in CSS style."""
         if isinstance(pad, int):
-            return cls(pad, pad, pad, pad)
+            return Spacing.all(pad)
         pad_len = len(pad)
         if pad_len == 1:
             _pad = pad[0]
-            return cls(_pad, _pad, _pad, _pad)
+            return Spacing.all(_pad)
         if pad_len == 2:
             pad_top, pad_right = cast(Tuple[int, int], pad)
             return cls(pad_top, pad_right, pad_top, pad_right)
@@ -644,6 +641,18 @@ class Spacing(NamedTuple):
             top, right, bottom, left = cast(Tuple[int, int, int, int], pad)
             return cls(top, right, bottom, left)
         raise ValueError(f"1, 2 or 4 integers required for spacing; {pad_len} given")
+
+    @classmethod
+    def vertical(cls, amount: int) -> Spacing:
+        return Spacing(amount, 0, amount, 0)
+
+    @classmethod
+    def horizontal(cls, amount: int) -> Spacing:
+        return Spacing(0, amount, 0, amount)
+
+    @classmethod
+    def all(cls, amount: int) -> Spacing:
+        return Spacing(amount, amount, amount, amount)
 
     def __add__(self, other: object) -> Spacing:
         if isinstance(other, tuple):

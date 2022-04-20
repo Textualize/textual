@@ -2,7 +2,7 @@
   layout: vertical;
 
   background: dark_green;
-  overflow: hidden auto;
+  overflow: auto auto;
   border: heavy white;
 }
 
@@ -10,4 +10,5 @@
   height: 8;
   min-width: 80;
   background: dark_blue;
+  margin-bottom: 4;
 }

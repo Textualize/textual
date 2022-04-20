@@ -14,7 +14,6 @@ from typing import Iterable, NamedTuple, TYPE_CHECKING, cast
 import rich.repr
 from rich.style import Style
 
-from .. import log
 from ..color import Color, ColorPair
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING
@@ -34,9 +33,7 @@ if TYPE_CHECKING:
     from ..layout import Layout
     from .styles import DockGroup, Styles, StylesBase
 
-
 from .types import EdgeType
-
 
 BorderDefinition = (
     "Sequence[tuple[EdgeType, str | Color] | None] | tuple[EdgeType, str | Color]"
@@ -71,13 +68,15 @@ class ScalarProperty:
         value = obj.get_rule(self.name)
         return value
 
-    def __set__(self, obj: StylesBase, value: float | Scalar | str | None) -> None:
+    def __set__(
+        self, obj: StylesBase, value: float | int | Scalar | str | None
+    ) -> None:
         """Set the scalar property
 
         Args:
             obj (Styles): The ``Styles`` object.
-            value (float | Scalar | str | None): The value to set the scalar property to.
-                You can directly pass a float value, which will be interpreted with
+            value (float | int | Scalar | str | None): The value to set the scalar property to.
+                You can directly pass a float or int value, which will be interpreted with
                 a default unit of Cells. You may also provide a string such as ``"50%"``,
                 as you might do when writing CSS. If a string with no units is supplied,
                 Cells will be used as the unit. Alternatively, you can directly supply
@@ -89,8 +88,9 @@ class ScalarProperty:
         """
         if value is None:
             obj.clear_rule(self.name)
+            obj.refresh(layout=True)
             return
-        if isinstance(value, float):
+        if isinstance(value, float) or isinstance(value, int):
             new_value = Scalar(float(value), Unit.CELLS, Unit.WIDTH)
         elif isinstance(value, Scalar):
             new_value = value
@@ -100,7 +100,7 @@ class ScalarProperty:
             except ScalarParseError:
                 raise StyleValueError("unable to parse scalar from {value!r}")
         else:
-            raise StyleValueError("expected float, Scalar, or None")
+            raise StyleValueError("expected float, int, Scalar, or None")
         if new_value is not None and new_value.unit not in self.units:
             raise StyleValueError(
                 f"{self.name} units must be one of {friendly_list(get_symbols(self.units))}"
@@ -108,7 +108,7 @@ class ScalarProperty:
         if new_value is not None and new_value.is_percent:
             new_value = Scalar(float(new_value.value), self.percent_unit, Unit.WIDTH)
         if obj.set_rule(self.name, new_value):
-            obj.refresh()
+            obj.refresh(layout=True)
 
 
 class BoxProperty:
@@ -208,7 +208,15 @@ class Edges(NamedTuple):
 
 
 class BorderProperty:
-    """Descriptor for getting and setting full borders and outlines."""
+    """Descriptor for getting and setting full borders and outlines.
+
+    Args:
+        layout (bool): True if the layout should be refreshed after setting, False otherwise.
+
+    """
+
+    def __init__(self, layout: bool) -> None:
+        self._layout = layout
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
@@ -262,20 +270,22 @@ class BorderProperty:
             StyleValueError: When the supplied ``tuple`` is not of valid length (1, 2, or 4).
         """
         top, right, bottom, left = self._properties
-        obj.refresh()
         if border is None:
             clear_rule = obj.clear_rule
             clear_rule(top)
             clear_rule(right)
             clear_rule(bottom)
             clear_rule(left)
+            obj.refresh(layout=self._layout)
             return
         if isinstance(border, tuple):
             setattr(obj, top, border)
             setattr(obj, right, border)
             setattr(obj, bottom, border)
             setattr(obj, left, border)
+            obj.refresh(layout=self._layout)
             return
+
         count = len(border)
         if count == 1:
             _border = border[0]
@@ -286,8 +296,8 @@ class BorderProperty:
         elif count == 2:
             _border1, _border2 = border
             setattr(obj, top, _border1)
-            setattr(obj, right, _border1)
-            setattr(obj, bottom, _border2)
+            setattr(obj, bottom, _border1)
+            setattr(obj, right, _border2)
             setattr(obj, left, _border2)
         elif count == 4:
             _border1, _border2, _border3, _border4 = border
@@ -297,6 +307,7 @@ class BorderProperty:
             setattr(obj, left, _border4)
         else:
             raise StyleValueError("expected 1, 2, or 4 values")
+        obj.refresh(layout=self._layout)
 
 
 class StyleProperty:
@@ -537,9 +548,10 @@ class StringEnumProperty:
     value belongs in the set of valid values.
     """
 
-    def __init__(self, valid_values: set[str], default: str) -> None:
+    def __init__(self, valid_values: set[str], default: str, layout=False) -> None:
         self._valid_values = valid_values
         self._default = default
+        self._layout = layout
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
@@ -569,14 +581,14 @@ class StringEnumProperty:
 
         if value is None:
             if obj.clear_rule(self.name):
-                obj.refresh()
+                obj.refresh(layout=self._layout)
         else:
             if value not in self._valid_values:
                 raise StyleValueError(
                     f"{self.name} must be one of {friendly_list(self._valid_values)}"
                 )
             if obj.set_rule(self.name, value):
-                obj.refresh()
+                obj.refresh(layout=self._layout)
 
 
 class NameProperty:
