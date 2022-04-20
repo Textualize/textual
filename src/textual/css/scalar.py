@@ -3,11 +3,10 @@ from __future__ import annotations
 from enum import Enum, unique
 from functools import lru_cache
 import re
-from typing import Iterable, NamedTuple, TYPE_CHECKING
+from typing import Callable, Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 
-from textual.css.tokenizer import Token
 
 from .. import log
 from ..geometry import Offset
@@ -107,6 +106,10 @@ class Scalar(NamedTuple):
     @property
     def symbol(self) -> str:
         return UNIT_SYMBOL[self.unit]
+
+    @property
+    def is_auto(self) -> bool:
+        return self.unit == Unit.AUTO
 
     @classmethod
     def from_number(cls, value: float) -> Scalar:

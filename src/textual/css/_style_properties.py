@@ -76,7 +76,9 @@ class ScalarProperty:
         value = obj.get_rule(self.name)
         return value
 
-    def __set__(self, obj: StylesBase, value: float | Scalar | str | None) -> None:
+    def __set__(
+        self, obj: StylesBase, value: float | int | Scalar | str | None
+    ) -> None:
         """Set the scalar property
 
         Args:

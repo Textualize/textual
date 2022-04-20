@@ -14,6 +14,7 @@ from typing import (
 import rich.repr
 from rich.align import Align
 from rich.console import Console, RenderableType
+from rich.measure import Measurement
 from rich.padding import Padding
 from rich.style import Style
 from rich.styled import Styled
@@ -23,12 +24,13 @@ from . import errors, log
 from . import events
 from ._animator import BoundAnimator
 from ._border import Border
+from ._box_model import get_box_model
 from ._callback import invoke
 from .color import Color
 from ._context import active_app
 from ._types import Lines
 from .dom import DOMNode
-from .geometry import clamp, Offset, Region, Size
+from .geometry import clamp, Offset, Region, Size, Spacing
 from .message import Message
 from . import messages
 from .layout import Layout
@@ -94,6 +96,8 @@ class Widget(DOMNode):
         super().__init__(name=name, id=id, classes=classes)
         self.add_children(*children)
 
+    auto_width = Reactive(True)
+    auto_height = Reactive(True)
     has_focus = Reactive(False)
     mouse_over = Reactive(False)
     scroll_x = Reactive(0.0, repaint=False)
@@ -102,6 +106,26 @@ class Widget(DOMNode):
     scroll_target_y = Reactive(0.0, repaint=False)
     show_vertical_scrollbar = Reactive(False, layout=True)
     show_horizontal_scrollbar = Reactive(False, layout=True)
+
+    def get_box_model(self, container_size, parent_size) -> tuple[Size, Spacing]:
+        box_model = get_box_model(
+            self.styles,
+            container_size,
+            parent_size,
+            self.get_content_width,
+            self.get_content_height,
+        )
+        self.log(self, self.styles.padding, self.styles.border.spacing)
+        return box_model
+
+    def get_content_width(self, container_size: Size, parent_size: Size) -> int:
+        console = self.app.console
+        renderable = self.render()
+        measurement = Measurement.get(console, console.options, renderable)
+        return measurement.maximum
+
+    def get_content_height(self, container_size: Size, parent_size: Size) -> int:
+        return container_size.height
 
     async def watch_scroll_x(self, new_value: float) -> None:
         self.horizontal_scrollbar.position = int(new_value)
@@ -651,13 +675,13 @@ class Widget(DOMNode):
 
     def on_mouse_scroll_down(self, event) -> None:
         if self.is_container:
-            if not self.scroll_down(animate=False):
-                event.stop()
+            self.scroll_down(animate=False)
+            event.stop()
 
     def on_mouse_scroll_up(self, event) -> None:
         if self.is_container:
-            if not self.scroll_up(animate=False):
-                event.stop()
+            self.scroll_up(animate=False)
+            event.stop()
 
     def handle_scroll_to(self, message: ScrollTo) -> None:
         if self.is_container:

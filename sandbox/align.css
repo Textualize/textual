@@ -10,23 +10,31 @@ Widget {
 }
 
 #thing {
-    width: 20;
+    width: auto;
     height: 10;
     
     background:magenta;
     margin: 1;
     padding: 1;
+    border: solid white;
+    box-sizing: content-box;
     /* border: solid white; */
     align-vertical: middle;    
 }
 
 
 #thing2 {
-    width: 20;
+    width: auto;
     height: 10;
-    
+    /* border: solid white; */
+     outline: heavy blue; 
+
+    padding: 1 2;
+    box-sizing: content-box;
+
     background:green;
     align-vertical: middle;
+    color:white;
 }
 
 

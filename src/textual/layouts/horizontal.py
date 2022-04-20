@@ -26,7 +26,7 @@ class HorizontalLayout(Layout):
 
         for widget in parent.children:
             styles = widget.styles
-            (content_width, content_height), margin = widget.styles.get_box_model(
+            (content_width, content_height), margin = widget.get_box_model(
                 size, parent_size
             )
             offset_y = styles.align_height(

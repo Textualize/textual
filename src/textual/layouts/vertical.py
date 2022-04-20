@@ -28,7 +28,7 @@ class VerticalLayout(Layout):
 
         for widget in parent.children:
             styles = widget.styles
-            (content_width, content_height), margin = styles.get_box_model(
+            (content_width, content_height), margin = widget.get_box_model(
                 size, parent_size
             )
             offset_x = styles.align_width(

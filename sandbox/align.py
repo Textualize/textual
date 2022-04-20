@@ -2,6 +2,7 @@ from rich.text import Text
 
 from textual.app import App
 from textual.widget import Widget
+from textual.widgets import Static
 
 
 class Thing(Widget):
@@ -15,7 +16,7 @@ class AlignApp(App):
 
     def on_mount(self) -> None:
         self.log("MOUNTED")
-        self.mount(thing=Thing(), thing2=Widget(), thing3=Widget())
+        self.mount(thing=Thing(), thing2=Static("0123456789"), thing3=Widget())
 
     def action_log_tree(self):
         self.log(self.screen.tree)

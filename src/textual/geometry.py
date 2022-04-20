@@ -7,7 +7,6 @@ Functions and classes to manage terminal geometry (anything involving coordinate
 
 from __future__ import annotations
 
-from math import sqrt
 from typing import Any, cast, NamedTuple, Tuple, Union, TypeVar
 
 
@@ -97,7 +96,7 @@ class Offset(NamedTuple):
         """
         x1, y1 = self
         x2, y2 = other
-        distance = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
+        distance = ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ** 0.5
         return distance
 
 
