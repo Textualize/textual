@@ -61,6 +61,7 @@ def test_width():
     )
     assert box_model == BoxModel(Size(60, 20), Spacing(1, 2, 3, 4))
 
+    # Set width to auto-detect
     styles.width = "auto"
 
     box_model = get_box_model(
