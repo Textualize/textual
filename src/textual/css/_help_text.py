@@ -77,14 +77,48 @@ def _contextualize_property_name(
     return property_name
 
 
-def spacing_help_text(
+def _spacing_examples(property_name: str) -> ContextSpecificBullets:
+    return ContextSpecificBullets(
+        inline=[
+            Bullet(
+                "In Python, you can set it to a tuple to assign spacing to each edge",
+                examples=[
+                    Example(
+                        f"widget.styles.{property_name} = (1, 2) [dim]# Vertical, horizontal"
+                    ),
+                    Example(
+                        f"widget.styles.{property_name} = (1, 2, 3, 4) [dim]# Top, right, bottom, left"
+                    ),
+                ],
+            ),
+            Bullet(
+                "Or to an integer to assign a single value to all edges",
+                examples=[Example(f"widget.styles.{property_name} = 2")],
+            ),
+        ],
+        css=[
+            Bullet(
+                "In Textual CSS, supply 1, 2 or 4 integers separated by a space",
+                examples=[
+                    Example(f"{property_name}: 1;"),
+                    Example(f"{property_name}: 1 2; [dim]# Vertical, horizontal"),
+                    Example(
+                        f"{property_name}: 1 2 3 4; [dim]# Top, right, bottom, left"
+                    ),
+                ],
+            ),
+        ],
+    )
+
+
+def spacing_wrong_number_of_values(
     property_name: str,
     num_values_supplied: int,
     context: StylingContext | None = None,
 ) -> HelpText:
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
-        summary=f"Invalid value for the [i]{property_name}[/] property",
+        summary=f"Invalid number of values for the [i]{property_name}[/] property",
         bullets=[
             Bullet(
                 f"You supplied {num_values_supplied} values for the '{property_name}' property"
@@ -92,40 +126,18 @@ def spacing_help_text(
             Bullet(
                 "Spacing properties like 'margin' and 'padding' require either 1, 2 or 4 integer values"
             ),
-            *ContextSpecificBullets(
-                inline=[
-                    Bullet(
-                        "In Python, you can set it to a tuple to assign spacing to each edge",
-                        examples=[
-                            Example(
-                                f"widget.styles.{property_name} = (1, 2) [dim]# Vertical, horizontal"
-                            ),
-                            Example(
-                                f"widget.styles.{property_name} = (1, 2, 3, 4) [dim]# Top, right, bottom, left"
-                            ),
-                        ],
-                    ),
-                    Bullet(
-                        "Or to an integer to assign a single value to all edges",
-                        examples=[Example(f"widget.styles.{property_name} = 2")],
-                    ),
-                ],
-                css=[
-                    Bullet(
-                        "In Textual CSS, supply 1, 2 or 4 values separated by a space",
-                        examples=[
-                            Example(f"{property_name}: 1;"),
-                            Example(
-                                f"{property_name}: 1 2; [dim]# Vertical, horizontal"
-                            ),
-                            Example(
-                                f"{property_name}: 1 2 3 4; [dim]# Top, right, bottom, left"
-                            ),
-                        ],
-                    ),
-                ],
-            ).get_by_context(context),
+            *_spacing_examples(property_name).get_by_context(context),
         ],
+    )
+
+
+def spacing_invalid_value(
+    property_name: str, context: StylingContext | None = None
+) -> HelpText:
+    property_name = _contextualize_property_name(property_name, context)
+    return HelpText(
+        summary=f"Invalid value for the [i]{property_name}[/] property",
+        bullets=_spacing_examples(property_name).get_by_context(context),
     )
 
 

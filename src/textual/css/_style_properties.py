@@ -15,7 +15,7 @@ from typing import Iterable, NamedTuple, TYPE_CHECKING, cast
 import rich.repr
 from rich.style import Style
 
-from ._help_text import spacing_help_text, scalar_help_text
+from ._help_text import spacing_wrong_number_of_values, scalar_help_text
 from ..color import Color, ColorPair
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING
@@ -380,7 +380,7 @@ class SpacingProperty:
             except ValueError as error:
                 raise StyleValueError(
                     str(error),
-                    help_text=spacing_help_text(
+                    help_text=spacing_wrong_number_of_values(
                         property_name=self.name,
                         num_values_supplied=len(spacing),
                         context="inline",

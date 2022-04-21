@@ -6,7 +6,11 @@ import rich.repr
 
 from ._error_tools import friendly_list
 from ._help_renderables import HelpText
-from ._help_text import spacing_help_text, scalar_help_text
+from ._help_text import (
+    spacing_wrong_number_of_values,
+    scalar_help_text,
+    spacing_invalid_value,
+)
 from .constants import (
     VALID_BORDER,
     VALID_BOX_SIZING,
@@ -292,14 +296,16 @@ class StylesBuilder:
                 try:
                     append(int(value))
                 except ValueError:
-                    self.error(name, token, f"expected a number here; found {value!r}")
+                    self.error(name, token, spacing_invalid_value(name, context="css"))
             else:
-                self.error(name, token, f"expected a number here; found {value!r}")
+                self.error(name, token, spacing_invalid_value(name, context="css"))
         if len(space) not in (1, 2, 4):
             self.error(
                 name,
                 tokens[0],
-                spacing_help_text(name, num_values_supplied=len(space), context="css"),
+                spacing_wrong_number_of_values(
+                    name, num_values_supplied=len(space), context="css"
+                ),
             )
         self.styles._rules[name] = Spacing.unpack(cast(SpacingDimensions, tuple(space)))
 

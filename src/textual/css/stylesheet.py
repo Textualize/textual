@@ -11,6 +11,7 @@ from rich.console import RenderableType, Console, ConsoleOptions
 from rich.highlighter import ReprHighlighter
 from rich.markup import render
 from rich.padding import Padding
+from rich.panel import Panel
 from rich.rule import Rule
 from rich.style import Style
 from rich.syntax import Syntax
@@ -83,26 +84,33 @@ class StylesheetErrors:
                 if token.referenced_by:
                     line_idx, col_idx = token.referenced_by.location
                     line_no, col_no = line_idx + 1, col_idx + 1
-                    path_string = f"{filename}:{line_no}:{col_no}"
+                    path_string = f"{path.absolute()}:{line_no}:{col_no}"
                 else:
                     line_idx, col_idx = token.location
                     line_no, col_no = line_idx + 1, col_idx + 1
-                    path_string = f"{filename}:{line_no}:{col_no}"
+                    path_string = f"{path.absolute()}:{line_no}:{col_no}"
 
                 link_style = Style(
-                    link=f"file://{path.absolute()}", color="red", bold=True
+                    link=f"file://{path.absolute()}",
+                    color="red",
+                    bold=True,
+                    italic=True,
                 )
+
                 path_text = Text(path_string, style=link_style)
                 title = Text.assemble(Text("Error at ", style="bold red"), path_text)
-                yield Rule(style="red")
-                yield Padding(title, pad=(0, 0, 0, 1))
-                yield Padding(self._get_snippet(token.code, line_no), pad=(0, 0, 1, 1))
-                yield Padding(message, pad=(0, 0, 0, 1))
-                if is_last:
-                    yield Rule(style="red")
+                yield ""
+                yield Panel(
+                    self._get_snippet(token.code, line_no),
+                    title=title,
+                    title_align="left",
+                    border_style="red",
+                )
+                yield Padding(message, pad=(0, 0, 1, 3))
 
+        yield Rule(style="red")
         yield render(
-            f" [b]{error_count} error{'s' if error_count != 1 else ''}[/] found in the stylesheet"
+            f" [b]{error_count} error{'s' if error_count != 1 else ''}[/] found in stylesheet"
         )
 
 

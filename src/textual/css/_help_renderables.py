@@ -46,7 +46,7 @@ class HelpText:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        tree = Tree(_markup_and_highlight(f"[b red]{self.summary}"), guide_style="red")
+        tree = Tree(_markup_and_highlight(f"[b blue]{self.summary}"), guide_style="dim")
         for bullet in self.bullets:
             tree.add(bullet)
         yield tree
