@@ -89,7 +89,7 @@ class StylesheetErrors:
                     )
                     append(self._get_snippet(token.code, line_no))
 
-                append(Padding(highlighter(render(message)), pad=(0, 1)))
+                append(Padding(message, pad=(0, 1)))
         return Group(*errors)
 
 

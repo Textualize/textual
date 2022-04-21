@@ -4,6 +4,7 @@ from rich.console import ConsoleOptions, Console
 from rich.padding import Padding
 from rich.traceback import Traceback
 
+from ._help_renderables import HelpText
 from .tokenize import Token
 
 
@@ -24,13 +25,14 @@ class StyleTypeError(TypeError):
 
 
 class StyleValueError(ValueError):
-    def __init__(self, *args, help_text: str | None = None):
+    def __init__(self, *args, help_text: HelpText | None = None):
         super().__init__(*args)
         self.help_text = help_text
 
     def __rich_console__(self, console: Console, options: ConsoleOptions):
         yield Traceback.from_exception(type(self), self, self.__traceback__)
-        yield Padding(self.help_text, pad=(1, 0, 0, 1))
+        if self.help_text is not None:
+            yield Padding(self.help_text, pad=(1, 0, 0, 1))
 
 
 class StylesheetError(Exception):

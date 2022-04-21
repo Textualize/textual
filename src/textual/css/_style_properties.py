@@ -379,7 +379,9 @@ class SpacingProperty:
                 raise StyleValueError(
                     str(error),
                     help_text=spacing_help_text(
-                        property_name=self.name, num_values_supplied=len(spacing)
+                        property_name=self.name,
+                        num_values_supplied=len(spacing),
+                        strategy="inline",
                     ),
                 )
             if obj.set_rule(self.name, unpacked_spacing):

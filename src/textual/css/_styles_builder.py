@@ -5,6 +5,7 @@ from typing import cast, Iterable, NoReturn
 import rich.repr
 
 from ._error_tools import friendly_list
+from ._help_renderables import HelpText
 from ._help_text import spacing_help_text, scalar_help_text
 from .constants import (
     VALID_BORDER,
@@ -55,7 +56,7 @@ class StylesBuilder:
     def __repr__(self) -> str:
         return "StylesBuilder()"
 
-    def error(self, name: str, token: Token, message: str) -> NoReturn:
+    def error(self, name: str, token: Token, message: str | HelpText) -> NoReturn:
         raise DeclarationError(name, token, message)
 
     def add_declaration(self, declaration: Declaration) -> None:
@@ -296,7 +297,7 @@ class StylesBuilder:
             self.error(
                 name,
                 tokens[0],
-                spacing_help_text(name, num_values_supplied=len(space)),
+                spacing_help_text(name, num_values_supplied=len(space), strategy="css"),
             )
         self.styles._rules[name] = Spacing.unpack(cast(SpacingDimensions, tuple(space)))
 
