@@ -7,6 +7,7 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.highlighter import ReprHighlighter
 from rich.markup import render
 from rich.text import Text
+from rich.tree import Tree
 
 _highlighter = ReprHighlighter()
 
@@ -22,7 +23,7 @@ class Example:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        yield _markup_and_highlight(f"    [dim]e.g. [/][i]{self.markup}[/]")
+        yield _markup_and_highlight(f"  [dim]e.g. [/][i]{self.markup}[/]")
 
 
 class Bullet:
@@ -33,15 +34,19 @@ class Bullet:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        yield _markup_and_highlight(f"• {self.markup}")
+        yield _markup_and_highlight(f"{self.markup}")
         yield from self.examples
 
 
 class HelpText:
-    def __init__(self, *bullet_points: Bullet) -> None:
-        self.bullet_points = bullet_points
+    def __init__(self, summary: str, *, bullets: Iterable[Bullet]) -> None:
+        self.summary = summary
+        self.bullets = bullets
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        yield from self.bullet_points
+        tree = Tree(_markup_and_highlight(f"[b red]{self.summary}"), guide_style="red")
+        for bullet in self.bullets:
+            tree.add(bullet)
+        yield tree

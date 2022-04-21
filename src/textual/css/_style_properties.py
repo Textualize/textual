@@ -102,7 +102,9 @@ class ScalarProperty:
             except ScalarParseError:
                 raise StyleValueError(
                     "unable to parse scalar from {value!r}",
-                    help_text=scalar_help_text(property_name=self.name),
+                    help_text=scalar_help_text(
+                        property_name=self.name, context="inline"
+                    ),
                 )
         else:
             raise StyleValueError("expected float, int, Scalar, or None")
@@ -381,7 +383,7 @@ class SpacingProperty:
                     help_text=spacing_help_text(
                         property_name=self.name,
                         num_values_supplied=len(spacing),
-                        strategy="inline",
+                        context="inline",
                     ),
                 )
             if obj.set_rule(self.name, unpacked_spacing):

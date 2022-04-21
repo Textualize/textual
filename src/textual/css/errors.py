@@ -32,7 +32,8 @@ class StyleValueError(ValueError):
     def __rich_console__(self, console: Console, options: ConsoleOptions):
         yield Traceback.from_exception(type(self), self, self.__traceback__)
         if self.help_text is not None:
-            yield Padding(self.help_text, pad=(1, 0, 0, 1))
+            yield ""
+            yield self.help_text
 
 
 class StylesheetError(Exception):

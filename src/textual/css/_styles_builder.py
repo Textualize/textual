@@ -163,7 +163,9 @@ class StylesBuilder:
 
     def _process_scalar(self, name: str, tokens: list[Token]) -> None:
         def scalar_error():
-            self.error(name, tokens[0], scalar_help_text(property_name=name))
+            self.error(
+                name, tokens[0], scalar_help_text(property_name=name, context="css")
+            )
 
         if not tokens:
             return
@@ -297,7 +299,7 @@ class StylesBuilder:
             self.error(
                 name,
                 tokens[0],
-                spacing_help_text(name, num_values_supplied=len(space), strategy="css"),
+                spacing_help_text(name, num_values_supplied=len(space), context="css"),
             )
         self.styles._rules[name] = Spacing.unpack(cast(SpacingDimensions, tuple(space)))
 

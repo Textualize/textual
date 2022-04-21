@@ -3,7 +3,6 @@ import sys
 
 from textual import events
 from textual.app import App
-from textual.geometry import Spacing
 from textual.widget import Widget
 from textual.widgets import Placeholder
 
@@ -18,7 +17,7 @@ class BasicApp(App):
         self.bind("p", "print")
         self.bind("o", "toggle_visibility")
         self.bind("p", "toggle_display")
-        self.bind("f", "modify_first_child")
+        self.bind("f", "modify_focussed")
         self.bind("b", "toggle_border")
         self.bind("m", "increase_margin")
 
@@ -61,11 +60,10 @@ class BasicApp(App):
             sep=" - ",
         )
         print(1234, 5678)
-
         sys.stdout.write("abcdef")
 
-    def action_modify_first_child(self):
-        """Increment height of first child widget, randomise border and bg color"""
+    def action_modify_focussed(self):
+        """Increment height of focussed child, randomise border and bg color"""
         previous_height = self.focused.styles.height.value
         new_height = previous_height + 1
         self.focused.styles.height = self.focused.styles.height.copy_with(
