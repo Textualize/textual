@@ -40,7 +40,9 @@ def get_box_model(
     is_content_box = styles.box_sizing == "content-box"
     gutter = styles.padding + styles.border.spacing
 
-    if not has_rule("width") or styles.width.is_auto:
+    if not has_rule("width"):
+        width = container_size.width
+    elif styles.width.is_auto:
         # When width is auto, we want enough space to always fit the content
         width = get_content_width(container_size, parent_size)
         if not is_content_box:
@@ -50,7 +52,9 @@ def get_box_model(
     else:
         width = styles.width.resolve_dimension(container_size, parent_size)
 
-    if not has_rule("height") or styles.height.is_auto:
+    if not has_rule("height"):
+        height = container_size.height
+    elif styles.height.is_auto:
         height = get_content_height(container_size, parent_size)
         if not is_content_box:
             height += gutter.height

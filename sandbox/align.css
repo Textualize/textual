@@ -26,7 +26,7 @@ Widget {
 #thing2 {
     border: solid white;
     /* outline: heavy blue;  */
-    
+    height: 10;
     padding: 1 2;
     box-sizing: border-box;
 
@@ -39,7 +39,7 @@ Widget {
 
 
 #thing3 {
-
+    height: 10;
     margin: 1;
     background:blue;
     align-horizontal: center;
