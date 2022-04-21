@@ -9,7 +9,7 @@ import warnings
 from asyncio import AbstractEventLoop
 from contextlib import redirect_stdout
 from time import perf_counter
-from typing import Any, Iterable, Type, TYPE_CHECKING
+from typing import Any, Iterable, TextIO, Type, TYPE_CHECKING
 
 import rich
 import rich.repr
@@ -101,7 +101,9 @@ class App(DOMNode):
             driver_class (Type[Driver], optional): Driver class, or None to use default. Defaults to None.
             title (str, optional): Title of the application. Defaults to "Textual Application".
         """
-        self.console = Console(markup=False, highlight=False, emoji=False)
+        self.console = Console(
+            file=sys.__stdout__, markup=False, highlight=False, emoji=False
+        )
         self.error_console = Console(markup=False, stderr=True)
         self._screen = screen
         self.driver_class = driver_class or self.get_driver_class()
@@ -123,6 +125,7 @@ class App(DOMNode):
         self._title = title
 
         self._log_console: Console | None = None
+        self._log_file: TextIO | None = None
         if log:
             self._log_file = open(log, "wt")
             self._log_console = Console(
@@ -132,9 +135,6 @@ class App(DOMNode):
                 highlight=False,
                 width=100,
             )
-        else:
-            self._log_console = None
-            self._log_file = None
 
         self.log_verbosity = log_verbosity
 
@@ -525,14 +525,10 @@ class App(DOMNode):
                 self.title = self._title
                 self.refresh()
                 await self.animator.start()
-                await super().process_messages()
-                log("PROCESS END")
-                if self.devtools.is_connected:
-                    await self._disconnect_devtools()
-                    self.log(f"Disconnected from devtools ({self.devtools.url})")
-                with timer("animator.stop()"):
+
+                with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
+                    await super().process_messages()
                     await self.animator.stop()
-                with timer("self.close_all()"):
                     await self.close_all()
             finally:
                 driver.stop_application_mode()
@@ -542,6 +538,12 @@ class App(DOMNode):
             self._running = False
             if self._exit_renderables:
                 self._print_error_renderables()
+            if self.devtools.is_connected:
+                await self._disconnect_devtools()
+                if self._log_console is not None:
+                    self._log_console.print(
+                        f"Disconnected from devtools ({self.devtools.url})"
+                    )
             if self._log_file is not None:
                 self._log_file.close()
 
