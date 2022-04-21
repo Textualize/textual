@@ -10,27 +10,27 @@ Widget {
 }
 
 #thing {
+
     width: auto;
-    height: auto;
-    
+    height: 10;
     background:magenta;
     margin: 3;
-    padding: 1;
-    border: solid white;
-    box-sizing: content-box;
-    /* border: solid white; */
+    padding: 1; 
+    border: solid white; 
+    box-sizing: border-box;
+    border: solid white; 
     align-horizontal: center;    
 }
 
 
 #thing2 {
-    width: auto;
-    height: 10;
-    /* border: solid white; */
-     outline: heavy blue; 
-
+    border: solid white;
+    /* outline: heavy blue;  */
+    
     padding: 1 2;
-    box-sizing: content-box;
+    box-sizing: border-box;
+
+    max-height: 100vh;
 
     background:green;
     align-horizontal: center;
@@ -39,8 +39,7 @@ Widget {
 
 
 #thing3 {
-    width: 20;
-    height: 10;
+
     margin: 1;
     background:blue;
     align-horizontal: center;

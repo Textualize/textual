@@ -34,9 +34,10 @@ class HorizontalLayout(Layout):
             max((box1.margin.right, box2.margin.left))
             for box1, box2 in zip(box_models, box_models[1:])
         ]
-        margins.append(box_models[-1].margin.right)
+        if box_models:
+            margins.append(box_models[-1].margin.right)
 
-        x = box_models[0].margin.left
+        x = box_models[0].margin.left if box_models else 0
 
         for widget, box_model, margin in zip(parent.children, box_models, margins):
             content_width, content_height = box_model.size
@@ -47,7 +48,7 @@ class HorizontalLayout(Layout):
             x += region.width + margin
             max_width = x
 
-        max_width += margins[-1]
+        max_width += margins[-1] if margins else 0
 
         total_region = Region(0, 0, max_width, max_height)
         add_placement(WidgetPlacement(total_region, None, 0))

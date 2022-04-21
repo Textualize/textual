@@ -201,7 +201,8 @@ Warning {
 
 Success {
   max-width: 80;
-  height:3;
+  height:3;  
+  box-sizing: border-box;
   background: $success-lighten-3;
   color: $text-success-lighten-3-fade-1;
   border-top: hkey $success;

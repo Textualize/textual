@@ -35,9 +35,10 @@ class VerticalLayout(Layout):
             max((box1.margin.bottom, box2.margin.top))
             for box1, box2 in zip(box_models, box_models[1:])
         ]
-        margins.append(box_models[-1].margin.bottom)
+        if box_models:
+            margins.append(box_models[-1].margin.bottom)
 
-        y = box_models[0].margin.top
+        y = box_models[0].margin.top if box_models else 0
 
         for widget, box_model, margin in zip(parent.children, box_models, margins):
             content_width, content_height = box_model.size
@@ -48,7 +49,7 @@ class VerticalLayout(Layout):
             y += region.height + margin
             max_height = y
 
-        max_height += margins[-1]
+        max_height += margins[-1] if margins else 0
 
         total_region = Region(0, 0, max_width, max_height)
         add_placement(WidgetPlacement(total_region, None, 0))

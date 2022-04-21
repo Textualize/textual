@@ -115,21 +115,16 @@ class Widget(DOMNode):
             self.get_content_width,
             self.get_content_height,
         )
-        self.log(self, self.styles.padding, self.styles.border.spacing)
         return box_model
 
-    def get_content_width(
-        self, container_size: Size, parent_size: Size, gutter: Spacing
-    ) -> int:
+    def get_content_width(self, container_size: Size, parent_size: Size) -> int:
         console = self.app.console
         renderable = self.render()
         measurement = Measurement.get(console, console.options, renderable)
         return measurement.maximum
 
-    def get_content_height(
-        self, container_size: Size, parent_size: Size, gutter: Spacing
-    ) -> int:
-        return container_size.height - gutter.height
+    def get_content_height(self, container_size: Size, parent_size: Size) -> int:
+        return container_size.height
 
     async def watch_scroll_x(self, new_value: float) -> None:
         self.horizontal_scrollbar.position = int(new_value)

@@ -8,7 +8,6 @@ when setting and getting.
 """
 
 from __future__ import annotations
-from tkinter.tix import AUTO
 
 from typing import Iterable, NamedTuple, TYPE_CHECKING, cast
 

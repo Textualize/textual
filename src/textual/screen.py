@@ -131,7 +131,8 @@ class Screen(Widget):
                         )
                     )
         except Exception as error:
-            self.app.panic(error)
+            self.app.on_exception(error)
+            return
         self.app.refresh()
         self._dirty_widgets.clear()
 
