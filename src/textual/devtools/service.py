@@ -14,7 +14,11 @@ from aiohttp.web_ws import WebSocketResponse
 from rich.console import Console
 from rich.markup import escape
 
-from textual.devtools.renderables import DevtoolsLogMessage, DevtoolsInternalMessage
+from textual.devtools.renderables import (
+    DevConsoleLog,
+    DevConsoleNotice,
+    DevConsoleHeader,
+)
 
 QUEUEABLE_TYPES = {"client_log", "client_spillover"}
 
@@ -38,6 +42,7 @@ class DevtoolsService:
     async def start(self):
         """Starts devtools tasks"""
         self.size_poll_task = asyncio.create_task(self._console_size_poller())
+        self.console.print(DevConsoleHeader())
 
     @property
     def clients_connected(self) -> bool:
@@ -167,7 +172,7 @@ class ClientHandler:
                 decoded_segments = base64.b64decode(encoded_segments)
                 segments = pickle.loads(decoded_segments)
                 self.service.console.print(
-                    DevtoolsLogMessage(
+                    DevConsoleLog(
                         segments=segments,
                         path=path,
                         line_number=line_number,
@@ -176,7 +181,7 @@ class ClientHandler:
                 )
             elif type == "client_spillover":
                 spillover = int(message_json["payload"]["spillover"])
-                info_renderable = DevtoolsInternalMessage(
+                info_renderable = DevConsoleNotice(
                     f"Discarded {spillover} messages", level="warning"
                 )
                 self.service.console.print(info_renderable)
@@ -198,9 +203,7 @@ class ClientHandler:
 
         if self.request.remote:
             self.service.console.print(
-                DevtoolsInternalMessage(
-                    f"Client '{escape(self.request.remote)}' connected"
-                )
+                DevConsoleNotice(f"Client '{escape(self.request.remote)}' connected")
             )
         try:
             await self.service.send_server_info(client_handler=self)
@@ -223,20 +226,16 @@ class ClientHandler:
                         await self.incoming_queue.put(message_json)
                 elif message.type == WSMsgType.ERROR:
                     self.service.console.print(
-                        DevtoolsInternalMessage(
-                            "Websocket error occurred", level="error"
-                        )
+                        DevConsoleNotice("Websocket error occurred", level="error")
                     )
                     break
         except Exception as error:
-            self.service.console.print(
-                DevtoolsInternalMessage(str(error), level="error")
-            )
+            self.service.console.print(DevConsoleNotice(str(error), level="error"))
         finally:
             if self.request.remote:
                 self.service.console.print(
                     "\n",
-                    DevtoolsInternalMessage(
+                    DevConsoleNotice(
                         f"Client '{escape(self.request.remote)}' disconnected"
                     ),
                 )
