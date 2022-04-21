@@ -73,7 +73,8 @@ App > Screen {
 
 Tweet {
   height: 12;
-  max-width: 80;
+  width: 80;
+ 
   margin: 1 3;
   background: $panel;
   color: $text-panel;
@@ -86,6 +87,7 @@ Tweet {
 }
 
 .scrollable {
+  width: 80;
   overflow-y: scroll;
   max-width:80;
   height: 20;
@@ -96,7 +98,7 @@ Tweet {
 .code {
 
   height: 34;
-  
+  width: 100%;
   
 }
 
@@ -108,6 +110,7 @@ TweetHeader {
 }
 
 TweetBody {  
+  width: 100%;
   background: $panel;
   color: $text-panel;
   height:20;
@@ -175,7 +178,7 @@ OptionItem:hover {
 }
 
 Error {
-  max-width: 80;
+  width: 80;
   height:3;
   background: $error;
   color: $text-error;
@@ -188,7 +191,7 @@ Error {
 }
 
 Warning {
-  max-width: 80;
+  width: 80;
   height:3;
   background: $warning;
   color: $text-warning-fade-1;
@@ -200,7 +203,7 @@ Warning {
 }
 
 Success {
-  max-width: 80;
+  width: 80;
   height:3;  
   box-sizing: border-box;
   background: $success-lighten-3;
