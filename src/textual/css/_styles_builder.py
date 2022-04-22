@@ -10,6 +10,7 @@ from ._help_text import (
     spacing_wrong_number_of_values,
     scalar_help_text,
     spacing_invalid_value,
+    string_enum_help_text,
 )
 from .constants import (
     VALID_BORDER,
@@ -26,7 +27,7 @@ from .styles import DockGroup, Styles
 from .tokenize import Token
 from .transition import Transition
 from .types import BoxSizing, Edge, Display, Overflow, Visibility
-from ..color import Color
+from ..color import Color, ColorParseError
 from .._duration import _duration_as_seconds
 from .._easing import EASING
 from ..geometry import Spacing, SpacingDimensions, clamp
@@ -130,7 +131,7 @@ class StylesBuilder:
         """
 
         if len(tokens) != 1:
-            self.error(name, tokens[0], "expected a single token here")
+            string_enum_help_text(name, valid_values=list(valid_values), context="css"),
 
         token = tokens[0]
         token_name, value, _, _, location, _ = token
@@ -138,13 +139,17 @@ class StylesBuilder:
             self.error(
                 name,
                 token,
-                f"invalid token {value!r}, expected {friendly_list(valid_values)}",
+                string_enum_help_text(
+                    name, valid_values=list(valid_values), context="css"
+                ),
             )
         if value not in valid_values:
             self.error(
                 name,
                 token,
-                f"invalid value {value!r} for {name}, expected {friendly_list(valid_values)}",
+                string_enum_help_text(
+                    name, valid_values=list(valid_values), context="css"
+                ),
             )
         return value
 
@@ -160,10 +165,18 @@ class StylesBuilder:
                     self.error(
                         name,
                         token,
-                        f"invalid value for display (received {value!r}, expected {friendly_list(VALID_DISPLAY)})",
+                        string_enum_help_text(
+                            "display", valid_values=list(VALID_DISPLAY), context="css"
+                        ),
                     )
             else:
-                self.error(name, token, f"invalid token {value!r} in this context")
+                self.error(
+                    name,
+                    token,
+                    string_enum_help_text(
+                        "display", valid_values=list(VALID_DISPLAY), context="css"
+                    ),
+                )
 
     def _process_scalar(self, name: str, tokens: list[Token]) -> None:
         def scalar_error():
@@ -195,10 +208,20 @@ class StylesBuilder:
                     self.error(
                         name,
                         token,
-                        f"invalid value for box-sizing (received {value!r}, expected {friendly_list(VALID_BOX_SIZING)})",
+                        string_enum_help_text(
+                            "box-sizing",
+                            valid_values=list(VALID_BOX_SIZING),
+                            context="css",
+                        ),
                     )
             else:
-                self.error(name, token, f"invalid token {value!r} in this context")
+                self.error(
+                    name,
+                    token,
+                    string_enum_help_text(
+                        "box-sizing", valid_values=list(VALID_BOX_SIZING), context="css"
+                    ),
+                )
 
     def process_width(self, name: str, tokens: list[Token]) -> None:
         self._process_scalar(name, tokens)
@@ -247,10 +270,16 @@ class StylesBuilder:
                     self.error(
                         name,
                         token,
-                        f"property 'visibility' has invalid value {value!r}; expected {friendly_list(VALID_VISIBILITY)}",
+                        string_enum_help_text(
+                            "visibility",
+                            valid_values=list(VALID_VISIBILITY),
+                            context="css",
+                        ),
                     )
             else:
-                self.error(name, token, f"invalid token {value!r} in this context")
+                string_enum_help_text(
+                    "visibility", valid_values=list(VALID_VISIBILITY), context="css"
+                )
 
     def process_opacity(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
@@ -356,7 +385,13 @@ class StylesBuilder:
                 if value in VALID_BORDER:
                     border_type = value
                 else:
-                    border_color = Color.parse(value)
+                    try:
+                        border_color = Color.parse(value)
+                    except ColorParseError:
+                        # TODO: Raise specific error here
+                        self.error(
+                            name, token, f"unexpected token {value!r} in declaration"
+                        )
 
             elif token_name == "color":
                 border_color = Color.parse(value)

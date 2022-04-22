@@ -7,9 +7,8 @@
 }
 
 .list-item {
-  height: 8x;
+  height: 8;
   min-width: 80;
   background: dark_blue;
-  padding: 2%;
-  opacity: x;
+  padding: 2;
 }

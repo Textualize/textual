@@ -15,7 +15,11 @@ from typing import Iterable, NamedTuple, TYPE_CHECKING, cast
 import rich.repr
 from rich.style import Style
 
-from ._help_text import spacing_wrong_number_of_values, scalar_help_text
+from ._help_text import (
+    spacing_wrong_number_of_values,
+    scalar_help_text,
+    string_enum_help_text,
+)
 from ..color import Color, ColorPair
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING
@@ -603,7 +607,12 @@ class StringEnumProperty:
         else:
             if value not in self._valid_values:
                 raise StyleValueError(
-                    f"{self.name} must be one of {friendly_list(self._valid_values)}"
+                    f"{self.name} must be one of {friendly_list(self._valid_values)}",
+                    help_text=string_enum_help_text(
+                        self.name,
+                        valid_values=list(self._valid_values),
+                        context="inline",
+                    ),
                 )
             if obj.set_rule(self.name, value):
                 obj.refresh(layout=self._layout)

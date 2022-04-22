@@ -172,3 +172,37 @@ def scalar_help_text(
             ).get_by_context(context),
         ],
     )
+
+
+def string_enum_help_text(
+    property_name: str, valid_values: list[str], context: StylingContext | None = None
+) -> HelpText:
+    property_name = _contextualize_property_name(property_name, context)
+    return HelpText(
+        summary=f"Invalid value for the [i]{property_name}[/] property",
+        bullets=[
+            Bullet(
+                f"The '{property_name}' property can only be set to {friendly_list(valid_values)}"
+            ),
+            *ContextSpecificBullets(
+                inline=[
+                    Bullet(
+                        "In Python, you can assign any of the valid strings to the property",
+                        examples=[
+                            Example(f'widget.styles.{property_name} = "{valid_value}"')
+                            for valid_value in valid_values
+                        ],
+                    )
+                ],
+                css=[
+                    Bullet(
+                        "In Textual CSS, you can assign any of the valid strings to the property",
+                        examples=[
+                            Example(f"{property_name}: {valid_value};")
+                            for valid_value in valid_values
+                        ],
+                    )
+                ],
+            ).get_by_context(context),
+        ],
+    )
