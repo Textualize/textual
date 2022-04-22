@@ -251,4 +251,8 @@ def color_property_help_text(
 def border_property_help_text(
     property_name: str, context: StylingContext | None
 ) -> HelpText:
-    pass
+    property_name = _contextualize_property_name(property_name, context)
+    return HelpText(
+        summary=f"Invalid value for [i]{property_name}[/] property",
+        bullets=[*ContextSpecificBullets(inline=[Bullet("")]).get_by_context(context)],
+    )

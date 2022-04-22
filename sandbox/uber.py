@@ -88,6 +88,7 @@ class BasicApp(App):
         # new_margin = old_margin + (1,1,1)
         # self.focused.styles.padding = (1, 1, 1)
         self.focused.styles.color = "banana"
+        self.focused.styles.border
 
 
 BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=1)

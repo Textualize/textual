@@ -10,6 +10,8 @@
   height: 8;
 
   min-width: 80;
-  background: dark_blu;
-  padding: 2x;
+  background: dark_blue;
+  padding: 2;
+  border-top: solid red ;
+  border-left: solid red ;
 }
