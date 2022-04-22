@@ -6,6 +6,8 @@ import rich.repr
 
 from ._error_tools import friendly_list
 from .constants import (
+    VALID_ALIGN_HORIZONTAL,
+    VALID_ALIGN_VERTICAL,
     VALID_BORDER,
     VALID_BOX_SIZING,
     VALID_EDGE,
@@ -600,3 +602,32 @@ class StylesBuilder:
             transitions[css_property] = Transition(duration, easing, delay)
 
         self.styles._rules["transitions"] = transitions
+
+    def process_align(self, name: str, tokens: list[Token]) -> None:
+        if len(tokens) != 2:
+            self.error(name, tokens[0], "expected two tokens")
+        token_horizontal = tokens[0]
+        token_vertical = tokens[1]
+        if token_horizontal.name != "token":
+            self.error(
+                name,
+                token_horizontal,
+                f"invalid token {token_horizontal!r}, expected {friendly_list(VALID_ALIGN_HORIZONTAL)}",
+            )
+        if token_vertical.name != "token":
+            self.error(
+                name,
+                token_vertical,
+                f"invalid token {token_vertical!r}, expected {friendly_list(VALID_ALIGN_VERTICAL)}",
+            )
+
+        self.styles._rules["align_horizontal"] = token_horizontal.value
+        self.styles._rules["align_vertical"] = token_vertical.value
+
+    def process_align_horizontal(self, name: str, tokens: list[Token]) -> None:
+        value = self._process_enum(name, tokens, VALID_ALIGN_HORIZONTAL)
+        self.styles._rules["align_horizontal"] = value
+
+    def process_align_vertical(self, name: str, tokens: list[Token]) -> None:
+        value = self._process_enum(name, tokens, VALID_ALIGN_VERTICAL)
+        self.styles._rules["align_vertical"] = value

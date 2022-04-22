@@ -30,6 +30,8 @@ EdgeType = Literal[
 ]
 Visibility = Literal["visible", "hidden", "initial", "inherit"]
 Display = Literal["block", "none"]
+AlignHorizontal = Literal["left", "center", "right"]
+AlignVertical = Literal["top", "middle", "bottom"]
 BoxSizing = Literal["border-box", "content-box"]
 Overflow = Literal["scroll", "hidden", "auto"]
 EdgeStyle = Tuple[str, Color]

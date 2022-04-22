@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import cast
 
 from textual.geometry import Size, Offset, Region
 from textual.layout import Layout, WidgetPlacement
@@ -24,15 +25,30 @@ class HorizontalLayout(Layout):
         x = max_width = max_height = 0
         parent_size = parent.size
 
-        for widget in parent.children:
-            (content_width, content_height), margin = widget.styles.get_box_model(
-                size, parent_size
-            )
-            region = Region(margin.left + x, margin.top, content_width, content_height)
-            max_height = max(max_height, content_height + margin.height)
+        box_models = [
+            widget.get_box_model(size, parent_size)
+            for widget in cast("list[Widget]", parent.children)
+        ]
+
+        margins = [
+            max((box1.margin.right, box2.margin.left))
+            for box1, box2 in zip(box_models, box_models[1:])
+        ]
+        if box_models:
+            margins.append(box_models[-1].margin.right)
+
+        x = box_models[0].margin.left if box_models else 0
+
+        for widget, box_model, margin in zip(parent.children, box_models, margins):
+            content_width, content_height = box_model.size
+            offset_y = widget.styles.align_height(content_height, parent_size.height)
+            region = Region(x, offset_y, content_width, content_height)
+            max_height = max(max_height, content_height)
             add_placement(WidgetPlacement(region, widget, 0))
-            x += region.width + margin.left
-            max_width = x + margin.right
+            x += region.width + margin
+            max_width = x
+
+        max_width += margins[-1] if margins else 0
 
         total_region = Region(0, 0, max_width, max_height)
         add_placement(WidgetPlacement(total_region, None, 0))

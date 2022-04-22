@@ -1,0 +1,46 @@
+
+
+Screen {
+    layout: vertical;
+    overflow: auto;
+}
+
+Widget {
+    margin:1;
+}
+
+#thing {
+
+    width: auto;
+    height: 10;
+    background:magenta;
+    margin: 3;
+    padding: 1; 
+    border: solid white; 
+    box-sizing: border-box;
+    border: solid white; 
+    align-horizontal: center;    
+}
+
+
+#thing2 {
+    border: solid white;
+    /* outline: heavy blue;  */
+    height: 10;
+    padding: 1 2;
+    box-sizing: border-box;
+
+    max-height: 100vh;
+
+    background:green;
+    align-horizontal: center;
+    color:white;
+}
+
+
+#thing3 {
+    height: 10;
+    margin: 1;
+    background:blue;
+    align-horizontal: center;
+}

@@ -13,7 +13,7 @@ from rich.style import Style
 from .. import log
 from .._animator import Animation, EasingFunction
 from ..color import Color
-from ..geometry import Size, Spacing
+from ..geometry import Offset, Size, Spacing
 from ._style_properties import (
     BorderProperty,
     BoxProperty,
@@ -32,17 +32,28 @@ from ._style_properties import (
     TransitionsProperty,
     FractionalProperty,
 )
-from .constants import VALID_BOX_SIZING, VALID_DISPLAY, VALID_VISIBILITY, VALID_OVERFLOW
+from .constants import (
+    VALID_ALIGN_HORIZONTAL,
+    VALID_ALIGN_VERTICAL,
+    VALID_BOX_SIZING,
+    VALID_DISPLAY,
+    VALID_VISIBILITY,
+    VALID_OVERFLOW,
+)
 from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
 from .transition import Transition
 from .types import (
     BoxSizing,
     Display,
+    AlignHorizontal,
+    AlignVertical,
     Edge,
+    AlignHorizontal,
     Overflow,
     Specificity3,
     Specificity4,
+    AlignVertical,
     Visibility,
 )
 
@@ -116,8 +127,12 @@ class RulesMap(TypedDict, total=False):
     scrollbar_background_hover: Color
     scrollbar_background_active: Color
 
+    align_horizontal: AlignHorizontal
+    align_vertical: AlignVertical
+
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
+RULE_NAMES_SET = frozenset(RULE_NAMES)
 _rule_getter = attrgetter(*RULE_NAMES)
 
 
@@ -179,10 +194,10 @@ class StylesBase(ABC):
     box_sizing = StringEnumProperty(VALID_BOX_SIZING, "border-box")
     width = ScalarProperty(percent_unit=Unit.WIDTH)
     height = ScalarProperty(percent_unit=Unit.HEIGHT)
-    min_width = ScalarProperty(percent_unit=Unit.WIDTH)
-    min_height = ScalarProperty(percent_unit=Unit.HEIGHT)
-    max_width = ScalarProperty(percent_unit=Unit.WIDTH)
-    max_height = ScalarProperty(percent_unit=Unit.HEIGHT)
+    min_width = ScalarProperty(percent_unit=Unit.WIDTH, allow_auto=False)
+    min_height = ScalarProperty(percent_unit=Unit.HEIGHT, allow_auto=False)
+    max_width = ScalarProperty(percent_unit=Unit.WIDTH, allow_auto=False)
+    max_height = ScalarProperty(percent_unit=Unit.HEIGHT, allow_auto=False)
 
     dock = DockProperty()
     docks = DocksProperty()
@@ -203,6 +218,9 @@ class StylesBase(ABC):
     scrollbar_background = ColorProperty("#555555")
     scrollbar_background_hover = ColorProperty("#444444")
     scrollbar_background_active = ColorProperty("black")
+
+    align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
+    align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles containts the same rules."""
@@ -345,70 +363,43 @@ class StylesBase(ABC):
         else:
             return None
 
-    def get_box_model(
-        self, container_size: Size, parent_size: Size
-    ) -> tuple[Size, Spacing]:
-        """Resolve the box model for this Styles.
+    def align_width(self, width: int, parent_width: int) -> int:
+        """Align the width dimension.
 
         Args:
-            container_size (Size): The size of the widget container.
-            parent_size (Size): The size widget's parent.
+            width (int): Width of the content.
+            parent_width (int): Width of the parent container.
 
         Returns:
-            tuple[Size, Spacing]: A tuple with the size of the content area and margin.
+            int: An offset to add to the X coordinate.
         """
-        has_rule = self.has_rule
-        width, height = container_size
+        offset_x = 0
+        align_horizontal = self.align_horizontal
+        if align_horizontal != "left":
+            if align_horizontal == "center":
+                offset_x = (parent_width - width) // 2
+            else:
+                offset_x = parent_width - width
+        return offset_x
 
-        if has_rule("width"):
-            width = self.width.resolve_dimension(container_size, parent_size)
-        else:
-            width = max(0, width - self.margin.width)
+    def align_height(self, height: int, parent_height: int) -> int:
+        """Align the height dimensions
 
-        if self.min_width:
-            min_width = self.min_width.resolve_dimension(container_size, parent_size)
-            width = max(width, min_width)
+        Args:
+            height (int): Height of the content.
+            parent_height (int): Height of the parent container.
 
-        if self.max_width:
-            max_width = self.max_width.resolve_dimension(container_size, parent_size)
-            width = min(width, max_width)
-
-        if has_rule("height"):
-            height = self.height.resolve_dimension(container_size, parent_size)
-        else:
-            height = max(0, height - self.margin.height)
-
-        if self.min_height:
-            min_height = self.min_height.resolve_dimension(container_size, parent_size)
-            height = max(height, min_height)
-
-        if self.max_height:
-            max_height = self.max_height.resolve_dimension(container_size, parent_size)
-            height = min(width, max_height)
-
-        # TODO: box sizing
-
-        size = Size(width, height)
-        margin = Spacing(0, 0, 0, 0)
-
-        if self.box_sizing == "content-box":
-
-            if has_rule("padding"):
-                size += self.padding.totals
-            if has_rule("border"):
-                size += self.border.spacing.totals
-            if has_rule("margin"):
-                margin = self.margin
-
-        else:  # border-box
-            if has_rule("padding"):
-                size -= self.padding.totals
-            if has_rule("border"):
-                size -= self.border.spacing.totals
-            if has_rule("margin"):
-                margin = self.margin
-
-        return size, margin
+        Returns:
+            int: An offset to add to the Y coordinate.
+        """
+        offset_y = 0
+        align_vertical = self.align_vertical
+        if align_vertical != "top":
+            if align_vertical == "middle":
+                offset_y = (parent_height - height) // 2
+            else:
+                offset_y = parent_height - height
+        return offset_y
 
 
 @rich.repr.auto
@@ -426,6 +417,7 @@ class Styles(StylesBase):
         return Styles(node=self.node, _rules=self.get_rules(), important=self.important)
 
     def has_rule(self, rule: str) -> bool:
+        assert rule in RULE_NAMES_SET, f"no such rule {rule!r}"
         return rule in self._rules
 
     def clear_rule(self, rule: str) -> bool:
@@ -675,6 +667,15 @@ class Styles(StylesBase):
                     for name, transition in self.transitions.items()
                 ),
             )
+
+        if has_rule("align_horizontal") and has_rule("align_vertical"):
+            append_declaration(
+                "align", f"{self.align_horizontal} {self.align_vertical}"
+            )
+        elif has_rule("align_horizontal"):
+            append_declaration("align-horizontal", self.align_horizontal)
+        elif has_rule("align_horizontal"):
+            append_declaration("align-vertical", self.align_vertical)
 
         lines.sort()
         return lines

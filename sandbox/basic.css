@@ -17,9 +17,10 @@
 App > Screen {
   layout: dock;
   docks: side=left/1;
-  background: $background;
-  color: $text-background;
+  background: $surface;
+  color: $text-surface;
 }
+
 
 #sidebar {
   color: $text-primary;
@@ -66,14 +67,14 @@ App > Screen {
   color: $text-background;
   background: $background;
   layout: vertical;
-  overflow-y:scroll;  
-
+  overflow-y: scroll;  
 }
 
 
 Tweet {
-  height: 22;
-  max-width: 80;
+  height: 12;
+  width: 80;
+ 
   margin: 1 3;
   background: $panel;
   color: $text-panel;
@@ -81,7 +82,24 @@ Tweet {
   /* border: outer $primary; */
   padding: 1;
   border: wide $panel-darken-2;
-  overflow-y: scroll
+  overflow-y: scroll; 
+  align-horizontal: center;
+}
+
+.scrollable {
+  width: 80;
+  overflow-y: scroll;
+  max-width:80;
+  height: 20;
+  align-horizontal: center;
+  layout: vertical;
+}
+
+.code {
+
+  height: 34;
+  width: 100%;
+  
 }
 
 
@@ -92,6 +110,7 @@ TweetHeader {
 }
 
 TweetBody {  
+  width: 100%;
   background: $panel;
   color: $text-panel;
   height:20;
@@ -159,7 +178,7 @@ OptionItem:hover {
 }
 
 Error {
-  max-width: 80;
+  width: 80;
   height:3;
   background: $error;
   color: $text-error;
@@ -168,10 +187,11 @@ Error {
   margin: 1 3;
   
   text-style: bold;
+  align-horizontal: center;   
 }
 
 Warning {
-  max-width: 80;
+  width: 80;
   height:3;
   background: $warning;
   color: $text-warning-fade-1;
@@ -179,15 +199,23 @@ Warning {
   border-bottom: hkey $warning-darken-2; 
   margin: 1 2;
   text-style: bold;
+  align-horizontal: center;
 }
 
 Success {
-  max-width: 80;
-  height:3;
+  width: 80;
+  height:3;  
+  box-sizing: border-box;
   background: $success-lighten-3;
   color: $text-success-lighten-3-fade-1;
   border-top: hkey $success;
   border-bottom: hkey $success; 
   margin: 1 2;
   text-style: bold;
+  align-horizontal: center;
+}
+
+
+.horizontal {
+  layout: horizontal
 }

@@ -9,7 +9,7 @@ import warnings
 from asyncio import AbstractEventLoop
 from contextlib import redirect_stdout
 from time import perf_counter
-from typing import Any, Iterable, Type, TYPE_CHECKING
+from typing import Any, Iterable, TextIO, Type, TYPE_CHECKING
 
 import rich
 import rich.repr
@@ -64,6 +64,7 @@ DEFAULT_COLORS = ColorSystem(
     success="#6d9f71",
     accent="#ffa62b",
     system="#5a4599",
+    dark_surface="#292929",
 )
 
 
@@ -100,7 +101,9 @@ class App(DOMNode):
             driver_class (Type[Driver], optional): Driver class, or None to use default. Defaults to None.
             title (str, optional): Title of the application. Defaults to "Textual Application".
         """
-        self.console = Console(markup=False, highlight=False, emoji=False)
+        self.console = Console(
+            file=sys.__stdout__, markup=False, highlight=False, emoji=False
+        )
         self.error_console = Console(markup=False, stderr=True)
         self._screen = screen
         self.driver_class = driver_class or self.get_driver_class()
@@ -122,6 +125,7 @@ class App(DOMNode):
         self._title = title
 
         self._log_console: Console | None = None
+        self._log_file: TextIO | None = None
         if log:
             self._log_file = open(log, "wt")
             self._log_console = Console(
@@ -131,9 +135,6 @@ class App(DOMNode):
                 highlight=False,
                 width=100,
             )
-        else:
-            self._log_console = None
-            self._log_file = None
 
         self.log_verbosity = log_verbosity
 
@@ -459,6 +460,7 @@ class App(DOMNode):
         Args:
             error (Exception): An exception instance.
         """
+
         if hasattr(error, "__rich__"):
             # Exception has a rich method, so we can defer to that for the rendering
             self.panic(error)
@@ -489,15 +491,9 @@ class App(DOMNode):
         if os.getenv("TEXTUAL_DEVTOOLS") == "1":
             try:
                 await self.devtools.connect()
-                if self._log_console:
-                    self._log_console.print(
-                        f"Connected to devtools ({self.devtools.url})"
-                    )
+                self.log(f"Connected to devtools ({self.devtools.url})")
             except DevtoolsConnectionError:
-                if self._log_console:
-                    self._log_console.print(
-                        f"Couldn't connect to devtools ({self.devtools.url})"
-                    )
+                self.log(f"Couldn't connect to devtools ({self.devtools.url})")
         try:
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
@@ -532,11 +528,8 @@ class App(DOMNode):
 
                 with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
                     await super().process_messages()
-                    log("Message processing stopped")
-                    with timer("animator.stop()"):
-                        await self.animator.stop()
-                    with timer("self.close_all()"):
-                        await self.close_all()
+                    await self.animator.stop()
+                    await self.close_all()
             finally:
                 driver.stop_application_mode()
         except Exception as error:
