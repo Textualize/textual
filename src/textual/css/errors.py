@@ -34,6 +34,7 @@ class StyleValueError(ValueError):
         if self.help_text is not None:
             yield ""
             yield self.help_text
+            yield ""
 
 
 class StylesheetError(Exception):

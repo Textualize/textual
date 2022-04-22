@@ -19,8 +19,9 @@ from ._help_text import (
     spacing_wrong_number_of_values,
     scalar_help_text,
     string_enum_help_text,
+    color_property_help_text,
 )
-from ..color import Color, ColorPair
+from ..color import Color, ColorPair, ColorParseError
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING
 from .errors import StyleTypeError, StyleValueError
@@ -724,8 +725,17 @@ class ColorProperty:
             if obj.set_rule(self.name, color):
                 obj.refresh()
         elif isinstance(color, str):
-            if obj.set_rule(self.name, Color.parse(color)):
+            try:
+                parsed_color = Color.parse(color)
+            except ColorParseError:
+                raise StyleValueError(
+                    f"Invalid color value '{color}'",
+                    help_text=color_property_help_text(self.name, context="inline"),
+                )
+            if obj.set_rule(self.name, parsed_color):
                 obj.refresh()
+        else:
+            raise StyleValueError(f"Invalid color value {color}")
 
 
 class StyleFlagsProperty:

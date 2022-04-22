@@ -11,6 +11,7 @@ from ._help_text import (
     scalar_help_text,
     spacing_invalid_value,
     string_enum_help_text,
+    color_property_help_text,
 )
 from .constants import (
     VALID_BORDER,
@@ -520,7 +521,7 @@ class StylesBuilder:
                     self.styles._rules[name] = Color.parse(token.value)
                 except Exception as error:
                     self.error(
-                        name, token, f"failed to parse color {token.value!r}; {error}"
+                        name, token, color_property_help_text(name, context="css")
                     )
             else:
                 self.error(

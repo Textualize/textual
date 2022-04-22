@@ -206,3 +206,43 @@ def string_enum_help_text(
             ).get_by_context(context),
         ],
     )
+
+
+def color_property_help_text(
+    property_name: str, context: StylingContext | None = None
+) -> HelpText:
+    property_name = _contextualize_property_name(property_name, context)
+    return HelpText(
+        summary=f"Invalid value for the [i]{property_name}[/] property",
+        bullets=[
+            Bullet(f"The '{property_name}' property can only be set to a valid color"),
+            Bullet(f"Colors can be specified using hex, RGB, or ANSI color names"),
+            *ContextSpecificBullets(
+                inline=[
+                    Bullet(
+                        "In Python, you can assign colors using strings or Color objects",
+                        examples=[
+                            Example(f'widget.styles.{property_name} = "#ff00aa"'),
+                            Example(
+                                f'widget.styles.{property_name} = "rgb(12,231,45)"'
+                            ),
+                            Example(f'widget.styles.{property_name} = "red"'),
+                            Example(
+                                f"widget.styles.{property_name} = Color(1, 5, 29, a=0.5)"
+                            ),
+                        ],
+                    )
+                ],
+                css=[
+                    Bullet(
+                        "In Textual CSS, colors can be set as follows",
+                        examples=[
+                            Example(f"{property_name}: [#ff00aa]#ff00aa[/];"),
+                            Example(f"{property_name}: rgb(12,231,45);"),
+                            Example(f"{property_name}: [rgb(255,0,0)]red[/];"),
+                        ],
+                    )
+                ],
+            ).get_by_context(context),
+        ],
+    )
