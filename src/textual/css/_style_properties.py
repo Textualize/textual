@@ -9,7 +9,6 @@ when setting and getting.
 
 from __future__ import annotations
 
-import inspect
 from typing import Iterable, NamedTuple, TYPE_CHECKING, cast
 
 import rich.repr

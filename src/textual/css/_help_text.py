@@ -246,3 +246,9 @@ def color_property_help_text(
             ).get_by_context(context),
         ],
     )
+
+
+def border_property_help_text(
+    property_name: str, context: StylingContext | None
+) -> HelpText:
+    pass

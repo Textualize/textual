@@ -112,6 +112,7 @@ class StylesheetErrors:
         yield render(
             f" [b]{error_count} error{'s' if error_count != 1 else ''}[/] found in stylesheet"
         )
+        yield ""
 
 
 @rich.repr.auto
