@@ -107,11 +107,20 @@ class Widget(DOMNode):
     show_vertical_scrollbar = Reactive(False, layout=True)
     show_horizontal_scrollbar = Reactive(False, layout=True)
 
-    def get_box_model(self, container_size: Size, parent_size: Size) -> BoxModel:
+    def get_box_model(self, container: Size, viewport: Size) -> BoxModel:
+        """Process the box model for this widget.
+
+        Args:
+            container (Size): The size of the container widget (with a layout)
+            viewport (Size): The viewport size.
+
+        Returns:
+            BoxModel: The size and margin for this widget.
+        """
         box_model = get_box_model(
             self.styles,
-            container_size,
-            parent_size,
+            container,
+            viewport,
             self.get_content_width,
             self.get_content_height,
         )
