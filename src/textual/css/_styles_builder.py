@@ -519,14 +519,12 @@ class StylesBuilder:
             if token.name in ("color", "token"):
                 try:
                     self.styles._rules[name] = Color.parse(token.value)
-                except Exception as error:
+                except Exception:
                     self.error(
                         name, token, color_property_help_text(name, context="css")
                     )
             else:
-                self.error(
-                    name, token, f"unexpected token {token.value!r} in declaration"
-                )
+                self.error(name, token, color_property_help_text(name, context="css"))
 
     process_background = process_color
     process_scrollbar_color = process_color
