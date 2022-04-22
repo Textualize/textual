@@ -1,9 +1,47 @@
 from rich.align import Align
 from rich.console import RenderableType
+from rich.syntax import Syntax
 from rich.text import Text
 
 from textual.app import App
 from textual.widget import Widget
+from textual.widgets import Static
+
+CODE = '''
+class Offset(NamedTuple):
+    """A point defined by x and y coordinates."""
+
+    x: int = 0
+    y: int = 0
+
+    @property
+    def is_origin(self) -> bool:
+        """Check if the point is at the origin (0, 0)"""
+        return self == (0, 0)
+
+    def __bool__(self) -> bool:
+        return self != (0, 0)
+
+    def __add__(self, other: object) -> Offset:
+        if isinstance(other, tuple):
+            _x, _y = self
+            x, y = other
+            return Offset(_x + x, _y + y)
+        return NotImplemented
+
+    def __sub__(self, other: object) -> Offset:
+        if isinstance(other, tuple):
+            _x, _y = self
+            x, y = other
+            return Offset(_x - x, _y - y)
+        return NotImplemented
+
+    def __mul__(self, other: object) -> Offset:
+        if isinstance(other, (float, int)):
+            x, y = self
+            return Offset(int(x * other), int(y * other))
+        return NotImplemented
+'''
 
 
 lorem = Text.from_markup(
@@ -56,9 +94,25 @@ class BasicApp(App):
     def on_mount(self):
         """Build layout here."""
         self.mount(
-            header=Widget(),
+            header=Static(
+                Align.center(
+                    "[b]This is a [u]Textual[/u] app, running in the terminal",
+                    vertical="middle",
+                )
+            ),
             content=Widget(
-                Tweet(TweetBody(), Widget(classes={"button"})),
+                Tweet(
+                    TweetBody(),
+                    # Widget(
+                    #     Widget(classes={"button"}),
+                    #     Widget(classes={"button"}),
+                    #     classes={"horizontal"},
+                    # ),
+                ),
+                Widget(
+                    Static(Syntax(CODE, "python"), classes={"code"}),
+                    classes={"scrollable"},
+                ),
                 Error(),
                 Tweet(TweetBody()),
                 Warning(),

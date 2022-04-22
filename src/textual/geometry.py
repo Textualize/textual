@@ -6,7 +6,6 @@ Functions and classes to manage terminal geometry (anything involving coordinate
 
 from __future__ import annotations
 
-from math import sqrt
 from typing import Any, cast, NamedTuple, Tuple, Union, TypeVar
 
 SpacingDimensions = Union[int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]]
@@ -94,7 +93,7 @@ class Offset(NamedTuple):
         """
         x1, y1 = self
         x2, y2 = other
-        distance = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
+        distance = ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ** 0.5
         return distance
 
 
@@ -662,6 +661,15 @@ class Spacing(NamedTuple):
             top2, right2, bottom2, left2 = other
             return Spacing(
                 top1 + top2, right1 + right2, bottom1 + bottom2, left1 + left2
+            )
+        return NotImplemented
+
+    def __sub__(self, other: object) -> Spacing:
+        if isinstance(other, tuple):
+            top1, right1, bottom1, left1 = self
+            top2, right2, bottom2, left2 = other
+            return Spacing(
+                top1 - top2, right1 - right2, bottom1 - bottom2, left1 - left2
             )
         return NotImplemented
 

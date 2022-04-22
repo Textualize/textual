@@ -3,11 +3,10 @@ from __future__ import annotations
 from enum import Enum, unique
 from functools import lru_cache
 import re
-from typing import Iterable, NamedTuple, TYPE_CHECKING
+from typing import Callable, Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 
-from textual.css.tokenizer import Token
 
 from .. import log
 from ..geometry import Offset
@@ -34,6 +33,7 @@ class Unit(Enum):
     HEIGHT = 5
     VIEW_WIDTH = 6
     VIEW_HEIGHT = 7
+    AUTO = 8
 
 
 UNIT_SYMBOL = {
@@ -107,6 +107,10 @@ class Scalar(NamedTuple):
     def symbol(self) -> str:
         return UNIT_SYMBOL[self.unit]
 
+    @property
+    def is_auto(self) -> bool:
+        return self.unit == Unit.AUTO
+
     @classmethod
     def from_number(cls, value: float) -> Scalar:
         return cls(float(value), Unit.CELLS, Unit.WIDTH)
@@ -124,11 +128,14 @@ class Scalar(NamedTuple):
         Returns:
             Scalar: New scalar
         """
-        match = _MATCH_SCALAR(token)
-        if match is None:
-            raise ScalarParseError(f"{token!r} is not a valid scalar")
-        value, unit_name = match.groups()
-        scalar = cls(float(value), SYMBOL_UNIT[unit_name or ""], percent_unit)
+        if token.lower() == "auto":
+            scalar = cls(1.0, Unit.AUTO, Unit.AUTO)
+        else:
+            match = _MATCH_SCALAR(token)
+            if match is None:
+                raise ScalarParseError(f"{token!r} is not a valid scalar")
+            value, unit_name = match.groups()
+            scalar = cls(float(value), SYMBOL_UNIT[unit_name or ""], percent_unit)
         return scalar
 
     @lru_cache(maxsize=4096)
@@ -142,12 +149,13 @@ class Scalar(NamedTuple):
             viewport (tuple[int, int]): Size of the viewport (typically terminal size)
 
         Raises:
-            ScalarResolveError: _description_
+            ScalarResolveError: If the unit is unknown.
 
         Returns:
-            float: _description_
+            int: A size (in cells)
         """
         value, unit, percent_unit = self
+
         if unit == Unit.PERCENT:
             unit = percent_unit
         try:
