@@ -27,7 +27,7 @@ def get_box_model(
     Args:
         styles (StylesBase): Styles object.
         container_size (Size): The size of the widget container.
-        parent_size (Size): The size widget's parent.
+        parent_size (Size): The size of the widget's parent.
         get_auto_width (Callable): A callable which accepts container size and parent size and returns a width.
         get_auto_height (Callable): A callable which accepts container size and parent size and returns a height.
 
