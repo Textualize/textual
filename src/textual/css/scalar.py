@@ -149,10 +149,10 @@ class Scalar(NamedTuple):
             viewport (tuple[int, int]): Size of the viewport (typically terminal size)
 
         Raises:
-            ScalarResolveError: _description_
+            ScalarResolveError: If the unit is unknown.
 
         Returns:
-            float: _description_
+            int: A size (in cells)
         """
         value, unit, percent_unit = self
 
