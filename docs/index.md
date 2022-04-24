@@ -1,6 +1,6 @@
 # Welcome to Textual documentation
 
-Textual is framework for rapidly creating _text user interfaces_ (TUIs from here on) with Python.
+Textual is a framework for rapidly creating _text user interfaces_ (TUIs from here on) with Python.
 
 A TUI is an application that lives within a terminal, which can have mouse and keyboard support and user interface elements like windows and panels, but is rendered purely with text. They have a number of advantages over GUI applications: they can be launched from the command line, and return to the command line, and they work over ssh.
 
