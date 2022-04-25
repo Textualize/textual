@@ -1,6 +1,6 @@
 #uber1 {
   layout: dock;
-  docks: x=left/y;
+  docks: x=left/2 y=right/3;
   background: dark_green;
   overflow: auto auto;
   border: heavy white;
@@ -11,5 +11,5 @@
   min-width: 80;
   background: dark_blue;
   padding: 2;
-  border: solid x;
+  border: solid red;
 }

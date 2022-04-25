@@ -335,21 +335,19 @@ def docks_property_help_text(
                 ],
                 css=[
                     Bullet(
-                        f"The [i]{property_name}[/] property expects a value of the form <name>=<edge>/<zindex>"
-                    ),
-                    Bullet("<name> can be any string you want"),
-                    Bullet(f"<edge> must be one of {friendly_list(VALID_EDGE)}"),
-                    Bullet(
-                        f"<zindex> must be an integer",
+                        f"The [i]{property_name}[/] property expects a value of the form <name>=<edge>/<zindex>...",
                         examples=[
                             Example(
                                 f"{property_name}: lhs=left/2;  [dim]# dock named [u]lhs[/], on [u]left[/] edge, with z-index [u]2[/]"
                             ),
                             Example(
-                                f"{property_name}: top=top/3;   [dim]# dock named [u]top[/], on [u]top[/] edge, with z-index [u]3[/]"
+                                f"{property_name}: top=top/3 rhs=right/2;  [dim]# declaring multiple docks"
                             ),
                         ],
                     ),
+                    Bullet("<name> can be any string you want"),
+                    Bullet(f"<edge> must be one of {friendly_list(VALID_EDGE)}"),
+                    Bullet(f"<zindex> must be an integer"),
                 ],
             ).get_by_context(context)
         ],

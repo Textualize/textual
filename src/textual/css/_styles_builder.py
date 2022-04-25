@@ -570,8 +570,7 @@ class StylesBuilder:
                 z = 0
                 if number:
                     if not number.isdigit():
-                        pass
-                    docks_error(name, token)
+                        docks_error(name, token)
                     z = int(number)
                 if edge_name not in VALID_EDGE:
                     docks_error(name, token)
