@@ -267,7 +267,7 @@ def border_property_help_text(
                                 f'widget.styles.{property_name} = ("solid", "red")'
                             ),
                             Example(
-                                f'widget.styles.{property_name} = ("round", #f0f0f0")'
+                                f'widget.styles.{property_name} = ("round", "#f0f0f0")'
                             ),
                             Example(
                                 f'widget.styles.{property_name} = [("dashed", "#f0f0f0"), ("solid", "blue")]  [dim]# Vertical, horizontal'
@@ -275,7 +275,7 @@ def border_property_help_text(
                         ],
                     ),
                     Bullet(
-                        f"Valid values for <bordertype> are:\n  {friendly_list(VALID_BORDER)}"
+                        f"Valid values for <bordertype> are:\n{friendly_list(VALID_BORDER)}"
                     ),
                     Bullet(
                         f"Colors can be specified using hex, RGB, or ANSI color names"

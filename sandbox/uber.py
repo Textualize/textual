@@ -85,7 +85,7 @@ class BasicApp(App):
 
     def action_increase_margin(self):
         old_margin = self.focused.styles.margin
-        self.focused.styles.border = [("solid", "green"), ("dashed", "s")]
+        self.focused.styles.border = [("solid", "green"), ("dashed", "red")]
 
 
 BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=1)

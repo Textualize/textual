@@ -341,7 +341,10 @@ class BorderProperty:
             setattr(obj, bottom, _border3)
             setattr(obj, left, _border4)
         else:
-            raise StyleValueError("expected 1, 2, or 4 values")
+            raise StyleValueError(
+                "expected 1, 2, or 4 values",
+                help_text=border_property_help_text(self.name, context="inline"),
+            )
         obj.refresh(layout=self._layout)
 
 
