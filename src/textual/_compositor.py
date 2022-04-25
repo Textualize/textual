@@ -391,7 +391,9 @@ class Compositor:
         self._cuts = [sorted(set(line_cuts)) for line_cuts in cuts]
         return self._cuts
 
-    def _get_renders(self) -> Iterable[tuple[Region, Region, Lines]]:
+    def _get_renders(
+        self, crop: Region | None = None
+    ) -> Iterable[tuple[Region, Region, Lines]]:
         """Get rendered widgets (lists of segments) in the composition.
 
         Returns:
@@ -402,15 +404,21 @@ class Compositor:
         _rich_traceback_guard = True
 
         if self.map:
-            widget_regions = sorted(
-                [
+            if crop:
+                overlaps = crop.overlaps
+                mapped_regions = [
+                    (widget, region, order, clip)
+                    for widget, (region, order, clip, _, _) in self.map.items()
+                    if widget.visible and not widget.is_transparent and overlaps(crop)
+                ]
+            else:
+                mapped_regions = [
                     (widget, region, order, clip)
                     for widget, (region, order, clip, _, _) in self.map.items()
                     if widget.visible and not widget.is_transparent
-                ],
-                key=itemgetter(2),
-                reverse=True,
-            )
+                ]
+
+            widget_regions = sorted(mapped_regions, key=itemgetter(2), reverse=True)
         else:
             widget_regions = []
 
@@ -480,29 +488,26 @@ class Compositor:
         ]
 
         # Go through all the renders in reverse order and fill buckets with no render
-        renders = self._get_renders()
+        renders = self._get_renders(crop)
         intersection = Region.intersection
 
         for region, clip, lines in renders:
             render_region = intersection(region, clip)
+
             for y, line in zip(render_region.y_range, lines):
                 first_cut, last_cut = render_region.x_extents
                 final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
 
-                # TODO: Suspect this may break for region not on cut boundaries
                 if len(final_cuts) == 2:
                     # Two cuts, which means the entire line
                     cut_segments = [line]
                 else:
-                    # More than one cut, which means we need to divide the line
-                    # if not final_cuts:
-                    #     continue
                     render_x = render_region.x
                     relative_cuts = [cut - render_x for cut in final_cuts]
                     _, *cut_segments = divide(line, relative_cuts)
 
-                # Since we are painting front to back, the first segments for a cut "wins"
                 chops_line = chops[y]
+                # Since we are painting front to back, the first segments for a cut "wins"
                 for cut, segments in zip(final_cuts, cut_segments):
                     if chops_line[cut] is None:
                         chops_line[cut] = segments
