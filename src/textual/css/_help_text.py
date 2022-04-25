@@ -4,6 +4,7 @@ import sys
 from dataclasses import dataclass
 
 from textual.css._help_renderables import Example, Bullet, HelpText
+from textual.css.constants import VALID_BORDER
 
 if sys.version_info >= (3, 8):
     from typing import Literal, Iterable
@@ -254,5 +255,48 @@ def border_property_help_text(
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
         summary=f"Invalid value for [i]{property_name}[/] property",
-        bullets=[*ContextSpecificBullets(inline=[Bullet("")]).get_by_context(context)],
+        bullets=[
+            *ContextSpecificBullets(
+                inline=[
+                    Bullet(
+                        f"In Python, set '{property_name}' using a tuple of the form (<bordertype>, <color>)",
+                        examples=[
+                            Example(
+                                f'widget.styles.{property_name} = ("solid", "red")'
+                            ),
+                            Example(
+                                f'widget.styles.{property_name} = ("round", #f0f0f0")'
+                            ),
+                            Example(
+                                f'widget.styles.{property_name} = [("dashed", "#f0f0f0"), ("solid", "blue")]  [dim]# Vertical, horizontal'
+                            ),
+                        ],
+                    ),
+                    Bullet(
+                        f"Valid values for <bordertype> are {friendly_list(VALID_BORDER)}"
+                    ),
+                    Bullet(
+                        f"Colors can be specified using hex, RGB, or ANSI color names"
+                    ),
+                ],
+                css=[
+                    Bullet(
+                        f"In Textual CSS, set '{property_name}' using a value of the form [i]<bordertype> <color>[/]",
+                        examples=[
+                            Example(f"{property_name}: solid red;"),
+                            Example(f"{property_name}: dashed #00ee22;"),
+                        ],
+                    ),
+                    Bullet(
+                        f"Valid values for <bordertype> are {friendly_list(VALID_BORDER)}"
+                    ),
+                    Bullet(
+                        f"Colors can be specified using hex, RGB, or ANSI color names"
+                    ),
+                    Bullet(
+                        f"To set border for a specific edge, use [i]border-top[/], [i]border-left[/], etc."
+                    ),
+                ],
+            ).get_by_context(context),
+        ],
     )

@@ -12,6 +12,5 @@
   min-width: 80;
   background: dark_blue;
   padding: 2;
-  border-top: solid red ;
-  border-left: solid red ;
+  border: solid red;
 }

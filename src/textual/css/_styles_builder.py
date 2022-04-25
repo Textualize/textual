@@ -12,6 +12,7 @@ from ._help_text import (
     spacing_invalid_value,
     string_enum_help_text,
     color_property_help_text,
+    border_property_help_text,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -391,15 +392,14 @@ class StylesBuilder:
                     try:
                         border_color = Color.parse(value)
                     except ColorParseError:
-                        # TODO: Raise specific error here
                         self.error(
-                            name, token, f"unexpected token {value!r} in declaration"
+                            name, token, border_property_help_text(name, context="css")
                         )
 
             elif token_name == "color":
                 border_color = Color.parse(value)
             else:
-                self.error(name, token, f"unexpected token {value!r} in declaration")
+                self.error(name, token, border_property_help_text(name, context="css"))
 
         return (border_type, border_color)
 

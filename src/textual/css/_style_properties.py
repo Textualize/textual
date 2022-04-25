@@ -14,7 +14,7 @@ from typing import Iterable, NamedTuple, TYPE_CHECKING, cast
 import rich.repr
 from rich.style import Style
 
-from ._help_text import scalar_help_text
+from ._help_text import scalar_help_text, border_property_help_text
 from .. import log
 from ._help_text import (
     spacing_wrong_number_of_values,
@@ -188,7 +188,15 @@ class BoxProperty:
             _type, color = border
             new_value = border
             if isinstance(color, str):
-                new_value = (_type, Color.parse(color))
+                try:
+                    new_value = (_type, Color.parse(color))
+                except ColorParseError as error:
+                    raise StyleValueError(
+                        str(error),
+                        help_text=border_property_help_text(
+                            self.name, context="inline"
+                        ),
+                    )
             elif isinstance(color, Color):
                 new_value = (_type, color)
             if obj.set_rule(self.name, new_value):
