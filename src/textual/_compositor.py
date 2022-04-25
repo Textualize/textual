@@ -506,8 +506,8 @@ class Compositor:
                     relative_cuts = [cut - render_x for cut in final_cuts]
                     _, *cut_segments = divide(line, relative_cuts)
 
-                chops_line = chops[y]
                 # Since we are painting front to back, the first segments for a cut "wins"
+                chops_line = chops[y]
                 for cut, segments in zip(final_cuts, cut_segments):
                     if chops_line[cut] is None:
                         chops_line[cut] = segments
