@@ -642,7 +642,7 @@ class NameListProperty:
     def __get__(
         self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> tuple[str, ...]:
-        return cast(tuple[str, ...], obj.get_rule(self.name, ()))
+        return cast("tuple[str, ...]", obj.get_rule(self.name, ()))
 
     def __set__(self, obj: StylesBase, names: str | tuple[str] | None = None):
 
