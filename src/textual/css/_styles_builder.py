@@ -15,6 +15,7 @@ from ._help_text import (
     border_property_help_text,
     layout_property_help_text,
     docks_property_help_text,
+    dock_property_help_text,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -553,7 +554,7 @@ class StylesBuilder:
             self.error(
                 name,
                 tokens[1],
-                f"unexpected tokens in dock declaration",
+                dock_property_help_text(name, context="css"),
             )
         self.styles._rules["dock"] = tokens[0].value if tokens else ""
 

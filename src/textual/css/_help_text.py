@@ -352,3 +352,32 @@ def docks_property_help_text(
             ).get_by_context(context)
         ],
     )
+
+
+def dock_property_help_text(
+    property_name: str, context: StylingContext | None
+) -> HelpText:
+    property_name = _contextualize_property_name(property_name, context)
+    return HelpText(
+        summary=f"Invalid value for [i]{property_name}[/] property",
+        bullets=[
+            Bullet("The value must be one of the defined docks"),
+            *ContextSpecificBullets(
+                inline=[],
+                css=[
+                    Bullet(
+                        "Define a dock using the [i]docks[/] property",
+                        examples=[
+                            Example("docks: [u]lhs[/]=left/2;"),
+                        ],
+                    ),
+                    Bullet(
+                        "Then attach a widget to a defined dock using the [i]dock[/] property",
+                        examples=[
+                            Example("dock: [scope.key][u]lhs[/][/];"),
+                        ],
+                    ),
+                ],
+            ).get_by_context(context),
+        ],
+    )
