@@ -414,7 +414,7 @@ class StylesBuilder:
         self.styles._rules[f"border_{edge}"] = border
 
     def process_border(self, name: str, tokens: list[Token]) -> None:
-        border = self._parse_border("border", tokens)
+        border = self._parse_border(name, tokens)
         rules = self.styles._rules
         rules["border_top"] = rules["border_right"] = border
         rules["border_bottom"] = rules["border_left"] = border
