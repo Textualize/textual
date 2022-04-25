@@ -1,5 +1,5 @@
 #uber1 {
-  layout: vertical;
+  layout: x;
 
   background: dark_green;
   overflow: auto auto;
@@ -8,9 +8,8 @@
 
 .list-item {
   height: 8;
-
   min-width: 80;
   background: dark_blue;
   padding: 2;
-  border: solid red;
+  border-right: solid x;
 }

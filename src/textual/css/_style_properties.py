@@ -14,8 +14,7 @@ from typing import Iterable, NamedTuple, TYPE_CHECKING, cast
 import rich.repr
 from rich.style import Style
 
-from ._help_text import scalar_help_text, border_property_help_text
-from .. import log
+from ._help_text import border_property_help_text, layout_property_help_text
 from ._help_text import (
     spacing_wrong_number_of_values,
     scalar_help_text,
@@ -513,7 +512,11 @@ class LayoutProperty:
                 or a ``Layout`` object.
         """
 
-        from ..layouts.factory import get_layout, Layout  # Prevents circular import
+        from ..layouts.factory import (
+            get_layout,
+            Layout,
+            MissingLayout,
+        )  # Prevents circular import
 
         if layout is None:
             if obj.clear_rule("layout"):
@@ -522,7 +525,14 @@ class LayoutProperty:
             if obj.set_rule("layout", layout):
                 obj.refresh(layout=True)
         else:
-            if obj.set_rule("layout", get_layout(layout)):
+            try:
+                layout_object = get_layout(layout)
+            except MissingLayout as error:
+                raise StyleValueError(
+                    str(error),
+                    help_text=layout_property_help_text(self.name, context="inline"),
+                )
+            if obj.set_rule("layout", layout_object):
                 obj.refresh(layout=True)
 
 

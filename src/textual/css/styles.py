@@ -10,10 +10,9 @@ from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 import rich.repr
 from rich.style import Style
 
-from .. import log
 from .._animator import Animation, EasingFunction
 from ..color import Color
-from ..geometry import Offset, Size, Spacing
+from ..geometry import Spacing
 from ._style_properties import (
     BorderProperty,
     BoxProperty,
@@ -46,8 +45,6 @@ from .transition import Transition
 from .types import (
     BoxSizing,
     Display,
-    AlignHorizontal,
-    AlignVertical,
     Edge,
     AlignHorizontal,
     Overflow,

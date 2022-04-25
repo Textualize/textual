@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from logging import getLogger
 from typing import (
     Any,
     Awaitable,
@@ -8,7 +7,6 @@ from typing import (
     Callable,
     Iterable,
     NamedTuple,
-    cast,
 )
 
 import rich.repr
@@ -20,17 +18,16 @@ from rich.style import Style
 from rich.styled import Styled
 
 
-from . import errors, log
+from . import errors
 from . import events
 from ._animator import BoundAnimator
 from ._border import Border
 from .box_model import BoxModel, get_box_model
-from ._callback import invoke
 from .color import Color
 from ._context import active_app
 from ._types import Lines
 from .dom import DOMNode
-from .geometry import clamp, Offset, Region, Size, Spacing
+from .geometry import clamp, Offset, Region, Size
 from .message import Message
 from . import messages
 from .layout import Layout

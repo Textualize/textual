@@ -13,6 +13,7 @@ from ._help_text import (
     string_enum_help_text,
     color_property_help_text,
     border_property_help_text,
+    layout_property_help_text,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -383,6 +384,9 @@ class StylesBuilder:
         border_type = "solid"
         border_color = Color(0, 255, 0)
 
+        def border_value_error():
+            self.error(name, token, border_property_help_text(name, context="css"))
+
         for token in tokens:
             token_name, value, _, _, _, _ = token
             if token_name == "token":
@@ -392,19 +396,21 @@ class StylesBuilder:
                     try:
                         border_color = Color.parse(value)
                     except ColorParseError:
-                        self.error(
-                            name, token, border_property_help_text(name, context="css")
-                        )
+                        border_value_error()
 
             elif token_name == "color":
-                border_color = Color.parse(value)
+                try:
+                    border_color = Color.parse(value)
+                except ColorParseError:
+                    border_value_error()
+
             else:
-                self.error(name, token, border_property_help_text(name, context="css"))
+                border_value_error()
 
         return (border_type, border_color)
 
     def _process_border_edge(self, edge: str, name: str, tokens: list[Token]) -> None:
-        border = self._parse_border("border", tokens)
+        border = self._parse_border(name, tokens)
         self.styles._rules[f"border_{edge}"] = border
 
     def process_border(self, name: str, tokens: list[Token]) -> None:
@@ -511,7 +517,7 @@ class StylesBuilder:
                     self.error(
                         name,
                         tokens[0],
-                        f"invalid value for layout (received {value!r}, expected {friendly_list(LAYOUT_MAP.keys())})",
+                        layout_property_help_text(name, context="css"),
                     )
 
     def process_color(self, name: str, tokens: list[Token]) -> None:
