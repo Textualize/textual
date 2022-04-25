@@ -1,6 +1,6 @@
 #uber1 {
-  layout: x;
-
+  layout: dock;
+  docks: x=left/y;
   background: dark_green;
   overflow: auto auto;
   border: heavy white;

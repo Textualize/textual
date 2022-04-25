@@ -4,7 +4,7 @@ import sys
 from dataclasses import dataclass
 
 from textual.css._help_renderables import Example, Bullet, HelpText
-from textual.css.constants import VALID_BORDER, VALID_LAYOUT
+from textual.css.constants import VALID_BORDER, VALID_LAYOUT, VALID_EDGE
 
 if sys.version_info >= (3, 8):
     from typing import Literal, Iterable
@@ -122,10 +122,10 @@ def spacing_wrong_number_of_values(
         summary=f"Invalid number of values for the [i]{property_name}[/] property",
         bullets=[
             Bullet(
-                f"You supplied {num_values_supplied} values for the '{property_name}' property"
+                f"You supplied {num_values_supplied} values for the [i]{property_name}[/] property"
             ),
             Bullet(
-                "Spacing properties like 'margin' and 'padding' require either 1, 2 or 4 integer values"
+                "Spacing properties like [i]margin[/] and [i]padding[/] require either 1, 2 or 4 integer values"
             ),
             *_spacing_examples(property_name).get_by_context(context),
         ],
@@ -150,7 +150,7 @@ def scalar_help_text(
         summary=f"Invalid value for the [i]{property_name}[/] property",
         bullets=[
             Bullet(
-                f"Scalar properties like '{property_name}' require numerical values and an optional unit"
+                f"Scalar properties like [i]{property_name}[/] require numerical values and an optional unit"
             ),
             Bullet(f"Valid units are {friendly_list(SYMBOL_UNIT)}"),
             *ContextSpecificBullets(
@@ -183,7 +183,7 @@ def string_enum_help_text(
         summary=f"Invalid value for the [i]{property_name}[/] property",
         bullets=[
             Bullet(
-                f"The '{property_name}' property can only be set to {friendly_list(valid_values)}"
+                f"The [i]{property_name}[/] property can only be set to {friendly_list(valid_values)}"
             ),
             *ContextSpecificBullets(
                 inline=[
@@ -216,7 +216,9 @@ def color_property_help_text(
     return HelpText(
         summary=f"Invalid value for the [i]{property_name}[/] property",
         bullets=[
-            Bullet(f"The '{property_name}' property can only be set to a valid color"),
+            Bullet(
+                f"The [i]{property_name}[/] property can only be set to a valid color"
+            ),
             Bullet(f"Colors can be specified using hex, RGB, or ANSI color names"),
             *ContextSpecificBullets(
                 inline=[
@@ -259,7 +261,7 @@ def border_property_help_text(
             *ContextSpecificBullets(
                 inline=[
                     Bullet(
-                        f"In Python, set '{property_name}' using a tuple of the form (<bordertype>, <color>)",
+                        f"In Python, set [i]{property_name}[/] using a tuple of the form (<bordertype>, <color>)",
                         examples=[
                             Example(
                                 f'widget.styles.{property_name} = ("solid", "red")'
@@ -281,7 +283,7 @@ def border_property_help_text(
                 ],
                 css=[
                     Bullet(
-                        f"In Textual CSS, set '{property_name}' using a value of the form [i]<bordertype> <color>[/]",
+                        f"In Textual CSS, set [i]{property_name}[/] using a value of the form [i]<bordertype> <color>[/]",
                         examples=[
                             Example(f"{property_name}: solid red;"),
                             Example(f"{property_name}: dashed #00ee22;"),
@@ -307,7 +309,48 @@ def layout_property_help_text(
         summary=f"Invalid value for [i]{property_name}[/] property",
         bullets=[
             Bullet(
-                f"The {property_name} property expects one of {friendly_list(VALID_LAYOUT)}"
+                f"The [i]{property_name}[/] property expects a value of {friendly_list(VALID_LAYOUT)}"
             ),
+        ],
+    )
+
+
+def docks_property_help_text(
+    property_name: str, context: StylingContext | None
+) -> HelpText:
+    property_name = _contextualize_property_name(property_name, context)
+    return HelpText(
+        summary=f"Invalid value for [i]{property_name}[/] property",
+        bullets=[
+            *ContextSpecificBullets(
+                inline=[
+                    Bullet(
+                        f"The [i]{property_name}[/] property expects an iterable of DockGroups",
+                        examples=[
+                            Example(
+                                f"widget.styles.{property_name} = [DockGroup(...), DockGroup(...)]"
+                            )
+                        ],
+                    ),
+                ],
+                css=[
+                    Bullet(
+                        f"The [i]{property_name}[/] property expects a value of the form <name>=<edge>/<zindex>"
+                    ),
+                    Bullet("<name> can be any string you want"),
+                    Bullet(f"<edge> must be one of {friendly_list(VALID_EDGE)}"),
+                    Bullet(
+                        f"<zindex> must be an integer",
+                        examples=[
+                            Example(
+                                f"{property_name}: lhs=left/2;  [dim]# dock named [u]lhs[/], on [u]left[/] edge, with z-index [u]2[/]"
+                            ),
+                            Example(
+                                f"{property_name}: top=top/3;   [dim]# dock named [u]top[/], on [u]top[/] edge, with z-index [u]3[/]"
+                            ),
+                        ],
+                    ),
+                ],
+            ).get_by_context(context)
         ],
     )

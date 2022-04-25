@@ -68,7 +68,6 @@ class StylesheetErrors:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderableType:
-        highlighter = ReprHighlighter()
         error_count = 0
         for rule in self.stylesheet.rules:
             for is_last, (token, message) in loop_last(rule.errors):
@@ -84,11 +83,15 @@ class StylesheetErrors:
                 if token.referenced_by:
                     line_idx, col_idx = token.referenced_by.location
                     line_no, col_no = line_idx + 1, col_idx + 1
-                    path_string = f"{path.absolute()}:{line_no}:{col_no}"
+                    path_string = (
+                        f"{path.absolute() if path else filename}:{line_no}:{col_no}"
+                    )
                 else:
                     line_idx, col_idx = token.location
                     line_no, col_no = line_idx + 1, col_idx + 1
-                    path_string = f"{path.absolute()}:{line_no}:{col_no}"
+                    path_string = (
+                        f"{path.absolute() if path else filename}:{line_no}:{col_no}"
+                    )
 
                 link_style = Style(
                     link=f"file://{path.absolute()}",
@@ -108,11 +111,10 @@ class StylesheetErrors:
                 )
                 yield Padding(message, pad=(0, 0, 1, 3))
 
-        yield Rule(style="red")
-        yield render(
-            f" [b]{error_count} error{'s' if error_count != 1 else ''}[/] found in stylesheet"
-        )
         yield ""
+        yield render(
+            f" [b][red]CSS parsing failed:[/] {error_count} error{'s' if error_count != 1 else ''}[/] found in stylesheet"
+        )
 
 
 @rich.repr.auto

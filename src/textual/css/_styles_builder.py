@@ -14,6 +14,7 @@ from ._help_text import (
     color_property_help_text,
     border_property_help_text,
     layout_property_help_text,
+    docks_property_help_text,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -432,7 +433,7 @@ class StylesBuilder:
         self._process_border_edge("left", name, tokens)
 
     def _process_outline(self, edge: str, name: str, tokens: list[Token]) -> None:
-        border = self._parse_border("outline", tokens)
+        border = self._parse_border(name, tokens)
         self.styles._rules[f"outline_{edge}"] = border
 
     def process_outline(self, name: str, tokens: list[Token]) -> None:
@@ -557,6 +558,9 @@ class StylesBuilder:
         self.styles._rules["dock"] = tokens[0].value if tokens else ""
 
     def process_docks(self, name: str, tokens: list[Token]) -> None:
+        def docks_error(name, token):
+            self.error(name, token, docks_property_help_text(name, context="css"))
+
         docks: list[DockGroup] = []
         for token in tokens:
             if token.name == "key_value":
@@ -566,25 +570,16 @@ class StylesBuilder:
                 z = 0
                 if number:
                     if not number.isdigit():
-                        self.error(
-                            name, token, f"expected integer after /, found {number!r}"
-                        )
+                        pass
+                    docks_error(name, token)
                     z = int(number)
                 if edge_name not in VALID_EDGE:
-                    self.error(
-                        name,
-                        token,
-                        f"edge must be one of 'top', 'right', 'bottom', or 'left'; found {edge_name!r}",
-                    )
+                    docks_error(name, token)
                 docks.append(DockGroup(key.strip(), cast(Edge, edge_name), z))
             elif token.name == "bar":
                 pass
             else:
-                self.error(
-                    name,
-                    token,
-                    f"unexpected token {token.value!r} in docks declaration",
-                )
+                docks_error(name, token)
         self.styles._rules["docks"] = tuple(docks + [DockGroup("_default", "top", 0)])
 
     def process_layer(self, name: str, tokens: list[Token]) -> None:
