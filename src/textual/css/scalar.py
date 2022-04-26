@@ -3,12 +3,10 @@ from __future__ import annotations
 from enum import Enum, unique
 from functools import lru_cache
 import re
-from typing import Callable, Iterable, NamedTuple, TYPE_CHECKING
+from typing import Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 
-
-from .. import log
 from ..geometry import Offset
 
 
@@ -50,7 +48,6 @@ SYMBOL_UNIT = {v: k for k, v in UNIT_SYMBOL.items()}
 
 _MATCH_SCALAR = re.compile(r"^(-?\d+\.?\d*)(fr|%|w|h|vw|vh)?$").match
 
-
 RESOLVE_MAP = {
     Unit.CELLS: lambda value, size, viewport: value,
     Unit.WIDTH: lambda value, size, viewport: size[0] * value / 100,
@@ -58,7 +55,6 @@ RESOLVE_MAP = {
     Unit.VIEW_WIDTH: lambda value, size, viewport: viewport[0] * value / 100,
     Unit.VIEW_HEIGHT: lambda value, size, viewport: viewport[1] * value / 100,
 }
-
 
 if TYPE_CHECKING:
     from ..widget import Widget
@@ -212,9 +208,7 @@ class ScalarOffset(NamedTuple):
 
 NULL_SCALAR = ScalarOffset(Scalar.from_number(0), Scalar.from_number(0))
 
-
 if __name__ == "__main__":
-
     print(Scalar.parse("3.14fr"))
     s = Scalar.parse("23")
     print(repr(s))
