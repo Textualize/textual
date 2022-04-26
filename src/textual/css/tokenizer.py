@@ -65,9 +65,11 @@ class TokenizeError(Exception):
         errors.append(Text(" Tokenizer error in stylesheet:", style="bold red"))
 
         errors.append(
-            highlighter(f" {self.path or '<unknown>'}:{self.line_no}:{self.col_no}")
+            highlighter(
+                f" {self.path or '<unknown>'}:{self.line_no + 1}:{self.col_no + 1}"
+            )
         )
-        errors.append(self._get_snippet(self.code, self.line_no))
+        errors.append(self._get_snippet(self.code, self.line_no + 1))
         final_message = ""
         for is_last, message_part in loop_last(message.split(";")):
             end = "" if is_last else "\n"

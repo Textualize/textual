@@ -4,7 +4,13 @@ import sys
 from dataclasses import dataclass
 
 from textual.css._help_renderables import Example, Bullet, HelpText
-from textual.css.constants import VALID_BORDER, VALID_LAYOUT, VALID_EDGE
+from textual.css.constants import (
+    VALID_BORDER,
+    VALID_LAYOUT,
+    VALID_EDGE,
+    VALID_ALIGN_HORIZONTAL,
+    VALID_ALIGN_VERTICAL,
+)
 
 if sys.version_info >= (3, 8):
     from typing import Literal, Iterable
@@ -541,5 +547,31 @@ def fractional_property_help_text(
                     )
                 ],
             ).get_by_context(context)
+        ],
+    )
+
+
+def align_help_text() -> HelpText:
+    return HelpText(
+        summary="Invalid value for [i]align[/] property",
+        bullets=[
+            Bullet(
+                markup="The [i]align[/] property expects exactly 2 values",
+                examples=[Example("align: <horizontal> <vertical>")],
+            ),
+            Bullet(
+                f"Valid values for <horizontal> are {friendly_list(VALID_ALIGN_HORIZONTAL)}"
+            ),
+            Bullet(
+                f"Valid values for <vertical> are {friendly_list(VALID_ALIGN_VERTICAL)}",
+                examples=[
+                    Example(
+                        "align: center middle;  [dim]# Center vertically & horizontally within parent"
+                    ),
+                    Example(
+                        "align: left middle;    [dim]# Align on the middle left of the parent"
+                    ),
+                ],
+            ),
         ],
     )

@@ -17,6 +17,7 @@ from ._help_text import (
     docks_property_help_text,
     dock_property_help_text,
     fractional_property_help_text,
+    align_help_text,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -657,20 +658,20 @@ class StylesBuilder:
 
     def process_align(self, name: str, tokens: list[Token]) -> None:
         if len(tokens) != 2:
-            self.error(name, tokens[0], "expected two tokens")
+            self.error(name, tokens[0], align_help_text())
         token_horizontal = tokens[0]
         token_vertical = tokens[1]
         if token_horizontal.name != "token":
             self.error(
                 name,
                 token_horizontal,
-                f"invalid token {token_horizontal!r}, expected {friendly_list(VALID_ALIGN_HORIZONTAL)}",
+                align_help_text(),
             )
         if token_vertical.name != "token":
             self.error(
                 name,
                 token_vertical,
-                f"invalid token {token_vertical!r}, expected {friendly_list(VALID_ALIGN_VERTICAL)}",
+                align_help_text(),
             )
 
         self.styles._rules["align_horizontal"] = token_horizontal.value

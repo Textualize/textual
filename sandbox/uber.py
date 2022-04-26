@@ -81,7 +81,6 @@ class BasicApp(App):
 
     def action_toggle_border(self):
         self.focused.styles.border = [("solid", "red"), ("dashed", "white")]
-        self.focused.styles.opacity = "x"
 
 
 BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=1)
