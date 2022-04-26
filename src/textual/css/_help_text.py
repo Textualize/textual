@@ -554,6 +554,38 @@ def fractional_property_help_text(
     )
 
 
+def offset_property_help_text(context: StylingContext | None) -> HelpText:
+    return HelpText(
+        summary="Invalid value for [i]offset[/] property",
+        bullets=[
+            *ContextSpecificBullets(
+                inline=[
+                    Bullet(
+                        markup="The offset property expects a tuple of 2 values [i](<horizontal>, <vertical>)[/]",
+                        examples=[
+                            Example("widget.styles.offset = (2, '50%')"),
+                        ],
+                    ),
+                ],
+                css=[
+                    Bullet(
+                        markup="The offset property expects a value of the form [i]<horizontal> <vertical>[/]",
+                        examples=[
+                            Example(
+                                "offset: 2 3;  [dim]# Horizontal offset of 2, vertical offset of 3"
+                            ),
+                            Example(
+                                "offset: 2 50%;  [dim]# Horizontal offset of 2, vertical offset of 50%"
+                            ),
+                        ],
+                    ),
+                ],
+            ).get_by_context(context),
+            Bullet("<horizontal> and <vertical> can be a number or scalar value"),
+        ],
+    )
+
+
 def align_help_text() -> HelpText:
     return HelpText(
         summary="Invalid value for [i]align[/] property",

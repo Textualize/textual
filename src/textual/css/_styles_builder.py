@@ -18,6 +18,7 @@ from ._help_text import (
     dock_property_help_text,
     fractional_property_help_text,
     align_help_text,
+    offset_property_help_text,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -452,23 +453,20 @@ class StylesBuilder:
         self._process_outline("left", name, tokens)
 
     def process_offset(self, name: str, tokens: list[Token]) -> None:
+        def offset_error(name: str, token: Token) -> None:
+            self.error(name, token, offset_property_help_text(context="css"))
+
         if not tokens:
             return
         if len(tokens) != 2:
-            self.error(
-                name, tokens[0], "expected two scalars or numbers in declaration"
-            )
+            offset_error(name, tokens[0])
         else:
             token1, token2 = tokens
 
             if token1.name not in ("scalar", "number"):
-                self.error(
-                    name, token1, f"expected a scalar or number; found {token1.value!r}"
-                )
+                offset_error(name, token1)
             if token2.name not in ("scalar", "number"):
-                self.error(
-                    name, token2, f"expected a scalar or number; found {token2.value!r}"
-                )
+                offset_error(name, token2)
 
             scalar_x = Scalar.parse(token1.value, Unit.WIDTH)
             scalar_y = Scalar.parse(token2.value, Unit.HEIGHT)

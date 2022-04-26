@@ -7,6 +7,6 @@
 
 .list-item {
   height: 8;
-  align: centear middlex;
   background: dark_blue;
+  offset: 12 1;
 }

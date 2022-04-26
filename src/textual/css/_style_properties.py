@@ -581,7 +581,7 @@ class OffsetProperty:
 
         Raises:
             ScalarParseError: If any of the string values supplied in the 2-tuple cannot
-                be parsed into a Scalar. For example, if you specify an non-existent unit.
+                be parsed into a Scalar. For example, if you specify a non-existent unit.
         """
         if offset is None:
             if obj.clear_rule(self.name):
