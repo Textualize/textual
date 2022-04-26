@@ -30,10 +30,22 @@ issue with inline styles.""",
 
 @dataclass
 class ContextSpecificBullets:
+    """
+    Args:
+        inline (Iterable[Bullet]): Information only relevant to users who are using
+            inline styling.
+        css (Iterable[Bullet]): Information only relevant to users who are using CSS.
+    """
+
     inline: Iterable[Bullet]
     css: Iterable[Bullet]
 
     def get_by_context(self, context: StylingContext | None) -> list[Bullet]:
+        """Get the information associated with the given context
+
+        Args:
+            context (StylingContext | None): The context to retrieve info for.
+        """
         if context == "inline":
             return list(self.inline)
         elif context == "css":
@@ -69,6 +81,16 @@ def _css_name(property_name: str) -> str:
 def _contextualize_property_name(
     property_name: str, context: StylingContext | None
 ) -> str:
+    """Convert a property name to CSS or inline by replacing
+        '-' with '_' or vice-versa
+
+    Args:
+        property_name (str): The name of the property
+        context (StylingContext): The context the property is being used in.
+
+    Returns:
+        str: The property name converted to the given context.
+    """
     if context:
         return (
             _css_name(property_name)
@@ -79,6 +101,7 @@ def _contextualize_property_name(
 
 
 def _spacing_examples(property_name: str) -> ContextSpecificBullets:
+    """Returns examples for spacing properties"""
     return ContextSpecificBullets(
         inline=[
             Bullet(
@@ -117,6 +140,19 @@ def spacing_wrong_number_of_values(
     num_values_supplied: int,
     context: StylingContext | None = None,
 ) -> HelpText:
+    """Help text to show when the user supplies the wrong number of values
+    for a spacing property (e.g. padding or margin).
+
+    Args:
+        property_name (str): The name of the property
+        num_values_supplied (int): The number of values the user supplied
+            (a number other than 1, 2 or 4).
+        context (StylingContext | None): The context the spacing property
+            is being used in.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
         summary=f"Invalid number of values for the [i]{property_name}[/] property",
@@ -135,6 +171,17 @@ def spacing_wrong_number_of_values(
 def spacing_invalid_value(
     property_name: str, context: StylingContext | None = None
 ) -> HelpText:
+    """Help text to show when the user supplies an invalid value for a spacing
+    property.
+
+    Args:
+        property_name (str): The name of the property
+        context (StylingContext | None): The context the spacing property
+            is being used in.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
         summary=f"Invalid value for the [i]{property_name}[/] property",
@@ -145,6 +192,19 @@ def spacing_invalid_value(
 def scalar_help_text(
     property_name: str, context: StylingContext | None = None
 ) -> HelpText:
+    """Help text to show when the user supplies an invalid value for
+    a scalar property.
+
+    Args:
+        property_name (str): The name of the property
+        num_values_supplied (int): The number of values the user supplied
+            (a number other than 1, 2 or 4).
+        context (StylingContext | None): The context the scalar property
+            is being used in.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
         summary=f"Invalid value for the [i]{property_name}[/] property",
@@ -178,6 +238,18 @@ def scalar_help_text(
 def string_enum_help_text(
     property_name: str, valid_values: list[str], context: StylingContext | None = None
 ) -> HelpText:
+    """Help text to show when the user supplies an invalid value for a string
+    enum property.
+
+    Args:
+        property_name (str): The name of the property
+        valid_values (list[str]): A list of the values that are considered valid.
+        context (StylingContext | None): The context the property
+            is being used in.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
         summary=f"Invalid value for the [i]{property_name}[/] property",
@@ -212,6 +284,17 @@ def string_enum_help_text(
 def color_property_help_text(
     property_name: str, context: StylingContext | None = None
 ) -> HelpText:
+    """Help text to show when the user supplies an invalid value for a color
+    property. For example, an unparseable color string.
+
+    Args:
+        property_name (str): The name of the property
+        context (StylingContext | None): The context the property
+            is being used in.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
         summary=f"Invalid value for the [i]{property_name}[/] property",
@@ -254,6 +337,17 @@ def color_property_help_text(
 def border_property_help_text(
     property_name: str, context: StylingContext | None
 ) -> HelpText:
+    """Help text to show when the user supplies an invalid value for a border
+    property (such as border, border-right, outline)
+
+    Args:
+        property_name (str): The name of the property
+        context (StylingContext | None): The context the property
+            is being used in.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
         summary=f"Invalid value for [i]{property_name}[/] property",
@@ -304,6 +398,17 @@ def border_property_help_text(
 def layout_property_help_text(
     property_name: str, context: StylingContext | None
 ) -> HelpText:
+    """Help text to show when the user supplies an invalid value
+    for a layout property.
+
+    Args:
+        property_name (str): The name of the property
+        context (StylingContext | None): The context the property
+            is being used in.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
         summary=f"Invalid value for [i]{property_name}[/] property",
@@ -318,6 +423,16 @@ def layout_property_help_text(
 def docks_property_help_text(
     property_name: str, context: StylingContext | None
 ) -> HelpText:
+    """Help text to show when the user supplies an invalid value for docks.
+
+    Args:
+        property_name (str): The name of the property
+        context (StylingContext | None): The context the property
+            is being used in.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
         summary=f"Invalid value for [i]{property_name}[/] property",
@@ -357,6 +472,16 @@ def docks_property_help_text(
 def dock_property_help_text(
     property_name: str, context: StylingContext | None
 ) -> HelpText:
+    """Help text to show when the user supplies an invalid value for dock.
+
+    Args:
+        property_name (str): The name of the property
+        context (StylingContext | None): The context the property
+            is being used in.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
         summary=f"Invalid value for [i]{property_name}[/] property",
