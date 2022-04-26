@@ -46,7 +46,6 @@ def test_read():
     test_data = "Where there is a Will there is a way!"
 
     for read_size in range(1, len(test_data) + 1):
-        test_parser = TestParser(read_size)
         for size in range(1, len(test_data) + 1):
             test_parser = TestParser(read_size)
             data = []
