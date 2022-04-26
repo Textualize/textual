@@ -1,13 +1,12 @@
 #uber1 {
   layout: vertical;
   background: dark_green;
-  overflow: auto auto;
+  overflow: hidden auto;
   border: heavy white;
 }
 
 .list-item {
   height: 8;
-  align: center middle;
+  align: centear middlex;
   background: dark_blue;
-  border: solid red;
 }

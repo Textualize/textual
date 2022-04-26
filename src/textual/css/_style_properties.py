@@ -515,7 +515,7 @@ class LayoutProperty:
         """
         Args:
             obj (Styles): The Styles object.
-            layout (str | Layout): The layout to use. You can supply a the name of the layout
+            layout (str | Layout): The layout to use. You can supply the name of the layout
                 or a ``Layout`` object.
         """
 
