@@ -13,10 +13,26 @@ _highlighter = ReprHighlighter()
 
 
 def _markup_and_highlight(text: str) -> Text:
+    """Highlight and render markup in a string of text, returning
+    a styled Text object.
+
+    Args:
+        text (str): The text to highlight and markup.
+
+    Returns:
+        Text: The Text, with highlighting and markup applied.
+    """
     return _highlighter(render(text))
 
 
 class Example:
+    """Renderable for an example, which can appear below bullet points in
+    the help text.
+
+    Attributes:
+        markup (str): The markup to display for this example
+    """
+
     def __init__(self, markup: str) -> None:
         self.markup = markup
 
@@ -27,6 +43,15 @@ class Example:
 
 
 class Bullet:
+    """Renderable for a single 'bullet point' containing information and optionally some examples
+        pertaining to that information.
+
+    Attributes:
+        markup (str): The markup to display
+        examples (Iterable[Example] | None): An optional list of examples
+            to display below this bullet.
+    """
+
     def __init__(self, markup: str, examples: Iterable[Example] | None = None) -> None:
         self.markup = markup
         self.examples = [] if examples is None else examples
@@ -39,6 +64,16 @@ class Bullet:
 
 
 class HelpText:
+    """Renderable for help text - the user is shown this when they
+    encounter a style-related error (e.g. setting a style property to an invalid
+    value).
+
+    Attributes:
+        summary (str): A succinct summary of the issue.
+        bullets (Iterable[Bullet]): Bullet points which provide additional
+            context around the issue. These are rendered below the summary.
+    """
+
     def __init__(self, summary: str, *, bullets: Iterable[Bullet]) -> None:
         self.summary = summary
         self.bullets = bullets
