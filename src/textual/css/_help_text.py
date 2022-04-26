@@ -560,14 +560,8 @@ def align_help_text() -> HelpText:
         bullets=[
             Bullet(
                 markup="The [i]align[/] property expects exactly 2 values",
-                examples=[Example("align: <horizontal> <vertical>")],
-            ),
-            Bullet(
-                f"Valid values for <horizontal> are {friendly_list(VALID_ALIGN_HORIZONTAL)}"
-            ),
-            Bullet(
-                f"Valid values for <vertical> are {friendly_list(VALID_ALIGN_VERTICAL)}",
                 examples=[
+                    Example("align: <horizontal> <vertical>"),
                     Example(
                         "align: center middle;  [dim]# Center vertically & horizontally within parent"
                     ),
@@ -575,6 +569,12 @@ def align_help_text() -> HelpText:
                         "align: left middle;    [dim]# Align on the middle left of the parent"
                     ),
                 ],
+            ),
+            Bullet(
+                f"Valid values for <horizontal> are {friendly_list(VALID_ALIGN_HORIZONTAL)}"
+            ),
+            Bullet(
+                f"Valid values for <vertical> are {friendly_list(VALID_ALIGN_VERTICAL)}",
             ),
         ],
     )
