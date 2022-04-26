@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from rich.console import ConsoleOptions, Console
-from rich.padding import Padding
 from rich.traceback import Traceback
 
 from ._help_renderables import HelpText

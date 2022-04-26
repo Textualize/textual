@@ -433,7 +433,7 @@ class StylesBuilder:
         self.styles._rules[f"outline_{edge}"] = border
 
     def process_outline(self, name: str, tokens: list[Token]) -> None:
-        border = self._parse_border("outline", tokens)
+        border = self._parse_border(name, tokens)
         rules = self.styles._rules
         rules["outline_top"] = rules["outline_right"] = border
         rules["outline_bottom"] = rules["outline_left"] = border
@@ -500,11 +500,13 @@ class StylesBuilder:
             self.styles._rules["offset"] = ScalarOffset(x, y)
 
     def process_layout(self, name: str, tokens: list[Token]) -> None:
-        from ..layouts.factory import get_layout, MissingLayout, LAYOUT_MAP
+        from ..layouts.factory import get_layout, MissingLayout
 
         if tokens:
             if len(tokens) != 1:
-                self.error(name, tokens[0], "unexpected tokens in declaration")
+                self.error(
+                    name, tokens[0], layout_property_help_text(name, context="css")
+                )
             else:
                 value = tokens[0].value
                 layout_name = value
