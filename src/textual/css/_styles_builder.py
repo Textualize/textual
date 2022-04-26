@@ -351,7 +351,7 @@ class StylesBuilder:
         if token_name == "number":
             space = int(value)
         else:
-            self.error(name, token, f"expected a number here; found {value!r}")
+            self.error(name, token, spacing_invalid_value(name, context="css"))
         style_name, _, edge = name.replace("-", "_").partition("_")
 
         current_spacing = cast(
