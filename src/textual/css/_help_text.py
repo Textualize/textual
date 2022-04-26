@@ -227,7 +227,10 @@ def scalar_help_text(
                 css=[
                     Bullet(
                         "In Textual CSS, write the number followed by the unit",
-                        examples=[Example(f"{property_name}: 50%;")],
+                        examples=[
+                            Example(f"{property_name}: 50%;"),
+                            Example(f"{property_name}: 5;"),
+                        ],
                     ),
                 ],
             ).get_by_context(context),
