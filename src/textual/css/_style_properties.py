@@ -478,14 +478,14 @@ class DockProperty:
         """
         return obj.get_rule("dock", "_default")
 
-    def __set__(self, obj: Styles, spacing: str | None):
+    def __set__(self, obj: Styles, dock_name: str | None):
         """Set the Dock property
 
         Args:
             obj (Styles): The ``Styles`` object
-            spacing (str | None): The spacing to use.
+            dock_name (str | None): The name of the dock to attach this widget to
         """
-        if obj.set_rule("dock", spacing):
+        if obj.set_rule("dock", dock_name):
             obj.refresh(layout=True)
 
 

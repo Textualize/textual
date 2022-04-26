@@ -32,8 +32,7 @@ issue with inline styles.""",
 class ContextSpecificBullets:
     """
     Args:
-        inline (Iterable[Bullet]): Information only relevant to users who are using
-            inline styling.
+        inline (Iterable[Bullet]): Information only relevant to users who are using inline styling.
         css (Iterable[Bullet]): Information only relevant to users who are using CSS.
     """
 
@@ -145,10 +144,8 @@ def spacing_wrong_number_of_values(
 
     Args:
         property_name (str): The name of the property
-        num_values_supplied (int): The number of values the user supplied
-            (a number other than 1, 2 or 4).
-        context (StylingContext | None): The context the spacing property
-            is being used in.
+        num_values_supplied (int): The number of values the user supplied (a number other than 1, 2 or 4).
+        context (StylingContext | None): The context the spacing property is being used in.
 
     Returns:
         HelpText: Renderable for displaying the help text for this property
@@ -176,8 +173,7 @@ def spacing_invalid_value(
 
     Args:
         property_name (str): The name of the property
-        context (StylingContext | None): The context the spacing property
-            is being used in.
+        context (StylingContext | None): The context the spacing property is being used in.
 
     Returns:
         HelpText: Renderable for displaying the help text for this property
@@ -197,10 +193,8 @@ def scalar_help_text(
 
     Args:
         property_name (str): The name of the property
-        num_values_supplied (int): The number of values the user supplied
-            (a number other than 1, 2 or 4).
-        context (StylingContext | None): The context the scalar property
-            is being used in.
+        num_values_supplied (int): The number of values the user supplied (a number other than 1, 2 or 4).
+        context (StylingContext | None): The context the scalar property is being used in.
 
     Returns:
         HelpText: Renderable for displaying the help text for this property
@@ -244,8 +238,7 @@ def string_enum_help_text(
     Args:
         property_name (str): The name of the property
         valid_values (list[str]): A list of the values that are considered valid.
-        context (StylingContext | None): The context the property
-            is being used in.
+        context (StylingContext | None): The context the property is being used in.
 
     Returns:
         HelpText: Renderable for displaying the help text for this property
@@ -289,8 +282,7 @@ def color_property_help_text(
 
     Args:
         property_name (str): The name of the property
-        context (StylingContext | None): The context the property
-            is being used in.
+        context (StylingContext | None): The context the property is being used in.
 
     Returns:
         HelpText: Renderable for displaying the help text for this property
@@ -342,8 +334,7 @@ def border_property_help_text(
 
     Args:
         property_name (str): The name of the property
-        context (StylingContext | None): The context the property
-            is being used in.
+        context (StylingContext | None): The context the property is being used in.
 
     Returns:
         HelpText: Renderable for displaying the help text for this property
@@ -403,8 +394,7 @@ def layout_property_help_text(
 
     Args:
         property_name (str): The name of the property
-        context (StylingContext | None): The context the property
-            is being used in.
+        context (StylingContext | None): The context the property is being used in.
 
     Returns:
         HelpText: Renderable for displaying the help text for this property
@@ -427,8 +417,7 @@ def docks_property_help_text(
 
     Args:
         property_name (str): The name of the property
-        context (StylingContext | None): The context the property
-            is being used in.
+        context (StylingContext | None): The context the property is being used in.
 
     Returns:
         HelpText: Renderable for displaying the help text for this property
@@ -476,8 +465,7 @@ def dock_property_help_text(
 
     Args:
         property_name (str): The name of the property
-        context (StylingContext | None): The context the property
-            is being used in.
+        context (StylingContext | None): The context the property is being used in.
 
     Returns:
         HelpText: Renderable for displaying the help text for this property
@@ -488,7 +476,16 @@ def dock_property_help_text(
         bullets=[
             Bullet("The value must be one of the defined docks"),
             *ContextSpecificBullets(
-                inline=[],
+                inline=[
+                    Bullet(
+                        "Attach a widget to a dock declared on the parent",
+                        examples=[
+                            Example(
+                                f'widget.styles.dock = "left"  [dim] # assumes parent widget has declared left dock[/]'
+                            )
+                        ],
+                    )
+                ],
                 css=[
                     Bullet(
                         "Define a dock using the [i]docks[/] property",
@@ -504,5 +501,45 @@ def dock_property_help_text(
                     ),
                 ],
             ).get_by_context(context),
+        ],
+    )
+
+
+def fractional_property_help_text(
+    property_name: str, context: StylingContext
+) -> HelpText:
+    """Help text to show when the user supplies an invalid value for a fractional property.
+
+    Args:
+        property_name (str): The name of the property
+        context (StylingContext | None): The context the property is being used in.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
+    property_name = _contextualize_property_name(property_name, context)
+    return HelpText(
+        summary=f"Invalid value for [i]{property_name}[/] property",
+        bullets=[
+            *ContextSpecificBullets(
+                inline=[
+                    Bullet(
+                        f"In Python, you can set [i]{property_name}[/] to a string or float value",
+                        examples=[
+                            Example(f"widget.styles.{property_name} = 0.25"),
+                            Example(f'widget.styles.{property_name} = "50%"'),
+                        ],
+                    )
+                ],
+                css=[
+                    Bullet(
+                        f"In Textual CSS, you can set [i]{property_name}[/] to a string or float",
+                        examples=[
+                            Example(f"{property_name}: 0.25;"),
+                            Example(f"{property_name}: 50%;"),
+                        ],
+                    )
+                ],
+            )
         ],
     )
