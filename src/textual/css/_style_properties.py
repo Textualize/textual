@@ -14,7 +14,11 @@ from typing import Iterable, NamedTuple, TYPE_CHECKING, cast
 import rich.repr
 from rich.style import Style
 
-from ._help_text import border_property_help_text, layout_property_help_text
+from ._help_text import (
+    border_property_help_text,
+    layout_property_help_text,
+    fractional_property_help_text,
+)
 from ._help_text import (
     spacing_wrong_number_of_values,
     scalar_help_text,
@@ -908,8 +912,9 @@ class FractionalProperty:
         elif isinstance(value, str) and value.endswith("%"):
             float_value = float(Scalar.parse(value).value) / 100
         else:
-            raise StyleTypeError(
-                f"{self.name} must be a str (e.g. '10%') or a float (e.g. 0.1)"
+            raise StyleValueError(
+                f"{self.name} must be a str (e.g. '10%') or a float (e.g. 0.1)",
+                help_text=fractional_property_help_text(name, context="inline"),
             )
         if obj.set_rule(name, clamp(float_value, 0, 1)):
             obj.refresh()

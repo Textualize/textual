@@ -16,6 +16,7 @@ from ._help_text import (
     layout_property_help_text,
     docks_property_help_text,
     dock_property_help_text,
+    fractional_property_help_text,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -315,13 +316,7 @@ class StylesBuilder:
                 error = True
 
         if error:
-            self.error(
-                name,
-                token,
-                f"property 'opacity' has invalid value {_join_tokens(tokens)!r}; "
-                f"expected a percentage or float between 0 and 1; "
-                f"example valid values: '0.4', '40%'",
-            )
+            self.error(name, token, fractional_property_help_text(name, context="css"))
 
     def _process_space(self, name: str, tokens: list[Token]) -> None:
         space: list[int] = []

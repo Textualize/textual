@@ -526,8 +526,8 @@ def fractional_property_help_text(
                     Bullet(
                         f"In Python, you can set [i]{property_name}[/] to a string or float value",
                         examples=[
-                            Example(f"widget.styles.{property_name} = 0.25"),
                             Example(f'widget.styles.{property_name} = "50%"'),
+                            Example(f"widget.styles.{property_name} = 0.25"),
                         ],
                     )
                 ],
@@ -535,11 +535,11 @@ def fractional_property_help_text(
                     Bullet(
                         f"In Textual CSS, you can set [i]{property_name}[/] to a string or float",
                         examples=[
-                            Example(f"{property_name}: 0.25;"),
                             Example(f"{property_name}: 50%;"),
+                            Example(f"{property_name}: 0.25;"),
                         ],
                     )
                 ],
-            )
+            ).get_by_context(context)
         ],
     )
