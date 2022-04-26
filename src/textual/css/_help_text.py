@@ -124,7 +124,7 @@ def _spacing_examples(property_name: str) -> ContextSpecificBullets:
                 "In Textual CSS, supply 1, 2 or 4 integers separated by a space",
                 examples=[
                     Example(f"{property_name}: 1;"),
-                    Example(f"{property_name}: 1 2; [dim]# Vertical, horizontal"),
+                    Example(f"{property_name}: 1 2;     [dim]# Vertical, horizontal"),
                     Example(
                         f"{property_name}: 1 2 3 4; [dim]# Top, right, bottom, left"
                     ),

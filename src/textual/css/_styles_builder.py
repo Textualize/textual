@@ -343,7 +343,7 @@ class StylesBuilder:
     def _process_space_partial(self, name: str, tokens: list[Token]) -> None:
         """Process granular margin / padding declarations."""
         if len(tokens) != 1:
-            self.error(name, tokens[0], "expected a single token here")
+            self.error(name, tokens[0], spacing_invalid_value(name, context="css"))
 
         _EDGE_SPACING_MAP = {"top": 0, "right": 1, "bottom": 2, "left": 3}
         token = tokens[0]
