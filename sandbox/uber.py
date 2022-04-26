@@ -19,7 +19,6 @@ class BasicApp(App):
         self.bind("p", "toggle_display")
         self.bind("f", "modify_focussed")
         self.bind("b", "toggle_border")
-        self.bind("m", "increase_margin")
 
     async def on_mount(self):
         """Build layout here."""
@@ -81,11 +80,7 @@ class BasicApp(App):
         self.focused.display = not self.focused.display
 
     def action_toggle_border(self):
-        self.focused.styles.border = [("solid", "red"), ("solid", "white")]
-
-    def action_increase_margin(self):
-        old_margin = self.focused.styles.margin
-        self.focused.styles.border = [("solid", "green"), ("dashed", "red")]
+        self.focused.styles.border = [("solid", "red"), ("dashed", "white")]
 
 
 BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=1)

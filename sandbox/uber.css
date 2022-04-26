@@ -1,13 +1,11 @@
 #uber1 {
-  layout: dock;
-  docks: x=left/2 y=right/3;
+  layout: vertical;
   background: dark_green;
   overflow: auto auto;
   border: heavy white;
 }
 
 .list-item {
-  dock: ac2 2;
   height: 8;
   min-width: 80;
   background: dark_blue;
