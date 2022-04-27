@@ -355,7 +355,7 @@ class BorderProperty:
 
 
 class StyleProperty:
-    """Descriptor for getting and setting the text style."""
+    """Descriptor for getting the Rich style."""
 
     DEFAULT_STYLE = Style()
 
