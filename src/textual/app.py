@@ -521,6 +521,7 @@ class App(DOMNode):
                 mount_event = events.Mount(sender=self)
                 await self.dispatch_message(mount_event)
 
+                # TODO: don't override `self.console` here
                 self.console = Console(file=sys.__stdout__)
                 self.title = self._title
                 self.refresh()

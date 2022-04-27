@@ -70,7 +70,7 @@ if TYPE_CHECKING:
 class RulesMap(TypedDict, total=False):
     """A typed dict for CSS rules.
 
-    Any key may be absent, indiciating that rule has not been set.
+    Any key may be absent, indicating that rule has not been set.
 
     Does not define composite rules, that is a rule that is made of a combination of other rules.
 
