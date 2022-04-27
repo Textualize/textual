@@ -171,7 +171,7 @@ class Scalar(NamedTuple):
         Args:
             value (float | None): The new value, or None to keep the same value
             unit (Unit | None): The new unit, or None to keep the same unit
-            percent_unit (Unit | None): The new percent_unit, or None to keep the same unit
+            percent_unit (Unit | None): The new percent_unit, or None to keep the same percent_unit
         """
         return Scalar(
             value if value is not None else self.value,

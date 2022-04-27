@@ -645,14 +645,40 @@ class Spacing(NamedTuple):
 
     @classmethod
     def vertical(cls, amount: int) -> Spacing:
+        """Construct a Spacing with a given amount of spacing on vertical edges,
+        and no horizontal spacing.
+
+        Args:
+            amount (int): The magnitude of spacing to apply to vertical edges
+
+        Returns:
+            Spacing: ``Spacing(amount, 0, amount, 0)``
+        """
         return Spacing(amount, 0, amount, 0)
 
     @classmethod
     def horizontal(cls, amount: int) -> Spacing:
+        """Construct a Spacing with a given amount of spacing on horizontal edges,
+        and no vertical spacing.
+
+        Args:
+            amount (int): The magnitude of spacing to apply to horizontal edges
+
+        Returns:
+            Spacing: ``Spacing(0, amount, 0, amount)``
+        """
         return Spacing(0, amount, 0, amount)
 
     @classmethod
     def all(cls, amount: int) -> Spacing:
+        """Construct a Spacing with a given amount of spacing on all edges.
+
+        Args:
+            amount (int): The magnitude of spacing to apply to all edges
+
+        Returns:
+            Spacing: ``Spacing(amount, amount, amount, amount)``
+        """
         return Spacing(amount, amount, amount, amount)
 
     def __add__(self, other: object) -> Spacing:
