@@ -556,6 +556,14 @@ def fractional_property_help_text(
 
 
 def offset_property_help_text(context: StylingContext | None) -> HelpText:
+    """Help text to show when the user supplies an invalid value for the offset property.
+
+    Args:
+        context (StylingContext | None): The context the property is being used in.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
     return HelpText(
         summary="Invalid value for [i]offset[/] property",
         bullets=[
@@ -588,6 +596,11 @@ def offset_property_help_text(context: StylingContext | None) -> HelpText:
 
 
 def align_help_text() -> HelpText:
+    """Help text to show when the user supplies an invalid value for a `align`.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
     return HelpText(
         summary="Invalid value for [i]align[/] property",
         bullets=[
@@ -614,6 +627,14 @@ def align_help_text() -> HelpText:
 
 
 def offset_single_axis_help_text(property_name: str) -> HelpText:
+    """Help text to show when the user supplies an invalid value for an offset-* property.
+
+    Args:
+        property_name (str): The name of the property
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
     return HelpText(
         summary=f"Invalid value for [i]{property_name}[/]",
         bullets=[
@@ -632,6 +653,15 @@ def offset_single_axis_help_text(property_name: str) -> HelpText:
 def style_flags_property_help_text(
     property_name: str, value: str, context: StylingContext | None
 ) -> HelpText:
+    """Help text to show when the user supplies an invalid value for a style flags property.
+
+    Args:
+        property_name (str): The name of the property
+        context (StylingContext | None): The context the property is being used in.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
     property_name = _contextualize_property_name(property_name, context)
     return HelpText(
         summary=f"Invalid value '{value}' in [i]{property_name}[/] property",
