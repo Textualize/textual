@@ -18,11 +18,14 @@ from .renderables.gradient import VerticalGradient
 class Screen(Widget):
     """A widget for the root of the app."""
 
-    DEFAULT_STYLES = """
-
-    layout: dock;
-    docks: _default=top;
-
+    CSS = """
+    
+    Screen {
+        layout: vertical;
+        docks: _default=top;
+        background: $surface;
+    }
+    
     """
 
     dark = Reactive(False)
@@ -39,8 +42,8 @@ class Screen(Widget):
     def is_transparent(self) -> bool:
         return False
 
-    def render(self) -> RenderableType:
-        return VerticalGradient("red", "blue")
+    # def render(self) -> RenderableType:
+    #     return VerticalGradient("red", "blue")
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the absolute offset of a given Widget.

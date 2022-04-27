@@ -19,6 +19,7 @@ from .css.query import NoMatchingNodesError
 from .message_pump import MessagePump
 
 if TYPE_CHECKING:
+    from .app import App
     from .css.query import DOMQuery
     from .screen import Screen
 
@@ -40,28 +41,36 @@ class DOMNode(MessagePump):
 
     def __init__(
         self,
+        *,
         name: str | None = None,
         id: str | None = None,
-        classes: set[str] | None = None,
+        classes: str | None = None,
     ) -> None:
         self._name = name
         self._id = id
-        self._classes: set[str] = set() if classes is None else classes
+        self._classes: set[str] = set() if classes is None else set(classes.split())
         self.children = NodeList()
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles.parse(
             self.INLINE_STYLES, repr(self), node=self
         )
         self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
-        self._default_styles = Styles.parse(self.DEFAULT_STYLES, f"{self.__class__}")
+        self._default_styles = Styles()
         self._default_rules = self._default_styles.extract_rules((0, 0, 0))
         super().__init__()
+
+    def on_register(self, app: App) -> None:
+        """Called when the widget is registered
+
+        Args:
+            app (App): Parent application.
+        """
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self._name, None
         yield "id", self._id, None
         if self._classes:
-            yield "classes", self._classes
+            yield "classes", " ".join(self._classes)
 
     @property
     def parent(self) -> DOMNode:

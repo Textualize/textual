@@ -110,8 +110,8 @@ class BasicApp(App):
                     # ),
                 ),
                 Widget(
-                    Static(Syntax(CODE, "python"), classes={"code"}),
-                    classes={"scrollable"},
+                    Static(Syntax(CODE, "python"), classes="code"),
+                    classes="scrollable",
                 ),
                 Error(),
                 Tweet(TweetBody()),
@@ -121,12 +121,12 @@ class BasicApp(App):
             ),
             footer=Widget(),
             sidebar=Widget(
-                Widget(classes={"title"}),
-                Widget(classes={"user"}),
+                Widget(classes="title"),
+                Widget(classes="user"),
                 OptionItem(),
                 OptionItem(),
                 OptionItem(),
-                Widget(classes={"content"}),
+                Widget(classes="content"),
             ),
         )
 

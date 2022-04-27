@@ -169,6 +169,8 @@ class Stylesheet:
             StylesheetError: If the CSS could not be read.
             StylesheetParseError: If the CSS is invalid.
         """
+        if (css, path) in self.source:
+            return
         try:
             rules = list(parse(css, path, variables=self.variables))
         except TokenizeError:

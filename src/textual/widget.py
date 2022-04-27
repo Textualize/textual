@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from logging import getLogger
+
 from typing import (
     Any,
     Awaitable,
@@ -39,6 +39,7 @@ from .renderables.opacity import Opacity
 
 
 if TYPE_CHECKING:
+    from .app import App
     from .scrollbar import (
         ScrollBar,
         ScrollTo,
@@ -71,12 +72,15 @@ class Widget(DOMNode):
 
     """
 
+    CSS = """
+    """
+
     def __init__(
         self,
         *children: Widget,
         name: str | None = None,
         id: str | None = None,
-        classes: set[str] | None = None,
+        classes: str | None = None,
     ) -> None:
 
         self._size = Size(0, 0)
@@ -106,6 +110,9 @@ class Widget(DOMNode):
     scroll_target_y = Reactive(0.0, repaint=False)
     show_vertical_scrollbar = Reactive(False, layout=True)
     show_horizontal_scrollbar = Reactive(False, layout=True)
+
+    def on_register(self, app: App) -> None:
+        self.app.stylesheet.parse(self.CSS, path=f"<{self.__class__.name}>")
 
     def get_box_model(self, container: Size, viewport: Size) -> BoxModel:
         """Process the box model for this widget.
@@ -414,11 +421,17 @@ class Widget(DOMNode):
         """
 
         renderable = self.render()
+
         styles = self.styles
         parent_styles = self.parent.styles
 
         parent_text_style = self.parent.rich_text_style
         text_style = styles.rich_style
+
+        content_align = (styles.content_align_horizontal, styles.content_align_vertical)
+        if content_align != ("left", "top"):
+            horizontal, vertical = content_align
+            renderable = Align(renderable, horizontal, vertical=vertical)
 
         renderable_text_style = parent_text_style + text_style
         if renderable_text_style:
@@ -614,6 +627,9 @@ class Widget(DOMNode):
         """
 
         # Default displays a pretty repr in the center of the screen
+
+        if self.is_container:
+            return ""
 
         label = self.css_identifier_styled
         return Align.center(label, vertical="middle")

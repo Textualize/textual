@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from rich.align import Align
-from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
-from rich.style import StyleType
+from rich.console import RenderableType
+from rich.text import Text
 
 from .. import events
 from ..message import Message
@@ -10,58 +9,64 @@ from ..reactive import Reactive
 from ..widget import Widget
 
 
-class ButtonPressed(Message, bubble=True):
-    pass
+class Button(Widget, can_focus=True):
+    """A simple clickable button."""
 
+    CSS = """
+    
+    Button {
+        width: auto;
+        height: 3;
+        padding: 0 2;
+        background: $primary;
+        color: $text-primary;
+        content-align: center middle;
+        border: tall $primary-lighten-3;        
+        margin: 1;
+        min-width:16;
+        text-style: bold;
+    }
 
-class Expand:
-    def __init__(self, renderable: RenderableType) -> None:
-        self.renderable = renderable
+    Button:hover {
+        background:$primary-darken-2;
+        color: $text-primary-darken-2;
+        border: tall $primary-lighten-1;
+        
+    }
+    
+    """
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        width = options.max_width
-        height = options.height or 1
-        yield from console.render(
-            self.renderable, options.update_dimensions(width, height)
-        )
+    class Pressed(Message, bubble=True):
+        pass
 
-
-class ButtonRenderable:
-    def __init__(self, label: RenderableType, style: StyleType = "") -> None:
-        self.label = label
-        self.style = style
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        width = options.max_width
-        height = options.height or 1
-
-        yield Align.center(
-            self.label, vertical="middle", style=self.style, width=width, height=height
-        )
-
-
-class Button(Widget):
     def __init__(
         self,
-        label: RenderableType,
+        label: RenderableType | None = None,
+        disabled: bool = False,
+        *,
         name: str | None = None,
-        style: StyleType = "white on dark_blue",
+        id: str | None = None,
+        classes: str | None = None,
     ):
-        super().__init__(name=name)
-        self.name = name or str(label)
-        self.button_style = style
+        super().__init__(name=name, id=id, classes=classes)
 
-        self.label = label
+        self.label = self.css_identifier_styled if label is None else label
+        self.disabled = disabled
+        if disabled:
+            self.add_class("-disabled")
 
     label: Reactive[RenderableType] = Reactive("")
 
+    def validate_label(self, label: RenderableType) -> RenderableType:
+        """Parse markup for self.label"""
+        if isinstance(label, str):
+            return Text.from_markup(label)
+        return label
+
     def render(self) -> RenderableType:
-        return ButtonRenderable(self.label, style=self.button_style)
+        return self.label
 
     async def on_click(self, event: events.Click) -> None:
-        event.prevent_default().stop()
-        await self.emit(ButtonPressed(self))
+        event.stop()
+        if not self.disabled:
+            await self.emit(Button.Pressed(self))

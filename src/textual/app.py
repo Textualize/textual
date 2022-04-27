@@ -558,6 +558,7 @@ class App(DOMNode):
             parent.children._append(child)
             self.registry.add(child)
             child.set_parent(parent)
+            child.on_register(self)
             child.start_messages()
             return True
         return False

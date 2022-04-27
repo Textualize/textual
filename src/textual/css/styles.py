@@ -13,7 +13,7 @@ from rich.style import Style
 from .. import log
 from .._animator import Animation, EasingFunction
 from ..color import Color
-from ..geometry import Offset, Size, Spacing
+from ..geometry import Spacing
 from ._style_properties import (
     BorderProperty,
     BoxProperty,
@@ -130,6 +130,9 @@ class RulesMap(TypedDict, total=False):
     align_horizontal: AlignHorizontal
     align_vertical: AlignVertical
 
+    content_align_horizontal: AlignHorizontal
+    content_align_vertical: AlignVertical
+
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
 RULE_NAMES_SET = frozenset(RULE_NAMES)
@@ -221,6 +224,9 @@ class StylesBase(ABC):
 
     align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
+
+    content_align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
+    content_align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles containts the same rules."""
@@ -676,6 +682,18 @@ class Styles(StylesBase):
             append_declaration("align-horizontal", self.align_horizontal)
         elif has_rule("align_horizontal"):
             append_declaration("align-vertical", self.align_vertical)
+
+        if has_rule("content_align_horizontal") and has_rule("content_align_vertical"):
+            append_declaration(
+                "content-align",
+                f"{self.content_align_horizontal} {self.content_align_vertical}",
+            )
+        elif has_rule("content_align_horizontal"):
+            append_declaration(
+                "content-align-horizontal", self.content_align_horizontal
+            )
+        elif has_rule("content_align_horizontal"):
+            append_declaration("content-align-vertical", self.content_align_vertical)
 
         lines.sort()
         return lines
