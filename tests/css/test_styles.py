@@ -3,7 +3,7 @@ import pytest
 from rich.style import Style
 
 from textual.color import Color
-from textual.css.errors import StyleTypeError, StyleValueError
+from textual.css.errors import StyleValueError
 from textual.css.styles import Styles, RenderStyles
 from textual.dom import DOMNode
 

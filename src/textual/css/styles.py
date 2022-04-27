@@ -219,7 +219,7 @@ class StylesBase(ABC):
     align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
 
     def __eq__(self, styles: object) -> bool:
-        """Check that Styles containts the same rules."""
+        """Check that Styles contains the same rules."""
         if not isinstance(styles, StylesBase):
             return NotImplemented
         return self.get_rules() == styles.get_rules()

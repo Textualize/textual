@@ -19,6 +19,7 @@ from ._help_text import (
     layout_property_help_text,
     fractional_property_help_text,
     offset_property_help_text,
+    style_flags_property_help_text,
 )
 from ._help_text import (
     spacing_wrong_number_of_values,
@@ -28,7 +29,7 @@ from ._help_text import (
 )
 from ..color import Color, ColorPair, ColorParseError
 from ._error_tools import friendly_list
-from .constants import NULL_SPACING
+from .constants import NULL_SPACING, VALID_STYLE_FLAGS
 from .errors import StyleTypeError, StyleValueError
 from .scalar import (
     get_symbols,
@@ -790,20 +791,6 @@ class ColorProperty:
 class StyleFlagsProperty:
     """Descriptor for getting and set style flag properties (e.g. ``bold italic underline``)."""
 
-    _VALID_PROPERTIES = {
-        "none",
-        "not",
-        "bold",
-        "italic",
-        "underline",
-        "overline",
-        "strike",
-        "b",
-        "i",
-        "u",
-        "o",
-    }
-
     def __set_name__(self, owner: Styles, name: str) -> None:
         self.name = name
 
@@ -840,12 +827,14 @@ class StyleFlagsProperty:
                 obj.refresh()
         else:
             words = [word.strip() for word in style_flags.split(" ")]
-            valid_word = self._VALID_PROPERTIES.__contains__
+            valid_word = VALID_STYLE_FLAGS.__contains__
             for word in words:
                 if not valid_word(word):
                     raise StyleValueError(
-                        f"unknown word {word!r} in style flags, "
-                        f"valid values are {friendly_list(self._VALID_PROPERTIES)}"
+                        f"unknown word {word!r} in style flags",
+                        help_text=style_flags_property_help_text(
+                            self.name, word, context="inline"
+                        ),
                     )
             style = Style.parse(style_flags)
             if obj.set_rule(self.name, style):

@@ -10,6 +10,7 @@ from textual.css.constants import (
     VALID_EDGE,
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
+    VALID_STYLE_FLAGS,
 )
 
 if sys.version_info >= (3, 8):
@@ -384,7 +385,7 @@ def border_property_help_text(
                         ],
                     ),
                     Bullet(
-                        f"Valid values for <bordertype> are:\n  {friendly_list(VALID_BORDER)}"
+                        f"Valid values for <bordertype> are:\n{friendly_list(VALID_BORDER)}"
                     ),
                     Bullet(
                         f"Colors can be specified using hex, RGB, or ANSI color names"
@@ -624,5 +625,38 @@ def offset_single_axis_help_text(property_name: str) -> HelpText:
                 ],
             ),
             Bullet(f"Valid scalar units are {friendly_list(SYMBOL_UNIT)}"),
+        ],
+    )
+
+
+def style_flags_property_help_text(
+    property_name: str, value: str, context: StylingContext | None
+) -> HelpText:
+    property_name = _contextualize_property_name(property_name, context)
+    return HelpText(
+        summary=f"Invalid value '{value}' in [i]{property_name}[/] property",
+        bullets=[
+            Bullet(
+                f"Style flag values such as [i]{property_name}[/] expect space-separated values"
+            ),
+            Bullet(f"Permitted values are {friendly_list(VALID_STYLE_FLAGS)}"),
+            *ContextSpecificBullets(
+                inline=[
+                    Bullet(
+                        markup="In Python, you can supply a string or Style object",
+                        examples=[
+                            Example(
+                                f'widget.styles.{property_name} = "bold italic underline"'
+                            )
+                        ],
+                    ),
+                ],
+                css=[
+                    Bullet(
+                        markup="In Textual CSS, you can supply style flags separated by spaces",
+                        examples=[Example(f"{property_name}: bold italic underline;")],
+                    )
+                ],
+            ).get_by_context(context),
         ],
     )

@@ -20,6 +20,7 @@ from ._help_text import (
     align_help_text,
     offset_property_help_text,
     offset_single_axis_help_text,
+    style_flags_property_help_text,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -30,6 +31,7 @@ from .constants import (
     VALID_DISPLAY,
     VALID_OVERFLOW,
     VALID_VISIBILITY,
+    VALID_STYLE_FLAGS,
 )
 from .errors import DeclarationError, StyleValueError
 from .model import Declaration
@@ -542,6 +544,15 @@ class StylesBuilder:
     process_scrollbar_background_active = process_color
 
     def process_text_style(self, name: str, tokens: list[Token]) -> None:
+        for token in tokens:
+            value = token.value
+            if value not in VALID_STYLE_FLAGS:
+                self.error(
+                    name,
+                    token,
+                    style_flags_property_help_text(name, value, context="css"),
+                )
+
         style_definition = " ".join(token.value for token in tokens)
         self.styles.text_style = style_definition
 

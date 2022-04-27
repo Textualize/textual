@@ -31,5 +31,18 @@ VALID_BOX_SIZING: Final = {"border-box", "content-box"}
 VALID_OVERFLOW: Final = {"scroll", "hidden", "auto"}
 VALID_ALIGN_HORIZONTAL: Final = {"left", "center", "right"}
 VALID_ALIGN_VERTICAL: Final = {"top", "middle", "bottom"}
+VALID_STYLE_FLAGS: Final = {
+    "none",
+    "not",
+    "bold",
+    "italic",
+    "underline",
+    "overline",
+    "strike",
+    "b",
+    "i",
+    "u",
+    "o",
+}
 
 NULL_SPACING: Final = Spacing.all(0)
