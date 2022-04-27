@@ -19,6 +19,7 @@ from ._help_text import (
     fractional_property_help_text,
     align_help_text,
     offset_property_help_text,
+    offset_single_axis_help_text,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -476,11 +477,11 @@ class StylesBuilder:
         if not tokens:
             return
         if len(tokens) != 1:
-            self.error(name, tokens[0], f"expected a single number")
+            self.error(name, tokens[0], offset_single_axis_help_text(name))
         else:
             token = tokens[0]
             if token.name not in ("scalar", "number"):
-                self.error(name, token, f"expected a scalar; found {token.value!r}")
+                self.error(name, token, offset_single_axis_help_text(name))
             x = Scalar.parse(token.value, Unit.WIDTH)
             y = self.styles.offset.y
             self.styles._rules["offset"] = ScalarOffset(x, y)
@@ -489,11 +490,11 @@ class StylesBuilder:
         if not tokens:
             return
         if len(tokens) != 1:
-            self.error(name, tokens[0], f"expected a single number")
+            self.error(name, tokens[0], offset_single_axis_help_text(name))
         else:
             token = tokens[0]
             if token.name not in ("scalar", "number"):
-                self.error(name, token, f"expected a scalar; found {token.value!r}")
+                self.error(name, token, offset_single_axis_help_text(name))
             y = Scalar.parse(token.value, Unit.HEIGHT)
             x = self.styles.offset.x
             self.styles._rules["offset"] = ScalarOffset(x, y)

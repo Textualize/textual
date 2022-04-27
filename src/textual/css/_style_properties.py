@@ -18,6 +18,7 @@ from ._help_text import (
     border_property_help_text,
     layout_property_help_text,
     fractional_property_help_text,
+    offset_property_help_text,
 )
 from ._help_text import (
     spacing_wrong_number_of_values,
@@ -591,16 +592,23 @@ class OffsetProperty:
                 obj.refresh(layout=True)
         else:
             x, y = offset
-            scalar_x = (
-                Scalar.parse(x, Unit.WIDTH)
-                if isinstance(x, str)
-                else Scalar(float(x), Unit.CELLS, Unit.WIDTH)
-            )
-            scalar_y = (
-                Scalar.parse(y, Unit.HEIGHT)
-                if isinstance(y, str)
-                else Scalar(float(y), Unit.CELLS, Unit.HEIGHT)
-            )
+
+            try:
+                scalar_x = (
+                    Scalar.parse(x, Unit.WIDTH)
+                    if isinstance(x, str)
+                    else Scalar(float(x), Unit.CELLS, Unit.WIDTH)
+                )
+                scalar_y = (
+                    Scalar.parse(y, Unit.HEIGHT)
+                    if isinstance(y, str)
+                    else Scalar(float(y), Unit.CELLS, Unit.HEIGHT)
+                )
+            except ScalarParseError as error:
+                raise StyleValueError(
+                    str(error), help_text=offset_property_help_text(context="inline")
+                )
+
             _offset = ScalarOffset(scalar_x, scalar_y)
 
             if obj.set_rule(self.name, _offset):

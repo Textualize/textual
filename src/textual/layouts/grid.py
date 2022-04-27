@@ -245,9 +245,6 @@ class GridLayout(Layout):
         col_align: GridAlign,
         row_align: GridAlign,
     ) -> Region:
-        offset_x = 0
-        offset_y = 0
-
         def align(size: int, container: int, align: GridAlign) -> int:
             offset = 0
             if align == "end":

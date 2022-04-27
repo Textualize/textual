@@ -610,3 +610,19 @@ def align_help_text() -> HelpText:
             ),
         ],
     )
+
+
+def offset_single_axis_help_text(property_name: str) -> HelpText:
+    return HelpText(
+        summary=f"Invalid value for [i]{property_name}[/]",
+        bullets=[
+            Bullet(
+                markup=f"The [i]{property_name}[/] property can be set to a number or scalar value",
+                examples=[
+                    Example(f"{property_name}: 10;"),
+                    Example(f"{property_name}: 50%;"),
+                ],
+            ),
+            Bullet(f"Valid scalar units are {friendly_list(SYMBOL_UNIT)}"),
+        ],
+    )
