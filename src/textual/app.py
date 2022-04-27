@@ -253,7 +253,7 @@ class App(DOMNode):
                     key_values = " ".join(
                         f"{key}={value}" for key, value in kwargs.items()
                     )
-                    output = " ".join((output, key_values))
+                    output = f"{output} {key_values}" if output else key_values
                 if self._log_console is not None:
                     self._log_console.print(output, soft_wrap=True)
                 if self.devtools.is_connected:

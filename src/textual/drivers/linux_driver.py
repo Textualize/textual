@@ -190,18 +190,21 @@ class LinuxDriver(Driver):
             return False
 
         parser = XTermParser(self._target, more_data)
+        feed = parser.feed
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
         read = os.read
 
+        EVENT_READ = selectors.EVENT_READ
+
         try:
             while not self.exit_event.is_set():
                 selector_events = selector.select(0.1)
                 for _selector_key, mask in selector_events:
-                    if mask | selectors.EVENT_READ:
+                    if mask | EVENT_READ:
                         unicode_data = decode(read(fileno, 1024))
-                        for event in parser.feed(unicode_data):
+                        for event in feed(unicode_data):
                             self.process_event(event)
         except Exception as error:
             log(error)

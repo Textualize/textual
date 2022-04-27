@@ -524,6 +524,7 @@ class Widget(DOMNode):
             self._container_size = container_size
 
             if self.is_container:
+                self._refresh_scrollbars()
                 width, height = self.container_size
                 if self.show_vertical_scrollbar:
                     self.vertical_scrollbar.window_virtual_size = virtual_size.height
@@ -534,7 +535,6 @@ class Widget(DOMNode):
 
                 self.refresh(layout=True)
                 self.call_later(self.scroll_to, self.scroll_x, self.scroll_y)
-                self._refresh_scrollbars()
             else:
                 self.refresh()
 

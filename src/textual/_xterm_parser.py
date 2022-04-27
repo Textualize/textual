@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import os
 import re
-from typing import Any, Callable, Generator
+from typing import Any, Callable, Generator, Iterable
 
 from . import log
 from . import events
@@ -34,6 +34,11 @@ class XTermParser(Parser[events.Event]):
     def debug_log(self, *args: Any) -> None:
         if self._debug_log_file is not None:
             self._debug_log_file.write(" ".join(args) + "\n")
+            self._debug_log_file.flush()
+
+    def feed(self, data: str) -> Iterable[events.Event]:
+        self.debug_log(f"FEED {data!r}")
+        return super().feed(data)
 
     def parse_mouse_code(self, code: str, sender: MessageTarget) -> events.Event | None:
         sgr_match = self._re_sgr_mouse.match(code)
@@ -83,10 +88,23 @@ class XTermParser(Parser[events.Event]):
         while not self.is_eof:
             character = yield read1()
             self.debug_log(f"character={character!r}")
-            # The more_data is to allow the parse to distinguish between an escape sequence
-            # and the escape key pressed
-            if character == ESC and ((yield self.peek_buffer()) or more_data()):
+            if character == ESC:
+                # Could be the escape key was pressed OR the start of an escape sequence
                 sequence: str = character
+                peek_buffer = yield self.peek_buffer()
+                if not peek_buffer:
+                    # An escape arrived without any following characters
+                    on_token(events.Key(self.sender, key=ESC))
+                    continue
+                if peek_buffer and peek_buffer[0] == ESC:
+                    # There is an escape in the buffer, so ESC ESC has arrived
+                    yield read1()
+                    on_token(events.Key(self.sender, key=ESC))
+                    # If there is no further data, it is not part of a sequence,
+                    # So we don't need to go in to the loop
+                    if len(peek_buffer) == 1 and not more_data():
+                        continue
+
                 while True:
                     sequence += yield read1()
                     self.debug_log(f"sequence={sequence!r}")

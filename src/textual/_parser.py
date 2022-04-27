@@ -47,7 +47,7 @@ class _ReadUntil(Awaitable):
         self.max_bytes = max_bytes
 
 
-class PeekBuffer(Awaitable):
+class _PeekBuffer(Awaitable):
     __slots__: list[str] = []
 
 
@@ -61,7 +61,7 @@ class Parser(Generic[T]):
     read = _Read
     read1 = _Read1
     read_until = _ReadUntil
-    peek_buffer = PeekBuffer
+    peek_buffer = _PeekBuffer
 
     def __init__(self) -> None:
         self._buffer = io.StringIO()
@@ -103,14 +103,14 @@ class Parser(Generic[T]):
         while tokens:
             yield popleft()
 
-        while pos < data_size or isinstance(self._awaiting, PeekBuffer):
+        while pos < data_size or isinstance(self._awaiting, _PeekBuffer):
 
             _awaiting = self._awaiting
             if isinstance(_awaiting, _Read1):
                 self._awaiting = self._gen.send(data[pos : pos + 1])
                 pos += 1
 
-            elif isinstance(_awaiting, PeekBuffer):
+            elif isinstance(_awaiting, _PeekBuffer):
                 self._awaiting = self._gen.send(data[pos:])
 
             elif isinstance(_awaiting, _Read):

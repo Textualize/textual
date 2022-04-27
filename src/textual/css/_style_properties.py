@@ -131,12 +131,12 @@ class ScalarProperty:
         ):
             raise StyleValueError("'auto' not allowed here")
 
-        if new_value.unit != Unit.AUTO:
-            if new_value is not None and new_value.unit not in self.units:
+        if new_value is not None and new_value.unit != Unit.AUTO:
+            if new_value.unit not in self.units:
                 raise StyleValueError(
                     f"{self.name} units must be one of {friendly_list(get_symbols(self.units))}"
                 )
-            if new_value is not None and new_value.is_percent:
+            if new_value.is_percent:
                 new_value = Scalar(
                     float(new_value.value), self.percent_unit, Unit.WIDTH
                 )
@@ -715,7 +715,7 @@ class NameListProperty:
     def __get__(
         self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> tuple[str, ...]:
-        return cast(tuple[str, ...], obj.get_rule(self.name, ()))
+        return cast("tuple[str, ...]", obj.get_rule(self.name, ()))
 
     def __set__(self, obj: StylesBase, names: str | tuple[str] | None = None):
 
