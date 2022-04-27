@@ -7,11 +7,11 @@ import rich.repr
 from ._error_tools import friendly_list
 from ._help_renderables import HelpText
 from ._help_text import (
+    spacing_invalid_value,
     spacing_wrong_number_of_values,
     scalar_help_text,
-    spacing_invalid_value,
-    string_enum_help_text,
     color_property_help_text,
+    string_enum_help_text,
     border_property_help_text,
     layout_property_help_text,
     docks_property_help_text,

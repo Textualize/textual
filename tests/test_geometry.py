@@ -324,6 +324,12 @@ def test_spacing_sub():
         Spacing(1, 2, 3, 4) - "foo"
 
 
+def test_spacing_convenience_constructors():
+    assert Spacing.vertical(2) == Spacing(2, 0, 2, 0)
+    assert Spacing.horizontal(2) == Spacing(0, 2, 0, 2)
+    assert Spacing.all(2) == Spacing(2, 2, 2, 2)
+
+
 def test_split():
     assert Region(10, 5, 22, 15).split(10, 5) == (
         Region(10, 5, 10, 5),
