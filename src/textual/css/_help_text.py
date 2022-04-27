@@ -46,7 +46,7 @@ class ContextSpecificBullets:
     inline: Iterable[Bullet]
     css: Iterable[Bullet]
 
-    def get_by_context(self, context: StylingContext | None) -> list[Bullet]:
+    def get_by_context(self, context: StylingContext) -> list[Bullet]:
         """Get the information associated with the given context
 
         Args:
@@ -54,10 +54,8 @@ class ContextSpecificBullets:
         """
         if context == "inline":
             return list(self.inline)
-        elif context == "css":
-            return list(self.css)
         else:
-            return list(self.inline) + list(self.css)
+            return list(self.css)
 
 
 def _python_name(property_name: str) -> str:
@@ -85,7 +83,8 @@ def _css_name(property_name: str) -> str:
 
 
 def _contextualize_property_name(
-    property_name: str, context: StylingContext | None
+    property_name: str,
+    context: StylingContext,
 ) -> str:
     """Convert a property name to CSS or inline by replacing
         '-' with '_' or vice-versa
@@ -97,13 +96,7 @@ def _contextualize_property_name(
     Returns:
         str: The property name converted to the given context.
     """
-    if context:
-        return (
-            _css_name(property_name)
-            if context == "css"
-            else _python_name(property_name)
-        )
-    return property_name
+    return _css_name(property_name) if context == "css" else _python_name(property_name)
 
 
 def _spacing_examples(property_name: str) -> ContextSpecificBullets:
@@ -144,7 +137,7 @@ def _spacing_examples(property_name: str) -> ContextSpecificBullets:
 def spacing_wrong_number_of_values(
     property_name: str,
     num_values_supplied: int,
-    context: StylingContext | None = None,
+    context: StylingContext,
 ) -> HelpText:
     """Help text to show when the user supplies the wrong number of values
     for a spacing property (e.g. padding or margin).
@@ -173,7 +166,8 @@ def spacing_wrong_number_of_values(
 
 
 def spacing_invalid_value(
-    property_name: str, context: StylingContext | None = None
+    property_name: str,
+    context: StylingContext,
 ) -> HelpText:
     """Help text to show when the user supplies an invalid value for a spacing
     property.
@@ -193,7 +187,8 @@ def spacing_invalid_value(
 
 
 def scalar_help_text(
-    property_name: str, context: StylingContext | None = None
+    property_name: str,
+    context: StylingContext,
 ) -> HelpText:
     """Help text to show when the user supplies an invalid value for
     a scalar property.
@@ -240,7 +235,9 @@ def scalar_help_text(
 
 
 def string_enum_help_text(
-    property_name: str, valid_values: list[str], context: StylingContext | None = None
+    property_name: str,
+    valid_values: list[str],
+    context: StylingContext,
 ) -> HelpText:
     """Help text to show when the user supplies an invalid value for a string
     enum property.
@@ -285,7 +282,8 @@ def string_enum_help_text(
 
 
 def color_property_help_text(
-    property_name: str, context: StylingContext | None = None
+    property_name: str,
+    context: StylingContext,
 ) -> HelpText:
     """Help text to show when the user supplies an invalid value for a color
     property. For example, an unparseable color string.
