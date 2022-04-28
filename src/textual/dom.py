@@ -274,7 +274,7 @@ class DOMNode(MessagePump):
         """Get the text style object.
 
         A widget's style is influenced by its parent. For instance if a widgets background has an alpha,
-        then its parent's background color will show throw. Additionally, widgets will inherit their
+        then its parent's background color will show through. Additionally, widgets will inherit their
         parent's text style (i.e. bold, italic etc).
 
         Returns:
