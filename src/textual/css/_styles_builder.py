@@ -461,10 +461,25 @@ class StylesBuilder:
     def process_color(self, name: str, tokens: list[Token]) -> None:
         """Processes a simple color declaration."""
         name = name.replace("-", "_")
-        for token in tokens:
+        token_indexes_to_skip = []
+        for i, token in enumerate(tokens):
+            if i in token_indexes_to_skip:
+                continue
             if token.name in ("color", "token"):
+                value = token.value
+                # Color names can include digits (e.g. "turquoise4"): if the next token is a number
+                # we should consider it part of the color name:
+                next_token = tokens[i + 1] if len(tokens) > (i + 1) else None
+                if (
+                    next_token
+                    and next_token.name == "number"
+                    and next_token.location[1] == token.location[1] + len(value)
+                ):
+                    value = value + next_token.value
+                    # skip next token, as we included it in this one's value:
+                    token_indexes_to_skip.append(i + 1)
                 try:
-                    self.styles._rules[name] = Color.parse(token.value)
+                    self.styles._rules[name] = Color.parse(value)
                 except Exception as error:
                     self.error(
                         name, token, f"failed to parse color {token.value!r}; {error}"
