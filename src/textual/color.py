@@ -125,6 +125,7 @@ class Color(NamedTuple):
 
     @property
     def is_transparent(self) -> bool:
+        """Check if the color is transparent, i.e. has 0 alpha."""
         return self.a == 0
 
     @property
