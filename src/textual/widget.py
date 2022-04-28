@@ -33,7 +33,7 @@ from .dom import DOMNode
 from .geometry import clamp, Offset, Region, Size, Spacing
 from .message import Message
 from . import messages
-from .layout import Layout
+from ._layout import Layout
 from .reactive import Reactive, watch
 from .renderables.opacity import Opacity
 
@@ -111,8 +111,16 @@ class Widget(DOMNode):
     show_vertical_scrollbar = Reactive(False, layout=True)
     show_horizontal_scrollbar = Reactive(False, layout=True)
 
+    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
+        self.app.register(self, *anon_widgets, **widgets)
+        self.screen.refresh()
+
+    def compose(self) -> Iterable[Widget]:
+        return
+        yield
+
     def on_register(self, app: App) -> None:
-        self.app.stylesheet.parse(self.CSS, path=f"<{self.__class__.name}>")
+        self.app.stylesheet.parse(self.CSS, path=f"<{self.__class__.__name__}>")
 
     def get_box_model(self, container: Size, viewport: Size) -> BoxModel:
         """Process the box model for this widget.
@@ -245,6 +253,18 @@ class Widget(DOMNode):
 
         enabled = self.show_vertical_scrollbar, self.show_horizontal_scrollbar
         return enabled
+
+    @property
+    def background_color(self) -> Color:
+        color = self.styles.background
+        colors: list[Color] = [color]
+        add_color = colors.append
+        node = self
+        while color.a < 1 and node.parent is not None:
+            node = node.parent
+            color = node.styles.background
+            add_color(color)
+        return sum(reversed(colors), start=Color(0, 0, 0, 0))
 
     def set_dirty(self) -> None:
         """Set the Widget as 'dirty' (requiring re-render)."""
@@ -491,8 +511,7 @@ class Widget(DOMNode):
         Returns:
             bool: ``True`` if there is background color, otherwise ``False``.
         """
-        return False
-        return self.layout is not None
+        return self.is_container and self.styles.background.is_transparent
 
     @property
     def console(self) -> Console:
@@ -631,8 +650,7 @@ class Widget(DOMNode):
         if self.is_container:
             return ""
 
-        label = self.css_identifier_styled
-        return Align.center(label, vertical="middle")
+        return self.css_identifier_styled
 
     async def action(self, action: str, *params) -> None:
         await self.app.action(action, self)
@@ -692,6 +710,12 @@ class Widget(DOMNode):
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)
+
+    def on_mount(self, event: events.Mount) -> None:
+        widgets = list(self.compose())
+        if widgets:
+            self.mount(*widgets)
+            self.screen.refresh()
 
     def on_leave(self) -> None:
         self.mouse_over = False

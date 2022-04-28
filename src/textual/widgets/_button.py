@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import cast
+
 from rich.console import RenderableType
 from rich.text import Text
 
@@ -30,14 +32,15 @@ class Button(Widget, can_focus=True):
     Button:hover {
         background:$primary-darken-2;
         color: $text-primary-darken-2;
-        border: tall $primary-lighten-1;
-        
+        border: tall $primary-lighten-1;        
     }
     
     """
 
     class Pressed(Message, bubble=True):
-        pass
+        @property
+        def button(self) -> Button:
+            return cast(Button, self.sender)
 
     def __init__(
         self,

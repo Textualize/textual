@@ -41,6 +41,7 @@ App > Screen {
   background: $primary-darken-2;
   color: $text-primary-darken-2 ;
   border-right: outer $primary-darken-3;
+  content-align: center middle;
 }
 
 #sidebar .user {
@@ -48,19 +49,21 @@ App > Screen {
   background: $primary-darken-1;
   color: $text-primary-darken-1;
   border-right: outer $primary-darken-3;
+  content-align: center middle;
 }
 
 #sidebar .content {
   background: $primary;
   color: $text-primary;
   border-right: outer $primary-darken-3;
+  content-align: center middle;
 }
 
 #header {
   color: $text-primary-darken-1;
   background: $primary-darken-1;
-  height: 3
-
+  height: 3;
+  content-align: center middle;
 }
 
 #content {
@@ -84,6 +87,7 @@ Tweet {
   border: wide $panel-darken-2;
   overflow-y: scroll; 
   align-horizontal: center;
+  
 }
 
 .scrollable {
@@ -152,6 +156,7 @@ TweetBody {
   background: $accent;
   height: 1;
   border-top: hkey $accent-darken-2;
+  content-align: center middle;
 }
 
 
@@ -165,6 +170,7 @@ OptionItem {
   transition: background 100ms linear;
   border-right: outer $primary-darken-2;
   border-left: hidden;
+  content-align: center middle;
 }
 
 OptionItem:hover {

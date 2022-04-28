@@ -64,7 +64,7 @@ else:
 
 if TYPE_CHECKING:
     from ..dom import DOMNode
-    from ..layout import Layout
+    from .._layout import Layout
 
 
 class RulesMap(TypedDict, total=False):
@@ -173,7 +173,7 @@ class StylesBase(ABC):
     layout = LayoutProperty()
 
     color = ColorProperty(Color(255, 255, 255))
-    background = ColorProperty(Color(0, 0, 0))
+    background = ColorProperty(Color(0, 0, 0, 0))
     text_style = StyleFlagsProperty()
 
     opacity = FractionalProperty()

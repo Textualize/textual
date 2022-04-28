@@ -66,7 +66,7 @@ class Tweet(Widget):
 
 class OptionItem(Widget):
     def render(self) -> Text:
-        return Align.center(Text("Option", justify="center"), vertical="middle")
+        return Text("Option")
 
 
 class Error(Widget):
@@ -95,10 +95,9 @@ class BasicApp(App):
         """Build layout here."""
         self.mount(
             header=Static(
-                Align.center(
-                    "[b]This is a [u]Textual[/u] app, running in the terminal",
-                    vertical="middle",
-                )
+                Text.from_markup(
+                    "[b]This is a [u]Textual[/u] app, running in the terminal"
+                ),
             ),
             content=Widget(
                 Tweet(
@@ -140,4 +139,7 @@ class BasicApp(App):
         self.panic(self.tree)
 
 
-BasicApp.run(css_file="basic.css", watch_css=True, log="textual.log")
+app = BasicApp(css_file="basic.css", watch_css=True, log="textual.log")
+
+if __name__ == "__main__":
+    app.run()

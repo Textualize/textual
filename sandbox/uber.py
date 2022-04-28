@@ -56,4 +56,7 @@ class BasicApp(App):
         sys.stdout.write("abcdef")
 
 
-BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=1)
+app = BasicApp(css_file="uber.css", log="textual.log", log_verbosity=1)
+
+if __name__ == "__main__":
+    app.run()

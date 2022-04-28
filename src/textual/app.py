@@ -9,7 +9,7 @@ import warnings
 from asyncio import AbstractEventLoop
 from contextlib import redirect_stdout
 from time import perf_counter
-from typing import Any, Iterable, TextIO, Type, TYPE_CHECKING
+from typing import Any, Generic, Iterable, TextIO, Type, TypeVar, TYPE_CHECKING
 
 import rich
 import rich.repr
@@ -67,6 +67,8 @@ DEFAULT_COLORS = ColorSystem(
     dark_surface="#292929",
 )
 
+ComposeResult = Iterable[Widget]
+
 
 class AppError(Exception):
     pass
@@ -76,8 +78,11 @@ class ActionError(Exception):
     pass
 
 
+ReturnType = TypeVar("ReturnType")
+
+
 @rich.repr.auto
-class App(DOMNode):
+class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications"""
 
     css = ""
@@ -159,12 +164,22 @@ class App(DOMNode):
 
         self.devtools = DevtoolsClient()
 
+        self._return_value: ReturnType | None = None
+
         super().__init__()
 
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
     background: Reactive[str] = Reactive("black")
     dark = Reactive(False)
+
+    def exit(self, result: ReturnType | None = None) -> None:
+        self._return_value = result
+        self.close_messages_no_wait()
+
+    def compose(self) -> Iterable[Widget]:
+        return
+        yield
 
     def get_css_variables(self) -> dict[str, str]:
         """Get a mapping of variables used to pre-populate CSS.
@@ -284,27 +299,9 @@ class App(DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
-    @classmethod
-    def run(
-        cls,
-        console: Console | None = None,
-        screen: bool = True,
-        driver: Type[Driver] | None = None,
-        loop: AbstractEventLoop | None = None,
-        **kwargs,
-    ):
-        """Run the app.
-
-        Args:
-            console (Console, optional): Console object. Defaults to None.
-            screen (bool, optional): Enable application mode. Defaults to True.
-            driver (Type[Driver], optional): Driver class or None for default. Defaults to None.
-            loop (AbstractEventLoop): Event loop to run the application on. If not specified, uvloop will be used.
-        """
-
+    def run(self, loop: AbstractEventLoop | None = None) -> ReturnType | None:
         async def run_app() -> None:
-            app = cls(screen=screen, driver_class=driver, **kwargs)
-            await app.process_messages()
+            await self.process_messages()
 
         if loop:
             asyncio.set_event_loop(loop)
@@ -321,6 +318,8 @@ class App(DOMNode):
             asyncio.run(run_app())
         finally:
             event_loop.close()
+
+        return self._return_value
 
     async def _on_css_change(self) -> None:
         """Called when the CSS changes (if watch_css is True)."""
@@ -340,6 +339,9 @@ class App(DOMNode):
                 self.stylesheet = stylesheet
                 self.stylesheet.update(self)
                 self.screen.refresh(layout=True)
+
+    def render(self) -> RenderableType:
+        return ""
 
     def query(self, selector: str | None = None) -> DOMQuery:
         """Get a DOM query in the current screen.
@@ -546,6 +548,12 @@ class App(DOMNode):
                     )
             if self._log_file is not None:
                 self._log_file.close()
+
+    def on_mount(self) -> None:
+        widgets = list(self.compose())
+        if widgets:
+            self.mount(*widgets)
+            self.screen.refresh()
 
     async def on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
