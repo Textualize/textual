@@ -11,7 +11,7 @@ DURATION = r"\d+\.?\d*(?:ms|s)"
 NUMBER = r"\-?\d+\.?\d*"
 COLOR = r"\#[0-9a-fA-F]{8}|\#[0-9a-fA-F]{6}|rgb\(\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*\)|rgba\(\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*\)"
 KEY_VALUE = r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+"
-TOKEN = "[a-zA-Z_-]+"
+TOKEN = "[a-zA-Z][a-zA-Z0-9_-]*"
 STRING = r"\".*?\""
 VARIABLE_REF = r"\$[a-zA-Z0-9_\-]+"
 

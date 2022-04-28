@@ -50,10 +50,9 @@ class DockLayout(Layout):
 
     def get_docks(self, parent: Widget) -> list[Dock]:
         groups: dict[str, list[Widget]] = defaultdict(list)
-        for child in parent.children:
+        for child in parent.displayed_children:
             assert isinstance(child, Widget)
-            if child.display:
-                groups[child.styles.dock].append(child)
+            groups[child.styles.dock].append(child)
         docks: list[Dock] = []
         append_dock = docks.append
         for name, edge, z in parent.styles.docks:
