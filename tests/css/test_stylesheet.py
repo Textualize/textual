@@ -10,10 +10,9 @@ from textual.css.tokenizer import TokenizeError
     "css_value,expectation,expected_color",
     [
         # Valid values:
+        ["transparent", does_not_raise(), Color(0, 0, 0, 0)],
         ["ansi_red", does_not_raise(), Color(128, 0, 0)],
-        ["ansi_dark_cyan", does_not_raise(), Color(0, 175, 135)],
-        ["ansi_medium_turquoise", does_not_raise(), Color(95, 215, 215)],
-        ["ansi_turquoise4", does_not_raise(), Color(0, 135, 135)],
+        ["ansi_bright_magenta", does_not_raise(), Color(255, 0, 255)],
         ["red", does_not_raise(), Color(255, 0, 0)],
         ["lime", does_not_raise(), Color(0, 255, 0)],
         ["coral", does_not_raise(), Color(255, 127, 80)],
@@ -26,8 +25,8 @@ from textual.css.tokenizer import TokenizeError
         ["rgba(200,90,30,0.3)", does_not_raise(), Color(200, 90, 30, 0.3)],
         # Some invalid ones:
         ["coffee", pytest.raises(StylesheetParseError), None],  # invalid color name
-        ["ansi_turquoise10", pytest.raises(StylesheetParseError), None],
-        ["ansi_turquoise 4", pytest.raises(StylesheetParseError), None],  # space in it
+        ["ansi_dark_cyan", pytest.raises(StylesheetParseError), None],
+        ["red 4", pytest.raises(StylesheetParseError), None],  # space in it
         ["1", pytest.raises(StylesheetParseError), None],  # invalid value
         ["()", pytest.raises(TokenizeError), None],  # invalid tokens
         # TODO: implement hex colors with 3 chars? @link https://devdocs.io/css/color_value
