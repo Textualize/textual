@@ -628,11 +628,11 @@ class Spacing(NamedTuple):
     def unpack(cls, pad: SpacingDimensions) -> Spacing:
         """Unpack padding specified in CSS style."""
         if isinstance(pad, int):
-            return Spacing.all(pad)
+            return cls(pad, pad, pad, pad)
         pad_len = len(pad)
         if pad_len == 1:
             _pad = pad[0]
-            return Spacing.all(_pad)
+            return cls(_pad, _pad, _pad, _pad)
         if pad_len == 2:
             pad_top, pad_right = cast(Tuple[int, int], pad)
             return cls(pad_top, pad_right, pad_top, pad_right)
