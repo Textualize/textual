@@ -121,6 +121,12 @@ class Widget(DOMNode):
         yield
 
     def on_register(self, app: App) -> None:
+        """Called when the instance is registered.
+
+        Args:
+            app (App): App instance.
+        """
+        # Parser the Widget's CSS
         self.app.stylesheet.parse(self.CSS, path=f"<{self.__class__.__name__}>")
 
     def get_box_model(self, container: Size, viewport: Size) -> BoxModel:
