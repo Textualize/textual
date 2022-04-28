@@ -182,7 +182,8 @@ class App(Generic[ReturnType], DOMNode):
         self._return_value = result
         self.close_messages_no_wait()
 
-    def compose(self) -> Iterable[Widget]:
+    def compose(self) -> ComposeResult:
+        """Yield child widgets for a container."""
         return
         yield
 

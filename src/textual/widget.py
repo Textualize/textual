@@ -39,7 +39,7 @@ from .renderables.opacity import Opacity
 
 
 if TYPE_CHECKING:
-    from .app import App
+    from .app import App, ComposeResult
     from .scrollbar import (
         ScrollBar,
         ScrollTo,
@@ -115,7 +115,8 @@ class Widget(DOMNode):
         self.app.register(self, *anon_widgets, **widgets)
         self.screen.refresh()
 
-    def compose(self) -> Iterable[Widget]:
+    def compose(self) -> ComposeResult:
+        """Yield child widgets for a container."""
         return
         yield
 
