@@ -18,8 +18,8 @@ class NodeList:
 
     """
 
-    def __init__(self, nodes: list[DOMNode] = None) -> None:
-        self._nodes: list[DOMNode] = [] if nodes is None else nodes
+    def __init__(self) -> None:
+        self._nodes: list[DOMNode] = []
 
     def __bool__(self) -> bool:
         return bool(self._nodes)

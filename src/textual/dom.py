@@ -279,8 +279,8 @@ class DOMNode(MessagePump):
         return tree
 
     @property
-    def displayed_children(self) -> NodeList:
-        return NodeList([child for child in self.children if child.display])
+    def displayed_children(self) -> list[DOMNode]:
+        return [child for child in self.children if child.display]
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.
