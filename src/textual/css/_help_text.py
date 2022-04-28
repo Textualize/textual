@@ -14,25 +14,18 @@ from textual.css.constants import (
 )
 
 if sys.version_info >= (3, 8):
-    from typing import Literal, Iterable
+    from typing import Literal, Iterable, Sequence
 else:
     from typing_extensions import Literal
-
-if sys.version_info >= (3, 9):
-    from typing import Annotated
-else:
-    from typing_extensions import Annotated
 
 from textual.css._error_tools import friendly_list
 from textual.css.scalar import SYMBOL_UNIT
 
-StylingContext = Annotated[
-    Literal["inline", "css"],
-    """The type of styling the user was using when the error was encountered.
+StylingContext = Literal["inline", "css"]
+"""The type of styling the user was using when the error was encountered.
 Used to give help text specific to the context i.e. we give CSS help if the
 user hit an issue with their CSS, and Python help text when the user has an
-issue with inline styles.""",
-]
+issue with inline styles."""
 
 
 @dataclass
@@ -43,8 +36,8 @@ class ContextSpecificBullets:
         css (Iterable[Bullet]): Information only relevant to users who are using CSS.
     """
 
-    inline: Iterable[Bullet]
-    css: Iterable[Bullet]
+    inline: Sequence[Bullet]
+    css: Sequence[Bullet]
 
     def get_by_context(self, context: StylingContext) -> list[Bullet]:
         """Get the information associated with the given context
@@ -104,7 +97,7 @@ def _spacing_examples(property_name: str) -> ContextSpecificBullets:
     return ContextSpecificBullets(
         inline=[
             Bullet(
-                "In Python, you can set it to a tuple to assign spacing to each edge",
+                f"Set [i]{property_name}[/] to a tuple to assign spacing to each edge",
                 examples=[
                     Example(
                         f"widget.styles.{property_name} = (1, 2) [dim]# Vertical, horizontal"
@@ -121,7 +114,7 @@ def _spacing_examples(property_name: str) -> ContextSpecificBullets:
         ],
         css=[
             Bullet(
-                "In Textual CSS, supply 1, 2 or 4 integers separated by a space",
+                "Supply 1, 2 or 4 integers separated by a space",
                 examples=[
                     Example(f"{property_name}: 1;"),
                     Example(f"{property_name}: 1 2;     [dim]# Vertical, horizontal"),
@@ -212,7 +205,7 @@ def scalar_help_text(
             *ContextSpecificBullets(
                 inline=[
                     Bullet(
-                        "In Python, you can assign a string, int or Scalar object itself",
+                        "Assign a string, int or Scalar object itself",
                         examples=[
                             Example(f'widget.styles.{property_name} = "50%"'),
                             Example(f"widget.styles.{property_name} = 10"),
@@ -222,7 +215,7 @@ def scalar_help_text(
                 ],
                 css=[
                     Bullet(
-                        "In Textual CSS, write the number followed by the unit",
+                        "Write the number followed by the unit",
                         examples=[
                             Example(f"{property_name}: 50%;"),
                             Example(f"{property_name}: 5;"),
@@ -260,19 +253,19 @@ def string_enum_help_text(
             *ContextSpecificBullets(
                 inline=[
                     Bullet(
-                        "In Python, you can assign any of the valid strings to the property",
+                        "Assign any of the valid strings to the property",
                         examples=[
                             Example(f'widget.styles.{property_name} = "{valid_value}"')
-                            for valid_value in valid_values
+                            for valid_value in sorted(valid_values)
                         ],
                     )
                 ],
                 css=[
                     Bullet(
-                        "In Textual CSS, you can assign any of the valid strings to the property",
+                        "Assign any of the valid strings to the property",
                         examples=[
                             Example(f"{property_name}: {valid_value};")
-                            for valid_value in valid_values
+                            for valid_value in sorted(valid_values)
                         ],
                     )
                 ],
@@ -306,7 +299,7 @@ def color_property_help_text(
             *ContextSpecificBullets(
                 inline=[
                     Bullet(
-                        "In Python, you can assign colors using strings or Color objects",
+                        "Assign colors using strings or Color objects",
                         examples=[
                             Example(f'widget.styles.{property_name} = "#ff00aa"'),
                             Example(
@@ -321,7 +314,7 @@ def color_property_help_text(
                 ],
                 css=[
                     Bullet(
-                        "In Textual CSS, colors can be set as follows",
+                        "Colors can be set as follows",
                         examples=[
                             Example(f"{property_name}: [#ff00aa]#ff00aa[/];"),
                             Example(f"{property_name}: rgb(12,231,45);"),
@@ -334,9 +327,7 @@ def color_property_help_text(
     )
 
 
-def border_property_help_text(
-    property_name: str, context: StylingContext | None
-) -> HelpText:
+def border_property_help_text(property_name: str, context: StylingContext) -> HelpText:
     """Help text to show when the user supplies an invalid value for a border
     property (such as border, border-right, outline)
 
@@ -354,7 +345,7 @@ def border_property_help_text(
             *ContextSpecificBullets(
                 inline=[
                     Bullet(
-                        f"In Python, set [i]{property_name}[/] using a tuple of the form (<bordertype>, <color>)",
+                        f"Set [i]{property_name}[/] using a tuple of the form (<bordertype>, <color>)",
                         examples=[
                             Example(
                                 f'widget.styles.{property_name} = ("solid", "red")'
@@ -376,7 +367,7 @@ def border_property_help_text(
                 ],
                 css=[
                     Bullet(
-                        f"In Textual CSS, set [i]{property_name}[/] using a value of the form [i]<bordertype> <color>[/]",
+                        f"Set [i]{property_name}[/] using a value of the form [i]<bordertype> <color>[/]",
                         examples=[
                             Example(f"{property_name}: solid red;"),
                             Example(f"{property_name}: dashed #00ee22;"),
@@ -394,9 +385,7 @@ def border_property_help_text(
     )
 
 
-def layout_property_help_text(
-    property_name: str, context: StylingContext | None
-) -> HelpText:
+def layout_property_help_text(property_name: str, context: StylingContext) -> HelpText:
     """Help text to show when the user supplies an invalid value
     for a layout property.
 
@@ -418,9 +407,7 @@ def layout_property_help_text(
     )
 
 
-def docks_property_help_text(
-    property_name: str, context: StylingContext | None
-) -> HelpText:
+def docks_property_help_text(property_name: str, context: StylingContext) -> HelpText:
     """Help text to show when the user supplies an invalid value for docks.
 
     Args:
@@ -466,9 +453,7 @@ def docks_property_help_text(
     )
 
 
-def dock_property_help_text(
-    property_name: str, context: StylingContext | None
-) -> HelpText:
+def dock_property_help_text(property_name: str, context: StylingContext) -> HelpText:
     """Help text to show when the user supplies an invalid value for dock.
 
     Args:
@@ -532,7 +517,7 @@ def fractional_property_help_text(
             *ContextSpecificBullets(
                 inline=[
                     Bullet(
-                        f"In Python, you can set [i]{property_name}[/] to a string or float value",
+                        f"Set [i]{property_name}[/] to a string or float value",
                         examples=[
                             Example(f'widget.styles.{property_name} = "50%"'),
                             Example(f"widget.styles.{property_name} = 0.25"),
@@ -541,7 +526,7 @@ def fractional_property_help_text(
                 ],
                 css=[
                     Bullet(
-                        f"In Textual CSS, you can set [i]{property_name}[/] to a string or float",
+                        f"Set [i]{property_name}[/] to a string or float",
                         examples=[
                             Example(f"{property_name}: 50%;"),
                             Example(f"{property_name}: 0.25;"),
@@ -553,7 +538,7 @@ def fractional_property_help_text(
     )
 
 
-def offset_property_help_text(context: StylingContext | None) -> HelpText:
+def offset_property_help_text(context: StylingContext) -> HelpText:
     """Help text to show when the user supplies an invalid value for the offset property.
 
     Args:
@@ -568,7 +553,7 @@ def offset_property_help_text(context: StylingContext | None) -> HelpText:
             *ContextSpecificBullets(
                 inline=[
                     Bullet(
-                        markup="The offset property expects a tuple of 2 values [i](<horizontal>, <vertical>)[/]",
+                        markup="The [i]offset[/] property expects a tuple of 2 values [i](<horizontal>, <vertical>)[/]",
                         examples=[
                             Example("widget.styles.offset = (2, '50%')"),
                         ],
@@ -576,7 +561,7 @@ def offset_property_help_text(context: StylingContext | None) -> HelpText:
                 ],
                 css=[
                     Bullet(
-                        markup="The offset property expects a value of the form [i]<horizontal> <vertical>[/]",
+                        markup="The [i]offset[/] property expects a value of the form [i]<horizontal> <vertical>[/]",
                         examples=[
                             Example(
                                 "offset: 2 3;  [dim]# Horizontal offset of 2, vertical offset of 3"
@@ -649,7 +634,7 @@ def offset_single_axis_help_text(property_name: str) -> HelpText:
 
 
 def style_flags_property_help_text(
-    property_name: str, value: str, context: StylingContext | None
+    property_name: str, value: str, context: StylingContext
 ) -> HelpText:
     """Help text to show when the user supplies an invalid value for a style flags property.
 
@@ -671,7 +656,7 @@ def style_flags_property_help_text(
             *ContextSpecificBullets(
                 inline=[
                     Bullet(
-                        markup="In Python, you can supply a string or Style object",
+                        markup="Supply a string or Style object",
                         examples=[
                             Example(
                                 f'widget.styles.{property_name} = "bold italic underline"'
@@ -681,7 +666,7 @@ def style_flags_property_help_text(
                 ],
                 css=[
                     Bullet(
-                        markup="In Textual CSS, you can supply style flags separated by spaces",
+                        markup="Supply style flags separated by spaces",
                         examples=[Example(f"{property_name}: bold italic underline;")],
                     )
                 ],
