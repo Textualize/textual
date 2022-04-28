@@ -174,6 +174,11 @@ class App(Generic[ReturnType], DOMNode):
     dark = Reactive(False)
 
     def exit(self, result: ReturnType | None = None) -> None:
+        """Exit the app, and return the supplied result.
+
+        Args:
+            result (ReturnType | None, optional): Return value. Defaults to None.
+        """
         self._return_value = result
         self.close_messages_no_wait()
 
