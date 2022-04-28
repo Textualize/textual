@@ -311,6 +311,7 @@ class DOMNode(MessagePump):
             add_node(node)
         return nodes
 
+    @property
     def displayed_children(self) -> list[DOMNode]:
         return [child for child in self.children if child.display]
 
