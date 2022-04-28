@@ -317,14 +317,12 @@ class BorderProperty:
             clear_rule(right)
             clear_rule(bottom)
             clear_rule(left)
-            obj.refresh(layout=self._layout)
             return
         if isinstance(border, tuple):
             setattr(obj, top, border)
             setattr(obj, right, border)
             setattr(obj, bottom, border)
             setattr(obj, left, border)
-            obj.refresh(layout=self._layout)
             return
 
         count = len(border)
