@@ -24,7 +24,7 @@ from rich.style import Style
 from rich.text import Text
 
 
-from ._color_constants import ANSI_COLOR_TO_RGB
+from ._color_constants import ANSI_COLOR_TO_RGB, WEB_COLOR_TO_RGB
 from .geometry import clamp
 
 
@@ -253,9 +253,14 @@ class Color(NamedTuple):
         """
         if isinstance(color_text, Color):
             return color_text
-        ansi_color = ANSI_COLOR_TO_RGB.get(color_text)
-        if ansi_color is not None:
-            return cls(*ansi_color)
+        if color_text.startswith("ansi_"):
+            ansi_color = ANSI_COLOR_TO_RGB.get(color_text[5:])
+            if ansi_color is not None:
+                return cls(*ansi_color)
+        else:
+            web_color = WEB_COLOR_TO_RGB.get(color_text)
+            if web_color is not None:
+                return cls(*web_color)
         color_match = RE_COLOR.match(color_text)
         if color_match is None:
             raise ColorParseError(f"failed to parse {color_text!r} as a color")
