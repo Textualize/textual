@@ -255,18 +255,6 @@ class Widget(DOMNode):
         enabled = self.show_vertical_scrollbar, self.show_horizontal_scrollbar
         return enabled
 
-    @property
-    def background_color(self) -> Color:
-        color = self.styles.background
-        colors: list[Color] = [color]
-        add_color = colors.append
-        node = self
-        while color.a < 1 and node.parent is not None:
-            node = node.parent
-            color = node.styles.background
-            add_color(color)
-        return sum(reversed(colors), start=Color(0, 0, 0, 0))
-
     def set_dirty(self) -> None:
         """Set the Widget as 'dirty' (requiring re-render)."""
         self._dirty_regions.clear()
