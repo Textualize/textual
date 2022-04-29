@@ -1,7 +1,7 @@
 import sys
 
 from .horizontal import HorizontalLayout
-from ..layout import Layout
+from .._layout import Layout
 from ..layouts.dock import DockLayout
 from ..layouts.grid import GridLayout
 from ..layouts.vertical import VerticalLayout

@@ -10,7 +10,7 @@ from typing import Iterable, NamedTuple, TYPE_CHECKING
 
 from .._layout_resolve import layout_resolve
 from ..geometry import Size, Offset, Region
-from ..layout import Layout, WidgetPlacement
+from .._layout import Layout, WidgetPlacement
 
 if TYPE_CHECKING:
     from ..widget import Widget

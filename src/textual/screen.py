@@ -11,18 +11,21 @@ from .geometry import Offset, Region
 from ._compositor import Compositor
 from .reactive import Reactive
 from .widget import Widget
-from .renderables.gradient import VerticalGradient
 
 
 @rich.repr.auto
 class Screen(Widget):
     """A widget for the root of the app."""
 
-    DEFAULT_STYLES = """
-
-    layout: dock;
-    docks: _default=top;
-
+    CSS = """
+    
+    Screen {
+        layout: dock;
+        docks: _default=top;
+        background: $surface;
+        color: $text-surface;
+    }
+    
     """
 
     dark = Reactive(False)
@@ -35,12 +38,8 @@ class Screen(Widget):
     def watch_dark(self, dark: bool) -> None:
         pass
 
-    @property
-    def is_transparent(self) -> bool:
-        return False
-
     def render(self) -> RenderableType:
-        return VerticalGradient("red", "blue")
+        return self.app.render()
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the absolute offset of a given Widget.

@@ -340,7 +340,7 @@ if __name__ == "__main__":
     console = Console()
     stylesheet = Stylesheet()
     try:
-        stylesheet.parse(css)
+        stylesheet.add_source(css)
     except StylesheetParseError as e:
         console.print(e.errors)
     print(stylesheet)

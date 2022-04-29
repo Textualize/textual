@@ -47,7 +47,8 @@ def test_color_property_parsing(css_value, expectation, expected_color):
     )
 
     with expectation:
-        stylesheet.parse(css)
+        stylesheet.add_source(css)
+        stylesheet.parse()
 
     if expected_color:
         css_rule = stylesheet.rules[0]

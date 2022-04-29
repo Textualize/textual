@@ -5,7 +5,7 @@ from typing import cast, TYPE_CHECKING
 from .. import log
 
 from ..geometry import Offset, Region, Size
-from ..layout import Layout, WidgetPlacement
+from .._layout import Layout, WidgetPlacement
 
 if TYPE_CHECKING:
     from ..widget import Widget
@@ -40,10 +40,13 @@ class VerticalLayout(Layout):
 
         y = box_models[0].margin.top if box_models else 0
 
-        for widget, box_model, margin in zip(parent.children, box_models, margins):
+        displayed_children = parent.displayed_children
+
+        for widget, box_model, margin in zip(displayed_children, box_models, margins):
             content_width, content_height = box_model.size
             offset_x = widget.styles.align_width(content_width, parent_size.width)
             region = Region(offset_x, y, content_width, content_height)
+            # TODO: it seems that `max_height` is not used?
             max_height = max(max_height, content_height)
             add_placement(WidgetPlacement(region, widget, 0))
             y += region.height + margin
@@ -54,4 +57,4 @@ class VerticalLayout(Layout):
         total_region = Region(0, 0, max_width, max_height)
         add_placement(WidgetPlacement(total_region, None, 0))
 
-        return placements, set(parent.children)
+        return placements, set(displayed_children)

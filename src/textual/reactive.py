@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     Reactable = Union[Widget, App]
 
 
-ReactiveType = TypeVar("ReactiveType")
+ReactiveType = TypeVar("ReactiveType", covariant=True)
 
 
 T = TypeVar("T")
@@ -36,7 +36,7 @@ class Reactive(Generic[ReactiveType]):
 
     def __init__(
         self,
-        default: ReactiveType,
+        default: ReactiveType | Callable[[], ReactiveType],
         *,
         layout: bool = False,
         repaint: bool = True,
@@ -58,7 +58,11 @@ class Reactive(Generic[ReactiveType]):
 
         self.name = name
         self.internal_name = f"_reactive_{name}"
-        setattr(owner, self.internal_name, self._default)
+        setattr(
+            owner,
+            self.internal_name,
+            self._default() if callable(self._default) else self._default,
+        )
 
     def __get__(self, obj: Reactable, obj_type: type[object]) -> ReactiveType:
         return getattr(obj, self.internal_name)

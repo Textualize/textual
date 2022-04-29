@@ -31,7 +31,7 @@ from .transition import Transition
 from ..geometry import Spacing, SpacingDimensions, clamp
 
 if TYPE_CHECKING:
-    from ..layout import Layout
+    from .._layout import Layout
     from .styles import DockGroup, Styles, StylesBase
 
 

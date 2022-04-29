@@ -14,7 +14,7 @@ class Static(Widget):
         *,
         name: str | None = None,
         id: str | None = None,
-        classes: set[str] | None = None,
+        classes: str | None = None,
         style: StyleType = "",
         padding: PaddingDimensions = 0,
     ) -> None:

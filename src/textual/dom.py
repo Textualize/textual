@@ -10,6 +10,7 @@ from rich.text import Text
 from rich.tree import Tree
 
 from ._node_list import NodeList
+from .color import Color
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from .css.errors import StyleValueError
@@ -19,6 +20,7 @@ from .css.query import NoMatchingNodesError
 from .message_pump import MessagePump
 
 if TYPE_CHECKING:
+    from .app import App
     from .css.query import DOMQuery
     from .screen import Screen
 
@@ -40,42 +42,44 @@ class DOMNode(MessagePump):
 
     def __init__(
         self,
+        *,
         name: str | None = None,
         id: str | None = None,
-        classes: set[str] | None = None,
+        classes: str | None = None,
     ) -> None:
         self._name = name
         self._id = id
-        self._classes: set[str] = set() if classes is None else classes
+        self._classes: set[str] = set() if classes is None else set(classes.split())
         self.children = NodeList()
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles.parse(
             self.INLINE_STYLES, repr(self), node=self
         )
         self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
-        self._default_styles = Styles.parse(self.DEFAULT_STYLES, f"{self.__class__}")
+        self._default_styles = Styles()
         self._default_rules = self._default_styles.extract_rules((0, 0, 0))
         super().__init__()
+
+    def on_register(self, app: App) -> None:
+        """Called when the widget is registered
+
+        Args:
+            app (App): Parent application.
+        """
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self._name, None
         yield "id", self._id, None
         if self._classes:
-            yield "classes", self._classes
+            yield "classes", " ".join(self._classes)
 
     @property
-    def parent(self) -> DOMNode:
+    def parent(self) -> DOMNode | None:
         """Get the parent node.
-
-        Raises:
-            NoParent: If this is the root node.
 
         Returns:
             DOMNode: The node which is the direct parent of this node.
         """
-        if self._parent is None:
-            raise NoParent(f"{self} has no parent")
-        assert isinstance(self._parent, DOMNode)
         return self._parent
 
     @property
@@ -223,19 +227,6 @@ class DOMNode(MessagePump):
             )
 
     @property
-    def rich_text_style(self) -> Style:
-        """Get the text style (added to parent style).
-
-        Returns:
-            Style: Rich Style object.
-        """
-        return (
-            self.parent.rich_text_style + self.styles.rich_style
-            if self.has_parent
-            else self.styles.rich_style
-        )
-
-    @property
     def tree(self) -> Tree:
         """Get a Rich tree object which will recursively render the structure of the node tree.
 
@@ -277,6 +268,52 @@ class DOMNode(MessagePump):
 
         add_children(tree, self)
         return tree
+
+    @property
+    def rich_text_style(self) -> Style:
+        """Get the text style object.
+
+        A widget's style is influenced by its parent. For instance if a widgets background has an alpha,
+        then its parent's background color will show through. Additionally, widgets will inherit their
+        parent's text style (i.e. bold, italic etc).
+
+        Returns:
+            Style: Rich Style object.
+        """
+
+        # TODO: Feels like there may be opportunity for caching here.
+
+        background = Color(0, 0, 0, 0)
+        color = Color(255, 255, 255, 0)
+        style = Style()
+        for node in reversed(self.ancestors):
+            styles = node.styles
+            if styles.has_rule("background"):
+                background += styles.background
+            if styles.has_rule("color"):
+                color = styles.color
+            style += styles.text_style
+
+        style = Style(bgcolor=background.rich_color, color=color.rich_color) + style
+        return style
+
+    @property
+    def ancestors(self) -> list[DOMNode]:
+        """Get a list of Nodes by tracing ancestors all the way back to App."""
+
+        nodes: list[DOMNode] = [self]
+        add_node = nodes.append
+        node = self
+        while True:
+            node = node.parent
+            if node is None:
+                break
+            add_node(node)
+        return nodes
+
+    @property
+    def displayed_children(self) -> list[DOMNode]:
+        return [child for child in self.children if child.display]
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.

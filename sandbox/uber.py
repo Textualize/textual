@@ -24,12 +24,12 @@ class BasicApp(App):
             Widget(id="uber2-child2"),
         )
         uber1 = Widget(
-            Placeholder(id="child1", classes={"list-item"}),
-            Placeholder(id="child2", classes={"list-item"}),
-            Placeholder(id="child3", classes={"list-item"}),
-            Placeholder(classes={"list-item"}),
-            Placeholder(classes={"list-item"}),
-            Placeholder(classes={"list-item"}),
+            Placeholder(id="child1", classes="list-item"),
+            Placeholder(id="child2", classes="list-item"),
+            Placeholder(id="child3", classes="list-item"),
+            Placeholder(classes="list-item"),
+            Placeholder(classes="list-item"),
+            Placeholder(classes="list-item"),
         )
         self.mount(uber1=uber1)
 
@@ -37,7 +37,7 @@ class BasicApp(App):
         await self.dispatch_key(event)
 
     def action_quit(self):
-        self.panic(self.screen.tree)
+        self.panic(self.app.tree)
 
     def action_dump(self):
         self.panic(str(self.app.registry))
@@ -56,4 +56,7 @@ class BasicApp(App):
         sys.stdout.write("abcdef")
 
 
-BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=1)
+app = BasicApp(css_file="uber.css", log="textual.log", log_verbosity=1)
+
+if __name__ == "__main__":
+    app.run()

@@ -124,6 +124,11 @@ class Color(NamedTuple):
         )
 
     @property
+    def is_transparent(self) -> bool:
+        """Check if the color is transparent, i.e. has 0 alpha."""
+        return self.a == 0
+
+    @property
     def clamped(self) -> Color:
         """Get a color with all components saturated to maximum and minimum values."""
         r, g, b, a = self
@@ -329,6 +334,7 @@ class Color(NamedTuple):
 # Color constants
 WHITE = Color(255, 255, 255)
 BLACK = Color(0, 0, 0)
+TRANSPARENT = Color(0, 0, 0, 0)
 
 
 class ColorPair(NamedTuple):
