@@ -258,11 +258,9 @@ class Color(NamedTuple):
         """
         if isinstance(color_text, Color):
             return color_text
-        if color_text == "transparent":
-            return TRANSPARENT
-        ansi_color = COLOR_NAME_TO_RGB.get(color_text)
-        if ansi_color is not None:
-            return cls(*ansi_color)
+        color_from_name = COLOR_NAME_TO_RGB.get(color_text)
+        if color_from_name is not None:
+            return cls(*color_from_name)
         color_match = RE_COLOR.match(color_text)
         if color_match is None:
             raise ColorParseError(f"failed to parse {color_text!r} as a color")

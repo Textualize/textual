@@ -214,9 +214,9 @@ class StylesBase(ABC):
 
     rich_style = StyleProperty()
 
-    scrollbar_color = ColorProperty("bright_magenta")
-    scrollbar_color_hover = ColorProperty("yellow")
-    scrollbar_color_active = ColorProperty("bright_yellow")
+    scrollbar_color = ColorProperty("ansi_bright_magenta")
+    scrollbar_color_hover = ColorProperty("ansi_yellow")
+    scrollbar_color_active = ColorProperty("ansi_bright_yellow")
 
     scrollbar_background = ColorProperty("#555555")
     scrollbar_background_hover = ColorProperty("#444444")
