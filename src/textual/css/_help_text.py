@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sys
 from dataclasses import dataclass
+from typing import Iterable
 
 from textual.css._help_renderables import Example, Bullet, HelpText
 from textual.css.constants import (
@@ -229,7 +230,7 @@ def scalar_help_text(
 
 def string_enum_help_text(
     property_name: str,
-    valid_values: list[str],
+    valid_values: Iterable[str],
     context: StylingContext,
 ) -> HelpText:
     """Help text to show when the user supplies an invalid value for a string

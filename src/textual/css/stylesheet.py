@@ -17,7 +17,8 @@ from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 
-from textual._loop import loop_last
+from .._loop import loop_last
+from .. import log
 from .errors import StylesheetError
 from .match import _check_selectors
 from .model import RuleSet
@@ -39,9 +40,9 @@ class StylesheetParseError(StylesheetError):
 
 class StylesheetErrors:
     def __init__(
-        self, stylesheet: "Stylesheet", variables: dict[str, str] | None = None
+        self, rules: list[RuleSet], variables: dict[str, str] | None = None
     ) -> None:
-        self.stylesheet = stylesheet
+        self.rules = rules
         self.variables: dict[str, str] = {}
         self._css_variables: dict[str, list[Token]] = {}
         if variables:
@@ -69,7 +70,7 @@ class StylesheetErrors:
         self, console: Console, options: ConsoleOptions
     ) -> RenderableType:
         error_count = 0
-        for rule in self.stylesheet.rules:
+        for rule in self.rules:
             for is_last, (token, message) in loop_last(rule.errors):
                 error_count += 1
 
@@ -139,10 +140,6 @@ class Stylesheet:
     @property
     def css(self) -> str:
         return "\n\n".join(rule_set.css for rule_set in self.rules)
-
-    @property
-    def error_renderable(self) -> StylesheetErrors:
-        return StylesheetErrors(self)
 
     def set_variables(self, variables: dict[str, str]) -> None:
         """Set CSS variables.
@@ -226,7 +223,8 @@ class Stylesheet:
         for path, css in self.source.items():
             css_rules = self._parse_rules(css, path)
             if any(rule.errors for rule in css_rules):
-                raise StylesheetParseError(self.error_renderable)
+                error_renderable = StylesheetErrors(css_rules)
+                raise StylesheetParseError(error_renderable)
             add_rules(css_rules)
         self._rules = rules
         self._require_parse = False
@@ -244,7 +242,7 @@ class Stylesheet:
         for path, css in self.source.items():
             stylesheet.add_source(css, path)
         stylesheet.parse()
-        self.rules = stylesheet.rules
+        self._rules = stylesheet.rules
         self.source = stylesheet.source
 
     @classmethod
