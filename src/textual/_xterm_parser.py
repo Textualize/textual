@@ -19,15 +19,15 @@ class XTermParser(Parser[events.Event]):
 
     _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(\d+);(\d+)([Mm])")
 
-    def __init__(self, sender: MessageTarget, more_data: Callable[[], bool]) -> None:
+    def __init__(
+        self, sender: MessageTarget, more_data: Callable[[], bool], debug: bool = False
+    ) -> None:
         self.sender = sender
         self.more_data = more_data
         self.last_x = 0
         self.last_y = 0
 
-        self._debug_log_file = (
-            open("keys.log", "wt") if "TEXTUAL_DEBUG" in os.environ else None
-        )
+        self._debug_log_file = open("keys.log", "wt") if debug else None
 
         super().__init__()
 
