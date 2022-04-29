@@ -9,8 +9,8 @@ import rich.repr
 from ._error_tools import friendly_list
 from ._help_renderables import HelpText
 from ._help_text import (
-    spacing_invalid_value,
-    spacing_wrong_number_of_values,
+    spacing_invalid_value_help_text,
+    spacing_wrong_number_of_values_help_text,
     scalar_help_text,
     color_property_help_text,
     string_enum_help_text,
@@ -23,6 +23,7 @@ from ._help_text import (
     offset_property_help_text,
     offset_single_axis_help_text,
     style_flags_property_help_text,
+    property_invalid_value_help_text,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -86,14 +87,17 @@ class StylesBuilder:
         process_method = getattr(self, f"process_{rule_name}", None)
 
         if process_method is None:
-            error_message = f"unknown declaration {declaration.name!r}"
-            did_you_mean_rule_name = self._did_you_mean_for_rule_name(declaration.name)
-            if did_you_mean_rule_name:
-                error_message += f"; did you mean {did_you_mean_rule_name!r}?"
+            suggested_property_name = self._suggested_property_name_for_rule(
+                declaration.name
+            )
             self.error(
                 declaration.name,
                 declaration.token,
-                error_message,
+                property_invalid_value_help_text(
+                    declaration.name,
+                    "css",
+                    suggested_property_name=suggested_property_name,
+                ),
             )
             return
 
@@ -345,14 +349,20 @@ class StylesBuilder:
                 try:
                     append(int(value))
                 except ValueError:
-                    self.error(name, token, spacing_invalid_value(name, context="css"))
+                    self.error(
+                        name,
+                        token,
+                        spacing_invalid_value_help_text(name, context="css"),
+                    )
             else:
-                self.error(name, token, spacing_invalid_value(name, context="css"))
+                self.error(
+                    name, token, spacing_invalid_value_help_text(name, context="css")
+                )
         if len(space) not in (1, 2, 4):
             self.error(
                 name,
                 tokens[0],
-                spacing_wrong_number_of_values(
+                spacing_wrong_number_of_values_help_text(
                     name, num_values_supplied=len(space), context="css"
                 ),
             )
@@ -361,7 +371,9 @@ class StylesBuilder:
     def _process_space_partial(self, name: str, tokens: list[Token]) -> None:
         """Process granular margin / padding declarations."""
         if len(tokens) != 1:
-            self.error(name, tokens[0], spacing_invalid_value(name, context="css"))
+            self.error(
+                name, tokens[0], spacing_invalid_value_help_text(name, context="css")
+            )
 
         _EDGE_SPACING_MAP = {"top": 0, "right": 1, "bottom": 2, "left": 3}
         token = tokens[0]
@@ -369,7 +381,9 @@ class StylesBuilder:
         if token_name == "number":
             space = int(value)
         else:
-            self.error(name, token, spacing_invalid_value(name, context="css"))
+            self.error(
+                name, token, spacing_invalid_value_help_text(name, context="css")
+            )
         style_name, _, edge = name.replace("-", "_").partition("_")
 
         current_spacing = cast(
@@ -731,7 +745,7 @@ class StylesBuilder:
     process_content_align_horizontal = process_align_horizontal
     process_content_align_vertical = process_align_vertical
 
-    def _did_you_mean_for_rule_name(self, rule_name: str) -> str | None:
+    def _suggested_property_name_for_rule(self, rule_name: str) -> str | None:
         possible_matches = get_close_matches(
             rule_name, self._processable_rule_names(), n=1
         )

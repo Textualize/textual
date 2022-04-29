@@ -128,7 +128,32 @@ def _spacing_examples(property_name: str) -> ContextSpecificBullets:
     )
 
 
-def spacing_wrong_number_of_values(
+def property_invalid_value_help_text(
+    property_name: str, context: StylingContext, *, suggested_property_name: str = None
+) -> HelpText:
+    """Help text to show when the user supplies an invalid value for CSS property
+    property.
+
+    Args:
+        property_name (str): The name of the property
+        context (StylingContext | None): The context the spacing property is being used in.
+    Keyword Args:
+        suggested_property_name (str | None): A suggested name for the property (e.g. "width" for "wdth"). Defaults to None.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
+    property_name = _contextualize_property_name(property_name, context)
+    bullets = []
+    if suggested_property_name:
+        suggested_property_name = _contextualize_property_name(
+            suggested_property_name, context
+        )
+        bullets.append(Bullet(f"Did you mean [i]{suggested_property_name}[/]?"))
+    return HelpText(f"Invalid CSS property [i]{property_name}[/]", bullets=bullets)
+
+
+def spacing_wrong_number_of_values_help_text(
     property_name: str,
     num_values_supplied: int,
     context: StylingContext,
@@ -159,7 +184,7 @@ def spacing_wrong_number_of_values(
     )
 
 
-def spacing_invalid_value(
+def spacing_invalid_value_help_text(
     property_name: str,
     context: StylingContext,
 ) -> HelpText:
