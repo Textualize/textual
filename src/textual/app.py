@@ -330,10 +330,10 @@ class App(Generic[ReturnType], DOMNode):
     async def _on_css_change(self) -> None:
         """Called when the CSS changes (if watch_css is True)."""
         if self.css_file is not None:
-            stylesheet = Stylesheet(variables=self.get_css_variables())
+
             try:
                 time = perf_counter()
-                stylesheet.read(self.css_file)
+                self.stylesheet.read(self.css_file)
                 elapsed = (perf_counter() - time) * 1000
                 self.log(f"loaded {self.css_file} in {elapsed:.0f}ms")
             except Exception as error:
@@ -342,7 +342,6 @@ class App(Generic[ReturnType], DOMNode):
                 self.log(error)
             else:
                 self.reset_styles()
-                self.stylesheet = stylesheet
                 self.stylesheet.update(self)
                 self.screen.refresh(layout=True)
 
@@ -506,7 +505,9 @@ class App(Generic[ReturnType], DOMNode):
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
             if self.css is not None:
-                self.stylesheet.parse(self.css, path=f"<{self.__class__.__name__}>")
+                self.stylesheet.add_source(
+                    self.css, path=f"<{self.__class__.__name__}>"
+                )
         except Exception as error:
             self.on_exception(error)
             self._print_error_renderables()

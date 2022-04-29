@@ -23,9 +23,9 @@ class Button(Widget, can_focus=True):
         background: $primary;
         color: $text-primary;
         content-align: center middle;
-        border: tall $primary-lighten-3;        
-        margin: 1;
-        min-width:16;
+        border: tall $primary-lighten-3;                
+        
+        margin: 1 0;
         text-style: bold;
     }
 

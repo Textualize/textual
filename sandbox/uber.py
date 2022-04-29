@@ -37,7 +37,7 @@ class BasicApp(App):
         await self.dispatch_key(event)
 
     def action_quit(self):
-        self.panic(self.screen.tree)
+        self.panic(self.app.tree)
 
     def action_dump(self):
         self.panic(str(self.app.registry))

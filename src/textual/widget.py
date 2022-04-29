@@ -68,10 +68,6 @@ class Widget(DOMNode):
 
     can_focus: bool = False
 
-    DEFAULT_STYLES = """
-
-    """
-
     CSS = """
     """
 
@@ -127,7 +123,9 @@ class Widget(DOMNode):
             app (App): App instance.
         """
         # Parser the Widget's CSS
-        self.app.stylesheet.parse(self.CSS, path=f"<{self.__class__.__name__}>")
+        self.app.stylesheet.add_source(
+            self.CSS, f"{__file__}:<{self.__class__.__name__}>"
+        )
 
     def get_box_model(self, container: Size, viewport: Size) -> BoxModel:
         """Process the box model for this widget.
