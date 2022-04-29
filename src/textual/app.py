@@ -97,20 +97,24 @@ class App(Generic[ReturnType], DOMNode):
         css_file: str | None = None,
         css: str | None = None,
         watch_css: bool = True,
+        _features: str | None = None,
     ):
-        """The Textual Application base class
+        """Textual application base class
 
         Args:
-            console (Console, optional): A Rich Console. Defaults to None.
-            screen (bool, optional): Enable full-screen application mode. Defaults to True.
-            driver_class (Type[Driver], optional): Driver class, or None to use default. Defaults to None.
-            title (str, optional): Title of the application. Defaults to "Textual Application".
+            driver_class (Type[Driver] | None, optional): Driver class or ``None`` to auto-detect. Defaults to None.
+            log (str, optional): Path to log file, or "" to disable. Defaults to "".
+            log_verbosity (int, optional): Log verbosity from 0-3. Defaults to 1.
+            title (str, optional): Default title of the application. Defaults to "Textual Application".
+            css_file (str | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
+            css (str | None, optional): CSS code to parse, or ``None`` for no literal CSS. Defaults to None.
+            watch_css (bool, optional): Watch CSS for changes. Defaults to True.
+            _features (set[str] | None, optional): Override env var features for testing. Defaults to None.
         """
         self.console = Console(
             file=sys.__stdout__, markup=False, highlight=False, emoji=False
         )
         self.error_console = Console(markup=False, stderr=True)
-        self._screen = screen
         self.driver_class = driver_class or self.get_driver_class()
         self._title = title
         self._screen_stack: list[Screen] = []
@@ -160,6 +164,11 @@ class App(Generic[ReturnType], DOMNode):
         if css is not None:
             self.css = css
 
+        _parse_features = os.getenv("TEXTUAL", "") if _features is None else _features
+        self.features = set(
+            feature.strip().lower() for feature in _parse_features.split(",") if feature
+        )
+
         self.registry: set[MessagePump] = set()
 
         self.devtools = DevtoolsClient()
@@ -172,6 +181,10 @@ class App(Generic[ReturnType], DOMNode):
     sub_title: Reactive[str] = Reactive("")
     background: Reactive[str] = Reactive("black")
     dark = Reactive(False)
+
+    @property
+    def devtools_enabled(self) -> bool:
+        return "devtools" in self.features
 
     def exit(self, result: ReturnType | None = None) -> None:
         """Exit the app, and return the supplied result.
@@ -495,7 +508,7 @@ class App(Generic[ReturnType], DOMNode):
         log("---")
         log(f"driver={self.driver_class}")
 
-        if os.getenv("TEXTUAL_DEVTOOLS") == "1":
+        if self.devtools_enabled:
             try:
                 await self.devtools.connect()
                 self.log(f"Connected to devtools ({self.devtools.url})")
@@ -504,7 +517,6 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
-                self.stylesheet.parse()
             if self.css is not None:
                 self.stylesheet.add_source(
                     self.css, path=f"<{self.__class__.__name__}>"
