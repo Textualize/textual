@@ -39,6 +39,10 @@ jobs:
         run: |
           source $VENV
           pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing
+      - name: Quick e2e smoke test
+        run: |
+          source $VENV
+          python tools/sandbox_e2e_smoke_test.py
       - name: Upload code coverage
         uses: codecov/codecov-action@v1.0.10
         with:
