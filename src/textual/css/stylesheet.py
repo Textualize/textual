@@ -101,17 +101,19 @@ class StylesheetErrors:
 @rich.repr.auto
 class Stylesheet:
     def __init__(self, *, variables: dict[str, str] | None = None) -> None:
-        self._rules: list[RuleSet] | None = None
+        self._rules: list[RuleSet] = []
         self.variables = variables or {}
         self.source: dict[str, str] = {}
+        self._require_parse = False
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.rules
 
     @property
     def rules(self) -> list[RuleSet]:
-        if self._rules is None:
+        if self._require_parse:
             self.parse()
+            self._require_parse = False
         assert self._rules is not None
         return self._rules
 
@@ -171,7 +173,7 @@ class Stylesheet:
         except Exception as error:
             raise StylesheetError(f"unable to read {filename!r}; {error}")
         self.source[path] = css
-        self._rules = None
+        self._require_parse = True
 
     def add_source(self, css: str, path: str | None = None) -> None:
         """Parse CSS from a string.
@@ -192,7 +194,7 @@ class Stylesheet:
             return
 
         self.source[path] = css
-        self._rules = None
+        self._require_parse = True
 
     def parse(self) -> None:
         """Parse the source in the stylesheet.
@@ -208,6 +210,7 @@ class Stylesheet:
                 raise StylesheetParseError(self.error_renderable)
             add_rules(css_rules)
         self._rules = rules
+        self._require_parse = False
 
     def reparse(self) -> None:
         """Re-parse source, applying new variables.
@@ -221,7 +224,8 @@ class Stylesheet:
         stylesheet = Stylesheet(variables=self.variables)
         for path, css in self.source.items():
             stylesheet.add_source(css, path)
-        self._rules = None
+        stylesheet.parse()
+        self.rules = stylesheet.rules
         self.source = stylesheet.source
 
     @classmethod

@@ -875,6 +875,7 @@ class TestParseLayout:
         stylesheet = Stylesheet()
         with pytest.raises(StylesheetParseError) as ex:
             stylesheet.add_source(css)
+            stylesheet.parse()
 
         assert ex.value.errors is not None
 
@@ -1033,8 +1034,10 @@ class TestParseTransition:
         stylesheet = Stylesheet()
         with pytest.raises(StylesheetParseError) as ex:
             stylesheet.add_source(css)
+            stylesheet.parse()
 
-        stylesheet_errors = stylesheet.rules[0].errors
+        rules = stylesheet._parse_rules(css, "foo")
+        stylesheet_errors = rules[0].errors
 
         assert len(stylesheet_errors) == 1
         assert stylesheet_errors[0][0].value == invalid_func_name
@@ -1067,7 +1070,9 @@ class TestParseOpacity:
 
         with pytest.raises(StylesheetParseError):
             stylesheet.add_source(css)
-        assert stylesheet.rules[0].errors
+            stylesheet.parse()
+        rules = stylesheet._parse_rules(css, "foo")
+        assert rules[0].errors
 
 
 class TestParseMargin:
