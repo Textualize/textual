@@ -69,7 +69,7 @@ class ScrollBarRender:
         position: float = 0,
         thickness: int = 1,
         vertical: bool = True,
-        style: StyleType = "ansi_bright_magenta on #555555",
+        style: StyleType = "bright_magenta on #555555",
     ) -> None:
         self.virtual_size = virtual_size
         self.window_size = window_size
@@ -89,7 +89,7 @@ class ScrollBarRender:
         thickness: int = 1,
         vertical: bool = True,
         back_color: Color = Color.parse("#555555"),
-        bar_color: Color = Color.parse("ansi_bright_magenta"),
+        bar_color: Color = Color.parse("bright_magenta"),
     ) -> Segments:
 
         if vertical:
@@ -181,7 +181,7 @@ class ScrollBarRender:
             vertical=self.vertical,
             thickness=thickness,
             back_color=_style.bgcolor or Color.parse("#555555"),
-            bar_color=_style.color or Color.parse("ansi_bright_magenta"),
+            bar_color=_style.color or Color.parse("bright_magenta"),
         )
         yield bar
 

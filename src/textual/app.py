@@ -504,6 +504,7 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
+                self.stylesheet.parse()
             if self.css is not None:
                 self.stylesheet.add_source(
                     self.css, path=f"<{self.__class__.__name__}>"

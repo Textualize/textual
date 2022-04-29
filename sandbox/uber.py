@@ -28,7 +28,7 @@ class BasicApp(App):
             Widget(id="uber2-child1"),
             Widget(id="uber2-child2"),
         )
-        first_child = Placeholder(id="child1", classes={"list-item"})
+        first_child = Placeholder(id="child1", classes="list-item")
         uber1 = Widget(
             Placeholder(id="child1", classes="list-item"),
             Placeholder(id="child2", classes="list-item"),

@@ -683,7 +683,7 @@ class StylesBuilder:
 
         if token_vertical.name != "token":
             align_error(name, token_vertical)
-        elif token_horizontal.value not in VALID_ALIGN_VERTICAL:
+        elif token_vertical.value not in VALID_ALIGN_VERTICAL:
             align_error(name, token_horizontal)
 
         name = name.replace("-", "_")
@@ -693,24 +693,26 @@ class StylesBuilder:
     def process_align_horizontal(self, name: str, tokens: list[Token]) -> None:
         try:
             value = self._process_enum(name, tokens, VALID_ALIGN_HORIZONTAL)
-            self.styles._rules[name.replace("-", "_")] = value
         except StyleValueError:
             self.error(
                 name,
                 tokens[0],
                 string_enum_help_text(name, VALID_ALIGN_HORIZONTAL, context="css"),
             )
+        else:
+            self.styles._rules[name.replace("-", "_")] = value
 
     def process_align_vertical(self, name: str, tokens: list[Token]) -> None:
         try:
             value = self._process_enum(name, tokens, VALID_ALIGN_VERTICAL)
-            self.styles._rules[name.replace("-", "_")] = value
         except StyleValueError:
             self.error(
                 name,
                 tokens[0],
                 string_enum_help_text(name, VALID_ALIGN_VERTICAL, context="css"),
             )
+        else:
+            self.styles._rules[name.replace("-", "_")] = value
 
     process_content_align = process_align
     process_content_align_horizontal = process_align_horizontal
