@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-ANSI_COLOR_TO_RGB: dict[str, tuple[int, int, int]] = {
+COLOR_NAME_TO_RGB: dict[str, tuple[int, int, int]] = {
     "black": (0, 0, 0),
     "red": (128, 0, 0),
     "green": (0, 128, 0),

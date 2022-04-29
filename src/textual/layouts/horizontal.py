@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import cast
 
 from textual.geometry import Size, Offset, Region
-from textual.layout import Layout, WidgetPlacement
+from textual._layout import Layout, WidgetPlacement
 
 from textual.widget import Widget
 

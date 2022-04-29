@@ -9,7 +9,7 @@ from typing import Iterable, TYPE_CHECKING, NamedTuple, Sequence
 from .._layout_resolve import layout_resolve
 from ..css.types import Edge
 from ..geometry import Offset, Region, Size
-from ..layout import Layout, WidgetPlacement
+from .._layout import Layout, WidgetPlacement
 from ..widget import Widget
 
 if sys.version_info >= (3, 8):

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from logging import getLogger
+
 from typing import (
     Any,
     Awaitable,
@@ -33,12 +33,13 @@ from .dom import DOMNode
 from .geometry import clamp, Offset, Region, Size, Spacing
 from .message import Message
 from . import messages
-from .layout import Layout
+from ._layout import Layout
 from .reactive import Reactive, watch
 from .renderables.opacity import Opacity
 
 
 if TYPE_CHECKING:
+    from .app import App, ComposeResult
     from .scrollbar import (
         ScrollBar,
         ScrollTo,
@@ -67,8 +68,7 @@ class Widget(DOMNode):
 
     can_focus: bool = False
 
-    DEFAULT_STYLES = """
-
+    CSS = """
     """
 
     def __init__(
@@ -76,7 +76,7 @@ class Widget(DOMNode):
         *children: Widget,
         name: str | None = None,
         id: str | None = None,
-        classes: set[str] | None = None,
+        classes: str | None = None,
     ) -> None:
 
         self._size = Size(0, 0)
@@ -106,6 +106,26 @@ class Widget(DOMNode):
     scroll_target_y = Reactive(0.0, repaint=False)
     show_vertical_scrollbar = Reactive(False, layout=True)
     show_horizontal_scrollbar = Reactive(False, layout=True)
+
+    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
+        self.app.register(self, *anon_widgets, **widgets)
+        self.screen.refresh()
+
+    def compose(self) -> ComposeResult:
+        """Yield child widgets for a container."""
+        return
+        yield
+
+    def on_register(self, app: App) -> None:
+        """Called when the instance is registered.
+
+        Args:
+            app (App): App instance.
+        """
+        # Parser the Widget's CSS
+        self.app.stylesheet.add_source(
+            self.CSS, f"{__file__}:<{self.__class__.__name__}>"
+        )
 
     def get_box_model(self, container: Size, viewport: Size) -> BoxModel:
         """Process the box model for this widget.
@@ -414,11 +434,17 @@ class Widget(DOMNode):
         """
 
         renderable = self.render()
+
         styles = self.styles
         parent_styles = self.parent.styles
 
         parent_text_style = self.parent.rich_text_style
         text_style = styles.rich_style
+
+        content_align = (styles.content_align_horizontal, styles.content_align_vertical)
+        if content_align != ("left", "top"):
+            horizontal, vertical = content_align
+            renderable = Align(renderable, horizontal, vertical=vertical)
 
         renderable_text_style = parent_text_style + text_style
         if renderable_text_style:
@@ -478,8 +504,7 @@ class Widget(DOMNode):
         Returns:
             bool: ``True`` if there is background color, otherwise ``False``.
         """
-        return False
-        return self.layout is not None
+        return self.is_container and self.styles.background.is_transparent
 
     @property
     def console(self) -> Console:
@@ -615,8 +640,10 @@ class Widget(DOMNode):
 
         # Default displays a pretty repr in the center of the screen
 
-        label = self.css_identifier_styled
-        return Align.center(label, vertical="middle")
+        if self.is_container:
+            return ""
+
+        return self.css_identifier_styled
 
     async def action(self, action: str, *params) -> None:
         await self.app.action(action, self)
@@ -676,6 +703,12 @@ class Widget(DOMNode):
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)
+
+    def on_mount(self, event: events.Mount) -> None:
+        widgets = list(self.compose())
+        if widgets:
+            self.mount(*widgets)
+            self.screen.refresh()
 
     def on_leave(self) -> None:
         self.mouse_over = False

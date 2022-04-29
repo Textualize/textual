@@ -5,7 +5,7 @@ from typing import cast, TYPE_CHECKING
 from .. import log
 
 from ..geometry import Offset, Region, Size
-from ..layout import Layout, WidgetPlacement
+from .._layout import Layout, WidgetPlacement
 
 if TYPE_CHECKING:
     from ..widget import Widget

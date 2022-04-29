@@ -621,13 +621,18 @@ class StylesBuilder:
                 f"invalid token {token_vertical!r}, expected {friendly_list(VALID_ALIGN_VERTICAL)}",
             )
 
-        self.styles._rules["align_horizontal"] = token_horizontal.value
-        self.styles._rules["align_vertical"] = token_vertical.value
+        name = name.replace("-", "_")
+        self.styles._rules[f"{name}_horizontal"] = token_horizontal.value
+        self.styles._rules[f"{name}_vertical"] = token_vertical.value
 
     def process_align_horizontal(self, name: str, tokens: list[Token]) -> None:
         value = self._process_enum(name, tokens, VALID_ALIGN_HORIZONTAL)
-        self.styles._rules["align_horizontal"] = value
+        self.styles._rules[name.replace("-", "_")] = value
 
     def process_align_vertical(self, name: str, tokens: list[Token]) -> None:
         value = self._process_enum(name, tokens, VALID_ALIGN_VERTICAL)
-        self.styles._rules["align_vertical"] = value
+        self.styles._rules[name.replace("-", "_")] = value
+
+    process_content_align = process_align
+    process_content_align_horizontal = process_align_horizontal
+    process_content_align_vertical = process_align_vertical
