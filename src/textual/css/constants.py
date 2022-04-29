@@ -25,10 +25,24 @@ VALID_BORDER: Final = {
     "wide",
 }
 VALID_EDGE: Final = {"top", "right", "bottom", "left"}
-VALID_LAYOUT: Final = {"dock", "vertical", "grid"}
+VALID_LAYOUT: Final = {"dock", "vertical", "horizontal"}
 
 VALID_BOX_SIZING: Final = {"border-box", "content-box"}
 VALID_OVERFLOW: Final = {"scroll", "hidden", "auto"}
 VALID_ALIGN_HORIZONTAL: Final = {"left", "center", "right"}
 VALID_ALIGN_VERTICAL: Final = {"top", "middle", "bottom"}
-NULL_SPACING: Final = Spacing(0, 0, 0, 0)
+VALID_STYLE_FLAGS: Final = {
+    "none",
+    "not",
+    "bold",
+    "italic",
+    "underline",
+    "overline",
+    "strike",
+    "b",
+    "i",
+    "u",
+    "o",
+}
+
+NULL_SPACING: Final = Spacing.all(0)

@@ -1,8 +1,6 @@
 from __future__ import annotations
-from operator import is_
 
-
-from typing import Callable, NamedTuple, TYPE_CHECKING
+from typing import Callable, NamedTuple
 
 from .geometry import Size, Spacing
 from .css.styles import StylesBase

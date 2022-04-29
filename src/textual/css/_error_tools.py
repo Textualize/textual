@@ -3,7 +3,9 @@ from __future__ import annotations
 from typing import Iterable
 
 
-def friendly_list(words: Iterable[str], joiner: str = "or") -> str:
+def friendly_list(
+    words: Iterable[str], joiner: str = "or", omit_empty: bool = True
+) -> str:
     """Generate a list of words as readable prose.
 
     >>> friendly_list(["foo", "bar", "baz"])
@@ -16,7 +18,9 @@ def friendly_list(words: Iterable[str], joiner: str = "or") -> str:
     Returns:
         str: List as prose.
     """
-    words = [repr(word) for word in sorted(words, key=str.lower)]
+    words = [
+        repr(word) for word in sorted(words, key=str.lower) if word or not omit_empty
+    ]
     if len(words) == 1:
         return words[0]
     elif len(words) == 2:

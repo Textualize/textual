@@ -14,10 +14,22 @@ from typing import Iterable, NamedTuple, TYPE_CHECKING, cast
 import rich.repr
 from rich.style import Style
 
-from .. import log
-from ..color import Color, ColorPair
+from ._help_text import (
+    border_property_help_text,
+    layout_property_help_text,
+    fractional_property_help_text,
+    offset_property_help_text,
+    style_flags_property_help_text,
+)
+from ._help_text import (
+    spacing_wrong_number_of_values,
+    scalar_help_text,
+    string_enum_help_text,
+    color_property_help_text,
+)
+from ..color import Color, ColorPair, ColorParseError
 from ._error_tools import friendly_list
-from .constants import NULL_SPACING
+from .constants import NULL_SPACING, VALID_STYLE_FLAGS
 from .errors import StyleTypeError, StyleValueError
 from .scalar import (
     get_symbols,
@@ -34,9 +46,7 @@ if TYPE_CHECKING:
     from .._layout import Layout
     from .styles import DockGroup, Styles, StylesBase
 
-
 from .types import EdgeType
-
 
 BorderDefinition = (
     "Sequence[tuple[EdgeType, str | Color] | None] | tuple[EdgeType, str | Color]"
@@ -82,8 +92,8 @@ class ScalarProperty:
 
         Args:
             obj (Styles): The ``Styles`` object.
-            value (float | Scalar | str | None): The value to set the scalar property to.
-                You can directly pass a float value, which will be interpreted with
+            value (float | int | Scalar | str | None): The value to set the scalar property to.
+                You can directly pass a float or int value, which will be interpreted with
                 a default unit of Cells. You may also provide a string such as ``"50%"``,
                 as you might do when writing CSS. If a string with no units is supplied,
                 Cells will be used as the unit. Alternatively, you can directly supply
@@ -95,6 +105,7 @@ class ScalarProperty:
         """
         if value is None:
             obj.clear_rule(self.name)
+            obj.refresh(layout=True)
             return
         if isinstance(value, (int, float)):
             new_value = Scalar(float(value), Unit.CELLS, Unit.WIDTH)
@@ -104,9 +115,14 @@ class ScalarProperty:
             try:
                 new_value = Scalar.parse(value)
             except ScalarParseError:
-                raise StyleValueError("unable to parse scalar from {value!r}")
+                raise StyleValueError(
+                    "unable to parse scalar from {value!r}",
+                    help_text=scalar_help_text(
+                        property_name=self.name, context="inline"
+                    ),
+                )
         else:
-            raise StyleValueError("expected float, Scalar, or None")
+            raise StyleValueError("expected float, int, Scalar, or None")
 
         if (
             new_value is not None
@@ -125,7 +141,7 @@ class ScalarProperty:
                     float(new_value.value), self.percent_unit, Unit.WIDTH
                 )
         if obj.set_rule(self.name, new_value):
-            obj.refresh()
+            obj.refresh(layout=True)
 
 
 class BoxProperty:
@@ -177,7 +193,15 @@ class BoxProperty:
             _type, color = border
             new_value = border
             if isinstance(color, str):
-                new_value = (_type, Color.parse(color))
+                try:
+                    new_value = (_type, Color.parse(color))
+                except ColorParseError as error:
+                    raise StyleValueError(
+                        str(error),
+                        help_text=border_property_help_text(
+                            self.name, context="inline"
+                        ),
+                    )
             elif isinstance(color, Color):
                 new_value = (_type, color)
             if obj.set_rule(self.name, new_value):
@@ -225,7 +249,15 @@ class Edges(NamedTuple):
 
 
 class BorderProperty:
-    """Descriptor for getting and setting full borders and outlines."""
+    """Descriptor for getting and setting full borders and outlines.
+
+    Args:
+        layout (bool): True if the layout should be refreshed after setting, False otherwise.
+
+    """
+
+    def __init__(self, layout: bool) -> None:
+        self._layout = layout
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
@@ -279,7 +311,6 @@ class BorderProperty:
             StyleValueError: When the supplied ``tuple`` is not of valid length (1, 2, or 4).
         """
         top, right, bottom, left = self._properties
-        obj.refresh()
         if border is None:
             clear_rule = obj.clear_rule
             clear_rule(top)
@@ -293,6 +324,7 @@ class BorderProperty:
             setattr(obj, bottom, border)
             setattr(obj, left, border)
             return
+
         count = len(border)
         if count == 1:
             _border = border[0]
@@ -303,8 +335,8 @@ class BorderProperty:
         elif count == 2:
             _border1, _border2 = border
             setattr(obj, top, _border1)
-            setattr(obj, right, _border1)
-            setattr(obj, bottom, _border2)
+            setattr(obj, bottom, _border1)
+            setattr(obj, right, _border2)
             setattr(obj, left, _border2)
         elif count == 4:
             _border1, _border2, _border3, _border4 = border
@@ -313,11 +345,15 @@ class BorderProperty:
             setattr(obj, bottom, _border3)
             setattr(obj, left, _border4)
         else:
-            raise StyleValueError("expected 1, 2, or 4 values")
+            raise StyleValueError(
+                "expected 1, 2, or 4 values",
+                help_text=border_property_help_text(self.name, context="inline"),
+            )
+        obj.refresh(layout=self._layout)
 
 
 class StyleProperty:
-    """Descriptor for getting and setting the text style."""
+    """Descriptor for getting the Rich style."""
 
     DEFAULT_STYLE = Style()
 
@@ -374,7 +410,18 @@ class SpacingProperty:
             if obj.clear_rule(self.name):
                 obj.refresh(layout=True)
         else:
-            if obj.set_rule(self.name, Spacing.unpack(spacing)):
+            try:
+                unpacked_spacing = Spacing.unpack(spacing)
+            except ValueError as error:
+                raise StyleValueError(
+                    str(error),
+                    help_text=spacing_wrong_number_of_values(
+                        property_name=self.name,
+                        num_values_supplied=len(spacing),
+                        context="inline",
+                    ),
+                )
+            if obj.set_rule(self.name, unpacked_spacing):
                 obj.refresh(layout=True)
 
 
@@ -435,14 +482,14 @@ class DockProperty:
         """
         return obj.get_rule("dock", "_default")
 
-    def __set__(self, obj: Styles, spacing: str | None):
+    def __set__(self, obj: Styles, dock_name: str | None):
         """Set the Dock property
 
         Args:
             obj (Styles): The ``Styles`` object
-            spacing (str | None): The spacing to use.
+            dock_name (str | None): The name of the dock to attach this widget to
         """
-        if obj.set_rule("dock", spacing):
+        if obj.set_rule("dock", dock_name):
             obj.refresh(layout=True)
 
 
@@ -468,11 +515,15 @@ class LayoutProperty:
         """
         Args:
             obj (Styles): The Styles object.
-            layout (str | Layout): The layout to use. You can supply a the name of the layout
+            layout (str | Layout): The layout to use. You can supply the name of the layout
                 or a ``Layout`` object.
         """
 
-        from ..layouts.factory import get_layout, Layout  # Prevents circular import
+        from ..layouts.factory import (
+            get_layout,
+            Layout,
+            MissingLayout,
+        )  # Prevents circular import
 
         if layout is None:
             if obj.clear_rule("layout"):
@@ -481,7 +532,14 @@ class LayoutProperty:
             if obj.set_rule("layout", layout):
                 obj.refresh(layout=True)
         else:
-            if obj.set_rule("layout", get_layout(layout)):
+            try:
+                layout_object = get_layout(layout)
+            except MissingLayout as error:
+                raise StyleValueError(
+                    str(error),
+                    help_text=layout_property_help_text(self.name, context="inline"),
+                )
+            if obj.set_rule("layout", layout_object):
                 obj.refresh(layout=True)
 
 
@@ -523,7 +581,7 @@ class OffsetProperty:
 
         Raises:
             ScalarParseError: If any of the string values supplied in the 2-tuple cannot
-                be parsed into a Scalar. For example, if you specify an non-existent unit.
+                be parsed into a Scalar. For example, if you specify a non-existent unit.
         """
         if offset is None:
             if obj.clear_rule(self.name):
@@ -533,16 +591,23 @@ class OffsetProperty:
                 obj.refresh(layout=True)
         else:
             x, y = offset
-            scalar_x = (
-                Scalar.parse(x, Unit.WIDTH)
-                if isinstance(x, str)
-                else Scalar(float(x), Unit.CELLS, Unit.WIDTH)
-            )
-            scalar_y = (
-                Scalar.parse(y, Unit.HEIGHT)
-                if isinstance(y, str)
-                else Scalar(float(y), Unit.CELLS, Unit.HEIGHT)
-            )
+
+            try:
+                scalar_x = (
+                    Scalar.parse(x, Unit.WIDTH)
+                    if isinstance(x, str)
+                    else Scalar(float(x), Unit.CELLS, Unit.WIDTH)
+                )
+                scalar_y = (
+                    Scalar.parse(y, Unit.HEIGHT)
+                    if isinstance(y, str)
+                    else Scalar(float(y), Unit.CELLS, Unit.HEIGHT)
+                )
+            except ScalarParseError as error:
+                raise StyleValueError(
+                    str(error), help_text=offset_property_help_text(context="inline")
+                )
+
             _offset = ScalarOffset(scalar_x, scalar_y)
 
             if obj.set_rule(self.name, _offset):
@@ -554,9 +619,10 @@ class StringEnumProperty:
     value belongs in the set of valid values.
     """
 
-    def __init__(self, valid_values: set[str], default: str) -> None:
+    def __init__(self, valid_values: set[str], default: str, layout=False) -> None:
         self._valid_values = valid_values
         self._default = default
+        self._layout = layout
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
@@ -586,14 +652,19 @@ class StringEnumProperty:
 
         if value is None:
             if obj.clear_rule(self.name):
-                obj.refresh()
+                obj.refresh(layout=self._layout)
         else:
             if value not in self._valid_values:
                 raise StyleValueError(
-                    f"{self.name} must be one of {friendly_list(self._valid_values)}"
+                    f"{self.name} must be one of {friendly_list(self._valid_values)}",
+                    help_text=string_enum_help_text(
+                        self.name,
+                        valid_values=list(self._valid_values),
+                        context="inline",
+                    ),
                 )
             if obj.set_rule(self.name, value):
-                obj.refresh()
+                obj.refresh(layout=self._layout)
 
 
 class NameProperty:
@@ -702,26 +773,21 @@ class ColorProperty:
             if obj.set_rule(self.name, color):
                 obj.refresh()
         elif isinstance(color, str):
-            if obj.set_rule(self.name, Color.parse(color)):
+            try:
+                parsed_color = Color.parse(color)
+            except ColorParseError:
+                raise StyleValueError(
+                    f"Invalid color value '{color}'",
+                    help_text=color_property_help_text(self.name, context="inline"),
+                )
+            if obj.set_rule(self.name, parsed_color):
                 obj.refresh()
+        else:
+            raise StyleValueError(f"Invalid color value {color}")
 
 
 class StyleFlagsProperty:
     """Descriptor for getting and set style flag properties (e.g. ``bold italic underline``)."""
-
-    _VALID_PROPERTIES = {
-        "none",
-        "not",
-        "bold",
-        "italic",
-        "underline",
-        "overline",
-        "strike",
-        "b",
-        "i",
-        "u",
-        "o",
-    }
 
     def __set_name__(self, owner: Styles, name: str) -> None:
         self.name = name
@@ -759,12 +825,14 @@ class StyleFlagsProperty:
                 obj.refresh()
         else:
             words = [word.strip() for word in style_flags.split(" ")]
-            valid_word = self._VALID_PROPERTIES.__contains__
+            valid_word = VALID_STYLE_FLAGS.__contains__
             for word in words:
                 if not valid_word(word):
                     raise StyleValueError(
-                        f"unknown word {word!r} in style flags, "
-                        f"valid values are {friendly_list(self._VALID_PROPERTIES)}"
+                        f"unknown word {word!r} in style flags",
+                        help_text=style_flags_property_help_text(
+                            self.name, word, context="inline"
+                        ),
                     )
             style = Style.parse(style_flags)
             if obj.set_rule(self.name, style):
@@ -839,8 +907,9 @@ class FractionalProperty:
         elif isinstance(value, str) and value.endswith("%"):
             float_value = float(Scalar.parse(value).value) / 100
         else:
-            raise StyleTypeError(
-                f"{self.name} must be a str (e.g. '10%') or a float (e.g. 0.1)"
+            raise StyleValueError(
+                f"{self.name} must be a str (e.g. '10%') or a float (e.g. 0.1)",
+                help_text=fractional_property_help_text(name, context="inline"),
             )
         if obj.set_rule(name, clamp(float_value, 0, 1)):
             obj.refresh()

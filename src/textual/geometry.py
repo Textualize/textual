@@ -4,14 +4,11 @@ Functions and classes to manage terminal geometry (anything involving coordinate
 
 """
 
-
 from __future__ import annotations
 
 from typing import Any, cast, NamedTuple, Tuple, Union, TypeVar
 
-
 SpacingDimensions = Union[int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]]
-
 
 T = TypeVar("T", int, float)
 
@@ -642,7 +639,47 @@ class Spacing(NamedTuple):
         if pad_len == 4:
             top, right, bottom, left = cast(Tuple[int, int, int, int], pad)
             return cls(top, right, bottom, left)
-        raise ValueError(f"1, 2 or 4 integers required for spacing; {pad_len} given")
+        raise ValueError(
+            f"1, 2 or 4 integers required for spacing properties; {pad_len} given"
+        )
+
+    @classmethod
+    def vertical(cls, amount: int) -> Spacing:
+        """Construct a Spacing with a given amount of spacing on vertical edges,
+        and no horizontal spacing.
+
+        Args:
+            amount (int): The magnitude of spacing to apply to vertical edges
+
+        Returns:
+            Spacing: ``Spacing(amount, 0, amount, 0)``
+        """
+        return Spacing(amount, 0, amount, 0)
+
+    @classmethod
+    def horizontal(cls, amount: int) -> Spacing:
+        """Construct a Spacing with a given amount of spacing on horizontal edges,
+        and no vertical spacing.
+
+        Args:
+            amount (int): The magnitude of spacing to apply to horizontal edges
+
+        Returns:
+            Spacing: ``Spacing(0, amount, 0, amount)``
+        """
+        return Spacing(0, amount, 0, amount)
+
+    @classmethod
+    def all(cls, amount: int) -> Spacing:
+        """Construct a Spacing with a given amount of spacing on all edges.
+
+        Args:
+            amount (int): The magnitude of spacing to apply to all edges
+
+        Returns:
+            Spacing: ``Spacing(amount, amount, amount, amount)``
+        """
+        return Spacing(amount, amount, amount, amount)
 
     def __add__(self, other: object) -> Spacing:
         if isinstance(other, tuple):

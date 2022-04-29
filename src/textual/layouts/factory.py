@@ -1,20 +1,11 @@
-import sys
-
 from .horizontal import HorizontalLayout
 from .._layout import Layout
 from ..layouts.dock import DockLayout
-from ..layouts.grid import GridLayout
 from ..layouts.vertical import VerticalLayout
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 
 LAYOUT_MAP = {
     "dock": DockLayout,
-    # "grid": GridLayout,
     "vertical": VerticalLayout,
     "horizontal": HorizontalLayout,
 }

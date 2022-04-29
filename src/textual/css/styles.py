@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 import rich.repr
 from rich.style import Style
 
-from .. import log
 from .._animator import Animation, EasingFunction
 from ..color import Color
 from ..geometry import Spacing
@@ -46,8 +45,6 @@ from .transition import Transition
 from .types import (
     BoxSizing,
     Display,
-    AlignHorizontal,
-    AlignVertical,
     Edge,
     AlignHorizontal,
     Overflow,
@@ -73,7 +70,6 @@ class RulesMap(TypedDict, total=False):
     Any key may be absent, indicating that rule has not been set.
 
     Does not define composite rules, that is a rule that is made of a combination of other rules.
-
     """
 
     display: Display
@@ -168,7 +164,7 @@ class StylesBase(ABC):
         "scrollbar_background_active",
     }
 
-    display = StringEnumProperty(VALID_DISPLAY, "block")
+    display = StringEnumProperty(VALID_DISPLAY, "block", layout=True)
     visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
     layout = LayoutProperty()
 
@@ -182,19 +178,19 @@ class StylesBase(ABC):
     margin = SpacingProperty()
     offset = OffsetProperty()
 
-    border = BorderProperty()
+    border = BorderProperty(layout=True)
     border_top = BoxProperty(Color(0, 255, 0))
     border_right = BoxProperty(Color(0, 255, 0))
     border_bottom = BoxProperty(Color(0, 255, 0))
     border_left = BoxProperty(Color(0, 255, 0))
 
-    outline = BorderProperty()
+    outline = BorderProperty(layout=False)
     outline_top = BoxProperty(Color(0, 255, 0))
     outline_right = BoxProperty(Color(0, 255, 0))
     outline_bottom = BoxProperty(Color(0, 255, 0))
     outline_left = BoxProperty(Color(0, 255, 0))
 
-    box_sizing = StringEnumProperty(VALID_BOX_SIZING, "border-box")
+    box_sizing = StringEnumProperty(VALID_BOX_SIZING, "border-box", layout=True)
     width = ScalarProperty(percent_unit=Unit.WIDTH)
     height = ScalarProperty(percent_unit=Unit.HEIGHT)
     min_width = ScalarProperty(percent_unit=Unit.WIDTH, allow_auto=False)
@@ -229,7 +225,7 @@ class StylesBase(ABC):
     content_align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
 
     def __eq__(self, styles: object) -> bool:
-        """Check that Styles containts the same rules."""
+        """Check that Styles contains the same rules."""
         if not isinstance(styles, StylesBase):
             return NotImplemented
         return self.get_rules() == styles.get_rules()

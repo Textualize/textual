@@ -3,15 +3,17 @@ from __future__ import annotations
 import os
 from collections import defaultdict
 from operator import itemgetter
-import os
+from pathlib import Path
 from typing import cast, Iterable
 
-
 import rich.repr
-from rich.console import Group, RenderableType
+from rich.console import RenderableType, Console, ConsoleOptions
 from rich.highlighter import ReprHighlighter
+from rich.markup import render
 from rich.padding import Padding
 from rich.panel import Panel
+from rich.rule import Rule
+from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 
@@ -25,7 +27,6 @@ from .tokenize import tokenize_values, Token
 from .tokenizer import TokenizeError
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
-from .. import log
 
 
 class StylesheetParseError(StylesheetError):
@@ -47,7 +48,7 @@ class StylesheetErrors:
             self.set_variables(variables)
 
     @classmethod
-    def _get_snippet(cls, code: str, line_no: int) -> Panel:
+    def _get_snippet(cls, code: str, line_no: int) -> RenderableType:
         syntax = Syntax(
             code,
             lexer="scss",
@@ -57,45 +58,63 @@ class StylesheetErrors:
             line_range=(max(0, line_no - 2), line_no + 2),
             highlight_lines={line_no},
         )
-        return Panel(syntax, border_style="red")
+        return syntax
 
     def set_variables(self, variable_map: dict[str, str]) -> None:
         """Pre-populate CSS variables."""
         self.variables.update(variable_map)
         self._css_variables = tokenize_values(self.variables)
 
-    def __rich__(self) -> RenderableType:
-        highlighter = ReprHighlighter()
-        errors: list[RenderableType] = []
-        append = errors.append
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderableType:
+        error_count = 0
         for rule in self.stylesheet.rules:
-            for token, message in rule.errors:
-                append("")
-                append(Text(" Error in stylesheet:", style="bold red"))
+            for is_last, (token, message) in loop_last(rule.errors):
+                error_count += 1
+
+                if token.path:
+                    path = Path(token.path)
+                    filename = path.name
+                else:
+                    path = None
+                    filename = "<unknown>"
 
                 if token.referenced_by:
                     line_idx, col_idx = token.referenced_by.location
                     line_no, col_no = line_idx + 1, col_idx + 1
-                    append(
-                        highlighter(f" {token.path or '<unknown>'}:{line_no}:{col_no}")
+                    path_string = (
+                        f"{path.absolute() if path else filename}:{line_no}:{col_no}"
                     )
-                    append(self._get_snippet(token.code, line_no))
                 else:
                     line_idx, col_idx = token.location
                     line_no, col_no = line_idx + 1, col_idx + 1
-                    append(
-                        highlighter(f" {token.path or '<unknown>'}:{line_no}:{col_no}")
+                    path_string = (
+                        f"{path.absolute() if path else filename}:{line_no}:{col_no}"
                     )
-                    append(self._get_snippet(token.code, line_no))
 
-                final_message = ""
-                for is_last, message_part in loop_last(message.split(";")):
-                    end = "" if is_last else "\n"
-                    final_message += f"• {message_part.strip()};{end}"
+                link_style = Style(
+                    link=f"file://{path.absolute()}",
+                    color="red",
+                    bold=True,
+                    italic=True,
+                )
 
-                append(Padding(highlighter(Text(final_message, "red")), pad=(0, 1)))
-                append("")
-        return Group(*errors)
+                path_text = Text(path_string, style=link_style)
+                title = Text.assemble(Text("Error at ", style="bold red"), path_text)
+                yield ""
+                yield Panel(
+                    self._get_snippet(token.code, line_no),
+                    title=title,
+                    title_align="left",
+                    border_style="red",
+                )
+                yield Padding(message, pad=(0, 0, 1, 3))
+
+        yield ""
+        yield render(
+            f" [b][red]CSS parsing failed:[/] {error_count} error{'s' if error_count != 1 else ''}[/] found in stylesheet"
+        )
 
 
 @rich.repr.auto

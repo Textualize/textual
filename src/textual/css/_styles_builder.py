@@ -5,6 +5,23 @@ from typing import cast, Iterable, NoReturn
 import rich.repr
 
 from ._error_tools import friendly_list
+from ._help_renderables import HelpText
+from ._help_text import (
+    spacing_invalid_value,
+    spacing_wrong_number_of_values,
+    scalar_help_text,
+    color_property_help_text,
+    string_enum_help_text,
+    border_property_help_text,
+    layout_property_help_text,
+    docks_property_help_text,
+    dock_property_help_text,
+    fractional_property_help_text,
+    align_help_text,
+    offset_property_help_text,
+    offset_single_axis_help_text,
+    style_flags_property_help_text,
+)
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
@@ -14,15 +31,16 @@ from .constants import (
     VALID_DISPLAY,
     VALID_OVERFLOW,
     VALID_VISIBILITY,
+    VALID_STYLE_FLAGS,
 )
-from .errors import DeclarationError
+from .errors import DeclarationError, StyleValueError
 from .model import Declaration
-from .scalar import Scalar, ScalarOffset, Unit, ScalarError
+from .scalar import Scalar, ScalarOffset, Unit, ScalarError, ScalarParseError
 from .styles import DockGroup, Styles
 from .tokenize import Token
 from .transition import Transition
 from .types import BoxSizing, Edge, Display, Overflow, Visibility
-from ..color import Color
+from ..color import Color, ColorParseError
 from .._duration import _duration_as_seconds
 from .._easing import EASING
 from ..geometry import Spacing, SpacingDimensions, clamp
@@ -56,7 +74,7 @@ class StylesBuilder:
     def __repr__(self) -> str:
         return "StylesBuilder()"
 
-    def error(self, name: str, token: Token, message: str) -> NoReturn:
+    def error(self, name: str, token: Token, message: str | HelpText) -> NoReturn:
         raise DeclarationError(name, token, message)
 
     def add_declaration(self, declaration: Declaration) -> None:
@@ -126,7 +144,7 @@ class StylesBuilder:
         """
 
         if len(tokens) != 1:
-            self.error(name, tokens[0], "expected a single token here")
+            string_enum_help_text(name, valid_values=list(valid_values), context="css"),
 
         token = tokens[0]
         token_name, value, _, _, location, _ = token
@@ -134,13 +152,17 @@ class StylesBuilder:
             self.error(
                 name,
                 token,
-                f"invalid token {value!r}, expected {friendly_list(valid_values)}",
+                string_enum_help_text(
+                    name, valid_values=list(valid_values), context="css"
+                ),
             )
         if value not in valid_values:
             self.error(
                 name,
                 token,
-                f"invalid value {value!r} for {name}, expected {friendly_list(valid_values)}",
+                string_enum_help_text(
+                    name, valid_values=list(valid_values), context="css"
+                ),
             )
         return value
 
@@ -156,18 +178,36 @@ class StylesBuilder:
                     self.error(
                         name,
                         token,
-                        f"invalid value for display (received {value!r}, expected {friendly_list(VALID_DISPLAY)})",
+                        string_enum_help_text(
+                            "display", valid_values=list(VALID_DISPLAY), context="css"
+                        ),
                     )
             else:
-                self.error(name, token, f"invalid token {value!r} in this context")
+                self.error(
+                    name,
+                    token,
+                    string_enum_help_text(
+                        "display", valid_values=list(VALID_DISPLAY), context="css"
+                    ),
+                )
 
     def _process_scalar(self, name: str, tokens: list[Token]) -> None:
+        def scalar_error():
+            self.error(
+                name, tokens[0], scalar_help_text(property_name=name, context="css")
+            )
+
         if not tokens:
             return
         if len(tokens) == 1:
-            self.styles._rules[name.replace("-", "_")] = Scalar.parse(tokens[0].value)
+            try:
+                self.styles._rules[name.replace("-", "_")] = Scalar.parse(
+                    tokens[0].value
+                )
+            except ScalarParseError:
+                scalar_error()
         else:
-            self.error(name, tokens[0], "a single scalar is expected")
+            scalar_error()
 
     def process_box_sizing(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
@@ -181,10 +221,20 @@ class StylesBuilder:
                     self.error(
                         name,
                         token,
-                        f"invalid value for box-sizing (received {value!r}, expected {friendly_list(VALID_BOX_SIZING)})",
+                        string_enum_help_text(
+                            "box-sizing",
+                            valid_values=list(VALID_BOX_SIZING),
+                            context="css",
+                        ),
                     )
             else:
-                self.error(name, token, f"invalid token {value!r} in this context")
+                self.error(
+                    name,
+                    token,
+                    string_enum_help_text(
+                        "box-sizing", valid_values=list(VALID_BOX_SIZING), context="css"
+                    ),
+                )
 
     def process_width(self, name: str, tokens: list[Token]) -> None:
         self._process_scalar(name, tokens)
@@ -233,10 +283,16 @@ class StylesBuilder:
                     self.error(
                         name,
                         token,
-                        f"property 'visibility' has invalid value {value!r}; expected {friendly_list(VALID_VISIBILITY)}",
+                        string_enum_help_text(
+                            "visibility",
+                            valid_values=list(VALID_VISIBILITY),
+                            context="css",
+                        ),
                     )
             else:
-                self.error(name, token, f"invalid token {value!r} in this context")
+                string_enum_help_text(
+                    "visibility", valid_values=list(VALID_VISIBILITY), context="css"
+                )
 
     def process_opacity(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
@@ -265,13 +321,7 @@ class StylesBuilder:
                 error = True
 
         if error:
-            self.error(
-                name,
-                token,
-                f"property 'opacity' has invalid value {_join_tokens(tokens)!r}; "
-                f"expected a percentage or float between 0 and 1; "
-                f"example valid values: '0.4', '40%'",
-            )
+            self.error(name, token, fractional_property_help_text(name, context="css"))
 
     def _process_space(self, name: str, tokens: list[Token]) -> None:
         space: list[int] = []
@@ -282,19 +332,23 @@ class StylesBuilder:
                 try:
                     append(int(value))
                 except ValueError:
-                    self.error(name, token, f"expected a number here; found {value!r}")
+                    self.error(name, token, spacing_invalid_value(name, context="css"))
             else:
-                self.error(name, token, f"unexpected token {value!r} in declaration")
+                self.error(name, token, spacing_invalid_value(name, context="css"))
         if len(space) not in (1, 2, 4):
             self.error(
-                name, tokens[0], f"1, 2, or 4 values expected; received {len(space)}"
+                name,
+                tokens[0],
+                spacing_wrong_number_of_values(
+                    name, num_values_supplied=len(space), context="css"
+                ),
             )
         self.styles._rules[name] = Spacing.unpack(cast(SpacingDimensions, tuple(space)))
 
     def _process_space_partial(self, name: str, tokens: list[Token]) -> None:
         """Process granular margin / padding declarations."""
         if len(tokens) != 1:
-            self.error(name, tokens[0], "expected a single token here")
+            self.error(name, tokens[0], spacing_invalid_value(name, context="css"))
 
         _EDGE_SPACING_MAP = {"top": 0, "right": 1, "bottom": 2, "left": 3}
         token = tokens[0]
@@ -302,7 +356,7 @@ class StylesBuilder:
         if token_name == "number":
             space = int(value)
         else:
-            self.error(name, token, f"expected a number here; found {value!r}")
+            self.error(name, token, spacing_invalid_value(name, context="css"))
         style_name, _, edge = name.replace("-", "_").partition("_")
 
         current_spacing = cast(
@@ -332,27 +386,37 @@ class StylesBuilder:
         border_type = "solid"
         border_color = Color(0, 255, 0)
 
+        def border_value_error():
+            self.error(name, token, border_property_help_text(name, context="css"))
+
         for token in tokens:
             token_name, value, _, _, _, _ = token
             if token_name == "token":
                 if value in VALID_BORDER:
                     border_type = value
                 else:
-                    border_color = Color.parse(value)
+                    try:
+                        border_color = Color.parse(value)
+                    except ColorParseError:
+                        border_value_error()
 
             elif token_name == "color":
-                border_color = Color.parse(value)
+                try:
+                    border_color = Color.parse(value)
+                except ColorParseError:
+                    border_value_error()
+
             else:
-                self.error(name, token, f"unexpected token {value!r} in declaration")
+                border_value_error()
 
         return (border_type, border_color)
 
     def _process_border_edge(self, edge: str, name: str, tokens: list[Token]) -> None:
-        border = self._parse_border("border", tokens)
+        border = self._parse_border(name, tokens)
         self.styles._rules[f"border_{edge}"] = border
 
     def process_border(self, name: str, tokens: list[Token]) -> None:
-        border = self._parse_border("border", tokens)
+        border = self._parse_border(name, tokens)
         rules = self.styles._rules
         rules["border_top"] = rules["border_right"] = border
         rules["border_bottom"] = rules["border_left"] = border
@@ -370,11 +434,11 @@ class StylesBuilder:
         self._process_border_edge("left", name, tokens)
 
     def _process_outline(self, edge: str, name: str, tokens: list[Token]) -> None:
-        border = self._parse_border("outline", tokens)
+        border = self._parse_border(name, tokens)
         self.styles._rules[f"outline_{edge}"] = border
 
     def process_outline(self, name: str, tokens: list[Token]) -> None:
-        border = self._parse_border("outline", tokens)
+        border = self._parse_border(name, tokens)
         rules = self.styles._rules
         rules["outline_top"] = rules["outline_right"] = border
         rules["outline_bottom"] = rules["outline_left"] = border
@@ -392,23 +456,20 @@ class StylesBuilder:
         self._process_outline("left", name, tokens)
 
     def process_offset(self, name: str, tokens: list[Token]) -> None:
+        def offset_error(name: str, token: Token) -> None:
+            self.error(name, token, offset_property_help_text(context="css"))
+
         if not tokens:
             return
         if len(tokens) != 2:
-            self.error(
-                name, tokens[0], "expected two scalars or numbers in declaration"
-            )
+            offset_error(name, tokens[0])
         else:
             token1, token2 = tokens
 
             if token1.name not in ("scalar", "number"):
-                self.error(
-                    name, token1, f"expected a scalar or number; found {token1.value!r}"
-                )
+                offset_error(name, token1)
             if token2.name not in ("scalar", "number"):
-                self.error(
-                    name, token2, f"expected a scalar or number; found {token2.value!r}"
-                )
+                offset_error(name, token2)
 
             scalar_x = Scalar.parse(token1.value, Unit.WIDTH)
             scalar_y = Scalar.parse(token2.value, Unit.HEIGHT)
@@ -418,11 +479,11 @@ class StylesBuilder:
         if not tokens:
             return
         if len(tokens) != 1:
-            self.error(name, tokens[0], f"expected a single number")
+            self.error(name, tokens[0], offset_single_axis_help_text(name))
         else:
             token = tokens[0]
             if token.name not in ("scalar", "number"):
-                self.error(name, token, f"expected a scalar; found {token.value!r}")
+                self.error(name, token, offset_single_axis_help_text(name))
             x = Scalar.parse(token.value, Unit.WIDTH)
             y = self.styles.offset.y
             self.styles._rules["offset"] = ScalarOffset(x, y)
@@ -431,21 +492,23 @@ class StylesBuilder:
         if not tokens:
             return
         if len(tokens) != 1:
-            self.error(name, tokens[0], f"expected a single number")
+            self.error(name, tokens[0], offset_single_axis_help_text(name))
         else:
             token = tokens[0]
             if token.name not in ("scalar", "number"):
-                self.error(name, token, f"expected a scalar; found {token.value!r}")
+                self.error(name, token, offset_single_axis_help_text(name))
             y = Scalar.parse(token.value, Unit.HEIGHT)
             x = self.styles.offset.x
             self.styles._rules["offset"] = ScalarOffset(x, y)
 
     def process_layout(self, name: str, tokens: list[Token]) -> None:
-        from ..layouts.factory import get_layout, MissingLayout, LAYOUT_MAP
+        from ..layouts.factory import get_layout, MissingLayout
 
         if tokens:
             if len(tokens) != 1:
-                self.error(name, tokens[0], "unexpected tokens in declaration")
+                self.error(
+                    name, tokens[0], layout_property_help_text(name, context="css")
+                )
             else:
                 value = tokens[0].value
                 layout_name = value
@@ -455,7 +518,7 @@ class StylesBuilder:
                     self.error(
                         name,
                         tokens[0],
-                        f"invalid value for layout (received {value!r}, expected {friendly_list(LAYOUT_MAP.keys())})",
+                        layout_property_help_text(name, context="css"),
                     )
 
     def process_color(self, name: str, tokens: list[Token]) -> None:
@@ -465,14 +528,12 @@ class StylesBuilder:
             if token.name in ("color", "token"):
                 try:
                     self.styles._rules[name] = Color.parse(token.value)
-                except Exception as error:
+                except Exception:
                     self.error(
-                        name, token, f"failed to parse color {token.value!r}; {error}"
+                        name, token, color_property_help_text(name, context="css")
                     )
             else:
-                self.error(
-                    name, token, f"unexpected token {token.value!r} in declaration"
-                )
+                self.error(name, token, color_property_help_text(name, context="css"))
 
     process_background = process_color
     process_scrollbar_color = process_color
@@ -483,6 +544,15 @@ class StylesBuilder:
     process_scrollbar_background_active = process_color
 
     def process_text_style(self, name: str, tokens: list[Token]) -> None:
+        for token in tokens:
+            value = token.value
+            if value not in VALID_STYLE_FLAGS:
+                self.error(
+                    name,
+                    token,
+                    style_flags_property_help_text(name, value, context="css"),
+                )
+
         style_definition = " ".join(token.value for token in tokens)
         self.styles.text_style = style_definition
 
@@ -492,11 +562,14 @@ class StylesBuilder:
             self.error(
                 name,
                 tokens[1],
-                f"unexpected tokens in dock declaration",
+                dock_property_help_text(name, context="css"),
             )
         self.styles._rules["dock"] = tokens[0].value if tokens else ""
 
     def process_docks(self, name: str, tokens: list[Token]) -> None:
+        def docks_error(name, token):
+            self.error(name, token, docks_property_help_text(name, context="css"))
+
         docks: list[DockGroup] = []
         for token in tokens:
             if token.name == "key_value":
@@ -506,25 +579,15 @@ class StylesBuilder:
                 z = 0
                 if number:
                     if not number.isdigit():
-                        self.error(
-                            name, token, f"expected integer after /, found {number!r}"
-                        )
+                        docks_error(name, token)
                     z = int(number)
                 if edge_name not in VALID_EDGE:
-                    self.error(
-                        name,
-                        token,
-                        f"edge must be one of 'top', 'right', 'bottom', or 'left'; found {edge_name!r}",
-                    )
+                    docks_error(name, token)
                 docks.append(DockGroup(key.strip(), cast(Edge, edge_name), z))
             elif token.name == "bar":
                 pass
             else:
-                self.error(
-                    name,
-                    token,
-                    f"unexpected token {token.value!r} in docks declaration",
-                )
+                docks_error(name, token)
         self.styles._rules["docks"] = tuple(docks + [DockGroup("_default", "top", 0)])
 
     def process_layer(self, name: str, tokens: list[Token]) -> None:
@@ -604,34 +667,50 @@ class StylesBuilder:
         self.styles._rules["transitions"] = transitions
 
     def process_align(self, name: str, tokens: list[Token]) -> None:
+        def align_error(name, token):
+            self.error(name, token, align_help_text())
+
         if len(tokens) != 2:
-            self.error(name, tokens[0], "expected two tokens")
+            self.error(name, tokens[0], align_help_text())
+
         token_horizontal = tokens[0]
         token_vertical = tokens[1]
+
         if token_horizontal.name != "token":
-            self.error(
-                name,
-                token_horizontal,
-                f"invalid token {token_horizontal!r}, expected {friendly_list(VALID_ALIGN_HORIZONTAL)}",
-            )
+            align_error(name, token_horizontal)
+        elif token_horizontal.value not in VALID_ALIGN_HORIZONTAL:
+            align_error(name, token_horizontal)
+
         if token_vertical.name != "token":
-            self.error(
-                name,
-                token_vertical,
-                f"invalid token {token_vertical!r}, expected {friendly_list(VALID_ALIGN_VERTICAL)}",
-            )
+            align_error(name, token_vertical)
+        elif token_horizontal.value not in VALID_ALIGN_VERTICAL:
+            align_error(name, token_horizontal)
 
         name = name.replace("-", "_")
         self.styles._rules[f"{name}_horizontal"] = token_horizontal.value
         self.styles._rules[f"{name}_vertical"] = token_vertical.value
 
     def process_align_horizontal(self, name: str, tokens: list[Token]) -> None:
-        value = self._process_enum(name, tokens, VALID_ALIGN_HORIZONTAL)
-        self.styles._rules[name.replace("-", "_")] = value
+        try:
+            value = self._process_enum(name, tokens, VALID_ALIGN_HORIZONTAL)
+            self.styles._rules[name.replace("-", "_")] = value
+        except StyleValueError:
+            self.error(
+                name,
+                tokens[0],
+                string_enum_help_text(name, VALID_ALIGN_HORIZONTAL, context="css"),
+            )
 
     def process_align_vertical(self, name: str, tokens: list[Token]) -> None:
-        value = self._process_enum(name, tokens, VALID_ALIGN_VERTICAL)
-        self.styles._rules[name.replace("-", "_")] = value
+        try:
+            value = self._process_enum(name, tokens, VALID_ALIGN_VERTICAL)
+            self.styles._rules[name.replace("-", "_")] = value
+        except StyleValueError:
+            self.error(
+                name,
+                tokens[0],
+                string_enum_help_text(name, VALID_ALIGN_VERTICAL, context="css"),
+            )
 
     process_content_align = process_align
     process_content_align_horizontal = process_align_horizontal
