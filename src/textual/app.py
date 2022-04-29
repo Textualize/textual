@@ -36,6 +36,7 @@ from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLo
 from .devtools.redirect_output import StdoutRedirector
 from .dom import DOMNode
 from .driver import Driver
+from .features import parse_features, FeatureFlag
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
 from .layouts.dock import Dock
@@ -89,7 +90,6 @@ class App(Generic[ReturnType], DOMNode):
 
     def __init__(
         self,
-        screen: bool = True,
         driver_class: Type[Driver] | None = None,
         log: str = "",
         log_verbosity: int = 1,
@@ -162,11 +162,7 @@ class App(Generic[ReturnType], DOMNode):
         if css is not None:
             self.css = css
 
-        self.features = set(
-            feature.strip().lower()
-            for feature in os.getenv("TEXTUAL", "").split(",")
-            if feature.strip()
-        )
+        self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
         self.registry: set[MessagePump] = set()
 
