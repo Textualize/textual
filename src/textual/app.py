@@ -97,7 +97,6 @@ class App(Generic[ReturnType], DOMNode):
         css_file: str | None = None,
         css: str | None = None,
         watch_css: bool = True,
-        _features: str | None = None,
     ):
         """Textual application base class
 
@@ -109,7 +108,6 @@ class App(Generic[ReturnType], DOMNode):
             css_file (str | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
             css (str | None, optional): CSS code to parse, or ``None`` for no literal CSS. Defaults to None.
             watch_css (bool, optional): Watch CSS for changes. Defaults to True.
-            _features (set[str] | None, optional): Override env var features for testing. Defaults to None.
         """
         self.console = Console(
             file=sys.__stdout__, markup=False, highlight=False, emoji=False
@@ -164,9 +162,10 @@ class App(Generic[ReturnType], DOMNode):
         if css is not None:
             self.css = css
 
-        _parse_features = os.getenv("TEXTUAL", "") if _features is None else _features
         self.features = set(
-            feature.strip().lower() for feature in _parse_features.split(",") if feature
+            feature.strip().lower()
+            for feature in os.getenv("TEXTUAL", "").split(",")
+            if feature.strip()
         )
 
         self.registry: set[MessagePump] = set()

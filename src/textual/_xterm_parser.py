@@ -24,7 +24,6 @@ class XTermParser(Parser[events.Event]):
     ) -> None:
         self.sender = sender
         self.more_data = more_data
-        self.debug = debug
         self.last_x = 0
         self.last_y = 0
 
