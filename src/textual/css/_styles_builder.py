@@ -698,9 +698,7 @@ class StylesBuilder:
             self.error(
                 name,
                 tokens[0],
-                string_enum_help_text(
-                    name, VALID_ALIGN_HORIZONTAL, context="css"
-                ),
+                string_enum_help_text(name, VALID_ALIGN_HORIZONTAL, context="css"),
             )
 
     def process_align_vertical(self, name: str, tokens: list[Token]) -> None:
@@ -711,12 +709,9 @@ class StylesBuilder:
             self.error(
                 name,
                 tokens[0],
-                string_enum_help_text(
-                    name, VALID_ALIGN_VERTICAL, context="css"
-                ),
+                string_enum_help_text(name, VALID_ALIGN_VERTICAL, context="css"),
             )
 
     process_content_align = process_align
     process_content_align_horizontal = process_align_horizontal
     process_content_align_vertical = process_align_vertical
-
