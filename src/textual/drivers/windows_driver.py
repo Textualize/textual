@@ -17,8 +17,10 @@ if TYPE_CHECKING:
 class WindowsDriver(Driver):
     """Powers display and input for Windows."""
 
-    def __init__(self, console: "Console", target: "MessageTarget") -> None:
-        super().__init__(console, target)
+    def __init__(
+        self, console: "Console", target: "MessageTarget", debug: bool = False
+    ) -> None:
+        super().__init__(console, target, debug)
         self.in_fileno = sys.stdin.fileno()
         self.out_fileno = sys.stdout.fileno()
 

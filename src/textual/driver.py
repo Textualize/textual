@@ -15,9 +15,12 @@ if TYPE_CHECKING:
 
 
 class Driver(ABC):
-    def __init__(self, console: "Console", target: "MessageTarget") -> None:
+    def __init__(
+        self, console: "Console", target: "MessageTarget", debug: bool = False
+    ) -> None:
         self.console = console
         self._target = target
+        self._debug = debug
         self._loop = asyncio.get_event_loop()
         self._mouse_down_time = time()
 

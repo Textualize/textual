@@ -184,7 +184,13 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def devtools_enabled(self) -> bool:
+        """Check if devtools are enabled."""
         return "devtools" in self.features
+
+    @property
+    def debug(self) -> bool:
+        """Check if debug mode is enabled."""
+        return "debug" in self.features
 
     def exit(self, result: ReturnType | None = None) -> None:
         """Exit the app, and return the supplied result.

@@ -27,8 +27,10 @@ from .._profile import timer
 class LinuxDriver(Driver):
     """Powers display and input for Linux / MacOS"""
 
-    def __init__(self, console: "Console", target: "MessageTarget") -> None:
-        super().__init__(console, target)
+    def __init__(
+        self, console: "Console", target: "MessageTarget", debug: bool = False
+    ) -> None:
+        super().__init__(console, target, debug)
         self.fileno = sys.stdin.fileno()
         self.attrs_before: list[Any] | None = None
         self.exit_event = Event()
@@ -189,7 +191,7 @@ class LinuxDriver(Driver):
                     return True
             return False
 
-        parser = XTermParser(self._target, more_data)
+        parser = XTermParser(self._target, more_data, self._debug)
         feed = parser.feed
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode
