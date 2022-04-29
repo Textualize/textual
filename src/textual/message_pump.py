@@ -174,6 +174,7 @@ class MessagePump:
         )
 
     def close_messages_no_wait(self) -> None:
+        """Request the message queue to exit."""
         self._message_queue.put_nowait(MessagePriority(None))
 
     async def close_messages(self) -> None:

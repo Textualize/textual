@@ -24,7 +24,7 @@ from rich.style import Style
 from rich.text import Text
 
 
-from ._color_constants import ANSI_COLOR_TO_RGB
+from ._color_constants import COLOR_NAME_TO_RGB
 from .geometry import clamp
 
 
@@ -122,6 +122,11 @@ class Color(NamedTuple):
                 self.get_contrast_text().rich_color, RichColor.from_rgb(r, g, b)
             ),
         )
+
+    @property
+    def is_transparent(self) -> bool:
+        """Check if the color is transparent, i.e. has 0 alpha."""
+        return self.a == 0
 
     @property
     def clamped(self) -> Color:
@@ -253,9 +258,9 @@ class Color(NamedTuple):
         """
         if isinstance(color_text, Color):
             return color_text
-        ansi_color = ANSI_COLOR_TO_RGB.get(color_text)
-        if ansi_color is not None:
-            return cls(*ansi_color)
+        color_from_name = COLOR_NAME_TO_RGB.get(color_text)
+        if color_from_name is not None:
+            return cls(*color_from_name)
         color_match = RE_COLOR.match(color_text)
         if color_match is None:
             raise ColorParseError(f"failed to parse {color_text!r} as a color")
@@ -329,6 +334,7 @@ class Color(NamedTuple):
 # Color constants
 WHITE = Color(255, 255, 255)
 BLACK = Color(0, 0, 0)
+TRANSPARENT = Color(0, 0, 0, 0)
 
 
 class ColorPair(NamedTuple):

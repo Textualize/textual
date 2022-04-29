@@ -686,31 +686,37 @@ class StylesBuilder:
         elif token_horizontal.value not in VALID_ALIGN_VERTICAL:
             align_error(name, token_horizontal)
 
-        self.styles._rules["align_horizontal"] = token_horizontal.value
-        self.styles._rules["align_vertical"] = token_vertical.value
+        name = name.replace("-", "_")
+        self.styles._rules[f"{name}_horizontal"] = token_horizontal.value
+        self.styles._rules[f"{name}_vertical"] = token_vertical.value
 
     def process_align_horizontal(self, name: str, tokens: list[Token]) -> None:
         try:
             value = self._process_enum(name, tokens, VALID_ALIGN_HORIZONTAL)
-            self.styles._rules["align_horizontal"] = value
+            self.styles._rules[name.replace("-", "_")] = value
         except StyleValueError:
             self.error(
                 name,
                 tokens[0],
                 string_enum_help_text(
-                    "align-horizontal", VALID_ALIGN_HORIZONTAL, context="css"
+                    name, VALID_ALIGN_HORIZONTAL, context="css"
                 ),
             )
 
     def process_align_vertical(self, name: str, tokens: list[Token]) -> None:
         try:
             value = self._process_enum(name, tokens, VALID_ALIGN_VERTICAL)
-            self.styles._rules["align_vertical"] = value
+            self.styles._rules[name.replace("-", "_")] = value
         except StyleValueError:
             self.error(
                 name,
                 tokens[0],
                 string_enum_help_text(
-                    "align-vertical", VALID_ALIGN_VERTICAL, context="css"
+                    name, VALID_ALIGN_VERTICAL, context="css"
                 ),
             )
+
+    process_content_align = process_align
+    process_content_align_horizontal = process_align_horizontal
+    process_content_align_vertical = process_align_vertical
+

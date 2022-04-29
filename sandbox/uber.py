@@ -30,12 +30,12 @@ class BasicApp(App):
         )
         first_child = Placeholder(id="child1", classes={"list-item"})
         uber1 = Widget(
-            first_child,
-            Placeholder(id="child2", classes={"list-item"}),
-            Placeholder(id="child3", classes={"list-item"}),
-            Placeholder(classes={"list-item"}),
-            Placeholder(classes={"list-item"}),
-            Placeholder(classes={"list-item"}),
+            Placeholder(id="child1", classes="list-item"),
+            Placeholder(id="child2", classes="list-item"),
+            Placeholder(id="child3", classes="list-item"),
+            Placeholder(classes="list-item"),
+            Placeholder(classes="list-item"),
+            Placeholder(classes="list-item"),
         )
         self.mount(uber1=uber1)
         await first_child.focus()
@@ -44,7 +44,7 @@ class BasicApp(App):
         await self.dispatch_key(event)
 
     def action_quit(self):
-        self.panic(self.screen.tree)
+        self.panic(self.app.tree)
 
     def action_dump(self):
         self.panic(str(self.app.registry))
@@ -83,4 +83,7 @@ class BasicApp(App):
         self.focused.styles.border = ("solid", "red")
 
 
-BasicApp.run(css_file="uber.css", log="textual.log", log_verbosity=1)
+app = BasicApp(css_file="uber.css", log="textual.log", log_verbosity=1)
+
+if __name__ == "__main__":
+    app.run()

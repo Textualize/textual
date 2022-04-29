@@ -864,7 +864,7 @@ class TestParseLayout:
         css = "#some-widget { layout: dock; }"
 
         stylesheet = Stylesheet()
-        stylesheet.parse(css)
+        stylesheet.add_source(css)
 
         styles = stylesheet.rules[0].styles
         assert isinstance(styles.layout, DockLayout)
@@ -874,7 +874,8 @@ class TestParseLayout:
 
         stylesheet = Stylesheet()
         with pytest.raises(StylesheetParseError) as ex:
-            stylesheet.parse(css)
+            stylesheet.add_source(css)
+            stylesheet.parse()
 
         assert ex.value.errors is not None
 
@@ -886,7 +887,7 @@ class TestParseText:
         }
         """
         stylesheet = Stylesheet()
-        stylesheet.parse(css)
+        stylesheet.add_source(css)
 
         styles = stylesheet.rules[0].styles
         assert styles.color == Color.parse("green")
@@ -897,7 +898,7 @@ class TestParseText:
         }
         """
         stylesheet = Stylesheet()
-        stylesheet.parse(css)
+        stylesheet.add_source(css)
 
         styles = stylesheet.rules[0].styles
         assert styles.background == Color.parse("red")
@@ -933,7 +934,7 @@ class TestParseOffset:
         }}
         """
         stylesheet = Stylesheet()
-        stylesheet.parse(css)
+        stylesheet.add_source(css)
 
         styles = stylesheet.rules[0].styles
 
@@ -972,7 +973,7 @@ class TestParseOffset:
         }}
         """
         stylesheet = Stylesheet()
-        stylesheet.parse(css)
+        stylesheet.add_source(css)
 
         styles = stylesheet.rules[0].styles
 
@@ -1002,7 +1003,7 @@ class TestParseTransition:
         }}
         """
         stylesheet = Stylesheet()
-        stylesheet.parse(css)
+        stylesheet.add_source(css)
 
         styles = stylesheet.rules[0].styles
 
@@ -1017,7 +1018,7 @@ class TestParseTransition:
     def test_no_delay_specified(self):
         css = f"#some-widget {{ transition: offset-x 1 in_out_cubic; }}"
         stylesheet = Stylesheet()
-        stylesheet.parse(css)
+        stylesheet.add_source(css)
 
         styles = stylesheet.rules[0].styles
 
@@ -1032,9 +1033,11 @@ class TestParseTransition:
 
         stylesheet = Stylesheet()
         with pytest.raises(StylesheetParseError) as ex:
-            stylesheet.parse(css)
+            stylesheet.add_source(css)
+            stylesheet.parse()
 
-        stylesheet_errors = stylesheet.rules[0].errors
+        rules = stylesheet._parse_rules(css, "foo")
+        stylesheet_errors = rules[0].errors
 
         assert len(stylesheet_errors) == 1
         assert stylesheet_errors[0][0].value == invalid_func_name
@@ -1056,7 +1059,7 @@ class TestParseOpacity:
     def test_opacity_to_styles(self, css_value, styles_value):
         css = f"#some-widget {{ opacity: {css_value} }}"
         stylesheet = Stylesheet()
-        stylesheet.parse(css)
+        stylesheet.add_source(css)
 
         assert stylesheet.rules[0].styles.opacity == styles_value
         assert not stylesheet.rules[0].errors
@@ -1066,15 +1069,17 @@ class TestParseOpacity:
         stylesheet = Stylesheet()
 
         with pytest.raises(StylesheetParseError):
-            stylesheet.parse(css)
-        assert stylesheet.rules[0].errors
+            stylesheet.add_source(css)
+            stylesheet.parse()
+        rules = stylesheet._parse_rules(css, "foo")
+        assert rules[0].errors
 
 
 class TestParseMargin:
     def test_margin_partial(self):
         css = "#foo {margin: 1; margin-top: 2; margin-right: 3; margin-bottom: -1;}"
         stylesheet = Stylesheet()
-        stylesheet.parse(css)
+        stylesheet.add_source(css)
         assert stylesheet.rules[0].styles.margin == Spacing(2, 3, -1, 1)
 
 
@@ -1082,5 +1087,5 @@ class TestParsePadding:
     def test_padding_partial(self):
         css = "#foo {padding: 1; padding-top: 2; padding-right: 3; padding-bottom: -1;}"
         stylesheet = Stylesheet()
-        stylesheet.parse(css)
+        stylesheet.add_source(css)
         assert stylesheet.rules[0].styles.padding == Spacing(2, 3, -1, 1)

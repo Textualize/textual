@@ -61,7 +61,7 @@ else:
 
 if TYPE_CHECKING:
     from ..dom import DOMNode
-    from ..layout import Layout
+    from .._layout import Layout
 
 
 class RulesMap(TypedDict, total=False):
@@ -126,6 +126,9 @@ class RulesMap(TypedDict, total=False):
     align_horizontal: AlignHorizontal
     align_vertical: AlignVertical
 
+    content_align_horizontal: AlignHorizontal
+    content_align_vertical: AlignVertical
+
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
 RULE_NAMES_SET = frozenset(RULE_NAMES)
@@ -166,7 +169,7 @@ class StylesBase(ABC):
     layout = LayoutProperty()
 
     color = ColorProperty(Color(255, 255, 255))
-    background = ColorProperty(Color(0, 0, 0))
+    background = ColorProperty(Color(0, 0, 0, 0))
     text_style = StyleFlagsProperty()
 
     opacity = FractionalProperty()
@@ -207,9 +210,9 @@ class StylesBase(ABC):
 
     rich_style = StyleProperty()
 
-    scrollbar_color = ColorProperty("bright_magenta")
-    scrollbar_color_hover = ColorProperty("yellow")
-    scrollbar_color_active = ColorProperty("bright_yellow")
+    scrollbar_color = ColorProperty("ansi_bright_magenta")
+    scrollbar_color_hover = ColorProperty("ansi_yellow")
+    scrollbar_color_active = ColorProperty("ansi_bright_yellow")
 
     scrollbar_background = ColorProperty("#555555")
     scrollbar_background_hover = ColorProperty("#444444")
@@ -217,6 +220,9 @@ class StylesBase(ABC):
 
     align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
+
+    content_align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
+    content_align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles contains the same rules."""
@@ -672,6 +678,18 @@ class Styles(StylesBase):
             append_declaration("align-horizontal", self.align_horizontal)
         elif has_rule("align_horizontal"):
             append_declaration("align-vertical", self.align_vertical)
+
+        if has_rule("content_align_horizontal") and has_rule("content_align_vertical"):
+            append_declaration(
+                "content-align",
+                f"{self.content_align_horizontal} {self.content_align_vertical}",
+            )
+        elif has_rule("content_align_horizontal"):
+            append_declaration(
+                "content-align-horizontal", self.content_align_horizontal
+            )
+        elif has_rule("content_align_horizontal"):
+            append_declaration("content-align-vertical", self.content_align_vertical)
 
         lines.sort()
         return lines

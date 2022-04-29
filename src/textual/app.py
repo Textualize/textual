@@ -9,7 +9,7 @@ import warnings
 from asyncio import AbstractEventLoop
 from contextlib import redirect_stdout
 from time import perf_counter
-from typing import Any, Iterable, TextIO, Type, TYPE_CHECKING
+from typing import Any, Generic, Iterable, TextIO, Type, TypeVar, TYPE_CHECKING
 
 import rich
 import rich.repr
@@ -67,6 +67,8 @@ DEFAULT_COLORS = ColorSystem(
     dark_surface="#292929",
 )
 
+ComposeResult = Iterable[Widget]
+
 
 class AppError(Exception):
     pass
@@ -76,8 +78,11 @@ class ActionError(Exception):
     pass
 
 
+ReturnType = TypeVar("ReturnType")
+
+
 @rich.repr.auto
-class App(DOMNode):
+class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications"""
 
     css = ""
@@ -159,12 +164,28 @@ class App(DOMNode):
 
         self.devtools = DevtoolsClient()
 
+        self._return_value: ReturnType | None = None
+
         super().__init__()
 
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
     background: Reactive[str] = Reactive("black")
     dark = Reactive(False)
+
+    def exit(self, result: ReturnType | None = None) -> None:
+        """Exit the app, and return the supplied result.
+
+        Args:
+            result (ReturnType | None, optional): Return value. Defaults to None.
+        """
+        self._return_value = result
+        self.close_messages_no_wait()
+
+    def compose(self) -> ComposeResult:
+        """Yield child widgets for a container."""
+        return
+        yield
 
     def get_css_variables(self) -> dict[str, str]:
         """Get a mapping of variables used to pre-populate CSS.
@@ -284,27 +305,9 @@ class App(DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
-    @classmethod
-    def run(
-        cls,
-        console: Console | None = None,
-        screen: bool = True,
-        driver: Type[Driver] | None = None,
-        loop: AbstractEventLoop | None = None,
-        **kwargs,
-    ):
-        """Run the app.
-
-        Args:
-            console (Console, optional): Console object. Defaults to None.
-            screen (bool, optional): Enable application mode. Defaults to True.
-            driver (Type[Driver], optional): Driver class or None for default. Defaults to None.
-            loop (AbstractEventLoop): Event loop to run the application on. If not specified, uvloop will be used.
-        """
-
+    def run(self, loop: AbstractEventLoop | None = None) -> ReturnType | None:
         async def run_app() -> None:
-            app = cls(screen=screen, driver_class=driver, **kwargs)
-            await app.process_messages()
+            await self.process_messages()
 
         if loop:
             asyncio.set_event_loop(loop)
@@ -322,13 +325,15 @@ class App(DOMNode):
         finally:
             event_loop.close()
 
+        return self._return_value
+
     async def _on_css_change(self) -> None:
         """Called when the CSS changes (if watch_css is True)."""
         if self.css_file is not None:
-            stylesheet = Stylesheet(variables=self.get_css_variables())
+
             try:
                 time = perf_counter()
-                stylesheet.read(self.css_file)
+                self.stylesheet.read(self.css_file)
                 elapsed = (perf_counter() - time) * 1000
                 self.log(f"loaded {self.css_file} in {elapsed:.0f}ms")
             except Exception as error:
@@ -337,9 +342,11 @@ class App(DOMNode):
                 self.log(error)
             else:
                 self.reset_styles()
-                self.stylesheet = stylesheet
                 self.stylesheet.update(self)
                 self.screen.refresh(layout=True)
+
+    def render(self) -> RenderableType:
+        return ""
 
     def query(self, selector: str | None = None) -> DOMQuery:
         """Get a DOM query in the current screen.
@@ -498,7 +505,9 @@ class App(DOMNode):
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
             if self.css is not None:
-                self.stylesheet.parse(self.css, path=f"<{self.__class__.__name__}>")
+                self.stylesheet.add_source(
+                    self.css, path=f"<{self.__class__.__name__}>"
+                )
         except Exception as error:
             self.on_exception(error)
             self._print_error_renderables()
@@ -521,6 +530,7 @@ class App(DOMNode):
                 mount_event = events.Mount(sender=self)
                 await self.dispatch_message(mount_event)
 
+                # TODO: don't override `self.console` here
                 self.console = Console(file=sys.__stdout__)
                 self.title = self._title
                 self.refresh()
@@ -547,6 +557,12 @@ class App(DOMNode):
             if self._log_file is not None:
                 self._log_file.close()
 
+    def on_mount(self) -> None:
+        widgets = list(self.compose())
+        if widgets:
+            self.mount(*widgets)
+            self.screen.refresh()
+
     async def on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
         if self._require_styles_update:
@@ -558,6 +574,7 @@ class App(DOMNode):
             parent.children._append(child)
             self.registry.add(child)
             child.set_parent(parent)
+            child.on_register(self)
             child.start_messages()
             return True
         return False
