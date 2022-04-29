@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from difflib import get_close_matches
+from functools import lru_cache
 from typing import cast, Iterable, NoReturn
 
 import rich.repr
@@ -84,24 +86,35 @@ class StylesBuilder:
         process_method = getattr(self, f"process_{rule_name}", None)
 
         if process_method is None:
+            error_message = f"unknown declaration {declaration.name!r}"
+            did_you_mean_rule_name = self._did_you_mean_for_rule_name(declaration.name)
+            if did_you_mean_rule_name:
+                error_message += f"; did you mean {did_you_mean_rule_name!r}?"
             self.error(
                 declaration.name,
                 declaration.token,
-                f"unknown declaration {declaration.name!r}",
+                error_message,
             )
-        else:
-            tokens = declaration.tokens
+            return
 
-            important = tokens[-1].name == "important"
-            if important:
-                tokens = tokens[:-1]
-                self.styles.important.add(rule_name)
-            try:
-                process_method(declaration.name, tokens)
-            except DeclarationError:
-                raise
-            except Exception as error:
-                self.error(declaration.name, declaration.token, str(error))
+        tokens = declaration.tokens
+
+        important = tokens[-1].name == "important"
+        if important:
+            tokens = tokens[:-1]
+            self.styles.important.add(rule_name)
+        try:
+            process_method(declaration.name, tokens)
+        except DeclarationError:
+            raise
+        except Exception as error:
+            self.error(declaration.name, declaration.token, str(error))
+
+    @lru_cache(maxsize=None)
+    def _processable_rule_names(self) -> frozenset[str]:
+        return frozenset(
+            [attr[8:] for attr in dir(self) if attr.startswith("process_")]
+        )
 
     def _process_enum_multiple(
         self, name: str, tokens: list[Token], valid_values: set[str], count: int
@@ -717,3 +730,9 @@ class StylesBuilder:
     process_content_align = process_align
     process_content_align_horizontal = process_align_horizontal
     process_content_align_vertical = process_align_vertical
+
+    def _did_you_mean_for_rule_name(self, rule_name: str) -> str | None:
+        possible_matches = get_close_matches(
+            rule_name, self._processable_rule_names(), n=1
+        )
+        return None if not possible_matches else possible_matches[0]

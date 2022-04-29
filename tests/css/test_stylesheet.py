@@ -53,3 +53,40 @@ def test_color_property_parsing(css_value, expectation, expected_color):
     if expected_color:
         css_rule = stylesheet.rules[0]
         assert css_rule.styles.background == expected_color
+
+
+@pytest.mark.parametrize(
+    "css_property_name,expected_property_name_suggestion",
+    [
+        ["backgroundu", "background"],
+        ["bckgroundu", "background"],
+        ["colr", "color"],
+        ["colour", "color"],
+        ["wdth", "width"],
+        ["wth", "width"],
+        ["wh", None],
+        ["xkcd", None],
+    ],
+)
+def test_did_you_mean_for_css_property_names(
+    css_property_name, expected_property_name_suggestion
+):
+    stylesheet = Stylesheet()
+    css = """
+    * {
+      border: blue;
+      ${PROPERTY}: red;
+    }
+    """.replace(
+        "${PROPERTY}", css_property_name
+    )
+
+    with pytest.raises(StylesheetParseError) as err:
+        stylesheet.parse(css)
+
+    error_token, error_message = err.value.errors.stylesheet.rules[0].errors[0]
+    if expected_property_name_suggestion is None:
+        assert "did you mean" not in error_message
+    else:
+        expected_did_you_mean_error_message = f"unknown declaration '{css_property_name}'; did you mean '{expected_property_name_suggestion}'?"
+        assert expected_did_you_mean_error_message == error_message
