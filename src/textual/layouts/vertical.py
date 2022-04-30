@@ -14,7 +14,7 @@ class VerticalLayout(Layout):
         *,
         auto_width: bool = False,
         z: int = 0,
-        gutter: SpacingDimensions = (0, 0, 0, 0)
+        gutter: SpacingDimensions = (0, 0, 0, 0),
     ):
         self.auto_width = auto_width
         self.z = z

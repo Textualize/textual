@@ -24,7 +24,7 @@ class WindowView(View, layout=VerticalLayout):
         *,
         auto_width: bool = False,
         gutter: SpacingDimensions = (0, 0),
-        name: str | None = None
+        name: str | None = None,
     ) -> None:
         layout = VerticalLayout(gutter=gutter, auto_width=auto_width)
         self.widget = widget if isinstance(widget, Widget) else Static(widget)
