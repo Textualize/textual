@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.18] - 2022-03-30
+
+## Change
+
+- Bump typing extensions
+
 ## [0.1.17] - 2022-03-10
 
 ### Changed
