@@ -64,7 +64,7 @@ rgba\((\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*)\)$
     re.VERBOSE,
 )
 
-# Fast way to split a string of 8 characters in to 3 pairs of 2 characters
+# Fast way to split a string of 6 characters in to 3 pairs of 2 characters
 split_pairs3: Callable[[str], tuple[str, str, str]] = itemgetter(
     slice(0, 2), slice(2, 4), slice(4, 6)
 )
@@ -275,7 +275,10 @@ class Color(NamedTuple):
             rgba,
         ) = color_match.groups()
 
-        if rgb_hex is not None:
+        if rgb_hex_triple is not None:
+            r, g, b = rgb_hex_triple
+            color = cls(int(r + r, 16), int(g + g, 16), int(b + b, 16))
+        elif rgb_hex is not None:
             r, g, b = [int(pair, 16) for pair in split_pairs3(rgb_hex)]
             color = cls(r, g, b, 1.0)
         elif rgba_hex is not None:
