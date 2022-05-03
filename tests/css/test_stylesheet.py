@@ -29,8 +29,6 @@ from textual.css.tokenizer import TokenizeError
         ["red 4", pytest.raises(StylesheetParseError), None],  # space in it
         ["1", pytest.raises(StylesheetParseError), None],  # invalid value
         ["()", pytest.raises(TokenizeError), None],  # invalid tokens
-        # TODO: implement hex colors with 3 chars? @link https://devdocs.io/css/color_value
-        ["#09f", pytest.raises(TokenizeError), None],
         # TODO: allow spaces in rgb/rgba expressions?
         ["rgb(200, 90, 30)", pytest.raises(TokenizeError), None],
         ["rgba(200,90,30, 0.4)", pytest.raises(TokenizeError), None],
