@@ -114,12 +114,7 @@ class Timer:
                     continue
                 wait_time = max(0, next_timer - monotonic())
                 if wait_time:
-                    try:
-                        await sleep(wait_time)
-                    except asyncio.CancelledError:
-                        # Likely our program terminating: this is fine, we just have to
-                        # shut down out asyncio Task properly:
-                        await self.stop()
+                    await sleep(wait_time)
                 event = events.Timer(
                     self.sender,
                     timer=self,

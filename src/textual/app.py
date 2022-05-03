@@ -325,6 +325,8 @@ class App(Generic[ReturnType], DOMNode):
         )
 
     def run(self) -> ReturnType | None:
+        """The entry point to run a Textual app."""
+
         async def run_app() -> None:
             await self.process_messages()
 
@@ -340,6 +342,10 @@ class App(Generic[ReturnType], DOMNode):
 
     @classmethod
     def _init_uvloop(cls) -> None:
+        """
+        Import and install the `uvloop` asyncio policy, if available.
+        This is done only once, even if the method is called multiple times.
+        """
         if hasattr(cls, "__uvloop_installed"):
             return
         cls.__uvloop_installed = False
@@ -518,7 +524,7 @@ class App(Generic[ReturnType], DOMNode):
         active_app.set(self)
         log("---")
         log(f"driver={self.driver_class}")
-        log(f"uvloop installed: {self.__class__.__uvloop_installed!r}")
+        log(f"asyncio running loop={asyncio.get_running_loop()!r}")
 
         if self.devtools_enabled:
             try:
