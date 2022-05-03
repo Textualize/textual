@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import weakref
 from asyncio import (
     get_event_loop,
@@ -84,7 +85,7 @@ class Timer:
         Returns:
             Task: A Task instance for the timer.
         """
-        self._task = get_event_loop().create_task(self._run())
+        self._task = asyncio.create_task(self._run())
         return self._task
 
     async def stop(self) -> None:
@@ -114,7 +115,12 @@ class Timer:
                     continue
                 wait_time = max(0, next_timer - monotonic())
                 if wait_time:
-                    await sleep(wait_time)
+                    try:
+                        await sleep(wait_time)
+                    except asyncio.CancelledError:
+                        # Likely our program terminating: this is fine, we just have to
+                        # shut down out asyncio Task properly:
+                        await self.stop()
                 event = events.Timer(
                     self.sender,
                     timer=self,

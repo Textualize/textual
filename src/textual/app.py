@@ -54,6 +54,9 @@ WINDOWS = PLATFORM == "Windows"
 # asyncio will warn against resources not being cleared
 warnings.simplefilter("always", ResourceWarning)
 
+# `asyncio.get_event_loop()` is deprecated since Python 3.10:
+_ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
+
 LayoutDefinition = "dict[str, Any]"
 
 
@@ -109,6 +112,8 @@ class App(Generic[ReturnType], DOMNode):
             css (str | None, optional): CSS code to parse, or ``None`` for no literal CSS. Defaults to None.
             watch_css (bool, optional): Watch CSS for changes. Defaults to True.
         """
+        App._init_uvloop()
+
         self.console = Console(
             file=sys.__stdout__, markup=False, highlight=False, emoji=False
         )
@@ -319,27 +324,32 @@ class App(Generic[ReturnType], DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
-    def run(self, loop: AbstractEventLoop | None = None) -> ReturnType | None:
+    def run(self) -> ReturnType | None:
         async def run_app() -> None:
             await self.process_messages()
 
-        if loop:
-            asyncio.set_event_loop(loop)
-        else:
-            try:
-                import uvloop
-            except ImportError:
-                pass
-            else:
-                asyncio.set_event_loop(uvloop.new_event_loop())
-
-        event_loop = asyncio.get_event_loop()
-        try:
+        if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
+            # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
             asyncio.run(run_app())
-        finally:
-            event_loop.close()
+        else:
+            # However, this works with Python<3.10:
+            event_loop = asyncio.get_event_loop()
+            event_loop.run_until_complete(run_app())
 
         return self._return_value
+
+    @classmethod
+    def _init_uvloop(cls) -> None:
+        if hasattr(cls, "__uvloop_installed"):
+            return
+        cls.__uvloop_installed = False
+        try:
+            import uvloop
+        except ImportError:
+            pass
+        else:
+            uvloop.install()
+            cls.__uvloop_installed = True
 
     async def _on_css_change(self) -> None:
         """Called when the CSS changes (if watch_css is True)."""
@@ -508,6 +518,7 @@ class App(Generic[ReturnType], DOMNode):
         active_app.set(self)
         log("---")
         log(f"driver={self.driver_class}")
+        log(f"uvloop installed: {self.__class__.__uvloop_installed!r}")
 
         if self.devtools_enabled:
             try:
