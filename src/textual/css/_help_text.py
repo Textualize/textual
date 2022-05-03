@@ -149,7 +149,7 @@ def property_invalid_value_help_text(
         suggested_property_name = _contextualize_property_name(
             suggested_property_name, context
         )
-        bullets.append(Bullet(f"Did you mean [i]{suggested_property_name}[/]?"))
+        bullets.append(Bullet(f'Did you mean "{suggested_property_name}"?'))
     return HelpText(f"Invalid CSS property [i]{property_name}[/]", bullets=bullets)
 
 

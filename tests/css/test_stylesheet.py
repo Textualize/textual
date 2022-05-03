@@ -64,6 +64,7 @@ def test_color_property_parsing(css_value, expectation, expected_color):
         ["backgroundu", "background"],
         ["bckgroundu", "background"],
         ["ofset-x", "offset-x"],
+        ["ofst_y", "offset-y"],
         ["colr", "color"],
         ["colour", "color"],
         ["wdth", "width"],
@@ -73,7 +74,7 @@ def test_color_property_parsing(css_value, expectation, expected_color):
     ],
 )
 def test_did_you_mean_for_css_property_names(
-    css_property_name, expected_property_name_suggestion
+    css_property_name: str, expected_property_name_suggestion
 ):
     stylesheet = Stylesheet()
     css = """
@@ -90,12 +91,15 @@ def test_did_you_mean_for_css_property_names(
         stylesheet.parse()
 
     _, help_text = err.value.errors.rules[0].errors[0]  # type: Any, HelpText
-    assert help_text.summary == f"Invalid CSS property [i]{css_property_name}[/]"
+    displayed_css_property_name = css_property_name.replace("_", "-")
+    assert (
+        help_text.summary == f"Invalid CSS property [i]{displayed_css_property_name}[/]"
+    )
 
     expected_bullets_length = 1 if expected_property_name_suggestion else 0
     assert len(help_text.bullets) == expected_bullets_length
     if expected_property_name_suggestion is not None:
         expected_suggestion_message = (
-            f"Did you mean [i]{expected_property_name_suggestion}[/]?"
+            f'Did you mean "{expected_property_name_suggestion}"?'
         )
         assert help_text.bullets[0].markup == expected_suggestion_message

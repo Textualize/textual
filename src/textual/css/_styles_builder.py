@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from difflib import get_close_matches
 from functools import lru_cache
-from typing import cast, Iterable, NoReturn
+from typing import cast, Iterable, NoReturn, Sequence
 
 import rich.repr
 
@@ -47,6 +46,7 @@ from ..color import Color, ColorParseError
 from .._duration import _duration_as_seconds
 from .._easing import EASING
 from ..geometry import Spacing, SpacingDimensions, clamp
+from ..suggestions import get_suggestion
 
 
 def _join_tokens(tokens: Iterable[Token], joiner: str = "") -> str:
@@ -87,7 +87,7 @@ class StylesBuilder:
         process_method = getattr(self, f"process_{rule_name}", None)
 
         if process_method is None:
-            suggested_property_name = self._suggested_property_name_for_rule(
+            suggested_property_name = self._get_suggested_property_name_for_rule(
                 declaration.name
             )
             self.error(
@@ -115,12 +115,14 @@ class StylesBuilder:
             self.error(declaration.name, declaration.token, str(error))
 
     @lru_cache(maxsize=None)
-    def _processable_rule_names(self) -> frozenset[str]:
-        return frozenset(
-            [attr[8:] for attr in dir(self) if attr.startswith("process_")]
-        )
+    def _get_processable_rule_names(self) -> Sequence[str]:
+        """
+        Returns the list of CSS properties we can manage -
+        i.e. the ones for which we have a `process_[property name]` method
+        """
+        return [attr[8:] for attr in dir(self) if attr.startswith("process_")]
 
-    def _process_enum_multiple(
+    def _get_process_enum_multiple(
         self, name: str, tokens: list[Token], valid_values: set[str], count: int
     ) -> tuple[str, ...]:
         """Generic code to process a declaration with two enumerations, like overflow: auto auto"""
@@ -745,8 +747,10 @@ class StylesBuilder:
     process_content_align_horizontal = process_align_horizontal
     process_content_align_vertical = process_align_vertical
 
-    def _suggested_property_name_for_rule(self, rule_name: str) -> str | None:
-        possible_matches = get_close_matches(
-            rule_name, self._processable_rule_names(), n=1
-        )
-        return None if not possible_matches else possible_matches[0]
+    def _get_suggested_property_name_for_rule(self, rule_name: str) -> str | None:
+        """
+        Returns a valid CSS property "Python" name, or None if no close matches could be found.
+
+        Example: returns "background" for rule_name "bkgrund", "offset_x" for "ofset_x"
+        """
+        return get_suggestion(rule_name, self._get_processable_rule_names())
