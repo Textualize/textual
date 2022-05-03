@@ -278,6 +278,11 @@ class Color(NamedTuple):
         if rgb_hex_triple is not None:
             r, g, b = rgb_hex_triple
             color = cls(int(r + r, 16), int(g + g, 16), int(b + b, 16))
+        elif rgb_hex_quad is not None:
+            r, g, b, a = rgb_hex_quad
+            color = cls(
+                int(r + r, 16), int(g + g, 16), int(b + b, 16), int(a + a, 16) / 255.0
+            )
         elif rgb_hex is not None:
             r, g, b = [int(pair, 16) for pair in split_pairs3(rgb_hex)]
             color = cls(r, g, b, 1.0)
