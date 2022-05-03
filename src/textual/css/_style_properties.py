@@ -22,7 +22,7 @@ from ._help_text import (
     style_flags_property_help_text,
 )
 from ._help_text import (
-    spacing_wrong_number_of_values,
+    spacing_wrong_number_of_values_help_text,
     scalar_help_text,
     string_enum_help_text,
     color_property_help_text,
@@ -415,7 +415,7 @@ class SpacingProperty:
             except ValueError as error:
                 raise StyleValueError(
                     str(error),
-                    help_text=spacing_wrong_number_of_values(
+                    help_text=spacing_wrong_number_of_values_help_text(
                         property_name=self.name,
                         num_values_supplied=len(spacing),
                         context="inline",
