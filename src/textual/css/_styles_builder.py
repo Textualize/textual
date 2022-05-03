@@ -119,6 +119,11 @@ class StylesBuilder:
         """
         Returns the list of CSS properties we can manage -
         i.e. the ones for which we have a `process_[property name]` method
+
+        Returns:
+            Sequence[str]: All the "Python-ised" CSS property names this class can handle.
+
+        Example: ("width", "background", "offset_x", ...)
         """
         return [attr[8:] for attr in dir(self) if attr.startswith("process_")]
 
@@ -750,6 +755,13 @@ class StylesBuilder:
     def _get_suggested_property_name_for_rule(self, rule_name: str) -> str | None:
         """
         Returns a valid CSS property "Python" name, or None if no close matches could be found.
+
+        Args:
+            rule_name (str): An invalid "Python-ised" CSS property (i.e. "offst_x" rather than "offst-x")
+
+        Returns:
+            str | None: The closest valid "Python-ised" CSS property.
+                Returns `None` if no close matches could be found.
 
         Example: returns "background" for rule_name "bkgrund", "offset_x" for "ofset_x"
         """
