@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import weakref
 from asyncio import (
-    get_event_loop,
     CancelledError,
     Event,
     sleep,

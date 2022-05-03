@@ -21,7 +21,7 @@ class Driver(ABC):
         self.console = console
         self._target = target
         self._debug = debug
-        self._loop = asyncio.get_event_loop()
+        self._loop = asyncio.get_running_loop()
         self._mouse_down_time = time()
 
     def send_event(self, event: events.Event) -> None:
