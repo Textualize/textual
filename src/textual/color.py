@@ -1,7 +1,7 @@
 """
 Manages Color in Textual.
 
-All instances where the developer is presented with a color should use this class. The only 
+All instances where the developer is presented with a color should use this class. The only
 exception should be when passing things to a Rich renderable, which will need to use the
 `rich_color` attribute to perform a conversion.
 
@@ -54,6 +54,8 @@ class Lab(NamedTuple):
 
 RE_COLOR = re.compile(
     r"""^
+\#([0-9a-fA-F]{3})$|
+\#([0-9a-fA-F]{4})$|
 \#([0-9a-fA-F]{6})$|
 \#([0-9a-fA-F]{8})$|
 rgb\((\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*)\)$|
@@ -264,7 +266,14 @@ class Color(NamedTuple):
         color_match = RE_COLOR.match(color_text)
         if color_match is None:
             raise ColorParseError(f"failed to parse {color_text!r} as a color")
-        rgb_hex, rgba_hex, rgb, rgba = color_match.groups()
+        (
+            rgb_hex_triple,
+            rgb_hex_quad,
+            rgb_hex,
+            rgba_hex,
+            rgb,
+            rgba,
+        ) = color_match.groups()
 
         if rgb_hex is not None:
             r, g, b = [int(pair, 16) for pair in split_pairs3(rgb_hex)]
