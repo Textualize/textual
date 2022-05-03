@@ -9,7 +9,16 @@ import warnings
 from asyncio import AbstractEventLoop
 from contextlib import redirect_stdout
 from time import perf_counter
-from typing import Any, Generic, Iterable, TextIO, Type, TypeVar, TYPE_CHECKING
+from typing import (
+    Any,
+    Generic,
+    Iterable,
+    Iterator,
+    TextIO,
+    Type,
+    TypeVar,
+    TYPE_CHECKING,
+)
 
 import rich
 import rich.repr
@@ -29,6 +38,7 @@ from ._callback import invoke
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
 from ._profile import timer
+from ._timer import Timer
 from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet, StylesheetError
 from .design import ColorSystem
@@ -163,12 +173,10 @@ class App(Generic[ReturnType], DOMNode):
             self.css = css
 
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
-
         self.registry: set[MessagePump] = set()
-
         self.devtools = DevtoolsClient()
-
         self._return_value: ReturnType | None = None
+        self._focus_timer: Timer | None = None
 
         super().__init__()
 
@@ -195,6 +203,80 @@ class App(Generic[ReturnType], DOMNode):
         """
         self._return_value = result
         self.close_messages_no_wait()
+
+    @property
+    def _focusable_widgets(self) -> list[Widget]:
+        """Get widgets that may receive focus"""
+        widgets: list[Widget] = []
+        add_widget = widgets.append
+        root = self.screen
+        stack: list[Iterator[Widget]] = [iter(root.children)]
+        pop = stack.pop
+        push = stack.append
+
+        while stack:
+            node = next(stack[-1], None)
+            if node is None:
+                pop()
+            else:
+                if node.is_container:
+                    push(iter(node.children))
+                else:
+                    if node.can_focus:
+                        add_widget(node)
+
+        return widgets
+
+    def show_focus(self) -> None:
+        """Highlight the currently focused widget."""
+        self.move_focus(0)
+
+    def move_focus(self, direction: int = 0) -> None:
+        """Move the focus in the given direction.
+
+        Args:
+            direction (int, optional): 1 to move forward, -1 to move backward, or
+                0 to highlight the current focus.
+        """
+
+        if self._focus_timer:
+            self._focus_timer.stop_no_wait()
+        focusable_widgets = self._focusable_widgets
+
+        if not focusable_widgets:
+            # Nothing focusable, so nothing to do
+            return
+        if self.focused is None:
+            # Nothing currently focused, so focus the first one
+            self.set_focus(focusable_widgets[0])
+        else:
+            try:
+                # Find the index of the currently focused widget
+                current_index = focusable_widgets.index(self.focused)
+            except ValueError:
+                # Focused widget was removed in the interim, start again
+                self.set_focus(focusable_widgets[0])
+            else:
+                # Only move the focus if we are currently showing the focus
+                if direction and self.has_class("-show-focus"):
+                    current_index = (current_index + direction) % len(focusable_widgets)
+                    self.set_focus(focusable_widgets[current_index])
+
+        self._focus_timer = self.set_timer(3, self.hide_focus)
+        self.add_class("-show-focus")
+        self.screen.refresh_layout()
+
+    def focus_next(self) -> None:
+        """Focus the next widget."""
+        self.move_focus(1)
+
+    def focus_previous(self) -> None:
+        """Focus the previous widget."""
+        self.move_focus(-1)
+
+    def hide_focus(self) -> None:
+        """Hide the focus."""
+        self.remove_class("-show-focus")
 
     def compose(self) -> ComposeResult:
         """Yield child widgets for a container."""
@@ -405,13 +487,15 @@ class App(Generic[ReturnType], DOMNode):
         self._screen_stack.append(screen)
         return screen
 
-    async def set_focus(self, widget: Widget | None) -> None:
+    def set_focus(self, widget: Widget | None) -> None:
         """Focus (or unfocus) a widget. A focused widget will receive key events first.
 
         Args:
             widget (Widget): [description]
         """
+        self.log("set_focus", widget)
         if widget == self.focused:
+            self.log("already focused")
             # Widget is already focused
             return
 
@@ -419,13 +503,13 @@ class App(Generic[ReturnType], DOMNode):
             if self.focused is not None:
                 focused = self.focused
                 self.focused = None
-                await focused.post_message(events.Blur(self))
+                focused.post_message_no_wait(events.Blur(self))
         elif widget.can_focus:
             if self.focused is not None:
-                await self.focused.post_message(events.Blur(self))
+                self.focused.post_message_no_wait(events.Blur(self))
             if widget is not None and self.focused != widget:
                 self.focused = widget
-                await widget.post_message(events.Focus(self))
+                widget.post_message_no_wait(events.Focus(self))
 
     async def set_mouse_over(self, widget: Widget | None) -> None:
         if widget is None:
@@ -845,7 +929,12 @@ class App(Generic[ReturnType], DOMNode):
         self.app.refresh()
 
     async def on_key(self, event: events.Key) -> None:
-        await self.press(event.key)
+        if event.key == "tab":
+            self.focus_next()
+        elif event.key == "shift+tab":
+            self.focus_previous()
+        else:
+            await self.press(event.key)
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log("shutdown request")

@@ -87,6 +87,10 @@ class Timer:
         self._task = get_event_loop().create_task(self._run())
         return self._task
 
+    def stop_no_wait(self) -> None:
+        """Stop the timer, and block until it exists."""
+        self._task.cancel()
+
     async def stop(self) -> None:
         """Stop the timer, and block until it exists."""
         self._task.cancel()

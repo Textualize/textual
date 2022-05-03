@@ -33,6 +33,7 @@ from . import messages
 from ._layout import Layout
 from .reactive import Reactive, watch
 from .renderables.opacity import Opacity
+from .renderables.tint import Tint
 
 
 if TYPE_CHECKING:
@@ -466,6 +467,8 @@ class Widget(DOMNode):
                 outline=True,
             )
 
+        if styles.tint.a != 0:
+            renderable = Tint(renderable, styles.tint)
         if styles.opacity != 1.0:
             renderable = Opacity(renderable, opacity=styles.opacity)
 
@@ -665,9 +668,9 @@ class Widget(DOMNode):
         elif self._dirty_regions:
             self.emit_no_wait(messages.Update(self, self))
 
-    async def focus(self) -> None:
+    def focus(self) -> None:
         """Give input focus to this widget."""
-        await self.app.set_focus(self)
+        self.app.set_focus(self)
 
     async def capture_mouse(self, capture: bool = True) -> None:
         """Capture (or release) the mouse.
@@ -712,6 +715,12 @@ class Widget(DOMNode):
 
     def on_enter(self) -> None:
         self.mouse_over = True
+
+    def on_focus(self, event: events.Focus) -> None:
+        self.has_focus = True
+
+    def on_blur(self, event: events.Blur) -> None:
+        self.has_focus = False
 
     def on_mouse_scroll_down(self, event) -> None:
         if self.is_container:

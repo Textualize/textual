@@ -130,9 +130,14 @@ class MessagePump:
         """
         if self._pending_message is None:
             try:
-                self._pending_message = self._message_queue.get_nowait().message
+                message = self._message_queue.get_nowait().message
             except QueueEmpty:
                 pass
+            else:
+                if message is None:
+                    self._closed = True
+                    raise MessagePumpClosed("The message pump is now closed")
+                self._pending_message = message
 
         if self._pending_message is not None:
             return self._pending_message
@@ -219,10 +224,12 @@ class MessagePump:
 
             # Combine any pending messages that may supersede this one
             while not (self._closed or self._closing):
-                pending = self.peek_message()
+                try:
+                    pending = self.peek_message()
+                except MessagePumpClosed:
+                    break
                 if pending is None or not message.can_replace(pending):
                     break
-                # self.log(message, "replaced with", pending)
                 try:
                     message = await self.get_message()
                 except MessagePumpClosed:

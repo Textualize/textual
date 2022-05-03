@@ -439,6 +439,7 @@ class DOMNode(MessagePump):
 
         """
         self._classes.update(class_names)
+        self.app.stylesheet.update(self.app, animate=True)
         self.refresh()
 
     def remove_class(self, *class_names: str) -> None:
@@ -449,6 +450,7 @@ class DOMNode(MessagePump):
 
         """
         self._classes.difference_update(class_names)
+        self.app.stylesheet.update(self.app, animate=True)
         self.refresh()
 
     def toggle_class(self, *class_names: str) -> None:

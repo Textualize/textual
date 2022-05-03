@@ -155,6 +155,12 @@ class Color(NamedTuple):
         return (r / 255, g / 255, b / 255)
 
     @property
+    def rgb(self) -> tuple[int, int, int]:
+        """Get just the red, green, and blue components."""
+        r, g, b, _ = self
+        return (r, g, b)
+
+    @property
     def hls(self) -> HLS:
         """Get the color as HLS."""
         r, g, b = self.normalized

@@ -14,10 +14,11 @@ class ButtonsApp(App[str]):
 
     def handle_pressed(self, event: Button.Pressed) -> None:
         self.app.bell()
+        self.log("pressed", event.button.id)
         self.exit(event.button.id)
 
 
-app = ButtonsApp(log="textual.log")
+app = ButtonsApp(log="textual.log", log_verbosity=2)
 
 if __name__ == "__main__":
     result = app.run()
