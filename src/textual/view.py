@@ -14,7 +14,7 @@ from .layout import Layout, NoWidget, WidgetPlacement
 from .geometry import Size, Offset, Region
 from .reactive import Reactive, watch
 
-from .widget import Widget, Widget
+from .widget import Widget
 
 
 if TYPE_CHECKING:
