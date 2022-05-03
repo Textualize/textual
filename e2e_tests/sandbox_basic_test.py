@@ -14,6 +14,11 @@ def launch_sandbox_script():
     basic_app.run()
 
 
+# The following line seems to be required in order to have this work in the MacOS part
+# of our CI - despite the fact that Python docs say that this function
+# "has no effect when invoked on any operating system other than Windows" 🤔
+multiprocessing.freeze_support()
+
 process = multiprocessing.Process(target=launch_sandbox_script, daemon=True)
 process.start()
 
