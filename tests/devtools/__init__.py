@@ -3,7 +3,6 @@ import sys
 
 import pytest
 
-
 _MACOS_CI = sys.platform == "darwin" and os.getenv("CI", "0") != "0"
 _WINDOWS = sys.platform == "win32"
 
