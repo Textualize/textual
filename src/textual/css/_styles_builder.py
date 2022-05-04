@@ -127,7 +127,7 @@ class StylesBuilder:
         """
         return [attr[8:] for attr in dir(self) if attr.startswith("process_")]
 
-    def _get_process_enum_multiple(
+    def _process_enum_multiple(
         self, name: str, tokens: list[Token], valid_values: set[str], count: int
     ) -> tuple[str, ...]:
         """Generic code to process a declaration with two enumerations, like overflow: auto auto"""
