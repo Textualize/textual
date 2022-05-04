@@ -160,9 +160,9 @@ class Screen(Widget):
             else:
                 widget, region = self.get_widget_at(event.x, event.y)
         except errors.NoWidget:
-            await self.app.set_mouse_over(None)
+            await self.app._set_mouse_over(None)
         else:
-            await self.app.set_mouse_over(widget)
+            await self.app._set_mouse_over(widget)
             mouse_event = events.MouseMove(
                 self,
                 event.x - region.x,

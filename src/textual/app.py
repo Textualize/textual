@@ -25,6 +25,7 @@ import rich.repr
 from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.measure import Measurement
+from rich.protocol import is_renderable
 from rich.screen import Screen as ScreenRenderable
 from rich.segment import Segments
 from rich.traceback import Traceback
@@ -96,7 +97,9 @@ ReturnType = TypeVar("ReturnType")
 class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications"""
 
-    css = ""
+    css = """
+
+    """
 
     def __init__(
         self,
@@ -205,7 +208,7 @@ class App(Generic[ReturnType], DOMNode):
         self.close_messages_no_wait()
 
     @property
-    def _focusable_widgets(self) -> list[Widget]:
+    def focus_chain(self) -> list[Widget]:
         """Get widgets that may receive focus"""
         widgets: list[Widget] = []
         add_widget = widgets.append
@@ -219,7 +222,7 @@ class App(Generic[ReturnType], DOMNode):
             if node is None:
                 pop()
             else:
-                if node.is_container:
+                if node.is_container and node.can_focus:
                     push(iter(node.children))
                 else:
                     if node.can_focus:
@@ -227,25 +230,25 @@ class App(Generic[ReturnType], DOMNode):
 
         return widgets
 
-    def show_focus(self) -> None:
-        """Highlight the currently focused widget."""
-        self.move_focus(0)
+    def _set_active(self) -> None:
+        active_app.set(self)
 
-    def move_focus(self, direction: int = 0) -> None:
+    def _move_focus(self, direction: int = 0) -> Widget | None:
         """Move the focus in the given direction.
 
         Args:
             direction (int, optional): 1 to move forward, -1 to move backward, or
                 0 to highlight the current focus.
         """
-
         if self._focus_timer:
+            # Cancel the timer that clears the show focus class
+            # We will be creating a new timer to extend the time until the focus is hidden
             self._focus_timer.stop_no_wait()
-        focusable_widgets = self._focusable_widgets
+        focusable_widgets = self.focus_chain
 
         if not focusable_widgets:
             # Nothing focusable, so nothing to do
-            return
+            return self.focused
         if self.focused is None:
             # Nothing currently focused, so focus the first one
             self.set_focus(focusable_widgets[0])
@@ -262,17 +265,21 @@ class App(Generic[ReturnType], DOMNode):
                     current_index = (current_index + direction) % len(focusable_widgets)
                     self.set_focus(focusable_widgets[current_index])
 
-        self._focus_timer = self.set_timer(3, self.hide_focus)
+        self._focus_timer = self.set_timer(2, self.hide_focus)
         self.add_class("-show-focus")
-        self.screen.refresh_layout()
+        return self.focused
 
-    def focus_next(self) -> None:
+    def show_focus(self) -> Widget | None:
+        """Highlight the currently focused widget."""
+        return self._move_focus(0)
+
+    def focus_next(self) -> Widget | None:
         """Focus the next widget."""
-        self.move_focus(1)
+        return self._move_focus(1)
 
-    def focus_previous(self) -> None:
+    def focus_previous(self) -> Widget | None:
         """Focus the previous widget."""
-        self.move_focus(-1)
+        return self._move_focus(-1)
 
     def hide_focus(self) -> None:
         """Hide the focus."""
@@ -483,9 +490,10 @@ class App(Generic[ReturnType], DOMNode):
         self.register(self.screen, *anon_widgets, **widgets)
         self.screen.refresh()
 
-    async def push_screen(self, screen: Screen) -> Screen:
-        self._screen_stack.append(screen)
-        return screen
+    def push_screen(self, screen: Screen | None = None) -> Screen:
+        new_screen = Screen() if screen is None else screen
+        self._screen_stack.append(new_screen)
+        return new_screen
 
     def set_focus(self, widget: Widget | None) -> None:
         """Focus (or unfocus) a widget. A focused widget will receive key events first.
@@ -493,25 +501,32 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widget (Widget): [description]
         """
-        self.log("set_focus", widget)
+        self.log("set_focus", widget=widget)
         if widget == self.focused:
-            self.log("already focused")
             # Widget is already focused
             return
 
         if widget is None:
-            if self.focused is not None:
-                focused = self.focused
-                self.focused = None
-                focused.post_message_no_wait(events.Blur(self))
-        elif widget.can_focus:
+            # No focus, so blur currently focused widget if it exists
             if self.focused is not None:
                 self.focused.post_message_no_wait(events.Blur(self))
-            if widget is not None and self.focused != widget:
+                self.focused = None
+        elif widget.can_focus:
+            if self.focused != widget:
+                if self.focused is not None:
+                    # Blur currently focused widget
+                    self.focused.post_message_no_wait(events.Blur(self))
+                # Change focus
                 self.focused = widget
+                # Send focus event
                 widget.post_message_no_wait(events.Focus(self))
 
-    async def set_mouse_over(self, widget: Widget | None) -> None:
+    async def _set_mouse_over(self, widget: Widget | None) -> None:
+        """Called when the mouse is over a nother widget.
+
+        Args:
+            widget (Widget | None): Widget under mouse, or None for no widgets.
+        """
         if widget is None:
             if self.mouse_over is not None:
                 try:
@@ -551,6 +566,10 @@ class App(Generic[ReturnType], DOMNode):
             *renderables (RenderableType, optional): Rich renderables to display on exit.
         """
 
+        assert all(
+            is_renderable(renderable) for renderable in renderables
+        ), "Can only call panic with strings or Rich renderables"
+
         prerendered = [
             Segments(self.console.render(renderable, self.console.options))
             for renderable in renderables
@@ -589,7 +608,7 @@ class App(Generic[ReturnType], DOMNode):
         self._exit_renderables.clear()
 
     async def process_messages(self) -> None:
-        active_app.set(self)
+        self._set_active()
         log("---")
         log(f"driver={self.driver_class}")
 
@@ -835,7 +854,7 @@ class App(Generic[ReturnType], DOMNode):
         if isinstance(event, events.Mount):
             screen = Screen()
             self.register(self, screen)
-            await self.push_screen(screen)
+            self.push_screen(screen)
             await super().on_event(event)
 
         elif isinstance(event, events.InputEvent) and not event.is_forwarded:
@@ -876,12 +895,18 @@ class App(Generic[ReturnType], DOMNode):
             action_target = default_namespace or self
             action_name = target
 
-        log("ACTION", action_target, action_name)
+        log("action", action)
         await self.dispatch_action(action_target, action_name, params)
 
     async def dispatch_action(
         self, namespace: object, action_name: str, params: Any
     ) -> None:
+        log(
+            "dispatch_action",
+            namespace=namespace,
+            action_name=action_name,
+            params=params,
+        )
         _rich_traceback_guard = True
         method_name = f"action_{action_name}"
         method = getattr(namespace, method_name, None)

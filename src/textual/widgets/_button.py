@@ -36,8 +36,7 @@ class Button(Widget, can_focus=True):
     }
 
     App.-show-focus Button:focus {
-        tint: $accent 20%;
-        
+        tint: $accent 20%;        
     }
     
     """
@@ -80,7 +79,5 @@ class Button(Widget, can_focus=True):
             await self.emit(Button.Pressed(self))
 
     async def on_key(self, event: events.Key) -> None:
-        self.log("BUTTON KEY", event)
         if event.key == "enter" and not self.disabled:
-            self.log("PRESSEd")
             await self.emit(Button.Pressed(self))

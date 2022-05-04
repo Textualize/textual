@@ -529,7 +529,7 @@ class Widget(DOMNode):
         Returns:
             bool: True if this widget is a container.
         """
-        return self.styles.layout is not None
+        return self.styles.layout is not None or bool(self.children)
 
     def watch_mouse_over(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""

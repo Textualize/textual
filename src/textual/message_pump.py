@@ -240,7 +240,7 @@ class MessagePump:
             except CancelledError:
                 raise
             except Exception as error:
-                self.app.panic(error)
+                self.app.on_exception(error)
                 break
             finally:
                 if self._message_queue.empty():
