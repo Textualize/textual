@@ -33,7 +33,7 @@ class DevConsoleHeader:
         lines = Renderables(
             [
                 f"[bold]Textual Development Console [magenta]v{version('textual')}",
-                "[magenta]Run a Textual app with the environment variable [b]TEXTUAL_DEVTOOLS=1[/] to connect.",
+                "[magenta]Run a Textual app with the environment variable [b]TEXTUAL=devtools[/] to connect.",
                 "[magenta]Press [b]Ctrl+C[/] to quit.",
             ]
         )
