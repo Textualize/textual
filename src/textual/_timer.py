@@ -88,11 +88,11 @@ class Timer:
         return self._task
 
     def stop_no_wait(self) -> None:
-        """Stop the timer, and block until it exists."""
+        """Stop the timer."""
         self._task.cancel()
 
     async def stop(self) -> None:
-        """Stop the timer, and block until it exists."""
+        """Stop the timer, and block until it exits."""
         self._task.cancel()
         await self._task
 
