@@ -1,0 +1,227 @@
+/* CSS file for basic.py */
+
+
+
+* {
+    transition: color 300ms linear, background 300ms linear;
+}
+
+
+* {
+  scrollbar-background: $panel-darken-2;
+  scrollbar-background-hover: $panel-darken-3;
+  scrollbar-color: $system;
+  scrollbar-color-active: $accent-darken-1;
+}
+
+App > Screen {
+  layout: dock;
+  docks: side=left/1;
+  background: $surface;
+  color: $text-surface;
+}
+
+
+#sidebar {
+  color: $text-primary;
+  background: $primary;
+  dock: side;
+  width: 30;
+  offset-x: -100%;
+  layout: dock;
+  transition: offset 500ms in_out_cubic;
+}
+
+#sidebar.-active {
+  offset-x: 0;
+}
+
+#sidebar .title {
+  height: 3;
+  background: $primary-darken-2;
+  color: $text-primary-darken-2 ;
+  border-right: outer $primary-darken-3;
+  content-align: center middle;
+}
+
+#sidebar .user {
+  height: 8;
+  background: $primary-darken-1;
+  color: $text-primary-darken-1;
+  border-right: outer $primary-darken-3;
+  content-align: center middle;
+}
+
+#sidebar .content {
+  background: $primary;
+  color: $text-primary;
+  border-right: outer $primary-darken-3;
+  content-align: center middle;
+}
+
+#header {
+  color: $text-primary-darken-1;
+  background: $primary-darken-1;
+  height: 3;
+  content-align: center middle;
+}
+
+#content {
+  color: $text-background;
+  background: $background;
+  layout: vertical;
+  overflow-y: scroll;  
+}
+
+
+Tweet {
+  height: 12;
+  width: 80;
+ 
+  margin: 1 3;
+  background: $panel;
+  color: $text-panel;
+  layout: vertical;
+  /* border: outer $primary; */
+  padding: 1;
+  border: wide $panel-darken-2;
+  overflow-y: scroll; 
+  align-horizontal: center;
+  
+}
+
+.scrollable {
+  width: 80;
+  overflow-y: scroll;
+  max-width:80;
+  height: 20;
+  align-horizontal: center;
+  layout: vertical;
+}
+
+.code {
+
+  height: 34;
+  width: 100%;
+  
+}
+
+
+TweetHeader {
+  height:1;
+  background: $accent;
+  color: $text-accent
+}
+
+TweetBody {  
+  width: 100%;
+  background: $panel;
+  color: $text-panel;
+  height:20;
+  padding: 0 1 0 0;
+ 
+}
+
+.button {
+  background: $accent;
+  color: $text-accent;
+  width:20;
+  height: 3;
+  /* border-top: hidden  $accent-darken-3;  */
+  border: tall $accent-darken-2;
+  /* border-left: tall $accent-darken-1; */
+ 
+
+  /* padding: 1 0 0 0 ; */
+
+  transition: background 200ms in_out_cubic, color 300ms in_out_cubic;
+ 
+}
+
+.button:hover {
+  background: $accent-lighten-1;
+  color: $text-accent-lighten-1;
+  width: 20;
+  height: 3;
+  border: tall $accent-darken-1;
+  /* border-left: tall $accent-darken-3; */
+ 
+
+
+ 
+}
+
+#footer {
+  color: $text-accent;
+  background: $accent;
+  height: 1;
+  border-top: hkey $accent-darken-2;
+  content-align: center middle;
+}
+
+
+#sidebar .content {
+  layout: vertical
+}
+
+OptionItem {
+  height: 3;
+  background: $primary;
+  transition: background 100ms linear;
+  border-right: outer $primary-darken-2;
+  border-left: hidden;
+  content-align: center middle;
+}
+
+OptionItem:hover {
+  height: 3;
+  color: $accent;
+  background: $primary-darken-1;
+  /* border-top: hkey $accent2-darken-3;
+  border-bottom: hkey $accent2-darken-3; */
+  text-style: bold;
+  border-left: outer $accent-darken-2;
+}
+
+Error {
+  width: 80;
+  height:3;
+  background: $error;
+  color: $text-error;
+  border-top: hkey $error-darken-2;
+  border-bottom: hkey $error-darken-2; 
+  margin: 1 3;
+  
+  text-style: bold;
+  align-horizontal: center;   
+}
+
+Warning {
+  width: 80;
+  height:3;
+  background: $warning;
+  color: $text-warning-fade-1;
+  border-top: hkey $warning-darken-2;
+  border-bottom: hkey $warning-darken-2; 
+  margin: 1 2;
+  text-style: bold;
+  align-horizontal: center;
+}
+
+Success {
+  width: 80;
+  height:3;  
+  box-sizing: border-box;
+  background: $success-lighten-3;
+  color: $text-success-lighten-3-fade-1;
+  border-top: hkey $success;
+  border-bottom: hkey $success; 
+  margin: 1 2;
+  text-style: bold;
+  align-horizontal: center;
+}
+
+
+.horizontal {
+  layout: horizontal
+}

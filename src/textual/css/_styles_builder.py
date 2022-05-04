@@ -1,14 +1,15 @@
 from __future__ import annotations
 
-from typing import cast, Iterable, NoReturn
+from functools import lru_cache
+from typing import cast, Iterable, NoReturn, Sequence
 
 import rich.repr
 
 from ._error_tools import friendly_list
 from ._help_renderables import HelpText
 from ._help_text import (
-    spacing_invalid_value,
-    spacing_wrong_number_of_values,
+    spacing_invalid_value_help_text,
+    spacing_wrong_number_of_values_help_text,
     scalar_help_text,
     color_property_help_text,
     string_enum_help_text,
@@ -21,6 +22,7 @@ from ._help_text import (
     offset_property_help_text,
     offset_single_axis_help_text,
     style_flags_property_help_text,
+    property_invalid_value_help_text,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -44,6 +46,7 @@ from ..color import Color, ColorParseError
 from .._duration import _duration_as_seconds
 from .._easing import EASING
 from ..geometry import Spacing, SpacingDimensions, clamp
+from ..suggestions import get_suggestion
 
 
 def _join_tokens(tokens: Iterable[Token], joiner: str = "") -> str:
@@ -84,26 +87,47 @@ class StylesBuilder:
         process_method = getattr(self, f"process_{rule_name}", None)
 
         if process_method is None:
+            suggested_property_name = self._get_suggested_property_name_for_rule(
+                declaration.name
+            )
             self.error(
                 declaration.name,
                 declaration.token,
-                f"unknown declaration {declaration.name!r}",
+                property_invalid_value_help_text(
+                    declaration.name,
+                    "css",
+                    suggested_property_name=suggested_property_name,
+                ),
             )
-        else:
-            tokens = declaration.tokens
+            return
 
-            important = tokens[-1].name == "important"
-            if important:
-                tokens = tokens[:-1]
-                self.styles.important.add(rule_name)
-            try:
-                process_method(declaration.name, tokens)
-            except DeclarationError:
-                raise
-            except Exception as error:
-                self.error(declaration.name, declaration.token, str(error))
+        tokens = declaration.tokens
 
-    def _process_enum_multiple(
+        important = tokens[-1].name == "important"
+        if important:
+            tokens = tokens[:-1]
+            self.styles.important.add(rule_name)
+        try:
+            process_method(declaration.name, tokens)
+        except DeclarationError:
+            raise
+        except Exception as error:
+            self.error(declaration.name, declaration.token, str(error))
+
+    @lru_cache(maxsize=None)
+    def _get_processable_rule_names(self) -> Sequence[str]:
+        """
+        Returns the list of CSS properties we can manage -
+        i.e. the ones for which we have a `process_[property name]` method
+
+        Returns:
+            Sequence[str]: All the "Python-ised" CSS property names this class can handle.
+
+        Example: ("width", "background", "offset_x", ...)
+        """
+        return [attr[8:] for attr in dir(self) if attr.startswith("process_")]
+
+    def _get_process_enum_multiple(
         self, name: str, tokens: list[Token], valid_values: set[str], count: int
     ) -> tuple[str, ...]:
         """Generic code to process a declaration with two enumerations, like overflow: auto auto"""
@@ -332,14 +356,20 @@ class StylesBuilder:
                 try:
                     append(int(value))
                 except ValueError:
-                    self.error(name, token, spacing_invalid_value(name, context="css"))
+                    self.error(
+                        name,
+                        token,
+                        spacing_invalid_value_help_text(name, context="css"),
+                    )
             else:
-                self.error(name, token, spacing_invalid_value(name, context="css"))
+                self.error(
+                    name, token, spacing_invalid_value_help_text(name, context="css")
+                )
         if len(space) not in (1, 2, 4):
             self.error(
                 name,
                 tokens[0],
-                spacing_wrong_number_of_values(
+                spacing_wrong_number_of_values_help_text(
                     name, num_values_supplied=len(space), context="css"
                 ),
             )
@@ -348,7 +378,9 @@ class StylesBuilder:
     def _process_space_partial(self, name: str, tokens: list[Token]) -> None:
         """Process granular margin / padding declarations."""
         if len(tokens) != 1:
-            self.error(name, tokens[0], spacing_invalid_value(name, context="css"))
+            self.error(
+                name, tokens[0], spacing_invalid_value_help_text(name, context="css")
+            )
 
         _EDGE_SPACING_MAP = {"top": 0, "right": 1, "bottom": 2, "left": 3}
         token = tokens[0]
@@ -356,7 +388,9 @@ class StylesBuilder:
         if token_name == "number":
             space = int(value)
         else:
-            self.error(name, token, spacing_invalid_value(name, context="css"))
+            self.error(
+                name, token, spacing_invalid_value_help_text(name, context="css")
+            )
         style_name, _, edge = name.replace("-", "_").partition("_")
 
         current_spacing = cast(
@@ -717,3 +751,18 @@ class StylesBuilder:
     process_content_align = process_align
     process_content_align_horizontal = process_align_horizontal
     process_content_align_vertical = process_align_vertical
+
+    def _get_suggested_property_name_for_rule(self, rule_name: str) -> str | None:
+        """
+        Returns a valid CSS property "Python" name, or None if no close matches could be found.
+
+        Args:
+            rule_name (str): An invalid "Python-ised" CSS property (i.e. "offst_x" rather than "offst-x")
+
+        Returns:
+            str | None: The closest valid "Python-ised" CSS property.
+                Returns `None` if no close matches could be found.
+
+        Example: returns "background" for rule_name "bkgrund", "offset_x" for "ofset_x"
+        """
+        return get_suggestion(rule_name, self._get_processable_rule_names())

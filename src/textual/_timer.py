@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import asyncio
 import weakref
 from asyncio import (
-    get_event_loop,
     CancelledError,
     Event,
     sleep,
@@ -84,7 +84,7 @@ class Timer:
         Returns:
             Task: A Task instance for the timer.
         """
-        self._task = get_event_loop().create_task(self._run())
+        self._task = asyncio.create_task(self._run())
         return self._task
 
     async def stop(self) -> None:
