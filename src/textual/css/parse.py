@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import PurePath
 from typing import Iterator, Iterable
 
 from rich import print
@@ -305,7 +306,7 @@ def substitute_references(
 
 
 def parse(
-    css: str, path: str, variables: dict[str, str] | None = None
+    css: str, path: str | PurePath, variables: dict[str, str] | None = None
 ) -> Iterable[RuleSet]:
     """Parse CSS by tokenizing it, performing variable substitution,
     and generating rule sets from it.

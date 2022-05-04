@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from collections import defaultdict
 from operator import itemgetter
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import cast, Iterable
 
 import rich.repr
@@ -149,13 +149,13 @@ class Stylesheet:
         """
         self.variables = variables
 
-    def _parse_rules(self, css: str, path: str) -> list[RuleSet]:
+    def _parse_rules(self, css: str, path: str | PurePath) -> list[RuleSet]:
         """Parse CSS and return rules.
 
 
         Args:
             css (str): String containing Textual CSS.
-            path (str): Path to CSS or unique identifier
+            path (str | PurePath): Path to CSS or unique identifier
 
         Raises:
             StylesheetError: If the CSS is invalid.
@@ -171,11 +171,11 @@ class Stylesheet:
             raise StylesheetError(f"failed to parse css; {error}")
         return rules
 
-    def read(self, filename: str) -> None:
+    def read(self, filename: str | PurePath) -> None:
         """Read Textual CSS file.
 
         Args:
-            filename (str): filename of CSS.
+            filename (str | PurePath): filename of CSS.
 
         Raises:
             StylesheetError: If the CSS could not be read.
@@ -188,15 +188,16 @@ class Stylesheet:
             path = os.path.abspath(filename)
         except Exception as error:
             raise StylesheetError(f"unable to read {filename!r}; {error}")
-        self.source[path] = css
+        self.source[str(path)] = css
         self._require_parse = True
 
-    def add_source(self, css: str, path: str | None = None) -> None:
+    def add_source(self, css: str, path: str | PurePath | None = None) -> None:
         """Parse CSS from a string.
 
         Args:
             css (str): String with CSS source.
-            path (str, optional): The path of the source if a file, or some other identifier. Defaults to "".
+            path (str | PurePath, optional): The path of the source if a file, or some other identifier.
+                Defaults to None.
 
         Raises:
             StylesheetError: If the CSS could not be read.
@@ -205,6 +206,8 @@ class Stylesheet:
 
         if path is None:
             path = str(hash(css))
+        elif isinstance(path, PurePath):
+            path = str(css)
         if path in self.source and self.source[path] == css:
             # Path already in source, and CSS is identical
             return

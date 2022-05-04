@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from pathlib import PurePath
 from typing import NamedTuple
 
 from rich.console import Group, RenderableType
@@ -148,8 +149,8 @@ class Token(NamedTuple):
 
 
 class Tokenizer:
-    def __init__(self, text: str, path: str = "") -> None:
-        self.path = path
+    def __init__(self, text: str, path: str | PurePath = "") -> None:
+        self.path = str(path)
         self.code = text
         self.lines = text.splitlines(keepends=True)
         self.line_no = 0

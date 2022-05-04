@@ -7,6 +7,7 @@ import platform
 import sys
 import warnings
 from contextlib import redirect_stdout
+from pathlib import PurePath
 from time import perf_counter
 from typing import (
     Any,
@@ -105,20 +106,20 @@ class App(Generic[ReturnType], DOMNode):
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
-        log: str = "",
+        log: str | PurePath = "",
         log_verbosity: int = 1,
         title: str = "Textual Application",
-        css_file: str | None = None,
+        css_file: str | PurePath | None = None,
         watch_css: bool = True,
     ):
         """Textual application base class
 
         Args:
             driver_class (Type[Driver] | None, optional): Driver class or ``None`` to auto-detect. Defaults to None.
-            log (str, optional): Path to log file, or "" to disable. Defaults to "".
+            log (str | PurePath, optional): Path to log file, or "" to disable. Defaults to "".
             log_verbosity (int, optional): Log verbosity from 0-3. Defaults to 1.
             title (str, optional): Default title of the application. Defaults to "Textual Application".
-            css_file (str | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
+            css_file (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
             watch_css (bool, optional): Watch CSS for changes. Defaults to True.
         """
         # N.B. This must be done *before* we call the parent constructor, because MessagePump's
