@@ -6,7 +6,6 @@ import os
 import platform
 import sys
 import warnings
-from asyncio import AbstractEventLoop
 from contextlib import redirect_stdout
 from time import perf_counter
 from typing import Any, Generic, Iterable, TextIO, Type, TypeVar, TYPE_CHECKING
@@ -28,9 +27,8 @@ from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
-from ._profile import timer
 from .binding import Bindings, NoBinding
-from .css.stylesheet import Stylesheet, StylesheetError
+from .css.stylesheet import Stylesheet
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
 from .devtools.redirect_output import StdoutRedirector
@@ -112,7 +110,10 @@ class App(Generic[ReturnType], DOMNode):
             css (str | None, optional): CSS code to parse, or ``None`` for no literal CSS. Defaults to None.
             watch_css (bool, optional): Watch CSS for changes. Defaults to True.
         """
-        App._init_uvloop()
+        # N.B. This must be done *before* we call the parent constructor, because MessagePump's
+        # constructor instantiates a `asyncio.PriorityQueue` and in Python versions older than 3.10
+        # this will create some first references to an asyncio loop.
+        _init_uvloop()
 
         self.console = Console(
             file=sys.__stdout__, markup=False, highlight=False, emoji=False
@@ -339,23 +340,6 @@ class App(Generic[ReturnType], DOMNode):
             event_loop.run_until_complete(run_app())
 
         return self._return_value
-
-    @classmethod
-    def _init_uvloop(cls) -> None:
-        """
-        Import and install the `uvloop` asyncio policy, if available.
-        This is done only once, even if the method is called multiple times.
-        """
-        if hasattr(cls, "__uvloop_installed"):
-            return
-        cls.__uvloop_installed = False
-        try:
-            import uvloop
-        except ImportError:
-            pass
-        else:
-            uvloop.install()
-            cls.__uvloop_installed = True
 
     async def _on_css_change(self) -> None:
         """Called when the CSS changes (if watch_css is True)."""
@@ -894,3 +878,26 @@ class App(Generic[ReturnType], DOMNode):
 
     async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
         self.stylesheet.update(self, animate=True)
+
+
+_uvloop_init_done: bool = False
+
+
+def _init_uvloop() -> None:
+    """
+    Import and install the `uvloop` asyncio policy, if available.
+    This is done only once, even if the function is called multiple times.
+    """
+    global _uvloop_init_done
+
+    if _uvloop_init_done:
+        return
+
+    try:
+        import uvloop
+    except ImportError:
+        pass
+    else:
+        uvloop.install()
+
+    _uvloop_init_done = True
