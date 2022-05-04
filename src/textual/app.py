@@ -239,6 +239,9 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             direction (int, optional): 1 to move forward, -1 to move backward, or
                 0 to highlight the current focus.
+
+        Returns:
+            Widget | None: Newly focused widget, or None for no focus.
         """
         if self._focus_timer:
             # Cancel the timer that clears the show focus class
@@ -270,19 +273,36 @@ class App(Generic[ReturnType], DOMNode):
         return self.focused
 
     def show_focus(self) -> Widget | None:
-        """Highlight the currently focused widget."""
+        """Highlight the currently focused widget.
+
+        Returns:
+            Widget | None: Focused widget, or None for no focus.
+        """
         return self._move_focus(0)
 
     def focus_next(self) -> Widget | None:
-        """Focus the next widget."""
+        """Focus the next widget.
+
+        Returns:
+            Widget | None: Newly focused widget, or None for no focus.
+        """
         return self._move_focus(1)
 
     def focus_previous(self) -> Widget | None:
-        """Focus the previous widget."""
+        """Focus the previous widget.
+
+        Returns:
+            Widget | None: Newly focused widget, or None for no focus.
+        """
         return self._move_focus(-1)
 
     def hide_focus(self) -> None:
-        """Hide the focus."""
+        """Hide the focus.
+
+        Returns:
+            Widget | None: Newly focused widget, or None for no focus.
+
+        """
         self.remove_class("-show-focus")
 
     def compose(self) -> ComposeResult:

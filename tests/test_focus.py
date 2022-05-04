@@ -11,7 +11,7 @@ class NonFocusable(Widget, can_focus=False):
     pass
 
 
-def test_focus_chain():
+async def test_focus_chain():
 
     app = App()
     app.push_screen(Screen())
@@ -31,7 +31,7 @@ def test_focus_chain():
     assert focused == ["foo", "Paul", "baz"]
 
 
-def test_show_focus():
+async def test_show_focus():
     app = App()
     app.push_screen(Screen())
     app.screen.add_children(
@@ -51,7 +51,7 @@ def test_show_focus():
     assert app.has_class("-show-focus")
 
 
-def test_focus_next_and_previous():
+async def test_focus_next_and_previous():
 
     app = App()
     app.push_screen(Screen())
