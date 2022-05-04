@@ -119,7 +119,6 @@ class App(Generic[ReturnType], DOMNode):
             log_verbosity (int, optional): Log verbosity from 0-3. Defaults to 1.
             title (str, optional): Default title of the application. Defaults to "Textual Application".
             css_file (str | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
-            css (str | None, optional): CSS code to parse, or ``None`` for no literal CSS. Defaults to None.
             watch_css (bool, optional): Watch CSS for changes. Defaults to True.
         """
         # N.B. This must be done *before* we call the parent constructor, because MessagePump's
