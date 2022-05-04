@@ -983,6 +983,18 @@ class TestParseOffset:
         assert styles.offset.y == parsed_y
 
 
+class TestParseOverflow:
+    def test_multiple_enum(self):
+        css = "#some-widget { overflow: hidden auto; }"
+        stylesheet = Stylesheet()
+        stylesheet.add_source(css)
+
+        styles = stylesheet.rules[0].styles
+
+        assert len(stylesheet.rules) == 1
+        assert styles.overflow_x == "hidden"
+        assert styles.overflow_y == "auto"
+
 class TestParseTransition:
     @pytest.mark.parametrize(
         "duration, parsed_duration",
