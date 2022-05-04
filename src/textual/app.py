@@ -215,7 +215,7 @@ class App(Generic[ReturnType], DOMNode):
         widgets: list[Widget] = []
         add_widget = widgets.append
         root = self.screen
-        stack: list[Iterator[Widget]] = [iter(root.children)]
+        stack: list[Iterator[Widget]] = [iter(root.displayed_children)]
         pop = stack.pop
         push = stack.append
 
@@ -225,7 +225,7 @@ class App(Generic[ReturnType], DOMNode):
                 pop()
             else:
                 if node.is_container and node.can_focus:
-                    push(iter(node.children))
+                    push(iter(node.displayed_children))
                 else:
                     if node.can_focus:
                         add_widget(node)
@@ -548,7 +548,7 @@ class App(Generic[ReturnType], DOMNode):
                 widget.post_message_no_wait(events.Focus(self))
 
     async def _set_mouse_over(self, widget: Widget | None) -> None:
-        """Called when the mouse is over a nother widget.
+        """Called when the mouse is over another widget.
 
         Args:
             widget (Widget | None): Widget under mouse, or None for no widgets.
