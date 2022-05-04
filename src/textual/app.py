@@ -756,7 +756,7 @@ class App(Generic[ReturnType], DOMNode):
         await self.devtools.disconnect()
 
     def start_widget(self, parent: Widget, widget: Widget) -> None:
-        """Start a widget (run it's task) so that it can receive messages.
+        """Start a widget (run its task) so that it can receive messages.
 
         Args:
             parent (Widget): The parent of the Widget.

@@ -43,3 +43,4 @@ jobs:
         run: |
           source $VENV
           python e2e_tests/sandbox_basic_test.py basic 2.0
+          python e2e_tests/sandbox_basic_test.py easing 2.0
