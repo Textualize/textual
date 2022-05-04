@@ -211,7 +211,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def focus_chain(self) -> list[Widget]:
-        """Get widgets that may receive focus"""
+        """Get widgets that may receive focus, in focus order."""
         widgets: list[Widget] = []
         add_widget = widgets.append
         root = self.screen
