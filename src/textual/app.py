@@ -233,6 +233,7 @@ class App(Generic[ReturnType], DOMNode):
         return widgets
 
     def _set_active(self) -> None:
+        """Set this app to be the currently active app."""
         active_app.set(self)
 
     def _move_focus(self, direction: int = 0) -> Widget | None:
@@ -507,6 +508,15 @@ class App(Generic[ReturnType], DOMNode):
         self.screen.refresh()
 
     def push_screen(self, screen: Screen | None = None) -> Screen:
+        """Push a new screen on the screen stack.
+
+        Args:
+            screen (Screen | None, optional): A new Screen instance or None to create
+                one internally. Defaults to None.
+
+        Returns:
+            Screen: Newly active screen.
+        """
         new_screen = Screen() if screen is None else screen
         self._screen_stack.append(new_screen)
         return new_screen
