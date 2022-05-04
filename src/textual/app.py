@@ -98,7 +98,7 @@ ReturnType = TypeVar("ReturnType")
 class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications"""
 
-    css = """
+    CSS = """
 
     """
 
@@ -109,7 +109,6 @@ class App(Generic[ReturnType], DOMNode):
         log_verbosity: int = 1,
         title: str = "Textual Application",
         css_file: str | None = None,
-        css: str | None = None,
         watch_css: bool = True,
     ):
         """Textual application base class
@@ -178,8 +177,6 @@ class App(Generic[ReturnType], DOMNode):
             if (watch_css and css_file)
             else None
         )
-        if css is not None:
-            self.css = css
 
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
         self.registry: set[MessagePump] = set()
@@ -642,9 +639,9 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
-            if self.css is not None:
+            if self.CSS is not None:
                 self.stylesheet.add_source(
-                    self.css, path=f"<{self.__class__.__name__}>"
+                    self.CSS, path=f"<{self.__class__.__name__}>"
                 )
         except Exception as error:
             self.on_exception(error)

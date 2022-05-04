@@ -5,6 +5,7 @@ from textual import layout
 
 
 class ButtonsApp(App[str]):
+
     def compose(self) -> ComposeResult:
         yield layout.Vertical(
             Button("foo", id="foo"),
