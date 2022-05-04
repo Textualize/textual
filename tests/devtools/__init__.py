@@ -9,5 +9,5 @@ import pytest
 # teardown code has finished running. These are very rare, but are much more of an issue on
 # CI since they can delay builds that have passed locally.
 pytestmark = pytest.mark.skipif(
-    sys.platform == "darwin" and os.getenv("CI"), reason="Issue #411"
+    sys.platform == "darwin" and os.getenv("CI", "0") != "0", reason="Issue #411"
 )
