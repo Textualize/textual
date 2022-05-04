@@ -32,7 +32,7 @@ importlib-metadata = "^4.11.3"
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.3"
 black = "^22.3.0"
-mypy = "^0.931"
+mypy = "^0.950"
 pytest-cov = "^2.12.1"
 mkdocs = "^1.2.3"
 mkdocstrings = "^0.17.0"
