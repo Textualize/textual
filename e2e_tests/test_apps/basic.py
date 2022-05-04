@@ -142,7 +142,9 @@ class BasicApp(App):
 
 
 css_file = Path(__file__).parent / "basic.css"
-app = BasicApp(css_file=str(css_file), watch_css=True, log="textual.log")
+app = BasicApp(
+    css_file=str(css_file), watch_css=True, log="textual.log", log_verbosity=0
+)
 
 if __name__ == "__main__":
     app.run()

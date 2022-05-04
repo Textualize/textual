@@ -73,7 +73,7 @@ class LinuxDriver(Driver):
 
     def start_application_mode(self):
 
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
 
         def send_size_event():
             terminal_size = self._get_terminal_size()
@@ -121,7 +121,7 @@ class LinuxDriver(Driver):
         self.console.file.write("\033[?1003h\n")
         self.console.file.flush()
         self._key_thread = Thread(
-            target=self.run_input_thread, args=(asyncio.get_event_loop(),)
+            target=self.run_input_thread, args=(asyncio.get_running_loop(),)
         )
         send_size_event()
         self._key_thread.start()
