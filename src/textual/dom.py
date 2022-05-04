@@ -313,7 +313,14 @@ class DOMNode(MessagePump):
 
     @property
     def displayed_children(self) -> list[DOMNode]:
+        """The children which don't have display: none set."""
         return [child for child in self.children if child.display]
+
+    @property
+    def focusable_children(self) -> list[DOMNode]:
+        """Get the children which may be focused."""
+        # TODO: This may be the place to define order, other focus related rules
+        return [child for child in self.children if child.display and child.visible]
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.

@@ -215,7 +215,7 @@ class App(Generic[ReturnType], DOMNode):
         widgets: list[Widget] = []
         add_widget = widgets.append
         root = self.screen
-        stack: list[Iterator[Widget]] = [iter(root.displayed_children)]
+        stack: list[Iterator[Widget]] = [iter(root.focusable_children)]
         pop = stack.pop
         push = stack.append
 
@@ -225,7 +225,7 @@ class App(Generic[ReturnType], DOMNode):
                 pop()
             else:
                 if node.is_container and node.can_focus:
-                    push(iter(node.displayed_children))
+                    push(iter(node.focusable_children))
                 else:
                     if node.can_focus:
                         add_widget(node)
