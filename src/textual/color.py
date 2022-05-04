@@ -1,7 +1,7 @@
 """
 Manages Color in Textual.
 
-All instances where the developer is presented with a color should use this class. The only 
+All instances where the developer is presented with a color should use this class. The only
 exception should be when passing things to a Rich renderable, which will need to use the
 `rich_color` attribute to perform a conversion.
 
@@ -54,6 +54,8 @@ class Lab(NamedTuple):
 
 RE_COLOR = re.compile(
     r"""^
+\#([0-9a-fA-F]{3})$|
+\#([0-9a-fA-F]{4})$|
 \#([0-9a-fA-F]{6})$|
 \#([0-9a-fA-F]{8})$|
 rgb\((\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*)\)$|
@@ -62,7 +64,7 @@ rgba\((\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*)\)$
     re.VERBOSE,
 )
 
-# Fast way to split a string of 8 characters in to 3 pairs of 2 characters
+# Fast way to split a string of 6 characters in to 3 pairs of 2 characters
 split_pairs3: Callable[[str], tuple[str, str, str]] = itemgetter(
     slice(0, 2), slice(2, 4), slice(4, 6)
 )
@@ -270,9 +272,27 @@ class Color(NamedTuple):
         color_match = RE_COLOR.match(color_text)
         if color_match is None:
             raise ColorParseError(f"failed to parse {color_text!r} as a color")
-        rgb_hex, rgba_hex, rgb, rgba = color_match.groups()
+        (
+            rgb_hex_triple,
+            rgb_hex_quad,
+            rgb_hex,
+            rgba_hex,
+            rgb,
+            rgba,
+        ) = color_match.groups()
 
-        if rgb_hex is not None:
+        if rgb_hex_triple is not None:
+            r, g, b = rgb_hex_triple
+            color = cls(int(f"{r}{r}", 16), int(f"{g}{g}", 16), int(f"{b}{b}", 16))
+        elif rgb_hex_quad is not None:
+            r, g, b, a = rgb_hex_quad
+            color = cls(
+                int(f"{r}{r}", 16),
+                int(f"{g}{g}", 16),
+                int(f"{b}{b}", 16),
+                int(f"{a}{a}", 16) / 255.0,
+            )
+        elif rgb_hex is not None:
             r, g, b = [int(pair, 16) for pair in split_pairs3(rgb_hex)]
             color = cls(r, g, b, 1.0)
         elif rgba_hex is not None:

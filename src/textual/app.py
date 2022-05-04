@@ -6,7 +6,6 @@ import os
 import platform
 import sys
 import warnings
-from asyncio import AbstractEventLoop
 from contextlib import redirect_stdout
 from time import perf_counter
 from typing import (
@@ -38,10 +37,9 @@ from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
-from ._profile import timer
 from ._timer import Timer
 from .binding import Bindings, NoBinding
-from .css.stylesheet import Stylesheet, StylesheetError
+from .css.stylesheet import Stylesheet
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
 from .devtools.redirect_output import StdoutRedirector
@@ -64,6 +62,9 @@ WINDOWS = PLATFORM == "Windows"
 
 # asyncio will warn against resources not being cleared
 warnings.simplefilter("always", ResourceWarning)
+
+# `asyncio.get_event_loop()` is deprecated since Python 3.10:
+_ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
 
 LayoutDefinition = "dict[str, Any]"
 
@@ -122,6 +123,11 @@ class App(Generic[ReturnType], DOMNode):
             css (str | None, optional): CSS code to parse, or ``None`` for no literal CSS. Defaults to None.
             watch_css (bool, optional): Watch CSS for changes. Defaults to True.
         """
+        # N.B. This must be done *before* we call the parent constructor, because MessagePump's
+        # constructor instantiates a `asyncio.PriorityQueue` and in Python versions older than 3.10
+        # this will create some first references to an asyncio loop.
+        _init_uvloop()
+
         self.console = Console(
             file=sys.__stdout__, markup=False, highlight=False, emoji=False
         )
@@ -428,25 +434,19 @@ class App(Generic[ReturnType], DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
-    def run(self, loop: AbstractEventLoop | None = None) -> ReturnType | None:
+    def run(self) -> ReturnType | None:
+        """The entry point to run a Textual app."""
+
         async def run_app() -> None:
             await self.process_messages()
 
-        if loop:
-            asyncio.set_event_loop(loop)
-        else:
-            try:
-                import uvloop
-            except ImportError:
-                pass
-            else:
-                asyncio.set_event_loop(uvloop.new_event_loop())
-
-        event_loop = asyncio.get_event_loop()
-        try:
+        if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
+            # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
             asyncio.run(run_app())
-        finally:
-            event_loop.close()
+        else:
+            # However, this works with Python<3.10:
+            event_loop = asyncio.get_event_loop()
+            event_loop.run_until_complete(run_app())
 
         return self._return_value
 
@@ -631,6 +631,7 @@ class App(Generic[ReturnType], DOMNode):
         self._set_active()
         log("---")
         log(f"driver={self.driver_class}")
+        log(f"asyncio running loop={asyncio.get_running_loop()!r}")
 
         if self.devtools_enabled:
             try:
@@ -1011,3 +1012,26 @@ class App(Generic[ReturnType], DOMNode):
 
     async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
         self.stylesheet.update(self, animate=True)
+
+
+_uvloop_init_done: bool = False
+
+
+def _init_uvloop() -> None:
+    """
+    Import and install the `uvloop` asyncio policy, if available.
+    This is done only once, even if the function is called multiple times.
+    """
+    global _uvloop_init_done
+
+    if _uvloop_init_done:
+        return
+
+    try:
+        import uvloop
+    except ImportError:
+        pass
+    else:
+        uvloop.install()
+
+    _uvloop_init_done = True

@@ -448,7 +448,7 @@ class Compositor:
         segment_lines: list[list[Segment]] = [
             sum(
                 [line for line in bucket.values() if line is not None],
-                start=[],
+                [],
             )
             for bucket in chops
         ]
