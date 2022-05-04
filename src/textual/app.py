@@ -8,13 +8,23 @@ import sys
 import warnings
 from contextlib import redirect_stdout
 from time import perf_counter
-from typing import Any, Generic, Iterable, TextIO, Type, TypeVar, TYPE_CHECKING
+from typing import (
+    Any,
+    Generic,
+    Iterable,
+    Iterator,
+    TextIO,
+    Type,
+    TypeVar,
+    TYPE_CHECKING,
+)
 
 import rich
 import rich.repr
 from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.measure import Measurement
+from rich.protocol import is_renderable
 from rich.screen import Screen as ScreenRenderable
 from rich.segment import Segments
 from rich.traceback import Traceback
@@ -27,6 +37,7 @@ from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
+from ._timer import Timer
 from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -87,7 +98,9 @@ ReturnType = TypeVar("ReturnType")
 class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications"""
 
-    css = ""
+    CSS = """
+
+    """
 
     def __init__(
         self,
@@ -96,7 +109,6 @@ class App(Generic[ReturnType], DOMNode):
         log_verbosity: int = 1,
         title: str = "Textual Application",
         css_file: str | None = None,
-        css: str | None = None,
         watch_css: bool = True,
     ):
         """Textual application base class
@@ -107,7 +119,6 @@ class App(Generic[ReturnType], DOMNode):
             log_verbosity (int, optional): Log verbosity from 0-3. Defaults to 1.
             title (str, optional): Default title of the application. Defaults to "Textual Application".
             css_file (str | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
-            css (str | None, optional): CSS code to parse, or ``None`` for no literal CSS. Defaults to None.
             watch_css (bool, optional): Watch CSS for changes. Defaults to True.
         """
         # N.B. This must be done *before* we call the parent constructor, because MessagePump's
@@ -165,16 +176,12 @@ class App(Generic[ReturnType], DOMNode):
             if (watch_css and css_file)
             else None
         )
-        if css is not None:
-            self.css = css
 
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
-
         self.registry: set[MessagePump] = set()
-
         self.devtools = DevtoolsClient()
-
         self._return_value: ReturnType | None = None
+        self._focus_timer: Timer | None = None
 
         super().__init__()
 
@@ -201,6 +208,105 @@ class App(Generic[ReturnType], DOMNode):
         """
         self._return_value = result
         self.close_messages_no_wait()
+
+    @property
+    def focus_chain(self) -> list[Widget]:
+        """Get widgets that may receive focus, in focus order."""
+        widgets: list[Widget] = []
+        add_widget = widgets.append
+        root = self.screen
+        stack: list[Iterator[Widget]] = [iter(root.focusable_children)]
+        pop = stack.pop
+        push = stack.append
+
+        while stack:
+            node = next(stack[-1], None)
+            if node is None:
+                pop()
+            else:
+                if node.is_container and node.can_focus:
+                    push(iter(node.focusable_children))
+                else:
+                    if node.can_focus:
+                        add_widget(node)
+
+        return widgets
+
+    def _set_active(self) -> None:
+        """Set this app to be the currently active app."""
+        active_app.set(self)
+
+    def _move_focus(self, direction: int = 0) -> Widget | None:
+        """Move the focus in the given direction.
+
+        Args:
+            direction (int, optional): 1 to move forward, -1 to move backward, or
+                0 to highlight the current focus.
+
+        Returns:
+            Widget | None: Newly focused widget, or None for no focus.
+        """
+        if self._focus_timer:
+            # Cancel the timer that clears the show focus class
+            # We will be creating a new timer to extend the time until the focus is hidden
+            self._focus_timer.stop_no_wait()
+        focusable_widgets = self.focus_chain
+
+        if not focusable_widgets:
+            # Nothing focusable, so nothing to do
+            return self.focused
+        if self.focused is None:
+            # Nothing currently focused, so focus the first one
+            self.set_focus(focusable_widgets[0])
+        else:
+            try:
+                # Find the index of the currently focused widget
+                current_index = focusable_widgets.index(self.focused)
+            except ValueError:
+                # Focused widget was removed in the interim, start again
+                self.set_focus(focusable_widgets[0])
+            else:
+                # Only move the focus if we are currently showing the focus
+                if direction and self.has_class("-show-focus"):
+                    current_index = (current_index + direction) % len(focusable_widgets)
+                    self.set_focus(focusable_widgets[current_index])
+
+        self._focus_timer = self.set_timer(2, self.hide_focus)
+        self.add_class("-show-focus")
+        return self.focused
+
+    def show_focus(self) -> Widget | None:
+        """Highlight the currently focused widget.
+
+        Returns:
+            Widget | None: Focused widget, or None for no focus.
+        """
+        return self._move_focus(0)
+
+    def focus_next(self) -> Widget | None:
+        """Focus the next widget.
+
+        Returns:
+            Widget | None: Newly focused widget, or None for no focus.
+        """
+        return self._move_focus(1)
+
+    def focus_previous(self) -> Widget | None:
+        """Focus the previous widget.
+
+        Returns:
+            Widget | None: Newly focused widget, or None for no focus.
+        """
+        return self._move_focus(-1)
+
+    def hide_focus(self) -> None:
+        """Hide the focus.
+
+        Returns:
+            Widget | None: Newly focused widget, or None for no focus.
+
+        """
+        self.remove_class("-show-focus")
 
     def compose(self) -> ComposeResult:
         """Yield child widgets for a container."""
@@ -401,33 +507,52 @@ class App(Generic[ReturnType], DOMNode):
         self.register(self.screen, *anon_widgets, **widgets)
         self.screen.refresh()
 
-    async def push_screen(self, screen: Screen) -> Screen:
-        self._screen_stack.append(screen)
-        return screen
+    def push_screen(self, screen: Screen | None = None) -> Screen:
+        """Push a new screen on the screen stack.
 
-    async def set_focus(self, widget: Widget | None) -> None:
+        Args:
+            screen (Screen | None, optional): A new Screen instance or None to create
+                one internally. Defaults to None.
+
+        Returns:
+            Screen: Newly active screen.
+        """
+        new_screen = Screen() if screen is None else screen
+        self._screen_stack.append(new_screen)
+        return new_screen
+
+    def set_focus(self, widget: Widget | None) -> None:
         """Focus (or unfocus) a widget. A focused widget will receive key events first.
 
         Args:
             widget (Widget): [description]
         """
+        self.log("set_focus", widget=widget)
         if widget == self.focused:
             # Widget is already focused
             return
 
         if widget is None:
+            # No focus, so blur currently focused widget if it exists
             if self.focused is not None:
-                focused = self.focused
+                self.focused.post_message_no_wait(events.Blur(self))
                 self.focused = None
-                await focused.post_message(events.Blur(self))
         elif widget.can_focus:
-            if self.focused is not None:
-                await self.focused.post_message(events.Blur(self))
-            if widget is not None and self.focused != widget:
+            if self.focused != widget:
+                if self.focused is not None:
+                    # Blur currently focused widget
+                    self.focused.post_message_no_wait(events.Blur(self))
+                # Change focus
                 self.focused = widget
-                await widget.post_message(events.Focus(self))
+                # Send focus event
+                widget.post_message_no_wait(events.Focus(self))
 
-    async def set_mouse_over(self, widget: Widget | None) -> None:
+    async def _set_mouse_over(self, widget: Widget | None) -> None:
+        """Called when the mouse is over another widget.
+
+        Args:
+            widget (Widget | None): Widget under mouse, or None for no widgets.
+        """
         if widget is None:
             if self.mouse_over is not None:
                 try:
@@ -467,6 +592,10 @@ class App(Generic[ReturnType], DOMNode):
             *renderables (RenderableType, optional): Rich renderables to display on exit.
         """
 
+        assert all(
+            is_renderable(renderable) for renderable in renderables
+        ), "Can only call panic with strings or Rich renderables"
+
         prerendered = [
             Segments(self.console.render(renderable, self.console.options))
             for renderable in renderables
@@ -505,7 +634,7 @@ class App(Generic[ReturnType], DOMNode):
         self._exit_renderables.clear()
 
     async def process_messages(self) -> None:
-        active_app.set(self)
+        self._set_active()
         log("---")
         log(f"driver={self.driver_class}")
         log(f"asyncio running loop={asyncio.get_running_loop()!r}")
@@ -519,9 +648,9 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if self.css_file is not None:
                 self.stylesheet.read(self.css_file)
-            if self.css is not None:
+            if self.CSS is not None:
                 self.stylesheet.add_source(
-                    self.css, path=f"<{self.__class__.__name__}>"
+                    self.CSS, path=f"<{self.__class__.__name__}>"
                 )
         except Exception as error:
             self.on_exception(error)
@@ -752,7 +881,7 @@ class App(Generic[ReturnType], DOMNode):
         if isinstance(event, events.Mount):
             screen = Screen()
             self.register(self, screen)
-            await self.push_screen(screen)
+            self.push_screen(screen)
             await super().on_event(event)
 
         elif isinstance(event, events.InputEvent) and not event.is_forwarded:
@@ -793,12 +922,18 @@ class App(Generic[ReturnType], DOMNode):
             action_target = default_namespace or self
             action_name = target
 
-        log("ACTION", action_target, action_name)
+        log("action", action)
         await self.dispatch_action(action_target, action_name, params)
 
     async def dispatch_action(
         self, namespace: object, action_name: str, params: Any
     ) -> None:
+        log(
+            "dispatch_action",
+            namespace=namespace,
+            action_name=action_name,
+            params=params,
+        )
         _rich_traceback_guard = True
         method_name = f"action_{action_name}"
         method = getattr(namespace, method_name, None)
@@ -846,7 +981,12 @@ class App(Generic[ReturnType], DOMNode):
         self.app.refresh()
 
     async def on_key(self, event: events.Key) -> None:
-        await self.press(event.key)
+        if event.key == "tab":
+            self.focus_next()
+        elif event.key == "shift+tab":
+            self.focus_previous()
+        else:
+            await self.press(event.key)
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log("shutdown request")

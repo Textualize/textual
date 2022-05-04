@@ -34,6 +34,10 @@ class Button(Widget, can_focus=True):
         color: $text-primary-darken-2;
         border: tall $primary-lighten-1;        
     }
+
+    App.-show-focus Button:focus {
+        tint: $accent 20%;        
+    }
     
     """
 
@@ -72,4 +76,8 @@ class Button(Widget, can_focus=True):
     async def on_click(self, event: events.Click) -> None:
         event.stop()
         if not self.disabled:
+            await self.emit(Button.Pressed(self))
+
+    async def on_key(self, event: events.Key) -> None:
+        if event.key == "enter" and not self.disabled:
             await self.emit(Button.Pressed(self))

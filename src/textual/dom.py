@@ -313,7 +313,14 @@ class DOMNode(MessagePump):
 
     @property
     def displayed_children(self) -> list[DOMNode]:
+        """The children which don't have display: none set."""
         return [child for child in self.children if child.display]
+
+    @property
+    def focusable_children(self) -> list[DOMNode]:
+        """Get the children which may be focused."""
+        # TODO: This may be the place to define order, other focus related rules
+        return [child for child in self.children if child.display and child.visible]
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.
@@ -439,7 +446,11 @@ class DOMNode(MessagePump):
 
         """
         self._classes.update(class_names)
-        self.refresh()
+        try:
+            self.app.stylesheet.update(self.app, animate=True)
+            self.refresh()
+        except LookupError:
+            pass
 
     def remove_class(self, *class_names: str) -> None:
         """Remove class names from this Node.
@@ -449,7 +460,11 @@ class DOMNode(MessagePump):
 
         """
         self._classes.difference_update(class_names)
-        self.refresh()
+        try:
+            self.app.stylesheet.update(self.app, animate=True)
+            self.refresh()
+        except LookupError:
+            pass
 
     def toggle_class(self, *class_names: str) -> None:
         """Toggle class names on this Node.
@@ -459,8 +474,11 @@ class DOMNode(MessagePump):
 
         """
         self._classes.symmetric_difference_update(class_names)
-        self.app.stylesheet.update(self.app, animate=True)
-        self.refresh()
+        try:
+            self.app.stylesheet.update(self.app, animate=True)
+            self.refresh()
+        except LookupError:
+            pass
 
     def has_pseudo_class(self, *class_names: str) -> bool:
         """Check for pseudo class (such as hover, focus etc)"""

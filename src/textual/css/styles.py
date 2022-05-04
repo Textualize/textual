@@ -115,6 +115,8 @@ class RulesMap(TypedDict, total=False):
 
     transitions: dict[str, Transition]
 
+    tint: Color
+
     scrollbar_color: Color
     scrollbar_color_hover: Color
     scrollbar_color_active: Color
@@ -156,6 +158,7 @@ class StylesBase(ABC):
         "max_height",
         "color",
         "background",
+        "tint",
         "scrollbar_color",
         "scrollbar_color_hover",
         "scrollbar_color_active",
@@ -210,6 +213,7 @@ class StylesBase(ABC):
 
     rich_style = StyleProperty()
 
+    tint = ColorProperty("transparent")
     scrollbar_color = ColorProperty("ansi_bright_magenta")
     scrollbar_color_hover = ColorProperty("ansi_yellow")
     scrollbar_color_active = ColorProperty("ansi_bright_yellow")

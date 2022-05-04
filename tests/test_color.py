@@ -48,6 +48,10 @@ def test_colorpair_style():
     )
 
 
+def test_rgb():
+    assert Color(10, 20, 30, 0.55).rgb == (10, 20, 30)
+
+
 def test_hls():
 
     red = Color(200, 20, 32)
@@ -94,7 +98,7 @@ def test_color_blend():
         ("#ffffff", Color(255, 255, 255, 1.0)),
         ("#FFFFFF", Color(255, 255, 255, 1.0)),
         ("#fab", Color(255, 170, 187, 1.0)),  # #ffaabb
-        ("#fab0", Color(255, 170, 187, .0)),  # #ffaabb00
+        ("#fab0", Color(255, 170, 187, 0.0)),  # #ffaabb00
         ("#020304ff", Color(2, 3, 4, 1.0)),
         ("#02030400", Color(2, 3, 4, 0.0)),
         ("#0203040f", Color(2, 3, 4, 0.058823529411764705)),

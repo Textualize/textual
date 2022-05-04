@@ -558,10 +558,20 @@ class StylesBuilder:
     def process_color(self, name: str, tokens: list[Token]) -> None:
         """Processes a simple color declaration."""
         name = name.replace("-", "_")
+
+        color: Color | None = None
+        alpha: float | None = None
+
         for token in tokens:
-            if token.name in ("color", "token"):
+            if token.name == "scalar":
+                alpha_scalar = Scalar.parse(token.value)
+                if alpha_scalar.unit != Unit.PERCENT:
+                    self.error(name, token, "alpha must be given as a percentage.")
+                alpha = alpha_scalar.value / 100.0
+
+            elif token.name in ("color", "token"):
                 try:
-                    self.styles._rules[name] = Color.parse(token.value)
+                    color = Color.parse(token.value)
                 except Exception:
                     self.error(
                         name, token, color_property_help_text(name, context="css")
@@ -569,6 +579,12 @@ class StylesBuilder:
             else:
                 self.error(name, token, color_property_help_text(name, context="css"))
 
+        if color is not None:
+            if alpha is not None:
+                color = color.with_alpha(alpha)
+            self.styles._rules[name] = color
+
+    process_tint = process_color
     process_background = process_color
     process_scrollbar_color = process_color
     process_scrollbar_color_hover = process_color

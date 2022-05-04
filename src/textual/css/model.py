@@ -83,7 +83,7 @@ class Selector:
         return self._checks[self.type](node)
 
     def _check_universal(self, node: DOMNode) -> bool:
-        return True
+        return node.has_pseudo_class(*self.pseudo_classes)
 
     def _check_type(self, node: DOMNode) -> bool:
         if node.css_type != self._name_lower:
