@@ -87,7 +87,7 @@ class ColorChanger(App):
             self.background = f"on color({event.key})"
 
 
-ColorChanger.run(log="textual.log")
+ColorChanger.run(log_path="textual.log")
 ```
 
 You'll notice that the `on_key` method above contains an additional `event` parameter which wasn't present on the beeper example. If the `event` argument is present, Textual will call the handler with an event object. Every event has an associated handler object, in this case it is a KeyEvent which contains additional information regarding which key was pressed.
@@ -114,7 +114,7 @@ class SimpleApp(App):
         await self.view.dock(Placeholder(), Placeholder(), edge="top")
 
 
-SimpleApp.run(log="textual.log")
+SimpleApp.run(log_path="textual.log")
 ```
 
 This app contains a single event handler `on_mount`. The mount event is sent when the app or widget is ready to start processing events, and is typically used for initialization. You may have noticed that `on_mount` is an `async` function. Since Textual is an asynchronous framework we will need this if we need to call most other methods.
@@ -137,7 +137,7 @@ await self.view.dock(Placeholder(), Placeholder(), edge="top")
 
 You will notice that this time we are docking _two_ Placeholder objects onto the `"top"` edge. We haven't set an explicit size this time so Textual will divide the remaining size amongst the two new widgets.
 
-The last line calls the `run` class method in the usual way, but with an argument we haven't seen before: `log="textual.log"` tells Textual to write log information to the given file. You can tail textual.log to see events being processed and other debug information.
+The last line calls the `run` class method in the usual way, but with an argument we haven't seen before: `log_path="textual.log"` tells Textual to write log information to the given file. You can tail textual.log to see events being processed and other debug information.
 
 If you run the above example, you will see something like the following:
 
@@ -183,7 +183,7 @@ class HoverApp(App):
         await self.view.dock(*hovers, edge="top")
 
 
-HoverApp.run(log="textual.log")
+HoverApp.run(log_path="textual.log")
 ```
 
 The `Hover` class is a custom widget which displays a panel containing the classic text "Hello World". The first line in the Hover class may seem a little mysterious at this point:

@@ -30,4 +30,4 @@ class MyApp(App):
         await self.call_later(add_content)
 
 
-MyApp.run(title="Simple App", log="textual.log")
+MyApp.run(title="Simple App", log_path="textual.log")

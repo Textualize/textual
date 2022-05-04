@@ -1,6 +1,3 @@
-from pathlib import Path
-
-from rich.align import Align
 from rich.console import RenderableType
 from rich.syntax import Syntax
 from rich.text import Text
@@ -141,11 +138,10 @@ class BasicApp(App):
         self.panic(self.tree)
 
 
-sandbox_folder = Path(__file__).parent
 app = BasicApp(
-    css_file=sandbox_folder / "basic.css",
+    css_path="basic.css",
     watch_css=True,
-    log=sandbox_folder / "textual.log",
+    log_path="textual.log",
 )
 
 if __name__ == "__main__":

@@ -36,8 +36,8 @@ def _check_selectors(selectors: list[Selector], node: DOMNode) -> bool:
 
     DESCENDENT = CombinatorType.DESCENDENT
 
-    css_path = node.css_path
-    path_count = len(css_path)
+    css_path_nodes = node.css_path_nodes
+    path_count = len(css_path_nodes)
     selector_count = len(selectors)
 
     stack: list[tuple[int, int]] = [(0, 0)]
@@ -51,7 +51,7 @@ def _check_selectors(selectors: list[Selector], node: DOMNode) -> bool:
         if selector_index == selector_count or node_index == path_count:
             pop()
         else:
-            path_node = css_path[node_index]
+            path_node = css_path_nodes[node_index]
             selector = selectors[selector_index]
             if selector.combinator == DESCENDENT:
                 # Find a matching descendent

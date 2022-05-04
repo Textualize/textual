@@ -132,4 +132,4 @@ if __name__ == "__main__":
         async def on_mount(self, event: events.Mount) -> None:
             await self.screen.dock(DirectoryTree("/Users/willmcgugan/projects"))
 
-    TreeApp.run(log="textual.log")
+    TreeApp(log_path="textual.log").run()

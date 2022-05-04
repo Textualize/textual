@@ -33,4 +33,4 @@ class BasicApp(App):
         self.log(header.styles)
 
 
-BasicApp.run(css_file="local_styles.css", log="textual.log")
+BasicApp.run(css_path="local_styles.css", log_path="textual.log")

@@ -212,4 +212,4 @@ class CalculatorApp(App):
         await self.screen.dock(Calculator())
 
 
-CalculatorApp.run(title="Calculator Test", log="textual.log")
+CalculatorApp.run(title="Calculator Test", log_path="textual.log")

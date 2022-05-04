@@ -167,7 +167,7 @@ class DOMNode(MessagePump):
         return self.__class__.__name__.lower()
 
     @property
-    def css_path(self) -> list[DOMNode]:
+    def css_path_nodes(self) -> list[DOMNode]:
         """A list of nodes from the root to this node, forming a "path".
 
         Returns:

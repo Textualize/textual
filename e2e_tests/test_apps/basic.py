@@ -143,9 +143,9 @@ class BasicApp(App):
 
 sandbox_folder = Path(__file__).parent
 app = BasicApp(
-    css_file=sandbox_folder / "basic.css",
+    css_path=sandbox_folder / "basic.css",
     watch_css=True,
-    log=sandbox_folder / "textual.log",
+    log_path=sandbox_folder / "basic.log",
     log_verbosity=0,
 )
 

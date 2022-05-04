@@ -67,4 +67,4 @@ class MyApp(App):
 
 
 # Run our app class
-MyApp.run(title="Code Viewer", log="textual.log")
+MyApp.run(title="Code Viewer", log_path="textual.log")

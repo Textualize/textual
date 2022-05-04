@@ -106,20 +106,20 @@ class App(Generic[ReturnType], DOMNode):
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
-        log: str | PurePath = "",
+        log_path: str | PurePath = "",
         log_verbosity: int = 1,
         title: str = "Textual Application",
-        css_file: str | PurePath | None = None,
+        css_path: str | PurePath | None = None,
         watch_css: bool = True,
     ):
         """Textual application base class
 
         Args:
             driver_class (Type[Driver] | None, optional): Driver class or ``None`` to auto-detect. Defaults to None.
-            log (str | PurePath, optional): Path to log file, or "" to disable. Defaults to "".
+            log_path (str | PurePath, optional): Path to log file, or "" to disable. Defaults to "".
             log_verbosity (int, optional): Log verbosity from 0-3. Defaults to 1.
             title (str, optional): Default title of the application. Defaults to "Textual Application".
-            css_file (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
+            css_path (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
             watch_css (bool, optional): Watch CSS for changes. Defaults to True.
         """
         # N.B. This must be done *before* we call the parent constructor, because MessagePump's
@@ -151,8 +151,8 @@ class App(Generic[ReturnType], DOMNode):
 
         self._log_console: Console | None = None
         self._log_file: TextIO | None = None
-        if log:
-            self._log_file = open(log, "wt")
+        if log_path:
+            self._log_file = open(log_path, "wt")
             self._log_console = Console(
                 file=self._log_file,
                 markup=False,
@@ -171,10 +171,10 @@ class App(Generic[ReturnType], DOMNode):
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
         self._require_styles_update = False
 
-        self.css_file = css_file
+        self.css_path = css_path
         self.css_monitor = (
-            FileMonitor(css_file, self._on_css_change)
-            if (watch_css and css_file)
+            FileMonitor(css_path, self._on_css_change)
+            if (watch_css and css_path)
             else None
         )
 
@@ -450,13 +450,13 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_css_change(self) -> None:
         """Called when the CSS changes (if watch_css is True)."""
-        if self.css_file is not None:
+        if self.css_path is not None:
 
             try:
                 time = perf_counter()
-                self.stylesheet.read(self.css_file)
+                self.stylesheet.read(self.css_path)
                 elapsed = (perf_counter() - time) * 1000
-                self.log(f"loaded {self.css_file} in {elapsed:.0f}ms")
+                self.log(f"loaded {self.css_path} in {elapsed:.0f}ms")
             except Exception as error:
                 # TODO: Catch specific exceptions
                 self.console.bell()
@@ -647,8 +647,8 @@ class App(Generic[ReturnType], DOMNode):
             except DevtoolsConnectionError:
                 self.log(f"Couldn't connect to devtools ({self.devtools.url})")
         try:
-            if self.css_file is not None:
-                self.stylesheet.read(self.css_file)
+            if self.css_path is not None:
+                self.stylesheet.read(self.css_path)
             if self.CSS is not None:
                 self.stylesheet.add_source(
                     self.CSS, path=f"<{self.__class__.__name__}>"

@@ -19,4 +19,4 @@ class GridTest(App):
         grid.place(*placeholders, center=Placeholder())
 
 
-GridTest.run(title="Grid Test", log="textual.log")
+GridTest.run(title="Grid Test", log_path="textual.log")
