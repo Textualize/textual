@@ -103,6 +103,7 @@ class ScalarProperty:
             StyleValueError: If the value is of an invalid type, uses an invalid unit, or
                 cannot be parsed for any other reason.
         """
+        _rich_traceback_omit = True
         if value is None:
             obj.clear_rule(self.name)
             obj.refresh(layout=True)
@@ -186,6 +187,7 @@ class BoxProperty:
         Raises:
             StyleSyntaxError: If the string supplied for the color has invalid syntax.
         """
+        _rich_traceback_omit = True
         if border is None:
             if obj.clear_rule(self.name):
                 obj.refresh()
@@ -310,6 +312,7 @@ class BorderProperty:
         Raises:
             StyleValueError: When the supplied ``tuple`` is not of valid length (1, 2, or 4).
         """
+        _rich_traceback_omit = True
         top, right, bottom, left = self._properties
         if border is None:
             clear_rule = obj.clear_rule
@@ -405,7 +408,7 @@ class SpacingProperty:
             ValueError: When the value is malformed, e.g. a ``tuple`` with a length that is
                 not 1, 2, or 4.
         """
-
+        _rich_traceback_omit = True
         if spacing is None:
             if obj.clear_rule(self.name):
                 obj.refresh(layout=True)
@@ -455,6 +458,7 @@ class DocksProperty:
             obj (Styles): The ``Styles`` object.
             docks (Iterable[DockGroup]): Iterable of DockGroups
         """
+        _rich_traceback_omit = True
         if docks is None:
             if obj.clear_rule("docks"):
                 obj.refresh(layout=True)
@@ -489,6 +493,7 @@ class DockProperty:
             obj (Styles): The ``Styles`` object
             dock_name (str | None): The name of the dock to attach this widget to
         """
+        _rich_traceback_omit = True
         if obj.set_rule("dock", dock_name):
             obj.refresh(layout=True)
 
@@ -525,6 +530,7 @@ class LayoutProperty:
             MissingLayout,
         )  # Prevents circular import
 
+        _rich_traceback_omit = True
         if layout is None:
             if obj.clear_rule("layout"):
                 obj.refresh(layout=True)
@@ -583,6 +589,7 @@ class OffsetProperty:
             ScalarParseError: If any of the string values supplied in the 2-tuple cannot
                 be parsed into a Scalar. For example, if you specify a non-existent unit.
         """
+        _rich_traceback_omit = True
         if offset is None:
             if obj.clear_rule(self.name):
                 obj.refresh(layout=True)
@@ -649,7 +656,7 @@ class StringEnumProperty:
         Raises:
             StyleValueError: If the value is not in the set of valid values.
         """
-
+        _rich_traceback_omit = True
         if value is None:
             if obj.clear_rule(self.name):
                 obj.refresh(layout=self._layout)
@@ -695,7 +702,7 @@ class NameProperty:
         Raises:
             StyleTypeError: If the value is not a ``str``.
         """
-
+        _rich_traceback_omit = True
         if name is None:
             if obj.clear_rule(self.name):
                 obj.refresh(layout=True)
@@ -716,7 +723,7 @@ class NameListProperty:
         return cast("tuple[str, ...]", obj.get_rule(self.name, ()))
 
     def __set__(self, obj: StylesBase, names: str | tuple[str] | None = None):
-
+        _rich_traceback_omit = True
         if names is None:
             if obj.clear_rule(self.name):
                 obj.refresh(layout=True)
@@ -765,7 +772,7 @@ class ColorProperty:
         Raises:
             ColorParseError: When the color string is invalid.
         """
-
+        _rich_traceback_omit = True
         if color is None:
             if obj.clear_rule(self.name):
                 obj.refresh()
@@ -817,6 +824,7 @@ class StyleFlagsProperty:
         Raises:
             StyleValueError: If the value is an invalid style flag
         """
+        _rich_traceback_omit = True
         if style_flags is None:
             if obj.clear_rule(self.name):
                 obj.refresh()
@@ -859,6 +867,7 @@ class TransitionsProperty:
         return obj.get_rule("transitions", {})
 
     def __set__(self, obj: Styles, transitions: dict[str, Transition] | None) -> None:
+        _rich_traceback_omit = True
         if transitions is None:
             obj.clear_rule("transitions")
         else:
@@ -896,6 +905,7 @@ class FractionalProperty:
             value (float|str|None): The value to set as a float between 0 and 1, or
                 as a percentage string such as '10%'.
         """
+        _rich_traceback_omit = True
         name = self.name
         if value is None:
             if obj.clear_rule(name):
