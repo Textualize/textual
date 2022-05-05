@@ -65,6 +65,7 @@ class RenderCache(NamedTuple):
 class Widget(DOMNode):
 
     can_focus: bool = False
+    can_focus_children: bool = True
 
     CSS = """
     """
@@ -347,9 +348,12 @@ class Widget(DOMNode):
             x=self.scroll_target_x + self.container_size.width, animate=animate
         )
 
-    def __init_subclass__(cls, can_focus: bool = True) -> None:
+    def __init_subclass__(
+        cls, can_focus: bool = True, can_focus_children: bool = True
+    ) -> None:
         super().__init_subclass__()
         cls.can_focus = can_focus
+        cls.can_focus_children = can_focus_children
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "id", self.id, None

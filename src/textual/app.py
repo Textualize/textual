@@ -224,7 +224,7 @@ class App(Generic[ReturnType], DOMNode):
             if node is None:
                 pop()
             else:
-                if node.is_container and node.can_focus:
+                if node.is_container and node.can_focus_children:
                     push(iter(node.focusable_children))
                 else:
                     if node.can_focus:

@@ -23,12 +23,6 @@ class BasicApp(App):
     async def on_mount(self):
         """Build layout here."""
 
-        uber2 = Widget()
-        uber2.add_children(
-            Widget(id="uber2-child1"),
-            Widget(id="uber2-child2"),
-        )
-        first_child = Placeholder(id="child1", classes="list-item")
         uber1 = Widget(
             Placeholder(id="child1", classes="list-item"),
             Placeholder(id="child2", classes="list-item"),
@@ -38,7 +32,6 @@ class BasicApp(App):
             Placeholder(classes="list-item"),
         )
         self.mount(uber1=uber1)
-        await first_child.focus()
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)
