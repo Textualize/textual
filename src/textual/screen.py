@@ -6,6 +6,7 @@ from rich.style import Style
 
 
 from . import events, messages, errors
+from .css.styles import Styles
 
 from .geometry import Offset, Region
 from ._compositor import Compositor
@@ -39,7 +40,7 @@ class Screen(Widget):
         pass
 
     def render(self, styles: Styles) -> RenderableType:
-        return self.app.render()
+        return self.app.render(styles)
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the absolute offset of a given Widget.
