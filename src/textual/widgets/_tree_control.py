@@ -9,6 +9,7 @@ from rich.text import Text, TextType
 from rich.tree import Tree
 from rich.padding import PaddingDimensions
 
+from textual.css.styles import Styles
 from .. import log
 from .. import events
 from ..reactive import Reactive

@@ -12,6 +12,7 @@ from rich.text import Text
 
 from textual import events
 from textual._layout_resolve import layout_resolve, Edge
+from textual.css.styles import Styles
 from textual.keys import Keys
 from textual.reactive import Reactive
 from textual.renderables.opacity import Opacity
