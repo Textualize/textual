@@ -6,6 +6,7 @@ from rich.text import Text
 import rich.repr
 
 from .. import events
+from ..css.styles import Styles
 from ..reactive import Reactive
 from ..widget import Widget
 
@@ -59,7 +60,7 @@ class Footer(Widget):
             text.append_text(key_text)
         return text
 
-    def render(self) -> RenderableType:
+    def render(self, styles: Styles) -> RenderableType:
         if self._key_text is None:
             self._key_text = self.make_key_text()
         return self._key_text

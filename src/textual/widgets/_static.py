@@ -4,6 +4,8 @@ from rich.console import RenderableType
 from rich.padding import Padding, PaddingDimensions
 from rich.style import StyleType
 from rich.styled import Styled
+
+from ..css.styles import Styles
 from ..widget import Widget
 
 
@@ -23,7 +25,7 @@ class Static(Widget):
         self.style = style
         self.padding = padding
 
-    def render(self) -> RenderableType:
+    def render(self, styles: Styles) -> RenderableType:
         renderable = self.renderable
         if self.padding:
             renderable = Padding(renderable, self.padding)

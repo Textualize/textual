@@ -249,7 +249,7 @@ class TreeControl(Generic[NodeDataType], Widget):
                     push(iter(node.children))
         return None
 
-    def render(self) -> RenderableType:
+    def render(self, styles: Styles) -> RenderableType:
         return self._tree
 
     def render_node(self, node: TreeNode[NodeDataType]) -> RenderableType:

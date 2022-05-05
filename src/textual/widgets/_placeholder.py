@@ -10,6 +10,7 @@ import rich.repr
 
 from .. import log
 from .. import events
+from ..css.styles import Styles
 from ..reactive import Reactive
 from ..widget import Widget
 
@@ -26,7 +27,7 @@ class Placeholder(Widget, can_focus=True):
         yield "has_focus", self.has_focus, False
         yield "mouse_over", self.mouse_over, False
 
-    def render(self) -> RenderableType:
+    def render(self, styles: Styles) -> RenderableType:
         return Panel(
             Align.center(
                 Pretty(self, no_wrap=True, overflow="ellipsis"), vertical="middle"

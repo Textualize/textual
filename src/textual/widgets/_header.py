@@ -10,6 +10,7 @@ from rich.style import StyleType
 from rich.table import Table
 
 from .. import events
+from ..css.styles import Styles
 from ..reactive import watch, Reactive
 from ..widget import Widget
 
@@ -49,7 +50,7 @@ class Header(Widget):
     def get_clock(self) -> str:
         return datetime.now().time().strftime("%X")
 
-    def render(self) -> RenderableType:
+    def render(self, styles: Styles) -> RenderableType:
         header_table = Table.grid(padding=(0, 1), expand=True)
         header_table.style = self.style
         header_table.add_column(justify="left", ratio=0, width=8)

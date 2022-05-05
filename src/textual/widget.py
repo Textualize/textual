@@ -26,6 +26,7 @@ from .box_model import BoxModel, get_box_model
 from .color import Color
 from ._context import active_app
 from ._types import Lines
+from .css.styles import Styles
 from .dom import DOMNode
 from .geometry import clamp, Offset, Region, Size
 from .message import Message
@@ -156,7 +157,7 @@ class Widget(DOMNode):
             int: The optimal width of the content.
         """
         console = self.app.console
-        renderable = self.render()
+        renderable = self.render(self.styles)
         measurement = Measurement.get(console, console.options, renderable)
         return measurement.maximum
 
@@ -173,7 +174,7 @@ class Widget(DOMNode):
         Returns:
             int: The height of the content.
         """
-        renderable = self.render()
+        renderable = self.render(self.styles)
         options = self.console.options.update_width(width)
         segments = self.console.render(renderable, options)
         # Cheaper than counting the lines returned from render_lines!
@@ -461,7 +462,7 @@ class Widget(DOMNode):
             RenderableType: A new renderable.
         """
 
-        renderable = self.render()
+        renderable = self.render(self.styles)
 
         styles = self.styles
         parent_styles = self.parent.styles
@@ -661,8 +662,11 @@ class Widget(DOMNode):
             self.set_dirty()
         self.check_idle()
 
-    def render(self) -> RenderableType:
+    def render(self, styles: Styles) -> RenderableType:
         """Get renderable for widget.
+
+        Args:
+            styles (Styles): The Styles object for this Widget.
 
         Returns:
             RenderableType: Any renderable

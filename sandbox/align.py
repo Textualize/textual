@@ -6,7 +6,7 @@ from textual.widgets import Static
 
 
 class Thing(Widget):
-    def render(self):
+    def render(self, styles: Styles):
         return "Hello, 3434 World.\n[b]Lorem impsum."
 
 

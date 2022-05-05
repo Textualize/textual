@@ -15,12 +15,12 @@ lorem = Text.from_markup(
 
 
 class Lorem(Widget):
-    def render(self) -> Text:
+    def render(self, styles: Styles) -> Text:
         return Padding(lorem, 1)
 
 
 class Background(Widget):
-    def render(self):
+    def render(self, styles: Styles):
         return VerticalGradient("#212121", "#212121")
 
 

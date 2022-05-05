@@ -6,6 +6,7 @@ from rich.console import RenderableType
 from rich.text import Text
 
 from .. import events
+from ..css.styles import Styles
 from ..message import Message
 from ..reactive import Reactive
 from ..widget import Widget
@@ -15,7 +16,7 @@ class Button(Widget, can_focus=True):
     """A simple clickable button."""
 
     CSS = """
-    
+
     Button {
         width: auto;
         height: 3;
@@ -23,8 +24,8 @@ class Button(Widget, can_focus=True):
         background: $primary;
         color: $text-primary;
         content-align: center middle;
-        border: tall $primary-lighten-3;                
-        
+        border: tall $primary-lighten-3;
+
         margin: 1 0;
         text-style: bold;
     }
@@ -32,13 +33,13 @@ class Button(Widget, can_focus=True):
     Button:hover {
         background:$primary-darken-2;
         color: $text-primary-darken-2;
-        border: tall $primary-lighten-1;        
+        border: tall $primary-lighten-1;
     }
 
     App.-show-focus Button:focus {
-        tint: $accent 20%;        
+        tint: $accent 20%;
     }
-    
+
     """
 
     class Pressed(Message, bubble=True):
@@ -70,7 +71,7 @@ class Button(Widget, can_focus=True):
             return Text.from_markup(label)
         return label
 
-    def render(self) -> RenderableType:
+    def render(self, styles: Styles) -> RenderableType:
         return self.label
 
     async def on_click(self, event: events.Click) -> None:

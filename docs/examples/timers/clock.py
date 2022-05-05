@@ -10,7 +10,7 @@ class Clock(Widget):
     def on_mount(self):
         self.set_interval(1, self.refresh)
 
-    def render(self):
+    def render(self, styles: Styles):
         time = datetime.now().strftime("%c")
         return Align.center(time, vertical="middle")
 

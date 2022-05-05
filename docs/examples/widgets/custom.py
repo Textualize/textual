@@ -9,7 +9,7 @@ class Hover(Widget):
 
     mouse_over = Reactive(False)
 
-    def render(self) -> Panel:
+    def render(self, styles: Styles) -> Panel:
         return Panel("Hello [b]World[/b]", style=("on red" if self.mouse_over else ""))
 
     def on_enter(self) -> None:
