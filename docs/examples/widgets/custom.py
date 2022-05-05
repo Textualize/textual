@@ -29,4 +29,4 @@ class HoverApp(App):
         await self.screen.dock(*hovers, edge="top")
 
 
-HoverApp.run(log="textual.log")
+HoverApp.run(log_path="textual.log")

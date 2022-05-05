@@ -31,4 +31,4 @@ class GridTest(App):
         )
 
 
-GridTest.run(title="Grid Test", log="textual.log")
+GridTest.run(title="Grid Test", log_path="textual.log")

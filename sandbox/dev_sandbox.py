@@ -34,4 +34,4 @@ class BasicApp(App):
         self.panic(self.tree)
 
 
-BasicApp.run(css_file="dev_sandbox.scss", watch_css=True, log="textual.log")
+BasicApp.run(css_path="dev_sandbox.scss", watch_css=True, log_path="textual.log")

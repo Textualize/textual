@@ -22,4 +22,4 @@ class AlignApp(App):
         self.log(self.screen.tree)
 
 
-AlignApp.run(css_file="align.css", log="textual.log", watch_css=True)
+AlignApp.run(css_path="align.css", log_path="textual.log", watch_css=True)

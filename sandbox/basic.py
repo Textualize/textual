@@ -1,6 +1,3 @@
-from pathlib import Path
-
-from rich.align import Align
 from rich.console import RenderableType
 from rich.syntax import Syntax
 from rich.text import Text
@@ -141,8 +138,11 @@ class BasicApp(App):
         self.panic(self.tree)
 
 
-css_file = Path(__file__).parent / "basic.css"
-app = BasicApp(css_file=str(css_file), watch_css=True, log="textual.log")
+app = BasicApp(
+    css_path="basic.css",
+    watch_css=True,
+    log_path="textual.log",
+)
 
 if __name__ == "__main__":
     app.run()

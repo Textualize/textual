@@ -12,4 +12,4 @@ class SimpleApp(App):
         await self.screen.dock(Placeholder(), Placeholder(), edge="top")
 
 
-SimpleApp.run(log="textual.log")
+SimpleApp.run(log_path="textual.log")

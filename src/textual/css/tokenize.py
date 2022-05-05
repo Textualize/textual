@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from pathlib import PurePath
 from typing import Iterable
 
 from textual.css.tokenizer import Expect, Tokenizer, Token
@@ -136,7 +137,7 @@ class TokenizerState:
         "declaration_set_end": expect_root_scope,
     }
 
-    def __call__(self, code: str, path: str) -> Iterable[Token]:
+    def __call__(self, code: str, path: str | PurePath) -> Iterable[Token]:
         tokenizer = Tokenizer(code, path=path)
         expect = self.EXPECT
         get_token = tokenizer.get_token

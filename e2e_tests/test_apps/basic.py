@@ -141,9 +141,12 @@ class BasicApp(App):
         self.panic(self.tree)
 
 
-css_file = Path(__file__).parent / "basic.css"
+sandbox_folder = Path(__file__).parent
 app = BasicApp(
-    css_file=str(css_file), watch_css=True, log="textual.log", log_verbosity=0
+    css_path=sandbox_folder / "basic.css",
+    watch_css=True,
+    log_path=sandbox_folder / "basic.log",
+    log_verbosity=0,
 )
 
 if __name__ == "__main__":

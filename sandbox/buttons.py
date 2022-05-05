@@ -5,7 +5,6 @@ from textual import layout
 
 
 class ButtonsApp(App[str]):
-
     def compose(self) -> ComposeResult:
         yield layout.Vertical(
             Button("foo", id="foo"),
@@ -19,7 +18,7 @@ class ButtonsApp(App[str]):
         self.exit(event.button.id)
 
 
-app = ButtonsApp(log="textual.log", log_verbosity=2)
+app = ButtonsApp(log_path="textual.log", log_verbosity=2)
 
 if __name__ == "__main__":
     result = app.run()

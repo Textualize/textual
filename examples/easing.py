@@ -42,4 +42,4 @@ class EasingApp(App):
         self.side = not self.side
 
 
-EasingApp().run(log="textual.log")
+EasingApp().run(log_path="textual.log")

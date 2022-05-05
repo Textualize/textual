@@ -1,4 +1,6 @@
+from __future__ import annotations
 import os
+from pathlib import PurePath
 from typing import Callable
 
 import rich.repr
@@ -8,7 +10,7 @@ from ._callback import invoke
 
 @rich.repr.auto
 class FileMonitor:
-    def __init__(self, path: str, callback: Callable) -> None:
+    def __init__(self, path: str | PurePath, callback: Callable) -> None:
         self.path = path
         self.callback = callback
         self._modified = self._get_modified()

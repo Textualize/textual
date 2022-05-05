@@ -328,4 +328,4 @@ if __name__ == "__main__":
             else:
                 await message.node.toggle()
 
-    TreeApp.run(log="textual.log")
+    TreeApp(log_path="textual.log").run()
