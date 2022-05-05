@@ -53,9 +53,7 @@ def get_box_model(
     if not has_rule("height"):
         height = container.height
     elif styles.height.is_auto:
-        print("get_content_height", container, viewport, width)
         height = get_content_height(container, viewport, width)
-        print("height", height)
         if not is_content_box:
             height += gutter.height
     else:
