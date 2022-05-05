@@ -20,6 +20,11 @@ from typing import (
     TYPE_CHECKING,
 )
 
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal  # pragma: no cover
+
 import rich
 import rich.repr
 from rich.console import Console, RenderableType
@@ -108,6 +113,10 @@ class App(Generic[ReturnType], DOMNode):
         driver_class: Type[Driver] | None = None,
         log_path: str | PurePath = "",
         log_verbosity: int = 1,
+        # TODO: make this Literal a proper type in Rich, so we re-use it?
+        log_color_system: Literal[
+            "auto", "standard", "256", "truecolor", "windows"
+        ] = "auto",
         title: str = "Textual Application",
         css_path: str | PurePath | None = None,
         watch_css: bool = False,
@@ -155,6 +164,7 @@ class App(Generic[ReturnType], DOMNode):
             self._log_file = open(log_path, "wt")
             self._log_console = Console(
                 file=self._log_file,
+                color_system=log_color_system,
                 markup=False,
                 emoji=False,
                 highlight=False,
@@ -483,6 +493,18 @@ class App(Generic[ReturnType], DOMNode):
         from .css.query import DOMQuery
 
         return DOMQuery(self.screen, selector)
+
+    def query_one(self, selector: str) -> DOMNode | None:
+        """Retrieves a single node via a DOM query in the current screen.
+
+        Args:
+            selector (str): A CSS selector .
+
+        Returns:
+            DOMNode | None: The first node matching the query, or None if no node matches the selector.
+        """
+        result = self.query(selector)
+        return result.first() if len(result) else None
 
     def get_child(self, id: str) -> DOMNode:
         """Shorthand for self.screen.get_child(id: str)

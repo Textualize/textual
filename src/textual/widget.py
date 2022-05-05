@@ -28,6 +28,7 @@ from ._context import active_app
 from ._types import Lines
 from .dom import DOMNode
 from .geometry import clamp, Offset, Region, Size
+from .layouts.vertical import VerticalLayout
 from .message import Message
 from . import messages
 from ._layout import Layout
@@ -82,6 +83,7 @@ class Widget(DOMNode):
         self._virtual_size = Size(0, 0)
         self._container_size = Size(0, 0)
         self._layout_required = False
+        self._default_layout = VerticalLayout()
         self._animate: BoundAnimator | None = None
         self._reactive_watches: dict[str, Callable] = {}
         self.highlight_style: Style | None = None
@@ -401,6 +403,7 @@ class Widget(DOMNode):
         Returns:
             Region: The widget region minus scrollbars.
         """
+        # return region
         show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (region, _, _, _) = region.split(-1, -1)
@@ -553,7 +556,12 @@ class Widget(DOMNode):
 
     @property
     def layout(self) -> Layout | None:
-        return self.styles.layout
+        return self.styles.layout or (
+            # If we have children we _should_ return a layout, otherwise they won't be displayed:
+            self._default_layout
+            if self.children
+            else None
+        )
 
     @property
     def is_container(self) -> bool:
