@@ -376,8 +376,11 @@ class Region(NamedTuple):
         """
         x1, y1, x2, y2 = self.corners
         ox, oy, ox2, oy2 = other.corners
-        return (x2 >= ox >= x1 and y2 >= oy >= y1) and (
-            x2 >= ox2 >= x1 and y2 >= oy2 >= y1
+        return (
+            (x2 >= ox >= x1)
+            and (y2 >= oy >= y1)
+            and (x2 >= ox2 >= x1)
+            and (y2 >= oy2 >= y1)
         )
 
     def translate(self, x: int = 0, y: int = 0) -> Region:

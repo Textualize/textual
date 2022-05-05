@@ -18,7 +18,7 @@ def get_box_model(
     container: Size,
     viewport: Size,
     get_content_width: Callable[[Size, Size], int],
-    get_content_height: Callable[[Size, Size], int],
+    get_content_height: Callable[[Size, Size, int], int],
 ) -> BoxModel:
     """Resolve the box model for this Styles.
 
@@ -53,7 +53,7 @@ def get_box_model(
     if not has_rule("height"):
         height = container.height
     elif styles.height.is_auto:
-        height = get_content_height(container, viewport)
+        height = get_content_height(container, viewport, width)
         if not is_content_box:
             height += gutter.height
     else:

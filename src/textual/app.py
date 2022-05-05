@@ -110,7 +110,7 @@ class App(Generic[ReturnType], DOMNode):
         log_verbosity: int = 1,
         title: str = "Textual Application",
         css_path: str | PurePath | None = None,
-        watch_css: bool = True,
+        watch_css: bool = False,
     ):
         """Textual application base class
 
@@ -120,7 +120,7 @@ class App(Generic[ReturnType], DOMNode):
             log_verbosity (int, optional): Log verbosity from 0-3. Defaults to 1.
             title (str, optional): Default title of the application. Defaults to "Textual Application".
             css_path (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
-            watch_css (bool, optional): Watch CSS for changes. Defaults to True.
+            watch_css (bool, optional): Watch CSS for changes. Defaults to False.
         """
         # N.B. This must be done *before* we call the parent constructor, because MessagePump's
         # constructor instantiates a `asyncio.PriorityQueue` and in Python versions older than 3.10
@@ -172,17 +172,19 @@ class App(Generic[ReturnType], DOMNode):
         self._require_styles_update = False
 
         self.css_path = css_path
-        self.css_monitor = (
-            FileMonitor(css_path, self._on_css_change)
-            if (watch_css and css_path)
-            else None
-        )
 
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
+
         self.registry: set[MessagePump] = set()
         self.devtools = DevtoolsClient()
         self._return_value: ReturnType | None = None
         self._focus_timer: Timer | None = None
+
+        self.css_monitor = (
+            FileMonitor(css_path, self._on_css_change)
+            if ((watch_css or self.debug) and css_path)
+            else None
+        )
 
         super().__init__()
 
@@ -636,9 +638,6 @@ class App(Generic[ReturnType], DOMNode):
 
     async def process_messages(self) -> None:
         self._set_active()
-        log("---")
-        log(f"driver={self.driver_class}")
-        log(f"asyncio running loop={asyncio.get_running_loop()!r}")
 
         if self.devtools_enabled:
             try:
@@ -646,6 +645,12 @@ class App(Generic[ReturnType], DOMNode):
                 self.log(f"Connected to devtools ({self.devtools.url})")
             except DevtoolsConnectionError:
                 self.log(f"Couldn't connect to devtools ({self.devtools.url})")
+
+        self.log("---")
+        self.log(driver=self.driver_class)
+        self.log(loop=asyncio.get_running_loop())
+        self.log(features=self.features)
+
         try:
             if self.css_path is not None:
                 self.stylesheet.read(self.css_path)
@@ -666,8 +671,6 @@ class App(Generic[ReturnType], DOMNode):
         try:
             load_event = events.Load(sender=self)
             await self.dispatch_message(load_event)
-            # Wait for the load event to be processed, so we don't go in to application mode beforehand
-            # await load_event.wait()
 
             driver = self._driver = self.driver_class(self.console, self)
             driver.start_application_mode()
