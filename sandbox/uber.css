@@ -1,3 +1,7 @@
+App.-show-focus *:focus {
+  tint: #8bc34a 50%;
+}
+
 #uber1 {
   layout: vertical;
   background: green;
@@ -5,8 +9,12 @@
   border: heavy white;
 }
 
+#uber1:focus-within {
+  background: darkslateblue;
+}
+
 .list-item {
-  height: 8;
+  height: 10;
   color: #12a0;
   background: #ffffff00;
 }

@@ -15,15 +15,16 @@ class BasicApp(App):
         self.bind("d", "dump")
         self.bind("t", "log_tree")
         self.bind("p", "print")
-        self.bind("o", "toggle_visibility")
-        self.bind("p", "toggle_display")
+        self.bind("v", "toggle_visibility")
+        self.bind("x", "toggle_display")
         self.bind("f", "modify_focussed")
         self.bind("b", "toggle_border")
 
     async def on_mount(self):
         """Build layout here."""
-
+        first_child = Placeholder(id="child1", classes="list-item")
         uber1 = Widget(
+            first_child,
             Placeholder(id="child1", classes="list-item"),
             Placeholder(id="child2", classes="list-item"),
             Placeholder(id="child3", classes="list-item"),
@@ -32,6 +33,8 @@ class BasicApp(App):
             Placeholder(classes="list-item"),
         )
         self.mount(uber1=uber1)
+        self.first_child = first_child
+        self.uber = uber1
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)
@@ -51,8 +54,7 @@ class BasicApp(App):
             self.screen.tree,
             sep=" - ",
         )
-        print(1234, 5678)
-        sys.stdout.write("abcdef")
+        self.app.set_focus(None)
 
     def action_modify_focussed(self):
         """Increment height of focussed child, randomise border and bg color"""
