@@ -177,7 +177,7 @@ class Widget(DOMNode):
         options = self.console.options.update_width(width)
         segments = self.console.render(renderable, options)
         # Cheaper than counting the lines returned from render_lines!
-        height = sum(segment.text.count("\n") for segment in segments)
+        height = sum(text.count("\n") for text, _, _ in segments)
         return height
 
     async def watch_scroll_x(self, new_value: float) -> None:
