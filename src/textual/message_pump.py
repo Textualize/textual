@@ -246,7 +246,9 @@ class MessagePump:
                 if self._message_queue.empty():
                     if not self._closed:
                         event = events.Idle(self)
-                        for method in self._get_dispatch_methods("on_idle", event):
+                        for _cls, method in self._get_dispatch_methods(
+                            "on_idle", event
+                        ):
                             await invoke(method, event)
 
         log("CLOSED", self)
@@ -264,18 +266,25 @@ class MessagePump:
 
     def _get_dispatch_methods(
         self, method_name: str, message: Message
-    ) -> Iterable[Callable[[Message], Awaitable]]:
+    ) -> Iterable[tuple[type, Callable[[Message], Awaitable]]]:
         for cls in self.__class__.__mro__:
             if message._no_default_action:
                 break
             method = cls.__dict__.get(method_name, None)
             if method is not None:
-                yield method.__get__(self, cls)
+                yield cls, method.__get__(self, cls)
 
     async def on_event(self, event: events.Event) -> None:
         _rich_traceback_guard = True
-        for method in self._get_dispatch_methods(f"on_{event.name}", event):
-            log(event, ">>>", self, verbosity=event.verbosity)
+
+        for cls, method in self._get_dispatch_methods(f"on_{event.name}", event):
+            log(
+                event,
+                ">>>",
+                self,
+                f"method=<{cls.__name__}.{method.__func__.__name__}>",
+                verbosity=event.verbosity,
+            )
             await invoke(method, event)
 
         if event.bubble and self._parent and not event._stop_propagation:
