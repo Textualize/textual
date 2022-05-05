@@ -3,6 +3,7 @@ from datetime import datetime
 from rich.align import Align
 
 from textual.app import App
+from textual.css.styles import Styles
 from textual.widget import Widget
 
 

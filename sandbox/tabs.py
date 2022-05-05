@@ -6,6 +6,7 @@ from rich.rule import Rule
 
 from textual import events
 from textual.app import App
+from textual.css.styles import Styles
 from textual.widget import Widget
 from textual.widgets.tabs import Tabs, Tab
 

@@ -40,6 +40,7 @@ from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
 from ._timer import Timer
 from .binding import Bindings, NoBinding
+from .css.styles import Styles
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog

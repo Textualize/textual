@@ -1,6 +1,7 @@
 from rich.text import Text
 
 from textual.app import App, ComposeResult
+from textual.css.styles import Styles
 from textual.widget import Widget
 from textual.widgets import Static
 

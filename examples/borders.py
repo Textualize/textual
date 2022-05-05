@@ -3,6 +3,7 @@ from rich.padding import Padding
 from rich.text import Text
 
 from textual.app import App
+from textual.css.styles import Styles
 from textual.renderables.gradient import VerticalGradient
 from textual import events
 from textual.widgets import Placeholder

@@ -2,6 +2,7 @@ from rich.console import RenderableType
 from rich.panel import Panel
 
 from textual.app import App
+from textual.css.styles import Styles
 from textual.widget import Widget
 
 
