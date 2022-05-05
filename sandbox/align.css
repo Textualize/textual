@@ -10,11 +10,10 @@ Widget {
 }
 
 #thing {
-
     width: auto;
-    height: 10;
+    height: auto;
     background:magenta;
-    margin: 3;
+    margin: 1;
     padding: 1; 
     border: solid white; 
     box-sizing: border-box;

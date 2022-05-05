@@ -145,14 +145,40 @@ class Widget(DOMNode):
         )
         return box_model
 
-    def get_content_width(self, container_size: Size, parent_size: Size) -> int:
+    def get_content_width(self, container_size: Size, viewport_size: Size) -> int:
+        """Gets the width of the content area.
+
+        Args:
+            container_size (Size): Size of the container (immediate parent) widget.
+            viewport_size (Size): Size of the viewport.
+
+        Returns:
+            int: The optimal width of the content.
+        """
         console = self.app.console
         renderable = self.render()
         measurement = Measurement.get(console, console.options, renderable)
         return measurement.maximum
 
-    def get_content_height(self, container_size: Size, parent_size: Size) -> int:
-        return container_size.height
+    def get_content_height(
+        self, container_size: Size, viewport_size: Size, width: int
+    ) -> int:
+        """Gets the height (number of lines) in the content area.
+
+        Args:
+            container_size (Size): Size of the container (immediate parent) widget.
+            viewport_size (Size): Size of the viewport.
+            width (int): Width of renderable.
+
+        Returns:
+            int: The height of the content.
+        """
+        renderable = self.render()
+        options = self.console.options.update_width(width)
+        segments = self.console.render(renderable, options)
+        # Cheaper than counting the lines returned from render_lines!
+        height = sum(segment.text.count("\n") for segment in segments)
+        return height
 
     async def watch_scroll_x(self, new_value: float) -> None:
         self.horizontal_scrollbar.position = int(new_value)
