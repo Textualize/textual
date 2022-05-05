@@ -6,6 +6,7 @@ import base64
 import json
 import pickle
 from json import JSONDecodeError
+from time import time
 from typing import cast
 
 from aiohttp import WSMessage, WSMsgType
@@ -157,6 +158,7 @@ class ClientHandler:
         """Consume messages from the incoming (client -> server) Queue, and print
         the corresponding renderables to the console for each message.
         """
+        last_message_time: float | None = None
         while True:
             message_json = await self.incoming_queue.get()
             if message_json is None:
@@ -171,6 +173,13 @@ class ClientHandler:
                 encoded_segments = message_json["payload"]["encoded_segments"]
                 decoded_segments = base64.b64decode(encoded_segments)
                 segments = pickle.loads(decoded_segments)
+                message_time = time()
+                if (
+                    last_message_time is not None
+                    and message_time - last_message_time > 1
+                ):
+                    # Print a rule if it has been longer than a second since the last message
+                    self.service.console.rule("")
                 self.service.console.print(
                     DevConsoleLog(
                         segments=segments,
@@ -179,6 +188,7 @@ class ClientHandler:
                         unix_timestamp=timestamp,
                     )
                 )
+                last_message_time = message_time
             elif type == "client_spillover":
                 spillover = int(message_json["payload"]["spillover"])
                 info_renderable = DevConsoleNotice(
