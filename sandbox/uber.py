@@ -76,9 +76,7 @@ class BasicApp(App):
         self.focused.styles.border_top = ("solid", "invalid-color")
 
 
-app = BasicApp(
-    css_path="uber.css",
-)
+app = BasicApp(css_path="uber.css")
 
 if __name__ == "__main__":
     app.run()
