@@ -423,8 +423,11 @@ class Widget(DOMNode):
         container_region = self.content_region + container_geometry.region.origin
 
         if widget_region in container_region:
+            # Widget is visible, nothing to do
             return False
 
+        # We can either scroll so the widget is at the top of the container, or so that
+        # it is at the bottom. We want to pick which has the shortest distance
         top_delta = widget_region.origin - container_region.origin
         bottom_delta = widget_region.origin - (
             container_region.origin
