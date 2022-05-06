@@ -15,14 +15,13 @@ class BasicApp(App):
         self.bind("d", "dump")
         self.bind("t", "log_tree")
         self.bind("p", "print")
-        self.bind("o", "toggle_visibility")
-        self.bind("p", "toggle_display")
+        self.bind("v", "toggle_visibility")
+        self.bind("x", "toggle_display")
         self.bind("f", "modify_focussed")
         self.bind("b", "toggle_border")
 
     async def on_mount(self):
         """Build layout here."""
-
         uber1 = Widget(
             Placeholder(id="child1", classes="list-item"),
             Placeholder(id="child2", classes="list-item"),
@@ -32,6 +31,7 @@ class BasicApp(App):
             Placeholder(classes="list-item"),
         )
         self.mount(uber1=uber1)
+        uber1.focus()
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)
@@ -47,9 +47,8 @@ class BasicApp(App):
 
     def action_print(self):
         print(
-            "Printed using builtin [b blue]print[/] function:",
-            self.screen.tree,
-            sep=" - ",
+            "Focused widget is:",
+            self.focused,
         )
         print(1234, 5678)
         sys.stdout.write("abcdef")

@@ -3,10 +3,10 @@ from __future__ import annotations
 from typing import cast
 
 from rich.console import RenderableType
+from rich.style import Style
 from rich.text import Text
 
 from .. import events
-from ..css.styles import Styles
 from ..message import Message
 from ..reactive import Reactive
 from ..widget import Widget
@@ -71,7 +71,7 @@ class Button(Widget, can_focus=True):
             return Text.from_markup(label)
         return label
 
-    def render(self, styles: Styles) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         return self.label
 
     async def on_click(self, event: events.Click) -> None:

@@ -3,6 +3,7 @@
   background: green;
   overflow: hidden auto;
   border: heavy white;
+  text-style: underline;
 }
 
 .list-item {

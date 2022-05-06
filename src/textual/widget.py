@@ -157,7 +157,7 @@ class Widget(DOMNode):
             int: The optimal width of the content.
         """
         console = self.app.console
-        renderable = self.render(self.styles)
+        renderable = self.render(self.styles.rich_style)
         measurement = Measurement.get(console, console.options, renderable)
         return measurement.maximum
 
@@ -174,7 +174,7 @@ class Widget(DOMNode):
         Returns:
             int: The height of the content.
         """
-        renderable = self.render(self.styles)
+        renderable = self.render(self.styles.rich_style)
         options = self.console.options.update_width(width)
         segments = self.console.render(renderable, options)
         # Cheaper than counting the lines returned from render_lines!
@@ -462,7 +462,7 @@ class Widget(DOMNode):
             RenderableType: A new renderable.
         """
 
-        renderable = self.render(self.styles)
+        renderable = self.render(self.styles.rich_style)
 
         styles = self.styles
         parent_styles = self.parent.styles
@@ -477,9 +477,11 @@ class Widget(DOMNode):
 
         renderable_text_style = parent_text_style + text_style
         if renderable_text_style:
-            renderable = Styled(renderable, renderable_text_style)
+            color = text_style.color
+            bgcolor = text_style.bgcolor
+            renderable = Styled(renderable, Style(color=color, bgcolor=bgcolor))
 
-        renderable = Padding(renderable, styles.padding, style=renderable_text_style)
+        renderable = Padding(renderable, styles.padding)
 
         if styles.border:
             renderable = Border(
@@ -662,11 +664,11 @@ class Widget(DOMNode):
             self.set_dirty()
         self.check_idle()
 
-    def render(self, styles: Styles) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         """Get renderable for widget.
 
         Args:
-            styles (Styles): The Styles object for this Widget.
+            style (Styles): The Styles object for this Widget.
 
         Returns:
             RenderableType: Any renderable

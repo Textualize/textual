@@ -12,7 +12,6 @@ from rich.text import Text
 
 from textual import events
 from textual._layout_resolve import layout_resolve, Edge
-from textual.css.styles import Styles
 from textual.keys import Keys
 from textual.reactive import Reactive
 from textual.renderables.opacity import Opacity
@@ -331,7 +330,7 @@ class Tabs(Widget):
         """
         return next((i for i, tab in enumerate(self.tabs) if tab.name == tab_name), 0)
 
-    def render(self, styles: Styles) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         return TabsRenderable(
             self.tabs,
             tab_padding=self.tab_padding,

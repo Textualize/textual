@@ -3,16 +3,16 @@ from dataclasses import dataclass
 from rich.console import RenderableType
 from rich.padding import Padding
 from rich.rule import Rule
+from rich.style import Style
 
 from textual import events
 from textual.app import App
-from textual.css.styles import Styles
 from textual.widget import Widget
 from textual.widgets.tabs import Tabs, Tab
 
 
 class Hr(Widget):
-    def render(self, styles: Styles) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         return Rule()
 
 
@@ -23,7 +23,7 @@ class Info(Widget):
         super().__init__()
         self.text = text
 
-    def render(self, styles: Styles) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         return Padding(f"{self.text}", pad=(0, 1))
 
 

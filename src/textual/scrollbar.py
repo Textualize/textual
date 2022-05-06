@@ -8,7 +8,6 @@ from rich.console import ConsoleOptions, RenderResult, RenderableType
 from rich.segment import Segment, Segments
 from rich.style import Style, StyleType
 
-from textual.css.styles import Styles
 from textual.reactive import Reactive
 from . import events
 from ._types import MessageTarget
@@ -206,18 +205,18 @@ class ScrollBar(Widget):
         yield "window_size", self.window_size
         yield "position", self.position
 
-    def render(self, styles: Styles) -> RenderableType:
-        styles = self.parent.styles
+    def render(self, style: Style) -> RenderableType:
+        style = self.parent.styles
         style = Style(
             bgcolor=(
-                styles.scrollbar_background_hover.rich_color
+                style.scrollbar_background_hover.rich_color
                 if self.mouse_over
-                else styles.scrollbar_background.rich_color
+                else style.scrollbar_background.rich_color
             ),
             color=(
-                styles.scrollbar_color_active.rich_color
+                style.scrollbar_color_active.rich_color
                 if self.grabbed
-                else styles.scrollbar_color.rich_color
+                else style.scrollbar_color.rich_color
             ),
         )
         return ScrollBarRender(
@@ -285,7 +284,6 @@ class ScrollBar(Widget):
 
 if __name__ == "__main__":
     from rich.console import Console
-    from rich.segment import Segments
 
     console = Console()
     bar = ScrollBarRender()

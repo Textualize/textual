@@ -28,6 +28,7 @@ from rich.measure import Measurement
 from rich.protocol import is_renderable
 from rich.screen import Screen as ScreenRenderable
 from rich.segment import Segments
+from rich.style import Style
 from rich.traceback import Traceback
 
 from . import actions
@@ -40,7 +41,6 @@ from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
 from ._timer import Timer
 from .binding import Bindings, NoBinding
-from .css.styles import Styles
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
@@ -469,7 +469,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.stylesheet.update(self)
                 self.screen.refresh(layout=True)
 
-    def render(self, styles: Styles) -> RenderableType:
+    def render(self, styles: Style) -> RenderableType:
         return ""
 
     def query(self, selector: str | None = None) -> DOMQuery:

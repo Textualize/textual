@@ -6,11 +6,9 @@ from rich.console import RenderableType
 from rich.panel import Panel
 from rich.pretty import Pretty
 import rich.repr
+from rich.style import Style
 
-
-from .. import log
 from .. import events
-from ..css.styles import Styles
 from ..reactive import Reactive
 from ..widget import Widget
 
@@ -20,22 +18,23 @@ class Placeholder(Widget, can_focus=True):
 
     has_focus: Reactive[bool] = Reactive(False)
     mouse_over: Reactive[bool] = Reactive(False)
-    style: Reactive[str] = Reactive("")
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
         yield "has_focus", self.has_focus, False
         yield "mouse_over", self.mouse_over, False
 
-    def render(self, styles: Styles) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
+        # Apply colours only inside render_styled
+        # Pass the full RICH style object into `render` - not the `Styles`
         return Panel(
             Align.center(
-                Pretty(self, no_wrap=True, overflow="ellipsis"), vertical="middle"
+                Pretty(self, no_wrap=True, overflow="ellipsis"),
+                vertical="middle",
             ),
             title=self.__class__.__name__,
             border_style="green" if self.mouse_over else "blue",
             box=box.HEAVY if self.has_focus else box.ROUNDED,
-            style=self.style,
         )
 
     async def on_focus(self, event: events.Focus) -> None:
