@@ -8,7 +8,7 @@ from rich.style import Style
 from . import events, messages, errors
 
 from .geometry import Offset, Region
-from ._compositor import Compositor, RegionGeometry
+from ._compositor import Compositor, MapGeometry
 from .reactive import Reactive
 from .widget import Widget
 
@@ -76,7 +76,7 @@ class Screen(Widget):
         """
         return self._compositor.get_style_at(x, y)
 
-    def find_widget(self, widget: Widget) -> RegionGeometry:
+    def find_widget(self, widget: Widget) -> MapGeometry:
         """Get the screen region of a Widget.
 
         Args:

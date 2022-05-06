@@ -52,7 +52,7 @@ class ReflowResult(NamedTuple):
     resized: set[Widget]  # Widgets that have been resized
 
 
-class RegionGeometry(NamedTuple):
+class MapGeometry(NamedTuple):
     """Defines the absolute location of a Widget."""
 
     region: Region  # The region occupied by the widget
@@ -62,7 +62,7 @@ class RegionGeometry(NamedTuple):
     container_size: Size  # The container size (area not occupied by scrollbars)
 
 
-RenderRegionMap: TypeAlias = "dict[Widget, RegionGeometry]"
+CompositorMap: TypeAlias = "dict[Widget, MapGeometry]"
 
 
 @rich.repr.auto
@@ -99,7 +99,7 @@ class Compositor:
 
     def __init__(self) -> None:
         # A mapping of Widget on to its "render location" (absolute position / depth)
-        self.map: RenderRegionMap = {}
+        self.map: CompositorMap = {}
 
         # All widgets considered in the arrangement
         # Note this may be a superset of self.map.keys() as some widgets may be invisible for various reasons
@@ -169,7 +169,7 @@ class Compositor:
             resized=resized_widgets,
         )
 
-    def _arrange_root(self, root: Widget) -> tuple[RenderRegionMap, set[Widget]]:
+    def _arrange_root(self, root: Widget) -> tuple[CompositorMap, set[Widget]]:
         """Arrange a widgets children based on its layout attribute.
 
         Args:
@@ -182,7 +182,7 @@ class Compositor:
 
         ORIGIN = Offset(0, 0)
         size = root.size
-        map: RenderRegionMap = {}
+        map: CompositorMap = {}
         widgets: set[Widget] = set()
         get_order = attrgetter("order")
 
@@ -251,7 +251,7 @@ class Compositor:
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(
                     container_size
                 ):
-                    map[chrome_widget] = RegionGeometry(
+                    map[chrome_widget] = MapGeometry(
                         chrome_region + container_region.origin + layout_offset,
                         order,
                         clip,
@@ -260,7 +260,7 @@ class Compositor:
                     )
 
                 # Add the container widget, which will render a background
-                map[widget] = RegionGeometry(
+                map[widget] = MapGeometry(
                     region + layout_offset,
                     order,
                     clip,
@@ -270,7 +270,7 @@ class Compositor:
 
             else:
                 # Add the widget to the map
-                map[widget] = RegionGeometry(
+                map[widget] = MapGeometry(
                     region + layout_offset, order, clip, region.size, container_size
                 )
 
@@ -340,7 +340,7 @@ class Compositor:
                 return segment.style or Style.null()
         return Style.null()
 
-    def find_widget(self, widget: Widget) -> RegionGeometry:
+    def find_widget(self, widget: Widget) -> MapGeometry:
         """Get information regarding the relative position of a widget in the Compositor.
 
         Args:
