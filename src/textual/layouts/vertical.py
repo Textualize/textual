@@ -41,7 +41,7 @@ class VerticalLayout(Layout):
         displayed_children = cast("list[Widget]", parent.displayed_children)
         for widget, box_model, margin in zip(displayed_children, box_models, margins):
             content_width, content_height = box_model.size
-            offset_x = widget.styles.align_width(content_width, parent_size.width)
+            offset_x = widget.styles.align_width(content_width, size.width)
             region = Region(offset_x, y, content_width, content_height)
             add_placement(WidgetPlacement(region, widget, 0))
             y += region.height + margin
