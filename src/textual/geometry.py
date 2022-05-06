@@ -259,16 +259,19 @@ class Region(NamedTuple):
 
     @property
     def bottom_left(self) -> Offset:
+        """Bottom left offset of the region."""
         x, y, _width, height = self
         return Offset(x, y + height)
 
     @property
     def top_right(self) -> Offset:
+        """Top right offset of the region."""
         x, y, width, _height = self
         return Offset(x + width, y)
 
     @property
     def bottom_right(self) -> Offset:
+        """Bottom right of the region."""
         x, y, width, height = self
         return Offset(x + width, y + height)
 

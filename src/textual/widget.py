@@ -303,6 +303,9 @@ class Widget(DOMNode):
             x (int | None, optional): X coordinate (column) to scroll to, or ``None`` for no change. Defaults to None.
             x (int | None, optional): Y coordinate (row) to scroll to, or ``None`` for no change. Defaults to None.
             animate (bool, optional): Animate to new scroll position. Defaults to False.
+
+        Returns:
+            bool: True if the scroll position changed, otherwise False.
         """
 
         scrolled_x = scrolled_y = False
@@ -329,16 +332,10 @@ class Widget(DOMNode):
                 if x != self.scroll_x:
                     self.scroll_target_x = self.scroll_x = x
                     scrolled_x = True
-                # self.scroll_target_x = self.scroll_x = x
-                # if x != self.scroll_x:
-                #     scrolled_x = True
             if y is not None:
                 if y != self.scroll_y:
                     self.scroll_target_y = self.scroll_y = y
                     scrolled_y = True
-                # self.scroll_target_y = self.scroll_y = y
-                # if y != self.scroll_y:
-                #     scrolled_y = True
             if scrolled_x or scrolled_y:
                 self.refresh(repaint=False, layout=True)
 
@@ -357,6 +354,9 @@ class Widget(DOMNode):
             x (int | None, optional): X coordinate (column) to scroll to, or ``None`` for no change. Defaults to None.
             x (int | None, optional): Y coordinate (row) to scroll to, or ``None`` for no change. Defaults to None.
             animate (bool, optional): Animate to new scroll position. Defaults to False.
+
+        Returns:
+            bool: True if the scroll position changed, otherwise False.
         """
         return self.scroll_to(
             None if x is None else (self.scroll_x + x),
@@ -403,6 +403,15 @@ class Widget(DOMNode):
         )
 
     def scroll_to_widget(self, widget: Widget, *, animate: bool = True) -> bool:
+        """Scroll so that a child widget is in the visible area.
+
+        Args:
+            widget (Widget): A Widget in the children.
+            animate (bool, optional): True to animate, or False to jump. Defaults to True.
+
+        Returns:
+            bool: True if the scroll position changed, otherwise False.
+        """
         screen = self.screen
         try:
             widget_geometry = screen.find_widget(widget)
@@ -424,7 +433,7 @@ class Widget(DOMNode):
 
         delta_x = min(top_delta.x, bottom_delta.x, key=abs)
         delta_y = min(top_delta.y, bottom_delta.y, key=abs)
-        return self.scroll_relative(delta_x or None, delta_y or None, animate=True)
+        return self.scroll_relative(delta_x or None, delta_y or None, animate=animate)
 
     def __init_subclass__(
         cls, can_focus: bool = True, can_focus_children: bool = True
@@ -575,6 +584,7 @@ class Widget(DOMNode):
 
     @property
     def content_offset(self) -> Offset:
+        """An offset from the Widget origin where the content begins."""
         x, y = self.styles.content_gutter.top_left
         return Offset(x, y)
 
@@ -585,7 +595,7 @@ class Widget(DOMNode):
     @property
     def region(self) -> Region:
         try:
-            return self.screen._compositor.find_widget(self)
+            return self.screen._compositor.find_widget(self).region
         except errors.NoWidget:
             return Region()
 
@@ -822,8 +832,7 @@ class Widget(DOMNode):
 
     def on_descendant_focus(self, event: events.DescendantFocus) -> None:
         self.descendant_has_focus = True
-        if self.is_container:
-            self.log(event.sender)
+        if self.is_container and isinstance(event.sender, Widget):
             self.scroll_to_widget(event.sender, animate=True)
 
     def on_descendant_blur(self, event: events.DescendantBlur) -> None:
