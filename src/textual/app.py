@@ -540,16 +540,19 @@ class App(Generic[ReturnType], DOMNode):
             # No focus, so blur currently focused widget if it exists
             if self.focused is not None:
                 self.focused.post_message_no_wait(events.Blur(self))
+                self.focused.emit_no_wait(events.DescendantBlur(self))
                 self.focused = None
         elif widget.can_focus:
             if self.focused != widget:
                 if self.focused is not None:
                     # Blur currently focused widget
                     self.focused.post_message_no_wait(events.Blur(self))
+                    self.focused.emit_no_wait(events.DescendantBlur(self))
                 # Change focus
                 self.focused = widget
                 # Send focus event
                 widget.post_message_no_wait(events.Focus(self))
+                widget.emit_no_wait(events.DescendantFocus(self))
 
     async def _set_mouse_over(self, widget: Widget | None) -> None:
         """Called when the mouse is over another widget.

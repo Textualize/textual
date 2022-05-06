@@ -393,3 +393,11 @@ class Focus(Event, bubble=False):
 
 class Blur(Event, bubble=False):
     pass
+
+
+class DescendantFocus(Event, bubble=True):
+    pass
+
+
+class DescendantBlur(Event, bubble=True):
+    pass

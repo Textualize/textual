@@ -99,6 +99,7 @@ class Widget(DOMNode):
     auto_width = Reactive(True)
     auto_height = Reactive(True)
     has_focus = Reactive(False)
+    descendant_has_focus = Reactive(False)
     mouse_over = Reactive(False)
     scroll_x = Reactive(0.0, repaint=False)
     scroll_y = Reactive(0.0, repaint=False)
@@ -451,6 +452,8 @@ class Widget(DOMNode):
             yield "hover"
         if self.has_focus:
             yield "focus"
+        if self.descendant_has_focus:
+            yield "focus-within"
 
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
@@ -753,10 +756,18 @@ class Widget(DOMNode):
         self.mouse_over = True
 
     def on_focus(self, event: events.Focus) -> None:
+        self.emit_no_wait(events.DescendantFocus(self))
         self.has_focus = True
 
     def on_blur(self, event: events.Blur) -> None:
+        self.emit_no_wait(events.DescendantBlur(self))
         self.has_focus = False
+
+    def on_descendant_focus(self, event: events.DescendantFocus) -> None:
+        self.descendant_has_focus = True
+
+    def on_descendant_blur(self, event: events.DescendantBlur) -> None:
+        self.descendant_has_focus = False
 
     def on_mouse_scroll_down(self, event) -> None:
         if self.is_container:

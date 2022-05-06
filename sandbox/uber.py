@@ -22,8 +22,9 @@ class BasicApp(App):
 
     async def on_mount(self):
         """Build layout here."""
+        first_child = Placeholder(id="child1", classes="list-item")
         uber1 = Widget(
-            Placeholder(id="child1", classes="list-item"),
+            first_child,
             Placeholder(id="child2", classes="list-item"),
             Placeholder(id="child3", classes="list-item"),
             Placeholder(classes="list-item"),
@@ -32,6 +33,8 @@ class BasicApp(App):
         )
         self.mount(uber1=uber1)
         uber1.focus()
+        self.first_child = first_child
+        self.uber = uber1
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)
@@ -50,8 +53,7 @@ class BasicApp(App):
             "Focused widget is:",
             self.focused,
         )
-        print(1234, 5678)
-        sys.stdout.write("abcdef")
+        self.app.set_focus(None)
 
     def action_modify_focussed(self):
         """Increment height of focussed child, randomise border and bg color"""
