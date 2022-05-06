@@ -80,7 +80,7 @@ class AppTest(App):
 
     def run(self):
         raise NotImplementedError(
-            "Use `async with my_test_app.get_running_state()` rather than `my_test_app.run()`"
+            "Use `async with my_test_app.in_running_state()` rather than `my_test_app.run()`"
         )
 
     @property

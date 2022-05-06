@@ -1,5 +1,6 @@
 from __future__ import annotations
 import asyncio
+import platform
 from typing import cast, List
 
 import pytest
@@ -9,6 +10,9 @@ from textual.app import ComposeResult
 from textual.geometry import Size
 from textual.widget import Widget
 from textual.widgets import Placeholder
+
+PLATFORM = platform.system()
+WINDOWS = PLATFORM == "Windows"
 
 # Let's allow ourselves some abbreviated names for those tests,
 # in order to make the test cases a bit easier to read :-)
@@ -106,7 +110,7 @@ PLACEHOLDERS_DEFAULT_H = 3  # the default height for our Placeholder widgets
         ],
     ),
 )
-async def test_vertical_container_with_children(
+async def test_composition_of_vertical_container_with_children(
     screen_size: Size,
     placeholders_count: int,
     root_container_style: str,
@@ -147,25 +151,38 @@ async def test_vertical_container_with_children(
 
     app = MyTestApp(size=screen_size, test_name="compositor")
 
+    expected_screen_size = Size(*screen_size)
+
+    # On Windows the screen size is always 1 cell smaller than the requested dimensions.
+    # Let's take this into account into our "expected_*" measurements:
+    if WINDOWS:
+        expected_screen_size = expected_screen_size._replace(
+            width=expected_screen_size.width - 1
+        )
+        expected_placeholders_size = (
+            expected_placeholders_size[0] - 1,
+            expected_placeholders_size[1],
+        )
+
     async with app.in_running_state():
         app.log_tree()
 
+        # root widget checks:
         root_widget = cast(Widget, app.query_one("#root"))
-        assert root_widget.size == screen_size
-        # assert root_widget.virtual_size == expected_root_widget_virtual_size
+        assert root_widget.size == expected_screen_size
         root_widget_region = app.screen.get_widget_region(root_widget)
-        assert root_widget_region == (0, 0, screen_size.width, screen_size.height)
+        assert root_widget_region == (
+            0,
+            0,
+            expected_screen_size.width,
+            expected_screen_size.height,
+        )
 
         app_placeholders = cast(List[Widget], app.query("Placeholder"))
         assert len(app_placeholders) == placeholders_count
 
+    # placeholder widgets checks:
     for placeholder in app_placeholders:
         assert placeholder.size == expected_placeholders_size
-        # expected_placeholder_size = (
-        #     test_size.width - 2,  # because of the 2 horizontal borders of "#root"
-        #     test_size.height - 2,  # ditto with vertical borders
-        # )
-        # assert placeholder.size == expected_root_widget_size
-        # assert placeholder.virtual_size == expected_root_widget_virtual_size
         assert placeholder.styles.offset.x.value == 0.0
         assert app.screen.get_offset(placeholder).x == expected_placeholders_offset_x
