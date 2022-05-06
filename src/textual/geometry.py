@@ -258,6 +258,21 @@ class Region(NamedTuple):
         return Offset(self.x, self.y)
 
     @property
+    def bottom_left(self) -> Offset:
+        x, y, _width, height = self
+        return Offset(x, y + height)
+
+    @property
+    def top_right(self) -> Offset:
+        x, y, width, _height = self
+        return Offset(x + width, y)
+
+    @property
+    def bottom_right(self) -> Offset:
+        x, y, width, height = self
+        return Offset(x + width, y + height)
+
+    @property
     def size(self) -> Size:
         """Get the size of the region."""
         return Size(self.width, self.height)

@@ -52,17 +52,17 @@ class ReflowResult(NamedTuple):
     resized: set[Widget]  # Widgets that have been resized
 
 
-class RenderRegion(NamedTuple):
+class RegionGeometry(NamedTuple):
     """Defines the absolute location of a Widget."""
 
     region: Region  # The region occupied by the widget
     order: tuple[int, ...]  # A tuple of ints defining the painting order
     clip: Region  # A region to clip the widget by (if a Widget is within a container)
     virtual_size: Size  # The virtual size  (scrollable region) of a widget if it is a container
-    container_size: Size  # The container size (area no occupied by scrollbars)
+    container_size: Size  # The container size (area not occupied by scrollbars)
 
 
-RenderRegionMap: TypeAlias = "dict[Widget, RenderRegion]"
+RenderRegionMap: TypeAlias = "dict[Widget, RegionGeometry]"
 
 
 @rich.repr.auto
@@ -251,7 +251,7 @@ class Compositor:
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(
                     container_size
                 ):
-                    map[chrome_widget] = RenderRegion(
+                    map[chrome_widget] = RegionGeometry(
                         chrome_region + container_region.origin + layout_offset,
                         order,
                         clip,
@@ -260,7 +260,7 @@ class Compositor:
                     )
 
                 # Add the container widget, which will render a background
-                map[widget] = RenderRegion(
+                map[widget] = RegionGeometry(
                     region + layout_offset,
                     order,
                     clip,
@@ -270,7 +270,7 @@ class Compositor:
 
             else:
                 # Add the widget to the map
-                map[widget] = RenderRegion(
+                map[widget] = RegionGeometry(
                     region + layout_offset, order, clip, region.size, container_size
                 )
 
@@ -340,8 +340,8 @@ class Compositor:
                 return segment.style or Style.null()
         return Style.null()
 
-    def get_widget_region(self, widget: Widget) -> Region:
-        """Get the Region of a Widget contained in this Layout.
+    def find_widget(self, widget: Widget) -> RegionGeometry:
+        """Get information regarding the relative position of a widget in the Compositor.
 
         Args:
             widget (Widget): The Widget in this layout you wish to know the Region of.
@@ -350,11 +350,11 @@ class Compositor:
             NoWidget: If the Widget is not contained in this Layout.
 
         Returns:
-            Region: The Region of the Widget.
+            RenderRegion: Widget information.
 
         """
         try:
-            region, *_ = self.map[widget]
+            region = self.map[widget]
         except KeyError:
             raise errors.NoWidget("Widget is not in layout")
         else:

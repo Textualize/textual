@@ -241,7 +241,12 @@ class StylesBase(ABC):
         Returns:
             Spacing: Space around widget.
         """
-        spacing = Spacing() + self.padding + self.border.spacing
+        spacing = self.padding + self.border.spacing
+        return spacing
+
+    @property
+    def content_gutter(self) -> Spacing:
+        spacing = self.padding + self.border.spacing + self.margin
         return spacing
 
     @abstractmethod
