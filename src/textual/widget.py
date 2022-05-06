@@ -597,8 +597,9 @@ class Widget(DOMNode):
 
     @property
     def region(self) -> Region:
+        """The region occupied by this widget, relative to the Screen."""
         try:
-            return self.screen._compositor.find_widget(self).region
+            return self.screen.find_widget(self).region
         except errors.NoWidget:
             return Region()
 

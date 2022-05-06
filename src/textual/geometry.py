@@ -292,17 +292,17 @@ class Region(NamedTuple):
 
     @property
     def x_range(self) -> range:
-        """A range object for X coordinates"""
+        """A range object for X coordinates."""
         return range(self.x, self.x + self.width)
 
     @property
     def y_range(self) -> range:
-        """A range object for Y coordinates"""
+        """A range object for Y coordinates."""
         return range(self.y, self.y + self.height)
 
     @property
     def reset_origin(self) -> Region:
-        """An region of the same size at the origin."""
+        """An region of the same size at (0, 0)."""
         _, _, width, height = self
         return Region(0, 0, width, height)
 
