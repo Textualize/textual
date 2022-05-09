@@ -350,7 +350,7 @@ class Compositor:
             NoWidget: If the Widget is not contained in this Layout.
 
         Returns:
-            RenderRegion: Widget information.
+            MapGeometry: Widget's composition information.
 
         """
         try:
