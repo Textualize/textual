@@ -227,9 +227,6 @@ class ScrollBar(Widget):
             style=style,
         )
 
-    async def on_event(self, event) -> None:
-        await super().on_event(event)
-
     async def on_enter(self, event: events.Enter) -> None:
         self.mouse_over = True
 

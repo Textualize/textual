@@ -272,6 +272,8 @@ class Widget(DOMNode):
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
+        self.horizontal_scrollbar.display = show_horizontal
+        self.vertical_scrollbar.display = show_vertical
 
     @property
     def scrollbars_enabled(self) -> tuple[bool, bool]:
@@ -666,6 +668,7 @@ class Widget(DOMNode):
 
     def watch_mouse_over(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
+        return
         self.app.update_styles()
 
     def watch_has_focus(self, value: bool) -> None:

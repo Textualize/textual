@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from operator import attrgetter, itemgetter
 import sys
-from typing import cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
+from typing import Callable, cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
@@ -100,12 +100,15 @@ class SpansUpdate:
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         move_to = Control.move_to
-        for line, offset, segments in self.spans:
-            yield move_to(offset, line)
+        new_line = Segment.line()
+        for last, (y, x, segments) in loop_last(self.spans):
+            yield move_to(x, y)
             yield from segments
+            if not last:
+                yield new_line
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield [(y, offset, "...") for y, offset, segments in self.spans]
+        yield [(y, x, "...") for y, x, _segments in self.spans]
 
 
 @rich.repr.auto(angular=True)
@@ -161,7 +164,7 @@ class Compositor:
                 ranges.sort()
                 x1, x2 = ranges[0]
                 for next_x1, next_x2 in ranges[1:]:
-                    if next_x1 <= x2 + 1:
+                    if next_x1 <= x2:
                         if next_x2 > x2:
                             x2 = next_x2
                     else:
@@ -523,6 +526,7 @@ class Compositor:
             is_rendered_line = {y for y, _, _ in spans}.__contains__
         else:
             crop = screen_region
+            spans = []
             is_rendered_line = lambda y: True
 
         _Segment = Segment
@@ -566,34 +570,25 @@ class Compositor:
                     if chops_line[cut] is None:
                         chops_line[cut] = segments
 
-        # Assemble the cut renders in to lists of segments
-        crop_x, crop_y, crop_x2, crop_y2 = crop.corners
-        render_lines = self._assemble_chops(chops[crop_y:crop_y2])
-
         if regions:
-
+            crop_x, crop_y, crop_x2, crop_y2 = crop.corners
+            render_lines = self._assemble_chops(chops[crop_y:crop_y2])
             render_spans = [
-                (y, x1, line_crop(render_lines[y], x1, x2)) for y, x1, x2 in spans
+                (y, x1, line_crop(render_lines[y - crop_y], x1, x2))
+                for y, x1, x2 in spans
             ]
             return SpansUpdate(render_spans)
 
         else:
-            return SegmentLines(render_lines, new_lines=True)
-
-        if crop is not None and (crop_x, crop_x2) != (0, width):
-            render_lines = [
-                line_crop(line, crop_x, crop_x2) if line else line
-                for line in render_lines
-            ]
-
-        return SegmentLines(render_lines, new_lines=True)
+            render_lines = self._assemble_chops(chops)
+            return LayoutUpdate(render_lines, screen_region)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         yield self.render()
 
-    def update_widgets(self, *widgets: Widget) -> RenderableType | None:
+    def update_widgets(self, widgets: set[Widget]) -> RenderableType | None:
         """Update a given widget in the composition.
 
         Args:
@@ -605,21 +600,13 @@ class Compositor:
         """
         regions: list[Region] = []
         add_region = regions.append
-        for widget in widgets:
-            if widget not in self.regions:
-                continue
+        for widget in self.regions.keys() & widgets:
             region, clip = self.regions[widget]
-            if not region:
-                continue
             update_region = region.intersection(clip)
-            if not update_region:
-                continue
-            add_region(update_region)
-
-        # print(regions)
+            if update_region:
+                add_region(update_region)
+        print("UPDATE_WIDGET")
+        print(widgets)
+        print(regions)
         update = self.render(regions or None)
-        # print("UPDATE", update)
         return update
-        # update = LayoutUpdate(update_lines, total_region)
-        # # print(widgets, total_region)
-        # return update

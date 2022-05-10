@@ -97,8 +97,8 @@ class Screen(Widget):
 
         # Render widgets together
         if self._dirty_widgets:
-            self.log(dirty=len(self._dirty_widgets))
-            display_update = self._compositor.update_widgets(*self._dirty_widgets)
+            self.log(dirty=self._dirty_widgets)
+            display_update = self._compositor.update_widgets(self._dirty_widgets)
             if display_update is not None:
                 self.app.display(display_update)
             self._dirty_widgets.clear()
@@ -108,6 +108,9 @@ class Screen(Widget):
         """Refresh the layout (can change size and positions of widgets)."""
         if not self.size:
             return
+        # This paint the entire screen, so replaces the batched dirty widgets
+        self._update_timer.pause()
+        self._dirty_widgets.clear()
         try:
             hidden, shown, resized = self._compositor.reflow(self, self.size)
 
@@ -138,7 +141,6 @@ class Screen(Widget):
             self.app.on_exception(error)
             return
         self.app.refresh()
-        self._dirty_widgets.clear()
 
     async def handle_update(self, message: messages.Update) -> None:
         message.stop()
