@@ -4,7 +4,7 @@ from typing import cast
 
 from rich.console import RenderableType
 from rich.style import Style
-from rich.text import Text
+from rich.text import Text, TextType
 
 from .. import events
 from ..message import Message
@@ -49,7 +49,7 @@ class Button(Widget, can_focus=True):
 
     def __init__(
         self,
-        label: RenderableType | None = None,
+        label: TextType | None = None,
         disabled: bool = False,
         *,
         name: str | None = None,
@@ -58,7 +58,11 @@ class Button(Widget, can_focus=True):
     ):
         super().__init__(name=name, id=id, classes=classes)
 
-        self.label = self.css_identifier_styled if label is None else label
+        if label is None:
+            label = self.css_identifier_styled
+
+        self.label: Text = self.validate_label(label)
+
         self.disabled = disabled
         if disabled:
             self.add_class("-disabled")
@@ -72,7 +76,7 @@ class Button(Widget, can_focus=True):
         return label
 
     def render(self, style: Style) -> RenderableType:
-        return self.label
+        return Text.styled(self.label.plain, style)
 
     async def on_click(self, event: events.Click) -> None:
         event.stop()

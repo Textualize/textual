@@ -464,7 +464,6 @@ class Widget(DOMNode):
         Returns:
             RenderableType: A new renderable.
         """
-
         renderable = self.render(self.styles.rich_style)
 
         styles = self.styles
@@ -478,12 +477,12 @@ class Widget(DOMNode):
             horizontal, vertical = content_align
             renderable = Align(renderable, horizontal, vertical=vertical)
 
+        renderable = Padding(renderable, styles.padding)
+
         renderable_text_style = parent_text_style + text_style
         if renderable_text_style:
             style = Style.from_color(text_style.color, text_style.bgcolor)
             renderable = Styled(renderable, style)
-
-        renderable = Padding(renderable, styles.padding)
 
         if styles.border:
             renderable = Border(
