@@ -145,4 +145,5 @@ class BasicApp(App):
             self.mount(example.widget)
 
 
-BasicApp.run(css_path="tabs.scss", watch_css=True, log_path="textual.log")
+app = BasicApp(css_path="tabs.scss", watch_css=True, log_path="textual.log")
+app.run()

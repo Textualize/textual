@@ -14,6 +14,11 @@ App.-show-focus *:focus {
   background: darkslateblue;
 }
 
+#child2 {
+  text-style: underline;
+  background: red;
+}
+
 .list-item {
   height: 10;
   color: #12a0;

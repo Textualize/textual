@@ -206,17 +206,17 @@ class ScrollBar(Widget):
         yield "position", self.position
 
     def render(self, style: Style) -> RenderableType:
-        style = self.parent.styles
-        style = Style(
+        styles = self.parent.styles
+        scrollbar_style = Style(
             bgcolor=(
-                style.scrollbar_background_hover.rich_color
+                styles.scrollbar_background_hover.rich_color
                 if self.mouse_over
-                else style.scrollbar_background.rich_color
+                else styles.scrollbar_background.rich_color
             ),
             color=(
-                style.scrollbar_color_active.rich_color
+                styles.scrollbar_color_active.rich_color
                 if self.grabbed
-                else style.scrollbar_color.rich_color
+                else styles.scrollbar_color.rich_color
             ),
         )
         return ScrollBarRender(
@@ -224,7 +224,7 @@ class ScrollBar(Widget):
             window_size=self.window_size,
             position=self.position,
             vertical=self.vertical,
-            style=style,
+            style=scrollbar_style,
         )
 
     async def on_event(self, event) -> None:
