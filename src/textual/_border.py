@@ -15,6 +15,7 @@ INNER = 1
 OUTER = 2
 
 BORDER_CHARS: dict[EdgeType, tuple[str, str, str]] = {
+    # TODO: in "browsers' CSS" `none` and `hidden` both set the border width to zero. Should we do the same?
     "": ("   ", "   ", "   "),
     "none": ("   ", "   ", "   "),
     "hidden": ("   ", "   ", "   "),
