@@ -395,9 +395,9 @@ class Blur(Event, bubble=False):
     pass
 
 
-class DescendantFocus(Event, bubble=True):
+class DescendantFocus(Event, verbosity=2, bubble=True):
     pass
 
 
-class DescendantBlur(Event, bubble=True):
+class DescendantBlur(Event, verbosity=2, bubble=True):
     pass

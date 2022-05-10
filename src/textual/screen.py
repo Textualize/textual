@@ -8,8 +8,7 @@ from rich.style import Style
 from . import events, messages, errors
 
 from .geometry import Offset, Region
-from ._compositor import Compositor
-from ._timer import Timer
+from ._compositor import Compositor, MapGeometry
 from .reactive import Reactive
 from .widget import Widget
 
@@ -77,7 +76,7 @@ class Screen(Widget):
         """
         return self._compositor.get_style_at(x, y)
 
-    def get_widget_region(self, widget: Widget) -> Region:
+    def find_widget(self, widget: Widget) -> MapGeometry:
         """Get the screen region of a Widget.
 
         Args:
@@ -86,7 +85,7 @@ class Screen(Widget):
         Returns:
             Region: Region relative to screen.
         """
-        return self._compositor.get_widget_region(widget)
+        return self._compositor.find_widget(widget)
 
     def on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
@@ -165,7 +164,7 @@ class Screen(Widget):
         try:
             if self.app.mouse_captured:
                 widget = self.app.mouse_captured
-                region = self.get_widget_region(widget)
+                region = self.find_widget(widget).region
             else:
                 widget, region = self.get_widget_at(event.x, event.y)
         except errors.NoWidget:
@@ -204,7 +203,7 @@ class Screen(Widget):
             try:
                 if self.app.mouse_captured:
                     widget = self.app.mouse_captured
-                    region = self.get_widget_region(widget)
+                    region = self.find_widget(widget).region
                 else:
                     widget, region = self.get_widget_at(event.x, event.y)
             except errors.NoWidget:
