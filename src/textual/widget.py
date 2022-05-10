@@ -445,13 +445,22 @@ class Widget(DOMNode):
         # We can either scroll so the widget is at the top of the container, or so that
         # it is at the bottom. We want to pick which has the shortest distance
         top_delta = widget_region.origin - container_region.origin
+
         bottom_delta = widget_region.origin - (
             container_region.origin
             + Offset(0, container_region.height - widget_region.height)
         )
 
-        delta_x = min(top_delta.x, bottom_delta.x, key=abs)
-        delta_y = min(top_delta.y, bottom_delta.y, key=abs)
+        if widget_region.width > container_region.width:
+            delta_x = top_delta.x
+        else:
+            delta_x = min(top_delta.x, bottom_delta.x, key=abs)
+
+        if widget_region.height > container_region.height:
+            delta_y = top_delta.y
+        else:
+            delta_y = min(top_delta.y, bottom_delta.y, key=abs)
+
         return self.scroll_relative(
             delta_x or None, delta_y or None, animate=animate, duration=0.2
         )
