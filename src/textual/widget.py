@@ -351,8 +351,8 @@ class Widget(DOMNode):
         """Scroll relative to current position.
 
         Args:
-            x (int | None, optional): X coordinate (column) to scroll to, or ``None`` for no change. Defaults to None.
-            x (int | None, optional): Y coordinate (row) to scroll to, or ``None`` for no change. Defaults to None.
+            x (int | None, optional): X distance (columns) to scroll, or ``None`` for no change. Defaults to None.
+            y (int | None, optional): Y distance (rows) to scroll, or ``None`` for no change. Defaults to None.
             animate (bool, optional): Animate to new scroll position. Defaults to False.
 
         Returns:
