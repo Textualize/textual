@@ -480,7 +480,7 @@ class Widget(DOMNode):
 
         renderable_text_style = parent_text_style + text_style
         if renderable_text_style:
-            style = Style.from_colors(text_style.color, text_style.bgcolor)
+            style = Style.from_color(text_style.color, text_style.bgcolor)
             renderable = Styled(renderable, style)
 
         renderable = Padding(renderable, styles.padding)
