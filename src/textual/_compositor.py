@@ -105,7 +105,7 @@ class SpansUpdate:
             yield from segments
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self.spans
+        yield [(y, offset, "...") for y, offset, segments in self.spans]
 
 
 @rich.repr.auto(angular=True)
@@ -149,7 +149,7 @@ class Compositor:
         """
         inline_ranges: dict[int, list[tuple[int, int]]] = {}
         for region_x, region_y, width, height in regions:
-            span = (region_x, region_x + width - 1)
+            span = (region_x, region_x + width)
             for y in range(region_y, region_y + height):
                 inline_ranges.setdefault(y, []).append(span)
 
@@ -570,14 +570,15 @@ class Compositor:
         crop_x, crop_y, crop_x2, crop_y2 = crop.corners
         render_lines = self._assemble_chops(chops[crop_y:crop_y2])
 
-        if not regions:
-            return SegmentLines(render_lines, new_lines=True)
+        if regions:
 
-        print("SPANS", spans)
-        render_spans = [
-            (y, x1, line_crop(render_lines[y - crop_y], x1, x2)) for y, x1, x2 in spans
-        ]
-        return SpansUpdate(render_spans)
+            render_spans = [
+                (y, x1, line_crop(render_lines[y], x1, x2)) for y, x1, x2 in spans
+            ]
+            return SpansUpdate(render_spans)
+
+        else:
+            return SegmentLines(render_lines, new_lines=True)
 
         if crop is not None and (crop_x, crop_x2) != (0, width):
             render_lines = [
@@ -602,7 +603,6 @@ class Compositor:
         Returns:
             LayoutUpdate | None: A renderable or None if nothing to render.
         """
-        log(widgets)
         regions: list[Region] = []
         add_region = regions.append
         for widget in widgets:
@@ -616,9 +616,9 @@ class Compositor:
                 continue
             add_region(update_region)
 
-        print(regions)
+        # print(regions)
         update = self.render(regions or None)
-        print("UPDATE", update)
+        # print("UPDATE", update)
         return update
         # update = LayoutUpdate(update_lines, total_region)
         # # print(widgets, total_region)
