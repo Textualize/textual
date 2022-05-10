@@ -397,6 +397,9 @@ class DOMNode(MessagePump):
 
         Returns:
             DOMNode: The first child of this node with the ID.
+
+        Raises:
+            NoMatchingNodesError: if no children could be found for this ID
         """
         for child in self.children:
             if child.id == id:

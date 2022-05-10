@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from operator import attrgetter, itemgetter
 import sys
-from typing import cast, Callable, Iterator, Iterable, NamedTuple, TYPE_CHECKING
+from typing import cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderResult
@@ -23,15 +23,13 @@ from rich.control import Control
 from rich.segment import Segment, SegmentLines
 from rich.style import Style
 
-from . import errors, log
+from . import errors
 from .geometry import Region, Offset, Size
 
 
 from ._loop import loop_last
-from ._profile import timer
 from ._segment_tools import line_crop
 from ._types import Lines
-from .widget import Widget
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
@@ -462,7 +460,6 @@ class Compositor:
         """Render a layout.
 
         Args:
-            console (Console): Console instance.
             clip (Optional[Region]): Region to clip to.
 
         Returns:

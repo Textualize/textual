@@ -120,9 +120,7 @@ class LinuxDriver(Driver):
         self.console.show_cursor(False)
         self.console.file.write("\033[?1003h\n")
         self.console.file.flush()
-        self._key_thread = Thread(
-            target=self.run_input_thread, args=(asyncio.get_running_loop(),)
-        )
+        self._key_thread = Thread(target=self.run_input_thread, args=(loop,))
         send_size_event()
         self._key_thread.start()
 

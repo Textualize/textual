@@ -20,8 +20,8 @@ class Screen(Widget):
     CSS = """
     
     Screen {
-        layout: dock;
-        docks: _default=top;
+        layout: vertical;
+        overflow-y: auto;
         background: $surface;
         color: $text-surface;
     }

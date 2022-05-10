@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from typing import cast, TYPE_CHECKING
 
-from .. import log
-
 from ..geometry import Offset, Region, Size
 from .._layout import Layout, WidgetPlacement
 
@@ -23,7 +21,7 @@ class VerticalLayout(Layout):
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
 
-        y = max_width = max_height = 0
+        max_width = max_height = 0
         parent_size = parent.size
 
         box_models = [
@@ -40,14 +38,11 @@ class VerticalLayout(Layout):
 
         y = box_models[0].margin.top if box_models else 0
 
-        displayed_children = parent.displayed_children
-
+        displayed_children = cast("list[Widget]", parent.displayed_children)
         for widget, box_model, margin in zip(displayed_children, box_models, margins):
             content_width, content_height = box_model.size
-            offset_x = widget.styles.align_width(content_width, parent_size.width)
+            offset_x = widget.styles.align_width(content_width, size.width)
             region = Region(offset_x, y, content_width, content_height)
-            # TODO: it seems that `max_height` is not used?
-            max_height = max(max_height, content_height)
             add_placement(WidgetPlacement(region, widget, 0))
             y += region.height + margin
             max_height = y
