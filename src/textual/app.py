@@ -494,18 +494,6 @@ class App(Generic[ReturnType], DOMNode):
 
         return DOMQuery(self.screen, selector)
 
-    def query_one(self, selector: str) -> DOMNode | None:
-        """Retrieves a single node via a DOM query in the current screen.
-
-        Args:
-            selector (str): A CSS selector .
-
-        Returns:
-            DOMNode | None: The first node matching the query, or None if no node matches the selector.
-        """
-        result = self.query(selector)
-        return result.first() if len(result) else None
-
     def get_child(self, id: str) -> DOMNode:
         """Shorthand for self.screen.get_child(id: str)
         Returns the first child (immediate descendent) of this DOMNode
@@ -516,6 +504,9 @@ class App(Generic[ReturnType], DOMNode):
 
         Returns:
             DOMNode: The first child of this node with the specified ID.
+
+        Raises:
+            NoMatchingNodesError: if no children could be found for this ID
         """
         return self.screen.get_child(id)
 

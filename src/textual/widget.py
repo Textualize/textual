@@ -403,7 +403,6 @@ class Widget(DOMNode):
         Returns:
             Region: The widget region minus scrollbars.
         """
-        # return region
         show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (region, _, _, _) = region.split(-1, -1)

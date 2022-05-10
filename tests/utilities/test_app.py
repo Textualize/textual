@@ -111,6 +111,7 @@ class ConsoleTest(Console):
             width=width,
             height=height,
             force_terminal=True,
+            legacy_windows=False,
         )
 
 
