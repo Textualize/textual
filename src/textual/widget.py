@@ -296,6 +296,8 @@ class Widget(DOMNode):
         y: float | None = None,
         *,
         animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
     ) -> bool:
         """Scroll to a given (absolute) coordinate, optionally animating.
 
@@ -316,14 +318,22 @@ class Widget(DOMNode):
                 self.scroll_target_x = x
                 if x != self.scroll_x:
                     self.animate(
-                        "scroll_x", self.scroll_target_x, speed=80, easing="out_cubic"
+                        "scroll_x",
+                        self.scroll_target_x,
+                        speed=speed,
+                        duration=duration,
+                        easing="out_cubic",
                     )
                     scrolled_x = True
             if y is not None:
                 self.scroll_target_y = y
                 if y != self.scroll_y:
                     self.animate(
-                        "scroll_y", self.scroll_target_y, speed=80, easing="out_cubic"
+                        "scroll_y",
+                        self.scroll_target_y,
+                        speed=speed,
+                        duration=duration,
+                        easing="out_cubic",
                     )
                     scrolled_y = True
 
@@ -347,6 +357,8 @@ class Widget(DOMNode):
         y: float | None = None,
         *,
         animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
     ) -> bool:
         """Scroll relative to current position.
 
@@ -362,6 +374,8 @@ class Widget(DOMNode):
             None if x is None else (self.scroll_x + x),
             None if y is None else (self.scroll_y + y),
             animate=animate,
+            speed=speed,
+            duration=duration,
         )
 
     def scroll_home(self, *, animate: bool = True) -> bool:
@@ -436,7 +450,9 @@ class Widget(DOMNode):
 
         delta_x = min(top_delta.x, bottom_delta.x, key=abs)
         delta_y = min(top_delta.y, bottom_delta.y, key=abs)
-        return self.scroll_relative(delta_x or None, delta_y or None, animate=animate)
+        return self.scroll_relative(
+            delta_x or None, delta_y or None, animate=animate, duration=0.2
+        )
 
     def __init_subclass__(
         cls, can_focus: bool = True, can_focus_children: bool = True
