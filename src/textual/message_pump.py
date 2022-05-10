@@ -149,8 +149,11 @@ class MessagePump:
         callback: TimerCallback = None,
         *,
         name: str | None = None,
+        pause: bool = False,
     ) -> Timer:
-        timer = Timer(self, delay, self, name=name, callback=callback, repeat=0)
+        timer = Timer(
+            self, delay, self, name=name, callback=callback, repeat=0, pause=pause
+        )
         self._child_tasks.add(timer.start())
         return timer
 
@@ -161,9 +164,16 @@ class MessagePump:
         *,
         name: str | None = None,
         repeat: int = 0,
+        pause: bool = False,
     ):
         timer = Timer(
-            self, interval, self, name=name, callback=callback, repeat=repeat or None
+            self,
+            interval,
+            self,
+            name=name,
+            callback=callback,
+            repeat=repeat or None,
+            pause=pause,
         )
         self._child_tasks.add(timer.start())
         return timer

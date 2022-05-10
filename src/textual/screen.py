@@ -9,6 +9,7 @@ from . import events, messages, errors
 
 from .geometry import Offset, Region
 from ._compositor import Compositor
+from ._timer import Timer
 from .reactive import Reactive
 from .widget import Widget
 
@@ -33,7 +34,7 @@ class Screen(Widget):
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
         super().__init__(name=name, id=id)
         self._compositor = Compositor()
-        self._dirty_widgets: list[Widget] = []
+        self._dirty_widgets: set[Widget] = set()
 
     def watch_dark(self, dark: bool) -> None:
         pass
@@ -90,14 +91,19 @@ class Screen(Widget):
     def on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         if self._dirty_widgets:
-            for widget in self._dirty_widgets:
-                # Repaint widgets
-                # TODO: Combine these in to a single update.
-                display_update = self._compositor.update_widget(self.console, widget)
-                if display_update is not None:
-                    self.app.display(display_update)
-            # Reset dirty list
+            self._update_timer.resume()
+
+    def _on_update(self) -> None:
+        """Called by the _update_timer."""
+
+        # Render widgets together
+        if self._dirty_widgets:
+            self.log(dirty=len(self._dirty_widgets))
+            display_update = self._compositor.update_widgets(*self._dirty_widgets)
+            if display_update is not None:
+                self.app.display(display_update)
             self._dirty_widgets.clear()
+        self._update_timer.pause()
 
     def refresh_layout(self) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
@@ -139,12 +145,15 @@ class Screen(Widget):
         message.stop()
         widget = message.widget
         assert isinstance(widget, Widget)
-        self._dirty_widgets.append(widget)
+        self._dirty_widgets.add(widget)
         self.check_idle()
 
     async def handle_layout(self, message: messages.Layout) -> None:
         message.stop()
         self.refresh_layout()
+
+    def on_mount(self, event: events.Mount) -> None:
+        self._update_timer = self.set_interval(1 / 20, self._on_update, pause=True)
 
     async def on_resize(self, event: events.Resize) -> None:
         self.size_updated(event.size, event.virtual_size, event.container_size)

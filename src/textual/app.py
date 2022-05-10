@@ -615,6 +615,7 @@ class App(Generic[ReturnType], DOMNode):
             is_renderable(renderable) for renderable in renderables
         ), "Can only call panic with strings or Rich renderables"
 
+        self.console.bell()
         prerendered = [
             Segments(self.console.render(renderable, self.console.options))
             for renderable in renderables

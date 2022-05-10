@@ -18,7 +18,7 @@ import sys
 from typing import cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
-from rich.console import Console, ConsoleOptions, RenderResult
+from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.control import Control
 from rich.segment import Segment, SegmentLines
 from rich.style import Style
@@ -91,6 +91,23 @@ class LayoutUpdate:
         yield "height", height
 
 
+@rich.repr.auto
+class SpansUpdate:
+    def __init__(self, spans: list[tuple[int, int, list[Segment]]]) -> None:
+        self.spans = spans
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        move_to = Control.move_to
+        for line, offset, segments in self.spans:
+            yield move_to(offset, line)
+            yield from segments
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self.spans
+
+
 @rich.repr.auto(angular=True)
 class Compositor:
     """Responsible for storing information regarding the relative positions of Widgets and rendering them."""
@@ -115,6 +132,43 @@ class Compositor:
 
         # The points in each line where the line bisects the left and right edges of the widget
         self._cuts: list[list[int]] | None = None
+
+    @classmethod
+    def _regions_to_spans(
+        cls, regions: Iterable[Region]
+    ) -> Iterable[tuple[int, int, int]]:
+        """Converts the regions to non-overlapping horizontal spans, where each span
+        represents the region on a single line. Combining the resulting strips therefore
+        results in a shape identical to the combined original regions.
+
+        Args:
+            regions (Iterable[Region]): An iterable of Regions.
+
+        Returns:
+            Iterable[tuple[int, int, int]]: Yields tuples of (Y, X1, X2)
+        """
+        inline_ranges: dict[int, list[tuple[int, int]]] = {}
+        for region_x, region_y, width, height in regions:
+            span = (region_x, region_x + width - 1)
+            for y in range(region_y, region_y + height):
+                inline_ranges.setdefault(y, []).append(span)
+
+        for y, ranges in sorted(inline_ranges.items()):
+            if len(ranges) == 1:
+                # Special case of 1 span
+                yield (y, *ranges[0])
+            else:
+                ranges.sort()
+                x1, x2 = ranges[0]
+                for next_x1, next_x2 in ranges[1:]:
+                    if next_x1 <= x2 + 1:
+                        if next_x2 > x2:
+                            x2 = next_x2
+                    else:
+                        yield (y, x1, x2)
+                        x1 = next_x1
+                        x2 = next_x2
+                yield (y, x1, x2)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "size", self.size
@@ -452,11 +506,7 @@ class Compositor:
         ]
         return segment_lines
 
-    def render(
-        self,
-        *,
-        crop: Region | None = None,
-    ) -> SegmentLines:
+    def render(self, regions: list[Region] | None = None) -> RenderableType:
         """Render a layout.
 
         Args:
@@ -467,8 +517,13 @@ class Compositor:
         """
         width, height = self.size
         screen_region = Region(0, 0, width, height)
-
-        crop_region = crop.intersection(screen_region) if crop else screen_region
+        if regions:
+            crop = Region.from_union(regions).intersection(screen_region)
+            spans = list(self._regions_to_spans(regions))
+            is_rendered_line = {y for y, _, _ in spans}.__contains__
+        else:
+            crop = screen_region
+            is_rendered_line = lambda y: True
 
         _Segment = Segment
         divide = _Segment.divide
@@ -492,6 +547,8 @@ class Compositor:
             render_region = intersection(region, clip)
 
             for y, line in zip(render_region.y_range, lines):
+                if not is_rendered_line(y):
+                    continue
                 first_cut, last_cut = render_region.x_extents
                 final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
 
@@ -510,8 +567,17 @@ class Compositor:
                         chops_line[cut] = segments
 
         # Assemble the cut renders in to lists of segments
-        crop_x, crop_y, crop_x2, crop_y2 = crop_region.corners
+        crop_x, crop_y, crop_x2, crop_y2 = crop.corners
         render_lines = self._assemble_chops(chops[crop_y:crop_y2])
+
+        if not regions:
+            return SegmentLines(render_lines, new_lines=True)
+
+        print("SPANS", spans)
+        render_spans = [
+            (y, x1, line_crop(render_lines[y - crop_y], x1, x2)) for y, x1, x2 in spans
+        ]
+        return SpansUpdate(render_spans)
 
         if crop is not None and (crop_x, crop_x2) != (0, width):
             render_lines = [
@@ -526,7 +592,7 @@ class Compositor:
     ) -> RenderResult:
         yield self.render()
 
-    def update_widget(self, console: Console, widget: Widget) -> LayoutUpdate | None:
+    def update_widgets(self, *widgets: Widget) -> RenderableType | None:
         """Update a given widget in the composition.
 
         Args:
@@ -536,14 +602,24 @@ class Compositor:
         Returns:
             LayoutUpdate | None: A renderable or None if nothing to render.
         """
-        if widget not in self.regions:
-            return None
-        region, clip = self.regions[widget]
-        if not region:
-            return None
-        update_region = region.intersection(clip)
-        if not update_region:
-            return None
-        update_lines = self.render(crop=update_region).lines
-        update = LayoutUpdate(update_lines, update_region)
+        log(widgets)
+        regions: list[Region] = []
+        add_region = regions.append
+        for widget in widgets:
+            if widget not in self.regions:
+                continue
+            region, clip = self.regions[widget]
+            if not region:
+                continue
+            update_region = region.intersection(clip)
+            if not update_region:
+                continue
+            add_region(update_region)
+
+        print(regions)
+        update = self.render(regions or None)
+        print("UPDATE", update)
         return update
+        # update = LayoutUpdate(update_lines, total_region)
+        # # print(widgets, total_region)
+        # return update
