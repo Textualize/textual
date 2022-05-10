@@ -4,6 +4,7 @@ import sys
 from dataclasses import dataclass
 from typing import Iterable
 
+from textual.color import ColorParseError
 from textual.css._help_renderables import Example, Bullet, HelpText
 from textual.css.constants import (
     VALID_BORDER,
@@ -303,6 +304,8 @@ def string_enum_help_text(
 def color_property_help_text(
     property_name: str,
     context: StylingContext,
+    *,
+    error: Exception = None,
 ) -> HelpText:
     """Help text to show when the user supplies an invalid value for a color
     property. For example, an unparseable color string.
@@ -310,14 +313,23 @@ def color_property_help_text(
     Args:
         property_name (str): The name of the property
         context (StylingContext | None): The context the property is being used in.
+        error (ColorParseError | None): The error that caused this help text to be displayed. Defaults to None.
 
     Returns:
         HelpText: Renderable for displaying the help text for this property
     """
     property_name = _contextualize_property_name(property_name, context)
+    suggested_color = (
+        error.suggested_color if error and isinstance(error, ColorParseError) else None
+    )
     return HelpText(
         summary=f"Invalid value for the [i]{property_name}[/] property",
         bullets=[
+            *(
+                [Bullet(f'Did you mean "{suggested_color}"?')]
+                if suggested_color
+                else []
+            ),
             Bullet(
                 f"The [i]{property_name}[/] property can only be set to a valid color"
             ),

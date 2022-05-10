@@ -572,9 +572,11 @@ class StylesBuilder:
             elif token.name in ("color", "token"):
                 try:
                     color = Color.parse(token.value)
-                except Exception:
+                except Exception as error:
                     self.error(
-                        name, token, color_property_help_text(name, context="css")
+                        name,
+                        token,
+                        color_property_help_text(name, context="css", error=error),
                     )
             else:
                 self.error(name, token, color_property_help_text(name, context="css"))
