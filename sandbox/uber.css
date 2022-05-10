@@ -14,7 +14,7 @@ App.-show-focus *:focus {
 }
 
 .list-item {
-  height: 10;
+  height: 6;
   color: #12a0;
   background: #ffffff00;
 }

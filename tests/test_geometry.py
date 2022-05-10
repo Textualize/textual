@@ -132,6 +132,18 @@ def test_region_origin():
     assert Region(1, 2, 3, 4).origin == Offset(1, 2)
 
 
+def test_region_bottom_left():
+    assert Region(1, 2, 3, 4).bottom_left == Offset(1, 6)
+
+
+def test_region_top_right():
+    assert Region(1, 2, 3, 4).top_right == Offset(4, 2)
+
+
+def test_region_bottom_right():
+    assert Region(1, 2, 3, 4).bottom_right == Offset(4, 6)
+
+
 def test_region_add():
     assert Region(1, 2, 3, 4) + (10, 20) == Region(11, 22, 3, 4)
     with pytest.raises(TypeError):

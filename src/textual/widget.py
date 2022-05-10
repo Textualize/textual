@@ -298,17 +298,21 @@ class Widget(DOMNode):
         y: float | None = None,
         *,
         animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
     ) -> bool:
         """Scroll to a given (absolute) coordinate, optionally animating.
 
         Args:
-            scroll_x (int | None, optional): X coordinate (column) to scroll to, or ``None`` for no change. Defaults to None.
-            scroll_y (int | None, optional): Y coordinate (row) to scroll to, or ``None`` for no change. Defaults to None.
+            x (int | None, optional): X coordinate (column) to scroll to, or ``None`` for no change. Defaults to None.
+            y (int | None, optional): Y coordinate (row) to scroll to, or ``None`` for no change. Defaults to None.
             animate (bool, optional): Animate to new scroll position. Defaults to False.
+
+        Returns:
+            bool: True if the scroll position changed, otherwise False.
         """
 
-        scrolled_x = False
-        scrolled_y = False
+        scrolled_x = scrolled_y = False
 
         if animate:
             # TODO: configure animation speed
@@ -316,65 +320,140 @@ class Widget(DOMNode):
                 self.scroll_target_x = x
                 if x != self.scroll_x:
                     self.animate(
-                        "scroll_x", self.scroll_target_x, speed=80, easing="out_cubic"
+                        "scroll_x",
+                        self.scroll_target_x,
+                        speed=speed,
+                        duration=duration,
+                        easing="out_cubic",
                     )
                     scrolled_x = True
             if y is not None:
                 self.scroll_target_y = y
                 if y != self.scroll_y:
                     self.animate(
-                        "scroll_y", self.scroll_target_y, speed=80, easing="out_cubic"
+                        "scroll_y",
+                        self.scroll_target_y,
+                        speed=speed,
+                        duration=duration,
+                        easing="out_cubic",
                     )
                     scrolled_y = True
 
         else:
             if x is not None:
-                self.scroll_target_x = self.scroll_x = x
                 if x != self.scroll_x:
+                    self.scroll_target_x = self.scroll_x = x
                     scrolled_x = True
             if y is not None:
-                self.scroll_target_y = self.scroll_y = y
                 if y != self.scroll_y:
+                    self.scroll_target_y = self.scroll_y = y
                     scrolled_y = True
-            self.refresh(repaint=False, layout=True)
+            if scrolled_x or scrolled_y:
+                self.refresh(repaint=False, layout=True)
+
         return scrolled_x or scrolled_y
 
-    def scroll_home(self, animate: bool = True) -> bool:
+    def scroll_relative(
+        self,
+        x: float | None = None,
+        y: float | None = None,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+    ) -> bool:
+        """Scroll relative to current position.
+
+        Args:
+            x (int | None, optional): X distance (columns) to scroll, or ``None`` for no change. Defaults to None.
+            y (int | None, optional): Y distance (rows) to scroll, or ``None`` for no change. Defaults to None.
+            animate (bool, optional): Animate to new scroll position. Defaults to False.
+
+        Returns:
+            bool: True if the scroll position changed, otherwise False.
+        """
+        return self.scroll_to(
+            None if x is None else (self.scroll_x + x),
+            None if y is None else (self.scroll_y + y),
+            animate=animate,
+            speed=speed,
+            duration=duration,
+        )
+
+    def scroll_home(self, *, animate: bool = True) -> bool:
         return self.scroll_to(0, 0, animate=animate)
 
-    def scroll_end(self, animate: bool = True) -> bool:
+    def scroll_end(self, *, animate: bool = True) -> bool:
         return self.scroll_to(0, self.max_scroll_y, animate=animate)
 
-    def scroll_left(self, animate: bool = True) -> bool:
+    def scroll_left(self, *, animate: bool = True) -> bool:
         return self.scroll_to(x=self.scroll_target_x - 1, animate=animate)
 
-    def scroll_right(self, animate: bool = True) -> bool:
+    def scroll_right(self, *, animate: bool = True) -> bool:
         return self.scroll_to(x=self.scroll_target_x + 1, animate=animate)
 
-    def scroll_up(self, animate: bool = True) -> bool:
+    def scroll_up(self, *, animate: bool = True) -> bool:
         return self.scroll_to(y=self.scroll_target_y + 1, animate=animate)
 
-    def scroll_down(self, animate: bool = True) -> bool:
+    def scroll_down(self, *, animate: bool = True) -> bool:
         return self.scroll_to(y=self.scroll_target_y - 1, animate=animate)
 
-    def scroll_page_up(self, animate: bool = True) -> bool:
+    def scroll_page_up(self, *, animate: bool = True) -> bool:
         return self.scroll_to(
             y=self.scroll_target_y - self.container_size.height, animate=animate
         )
 
-    def scroll_page_down(self, animate: bool = True) -> bool:
+    def scroll_page_down(self, *, animate: bool = True) -> bool:
         return self.scroll_to(
             y=self.scroll_target_y + self.container_size.height, animate=animate
         )
 
-    def scroll_page_left(self, animate: bool = True) -> bool:
+    def scroll_page_left(self, *, animate: bool = True) -> bool:
         return self.scroll_to(
             x=self.scroll_target_x - self.container_size.width, animate=animate
         )
 
-    def scroll_page_right(self, animate: bool = True) -> bool:
+    def scroll_page_right(self, *, animate: bool = True) -> bool:
         return self.scroll_to(
             x=self.scroll_target_x + self.container_size.width, animate=animate
+        )
+
+    def scroll_to_widget(self, widget: Widget, *, animate: bool = True) -> bool:
+        """Scroll so that a child widget is in the visible area.
+
+        Args:
+            widget (Widget): A Widget in the children.
+            animate (bool, optional): True to animate, or False to jump. Defaults to True.
+
+        Returns:
+            bool: True if the scroll position changed, otherwise False.
+        """
+        screen = self.screen
+        try:
+            widget_geometry = screen.find_widget(widget)
+            container_geometry = screen.find_widget(self)
+        except errors.NoWidget:
+            return False
+
+        widget_region = widget.content_region + widget_geometry.region.origin
+        container_region = self.content_region + container_geometry.region.origin
+
+        if widget_region in container_region:
+            # Widget is visible, nothing to do
+            return False
+
+        # We can either scroll so the widget is at the top of the container, or so that
+        # it is at the bottom. We want to pick which has the shortest distance
+        top_delta = widget_region.origin - container_region.origin
+        bottom_delta = widget_region.origin - (
+            container_region.origin
+            + Offset(0, container_region.height - widget_region.height)
+        )
+
+        delta_x = min(top_delta.x, bottom_delta.x, key=abs)
+        delta_y = min(top_delta.y, bottom_delta.y, key=abs)
+        return self.scroll_relative(
+            delta_x or None, delta_y or None, animate=animate, duration=0.2
         )
 
     def __init_subclass__(
@@ -518,13 +597,27 @@ class Widget(DOMNode):
         return self._container_size
 
     @property
+    def content_region(self) -> Region:
+        """A region relative to the Widget origin that contains the content."""
+        x, y = self.styles.content_gutter.top_left
+        width, height = self._container_size
+        return Region(x, y, width, height)
+
+    @property
+    def content_offset(self) -> Offset:
+        """An offset from the Widget origin where the content begins."""
+        x, y = self.styles.content_gutter.top_left
+        return Offset(x, y)
+
+    @property
     def virtual_size(self) -> Size:
         return self._virtual_size
 
     @property
     def region(self) -> Region:
+        """The region occupied by this widget, relative to the Screen."""
         try:
-            return self.screen._compositor.get_widget_region(self)
+            return self.screen.find_widget(self).region
         except errors.NoWidget:
             return Region()
 
@@ -766,6 +859,8 @@ class Widget(DOMNode):
 
     def on_descendant_focus(self, event: events.DescendantFocus) -> None:
         self.descendant_has_focus = True
+        if self.is_container and isinstance(event.sender, Widget):
+            self.scroll_to_widget(event.sender, animate=True)
 
     def on_descendant_blur(self, event: events.DescendantBlur) -> None:
         self.descendant_has_focus = False
