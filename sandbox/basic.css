@@ -167,7 +167,6 @@ TweetBody {
 OptionItem {
   height: 3;
   background: $primary;
-  transition: background 100ms linear;
   border-right: outer $primary-darken-2;
   border-left: hidden;
   content-align: center middle;

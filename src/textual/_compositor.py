@@ -571,7 +571,7 @@ class Compositor:
                         chops_line[cut] = segments
 
         if regions:
-            crop_x, crop_y, crop_x2, crop_y2 = crop.corners
+            crop_y, crop_y2 = crop.y_extents
             render_lines = self._assemble_chops(chops[crop_y:crop_y2])
             render_spans = [
                 (y, x1, line_crop(render_lines[y - crop_y], x1, x2))

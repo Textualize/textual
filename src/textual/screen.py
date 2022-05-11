@@ -162,7 +162,6 @@ class Screen(Widget):
         event.stop()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
-
         try:
             if self.app.mouse_captured:
                 widget = self.app.mouse_captured

@@ -615,7 +615,6 @@ class App(Generic[ReturnType], DOMNode):
             is_renderable(renderable) for renderable in renderables
         ), "Can only call panic with strings or Rich renderables"
 
-        self.console.bell()
         prerendered = [
             Segments(self.console.render(renderable, self.console.options))
             for renderable in renderables
@@ -640,6 +639,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def fatal_error(self) -> None:
         """Exits the app after an unhandled exception."""
+        self.console.bell()
         traceback = Traceback(
             show_locals=True, width=None, locals_max_length=5, suppress=[rich]
         )
@@ -943,14 +943,14 @@ class App(Generic[ReturnType], DOMNode):
             action_target = default_namespace or self
             action_name = target
 
-        log("action", action)
+        log("<action>", action)
         await self.dispatch_action(action_target, action_name, params)
 
     async def dispatch_action(
         self, namespace: object, action_name: str, params: Any
     ) -> None:
         log(
-            "dispatch_action",
+            "<action>",
             namespace=namespace,
             action_name=action_name,
             params=params,
