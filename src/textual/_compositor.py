@@ -94,7 +94,7 @@ class LayoutUpdate:
 
 @rich.repr.auto
 class SpansUpdate:
-    """A renderable that apples updated spans to the screen."""
+    """A renderable that applies updated spans to the screen."""
 
     def __init__(self, spans: list[tuple[int, int, list[Segment]]]) -> None:
         """Apply spans, which consist of a tuple of (LINE, OFFSET, SEGMENTS)
@@ -148,7 +148,7 @@ class Compositor:
     def _regions_to_spans(
         cls, regions: Iterable[Region]
     ) -> Iterable[tuple[int, int, int]]:
-        """Converts the regions to horizontal spans. Spans will be combined if the overlap
+        """Converts the regions to horizontal spans. Spans will be combined if they overlap
         or are contiguous to produce optimal non-overlapping spans.
 
         Args:
