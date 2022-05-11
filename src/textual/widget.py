@@ -668,7 +668,6 @@ class Widget(DOMNode):
 
     def watch_mouse_over(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
-        return
         self.app.update_styles()
 
     def watch_has_focus(self, value: bool) -> None:
@@ -728,8 +727,10 @@ class Widget(DOMNode):
         if self._dirty_regions:
             self._render_lines()
             if self.is_container:
-                self.horizontal_scrollbar.refresh()
-                self.vertical_scrollbar.refresh()
+                if self.show_horizontal_scrollbar:
+                    self.horizontal_scrollbar.refresh()
+                if self.show_vertical_scrollbar:
+                    self.vertical_scrollbar.refresh()
         lines = self._render_cache.lines[start:end]
         return lines
 

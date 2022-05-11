@@ -605,8 +605,5 @@ class Compositor:
             update_region = region.intersection(clip)
             if update_region:
                 add_region(update_region)
-        print("UPDATE_WIDGET")
-        print(widgets)
-        print(regions)
         update = self.render(regions or None)
         return update
