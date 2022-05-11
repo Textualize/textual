@@ -699,7 +699,6 @@ class Widget(DOMNode):
                 self.refresh(layout=True)
                 self.call_later(self.scroll_to, self.scroll_x, self.scroll_y)
             else:
-                print("size updated refresh")
                 self.refresh()
 
     def _render_lines(self) -> None:
