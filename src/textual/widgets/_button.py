@@ -61,7 +61,7 @@ class Button(Widget, can_focus=True):
         if label is None:
             label = self.css_identifier_styled
 
-        self.label: Text = self.validate_label(label)
+        self.label: Text = label
 
         self.disabled = disabled
         if disabled:
@@ -76,7 +76,9 @@ class Button(Widget, can_focus=True):
         return label
 
     def render(self, style: Style) -> RenderableType:
-        return Text.styled(self.label.plain, style)
+        label = self.label.copy()
+        label.stylize(style)
+        return label
 
     async def on_click(self, event: events.Click) -> None:
         event.stop()
