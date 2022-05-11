@@ -145,13 +145,13 @@ def property_invalid_value_help_text(
         HelpText: Renderable for displaying the help text for this property
     """
     property_name = _contextualize_property_name(property_name, context)
-    bullets = []
+    summary = f"Invalid CSS property [i]{property_name}[/]"
     if suggested_property_name:
         suggested_property_name = _contextualize_property_name(
             suggested_property_name, context
         )
-        bullets.append(Bullet(f'Did you mean "{suggested_property_name}"?'))
-    return HelpText(f"Invalid CSS property [i]{property_name}[/]", bullets=bullets)
+        summary += f'. Did you mean "{suggested_property_name}"?'
+    return HelpText(summary)
 
 
 def spacing_wrong_number_of_values_help_text(
@@ -319,17 +319,15 @@ def color_property_help_text(
         HelpText: Renderable for displaying the help text for this property
     """
     property_name = _contextualize_property_name(property_name, context)
+    summary = f"Invalid value for the [i]{property_name}[/] property"
     suggested_color = (
         error.suggested_color if error and isinstance(error, ColorParseError) else None
     )
+    if suggested_color:
+        summary += f'. Did you mean "{suggested_color}"?'
     return HelpText(
-        summary=f"Invalid value for the [i]{property_name}[/] property",
+        summary=summary,
         bullets=[
-            *(
-                [Bullet(f'Did you mean "{suggested_color}"?')]
-                if suggested_color
-                else []
-            ),
             Bullet(
                 f"The [i]{property_name}[/] property can only be set to a valid color"
             ),

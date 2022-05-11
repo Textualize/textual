@@ -90,17 +90,10 @@ def test_did_you_mean_for_css_property_names(
 
     _, help_text = err.value.errors.rules[0].errors[0]  # type: Any, HelpText
     displayed_css_property_name = css_property_name.replace("_", "-")
-    assert (
-        help_text.summary == f"Invalid CSS property [i]{displayed_css_property_name}[/]"
-    )
-
-    expected_bullets_length = 1 if expected_property_name_suggestion else 0
-    assert len(help_text.bullets) == expected_bullets_length
-    if expected_property_name_suggestion is not None:
-        expected_suggestion_message = (
-            f'Did you mean "{expected_property_name_suggestion}"?'
-        )
-        assert help_text.bullets[0].markup == expected_suggestion_message
+    expected_summary = f"Invalid CSS property [i]{displayed_css_property_name}[/]"
+    if expected_property_name_suggestion:
+        expected_summary += f'. Did you mean "{expected_property_name_suggestion}"?'
+    assert help_text.summary == expected_summary
 
 
 @pytest.mark.parametrize(
@@ -134,14 +127,11 @@ def test_did_you_mean_for_color_names(
 
     _, help_text = err.value.errors.rules[0].errors[0]  # type: Any, HelpText
     displayed_css_property_name = css_property_name.replace("_", "-")
-    assert (
-        help_text.summary
-        == f"Invalid value for the [i]{displayed_css_property_name}[/] property"
+    expected_error_summary = (
+        f"Invalid value for the [i]{displayed_css_property_name}[/] property"
     )
 
-    first_bullet = help_text.bullets[0]
     if expected_color_suggestion is not None:
-        expected_suggestion_message = f'Did you mean "{expected_color_suggestion}"?'
-        assert first_bullet.markup == expected_suggestion_message
-    else:
-        assert "Did you mean" not in first_bullet.markup
+        expected_error_summary += f'. Did you mean "{expected_color_suggestion}"?'
+
+    assert help_text.summary == expected_error_summary

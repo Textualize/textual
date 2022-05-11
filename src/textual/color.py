@@ -85,7 +85,7 @@ class ColorParseError(Exception):
             message (str): the error message
             suggested_color (str | None): a close color we can suggest. Defaults to None.
         """
-        super().__init__(*[message])
+        super().__init__(message)
         self.suggested_color = suggested_color
 
 

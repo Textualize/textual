@@ -788,7 +788,7 @@ class ColorProperty:
                     help_text=color_property_help_text(
                         self.name, context="inline", error=error
                     ),
-                ) from error
+                )
             if obj.set_rule(self.name, parsed_color):
                 obj.refresh()
         else:
