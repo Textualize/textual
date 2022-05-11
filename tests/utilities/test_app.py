@@ -58,7 +58,7 @@ class AppTest(App):
     def in_running_state(
         self,
         *,
-        waiting_duration_after_initialisation: float = 0.001,
+        waiting_duration_after_initialisation: float = 0.1,
         waiting_duration_post_yield: float = 0,
     ) -> AsyncContextManager:
         async def run_app() -> None:
