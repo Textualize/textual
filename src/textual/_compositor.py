@@ -569,6 +569,7 @@ class Compositor:
                 else:
                     render_x = render_region.x
                     relative_cuts = [cut - render_x for cut in final_cuts]
+                    # print(relative_cuts)
                     _, *cut_segments = divide(line, relative_cuts)
 
                 # Since we are painting front to back, the first segments for a cut "wins"
