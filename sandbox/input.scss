@@ -1,0 +1,31 @@
+
+App {
+  layout: dock;
+  docks: top=top bot=bottom;
+  background: $secondary;
+}
+
+Screen {
+  background: $secondary;
+}
+
+#fahrenheit {
+  width: 50%;
+}
+
+#celsius {
+  width: 50%;
+}
+
+#inputs {
+  dock: top;
+  layout: horizontal;
+  background: $primary;
+  height: 3;
+}
+
+#body {
+  dock: top;
+  background: $secondary;
+  height: 20;
+}

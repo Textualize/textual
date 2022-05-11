@@ -18,7 +18,9 @@ class ButtonsApp(App[str]):
         self.exit(event.button.id)
 
 
-app = ButtonsApp(log_path="textual.log", log_verbosity=2)
+app = ButtonsApp(
+    log_path="textual.log", css_path="buttons.css", watch_css=True, log_verbosity=2
+)
 
 if __name__ == "__main__":
     result = app.run()

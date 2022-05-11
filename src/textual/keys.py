@@ -199,6 +199,11 @@ class Keys(str, Enum):
     ShiftControlHome = ControlShiftHome
     ShiftControlEnd = ControlShiftEnd
 
+    @classmethod
+    def values(cls):
+        """Returns a set of all the enum values."""
+        return set(cls._value2member_map_.keys())
+
 
 @dataclass
 class Binding:
