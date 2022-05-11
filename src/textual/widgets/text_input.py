@@ -13,31 +13,16 @@ from textual.widget import Widget
 
 
 class TextInputBase(Widget):
-    ALLOW_PROPAGATE = {"tab", "shift+tab"}
+    ALLOW_PROPAGATE = {}
 
     current_text = Reactive("", layout=True)
     cursor_index = Reactive(0)
-
-    class Changed(Message, bubble=True):
-        def __init__(self, sender: MessageTarget, value: str) -> None:
-            """Message posted when the user presses the 'enter' key while
-            focused on a TextInput widget.
-
-            Args:
-                sender (MessageTarget): Sender of the message
-                value (str): The value in the TextInput
-            """
-            super().__init__(sender)
-            self.value = value
 
     def on_key(self, event: events.Key) -> None:
         key = event.key
 
         if key == "\x1b":
             return
-
-        if key not in self.ALLOW_PROPAGATE:
-            event.stop()
 
         changed = False
         if key == "ctrl+h" and self.cursor_index != 0:
@@ -78,6 +63,9 @@ class TextInputBase(Widget):
 
 
 class TextInput(TextInputBase, can_focus=True):
+
+    ALLOW_PROPAGATE = {"tab", "shift+tab"}
+
     CSS = """
     TextInput {
         width: auto;
@@ -101,18 +89,6 @@ class TextInput(TextInputBase, can_focus=True):
         tint: $accent 20%;
     }
     """
-
-    class Submitted(Message, bubble=True):
-        def __init__(self, sender: MessageTarget, value: str) -> None:
-            """Message posted when the user presses the 'enter' key while
-            focused on a TextInput widget.
-
-            Args:
-                sender (MessageTarget): Sender of the message
-                value (str): The value in the TextInput
-            """
-            super().__init__(sender)
-            self.value = value
 
     def __init__(
         self,
@@ -168,5 +144,31 @@ class TextInput(TextInputBase, can_focus=True):
 
     def on_key(self, event: events.Key) -> None:
         key = event.key
+        if key not in self.ALLOW_PROPAGATE:
+            event.stop()
+
         if key == "enter" and self.current_text:
             self.post_message_no_wait(TextInput.Submitted(self, self.current_text))
+
+    class Changed(Message, bubble=True):
+        def __init__(self, sender: MessageTarget, value: str) -> None:
+            """Message posted when the user changes the value in a TextInput
+
+            Args:
+                sender (MessageTarget): Sender of the message
+                value (str): The value in the TextInput
+            """
+            super().__init__(sender)
+            self.value = value
+
+    class Submitted(Message, bubble=True):
+        def __init__(self, sender: MessageTarget, value: str) -> None:
+            """Message posted when the user presses the 'enter' key while
+            focused on a TextInput widget.
+
+            Args:
+                sender (MessageTarget): Sender of the message
+                value (str): The value in the TextInput
+            """
+            super().__init__(sender)
+            self.value = value
