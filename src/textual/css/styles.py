@@ -38,6 +38,7 @@ from .constants import (
     VALID_DISPLAY,
     VALID_VISIBILITY,
     VALID_OVERFLOW,
+    VALID_SCROLLBAR_GUTTER,
 )
 from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
@@ -52,6 +53,7 @@ from .types import (
     Specificity4,
     AlignVertical,
     Visibility,
+    ScrollbarGutter,
 )
 
 if sys.version_info >= (3, 8):
@@ -124,6 +126,8 @@ class RulesMap(TypedDict, total=False):
     scrollbar_background: Color
     scrollbar_background_hover: Color
     scrollbar_background_active: Color
+
+    scrollbar_gutter: ScrollbarGutter
 
     align_horizontal: AlignHorizontal
     align_vertical: AlignVertical
@@ -221,6 +225,8 @@ class StylesBase(ABC):
     scrollbar_background = ColorProperty("#555555")
     scrollbar_background_hover = ColorProperty("#444444")
     scrollbar_background_active = ColorProperty("black")
+
+    scrollbar_gutter = StringEnumProperty(VALID_SCROLLBAR_GUTTER, "auto")
 
     align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
@@ -656,6 +662,8 @@ class Styles(StylesBase):
             append_declaration("overflow-x", self.overflow_x)
         if has_rule("overflow-y"):
             append_declaration("overflow-y", self.overflow_y)
+        if has_rule("scrollbar-gutter"):
+            append_declaration("scrollbar-gutter", self.scrollbar_gutter)
 
         if has_rule("box-sizing"):
             append_declaration("box-sizing", self.box_sizing)
