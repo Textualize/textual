@@ -20,7 +20,7 @@ from typing import Callable, cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.control import Control
-from rich.segment import Segment, SegmentLines
+from rich.segment import Segment
 from rich.style import Style
 
 from . import errors
@@ -78,6 +78,7 @@ class LayoutUpdate:
         new_line = Segment.line()
         move_to = Control.move_to
         for last, (y, line) in loop_last(enumerate(self.lines, self.region.y)):
+            yield Control.home()
             yield move_to(x, y)
             yield from line
             if not last:
@@ -93,7 +94,14 @@ class LayoutUpdate:
 
 @rich.repr.auto
 class SpansUpdate:
+    """A renderable that apples updated spans to the screen."""
+
     def __init__(self, spans: list[tuple[int, int, list[Segment]]]) -> None:
+        """Apply spans, which consist of a tuple of (LINE, OFFSET, SEGMENTS)
+
+        Args:
+            spans (list[tuple[int, int, list[Segment]]]): A list of spans.
+        """
         self.spans = spans
 
     def __rich_console__(
@@ -140,9 +148,8 @@ class Compositor:
     def _regions_to_spans(
         cls, regions: Iterable[Region]
     ) -> Iterable[tuple[int, int, int]]:
-        """Converts the regions to non-overlapping horizontal spans, where each span
-        represents the region on a single line. Combining the resulting strips therefore
-        results in a shape identical to the combined original regions.
+        """Converts the regions to horizontal spans. Spans will be combined if the overlap
+        or are contiguous to produce optimal non-overlapping spans.
 
         Args:
             regions (Iterable[Region]): An iterable of Regions.
@@ -521,6 +528,7 @@ class Compositor:
         width, height = self.size
         screen_region = Region(0, 0, width, height)
         if regions:
+            # Create a crop regions that surrounds all updates
             crop = Region.from_union(regions).intersection(screen_region)
             spans = list(self._regions_to_spans(regions))
             is_rendered_line = {y for y, _, _ in spans}.__contains__
@@ -539,9 +547,8 @@ class Compositor:
             "Callable[[list[int]], dict[int, list[Segment] | None]]", dict.fromkeys
         )
         # A mapping of cut index to a list of segments for each line
-        chops: list[dict[int, list[Segment] | None]] = [
-            fromkeys(cut_set) for cut_set in cuts
-        ]
+        chops: list[dict[int, list[Segment] | None]]
+        chops = [fromkeys(cut_set) for cut_set in cuts]
 
         # Go through all the renders in reverse order and fill buckets with no render
         renders = self._get_renders(crop)

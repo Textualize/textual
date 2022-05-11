@@ -295,10 +295,6 @@ class Widget(DOMNode):
         self._dirty_regions.clear()
         self._dirty_regions.append(self.size.region)
 
-    def set_clean(self) -> None:
-        """Set the widget as clean."""
-        self._dirty_regions.clear()
-
     def scroll_to(
         self,
         x: float | None = None,
