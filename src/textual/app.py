@@ -33,6 +33,7 @@ from rich.measure import Measurement
 from rich.protocol import is_renderable
 from rich.screen import Screen as ScreenRenderable
 from rich.segment import Segments
+from rich.style import Style
 from rich.traceback import Traceback
 
 from . import actions
@@ -478,7 +479,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.stylesheet.update(self)
                 self.screen.refresh(layout=True)
 
-    def render(self) -> RenderableType:
+    def render(self, styles: Style) -> RenderableType:
         return ""
 
     def query(self, selector: str | None = None) -> DOMQuery:

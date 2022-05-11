@@ -1,4 +1,4 @@
-from rich.text import Text
+from rich.style import Style
 
 from textual.app import App, ComposeResult
 from textual.widget import Widget
@@ -6,7 +6,7 @@ from textual.widgets import Static
 
 
 class Thing(Widget):
-    def render(self):
+    def render(self, style: Style):
         return "Hello, 3434 World.\n[b]Lorem impsum."
 
 

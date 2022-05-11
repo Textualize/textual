@@ -9,13 +9,14 @@ from decimal import Decimal
 from rich.align import Align
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.padding import Padding
+from rich.style import Style
 from rich.text import Text
 
 from textual.app import App
 from textual.reactive import Reactive
 from textual.views import GridView
 from textual.widget import Widget
-from textual.widgets import Button, ButtonPressed
+from textual.widgets import Button
 
 try:
     from pyfiglet import Figlet
@@ -55,7 +56,7 @@ class Numbers(Widget):
 
     value = Reactive("0")
 
-    def render(self) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         """Build a Rich renderable to render the calculator display."""
         return Padding(
             Align.right(FigletText(self.value), vertical="middle"),

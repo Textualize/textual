@@ -26,6 +26,7 @@ from .box_model import BoxModel, get_box_model
 from .color import Color
 from ._context import active_app
 from ._types import Lines
+from .css.styles import Styles
 from .dom import DOMNode
 from .geometry import clamp, Offset, Region, Size
 from .layouts.vertical import VerticalLayout
@@ -160,7 +161,7 @@ class Widget(DOMNode):
             int: The optimal width of the content.
         """
         console = self.app.console
-        renderable = self.render()
+        renderable = self.render(self.styles.rich_style)
         measurement = Measurement.get(console, console.options, renderable)
         return measurement.maximum
 
@@ -177,7 +178,7 @@ class Widget(DOMNode):
         Returns:
             int: The height of the content.
         """
-        renderable = self.render()
+        renderable = self.render(self.styles.rich_style)
         options = self.console.options.update_width(width)
         segments = self.console.render(renderable, options)
         # Cheaper than counting the lines returned from render_lines!
@@ -447,13 +448,22 @@ class Widget(DOMNode):
         # We can either scroll so the widget is at the top of the container, or so that
         # it is at the bottom. We want to pick which has the shortest distance
         top_delta = widget_region.origin - container_region.origin
+
         bottom_delta = widget_region.origin - (
             container_region.origin
             + Offset(0, container_region.height - widget_region.height)
         )
 
-        delta_x = min(top_delta.x, bottom_delta.x, key=abs)
-        delta_y = min(top_delta.y, bottom_delta.y, key=abs)
+        if widget_region.width > container_region.width:
+            delta_x = top_delta.x
+        else:
+            delta_x = min(top_delta.x, bottom_delta.x, key=abs)
+
+        if widget_region.height > container_region.height:
+            delta_y = top_delta.y
+        else:
+            delta_y = min(top_delta.y, bottom_delta.y, key=abs)
+
         return self.scroll_relative(
             delta_x or None, delta_y or None, animate=animate, duration=0.2
         )
@@ -546,8 +556,7 @@ class Widget(DOMNode):
         Returns:
             RenderableType: A new renderable.
         """
-
-        renderable = self.render()
+        renderable = self.render(self.styles.rich_style)
 
         styles = self.styles
         parent_styles = self.parent.styles
@@ -560,11 +569,12 @@ class Widget(DOMNode):
             horizontal, vertical = content_align
             renderable = Align(renderable, horizontal, vertical=vertical)
 
+        renderable = Padding(renderable, styles.padding)
+
         renderable_text_style = parent_text_style + text_style
         if renderable_text_style:
-            renderable = Styled(renderable, renderable_text_style)
-
-        renderable = Padding(renderable, styles.padding, style=renderable_text_style)
+            style = Style.from_color(text_style.color, text_style.bgcolor)
+            renderable = Styled(renderable, style)
 
         if styles.border:
             renderable = Border(
@@ -769,8 +779,11 @@ class Widget(DOMNode):
             self._repaint_required = True
         self.check_idle()
 
-    def render(self) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         """Get renderable for widget.
+
+        Args:
+            style (Styles): The Styles object for this Widget.
 
         Returns:
             RenderableType: Any renderable

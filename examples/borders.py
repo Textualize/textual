@@ -1,11 +1,9 @@
-from rich.console import Group
 from rich.padding import Padding
+from rich.style import Style
 from rich.text import Text
 
 from textual.app import App
 from textual.renderables.gradient import VerticalGradient
-from textual import events
-from textual.widgets import Placeholder
 from textual.widget import Widget
 
 lorem = Text.from_markup(
@@ -15,12 +13,12 @@ lorem = Text.from_markup(
 
 
 class Lorem(Widget):
-    def render(self) -> Text:
+    def render(self, style: Style) -> Text:
         return Padding(lorem, 1)
 
 
 class Background(Widget):
-    def render(self):
+    def render(self, style: Style):
         return VerticalGradient("#212121", "#212121")
 
 

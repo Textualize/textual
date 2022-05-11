@@ -330,7 +330,7 @@ class Tabs(Widget):
         """
         return next((i for i, tab in enumerate(self.tabs) if tab.name == tab_name), 0)
 
-    def render(self) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         return TabsRenderable(
             self.tabs,
             tab_padding=self.tab_padding,

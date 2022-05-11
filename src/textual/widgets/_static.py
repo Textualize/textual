@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from rich.console import RenderableType
+from rich.style import Style
+
 from ..widget import Widget
 
 
@@ -16,7 +18,7 @@ class Static(Widget):
         super().__init__(name=name, id=id, classes=classes)
         self.renderable = renderable
 
-    def render(self) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         return self.renderable
 
     def update(self, renderable: RenderableType) -> None:
