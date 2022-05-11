@@ -23,7 +23,7 @@ from rich.color import Color as RichColor
 from rich.style import Style
 from rich.text import Text
 
-
+from textual.suggestions import get_suggestion
 from ._color_constants import COLOR_NAME_TO_RGB
 from .geometry import clamp
 
@@ -76,6 +76,17 @@ split_pairs4: Callable[[str], tuple[str, str, str, str]] = itemgetter(
 
 class ColorParseError(Exception):
     """A color failed to parse"""
+
+    def __init__(self, message: str, suggested_color: str | None = None):
+        """
+        Creates a new ColorParseError
+
+        Args:
+            message (str): the error message
+            suggested_color (str | None): a close color we can suggest. Defaults to None.
+        """
+        super().__init__(message)
+        self.suggested_color = suggested_color
 
 
 @rich.repr.auto
@@ -271,7 +282,14 @@ class Color(NamedTuple):
             return cls(*color_from_name)
         color_match = RE_COLOR.match(color_text)
         if color_match is None:
-            raise ColorParseError(f"failed to parse {color_text!r} as a color")
+            error_message = f"failed to parse {color_text!r} as a color"
+            suggested_color = None
+            if not color_text.startswith("#") and not color_text.startswith("rgb"):
+                # Seems like we tried to use a color name: let's try to find one that is close enough:
+                suggested_color = get_suggestion(color_text, COLOR_NAME_TO_RGB.keys())
+                if suggested_color:
+                    error_message += f"; did you mean '{suggested_color}'?"
+            raise ColorParseError(error_message, suggested_color)
         (
             rgb_hex_triple,
             rgb_hex_quad,

@@ -150,8 +150,6 @@ async def test_composition_of_vertical_container_with_children(
     expected_screen_size = Size(*screen_size)
 
     async with app.in_running_state():
-        app.log_tree()
-
         # root widget checks:
         root_widget = cast(Widget, app.get_child("root"))
         assert root_widget.size == expected_screen_size

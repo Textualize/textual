@@ -70,13 +70,13 @@ class HelpText:
 
     Attributes:
         summary (str): A succinct summary of the issue.
-        bullets (Iterable[Bullet]): Bullet points which provide additional
-            context around the issue. These are rendered below the summary.
+        bullets (Iterable[Bullet] | None): Bullet points which provide additional
+            context around the issue. These are rendered below the summary. Defaults to None.
     """
 
-    def __init__(self, summary: str, *, bullets: Iterable[Bullet]) -> None:
+    def __init__(self, summary: str, *, bullets: Iterable[Bullet] = None) -> None:
         self.summary = summary
-        self.bullets = bullets
+        self.bullets = bullets or []
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions

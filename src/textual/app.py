@@ -144,6 +144,9 @@ class App(Generic[ReturnType], DOMNode):
         self.driver_class = driver_class or self.get_driver_class()
         self._title = title
         self._screen_stack: list[Screen] = []
+        self._sync_available = (
+            os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal" and not WINDOWS
+        )
 
         self.focused: Widget | None = None
         self.mouse_over: Widget | None = None
@@ -808,20 +811,19 @@ class App(Generic[ReturnType], DOMNode):
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         if not self._running:
             return
-        sync_available = (
-            os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal" and not WINDOWS
-        )
         if not self._closed:
             console = self.console
             try:
-                if sync_available:
+                if self._sync_available:
                     console.file.write("\x1bP=1s\x1b\\")
                 console.print(
                     ScreenRenderable(
-                        Control.home(), self.screen._compositor, Control.home()
+                        Control.home(),
+                        self.screen._compositor,
+                        Control.home(),
                     )
                 )
-                if sync_available:
+                if self._sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
                 console.file.flush()
             except Exception as error:

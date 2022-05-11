@@ -20,7 +20,7 @@ class VerticalContainer(Widget):
 
     VerticalContainer Placeholder {
         margin: 1 0;
-        height: 3;
+        height: 5;
         border: solid lime;
         align: center top;
     }
@@ -79,10 +79,10 @@ class MyTestApp(App):
         placeholders = self.query("Placeholder")
         placeholders_count = len(placeholders)
         placeholder = Placeholder(
-            id=f"placeholder_{placeholders_count+1}",
-            name=f"Placeholder #{placeholders_count+1}",
+            id=f"placeholder_{placeholders_count}",
+            name=f"Placeholder #{placeholders_count}",
         )
-        root = self.query_one("#root")
+        root = self.get_child("root")
         root.mount(placeholder)
         self.refresh(repaint=True, layout=True)
         self.refresh_css()

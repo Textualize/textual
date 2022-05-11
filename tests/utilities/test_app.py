@@ -4,9 +4,10 @@ import asyncio
 import contextlib
 import io
 from pathlib import Path
-from typing import AsyncContextManager
+from typing import AsyncContextManager, cast
 
-from rich.console import Console, Capture
+from rich.console import Console
+
 from textual import events
 from textual.app import App, ReturnType, ComposeResult
 from textual.driver import Driver
@@ -15,6 +16,9 @@ from textual.geometry import Size
 
 # N.B. These classes would better be named TestApp/TestConsole/TestDriver/etc,
 # but it makes pytest emit warning as it will try to collect them as classes containing test cases :-/
+
+# This value is also hard-coded in Textual's `App` class:
+CLEAR_SCREEN_SEQUENCE = "\x1bP=1s\x1b\\"
 
 
 class AppTest(App):
@@ -25,7 +29,7 @@ class AppTest(App):
         size: Size,
         log_verbosity: int = 2,
     ):
-        # will log in "/tests/test.[test name].log":
+        # Tests will log in "/tests/test.[test name].log":
         log_path = Path(__file__).parent.parent / f"test.{test_name}.log"
         super().__init__(
             driver_class=DriverTest,
@@ -33,6 +37,11 @@ class AppTest(App):
             log_verbosity=log_verbosity,
             log_color_system="256",
         )
+
+        # We need this so the `CLEAR_SCREEN_SEQUENCE` is always sent for a screen refresh,
+        # whatever the environment:
+        self._sync_available = True
+
         self._size = size
         self._console = ConsoleTest(width=size.width, height=size.height)
         self._error_console = ConsoleTest(width=size.width, height=size.height)
@@ -49,16 +58,18 @@ class AppTest(App):
     def in_running_state(
         self,
         *,
-        initialisation_timeout: float = 0.1,
-    ) -> AsyncContextManager[Capture]:
+        waiting_duration_after_initialisation: float = 0.001,
+        waiting_duration_post_yield: float = 0,
+    ) -> AsyncContextManager:
         async def run_app() -> None:
             await self.process_messages()
 
         @contextlib.asynccontextmanager
         async def get_running_state_context_manager():
+            self._set_active()
             run_task = asyncio.create_task(run_app())
             timeout_before_yielding_task = asyncio.create_task(
-                asyncio.sleep(initialisation_timeout)
+                asyncio.sleep(waiting_duration_after_initialisation)
             )
             done, pending = await asyncio.wait(
                 (
@@ -69,10 +80,11 @@ class AppTest(App):
             )
             if run_task in done or run_task not in pending:
                 raise RuntimeError(
-                    "TestApp is no longer return after its initialization period"
+                    "TestApp is no longer running after its initialization period"
                 )
-            with self.console.capture() as capture:
-                yield capture
+            yield
+            if waiting_duration_post_yield:
+                await asyncio.sleep(waiting_duration_post_yield)
             assert not run_task.done()
             await self.shutdown()
 
@@ -82,6 +94,18 @@ class AppTest(App):
         raise NotImplementedError(
             "Use `async with my_test_app.in_running_state()` rather than `my_test_app.run()`"
         )
+
+    @property
+    def total_capture(self) -> str | None:
+        return self.console.file.getvalue()
+
+    @property
+    def last_display_capture(self) -> str | None:
+        total_capture = self.total_capture
+        if not total_capture:
+            return None
+        last_display_start_index = total_capture.rindex(CLEAR_SCREEN_SEQUENCE)
+        return total_capture[last_display_start_index:]
 
     @property
     def console(self) -> ConsoleTest:
@@ -110,9 +134,17 @@ class ConsoleTest(Console):
             file=file,
             width=width,
             height=height,
-            force_terminal=True,
+            force_terminal=False,
             legacy_windows=False,
         )
+
+    @property
+    def file(self) -> io.StringIO:
+        return cast(io.StringIO, self._file)
+
+    @property
+    def is_dumb_terminal(self) -> bool:
+        return False
 
 
 class DriverTest(Driver):
