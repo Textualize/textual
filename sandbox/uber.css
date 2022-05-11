@@ -7,10 +7,16 @@ App.-show-focus *:focus {
   background: green;
   overflow: hidden auto;
   border: heavy white;
+  text-style: underline;
 }
 
 #uber1:focus-within {
   background: darkslateblue;
+}
+
+#child2 {
+  text-style: underline;
+  background: red;
 }
 
 .list-item {

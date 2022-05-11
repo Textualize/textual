@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from rich.console import RenderableType
 from rich.padding import Padding
 from rich.rule import Rule
+from rich.style import Style
 
 from textual import events
 from textual.app import App
@@ -11,7 +12,7 @@ from textual.widgets.tabs import Tabs, Tab
 
 
 class Hr(Widget):
-    def render(self) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         return Rule()
 
 
@@ -22,7 +23,7 @@ class Info(Widget):
         super().__init__()
         self.text = text
 
-    def render(self) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         return Padding(f"{self.text}", pad=(0, 1))
 
 
@@ -144,4 +145,5 @@ class BasicApp(App):
             self.mount(example.widget)
 
 
-BasicApp.run(css_path="tabs.scss", watch_css=True, log_path="textual.log")
+app = BasicApp(css_path="tabs.scss", watch_css=True, log_path="textual.log")
+app.run()

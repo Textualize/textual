@@ -18,14 +18,14 @@ class Screen(Widget):
     """A widget for the root of the app."""
 
     CSS = """
-    
+
     Screen {
         layout: vertical;
         overflow-y: auto;
         background: $surface;
         color: $text-surface;
     }
-    
+
     """
 
     dark = Reactive(False)
@@ -38,8 +38,8 @@ class Screen(Widget):
     def watch_dark(self, dark: bool) -> None:
         pass
 
-    def render(self) -> RenderableType:
-        return self.app.render()
+    def render(self, style: Style) -> RenderableType:
+        return self.app.render(style)
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the absolute offset of a given Widget.

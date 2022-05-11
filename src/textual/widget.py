@@ -26,6 +26,7 @@ from .box_model import BoxModel, get_box_model
 from .color import Color
 from ._context import active_app
 from ._types import Lines
+from .css.styles import Styles
 from .dom import DOMNode
 from .geometry import clamp, Offset, Region, Size
 from .layouts.vertical import VerticalLayout
@@ -159,7 +160,7 @@ class Widget(DOMNode):
             int: The optimal width of the content.
         """
         console = self.app.console
-        renderable = self.render()
+        renderable = self.render(self.styles.rich_style)
         measurement = Measurement.get(console, console.options, renderable)
         return measurement.maximum
 
@@ -176,7 +177,7 @@ class Widget(DOMNode):
         Returns:
             int: The height of the content.
         """
-        renderable = self.render()
+        renderable = self.render(self.styles.rich_style)
         options = self.console.options.update_width(width)
         segments = self.console.render(renderable, options)
         # Cheaper than counting the lines returned from render_lines!
@@ -553,8 +554,7 @@ class Widget(DOMNode):
         Returns:
             RenderableType: A new renderable.
         """
-
-        renderable = self.render()
+        renderable = self.render(self.styles.rich_style)
 
         styles = self.styles
         parent_styles = self.parent.styles
@@ -567,11 +567,12 @@ class Widget(DOMNode):
             horizontal, vertical = content_align
             renderable = Align(renderable, horizontal, vertical=vertical)
 
+        renderable = Padding(renderable, styles.padding)
+
         renderable_text_style = parent_text_style + text_style
         if renderable_text_style:
-            renderable = Styled(renderable, renderable_text_style)
-
-        renderable = Padding(renderable, styles.padding, style=renderable_text_style)
+            style = Style.from_color(text_style.color, text_style.bgcolor)
+            renderable = Styled(renderable, style)
 
         if styles.border:
             renderable = Border(
@@ -773,8 +774,11 @@ class Widget(DOMNode):
             self.set_dirty()
         self.check_idle()
 
-    def render(self) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         """Get renderable for widget.
+
+        Args:
+            style (Styles): The Styles object for this Widget.
 
         Returns:
             RenderableType: Any renderable
