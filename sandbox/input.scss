@@ -1,11 +1,17 @@
 
 App {
-  layout: dock;
-  docks: top=top bot=bottom;
   background: $secondary;
 }
 
+#spacer {
+  height: 1;
+  background: $primary-darken-2;
+  dock: top;
+}
+
 Screen {
+  layout: dock;
+  docks: top=top bottom=bottom;
   background: $secondary;
 }
 
@@ -28,4 +34,8 @@ Screen {
   dock: top;
   background: $secondary;
   height: 20;
+}
+
+#text_area {
+  dock: bottom;
 }

@@ -1,7 +1,7 @@
 from textual.app import App
 from textual.widget import Widget
 
-from textual.widgets.text_input import TextInput, TextInputBase
+from textual.widgets.text_input import TextInput, TextWidgetBase, TextArea
 
 
 def celsius_to_fahrenheit(celsius: float) -> float:
@@ -19,8 +19,10 @@ class InputApp(App[str]):
         self.fahrenheit.focus()
         text_boxes = Widget(self.fahrenheit, self.celsius)
         self.mount(inputs=text_boxes)
+        self.mount(spacer=Widget())
+        self.mount(text_area=TextArea())
 
-    def handle_changed(self, event: TextInputBase.Changed) -> None:
+    def handle_changed(self, event: TextWidgetBase.Changed) -> None:
         try:
             value = float(event.value)
         except ValueError:

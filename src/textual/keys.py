@@ -202,7 +202,7 @@ class Keys(str, Enum):
     @classmethod
     def values(cls):
         """Returns a set of all the enum values."""
-        return set(cls._value2member_map_.keys())
+        return set(cls._value2member_map_.values())
 
 
 @dataclass
