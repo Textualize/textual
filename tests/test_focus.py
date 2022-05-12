@@ -31,26 +31,6 @@ async def test_focus_chain():
     assert focused == ["foo", "Paul", "baz"]
 
 
-async def test_show_focus():
-    app = App()
-    app.push_screen(Screen())
-    app.screen.add_children(
-        Focusable(id="foo"),
-        NonFocusable(id="bar"),
-        Focusable(Focusable(id="Paul"), id="container1"),
-        NonFocusable(Focusable(id="Jessica"), id="container2"),
-        Focusable(id="baz"),
-    )
-
-    focused = [widget.id for widget in app.focus_chain]
-    assert focused == ["foo", "Paul", "baz"]
-
-    assert app.focused is None
-    assert not app.has_class("-show-focus")
-    app.show_focus()
-    assert app.has_class("-show-focus")
-
-
 async def test_focus_next_and_previous():
 
     app = App()
