@@ -20,6 +20,7 @@ class InputApp(App[str]):
         text_boxes = Widget(self.fahrenheit, self.celsius)
         self.mount(inputs=text_boxes)
         self.mount(spacer=Widget())
+        self.mount(footer=TextInput(placeholder="Footer Search Bar"))
         self.mount(text_area=TextArea())
 
     def handle_changed(self, event: TextWidgetBase.Changed) -> None:

@@ -1,4 +1,3 @@
-
 App {
   background: $secondary;
 }
@@ -25,17 +24,32 @@ Screen {
 
 #inputs {
   dock: top;
-  layout: horizontal;
   background: $primary;
   height: 3;
-}
-
-#body {
-  dock: top;
-  background: $secondary;
-  height: 20;
+  layout: horizontal;
 }
 
 #text_area {
   dock: bottom;
+}
+
+
+/* Not ideal having to do this to get a single cell height text input,
+which will probably be a common use-case */
+#footer {
+  dock: bottom;
+  height: 1;
+  padding: 0;
+  border: ;
+}
+
+#footer > TextInputChild {
+  border: ;
+  padding: 0;
+  height: 1;
+}
+
+#footer > TextInputChild:focus {
+  padding: 0;
+  border: ;
 }
