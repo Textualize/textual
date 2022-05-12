@@ -7,7 +7,7 @@ from pathlib import Path, PurePath
 from typing import cast, Iterable
 
 import rich.repr
-from rich.console import RenderableType, Console, ConsoleOptions
+from rich.console import RenderableType, RenderResult, Console, ConsoleOptions
 from rich.highlighter import ReprHighlighter
 from rich.markup import render
 from rich.padding import Padding
@@ -68,10 +68,10 @@ class StylesheetErrors:
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
-    ) -> RenderableType:
+    ) -> RenderResult:
         error_count = 0
         for rule in self.rules:
-            for is_last, (token, message) in loop_last(rule.errors):
+            for token, message in rule.errors:
                 error_count += 1
 
                 if token.path:
@@ -297,7 +297,6 @@ class Stylesheet:
                 for name, specificity_rules in rule_attributes.items()
             },
         )
-
         self.replace_rules(node, node_rules, animate=animate)
 
     @classmethod
@@ -363,8 +362,9 @@ class Stylesheet:
                 setattr(base_styles, key, new_value)
         else:
             # Not animated, so we apply the rules directly
+            get_rule = rules.get
             for key in modified_rule_keys:
-                setattr(base_styles, key, rules.get(key))
+                setattr(base_styles, key, get_rule(key))
 
     def update(self, root: DOMNode, animate: bool = False) -> None:
         """Update a node and its children."""

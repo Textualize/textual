@@ -15,12 +15,12 @@ from __future__ import annotations
 
 from operator import attrgetter, itemgetter
 import sys
-from typing import cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
+from typing import Callable, cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
-from rich.console import Console, ConsoleOptions, RenderResult
+from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.control import Control
-from rich.segment import Segment, SegmentLines
+from rich.segment import Segment
 from rich.style import Style
 
 from . import errors
@@ -78,6 +78,7 @@ class LayoutUpdate:
         new_line = Segment.line()
         move_to = Control.move_to
         for last, (y, line) in loop_last(enumerate(self.lines, self.region.y)):
+            yield Control.home()
             yield move_to(x, y)
             yield from line
             if not last:
@@ -89,6 +90,33 @@ class LayoutUpdate:
         yield "y", y
         yield "width", width
         yield "height", height
+
+
+@rich.repr.auto
+class SpansUpdate:
+    """A renderable that applies updated spans to the screen."""
+
+    def __init__(self, spans: list[tuple[int, int, list[Segment]]]) -> None:
+        """Apply spans, which consist of a tuple of (LINE, OFFSET, SEGMENTS)
+
+        Args:
+            spans (list[tuple[int, int, list[Segment]]]): A list of spans.
+        """
+        self.spans = spans
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        move_to = Control.move_to
+        new_line = Segment.line()
+        for last, (y, x, segments) in loop_last(self.spans):
+            yield move_to(x, y)
+            yield from segments
+            if not last:
+                yield new_line
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield [(y, x, "...") for y, x, _segments in self.spans]
 
 
 @rich.repr.auto(angular=True)
@@ -115,6 +143,42 @@ class Compositor:
 
         # The points in each line where the line bisects the left and right edges of the widget
         self._cuts: list[list[int]] | None = None
+
+    @classmethod
+    def _regions_to_spans(
+        cls, regions: Iterable[Region]
+    ) -> Iterable[tuple[int, int, int]]:
+        """Converts the regions to horizontal spans. Spans will be combined if they overlap
+        or are contiguous to produce optimal non-overlapping spans.
+
+        Args:
+            regions (Iterable[Region]): An iterable of Regions.
+
+        Returns:
+            Iterable[tuple[int, int, int]]: Yields tuples of (Y, X1, X2)
+        """
+        inline_ranges: dict[int, list[tuple[int, int]]] = {}
+        for region_x, region_y, width, height in regions:
+            span = (region_x, region_x + width)
+            for y in range(region_y, region_y + height):
+                inline_ranges.setdefault(y, []).append(span)
+
+        for y, ranges in sorted(inline_ranges.items()):
+            if len(ranges) == 1:
+                # Special case of 1 span
+                yield (y, *ranges[0])
+            else:
+                ranges.sort()
+                x1, x2 = ranges[0]
+                for next_x1, next_x2 in ranges[1:]:
+                    if next_x1 <= x2:
+                        if next_x2 > x2:
+                            x2 = next_x2
+                    else:
+                        yield (y, x1, x2)
+                        x1 = next_x1
+                        x2 = next_x2
+                yield (y, x1, x2)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "size", self.size
@@ -452,11 +516,7 @@ class Compositor:
         ]
         return segment_lines
 
-    def render(
-        self,
-        *,
-        crop: Region | None = None,
-    ) -> SegmentLines:
+    def render(self, regions: list[Region] | None = None) -> RenderableType:
         """Render a layout.
 
         Args:
@@ -467,8 +527,15 @@ class Compositor:
         """
         width, height = self.size
         screen_region = Region(0, 0, width, height)
-
-        crop_region = crop.intersection(screen_region) if crop else screen_region
+        if regions:
+            # Create a crop regions that surrounds all updates
+            crop = Region.from_union(regions).intersection(screen_region)
+            spans = list(self._regions_to_spans(regions))
+            is_rendered_line = {y for y, _, _ in spans}.__contains__
+        else:
+            crop = screen_region
+            spans = []
+            is_rendered_line = lambda y: True
 
         _Segment = Segment
         divide = _Segment.divide
@@ -480,9 +547,8 @@ class Compositor:
             "Callable[[list[int]], dict[int, list[Segment] | None]]", dict.fromkeys
         )
         # A mapping of cut index to a list of segments for each line
-        chops: list[dict[int, list[Segment] | None]] = [
-            fromkeys(cut_set) for cut_set in cuts
-        ]
+        chops: list[dict[int, list[Segment] | None]]
+        chops = [fromkeys(cut_set) for cut_set in cuts]
 
         # Go through all the renders in reverse order and fill buckets with no render
         renders = self._get_renders(crop)
@@ -492,6 +558,8 @@ class Compositor:
             render_region = intersection(region, clip)
 
             for y, line in zip(render_region.y_range, lines):
+                if not is_rendered_line(y):
+                    continue
                 first_cut, last_cut = render_region.x_extents
                 final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
 
@@ -501,6 +569,7 @@ class Compositor:
                 else:
                     render_x = render_region.x
                     relative_cuts = [cut - render_x for cut in final_cuts]
+                    # print(relative_cuts)
                     _, *cut_segments = divide(line, relative_cuts)
 
                 # Since we are painting front to back, the first segments for a cut "wins"
@@ -509,24 +578,25 @@ class Compositor:
                     if chops_line[cut] is None:
                         chops_line[cut] = segments
 
-        # Assemble the cut renders in to lists of segments
-        crop_x, crop_y, crop_x2, crop_y2 = crop_region.corners
-        render_lines = self._assemble_chops(chops[crop_y:crop_y2])
-
-        if crop is not None and (crop_x, crop_x2) != (0, width):
-            render_lines = [
-                line_crop(line, crop_x, crop_x2) if line else line
-                for line in render_lines
+        if regions:
+            crop_y, crop_y2 = crop.y_extents
+            render_lines = self._assemble_chops(chops[crop_y:crop_y2])
+            render_spans = [
+                (y, x1, line_crop(render_lines[y - crop_y], x1, x2))
+                for y, x1, x2 in spans
             ]
+            return SpansUpdate(render_spans)
 
-        return SegmentLines(render_lines, new_lines=True)
+        else:
+            render_lines = self._assemble_chops(chops)
+            return LayoutUpdate(render_lines, screen_region)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         yield self.render()
 
-    def update_widget(self, console: Console, widget: Widget) -> LayoutUpdate | None:
+    def update_widgets(self, widgets: set[Widget]) -> RenderableType | None:
         """Update a given widget in the composition.
 
         Args:
@@ -536,14 +606,12 @@ class Compositor:
         Returns:
             LayoutUpdate | None: A renderable or None if nothing to render.
         """
-        if widget not in self.regions:
-            return None
-        region, clip = self.regions[widget]
-        if not region:
-            return None
-        update_region = region.intersection(clip)
-        if not update_region:
-            return None
-        update_lines = self.render(crop=update_region).lines
-        update = LayoutUpdate(update_lines, update_region)
+        regions: list[Region] = []
+        add_region = regions.append
+        for widget in self.regions.keys() & widgets:
+            region, clip = self.regions[widget]
+            update_region = region.intersection(clip)
+            if update_region:
+                add_region(update_region)
+        update = self.render(regions or None)
         return update

@@ -114,6 +114,17 @@ def test_region_null():
     assert not Region()
 
 
+def test_region_from_union():
+    with pytest.raises(ValueError):
+        Region.from_union([])
+    regions = [
+        Region(10, 20, 30, 40),
+        Region(15, 25, 5, 5),
+        Region(30, 25, 20, 10),
+    ]
+    assert Region.from_union(regions) == Region(10, 20, 40, 40)
+
+
 def test_region_from_origin():
     assert Region.from_origin(Offset(3, 4), (5, 6)) == Region(3, 4, 5, 6)
 

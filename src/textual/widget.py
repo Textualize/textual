@@ -84,6 +84,7 @@ class Widget(DOMNode):
         self._virtual_size = Size(0, 0)
         self._container_size = Size(0, 0)
         self._layout_required = False
+        self._repaint_required = False
         self._default_layout = VerticalLayout()
         self._animate: BoundAnimator | None = None
         self._reactive_watches: dict[str, Callable] = {}
@@ -273,6 +274,8 @@ class Widget(DOMNode):
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
+        self.horizontal_scrollbar.display = show_horizontal
+        self.vertical_scrollbar.display = show_vertical
 
     @property
     def scrollbars_enabled(self) -> tuple[bool, bool]:
@@ -312,7 +315,6 @@ class Widget(DOMNode):
         Returns:
             bool: True if the scroll position changed, otherwise False.
         """
-
         scrolled_x = scrolled_y = False
 
         if animate:
@@ -342,13 +344,13 @@ class Widget(DOMNode):
 
         else:
             if x is not None:
-                if x != self.scroll_x:
-                    self.scroll_target_x = self.scroll_x = x
-                    scrolled_x = True
+                scroll_x = self.scroll_x
+                self.scroll_target_x = self.scroll_x = x
+                scrolled_x = scroll_x != self.scroll_x
             if y is not None:
-                if y != self.scroll_y:
-                    self.scroll_target_y = self.scroll_y = y
-                    scrolled_y = True
+                scroll_y = self.scroll_y
+                self.scroll_target_y = self.scroll_y = y
+                scrolled_y = scroll_y != self.scroll_y
             if scrolled_x or scrolled_y:
                 self.refresh(repaint=False, layout=True)
 
@@ -735,8 +737,10 @@ class Widget(DOMNode):
         if self._dirty_regions:
             self._render_lines()
             if self.is_container:
-                self.horizontal_scrollbar.refresh()
-                self.vertical_scrollbar.refresh()
+                if self.show_horizontal_scrollbar:
+                    self.horizontal_scrollbar.refresh()
+                if self.show_vertical_scrollbar:
+                    self.vertical_scrollbar.refresh()
         lines = self._render_cache.lines[start:end]
         return lines
 
@@ -772,6 +776,7 @@ class Widget(DOMNode):
             self._layout_required = True
         if repaint:
             self.set_dirty()
+            self._repaint_required = True
         self.check_idle()
 
     def render(self, style: Style) -> RenderableType:
@@ -783,13 +788,7 @@ class Widget(DOMNode):
         Returns:
             RenderableType: Any renderable
         """
-
-        # Default displays a pretty repr in the center of the screen
-
-        if self.is_container:
-            return ""
-
-        return self.css_identifier_styled
+        return "" if self.is_container else self.css_identifier_styled
 
     async def action(self, action: str, *params) -> None:
         await self.app.action(action, self)
@@ -811,8 +810,9 @@ class Widget(DOMNode):
         if self.check_layout():
             self._reset_check_layout()
             self.screen.post_message_no_wait(messages.Layout(self))
-        elif self._dirty_regions:
+        elif self._repaint_required:
             self.emit_no_wait(messages.Update(self, self))
+        self._repaint_required = False
 
     def focus(self) -> None:
         """Give input focus to this widget."""

@@ -24,6 +24,9 @@ class Layout(ABC):
 
     name: ClassVar[str] = ""
 
+    def __repr__(self) -> str:
+        return f"<{self.name}>"
+
     @abstractmethod
     def arrange(
         self, parent: Widget, size: Size, scroll: Offset
