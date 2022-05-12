@@ -4,12 +4,15 @@ import asyncio
 import contextlib
 import io
 from pathlib import Path
-from typing import AsyncContextManager, cast
+from time import monotonic
+from typing import AsyncContextManager, cast, ContextManager, Callable
+from unittest import mock
 
 from rich.console import Console
 
 from textual import events, errors
-from textual.app import App, ReturnType, ComposeResult
+from textual._timer import Timer
+from textual.app import App, ComposeResult
 from textual.driver import Driver
 from textual.geometry import Size
 
@@ -63,33 +66,52 @@ class AppTest(App):
         *,
         waiting_duration_after_initialisation: float = 0.1,
         waiting_duration_post_yield: float = 0,
+        time_acceleration: bool = True,
+        time_acceleration_factor: float = 10,
+        # force_timers_tick_after_yield: bool = True,
     ) -> AsyncContextManager:
         async def run_app() -> None:
             await self.process_messages()
 
+        if time_acceleration:
+            waiting_duration_after_initialisation /= time_acceleration_factor
+            waiting_duration_post_yield /= time_acceleration_factor
+
+        time_acceleration_context: ContextManager = (
+            textual_timers_accelerate_time(acceleration_factor=time_acceleration_factor)
+            if time_acceleration
+            else contextlib.nullcontext()
+        )
+
         @contextlib.asynccontextmanager
         async def get_running_state_context_manager():
             self._set_active()
-            run_task = asyncio.create_task(run_app())
-            timeout_before_yielding_task = asyncio.create_task(
-                asyncio.sleep(waiting_duration_after_initialisation)
-            )
-            done, pending = await asyncio.wait(
-                (
-                    run_task,
-                    timeout_before_yielding_task,
-                ),
-                return_when=asyncio.FIRST_COMPLETED,
-            )
-            if run_task in done or run_task not in pending:
-                raise RuntimeError(
-                    "TestApp is no longer running after its initialization period"
+            with time_acceleration_context:
+                run_task = asyncio.create_task(run_app())
+                timeout_before_yielding_task = asyncio.create_task(
+                    asyncio.sleep(waiting_duration_after_initialisation)
                 )
-            yield
-            if waiting_duration_post_yield:
-                await asyncio.sleep(waiting_duration_post_yield)
-            assert not run_task.done()
-            await self.shutdown()
+                done, pending = await asyncio.wait(
+                    (
+                        run_task,
+                        timeout_before_yielding_task,
+                    ),
+                    return_when=asyncio.FIRST_COMPLETED,
+                )
+                if run_task in done or run_task not in pending:
+                    raise RuntimeError(
+                        "TestApp is no longer running after its initialization period"
+                    )
+                yield
+                waiting_duration = max(
+                    waiting_duration_post_yield or 0,
+                    self.screen._update_timer._interval,
+                )
+                await asyncio.sleep(waiting_duration)
+                # if force_timers_tick_after_yield:
+                #     await textual_timers_force_tick()
+                assert not run_task.done()
+                await self.shutdown()
 
         return get_running_state_context_manager()
 
@@ -207,3 +229,45 @@ class DriverTest(Driver):
 
     def stop_application_mode(self) -> None:
         pass
+
+
+async def textual_timers_force_tick() -> None:
+    timer_instances_tick_tasks: list[asyncio.Task] = []
+    for timer in Timer._instances:
+        task = asyncio.create_task(timer._tick(next_timer=0, count=0))
+        timer_instances_tick_tasks.append(task)
+    await asyncio.wait(timer_instances_tick_tasks)
+
+
+def textual_timers_accelerate_time(
+    *, acceleration_factor: float = 10
+) -> ContextManager:
+    @contextlib.contextmanager
+    def accelerate_time_for_timer_context_manager():
+        starting_time = monotonic()
+
+        # Our replacement for "textual._timer.Timer._sleep":
+        async def timer_sleep(duration: float) -> None:
+            await asyncio.sleep(duration / acceleration_factor)
+
+        # Our replacement for "textual._timer.Timer.get_time":
+        def timer_get_time() -> float:
+            real_now = monotonic()
+            real_elapsed_time = real_now - starting_time
+            accelerated_elapsed_time = real_elapsed_time * acceleration_factor
+            print(
+                f"timer_get_time:: accelerated_elapsed_time={accelerated_elapsed_time}"
+            )
+            return starting_time + accelerated_elapsed_time
+
+        with mock.patch("textual._timer.Timer._sleep") as timer_sleep_mock, mock.patch(
+            "textual._timer.Timer.get_time"
+        ) as timer_get_time_mock, mock.patch(
+            "textual.message.Message._get_time"
+        ) as message_get_time_mock:
+            timer_sleep_mock.side_effect = timer_sleep
+            timer_get_time_mock.side_effect = timer_get_time
+            message_get_time_mock.side_effect = timer_get_time
+            yield
+
+    return accelerate_time_for_timer_context_manager()

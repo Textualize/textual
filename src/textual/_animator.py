@@ -3,14 +3,11 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import asyncio
 import sys
-from time import monotonic
 from typing import Any, Callable, TypeVar
 
 from dataclasses import dataclass
 
-from . import log
 from ._easing import DEFAULT_EASING, EASING
-from ._profile import timer
 from ._timer import Timer
 from ._types import MessageTarget
 
@@ -139,10 +136,6 @@ class Animator:
             pause=True,
         )
 
-    def get_time(self) -> float:
-        """Get the current wall clock time."""
-        return monotonic()
-
     async def start(self) -> None:
         """Start the animator task."""
 
@@ -189,7 +182,7 @@ class Animator:
 
         if final_value is ...:
             final_value = value
-        start_time = self.get_time()
+        start_time = self._timer.get_time()
 
         animation_key = (id(obj), attribute)
 
@@ -240,7 +233,7 @@ class Animator:
         if not self._animations:
             self._timer.pause()
         else:
-            animation_time = self.get_time()
+            animation_time = self._timer.get_time()
             animation_keys = list(self._animations.keys())
             for animation_key in animation_keys:
                 animation = self._animations[animation_key]

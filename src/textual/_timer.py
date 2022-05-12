@@ -8,7 +8,6 @@ from asyncio import (
     sleep,
     Task,
 )
-from functools import partial
 from time import monotonic
 from typing import Awaitable, Callable, Union
 
@@ -28,6 +27,8 @@ class EventTargetGone(Exception):
 @rich_repr
 class Timer:
     _timer_count: int = 1
+    # Used to mock Timers' behaviour in a Textual app's integration test:
+    _instances: weakref.WeakSet[Timer] = weakref.WeakSet()
 
     def __init__(
         self,
@@ -63,6 +64,7 @@ class Timer:
         self._repeat = repeat
         self._skip = skip
         self._active = Event()
+        Timer._instances.add(self)
         if not pause:
             self._active.set()
 
@@ -104,37 +106,53 @@ class Timer:
         """Result a paused timer."""
         self._active.set()
 
+    @staticmethod
+    def get_time() -> float:
+        """Get the current wall clock time."""
+        # N.B. This method will likely be a mocking target in integration tests.
+        return monotonic()
+
+    @staticmethod
+    async def _sleep(duration: float) -> None:
+        # N.B. This method will likely be a mocking target in integration tests.
+        await sleep(duration)
+
     async def _run(self) -> None:
         """Run the timer."""
         count = 0
         _repeat = self._repeat
         _interval = self._interval
-        start = monotonic()
+        start = self.get_time()
         try:
             while _repeat is None or count <= _repeat:
                 next_timer = start + ((count + 1) * _interval)
-                if self._skip and next_timer < monotonic():
+                now = self.get_time()
+                if self._skip and next_timer < now:
                     count += 1
                     continue
-                wait_time = max(0, next_timer - monotonic())
+                wait_time = max(0, next_timer - now)
                 if wait_time:
-                    await sleep(wait_time)
-                event = events.Timer(
-                    self.sender,
-                    timer=self,
-                    time=next_timer,
-                    count=count,
-                    callback=self._callback,
-                )
+                    await self._sleep(wait_time)
                 count += 1
                 try:
-                    if self._callback is not None:
-                        await invoke(self._callback)
-                    else:
-                        await self.target.post_priority_message(event)
-
+                    await self._tick(next_timer=next_timer, count=count)
                 except EventTargetGone:
                     break
                 await self._active.wait()
         except CancelledError:
             pass
+
+    async def _tick(self, *, next_timer: float, count: int) -> None:
+        """Triggers the Timer's action: either call its callback, or sends an event to its target"""
+        if self._callback is not None:
+            await invoke(self._callback)
+        else:
+            event = events.Timer(
+                self.sender,
+                timer=self,
+                time=next_timer,
+                count=count,
+                callback=self._callback,
+            )
+
+            await self.target.post_priority_message(event)

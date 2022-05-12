@@ -245,10 +245,3 @@ def test_bound_animator():
         easing=EASING[DEFAULT_EASING],
     )
     assert animator._animations[(id(animate_test), "foo")] == expected
-
-
-def test_animator_get_time():
-    target = Mock()
-    animator = Animator(target)
-    assert isinstance(animator.get_time(), float)
-    assert animator.get_time() <= animator.get_time()

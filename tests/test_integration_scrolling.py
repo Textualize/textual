@@ -21,7 +21,6 @@ from textual.widgets import Placeholder
 SCREEN_SIZE = Size(100, 30)
 
 
-@pytest.mark.skip("flaky test")
 @pytest.mark.asyncio
 @pytest.mark.integration_test  # this is a slow test, we may want to skip them in some contexts
 @pytest.mark.parametrize(
@@ -48,7 +47,7 @@ SCREEN_SIZE = Size(100, 30)
         # The state of the screen at this "halfway there" timing looks to not be deterministic though,
         # depending on the environment - so let's only assert stuff for the middle placeholders
         # and the first and last ones, but without being too specific about the others:
-        [SCREEN_SIZE, 10, "placeholder_9", True, 0.1, (5, 6, 7), (1, 2, 9)],
+        [SCREEN_SIZE, 10, "placeholder_9", True, 0.1, (6, 7, 8), (1, 2, 5, 9)],
     ),
 )
 async def test_scroll_to_widget(
@@ -94,7 +93,7 @@ async def test_scroll_to_widget(
         id_: f"placeholder_{id_}" in last_display_capture
         for id_ in range(placeholders_count)
     }
-
+    print(f"placeholders_visibility_by_id={placeholders_visibility_by_id}")
     # Let's start by checking placeholders that should be visible:
     for placeholder_id in last_screen_expected_placeholder_ids:
         assert (
