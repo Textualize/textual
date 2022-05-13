@@ -41,3 +41,27 @@ class Layout(ABC):
         Returns:
             Iterable[WidgetPlacement]: An iterable of widget location
         """
+
+    def get_content_width(
+        self, parent: Widget, container_size: Size, viewport_size: Size
+    ) -> int:
+        width: int | None = None
+        for child in parent.displayed_children:
+            if not child.is_container:
+                child_width = child.get_content_width(container_size, viewport_size)
+                width = child_width if width is None else max(width, child_width)
+        if width is None:
+            width = container_size.width
+        return width
+
+    def get_content_height(
+        self, parent: Widget, container_size: Size, viewport_size: Size, width: int
+    ) -> int:
+        if not parent.displayed_children:
+            height = container_size.height
+        else:
+            placements, widgets = self.arrange(
+                parent, Size(width, container_size.height), Offset(0, 0)
+            )
+            height = max(placement.region.y_max for placement in placements)
+        return height

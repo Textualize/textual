@@ -27,6 +27,7 @@ Widget {
     /* outline: heavy blue;  */
     height: 10;
     padding: 1 2;
+    
     box-sizing: border-box;
 
     max-height: 100vh;
@@ -41,5 +42,7 @@ Widget {
     height: 10;
     margin: 1;
     background:blue;
+    color: white 50%;
+    border: white;
     align-horizontal: center;
 }

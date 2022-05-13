@@ -141,6 +141,11 @@ class Stylesheet:
     def css(self) -> str:
         return "\n\n".join(rule_set.css for rule_set in self.rules)
 
+    def copy(self) -> Stylesheet:
+        stylesheet = Stylesheet(variables=self.variables.copy())
+        stylesheet.source = self.source.copy()
+        return stylesheet
+
     def set_variables(self, variables: dict[str, str]) -> None:
         """Set CSS variables.
 

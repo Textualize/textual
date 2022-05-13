@@ -270,7 +270,7 @@ class DOMNode(MessagePump):
         return tree
 
     @property
-    def rich_text_style(self) -> Style:
+    def text_style(self) -> Style:
         """Get the text style object.
 
         A widget's style is influenced by its parent. For instance if a widgets background has an alpha,
@@ -283,19 +283,25 @@ class DOMNode(MessagePump):
 
         # TODO: Feels like there may be opportunity for caching here.
 
-        background = Color(0, 0, 0, 0)
-        color = Color(255, 255, 255, 0)
         style = Style()
+        for node in reversed(self.ancestors):
+            style += node.styles.text_style
+
+        return style
+
+    @property
+    def colors(self) -> tuple[tuple[Color, Color], tuple[Color, Color]]:
+        base_background = background = Color(0, 0, 0, 0)
+        base_color = color = Color(255, 255, 255, 0)
         for node in reversed(self.ancestors):
             styles = node.styles
             if styles.has_rule("background"):
+                base_background = background
                 background += styles.background
             if styles.has_rule("color"):
-                color = styles.color
-            style += styles.text_style
-
-        style = Style(bgcolor=background.rich_color, color=color.rich_color) + style
-        return style
+                base_color = color
+                color += styles.color
+        return (base_background, base_color), (background, color)
 
     @property
     def ancestors(self) -> list[DOMNode]:

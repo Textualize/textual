@@ -47,9 +47,17 @@ class VerticalLayout(Layout):
             y += region.height + margin
             max_height = y
 
-        max_height += margins[-1] if margins else 0
+        # max_height += margins[-1] if margins else 0
 
         total_region = Region(0, 0, max_width, max_height)
         add_placement(WidgetPlacement(total_region, None, 0))
 
         return placements, set(displayed_children)
+
+    # def get_content_width(
+    #     self, parent: Widget, container_size: Size, viewport_size: Size
+    # ) -> int:
+    #     width = super().get_content_width(parent, container_size, viewport_size)
+    #     width = min(width, container_size.width)
+    #     print("get_content_width", parent, container_size, width)
+    #     return width

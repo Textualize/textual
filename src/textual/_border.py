@@ -5,7 +5,7 @@ from functools import lru_cache
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 import rich.repr
 from rich.segment import Segment, SegmentLines
-from rich.style import Style, StyleType
+from rich.style import Style
 
 from .color import Color
 from .css.types import EdgeStyle, EdgeType
@@ -210,8 +210,8 @@ class Border:
                 if new_height >= 1:
                     render_options = options.update_dimensions(width, new_height)
                 else:
-                    render_options = options
-                    has_top = has_bottom = False
+                    render_options = options.update_width(width)
+                    # has_top = has_bottom = False
 
         lines = console.render_lines(self.renderable, render_options)
 

@@ -179,7 +179,7 @@ class ClientHandler:
                     and message_time - last_message_time > 1
                 ):
                     # Print a rule if it has been longer than a second since the last message
-                    self.service.console.rule("")
+                    self.service.console.rule()
                 self.service.console.print(
                     DevConsoleLog(
                         segments=segments,

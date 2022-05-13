@@ -415,7 +415,7 @@ class App(Generic[ReturnType], DOMNode):
                 output = " ".join(str(arg) for arg in objects)
                 if kwargs:
                     key_values = " ".join(
-                        f"{key}={value}" for key, value in kwargs.items()
+                        f"{key}={value!r}" for key, value in kwargs.items()
                     )
                     output = f"{output} {key_values}" if output else key_values
                 if self._log_console is not None:
@@ -425,7 +425,7 @@ class App(Generic[ReturnType], DOMNode):
                         DevtoolsLog(output, caller=_textual_calling_frame)
                     )
         except Exception:
-            pass
+            self.console.bell()
 
     def bind(
         self,
@@ -470,14 +470,17 @@ class App(Generic[ReturnType], DOMNode):
 
             try:
                 time = perf_counter()
-                self.stylesheet.read(self.css_path)
+                stylesheet = self.stylesheet.copy()
+                stylesheet.read(self.css_path)
+                stylesheet.parse()
                 elapsed = (perf_counter() - time) * 1000
-                self.log(f"loaded {self.css_path} in {elapsed:.0f}ms")
+                self.log(f"<stylesheet> loaded {self.css_path!r} in {elapsed:.0f} ms")
             except Exception as error:
                 # TODO: Catch specific exceptions
                 self.console.bell()
                 self.log(error)
             else:
+                self.stylesheet = stylesheet
                 self.reset_styles()
                 self.stylesheet.update(self)
                 self.screen.refresh(layout=True)

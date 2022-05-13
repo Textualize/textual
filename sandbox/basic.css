@@ -75,7 +75,7 @@ App > Screen {
 
 
 Tweet {
-  height: 12;
+  height: auto;
   width: 80;
  
   margin: 1 3;
@@ -85,7 +85,7 @@ Tweet {
   /* border: outer $primary; */
   padding: 1;
   border: wide $panel-darken-2;
-  overflow-y: scroll; 
+  overflow-y: auto; 
   align-horizontal: center;
   
 }

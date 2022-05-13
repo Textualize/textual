@@ -50,8 +50,6 @@ class HorizontalLayout(Layout):
             x += region.width + margin
             max_width = x
 
-        max_width += margins[-1] if margins else 0
-
         total_region = Region(0, 0, max_width, max_height)
         add_placement(WidgetPlacement(total_region, None, 0))
 

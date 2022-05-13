@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
-import datetime
+from time import time
 import inspect
 import json
 import pickle
@@ -207,7 +207,7 @@ class DevtoolsClient:
             {
                 "type": "client_log",
                 "payload": {
-                    "timestamp": int(datetime.datetime.utcnow().timestamp()),
+                    "timestamp": int(time()),
                     "path": getattr(log.caller, "filename", ""),
                     "line_number": getattr(log.caller, "lineno", 0),
                     "encoded_segments": encoded_segments,
@@ -242,6 +242,6 @@ class DevtoolsClient:
         Returns:
              str: The Segment list pickled with pickle protocol v3, then base64 encoded
         """
-        pickled = pickle.dumps(segments, protocol=3)
+        pickled = pickle.dumps(segments, protocol=pickle.HIGHEST_PROTOCOL)
         encoded = base64.b64encode(pickled)
         return str(encoded, encoding="utf-8")
