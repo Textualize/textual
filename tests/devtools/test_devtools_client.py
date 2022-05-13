@@ -41,7 +41,7 @@ async def test_devtools_log_places_encodes_and_queues_message(devtools):
             "timestamp": 1649170419,
             "path": "a/b/c.py",
             "line_number": 123,
-            "segments": b"\x80\x05\x95B\x00\x00\x00\x00\x00\x00\x00]\x94(\x8c\x0crich.segment\x94\x8c\x07Segment\x94\x93\x94\x8c\rHello, world!\x94NN\x87\x94\x81\x94h\x03\x8c\x01\n\x94NN\x87\x94\x81\x94e.",
+            "segments": b"\x80\x03]q\x00(crich.segment\nSegment\nq\x01X\r\x00\x00\x00Hello, world!q\x02NN\x87q\x03\x81q\x04h\x01X\x01\x00\x00\x00\nq\x05NN\x87q\x06\x81q\x07e.",
         },
     }
 
@@ -59,7 +59,7 @@ async def test_devtools_log_places_encodes_and_queues_many_logs_as_string(devtoo
             "timestamp": 1649170419,
             "path": "a/b/c.py",
             "line_number": 123,
-            "segments": b"\x80\x05\x95@\x00\x00\x00\x00\x00\x00\x00]\x94(\x8c\x0crich.segment\x94\x8c\x07Segment\x94\x93\x94\x8c\x0bhello world\x94NN\x87\x94\x81\x94h\x03\x8c\x01\n\x94NN\x87\x94\x81\x94e.",
+            "segments": b"\x80\x03]q\x00(crich.segment\nSegment\nq\x01X\x0b\x00\x00\x00hello worldq\x02NN\x87q\x03\x81q\x04h\x01X\x01\x00\x00\x00\nq\x05NN\x87q\x06\x81q\x07e.",
         },
     }
 
