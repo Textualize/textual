@@ -72,19 +72,13 @@ class DevConsoleLog:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        local_time = (
-            datetime.fromtimestamp(self.unix_timestamp)
-            .replace(tzinfo=timezone.utc)
-            .astimezone(tz=datetime.now().astimezone().tzinfo)
-        )
-        timezone_name = local_time.tzname()
+        local_time = datetime.fromtimestamp(self.unix_timestamp)
         table = Table.grid(expand=True)
-        table.add_column()
-        table.add_column()
+
         file_link = escape(f"file://{Path(self.path).absolute()}")
         file_and_line = escape(f"{Path(self.path).name}:{self.line_number}")
         table.add_row(
-            f"[dim]{local_time.time()} {timezone_name}",
+            f"[dim]{local_time.time()}",
             Align.right(
                 Text(f"{file_and_line}", style=Style(dim=True, link=file_link))
             ),
