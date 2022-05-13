@@ -30,10 +30,10 @@ class InputApp(App[str]):
             return
         if event.sender == self.celsius:
             fahrenheit = celsius_to_fahrenheit(value)
-            self.fahrenheit.current_text = f"{fahrenheit:.1f}"
+            self.fahrenheit.value = f"{fahrenheit:.1f}"
         elif event.sender == self.fahrenheit:
             celsius = fahrenheit_to_celsius(value)
-            self.celsius.current_text = f"{celsius:.1f}"
+            self.celsius.value = f"{celsius:.1f}"
 
 
 app = InputApp(

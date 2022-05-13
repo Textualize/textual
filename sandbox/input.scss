@@ -22,6 +22,10 @@ Screen {
   width: 50%;
 }
 
+#celsius :focus {
+  border: heavy darkgoldenrod;
+}
+
 #inputs {
   dock: top;
   background: $primary;
@@ -37,4 +41,8 @@ Screen {
   dock: bottom;
   height: 1;
   border: ;
+}
+
+#footer :focus {
+  border: heavy $secondary;
 }

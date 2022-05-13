@@ -46,7 +46,7 @@ class Timer:
         Args:
             event_target (MessageTarget): The object which will receive the timer events.
             interval (float): The time between timer events.
-            sender (MessageTarget): The sender of the event.s
+            sender (MessageTarget): The sender of the event.
             name (str | None, optional): A name to assign the event (for debugging). Defaults to None.
             callback (TimerCallback | None, optional): A optional callback to invoke when the event is handled. Defaults to None.
             repeat (int | None, optional): The number of times to repeat the timer, or None for no repeat. Defaults to None.
