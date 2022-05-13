@@ -4,12 +4,13 @@ from datetime import datetime
 
 import time_machine
 
+import msgpack
 from textual.devtools.redirect_output import StdoutRedirector
 
 TIMESTAMP = 1649166819
 
 
-@time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
+@time_machine.travel(datetime.utcfromtimestamp(TIMESTAMP))
 async def test_print_redirect_to_devtools_only(devtools):
     await devtools._stop_log_queue_processing()
 
@@ -19,14 +20,15 @@ async def test_print_redirect_to_devtools_only(devtools):
     assert devtools.log_queue.qsize() == 1
 
     queued_log = await devtools.log_queue.get()
-    queued_log_json = json.loads(queued_log)
-    payload = queued_log_json["payload"]
+    queued_log_data = msgpack.unpackb(queued_log)
+    print(repr(queued_log_data))
+    payload = queued_log_data["payload"]
 
-    assert queued_log_json["type"] == "client_log"
+    assert queued_log_data["type"] == "client_log"
     assert payload["timestamp"] == TIMESTAMP
     assert (
-            payload["encoded_segments"]
-            == "gANdcQAoY3JpY2guc2VnbWVudApTZWdtZW50CnEBWA0AAABIZWxsbywgd29ybGQhcQJOTodxA4FxBGgBWAEAAAAKcQVOTodxBoFxB2Uu"
+        payload["segments"]
+        == b"\x80\x05\x95B\x00\x00\x00\x00\x00\x00\x00]\x94(\x8c\x0crich.segment\x94\x8c\x07Segment\x94\x93\x94\x8c\rHello, world!\x94NN\x87\x94\x81\x94h\x03\x8c\x01\n\x94NN\x87\x94\x81\x94e."
     )
 
 
@@ -86,8 +88,10 @@ async def test_print_multiple_args_batched_as_one_log(devtools, in_memory_logfil
 
     assert queued_log_json["type"] == "client_log"
     assert payload["timestamp"] == TIMESTAMP
-    assert payload[
-               "encoded_segments"] == "gANdcQAoY3JpY2guc2VnbWVudApTZWdtZW50CnEBWBQAAABIZWxsbyB3b3JsZCBtdWx0aXBsZXECTk6HcQOBcQRoAVgBAAAACnEFTk6HcQaBcQdlLg=="
+    assert (
+        payload["encoded_segments"]
+        == "gANdcQAoY3JpY2guc2VnbWVudApTZWdtZW50CnEBWBQAAABIZWxsbyB3b3JsZCBtdWx0aXBsZXECTk6HcQOBcQRoAVgBAAAACnEFTk6HcQaBcQdlLg=="
+    )
     assert len(payload["path"]) > 0
     assert payload["line_number"] != 0
 

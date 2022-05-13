@@ -7,6 +7,7 @@ import time_machine
 from aiohttp.web_ws import WebSocketResponse
 from rich.console import ConsoleDimensions
 from rich.panel import Panel
+import msgpack
 
 from tests.utilities.render import wait_for_predicate
 from textual.devtools.client import DevtoolsClient
@@ -32,14 +33,15 @@ async def test_devtools_log_places_encodes_and_queues_message(devtools):
     await devtools._stop_log_queue_processing()
     devtools.log(DevtoolsLog("Hello, world!", CALLER))
     queued_log = await devtools.log_queue.get()
-    queued_log_json = json.loads(queued_log)
-    assert queued_log_json == {
+    queued_log_data = msgpack.unpackb(queued_log)
+    print(repr(queued_log_data))
+    assert queued_log_data == {
         "type": "client_log",
         "payload": {
-            "timestamp": TIMESTAMP,
-            "path": CALLER_PATH,
-            "line_number": CALLER_LINENO,
-            "encoded_segments": "gANdcQAoY3JpY2guc2VnbWVudApTZWdtZW50CnEBWA0AAABIZWxsbywgd29ybGQhcQJOTodxA4FxBGgBWAEAAAAKcQVOTodxBoFxB2Uu",
+            "timestamp": 1649170419,
+            "path": "a/b/c.py",
+            "line_number": 123,
+            "segments": b"\x80\x05\x95B\x00\x00\x00\x00\x00\x00\x00]\x94(\x8c\x0crich.segment\x94\x8c\x07Segment\x94\x93\x94\x8c\rHello, world!\x94NN\x87\x94\x81\x94h\x03\x8c\x01\n\x94NN\x87\x94\x81\x94e.",
         },
     }
 
@@ -49,14 +51,15 @@ async def test_devtools_log_places_encodes_and_queues_many_logs_as_string(devtoo
     await devtools._stop_log_queue_processing()
     devtools.log(DevtoolsLog(("hello", "world"), CALLER))
     queued_log = await devtools.log_queue.get()
-    queued_log_json = json.loads(queued_log)
-    assert queued_log_json == {
+    queued_log_data = msgpack.unpackb(queued_log)
+    print(repr(queued_log_data))
+    assert queued_log_data == {
         "type": "client_log",
         "payload": {
-            "timestamp": TIMESTAMP,
-            "path": CALLER_PATH,
-            "line_number": CALLER_LINENO,
-            "encoded_segments": "gANdcQAoY3JpY2guc2VnbWVudApTZWdtZW50CnEBWAsAAABoZWxsbyB3b3JsZHECTk6HcQOBcQRoAVgBAAAACnEFTk6HcQaBcQdlLg==",
+            "timestamp": 1649170419,
+            "path": "a/b/c.py",
+            "line_number": 123,
+            "segments": b"\x80\x05\x95@\x00\x00\x00\x00\x00\x00\x00]\x94(\x8c\x0crich.segment\x94\x8c\x07Segment\x94\x93\x94\x8c\x0bhello world\x94NN\x87\x94\x81\x94h\x03\x8c\x01\n\x94NN\x87\x94\x81\x94e.",
         },
     }
 
