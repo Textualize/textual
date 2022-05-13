@@ -179,10 +179,13 @@ class Animator:
             raise AttributeError(
                 f"Can't animate attribute {attribute!r} on {obj!r}; attribute does not exist"
             )
+        assert not all(
+            (duration, speed)
+        ), "An Animation should have a duration OR a speed, received both"
 
         if final_value is ...:
             final_value = value
-        start_time = self._timer.get_time()
+        start_time = self._get_time()
 
         animation_key = (id(obj), attribute)
 
@@ -233,9 +236,15 @@ class Animator:
         if not self._animations:
             self._timer.pause()
         else:
-            animation_time = self._timer.get_time()
+            animation_time = self._get_time()
             animation_keys = list(self._animations.keys())
             for animation_key in animation_keys:
                 animation = self._animations[animation_key]
                 if animation(animation_time):
                     del self._animations[animation_key]
+
+    def _get_time(self) -> float:
+        """Get the current wall clock time, via the internal Timer."""
+        # N.B. We could remove this method and always call `self._timer.get_time()` internally,
+        # but it's handy to have in mocking situations
+        return self._timer.get_time()

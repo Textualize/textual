@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import sys
+
 from rich.console import RenderableType
 import rich.repr
 from rich.style import Style
@@ -11,6 +13,14 @@ from .geometry import Offset, Region
 from ._compositor import Compositor, MapGeometry
 from .reactive import Reactive
 from .widget import Widget
+
+if sys.version_info >= (3, 8):
+    from typing import Final
+else:
+    from typing_extensions import Final
+
+# Screen updates will be batched so that they don't happen more often than 20 times per second:
+UPDATE_PERIOD: Final = 1 / 20
 
 
 @rich.repr.auto
@@ -158,7 +168,9 @@ class Screen(Widget):
         self.check_idle()
 
     def on_mount(self, event: events.Mount) -> None:
-        self._update_timer = self.set_interval(1 / 20, self._on_update, pause=True)
+        self._update_timer = self.set_interval(
+            UPDATE_PERIOD, self._on_update, pause=True
+        )
 
     async def on_resize(self, event: events.Resize) -> None:
         self.size_updated(event.size, event.virtual_size, event.container_size)

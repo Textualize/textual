@@ -19,6 +19,9 @@ from ._types import MessageTarget
 
 TimerCallback = Union[Callable[[], Awaitable[None]], Callable[[], None]]
 
+# /!\ This should only be changed in an "integration tests" context, in which we mock time
+_TIMERS_CAN_SKIP: bool = True
+
 
 class EventTargetGone(Exception):
     pass
@@ -27,8 +30,6 @@ class EventTargetGone(Exception):
 @rich_repr
 class Timer:
     _timer_count: int = 1
-    # Used to mock Timers' behaviour in a Textual app's integration test:
-    _instances: weakref.WeakSet[Timer] = weakref.WeakSet()
 
     def __init__(
         self,
@@ -64,7 +65,6 @@ class Timer:
         self._repeat = repeat
         self._skip = skip
         self._active = Event()
-        Timer._instances.add(self)
         if not pause:
             self._active.set()
 
@@ -126,11 +126,10 @@ class Timer:
         try:
             while _repeat is None or count <= _repeat:
                 next_timer = start + ((count + 1) * _interval)
-                now = self.get_time()
-                if self._skip and next_timer < now:
+                if self._skip and _TIMERS_CAN_SKIP and next_timer < self.get_time():
                     count += 1
                     continue
-                wait_time = max(0, next_timer - now)
+                wait_time = max(0, next_timer - self.get_time())
                 if wait_time:
                     await self._sleep(wait_time)
                 count += 1

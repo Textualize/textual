@@ -177,11 +177,11 @@ class MockAnimator(Animator):
         self._time = 0.0
         self._on_animation_frame_called = False
 
-    def get_time(self):
-        return self._time
-
     def on_animation_frame(self):
         self._on_animation_frame_called = True
+
+    def _get_time(self):
+        return self._time
 
 
 def test_animator():
