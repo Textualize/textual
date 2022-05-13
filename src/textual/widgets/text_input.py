@@ -279,7 +279,6 @@ class TextInput(TextWidgetBase, can_focus=True):
         elif key == "home":
             self.visible_range = (0, available_width)
         elif key == "end":
-            print(cursor_index, available_width)
             value_length = len(self.value)
             if scrollable:
                 self.visible_range = (
