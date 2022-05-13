@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from rich.console import RenderableType
 from rich.padding import Padding
+from rich.style import Style
 from rich.text import Text
 
 from textual import events
@@ -63,6 +64,19 @@ class TextEditorBackend:
         self.cursor_index = new_index
         return previous_index != new_index
 
+    def query_cursor_left(self) -> bool:
+        """Check if the cursor can move 1 character left in the text"""
+        previous_index = self.cursor_index
+        new_index = max(0, previous_index - 1)
+        return previous_index != new_index
+
+    def query_cursor_right(self) -> bool:
+        """Check if the cursor can move right"""
+        previous_index = self.cursor_index
+        new_index = min(len(self.content), previous_index + 1)
+        print(previous_index, new_index)
+        return previous_index != new_index
+
     def cursor_text_start(self) -> bool:
         if self.cursor_index == 0:
             return False
@@ -85,6 +99,11 @@ class TextEditorBackend:
         self.content = new_text
         self.cursor_index = min(len(self.content), self.cursor_index + 1)
         return True
+
+    def get_range(self, start: int, end: int) -> str:
+        """Return the text between 2 indices. Useful for previews/views into
+        a subset of the content e.g. scrollable single-line input fields"""
+        return self.content[start:end]
 
 
 class TextWidgetBase(Widget):
@@ -150,49 +169,9 @@ class TextWidgetBase(Widget):
             self.value = value
 
 
-class TextInput(Widget):
+class TextInput(TextWidgetBase, can_focus=True):
     CSS = """
-        TextInput {
-            overflow: hidden hidden;
-            background: $primary-darken-1;
-            scrollbar-color: $primary-darken-2;
-        }
-    """
-
-    def __init__(
-        self,
-        placeholder: str = "",
-        initial: str = "",
-        *,
-        name: str | None = None,
-        id: str | None = None,
-        classes: str | None = None,
-    ):
-        super().__init__(name=name, id=id, classes=classes)
-        self.placeholder = placeholder
-        self.initial = initial
-
-    def compose(self) -> ComposeResult:
-        yield TextInputChild(
-            placeholder=self.placeholder, initial=self.initial, wrapper=self
-        )
-
-    class Submitted(Message, bubble=True):
-        def __init__(self, sender: MessageTarget, value: str) -> None:
-            """Message posted when the user presses the 'enter' key while
-            focused on a TextInput widget.
-
-            Args:
-                sender (MessageTarget): Sender of the message
-                value (str): The value in the TextInput
-            """
-            super().__init__(sender)
-            self.value = value
-
-
-class TextInputChild(TextWidgetBase, can_focus=True):
-    CSS = """
-    TextInputChild {
+    TextInput {
         width: auto;
         background: $primary;
         height: 3;
@@ -201,17 +180,17 @@ class TextInputChild(TextWidgetBase, can_focus=True):
         background: $primary-darken-1;
     }
 
-    TextInputChild:hover {
+    TextInput:hover {
         background: $primary-darken-1;
     }
 
-    TextInputChild:focus {
+    TextInput:focus {
         background: $primary-darken-2;
         border: hkey $primary-lighten-1;
         padding: 0;
     }
 
-    App.-show-focus TextInputChild:focus {
+    App.-show-focus TextInput:focus {
         tint: $accent 20%;
     }
     """
@@ -219,7 +198,6 @@ class TextInputChild(TextWidgetBase, can_focus=True):
     def __init__(
         self,
         *,
-        wrapper: Widget,
         placeholder: str = "",
         initial: str = "",
         name: str | None = None,
@@ -229,23 +207,23 @@ class TextInputChild(TextWidgetBase, can_focus=True):
         super().__init__(name=name, id=id, classes=classes)
         self.placeholder = placeholder
         self.text = TextEditorBackend(initial, 0)
-        self.wrapper = wrapper
+        self.visible_range: tuple[int, int] | None = None
 
-    def get_content_width(self, container_size: Size, viewport_size: Size) -> int:
-        return (
-            max(len(self.text.content), len(self.placeholder))
-            + self.styles.gutter.width
-        )
+    def render(self, style: Style) -> RenderableType:
+        # First render: Cursor at start of text, visible range goes from cursor to content region width
+        if not self.visible_range:
+            self.visible_range = (self.text.cursor_index, self.content_region.width)
 
-    def render(self) -> RenderableType:
         # We only show the cursor if the widget has focus
         show_cursor = self.has_focus
         if self.text.content:
-            display_text = Text(self.text.content, no_wrap=True)
+            start, end = self.visible_range
+            visible_text = self.text.get_range(start, end)
+            display_text = Text(visible_text, no_wrap=True)
 
             if show_cursor:
                 display_text = self._apply_cursor_to_text(
-                    display_text, self.text.cursor_index
+                    display_text, self.text.cursor_index - self.visible_range[0]
                 )
             return display_text
         else:
@@ -260,16 +238,61 @@ class TextInputChild(TextWidgetBase, can_focus=True):
         if key in self.STOP_PROPAGATE:
             event.stop()
 
+        start, end = self.visible_range
+        cursor_index = self.text.cursor_index
+        available_width = self.content_region.width
+        scrollable = len(self.text.content) >= available_width
         if key == "enter" and self.text.content:
             self.post_message_no_wait(TextInput.Submitted(self, self.text.content))
+        elif key == "right":
+            if cursor_index == end - 1:
+                if scrollable and self.text.query_cursor_right():
+                    self.visible_range = (start + 1, end + 1)
+                else:
+                    self.app.bell()
+        elif key == "left":
+            if cursor_index == start:
+                if scrollable and self.text.query_cursor_left():
+                    self.visible_range = (
+                        cursor_index - 1,
+                        cursor_index + available_width - 1,
+                    )
+                else:
+                    # If the user has hit the scroll limit
+                    self.app.bell()
         elif key == "ctrl+h":
-            self.wrapper.scroll_left()
-        elif key == "home":
-            self.wrapper.scroll_home()
-        elif key == "end":
-            self.wrapper.scroll_to(x=self.wrapper.max_scroll_x)
+            if cursor_index == start and self.text.query_cursor_left():
+                self.visible_range = start - 1, end - 1
         elif key not in Keys.values():
-            self.wrapper.scroll_to(x=self.wrapper.scroll_x + 1)
+            # If we're at the end of the visible range, and the editor backend
+            # will permit us to move the cursor right, then shift the visible
+            # window/range along to the right.
+            print("inserted", cursor_index, end)
+            if cursor_index == end - 1:
+                self.visible_range = start + 1, end + 1
+
+        # We need to clamp the visible range to ensure we don't use negative indexing
+        start, end = self.visible_range
+        self.visible_range = (max(0, start), end)
+        ns, ne = self.visible_range
+        print(
+            cursor_index,
+            self.visible_range,
+            self.content_region,
+            ne - ns == self.content_region.width,
+        )
+
+    class Submitted(Message, bubble=True):
+        def __init__(self, sender: MessageTarget, value: str) -> None:
+            """Message posted when the user presses the 'enter' key while
+            focused on a TextInput widget.
+
+            Args:
+                sender (MessageTarget): Sender of the message
+                value (str): The value in the TextInput
+            """
+            super().__init__(sender)
+            self.value = value
 
 
 class TextArea(Widget):
@@ -287,7 +310,7 @@ class TextAreaChild(TextWidgetBase, can_focus=True):
     CSS = "TextAreaChild { height: auto; background: $primary-darken-1; }"
     STOP_PROPAGATE = {"tab", "shift+tab"}
 
-    def render(self) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         # We only show the cursor if the widget has focus
         show_cursor = self.has_focus
         display_text = Text(self.text.content, no_wrap=True)
