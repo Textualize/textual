@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from rich.console import RenderableType
 from rich.padding import Padding
 from rich.text import Text
@@ -10,63 +12,113 @@ from textual.app import ComposeResult
 from textual.geometry import Size
 from textual.keys import Keys
 from textual.message import Message
-from textual.reactive import Reactive
 from textual.widget import Widget
+
+
+@dataclass
+class TextEditorBackend:
+    content: str = ""
+    cursor_index: int = 0
+
+    def delete_back(self) -> bool:
+        """Delete the character behind the cursor
+
+        Returns: True if the text content was modified. False otherwise.
+        """
+        if self.cursor_index == 0:
+            return False
+
+        new_text = (
+            self.content[: self.cursor_index - 1] + self.content[self.cursor_index :]
+        )
+        self.content = new_text
+        self.cursor_index = max(0, self.cursor_index - 1)
+        return True
+
+    def delete_forward(self) -> bool:
+        """Delete the character in front of the cursor
+
+        Returns: True if the text content was modified. False otherwise.
+        """
+        if self.cursor_index == len(self.content):
+            return False
+
+        new_text = (
+            self.content[: self.cursor_index] + self.content[self.cursor_index + 1 :]
+        )
+        self.content = new_text
+        return True
+
+    def cursor_left(self) -> bool:
+        """Move the cursor 1 character left in the text"""
+        previous_index = self.cursor_index
+        new_index = max(0, previous_index - 1)
+        self.cursor_index = new_index
+        return previous_index != new_index
+
+    def cursor_right(self) -> bool:
+        """Move the cursor 1 character right in the text"""
+        previous_index = self.cursor_index
+        new_index = min(len(self.content), previous_index + 1)
+        self.cursor_index = new_index
+        return previous_index != new_index
+
+    def cursor_text_start(self) -> bool:
+        if self.cursor_index == 0:
+            return False
+
+        self.cursor_index = 0
+        return True
+
+    def cursor_text_end(self) -> bool:
+        text_length = len(self.content)
+        if self.cursor_index == text_length:
+            return False
+
+        self.cursor_index = text_length
+        return True
+
+    def insert_at_cursor(self, text: str) -> bool:
+        new_text = (
+            self.content[: self.cursor_index] + text + self.content[self.cursor_index :]
+        )
+        self.content = new_text
+        self.cursor_index = min(len(self.content), self.cursor_index + 1)
+        return True
 
 
 class TextWidgetBase(Widget):
     STOP_PROPAGATE = set()
 
-    current_text = Reactive("", layout=True)
-    cursor_index = Reactive(0)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.text = TextEditorBackend()
 
     def on_key(self, event: events.Key) -> None:
         key = event.key
-
         if key == "\x1b":
             return
 
-        repaint = False
-        if key == "ctrl+h" and self.cursor_index != 0:
-            new_text = (
-                self.current_text[: self.cursor_index - 1]
-                + self.current_text[self.cursor_index :]
-            )
-            self.current_text = new_text
-            self.cursor_index = max(0, self.cursor_index - 1)
-            repaint = True
-        elif key == "ctrl+d" and self.cursor_index != len(self.current_text):
-            new_text = (
-                self.current_text[: self.cursor_index]
-                + self.current_text[self.cursor_index + 1 :]
-            )
-            self.current_text = new_text
-            repaint = True
+        changed = False
+        if key == "ctrl+h":
+            changed = self.text.delete_back()
+        elif key == "ctrl+d":
+            changed = self.text.delete_forward()
         elif key == "left":
-            self.cursor_index = max(0, self.cursor_index - 1)
+            self.text.cursor_left()
         elif key == "right":
-            self.cursor_index = min(len(self.current_text), self.cursor_index + 1)
+            self.text.cursor_right()
         elif key == "home":
-            self.cursor_index = 0
+            self.text.cursor_text_start()
         elif key == "end":
-            self.cursor_index = len(self.current_text)
+            self.text.cursor_text_end()
         elif key not in Keys.values():
-            self.insert_at_cursor(key)
-            repaint = True
+            changed = self.text.insert_at_cursor(key)
 
-        if repaint:
-            self.post_message_no_wait(self.Changed(self, value=self.current_text))
+        if changed:
+            self.post_message_no_wait(self.Changed(self, value=self.text.content))
 
         self.refresh(layout=True)
-
-    def insert_at_cursor(self, text: str) -> None:
-        new_text = (
-            self.current_text[: self.cursor_index]
-            + text
-            + self.current_text[self.cursor_index :]
-        )
-        self.current_text = new_text
-        self.cursor_index = min(len(self.current_text), self.cursor_index + 1)
 
     def _apply_cursor_to_text(self, display_text: Text, index: int):
         # Either write a cursor character or apply reverse style to cursor location
@@ -119,7 +171,6 @@ class TextInput(Widget):
         super().__init__(name=name, id=id, classes=classes)
         self.placeholder = placeholder
         self.initial = initial
-        self.current_text = initial if initial else ""
 
     def compose(self) -> ComposeResult:
         yield TextInputChild(
@@ -177,24 +228,24 @@ class TextInputChild(TextWidgetBase, can_focus=True):
     ):
         super().__init__(name=name, id=id, classes=classes)
         self.placeholder = placeholder
-        self.current_text = initial if initial else ""
+        self.text = TextEditorBackend(initial, 0)
         self.wrapper = wrapper
 
     def get_content_width(self, container_size: Size, viewport_size: Size) -> int:
         return (
-            max(len(self.current_text), len(self.placeholder))
+            max(len(self.text.content), len(self.placeholder))
             + self.styles.gutter.width
         )
 
     def render(self) -> RenderableType:
         # We only show the cursor if the widget has focus
         show_cursor = self.has_focus
-        if self.current_text:
-            display_text = Text(self.current_text, no_wrap=True)
+        if self.text.content:
+            display_text = Text(self.text.content, no_wrap=True)
 
             if show_cursor:
                 display_text = self._apply_cursor_to_text(
-                    display_text, self.cursor_index
+                    display_text, self.text.cursor_index
                 )
             return display_text
         else:
@@ -209,14 +260,13 @@ class TextInputChild(TextWidgetBase, can_focus=True):
         if key in self.STOP_PROPAGATE:
             event.stop()
 
-        if key == "enter" and self.current_text:
-            self.post_message_no_wait(TextInput.Submitted(self, self.current_text))
+        if key == "enter" and self.text.content:
+            self.post_message_no_wait(TextInput.Submitted(self, self.text.content))
         elif key == "ctrl+h":
             self.wrapper.scroll_left()
         elif key == "home":
             self.wrapper.scroll_home()
         elif key == "end":
-            print(self.wrapper.max_scroll_x)
             self.wrapper.scroll_to(x=self.wrapper.max_scroll_x)
         elif key not in Keys.values():
             self.wrapper.scroll_to(x=self.wrapper.scroll_x + 1)
@@ -240,24 +290,26 @@ class TextAreaChild(TextWidgetBase, can_focus=True):
     def render(self) -> RenderableType:
         # We only show the cursor if the widget has focus
         show_cursor = self.has_focus
-        display_text = Text(self.current_text, no_wrap=True)
+        display_text = Text(self.text.content, no_wrap=True)
         if show_cursor:
-            display_text = self._apply_cursor_to_text(display_text, self.cursor_index)
+            display_text = self._apply_cursor_to_text(
+                display_text, self.text.cursor_index
+            )
         return Padding(display_text, pad=1)
 
     def get_content_height(
         self, container_size: Size, viewport_size: Size, width: int
     ) -> int:
-        return self.current_text.count("\n") + 1 + 2
+        return self.text.content.count("\n") + 1 + 2
 
     def on_key(self, event: events.Key) -> None:
         if event.key in self.STOP_PROPAGATE:
             event.stop()
 
         if event.key == "enter":
-            self.insert_at_cursor("\n")
+            self.text.insert_at_cursor("\n")
         elif event.key == "tab":
-            self.insert_at_cursor("\t")
+            self.text.insert_at_cursor("\t")
         elif event.key == "\x1b":
             self.app.focused = None
 
