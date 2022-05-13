@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import cast
 
 from rich.console import RenderableType
-from rich.text import Text
+from rich.style import Style
+from rich.text import Text, TextType
 
 from .. import events
 from ..message import Message
@@ -24,8 +25,7 @@ class Button(Widget, can_focus=True):
         color: $text-primary;
         content-align: center middle;
         border: tall $primary-lighten-3;
-
-        margin: 1;
+        margin: 1 0;
         text-style: bold;
     }
 
@@ -48,7 +48,7 @@ class Button(Widget, can_focus=True):
 
     def __init__(
         self,
-        label: RenderableType | None = None,
+        label: TextType | None = None,
         disabled: bool = False,
         *,
         name: str | None = None,
@@ -57,7 +57,11 @@ class Button(Widget, can_focus=True):
     ):
         super().__init__(name=name, id=id, classes=classes)
 
-        self.label = self.css_identifier_styled if label is None else label
+        if label is None:
+            label = self.css_identifier_styled
+
+        self.label: Text = label
+
         self.disabled = disabled
         if disabled:
             self.add_class("-disabled")
@@ -70,8 +74,10 @@ class Button(Widget, can_focus=True):
             return Text.from_markup(label)
         return label
 
-    def render(self) -> RenderableType:
-        return self.label
+    def render(self, style: Style) -> RenderableType:
+        label = self.label.copy()
+        label.stylize(style)
+        return label
 
     async def on_click(self, event: events.Click) -> None:
         event.stop()

@@ -6,7 +6,7 @@ Functions and classes to manage terminal geometry (anything involving coordinate
 
 from __future__ import annotations
 
-from typing import Any, cast, NamedTuple, Tuple, Union, TypeVar
+from typing import Any, cast, Iterable, NamedTuple, Tuple, Union, TypeVar
 
 SpacingDimensions = Union[int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]]
 
@@ -182,6 +182,24 @@ class Region(NamedTuple):
     height: int = 0
 
     @classmethod
+    def from_union(cls, regions: list[Region]) -> Region:
+        """Create a Region from the union of other regions.
+
+        Args:
+            regions (Iterable[Region]): One or more regions.
+
+        Returns:
+            Region: A Region that encloses all other regions.
+        """
+        if not regions:
+            raise ValueError("At least one region expected")
+        min_x = min([region.x for region in regions])
+        max_x = max([x + width for x, _y, width, _height in regions])
+        min_y = min([region.y for region in regions])
+        max_y = max([y + height for _x, y, _width, height in regions])
+        return cls(min_x, min_y, max_x - min_x, max_y - min_y)
+
+    @classmethod
     def from_corners(cls, x1: int, y1: int, x2: int, y2: int) -> Region:
         """Construct a Region form the top left and bottom right corners.
 
@@ -258,6 +276,24 @@ class Region(NamedTuple):
         return Offset(self.x, self.y)
 
     @property
+    def bottom_left(self) -> Offset:
+        """Bottom left offset of the region."""
+        x, y, _width, height = self
+        return Offset(x, y + height)
+
+    @property
+    def top_right(self) -> Offset:
+        """Top right offset of the region."""
+        x, y, width, _height = self
+        return Offset(x + width, y)
+
+    @property
+    def bottom_right(self) -> Offset:
+        """Bottom right of the region."""
+        x, y, width, height = self
+        return Offset(x + width, y + height)
+
+    @property
     def size(self) -> Size:
         """Get the size of the region."""
         return Size(self.width, self.height)
@@ -274,17 +310,17 @@ class Region(NamedTuple):
 
     @property
     def x_range(self) -> range:
-        """A range object for X coordinates"""
+        """A range object for X coordinates."""
         return range(self.x, self.x + self.width)
 
     @property
     def y_range(self) -> range:
-        """A range object for Y coordinates"""
+        """A range object for Y coordinates."""
         return range(self.y, self.y + self.height)
 
     @property
     def reset_origin(self) -> Region:
-        """An region of the same size at the origin."""
+        """An region of the same size at (0, 0)."""
         _, _, width, height = self
         return Region(0, 0, width, height)
 

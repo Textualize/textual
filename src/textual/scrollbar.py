@@ -205,9 +205,9 @@ class ScrollBar(Widget):
         yield "window_size", self.window_size
         yield "position", self.position
 
-    def render(self) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         styles = self.parent.styles
-        style = Style(
+        scrollbar_style = Style(
             bgcolor=(
                 styles.scrollbar_background_hover.rich_color
                 if self.mouse_over
@@ -224,11 +224,8 @@ class ScrollBar(Widget):
             window_size=self.window_size,
             position=self.position,
             vertical=self.vertical,
-            style=style,
+            style=scrollbar_style,
         )
-
-    async def on_event(self, event) -> None:
-        await super().on_event(event)
 
     async def on_enter(self, event: events.Enter) -> None:
         self.mouse_over = True
@@ -284,7 +281,6 @@ class ScrollBar(Widget):
 
 if __name__ == "__main__":
     from rich.console import Console
-    from rich.segment import Segments
 
     console = Console()
     bar = ScrollBarRender()

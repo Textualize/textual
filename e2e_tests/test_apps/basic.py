@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from rich.align import Align
 from rich.console import RenderableType
+from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 
@@ -53,12 +53,12 @@ lorem = Text.from_markup(
 
 
 class TweetHeader(Widget):
-    def render(self) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         return Text("Lorem Impsum", justify="center")
 
 
 class TweetBody(Widget):
-    def render(self) -> Text:
+    def render(self, style: Style) -> Text:
         return lorem
 
 
@@ -67,22 +67,22 @@ class Tweet(Widget):
 
 
 class OptionItem(Widget):
-    def render(self) -> Text:
+    def render(self, style: Style) -> Text:
         return Text("Option")
 
 
 class Error(Widget):
-    def render(self) -> Text:
+    def render(self, style: Style) -> Text:
         return Text("This is an error message", justify="center")
 
 
 class Warning(Widget):
-    def render(self) -> Text:
+    def render(self, style: Style) -> Text:
         return Text("This is a warning message", justify="center")
 
 
 class Success(Widget):
-    def render(self) -> Text:
+    def render(self, style: Style) -> Text:
         return Text("This is a success message", justify="center")
 
 

@@ -33,6 +33,7 @@ from rich.measure import Measurement
 from rich.protocol import is_renderable
 from rich.screen import Screen as ScreenRenderable
 from rich.segment import Segments
+from rich.style import Style
 from rich.traceback import Traceback
 
 from . import actions
@@ -143,6 +144,9 @@ class App(Generic[ReturnType], DOMNode):
         self.driver_class = driver_class or self.get_driver_class()
         self._title = title
         self._screen_stack: list[Screen] = []
+        self._sync_available = (
+            os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal" and not WINDOWS
+        )
 
         self.focused: Widget | None = None
         self.mouse_over: Widget | None = None
@@ -478,7 +482,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.stylesheet.update(self)
                 self.screen.refresh(layout=True)
 
-    def render(self) -> RenderableType:
+    def render(self, styles: Style) -> RenderableType:
         return ""
 
     def query(self, selector: str | None = None) -> DOMQuery:
@@ -639,6 +643,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def fatal_error(self) -> None:
         """Exits the app after an unhandled exception."""
+        self.console.bell()
         traceback = Traceback(
             show_locals=True, width=None, locals_max_length=5, suppress=[rich]
         )
@@ -806,20 +811,19 @@ class App(Generic[ReturnType], DOMNode):
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         if not self._running:
             return
-        sync_available = (
-            os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal" and not WINDOWS
-        )
         if not self._closed:
             console = self.console
             try:
-                if sync_available:
+                if self._sync_available:
                     console.file.write("\x1bP=1s\x1b\\")
                 console.print(
                     ScreenRenderable(
-                        Control.home(), self.screen._compositor, Control.home()
+                        Control.home(),
+                        self.screen._compositor,
+                        Control.home(),
                     )
                 )
-                if sync_available:
+                if self._sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
                 console.file.flush()
             except Exception as error:
@@ -942,14 +946,14 @@ class App(Generic[ReturnType], DOMNode):
             action_target = default_namespace or self
             action_name = target
 
-        log("action", action)
+        log("<action>", action)
         await self.dispatch_action(action_target, action_name, params)
 
     async def dispatch_action(
         self, namespace: object, action_name: str, params: Any
     ) -> None:
         log(
-            "dispatch_action",
+            "<action>",
             namespace=namespace,
             action_name=action_name,
             params=params,

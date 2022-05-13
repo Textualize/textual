@@ -782,10 +782,12 @@ class ColorProperty:
         elif isinstance(color, str):
             try:
                 parsed_color = Color.parse(color)
-            except ColorParseError:
+            except ColorParseError as error:
                 raise StyleValueError(
                     f"Invalid color value '{color}'",
-                    help_text=color_property_help_text(self.name, context="inline"),
+                    help_text=color_property_help_text(
+                        self.name, context="inline", error=error
+                    ),
                 )
             if obj.set_rule(self.name, parsed_color):
                 obj.refresh()

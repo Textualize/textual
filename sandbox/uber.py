@@ -25,7 +25,6 @@ class BasicApp(App):
         first_child = Placeholder(id="child1", classes="list-item")
         uber1 = Widget(
             first_child,
-            Placeholder(id="child1", classes="list-item"),
             Placeholder(id="child2", classes="list-item"),
             Placeholder(id="child3", classes="list-item"),
             Placeholder(classes="list-item"),
@@ -33,6 +32,7 @@ class BasicApp(App):
             Placeholder(classes="list-item"),
         )
         self.mount(uber1=uber1)
+        uber1.focus()
         self.first_child = first_child
         self.uber = uber1
 
@@ -50,9 +50,8 @@ class BasicApp(App):
 
     def action_print(self):
         print(
-            "Printed using builtin [b blue]print[/] function:",
-            self.screen.tree,
-            sep=" - ",
+            "Focused widget is:",
+            self.focused,
         )
         self.app.set_focus(None)
 

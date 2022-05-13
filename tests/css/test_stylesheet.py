@@ -90,14 +90,48 @@ def test_did_you_mean_for_css_property_names(
 
     _, help_text = err.value.errors.rules[0].errors[0]  # type: Any, HelpText
     displayed_css_property_name = css_property_name.replace("_", "-")
-    assert (
-        help_text.summary == f"Invalid CSS property [i]{displayed_css_property_name}[/]"
+    expected_summary = f"Invalid CSS property [i]{displayed_css_property_name}[/]"
+    if expected_property_name_suggestion:
+        expected_summary += f'. Did you mean "{expected_property_name_suggestion}"?'
+    assert help_text.summary == expected_summary
+
+
+@pytest.mark.parametrize(
+    "css_property_name,css_property_value,expected_color_suggestion",
+    [
+        ["color", "blu", "blue"],
+        ["background", "chartruse", "chartreuse"],
+        ["tint", "ansi_whi", "ansi_white"],
+        ["scrollbar-color", "transprnt", "transparent"],
+        ["color", "xkcd", None],
+    ],
+)
+def test_did_you_mean_for_color_names(
+    css_property_name: str, css_property_value: str, expected_color_suggestion
+):
+    stylesheet = Stylesheet()
+    css = """
+    * {
+      border: blue;
+      ${PROPERTY}: ${VALUE};
+    }
+    """.replace(
+        "${PROPERTY}", css_property_name
+    ).replace(
+        "${VALUE}", css_property_value
     )
 
-    expected_bullets_length = 1 if expected_property_name_suggestion else 0
-    assert len(help_text.bullets) == expected_bullets_length
-    if expected_property_name_suggestion is not None:
-        expected_suggestion_message = (
-            f'Did you mean "{expected_property_name_suggestion}"?'
-        )
-        assert help_text.bullets[0].markup == expected_suggestion_message
+    stylesheet.add_source(css)
+    with pytest.raises(StylesheetParseError) as err:
+        stylesheet.parse()
+
+    _, help_text = err.value.errors.rules[0].errors[0]  # type: Any, HelpText
+    displayed_css_property_name = css_property_name.replace("_", "-")
+    expected_error_summary = (
+        f"Invalid value for the [i]{displayed_css_property_name}[/] property"
+    )
+
+    if expected_color_suggestion is not None:
+        expected_error_summary += f'. Did you mean "{expected_color_suggestion}"?'
+
+    assert help_text.summary == expected_error_summary

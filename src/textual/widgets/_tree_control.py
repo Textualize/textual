@@ -5,12 +5,11 @@ from typing import Generic, Iterator, NewType, TypeVar
 
 import rich.repr
 from rich.console import RenderableType
+from rich.style import Style
 from rich.text import Text, TextType
 from rich.tree import Tree
 from rich.padding import PaddingDimensions
 
-from .. import log
-from .. import events
 from ..reactive import Reactive
 from .._types import MessageTarget
 from ..widget import Widget
@@ -249,7 +248,7 @@ class TreeControl(Generic[NodeDataType], Widget):
                     push(iter(node.children))
         return None
 
-    def render(self) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         return self._tree
 
     def render_node(self, node: TreeNode[NodeDataType]) -> RenderableType:

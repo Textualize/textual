@@ -1,7 +1,5 @@
-from contextlib import nullcontext as does_not_raise
-from decimal import Decimal
-
 import pytest
+from rich.style import Style
 
 from textual.app import App
 from textual.css.errors import StyleValueError
@@ -41,7 +39,7 @@ def test_widget_content_width():
             self.text = text
             super().__init__(id=id)
 
-        def render(self) -> str:
+        def render(self, style: Style) -> str:
             return self.text
 
     widget1 = TextWidget("foo", id="widget1")

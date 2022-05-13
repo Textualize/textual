@@ -1,0 +1,8 @@
+#foo {
+    text-style: underline;
+    background: rebeccapurple;
+}
+
+#foo:hover {
+    background: greenyellow;
+}

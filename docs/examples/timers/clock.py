@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from rich.align import Align
+from rich.style import Style
 
 from textual.app import App
 from textual.widget import Widget
@@ -10,7 +11,7 @@ class Clock(Widget):
     def on_mount(self):
         self.set_interval(1, self.refresh)
 
-    def render(self):
+    def render(self, style: Style):
         time = datetime.now().strftime("%c")
         return Align.center(time, vertical="middle")
 

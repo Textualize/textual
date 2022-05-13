@@ -1,12 +1,13 @@
 from rich.console import RenderableType
 from rich.panel import Panel
+from rich.style import Style
 
 from textual.app import App
 from textual.widget import Widget
 
 
 class PanelWidget(Widget):
-    def render(self) -> RenderableType:
+    def render(self, style: Style) -> RenderableType:
         return Panel("hello world!", title="Title")
 
 
