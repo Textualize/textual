@@ -161,18 +161,17 @@ class ClientHandler:
         """
         last_message_time: float | None = None
         while True:
-            message_json = await self.incoming_queue.get()
-            if message_json is None:
+            message = await self.incoming_queue.get()
+            if message is None:
                 self.incoming_queue.task_done()
                 break
 
-            type = message_json["type"]
+            type = message["type"]
             if type == "client_log":
-                path = message_json["payload"]["path"]
-                line_number = message_json["payload"]["line_number"]
-                timestamp = message_json["payload"]["timestamp"]
-                encoded_segments = message_json["payload"]["segments"]
-                # decoded_segments = base64.b64decode(encoded_segments)
+                path = message["payload"]["path"]
+                line_number = message["payload"]["line_number"]
+                timestamp = message["payload"]["timestamp"]
+                encoded_segments = message["payload"]["segments"]
                 segments = pickle.loads(encoded_segments)
                 message_time = time()
                 if (
@@ -180,7 +179,7 @@ class ClientHandler:
                     and message_time - last_message_time > 1
                 ):
                     # Print a rule if it has been longer than a second since the last message
-                    self.service.console.rule("")
+                    self.service.console.rule()
                 self.service.console.print(
                     DevConsoleLog(
                         segments=segments,
@@ -191,7 +190,7 @@ class ClientHandler:
                 )
                 last_message_time = message_time
             elif type == "client_spillover":
-                spillover = int(message_json["payload"]["spillover"])
+                spillover = int(message["payload"]["spillover"])
                 info_renderable = DevConsoleNotice(
                     f"Discarded {spillover} messages", level="warning"
                 )

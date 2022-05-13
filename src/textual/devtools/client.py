@@ -238,14 +238,15 @@ class DevtoolsClient:
         except QueueFull:
             self.spillover += 1
 
-    def _encode_segments(self, segments: list[Segment]) -> bytes:
+    @classmethod
+    def _encode_segments(cls, segments: list[Segment]) -> bytes:
         """Pickle a list of Segments
 
         Args:
             segments (list[Segment]): A list of Segments to encode
 
         Returns:
-             bytes: The Segment list pickled with the latest protocol.
+            bytes: The Segment list pickled with the latest protocol.
         """
         pickled = pickle.dumps(segments, protocol=pickle.HIGHEST_PROTOCOL)
         return pickled
