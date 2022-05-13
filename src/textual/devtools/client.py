@@ -245,7 +245,7 @@ class DevtoolsClient:
             segments (list[Segment]): A list of Segments to encode
 
         Returns:
-             str: The Segment list pickled with pickle protocol v3, then base64 encoded
+             bytes: The Segment list pickled with the latest protocol.
         """
         pickled = pickle.dumps(segments, protocol=pickle.HIGHEST_PROTOCOL)
         return pickled
