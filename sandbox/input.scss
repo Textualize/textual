@@ -33,23 +33,8 @@ Screen {
   dock: bottom;
 }
 
-
-/* Not ideal having to do this to get a single cell height text input,
-which will probably be a common use-case */
 #footer {
   dock: bottom;
   height: 1;
-  padding: 0;
-  border: ;
-}
-
-#footer > TextInputChild {
-  border: ;
-  padding: 0;
-  height: 1;
-}
-
-#footer > TextInputChild:focus {
-  padding: 0;
   border: ;
 }
