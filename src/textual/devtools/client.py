@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import asyncio
-import base64
 import datetime
 import inspect
 import json
+import msgpack
 import pickle
+from time import time
 from asyncio import Queue, Task, QueueFull
 from io import StringIO
 from typing import Type, Any, NamedTuple
@@ -97,7 +98,7 @@ class DevtoolsClient:
         self.update_console_task: Task | None = None
         self.console: DevtoolsConsole = DevtoolsConsole(file=StringIO())
         self.websocket: ClientWebSocketResponse | None = None
-        self.log_queue: Queue[str | Type[ClientShutdown]] | None = None
+        self.log_queue: Queue[str | bytes | Type[ClientShutdown]] | None = None
         self.spillover: int = 0
 
     async def connect(self) -> None:
@@ -144,7 +145,10 @@ class DevtoolsClient:
                 if log is ClientShutdown:
                     log_queue.task_done()
                     break
-                await websocket.send_str(log)
+                if isinstance(log, str):
+                    await websocket.send_str(log)
+                else:
+                    await websocket.send_bytes(log)
                 log_queue.task_done()
 
         self.log_queue_task = asyncio.create_task(send_queued_logs())
@@ -203,17 +207,18 @@ class DevtoolsClient:
         segments = self.console.export_segments()
 
         encoded_segments = self._encode_segments(segments)
-        message = json.dumps(
+        message: bytes | None = msgpack.packb(
             {
                 "type": "client_log",
                 "payload": {
-                    "timestamp": int(datetime.datetime.utcnow().timestamp()),
+                    "timestamp": int(time()),
                     "path": getattr(log.caller, "filename", ""),
                     "line_number": getattr(log.caller, "lineno", 0),
-                    "encoded_segments": encoded_segments,
+                    "segments": encoded_segments,
                 },
             }
         )
+        assert message is not None
         try:
             if self.log_queue:
                 self.log_queue.put_nowait(message)
@@ -233,15 +238,15 @@ class DevtoolsClient:
         except QueueFull:
             self.spillover += 1
 
-    def _encode_segments(self, segments: list[Segment]) -> str:
-        """Pickle and Base64 encode the list of Segments
+    @classmethod
+    def _encode_segments(cls, segments: list[Segment]) -> bytes:
+        """Pickle a list of Segments
 
         Args:
             segments (list[Segment]): A list of Segments to encode
 
         Returns:
-             str: The Segment list pickled with pickle protocol v3, then base64 encoded
+            bytes: The Segment list pickled with the latest protocol.
         """
-        pickled = pickle.dumps(segments, protocol=3)
-        encoded = base64.b64encode(pickled)
-        return str(encoded, encoding="utf-8")
+        pickled = pickle.dumps(segments, protocol=4)
+        return pickled
