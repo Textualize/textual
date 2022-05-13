@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 
 import pytest
 import time_machine
@@ -6,22 +6,23 @@ from rich.align import Align
 from rich.console import Console
 from rich.segment import Segment
 
+import msgpack
 from tests.utilities.render import wait_for_predicate
 from textual.devtools.renderables import DevConsoleLog, DevConsoleNotice
 
 TIMESTAMP = 1649166819
 WIDTH = 40
 # The string "Hello, world!" is encoded in the payload below
-EXAMPLE_LOG = {
+_EXAMPLE_LOG = {
     "type": "client_log",
     "payload": {
-        "encoded_segments": "gASVQgAAAAAAAABdlCiMDHJpY2guc2VnbWVudJSMB1NlZ"
-        "21lbnSUk5SMDUhlbGxvLCB3b3JsZCGUTk6HlIGUaAOMAQqUTk6HlIGUZS4=",
+        "segments": b"\x80\x04\x955\x00\x00\x00\x00\x00\x00\x00]\x94\x8c\x0crich.segment\x94\x8c\x07Segment\x94\x93\x94\x8c\rHello, world!\x94NN\x87\x94\x81\x94a.",
         "line_number": 123,
         "path": "abc/hello.py",
         "timestamp": TIMESTAMP,
     },
 }
+EXAMPLE_LOG = msgpack.packb(_EXAMPLE_LOG)
 
 
 @pytest.fixture(scope="module")
@@ -48,15 +49,10 @@ def test_log_message_render(console):
     right: Align = right_cells[0]
 
     # Since we can't guarantee the timezone the tests will run in...
-    local_time = (
-        datetime.fromtimestamp(TIMESTAMP)
-        .replace(tzinfo=timezone.utc)
-        .astimezone(tz=datetime.now().astimezone().tzinfo)
-    )
-    timezone_name = local_time.tzname()
+    local_time = datetime.fromtimestamp(TIMESTAMP)
     string_timestamp = local_time.time()
 
-    assert left == f"[dim]{string_timestamp} {timezone_name}"
+    assert left == f"[dim]{string_timestamp}"
     assert right.align == "right"
     assert "hello.py:123" in right.renderable
 
@@ -69,7 +65,7 @@ def test_internal_message_render(console):
 
 
 async def test_devtools_valid_client_log(devtools):
-    await devtools.websocket.send_json(EXAMPLE_LOG)
+    await devtools.websocket.send_bytes(EXAMPLE_LOG)
     assert devtools.is_connected
 
 

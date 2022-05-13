@@ -1,7 +1,7 @@
 Horizontal {
     background: red 50%;
     overflow-x: auto;
-    width: auto
+    /* width: auto */
 }
 
 .test {

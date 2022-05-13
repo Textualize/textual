@@ -14,6 +14,7 @@ from aiohttp.abc import Request
 from aiohttp.web_ws import WebSocketResponse
 from rich.console import Console
 from rich.markup import escape
+import msgpack
 
 from textual.devtools.renderables import (
     DevConsoleLog,
@@ -160,19 +161,18 @@ class ClientHandler:
         """
         last_message_time: float | None = None
         while True:
-            message_json = await self.incoming_queue.get()
-            if message_json is None:
+            message = await self.incoming_queue.get()
+            if message is None:
                 self.incoming_queue.task_done()
                 break
 
-            type = message_json["type"]
+            type = message["type"]
             if type == "client_log":
-                path = message_json["payload"]["path"]
-                line_number = message_json["payload"]["line_number"]
-                timestamp = message_json["payload"]["timestamp"]
-                encoded_segments = message_json["payload"]["encoded_segments"]
-                decoded_segments = base64.b64decode(encoded_segments)
-                segments = pickle.loads(decoded_segments)
+                path = message["payload"]["path"]
+                line_number = message["payload"]["line_number"]
+                timestamp = message["payload"]["timestamp"]
+                encoded_segments = message["payload"]["segments"]
+                segments = pickle.loads(encoded_segments)
                 message_time = time()
                 if (
                     last_message_time is not None
@@ -190,7 +190,7 @@ class ClientHandler:
                 )
                 last_message_time = message_time
             elif type == "client_spillover":
-                spillover = int(message_json["payload"]["spillover"])
+                spillover = int(message["payload"]["spillover"])
                 info_renderable = DevConsoleNotice(
                     f"Discarded {spillover} messages", level="warning"
                 )
@@ -219,21 +219,26 @@ class ClientHandler:
             await self.service.send_server_info(client_handler=self)
             async for message in self.websocket:
                 message = cast(WSMessage, message)
-                if message.type == WSMsgType.TEXT:
+
+                if message.type in (WSMsgType.TEXT, WSMsgType.BINARY):
+
                     try:
-                        message_json = json.loads(message.data)
+                        if isinstance(message.data, bytes):
+                            message = msgpack.unpackb(message.data)
+                        else:
+                            message = json.loads(message.data)
                     except JSONDecodeError:
                         self.service.console.print(escape(str(message.data)))
                         continue
 
-                    type = message_json.get("type")
+                    type = message.get("type")
                     if not type:
                         continue
                     if (
                         type in QUEUEABLE_TYPES
                         and not self.service.shutdown_event.is_set()
                     ):
-                        await self.incoming_queue.put(message_json)
+                        await self.incoming_queue.put(message)
                 elif message.type == WSMsgType.ERROR:
                     self.service.console.print(
                         DevConsoleNotice("Websocket error occurred", level="error")

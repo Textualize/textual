@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
@@ -73,8 +73,8 @@ class DevConsoleLog:
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         local_time = datetime.fromtimestamp(self.unix_timestamp)
-
         table = Table.grid(expand=True)
+
         file_link = escape(f"file://{Path(self.path).absolute()}")
         file_and_line = escape(f"{Path(self.path).name}:{self.line_number}")
         table.add_row(
