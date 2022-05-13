@@ -23,7 +23,6 @@ class TextEditorBackend:
 
     def set_content(self, text: str):
         self.content = text
-        self.cursor_text_end()
 
     def delete_back(self) -> bool:
         """Delete the character behind the cursor
@@ -220,6 +219,7 @@ class TextInput(TextWidgetBase, can_focus=True):
     @value.setter
     def value(self, value: str):
         self._editor.set_content(value)
+        self._editor.cursor_text_end()
         self.refresh(layout=True)
 
     def render(self, style: Style) -> RenderableType:
@@ -276,6 +276,18 @@ class TextInput(TextWidgetBase, can_focus=True):
         elif key == "ctrl+h":
             if cursor_index == start and self._editor.query_cursor_left():
                 self.visible_range = start - 1, end - 1
+        elif key == "home":
+            self.visible_range = (0, available_width)
+        elif key == "end":
+            print(cursor_index, available_width)
+            value_length = len(self.value)
+            if scrollable:
+                self.visible_range = (
+                    value_length - available_width + 1,
+                    max(available_width, value_length) + 1,
+                )
+            else:
+                self.visible_range = (0, available_width)
         elif key not in Keys.values():
             # If we're at the end of the visible range, and the editor backend
             # will permit us to move the cursor right, then shift the visible
@@ -286,7 +298,10 @@ class TextInput(TextWidgetBase, can_focus=True):
         # We need to clamp the visible range to ensure we don't use negative indexing
         start, end = self.visible_range
         self.visible_range = (max(0, start), end)
+
+        # print(self.visible_range)
         # ns, ne = self.visible_range
+        # assert ne - ns == self.content_region.width
         # print(
         #     cursor_index,
         #     self.visible_range,
