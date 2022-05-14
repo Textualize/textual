@@ -192,7 +192,6 @@ class App(Generic[ReturnType], DOMNode):
         self.registry: set[MessagePump] = set()
         self.devtools = DevtoolsClient()
         self._return_value: ReturnType | None = None
-        self._focus_timer: Timer | None = None
 
         self.css_monitor = (
             FileMonitor(css_path, self._on_css_change)
@@ -263,10 +262,6 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             Widget | None: Newly focused widget, or None for no focus.
         """
-        if self._focus_timer:
-            # Cancel the timer that clears the show focus class
-            # We will be creating a new timer to extend the time until the focus is hidden
-            self._focus_timer.stop_no_wait()
         focusable_widgets = self.focus_chain
 
         if not focusable_widgets:
@@ -284,12 +279,10 @@ class App(Generic[ReturnType], DOMNode):
                 self.set_focus(focusable_widgets[0])
             else:
                 # Only move the focus if we are currently showing the focus
-                if direction and self.has_class("-show-focus"):
+                if direction:
                     current_index = (current_index + direction) % len(focusable_widgets)
                     self.set_focus(focusable_widgets[current_index])
 
-        self._focus_timer = self.set_timer(2, self.hide_focus)
-        self.add_class("-show-focus")
         return self.focused
 
     def show_focus(self) -> Widget | None:
@@ -315,15 +308,6 @@ class App(Generic[ReturnType], DOMNode):
             Widget | None: Newly focused widget, or None for no focus.
         """
         return self._move_focus(-1)
-
-    def hide_focus(self) -> None:
-        """Hide the focus.
-
-        Returns:
-            Widget | None: Newly focused widget, or None for no focus.
-
-        """
-        self.remove_class("-show-focus")
 
     def compose(self) -> ComposeResult:
         """Yield child widgets for a container."""
