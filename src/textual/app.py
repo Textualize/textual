@@ -552,7 +552,6 @@ class App(Generic[ReturnType], DOMNode):
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
         self.register(self.screen, *anon_widgets, **widgets)
-        self.screen.refresh()
 
     def push_screen(self, screen: Screen | None = None) -> Screen:
         """Push a new screen on the screen stack.
@@ -757,7 +756,6 @@ class App(Generic[ReturnType], DOMNode):
         widgets = list(self.compose())
         if widgets:
             self.mount(*widgets)
-            self.screen.refresh()
 
     async def on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
