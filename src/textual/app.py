@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+from datetime import datetime
 import inspect
+import io
 import os
 import platform
 import sys
@@ -410,6 +412,33 @@ class App(Generic[ReturnType], DOMNode):
                     )
         except Exception:
             pass
+
+    def action_screenshot(self, path: str | None = None) -> None:
+        """Action to save a screenshot."""
+        self.save_screenshot(path)
+
+    def save_screenshot(self, path: str | None = None) -> None:
+        """Save an SVG screenshot of the current screen.
+
+        Args:
+            path (str | None, optional): Path of the SVG to save, or None to
+                generate a path automatically. Defaults to None.
+        """
+        if path is None:
+            svg_path = f"{self.title.lower()}_{datetime.now().isoformat()}.svg"
+            svg_path = svg_path.replace("/", "_").replace("\\", "_")
+        else:
+            svg_path = path
+        console = Console(
+            width=self.console.width,
+            height=self.console.height,
+            file=io.StringIO(),
+            force_terminal=True,
+            color_system="truecolor",
+            record=True,
+        )
+        console.print(self.screen._compositor)
+        console.save_svg(svg_path, title=self.title)
 
     def bind(
         self,
