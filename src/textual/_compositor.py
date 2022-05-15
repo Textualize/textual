@@ -244,10 +244,9 @@ class Compositor:
             if widget in old_widgets and widget.size != region.size
         }
 
-        # Updates (regions) that need repainting
+        # Calculate regions that need repainting
         # Hidden widgets and shown widgets will need repainting
         crop_screen = size.region.intersection
-
         updates = self._dirty_regions
         updates.update(
             [
@@ -255,13 +254,14 @@ class Compositor:
                 for widget in (shown_widgets | hidden_widgets)
             ]
         )
-        # Widgets that have moved in any way (position, ordering, etc)
+        # Widgets that have moved in any way (position, ordering, etc.)
         changed_widgets = [
             widget
             for widget in old_widgets & new_widgets
             if map[widget] != old_map[widget]
         ]
         if changed_widgets:
+            # Paint the old position and the new position
             updates.update(
                 [crop_screen(map[widget].visible_region) for widget in changed_widgets]
             )
