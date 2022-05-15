@@ -30,10 +30,8 @@ else:
 import rich
 import rich.repr
 from rich.console import Console, RenderableType
-from rich.control import Control
 from rich.measure import Measurement
 from rich.protocol import is_renderable
-from rich.screen import Screen as ScreenRenderable
 from rich.segment import Segments
 from rich.style import Style
 from rich.traceback import Traceback
@@ -845,13 +843,7 @@ class App(Generic[ReturnType], DOMNode):
             try:
                 if self._sync_available:
                     console.file.write("\x1bP=1s\x1b\\")
-                console.print(
-                    ScreenRenderable(
-                        Control.home(),
-                        self.screen._compositor,
-                        Control.home(),
-                    )
-                )
+                console.print(self.screen._compositor)
                 if self._sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
                 console.file.flush()

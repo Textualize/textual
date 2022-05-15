@@ -645,7 +645,7 @@ class Compositor:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        yield self.render(full=True)
+        yield self.render()
 
     def update_widgets(self, widgets: set[Widget]):
         """Update a given widget in the composition.
