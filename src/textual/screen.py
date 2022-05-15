@@ -106,7 +106,6 @@ class Screen(Widget):
         if not self.size:
             return
         # This paint the entire screen, so replaces the batched dirty widgets
-        # self._on_update()
         self._compositor.update_widgets(self._dirty_widgets)
         self._update_timer.pause()
         try:
