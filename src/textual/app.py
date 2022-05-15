@@ -875,10 +875,15 @@ class App(Generic[ReturnType], DOMNode):
             return
         if not self._closed:
             console = self.console
+            if self._sync_available:
+                console.file.write("\x1bP=1s\x1b\\")
             try:
                 console.print(renderable)
             except Exception as error:
                 self.on_exception(error)
+            if self._sync_available:
+                console.file.write("\x1bP=2s\x1b\\")
+            console.file.flush()
 
     def measure(self, renderable: RenderableType, max_width=100_000) -> int:
         """Get the optimal width for a widget or renderable.

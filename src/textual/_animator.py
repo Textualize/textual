@@ -249,5 +249,6 @@ class Animator:
         self.on_animation_frame()
 
     def on_animation_frame(self) -> None:
+        return
         # TODO: We should be able to do animation without refreshing everything
         self.target.screen.refresh_layout()
