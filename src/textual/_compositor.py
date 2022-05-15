@@ -246,18 +246,31 @@ class Compositor:
 
         # Updates (regions) that need repainting
         # Hidden widgets and shown widgets will need repainting
-        updates: set[Region] = {
-            map[widget].visible_region for widget in (shown_widgets | hidden_widgets)
-        }
-        add_region = updates.add
-        # Widgets that have moved in any way (position, ordering, etc)
-        for widget in old_widgets & new_widgets:
-            if map[widget] != old_map[widget]:
-                add_region(map[widget].visible_region)
-                add_region(old_map[widget].visible_region)
-        # Crop region to the screen
         crop_screen = size.region.intersection
-        self._dirty_regions.update([crop_screen(update) for update in updates])
+
+        updates = self._dirty_regions
+        updates.update(
+            [
+                crop_screen(map[widget].visible_region)
+                for widget in (shown_widgets | hidden_widgets)
+            ]
+        )
+        # Widgets that have moved in any way (position, ordering, etc)
+        changed_widgets = [
+            widget
+            for widget in old_widgets & new_widgets
+            if map[widget] != old_map[widget]
+        ]
+        if changed_widgets:
+            updates.update(
+                [crop_screen(map[widget].visible_region) for widget in changed_widgets]
+            )
+            updates.update(
+                [
+                    crop_screen(old_map[widget].visible_region)
+                    for widget in changed_widgets
+                ]
+            )
 
         return ReflowResult(
             hidden=hidden_widgets, shown=shown_widgets, resized=resized_widgets
