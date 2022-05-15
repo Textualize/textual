@@ -558,11 +558,8 @@ class Compositor:
         ]
         return segment_lines
 
-    def render(self, full: bool = False) -> RenderableType:
+    def render(self) -> RenderableType:
         """Render a layout.
-
-        Args:
-            full (bool): Perform a full render (ignore dirty regions)
 
         Returns:
             SegmentLines: A renderable
@@ -570,25 +567,18 @@ class Compositor:
         width, height = self.size
         screen_region = Region(0, 0, width, height)
 
-        if full:
-            update_regions = set()
-            crop = screen_region
-            is_rendered_line = lambda y: True
-        else:
-            update_regions = self._dirty_regions.copy()
-            self._dirty_regions.clear()
+        update_regions = self._dirty_regions.copy()
+        self._dirty_regions.clear()
 
-            if update_regions:
-                # Create a crop regions that surrounds all updates
-                crop = Region.from_union(list(update_regions)).intersection(
-                    screen_region
-                )
-                spans = list(self._regions_to_spans(update_regions))
-                is_rendered_line = {y for y, _, _ in spans}.__contains__
-            else:
-                crop = screen_region
-                spans = []
-                is_rendered_line = lambda y: True
+        if update_regions:
+            # Create a crop regions that surrounds all updates
+            crop = Region.from_union(list(update_regions)).intersection(screen_region)
+            spans = list(self._regions_to_spans(update_regions))
+            is_rendered_line = {y for y, _, _ in spans}.__contains__
+        else:
+            crop = screen_region
+            spans = []
+            is_rendered_line = lambda y: True
 
         divide = Segment.divide
 
