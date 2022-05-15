@@ -270,7 +270,9 @@ class Compositor:
             )
 
         return ReflowResult(
-            hidden=hidden_widgets, shown=shown_widgets, resized=resized_widgets
+            hidden=hidden_widgets,
+            shown=shown_widgets,
+            resized=resized_widgets,
         )
 
     def _arrange_root(self, root: Widget) -> tuple[CompositorMap, set[Widget]]:
@@ -637,7 +639,7 @@ class Compositor:
     ) -> RenderResult:
         yield self.render()
 
-    def update_widgets(self, widgets: set[Widget]):
+    def update_widgets(self, widgets: set[Widget]) -> None:
         """Update a given widget in the composition.
 
         Args:
