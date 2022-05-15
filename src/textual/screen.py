@@ -95,7 +95,7 @@ class Screen(Widget):
     def _on_update(self) -> None:
         """Called by the _update_timer."""
         # Render widgets together
-        if self._dirty_widgets or self._dirty_regions:
+        if self._dirty_widgets:
             self._compositor.update_widgets(self._dirty_widgets)
             self.app.display(self._compositor.render())
             self._dirty_widgets.clear()

@@ -81,13 +81,11 @@ class LayoutUpdate:
         x = self.region.x
         new_line = Segment.line()
         move_to = Control.move_to
-        yield Control.home()
         for last, (y, line) in loop_last(enumerate(self.lines, self.region.y)):
             yield move_to(x, y)
             yield from line
             if not last:
                 yield new_line
-        yield Control.home()
 
     def __rich_repr__(self) -> rich.repr.Result:
         x, y, width, height = self.region
@@ -114,13 +112,11 @@ class SpansUpdate:
     ) -> RenderResult:
         move_to = Control.move_to
         new_line = Segment.line()
-        yield Control.home()
         for last, (y, x, segments) in loop_last(self.spans):
             yield move_to(x, y)
             yield from segments
             if not last:
                 yield new_line
-        yield Control.home()
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield [(y, x, "...") for y, x, _segments in self.spans]
@@ -151,6 +147,7 @@ class Compositor:
         # The points in each line where the line bisects the left and right edges of the widget
         self._cuts: list[list[int]] | None = None
 
+        # Regions that require an update
         self._dirty_regions: set[Region] = set()
 
     def add_dirty_regions(self, regions: Iterable[Region]) -> None:
@@ -592,8 +589,7 @@ class Compositor:
                 spans = []
                 is_rendered_line = lambda y: True
 
-        _Segment = Segment
-        divide = _Segment.divide
+        divide = Segment.divide
 
         # Maps each cut on to a list of segments
         cuts = self.cuts
