@@ -212,6 +212,7 @@ class Compositor:
         self.root = parent
         self.size = size
 
+        # Keep a copy of the old map because we're going to compare it with the update
         old_map = self.map.copy()
         # TODO: Handle virtual size
         map, widgets = self._arrange_root(parent)
