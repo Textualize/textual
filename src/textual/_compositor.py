@@ -244,20 +244,20 @@ class Compositor:
             if widget in old_widgets and widget.size != region.size
         }
 
-        screen_region = size.region
-        with timer("delta"):
-            updates: set[Region] = {
-                map[widget].visible_region
-                for widget in (shown_widgets | hidden_widgets)
-            }
-            add_region = updates.add
-            for widget in old_widgets & new_widgets:
-                if map[widget] != old_map[widget]:
-                    add_region(map[widget].visible_region)
-                    add_region(old_map[widget].visible_region)
-            self._dirty_regions.update(
-                [screen_region.intersection(update) for update in updates]
-            )
+        # Updates (regions) that need repainting
+        # Hidden widgets and shown widgets will need repainting
+        updates: set[Region] = {
+            map[widget].visible_region for widget in (shown_widgets | hidden_widgets)
+        }
+        add_region = updates.add
+        # Widgets that have moved in any way (position, ordering, etc)
+        for widget in old_widgets & new_widgets:
+            if map[widget] != old_map[widget]:
+                add_region(map[widget].visible_region)
+                add_region(old_map[widget].visible_region)
+        # Crop region to the screen
+        crop_screen = size.region.intersection
+        self._dirty_regions.update([crop_screen(update) for update in updates])
 
         return ReflowResult(
             hidden=hidden_widgets, shown=shown_widgets, resized=resized_widgets
@@ -580,7 +580,6 @@ class Compositor:
                 spans = []
                 is_rendered_line = lambda y: True
 
-        print("CROP", crop)
         _Segment = Segment
         divide = _Segment.divide
 
