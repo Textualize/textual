@@ -155,6 +155,11 @@ class Compositor:
         self._dirty_regions: set[Region] = set()
 
     def add_dirty_regions(self, regions: Iterable[Region]) -> None:
+        """Add dirty regions to be repainted next call to render.
+
+        Args:
+            regions (Iterable[Region]): Regions that are "dirty" (changed since last render).
+        """
         self._dirty_regions.update(regions)
 
     @classmethod
