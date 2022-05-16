@@ -26,6 +26,7 @@ from rich.style import Style
 from . import errors
 from .geometry import Region, Offset, Size
 
+from ._profile import timer
 from ._loop import loop_last
 from ._segment_tools import line_crop
 from ._types import Lines
@@ -228,7 +229,7 @@ class Compositor:
         self.map = map
         self.widgets = widgets
 
-        # Copy renders if the size hasn't changed
+        # Get a map of regions
         self.regions = {
             widget: (region, clip)
             for widget, (region, _order, clip, _, _) in map.items()
@@ -241,33 +242,13 @@ class Compositor:
             if widget in old_widgets and widget.size != region.size
         }
 
-        # Calculate regions that need repainting
-        # Hidden widgets and shown widgets will need repainting
+        # Gets pairs of tuples of (Widget, MapGeometry) which have changed
+        # i.e. if something is moved / deleted / added
         crop_screen = size.region.intersection
-        updates = self._dirty_regions
-        updates.update(
-            [
-                crop_screen(map[widget].visible_region)
-                for widget in (shown_widgets | hidden_widgets)
-            ]
+        changes: set[tuple[Widget, MapGeometry]] = self.map.items() ^ old_map.items()
+        self._dirty_regions.update(
+            [crop_screen(map_geometry.visible_region) for _, map_geometry in changes]
         )
-        # Widgets that have moved in any way (position, ordering, etc.)
-        changed_widgets = [
-            widget
-            for widget in old_widgets & new_widgets
-            if map[widget] != old_map[widget]
-        ]
-        if changed_widgets:
-            # Paint the old position and the new position
-            updates.update(
-                [crop_screen(map[widget].visible_region) for widget in changed_widgets]
-            )
-            updates.update(
-                [
-                    crop_screen(old_map[widget].visible_region)
-                    for widget in changed_widgets
-                ]
-            )
 
         return ReflowResult(
             hidden=hidden_widgets,
@@ -583,6 +564,8 @@ class Compositor:
             is_rendered_line = lambda y: True
 
         divide = Segment.divide
+
+        print("CROP", crop)
 
         # Maps each cut on to a list of segments
         cuts = self.cuts
