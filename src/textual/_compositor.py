@@ -26,7 +26,6 @@ from rich.style import Style
 from . import errors
 from .geometry import Region, Offset, Size
 
-from ._profile import timer
 from ._loop import loop_last
 from ._segment_tools import line_crop
 from ._types import Lines
