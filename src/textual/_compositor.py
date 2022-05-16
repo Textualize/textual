@@ -37,7 +37,6 @@ else:  # pragma: no cover
 
 
 if TYPE_CHECKING:
-    from .screen import Screen
     from .widget import Widget
 
 
@@ -214,11 +213,10 @@ class Compositor:
 
         # Keep a copy of the old map because we're going to compare it with the update
         old_map = self.map.copy()
-        # TODO: Handle virtual size
+        old_widgets = old_map.keys()
         map, widgets = self._arrange_root(parent)
-
-        old_widgets = self.map.keys()
         new_widgets = map.keys()
+
         # Newly visible widgets
         shown_widgets = new_widgets - old_widgets
         # Newly hidden widgets
