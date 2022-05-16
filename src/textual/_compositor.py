@@ -244,11 +244,18 @@ class Compositor:
 
         # Gets pairs of tuples of (Widget, MapGeometry) which have changed
         # i.e. if something is moved / deleted / added
-        crop_screen = size.region.intersection
-        changes: set[tuple[Widget, MapGeometry]] = self.map.items() ^ old_map.items()
-        self._dirty_regions.update(
-            [crop_screen(map_geometry.visible_region) for _, map_geometry in changes]
-        )
+        screen = size.region
+        if screen not in self._dirty_regions:
+            crop_screen = screen.intersection
+            changes: set[tuple[Widget, MapGeometry]] = (
+                self.map.items() ^ old_map.items()
+            )
+            self._dirty_regions.update(
+                [
+                    crop_screen(map_geometry.visible_region)
+                    for _, map_geometry in changes
+                ]
+            )
 
         return ReflowResult(
             hidden=hidden_widgets,
@@ -551,6 +558,9 @@ class Compositor:
         screen_region = Region(0, 0, width, height)
 
         update_regions = self._dirty_regions.copy()
+        if screen_region in update_regions:
+            # If one of the updates is the entire screen, then we only need one update
+            update_regions.clear()
         self._dirty_regions.clear()
 
         if update_regions:
@@ -564,8 +574,6 @@ class Compositor:
             is_rendered_line = lambda y: True
 
         divide = Segment.divide
-
-        print("CROP", crop)
 
         # Maps each cut on to a list of segments
         cuts = self.cuts

@@ -431,15 +431,12 @@ class Widget(DOMNode):
         Returns:
             bool: True if the scroll position changed, otherwise False.
         """
-        screen = self.screen
+
         try:
-            widget_geometry = screen.find_widget(widget)
-            container_geometry = screen.find_widget(self)
+            widget_region = widget.content_region
+            container_region = self.content_region
         except errors.NoWidget:
             return False
-
-        widget_region = widget.content_region + widget_geometry.region.origin
-        container_region = self.content_region + container_geometry.region.origin
 
         if widget_region in container_region:
             # Widget is visible, nothing to do
@@ -610,10 +607,8 @@ class Widget(DOMNode):
 
     @property
     def content_region(self) -> Region:
-        """A region relative to the Widget origin that contains the content."""
-        x, y = self.styles.content_gutter.top_left
-        width, height = self._container_size
-        return Region(x, y, width, height)
+        """Gets an absolute region containing the content (minus padding and border)."""
+        return self.region.shrink(self.styles.content_gutter)
 
     @property
     def content_offset(self) -> Offset:
