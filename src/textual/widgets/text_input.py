@@ -143,7 +143,7 @@ class TextInput(TextWidgetBase, can_focus=True):
 
             if show_cursor:
                 display_text = self._apply_cursor_to_text(
-                    display_text, self._editor.cursor_index - self.visible_range[0]
+                    display_text, self._editor.cursor_index - start
                 )
             return display_text
         else:
