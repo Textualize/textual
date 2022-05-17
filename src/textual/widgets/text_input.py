@@ -18,8 +18,13 @@ from textual.widget import Widget
 class TextWidgetBase(Widget):
     STOP_PROPAGATE = set()
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(
+        self,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ):
+        super().__init__(name=name, id=id, classes=classes)
         self._editor = TextEditorBackend()
 
     def on_key(self, event: events.Key) -> None:
