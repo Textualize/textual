@@ -63,6 +63,7 @@ class MapGeometry(NamedTuple):
         return self.clip.intersection(self.region)
 
 
+# Maps a widget on to its geometry (information that describes its position in the composition)
 CompositorMap: TypeAlias = "dict[Widget, MapGeometry]"
 
 
@@ -171,10 +172,11 @@ class Compositor:
             Iterable[tuple[int, int, int]]: Yields tuples of (Y, X1, X2)
         """
         inline_ranges: dict[int, list[tuple[int, int]]] = {}
+        setdefault = inline_ranges.setdefault
         for region_x, region_y, width, height in regions:
             span = (region_x, region_x + width)
             for y in range(region_y, region_y + height):
-                inline_ranges.setdefault(y, []).append(span)
+                setdefault(y, []).append(span)
 
         for y, ranges in sorted(inline_ranges.items()):
             if len(ranges) == 1:
