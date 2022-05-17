@@ -159,11 +159,8 @@ class TextInput(TextWidgetBase, can_focus=True):
             visible_text = self._editor.get_range(start, end)
             display_text = Text(visible_text, no_wrap=True)
 
-            # TODO: This should not be done in renderer
-            if self.autocompleter is not None:
-                self._suggestion = self.autocompleter(self.value)
-                if self._suggestion:
-                    display_text.append(self._suggestion, "dim")
+            if self._suggestion:
+                display_text.append(self._suggestion, "dim")
 
             if show_cursor:
                 display_text = self._apply_cursor_to_text(
@@ -195,6 +192,12 @@ class TextInput(TextWidgetBase, can_focus=True):
                 else:
                     # If the user has hit the scroll limit
                     self.app.bell()
+
+            print("pressed right", self._suggestion)
+            if self._suggestion and self._editor.cursor_at_end:
+                self._editor.insert_at_cursor(self._suggestion)
+                self._suggestion = ""
+
         elif key == "left":
             if cursor_index == start:
                 if scrollable and self._editor.query_cursor_left():
@@ -207,6 +210,9 @@ class TextInput(TextWidgetBase, can_focus=True):
         elif key == "ctrl+h":
             if cursor_index == start and self._editor.query_cursor_left():
                 self.visible_range = start - 1, end - 1
+            self._update_suggestion(event)
+        elif key == "ctrl+d":
+            self._update_suggestion(event)
         elif key == "home":
             self.visible_range = (0, available_width)
         elif key == "end":
@@ -224,11 +230,18 @@ class TextInput(TextWidgetBase, can_focus=True):
             # window/range along to the right.
             if cursor_index == end - 1:
                 self.visible_range = start + 1, end + 1
+            self._update_suggestion(event)
 
         # We need to clamp the visible range to ensure we don't use negative indexing
         start, end = self.visible_range
         self.visible_range = (max(0, start), end)
         print("at end of TextInput.on_key")
+
+    def _update_suggestion(self, event: events.Key):
+        if self.autocompleter is not None:
+            event.prevent_default()
+            super().on_key(event)
+            self._suggestion = self.autocompleter(self.value)
 
     class Submitted(Message, bubble=True):
         def __init__(self, sender: MessageTarget, value: str) -> None:

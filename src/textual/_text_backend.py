@@ -146,3 +146,7 @@ class TextEditorBackend:
             str: The sliced string between start and end.
         """
         return self.content[start:end]
+
+    @property
+    def cursor_at_end(self):
+        return self.cursor_index == len(self.content)
