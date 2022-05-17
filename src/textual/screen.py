@@ -169,7 +169,7 @@ class Screen(Widget):
 
     def on_mount(self, event: events.Mount) -> None:
         self._update_timer = self.set_interval(
-            UPDATE_PERIOD, self._on_update, pause=True
+            UPDATE_PERIOD, self._on_update, name="screen_update", pause=True
         )
 
     async def on_resize(self, event: events.Resize) -> None:
