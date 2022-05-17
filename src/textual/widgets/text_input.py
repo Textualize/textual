@@ -205,16 +205,6 @@ class TextInput(TextWidgetBase, can_focus=True):
         start, end = self.visible_range
         self.visible_range = (max(0, start), end)
 
-        # print(self.visible_range)
-        # ns, ne = self.visible_range
-        # assert ne - ns == self.content_region.width
-        # print(
-        #     cursor_index,
-        #     self.visible_range,
-        #     self.content_region,
-        #     ne - ns == self.content_region.width,
-        # )
-
     class Submitted(Message, bubble=True):
         def __init__(self, sender: MessageTarget, value: str) -> None:
             """Message posted when the user presses the 'enter' key while
