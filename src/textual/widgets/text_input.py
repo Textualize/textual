@@ -16,6 +16,8 @@ from textual.widget import Widget
 
 
 class TextWidgetBase(Widget):
+    """Base class for Widgets which support text input"""
+
     STOP_PROPAGATE = set()
 
     def __init__(
