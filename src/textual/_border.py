@@ -5,9 +5,8 @@ from functools import lru_cache
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 import rich.repr
 from rich.segment import Segment, SegmentLines
-from rich.style import Style, StyleType
+from rich.style import Style
 
-from .color import Color
 from .css.types import EdgeStyle, EdgeType
 
 
@@ -15,10 +14,14 @@ INNER = 1
 OUTER = 2
 
 BORDER_CHARS: dict[EdgeType, tuple[str, str, str]] = {
-    # TODO: in "browsers' CSS" `none` and `hidden` both set the border width to zero. Should we do the same?
+    # Each string of the tuple represents a sub-tuple itself:
+    #  - 1st string represents `(top1, top2, top3)`
+    #  - 2nd string represents (mid1, mid2, mid3)
+    #  - 3rd string represents (bottom1, bottom2, bottom3)
     "": ("   ", "   ", "   "),
     "none": ("   ", "   ", "   "),
     "hidden": ("   ", "   ", "   "),
+    "blank": ("   ", "   ", "   "),
     "round": ("╭─╮", "│ │", "╰─╯"),
     "solid": ("┌─┐", "│ │", "└─┘"),
     "double": ("╔═╗", "║ ║", "╚═╝"),
@@ -40,6 +43,7 @@ BORDER_LOCATIONS: dict[
     "": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "none": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "hidden": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+    "blank": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "round": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "solid": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "double": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
@@ -52,6 +56,8 @@ BORDER_LOCATIONS: dict[
     "tall": ((1, 0, 1), (1, 0, 1), (1, 0, 1)),
     "wide": ((1, 1, 1), (0, 1, 0), (1, 1, 1)),
 }
+
+_INVISIBLE_EDGE_TYPES: tuple[EdgeType, ...] = ("none", "hidden")
 
 
 @lru_cache(maxsize=1024)
@@ -135,7 +141,12 @@ class Border:
             (bottom, bottom_color),
             (left, left_color),
         ) = edge_styles
-        self._sides = (top or "none", right or "none", bottom or "none", left or "none")
+        self._sides: tuple[EdgeType, ...] = (
+            top or "none",
+            right or "none",
+            bottom or "none",
+            left or "none",
+        )
         from_color = Style.from_color
 
         self._styles = (
@@ -159,10 +170,10 @@ class Border:
             width (int): Desired width.
         """
         top, right, bottom, left = self._sides
-        has_left = left != "none"
-        has_right = right != "none"
-        has_top = top != "none"
-        has_bottom = bottom != "none"
+        has_left = left not in _INVISIBLE_EDGE_TYPES
+        has_right = right not in _INVISIBLE_EDGE_TYPES
+        has_top = top not in _INVISIBLE_EDGE_TYPES
+        has_bottom = bottom not in _INVISIBLE_EDGE_TYPES
 
         if has_top:
             lines.pop(0)
@@ -188,10 +199,10 @@ class Border:
         outer_style = console.get_style(self.outer_style)
         top_style, right_style, bottom_style, left_style = self._styles
 
-        has_left = left != "none"
-        has_right = right != "none"
-        has_top = top != "none"
-        has_bottom = bottom != "none"
+        has_left = left not in _INVISIBLE_EDGE_TYPES
+        has_right = right not in _INVISIBLE_EDGE_TYPES
+        has_top = top not in _INVISIBLE_EDGE_TYPES
+        has_bottom = bottom not in _INVISIBLE_EDGE_TYPES
 
         width = options.max_width - has_left - has_right
 

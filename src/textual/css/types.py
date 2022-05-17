@@ -16,6 +16,7 @@ EdgeType = Literal[
     "",
     "none",
     "hidden",
+    "blank",
     "round",
     "solid",
     "double",
@@ -35,6 +36,6 @@ AlignVertical = Literal["top", "middle", "bottom"]
 ScrollbarGutter = Literal["auto", "stable"]
 BoxSizing = Literal["border-box", "content-box"]
 Overflow = Literal["scroll", "hidden", "auto"]
-EdgeStyle = Tuple[str, Color]
+EdgeStyle = Tuple[EdgeType, Color]
 Specificity3 = Tuple[int, int, int]
 Specificity4 = Tuple[int, int, int, int]
