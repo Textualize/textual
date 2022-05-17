@@ -31,6 +31,7 @@ VALID_BOX_SIZING: Final = {"border-box", "content-box"}
 VALID_OVERFLOW: Final = {"scroll", "hidden", "auto"}
 VALID_ALIGN_HORIZONTAL: Final = {"left", "center", "right"}
 VALID_ALIGN_VERTICAL: Final = {"top", "middle", "bottom"}
+VALID_SCROLLBAR_GUTTER: Final = {"auto", "stable"}
 VALID_STYLE_FLAGS: Final = {
     "none",
     "not",

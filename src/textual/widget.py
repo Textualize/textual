@@ -492,6 +492,9 @@ class Widget(DOMNode):
             Region: The widget region minus scrollbars.
         """
         show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
+        if self.styles.scrollbar_gutter == "stable":
+            # Let's _always_ reserve some space, whether the scrollbar is actually displayed or not:
+            show_vertical_scrollbar = True
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (region, _, _, _) = region.split(-1, -1)
         elif show_vertical_scrollbar:

@@ -34,6 +34,7 @@ from .constants import (
     VALID_OVERFLOW,
     VALID_VISIBILITY,
     VALID_STYLE_FLAGS,
+    VALID_SCROLLBAR_GUTTER,
 )
 from .errors import DeclarationError, StyleValueError
 from .model import Declaration
@@ -769,6 +770,18 @@ class StylesBuilder:
     process_content_align = process_align
     process_content_align_horizontal = process_align_horizontal
     process_content_align_vertical = process_align_vertical
+
+    def process_scrollbar_gutter(self, name: str, tokens: list[Token]) -> None:
+        try:
+            value = self._process_enum(name, tokens, VALID_SCROLLBAR_GUTTER)
+        except StyleValueError:
+            self.error(
+                name,
+                tokens[0],
+                string_enum_help_text(name, VALID_SCROLLBAR_GUTTER, context="css"),
+            )
+        else:
+            self.styles._rules[name.replace("-", "_")] = value
 
     def _get_suggested_property_name_for_rule(self, rule_name: str) -> str | None:
         """

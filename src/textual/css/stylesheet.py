@@ -315,7 +315,7 @@ class Stylesheet:
         styles = node.styles
         base_styles = styles.base
 
-        # Styles currently used an new rules
+        # Styles currently used on new rules
         modified_rule_keys = {*base_styles.get_rules().keys(), *rules.keys()}
         # Current render rules (missing rules are filled with default)
         current_render_rules = styles.get_render_rules()
