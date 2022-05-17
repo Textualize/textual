@@ -246,8 +246,3 @@ class Animator:
                 animation = self._animations[animation_key]
                 if animation(animation_time):
                     del self._animations[animation_key]
-        self.on_animation_frame()
-
-    def on_animation_frame(self) -> None:
-        # TODO: We should be able to do animation without refreshing everything
-        self.target.screen.refresh_layout()

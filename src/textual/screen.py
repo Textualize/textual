@@ -94,13 +94,10 @@ class Screen(Widget):
 
     def _on_update(self) -> None:
         """Called by the _update_timer."""
-
         # Render widgets together
         if self._dirty_widgets:
-            self.log(dirty=self._dirty_widgets)
-            display_update = self._compositor.update_widgets(self._dirty_widgets)
-            if display_update is not None:
-                self.app.display(display_update)
+            self._compositor.update_widgets(self._dirty_widgets)
+            self.app.display(self._compositor.render())
             self._dirty_widgets.clear()
         self._update_timer.pause()
 
@@ -109,8 +106,8 @@ class Screen(Widget):
         if not self.size:
             return
         # This paint the entire screen, so replaces the batched dirty widgets
+        self._compositor.update_widgets(self._dirty_widgets)
         self._update_timer.pause()
-        self._dirty_widgets.clear()
         try:
             hidden, shown, resized = self._compositor.reflow(self, self.size)
 
@@ -140,7 +137,10 @@ class Screen(Widget):
         except Exception as error:
             self.app.on_exception(error)
             return
-        self.app.refresh()
+
+        display_update = self._compositor.render()
+        if display_update is not None:
+            self.app.display(display_update)
 
     async def handle_update(self, message: messages.Update) -> None:
         message.stop()
