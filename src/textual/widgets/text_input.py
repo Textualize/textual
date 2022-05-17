@@ -53,7 +53,7 @@ class TextWidgetBase(Widget):
 
         self.refresh(layout=True)
 
-    def _apply_cursor_to_text(self, display_text: Text, index: int):
+    def _apply_cursor_to_text(self, display_text: Text, index: int) -> Text:
         # Either write a cursor character or apply reverse style to cursor location
         at_end_of_text = index == len(display_text)
         at_end_of_line = index < len(display_text) and display_text[index].plain == "\n"
@@ -63,6 +63,8 @@ class TextWidgetBase(Widget):
                 display_text[:index],
                 "█",
                 display_text[index:],
+                overflow="ignore",
+                no_wrap=True,
             )
         else:
             display_text.stylize(
