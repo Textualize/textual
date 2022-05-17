@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from time import monotonic
 from typing import ClassVar
 
 import rich.repr
 
+from . import _clock
 from .case import camel_to_snake
 from ._types import MessageTarget
 
@@ -39,7 +39,7 @@ class Message:
 
         self.sender = sender
         self.name = camel_to_snake(self.__class__.__name__.replace("Message", ""))
-        self.time = self._get_time()
+        self.time = _clock.get_time()
         self._forwarded = False
         self._no_default_action = False
         self._stop_propagation = False
@@ -99,9 +99,3 @@ class Message:
         """
         self._stop_propagation = stop
         return self
-
-    @staticmethod
-    def _get_time() -> float:
-        """Get the current wall clock time."""
-        # N.B. This method will likely be a mocking target in integration tests.
-        return monotonic()

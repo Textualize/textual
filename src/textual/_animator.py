@@ -7,6 +7,7 @@ from typing import Any, Callable, TypeVar
 
 from dataclasses import dataclass
 
+from . import _clock
 from ._easing import DEFAULT_EASING, EASING
 from ._timer import Timer
 from ._types import MessageTarget
@@ -179,9 +180,9 @@ class Animator:
             raise AttributeError(
                 f"Can't animate attribute {attribute!r} on {obj!r}; attribute does not exist"
             )
-        assert not all(
-            (duration, speed)
-        ), "An Animation should have a duration OR a speed, received both"
+        assert (duration is not None and speed is None) or (
+            duration is None and speed is not None
+        ), "An Animation should have a duration OR a speed"
 
         if final_value is ...:
             final_value = value
@@ -247,4 +248,4 @@ class Animator:
         """Get the current wall clock time, via the internal Timer."""
         # N.B. We could remove this method and always call `self._timer.get_time()` internally,
         # but it's handy to have in mocking situations
-        return self._timer.get_time()
+        return _clock.get_time()

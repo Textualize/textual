@@ -5,22 +5,18 @@ import weakref
 from asyncio import (
     CancelledError,
     Event,
-    sleep,
     Task,
 )
-from time import monotonic
 from typing import Awaitable, Callable, Union
 
 from rich.repr import Result, rich_repr
 
 from . import events
 from ._callback import invoke
+from . import _clock
 from ._types import MessageTarget
 
 TimerCallback = Union[Callable[[], Awaitable[None]], Callable[[], None]]
-
-# /!\ This should only be changed in an "integration tests" context, in which we mock time
-_TIMERS_CAN_SKIP: bool = True
 
 
 class EventTargetGone(Exception):
@@ -106,32 +102,23 @@ class Timer:
         """Result a paused timer."""
         self._active.set()
 
-    @staticmethod
-    def get_time() -> float:
-        """Get the current wall clock time."""
-        # N.B. This method will likely be a mocking target in integration tests.
-        return monotonic()
-
-    @staticmethod
-    async def _sleep(duration: float) -> None:
-        # N.B. This method will likely be a mocking target in integration tests.
-        await sleep(duration)
-
     async def _run(self) -> None:
         """Run the timer."""
         count = 0
         _repeat = self._repeat
         _interval = self._interval
-        start = self.get_time()
+        start = await _clock.aget_time()
         try:
             while _repeat is None or count <= _repeat:
                 next_timer = start + ((count + 1) * _interval)
-                if self._skip and _TIMERS_CAN_SKIP and next_timer < self.get_time():
+                now = await _clock.aget_time()
+                if self._skip and next_timer < now:
                     count += 1
                     continue
-                wait_time = max(0, next_timer - self.get_time())
+                now = await _clock.aget_time()
+                wait_time = max(0, next_timer - now)
                 if wait_time:
-                    await self._sleep(wait_time)
+                    await _clock.sleep(wait_time)
                 count += 1
                 try:
                     await self._tick(next_timer=next_timer, count=count)
