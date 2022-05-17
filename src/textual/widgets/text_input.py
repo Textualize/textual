@@ -56,7 +56,7 @@ class TextWidgetBase(Widget):
     def _apply_cursor_to_text(self, display_text: Text, index: int) -> Text:
         # Either write a cursor character or apply reverse style to cursor location
         at_end_of_text = index == len(display_text)
-        at_end_of_line = index < len(display_text) and display_text[index].plain == "\n"
+        at_end_of_line = index < len(display_text) and display_text.plain[index] == "\n"
 
         if at_end_of_text or at_end_of_line:
             display_text = Text.assemble(
@@ -105,10 +105,6 @@ class TextInput(TextWidgetBase, can_focus=True):
         background: $primary-darken-2;
         border: heavy $primary-lighten-1;
         padding: 0;
-    }
-
-    App.-show-focus TextInput:focus {
-        tint: $accent 20%;
     }
     """
 
