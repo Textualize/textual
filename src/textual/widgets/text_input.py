@@ -18,7 +18,8 @@ from textual.widget import Widget
 class TextWidgetBase(Widget):
     """Base class for Widgets which support text input"""
 
-    STOP_PROPAGATE = set()
+    STOP_PROPAGATE: set[str] = set()
+    """Set of keybinds which will not be propagated to parent widgets"""
 
     def __init__(
         self,
