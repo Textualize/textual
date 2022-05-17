@@ -208,7 +208,6 @@ def test_animator():
 
     animator()
     assert animate_test.foo == 0
-    assert animator._on_animation_frame_called
 
     animator._time = 5
     animator()
