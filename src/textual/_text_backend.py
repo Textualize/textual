@@ -86,7 +86,7 @@ class TextEditorBackend:
             self.content[: self.cursor_index] + text + self.content[self.cursor_index :]
         )
         self.content = new_text
-        self.cursor_index = min(len(self.content), self.cursor_index + 1)
+        self.cursor_index = min(len(self.content), self.cursor_index + len(text))
         return True
 
     def get_range(self, start: int, end: int) -> str:
