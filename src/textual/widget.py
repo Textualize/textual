@@ -105,8 +105,8 @@ class Widget(DOMNode):
     has_focus = Reactive(False)
     descendant_has_focus = Reactive(False)
     mouse_over = Reactive(False)
-    scroll_x = Reactive(0.0, repaint=False)
-    scroll_y = Reactive(0.0, repaint=False)
+    scroll_x = Reactive(0.0, repaint=False, layout=True)
+    scroll_y = Reactive(0.0, repaint=False, layout=True)
     scroll_target_x = Reactive(0.0, repaint=False)
     scroll_target_y = Reactive(0.0, repaint=False)
     show_vertical_scrollbar = Reactive(False, layout=True)
@@ -454,15 +454,12 @@ class Widget(DOMNode):
         Returns:
             bool: True if the scroll position changed, otherwise False.
         """
-        screen = self.screen
+
         try:
-            widget_geometry = screen.find_widget(widget)
-            container_geometry = screen.find_widget(self)
+            widget_region = widget.content_region
+            container_region = self.content_region
         except errors.NoWidget:
             return False
-
-        widget_region = widget.content_region + widget_geometry.region.origin
-        container_region = self.content_region + container_geometry.region.origin
 
         if widget_region in container_region:
             # Widget is visible, nothing to do
@@ -629,10 +626,8 @@ class Widget(DOMNode):
 
     @property
     def content_region(self) -> Region:
-        """A region relative to the Widget origin that contains the content."""
-        x, y = self.styles.content_gutter.top_left
-        width, height = self._container_size
-        return Region(x, y, width, height)
+        """Gets an absolute region containing the content (minus padding and border)."""
+        return self.region.shrink(self.styles.content_gutter)
 
     @property
     def content_offset(self) -> Offset:

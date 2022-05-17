@@ -6,7 +6,7 @@ Functions and classes to manage terminal geometry (anything involving coordinate
 
 from __future__ import annotations
 
-from typing import Any, cast, Iterable, NamedTuple, Tuple, Union, TypeVar
+from typing import Any, cast, NamedTuple, Sequence, Tuple, Union, TypeVar
 
 SpacingDimensions = Union[int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]]
 
@@ -182,7 +182,7 @@ class Region(NamedTuple):
     height: int = 0
 
     @classmethod
-    def from_union(cls, regions: list[Region]) -> Region:
+    def from_union(cls, regions: Sequence[Region]) -> Region:
         """Create a Region from the union of other regions.
 
         Args:

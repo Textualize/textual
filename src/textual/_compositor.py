@@ -26,7 +26,6 @@ from rich.style import Style
 from . import errors
 from .geometry import Region, Offset, Size
 
-
 from ._loop import loop_last
 from ._segment_tools import line_crop
 from ._types import Lines
@@ -38,7 +37,6 @@ else:  # pragma: no cover
 
 
 if TYPE_CHECKING:
-    from .screen import Screen
     from .widget import Widget
 
 
@@ -59,6 +57,11 @@ class MapGeometry(NamedTuple):
     virtual_size: Size  # The virtual size  (scrollable region) of a widget if it is a container
     container_size: Size  # The container size (area not occupied by scrollbars)
 
+    @property
+    def visible_region(self) -> Region:
+        """The Widget region after clipping."""
+        return self.clip.intersection(self.region)
+
 
 CompositorMap: TypeAlias = "dict[Widget, MapGeometry]"
 
@@ -78,7 +81,6 @@ class LayoutUpdate:
         new_line = Segment.line()
         move_to = Control.move_to
         for last, (y, line) in loop_last(enumerate(self.lines, self.region.y)):
-            yield Control.home()
             yield move_to(x, y)
             yield from line
             if not last:
@@ -144,6 +146,17 @@ class Compositor:
         # The points in each line where the line bisects the left and right edges of the widget
         self._cuts: list[list[int]] | None = None
 
+        # Regions that require an update
+        self._dirty_regions: set[Region] = set()
+
+    def add_dirty_regions(self, regions: Iterable[Region]) -> None:
+        """Add dirty regions to be repainted next call to render.
+
+        Args:
+            regions (Iterable[Region]): Regions that are "dirty" (changed since last render).
+        """
+        self._dirty_regions.update(regions)
+
     @classmethod
     def _regions_to_spans(
         cls, regions: Iterable[Region]
@@ -198,11 +211,12 @@ class Compositor:
         self.root = parent
         self.size = size
 
-        # TODO: Handle virtual size
+        # Keep a copy of the old map because we're going to compare it with the update
+        old_map = self.map.copy()
+        old_widgets = old_map.keys()
         map, widgets = self._arrange_root(parent)
+        new_widgets = map.keys()
 
-        old_widgets = set(self.map.keys())
-        new_widgets = set(map.keys())
         # Newly visible widgets
         shown_widgets = new_widgets - old_widgets
         # Newly hidden widgets
@@ -212,7 +226,7 @@ class Compositor:
         self.map = map
         self.widgets = widgets
 
-        # Copy renders if the size hasn't changed
+        # Get a map of regions
         self.regions = {
             widget: (region, clip)
             for widget, (region, _order, clip, _, _) in map.items()
@@ -224,6 +238,21 @@ class Compositor:
             for widget, (region, *_) in map.items()
             if widget in old_widgets and widget.size != region.size
         }
+
+        # Gets pairs of tuples of (Widget, MapGeometry) which have changed
+        # i.e. if something is moved / deleted / added
+        screen = size.region
+        if screen not in self._dirty_regions:
+            crop_screen = screen.intersection
+            changes: set[tuple[Widget, MapGeometry]] = (
+                self.map.items() ^ old_map.items()
+            )
+            self._dirty_regions.update(
+                [
+                    crop_screen(map_geometry.visible_region)
+                    for _, map_geometry in changes
+                ]
+            )
 
         return ReflowResult(
             hidden=hidden_widgets,
@@ -516,29 +545,32 @@ class Compositor:
         ]
         return segment_lines
 
-    def render(self, regions: list[Region] | None = None) -> RenderableType:
+    def render(self) -> RenderableType:
         """Render a layout.
-
-        Args:
-            clip (Optional[Region]): Region to clip to.
 
         Returns:
             SegmentLines: A renderable
         """
         width, height = self.size
         screen_region = Region(0, 0, width, height)
-        if regions:
+
+        update_regions = self._dirty_regions.copy()
+        if screen_region in update_regions:
+            # If one of the updates is the entire screen, then we only need one update
+            update_regions.clear()
+        self._dirty_regions.clear()
+
+        if update_regions:
             # Create a crop regions that surrounds all updates
-            crop = Region.from_union(regions).intersection(screen_region)
-            spans = list(self._regions_to_spans(regions))
+            crop = Region.from_union(list(update_regions)).intersection(screen_region)
+            spans = list(self._regions_to_spans(update_regions))
             is_rendered_line = {y for y, _, _ in spans}.__contains__
         else:
             crop = screen_region
             spans = []
             is_rendered_line = lambda y: True
 
-        _Segment = Segment
-        divide = _Segment.divide
+        divide = Segment.divide
 
         # Maps each cut on to a list of segments
         cuts = self.cuts
@@ -569,7 +601,6 @@ class Compositor:
                 else:
                     render_x = render_region.x
                     relative_cuts = [cut - render_x for cut in final_cuts]
-                    # print(relative_cuts)
                     _, *cut_segments = divide(line, relative_cuts)
 
                 # Since we are painting front to back, the first segments for a cut "wins"
@@ -578,7 +609,7 @@ class Compositor:
                     if chops_line[cut] is None:
                         chops_line[cut] = segments
 
-        if regions:
+        if update_regions:
             crop_y, crop_y2 = crop.y_extents
             render_lines = self._assemble_chops(chops[crop_y:crop_y2])
             render_spans = [
@@ -596,15 +627,13 @@ class Compositor:
     ) -> RenderResult:
         yield self.render()
 
-    def update_widgets(self, widgets: set[Widget]) -> RenderableType | None:
+    def update_widgets(self, widgets: set[Widget]) -> None:
         """Update a given widget in the composition.
 
         Args:
             console (Console): Console instance.
             widget (Widget): Widget to update.
 
-        Returns:
-            LayoutUpdate | None: A renderable or None if nothing to render.
         """
         regions: list[Region] = []
         add_region = regions.append
@@ -613,5 +642,4 @@ class Compositor:
             update_region = region.intersection(clip)
             if update_region:
                 add_region(update_region)
-        update = self.render(regions or None)
-        return update
+        self.add_dirty_regions(regions)

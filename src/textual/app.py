@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+from datetime import datetime
 import inspect
+import io
 import os
 import platform
 import sys
@@ -28,10 +30,8 @@ else:
 import rich
 import rich.repr
 from rich.console import Console, RenderableType
-from rich.control import Control
 from rich.measure import Measurement
 from rich.protocol import is_renderable
-from rich.screen import Screen as ScreenRenderable
 from rich.segment import Segments
 from rich.style import Style
 from rich.traceback import Traceback
@@ -192,7 +192,6 @@ class App(Generic[ReturnType], DOMNode):
         self.registry: set[MessagePump] = set()
         self.devtools = DevtoolsClient()
         self._return_value: ReturnType | None = None
-        self._focus_timer: Timer | None = None
 
         self.css_monitor = (
             FileMonitor(css_path, self._on_css_change)
@@ -263,10 +262,6 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             Widget | None: Newly focused widget, or None for no focus.
         """
-        if self._focus_timer:
-            # Cancel the timer that clears the show focus class
-            # We will be creating a new timer to extend the time until the focus is hidden
-            self._focus_timer.stop_no_wait()
         focusable_widgets = self.focus_chain
 
         if not focusable_widgets:
@@ -284,12 +279,10 @@ class App(Generic[ReturnType], DOMNode):
                 self.set_focus(focusable_widgets[0])
             else:
                 # Only move the focus if we are currently showing the focus
-                if direction and self.has_class("-show-focus"):
+                if direction:
                     current_index = (current_index + direction) % len(focusable_widgets)
                     self.set_focus(focusable_widgets[current_index])
 
-        self._focus_timer = self.set_timer(2, self.hide_focus)
-        self.add_class("-show-focus")
         return self.focused
 
     def show_focus(self) -> Widget | None:
@@ -315,15 +308,6 @@ class App(Generic[ReturnType], DOMNode):
             Widget | None: Newly focused widget, or None for no focus.
         """
         return self._move_focus(-1)
-
-    def hide_focus(self) -> None:
-        """Hide the focus.
-
-        Returns:
-            Widget | None: Newly focused widget, or None for no focus.
-
-        """
-        self.remove_class("-show-focus")
 
     def compose(self) -> ComposeResult:
         """Yield child widgets for a container."""
@@ -427,6 +411,49 @@ class App(Generic[ReturnType], DOMNode):
         except Exception:
             self.console.bell()
 
+    def action_screenshot(self, path: str | None = None) -> None:
+        """Action to save a screenshot."""
+        self.save_screenshot(path)
+
+    def export_screenshot(self) -> str:
+        """Export a SVG screenshot of the current screen.
+
+        Args:
+            path (str | None, optional): Path of the SVG to save, or None to
+                generate a path automatically. Defaults to None.
+        """
+
+        console = Console(
+            width=self.console.width,
+            height=self.console.height,
+            file=io.StringIO(),
+            force_terminal=True,
+            color_system="truecolor",
+            record=True,
+        )
+        console.print(self.screen._compositor)
+        return console.export_svg(title=self.title)
+
+    def save_screenshot(self, path: str | None = None) -> str:
+        """Save a screenshot of the current screen.
+
+        Args:
+            path (str | None, optional): Path to SVG to save or None to pick
+                a filename automatically. Defaults to None.
+
+        Returns:
+            str: Filename of screenshot.
+        """
+        if path is None:
+            svg_path = f"{self.title.lower()}_{datetime.now().isoformat()}.svg"
+            svg_path = svg_path.replace("/", "_").replace("\\", "_")
+        else:
+            svg_path = path
+        screenshot_svg = self.export_screenshot()
+        with open(svg_path, "w") as svg_file:
+            svg_file.write(screenshot_svg)
+        return svg_path
+
     def bind(
         self,
         keys: str,
@@ -528,7 +555,6 @@ class App(Generic[ReturnType], DOMNode):
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
         self.register(self.screen, *anon_widgets, **widgets)
-        self.screen.refresh()
 
     def push_screen(self, screen: Screen | None = None) -> Screen:
         """Push a new screen on the screen stack.
@@ -733,7 +759,6 @@ class App(Generic[ReturnType], DOMNode):
         widgets = list(self.compose())
         if widgets:
             self.mount(*widgets)
-            self.screen.refresh()
 
     async def on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
@@ -819,13 +844,7 @@ class App(Generic[ReturnType], DOMNode):
             try:
                 if self._sync_available:
                     console.file.write("\x1bP=1s\x1b\\")
-                console.print(
-                    ScreenRenderable(
-                        Control.home(),
-                        self.screen._compositor,
-                        Control.home(),
-                    )
-                )
+                console.print(self.screen._compositor)
                 if self._sync_available:
                     console.file.write("\x1bP=2s\x1b\\")
                 console.file.flush()
@@ -849,10 +868,15 @@ class App(Generic[ReturnType], DOMNode):
             return
         if not self._closed:
             console = self.console
+            if self._sync_available:
+                console.file.write("\x1bP=1s\x1b\\")
             try:
                 console.print(renderable)
             except Exception as error:
                 self.on_exception(error)
+            if self._sync_available:
+                console.file.write("\x1bP=2s\x1b\\")
+            console.file.flush()
 
     def measure(self, renderable: RenderableType, max_width=100_000) -> int:
         """Get the optimal width for a widget or renderable.
