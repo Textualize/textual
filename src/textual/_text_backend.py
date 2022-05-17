@@ -5,16 +5,26 @@ from dataclasses import dataclass
 
 @dataclass
 class TextEditorBackend:
+    """Represents a text editor (some text and a cursor)"""
+
     content: str = ""
     cursor_index: int = 0
 
-    def set_content(self, text: str):
+    def set_content(self, text: str) -> None:
+        """Set the content of the editor
+
+        Args:
+            text (str): The text to set as the content
+        """
         self.content = text
 
     def delete_back(self) -> bool:
-        """Delete the character behind the cursor
+        """Delete the character behind the cursor and moves cursor back. If the
+        cursor is at the start of the content, does nothing other than immediately
+        return False.
 
-        Returns: True if the text content was modified. False otherwise.
+        Returns:
+            bool: True if the text content was modified. False otherwise.
         """
         if self.cursor_index == 0:
             return False
@@ -27,7 +37,7 @@ class TextEditorBackend:
         return True
 
     def delete_forward(self) -> bool:
-        """Delete the character in front of the cursor
+        """Delete the character in front of the cursor without moving the cursor.
 
         Returns: True if the text content was modified. False otherwise.
         """
@@ -41,32 +51,53 @@ class TextEditorBackend:
         return True
 
     def cursor_left(self) -> bool:
-        """Move the cursor 1 character left in the text"""
+        """Move the cursor 1 character left in the text. Is a noop if cursor is at start.
+
+        Returns:
+            bool: True if the cursor moved. False otherwise.
+        """
         previous_index = self.cursor_index
         new_index = max(0, previous_index - 1)
         self.cursor_index = new_index
         return previous_index != new_index
 
     def cursor_right(self) -> bool:
-        """Move the cursor 1 character right in the text"""
+        """Move the cursor 1 character right in the text. Is a noop if the cursor is at end.
+
+        Returns:
+            bool: True if the cursor moved. False otherwise.
+        """
         previous_index = self.cursor_index
         new_index = min(len(self.content), previous_index + 1)
         self.cursor_index = new_index
         return previous_index != new_index
 
     def query_cursor_left(self) -> bool:
-        """Check if the cursor can move 1 character left in the text"""
+        """Check if the cursor can move 1 character left in the text.
+
+        Returns:
+            bool: True if the cursor can move left. False otherwise.
+        """
         previous_index = self.cursor_index
         new_index = max(0, previous_index - 1)
         return previous_index != new_index
 
     def query_cursor_right(self) -> bool:
-        """Check if the cursor can move right"""
+        """Check if the cursor can move right (we can't move right if we're at the end)
+
+        Returns:
+            bool: True if the cursor can move right. False otherwise.
+        """
         previous_index = self.cursor_index
         new_index = min(len(self.content), previous_index + 1)
         return previous_index != new_index
 
     def cursor_text_start(self) -> bool:
+        """Move the cursor to the start of the text
+
+        Returns:
+            bool: True if the cursor moved. False otherwise.
+        """
         if self.cursor_index == 0:
             return False
 
@@ -74,6 +105,11 @@ class TextEditorBackend:
         return True
 
     def cursor_text_end(self) -> bool:
+        """Move the cursor to the end of the text
+
+        Returns:
+            bool: True if the cursor moved. False otherwise.
+        """
         text_length = len(self.content)
         if self.cursor_index == text_length:
             return False
@@ -82,6 +118,15 @@ class TextEditorBackend:
         return True
 
     def insert_at_cursor(self, text: str) -> bool:
+        """Insert some text at the cursor position, and move the cursor
+        to the end of the newly inserted text.
+
+        Args:
+            text: The text to insert
+
+        Returns:
+            bool: Always returns True since text should be insertable regardless of cursor location
+        """
         new_text = (
             self.content[: self.cursor_index] + text + self.content[self.cursor_index :]
         )
@@ -91,5 +136,13 @@ class TextEditorBackend:
 
     def get_range(self, start: int, end: int) -> str:
         """Return the text between 2 indices. Useful for previews/views into
-        a subset of the content e.g. scrollable single-line input fields"""
+        a subset of the content e.g. scrollable single-line input fields
+
+        Args:
+            start (int): The starting index to return text from (inclusive)
+            end (int): The index to return text up to (exclusive)
+
+        Returns:
+            str: The sliced string between start and end.
+        """
         return self.content[start:end]
