@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from pathlib import Path
+
 from textual.app import App
 from textual.widget import Widget
 
@@ -12,6 +16,18 @@ def fahrenheit_to_celsius(fahrenheit: float) -> float:
     return (fahrenheit - 32) / 1.8
 
 
+words = set(Path("/usr/share/dict/words").read_text().splitlines())
+
+
+def word_autocompleter(value: str) -> str | None:
+    print(value)
+    for word in words:
+        if word.startswith(value):
+            print("autocompleter suggests: ", word)
+            return word[len(value) :]
+    return None
+
+
 class InputApp(App[str]):
     def on_mount(self) -> None:
         self.fahrenheit = TextInput(placeholder="Fahrenheit", id="fahrenheit")
@@ -20,7 +36,11 @@ class InputApp(App[str]):
         text_boxes = Widget(self.fahrenheit, self.celsius)
         self.mount(inputs=text_boxes)
         self.mount(spacer=Widget())
-        self.mount(footer=TextInput(placeholder="Footer Search Bar"))
+        self.mount(
+            footer=TextInput(
+                placeholder="Footer Search Bar", autocompleter=word_autocompleter
+            )
+        )
         self.mount(text_area=TextArea())
 
     def handle_changed(self, event: TextWidgetBase.Changed) -> None:

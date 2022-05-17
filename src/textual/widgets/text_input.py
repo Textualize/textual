@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Callable
+
 from rich.console import RenderableType
 from rich.padding import Padding
 from rich.style import Style
@@ -47,6 +49,7 @@ class TextWidgetBase(Widget):
             self.post_message_no_wait(self.Changed(self, value=self._editor.content))
 
         self.refresh(layout=True)
+        print("at end of TextWidgetBase.on_key")
 
     def _apply_cursor_to_text(self, display_text: Text, index: int):
         # Either write a cursor character or apply reverse style to cursor location
@@ -80,6 +83,17 @@ class TextWidgetBase(Widget):
 
 
 class TextInput(TextWidgetBase, can_focus=True):
+    """Widget for inputting text
+
+    Args:
+        placeholder (str): The text that will be displayed when there's no content in the TextInput.
+            Defaults to an empty string.
+        initial (str): The initial value. Defaults to an empty string.
+        autocompleter (Callable[[str], str | None): Function which returns autocomplete suggestion
+            which will be displayed within the widget any time the content changes. The autocomplete
+            suggestion will be displayed as dim text similar to suggestion text in the zsh or fish shells.
+    """
+
     CSS = """
     TextInput {
         width: auto;
@@ -110,6 +124,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         *,
         placeholder: str = "",
         initial: str = "",
+        autocompleter: Callable[[str], str | None] | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -118,6 +133,8 @@ class TextInput(TextWidgetBase, can_focus=True):
         self.placeholder = placeholder
         self._editor = TextEditorBackend(initial, 0)
         self.visible_range: tuple[int, int] | None = None
+        self.autocompleter = autocompleter
+        self._suggestion = ""
 
     @property
     def value(self):
@@ -131,6 +148,7 @@ class TextInput(TextWidgetBase, can_focus=True):
 
     def render(self, style: Style) -> RenderableType:
         # First render: Cursor at start of text, visible range goes from cursor to content region width
+        print("inside render")
         if not self.visible_range:
             self.visible_range = (self._editor.cursor_index, self.content_region.width)
 
@@ -140,6 +158,12 @@ class TextInput(TextWidgetBase, can_focus=True):
             start, end = self.visible_range
             visible_text = self._editor.get_range(start, end)
             display_text = Text(visible_text, no_wrap=True)
+
+            # TODO: This should not be done in renderer
+            if self.autocompleter is not None:
+                self._suggestion = self.autocompleter(self.value)
+                if self._suggestion:
+                    display_text.append(self._suggestion, "dim")
 
             if show_cursor:
                 display_text = self._apply_cursor_to_text(
@@ -169,6 +193,7 @@ class TextInput(TextWidgetBase, can_focus=True):
                 if scrollable and self._editor.query_cursor_right():
                     self.visible_range = (start + 1, end + 1)
                 else:
+                    # If the user has hit the scroll limit
                     self.app.bell()
         elif key == "left":
             if cursor_index == start:
@@ -178,7 +203,6 @@ class TextInput(TextWidgetBase, can_focus=True):
                         cursor_index + available_width - 1,
                     )
                 else:
-                    # If the user has hit the scroll limit
                     self.app.bell()
         elif key == "ctrl+h":
             if cursor_index == start and self._editor.query_cursor_left():
@@ -204,6 +228,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         # We need to clamp the visible range to ensure we don't use negative indexing
         start, end = self.visible_range
         self.visible_range = (max(0, start), end)
+        print("at end of TextInput.on_key")
 
     class Submitted(Message, bubble=True):
         def __init__(self, sender: MessageTarget, value: str) -> None:
