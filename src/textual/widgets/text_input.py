@@ -10,7 +10,7 @@ from textual._text_backend import TextEditorBackend
 from textual._types import MessageTarget
 from textual.app import ComposeResult
 from textual.geometry import Size
-from textual.keys import Keys
+from textual.keys import KEY_BINDINGS
 from textual.message import Message
 from textual.widget import Widget
 
@@ -45,7 +45,7 @@ class TextWidgetBase(Widget):
             self._editor.cursor_text_start()
         elif key == "end":
             self._editor.cursor_text_end()
-        elif key not in Keys.values():
+        elif key not in KEY_BINDINGS:
             changed = self._editor.insert_at_cursor(key)
 
         if changed:
@@ -197,7 +197,7 @@ class TextInput(TextWidgetBase, can_focus=True):
                 )
             else:
                 self.visible_range = (0, available_width)
-        elif key not in Keys.values():
+        elif key not in KEY_BINDINGS:
             # If we're at the end of the visible range, and the editor backend
             # will permit us to move the cursor right, then shift the visible
             # window/range along to the right.
