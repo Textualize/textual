@@ -784,6 +784,56 @@ class StylesBuilder:
         else:
             self.styles._rules[name.replace("-", "_")] = value
 
+    def process_scrollbar_size(self, name: str, tokens: list[Token]) -> None:
+        def offset_error(name: str, token: Token) -> None:
+            # TODO: handle help text
+            self.error(name, token, offset_property_help_text(context="css"))
+
+        if not tokens:
+            return
+        if len(tokens) != 2:
+            offset_error(name, tokens[0])
+        else:
+            token1, token2 = tokens
+
+            if token1.name not in ("scalar", "number"):
+                offset_error(name, token1)
+            if token2.name not in ("scalar", "number"):
+                offset_error(name, token2)
+
+            vertical = Scalar.parse(token1.value, Unit.HEIGHT)
+            horizontal = Scalar.parse(token2.value, Unit.WIDTH)
+            self.styles._rules["scrollbar_size_vertical"] = vertical
+            self.styles._rules["scrollbar_size_horizontal"] = horizontal
+
+    def process_scrollbar_size_vertical(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        if len(tokens) != 1:
+            # TODO: handle help text
+            self.error(name, tokens[0], offset_single_axis_help_text(name))
+        else:
+            token = tokens[0]
+            if token.name not in ("scalar", "number"):
+                self.error(name, token, offset_single_axis_help_text(name))
+            self.styles._rules["scrollbar_size_vertical"] = Scalar.parse(
+                token.value, Unit.HEIGHT
+            )
+
+    def process_scrollbar_size_horizontal(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        if len(tokens) != 1:
+            # TODO: handle help text
+            self.error(name, tokens[0], offset_single_axis_help_text(name))
+        else:
+            token = tokens[0]
+            if token.name not in ("scalar", "number"):
+                self.error(name, token, offset_single_axis_help_text(name))
+            self.styles._rules["scrollbar_size_horizontal"] = Scalar.parse(
+                token.value, Unit.WIDTH
+            )
+
     def _get_suggested_property_name_for_rule(self, rule_name: str) -> str | None:
         """
         Returns a valid CSS property "Python" name, or None if no close matches could be found.

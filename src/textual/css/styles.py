@@ -129,6 +129,9 @@ class RulesMap(TypedDict, total=False):
 
     scrollbar_gutter: ScrollbarGutter
 
+    scrollbar_size_vertical: Scalar
+    scrollbar_size_horizontal: Scalar
+
     align_horizontal: AlignHorizontal
     align_vertical: AlignVertical
 
@@ -227,6 +230,13 @@ class StylesBase(ABC):
     scrollbar_background_active = ColorProperty("black")
 
     scrollbar_gutter = StringEnumProperty(VALID_SCROLLBAR_GUTTER, "auto")
+
+    scrollbar_size_vertical = ScalarProperty(
+        units={Unit.CELLS}, percent_unit=Unit.WIDTH, allow_auto=False
+    )
+    scrollbar_size_horizontal = ScalarProperty(
+        units={Unit.CELLS}, percent_unit=Unit.HEIGHT, allow_auto=False
+    )
 
     align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
@@ -664,6 +674,16 @@ class Styles(StylesBase):
             append_declaration("overflow-y", self.overflow_y)
         if has_rule("scrollbar-gutter"):
             append_declaration("scrollbar-gutter", self.scrollbar_gutter)
+        if has_rule("scrollbar-size"):
+            append_declaration("scrollbar-size", self.scrollbar_size)
+        if has_rule("scrollbar-size-vertical"):
+            append_declaration(
+                "scrollbar-size-vertical", str(self.scrollbar_size_vertical)
+            )
+        if has_rule("scrollbar-size-horizontal"):
+            append_declaration(
+                "scrollbar-size-horizontal", str(self.scrollbar_size_horizontal)
+            )
 
         if has_rule("box-sizing"):
             append_declaration("box-sizing", self.box_sizing)

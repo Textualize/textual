@@ -188,8 +188,11 @@ class ScrollBarRender:
 
 @rich.repr.auto
 class ScrollBar(Widget):
-    def __init__(self, vertical: bool = True, name: str | None = None) -> None:
+    def __init__(
+        self, vertical: bool = True, name: str | None = None, *, thickness: int = 1
+    ) -> None:
         self.vertical = vertical
+        self.thickness = thickness
         self.grabbed_position: float = 0
         super().__init__(name=name)
 
@@ -204,6 +207,8 @@ class ScrollBar(Widget):
         yield "window_virtual_size", self.window_virtual_size
         yield "window_size", self.window_size
         yield "position", self.position
+        if self.thickness > 1:
+            yield "thickness", self.thickness
 
     def render(self, style: Style) -> RenderableType:
         styles = self.parent.styles
@@ -223,6 +228,7 @@ class ScrollBar(Widget):
             virtual_size=self.window_virtual_size,
             window_size=self.window_size,
             position=self.position,
+            thickness=self.thickness,
             vertical=self.vertical,
             style=scrollbar_style,
         )
@@ -283,8 +289,12 @@ if __name__ == "__main__":
     from rich.console import Console
 
     console = Console()
-    bar = ScrollBarRender()
 
-    console.print(
-        ScrollBarRender(position=15.3, window_size=100, thickness=5, vertical=True)
-    )
+    thickness = 2
+    console.print(f"Bars thickness: {thickness}")
+
+    console.print("Vertical bar:")
+    console.print(ScrollBarRender.render_bar(thickness=thickness))
+
+    console.print("Horizontal bar:")
+    console.print(ScrollBarRender.render_bar(vertical=False, thickness=thickness))
