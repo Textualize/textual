@@ -25,7 +25,7 @@ class TextWidgetBase(Widget):
     STOP_PROPAGATE: set[str] = set()
     """Set of keybinds which will not be propagated to parent widgets"""
 
-    cursor_blink_enabled = Reactive(False)
+    cursor_blink_enabled = Reactive(True)
     cursor_blink_period = Reactive(0.6)
 
     def __init__(
