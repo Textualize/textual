@@ -47,6 +47,7 @@ class Layout(ABC):
     ) -> int:
         width: int | None = None
         for child in parent.displayed_children:
+            assert isinstance(child, Widget)
             if not child.is_container:
                 child_width = child.get_content_width(container_size, viewport_size)
                 width = child_width if width is None else max(width, child_width)
