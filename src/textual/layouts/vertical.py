@@ -49,11 +49,3 @@ class VerticalLayout(Layout):
         add_placement(WidgetPlacement(total_region, None, 0))
 
         return placements, set(displayed_children)
-
-    # def get_content_width(
-    #     self, parent: Widget, container_size: Size, viewport_size: Size
-    # ) -> int:
-    #     width = super().get_content_width(parent, container_size, viewport_size)
-    #     width = min(width, container_size.width)
-    #     print("get_content_width", parent, container_size, width)
-    #     return width

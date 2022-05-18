@@ -106,6 +106,7 @@ class SpansUpdate:
 
         Args:
             spans (list[tuple[int, int, list[Segment]]]): A list of spans.
+            crop_y (int): The y extent of the crop region
         """
         self.spans = spans
         self.last_y = crop_y - 1

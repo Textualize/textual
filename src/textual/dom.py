@@ -291,6 +291,11 @@ class DOMNode(MessagePump):
 
     @property
     def colors(self) -> tuple[tuple[Color, Color], tuple[Color, Color]]:
+        """Gets the Widgets foreground and background colors, and its parent's colors.
+
+        Returns:
+            tuple[tuple[Color, Color], tuple[Color, Color]]: Base colors and widget colors
+        """
         base_background = background = Color(0, 0, 0, 0)
         base_color = color = Color(255, 255, 255, 0)
         for node in reversed(self.ancestors):
