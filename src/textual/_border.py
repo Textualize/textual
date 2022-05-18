@@ -211,7 +211,6 @@ class Border:
                     render_options = options.update_dimensions(width, new_height)
                 else:
                     render_options = options.update_width(width)
-                    # has_top = has_bottom = False
 
         lines = console.render_lines(self.renderable, render_options)
 

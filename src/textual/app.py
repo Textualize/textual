@@ -408,8 +408,8 @@ class App(Generic[ReturnType], DOMNode):
                     self.devtools.log(
                         DevtoolsLog(output, caller=_textual_calling_frame)
                     )
-        except Exception:
-            self.console.bell()
+        except Exception as error:
+            self.on_exception(error)
 
     def action_screenshot(self, path: str | None = None) -> None:
         """Action to save a screenshot."""

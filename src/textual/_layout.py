@@ -48,6 +48,16 @@ class Layout(ABC):
         """
 
     def get_content_width(self, widget: Widget, container: Size, viewport: Size) -> int:
+        """Get the width of the content.
+
+        Args:
+            widget (Widget): The container widget.
+            container (Size): The container size.
+            viewport (Size): The viewport size.
+
+        Returns:
+            int: Width of the content.
+        """
         width: int | None = None
         for child in widget.displayed_children:
             assert isinstance(child, Widget)
@@ -61,6 +71,17 @@ class Layout(ABC):
     def get_content_height(
         self, widget: Widget, container: Size, viewport: Size, width: int
     ) -> int:
+        """Get the content height.
+
+        Args:
+            widget (Widget): The container widget.
+            container (Size): The container size.
+            viewport (Size): The viewport.
+            width (int): The content width.
+
+        Returns:
+            int: Content height (in lines).
+        """
         if not widget.displayed_children:
             height = container.height
         else:

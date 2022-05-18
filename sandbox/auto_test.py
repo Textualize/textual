@@ -4,7 +4,7 @@ from textual.layout import Vertical
 
 from rich.text import Text
 
-TEXT = Text.from_markup(" ".join(str(n) * 5 for n in range(10)))
+TEXT = Text.from_markup(" ".join(str(n) * 5 for n in range(12)))
 
 
 class AutoApp(App):
