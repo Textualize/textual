@@ -9,7 +9,7 @@ from typing import Iterable, TYPE_CHECKING, NamedTuple, Sequence
 from .._layout_resolve import layout_resolve
 from ..css.types import Edge
 from ..geometry import Offset, Region, Size
-from .._layout import Layout, WidgetPlacement
+from .._layout import ArrangeResult, Layout, WidgetPlacement
 from ..widget import Widget
 
 if sys.version_info >= (3, 8):
@@ -59,9 +59,7 @@ class DockLayout(Layout):
             append_dock(Dock(edge, groups[name], z))
         return docks
 
-    def arrange(
-        self, parent: Widget, size: Size, scroll: Offset
-    ) -> tuple[list[WidgetPlacement], set[Widget]]:
+    def arrange(self, parent: Widget, size: Size) -> ArrangeResult:
 
         width, height = size
         layout_region = Region(0, 0, width, height)

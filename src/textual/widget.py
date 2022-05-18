@@ -159,7 +159,7 @@ class Widget(DOMNode):
         )
         return box_model
 
-    def get_content_width(self, container_size: Size, viewport_size: Size) -> int:
+    def get_content_width(self, container: Size, viewport: Size) -> int:
         """Gets the width of the content area.
 
         Args:
@@ -170,11 +170,11 @@ class Widget(DOMNode):
             int: The optimal width of the content.
         """
         if self.is_container:
-            return self.layout.get_content_width(self, container_size, viewport_size)
+            return self.layout.get_content_width(self, container, viewport)
         console = self.app.console
         renderable = self.render(self.styles.rich_style)
         measurement = Measurement.get(
-            console, console.options.update_width(container_size.width), renderable
+            console, console.options.update_width(container.width), renderable
         )
         width = measurement.maximum
         return width
@@ -203,8 +203,7 @@ class Widget(DOMNode):
             options = self.console.options.update_width(width).update(highlight=False)
 
             segments = self.console.render(renderable, options)
-            # # Cheaper than counting the lines returned from render_lines!
-            # print(list(segments))
+            # Cheaper than counting the lines returned from render_lines!
             height = sum(text.count("\n") for text, _, _ in segments)
         return height
 

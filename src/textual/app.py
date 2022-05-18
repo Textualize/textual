@@ -837,19 +837,7 @@ class App(Generic[ReturnType], DOMNode):
         await self.close_messages()
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
-        if not self._running:
-            return
-        if not self._closed:
-            console = self.console
-            try:
-                if self._sync_available:
-                    console.file.write("\x1bP=1s\x1b\\")
-                console.print(self.screen._compositor)
-                if self._sync_available:
-                    console.file.write("\x1bP=2s\x1b\\")
-                console.file.flush()
-            except Exception as error:
-                self.on_exception(error)
+        self.display(self.screen._compositor)
 
     def refresh_css(self, animate: bool = True) -> None:
         """Refresh CSS.
@@ -864,14 +852,12 @@ class App(Generic[ReturnType], DOMNode):
         self.refresh(layout=True)
 
     def display(self, renderable: RenderableType) -> None:
-        if not self._running:
-            return
-        if not self._closed:
+        if self._running and not self._closed:
             console = self.console
             if self._sync_available:
                 console.file.write("\x1bP=1s\x1b\\")
             try:
-                console.print(renderable)
+                console.print(renderable, end="")
             except Exception as error:
                 self.on_exception(error)
             if self._sync_available:

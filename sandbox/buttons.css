@@ -3,6 +3,10 @@
     background: rebeccapurple;
 }
 
+*:focus {
+    tint: yellow 50%;
+}
+
 #foo:hover {
     background: greenyellow;
 }

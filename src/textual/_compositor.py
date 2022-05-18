@@ -99,23 +99,27 @@ class LayoutUpdate:
 class SpansUpdate:
     """A renderable that applies updated spans to the screen."""
 
-    def __init__(self, spans: list[tuple[int, int, list[Segment]]]) -> None:
+    def __init__(
+        self, spans: list[tuple[int, int, list[Segment]]], crop_y: int
+    ) -> None:
         """Apply spans, which consist of a tuple of (LINE, OFFSET, SEGMENTS)
 
         Args:
             spans (list[tuple[int, int, list[Segment]]]): A list of spans.
         """
         self.spans = spans
+        self.last_y = crop_y - 1
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         move_to = Control.move_to
         new_line = Segment.line()
-        for last, (y, x, segments) in loop_last(self.spans):
+        last_y = self.last_y
+        for y, x, segments in self.spans:
             yield move_to(x, y)
             yield from segments
-            if not last:
+            if y != last_y:
                 yield new_line
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -318,7 +322,7 @@ class Compositor:
 
                 # Arrange the layout
                 placements, arranged_widgets = widget.layout.arrange(
-                    widget, child_region.size, widget.scroll_offset
+                    widget, child_region.size
                 )
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=get_order)
@@ -618,7 +622,7 @@ class Compositor:
                 (y, x1, line_crop(render_lines[y - crop_y], x1, x2))
                 for y, x1, x2 in spans
             ]
-            return SpansUpdate(render_spans)
+            return SpansUpdate(render_spans, crop_y2)
 
         else:
             render_lines = self._assemble_chops(chops)

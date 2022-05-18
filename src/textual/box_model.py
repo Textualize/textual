@@ -38,12 +38,13 @@ def get_box_model(
     is_content_box = styles.box_sizing == "content-box"
     is_border_box = styles.box_sizing == "border-box"
     gutter = styles.padding + styles.border.spacing
+    margin = styles.margin
 
     is_auto_width = styles.width and styles.width.is_auto
     is_auto_height = styles.height and styles.height.is_auto
 
     if not has_rule("width"):
-        width = container.width
+        width = container.width - margin.width
     elif is_auto_width:
         # When width is auto, we want enough space to always fit the content
         width = get_content_width(
@@ -65,7 +66,7 @@ def get_box_model(
         width = min(width, max_width)
 
     if not has_rule("height"):
-        height = container.height
+        height = container.height - margin.height
     elif styles.height.is_auto:
         height = get_content_height(
             container - gutter.totals if is_border_box else container, viewport, width
@@ -90,9 +91,5 @@ def get_box_model(
         width += gutter.width
         height += gutter.height
 
-    size = Size(width, height)
-    margin = styles.margin
-
-    model = BoxModel(size, margin)
-
+    model = BoxModel(Size(width, height), margin)
     return model
