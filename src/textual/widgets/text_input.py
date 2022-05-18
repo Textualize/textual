@@ -178,13 +178,14 @@ class TextInput(TextWidgetBase, can_focus=True):
 
     def on_click(self, event: events.Click) -> None:
         # TODO: Support more than ASCII
-        if not self.content_region.contains_point((event.x, event.y)):
+        if not self.content_region.contains_point((event.screen_x, event.screen_y)):
             return
 
         self._cursor_blink_visible = True
         start_index, end_index = self.visible_range
 
-        new_cursor_index = start_index + event.x - self.content_region.x
+        new_cursor_index = start_index + event.screen_x - self.content_region.x
+        print(new_cursor_index)
         new_cursor_index = clamp(new_cursor_index, 0, len(self._editor.content))
         self._editor.cursor_index = new_cursor_index
         print(self._editor.cursor_index)
