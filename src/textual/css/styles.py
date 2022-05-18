@@ -129,8 +129,8 @@ class RulesMap(TypedDict, total=False):
 
     scrollbar_gutter: ScrollbarGutter
 
-    scrollbar_size_vertical: Scalar
-    scrollbar_size_horizontal: Scalar
+    scrollbar_size_vertical: int
+    scrollbar_size_horizontal: int
 
     align_horizontal: AlignHorizontal
     align_vertical: AlignVertical
@@ -675,15 +675,19 @@ class Styles(StylesBase):
         if has_rule("scrollbar-gutter"):
             append_declaration("scrollbar-gutter", self.scrollbar_gutter)
         if has_rule("scrollbar-size"):
-            append_declaration("scrollbar-size", self.scrollbar_size)
-        if has_rule("scrollbar-size-vertical"):
             append_declaration(
-                "scrollbar-size-vertical", str(self.scrollbar_size_vertical)
+                "scrollbar-size",
+                f"{self.scrollbar_size_horizontal} {self.scrollbar_size_vertical}",
             )
-        if has_rule("scrollbar-size-horizontal"):
-            append_declaration(
-                "scrollbar-size-horizontal", str(self.scrollbar_size_horizontal)
-            )
+        else:
+            if has_rule("scrollbar-size-horizontal"):
+                append_declaration(
+                    "scrollbar-size-horizontal", str(self.scrollbar_size_horizontal)
+                )
+            if has_rule("scrollbar-size-vertical"):
+                append_declaration(
+                    "scrollbar-size-vertical", str(self.scrollbar_size_vertical)
+                )
 
         if has_rule("box-sizing"):
             append_declaration("box-sizing", self.box_sizing)

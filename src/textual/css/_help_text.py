@@ -614,6 +614,65 @@ def offset_property_help_text(context: StylingContext) -> HelpText:
     )
 
 
+def scrollbar_size_property_help_text(context: StylingContext) -> HelpText:
+    """Help text to show when the user supplies an invalid value for the scrollbar-size property.
+
+    Args:
+        context (StylingContext | None): The context the property is being used in.
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
+    return HelpText(
+        summary="Invalid value for [i]scrollbar-size[/] property",
+        bullets=[
+            *ContextSpecificBullets(
+                inline=[
+                    Bullet(
+                        markup="The [i]scrollbar_size[/] property expects a tuple of 2 values [i](<horizontal>, <vertical>)[/]",
+                        examples=[
+                            Example("widget.styles.scrollbar_size = (2, 1)"),
+                        ],
+                    ),
+                ],
+                css=[
+                    Bullet(
+                        markup="The [i]scrollbar-size[/] property expects a value of the form [i]<horizontal> <vertical>[/]",
+                        examples=[
+                            Example(
+                                "scrollbar-size: 2 3;  [dim]# Horizontal offset of 2, vertical offset of 3"
+                            ),
+                        ],
+                    ),
+                ],
+            ).get_by_context(context),
+            Bullet("<horizontal> and <vertical> must be integers"),
+        ],
+    )
+
+
+def scrollbar_size_single_axis_help_text(property_name: str) -> HelpText:
+    """Help text to show when the user supplies an invalid value for a scrollbar-size-* property.
+
+    Args:
+        property_name (str): The name of the property
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
+    return HelpText(
+        summary=f"Invalid value for [i]{property_name}[/]",
+        bullets=[
+            Bullet(
+                markup=f"The [i]{property_name}[/] property can only be set to a integer",
+                examples=[
+                    Example(f"{property_name}: 2;"),
+                ],
+            ),
+        ],
+    )
+
+
 def align_help_text() -> HelpText:
     """Help text to show when the user supplies an invalid value for a `align`.
 
