@@ -1,14 +1,20 @@
 from __future__ import annotations
 
+import sys
 from functools import lru_cache
+from typing import cast, Tuple, Union
 
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 import rich.repr
 from rich.segment import Segment, SegmentLines
-from rich.style import Style
+from rich.style import Style, Color
 
 from .css.types import EdgeStyle, EdgeType
 
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:  # pragma: no cover
+    from typing_extensions import TypeAlias
 
 INNER = 1
 OUTER = 2
@@ -57,7 +63,9 @@ BORDER_LOCATIONS: dict[
     "wide": ((1, 1, 1), (0, 1, 0), (1, 1, 1)),
 }
 
-INVISIBLE_EDGE_TYPES: tuple[EdgeType, ...] = ("", "none", "hidden")
+INVISIBLE_EDGE_TYPES = cast("frozenset[EdgeType]", frozenset(("", "none", "hidden")))
+
+BorderValue: TypeAlias = Tuple[EdgeType, Union[str, Color, Style]]
 
 
 @lru_cache(maxsize=1024)
@@ -141,7 +149,7 @@ class Border:
             (bottom, bottom_color),
             (left, left_color),
         ) = edge_styles
-        self._sides: tuple[EdgeType, ...] = (
+        self._sides: tuple[EdgeType, EdgeType, EdgeType, EdgeType] = (
             top or "none",
             right or "none",
             bottom or "none",
@@ -170,10 +178,11 @@ class Border:
             width (int): Desired width.
         """
         top, right, bottom, left = self._sides
-        has_left = left not in INVISIBLE_EDGE_TYPES
-        has_right = right not in INVISIBLE_EDGE_TYPES
-        has_top = top not in INVISIBLE_EDGE_TYPES
-        has_bottom = bottom not in INVISIBLE_EDGE_TYPES
+        # the 4 following lines rely on the fact that we normalise "none" and "hidden" to en empty string
+        has_left = bool(left)
+        has_right = bool(right)
+        has_top = bool(top)
+        has_bottom = bool(bottom)
 
         if has_top:
             lines.pop(0)
@@ -199,10 +208,11 @@ class Border:
         outer_style = console.get_style(self.outer_style)
         top_style, right_style, bottom_style, left_style = self._styles
 
-        has_left = left not in INVISIBLE_EDGE_TYPES
-        has_right = right not in INVISIBLE_EDGE_TYPES
-        has_top = top not in INVISIBLE_EDGE_TYPES
-        has_bottom = bottom not in INVISIBLE_EDGE_TYPES
+        # ditto than in `_crop_renderable` ☝
+        has_left = bool(left)
+        has_right = bool(right)
+        has_top = bool(top)
+        has_bottom = bool(bottom)
 
         width = options.max_width - has_left - has_right
 
@@ -271,6 +281,18 @@ class Border:
             if has_right:
                 yield box3 if bottom == right else _Segment(" ", box3.style)
             yield new_line
+
+
+_edge_type_normalization_table: dict[EdgeType, EdgeType] = {
+    # i.e. we normalize "border: none;" to "border: ;".
+    # As a result our layout-related calculations that include borders are simpler (and have better performance)
+    "none": "",
+    "hidden": "",
+}
+
+
+def normalize_border_value(value: BorderValue) -> BorderValue:
+    return _edge_type_normalization_table.get(value[0], value[0]), value[1]
 
 
 if __name__ == "__main__":
