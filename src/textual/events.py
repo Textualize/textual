@@ -9,7 +9,7 @@ from . import log
 from .geometry import Offset, Size
 from .message import Message
 from ._types import MessageTarget
-from .keys import Keys
+from .keys import Keys, KEY_BINDINGS
 
 MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
 
@@ -199,6 +199,16 @@ class Key(InputEvent):
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "key", self.key
+
+    @property
+    def is_printable(self) -> bool:
+        """Return True if the key is printable. Currently, we assume any key event that
+        isn't defined in key bindings is printable.
+
+        Returns:
+            bool: True if the key is printable. False otherwise.
+        """
+        return self.key not in KEY_BINDINGS
 
 
 @rich.repr.auto

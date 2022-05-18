@@ -39,7 +39,8 @@ class TextEditorBackend:
     def delete_forward(self) -> bool:
         """Delete the character in front of the cursor without moving the cursor.
 
-        Returns: True if the text content was modified. False otherwise.
+        Returns:
+            bool: True if the text content was modified. False otherwise.
         """
         if self.cursor_index == len(self.content):
             return False
