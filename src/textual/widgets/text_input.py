@@ -56,7 +56,6 @@ class TextWidgetBase(Widget):
             self.post_message_no_wait(self.Changed(self, value=self._editor.content))
 
         self.refresh(layout=True)
-        print("at end of TextWidgetBase.on_key")
 
     def _apply_cursor_to_text(self, display_text: Text, index: int) -> Text:
         # Either write a cursor character or apply reverse style to cursor location
@@ -160,6 +159,9 @@ class TextInput(TextWidgetBase, can_focus=True):
 
     def on_resize(self, event: events.Resize) -> None:
         # Ensure the cursor remains visible when the widget is resized
+        self._reset_visible_range()
+
+    def _reset_visible_range(self):
         new_visible_range_end = max(
             self._editor.cursor_index + 1, self.content_region.width
         )
@@ -169,7 +171,6 @@ class TextInput(TextWidgetBase, can_focus=True):
 
     def render(self, style: Style) -> RenderableType:
         # First render: Cursor at start of text, visible range goes from cursor to content region width
-        print("inside render")
         if not self.visible_range:
             self.visible_range = (self._editor.cursor_index, self.content_region.width)
 
@@ -216,11 +217,10 @@ class TextInput(TextWidgetBase, can_focus=True):
                     # If the user has hit the scroll limit
                     self.app.bell()
 
-            print("pressed right", self._suggestion)
             if self._suggestion and self._editor.cursor_at_end:
                 self._editor.insert_at_cursor(self._suggestion)
                 self._suggestion = ""
-
+                self._reset_visible_range()
         elif key == "left":
             if cursor_index == start:
                 if scrollable and self._editor.query_cursor_left():
@@ -258,13 +258,16 @@ class TextInput(TextWidgetBase, can_focus=True):
         # We need to clamp the visible range to ensure we don't use negative indexing
         start, end = self.visible_range
         self.visible_range = (max(0, start), end)
-        print("at end of TextInput.on_key")
 
-    def _update_suggestion(self, event: events.Key):
+    def _update_suggestion(self, event: events.Key) -> None:
+        """Run the autocompleter function, updating the suggestion if necessary"""
         if self.autocompleter is not None:
             event.prevent_default()
             super().on_key(event)
-            self._suggestion = self.autocompleter(self.value)
+            if self.value:
+                self._suggestion = self.autocompleter(self.value)
+            else:
+                self._suggestion = None
 
     class Submitted(Message, bubble=True):
         def __init__(self, sender: MessageTarget, value: str) -> None:

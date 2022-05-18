@@ -20,10 +20,10 @@ words = set(Path("/usr/share/dict/words").read_text().splitlines())
 
 
 def word_autocompleter(value: str) -> str | None:
-    print(value)
+    # An example autocompleter that uses the Unix dictionary to suggest
+    # word completions
     for word in words:
         if word.startswith(value):
-            print("autocompleter suggests: ", word)
             return word[len(value) :]
     return None
 
@@ -36,6 +36,11 @@ class InputApp(App[str]):
         text_boxes = Widget(self.fahrenheit, self.celsius)
         self.mount(inputs=text_boxes)
         self.mount(spacer=Widget())
+        self.mount(
+            top_search=Widget(
+                TextInput(autocompleter=word_autocompleter, id="topsearchbox")
+            )
+        )
         self.mount(
             footer=TextInput(
                 placeholder="Footer Search Bar", autocompleter=word_autocompleter

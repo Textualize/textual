@@ -37,12 +37,17 @@ Screen {
   dock: bottom;
 }
 
+#top_search {
+  dock: top;
+}
+
+#topsearchbox {
+  width: 10;
+}
+
 #footer {
+  background: $primary-darken-2;
   dock: bottom;
   height: 1;
   border: ;
-}
-
-#footer :focus {
-  border: heavy $secondary;
 }
