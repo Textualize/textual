@@ -10,7 +10,6 @@ from textual._text_backend import TextEditorBackend
 from textual._types import MessageTarget
 from textual.app import ComposeResult
 from textual.geometry import Size
-from textual.keys import KEY_BINDINGS
 from textual.message import Message
 from textual.widget import Widget
 
@@ -126,14 +125,30 @@ class TextInput(TextWidgetBase, can_focus=True):
         self.visible_range: tuple[int, int] | None = None
 
     @property
-    def value(self):
+    def value(self) -> str:
+        """Get the value from the text input widget as a string
+
+        Returns:
+            str: The value in the text input widget
+        """
         return self._editor.content
 
     @value.setter
-    def value(self, value: str):
+    def value(self, value: str) -> None:
+        """Update the value in the text input widget and move the cursor to the end of
+        the new value."""
         self._editor.set_content(value)
         self._editor.cursor_text_end()
-        self.refresh(layout=True)
+        self.refresh()
+
+    def on_resize(self, event: events.Resize) -> None:
+        # Ensure the cursor remains visible when the widget is resized
+        new_visible_range_end = max(
+            self._editor.cursor_index + 1, self.content_region.width
+        )
+        new_visible_range_start = new_visible_range_end - self.content_region.width
+        self.visible_range = (new_visible_range_start, new_visible_range_end)
+        self.refresh()
 
     def render(self, style: Style) -> RenderableType:
         # First render: Cursor at start of text, visible range goes from cursor to content region width
@@ -145,8 +160,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         if self._editor.content:
             start, end = self.visible_range
             visible_text = self._editor.get_range(start, end)
-            display_text = Text(visible_text, no_wrap=True)
-
+            display_text = Text(visible_text, no_wrap=True, overflow="ignore")
             if show_cursor:
                 display_text = self._apply_cursor_to_text(
                     display_text, self._editor.cursor_index - start
@@ -154,7 +168,9 @@ class TextInput(TextWidgetBase, can_focus=True):
             return display_text
         else:
             # The user has not entered text - show the placeholder
-            display_text = Text(self.placeholder, "dim")
+            display_text = Text(
+                self.placeholder, "dim", no_wrap=True, overflow="ignore"
+            )
             if show_cursor:
                 display_text = self._apply_cursor_to_text(display_text, 0)
             return display_text
