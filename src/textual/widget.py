@@ -113,11 +113,23 @@ class Widget(DOMNode):
     show_horizontal_scrollbar = Reactive(False, layout=True)
 
     def watch_show_horizontal_scrollbar(self, value: bool) -> None:
+        """Watch function for show_horizontal_scrollbar attribute.
+
+        Args:
+            value (bool): Show horizontal scrollbar flag.
+        """
         if not value:
+            # reset the scroll position if the scrollbar is hidden.
             self.scroll_to(0, 0, animate=False)
 
     def watch_show_vertical_scrollbar(self, value: bool) -> None:
+        """Watch function for show_vertical_scrollbar attribute.
+
+        Args:
+            value (bool): Show vertical scrollbar flag.
+        """
         if not value:
+            # reset the scroll position if the scrollbar is hidden.
             self.scroll_to(0, 0, animate=False)
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
