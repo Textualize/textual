@@ -22,7 +22,7 @@ textual = "textual.cli.cli:run"
 
 [tool.poetry.dependencies]
 python = "^3.7"
-rich = "^12.3.0"
+rich = "^12.4.0"
 
 #rich = {git = "git@github.com:willmcgugan/rich", rev = "link-id"}
 click = "8.1.2"

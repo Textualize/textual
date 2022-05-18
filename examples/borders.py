@@ -53,4 +53,5 @@ class BordersApp(App):
         self.mount(borders=borders_view)
 
 
-BordersApp.run(css_path="borders.css", log_path="textual.log")
+app = BordersApp(css_path="borders.css", log_path="textual.log")
+app.run()
