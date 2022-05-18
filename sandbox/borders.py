@@ -17,7 +17,7 @@ class VerticalContainer(Widget):
 
     VerticalContainer Placeholder {
         margin: 1 0;
-        height: 5;
+        height: auto;
         align: center top;
     }
     """
@@ -37,26 +37,28 @@ class Introduction(Widget):
         return Text("Here are the color edge types we support.", justify="center")
 
 
+class BorderDemo(Widget):
+    def __init__(self, name: str):
+        super().__init__(name=name)
+
+    def render(self, style) -> RenderableType:
+        return Text(self.name, style="black on yellow", justify="center")
+
+
 class MyTestApp(App):
     def compose(self) -> ComposeResult:
-        placeholders = []
+        border_demo_widgets = []
         for border_edge_type in EdgeType.__args__:
-            border_placeholder = Placeholder(
-                id=f"placeholder_{border_edge_type}",
-                title=(border_edge_type or " ").upper(),
-                name=f"border: {border_edge_type} white",
-            )
-            border_placeholder.styles.border = (border_edge_type, "white")
-            placeholders.append(border_placeholder)
+            border_demo = BorderDemo(f'"border: {border_edge_type} white"')
+            border_demo.styles.height = "auto"
+            border_demo.styles.margin = (1, 0)
+            border_demo.styles.border = (border_edge_type, "white")
+            border_demo_widgets.append(border_demo)
 
-        yield VerticalContainer(Introduction(), *placeholders, id="root")
+        yield VerticalContainer(Introduction(), *border_demo_widgets, id="root")
 
     def on_mount(self):
         self.bind("q", "quit")
-        self.bind("t", "tree")
-
-    def action_tree(self):
-        self.log(self.tree)
 
 
 app = MyTestApp()

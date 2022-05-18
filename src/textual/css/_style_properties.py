@@ -27,6 +27,7 @@ from ._help_text import (
     string_enum_help_text,
     color_property_help_text,
 )
+from .._border import INVISIBLE_EDGE_TYPES
 from ..color import Color, ColorPair, ColorParseError
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING, VALID_STYLE_FLAGS
@@ -243,10 +244,10 @@ class Edges(NamedTuple):
         """
         (top, _), (right, _), (bottom, _), (left, _) = self
         return Spacing(
-            1 if top else 0,
-            1 if right else 0,
-            1 if bottom else 0,
-            1 if left else 0,
+            1 if top not in INVISIBLE_EDGE_TYPES else 0,
+            1 if right not in INVISIBLE_EDGE_TYPES else 0,
+            1 if bottom not in INVISIBLE_EDGE_TYPES else 0,
+            1 if left not in INVISIBLE_EDGE_TYPES else 0,
         )
 
 

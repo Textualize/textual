@@ -8,7 +8,7 @@ from typing import AsyncContextManager, cast
 
 from rich.console import Console
 
-from textual import events
+from textual import events, errors
 from textual.app import App, ReturnType, ComposeResult
 from textual.driver import Driver
 from textual.geometry import Size
@@ -122,6 +122,36 @@ class AppTest(App):
             return None
         last_display_start_index = total_capture.rindex(CLEAR_SCREEN_SEQUENCE)
         return total_capture[last_display_start_index:]
+
+    def get_char_at(self, x: int, y: int) -> str:
+        """Get the character at the given cell or empty string
+
+        Args:
+            x (int): X position within the Layout
+            y (int): Y position within the Layout
+
+        Returns:
+            str: The character at the cell (x, y) within the Layout
+        """
+        # N.B. Basically a copy-paste-and-slightly-adapt of `Compositor.get_style_at()`
+        try:
+            widget, region = self.get_widget_at(x, y)
+        except errors.NoWidget:
+            return ""
+        if widget not in self.screen._compositor.regions:
+            return ""
+
+        x -= region.x
+        y -= region.y
+        lines = widget.get_render_lines(y, y + 1)
+        if not lines:
+            return ""
+        end = 0
+        for segment in lines[0]:
+            end += segment.cell_length
+            if x < end:
+                return segment.text[0]
+        return ""
 
     @property
     def console(self) -> ConsoleTest:

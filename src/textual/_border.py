@@ -57,7 +57,7 @@ BORDER_LOCATIONS: dict[
     "wide": ((1, 1, 1), (0, 1, 0), (1, 1, 1)),
 }
 
-_INVISIBLE_EDGE_TYPES: tuple[EdgeType, ...] = ("none", "hidden")
+INVISIBLE_EDGE_TYPES: tuple[EdgeType, ...] = ("", "none", "hidden")
 
 
 @lru_cache(maxsize=1024)
@@ -170,10 +170,10 @@ class Border:
             width (int): Desired width.
         """
         top, right, bottom, left = self._sides
-        has_left = left not in _INVISIBLE_EDGE_TYPES
-        has_right = right not in _INVISIBLE_EDGE_TYPES
-        has_top = top not in _INVISIBLE_EDGE_TYPES
-        has_bottom = bottom not in _INVISIBLE_EDGE_TYPES
+        has_left = left not in INVISIBLE_EDGE_TYPES
+        has_right = right not in INVISIBLE_EDGE_TYPES
+        has_top = top not in INVISIBLE_EDGE_TYPES
+        has_bottom = bottom not in INVISIBLE_EDGE_TYPES
 
         if has_top:
             lines.pop(0)
@@ -199,10 +199,10 @@ class Border:
         outer_style = console.get_style(self.outer_style)
         top_style, right_style, bottom_style, left_style = self._styles
 
-        has_left = left not in _INVISIBLE_EDGE_TYPES
-        has_right = right not in _INVISIBLE_EDGE_TYPES
-        has_top = top not in _INVISIBLE_EDGE_TYPES
-        has_bottom = bottom not in _INVISIBLE_EDGE_TYPES
+        has_left = left not in INVISIBLE_EDGE_TYPES
+        has_right = right not in INVISIBLE_EDGE_TYPES
+        has_top = top not in INVISIBLE_EDGE_TYPES
+        has_bottom = bottom not in INVISIBLE_EDGE_TYPES
 
         width = options.max_width - has_left - has_right
 

@@ -42,7 +42,7 @@ from .scalar import Scalar, ScalarOffset, Unit, ScalarError, ScalarParseError
 from .styles import DockGroup, Styles
 from .tokenize import Token
 from .transition import Transition
-from .types import BoxSizing, Edge, Display, Overflow, Visibility
+from .types import BoxSizing, Edge, Display, Overflow, Visibility, EdgeType
 from ..color import Color, ColorParseError
 from .._duration import _duration_as_seconds
 from .._easing import EASING
@@ -418,7 +418,7 @@ class StylesBuilder:
     process_padding_left = _process_space_partial
 
     def _parse_border(self, name: str, tokens: list[Token]) -> tuple[str, Color]:
-        border_type = "solid"
+        border_type: EdgeType = "solid"
         border_color = Color(0, 255, 0)
 
         def border_value_error():
