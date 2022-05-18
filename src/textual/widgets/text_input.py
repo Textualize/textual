@@ -13,7 +13,7 @@ from textual._text_backend import TextEditorBackend
 from textual._timer import Timer
 from textual._types import MessageTarget
 from textual.app import ComposeResult
-from textual.geometry import Size
+from textual.geometry import Size, clamp
 from textual.message import Message
 from textual.reactive import Reactive
 from textual.widget import Widget
@@ -25,7 +25,7 @@ class TextWidgetBase(Widget):
     STOP_PROPAGATE: set[str] = set()
     """Set of keybinds which will not be propagated to parent widgets"""
 
-    cursor_blink_enabled = Reactive(True)
+    cursor_blink_enabled = Reactive(False)
     cursor_blink_period = Reactive(0.6)
 
     def __init__(
@@ -175,6 +175,20 @@ class TextInput(TextWidgetBase, can_focus=True):
     def on_resize(self, event: events.Resize) -> None:
         # Ensure the cursor remains visible when the widget is resized
         self._reset_visible_range()
+
+    def on_click(self, event: events.Click) -> None:
+        # TODO: Support more than ASCII
+        if not self.content_region.contains_point((event.x, event.y)):
+            return
+
+        self._cursor_blink_visible = True
+        start_index, end_index = self.visible_range
+
+        new_cursor_index = start_index + event.x - self.content_region.x
+        new_cursor_index = clamp(new_cursor_index, 0, len(self._editor.content))
+        self._editor.cursor_index = new_cursor_index
+        print(self._editor.cursor_index)
+        self.refresh()
 
     def _reset_visible_range(self):
         new_visible_range_end = max(
