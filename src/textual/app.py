@@ -837,7 +837,7 @@ class App(Generic[ReturnType], DOMNode):
         await self.close_messages()
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
-        self.display(self.screen._compositor)
+        self._display(self.screen._compositor)
 
     def refresh_css(self, animate: bool = True) -> None:
         """Refresh CSS.
@@ -851,13 +851,18 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.update(self.app, animate=animate)
         self.refresh(layout=True)
 
-    def display(self, renderable: RenderableType) -> None:
+    def _display(self, renderable: RenderableType) -> None:
+        """Display a renderable within a sync.
+
+        Args:
+            renderable (RenderableType): A Rich renderable.
+        """
         if self._running and not self._closed:
             console = self.console
             if self._sync_available:
                 console.file.write("\x1bP=1s\x1b\\")
             try:
-                console.print(renderable, end="")
+                console.print(renderable)
             except Exception as error:
                 self.on_exception(error)
             if self._sync_available:

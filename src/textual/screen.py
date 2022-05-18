@@ -97,7 +97,7 @@ class Screen(Widget):
         # Render widgets together
         if self._dirty_widgets:
             self._compositor.update_widgets(self._dirty_widgets)
-            self.app.display(self._compositor.render())
+            self.app._display(self._compositor.render())
             self._dirty_widgets.clear()
         self._update_timer.pause()
 
@@ -140,7 +140,7 @@ class Screen(Widget):
 
         display_update = self._compositor.render()
         if display_update is not None:
-            self.app.display(display_update)
+            self.app._display(display_update)
 
     async def handle_update(self, message: messages.Update) -> None:
         message.stop()
