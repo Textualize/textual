@@ -67,4 +67,3 @@ app = InputApp(
 
 if __name__ == "__main__":
     result = app.run()
-    print(repr(result))
