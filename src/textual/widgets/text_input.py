@@ -10,6 +10,7 @@ from rich.text import Text
 
 from textual import events
 from textual._text_backend import TextEditorBackend
+from textual._timer import Timer
 from textual._types import MessageTarget
 from textual.app import ComposeResult
 from textual.geometry import Size
@@ -24,7 +25,7 @@ class TextWidgetBase(Widget):
     STOP_PROPAGATE: set[str] = set()
     """Set of keybinds which will not be propagated to parent widgets"""
 
-    cursor_blink_enabled = Reactive(True)
+    cursor_blink_enabled = Reactive(False)
     cursor_blink_period = Reactive(0.6)
 
     def __init__(
@@ -145,9 +146,11 @@ class TextInput(TextWidgetBase, can_focus=True):
         self.autocompleter = autocompleter
         self._suggestion = ""
 
+        self._cursor_blink_visible = True
+        self._cursor_blink_timer: Timer | None = None
+        self._last_keypress_time: float = 0.0
         if self.cursor_blink_enabled:
             self._last_keypress_time = time.monotonic()
-            self._cursor_blink_visible = True
             self._cursor_blink_timer = self.set_interval(
                 self.cursor_blink_period, self._toggle_cursor_visible
             )
@@ -286,6 +289,8 @@ class TextInput(TextWidgetBase, can_focus=True):
                 self._suggestion = None
 
     def _toggle_cursor_visible(self):
+        """Manages the blinking of the cursor - ensuring blinking only starts when the
+        user hasn't pressed a key in some time"""
         if time.monotonic() - self._last_keypress_time > self.cursor_blink_period:
             self._cursor_blink_visible = not self._cursor_blink_visible
             self.refresh()
