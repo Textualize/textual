@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from typing import Callable
 
 from rich.console import RenderableType
@@ -13,6 +14,7 @@ from textual._types import MessageTarget
 from textual.app import ComposeResult
 from textual.geometry import Size
 from textual.message import Message
+from textual.reactive import Reactive
 from textual.widget import Widget
 
 
@@ -21,6 +23,9 @@ class TextWidgetBase(Widget):
 
     STOP_PROPAGATE: set[str] = set()
     """Set of keybinds which will not be propagated to parent widgets"""
+
+    cursor_blink_enabled = Reactive(True)
+    cursor_blink_period = Reactive(0.6)
 
     def __init__(
         self,
@@ -140,6 +145,13 @@ class TextInput(TextWidgetBase, can_focus=True):
         self.autocompleter = autocompleter
         self._suggestion = ""
 
+        if self.cursor_blink_enabled:
+            self._last_keypress_time = time.monotonic()
+            self._cursor_blink_visible = True
+            self._cursor_blink_timer = self.set_interval(
+                self.cursor_blink_period, self._toggle_cursor_visible
+            )
+
     @property
     def value(self) -> str:
         """Get the value from the text input widget as a string
@@ -175,7 +187,7 @@ class TextInput(TextWidgetBase, can_focus=True):
             self.visible_range = (self._editor.cursor_index, self.content_region.width)
 
         # We only show the cursor if the widget has focus
-        show_cursor = self.has_focus
+        show_cursor = self.has_focus and self._cursor_blink_visible
         if self._editor.content:
             start, end = self.visible_range
             visible_text = self._editor.get_range(start, end)
@@ -202,6 +214,10 @@ class TextInput(TextWidgetBase, can_focus=True):
         key = event.key
         if key in self.STOP_PROPAGATE:
             event.stop()
+
+        self._last_keypress_time = time.monotonic()
+        if self._cursor_blink_timer:
+            self._cursor_blink_visible = True
 
         start, end = self.visible_range
         cursor_index = self._editor.cursor_index
@@ -268,6 +284,11 @@ class TextInput(TextWidgetBase, can_focus=True):
                 self._suggestion = self.autocompleter(self.value)
             else:
                 self._suggestion = None
+
+    def _toggle_cursor_visible(self):
+        if time.monotonic() - self._last_keypress_time > self.cursor_blink_period:
+            self._cursor_blink_visible = not self._cursor_blink_visible
+            self.refresh()
 
     class Submitted(Message, bubble=True):
         def __init__(self, sender: MessageTarget, value: str) -> None:
