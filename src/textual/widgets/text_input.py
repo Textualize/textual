@@ -246,7 +246,8 @@ class TextInput(TextWidgetBase, can_focus=True):
         available_width = self.content_region.width
         scrollable = cell_len(self._editor.content) >= available_width
 
-        visible_content_cell_len = cell_len(self._editor.get_range(start, end))
+        visible_content = self._editor.get_range(start, end)
+        visible_content_cell_len = cell_len(visible_content)
 
         visible_content_to_cursor = self._editor.get_range(
             start, self._editor.cursor_index + 1
@@ -258,7 +259,6 @@ class TextInput(TextWidgetBase, can_focus=True):
         visible_content_to_cursor_cell_len = cell_len(visible_content_to_cursor)
 
         cursor_at_end = visible_content_to_cursor_cell_len == available_width
-        trailing_cell_len = cell_len(self._editor.get_range(start + 1, end + 1))
         key_cell_len = cell_len(key)
         if event.is_printable:
             # If we're at the end of the visible range, and the editor backend
@@ -266,18 +266,15 @@ class TextInput(TextWidgetBase, can_focus=True):
             # window/range along to the right.
 
             # Check if we'll need to scroll to accommodate the new cell width after insertion.
-            scroll_required = trailing_cell_len + key_cell_len >= available_width - 1
-            self.log(trailing_cell_len=trailing_cell_len)
             self.log(key_cell_len=key_cell_len)
-            if visible_content_cell_len == available_width - key_cell_len:
+            if visible_content_to_cursor_cell_len + key_cell_len >= available_width:
                 self.visible_range = start + key_cell_len, end + key_cell_len
             self._update_suggestion(event)
         elif (
             key == "ctrl+x"
         ):  # TODO: This allows us to query and print the text input state
-            trailing_cell_len = cell_len(self._editor.get_range(start + 1, end + 1))
-            self.log(trailing_cell_len=trailing_cell_len)
-            self.log(visible_cell_len=visible_content_cell_len)
+            self.log(visible_content=visible_content)
+            self.log(visible_content_cell_len=visible_content_cell_len)
             self.log(
                 visible_content_to_cursor_cell_len=visible_content_to_cursor_cell_len
             )
