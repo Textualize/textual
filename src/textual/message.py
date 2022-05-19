@@ -39,7 +39,7 @@ class Message:
 
         self.sender = sender
         self.name = camel_to_snake(self.__class__.__name__.replace("Message", ""))
-        self.time = _clock.get_time()
+        self.time = _clock.get_time_no_wait()
         self._forwarded = False
         self._no_default_action = False
         self._stop_propagation = False

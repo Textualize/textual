@@ -248,4 +248,4 @@ class Animator:
         """Get the current wall clock time, via the internal Timer."""
         # N.B. We could remove this method and always call `self._timer.get_time()` internally,
         # but it's handy to have in mocking situations
-        return _clock.get_time()
+        return _clock.get_time_no_wait()

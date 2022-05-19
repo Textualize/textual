@@ -13,11 +13,11 @@ by mocking the few functions exposed by this module.
 # even for Python modules that imported functions such as `get_time` *before* we mocked this internal _Clock.
 # (so mocking public APIs such as `get_time` wouldn't affect direct references to then that were done during imports)
 class _Clock:
-    def get_time(self) -> float:
-        return monotonic()
+    async def get_time(self) -> float:
+        return self.get_time_no_wait()
 
-    async def aget_time(self) -> float:
-        return self.get_time()
+    def get_time_no_wait(self) -> float:
+        return monotonic()
 
     async def sleep(self, seconds: float) -> None:
         await asyncio.sleep(seconds)
@@ -27,17 +27,17 @@ class _Clock:
 _clock = _Clock()
 
 
-def get_time() -> float:
+def get_time_no_wait() -> float:
     """
     Get the current wall clock time.
 
     Returns:
         float: the value (in fractional seconds) of a monotonic clock, i.e. a clock that cannot go backwards.
     """
-    return _clock.get_time()
+    return _clock.get_time_no_wait()
 
 
-async def aget_time() -> float:
+async def get_time() -> float:
     """
     Asynchronous version of `get_time`. Useful in situations where we want asyncio to be
     able to "do things" elsewhere right before we fetch the time.
@@ -45,7 +45,7 @@ async def aget_time() -> float:
     Returns:
         float: the value (in fractional seconds) of a monotonic clock, i.e. a clock that cannot go backwards.
     """
-    return await _clock.aget_time()
+    return await _clock.get_time()
 
 
 async def sleep(seconds: float) -> None:

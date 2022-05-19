@@ -83,9 +83,7 @@ class AppTest(App):
                 # run in this one - so the app must also be the active App in our current context:
                 self._set_active()
 
-                await clock_mock.move_clock_forward(
-                    seconds=waiting_duration_after_initialisation
-                )
+                await clock_mock.advance_clock(waiting_duration_after_initialisation)
                 # make sure the App has entered its main loop at this stage:
                 assert self._driver is not None
 
@@ -96,12 +94,10 @@ class AppTest(App):
                 # so it can also do some time-based Textual stuff if it needs to:
                 yield clock_mock
 
-                await clock_mock.move_clock_forward(
-                    seconds=waiting_duration_after_yield
-                )
+                await clock_mock.advance_clock(waiting_duration_after_yield)
 
-                # Make sure our screen is up to date before exiting the context manager,
-                # so tests using our `last_display_capture` for example can assert things on an up to date screen:
+                # Make sure our screen is up-to-date before exiting the context manager,
+                # so tests using our `last_display_capture` for example can assert things on a fully refreshed screen:
                 await self.force_full_screen_update()
 
             # End of simulated time: we just shut down ourselves:
@@ -267,66 +263,62 @@ async def let_asyncio_process_some_events() -> None:
 
 
 class ClockMock(_Clock):
+    # To avoid issues with floats we will store the current time as an integer internally.
+    # Tenths of microseconds should be a good enough granularity:
+    TIME_RESOLUTION = 10_000_000
+
     def __init__(
         self,
         *,
         ticks_granularity_fps: int = 60,
     ):
         self._ticks_granularity_fps = ticks_granularity_fps
-        self._single_tick_duration = 1.0 / ticks_granularity_fps
-        self._start_time = self._current_time = None
-        self._pending_sleep_events: list[tuple[float, asyncio.Event]] = []
+        self._single_tick_duration = int(self.TIME_RESOLUTION / ticks_granularity_fps)
+        self._start_time: int = -1
+        self._current_time: int = -1
+        self._pending_sleep_events: list[tuple[int, asyncio.Event]] = []
 
-    def get_time(self) -> float:
-        if self._current_time is None:
+    def get_time_no_wait(self) -> float:
+        if self._current_time == -1:
             self._start_clock()
 
-        # let's make the time advance _very_ slightly between 2 consecutive calls of this function,
-        # within the same order of magnitude than 2 consecutive calls to ` timer.monotonic()`:
-        self._current_time += 1.1e-06
-
-        return self._current_time
+        return self._current_time / self.TIME_RESOLUTION
 
     async def sleep(self, seconds: float) -> None:
         event = asyncio.Event()
-        target_event_monotonic_time = self._current_time + seconds
+        internal_waiting_duration = int(seconds * self.TIME_RESOLUTION)
+        target_event_monotonic_time = self._current_time + internal_waiting_duration
         self._pending_sleep_events.append((target_event_monotonic_time, event))
         # Ok, let's wait for this Event
-        # (which can only be "unlocked" by calls to `move_clock_forward()`)
+        # (which can only be "unlocked" by calls to `advance_clock()`)
         await event.wait()
 
-    async def move_clock_forward(self, *, seconds: float) -> tuple[float, int]:
+    async def advance_clock(self, seconds: float) -> None:
         """
-        Artificially moves the Textual clock forward.
+        Artificially advance the Textual clock forward.
 
         Args:
             seconds: for each second we will artificially tick `ticks_granularity_fps` times
-
-        Returns:
-            tuple[float, int]: a tuple giving the new mocked current time and the number of sleep awaiters
-                that were unblocked by this call to  `move_clock_forward`
         """
-        if self._current_time is None:
+        if self._current_time == -1:
             self._start_clock()
 
         ticks_count = ceil(seconds * self._ticks_granularity_fps)
-        activated_timers_count_total = 0
+        activated_timers_count_total = 0  # useful when debugging this code :-)
         for tick_counter in range(ticks_count):
             self._current_time += self._single_tick_duration
             activated_timers_count = self._check_sleep_timers_to_activate()
             activated_timers_count_total += activated_timers_count
-            # Let's give an opportunity to asyncio-related stuff to happen,
-            # now that we likely unlocked some occurrences of `await sleep(duration)`:
+            # Now that we likely unlocked some occurrences of `await sleep(duration)`,
+            # let's give an opportunity to asyncio-related stuff to happen:
             if activated_timers_count:
                 await let_asyncio_process_some_events()
 
         await let_asyncio_process_some_events()
 
-        return self._current_time, activated_timers_count_total
-
     def _start_clock(self) -> None:
-        # N.B. `start_time` is not used, but it is useful to have when we set breakpoints there :-)
-        self._start_time = self._current_time = monotonic()
+        # N.B. `start_time` is not actually used, but it is useful to have when we set breakpoints there :-)
+        self._start_time = self._current_time = int(monotonic() * self.TIME_RESOLUTION)
 
     def _check_sleep_timers_to_activate(self) -> int:
         activated_timers_count = 0
