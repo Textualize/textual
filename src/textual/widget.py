@@ -66,12 +66,11 @@ class RenderCache(NamedTuple):
 @rich.repr.auto
 class Widget(DOMNode):
 
+    CSS = """
+    """
+
     can_focus: bool = False
     can_focus_children: bool = True
-
-    CSS = """
-    
-    """
 
     def __init__(
         self,
@@ -169,14 +168,18 @@ class Widget(DOMNode):
             self.get_content_width,
             self.get_content_height,
         )
+        print("--")
+        print(self)
+        print("container", container)
+        print("model", box_model)
         return box_model
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         """Gets the width of the content area.
 
         Args:
-            container_size (Size): Size of the container (immediate parent) widget.
-            viewport_size (Size): Size of the viewport.
+            container (Size): Size of the container (immediate parent) widget.
+            viewport (Size): Size of the viewport.
 
         Returns:
             int: The optimal width of the content.
@@ -194,32 +197,34 @@ class Widget(DOMNode):
         width = measurement.maximum
         return width
 
-    def get_content_height(
-        self, container_size: Size, viewport_size: Size, width: int
-    ) -> int:
+    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         """Gets the height (number of lines) in the content area.
 
         Args:
-            container_size (Size): Size of the container (immediate parent) widget.
-            viewport_size (Size): Size of the viewport.
+            container (Size): Size of the container (immediate parent) widget.
+            viewport (Size): Size of the viewport.
             width (int): Width of renderable.
 
         Returns:
             int: The height of the content.
         """
-
         if self.is_container:
             assert self.layout is not None
             height = self.layout.get_content_height(
-                self, container_size, viewport_size, width
+                self,
+                container,
+                viewport,
+                width,
             )
+            print(self, "auto_height container", "width=", width, "height=", height)
         else:
             renderable = self.render(self.styles.rich_style)
             options = self.console.options.update_width(width).update(highlight=False)
-
             segments = self.console.render(renderable, options)
             # Cheaper than counting the lines returned from render_lines!
             height = sum(text.count("\n") for text, _, _ in segments)
+            print(self, "auto_height renderable", height)
+
         return height
 
     async def watch_scroll_x(self, new_value: float) -> None:
@@ -690,13 +695,9 @@ class Widget(DOMNode):
         return self._animate
 
     @property
-    def layout(self) -> Layout | None:
-        return self.styles.layout or (
-            # If we have children we _should_ return a layout, otherwise they won't be displayed:
-            self._default_layout
-            if self.children
-            else None
-        )
+    def layout(self) -> Layout:
+        """Get the layout object if set in styles, or a default layout."""
+        return self.styles.layout or self._default_layout
 
     @property
     def is_container(self) -> bool:

@@ -26,8 +26,12 @@ DockEdge = Literal["top", "right", "bottom", "left"]
 @dataclass
 class DockOptions:
     size: int | None = None
-    fraction: int = 1
+    fraction: int | None = 1
     min_size: int = 1
+
+    def __post_init__(self) -> None:
+        if self.size is None and self.fraction is None:
+            self.fraction = 1
 
 
 class Dock(NamedTuple):
@@ -71,6 +75,7 @@ class DockLayout(Layout):
             styles = widget.styles
             has_rule = styles.has_rule
 
+            # TODO: This was written pre resolve_dimension, we should update this to use available units
             return (
                 DockOptions(
                     styles.width.cells if has_rule("width") else None,

@@ -19,7 +19,6 @@ class VerticalLayout(Layout):
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
 
-        max_width = max_height = 0
         parent_size = parent.size
 
         box_models = [
@@ -43,9 +42,8 @@ class VerticalLayout(Layout):
             region = Region(offset_x, y, content_width, content_height)
             add_placement(WidgetPlacement(region, widget, 0))
             y += region.height + margin
-            max_height = y
 
-        total_region = Region(0, 0, max_width, max_height)
+        total_region = Region(0, 0, size.width, y)
         add_placement(WidgetPlacement(total_region, None, 0))
 
         return placements, set(displayed_children)

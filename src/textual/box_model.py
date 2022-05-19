@@ -35,50 +35,48 @@ def get_box_model(
     width, height = container
     is_content_box = styles.box_sizing == "content-box"
     is_border_box = styles.box_sizing == "border-box"
-    gutter = styles.padding + styles.border.spacing
+    gutter = styles.gutter
     margin = styles.margin
 
     is_auto_width = styles.width and styles.width.is_auto
+    is_auto_height = styles.height and styles.height.is_auto
+
+    # Container minus padding and border
+    content_container = container - gutter.totals
+    # The container including the content
+    sizing_container = content_container if is_border_box else container
 
     if styles.width is None:
         width = container.width - margin.width
     elif is_auto_width:
         # When width is auto, we want enough space to always fit the content
-        width = get_content_width(
-            (container - gutter.totals if is_border_box else container)
-            - styles.margin.totals,
-            viewport,
-        )
+        width = get_content_width(sizing_container - styles.margin.totals, viewport)
     else:
         width = styles.width.resolve_dimension(container, viewport)
 
     if styles.min_width is not None:
-        min_width = styles.min_width.resolve_dimension(container, viewport)
+        min_width = styles.min_width.resolve_dimension(content_container, viewport)
         width = max(width, min_width)
 
     if styles.max_width is not None:
-        max_width = styles.max_width.resolve_dimension(container, viewport)
+        max_width = styles.max_width.resolve_dimension(content_container, viewport)
         width = min(width, max_width)
 
     if styles.height is None:
         height = container.height - margin.height
     elif styles.height.is_auto:
-        height = get_content_height(
-            container - gutter.totals if is_border_box else container,
-            viewport,
-            (width - gutter.width) if is_border_box else width,
-        )
+        height = get_content_height(content_container, viewport, width - gutter.width)
         if is_border_box:
             height += gutter.height
     else:
-        height = styles.height.resolve_dimension(container, viewport)
+        height = styles.height.resolve_dimension(content_container, viewport)
 
     if styles.min_height is not None:
-        min_height = styles.min_height.resolve_dimension(container, viewport)
+        min_height = styles.min_height.resolve_dimension(content_container, viewport)
         height = max(height, min_height)
 
     if styles.max_height is not None:
-        max_height = styles.max_height.resolve_dimension(container, viewport)
+        max_height = styles.max_height.resolve_dimension(content_container, viewport)
         height = min(height, max_height)
 
     if is_border_box and is_auto_width:
@@ -86,7 +84,7 @@ def get_box_model(
 
     if is_content_box:
         width += gutter.width
-        height += gutter.height
+        # height += gutter.height
 
     model = BoxModel(Size(width, height), margin)
     return model

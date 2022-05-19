@@ -1,0 +1,25 @@
+
+
+Vertical {
+    background: blue;
+  
+}
+
+#container {
+    width:50%; 
+    height: auto; 
+    align-horizontal: center;
+    padding: 1; 
+    border: heavy white; 
+    background: white 50%; 
+    overflow-y: auto    
+}
+
+TextWidget {
+    /* width: 50%; */
+    height: auto;
+    padding: 2; 
+    background: green 30%;
+    border: yellow;
+    box-sizing: border-box;    
+}

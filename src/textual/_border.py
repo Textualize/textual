@@ -166,7 +166,7 @@ class Border:
 
         if has_top:
             lines.pop(0)
-        if has_bottom:
+        if has_bottom and lines:
             lines.pop(-1)
 
         divide = Segment.divide

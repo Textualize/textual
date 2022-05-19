@@ -69,7 +69,7 @@ App > Screen {
   color: $text-background;
   background: $background;
   layout: vertical;
-  overflow-y: scroll;  
+  overflow-y: scroll; 
 }
 
 
@@ -114,11 +114,11 @@ TweetHeader {
 }
 
 TweetBody {  
-  width: 100%;
+  width: 100w;
   background: $panel;
   color: $text-panel;
   height: auto;
-  padding: 0 1 0 0;
+  padding: 0 1 0 0; 
  
 }
 
