@@ -85,9 +85,9 @@ Tweet {
   padding: 1;
   border: wide $panel-darken-2;
   overflow-y: auto;
-  scrollbar-gutter: stable;
+  /* scrollbar-gutter: stable; */
   align-horizontal: center;
-  box-sizing: content-box;
+  box-sizing: border-box;
 }
 
 .scrollable {

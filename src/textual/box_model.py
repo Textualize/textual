@@ -64,7 +64,9 @@ def get_box_model(
         height = container.height - margin.height
     elif styles.height.is_auto:
         height = get_content_height(
-            container - gutter.totals if is_border_box else container, viewport, width
+            container - gutter.totals if is_border_box else container,
+            viewport,
+            (width - gutter.width) if is_border_box else width,
         )
         if is_border_box:
             height += gutter.height
