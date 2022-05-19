@@ -246,9 +246,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         available_width = self.content_region.width
         scrollable = cell_len(self._editor.content) >= available_width
 
-        visible_content_cell_len = cell_len(
-            self._editor.get_range(start, end)
-        )  # TODO: This is correct
+        visible_content_cell_len = cell_len(self._editor.get_range(start, end))
 
         visible_content_to_cursor = self._editor.get_range(
             start, self._editor.cursor_index + 1
@@ -259,26 +257,40 @@ class TextInput(TextWidgetBase, can_focus=True):
 
         visible_content_to_cursor_cell_len = cell_len(visible_content_to_cursor)
 
-        self.log(visible_content_to_cursor=visible_content_to_cursor)
-        self.log(visible_content_to_cursor_cell_len=visible_content_to_cursor_cell_len)
+        cursor_at_end = visible_content_to_cursor_cell_len == available_width
+        trailing_cell_len = cell_len(self._editor.get_range(start + 1, end + 1))
+        key_cell_len = cell_len(key)
+        if event.is_printable:
+            # If we're at the end of the visible range, and the editor backend
+            # will permit us to move the cursor right, then shift the visible
+            # window/range along to the right.
 
-        cursor_at_end = (
-            visible_content_to_cursor_cell_len == available_width
-            or visible_content_to_cursor_cell_len == available_width - 1
-            and cell_len(self._editor.query_cursor_right() or "") == 2
-        )
-
-        self.log(cell_len=visible_content_cell_len)
-        self.log(char_to_right=self._editor.query_cursor_right())
-
-        if key == "enter" and self._editor.content:
+            # Check if we'll need to scroll to accommodate the new cell width after insertion.
+            scroll_required = trailing_cell_len + key_cell_len >= available_width - 1
+            self.log(trailing_cell_len=trailing_cell_len)
+            self.log(key_cell_len=key_cell_len)
+            if visible_content_cell_len == available_width - key_cell_len:
+                self.visible_range = start + key_cell_len, end + key_cell_len
+            self._update_suggestion(event)
+        elif (
+            key == "ctrl+x"
+        ):  # TODO: This allows us to query and print the text input state
+            trailing_cell_len = cell_len(self._editor.get_range(start + 1, end + 1))
+            self.log(trailing_cell_len=trailing_cell_len)
+            self.log(visible_cell_len=visible_content_cell_len)
+            self.log(
+                visible_content_to_cursor_cell_len=visible_content_to_cursor_cell_len
+            )
+            self.log(available_width=available_width)
+            self.log(cursor_index=self._editor.cursor_index)
+        elif key == "enter" and self._editor.content:
             self.post_message_no_wait(TextInput.Submitted(self, self._editor.content))
         elif key == "right":
-            print(visible_content_cell_len)
-            print(available_width)
-            print(cursor_index)
-            if cursor_at_end:
-                print("scrolling")
+            if (
+                cursor_at_end
+                or visible_content_to_cursor_cell_len == available_width - 1
+                and cell_len(self._editor.query_cursor_right() or "") == 2
+            ):
                 if scrollable:
                     character_to_right = self._editor.query_cursor_right()
                     if character_to_right is not None:
@@ -324,26 +336,6 @@ class TextInput(TextWidgetBase, can_focus=True):
                 )
             else:
                 self.visible_range = (0, available_width)
-        elif event.is_printable:
-            # If we're at the end of the visible range, and the editor backend
-            # will permit us to move the cursor right, then shift the visible
-            # window/range along to the right.
-
-            # Check if we'll need to scroll to accommodate the new cell width after insertion.
-            trailing_cell_len = cell_len(self._editor.get_range(start + 1, end + 1))
-            key_cell_len = cell_len(event.key)
-            scroll_required = trailing_cell_len + key_cell_len >= available_width - 1
-            self.log(trailing_cell_len=trailing_cell_len)
-            self.log(key_cell_len=key_cell_len)
-            if visible_content_cell_len + key_cell_len >= available_width:
-                self.visible_range = start + 1, end + 1
-            self._update_suggestion(event)
-        elif key == "ctrl+x":
-            trailing_cell_len = cell_len(self._editor.get_range(start + 1, end + 1))
-            self.log(trailing_cell_len=trailing_cell_len)
-            self.log(visible_cell_len=visible_content_cell_len)
-            self.log(available_width=available_width)
-            self.log(cursor_index=self._editor.cursor_index)
 
         # We need to clamp the visible range to ensure we don't use negative indexing
         start, end = self.visible_range
