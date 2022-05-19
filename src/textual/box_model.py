@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Callable, NamedTuple
 
-from .geometry import Size, Spacing
 from .css.styles import StylesBase
+from .geometry import Size, Spacing
 
 
 class BoxModel(NamedTuple):
