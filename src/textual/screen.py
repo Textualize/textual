@@ -91,6 +91,9 @@ class Screen(Widget):
         # Check for any widgets marked as 'dirty' (needs a repaint)
         if self._dirty_widgets:
             self._update_timer.resume()
+        if self._layout_required:
+            self._refresh_layout()
+            self._layout_required = False
 
     def _on_update(self) -> None:
         """Called by the _update_timer."""
@@ -101,7 +104,7 @@ class Screen(Widget):
             self._dirty_widgets.clear()
         self._update_timer.pause()
 
-    def refresh_layout(self) -> None:
+    def _refresh_layout(self) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
         if not self.size:
             return
@@ -151,14 +154,15 @@ class Screen(Widget):
 
     async def handle_layout(self, message: messages.Layout) -> None:
         message.stop()
-        self.refresh_layout()
+        self._layout_required = True
+        self.check_idle()
 
     def on_mount(self, event: events.Mount) -> None:
         self._update_timer = self.set_interval(1 / 20, self._on_update, pause=True)
 
     async def on_resize(self, event: events.Resize) -> None:
         self.size_updated(event.size, event.virtual_size, event.container_size)
-        self.refresh_layout()
+        self._refresh_layout()
         event.stop()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:

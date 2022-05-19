@@ -775,9 +775,6 @@ class Widget(DOMNode):
         """Check if a layout has been requested."""
         return self._layout_required
 
-    def _reset_check_layout(self) -> None:
-        self._layout_required = False
-
     def get_style_at(self, x: int, y: int) -> Style:
         offset_x, offset_y = self.screen.get_offset(self)
         return self.screen.get_style_at(x + offset_x, y + offset_y)
@@ -835,7 +832,7 @@ class Widget(DOMNode):
         """
 
         if self.check_layout():
-            self._reset_check_layout()
+            self._layout_required = False
             self.screen.post_message_no_wait(messages.Layout(self))
         elif self._repaint_required:
             self.emit_no_wait(messages.Update(self, self))
@@ -881,7 +878,7 @@ class Widget(DOMNode):
         widgets = list(self.compose())
         if widgets:
             self.mount(*widgets)
-            self.screen.refresh()
+            self.screen.refresh(repaint=False, layout=True)
 
     def on_leave(self) -> None:
         self.mouse_over = False

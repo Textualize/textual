@@ -42,7 +42,7 @@ class DockView(Screen):
                 await self.mount(widget)
             else:
                 await self.mount(**{name: widget})
-        await self.refresh_layout()
+        await self._refresh_layout()
 
     async def dock_grid(
         self,
@@ -68,5 +68,5 @@ class DockView(Screen):
             await self.mount(view)
         else:
             await self.mount(**{name: view})
-        await self.refresh_layout()
+        await self._refresh_layout()
         return grid

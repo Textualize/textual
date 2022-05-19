@@ -562,10 +562,10 @@ class Compositor:
         screen_region = Region(0, 0, width, height)
 
         update_regions = self._dirty_regions.copy()
+        self._dirty_regions.clear()
         if screen_region in update_regions:
             # If one of the updates is the entire screen, then we only need one update
-            update_regions.clear()
-        self._dirty_regions.clear()
+            update_regions = {screen_region}
 
         if update_regions:
             # Create a crop regions that surrounds all updates
@@ -632,7 +632,8 @@ class Compositor:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        yield self.render()
+        if self._dirty_regions:
+            yield self.render()
 
     def update_widgets(self, widgets: set[Widget]) -> None:
         """Update a given widget in the composition.

@@ -504,7 +504,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.log(f"<stylesheet> loaded {self.css_path!r} in {elapsed:.0f} ms")
             except Exception as error:
                 # TODO: Catch specific exceptions
-                self.console.bell()
+                self.bell()
                 self.log(error)
             else:
                 self.stylesheet = stylesheet
@@ -672,13 +672,14 @@ class App(Generic[ReturnType], DOMNode):
 
     def fatal_error(self) -> None:
         """Exits the app after an unhandled exception."""
-        self.console.bell()
+        self.bell()
         traceback = Traceback(
             show_locals=True, width=None, locals_max_length=5, suppress=[rich]
         )
         self._exit_renderables.append(
             Segments(self.console.render(traceback, self.console.options))
         )
+        self._print_error_renderables()
         self.close_messages_no_wait()
 
     def _print_error_renderables(self) -> None:
@@ -754,6 +755,7 @@ class App(Generic[ReturnType], DOMNode):
                     )
             if self._log_file is not None:
                 self._log_file.close()
+                self._log_console = None
 
     def on_mount(self) -> None:
         widgets = list(self.compose())
