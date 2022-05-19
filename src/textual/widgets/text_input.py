@@ -178,18 +178,25 @@ class TextInput(TextWidgetBase, can_focus=True):
         self._reset_visible_range()
 
     def on_click(self, event: events.Click) -> None:
-        # TODO: Support more than ASCII
         if not self.content_region.contains_point((event.screen_x, event.screen_y)):
             return
 
         self._cursor_blink_visible = True
         start_index, end_index = self.visible_range
 
-        new_cursor_index = start_index + event.screen_x - self.content_region.x
-        print(new_cursor_index)
+        click_x = event.screen_x - self.content_region.x
+        new_cursor_index = start_index + click_x
+
+        # Convert click offset to cursor index accounting for varying cell lengths
+        cell_len_accumulated = 0
+        for i, character in enumerate(self._editor.get_range(start_index, end_index)):
+            cell_len_accumulated += cell_len(character)
+            if cell_len_accumulated > click_x:
+                new_cursor_index = start_index + i
+                break
+
         new_cursor_index = clamp(new_cursor_index, 0, len(self._editor.content))
         self._editor.cursor_index = new_cursor_index
-        print(self._editor.cursor_index)
         self.refresh()
 
     def _reset_visible_range(self):
