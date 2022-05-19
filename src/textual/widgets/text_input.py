@@ -3,6 +3,7 @@ from __future__ import annotations
 import time
 from typing import Callable
 
+from rich.cells import cell_len
 from rich.console import RenderableType
 from rich.padding import Padding
 from rich.style import Style
@@ -237,16 +238,58 @@ class TextInput(TextWidgetBase, can_focus=True):
         if self._cursor_blink_timer:
             self._cursor_blink_visible = True
 
+        # Cursor location and the *codepoint* range of our view into the content
         start, end = self.visible_range
         cursor_index = self._editor.cursor_index
+
+        # We can scroll if the cell width of the content is greater than the content region
         available_width = self.content_region.width
-        scrollable = len(self._editor.content) >= available_width
+        scrollable = cell_len(self._editor.content) >= available_width
+
+        visible_content_cell_len = cell_len(
+            self._editor.get_range(start, end)
+        )  # TODO: This is correct
+
+        visible_content_to_cursor = self._editor.get_range(
+            start, self._editor.cursor_index + 1
+        )
+
+        # if the final character is double width it may not be visible to the user unless we scroll the visible
+        # window along by 2, but that depends on the width of the content region as well!!
+
+        visible_content_to_cursor_cell_len = cell_len(visible_content_to_cursor)
+
+        self.log(visible_content_to_cursor=visible_content_to_cursor)
+        self.log(visible_content_to_cursor_cell_len=visible_content_to_cursor_cell_len)
+
+        cursor_at_end = (
+            visible_content_to_cursor_cell_len == available_width
+            or visible_content_to_cursor_cell_len == available_width - 1
+            and cell_len(self._editor.query_cursor_right() or "") == 2
+        )
+
+        self.log(cell_len=visible_content_cell_len)
+        self.log(char_to_right=self._editor.query_cursor_right())
+
         if key == "enter" and self._editor.content:
             self.post_message_no_wait(TextInput.Submitted(self, self._editor.content))
         elif key == "right":
-            if cursor_index == end - 1:
-                if scrollable and self._editor.query_cursor_right():
-                    self.visible_range = (start + 1, end + 1)
+            print(visible_content_cell_len)
+            print(available_width)
+            print(cursor_index)
+            if cursor_at_end:
+                print("scrolling")
+                if scrollable:
+                    character_to_right = self._editor.query_cursor_right()
+                    if character_to_right is not None:
+                        cell_width_character_to_right = cell_len(character_to_right)
+                        window_shift_amount = cell_width_character_to_right
+                    else:
+                        window_shift_amount = 1
+                    self.visible_range = (
+                        start + window_shift_amount,
+                        end + window_shift_amount,
+                    )
                 else:
                     # If the user has hit the scroll limit
                     self.app.bell()
@@ -285,9 +328,22 @@ class TextInput(TextWidgetBase, can_focus=True):
             # If we're at the end of the visible range, and the editor backend
             # will permit us to move the cursor right, then shift the visible
             # window/range along to the right.
-            if cursor_index == end - 1:
+
+            # Check if we'll need to scroll to accommodate the new cell width after insertion.
+            trailing_cell_len = cell_len(self._editor.get_range(start + 1, end + 1))
+            key_cell_len = cell_len(event.key)
+            scroll_required = trailing_cell_len + key_cell_len >= available_width - 1
+            self.log(trailing_cell_len=trailing_cell_len)
+            self.log(key_cell_len=key_cell_len)
+            if visible_content_cell_len + key_cell_len >= available_width:
                 self.visible_range = start + 1, end + 1
             self._update_suggestion(event)
+        elif key == "ctrl+x":
+            trailing_cell_len = cell_len(self._editor.get_range(start + 1, end + 1))
+            self.log(trailing_cell_len=trailing_cell_len)
+            self.log(visible_cell_len=visible_content_cell_len)
+            self.log(available_width=available_width)
+            self.log(cursor_index=self._editor.cursor_index)
 
         # We need to clamp the visible range to ensure we don't use negative indexing
         start, end = self.visible_range
@@ -296,6 +352,8 @@ class TextInput(TextWidgetBase, can_focus=True):
     def _update_suggestion(self, event: events.Key) -> None:
         """Run the autocompleter function, updating the suggestion if necessary"""
         if self.autocompleter is not None:
+            # TODO: We shouldn't be doing the stuff below here, maybe we need to add
+            #  a method to the editor to query an edit operation?
             event.prevent_default()
             super().on_key(event)
             if self.value:

@@ -11,7 +11,7 @@ App {
 Screen {
   layout: dock;
   docks: top=top bottom=bottom;
-  background: $secondary;
+  background: $background;
 }
 
 #fahrenheit {
@@ -42,7 +42,7 @@ Screen {
 }
 
 #topsearchbox {
-  width: 100%;
+  width: 10%;
 }
 
 #footer {
