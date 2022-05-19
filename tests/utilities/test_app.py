@@ -38,6 +38,9 @@ class AppTest(App):
             log_color_system="256",
         )
 
+        # Let's disable all features by default
+        self.features = frozenset()
+
         # We need this so the `CLEAR_SCREEN_SEQUENCE` is always sent for a screen refresh,
         # whatever the environment:
         self._sync_available = True
@@ -89,6 +92,19 @@ class AppTest(App):
             await self.shutdown()
 
         return get_running_state_context_manager()
+
+    async def boot_and_shutdown(
+        self,
+        *,
+        waiting_duration_after_initialisation: float = 0.001,
+        waiting_duration_before_shutdown: float = 0,
+    ):
+        """Just a commodity shortcut for `async with app.in_running_state(): pass`, for simple cases"""
+        async with self.in_running_state(
+            waiting_duration_after_initialisation=waiting_duration_after_initialisation,
+            waiting_duration_post_yield=waiting_duration_before_shutdown,
+        ):
+            pass
 
     def run(self):
         raise NotImplementedError(

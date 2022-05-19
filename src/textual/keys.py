@@ -200,6 +200,9 @@ class Keys(str, Enum):
     ShiftControlEnd = ControlShiftEnd
 
 
+KEY_BINDINGS = Keys._value2member_map_.values()
+
+
 @dataclass
 class Binding:
     action: str

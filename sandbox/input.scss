@@ -1,0 +1,48 @@
+App {
+  background: $secondary;
+}
+
+#spacer {
+  height: 1;
+  background: $primary-darken-2;
+  dock: top;
+}
+
+Screen {
+  layout: dock;
+  docks: top=top bottom=bottom;
+  background: $secondary;
+}
+
+#fahrenheit {
+  width: 50%;
+}
+
+#celsius {
+  width: 50%;
+}
+
+#celsius :focus {
+  border: heavy darkgoldenrod;
+}
+
+#inputs {
+  dock: top;
+  background: $primary;
+  height: 3;
+  layout: horizontal;
+}
+
+#text_area {
+  dock: bottom;
+}
+
+#footer {
+  dock: bottom;
+  height: 1;
+  border: ;
+}
+
+#footer :focus {
+  border: heavy $secondary;
+}

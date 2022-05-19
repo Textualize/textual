@@ -114,7 +114,6 @@ class App(Generic[ReturnType], DOMNode):
         driver_class: Type[Driver] | None = None,
         log_path: str | PurePath = "",
         log_verbosity: int = 1,
-        # TODO: make this Literal a proper type in Rich, so we re-use it?
         log_color_system: Literal[
             "auto", "standard", "256", "truecolor", "windows"
         ] = "auto",
