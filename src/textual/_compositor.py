@@ -356,7 +356,6 @@ class Compositor:
                         container_size,
                         container_size,
                     )
-                    t = 1
 
                 # Add the container widget, which will render a background
                 map[widget] = MapGeometry(

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import cast, List
+from typing import cast, List, Sequence
 
 import pytest
 from rich.console import RenderableType
@@ -24,7 +24,6 @@ PLACEHOLDERS_DEFAULT_H = 3  # the default height for our Placeholder widgets
 @pytest.mark.integration_test  # this is a slow test, we may want to skip them in some contexts
 @pytest.mark.parametrize(
     (
-        "screen_size",
         "placeholders_count",
         "root_container_style",
         "placeholders_style",
@@ -35,7 +34,6 @@ PLACEHOLDERS_DEFAULT_H = 3  # the default height for our Placeholder widgets
     (
         *[
             [
-                SCREEN_SIZE,
                 1,
                 f"border: {invisible_border_edge};",  # #root has no visible border
                 "",  # no specific placeholder style
@@ -49,7 +47,6 @@ PLACEHOLDERS_DEFAULT_H = 3  # the default height for our Placeholder widgets
             for invisible_border_edge in ("", "none", "hidden")
         ],
         [
-            SCREEN_SIZE,
             1,
             "border: solid white;",  # #root has a visible border
             "",  # no specific placeholder style
@@ -61,7 +58,6 @@ PLACEHOLDERS_DEFAULT_H = 3  # the default height for our Placeholder widgets
             1,
         ],
         [
-            SCREEN_SIZE,
             4,
             "border: solid white;",  # #root has a visible border
             "",  # no specific placeholder style
@@ -73,7 +69,6 @@ PLACEHOLDERS_DEFAULT_H = 3  # the default height for our Placeholder widgets
             1,
         ],
         [
-            SCREEN_SIZE,
             1,
             "border: solid white;",  # #root has a visible border
             "align: center top;",  # placeholders are centered horizontally
@@ -85,7 +80,6 @@ PLACEHOLDERS_DEFAULT_H = 3  # the default height for our Placeholder widgets
             1,
         ],
         [
-            SCREEN_SIZE,
             4,
             "border: solid white;",  # #root has a visible border
             "align: center top;",  # placeholders are centered horizontally
@@ -99,7 +93,6 @@ PLACEHOLDERS_DEFAULT_H = 3  # the default height for our Placeholder widgets
     ),
 )
 async def test_composition_of_vertical_container_with_children(
-    screen_size: Size,
     placeholders_count: int,
     root_container_style: str,
     placeholders_style: str,
@@ -136,9 +129,9 @@ async def test_composition_of_vertical_container_with_children(
 
             yield VerticalContainer(*placeholders, id="root")
 
-    app = MyTestApp(size=screen_size, test_name="compositor")
+    app = MyTestApp(size=SCREEN_SIZE, test_name="compositor")
 
-    expected_screen_size = Size(*screen_size)
+    expected_screen_size = SCREEN_SIZE
 
     async with app.in_running_state():
         # root widget checks:
@@ -232,3 +225,87 @@ async def test_border_edge_types_impact_on_widget_size(
     top_left_edge_char = app.get_char_at(0, 0)
     top_left_edge_char_is_a_visible_one = top_left_edge_char != " "
     assert top_left_edge_char_is_a_visible_one == expects_visible_char_at_top_left_edge
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "large_widget_size,container_style,expected_large_widget_visible_region_size",
+    (
+        # In these tests we're going to insert a "large widget"
+        # into a container with size (20,20).
+        # ---------------- let's start!
+        # no overflow/scrollbar instructions: no scrollbars
+        [Size(30, 30), "color: red", Size(20, 20)],
+        # explicit hiding of the overflow: no scrollbars either
+        [Size(30, 30), "overflow: hidden", Size(20, 20)],
+        # scrollbar for both directions
+        [Size(30, 30), "overflow: auto", Size(19, 19)],
+        # horizontal scrollbar
+        [Size(30, 30), "overflow-x: auto", Size(20, 19)],
+        # vertical scrollbar
+        [Size(30, 30), "overflow-y: auto", Size(19, 20)],
+        # scrollbar for both directions, custom scrollbar size
+        [Size(30, 30), ("overflow: auto", "scrollbar-size: 3 5"), Size(15, 17)],
+        # scrollbar for both directions, custom vertical scrollbar size
+        [Size(30, 30), ("overflow: auto", "scrollbar-size-vertical: 3"), Size(17, 19)],
+        # scrollbar for both directions, custom horizontal scrollbar size
+        [
+            Size(30, 30),
+            ("overflow: auto", "scrollbar-size-horizontal: 3"),
+            Size(19, 17),
+        ],
+        # scrollbar needed only vertically, custom scrollbar size
+        [
+            Size(20, 30),
+            ("overflow: auto", "scrollbar-size: 3 3"),
+            Size(17, 20),
+        ],
+        # scrollbar needed only horizontally, custom scrollbar size
+        [
+            Size(30, 20),
+            ("overflow: auto", "scrollbar-size: 3 3"),
+            Size(20, 17),
+        ],
+        # edge case: scrollbars should not be displayed at all if their size is set to 0
+        [Size(30, 30), ("overflow: auto", "scrollbar-size: 0 0"), Size(20, 20)],
+    ),
+)
+async def test_scrollbar_size_impact_on_the_layout(
+    large_widget_size: Size,
+    container_style: str | Sequence[str],
+    expected_large_widget_visible_region_size: Size,
+):
+    class LargeWidget(Widget):
+        def on_mount(self):
+            self.styles.width = large_widget_size[0]
+            self.styles.height = large_widget_size[1]
+
+    class LargeWidgetContainer(Widget):
+        CSS = """
+        LargeWidgetContainer {
+            width: 20;
+            height: 20;
+            ${container_style};
+        }
+        """.replace(
+            "${container_style}",
+            container_style
+            if isinstance(container_style, str)
+            else ";".join(container_style),
+        )
+
+    large_widget = LargeWidget()
+    container = LargeWidgetContainer(large_widget)
+
+    class MyTestApp(AppTest):
+        def compose(self) -> ComposeResult:
+            yield container
+
+    app = MyTestApp(size=Size(40, 40), test_name="scrollbar_size_impact_on_the_layout")
+
+    await app.boot_and_shutdown()
+
+    compositor = app.screen._compositor
+    widgets_map = compositor.map
+    large_widget_visible_region_size = widgets_map[large_widget].visible_region.size
+    assert large_widget_visible_region_size == expected_large_widget_visible_region_size
