@@ -142,6 +142,11 @@ class Stylesheet:
         return "\n\n".join(rule_set.css for rule_set in self.rules)
 
     def copy(self) -> Stylesheet:
+        """Create a copy of this stylesheet.
+
+        Returns:
+            Stylesheet: New stylesheet.
+        """
         stylesheet = Stylesheet(variables=self.variables.copy())
         stylesheet.source = self.source.copy()
         return stylesheet
