@@ -565,7 +565,7 @@ class Compositor:
         self._dirty_regions.clear()
         if screen_region in update_regions:
             # If one of the updates is the entire screen, then we only need one update
-            update_regions = {screen_region}
+            update_regions.clear()
 
         if update_regions:
             # Create a crop regions that surrounds all updates
