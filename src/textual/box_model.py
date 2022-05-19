@@ -32,8 +32,6 @@ def get_box_model(
     Returns:
         BoxModel: A tuple with the size of the content area and margin.
     """
-
-    has_rule = styles.has_rule
     width, height = container
     is_content_box = styles.box_sizing == "content-box"
     is_border_box = styles.box_sizing == "border-box"
@@ -41,7 +39,6 @@ def get_box_model(
     margin = styles.margin
 
     is_auto_width = styles.width and styles.width.is_auto
-    is_auto_height = styles.height and styles.height.is_auto
 
     if styles.width is None:
         width = container.width - margin.width
@@ -52,8 +49,6 @@ def get_box_model(
             - styles.margin.totals,
             viewport,
         )
-        # width = min(container.width, width)
-
     else:
         width = styles.width.resolve_dimension(container, viewport)
 

@@ -183,10 +183,13 @@ class Widget(DOMNode):
         """
         if self.is_container:
             return self.layout.get_content_width(self, container, viewport)
+
         console = self.app.console
         renderable = self.render(self.styles.rich_style)
         measurement = Measurement.get(
-            console, console.options.update_width(container.width), renderable
+            console,
+            console.options.update_width(container.width),
+            renderable,
         )
         width = measurement.maximum
         return width
@@ -207,7 +210,7 @@ class Widget(DOMNode):
 
         if self.is_container:
             assert self.layout is not None
-            return self.layout.get_content_height(
+            height = self.layout.get_content_height(
                 self, container_size, viewport_size, width
             )
         else:

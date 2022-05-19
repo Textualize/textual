@@ -87,7 +87,7 @@ Tweet {
   overflow-y: auto;
   scrollbar-gutter: stable;
   align-horizontal: center;
-  
+  box-sizing: content-box;
 }
 
 .scrollable {

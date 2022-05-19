@@ -245,7 +245,7 @@ class StylesBase(ABC):
         """Get space around widget.
 
         Returns:
-            Spacing: Space around widget.
+            Spacing: Space around widget content.
         """
         spacing = self.padding + self.border.spacing
         return spacing

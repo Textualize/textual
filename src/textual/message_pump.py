@@ -198,13 +198,14 @@ class MessagePump:
             return
 
         self._closing = True
-
         await self._message_queue.put(MessagePriority(None))
-
         for task in self._child_tasks:
             task.cancel()
             await task
         self._child_tasks.clear()
+        if self._task is not None:
+            # Ensure everything is closed before returning
+            await self._task
 
     def start_messages(self) -> None:
         self._task = asyncio.create_task(self.process_messages())

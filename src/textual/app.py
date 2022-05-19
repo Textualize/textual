@@ -678,7 +678,6 @@ class App(Generic[ReturnType], DOMNode):
         self._exit_renderables.append(
             Segments(self.console.render(traceback, self.console.options))
         )
-        self._print_error_renderables()
         self.close_messages_no_wait()
 
     def _print_error_renderables(self) -> None:
@@ -744,8 +743,7 @@ class App(Generic[ReturnType], DOMNode):
             self.on_exception(error)
         finally:
             self._running = False
-            if self._exit_renderables:
-                self._print_error_renderables()
+            self._print_error_renderables()
             if self.devtools.is_connected:
                 await self._disconnect_devtools()
                 if self._log_console is not None:
