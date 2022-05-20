@@ -65,13 +65,12 @@ class TextWidgetBase(Widget):
         self.refresh(layout=True)
 
     def _apply_cursor_to_text(self, display_text: Text, index: int) -> Text:
+        if index < 0:
+            return display_text
+
         # Either write a cursor character or apply reverse style to cursor location
         at_end_of_text = index == len(display_text)
-        at_end_of_line = (
-            display_text
-            and index < len(display_text)
-            and display_text.plain[index] == "\n"
-        )
+        at_end_of_line = index < len(display_text) and display_text.plain[index] == "\n"
 
         if at_end_of_text or at_end_of_line:
             display_text = Text.assemble(
@@ -204,11 +203,25 @@ class TextInput(TextWidgetBase, can_focus=True):
         self.refresh()
 
     def _reset_visible_range(self):
-        new_visible_range_end = max(
-            self._editor.cursor_index + 1, self.content_region.width
+        """Reset our window into the editor content. Used when the widget is resized."""
+        available_width = self.content_region.width
+
+        # Adjust the window end such that the cursor is just off of it
+        new_visible_range_end = max(self._editor.cursor_index + 1, available_width)
+        # The visible window extends back by the width of the content region
+        new_visible_range_start = new_visible_range_end - available_width
+
+        # Check the cell length of the newly visible content and adjust window to accommodate
+        new_range = self._editor.get_range(
+            new_visible_range_start, new_visible_range_end
         )
-        new_visible_range_start = new_visible_range_end - self.content_region.width
-        self.visible_range = (new_visible_range_start, new_visible_range_end)
+        new_range_cell_len = cell_len(new_range)
+        additional_shift_required = max(0, new_range_cell_len - available_width) + 1
+        self.visible_range = (
+            new_visible_range_start + additional_shift_required,
+            new_visible_range_end + additional_shift_required,
+        )
+
         self.refresh()
 
     def render(self, style: Style) -> RenderableType:
