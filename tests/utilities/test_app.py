@@ -190,8 +190,12 @@ class AppTest(App):
         total_capture = self.total_capture
         if not total_capture:
             return None
-        last_display_start_index = total_capture.rindex(CLEAR_SCREEN_SEQUENCE)
-        return total_capture[last_display_start_index:]
+        screen_captures = total_capture.split(CLEAR_SCREEN_SEQUENCE)
+        for single_screen_capture in reversed(screen_captures):
+            if len(single_screen_capture) > 30:
+                # let's return the last occurrence of a screen that seem to be properly "fully-paint"
+                return single_screen_capture
+        return None
 
     @property
     def console(self) -> ConsoleTest:
@@ -278,7 +282,7 @@ class ClockMock(_Clock):
         self._current_time: int = -1
         # For each call to our `sleep` method we will store an asyncio.Event
         # and the time at which we should trigger it:
-        self._pending_sleep_events: dict[asyncio.Event, int] = {}
+        self._pending_sleep_events: dict[int, list[asyncio.Event]] = {}
 
     def get_time_no_wait(self) -> float:
         if self._current_time == -1:
@@ -290,7 +294,9 @@ class ClockMock(_Clock):
         event = asyncio.Event()
         internal_waiting_duration = int(seconds * self.TIME_RESOLUTION)
         target_event_monotonic_time = self._current_time + internal_waiting_duration
-        self._pending_sleep_events[event] = target_event_monotonic_time
+        self._pending_sleep_events.setdefault(target_event_monotonic_time, []).append(
+            event
+        )
         # Ok, let's wait for this Event
         # (which can only be "unlocked" by calls to `advance_clock()`)
         await event.wait()
@@ -324,14 +330,20 @@ class ClockMock(_Clock):
 
     def _check_sleep_timers_to_activate(self) -> int:
         activated_timers_count = 0
-        for event, target_event_monotonic_time in self._pending_sleep_events:
-            if self._current_time < target_event_monotonic_time:
+        activated_events_times_to_clear: list[int] = []
+        for (monotonic_time, target_events) in self._pending_sleep_events.items():
+            if self._current_time < monotonic_time:
                 continue  # not time for you yet, dear awaiter...
-            # Right, let's release this waiting event!
-            event.set()
-            activated_timers_count += 1
-            # ...and remove it from our pending sleep events list:
-            del self._pending_sleep_events[event]
+            # Right, let's release these waiting events!
+            for event in target_events:
+                event.set()
+            activated_timers_count += len(target_events)
+            # ...and let's mark it for removal:
+            activated_events_times_to_clear.append(monotonic_time)
+
+        if activated_events_times_to_clear:
+            for event_time_to_clear in activated_events_times_to_clear:
+                del self._pending_sleep_events[event_time_to_clear]
 
         return activated_timers_count
 
