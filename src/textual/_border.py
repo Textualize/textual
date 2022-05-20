@@ -200,7 +200,6 @@ class Border:
     def __rich_console__(
         self, console: "Console", options: "ConsoleOptions"
     ) -> "RenderResult":
-
         top, right, bottom, left = self._sides
         style = console.get_style(self.inner_style)
         outer_style = console.get_style(self.outer_style)
