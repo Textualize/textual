@@ -216,7 +216,8 @@ class TextInput(TextWidgetBase, can_focus=True):
             new_visible_range_start, new_visible_range_end
         )
         new_range_cell_len = cell_len(new_range)
-        additional_shift_required = max(0, new_range_cell_len - available_width) + 1
+        additional_shift_required = max(0, new_range_cell_len - available_width)
+
         self.visible_range = (
             new_visible_range_start + additional_shift_required,
             new_visible_range_end + additional_shift_required,
@@ -281,18 +282,15 @@ class TextInput(TextWidgetBase, can_focus=True):
         cursor_at_end = visible_content_to_cursor_cell_len == available_width
         key_cell_len = cell_len(key)
         if event.is_printable:
-            # If we're at the end of the visible range, and the editor backend
-            # will permit us to move the cursor right, then shift the visible
-            # window/range along to the right.
-
             # Check if we'll need to scroll to accommodate the new cell width after insertion.
-            self.log(key_cell_len=key_cell_len)
             if visible_content_to_cursor_cell_len + key_cell_len >= available_width:
                 self.visible_range = start + key_cell_len, end + key_cell_len
             self._update_suggestion(event)
         elif (
             key == "ctrl+x"
         ):  # TODO: This allows us to query and print the text input state
+            self.log(start=start)
+            self.log(end=end)
             self.log(visible_content=visible_content)
             self.log(visible_content_cell_len=visible_content_cell_len)
             self.log(
