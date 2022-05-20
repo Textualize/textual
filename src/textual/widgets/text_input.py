@@ -40,7 +40,7 @@ class TextWidgetBase(Widget):
 
     def on_key(self, event: events.Key) -> None:
         key = event.key
-        if key == "\x1b":
+        if key == "escape":
             return
 
         changed = False
@@ -115,7 +115,7 @@ class TextInput(TextWidgetBase, can_focus=True):
     CSS = """
     TextInput {
         width: auto;
-        background: $background;
+        background: $surface;
         height: 3;
         padding: 0 1;
         content-align: left middle;
@@ -170,6 +170,11 @@ class TextInput(TextWidgetBase, can_focus=True):
         self._reset_visible_range()
 
     def on_click(self, event: events.Click) -> None:
+        """When the user clicks on the text input, the cursor moves to the
+        character that was clicked on. Double-width characters makes this more
+        difficult."""
+
+        # If they've clicked outwith the content region (e.g. on padding), do nothing.
         if not self.content_region.contains_point((event.screen_x, event.screen_y)):
             return
 
@@ -260,9 +265,9 @@ class TextInput(TextWidgetBase, can_focus=True):
         available_width = self.content_region.width
         scrollable = cell_len(self._editor.content) >= available_width
 
+        # Check what content is visible from the editor, and how wide that content is
         visible_content = self._editor.get_range(start, end)
         visible_content_cell_len = cell_len(visible_content)
-
         visible_content_to_cursor = self._editor.get_range(
             start, self._editor.cursor_index + 1
         )
@@ -306,10 +311,6 @@ class TextInput(TextWidgetBase, can_focus=True):
                         start + window_shift_amount,
                         end + window_shift_amount,
                     )
-                else:
-                    # If the user has hit the scroll limit
-                    self.app.bell()
-
             if self._suggestion_suffix and self._editor.cursor_at_end:
                 self._editor.insert_at_cursor(self._suggestion_suffix)
                 self._suggestion_suffix = ""
