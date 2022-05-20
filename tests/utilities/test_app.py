@@ -255,7 +255,7 @@ class DriverTest(Driver):
 # > The resolution of the monotonic clock on Windows is usually around 15.6 msec.
 # > The best resolution is 0.5 msec.
 # @link https://docs.python.org/3/library/asyncio-platforms.html:
-ASYNCIO_EVENTS_PROCESSING_REQUIRED_PERIOD = 0.025 if WINDOWS else 0.002
+ASYNCIO_EVENTS_PROCESSING_REQUIRED_PERIOD = 0.025 if WINDOWS else 0.005
 
 
 async def let_asyncio_process_some_events() -> None:
@@ -276,7 +276,9 @@ class ClockMock(_Clock):
         self._single_tick_duration = int(self.TIME_RESOLUTION / ticks_granularity_fps)
         self._start_time: int = -1
         self._current_time: int = -1
-        self._pending_sleep_events: list[tuple[int, asyncio.Event]] = []
+        # For each call to our `sleep` method we will store an asyncio.Event
+        # and the time at which we should trigger it:
+        self._pending_sleep_events: dict[asyncio.Event, int] = {}
 
     def get_time_no_wait(self) -> float:
         if self._current_time == -1:
@@ -288,7 +290,7 @@ class ClockMock(_Clock):
         event = asyncio.Event()
         internal_waiting_duration = int(seconds * self.TIME_RESOLUTION)
         target_event_monotonic_time = self._current_time + internal_waiting_duration
-        self._pending_sleep_events.append((target_event_monotonic_time, event))
+        self._pending_sleep_events[event] = target_event_monotonic_time
         # Ok, let's wait for this Event
         # (which can only be "unlocked" by calls to `advance_clock()`)
         await event.wait()
@@ -322,16 +324,14 @@ class ClockMock(_Clock):
 
     def _check_sleep_timers_to_activate(self) -> int:
         activated_timers_count = 0
-        for i, (target_event_monotonic_time, event) in enumerate(
-            self._pending_sleep_events
-        ):
+        for event, target_event_monotonic_time in self._pending_sleep_events:
             if self._current_time < target_event_monotonic_time:
                 continue  # not time for you yet, dear awaiter...
             # Right, let's release this waiting event!
             event.set()
             activated_timers_count += 1
             # ...and remove it from our pending sleep events list:
-            del self._pending_sleep_events[i]
+            del self._pending_sleep_events[event]
 
         return activated_timers_count
 
