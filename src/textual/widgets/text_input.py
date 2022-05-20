@@ -137,7 +137,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         self._editor = TextEditorBackend(initial, 0)
         self.visible_range: tuple[int, int] | None = None
         self.autocompleter = autocompleter
-        self._suggestion = ""
+        self._suggestion_suffix = ""
 
         self._cursor_blink_visible = True
         self._cursor_blink_timer: Timer | None = None
@@ -226,8 +226,8 @@ class TextInput(TextWidgetBase, can_focus=True):
             visible_text = self._editor.get_range(start, end)
             display_text = Text(visible_text, no_wrap=True, overflow="ignore")
 
-            if self._suggestion:
-                display_text.append(self._suggestion, "dim")
+            if self._suggestion_suffix:
+                display_text.append(self._suggestion_suffix, "dim")
 
             if show_cursor:
                 display_text = self._apply_cursor_to_text(
@@ -310,9 +310,9 @@ class TextInput(TextWidgetBase, can_focus=True):
                     # If the user has hit the scroll limit
                     self.app.bell()
 
-            if self._suggestion and self._editor.cursor_at_end:
-                self._editor.insert_at_cursor(self._suggestion)
-                self._suggestion = ""
+            if self._suggestion_suffix and self._editor.cursor_at_end:
+                self._editor.insert_at_cursor(self._suggestion_suffix)
+                self._suggestion_suffix = ""
                 self._reset_visible_range()
         elif key == "left":
             if cursor_index == start:
@@ -363,9 +363,15 @@ class TextInput(TextWidgetBase, can_focus=True):
             event.prevent_default()
             super().on_key(event)
             if self.value:
-                self._suggestion = self.autocompleter(self.value)
+                start, end = self.visible_range
+                full_suggestion = self.autocompleter(self.value)
+                if full_suggestion:
+                    suffix = full_suggestion[len(self._editor.get_range(start, end)) :]
+                    self._suggestion_suffix = suffix
+                else:
+                    self._suggestion_suffix = None
             else:
-                self._suggestion = None
+                self._suggestion_suffix = None
 
     def _toggle_cursor_visible(self):
         """Manages the blinking of the cursor - ensuring blinking only starts when the

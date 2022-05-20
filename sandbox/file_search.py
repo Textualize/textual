@@ -42,13 +42,14 @@ class FileTable(Widget):
         grid = Table.grid()
         grid.add_column()
         for file in self.filtered_files:
-            file_text = Text(" " + file.name)
-            file_text.highlight_regex(self.filter, "black on yellow")
+            file_text = Text(f" {file.name}")
+            if self.filter:
+                file_text.highlight_regex(self.filter, "black on yellow")
             grid.add_row(file_text)
         return grid
 
 
-class FileSearchApp(App[str]):
+class FileSearchApp(App):
     dark = True
 
     def on_mount(self) -> None:

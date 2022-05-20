@@ -24,7 +24,7 @@ def word_autocompleter(value: str) -> str | None:
     # word completions
     for word in words:
         if word.startswith(value):
-            return word[len(value) :]
+            return word
     return None
 
 
