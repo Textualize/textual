@@ -67,7 +67,11 @@ class TextWidgetBase(Widget):
     def _apply_cursor_to_text(self, display_text: Text, index: int) -> Text:
         # Either write a cursor character or apply reverse style to cursor location
         at_end_of_text = index == len(display_text)
-        at_end_of_line = index < len(display_text) and display_text.plain[index] == "\n"
+        at_end_of_line = (
+            display_text
+            and index < len(display_text)
+            and display_text.plain[index] == "\n"
+        )
 
         if at_end_of_text or at_end_of_line:
             display_text = Text.assemble(
@@ -259,10 +263,6 @@ class TextInput(TextWidgetBase, can_focus=True):
         visible_content_to_cursor = self._editor.get_range(
             start, self._editor.cursor_index + 1
         )
-
-        # if the final character is double width it may not be visible to the user unless we scroll the visible
-        # window along by 2, but that depends on the width of the content region as well!!
-
         visible_content_to_cursor_cell_len = cell_len(visible_content_to_cursor)
 
         cursor_at_end = visible_content_to_cursor_cell_len == available_width
@@ -332,11 +332,21 @@ class TextInput(TextWidgetBase, can_focus=True):
         elif key == "home":
             self.visible_range = (0, available_width)
         elif key == "end":
-            value_length = len(self.value)
+            num_codepoints = len(self.value)
+            final_visible_codepoints = self._editor.get_range(
+                num_codepoints - available_width + 1,
+                max(num_codepoints, available_width) + 1,
+            )
+            cell_len_final_visible = cell_len(final_visible_codepoints)
+
+            # Additional shift to ensure there's space for double width character
+            additional_shift_required = (
+                max(0, cell_len_final_visible - available_width) + 2
+            )
             if scrollable:
                 self.visible_range = (
-                    value_length - available_width + 1,
-                    max(available_width, value_length) + 1,
+                    num_codepoints - available_width + additional_shift_required,
+                    max(available_width, num_codepoints) + additional_shift_required,
                 )
             else:
                 self.visible_range = (0, available_width)
