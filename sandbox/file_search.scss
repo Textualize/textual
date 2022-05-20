@@ -1,0 +1,21 @@
+Screen {
+  layout: dock;
+  docks: top=top bottom=bottom;
+}
+
+#file_table_wrapper {
+  dock: bottom;
+  height: auto;
+  overflow: auto auto;
+  scrollbar-color: $accent-darken-1;
+}
+
+#file_table {
+  height: auto;
+}
+
+#search_bar {
+  dock: bottom;
+  background: $accent;
+  height: 1;
+}

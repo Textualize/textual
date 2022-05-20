@@ -115,21 +115,10 @@ class TextInput(TextWidgetBase, can_focus=True):
     CSS = """
     TextInput {
         width: auto;
-        background: $primary;
+        background: $background;
         height: 3;
         padding: 0 1;
         content-align: left middle;
-        background: $primary-darken-1;
-    }
-
-    TextInput:hover {
-        background: $primary-darken-2;
-    }
-
-    TextInput:focus {
-        background: $primary-darken-2;
-        border: heavy $primary-lighten-1;
-        padding: 0;
     }
     """
 
