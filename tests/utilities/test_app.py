@@ -8,7 +8,7 @@ from typing import AsyncContextManager, cast
 
 from rich.console import Console
 
-from textual import events
+from textual import events, errors
 from textual.app import App, ReturnType, ComposeResult
 from textual.driver import Driver
 from textual.geometry import Size
@@ -37,6 +37,9 @@ class AppTest(App):
             log_verbosity=log_verbosity,
             log_color_system="256",
         )
+
+        # Let's disable all features by default
+        self.features = frozenset()
 
         # We need this so the `CLEAR_SCREEN_SEQUENCE` is always sent for a screen refresh,
         # whatever the environment:
@@ -90,6 +93,19 @@ class AppTest(App):
 
         return get_running_state_context_manager()
 
+    async def boot_and_shutdown(
+        self,
+        *,
+        waiting_duration_after_initialisation: float = 0.001,
+        waiting_duration_before_shutdown: float = 0,
+    ):
+        """Just a commodity shortcut for `async with app.in_running_state(): pass`, for simple cases"""
+        async with self.in_running_state(
+            waiting_duration_after_initialisation=waiting_duration_after_initialisation,
+            waiting_duration_post_yield=waiting_duration_before_shutdown,
+        ):
+            pass
+
     def run(self):
         raise NotImplementedError(
             "Use `async with my_test_app.in_running_state()` rather than `my_test_app.run()`"
@@ -106,6 +122,36 @@ class AppTest(App):
             return None
         last_display_start_index = total_capture.rindex(CLEAR_SCREEN_SEQUENCE)
         return total_capture[last_display_start_index:]
+
+    def get_char_at(self, x: int, y: int) -> str:
+        """Get the character at the given cell or empty string
+
+        Args:
+            x (int): X position within the Layout
+            y (int): Y position within the Layout
+
+        Returns:
+            str: The character at the cell (x, y) within the Layout
+        """
+        # N.B. Basically a copy-paste-and-slightly-adapt of `Compositor.get_style_at()`
+        try:
+            widget, region = self.get_widget_at(x, y)
+        except errors.NoWidget:
+            return ""
+        if widget not in self.screen._compositor.regions:
+            return ""
+
+        x -= region.x
+        y -= region.y
+        lines = widget.get_render_lines(y, y + 1)
+        if not lines:
+            return ""
+        end = 0
+        for segment in lines[0]:
+            end += segment.cell_length
+            if x < end:
+                return segment.text[0]
+        return ""
 
     @property
     def console(self) -> ConsoleTest:

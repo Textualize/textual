@@ -63,6 +63,7 @@ class MapGeometry(NamedTuple):
         return self.clip.intersection(self.region)
 
 
+# Maps a widget on to its geometry (information that describes its position in the composition)
 CompositorMap: TypeAlias = "dict[Widget, MapGeometry]"
 
 
@@ -98,23 +99,28 @@ class LayoutUpdate:
 class SpansUpdate:
     """A renderable that applies updated spans to the screen."""
 
-    def __init__(self, spans: list[tuple[int, int, list[Segment]]]) -> None:
+    def __init__(
+        self, spans: list[tuple[int, int, list[Segment]]], crop_y: int
+    ) -> None:
         """Apply spans, which consist of a tuple of (LINE, OFFSET, SEGMENTS)
 
         Args:
             spans (list[tuple[int, int, list[Segment]]]): A list of spans.
+            crop_y (int): The y extent of the crop region
         """
         self.spans = spans
+        self.last_y = crop_y - 1
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         move_to = Control.move_to
         new_line = Segment.line()
-        for last, (y, x, segments) in loop_last(self.spans):
+        last_y = self.last_y
+        for y, x, segments in self.spans:
             yield move_to(x, y)
             yield from segments
-            if not last:
+            if y != last_y:
                 yield new_line
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -171,10 +177,11 @@ class Compositor:
             Iterable[tuple[int, int, int]]: Yields tuples of (Y, X1, X2)
         """
         inline_ranges: dict[int, list[tuple[int, int]]] = {}
+        setdefault = inline_ranges.setdefault
         for region_x, region_y, width, height in regions:
             span = (region_x, region_x + width)
             for y in range(region_y, region_y + height):
-                inline_ranges.setdefault(y, []).append(span)
+                setdefault(y, []).append(span)
 
         for y, ranges in sorted(inline_ranges.items()):
             if len(ranges) == 1:
@@ -316,7 +323,7 @@ class Compositor:
 
                 # Arrange the layout
                 placements, arranged_widgets = widget.layout.arrange(
-                    widget, child_region.size, widget.scroll_offset
+                    widget, child_region.size
                 )
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=get_order)
@@ -555,10 +562,10 @@ class Compositor:
         screen_region = Region(0, 0, width, height)
 
         update_regions = self._dirty_regions.copy()
+        self._dirty_regions.clear()
         if screen_region in update_regions:
             # If one of the updates is the entire screen, then we only need one update
             update_regions.clear()
-        self._dirty_regions.clear()
 
         if update_regions:
             # Create a crop regions that surrounds all updates
@@ -616,7 +623,7 @@ class Compositor:
                 (y, x1, line_crop(render_lines[y - crop_y], x1, x2))
                 for y, x1, x2 in spans
             ]
-            return SpansUpdate(render_spans)
+            return SpansUpdate(render_spans, crop_y2)
 
         else:
             render_lines = self._assemble_chops(chops)
@@ -625,7 +632,8 @@ class Compositor:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        yield self.render()
+        if self._dirty_regions:
+            yield self.render()
 
     def update_widgets(self, widgets: set[Widget]) -> None:
         """Update a given widget in the composition.

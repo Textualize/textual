@@ -1,0 +1,18 @@
+Horizontal {
+    background: red 50%;
+    overflow-x: auto;
+    /* width: auto */
+}
+
+.test {
+    width: auto;
+    height: auto;
+
+    background: white 50%;
+    border:solid green;   
+    padding: 0;
+    margin:3;
+
+    align: center middle;
+    box-sizing: content-box;
+} 

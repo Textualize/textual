@@ -27,6 +27,7 @@ from ._help_text import (
     string_enum_help_text,
     color_property_help_text,
 )
+from .._border import INVISIBLE_EDGE_TYPES, normalize_border_value
 from ..color import Color, ColorPair, ColorParseError
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING, VALID_STYLE_FLAGS
@@ -71,7 +72,7 @@ class ScalarProperty:
         self.name = name
 
     def __get__(
-        self, obj: StylesBase, objtype: type[Styles] | None = None
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> Scalar | None:
         """Get the scalar property
 
@@ -321,28 +322,37 @@ class BorderProperty:
             clear_rule(bottom)
             clear_rule(left)
             return
-        if isinstance(border, tuple):
-            setattr(obj, top, border)
-            setattr(obj, right, border)
-            setattr(obj, bottom, border)
-            setattr(obj, left, border)
+        if isinstance(border, tuple) and len(border) == 2:
+            _border = normalize_border_value(border)
+            setattr(obj, top, _border)
+            setattr(obj, right, _border)
+            setattr(obj, bottom, _border)
+            setattr(obj, left, _border)
             return
 
         count = len(border)
         if count == 1:
-            _border = border[0]
+            _border = normalize_border_value(border[0])
             setattr(obj, top, _border)
             setattr(obj, right, _border)
             setattr(obj, bottom, _border)
             setattr(obj, left, _border)
         elif count == 2:
-            _border1, _border2 = border
+            _border1, _border2 = (
+                normalize_border_value(border[0]),
+                normalize_border_value(border[1]),
+            )
             setattr(obj, top, _border1)
             setattr(obj, bottom, _border1)
             setattr(obj, right, _border2)
             setattr(obj, left, _border2)
         elif count == 4:
-            _border1, _border2, _border3, _border4 = border
+            _border1, _border2, _border3, _border4 = (
+                normalize_border_value(border[0]),
+                normalize_border_value(border[1]),
+                normalize_border_value(border[3]),
+                normalize_border_value(border[4]),
+            )
             setattr(obj, top, _border1)
             setattr(obj, right, _border2)
             setattr(obj, bottom, _border3)

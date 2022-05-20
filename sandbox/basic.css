@@ -69,12 +69,12 @@ App > Screen {
   color: $text-background;
   background: $background;
   layout: vertical;
-  overflow-y: scroll;  
+  overflow-y: scroll; 
 }
 
 
 Tweet {
-  height: 12;
+  height: auto;
   width: 80;
  
   margin: 1 3;
@@ -84,9 +84,10 @@ Tweet {
   /* border: outer $primary; */
   padding: 1;
   border: wide $panel-darken-2;
-  overflow-y: scroll; 
+  overflow-y: auto;
+  /* scrollbar-gutter: stable; */
   align-horizontal: center;
-  
+  box-sizing: border-box;
 }
 
 .scrollable {
@@ -113,11 +114,11 @@ TweetHeader {
 }
 
 TweetBody {  
-  width: 100%;
+  width: 100w;
   background: $panel;
   color: $text-panel;
-  height:20;
-  padding: 0 1 0 0;
+  height: auto;
+  padding: 0 1 0 0; 
  
 }
 

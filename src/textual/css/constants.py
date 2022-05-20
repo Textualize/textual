@@ -1,4 +1,6 @@
+from __future__ import annotations
 import sys
+import typing
 
 if sys.version_info >= (3, 8):
     from typing import Final
@@ -7,12 +9,16 @@ else:
 
 from ..geometry import Spacing
 
+if typing.TYPE_CHECKING:
+    from .types import EdgeType
+
 VALID_VISIBILITY: Final = {"visible", "hidden"}
 VALID_DISPLAY: Final = {"block", "none"}
-VALID_BORDER: Final = {
+VALID_BORDER: Final[set[EdgeType]] = {
     "none",
     "hidden",
     "round",
+    "blank",
     "solid",
     "double",
     "dashed",
@@ -31,6 +37,7 @@ VALID_BOX_SIZING: Final = {"border-box", "content-box"}
 VALID_OVERFLOW: Final = {"scroll", "hidden", "auto"}
 VALID_ALIGN_HORIZONTAL: Final = {"left", "center", "right"}
 VALID_ALIGN_VERTICAL: Final = {"top", "middle", "bottom"}
+VALID_SCROLLBAR_GUTTER: Final = {"auto", "stable"}
 VALID_STYLE_FLAGS: Final = {
     "none",
     "not",

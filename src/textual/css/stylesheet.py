@@ -141,6 +141,16 @@ class Stylesheet:
     def css(self) -> str:
         return "\n\n".join(rule_set.css for rule_set in self.rules)
 
+    def copy(self) -> Stylesheet:
+        """Create a copy of this stylesheet.
+
+        Returns:
+            Stylesheet: New stylesheet.
+        """
+        stylesheet = Stylesheet(variables=self.variables.copy())
+        stylesheet.source = self.source.copy()
+        return stylesheet
+
     def set_variables(self, variables: dict[str, str]) -> None:
         """Set CSS variables.
 
@@ -315,7 +325,7 @@ class Stylesheet:
         styles = node.styles
         base_styles = styles.base
 
-        # Styles currently used an new rules
+        # Styles currently used on new rules
         modified_rule_keys = {*base_styles.get_rules().keys(), *rules.keys()}
         # Current render rules (missing rules are filled with default)
         current_render_rules = styles.get_render_rules()

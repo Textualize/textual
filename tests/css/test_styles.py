@@ -1,15 +1,24 @@
+import sys
 from decimal import Decimal
+
+if sys.version_info >= (3, 10):
+    from typing import Literal
+else:  # pragma: no cover
+    from typing_extensions import Literal
 
 import pytest
 
 from rich.style import Style
 
+from textual.app import ComposeResult
 from textual.color import Color
 from textual.css.errors import StyleValueError
 from textual.css.scalar import Scalar, Unit
 from textual.css.styles import Styles, RenderStyles
 from textual.dom import DOMNode
 from textual.widget import Widget
+
+from tests.utilities.test_app import AppTest
 
 
 def test_styles_reset():
@@ -185,3 +194,77 @@ def test_widget_style_size_fails_if_data_type_is_not_supported(size_dimension_in
 
     with pytest.raises(StyleValueError):
         widget.styles.width = size_dimension_input
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "overflow_y,scrollbar_gutter,text_length,expected_text_widget_width,expects_vertical_scrollbar",
+    (
+        # ------------------------------------------------
+        # ----- Let's start with `overflow-y: auto`:
+        # short text: full width, no scrollbar
+        ["auto", "auto", "short_text", 80, False],
+        # long text: reduced width, scrollbar
+        ["auto", "auto", "long_text", 79, True],
+        # short text, `scrollbar-gutter: stable`: reduced width, no scrollbar
+        ["auto", "stable", "short_text", 79, False],
+        # long text, `scrollbar-gutter: stable`: reduced width, scrollbar
+        ["auto", "stable", "long_text", 79, True],
+        # ------------------------------------------------
+        # ----- And now let's see the behaviour with `overflow-y: scroll`:
+        # short text: reduced width, scrollbar
+        ["scroll", "auto", "short_text", 79, True],
+        # long text: reduced width, scrollbar
+        ["scroll", "auto", "long_text", 79, True],
+        # short text, `scrollbar-gutter: stable`: reduced width, scrollbar
+        ["scroll", "stable", "short_text", 79, True],
+        # long text, `scrollbar-gutter: stable`: reduced width, scrollbar
+        ["scroll", "stable", "long_text", 79, True],
+        # ------------------------------------------------
+        # ----- Finally, let's check the behaviour with `overflow-y: hidden`:
+        # short text: full width, no scrollbar
+        ["hidden", "auto", "short_text", 80, False],
+        # long text: full width, no scrollbar
+        ["hidden", "auto", "long_text", 80, False],
+        # short text, `scrollbar-gutter: stable`: reduced width, no scrollbar
+        ["hidden", "stable", "short_text", 79, False],
+        # long text, `scrollbar-gutter: stable`: reduced width, no scrollbar
+        ["hidden", "stable", "long_text", 79, False],
+    ),
+)
+async def test_scrollbar_gutter(
+    overflow_y: str,
+    scrollbar_gutter: str,
+    text_length: Literal["short_text", "long_text"],
+    expected_text_widget_width: int,
+    expects_vertical_scrollbar: bool,
+):
+    from rich.text import Text
+    from textual.geometry import Size
+
+    class TextWidget(Widget):
+        def render(self, styles) -> Text:
+            text_multiplier = 10 if text_length == "long_text" else 2
+            return Text(
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In velit liber a a a."
+                * text_multiplier
+            )
+
+    container = Widget()
+    container.styles.height = 3
+    container.styles.overflow_y = overflow_y
+    container.styles.scrollbar_gutter = scrollbar_gutter
+
+    text_widget = TextWidget()
+    text_widget.styles.height = "auto"
+    container.add_child(text_widget)
+
+    class MyTestApp(AppTest):
+        def compose(self) -> ComposeResult:
+            yield container
+
+    app = MyTestApp(test_name="scrollbar_gutter", size=Size(80, 10))
+    await app.boot_and_shutdown()
+
+    assert text_widget.size.width == expected_text_widget_width
+    assert container.scrollbars_enabled[0] is expects_vertical_scrollbar
