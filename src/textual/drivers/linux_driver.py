@@ -21,6 +21,7 @@ from ..driver import Driver
 from ..geometry import Size
 from .._types import MessageTarget
 from .._xterm_parser import XTermParser
+from .._terminal_modes import get_mode_request_sequence, Mode
 from .._profile import timer
 
 
@@ -123,6 +124,11 @@ class LinuxDriver(Driver):
         self._key_thread = Thread(target=self.run_input_thread, args=(loop,))
         send_size_event()
         self._key_thread.start()
+        self._request_terminal_mode_support(Mode.SynchronizedOutput)
+
+    def _request_terminal_mode_support(self, mode: Mode):
+        self.console.file.write(get_mode_request_sequence(mode) + "\n")
+        self.console.file.flush()
 
     @classmethod
     def _patch_lflag(cls, attrs: int) -> int:
@@ -214,7 +220,6 @@ class LinuxDriver(Driver):
 
 
 if __name__ == "__main__":
-    from time import sleep
     from rich.console import Console
     from .. import events
 

@@ -1,9 +1,14 @@
 from typing import Dict, Tuple
 
+from ._terminal_modes import (
+    get__mode_report_sequence,
+    Mode,
+    ModeReportParameter,
+)
 from .keys import Keys
 
 # Mapping of vt100 escape codes to Keys.
-ANSI_SEQUENCES: Dict[str, Tuple[Keys, ...]] = {
+ANSI_SEQUENCES_KEYS: Dict[str, Tuple[Keys, ...]] = {
     # Control keys.
     "\r": (Keys.Enter,),
     "\x00": (Keys.ControlAt,),  # Control-At (Also for Ctrl-Space)
@@ -298,4 +303,13 @@ ANSI_SEQUENCES: Dict[str, Tuple[Keys, ...]] = {
     "\x1b[1;8w": (Keys.Escape, Keys.ControlShift7),
     "\x1b[1;8x": (Keys.Escape, Keys.ControlShift8),
     "\x1b[1;8y": (Keys.Escape, Keys.ControlShift9),
+}
+
+
+# Mapping of escape codes to report whether they support a "mode" we requested.
+ANSI_SEQUENCES_MODE_REPORTS: Dict[str, Tuple[Mode, ModeReportParameter]] = {
+    get__mode_report_sequence(mode, parameter): (mode, parameter)
+    for mode, parameter in [
+        (mode, parameter) for parameter in ModeReportParameter for mode in Mode
+    ]
 }

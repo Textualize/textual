@@ -6,6 +6,11 @@ import rich.repr
 from rich.style import Style
 
 from . import log
+from ._terminal_modes import (
+    Mode,
+    ModeReportParameter,
+    MODE_REPORTS_PARAMETERS_INDICATING_SUPPORT,
+)
 from .geometry import Offset, Size
 from .message import Message
 from ._types import MessageTarget
@@ -411,3 +416,37 @@ class DescendantFocus(Event, verbosity=2, bubble=True):
 
 class DescendantBlur(Event, verbosity=2, bubble=True):
     pass
+
+
+@rich.repr.auto
+class ModeReport(InputEvent):
+    """Sent when the terminals responses to a "mode "(i.e. a supported feature) request"""
+
+    __slots__ = ["mode", "report_parameter"]
+
+    def __init__(
+        self, sender: MessageTarget, mode: Mode, report_parameter: ModeReportParameter
+    ) -> None:
+        """
+
+        Args:
+            sender (MessageTarget): The sender of the event
+            mode (Mode): The mode the terminal emulator is giving us results about
+            report_parameter (ModeReportParameter): The status of this mode for the terminal emulator
+        """
+        super().__init__(sender)
+        self.mode = mode
+        self.report_parameter = report_parameter
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "mode", self.mode
+        yield "report_parameter", self.report_parameter
+
+    @property
+    def mode_is_supported(self) -> bool:
+        """Return True if the mode seems to be supported by the terminal emulator.
+
+        Returns:
+            bool: True if it's supported. False otherwise.
+        """
+        return self.report_parameter in MODE_REPORTS_PARAMETERS_INDICATING_SUPPORT

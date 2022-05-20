@@ -22,6 +22,10 @@ from typing import (
     TYPE_CHECKING,
 )
 
+from ._terminal_features import TerminalSupportedFeatures
+from ._terminal_modes import Mode
+from .events import ModeReport
+
 if sys.version_info >= (3, 8):
     from typing import Literal
 else:
@@ -44,7 +48,6 @@ from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
-from ._timer import Timer
 from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -143,9 +146,7 @@ class App(Generic[ReturnType], DOMNode):
         self.driver_class = driver_class or self.get_driver_class()
         self._title = title
         self._screen_stack: list[Screen] = []
-        self._sync_available = (
-            os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal" and not WINDOWS
-        )
+        self._terminal_features = TerminalSupportedFeatures.from_autodetect()
 
         self.focused: Widget | None = None
         self.mouse_over: Widget | None = None
@@ -698,6 +699,7 @@ class App(Generic[ReturnType], DOMNode):
         self.log("---")
         self.log(driver=self.driver_class)
         self.log(loop=asyncio.get_running_loop())
+        self.log(terminal_features=self._terminal_features)
         self.log(features=self.features)
 
         try:
@@ -858,14 +860,18 @@ class App(Generic[ReturnType], DOMNode):
         """
         if self._running and not self._closed:
             console = self.console
-            if self._sync_available:
-                console.file.write("\x1bP=1s\x1b\\")
+            (
+                sync_update_start,
+                sync_update_end,
+            ) = self._terminal_features.synchronized_update_sequences()
+            if sync_update_start:
+                console.file.write(sync_update_start)
             try:
                 console.print(renderable)
             except Exception as error:
                 self.on_exception(error)
-            if self._sync_available:
-                console.file.write("\x1bP=2s\x1b\\")
+            if sync_update_end:
+                console.file.write(sync_update_end)
             console.file.flush()
 
     def measure(self, renderable: RenderableType, max_width=100_000) -> int:
@@ -939,6 +945,15 @@ class App(Generic[ReturnType], DOMNode):
             else:
                 # Forward the event to the view
                 await self.screen.forward_event(event)
+
+        elif isinstance(event, ModeReport):
+            if event.mode is Mode.SynchronizedOutput:
+                is_supported = event.mode_is_supported
+                log(
+                    f"SynchronizedOutput (aka 'mode2026') {'is' if is_supported else ' is not'} supported"
+                )
+                self._terminal_features.mode2026_synchronized_update = is_supported
+
         else:
             await super().on_event(event)
 
