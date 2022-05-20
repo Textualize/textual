@@ -1,4 +1,6 @@
+from __future__ import annotations
 import sys
+import typing
 
 if sys.version_info >= (3, 8):
     from typing import Final
@@ -7,12 +9,16 @@ else:
 
 from ..geometry import Spacing
 
+if typing.TYPE_CHECKING:
+    from .types import EdgeType
+
 VALID_VISIBILITY: Final = {"visible", "hidden"}
 VALID_DISPLAY: Final = {"block", "none"}
-VALID_BORDER: Final = {
+VALID_BORDER: Final[set[EdgeType]] = {
     "none",
     "hidden",
     "round",
+    "blank",
     "solid",
     "double",
     "dashed",

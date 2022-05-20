@@ -19,6 +19,19 @@ class Placeholder(Widget, can_focus=True):
     has_focus: Reactive[bool] = Reactive(False)
     mouse_over: Reactive[bool] = Reactive(False)
 
+    def __init__(
+        # parent class constructor signature:
+        self,
+        *children: Widget,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        # ...and now for our own class specific params:
+        title: str | None = None,
+    ) -> None:
+        super().__init__(*children, name=name, id=id, classes=classes)
+        self.title = title
+
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
         yield "has_focus", self.has_focus, False
@@ -32,7 +45,7 @@ class Placeholder(Widget, can_focus=True):
                 Pretty(self, no_wrap=True, overflow="ellipsis"),
                 vertical="middle",
             ),
-            title=self.__class__.__name__,
+            title=self.title or self.__class__.__name__,
             border_style="green" if self.mouse_over else "blue",
             box=box.HEAVY if self.has_focus else box.ROUNDED,
         )
