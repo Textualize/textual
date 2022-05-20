@@ -44,7 +44,9 @@ class TextWidgetBase(Widget):
             return
 
         changed = False
-        if key == "ctrl+h":
+        if event.is_printable:
+            changed = self._editor.insert_at_cursor(key)
+        elif key == "ctrl+h":
             changed = self._editor.delete_back()
         elif key == "ctrl+d":
             changed = self._editor.delete_forward()
@@ -56,8 +58,6 @@ class TextWidgetBase(Widget):
             self._editor.cursor_text_start()
         elif key == "end" or key == "ctrl+e":
             self._editor.cursor_text_end()
-        elif event.is_printable:
-            changed = self._editor.insert_at_cursor(key)
 
         if changed:
             self.post_message_no_wait(self.Changed(self, value=self._editor.content))
