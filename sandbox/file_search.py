@@ -16,7 +16,7 @@ from textual.widgets.text_input import TextInput, TextWidgetBase
 
 
 def get_files() -> list[Path]:
-    files = [file for file in Path.cwd().iterdir()]
+    files = list(Path.cwd().iterdir())
     return files
 
 
@@ -53,17 +53,13 @@ class FileSearchApp(App[str]):
 
     def on_mount(self) -> None:
         self.file_table = FileTable(id="file_table", files=list(Path.cwd().iterdir()))
-        self.mount(file_table_wrapper=Widget(self.file_table))
-
         self.search_bar = TextInput(placeholder="Search for files...")
-        self.search_bar.cursor_blink_enabled = True
         self.search_bar.focus()
-
+        self.mount(file_table_wrapper=Widget(self.file_table))
         self.mount(search_bar=self.search_bar)
 
     def handle_changed(self, event: TextWidgetBase.Changed) -> None:
-        if event.sender == self.search_bar:
-            self.file_table.filter = event.value
+        self.file_table.filter = event.value
 
 
 app = FileSearchApp(
