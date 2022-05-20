@@ -23,10 +23,8 @@ from . import events
 from ._animator import BoundAnimator
 from ._border import Border
 from .box_model import BoxModel, get_box_model
-from .color import Color
 from ._context import active_app
 from ._types import Lines
-from .css.styles import Styles
 from .dom import DOMNode
 from .geometry import clamp, Offset, Region, Size
 from .layouts.vertical import VerticalLayout
@@ -96,6 +94,8 @@ class Widget(DOMNode):
         self._render_cache = RenderCache(Size(0, 0), [])
         self._dirty_regions: list[Region] = []
 
+        # Cache the auto content dimensions
+        # TODO: add mechanism to explicitly clear this
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
