@@ -7,12 +7,14 @@ Horizontal {
 .test {
     width: auto;
     height: auto;
-
+    height: 5;
     background: white 50%;
-    border:solid green;   
+    /* border:solid green;    */
+    border-right: outer green; 
+    border-left: outer blue;
     padding: 0;
     margin:3;
 
     align: center middle;
-    box-sizing: content-box;
+    box-sizing: border-box;
 } 

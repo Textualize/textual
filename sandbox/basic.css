@@ -40,7 +40,7 @@ App > Screen {
   background: $primary-darken-2;
   color: $text-primary-darken-2 ;
   border-right: outer $primary-darken-3;
-  content-align: center middle;
+  content-align: center middle;  
 }
 
 #sidebar .user {
@@ -168,7 +168,7 @@ OptionItem {
   height: 3;
   background: $primary;
   border-right: outer $primary-darken-2;
-  border-left: hidden;
+  border-left: blank;
   content-align: center middle;
 }
 

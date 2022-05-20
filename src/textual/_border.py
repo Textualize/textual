@@ -22,7 +22,7 @@ OUTER = 2
 
 BORDER_CHARS: dict[EdgeType, tuple[str, str, str]] = {
     # Each string of the tuple represents a sub-tuple itself:
-    #  - 1st string represents `(top1, top2, top3)`
+    #  - 1st string represents (top1, top2, top3)
     #  - 2nd string represents (mid1, mid2, mid3)
     #  - 3rd string represents (bottom1, bottom2, bottom3)
     "": ("   ", "   ", "   "),
@@ -128,7 +128,7 @@ class Border:
 
     This is analogous to Rich's `Box` but more flexible. Different borders may be
     applied to each of the four edges, and more advanced borders can be achieved through
-    varions combinations of Widget and parent background colors.
+    various combinations of Widget and parent background colors.
 
     """
 
@@ -150,12 +150,8 @@ class Border:
             (bottom, bottom_color),
             (left, left_color),
         ) = edge_styles
-        self._sides: tuple[EdgeType, EdgeType, EdgeType, EdgeType] = (
-            top or "none",
-            right or "none",
-            bottom or "none",
-            left or "none",
-        )
+        self._sides: tuple[EdgeType, EdgeType, EdgeType, EdgeType]
+        self._sides = (top, right, bottom, left)
         from_color = Style.from_color
 
         self._styles = (
@@ -204,6 +200,7 @@ class Border:
     def __rich_console__(
         self, console: "Console", options: "ConsoleOptions"
     ) -> "RenderResult":
+
         top, right, bottom, left = self._sides
         style = console.get_style(self.inner_style)
         outer_style = console.get_style(self.outer_style)
