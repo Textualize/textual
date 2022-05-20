@@ -814,6 +814,8 @@ class Widget(DOMNode):
         if layout:
             self._layout_required = True
         if repaint:
+            self._content_width_cache = (None, 0)
+            self._content_height_cache = (None, 0)
             self.set_dirty()
             self._repaint_required = True
         self.check_idle()
