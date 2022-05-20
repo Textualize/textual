@@ -363,10 +363,9 @@ class TextInput(TextWidgetBase, can_focus=True):
             event.prevent_default()
             super().on_key(event)
             if self.value:
-                start, end = self.visible_range
                 full_suggestion = self.autocompleter(self.value)
                 if full_suggestion:
-                    suffix = full_suggestion[len(self._editor.get_range(start, end)) :]
+                    suffix = full_suggestion[len(self.value) :]
                     self._suggestion_suffix = suffix
                 else:
                     self._suggestion_suffix = None
