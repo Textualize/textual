@@ -127,7 +127,7 @@ class LinuxDriver(Driver):
         self._request_terminal_mode_support(Mode.SynchronizedOutput)
 
     def _request_terminal_mode_support(self, mode: Mode):
-        self.console.file.write(get_mode_request_sequence(mode) + "\n")
+        self.console.file.write(get_mode_request_sequence(mode))
         self.console.file.flush()
 
     @classmethod

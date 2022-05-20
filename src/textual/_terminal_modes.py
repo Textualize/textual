@@ -37,5 +37,5 @@ def get_mode_request_sequence(mode: Mode) -> str:
     return "\033[?" + mode.value + "$p\n"
 
 
-def get__mode_report_sequence(mode: Mode, parameter: ModeReportParameter) -> str:
+def get_mode_report_sequence(mode: Mode, parameter: ModeReportParameter) -> str:
     return f"\x1b[?{mode.value};{parameter.value}$y"

@@ -1,17 +1,15 @@
 from __future__ import annotations
-import os
-import platform
-from dataclasses import dataclass
+from typing import NamedTuple
+
+from textual._ansi_sequences import TERMINAL_MODES_ANSI_SEQUENCES
+from textual._terminal_modes import Mode
 
 
-@dataclass
-class TerminalSupportedFeatures:
+class TerminalSupportedFeatures(NamedTuple):
     """
     Handles information about the features the current terminal emulator seems to support.
     """
 
-    iterm2_synchronized_update: bool = False
-    """@link https://gitlab.com/gnachman/iterm2/-/wikis/synchronized-updates-spec"""
     mode2026_synchronized_update: bool = False
     """@link https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036"""
 
@@ -26,19 +24,15 @@ class TerminalSupportedFeatures:
             TerminalSupportedFeatures: a new TerminalSupportedFeatures
         """
 
-        # Using macOS, but not using the default terminal: let's assume we're on iTerm2
-        iterm2_synchronized_update = (
-            platform.system() == "Darwin"
-            and os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal"
-        )
+        # Here we might detect some features later on, by checking the OS type, the env vars, etc.
+        # (the same way we were doing it to detect iTerm2 "synchronized update" mode)
 
-        # Detecting "mode2026" is more complicated, as we have to use an async request/response
+        # Detecting "mode2026" is complicated, as we have to use an async request/response
         # machinery with the terminal emulator - for now we should just assume it's not supported.
         # See the use of the Mode and ModeReportParameter classes in the Textual code to check this machinery.
         mode2026_synchronized_update = False
 
         return cls(
-            iterm2_synchronized_update=iterm2_synchronized_update,
             mode2026_synchronized_update=mode2026_synchronized_update,
         )
 
@@ -47,12 +41,12 @@ class TerminalSupportedFeatures:
         """
         Tells the caller if the current terminal emulator seems to support "synchronised updates"
         (i.e. "buffered" updates).
-        At the moment we support the iTerm2 specific one, as wel las the more generic "mode 2026".
+        At the moment we only support the generic "mode 2026".
 
         Returns:
             bool: whether the terminal seems to support buffered mode or not
         """
-        return self.iterm2_synchronized_update or self.mode2026_synchronized_update
+        return self.mode2026_synchronized_update
 
     def synchronized_update_sequences(self) -> tuple[str, str]:
         """
@@ -70,15 +64,11 @@ class TerminalSupportedFeatures:
         )
 
     def _synchronized_update_start_sequence(self) -> str:
-        if self.iterm2_synchronized_update:
-            return "\x1bP=1s\x1b\\"
         if self.mode2026_synchronized_update:
-            return "\x1b[?2026h"
+            return TERMINAL_MODES_ANSI_SEQUENCES[Mode.SynchronizedOutput]["start_sync"]
         return ""
 
     def _synchronized_update_end_sequence(self) -> str:
-        if self.iterm2_synchronized_update:
-            return "\x1bP=2s\x1b\\"
         if self.mode2026_synchronized_update:
-            return "\x1b[?2026l"
+            return TERMINAL_MODES_ANSI_SEQUENCES[Mode.SynchronizedOutput]["end_sync"]
         return ""

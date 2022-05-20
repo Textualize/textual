@@ -1,7 +1,7 @@
 from typing import Dict, Tuple
 
 from ._terminal_modes import (
-    get__mode_report_sequence,
+    get_mode_report_sequence,
     Mode,
     ModeReportParameter,
 )
@@ -308,8 +308,12 @@ ANSI_SEQUENCES_KEYS: Dict[str, Tuple[Keys, ...]] = {
 
 # Mapping of escape codes to report whether they support a "mode" we requested.
 ANSI_SEQUENCES_MODE_REPORTS: Dict[str, Tuple[Mode, ModeReportParameter]] = {
-    get__mode_report_sequence(mode, parameter): (mode, parameter)
+    get_mode_report_sequence(mode, parameter): (mode, parameter)
     for mode, parameter in [
         (mode, parameter) for parameter in ModeReportParameter for mode in Mode
     ]
+}
+
+TERMINAL_MODES_ANSI_SEQUENCES: Dict[Mode, dict] = {
+    Mode.SynchronizedOutput: {"start_sync": "\x1b[?2026h", "end_sync": "\x1b[?2026l"},
 }

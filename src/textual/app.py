@@ -952,7 +952,9 @@ class App(Generic[ReturnType], DOMNode):
                 log(
                     f"SynchronizedOutput (aka 'mode2026') {'is' if is_supported else ' is not'} supported"
                 )
-                self._terminal_features.mode2026_synchronized_update = is_supported
+                self._terminal_features = self._terminal_features._replace(
+                    mode2026_synchronized_update=is_supported
+                )
 
         else:
             await super().on_event(event)
