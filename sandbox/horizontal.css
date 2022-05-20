@@ -14,5 +14,5 @@ Horizontal {
     margin:3;
 
     align: center middle;
-    box-sizing: border-box;
+    box-sizing: content-box;
 } 

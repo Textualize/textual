@@ -96,6 +96,9 @@ class Widget(DOMNode):
         self._render_cache = RenderCache(Size(0, 0), [])
         self._dirty_regions: list[Region] = []
 
+        self._content_width_cache: tuple[object, int] = (None, 0)
+        self._content_height_cache: tuple[object, int] = (None, 0)
+
         super().__init__(name=name, id=id, classes=classes)
         self.add_children(*children)
 
@@ -168,10 +171,6 @@ class Widget(DOMNode):
             self.get_content_width,
             self.get_content_height,
         )
-        print("--")
-        print(self)
-        print("container", container)
-        print("model", box_model)
         return box_model
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
@@ -187,6 +186,10 @@ class Widget(DOMNode):
         if self.is_container:
             return self.layout.get_content_width(self, container, viewport)
 
+        cache_key = container.width
+        if self._content_width_cache[0] == cache_key:
+            return self._content_width_cache[1]
+
         console = self.app.console
         renderable = self.render(self.styles.rich_style)
         measurement = Measurement.get(
@@ -195,6 +198,7 @@ class Widget(DOMNode):
             renderable,
         )
         width = measurement.maximum
+        self._content_width_cache = (cache_key, width)
         return width
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
@@ -216,14 +220,18 @@ class Widget(DOMNode):
                 viewport,
                 width,
             )
-            print(self, "auto_height container", "width=", width, "height=", height)
         else:
+            cache_key = width
+
+            if self._content_height_cache[0] == cache_key:
+                return self._content_height_cache[1]
+
             renderable = self.render(self.styles.rich_style)
             options = self.console.options.update_width(width).update(highlight=False)
             segments = self.console.render(renderable, options)
             # Cheaper than counting the lines returned from render_lines!
             height = sum(text.count("\n") for text, _, _ in segments)
-            print(self, "auto_height renderable", height)
+            self._content_height_cache = (cache_key, height)
 
         return height
 
