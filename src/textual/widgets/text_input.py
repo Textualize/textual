@@ -52,9 +52,9 @@ class TextWidgetBase(Widget):
             self._editor.cursor_left()
         elif key == "right":
             self._editor.cursor_right()
-        elif key == "home":
+        elif key == "home" or key == "ctrl+a":
             self._editor.cursor_text_start()
-        elif key == "end":
+        elif key == "end" or key == "ctrl+e":
             self._editor.cursor_text_end()
         elif event.is_printable:
             changed = self._editor.insert_at_cursor(key)
@@ -340,9 +340,9 @@ class TextInput(TextWidgetBase, can_focus=True):
             self._update_suggestion(event)
         elif key == "ctrl+d":
             self._update_suggestion(event)
-        elif key == "home":
+        elif key == "home" or key == "ctrl+a":
             self.visible_range = (0, available_width)
-        elif key == "end":
+        elif key == "end" or key == "ctrl+e":
             num_codepoints = len(self.value)
             final_visible_codepoints = self._editor.get_range(
                 num_codepoints - available_width + 1,
