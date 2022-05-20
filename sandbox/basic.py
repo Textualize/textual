@@ -148,6 +148,9 @@ class BasicApp(App):
     def key_x(self):
         self.panic(self.tree)
 
+    def key_escape(self):
+        self.app.bell()
+
     def key_t(self):
         # Pressing "t" toggles the content of the TweetBody widget, from a long "Lorem ipsum..." to a shorter one.
         tweet_body = self.screen.query("TweetBody").first()

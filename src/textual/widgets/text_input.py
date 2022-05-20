@@ -278,7 +278,7 @@ class TextAreaChild(TextWidgetBase, can_focus=True):
             self._editor.insert_at_cursor("\n")
         elif event.key == "tab":
             self._editor.insert_at_cursor("\t")
-        elif event.key == "\x1b":
+        elif event.key == "escape":
             self.app.focused = None
 
     def on_focus(self, event: events.Focus) -> None:

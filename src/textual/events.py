@@ -9,7 +9,7 @@ from . import log
 from .geometry import Offset, Size
 from .message import Message
 from ._types import MessageTarget
-from .keys import Keys, KEY_BINDINGS
+from .keys import Keys, KEY_VALUES
 
 MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
 
@@ -208,7 +208,7 @@ class Key(InputEvent):
         Returns:
             bool: True if the key is printable. False otherwise.
         """
-        return self.key not in KEY_BINDINGS
+        return self.key not in KEY_VALUES
 
 
 @rich.repr.auto
