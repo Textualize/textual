@@ -200,4 +200,4 @@ class Keys(str, Enum):
     ShiftControlEnd = ControlShiftEnd
 
 
-KEY_VALUES = frozenset(Keys._value2member_map_.values())
+KEY_VALUES = frozenset(Keys.__members__.values())
