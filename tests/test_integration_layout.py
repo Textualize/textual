@@ -266,8 +266,6 @@ async def test_border_edge_types_impact_on_widget_size(
             ("overflow: auto", "scrollbar-size: 3 3"),
             Size(20, 17),
         ],
-        # edge case: scrollbars should not be displayed at all if their size is set to 0
-        [Size(30, 30), ("overflow: auto", "scrollbar-size: 0 0"), Size(20, 20)],
     ),
 )
 async def test_scrollbar_size_impact_on_the_layout(

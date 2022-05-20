@@ -288,13 +288,9 @@ class Widget(DOMNode):
 
         if self._vertical_scrollbar is not None:
             return self._vertical_scrollbar
-        thickness = (
-            1
-            if self.styles.scrollbar_size_vertical is None
-            else int(self.styles.scrollbar_size_vertical.value)
-        )
+        (vertical_scrollbar_thickness, _) = self._get_scrollbar_thicknesses()
         self._vertical_scrollbar = scroll_bar = ScrollBar(
-            vertical=True, name="vertical", thickness=thickness
+            vertical=True, name="vertical", thickness=vertical_scrollbar_thickness
         )
         self.app.start_widget(self, scroll_bar)
         return scroll_bar
@@ -310,13 +306,9 @@ class Widget(DOMNode):
 
         if self._horizontal_scrollbar is not None:
             return self._horizontal_scrollbar
-        thickness = (
-            1
-            if self.styles.scrollbar_size_horizontal is None
-            else int(self.styles.scrollbar_size_horizontal.value)
-        )
+        (_, horizontal_scrollbar_thickness) = self._get_scrollbar_thicknesses()
         self._horizontal_scrollbar = scroll_bar = ScrollBar(
-            vertical=False, name="horizontal", thickness=thickness
+            vertical=False, name="horizontal", thickness=horizontal_scrollbar_thickness
         )
 
         self.app.start_widget(self, scroll_bar)
@@ -330,9 +322,6 @@ class Widget(DOMNode):
         styles = self.styles
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
-        scrollbar_size_horizontal = styles.scrollbar_size_horizontal
-        scrollbar_size_vertical = styles.scrollbar_size_vertical
-        overflow_y = styles.overflow_y
         width, height = self.container_size
 
         show_horizontal = self.show_horizontal_scrollbar
@@ -342,11 +331,6 @@ class Widget(DOMNode):
             show_horizontal = True
         elif overflow_x == "auto":
             show_horizontal = self.virtual_size.width > width
-        if (
-            scrollbar_size_horizontal is not None
-            and scrollbar_size_horizontal.value == 0
-        ):
-            show_horizontal = False
 
         show_vertical = self.show_vertical_scrollbar
         if overflow_y == "hidden":
@@ -355,8 +339,6 @@ class Widget(DOMNode):
             show_vertical = True
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
-        if scrollbar_size_vertical is not None and scrollbar_size_vertical.value == 0:
-            show_vertical = False
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical

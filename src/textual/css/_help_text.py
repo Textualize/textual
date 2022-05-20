@@ -646,7 +646,9 @@ def scrollbar_size_property_help_text(context: StylingContext) -> HelpText:
                     ),
                 ],
             ).get_by_context(context),
-            Bullet("<horizontal> and <vertical> must be positive integers"),
+            Bullet(
+                "<horizontal> and <vertical> must be positive integers, greater than zero"
+            ),
         ],
     )
 
@@ -664,7 +666,7 @@ def scrollbar_size_single_axis_help_text(property_name: str) -> HelpText:
         summary=f"Invalid value for [i]{property_name}[/]",
         bullets=[
             Bullet(
-                markup=f"The [i]{property_name}[/] property can only be set to a positive integer",
+                markup=f"The [i]{property_name}[/] property can only be set to a positive integer, greather than zero",
                 examples=[
                     Example(f"{property_name}: 2;"),
                 ],
