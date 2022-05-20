@@ -484,13 +484,13 @@ class Region(NamedTuple):
         )
 
     def intersection(self, region: Region) -> Region:
-        """Get that covers both regions.
+        """Get the overlapping portion of the two regions.
 
         Args:
             region (Region): A region that overlaps this region.
 
         Returns:
-            Region: A new region that fits within ``region``.
+            Region: A new region that covers when the two regions overlap.
         """
         # Unrolled because this method is used a lot
         x1, y1, w1, h1 = self
@@ -511,10 +511,10 @@ class Region(NamedTuple):
         """Get a new region that contains both regions.
 
         Args:
-            region (Region): [description]
+            region (Region): Another region.
 
         Returns:
-            Region: [description]
+            Region: An optimally sized region to cover both regions.
         """
         x1, y1, x2, y2 = self.corners
         ox1, oy1, ox2, oy2 = region.corners

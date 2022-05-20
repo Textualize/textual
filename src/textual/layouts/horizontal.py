@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import cast
 
 from textual.geometry import Size, Offset, Region
-from textual._layout import Layout, WidgetPlacement
+from textual._layout import ArrangeResult, Layout, WidgetPlacement
 
 from textual.widget import Widget
 
@@ -15,9 +15,7 @@ class HorizontalLayout(Layout):
 
     name = "horizontal"
 
-    def arrange(
-        self, parent: Widget, size: Size, scroll: Offset
-    ) -> tuple[list[WidgetPlacement], set[Widget]]:
+    def arrange(self, parent: Widget, size: Size) -> ArrangeResult:
 
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
@@ -49,8 +47,6 @@ class HorizontalLayout(Layout):
             add_placement(WidgetPlacement(region, widget, 0))
             x += region.width + margin
             max_width = x
-
-        max_width += margins[-1] if margins else 0
 
         total_region = Region(0, 0, max_width, max_height)
         add_placement(WidgetPlacement(total_region, None, 0))

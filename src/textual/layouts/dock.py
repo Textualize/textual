@@ -9,7 +9,7 @@ from typing import Iterable, TYPE_CHECKING, NamedTuple, Sequence
 from .._layout_resolve import layout_resolve
 from ..css.types import Edge
 from ..geometry import Offset, Region, Size
-from .._layout import Layout, WidgetPlacement
+from .._layout import ArrangeResult, Layout, WidgetPlacement
 from ..widget import Widget
 
 if sys.version_info >= (3, 8):
@@ -26,8 +26,12 @@ DockEdge = Literal["top", "right", "bottom", "left"]
 @dataclass
 class DockOptions:
     size: int | None = None
-    fraction: int = 1
+    fraction: int | None = 1
     min_size: int = 1
+
+    def __post_init__(self) -> None:
+        if self.size is None and self.fraction is None:
+            self.fraction = 1
 
 
 class Dock(NamedTuple):
@@ -59,9 +63,7 @@ class DockLayout(Layout):
             append_dock(Dock(edge, groups[name], z))
         return docks
 
-    def arrange(
-        self, parent: Widget, size: Size, scroll: Offset
-    ) -> tuple[list[WidgetPlacement], set[Widget]]:
+    def arrange(self, parent: Widget, size: Size) -> ArrangeResult:
 
         width, height = size
         layout_region = Region(0, 0, width, height)
@@ -73,6 +75,7 @@ class DockLayout(Layout):
             styles = widget.styles
             has_rule = styles.has_rule
 
+            # TODO: This was written pre resolve_dimension, we should update this to use available units
             return (
                 DockOptions(
                     styles.width.cells if has_rule("width") else None,

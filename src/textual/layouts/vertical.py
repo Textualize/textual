@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import cast, TYPE_CHECKING
 
-from ..geometry import Offset, Region, Size
-from .._layout import Layout, WidgetPlacement
+from ..geometry import Region, Size
+from .._layout import ArrangeResult, Layout, WidgetPlacement
 
 if TYPE_CHECKING:
     from ..widget import Widget
@@ -14,14 +14,11 @@ class VerticalLayout(Layout):
 
     name = "vertical"
 
-    def arrange(
-        self, parent: Widget, size: Size, scroll: Offset
-    ) -> tuple[list[WidgetPlacement], set[Widget]]:
+    def arrange(self, parent: Widget, size: Size) -> ArrangeResult:
 
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
 
-        max_width = max_height = 0
         parent_size = parent.size
 
         box_models = [
@@ -45,11 +42,8 @@ class VerticalLayout(Layout):
             region = Region(offset_x, y, content_width, content_height)
             add_placement(WidgetPlacement(region, widget, 0))
             y += region.height + margin
-            max_height = y
 
-        max_height += margins[-1] if margins else 0
-
-        total_region = Region(0, 0, max_width, max_height)
+        total_region = Region(0, 0, size.width, y)
         add_placement(WidgetPlacement(total_region, None, 0))
 
         return placements, set(displayed_children)

@@ -59,7 +59,7 @@ def test_width():
     box_model = get_box_model(
         styles, Size(60, 20), Size(80, 24), get_auto_width, get_auto_height
     )
-    assert box_model == BoxModel(Size(60, 20), Spacing(1, 2, 3, 4))
+    assert box_model == BoxModel(Size(54, 16), Spacing(1, 2, 3, 4))
 
     # Set width to auto-detect
     styles.width = "auto"
@@ -68,7 +68,7 @@ def test_width():
         styles, Size(60, 20), Size(80, 24), get_auto_width, get_auto_height
     )
     # Setting width to auto should call get_auto_width
-    assert box_model == BoxModel(Size(10, 20), Spacing(1, 2, 3, 4))
+    assert box_model == BoxModel(Size(10, 16), Spacing(1, 2, 3, 4))
 
     # Set width to 100 vw which should make it the width of the parent
     styles.width = "100vw"
@@ -76,7 +76,7 @@ def test_width():
     box_model = get_box_model(
         styles, Size(60, 20), Size(80, 24), get_auto_width, get_auto_height
     )
-    assert box_model == BoxModel(Size(80, 20), Spacing(1, 2, 3, 4))
+    assert box_model == BoxModel(Size(80, 16), Spacing(1, 2, 3, 4))
 
     # Set the width to 100% should make it fill the container size
     styles.width = "100%"
@@ -84,7 +84,7 @@ def test_width():
     box_model = get_box_model(
         styles, Size(60, 20), Size(80, 24), get_auto_width, get_auto_height
     )
-    assert box_model == BoxModel(Size(60, 20), Spacing(1, 2, 3, 4))
+    assert box_model == BoxModel(Size(60, 16), Spacing(1, 2, 3, 4))
 
     styles.width = "100vw"
     styles.max_width = "50%"
@@ -92,7 +92,7 @@ def test_width():
     box_model = get_box_model(
         styles, Size(60, 20), Size(80, 24), get_auto_width, get_auto_height
     )
-    assert box_model == BoxModel(Size(30, 20), Spacing(1, 2, 3, 4))
+    assert box_model == BoxModel(Size(30, 16), Spacing(1, 2, 3, 4))
 
 
 def test_height():
@@ -116,7 +116,7 @@ def test_height():
     box_model = get_box_model(
         styles, Size(60, 20), Size(80, 24), get_auto_width, get_auto_height
     )
-    assert box_model == BoxModel(Size(60, 20), Spacing(1, 2, 3, 4))
+    assert box_model == BoxModel(Size(54, 16), Spacing(1, 2, 3, 4))
 
     # Set width to 100 vw which should make it the width of the parent
     styles.height = "100vh"
@@ -124,7 +124,7 @@ def test_height():
     box_model = get_box_model(
         styles, Size(60, 20), Size(80, 24), get_auto_width, get_auto_height
     )
-    assert box_model == BoxModel(Size(60, 24), Spacing(1, 2, 3, 4))
+    assert box_model == BoxModel(Size(54, 24), Spacing(1, 2, 3, 4))
 
     # Set the width to 100% should make it fill the container size
     styles.height = "100%"
@@ -132,7 +132,7 @@ def test_height():
     box_model = get_box_model(
         styles, Size(60, 20), Size(80, 24), get_auto_width, get_auto_height
     )
-    assert box_model == BoxModel(Size(60, 20), Spacing(1, 2, 3, 4))
+    assert box_model == BoxModel(Size(54, 20), Spacing(1, 2, 3, 4))
 
     styles.height = "100vh"
     styles.max_height = "50%"
@@ -140,7 +140,7 @@ def test_height():
     box_model = get_box_model(
         styles, Size(60, 20), Size(80, 24), get_auto_width, get_auto_height
     )
-    assert box_model == BoxModel(Size(60, 10), Spacing(1, 2, 3, 4))
+    assert box_model == BoxModel(Size(54, 10), Spacing(1, 2, 3, 4))
 
 
 def test_max():

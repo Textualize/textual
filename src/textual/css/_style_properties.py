@@ -72,7 +72,7 @@ class ScalarProperty:
         self.name = name
 
     def __get__(
-        self, obj: StylesBase, objtype: type[Styles] | None = None
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
     ) -> Scalar | None:
         """Get the scalar property
 

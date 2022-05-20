@@ -7,8 +7,9 @@ from typing import cast, Tuple, Union
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 import rich.repr
 from rich.segment import Segment, SegmentLines
-from rich.style import Style, Color
+from rich.style import Style
 
+from .color import Color
 from .css.types import EdgeStyle, EdgeType
 
 if sys.version_info >= (3, 10):
@@ -186,7 +187,7 @@ class Border:
 
         if has_top:
             lines.pop(0)
-        if has_bottom:
+        if has_bottom and lines:
             lines.pop(-1)
 
         divide = Segment.divide
@@ -231,8 +232,7 @@ class Border:
                 if new_height >= 1:
                     render_options = options.update_dimensions(width, new_height)
                 else:
-                    render_options = options
-                    has_top = has_bottom = False
+                    render_options = options.update_width(width)
 
         lines = console.render_lines(self.renderable, render_options)
 

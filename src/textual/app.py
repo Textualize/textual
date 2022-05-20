@@ -398,7 +398,7 @@ class App(Generic[ReturnType], DOMNode):
                 output = " ".join(str(arg) for arg in objects)
                 if kwargs:
                     key_values = " ".join(
-                        f"{key}={value}" for key, value in kwargs.items()
+                        f"{key}={value!r}" for key, value in kwargs.items()
                     )
                     output = f"{output} {key_values}" if output else key_values
                 if self._log_console is not None:
@@ -407,8 +407,8 @@ class App(Generic[ReturnType], DOMNode):
                     self.devtools.log(
                         DevtoolsLog(output, caller=_textual_calling_frame)
                     )
-        except Exception:
-            pass
+        except Exception as error:
+            self.on_exception(error)
 
     def action_screenshot(self, path: str | None = None) -> None:
         """Action to save a screenshot."""
@@ -496,14 +496,17 @@ class App(Generic[ReturnType], DOMNode):
 
             try:
                 time = perf_counter()
-                self.stylesheet.read(self.css_path)
+                stylesheet = self.stylesheet.copy()
+                stylesheet.read(self.css_path)
+                stylesheet.parse()
                 elapsed = (perf_counter() - time) * 1000
-                self.log(f"loaded {self.css_path} in {elapsed:.0f}ms")
+                self.log(f"<stylesheet> loaded {self.css_path!r} in {elapsed:.0f} ms")
             except Exception as error:
                 # TODO: Catch specific exceptions
-                self.console.bell()
+                self.bell()
                 self.log(error)
             else:
+                self.stylesheet = stylesheet
                 self.reset_styles()
                 self.stylesheet.update(self)
                 self.screen.refresh(layout=True)
@@ -668,7 +671,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def fatal_error(self) -> None:
         """Exits the app after an unhandled exception."""
-        self.console.bell()
+        self.bell()
         traceback = Traceback(
             show_locals=True, width=None, locals_max_length=5, suppress=[rich]
         )
@@ -740,8 +743,7 @@ class App(Generic[ReturnType], DOMNode):
             self.on_exception(error)
         finally:
             self._running = False
-            if self._exit_renderables:
-                self._print_error_renderables()
+            self._print_error_renderables()
             if self.devtools.is_connected:
                 await self._disconnect_devtools()
                 if self._log_console is not None:
@@ -750,6 +752,7 @@ class App(Generic[ReturnType], DOMNode):
                     )
             if self._log_file is not None:
                 self._log_file.close()
+                self._log_console = None
 
     def on_mount(self) -> None:
         widgets = list(self.compose())
@@ -833,19 +836,7 @@ class App(Generic[ReturnType], DOMNode):
         await self.close_messages()
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
-        if not self._running:
-            return
-        if not self._closed:
-            console = self.console
-            try:
-                if self._sync_available:
-                    console.file.write("\x1bP=1s\x1b\\")
-                console.print(self.screen._compositor)
-                if self._sync_available:
-                    console.file.write("\x1bP=2s\x1b\\")
-                console.file.flush()
-            except Exception as error:
-                self.on_exception(error)
+        self._display(self.screen._compositor)
 
     def refresh_css(self, animate: bool = True) -> None:
         """Refresh CSS.
@@ -859,10 +850,13 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.update(self.app, animate=animate)
         self.refresh(layout=True)
 
-    def display(self, renderable: RenderableType) -> None:
-        if not self._running:
-            return
-        if not self._closed:
+    def _display(self, renderable: RenderableType) -> None:
+        """Display a renderable within a sync.
+
+        Args:
+            renderable (RenderableType): A Rich renderable.
+        """
+        if self._running and not self._closed:
             console = self.console
             if self._sync_available:
                 console.file.write("\x1bP=1s\x1b\\")
