@@ -168,6 +168,7 @@ class Widget(DOMNode):
             self.styles,
             container,
             viewport,
+            self.scrollbar_dimensions,
             self.get_content_width,
             self.get_content_height,
         )
@@ -184,7 +185,10 @@ class Widget(DOMNode):
             int: The optimal width of the content.
         """
         if self.is_container:
-            return self.layout.get_content_width(self, container, viewport)
+            return (
+                self.layout.get_content_width(self, container, viewport)
+                + self.scrollbar_width
+            )
 
         cache_key = container.width
         if self._content_width_cache[0] == cache_key:
@@ -214,11 +218,14 @@ class Widget(DOMNode):
         """
         if self.is_container:
             assert self.layout is not None
-            height = self.layout.get_content_height(
-                self,
-                container,
-                viewport,
-                width,
+            height = (
+                self.layout.get_content_height(
+                    self,
+                    container,
+                    viewport,
+                    width,
+                )
+                + self.scrollbar_height
             )
         else:
             cache_key = width
@@ -255,11 +262,19 @@ class Widget(DOMNode):
 
     @property
     def max_scroll_x(self) -> float:
-        return max(0, self.virtual_size.width - self.container_size.width)
+        return max(
+            0,
+            self.virtual_size.width - self.container_size.width + self.scrollbar_width,
+        )
 
     @property
     def max_scroll_y(self) -> float:
-        return max(0, self.virtual_size.height - self.container_size.height)
+        return max(
+            0,
+            self.virtual_size.height
+            - self.container_size.height
+            + self.scrollbar_height,
+        )
 
     @property
     def vertical_scrollbar(self) -> ScrollBar:
@@ -335,11 +350,26 @@ class Widget(DOMNode):
             tuple[bool, bool]: A tuple of (<vertical scrollbar enabled>, <horizontal scrollbar enabled>)
 
         """
-        if self.layout is None:
+        if not self.is_container:
             return False, False
 
         enabled = self.show_vertical_scrollbar, self.show_horizontal_scrollbar
         return enabled
+
+    @property
+    def scrollbar_dimensions(self) -> tuple[int, int]:
+        """Get the size of any scrollbars on the widget"""
+        return (int(self.show_horizontal_scrollbar), int(self.show_vertical_scrollbar))
+
+    @property
+    def scrollbar_width(self) -> int:
+        """Get the width used by the *vertical* scrollbar."""
+        return int(self.show_vertical_scrollbar)
+
+    @property
+    def scrollbar_height(self) -> int:
+        """Get the height used by the *horizontal* scrollbar."""
+        return int(self.show_horizontal_scrollbar)
 
     def set_dirty(self) -> None:
         """Set the Widget as 'dirty' (requiring re-render)."""
@@ -366,7 +396,6 @@ class Widget(DOMNode):
             bool: True if the scroll position changed, otherwise False.
         """
         scrolled_x = scrolled_y = False
-
         if animate:
             # TODO: configure animation speed
             if x is not None:
@@ -915,8 +944,6 @@ class Widget(DOMNode):
 
     def on_descendant_focus(self, event: events.DescendantFocus) -> None:
         self.descendant_has_focus = True
-        if self.is_container and isinstance(event.sender, Widget):
-            self.scroll_to_widget(event.sender, animate=True)
 
     def on_descendant_blur(self, event: events.DescendantBlur) -> None:
         self.descendant_has_focus = False

@@ -159,9 +159,7 @@ class BasicApp(App):
 
 
 app = BasicApp(
-    css_path="basic.css",
-    watch_css=True,
-    log_path="textual.log",
+    css_path="basic.css", watch_css=True, log_path="textual.log", log_verbosity=1
 )
 
 if __name__ == "__main__":
