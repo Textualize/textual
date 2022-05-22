@@ -168,7 +168,6 @@ class Widget(DOMNode):
             self.styles,
             container,
             viewport,
-            self.scrollbar_dimensions,
             self.get_content_width,
             self.get_content_height,
         )

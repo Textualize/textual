@@ -17,7 +17,6 @@ def get_box_model(
     styles: StylesBase,
     container: Size,
     viewport: Size,
-    scrollbars: tuple[int, int],
     get_content_width: Callable[[Size, Size], int],
     get_content_height: Callable[[Size, Size, int], int],
 ) -> BoxModel:
