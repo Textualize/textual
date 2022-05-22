@@ -262,6 +262,7 @@ class Widget(DOMNode):
 
     @property
     def max_scroll_x(self) -> float:
+        """The maximum value of `scroll_x`."""
         return max(
             0,
             self.virtual_size.width - self.container_size.width + self.scrollbar_width,
@@ -269,6 +270,7 @@ class Widget(DOMNode):
 
     @property
     def max_scroll_y(self) -> float:
+        """The maximum value of `scroll_y`."""
         return max(
             0,
             self.virtual_size.height
