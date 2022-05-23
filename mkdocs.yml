@@ -1,12 +1,26 @@
 site_name: Textual
-site_url: https://example.com/
+site_url: https://www.textualize.io/
 
 markdown_extensions:
-  - pymdownx.highlight
-  - pymdownx.superfences
+  - admonition
+  - meta
+  - toc:
+      permalink: true
+  - pymdownx.keys
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: textual
+          class: textual
+          format: !!python/name:textual._doc.format_svg
   - pymdownx.inlinehilite
   - pymdownx.superfences
   - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true 
+  - pymdownx.snippets
+  - markdown.extensions.attr_list
 
 theme:
   name: material

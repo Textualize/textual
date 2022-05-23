@@ -136,8 +136,13 @@ class App(Generic[ReturnType], DOMNode):
         # this will create some first references to an asyncio loop.
         _init_uvloop()
 
+        self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
+
         self.console = Console(
-            file=sys.__stdout__, markup=False, highlight=False, emoji=False
+            file=(open(os.devnull, "wt") if self.is_headless else sys.__stdout__),
+            markup=True,
+            highlight=False,
+            emoji=False,
         )
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
@@ -186,8 +191,6 @@ class App(Generic[ReturnType], DOMNode):
 
         self.css_path = css_path
 
-        self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
-
         self.registry: set[MessagePump] = set()
         self.devtools = DevtoolsClient()
         self._return_value: ReturnType | None = None
@@ -214,6 +217,11 @@ class App(Generic[ReturnType], DOMNode):
     def debug(self) -> bool:
         """Check if debug mode is enabled."""
         return "debug" in self.features
+
+    @property
+    def is_headless(self) -> bool:
+        """Check if the app is running in 'headless' mode."""
+        return "headless" in self.features
 
     def exit(self, result: ReturnType | None = None) -> None:
         """Exit the app, and return the supplied result.
@@ -430,7 +438,7 @@ class App(Generic[ReturnType], DOMNode):
             color_system="truecolor",
             record=True,
         )
-        console.print(self.screen._compositor)
+        console.print(self.screen._compositor.render(full=True))
         return console.export_svg(title=self.title)
 
     def save_screenshot(self, path: str | None = None) -> str:
@@ -443,6 +451,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             str: Filename of screenshot.
         """
+        self.bell()
         if path is None:
             svg_path = f"{self.title.lower()}_{datetime.now().isoformat()}.svg"
             svg_path = svg_path.replace("/", "_").replace("\\", "_")
@@ -727,13 +736,12 @@ class App(Generic[ReturnType], DOMNode):
                 mount_event = events.Mount(sender=self)
                 await self.dispatch_message(mount_event)
 
-                # TODO: don't override `self.console` here
-                self.console = Console(file=sys.__stdout__)
                 self.title = self._title
                 self.refresh()
                 await self.animator.start()
 
                 with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
+                    await self._ready()
                     await super().process_messages()
                     await self.animator.stop()
                     await self.close_all()
@@ -753,6 +761,22 @@ class App(Generic[ReturnType], DOMNode):
             if self._log_file is not None:
                 self._log_file.close()
                 self._log_console = None
+
+    async def _ready(self) -> None:
+        try:
+            screenshot_timer = float(os.environ.get("TEXTUAL_SCREENSHOT", "0"))
+        except ValueError:
+            return
+
+        if not screenshot_timer:
+            return
+
+        async def on_screenshot():
+            svg = self.export_screenshot()
+            self._screenshot = svg
+            await self.shutdown()
+
+        self.set_timer(screenshot_timer, on_screenshot)
 
     def on_mount(self) -> None:
         widgets = list(self.compose())

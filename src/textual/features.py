@@ -9,16 +9,16 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Final, Literal
 
-FEATURES: Final = {"devtools", "debug"}
+FEATURES: Final = {"devtools", "debug", "headless"}
 
-FeatureFlag = Literal["devtools", "debug"]
+FeatureFlag = Literal["devtools", "debug", "headless"]
 
 
 def parse_features(features: str) -> frozenset[FeatureFlag]:
     """Parse features env var
 
     Args:
-        features (str): Comma seprated feature flags
+        features (str): Comma separated feature flags
 
     Returns:
         frozenset[FeatureFlag]: A frozen set of known features.

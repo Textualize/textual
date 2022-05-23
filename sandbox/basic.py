@@ -158,11 +158,7 @@ class BasicApp(App):
         tweet_body.refresh(layout=True)
 
 
-app = BasicApp(
-    css_path="basic.css",
-    watch_css=True,
-    log_path="textual.log",
-)
+app = BasicApp(css_path="basic.css")
 
 if __name__ == "__main__":
     app.run()
