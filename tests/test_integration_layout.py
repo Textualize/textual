@@ -1,5 +1,4 @@
 from __future__ import annotations
-import asyncio
 from typing import cast, List
 
 import pytest
@@ -107,7 +106,6 @@ async def test_composition_of_vertical_container_with_children(
     expected_placeholders_size: tuple[int, int],
     expected_root_widget_virtual_size: tuple[int, int],
     expected_placeholders_offset_x: int,
-    event_loop: asyncio.AbstractEventLoop,
 ):
     class VerticalContainer(Widget):
         CSS = (

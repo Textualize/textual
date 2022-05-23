@@ -96,8 +96,8 @@ def get_box_model(
     content_height = max(1, content_height)
 
     # Get box dimensions by adding gutter
-    width = content_width + gutter.width
-    height = content_height + gutter.height
 
-    model = BoxModel(Size(width, height), margin)
+    size = Size(content_width, content_height) + gutter.totals
+
+    model = BoxModel(size, margin)
     return model

@@ -49,7 +49,7 @@ includes = "src"
 asyncio_mode = "auto"
 testpaths = ["tests"]
 markers = [
-    "integration_test: marks tests as slow integration tests(deselect with '-m \"not integration_test\"')",
+    "integration_test: marks tests as slow integration tests (deselect with '-m \"not integration_test\"')",
 ]
 
 [build-system]

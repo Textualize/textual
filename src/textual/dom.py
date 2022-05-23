@@ -9,6 +9,7 @@ from rich.style import Style
 from rich.text import Text
 from rich.tree import Tree
 
+from ._context import NoActiveAppError
 from ._node_list import NodeList
 from .color import Color
 from .css._error_tools import friendly_list
@@ -463,7 +464,7 @@ class DOMNode(MessagePump):
         try:
             self.app.stylesheet.update(self.app, animate=True)
             self.refresh()
-        except LookupError:
+        except NoActiveAppError:
             pass
 
     def remove_class(self, *class_names: str) -> None:
@@ -477,7 +478,7 @@ class DOMNode(MessagePump):
         try:
             self.app.stylesheet.update(self.app, animate=True)
             self.refresh()
-        except LookupError:
+        except NoActiveAppError:
             pass
 
     def toggle_class(self, *class_names: str) -> None:
@@ -491,7 +492,7 @@ class DOMNode(MessagePump):
         try:
             self.app.stylesheet.update(self.app, animate=True)
             self.refresh()
-        except LookupError:
+        except NoActiveAppError:
             pass
 
     def has_pseudo_class(self, *class_names: str) -> bool:

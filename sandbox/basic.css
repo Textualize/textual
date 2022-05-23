@@ -84,7 +84,7 @@ Tweet {
   /* border: outer $primary; */
   padding: 1;
   border: wide $panel-darken-2;
-  overflow-y: auto;
+  overflow: auto;
   /* scrollbar-gutter: stable; */
   align-horizontal: center;
   box-sizing: border-box;
@@ -114,10 +114,10 @@ TweetHeader {
 }
 
 TweetBody {  
-  width: 100w;
+  width: 130%;
   background: $panel;
   color: $text-panel;
-  height: auto;
+  height: auto; 
   padding: 0 1 0 0; 
  
 }
