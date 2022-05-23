@@ -16,10 +16,15 @@ Textual seeks to lower the difficulty level of building a TUI by borrowing devel
     --8<-- "docs/examples/simple.py"
     ```
 
+=== "CSS"
+
+    ```python
+    --8<-- "docs/examples/simple.css"
+    ```
+
 === "Terminal"
 
-    ```{.textual columns="40" lines="10"}
-    --8<-- "docs/examples/simple.py"
+    ```{.textual path="docs/examples/simple.py" columns="80" lines="24"}
     ```
 
 Textual also offers a number of enhancements over traditional TUI applications by taking advantage of improvements to terminal software and the hardware it runs on. Terminals are a far cry from their roots in ancient hardware and dial-up modems, yet much of the software that runs on them hasn't kept pace.

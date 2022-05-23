@@ -561,14 +561,14 @@ class Compositor:
         width, height = self.size
         screen_region = Region(0, 0, width, height)
 
-        if not full:
+        if full:
+            update_regions: set[Region] = set()
+        else:
             update_regions = self._dirty_regions.copy()
             self._dirty_regions.clear()
             if screen_region in update_regions:
                 # If one of the updates is the entire screen, then we only need one update
                 update_regions.clear()
-        else:
-            update_regions = set()
 
         if update_regions:
             # Create a crop regions that surrounds all updates
