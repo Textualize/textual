@@ -177,11 +177,11 @@ class MockAnimator(Animator):
         self._time = 0.0
         self._on_animation_frame_called = False
 
-    def get_time(self):
-        return self._time
-
     def on_animation_frame(self):
         self._on_animation_frame_called = True
+
+    def _get_time(self):
+        return self._time
 
 
 def test_animator():
@@ -245,10 +245,3 @@ def test_bound_animator():
         easing=EASING[DEFAULT_EASING],
     )
     assert animator._animations[(id(animate_test), "foo")] == expected
-
-
-def test_animator_get_time():
-    target = Mock()
-    animator = Animator(target)
-    assert isinstance(animator.get_time(), float)
-    assert animator.get_time() <= animator.get_time()
