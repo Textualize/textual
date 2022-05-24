@@ -504,7 +504,7 @@ class Widget(DOMNode):
         )
 
     def scroll_to_widget(self, widget: Widget, *, animate: bool = True) -> bool:
-        """Scroll so that a child widget is in the visible area.
+        """Scroll so that a descendant widget is in the visible area.
 
         Args:
             widget (Widget): A Widget in the children.
@@ -514,38 +514,50 @@ class Widget(DOMNode):
             bool: True if the scroll position changed, otherwise False.
         """
 
-        try:
-            widget_region = widget.content_region
-            container_region = self.content_region
-        except errors.NoWidget:
-            return False
+        node = widget.parent
+        child = widget
+        while node:
+            try:
+                widget_region = child.content_region
+                container_region = node.content_region
+            except (errors.NoWidget, AttributeError):
+                return False
 
-        if widget_region in container_region:
-            # Widget is visible, nothing to do
-            return False
+            if widget_region in container_region:
+                # Widget is visible, nothing to do
+                child = node
+                node = node.parent
+                continue
 
-        # We can either scroll so the widget is at the top of the container, or so that
-        # it is at the bottom. We want to pick which has the shortest distance
-        top_delta = widget_region.origin - container_region.origin
+            # We can either scroll so the widget is at the top of the container, or so that
+            # it is at the bottom. We want to pick which has the shortest distance
+            top_delta = widget_region.origin - container_region.origin
 
-        bottom_delta = widget_region.origin - (
-            container_region.origin
-            + Offset(0, container_region.height - widget_region.height)
-        )
+            bottom_delta = widget_region.origin - (
+                container_region.origin
+                + Offset(0, container_region.height - widget_region.height)
+            )
 
-        if widget_region.width > container_region.width:
-            delta_x = top_delta.x
-        else:
-            delta_x = min(top_delta.x, bottom_delta.x, key=abs)
+            if widget_region.width > container_region.width:
+                delta_x = top_delta.x
+            else:
+                delta_x = min(top_delta.x, bottom_delta.x, key=abs)
 
-        if widget_region.height > container_region.height:
-            delta_y = top_delta.y
-        else:
-            delta_y = min(top_delta.y, bottom_delta.y, key=abs)
+            if widget_region.height > container_region.height:
+                delta_y = top_delta.y
+            else:
+                delta_y = min(top_delta.y, bottom_delta.y, key=abs)
 
-        return self.scroll_relative(
-            delta_x or None, delta_y or None, animate=animate, duration=0.2
-        )
+            node.scroll_relative(
+                delta_x or None, delta_y or None, animate=animate, duration=0.2
+            )
+
+            if node == self:
+                break
+            child = node
+            node = node.parent
+
+        # TODO: Return boolean value
 
     def __init_subclass__(
         cls, can_focus: bool = True, can_focus_children: bool = True

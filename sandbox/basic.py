@@ -100,6 +100,8 @@ class BasicApp(App, css_path="basic.css"):
 
     def on_mount(self):
         """Build layout here."""
+
+        self.scroll_to_target = Tweet(TweetBody())
         self.mount(
             header=Static(
                 Text.from_markup(
@@ -109,14 +111,10 @@ class BasicApp(App, css_path="basic.css"):
             content=Widget(
                 Tweet(
                     TweetBody(),
-                    # Widget(
-                    #     Widget(classes={"button"}),
-                    #     Widget(classes={"button"}),
-                    #     classes={"horizontal"},
-                    # ),
                 ),
                 Widget(
                     Static(Syntax(CODE, "python"), classes="code"),
+                    self.scroll_to_target,
                     classes="scrollable",
                 ),
                 Error(),
@@ -156,6 +154,9 @@ class BasicApp(App, css_path="basic.css"):
         tweet_body = self.screen.query("TweetBody").first()
         tweet_body.short_lorem = not tweet_body.short_lorem
         tweet_body.refresh(layout=True)
+
+    def key_v(self):
+        self.get_child(id="content").scroll_to_widget(self.scroll_to_target)
 
 
 app = BasicApp()
