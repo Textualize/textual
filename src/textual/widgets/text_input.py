@@ -201,7 +201,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         available_width = self.content_region.width
 
         # Adjust the window end such that the cursor is just off of it
-        new_visible_range_end = max(self._editor.cursor_index + 1, available_width)
+        new_visible_range_end = max(self._editor.cursor_index + 2, available_width)
         # The visible window extends back by the width of the content region
         new_visible_range_start = new_visible_range_end - available_width
 
