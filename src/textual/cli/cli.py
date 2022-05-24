@@ -46,8 +46,6 @@ def import_app(import_name: str) -> App:
 
     from textual.app import App
 
-    sys.path.append("")
-
     lib, _colon, name = import_name.partition(":")
     name = name or "app"
 
@@ -68,6 +66,7 @@ def import_app(import_name: str) -> App:
             raise AppFail(f"App {name!r} not found in {lib!r}")
     else:
         # Assuming the user wants to import the file
+        sys.path.append("")
         try:
             module = importlib.import_module(lib)
         except ImportError as error:
