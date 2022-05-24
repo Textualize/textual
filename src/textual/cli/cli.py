@@ -47,7 +47,6 @@ def import_app(import_name: str) -> App:
     from textual.app import App
 
     lib, _colon, name = import_name.partition(":")
-    name = name or "app"
 
     if lib.endswith(".py"):
         # We're assuming the user wants to load a .py file
@@ -60,10 +59,41 @@ def import_app(import_name: str) -> App:
         global_vars: dict[str, object] = {}
         exec(py_code, global_vars)
 
-        try:
-            app = global_vars[name]
-        except KeyError:
-            raise AppFail(f"App {name!r} not found in {lib!r}")
+        if name:
+            # User has give a name, use that
+            try:
+                app = global_vars[name]
+            except KeyError:
+                raise AppFail(f"App {name!r} not found in {lib!r}")
+        else:
+            # User has not given a name
+            if "app" in global_vars:
+                # App exists, lets use that
+                try:
+                    app = global_vars[name]
+                except KeyError:
+                    raise AppFail(f"App {name!r} not found in {lib!r}")
+            else:
+                # Find a App class or instance that is *not* the base class
+                apps = [
+                    value
+                    for key, value in global_vars.items()
+                    if (
+                        isinstance(value, App)
+                        or (inspect.isclass(value) and issubclass(value, App))
+                        and value is not App
+                    )
+                ]
+                if not apps:
+                    raise AppFail(
+                        f'Unable to find app in {lib!r}, try specifying app with "foo.py:app"'
+                    )
+                if len(apps) > 1:
+                    raise AppFail(
+                        f'Multiple apps found {lib!r}, try specifying app with "foo.py:app"'
+                    )
+                app = apps[0]
+
     else:
         # Assuming the user wants to import the file
         sys.path.append("")
@@ -78,7 +108,7 @@ def import_app(import_name: str) -> App:
             raise AppFail(f"Unable to find {name!r} in {module!r}")
 
     if inspect.isclass(app) and issubclass(app, App):
-        app = App()
+        app = app()
 
     return cast(App, app)
 

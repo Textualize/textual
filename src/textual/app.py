@@ -109,6 +109,8 @@ class App(Generic[ReturnType], DOMNode):
 
     """
 
+    CSS_PATH: str | None = None
+
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
@@ -188,8 +190,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
         self._require_styles_update = False
-
-        self.css_path = css_path
+        self.css_path = css_path or self.CSS_PATH
 
         self.registry: set[MessagePump] = set()
         self.devtools = DevtoolsClient()
@@ -202,6 +203,10 @@ class App(Generic[ReturnType], DOMNode):
         )
 
         super().__init__()
+
+    def __init_subclass__(cls, css_path: str | None = None) -> None:
+        super().__init_subclass__()
+        cls.CSS_PATH = css_path
 
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
