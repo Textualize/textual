@@ -23,8 +23,7 @@ from typing import (
 )
 
 from ._terminal_features import TerminalSupportedFeatures
-from ._terminal_modes import Mode
-from .events import ModeReport
+from ._terminal_modes import Mode, ModeReportResponse
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -146,7 +145,7 @@ class App(Generic[ReturnType], DOMNode):
         self.driver_class = driver_class or self.get_driver_class()
         self._title = title
         self._screen_stack: list[Screen] = []
-        self._terminal_features = TerminalSupportedFeatures.from_autodetect()
+        self._terminal_features = TerminalSupportedFeatures()
 
         self.focused: Widget | None = None
         self.mouse_over: Widget | None = None
@@ -860,18 +859,12 @@ class App(Generic[ReturnType], DOMNode):
         """
         if self._running and not self._closed:
             console = self.console
-            (
-                sync_update_start,
-                sync_update_end,
-            ) = self._terminal_features.synchronized_update_sequences()
-            if sync_update_start:
-                console.file.write(sync_update_start)
+            self._begin_update()
             try:
                 console.print(renderable)
             except Exception as error:
                 self.on_exception(error)
-            if sync_update_end:
-                console.file.write(sync_update_end)
+            self._end_update()
             console.file.flush()
 
     def measure(self, renderable: RenderableType, max_width=100_000) -> int:
@@ -945,16 +938,6 @@ class App(Generic[ReturnType], DOMNode):
             else:
                 # Forward the event to the view
                 await self.screen.forward_event(event)
-
-        elif isinstance(event, ModeReport):
-            if event.mode is Mode.SynchronizedOutput:
-                is_supported = event.mode_is_supported
-                log(
-                    f"SynchronizedOutput (aka 'mode2026') {'is' if is_supported else ' is not'} supported"
-                )
-                self._terminal_features = self._terminal_features._replace(
-                    mode2026_synchronized_update=is_supported
-                )
 
         else:
             await super().on_event(event)
@@ -1076,6 +1059,30 @@ class App(Generic[ReturnType], DOMNode):
 
     async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
         self.stylesheet.update(self, animate=True)
+
+    def handle_mode_report_response(self, message: ModeReportResponse) -> None:
+        if message.mode is Mode.SynchronizedOutput:
+            is_supported = message.mode_is_supported
+            log(
+                f"SynchronizedOutput mode {'is' if is_supported else 'is not'} supported by this terminal"
+            )
+            self._terminal_features = self._terminal_features._replace(
+                synchronised_output=is_supported
+            )
+
+    def _begin_update(self) -> None:
+        synchronized_output_start_sequence = (
+            self._terminal_features.synchronized_output_start_sequence()
+        )
+        if synchronized_output_start_sequence:
+            self.console.file.write(synchronized_output_start_sequence)
+
+    def _end_update(self) -> None:
+        synchronized_output_end_sequence = (
+            self._terminal_features.synchronized_output_end_sequence()
+        )
+        if synchronized_output_end_sequence:
+            self.console.file.write(synchronized_output_end_sequence)
 
 
 _uvloop_init_done: bool = False

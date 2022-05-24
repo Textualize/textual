@@ -7,11 +7,15 @@ from typing import Any, Callable, Generator, Iterable
 
 from . import log
 from . import events
+from ._terminal_modes import ModeReportResponse
 from ._types import MessageTarget
 from ._parser import Awaitable, Parser, TokenCallback
-from ._ansi_sequences import ANSI_SEQUENCES_KEYS, ANSI_SEQUENCES_MODE_REPORTS
+from ._ansi_sequences import ANSI_SEQUENCES_KEYS
 
 _re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[\d;]+[mM]|M...)\Z")
+_re_terminal_mode_response = re.compile(
+    "^" + re.escape("\x1b[") + r"\?(?P<mode_id>\d+);(?P<setting_parameter>\d)\$y"
+)
 
 
 class XTermParser(Parser[events.Event]):
@@ -82,7 +86,6 @@ class XTermParser(Parser[events.Event]):
         ESC = "\x1b"
         read1 = self.read1
         get_key_ansi_sequence = ANSI_SEQUENCES_KEYS.get
-        get_mode_report_sequence = ANSI_SEQUENCES_MODE_REPORTS.get
         more_data = self.more_data
 
         while not self.is_eof:
@@ -123,11 +126,14 @@ class XTermParser(Parser[events.Event]):
                             on_token(event)
                         break
                     # Or a mode report? (i.e. the terminal telling us if it supports a mode we requested)
-                    mode_report_match = get_mode_report_sequence(sequence, None)
+                    mode_report_match = _re_terminal_mode_response.match(sequence)
                     if mode_report_match is not None:
-                        mode_report, parameter = mode_report_match
-                        event = events.ModeReport(self.sender, mode_report, parameter)
-                        on_token(event)
+                        message = ModeReportResponse.from_terminal_mode_response(
+                            self.sender,
+                            mode_report_match["mode_id"],
+                            mode_report_match["setting_parameter"],
+                        )
+                        on_token(message)
                         break
             else:
                 keys = get_key_ansi_sequence(character, None)

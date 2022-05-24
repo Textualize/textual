@@ -53,9 +53,7 @@ class AppTest(App):
         # We need this so the `CLEAR_SCREEN_SEQUENCE` is always sent for a screen refresh,
         # whatever the environment:
         # (we use it to slice the output into distinct full screens displays)
-        self._terminal_features = TerminalSupportedFeatures(
-            mode2026_synchronized_update=True,
-        )
+        self._terminal_features = TerminalSupportedFeatures(synchronised_output=True)
 
         self._size = size
         self._console = ConsoleTest(width=size.width, height=size.height)
