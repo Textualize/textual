@@ -10,19 +10,19 @@ Creating a TUI can be challenging. It may be easier to create a GUI or web appli
 
 Textual seeks to lower the difficulty level of building a TUI by borrowing developments from the web world and to a lesser extent desktop applications. The goal is for it to be as easy to develop a TUI for your project as it would be to add a command line interface.XX
 
-=== "Python"
+=== "simple.py"
 
     ```python
     --8<-- "docs/examples/simple.py"
     ```
 
-=== "CSS"
+=== "simple.css"
 
-    ```python
+    ```scss
     --8<-- "docs/examples/simple.css"
     ```
 
-=== "Terminal"
+=== "Result"
 
     ```{.textual path="docs/examples/simple.py" columns="80" lines="24"}
     ```

@@ -763,6 +763,11 @@ class App(Generic[ReturnType], DOMNode):
                 self._log_console = None
 
     async def _ready(self) -> None:
+        """Called immediately prior to processing messages.
+
+        May be used as a hook for any operations that should run first.
+
+        """
         try:
             screenshot_timer = float(os.environ.get("TEXTUAL_SCREENSHOT", "0"))
         except ValueError:
@@ -772,8 +777,9 @@ class App(Generic[ReturnType], DOMNode):
             return
 
         async def on_screenshot():
+            """Used by docs plugin."""
             svg = self.export_screenshot()
-            self._screenshot = svg
+            self._screenshot = svg  # type: ignore
             await self.shutdown()
 
         self.set_timer(screenshot_timer, on_screenshot)
@@ -880,7 +886,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             renderable (RenderableType): A Rich renderable.
         """
-        if self._running and not self._closed:
+        if self._running and not self._closed and not self.is_headless:
             console = self.console
             if self._sync_available:
                 console.file.write("\x1bP=1s\x1b\\")
