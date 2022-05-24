@@ -47,7 +47,7 @@ ANSI_SEQUENCES: Dict[str, Tuple[Keys, ...]] = {
     # support it. (Most terminals send ControlH when backspace is pressed.)
     # See: http://www.ibb.net/~anne/keyboard.html
     "\x7f": (Keys.ControlH,),
-    # --
+    "\x1b\x7f": (Keys.ControlW,),
     # Various
     "\x1b[1~": (Keys.Home,),  # tmux
     "\x1b[2~": (Keys.Insert,),
