@@ -552,7 +552,7 @@ class Compositor:
         ]
         return segment_lines
 
-    def render(self) -> RenderableType:
+    def render(self, full: bool = True) -> RenderableType:
         """Render a layout.
 
         Returns:
@@ -561,11 +561,14 @@ class Compositor:
         width, height = self.size
         screen_region = Region(0, 0, width, height)
 
-        update_regions = self._dirty_regions.copy()
-        self._dirty_regions.clear()
-        if screen_region in update_regions:
-            # If one of the updates is the entire screen, then we only need one update
-            update_regions.clear()
+        if full:
+            update_regions: set[Region] = set()
+        else:
+            update_regions = self._dirty_regions.copy()
+            self._dirty_regions.clear()
+            if screen_region in update_regions:
+                # If one of the updates is the entire screen, then we only need one update
+                update_regions.clear()
 
         if update_regions:
             # Create a crop regions that surrounds all updates

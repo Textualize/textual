@@ -22,9 +22,8 @@ textual = "textual.cli.cli:run"
 
 [tool.poetry.dependencies]
 python = "^3.7"
-rich = "^12.4.0"
-
-#rich = {git = "git@github.com:willmcgugan/rich", rev = "link-id"}
+rich = "^12.4.3"
+#rich = {path="../rich", develop=true}
 click = "8.1.2"
 importlib-metadata = "^4.11.3"
 typing-extensions = { version = "^4.0.0", python = "<3.8" }
@@ -35,12 +34,13 @@ pytest = "^6.2.3"
 black = "^22.3.0"
 mypy = "^0.950"
 pytest-cov = "^2.12.1"
-mkdocs = "^1.2.3"
+mkdocs = "^1.3.0"
 mkdocstrings = "^0.17.0"
 mkdocs-material = "^7.3.6"
 pre-commit = "^2.13.0"
 pytest-aiohttp = "^1.0.4"
 time-machine = "^2.6.0"
+Jinja2 = "<3.1.0"
 
 [tool.black]
 includes = "src"

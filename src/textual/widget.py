@@ -399,6 +399,8 @@ class Widget(DOMNode):
         scrolled_x = scrolled_y = False
         if animate:
             # TODO: configure animation speed
+            if duration is None and speed is None:
+                speed = 50
             if x is not None:
                 self.scroll_target_x = x
                 if x != self.scroll_x:
