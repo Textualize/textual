@@ -60,7 +60,7 @@ def import_app(import_name: str) -> App:
         exec(py_code, global_vars)
 
         if name:
-            # User has give a name, use that
+            # User has given a name, use that
             try:
                 app = global_vars[name]
             except KeyError:
