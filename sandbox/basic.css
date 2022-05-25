@@ -74,7 +74,7 @@ App > Screen {
 
 
 Tweet {
-  height: auto;
+  height: 12;
   width: 80;
  
   margin: 1 3;
@@ -88,6 +88,15 @@ Tweet {
   /* scrollbar-gutter: stable; */
   align-horizontal: center;
   box-sizing: border-box;
+}
+
+Tweet.scrollbar-size-custom {
+  scrollbar-size-vertical: 2;
+}
+
+
+Tweet.scroll-horizontal {
+  scrollbar-size-horizontal: 2;
 }
 
 .scrollable {
@@ -114,12 +123,15 @@ TweetHeader {
 }
 
 TweetBody {  
-  width: 130%;
+  width: 100%;
   background: $panel;
   color: $text-panel;
   height: auto; 
   padding: 0 1 0 0; 
- 
+}
+
+Tweet.scroll-horizontal TweetBody {
+  width: 350;
 }
 
 .button {

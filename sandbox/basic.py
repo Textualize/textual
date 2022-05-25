@@ -107,22 +107,15 @@ class BasicApp(App, css_path="basic.css"):
                 ),
             ),
             content=Widget(
-                Tweet(
-                    TweetBody(),
-                    # Widget(
-                    #     Widget(classes={"button"}),
-                    #     Widget(classes={"button"}),
-                    #     classes={"horizontal"},
-                    # ),
-                ),
+                Tweet(TweetBody()),
                 Widget(
                     Static(Syntax(CODE, "python"), classes="code"),
                     classes="scrollable",
                 ),
                 Error(),
-                Tweet(TweetBody()),
+                Tweet(TweetBody(), classes="scrollbar-size-custom"),
                 Warning(),
-                Tweet(TweetBody()),
+                Tweet(TweetBody(), classes="scroll-horizontal"),
                 Success(),
             ),
             footer=Widget(),
