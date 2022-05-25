@@ -130,6 +130,11 @@ class LinuxDriver(Driver):
         self._key_thread = Thread(target=self.run_input_thread, args=(loop,))
         send_size_event()
         self._key_thread.start()
+        self._request_terminal_sync_mode_support()
+
+    def _request_terminal_sync_mode_support(self):
+        self.console.file.write("\033[?2026$p")
+        self.console.file.flush()
 
     @classmethod
     def _patch_lflag(cls, attrs: int) -> int:
@@ -221,7 +226,6 @@ class LinuxDriver(Driver):
 
 
 if __name__ == "__main__":
-    from time import sleep
     from rich.console import Console
     from .. import events
 

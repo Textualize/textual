@@ -39,7 +39,7 @@ class Introduction(Widget):
     }
     """
 
-    def render(self) -> RenderableType:
+    def render(self, styles) -> RenderableType:
         return Text(
             "Press '-' and '+' to add or remove placeholders.", justify="center"
         )

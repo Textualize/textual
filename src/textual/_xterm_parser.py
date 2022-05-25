@@ -1,18 +1,19 @@
 from __future__ import annotations
 
 
-import os
 import re
 from typing import Any, Callable, Generator, Iterable
 
-from . import log
+from . import log, messages
 from . import events
 from ._types import MessageTarget
 from ._parser import Awaitable, Parser, TokenCallback
-from ._ansi_sequences import ANSI_SEQUENCES
-
+from ._ansi_sequences import ANSI_SEQUENCES_KEYS
 
 _re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[\d;]+[mM]|M...)\Z")
+_re_terminal_mode_response = re.compile(
+    "^" + re.escape("\x1b[") + r"\?(?P<mode_id>\d+);(?P<setting_parameter>\d)\$y"
+)
 
 
 class XTermParser(Parser[events.Event]):
@@ -82,7 +83,7 @@ class XTermParser(Parser[events.Event]):
 
         ESC = "\x1b"
         read1 = self.read1
-        get_ansi_sequence = ANSI_SEQUENCES.get
+        get_key_ansi_sequence = ANSI_SEQUENCES_KEYS.get
         more_data = self.more_data
 
         while not self.is_eof:
@@ -108,21 +109,33 @@ class XTermParser(Parser[events.Event]):
                 while True:
                     sequence += yield read1()
                     self.debug_log(f"sequence={sequence!r}")
-                    keys = get_ansi_sequence(sequence, None)
+                    # Was it a pressed key event that we received?
+                    keys = get_key_ansi_sequence(sequence, None)
                     if keys is not None:
                         for key in keys:
                             on_token(events.Key(self.sender, key=key))
                         break
-                    else:
-                        mouse_match = _re_mouse_event.match(sequence)
-                        if mouse_match is not None:
-                            mouse_code = mouse_match.group(0)
-                            event = self.parse_mouse_code(mouse_code, self.sender)
-                            if event:
-                                on_token(event)
-                            break
+                    # Or a mouse event?
+                    mouse_match = _re_mouse_event.match(sequence)
+                    if mouse_match is not None:
+                        mouse_code = mouse_match.group(0)
+                        event = self.parse_mouse_code(mouse_code, self.sender)
+                        if event:
+                            on_token(event)
+                        break
+                    # Or a mode report? (i.e. the terminal telling us if it supports a mode we requested)
+                    mode_report_match = _re_terminal_mode_response.match(sequence)
+                    if mode_report_match is not None:
+                        if (
+                            mode_report_match["mode_id"] == "2026"
+                            and int(mode_report_match["setting_parameter"]) > 0
+                        ):
+                            on_token(
+                                messages.TerminalSupportsSynchronizedOutput(self.sender)
+                            )
+                        break
             else:
-                keys = get_ansi_sequence(character, None)
+                keys = get_key_ansi_sequence(character, None)
                 if keys is not None:
                     for key in keys:
                         on_token(events.Key(self.sender, key=key))

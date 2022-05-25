@@ -13,16 +13,17 @@ from rich.console import Console
 
 from textual import events, errors
 from textual._clock import _Clock
-from textual.app import App, ComposeResult, WINDOWS
+from textual.app import WINDOWS
 from textual._context import active_app
+from textual._ansi_sequences import TERMINAL_MODES_ANSI_SEQUENCES
+from textual.app import App, ComposeResult
 from textual.driver import Driver
 from textual.geometry import Size, Region
 
 # N.B. These classes would better be named TestApp/TestConsole/TestDriver/etc,
 # but it makes pytest emit warning as it will try to collect them as classes containing test cases :-/
 
-# This value is also hard-coded in Textual's `App` class:
-CLEAR_SCREEN_SEQUENCE = "\x1bP=1s\x1b\\"
+_SYNC_START_SEQUENCE = TERMINAL_MODES_ANSI_SEQUENCES["sync_start"]
 
 
 class AppTest(App):
@@ -45,8 +46,9 @@ class AppTest(App):
         # Let's disable all features by default
         self.features = frozenset()
 
-        # We need this so the `CLEAR_SCREEN_SEQUENCE` is always sent for a screen refresh,
+        # We need this so the "start buffeting"` is always sent for a screen refresh,
         # whatever the environment:
+        # (we use it to slice the output into distinct full screens displays)
         self._sync_available = True
 
         self._size = size
@@ -190,7 +192,7 @@ class AppTest(App):
         total_capture = self.total_capture
         if not total_capture:
             return None
-        screen_captures = total_capture.split(CLEAR_SCREEN_SEQUENCE)
+        screen_captures = total_capture.split(_SYNC_START_SEQUENCE)
         for single_screen_capture in reversed(screen_captures):
             if len(single_screen_capture) > 30:
                 # let's return the last occurrence of a screen that seem to be properly "fully-paint"
@@ -341,9 +343,8 @@ class ClockMock(_Clock):
             # ...and let's mark it for removal:
             activated_events_times_to_clear.append(monotonic_time)
 
-        if activated_events_times_to_clear:
-            for event_time_to_clear in activated_events_times_to_clear:
-                del self._pending_sleep_events[event_time_to_clear]
+        for event_time_to_clear in activated_events_times_to_clear:
+            del self._pending_sleep_events[event_time_to_clear]
 
         return activated_timers_count
 

@@ -22,6 +22,8 @@ from typing import (
     TYPE_CHECKING,
 )
 
+from ._ansi_sequences import TERMINAL_MODES_ANSI_SEQUENCES
+
 if sys.version_info >= (3, 8):
     from typing import Literal
 else:
@@ -44,7 +46,6 @@ from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
-from ._timer import Timer
 from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -150,9 +151,7 @@ class App(Generic[ReturnType], DOMNode):
         self.driver_class = driver_class or self.get_driver_class()
         self._title = title
         self._screen_stack: list[Screen] = []
-        self._sync_available = (
-            os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal" and not WINDOWS
-        )
+        self._sync_available = False
 
         self.focused: Widget | None = None
         self.mouse_over: Widget | None = None
@@ -893,14 +892,12 @@ class App(Generic[ReturnType], DOMNode):
         """
         if self._running and not self._closed and not self.is_headless:
             console = self.console
-            if self._sync_available:
-                console.file.write("\x1bP=1s\x1b\\")
+            self._begin_update()
             try:
                 console.print(renderable)
             except Exception as error:
                 self.on_exception(error)
-            if self._sync_available:
-                console.file.write("\x1bP=2s\x1b\\")
+            self._end_update()
             console.file.flush()
 
     def measure(self, renderable: RenderableType, max_width=100_000) -> int:
@@ -974,6 +971,7 @@ class App(Generic[ReturnType], DOMNode):
             else:
                 # Forward the event to the view
                 await self.screen.forward_event(event)
+
         else:
             await super().on_event(event)
 
@@ -1094,6 +1092,20 @@ class App(Generic[ReturnType], DOMNode):
 
     async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
         self.stylesheet.update(self, animate=True)
+
+    def handle_terminal_supports_synchronized_output(
+        self, message: messages.TerminalSupportsSynchronizedOutput
+    ) -> None:
+        log("SynchronizedOutput mode is supported by this terminal")
+        self._sync_available = True
+
+    def _begin_update(self) -> None:
+        if self._sync_available:
+            self.console.file.write(TERMINAL_MODES_ANSI_SEQUENCES["sync_start"])
+
+    def _end_update(self) -> None:
+        if self._sync_available:
+            self.console.file.write(TERMINAL_MODES_ANSI_SEQUENCES["sync_stop"])
 
 
 _uvloop_init_done: bool = False
