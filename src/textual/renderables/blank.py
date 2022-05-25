@@ -24,7 +24,7 @@ class Blank:
         width = options.max_width
         height = options.height or options.max_height
 
-        segment = Segment(f"{' ' * width}", style=self._style)
+        segment = Segment(" " * width, self._style)
         line = Segment.line()
         for _ in range(height):
             yield segment

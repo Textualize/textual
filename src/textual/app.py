@@ -526,7 +526,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.screen.refresh(layout=True)
 
     def render(self) -> RenderableType:
-        return ""
+        return Blank("red")
 
     def query(self, selector: str | None = None) -> DOMQuery:
         """Get a DOM query in the current screen.
@@ -999,7 +999,6 @@ class App(Generic[ReturnType], DOMNode):
             action_target = default_namespace or self
             action_name = target
 
-        log("<action>", action)
         await self.dispatch_action(action_target, action_name, params)
 
     async def dispatch_action(
@@ -1014,6 +1013,8 @@ class App(Generic[ReturnType], DOMNode):
         _rich_traceback_guard = True
         method_name = f"action_{action_name}"
         method = getattr(namespace, method_name, None)
+        if method is None:
+            log(f"<action> {action_name!r} has no target")
         if callable(method):
             await invoke(method, *params)
 

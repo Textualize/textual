@@ -476,6 +476,7 @@ class Styles(StylesBase):
         return self._rules.get(rule, default)
 
     def refresh(self, *, layout: bool = False) -> None:
+        print(self, self.node, "REFRESH", layout)
         if self.node is not None:
             self.node.refresh(layout=layout)
 

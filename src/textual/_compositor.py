@@ -498,7 +498,7 @@ class Compositor:
         """Get rendered widgets (lists of segments) in the composition.
 
         Returns:
-            Iterable[tuple[Region, Region, Lines]]: An interable of <region>, <clip region>, and <lines>
+            Iterable[tuple[Region, Region, Lines]]: An iterable of <region>, <clip region>, and <lines>
         """
         # If a renderable throws an error while rendering, the user likely doesn't care about the traceback
         # up to this point.
