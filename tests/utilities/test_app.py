@@ -16,8 +16,6 @@ from textual._clock import _Clock
 from textual.app import WINDOWS
 from textual._context import active_app
 from textual._ansi_sequences import TERMINAL_MODES_ANSI_SEQUENCES
-from textual._terminal_features import TerminalSupportedFeatures
-from textual._terminal_modes import Mode
 from textual.app import App, ComposeResult
 from textual.driver import Driver
 from textual.geometry import Size, Region
@@ -25,9 +23,7 @@ from textual.geometry import Size, Region
 # N.B. These classes would better be named TestApp/TestConsole/TestDriver/etc,
 # but it makes pytest emit warning as it will try to collect them as classes containing test cases :-/
 
-CLEAR_SCREEN_SEQUENCE = TERMINAL_MODES_ANSI_SEQUENCES[Mode.SynchronizedOutput][
-    "start_sync"
-]
+_SYNC_START_SEQUENCE = TERMINAL_MODES_ANSI_SEQUENCES["sync_start"]
 
 
 class AppTest(App):
@@ -50,10 +46,10 @@ class AppTest(App):
         # Let's disable all features by default
         self.features = frozenset()
 
-        # We need this so the `CLEAR_SCREEN_SEQUENCE` is always sent for a screen refresh,
+        # We need this so the "start buffeting"` is always sent for a screen refresh,
         # whatever the environment:
         # (we use it to slice the output into distinct full screens displays)
-        self._terminal_features = TerminalSupportedFeatures(synchronised_output=True)
+        self._sync_available = True
 
         self._size = size
         self._console = ConsoleTest(width=size.width, height=size.height)
@@ -196,7 +192,7 @@ class AppTest(App):
         total_capture = self.total_capture
         if not total_capture:
             return None
-        screen_captures = total_capture.split(CLEAR_SCREEN_SEQUENCE)
+        screen_captures = total_capture.split(_SYNC_START_SEQUENCE)
         for single_screen_capture in reversed(screen_captures):
             if len(single_screen_capture) > 30:
                 # let's return the last occurrence of a screen that seem to be properly "fully-paint"

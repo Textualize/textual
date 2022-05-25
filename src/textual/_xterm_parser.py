@@ -1,13 +1,11 @@
 from __future__ import annotations
 
 
-import os
 import re
 from typing import Any, Callable, Generator, Iterable
 
-from . import log
+from . import log, messages
 from . import events
-from ._terminal_modes import ModeReportResponse
 from ._types import MessageTarget
 from ._parser import Awaitable, Parser, TokenCallback
 from ._ansi_sequences import ANSI_SEQUENCES_KEYS
@@ -128,12 +126,13 @@ class XTermParser(Parser[events.Event]):
                     # Or a mode report? (i.e. the terminal telling us if it supports a mode we requested)
                     mode_report_match = _re_terminal_mode_response.match(sequence)
                     if mode_report_match is not None:
-                        message = ModeReportResponse.from_terminal_mode_response(
-                            self.sender,
-                            mode_report_match["mode_id"],
-                            mode_report_match["setting_parameter"],
-                        )
-                        on_token(message)
+                        if (
+                            mode_report_match["mode_id"] == "2026"
+                            and int(mode_report_match["setting_parameter"]) > 0
+                        ):
+                            on_token(
+                                messages.TerminalSupportsSynchronizedOutput(self.sender)
+                            )
                         break
             else:
                 keys = get_key_ansi_sequence(character, None)

@@ -6,11 +6,6 @@ import rich.repr
 from rich.style import Style
 
 from . import log
-from ._terminal_modes import (
-    Mode,
-    ModeReportParameter,
-    MODE_REPORTS_PARAMETERS_INDICATING_SUPPORT,
-)
 from .geometry import Offset, Size
 from .message import Message
 from ._types import MessageTarget

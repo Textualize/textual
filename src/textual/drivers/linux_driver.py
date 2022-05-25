@@ -21,7 +21,6 @@ from ..driver import Driver
 from ..geometry import Size
 from .._types import MessageTarget
 from .._xterm_parser import XTermParser
-from .._terminal_modes import get_mode_request_sequence, Mode
 from .._profile import timer
 
 
@@ -124,10 +123,10 @@ class LinuxDriver(Driver):
         self._key_thread = Thread(target=self.run_input_thread, args=(loop,))
         send_size_event()
         self._key_thread.start()
-        self._request_terminal_mode_support(Mode.SynchronizedOutput)
+        self._request_terminal_sync_mode_support()
 
-    def _request_terminal_mode_support(self, mode: Mode):
-        self.console.file.write(get_mode_request_sequence(mode))
+    def _request_terminal_sync_mode_support(self):
+        self.console.file.write("\033[?2026$p")
         self.console.file.flush()
 
     @classmethod

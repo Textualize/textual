@@ -58,3 +58,10 @@ class Prompt(Message, system=True):
 
     def can_replace(self, message: Message) -> bool:
         return isinstance(message, StylesUpdated)
+
+
+class TerminalSupportsSynchronizedOutput(Message):
+    """
+    Used to make the App aware that the terminal emulator supports synchronised output.
+    @link https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036
+    """

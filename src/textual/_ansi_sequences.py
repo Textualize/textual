@@ -1,10 +1,9 @@
-from typing import Dict, Tuple
+from typing import Mapping, Tuple
 
-from ._terminal_modes import Mode
 from .keys import Keys
 
 # Mapping of vt100 escape codes to Keys.
-ANSI_SEQUENCES_KEYS: Dict[str, Tuple[Keys, ...]] = {
+ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     # Control keys.
     "\r": (Keys.Enter,),
     "\x00": (Keys.ControlAt,),  # Control-At (Also for Ctrl-Space)
@@ -302,6 +301,7 @@ ANSI_SEQUENCES_KEYS: Dict[str, Tuple[Keys, ...]] = {
 }
 
 
-TERMINAL_MODES_ANSI_SEQUENCES: Dict[Mode, Dict[str, str]] = {
-    Mode.SynchronizedOutput: {"start_sync": "\x1b[?2026h", "end_sync": "\x1b[?2026l"},
+TERMINAL_MODES_ANSI_SEQUENCES: Mapping[str, str] = {
+    "sync_start": "\x1b[?2026h",
+    "sync_stop": "\x1b[?2026l",
 }

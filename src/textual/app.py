@@ -22,8 +22,7 @@ from typing import (
     TYPE_CHECKING,
 )
 
-from ._terminal_features import TerminalSupportedFeatures
-from ._terminal_modes import Mode, ModeReportResponse
+from ._ansi_sequences import TERMINAL_MODES_ANSI_SEQUENCES
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -145,7 +144,7 @@ class App(Generic[ReturnType], DOMNode):
         self.driver_class = driver_class or self.get_driver_class()
         self._title = title
         self._screen_stack: list[Screen] = []
-        self._terminal_features = TerminalSupportedFeatures()
+        self._sync_available = False
 
         self.focused: Widget | None = None
         self.mouse_over: Widget | None = None
@@ -698,7 +697,6 @@ class App(Generic[ReturnType], DOMNode):
         self.log("---")
         self.log(driver=self.driver_class)
         self.log(loop=asyncio.get_running_loop())
-        self.log(terminal_features=self._terminal_features)
         self.log(features=self.features)
 
         try:
@@ -1060,29 +1058,19 @@ class App(Generic[ReturnType], DOMNode):
     async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
         self.stylesheet.update(self, animate=True)
 
-    def handle_mode_report_response(self, message: ModeReportResponse) -> None:
-        if message.mode is Mode.SynchronizedOutput:
-            is_supported = message.mode_is_supported
-            log(
-                f"SynchronizedOutput mode {'is' if is_supported else 'is not'} supported by this terminal"
-            )
-            self._terminal_features = self._terminal_features._replace(
-                synchronised_output=is_supported
-            )
+    def handle_terminal_supports_synchronized_output(
+        self, message: messages.TerminalSupportsSynchronizedOutput
+    ) -> None:
+        log("SynchronizedOutput mode is supported by this terminal")
+        self._sync_available = True
 
     def _begin_update(self) -> None:
-        synchronized_output_start_sequence = (
-            self._terminal_features.synchronized_output_start_sequence()
-        )
-        if synchronized_output_start_sequence:
-            self.console.file.write(synchronized_output_start_sequence)
+        if self._sync_available:
+            self.console.file.write(TERMINAL_MODES_ANSI_SEQUENCES["sync_start"])
 
     def _end_update(self) -> None:
-        synchronized_output_end_sequence = (
-            self._terminal_features.synchronized_output_end_sequence()
-        )
-        if synchronized_output_end_sequence:
-            self.console.file.write(synchronized_output_end_sequence)
+        if self._sync_available:
+            self.console.file.write(TERMINAL_MODES_ANSI_SEQUENCES["sync_stop"])
 
 
 _uvloop_init_done: bool = False
