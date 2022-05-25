@@ -9,7 +9,7 @@ from rich.padding import Padding
 from rich.style import Style
 from rich.text import Text
 
-from textual import events
+from textual import events, _clock
 from textual._text_backend import TextEditorBackend
 from textual._timer import Timer
 from textual._types import MessageTarget
@@ -143,7 +143,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         self._cursor_blink_timer: Timer | None = None
         self._last_keypress_time: float = 0.0
         if self.cursor_blink_enabled:
-            self._last_keypress_time = time.monotonic()
+            self._last_keypress_time = _clock.get_time_no_wait()
             self._cursor_blink_timer = self.set_interval(
                 self.cursor_blink_period, self._toggle_cursor_visible
             )
@@ -186,10 +186,12 @@ class TextInput(TextWidgetBase, can_focus=True):
 
         # Convert click offset to cursor index accounting for varying cell lengths
         cell_len_accumulated = 0
-        for i, character in enumerate(self._editor.get_range(start_index, end_index)):
+        for index, character in enumerate(
+            self._editor.get_range(start_index, end_index)
+        ):
             cell_len_accumulated += cell_len(character)
             if cell_len_accumulated > click_x:
-                new_cursor_index = start_index + i
+                new_cursor_index = start_index + index
                 break
 
         new_cursor_index = clamp(new_cursor_index, 0, len(self._editor.content))
@@ -253,7 +255,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         if key in self.STOP_PROPAGATE:
             event.stop()
 
-        self._last_keypress_time = time.monotonic()
+        self._last_keypress_time = _clock.get_time_no_wait()
         if self._cursor_blink_timer:
             self._cursor_blink_visible = True
 
@@ -376,7 +378,10 @@ class TextInput(TextWidgetBase, can_focus=True):
     def _toggle_cursor_visible(self):
         """Manages the blinking of the cursor - ensuring blinking only starts when the
         user hasn't pressed a key in some time"""
-        if time.monotonic() - self._last_keypress_time > self.cursor_blink_period:
+        if (
+            _clock.get_time_no_wait() - self._last_keypress_time
+            > self.cursor_blink_period
+        ):
             self._cursor_blink_visible = not self._cursor_blink_visible
             self.refresh()
 
