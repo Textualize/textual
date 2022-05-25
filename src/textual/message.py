@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from time import monotonic
 from typing import ClassVar
 
 import rich.repr
 
+from . import _clock
 from .case import camel_to_snake
 from ._types import MessageTarget
 
@@ -39,7 +39,7 @@ class Message:
 
         self.sender = sender
         self.name = camel_to_snake(self.__class__.__name__.replace("Message", ""))
-        self.time = monotonic()
+        self.time = _clock.get_time_no_wait()
         self._forwarded = False
         self._no_default_action = False
         self._stop_propagation = False

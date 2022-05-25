@@ -12,7 +12,7 @@ from . import events
 from . import log
 from ._timer import Timer, TimerCallback
 from ._callback import invoke
-from ._context import active_app
+from ._context import active_app, NoActiveAppError
 from .message import Message
 from . import messages
 
@@ -74,8 +74,16 @@ class MessagePump:
 
     @property
     def app(self) -> "App":
-        """Get the current app."""
-        return active_app.get()
+        """
+        Get the current app.
+
+        Raises:
+            NoActiveAppError: if no active app could be found for the current asyncio context
+        """
+        try:
+            return active_app.get()
+        except LookupError:
+            raise NoActiveAppError()
 
     @property
     def is_parent_active(self):
@@ -152,7 +160,13 @@ class MessagePump:
         pause: bool = False,
     ) -> Timer:
         timer = Timer(
-            self, delay, self, name=name, callback=callback, repeat=0, pause=pause
+            self,
+            delay,
+            self,
+            name=name or f"set_timer#{Timer._timer_count}",
+            callback=callback,
+            repeat=0,
+            pause=pause,
         )
         self._child_tasks.add(timer.start())
         return timer
@@ -170,7 +184,7 @@ class MessagePump:
             self,
             interval,
             self,
-            name=name,
+            name=name or f"set_interval#{Timer._timer_count}",
             callback=callback,
             repeat=repeat or None,
             pause=pause,

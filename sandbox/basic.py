@@ -91,7 +91,7 @@ class Success(Widget):
         return Text("This is a success message", justify="center")
 
 
-class BasicApp(App):
+class BasicApp(App, css_path="basic.css"):
     """A basic app demonstrating CSS"""
 
     def on_load(self):
@@ -158,11 +158,7 @@ class BasicApp(App):
         tweet_body.refresh(layout=True)
 
 
-app = BasicApp(
-    css_path="basic.css",
-    watch_css=True,
-    log_path="textual.log",
-)
+app = BasicApp()
 
 if __name__ == "__main__":
     app.run()

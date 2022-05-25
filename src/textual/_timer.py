@@ -5,17 +5,15 @@ import weakref
 from asyncio import (
     CancelledError,
     Event,
-    sleep,
     Task,
 )
-from functools import partial
-from time import monotonic
 from typing import Awaitable, Callable, Union
 
 from rich.repr import Result, rich_repr
 
 from . import events
 from ._callback import invoke
+from . import _clock
 from ._types import MessageTarget
 
 TimerCallback = Union[Callable[[], Awaitable[None]], Callable[[], None]]
@@ -109,32 +107,38 @@ class Timer:
         count = 0
         _repeat = self._repeat
         _interval = self._interval
-        start = monotonic()
+        start = _clock.get_time_no_wait()
         try:
             while _repeat is None or count <= _repeat:
                 next_timer = start + ((count + 1) * _interval)
-                if self._skip and next_timer < monotonic():
+                now = await _clock.get_time()
+                if self._skip and next_timer < now:
                     count += 1
                     continue
-                wait_time = max(0, next_timer - monotonic())
+                now = await _clock.get_time()
+                wait_time = max(0, next_timer - now)
                 if wait_time:
-                    await sleep(wait_time)
-                event = events.Timer(
-                    self.sender,
-                    timer=self,
-                    time=next_timer,
-                    count=count,
-                    callback=self._callback,
-                )
+                    await _clock.sleep(wait_time)
                 count += 1
                 try:
-                    if self._callback is not None:
-                        await invoke(self._callback)
-                    else:
-                        await self.target.post_priority_message(event)
-
+                    await self._tick(next_timer=next_timer, count=count)
                 except EventTargetGone:
                     break
                 await self._active.wait()
         except CancelledError:
             pass
+
+    async def _tick(self, *, next_timer: float, count: int) -> None:
+        """Triggers the Timer's action: either call its callback, or sends an event to its target"""
+        if self._callback is not None:
+            await invoke(self._callback)
+        else:
+            event = events.Timer(
+                self.sender,
+                timer=self,
+                time=next_timer,
+                count=count,
+                callback=self._callback,
+            )
+
+            await self.target.post_priority_message(event)

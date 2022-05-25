@@ -16,7 +16,7 @@ class TextWidget(Widget):
         return TEXT
 
 
-class AutoApp(App):
+class AutoApp(App, css_path="nest.css"):
     def on_mount(self) -> None:
         self.bind("t", "tree")
 
@@ -30,9 +30,3 @@ class AutoApp(App):
 
     def action_tree(self):
         self.log(self.screen.tree)
-
-
-app = AutoApp(css_path="nest.css")
-
-if __name__ == "__main__":
-    app.run()

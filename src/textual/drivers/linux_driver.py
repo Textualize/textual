@@ -14,8 +14,9 @@ from threading import Event, Thread
 if TYPE_CHECKING:
     from rich.console import Console
 
-from .. import log
+import rich.repr
 
+from .. import log
 from .. import events
 from ..driver import Driver
 from ..geometry import Size
@@ -24,6 +25,7 @@ from .._xterm_parser import XTermParser
 from .._profile import timer
 
 
+@rich.repr.auto
 class LinuxDriver(Driver):
     """Powers display and input for Linux / MacOS"""
 
@@ -36,14 +38,19 @@ class LinuxDriver(Driver):
         self.exit_event = Event()
         self._key_thread: Thread | None = None
 
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "debug", self._debug
+
     def _get_terminal_size(self) -> tuple[int, int]:
         width: int | None = 80
         height: int | None = 25
+        import shutil
+
         try:
-            width, height = os.get_terminal_size(sys.__stdin__.fileno())
+            width, height = shutil.get_terminal_size()
         except (AttributeError, ValueError, OSError):
             try:
-                width, height = os.get_terminal_size(sys.__stdout__.fileno())
+                width, height = shutil.get_terminal_size()
             except (AttributeError, ValueError, OSError):
                 pass
         width = width or 80

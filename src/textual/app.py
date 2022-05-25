@@ -109,6 +109,8 @@ class App(Generic[ReturnType], DOMNode):
 
     """
 
+    CSS_PATH: str | None = None
+
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
@@ -136,8 +138,13 @@ class App(Generic[ReturnType], DOMNode):
         # this will create some first references to an asyncio loop.
         _init_uvloop()
 
+        self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
+
         self.console = Console(
-            file=sys.__stdout__, markup=False, highlight=False, emoji=False
+            file=(open(os.devnull, "wt") if self.is_headless else sys.__stdout__),
+            markup=True,
+            highlight=False,
+            emoji=False,
         )
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
@@ -183,10 +190,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
         self._require_styles_update = False
-
-        self.css_path = css_path
-
-        self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
+        self.css_path = css_path or self.CSS_PATH
 
         self.registry: set[MessagePump] = set()
         self.devtools = DevtoolsClient()
@@ -199,6 +203,10 @@ class App(Generic[ReturnType], DOMNode):
         )
 
         super().__init__()
+
+    def __init_subclass__(cls, css_path: str | None = None) -> None:
+        super().__init_subclass__()
+        cls.CSS_PATH = css_path
 
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
@@ -214,6 +222,11 @@ class App(Generic[ReturnType], DOMNode):
     def debug(self) -> bool:
         """Check if debug mode is enabled."""
         return "debug" in self.features
+
+    @property
+    def is_headless(self) -> bool:
+        """Check if the app is running in 'headless' mode."""
+        return "headless" in self.features
 
     def exit(self, result: ReturnType | None = None) -> None:
         """Exit the app, and return the supplied result.
@@ -430,7 +443,7 @@ class App(Generic[ReturnType], DOMNode):
             color_system="truecolor",
             record=True,
         )
-        console.print(self.screen._compositor)
+        console.print(self.screen._compositor.render(full=True))
         return console.export_svg(title=self.title)
 
     def save_screenshot(self, path: str | None = None) -> str:
@@ -443,6 +456,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             str: Filename of screenshot.
         """
+        self.bell()
         if path is None:
             svg_path = f"{self.title.lower()}_{datetime.now().isoformat()}.svg"
             svg_path = svg_path.replace("/", "_").replace("\\", "_")
@@ -727,13 +741,12 @@ class App(Generic[ReturnType], DOMNode):
                 mount_event = events.Mount(sender=self)
                 await self.dispatch_message(mount_event)
 
-                # TODO: don't override `self.console` here
-                self.console = Console(file=sys.__stdout__)
                 self.title = self._title
                 self.refresh()
                 await self.animator.start()
 
                 with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
+                    await self._ready()
                     await super().process_messages()
                     await self.animator.stop()
                     await self.close_all()
@@ -753,6 +766,28 @@ class App(Generic[ReturnType], DOMNode):
             if self._log_file is not None:
                 self._log_file.close()
                 self._log_console = None
+
+    async def _ready(self) -> None:
+        """Called immediately prior to processing messages.
+
+        May be used as a hook for any operations that should run first.
+
+        """
+        try:
+            screenshot_timer = float(os.environ.get("TEXTUAL_SCREENSHOT", "0"))
+        except ValueError:
+            return
+
+        if not screenshot_timer:
+            return
+
+        async def on_screenshot():
+            """Used by docs plugin."""
+            svg = self.export_screenshot()
+            self._screenshot = svg  # type: ignore
+            await self.shutdown()
+
+        self.set_timer(screenshot_timer, on_screenshot)
 
     def on_mount(self) -> None:
         widgets = list(self.compose())
@@ -856,7 +891,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             renderable (RenderableType): A Rich renderable.
         """
-        if self._running and not self._closed:
+        if self._running and not self._closed and not self.is_headless:
             console = self.console
             if self._sync_available:
                 console.file.write("\x1bP=1s\x1b\\")
