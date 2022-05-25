@@ -32,7 +32,7 @@ import rich.repr
 from rich.console import Console, RenderableType
 from rich.measure import Measurement
 from rich.protocol import is_renderable
-from rich.segment import Segments
+from rich.segment import Segments, SegmentLines
 from rich.traceback import Traceback
 
 from . import actions
@@ -441,7 +441,9 @@ class App(Generic[ReturnType], DOMNode):
             color_system="truecolor",
             record=True,
         )
-        console.print(self.screen._compositor.render(full=True))
+        lines = self.screen._compositor.render(full=True).lines
+
+        console.print(SegmentLines(lines, new_lines=True))
         return console.export_svg(title=self.title)
 
     def save_screenshot(self, path: str | None = None) -> str:
@@ -524,7 +526,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.screen.refresh(layout=True)
 
     def render(self) -> RenderableType:
-        return Blank()
+        return ""
 
     def query(self, selector: str | None = None) -> DOMQuery:
         """Get a DOM query in the current screen.

@@ -28,7 +28,12 @@ class Screen(Widget):
     """A widget for the root of the app."""
 
     CSS = """
-
+    Screen {
+        layout: vertical;
+        overflow-y: auto;
+        background: $surface;
+        color: $text-surface;
+    }
     """
 
     dark = Reactive(False)
