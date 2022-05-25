@@ -1,16 +1,22 @@
 from __future__ import annotations
 
+import time
+from typing import Callable
+
+from rich.cells import cell_len
 from rich.console import RenderableType
 from rich.padding import Padding
 from rich.style import Style
 from rich.text import Text
 
-from textual import events
+from textual import events, _clock
 from textual._text_backend import TextEditorBackend
+from textual._timer import Timer
 from textual._types import MessageTarget
 from textual.app import ComposeResult
-from textual.geometry import Size
+from textual.geometry import Size, clamp
 from textual.message import Message
+from textual.reactive import Reactive
 from textual.widget import Widget
 
 
@@ -19,6 +25,9 @@ class TextWidgetBase(Widget):
 
     STOP_PROPAGATE: set[str] = set()
     """Set of keybinds which will not be propagated to parent widgets"""
+
+    cursor_blink_enabled = Reactive(False)
+    cursor_blink_period = Reactive(0.6)
 
     def __init__(
         self,
@@ -31,11 +40,13 @@ class TextWidgetBase(Widget):
 
     def on_key(self, event: events.Key) -> None:
         key = event.key
-        if key == "\x1b":
+        if key == "escape":
             return
 
         changed = False
-        if key == "ctrl+h":
+        if event.is_printable:
+            changed = self._editor.insert_at_cursor(key)
+        elif key == "ctrl+h":
             changed = self._editor.delete_back()
         elif key == "ctrl+d":
             changed = self._editor.delete_forward()
@@ -43,12 +54,10 @@ class TextWidgetBase(Widget):
             self._editor.cursor_left()
         elif key == "right":
             self._editor.cursor_right()
-        elif key == "home":
+        elif key == "home" or key == "ctrl+a":
             self._editor.cursor_text_start()
-        elif key == "end":
+        elif key == "end" or key == "ctrl+e":
             self._editor.cursor_text_end()
-        elif event.is_printable:
-            changed = self._editor.insert_at_cursor(key)
 
         if changed:
             self.post_message_no_wait(self.Changed(self, value=self._editor.content))
@@ -56,6 +65,9 @@ class TextWidgetBase(Widget):
         self.refresh(layout=True)
 
     def _apply_cursor_to_text(self, display_text: Text, index: int) -> Text:
+        if index < 0:
+            return display_text
+
         # Either write a cursor character or apply reverse style to cursor location
         at_end_of_text = index == len(display_text)
         at_end_of_line = index < len(display_text) and display_text.plain[index] == "\n"
@@ -89,24 +101,24 @@ class TextWidgetBase(Widget):
 
 
 class TextInput(TextWidgetBase, can_focus=True):
+    """Widget for inputting text
+
+    Args:
+        placeholder (str): The text that will be displayed when there's no content in the TextInput.
+            Defaults to an empty string.
+        initial (str): The initial value. Defaults to an empty string.
+        autocompleter (Callable[[str], str | None): Function which returns autocomplete suggestion
+            which will be displayed within the widget any time the content changes. The autocomplete
+            suggestion will be displayed as dim text similar to suggestion text in the zsh or fish shells.
+    """
+
     CSS = """
     TextInput {
         width: auto;
-        background: $primary;
+        background: $surface;
         height: 3;
         padding: 0 1;
         content-align: left middle;
-        background: $primary-darken-1;
-    }
-
-    TextInput:hover {
-        background: $primary-darken-2;
-    }
-
-    TextInput:focus {
-        background: $primary-darken-2;
-        border: heavy $primary-lighten-1;
-        padding: 0;
     }
     """
 
@@ -115,6 +127,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         *,
         placeholder: str = "",
         initial: str = "",
+        autocompleter: Callable[[str], str | None] | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -123,6 +136,17 @@ class TextInput(TextWidgetBase, can_focus=True):
         self.placeholder = placeholder
         self._editor = TextEditorBackend(initial, 0)
         self.visible_range: tuple[int, int] | None = None
+        self.autocompleter = autocompleter
+        self._suggestion_suffix = ""
+
+        self._cursor_blink_visible = True
+        self._cursor_blink_timer: Timer | None = None
+        self._last_keypress_time: float = 0.0
+        if self.cursor_blink_enabled:
+            self._last_keypress_time = _clock.get_time_no_wait()
+            self._cursor_blink_timer = self.set_interval(
+                self.cursor_blink_period, self._toggle_cursor_visible
+            )
 
     @property
     def value(self) -> str:
@@ -143,11 +167,58 @@ class TextInput(TextWidgetBase, can_focus=True):
 
     def on_resize(self, event: events.Resize) -> None:
         # Ensure the cursor remains visible when the widget is resized
-        new_visible_range_end = max(
-            self._editor.cursor_index + 1, self.content_region.width
+        self._reset_visible_range()
+
+    def on_click(self, event: events.Click) -> None:
+        """When the user clicks on the text input, the cursor moves to the
+        character that was clicked on. Double-width characters makes this more
+        difficult."""
+
+        # If they've clicked outwith the content region (e.g. on padding), do nothing.
+        if not self.content_region.contains_point((event.screen_x, event.screen_y)):
+            return
+
+        self._cursor_blink_visible = True
+        start_index, end_index = self.visible_range
+
+        click_x = event.screen_x - self.content_region.x
+        new_cursor_index = start_index + click_x
+
+        # Convert click offset to cursor index accounting for varying cell lengths
+        cell_len_accumulated = 0
+        for index, character in enumerate(
+            self._editor.get_range(start_index, end_index)
+        ):
+            cell_len_accumulated += cell_len(character)
+            if cell_len_accumulated > click_x:
+                new_cursor_index = start_index + index
+                break
+
+        new_cursor_index = clamp(new_cursor_index, 0, len(self._editor.content))
+        self._editor.cursor_index = new_cursor_index
+        self.refresh()
+
+    def _reset_visible_range(self):
+        """Reset our window into the editor content. Used when the widget is resized."""
+        available_width = self.content_region.width
+
+        # Adjust the window end such that the cursor is just off of it
+        new_visible_range_end = max(self._editor.cursor_index + 2, available_width)
+        # The visible window extends back by the width of the content region
+        new_visible_range_start = new_visible_range_end - available_width
+
+        # Check the cell length of the newly visible content and adjust window to accommodate
+        new_range = self._editor.get_range(
+            new_visible_range_start, new_visible_range_end
         )
-        new_visible_range_start = new_visible_range_end - self.content_region.width
-        self.visible_range = (new_visible_range_start, new_visible_range_end)
+        new_range_cell_len = cell_len(new_range)
+        additional_shift_required = max(0, new_range_cell_len - available_width)
+
+        self.visible_range = (
+            new_visible_range_start + additional_shift_required,
+            new_visible_range_end + additional_shift_required,
+        )
+
         self.refresh()
 
     def render(self, style: Style) -> RenderableType:
@@ -156,11 +227,15 @@ class TextInput(TextWidgetBase, can_focus=True):
             self.visible_range = (self._editor.cursor_index, self.content_region.width)
 
         # We only show the cursor if the widget has focus
-        show_cursor = self.has_focus
+        show_cursor = self.has_focus and self._cursor_blink_visible
         if self._editor.content:
             start, end = self.visible_range
             visible_text = self._editor.get_range(start, end)
             display_text = Text(visible_text, no_wrap=True, overflow="ignore")
+
+            if self._suggestion_suffix:
+                display_text.append(self._suggestion_suffix, "dim")
+
             if show_cursor:
                 display_text = self._apply_cursor_to_text(
                     display_text, self._editor.cursor_index - start
@@ -180,18 +255,68 @@ class TextInput(TextWidgetBase, can_focus=True):
         if key in self.STOP_PROPAGATE:
             event.stop()
 
+        self._last_keypress_time = _clock.get_time_no_wait()
+        if self._cursor_blink_timer:
+            self._cursor_blink_visible = True
+
+        # Cursor location and the *codepoint* range of our view into the content
         start, end = self.visible_range
         cursor_index = self._editor.cursor_index
+
+        # We can scroll if the cell width of the content is greater than the content region
         available_width = self.content_region.width
-        scrollable = len(self._editor.content) >= available_width
-        if key == "enter" and self._editor.content:
+        scrollable = cell_len(self._editor.content) >= available_width
+
+        # Check what content is visible from the editor, and how wide that content is
+        visible_content = self._editor.get_range(start, end)
+        visible_content_cell_len = cell_len(visible_content)
+        visible_content_to_cursor = self._editor.get_range(
+            start, self._editor.cursor_index + 1
+        )
+        visible_content_to_cursor_cell_len = cell_len(visible_content_to_cursor)
+
+        cursor_at_end = visible_content_to_cursor_cell_len == available_width
+        key_cell_len = cell_len(key)
+        if event.is_printable:
+            # Check if we'll need to scroll to accommodate the new cell width after insertion.
+            if visible_content_to_cursor_cell_len + key_cell_len >= available_width:
+                self.visible_range = start + key_cell_len, end + key_cell_len
+            self._update_suggestion(event)
+        elif (
+            key == "ctrl+x"
+        ):  # TODO: This allows us to query and print the text input state
+            self.log(start=start)
+            self.log(end=end)
+            self.log(visible_content=visible_content)
+            self.log(visible_content_cell_len=visible_content_cell_len)
+            self.log(
+                visible_content_to_cursor_cell_len=visible_content_to_cursor_cell_len
+            )
+            self.log(available_width=available_width)
+            self.log(cursor_index=self._editor.cursor_index)
+        elif key == "enter" and self._editor.content:
             self.post_message_no_wait(TextInput.Submitted(self, self._editor.content))
         elif key == "right":
-            if cursor_index == end - 1:
-                if scrollable and self._editor.query_cursor_right():
-                    self.visible_range = (start + 1, end + 1)
-                else:
-                    self.app.bell()
+            if (
+                cursor_at_end
+                or visible_content_to_cursor_cell_len == available_width - 1
+                and cell_len(self._editor.query_cursor_right() or "") == 2
+            ):
+                if scrollable:
+                    character_to_right = self._editor.query_cursor_right()
+                    if character_to_right is not None:
+                        cell_width_character_to_right = cell_len(character_to_right)
+                        window_shift_amount = cell_width_character_to_right
+                    else:
+                        window_shift_amount = 1
+                    self.visible_range = (
+                        start + window_shift_amount,
+                        end + window_shift_amount,
+                    )
+            if self._suggestion_suffix and self._editor.cursor_at_end:
+                self._editor.insert_at_cursor(self._suggestion_suffix)
+                self._suggestion_suffix = ""
+                self._reset_visible_range()
         elif key == "left":
             if cursor_index == start:
                 if scrollable and self._editor.query_cursor_left():
@@ -200,32 +325,65 @@ class TextInput(TextWidgetBase, can_focus=True):
                         cursor_index + available_width - 1,
                     )
                 else:
-                    # If the user has hit the scroll limit
                     self.app.bell()
         elif key == "ctrl+h":
             if cursor_index == start and self._editor.query_cursor_left():
                 self.visible_range = start - 1, end - 1
-        elif key == "home":
+            self._update_suggestion(event)
+        elif key == "ctrl+d":
+            self._update_suggestion(event)
+        elif key == "home" or key == "ctrl+a":
             self.visible_range = (0, available_width)
-        elif key == "end":
-            value_length = len(self.value)
+        elif key == "end" or key == "ctrl+e":
+            num_codepoints = len(self.value)
+            final_visible_codepoints = self._editor.get_range(
+                num_codepoints - available_width + 1,
+                max(num_codepoints, available_width) + 1,
+            )
+            cell_len_final_visible = cell_len(final_visible_codepoints)
+
+            # Additional shift to ensure there's space for double width character
+            additional_shift_required = (
+                max(0, cell_len_final_visible - available_width) + 2
+            )
             if scrollable:
                 self.visible_range = (
-                    value_length - available_width + 1,
-                    max(available_width, value_length) + 1,
+                    num_codepoints - available_width + additional_shift_required,
+                    max(available_width, num_codepoints) + additional_shift_required,
                 )
             else:
                 self.visible_range = (0, available_width)
-        elif event.is_printable:
-            # If we're at the end of the visible range, and the editor backend
-            # will permit us to move the cursor right, then shift the visible
-            # window/range along to the right.
-            if cursor_index == end - 1:
-                self.visible_range = start + 1, end + 1
 
         # We need to clamp the visible range to ensure we don't use negative indexing
         start, end = self.visible_range
         self.visible_range = (max(0, start), end)
+
+    def _update_suggestion(self, event: events.Key) -> None:
+        """Run the autocompleter function, updating the suggestion if necessary"""
+        if self.autocompleter is not None:
+            # TODO: We shouldn't be doing the stuff below here, maybe we need to add
+            #  a method to the editor to query an edit operation?
+            event.prevent_default()
+            super().on_key(event)
+            if self.value:
+                full_suggestion = self.autocompleter(self.value)
+                if full_suggestion:
+                    suffix = full_suggestion[len(self.value) :]
+                    self._suggestion_suffix = suffix
+                else:
+                    self._suggestion_suffix = None
+            else:
+                self._suggestion_suffix = None
+
+    def _toggle_cursor_visible(self):
+        """Manages the blinking of the cursor - ensuring blinking only starts when the
+        user hasn't pressed a key in some time"""
+        if (
+            _clock.get_time_no_wait() - self._last_keypress_time
+            > self.cursor_blink_period
+        ):
+            self._cursor_blink_visible = not self._cursor_blink_visible
+            self.refresh()
 
     class Submitted(Message, bubble=True):
         def __init__(self, sender: MessageTarget, value: str) -> None:
