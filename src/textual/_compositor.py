@@ -222,6 +222,9 @@ class Compositor:
         old_map = self.map.copy()
         old_widgets = old_map.keys()
         map, widgets = self._arrange_root(parent)
+
+        # parent.log(map)
+
         new_widgets = map.keys()
 
         # Newly visible widgets
@@ -552,7 +555,7 @@ class Compositor:
         ]
         return segment_lines
 
-    def render(self, full: bool = True) -> RenderableType:
+    def render(self, full: bool = False) -> RenderableType:
         """Render a layout.
 
         Returns:

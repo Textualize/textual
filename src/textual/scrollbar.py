@@ -205,7 +205,7 @@ class ScrollBar(Widget):
         yield "window_size", self.window_size
         yield "position", self.position
 
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         styles = self.parent.styles
         scrollbar_style = Style(
             bgcolor=(

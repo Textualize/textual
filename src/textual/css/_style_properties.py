@@ -47,7 +47,7 @@ if TYPE_CHECKING:
     from .._layout import Layout
     from .styles import DockGroup, Styles, StylesBase
 
-from .types import EdgeType
+from .types import EdgeType, AlignHorizontal, AlignVertical
 
 BorderDefinition = (
     "Sequence[tuple[EdgeType, str | Color] | None] | tuple[EdgeType, str | Color]"
@@ -935,3 +935,23 @@ class FractionalProperty:
             )
         if obj.set_rule(name, clamp(float_value, 0, 1)):
             obj.refresh()
+
+
+class AlignProperty:
+    def __set_name__(self, owner: StylesBase, name: str) -> None:
+        self.horizontal = f"{name}_horizontal"
+        self.vertical = f"{name}_vertical"
+
+    def __get__(
+        self, obj: StylesBase, type: type[StylesBase]
+    ) -> tuple[AlignHorizontal, AlignVertical]:
+        horizontal = getattr(obj, self.horizontal)
+        vertical = getattr(obj, self.vertical)
+        return (horizontal, vertical)
+
+    def __set__(
+        self, obj: StylesBase, value: tuple[AlignHorizontal, AlignVertical]
+    ) -> None:
+        horizontal, vertical = value
+        setattr(obj, self.horizontal, horizontal)
+        setattr(obj, self.vertical, vertical)

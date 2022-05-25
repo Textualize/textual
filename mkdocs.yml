@@ -45,9 +45,9 @@ plugins:
     handlers:
         python:
           rendering:
-            show_source: false
+            show_source: true
           selection:
-            filters:
+            filters:              
               - "!^_"
               - "^__init__$"
               - "!^can_replace$"

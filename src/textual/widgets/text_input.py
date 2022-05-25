@@ -150,7 +150,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         self.visible_range = (new_visible_range_start, new_visible_range_end)
         self.refresh()
 
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         # First render: Cursor at start of text, visible range goes from cursor to content region width
         if not self.visible_range:
             self.visible_range = (self._editor.cursor_index, self.content_region.width)
@@ -255,7 +255,7 @@ class TextAreaChild(TextWidgetBase, can_focus=True):
     CSS = "TextAreaChild { height: auto; background: $primary-darken-1; }"
     STOP_PROPAGATE = {"tab", "shift+tab"}
 
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         # We only show the cursor if the widget has focus
         show_cursor = self.has_focus
         display_text = Text(self._editor.content, no_wrap=True)

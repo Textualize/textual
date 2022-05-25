@@ -1,4 +1,4 @@
-# Welcome to Textual documentation
+# Welcome
 
 Textual is framework for rapidly creating _text user interfaces_ (TUIs from here on) with Python.
 

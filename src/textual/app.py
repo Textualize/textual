@@ -33,7 +33,6 @@ from rich.console import Console, RenderableType
 from rich.measure import Measurement
 from rich.protocol import is_renderable
 from rich.segment import Segments
-from rich.style import Style
 from rich.traceback import Traceback
 
 from . import actions
@@ -58,6 +57,7 @@ from .geometry import Offset, Region, Size
 from .layouts.dock import Dock
 from .message_pump import MessagePump
 from .reactive import Reactive
+from .renderables.blank import Blank
 from .screen import Screen
 from .widget import Widget
 
@@ -106,7 +106,6 @@ class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications"""
 
     CSS = """
-
     """
 
     CSS_PATH: str | None = None
@@ -210,7 +209,6 @@ class App(Generic[ReturnType], DOMNode):
 
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
-    background: Reactive[str] = Reactive("black")
     dark = Reactive(False)
 
     @property
@@ -525,8 +523,8 @@ class App(Generic[ReturnType], DOMNode):
                 self.stylesheet.update(self)
                 self.screen.refresh(layout=True)
 
-    def render(self, styles: Style) -> RenderableType:
-        return ""
+    def render(self) -> RenderableType:
+        return Blank()
 
     def query(self, selector: str | None = None) -> DOMQuery:
         """Get a DOM query in the current screen.
@@ -742,6 +740,7 @@ class App(Generic[ReturnType], DOMNode):
                 await self.dispatch_message(mount_event)
 
                 self.title = self._title
+                self.stylesheet.update(self)
                 self.refresh()
                 await self.animator.start()
 

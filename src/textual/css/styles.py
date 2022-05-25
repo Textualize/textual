@@ -14,6 +14,7 @@ from .._animator import Animation, EasingFunction
 from ..color import Color
 from ..geometry import Spacing
 from ._style_properties import (
+    AlignProperty,
     BorderProperty,
     BoxProperty,
     ColorProperty,
@@ -230,9 +231,11 @@ class StylesBase(ABC):
 
     align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
+    align = AlignProperty()
 
     content_align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     content_align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
+    content_align = AlignProperty()
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles contains the same rules."""
@@ -531,7 +534,8 @@ class Styles(StylesBase):
     ) -> Animation | None:
         from ..widget import Widget
 
-        assert isinstance(self.node, Widget)
+        # node = self.node
+        # assert isinstance(self.node, Widget)
         if isinstance(value, ScalarOffset):
             return ScalarAnimation(
                 self.node,

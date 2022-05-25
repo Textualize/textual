@@ -1,5 +1,6 @@
 import os
 
+from textual.cli.cli import import_app
 
 # This module defines our "Custom Fences", powered by SuperFences
 # @link https://facelessuser.github.io/pymdown-extensions/extensions/superfences/#custom-fences
@@ -7,7 +8,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs):
     """A superfences formatter to insert a SVG screenshot."""
 
     os.environ["TEXTUAL"] = "headless"
-    os.environ["TEXTUAL_SCREENSHOT"] = "0.1"
+    os.environ["TEXTUAL_SCREENSHOT"] = "0.2"
     os.environ["COLUMNS"] = attrs.get("columns", "80")
     os.environ["LINES"] = attrs.get("lines", "24")
     path = attrs.get("path")
@@ -21,6 +22,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs):
                 source = python_code.read()
             app_vars = {}
             exec(source, app_vars)
+
             app = app_vars["app"]
             app.run()
             svg = app._screenshot

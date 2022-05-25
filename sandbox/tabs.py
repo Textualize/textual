@@ -12,7 +12,7 @@ from textual.widgets.tabs import Tabs, Tab
 
 
 class Hr(Widget):
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         return Rule()
 
 
@@ -23,7 +23,7 @@ class Info(Widget):
         super().__init__()
         self.text = text
 
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         return Padding(f"{self.text}", pad=(0, 1))
 
 

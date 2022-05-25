@@ -29,13 +29,6 @@ class Screen(Widget):
 
     CSS = """
 
-    Screen {
-        layout: vertical;
-        overflow-y: auto;
-        background: $surface;
-        color: $text-surface;
-    }
-
     """
 
     dark = Reactive(False)
@@ -48,8 +41,8 @@ class Screen(Widget):
     def watch_dark(self, dark: bool) -> None:
         pass
 
-    def render(self, style: Style) -> RenderableType:
-        return self.app.render(style)
+    def render(self) -> RenderableType:
+        return self.app.render()
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the absolute offset of a given Widget.
@@ -174,7 +167,6 @@ class Screen(Widget):
 
     async def on_resize(self, event: events.Resize) -> None:
         self.size_updated(event.size, event.virtual_size, event.container_size)
-        self._refresh_layout()
         event.stop()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:

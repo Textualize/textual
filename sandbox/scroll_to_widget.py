@@ -35,7 +35,7 @@ class Introduction(Widget):
     }
     """
 
-    def render(self, styles) -> RenderableType:
+    def render(self) -> RenderableType:
         return Text(
             "Press keys 0 to 9 to scroll to the Placeholder with that ID.",
             justify="center",
