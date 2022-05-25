@@ -198,43 +198,52 @@ def test_widget_style_size_fails_if_data_type_is_not_supported(size_dimension_in
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
-    "overflow_y,scrollbar_gutter,text_length,expected_text_widget_width,expects_vertical_scrollbar",
+    "overflow_y,scrollbar_gutter,scrollbar_size,text_length,expected_text_widget_width,expects_vertical_scrollbar",
     (
         # ------------------------------------------------
         # ----- Let's start with `overflow-y: auto`:
         # short text: full width, no scrollbar
-        ["auto", "auto", "short_text", 80, False],
+        ["auto", "auto", 1, "short_text", 80, False],
         # long text: reduced width, scrollbar
-        ["auto", "auto", "long_text", 79, True],
+        ["auto", "auto", 1, "long_text", 79, True],
         # short text, `scrollbar-gutter: stable`: reduced width, no scrollbar
-        ["auto", "stable", "short_text", 79, False],
+        ["auto", "stable", 1, "short_text", 79, False],
         # long text, `scrollbar-gutter: stable`: reduced width, scrollbar
-        ["auto", "stable", "long_text", 79, True],
+        ["auto", "stable", 1, "long_text", 79, True],
         # ------------------------------------------------
         # ----- And now let's see the behaviour with `overflow-y: scroll`:
         # short text: reduced width, scrollbar
-        ["scroll", "auto", "short_text", 79, True],
+        ["scroll", "auto", 1, "short_text", 79, True],
         # long text: reduced width, scrollbar
-        ["scroll", "auto", "long_text", 79, True],
+        ["scroll", "auto", 1, "long_text", 79, True],
         # short text, `scrollbar-gutter: stable`: reduced width, scrollbar
-        ["scroll", "stable", "short_text", 79, True],
+        ["scroll", "stable", 1, "short_text", 79, True],
         # long text, `scrollbar-gutter: stable`: reduced width, scrollbar
-        ["scroll", "stable", "long_text", 79, True],
+        ["scroll", "stable", 1, "long_text", 79, True],
         # ------------------------------------------------
         # ----- Finally, let's check the behaviour with `overflow-y: hidden`:
         # short text: full width, no scrollbar
-        ["hidden", "auto", "short_text", 80, False],
+        ["hidden", "auto", 1, "short_text", 80, False],
         # long text: full width, no scrollbar
-        ["hidden", "auto", "long_text", 80, False],
+        ["hidden", "auto", 1, "long_text", 80, False],
         # short text, `scrollbar-gutter: stable`: reduced width, no scrollbar
-        ["hidden", "stable", "short_text", 79, False],
+        ["hidden", "stable", 1, "short_text", 79, False],
         # long text, `scrollbar-gutter: stable`: reduced width, no scrollbar
-        ["hidden", "stable", "long_text", 79, False],
+        ["hidden", "stable", 1, "long_text", 79, False],
+        # ------------------------------------------------
+        # ----- Bonus round with a custom scrollbar size, now that we can set this:
+        ["auto", "auto", 3, "short_text", 80, False],
+        ["auto", "auto", 3, "long_text", 77, True],
+        ["scroll", "auto", 3, "short_text", 77, True],
+        ["scroll", "stable", 3, "short_text", 77, True],
+        ["hidden", "auto", 3, "long_text", 80, False],
+        ["hidden", "stable", 3, "short_text", 77, False],
     ),
 )
 async def test_scrollbar_gutter(
     overflow_y: str,
     scrollbar_gutter: str,
+    scrollbar_size: int,
     text_length: Literal["short_text", "long_text"],
     expected_text_widget_width: int,
     expects_vertical_scrollbar: bool,
@@ -254,6 +263,8 @@ async def test_scrollbar_gutter(
     container.styles.height = 3
     container.styles.overflow_y = overflow_y
     container.styles.scrollbar_gutter = scrollbar_gutter
+    if scrollbar_size > 1:
+        container.styles.scrollbar_size_vertical = scrollbar_size
 
     text_widget = TextWidget()
     text_widget.styles.height = "auto"
