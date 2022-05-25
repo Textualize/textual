@@ -131,7 +131,7 @@ TweetBody {
 }
 
 Tweet.scroll-horizontal TweetBody {
-  width: 130%;
+  width: 350;
 }
 
 .button {

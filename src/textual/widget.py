@@ -184,6 +184,7 @@ class Widget(DOMNode):
             int: The optimal width of the content.
         """
         if self.is_container:
+            assert self.layout is not None
             return (
                 self.layout.get_content_width(self, container, viewport)
                 + self.scrollbar_width
@@ -288,7 +289,7 @@ class Widget(DOMNode):
 
         if self._vertical_scrollbar is not None:
             return self._vertical_scrollbar
-        (vertical_scrollbar_thickness, _) = self._get_scrollbar_thicknesses()
+        vertical_scrollbar_thickness = self._get_scrollbar_thickness_vertical()
         self._vertical_scrollbar = scroll_bar = ScrollBar(
             vertical=True, name="vertical", thickness=vertical_scrollbar_thickness
         )
@@ -306,7 +307,7 @@ class Widget(DOMNode):
 
         if self._horizontal_scrollbar is not None:
             return self._horizontal_scrollbar
-        (_, horizontal_scrollbar_thickness) = self._get_scrollbar_thicknesses()
+        horizontal_scrollbar_thickness = self._get_scrollbar_thickness_horizontal()
         self._horizontal_scrollbar = scroll_bar = ScrollBar(
             vertical=False, name="horizontal", thickness=horizontal_scrollbar_thickness
         )
@@ -362,17 +363,20 @@ class Widget(DOMNode):
     @property
     def scrollbar_dimensions(self) -> tuple[int, int]:
         """Get the size of any scrollbars on the widget"""
-        return (int(self.show_horizontal_scrollbar), int(self.show_vertical_scrollbar))
+        return (
+            self._get_scrollbar_thickness_horizontal(),
+            self._get_scrollbar_thickness_vertical(),
+        )
 
     @property
     def scrollbar_width(self) -> int:
         """Get the width used by the *vertical* scrollbar."""
-        return int(self.show_vertical_scrollbar)
+        return self._get_scrollbar_thickness_vertical()
 
     @property
     def scrollbar_height(self) -> int:
         """Get the height used by the *horizontal* scrollbar."""
-        return int(self.show_horizontal_scrollbar)
+        return self._get_scrollbar_thickness_horizontal()
 
     def set_dirty(self) -> None:
         """Set the Widget as 'dirty' (requiring re-render)."""
@@ -580,10 +584,8 @@ class Widget(DOMNode):
             # Let's _always_ reserve some space, whether the scrollbar is actually displayed or not:
             show_vertical_scrollbar = True
 
-        (
-            vertical_scrollbar_thickness,
-            horizontal_scrollbar_thickness,
-        ) = self._get_scrollbar_thicknesses()
+        horizontal_scrollbar_thickness = self._get_scrollbar_thickness_horizontal()
+        vertical_scrollbar_thickness = self._get_scrollbar_thickness_vertical()
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (region, _, _, _) = region.split(
                 -vertical_scrollbar_thickness, -horizontal_scrollbar_thickness
@@ -609,13 +611,11 @@ class Widget(DOMNode):
         region = size.region
         show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
 
-        (
-            vertical_scrollbar_thickness,
-            horizontal_scrollbar_thickness,
-        ) = self._get_scrollbar_thicknesses()
+        horizontal_scrollbar_thickness = self._get_scrollbar_thickness_horizontal()
+        vertical_scrollbar_thickness = self._get_scrollbar_thickness_vertical()
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (
-                region,
+                _,
                 vertical_scrollbar_region,
                 horizontal_scrollbar_region,
                 _,
@@ -627,30 +627,37 @@ class Widget(DOMNode):
             if horizontal_scrollbar_region:
                 yield self.horizontal_scrollbar, horizontal_scrollbar_region
         elif show_vertical_scrollbar:
-            region, scrollbar_region = region.split_vertical(
-                -vertical_scrollbar_thickness
-            )
+            _, scrollbar_region = region.split_vertical(-vertical_scrollbar_thickness)
             if scrollbar_region:
                 yield self.vertical_scrollbar, scrollbar_region
         elif show_horizontal_scrollbar:
-            region, scrollbar_region = region.split_horizontal(
+            _, scrollbar_region = region.split_horizontal(
                 -horizontal_scrollbar_thickness
             )
             if scrollbar_region:
                 yield self.horizontal_scrollbar, scrollbar_region
 
-    def _get_scrollbar_thicknesses(self) -> tuple[int, int]:
-        """
+    def _get_scrollbar_thickness_horizontal(self) -> int:
+        """Get the thickness of the horizontal scrollbar
+
         Returns:
-            tuple[int, int]: first integer is the thickness of the vertical scrollbar,
-                2nd integer is the thickness of the horizontal scrollbar
+            int: the thickness of the horizontal scrollbar (can be zero if CSS rules prevent horizontal scrolling)
         """
-        vertical_scrollbar_size = horizontal_scrollbar_size = 1
-        if self.styles.scrollbar_size_vertical is not None:
-            vertical_scrollbar_size = int(self.styles.scrollbar_size_vertical.value)
-        if self.styles.scrollbar_size_horizontal is not None:
-            horizontal_scrollbar_size = int(self.styles.scrollbar_size_horizontal.value)
-        return vertical_scrollbar_size, horizontal_scrollbar_size
+        scrollbar_size = 1 if self.show_horizontal_scrollbar else 0
+        if scrollbar_size and self.styles.scrollbar_size_horizontal is not None:
+            scrollbar_size = int(self.styles.scrollbar_size_horizontal.value)
+        return scrollbar_size
+
+    def _get_scrollbar_thickness_vertical(self) -> int:
+        """Get the thickness of the vertical scrollbar
+
+        Returns:
+            int: the thickness of the vertical scrollbar (can be zero if CSS rules prevent vertical scrolling)
+        """
+        scrollbar_size = 1 if self.show_vertical_scrollbar else 0
+        if scrollbar_size and self.styles.scrollbar_size_vertical is not None:
+            scrollbar_size = int(self.styles.scrollbar_size_vertical.value)
+        return scrollbar_size
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Pseudo classes for a widget"""
