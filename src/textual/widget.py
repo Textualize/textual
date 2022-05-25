@@ -504,22 +504,26 @@ class Widget(DOMNode):
         )
 
     def scroll_to_widget(self, widget: Widget, *, animate: bool = True) -> bool:
-        """Scroll so that a descendant widget is in the visible area.
+        """Starting from `widget`, travel up the DOM to this node, scrolling all containers such that
+        every widget is visible within its parent container. This will, in the majority of cases,
+        bring the target widget into
 
         Args:
-            widget (Widget): A Widget in the children.
+            widget (Widget): A descendant widget.
             animate (bool, optional): True to animate, or False to jump. Defaults to True.
 
         Returns:
-            bool: True if the scroll position changed, otherwise False.
+            bool: True if any scrolling has occurred in any descendant, otherwise False.
         """
+
+        scrolls = set()
 
         node = widget.parent
         child = widget
         while node:
             try:
-                widget_region = child.content_region
-                container_region = node.content_region
+                widget_region = child.region
+                container_region = node.region
             except (errors.NoWidget, AttributeError):
                 return False
 
@@ -548,16 +552,17 @@ class Widget(DOMNode):
             else:
                 delta_y = min(top_delta.y, bottom_delta.y, key=abs)
 
-            node.scroll_relative(
+            scrolled = node.scroll_relative(
                 delta_x or None, delta_y or None, animate=animate, duration=0.2
             )
+            scrolls.add(scrolled)
 
             if node == self:
                 break
             child = node
             node = node.parent
 
-        # TODO: Return boolean value
+        return any(scrolls)
 
     def __init_subclass__(
         cls, can_focus: bool = True, can_focus_children: bool = True
