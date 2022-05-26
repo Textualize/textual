@@ -769,7 +769,6 @@ class Widget(DOMNode):
             self._size = size
             self._virtual_size = virtual_size
             self._container_size = container_size
-
             if self.is_container:
                 self._refresh_scrollbars()
                 width, height = self.container_size

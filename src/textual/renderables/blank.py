@@ -11,12 +11,12 @@ class Blank:
     """Draw solid background color."""
 
     def __init__(self, color: Color | str = "transparent") -> None:
-        background = (
-            color.rich_color
-            if isinstance(color, Color)
-            else Color.parse(color).rich_color
+        background = color if isinstance(color, Color) else Color.parse(color)
+        self._style = (
+            Style()
+            if background.is_transparent
+            else Style.from_color(None, background.rich_color)
         )
-        self._style = Style.from_color(None, background)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions

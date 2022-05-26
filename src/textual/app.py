@@ -526,7 +526,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.screen.refresh(layout=True)
 
     def render(self) -> RenderableType:
-        return Blank("red")
+        return Blank()
 
     def query(self, selector: str | None = None) -> DOMQuery:
         """Get a DOM query in the current screen.
@@ -737,22 +737,21 @@ class App(Generic[ReturnType], DOMNode):
 
             driver = self._driver = self.driver_class(self.console, self)
             driver.start_application_mode()
-            try:
-                mount_event = events.Mount(sender=self)
-                await self.dispatch_message(mount_event)
+            with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
+                try:
+                    mount_event = events.Mount(sender=self)
+                    await self.dispatch_message(mount_event)
 
-                self.title = self._title
-                self.stylesheet.update(self)
-                self.refresh()
-                await self.animator.start()
-
-                with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
+                    self.title = self._title
+                    self.stylesheet.update(self)
+                    self.refresh()
+                    await self.animator.start()
                     await self._ready()
                     await super().process_messages()
                     await self.animator.stop()
                     await self.close_all()
-            finally:
-                driver.stop_application_mode()
+                finally:
+                    driver.stop_application_mode()
         except Exception as error:
             self.on_exception(error)
         finally:
@@ -872,7 +871,11 @@ class App(Generic[ReturnType], DOMNode):
         await self.close_messages()
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
-        self._display(self.screen._compositor)
+        self.screen.refresh(repaint=repaint, layout=layout)
+        # self._display(self.screen._compositor.render())
+
+    def _paint(self):
+        self._display(self.screen._compositor.render())
 
     def refresh_css(self, animate: bool = True) -> None:
         """Refresh CSS.
@@ -1052,11 +1055,11 @@ class App(Generic[ReturnType], DOMNode):
 
     async def handle_update(self, message: messages.Update) -> None:
         message.stop()
-        self.app.refresh()
+        self._paint()
 
     async def handle_layout(self, message: messages.Layout) -> None:
         message.stop()
-        self.app.refresh()
+        self._paint()
 
     async def on_key(self, event: events.Key) -> None:
         if event.key == "tab":
@@ -1071,6 +1074,9 @@ class App(Generic[ReturnType], DOMNode):
         await self.close_messages()
 
     async def on_resize(self, event: events.Resize) -> None:
+        event.stop()
+        self.screen._screen_resized(event.size)
+
         await self.screen.post_message(event)
 
     async def action_press(self, key: str) -> None:

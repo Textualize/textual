@@ -221,7 +221,7 @@ class Compositor:
         # Keep a copy of the old map because we're going to compare it with the update
         old_map = self.map.copy()
         old_widgets = old_map.keys()
-        map, widgets = self._arrange_root(parent)
+        map, widgets = self._arrange_root(parent, size)
 
         # parent.log(map)
 
@@ -246,17 +246,16 @@ class Compositor:
         resized_widgets = {
             widget
             for widget, (region, *_) in map.items()
-            if widget in old_widgets and widget.size != region.size
+            if widget in old_widgets and old_map[widget].region.size != region.size
         }
 
         # Gets pairs of tuples of (Widget, MapGeometry) which have changed
         # i.e. if something is moved / deleted / added
         screen = size.region
+
         if screen not in self._dirty_regions:
             crop_screen = screen.intersection
-            changes: set[tuple[Widget, MapGeometry]] = (
-                self.map.items() ^ old_map.items()
-            )
+            changes = map.items() ^ old_map.items()
             self._dirty_regions.update(
                 [
                     crop_screen(map_geometry.visible_region)
@@ -270,7 +269,9 @@ class Compositor:
             resized=resized_widgets,
         )
 
-    def _arrange_root(self, root: Widget) -> tuple[CompositorMap, set[Widget]]:
+    def _arrange_root(
+        self, root: Widget, size: Size
+    ) -> tuple[CompositorMap, set[Widget]]:
         """Arrange a widgets children based on its layout attribute.
 
         Args:
@@ -282,7 +283,7 @@ class Compositor:
         """
 
         ORIGIN = Offset(0, 0)
-        size = root.size
+
         map: CompositorMap = {}
         widgets: set[Widget] = set()
         get_order = attrgetter("order")

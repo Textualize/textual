@@ -5,7 +5,7 @@ from textual.widget import Widget
 class WidthApp(App):
     CSS = """    
     Widget {     
-        background: blue;
+        background: blue 50%;
         width: 50%;
     }
     """
