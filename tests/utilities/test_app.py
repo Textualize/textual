@@ -59,11 +59,6 @@ class AppTest(App):
         """Handy shortcut when testing stuff"""
         self.log(self.tree)
 
-    def compose(self) -> ComposeResult:
-        raise NotImplementedError(
-            "Create a subclass of TestApp and override its `compose()` method, rather than using TestApp directly"
-        )
-
     def in_running_state(
         self,
         *,

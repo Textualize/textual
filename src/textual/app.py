@@ -964,20 +964,20 @@ class App(Generic[ReturnType], DOMNode):
         """Play the console 'bell'."""
         self.console.bell()
 
-    async def press(self, event: events.Key) -> bool:
+    async def press(self, key: str) -> bool:
         """Handle a key press.
 
         Args:
-            key (events.Key): A key event
+            key (str): A key
 
         Returns:
             bool: True if the key was handled by a binding, otherwise False
         """
         try:
-            binding = self.bindings.get_key(event.key)
+            binding = self.bindings.get_key(key)
         except NoBinding:
             return False
-        await self.action(binding.action, event=event)
+        await self.action(binding.action, event=events.Key(self, key))
         return True
 
     async def on_event(self, event: events.Event) -> None:
@@ -1020,11 +1020,11 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             action (str): Action encoded in a string.
         """
-        target, params = actions.parse(action, event=event)
+        target, params = actions.parse(action, {"event": event})
         if "." in target:
             destination, action_name = target.split(".", 1)
             if destination not in self._action_targets:
-                raise ActionError("Action namespace {destination} is not known")
+                raise ActionError(f"Action namespace {destination} is not known")
             action_target = getattr(self, destination)
         else:
             action_target = default_namespace or self

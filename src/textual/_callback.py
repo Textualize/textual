@@ -7,7 +7,7 @@ from typing import Any, Callable
 
 
 @lru_cache(maxsize=2048)
-def count_parameters(func: Callable) -> tuple[int, bool]:
+def analyze_parameters(func: Callable) -> tuple[int, bool]:
     """Count the number of parameters in a callable, and checks if the last positional one is a "capture all"
 
     Args:
@@ -38,7 +38,7 @@ async def invoke(callback: Callable, *params: object) -> Any:
         Any: [description]
     """
     _rich_traceback_guard = True
-    parameter_count, has_capture_all = count_parameters(callback)
+    parameter_count, has_capture_all = analyze_parameters(callback)
     # If the target has a "capture all" argument we simply inject everything,
     # otherwise we only inject the number of arguments expected by the callable:
     parameters = params if has_capture_all else params[:parameter_count]

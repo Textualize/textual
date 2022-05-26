@@ -15,7 +15,7 @@ from typing import (
 
 from . import events
 
-from ._callback import count_parameters, invoke
+from ._callback import analyze_parameters, invoke
 from ._types import MessageTarget
 
 if TYPE_CHECKING:
@@ -94,7 +94,7 @@ class Reactive(Generic[ReactiveType]):
             obj: Reactable, watch_function: Callable, old_value: Any, value: Any
         ) -> None:
             _rich_traceback_guard = True
-            if count_parameters(watch_function)[0] == 2:
+            if analyze_parameters(watch_function)[0] == 2:
                 watch_result = watch_function(old_value, value)
             else:
                 watch_result = watch_function(value)
