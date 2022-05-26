@@ -964,21 +964,20 @@ class App(Generic[ReturnType], DOMNode):
         """Play the console 'bell'."""
         self.console.bell()
 
-    async def press(self, key: str) -> bool:
+    async def press(self, event: events.Key) -> bool:
         """Handle a key press.
 
         Args:
-            key (str): A key
+            key (events.Key): A key event
 
         Returns:
             bool: True if the key was handled by a binding, otherwise False
         """
         try:
-            binding = self.bindings.get_key(key)
+            binding = self.bindings.get_key(event.key)
         except NoBinding:
             return False
-        else:
-            await self.action(binding.action)
+        await self.action(binding.action, event=event)
         return True
 
     async def on_event(self, event: events.Event) -> None:
@@ -1013,14 +1012,15 @@ class App(Generic[ReturnType], DOMNode):
         self,
         action: str,
         default_namespace: object | None = None,
-        modifiers: set[str] | None = None,
+        event: events.Event | None = None,
+        modifiers: set[str] | None = None,  # TODO: implement modifiers?
     ) -> None:
         """Perform an action.
 
         Args:
             action (str): Action encoded in a string.
         """
-        target, params = actions.parse(action)
+        target, params = actions.parse(action, event=event)
         if "." in target:
             destination, action_name = target.split(".", 1)
             if destination not in self._action_targets:
@@ -1095,7 +1095,7 @@ class App(Generic[ReturnType], DOMNode):
         elif event.key == "shift+tab":
             self.focus_previous()
         else:
-            await self.press(event.key)
+            await self.press(event)
 
     async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log("shutdown request")
@@ -1108,7 +1108,7 @@ class App(Generic[ReturnType], DOMNode):
         await self.screen.post_message(event)
 
     async def action_press(self, key: str) -> None:
-        await self.press(key)
+        await self.press(events.Key(self, key))
 
     async def action_quit(self) -> None:
         await self.shutdown()

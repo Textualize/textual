@@ -23,13 +23,15 @@ from textual.geometry import Size, Region
 # N.B. These classes would better be named TestApp/TestConsole/TestDriver/etc,
 # but it makes pytest emit warning as it will try to collect them as classes containing test cases :-/
 
+_DEFAULT_SIZE = Size(20, 10)
+
 
 class AppTest(App):
     def __init__(
         self,
         *,
         test_name: str,
-        size: Size,
+        size: Size = _DEFAULT_SIZE,
         log_verbosity: int = 2,
     ):
         # Tests will log in "/tests/test.[test name].log":
@@ -101,7 +103,6 @@ class AppTest(App):
                 await self.force_full_screen_update()
 
             # End of simulated time: we just shut down ourselves:
-            assert not run_task.done()
             await self.shutdown()
 
         return get_running_state_context_manager()

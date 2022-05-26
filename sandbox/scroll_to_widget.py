@@ -54,14 +54,19 @@ class MyTestApp(App):
     def on_mount(self):
         self.bind("q", "quit")
         self.bind("t", "tree")
-        for widget_index in range(placeholders_count):
-            self.bind(str(widget_index), f"scroll_to('placeholder_{widget_index}')")
+
+        scroll_to_placeholders_keys_to_bind = ",".join(
+            [str(i) for i in range(placeholders_count)]
+        )
+        self.bind(
+            scroll_to_placeholders_keys_to_bind, "scroll_to_placeholder('$event.key')"
+        )
 
     def action_tree(self):
         self.log(self.tree)
 
-    async def action_scroll_to(self, target_placeholder_id: str):
-        target_placeholder = self.query(f"#{target_placeholder_id}").first()
+    async def action_scroll_to_placeholder(self, key: str):
+        target_placeholder = self.query(f"#placeholder_{key}").first()
         target_placeholder_container = self.query("#root").first()
         target_placeholder_container.scroll_to_widget(target_placeholder, animate=True)
 
