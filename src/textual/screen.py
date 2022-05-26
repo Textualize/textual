@@ -181,8 +181,6 @@ class Screen(Widget):
 
     async def on_resize(self, event: events.Resize) -> None:
         event.stop()
-        # self._size = event.size
-        # self._refresh_layout(event.size, full=True)
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         try:
