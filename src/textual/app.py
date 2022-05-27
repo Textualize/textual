@@ -441,9 +441,8 @@ class App(Generic[ReturnType], DOMNode):
             color_system="truecolor",
             record=True,
         )
-        lines = self.screen._compositor.render(full=True).lines
-
-        console.print(SegmentLines(lines, new_lines=True))
+        screen_render = self.screen._compositor.render(full=True)
+        console.print(screen_render)
         return console.export_svg(title=self.title)
 
     def save_screenshot(self, path: str | None = None) -> str:
