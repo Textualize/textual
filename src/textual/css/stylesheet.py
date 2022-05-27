@@ -386,15 +386,15 @@ if __name__ == "__main__":
     from rich.traceback import install
 
     install(show_locals=True)
-    #
-    # class Widget(DOMNode):
-    #     pass
-    #
-    # class View(DOMNode):
-    #     pass
-    #
-    # class App(DOMNode):
-    #     pass
+
+    class Widget(DOMNode):
+        pass
+
+    class View(DOMNode):
+        pass
+
+    class App(DOMNode):
+        pass
 
     app = App()
     main_view = View(id="main")
