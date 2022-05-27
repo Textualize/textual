@@ -5,8 +5,8 @@ Screen {
 
 #file_table_wrapper {
   dock: bottom;
-  height: auto;
-  overflow: auto auto;
+  height: 20;
+  overflow: auto scroll;
   scrollbar-color: $accent-darken-1;
 }
 

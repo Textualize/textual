@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import time
 from typing import Callable
 
 from rich.cells import cell_len
@@ -135,7 +134,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         super().__init__(name=name, id=id, classes=classes)
         self.placeholder = placeholder
         self._editor = TextEditorBackend(initial, 0)
-        self.visible_range: tuple[int, int] | None = None
+        self.visible_range: tuple[int, int] = (0, 0)
         self.autocompleter = autocompleter
         self._suggestion_suffix = ""
 
@@ -282,18 +281,6 @@ class TextInput(TextWidgetBase, can_focus=True):
             if visible_content_to_cursor_cell_len + key_cell_len >= available_width:
                 self.visible_range = start + key_cell_len, end + key_cell_len
             self._update_suggestion(event)
-        elif (
-            key == "ctrl+x"
-        ):  # TODO: This allows us to query and print the text input state
-            self.log(start=start)
-            self.log(end=end)
-            self.log(visible_content=visible_content)
-            self.log(visible_content_cell_len=visible_content_cell_len)
-            self.log(
-                visible_content_to_cursor_cell_len=visible_content_to_cursor_cell_len
-            )
-            self.log(available_width=available_width)
-            self.log(cursor_index=self._editor.cursor_index)
         elif key == "enter" and self._editor.content:
             self.post_message_no_wait(TextInput.Submitted(self, self._editor.content))
         elif key == "right":

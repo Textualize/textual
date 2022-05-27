@@ -343,6 +343,7 @@ class DOMNode(MessagePump):
         return ()
 
     def reset_styles(self) -> None:
+        """Reset styles back to their initial state"""
         from .widget import Widget
 
         for node in self.walk_children():
