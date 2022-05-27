@@ -195,7 +195,7 @@ async def test_border_edge_types_impact_on_widget_size(
     expects_visible_char_at_top_left_edge: bool,
 ):
     class BorderTarget(Widget):
-        def render(self, style) -> RenderableType:
+        def render(self) -> RenderableType:
             return Text("border target", style="black on yellow", justify="center")
 
     border_target = BorderTarget()

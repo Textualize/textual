@@ -21,6 +21,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs):
                 source = python_code.read()
             app_vars = {}
             exec(source, app_vars)
+
             app = app_vars["app"]
             app.run()
             svg = app._screenshot

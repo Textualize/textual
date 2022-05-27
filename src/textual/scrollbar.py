@@ -210,7 +210,7 @@ class ScrollBar(Widget):
         if self.thickness > 1:
             yield "thickness", self.thickness
 
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         styles = self.parent.styles
         scrollbar_style = Style(
             bgcolor=(

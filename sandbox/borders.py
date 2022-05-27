@@ -33,7 +33,7 @@ class Introduction(Widget):
     }
     """
 
-    def render(self, styles) -> RenderableType:
+    def render(self) -> RenderableType:
         return Text("Here are the color edge types we support.", justify="center")
 
 
@@ -41,7 +41,7 @@ class BorderDemo(Widget):
     def __init__(self, name: str):
         super().__init__(name=name)
 
-    def render(self, style) -> RenderableType:
+    def render(self) -> RenderableType:
         return Text(self.name, style="black on yellow", justify="center")
 
 

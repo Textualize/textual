@@ -98,10 +98,12 @@ class Resize(Event, verbosity=2, bubble=False):
         container_size: Size | None = None,
     ) -> None:
         """
+
         Args:
-            sender (MessageTarget): Event sender.
-            width (int): New width in terminal cells.
-            height (int): New height in terminal cells.
+            sender (MessageTarget): The sender of the event (the Screen).
+            size (Size): The new size of the Widget.
+            virtual_size (Size): The virtual size (scrollable size) of the Widget.
+            container_size (Size | None, optional): The size of the Widget's container widget. Defaults to None.
         """
         self.size = size
         self.virtual_size = virtual_size

@@ -74,7 +74,7 @@ class Button(Widget, can_focus=True):
             return Text.from_markup(label)
         return label
 
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         label = self.label.copy()
         label.stylize(style)
         return label

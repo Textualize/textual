@@ -34,8 +34,7 @@ import rich.repr
 from rich.console import Console, RenderableType
 from rich.measure import Measurement
 from rich.protocol import is_renderable
-from rich.segment import Segments
-from rich.style import Style
+from rich.segment import Segments, SegmentLines
 from rich.traceback import Traceback
 
 from . import actions
@@ -59,6 +58,7 @@ from .geometry import Offset, Region, Size
 from .layouts.dock import Dock
 from .message_pump import MessagePump
 from .reactive import Reactive
+from .renderables.blank import Blank
 from .screen import Screen
 from .widget import Widget
 
@@ -107,7 +107,6 @@ class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications"""
 
     CSS = """
-
     """
 
     CSS_PATH: str | None = None
@@ -209,7 +208,6 @@ class App(Generic[ReturnType], DOMNode):
 
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
-    background: Reactive[str] = Reactive("black")
     dark = Reactive(False)
 
     @property
@@ -442,7 +440,8 @@ class App(Generic[ReturnType], DOMNode):
             color_system="truecolor",
             record=True,
         )
-        console.print(self.screen._compositor.render(full=True))
+        screen_render = self.screen._compositor.render(full=True)
+        console.print(screen_render)
         return console.export_svg(title=self.title)
 
     def save_screenshot(self, path: str | None = None) -> str:
@@ -524,8 +523,8 @@ class App(Generic[ReturnType], DOMNode):
                 self.stylesheet.update(self)
                 self.screen.refresh(layout=True)
 
-    def render(self, styles: Style) -> RenderableType:
-        return ""
+    def render(self) -> RenderableType:
+        return Blank()
 
     def query(self, selector: str | None = None) -> DOMQuery:
         """Get a DOM query in the current screen.
@@ -736,21 +735,21 @@ class App(Generic[ReturnType], DOMNode):
 
             driver = self._driver = self.driver_class(self.console, self)
             driver.start_application_mode()
-            try:
-                mount_event = events.Mount(sender=self)
-                await self.dispatch_message(mount_event)
+            with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
+                try:
+                    mount_event = events.Mount(sender=self)
+                    await self.dispatch_message(mount_event)
 
-                self.title = self._title
-                self.refresh()
-                await self.animator.start()
-
-                with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
+                    self.title = self._title
+                    self.stylesheet.update(self)
+                    self.refresh()
+                    await self.animator.start()
                     await self._ready()
                     await super().process_messages()
                     await self.animator.stop()
                     await self.close_all()
-            finally:
-                driver.stop_application_mode()
+                finally:
+                    driver.stop_application_mode()
         except Exception as error:
             self.on_exception(error)
         finally:
@@ -870,7 +869,11 @@ class App(Generic[ReturnType], DOMNode):
         await self.close_messages()
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
-        self._display(self.screen._compositor)
+        self.screen.refresh(repaint=repaint, layout=layout)
+
+    def _paint(self):
+        """Perform a "paint" (draw the screen)."""
+        self._display(self.screen._compositor.render())
 
     def refresh_css(self, animate: bool = True) -> None:
         """Refresh CSS.
@@ -996,7 +999,6 @@ class App(Generic[ReturnType], DOMNode):
             action_target = default_namespace or self
             action_name = target
 
-        log("<action>", action)
         await self.dispatch_action(action_target, action_name, params)
 
     async def dispatch_action(
@@ -1011,6 +1013,8 @@ class App(Generic[ReturnType], DOMNode):
         _rich_traceback_guard = True
         method_name = f"action_{action_name}"
         method = getattr(namespace, method_name, None)
+        if method is None:
+            log(f"<action> {action_name!r} has no target")
         if callable(method):
             await invoke(method, *params)
 
@@ -1048,11 +1052,11 @@ class App(Generic[ReturnType], DOMNode):
 
     async def handle_update(self, message: messages.Update) -> None:
         message.stop()
-        self.app.refresh()
+        self._paint()
 
     async def handle_layout(self, message: messages.Layout) -> None:
         message.stop()
-        self.app.refresh()
+        self._paint()
 
     async def on_key(self, event: events.Key) -> None:
         if event.key == "tab":
@@ -1067,6 +1071,9 @@ class App(Generic[ReturnType], DOMNode):
         await self.close_messages()
 
     async def on_resize(self, event: events.Resize) -> None:
+        event.stop()
+        self.screen._screen_resized(event.size)
+
         await self.screen.post_message(event)
 
     async def action_press(self, key: str) -> None:

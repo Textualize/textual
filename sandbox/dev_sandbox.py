@@ -7,7 +7,7 @@ from textual.widget import Widget
 
 
 class PanelWidget(Widget):
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         return Panel("hello world!", title="Title")
 
 

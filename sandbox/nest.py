@@ -12,7 +12,7 @@ TEXT = Text.from_markup(lorem)
 
 
 class TextWidget(Widget):
-    def render(self, style):
+    def render(self):
         return TEXT
 
 

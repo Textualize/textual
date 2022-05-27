@@ -39,7 +39,7 @@ def test_widget_content_width():
             self.text = text
             super().__init__(id=id)
 
-        def render(self, style: Style) -> str:
+        def render(self) -> str:
             return self.text
 
     widget1 = TextWidget("foo", id="widget1")

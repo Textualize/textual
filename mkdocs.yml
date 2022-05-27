@@ -1,12 +1,33 @@
 site_name: Textual
 site_url: https://www.textualize.io/
 
+nav:
+  - "index.md"
+  - "introduction.md"
+  - Guide:
+    - "guide/guide.md"
+  - "actions.md"
+  - Events:
+    - "events/mount.md"
+    - "events/resize.md"
+  - Styles:    
+    - "styles/width.md"
+  - Widgets: "/widgets/"
+  - Reference:
+    - "reference/app.md"
+    - "reference/events.md"
+    - "reference/widget.md"
+
 markdown_extensions:
   - admonition
+  - def_list
   - meta
   - toc:
       permalink: true
+      baselevel: 1
   - pymdownx.keys
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.superfences:
@@ -24,6 +45,9 @@ markdown_extensions:
 
 theme:
   name: material
+  custom_dir: custom_theme
+  # features:
+  #   - navigation.tabs
   palette:
   - media: "(prefers-color-scheme: light)"
     scheme: default
@@ -39,13 +63,14 @@ theme:
       name: Switch to light mode
 
 plugins:
+
 - search:
 - mkdocstrings:
     default_handler: python
     handlers:
         python:
           rendering:
-            show_source: false
+            show_source: true
           selection:
             filters:
               - "!^_"

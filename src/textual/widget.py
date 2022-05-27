@@ -32,6 +32,7 @@ from .message import Message
 from . import messages
 from ._layout import Layout
 from .reactive import Reactive, watch
+from .renderables.blank import Blank
 from .renderables.opacity import Opacity
 from .renderables.tint import Tint
 
@@ -195,7 +196,7 @@ class Widget(DOMNode):
             return self._content_width_cache[1]
 
         console = self.app.console
-        renderable = self.render(self.styles.rich_style)
+        renderable = self.render()
         measurement = Measurement.get(
             console,
             console.options.update_width(container.width),
@@ -233,7 +234,7 @@ class Widget(DOMNode):
             if self._content_height_cache[0] == cache_key:
                 return self._content_height_cache[1]
 
-            renderable = self.render(self.styles.rich_style)
+            renderable = self.render()
             options = self.console.options.update_width(width).update(highlight=False)
             segments = self.console.render(renderable, options)
             # Cheaper than counting the lines returned from render_lines!
@@ -684,10 +685,11 @@ class Widget(DOMNode):
         Returns:
             RenderableType: A new renderable.
         """
-        renderable = self.render(self.text_style)
 
         (base_background, base_color), (background, color) = self.colors
         styles = self.styles
+
+        renderable = self.render()
 
         content_align = (styles.content_align_horizontal, styles.content_align_vertical)
         if content_align != ("left", "top"):
@@ -813,7 +815,6 @@ class Widget(DOMNode):
             self._size = size
             self._virtual_size = virtual_size
             self._container_size = container_size
-
             if self.is_container:
                 self._refresh_scrollbars()
                 width, height = self.container_size
@@ -898,7 +899,7 @@ class Widget(DOMNode):
             self._repaint_required = True
         self.check_idle()
 
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         """Get renderable for widget.
 
         Args:

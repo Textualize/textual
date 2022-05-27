@@ -252,7 +252,7 @@ async def test_scrollbar_gutter(
     from textual.geometry import Size
 
     class TextWidget(Widget):
-        def render(self, styles) -> Text:
+        def render(self) -> Text:
             text_multiplier = 10 if text_length == "long_text" else 2
             return Text(
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In velit liber a a a."
