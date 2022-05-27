@@ -56,14 +56,14 @@ lorem_long_text = Text.from_markup(lorem * 2)
 
 
 class TweetHeader(Widget):
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         return Text("Lorem Impsum", justify="center")
 
 
 class TweetBody(Widget):
     short_lorem = Reactive[bool](False)
 
-    def render(self, style: Style) -> Text:
+    def render(self) -> Text:
         return lorem_short_text if self.short_lorem else lorem_long_text
 
 
@@ -72,22 +72,22 @@ class Tweet(Widget):
 
 
 class OptionItem(Widget):
-    def render(self, style: Style) -> Text:
+    def render(self) -> Text:
         return Text("Option")
 
 
 class Error(Widget):
-    def render(self, style: Style) -> Text:
+    def render(self) -> Text:
         return Text("This is an error message", justify="center")
 
 
 class Warning(Widget):
-    def render(self, style: Style) -> Text:
+    def render(self) -> Text:
         return Text("This is a warning message", justify="center")
 
 
 class Success(Widget):
-    def render(self, style: Style) -> Text:
+    def render(self) -> Text:
         return Text("This is a success message", justify="center")
 
 
@@ -109,18 +109,16 @@ class BasicApp(App, css_path="basic.css"):
                 ),
             ),
             content=Widget(
-                Tweet(
-                    TweetBody(),
-                ),
+                Tweet(TweetBody()),
                 Widget(
                     Static(Syntax(CODE, "python"), classes="code"),
                     self.scroll_to_target,
                     classes="scrollable",
                 ),
                 Error(),
-                Tweet(TweetBody()),
+                Tweet(TweetBody(), classes="scrollbar-size-custom"),
                 Warning(),
-                Tweet(TweetBody()),
+                Tweet(TweetBody(), classes="scroll-horizontal"),
                 Success(),
             ),
             footer=Widget(),

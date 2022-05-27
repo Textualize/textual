@@ -23,6 +23,8 @@ from ._help_text import (
     offset_single_axis_help_text,
     style_flags_property_help_text,
     property_invalid_value_help_text,
+    scrollbar_size_property_help_text,
+    scrollbar_size_single_axis_help_text,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -783,6 +785,59 @@ class StylesBuilder:
             )
         else:
             self.styles._rules[name.replace("-", "_")] = value
+
+    def process_scrollbar_size(self, name: str, tokens: list[Token]) -> None:
+        def scrollbar_size_error(name: str, token: Token) -> None:
+            self.error(name, token, scrollbar_size_property_help_text(context="css"))
+
+        if not tokens:
+            return
+        if len(tokens) != 2:
+            scrollbar_size_error(name, tokens[0])
+        else:
+            token1, token2 = tokens
+
+            if token1.name != "number" or not token1.value.isdigit():
+                scrollbar_size_error(name, token1)
+            if token2.name != "number" or not token2.value.isdigit():
+                scrollbar_size_error(name, token2)
+
+            horizontal = int(token1.value)
+            if horizontal == 0:
+                scrollbar_size_error(name, token1)
+            vertical = int(token2.value)
+            if vertical == 0:
+                scrollbar_size_error(name, token2)
+            self.styles._rules["scrollbar_size_horizontal"] = horizontal
+            self.styles._rules["scrollbar_size_vertical"] = vertical
+
+    def process_scrollbar_size_vertical(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        if len(tokens) != 1:
+            self.error(name, tokens[0], scrollbar_size_single_axis_help_text(name))
+        else:
+            token = tokens[0]
+            if token.name != "number" or not token.value.isdigit():
+                self.error(name, token, scrollbar_size_single_axis_help_text(name))
+            value = int(token.value)
+            if value == 0:
+                self.error(name, token, scrollbar_size_single_axis_help_text(name))
+            self.styles._rules["scrollbar_size_vertical"] = value
+
+    def process_scrollbar_size_horizontal(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        if len(tokens) != 1:
+            self.error(name, tokens[0], scrollbar_size_single_axis_help_text(name))
+        else:
+            token = tokens[0]
+            if token.name != "number" or not token.value.isdigit():
+                self.error(name, token, scrollbar_size_single_axis_help_text(name))
+            value = int(token.value)
+            if value == 0:
+                self.error(name, token, scrollbar_size_single_axis_help_text(name))
+            self.styles._rules["scrollbar_size_horizontal"] = value
 
     def _get_suggested_property_name_for_rule(self, rule_name: str) -> str | None:
         """

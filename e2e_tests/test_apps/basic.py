@@ -53,12 +53,12 @@ lorem = Text.from_markup(
 
 
 class TweetHeader(Widget):
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         return Text("Lorem Impsum", justify="center")
 
 
 class TweetBody(Widget):
-    def render(self, style: Style) -> Text:
+    def render(self) -> Text:
         return lorem
 
 
@@ -67,22 +67,22 @@ class Tweet(Widget):
 
 
 class OptionItem(Widget):
-    def render(self, style: Style) -> Text:
+    def render(self) -> Text:
         return Text("Option")
 
 
 class Error(Widget):
-    def render(self, style: Style) -> Text:
+    def render(self) -> Text:
         return Text("This is an error message", justify="center")
 
 
 class Warning(Widget):
-    def render(self, style: Style) -> Text:
+    def render(self) -> Text:
         return Text("This is a warning message", justify="center")
 
 
 class Success(Widget):
-    def render(self, style: Style) -> Text:
+    def render(self) -> Text:
         return Text("This is a success message", justify="center")
 
 

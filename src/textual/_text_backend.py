@@ -74,7 +74,7 @@ class TextEditorBackend:
         return previous_index != new_index
 
     def query_cursor_left(self) -> bool:
-        """Check if the cursor can move 1 character left in the text.
+        """Check if the cursor can move 1 codepoint left in the text.
 
         Returns:
             bool: True if the cursor can move left. False otherwise.
@@ -83,15 +83,21 @@ class TextEditorBackend:
         new_index = max(0, previous_index - 1)
         return previous_index != new_index
 
-    def query_cursor_right(self) -> bool:
+    def query_cursor_right(self) -> str | None:
         """Check if the cursor can move right (we can't move right if we're at the end)
+        and return the codepoint to the right of the cursor if it exists. If it doesn't
+        exist (e.g. we're at the end), then return None
 
         Returns:
-            bool: True if the cursor can move right. False otherwise.
+            str: The codepoint to the right of the cursor if it exists, otherwise None.
         """
         previous_index = self.cursor_index
         new_index = min(len(self.content), previous_index + 1)
-        return previous_index != new_index
+        if new_index == len(self.content):
+            return None
+        elif previous_index != new_index:
+            return self.content[new_index]
+        return None
 
     def cursor_text_start(self) -> bool:
         """Move the cursor to the start of the text
@@ -147,3 +153,7 @@ class TextEditorBackend:
             str: The sliced string between start and end.
         """
         return self.content[start:end]
+
+    @property
+    def cursor_at_end(self):
+        return self.cursor_index == len(self.content)

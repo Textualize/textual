@@ -221,7 +221,8 @@ class Compositor:
         # Keep a copy of the old map because we're going to compare it with the update
         old_map = self.map.copy()
         old_widgets = old_map.keys()
-        map, widgets = self._arrange_root(parent)
+        map, widgets = self._arrange_root(parent, size)
+
         new_widgets = map.keys()
 
         # Newly visible widgets
@@ -243,23 +244,25 @@ class Compositor:
         resized_widgets = {
             widget
             for widget, (region, *_) in map.items()
-            if widget in old_widgets and widget.size != region.size
+            if widget in old_widgets and old_map[widget].region.size != region.size
         }
 
         # Gets pairs of tuples of (Widget, MapGeometry) which have changed
         # i.e. if something is moved / deleted / added
         screen = size.region
+
         if screen not in self._dirty_regions:
             crop_screen = screen.intersection
-            changes: set[tuple[Widget, MapGeometry]] = (
-                self.map.items() ^ old_map.items()
-            )
-            self._dirty_regions.update(
-                [
+            changes = map.items() ^ old_map.items()
+            regions = {
+                region
+                for region in (
                     crop_screen(map_geometry.visible_region)
                     for _, map_geometry in changes
-                ]
-            )
+                )
+                if region
+            }
+            self._dirty_regions.update(regions)
 
         return ReflowResult(
             hidden=hidden_widgets,
@@ -267,7 +270,9 @@ class Compositor:
             resized=resized_widgets,
         )
 
-    def _arrange_root(self, root: Widget) -> tuple[CompositorMap, set[Widget]]:
+    def _arrange_root(
+        self, root: Widget, size: Size
+    ) -> tuple[CompositorMap, set[Widget]]:
         """Arrange a widgets children based on its layout attribute.
 
         Args:
@@ -279,7 +284,7 @@ class Compositor:
         """
 
         ORIGIN = Offset(0, 0)
-        size = root.size
+
         map: CompositorMap = {}
         widgets: set[Widget] = set()
         get_order = attrgetter("order")
@@ -495,7 +500,7 @@ class Compositor:
         """Get rendered widgets (lists of segments) in the composition.
 
         Returns:
-            Iterable[tuple[Region, Region, Lines]]: An interable of <region>, <clip region>, and <lines>
+            Iterable[tuple[Region, Region, Lines]]: An iterable of <region>, <clip region>, and <lines>
         """
         # If a renderable throws an error while rendering, the user likely doesn't care about the traceback
         # up to this point.
@@ -552,7 +557,7 @@ class Compositor:
         ]
         return segment_lines
 
-    def render(self, full: bool = True) -> RenderableType:
+    def render(self, full: bool = False) -> RenderableType:
         """Render a layout.
 
         Returns:

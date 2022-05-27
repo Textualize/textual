@@ -9,7 +9,7 @@ from ..widget import Widget
 class Static(Widget):
     def __init__(
         self,
-        renderable: RenderableType,
+        renderable: RenderableType = "",
         *,
         name: str | None = None,
         id: str | None = None,
@@ -18,7 +18,7 @@ class Static(Widget):
         super().__init__(name=name, id=id, classes=classes)
         self.renderable = renderable
 
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         return self.renderable
 
     def update(self, renderable: RenderableType) -> None:

@@ -1,9 +1,9 @@
-from typing import Dict, Tuple
+from typing import Mapping, Tuple
 
 from .keys import Keys
 
 # Mapping of vt100 escape codes to Keys.
-ANSI_SEQUENCES: Dict[str, Tuple[Keys, ...]] = {
+ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     # Control keys.
     "\r": (Keys.Enter,),
     "\x00": (Keys.ControlAt,),  # Control-At (Also for Ctrl-Space)
@@ -47,7 +47,7 @@ ANSI_SEQUENCES: Dict[str, Tuple[Keys, ...]] = {
     # support it. (Most terminals send ControlH when backspace is pressed.)
     # See: http://www.ibb.net/~anne/keyboard.html
     "\x7f": (Keys.ControlH,),
-    # --
+    "\x1b\x7f": (Keys.ControlW,),
     # Various
     "\x1b[1~": (Keys.Home,),  # tmux
     "\x1b[2~": (Keys.Insert,),
@@ -230,8 +230,8 @@ ANSI_SEQUENCES: Dict[str, Tuple[Keys, ...]] = {
     "\x1bOc": (Keys.ControlRight,),  # rxvt
     "\x1bOd": (Keys.ControlLeft,),  # rxvt
     # Control + shift + arrows.
-    "\x1b[1;6A": (Keys.ControlShiftDown,),
-    "\x1b[1;6B": (Keys.ControlShiftUp,),
+    "\x1b[1;6A": (Keys.ControlShiftUp,),
+    "\x1b[1;6B": (Keys.ControlShiftDown,),
     "\x1b[1;6C": (Keys.ControlShiftRight,),
     "\x1b[1;6D": (Keys.ControlShiftLeft,),
     "\x1b[1;6F": (Keys.ControlShiftEnd,),
@@ -299,3 +299,7 @@ ANSI_SEQUENCES: Dict[str, Tuple[Keys, ...]] = {
     "\x1b[1;8x": (Keys.Escape, Keys.ControlShift8),
     "\x1b[1;8y": (Keys.Escape, Keys.ControlShift9),
 }
+
+# https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036
+SYNC_START = "\x1b[?2026h"
+SYNC_END = "\x1b[?2026l"

@@ -70,7 +70,7 @@ def import_app(import_name: str) -> App:
             if "app" in global_vars:
                 # App exists, lets use that
                 try:
-                    app = global_vars[name]
+                    app = global_vars["app"]
                 except KeyError:
                     raise AppFail(f"App {name!r} not found in {lib!r}")
             else:
@@ -143,7 +143,7 @@ def run_app(import_name: str, dev: bool) -> None:
     features = set(parse_features(os.environ.get("TEXTUAL", "")))
     if dev:
         features.add("debug")
-        features.add("dev")
+        features.add("devtools")
 
     os.environ["TEXTUAL"] = ",".join(sorted(features))
 

@@ -9,9 +9,10 @@ from rich.style import Style
 
 from . import events, messages, errors
 
-from .geometry import Offset, Region
+from .geometry import Offset, Region, Size
 from ._compositor import Compositor, MapGeometry
 from .reactive import Reactive
+from .renderables.blank import Blank
 from .widget import Widget
 
 if sys.version_info >= (3, 8):
@@ -28,14 +29,10 @@ class Screen(Widget):
     """A widget for the root of the app."""
 
     CSS = """
-
     Screen {
         layout: vertical;
         overflow-y: auto;
-        background: $surface;
-        color: $text-surface;
     }
-
     """
 
     dark = Reactive(False)
@@ -45,11 +42,15 @@ class Screen(Widget):
         self._compositor = Compositor()
         self._dirty_widgets: set[Widget] = set()
 
+    @property
+    def is_transparent(self) -> bool:
+        return False
+
     def watch_dark(self, dark: bool) -> None:
         pass
 
-    def render(self, style: Style) -> RenderableType:
-        return self.app.render(style)
+    def render(self) -> RenderableType:
+        return Blank()
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the absolute offset of a given Widget.
@@ -114,15 +115,16 @@ class Screen(Widget):
             self._dirty_widgets.clear()
         self._update_timer.pause()
 
-    def _refresh_layout(self) -> None:
+    def _refresh_layout(self, size: Size | None = None, full: bool = False) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
-        if not self.size:
+        size = self.size if size is None else size
+        if not size:
             return
-        # This paint the entire screen, so replaces the batched dirty widgets
+
         self._compositor.update_widgets(self._dirty_widgets)
         self._update_timer.pause()
         try:
-            hidden, shown, resized = self._compositor.reflow(self, self.size)
+            hidden, shown, resized = self._compositor.reflow(self, size)
 
             Hide = events.Hide
             Show = events.Show
@@ -131,6 +133,7 @@ class Screen(Widget):
             for widget in shown:
                 widget.post_message_no_wait(Show(self))
 
+            # We want to send a resize event to widgets that were just added or change since last layout
             send_resize = shown | resized
 
             for (
@@ -151,7 +154,7 @@ class Screen(Widget):
             self.app.on_exception(error)
             return
 
-        display_update = self._compositor.render()
+        display_update = self._compositor.render(full=full)
         if display_update is not None:
             self.app._display(display_update)
 
@@ -172,9 +175,11 @@ class Screen(Widget):
             UPDATE_PERIOD, self._on_update, name="screen_update", pause=True
         )
 
+    def _screen_resized(self, size: Size):
+        """Called by App when the screen is resized."""
+        self._refresh_layout(size, full=True)
+
     async def on_resize(self, event: events.Resize) -> None:
-        self.size_updated(event.size, event.virtual_size, event.container_size)
-        self._refresh_layout()
         event.stop()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:

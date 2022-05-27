@@ -56,7 +56,7 @@ class Numbers(Widget):
 
     value = Reactive("0")
 
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         """Build a Rich renderable to render the calculator display."""
         return Padding(
             Align.right(FigletText(self.value), vertical="middle"),

@@ -8,17 +8,14 @@ from typing import cast, Iterable
 
 import rich.repr
 from rich.console import RenderableType, RenderResult, Console, ConsoleOptions
-from rich.highlighter import ReprHighlighter
 from rich.markup import render
 from rich.padding import Padding
 from rich.panel import Panel
-from rich.rule import Rule
 from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 
-from .._loop import loop_last
-from .. import log
+from textual.widget import Widget
 from .errors import StylesheetError
 from .match import _check_selectors
 from .model import RuleSet
@@ -308,6 +305,8 @@ class Stylesheet:
             },
         )
         self.replace_rules(node, node_rules, animate=animate)
+        if isinstance(node, Widget):
+            node._refresh_scrollbars()
 
     @classmethod
     def replace_rules(

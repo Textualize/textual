@@ -37,7 +37,7 @@ class Placeholder(Widget, can_focus=True):
         yield "has_focus", self.has_focus, False
         yield "mouse_over", self.mouse_over, False
 
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         # Apply colours only inside render_styled
         # Pass the full RICH style object into `render` - not the `Styles`
         return Panel(
