@@ -195,7 +195,7 @@ class Widget(DOMNode):
             return self._content_width_cache[1]
 
         console = self.app.console
-        renderable = self.render(self.styles.rich_style)
+        renderable = self.render()
         measurement = Measurement.get(
             console,
             console.options.update_width(container.width),
