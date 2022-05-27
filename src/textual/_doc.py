@@ -1,6 +1,5 @@
 import os
 
-from textual.cli.cli import import_app
 
 # This module defines our "Custom Fences", powered by SuperFences
 # @link https://facelessuser.github.io/pymdown-extensions/extensions/superfences/#custom-fences
