@@ -72,7 +72,7 @@ plugins:
           rendering:
             show_source: true
           selection:
-            filters:              
+            filters:
               - "!^_"
               - "^__init__$"
               - "!^can_replace$"
