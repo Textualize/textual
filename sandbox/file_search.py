@@ -38,7 +38,7 @@ class FileTable(Widget):
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         return len(self.filtered_files)
 
-    def render(self, style: Style) -> RenderableType:
+    def render(self) -> RenderableType:
         grid = Table.grid()
         grid.add_column()
         for file in self.filtered_files:
