@@ -223,8 +223,6 @@ class Compositor:
         old_widgets = old_map.keys()
         map, widgets = self._arrange_root(parent, size)
 
-        # parent.log(map)
-
         new_widgets = map.keys()
 
         # Newly visible widgets

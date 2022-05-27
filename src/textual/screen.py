@@ -177,6 +177,7 @@ class Screen(Widget):
         )
 
     def _screen_resized(self, size: Size):
+        """Called by App when the screen is resized."""
         self._refresh_layout(size, full=True)
 
     async def on_resize(self, event: events.Resize) -> None:
