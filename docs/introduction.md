@@ -12,7 +12,7 @@ This is a very gentle introduction to creating Textual applications. By the end 
 
 ## A Simple App
 
-Lets looks at the simplest possible Textual app. It doesn't do much, but will demonstrate the basic steps you will need to create any application.
+Let's looks at the simplest possible Textual app. It doesn't do much, but will demonstrate the basic steps you will need to create any application.
 
 If you would like to follow along and run the examples, navigate to the `docs/examples/introduction` directory from the command prompt. We will be looking at `intro01.py`, which you can see here:
 
