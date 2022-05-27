@@ -15,6 +15,7 @@ from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 
+from textual.widget import Widget
 from .errors import StylesheetError
 from .match import _check_selectors
 from .model import RuleSet
@@ -304,6 +305,8 @@ class Stylesheet:
             },
         )
         self.replace_rules(node, node_rules, animate=animate)
+        if isinstance(node, Widget):
+            node._refresh_scrollbars()
 
     @classmethod
     def replace_rules(
