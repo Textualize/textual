@@ -9,7 +9,6 @@ from rich.style import Style
 
 from . import events, messages, errors
 
-from .color import Color
 from .geometry import Offset, Region, Size
 from ._compositor import Compositor, MapGeometry
 from .reactive import Reactive

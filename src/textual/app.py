@@ -22,7 +22,7 @@ from typing import (
     TYPE_CHECKING,
 )
 
-from ._ansi_sequences import TERMINAL_MODES_ANSI_SEQUENCES
+from ._ansi_sequences import SYNC_START, SYNC_END
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -897,10 +897,12 @@ class App(Generic[ReturnType], DOMNode):
             console = self.console
             self._begin_update()
             try:
-                console.print(renderable)
-            except Exception as error:
-                self.on_exception(error)
-            self._end_update()
+                try:
+                    console.print(renderable)
+                except Exception as error:
+                    self.on_exception(error)
+            finally:
+                self._end_update()
             console.file.flush()
 
     def measure(self, renderable: RenderableType, max_width=100_000) -> int:
@@ -1103,16 +1105,16 @@ class App(Generic[ReturnType], DOMNode):
     def handle_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput
     ) -> None:
-        log("SynchronizedOutput mode is supported by this terminal")
+        log("[b green]SynchronizedOutput mode is supported")
         self._sync_available = True
 
     def _begin_update(self) -> None:
         if self._sync_available:
-            self.console.file.write(TERMINAL_MODES_ANSI_SEQUENCES["sync_start"])
+            self.console.file.write(SYNC_START)
 
     def _end_update(self) -> None:
         if self._sync_available:
-            self.console.file.write(TERMINAL_MODES_ANSI_SEQUENCES["sync_stop"])
+            self.console.file.write(SYNC_END)
 
 
 _uvloop_init_done: bool = False

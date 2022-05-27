@@ -254,12 +254,15 @@ class Compositor:
         if screen not in self._dirty_regions:
             crop_screen = screen.intersection
             changes = map.items() ^ old_map.items()
-            self._dirty_regions.update(
-                [
+            regions = {
+                region
+                for region in (
                     crop_screen(map_geometry.visible_region)
                     for _, map_geometry in changes
-                ]
-            )
+                )
+                if region
+            }
+            self._dirty_regions.update(regions)
 
         return ReflowResult(
             hidden=hidden_widgets,

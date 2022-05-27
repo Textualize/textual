@@ -300,8 +300,6 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;8y": (Keys.Escape, Keys.ControlShift9),
 }
 
-
-TERMINAL_MODES_ANSI_SEQUENCES: Mapping[str, str] = {
-    "sync_start": "\x1b[?2026h",
-    "sync_stop": "\x1b[?2026l",
-}
+# https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036
+SYNC_START = "\x1b[?2026h"
+SYNC_END = "\x1b[?2026l"
