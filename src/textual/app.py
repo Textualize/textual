@@ -1085,10 +1085,11 @@ class App(Generic[ReturnType], DOMNode):
     async def action_focus(self, widget_id: str) -> None:
         try:
             node = self.query(f"#{widget_id}").first()
-            if isinstance(node, Widget):
-                self.set_focus(node)
         except NoMatchingNodesError:
             pass
+        else:
+            if isinstance(node, Widget):
+                self.set_focus(node)
 
     async def action_add_class_(self, selector: str, class_name: str) -> None:
         self.screen.query(selector).add_class(class_name)
