@@ -47,6 +47,7 @@ from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
 from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet
+from .css.query import NoMatchingNodesError
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
 from .devtools.redirect_output import StdoutRedirector
@@ -1089,6 +1090,15 @@ class App(Generic[ReturnType], DOMNode):
 
     async def action_bell(self) -> None:
         self.bell()
+
+    async def action_focus(self, widget_id: str) -> None:
+        try:
+            node = self.query(f"#{widget_id}").first()
+        except NoMatchingNodesError:
+            pass
+        else:
+            if isinstance(node, Widget):
+                self.set_focus(node)
 
     async def action_add_class_(self, selector: str, class_name: str) -> None:
         self.screen.query(selector).add_class(class_name)
