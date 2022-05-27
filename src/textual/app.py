@@ -871,9 +871,9 @@ class App(Generic[ReturnType], DOMNode):
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         self.screen.refresh(repaint=repaint, layout=layout)
-        # self._display(self.screen._compositor.render())
 
     def _paint(self):
+        """Perform a "paint" (draw the screen)."""
         self._display(self.screen._compositor.render())
 
     def refresh_css(self, animate: bool = True) -> None:
