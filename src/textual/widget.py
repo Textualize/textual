@@ -993,9 +993,21 @@ class Widget(DOMNode):
 
     def on_descendant_focus(self, event: events.DescendantFocus) -> None:
         self.descendant_has_focus = True
+        if "focus-within" in self.pseudo_classes:
+            sender = event.sender
+            for child in self.walk_children(False):
+                child.refresh()
+                if child is sender:
+                    break
 
     def on_descendant_blur(self, event: events.DescendantBlur) -> None:
         self.descendant_has_focus = False
+        if "focus-within" in self.pseudo_classes:
+            sender = event.sender
+            for child in self.walk_children(False):
+                child.refresh()
+                if child is sender:
+                    break
 
     def on_mouse_scroll_down(self, event) -> None:
         if self.is_container:
