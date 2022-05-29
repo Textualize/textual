@@ -195,8 +195,8 @@ class App(Generic[ReturnType], DOMNode):
         self._return_value: ReturnType | None = None
 
         self.css_monitor = (
-            FileMonitor(css_path, self._on_css_change)
-            if ((watch_css or self.debug) and css_path)
+            FileMonitor(self.css_path, self._on_css_change)
+            if ((watch_css or self.debug) and self.css_path)
             else None
         )
 
@@ -726,7 +726,7 @@ class App(Generic[ReturnType], DOMNode):
 
         if self.css_monitor:
             self.set_interval(0.5, self.css_monitor, name="css monitor")
-            self.log("started", self.css_monitor)
+            self.log("[b green]STARTED[/]", self.css_monitor)
 
         self._running = True
         try:
