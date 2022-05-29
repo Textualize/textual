@@ -90,7 +90,7 @@ class GenericProperty(Generic[PropertyGetType, PropertySetType]):
             return
         new_value = self.validate_value(value)
         if obj.set_rule(self.name, new_value):
-            obj.refresh(layout=True)
+            obj.refresh(layout=self.layout)
 
 
 class IntegerProperty(GenericProperty[int, int]):
