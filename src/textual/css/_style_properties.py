@@ -96,10 +96,9 @@ class GenericProperty(Generic[PropertyGetType, PropertySetType]):
 class IntegerProperty(GenericProperty[int, int]):
     def validate_value(self, value: object) -> int:
         if isinstance(value, (int, float)):
-            value = int(value)
+            return int(value)
         else:
             raise StyleValueError(f"Expected a number here, got f{value}")
-        return value
 
 
 class ScalarProperty:
