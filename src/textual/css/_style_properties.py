@@ -9,7 +9,7 @@ when setting and getting.
 
 from __future__ import annotations
 
-from typing import Iterable, NamedTuple, TYPE_CHECKING, cast
+from typing import Generic, Iterable, NamedTuple, TypeVar, TYPE_CHECKING, cast
 
 import rich.repr
 from rich.style import Style
@@ -52,6 +52,54 @@ from .types import EdgeType, AlignHorizontal, AlignVertical
 BorderDefinition = (
     "Sequence[tuple[EdgeType, str | Color] | None] | tuple[EdgeType, str | Color]"
 )
+
+PropertyGetType = TypeVar("PropertyGetType")
+PropertySetType = TypeVar("PropertySetType")
+
+
+class GenericProperty(Generic[PropertyGetType, PropertySetType]):
+    def __init__(self, default: PropertyGetType, layout: bool = False) -> None:
+        self.default = default
+        self.layout = layout
+
+    def validate_value(self, value: object) -> PropertyGetType:
+        """Validate the setter value
+
+        Args:
+            value (object): The value being set.
+
+        Returns:
+            PropertyType: The value to be set.
+        """
+        # Raise StyleValueError here
+        return cast(PropertyGetType, value)
+
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self.name = name
+
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> PropertyGetType:
+        return cast(PropertyGetType, obj.get_rule(self.name, self.default))
+
+    def __set__(self, obj: StylesBase, value: PropertySetType | None) -> None:
+        _rich_traceback_omit = True
+        if value is None:
+            obj.clear_rule(self.name)
+            obj.refresh(layout=self.layout)
+            return
+        new_value = self.validate_value(value)
+        if obj.set_rule(self.name, new_value):
+            obj.refresh(layout=True)
+
+
+class IntegerProperty(GenericProperty[int, int]):
+    def validate_value(self, value: object) -> int:
+        if isinstance(value, (int, float)):
+            value = int(value)
+        else:
+            raise StyleValueError(f"Expected a number here, got f{value}")
+        return value
 
 
 class ScalarProperty:

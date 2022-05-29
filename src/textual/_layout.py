@@ -5,7 +5,7 @@ import sys
 from typing import ClassVar, NamedTuple, TYPE_CHECKING
 
 
-from .geometry import Region, Offset, Size
+from .geometry import Region, Size
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias

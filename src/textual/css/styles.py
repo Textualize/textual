@@ -20,6 +20,7 @@ from ._style_properties import (
     ColorProperty,
     DockProperty,
     DocksProperty,
+    IntegerProperty,
     LayoutProperty,
     NameListProperty,
     NameProperty,
@@ -232,12 +233,8 @@ class StylesBase(ABC):
 
     scrollbar_gutter = StringEnumProperty(VALID_SCROLLBAR_GUTTER, "auto")
 
-    scrollbar_size_vertical = ScalarProperty(
-        units={Unit.CELLS}, percent_unit=Unit.WIDTH, allow_auto=False
-    )
-    scrollbar_size_horizontal = ScalarProperty(
-        units={Unit.CELLS}, percent_unit=Unit.HEIGHT, allow_auto=False
-    )
+    scrollbar_size_vertical = IntegerProperty(default=1, layout=True)
+    scrollbar_size_horizontal = IntegerProperty(default=1, layout=True)
 
     align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
