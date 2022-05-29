@@ -373,12 +373,18 @@ class Widget(DOMNode):
     @property
     def scrollbar_size_vertical(self) -> int:
         """Get the width used by the *vertical* scrollbar."""
-        return self.styles.scrollbar_size_vertical * self.show_vertical_scrollbar
+        return (
+            self.styles.scrollbar_size_vertical if self.show_vertical_scrollbar else 0
+        )
 
     @property
     def scrollbar_size_horizontal(self) -> int:
         """Get the height used by the *horizontal* scrollbar."""
-        return self.styles.scrollbar_size_horizontal * self.show_horizontal_scrollbar
+        return (
+            self.styles.scrollbar_size_horizontal
+            if self.show_horizontal_scrollbar
+            else 0
+        )
 
     def set_dirty(self) -> None:
         """Set the Widget as 'dirty' (requiring re-render)."""
