@@ -379,7 +379,7 @@ class DOMNode(MessagePump):
             node.id = node_id
 
     def walk_children(self, with_self: bool = True) -> Iterable[DOMNode]:
-        """Generate all descendents of this node.
+        """Generate all descendants of this node.
 
         Args:
             with_self (bool, optional): Also include self in the results. Defaults to True.

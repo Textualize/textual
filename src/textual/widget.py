@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from fractions import Fraction
 from typing import (
     Any,
     Awaitable,
@@ -155,7 +156,9 @@ class Widget(DOMNode):
             self.CSS, f"{__file__}:<{self.__class__.__name__}>"
         )
 
-    def get_box_model(self, container: Size, viewport: Size) -> BoxModel:
+    def get_box_model(
+        self, container: Size, viewport: Size, fraction_unit: Fraction
+    ) -> BoxModel:
         """Process the box model for this widget.
 
         Args:
@@ -169,6 +172,7 @@ class Widget(DOMNode):
             self.styles,
             container,
             viewport,
+            fraction_unit,
             self.get_content_width,
             self.get_content_height,
         )
