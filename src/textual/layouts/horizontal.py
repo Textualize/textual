@@ -3,7 +3,7 @@ from __future__ import annotations
 from fractions import Fraction
 from typing import cast
 
-from textual.geometry import Size, Offset, Region
+from textual.geometry import Size, Region
 from textual._layout import ArrangeResult, Layout, WidgetPlacement
 
 from textual.widget import Widget
@@ -21,7 +21,7 @@ class HorizontalLayout(Layout):
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
 
-        x = max_width = max_height = 0
+        x = max_width = max_height = Fraction(0)
         parent_size = parent.size
 
         children = list(parent.children)
@@ -43,9 +43,9 @@ class HorizontalLayout(Layout):
         if box_models:
             margins.append(box_models[-1].margin.right)
 
-        x = box_models[0].margin.left if box_models else 0
+        x = Fraction(box_models[0].margin.left if box_models else 0)
 
-        displayed_children = parent.displayed_children
+        displayed_children = cast("list[Widget]", parent.displayed_children)
 
         for widget, box_model, margin in zip(displayed_children, box_models, margins):
             content_width, content_height, box_margin = box_model
@@ -62,7 +62,7 @@ class HorizontalLayout(Layout):
             x = next_x + margin
             max_width = x
 
-        total_region = Region(0, 0, max_width, max_height)
+        total_region = Region(0, 0, int(max_width), int(max_height))
         add_placement(WidgetPlacement(total_region, None, 0))
 
         return placements, set(displayed_children)
