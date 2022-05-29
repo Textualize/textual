@@ -114,6 +114,7 @@ def get_box_model(
         content_height = min(content_height, max_height)
 
     content_height = max(Fraction(1), content_height)
-
-    model = BoxModel(content_width, content_height, margin)
+    model = BoxModel(
+        content_width + gutter.width, content_height + gutter.height, margin
+    )
     return model
