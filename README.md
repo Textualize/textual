@@ -1,3 +1,7 @@
+Test report: https://docs.google.com/document/d/1KM0C-gpHHLpm2A1hSqcoubx17HWyOGnfCUuwN9RpOww/edit
+
+Nguyễn Kiều Hưng - 17021269
+
 # Textual
 
 ![screenshot](./imgs/textual.png)
