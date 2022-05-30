@@ -23,10 +23,12 @@ from . import errors
 from . import events
 from ._animator import BoundAnimator
 from ._border import Border
+from ._profile import timer
 from .box_model import BoxModel, get_box_model
 from ._context import active_app
 from ._types import Lines
 from .dom import DOMNode
+from ._layout import ArrangeResult
 from .geometry import clamp, Offset, Region, Size
 from .layouts.vertical import VerticalLayout
 from .message import Message
@@ -101,6 +103,9 @@ class Widget(DOMNode):
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
+        self._arrangement: ArrangeResult | None = None
+        self._arrangement_size: Size = Size()
+
         super().__init__(name=name, id=id, classes=classes)
         self.add_children(*children)
 
@@ -115,6 +120,13 @@ class Widget(DOMNode):
     scroll_target_y = Reactive(0.0, repaint=False)
     show_vertical_scrollbar = Reactive(False, layout=True)
     show_horizontal_scrollbar = Reactive(False, layout=True)
+
+    def _arrange(self, size: Size) -> ArrangeResult:
+        if self._arrangement is not None and size == self._arrangement_size:
+            return self._arrangement
+        self._arrangement = self.layout.arrange(self, size)
+        self._arrangement_size = size
+        return self._arrangement
 
     def watch_show_horizontal_scrollbar(self, value: bool) -> None:
         """Watch function for show_horizontal_scrollbar attribute.
@@ -611,19 +623,17 @@ class Widget(DOMNode):
         """Arrange the 'chrome' widgets (typically scrollbars) for a layout element.
 
         Args:
-            size (Size): _description_
+            size (Size): Size of the containing region.
 
         Returns:
-            Iterable[tuple[Widget, Region]]: _description_
+            Iterable[tuple[Widget, Region]]: Tuples of scrollbar Widget and region.
 
-        Yields:
-            Iterator[Iterable[tuple[Widget, Region]]]: _description_
         """
         region = size.region
         show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
 
-        horizontal_scrollbar_thickness = self.scrollbar_size_horizontal
-        vertical_scrollbar_thickness = self.scrollbar_size_vertical
+        scrollbar_size_horizontal = self.scrollbar_size_horizontal
+        scrollbar_size_vertical = self.scrollbar_size_vertical
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (
                 _,
@@ -631,20 +641,19 @@ class Widget(DOMNode):
                 horizontal_scrollbar_region,
                 _,
             ) = region.split(
-                -vertical_scrollbar_thickness, -horizontal_scrollbar_thickness
+                -scrollbar_size_vertical,
+                -scrollbar_size_horizontal,
             )
             if vertical_scrollbar_region:
                 yield self.vertical_scrollbar, vertical_scrollbar_region
             if horizontal_scrollbar_region:
                 yield self.horizontal_scrollbar, horizontal_scrollbar_region
         elif show_vertical_scrollbar:
-            _, scrollbar_region = region.split_vertical(-vertical_scrollbar_thickness)
+            _, scrollbar_region = region.split_vertical(-scrollbar_size_vertical)
             if scrollbar_region:
                 yield self.vertical_scrollbar, scrollbar_region
         elif show_horizontal_scrollbar:
-            _, scrollbar_region = region.split_horizontal(
-                -horizontal_scrollbar_thickness
-            )
+            _, scrollbar_region = region.split_horizontal(-scrollbar_size_horizontal)
             if scrollbar_region:
                 yield self.horizontal_scrollbar, scrollbar_region
 
@@ -838,11 +847,11 @@ class Widget(DOMNode):
         """
         if self._dirty_regions:
             self._render_lines()
-            if self.is_container:
-                if self.show_horizontal_scrollbar:
-                    self.horizontal_scrollbar.refresh()
-                if self.show_vertical_scrollbar:
-                    self.vertical_scrollbar.refresh()
+            # if self.is_container:
+            #     if self.show_horizontal_scrollbar:
+            #         self.horizontal_scrollbar.refresh()
+            #     if self.show_vertical_scrollbar:
+            #         self.vertical_scrollbar.refresh()
         lines = self._render_cache.lines[start:end]
         return lines
 

@@ -26,6 +26,7 @@ from rich.style import Style
 from . import errors
 from .geometry import Region, Offset, Size
 
+from ._profile import timer
 from ._loop import loop_last
 from ._segment_tools import line_crop
 from ._types import Lines
@@ -214,6 +215,7 @@ class Compositor:
         Returns:
             ReflowResult: Hidden shown and resized widgets
         """
+        print("REFLOW")
         self._cuts = None
         self.root = parent
         self.size = size
@@ -327,9 +329,7 @@ class Compositor:
                 total_region = child_region.reset_origin
 
                 # Arrange the layout
-                placements, arranged_widgets = widget.layout.arrange(
-                    widget, child_region.size
-                )
+                placements, arranged_widgets = widget._arrange(child_region.size)
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=get_order)
 
@@ -557,6 +557,7 @@ class Compositor:
         ]
         return segment_lines
 
+    @timer("render")
     def render(self, full: bool = False) -> RenderableType:
         """Render a layout.
 

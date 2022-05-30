@@ -84,6 +84,6 @@ class Layout(ABC):
         if not widget.displayed_children:
             height = container.height
         else:
-            placements, widgets = self.arrange(widget, Size(width, container.height))
+            placements, widgets = widget._arrange(Size(width, container.height))
             height = max(placement.region.y_max for placement in placements)
         return height
