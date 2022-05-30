@@ -859,11 +859,6 @@ class Widget(DOMNode):
         """
         if self._dirty_regions:
             self._render_lines()
-            # if self.is_container:
-            #     if self.show_horizontal_scrollbar:
-            #         self.horizontal_scrollbar.refresh()
-            #     if self.show_vertical_scrollbar:
-            #         self.vertical_scrollbar.refresh()
         lines = self._render_cache.lines[start:end]
         return lines
 
