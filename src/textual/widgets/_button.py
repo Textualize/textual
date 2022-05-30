@@ -76,7 +76,7 @@ class Button(Widget, can_focus=True):
 
     def render(self) -> RenderableType:
         label = self.label.copy()
-        label.stylize(style)
+        label.stylize(self.text_style)
         return label
 
     async def on_click(self, event: events.Click) -> None:

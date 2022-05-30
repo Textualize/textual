@@ -568,10 +568,10 @@ class Compositor:
             update_regions: set[Region] = set()
         else:
             update_regions = self._dirty_regions.copy()
-            self._dirty_regions.clear()
             if screen_region in update_regions:
                 # If one of the updates is the entire screen, then we only need one update
                 full = True
+        self._dirty_regions.clear()
 
         if full:
             crop = screen_region
