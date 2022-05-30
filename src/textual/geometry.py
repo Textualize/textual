@@ -665,7 +665,17 @@ class Spacing(NamedTuple):
 
     @classmethod
     def unpack(cls, pad: SpacingDimensions) -> Spacing:
-        """Unpack padding specified in CSS style."""
+        """Unpack padding specified in CSS style.
+
+        Args:
+            pad (SpacingDimensions): An integer, or tuple of 1, 2, or 4 integers.
+
+        Raises:
+            ValueError: If `pad` is an invalid value.
+
+        Returns:
+            Spacing: New Spacing object.
+        """
         if isinstance(pad, int):
             return cls(pad, pad, pad, pad)
         pad_len = len(pad)

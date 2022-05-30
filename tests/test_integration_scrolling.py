@@ -12,6 +12,7 @@ from textual.widgets import Placeholder
 SCREEN_SIZE = Size(100, 30)
 
 
+@pytest.mark.skip("Needs a rethink")
 @pytest.mark.asyncio
 @pytest.mark.integration_test  # this is a slow test, we may want to skip them in some contexts
 @pytest.mark.parametrize(
@@ -90,7 +91,7 @@ async def test_scroll_to_widget(
         id_: f"placeholder_{id_}" in last_display_capture
         for id_ in range(placeholders_count)
     }
-
+    print(placeholders_visibility_by_id)
     # Let's start by checking placeholders that should be visible:
     for placeholder_id in last_screen_expected_placeholder_ids:
         assert placeholders_visibility_by_id[placeholder_id] is True, (

@@ -214,6 +214,7 @@ class Compositor:
         Returns:
             ReflowResult: Hidden shown and resized widgets
         """
+        print("REFLOW")
         self._cuts = None
         self.root = parent
         self.size = size
@@ -327,9 +328,7 @@ class Compositor:
                 total_region = child_region.reset_origin
 
                 # Arrange the layout
-                placements, arranged_widgets = widget.layout.arrange(
-                    widget, child_region.size
-                )
+                placements, arranged_widgets = widget._arrange(child_region.size)
                 widgets.update(arranged_widgets)
                 placements = sorted(placements, key=get_order)
 
