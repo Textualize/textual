@@ -140,6 +140,9 @@ class Widget(DOMNode):
         self._arrangement_cache_key = (self.children._updates, size)
         return self._arrangement
 
+    def _clear_arrangement_cache(self) -> None:
+        self._arrangement = None
+
     def watch_show_horizontal_scrollbar(self, value: bool) -> None:
         """Watch function for show_horizontal_scrollbar attribute.
 
@@ -885,6 +888,7 @@ class Widget(DOMNode):
         """
         if layout:
             self._layout_required = True
+            self._clear_arrangement_cache()
         if repaint:
             self._content_width_cache = (None, 0)
             self._content_height_cache = (None, 0)
