@@ -104,7 +104,7 @@ class Widget(DOMNode):
         self._content_height_cache: tuple[object, int] = (None, 0)
 
         self._arrangement: ArrangeResult | None = None
-        self._arrangement_size: Size = Size()
+        self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
 
         super().__init__(name=name, id=id, classes=classes)
         self.add_children(*children)
@@ -122,10 +122,14 @@ class Widget(DOMNode):
     show_horizontal_scrollbar = Reactive(False, layout=True)
 
     def _arrange(self, size: Size) -> ArrangeResult:
-        if self._arrangement is not None and size == self._arrangement_size:
+        arrange_cache_key = (self.children._updates, size)
+        if (
+            self._arrangement is not None
+            and arrange_cache_key == self._arrangement_cache_key
+        ):
             return self._arrangement
         self._arrangement = self.layout.arrange(self, size)
-        self._arrangement_size = size
+        self._arrangement_cache_key = (self.children._updates, size)
         return self._arrangement
 
     def watch_show_horizontal_scrollbar(self, value: bool) -> None:
@@ -855,10 +859,6 @@ class Widget(DOMNode):
         lines = self._render_cache.lines[start:end]
         return lines
 
-    def check_layout(self) -> bool:
-        """Check if a layout has been requested."""
-        return self._layout_required
-
     def get_style_at(self, x: int, y: int) -> Style:
         offset_x, offset_y = self.screen.get_offset(self)
         return self.screen.get_style_at(x + offset_x, y + offset_y)
@@ -917,12 +917,12 @@ class Widget(DOMNode):
             event (events.Idle): Idle event.
         """
 
-        if self.check_layout():
+        if self._layout_required:
             self._layout_required = False
             self.screen.post_message_no_wait(messages.Layout(self))
         elif self._repaint_required:
             self.emit_no_wait(messages.Update(self, self))
-        self._repaint_required = False
+            self._repaint_required = False
 
     def focus(self) -> None:
         """Give input focus to this widget."""

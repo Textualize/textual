@@ -13,6 +13,7 @@ from .geometry import Offset, Region, Size
 from ._compositor import Compositor, MapGeometry
 from .reactive import Reactive
 from .renderables.blank import Blank
+from ._timer import Timer
 from .widget import Widget
 
 if sys.version_info >= (3, 8):
@@ -41,10 +42,20 @@ class Screen(Widget):
         super().__init__(name=name, id=id)
         self._compositor = Compositor()
         self._dirty_widgets: set[Widget] = set()
+        self._update_timer: Timer | None = None
 
     @property
     def is_transparent(self) -> bool:
         return False
+
+    @property
+    def update_timer(self) -> Timer:
+        """Timer used to perform updates."""
+        if self._update_timer is None:
+            self._update_timer = self.set_interval(
+                UPDATE_PERIOD, self._on_update, name="screen_update", pause=True
+            )
+        return self._update_timer
 
     def watch_dark(self, dark: bool) -> None:
         pass
@@ -100,20 +111,24 @@ class Screen(Widget):
 
     def on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
-        if self._dirty_widgets:
-            self._update_timer.resume()
+        event.prevent_default()
+
         if self._layout_required:
             self._refresh_layout()
             self._layout_required = False
+            self._dirty_widgets.clear()
+        elif self._dirty_widgets:
+            self.update_timer.resume()
 
     def _on_update(self) -> None:
         """Called by the _update_timer."""
         # Render widgets together
+
         if self._dirty_widgets:
             self._compositor.update_widgets(self._dirty_widgets)
             self.app._display(self._compositor.render())
             self._dirty_widgets.clear()
-        self._update_timer.pause()
+        self.update_timer.pause()
 
     def _refresh_layout(self, size: Size | None = None, full: bool = False) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
@@ -122,7 +137,7 @@ class Screen(Widget):
             return
 
         self._compositor.update_widgets(self._dirty_widgets)
-        self._update_timer.pause()
+        self.update_timer.pause()
         try:
             hidden, shown, resized = self._compositor.reflow(self, size)
 
@@ -153,7 +168,6 @@ class Screen(Widget):
         except Exception as error:
             self.app.on_exception(error)
             return
-
         display_update = self._compositor.render(full=full)
         if display_update is not None:
             self.app._display(display_update)
@@ -171,9 +185,8 @@ class Screen(Widget):
         self.check_idle()
 
     def on_mount(self, event: events.Mount) -> None:
-        self._update_timer = self.set_interval(
-            UPDATE_PERIOD, self._on_update, name="screen_update", pause=True
-        )
+        pass
+        # self._refresh_layout()
 
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""

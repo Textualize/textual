@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import Iterator, overload, TYPE_CHECKING
-from weakref import ref
 
 import rich.repr
 
@@ -19,7 +18,10 @@ class NodeList:
     """
 
     def __init__(self) -> None:
+        # The nodes in the list
         self._nodes: list[DOMNode] = []
+        # Increments when list is updated (used for caching)
+        self._updates = 0
 
     def __bool__(self) -> bool:
         return bool(self._nodes)
@@ -39,9 +41,11 @@ class NodeList:
     def _append(self, widget: DOMNode) -> None:
         if widget not in self._nodes:
             self._nodes.append(widget)
+            self._updates += 1
 
     def _clear(self) -> None:
         del self._nodes[:]
+        self._updates += 1
 
     def __iter__(self) -> Iterator[DOMNode]:
         return iter(self._nodes)
