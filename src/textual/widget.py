@@ -122,6 +122,14 @@ class Widget(DOMNode):
     show_horizontal_scrollbar = Reactive(False, layout=True)
 
     def _arrange(self, size: Size) -> ArrangeResult:
+        """Arrange children.
+
+        Args:
+            size (Size): Size of container.
+
+        Returns:
+            ArrangeResult: Widget locations.
+        """
         arrange_cache_key = (self.children._updates, size)
         if (
             self._arrangement is not None

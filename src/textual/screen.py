@@ -184,10 +184,6 @@ class Screen(Widget):
         self._layout_required = True
         self.check_idle()
 
-    def on_mount(self, event: events.Mount) -> None:
-        pass
-        # self._refresh_layout()
-
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""
         self._refresh_layout(size, full=True)
