@@ -214,7 +214,6 @@ class Compositor:
         Returns:
             ReflowResult: Hidden shown and resized widgets
         """
-        print("REFLOW")
         self._cuts = None
         self.root = parent
         self.size = size

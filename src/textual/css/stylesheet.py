@@ -380,6 +380,11 @@ class Stylesheet:
         apply = self.apply
         for node in root.walk_children():
             apply(node, animate=animate)
+            if isinstance(node, Widget):
+                if node.show_vertical_scrollbar:
+                    apply(node.vertical_scrollbar)
+                if node.show_horizontal_scrollbar:
+                    apply(node.horizontal_scrollbar)
 
 
 if __name__ == "__main__":
