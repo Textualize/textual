@@ -181,7 +181,6 @@ class Screen(Widget):
         self.check_idle()
 
     async def handle_layout(self, message: messages.Layout) -> None:
-        print("LAYOUT")
         message.stop()
         message.prevent_default()
         self._layout_required = True
