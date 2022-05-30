@@ -185,7 +185,6 @@ class Screen(Widget):
         message.prevent_default()
         self._layout_required = True
         self.check_idle()
-        self._refresh_layout()
 
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""

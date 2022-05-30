@@ -555,7 +555,7 @@ class Compositor:
         ]
         return segment_lines
 
-    def render(self, full: bool = False) -> RenderableType:
+    def render(self, full: bool = False) -> RenderableType | None:
         """Render a layout.
 
         Returns:
@@ -571,17 +571,19 @@ class Compositor:
             self._dirty_regions.clear()
             if screen_region in update_regions:
                 # If one of the updates is the entire screen, then we only need one update
-                update_regions.clear()
+                full = True
 
-        if update_regions:
+        if full:
+            crop = screen_region
+            spans = []
+            is_rendered_line = lambda y: True
+        elif update_regions:
             # Create a crop regions that surrounds all updates
             crop = Region.from_union(list(update_regions)).intersection(screen_region)
             spans = list(self._regions_to_spans(update_regions))
             is_rendered_line = {y for y, _, _ in spans}.__contains__
         else:
-            crop = screen_region
-            spans = []
-            is_rendered_line = lambda y: True
+            return None
 
         divide = Segment.divide
 
@@ -622,7 +624,10 @@ class Compositor:
                     if chops_line[cut] is None:
                         chops_line[cut] = segments
 
-        if update_regions:
+        if full:
+            render_lines = self._assemble_chops(chops)
+            return LayoutUpdate(render_lines, screen_region)
+        else:
             crop_y, crop_y2 = crop.y_extents
             render_lines = self._assemble_chops(chops[crop_y:crop_y2])
             render_spans = [
@@ -630,10 +635,6 @@ class Compositor:
                 for y, x1, x2 in spans
             ]
             return SpansUpdate(render_spans, crop_y2)
-
-        else:
-            render_lines = self._assemble_chops(chops)
-            return LayoutUpdate(render_lines, screen_region)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
