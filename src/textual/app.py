@@ -888,12 +888,14 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.update(self.app, animate=animate)
         self.refresh(layout=True)
 
-    def _display(self, renderable: RenderableType) -> None:
+    def _display(self, renderable: RenderableType | None) -> None:
         """Display a renderable within a sync.
 
         Args:
             renderable (RenderableType): A Rich renderable.
         """
+        if renderable is None:
+            return
         if self._running and not self._closed and not self.is_headless:
             console = self.console
             self._begin_update()
