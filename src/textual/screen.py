@@ -174,15 +174,19 @@ class Screen(Widget):
 
     async def handle_update(self, message: messages.Update) -> None:
         message.stop()
+        message.prevent_default()
         widget = message.widget
         assert isinstance(widget, Widget)
         self._dirty_widgets.add(widget)
         self.check_idle()
 
     async def handle_layout(self, message: messages.Layout) -> None:
+        print("LAYOUT")
         message.stop()
+        message.prevent_default()
         self._layout_required = True
         self.check_idle()
+        self._refresh_layout()
 
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""

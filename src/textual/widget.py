@@ -920,11 +920,11 @@ class Widget(DOMNode):
             event (events.Idle): Idle event.
         """
 
-        if self._layout_required:
-            self._layout_required = False
-            self.screen.post_message_no_wait(messages.Layout(self))
-        elif self._repaint_required:
+        if self._repaint_required:
             self.screen.post_message_no_wait(messages.Update(self, self))
+        if self._layout_required:
+            self.screen.post_message_no_wait(messages.Layout(self))
+        self._layout_required = False
         self._repaint_required = False
 
     def focus(self) -> None:
