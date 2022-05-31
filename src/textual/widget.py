@@ -622,15 +622,19 @@ class Widget(DOMNode):
         horizontal_scrollbar_thickness = self.scrollbar_size_horizontal
         vertical_scrollbar_thickness = self.scrollbar_size_vertical
 
+        print(self, horizontal_scrollbar_thickness, vertical_scrollbar_thickness)
+
         if self.styles.scrollbar_gutter == "stable":
             # Let's _always_ reserve some space, whether the scrollbar is actually displayed or not:
             show_vertical_scrollbar = True
             vertical_scrollbar_thickness = self.styles.scrollbar_size_vertical
 
         if show_horizontal_scrollbar and show_vertical_scrollbar:
+            print(1, region)
             (region, _, _, _) = region.split(
                 -vertical_scrollbar_thickness, -horizontal_scrollbar_thickness
             )
+            print(2, region)
         elif show_vertical_scrollbar:
             region, _ = region.split_vertical(-vertical_scrollbar_thickness)
         elif show_horizontal_scrollbar:
@@ -780,7 +784,7 @@ class Widget(DOMNode):
         Returns:
             bool: ``True`` if there is background color, otherwise ``False``.
         """
-        return self.is_container and self.styles.background.is_transparent
+        return self.is_scrollable and self.styles.background.is_transparent
 
     @property
     def console(self) -> Console:

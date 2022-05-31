@@ -1,3 +1,4 @@
+from ._datatable import DataTable
 from ._footer import Footer
 from ._header import Header
 from ._button import Button
@@ -8,6 +9,7 @@ from ._directory_tree import DirectoryTree, FileClick
 
 __all__ = [
     "Button",
+    "DataTable",
     "DirectoryTree",
     "FileClick",
     "Footer",

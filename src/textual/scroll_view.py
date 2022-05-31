@@ -11,8 +11,8 @@ class ScrollView(Widget):
     
     ScrollView {
         background: blue;
-        overflow-y: scroll;
-        overflow-x: scroll;
+        overflow-y: auto;
+        overflow-x: auto;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
     }
@@ -31,7 +31,6 @@ class ScrollView(Widget):
     def on_mount(self):
         self.virtual_size = Size(200, 200)
         self._refresh_scrollbars()
-        self.refresh(layout=True)
 
     def size_updated(
         self, size: Size, virtual_size: Size, container_size: Size
@@ -57,7 +56,9 @@ class ScrollView(Widget):
             self.call_later(self.scroll_to, self.scroll_x, self.scroll_y)
 
     def render(self) -> RenderableType:
-        return f"{self.scroll_offset} {self.show_vertical_scrollbar}"
+        from rich.panel import Panel
+
+        return Panel(f"{self.scroll_offset} {self.show_vertical_scrollbar}")
 
     def watch_scroll_x(self, new_value: float) -> None:
         self.horizontal_scrollbar.position = int(new_value)

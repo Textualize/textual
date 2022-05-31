@@ -326,27 +326,28 @@ class Compositor:
                 # The region covered by children relative to parent widget
                 total_region = child_region.reset_origin
 
-                # Arrange the layout
-                placements, arranged_widgets = widget._arrange(child_region.size)
-                widgets.update(arranged_widgets)
-                placements = sorted(placements, key=get_order)
+                if widget.is_container:
+                    # Arrange the layout
+                    placements, arranged_widgets = widget._arrange(child_region.size)
+                    widgets.update(arranged_widgets)
+                    placements = sorted(placements, key=get_order)
 
-                # An offset added to all placements
-                placement_offset = (
-                    container_region.origin + layout_offset - widget.scroll_offset
-                )
+                    # An offset added to all placements
+                    placement_offset = (
+                        container_region.origin + layout_offset - widget.scroll_offset
+                    )
 
-                # Add all the widgets
-                for sub_region, sub_widget, z in placements:
-                    # Combine regions with children to calculate the "virtual size"
-                    total_region = total_region.union(sub_region)
-                    if sub_widget is not None:
-                        add_widget(
-                            sub_widget,
-                            sub_region + placement_offset,
-                            order + (z,),
-                            sub_clip,
-                        )
+                    # Add all the widgets
+                    for sub_region, sub_widget, z in placements:
+                        # Combine regions with children to calculate the "virtual size"
+                        total_region = total_region.union(sub_region)
+                        if sub_widget is not None:
+                            add_widget(
+                                sub_widget,
+                                sub_region + placement_offset,
+                                order + (z,),
+                                sub_clip,
+                            )
 
                 # Add any scrollbars
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(
@@ -360,14 +361,24 @@ class Compositor:
                         container_size,
                     )
 
-                # Add the container widget, which will render a background
-                map[widget] = MapGeometry(
-                    region + layout_offset,
-                    order,
-                    clip,
-                    total_region.size,
-                    container_size,
-                )
+                if widget.is_container:
+                    # Add the container widget, which will render a background
+                    map[widget] = MapGeometry(
+                        region + layout_offset,
+                        order,
+                        clip,
+                        total_region.size,
+                        container_size,
+                    )
+                else:
+
+                    map[widget] = MapGeometry(
+                        child_region + layout_offset,
+                        order,
+                        clip,
+                        child_region.size,
+                        container_size,
+                    )
 
             else:
                 # Add the widget to the map
