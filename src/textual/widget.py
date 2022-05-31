@@ -16,7 +16,6 @@ from rich.console import Console, RenderableType
 from rich.measure import Measurement
 from rich.padding import Padding
 from rich.style import Style
-from rich.styled import Styled
 
 
 from . import errors
@@ -53,6 +52,8 @@ if TYPE_CHECKING:
 
 
 class RenderCache(NamedTuple):
+    """Stores results of a previous render."""
+
     size: Size
     lines: Lines
 
@@ -114,8 +115,8 @@ class Widget(DOMNode):
     has_focus = Reactive(False)
     descendant_has_focus = Reactive(False)
     mouse_over = Reactive(False)
-    scroll_x = Reactive(0.0, repaint=False, layout=True)
-    scroll_y = Reactive(0.0, repaint=False, layout=True)
+    scroll_x = Reactive(0.0, repaint=False, layout=False)
+    scroll_y = Reactive(0.0, repaint=False, layout=False)
     scroll_target_x = Reactive(0.0, repaint=False)
     scroll_target_y = Reactive(0.0, repaint=False)
     show_vertical_scrollbar = Reactive(False, layout=True)
@@ -274,11 +275,13 @@ class Widget(DOMNode):
 
         return height
 
-    async def watch_scroll_x(self, new_value: float) -> None:
+    def watch_scroll_x(self, new_value: float) -> None:
         self.horizontal_scrollbar.position = int(new_value)
+        self.refresh(layout=True)
 
-    async def watch_scroll_y(self, new_value: float) -> None:
+    def watch_scroll_y(self, new_value: float) -> None:
         self.vertical_scrollbar.position = int(new_value)
+        self.refresh(layout=True)
 
     def validate_scroll_x(self, value: float) -> float:
         return clamp(value, 0, self.max_scroll_x)
@@ -349,7 +352,7 @@ class Widget(DOMNode):
 
     def _refresh_scrollbars(self) -> None:
         """Refresh scrollbar visibility."""
-        if not self.is_container:
+        if not self.is_scrollable:
             return
 
         styles = self.styles
@@ -386,7 +389,7 @@ class Widget(DOMNode):
             tuple[bool, bool]: A tuple of (<vertical scrollbar enabled>, <horizontal scrollbar enabled>)
 
         """
-        if not self.is_container:
+        if not self.is_scrollable:
             return False, False
 
         enabled = self.show_vertical_scrollbar, self.show_horizontal_scrollbar
@@ -754,6 +757,10 @@ class Widget(DOMNode):
     def virtual_size(self) -> Size:
         return self._virtual_size
 
+    @virtual_size.setter
+    def virtual_size(self, new_size: Size) -> None:
+        self._virtual_size = new_size
+
     @property
     def region(self) -> Region:
         """The region occupied by this widget, relative to the Screen."""
@@ -801,6 +808,15 @@ class Widget(DOMNode):
         """
         return self.styles.layout is not None or bool(self.children)
 
+    @property
+    def is_scrollable(self) -> bool:
+        """Check if this Widget may be scrolled.
+
+        Returns:
+            bool: True if this widget may be scrolled.
+        """
+        return self.is_container
+
     def watch_mouse_over(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
         self.app.update_styles()
@@ -820,7 +836,7 @@ class Widget(DOMNode):
             self._size = size
             self._virtual_size = virtual_size
             self._container_size = container_size
-            if self.is_container:
+            if self.is_scrollable:
                 self._refresh_scrollbars()
                 width, height = self.container_size
                 if self.show_vertical_scrollbar:
@@ -1008,84 +1024,84 @@ class Widget(DOMNode):
                     break
 
     def on_mouse_scroll_down(self, event) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             if self.scroll_down(animate=False):
                 event.stop()
 
     def on_mouse_scroll_up(self, event) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             if self.scroll_up(animate=False):
                 event.stop()
 
     def handle_scroll_to(self, message: ScrollTo) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_to(message.x, message.y, animate=message.animate)
             message.stop()
 
     def handle_scroll_up(self, event: ScrollUp) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_page_up()
             event.stop()
 
     def handle_scroll_down(self, event: ScrollDown) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_page_down()
             event.stop()
 
     def handle_scroll_left(self, event: ScrollLeft) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_page_left()
             event.stop()
 
     def handle_scroll_right(self, event: ScrollRight) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_page_right()
             event.stop()
 
     def key_home(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_home()
             return True
         return False
 
     def key_end(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_end()
             return True
         return False
 
     def key_left(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_left()
             return True
         return False
 
     def key_right(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_right()
             return True
         return False
 
     def key_down(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_up()
             return True
         return False
 
     def key_up(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_down()
             return True
         return False
 
     def key_pagedown(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_page_down()
             return True
         return False
 
     def key_pageup(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_page_up()
             return True
         return False

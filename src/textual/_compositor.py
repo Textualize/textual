@@ -316,7 +316,7 @@ class Compositor:
             container_size = container_region.size
 
             # Containers (widgets with layout) require adding children
-            if widget.is_container:
+            if widget.is_scrollable:
                 # The region that contains the content (container region minus scrollbars)
                 child_region = widget._arrange_container(container_region)
 
