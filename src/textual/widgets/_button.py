@@ -17,7 +17,7 @@ class Button(Widget, can_focus=True):
 
     CSS = """
 
-    Button {
+    $WIDGET {
         width: auto;
         height: 3;
         background: $primary;
@@ -29,13 +29,13 @@ class Button(Widget, can_focus=True):
         text-style: bold;
     }
 
-    Button:hover {
+    $WIDGET:hover {
         background:$primary-darken-2;
         color: $text-primary-darken-2;
         border: tall $primary-lighten-1;
     }
 
-    App.-show-focus Button:focus {
+    App.-show-focus $WIDGET:focus {
         tint: $accent 20%;
     }
 

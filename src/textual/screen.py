@@ -30,9 +30,7 @@ class Screen(Widget):
     """A widget for the root of the app."""
 
     CSS = """
-    Screen {
-        background: $surface;
-        color: $text-surface;
+    $WIDGET {
         layout: vertical;
         overflow-y: auto;
     }
@@ -114,20 +112,19 @@ class Screen(Widget):
     def on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
-
         if self._layout_required:
             self._refresh_layout()
             self._layout_required = False
             self._dirty_widgets.clear()
-        elif self._dirty_widgets:
+        elif self._dirty_widgets or self._dirty_regions:
             self.update_timer.resume()
 
     def _on_update(self) -> None:
         """Called by the _update_timer."""
         # Render widgets together
-
-        if self._dirty_widgets:
+        if self._dirty_widgets or self._dirty_regions:
             self._compositor.update_widgets(self._dirty_widgets)
+            self._compositor.add_dirty_regions(self._dirty_regions)
             self.app._display(self._compositor.render())
             self._dirty_widgets.clear()
         self.update_timer.pause()

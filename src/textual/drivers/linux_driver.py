@@ -194,8 +194,6 @@ class LinuxDriver(Driver):
 
         fileno = self.fileno
 
-        print(1)
-
         def more_data() -> bool:
             """Check if there is more data to parse."""
             for key, events in selector.select(0.01):
@@ -203,28 +201,20 @@ class LinuxDriver(Driver):
                     return True
             return False
 
-        print(2)
         parser = XTermParser(self._target, more_data, self._debug)
         feed = parser.feed
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
         read = os.read
-        print(3)
         EVENT_READ = selectors.EVENT_READ
 
         try:
-            print(4)
             while not self.exit_event.is_set():
-                print(5)
                 selector_events = selector.select(0.1)
-                print(6)
                 for _selector_key, mask in selector_events:
-                    print(7)
                     if mask | EVENT_READ:
-                        print(8)
                         unicode_data = decode(read(fileno, 1024))
-                        print(9)
                         for event in feed(unicode_data):
                             self.process_event(event)
         except Exception as error:

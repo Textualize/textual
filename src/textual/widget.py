@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from fractions import Fraction
+import string
 from typing import (
     Any,
     Awaitable,
@@ -23,7 +24,6 @@ from . import errors
 from . import events
 from ._animator import BoundAnimator
 from ._border import Border
-from ._profile import timer
 from .box_model import BoxModel, get_box_model
 from ._context import active_app
 from ._types import Lines
@@ -35,7 +35,6 @@ from .message import Message
 from . import messages
 from ._layout import Layout
 from .reactive import Reactive, watch
-from .renderables.blank import Blank
 from .renderables.opacity import Opacity
 from .renderables.tint import Tint
 
@@ -178,9 +177,10 @@ class Widget(DOMNode):
         Args:
             app (App): App instance.
         """
+        css_code = string.Template(self.CSS).safe_substitute({"WIDGET": self.css_type})
         # Parser the Widget's CSS
         self.app.stylesheet.add_source(
-            self.CSS, f"{__file__}:<{self.__class__.__name__}>"
+            css_code, f"{__file__}:<{self.__class__.__name__}>"
         )
 
     def get_box_model(

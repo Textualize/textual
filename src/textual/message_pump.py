@@ -268,6 +268,7 @@ class MessagePump:
                 self.app.on_exception(error)
                 break
             finally:
+                self._message_queue.task_done()
                 if self._message_queue.empty():
                     if not self._closed:
                         event = events.Idle(self)

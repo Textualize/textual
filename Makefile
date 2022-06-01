@@ -6,3 +6,7 @@ format:
 	black src
 format-check:
 	black --check src
+docs-serve:
+	mkdocs serve
+docs-build:
+	mkdocs build

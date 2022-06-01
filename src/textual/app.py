@@ -7,6 +7,7 @@ import io
 import os
 import platform
 import sys
+import string
 import warnings
 from contextlib import redirect_stdout
 from pathlib import PurePath
@@ -108,6 +109,10 @@ class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications"""
 
     CSS = """
+    $WIDGET {
+        background: $surface;
+        color: $text-surface;
+    }
     """
 
     CSS_PATH: str | None = None
@@ -721,8 +726,11 @@ class App(Generic[ReturnType], DOMNode):
             if self.css_path is not None:
                 self.stylesheet.read(self.css_path)
             if self.CSS is not None:
+                css_code = string.Template(self.CSS).safe_substitute(
+                    {"WIDGET": self.css_type}
+                )
                 self.stylesheet.add_source(
-                    self.CSS, path=f"<{self.__class__.__name__}>"
+                    css_code, path=f"<{self.__class__.__name__}>"
                 )
         except Exception as error:
             self.on_exception(error)
@@ -875,6 +883,8 @@ class App(Generic[ReturnType], DOMNode):
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         self.screen.refresh(repaint=repaint, layout=layout)
+        self.check_idle()
+        # self.screen._refresh_layout()
 
     def _paint(self):
         """Perform a "paint" (draw the screen)."""
@@ -1062,10 +1072,12 @@ class App(Generic[ReturnType], DOMNode):
     async def handle_update(self, message: messages.Update) -> None:
         message.stop()
         self._paint()
+        print("UPDATE PAINT")
 
     async def handle_layout(self, message: messages.Layout) -> None:
         message.stop()
         self._paint()
+        print("LAYOUT PAINT")
 
     async def on_key(self, event: events.Key) -> None:
         if event.key == "tab":
