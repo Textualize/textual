@@ -160,10 +160,10 @@ class LinuxDriver(Driver):
             if not self.exit_event.is_set():
                 signal.signal(signal.SIGWINCH, signal.SIG_DFL)
                 self._disable_mouse_support()
-                termios.tcflush(self.fileno, termios.TCIFLUSH)
                 self.exit_event.set()
                 if self._key_thread is not None:
                     self._key_thread.join()
+                termios.tcflush(self.fileno, termios.TCIFLUSH)
         except Exception as error:
             # TODO: log this
             pass
@@ -194,6 +194,8 @@ class LinuxDriver(Driver):
 
         fileno = self.fileno
 
+        print(1)
+
         def more_data() -> bool:
             """Check if there is more data to parse."""
             for key, events in selector.select(0.01):
@@ -201,24 +203,32 @@ class LinuxDriver(Driver):
                     return True
             return False
 
+        print(2)
         parser = XTermParser(self._target, more_data, self._debug)
         feed = parser.feed
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
         read = os.read
-
+        print(3)
         EVENT_READ = selectors.EVENT_READ
 
         try:
+            print(4)
             while not self.exit_event.is_set():
+                print(5)
                 selector_events = selector.select(0.1)
+                print(6)
                 for _selector_key, mask in selector_events:
+                    print(7)
                     if mask | EVENT_READ:
+                        print(8)
                         unicode_data = decode(read(fileno, 1024))
+                        print(9)
                         for event in feed(unicode_data):
                             self.process_event(event)
         except Exception as error:
+            print(10)
             log(error)
         finally:
             with timer("selector.close"):

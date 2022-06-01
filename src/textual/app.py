@@ -675,6 +675,10 @@ class App(Generic[ReturnType], DOMNode):
             error (Exception): An exception instance.
         """
 
+        if "tb" in self.features:
+            self.fatal_error()
+            return
+
         if hasattr(error, "__rich__"):
             # Exception has a rich method, so we can defer to that for the rendering
             self.panic(error)
@@ -736,8 +740,8 @@ class App(Generic[ReturnType], DOMNode):
 
             driver = self._driver = self.driver_class(self.console, self)
             driver.start_application_mode()
-            with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
-                try:
+            try:
+                with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
                     mount_event = events.Mount(sender=self)
                     await self.dispatch_message(mount_event)
 
@@ -749,8 +753,8 @@ class App(Generic[ReturnType], DOMNode):
                     await super().process_messages()
                     await self.animator.stop()
                     await self.close_all()
-                finally:
-                    driver.stop_application_mode()
+            finally:
+                driver.stop_application_mode()
         except Exception as error:
             self.on_exception(error)
         finally:
@@ -886,7 +890,7 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.set_variables(self.get_css_variables())
         stylesheet.reparse()
         stylesheet.update(self.app, animate=animate)
-        self.refresh(layout=True)
+        self.screen._refresh_layout(self.size, full=True)
 
     def _display(self, renderable: RenderableType | None) -> None:
         """Display a renderable within a sync.

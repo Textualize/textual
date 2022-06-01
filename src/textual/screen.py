@@ -31,6 +31,8 @@ class Screen(Widget):
 
     CSS = """
     Screen {
+        background: $surface;
+        color: $text-surface;
         layout: vertical;
         overflow-y: auto;
     }

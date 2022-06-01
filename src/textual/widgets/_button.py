@@ -20,12 +20,12 @@ class Button(Widget, can_focus=True):
     Button {
         width: auto;
         height: 3;
-        padding: 0 2;
         background: $primary;
         color: $text-primary;
         content-align: center middle;
         border: tall $primary-lighten-3;
         margin: 1 0;
+        align: center middle;
         text-style: bold;
     }
 
