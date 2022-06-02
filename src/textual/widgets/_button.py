@@ -17,25 +17,38 @@ class Button(Widget, can_focus=True):
 
     CSS = """
 
-    $WIDGET {
+
+    Button {
         width: auto;
         height: 3;
         background: $primary;
         color: $text-primary;
         content-align: center middle;
         border: tall $primary-lighten-3;
+        
         margin: 1 0;
         align: center middle;
         text-style: bold;
     }
 
-    $WIDGET:hover {
+    .-dark-mode Button {
+        border: tall white $primary-lighten-2;
+        color: $primary-lighten-2;
+        background: $background;
+    }
+
+    .-dark-mode Button:hover {
+        background: $surface;
+    }
+
+
+    Button:hover {
         background:$primary-darken-2;
         color: $text-primary-darken-2;
         border: tall $primary-lighten-1;
     }
 
-    App.-show-focus $WIDGET:focus {
+    App.-show-focus Button:focus {
         tint: $accent 20%;
     }
 

@@ -30,7 +30,7 @@ class Screen(Widget):
     """A widget for the root of the app."""
 
     CSS = """
-    $WIDGET {
+    Screen {             
         layout: vertical;
         overflow-y: auto;
     }

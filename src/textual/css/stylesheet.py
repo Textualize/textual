@@ -115,7 +115,7 @@ class StylesheetErrors:
         )
 
 
-@rich.repr.auto
+@rich.repr.auto(angular=True)
 class Stylesheet:
     def __init__(self, *, variables: dict[str, str] | None = None) -> None:
         self._rules: list[RuleSet] = []
@@ -124,7 +124,7 @@ class Stylesheet:
         self._require_parse = False
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self.rules
+        yield list(self.source.keys())
 
     @property
     def rules(self) -> list[RuleSet]:

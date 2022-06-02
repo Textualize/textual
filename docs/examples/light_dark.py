@@ -3,16 +3,18 @@ from textual.widgets import Button
 
 
 class ButtonApp(App):
+
     CSS = """
+
     Button {
         width: 100%;
     }
+
     """
 
     def compose(self):
-        yield Button("Light", id="light")
-        yield Button("Dark", id="dark")
+        yield Button("Lights off")
 
     def handle_pressed(self, event):
-        self.dark = event.button.id == "dark"
-
+        self.dark = not self.dark
+        event.button.label = "Lights ON" if self.dark else "Lights OFF"

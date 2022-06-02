@@ -17,8 +17,6 @@ class Hr(Widget):
 
 
 class Info(Widget):
-    DEFAULT_STYLES = "height: 2;"
-
     def __init__(self, text: str) -> None:
         super().__init__()
         self.text = text

@@ -48,6 +48,7 @@ from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
 from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet
+from .css.styles import RenderStyles
 from .css.query import NoMatchingNodesError
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
@@ -61,6 +62,7 @@ from .layouts.dock import Dock
 from .message_pump import MessagePump
 from .reactive import Reactive
 from .renderables.blank import Blank
+
 from .screen import Screen
 from .widget import Widget
 
@@ -109,9 +111,9 @@ class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications"""
 
     CSS = """
-    $WIDGET {
+    App {     
         background: $surface;
-        color: $text-surface;
+        color: $text-surface;        
     }
     """
 
@@ -144,6 +146,7 @@ class App(Generic[ReturnType], DOMNode):
         # this will create some first references to an asyncio loop.
         _init_uvloop()
 
+        super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
         self.console = Console(
@@ -206,10 +209,10 @@ class App(Generic[ReturnType], DOMNode):
             else None
         )
 
-        super().__init__()
-
-    def __init_subclass__(cls, css_path: str | None = None) -> None:
-        super().__init_subclass__()
+    def __init_subclass__(
+        cls, css_path: str | None = None, inherit_css: bool = True
+    ) -> None:
+        super().__init_subclass__(inherit_css=inherit_css)
         cls.CSS_PATH = css_path
 
     title: Reactive[str] = Reactive("Textual")
@@ -340,7 +343,15 @@ class App(Generic[ReturnType], DOMNode):
 
     def watch_dark(self, dark: bool) -> None:
         """Watches the dark bool."""
+
         self.screen.dark = dark
+        if dark:
+            self.add_class("-dark-mode")
+            self.remove_class("-light-mode")
+        else:
+            self.remove_class("-dark-mode")
+            self.add_class("-light-mode")
+
         self.refresh_css()
 
     def get_driver_class(self) -> Type[Driver]:
@@ -364,6 +375,18 @@ class App(Generic[ReturnType], DOMNode):
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "title", self.title
+        yield "id", self.id, None
+        if self.name:
+            yield "name", self.name
+        if self.classes:
+            yield "classes", set(self.classes)
+        pseudo_classes = self.pseudo_classes
+        if pseudo_classes:
+            yield "pseudo_classes", set(pseudo_classes)
+
+    @property
+    def is_transparent(self) -> bool:
+        return True
 
     @property
     def animator(self) -> Animator:
@@ -372,10 +395,6 @@ class App(Generic[ReturnType], DOMNode):
     @property
     def screen(self) -> Screen:
         return self._screen_stack[-1]
-
-    @property
-    def css_type(self) -> str:
-        return "app"
 
     @property
     def size(self) -> Size:
@@ -680,10 +699,6 @@ class App(Generic[ReturnType], DOMNode):
             error (Exception): An exception instance.
         """
 
-        if "tb" in self.features:
-            self.fatal_error()
-            return
-
         if hasattr(error, "__rich__"):
             # Exception has a rich method, so we can defer to that for the rendering
             self.panic(error)
@@ -725,13 +740,8 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if self.css_path is not None:
                 self.stylesheet.read(self.css_path)
-            if self.CSS is not None:
-                css_code = string.Template(self.CSS).safe_substitute(
-                    {"WIDGET": self.css_type}
-                )
-                self.stylesheet.add_source(
-                    css_code, path=f"<{self.__class__.__name__}>"
-                )
+            for path, css in self.css:
+                self.stylesheet.add_source(css, path=path)
         except Exception as error:
             self.on_exception(error)
             self._print_error_renderables()
