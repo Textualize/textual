@@ -9,7 +9,7 @@ class ActionError(Exception):
     pass
 
 
-re_action_params = re.compile(r"([\w\.]+)(\(.*?\))")
+re_action_params = re.compile(r"([\w\.]+)(\(.*\))")
 
 
 def parse(action: str) -> tuple[str, tuple[Any, ...]]:
