@@ -49,9 +49,7 @@ class DOMQuery:
 
         if selector is not None:
             selector_set = parse_selectors(selector)
-            print(selector_set)
             self._nodes = [_node for _node in self._nodes if match(selector_set, _node)]
-            print(self._nodes)
 
     def __len__(self) -> int:
         return len(self._nodes)
