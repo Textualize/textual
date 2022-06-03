@@ -532,7 +532,6 @@ class DOMNode(MessagePump):
         self._classes.update(class_names)
         try:
             self.app.stylesheet.update(self.app, animate=True)
-            self.refresh()
         except NoActiveAppError:
             pass
 
@@ -546,7 +545,6 @@ class DOMNode(MessagePump):
         self._classes.difference_update(class_names)
         try:
             self.app.stylesheet.update(self.app, animate=True)
-            self.refresh()
         except NoActiveAppError:
             pass
 
@@ -560,7 +558,6 @@ class DOMNode(MessagePump):
         self._classes.symmetric_difference_update(class_names)
         try:
             self.app.stylesheet.update(self.app, animate=True)
-            self.refresh()
         except NoActiveAppError:
             pass
 
