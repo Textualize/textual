@@ -894,7 +894,6 @@ class App(Generic[ReturnType], DOMNode):
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         self.screen.refresh(repaint=repaint, layout=layout)
         self.check_idle()
-        # self.screen._refresh_layout()
 
     def _paint(self):
         """Perform a "paint" (draw the screen)."""
