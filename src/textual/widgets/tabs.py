@@ -191,8 +191,6 @@ class Tabs(Widget):
             that character.
     """
 
-    DEFAULT_STYLES = "height: 2;"
-
     _active_tab_name: Reactive[str | None] = Reactive("")
     _bar_offset: Reactive[float] = Reactive(0.0)
 

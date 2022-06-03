@@ -303,7 +303,7 @@ class Region(NamedTuple):
         """Get the maxima and minima of region.
 
         Returns:
-            tuple[int, int, int, int]: A tuple of (<min x>, <max x>, <min y>, <max y>)
+            tuple[int, int, int, int]: A tuple of `(<min x>, <max x>, <min y>, <max y>)`
         """
         x, y, width, height = self
         return x, y, x + width, y + height
@@ -527,6 +527,7 @@ class Region(NamedTuple):
     def split(self, cut_x: int, cut_y: int) -> tuple[Region, Region, Region, Region]:
         """Split a region in to 4 from given x and y offsets (cuts).
 
+        ```
                    cut_x ↓
                 ┌────────┐┌───┐
                 │        ││   │
@@ -536,6 +537,7 @@ class Region(NamedTuple):
                 ┌────────┐┌───┐
                 │    2   ││ 3 │
                 └────────┘└───┘
+        ```
 
         Args:
             cut_x (int): Offset from self.x where the cut should be made. If negative, the cut
@@ -564,11 +566,13 @@ class Region(NamedTuple):
     def split_vertical(self, cut: int) -> tuple[Region, Region]:
         """Split a region in to two, from a given x offset.
 
+        ```
                  cut ↓
             ┌────────┐┌───┐
             │    0   ││ 1 │
             │        ││   │
             └────────┘└───┘
+        ```
 
         Args:
             cut (int): An offset from self.x where the cut should be made. If cut is negative,
@@ -590,6 +594,7 @@ class Region(NamedTuple):
     def split_horizontal(self, cut: int) -> tuple[Region, Region]:
         """Split a region in to two, from a given x offset.
 
+        ```
                     ┌─────────┐
                     │    0    │
                     │         │
@@ -597,6 +602,7 @@ class Region(NamedTuple):
                     ┌─────────┐
                     │    1    │
                     └─────────┘
+        ```
 
         Args:
             cut (int): An offset from self.x where the cut should be made. May be negative,

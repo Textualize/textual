@@ -47,6 +47,7 @@ from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
 from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet
+from .css.styles import RenderStyles
 from .css.query import NoMatchingNodesError
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
@@ -60,6 +61,8 @@ from .layouts.dock import Dock
 from .message_pump import MessagePump
 from .reactive import Reactive
 from .renderables.blank import Blank
+from ._profile import timer
+
 from .screen import Screen
 from .widget import Widget
 
@@ -108,6 +111,10 @@ class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications"""
 
     CSS = """
+    App {     
+        background: $surface;
+        color: $text-surface;        
+    }
     """
 
     CSS_PATH: str | None = None
@@ -139,6 +146,7 @@ class App(Generic[ReturnType], DOMNode):
         # this will create some first references to an asyncio loop.
         _init_uvloop()
 
+        super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
         self.console = Console(
@@ -201,10 +209,10 @@ class App(Generic[ReturnType], DOMNode):
             else None
         )
 
-        super().__init__()
-
-    def __init_subclass__(cls, css_path: str | None = None) -> None:
-        super().__init_subclass__()
+    def __init_subclass__(
+        cls, css_path: str | None = None, inherit_css: bool = True
+    ) -> None:
+        super().__init_subclass__(inherit_css=inherit_css)
         cls.CSS_PATH = css_path
 
     title: Reactive[str] = Reactive("Textual")
@@ -335,7 +343,15 @@ class App(Generic[ReturnType], DOMNode):
 
     def watch_dark(self, dark: bool) -> None:
         """Watches the dark bool."""
+
         self.screen.dark = dark
+        if dark:
+            self.add_class("-dark-mode")
+            self.remove_class("-light-mode")
+        else:
+            self.remove_class("-dark-mode")
+            self.add_class("-light-mode")
+
         self.refresh_css()
 
     def get_driver_class(self) -> Type[Driver]:
@@ -359,6 +375,18 @@ class App(Generic[ReturnType], DOMNode):
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "title", self.title
+        yield "id", self.id, None
+        if self.name:
+            yield "name", self.name
+        if self.classes:
+            yield "classes", set(self.classes)
+        pseudo_classes = self.pseudo_classes
+        if pseudo_classes:
+            yield "pseudo_classes", set(pseudo_classes)
+
+    @property
+    def is_transparent(self) -> bool:
+        return True
 
     @property
     def animator(self) -> Animator:
@@ -367,10 +395,6 @@ class App(Generic[ReturnType], DOMNode):
     @property
     def screen(self) -> Screen:
         return self._screen_stack[-1]
-
-    @property
-    def css_type(self) -> str:
-        return "app"
 
     @property
     def size(self) -> Size:
@@ -716,10 +740,8 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if self.css_path is not None:
                 self.stylesheet.read(self.css_path)
-            if self.CSS is not None:
-                self.stylesheet.add_source(
-                    self.CSS, path=f"<{self.__class__.__name__}>"
-                )
+            for path, css in self.css:
+                self.stylesheet.add_source(css, path=path)
         except Exception as error:
             self.on_exception(error)
             self._print_error_renderables()
@@ -736,8 +758,8 @@ class App(Generic[ReturnType], DOMNode):
 
             driver = self._driver = self.driver_class(self.console, self)
             driver.start_application_mode()
-            with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
-                try:
+            try:
+                with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
                     mount_event = events.Mount(sender=self)
                     await self.dispatch_message(mount_event)
 
@@ -749,8 +771,8 @@ class App(Generic[ReturnType], DOMNode):
                     await super().process_messages()
                     await self.animator.stop()
                     await self.close_all()
-                finally:
-                    driver.stop_application_mode()
+            finally:
+                driver.stop_application_mode()
         except Exception as error:
             self.on_exception(error)
         finally:
@@ -871,6 +893,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         self.screen.refresh(repaint=repaint, layout=layout)
+        self.check_idle()
 
     def _paint(self):
         """Perform a "paint" (draw the screen)."""
@@ -886,7 +909,7 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.set_variables(self.get_css_variables())
         stylesheet.reparse()
         stylesheet.update(self.app, animate=animate)
-        self.refresh(layout=True)
+        self.screen._refresh_layout(self.size, full=True)
 
     def _display(self, renderable: RenderableType | None) -> None:
         """Display a renderable within a sync.
