@@ -39,10 +39,13 @@ class DOMNode(MessagePump):
 
     """
 
+    # Custom CSS
     CSS: ClassVar[str] = ""
 
-    inherit_css: ClassVar[bool] = True
-    css_type_names: ClassVar[frozenset[str]] = frozenset()
+    # True if this node inherits the CSS from the base class.
+    _inherit_css: ClassVar[bool] = True
+    # List of names of base class (lower cased) that inherit CSS
+    _css_type_names: ClassVar[frozenset[str]] = frozenset()
 
     def __init__(
         self,
@@ -64,22 +67,35 @@ class DOMNode(MessagePump):
 
     def __init_subclass__(cls, inherit_css: bool = True) -> None:
         super().__init_subclass__()
-        cls.inherit_css = inherit_css
+        cls._inherit_css = inherit_css
         css_type_names: set[str] = set()
         for base in cls._css_bases(cls):
             css_type_names.add(base.__name__.lower())
-        cls.css_type_names = frozenset(css_type_names)
+        cls._css_type_names = frozenset(css_type_names)
 
     @property
     def _node_bases(self) -> Iterator[Type[DOMNode]]:
+        """Get the DOMNode bases classes (including self.__class__)
+
+        Returns:
+            Iterator[Type[DOMNode]]: An iterable of DOMNode classes.
+        """
         return self._css_bases(self.__class__)
 
     @classmethod
     def _css_bases(cls, base: Type[DOMNode]) -> Iterator[Type[DOMNode]]:
+        """Get the DOMNode base classes, which inherit CSS.
+
+        Args:
+            base (Type[DOMNode]): A DOMNode class
+
+        Returns:
+            Iterator[Type[DOMNode]]: An iterable of DOMNode classes.
+        """
         _class = base
         while True:
             yield _class
-            if not _class.inherit_css:
+            if not _class._inherit_css:
                 break
             for _base in _class.__bases__:
                 if issubclass(_base, DOMNode):
@@ -103,11 +119,17 @@ class DOMNode(MessagePump):
 
     @property
     def css(self) -> list[tuple[str, str]]:
-        """Combined CSS from base classes"""
+        """Gets the CSS for this class and inherited from bases.
+
+        Returns:
+            list[tuple[str, str]]: a list of tuples containing (PATH, SOURCE) for this
+                and inherited from base classes.
+        """
 
         css_stack: list[tuple[str, str]] = []
 
         def get_path(base: Type[DOMNode]) -> str:
+            """Get a path to the DOM Node"""
             try:
                 return f"{getfile(base)}:{base.__name__}"
             except TypeError:
@@ -125,7 +147,7 @@ class DOMNode(MessagePump):
         """Get the parent node.
 
         Returns:
-            DOMNode: The node which is the direct parent of this node.
+            DOMNode | None: The node which is the direct parent of this node.
         """
         return self._parent
 

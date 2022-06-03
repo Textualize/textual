@@ -61,6 +61,7 @@ from .layouts.dock import Dock
 from .message_pump import MessagePump
 from .reactive import Reactive
 from .renderables.blank import Blank
+from ._profile import timer
 
 from .screen import Screen
 from .widget import Widget
@@ -1081,12 +1082,10 @@ class App(Generic[ReturnType], DOMNode):
     async def handle_update(self, message: messages.Update) -> None:
         message.stop()
         self._paint()
-        print("UPDATE PAINT")
 
     async def handle_layout(self, message: messages.Layout) -> None:
         message.stop()
         self._paint()
-        print("LAYOUT PAINT")
 
     async def on_key(self, event: events.Key) -> None:
         if event.key == "tab":

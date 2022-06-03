@@ -86,10 +86,8 @@ class Selector:
         return node.has_pseudo_class(*self.pseudo_classes)
 
     def _check_type(self, node: DOMNode) -> bool:
-        if self._name_lower not in node.css_type_names:
+        if self._name_lower not in node._css_type_names:
             return False
-        # if node.css_type != self._name_lower:
-        #     return False
         if self.pseudo_classes and not node.has_pseudo_class(*self.pseudo_classes):
             return False
         return True

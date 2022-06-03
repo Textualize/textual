@@ -5,7 +5,7 @@ import inspect
 from asyncio import CancelledError
 from asyncio import PriorityQueue, QueueEmpty, Task
 from functools import partial, total_ordering
-from typing import TYPE_CHECKING, Awaitable, Iterable, Callable, NamedTuple
+from typing import TYPE_CHECKING, Awaitable, Iterable, Callable
 from weakref import WeakSet
 
 from . import events

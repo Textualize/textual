@@ -16,3 +16,7 @@ class Clock(Widget):
 class ClockApp(App):
     def compose(self):
         yield Clock()
+
+
+app = ClockApp()
+app.run()

@@ -218,7 +218,6 @@ class LinuxDriver(Driver):
                         for event in feed(unicode_data):
                             self.process_event(event)
         except Exception as error:
-            print(10)
             log(error)
         finally:
             with timer("selector.close"):
