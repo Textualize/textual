@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from fractions import Fraction
-import string
 from typing import (
     Any,
     Awaitable,

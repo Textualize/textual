@@ -7,7 +7,6 @@ import io
 import os
 import platform
 import sys
-import string
 import warnings
 from contextlib import redirect_stdout
 from pathlib import PurePath
