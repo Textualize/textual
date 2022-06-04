@@ -61,7 +61,7 @@ class TweetHeader(Widget):
 
 
 class TweetBody(Widget):
-    short_lorem = Reactive[bool](False)
+    short_lorem = Reactive(False)
 
     def render(self) -> Text:
         return lorem_short_text if self.short_lorem else lorem_long_text
@@ -148,7 +148,6 @@ class BasicApp(App, css_path="basic.css"):
         # Pressing "t" toggles the content of the TweetBody widget, from a long "Lorem ipsum..." to a shorter one.
         tweet_body = self.screen.query("TweetBody").first()
         tweet_body.short_lorem = not tweet_body.short_lorem
-        tweet_body.refresh(layout=True)
 
 
 app = BasicApp()
