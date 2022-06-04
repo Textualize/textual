@@ -22,7 +22,6 @@ from . import errors
 from . import events
 from ._animator import BoundAnimator
 from ._border import Border
-from ._profile import timer
 from .box_model import BoxModel, get_box_model
 from ._context import active_app
 from ._types import Lines
@@ -34,7 +33,6 @@ from .message import Message
 from . import messages
 from ._layout import Layout
 from .reactive import Reactive, watch
-from .renderables.blank import Blank
 from .renderables.opacity import Opacity
 from .renderables.tint import Tint
 
@@ -68,9 +66,6 @@ class RenderCache(NamedTuple):
 
 @rich.repr.auto
 class Widget(DOMNode):
-
-    CSS = """
-    """
 
     can_focus: bool = False
     can_focus_children: bool = True
@@ -179,10 +174,9 @@ class Widget(DOMNode):
         Args:
             app (App): App instance.
         """
-        # Parser the Widget's CSS
-        self.app.stylesheet.add_source(
-            self.CSS, f"{__file__}:<{self.__class__.__name__}>"
-        )
+        # Parse the Widget's CSS
+        for path, css in self.css:
+            self.app.stylesheet.add_source(css, path=path)
 
     def get_box_model(
         self, container: Size, viewport: Size, fraction_unit: Fraction
@@ -539,12 +533,16 @@ class Widget(DOMNode):
 
     def scroll_page_left(self, *, animate: bool = True) -> bool:
         return self.scroll_to(
-            x=self.scroll_target_x - self.container_size.width, animate=animate
+            x=self.scroll_target_x - self.container_size.width,
+            animate=animate,
+            duration=0.3,
         )
 
     def scroll_page_right(self, *, animate: bool = True) -> bool:
         return self.scroll_to(
-            x=self.scroll_target_x + self.container_size.width, animate=animate
+            x=self.scroll_target_x + self.container_size.width,
+            animate=animate,
+            duration=0.3,
         )
 
     def scroll_to_widget(self, widget: Widget, *, animate: bool = True) -> bool:
@@ -592,9 +590,12 @@ class Widget(DOMNode):
         )
 
     def __init_subclass__(
-        cls, can_focus: bool = True, can_focus_children: bool = True
+        cls,
+        can_focus: bool = True,
+        can_focus_children: bool = True,
+        inherit_css: bool = True,
     ) -> None:
-        super().__init_subclass__()
+        super().__init_subclass__(inherit_css=inherit_css)
         cls.can_focus = can_focus
         cls.can_focus_children = can_focus_children
 
@@ -1038,8 +1039,8 @@ class Widget(DOMNode):
                 event.stop()
 
     def handle_scroll_to(self, message: ScrollTo) -> None:
-        if self.is_scrollable:
-            self.scroll_to(message.x, message.y, animate=message.animate)
+        if self.is_container:
+            self.scroll_to(message.x, message.y, animate=message.animate, duration=0.1)
             message.stop()
 
     def handle_scroll_up(self, event: ScrollUp) -> None:

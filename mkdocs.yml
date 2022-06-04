@@ -16,6 +16,7 @@ nav:
   - Reference:
     - "reference/app.md"
     - "reference/events.md"
+    - "reference/geometry.md"
     - "reference/widget.md"
 
 markdown_extensions:
@@ -70,7 +71,7 @@ plugins:
     handlers:
         python:
           rendering:
-            show_source: true
+            show_source: false
           selection:
             filters:
               - "!^_"

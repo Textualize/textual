@@ -17,17 +17,30 @@ class Button(Widget, can_focus=True):
 
     CSS = """
 
+
     Button {
         width: auto;
         height: 3;
-        padding: 0 2;
         background: $primary;
         color: $text-primary;
         content-align: center middle;
         border: tall $primary-lighten-3;
+        
         margin: 1 0;
+        align: center middle;
         text-style: bold;
     }
+
+    .-dark-mode Button {
+        border: tall white $primary-lighten-2;
+        color: $primary-lighten-2;
+        background: $background;
+    }
+
+    .-dark-mode Button:hover {
+        background: $surface;
+    }
+
 
     Button:hover {
         background:$primary-darken-2;

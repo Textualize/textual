@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Iterable, Iterator, TYPE_CHECKING
+from inspect import getfile
+from typing import ClassVar, Iterable, Iterator, Type, TYPE_CHECKING
 
 import rich.repr
 from rich.highlighter import ReprHighlighter
@@ -38,8 +39,13 @@ class DOMNode(MessagePump):
 
     """
 
-    DEFAULT_STYLES = ""
-    INLINE_STYLES = ""
+    # Custom CSS
+    CSS: ClassVar[str] = ""
+
+    # True if this node inherits the CSS from the base class.
+    _inherit_css: ClassVar[bool] = True
+    # List of names of base class (lower cased) that inherit CSS
+    _css_type_names: ClassVar[frozenset[str]] = frozenset()
 
     def __init__(
         self,
@@ -53,13 +59,50 @@ class DOMNode(MessagePump):
         self._classes: set[str] = set() if classes is None else set(classes.split())
         self.children = NodeList()
         self._css_styles: Styles = Styles(self)
-        self._inline_styles: Styles = Styles.parse(
-            self.INLINE_STYLES, repr(self), node=self
-        )
+        self._inline_styles: Styles = Styles(self)
         self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
         self._default_styles = Styles()
         self._default_rules = self._default_styles.extract_rules((0, 0, 0))
         super().__init__()
+
+    def __init_subclass__(cls, inherit_css: bool = True) -> None:
+        super().__init_subclass__()
+        cls._inherit_css = inherit_css
+        css_type_names: set[str] = set()
+        for base in cls._css_bases(cls):
+            css_type_names.add(base.__name__.lower())
+        cls._css_type_names = frozenset(css_type_names)
+
+    @property
+    def _node_bases(self) -> Iterator[Type[DOMNode]]:
+        """Get the DOMNode bases classes (including self.__class__)
+
+        Returns:
+            Iterator[Type[DOMNode]]: An iterable of DOMNode classes.
+        """
+        return self._css_bases(self.__class__)
+
+    @classmethod
+    def _css_bases(cls, base: Type[DOMNode]) -> Iterator[Type[DOMNode]]:
+        """Get the DOMNode base classes, which inherit CSS.
+
+        Args:
+            base (Type[DOMNode]): A DOMNode class
+
+        Returns:
+            Iterator[Type[DOMNode]]: An iterable of DOMNode classes.
+        """
+        _class = base
+        while True:
+            yield _class
+            if not _class._inherit_css:
+                break
+            for _base in _class.__bases__:
+                if issubclass(_base, DOMNode):
+                    _class = _base
+                    break
+            else:
+                break
 
     def on_register(self, app: App) -> None:
         """Called when the widget is registered
@@ -75,11 +118,36 @@ class DOMNode(MessagePump):
             yield "classes", " ".join(self._classes)
 
     @property
+    def css(self) -> list[tuple[str, str]]:
+        """Gets the CSS for this class and inherited from bases.
+
+        Returns:
+            list[tuple[str, str]]: a list of tuples containing (PATH, SOURCE) for this
+                and inherited from base classes.
+        """
+
+        css_stack: list[tuple[str, str]] = []
+
+        def get_path(base: Type[DOMNode]) -> str:
+            """Get a path to the DOM Node"""
+            try:
+                return f"{getfile(base)}:{base.__name__}"
+            except TypeError:
+                return f"{base.__name__}"
+
+        for base in self._node_bases:
+            css = base.CSS.strip()
+            if css:
+                css_stack.append((get_path(base), css))
+
+        return css_stack
+
+    @property
     def parent(self) -> DOMNode | None:
         """Get the parent node.
 
         Returns:
-            DOMNode: The node which is the direct parent of this node.
+            DOMNode | None: The node which is the direct parent of this node.
         """
         return self._parent
 
@@ -159,15 +227,6 @@ class DOMNode(MessagePump):
         return pseudo_classes
 
     @property
-    def css_type(self) -> str:
-        """Gets the CSS type, used by the CSS.
-
-        Returns:
-            str: A type used in CSS (lower cased class name).
-        """
-        return self.__class__.__name__.lower()
-
-    @property
     def css_path_nodes(self) -> list[DOMNode]:
         """A list of nodes from the root to this node, forming a "path".
 
@@ -238,20 +297,29 @@ class DOMNode(MessagePump):
         from rich.console import Group
         from rich.panel import Panel
 
-        highlighter = ReprHighlighter()
-        tree = Tree(highlighter(repr(self)))
+        from .widget import Widget
 
-        def add_children(tree, node):
-            for child in node.children:
+        def render_info(node: DOMNode) -> Columns:
+            if isinstance(node, Widget):
                 info = Columns(
                     [
-                        Pretty(child),
-                        highlighter(f"region={child.region!r}"),
+                        Pretty(node),
+                        highlighter(f"region={node.region!r}"),
                         highlighter(
-                            f"virtual_size={child.virtual_size!r}",
+                            f"virtual_size={node.virtual_size!r}",
                         ),
                     ]
                 )
+            else:
+                info = Columns([Pretty(node)])
+            return info
+
+        highlighter = ReprHighlighter()
+        tree = Tree(render_info(self))
+
+        def add_children(tree, node):
+            for child in node.children:
+                info = render_info(child)
                 css = child.styles.css
                 if css:
                     info = Group(
@@ -464,7 +532,6 @@ class DOMNode(MessagePump):
         self._classes.update(class_names)
         try:
             self.app.stylesheet.update(self.app, animate=True)
-            self.refresh()
         except NoActiveAppError:
             pass
 
@@ -478,7 +545,6 @@ class DOMNode(MessagePump):
         self._classes.difference_update(class_names)
         try:
             self.app.stylesheet.update(self.app, animate=True)
-            self.refresh()
         except NoActiveAppError:
             pass
 
@@ -492,7 +558,6 @@ class DOMNode(MessagePump):
         self._classes.symmetric_difference_update(class_names)
         try:
             self.app.stylesheet.update(self.app, animate=True)
-            self.refresh()
         except NoActiveAppError:
             pass
 

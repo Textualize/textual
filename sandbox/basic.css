@@ -11,19 +11,21 @@
   scrollbar-background-hover: $panel-darken-3;
   scrollbar-color: $system;
   scrollbar-color-active: $accent-darken-1;
+  scrollbar-size-horizontal: 1;
+  scrollbar-size-vertical: 2;
 }
 
 App > Screen {
   layout: dock;
   docks: side=left/1;
   background: $surface;
-  color: $text-surface;
+  color: $text-surface; 
 }
 
 
 #sidebar {
   color: $text-primary;
-  background: $primary;
+  background: $primary-background;
   dock: side;
   width: 30;
   offset-x: -100%;
@@ -37,7 +39,7 @@ App > Screen {
 
 #sidebar .title {
   height: 3;
-  background: $primary-darken-2;
+  background: $primary-background-darken-2;
   color: $text-primary-darken-2 ;
   border-right: outer $primary-darken-3;
   content-align: center middle;  
@@ -45,16 +47,16 @@ App > Screen {
 
 #sidebar .user {
   height: 8;
-  background: $primary-darken-1;
+  background: $primary-background-darken-1;
   color: $text-primary-darken-1;
-  border-right: outer $primary-darken-3;
+  border-right: outer $primary-background-darken-3;
   content-align: center middle;
 }
 
 #sidebar .content {
-  background: $primary;
-  color: $text-primary;
-  border-right: outer $primary-darken-3;
+  background: $primary-background;
+  color: $text-primary-background;
+  border-right: outer $primary-background-darken-3;
   content-align: center middle;
 }
 
@@ -90,14 +92,6 @@ Tweet {
   box-sizing: border-box;
 }
 
-Tweet.scrollbar-size-custom {
-  scrollbar-size-vertical: 2;
-}
-
-
-Tweet.scroll-horizontal {
-  scrollbar-size-horizontal: 2;
-}
 
 .scrollable {
   width: 80;
@@ -178,8 +172,8 @@ Tweet.scroll-horizontal TweetBody {
 
 OptionItem {
   height: 3;
-  background: $primary;
-  border-right: outer $primary-darken-2;
+  background: $primary-background;
+  border-right: outer $primary-background-darken-2;
   border-left: blank;
   content-align: center middle;
 }
@@ -187,7 +181,7 @@ OptionItem {
 OptionItem:hover {
   height: 3;
   color: $accent;
-  background: $primary-darken-1;
+  background: $primary-background-darken-1;
   /* border-top: hkey $accent2-darken-3;
   border-bottom: hkey $accent2-darken-3; */
   text-style: bold;

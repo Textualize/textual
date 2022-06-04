@@ -188,6 +188,8 @@ class ColorSystem:
         COLORS = [
             ("primary", primary),
             ("secondary", secondary),
+            ("primary-background", primary),
+            ("secondary-background", secondary),
             ("background", background),
             ("panel", panel),
             ("surface", surface),
@@ -199,7 +201,7 @@ class ColorSystem:
         ]
 
         # Colors names that have a dark variant
-        DARK_SHADES = {"primary", "secondary"}
+        DARK_SHADES = {"primary-background", "secondary-background"}
 
         for name, color in COLORS:
             is_dark_shade = dark and name in DARK_SHADES
