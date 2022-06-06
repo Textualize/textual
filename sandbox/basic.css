@@ -140,7 +140,7 @@ Tweet.scroll-horizontal TweetBody {
 
   /* padding: 1 0 0 0 ; */
 
-  transition: background 200ms in_out_cubic, color 300ms in_out_cubic;
+  transition: background 400ms in_out_cubic, color 400ms in_out_cubic;
  
 }
 

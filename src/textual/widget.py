@@ -67,6 +67,17 @@ class RenderCache(NamedTuple):
 @rich.repr.auto
 class Widget(DOMNode):
 
+    CSS = """
+    Widget{
+        scrollbar-background: $panel-darken-2;
+        scrollbar-background-hover: $panel-darken-3;        
+        scrollbar-color: $system;
+        scrollbar-color-active: $accent-darken-1;        
+        scrollbar-size-vertical: 2;
+        scrollbar-size-horizontal: 1;
+    }
+    """
+
     can_focus: bool = False
     can_focus_children: bool = True
 

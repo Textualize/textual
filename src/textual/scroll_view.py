@@ -13,8 +13,6 @@ class ScrollView(Widget):
         background: blue;
         overflow-y: auto;
         overflow-x: auto;
-        scrollbar-size-vertical: 2;
-        scrollbar-size-horizontal: 1;
     }
 
     """

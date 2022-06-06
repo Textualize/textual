@@ -113,7 +113,7 @@ class App(Generic[ReturnType], DOMNode):
     CSS = """
     App {     
         background: $surface;
-        color: $text-surface;        
+        color: $text-surface;                
     }
     """
 

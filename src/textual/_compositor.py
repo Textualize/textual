@@ -96,12 +96,12 @@ class LayoutUpdate:
         yield "height", height
 
 
-@rich.repr.auto
-class SpansUpdate:
+@rich.repr.auto(angular=True)
+class ChopsUpdate:
     """A renderable that applies updated spans to the screen."""
 
     def __init__(
-        self, spans: list[tuple[int, int, list[Segment]]], crop_y: int
+        self, chops: list[dict[int, list[Segment] | None]], crop: Region
     ) -> None:
         """Apply spans, which consist of a tuple of (LINE, OFFSET, SEGMENTS)
 
@@ -109,23 +109,28 @@ class SpansUpdate:
             spans (list[tuple[int, int, list[Segment]]]): A list of spans.
             crop_y (int): The y extent of the crop region
         """
-        self.spans = spans
-        self.last_y = crop_y - 1
+        self.chops = chops
+        self.crop = crop
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         move_to = Control.move_to
         new_line = Segment.line()
-        last_y = self.last_y
-        for y, x, segments in self.spans:
-            yield move_to(x, y)
-            yield from segments
+        chops = self.chops
+        crop = self.crop
+        last_y = crop.y_max - 1
+        for y in crop.y_range:
+            line = chops[y]
+            for x, segments in line.items():
+                if segments is not None:
+                    yield move_to(x, y)
+                    yield from segments
             if y != last_y:
                 yield new_line
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield [(y, x, "...") for y, x, _segments in self.spans]
+        yield None, self.crop
 
 
 @rich.repr.auto(angular=True)
@@ -544,7 +549,10 @@ class Compositor:
             if region in clip:
                 yield region, clip, widget.get_render_lines()
             elif overlaps(clip, region):
-                new_x, new_y, new_width, new_height = intersection(region, clip)
+                clipped_region = intersection(region, clip)
+                if not clipped_region:
+                    continue
+                new_x, new_y, new_width, new_height = clipped_region
                 delta_x = new_x - region.x
                 delta_y = new_y - region.y
                 crop_x = delta_x + new_width
@@ -566,6 +574,7 @@ class Compositor:
         ]
         return segment_lines
 
+    @timer("render")
     def render(self, full: bool = False) -> RenderableType | None:
         """Render a layout.
 
@@ -600,6 +609,7 @@ class Compositor:
 
         # Maps each cut on to a list of segments
         cuts = self.cuts
+
         # dict.fromkeys is a callable which takes a list of ints returns a dict which maps ints on to a list of Segments or None.
         fromkeys = cast(
             "Callable[[list[int]], dict[int, list[Segment] | None]]", dict.fromkeys
@@ -616,9 +626,6 @@ class Compositor:
 
         for region, clip, lines in renders:
             render_region = intersection(region, clip)
-
-            if not (render_region and crop.overlaps(render_region)):
-                continue
 
             for y, line in zip(render_region.y_range, lines):
                 if not is_rendered_line(y):
@@ -648,18 +655,7 @@ class Compositor:
             render_lines = self._assemble_chops(chops)
             return LayoutUpdate(render_lines, screen_region)
         else:
-            # It may be possible to do this without the line crop
-            crop_y, crop_y2 = crop.y_extents
-            render_lines = self._assemble_chops(chops[crop_y:crop_y2])
-            render_spans = [
-                (
-                    y,
-                    x1,
-                    line_crop(render_lines[y - crop_y], x1, x2),
-                )
-                for y, x1, x2 in spans
-            ]
-            return SpansUpdate(render_spans, crop_y2)
+            return ChopsUpdate(chops, crop)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
