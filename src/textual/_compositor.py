@@ -120,10 +120,11 @@ class ChopsUpdate:
         chops = self.chops
         crop = self.crop
         last_y = crop.y_max - 1
+        x1, x2 = crop.x_extents
         for y in crop.y_range:
             line = chops[y]
             for x, segments in line.items():
-                if segments is not None:
+                if segments is not None and x2 > x >= x1:
                     yield move_to(x, y)
                     yield from segments
             if y != last_y:
