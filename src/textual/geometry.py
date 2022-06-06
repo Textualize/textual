@@ -186,7 +186,7 @@ class Region(NamedTuple):
         """Create a Region from the union of other regions.
 
         Args:
-            regions (Iterable[Region]): One or more regions.
+            regions (Sequence[Region]): One or more regions.
 
         Returns:
             Region: A Region that encloses all other regions.
@@ -240,7 +240,7 @@ class Region(NamedTuple):
         The end value is non inclusive.
 
         Returns:
-            tuple[int, int]: [description]
+            tuple[int, int]: Pair of x coordinates (row numbers).
         """
         return (self.x, self.x + self.width)
 
@@ -251,7 +251,7 @@ class Region(NamedTuple):
         The end value is non inclusive.
 
         Returns:
-            tuple[int, int]: [description]
+            tuple[int, int]: Pair of y coordinates (line numbers).
         """
         return (self.y, self.y + self.height)
 

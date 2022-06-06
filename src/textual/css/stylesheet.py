@@ -305,8 +305,6 @@ class Stylesheet:
             },
         )
         self.replace_rules(node, node_rules, animate=animate)
-        if isinstance(node, Widget):
-            node._refresh_scrollbars()
 
     @classmethod
     def replace_rules(

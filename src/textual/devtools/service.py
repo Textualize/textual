@@ -176,9 +176,9 @@ class ClientHandler:
                 message_time = time()
                 if (
                     last_message_time is not None
-                    and message_time - last_message_time > 1
+                    and message_time - last_message_time > 0.5
                 ):
-                    # Print a rule if it has been longer than a second since the last message
+                    # Print a rule if it has been longer than half a second since the last message
                     self.service.console.rule()
                 self.service.console.print(
                     DevConsoleLog(

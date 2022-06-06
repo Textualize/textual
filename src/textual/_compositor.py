@@ -26,6 +26,7 @@ from rich.style import Style
 from . import errors
 from .geometry import Region, Offset, Size
 
+from ._profile import timer
 from ._loop import loop_last
 from ._segment_tools import line_crop
 from ._types import Lines
@@ -555,8 +556,7 @@ class Compositor:
     def _assemble_chops(
         cls, chops: list[dict[int, list[Segment] | None]]
     ) -> list[list[Segment]]:
-
-        # Pretty sure we don't need to sort the bucket items
+        """Combine chops in to lines."""
         segment_lines: list[list[Segment]] = [
             sum(
                 [line for line in bucket.values() if line is not None],
@@ -608,6 +608,8 @@ class Compositor:
         chops: list[dict[int, list[Segment] | None]]
         chops = [fromkeys(cut_set) for cut_set in cuts]
 
+        cut_segments: Iterable[list[Segment]]
+
         # Go through all the renders in reverse order and fill buckets with no render
         renders = self._get_renders(crop)
         intersection = Region.intersection
@@ -615,22 +617,29 @@ class Compositor:
         for region, clip, lines in renders:
             render_region = intersection(region, clip)
 
+            if not (render_region and crop.overlaps(render_region)):
+                continue
+
             for y, line in zip(render_region.y_range, lines):
                 if not is_rendered_line(y):
                     continue
+
+                chops_line = chops[y]
+                if all(chops_line):
+                    continue
+
                 first_cut, last_cut = render_region.x_extents
                 final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
 
-                if len(final_cuts) == 2:
+                if len(final_cuts) <= 2:
                     # Two cuts, which means the entire line
                     cut_segments = [line]
                 else:
                     render_x = render_region.x
-                    relative_cuts = [cut - render_x for cut in final_cuts]
-                    _, *cut_segments = divide(line, relative_cuts)
+                    relative_cuts = [cut - render_x for cut in final_cuts[1:]]
+                    cut_segments = divide(line, relative_cuts)
 
                 # Since we are painting front to back, the first segments for a cut "wins"
-                chops_line = chops[y]
                 for cut, segments in zip(final_cuts, cut_segments):
                     if chops_line[cut] is None:
                         chops_line[cut] = segments
@@ -639,10 +648,15 @@ class Compositor:
             render_lines = self._assemble_chops(chops)
             return LayoutUpdate(render_lines, screen_region)
         else:
+            # It may be possible to do this without the line crop
             crop_y, crop_y2 = crop.y_extents
             render_lines = self._assemble_chops(chops[crop_y:crop_y2])
             render_spans = [
-                (y, x1, line_crop(render_lines[y - crop_y], x1, x2))
+                (
+                    y,
+                    x1,
+                    line_crop(render_lines[y - crop_y], x1, x2),
+                )
                 for y, x1, x2 in spans
             ]
             return SpansUpdate(render_spans, crop_y2)

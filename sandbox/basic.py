@@ -146,7 +146,7 @@ class BasicApp(App, css_path="basic.css"):
 
     def key_t(self):
         # Pressing "t" toggles the content of the TweetBody widget, from a long "Lorem ipsum..." to a shorter one.
-        tweet_body = self.screen.query("TweetBody").first()
+        tweet_body = self.query("TweetBody").first()
         tweet_body.short_lorem = not tweet_body.short_lorem
 
 

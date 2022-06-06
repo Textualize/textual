@@ -266,6 +266,14 @@ class StylesBase(ABC):
         spacing = self.padding + self.border.spacing + self.margin
         return spacing
 
+    @property
+    def auto_dimensions(self) -> bool:
+        """Check if width or height are set to 'auto'."""
+        has_rule = self.has_rule
+        return (has_rule("width") and self.width.is_auto) or (
+            has_rule("height") and self.height.is_auto
+        )
+
     @abstractmethod
     def has_rule(self, rule: str) -> bool:
         """Check if a rule is set on this Styles object.

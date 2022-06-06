@@ -623,19 +623,16 @@ class Widget(DOMNode):
         horizontal_scrollbar_thickness = self.scrollbar_size_horizontal
         vertical_scrollbar_thickness = self.scrollbar_size_vertical
 
-        print(self, horizontal_scrollbar_thickness, vertical_scrollbar_thickness)
-
         if self.styles.scrollbar_gutter == "stable":
             # Let's _always_ reserve some space, whether the scrollbar is actually displayed or not:
             show_vertical_scrollbar = True
             vertical_scrollbar_thickness = self.styles.scrollbar_size_vertical
 
         if show_horizontal_scrollbar and show_vertical_scrollbar:
-            print(1, region)
             (region, _, _, _) = region.split(
-                -vertical_scrollbar_thickness, -horizontal_scrollbar_thickness
+                -vertical_scrollbar_thickness,
+                -horizontal_scrollbar_thickness,
             )
-            print(2, region)
         elif show_vertical_scrollbar:
             region, _ = region.split_vertical(-vertical_scrollbar_thickness)
         elif show_horizontal_scrollbar:
@@ -915,6 +912,9 @@ class Widget(DOMNode):
             self._content_height_cache = (None, 0)
             self.set_dirty()
             self._repaint_required = True
+            if isinstance(self.parent, Widget) and self.styles.auto_dimensions:
+                self.parent.refresh(layout=True)
+
         self.check_idle()
 
     def render(self) -> RenderableType:
