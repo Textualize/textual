@@ -8,7 +8,7 @@ from typing import Iterable, NamedTuple
 
 import rich.repr
 
-from ..geometry import Offset, Size
+from ..geometry import Offset, Size, clamp
 
 
 class ScalarError(Exception):
@@ -333,6 +333,17 @@ class ScalarOffset(NamedTuple):
 
 
 NULL_SCALAR = ScalarOffset(Scalar.from_number(0), Scalar.from_number(0))
+
+
+def percentage_string_to_float(string: str) -> float:
+    string = string.strip()
+    if string.endswith("%"):
+        percentage = string[:-1]
+        float_percentage = clamp(float(percentage) / 100, 0, 1)
+    else:
+        float_percentage = float(string)
+    return float_percentage
+
 
 if __name__ == "__main__":
     print(Scalar.parse("3.14fr"))

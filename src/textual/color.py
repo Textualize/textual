@@ -23,6 +23,8 @@ from rich.color import Color as RichColor
 from rich.style import Style
 from rich.text import Text
 
+from textual.css.scalar import percentage_string_to_float
+from textual.css.tokenize import COMMA, OPEN_BRACE, CLOSE_BRACE, DECIMAL, PERCENT
 from textual.suggestions import get_suggestion
 from ._color_constants import COLOR_NAME_TO_RGB
 from .geometry import clamp
@@ -53,13 +55,15 @@ class Lab(NamedTuple):
 
 
 RE_COLOR = re.compile(
-    r"""^
-\#([0-9a-fA-F]{3})$|
-\#([0-9a-fA-F]{4})$|
-\#([0-9a-fA-F]{6})$|
-\#([0-9a-fA-F]{8})$|
-rgb\((\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*)\)$|
-rgba\((\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*)\)$
+    rf"""^
+\#([0-9a-fA-F]{{3}})$|
+\#([0-9a-fA-F]{{4}})$|
+\#([0-9a-fA-F]{{6}})$|
+\#([0-9a-fA-F]{{8}})$|
+rgb{OPEN_BRACE}({DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}){CLOSE_BRACE}$|
+rgba{OPEN_BRACE}({DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}){CLOSE_BRACE}$|
+hsl{OPEN_BRACE}({DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}){CLOSE_BRACE}$|
+hsla{OPEN_BRACE}({DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{COMMA}{DECIMAL}){CLOSE_BRACE}$|
 """,
     re.VERBOSE,
 )
@@ -123,7 +127,9 @@ class Color(NamedTuple):
         Returns:
             Color: A new color.
         """
+        print("A")
         r, g, b = hls_to_rgb(h, l, s)
+        print("B")
         return cls(int(r * 255 + 0.5), int(g * 255 + 0.5), int(b * 255 + 0.5))
 
     def __rich__(self) -> Text:
@@ -296,6 +302,8 @@ class Color(NamedTuple):
             rgba_hex,
             rgb,
             rgba,
+            hsl,
+            hsla,
         ) = color_match.groups()
 
         if rgb_hex_triple is not None:
@@ -328,6 +336,19 @@ class Color(NamedTuple):
                 clamp(int(float_b), 0, 255),
                 clamp(float_a, 0.0, 1.0),
             )
+        elif hsl is not None:
+            h, s, l = [value.strip() for value in hsl.split(",")]
+            h = clamp(int(h), 0, 360) / 360
+            s = percentage_string_to_float(s)
+            l = percentage_string_to_float(l)
+            color = Color.from_hls(h, l, s)
+        elif hsla is not None:
+            h, s, l, a = [value.strip() for value in hsl.split(",")]
+            h = clamp(h, 0, 360)
+            s = percentage_string_to_float(s)
+            l = percentage_string_to_float(l)
+            a = clamp(a, 0.0, 1.0)
+            color = Color.from_hls(h, l, s).with_alpha(a)
         else:
             raise AssertionError("Can't get here if RE_COLOR matches")
         return color
