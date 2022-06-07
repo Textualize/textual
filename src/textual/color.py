@@ -63,7 +63,7 @@ RE_COLOR = re.compile(
 rgb{OPEN_BRACE}({DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}){CLOSE_BRACE}$|
 rgba{OPEN_BRACE}({DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}){CLOSE_BRACE}$|
 hsl{OPEN_BRACE}({DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}){CLOSE_BRACE}$|
-hsla{OPEN_BRACE}({DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{COMMA}{DECIMAL}){CLOSE_BRACE}$|
+hsla{OPEN_BRACE}({DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{COMMA}{DECIMAL}){CLOSE_BRACE}$
 """,
     re.VERBOSE,
 )
@@ -289,7 +289,11 @@ class Color(NamedTuple):
         if color_match is None:
             error_message = f"failed to parse {color_text!r} as a color"
             suggested_color = None
-            if not color_text.startswith("#") and not color_text.startswith("rgb"):
+            if (
+                not color_text.startswith("#")
+                and not color_text.startswith("rgb")
+                and not color_text.startswith("hsl")
+            ):
                 # Seems like we tried to use a color name: let's try to find one that is close enough:
                 suggested_color = get_suggestion(color_text, COLOR_NAME_TO_RGB.keys())
                 if suggested_color:
