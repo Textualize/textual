@@ -904,6 +904,32 @@ class TestParseText:
         assert styles.background == Color.parse("red")
 
 
+class TestParseColor:
+    """More in-depth tests around parsing of CSS colors"""
+
+    @pytest.mark.parametrize("value,result", [
+        ("rgb(1,255,50)", Color(1, 255, 50)),
+        ("rgb( 1, 255,50 )", Color(1, 255, 50)),
+        ("rgba( 1, 255,50,0.3 )", Color(1, 255, 50, 0.3)),
+        ("rgba( 1, 255,50, 1.3 )", Color(1, 255, 50, 1.0)),
+        ("hsl( 180, 50%, 50% )", Color(64, 191, 191)),
+        ("hsl(180,50%,50%)", Color(64, 191, 191)),
+        ("hsla(180,50%,50%,0.25)", Color(64, 191, 191, 0.25)),
+        ("hsla( 180, 50% ,50%,0.25 )", Color(64, 191, 191, 0.25)),
+        ("hsla( 180, 50% , 50% , 1.5 )", Color(64, 191, 191)),
+    ])
+    def test_rgb_and_hsl(self, value, result):
+        css = f""".box {{
+          color: {value};
+        }}
+        """
+        stylesheet = Stylesheet()
+        stylesheet.add_source(css)
+
+        styles = stylesheet.rules[0].styles
+        assert styles.color == result
+
+
 class TestParseOffset:
     @pytest.mark.parametrize(
         "offset_x, parsed_x, offset_y, parsed_y",

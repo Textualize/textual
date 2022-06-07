@@ -8,7 +8,7 @@ from textual.css.tokenizer import Expect, Tokenizer, Token
 
 PERCENT = r"-?\d+\.?\d*%"
 DECIMAL = r"-?\d+\.?\d*"
-COMMA = r",\s*"
+COMMA = r"\s*,\s*"
 OPEN_BRACE = r"\(\s*"
 CLOSE_BRACE = r"\s*\)"
 
@@ -20,7 +20,7 @@ COMMENT_START = r"\/\*"
 SCALAR = rf"{DECIMAL}(?:fr|%|w|h|vw|vh)"
 DURATION = r"\d+\.?\d*(?:ms|s)"
 NUMBER = r"\-?\d+\.?\d*"
-COLOR = f"{HEX_COLOR}|{RGB_COLOR}|{HSL_COLOR}"
+COLOR = rf"{HEX_COLOR}|{RGB_COLOR}|{HSL_COLOR}"
 KEY_VALUE = r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+"
 TOKEN = "[a-zA-Z][a-zA-Z0-9_-]*"
 STRING = r"\".*?\""

@@ -127,9 +127,7 @@ class Color(NamedTuple):
         Returns:
             Color: A new color.
         """
-        print("A")
         r, g, b = hls_to_rgb(h, l, s)
-        print("B")
         return cls(int(r * 255 + 0.5), int(g * 255 + 0.5), int(b * 255 + 0.5))
 
     def __rich__(self) -> Text:
@@ -341,17 +339,17 @@ class Color(NamedTuple):
                 clamp(float_a, 0.0, 1.0),
             )
         elif hsl is not None:
-            h, s, l = [value.strip() for value in hsl.split(",")]
-            h = clamp(int(h), 0, 360) / 360
+            h, s, l = hsl.split(",")
+            h = clamp(float(h), 0, 360) / 360
             s = percentage_string_to_float(s)
             l = percentage_string_to_float(l)
             color = Color.from_hls(h, l, s)
         elif hsla is not None:
-            h, s, l, a = [value.strip() for value in hsl.split(",")]
-            h = clamp(h, 0, 360)
+            h, s, l, a = hsla.split(",")
+            h = clamp(float(h), 0, 360) / 360
             s = percentage_string_to_float(s)
             l = percentage_string_to_float(l)
-            a = clamp(a, 0.0, 1.0)
+            a = clamp(float(a), 0.0, 1.0)
             color = Color.from_hls(h, l, s).with_alpha(a)
         else:
             raise AssertionError("Can't get here if RE_COLOR matches")
