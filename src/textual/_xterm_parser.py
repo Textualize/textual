@@ -30,7 +30,7 @@ class XTermParser(Parser[events.Event]):
         self.last_x = 0
         self.last_y = 0
 
-        self._debug_log_file = open("keys.log", "wt")
+        self._debug_log_file = open("keys.log", "wt") if debug else None
 
         super().__init__()
 
