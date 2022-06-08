@@ -16,6 +16,7 @@ from rich.console import Console, RenderableType
 from rich.measure import Measurement
 from rich.padding import Padding
 from rich.style import Style
+from rich.styled import Styled
 
 
 from . import errors
@@ -91,7 +92,6 @@ class Widget(DOMNode):
     ) -> None:
 
         self._size = Size(0, 0)
-        self._virtual_size = Size(0, 0)
         self._container_size = Size(0, 0)
         self._layout_required = False
         self._repaint_required = False
@@ -117,6 +117,7 @@ class Widget(DOMNode):
         super().__init__(name=name, id=id, classes=classes)
         self.add_children(*children)
 
+    virtual_size = Reactive(Size(0, 0), layout=True)
     auto_width = Reactive(True)
     auto_height = Reactive(True)
     has_focus = Reactive(False)
@@ -768,14 +769,6 @@ class Widget(DOMNode):
         return Offset(x, y)
 
     @property
-    def virtual_size(self) -> Size:
-        return self._virtual_size
-
-    @virtual_size.setter
-    def virtual_size(self, new_size: Size) -> None:
-        self._virtual_size = new_size
-
-    @property
     def region(self) -> Region:
         """The region occupied by this widget, relative to the Screen."""
         try:
@@ -846,9 +839,9 @@ class Widget(DOMNode):
     def size_updated(
         self, size: Size, virtual_size: Size, container_size: Size
     ) -> None:
-        if self._size != size or self._virtual_size != virtual_size:
+        if self._size != size or self.virtual_size != virtual_size:
             self._size = size
-            self._virtual_size = virtual_size
+            self.virtual_size = virtual_size
             self._container_size = container_size
             if self.is_scrollable:
                 self._refresh_scrollbars()
@@ -878,9 +871,7 @@ class Widget(DOMNode):
         self._render_cache = RenderCache(self.size, lines)
         self._dirty_regions.clear()
 
-    def get_render_lines(
-        self, start: int | None = None, end: int | None = None
-    ) -> Lines:
+    def render_lines(self, start: int | None = None, end: int | None = None) -> Lines:
         """Get segment lines to render the widget.
 
         Args:
@@ -1051,7 +1042,7 @@ class Widget(DOMNode):
                 event.stop()
 
     def handle_scroll_to(self, message: ScrollTo) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_to(message.x, message.y, animate=message.animate, duration=0.1)
             message.stop()
 

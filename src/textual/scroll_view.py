@@ -1,18 +1,20 @@
 from __future__ import annotations
 
 from rich.console import RenderableType
+from rich.segment import Segment
+from rich.style import Style
 
 from .geometry import Size
+from ._types import Lines
 from .widget import Widget
 
 
 class ScrollView(Widget):
     CSS = """
     
-    ScrollView {
-        background: blue;
+    ScrollView {     
         overflow-y: auto;
-        overflow-x: auto;
+        overflow-x: auto;        
     }
 
     """
@@ -26,9 +28,19 @@ class ScrollView(Widget):
     def is_scrollable(self) -> bool:
         return True
 
+    @property
+    def is_transparent(self) -> bool:
+        return False
+
     def on_mount(self):
         self.virtual_size = Size(200, 200)
         self._refresh_scrollbars()
+
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        return self.virtual_size.width
+
+    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        return self.virtual_size.height
 
     def size_updated(
         self, size: Size, virtual_size: Size, container_size: Size
@@ -53,26 +65,25 @@ class ScrollView(Widget):
             self.refresh(layout=False)
             self.call_later(self.scroll_to, self.scroll_x, self.scroll_y)
 
+    # def render_lines(self, start: int | None = None, end: int | None = None) -> Lines:
+    #     style = Style.parse("white on green")
+    #     width, height = self.size
+    #     lines = [
+    #         [Segment(str(" " * width), style)]
+    #         for line in range(start or 0, end or height)
+    #     ]
+    #     return lines
+
     def render(self) -> RenderableType:
+
         from rich.panel import Panel
 
         return Panel(f"{self.scroll_offset} {self.show_vertical_scrollbar}")
 
     def watch_scroll_x(self, new_value: float) -> None:
         self.horizontal_scrollbar.position = int(new_value)
-        self.refresh()
+        self.refresh(layout=False)
 
     def watch_scroll_y(self, new_value: float) -> None:
         self.vertical_scrollbar.position = int(new_value)
-        self.refresh()
-
-
-if __name__ == "__main__":
-    from textual.app import App, ComposeResult
-
-    class ScrollApp(App):
-        def compose(self) -> ComposeResult:
-            yield ScrollView()
-
-    app = ScrollApp()
-    app.run()
+        self.refresh(layout=False)
