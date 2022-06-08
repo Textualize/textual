@@ -41,6 +41,14 @@ class Driver(ABC):
             click_event = events.Click.from_event(event)
             self.send_event(click_event)
 
+    def enable_bracketed_paste(self) -> None:
+        self.console.file.write("\x1b[?2004h")
+        self.console.file.flush()
+
+    def disable_bracketed_paste(self) -> None:
+        self.console.file.write("\x1b[?2004l")
+        self.console.file.flush()
+
     @abstractmethod
     def start_application_mode(self) -> None:
         ...

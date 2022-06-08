@@ -413,3 +413,24 @@ class DescendantFocus(Event, verbosity=2, bubble=True):
 
 class DescendantBlur(Event, verbosity=2, bubble=True):
     pass
+
+
+@rich.repr.auto
+class Paste(Event, bubble=False):
+    """Event containing text that was pasted into the Textual application.
+    This event will only appear when running in a terminal emulator that supports
+    bracketed paste mode. Textual will enable bracketed pastes when an app starts,
+    and disable it when the app shuts down.
+    """
+
+    def __init__(self, sender: MessageTarget, text: str) -> None:
+        """
+        Args:
+            sender (MessageTarget): The sender of the event, (in this case the app).
+            text: The text that has been pasted
+        """
+        super().__init__(sender)
+        self.text = text
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "text", self.text

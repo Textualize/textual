@@ -111,9 +111,9 @@ class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications"""
 
     CSS = """
-    App {     
+    App {
         background: $surface;
-        color: $text-surface;        
+        color: $text-surface;
     }
     """
 
@@ -758,6 +758,7 @@ class App(Generic[ReturnType], DOMNode):
 
             driver = self._driver = self.driver_class(self.console, self)
             driver.start_application_mode()
+            driver.enable_bracketed_paste()
             try:
                 with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
                     mount_event = events.Mount(sender=self)
@@ -772,6 +773,7 @@ class App(Generic[ReturnType], DOMNode):
                     await self.animator.stop()
                     await self.close_all()
             finally:
+                driver.disable_bracketed_paste()
                 driver.stop_application_mode()
         except Exception as error:
             self.on_exception(error)

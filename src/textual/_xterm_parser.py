@@ -14,6 +14,8 @@ _re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[\d;]+[mM]|M...)\Z"
 _re_terminal_mode_response = re.compile(
     "^" + re.escape("\x1b[") + r"\?(?P<mode_id>\d+);(?P<setting_parameter>\d)\$y"
 )
+_re_bracketed_paste_start = re.compile(r"^\x1b\[200~$")
+_re_bracketed_paste_end = re.compile(r"^\x1b\[201~$")
 
 
 class XTermParser(Parser[events.Event]):
@@ -28,7 +30,7 @@ class XTermParser(Parser[events.Event]):
         self.last_x = 0
         self.last_y = 0
 
-        self._debug_log_file = open("keys.log", "wt") if debug else None
+        self._debug_log_file = open("keys.log", "wt")
 
         super().__init__()
 
@@ -85,9 +87,17 @@ class XTermParser(Parser[events.Event]):
         read1 = self.read1
         get_key_ansi_sequence = ANSI_SEQUENCES_KEYS.get
         more_data = self.more_data
+        paste_buffer: list[str] = []
+        bracketed_paste = False
 
         while not self.is_eof:
             character = yield read1()
+            if bracketed_paste:
+                paste_buffer.append(character)
+            elif not bracketed_paste and paste_buffer:
+                # The paste buffer has content, but the bracketed paste has finished,
+                # so we flush the paste buffer.
+                on_token(events.Paste(self.sender, text="".join(paste_buffer)))
             self.debug_log(f"character={character!r}")
             if character == ESC:
                 # Could be the escape key was pressed OR the start of an escape sequence
@@ -109,6 +119,23 @@ class XTermParser(Parser[events.Event]):
                 while True:
                     sequence += yield read1()
                     self.debug_log(f"sequence={sequence!r}")
+
+                    # Firstly, check if it's a bracketed paste
+                    bracketed_paste_start_match = _re_bracketed_paste_start.match(
+                        sequence
+                    )
+                    self.debug_log(f"sequence = {repr(sequence)}")
+                    self.debug_log(f"match = {repr(bracketed_paste_start_match)}")
+                    if bracketed_paste_start_match is not None:
+                        bracketed_paste = True
+                        self.debug_log("BRACKETED PASTE START DETECTED")
+                        break
+                    bracketed_paste_end_match = _re_bracketed_paste_end.match(sequence)
+                    if bracketed_paste_end_match is not None:
+                        bracketed_paste = False
+                        self.debug_log("BRACKETED PASTE ENDED")
+                        break
+
                     # Was it a pressed key event that we received?
                     keys = get_key_ansi_sequence(sequence, None)
                     if keys is not None:
