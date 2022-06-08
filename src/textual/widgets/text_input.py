@@ -197,6 +197,8 @@ class TextInput(TextWidgetBase, can_focus=True):
         self.refresh()
 
     def on_paste(self, event: events.Paste) -> None:
+        """Handle Paste event by stripping newlines from the text, and inserting
+        the text at the cursor position, sliding the visible window if required."""
         text = "".join(event.text.splitlines())
         width_behind_cursor = self._visible_content_to_cursor_cell_len
         self._editor.insert(text)
@@ -272,6 +274,7 @@ class TextInput(TextWidgetBase, can_focus=True):
 
     @property
     def _visible_content_to_cursor_cell_len(self) -> int:
+        """The cell width of the visible content up to the cursor cell"""
         start, _ = self.visible_range
         visible_content_to_cursor = self._editor.get_range(
             start, self._editor.cursor_index + 1
@@ -280,6 +283,7 @@ class TextInput(TextWidgetBase, can_focus=True):
 
     @property
     def _cursor_at_right_edge(self) -> bool:
+        """True if the cursor is at the right edge of the content area"""
         return self._visible_content_to_cursor_cell_len == self.content_region.width
 
     def on_key(self, event: events.Key) -> None:
