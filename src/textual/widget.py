@@ -72,9 +72,10 @@ class Widget(DOMNode):
         scrollbar-background: $panel-darken-2;
         scrollbar-background-hover: $panel-darken-3;        
         scrollbar-color: $system;
-        scrollbar-color-active: $accent-darken-1;        
+        scrollbar-color-active: $accent-darken-1;                
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
+        
     }
     """
 

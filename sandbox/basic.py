@@ -109,7 +109,10 @@ class BasicApp(App, css_path="basic.css"):
             content=Widget(
                 Tweet(TweetBody()),
                 Widget(
-                    Static(Syntax(CODE, "python"), classes="code"),
+                    Static(
+                        Syntax(CODE, "python", line_numbers=True, indent_guides=True),
+                        classes="code",
+                    ),
                     classes="scrollable",
                 ),
                 Error(),
