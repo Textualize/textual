@@ -1,5 +1,4 @@
 import pytest
-
 from rich.color import Color as RichColor
 from rich.text import Text
 
@@ -108,10 +107,41 @@ def test_color_blend():
         ("rgb(2,3,4)", Color(2, 3, 4, 1.0)),
         ("rgba(2,3,4,1.0)", Color(2, 3, 4, 1.0)),
         ("rgba(2,3,4,0.058823529411764705)", Color(2, 3, 4, 0.058823529411764705)),
+        ("hsl(45,25%,25%)", Color(80, 72, 48)),
+        ("hsla(45,25%,25%,0.35)", Color(80, 72, 48, 0.35)),
     ],
 )
 def test_color_parse(text, expected):
     assert Color.parse(text) == expected
+
+
+@pytest.mark.parametrize("input,output", [
+    ("rgb( 300, 300 , 300 )", Color(255, 255, 255)),
+    ("rgba( 2 , 3 , 4, 1.0 )", Color(2, 3, 4, 1.0)),
+    ("hsl( 45, 25% , 25% )", Color(80, 72, 48)),
+    ("hsla( 45, 25% , 25%, 0.35 )", Color(80, 72, 48, 0.35)),
+])
+def test_color_parse_input_has_spaces(input, output):
+    assert Color.parse(input) == output
+
+
+@pytest.mark.parametrize("input,output", [
+    ("rgb(300, 300, 300)", Color(255, 255, 255)),
+    ("rgba(300, 300, 300, 300)", Color(255, 255, 255, 1.0)),
+    ("hsl(400, 200%, 250%)", Color(255, 255, 255, 1.0)),
+    ("hsla(400, 200%, 250%, 1.9)", Color(255, 255, 255, 1.0)),
+])
+def test_color_parse_clamp(input, output):
+    assert Color.parse(input) == output
+
+
+def test_color_parse_hsl_negative_degrees():
+    assert Color.parse("hsl(-90, 50%, 50%)") == Color.parse("hsl(270, 50%, 50%)")
+
+
+def test_color_parse_hsla_negative_degrees():
+    assert Color.parse("hsla(-45, 50%, 50%, 0.2)") == Color.parse(
+        "hsla(315, 50%, 50%, 0.2)")
 
 
 def test_color_parse_color():

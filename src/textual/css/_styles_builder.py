@@ -40,7 +40,14 @@ from .constants import (
 )
 from .errors import DeclarationError, StyleValueError
 from .model import Declaration
-from .scalar import Scalar, ScalarOffset, Unit, ScalarError, ScalarParseError
+from .scalar import (
+    Scalar,
+    ScalarOffset,
+    Unit,
+    ScalarError,
+    ScalarParseError,
+    percentage_string_to_float,
+)
 from .styles import DockGroup, Styles
 from .tokenize import Token
 from .transition import Transition
@@ -333,9 +340,8 @@ class StylesBuilder:
             token_name = token.name
             value = token.value
             if token_name == "scalar" and value.endswith("%"):
-                percentage = value[:-1]
                 try:
-                    opacity = clamp(float(percentage) / 100, 0, 1)
+                    opacity = percentage_string_to_float(value)
                     self.styles.set_rule(name, opacity)
                 except ValueError:
                     error = True

@@ -6,11 +6,21 @@ from typing import Iterable
 
 from textual.css.tokenizer import Expect, Tokenizer, Token
 
+PERCENT = r"-?\d+\.?\d*%"
+DECIMAL = r"-?\d+\.?\d*"
+COMMA = r"\s*,\s*"
+OPEN_BRACE = r"\(\s*"
+CLOSE_BRACE = r"\s*\)"
+
+HEX_COLOR = r"\#[0-9a-fA-F]{8}|\#[0-9a-fA-F]{6}|\#[0-9a-fA-F]{4}|\#[0-9a-fA-F]{3}"
+RGB_COLOR = rf"rgb{OPEN_BRACE}{DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}{CLOSE_BRACE}|rgba{OPEN_BRACE}{DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}{CLOSE_BRACE}"
+HSL_COLOR = rf"hsl{OPEN_BRACE}{DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{CLOSE_BRACE}|hsla{OPEN_BRACE}{DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{COMMA}{DECIMAL}{CLOSE_BRACE}"
+
 COMMENT_START = r"\/\*"
-SCALAR = r"\-?\d+\.?\d*(?:fr|%|w|h|vw|vh)"
+SCALAR = rf"{DECIMAL}(?:fr|%|w|h|vw|vh)"
 DURATION = r"\d+\.?\d*(?:ms|s)"
 NUMBER = r"\-?\d+\.?\d*"
-COLOR = r"\#[0-9a-fA-F]{8}|\#[0-9a-fA-F]{6}|\#[0-9a-fA-F]{4}|\#[0-9a-fA-F]{3}|rgb\(\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*\)|rgba\(\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*\)"
+COLOR = rf"{HEX_COLOR}|{RGB_COLOR}|{HSL_COLOR}"
 KEY_VALUE = r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+"
 TOKEN = "[a-zA-Z][a-zA-Z0-9_-]*"
 STRING = r"\".*?\""
