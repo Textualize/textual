@@ -136,21 +136,21 @@ def test_cursor_text_end_cursor_in_middle():
 
 def test_insert_at_cursor_cursor_at_start():
     editor = TextEditorBackend(CONTENT)
-    assert editor.insert_at_cursor("ABC")
+    assert editor.insert("ABC")
     assert editor.content == "ABC" + CONTENT
     assert editor.cursor_index == len("ABC")
 
 def test_insert_at_cursor_cursor_in_middle():
     start_cursor_index = 6
     editor = TextEditorBackend(CONTENT, start_cursor_index)
-    assert editor.insert_at_cursor("ABC")
+    assert editor.insert("ABC")
     assert editor.content == "Hello,ABC world!"
     assert editor.cursor_index == start_cursor_index + len("ABC")
 
 
 def test_insert_at_cursor_cursor_at_end():
     editor = TextEditorBackend(CONTENT, len(CONTENT))
-    assert editor.insert_at_cursor("ABC")
+    assert editor.insert("ABC")
     assert editor.content == CONTENT + "ABC"
     assert editor.cursor_index == len(editor.content)
 

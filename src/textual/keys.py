@@ -180,7 +180,6 @@ class Keys(str, Enum):
     CPRResponse = "<cursor-position-response>"
     Vt100MouseEvent = "<vt100-mouse-event>"
     WindowsMouseEvent = "<windowshift+mouse-event>"
-    BracketedPaste = "<bracketed-paste>"
 
     # For internal use: key which is ignored.
     # (The key binding for this key should not do anything.)

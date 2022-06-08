@@ -5,7 +5,6 @@ from typing import Callable
 from rich.cells import cell_len
 from rich.console import RenderableType
 from rich.padding import Padding
-from rich.style import Style
 from rich.text import Text
 
 from textual import events, _clock
@@ -44,7 +43,7 @@ class TextWidgetBase(Widget):
 
         changed = False
         if event.is_printable:
-            changed = self._editor.insert_at_cursor(key)
+            changed = self._editor.insert(key)
         elif key == "ctrl+h":
             changed = self._editor.delete_back()
         elif key == "ctrl+d":
@@ -197,6 +196,30 @@ class TextInput(TextWidgetBase, can_focus=True):
         self._editor.cursor_index = new_cursor_index
         self.refresh()
 
+    def on_paste(self, event: events.Paste) -> None:
+        """Handle Paste event by stripping newlines from the text, and inserting
+        the text at the cursor position, sliding the visible window if required."""
+        text = "".join(event.text.splitlines())
+        width_behind_cursor = self._visible_content_to_cursor_cell_len
+        self._editor.insert(text)
+        paste_cell_len = cell_len(text)
+        available_width = self.content_region.width
+
+        # By inserting the pasted text, how far beyond the bounds of the text input
+        # will we move the cursor? We need to slide the visible window along by that.
+        scroll_amount = paste_cell_len + width_behind_cursor - available_width + 1
+
+        if scroll_amount > 0:
+            self._slide_window(scroll_amount)
+
+        self.refresh()
+
+    def _slide_window(self, amount: int) -> None:
+        """Slide the visible window left or right by `amount`. Negative integers move
+        the window left, and positive integers move the window right."""
+        start, end = self.visible_range
+        self.visible_range = start + amount, end + amount
+
     def _reset_visible_range(self):
         """Reset our window into the editor content. Used when the widget is resized."""
         available_width = self.content_region.width
@@ -249,6 +272,20 @@ class TextInput(TextWidgetBase, can_focus=True):
                 display_text = self._apply_cursor_to_text(display_text, 0)
             return display_text
 
+    @property
+    def _visible_content_to_cursor_cell_len(self) -> int:
+        """The cell width of the visible content up to the cursor cell"""
+        start, _ = self.visible_range
+        visible_content_to_cursor = self._editor.get_range(
+            start, self._editor.cursor_index + 1
+        )
+        return cell_len(visible_content_to_cursor)
+
+    @property
+    def _cursor_at_right_edge(self) -> bool:
+        """True if the cursor is at the right edge of the content area"""
+        return self._visible_content_to_cursor_cell_len == self.content_region.width
+
     def on_key(self, event: events.Key) -> None:
         key = event.key
         if key in self.STOP_PROPAGATE:
@@ -267,19 +304,14 @@ class TextInput(TextWidgetBase, can_focus=True):
         scrollable = cell_len(self._editor.content) >= available_width
 
         # Check what content is visible from the editor, and how wide that content is
-        visible_content = self._editor.get_range(start, end)
-        visible_content_cell_len = cell_len(visible_content)
-        visible_content_to_cursor = self._editor.get_range(
-            start, self._editor.cursor_index + 1
-        )
-        visible_content_to_cursor_cell_len = cell_len(visible_content_to_cursor)
+        visible_content_to_cursor_cell_len = self._visible_content_to_cursor_cell_len
 
-        cursor_at_end = visible_content_to_cursor_cell_len == available_width
+        cursor_at_end = self._cursor_at_right_edge
         key_cell_len = cell_len(key)
         if event.is_printable:
             # Check if we'll need to scroll to accommodate the new cell width after insertion.
             if visible_content_to_cursor_cell_len + key_cell_len >= available_width:
-                self.visible_range = start + key_cell_len, end + key_cell_len
+                self._slide_window(key_cell_len)
             self._update_suggestion(event)
         elif key == "enter" and self._editor.content:
             self.post_message_no_wait(TextInput.Submitted(self, self._editor.content))
@@ -296,12 +328,9 @@ class TextInput(TextWidgetBase, can_focus=True):
                         window_shift_amount = cell_width_character_to_right
                     else:
                         window_shift_amount = 1
-                    self.visible_range = (
-                        start + window_shift_amount,
-                        end + window_shift_amount,
-                    )
+                    self._slide_window(window_shift_amount)
             if self._suggestion_suffix and self._editor.cursor_at_end:
-                self._editor.insert_at_cursor(self._suggestion_suffix)
+                self._editor.insert(self._suggestion_suffix)
                 self._suggestion_suffix = ""
                 self._reset_visible_range()
         elif key == "left":
@@ -315,7 +344,7 @@ class TextInput(TextWidgetBase, can_focus=True):
                     self.app.bell()
         elif key == "ctrl+h":
             if cursor_index == start and self._editor.query_cursor_left():
-                self.visible_range = start - 1, end - 1
+                self._slide_window(-1)
             self._update_suggestion(event)
         elif key == "ctrl+d":
             self._update_suggestion(event)
@@ -420,9 +449,9 @@ class TextAreaChild(TextWidgetBase, can_focus=True):
             event.stop()
 
         if event.key == "enter":
-            self._editor.insert_at_cursor("\n")
+            self._editor.insert("\n")
         elif event.key == "tab":
-            self._editor.insert_at_cursor("\t")
+            self._editor.insert("\t")
         elif event.key == "escape":
             self.app.focused = None
 
