@@ -328,6 +328,11 @@ NULL_SCALAR = ScalarOffset(Scalar.from_number(0), Scalar.from_number(0))
 
 
 def percentage_string_to_float(string: str) -> float:
+    """Convert a string percentage e.g. '20%' to a float e.g. 20.0.
+
+    Args:
+        string (str): The percentage string to convert.
+    """
     string = string.strip()
     if string.endswith("%"):
         percentage = string[:-1]
