@@ -231,7 +231,6 @@ class Color(NamedTuple):
         r, g, b, _ = self
         return Color(r, g, b, alpha)
 
-    @lru_cache(maxsize=2048)
     def blend(self, destination: Color, factor: float) -> Color:
         """Generate a new color between two colors.
 
@@ -418,6 +417,7 @@ class ColorPair(NamedTuple):
             )
 
 
+@lru_cache(maxsize=1024)
 def rgb_to_lab(rgb: Color) -> Lab:
     """Convert an RGB color to the CIE-L*ab format.
 
@@ -444,6 +444,7 @@ def rgb_to_lab(rgb: Color) -> Lab:
     return Lab(116 * y - 16, 500 * (x - y), 200 * (y - z))
 
 
+@lru_cache(maxsize=1024)
 def lab_to_rgb(lab: Lab) -> Color:
     """Convert a CIE-L*ab color to RGB.
 

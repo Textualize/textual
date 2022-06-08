@@ -6,9 +6,13 @@ Functions and classes to manage terminal geometry (anything involving coordinate
 
 from __future__ import annotations
 
-from typing import Any, cast, NamedTuple, Sequence, Tuple, Union, TypeVar
+from functools import lru_cache
 
-SpacingDimensions = Union[int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]]
+from typing import Any, cast, Collection, NamedTuple, Tuple, TypeAlias, Union, TypeVar
+
+SpacingDimensions: TypeAlias = Union[
+    int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]
+]
 
 T = TypeVar("T", int, float)
 
@@ -182,7 +186,7 @@ class Region(NamedTuple):
     height: int = 0
 
     @classmethod
-    def from_union(cls, regions: Sequence[Region]) -> Region:
+    def from_union(cls, regions: Collection[Region]) -> Region:
         """Create a Region from the union of other regions.
 
         Args:
@@ -356,6 +360,7 @@ class Region(NamedTuple):
             height + expand_height * 2,
         )
 
+    @lru_cache(maxsize=1024)
     def overlaps(self, other: Region) -> bool:
         """Check if another region overlaps this region.
 
@@ -433,6 +438,7 @@ class Region(NamedTuple):
         self_x, self_y, width, height = self
         return Region(self_x + x, self_y + y, width, height)
 
+    @lru_cache(maxsize=4096)
     def __contains__(self, other: Any) -> bool:
         """Check if a point is in this region."""
         if isinstance(other, Region):
@@ -483,6 +489,7 @@ class Region(NamedTuple):
             height=max(0, height - top - bottom),
         )
 
+    @lru_cache(maxsize=4096)
     def intersection(self, region: Region) -> Region:
         """Get the overlapping portion of the two regions.
 
@@ -507,6 +514,7 @@ class Region(NamedTuple):
 
         return Region(rx1, ry1, rx2 - rx1, ry2 - ry1)
 
+    @lru_cache(maxsize=4096)
     def union(self, region: Region) -> Region:
         """Get a new region that contains both regions.
 
@@ -524,6 +532,7 @@ class Region(NamedTuple):
         )
         return union_region
 
+    @lru_cache(maxsize=1024)
     def split(self, cut_x: int, cut_y: int) -> tuple[Region, Region, Region, Region]:
         """Split a region in to 4 from given x and y offsets (cuts).
 
@@ -563,6 +572,7 @@ class Region(NamedTuple):
             _Region(x + cut_x, y + cut_y, width - cut_x, height - cut_y),
         )
 
+    @lru_cache(maxsize=1024)
     def split_vertical(self, cut: int) -> tuple[Region, Region]:
         """Split a region in to two, from a given x offset.
 
@@ -591,6 +601,7 @@ class Region(NamedTuple):
             Region(x + cut, y, width - cut, height),
         )
 
+    @lru_cache(maxsize=1024)
     def split_horizontal(self, cut: int) -> tuple[Region, Region]:
         """Split a region in to two, from a given x offset.
 

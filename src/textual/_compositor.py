@@ -68,7 +68,7 @@ class MapGeometry(NamedTuple):
 CompositorMap: TypeAlias = "dict[Widget, MapGeometry]"
 
 
-@rich.repr.auto
+@rich.repr.auto(angular=True)
 class LayoutUpdate:
     """A renderable containing the result of a render for a given region."""
 
@@ -89,11 +89,7 @@ class LayoutUpdate:
                 yield new_line
 
     def __rich_repr__(self) -> rich.repr.Result:
-        x, y, width, height = self.region
-        yield "x", x
-        yield "y", y
-        yield "width", width
-        yield "height", height
+        yield self.region
 
 
 @rich.repr.auto(angular=True)
@@ -558,7 +554,10 @@ class Compositor:
                 delta_y = new_y - region.y
                 crop_x = delta_x + new_width
                 lines = widget.get_render_lines(delta_y, delta_y + new_height)
-                lines = [line_crop(line, delta_x, crop_x) for line in lines]
+                if (delta_x, crop_x) != (0, region.width):
+                    lines = [
+                        line_crop(line, delta_x, crop_x, region.width) for line in lines
+                    ]
                 yield region, clip, lines
 
     @classmethod
@@ -600,7 +599,7 @@ class Compositor:
             is_rendered_line = lambda y: True
         elif update_regions:
             # Create a crop regions that surrounds all updates
-            crop = Region.from_union(list(update_regions)).intersection(screen_region)
+            crop = Region.from_union(update_regions).intersection(screen_region)
             spans = list(self._regions_to_spans(update_regions))
             is_rendered_line = {y for y, _, _ in spans}.__contains__
         else:

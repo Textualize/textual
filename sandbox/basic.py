@@ -117,6 +117,11 @@ class BasicApp(App, css_path="basic.css"):
                 Warning(),
                 Tweet(TweetBody(), classes="scroll-horizontal"),
                 Success(),
+                Tweet(TweetBody(), classes="scroll-horizontal"),
+                Tweet(TweetBody(), classes="scroll-horizontal"),
+                Tweet(TweetBody(), classes="scroll-horizontal"),
+                Tweet(TweetBody(), classes="scroll-horizontal"),
+                Tweet(TweetBody(), classes="scroll-horizontal"),
             ),
             footer=Widget(),
             sidebar=Widget(
@@ -154,3 +159,15 @@ app = BasicApp()
 
 if __name__ == "__main__":
     app.run()
+
+    from textual.geometry import Region
+    from textual.color import Color
+
+    print(Region.intersection.cache_info())
+    print(Region.overlaps.cache_info())
+    print(Region.union.cache_info())
+    print(Region.split_vertical.cache_info())
+    print(Region.__contains__.cache_info())
+    from textual.css.scalar import Scalar
+
+    print(Scalar.resolve_dimension.cache_info())
