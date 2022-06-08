@@ -100,6 +100,8 @@ class BasicApp(App, css_path="basic.css"):
 
     def on_mount(self):
         """Build layout here."""
+
+        self.scroll_to_target = Tweet(TweetBody())
         self.mount(
             header=Static(
                 Text.from_markup(
@@ -157,6 +159,9 @@ class BasicApp(App, css_path="basic.css"):
         tweet_body = self.query("TweetBody").first()
         tweet_body.short_lorem = not tweet_body.short_lorem
 
+    def key_v(self):
+        self.get_child(id="content").scroll_to_widget(self.scroll_to_target)
+
 
 app = BasicApp()
 
@@ -176,5 +181,5 @@ if __name__ == "__main__":
     print(Scalar.resolve_dimension.cache_info())
 
     from rich.style import Style
+
     print(Style._add_cache)
-    

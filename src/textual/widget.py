@@ -564,48 +564,65 @@ class Widget(DOMNode):
         )
 
     def scroll_to_widget(self, widget: Widget, *, animate: bool = True) -> bool:
-        """Scroll so that a child widget is in the visible area.
+        """Starting from `widget`, travel up the DOM to this node, scrolling all containers such that
+        every widget is visible within its parent container. This will, in the majority of cases,
+        bring the target widget into
 
         Args:
-            widget (Widget): A Widget in the children.
+            widget (Widget): A descendant widget.
             animate (bool, optional): True to animate, or False to jump. Defaults to True.
 
         Returns:
-            bool: True if the scroll position changed, otherwise False.
+            bool: True if any scrolling has occurred in any descendant, otherwise False.
         """
 
-        try:
-            widget_region = widget.content_region
-            container_region = self.content_region
-        except errors.NoWidget:
-            return False
+        scrolls = set()
 
-        if widget_region in container_region:
-            # Widget is visible, nothing to do
-            return False
+        node = widget.parent
+        child = widget
+        while node:
+            try:
+                widget_region = child.region
+                container_region = node.region
+            except (errors.NoWidget, AttributeError):
+                return False
 
-        # We can either scroll so the widget is at the top of the container, or so that
-        # it is at the bottom. We want to pick which has the shortest distance
-        top_delta = widget_region.origin - container_region.origin
+            if widget_region in container_region:
+                # Widget is visible, nothing to do
+                child = node
+                node = node.parent
+                continue
 
-        bottom_delta = widget_region.origin - (
-            container_region.origin
-            + Offset(0, container_region.height - widget_region.height)
-        )
+            # We can either scroll so the widget is at the top of the container, or so that
+            # it is at the bottom. We want to pick which has the shortest distance
+            top_delta = widget_region.origin - container_region.origin
 
-        if widget_region.width > container_region.width:
-            delta_x = top_delta.x
-        else:
-            delta_x = min(top_delta.x, bottom_delta.x, key=abs)
+            bottom_delta = widget_region.origin - (
+                container_region.origin
+                + Offset(0, container_region.height - widget_region.height)
+            )
 
-        if widget_region.height > container_region.height:
-            delta_y = top_delta.y
-        else:
-            delta_y = min(top_delta.y, bottom_delta.y, key=abs)
+            if widget_region.width > container_region.width:
+                delta_x = top_delta.x
+            else:
+                delta_x = min(top_delta.x, bottom_delta.x, key=abs)
 
-        return self.scroll_relative(
-            delta_x or None, delta_y or None, animate=animate, duration=0.2
-        )
+            if widget_region.height > container_region.height:
+                delta_y = top_delta.y
+            else:
+                delta_y = min(top_delta.y, bottom_delta.y, key=abs)
+
+            scrolled = node.scroll_relative(
+                delta_x or None, delta_y or None, animate=animate, duration=0.2
+            )
+            scrolls.add(scrolled)
+
+            if node == self:
+                break
+            child = node
+            node = node.parent
+
+        return any(scrolls)
 
     def __init_subclass__(
         cls,
