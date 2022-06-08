@@ -42,10 +42,14 @@ class Driver(ABC):
             self.send_event(click_event)
 
     def enable_bracketed_paste(self) -> None:
+        """Write the ANSI escape code `ESC[?2004h`, which
+        enables bracketed paste mode."""
         self.console.file.write("\x1b[?2004h")
         self.console.file.flush()
 
     def disable_bracketed_paste(self) -> None:
+        """Write the ANSI escape code `ESC[?2004l`, which
+        disables bracketed paste mode."""
         self.console.file.write("\x1b[?2004l")
         self.console.file.flush()
 
