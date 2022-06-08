@@ -42,7 +42,7 @@ App > Screen {
   background: $primary-background-darken-2;
   color: $text-primary-darken-2 ;
   border-right: outer $primary-darken-3;
-  content-align: center middle;  
+  content-align: center middle;
 }
 
 #sidebar .user {
@@ -71,14 +71,13 @@ App > Screen {
   color: $text-background;
   background: $background;
   layout: vertical;
-  overflow-y: scroll; 
+  overflow-y: scroll;
 }
 
 
 Tweet {
   height: 12;
   width: 80;
- 
   margin: 1 3;
   background: $panel;
   color: $text-panel;
@@ -106,9 +105,8 @@ Tweet {
 
   height: 34;
   width: 100%;
-  
-}
 
+}
 
 TweetHeader {
   height:1;
@@ -136,12 +134,12 @@ Tweet.scroll-horizontal TweetBody {
   /* border-top: hidden  $accent-darken-3;  */
   border: tall $accent-darken-2;
   /* border-left: tall $accent-darken-1; */
- 
+
 
   /* padding: 1 0 0 0 ; */
 
   transition: background 200ms in_out_cubic, color 300ms in_out_cubic;
- 
+
 }
 
 .button:hover {
@@ -151,10 +149,10 @@ Tweet.scroll-horizontal TweetBody {
   height: 3;
   border: tall $accent-darken-1;
   /* border-left: tall $accent-darken-3; */
- 
 
 
- 
+
+
 }
 
 #footer {
@@ -194,11 +192,11 @@ Error {
   background: $error;
   color: $text-error;
   border-top: hkey $error-darken-2;
-  border-bottom: hkey $error-darken-2; 
+  border-bottom: hkey $error-darken-2;
   margin: 1 3;
-  
+
   text-style: bold;
-  align-horizontal: center;   
+  align-horizontal: center;
 }
 
 Warning {
@@ -207,7 +205,7 @@ Warning {
   background: $warning;
   color: $text-warning-fade-1;
   border-top: hkey $warning-darken-2;
-  border-bottom: hkey $warning-darken-2; 
+  border-bottom: hkey $warning-darken-2;
   margin: 1 2;
   text-style: bold;
   align-horizontal: center;
@@ -215,12 +213,12 @@ Warning {
 
 Success {
   width: 80;
-  height:3;  
+  height:3;
   box-sizing: border-box;
   background: $success-lighten-3;
   color: $text-success-lighten-3-fade-1;
   border-top: hkey $success;
-  border-bottom: hkey $success; 
+  border-bottom: hkey $success;
   margin: 1 2;
   text-style: bold;
   align-horizontal: center;
