@@ -336,7 +336,7 @@ class Color(NamedTuple):
             )
         elif hsl is not None:
             h, s, l = hsl.split(",")
-            h = clamp(float(h), 0, 360) / 360
+            h = float(h) % 360
             s = percentage_string_to_float(s)
             l = percentage_string_to_float(l)
             color = Color.from_hls(h, l, s)
