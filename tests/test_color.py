@@ -1,5 +1,4 @@
 import pytest
-
 from rich.color import Color as RichColor
 from rich.text import Text
 
@@ -134,6 +133,15 @@ def test_color_parse_input_has_spaces(input, output):
 ])
 def test_color_parse_clamp(input, output):
     assert Color.parse(input) == output
+
+
+def test_color_parse_hsl_negative_degrees():
+    assert Color.parse("hsl(-90, 50%, 50%)") == Color.parse("hsl(270, 50%, 50%)")
+
+
+def test_color_parse_hsla_negative_degrees():
+    assert Color.parse("hsla(-45, 50%, 50%, 0.2)") == Color.parse(
+        "hsla(315, 50%, 50%, 0.2)")
 
 
 def test_color_parse_color():

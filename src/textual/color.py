@@ -287,7 +287,7 @@ class Color(NamedTuple):
         if color_match is None:
             error_message = f"failed to parse {color_text!r} as a color"
             suggested_color = None
-            if not color_text.startswith(('#', 'rgb', 'hsl')):
+            if not color_text.startswith(("#", "rgb", "hsl")):
                 # Seems like we tried to use a color name: let's try to find one that is close enough:
                 suggested_color = get_suggestion(color_text, COLOR_NAME_TO_RGB.keys())
                 if suggested_color:
@@ -336,13 +336,13 @@ class Color(NamedTuple):
             )
         elif hsl is not None:
             h, s, l = hsl.split(",")
-            h = float(h) % 360
+            h = float(h) % 360 / 360
             s = percentage_string_to_float(s)
             l = percentage_string_to_float(l)
             color = Color.from_hls(h, l, s)
         elif hsla is not None:
             h, s, l, a = hsla.split(",")
-            h = clamp(float(h), 0, 360) / 360
+            h = float(h) % 360 / 360
             s = percentage_string_to_float(s)
             l = percentage_string_to_float(l)
             a = clamp(float(a), 0.0, 1.0)
