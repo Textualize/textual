@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from typing import Any, Callable, Generator, Iterable
 
-from . import log, messages
+from . import messages
 from . import events
 from ._types import MessageTarget
 from ._parser import Awaitable, Parser, TokenCallback
@@ -91,13 +91,7 @@ class XTermParser(Parser[events.Event]):
         bracketed_paste = False
 
         while not self.is_eof:
-            character = yield read1()
-
-            # If we're currently performing a bracketed paste,
-            if bracketed_paste:
-                paste_buffer.append(character)
-                self.debug_log(f"paste_buffer={paste_buffer!r}")
-            elif not bracketed_paste and paste_buffer:
+            if not bracketed_paste and paste_buffer:
                 # We're at the end of the bracketed paste.
                 # The paste buffer has content, but the bracketed paste has finished,
                 # so we flush the paste buffer. We have to remove the final character
@@ -108,6 +102,13 @@ class XTermParser(Parser[events.Event]):
                 self.debug_log(f"pasted_text={pasted_text!r}")
                 on_token(events.Paste(self.sender, text=pasted_text))
                 paste_buffer.clear()
+
+            character = yield read1()
+
+            # If we're currently performing a bracketed paste,
+            if bracketed_paste:
+                paste_buffer.append(character)
+                self.debug_log(f"paste_buffer={paste_buffer!r}")
 
             self.debug_log(f"character={character!r}")
             if character == ESC:
