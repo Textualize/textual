@@ -5,7 +5,6 @@ from typing import Callable
 from rich.cells import cell_len
 from rich.console import RenderableType
 from rich.padding import Padding
-from rich.style import Style
 from rich.text import Text
 
 from textual import events, _clock
@@ -196,6 +195,10 @@ class TextInput(TextWidgetBase, can_focus=True):
         new_cursor_index = clamp(new_cursor_index, 0, len(self._editor.content))
         self._editor.cursor_index = new_cursor_index
         self.refresh()
+
+    def on_paste(self, event: events.Paste) -> None:
+        self._editor.insert_at_cursor(event.text)
+        self.refresh(layout=True)
 
     def _reset_visible_range(self):
         """Reset our window into the editor content. Used when the widget is resized."""

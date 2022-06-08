@@ -1004,7 +1004,8 @@ class App(Generic[ReturnType], DOMNode):
             else:
                 # Forward the event to the view
                 await self.screen.forward_event(event)
-
+        elif isinstance(event, events.Paste):
+            await self.focused.forward_event(event)
         else:
             await super().on_event(event)
 

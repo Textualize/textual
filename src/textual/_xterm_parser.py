@@ -92,35 +92,47 @@ class XTermParser(Parser[events.Event]):
 
         while not self.is_eof:
             character = yield read1()
+
+            # If we're currently performing a bracketed paste,
             if bracketed_paste:
                 paste_buffer.append(character)
+                self.debug_log(f"paste_buffer={paste_buffer!r}")
             elif not bracketed_paste and paste_buffer:
+                # We're at the end of the bracketed paste.
                 # The paste buffer has content, but the bracketed paste has finished,
-                # so we flush the paste buffer.
-                on_token(events.Paste(self.sender, text="".join(paste_buffer)))
+                # so we flush the paste buffer. We have to remove the final character
+                # since if bracketed paste has come to an end, we'll have added the
+                # ESC from the closing bracket, since at that point we didn't know what
+                # the full escape code was.
+                pasted_text = "".join(paste_buffer[:-1])
+                self.debug_log(f"pasted_text={pasted_text!r}")
+                on_token(events.Paste(self.sender, text=pasted_text))
+                paste_buffer.clear()
+
             self.debug_log(f"character={character!r}")
             if character == ESC:
                 # Could be the escape key was pressed OR the start of an escape sequence
                 sequence: str = character
-                peek_buffer = yield self.peek_buffer()
-                if not peek_buffer:
-                    # An escape arrived without any following characters
-                    on_token(events.Key(self.sender, key="escape"))
-                    continue
-                if peek_buffer and peek_buffer[0] == ESC:
-                    # There is an escape in the buffer, so ESC ESC has arrived
-                    yield read1()
-                    on_token(events.Key(self.sender, key="escape"))
-                    # If there is no further data, it is not part of a sequence,
-                    # So we don't need to go in to the loop
-                    if len(peek_buffer) == 1 and not more_data():
+                if not bracketed_paste:
+                    peek_buffer = yield self.peek_buffer()
+                    if not peek_buffer:
+                        # An escape arrived without any following characters
+                        on_token(events.Key(self.sender, key="escape"))
                         continue
+                    if peek_buffer and peek_buffer[0] == ESC:
+                        # There is an escape in the buffer, so ESC ESC has arrived
+                        yield read1()
+                        on_token(events.Key(self.sender, key="escape"))
+                        # If there is no further data, it is not part of a sequence,
+                        # So we don't need to go in to the loop
+                        if len(peek_buffer) == 1 and not more_data():
+                            continue
 
                 while True:
                     sequence += yield read1()
                     self.debug_log(f"sequence={sequence!r}")
 
-                    # Firstly, check if it's a bracketed paste
+                    # Firstly, check if it's a bracketed paste escape code
                     bracketed_paste_start_match = _re_bracketed_paste_start.match(
                         sequence
                     )
@@ -130,41 +142,46 @@ class XTermParser(Parser[events.Event]):
                         bracketed_paste = True
                         self.debug_log("BRACKETED PASTE START DETECTED")
                         break
+
                     bracketed_paste_end_match = _re_bracketed_paste_end.match(sequence)
                     if bracketed_paste_end_match is not None:
                         bracketed_paste = False
                         self.debug_log("BRACKETED PASTE ENDED")
                         break
 
-                    # Was it a pressed key event that we received?
-                    keys = get_key_ansi_sequence(sequence, None)
+                    if not bracketed_paste:
+                        # Was it a pressed key event that we received?
+                        keys = get_key_ansi_sequence(sequence, None)
+                        if keys is not None:
+                            for key in keys:
+                                on_token(events.Key(self.sender, key=key))
+                            break
+                        # Or a mouse event?
+                        mouse_match = _re_mouse_event.match(sequence)
+                        if mouse_match is not None:
+                            mouse_code = mouse_match.group(0)
+                            event = self.parse_mouse_code(mouse_code, self.sender)
+                            if event:
+                                on_token(event)
+                            break
+                        # Or a mode report? (i.e. the terminal telling us if it supports a mode we requested)
+                        mode_report_match = _re_terminal_mode_response.match(sequence)
+                        if mode_report_match is not None:
+                            if (
+                                mode_report_match["mode_id"] == "2026"
+                                and int(mode_report_match["setting_parameter"]) > 0
+                            ):
+                                on_token(
+                                    messages.TerminalSupportsSynchronizedOutput(
+                                        self.sender
+                                    )
+                                )
+                            break
+            else:
+                if not bracketed_paste:
+                    keys = get_key_ansi_sequence(character, None)
                     if keys is not None:
                         for key in keys:
                             on_token(events.Key(self.sender, key=key))
-                        break
-                    # Or a mouse event?
-                    mouse_match = _re_mouse_event.match(sequence)
-                    if mouse_match is not None:
-                        mouse_code = mouse_match.group(0)
-                        event = self.parse_mouse_code(mouse_code, self.sender)
-                        if event:
-                            on_token(event)
-                        break
-                    # Or a mode report? (i.e. the terminal telling us if it supports a mode we requested)
-                    mode_report_match = _re_terminal_mode_response.match(sequence)
-                    if mode_report_match is not None:
-                        if (
-                            mode_report_match["mode_id"] == "2026"
-                            and int(mode_report_match["setting_parameter"]) > 0
-                        ):
-                            on_token(
-                                messages.TerminalSupportsSynchronizedOutput(self.sender)
-                            )
-                        break
-            else:
-                keys = get_key_ansi_sequence(character, None)
-                if keys is not None:
-                    for key in keys:
-                        on_token(events.Key(self.sender, key=key))
-                else:
-                    on_token(events.Key(self.sender, key=character))
+                    else:
+                        on_token(events.Key(self.sender, key=character))
