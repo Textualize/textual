@@ -124,7 +124,7 @@ class TextEditorBackend:
         self.cursor_index = text_length
         return True
 
-    def insert_at_cursor(self, text: str) -> bool:
+    def insert(self, text: str) -> bool:
         """Insert some text at the cursor position, and move the cursor
         to the end of the newly inserted text.
 
