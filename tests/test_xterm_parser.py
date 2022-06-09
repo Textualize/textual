@@ -3,7 +3,9 @@ from unittest import mock
 import pytest
 
 from textual._xterm_parser import XTermParser
-from textual.events import Paste, Key, MouseDown, MouseUp, MouseMove
+from textual.events import Paste, Key, MouseDown, MouseUp, MouseMove, MouseScrollDown, \
+    MouseScrollUp
+from textual.messages import TerminalSupportsSynchronizedOutput
 
 
 @pytest.fixture
@@ -36,6 +38,15 @@ def test_bracketed_paste_content_contains_escape_codes(parser):
     events = list(parser.feed(f"\x1b[200~{pasted_text}\x1b[201~"))
     assert len(events) == 1
     assert events[0].text == pasted_text
+
+
+def test_bracketed_paste_amongst_other_codes(parser):
+    pasted_text = "PASTED"
+    events = list(parser.feed(f"\x1b[8~\x1b[200~{pasted_text}\x1b[201~\x1b[8~"))
+    assert len(events) == 3  # Key.End -> Paste -> Key.End
+    assert events[0].key == "end"
+    assert events[1].text == pasted_text
+    assert events[2].key == "end"
 
 
 def test_cant_match_escape_sequence_too_long(parser):
@@ -134,8 +145,8 @@ def test_mouse_click(parser, sequence, event_type, shift, meta):
 @pytest.mark.parametrize("sequence, shift, meta, button", [
     ("\x1b[<32;15;38M", False, False, 1),  # Click and drag
     ("\x1b[<35;15;38M", False, False, 0),  # Basic cursor movement
-    ("\x1b[<39;15;38M", True, False, 0),   # Shift held down
-    ("\x1b[<43;15;38M", False, True, 0),   # Meta held down
+    ("\x1b[<39;15;38M", True, False, 0),  # Shift held down
+    ("\x1b[<43;15;38M", False, True, 0),  # Meta held down
 ])
 def test_mouse_move(parser, sequence, shift, meta, button):
     events = list(parser.feed(sequence))
@@ -152,9 +163,60 @@ def test_mouse_move(parser, sequence, shift, meta, button):
     assert event.button == button
 
 
+@pytest.mark.parametrize("sequence", [
+    "\x1b[<64;18;25M",
+    "\x1b[<68;18;25M",
+    "\x1b[<72;18;25M",
+])
+def test_mouse_scroll_down(parser, sequence):
+    """Scrolling the mouse with and without modifiers held down.
+    We don't currently capture modifier keys in scroll events.
+    """
+    events = list(parser.feed(sequence))
+
+    assert len(events) == 1
+
+    event = events[0]
+
+    assert isinstance(event, MouseScrollDown)
+    assert event.x == 17
+    assert event.y == 24
+
+
+@pytest.mark.parametrize("sequence, shift, meta", [
+    ("\x1b[<65;18;25M", False, False),
+    ("\x1b[<69;18;25M", True, False),
+    ("\x1b[<73;18;25M", False, True),
+])
+def test_mouse_scroll_up(parser, sequence, shift, meta):
+    events = list(parser.feed(sequence))
+
+    assert len(events) == 1
+
+    event = events[0]
+
+    assert isinstance(event, MouseScrollUp)
+    assert event.x == 17
+    assert event.y == 24
+
+
 def test_escape_sequence_resulting_in_multiple_keypresses(parser):
     """Some sequences are interpreted as more than 1 keypress"""
     events = list(parser.feed("\x1b[2;4~"))
     assert len(events) == 2
     assert events[0].key == "escape"
     assert events[1].key == "shift+insert"
+
+
+def test_terminal_mode_reporting_synchronized_output_supported(parser):
+    sequence = "\x1b[?2026;1$y"
+    events = list(parser.feed(sequence))
+    assert len(events) == 1
+    assert isinstance(events[0], TerminalSupportsSynchronizedOutput)
+    assert events[0].sender == mock.sentinel
+
+
+def test_terminal_mode_reporting_synchronized_output_not_supported(parser):
+    sequence = "\x1b[?2026;0$y"
+    events = list(parser.feed(sequence))
+    assert events == []
