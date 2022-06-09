@@ -166,7 +166,6 @@ if __name__ == "__main__":
         def parse(
             self, on_token: Callable[[str], None]
         ) -> Generator[Awaitable, str, None]:
-            data = yield self.read1()
             while True:
                 data = yield self.read1()
                 if not data:
