@@ -13,12 +13,10 @@ def test_read1():
                 on_token(data)
 
     test_parser = TestParser()
-
     test_data = "Where there is a Will there is a way!"
 
     for size in range(1, len(test_data) + 1):
         # Feed the parser in pieces, first 1 character at a time, then 2, etc
-        test_parser = TestParser()
         data = []
         for offset in range(0, len(test_data), size):
             for chunk in test_parser.feed(test_data[offset : offset + size]):
