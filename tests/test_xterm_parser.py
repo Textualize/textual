@@ -95,6 +95,13 @@ def test_simple_key_presses_all_delivered_correct_order(parser):
     assert "".join(event.key for event in events) == sequence
 
 
+def test_simple_keypress_non_character_key(parser):
+    sequence = "\x09"
+    events = list(parser.feed(sequence))
+    assert len(events) == 1
+    assert events[0].key == "tab"
+
+
 def test_key_presses_and_escape_sequence_mixed(parser):
     sequence = "abc\x1b[13~123"
     events = list(parser.feed(sequence))
