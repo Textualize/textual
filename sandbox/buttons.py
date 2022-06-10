@@ -1,21 +1,30 @@
+from textual import layout, events
 from textual.app import App, ComposeResult
-
 from textual.widgets import Button
-from textual import layout
 
 
 class ButtonsApp(App[str]):
     def compose(self) -> ComposeResult:
         yield layout.Vertical(
-            Button("foo", id="foo"),
-            Button("bar", id="bar"),
-            Button("baz", id="baz"),
+            Button("default", id="foo"),
+            Button.success("success", id="bar"),
+            Button.warning("warning", id="baz"),
+            Button.error("error", id="baz"),
         )
 
     def handle_pressed(self, event: Button.Pressed) -> None:
         self.app.bell()
-        self.log("pressed", event.button.id)
-        self.exit(event.button.id)
+        print("pressed", event.button.id)
+
+    async def on_key(self, event: events.Key) -> None:
+        await self.dispatch_key(event)
+
+    def key_a(self):
+        print(f"text-success: {self.stylesheet.variables.get('text-success')}")
+        print(
+            f"text-success-darken-1: {self.stylesheet.variables.get('text-success-darken-1')}"
+        )
+        self.dark = not self.dark
 
 
 app = ButtonsApp(

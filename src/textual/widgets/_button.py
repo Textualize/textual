@@ -1,51 +1,130 @@
 from __future__ import annotations
 
-from typing import cast
+from typing import cast, Literal
 
 from rich.console import RenderableType
-from rich.style import Style
 from rich.text import Text, TextType
 
 from .. import events
+from ..css._error_tools import friendly_list
 from ..message import Message
 from ..reactive import Reactive
 from ..widget import Widget
+
+ButtonVariant = Literal["default", "success", "warning", "error"]
+_VALID_BUTTON_VARIANTS = {"default", "success", "warning", "error"}
+
+
+class InvalidButtonVariant(Exception):
+    pass
 
 
 class Button(Widget, can_focus=True):
     """A simple clickable button."""
 
     CSS = """
-
-
     Button {
         width: auto;
         height: 3;
+
         background: $primary;
         color: $text-primary;
-        content-align: center middle;
         border: tall $primary-lighten-3;
-        
+
+        content-align: center middle;
         margin: 1 0;
         align: center middle;
         text-style: bold;
     }
 
+    Button:hover {
+        background: $primary-darken-2;
+        color: $text-primary-darken-2;
+        border: tall $primary-lighten-1;
+    }
+
     .-dark-mode Button {
-        border: tall white $primary-lighten-2;
-        color: $primary-lighten-2;
         background: $background;
+        color: $primary-lighten-2;
+        border: tall white $primary-lighten-2;
     }
 
     .-dark-mode Button:hover {
         background: $surface;
     }
 
+    /* Success variant */
+    Button.-success {
+        background: $success;
+        color: $text-success;
+        border: tall $success-lighten-3;
+    }
 
-    Button:hover {
-        background:$primary-darken-2;
-        color: $text-primary-darken-2;
-        border: tall $primary-lighten-1;
+    Button.-success:hover {
+        background: $success-darken-1;
+        color: $text-success-darken-1;
+        border: tall $success-lighten-2;  /* TODO: This shouldn't be necessary?? */
+    }
+
+    .-dark-mode Button.-success {
+        background: $success;
+        color: $text-success;
+        border: tall $success-lighten-3;
+    }
+
+    .-dark-mode Button.-success:hover {
+        background: $success-darken-1;
+        color: $text-success-darken-1;
+        border: tall $success-lighten-3;
+    }
+
+    /* Warning variant */
+    Button.-warning {
+        background: $warning;
+        color: $text-warning;
+        border: tall $warning-lighten-3;
+    }
+
+    Button.-warning:hover {
+        background: $warning-darken-1;
+        color: $text-warning-darken-1;
+        border: tall $warning-lighten-3;
+    }
+
+    .-dark-mode Button.-warning {
+        background: $warning;
+        color: $text-warning;
+        border: tall $warning-lighten-3;
+    }
+
+    .-dark-mode Button.-warning:hover {
+        background: $warning-darken-1;
+        color: $text-warning-darken-1;
+        border: tall $warning-lighten-3;
+    }
+
+    Button.-error {
+        background: $error;
+        color: $text-error;
+        border: tall $error-lighten-3;
+    }
+
+    Button.-error:hover {
+        background: $error-darken-1;
+        color: $text-error-darken-1;
+        border: tall $error-lighten-3;
+    }
+
+    .-dark-mode Button.-error {
+        background: $error;
+        color: $text-error;
+        border: tall $error-lighten-3;
+    }
+
+    .-dark-mode Button.-error:hover {
+        background: $error-darken-1;
+        color: $text-error-darken-1;
+        border: tall $error-lighten-3;
     }
 
     App.-show-focus Button:focus {
@@ -63,11 +142,22 @@ class Button(Widget, can_focus=True):
         self,
         label: TextType | None = None,
         disabled: bool = False,
+        variant: ButtonVariant = "default",
         *,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
     ):
+        """Create a Button widget.
+
+        Args:
+            label (str): The text that appears within the button.
+            disabled (bool): Whether the button is disabled or not.
+            variant (ButtonVariant): The variant of the button.
+            name: The name of the button.
+            id: The ID of the button in the DOM.
+            classes: The CSS classes of the button.
+        """
         super().__init__(name=name, id=id, classes=classes)
 
         if label is None:
@@ -78,6 +168,15 @@ class Button(Widget, can_focus=True):
         self.disabled = disabled
         if disabled:
             self.add_class("-disabled")
+
+        if variant in _VALID_BUTTON_VARIANTS:
+            if variant != "default":
+                self.add_class(f"-{variant}")
+
+        else:
+            raise InvalidButtonVariant(
+                f"Valid button variants are {friendly_list(_VALID_BUTTON_VARIANTS)}"
+            )
 
     label: Reactive[RenderableType] = Reactive("")
 
@@ -100,3 +199,93 @@ class Button(Widget, can_focus=True):
     async def on_key(self, event: events.Key) -> None:
         if event.key == "enter" and not self.disabled:
             await self.emit(Button.Pressed(self))
+
+    @staticmethod
+    def success(
+        label: TextType | None = None,
+        disabled: bool = False,
+        *,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ) -> Button:
+        """Utility constructor for creating a success Button variant.
+
+        Args:
+            label (str): The text that appears within the button.
+            disabled (bool): Whether the button is disabled or not.
+            name: The name of the button.
+            id: The ID of the button in the DOM.
+            classes: The CSS classes of the button.
+
+        Returns:
+            Button: A Button widget of the 'success' variant.
+        """
+        return Button(
+            label=label,
+            disabled=disabled,
+            variant="success",
+            name=name,
+            id=id,
+            classes=classes,
+        )
+
+    @staticmethod
+    def warning(
+        label: TextType | None = None,
+        disabled: bool = False,
+        *,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ) -> Button:
+        """Utility constructor for creating a warning Button variant.
+
+        Args:
+            label (str): The text that appears within the button.
+            disabled (bool): Whether the button is disabled or not.
+            name: The name of the button.
+            id: The ID of the button in the DOM.
+            classes: The CSS classes of the button.
+
+        Returns:
+            Button: A Button widget of the 'warning' variant.
+        """
+        return Button(
+            label=label,
+            disabled=disabled,
+            variant="warning",
+            name=name,
+            id=id,
+            classes=classes,
+        )
+
+    @staticmethod
+    def error(
+        label: TextType | None = None,
+        disabled: bool = False,
+        *,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ) -> Button:
+        """Utility constructor for creating an error Button variant.
+
+        Args:
+            label (str): The text that appears within the button.
+            disabled (bool): Whether the button is disabled or not.
+            name: The name of the button.
+            id: The ID of the button in the DOM.
+            classes: The CSS classes of the button.
+
+        Returns:
+            Button: A Button widget of the 'error' variant.
+        """
+        return Button(
+            label=label,
+            disabled=disabled,
+            variant="error",
+            name=name,
+            id=id,
+            classes=classes,
+        )
