@@ -104,7 +104,6 @@ class XTermParser(Parser[events.Event]):
                 # ESC from the closing bracket, since at that point we didn't know what
                 # the full escape code was.
                 pasted_text = "".join(paste_buffer[:-1])
-                self.debug_log(f"pasted_text={pasted_text!r}")
                 on_token(events.Paste(self.sender, text=pasted_text))
                 paste_buffer.clear()
 
@@ -112,7 +111,6 @@ class XTermParser(Parser[events.Event]):
 
             if bracketed_paste:
                 paste_buffer.append(character)
-                self.debug_log(f"paste_buffer={paste_buffer!r}")
 
             self.debug_log(f"character={character!r}")
             if character == ESC:
@@ -133,12 +131,13 @@ class XTermParser(Parser[events.Event]):
                         if len(peek_buffer) == 1 and not more_data():
                             continue
 
+                # Look ahead through the suspected escape sequence for a match
                 while True:
-                    # If we look ahead and see an escape, then we've failed
-                    # to find an escape sequence and should reissue the characters
-                    # up till this point.
-                    buffer = yield self.peek_buffer()
 
+                    # If we run into another ESC at this point, then we've failed
+                    # to find a match, and should issue everything we've seen within
+                    # the suspected sequence as Key events instead.
+                    buffer = yield self.peek_buffer()
                     if (
                         buffer
                         and buffer[0] == ESC
@@ -158,21 +157,16 @@ class XTermParser(Parser[events.Event]):
 
                     self.debug_log(f"sequence={sequence!r}")
 
-                    # Firstly, check if it's a bracketed paste escape code
                     bracketed_paste_start_match = _re_bracketed_paste_start.match(
                         sequence
                     )
-                    self.debug_log(f"sequence = {repr(sequence)}")
-                    self.debug_log(f"match = {repr(bracketed_paste_start_match)}")
                     if bracketed_paste_start_match is not None:
                         bracketed_paste = True
-                        self.debug_log("BRACKETED PASTE START DETECTED")
                         break
 
                     bracketed_paste_end_match = _re_bracketed_paste_end.match(sequence)
                     if bracketed_paste_end_match is not None:
                         bracketed_paste = False
-                        self.debug_log("BRACKETED PASTE ENDED")
                         break
 
                     if not bracketed_paste:
