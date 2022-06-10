@@ -3,8 +3,15 @@ from unittest import mock
 import pytest
 
 from textual._xterm_parser import XTermParser
-from textual.events import Paste, Key, MouseDown, MouseUp, MouseMove, MouseScrollDown, \
-    MouseScrollUp
+from textual.events import (
+    Paste,
+    Key,
+    MouseDown,
+    MouseUp,
+    MouseMove,
+    MouseScrollDown,
+    MouseScrollUp,
+)
 from textual.messages import TerminalSupportsSynchronizedOutput
 
 
@@ -205,6 +212,13 @@ def test_mouse_scroll_up(parser, sequence, shift, meta):
     assert isinstance(event, MouseScrollUp)
     assert event.x == 17
     assert event.y == 24
+
+
+def test_mouse_event_detected_but_info_not_parsed(parser):
+    # I don't know if this can actually happen in reality, but
+    # there's a branch in the code that allows for the possibility.
+    events = list(parser.feed("\x1b[<65;18;20;25M"))
+    assert len(events) == 0
 
 
 def test_escape_sequence_resulting_in_multiple_keypresses(parser):
