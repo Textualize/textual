@@ -2,7 +2,6 @@ from __future__ import annotations
 
 
 import re
-from collections import deque
 from typing import Any, Callable, Generator, Iterable
 
 from . import messages
@@ -36,11 +35,11 @@ class XTermParser(Parser[events.Event]):
         self.last_x = 0
         self.last_y = 0
 
-        self._debug_log_file = open("keys.log", "wt")
+        self._debug_log_file = open("keys.log", "wt") if debug else None
 
         super().__init__()
 
-    def debug_log(self, *args: Any) -> None:
+    def debug_log(self, *args: Any) -> None:  # pragma: no cover
         if self._debug_log_file is not None:
             self._debug_log_file.write(" ".join(args) + "\n")
             self._debug_log_file.flush()
@@ -187,12 +186,13 @@ class XTermParser(Parser[events.Event]):
                         mouse_match = _re_mouse_event.match(sequence)
                         if mouse_match is not None:
                             mouse_code = mouse_match.group(0)
-                            print(mouse_code)
                             event = self.parse_mouse_code(mouse_code, self.sender)
                             if event:
                                 on_token(event)
                             break
-                        # Or a mode report? (i.e. the terminal telling us if it supports a mode we requested)
+
+                        # Or a mode report?
+                        # (i.e. the terminal saying it supports a mode we requested)
                         mode_report_match = _re_terminal_mode_response.match(sequence)
                         if mode_report_match is not None:
                             if (
