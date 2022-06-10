@@ -1,6 +1,12 @@
 from __future__ import annotations
 
-from typing import cast, Literal
+import sys
+from typing import cast
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal  # pragma: no cover
 
 from rich.console import RenderableType
 from rich.text import Text, TextType
@@ -130,7 +136,6 @@ class Button(Widget, can_focus=True):
     App.-show-focus Button:focus {
         tint: $accent 20%;
     }
-
     """
 
     class Pressed(Message, bubble=True):
