@@ -14,16 +14,11 @@ class ButtonsApp(App[str]):
 
     def handle_pressed(self, event: Button.Pressed) -> None:
         self.app.bell()
-        print("pressed", event.button.id)
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)
 
-    def key_a(self):
-        print(f"text-success: {self.stylesheet.variables.get('text-success')}")
-        print(
-            f"text-success-darken-1: {self.stylesheet.variables.get('text-success-darken-1')}"
-        )
+    def key_d(self):
         self.dark = not self.dark
 
 
