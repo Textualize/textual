@@ -332,6 +332,7 @@ class Color(NamedTuple):
             raise AssertionError("Can't get here if RE_COLOR matches")
         return color
 
+    @lru_cache(maxsize=1024)
     def darken(self, amount: float) -> Color:
         """Darken the color by a given amount.
 
@@ -356,6 +357,7 @@ class Color(NamedTuple):
         """
         return self.darken(-amount).clamped
 
+    @lru_cache(maxsize=1024)
     def get_contrast_text(self, alpha=0.95) -> Color:
         """Get a light or dark color that best contrasts this color, for use with text.
 
@@ -417,7 +419,6 @@ class ColorPair(NamedTuple):
             )
 
 
-@lru_cache(maxsize=1024)
 def rgb_to_lab(rgb: Color) -> Lab:
     """Convert an RGB color to the CIE-L*ab format.
 
@@ -444,7 +445,6 @@ def rgb_to_lab(rgb: Color) -> Lab:
     return Lab(116 * y - 16, 500 * (x - y), 200 * (y - z))
 
 
-@lru_cache(maxsize=1024)
 def lab_to_rgb(lab: Lab) -> Color:
     """Convert a CIE-L*ab color to RGB.
 

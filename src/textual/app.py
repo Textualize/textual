@@ -87,7 +87,7 @@ DEFAULT_COLORS = ColorSystem(
     warning="#ffa62b",
     error="#ba3c5b",
     success="#6d9f71",
-    accent="#ffa62b",
+    # accent="#ffa62b",
     system="#5a4599",
     dark_surface="#292929",
 )

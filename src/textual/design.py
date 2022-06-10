@@ -55,6 +55,8 @@ class ColorSystem:
         "primary",
         "secondary",
         "background",
+        "primary-background",
+        "secondary-background",
         "surface",
         "panel",
         "warning",

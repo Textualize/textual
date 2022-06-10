@@ -871,7 +871,7 @@ class Widget(DOMNode):
         self._render_cache = RenderCache(self.size, lines)
         self._dirty_regions.clear()
 
-    def render_lines(self, start: int | None = None, end: int | None = None) -> Lines:
+    def render_lines(self, start: int, end: int) -> Lines:
         """Get segment lines to render the widget.
 
         Args:

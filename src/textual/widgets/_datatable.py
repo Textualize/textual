@@ -1,87 +1,90 @@
 from __future__ import annotations
 
-from abc import abstractmethod, ABC
+from rich.segment import Segment
 
-from rich.console import Console, ConsoleOptions, RenderResult
-from rich.text import Text
+from typing import cast, Generic, TypeVar
 
+from collections.abc import Container
 from dataclasses import dataclass
-from typing import Awaitable, Callable, Generic, TypeVar
 
-from ..geometry import Size
+from rich.console import RenderableType
+from rich.text import TextType
+
 from .._lru_cache import LRUCache
+from .._types import Lines
 from ..scroll_view import ScrollView
 
 
 RowType = TypeVar("RowType")
-
-RowSetter = Callable[[RowType | None], Awaitable[None]]
-
-
-class DataProvider(ABC):
-    @abstractmethod
-    async def start(self) -> None:
-        pass
-
-    @abstractmethod
-    async def get_size(self) -> int | None:
-        ...
-
-    @abstractmethod
-    async def request_row(self, row_no: int, set_row: RowSetter) -> None:
-        ...
-
-
-class DictListProvider:
-    def __init__(self, data: list[list]) -> None:
-        self.data = data
-
-    async def start(self) -> None:
-        pass
-
-    async def get_size(self) -> int | None:
-        return len(self.data)
-
-    async def request_row(self, row_no: int, set_row: RowSetter) -> None:
-        if row_no > len(self.data):
-            await set_row(None)
-        else:
-            row = self.data[row_no]
-            await set_row(row)
+IndexType = TypeVar("IndexType", int, str)
 
 
 @dataclass
-class Column:
-    label: Text
+class Column(Generic[IndexType]):
+    index: IndexType
+    label: TextType
     width: int
+    visible: bool = False
 
 
-class _TableRenderable:
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        pass
+@dataclass
+class Cell:
+    value: object
 
 
-class DataTable(ScrollView, Generic[RowType]):
+class DataTable(ScrollView, Generic[RowType, IndexType]):
     def __init__(
         self,
-        data_provider: DataProvider | None,
-        *,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
+        self.columns: list[Column[IndexType]] = []
+        self.rows: dict[int, RowType] = {}
+        self.row_count = 0
+        self._cells: dict[int, list[Cell]] = {}
 
-        self._data_provider = data_provider
-        self._columns: list[Column]
-        self._rows = LRUCache[int, RowType]
+        self._cell_render_cache: dict[tuple[int, IndexType, int], Lines] = LRUCache(
+            1000
+        )
 
-        self.height = 0
+    def add_column(self, label: TextType, index: IndexType | None, width: int) -> None:
+        if index is None:
+            index = cast(IndexType, len(self.columns))
+        self.columns.append(Column(index, label, width))
+        self.refresh()
 
-    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
-        return super().get_content_height(container, viewport, width)
+    def add_row(self, row: RowType) -> None:
+        self.rows[self.row_count] = row
+        self.row_count += 1
+        self.refresh()
 
-    async def set_row(self, row_no: int, row: RowType):
+    def _get_row(self, row_index: int) -> RowType | None:
+        return self.rows.get(row_index)
+
+    def _get_cell(self, row_index: int, column: IndexType) -> object | None:
+        row = self.rows.get(row_index)
+        if row is None:
+            return None
+        try:
+            return row[column]
+        except LookupError:
+            return None
+
+    # def _render_cell(self, row_index: int, column: IndexType) -> Lines:
+
+    #     cell = self._get_cell(row_index, column)
+
+    # def render_row(
+    #     self,
+    #     row: int,
+    # ):
+    #     list[list[Segment]]
+
+    # def _render_cell(self, row: int, column: int) -> Lines:
+
+    #     self.app.console.render_lines()
+
+    def render_lines(self, start: int, end: int) -> Lines:
         pass

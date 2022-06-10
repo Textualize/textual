@@ -543,7 +543,7 @@ class Compositor:
             if not region:
                 continue
             if region in clip:
-                yield region, clip, widget.render_lines()
+                yield region, clip, widget.render_lines(0, region.height)
             elif overlaps(clip, region):
                 clipped_region = intersection(region, clip)
                 if not clipped_region:
