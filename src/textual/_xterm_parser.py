@@ -1,18 +1,19 @@
 from __future__ import annotations
 
-
 import re
 from typing import Any, Callable, Generator, Iterable
 
-from . import messages
 from . import events
-from ._types import MessageTarget
-from ._parser import Awaitable, Parser, TokenCallback
+from . import messages
 from ._ansi_sequences import ANSI_SEQUENCES_KEYS
+from ._parser import Awaitable, Parser, TokenCallback
+from ._types import MessageTarget
 
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search
 # to be unsuccessful?
+from .keys import Keys
+
 _MAX_SEQUENCE_SEARCH_THRESHOLD = 20
 
 _re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[\d;]+[mM]|M...)\Z")
@@ -24,7 +25,6 @@ _re_bracketed_paste_end = re.compile(r"^\x1b\[201~$")
 
 
 class XTermParser(Parser[events.Event]):
-
     _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(\d+);(\d+)([Mm])")
 
     def __init__(
@@ -144,12 +144,11 @@ class XTermParser(Parser[events.Event]):
                         or len(sequence) > _MAX_SEQUENCE_SEARCH_THRESHOLD
                     ):
                         for character in sequence:
-                            keys = get_key_ansi_sequence(character, None)
-                            if keys is not None:
-                                for key in keys:
-                                    on_token(events.Key(self.sender, key=key))
-                            else:
-                                on_token(events.Key(self.sender, key=character))
+                            key_events = self._sequence_to_key_events(character)
+                            for event in key_events:
+                                if event.key == "escape":
+                                    event = events.Key(event.sender, key="^")
+                                on_token(event)
                         break
 
                     sequence_character = yield read1()
@@ -171,10 +170,10 @@ class XTermParser(Parser[events.Event]):
 
                     if not bracketed_paste:
                         # Was it a pressed key event that we received?
-                        keys = get_key_ansi_sequence(sequence, None)
-                        if keys is not None:
-                            for key in keys:
-                                on_token(events.Key(self.sender, key=key))
+                        key_events = list(self._sequence_to_key_events(sequence))
+                        for event in key_events:
+                            on_token(event)
+                        if key_events:
                             break
                         # Or a mouse event?
                         mouse_match = _re_mouse_event.match(sequence)
@@ -201,9 +200,11 @@ class XTermParser(Parser[events.Event]):
                             break
             else:
                 if not bracketed_paste:
-                    keys = get_key_ansi_sequence(character, None)
-                    if keys is not None:
-                        for key in keys:
-                            on_token(events.Key(self.sender, key=key))
-                    else:
-                        on_token(events.Key(self.sender, key=character))
+                    for event in self._sequence_to_key_events(character):
+                        on_token(event)
+
+    def _sequence_to_key_events(self, sequence: str) -> Iterable[events.Key]:
+        default = (sequence,) if len(sequence) == 1 else ()
+        keys = ANSI_SEQUENCES_KEYS.get(sequence, default)
+        for key in keys:
+            yield events.Key(self.sender, key)

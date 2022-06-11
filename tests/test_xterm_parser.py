@@ -67,8 +67,8 @@ def test_cant_match_escape_sequence_too_long(parser):
     assert len(events) == len(sequence)
     assert all(isinstance(event, Key) for event in events)
 
-    # '\x1b' is translated to 'escape'
-    assert events[0].key == "escape"
+    # When we backtrack '\x1b' is translated to '^'
+    assert events[0].key == "^"
 
     # The rest of the characters correspond to the expected key presses
     events = events[1:]
@@ -87,7 +87,7 @@ def test_unknown_sequence_followed_by_known_sequence(parser):
     sequence = unknown_sequence + known_sequence
     events = parser.feed(sequence)
 
-    assert next(events).key == "escape"
+    assert next(events).key == "^"
     assert next(events).key == "["
     assert next(events).key == "?"
     assert next(events).key == "end"
