@@ -90,7 +90,7 @@ class XTermParser(Parser[events.Event]):
 
         ESC = "\x1b"
         read1 = self.read1
-        get_key_ansi_sequence = ANSI_SEQUENCES_KEYS.get
+        sequence_to_key_events = self._sequence_to_key_events
         more_data = self.more_data
         paste_buffer: list[str] = []
         bracketed_paste = False
@@ -144,7 +144,7 @@ class XTermParser(Parser[events.Event]):
                         or len(sequence) > _MAX_SEQUENCE_SEARCH_THRESHOLD
                     ):
                         for character in sequence:
-                            key_events = self._sequence_to_key_events(character)
+                            key_events = sequence_to_key_events(character)
                             for event in key_events:
                                 if event.key == "escape":
                                     event = events.Key(event.sender, key="^")
@@ -170,7 +170,7 @@ class XTermParser(Parser[events.Event]):
 
                     if not bracketed_paste:
                         # Was it a pressed key event that we received?
-                        key_events = list(self._sequence_to_key_events(sequence))
+                        key_events = list(sequence_to_key_events(sequence))
                         for event in key_events:
                             on_token(event)
                         if key_events:
@@ -200,7 +200,7 @@ class XTermParser(Parser[events.Event]):
                             break
             else:
                 if not bracketed_paste:
-                    for event in self._sequence_to_key_events(character):
+                    for event in sequence_to_key_events(character):
                         on_token(event)
 
     def _sequence_to_key_events(self, sequence: str) -> Iterable[events.Key]:
