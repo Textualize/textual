@@ -69,7 +69,7 @@ class Button(Widget, can_focus=True):
     Button.-success:hover {
         background: $success-darken-1;
         color: $text-success-darken-1;
-        border: tall $success-lighten-2;  /* TODO: This shouldn't be necessary?? */
+        border: tall $success-lighten-2;
     }
 
     .-dark-mode Button.-success {
@@ -109,6 +109,7 @@ class Button(Widget, can_focus=True):
         border: tall $warning-lighten-3;
     }
 
+    /* Error variant */
     Button.-error {
         background: $error;
         color: $text-error;
