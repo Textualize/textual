@@ -359,6 +359,13 @@ class DOMNode(MessagePump):
         return style
 
     @property
+    def rich_style(self) -> Style:
+        (_, _), (background, color) = self.colors
+        style = Style.from_color(color.rich_color, background.rich_color)
+        style += self.text_style
+        return style
+
+    @property
     def colors(self) -> tuple[tuple[Color, Color], tuple[Color, Color]]:
         """Gets the Widgets foreground and background colors, and its parent's colors.
 

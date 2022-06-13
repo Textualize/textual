@@ -80,6 +80,14 @@ class Selector:
         self.specificity = (specificity1, specificity2 + 1, specificity3)
 
     def check(self, node: DOMNode) -> bool:
+        """Check if a given node matches the selector.
+
+        Args:
+            node (DOMNode): A DOM node.
+
+        Returns:
+            bool: True if the selector matches, otherwise False.
+        """
         return self._checks[self.type](node)
 
     def _check_universal(self, node: DOMNode) -> bool:

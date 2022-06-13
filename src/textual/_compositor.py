@@ -444,7 +444,7 @@ class Compositor:
 
         x -= region.x
         y -= region.y
-        lines = widget.render_lines(y, y + 1)
+        lines = widget.render_lines((y, y + 1), (0, region.width))
         if not lines:
             return Style.null()
         end = 0
@@ -543,7 +543,10 @@ class Compositor:
             if not region:
                 continue
             if region in clip:
-                yield region, clip, widget.render_lines(0, region.height)
+                yield region, clip, widget.render_lines(
+                    (0, region.height),
+                    (0, region.width),
+                )
             elif overlaps(clip, region):
                 clipped_region = intersection(region, clip)
                 if not clipped_region:
@@ -552,11 +555,10 @@ class Compositor:
                 delta_x = new_x - region.x
                 delta_y = new_y - region.y
                 crop_x = delta_x + new_width
-                lines = widget.render_lines(delta_y, delta_y + new_height)
-                if (delta_x, crop_x) != (0, region.width):
-                    lines = [
-                        line_crop(line, delta_x, crop_x, region.width) for line in lines
-                    ]
+                lines = widget.render_lines(
+                    (delta_y, delta_y + new_height),
+                    (delta_x, crop_x),
+                )
                 yield region, clip, lines
 
     @classmethod

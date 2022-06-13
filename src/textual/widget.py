@@ -4,6 +4,7 @@ from fractions import Fraction
 from typing import (
     Any,
     Awaitable,
+    ClassVar,
     TYPE_CHECKING,
     Callable,
     Iterable,
@@ -36,6 +37,8 @@ from ._layout import Layout
 from .reactive import Reactive, watch
 from .renderables.opacity import Opacity
 from .renderables.tint import Tint
+from ._segment_tools import line_crop
+from .css.styles import Styles
 
 
 if TYPE_CHECKING:
@@ -73,12 +76,14 @@ class Widget(DOMNode):
         scrollbar-background: $panel-darken-2;
         scrollbar-background-hover: $panel-darken-3;        
         scrollbar-color: $system;
-        scrollbar-color-active: $accent-darken-1;                
+        scrollbar-color-active: $secondary-darken-1;                
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
         
     }
     """
+
+    COMPONENTS: ClassVar[set[str]] = set()
 
     can_focus: bool = False
     can_focus_children: bool = True
@@ -113,6 +118,8 @@ class Widget(DOMNode):
 
         self._arrangement: ArrangeResult | None = None
         self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
+
+        self.component_styles: dict[str, Styles] = {}
 
         super().__init__(name=name, id=id, classes=classes)
         self.add_children(*children)
@@ -871,19 +878,22 @@ class Widget(DOMNode):
         self._render_cache = RenderCache(self.size, lines)
         self._dirty_regions.clear()
 
-    def render_lines(self, start: int, end: int) -> Lines:
-        """Get segment lines to render the widget.
+    def _crop_lines(self, lines: Lines, x1, x2) -> Lines:
+        if (x1, x2) != (0, self.size.width):
+            lines = [line_crop(line, x1, x2, self.size.width) for line in lines]
+        return lines
 
-        Args:
-            start (int | None, optional): line start index, or None for first line. Defaults to None.
-            end (int | None, optional): line end index, or None for last line. Defaults to None.
-
-        Returns:
-            Lines: A list of lists of segments.
-        """
+    def render_lines(
+        self, line_range: tuple[int, int], column_range: tuple[int, int]
+    ) -> Lines:
+        """Get segment lines to render the widget."""
         if self._dirty_regions:
             self._render_lines()
-        lines = self._render_cache.lines[start:end]
+
+        y1, y2 = line_range
+        lines = self._render_cache.lines[y1:y2]
+        if column_range is not None:
+            lines = self._crop_lines(lines, *column_range)
         return lines
 
     def get_style_at(self, x: int, y: int) -> Style:

@@ -15,7 +15,7 @@ class ScrollView(Widget):
     ScrollView {     
         overflow-y: auto;
         overflow-x: auto;        
-    }
+    }    
 
     """
 
@@ -33,7 +33,6 @@ class ScrollView(Widget):
         return False
 
     def on_mount(self):
-        self.virtual_size = Size(200, 200)
         self._refresh_scrollbars()
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
@@ -65,17 +64,7 @@ class ScrollView(Widget):
             self.refresh(layout=False)
             self.call_later(self.scroll_to, self.scroll_x, self.scroll_y)
 
-    # def render_lines(self, start: int | None = None, end: int | None = None) -> Lines:
-    #     style = Style.parse("white on green")
-    #     width, height = self.size
-    #     lines = [
-    #         [Segment(str(" " * width), style)]
-    #         for line in range(start or 0, end or height)
-    #     ]
-    #     return lines
-
     def render(self) -> RenderableType:
-
         from rich.panel import Panel
 
         return Panel(f"{self.scroll_offset} {self.show_vertical_scrollbar}")

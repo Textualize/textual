@@ -516,7 +516,7 @@ class Region(NamedTuple):
 
     @lru_cache(maxsize=4096)
     def union(self, region: Region) -> Region:
-        """Get a new region that contains both regions.
+        """Get the smallest region that contains both regions.
 
         Args:
             region (Region): Another region.
