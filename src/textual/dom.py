@@ -42,6 +42,9 @@ class DOMNode(MessagePump):
     # Custom CSS
     CSS: ClassVar[str] = ""
 
+    # Virtual DOM nodes
+    COMPONENT_CLASSES: ClassVar[set[str]] = set()
+
     # True if this node inherits the CSS from the base class.
     _inherit_css: ClassVar[bool] = True
     # List of names of base class (lower cased) that inherit CSS
@@ -61,8 +64,8 @@ class DOMNode(MessagePump):
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles(self)
         self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
-        self._default_styles = Styles()
-        self._default_rules = self._default_styles.extract_rules((0, 0, 0))
+        self.component_styles: dict[str, StylesBase] = {}
+
         super().__init__()
 
     def __init_subclass__(cls, inherit_css: bool = True) -> None:

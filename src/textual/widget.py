@@ -83,7 +83,7 @@ class Widget(DOMNode):
     }
     """
 
-    COMPONENTS: ClassVar[set[str]] = set()
+    COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
     can_focus: bool = False
     can_focus_children: bool = True
@@ -118,8 +118,6 @@ class Widget(DOMNode):
 
         self._arrangement: ArrangeResult | None = None
         self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
-
-        self.component_styles: dict[str, Styles] = {}
 
         super().__init__(name=name, id=id, classes=classes)
         self.add_children(*children)

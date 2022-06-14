@@ -1,25 +1,20 @@
 from __future__ import annotations
 
-from rich.segment import Segment
-
-from typing import cast, Generic, Iterable, TypeVar
-
-from collections.abc import Container
 from dataclasses import dataclass
+from typing import ClassVar, Generic, TypeVar, cast
 
-from rich.console import RenderableType
 from rich.padding import Padding
+from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text, TextType
 
-from ..widget import Widget
-from ..geometry import Size
 from .._lru_cache import LRUCache
-from ..reactive import Reactive
-from .._types import Lines
-from ..scroll_view import ScrollView
 from .._segment_tools import line_crop
-
+from .._types import Lines
+from ..geometry import Size
+from ..reactive import Reactive
+from ..scroll_view import ScrollView
+from ..widget import Widget
 
 CellType = TypeVar("CellType")
 
@@ -44,13 +39,19 @@ class Header(Widget):
 class DataTable(ScrollView, Generic[CellType]):
 
     CSS = """
-    DataTable Header {
-        display: none;
+    DataTable > .header {        
         text-style: bold;
         background: $primary;
         color: $text-primary;
     }
+    DataTable > .fixed {
+        text-style: bold;
+        background: $primary-darken-2;
+        color: $text-primary-darken-2;
+    }
     """
+
+    COMPONENT_CLASSES: ClassVar[set[str]] = {"header", "fixed"}
 
     def __init__(
         self,
@@ -70,9 +71,6 @@ class DataTable(ScrollView, Generic[CellType]):
     show_header = Reactive(True)
     fixed_rows = Reactive(1)
     fixed_columns = Reactive(1)
-
-    def compose(self):
-        yield Header()
 
     def _update_dimensions(self) -> None:
         max_width = sum(column.width for column in self.columns)
@@ -128,12 +126,13 @@ class DataTable(ScrollView, Generic[CellType]):
             rendered_width += column.width
             cell_segments.append(lines[0])
 
-        header_style = self.query("Header").first().rich_style
+        fixed_style = self.component_styles["fixed"].rich_style
+        header_style = fixed_style + self.component_styles["header"].rich_style
 
         fixed: list[Segment] = sum(cell_segments[: self.fixed_columns], start=[])
         fixed_width = sum(column.width for column in self.columns[: self.fixed_columns])
 
-        fixed = list(Segment.apply_style(fixed, header_style))
+        fixed = list(Segment.apply_style(fixed, fixed_style))
 
         line: list[Segment] = []
         extend = line.extend
