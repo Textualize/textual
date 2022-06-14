@@ -148,7 +148,7 @@ class XTermParser(Parser[events.Event]):
                     # to find a match, and should issue everything we've seen within
                     # the suspected sequence as Key events instead.
                     sequence_character = yield read1()
-                    next_sequence = sequence + sequence_character
+                    new_sequence = sequence + sequence_character
 
                     threshold_exceeded = len(sequence) > _MAX_SEQUENCE_SEARCH_THRESHOLD
                     found_escape = sequence_character and sequence_character == ESC
@@ -156,7 +156,7 @@ class XTermParser(Parser[events.Event]):
                     if threshold_exceeded:
                         # We exceeded the sequence length threshold, so reissue all the
                         # characters in that sequence as key-presses.
-                        reissue_sequence_as_keys(next_sequence)
+                        reissue_sequence_as_keys(new_sequence)
                         break
 
                     if found_escape:
@@ -167,7 +167,7 @@ class XTermParser(Parser[events.Event]):
                         reissue_sequence_as_keys(sequence)
                         break
 
-                    sequence = next_sequence
+                    sequence = new_sequence
 
                     self.debug_log(f"sequence={sequence!r}")
 
