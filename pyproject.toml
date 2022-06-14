@@ -27,7 +27,10 @@ rich = "^12.4.3"
 click = "8.1.2"
 importlib-metadata = "^4.11.3"
 typing-extensions = { version = "^4.0.0", python = "<3.8" }
-msgpack = "^1.0.3"
+
+# Dependencies below are required for devtools only
+aiohttp = { version = "^3.8.1", optional = true }
+msgpack = { version = "^1.0.3", optional = true }
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.3"
@@ -41,6 +44,9 @@ pre-commit = "^2.13.0"
 pytest-aiohttp = "^1.0.4"
 time-machine = "^2.6.0"
 Jinja2 = "<3.1.0"
+
+[tool.poetry.extras]
+dev = ["aiohttp", "msgpack"]
 
 [tool.black]
 includes = "src"
