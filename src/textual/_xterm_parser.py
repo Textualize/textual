@@ -96,6 +96,14 @@ class XTermParser(Parser[events.Event]):
         bracketed_paste = False
         reuse_escape = False
 
+        def reissue_sequence_as_keys(reissue_sequence: str) -> None:
+            for character in reissue_sequence:
+                key_events = sequence_to_key_events(character)
+                for event in key_events:
+                    if event.key == "escape":
+                        event = events.Key(event.sender, key="^")
+                    on_token(event)
+
         while not self.is_eof:
             if not bracketed_paste and paste_buffer:
                 # We're at the end of the bracketed paste.
@@ -141,30 +149,22 @@ class XTermParser(Parser[events.Event]):
                     # the suspected sequence as Key events instead.
                     sequence_character = yield read1()
                     next_sequence = sequence + sequence_character
-                    if (
-                        sequence_character
-                        and sequence_character == ESC
-                        or len(sequence) > _MAX_SEQUENCE_SEARCH_THRESHOLD
-                    ):
-                        if sequence_character == ESC:
-                            # We've hit an escape, so we need to issue all the keys
-                            # up to but not including it, since this escape could be
-                            # part of an upcoming control sequence.
-                            reuse_escape = True
-                            reissue_sequence = sequence
-                        else:
-                            # We exceeded the sequence length threshold, so reissue all the
-                            # characters in that sequence as key-presses.
-                            reissue_sequence = next_sequence
 
-                        for character in reissue_sequence:
-                            key_events = sequence_to_key_events(character)
-                            for event in key_events:
-                                if event.key == "escape":
-                                    event = events.Key(event.sender, key="^")
-                                on_token(event)
+                    threshold_exceeded = len(sequence) > _MAX_SEQUENCE_SEARCH_THRESHOLD
+                    found_escape = sequence_character and sequence_character == ESC
 
-                        # We're done looking for escape sequences
+                    if threshold_exceeded:
+                        # We exceeded the sequence length threshold, so reissue all the
+                        # characters in that sequence as key-presses.
+                        reissue_sequence_as_keys(next_sequence)
+                        break
+
+                    if found_escape:
+                        # We've hit an escape, so we need to reissue all the keys
+                        # up to but not including it, since this escape could be
+                        # part of an upcoming control sequence.
+                        reuse_escape = True
+                        reissue_sequence_as_keys(sequence)
                         break
 
                     sequence = next_sequence
