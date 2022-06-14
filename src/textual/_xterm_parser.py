@@ -94,7 +94,7 @@ class XTermParser(Parser[events.Event]):
         more_data = self.more_data
         paste_buffer: list[str] = []
         bracketed_paste = False
-        reuse_escape = False
+        use_prior_escape = False
 
         def reissue_sequence_as_keys(reissue_sequence: str) -> None:
             for character in reissue_sequence:
@@ -116,8 +116,8 @@ class XTermParser(Parser[events.Event]):
                 on_token(events.Paste(self.sender, text=pasted_text))
                 paste_buffer.clear()
 
-            character = ESC if reuse_escape else (yield read1())
-            reuse_escape = False
+            character = ESC if use_prior_escape else (yield read1())
+            use_prior_escape = False
 
             if bracketed_paste:
                 paste_buffer.append(character)
@@ -163,7 +163,7 @@ class XTermParser(Parser[events.Event]):
                         # We've hit an escape, so we need to reissue all the keys
                         # up to but not including it, since this escape could be
                         # part of an upcoming control sequence.
-                        reuse_escape = True
+                        use_prior_escape = True
                         reissue_sequence_as_keys(sequence)
                         break
 
