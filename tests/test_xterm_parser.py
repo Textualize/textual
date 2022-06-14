@@ -15,6 +15,15 @@ from textual.events import (
 from textual.messages import TerminalSupportsSynchronizedOutput
 
 
+def chunks(data, size):
+    chunk_start = 0
+    chunk_end = size
+    while chunk_end <= len(data):
+        yield data[chunk_start:chunk_end]
+        chunk_start = chunk_end
+        chunk_end += size
+
+
 @pytest.fixture
 def parser():
     return XTermParser(sender=mock.sentinel, more_data=lambda: False)
