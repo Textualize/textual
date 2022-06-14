@@ -59,7 +59,7 @@ class DataTable(ScrollView, Generic[CellType]):
     }
 
     DataTable > .datatable--even-row {
-        
+        background: $primary 10%;
     }
 
     DataTable > .datatable--highlight {
@@ -197,15 +197,12 @@ class DataTable(ScrollView, Generic[CellType]):
         x1 += scroll_x
         x2 += scroll_x
 
-        fixed_lines = [
-            list(self._render_line(y, x1, x2)) for y in range(0, self.fixed_rows)
-        ]
-        lines = [list(self._render_line(y, x1, x2)) for y in range(y1, y2)]
+        fixed_lines = [self._render_line(y, x1, x2) for y in range(0, self.fixed_rows)]
+        lines = [self._render_line(y, x1, x2) for y in range(y1, y2)]
 
-        if self.fixed_rows:
-            for line_no, y in enumerate(range(y1, y2)):
-                if y == 0:
-                    lines[line_no] = fixed_lines[line_no]
+        for fixed_line, y in zip(fixed_lines, range(y1, y2)):
+            if y - scroll_y == 0:
+                lines[0] = fixed_line
 
         (base_background, base_color), (background, color) = self.colors
         style = Style.from_color(color.rich_color, background.rich_color)
