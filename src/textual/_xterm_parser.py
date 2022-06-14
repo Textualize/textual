@@ -127,6 +127,16 @@ class XTermParser(Parser[events.Event]):
                 # Could be the escape key was pressed OR the start of an escape sequence
                 sequence: str = character
                 if not bracketed_paste:
+                    # TODO: There's nothing left in the buffer at the moment,
+                    #  but since we're on an escape, how can we be sure that the
+                    #  data that next gets fed to the parser isn't an escape sequence?
+
+                    #  This problem arises when an ESC falls at the end of a chunk.
+                    #  We'll be at an escape, but peek_buffer will return an empty
+                    #  string because there's nothing in the buffer yet.
+
+                    #  This code makes an assumption that an escape sequence will never be
+                    #  "chopped up", so buffers would never contain partial escape sequences.
                     peek_buffer = yield self.peek_buffer()
                     if not peek_buffer:
                         # An escape arrived without any following characters

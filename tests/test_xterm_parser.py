@@ -1,3 +1,4 @@
+import itertools
 from unittest import mock
 
 import pytest
@@ -16,17 +17,40 @@ from textual.messages import TerminalSupportsSynchronizedOutput
 
 
 def chunks(data, size):
+    if size == 0:
+        yield data
+        return
+
     chunk_start = 0
     chunk_end = size
-    while chunk_end <= len(data):
+    while True:
         yield data[chunk_start:chunk_end]
         chunk_start = chunk_end
         chunk_end += size
+        if chunk_end >= len(data):
+            yield data[chunk_start:chunk_end]
+            break
 
 
 @pytest.fixture
 def parser():
     return XTermParser(sender=mock.sentinel, more_data=lambda: False)
+
+
+@pytest.mark.parametrize("chunk_size", [2,3,4,5,6])
+def test_varying_parser_chunk_sizes_no_missing_data(parser, chunk_size):
+    end = "\x1b[8~"
+    text = "ABCDEFGH"
+
+    data = end + text
+    events = []
+    for chunk in chunks(data, chunk_size):
+        events.append(parser.feed(chunk))
+
+    events = list(itertools.chain.from_iterable(list(event) for event in events))
+
+    assert events[0].key == "end"
+    assert [event.key for event in events[1:]] == list(text)
 
 
 def test_bracketed_paste(parser):
@@ -85,7 +109,14 @@ def test_cant_match_escape_sequence_too_long(parser):
         assert events[index].key == character
 
 
-def test_unknown_sequence_followed_by_known_sequence(parser):
+@pytest.mark.parametrize("chunk_size", [
+    pytest.param(2, marks=pytest.mark.xfail(reason="Fails when ESC at end of chunk")),
+    3,
+    pytest.param(4, marks=pytest.mark.xfail(reason="Fails when ESC at end of chunk")),
+    5,
+    6,
+])
+def test_unknown_sequence_followed_by_known_sequence(parser, chunk_size):
     """ When we feed the parser an unknown sequence followed by a known
     sequence. The characters in the unknown sequence are delivered as keys,
     and the known escape sequence that follows is delivered as expected.
@@ -94,15 +125,20 @@ def test_unknown_sequence_followed_by_known_sequence(parser):
     known_sequence = "\x1b[8~"  # key = 'end'
 
     sequence = unknown_sequence + known_sequence
-    events = parser.feed(sequence)
 
-    assert next(events).key == "^"
-    assert next(events).key == "["
-    assert next(events).key == "?"
-    assert next(events).key == "end"
+    events = []
+    parser.more_data = lambda: True
+    for chunk in chunks(sequence, chunk_size):
+        events.append(parser.feed(chunk))
 
-    with pytest.raises(StopIteration):
-        next(events)
+    events = list(itertools.chain.from_iterable(list(event) for event in events))
+
+    assert [event.key for event in events] == [
+        "^",
+        "[",
+        "?",
+        "end",
+    ]
 
 
 def test_simple_key_presses_all_delivered_correct_order(parser):
