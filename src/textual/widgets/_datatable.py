@@ -39,19 +39,42 @@ class Header(Widget):
 class DataTable(ScrollView, Generic[CellType]):
 
     CSS = """
-    DataTable > .header {        
+    DataTable {
+        background: $surface;
+        color: $text-surface;       
+    }
+    DataTable > .datatable--header {        
         text-style: bold;
         background: $primary;
         color: $text-primary;
     }
-    DataTable > .fixed {
+    DataTable > .datatable--fixed {
         text-style: bold;
         background: $primary-darken-2;
         color: $text-primary-darken-2;
     }
+
+    DataTable > .datatable--odd-row {
+        
+    }
+
+    DataTable > .datatable--even-row {
+        
+    }
+
+    DataTable > .datatable--highlight {
+        background: $secondary;
+        color: $text-secondary;
+    }
     """
 
-    COMPONENT_CLASSES: ClassVar[set[str]] = {"header", "fixed"}
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "datatable--header",
+        "datatable--fixed",
+        "datatable--odd-row",
+        "datatable--even-row",
+        "datatable--highlight",
+    }
 
     def __init__(
         self,
@@ -74,7 +97,6 @@ class DataTable(ScrollView, Generic[CellType]):
 
     def _update_dimensions(self) -> None:
         max_width = sum(column.width for column in self.columns)
-
         self.virtual_size = Size(max_width, len(self.data) + self.show_header)
 
     def add_column(self, label: TextType, *, width: int = 10) -> None:
@@ -104,12 +126,15 @@ class DataTable(ScrollView, Generic[CellType]):
 
     def _render_cell(self, y: int, column: Column) -> Lines:
 
+        style = Style.from_meta({"y": y, "column": column.index})
+
         cell_key = (y, column.index)
         if cell_key not in self._cell_render_cache:
             cell = self.get_row(y)[column.index]
             lines = self.app.console.render_lines(
                 Padding(cell, (0, 1)),
                 self.app.console.options.update_dimensions(column.width, 1),
+                style=style,
             )
             self._cell_render_cache[cell_key] = lines
 
@@ -126,20 +151,34 @@ class DataTable(ScrollView, Generic[CellType]):
             rendered_width += column.width
             cell_segments.append(lines[0])
 
-        fixed_style = self.component_styles["fixed"].rich_style
-        header_style = fixed_style + self.component_styles["header"].rich_style
+        fixed_style = self.component_styles[
+            "datatable--fixed"
+        ].node.rich_style + Style.from_meta({"fixed": True})
+        header_style = self.component_styles[
+            "datatable--header"
+        ].node.rich_style + Style.from_meta({"header": True})
 
         fixed: list[Segment] = sum(cell_segments[: self.fixed_columns], start=[])
         fixed_width = sum(column.width for column in self.columns[: self.fixed_columns])
 
         fixed = list(Segment.apply_style(fixed, fixed_style))
 
-        line: list[Segment] = []
-        extend = line.extend
-        for segments in cell_segments:
-            extend(segments)
-        segments = fixed + line_crop(line, x1 + fixed_width, x2, width)
-        line = Segment.adjust_line_length(segments, width)
+        line: list[Segment] = sum(cell_segments, start=[])
+
+        row_style = Style()
+        if y == 0:
+            segments = fixed + line_crop(line, x1 + fixed_width, x2, width)
+            line = Segment.adjust_line_length(segments, width)
+        else:
+            component_row_style = (
+                "datatable--odd-row" if y % 2 else "datatable--even-row"
+            )
+
+            row_style += self.component_styles[component_row_style].node.rich_style
+
+            line = list(Segment.apply_style(line, row_style))
+            segments = fixed + line_crop(line, x1 + fixed_width, x2, width)
+            line = Segment.adjust_line_length(segments, width)
 
         if y == 0 and self.show_header:
             line = list(Segment.apply_style(line, header_style))
@@ -162,11 +201,17 @@ class DataTable(ScrollView, Generic[CellType]):
             list(self._render_line(y, x1, x2)) for y in range(0, self.fixed_rows)
         ]
         lines = [list(self._render_line(y, x1, x2)) for y in range(y1, y2)]
-        if fixed_lines:
-            lines = fixed_lines + lines[self.fixed_rows :]
+
+        if self.fixed_rows:
+            for line_no, y in enumerate(range(y1, y2)):
+                if y == 0:
+                    lines[line_no] = fixed_lines[line_no]
 
         (base_background, base_color), (background, color) = self.colors
         style = Style.from_color(color.rich_color, background.rich_color)
         lines = [list(Segment.apply_style(line, style)) for line in lines]
 
         return lines
+
+    def on_mouse_move(self, event):
+        print(self.get_style_at(event.x, event.y).meta)

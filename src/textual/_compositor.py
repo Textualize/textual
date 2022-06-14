@@ -444,7 +444,9 @@ class Compositor:
 
         x -= region.x
         y -= region.y
+
         lines = widget.render_lines((y, y + 1), (0, region.width))
+
         if not lines:
             return Style.null()
         end = 0

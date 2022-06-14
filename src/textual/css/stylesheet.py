@@ -302,6 +302,7 @@ class Stylesheet:
         )
         self.replace_rules(node, node_rules, animate=animate)
 
+        node.component_styles.clear()
         for component in node.COMPONENT_CLASSES:
             virtual_node = DOMNode(classes=component)
             virtual_node.set_parent(node)

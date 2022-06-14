@@ -358,7 +358,6 @@ class DOMNode(MessagePump):
         style = Style()
         for node in reversed(self.ancestors):
             style += node.styles.text_style
-
         return style
 
     @property
@@ -390,7 +389,6 @@ class DOMNode(MessagePump):
     @property
     def ancestors(self) -> list[DOMNode]:
         """Get a list of Nodes by tracing ancestors all the way back to App."""
-
         nodes: list[DOMNode] = [self]
         add_node = nodes.append
         node = self
