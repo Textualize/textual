@@ -24,10 +24,16 @@ textual = "textual.cli.cli:run"
 python = "^3.7"
 #rich = "^12.4.3"
 rich = {path="../rich", develop=true}
-click = "8.1.2"
 importlib-metadata = "^4.11.3"
 typing-extensions = { version = "^4.0.0", python = "<3.8" }
-msgpack = "^1.0.3"
+
+# Dependencies below are required for devtools only
+aiohttp = { version = "^3.8.1", optional = true }
+click = {version = "8.1.2", optional = true}
+msgpack = { version = "^1.0.3", optional = true }
+
+[tool.poetry.extras]
+dev = ["aiohttp", "click", "msgpack"]
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.3"
