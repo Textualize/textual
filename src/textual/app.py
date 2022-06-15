@@ -34,7 +34,7 @@ import rich.repr
 from rich.console import Console, RenderableType
 from rich.measure import Measurement
 from rich.protocol import is_renderable
-from rich.segment import Segments, SegmentLines
+from rich.segment import Segments
 from rich.traceback import Traceback
 
 from . import actions
@@ -47,7 +47,6 @@ from ._context import active_app
 from ._event_broker import extract_handler_actions, NoHandler
 from .binding import Bindings, NoBinding
 from .css.stylesheet import Stylesheet
-from .css.styles import RenderStyles
 from .css.query import NoMatchingNodesError
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
@@ -61,7 +60,6 @@ from .layouts.dock import Dock
 from .message_pump import MessagePump
 from .reactive import Reactive
 from .renderables.blank import Blank
-from ._profile import timer
 
 from .screen import Screen
 from .widget import Widget

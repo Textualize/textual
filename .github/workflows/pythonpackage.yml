@@ -25,7 +25,7 @@ jobs:
           version: 1.1.6
           virtualenvs-in-project: true
       - name: Install dependencies
-        run: poetry install
+        run: poetry install --extras "dev"
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       - name: Format check with black
         run: |
