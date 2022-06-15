@@ -18,7 +18,7 @@ from ..reactive import Reactive
 from ..widget import Widget
 
 ButtonVariant = Literal["default", "success", "warning", "error"]
-_VALID_BUTTON_VARIANTS = {"default", "success", "warning", "error"}
+_VALID_BUTTON_VARIANTS = ButtonVariant.__args__  # type: ignore
 
 
 class InvalidButtonVariant(Exception):
@@ -206,8 +206,9 @@ class Button(Widget, can_focus=True):
         if event.key == "enter" and not self.disabled:
             await self.emit(Button.Pressed(self))
 
-    @staticmethod
+    @classmethod
     def success(
+        cls,
         label: TextType | None = None,
         disabled: bool = False,
         *,
@@ -236,8 +237,9 @@ class Button(Widget, can_focus=True):
             classes=classes,
         )
 
-    @staticmethod
+    @classmethod
     def warning(
+        cls,
         label: TextType | None = None,
         disabled: bool = False,
         *,
@@ -266,8 +268,9 @@ class Button(Widget, can_focus=True):
             classes=classes,
         )
 
-    @staticmethod
+    @classmethod
     def error(
+        cls,
         label: TextType | None = None,
         disabled: bool = False,
         *,
