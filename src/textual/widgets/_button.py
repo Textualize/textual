@@ -18,7 +18,7 @@ from ..reactive import Reactive
 from ..widget import Widget
 
 ButtonVariant = Literal["default", "success", "warning", "error"]
-_VALID_BUTTON_VARIANTS = ButtonVariant.__args__  # type: ignore
+_VALID_BUTTON_VARIANTS = {"default", "success", "warning", "error"}
 
 
 class InvalidButtonVariant(Exception):
