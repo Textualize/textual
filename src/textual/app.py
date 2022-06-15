@@ -151,7 +151,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self.console = Console(
             file=(open(os.devnull, "wt") if self.is_headless else sys.__stdout__),
-            markup=True,
+            markup=False,
             highlight=False,
             emoji=False,
         )

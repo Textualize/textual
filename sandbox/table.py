@@ -21,9 +21,13 @@ class TableApp(App):
 
     def on_mount(self):
         self.bind("d", "toggle_dark")
+        self.bind("z", "toggle_zebra")
 
     def action_toggle_dark(self) -> None:
         self.app.dark = not self.app.dark
+
+    def action_toggle_zebra(self) -> None:
+        self.table.zebra_stripes = not self.table.zebra_stripes
 
 
 app = TableApp()

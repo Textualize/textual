@@ -174,3 +174,6 @@ if __name__ == "__main__":
     from textual.css.scalar import Scalar
 
     print(Scalar.resolve_dimension.cache_info())
+
+    from rich.style import Style
+    print(Style.__add__.cache_info())

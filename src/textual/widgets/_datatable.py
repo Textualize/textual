@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar, Generic, TypeVar, cast
 
+from rich.console import RenderableType
 from rich.padding import Padding
 from rich.segment import Segment
 from rich.style import Style
@@ -11,8 +12,9 @@ from rich.text import Text, TextType
 from .._lru_cache import LRUCache
 from .._segment_tools import line_crop
 from .._types import Lines
-from ..geometry import Size
+from ..geometry import Region, Size
 from ..reactive import Reactive
+from .._profile import timer
 from ..scroll_view import ScrollView
 from ..widget import Widget
 
@@ -25,6 +27,13 @@ class Column:
     width: int
     visible: bool = False
     index: int = 0
+
+
+@dataclass
+class Row:
+    index: int
+    height: int = 1
+    cell_renderables: list[RenderableType] = field(default_factory=list)
 
 
 @dataclass
@@ -62,6 +71,10 @@ class DataTable(ScrollView, Generic[CellType]):
         background: $primary 10%;
     }
 
+    .-dark-mode DataTable > .datatable--even-row {
+        background: $primary 15%;
+    }
+
     DataTable > .datatable--highlight {
         background: $secondary;
         color: $text-secondary;
@@ -84,16 +97,19 @@ class DataTable(ScrollView, Generic[CellType]):
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
         self.columns: list[Column] = []
+        self.rows: dict[int, Row] = {}
         self.data: dict[int, list[CellType]] = {}
         self.row_count = 0
 
-        self._cells: dict[int, list[Cell]] = {}
+        self.line_contents: list[str] = []
 
+        self._cells: dict[int, list[Cell]] = {}
         self._cell_render_cache: dict[tuple[int, int], Lines] = LRUCache(10000)
 
     show_header = Reactive(True)
     fixed_rows = Reactive(1)
     fixed_columns = Reactive(1)
+    zebra_stripes = Reactive(False)
 
     def _update_dimensions(self) -> None:
         max_width = sum(column.width for column in self.columns)
@@ -105,8 +121,17 @@ class DataTable(ScrollView, Generic[CellType]):
         self._update_dimensions()
         self.refresh()
 
-    def add_row(self, *cells: CellType) -> None:
-        self.data[self.row_count] = list(cells)
+    def add_row(self, *cells: CellType, height: int = 1) -> None:
+        row_index = self.row_count
+        self.data[row_index] = list(cells)
+        self.rows[row_index] = Row(
+            row_index,
+            height=height,
+            cell_renderables=[
+                Text.from_markup(cell) if isinstance(cell, str) else cell
+                for cell in cells
+            ],
+        )
         self.row_count += 1
         self._update_dimensions()
         self.refresh()
@@ -122,7 +147,7 @@ class DataTable(ScrollView, Generic[CellType]):
         if data is None:
             return [Text() for column in self.columns]
         else:
-            return data
+            return self.rows[data_offset].cell_renderables
 
     def _render_cell(self, y: int, column: Column) -> Lines:
 
@@ -151,6 +176,8 @@ class DataTable(ScrollView, Generic[CellType]):
             rendered_width += column.width
             cell_segments.append(lines[0])
 
+        base_style = self.rich_style
+
         fixed_style = self.component_styles[
             "datatable--fixed"
         ].node.rich_style + Style.from_meta({"fixed": True})
@@ -165,37 +192,31 @@ class DataTable(ScrollView, Generic[CellType]):
 
         line: list[Segment] = sum(cell_segments, start=[])
 
-        row_style = Style()
+        row_style = base_style
         if y == 0:
             segments = fixed + line_crop(line, x1 + fixed_width, x2, width)
             line = Segment.adjust_line_length(segments, width)
         else:
-            component_row_style = (
-                "datatable--odd-row" if y % 2 else "datatable--even-row"
-            )
-
-            row_style += self.component_styles[component_row_style].node.rich_style
+            if self.zebra_stripes:
+                component_row_style = (
+                    "datatable--odd-row" if y % 2 else "datatable--even-row"
+                )
+                row_style = self.component_styles[component_row_style].node.rich_style
 
             line = list(Segment.apply_style(line, row_style))
             segments = fixed + line_crop(line, x1 + fixed_width, x2, width)
-            line = Segment.adjust_line_length(segments, width)
+            line = Segment.adjust_line_length(segments, width, style=base_style)
 
         if y == 0 and self.show_header:
             line = list(Segment.apply_style(line, header_style))
 
         return line
 
-    def render_lines(
-        self, line_range: tuple[int, int], column_range: tuple[int, int]
-    ) -> Lines:
-        scroll_x, scroll_y = self.scroll_offset
-        y1, y2 = line_range
-        y1 += scroll_y
-        y2 += scroll_y
+    @timer("render_lines")
+    def render_lines(self, crop: Region) -> Lines:
 
-        x1, x2 = column_range
-        x1 += scroll_x
-        x2 += scroll_x
+        scroll_x, scroll_y = self.scroll_offset
+        x1, y1, x2, y2 = crop.translate(scroll_x, scroll_y).corners
 
         fixed_lines = [self._render_line(y, x1, x2) for y in range(0, self.fixed_rows)]
         lines = [self._render_line(y, x1, x2) for y in range(y1, y2)]
@@ -203,10 +224,6 @@ class DataTable(ScrollView, Generic[CellType]):
         for fixed_line, y in zip(fixed_lines, range(y1, y2)):
             if y - scroll_y == 0:
                 lines[0] = fixed_line
-
-        (base_background, base_color), (background, color) = self.colors
-        style = Style.from_color(color.rich_color, background.rich_color)
-        lines = [list(Segment.apply_style(line, style)) for line in lines]
 
         return lines
 

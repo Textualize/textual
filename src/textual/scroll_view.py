@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 from rich.console import RenderableType
-from rich.segment import Segment
-from rich.style import Style
+
 
 from .geometry import Size
-from ._types import Lines
 from .widget import Widget
 
 

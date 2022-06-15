@@ -877,21 +877,26 @@ class Widget(DOMNode):
         self._dirty_regions.clear()
 
     def _crop_lines(self, lines: Lines, x1, x2) -> Lines:
-        if (x1, x2) != (0, self.size.width):
-            lines = [line_crop(line, x1, x2, self.size.width) for line in lines]
+        width = self.size.width
+        if (x1, x2) != (0, width):
+            lines = [line_crop(line, x1, x2, width) for line in lines]
         return lines
 
-    def render_lines(
-        self, line_range: tuple[int, int], column_range: tuple[int, int]
-    ) -> Lines:
-        """Get segment lines to render the widget."""
+    def render_lines(self, crop: Region) -> Lines:
+        """Render the widget in to lines.
+
+        Args:
+            crop (Region): Region within visible area to.
+
+        Returns:
+            Lines: A list of list of segments
+        """
         if self._dirty_regions:
             self._render_lines()
 
-        y1, y2 = line_range
+        x1, y1, x2, y2 = crop.corners
         lines = self._render_cache.lines[y1:y2]
-        if column_range is not None:
-            lines = self._crop_lines(lines, *column_range)
+        lines = self._crop_lines(lines, x1, x2)
         return lines
 
     def get_style_at(self, x: int, y: int) -> Style:
