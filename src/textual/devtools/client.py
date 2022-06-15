@@ -27,6 +27,7 @@ try:
     )
     import msgpack
 except ImportError:
+    # TODO: Add link to documentation on how to install devtools
     raise DevtoolsDependenciesMissingError(
         "Textual Devtools requires installation of the 'dev' extra dependencies. "
     )
