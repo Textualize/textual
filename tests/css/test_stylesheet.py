@@ -23,6 +23,17 @@ def test_stylesheet_apply_takes_final_rule_in_specificity_clash():
     assert node.styles.background == Color(0, 0, 255)  # background: blue
 
 
+def test_stylesheet_apply_empty_rules():
+    css = ".a {} .b {}"
+
+    stylesheet = Stylesheet()
+    stylesheet.source["test.css"] = css
+    stylesheet.parse()
+
+    node = DOMNode(classes="a b")
+    stylesheet.apply(node)
+
+
 @pytest.mark.parametrize(
     "css_value,expectation,expected_color",
     [
