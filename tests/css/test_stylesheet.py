@@ -8,6 +8,7 @@ from textual.css._help_renderables import HelpText
 from textual.css.stylesheet import Stylesheet, StylesheetParseError
 from textual.css.tokenizer import TokenizeError
 from textual.dom import DOMNode
+from textual.geometry import Spacing
 
 
 def _make_stylesheet(css: str) -> Stylesheet:
@@ -25,6 +26,16 @@ def test_stylesheet_apply_highest_specificity_wins():
     stylesheet.apply(node)
 
     assert node.styles.color == Color(255, 0, 0)
+
+
+def test_stylesheet_apply_doesnt_override_defaults():
+    css = "#id {color: red;}"
+    stylesheet = _make_stylesheet(css)
+    node = DOMNode(id="id")
+    stylesheet.apply(node)
+
+    assert node.styles.margin == Spacing.all(0)
+    assert node.styles.box_sizing == "border-box"
 
 
 def test_stylesheet_apply_highest_specificity_wins_multiple_classes():
