@@ -303,6 +303,8 @@ class Stylesheet:
             rules_with_highest_specificity = [
                 rule for rule in specificity_rules if rule[0] == highest_specificity
             ]
+            # In the event of two rules having the same specificity, we take the
+            # rule that was declared last and use that.
             node_rules[name] = rules_with_highest_specificity[-1][1]
 
         self.replace_rules(node, node_rules, animate=animate)

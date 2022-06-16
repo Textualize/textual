@@ -10,12 +10,71 @@ from textual.css.tokenizer import TokenizeError
 from textual.dom import DOMNode
 
 
-def test_stylesheet_apply_takes_final_rule_in_specificity_clash():
-    css = ".a {background: red; color: lime} .b {background: blue}"
+def _make_stylesheet(css: str) -> Stylesheet:
     stylesheet = Stylesheet()
     stylesheet.source["test.css"] = css
     stylesheet.parse()
+    return stylesheet
 
+
+def test_stylesheet_apply_highest_specificity_wins():
+    """#ids have higher specificity than .classes"""
+    css = "#id {color: red;} .class {color: blue;}"
+    stylesheet = _make_stylesheet(css)
+    node = DOMNode(classes="class", id="id")
+    stylesheet.apply(node)
+
+    assert node.styles.color == Color(255, 0, 0)
+
+
+def test_stylesheet_apply_highest_specificity_wins_multiple_classes():
+    """When we use two selectors containing only classes, then the selector
+    `.b.c` has greater specificity than the selector `.a`"""
+    css = ".b.c {background: blue;} .a {background: red; color: lime;}"
+    stylesheet = _make_stylesheet(css)
+    node = DOMNode(classes="a b c")
+    stylesheet.apply(node)
+
+    assert node.styles.background == Color(0, 0, 255)
+    assert node.styles.color == Color(0, 255, 0)
+
+
+def test_stylesheet_many_classes_dont_overrule_id():
+    """#id is further to the left in the specificity tuple than class, and
+    a selector containing multiple classes cannot take priority over even a
+    single class."""
+    css = "#id {color: red;} .a.b.c.d {color: blue;}"
+    stylesheet = _make_stylesheet(css)
+    node = DOMNode(classes="a b c d", id="id")
+    stylesheet.apply(node)
+
+    assert node.styles.color == Color(255, 0, 0)
+
+
+def test_stylesheet_last_rule_wins_when_same_rule_twice_in_one_ruleset():
+    css = "#id {color: red; color: blue;}"
+    stylesheet = _make_stylesheet(css)
+    node = DOMNode(id="id")
+    stylesheet.apply(node)
+
+    assert node.styles.color == Color(0, 0, 255)
+
+
+def test_stylesheet_rulesets_merged_for_duplicate_selectors():
+    css = "#id {color: red; background: lime;} #id {color:blue;}"
+    stylesheet = _make_stylesheet(css)
+    node = DOMNode(id="id")
+    stylesheet.apply(node)
+
+    assert node.styles.color == Color(0, 0, 255)
+    assert node.styles.background == Color(0, 255, 0)
+
+
+def test_stylesheet_apply_takes_final_rule_in_specificity_clash():
+    """.a and .b both contain background and have same specificity, so .b wins
+    since it was declared last - the background should be blue."""
+    css = ".a {background: red; color: lime;} .b {background: blue;}"
+    stylesheet = _make_stylesheet(css)
     node = DOMNode(classes="a b", id="c")
     stylesheet.apply(node)
 
@@ -23,13 +82,10 @@ def test_stylesheet_apply_takes_final_rule_in_specificity_clash():
     assert node.styles.background == Color(0, 0, 255)  # background: blue
 
 
-def test_stylesheet_apply_empty_rules():
+def test_stylesheet_apply_empty_rulesets():
+    """Ensure that we don't crash when working with empty rulesets"""
     css = ".a {} .b {}"
-
-    stylesheet = Stylesheet()
-    stylesheet.source["test.css"] = css
-    stylesheet.parse()
-
+    stylesheet = _make_stylesheet(css)
     node = DOMNode(classes="a b")
     stylesheet.apply(node)
 
