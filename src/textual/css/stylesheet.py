@@ -296,11 +296,10 @@ class Stylesheet:
                     rule_attributes[key].append((rule_specificity, value))
 
         # For each rule declared for this node, keep only the most specific one
-        get_first_item = itemgetter(0)
         node_rules: RulesMap = cast(
             RulesMap,
             {
-                name: max(specificity_rules, key=get_first_item)[1]
+                name: specificity_rules[-1][1]
                 for name, specificity_rules in rule_attributes.items()
             },
         )

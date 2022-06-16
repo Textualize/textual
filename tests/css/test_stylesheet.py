@@ -7,6 +7,20 @@ from textual.color import Color
 from textual.css._help_renderables import HelpText
 from textual.css.stylesheet import Stylesheet, StylesheetParseError
 from textual.css.tokenizer import TokenizeError
+from textual.dom import DOMNode
+
+
+def test_stylesheet_apply_takes_final_rule_in_specificity_clash():
+    css = ".a {background: red; color: lime} .b {background:blue}"
+    stylesheet = Stylesheet()
+    stylesheet.source["test.css"] = css
+    stylesheet.parse()
+
+    node = DOMNode(classes="a b")
+    stylesheet.apply(node)
+
+    assert node.styles.color == Color(0, 255, 0)  # color: lime
+    assert node.styles.background == Color(0, 0, 255)  # background: blue
 
 
 @pytest.mark.parametrize(
