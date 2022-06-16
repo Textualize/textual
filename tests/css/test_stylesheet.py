@@ -11,12 +11,12 @@ from textual.dom import DOMNode
 
 
 def test_stylesheet_apply_takes_final_rule_in_specificity_clash():
-    css = ".a {background: red; color: lime} .b {background:blue}"
+    css = ".a {background: red; color: lime} .b {background: blue}"
     stylesheet = Stylesheet()
     stylesheet.source["test.css"] = css
     stylesheet.parse()
 
-    node = DOMNode(classes="a b")
+    node = DOMNode(classes="a b", id="c")
     stylesheet.apply(node)
 
     assert node.styles.color == Color(0, 255, 0)  # color: lime

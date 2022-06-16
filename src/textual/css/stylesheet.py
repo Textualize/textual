@@ -296,13 +296,15 @@ class Stylesheet:
                     rule_attributes[key].append((rule_specificity, value))
 
         # For each rule declared for this node, keep only the most specific one
-        node_rules: RulesMap = cast(
-            RulesMap,
-            {
-                name: specificity_rules[-1][1]
-                for name, specificity_rules in rule_attributes.items()
-            },
-        )
+        get_first_item = itemgetter(0)
+        node_rules: RulesMap = cast(RulesMap, {})
+        for name, specificity_rules in rule_attributes.items():
+            highest_specificity = max(specificity_rules, key=get_first_item)[0]
+            rules_with_highest_specificity = [
+                rule for rule in specificity_rules if rule[0] == highest_specificity
+            ]
+            node_rules[name] = rules_with_highest_specificity[-1][1]
+
         self.replace_rules(node, node_rules, animate=animate)
         if isinstance(node, Widget):
             node._refresh_scrollbars()
