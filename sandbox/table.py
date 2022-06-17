@@ -22,6 +22,7 @@ class TableApp(App):
     def on_mount(self):
         self.bind("d", "toggle_dark")
         self.bind("z", "toggle_zebra")
+        self.bind("x", "exit")
 
     def action_toggle_dark(self) -> None:
         self.app.dark = not self.app.dark
@@ -29,7 +30,10 @@ class TableApp(App):
     def action_toggle_zebra(self) -> None:
         self.table.zebra_stripes = not self.table.zebra_stripes
 
+    def action_exit(self) -> None:
+        from rich.style import Style
+        self.exit(Style._add_cache.cache_info())
 
 app = TableApp()
 if __name__ == "__main__":
-    app.run()
+    print(app.run())
