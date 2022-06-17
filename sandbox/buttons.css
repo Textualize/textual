@@ -1,12 +1,4 @@
-#foo {
-    text-style: underline;
-    background: rebeccapurple;
-}
-
-*:focus {
-    tint: yellow 50%;
-}
-
-#foo:hover {
-    background: greenyellow;
+Button {
+    padding-left: 1;
+    padding-right: 1;
 }

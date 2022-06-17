@@ -416,7 +416,6 @@ class MessagePump:
         Args:
             event (events.Key): A key event.
         """
-
         key_method = getattr(self, f"key_{event.key}", None)
         if key_method is not None:
             if await invoke(key_method, event):
