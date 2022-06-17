@@ -9,7 +9,7 @@ from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text, TextType
 
-from .._lru_cache import LRUCache
+from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._types import Lines
 from ..geometry import Region, Size
