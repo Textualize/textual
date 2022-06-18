@@ -194,7 +194,7 @@ class App(Generic[ReturnType], DOMNode):
         self.design = DEFAULT_COLORS
 
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
-        self._require_styles_update = False
+        self._require_stylesheet_update = False
         self.css_path = css_path or self.CSS_PATH
 
         self.registry: set[MessagePump] = set()
@@ -584,7 +584,7 @@ class App(Generic[ReturnType], DOMNode):
         Should be called whenever CSS classes / pseudo classes change.
 
         """
-        self._require_styles_update = True
+        self._require_stylesheet_update = True
         self.check_idle()
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
@@ -817,9 +817,9 @@ class App(Generic[ReturnType], DOMNode):
 
     async def on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
-        if self._require_styles_update:
-            await self.post_message(messages.StylesUpdated(self))
-            self._require_styles_update = False
+        if self._require_stylesheet_update:
+            self._require_stylesheet_update = False
+            self.stylesheet.update(self, animate=True)
 
     def _register_child(self, parent: DOMNode, child: DOMNode) -> bool:
         if child not in self.registry:
@@ -1135,8 +1135,8 @@ class App(Generic[ReturnType], DOMNode):
     async def action_toggle_class(self, selector: str, class_name: str) -> None:
         self.screen.query(selector).toggle_class(class_name)
 
-    async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
-        self.stylesheet.update(self, animate=True)
+    # async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
+    #     self.stylesheet.update(self, animate=True)
 
     def handle_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput

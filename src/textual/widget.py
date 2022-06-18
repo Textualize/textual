@@ -854,10 +854,6 @@ class Widget(DOMNode):
         """Update from CSS if has focus state changes."""
         self.app.update_styles()
 
-    def on_style_change(self) -> None:
-        self.set_dirty()
-        self.check_idle()
-
     def size_updated(
         self, size: Size, virtual_size: Size, container_size: Size
     ) -> None:

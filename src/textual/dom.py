@@ -428,9 +428,6 @@ class DOMNode(MessagePump):
                 node.set_dirty()
                 node._layout_required = True
 
-    def on_style_change(self) -> None:
-        pass
-
     def add_child(self, node: DOMNode) -> None:
         """Add a new child node.
 

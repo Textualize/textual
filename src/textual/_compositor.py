@@ -445,7 +445,6 @@ class Compositor:
         x -= region.x
         y -= region.y
 
-        # lines = widget.render_lines((y, y + 1), (0, region.width))
         lines = widget.render_lines(Region(0, y, region.width, 1))
 
         if not lines:
@@ -575,6 +574,7 @@ class Compositor:
         ]
         return segment_lines
 
+    @timer("render")
     def render(self, full: bool = False) -> RenderableType | None:
         """Render a layout.
 

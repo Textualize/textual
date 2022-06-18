@@ -25,6 +25,7 @@ from .tokenize import tokenize_values, Token
 from .tokenizer import TokenizeError
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
+from .. import messages
 
 
 class StylesheetParseError(StylesheetError):
@@ -374,6 +375,8 @@ class Stylesheet:
             get_rule = rules.get
             for key in modified_rule_keys:
                 setattr(base_styles, key, get_rule(key))
+
+        node.post_message_no_wait(messages.StylesUpdated(sender=node))
 
     def update(self, root: DOMNode, animate: bool = False) -> None:
         """Update a node and its children."""

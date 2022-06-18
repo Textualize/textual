@@ -7,7 +7,6 @@ Functions and classes to manage terminal geometry (anything involving coordinate
 from __future__ import annotations
 
 from functools import lru_cache
-
 from typing import Any, cast, Collection, NamedTuple, Tuple, TypeAlias, Union, TypeVar
 
 SpacingDimensions: TypeAlias = Union[

@@ -1,13 +1,23 @@
-"""
-
-LRU Cache operation borrowed from Rich.
-
-This may become more sophisticated in Textual, but hopefully remain simple in Rich.
-
-"""
-
+import sys
+from collections import deque
+from functools import wraps
 from threading import Lock
-from typing import Dict, Generic, List, Optional, TypeVar, Union, overload
+from typing import (
+    Callable,
+    Deque,
+    Dict,
+    Generic,
+    List,
+    Optional,
+    TypeVar,
+    Union,
+    overload,
+)
+
+if sys.version_info >= (3, 10):
+    from typing import ParamSpec
+else:
+    from typing_extensions import ParamSpec
 
 CacheKey = TypeVar("CacheKey")
 CacheValue = TypeVar("CacheValue")
@@ -39,6 +49,12 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
     def __len__(self) -> int:
         return len(self.cache)
+
+    def clear(self) -> None:
+        """Clear the cache."""
+        with self._lock:
+            self.cache.clear()
+            self.root = []
 
     def set(self, key: CacheKey, value: CacheValue) -> None:
         """Set a value.
@@ -122,3 +138,48 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
     def __contains__(self, key: CacheKey) -> bool:
         return key in self.cache
+
+
+P = ParamSpec("P")
+T = TypeVar("T")
+
+
+def fifo_cache(maxsize: int) -> Callable[[Callable[P, T]], Callable[P, T]]:
+    """A First In First Out cache.
+
+    Args:
+        maxsize (int): Maximum size of the cache
+
+    """
+
+    def decorator(func: Callable[P, T]) -> Callable[P, T]:
+        queue: Deque[object] = deque()
+        cache: Dict[object, T] = {}
+
+        @wraps(func)
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
+            try:
+                return cache[args]
+            except KeyError:
+                assert not kwargs, "Will not work with keyword arguments!"
+                cache[args] = result = func(*args)
+                queue.append(args)
+                if len(queue) > maxsize:
+                    del cache[queue.popleft()]
+                return result
+
+        return wrapper
+
+    return decorator
+
+
+@fifo_cache(10)
+def double(n: int) -> int:
+    return n * n
+
+
+print(double(1))
+print(double(2))
+print(double(2))
+print(double(3))
+print(double(4))
