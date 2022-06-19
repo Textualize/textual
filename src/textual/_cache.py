@@ -54,6 +54,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         """Clear the cache."""
         with self._lock:
             self.cache.clear()
+            self.full = False
             self.root = []
 
     def set(self, key: CacheKey, value: CacheValue) -> None:

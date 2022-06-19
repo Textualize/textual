@@ -13,6 +13,7 @@ without having to render the entire screen.
 
 from __future__ import annotations
 
+from itertools import chain
 from operator import attrgetter, itemgetter
 import sys
 from typing import Callable, cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
@@ -566,9 +567,10 @@ class Compositor:
     ) -> list[list[Segment]]:
         """Combine chops in to lines."""
         segment_lines: list[list[Segment]] = [
-            sum(
-                [line for line in bucket.values() if line is not None],
-                [],
+            list(
+                chain.from_iterable(
+                    line for line in bucket.values() if line is not None
+                )
             )
             for bucket in chops
         ]

@@ -522,10 +522,10 @@ class Widget(DOMNode):
         )
 
     def scroll_home(self, *, animate: bool = True) -> bool:
-        return self.scroll_to(0, 0, animate=animate)
+        return self.scroll_to(0, 0, animate=animate, duration=1)
 
     def scroll_end(self, *, animate: bool = True) -> bool:
-        return self.scroll_to(0, self.max_scroll_y, animate=animate)
+        return self.scroll_to(0, self.max_scroll_y, animate=animate, duration=1)
 
     def scroll_left(self, *, animate: bool = True) -> bool:
         return self.scroll_to(x=self.scroll_target_x - 1, animate=animate)
