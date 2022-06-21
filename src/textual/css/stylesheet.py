@@ -288,7 +288,7 @@ class Stylesheet:
             rule_attributes[key].append((default_specificity, value))
 
         # Collect the rules defined in the stylesheet
-        for rule in self.rules:
+        for rule in reversed(self.rules):
             for specificity in _check_rule(rule, node):
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     specificity
@@ -304,6 +304,7 @@ class Stylesheet:
                 for name, specificity_rules in rule_attributes.items()
             },
         )
+
         self.replace_rules(node, node_rules, animate=animate)
         if isinstance(node, Widget):
             node._refresh_scrollbars()
