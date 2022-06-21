@@ -285,7 +285,7 @@ class Stylesheet:
         _check_rule = self._check_rule
 
         # Collect the rules defined in the stylesheet
-        for rule in self.rules:
+        for rule in reversed(self.rules):
             for specificity in _check_rule(rule, node):
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     specificity
@@ -301,6 +301,7 @@ class Stylesheet:
                 for name, specificity_rules in rule_attributes.items()
             },
         )
+
         self.replace_rules(node, node_rules, animate=animate)
 
         node.component_styles.clear()
