@@ -6,8 +6,14 @@ Functions and classes to manage terminal geometry (anything involving coordinate
 
 from __future__ import annotations
 
+import sys
 from functools import lru_cache
-from typing import Any, cast, Collection, NamedTuple, Tuple, TypeAlias, Union, TypeVar
+from typing import Any, Collection, NamedTuple, Tuple, TypeVar, Union, cast
+
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:  # pragma: no cover
+    from typing_extensions import TypeAlias
 
 SpacingDimensions: TypeAlias = Union[
     int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]
