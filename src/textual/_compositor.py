@@ -100,11 +100,11 @@ class ChopsUpdate:
     def __init__(
         self, chops: list[dict[int, list[Segment] | None]], crop: Region
     ) -> None:
-        """Apply spans, which consist of a tuple of (LINE, OFFSET, SEGMENTS)
+        """A renderable which updates chops (fragments of lines).
 
         Args:
-            spans (list[tuple[int, int, list[Segment]]]): A list of spans.
-            crop_y (int): The y extent of the crop region
+            chops (list[dict[int, list[Segment]  |  None]]): A mapping of offsets to list of segments, per line.
+            crop (Region): Region to restrict update to.
         """
         self.chops = chops
         self.crop = crop
