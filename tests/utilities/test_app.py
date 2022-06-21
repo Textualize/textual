@@ -139,7 +139,7 @@ class AppTest(App):
 
         x -= region.x
         y -= region.y
-        lines = widget.get_render_lines(y, y + 1)
+        lines = widget.render_lines(Region(0, y, region.width, 1))
         if not lines:
             return ""
         end = 0

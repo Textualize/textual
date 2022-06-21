@@ -13,6 +13,7 @@ without having to render the entire screen.
 
 from __future__ import annotations
 
+from itertools import chain
 from operator import attrgetter, itemgetter
 import sys
 from typing import Callable, cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
@@ -26,6 +27,7 @@ from rich.style import Style
 from . import errors
 from .geometry import Region, Offset, Size
 
+from ._profile import timer
 from ._loop import loop_last
 from ._segment_tools import line_crop
 from ._types import Lines
@@ -67,7 +69,7 @@ class MapGeometry(NamedTuple):
 CompositorMap: TypeAlias = "dict[Widget, MapGeometry]"
 
 
-@rich.repr.auto
+@rich.repr.auto(angular=True)
 class LayoutUpdate:
     """A renderable containing the result of a render for a given region."""
 
@@ -88,43 +90,45 @@ class LayoutUpdate:
                 yield new_line
 
     def __rich_repr__(self) -> rich.repr.Result:
-        x, y, width, height = self.region
-        yield "x", x
-        yield "y", y
-        yield "width", width
-        yield "height", height
+        yield self.region
 
 
-@rich.repr.auto
-class SpansUpdate:
+@rich.repr.auto(angular=True)
+class ChopsUpdate:
     """A renderable that applies updated spans to the screen."""
 
     def __init__(
-        self, spans: list[tuple[int, int, list[Segment]]], crop_y: int
+        self, chops: list[dict[int, list[Segment] | None]], crop: Region
     ) -> None:
-        """Apply spans, which consist of a tuple of (LINE, OFFSET, SEGMENTS)
+        """A renderable which updates chops (fragments of lines).
 
         Args:
-            spans (list[tuple[int, int, list[Segment]]]): A list of spans.
-            crop_y (int): The y extent of the crop region
+            chops (list[dict[int, list[Segment]  |  None]]): A mapping of offsets to list of segments, per line.
+            crop (Region): Region to restrict update to.
         """
-        self.spans = spans
-        self.last_y = crop_y - 1
+        self.chops = chops
+        self.crop = crop
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         move_to = Control.move_to
         new_line = Segment.line()
-        last_y = self.last_y
-        for y, x, segments in self.spans:
-            yield move_to(x, y)
-            yield from segments
+        chops = self.chops
+        crop = self.crop
+        last_y = crop.y_max - 1
+        x1, x2 = crop.x_extents
+        for y in crop.y_range:
+            line = chops[y]
+            for x, segments in line.items():
+                if segments is not None and x2 > x >= x1:
+                    yield move_to(x, y)
+                    yield from segments
             if y != last_y:
                 yield new_line
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield [(y, x, "...") for y, x, _segments in self.spans]
+        yield None, self.crop
 
 
 @rich.repr.auto(angular=True)
@@ -315,10 +319,10 @@ class Compositor:
             container_region = region.shrink(widget.styles.gutter)
             container_size = container_region.size
 
-            # Containers (widgets with layout) require adding children
-            if widget.is_container:
+            # Widgets with scrollbars (containers or scroll view) require additional processing
+            if widget.is_scrollable:
                 # The region that contains the content (container region minus scrollbars)
-                child_region = widget._arrange_container(container_region)
+                child_region = widget._get_scrollable_region(container_region)
 
                 # Adjust the clip region accordingly
                 sub_clip = clip.intersection(child_region)
@@ -326,27 +330,28 @@ class Compositor:
                 # The region covered by children relative to parent widget
                 total_region = child_region.reset_origin
 
-                # Arrange the layout
-                placements, arranged_widgets = widget._arrange(child_region.size)
-                widgets.update(arranged_widgets)
-                placements = sorted(placements, key=get_order)
+                if widget.is_container:
+                    # Arrange the layout
+                    placements, arranged_widgets = widget._arrange(child_region.size)
+                    widgets.update(arranged_widgets)
+                    placements = sorted(placements, key=get_order)
 
-                # An offset added to all placements
-                placement_offset = (
-                    container_region.origin + layout_offset - widget.scroll_offset
-                )
+                    # An offset added to all placements
+                    placement_offset = (
+                        container_region.origin + layout_offset - widget.scroll_offset
+                    )
 
-                # Add all the widgets
-                for sub_region, sub_widget, z in placements:
-                    # Combine regions with children to calculate the "virtual size"
-                    total_region = total_region.union(sub_region)
-                    if sub_widget is not None:
-                        add_widget(
-                            sub_widget,
-                            sub_region + placement_offset,
-                            order + (z,),
-                            sub_clip,
-                        )
+                    # Add all the widgets
+                    for sub_region, sub_widget, z in placements:
+                        # Combine regions with children to calculate the "virtual size"
+                        total_region = total_region.union(sub_region)
+                        if sub_widget is not None:
+                            add_widget(
+                                sub_widget,
+                                sub_region + placement_offset,
+                                order + (z,),
+                                sub_clip,
+                            )
 
                 # Add any scrollbars
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(
@@ -360,14 +365,23 @@ class Compositor:
                         container_size,
                     )
 
-                # Add the container widget, which will render a background
-                map[widget] = MapGeometry(
-                    region + layout_offset,
-                    order,
-                    clip,
-                    total_region.size,
-                    container_size,
-                )
+                if widget.is_container:
+                    # Add the container widget, which will render a background
+                    map[widget] = MapGeometry(
+                        region + layout_offset,
+                        order,
+                        clip,
+                        total_region.size,
+                        container_size,
+                    )
+                else:
+                    map[widget] = MapGeometry(
+                        child_region + layout_offset,
+                        order,
+                        clip,
+                        child_region.size,
+                        container_size,
+                    )
 
             else:
                 # Add the widget to the map
@@ -431,7 +445,9 @@ class Compositor:
 
         x -= region.x
         y -= region.y
-        lines = widget.get_render_lines(y, y + 1)
+
+        lines = widget.render_lines(Region(0, y, region.width, 1))
+
         if not lines:
             return Style.null()
         end = 0
@@ -530,31 +546,34 @@ class Compositor:
             if not region:
                 continue
             if region in clip:
-                yield region, clip, widget.get_render_lines()
+                yield region, clip, widget.render_lines(
+                    Region(0, 0, region.width, region.height)
+                )
             elif overlaps(clip, region):
-                new_x, new_y, new_width, new_height = intersection(region, clip)
+                clipped_region = intersection(region, clip)
+                if not clipped_region:
+                    continue
+                new_x, new_y, new_width, new_height = clipped_region
                 delta_x = new_x - region.x
                 delta_y = new_y - region.y
-                crop_x = delta_x + new_width
-                lines = widget.get_render_lines(delta_y, delta_y + new_height)
-                lines = [line_crop(line, delta_x, crop_x) for line in lines]
+                lines = widget.render_lines(
+                    Region(delta_x, delta_y, new_width, new_height)
+                )
                 yield region, clip, lines
 
     @classmethod
     def _assemble_chops(
         cls, chops: list[dict[int, list[Segment] | None]]
     ) -> list[list[Segment]]:
-
-        # Pretty sure we don't need to sort the bucket items
+        """Combine chops in to lines."""
+        from_iterable = chain.from_iterable
         segment_lines: list[list[Segment]] = [
-            sum(
-                [line for line in bucket.values() if line is not None],
-                [],
-            )
+            list(from_iterable(line for line in bucket.values() if line is not None))
             for bucket in chops
         ]
         return segment_lines
 
+    @timer("render")
     def render(self, full: bool = False) -> RenderableType | None:
         """Render a layout.
 
@@ -579,7 +598,7 @@ class Compositor:
             is_rendered_line = lambda y: True
         elif update_regions:
             # Create a crop regions that surrounds all updates
-            crop = Region.from_union(list(update_regions)).intersection(screen_region)
+            crop = Region.from_union(update_regions).intersection(screen_region)
             spans = list(self._regions_to_spans(update_regions))
             is_rendered_line = {y for y, _, _ in spans}.__contains__
         else:
@@ -589,6 +608,7 @@ class Compositor:
 
         # Maps each cut on to a list of segments
         cuts = self.cuts
+
         # dict.fromkeys is a callable which takes a list of ints returns a dict which maps ints on to a list of Segments or None.
         fromkeys = cast(
             "Callable[[list[int]], dict[int, list[Segment] | None]]", dict.fromkeys
@@ -596,6 +616,8 @@ class Compositor:
         # A mapping of cut index to a list of segments for each line
         chops: list[dict[int, list[Segment] | None]]
         chops = [fromkeys(cut_set) for cut_set in cuts]
+
+        cut_segments: Iterable[list[Segment]]
 
         # Go through all the renders in reverse order and fill buckets with no render
         renders = self._get_renders(crop)
@@ -607,19 +629,23 @@ class Compositor:
             for y, line in zip(render_region.y_range, lines):
                 if not is_rendered_line(y):
                     continue
+
+                chops_line = chops[y]
+                if all(chops_line):
+                    continue
+
                 first_cut, last_cut = render_region.x_extents
                 final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
 
-                if len(final_cuts) == 2:
+                if len(final_cuts) <= 2:
                     # Two cuts, which means the entire line
                     cut_segments = [line]
                 else:
                     render_x = render_region.x
-                    relative_cuts = [cut - render_x for cut in final_cuts]
-                    _, *cut_segments = divide(line, relative_cuts)
+                    relative_cuts = [cut - render_x for cut in final_cuts[1:]]
+                    cut_segments = divide(line, relative_cuts)
 
                 # Since we are painting front to back, the first segments for a cut "wins"
-                chops_line = chops[y]
                 for cut, segments in zip(final_cuts, cut_segments):
                     if chops_line[cut] is None:
                         chops_line[cut] = segments
@@ -628,13 +654,7 @@ class Compositor:
             render_lines = self._assemble_chops(chops)
             return LayoutUpdate(render_lines, screen_region)
         else:
-            crop_y, crop_y2 = crop.y_extents
-            render_lines = self._assemble_chops(chops[crop_y:crop_y2])
-            render_spans = [
-                (y, x1, line_crop(render_lines[y - crop_y], x1, x2))
-                for y, x1, x2 in spans
-            ]
-            return SpansUpdate(render_spans, crop_y2)
+            return ChopsUpdate(chops, crop)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions

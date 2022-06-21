@@ -223,6 +223,14 @@ class Scalar(NamedTuple):
 
     @classmethod
     def from_number(cls, value: float) -> Scalar:
+        """Create a scalar with cells unit.
+
+        Args:
+            value (float): A number of cells.
+
+        Returns:
+            Scalar: New Scalar.
+        """
         return cls(float(value), Unit.CELLS, Unit.WIDTH)
 
     @classmethod

@@ -87,7 +87,6 @@ class LinuxDriver(Driver):
             width, height = terminal_size
             textual_size = Size(width, height)
             event = events.Resize(self._target, textual_size, textual_size)
-            self.console.size = terminal_size
             asyncio.run_coroutine_threadsafe(
                 self._target.post_message(event),
                 loop=loop,

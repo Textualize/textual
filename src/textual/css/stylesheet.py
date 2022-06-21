@@ -20,11 +20,12 @@ from .errors import StylesheetError
 from .match import _check_selectors
 from .model import RuleSet
 from .parse import parse
-from .styles import RulesMap
+from .styles import RulesMap, Styles
 from .tokenize import tokenize_values, Token
 from .tokenizer import TokenizeError
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
+from .. import messages
 
 
 class StylesheetParseError(StylesheetError):
@@ -258,7 +259,7 @@ class Stylesheet:
     @classmethod
     def _check_rule(cls, rule: RuleSet, node: DOMNode) -> Iterable[Specificity3]:
         for selector_set in rule.selector_set:
-            if _check_selectors(selector_set.selectors, node):
+            if _check_selectors(selector_set.selectors, node.css_path_nodes):
                 yield selector_set.specificity
 
     def apply(self, node: DOMNode, animate: bool = False) -> None:
@@ -283,10 +284,6 @@ class Stylesheet:
 
         _check_rule = self._check_rule
 
-        # Collect default node CSS rules
-        for key, default_specificity, value in node._default_rules:
-            rule_attributes[key].append((default_specificity, value))
-
         # Collect the rules defined in the stylesheet
         for rule in reversed(self.rules):
             for specificity in _check_rule(rule, node):
@@ -306,8 +303,13 @@ class Stylesheet:
         )
 
         self.replace_rules(node, node_rules, animate=animate)
-        if isinstance(node, Widget):
-            node._refresh_scrollbars()
+
+        node.component_styles.clear()
+        for component in node.COMPONENT_CLASSES:
+            virtual_node = DOMNode(classes=component)
+            virtual_node.set_parent(node)
+            self.apply(virtual_node, animate=False)
+            node.component_styles[component] = virtual_node.styles
 
     @classmethod
     def replace_rules(
@@ -331,8 +333,7 @@ class Stylesheet:
         current_render_rules = styles.get_render_rules()
 
         # Calculate replacement rules (defaults + new rules)
-        new_styles = node._default_styles.copy()
-        new_styles.merge_rules(rules)
+        new_styles = Styles(node, rules)
 
         if new_styles == base_styles:
             # Nothing to change, return early
@@ -375,6 +376,8 @@ class Stylesheet:
             get_rule = rules.get
             for key in modified_rule_keys:
                 setattr(base_styles, key, get_rule(key))
+
+        node.post_message_no_wait(messages.StylesUpdated(sender=node))
 
     def update(self, root: DOMNode, animate: bool = False) -> None:
         """Update a node and its children."""

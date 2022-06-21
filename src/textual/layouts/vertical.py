@@ -31,7 +31,7 @@ class VerticalLayout(Layout):
 
         box_models = [
             widget.get_box_model(size, parent_size, fraction_unit)
-            for widget in cast("list[Widget]", parent.children)
+            for widget in parent.children
         ]
 
         margins = [

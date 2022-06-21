@@ -4,6 +4,7 @@ from fractions import Fraction
 from typing import (
     Any,
     Awaitable,
+    ClassVar,
     TYPE_CHECKING,
     Callable,
     Iterable,
@@ -36,6 +37,8 @@ from ._layout import Layout
 from .reactive import Reactive, watch
 from .renderables.opacity import Opacity
 from .renderables.tint import Tint
+from ._segment_tools import line_crop
+from .css.styles import Styles
 
 
 if TYPE_CHECKING:
@@ -51,6 +54,8 @@ if TYPE_CHECKING:
 
 
 class RenderCache(NamedTuple):
+    """Stores results of a previous render."""
+
     size: Size
     lines: Lines
 
@@ -66,6 +71,20 @@ class RenderCache(NamedTuple):
 @rich.repr.auto
 class Widget(DOMNode):
 
+    CSS = """
+    Widget{
+        scrollbar-background: $panel-darken-2;
+        scrollbar-background-hover: $panel-darken-3;        
+        scrollbar-color: $system;
+        scrollbar-color-active: $secondary-darken-1;                
+        scrollbar-size-vertical: 2;
+        scrollbar-size-horizontal: 1;
+        
+    }
+    """
+
+    COMPONENT_CLASSES: ClassVar[set[str]] = set()
+
     can_focus: bool = False
     can_focus_children: bool = True
 
@@ -78,7 +97,6 @@ class Widget(DOMNode):
     ) -> None:
 
         self._size = Size(0, 0)
-        self._virtual_size = Size(0, 0)
         self._container_size = Size(0, 0)
         self._layout_required = False
         self._repaint_required = False
@@ -104,13 +122,14 @@ class Widget(DOMNode):
         super().__init__(name=name, id=id, classes=classes)
         self.add_children(*children)
 
+    virtual_size = Reactive(Size(0, 0), layout=True)
     auto_width = Reactive(True)
     auto_height = Reactive(True)
     has_focus = Reactive(False)
     descendant_has_focus = Reactive(False)
     mouse_over = Reactive(False)
-    scroll_x = Reactive(0.0, repaint=False, layout=True)
-    scroll_y = Reactive(0.0, repaint=False, layout=True)
+    scroll_x = Reactive(0.0, repaint=False, layout=False)
+    scroll_y = Reactive(0.0, repaint=False, layout=False)
     scroll_target_x = Reactive(0.0, repaint=False)
     scroll_target_y = Reactive(0.0, repaint=False)
     show_vertical_scrollbar = Reactive(False, layout=True)
@@ -268,11 +287,13 @@ class Widget(DOMNode):
 
         return height
 
-    async def watch_scroll_x(self, new_value: float) -> None:
+    def watch_scroll_x(self, new_value: float) -> None:
         self.horizontal_scrollbar.position = int(new_value)
+        self.refresh(layout=True)
 
-    async def watch_scroll_y(self, new_value: float) -> None:
+    def watch_scroll_y(self, new_value: float) -> None:
         self.vertical_scrollbar.position = int(new_value)
+        self.refresh(layout=True)
 
     def validate_scroll_x(self, value: float) -> float:
         return clamp(value, 0, self.max_scroll_x)
@@ -343,7 +364,7 @@ class Widget(DOMNode):
 
     def _refresh_scrollbars(self) -> None:
         """Refresh scrollbar visibility."""
-        if not self.is_container:
+        if not self.is_scrollable:
             return
 
         styles = self.styles
@@ -380,7 +401,7 @@ class Widget(DOMNode):
             tuple[bool, bool]: A tuple of (<vertical scrollbar enabled>, <horizontal scrollbar enabled>)
 
         """
-        if not self.is_container:
+        if not self.is_scrollable:
             return False, False
 
         enabled = self.show_vertical_scrollbar, self.show_horizontal_scrollbar
@@ -501,10 +522,10 @@ class Widget(DOMNode):
         )
 
     def scroll_home(self, *, animate: bool = True) -> bool:
-        return self.scroll_to(0, 0, animate=animate)
+        return self.scroll_to(0, 0, animate=animate, duration=1)
 
     def scroll_end(self, *, animate: bool = True) -> bool:
-        return self.scroll_to(0, self.max_scroll_y, animate=animate)
+        return self.scroll_to(0, self.max_scroll_y, animate=animate, duration=1)
 
     def scroll_left(self, *, animate: bool = True) -> bool:
         return self.scroll_to(x=self.scroll_target_x - 1, animate=animate)
@@ -623,7 +644,7 @@ class Widget(DOMNode):
         if pseudo_classes:
             yield "pseudo_classes", set(pseudo_classes)
 
-    def _arrange_container(self, region: Region) -> Region:
+    def _get_scrollable_region(self, region: Region) -> Region:
         """Adjusts the Widget region to accommodate scrollbars.
 
         Args:
@@ -644,7 +665,8 @@ class Widget(DOMNode):
 
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (region, _, _, _) = region.split(
-                -vertical_scrollbar_thickness, -horizontal_scrollbar_thickness
+                -vertical_scrollbar_thickness,
+                -horizontal_scrollbar_thickness,
             )
         elif show_vertical_scrollbar:
             region, _ = region.split_vertical(-vertical_scrollbar_thickness)
@@ -769,10 +791,6 @@ class Widget(DOMNode):
         return Offset(x, y)
 
     @property
-    def virtual_size(self) -> Size:
-        return self._virtual_size
-
-    @property
     def region(self) -> Region:
         """The region occupied by this widget, relative to the Screen."""
         try:
@@ -791,7 +809,7 @@ class Widget(DOMNode):
         Returns:
             bool: ``True`` if there is background color, otherwise ``False``.
         """
-        return self.is_container and self.styles.background.is_transparent
+        return self.is_scrollable and self.styles.background.is_transparent
 
     @property
     def console(self) -> Console:
@@ -812,12 +830,21 @@ class Widget(DOMNode):
 
     @property
     def is_container(self) -> bool:
-        """Check if this widget is a container (contains other widgets)
+        """Check if this widget is a container (contains other widgets).
 
         Returns:
             bool: True if this widget is a container.
         """
         return self.styles.layout is not None or bool(self.children)
+
+    @property
+    def is_scrollable(self) -> bool:
+        """Check if this Widget may be scrolled.
+
+        Returns:
+            bool: True if this widget may be scrolled.
+        """
+        return self.is_container
 
     def watch_mouse_over(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
@@ -827,18 +854,14 @@ class Widget(DOMNode):
         """Update from CSS if has focus state changes."""
         self.app.update_styles()
 
-    def on_style_change(self) -> None:
-        self.set_dirty()
-        self.check_idle()
-
     def size_updated(
         self, size: Size, virtual_size: Size, container_size: Size
     ) -> None:
-        if self._size != size or self._virtual_size != virtual_size:
+        if self._size != size or self.virtual_size != virtual_size:
             self._size = size
-            self._virtual_size = virtual_size
+            self.virtual_size = virtual_size
             self._container_size = container_size
-            if self.is_container:
+            if self.is_scrollable:
                 self._refresh_scrollbars()
                 width, height = self.container_size
                 if self.show_vertical_scrollbar:
@@ -866,21 +889,27 @@ class Widget(DOMNode):
         self._render_cache = RenderCache(self.size, lines)
         self._dirty_regions.clear()
 
-    def get_render_lines(
-        self, start: int | None = None, end: int | None = None
-    ) -> Lines:
-        """Get segment lines to render the widget.
+    def _crop_lines(self, lines: Lines, x1, x2) -> Lines:
+        width = self.size.width
+        if (x1, x2) != (0, width):
+            lines = [line_crop(line, x1, x2, width) for line in lines]
+        return lines
+
+    def render_lines(self, crop: Region) -> Lines:
+        """Render the widget in to lines.
 
         Args:
-            start (int | None, optional): line start index, or None for first line. Defaults to None.
-            end (int | None, optional): line end index, or None for last line. Defaults to None.
+            crop (Region): Region within visible area to.
 
         Returns:
-            Lines: A list of lists of segments.
+            Lines: A list of list of segments
         """
         if self._dirty_regions:
             self._render_lines()
-        lines = self._render_cache.lines[start:end]
+
+        x1, y1, x2, y2 = crop.corners
+        lines = self._render_cache.lines[y1:y2]
+        lines = self._crop_lines(lines, x1, x2)
         return lines
 
     def get_style_at(self, x: int, y: int) -> Style:
@@ -912,6 +941,9 @@ class Widget(DOMNode):
             self._content_height_cache = (None, 0)
             self.set_dirty()
             self._repaint_required = True
+            if isinstance(self.parent, Widget) and self.styles.auto_dimensions:
+                self.parent.refresh(layout=True)
+
         self.check_idle()
 
     def render(self) -> RenderableType:
@@ -1026,84 +1058,84 @@ class Widget(DOMNode):
                     break
 
     def on_mouse_scroll_down(self, event) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             if self.scroll_down(animate=False):
                 event.stop()
 
     def on_mouse_scroll_up(self, event) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             if self.scroll_up(animate=False):
                 event.stop()
 
     def handle_scroll_to(self, message: ScrollTo) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_to(message.x, message.y, animate=message.animate, duration=0.1)
             message.stop()
 
     def handle_scroll_up(self, event: ScrollUp) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_page_up()
             event.stop()
 
     def handle_scroll_down(self, event: ScrollDown) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_page_down()
             event.stop()
 
     def handle_scroll_left(self, event: ScrollLeft) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_page_left()
             event.stop()
 
     def handle_scroll_right(self, event: ScrollRight) -> None:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_page_right()
             event.stop()
 
     def key_home(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_home()
             return True
         return False
 
     def key_end(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_end()
             return True
         return False
 
     def key_left(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_left()
             return True
         return False
 
     def key_right(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_right()
             return True
         return False
 
     def key_down(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_up()
             return True
         return False
 
     def key_up(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_down()
             return True
         return False
 
     def key_pagedown(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_page_down()
             return True
         return False
 
     def key_pageup(self) -> bool:
-        if self.is_container:
+        if self.is_scrollable:
             self.scroll_page_up()
             return True
         return False

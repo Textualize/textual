@@ -61,7 +61,7 @@ class TweetHeader(Widget):
 
 
 class TweetBody(Widget):
-    short_lorem = Reactive[bool](False)
+    short_lorem = Reactive(False)
 
     def render(self) -> Text:
         return lorem_short_text if self.short_lorem else lorem_long_text
@@ -120,6 +120,11 @@ class BasicApp(App, css_path="basic.css"):
                 Warning(),
                 Tweet(TweetBody(), classes="scroll-horizontal"),
                 Success(),
+                Tweet(TweetBody(), classes="scroll-horizontal"),
+                Tweet(TweetBody(), classes="scroll-horizontal"),
+                Tweet(TweetBody(), classes="scroll-horizontal"),
+                Tweet(TweetBody(), classes="scroll-horizontal"),
+                Tweet(TweetBody(), classes="scroll-horizontal"),
             ),
             footer=Widget(),
             sidebar=Widget(
@@ -149,9 +154,8 @@ class BasicApp(App, css_path="basic.css"):
 
     def key_t(self):
         # Pressing "t" toggles the content of the TweetBody widget, from a long "Lorem ipsum..." to a shorter one.
-        tweet_body = self.screen.query("TweetBody").first()
+        tweet_body = self.query("TweetBody").first()
         tweet_body.short_lorem = not tweet_body.short_lorem
-        tweet_body.refresh(layout=True)
 
     def key_v(self):
         self.get_child(id="content").scroll_to_widget(self.scroll_to_target)
@@ -164,3 +168,19 @@ app = BasicApp()
 
 if __name__ == "__main__":
     app.run()
+
+    from textual.geometry import Region
+    from textual.color import Color
+
+    print(Region.intersection.cache_info())
+    print(Region.overlaps.cache_info())
+    print(Region.union.cache_info())
+    print(Region.split_vertical.cache_info())
+    print(Region.__contains__.cache_info())
+    from textual.css.scalar import Scalar
+
+    print(Scalar.resolve_dimension.cache_info())
+
+    from rich.style import Style
+
+    print(Style._add.cache_info())

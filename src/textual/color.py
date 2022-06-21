@@ -235,7 +235,6 @@ class Color(NamedTuple):
         r, g, b, _ = self
         return Color(r, g, b, alpha)
 
-    @lru_cache(maxsize=2048)
     def blend(self, destination: Color, factor: float) -> Color:
         """Generate a new color between two colors.
 
@@ -352,6 +351,7 @@ class Color(NamedTuple):
             raise AssertionError("Can't get here if RE_COLOR matches")
         return color
 
+    @lru_cache(maxsize=1024)
     def darken(self, amount: float) -> Color:
         """Darken the color by a given amount.
 
@@ -376,6 +376,7 @@ class Color(NamedTuple):
         """
         return self.darken(-amount).clamped
 
+    @lru_cache(maxsize=1024)
     def get_contrast_text(self, alpha=0.95) -> Color:
         """Get a light or dark color that best contrasts this color, for use with text.
 
