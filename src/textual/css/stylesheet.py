@@ -288,7 +288,7 @@ class Stylesheet:
             rule_attributes[key].append((default_specificity, value))
 
         # Collect the rules defined in the stylesheet
-        for rule in self.rules:
+        for rule in reversed(self.rules):
             for specificity in _check_rule(rule, node):
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     specificity
@@ -297,15 +297,13 @@ class Stylesheet:
 
         # For each rule declared for this node, keep only the most specific one
         get_first_item = itemgetter(0)
-        node_rules: RulesMap = cast(RulesMap, {})
-        for name, specificity_rules in rule_attributes.items():
-            highest_specificity = max(specificity_rules, key=get_first_item)[0]
-            rules_with_highest_specificity = [
-                rule for rule in specificity_rules if rule[0] == highest_specificity
-            ]
-            # In the event of two rules having the same specificity, we take the
-            # rule that was declared last and use that.
-            node_rules[name] = rules_with_highest_specificity[-1][1]
+        node_rules: RulesMap = cast(
+            RulesMap,
+            {
+                name: max(specificity_rules, key=get_first_item)[1]
+                for name, specificity_rules in rule_attributes.items()
+            },
+        )
 
         self.replace_rules(node, node_rules, animate=animate)
         if isinstance(node, Widget):
