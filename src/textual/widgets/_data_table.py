@@ -159,12 +159,23 @@ class DataTable(ScrollView, Generic[CellType]):
         )
 
     def add_column(self, label: TextType, *, width: int = 10) -> None:
+        """Add a column to the table.
+
+        Args:
+            label (TextType): A str or Text object containing the label (shown top of column)
+            width (int, optional): Width of the column in cells. Defaults to 10.
+        """
         text_label = Text.from_markup(label) if isinstance(label, str) else label
         self.columns.append(Column(text_label, width, index=len(self.columns)))
         self._update_dimensions()
         self.refresh()
 
     def add_row(self, *cells: CellType, height: int = 1) -> None:
+        """Add a row.
+
+        Args:
+            height (int, optional): The height of a row (in lines). Defaults to 1.
+        """
         row_index = self.row_count
         self.data[row_index] = list(cells)
         self.rows[row_index] = Row(row_index, height=height)
@@ -176,7 +187,15 @@ class DataTable(ScrollView, Generic[CellType]):
         self._update_dimensions()
         self.refresh()
 
-    def get_row_renderables(self, row_index: int) -> list[RenderableType]:
+    def _get_row_renderables(self, row_index: int) -> list[RenderableType]:
+        """Get renderables for the given row.
+
+        Args:
+            row_index (int): Index of the row.
+
+        Returns:
+            list[RenderableType]: List of renderables
+        """
 
         if row_index == -1:
             row = [column.label for column in self.columns]
@@ -192,13 +211,24 @@ class DataTable(ScrollView, Generic[CellType]):
     def _render_cell(
         self, row_index: int, column_index: int, style: Style, width: int
     ) -> Lines:
+        """Render the given cell.
+
+        Args:
+            row_index (int): Index of the row.
+            column_index (int): Index of the column.
+            style (Style): Style to apply.
+            width (int): Width of the cell.
+
+        Returns:
+            Lines: A list of segments per line.
+        """
         cell_key = (row_index, column_index, style)
         if cell_key not in self._cell_render_cache:
             style += Style.from_meta({"row": row_index, "column": column_index})
             height = (
                 self.header_height if row_index == -1 else self.rows[row_index].height
             )
-            cell = self.get_row_renderables(row_index)[column_index]
+            cell = self._get_row_renderables(row_index)[column_index]
             lines = self.app.console.render_lines(
                 Padding(cell, (0, 1)),
                 self.app.console.options.update_dimensions(width, height),
@@ -210,6 +240,16 @@ class DataTable(ScrollView, Generic[CellType]):
     def _render_row(
         self, row_index: int, line_no: int, base_style: Style
     ) -> tuple[Lines, Lines]:
+        """Render a row in to lines for each cell.
+
+        Args:
+            row_index (int): Index of the row.
+            line_no (int): Line number (on screen, 0 is top)
+            base_style (Style): Base style of row.
+
+        Returns:
+            tuple[Lines, Lines]: Lines for fixed cells, and Lines for scrollable cells.
+        """
 
         cache_key = (row_index, line_no, base_style)
 
@@ -249,6 +289,14 @@ class DataTable(ScrollView, Generic[CellType]):
         return row_pair
 
     def _get_offsets(self, y: int) -> tuple[int, int]:
+        """Get row number and line offset for a given line.
+
+        Args:
+            y (int): Y coordinate relative to screen top.
+
+        Returns:
+            tuple[int, int]: Line number and line offset within cell.
+        """
         if self.show_header:
             if y < self.header_height:
                 return (-1, y)
@@ -258,6 +306,17 @@ class DataTable(ScrollView, Generic[CellType]):
     def _render_line(
         self, y: int, x1: int, x2: int, base_style: Style
     ) -> list[Segment]:
+        """Render a line in to a list of segments.
+
+        Args:
+            y (int): Y coordinate of line
+            x1 (int): X start crop.
+            x2 (int): X end crop (exclusive).
+            base_style (Style): Style to apply to line.
+
+        Returns:
+            list[Segment]: List of segments for rendering.
+        """
 
         width = self.content_region.width
 
@@ -288,6 +347,14 @@ class DataTable(ScrollView, Generic[CellType]):
 
     @timer("render_lines")
     def render_lines(self, crop: Region) -> Lines:
+        """Render lines within a given region.
+
+        Args:
+            crop (Region): Region to crop to.
+
+        Returns:
+            Lines: A list of segments for every line within crop region.
+        """
 
         scroll_x, scroll_y = self.scroll_offset
         x1, y1, x2, y2 = crop.translate(scroll_x, scroll_y).corners
