@@ -624,6 +624,67 @@ class Widget(DOMNode):
 
         return any(scrolls)
 
+    def scroll_to_region(self, region: Region, *, animate: bool = True) -> bool:
+        """Scrolls a given region in to view.
+
+        Args:
+            region (Region): A region that should be visible.
+            animate (bool, optional): Enable animation. Defaults to True.
+
+        Returns:
+            bool: True if the window was scrolled.
+        """
+
+        scroll_x, scroll_y = self.scroll_offset
+        width, height = self.region.size
+        container_region = Region(scroll_x, scroll_y, width, height)
+
+        if region in container_region:
+            # Widget is visible, nothing to do
+            return False
+
+        (
+            container_left,
+            container_top,
+            container_right,
+            container_bottom,
+        ) = container_region.corners
+        (
+            child_left,
+            child_top,
+            child_right,
+            child_bottom,
+        ) = region.corners
+
+        delta_x = 0
+        delta_y = 0
+
+        if not (
+            (container_right >= child_left > container_left)
+            and (container_right >= child_right > container_left)
+        ):
+            delta_x = min(
+                child_left - container_left,
+                child_left - (container_right - region.width),
+                key=abs,
+            )
+
+        if not (
+            (container_bottom >= child_top > container_top)
+            and (container_bottom >= child_bottom > container_top)
+        ):
+            delta_y = min(
+                child_top - container_top,
+                child_top - (container_bottom - region.height),
+                key=abs,
+            )
+
+        scrolled = self.scroll_relative(
+            delta_x or None, delta_y or None, animate=abs(delta_y) != 1, duration=0.2
+        )
+
+        return scrolled
+
     def __init_subclass__(
         cls,
         can_focus: bool = True,

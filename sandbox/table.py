@@ -47,7 +47,13 @@ class TableApp(App):
             height = 1
             row = [f"row [b]{n}[/b] col [i]{c}[/i]" for c in range(6)]
             if n == 10:
-                row[1] = Syntax(CODE, "python", line_numbers=True, indent_guides=True)
+                row[1] = Syntax(
+                    CODE,
+                    "python",
+                    theme="ansi_dark",
+                    line_numbers=True,
+                    indent_guides=True,
+                )
                 height = 13
 
             if n == 30:
