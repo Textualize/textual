@@ -120,10 +120,8 @@ class LRUCache(Generic[CacheKey, CacheValue]):
                 # Move link to head of list
                 link[0] = head[0]
                 link[1] = head
-                head[0][1] = link  # type: ignore[index]
-                head[0] = link
-                # Update root
-                self.head = link
+                self.head = head[0][1] = head[0] = link  # type: ignore[index]
+
             return link[3]  # type: ignore[return-value]
 
     def __getitem__(self, key: CacheKey) -> CacheValue:
@@ -135,9 +133,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
                 head = self.head
                 link[0] = head[0]
                 link[1] = head
-                head[0][1] = link  # type: ignore[index]
-                head[0] = link
-                self.head = link
+                self.head = head[0][1] = head[0] = link  # type: ignore[index]
             return link[3]  # type: ignore[return-value]
 
     def __contains__(self, key: CacheKey) -> bool:
