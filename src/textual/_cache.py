@@ -68,7 +68,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
                 head = self.head
                 if not head:
                     # First link references itself
-                    self.head[:] = [self.head, self.head, key, value]
+                    self.head[:] = [head, head, key, value]
                 else:
                     # Add a new root to the beginning
                     self.head = [head[0], head, key, value]
