@@ -23,6 +23,7 @@ from .message_pump import MessagePump
 
 if TYPE_CHECKING:
     from .app import App
+    from .css.styles import StylesBase
     from .css.query import DOMQuery
     from .screen import Screen
 
@@ -64,6 +65,7 @@ class DOMNode(MessagePump):
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles(self)
         self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
+        # A mapping of class names to Styles set in COMPONENT_CLASSES
         self.component_styles: dict[str, StylesBase] = {}
 
         super().__init__()
