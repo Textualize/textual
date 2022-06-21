@@ -15,7 +15,7 @@ def line_crop(
     Args:
         segments (list[Segment]): A list of Segments for a line.
         start (int): Start offset
-        end (int): End offset
+        end (int): End offset (exclusive)
         total (int): Total cell length of segments.
     Returns:
         list[Segment]: A new shorter list of segments
