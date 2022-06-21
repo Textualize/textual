@@ -118,10 +118,8 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         """
         link = self.cache.get(key)
         if link is None:
-            # Cache hit!
             return default
         with self._lock:
-            # Cache miss
             if link is not self.head:
                 # Remove link from list
                 link[0][1] = link[1]  # type: ignore[index]
