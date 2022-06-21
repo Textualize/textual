@@ -362,7 +362,7 @@ class DOMNode(MessagePump):
 
     @property
     def rich_style(self) -> Style:
-        """Get a Rich Style object for this Widget."""
+        """Get a Rich Style object for this DOMNode."""
         (_, _), (background, color) = self.colors
         style = Style.from_color(color.rich_color, background.rich_color)
         style += self.text_style
