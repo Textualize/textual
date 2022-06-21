@@ -322,7 +322,7 @@ class Compositor:
             # Containers (widgets with layout) require adding children
             if widget.is_scrollable:
                 # The region that contains the content (container region minus scrollbars)
-                child_region = widget._arrange_container(container_region)
+                child_region = widget._get_scrollable_region(container_region)
 
                 # Adjust the clip region accordingly
                 sub_clip = clip.intersection(child_region)
