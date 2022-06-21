@@ -30,7 +30,7 @@ def default_cell_formatter(obj: object) -> RenderableType | None:
     if isinstance(obj, str):
         return Text.from_markup(obj)
     if not is_renderable(obj):
-        raise TypeError("Table cell contains {obj!r} which is not renderable")
+        raise TypeError(f"Table cell {obj!r} is not renderable")
     return cast(RenderableType, obj)
 
 
@@ -166,7 +166,7 @@ class DataTable(ScrollView, Generic[CellType]):
         self._update_dimensions()
         self.refresh()
 
-    def add_row(self, *cells: CellType, height: int = 3) -> None:
+    def add_row(self, *cells: CellType, height: int = 1) -> None:
         row_index = self.row_count
         self.data[row_index] = list(cells)
         self.rows[row_index] = Row(row_index, height=height)
@@ -187,22 +187,23 @@ class DataTable(ScrollView, Generic[CellType]):
         data = self.data.get(row_index)
         empty = Text()
         if data is None:
-            return [Text("!") for column in self.columns]
+            return [empty for _ in self.columns]
         else:
             return [default_cell_formatter(datum) or empty for datum in data]
 
-    def _render_cell(self, row_index: int, column: Column, style: Style) -> Lines:
-
-        cell_key = (row_index, column.index, style)
+    def _render_cell(
+        self, row_index: int, column_index: int, style: Style, width: int
+    ) -> Lines:
+        cell_key = (row_index, column_index, style)
         if cell_key not in self._cell_render_cache:
-            style += Style.from_meta({"row": row_index, "column": column.index})
+            style += Style.from_meta({"row": row_index, "column": column_index})
             height = (
                 self.header_height if row_index == -1 else self.rows[row_index].height
             )
-            cell = self.get_row_renderables(row_index)[column.index]
+            cell = self.get_row_renderables(row_index)[column_index]
             lines = self.app.console.render_lines(
                 Padding(cell, (0, 1)),
-                self.app.console.options.update_dimensions(column.width, height),
+                self.app.console.options.update_dimensions(width, height),
                 style=style,
             )
             self._cell_render_cache[cell_key] = lines
@@ -217,11 +218,13 @@ class DataTable(ScrollView, Generic[CellType]):
         if cache_key in self._row_render_cache:
             return self._row_render_cache[cache_key]
 
+        render_cell = self._render_cell
+
         if self.fixed_columns:
             fixed_style = self.component_styles["datatable--fixed"].node.rich_style
             fixed_style += Style.from_meta({"fixed": True})
             fixed_row = [
-                self._render_cell(row_index, column, fixed_style)[line_no]
+                render_cell(row_index, column.index, fixed_style, column.width)[line_no]
                 for column in self.columns[: self.fixed_columns]
             ]
         else:
@@ -239,7 +242,7 @@ class DataTable(ScrollView, Generic[CellType]):
                 row_style = base_style
 
         scrollable_row = [
-            self._render_cell(row_index, column, row_style)[line_no]
+            render_cell(row_index, column.index, row_style, column.width)[line_no]
             for column in self.columns
         ]
 
@@ -281,7 +284,9 @@ class DataTable(ScrollView, Generic[CellType]):
         elif remaining_width < 0:
             segments = Segment.adjust_line_length(segments, width, style=base_style)
 
-        self._line_cache[cache_key] = segments
+        simplified_segments = list(Segment.simplify(segments))
+
+        self._line_cache[cache_key] = simplified_segments
         return segments
 
     @timer("render_lines")
@@ -298,11 +303,11 @@ class DataTable(ScrollView, Generic[CellType]):
         if self.show_header:
             fixed_top_row_count += self.get_row_height(-1)
 
+        render_line = self._render_line
         fixed_lines = [
-            self._render_line(y, x1, x2, base_style)
-            for y in range(0, fixed_top_row_count)
+            render_line(y, x1, x2, base_style) for y in range(0, fixed_top_row_count)
         ]
-        lines = [self._render_line(y, x1, x2, base_style) for y in range(y1, y2)]
+        lines = [render_line(y, x1, x2, base_style) for y in range(y1, y2)]
 
         for line_index, y in enumerate(range(y1, y2)):
             if y - scroll_y < fixed_top_row_count:

@@ -1135,9 +1135,6 @@ class App(Generic[ReturnType], DOMNode):
     async def action_toggle_class(self, selector: str, class_name: str) -> None:
         self.screen.query(selector).toggle_class(class_name)
 
-    # async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
-    #     self.stylesheet.update(self, animate=True)
-
     def handle_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput
     ) -> None:

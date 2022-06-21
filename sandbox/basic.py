@@ -182,4 +182,4 @@ if __name__ == "__main__":
 
     from rich.style import Style
 
-    print(Style._add_cache)
+    print(Style._add.cache_info())

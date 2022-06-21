@@ -566,12 +566,9 @@ class Compositor:
         cls, chops: list[dict[int, list[Segment] | None]]
     ) -> list[list[Segment]]:
         """Combine chops in to lines."""
+        from_iterable = chain.from_iterable
         segment_lines: list[list[Segment]] = [
-            list(
-                chain.from_iterable(
-                    line for line in bucket.values() if line is not None
-                )
-            )
+            list(from_iterable(line for line in bucket.values() if line is not None))
             for bucket in chops
         ]
         return segment_lines

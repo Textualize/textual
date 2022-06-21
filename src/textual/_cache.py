@@ -1,10 +1,19 @@
-import sys
-from collections import deque
-from functools import wraps
+"""
+
+A LRU (Least Recently Used) Cache container.
+
+Use when you want to cache slow operations and new keys are a good predictor
+of subsequent keys.
+
+Note that stdlib's @lru_cache is implemented in C and faster! It's best to use
+@lru_cache where you are caching things that are fairly quick and called many times.
+Use LRUCache where you want increased flexibility and you are caching slow operations
+where the overhead of the cache is a small fraction of the total processing time.  
+
+"""
+
 from threading import Lock
 from typing import (
-    Callable,
-    Deque,
     Dict,
     Generic,
     List,
@@ -13,11 +22,6 @@ from typing import (
     Union,
     overload,
 )
-
-if sys.version_info >= (3, 10):
-    from typing import ParamSpec
-else:
-    from typing_extensions import ParamSpec
 
 CacheKey = TypeVar("CacheKey")
 CacheValue = TypeVar("CacheValue")
@@ -111,8 +115,8 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         link = self.cache.get(key)
         if link is None:
             return default
-        if link is not self.root:
-            with self._lock:
+        with self._lock:
+            if link is not self.root:
                 link[0][1] = link[1]  # type: ignore[index]
                 link[1][0] = link[0]  # type: ignore[index]
                 root = self.root
@@ -121,12 +125,12 @@ class LRUCache(Generic[CacheKey, CacheValue]):
                 root[0][1] = link  # type: ignore[index]
                 root[0] = link
                 self.root = link
-        return link[3]  # type: ignore[return-value]
+            return link[3]  # type: ignore[return-value]
 
     def __getitem__(self, key: CacheKey) -> CacheValue:
         link = self.cache[key]
-        if link is not self.root:
-            with self._lock:
+        with self._lock:
+            if link is not self.root:
                 link[0][1] = link[1]  # type: ignore[index]
                 link[1][0] = link[0]  # type: ignore[index]
                 root = self.root
@@ -135,52 +139,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
                 root[0][1] = link  # type: ignore[index]
                 root[0] = link
                 self.root = link
-        return link[3]  # type: ignore[return-value]
+            return link[3]  # type: ignore[return-value]
 
     def __contains__(self, key: CacheKey) -> bool:
         return key in self.cache
-
-
-P = ParamSpec("P")
-T = TypeVar("T")
-
-
-def fifo_cache(maxsize: int) -> Callable[[Callable[P, T]], Callable[P, T]]:
-    """A First In First Out cache.
-
-    Args:
-        maxsize (int): Maximum size of the cache
-
-    """
-
-    def decorator(func: Callable[P, T]) -> Callable[P, T]:
-        queue: Deque[object] = deque()
-        cache: Dict[object, T] = {}
-
-        @wraps(func)
-        def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
-            try:
-                return cache[args]
-            except KeyError:
-                assert not kwargs, "Will not work with keyword arguments!"
-                cache[args] = result = func(*args)
-                queue.append(args)
-                if len(queue) > maxsize:
-                    del cache[queue.popleft()]
-                return result
-
-        return wrapper
-
-    return decorator
-
-
-@fifo_cache(10)
-def double(n: int) -> int:
-    return n * n
-
-
-print(double(1))
-print(double(2))
-print(double(2))
-print(double(3))
-print(double(4))
