@@ -148,7 +148,7 @@ class DataTable(ScrollView, Generic[CellType]):
     def watch_fixed_rows(self, fixed_rows: int) -> None:
         self._clear_caches()
 
-    def watch_zebra_stripes(self, zebra_stripes: int) -> None:
+    def watch_zebra_stripes(self, zebra_stripes: bool) -> None:
         self._clear_caches()
 
     def _update_dimensions(self) -> None:
