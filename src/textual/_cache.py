@@ -12,16 +12,10 @@ where the overhead of the cache is a small fraction of the total processing time
 
 """
 
+from __future__ import annotations
+
 from threading import Lock
-from typing import (
-    Dict,
-    Generic,
-    List,
-    Optional,
-    TypeVar,
-    Union,
-    overload,
-)
+from typing import Dict, Generic, TypeVar, overload
 
 CacheKey = TypeVar("CacheKey")
 CacheValue = TypeVar("CacheValue")
@@ -45,9 +39,9 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
     def __init__(self, maxsize: int) -> None:
         self.maxsize = maxsize
-        self.cache: Dict[CacheKey, List[object]] = {}
+        self.cache: Dict[CacheKey, list[object]] = {}
         self.full = False
-        self.head: List[object] = []
+        self.head: list[object] = []
         self._lock = Lock()
         super().__init__()
 
@@ -95,18 +89,16 @@ class LRUCache(Generic[CacheKey, CacheValue]):
     __setitem__ = set
 
     @overload
-    def get(self, key: CacheKey) -> Optional[CacheValue]:
+    def get(self, key: CacheKey) -> CacheValue | None:
         ...
 
     @overload
-    def get(
-        self, key: CacheKey, default: DefaultValue
-    ) -> Union[CacheValue, DefaultValue]:
+    def get(self, key: CacheKey, default: DefaultValue) -> CacheValue | DefaultValue:
         ...
 
     def get(
-        self, key: CacheKey, default: Optional[DefaultValue] = None
-    ) -> Union[CacheValue, Optional[DefaultValue]]:
+        self, key: CacheKey, default: DefaultValue | None = None
+    ) -> CacheValue | DefaultValue | None:
         """Get a value from the cache, or return a default if the key is not present.
 
         Args:
