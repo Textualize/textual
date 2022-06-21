@@ -111,10 +111,8 @@ class BasicApp(App, css_path="basic.css"):
             content=Widget(
                 Tweet(TweetBody()),
                 Widget(
-                    Static(
-                        Syntax(CODE, "python", line_numbers=True, indent_guides=True),
-                        classes="code",
-                    ),
+                    Static(Syntax(CODE, "python"), classes="code"),
+                    self.scroll_to_target,
                     classes="scrollable",
                 ),
                 Error(),
@@ -158,6 +156,9 @@ class BasicApp(App, css_path="basic.css"):
         # Pressing "t" toggles the content of the TweetBody widget, from a long "Lorem ipsum..." to a shorter one.
         tweet_body = self.query("TweetBody").first()
         tweet_body.short_lorem = not tweet_body.short_lorem
+
+    def key_v(self):
+        self.get_child(id="content").scroll_to_widget(self.scroll_to_target)
 
     def key_v(self):
         self.get_child(id="content").scroll_to_widget(self.scroll_to_target)
