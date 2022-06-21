@@ -830,7 +830,7 @@ class Widget(DOMNode):
 
     @property
     def is_container(self) -> bool:
-        """Check if this widget is a container (contains other widgets)
+        """Check if this widget is a container (contains other widgets).
 
         Returns:
             bool: True if this widget is a container.
