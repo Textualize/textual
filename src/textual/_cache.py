@@ -30,13 +30,13 @@ DefaultValue = TypeVar("DefaultValue")
 
 class LRUCache(Generic[CacheKey, CacheValue]):
     """
-    A dictionary-like container that stores a given maximum items.
+    A dictionary-like container with a maximum size.
 
     If an additional item is added when the LRUCache is full, the least
     recently used key is discarded to make room for the new item.
 
-    The implementation is similar to functools.lru_cache, which uses a linked
-    list to keep track of the most recently used items.
+    The implementation is similar to functools.lru_cache, which uses a (doubly)
+    linked list to keep track of the most recently used items.
 
     Each entry is stored as [PREV, NEXT, KEY, VALUE] where PREV is a reference
     to the previous entry, and NEXT is a reference to the next value.
@@ -47,7 +47,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         self.maxsize = maxsize
         self.cache: Dict[CacheKey, List[object]] = {}
         self.full = False
-        self.root: List[object] = []
+        self.head: List[object] = []
         self._lock = Lock()
         super().__init__()
 
@@ -59,7 +59,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         with self._lock:
             self.cache.clear()
             self.full = False
-            self.root = []
+            self.head = []
 
     def set(self, key: CacheKey, value: CacheValue) -> None:
         """Set a value.
@@ -71,21 +71,25 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         with self._lock:
             link = self.cache.get(key)
             if link is None:
-                root = self.root
-                if not root:
-                    self.root[:] = [self.root, self.root, key, value]
+                head = self.head
+                if not head:
+                    # First link references itself
+                    self.head[:] = [self.head, self.head, key, value]
                 else:
-                    self.root = [root[0], root, key, value]
-                    root[0][1] = self.root  # type: ignore[index]
-                    root[0] = self.root
-                self.cache[key] = self.root
+                    # Add a new root to the beginning
+                    self.head = [head[0], head, key, value]
+                    # Updated references on previous root
+                    head[0][1] = self.head  # type: ignore[index]
+                    head[0] = self.head
+                self.cache[key] = self.head
 
                 if self.full or len(self.cache) > self.maxsize:
+                    # Cache is full, we need to evict the oldest one
                     self.full = True
-                    root = self.root
-                    last = root[0]
-                    last[0][1] = root  # type: ignore[index]
-                    root[0] = last[0]  # type: ignore[index]
+                    head = self.head
+                    last = head[0]
+                    last[0][1] = head  # type: ignore[index]
+                    head[0] = last[0]  # type: ignore[index]
                     del self.cache[last[2]]  # type: ignore[index]
 
     __setitem__ = set
@@ -114,31 +118,36 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         """
         link = self.cache.get(key)
         if link is None:
+            # Cache hit!
             return default
         with self._lock:
-            if link is not self.root:
+            # Cache miss
+            if link is not self.head:
+                # Remove link from list
                 link[0][1] = link[1]  # type: ignore[index]
                 link[1][0] = link[0]  # type: ignore[index]
-                root = self.root
-                link[0] = root[0]
-                link[1] = root
-                root[0][1] = link  # type: ignore[index]
-                root[0] = link
-                self.root = link
+                head = self.head
+                # Move link to head of list
+                link[0] = head[0]
+                link[1] = head
+                head[0][1] = link  # type: ignore[index]
+                head[0] = link
+                # Update root
+                self.head = link
             return link[3]  # type: ignore[return-value]
 
     def __getitem__(self, key: CacheKey) -> CacheValue:
         link = self.cache[key]
         with self._lock:
-            if link is not self.root:
+            if link is not self.head:
                 link[0][1] = link[1]  # type: ignore[index]
                 link[1][0] = link[0]  # type: ignore[index]
-                root = self.root
-                link[0] = root[0]
-                link[1] = root
-                root[0][1] = link  # type: ignore[index]
-                root[0] = link
-                self.root = link
+                head = self.head
+                link[0] = head[0]
+                link[1] = head
+                head[0][1] = link  # type: ignore[index]
+                head[0] = link
+                self.head = link
             return link[3]  # type: ignore[return-value]
 
     def __contains__(self, key: CacheKey) -> bool:
