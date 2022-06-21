@@ -319,7 +319,7 @@ class Compositor:
             container_region = region.shrink(widget.styles.gutter)
             container_size = container_region.size
 
-            # Containers (widgets with layout) require adding children
+            # Widgets with scrollbars (containers or scroll view) require additional processing
             if widget.is_scrollable:
                 # The region that contains the content (container region minus scrollbars)
                 child_region = widget._get_scrollable_region(container_region)
