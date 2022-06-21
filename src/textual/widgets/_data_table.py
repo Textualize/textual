@@ -275,7 +275,6 @@ class DataTable(ScrollView, Generic[CellType]):
 
         segments = fixed_line + line_crop(scrollable_line, x1 + fixed_width, x2, width)
 
-        # line = Segment.adjust_line_length(segments, width, style=base_style)
         remaining_width = width - (fixed_width + min(width, (x2 - x1 + fixed_width)))
         if remaining_width > 0:
             segments.append(Segment(" " * remaining_width, base_style))
