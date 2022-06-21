@@ -152,9 +152,10 @@ class DataTable(ScrollView, Generic[CellType]):
         self._clear_caches()
 
     def _update_dimensions(self) -> None:
-        max_width = sum(column.width for column in self.columns)
+        """Called to recalculate the virtual (scrollable) size."""
+        total_width = sum(column.width for column in self.columns)
         self.virtual_size = Size(
-            max_width,
+            total_width,
             len(self._y_offsets) + (self.header_height if self.show_header else 0),
         )
 
