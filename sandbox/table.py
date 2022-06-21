@@ -68,9 +68,7 @@ class TableApp(App):
         self.table.zebra_stripes = not self.table.zebra_stripes
 
     def action_exit(self) -> None:
-        from rich.style import Style
-
-        self.exit(Style._add_cache.cache_info())
+        pass
 
 
 app = TableApp()
