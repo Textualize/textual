@@ -14,6 +14,7 @@ class Keys(str, Enum):
 
     value: str
 
+    Space = "space"
     Escape = "escape"  # Also Control-[
     ShiftEscape = "shift+escape"
     Return = "return"

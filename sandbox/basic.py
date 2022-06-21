@@ -156,6 +156,9 @@ class BasicApp(App, css_path="basic.css"):
     def key_v(self):
         self.get_child(id="content").scroll_to_widget(self.scroll_to_target)
 
+    def key_space(self):
+        self.bell()
+
 
 app = BasicApp()
 

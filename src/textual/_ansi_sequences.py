@@ -5,6 +5,7 @@ from .keys import Keys
 # Mapping of vt100 escape codes to Keys.
 ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     # Control keys.
+    " ": (Keys.Space,),
     "\r": (Keys.Enter,),
     "\x00": (Keys.ControlAt,),  # Control-At (Also for Ctrl-Space)
     "\x01": (Keys.ControlA,),  # Control-A (home)
