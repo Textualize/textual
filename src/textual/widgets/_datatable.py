@@ -23,8 +23,6 @@ from .. import messages
 
 CellType = TypeVar("CellType")
 
-CellFormatter = Callable[[object], RenderableType | None]
-
 
 def default_cell_formatter(obj: object) -> RenderableType | None:
     if isinstance(obj, str):
