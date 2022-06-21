@@ -195,7 +195,7 @@ class Region(NamedTuple):
         """Create a Region from the union of other regions.
 
         Args:
-            regions (Sequence[Region]): One or more regions.
+            regions (Collection[Region]): One or more regions.
 
         Returns:
             Region: A Region that encloses all other regions.
