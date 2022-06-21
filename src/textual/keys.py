@@ -189,6 +189,7 @@ class Keys(str, Enum):
     # Some 'Key' aliases (for backwardshift+compatibility).
     ControlSpace = "ctrl-at"
     Tab = "tab"
+    Space = "space"
     Enter = "enter"
     Backspace = "backspace"
 
