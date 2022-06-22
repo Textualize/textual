@@ -23,6 +23,7 @@ from .message_pump import MessagePump
 
 if TYPE_CHECKING:
     from .app import App
+    from .css.styles import StylesBase
     from .css.query import DOMQuery
     from .screen import Screen
 
@@ -41,6 +42,9 @@ class DOMNode(MessagePump):
 
     # Custom CSS
     CSS: ClassVar[str] = ""
+
+    # Virtual DOM nodes
+    COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
     # True if this node inherits the CSS from the base class.
     _inherit_css: ClassVar[bool] = True
@@ -61,8 +65,9 @@ class DOMNode(MessagePump):
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles(self)
         self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
-        self._default_styles = Styles()
-        self._default_rules = self._default_styles.extract_rules((0, 0, 0))
+        # A mapping of class names to Styles set in COMPONENT_CLASSES
+        self.component_styles: dict[str, StylesBase] = {}
+
         super().__init__()
 
     def __init_subclass__(cls, inherit_css: bool = True) -> None:
@@ -355,7 +360,14 @@ class DOMNode(MessagePump):
         style = Style()
         for node in reversed(self.ancestors):
             style += node.styles.text_style
+        return style
 
+    @property
+    def rich_style(self) -> Style:
+        """Get a Rich Style object for this DOMNode."""
+        (_, _), (background, color) = self.colors
+        style = Style.from_color(color.rich_color, background.rich_color)
+        style += self.text_style
         return style
 
     @property
@@ -380,7 +392,6 @@ class DOMNode(MessagePump):
     @property
     def ancestors(self) -> list[DOMNode]:
         """Get a list of Nodes by tracing ancestors all the way back to App."""
-
         nodes: list[DOMNode] = [self]
         add_node = nodes.append
         node = self
@@ -419,9 +430,6 @@ class DOMNode(MessagePump):
             if isinstance(node, Widget):
                 node.set_dirty()
                 node._layout_required = True
-
-    def on_style_change(self) -> None:
-        pass
 
     def add_child(self, node: DOMNode) -> None:
         """Add a new child node.

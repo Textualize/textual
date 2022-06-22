@@ -145,7 +145,7 @@ def property_invalid_value_help_text(
         HelpText: Renderable for displaying the help text for this property
     """
     property_name = _contextualize_property_name(property_name, context)
-    summary = f"Invalid CSS property [i]{property_name}[/]"
+    summary = f"Invalid CSS property {property_name!r}"
     if suggested_property_name:
         suggested_property_name = _contextualize_property_name(
             suggested_property_name, context

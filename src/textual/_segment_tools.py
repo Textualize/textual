@@ -7,14 +7,16 @@ from __future__ import annotations
 from rich.segment import Segment
 
 
-def line_crop(segments: list[Segment], start: int, end: int) -> list[Segment]:
+def line_crop(
+    segments: list[Segment], start: int, end: int, total: int
+) -> list[Segment]:
     """Crops a list of segments between two cell offsets.
 
     Args:
         segments (list[Segment]): A list of Segments for a line.
         start (int): Start offset
-        end (int): End offset
-
+        end (int): End offset (exclusive)
+        total (int): Total cell length of segments.
     Returns:
         list[Segment]: A new shorter list of segments
     """
@@ -34,6 +36,13 @@ def line_crop(segments: list[Segment], start: int, end: int) -> list[Segment]:
         pos = end_pos
     else:
         return []
+
+    if end >= total:
+        # The end crop is the end of the segments, so we can collect all remaining segments
+        if segment:
+            add_segment(segment)
+        output_segments.extend(iter_segments)
+        return output_segments
 
     pos = start
     while segment is not None:

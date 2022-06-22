@@ -179,7 +179,7 @@ def test_did_you_mean_for_css_property_names(
 
     _, help_text = err.value.errors.rules[0].errors[0]  # type: Any, HelpText
     displayed_css_property_name = css_property_name.replace("_", "-")
-    expected_summary = f"Invalid CSS property [i]{displayed_css_property_name}[/]"
+    expected_summary = f"Invalid CSS property {displayed_css_property_name!r}"
     if expected_property_name_suggestion:
         expected_summary += f'. Did you mean "{expected_property_name_suggestion}"?'
     assert help_text.summary == expected_summary

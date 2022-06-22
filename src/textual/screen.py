@@ -21,8 +21,8 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Final
 
-# Screen updates will be batched so that they don't happen more often than 20 times per second:
-UPDATE_PERIOD: Final = 1 / 20
+# Screen updates will be batched so that they don't happen more often than 60 times per second:
+UPDATE_PERIOD: Final = 1 / 60
 
 
 @rich.repr.auto
@@ -30,7 +30,8 @@ class Screen(Widget):
     """A widget for the root of the app."""
 
     CSS = """
-    Screen {             
+    Screen {
+            
         layout: vertical;
         overflow-y: auto;
     }

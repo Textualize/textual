@@ -57,7 +57,7 @@ class Prompt(Message, system=True):
     """Used to 'wake up' an event loop."""
 
     def can_replace(self, message: Message) -> bool:
-        return isinstance(message, StylesUpdated)
+        return isinstance(message, Prompt)
 
 
 class TerminalSupportsSynchronizedOutput(Message):

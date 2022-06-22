@@ -1,9 +1,10 @@
-# Examples
+# Textual Examples
 
-Run any of these examples to demonstrate a Textual features.
+This directory contains example Textual applications.
 
-The example code will generate a log file called "textual.log". Tail this file to gain insight in to what Textual is doing.
+To run them, navigate to the examples directory and enter `python` followed buy the name of the Python file.
 
 ```
-tail -f textual
+cd textual/examples
+python pride.py
 ```

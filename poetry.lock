@@ -113,11 +113,11 @@ python-versions = ">=3.6.1"
 
 [[package]]
 name = "charset-normalizer"
-version = "2.0.12"
+version = "2.1.0"
 description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
 category = "main"
 optional = false
-python-versions = ">=3.5.0"
+python-versions = ">=3.6.0"
 
 [package.extras]
 unicode_backport = ["unicodedata2"]
@@ -136,7 +136,7 @@ importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
 
 [[package]]
 name = "colorama"
-version = "0.4.4"
+version = "0.4.5"
 description = "Cross-platform colored terminal text."
 category = "main"
 optional = false
@@ -345,7 +345,7 @@ mkdocs = ">=1.1"
 
 [[package]]
 name = "mkdocs-material"
-version = "8.3.5"
+version = "8.3.6"
 description = "Documentation that simply works"
 category = "dev"
 optional = false
@@ -775,12 +775,12 @@ docs = ["sphinx", "jaraco.packaging (>=9)", "rst.linker (>=1.9)"]
 testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-cov", "pytest-enabler (>=1.0.1)", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy (>=0.9.1)"]
 
 [extras]
-dev = ["aiohttp", "msgpack"]
+dev = ["aiohttp", "click", "msgpack"]
 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "fa967da13a215abd45b601b171943b3dfb94ecbeffa8078d9e53f22e249f513b"
+content-hash = "8ce8d66466dad1b984673595ebd0cc7bc0d28c7a672269e9b5620c242d87d9ad"
 
 [metadata.files]
 aiohttp = [
@@ -911,16 +911,16 @@ cfgv = [
     {file = "cfgv-3.3.1.tar.gz", hash = "sha256:f5a830efb9ce7a445376bb66ec94c638a9787422f96264c98edc6bdeed8ab736"},
 ]
 charset-normalizer = [
-    {file = "charset-normalizer-2.0.12.tar.gz", hash = "sha256:2857e29ff0d34db842cd7ca3230549d1a697f96ee6d3fb071cfa6c7393832597"},
-    {file = "charset_normalizer-2.0.12-py3-none-any.whl", hash = "sha256:6881edbebdb17b39b4eaaa821b438bf6eddffb4468cf344f09f89def34a8b1df"},
+    {file = "charset-normalizer-2.1.0.tar.gz", hash = "sha256:575e708016ff3a5e3681541cb9d79312c416835686d054a23accb873b254f413"},
+    {file = "charset_normalizer-2.1.0-py3-none-any.whl", hash = "sha256:5189b6f22b01957427f35b6a08d9a0bc45b46d3788ef5a92e978433c7a35f8a5"},
 ]
 click = [
     {file = "click-8.1.2-py3-none-any.whl", hash = "sha256:24e1a4a9ec5bf6299411369b208c1df2188d9eb8d916302fe6bf03faed227f1e"},
     {file = "click-8.1.2.tar.gz", hash = "sha256:479707fe14d9ec9a0757618b7a100a0ae4c4e236fac5b7f80ca68028141a1a72"},
 ]
 colorama = [
-    {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
-    {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
+    {file = "colorama-0.4.5-py2.py3-none-any.whl", hash = "sha256:854bf444933e37f5824ae7bfc1e98d5bce2ebe4160d46b5edf346a89358e99da"},
+    {file = "colorama-0.4.5.tar.gz", hash = "sha256:e6c6b4334fc50988a639d9b98aa429a0b57da6e17b9a44f0451f930b6967b7a4"},
 ]
 commonmark = [
     {file = "commonmark-0.9.1-py2.py3-none-any.whl", hash = "sha256:da2f38c92590f83de410ba1a3cbceafbc74fee9def35f9251ba9a971d6d66fd9"},
@@ -1125,8 +1125,8 @@ mkdocs-autorefs = [
     {file = "mkdocs_autorefs-0.4.1-py3-none-any.whl", hash = "sha256:a2248a9501b29dc0cc8ba4c09f4f47ff121945f6ce33d760f145d6f89d313f5b"},
 ]
 mkdocs-material = [
-    {file = "mkdocs-material-8.3.5.tar.gz", hash = "sha256:0d7ae82b28fa57a2ad9a4eeb5fd01704cb8fe963eb20c56a68afdd735e52b432"},
-    {file = "mkdocs_material-8.3.5-py2.py3-none-any.whl", hash = "sha256:9190aef365bd6ed43b27f47d1de956d9e67b61f4b9edb444563337ef717cacd3"},
+    {file = "mkdocs-material-8.3.6.tar.gz", hash = "sha256:be8f95c0dfb927339b55b2cc066423dc0b381be9828ff74a5b02df979a859b66"},
+    {file = "mkdocs_material-8.3.6-py2.py3-none-any.whl", hash = "sha256:01f3fbab055751b3b75a64b538e86b9ce0c6a0f8d43620f6287dfa16534443e5"},
 ]
 mkdocs-material-extensions = [
     {file = "mkdocs-material-extensions-1.0.3.tar.gz", hash = "sha256:bfd24dfdef7b41c312ede42648f9eb83476ea168ec163b613f9abd12bbfddba2"},
