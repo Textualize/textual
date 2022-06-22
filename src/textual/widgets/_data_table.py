@@ -16,7 +16,7 @@ from .. import events
 from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._types import Lines
-from ..geometry import clamp, Region, Size
+from ..geometry import clamp, Region, Size, Spacing
 from ..reactive import Reactive
 from .._profile import timer
 from ..scroll_view import ScrollView
@@ -103,8 +103,7 @@ class DataTable(ScrollView, Generic[CellType]):
     }
 
     DataTable > .datatable--highlight {
-        background: $secondary;
-        color: $text-secondary;
+        background: $primary 20%;
     }
     """
 
@@ -135,7 +134,7 @@ class DataTable(ScrollView, Generic[CellType]):
         self._row_render_cache = LRUCache(1000)
 
         self._cell_render_cache: LRUCache[tuple[int, int, Style], Lines]
-        self._cell_render_cache = LRUCache(10000)
+        self._cell_render_cache = LRUCache(1000)
 
         self._line_cache: LRUCache[tuple[int, int, int, int], list[Segment]]
         self._line_cache = LRUCache(1000)
@@ -144,13 +143,15 @@ class DataTable(ScrollView, Generic[CellType]):
 
     show_header = Reactive(True)
     fixed_rows = Reactive(0)
-    fixed_columns = Reactive(0)
+    fixed_columns = Reactive(1)
     zebra_stripes = Reactive(False)
     header_height = Reactive(1)
     show_cursor = Reactive(True)
     cursor_type = Reactive(CELL)
     cursor_row = Reactive(0)
-    cursor_column = Reactive(0)
+    cursor_column = Reactive(1)
+    hover_row = Reactive(0)
+    hover_column = Reactive(0)
 
     def _clear_caches(self) -> None:
         self._row_render_cache.clear()
@@ -188,7 +189,7 @@ class DataTable(ScrollView, Generic[CellType]):
             len(self._y_offsets) + (self.header_height if self.show_header else 0),
         )
 
-    def _get_cursor_region(self, row_index: int, column_index: int) -> Region:
+    def _get_cell_region(self, row_index: int, column_index: int) -> Region:
         row = self.rows[row_index]
         x = sum(column.width for column in self.columns[:column_index])
         width = self.columns[column_index].width
@@ -256,6 +257,7 @@ class DataTable(ScrollView, Generic[CellType]):
         style: Style,
         width: int,
         cursor: bool = False,
+        hover: bool = False,
     ) -> Lines:
         """Render the given cell.
 
@@ -268,9 +270,11 @@ class DataTable(ScrollView, Generic[CellType]):
         Returns:
             Lines: A list of segments per line.
         """
+        if hover:
+            style += self.component_styles["datatable--highlight"].node.rich_style
         if cursor:
             style += self.component_styles["datatable--cursor"].node.rich_style
-        cell_key = (row_index, column_index, style)
+        cell_key = (row_index, column_index, style, cursor, hover)
         if cell_key not in self._cell_render_cache:
             style += Style.from_meta({"row": row_index, "column": column_index})
             height = (
@@ -286,7 +290,12 @@ class DataTable(ScrollView, Generic[CellType]):
         return self._cell_render_cache[cell_key]
 
     def _render_row(
-        self, row_index: int, line_no: int, base_style: Style, cursor: int = -1
+        self,
+        row_index: int,
+        line_no: int,
+        base_style: Style,
+        cursor_column: int = -1,
+        hover_column: int = -1,
     ) -> tuple[Lines, Lines]:
         """Render a row in to lines for each cell.
 
@@ -299,7 +308,7 @@ class DataTable(ScrollView, Generic[CellType]):
             tuple[Lines, Lines]: Lines for fixed cells, and Lines for scrollable cells.
         """
 
-        cache_key = (row_index, line_no, base_style)
+        cache_key = (row_index, line_no, base_style, cursor_column, hover_column)
 
         if cache_key in self._row_render_cache:
             return self._row_render_cache[cache_key]
@@ -333,7 +342,8 @@ class DataTable(ScrollView, Generic[CellType]):
                 column.index,
                 row_style,
                 column.width,
-                cursor=cursor == column.index,
+                cursor=cursor_column == column.index,
+                hover=hover_column == column.index,
             )[line_no]
             for column in self.columns
         ]
@@ -373,20 +383,24 @@ class DataTable(ScrollView, Generic[CellType]):
         """
 
         width = self.region.width
+        row_index, line_no = self._get_offsets(y)
+        cursor_column = (
+            self.cursor_column
+            if (self.show_cursor and self.cursor_row == row_index)
+            else -1
+        )
+        hover_column = self.hover_column if (self.hover_row == row_index) else -1
 
-        cache_key = (y, x1, x2, width)
+        cache_key = (y, x1, x2, width, cursor_column, hover_column)
         if cache_key in self._line_cache:
             return self._line_cache[cache_key]
-
-        row_index, line_no = self._get_offsets(y)
 
         fixed, scrollable = self._render_row(
             row_index,
             line_no,
             base_style,
-            cursor=self.cursor_column
-            if (self.show_cursor and self.cursor_row == row_index)
-            else -1,
+            cursor_column=cursor_column,
+            hover_column=hover_column,
         )
         fixed_width = sum(column.width for column in self.columns[: self.fixed_columns])
 
@@ -440,41 +454,55 @@ class DataTable(ScrollView, Generic[CellType]):
 
         return lines
 
-    def on_mouse_move(self, event):
-        print(self.get_style_at(event.x, event.y).meta)
+    def on_mouse_move(self, event: events.MouseMove):
+        meta = self.get_style_at(event.x, event.y).meta
+        self.hover_row = meta.get("row")
+        self.hover_column = meta.get("column")
 
     async def on_key(self, event) -> None:
         await self.dispatch_key(event)
 
+    def _get_cell_border(self) -> Spacing:
+        top = self.header_height if self.show_header else 0
+        top += sum(
+            self.rows[row_index].height
+            for row_index in range(self.fixed_rows)
+            if row_index in self.rows
+        )
+        left = sum(column.width for column in self.columns[: self.fixed_columns])
+        return Spacing(top, 0, 0, left)
+
     def _scroll_cursor_in_to_view(self) -> None:
-        region = self._get_cursor_region(self.cursor_row, self.cursor_column)
-        print("CURSOR", region)
-        self.scroll_to_region(region)
+        region = self._get_cell_region(self.cursor_row, self.cursor_column)
+        spacing = self._get_cell_border()
+        self.scroll_to_region(region, animate=False, spacing=spacing)
+
+    def on_click(self, event: events.Click) -> None:
+        meta = self.get_style_at(event.x, event.y).meta
+        self.cursor_row = meta.get("row")
+        self.cursor_column = meta.get("column")
+        self._scroll_cursor_in_to_view()
 
     def key_down(self, event: events.Key):
         self.cursor_row += 1
-        self._clear_caches()
         event.stop()
         event.prevent_default()
         self._scroll_cursor_in_to_view()
 
     def key_up(self, event: events.Key):
         self.cursor_row -= 1
-        self._clear_caches()
         event.stop()
         event.prevent_default()
         self._scroll_cursor_in_to_view()
 
     def key_right(self, event: events.Key):
         self.cursor_column += 1
-        self._clear_caches()
         event.stop()
         event.prevent_default()
         self._scroll_cursor_in_to_view()
 
     def key_left(self, event: events.Key):
         self.cursor_column -= 1
-        self._clear_caches()
         event.stop()
         event.prevent_default()
         self._scroll_cursor_in_to_view()

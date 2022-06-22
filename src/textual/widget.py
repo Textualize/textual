@@ -29,7 +29,7 @@ from ._context import active_app
 from ._types import Lines
 from .dom import DOMNode
 from ._layout import ArrangeResult
-from .geometry import clamp, Offset, Region, Size
+from .geometry import clamp, Offset, Region, Size, Spacing
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from . import messages
@@ -624,12 +624,15 @@ class Widget(DOMNode):
 
         return any(scrolls)
 
-    def scroll_to_region(self, region: Region, *, animate: bool = True) -> bool:
+    def scroll_to_region(
+        self, region: Region, *, spacing: Spacing | None = None, animate: bool = True
+    ) -> bool:
         """Scrolls a given region in to view.
 
         Args:
             region (Region): A region that should be visible.
             animate (bool, optional): Enable animation. Defaults to True.
+            spacing (Spacing): Space to subtract from the window region.
 
         Returns:
             bool: True if the window was scrolled.
@@ -637,50 +640,41 @@ class Widget(DOMNode):
 
         scroll_x, scroll_y = self.scroll_offset
         width, height = self.region.size
-        container_region = Region(scroll_x, scroll_y, width, height)
+        window = Region(scroll_x, scroll_y, width, height)
+        if spacing is not None:
+            window = window.shrink(spacing)
 
-        if region in container_region:
-            # Widget is visible, nothing to do
+        if region in window:
+            # Widget is entirely visible, nothing to do
             return False
 
-        (
-            container_left,
-            container_top,
-            container_right,
-            container_bottom,
-        ) = container_region.corners
-        (
-            child_left,
-            child_top,
-            child_right,
-            child_bottom,
-        ) = region.corners
+        window_left, window_top, window_right, window_bottom = window.corners
+        left, top, right, bottom = region.corners
 
-        delta_x = 0
-        delta_y = 0
+        delta_x = delta_y = 0
 
         if not (
-            (container_right >= child_left > container_left)
-            and (container_right >= child_right > container_left)
+            (window_right > left >= window_left)
+            and (window_right > right >= window_left)
         ):
             delta_x = min(
-                child_left - container_left,
-                child_left - (container_right - region.width),
+                left - window_left,
+                left - (window_right - region.width),
                 key=abs,
             )
 
         if not (
-            (container_bottom >= child_top > container_top)
-            and (container_bottom >= child_bottom > container_top)
+            (window_bottom > top >= window_top)
+            and (window_bottom > bottom >= window_top)
         ):
             delta_y = min(
-                child_top - container_top,
-                child_top - (container_bottom - region.height),
+                top - window_top,
+                top - (window_bottom - region.height),
                 key=abs,
             )
 
         scrolled = self.scroll_relative(
-            delta_x or None, delta_y or None, animate=abs(delta_y) != 1, duration=0.2
+            delta_x or None, delta_y or None, animate=animate, duration=0.2
         )
 
         return scrolled
