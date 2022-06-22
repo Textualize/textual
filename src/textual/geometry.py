@@ -224,17 +224,17 @@ class Region(NamedTuple):
         return cls(x1, y1, x2 - x1, y2 - y1)
 
     @classmethod
-    def from_origin(cls, origin: tuple[int, int], size: tuple[int, int]) -> Region:
-        """Create a region from origin and size.
+    def from_offset(cls, offset: tuple[int, int], size: tuple[int, int]) -> Region:
+        """Create a region from offset and size.
 
         Args:
-            origin (Point): Origin (top left point)
+            offset (Point): Offset (top left point)
             size (tuple[int, int]): Dimensions of region.
 
         Returns:
             Region: A region instance.
         """
-        x, y = origin
+        x, y = offset
         width, height = size
         return cls(x, y, width, height)
 
@@ -280,7 +280,7 @@ class Region(NamedTuple):
         return self.width * self.height
 
     @property
-    def origin(self) -> Offset:
+    def offset(self) -> Offset:
         """Get the start point of the region."""
         return Offset(self.x, self.y)
 
@@ -328,7 +328,7 @@ class Region(NamedTuple):
         return range(self.y, self.y + self.height)
 
     @property
-    def reset_origin(self) -> Region:
+    def reset_offset(self) -> Region:
         """An region of the same size at (0, 0)."""
         _, _, width, height = self
         return Region(0, 0, width, height)
@@ -346,6 +346,19 @@ class Region(NamedTuple):
             x, y, width, height = self
             return Region(x - ox, y - oy, width, height)
         return NotImplemented
+
+    def at_offset(self, offset: tuple[int, int]) -> Region:
+        """Get a new Region with the same size at a given offset.
+
+        Args:
+            offset (tuple[int, int]): An offset.
+
+        Returns:
+            Region: New Region with adjusted offset.
+        """
+        x, y = offset
+        _x, _y, width, height = self
+        return Region(x, y, width, height)
 
     def expand(self, size: tuple[int, int]) -> Region:
         """Increase the size of the region by adding a border.
@@ -430,7 +443,7 @@ class Region(NamedTuple):
         )
 
     def translate(self, x: int = 0, y: int = 0) -> Region:
-        """Move the origin of the Region.
+        """Move the offset of the Region.
 
         Args:
             translate_x (int): Value to add to x coordinate.

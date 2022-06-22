@@ -595,9 +595,9 @@ class Widget(DOMNode):
 
             # We can either scroll so the widget is at the top of the container, or so that
             # it is at the bottom. We want to pick which has the shortest distance
-            top_delta = widget_region.origin - container_region.origin
+            top_delta = widget_region.offset - container_region.origin
 
-            bottom_delta = widget_region.origin - (
+            bottom_delta = widget_region.offset - (
                 container_region.origin
                 + Offset(0, container_region.height - widget_region.height)
             )
@@ -627,7 +627,10 @@ class Widget(DOMNode):
     def scroll_to_region(
         self, region: Region, *, spacing: Spacing | None = None, animate: bool = True
     ) -> bool:
-        """Scrolls a given region in to view.
+        """Scrolls a given region in to view, if required.
+
+        This method will scroll the least distance required to move `region` fully within
+        the scrollable area.
 
         Args:
             region (Region): A region that should be visible.
@@ -638,9 +641,7 @@ class Widget(DOMNode):
             bool: True if the window was scrolled.
         """
 
-        scroll_x, scroll_y = self.scroll_offset
-        width, height = self.region.size
-        window = Region(scroll_x, scroll_y, width, height)
+        window = self.region.at_offset(self.scroll_offset)
         if spacing is not None:
             window = window.shrink(spacing)
 
@@ -650,13 +651,13 @@ class Widget(DOMNode):
 
         window_left, window_top, window_right, window_bottom = window.corners
         left, top, right, bottom = region.corners
-
         delta_x = delta_y = 0
 
         if not (
             (window_right > left >= window_left)
             and (window_right > right >= window_left)
         ):
+            # The window needs to scroll on the X axis to bring region in to view
             delta_x = min(
                 left - window_left,
                 left - (window_right - region.width),
@@ -667,6 +668,7 @@ class Widget(DOMNode):
             (window_bottom > top >= window_top)
             and (window_bottom > bottom >= window_top)
         ):
+            # The window needs to scroll on the Y axis to bring region in to view
             delta_y = min(
                 top - window_top,
                 top - (window_bottom - region.height),

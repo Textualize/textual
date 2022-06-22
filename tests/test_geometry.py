@@ -126,7 +126,7 @@ def test_region_from_union():
 
 
 def test_region_from_origin():
-    assert Region.from_origin(Offset(3, 4), (5, 6)) == Region(3, 4, 5, 6)
+    assert Region.from_offset(Offset(3, 4), (5, 6)) == Region(3, 4, 5, 6)
 
 
 def test_region_area():
@@ -140,7 +140,7 @@ def test_region_size():
 
 
 def test_region_origin():
-    assert Region(1, 2, 3, 4).origin == Offset(1, 2)
+    assert Region(1, 2, 3, 4).offset == Offset(1, 2)
 
 
 def test_region_bottom_left():
@@ -275,7 +275,7 @@ def test_region_y_range():
 
 
 def test_region_reset_origin():
-    assert Region(5, 10, 20, 30).reset_origin == Region(0, 0, 20, 30)
+    assert Region(5, 10, 20, 30).reset_offset == Region(0, 0, 20, 30)
 
 
 def test_region_expand():

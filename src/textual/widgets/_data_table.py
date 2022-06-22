@@ -130,13 +130,15 @@ class DataTable(ScrollView, Generic[CellType]):
 
         self._y_offsets: list[tuple[int, int]] = []
 
-        self._row_render_cache: LRUCache[tuple[int, int, Style], tuple[Lines, Lines]]
+        self._row_render_cache: LRUCache[
+            tuple[int, int, Style, int, int], tuple[Lines, Lines]
+        ]
         self._row_render_cache = LRUCache(1000)
 
-        self._cell_render_cache: LRUCache[tuple[int, int, Style], Lines]
+        self._cell_render_cache: LRUCache[tuple[int, int, Style, bool, bool], Lines]
         self._cell_render_cache = LRUCache(1000)
 
-        self._line_cache: LRUCache[tuple[int, int, int, int], list[Segment]]
+        self._line_cache: LRUCache[tuple[int, int, int, int, int, int], list[Segment]]
         self._line_cache = LRUCache(1000)
 
         self._line_no = 0
@@ -148,10 +150,10 @@ class DataTable(ScrollView, Generic[CellType]):
     header_height = Reactive(1)
     show_cursor = Reactive(True)
     cursor_type = Reactive(CELL)
-    cursor_row = Reactive(0)
-    cursor_column = Reactive(1)
-    hover_row = Reactive(0)
-    hover_column = Reactive(0)
+    cursor_row: Reactive[int] = Reactive(0)
+    cursor_column: Reactive[int] = Reactive(1)
+    hover_row: Reactive[int] = Reactive(0)
+    hover_column: Reactive[int] = Reactive(0)
 
     def _clear_caches(self) -> None:
         self._row_render_cache.clear()
@@ -408,13 +410,7 @@ class DataTable(ScrollView, Generic[CellType]):
         scrollable_line: list[Segment] = list(chain.from_iterable(scrollable))
 
         segments = fixed_line + line_crop(scrollable_line, x1 + fixed_width, x2, width)
-
-        # remaining_width = width - (fixed_width + min(width, (x2 - x1 + fixed_width)))
-        # if remaining_width > 0:
-        #     segments.append(Segment(" " * remaining_width, base_style))
-        # elif remaining_width < 0:
         segments = Segment.adjust_line_length(segments, width, style=base_style)
-
         simplified_segments = list(Segment.simplify(segments))
 
         self._line_cache[cache_key] = simplified_segments
@@ -456,8 +452,9 @@ class DataTable(ScrollView, Generic[CellType]):
 
     def on_mouse_move(self, event: events.MouseMove):
         meta = self.get_style_at(event.x, event.y).meta
-        self.hover_row = meta.get("row")
-        self.hover_column = meta.get("column")
+        if meta:
+            self.hover_row = meta["row"]
+            self.hover_column = meta["column"]
 
     async def on_key(self, event) -> None:
         await self.dispatch_key(event)
@@ -479,9 +476,10 @@ class DataTable(ScrollView, Generic[CellType]):
 
     def on_click(self, event: events.Click) -> None:
         meta = self.get_style_at(event.x, event.y).meta
-        self.cursor_row = meta.get("row")
-        self.cursor_column = meta.get("column")
-        self._scroll_cursor_in_to_view()
+        if meta:
+            self.cursor_row = meta["row"]
+            self.cursor_column = meta["column"]
+            self._scroll_cursor_in_to_view()
 
     def key_down(self, event: events.Key):
         self.cursor_row += 1

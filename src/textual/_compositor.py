@@ -328,7 +328,7 @@ class Compositor:
                 sub_clip = clip.intersection(child_region)
 
                 # The region covered by children relative to parent widget
-                total_region = child_region.reset_origin
+                total_region = child_region.reset_offset
 
                 if widget.is_container:
                     # Arrange the layout
@@ -338,7 +338,7 @@ class Compositor:
 
                     # An offset added to all placements
                     placement_offset = (
-                        container_region.origin + layout_offset - widget.scroll_offset
+                        container_region.offset + layout_offset - widget.scroll_offset
                     )
 
                     # Add all the widgets
@@ -358,7 +358,7 @@ class Compositor:
                     container_size
                 ):
                     map[chrome_widget] = MapGeometry(
-                        chrome_region + container_region.origin + layout_offset,
+                        chrome_region + container_region.offset + layout_offset,
                         order,
                         clip,
                         container_size,
@@ -414,7 +414,7 @@ class Compositor:
     def get_offset(self, widget: Widget) -> Offset:
         """Get the offset of a widget."""
         try:
-            return self.map[widget].region.origin
+            return self.map[widget].region.offset
         except KeyError:
             raise errors.NoWidget("Widget is not in layout")
 
