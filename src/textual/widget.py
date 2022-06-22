@@ -626,7 +626,7 @@ class Widget(DOMNode):
 
     def scroll_to_region(
         self, region: Region, *, spacing: Spacing | None = None, animate: bool = True
-    ) -> bool:
+    ) -> Offset:
         """Scrolls a given region in to view, if required.
 
         This method will scroll the least distance required to move `region` fully within
@@ -644,42 +644,16 @@ class Widget(DOMNode):
         window = self.region.at_offset(self.scroll_offset)
         if spacing is not None:
             window = window.shrink(spacing)
-
-        if region in window:
-            # Widget is entirely visible, nothing to do
-            return False
-
-        window_left, window_top, window_right, window_bottom = window.corners
-        left, top, right, bottom = region.corners
-        delta_x = delta_y = 0
-
-        if not (
-            (window_right > left >= window_left)
-            and (window_right > right >= window_left)
-        ):
-            # The window needs to scroll on the X axis to bring region in to view
-            delta_x = min(
-                left - window_left,
-                left - (window_right - region.width),
-                key=abs,
+        delta = Region.translate_inside(window, region)
+        if delta:
+            self.scroll_relative(
+                delta.x or None,
+                delta.y or None,
+                animate=animate,
+                duration=0.2,
             )
 
-        if not (
-            (window_bottom > top >= window_top)
-            and (window_bottom > bottom >= window_top)
-        ):
-            # The window needs to scroll on the Y axis to bring region in to view
-            delta_y = min(
-                top - window_top,
-                top - (window_bottom - region.height),
-                key=abs,
-            )
-
-        scrolled = self.scroll_relative(
-            delta_x or None, delta_y or None, animate=animate, duration=0.2
-        )
-
-        return scrolled
+        return delta
 
     def __init_subclass__(
         cls,

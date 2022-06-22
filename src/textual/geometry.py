@@ -238,6 +238,51 @@ class Region(NamedTuple):
         width, height = size
         return cls(x, y, width, height)
 
+    @classmethod
+    def translate_inside(cls, window_region: Region, region: Region) -> Offset:
+        """Calculate the smallest offset required to move a region inside another region.
+
+        This method is used to calculate the required offset to scroll something in to view.
+
+        Args:
+            window_region (Region): The window region.
+            region (Region): The region to move inside the window.
+
+        Returns:
+            Offset: An offset required to add to region to move it inside window_region.
+        """
+
+        if region in window_region:
+            # Region is already inside the window, so no need to move it.
+            return Offset(0, 0)
+
+        window_left, window_top, window_right, window_bottom = window_region.corners
+        left, top, right, bottom = region.corners
+        delta_x = delta_y = 0
+
+        if not (
+            (window_right > left >= window_left)
+            and (window_right > right >= window_left)
+        ):
+            # The window needs to scroll on the X axis to bring region in to view
+            delta_x = min(
+                left - window_left,
+                left - (window_right - region.width),
+                key=abs,
+            )
+
+        if not (
+            (window_bottom > top >= window_top)
+            and (window_bottom > bottom >= window_top)
+        ):
+            # The window needs to scroll on the Y axis to bring region in to view
+            delta_y = min(
+                top - window_top,
+                top - (window_bottom - region.height),
+                key=abs,
+            )
+        return Offset(delta_x, delta_y)
+
     def __bool__(self) -> bool:
         """A Region is considered False when it has no area."""
         return bool(self.width and self.height)
