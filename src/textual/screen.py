@@ -117,15 +117,14 @@ class Screen(Widget):
             self._refresh_layout()
             self._layout_required = False
             self._dirty_widgets.clear()
-        elif self._dirty_widgets or self._dirty_regions:
+        elif self._dirty_widgets:
             self.update_timer.resume()
 
     def _on_update(self) -> None:
         """Called by the _update_timer."""
         # Render widgets together
-        if self._dirty_widgets or self._dirty_regions:
+        if self._dirty_widgets:
             self._compositor.update_widgets(self._dirty_widgets)
-            self._compositor.add_dirty_regions(self._dirty_regions)
             self.app._display(self._compositor.render())
             self._dirty_widgets.clear()
         self.update_timer.pause()

@@ -161,14 +161,6 @@ class Compositor:
         # Regions that require an update
         self._dirty_regions: set[Region] = set()
 
-    def add_dirty_regions(self, regions: Iterable[Region]) -> None:
-        """Add dirty regions to be repainted next call to render.
-
-        Args:
-            regions (Iterable[Region]): Regions that are "dirty" (changed since last render).
-        """
-        self._dirty_regions.update(regions)
-
     @classmethod
     def _regions_to_spans(
         cls, regions: Iterable[Region]
@@ -679,10 +671,10 @@ class Compositor:
         for widget in self.regions.keys() & widgets:
             (x, y, _, _), clip = self.regions[widget]
             intersection = clip.intersection
-
             for dirty_region in widget.get_dirty_regions():
                 update_region = intersection(dirty_region.translate(x, y))
                 if update_region:
                     add_region(update_region)
 
-        self.add_dirty_regions(regions)
+        self._dirty_regions.update(regions)
+        # self.add_dirty_regions(regions)
