@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from functools import partial
 from typing import cast
 
 if sys.version_info >= (3, 8):
@@ -41,12 +42,18 @@ class Button(Widget, can_focus=True):
         margin: 1 0;
         align: center middle;
         text-style: bold;
+
+        transition: background 0.1;/* for "active" effect */
     }
 
     Button:hover {
         background: $primary-darken-2;
         color: $text-primary-darken-2;
         border: tall $primary-lighten-1;
+    }
+
+    Button.-active {
+        background: $primary-lighten-1;
     }
 
     .-dark-mode Button {
@@ -57,6 +64,10 @@ class Button(Widget, can_focus=True):
 
     .-dark-mode Button:hover {
         background: $surface;
+    }
+
+    .-dark-mode Button.-active {
+        background: $background-lighten-3;
     }
 
     /* Success variant */
@@ -72,6 +83,10 @@ class Button(Widget, can_focus=True):
         border: tall $success-lighten-2;
     }
 
+    Button.-success.-active {
+        background: $success-lighten-1;
+    }
+
     .-dark-mode Button.-success {
         background: $success;
         color: $text-success;
@@ -82,6 +97,10 @@ class Button(Widget, can_focus=True):
         background: $success-darken-1;
         color: $text-success-darken-1;
         border: tall $success-lighten-3;
+    }
+
+    .-dark-mode Button.-success.-active {
+        background: $success-lighten-1;
     }
 
     /* Warning variant */
@@ -97,6 +116,10 @@ class Button(Widget, can_focus=True):
         border: tall $warning-lighten-3;
     }
 
+    Button.-warning.-active {
+        background: $warning;
+    }
+
     .-dark-mode Button.-warning {
         background: $warning;
         color: $text-warning;
@@ -107,6 +130,10 @@ class Button(Widget, can_focus=True):
         background: $warning-darken-1;
         color: $text-warning-darken-1;
         border: tall $warning-lighten-3;
+    }
+
+    .-dark-mode Button.-warning.-active {
+        background: $warning-lighten-1;
     }
 
     /* Error variant */
@@ -122,6 +149,10 @@ class Button(Widget, can_focus=True):
         border: tall $error-lighten-3;
     }
 
+    Button.-error.-active {
+        background: $error;
+    }
+
     .-dark-mode Button.-error {
         background: $error;
         color: $text-error;
@@ -134,10 +165,17 @@ class Button(Widget, can_focus=True):
         border: tall $error-lighten-3;
     }
 
+    .-dark-mode Button.-error.-active {
+        background: $error;
+    }
+
     App.-show-focus Button:focus {
         tint: $accent 20%;
     }
     """
+
+    ACTIVE_EFFECT_DURATION = 0.3
+    """When buttons are clicked they get the `-active` class for this duration (in seconds)"""
 
     class Pressed(Message, bubble=True):
         @property
@@ -199,8 +237,15 @@ class Button(Widget, can_focus=True):
 
     async def on_click(self, event: events.Click) -> None:
         event.stop()
-        if not self.disabled:
-            await self.emit(Button.Pressed(self))
+        if self.disabled:
+            return
+        # Manage the "active" effect:
+        self.add_class("-active")
+        self.set_timer(
+            self.ACTIVE_EFFECT_DURATION, partial(self.remove_class, "-active")
+        )
+        # ...and let other components know that we've just been clicked:
+        await self.emit(Button.Pressed(self))
 
     async def on_key(self, event: events.Key) -> None:
         if event.key == "enter" and not self.disabled:
