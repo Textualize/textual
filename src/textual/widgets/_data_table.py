@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from itertools import chain
 import sys
-from typing import ClassVar, Generic, TypeVar, cast
+from typing import ClassVar, Generic, NamedTuple, TypeVar, cast
 
 from rich.console import RenderableType
 from rich.padding import Padding
@@ -63,6 +63,27 @@ class Cell:
     value: object
 
 
+class Coord(NamedTuple):
+    row: int
+    column: int
+
+    def left(self) -> Coord:
+        row, column = self
+        return Coord(row, column - 1)
+
+    def right(self) -> Coord:
+        row, column = self
+        return Coord(row, column + 1)
+
+    def up(self) -> Coord:
+        row, column = self
+        return Coord(row - 1, column)
+
+    def down(self) -> Coord:
+        row, column = self
+        return Coord(row + 1, column)
+
+
 class Header(Widget):
     pass
 
@@ -103,7 +124,7 @@ class DataTable(ScrollView, Generic[CellType]):
     }
 
     DataTable > .datatable--highlight {
-        background: $primary 20%;
+        background: $secondary 20%;
     }
     """
 
@@ -150,10 +171,25 @@ class DataTable(ScrollView, Generic[CellType]):
     header_height = Reactive(1)
     show_cursor = Reactive(True)
     cursor_type = Reactive(CELL)
-    cursor_row: Reactive[int] = Reactive(0)
-    cursor_column: Reactive[int] = Reactive(1)
-    hover_row: Reactive[int] = Reactive(0)
-    hover_column: Reactive[int] = Reactive(0)
+
+    cursor_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
+    hover_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
+
+    @property
+    def hover_row(self) -> int:
+        return self.hover_cell.row
+
+    @property
+    def hover_column(self) -> int:
+        return self.hover_cell.column
+
+    @property
+    def cursor_row(self) -> int:
+        return self.cursor_cell.row
+
+    @property
+    def cursor_column(self) -> int:
+        return self.cursor_cell.column
 
     def _clear_caches(self) -> None:
         self._row_render_cache.clear()
@@ -177,11 +213,19 @@ class DataTable(ScrollView, Generic[CellType]):
     def watch_zebra_stripes(self, zebra_stripes: bool) -> None:
         self._clear_caches()
 
-    def validate_cursor_row(self, value: int) -> int:
-        return clamp(value, 0, self.row_count - 1)
+    def watch_hover_cell(self, old: Coord, value: Coord) -> None:
+        self.refresh_cell(*old)
+        self.refresh_cell(*value)
 
-    def validate_cursor_column(self, value: int) -> int:
-        return clamp(value, self.fixed_columns, len(self.columns) - 1)
+    def watch_cursor_cell(self, old: Coord, value: Coord) -> None:
+        self.refresh_cell(*old)
+        self.refresh_cell(*value)
+
+    def validate_cursor_cell(self, value: Coord) -> Coord:
+        row, column = value
+        row = clamp(row, 0, self.row_count - 1)
+        column = clamp(column, self.fixed_columns, len(self.columns) - 1)
+        return Coord(row, column)
 
     def _update_dimensions(self) -> None:
         """Called to recalculate the virtual (scrollable) size."""
@@ -230,6 +274,15 @@ class DataTable(ScrollView, Generic[CellType]):
         self._line_no += height
         self._update_dimensions()
         self.refresh()
+
+    def refresh_cell(self, row_index: int, column_index: int) -> None:
+        if row_index < 0 or column_index < 0:
+            return
+        region = self._get_cell_region(row_index, column_index)
+        region = region.translate_negative(*self.scroll_offset)
+        refresh_region = self.content_region.intersection(region)
+        if refresh_region:
+            self.refresh(refresh_region)
 
     def _get_row_renderables(self, row_index: int) -> list[RenderableType]:
         """Get renderables for the given row.
@@ -448,13 +501,16 @@ class DataTable(ScrollView, Generic[CellType]):
             if y - scroll_y < fixed_top_row_count:
                 lines[line_index] = fixed_lines[line_index]
 
+        # self._dirty_regions.clear()
         return lines
 
     def on_mouse_move(self, event: events.MouseMove):
         meta = self.get_style_at(event.x, event.y).meta
         if meta:
-            self.hover_row = meta["row"]
-            self.hover_column = meta["column"]
+            try:
+                self.hover_cell = Coord(meta["row"], meta["column"])
+            except KeyError:
+                pass
 
     async def on_key(self, event) -> None:
         await self.dispatch_key(event)
@@ -477,30 +533,29 @@ class DataTable(ScrollView, Generic[CellType]):
     def on_click(self, event: events.Click) -> None:
         meta = self.get_style_at(event.x, event.y).meta
         if meta:
-            self.cursor_row = meta["row"]
-            self.cursor_column = meta["column"]
+            self.cursor_cell = Coord(meta["row"], meta["column"])
             self._scroll_cursor_in_to_view()
 
     def key_down(self, event: events.Key):
-        self.cursor_row += 1
+        self.cursor_cell = self.cursor_cell.down()
         event.stop()
         event.prevent_default()
         self._scroll_cursor_in_to_view()
 
     def key_up(self, event: events.Key):
-        self.cursor_row -= 1
+        self.cursor_cell = self.cursor_cell.up()
         event.stop()
         event.prevent_default()
         self._scroll_cursor_in_to_view()
 
     def key_right(self, event: events.Key):
-        self.cursor_column += 1
+        self.cursor_cell = self.cursor_cell.right()
         event.stop()
         event.prevent_default()
         self._scroll_cursor_in_to_view()
 
     def key_left(self, event: events.Key):
-        self.cursor_column -= 1
+        self.cursor_cell = self.cursor_cell.left()
         event.stop()
         event.prevent_default()
         self._scroll_cursor_in_to_view()

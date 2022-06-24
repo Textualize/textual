@@ -5,6 +5,7 @@ from typing import (
     Any,
     Awaitable,
     ClassVar,
+    Collection,
     TYPE_CHECKING,
     Callable,
     Iterable,
@@ -17,8 +18,6 @@ from rich.console import Console, RenderableType
 from rich.measure import Measurement
 from rich.padding import Padding
 from rich.style import Style
-from rich.styled import Styled
-
 
 from . import errors
 from . import events
@@ -109,7 +108,7 @@ class Widget(DOMNode):
         self._horizontal_scrollbar: ScrollBar | None = None
 
         self._render_cache = RenderCache(Size(0, 0), [])
-        self._dirty_regions: list[Region] = []
+        self._dirty_regions: set[Region] = set()
 
         # Cache the auto content dimensions
         # TODO: add mechanism to explicitly clear this
@@ -428,10 +427,24 @@ class Widget(DOMNode):
             else 0
         )
 
-    def set_dirty(self) -> None:
+    def _set_dirty(self, *regions: Region) -> None:
         """Set the Widget as 'dirty' (requiring re-render)."""
-        self._dirty_regions.clear()
-        self._dirty_regions.append(self.size.region)
+
+        # self._dirty_regions.clear()
+        # # TODO: Does this need to be content region?
+        # self._dirty_regions.append(self.size.region)
+
+        if regions:
+            self._dirty_regions.update(regions)
+        else:
+            self._dirty_regions.clear()
+            # TODO: Does this need to be content region?
+            # self._dirty_regions.append(self.size.region)
+            self._dirty_regions.add(self.content_region.size.region)
+
+    def get_dirty_regions(self) -> Collection[Region]:
+        regions = self._dirty_regions.copy()
+        return regions
 
     def scroll_to(
         self,
@@ -686,23 +699,23 @@ class Widget(DOMNode):
         """
         show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
 
-        horizontal_scrollbar_thickness = self.scrollbar_size_horizontal
-        vertical_scrollbar_thickness = self.scrollbar_size_vertical
+        scrollbar_size_horizontal = self.styles.scrollbar_size_horizontal
+        scrollbar_size_vertical = self.styles.scrollbar_size_vertical
 
         if self.styles.scrollbar_gutter == "stable":
             # Let's _always_ reserve some space, whether the scrollbar is actually displayed or not:
             show_vertical_scrollbar = True
-            vertical_scrollbar_thickness = self.styles.scrollbar_size_vertical
+            scrollbar_size_vertical = self.styles.scrollbar_size_vertical
 
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (region, _, _, _) = region.split(
-                -vertical_scrollbar_thickness,
-                -horizontal_scrollbar_thickness,
+                -scrollbar_size_vertical,
+                -scrollbar_size_horizontal,
             )
         elif show_vertical_scrollbar:
-            region, _ = region.split_vertical(-vertical_scrollbar_thickness)
+            region, _ = region.split_vertical(-scrollbar_size_vertical)
         elif show_horizontal_scrollbar:
-            region, _ = region.split_horizontal(-horizontal_scrollbar_thickness)
+            region, _ = region.split_horizontal(-scrollbar_size_horizontal)
         return region
 
     def _arrange_scrollbars(self, size: Size) -> Iterable[tuple[Widget, Region]]:
@@ -720,6 +733,7 @@ class Widget(DOMNode):
 
         scrollbar_size_horizontal = self.scrollbar_size_horizontal
         scrollbar_size_vertical = self.scrollbar_size_vertical
+
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (
                 _,
@@ -954,7 +968,9 @@ class Widget(DOMNode):
         event.set_forwarded()
         await self.post_message(event)
 
-    def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
+    def refresh(
+        self, *regions: Region, repaint: bool = True, layout: bool = False
+    ) -> None:
         """Initiate a refresh of the widget.
 
         This method sets an internal flag to perform a refresh, which will be done on the
@@ -964,13 +980,14 @@ class Widget(DOMNode):
             repaint (bool, optional): Repaint the widget (will call render() again). Defaults to True.
             layout (bool, optional): Also layout widgets in the view. Defaults to False.
         """
+
         if layout:
             self._layout_required = True
             self._clear_arrangement_cache()
         if repaint:
+            self._set_dirty(*regions)
             self._content_width_cache = (None, 0)
             self._content_height_cache = (None, 0)
-            self.set_dirty()
             self._repaint_required = True
             if isinstance(self.parent, Widget) and self.styles.auto_dimensions:
                 self.parent.refresh(layout=True)

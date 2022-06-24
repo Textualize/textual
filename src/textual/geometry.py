@@ -77,6 +77,10 @@ class Offset(NamedTuple):
             return Offset(int(x * other), int(y * other))
         return NotImplemented
 
+    def __neg__(self) -> Offset:
+        x, y = self
+        return Offset(-x, -y)
+
     def blend(self, destination: Offset, factor: float) -> Offset:
         """Blend (interpolate) to a new point.
 
@@ -240,7 +244,8 @@ class Region(NamedTuple):
 
     @classmethod
     def translate_inside(cls, window_region: Region, region: Region) -> Offset:
-        """Calculate the smallest offset required to move a region inside another region.
+        """Calculate the smallest offset required to translate a region so that is is within
+        another region.
 
         This method is used to calculate the required offset to scroll something in to view.
 
@@ -257,6 +262,7 @@ class Region(NamedTuple):
             return Offset(0, 0)
 
         window_left, window_top, window_right, window_bottom = window_region.corners
+        region = region.crop_size(window_region.size)
         left, top, right, bottom = region.corners
         delta_x = delta_y = 0
 
@@ -264,6 +270,7 @@ class Region(NamedTuple):
             (window_right > left >= window_left)
             and (window_right > right >= window_left)
         ):
+            # The region does not fit
             # The window needs to scroll on the X axis to bring region in to view
             delta_x = min(
                 left - window_left,
@@ -310,12 +317,12 @@ class Region(NamedTuple):
         return (self.y, self.y + self.height)
 
     @property
-    def x_max(self) -> int:
+    def right(self) -> int:
         """Maximum X value (non inclusive)"""
         return self.x + self.width
 
     @property
-    def y_max(self) -> int:
+    def bottom(self) -> int:
         """Maximum Y value (non inclusive)"""
         return self.y + self.height
 
@@ -348,16 +355,21 @@ class Region(NamedTuple):
         return Offset(x + width, y + height)
 
     @property
+    def offset(self) -> Offset:
+        x, y, _, _ = self
+        return Offset(x, y)
+
+    @property
     def size(self) -> Size:
         """Get the size of the region."""
         return Size(self.width, self.height)
 
     @property
     def corners(self) -> tuple[int, int, int, int]:
-        """Get the maxima and minima of region.
+        """Get the top left and bottom right coordinates as a tuple of integers.
 
         Returns:
-            tuple[int, int, int, int]: A tuple of `(<min x>, <max x>, <min y>, <max y>)`
+            tuple[int, int, int, int]: A tuple of `(<left>, <top>, <right>, <bottom>)`
         """
         x, y, width, height = self
         return x, y, x + width, y + height
@@ -404,6 +416,19 @@ class Region(NamedTuple):
         x, y = offset
         _x, _y, width, height = self
         return Region(x, y, width, height)
+
+    def crop_size(self, size: tuple[int, int]) -> Region:
+        """Get a region with the same offset, with a size no larger than `size`.
+
+        Args:
+            size (tuple[int, int]): Maximum width and height (WIDTH, HEIGHT).
+
+        Returns:
+            Region: New region that could fit within `size`.
+        """
+        x, y, width1, height1 = self
+        width2, height2 = size
+        return Region(x, y, min(width1, width2), min(height1, height2))
 
     def expand(self, size: tuple[int, int]) -> Region:
         """Increase the size of the region by adding a border.
@@ -500,6 +525,20 @@ class Region(NamedTuple):
 
         self_x, self_y, width, height = self
         return Region(self_x + x, self_y + y, width, height)
+
+    def translate_negative(self, x: int = 0, y: int = 0) -> Region:
+        """Move the offset of the Region in the opposite direction.
+
+        Args:
+            translate_x (int): Value to subtract to x coordinate.
+            translate_y (int): Value to subtract to y coordinate.
+
+        Returns:
+            Region: A new region shifted by x, y
+        """
+
+        self_x, self_y, width, height = self
+        return Region(self_x - x, self_y - y, width, height)
 
     @lru_cache(maxsize=4096)
     def __contains__(self, other: Any) -> bool:

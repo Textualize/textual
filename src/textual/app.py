@@ -588,7 +588,20 @@ class App(Generic[ReturnType], DOMNode):
         self.check_idle()
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
+        """Mount widgets. Widgets specified as positional args, or keywords args. If supplied
+        as keyword args they will be assigned an id of the key.
+
+        """
         self.register(self.screen, *anon_widgets, **widgets)
+
+    def mount_all(self, widgets: Iterable[Widget]) -> None:
+        """Mount widgets from an iterable.
+
+        Args:
+            widgets (Iterable[Widget]): An iterable of widgets.
+        """
+        for widget in widgets:
+            self.register(self.screen, widget)
 
     def push_screen(self, screen: Screen | None = None) -> Screen:
         """Push a new screen on the screen stack.
@@ -811,9 +824,9 @@ class App(Generic[ReturnType], DOMNode):
         self.set_timer(screenshot_timer, on_screenshot)
 
     def on_mount(self) -> None:
-        widgets = list(self.compose())
+        widgets = self.compose()
         if widgets:
-            self.mount(*widgets)
+            self.mount_all(widgets)
 
     async def on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""

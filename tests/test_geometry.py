@@ -259,11 +259,11 @@ def test_region_y_extents():
 
 
 def test_region_x_max():
-    assert Region(5, 10, 20, 30).x_max == 25
+    assert Region(5, 10, 20, 30).right == 25
 
 
 def test_region_y_max():
-    assert Region(5, 10, 20, 30).y_max == 40
+    assert Region(5, 10, 20, 30).bottom == 40
 
 
 def test_region_x_range():

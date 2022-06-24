@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from typing import Collection
+
 from rich.console import RenderableType
 
 
-from .geometry import Size
+from .geometry import Region, Size
 from .widget import Widget
 
 
@@ -37,6 +39,11 @@ class ScrollView(Widget):
     def is_transparent(self) -> bool:
         """Not transparent, i.e. renders something."""
         return False
+
+    def get_dirty_regions(self) -> Collection[Region]:
+        regions = self._dirty_regions.copy()
+        self._dirty_regions.clear()
+        return regions
 
     def on_mount(self):
         self._refresh_scrollbars()

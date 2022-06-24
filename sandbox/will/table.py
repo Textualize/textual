@@ -36,6 +36,8 @@ test_table.add_row("Dec 16, 2016", "Rogue One: A Star Wars Story", "$1,332,439,8
 class TableApp(App):
     def compose(self) -> ComposeResult:
         table = self.table = DataTable(id="data")
+        yield table
+
         table.add_column("Foo", width=20)
         table.add_column("Bar", width=60)
         table.add_column("Baz", width=20)
@@ -60,7 +62,8 @@ class TableApp(App):
                 row[1] = test_table
                 height = 13
             table.add_row(*row, height=height)
-        yield table
+
+        table.focus()
 
     def on_mount(self):
         self.bind("d", "toggle_dark")
