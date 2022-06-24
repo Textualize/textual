@@ -19,13 +19,12 @@ SCREEN_H = 8  # height of our Screens
 SCREEN_SIZE = Size(SCREEN_W, SCREEN_H)
 PLACEHOLDERS_DEFAULT_H = 3  # the default height for our Placeholder widgets
 
-# TODO: Brittle test
-# These tests are currently way to brittle due to the CSS layout not being final
-# They are also very hard to follow, if they break its not clear *what* went wrong
-# Going to leave them marked as "skip" for now.
+# As per Widget's CSS property, by default Widgets have a horizontal scrollbar of size 1
+# and a vertical scrollbar of size 2:
+SCROLL_H_SIZE = 1
+SCROLL_V_SIZE = 2
 
 
-@pytest.mark.skip("brittle")
 @pytest.mark.asyncio
 @pytest.mark.integration_test  # this is a slow test, we may want to skip them in some contexts
 @pytest.mark.parametrize(
@@ -70,7 +69,7 @@ PLACEHOLDERS_DEFAULT_H = 3  # the default height for our Placeholder widgets
             # #root's virtual height should be as high as its stacked content
             (SCREEN_W - 2 - 1, PLACEHOLDERS_DEFAULT_H * 4),
             # placeholders width=same than screen, minus 2 borders, minus scrollbar :: height=default height minus 2 borders
-            (SCREEN_W - 2 - 1, PLACEHOLDERS_DEFAULT_H),
+            (SCREEN_W - 2 - SCROLL_V_SIZE, PLACEHOLDERS_DEFAULT_H),
             # placeholders should be at offset 1 because of #root's border
             1,
         ],
@@ -90,9 +89,12 @@ PLACEHOLDERS_DEFAULT_H = 3  # the default height for our Placeholder widgets
             "border: solid white;",  # #root has a visible border
             "align: center top;",  # placeholders are centered horizontally
             # #root's virtual height should be as high as its stacked content
-            (SCREEN_W - 2 - 1, PLACEHOLDERS_DEFAULT_H * 4),
+            (
+                SCREEN_W - 2 - SCROLL_V_SIZE,
+                PLACEHOLDERS_DEFAULT_H * 4,
+            ),
             # placeholders width=same than screen, minus 2 borders, minus scrollbar :: height=default height
-            (SCREEN_W - 2 - 1, PLACEHOLDERS_DEFAULT_H),
+            (SCREEN_W - 2 - SCROLL_V_SIZE, PLACEHOLDERS_DEFAULT_H),
             # placeholders should be at offset 1 because of #root's border
             1,
         ],
@@ -114,7 +116,7 @@ async def test_composition_of_vertical_container_with_children(
             overflow: hidden auto;
             ${root_container_style}
         }
-        
+
         VerticalContainer Placeholder {
             height: ${placeholders_height};
             ${placeholders_style}
@@ -233,7 +235,6 @@ async def test_border_edge_types_impact_on_widget_size(
     assert top_left_edge_char_is_a_visible_one == expects_visible_char_at_top_left_edge
 
 
-@pytest.mark.skip("brittle")
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "large_widget_size,container_style,expected_large_widget_visible_region_size",
@@ -246,32 +247,43 @@ async def test_border_edge_types_impact_on_widget_size(
         # explicit hiding of the overflow: no scrollbars either
         [Size(30, 30), "overflow: hidden", Size(20, 20)],
         # scrollbar for both directions
-        [Size(30, 30), "overflow: auto", Size(19, 19)],
+        [
+            Size(30, 30),
+            "overflow: auto",
+            Size(
+                20 - SCROLL_V_SIZE,
+                20 - SCROLL_H_SIZE,
+            ),
+        ],
         # horizontal scrollbar
-        [Size(30, 30), "overflow-x: auto", Size(20, 19)],
+        [Size(30, 30), "overflow-x: auto", Size(20, 20 - SCROLL_H_SIZE)],
         # vertical scrollbar
-        [Size(30, 30), "overflow-y: auto", Size(19, 20)],
+        [Size(30, 30), "overflow-y: auto", Size(20 - SCROLL_V_SIZE, 20)],
         # scrollbar for both directions, custom scrollbar size
-        [Size(30, 30), ("overflow: auto", "scrollbar-size: 3 5"), Size(15, 17)],
+        [Size(30, 30), ("overflow: auto", "scrollbar-size: 3 5"), Size(20 - 5, 20 - 3)],
         # scrollbar for both directions, custom vertical scrollbar size
-        [Size(30, 30), ("overflow: auto", "scrollbar-size-vertical: 3"), Size(17, 19)],
+        [
+            Size(30, 30),
+            ("overflow: auto", "scrollbar-size-vertical: 3"),
+            Size(20 - 3, 20 - SCROLL_H_SIZE),
+        ],
         # scrollbar for both directions, custom horizontal scrollbar size
         [
             Size(30, 30),
             ("overflow: auto", "scrollbar-size-horizontal: 3"),
-            Size(19, 17),
+            Size(20 - SCROLL_V_SIZE, 20 - 3),
         ],
         # scrollbar needed only vertically, custom scrollbar size
         [
             Size(20, 30),
             ("overflow: auto", "scrollbar-size: 3 3"),
-            Size(17, 20),
+            Size(20 - 3, 20),
         ],
         # scrollbar needed only horizontally, custom scrollbar size
         [
             Size(30, 20),
             ("overflow: auto", "scrollbar-size: 3 3"),
-            Size(20, 17),
+            Size(20, 20 - 3),
         ],
     ),
 )
@@ -285,22 +297,26 @@ async def test_scrollbar_size_impact_on_the_layout(
             self.styles.width = large_widget_size[0]
             self.styles.height = large_widget_size[1]
 
+    container_style_rules = (
+        [container_style] if isinstance(container_style, str) else container_style
+    )
+
     class LargeWidgetContainer(Widget):
+        # TODO: Once textual#581 ("Default versus User CSS") is solved the following CSS should just use the
+        #  "LargeWidgetContainer" selector, without having to use a more specific one to be able to override Widget's CSS:
         CSS = """
-        LargeWidgetContainer {
+        #large-widget-container {
             width: 20;
             height: 20;
             ${container_style};
         }
         """.replace(
             "${container_style}",
-            container_style
-            if isinstance(container_style, str)
-            else ";".join(container_style),
+            ";\n".join(container_style_rules),
         )
 
     large_widget = LargeWidget()
-    container = LargeWidgetContainer(large_widget)
+    container = LargeWidgetContainer(large_widget, id="large-widget-container")
 
     class MyTestApp(AppTest):
         def compose(self) -> ComposeResult:
