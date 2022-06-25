@@ -19,6 +19,7 @@ import sys
 from typing import Callable, cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
+from rich.cells import cached_cell_len
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.control import Control
 from rich.segment import Segment
@@ -98,16 +99,21 @@ class ChopsUpdate:
     """A renderable that applies updated spans to the screen."""
 
     def __init__(
-        self, chops: list[dict[int, list[Segment] | None]], crop: Region
+        self,
+        chops: list[dict[int, list[Segment] | None]],
+        spans: list[tuple[int, int, int]],
+        chop_ends: list[list[int]],
     ) -> None:
         """A renderable which updates chops (fragments of lines).
 
         Args:
             chops (list[dict[int, list[Segment]  |  None]]): A mapping of offsets to list of segments, per line.
             crop (Region): Region to restrict update to.
+            chop_ends (list[list[int]]): A list of the end offsets for each line
         """
         self.chops = chops
-        self.crop = crop
+        self.spans = spans
+        self.chop_ends = chop_ends
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -115,22 +121,53 @@ class ChopsUpdate:
         move_to = Control.move_to
         new_line = Segment.line()
         chops = self.chops
-        crop = self.crop
-        last_y = crop.bottom - 1
-        x1, x2 = crop.x_extents
-        for y in crop.y_range:
+        chop_ends = self.chop_ends
+        last_y = self.spans[-1][0]
+
+        _cell_len = cached_cell_len
+
+        for y, x1, x2 in self.spans:
             line = chops[y]
-            for x, segments in line.items():
+            ends = chop_ends[y]
+            for end, (x, segments) in zip(ends, line.items()):
                 # TODO: crop to x extents
-                if segments is not None:
-                    # if segments is not None and x2 > x >= x1:
+                if segments is None:
+                    continue
+
+                if x > x2 or end <= x1:
+                    continue
+
+                if x2 > x >= x1 and end <= x2:
                     yield move_to(x, y)
                     yield from segments
+                    continue
+
+                iter_segments = iter(segments)
+                if x < x1:
+                    for segment in iter_segments:
+                        next_x = x + _cell_len(segment.text)
+                        if next_x > x1:
+                            yield move_to(x, y)
+                            yield segment
+                            break
+                        x = next_x
+                else:
+                    yield move_to(x, y)
+                if end <= x2:
+                    yield from iter_segments
+                else:
+                    for segment in iter_segments:
+                        if x >= x2:
+                            break
+                        yield segment
+                        x += _cell_len(segment.text)
+
             if y != last_y:
                 yield new_line
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield None, self.crop
+        return
+        yield
 
 
 @rich.repr.auto(angular=True)
@@ -500,6 +537,7 @@ class Compositor:
 
         # Sort the cuts for each line
         self._cuts = [sorted(set(line_cuts)) for line_cuts in cuts]
+
         return self._cuts
 
     def _get_renders(
@@ -609,7 +647,7 @@ class Compositor:
         )
         # A mapping of cut index to a list of segments for each line
         chops: list[dict[int, list[Segment] | None]]
-        chops = [fromkeys(cut_set) for cut_set in cuts]
+        chops = [fromkeys(cut_set[:-1]) for cut_set in cuts]
 
         cut_segments: Iterable[list[Segment]]
 
@@ -625,8 +663,6 @@ class Compositor:
                     continue
 
                 chops_line = chops[y]
-                if all(chops_line):
-                    continue
 
                 first_cut, last_cut = render_region.x_extents
                 cuts_line = cuts[y]
@@ -650,7 +686,8 @@ class Compositor:
             render_lines = self._assemble_chops(chops)
             return LayoutUpdate(render_lines, screen_region)
         else:
-            return ChopsUpdate(chops, crop)
+            chop_ends = [cut_set[1:] for cut_set in cuts]
+            return ChopsUpdate(chops, spans, chop_ends)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions

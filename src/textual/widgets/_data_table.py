@@ -203,6 +203,7 @@ class DataTable(ScrollView, Generic[CellType]):
 
     async def handle_styles_updated(self, message: messages.StylesUpdated) -> None:
         self._clear_caches()
+        self.refresh()
 
     def watch_show_header(self, show_header: bool) -> None:
         self._clear_caches()
@@ -469,7 +470,6 @@ class DataTable(ScrollView, Generic[CellType]):
         self._line_cache[cache_key] = simplified_segments
         return segments
 
-    @timer("render_lines")
     def render_lines(self, crop: Region) -> Lines:
         """Render lines within a given region.
 
@@ -501,7 +501,6 @@ class DataTable(ScrollView, Generic[CellType]):
             if y - scroll_y < fixed_top_row_count:
                 lines[line_index] = fixed_lines[line_index]
 
-        # self._dirty_regions.clear()
         return lines
 
     def on_mouse_move(self, event: events.MouseMove):

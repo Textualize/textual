@@ -60,6 +60,7 @@ from .layouts.dock import Dock
 from .message_pump import MessagePump
 from .reactive import Reactive
 from .renderables.blank import Blank
+from ._profile import timer
 
 from .screen import Screen
 from .widget import Widget
@@ -924,6 +925,7 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.update(self.app, animate=animate)
         self.screen._refresh_layout(self.size, full=True)
 
+    @timer("_display")
     def _display(self, renderable: RenderableType | None) -> None:
         """Display a renderable within a sync.
 
