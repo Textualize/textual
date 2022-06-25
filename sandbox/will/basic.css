@@ -22,6 +22,10 @@ App > Screen {
   color: $text-surface; 
 }
 
+DataTable {
+  margin: 2;
+  height: 12;  
+}
 
 #sidebar {
   color: $text-primary;

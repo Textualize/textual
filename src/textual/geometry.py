@@ -355,11 +355,6 @@ class Region(NamedTuple):
         return Offset(x + width, y + height)
 
     @property
-    def offset(self) -> Offset:
-        x, y, _, _ = self
-        return Offset(x, y)
-
-    @property
     def size(self) -> Size:
         """Get the size of the region."""
         return Size(self.width, self.height)

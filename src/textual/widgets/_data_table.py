@@ -157,16 +157,18 @@ class DataTable(ScrollView, Generic[CellType]):
         self._row_render_cache = LRUCache(1000)
 
         self._cell_render_cache: LRUCache[tuple[int, int, Style, bool, bool], Lines]
-        self._cell_render_cache = LRUCache(1000)
+        self._cell_render_cache = LRUCache(10000)
 
-        self._line_cache: LRUCache[tuple[int, int, int, int, int, int], list[Segment]]
+        self._line_cache: LRUCache[
+            tuple[int, int, int, int, int, int, Style], list[Segment]
+        ]
         self._line_cache = LRUCache(1000)
 
         self._line_no = 0
 
     show_header = Reactive(True)
     fixed_rows = Reactive(0)
-    fixed_columns = Reactive(1)
+    fixed_columns = Reactive(0)
     zebra_stripes = Reactive(False)
     header_height = Reactive(1)
     show_cursor = Reactive(True)
@@ -237,6 +239,8 @@ class DataTable(ScrollView, Generic[CellType]):
         )
 
     def _get_cell_region(self, row_index: int, column_index: int) -> Region:
+        if row_index not in self.rows:
+            return Region(0, 0, 0, 0)
         row = self.rows[row_index]
         x = sum(column.width for column in self.columns[:column_index])
         width = self.columns[column_index].width
@@ -281,9 +285,11 @@ class DataTable(ScrollView, Generic[CellType]):
             return
         region = self._get_cell_region(row_index, column_index)
         region = region.translate_negative(*self.scroll_offset)
-        refresh_region = self.content_region.intersection(region)
-        if refresh_region:
-            self.refresh(refresh_region)
+        if region:
+            self.refresh(region)
+        # refresh_region = self.content_region.intersection(region)
+        # if refresh_region:
+        #     self.refresh(refresh_region)
 
     def _get_row_renderables(self, row_index: int) -> list[RenderableType]:
         """Get renderables for the given row.
@@ -421,6 +427,8 @@ class DataTable(ScrollView, Generic[CellType]):
             if y < self.header_height:
                 return (-1, y)
             y -= self.header_height
+        if y > len(self._y_offsets):
+            raise LookupError("Y coord {y!r} is greater than total height")
         return self._y_offsets[y]
 
     def _render_line(
@@ -439,7 +447,11 @@ class DataTable(ScrollView, Generic[CellType]):
         """
 
         width = self.region.width
-        row_index, line_no = self._get_offsets(y)
+
+        try:
+            row_index, line_no = self._get_offsets(y)
+        except LookupError:
+            return [Segment(" " * width, base_style)]
         cursor_column = (
             self.cursor_column
             if (self.show_cursor and self.cursor_row == row_index)
@@ -447,7 +459,7 @@ class DataTable(ScrollView, Generic[CellType]):
         )
         hover_column = self.hover_column if (self.hover_row == row_index) else -1
 
-        cache_key = (y, x1, x2, width, cursor_column, hover_column)
+        cache_key = (y, x1, x2, width, cursor_column, hover_column, base_style)
         if cache_key in self._line_cache:
             return self._line_cache[cache_key]
 
@@ -479,7 +491,6 @@ class DataTable(ScrollView, Generic[CellType]):
         Returns:
             Lines: A list of segments for every line within crop region.
         """
-
         scroll_x, scroll_y = self.scroll_offset
         x1, y1, x2, y2 = crop.translate(scroll_x, scroll_y).corners
 
@@ -500,11 +511,10 @@ class DataTable(ScrollView, Generic[CellType]):
         for line_index, y in enumerate(range(y1, y2)):
             if y - scroll_y < fixed_top_row_count:
                 lines[line_index] = fixed_lines[line_index]
-
         return lines
 
     def on_mouse_move(self, event: events.MouseMove):
-        meta = self.get_style_at(event.x, event.y).meta
+        meta = event.style.meta
         if meta:
             try:
                 self.hover_cell = Coord(meta["row"], meta["column"])
@@ -524,10 +534,10 @@ class DataTable(ScrollView, Generic[CellType]):
         left = sum(column.width for column in self.columns[: self.fixed_columns])
         return Spacing(top, 0, 0, left)
 
-    def _scroll_cursor_in_to_view(self) -> None:
+    def _scroll_cursor_in_to_view(self, animate: bool = False) -> None:
         region = self._get_cell_region(self.cursor_row, self.cursor_column)
         spacing = self._get_cell_border()
-        self.scroll_to_region(region, animate=False, spacing=spacing)
+        self.scroll_to_region(region, animate=animate, spacing=spacing)
 
     def on_click(self, event: events.Click) -> None:
         meta = self.get_style_at(event.x, event.y).meta
@@ -551,10 +561,10 @@ class DataTable(ScrollView, Generic[CellType]):
         self.cursor_cell = self.cursor_cell.right()
         event.stop()
         event.prevent_default()
-        self._scroll_cursor_in_to_view()
+        self._scroll_cursor_in_to_view(animate=True)
 
     def key_left(self, event: events.Key):
         self.cursor_cell = self.cursor_cell.left()
         event.stop()
         event.prevent_default()
-        self._scroll_cursor_in_to_view()
+        self._scroll_cursor_in_to_view(animate=True)
