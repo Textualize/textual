@@ -435,12 +435,13 @@ class Widget(DOMNode):
         # self._dirty_regions.append(self.size.region)
 
         if regions:
+            content_offset = self.content_offset
             self._dirty_regions.update(regions)
         else:
             self._dirty_regions.clear()
             # TODO: Does this need to be content region?
             # self._dirty_regions.append(self.size.region)
-            self._dirty_regions.add(self.content_region.size.region)
+            self._dirty_regions.add(self.size.region)
 
     def get_dirty_regions(self) -> Collection[Region]:
         regions = self._dirty_regions.copy()
@@ -589,6 +590,7 @@ class Widget(DOMNode):
             bool: True if any scrolling has occurred in any descendant, otherwise False.
         """
 
+        # TODO: Update this to use scroll_to_region
         scrolls = set()
 
         node = widget.parent
@@ -657,7 +659,7 @@ class Widget(DOMNode):
         window = self.region.at_offset(self.scroll_offset)
         if spacing is not None:
             window = window.shrink(spacing)
-        delta = Region.translate_inside(window, region)
+        delta = Region.get_scroll_to_visible(window, region)
         if delta:
             self.scroll_relative(
                 delta.x or None,
@@ -665,7 +667,6 @@ class Widget(DOMNode):
                 animate=animate,
                 duration=0.2,
             )
-
         return delta
 
     def __init_subclass__(
@@ -769,17 +770,17 @@ class Widget(DOMNode):
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
 
-    def render_styled(self) -> RenderableType:
-        """Applies style attributes to the default renderable.
+    def _style_renderable(self, renderable: RenderableType) -> RenderableType:
+        """Applies CSS styles to a renderable by wrapping it in another renderable.
+
+        Args:
+            renderable (RenderableType): Renderable to apply styles to.
 
         Returns:
-            RenderableType: A new renderable.
+            RenderableType: An updated renderable.
         """
-
         (base_background, base_color), (background, color) = self.colors
         styles = self.styles
-
-        renderable = self.render()
 
         content_align = (styles.content_align_horizontal, styles.content_align_vertical)
         if content_align != ("left", "top"):
@@ -816,6 +817,17 @@ class Widget(DOMNode):
 
         return renderable
 
+    def render_styled(self) -> RenderableType:
+        """Applies style attributes to the default renderable.
+
+        Returns:
+            RenderableType: A new renderable.
+        """
+
+        renderable = self.render()
+        renderable = self._style_renderable(renderable)
+        return renderable
+
     @property
     def size(self) -> Size:
         return self._size
@@ -842,6 +854,16 @@ class Widget(DOMNode):
             return self.screen.find_widget(self).region
         except errors.NoWidget:
             return Region()
+
+    @property
+    def window_region(self) -> Region:
+        """The region within the scrollable area that is currently visible.
+
+        Returns:
+            Region: New region.
+        """
+        window_region = self.region.at_offset(self.scroll_offset)
+        return window_region
 
     @property
     def scroll_offset(self) -> Offset:
@@ -937,7 +959,8 @@ class Widget(DOMNode):
     def _crop_lines(self, lines: Lines, x1, x2) -> Lines:
         width = self.size.width
         if (x1, x2) != (0, width):
-            lines = [line_crop(line, x1, x2, width) for line in lines]
+            _line_crop = line_crop
+            lines = [_line_crop(line, x1, x2, width) for line in lines]
         return lines
 
     def render_lines(self, crop: Region) -> Lines:

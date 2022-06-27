@@ -89,6 +89,11 @@ def test_offset_sub():
         Offset(1, 1) - "foo"
 
 
+def test_offset_neg():
+    assert Offset(0, 0) == Offset(0, 0)
+    assert -Offset(2, -3) == Offset(-2, 3)
+
+
 def test_offset_mul():
     assert Offset(2, 1) * 2 == Offset(4, 2)
     assert Offset(2, 1) * -2 == Offset(-4, -2)
@@ -125,8 +130,21 @@ def test_region_from_union():
     assert Region.from_union(regions) == Region(10, 20, 40, 40)
 
 
-def test_region_from_origin():
+def test_region_from_offset():
     assert Region.from_offset(Offset(3, 4), (5, 6)) == Region(3, 4, 5, 6)
+
+
+@pytest.mark.parametrize(
+    "window,region,scroll",
+    [
+        (Region(0, 0, 200, 100), Region(0, 0, 200, 100), Offset(0, 0)),
+        (Region(0, 0, 200, 100), Region(0, -100, 10, 10), Offset(0, -100)),
+        (Region(10, 15, 20, 10), Region(0, 0, 50, 50), Offset(-10, -15)),
+    ],
+)
+def test_get_scroll_to_visible(window, region, scroll):
+    assert Region.get_scroll_to_visible(window, region) == scroll
+    assert region.overlaps(window + scroll)
 
 
 def test_region_area():
@@ -167,6 +185,16 @@ def test_region_sub():
         Region(1, 2, 3, 4) - "foo"
 
 
+def test_region_at_offset():
+    assert Region(10, 10, 30, 40).at_offset((0, 0)) == Region(0, 0, 30, 40)
+    assert Region(10, 10, 30, 40).at_offset((-15, 30)) == Region(-15, 30, 30, 40)
+
+
+def test_crop_size():
+    assert Region(10, 20, 100, 200).crop_size((50, 40)) == Region(10, 20, 50, 40)
+    assert Region(10, 20, 100, 200).crop_size((500, 40)) == Region(10, 20, 100, 40)
+
+
 def test_region_overlaps():
     assert Region(10, 10, 30, 20).overlaps(Region(0, 0, 20, 20))
     assert not Region(10, 10, 5, 5).overlaps(Region(15, 15, 20, 20))
@@ -201,8 +229,8 @@ def test_region_contains_region():
 
 
 def test_region_translate():
-    assert Region(1, 2, 3, 4).translate(10, 20) == Region(11, 22, 3, 4)
-    assert Region(1, 2, 3, 4).translate(y=20) == Region(1, 22, 3, 4)
+    assert Region(1, 2, 3, 4).translate((10, 20)) == Region(11, 22, 3, 4)
+    assert Region(1, 2, 3, 4).translate((0, 20)) == Region(1, 22, 3, 4)
 
 
 def test_region_contains_special():
@@ -274,7 +302,7 @@ def test_region_y_range():
     assert Region(5, 10, 20, 30).y_range == range(10, 40)
 
 
-def test_region_reset_origin():
+def test_region_reset_offset():
     assert Region(5, 10, 20, 30).reset_offset == Region(0, 0, 20, 30)
 
 

@@ -578,9 +578,8 @@ class Compositor:
             if not region:
                 continue
             if region in clip:
-                yield region, clip, widget.render_lines(
-                    Region(0, 0, region.width, region.height)
-                )
+                lines = widget.render_lines(Region(0, 0, region.width, region.height))
+                yield region, clip, lines
             elif overlaps(clip, region):
                 clipped_region = intersection(region, clip)
                 if not clipped_region:
@@ -706,12 +705,12 @@ class Compositor:
         regions: list[Region] = []
         add_region = regions.append
         for widget in self.regions.keys() & widgets:
-            (x, y, _, _), clip = self.regions[widget]
+            region, clip = self.regions[widget]
+            offset = region.offset
             intersection = clip.intersection
             for dirty_region in widget.get_dirty_regions():
-                update_region = intersection(dirty_region.translate(x, y))
+                update_region = intersection(dirty_region.translate(offset))
                 if update_region:
                     add_region(update_region)
 
         self._dirty_regions.update(regions)
-        # self.add_dirty_regions(regions)

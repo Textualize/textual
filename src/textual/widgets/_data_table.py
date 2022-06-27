@@ -284,9 +284,10 @@ class DataTable(ScrollView, Generic[CellType]):
         if row_index < 0 or column_index < 0:
             return
         region = self._get_cell_region(row_index, column_index)
-        region = region.translate_negative(*self.scroll_offset)
-        if region:
-            self.refresh(region)
+        if not self.window_region.overlaps(region):
+            return
+        region = region.translate(-self.scroll_offset)
+        self.refresh(region)
         # refresh_region = self.content_region.intersection(region)
         # if refresh_region:
         #     self.refresh(refresh_region)
@@ -491,8 +492,8 @@ class DataTable(ScrollView, Generic[CellType]):
         Returns:
             Lines: A list of segments for every line within crop region.
         """
-        scroll_x, scroll_y = self.scroll_offset
-        x1, y1, x2, y2 = crop.translate(scroll_x, scroll_y).corners
+        scroll_y = self.scroll_offset.y
+        x1, y1, x2, y2 = crop.translate(self.scroll_offset).corners
 
         base_style = self.rich_style
 
@@ -511,6 +512,7 @@ class DataTable(ScrollView, Generic[CellType]):
         for line_index, y in enumerate(range(y1, y2)):
             if y - scroll_y < fixed_top_row_count:
                 lines[line_index] = fixed_lines[line_index]
+
         return lines
 
     def on_mouse_move(self, event: events.MouseMove):

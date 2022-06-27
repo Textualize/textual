@@ -137,17 +137,15 @@ class BasicApp(App, css_path="basic.css"):
                 Widget(classes="content"),
             ),
         )
-        table.add_column("Foo", width=80)
-        table.add_column("Bar", width=50)
-        table.add_column("Baz", width=40)
+        table.add_column("Foo", width=20)
+        table.add_column("Bar", width=20)
+        table.add_column("Baz", width=20)
+        table.add_column("Foo", width=20)
+        table.add_column("Bar", width=20)
+        table.add_column("Baz", width=20)
         table.zebra_stripes = True
         for n in range(100):
-            table.add_row(
-                f"{n} This is an example of a [b]DataTable widget[/b] within a larger [bold magenta]Textual UI",
-                "Cells may contain just about any kind of data",
-                "Where there is a Will there is a Way",
-                height=1,
-            )
+            table.add_row(*[f"Cell ([b]{n}[/b], {col})" for col in range(6)])
 
     async def on_key(self, event) -> None:
         await self.dispatch_key(event)

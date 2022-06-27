@@ -15,6 +15,10 @@
   scrollbar-size-vertical: 2;
 }
 
+*:hover {
+  tint: red 30%;
+}
+
 App > Screen {
   layout: dock;
   docks: side=left/1;
@@ -23,7 +27,9 @@ App > Screen {
 }
 
 DataTable {
-  margin: 2;
+  border: solid red;
+  
+  margin: 1 1;  
   height: 12;  
 }
 

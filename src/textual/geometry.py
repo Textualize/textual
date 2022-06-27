@@ -243,8 +243,8 @@ class Region(NamedTuple):
         return cls(x, y, width, height)
 
     @classmethod
-    def translate_inside(cls, window_region: Region, region: Region) -> Offset:
-        """Calculate the smallest offset required to translate a region so that is is within
+    def get_scroll_to_visible(cls, window_region: Region, region: Region) -> Offset:
+        """Calculate the smallest offset required to translate a window so that it contains
         another region.
 
         This method is used to calculate the required offset to scroll something in to view.
@@ -507,33 +507,19 @@ class Region(NamedTuple):
             and (y2 >= oy2 >= y1)
         )
 
-    def translate(self, x: int = 0, y: int = 0) -> Region:
+    def translate(self, offset: tuple[int, int]) -> Region:
         """Move the offset of the Region.
 
         Args:
-            translate_x (int): Value to add to x coordinate.
-            translate_y (int): Value to add to y coordinate.
+            translate (tuple[int, int]): Offset to add to region.
 
         Returns:
-            Region: A new region shifted by x, y
+            Region: A new region shifted by (x, y)
         """
 
         self_x, self_y, width, height = self
-        return Region(self_x + x, self_y + y, width, height)
-
-    def translate_negative(self, x: int = 0, y: int = 0) -> Region:
-        """Move the offset of the Region in the opposite direction.
-
-        Args:
-            translate_x (int): Value to subtract to x coordinate.
-            translate_y (int): Value to subtract to y coordinate.
-
-        Returns:
-            Region: A new region shifted by x, y
-        """
-
-        self_x, self_y, width, height = self
-        return Region(self_x - x, self_y - y, width, height)
+        offset_x, offset_y = offset
+        return Region(self_x + offset_x, self_y + offset_y, width, height)
 
     @lru_cache(maxsize=4096)
     def __contains__(self, other: Any) -> bool:
