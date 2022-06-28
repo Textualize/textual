@@ -108,7 +108,7 @@ def test_stylesheet_apply_user_css_over_widget_css():
     user_css = ".a {color: red; tint: yellow;}"
 
     class MyWidget(Widget):
-        CSS = ".a {color: blue; background: lime;}"
+        CSS = ".a {color: blue !important; background: lime;}"
 
     node = MyWidget()
     node.add_class("a")
