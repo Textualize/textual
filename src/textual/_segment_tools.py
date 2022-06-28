@@ -6,10 +6,10 @@ from __future__ import annotations
 
 from rich.segment import Segment
 
+from ._cells import cell_len
 
-def line_crop(
-    segments: list[Segment], start: int, end: int, total: int
-) -> list[Segment]:
+
+def line_crop(segments: list[Segment], start: int, end: int, total: int):
     """Crops a list of segments between two cell offsets.
 
     Args:
@@ -23,13 +23,15 @@ def line_crop(
     # This is essentially a specialized version of Segment.divide
     # The following line has equivalent functionality (but a little slower)
     # return list(Segment.divide(segments, [start, end]))[1]
+
+    _cell_len = cell_len
     pos = 0
     output_segments: list[Segment] = []
     add_segment = output_segments.append
     iter_segments = iter(segments)
     segment: Segment | None = None
     for segment in iter_segments:
-        end_pos = pos + segment.cell_length
+        end_pos = pos + _cell_len(segment.text)
         if end_pos > start:
             segment = segment.split_cells(start - pos)[-1]
             break
@@ -46,7 +48,7 @@ def line_crop(
 
     pos = start
     while segment is not None:
-        end_pos = pos + segment.cell_length
+        end_pos = pos + _cell_len(segment.text)
         if end_pos < end:
             add_segment(segment)
         else:

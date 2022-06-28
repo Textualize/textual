@@ -428,7 +428,7 @@ class DOMNode(MessagePump):
         for node in self.walk_children():
             node._css_styles.reset()
             if isinstance(node, Widget):
-                node.set_dirty()
+                node._set_dirty()
                 node._layout_required = True
 
     def add_child(self, node: DOMNode) -> None:

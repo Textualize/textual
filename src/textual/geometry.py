@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import sys
 from functools import lru_cache
+from operator import itemgetter, attrgetter
 from typing import Any, Collection, NamedTuple, Tuple, TypeVar, Union, cast
 
 if sys.version_info >= (3, 10):
@@ -77,6 +78,10 @@ class Offset(NamedTuple):
             return Offset(int(x * other), int(y * other))
         return NotImplemented
 
+    def __neg__(self) -> Offset:
+        x, y = self
+        return Offset(-x, -y)
+
     def blend(self, destination: Offset, factor: float) -> Offset:
         """Blend (interpolate) to a new point.
 
@@ -89,7 +94,10 @@ class Offset(NamedTuple):
         """
         x1, y1 = self
         x2, y2 = destination
-        return Offset(int(x1 + (x2 - x1) * factor), int((y1 + (y2 - y1) * factor)))
+        return Offset(
+            int(x1 + (x2 - x1) * factor),
+            int(y1 + (y2 - y1) * factor),
+        )
 
     def get_distance_to(self, other: Offset) -> float:
         """Get the distance to another offset.
@@ -191,7 +199,14 @@ class Region(NamedTuple):
     height: int = 0
 
     @classmethod
-    def from_union(cls, regions: Collection[Region]) -> Region:
+    def from_union(
+        cls,
+        regions: Collection[Region],
+        _get_x=itemgetter(0),
+        _get_y=itemgetter(1),
+        _get_right=attrgetter("right"),
+        _get_bottom=attrgetter("bottom"),
+    ) -> Region:
         """Create a Region from the union of other regions.
 
         Args:
@@ -202,10 +217,10 @@ class Region(NamedTuple):
         """
         if not regions:
             raise ValueError("At least one region expected")
-        min_x = min([region.x for region in regions])
-        max_x = max([x + width for x, _y, width, _height in regions])
-        min_y = min([region.y for region in regions])
-        max_y = max([y + height for _x, y, _width, height in regions])
+        min_x = min(regions, key=_get_x).x
+        max_x = max(regions, key=_get_right).right
+        min_y = min(regions, key=_get_y).y
+        max_y = max(regions, key=_get_bottom).bottom
         return cls(min_x, min_y, max_x - min_x, max_y - min_y)
 
     @classmethod
@@ -224,19 +239,67 @@ class Region(NamedTuple):
         return cls(x1, y1, x2 - x1, y2 - y1)
 
     @classmethod
-    def from_origin(cls, origin: tuple[int, int], size: tuple[int, int]) -> Region:
-        """Create a region from origin and size.
+    def from_offset(cls, offset: tuple[int, int], size: tuple[int, int]) -> Region:
+        """Create a region from offset and size.
 
         Args:
-            origin (Point): Origin (top left point)
+            offset (Point): Offset (top left point)
             size (tuple[int, int]): Dimensions of region.
 
         Returns:
             Region: A region instance.
         """
-        x, y = origin
+        x, y = offset
         width, height = size
         return cls(x, y, width, height)
+
+    @classmethod
+    def get_scroll_to_visible(cls, window_region: Region, region: Region) -> Offset:
+        """Calculate the smallest offset required to translate a window so that it contains
+        another region.
+
+        This method is used to calculate the required offset to scroll something in to view.
+
+        Args:
+            window_region (Region): The window region.
+            region (Region): The region to move inside the window.
+
+        Returns:
+            Offset: An offset required to add to region to move it inside window_region.
+        """
+
+        if region in window_region:
+            # Region is already inside the window, so no need to move it.
+            return Offset(0, 0)
+
+        window_left, window_top, window_right, window_bottom = window_region.corners
+        region = region.crop_size(window_region.size)
+        left, top, right, bottom = region.corners
+        delta_x = delta_y = 0
+
+        if not (
+            (window_right > left >= window_left)
+            and (window_right > right >= window_left)
+        ):
+            # The region does not fit
+            # The window needs to scroll on the X axis to bring region in to view
+            delta_x = min(
+                left - window_left,
+                left - (window_right - region.width),
+                key=abs,
+            )
+
+        if not (
+            (window_bottom > top >= window_top)
+            and (window_bottom > bottom >= window_top)
+        ):
+            # The window needs to scroll on the Y axis to bring region in to view
+            delta_y = min(
+                top - window_top,
+                top - (window_bottom - region.height),
+                key=abs,
+            )
+        return Offset(delta_x, delta_y)
 
     def __bool__(self) -> bool:
         """A Region is considered False when it has no area."""
@@ -265,12 +328,12 @@ class Region(NamedTuple):
         return (self.y, self.y + self.height)
 
     @property
-    def x_max(self) -> int:
+    def right(self) -> int:
         """Maximum X value (non inclusive)"""
         return self.x + self.width
 
     @property
-    def y_max(self) -> int:
+    def bottom(self) -> int:
         """Maximum Y value (non inclusive)"""
         return self.y + self.height
 
@@ -280,7 +343,7 @@ class Region(NamedTuple):
         return self.width * self.height
 
     @property
-    def origin(self) -> Offset:
+    def offset(self) -> Offset:
         """Get the start point of the region."""
         return Offset(self.x, self.y)
 
@@ -309,10 +372,10 @@ class Region(NamedTuple):
 
     @property
     def corners(self) -> tuple[int, int, int, int]:
-        """Get the maxima and minima of region.
+        """Get the top left and bottom right coordinates as a tuple of integers.
 
         Returns:
-            tuple[int, int, int, int]: A tuple of `(<min x>, <max x>, <min y>, <max y>)`
+            tuple[int, int, int, int]: A tuple of `(<left>, <top>, <right>, <bottom>)`
         """
         x, y, width, height = self
         return x, y, x + width, y + height
@@ -328,7 +391,7 @@ class Region(NamedTuple):
         return range(self.y, self.y + self.height)
 
     @property
-    def reset_origin(self) -> Region:
+    def reset_offset(self) -> Region:
         """An region of the same size at (0, 0)."""
         _, _, width, height = self
         return Region(0, 0, width, height)
@@ -346,6 +409,32 @@ class Region(NamedTuple):
             x, y, width, height = self
             return Region(x - ox, y - oy, width, height)
         return NotImplemented
+
+    def at_offset(self, offset: tuple[int, int]) -> Region:
+        """Get a new Region with the same size at a given offset.
+
+        Args:
+            offset (tuple[int, int]): An offset.
+
+        Returns:
+            Region: New Region with adjusted offset.
+        """
+        x, y = offset
+        _x, _y, width, height = self
+        return Region(x, y, width, height)
+
+    def crop_size(self, size: tuple[int, int]) -> Region:
+        """Get a region with the same offset, with a size no larger than `size`.
+
+        Args:
+            size (tuple[int, int]): Maximum width and height (WIDTH, HEIGHT).
+
+        Returns:
+            Region: New region that could fit within `size`.
+        """
+        x, y, width1, height1 = self
+        width2, height2 = size
+        return Region(x, y, min(width1, width2), min(height1, height2))
 
     def expand(self, size: tuple[int, int]) -> Region:
         """Increase the size of the region by adding a border.
@@ -429,19 +518,19 @@ class Region(NamedTuple):
             and (y2 >= oy2 >= y1)
         )
 
-    def translate(self, x: int = 0, y: int = 0) -> Region:
-        """Move the origin of the Region.
+    def translate(self, offset: tuple[int, int]) -> Region:
+        """Move the offset of the Region.
 
         Args:
-            translate_x (int): Value to add to x coordinate.
-            translate_y (int): Value to add to y coordinate.
+            translate (tuple[int, int]): Offset to add to region.
 
         Returns:
-            Region: A new region shifted by x, y
+            Region: A new region shifted by (x, y)
         """
 
         self_x, self_y, width, height = self
-        return Region(self_x + x, self_y + y, width, height)
+        offset_x, offset_y = offset
+        return Region(self_x + offset_x, self_y + offset_y, width, height)
 
     @lru_cache(maxsize=4096)
     def __contains__(self, other: Any) -> bool:

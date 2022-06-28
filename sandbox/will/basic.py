@@ -6,7 +6,7 @@ from rich.text import Text
 from textual.app import App
 from textual.reactive import Reactive
 from textual.widget import Widget
-from textual.widgets import Static
+from textual.widgets import Static, DataTable
 
 CODE = '''
 class Offset(NamedTuple):
@@ -101,6 +101,7 @@ class BasicApp(App, css_path="basic.css"):
     def on_mount(self):
         """Build layout here."""
 
+        table = DataTable()
         self.scroll_to_target = Tweet(TweetBody())
         self.mount(
             header=Static(
@@ -114,6 +115,7 @@ class BasicApp(App, css_path="basic.css"):
                     Static(Syntax(CODE, "python"), classes="code"),
                     classes="scrollable",
                 ),
+                table,
                 Error(),
                 Tweet(TweetBody(), classes="scrollbar-size-custom"),
                 Warning(),
@@ -135,6 +137,15 @@ class BasicApp(App, css_path="basic.css"):
                 Widget(classes="content"),
             ),
         )
+        table.add_column("Foo", width=20)
+        table.add_column("Bar", width=20)
+        table.add_column("Baz", width=20)
+        table.add_column("Foo", width=20)
+        table.add_column("Bar", width=20)
+        table.add_column("Baz", width=20)
+        table.zebra_stripes = True
+        for n in range(100):
+            table.add_row(*[f"Cell ([b]{n}[/b], {col})" for col in range(6)])
 
     async def on_key(self, event) -> None:
         await self.dispatch_key(event)
@@ -181,5 +192,8 @@ if __name__ == "__main__":
     print(Scalar.resolve_dimension.cache_info())
 
     from rich.style import Style
+    from rich.cells import cached_cell_len
 
     print(Style._add.cache_info())
+
+    print(cached_cell_len.cache_info())

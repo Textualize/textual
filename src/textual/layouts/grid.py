@@ -253,10 +253,12 @@ class GridLayout(Layout):
                 offset = (container - size) // 2
             return offset
 
-        offset_x = align(grid_size.width, container.width, col_align)
-        offset_y = align(grid_size.height, container.height, row_align)
+        offset = Offset(
+            align(grid_size.width, container.width, col_align),
+            align(grid_size.height, container.height, row_align),
+        )
 
-        region = region.translate(offset_x, offset_y)
+        region = region.translate(offset)
         return region
 
     def get_widgets(self) -> Iterable[Widget]:

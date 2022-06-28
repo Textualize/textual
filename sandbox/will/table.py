@@ -36,6 +36,8 @@ test_table.add_row("Dec 16, 2016", "Rogue One: A Star Wars Story", "$1,332,439,8
 class TableApp(App):
     def compose(self) -> ComposeResult:
         table = self.table = DataTable(id="data")
+        yield table
+
         table.add_column("Foo", width=20)
         table.add_column("Bar", width=60)
         table.add_column("Baz", width=20)
@@ -47,14 +49,21 @@ class TableApp(App):
             height = 1
             row = [f"row [b]{n}[/b] col [i]{c}[/i]" for c in range(6)]
             if n == 10:
-                row[1] = Syntax(CODE, "python", line_numbers=True, indent_guides=True)
+                row[1] = Syntax(
+                    CODE,
+                    "python",
+                    theme="ansi_dark",
+                    line_numbers=True,
+                    indent_guides=True,
+                )
                 height = 13
 
             if n == 30:
                 row[1] = test_table
                 height = 13
             table.add_row(*row, height=height)
-        yield table
+
+        table.focus()
 
     def on_mount(self):
         self.bind("d", "toggle_dark")

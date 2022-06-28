@@ -186,6 +186,8 @@ class Border:
         if has_bottom and lines:
             lines.pop(-1)
 
+        # TODO: Divide is probably quite inefficient here,
+        # It could be much faster for the specific case of one off the start end end
         divide = Segment.divide
         if has_left and has_right:
             for line in lines:

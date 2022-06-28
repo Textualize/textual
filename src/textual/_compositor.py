@@ -19,6 +19,7 @@ import sys
 from typing import Callable, cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
+
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.control import Control
 from rich.segment import Segment
@@ -27,9 +28,9 @@ from rich.style import Style
 from . import errors
 from .geometry import Region, Offset, Size
 
+from ._cells import cell_len
 from ._profile import timer
 from ._loop import loop_last
-from ._segment_tools import line_crop
 from ._types import Lines
 
 if sys.version_info >= (3, 10):
@@ -98,16 +99,21 @@ class ChopsUpdate:
     """A renderable that applies updated spans to the screen."""
 
     def __init__(
-        self, chops: list[dict[int, list[Segment] | None]], crop: Region
+        self,
+        chops: list[dict[int, list[Segment] | None]],
+        spans: list[tuple[int, int, int]],
+        chop_ends: list[list[int]],
     ) -> None:
         """A renderable which updates chops (fragments of lines).
 
         Args:
             chops (list[dict[int, list[Segment]  |  None]]): A mapping of offsets to list of segments, per line.
             crop (Region): Region to restrict update to.
+            chop_ends (list[list[int]]): A list of the end offsets for each line
         """
         self.chops = chops
-        self.crop = crop
+        self.spans = spans
+        self.chop_ends = chop_ends
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -115,20 +121,53 @@ class ChopsUpdate:
         move_to = Control.move_to
         new_line = Segment.line()
         chops = self.chops
-        crop = self.crop
-        last_y = crop.y_max - 1
-        x1, x2 = crop.x_extents
-        for y in crop.y_range:
+        chop_ends = self.chop_ends
+        last_y = self.spans[-1][0]
+
+        _cell_len = cell_len
+
+        for y, x1, x2 in self.spans:
             line = chops[y]
-            for x, segments in line.items():
-                if segments is not None and x2 > x >= x1:
+            ends = chop_ends[y]
+            for end, (x, segments) in zip(ends, line.items()):
+                # TODO: crop to x extents
+                if segments is None:
+                    continue
+
+                if x > x2 or end <= x1:
+                    continue
+
+                if x2 > x >= x1 and end <= x2:
                     yield move_to(x, y)
                     yield from segments
+                    continue
+
+                iter_segments = iter(segments)
+                if x < x1:
+                    for segment in iter_segments:
+                        next_x = x + _cell_len(segment.text)
+                        if next_x > x1:
+                            yield move_to(x, y)
+                            yield segment
+                            break
+                        x = next_x
+                else:
+                    yield move_to(x, y)
+                if end <= x2:
+                    yield from iter_segments
+                else:
+                    for segment in iter_segments:
+                        if x >= x2:
+                            break
+                        yield segment
+                        x += _cell_len(segment.text)
+
             if y != last_y:
                 yield new_line
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield None, self.crop
+        return
+        yield
 
 
 @rich.repr.auto(angular=True)
@@ -158,14 +197,6 @@ class Compositor:
 
         # Regions that require an update
         self._dirty_regions: set[Region] = set()
-
-    def add_dirty_regions(self, regions: Iterable[Region]) -> None:
-        """Add dirty regions to be repainted next call to render.
-
-        Args:
-            regions (Iterable[Region]): Regions that are "dirty" (changed since last render).
-        """
-        self._dirty_regions.update(regions)
 
     @classmethod
     def _regions_to_spans(
@@ -328,7 +359,7 @@ class Compositor:
                 sub_clip = clip.intersection(child_region)
 
                 # The region covered by children relative to parent widget
-                total_region = child_region.reset_origin
+                total_region = child_region.reset_offset
 
                 if widget.is_container:
                     # Arrange the layout
@@ -338,7 +369,7 @@ class Compositor:
 
                     # An offset added to all placements
                     placement_offset = (
-                        container_region.origin + layout_offset - widget.scroll_offset
+                        container_region.offset + layout_offset - widget.scroll_offset
                     )
 
                     # Add all the widgets
@@ -358,7 +389,7 @@ class Compositor:
                     container_size
                 ):
                     map[chrome_widget] = MapGeometry(
-                        chrome_region + container_region.origin + layout_offset,
+                        chrome_region + container_region.offset + layout_offset,
                         order,
                         clip,
                         container_size,
@@ -414,7 +445,7 @@ class Compositor:
     def get_offset(self, widget: Widget) -> Offset:
         """Get the offset of a widget."""
         try:
-            return self.map[widget].region.origin
+            return self.map[widget].region.offset
         except KeyError:
             raise errors.NoWidget("Widget is not in layout")
 
@@ -506,6 +537,7 @@ class Compositor:
 
         # Sort the cuts for each line
         self._cuts = [sorted(set(line_cuts)) for line_cuts in cuts]
+
         return self._cuts
 
     def _get_renders(
@@ -546,9 +578,8 @@ class Compositor:
             if not region:
                 continue
             if region in clip:
-                yield region, clip, widget.render_lines(
-                    Region(0, 0, region.width, region.height)
-                )
+                lines = widget.render_lines(Region(0, 0, region.width, region.height))
+                yield region, clip, lines
             elif overlaps(clip, region):
                 clipped_region = intersection(region, clip)
                 if not clipped_region:
@@ -615,7 +646,7 @@ class Compositor:
         )
         # A mapping of cut index to a list of segments for each line
         chops: list[dict[int, list[Segment] | None]]
-        chops = [fromkeys(cut_set) for cut_set in cuts]
+        chops = [fromkeys(cut_set[:-1]) for cut_set in cuts]
 
         cut_segments: Iterable[list[Segment]]
 
@@ -631,12 +662,12 @@ class Compositor:
                     continue
 
                 chops_line = chops[y]
-                if all(chops_line):
-                    continue
 
                 first_cut, last_cut = render_region.x_extents
-                final_cuts = [cut for cut in cuts[y] if (last_cut >= cut >= first_cut)]
-
+                cuts_line = cuts[y]
+                final_cuts = [
+                    cut for cut in cuts_line if (last_cut >= cut >= first_cut)
+                ]
                 if len(final_cuts) <= 2:
                     # Two cuts, which means the entire line
                     cut_segments = [line]
@@ -654,7 +685,8 @@ class Compositor:
             render_lines = self._assemble_chops(chops)
             return LayoutUpdate(render_lines, screen_region)
         else:
-            return ChopsUpdate(chops, crop)
+            chop_ends = [cut_set[1:] for cut_set in cuts]
+            return ChopsUpdate(chops, spans, chop_ends)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -674,7 +706,11 @@ class Compositor:
         add_region = regions.append
         for widget in self.regions.keys() & widgets:
             region, clip = self.regions[widget]
-            update_region = region.intersection(clip)
-            if update_region:
-                add_region(update_region)
-        self.add_dirty_regions(regions)
+            offset = region.offset
+            intersection = clip.intersection
+            for dirty_region in widget.get_dirty_regions():
+                update_region = intersection(dirty_region.translate(offset))
+                if update_region:
+                    add_region(update_region)
+
+        self._dirty_regions.update(regions)

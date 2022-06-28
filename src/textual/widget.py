@@ -5,6 +5,7 @@ from typing import (
     Any,
     Awaitable,
     ClassVar,
+    Collection,
     TYPE_CHECKING,
     Callable,
     Iterable,
@@ -17,8 +18,6 @@ from rich.console import Console, RenderableType
 from rich.measure import Measurement
 from rich.padding import Padding
 from rich.style import Style
-from rich.styled import Styled
-
 
 from . import errors
 from . import events
@@ -29,7 +28,7 @@ from ._context import active_app
 from ._types import Lines
 from .dom import DOMNode
 from ._layout import ArrangeResult
-from .geometry import clamp, Offset, Region, Size
+from .geometry import clamp, Offset, Region, Size, Spacing
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from . import messages
@@ -109,7 +108,7 @@ class Widget(DOMNode):
         self._horizontal_scrollbar: ScrollBar | None = None
 
         self._render_cache = RenderCache(Size(0, 0), [])
-        self._dirty_regions: list[Region] = []
+        self._dirty_regions: set[Region] = set()
 
         # Cache the auto content dimensions
         # TODO: add mechanism to explicitly clear this
@@ -428,10 +427,33 @@ class Widget(DOMNode):
             else 0
         )
 
-    def set_dirty(self) -> None:
-        """Set the Widget as 'dirty' (requiring re-render)."""
-        self._dirty_regions.clear()
-        self._dirty_regions.append(self.size.region)
+    def _set_dirty(self, *regions: Region) -> None:
+        """Set the Widget as 'dirty' (requiring re-paint).
+
+        Regions should be specified as positional args. If no regions are added, then
+        the entire widget will be considered dirty.
+
+        Args:
+            *regions (Region): Regions which require a repaint.
+
+        """
+
+        if regions:
+            self._dirty_regions.update(regions)
+        else:
+            self._dirty_regions.clear()
+            # TODO: Does this need to be content region?
+            # self._dirty_regions.append(self.size.region)
+            self._dirty_regions.add(self.size.region)
+
+    def get_dirty_regions(self) -> Collection[Region]:
+        """Get regions which require a repaint.
+
+        Returns:
+            Collection[Region]: Regions to repaint.
+        """
+        regions = self._dirty_regions.copy()
+        return regions
 
     def scroll_to(
         self,
@@ -576,6 +598,7 @@ class Widget(DOMNode):
             bool: True if any scrolling has occurred in any descendant, otherwise False.
         """
 
+        # TODO: Update this to use scroll_to_region
         scrolls = set()
 
         node = widget.parent
@@ -595,9 +618,9 @@ class Widget(DOMNode):
 
             # We can either scroll so the widget is at the top of the container, or so that
             # it is at the bottom. We want to pick which has the shortest distance
-            top_delta = widget_region.origin - container_region.origin
+            top_delta = widget_region.offset - container_region.origin
 
-            bottom_delta = widget_region.origin - (
+            bottom_delta = widget_region.offset - (
                 container_region.origin
                 + Offset(0, container_region.height - widget_region.height)
             )
@@ -623,6 +646,36 @@ class Widget(DOMNode):
             node = node.parent
 
         return any(scrolls)
+
+    def scroll_to_region(
+        self, region: Region, *, spacing: Spacing | None = None, animate: bool = True
+    ) -> Offset:
+        """Scrolls a given region in to view, if required.
+
+        This method will scroll the least distance required to move `region` fully within
+        the scrollable area.
+
+        Args:
+            region (Region): A region that should be visible.
+            animate (bool, optional): Enable animation. Defaults to True.
+            spacing (Spacing): Space to subtract from the window region.
+
+        Returns:
+            bool: True if the window was scrolled.
+        """
+
+        window = self.region.at_offset(self.scroll_offset)
+        if spacing is not None:
+            window = window.shrink(spacing)
+        delta = Region.get_scroll_to_visible(window, region)
+        if delta:
+            self.scroll_relative(
+                delta.x or None,
+                delta.y or None,
+                animate=animate,
+                duration=0.2,
+            )
+        return delta
 
     def __init_subclass__(
         cls,
@@ -655,23 +708,23 @@ class Widget(DOMNode):
         """
         show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
 
-        horizontal_scrollbar_thickness = self.scrollbar_size_horizontal
-        vertical_scrollbar_thickness = self.scrollbar_size_vertical
+        scrollbar_size_horizontal = self.styles.scrollbar_size_horizontal
+        scrollbar_size_vertical = self.styles.scrollbar_size_vertical
 
         if self.styles.scrollbar_gutter == "stable":
             # Let's _always_ reserve some space, whether the scrollbar is actually displayed or not:
             show_vertical_scrollbar = True
-            vertical_scrollbar_thickness = self.styles.scrollbar_size_vertical
+            scrollbar_size_vertical = self.styles.scrollbar_size_vertical
 
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (region, _, _, _) = region.split(
-                -vertical_scrollbar_thickness,
-                -horizontal_scrollbar_thickness,
+                -scrollbar_size_vertical,
+                -scrollbar_size_horizontal,
             )
         elif show_vertical_scrollbar:
-            region, _ = region.split_vertical(-vertical_scrollbar_thickness)
+            region, _ = region.split_vertical(-scrollbar_size_vertical)
         elif show_horizontal_scrollbar:
-            region, _ = region.split_horizontal(-horizontal_scrollbar_thickness)
+            region, _ = region.split_horizontal(-scrollbar_size_horizontal)
         return region
 
     def _arrange_scrollbars(self, size: Size) -> Iterable[tuple[Widget, Region]]:
@@ -689,6 +742,7 @@ class Widget(DOMNode):
 
         scrollbar_size_horizontal = self.scrollbar_size_horizontal
         scrollbar_size_vertical = self.scrollbar_size_vertical
+
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (
                 _,
@@ -724,17 +778,17 @@ class Widget(DOMNode):
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
 
-    def render_styled(self) -> RenderableType:
-        """Applies style attributes to the default renderable.
+    def _style_renderable(self, renderable: RenderableType) -> RenderableType:
+        """Applies CSS styles to a renderable by wrapping it in another renderable.
+
+        Args:
+            renderable (RenderableType): Renderable to apply styles to.
 
         Returns:
-            RenderableType: A new renderable.
+            RenderableType: An updated renderable.
         """
-
         (base_background, base_color), (background, color) = self.colors
         styles = self.styles
-
-        renderable = self.render()
 
         content_align = (styles.content_align_horizontal, styles.content_align_vertical)
         if content_align != ("left", "top"):
@@ -771,6 +825,17 @@ class Widget(DOMNode):
 
         return renderable
 
+    def render_styled(self) -> RenderableType:
+        """Applies style attributes to the default renderable.
+
+        Returns:
+            RenderableType: A new renderable.
+        """
+
+        renderable = self.render()
+        renderable = self._style_renderable(renderable)
+        return renderable
+
     @property
     def size(self) -> Size:
         return self._size
@@ -797,6 +862,16 @@ class Widget(DOMNode):
             return self.screen.find_widget(self).region
         except errors.NoWidget:
             return Region()
+
+    @property
+    def window_region(self) -> Region:
+        """The region within the scrollable area that is currently visible.
+
+        Returns:
+            Region: New region.
+        """
+        window_region = self.region.at_offset(self.scroll_offset)
+        return window_region
 
     @property
     def scroll_offset(self) -> Offset:
@@ -892,7 +967,8 @@ class Widget(DOMNode):
     def _crop_lines(self, lines: Lines, x1, x2) -> Lines:
         width = self.size.width
         if (x1, x2) != (0, width):
-            lines = [line_crop(line, x1, x2, width) for line in lines]
+            _line_crop = line_crop
+            lines = [_line_crop(line, x1, x2, width) for line in lines]
         return lines
 
     def render_lines(self, crop: Region) -> Lines:
@@ -923,7 +999,9 @@ class Widget(DOMNode):
         event.set_forwarded()
         await self.post_message(event)
 
-    def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
+    def refresh(
+        self, *regions: Region, repaint: bool = True, layout: bool = False
+    ) -> None:
         """Initiate a refresh of the widget.
 
         This method sets an internal flag to perform a refresh, which will be done on the
@@ -933,13 +1011,14 @@ class Widget(DOMNode):
             repaint (bool, optional): Repaint the widget (will call render() again). Defaults to True.
             layout (bool, optional): Also layout widgets in the view. Defaults to False.
         """
+
         if layout:
             self._layout_required = True
             self._clear_arrangement_cache()
         if repaint:
+            self._set_dirty(*regions)
             self._content_width_cache = (None, 0)
             self._content_height_cache = (None, 0)
-            self.set_dirty()
             self._repaint_required = True
             if isinstance(self.parent, Widget) and self.styles.auto_dimensions:
                 self.parent.refresh(layout=True)
