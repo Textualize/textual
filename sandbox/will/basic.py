@@ -192,5 +192,8 @@ if __name__ == "__main__":
     print(Scalar.resolve_dimension.cache_info())
 
     from rich.style import Style
+    from rich.cells import cached_cell_len
 
     print(Style._add.cache_info())
+
+    print(cached_cell_len.cache_info())

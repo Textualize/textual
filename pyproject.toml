@@ -22,8 +22,8 @@ textual = "textual.cli.cli:run"
 
 [tool.poetry.dependencies]
 python = "^3.7"
-#rich = "^12.4.3"
-rich = {path="../rich", develop=true}
+rich = "^12.4.3"
+#rich = {path="../rich", develop=true}
 importlib-metadata = "^4.11.3"
 typing-extensions = { version = "^4.0.0", python = "<3.8" }
 

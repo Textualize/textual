@@ -19,7 +19,7 @@ import sys
 from typing import Callable, cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
 
 import rich.repr
-from rich.cells import cached_cell_len
+
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.control import Control
 from rich.segment import Segment
@@ -28,9 +28,9 @@ from rich.style import Style
 from . import errors
 from .geometry import Region, Offset, Size
 
+from ._cells import cell_len
 from ._profile import timer
 from ._loop import loop_last
-from ._segment_tools import line_crop
 from ._types import Lines
 
 if sys.version_info >= (3, 10):
@@ -124,7 +124,7 @@ class ChopsUpdate:
         chop_ends = self.chop_ends
         last_y = self.spans[-1][0]
 
-        _cell_len = cached_cell_len
+        _cell_len = cell_len
 
         for y, x1, x2 in self.spans:
             line = chops[y]

@@ -4,8 +4,9 @@ Tools for processing Segments, or lists of Segments.
 
 from __future__ import annotations
 
-from rich.cells import cached_cell_len
 from rich.segment import Segment
+
+from ._cells import cell_len
 
 
 def line_crop(segments: list[Segment], start: int, end: int, total: int):
@@ -23,7 +24,7 @@ def line_crop(segments: list[Segment], start: int, end: int, total: int):
     # The following line has equivalent functionality (but a little slower)
     # return list(Segment.divide(segments, [start, end]))[1]
 
-    _cell_len = cached_cell_len
+    _cell_len = cell_len
     pos = 0
     output_segments: list[Segment] = []
     add_segment = output_segments.append
