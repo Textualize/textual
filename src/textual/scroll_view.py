@@ -41,6 +41,11 @@ class ScrollView(Widget):
         return False
 
     def get_dirty_regions(self) -> Collection[Region]:
+        """Get regions which require a repaint.
+
+        Returns:
+            Collection[Region]: Regions to repaint.
+        """
         regions = self._dirty_regions.copy()
         self._dirty_regions.clear()
         return regions
