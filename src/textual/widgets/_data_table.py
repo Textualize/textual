@@ -35,15 +35,25 @@ CellType = TypeVar("CellType")
 
 
 def default_cell_formatter(obj: object) -> RenderableType | None:
+    """Format a cell in to a renderable.
+
+    Args:
+        obj (object): Data for a cell.
+
+    Returns:
+        RenderableType | None: A renderable or None if the object could not be rendered.
+    """
     if isinstance(obj, str):
         return Text.from_markup(obj)
     if not is_renderable(obj):
-        raise TypeError(f"Table cell {obj!r} is not renderable")
+        return None
     return cast(RenderableType, obj)
 
 
 @dataclass
 class Column:
+    """Table column."""
+
     label: Text
     width: int
     visible: bool = False
@@ -52,6 +62,8 @@ class Column:
 
 @dataclass
 class Row:
+    """Table row."""
+
     index: int
     height: int
     y: int
@@ -60,32 +72,36 @@ class Row:
 
 @dataclass
 class Cell:
+    """Table cell."""
+
     value: object
 
 
 class Coord(NamedTuple):
+    """An object to represent the cordinate of a cell within the data table."""
+
     row: int
     column: int
 
     def left(self) -> Coord:
+        """Get coordinate to the left."""
         row, column = self
         return Coord(row, column - 1)
 
     def right(self) -> Coord:
+        """Get coordinate to the right."""
         row, column = self
         return Coord(row, column + 1)
 
     def up(self) -> Coord:
+        """Get coordinate above."""
         row, column = self
         return Coord(row - 1, column)
 
     def down(self) -> Coord:
+        """Get coordinate below."""
         row, column = self
         return Coord(row + 1, column)
-
-
-class Header(Widget):
-    pass
 
 
 class DataTable(ScrollView, Generic[CellType]):
@@ -288,9 +304,6 @@ class DataTable(ScrollView, Generic[CellType]):
             return
         region = region.translate(-self.scroll_offset)
         self.refresh(region)
-        # refresh_region = self.content_region.intersection(region)
-        # if refresh_region:
-        #     self.refresh(refresh_region)
 
     def _get_row_renderables(self, row_index: int) -> list[RenderableType]:
         """Get renderables for the given row.
