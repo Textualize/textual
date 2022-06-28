@@ -1,0 +1,11 @@
+Screen {
+    layout: dock;
+    height: 100%;
+}
+
+#box {
+    height: 50%;
+    width: 50%;
+    align: center middle;
+    background: green;
+}

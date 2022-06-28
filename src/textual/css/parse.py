@@ -7,6 +7,7 @@ from typing import Iterator, Iterable
 from rich import print
 
 from textual.css.errors import UnresolvedVariableError
+from textual.css.types import Specificity3
 from ._styles_builder import StylesBuilder, DeclarationError
 from .model import (
     Declaration,
@@ -20,7 +21,7 @@ from .styles import Styles
 from .tokenize import tokenize, tokenize_declarations, Token, tokenize_values
 from .tokenizer import EOFError, ReferencedBy
 
-SELECTOR_MAP: dict[str, tuple[SelectorType, tuple[int, int, int]]] = {
+SELECTOR_MAP: dict[str, tuple[SelectorType, Specificity3]] = {
     "selector": (SelectorType.TYPE, (0, 0, 1)),
     "selector_start": (SelectorType.TYPE, (0, 0, 1)),
     "selector_class": (SelectorType.CLASS, (0, 1, 0)),

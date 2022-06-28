@@ -3,12 +3,15 @@ from typing import Any
 
 import pytest
 
+from tests.utilities.test_app import AppTest
+from textual.app import App, ComposeResult
 from textual.color import Color
 from textual.css._help_renderables import HelpText
 from textual.css.stylesheet import Stylesheet, StylesheetParseError
 from textual.css.tokenizer import TokenizeError
 from textual.dom import DOMNode
 from textual.geometry import Spacing
+from textual.widget import Widget
 
 
 def _make_stylesheet(css: str) -> Stylesheet:
@@ -99,6 +102,24 @@ def test_stylesheet_apply_empty_rulesets():
     stylesheet = _make_stylesheet(css)
     node = DOMNode(classes="a b")
     stylesheet.apply(node)
+
+
+@pytest.mark.xfail(reason="wip")
+def test_stylesheet_apply_user_css_over_widget_css():
+    user_css = ".a {color: red;}"
+
+    class MyWidget(Widget):
+        CSS = ".a {color: blue;}"
+
+    node = MyWidget()
+    node.add_class("a")
+
+    print(node.styles.color)
+    stylesheet = _make_stylesheet(user_css)
+    stylesheet.apply(node)
+
+    assert node.styles.background == Color(0, 0, 255)
+    # TODO: On Tuesday - writing the tests for prioritising user CSS above widget CSS.
 
 
 @pytest.mark.parametrize(
