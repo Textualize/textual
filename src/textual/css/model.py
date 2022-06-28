@@ -156,6 +156,7 @@ class RuleSet:
     styles: Styles = field(default_factory=Styles)
     errors: list[tuple[Token, str]] = field(default_factory=list)
     classes: set[str] = field(default_factory=set)
+    is_widget_rule_set: bool = False
 
     @classmethod
     def _selector_to_css(cls, selectors: list[Selector]) -> str:

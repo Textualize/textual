@@ -37,5 +37,7 @@ ScrollbarGutter = Literal["auto", "stable"]
 BoxSizing = Literal["border-box", "content-box"]
 Overflow = Literal["scroll", "hidden", "auto"]
 EdgeStyle = Tuple[EdgeType, Color]
+
 Specificity3 = Tuple[int, int, int]
 Specificity4 = Tuple[int, int, int, int]
+Specificity5 = Tuple[int, int, int, int, int]

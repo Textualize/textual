@@ -1,10 +1,27 @@
+from __future__ import annotations
+
+from rich.console import RenderableType
+from rich.panel import Panel
+
 from textual.app import App, ComposeResult
-from textual.widgets import Static
+from textual.widget import Widget
+
+
+class Box(Widget):
+    CSS = "#box {background: blue;}"
+
+    def __init__(
+        self, id: str | None = None, classes: str | None = None, *children: Widget
+    ):
+        super().__init__(*children, id=id, classes=classes)
+
+    def render(self) -> RenderableType:
+        return Panel("Box")
 
 
 class JustABox(App):
     def compose(self) -> ComposeResult:
-        yield Static("Hello, World!", id="box")
+        yield Box(id="box")
 
 
 if __name__ == "__main__":

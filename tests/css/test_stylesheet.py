@@ -104,22 +104,25 @@ def test_stylesheet_apply_empty_rulesets():
     stylesheet.apply(node)
 
 
-@pytest.mark.xfail(reason="wip")
 def test_stylesheet_apply_user_css_over_widget_css():
-    user_css = ".a {color: red;}"
+    user_css = ".a {color: red; tint: yellow;}"
 
     class MyWidget(Widget):
-        CSS = ".a {color: blue;}"
+        CSS = ".a {color: blue; background: lime;}"
 
     node = MyWidget()
     node.add_class("a")
 
-    print(node.styles.color)
     stylesheet = _make_stylesheet(user_css)
+    stylesheet.add_source(MyWidget.CSS, "widget.py:MyWidget", is_widget_css=True)
     stylesheet.apply(node)
 
-    assert node.styles.background == Color(0, 0, 255)
-    # TODO: On Tuesday - writing the tests for prioritising user CSS above widget CSS.
+    # The node is red because user CSS overrides Widget.CSS
+    assert node.styles.color == Color(255, 0, 0)
+    # The background colour defined in the Widget still applies, since user CSS doesn't override it
+    assert node.styles.background == Color(0, 255, 0)
+    # As expected, the tint colour is yellow, since there's no competition between user or widget CSS
+    assert node.styles.tint == Color(255, 255, 0)
 
 
 @pytest.mark.parametrize(

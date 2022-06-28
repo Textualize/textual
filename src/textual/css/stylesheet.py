@@ -122,6 +122,8 @@ class Stylesheet:
         self._rules: list[RuleSet] = []
         self.variables = variables or {}
         self.source: dict[str, str] = {}
+        # Records which of the source keys represent CSS defined at the widget level
+        self._widget_css_paths: set[str] = set()
         self._require_parse = False
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -147,6 +149,7 @@ class Stylesheet:
         """
         stylesheet = Stylesheet(variables=self.variables.copy())
         stylesheet.source = self.source.copy()
+        stylesheet._widget_css_paths = self._widget_css_paths.copy()
         return stylesheet
 
     def set_variables(self, variables: dict[str, str]) -> None:
@@ -159,7 +162,6 @@ class Stylesheet:
 
     def _parse_rules(self, css: str, path: str | PurePath) -> list[RuleSet]:
         """Parse CSS and return rules.
-
 
         Args:
             css (str): String containing Textual CSS.
@@ -177,6 +179,11 @@ class Stylesheet:
             raise
         except Exception as error:
             raise StylesheetError(f"failed to parse css; {error}")
+
+        if path in self._widget_css_paths:
+            for rule in rules:
+                rule.is_widget_rule_set = True
+
         return rules
 
     def read(self, filename: str | PurePath) -> None:
@@ -199,13 +206,17 @@ class Stylesheet:
         self.source[str(path)] = css
         self._require_parse = True
 
-    def add_source(self, css: str, path: str | PurePath | None = None) -> None:
+    def add_source(
+        self, css: str, path: str | PurePath | None = None, is_widget_css: bool = False
+    ) -> None:
         """Parse CSS from a string.
 
         Args:
             css (str): String with CSS source.
             path (str | PurePath, optional): The path of the source if a file, or some other identifier.
                 Defaults to None.
+            is_widget_css (bool): True if the CSS is defined in the Widget, False if the CSS is defined
+                in a user stylesheet.
 
         Raises:
             StylesheetError: If the CSS could not be read.
@@ -219,6 +230,11 @@ class Stylesheet:
         if path in self.source and self.source[path] == css:
             # Path already in source, and CSS is identical
             return
+
+        # Record any CSS defined at the widget level for
+        # different specificity treatment from user CSS.
+        if is_widget_css:
+            self._widget_css_paths.add(path)
 
         self.source[path] = css
         self._require_parse = True
@@ -286,9 +302,10 @@ class Stylesheet:
 
         # Collect the rules defined in the stylesheet
         for rule in reversed(self.rules):
-            for specificity in _check_rule(rule, node):
+            is_widget_rule = rule.is_widget_rule_set
+            for base_specificity in _check_rule(rule, node):
                 for key, rule_specificity, value in rule.styles.extract_rules(
-                    specificity
+                    base_specificity, is_widget_rule
                 ):
                     rule_attributes[key].append((rule_specificity, value))
 
