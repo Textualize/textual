@@ -428,14 +428,17 @@ class Widget(DOMNode):
         )
 
     def _set_dirty(self, *regions: Region) -> None:
-        """Set the Widget as 'dirty' (requiring re-render)."""
+        """Set the Widget as 'dirty' (requiring re-paint).
 
-        # self._dirty_regions.clear()
-        # # TODO: Does this need to be content region?
-        # self._dirty_regions.append(self.size.region)
+        Regions should be specified as positional args. If no regions are added, then
+        the entire widget will be considered dirty.
+
+        Args:
+            *regions (Region): Regions which require a repaint.
+
+        """
 
         if regions:
-            content_offset = self.content_offset
             self._dirty_regions.update(regions)
         else:
             self._dirty_regions.clear()
@@ -444,6 +447,11 @@ class Widget(DOMNode):
             self._dirty_regions.add(self.size.region)
 
     def get_dirty_regions(self) -> Collection[Region]:
+        """Get regions which require a repaint.
+
+        Returns:
+            Collection[Region]: Regions to repaint.
+        """
         regions = self._dirty_regions.copy()
         return regions
 

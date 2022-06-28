@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import sys
 from functools import lru_cache
+from operator import itemgetter, attrgetter
 from typing import Any, Collection, NamedTuple, Tuple, TypeVar, Union, cast
 
 if sys.version_info >= (3, 10):
@@ -93,7 +94,10 @@ class Offset(NamedTuple):
         """
         x1, y1 = self
         x2, y2 = destination
-        return Offset(int(x1 + (x2 - x1) * factor), int((y1 + (y2 - y1) * factor)))
+        return Offset(
+            int(x1 + (x2 - x1) * factor),
+            int(y1 + (y2 - y1) * factor),
+        )
 
     def get_distance_to(self, other: Offset) -> float:
         """Get the distance to another offset.
@@ -195,7 +199,14 @@ class Region(NamedTuple):
     height: int = 0
 
     @classmethod
-    def from_union(cls, regions: Collection[Region]) -> Region:
+    def from_union(
+        cls,
+        regions: Collection[Region],
+        _get_x=itemgetter(0),
+        _get_y=itemgetter(1),
+        _get_right=attrgetter("right"),
+        _get_bottom=attrgetter("bottom"),
+    ) -> Region:
         """Create a Region from the union of other regions.
 
         Args:
@@ -206,10 +217,10 @@ class Region(NamedTuple):
         """
         if not regions:
             raise ValueError("At least one region expected")
-        min_x = min([region.x for region in regions])
-        max_x = max([x + width for x, _y, width, _height in regions])
-        min_y = min([region.y for region in regions])
-        max_y = max([y + height for _x, y, _width, height in regions])
+        min_x = min(regions, key=_get_x).x
+        max_x = max(regions, key=_get_right).right
+        min_y = min(regions, key=_get_y).y
+        max_y = max(regions, key=_get_bottom).bottom
         return cls(min_x, min_y, max_x - min_x, max_y - min_y)
 
     @classmethod
