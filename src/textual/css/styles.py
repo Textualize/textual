@@ -530,7 +530,11 @@ class Styles(StylesBase):
         rules = [
             (
                 rule_name,
-                (int(not is_widget_rule), int(is_important(rule_name)), *specificity),
+                (
+                    0 if is_widget_rule else 1,
+                    1 if is_important(rule_name) else 0,
+                    *specificity,
+                ),
                 rule_value,
             )
             for rule_name, rule_value in self._rules.items()
