@@ -26,6 +26,7 @@ BORDER_CHARS: dict[EdgeType, tuple[str, str, str]] = {
     #  - 2nd string represents (mid1, mid2, mid3)
     #  - 3rd string represents (bottom1, bottom2, bottom3)
     "": ("   ", "   ", "   "),
+    "ascii": ("+-+", "| |", "+-+"),
     "none": ("   ", "   ", "   "),
     "hidden": ("   ", "   ", "   "),
     "blank": ("   ", "   ", "   "),
@@ -48,6 +49,7 @@ BORDER_LOCATIONS: dict[
     EdgeType, tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]]
 ] = {
     "": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+    "ascii": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "none": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "hidden": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "blank": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),

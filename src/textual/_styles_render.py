@@ -7,6 +7,7 @@ from rich.segment import Segment
 
 from ._border import get_box
 from .color import Color
+from .css.types import EdgeType
 from ._segment_tools import line_crop
 from ._types import Lines
 from .geometry import Region, Size
@@ -15,6 +16,9 @@ from .widget import Widget
 
 if TYPE_CHECKING:
     from .css.styles import RenderStyles
+
+
+NORMALIZE_BORDER: dict[EdgeType, EdgeType] = {"none": "", "hidden": ""}
 
 
 class StylesRenderer:
@@ -89,6 +93,12 @@ class StylesRenderer:
             (border_left, border_left_color),
         ) = styles.border
 
+        normalize_border_get = NORMALIZE_BORDER.get
+        border_top = normalize_border_get(border_top, border_top)
+        border_right = normalize_border_get(border_right, border_right)
+        border_bottom = normalize_border_get(border_bottom, border_bottom)
+        border_left = normalize_border_get(border_left, border_left)
+
         from_color = Style.from_color
 
         inner_style = from_color(bgcolor=background.rich_color)
@@ -139,10 +149,9 @@ class StylesRenderer:
             return [Segment(" " * width, background_style)]
 
         # Apply background style
-        line_y = y - gutter.top
         line = list(
             Segment.apply_style(
-                self.render_content_line(line_y, content_width), inner_style
+                self.render_content_line(y - gutter.top, content_width), inner_style
             )
         )
 
@@ -197,10 +206,10 @@ if __name__ == "__main__":
     styles = Styles()
     styles.padding = 2
     styles.border = (
+        ("tall", Color.parse("red")),
+        ("none", Color.parse("white")),
         ("outer", Color.parse("red")),
-        ("", Color.parse("white")),
-        ("outer", Color.parse("red")),
-        ("", Color.parse("red")),
+        ("none", Color.parse("red")),
     )
 
     size = Size(40, 10)
