@@ -194,7 +194,7 @@ class Widget(DOMNode):
         """
         # Parse the Widget's CSS
         for path, css in self.css:
-            self.app.stylesheet.add_source(css, path=path, is_widget_css=True)
+            self.app.stylesheet.add_source(css, path=path, is_default_css=True)
 
     def get_box_model(
         self, container: Size, viewport: Size, fraction_unit: Fraction

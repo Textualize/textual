@@ -80,7 +80,9 @@ def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
     return selector_set
 
 
-def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
+def parse_rule_set(
+    tokens: Iterator[Token], token: Token, is_default_rules: bool = False
+) -> Iterable[RuleSet]:
     get_selector = SELECTOR_MAP.get
     combinator: CombinatorType | None = CombinatorType.DESCENDENT
     selectors: list[Selector] = []
@@ -149,7 +151,10 @@ def parse_rule_set(tokens: Iterator[Token], token: Token) -> Iterable[RuleSet]:
             errors.append((error.token, error.message))
 
     rule_set = RuleSet(
-        list(SelectorSet.from_selectors(rule_selectors)), styles_builder.styles, errors
+        list(SelectorSet.from_selectors(rule_selectors)),
+        styles_builder.styles,
+        errors,
+        is_default_rules=is_default_rules,
     )
     rule_set._post_parse()
     yield rule_set
@@ -307,7 +312,10 @@ def substitute_references(
 
 
 def parse(
-    css: str, path: str | PurePath, variables: dict[str, str] | None = None
+    css: str,
+    path: str | PurePath,
+    variables: dict[str, str] | None = None,
+    is_default_rules: bool = False,
 ) -> Iterable[RuleSet]:
     """Parse CSS by tokenizing it, performing variable substitution,
     and generating rule sets from it.
@@ -315,6 +323,9 @@ def parse(
     Args:
         css (str): The input CSS
         path (str): Path to the CSS
+        variables (dict[str, str]): Substitution variables to substitute tokens for.
+        is_default_rules (bool): True if the rules we're extracting are
+            default (i.e. in Widget.CSS) rules. False if they're from user defined CSS.
     """
     variable_tokens = tokenize_values(variables or {})
     tokens = iter(substitute_references(tokenize(css, path), variable_tokens))
@@ -323,7 +334,7 @@ def parse(
         if token is None:
             break
         if token.name.startswith("selector_start"):
-            yield from parse_rule_set(tokens, token)
+            yield from parse_rule_set(tokens, token, is_default_rules=is_default_rules)
 
 
 if __name__ == "__main__":

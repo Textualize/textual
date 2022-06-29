@@ -3,20 +3,18 @@ from typing import Any
 
 import pytest
 
-from tests.utilities.test_app import AppTest
-from textual.app import App, ComposeResult
 from textual.color import Color
 from textual.css._help_renderables import HelpText
-from textual.css.stylesheet import Stylesheet, StylesheetParseError
+from textual.css.stylesheet import Stylesheet, StylesheetParseError, CssSource
 from textual.css.tokenizer import TokenizeError
 from textual.dom import DOMNode
 from textual.geometry import Spacing
 from textual.widget import Widget
 
 
-def _make_stylesheet(css: str) -> Stylesheet:
+def _make_user_stylesheet(css: str) -> Stylesheet:
     stylesheet = Stylesheet()
-    stylesheet.source["test.css"] = css
+    stylesheet.source["test.css"] = CssSource(css, is_defaults=False)
     stylesheet.parse()
     return stylesheet
 
@@ -24,7 +22,7 @@ def _make_stylesheet(css: str) -> Stylesheet:
 def test_stylesheet_apply_highest_specificity_wins():
     """#ids have higher specificity than .classes"""
     css = "#id {color: red;} .class {color: blue;}"
-    stylesheet = _make_stylesheet(css)
+    stylesheet = _make_user_stylesheet(css)
     node = DOMNode(classes="class", id="id")
     stylesheet.apply(node)
 
@@ -33,7 +31,7 @@ def test_stylesheet_apply_highest_specificity_wins():
 
 def test_stylesheet_apply_doesnt_override_defaults():
     css = "#id {color: red;}"
-    stylesheet = _make_stylesheet(css)
+    stylesheet = _make_user_stylesheet(css)
     node = DOMNode(id="id")
     stylesheet.apply(node)
 
@@ -45,7 +43,7 @@ def test_stylesheet_apply_highest_specificity_wins_multiple_classes():
     """When we use two selectors containing only classes, then the selector
     `.b.c` has greater specificity than the selector `.a`"""
     css = ".b.c {background: blue;} .a {background: red; color: lime;}"
-    stylesheet = _make_stylesheet(css)
+    stylesheet = _make_user_stylesheet(css)
     node = DOMNode(classes="a b c")
     stylesheet.apply(node)
 
@@ -58,7 +56,7 @@ def test_stylesheet_many_classes_dont_overrule_id():
     a selector containing multiple classes cannot take priority over even a
     single class."""
     css = "#id {color: red;} .a.b.c.d {color: blue;}"
-    stylesheet = _make_stylesheet(css)
+    stylesheet = _make_user_stylesheet(css)
     node = DOMNode(classes="a b c d", id="id")
     stylesheet.apply(node)
 
@@ -67,7 +65,7 @@ def test_stylesheet_many_classes_dont_overrule_id():
 
 def test_stylesheet_last_rule_wins_when_same_rule_twice_in_one_ruleset():
     css = "#id {color: red; color: blue;}"
-    stylesheet = _make_stylesheet(css)
+    stylesheet = _make_user_stylesheet(css)
     node = DOMNode(id="id")
     stylesheet.apply(node)
 
@@ -76,7 +74,7 @@ def test_stylesheet_last_rule_wins_when_same_rule_twice_in_one_ruleset():
 
 def test_stylesheet_rulesets_merged_for_duplicate_selectors():
     css = "#id {color: red; background: lime;} #id {color:blue;}"
-    stylesheet = _make_stylesheet(css)
+    stylesheet = _make_user_stylesheet(css)
     node = DOMNode(id="id")
     stylesheet.apply(node)
 
@@ -88,7 +86,7 @@ def test_stylesheet_apply_takes_final_rule_in_specificity_clash():
     """.a and .b both contain background and have same specificity, so .b wins
     since it was declared last - the background should be blue."""
     css = ".a {background: red; color: lime;} .b {background: blue;}"
-    stylesheet = _make_stylesheet(css)
+    stylesheet = _make_user_stylesheet(css)
     node = DOMNode(classes="a b", id="c")
     stylesheet.apply(node)
 
@@ -99,7 +97,7 @@ def test_stylesheet_apply_takes_final_rule_in_specificity_clash():
 def test_stylesheet_apply_empty_rulesets():
     """Ensure that we don't crash when working with empty rulesets"""
     css = ".a {} .b {}"
-    stylesheet = _make_stylesheet(css)
+    stylesheet = _make_user_stylesheet(css)
     node = DOMNode(classes="a b")
     stylesheet.apply(node)
 
@@ -113,8 +111,8 @@ def test_stylesheet_apply_user_css_over_widget_css():
     node = MyWidget()
     node.add_class("a")
 
-    stylesheet = _make_stylesheet(user_css)
-    stylesheet.add_source(MyWidget.CSS, "widget.py:MyWidget", is_widget_css=True)
+    stylesheet = _make_user_stylesheet(user_css)
+    stylesheet.add_source(MyWidget.CSS, "widget.py:MyWidget", is_default_css=True)
     stylesheet.apply(node)
 
     # The node is red because user CSS overrides Widget.CSS

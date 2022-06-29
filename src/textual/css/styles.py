@@ -514,13 +514,15 @@ class Styles(StylesBase):
     def extract_rules(
         self,
         specificity: Specificity3,
-        is_widget_rule: bool = False,
+        is_default_rules: bool = False,
     ) -> list[tuple[str, Specificity5, Any]]:
         """Extract rules from Styles object, and apply !important css specificity as
         well as higher specificity of user CSS vs widget CSS.
 
         Args:
             specificity (Specificity3): A node specificity.
+            is_default_rules (bool): True if the rules we're extracting are
+                default (i.e. in Widget.CSS) rules. False if they're from user defined CSS.
 
         Returns:
             list[tuple[str, Specificity5, Any]]]: A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
@@ -531,7 +533,7 @@ class Styles(StylesBase):
             (
                 rule_name,
                 (
-                    0 if is_widget_rule else 1,
+                    0 if is_default_rules else 1,
                     1 if is_important(rule_name) else 0,
                     *specificity,
                 ),
