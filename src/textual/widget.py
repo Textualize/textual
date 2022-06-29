@@ -73,12 +73,12 @@ class Widget(DOMNode):
     CSS = """
     Widget{
         scrollbar-background: $panel-darken-2;
-        scrollbar-background-hover: $panel-darken-3;        
+        scrollbar-background-hover: $panel-darken-3;
         scrollbar-color: $system;
-        scrollbar-color-active: $secondary-darken-1;                
+        scrollbar-color-active: $secondary-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
-        
+
     }
     """
 
@@ -193,7 +193,7 @@ class Widget(DOMNode):
         """
         # Parse the Widget's CSS
         for path, css in self.css:
-            self.app.stylesheet.add_source(css, path=path)
+            self.app.stylesheet.add_source(css, path=path, is_default_css=True)
 
     def get_box_model(
         self, container: Size, viewport: Size, fraction_unit: Fraction
