@@ -9,7 +9,9 @@ from rich.segment import Segment
 from ._cells import cell_len
 
 
-def line_crop(segments: list[Segment], start: int, end: int, total: int):
+def line_crop(
+    segments: list[Segment], start: int, end: int, total: int
+) -> list[Segment]:
     """Crops a list of segments between two cell offsets.
 
     Args:
@@ -58,3 +60,31 @@ def line_crop(segments: list[Segment], start: int, end: int, total: int):
         segment = next(iter_segments, None)
 
     return output_segments
+
+
+def line_trim(segments: list[Segment], start: bool, end: bool) -> list[Segment]:
+    """Optionally remove a cell from the start and / or end of a list of segments.
+
+    Args:
+        segments (list[Segment]): A line (list of Segments)
+        start (bool): Remove cell from start.
+        end (bool): Remove cell from end.
+
+    Returns:
+        list[Segment]: A new list of segments.
+    """
+    segments = segments.copy()
+    if segments and start:
+        _, first_segment = segments[0].split_cells(1)
+        if first_segment.text:
+            segments[0] = first_segment
+        else:
+            segments.pop(0)
+    if segments and end:
+        last_segment = segments[-1]
+        last_segment, _ = last_segment.split_cells(len(last_segment.text) - 1)
+        if last_segment.text:
+            segments[-1] = last_segment
+        else:
+            segments.pop(-1)
+    return segments

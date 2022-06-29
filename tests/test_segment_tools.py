@@ -2,7 +2,7 @@ from rich.segment import Segment
 from rich.style import Style
 
 
-from textual._segment_tools import line_crop
+from textual._segment_tools import line_crop, line_trim
 
 
 def test_line_crop():
@@ -62,3 +62,30 @@ def test_line_crop_edge_2():
     expected = []
     print(repr(result))
     assert result == expected
+
+
+def test_line_trim():
+    segments = [Segment("foo")]
+
+    assert line_trim(segments, False, False) == segments
+    assert line_trim(segments, True, False) == [Segment("oo")]
+    assert line_trim(segments, False, True) == [Segment("fo")]
+    assert line_trim(segments, True, True) == [Segment("o")]
+
+    fob_segments = [Segment("f"), Segment("o"), Segment("b")]
+
+    assert line_trim(fob_segments, True, False) == [
+        Segment("o"),
+        Segment("b"),
+    ]
+
+    assert line_trim(fob_segments, False, True) == [
+        Segment("f"),
+        Segment("o"),
+    ]
+
+    assert line_trim(fob_segments, True, True) == [
+        Segment("o"),
+    ]
+
+    assert line_trim([], True, True) == []
