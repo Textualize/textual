@@ -80,7 +80,6 @@ class StylesRenderer:
         gutter = styles.gutter
         width, height = size
         content_width, content_height = size - gutter.totals
-        last_y = height - 1
 
         pad_top, pad_right, pad_bottom, pad_left = styles.padding
         (
@@ -90,17 +89,20 @@ class StylesRenderer:
             (border_left, border_left_color),
         ) = styles.border
 
-        inner_style = Style.from_color(base_background.rich_color)
-        outer_style = Style.from_color(background.rich_color)
+        from_color = Style.from_color
 
-        if border_top and y in (0, last_y):
+        inner_style = from_color(bgcolor=background.rich_color)
+        outer_style = from_color(bgcolor=base_background.rich_color)
+
+        # Draw top or bottom borders
+        if border_top and y in (0, height - 1):
 
             border_color = border_top_color if y == 0 else border_bottom_color
             box_segments = get_box(
                 border_top if y == 0 else border_bottom,
                 inner_style,
                 outer_style,
-                Style.from_color(bgcolor=border_color.rich_color),
+                Style.from_color(color=border_color.rich_color),
             )
             box1, box2, box3 = box_segments[0 if y == 0 else 2]
 
@@ -108,21 +110,25 @@ class StylesRenderer:
                 return [box1, Segment(box2.text * (width - 2), box2.style), box3]
             elif border_left:
                 return [box1, Segment(box2.text * (width - 1), box2.style)]
-            return [Segment(box2.text * (width - 1), box2.style), box3]
+            elif border_right:
+                return [Segment(box2.text * (width - 1), box2.style), box3]
+            else:
+                return [Segment(box2.text * width, box2.style)]
 
+        # Draw padding
         if (pad_top and y < gutter.top) or (pad_bottom and y >= height - gutter.bottom):
-            background_style = Style.from_color(bgcolor=base_background.rich_color)
+            background_style = from_color(bgcolor=background.rich_color)
             _, (left, _, _), _ = get_box(
                 border_left,
                 inner_style,
                 outer_style,
-                Style.from_color(bgcolor=border_left_color.rich_color),
+                from_color(color=border_left_color.rich_color),
             )
             _, (_, _, right), _ = get_box(
-                border_left,
+                border_right,
                 inner_style,
                 outer_style,
-                Style.from_color(bgcolor=border_right_color.rich_color),
+                Style.from_color(color=border_right_color.rich_color),
             )
             if border_left and border_right:
                 return [left, Segment(" " * (width - 2), background_style), right]
@@ -132,9 +138,15 @@ class StylesRenderer:
                 return [Segment(" " * (width - 1), background_style), right]
             return [Segment(" " * width, background_style)]
 
+        # Apply background style
         line_y = y - gutter.top
-        line = self.render_content_line(line_y, content_width)
+        line = list(
+            Segment.apply_style(
+                self.render_content_line(line_y, content_width), inner_style
+            )
+        )
 
+        # Add padding
         if pad_left and pad_right:
             line = [
                 Segment(" " * pad_left, inner_style),
@@ -155,17 +167,18 @@ class StylesRenderer:
         if not border_left and not border_right:
             return line
 
+        # Add left / right border
         _, (left, _, _), _ = get_box(
             border_left,
             inner_style,
             outer_style,
-            Style.from_color(border_left_color.rich_color),
+            from_color(border_left_color.rich_color),
         )
         _, (_, _, right), _ = get_box(
             border_left,
             inner_style,
             outer_style,
-            Style.from_color(border_right_color.rich_color),
+            from_color(border_right_color.rich_color),
         )
 
         if border_left and border_right:
@@ -183,14 +196,20 @@ if __name__ == "__main__":
 
     styles = Styles()
     styles.padding = 2
-    styles.border = ("solid", Color.parse("red"))
+    styles.border = (
+        ("outer", Color.parse("red")),
+        ("", Color.parse("white")),
+        ("outer", Color.parse("red")),
+        ("", Color.parse("red")),
+    )
 
     size = Size(40, 10)
     sr = StylesRenderer(None)
     lines = sr._render(
         size, size.region, styles, Color.parse("blue"), Color.parse("green")
     )
-
+    for line in lines:
+        print(line)
     from rich.segment import SegmentLines
 
     print(SegmentLines(lines, new_lines=True))

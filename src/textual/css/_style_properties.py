@@ -397,8 +397,8 @@ class BorderProperty:
             _border1, _border2, _border3, _border4 = (
                 normalize_border_value(border[0]),
                 normalize_border_value(border[1]),
+                normalize_border_value(border[2]),
                 normalize_border_value(border[3]),
-                normalize_border_value(border[4]),
             )
             setattr(obj, top, _border1)
             setattr(obj, right, _border2)
