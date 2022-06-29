@@ -386,7 +386,10 @@ class DOMNode(MessagePump):
                 background += styles.background
             if styles.has_rule("color"):
                 base_color = color
-                color += styles.color
+                if styles.color.is_auto:
+                    color = background.get_contrast_text(styles.color.a)
+                else:
+                    color += styles.color
         return (base_background, base_color), (background, color)
 
     @property

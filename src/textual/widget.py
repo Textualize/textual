@@ -71,14 +71,14 @@ class RenderCache(NamedTuple):
 class Widget(DOMNode):
 
     CSS = """
-    Widget{
+    Widget {
+        color: auto;
         scrollbar-background: $panel-darken-2;
         scrollbar-background-hover: $panel-darken-3;
         scrollbar-color: $system;
         scrollbar-color-active: $secondary-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
-
     }
     """
 
