@@ -5,6 +5,7 @@ from typing import cast, Iterable, NoReturn, Sequence
 
 import rich.repr
 
+from ._color import parse_color_expression
 from ._error_tools import friendly_list
 from ._help_renderables import HelpText
 from ._help_text import (
@@ -570,31 +571,26 @@ class StylesBuilder:
         name = name.replace("-", "_")
 
         color: Color | None = None
-        alpha: float | None = None
+        rules = self.styles._rules
 
-        for token in tokens:
-            if token.name == "scalar":
-                alpha_scalar = Scalar.parse(token.value)
-                if alpha_scalar.unit != Unit.PERCENT:
-                    self.error(name, token, "alpha must be given as a percentage.")
-                alpha = alpha_scalar.value / 100.0
+        expression = _join_tokens(tokens)
+        try:
+            color, is_auto = parse_color_expression(expression)
+        except Exception as error:
+            self.error(
+                name,
+                expression,
+                color_property_help_text(name, context="css", error=error),
+            )
 
-            elif token.name in ("color", "token"):
-                try:
-                    color = Color.parse(token.value)
-                except Exception as error:
-                    self.error(
-                        name,
-                        token,
-                        color_property_help_text(name, context="css", error=error),
-                    )
-            else:
-                self.error(name, token, color_property_help_text(name, context="css"))
-
+        if is_auto:
+            if name != "color":
+                self.error(
+                    name, "auto", "'auto' can only be set for the 'color' property."
+                )
+            rules["color_auto"] = True
         if color is not None:
-            if alpha is not None:
-                color = color.with_alpha(alpha)
-            self.styles._rules[name] = color
+            rules[name] = color
 
     process_tint = process_color
     process_background = process_color

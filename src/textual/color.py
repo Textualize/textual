@@ -63,8 +63,7 @@ RE_COLOR = re.compile(
 rgb{OPEN_BRACE}({DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}){CLOSE_BRACE}$|
 rgba{OPEN_BRACE}({DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}{COMMA}{DECIMAL}){CLOSE_BRACE}$|
 hsl{OPEN_BRACE}({DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}){CLOSE_BRACE}$|
-hsla{OPEN_BRACE}({DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{COMMA}{DECIMAL}){CLOSE_BRACE}$|
-(auto)(?:\s+({DECIMAL})%)?$
+hsla{OPEN_BRACE}({DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{COMMA}{DECIMAL}){CLOSE_BRACE}$
 """,
     re.VERBOSE,
 )
@@ -145,11 +144,6 @@ class Color(NamedTuple):
     def is_transparent(self) -> bool:
         """Check if the color is transparent, i.e. has 0 alpha."""
         return self.a == 0
-
-    @property
-    def is_auto(self) -> bool:
-        """Check if the color is "auto"."""
-        return self.r == AUTO.r and self.g == AUTO.g and self.b == AUTO.b
 
     @property
     def clamped(self) -> Color:
@@ -308,8 +302,6 @@ class Color(NamedTuple):
             rgba,
             hsl,
             hsla,
-            auto,
-            auto_percentage,
         ) = color_match.groups()
 
         if rgb_hex_triple is not None:
@@ -355,13 +347,6 @@ class Color(NamedTuple):
             l = percentage_string_to_float(l)
             a = clamp(float(a), 0.0, 1.0)
             color = Color.from_hls(h, l, s).with_alpha(a)
-        elif auto == "auto":
-            auto_percentage_float = (
-                clamp(float(auto_percentage) / 100.0, 0.0, 1.0)
-                if auto_percentage
-                else 1.0
-            )
-            color = Color(AUTO.r, AUTO.g, AUTO.b, auto_percentage_float)
         else:
             raise AssertionError("Can't get here if RE_COLOR matches")
         return color
@@ -414,11 +399,6 @@ class Color(NamedTuple):
 WHITE = Color(255, 255, 255)
 BLACK = Color(0, 0, 0)
 TRANSPARENT = Color(0, 0, 0, 0)
-# We cannot express "auto" using Color primitives, so for this one we'll use some sentinel values for each R,G,B value.
-# (because "auto" is resolved at runtime, depending on the background color of the Node and its parents)
-# A color is "auto" if its R, G and B values are exactly equal to the following ones:
-# (we could have "userland colors" that accidentally have these exact same values, but it's probably unlikely enough?)
-AUTO = Color(0.123456789, 1.234567890, 2.345678901)
 
 
 class ColorPair(NamedTuple):

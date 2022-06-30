@@ -14,6 +14,7 @@ from typing import Generic, Iterable, NamedTuple, TypeVar, TYPE_CHECKING, cast
 import rich.repr
 from rich.style import Style
 
+from ._color import parse_color_expression
 from ._help_text import (
     border_property_help_text,
     layout_property_help_text,
@@ -794,6 +795,37 @@ class NameListProperty:
                 obj.refresh(layout=True)
 
 
+class BooleanProperty:
+    """Descriptor for getting boolean properties"""
+
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> bool | None:
+        """Get a ``bool``.
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            bool | None: The boolean value
+        """
+        return cast("bool | None", obj.get_rule("color_auto", None))
+
+    def __set__(self, obj: Styles, value: bool | None) -> None:
+        """Set the boolean value
+
+        Args:
+            obj (Styles): The ``Styles`` object
+            value (bool | None): The value to set.
+        """
+        _rich_traceback_omit = True
+        if value is None:
+            obj.clear_rule("color_auto")
+        else:
+            obj.set_rule("color_auto", value)
+
+
 class ColorProperty:
     """Descriptor for getting and setting color properties."""
 
@@ -838,7 +870,7 @@ class ColorProperty:
                 obj.refresh()
         elif isinstance(color, str):
             try:
-                parsed_color = Color.parse(color)
+                parsed_color, is_auto = parse_color_expression(color)
             except ColorParseError as error:
                 raise StyleValueError(
                     f"Invalid color value '{color}'",
@@ -846,6 +878,8 @@ class ColorProperty:
                         self.name, context="inline", error=error
                     ),
                 )
+            if is_auto:
+                obj.set_rule("color_auto", True)
             if obj.set_rule(self.name, parsed_color):
                 obj.refresh()
         else:

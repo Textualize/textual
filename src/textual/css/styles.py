@@ -15,6 +15,7 @@ from ..color import Color
 from ..geometry import Spacing
 from ._style_properties import (
     AlignProperty,
+    BooleanProperty,
     BorderProperty,
     BoxProperty,
     ColorProperty,
@@ -52,7 +53,6 @@ from .types import (
     AlignHorizontal,
     Overflow,
     Specificity3,
-    Specificity4,
     AlignVertical,
     Visibility,
     ScrollbarGutter,
@@ -82,6 +82,7 @@ class RulesMap(TypedDict, total=False):
     layout: "Layout"
 
     color: Color
+    color_auto: bool
     background: Color
     text_style: Style
 
@@ -182,6 +183,9 @@ class StylesBase(ABC):
     layout = LayoutProperty()
 
     color = ColorProperty(Color(255, 255, 255))
+    # N.B. This one is a pseudo-property, in the sense that we cannot set it via CSS via a dedicated property:
+    # (can only be set by specifying the special value "auto" for the "color" property)
+    color_auto = BooleanProperty()
     background = ColorProperty(Color(0, 0, 0, 0))
     text_style = StyleFlagsProperty()
 
@@ -684,7 +688,11 @@ class Styles(StylesBase):
             assert self.layout is not None
             append_declaration("layout", self.layout.name)
 
-        if has_rule("color"):
+        if get_rule("color_auto", False):
+            append_declaration(
+                "color", f"auto{f' {self.color.a * 100}%' if self.color.a < 1 else ''}"
+            )
+        elif has_rule("color"):
             append_declaration("color", self.color.hex)
         if has_rule("background"):
             append_declaration("background", self.background.hex)
