@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 from rich.style import Style
-from typing import TYPE_CHECKING
+from typing import Iterable, TYPE_CHECKING
 
 from rich.segment import Segment
 
 from ._border import get_box
 from .color import Color
 from .css.types import EdgeType
+from .renderables.opacity import Opacity
+from .renderables.tint import Tint
 from ._segment_tools import line_crop
 from ._types import Lines
 from .geometry import Region, Size
@@ -22,19 +24,21 @@ NORMALIZE_BORDER: dict[EdgeType, EdgeType] = {"none": "", "hidden": ""}
 
 
 class StylesRenderer:
+    """Responsible for rendering CSS Styles and keeping a cached of rendered lines."""
+
     def __init__(self, widget: Widget) -> None:
         self._widget = widget
         self._cache: dict[int, list[Segment]] = {}
         self._dirty_lines: set[int] = set()
 
     def set_dirty(self, *regions: Region) -> None:
+        """Add a dirty region, or set the entire widget as dirty."""
         if regions:
             for region in regions:
-                self._dirty_lines.update(region.y_range)
+                self._dirty_lines.update(region.line_range)
         else:
             self._dirty_lines.clear()
-            for y in self._widget.size.lines:
-                self._dirty_lines.add(y)
+            self._dirty_lines.update(self._widget.size.lines_range)
 
     def render(self, region: Region) -> Lines:
 
@@ -60,7 +64,7 @@ class StylesRenderer:
 
         is_dirty = self._dirty_lines.__contains__
         render_line = self.render_line
-        for y in region.y_range:
+        for y in region.line_range:
             if is_dirty(y) or y not in self._cache:
                 line = render_line(styles, y, size, base_background, background)
                 line = list(simplify(line))
@@ -68,11 +72,11 @@ class StylesRenderer:
             else:
                 line = self._cache[y]
             add_line(line)
-        self._dirty_lines.difference_update(region.y_range)
+        self._dirty_lines.difference_update(region.line_range)
 
-        if region.x_extents != (0, width):
+        if region.column_span != (0, width):
             _line_crop = line_crop
-            x1, x2 = region.x_extents
+            x1, x2 = region.column_span
             lines = [_line_crop(line, x1, x2, width) for line in lines]
 
         return lines
@@ -109,8 +113,16 @@ class StylesRenderer:
 
         from_color = Style.from_color
 
-        inner_style = from_color(bgcolor=background.rich_color)
+        rich_style = styles.rich_style
+        inner_style = from_color(bgcolor=background.rich_color) + rich_style
         outer_style = from_color(bgcolor=base_background.rich_color)
+
+        def post(segments: Iterable[Segment]) -> list[Segment]:
+            if styles.opacity != 1.0:
+                segments = Opacity.process_segments(segments, styles.opacity)
+            if styles.tint.a:
+                segments = Tint.process_segments(segments, styles.tint)
+            return segments if isinstance(segments, list) else list(segments)
 
         # Draw top or bottom borders
         if border_top and y in (0, height - 1):
@@ -120,22 +132,24 @@ class StylesRenderer:
                 border_top if y == 0 else border_bottom,
                 inner_style,
                 outer_style,
-                Style.from_color(color=border_color.rich_color),
+                from_color(color=border_color.rich_color),
             )
             box1, box2, box3 = box_segments[0 if y == 0 else 2]
 
             if border_left and border_right:
-                return [box1, Segment(box2.text * (width - 2), box2.style), box3]
+                return post([box1, Segment(box2.text * (width - 2), box2.style), box3])
             elif border_left:
-                return [box1, Segment(box2.text * (width - 1), box2.style)]
+                return post([box1, Segment(box2.text * (width - 1), box2.style)])
             elif border_right:
-                return [Segment(box2.text * (width - 1), box2.style), box3]
+                return post([Segment(box2.text * (width - 1), box2.style), box3])
             else:
-                return [Segment(box2.text * width, box2.style)]
+                return post([Segment(box2.text * width, box2.style)])
 
         # Draw padding
         if (pad_top and y < gutter.top) or (pad_bottom and y >= height - gutter.bottom):
-            background_style = from_color(bgcolor=background.rich_color)
+            background_style = from_color(
+                color=rich_style.color, bgcolor=background.rich_color
+            )
             _, (left, _, _), _ = get_box(
                 border_left,
                 inner_style,
@@ -146,15 +160,15 @@ class StylesRenderer:
                 border_right,
                 inner_style,
                 outer_style,
-                Style.from_color(color=border_right_color.rich_color),
+                from_color(color=border_right_color.rich_color),
             )
             if border_left and border_right:
-                return [left, Segment(" " * (width - 2), background_style), right]
+                return post([left, Segment(" " * (width - 2), background_style), right])
             if border_left:
-                return [left, Segment(" " * (width - 1), background_style)]
+                return post([left, Segment(" " * (width - 1), background_style)])
             if border_right:
-                return [Segment(" " * (width - 1), background_style), right]
-            return [Segment(" " * width, background_style)]
+                return post([Segment(" " * (width - 1), background_style), right])
+            return post([Segment(" " * width, background_style)])
 
         # Apply background style
         line = self.render_content_line(y - gutter.top)
@@ -180,7 +194,7 @@ class StylesRenderer:
             ]
 
         if not border_left and not border_right:
-            return line
+            return post(line)
 
         # Add left / right border
         _, (left, _, _), _ = get_box(
@@ -197,11 +211,11 @@ class StylesRenderer:
         )
 
         if border_left and border_right:
-            return [left, *line, right]
+            return post([left, *line, right])
         elif border_left:
-            return [left, *line]
+            return post([left, *line])
 
-        return [*line, right]
+        return post([*line, right])
 
 
 if __name__ == "__main__":

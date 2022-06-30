@@ -15,9 +15,9 @@
   scrollbar-size-vertical: 2;
 }
 
-/* *:hover {
-  tint: red 30%;
-} */
+*:hover {
+  /* tint: 30% red; */
+}
 
 App > Screen {
   layout: dock;

@@ -167,6 +167,7 @@ class StylesBase(ABC):
         "max_height",
         "color",
         "background",
+        "opacity",
         "tint",
         "scrollbar_color",
         "scrollbar_color_hover",

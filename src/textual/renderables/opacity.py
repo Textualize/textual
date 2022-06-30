@@ -1,4 +1,5 @@
 import functools
+from typing import Iterable
 
 from rich.color import Color
 from rich.console import ConsoleOptions, Console, RenderResult, RenderableType
@@ -8,51 +9,63 @@ from rich.style import Style
 from textual.renderables._blend_colors import blend_colors
 
 
-class Opacity:
-    """Wrap a renderable to blend foreground color into the background color.
-
-    Args:
-        renderable (RenderableType): The RenderableType to manipulate.
-        opacity (float): The opacity as a float. A value of 1.0 means text is fully visible.
-    """
-
-    def __init__(self, renderable: RenderableType, opacity: float = 1.0) -> None:
-        self.renderable = renderable
-        self.opacity = opacity
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        segments = console.render(self.renderable, options)
-        opacity = self.opacity
-        for segment in segments:
-            style = segment.style
-            if not style:
-                yield segment
-                continue
-            fg = style.color
-            bg = style.bgcolor
-            if fg and fg.triplet and bg and bg.triplet:
-                color_style = _get_blended_style_cached(
-                    fg_color=fg, bg_color=bg, opacity=opacity
-                )
-                yield Segment(
-                    segment.text,
-                    style + color_style,
-                    segment.control,
-                )
-            else:
-                yield segment
-
-
 @functools.lru_cache(maxsize=1024)
 def _get_blended_style_cached(
-    fg_color: Color, bg_color: Color, opacity: float
+    bg_color: Color, fg_color: Color, opacity: float
 ) -> Style:
     return Style.from_color(
         color=blend_colors(bg_color, fg_color, ratio=opacity),
         bgcolor=bg_color,
     )
+
+
+class Opacity:
+    """Blend foreground in to background."""
+
+    def __init__(self, renderable: RenderableType, opacity: float = 1.0) -> None:
+        """Wrap a renderable to blend foreground color into the background color.
+
+        Args:
+            renderable (RenderableType): The RenderableType to manipulate.
+            opacity (float): The opacity as a float. A value of 1.0 means text is fully visible.
+        """
+        self.renderable = renderable
+        self.opacity = opacity
+
+    @classmethod
+    def process_segments(
+        cls, segments: Iterable[Segment], opacity: float
+    ) -> Iterable[Segment]:
+        """Apply opacity to segments.
+
+        Args:
+            segments (Iterable[Segment]): Incoming segments.
+            opacity (float): Opacity to apply.
+
+        Returns:
+            Iterable[Segment]: Segments with applied opacity.
+
+        """
+        _Segment = Segment
+        for segment in segments:
+            text, style, control = segment
+            if not style:
+                yield segment
+                continue
+
+            color = style.color
+            bgcolor = style.bgcolor
+            if color and color.triplet and bgcolor and bgcolor.triplet:
+                color_style = _get_blended_style_cached(bgcolor, color, opacity)
+                yield _Segment(text, style + color_style)
+            else:
+                yield segment
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        segments = console.render(self.renderable, options)
+        return self.process_segments(segments, self.opacity)
 
 
 if __name__ == "__main__":
