@@ -35,7 +35,7 @@ def line_crop(
     for segment in iter_segments:
         end_pos = pos + _cell_len(segment.text)
         if end_pos > start:
-            segment = segment.split_cells(start - pos)[-1]
+            segment = segment.split_cells(start - pos)[1]
             break
         pos = end_pos
     else:
@@ -86,5 +86,5 @@ def line_trim(segments: list[Segment], start: bool, end: bool) -> list[Segment]:
         if last_segment.text:
             segments[-1] = last_segment
         else:
-            segments.pop(-1)
+            segments.pop()
     return segments

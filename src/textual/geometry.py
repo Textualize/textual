@@ -139,6 +139,10 @@ class Size(NamedTuple):
         width, height = self
         return Region(0, 0, width, height)
 
+    @property
+    def lines(self) -> list[int]:
+        return list(range(self.height))
+
     def __add__(self, other: object) -> Size:
         if isinstance(other, tuple):
             width, height = self

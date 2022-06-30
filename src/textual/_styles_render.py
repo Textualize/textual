@@ -11,11 +11,11 @@ from .css.types import EdgeType
 from ._segment_tools import line_crop
 from ._types import Lines
 from .geometry import Region, Size
-from .widget import Widget
 
 
 if TYPE_CHECKING:
     from .css.styles import RenderStyles
+    from .widget import Widget
 
 
 NORMALIZE_BORDER: dict[EdgeType, EdgeType] = {"none": "", "hidden": ""}
@@ -27,8 +27,14 @@ class StylesRenderer:
         self._cache: dict[int, list[Segment]] = {}
         self._dirty_lines: set[int] = set()
 
-    def invalidate(self, region: Region) -> None:
-        self._dirty_lines.update(region.y_range)
+    def set_dirty(self, *regions: Region) -> None:
+        if regions:
+            for region in regions:
+                self._dirty_lines.update(region.y_range)
+        else:
+            self._dirty_lines.clear()
+            for y in self._widget.size.lines:
+                self._dirty_lines.add(y)
 
     def render(self, region: Region) -> Lines:
 
@@ -50,12 +56,14 @@ class StylesRenderer:
         width, height = size
         lines: Lines = []
         add_line = lines.append
+        simplify = Segment.simplify
 
         is_dirty = self._dirty_lines.__contains__
         render_line = self.render_line
         for y in region.y_range:
             if is_dirty(y) or y not in self._cache:
                 line = render_line(styles, y, size, base_background, background)
+                line = list(simplify(line))
                 self._cache[y] = line
             else:
                 line = self._cache[y]
@@ -64,13 +72,13 @@ class StylesRenderer:
 
         if region.x_extents != (0, width):
             _line_crop = line_crop
-            x1, x2 = region.x_range
+            x1, x2 = region.x_extents
             lines = [_line_crop(line, x1, x2, width) for line in lines]
 
         return lines
 
-    def render_content_line(self, y: int, width: int) -> list[Segment]:
-        return [Segment((str(y) * width)[:width])]
+    def render_content_line(self, y: int) -> list[Segment]:
+        return self._widget.render_line(y)
 
     def render_line(
         self,
@@ -149,11 +157,9 @@ class StylesRenderer:
             return [Segment(" " * width, background_style)]
 
         # Apply background style
-        line = list(
-            Segment.apply_style(
-                self.render_content_line(y - gutter.top, content_width), inner_style
-            )
-        )
+        line = self.render_content_line(y - gutter.top)
+        if inner_style:
+            line = list(Segment.apply_style(line, inner_style))
 
         # Add padding
         if pad_left and pad_right:
@@ -184,7 +190,7 @@ class StylesRenderer:
             from_color(border_left_color.rich_color),
         )
         _, (_, _, right), _ = get_box(
-            border_left,
+            border_right,
             inner_style,
             outer_style,
             from_color(border_right_color.rich_color),
@@ -195,7 +201,7 @@ class StylesRenderer:
         elif border_left:
             return [left, *line]
 
-        return [right, *line]
+        return [*line, right]
 
 
 if __name__ == "__main__":

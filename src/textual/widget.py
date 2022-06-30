@@ -17,6 +17,7 @@ from rich.align import Align
 from rich.console import Console, RenderableType
 from rich.measure import Measurement
 from rich.padding import Padding
+from rich.segment import Segment
 from rich.style import Style
 
 from . import errors
@@ -25,6 +26,7 @@ from ._animator import BoundAnimator
 from ._border import Border
 from .box_model import BoxModel, get_box_model
 from ._context import active_app
+from ._styles_render import StylesRenderer
 from ._types import Lines
 from .dom import DOMNode
 from ._layout import ArrangeResult
@@ -117,6 +119,8 @@ class Widget(DOMNode):
 
         self._arrangement: ArrangeResult | None = None
         self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
+
+        self._styles_renderer = StylesRenderer(self)
 
         super().__init__(name=name, id=id, classes=classes)
         self.add_children(*children)
@@ -833,8 +837,17 @@ class Widget(DOMNode):
         """
 
         renderable = self.render()
-        renderable = self._style_renderable(renderable)
+        styles = self.styles
+        content_align = (styles.content_align_horizontal, styles.content_align_vertical)
+        if content_align != ("left", "top"):
+            horizontal, vertical = content_align
+            renderable = Align(renderable, horizontal, vertical=vertical)
+
         return renderable
+
+    @property
+    def content_size(self) -> Size:
+        return self._size - self.styles.gutter.totals
 
     @property
     def size(self) -> Size:
@@ -955,13 +968,13 @@ class Widget(DOMNode):
 
     def _render_lines(self) -> None:
         """Render all lines."""
-        width, height = self.size
+        width, height = self.content_size
         renderable = self.render_styled()
         options = self.console.options.update_dimensions(width, height).update(
             highlight=False
         )
-        lines = self.console.render_lines(renderable, options)
-        self._render_cache = RenderCache(self.size, lines)
+        lines = self.console.render_lines(renderable, options, style=self.rich_style)
+        self._render_cache = RenderCache(self.content_size, lines)
         self._dirty_regions.clear()
 
     def _crop_lines(self, lines: Lines, x1, x2) -> Lines:
@@ -970,6 +983,10 @@ class Widget(DOMNode):
             _line_crop = line_crop
             lines = [_line_crop(line, x1, x2, width) for line in lines]
         return lines
+
+    def render_line(self, y) -> list[Segment]:
+        line = self._render_cache.lines[y]
+        return line
 
     def render_lines(self, crop: Region) -> Lines:
         """Render the widget in to lines.
@@ -981,7 +998,11 @@ class Widget(DOMNode):
             Lines: A list of list of segments
         """
         if self._dirty_regions:
+            self._styles_renderer.set_dirty(*self._dirty_regions)
             self._render_lines()
+
+        lines = self._styles_renderer.render(crop)
+        return lines
 
         x1, y1, x2, y2 = crop.corners
         lines = self._render_cache.lines[y1:y2]
