@@ -14,7 +14,7 @@ from typing import Generic, Iterable, NamedTuple, TypeVar, TYPE_CHECKING, cast
 import rich.repr
 from rich.style import Style
 
-from ._color import parse_color_expression
+from ._color import parse_color_tokens
 from ._help_text import (
     border_property_help_text,
     layout_property_help_text,
@@ -28,7 +28,8 @@ from ._help_text import (
     string_enum_help_text,
     color_property_help_text,
 )
-from .._border import INVISIBLE_EDGE_TYPES, normalize_border_value
+from .tokenize import tokenize_value
+from .._border import normalize_border_value
 from ..color import Color, ColorPair, ColorParseError
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING, VALID_STYLE_FLAGS
@@ -869,8 +870,9 @@ class ColorProperty:
             if obj.set_rule(self.name, color):
                 obj.refresh()
         elif isinstance(color, str):
+            tokens = tokenize_value(color, "expression")
             try:
-                parsed_color, is_auto = parse_color_expression(color)
+                parsed_color, is_auto = parse_color_tokens(self.name, tokens)
             except ColorParseError as error:
                 raise StyleValueError(
                     f"Invalid color value '{color}'",

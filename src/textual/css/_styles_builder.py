@@ -5,7 +5,7 @@ from typing import cast, Iterable, NoReturn, Sequence
 
 import rich.repr
 
-from ._color import parse_color_expression
+from ._color import parse_color_tokens
 from ._error_tools import friendly_list
 from ._help_renderables import HelpText
 from ._help_text import (
@@ -570,27 +570,17 @@ class StylesBuilder:
         """Processes a simple color declaration."""
         name = name.replace("-", "_")
 
-        color: Color | None = None
-        rules = self.styles._rules
+        parsed_color, is_auto = parse_color_tokens(name, tokens)
 
-        expression = _join_tokens(tokens)
-        try:
-            color, is_auto = parse_color_expression(expression)
-        except Exception as error:
-            self.error(
-                name,
-                expression,
-                color_property_help_text(name, context="css", error=error),
-            )
-
+        set_rule = self.styles._rules.__setitem__
         if is_auto:
             if name != "color":
                 self.error(
                     name, "auto", "'auto' can only be set for the 'color' property."
                 )
-            rules["color_auto"] = True
-        if color is not None:
-            rules[name] = color
+            set_rule("color_auto", True)
+        if parsed_color is not None:
+            set_rule(name, parsed_color)
 
     process_tint = process_color
     process_background = process_color
