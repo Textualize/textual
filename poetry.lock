@@ -699,7 +699,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -780,7 +780,7 @@ dev = ["aiohttp", "click", "msgpack"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "8ce8d66466dad1b984673595ebd0cc7bc0d28c7a672269e9b5620c242d87d9ad"
+content-hash = "6d232128121deb8983df01e4263f304a49a302c3b8189f19557a76c470eddbee"
 
 [metadata.files]
 aiohttp = [
