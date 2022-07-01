@@ -33,7 +33,7 @@ def parse_color_tokens(property_name: str, tokens: list[Token]) -> tuple[Color, 
     is_auto = False
 
     for token in tokens:
-        if token.value == "auto":
+        if token.name == "token" and token.value == "auto":
             is_auto = True
         elif token.name == "scalar":
             alpha_scalar = Scalar.parse(token.value)

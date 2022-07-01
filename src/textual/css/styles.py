@@ -15,7 +15,6 @@ from ..color import Color
 from ..geometry import Spacing
 from ._style_properties import (
     AlignProperty,
-    BooleanProperty,
     BorderProperty,
     BoxProperty,
     ColorProperty,
@@ -82,7 +81,6 @@ class RulesMap(TypedDict, total=False):
     layout: "Layout"
 
     color: Color
-    color_auto: bool
     background: Color
     text_style: Style
 
@@ -183,9 +181,6 @@ class StylesBase(ABC):
     layout = LayoutProperty()
 
     color = ColorProperty(Color(255, 255, 255))
-    # N.B. This one is a pseudo-property, in the sense that we cannot set it via CSS via a dedicated property:
-    # (can only be set by specifying the special value "auto" for the "color" property)
-    color_auto = BooleanProperty()
     background = ColorProperty(Color(0, 0, 0, 0))
     text_style = StyleFlagsProperty()
 
@@ -248,6 +243,8 @@ class StylesBase(ABC):
     content_align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     content_align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
     content_align = AlignProperty()
+
+    _color_auto: bool = False
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles contains the same rules."""
@@ -441,6 +438,10 @@ class StylesBase(ABC):
             else:
                 offset_y = parent_height - height
         return offset_y
+
+    @property
+    def color_auto(self) -> bool:
+        return self._color_auto
 
 
 @rich.repr.auto
@@ -688,9 +689,9 @@ class Styles(StylesBase):
             assert self.layout is not None
             append_declaration("layout", self.layout.name)
 
-        if get_rule("color_auto", False):
+        if self._color_auto:
             append_declaration(
-                "color", f"auto{f' {self.color.a * 100}%' if self.color.a < 1 else ''}"
+                "color", f"auto {self.color.a * 100}%" if self.color.a < 1 else "auto"
             )
         elif has_rule("color"):
             append_declaration("color", self.color.hex)

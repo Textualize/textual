@@ -33,7 +33,7 @@ from .._border import normalize_border_value
 from ..color import Color, ColorPair, ColorParseError
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING, VALID_STYLE_FLAGS
-from .errors import StyleTypeError, StyleValueError
+from .errors import StyleTypeError, StyleValueError, DeclarationError
 from .scalar import (
     get_symbols,
     UNIT_SYMBOL,
@@ -796,37 +796,6 @@ class NameListProperty:
                 obj.refresh(layout=True)
 
 
-class BooleanProperty:
-    """Descriptor for getting boolean properties"""
-
-    def __get__(
-        self, obj: StylesBase, objtype: type[StylesBase] | None = None
-    ) -> bool | None:
-        """Get a ``bool``.
-
-        Args:
-            obj (Styles): The ``Styles`` object.
-            objtype (type[Styles]): The ``Styles`` class.
-
-        Returns:
-            bool | None: The boolean value
-        """
-        return cast("bool | None", obj.get_rule("color_auto", None))
-
-    def __set__(self, obj: Styles, value: bool | None) -> None:
-        """Set the boolean value
-
-        Args:
-            obj (Styles): The ``Styles`` object
-            value (bool | None): The value to set.
-        """
-        _rich_traceback_omit = True
-        if value is None:
-            obj.clear_rule("color_auto")
-        else:
-            obj.set_rule("color_auto", value)
-
-
 class ColorProperty:
     """Descriptor for getting and setting color properties."""
 
@@ -880,8 +849,16 @@ class ColorProperty:
                         self.name, context="inline", error=error
                     ),
                 )
+            except DeclarationError as error:
+                raise StyleValueError(
+                    f"Invalid color value '{color}': {error.message}",
+                    help_text=color_property_help_text(
+                        self.name, context="inline", error=error
+                    ),
+                )
+
             if is_auto:
-                obj.set_rule("color_auto", True)
+                obj._color_auto = True
             if obj.set_rule(self.name, parsed_color):
                 obj.refresh()
         else:

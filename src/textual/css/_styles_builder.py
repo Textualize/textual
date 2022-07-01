@@ -572,15 +572,14 @@ class StylesBuilder:
 
         parsed_color, is_auto = parse_color_tokens(name, tokens)
 
-        set_rule = self.styles._rules.__setitem__
         if is_auto:
             if name != "color":
                 self.error(
                     name, "auto", "'auto' can only be set for the 'color' property."
                 )
-            set_rule("color_auto", True)
+            self.styles._color_auto = True
         if parsed_color is not None:
-            set_rule(name, parsed_color)
+            self.styles._rules[name] = parsed_color
 
     process_tint = process_color
     process_background = process_color

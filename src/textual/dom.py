@@ -384,7 +384,7 @@ class DOMNode(MessagePump):
             if styles.has_rule("background"):
                 base_background = background
                 background += styles.background
-            if styles.has_rule("color_auto"):
+            if styles.color_auto:
                 base_color = color
                 # The alpha of our "color_auto" color is stored in the "color" property
                 # (which in this case is used only to bear that value; its RGB values should not be taken into account)
