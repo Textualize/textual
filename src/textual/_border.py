@@ -70,15 +70,19 @@ INVISIBLE_EDGE_TYPES = cast("frozenset[EdgeType]", frozenset(("", "none", "hidde
 
 BorderValue: TypeAlias = Tuple[EdgeType, Union[str, Color, Style]]
 
+BoxSegments: TypeAlias = tuple[
+    tuple[Segment, Segment, Segment],
+    tuple[Segment, Segment, Segment],
+    tuple[Segment, Segment, Segment],
+]
+
+Borders: TypeAlias = tuple[EdgeStyle, EdgeStyle, EdgeStyle, EdgeStyle]
+
 
 @lru_cache(maxsize=1024)
 def get_box(
     name: EdgeType, inner_style: Style, outer_style: Style, style: Style
-) -> tuple[
-    tuple[Segment, Segment, Segment],
-    tuple[Segment, Segment, Segment],
-    tuple[Segment, Segment, Segment],
-]:
+) -> BoxSegments:
     """Get segments used to render a box.
 
     Args:
@@ -124,6 +128,20 @@ def get_box(
     )
 
 
+def render_row(
+    box_row: tuple[Segment, Segment, Segment], width: int, left: bool, right: bool
+) -> list[Segment]:
+    box1, box2, box3 = box_row
+    if left and right:
+        return [box1, Segment(box2.text * (width - 2), box2.style), box3]
+    if left:
+        return [box1, Segment(box2.text * (width - 1), box2.style)]
+    if right:
+        return [Segment(box2.text * (width - 1), box2.style), box3]
+    else:
+        return [Segment(box2.text * width, box2.style)]
+
+
 @rich.repr.auto
 class Border:
     """Renders Textual CSS borders.
@@ -137,13 +155,13 @@ class Border:
     def __init__(
         self,
         renderable: RenderableType,
-        edge_styles: tuple[EdgeStyle, EdgeStyle, EdgeStyle, EdgeStyle],
+        borders: Borders,
         inner_color: Color,
         outer_color: Color,
         outline: bool = False,
     ):
         self.renderable = renderable
-        self.edge_styles = edge_styles
+        self.edge_styles = borders
         self.outline = outline
 
         (
@@ -151,7 +169,7 @@ class Border:
             (right, right_color),
             (bottom, bottom_color),
             (left, left_color),
-        ) = edge_styles
+        ) = borders
         self._sides: tuple[EdgeType, EdgeType, EdgeType, EdgeType]
         self._sides = (top, right, bottom, left)
         from_color = Style.from_color

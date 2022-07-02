@@ -88,7 +88,7 @@ class Warning(Widget):
 
 class Success(Widget):
     def render(self) -> Text:
-        return Text("This is a success message", justify="center")
+        return Text("This\nis\na\nsuccess\n message", justify="center")
 
 
 class BasicApp(App, css_path="basic.css"):

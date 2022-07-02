@@ -16,7 +16,8 @@
 }
 
 *:hover {
-  /* tint: 30% red; */
+  tint: 30% red; 
+  /* outline: heavy red; */
 }
 
 App > Screen {
@@ -224,13 +225,15 @@ Warning {
 
 Success {
   width: 100%;
-  height:3;  
+  width:90%;
+  height:auto;  
   box-sizing: border-box;
   background: $success-lighten-3;
   color: $text-success-lighten-3-fade-1;
+  
   border-top: hkey $success;
   border-bottom: hkey $success;
-  margin: 1 2;
+
   text-style: bold;
   align-horizontal: center;
 }

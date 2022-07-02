@@ -5,12 +5,12 @@ from typing import Iterable, TYPE_CHECKING
 
 from rich.segment import Segment
 
-from ._border import get_box
+from ._border import get_box, render_row
 from .color import Color
 from .css.types import EdgeType
 from .renderables.opacity import Opacity
 from .renderables.tint import Tint
-from ._segment_tools import line_crop
+from ._segment_tools import line_crop, line_pad, line_trim
 from ._types import Lines
 from .geometry import Region, Size
 
@@ -18,9 +18,6 @@ from .geometry import Region, Size
 if TYPE_CHECKING:
     from .css.styles import RenderStyles
     from .widget import Widget
-
-
-NORMALIZE_BORDER: dict[EdgeType, EdgeType] = {"none": "", "hidden": ""}
 
 
 class StylesRenderer:
@@ -95,7 +92,6 @@ class StylesRenderer:
 
         gutter = styles.gutter
         width, height = size
-        content_width, content_height = size - gutter.totals
 
         pad_top, pad_right, pad_bottom, pad_left = styles.padding
         (
@@ -105,11 +101,12 @@ class StylesRenderer:
             (border_left, border_left_color),
         ) = styles.border
 
-        normalize_border_get = NORMALIZE_BORDER.get
-        border_top = normalize_border_get(border_top, border_top)
-        border_right = normalize_border_get(border_right, border_right)
-        border_bottom = normalize_border_get(border_bottom, border_bottom)
-        border_left = normalize_border_get(border_left, border_left)
+        (
+            (outline_top, outline_top_color),
+            (outline_right, outline_right_color),
+            (outline_bottom, outline_bottom_color),
+            (outline_left, outline_left_color),
+        ) = styles.outline
 
         from_color = Style.from_color
 
@@ -124,8 +121,9 @@ class StylesRenderer:
                 segments = Tint.process_segments(segments, styles.tint)
             return segments if isinstance(segments, list) else list(segments)
 
+        line: Iterable[Segment]
         # Draw top or bottom borders
-        if border_top and y in (0, height - 1):
+        if (border_top and y == 0) or (border_bottom and y == height - 1):
 
             border_color = border_top_color if y == 0 else border_bottom_color
             box_segments = get_box(
@@ -134,19 +132,17 @@ class StylesRenderer:
                 outer_style,
                 from_color(color=border_color.rich_color),
             )
-            box1, box2, box3 = box_segments[0 if y == 0 else 2]
-
-            if border_left and border_right:
-                return post([box1, Segment(box2.text * (width - 2), box2.style), box3])
-            elif border_left:
-                return post([box1, Segment(box2.text * (width - 1), box2.style)])
-            elif border_right:
-                return post([Segment(box2.text * (width - 1), box2.style), box3])
-            else:
-                return post([Segment(box2.text * width, box2.style)])
+            line = render_row(
+                box_segments[0 if y == 0 else 2],
+                width,
+                border_left != "",
+                border_right != "",
+            )
 
         # Draw padding
-        if (pad_top and y < gutter.top) or (pad_bottom and y >= height - gutter.bottom):
+        elif (pad_top and y < gutter.top) or (
+            pad_bottom and y >= height - gutter.bottom
+        ):
             background_style = from_color(
                 color=rich_style.color, bgcolor=background.rich_color
             )
@@ -163,59 +159,79 @@ class StylesRenderer:
                 from_color(color=border_right_color.rich_color),
             )
             if border_left and border_right:
-                return post([left, Segment(" " * (width - 2), background_style), right])
+                line = [left, Segment(" " * (width - 2), background_style), right]
             if border_left:
-                return post([left, Segment(" " * (width - 1), background_style)])
+                line = [left, Segment(" " * (width - 1), background_style)]
             if border_right:
-                return post([Segment(" " * (width - 1), background_style), right])
-            return post([Segment(" " * width, background_style)])
+                line = [Segment(" " * (width - 1), background_style), right]
+            else:
+                line = [Segment(" " * width, background_style)]
+        else:
+            # Apply background style
+            line = self.render_content_line(y - gutter.top)
+            if inner_style:
+                line = Segment.apply_style(line, inner_style)
+            line = line_pad(line, pad_left, pad_right, inner_style)
 
-        # Apply background style
-        line = self.render_content_line(y - gutter.top)
-        if inner_style:
-            line = list(Segment.apply_style(line, inner_style))
+            if border_left or border_right:
+                # Add left / right border
+                _, (left, _, _), _ = get_box(
+                    border_left,
+                    inner_style,
+                    outer_style,
+                    from_color(border_left_color.rich_color),
+                )
+                _, (_, _, right), _ = get_box(
+                    border_right,
+                    inner_style,
+                    outer_style,
+                    from_color(border_right_color.rich_color),
+                )
 
-        # Add padding
-        if pad_left and pad_right:
-            line = [
-                Segment(" " * pad_left, inner_style),
-                *line,
-                Segment(" " * pad_right, inner_style),
-            ]
-        elif pad_left:
-            line = [
-                Segment(" " * pad_left, inner_style),
-                *line,
-            ]
-        elif pad_right:
-            line = [
-                *line,
-                Segment(" " * pad_right, inner_style),
-            ]
+                if border_left and border_right:
+                    line = [left, *line, right]
+                elif border_left:
+                    line = [left, *line]
+                else:
+                    line = [*line, right]
 
-        if not border_left and not border_right:
-            return post(line)
+        if (outline_top and y == 0) or (outline_bottom and y == height - 1):
+            outline_color = outline_top_color if y == 0 else outline_bottom_color
+            box_segments = get_box(
+                outline_top if y == 0 else outline_bottom,
+                inner_style,
+                outer_style,
+                from_color(color=outline_color.rich_color),
+            )
+            line = render_row(
+                box_segments[0 if y == 0 else 2],
+                width,
+                outline_left != "",
+                outline_right != "",
+            )
 
-        # Add left / right border
-        _, (left, _, _), _ = get_box(
-            border_left,
-            inner_style,
-            outer_style,
-            from_color(border_left_color.rich_color),
-        )
-        _, (_, _, right), _ = get_box(
-            border_right,
-            inner_style,
-            outer_style,
-            from_color(border_right_color.rich_color),
-        )
+        elif outline_left or outline_right:
+            _, (left, _, _), _ = get_box(
+                outline_left,
+                inner_style,
+                outer_style,
+                from_color(outline_left_color.rich_color),
+            )
+            _, (_, _, right), _ = get_box(
+                outline_right,
+                inner_style,
+                outer_style,
+                from_color(outline_right_color.rich_color),
+            )
+            line = line_trim(list(line), outline_left != "", outline_right != "")
+            if outline_left and outline_right:
+                line = [left, *line, right]
+            elif outline_left:
+                line = [left, *line]
+            else:
+                line = [*line, right]
 
-        if border_left and border_right:
-            return post([left, *line, right])
-        elif border_left:
-            return post([left, *line])
-
-        return post([*line, right])
+        return post(line)
 
 
 if __name__ == "__main__":

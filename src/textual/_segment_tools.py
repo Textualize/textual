@@ -4,7 +4,10 @@ Tools for processing Segments, or lists of Segments.
 
 from __future__ import annotations
 
+from typing import Iterable
+
 from rich.segment import Segment
+from rich.style import Style
 
 from ._cells import cell_len
 
@@ -87,4 +90,37 @@ def line_trim(segments: list[Segment], start: bool, end: bool) -> list[Segment]:
             segments[-1] = last_segment
         else:
             segments.pop()
+    return segments
+
+
+def line_pad(
+    segments: Iterable[Segment], pad_left: int, pad_right: int, style: Style
+) -> Iterable[Segment]:
+    """Adds padding to the left and / or right of a list of segments.
+
+    Args:
+        segments (list[Segment]): A line (list of Segments).
+        pad_left (int): Cells to pad on the left.
+        pad_right (int): Cells to pad on the right.
+        style (Style): Style of padded cells.
+
+    Returns:
+        list[Segment]: A new line with padding.
+    """
+    if pad_left and pad_right:
+        segments = [
+            Segment(" " * pad_left, style),
+            *segments,
+            Segment(" " * pad_right, style),
+        ]
+    elif pad_left:
+        segments = [
+            Segment(" " * pad_left, style),
+            *segments,
+        ]
+    elif pad_right:
+        segments = [
+            *segments,
+            Segment(" " * pad_right, style),
+        ]
     return segments
