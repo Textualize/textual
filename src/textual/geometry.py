@@ -459,11 +459,6 @@ class Region(NamedTuple):
             height + expand_height * 2,
         )
 
-    def enlarge(self, size: tuple[int, int]) -> Region:
-        add_width, add_height = size
-        x, y, width, height = self
-        return Region(x, y, width + add_width, height + add_height)
-
     @lru_cache(maxsize=1024)
     def overlaps(self, other: Region) -> bool:
         """Check if another region overlaps this region.
