@@ -974,7 +974,7 @@ class Widget(DOMNode):
             else:
                 self.refresh()
 
-    def _render_lines(self) -> None:
+    def _render_content(self) -> None:
         """Render all lines."""
         width, height = self.content_size
         renderable = self.render_styled()
@@ -985,14 +985,17 @@ class Widget(DOMNode):
         self._render_cache = RenderCache(self.content_size, lines)
         self._dirty_regions.clear()
 
-    def _crop_lines(self, lines: Lines, x1, x2) -> Lines:
-        width = self.size.width
-        if (x1, x2) != (0, width):
-            _line_crop = line_crop
-            lines = [_line_crop(line, x1, x2, width) for line in lines]
-        return lines
+    def render_line(self, y: int) -> list[Segment]:
+        """Render a line of content.
 
-    def render_line(self, y) -> list[Segment]:
+        Args:
+            y (int): Y Coordinate of line.
+
+        Returns:
+            list[Segment]: A rendered line.
+        """
+        if self._dirty_regions:
+            self._render_content()
         line = self._render_cache.lines[y]
         return line
 
@@ -1005,9 +1008,6 @@ class Widget(DOMNode):
         Returns:
             Lines: A list of list of segments
         """
-        if self._dirty_regions:
-            self._render_lines()
-
         lines = self._styles_cache.render_widget(self, crop)
         return lines
 

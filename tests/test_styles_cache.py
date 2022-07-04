@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from rich.segment import Segment
 
 from textual.color import Color
