@@ -14,8 +14,8 @@ class EasingApp(App):
 
     def watch_side(self, side: bool) -> None:
         """Animate when the side changes (False for left, True for right)."""
-        width = self.easing_view.size.width
-        animate_x = (width - self.placeholder.size.width) if side else 0
+        width = self.easing_view.outer_size.width
+        animate_x = (width - self.placeholder.outer_size.width) if side else 0
         self.placeholder.animate(
             "layout_offset_x", animate_x, easing=self.easing, duration=1
         )

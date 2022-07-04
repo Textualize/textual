@@ -144,7 +144,7 @@ async def test_composition_of_vertical_container_with_children(
     async with app.in_running_state():
         # root widget checks:
         root_widget = cast(Widget, app.get_child("root"))
-        assert root_widget.size == expected_screen_size
+        assert root_widget.outer_size == expected_screen_size
         root_widget_region = app.screen.find_widget(root_widget).region
         assert root_widget_region == (
             0,
@@ -158,7 +158,7 @@ async def test_composition_of_vertical_container_with_children(
 
     # placeholder widgets checks:
     for placeholder in app_placeholders:
-        assert placeholder.size == expected_placeholders_size
+        assert placeholder.outer_size == expected_placeholders_size
         assert placeholder.styles.offset.x.value == 0.0
         assert app.screen.get_offset(placeholder).x == expected_placeholders_offset_x
 
@@ -224,7 +224,7 @@ async def test_border_edge_types_impact_on_widget_size(
     )
     assert box_inner_size == expected_box_inner_size
 
-    assert border_target.size == expected_box_size
+    assert border_target.outer_size == expected_box_size
 
     top_left_edge_style = app.screen.get_style_at(0, 0)
     top_left_edge_color = top_left_edge_style.color.name

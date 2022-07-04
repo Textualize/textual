@@ -434,15 +434,18 @@ class Widget(DOMNode):
         return self.styles.gutter + self.scrollbar_gutter
 
     @property
-    def content_size(self) -> Size:
+    def size(self) -> Size:
+        """The size of the content area."""
         return self.content_region.size
 
     @property
-    def size(self) -> Size:
+    def outer_size(self) -> Size:
+        """The size of the widget (including padding and border)."""
         return self._size
 
     @property
     def container_size(self) -> Size:
+        """The size of the container (parent widget)."""
         return self._container_size
 
     @property
@@ -535,17 +538,14 @@ class Widget(DOMNode):
         """
 
         if regions:
-            widget_regions = [
-                region.translate(self.content_offset) for region in regions
-            ]
+            content_offset = self.content_offset
+            widget_regions = [region.translate(content_offset) for region in regions]
             self._dirty_regions.update(widget_regions)
             self._styles_cache.set_dirty(*widget_regions)
         else:
             self._dirty_regions.clear()
             self._styles_cache.clear()
-            # TODO: Does this need to be content region?
-            # self._dirty_regions.append(self.size.region)
-            self._dirty_regions.add(self.size.region)
+            self._dirty_regions.add(self.outer_size.region)
 
     def get_dirty_regions(self) -> Collection[Region]:
         """Get regions which require a repaint.
@@ -976,13 +976,13 @@ class Widget(DOMNode):
 
     def _render_content(self) -> None:
         """Render all lines."""
-        width, height = self.content_size
+        width, height = self.size
         renderable = self.render_styled()
         options = self.console.options.update_dimensions(width, height).update(
             highlight=False
         )
         lines = self.console.render_lines(renderable, options, style=self.rich_style)
-        self._render_cache = RenderCache(self.content_size, lines)
+        self._render_cache = RenderCache(self.size, lines)
         self._dirty_regions.clear()
 
     def render_line(self, y: int) -> list[Segment]:

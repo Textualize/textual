@@ -462,7 +462,7 @@ class DataTable(ScrollView, Generic[CellType]):
             list[Segment]: List of segments for rendering.
         """
 
-        width = self.content_size.width
+        width = self.size.width
 
         try:
             row_index, line_no = self._get_offsets(y)
@@ -507,7 +507,7 @@ class DataTable(ScrollView, Generic[CellType]):
         Returns:
             list[Segment]: A rendered line.
         """
-        width, height = self.content_size
+        width, height = self.size
         scroll_x, scroll_y = self.scroll_offset
         fixed_top_row_count = sum(
             self.get_row_height(row_index) for row_index in range(self.fixed_rows)

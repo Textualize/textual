@@ -36,7 +36,7 @@ class ScalarAnimation(Animation):
         self.final_value = value
         self.easing = easing
 
-        size = widget.size
+        size = widget.outer_size
         viewport = widget.app.size
 
         self.start: Offset = getattr(styles, attribute).resolve(size, viewport)
