@@ -10,7 +10,7 @@ from ._border import get_box, render_row
 from ._segment_tools import line_crop, line_pad, line_trim
 from ._types import Lines
 from .color import Color
-from .geometry import Region, Size
+from .geometry import Spacing, Region, Size
 from .renderables.opacity import Opacity
 from .renderables.tint import Tint
 
@@ -62,9 +62,18 @@ class StylesCache:
             self.clear()
 
     def is_dirty(self, y: int) -> bool:
+        """Check if a given line is dirty (needs to be rendered again).
+
+        Args:
+            y (int): Y coordinate of line.
+
+        Returns:
+            bool: True if line requires a render, False if can be cached.
+        """
         return y in self._dirty_lines
 
     def clear(self) -> None:
+        """Clear the styles cache (will cause the content to re-render)."""
         self._cache.clear()
         self._dirty_lines.clear()
 
@@ -79,12 +88,15 @@ class StylesCache:
             Lines: Rendered lines.
         """
         (base_background, base_color), (background, color) = widget.colors
+        padding = widget.styles.padding + widget.scrollbar_gutter
         lines = self.render(
             widget.styles,
             widget.region.size,
             base_background,
             background,
             widget.render_line,
+            content_size=widget.content_region.size,
+            padding=padding,
             crop=crop,
         )
         return lines
@@ -95,35 +107,33 @@ class StylesCache:
         size: Size,
         base_background: Color,
         background: Color,
-        render_line: RenderLineCallback,
+        render_content_line: RenderLineCallback,
+        content_size: Size | None = None,
+        padding: Spacing | None = None,
         crop: Region | None = None,
     ) -> Lines:
-        """Render a given region.
+        """Render a widget content plus CSS styles.
 
         Args:
-            region (Region): A region in the screen to render.
+            styles (StylesBase): CSS Styles object.
+            size (Size): Size of widget.
+            base_background (Color): Background color beneath widget.
+            background (Color): Background color of widget.
+            render_content_line (RenderLineCallback): Callback to render content line.
+            content_size (Size | None, optional): Size of content or None to assume full size. Defaults to None.
+            padding (Spacing | None, optional): Override padding from Styles, or None to use styles.padding. Defaults to None.
+            crop (Region | None, optional): Region to crop to. Defaults to None.
 
         Returns:
-            Lines: List of Segments, one per line.
+            Lines: Rendered lines.
         """
-        return self._render(
-            size,
-            size.region if crop is None else crop,
-            styles,
-            base_background,
-            background,
-            render_line,
-        )
+        if content_size is None:
+            content_size = size
+        if padding is None:
+            padding = styles.padding
+        if crop is None:
+            crop = size.region
 
-    def _render(
-        self,
-        size: Size,
-        crop: Region,
-        styles: StylesBase,
-        base_background: Color,
-        background: Color,
-        render_content_line: RenderLineCallback,
-    ) -> Lines:
         width, height = size
         if width != self._width:
             self.clear()
@@ -137,7 +147,14 @@ class StylesCache:
         for y in crop.line_range:
             if is_dirty(y) or y not in self._cache:
                 line = render_line(
-                    styles, y, size, base_background, background, render_content_line
+                    styles,
+                    y,
+                    size,
+                    content_size,
+                    padding,
+                    base_background,
+                    background,
+                    render_content_line,
                 )
                 line = list(simplify(line))
                 self._cache[y] = line
@@ -158,27 +175,34 @@ class StylesCache:
         styles: StylesBase,
         y: int,
         size: Size,
+        content_size: Size,
+        padding: Spacing,
         base_background: Color,
         background: Color,
         render_content_line: RenderLineCallback,
     ) -> list[Segment]:
-        """Render a styled lines.
+        """Render a styled line.
 
         Args:
-            styles (RenderStyles): Styles object.
-            y (int): The y coordinate of the line (relative to top of widget)
+            styles (StylesBase): Styles object.
+            y (int): The y coordinate of the line (relative to widget screen offset).
             size (Size): Size of the widget.
-            base_background (Color): The background color beneath this widget.
-            background (Color): Background color of the widget.
+            content_size (Size): Size of the content area.
+            padding (Spacing): Padding.
+            base_background (Color): Background color of widget beneath this line.
+            background (Color): Background color of widget.
+            render_content_line (RenderLineCallback): Callback to render a line of content.
 
         Returns:
-            list[Segment]: A line as a list of segments.
+            list[Segment]: _description_
         """
 
         gutter = styles.gutter
         width, height = size
+        content_width, content_height = content_size
 
-        pad_top, pad_right, pad_bottom, pad_left = styles.padding
+        pad_top, pad_right, pad_bottom, pad_left = padding
+
         (
             (border_top, border_top_color),
             (border_right, border_right_color),
@@ -252,7 +276,11 @@ class StylesCache:
                 line = [Segment(" " * width, background_style)]
         else:
             # Content with border and padding (C)
-            line = render_content_line(y - gutter.top)
+            content_y = y - gutter.top
+            if content_y < content_height:
+                line = render_content_line(y - gutter.top)
+            else:
+                line = [Segment(" " * content_width, inner)]
             if inner:
                 line = Segment.apply_style(line, inner)
             line = line_pad(line, pad_left, pad_right, inner)

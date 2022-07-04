@@ -37,6 +37,7 @@ def test_no_styles():
         Color.parse("blue"),
         Color.parse("green"),
         content.__getitem__,
+        content_size=Size(3, 3),
     )
     expected = [
         [Segment("foo", styles.rich_style)],
@@ -61,6 +62,7 @@ def test_border():
         Color.parse("blue"),
         Color.parse("green"),
         content.__getitem__,
+        content_size=Size(3, 3),
     )
 
     text_content = _extract_content(lines)
@@ -91,6 +93,7 @@ def test_padding():
         Color.parse("blue"),
         Color.parse("green"),
         content.__getitem__,
+        content_size=Size(3, 3),
     )
 
     text_content = _extract_content(lines)
@@ -122,6 +125,7 @@ def test_padding_border():
         Color.parse("blue"),
         Color.parse("green"),
         content.__getitem__,
+        content_size=Size(3, 3),
     )
 
     text_content = _extract_content(lines)
@@ -154,6 +158,7 @@ def test_outline():
         Color.parse("blue"),
         Color.parse("green"),
         content.__getitem__,
+        content_size=Size(3, 3),
     )
 
     text_content = _extract_content(lines)
@@ -181,6 +186,7 @@ def test_crop():
         Color.parse("blue"),
         Color.parse("green"),
         content.__getitem__,
+        content_size=Size(3, 3),
         crop=Region(2, 2, 3, 3),
     )
     text_content = _extract_content(lines)
@@ -239,6 +245,7 @@ def test_dirty_cache():
         Color.parse("blue"),
         Color.parse("green"),
         get_content_line,
+        content_size=Size(3, 3),
     )
     assert rendered_lines == []
     del rendered_lines[:]
@@ -254,6 +261,7 @@ def test_dirty_cache():
         Color.parse("blue"),
         Color.parse("green"),
         get_content_line,
+        content_size=Size(3, 3),
     )
     assert rendered_lines == [0, 1]
     text_content = _extract_content(lines)

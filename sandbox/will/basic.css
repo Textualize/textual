@@ -28,9 +28,11 @@ App > Screen {
 }
 
 DataTable {
-  border: solid red;
-  
-  margin: 1 1;  
+  /*border:heavy red;*/
+  /* tint: 10% green; */
+  /* opacity: 50%; */
+  padding: 1;
+  margin: 1 2;  
   height: 12;  
 }
 
@@ -105,7 +107,7 @@ Tweet {
 
 
 .scrollable {
-  
+ 
   overflow-y: scroll;
   margin: 1 2;
   height: 20;
@@ -113,8 +115,7 @@ Tweet {
   layout: vertical;
 }
 
-.code {
-  
+.code {  
   height: auto;
     
 }

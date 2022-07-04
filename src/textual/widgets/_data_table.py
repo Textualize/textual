@@ -518,38 +518,6 @@ class DataTable(ScrollView, Generic[CellType]):
         lines = self._styles_cache.render_widget(self, crop)
         return lines
 
-    # def render_lines(self, crop: Region) -> Lines:
-    #     """Render lines within a given region.
-
-    #     Args:
-    #         crop (Region): Region to crop to.
-
-    #     Returns:
-    #         Lines: A list of segments for every line within crop region.
-    #     """
-    #     scroll_y = self.scroll_offset.y
-    #     x1, y1, x2, y2 = crop.translate(self.scroll_offset).corners
-
-    #     base_style = self.rich_style
-
-    #     fixed_top_row_count = sum(
-    #         self.get_row_height(row_index) for row_index in range(self.fixed_rows)
-    #     )
-    #     if self.show_header:
-    #         fixed_top_row_count += self.get_row_height(-1)
-
-    #     render_line = self._render_line
-    #     fixed_lines = [
-    #         render_line(y, x1, x2, base_style) for y in range(0, fixed_top_row_count)
-    #     ]
-    #     lines = [render_line(y, x1, x2, base_style) for y in range(y1, y2)]
-
-    #     for line_index, y in enumerate(range(y1, y2)):
-    #         if y - scroll_y < fixed_top_row_count:
-    #             lines[line_index] = fixed_lines[line_index]
-
-    #     return lines
-
     def on_mouse_move(self, event: events.MouseMove):
         meta = event.style.meta
         if meta:
@@ -573,7 +541,6 @@ class DataTable(ScrollView, Generic[CellType]):
 
     def _scroll_cursor_in_to_view(self, animate: bool = False) -> None:
         region = self._get_cell_region(self.cursor_row, self.cursor_column)
-        region.translate(self.content_offset)
         spacing = self._get_cell_border()
         self.scroll_to_region(region, animate=animate, spacing=spacing)
 

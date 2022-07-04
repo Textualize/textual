@@ -406,11 +406,6 @@ class Widget(DOMNode):
         return enabled
 
     @property
-    def scrollbar_dimensions(self) -> tuple[int, int]:
-        """Get the size of any scrollbars on the widget"""
-        return (self.scrollbar_size_horizontal, self.scrollbar_size_vertical)
-
-    @property
     def scrollbar_size_vertical(self) -> int:
         """Get the width used by the *vertical* scrollbar."""
         return (
@@ -425,6 +420,108 @@ class Widget(DOMNode):
             if self.show_horizontal_scrollbar
             else 0
         )
+
+    @property
+    def scrollbar_gutter(self) -> Spacing:
+        gutter = Spacing(
+            0, self.scrollbar_size_vertical, self.scrollbar_size_horizontal, 0
+        )
+        return gutter
+
+    @property
+    def gutter(self) -> Spacing:
+        """Spacing for padding / border / scrollbars."""
+        return self.styles.gutter + self.scrollbar_gutter
+
+    @property
+    def content_size(self) -> Size:
+        return self.content_region.size
+
+    @property
+    def size(self) -> Size:
+        return self._size
+
+    @property
+    def container_size(self) -> Size:
+        return self._container_size
+
+    @property
+    def content_region(self) -> Region:
+        """Gets an absolute region containing the content (minus padding and border)."""
+        content_region = self.region.shrink(self.gutter)
+        return content_region
+
+    @property
+    def content_offset(self) -> Offset:
+        """An offset from the Widget origin where the content begins."""
+        x, y = self.gutter.top_left
+        return Offset(x, y)
+
+    @property
+    def region(self) -> Region:
+        """The region occupied by this widget, relative to the Screen."""
+        try:
+            return self.screen.find_widget(self).region
+        except errors.NoWidget:
+            return Region()
+
+    @property
+    def window_region(self) -> Region:
+        """The region within the scrollable area that is currently visible.
+
+        Returns:
+            Region: New region.
+        """
+        window_region = self.region.at_offset(self.scroll_offset)
+        return window_region
+
+    @property
+    def scroll_offset(self) -> Offset:
+        return Offset(int(self.scroll_x), int(self.scroll_y))
+
+    @property
+    def is_transparent(self) -> bool:
+        """Check if the background styles is not set.
+
+        Returns:
+            bool: ``True`` if there is background color, otherwise ``False``.
+        """
+        return self.is_scrollable and self.styles.background.is_transparent
+
+    @property
+    def console(self) -> Console:
+        """Get the current console."""
+        return active_app.get().console
+
+    @property
+    def animate(self) -> BoundAnimator:
+        if self._animate is None:
+            self._animate = self.app.animator.bind(self)
+        assert self._animate is not None
+        return self._animate
+
+    @property
+    def layout(self) -> Layout:
+        """Get the layout object if set in styles, or a default layout."""
+        return self.styles.layout or self._default_layout
+
+    @property
+    def is_container(self) -> bool:
+        """Check if this widget is a container (contains other widgets).
+
+        Returns:
+            bool: True if this widget is a container.
+        """
+        return self.styles.layout is not None or bool(self.children)
+
+    @property
+    def is_scrollable(self) -> bool:
+        """Check if this Widget may be scrolled.
+
+        Returns:
+            bool: True if this widget may be scrolled.
+        """
+        return self.is_container
 
     def _set_dirty(self, *regions: Region) -> None:
         """Set the Widget as 'dirty' (requiring re-paint).
@@ -731,17 +828,17 @@ class Widget(DOMNode):
             region, _ = region.split_horizontal(-scrollbar_size_horizontal)
         return region
 
-    def _arrange_scrollbars(self, size: Size) -> Iterable[tuple[Widget, Region]]:
+    def _arrange_scrollbars(self, region: Region) -> Iterable[tuple[Widget, Region]]:
         """Arrange the 'chrome' widgets (typically scrollbars) for a layout element.
 
         Args:
-            size (Size): Size of the containing region.
+            region (Region): The containing region.
 
         Returns:
             Iterable[tuple[Widget, Region]]: Tuples of scrollbar Widget and region.
 
         """
-        region = size.region
+
         show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
 
         scrollbar_size_horizontal = self.scrollbar_size_horizontal
@@ -844,95 +941,6 @@ class Widget(DOMNode):
             renderable = Align(renderable, horizontal, vertical=vertical)
 
         return renderable
-
-    @property
-    def content_size(self) -> Size:
-        return self.content_region.size
-
-    @property
-    def size(self) -> Size:
-        return self._size
-
-    @property
-    def container_size(self) -> Size:
-        return self._container_size
-
-    @property
-    def content_region(self) -> Region:
-        """Gets an absolute region containing the content (minus padding and border)."""
-        return self.region.shrink(self.styles.gutter)
-
-    @property
-    def content_offset(self) -> Offset:
-        """An offset from the Widget origin where the content begins."""
-        x, y = self.styles.gutter.top_left
-        return Offset(x, y)
-
-    @property
-    def region(self) -> Region:
-        """The region occupied by this widget, relative to the Screen."""
-        try:
-            return self.screen.find_widget(self).region
-        except errors.NoWidget:
-            return Region()
-
-    @property
-    def window_region(self) -> Region:
-        """The region within the scrollable area that is currently visible.
-
-        Returns:
-            Region: New region.
-        """
-        window_region = self.region.at_offset(self.scroll_offset)
-        return window_region
-
-    @property
-    def scroll_offset(self) -> Offset:
-        return Offset(int(self.scroll_x), int(self.scroll_y))
-
-    @property
-    def is_transparent(self) -> bool:
-        """Check if the background styles is not set.
-
-        Returns:
-            bool: ``True`` if there is background color, otherwise ``False``.
-        """
-        return self.is_scrollable and self.styles.background.is_transparent
-
-    @property
-    def console(self) -> Console:
-        """Get the current console."""
-        return active_app.get().console
-
-    @property
-    def animate(self) -> BoundAnimator:
-        if self._animate is None:
-            self._animate = self.app.animator.bind(self)
-        assert self._animate is not None
-        return self._animate
-
-    @property
-    def layout(self) -> Layout:
-        """Get the layout object if set in styles, or a default layout."""
-        return self.styles.layout or self._default_layout
-
-    @property
-    def is_container(self) -> bool:
-        """Check if this widget is a container (contains other widgets).
-
-        Returns:
-            bool: True if this widget is a container.
-        """
-        return self.styles.layout is not None or bool(self.children)
-
-    @property
-    def is_scrollable(self) -> bool:
-        """Check if this Widget may be scrolled.
-
-        Returns:
-            bool: True if this widget may be scrolled.
-        """
-        return self.is_container
 
     def watch_mouse_over(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""

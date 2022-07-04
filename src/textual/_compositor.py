@@ -386,33 +386,23 @@ class Compositor:
 
                 # Add any scrollbars
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(
-                    container_size
+                    container_region
                 ):
                     map[chrome_widget] = MapGeometry(
-                        chrome_region + container_region.offset + layout_offset,
+                        chrome_region + layout_offset,
                         order,
                         clip,
                         container_size,
                         container_size,
                     )
 
-                if widget.is_container:
-                    # Add the container widget, which will render a background
-                    map[widget] = MapGeometry(
-                        region + layout_offset,
-                        order,
-                        clip,
-                        total_region.size,
-                        container_size,
-                    )
-                else:
-                    map[widget] = MapGeometry(
-                        child_region + layout_offset,
-                        order,
-                        clip,
-                        child_region.size,
-                        container_size,
-                    )
+                map[widget] = MapGeometry(
+                    region + layout_offset,
+                    order,
+                    clip,
+                    total_region.size,
+                    container_size,
+                )
 
             else:
                 # Add the widget to the map
