@@ -13,6 +13,18 @@ from textual.renderables._blend_colors import blend_colors
 def _get_blended_style_cached(
     bg_color: Color, fg_color: Color, opacity: float
 ) -> Style:
+    """Blend from one color to another.
+
+    Cached because when a UI is static the opacity will be constant.
+
+    Args:
+        bg_color (Color): Background color.
+        fg_color (Color): Foreground color.
+        opacity (float): Opacity.
+
+    Returns:
+        Style: Resulting style.
+    """
     return Style.from_color(
         color=blend_colors(bg_color, fg_color, ratio=opacity),
         bgcolor=bg_color,
