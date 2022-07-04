@@ -17,6 +17,7 @@ VALID_DISPLAY: Final = {"block", "none"}
 VALID_BORDER: Final[set[EdgeType]] = {
     "none",
     "hidden",
+    "ascii",
     "round",
     "blank",
     "solid",

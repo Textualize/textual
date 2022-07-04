@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from fractions import Fraction
 from typing import (
+    TYPE_CHECKING,
     Any,
     Awaitable,
+    Callable,
     ClassVar,
     Collection,
-    TYPE_CHECKING,
-    Callable,
     Iterable,
     NamedTuple,
 )
@@ -20,37 +20,32 @@ from rich.padding import Padding
 from rich.segment import Segment
 from rich.style import Style
 
-from . import errors
-from . import events
+from . import errors, events, messages
 from ._animator import BoundAnimator
 from ._border import Border
-from .box_model import BoxModel, get_box_model
 from ._context import active_app
-from ._styles_render import StylesRenderer
+from ._layout import ArrangeResult, Layout
+from ._segment_tools import line_crop
+from ._styles_cache import StylesCache
 from ._types import Lines
+from .box_model import BoxModel, get_box_model
 from .dom import DOMNode
-from ._layout import ArrangeResult
-from .geometry import clamp, Offset, Region, Size, Spacing
+from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
-from . import messages
-from ._layout import Layout
 from .reactive import Reactive, watch
 from .renderables.opacity import Opacity
 from .renderables.tint import Tint
-from ._segment_tools import line_crop
-from .css.styles import Styles
-
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
     from .scrollbar import (
         ScrollBar,
-        ScrollTo,
-        ScrollUp,
         ScrollDown,
         ScrollLeft,
         ScrollRight,
+        ScrollTo,
+        ScrollUp,
     )
 
 
@@ -120,7 +115,7 @@ class Widget(DOMNode):
         self._arrangement: ArrangeResult | None = None
         self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
 
-        self._styles_renderer = StylesRenderer(self)
+        self._styles_cache = StylesCache()
 
         super().__init__(name=name, id=id, classes=classes)
         self.add_children(*children)
@@ -443,9 +438,14 @@ class Widget(DOMNode):
         """
 
         if regions:
-            self._dirty_regions.update(regions)
+            widget_regions = [
+                region.translate(self.content_offset) for region in regions
+            ]
+            self._dirty_regions.update(widget_regions)
+            self._styles_cache.set_dirty(*widget_regions)
         else:
             self._dirty_regions.clear()
+            self._styles_cache.clear()
             # TODO: Does this need to be content region?
             # self._dirty_regions.append(self.size.region)
             self._dirty_regions.add(self.size.region)
@@ -668,7 +668,7 @@ class Widget(DOMNode):
             bool: True if the window was scrolled.
         """
 
-        window = self.region.at_offset(self.scroll_offset)
+        window = self.content_region.at_offset(self.scroll_offset)
         if spacing is not None:
             window = window.shrink(spacing)
         delta = Region.get_scroll_to_visible(window, region)
@@ -847,7 +847,7 @@ class Widget(DOMNode):
 
     @property
     def content_size(self) -> Size:
-        return self._size - self.styles.gutter.totals
+        return self.content_region.size
 
     @property
     def size(self) -> Size:
@@ -860,12 +860,12 @@ class Widget(DOMNode):
     @property
     def content_region(self) -> Region:
         """Gets an absolute region containing the content (minus padding and border)."""
-        return self.region.shrink(self.styles.content_gutter)
+        return self.region.shrink(self.styles.gutter)
 
     @property
     def content_offset(self) -> Offset:
         """An offset from the Widget origin where the content begins."""
-        x, y = self.styles.content_gutter.top_left
+        x, y = self.styles.gutter.top_left
         return Offset(x, y)
 
     @property
@@ -998,15 +998,9 @@ class Widget(DOMNode):
             Lines: A list of list of segments
         """
         if self._dirty_regions:
-            self._styles_renderer.set_dirty(*self._dirty_regions)
             self._render_lines()
 
-        lines = self._styles_renderer.render(crop)
-        return lines
-
-        x1, y1, x2, y2 = crop.corners
-        lines = self._render_cache.lines[y1:y2]
-        lines = self._crop_lines(lines, x1, x2)
+        lines = self._styles_cache.render_widget(self, crop)
         return lines
 
     def get_style_at(self, x: int, y: int) -> Style:

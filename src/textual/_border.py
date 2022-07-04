@@ -131,6 +131,17 @@ def get_box(
 def render_row(
     box_row: tuple[Segment, Segment, Segment], width: int, left: bool, right: bool
 ) -> list[Segment]:
+    """Render a top, or bottom border row.
+
+    Args:
+        box_row (tuple[Segment, Segment, Segment]): Corners and side segments.
+        width (int): Total width of resulting line.
+        left (bool): Render left corner.
+        right (bool): Render right corner.
+
+    Returns:
+        list[Segment]: A list of segments.
+    """
     box1, box2, box3 = box_row
     if left and right:
         return [box1, Segment(box2.text * (width - 2), box2.style), box3]

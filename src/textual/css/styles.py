@@ -262,12 +262,6 @@ class StylesBase(ABC):
         return spacing
 
     @property
-    def content_gutter(self) -> Spacing:
-        """The spacing that surrounds the content area of the widget."""
-        spacing = self.padding + self.border.spacing + self.margin
-        return spacing
-
-    @property
     def auto_dimensions(self) -> bool:
         """Check if width or height are set to 'auto'."""
         has_rule = self.has_rule

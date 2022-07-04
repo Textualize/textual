@@ -95,7 +95,7 @@ def line_trim(segments: list[Segment], start: bool, end: bool) -> list[Segment]:
 
 def line_pad(
     segments: Iterable[Segment], pad_left: int, pad_right: int, style: Style
-) -> Iterable[Segment]:
+) -> list[Segment]:
     """Adds padding to the left and / or right of a list of segments.
 
     Args:
@@ -123,4 +123,4 @@ def line_pad(
             *segments,
             Segment(" " * pad_right, style),
         ]
-    return segments
+    return list(segments)

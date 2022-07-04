@@ -140,7 +140,8 @@ class Size(NamedTuple):
         return Region(0, 0, width, height)
 
     @property
-    def lines_range(self) -> range:
+    def line_range(self) -> range:
+        """Get a range covering lines."""
         return range(self.height)
 
     def __add__(self, other: object) -> Size:

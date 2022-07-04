@@ -2,7 +2,7 @@ from rich.segment import Segment
 from rich.style import Style
 
 
-from textual._segment_tools import line_crop, line_trim
+from textual._segment_tools import line_crop, line_trim, line_pad
 
 
 def test_line_crop():
@@ -89,3 +89,25 @@ def test_line_trim():
     ]
 
     assert line_trim([], True, True) == []
+
+
+def test_line_pad():
+    segments = [Segment("foo"), Segment("bar")]
+    style = Style.parse("red")
+    assert line_pad(segments, 2, 3, style) == [
+        Segment("  ", style),
+        *segments,
+        Segment("   ", style),
+    ]
+
+    assert line_pad(segments, 0, 3, style) == [
+        *segments,
+        Segment("   ", style),
+    ]
+
+    assert line_pad(segments, 2, 0, style) == [
+        Segment("  ", style),
+        *segments,
+    ]
+
+    assert line_pad(segments, 0, 0, style) == segments

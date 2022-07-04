@@ -115,7 +115,7 @@ class BasicApp(App, css_path="basic.css"):
                     Static(Syntax(CODE, "python"), classes="code"),
                     classes="scrollable",
                 ),
-                # table,
+                table,
                 Error(),
                 Tweet(TweetBody(), classes="scrollbar-size-custom"),
                 Warning(),
