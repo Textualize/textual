@@ -70,13 +70,13 @@ INVISIBLE_EDGE_TYPES = cast("frozenset[EdgeType]", frozenset(("", "none", "hidde
 
 BorderValue: TypeAlias = Tuple[EdgeType, Union[str, Color, Style]]
 
-BoxSegments: TypeAlias = tuple[
-    tuple[Segment, Segment, Segment],
-    tuple[Segment, Segment, Segment],
-    tuple[Segment, Segment, Segment],
+BoxSegments: TypeAlias = Tuple[
+    Tuple[Segment, Segment, Segment],
+    Tuple[Segment, Segment, Segment],
+    Tuple[Segment, Segment, Segment],
 ]
 
-Borders: TypeAlias = tuple[EdgeStyle, EdgeStyle, EdgeStyle, EdgeStyle]
+Borders: TypeAlias = Tuple[EdgeStyle, EdgeStyle, EdgeStyle, EdgeStyle]
 
 
 @lru_cache(maxsize=1024)
