@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING, Callable, Iterable
+from typing import TYPE_CHECKING, Callable, Iterable, List
 
 from rich.segment import Segment
 from rich.style import Style
@@ -10,7 +10,7 @@ from ._border import get_box, render_row
 from ._segment_tools import line_crop, line_pad, line_trim
 from ._types import Lines
 from .color import Color
-from .geometry import Spacing, Region, Size
+from .geometry import Region, Size, Spacing
 from .renderables.opacity import Opacity
 from .renderables.tint import Tint
 
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from .widget import Widget
 
 
-RenderLineCallback: TypeAlias = Callable[[int], list[Segment]]
+RenderLineCallback: TypeAlias = Callable[[int], List[Segment]]
 
 
 class StylesCache:
