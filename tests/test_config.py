@@ -26,6 +26,10 @@ def packaged_default_config(tmp_path):
     custom_config = "hello"
     another_config = "world"
 
+    [{TEST_APP_NAME}.devtools]
+    a = 2
+    c = 4
+
     [some_other_app]  # Your app can't impact config of another app
     x = 1
     """
@@ -55,6 +59,10 @@ def user_config(tmp_path):
     [{TEST_APP_NAME}.config]
     another_config = "override"
 
+    [{TEST_APP_NAME}.devtools]
+    a = 1
+    b = 2
+
     [some_other_app]  # User config can, of course, contain other app config, but its not relevant to *this* app.
     y = 1
     """
@@ -62,8 +70,10 @@ def user_config(tmp_path):
     return config
 
 
-def test_resolve_reads_files_and_merges_sections_correctly(packaged_default_config, user_config):
-    """ This is quite a large test but the whole configuration flow has many steps, so it's worth
+def test_resolve_reads_files_and_merges_sections_correctly(
+    packaged_default_config, user_config
+):
+    """This is quite a large test but the whole configuration flow has many steps, so it's worth
     have a test of the intermediary state here.
     This tests the process of reading user config and the default config packaged with the app, and
     ensures that corresponding values are merged correctly, and that only properly namespaced values in
@@ -77,14 +87,21 @@ def test_resolve_reads_files_and_merges_sections_correctly(packaged_default_conf
     config.resolve()
 
     assert config._raw_merged_config == {
-        "meta": {"abc": 123},  # [meta] section retrieved from user config, [meta] from packaged defaults ignored
-        "not_hotdog": {  # [not_hotdog] sections from packaged/default config and user config merged
+        "meta": {  # [meta] section retrieved from user config, [meta] from packaged defaults ignored
+            "abc": 123
+        },
+        TEST_APP_NAME: {  # [not_hotdog] sections from packaged/default config and user config merged
             "config": {
                 "another_config": "override",  # Appears in both user config and packaged defaults, user-config wins.
-                "custom_config": "hello"  # Appears only in packaged defaults, with no user overrides.
+                "custom_config": "hello",  # Appears only in packaged defaults, with no user overrides.
             },
             "dark": True,  # From the user's app config
             "debug": False,  # From the default app packaged config
+            "devtools": {
+                "a": 1,
+                "b": 2,
+                "c": 4,
+                "enabled": False,
+            },
         },
-        "textual": {"dark": False, "debug": True, "devtools": {"enabled": False}},
     }

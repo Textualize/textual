@@ -33,21 +33,48 @@ class Config:
                 multiple times in the supplied config files and have matching namespaces, the last occurrence will be
                 used.
         """
-        # TODO: If namespace is None, it may be contained within the packaged defaults
         self.namespace = namespace
-        self.default_config_path = default_config_path
-        self.user_config_paths = user_config_paths
+        self._default_config_path = default_config_path
+        self._user_config_paths = user_config_paths
         self._raw_merged_config = {}
 
     def resolve(self) -> Config:
         """Resolve configuration"""
         default_config = self._read_and_filter_default_config_file()
         user_configs = self._read_and_filter_user_config_files()
+
+        # Todo: may not need to be an attribute
         self._raw_merged_config = self._merge_raw_config_dicts(
             default_config, user_configs
         )
+        self._raw_merged_config = self._prioritise_user_config(self._raw_merged_config)
 
         return self
+
+    def _prioritise_user_config(
+        self, raw_merged_config: dict[str, object]
+    ) -> dict[str, object]:
+        """Given a merged/combined settings file which may have 'global' config and app level config, ensure
+        the config for the curren Textual app takes precedence. After this operation, the [textual] section
+        will be merged into the [APP_NAME] section."""
+        config = raw_merged_config.copy()
+
+        global_config = config.pop("textual", {})
+        namespaced_config = config.get(self.namespace, {})
+
+        global_devtools_config = global_config.pop("devtools")
+        namespaced_devtools_config = namespaced_config.get("devtools")
+
+        config = {
+            "meta": config.get("meta", {}),
+            self.namespace: {
+                **global_config,
+                **namespaced_config,
+                "devtools": {**global_devtools_config, **namespaced_devtools_config},
+            },
+        }
+
+        return config
 
     def _read_and_filter_default_config_file(self) -> dict[str, object]:
         """Read the default config file (that is, the config file that is packaged alongside this application
@@ -55,7 +82,7 @@ class Config:
         relevant for a default config file. For example, sections pertaining to other applications or global sections
         should be removed."""
         try:
-            with open(self.default_config_path, "rb") as default_config_file:
+            with open(self._default_config_path, "rb") as default_config_file:
                 default_config = tomli.load(default_config_file)
         except OSError:
             return {}
@@ -69,13 +96,18 @@ class Config:
         """Read the config files on the users machine. Keys found in here inside matching namespaces will ultimately
         override corresponding keys inside the default config files."""
         user_configs = []
-        for path in self.user_config_paths:
-            with open(path, "rb") as user_config_file:
-                user_config = tomli.load(user_config_file)
+        for path in self._user_config_paths:
+            try:
+                with open(path, "rb") as user_config_file:
+                    user_config = tomli.load(user_config_file)
+            except OSError:
+                continue
+
             user_config = _filter_keys(
                 user_config, keys_to_keep=self._user_config_headers
             )
             user_configs.append(user_config)
+
         return user_configs
 
     @property
@@ -87,6 +119,8 @@ class Config:
 
     @property
     def _user_config_headers(self) -> frozenset[str]:
+        """Get a frozenset of strings containing the names of the section headers relevant to the user config that
+        is bundled with this application."""
         return frozenset(
             (
                 "meta",
@@ -111,26 +145,37 @@ class Config:
             # By "sandbox" we refer to `APP_NAME.config` section
             merged_config_sandbox = merged_namespace.get("config", {})
             user_config_sandbox = user_config_namespace.get("config", {})
-            merged[self.namespace] = {
-                **merged_namespace,
-                **user_config_namespace,
-                "config": {**merged_config_sandbox, **user_config_sandbox},
-            }
 
             # Merge the `meta` section
             merged_meta = merged.get("meta", {})
             merged_meta.update(user_config.get("meta", {}))
-            merged["meta"] = merged_meta
 
             # Merge the `textual` section
             merged_textual = merged.get("textual", {})
             merged_textual.update(user_config.get("textual", {}))
-            merged["textual"] = merged_textual
 
             # Merge the `textual.devtools` section
             merged_devtools = merged.get("textual", {}).get("devtools", {})
             merged_devtools.update(user_config.get("textual", {}).get("devtools", {}))
-            merged["textual"]["devtools"] = merged_devtools
+
+            # Merge the `APP_NAME.devtools` sections
+            merged_app_devtools = merged_namespace.get("devtools", {})
+            merged_app_devtools.update(user_config_namespace.get("devtools", {}))
+
+            # Merge the new settings with the previous iteration
+            merged = {
+                "meta": merged_meta,
+                "textual": {
+                    **merged_textual,
+                    "devtools": merged_devtools,
+                },
+                self.namespace: {
+                    **merged_namespace,
+                    **user_config_namespace,
+                    "config": {**merged_config_sandbox, **user_config_sandbox},
+                    "devtools": merged_app_devtools,
+                },
+            }
 
         return merged
 
