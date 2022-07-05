@@ -19,6 +19,7 @@ The `Button` widget creates a clickable button on screen
 ## Reacting to clicks
 
 To handle button presses, we need a `handle_button_pressed` function, like the following:
+
 Where a button with a name of "10" denotes an exit and other numbers denote some value that the user has clicked
 
 ```python
