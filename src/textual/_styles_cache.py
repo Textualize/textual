@@ -31,6 +31,12 @@ RenderLineCallback: TypeAlias = Callable[[int], List[Segment]]
 class StylesCache:
     """Responsible for rendering CSS Styles and keeping a cached of rendered lines.
 
+    The render method applies border, outline, and padding set in the Styles object to widget content.
+
+    The diagram below shows content (possibly from a Rich renderable) with padding and border. The
+    labels A. B. and C. indicate the code path (see comments in render_line below) chosen to render
+    the indicated lines.
+
     ```
     ┏━━━━━━━━━━━━━━━━━━━━━━┓◀── A. border
     ┃                      ┃◀┐
