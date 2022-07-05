@@ -104,12 +104,10 @@ def test_resolve_reads_files_and_merges_sections_correctly(
         }
     )
     assert config["dark"] is True
-    assert (
-        config.meta
-        == {  # [meta] section retrieved from user config, [meta] from packaged defaults ignored
-            "abc": 123,
-        }
-    )
+    # [meta] section retrieved from user config, [meta] from packaged defaults ignored
+    assert config.meta == {
+        "abc": 123,
+    }
 
 
 def test_empty_user_config_but_not_empty_packaged_defaults(
@@ -130,6 +128,7 @@ def test_empty_user_config_but_not_empty_packaged_defaults(
         "debug": False,
         "devtools": {"a": 2, "c": 4},
     }
+    assert config.meta == {}
 
 
 def test_empty_packaged_defaults_but_not_empty_user_config(tmp_path, user_config):
@@ -149,3 +148,75 @@ def test_empty_packaged_defaults_but_not_empty_user_config(tmp_path, user_config
         "debug": True,
         "devtools": {"a": 1, "b": 2, "enabled": False},
     }
+    assert config.meta == {"abc": 123}
+
+
+def test_empty_config_files(tmp_path):
+    packaged_default_config_path = tmp_path / "packaged-defaults-textual.toml"
+    user_config_path = tmp_path / "packaged-defaults-textual.toml"
+
+    packaged_default_config_path.write_text("")
+    user_config_path.write_text("")
+
+    config = Config(
+        TEST_APP_NAME,
+        default_config_path=packaged_default_config_path,
+        user_config_paths=[user_config_path],
+    )
+    config.resolve()
+
+    assert config.raw == {"config": {}, "devtools": {}}
+    assert config.meta == {}
+
+
+def test_packaged_default_config_file_doesnt_exist(tmp_path, user_config):
+    non_existent_config_path = tmp_path / "i" / "dont" / "exist.toml"
+    config = Config(
+        TEST_APP_NAME,
+        default_config_path=non_existent_config_path,
+        user_config_paths=[user_config],
+    )
+    config.resolve()
+
+    assert config.raw == {
+        "config": {"another_config": "override"},
+        "dark": True,
+        "debug": True,
+        "devtools": {"a": 1, "b": 2, "enabled": False},
+    }
+    assert config.meta == {"abc": 123}
+
+
+def test_user_config_files_dont_exist(tmp_path, packaged_default_config):
+    # This is a highly likely scenario. Config will receive the locations where configuration files
+    # could exist. It's likely that they won't exist for the majority of users, however.
+    non_existent_config_path = tmp_path / "i" / "dont" / "exist.toml"
+    config = Config(
+        TEST_APP_NAME,
+        default_config_path=packaged_default_config,
+        user_config_paths=[non_existent_config_path],
+    )
+    config.resolve()
+
+    assert config.raw == {
+        "config": {"another_config": "world", "custom_config": "hello"},
+        "debug": False,
+        "devtools": {"a": 2, "c": 4},
+    }
+    assert config.meta == {}
+
+
+@pytest.mark.xfail(reason="wip, see comments in test body")
+def test_no_config_files_exist_at_all(tmp_path):
+    user_config_path = tmp_path / "i" / "dont" / "exist.toml"
+    packaged_default_config_path = tmp_path / "i" / "also" / "dont" / "exist.toml"
+
+    config = Config(
+        TEST_APP_NAME,
+        default_config_path=packaged_default_config_path,
+        user_config_paths=[user_config_path],
+    )
+
+    # TODO: These should be empty dicts, not None
+    assert config.raw == {}
+    assert config.meta == {}

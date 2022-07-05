@@ -78,8 +78,8 @@ class Config:
         global_config = config.pop("textual", {})
         namespaced_config = config.get(self.namespace, {})
 
-        global_devtools_config = global_config.pop("devtools")
-        namespaced_devtools_config = namespaced_config.get("devtools")
+        global_devtools_config = global_config.get("devtools", {})
+        namespaced_devtools_config = namespaced_config.get("devtools", {})
 
         config = {
             "meta": config.get("meta", {}),
