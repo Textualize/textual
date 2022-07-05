@@ -194,7 +194,7 @@ class StylesCache:
             render_content_line (RenderLineCallback): Callback to render a line of content.
 
         Returns:
-            list[Segment]: _description_
+            list[Segment]: A line of segments.
         """
 
         gutter = styles.gutter

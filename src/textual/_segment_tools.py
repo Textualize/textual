@@ -99,7 +99,7 @@ def line_pad(
     """Adds padding to the left and / or right of a list of segments.
 
     Args:
-        segments (list[Segment]): A line (list of Segments).
+        segments (Iterable[Segment]): A line of segments.
         pad_left (int): Cells to pad on the left.
         pad_right (int): Cells to pad on the right.
         style (Style): Style of padded cells.
@@ -108,18 +108,18 @@ def line_pad(
         list[Segment]: A new line with padding.
     """
     if pad_left and pad_right:
-        segments = [
+        return [
             Segment(" " * pad_left, style),
             *segments,
             Segment(" " * pad_right, style),
         ]
     elif pad_left:
-        segments = [
+        return [
             Segment(" " * pad_left, style),
             *segments,
         ]
     elif pad_right:
-        segments = [
+        return [
             *segments,
             Segment(" " * pad_right, style),
         ]
