@@ -31,7 +31,7 @@ Where a button with a name of "10" denotes an exit and other numbers denote some
 
         # Make sure we are not exiting
         if int(button_name) != 10:
-            # If not music button, assume state change
+            # If not the exit button, then change some variable to the name of the button the user clicked
             somevalue = int(button_name)
             # You may need a refresh here depending on your needs
         else:
