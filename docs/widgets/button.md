@@ -14,7 +14,7 @@ The `Button` widget creates a clickable button on screen
 
 `style`
 
-: The style of the button
+: The style of the button, using standard textual syntax
 
 ## Reacting to clicks
 
