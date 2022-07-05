@@ -323,7 +323,7 @@ class Region(NamedTuple):
 
     @property
     def line_span(self) -> tuple[int, int]:
-        """Get the star and end line number (y coord).
+        """Get the start and end line number (y coord).
 
         The end value is exclusive.
 
