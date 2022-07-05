@@ -38,16 +38,32 @@ class Config:
         self._user_config_paths = user_config_paths
         self._raw_merged_config = {}
 
+        # Textual default config values which can be overridden by resolved config.
+
+        # TODO: Apply environment variables first before resolving configuration files
+        self.dark = False
+        self.debug = False
+
+    def __getitem__(self, key: str) -> object:
+        """Retrieve a config value for this application for a given key."""
+        return self._raw_merged_config.get(self.namespace)[key]
+
+    @property
+    def raw(self) -> dict[str, object]:
+        return self._raw_merged_config.get(self.namespace)
+
+    @property
+    def meta(self) -> dict[str, object]:
+        return self._raw_merged_config.get("meta")
+
     def resolve(self) -> Config:
         """Resolve configuration"""
         default_config = self._read_and_filter_default_config_file()
         user_configs = self._read_and_filter_user_config_files()
 
-        # Todo: may not need to be an attribute
-        self._raw_merged_config = self._merge_raw_config_dicts(
-            default_config, user_configs
-        )
-        self._raw_merged_config = self._prioritise_user_config(self._raw_merged_config)
+        raw_merged_config = self._merge_raw_config_dicts(default_config, user_configs)
+        self._raw_merged_config = self._prioritise_user_config(raw_merged_config)
+        self._fill_attributes(self._raw_merged_config)
 
         return self
 
@@ -179,10 +195,16 @@ class Config:
 
         return merged
 
+    def _fill_attributes(self, raw_merged_config: dict[str, object]) -> None:
+        """Override the Textual default configuration values with the values from a dictionary"""
+        # TODO: At this point we may consider validation. There's none here for now though.
+        #  .. May also consider having a separate object which we can convert this dict into easily,
+        #  that allows for validation via pydantic, with this class providing "transparent" read-only
+        #  access to it.
+
 
 def _filter_keys(
     dictionary: dict[str, object], keys_to_keep: Collection[str]
 ) -> dict[str, object]:
-    """Removes sections that aren't relevant, for example
-    sections defining configuration for other Textual apps.'"""
+    """Removes items from a dictionary where the key isn't contained in `keys_to_keep`"""
     return {key: value for key, value in dictionary.items() if key in keys_to_keep}

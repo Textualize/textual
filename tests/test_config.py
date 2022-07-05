@@ -86,11 +86,9 @@ def test_resolve_reads_files_and_merges_sections_correctly(
 
     config.resolve()
 
-    assert config._raw_merged_config == {
-        "meta": {  # [meta] section retrieved from user config, [meta] from packaged defaults ignored
-            "abc": 123
-        },
-        TEST_APP_NAME: {  # [not_hotdog] sections from packaged/default config and user config merged
+    assert (
+        config.raw
+        == {  # [not_hotdog] sections from packaged/default config and user config merged
             "config": {
                 "another_config": "override",  # Appears in both user config and packaged defaults, user-config wins.
                 "custom_config": "hello",  # Appears only in packaged defaults, with no user overrides.
@@ -103,5 +101,51 @@ def test_resolve_reads_files_and_merges_sections_correctly(
                 "c": 4,
                 "enabled": False,
             },
-        },
+        }
+    )
+    assert config["dark"] is True
+    assert (
+        config.meta
+        == {  # [meta] section retrieved from user config, [meta] from packaged defaults ignored
+            "abc": 123,
+        }
+    )
+
+
+def test_empty_user_config_but_not_empty_packaged_defaults(
+    tmp_path, packaged_default_config
+):
+    user_config_path = tmp_path / "user-config-textual.toml"
+    user_config_path.write_text("")
+
+    config = Config(
+        TEST_APP_NAME,
+        default_config_path=packaged_default_config,
+        user_config_paths=[user_config_path],
+    )
+    config.resolve()
+
+    assert config.raw == {
+        "config": {"another_config": "world", "custom_config": "hello"},
+        "debug": False,
+        "devtools": {"a": 2, "c": 4},
+    }
+
+
+def test_empty_packaged_defaults_but_not_empty_user_config(tmp_path, user_config):
+    packaged_default_config_path = tmp_path / "packaged-defaults-textual.toml"
+    packaged_default_config_path.write_text("")
+
+    config = Config(
+        TEST_APP_NAME,
+        default_config_path=packaged_default_config_path,
+        user_config_paths=[user_config],
+    )
+    config.resolve()
+
+    assert config.raw == {
+        "config": {"another_config": "override"},
+        "dark": True,
+        "debug": True,
+        "devtools": {"a": 1, "b": 2, "enabled": False},
     }
