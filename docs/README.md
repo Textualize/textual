@@ -1,6 +1,8 @@
 # Documentation Workflow
 
 * Ensure you're inside a *Python 3.10+* virtual environment
+* Install the material theme using `pip install mkdocs-material`
+* Install the strings extension using `pip install mkdocstrings-python`
 * Run the live-reload server using `mkdocs serve` from the project root
 * Create new pages by adding new directories and Markdown files inside `docs/*`
 
@@ -16,3 +18,4 @@
     docs/
         index.md  # The documentation homepage.
         ...       # Other markdown pages, images and other files.
+
