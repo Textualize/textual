@@ -20,7 +20,7 @@ class VerticalLayout(Layout):
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
 
-        parent_size = parent.size
+        parent_size = parent.outer_size
 
         children = list(parent.children)
         styles = [child.styles for child in children if child.styles.height is not None]

@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from fractions import Fraction
 from typing import (
+    TYPE_CHECKING,
     Any,
     Awaitable,
+    Callable,
     ClassVar,
     Collection,
-    TYPE_CHECKING,
-    Callable,
     Iterable,
     NamedTuple,
 )
@@ -17,38 +17,35 @@ from rich.align import Align
 from rich.console import Console, RenderableType
 from rich.measure import Measurement
 from rich.padding import Padding
+from rich.segment import Segment
 from rich.style import Style
 
-from . import errors
-from . import events
+from . import errors, events, messages
 from ._animator import BoundAnimator
 from ._border import Border
-from .box_model import BoxModel, get_box_model
 from ._context import active_app
+from ._layout import ArrangeResult, Layout
+from ._segment_tools import line_crop
+from ._styles_cache import StylesCache
 from ._types import Lines
+from .box_model import BoxModel, get_box_model
 from .dom import DOMNode
-from ._layout import ArrangeResult
-from .geometry import clamp, Offset, Region, Size, Spacing
+from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
-from . import messages
-from ._layout import Layout
 from .reactive import Reactive, watch
 from .renderables.opacity import Opacity
 from .renderables.tint import Tint
-from ._segment_tools import line_crop
-from .css.styles import Styles
-
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
     from .scrollbar import (
         ScrollBar,
-        ScrollTo,
-        ScrollUp,
         ScrollDown,
         ScrollLeft,
         ScrollRight,
+        ScrollTo,
+        ScrollUp,
     )
 
 
@@ -117,6 +114,8 @@ class Widget(DOMNode):
 
         self._arrangement: ArrangeResult | None = None
         self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
+
+        self._styles_cache = StylesCache()
 
         super().__init__(name=name, id=id, classes=classes)
         self.add_children(*children)
@@ -407,11 +406,6 @@ class Widget(DOMNode):
         return enabled
 
     @property
-    def scrollbar_dimensions(self) -> tuple[int, int]:
-        """Get the size of any scrollbars on the widget"""
-        return (self.scrollbar_size_horizontal, self.scrollbar_size_vertical)
-
-    @property
     def scrollbar_size_vertical(self) -> int:
         """Get the width used by the *vertical* scrollbar."""
         return (
@@ -427,6 +421,111 @@ class Widget(DOMNode):
             else 0
         )
 
+    @property
+    def scrollbar_gutter(self) -> Spacing:
+        gutter = Spacing(
+            0, self.scrollbar_size_vertical, self.scrollbar_size_horizontal, 0
+        )
+        return gutter
+
+    @property
+    def gutter(self) -> Spacing:
+        """Spacing for padding / border / scrollbars."""
+        return self.styles.gutter + self.scrollbar_gutter
+
+    @property
+    def size(self) -> Size:
+        """The size of the content area."""
+        return self.content_region.size
+
+    @property
+    def outer_size(self) -> Size:
+        """The size of the widget (including padding and border)."""
+        return self._size
+
+    @property
+    def container_size(self) -> Size:
+        """The size of the container (parent widget)."""
+        return self._container_size
+
+    @property
+    def content_region(self) -> Region:
+        """Gets an absolute region containing the content (minus padding and border)."""
+        content_region = self.region.shrink(self.gutter)
+        return content_region
+
+    @property
+    def content_offset(self) -> Offset:
+        """An offset from the Widget origin where the content begins."""
+        x, y = self.gutter.top_left
+        return Offset(x, y)
+
+    @property
+    def region(self) -> Region:
+        """The region occupied by this widget, relative to the Screen."""
+        try:
+            return self.screen.find_widget(self).region
+        except errors.NoWidget:
+            return Region()
+
+    @property
+    def window_region(self) -> Region:
+        """The region within the scrollable area that is currently visible.
+
+        Returns:
+            Region: New region.
+        """
+        window_region = self.region.at_offset(self.scroll_offset)
+        return window_region
+
+    @property
+    def scroll_offset(self) -> Offset:
+        return Offset(int(self.scroll_x), int(self.scroll_y))
+
+    @property
+    def is_transparent(self) -> bool:
+        """Check if the background styles is not set.
+
+        Returns:
+            bool: ``True`` if there is background color, otherwise ``False``.
+        """
+        return self.is_scrollable and self.styles.background.is_transparent
+
+    @property
+    def console(self) -> Console:
+        """Get the current console."""
+        return active_app.get().console
+
+    @property
+    def animate(self) -> BoundAnimator:
+        if self._animate is None:
+            self._animate = self.app.animator.bind(self)
+        assert self._animate is not None
+        return self._animate
+
+    @property
+    def layout(self) -> Layout:
+        """Get the layout object if set in styles, or a default layout."""
+        return self.styles.layout or self._default_layout
+
+    @property
+    def is_container(self) -> bool:
+        """Check if this widget is a container (contains other widgets).
+
+        Returns:
+            bool: True if this widget is a container.
+        """
+        return self.styles.layout is not None or bool(self.children)
+
+    @property
+    def is_scrollable(self) -> bool:
+        """Check if this Widget may be scrolled.
+
+        Returns:
+            bool: True if this widget may be scrolled.
+        """
+        return self.is_container
+
     def _set_dirty(self, *regions: Region) -> None:
         """Set the Widget as 'dirty' (requiring re-paint).
 
@@ -439,12 +538,14 @@ class Widget(DOMNode):
         """
 
         if regions:
-            self._dirty_regions.update(regions)
+            content_offset = self.content_offset
+            widget_regions = [region.translate(content_offset) for region in regions]
+            self._dirty_regions.update(widget_regions)
+            self._styles_cache.set_dirty(*widget_regions)
         else:
             self._dirty_regions.clear()
-            # TODO: Does this need to be content region?
-            # self._dirty_regions.append(self.size.region)
-            self._dirty_regions.add(self.size.region)
+            self._styles_cache.clear()
+            self._dirty_regions.add(self.outer_size.region)
 
     def get_dirty_regions(self) -> Collection[Region]:
         """Get regions which require a repaint.
@@ -664,7 +765,7 @@ class Widget(DOMNode):
             bool: True if the window was scrolled.
         """
 
-        window = self.region.at_offset(self.scroll_offset)
+        window = self.content_region.at_offset(self.scroll_offset)
         if spacing is not None:
             window = window.shrink(spacing)
         delta = Region.get_scroll_to_visible(window, region)
@@ -727,17 +828,17 @@ class Widget(DOMNode):
             region, _ = region.split_horizontal(-scrollbar_size_horizontal)
         return region
 
-    def _arrange_scrollbars(self, size: Size) -> Iterable[tuple[Widget, Region]]:
+    def _arrange_scrollbars(self, region: Region) -> Iterable[tuple[Widget, Region]]:
         """Arrange the 'chrome' widgets (typically scrollbars) for a layout element.
 
         Args:
-            size (Size): Size of the containing region.
+            region (Region): The containing region.
 
         Returns:
             Iterable[tuple[Widget, Region]]: Tuples of scrollbar Widget and region.
 
         """
-        region = size.region
+
         show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
 
         scrollbar_size_horizontal = self.scrollbar_size_horizontal
@@ -833,93 +934,13 @@ class Widget(DOMNode):
         """
 
         renderable = self.render()
-        renderable = self._style_renderable(renderable)
+        styles = self.styles
+        content_align = (styles.content_align_horizontal, styles.content_align_vertical)
+        if content_align != ("left", "top"):
+            horizontal, vertical = content_align
+            renderable = Align(renderable, horizontal, vertical=vertical)
+
         return renderable
-
-    @property
-    def size(self) -> Size:
-        return self._size
-
-    @property
-    def container_size(self) -> Size:
-        return self._container_size
-
-    @property
-    def content_region(self) -> Region:
-        """Gets an absolute region containing the content (minus padding and border)."""
-        return self.region.shrink(self.styles.content_gutter)
-
-    @property
-    def content_offset(self) -> Offset:
-        """An offset from the Widget origin where the content begins."""
-        x, y = self.styles.content_gutter.top_left
-        return Offset(x, y)
-
-    @property
-    def region(self) -> Region:
-        """The region occupied by this widget, relative to the Screen."""
-        try:
-            return self.screen.find_widget(self).region
-        except errors.NoWidget:
-            return Region()
-
-    @property
-    def window_region(self) -> Region:
-        """The region within the scrollable area that is currently visible.
-
-        Returns:
-            Region: New region.
-        """
-        window_region = self.region.at_offset(self.scroll_offset)
-        return window_region
-
-    @property
-    def scroll_offset(self) -> Offset:
-        return Offset(int(self.scroll_x), int(self.scroll_y))
-
-    @property
-    def is_transparent(self) -> bool:
-        """Check if the background styles is not set.
-
-        Returns:
-            bool: ``True`` if there is background color, otherwise ``False``.
-        """
-        return self.is_scrollable and self.styles.background.is_transparent
-
-    @property
-    def console(self) -> Console:
-        """Get the current console."""
-        return active_app.get().console
-
-    @property
-    def animate(self) -> BoundAnimator:
-        if self._animate is None:
-            self._animate = self.app.animator.bind(self)
-        assert self._animate is not None
-        return self._animate
-
-    @property
-    def layout(self) -> Layout:
-        """Get the layout object if set in styles, or a default layout."""
-        return self.styles.layout or self._default_layout
-
-    @property
-    def is_container(self) -> bool:
-        """Check if this widget is a container (contains other widgets).
-
-        Returns:
-            bool: True if this widget is a container.
-        """
-        return self.styles.layout is not None or bool(self.children)
-
-    @property
-    def is_scrollable(self) -> bool:
-        """Check if this Widget may be scrolled.
-
-        Returns:
-            bool: True if this widget may be scrolled.
-        """
-        return self.is_container
 
     def watch_mouse_over(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
@@ -953,23 +974,30 @@ class Widget(DOMNode):
             else:
                 self.refresh()
 
-    def _render_lines(self) -> None:
+    def _render_content(self) -> None:
         """Render all lines."""
         width, height = self.size
         renderable = self.render_styled()
         options = self.console.options.update_dimensions(width, height).update(
             highlight=False
         )
-        lines = self.console.render_lines(renderable, options)
+        lines = self.console.render_lines(renderable, options, style=self.rich_style)
         self._render_cache = RenderCache(self.size, lines)
         self._dirty_regions.clear()
 
-    def _crop_lines(self, lines: Lines, x1, x2) -> Lines:
-        width = self.size.width
-        if (x1, x2) != (0, width):
-            _line_crop = line_crop
-            lines = [_line_crop(line, x1, x2, width) for line in lines]
-        return lines
+    def render_line(self, y: int) -> list[Segment]:
+        """Render a line of content.
+
+        Args:
+            y (int): Y Coordinate of line.
+
+        Returns:
+            list[Segment]: A rendered line.
+        """
+        if self._dirty_regions:
+            self._render_content()
+        line = self._render_cache.lines[y]
+        return line
 
     def render_lines(self, crop: Region) -> Lines:
         """Render the widget in to lines.
@@ -980,12 +1008,7 @@ class Widget(DOMNode):
         Returns:
             Lines: A list of list of segments
         """
-        if self._dirty_regions:
-            self._render_lines()
-
-        x1, y1, x2, y2 = crop.corners
-        lines = self._render_cache.lines[y1:y2]
-        lines = self._crop_lines(lines, x1, x2)
+        lines = self._styles_cache.render_widget(self, crop)
         return lines
 
     def get_style_at(self, x: int, y: int) -> Style:

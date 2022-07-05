@@ -26,6 +26,7 @@ BORDER_CHARS: dict[EdgeType, tuple[str, str, str]] = {
     #  - 2nd string represents (mid1, mid2, mid3)
     #  - 3rd string represents (bottom1, bottom2, bottom3)
     "": ("   ", "   ", "   "),
+    "ascii": ("+-+", "| |", "+-+"),
     "none": ("   ", "   ", "   "),
     "hidden": ("   ", "   ", "   "),
     "blank": ("   ", "   ", "   "),
@@ -48,6 +49,7 @@ BORDER_LOCATIONS: dict[
     EdgeType, tuple[tuple[int, int, int], tuple[int, int, int], tuple[int, int, int]]
 ] = {
     "": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
+    "ascii": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "none": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "hidden": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "blank": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
@@ -68,15 +70,19 @@ INVISIBLE_EDGE_TYPES = cast("frozenset[EdgeType]", frozenset(("", "none", "hidde
 
 BorderValue: TypeAlias = Tuple[EdgeType, Union[str, Color, Style]]
 
+BoxSegments: TypeAlias = Tuple[
+    Tuple[Segment, Segment, Segment],
+    Tuple[Segment, Segment, Segment],
+    Tuple[Segment, Segment, Segment],
+]
+
+Borders: TypeAlias = Tuple[EdgeStyle, EdgeStyle, EdgeStyle, EdgeStyle]
+
 
 @lru_cache(maxsize=1024)
 def get_box(
     name: EdgeType, inner_style: Style, outer_style: Style, style: Style
-) -> tuple[
-    tuple[Segment, Segment, Segment],
-    tuple[Segment, Segment, Segment],
-    tuple[Segment, Segment, Segment],
-]:
+) -> BoxSegments:
     """Get segments used to render a box.
 
     Args:
@@ -122,6 +128,31 @@ def get_box(
     )
 
 
+def render_row(
+    box_row: tuple[Segment, Segment, Segment], width: int, left: bool, right: bool
+) -> list[Segment]:
+    """Render a top, or bottom border row.
+
+    Args:
+        box_row (tuple[Segment, Segment, Segment]): Corners and side segments.
+        width (int): Total width of resulting line.
+        left (bool): Render left corner.
+        right (bool): Render right corner.
+
+    Returns:
+        list[Segment]: A list of segments.
+    """
+    box1, box2, box3 = box_row
+    if left and right:
+        return [box1, Segment(box2.text * (width - 2), box2.style), box3]
+    if left:
+        return [box1, Segment(box2.text * (width - 1), box2.style)]
+    if right:
+        return [Segment(box2.text * (width - 1), box2.style), box3]
+    else:
+        return [Segment(box2.text * width, box2.style)]
+
+
 @rich.repr.auto
 class Border:
     """Renders Textual CSS borders.
@@ -135,13 +166,13 @@ class Border:
     def __init__(
         self,
         renderable: RenderableType,
-        edge_styles: tuple[EdgeStyle, EdgeStyle, EdgeStyle, EdgeStyle],
+        borders: Borders,
         inner_color: Color,
         outer_color: Color,
         outline: bool = False,
     ):
         self.renderable = renderable
-        self.edge_styles = edge_styles
+        self.edge_styles = borders
         self.outline = outline
 
         (
@@ -149,7 +180,7 @@ class Border:
             (right, right_color),
             (bottom, bottom_color),
             (left, left_color),
-        ) = edge_styles
+        ) = borders
         self._sides: tuple[EdgeType, EdgeType, EdgeType, EdgeType]
         self._sides = (top, right, bottom, left)
         from_color = Style.from_color

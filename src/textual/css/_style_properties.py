@@ -221,6 +221,8 @@ class BoxProperty:
                 it's style. Example types are "rounded", "solid", and "dashed".
         """
         box_type, color = obj.get_rule(self.name) or ("", self._default_color)
+        if box_type in {"none", "hidden"}:
+            box_type = ""
         return (box_type, color)
 
     def __set__(self, obj: Styles, border: tuple[EdgeType, str | Color] | None):
@@ -397,8 +399,8 @@ class BorderProperty:
             _border1, _border2, _border3, _border4 = (
                 normalize_border_value(border[0]),
                 normalize_border_value(border[1]),
+                normalize_border_value(border[2]),
                 normalize_border_value(border[3]),
-                normalize_border_value(border[4]),
             )
             setattr(obj, top, _border1)
             setattr(obj, right, _border2)
