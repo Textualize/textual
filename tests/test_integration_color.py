@@ -28,6 +28,10 @@ def test_color_auto_single_widget(
     widget.styles.color = widget_color
     widget.styles.background = widget_background_color
 
+    # the ColorProperty is able to calculate an "auto" color on its own:
+    assert widget.styles.color == expected_color
+
+    # ...which is something we're also using when we're asking a DOMNode what its colors are:
     (_, _), (_, color) = widget.colors
     assert color == expected_color
 

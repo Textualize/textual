@@ -810,6 +810,9 @@ class ColorProperty:
     ) -> Color:
         """Get a ``Color``.
 
+        If the property is "color" and the styles have a "color_auto", this value will be dynamically calculated
+        by taking into account the background colors of the attached DOMNode's ancestors.
+
         Args:
             obj (Styles): The ``Styles`` object.
             objtype (type[Styles]): The ``Styles`` class.
@@ -817,7 +820,37 @@ class ColorProperty:
         Returns:
             Color: The Color
         """
-        return cast(Color, obj.get_rule(self.name, self._default_color))
+        if self.name != "color" or not obj.color_auto:
+            # Simple (and main) case: we just return the color stored in the Style rule:
+            return cast(Color, obj.get_rule(self.name, self._default_color))
+
+        # We're dealing with a "color" property that has an "auto" value: let's traverse the Node ancestors to
+        # calculate what the resulting value should be.
+        from ..dom import DOMNode
+
+        styles_node = getattr(obj, "node", None)
+        if not isinstance(styles_node, DOMNode):
+            raise ValueError(
+                "Dynamic 'auto' color can only be used with an subclass of StylesBase that has a 'node' attribute"
+            )
+        # We just repeat what `DOMNode.color` does, in a slightly simplified way.
+        # N.B. `DOMNode.color` will call this `__get__` method while it is itself traversing the DOMNode ancestors,
+        # so we loop over ancestors in a loop that is itself looping over ancestors.
+        # That's a deliberate implementation choice.
+        background = Color(0, 0, 0, 0)
+        color = Color(255, 255, 255, 0)
+        for node in reversed(styles_node.ancestors):
+            styles = node.styles
+            if styles.has_rule("background"):
+                background += styles.background
+            if styles.color_auto:
+                # The alpha of our "color_auto" color is stored in the "color" property
+                # (which in this case is used only to bear that value; its RGB values should not be taken into account)
+                color_auto_alpha = styles.get_rule("color").a
+                color = background.get_contrast_text(color_auto_alpha)
+            elif styles.has_rule("color"):
+                color += styles.get_rule("color")  # styles.color
+        return color
 
     def __set__(self, obj: StylesBase, color: Color | str | None):
         """Set the Color
