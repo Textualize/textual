@@ -1,7 +1,3 @@
-"""Resolve configuration files, parse them, and merge them based
-on priorities. This is a completely standalone class, unaware of Textual
-concepts like “widgets” etc.
-"""
 from __future__ import annotations
 
 from pathlib import PurePath
@@ -29,9 +25,9 @@ class Config:
             default_config_path (str | PurePath): The path to the default config for this app. This type of config is
                 handled separately from user configuration as it's more restrictive. For example, you cannot bundle
                 a config file with your application that alters global configuration.
-            user_config_paths (Iterable[str | PurePath]): The paths to the config files to load. If items appear
-                multiple times in the supplied config files and have matching namespaces, the last occurrence will be
-                used.
+            user_config_paths (Iterable[str | PurePath]): The paths to the config files to load on the users machine.
+                If items appear multiple times in the supplied config files and have matching namespaces, the last
+                occurrence will take priority.
         """
         self.namespace = namespace
         self._default_config_path = default_config_path
@@ -63,6 +59,7 @@ class Config:
 
         raw_merged_config = self._merge_raw_config_dicts(default_config, user_configs)
         self._raw_merged_config = self._prioritise_user_config(raw_merged_config)
+
         self._fill_attributes(self._raw_merged_config)
 
         return self
