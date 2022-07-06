@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from textual._config import Config
@@ -6,7 +8,7 @@ TEST_APP_NAME = "not_hotdog"
 
 
 @pytest.fixture
-def packaged_default_config(tmp_path):
+def packaged_default_config_path(tmp_path) -> Path:
     """By 'packaged default config' we mean the configuration file that gets shipped alongside
     a Textual application, and which contains the default configuration values."""
     config = tmp_path / "textual.toml"
@@ -38,7 +40,7 @@ def packaged_default_config(tmp_path):
 
 
 @pytest.fixture
-def user_config(tmp_path):
+def user_config_path(tmp_path) -> Path:
     config = tmp_path / "user_config" / "textual.toml"
     config.parent.mkdir()
     config.write_text(
@@ -71,7 +73,7 @@ def user_config(tmp_path):
 
 
 def test_resolve_reads_files_and_merges_sections_correctly(
-    packaged_default_config, user_config
+    packaged_default_config_path, user_config_path
 ):
     """This is quite a large test but the whole configuration flow has many steps, so it's worth
     have a test of the intermediary state here.
@@ -80,8 +82,8 @@ def test_resolve_reads_files_and_merges_sections_correctly(
     the packaged default config is included."""
     config = Config(
         namespace=TEST_APP_NAME,
-        default_config_path=packaged_default_config,
-        user_config_paths=[user_config],
+        default_config_path=packaged_default_config_path,
+        user_config_paths=[user_config_path],
     )
 
     config.resolve()
@@ -111,14 +113,14 @@ def test_resolve_reads_files_and_merges_sections_correctly(
 
 
 def test_empty_user_config_but_not_empty_packaged_defaults(
-    tmp_path, packaged_default_config
+    tmp_path, packaged_default_config_path
 ):
     user_config_path = tmp_path / "user-config-textual.toml"
     user_config_path.write_text("")
 
     config = Config(
         TEST_APP_NAME,
-        default_config_path=packaged_default_config,
+        default_config_path=packaged_default_config_path,
         user_config_paths=[user_config_path],
     )
     config.resolve()
@@ -131,14 +133,14 @@ def test_empty_user_config_but_not_empty_packaged_defaults(
     assert config.meta == {}
 
 
-def test_empty_packaged_defaults_but_not_empty_user_config(tmp_path, user_config):
+def test_empty_packaged_defaults_but_not_empty_user_config(tmp_path, user_config_path):
     packaged_default_config_path = tmp_path / "packaged-defaults-textual.toml"
     packaged_default_config_path.write_text("")
 
     config = Config(
         TEST_APP_NAME,
         default_config_path=packaged_default_config_path,
-        user_config_paths=[user_config],
+        user_config_paths=[user_config_path],
     )
     config.resolve()
 
@@ -169,12 +171,12 @@ def test_empty_config_files(tmp_path):
     assert config.meta == {}
 
 
-def test_packaged_default_config_file_doesnt_exist(tmp_path, user_config):
+def test_packaged_default_config_file_doesnt_exist(tmp_path, user_config_path):
     non_existent_config_path = tmp_path / "i" / "dont" / "exist.toml"
     config = Config(
         TEST_APP_NAME,
         default_config_path=non_existent_config_path,
-        user_config_paths=[user_config],
+        user_config_paths=[user_config_path],
     )
     config.resolve()
 
@@ -187,13 +189,13 @@ def test_packaged_default_config_file_doesnt_exist(tmp_path, user_config):
     assert config.meta == {"abc": 123}
 
 
-def test_user_config_files_dont_exist(tmp_path, packaged_default_config):
+def test_user_config_files_dont_exist(tmp_path, packaged_default_config_path):
     # This is a highly likely scenario. Config will receive the locations where configuration files
     # could exist. It's likely that they won't exist for the majority of users, however.
     non_existent_config_path = tmp_path / "i" / "dont" / "exist.toml"
     config = Config(
         TEST_APP_NAME,
-        default_config_path=packaged_default_config,
+        default_config_path=packaged_default_config_path,
         user_config_paths=[non_existent_config_path],
     )
     config.resolve()
