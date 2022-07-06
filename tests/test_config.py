@@ -206,7 +206,6 @@ def test_user_config_files_dont_exist(tmp_path, packaged_default_config):
     assert config.meta == {}
 
 
-@pytest.mark.xfail(reason="wip, see comments in test body")
 def test_no_config_files_exist_at_all(tmp_path):
     user_config_path = tmp_path / "i" / "dont" / "exist.toml"
     packaged_default_config_path = tmp_path / "i" / "also" / "dont" / "exist.toml"
@@ -217,6 +216,7 @@ def test_no_config_files_exist_at_all(tmp_path):
         user_config_paths=[user_config_path],
     )
 
-    # TODO: These should be empty dicts, not None
-    assert config.raw == {}
+    config.resolve()
+
+    assert config.raw == {'devtools': {}}
     assert config.meta == {}
