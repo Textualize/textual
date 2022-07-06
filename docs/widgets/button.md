@@ -25,7 +25,8 @@ Where a button with a name of "10" denotes an exit and other numbers denote some
 ```python
 # Function that activates on a button press
     async def handle_button_pressed(self, message: ButtonPressed) -> None:
-        """A message sent by the button widget"""
+        """This code is executed on a button press"""
+        
         # Make sure that we are looking at a button press
         assert isinstance(message.sender, Button)
         button_name = message.sender.name
