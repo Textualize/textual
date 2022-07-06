@@ -32,6 +32,7 @@ from ._style_properties import (
     StyleProperty,
     TransitionsProperty,
     FractionalProperty,
+    ForegroundColorProperty,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -180,7 +181,7 @@ class StylesBase(ABC):
     visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
     layout = LayoutProperty()
 
-    color = ColorProperty(Color(255, 255, 255))
+    color = ForegroundColorProperty(Color(255, 255, 255))
     background = ColorProperty(Color(0, 0, 0, 0))
     text_style = StyleFlagsProperty()
 
