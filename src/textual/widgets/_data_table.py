@@ -113,8 +113,8 @@ class DataTable(ScrollView, Generic[CellType]):
     }
     DataTable > .datatable--header {        
         text-style: bold;
-        background: $primary;
-        color: $text-primary;
+        background: $primary-darken-1;
+        color: $text-primary-darken-1;
     }
     DataTable > .datatable--fixed {
         text-style: bold;
@@ -131,8 +131,8 @@ class DataTable(ScrollView, Generic[CellType]):
     }
 
     DataTable >  .datatable--cursor {
-        background: $secondary;
-        color: $text-secondary;
+        background: $accent;
+        color: $text-accent;
     }
 
     .-dark-mode DataTable > .datatable--even-row {
@@ -140,7 +140,7 @@ class DataTable(ScrollView, Generic[CellType]):
     }
 
     DataTable > .datatable--highlight {
-        background: $secondary 20%;
+        background: $accent 20%;
     }
     """
 

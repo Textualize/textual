@@ -143,7 +143,7 @@ class Token(NamedTuple):
         yield "name", self.name
         yield "value", self.value
         yield "path", self.path
-        yield "code", self.code
+        yield "code", self.code if len(self.code) < 40 else self.code[:40] + "..."
         yield "location", self.location
         yield "referenced_by", self.referenced_by, None
 

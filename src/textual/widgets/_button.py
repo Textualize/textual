@@ -36,7 +36,10 @@ class Button(Widget, can_focus=True):
 
         background: $primary;
         color: $text-primary;
-        border: tall $primary-lighten-3;
+        
+        border: none;
+        border-top: tall $primary-lighten-2;
+        border-bottom: tall $primary-darken-3;
 
         content-align: center middle;
         margin: 1 0;
@@ -48,88 +51,104 @@ class Button(Widget, can_focus=True):
 
     Button:hover {
         background: $primary-darken-2;
-        color: $text-primary-darken-2;
-        border: tall $primary-lighten-1;
+        color: $text-primary-darken-2;       
     }
 
     Button.-active {
         background: $primary-lighten-1;
+        border-bottom: tall $primary-lighten-2;
+        border-top: tall $primary-darken-3;
     }
 
     .-dark-mode Button {
-        background: $background;
-        color: $primary-lighten-2;
-        border: tall white $primary-lighten-2;
+        background: $primary;
+        color: $text-primary;
+       
     }
 
     .-dark-mode Button:hover {
-        background: $surface;
+        background: $primary-darken-2;
+        color: $text-primary-darken-2;
     }
 
     .-dark-mode Button.-active {
-        background: $background-lighten-3;
+        background: $primary-lighten-3;
+        border-bottom: tall $primary-lighten-2;
+        border-top: tall $primary-darken-3;
     }
 
     /* Success variant */
     Button.-success {
         background: $success;
         color: $text-success;
-        border: tall $success-lighten-3;
+        border-top: tall $success-lighten-2;
+        border-bottom: tall $success-darken-3;
+      
     }
 
     Button.-success:hover {
-        background: $success-darken-1;
-        color: $text-success-darken-1;
-        border: tall $success-lighten-2;
+        background: $success-darken-2;
+        color: $text-success-darken-2;
+
     }
 
     Button.-success.-active {
         background: $success-lighten-1;
+        border-bottom: tall $success-lighten-2;
+        border-top: tall $success-darken-3;
     }
 
     .-dark-mode Button.-success {
         background: $success;
         color: $text-success;
-        border: tall $success-lighten-3;
+        border: none;
+        border-top: tall $success-lighten-2;
+        border-bottom: tall $success-darken-3;
+      
     }
 
     .-dark-mode Button.-success:hover {
-        background: $success-darken-1;
-        color: $text-success-darken-1;
-        border: tall $success-lighten-3;
+        background: $success-darken-2;
+        color: $text-success-darken-2;
+      
     }
 
     .-dark-mode Button.-success.-active {
         background: $success-lighten-1;
+        border-bottom: tall $success-lighten-2;
+        border-top: tall $success-darken-3;
     }
 
     /* Warning variant */
     Button.-warning {
         background: $warning;
-        color: $text-warning;
-        border: tall $warning-lighten-3;
+        color: $text-warning;       
+        border-top: tall $warning-lighten-2;
+        border-bottom: tall $warning-darken-3;
     }
 
     Button.-warning:hover {
-        background: $warning-darken-1;
+        background: $warning-darken-2;
         color: $text-warning-darken-1;
-        border: tall $warning-lighten-3;
+       
     }
 
     Button.-warning.-active {
-        background: $warning;
+        background: $warning-lighten-2;
+        border-bottom: tall $warning-lighten-2;
+        border-top: tall $warning-darken-3;
     }
 
     .-dark-mode Button.-warning {
         background: $warning;
         color: $text-warning;
-        border: tall $warning-lighten-3;
+   
     }
 
     .-dark-mode Button.-warning:hover {
         background: $warning-darken-1;
         color: $text-warning-darken-1;
-        border: tall $warning-lighten-3;
+        
     }
 
     .-dark-mode Button.-warning.-active {
@@ -140,33 +159,38 @@ class Button(Widget, can_focus=True):
     Button.-error {
         background: $error;
         color: $text-error;
-        border: tall $error-lighten-3;
+        border-top: tall $error-lighten-2;
+        border-bottom: tall $error-darken-3;
+     
     }
 
     Button.-error:hover {
         background: $error-darken-1;
-        color: $text-error-darken-1;
-        border: tall $error-lighten-3;
+        color: $text-error-darken-2;
+
     }
 
     Button.-error.-active {
-        background: $error;
+        background: $error-lighten-2;
+        border-bottom: tall $error-lighten-2;
+        border-top: tall $error-darken-3;
     }
 
     .-dark-mode Button.-error {
         background: $error;
         color: $text-error;
-        border: tall $error-lighten-3;
+
+      
     }
 
     .-dark-mode Button.-error:hover {
         background: $error-darken-1;
         color: $text-error-darken-1;
-        border: tall $error-lighten-3;
+       
     }
 
     .-dark-mode Button.-error.-active {
-        background: $error;
+        background: $error-lighten-1;
     }
 
     App.-show-focus Button:focus {
