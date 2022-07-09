@@ -16,9 +16,10 @@ import rich.repr
 from rich.align import Align
 from rich.console import Console, RenderableType
 from rich.measure import Measurement
-from rich.padding import Padding
+
 from rich.segment import Segment
 from rich.style import Style
+from rich.styled import Styled
 
 from . import errors, events, messages
 from ._animator import BoundAnimator
@@ -878,53 +879,6 @@ class Widget(DOMNode):
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
 
-    def _style_renderable(self, renderable: RenderableType) -> RenderableType:
-        """Applies CSS styles to a renderable by wrapping it in another renderable.
-
-        Args:
-            renderable (RenderableType): Renderable to apply styles to.
-
-        Returns:
-            RenderableType: An updated renderable.
-        """
-        (base_background, base_color), (background, color) = self.colors
-        styles = self.styles
-
-        content_align = (styles.content_align_horizontal, styles.content_align_vertical)
-        if content_align != ("left", "top"):
-            horizontal, vertical = content_align
-            renderable = Align(renderable, horizontal, vertical=vertical)
-
-        renderable = Padding(
-            renderable,
-            styles.padding,
-            style=Style.from_color(color.rich_color, background.rich_color),
-        )
-
-        if styles.border:
-            renderable = Border(
-                renderable,
-                styles.border,
-                inner_color=background,
-                outer_color=base_background,
-            )
-
-        if styles.outline:
-            renderable = Border(
-                renderable,
-                styles.outline,
-                inner_color=styles.background,
-                outer_color=base_background,
-                outline=True,
-            )
-
-        if styles.tint.a != 0:
-            renderable = Tint(renderable, styles.tint)
-        if styles.opacity != 1.0:
-            renderable = Opacity(renderable, opacity=styles.opacity)
-
-        return renderable
-
     def render_styled(self) -> RenderableType:
         """Applies style attributes to the default renderable.
 
@@ -934,6 +888,9 @@ class Widget(DOMNode):
 
         renderable = self.render()
         styles = self.styles
+        rich_style = self.rich_style
+        if rich_style:
+            renderable = Styled(renderable, rich_style)
         content_align = (styles.content_align_horizontal, styles.content_align_vertical)
         if content_align != ("left", "top"):
             horizontal, vertical = content_align
@@ -980,7 +937,7 @@ class Widget(DOMNode):
         options = self.console.options.update_dimensions(width, height).update(
             highlight=False
         )
-        lines = self.console.render_lines(renderable, options, style=self.rich_style)
+        lines = self.console.render_lines(renderable, options)
         self._render_cache = RenderCache(self.size, lines)
         self._dirty_regions.clear()
 

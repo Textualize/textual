@@ -10,6 +10,7 @@ from rich.segment import Segment
 from rich.style import Style
 
 from ._cells import cell_len
+from ._types import Lines
 
 
 def line_crop(
