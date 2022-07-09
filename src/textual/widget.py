@@ -20,6 +20,7 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.styled import Styled
+from rich.text import Text
 
 from . import errors, events, messages
 from ._animator import BoundAnimator
@@ -887,11 +888,21 @@ class Widget(DOMNode):
         """
 
         renderable = self.render()
-        styles = self.styles
+
+        if isinstance(renderable, str):
+            renderable = Text.from_markup(renderable)
+
         rich_style = self.rich_style
-        if rich_style:
+        if isinstance(renderable, Text):
+            renderable.stylize(rich_style)
+        else:
             renderable = Styled(renderable, rich_style)
-        content_align = (styles.content_align_horizontal, styles.content_align_vertical)
+
+        styles = self.styles
+        content_align = (
+            styles.content_align_horizontal,
+            styles.content_align_vertical,
+        )
         if content_align != ("left", "top"):
             horizontal, vertical = content_align
             renderable = Align(renderable, horizontal, vertical=vertical)

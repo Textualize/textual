@@ -88,7 +88,7 @@ def test_width():
     box_model = get_box_model(
         styles, Size(60, 20), Size(80, 24), one, get_auto_width, get_auto_height
     )
-    assert box_model == BoxModel(Fraction(60), Fraction(16), Spacing(1, 2, 3, 4))
+    assert box_model == BoxModel(Fraction(54), Fraction(16), Spacing(1, 2, 3, 4))
 
     styles.width = "100vw"
     styles.max_width = "50%"

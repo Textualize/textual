@@ -1,4 +1,6 @@
+
 Button {
-    
-    width:100%;
+    box-sizing: border-box;
+    margin: 1;
+    width: 100%;
 }

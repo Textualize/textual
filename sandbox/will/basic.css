@@ -84,7 +84,7 @@ Tweet {
   height:12;
   width: 100%;
  
-  margin: 1 3;
+  
   background: $panel;
   color: $text-panel;
   layout: vertical;
@@ -198,7 +198,7 @@ Error {
   color: $text-error;
   border-top: wide $error-darken-1;
   border-bottom: wide $error-darken-1;
-  margin: 1 3;
+  
   padding: 0;
   text-style: bold;
   align-horizontal: center;
@@ -211,7 +211,7 @@ Warning {
   color: $text-warning-fade-1;
   border-top: wide $warning-darken-1;
   border-bottom: wide $warning-darken-1;
-  margin: 1 2;
+  
   text-style: bold;
   align-horizontal: center;
 }
@@ -222,7 +222,7 @@ Success {
   height:auto;  
   box-sizing: border-box;
   background: $success;
-  color: $text-success-fade-1;  
+  color: $text-success;  
   
   border-top: hkey $success-darken-1;
   border-bottom: hkey $success-darken-1; 

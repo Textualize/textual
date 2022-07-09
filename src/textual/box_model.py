@@ -62,7 +62,7 @@ def get_box_model(
     else:
         # An explicit width
         content_width = styles.width.resolve_dimension(
-            sizing_container, viewport, fraction_unit
+            sizing_container - styles.margin.totals, viewport, fraction_unit
         )
         if is_border_box:
             content_width -= gutter.width

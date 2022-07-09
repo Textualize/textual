@@ -48,7 +48,7 @@ class Button(Widget, can_focus=True):
     }
 
     Button:focus {
-        text-style: bold underline;
+        text-style: bold underline;        
     }
 
     Button:hover {
