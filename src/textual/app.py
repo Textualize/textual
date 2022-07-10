@@ -85,29 +85,7 @@ DEFAULT_COLORS = ColorSystem(
     secondary="#ffa62b",
     warning="#ffa62b",
     error="#ba3c5b",
-    success="#6d9f71",
-    accent="#ffa62b",
-    system="#5a4599",
-    dark_surface="#292929",
-)
-
-DEFAULT_COLORS = ColorSystem(
-    primary="#1565B5",
-    secondary="#8E6040",
-    warning="#C5AF34",
-    error="#BF4E60",
-    success="#48B47E",
-    accent="#2586E6",
-    system="#725BE8",
-    dark_surface="#292929",
-)
-
-DEFAULT_COLORS = ColorSystem(
-    primary="#406e8e",
-    secondary="#ffa62b",
-    warning="#ffa62b",
-    error="#ba3c5b",
-    success="#3CBC88",
+    success="#4EBF71",
     accent="#1A75B4",
     system="#5a4599",
     dark_surface="#292929",
