@@ -33,18 +33,13 @@ class Button(Widget, can_focus=True):
     Button {
         width: auto;
         height: 3;
-
         background: $primary;
-        color: $text-primary;
-        
+        color: $text-primary;        
         border: none;
         border-top: tall $primary-lighten-2;
         border-bottom: tall $primary-darken-3;
-
-        content-align: center middle;
-        
-        text-style: bold;
-      
+        content-align: center middle;        
+        text-style: bold;      
     }
 
     Button:focus {
@@ -60,26 +55,9 @@ class Button(Widget, can_focus=True):
     Button.-active {
         background: $primary;
         border-bottom: tall $primary-lighten-2;
-        border-top: tall $primary-darken-2;
-        opacity:0.8;
+        border-top: tall $primary-darken-2;                
     }
 
-    .-dark-mode Button {
-        background: $primary;
-        color: $text-primary;
-       
-    }
-
-    .-dark-mode Button:hover {
-        background: $primary-darken-2;
-        color: $text-primary-darken-2;
-    }
-
-    .-dark-mode Button.-active {
-        background: $primary;
-        border-bottom: tall $primary-lighten-2;
-        border-top: tall $primary-darken-2;
-    }
 
     /* Success variant */
     Button.-success {
@@ -102,27 +80,7 @@ class Button(Widget, can_focus=True):
         border-top: tall $success-darken-2;
     }
 
-    .-dark-mode Button.-success {
-        background: $success;
-        color: $text-success;
-        border: none;
-        border-top: tall $success-lighten-2;
-        border-bottom: tall $success-darken-3;
-      
-    }
-
-    .-dark-mode Button.-success:hover {
-        background: $success-darken-2;
-        color: $text-success-darken-2;
-      
-    }
-
-    .-dark-mode Button.-success.-active {
-        background: $success;
-        border-bottom: tall $success-lighten-2;
-        border-top: tall $success-darken-2;
-    }
-
+   
     /* Warning variant */
     Button.-warning {
         background: $warning;
@@ -142,19 +100,6 @@ class Button(Widget, can_focus=True):
         border-bottom: tall $warning-lighten-2;
         border-top: tall $warning-darken-2;
     }
-
-    .-dark-mode Button.-warning {
-        background: $warning;
-        color: $text-warning;
-   
-    }
-
-    .-dark-mode Button.-warning:hover {
-        background: $warning-darken-1;
-        color: $text-warning-darken-1;
-        
-    }
-
    
 
     /* Error variant */
@@ -178,24 +123,6 @@ class Button(Widget, can_focus=True):
         border-top: tall $error-darken-2;
     }
 
-    .-dark-mode Button.-error {
-        background: $error;
-        color: $text-error;
-
-      
-    }
-
-    .-dark-mode Button.-error:hover {
-        background: $error-darken-1;
-        color: $text-error-darken-1;
-       
-    }
-
-   
-
-    App.-show-focus Button:focus {
-        tint: $accent 20%;
-    }
     """
 
     ACTIVE_EFFECT_DURATION = 0.3
