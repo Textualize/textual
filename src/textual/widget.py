@@ -880,7 +880,7 @@ class Widget(DOMNode):
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
 
-    def render_styled(self) -> RenderableType:
+    def _render_styled(self) -> RenderableType:
         """Applies style attributes to the default renderable.
 
         Returns:
@@ -944,7 +944,7 @@ class Widget(DOMNode):
     def _render_content(self) -> None:
         """Render all lines."""
         width, height = self.size
-        renderable = self.render_styled()
+        renderable = self._render_styled()
         options = self.console.options.update_dimensions(width, height).update(
             highlight=False
         )
