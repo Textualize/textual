@@ -131,8 +131,8 @@ class DataTable(ScrollView, Generic[CellType]):
     }
 
     DataTable >  .datatable--cursor {
-        background: $accent;
-        color: $text-accent;
+        background: $secondary;
+        color: $text-secondary;
     }
 
     .-dark-mode DataTable > .datatable--even-row {
@@ -140,7 +140,7 @@ class DataTable(ScrollView, Generic[CellType]):
     }
 
     DataTable > .datatable--highlight {
-        background: $accent 20%;
+        background: $secondary 20%;
     }
     """
 
