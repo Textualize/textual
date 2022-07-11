@@ -251,6 +251,12 @@ def test_region_shrink():
     assert region.shrink(margin) == Region(x=14, y=11, width=44, height=46)
 
 
+def test_region_grow():
+    margin = Spacing(top=1, right=2, bottom=3, left=4)
+    region = Region(x=10, y=10, width=50, height=50)
+    assert region.grow(margin) == Region(x=6, y=9, width=56, height=54)
+
+
 def test_region_intersection():
     assert Region(0, 0, 100, 50).intersection(Region(10, 10, 10, 10)) == Region(
         10, 10, 10, 10

@@ -569,8 +569,27 @@ class Region(NamedTuple):
         )
         return new_region
 
+    def grow(self, margin: tuple[int, int, int, int]) -> Region:
+        """Grow a region by adding spacing.
+
+        Args:
+            margin (Spacing): Defines how many cells to grow the Region by at each edge.
+
+        Returns:
+            Region: New region.
+        """
+
+        top, right, bottom, left = margin
+        x, y, width, height = self
+        return Region(
+            x=x - left,
+            y=y - top,
+            width=max(0, width + left + right),
+            height=max(0, height + top + bottom),
+        )
+
     def shrink(self, margin: tuple[int, int, int, int]) -> Region:
-        """Shrink a region by pushing each edge inwards.
+        """Shrink a region by subtracting spacing.
 
         Args:
             margin (Spacing): Defines how many cells to shrink the Region by at each edge.

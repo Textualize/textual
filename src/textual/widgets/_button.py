@@ -43,7 +43,7 @@ class Button(Widget, can_focus=True):
     }
 
     Button:focus {
-        text-style: bold underline;        
+        text-style: bold reverse;        
     }
 
     Button:hover {
@@ -183,6 +183,7 @@ class Button(Widget, can_focus=True):
 
     def render(self) -> RenderableType:
         label = self.label.copy()
+        label = Text.assemble(" ", label, " ")
         label.stylize(self.text_style)
         return label
 

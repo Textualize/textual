@@ -688,9 +688,7 @@ class Widget(DOMNode):
         )
 
     def scroll_to_widget(self, widget: Widget, *, animate: bool = True) -> bool:
-        """Starting from `widget`, travel up the DOM to this node, scrolling all containers such that
-        every widget is visible within its parent container. This will, in the majority of cases,
-        bring the target widget into
+        """Scroll scrolling to bring a widget in to view.
 
         Args:
             widget (Widget): A descendant widget.
@@ -705,7 +703,8 @@ class Widget(DOMNode):
 
         node = widget.parent
         child = widget
-        while node:
+        while isinstance(node, Widget):
+            assert isinstance(child, Widget)
             try:
                 widget_region = child.region
                 container_region = node.region
@@ -718,12 +717,14 @@ class Widget(DOMNode):
                 node = node.parent
                 continue
 
+            widget_region = widget_region.grow(widget.styles.margin)
+
             # We can either scroll so the widget is at the top of the container, or so that
             # it is at the bottom. We want to pick which has the shortest distance
-            top_delta = widget_region.offset - container_region.origin
+            top_delta = widget_region.offset - container_region.offset
 
             bottom_delta = widget_region.offset - (
-                container_region.origin
+                container_region.offset
                 + Offset(0, container_region.height - widget_region.height)
             )
 

@@ -594,7 +594,6 @@ class Compositor:
         ]
         return segment_lines
 
-    @timer("render")
     def render(self, full: bool = False) -> RenderableType | None:
         """Render a layout.
 
