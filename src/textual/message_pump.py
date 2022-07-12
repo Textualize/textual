@@ -397,8 +397,8 @@ class MessagePump:
         self._callbacks.append(event.callback)
 
     async def invoke_and_clear_callbacks(self) -> None:
-        """Invoke all callbacks that are waiting to be executed, and the clear them.
-        Callbacks will be invoked in the order they were appending to the callback list.
+        """Invoke all callbacks that are waiting to be executed, and then clear them.
+        Callbacks will be invoked in the same order they were registered.
         """
         for callback in self._callbacks:
             await invoke(callback)
