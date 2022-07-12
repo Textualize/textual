@@ -279,11 +279,11 @@ def test_size_sub():
 
 
 def test_region_x_extents():
-    assert Region(5, 10, 20, 30).x_extents == (5, 25)
+    assert Region(5, 10, 20, 30).column_span == (5, 25)
 
 
 def test_region_y_extents():
-    assert Region(5, 10, 20, 30).y_extents == (10, 40)
+    assert Region(5, 10, 20, 30).line_span == (10, 40)
 
 
 def test_region_x_max():
@@ -294,12 +294,12 @@ def test_region_y_max():
     assert Region(5, 10, 20, 30).bottom == 40
 
 
-def test_region_x_range():
-    assert Region(5, 10, 20, 30).x_range == range(5, 25)
+def test_region_columns_range():
+    assert Region(5, 10, 20, 30).column_range == range(5, 25)
 
 
-def test_region_y_range():
-    assert Region(5, 10, 20, 30).y_range == range(10, 40)
+def test_region_lines_range():
+    assert Region(5, 10, 20, 30).line_range == range(10, 40)
 
 
 def test_region_reset_offset():

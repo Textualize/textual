@@ -139,6 +139,11 @@ class Size(NamedTuple):
         width, height = self
         return Region(0, 0, width, height)
 
+    @property
+    def line_range(self) -> range:
+        """Get a range covering lines."""
+        return range(self.height)
+
     def __add__(self, other: object) -> Size:
         if isinstance(other, tuple):
             width, height = self
@@ -306,21 +311,21 @@ class Region(NamedTuple):
         return bool(self.width and self.height)
 
     @property
-    def x_extents(self) -> tuple[int, int]:
-        """Get the starting and ending x coord.
+    def column_span(self) -> tuple[int, int]:
+        """Get the start and end column (x coord).
 
-        The end value is non inclusive.
+        The end value is exclusive.
 
         Returns:
-            tuple[int, int]: Pair of x coordinates (row numbers).
+            tuple[int, int]: Pair of x coordinates (column numbers).
         """
         return (self.x, self.x + self.width)
 
     @property
-    def y_extents(self) -> tuple[int, int]:
-        """Get the starting and ending x coord.
+    def line_span(self) -> tuple[int, int]:
+        """Get the start and end line number (y coord).
 
-        The end value is non inclusive.
+        The end value is exclusive.
 
         Returns:
             tuple[int, int]: Pair of y coordinates (line numbers).
@@ -381,12 +386,12 @@ class Region(NamedTuple):
         return x, y, x + width, y + height
 
     @property
-    def x_range(self) -> range:
+    def column_range(self) -> range:
         """A range object for X coordinates."""
         return range(self.x, self.x + self.width)
 
     @property
-    def y_range(self) -> range:
+    def line_range(self) -> range:
         """A range object for Y coordinates."""
         return range(self.y, self.y + self.height)
 

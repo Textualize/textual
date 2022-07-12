@@ -159,7 +159,7 @@ class AppTest(App):
 
         # We artificially tell the Compositor that the whole area should be refreshed
         screen._compositor._dirty_regions = {
-            Region(0, 0, screen.size.width, screen.size.height),
+            Region(0, 0, screen.outer_size.width, screen.outer_size.height),
         }
         screen.refresh(repaint=repaint, layout=layout)
         # We also have to make sure we have at least one dirty widget, or `screen._on_update()` will early return:

@@ -22,7 +22,7 @@ class HorizontalLayout(Layout):
         add_placement = placements.append
 
         x = max_width = max_height = Fraction(0)
-        parent_size = parent.size
+        parent_size = parent.outer_size
 
         children = list(parent.children)
         styles = [child.styles for child in children if child.styles.width is not None]

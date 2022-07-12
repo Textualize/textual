@@ -168,6 +168,7 @@ class StylesBase(ABC):
         "max_height",
         "color",
         "background",
+        "opacity",
         "tint",
         "scrollbar_color",
         "scrollbar_color_hover",
@@ -259,12 +260,6 @@ class StylesBase(ABC):
             Spacing: Space around widget content.
         """
         spacing = self.padding + self.border.spacing
-        return spacing
-
-    @property
-    def content_gutter(self) -> Spacing:
-        """The spacing that surrounds the content area of the widget."""
-        spacing = self.padding + self.border.spacing + self.margin
         return spacing
 
     @property

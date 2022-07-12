@@ -386,33 +386,23 @@ class Compositor:
 
                 # Add any scrollbars
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(
-                    container_size
+                    container_region
                 ):
                     map[chrome_widget] = MapGeometry(
-                        chrome_region + container_region.offset + layout_offset,
+                        chrome_region + layout_offset,
                         order,
                         clip,
                         container_size,
                         container_size,
                     )
 
-                if widget.is_container:
-                    # Add the container widget, which will render a background
-                    map[widget] = MapGeometry(
-                        region + layout_offset,
-                        order,
-                        clip,
-                        total_region.size,
-                        container_size,
-                    )
-                else:
-                    map[widget] = MapGeometry(
-                        child_region + layout_offset,
-                        order,
-                        clip,
-                        child_region.size,
-                        container_size,
-                    )
+                map[widget] = MapGeometry(
+                    region + layout_offset,
+                    order,
+                    clip,
+                    total_region.size,
+                    container_size,
+                )
 
             else:
                 # Add the widget to the map
@@ -657,13 +647,13 @@ class Compositor:
         for region, clip, lines in renders:
             render_region = intersection(region, clip)
 
-            for y, line in zip(render_region.y_range, lines):
+            for y, line in zip(render_region.line_range, lines):
                 if not is_rendered_line(y):
                     continue
 
                 chops_line = chops[y]
 
-                first_cut, last_cut = render_region.x_extents
+                first_cut, last_cut = render_region.column_span
                 cuts_line = cuts[y]
                 final_cuts = [
                     cut for cut in cuts_line if (last_cut >= cut >= first_cut)

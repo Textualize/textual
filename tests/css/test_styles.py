@@ -277,5 +277,5 @@ async def test_scrollbar_gutter(
     app = MyTestApp(test_name="scrollbar_gutter", size=Size(80, 10))
     await app.boot_and_shutdown()
 
-    assert text_widget.size.width == expected_text_widget_width
+    assert text_widget.outer_size.width == expected_text_widget_width
     assert container.scrollbars_enabled[0] is expects_vertical_scrollbar
