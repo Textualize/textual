@@ -62,6 +62,7 @@ class MessagePump:
         self._pending_message: Message | None = None
         self._task: Task | None = None
         self._child_tasks: WeakSet[Task] = WeakSet()
+        self._callbacks: list[Callable[[], Awaitable[None]]] = []
 
     @property
     def task(self) -> Task:
@@ -392,8 +393,16 @@ class MessagePump:
             return False
         return self.post_message_no_wait(message)
 
-    async def on_callback(self, event: events.Callback) -> None:
-        await invoke(event.callback)
+    def on_callback(self, event: events.Callback) -> None:
+        self._callbacks.append(event.callback)
+
+    async def invoke_and_clear_callbacks(self) -> None:
+        """Invoke all callbacks that are waiting to be executed, and the clear them.
+        Callbacks will be invoked in the order they were appending to the callback list.
+        """
+        for callback in self._callbacks:
+            await invoke(callback)
+        self._callbacks.clear()
 
     def emit_no_wait(self, message: Message) -> bool:
         if self._parent:

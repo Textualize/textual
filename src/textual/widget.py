@@ -1036,7 +1036,7 @@ class Widget(DOMNode):
             self.log(self, f"IS NOT RUNNING, {message!r} not sent")
         return await super().post_message(message)
 
-    def on_idle(self, event: events.Idle) -> None:
+    async def on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.
 
         Args:
@@ -1049,6 +1049,7 @@ class Widget(DOMNode):
             self.screen.post_message_no_wait(messages.Layout(self))
         self._layout_required = False
         self._repaint_required = False
+        await self.invoke_and_clear_callbacks()
 
     def focus(self) -> None:
         """Give input focus to this widget."""
