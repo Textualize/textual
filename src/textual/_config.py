@@ -1,27 +1,49 @@
 from __future__ import annotations
 
-from pathlib import PurePath
+from pathlib import PurePath, Path
 from typing import Iterable, Collection
 
 import tomli
 
+from textual.features import FeatureFlag
+
+
+def convert_feature_flags_to_config(
+    feature_flags: set[FeatureFlag],
+) -> dict[str, object]:
+    return {}
+
+
+def get_user_config_path() -> Path:
+    return Path.home() / ".textual" / "textual.toml"
+
 
 class Config:
+    """Manages access to configuration for the Textual application.
+    Textual applications may ship with a `textual.toml` file containing default configuration values.
+    We refer to these as "packaged defaults", and they may only contain relating to the Textual app.
+    Users may have a `textual.toml` file on their system which may override these default configuration values.
+    Instantiating this class does not result in disk access. Disk access only occurs when the `resolve` method is
+    called.
+
+    Attributes:
+        dark (bool): True if that app should launch in dark mode.
+        debug (bool): True if that app should launch in debug mode.
+
+    """
+
     def __init__(
         self,
         namespace: str,
+        feature_flags: set[FeatureFlag],
         default_config_path: str | PurePath,
         user_config_paths: Iterable[str | PurePath] = None,
     ):
-        """Manages access to configuration for the Textual application.
-        Textual applications may ship with a `textual.toml` file containing default configuration values.
-        We refer to these as "packaged defaults", and they may only contain relating to the Textual app.
-        Users may have a `textual.toml` file on their system which may override these default configuration values.
-        Instantiating this class does not result in disk access. Disk access only occurs when the `resolve` method is
-        called.
+        """
 
         Args:
             namespace (str): The namespace of this application. Used to filter out irrelevant config.
+            feature_flags (set[FeatureFlag]): Feature flags for this Textual application.
             default_config_path (str | PurePath): The path to the default config for this app. This type of config is
                 handled separately from user configuration as it's more restrictive. For example, you cannot bundle
                 a config file with your application that alters global configuration.
@@ -38,7 +60,8 @@ class Config:
 
         # TODO: Apply environment variables first before resolving configuration files
         self.dark = False
-        self.debug = False
+        self.debug = "debug" in feature_flags
+        self.devtools_enabled = "devtools" in feature_flags
 
     def __getitem__(self, key: str) -> object:
         """Retrieve a config value for this application for a given key."""

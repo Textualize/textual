@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime
 import inspect
 import io
 import os
@@ -9,6 +8,7 @@ import platform
 import sys
 import warnings
 from contextlib import redirect_stdout
+from datetime import datetime
 from pathlib import PurePath
 from time import perf_counter
 from typing import (
@@ -23,6 +23,7 @@ from typing import (
 )
 
 from ._ansi_sequences import SYNC_START, SYNC_END
+from ._config import get_user_config_path, Config
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -79,7 +80,6 @@ _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
 
 LayoutDefinition = "dict[str, Any]"
 
-
 DEFAULT_COLORS = ColorSystem(
     primary="#406e8e",
     secondary="#ffa62b",
@@ -112,7 +112,7 @@ class App(Generic[ReturnType], DOMNode):
     CSS = """
     App {
         background: $surface;
-        color: $text-surface;                
+        color: $text-surface;
     }
     """
 
@@ -129,6 +129,8 @@ class App(Generic[ReturnType], DOMNode):
         title: str = "Textual Application",
         css_path: str | PurePath | None = None,
         watch_css: bool = False,
+        config_namespace: str | None = None,
+        config_path: str | PurePath | None = None,
     ):
         """Textual application base class
 
@@ -137,8 +139,10 @@ class App(Generic[ReturnType], DOMNode):
             log_path (str | PurePath, optional): Path to log file, or "" to disable. Defaults to "".
             log_verbosity (int, optional): Log verbosity from 0-3. Defaults to 1.
             title (str, optional): Default title of the application. Defaults to "Textual Application".
-            css_path (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
+            css_path (str | PurePath | None): Path to CSS or ``None`` for no CSS file. Defaults to None.
             watch_css (bool, optional): Watch CSS for changes. Defaults to False.
+            config_namespace (str | None): The namespace to read from in the config file.
+            config_path (str | PurePath | None): Path to default config file or ``None`` for no config file. Defaults to None.
         """
         # N.B. This must be done *before* we call the parent constructor, because MessagePump's
         # constructor instantiates a `asyncio.PriorityQueue` and in Python versions older than 3.10
@@ -207,6 +211,14 @@ class App(Generic[ReturnType], DOMNode):
             if ((watch_css or self.debug) and self.css_path)
             else None
         )
+
+        if config_namespace:
+            self.config = Config(
+                namespace=config_namespace,
+                default_config_path=config_path,
+                user_config_paths=[get_user_config_path()],
+            )
+            self.config.resolve()
 
     def __init_subclass__(
         cls, css_path: str | None = None, inherit_css: bool = True
@@ -772,7 +784,9 @@ class App(Generic[ReturnType], DOMNode):
             driver.start_application_mode()
             driver.enable_bracketed_paste()
             try:
-                with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
+                with redirect_stdout(
+                    StdoutRedirector(self.devtools, self._log_file)
+                ):  # type: ignore
                     mount_event = events.Mount(sender=self)
                     await self.dispatch_message(mount_event)
 
