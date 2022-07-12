@@ -178,6 +178,8 @@ class StylesBase(ABC):
         "scrollbar_background_active",
     }
 
+    node: DOMNode | None = None
+
     display = StringEnumProperty(VALID_DISPLAY, "block", layout=True)
     visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
     layout = LayoutProperty()
@@ -325,11 +327,12 @@ class StylesBase(ABC):
         """
 
     @abstractmethod
-    def refresh(self, *, layout: bool = False) -> None:
+    def refresh(self, *, layout: bool = False, children: bool = False) -> None:
         """Mark the styles as requiring a refresh.
 
         Args:
             layout (bool, optional): Also require a layout. Defaults to False.
+            children (bool, opional): Also refresh children. Defaults to False.
         """
 
     @abstractmethod
@@ -439,7 +442,6 @@ class StylesBase(ABC):
 class Styles(StylesBase):
 
     node: DOMNode | None = None
-
     _rules: RulesMap = field(default_factory=dict)
 
     important: set[str] = field(default_factory=set)
@@ -486,9 +488,12 @@ class Styles(StylesBase):
     def get_rule(self, rule: str, default: object = None) -> object:
         return self._rules.get(rule, default)
 
-    def refresh(self, *, layout: bool = False) -> None:
+    def refresh(self, *, layout: bool = False, children: bool = False) -> None:
         if self.node is not None:
             self.node.refresh(layout=layout)
+            if children:
+                for child in self.node.walk_children(with_self=False):
+                    child.refresh(layout=layout)
 
     def reset(self) -> None:
         """Reset the rules to initial state."""
@@ -783,8 +788,8 @@ class RenderStyles(StylesBase):
             if self.has_rule(rule_name):
                 yield rule_name, getattr(self, rule_name)
 
-    def refresh(self, *, layout: bool = False) -> None:
-        self._inline_styles.refresh(layout=layout)
+    def refresh(self, *, layout: bool = False, children: bool = False) -> None:
+        self._inline_styles.refresh(layout=layout, children=children)
 
     def merge(self, other: Styles) -> None:
         """Merge values from another Styles.

@@ -834,10 +834,10 @@ class ColorProperty:
         _rich_traceback_omit = True
         if color is None:
             if obj.clear_rule(self.name):
-                obj.refresh()
+                obj.refresh(children=True)
         elif isinstance(color, Color):
             if obj.set_rule(self.name, color):
-                obj.refresh()
+                obj.refresh(children=True)
         elif isinstance(color, str):
             try:
                 parsed_color = Color.parse(color)
@@ -849,7 +849,7 @@ class ColorProperty:
                     ),
                 )
             if obj.set_rule(self.name, parsed_color):
-                obj.refresh()
+                obj.refresh(children=True)
         else:
             raise StyleValueError(f"Invalid color value {color}")
 

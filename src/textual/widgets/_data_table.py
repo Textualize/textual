@@ -113,8 +113,8 @@ class DataTable(ScrollView, Generic[CellType]):
     }
     DataTable > .datatable--header {        
         text-style: bold;
-        background: $primary;
-        color: $text-primary;
+        background: $primary-darken-1;
+        color: $text-primary-darken-1;
     }
     DataTable > .datatable--fixed {
         text-style: bold;

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from rich.segment import Segment
+from rich.style import Style
 
 from textual.color import Color
 from textual.geometry import Region, Size
@@ -41,10 +42,11 @@ def test_no_styles():
         content.__getitem__,
         content_size=Size(3, 3),
     )
+    style = Style.from_color(bgcolor=Color.parse("green").rich_color)
     expected = [
-        [Segment("foo", styles.rich_style)],
-        [Segment("bar", styles.rich_style)],
-        [Segment("baz", styles.rich_style)],
+        [Segment("foo", style)],
+        [Segment("bar", style)],
+        [Segment("baz", style)],
     ]
     assert lines == expected
 

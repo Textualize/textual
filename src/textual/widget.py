@@ -16,9 +16,11 @@ import rich.repr
 from rich.align import Align
 from rich.console import Console, RenderableType
 from rich.measure import Measurement
-from rich.padding import Padding
+
 from rich.segment import Segment
 from rich.style import Style
+from rich.styled import Styled
+from rich.text import Text
 
 from . import errors, events, messages
 from ._animator import BoundAnimator
@@ -72,10 +74,9 @@ class Widget(DOMNode):
         scrollbar-background: $panel-darken-2;
         scrollbar-background-hover: $panel-darken-3;
         scrollbar-color: $system;
-        scrollbar-color-active: $secondary-darken-1;
+        scrollbar-color-active: $warning-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
-
     }
     """
 
@@ -879,54 +880,7 @@ class Widget(DOMNode):
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
 
-    def _style_renderable(self, renderable: RenderableType) -> RenderableType:
-        """Applies CSS styles to a renderable by wrapping it in another renderable.
-
-        Args:
-            renderable (RenderableType): Renderable to apply styles to.
-
-        Returns:
-            RenderableType: An updated renderable.
-        """
-        (base_background, base_color), (background, color) = self.colors
-        styles = self.styles
-
-        content_align = (styles.content_align_horizontal, styles.content_align_vertical)
-        if content_align != ("left", "top"):
-            horizontal, vertical = content_align
-            renderable = Align(renderable, horizontal, vertical=vertical)
-
-        renderable = Padding(
-            renderable,
-            styles.padding,
-            style=Style.from_color(color.rich_color, background.rich_color),
-        )
-
-        if styles.border:
-            renderable = Border(
-                renderable,
-                styles.border,
-                inner_color=background,
-                outer_color=base_background,
-            )
-
-        if styles.outline:
-            renderable = Border(
-                renderable,
-                styles.outline,
-                inner_color=styles.background,
-                outer_color=base_background,
-                outline=True,
-            )
-
-        if styles.tint.a != 0:
-            renderable = Tint(renderable, styles.tint)
-        if styles.opacity != 1.0:
-            renderable = Opacity(renderable, opacity=styles.opacity)
-
-        return renderable
-
-    def render_styled(self) -> RenderableType:
+    def _render_styled(self) -> RenderableType:
         """Applies style attributes to the default renderable.
 
         Returns:
@@ -934,8 +888,21 @@ class Widget(DOMNode):
         """
 
         renderable = self.render()
+
+        if isinstance(renderable, str):
+            renderable = Text.from_markup(renderable)
+
+        rich_style = self.rich_style
+        if isinstance(renderable, Text):
+            renderable.stylize(rich_style)
+        else:
+            renderable = Styled(renderable, rich_style)
+
         styles = self.styles
-        content_align = (styles.content_align_horizontal, styles.content_align_vertical)
+        content_align = (
+            styles.content_align_horizontal,
+            styles.content_align_vertical,
+        )
         if content_align != ("left", "top"):
             horizontal, vertical = content_align
             renderable = Align(renderable, horizontal, vertical=vertical)
@@ -977,11 +944,11 @@ class Widget(DOMNode):
     def _render_content(self) -> None:
         """Render all lines."""
         width, height = self.size
-        renderable = self.render_styled()
+        renderable = self._render_styled()
         options = self.console.options.update_dimensions(width, height).update(
             highlight=False
         )
-        lines = self.console.render_lines(renderable, options, style=self.rich_style)
+        lines = self.console.render_lines(renderable, options)
         self._render_cache = RenderCache(self.size, lines)
         self._dirty_regions.clear()
 

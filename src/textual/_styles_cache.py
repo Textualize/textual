@@ -225,8 +225,7 @@ class StylesCache:
 
         from_color = Style.from_color
 
-        rich_style = styles.rich_style
-        inner = from_color(bgcolor=background.rich_color) + rich_style
+        inner = from_color(bgcolor=(base_background + background).rich_color)
         outer = from_color(bgcolor=base_background.rich_color)
 
         def post(segments: Iterable[Segment]) -> list[Segment]:
@@ -265,9 +264,7 @@ class StylesCache:
         elif (pad_top and y < gutter.top) or (
             pad_bottom and y >= height - gutter.bottom
         ):
-            background_style = from_color(
-                color=rich_style.color, bgcolor=background.rich_color
-            )
+            background_style = from_color(bgcolor=background.rich_color)
             left_style = from_color(color=border_left_color.rich_color)
             left = get_box(border_left, inner, outer, left_style)[1][0]
             right_style = from_color(color=border_right_color.rich_color)

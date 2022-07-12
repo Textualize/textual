@@ -7,6 +7,7 @@ class Vertical(Widget):
     CSS = """
     Vertical {
         layout: vertical;       
+        overflow: auto;
     }    
     """
 
@@ -17,5 +18,6 @@ class Horizontal(Widget):
     CSS = """
     Horizontal {
         layout: horizontal;
+        overflow: auto;
     }    
     """

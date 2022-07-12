@@ -43,6 +43,7 @@ VALID_STYLE_FLAGS: Final = {
     "none",
     "not",
     "bold",
+    "blink",
     "italic",
     "underline",
     "overline",
@@ -50,7 +51,9 @@ VALID_STYLE_FLAGS: Final = {
     "b",
     "i",
     "u",
+    "uu",
     "o",
+    "reverse",
 }
 
 NULL_SPACING: Final = Spacing.all(0)

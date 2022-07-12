@@ -6,14 +6,6 @@
     transition: color 300ms linear, background 300ms linear;
 }
 
-* {
-  scrollbar-background: $panel-darken-2;
-  scrollbar-background-hover: $panel-darken-3;
-  scrollbar-color: $system;
-  scrollbar-color-active: $accent-darken-1;
-  scrollbar-size-horizontal: 1;
-  scrollbar-size-vertical: 2;
-}
 
 *:hover {
   /* tint: 30% red;  
@@ -74,8 +66,8 @@ DataTable {
 }
 
 #header {
-  color: $text-primary-darken-1;
-  background: $primary-darken-1;
+  color: $text-primary-background-darken-1;
+  background: $primary-background-darken-1;
   height: 3;
   content-align: center middle;
 }
@@ -92,7 +84,7 @@ Tweet {
   height:12;
   width: 100%;
  
-  margin: 1 3;
+  
   background: $panel;
   color: $text-panel;
   layout: vertical;
@@ -117,7 +109,6 @@ Tweet {
 
 .code {  
   height: auto;
-    
 }
 
 
@@ -172,7 +163,7 @@ Tweet.scroll-horizontal TweetBody {
   color: $text-accent;
   background: $accent;
   height: 1;
-  border-top: hkey $accent-darken-2;
+  
   content-align: center middle;
 }
 
@@ -191,12 +182,12 @@ OptionItem {
 
 OptionItem:hover {
   height: 3;
-  color: $accent;
+  color: $secondary;
   background: $primary-background-darken-1;
   /* border-top: hkey $accent2-darken-3;
   border-bottom: hkey $accent2-darken-3; */
   text-style: bold;
-  border-left: outer $accent-darken-2;
+  border-left: outer $secondary-darken-2;
 }
 
 Error {
@@ -204,10 +195,10 @@ Error {
   height:3;
   background: $error;
   color: $text-error;
-  border-top: hkey $error-darken-2;
-  border-bottom: hkey $error-darken-2;
-  margin: 1 3;
-
+  border-top: wide $error-darken-1;
+  border-bottom: wide $error-darken-1;
+  
+  padding: 0;
   text-style: bold;
   align-horizontal: center;
 }
@@ -217,9 +208,9 @@ Warning {
   height:3;
   background: $warning;
   color: $text-warning-fade-1;
-  border-top: hkey $warning-darken-2;
-  border-bottom: hkey $warning-darken-2;
-  margin: 1 2;
+  border-top: wide $warning-darken-1;
+  border-bottom: wide $warning-darken-1;
+  
   text-style: bold;
   align-horizontal: center;
 }
@@ -229,13 +220,14 @@ Success {
   width:90%;
   height:auto;  
   box-sizing: border-box;
-  background: $success-lighten-3;
-  color: $text-success-lighten-3-fade-1;
+  background: $success;
+  color: $text-success;  
   
-  border-top: hkey $success;
-  border-bottom: hkey $success;
+  border-top: hkey $success-darken-1;
+  border-bottom: hkey $success-darken-1; 
 
-  text-style: bold;
+  text-style: bold underline;
+
   align-horizontal: center;
 }
 

@@ -49,7 +49,7 @@ def test_width():
     def get_auto_width(container: Size, parent: Size) -> int:
         return 10
 
-    def get_auto_height(container: Size, parent: Size) -> int:
+    def get_auto_height(container: Size, parent: Size, width: int) -> int:
         return 10
 
     box_model = get_box_model(
@@ -88,7 +88,7 @@ def test_width():
     box_model = get_box_model(
         styles, Size(60, 20), Size(80, 24), one, get_auto_width, get_auto_height
     )
-    assert box_model == BoxModel(Fraction(60), Fraction(16), Spacing(1, 2, 3, 4))
+    assert box_model == BoxModel(Fraction(54), Fraction(16), Spacing(1, 2, 3, 4))
 
     styles.width = "100vw"
     styles.max_width = "50%"
@@ -107,7 +107,7 @@ def test_height():
     def get_auto_width(container: Size, parent: Size) -> int:
         return 10
 
-    def get_auto_height(container: Size, parent: Size) -> int:
+    def get_auto_height(container: Size, parent: Size, width: int) -> int:
         return 10
 
     box_model = get_box_model(
@@ -139,6 +139,15 @@ def test_height():
     )
     assert box_model == BoxModel(Fraction(54), Fraction(20), Spacing(1, 2, 3, 4))
 
+    styles.height = "auto"
+    styles.margin = 2
+
+    box_model = get_box_model(
+        styles, Size(60, 20), Size(80, 24), one, get_auto_width, get_auto_height
+    )
+    assert box_model == BoxModel(Fraction(56), Fraction(10), Spacing(2, 2, 2, 2))
+
+    styles.margin = 1, 2, 3, 4
     styles.height = "100vh"
     styles.max_height = "50%"
 

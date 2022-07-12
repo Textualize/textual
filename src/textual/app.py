@@ -85,11 +85,12 @@ DEFAULT_COLORS = ColorSystem(
     secondary="#ffa62b",
     warning="#ffa62b",
     error="#ba3c5b",
-    success="#6d9f71",
-    accent="#ffa62b",
+    success="#4EBF71",
+    accent="#1A75B4",
     system="#5a4599",
     dark_surface="#292929",
 )
+
 
 ComposeResult = Iterable[Widget]
 
