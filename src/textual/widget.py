@@ -289,10 +289,12 @@ class Widget(DOMNode):
     def watch_scroll_x(self, new_value: float) -> None:
         self.horizontal_scrollbar.position = int(new_value)
         self.refresh(layout=True)
+        self.horizontal_scrollbar.refresh()
 
     def watch_scroll_y(self, new_value: float) -> None:
         self.vertical_scrollbar.position = int(new_value)
         self.refresh(layout=True)
+        self.vertical_scrollbar.refresh()
 
     def validate_scroll_x(self, value: float) -> float:
         return clamp(value, 0, self.max_scroll_x)
@@ -724,7 +726,7 @@ class Widget(DOMNode):
                 region.translate(-scroll_offset)
                 .translate(-widget.scroll_offset)
                 .translate(container.virtual_region.offset)
-            )
+            ).intersection(container.virtual_region)
             widget = container
         return scrolled
 
@@ -765,7 +767,7 @@ class Widget(DOMNode):
 
     def __init_subclass__(
         cls,
-        can_focus: bool = True,
+        can_focus: bool = False,
         can_focus_children: bool = True,
         inherit_css: bool = True,
     ) -> None:
