@@ -45,6 +45,10 @@ class Callback(Event, bubble=False, verbosity=3):
         yield "callback", self.callback
 
 
+class InvokeCallbacks(Event, bubble=False):
+    """Signal that the callbacks that have been scheduled should be invoked."""
+
+
 class ShutdownRequest(Event):
     pass
 

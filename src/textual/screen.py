@@ -8,6 +8,7 @@ from rich.style import Style
 
 
 from . import events, messages, errors
+from .events import InvokeCallbacks
 
 from .geometry import Offset, Region, Size
 from ._compositor import Compositor, MapGeometry
@@ -31,7 +32,7 @@ class Screen(Widget):
 
     CSS = """
     Screen {
-            
+
         layout: vertical;
         overflow-y: auto;
     }
@@ -127,6 +128,8 @@ class Screen(Widget):
             self._compositor.update_widgets(self._dirty_widgets)
             self.app._display(self._compositor.render())
             self._dirty_widgets.clear()
+
+        self.post_message_no_wait(InvokeCallbacks(self))
         self.update_timer.pause()
 
     def _refresh_layout(self, size: Size | None = None, full: bool = False) -> None:

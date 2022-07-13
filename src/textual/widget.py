@@ -1049,7 +1049,6 @@ class Widget(DOMNode):
             self.screen.post_message_no_wait(messages.Layout(self))
         self._layout_required = False
         self._repaint_required = False
-        await self.invoke_and_clear_callbacks()
 
     def focus(self) -> None:
         """Give input focus to this widget."""

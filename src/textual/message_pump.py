@@ -396,13 +396,14 @@ class MessagePump:
     def on_callback(self, event: events.Callback) -> None:
         self._callbacks.append(event.callback)
 
-    async def invoke_and_clear_callbacks(self) -> None:
+    async def on_invoke_callbacks(self, event: events.InvokeCallbacks) -> None:
         """Invoke all callbacks that are waiting to be executed, and then clear them.
         Callbacks will be invoked in the same order they were registered.
         """
-        for callback in self._callbacks:
-            await invoke(callback)
+        callbacks = self._callbacks[:]
         self._callbacks.clear()
+        for callback in callbacks:
+            await invoke(callback)
 
     def emit_no_wait(self, message: Message) -> bool:
         if self._parent:
