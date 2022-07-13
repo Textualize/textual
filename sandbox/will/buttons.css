@@ -1,0 +1,24 @@
+
+Button {
+    margin: 1;
+    width: 100%;
+}
+
+Vertical {
+    height: auto;       
+}
+
+Horizontal {    
+    height: auto;    
+}
+
+Horizontal Button {
+    width: 20;
+    
+    margin: 1 2     ;
+}
+
+#scroll {
+    height: 10; 
+   
+}

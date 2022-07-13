@@ -57,7 +57,9 @@ class HorizontalLayout(Layout):
             )
             next_x = x + content_width
             region = Region(int(x), offset_y, int(next_x - int(x)), int(content_height))
-            max_height = max(max_height, content_height)
+            max_height = max(
+                max_height, content_height + offset_y + box_model.margin.bottom
+            )
             add_placement(WidgetPlacement(region, widget, 0))
             x = next_x + margin
             max_width = x

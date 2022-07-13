@@ -104,7 +104,7 @@ class Coord(NamedTuple):
         return Coord(row + 1, column)
 
 
-class DataTable(ScrollView, Generic[CellType]):
+class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     CSS = """
     DataTable {
