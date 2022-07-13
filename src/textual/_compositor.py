@@ -59,7 +59,7 @@ class MapGeometry(NamedTuple):
     clip: Region  # A region to clip the widget by (if a Widget is within a container)
     virtual_size: Size  # The virtual size  (scrollable region) of a widget if it is a container
     container_size: Size  # The container size (area not occupied by scrollbars)
-    virtual_region: Region
+    virtual_region: Region  # The region relative to the container (but not necessarily visible)
 
     @property
     def visible_region(self) -> Region:
