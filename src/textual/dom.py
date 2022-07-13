@@ -449,8 +449,10 @@ class DOMNode(MessagePump):
         """
         _append = self.children._append
         for node in nodes:
+            node.set_parent(self)
             _append(node)
         for node_id, node in named_nodes.items():
+            node.set_parent(self)
             _append(node)
             node.id = node_id
 
