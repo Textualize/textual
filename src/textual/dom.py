@@ -411,7 +411,11 @@ class DOMNode(MessagePump):
     def focusable_children(self) -> list[DOMNode]:
         """Get the children which may be focused."""
         # TODO: This may be the place to define order, other focus related rules
-        return [child for child in self.children if child.display and child.visible]
+        return [
+            child
+            for child in self.children
+            if child.display and child.visible and child.can_focus
+        ]
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.

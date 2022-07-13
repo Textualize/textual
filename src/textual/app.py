@@ -81,7 +81,7 @@ LayoutDefinition = "dict[str, Any]"
 
 
 DEFAULT_COLORS = ColorSystem(
-    primary="#406e8e",
+    primary="#2A4E6E",
     secondary="#ffa62b",
     warning="#ffa62b",
     error="#ba3c5b",
@@ -645,7 +645,7 @@ class App(Generic[ReturnType], DOMNode):
                 # Change focus
                 self.focused = widget
                 # Send focus event
-                widget.parent.scroll_to_widget(widget)
+                self.screen.scroll_to_widget(widget)
                 widget.post_message_no_wait(events.Focus(self))
                 widget.emit_no_wait(events.DescendantFocus(self))
 

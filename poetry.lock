@@ -654,24 +654,19 @@ pyyaml = "*"
 
 [[package]]
 name = "rich"
-version = "12.4.4"
+version = "12.5.1"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 category = "main"
 optional = false
-python-versions = "^3.6.3"
-develop = true
+python-versions = ">=3.6.3,<4.0.0"
 
 [package.dependencies]
-commonmark = "^0.9.0"
-pygments = "^2.6.0"
-typing-extensions = {version = ">=4.0.0, <5.0", markers = "python_version < \"3.9\""}
+commonmark = ">=0.9.0,<0.10.0"
+pygments = ">=2.6.0,<3.0.0"
+typing-extensions = {version = ">=4.0.0,<5.0", markers = "python_version < \"3.9\""}
 
 [package.extras]
 jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
-
-[package.source]
-type = "directory"
-url = "../rich"
 
 [[package]]
 name = "six"
@@ -785,7 +780,7 @@ dev = ["aiohttp", "click", "msgpack"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "08c432accbe56db11ca9b2d69c2b4e15967e1a0142d4508f245715cae6f3d239"
+content-hash = "2d0f99d7fb563eb0b34cda9542ecf87c35cf5944a67510625969ec7b046b6d03"
 
 [metadata.files]
 aiohttp = [

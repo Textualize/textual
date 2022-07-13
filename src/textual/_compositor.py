@@ -54,11 +54,12 @@ class ReflowResult(NamedTuple):
 class MapGeometry(NamedTuple):
     """Defines the absolute location of a Widget."""
 
-    region: Region  # The region occupied by the widget
+    region: Region  # The (screen) region occupied by the widget
     order: tuple[int, ...]  # A tuple of ints defining the painting order
     clip: Region  # A region to clip the widget by (if a Widget is within a container)
     virtual_size: Size  # The virtual size  (scrollable region) of a widget if it is a container
     container_size: Size  # The container size (area not occupied by scrollbars)
+    virtual_region: Region
 
     @property
     def visible_region(self) -> Region:
@@ -271,8 +272,7 @@ class Compositor:
 
         # Get a map of regions
         self.regions = {
-            widget: (region, clip)
-            for widget, (region, _order, clip, _, _) in map.items()
+            widget: (region, clip) for widget, (region, _order, clip, *_) in map.items()
         }
 
         # Widgets with changed size
@@ -326,6 +326,7 @@ class Compositor:
 
         def add_widget(
             widget: Widget,
+            virtual_region: Region,
             region: Region,
             order: tuple[int, ...],
             clip: Region,
@@ -379,6 +380,7 @@ class Compositor:
                         if sub_widget is not None:
                             add_widget(
                                 sub_widget,
+                                sub_region,
                                 sub_region + placement_offset,
                                 order + (z,),
                                 sub_clip,
@@ -394,6 +396,7 @@ class Compositor:
                         clip,
                         container_size,
                         container_size,
+                        chrome_region,
                     )
 
                 map[widget] = MapGeometry(
@@ -402,16 +405,22 @@ class Compositor:
                     clip,
                     total_region.size,
                     container_size,
+                    virtual_region,
                 )
 
             else:
                 # Add the widget to the map
                 map[widget] = MapGeometry(
-                    region + layout_offset, order, clip, region.size, container_size
+                    region + layout_offset,
+                    order,
+                    clip,
+                    region.size,
+                    container_size,
+                    virtual_region,
                 )
 
         # Add top level (root) widget
-        add_widget(root, size.region, (0,), size.region)
+        add_widget(root, size.region, size.region, (0,), size.region)
         return map, widgets
 
     def __iter__(self) -> Iterator[tuple[Widget, Region, Region, Size, Size]]:
@@ -423,7 +432,7 @@ class Compositor:
         """
         layers = sorted(self.map.items(), key=lambda item: item[1].order, reverse=True)
         intersection = Region.intersection
-        for widget, (region, _order, clip, virtual_size, container_size) in layers:
+        for widget, (region, _order, clip, virtual_size, container_size, *_) in layers:
             yield (
                 widget,
                 intersection(region, clip),
@@ -517,7 +526,7 @@ class Compositor:
         intersection = Region.intersection
         extend = list.extend
 
-        for region, order, clip, _, _ in self.map.values():
+        for region, order, clip, *_ in self.map.values():
             region = intersection(region, clip)
             if region and (region in screen_region):
                 x, y, region_width, region_height = region
@@ -547,13 +556,13 @@ class Compositor:
                 overlaps = crop.overlaps
                 mapped_regions = [
                     (widget, region, order, clip)
-                    for widget, (region, order, clip, _, _) in self.map.items()
+                    for widget, (region, order, clip, *_) in self.map.items()
                     if widget.visible and not widget.is_transparent and overlaps(crop)
                 ]
             else:
                 mapped_regions = [
                     (widget, region, order, clip)
-                    for widget, (region, order, clip, _, _) in self.map.items()
+                    for widget, (region, order, clip, *_) in self.map.items()
                     if widget.visible and not widget.is_transparent
                 ]
 

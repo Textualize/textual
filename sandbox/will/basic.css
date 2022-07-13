@@ -66,8 +66,8 @@ DataTable {
 }
 
 #header {
-  color: $text-primary-background-darken-1;
-  background: $primary-background-darken-1;
+  color: $text-secondary-background-darken-1;
+  background: $secondary-background-darken-1;
   height: 3;
   content-align: center middle;
 }
@@ -109,6 +109,7 @@ Tweet {
 
 .code {  
   height: auto;
+  
 }
 
 
