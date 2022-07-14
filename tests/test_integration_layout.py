@@ -12,6 +12,8 @@ from textual.geometry import Size
 from textual.widget import Widget
 from textual.widgets import Placeholder
 
+pytestmark = pytest.mark.integration_test
+
 # Let's allow ourselves some abbreviated names for those tests,
 # in order to make the test cases a bit easier to read :-)
 SCREEN_W = 100  # width of our Screens
@@ -26,7 +28,6 @@ SCROLL_V_SIZE = 2
 
 
 @pytest.mark.asyncio
-@pytest.mark.integration_test  # this is a slow test, we may want to skip them in some contexts
 @pytest.mark.parametrize(
     (
         "placeholders_count",
@@ -164,7 +165,6 @@ async def test_composition_of_vertical_container_with_children(
 
 
 @pytest.mark.asyncio
-@pytest.mark.integration_test
 @pytest.mark.parametrize(
     "edge_type,expected_box_inner_size,expected_box_size,expected_top_left_edge_color,expects_visible_char_at_top_left_edge",
     (

@@ -62,7 +62,6 @@ class MessagePump:
         self._pending_message: Message | None = None
         self._task: Task | None = None
         self._child_tasks: WeakSet[Task] = WeakSet()
-        self._callbacks: list[Callable[[], Awaitable[None]]] = []
 
     @property
     def task(self) -> Task:
@@ -194,14 +193,21 @@ class MessagePump:
         return timer
 
     def call_later(self, callback: Callable, *args, **kwargs) -> None:
-        """Run a callback after processing all messages and refreshing the screen.
+        """Schedule a callback to run after all messages are processed and the screen
+        has been refreshed.
 
         Args:
             callback (Callable): A callable.
         """
-        self.post_message_no_wait(
+        # We send the callback event to self, to ensure that messages preceding it
+        # in this message pump are handled first.
+        self.app.screen.post_message_no_wait(
             events.Callback(self, partial(callback, *args, **kwargs))
         )
+
+    # def on_callback(self, event: events.Callback) -> None:
+    #     # We forward Callbacks registered on to the Screen
+    #     self.app.screen.post_message_no_wait(event)
 
     def close_messages_no_wait(self) -> None:
         """Request the message queue to exit."""
@@ -392,18 +398,6 @@ class MessagePump:
         if self._closing or self._closed:
             return False
         return self.post_message_no_wait(message)
-
-    def on_callback(self, event: events.Callback) -> None:
-        self._callbacks.append(event.callback)
-
-    async def on_invoke_callbacks(self, event: events.InvokeCallbacks) -> None:
-        """Invoke all callbacks that are waiting to be executed, and then clear them.
-        Callbacks will be invoked in the same order they were registered.
-        """
-        callbacks = self._callbacks[:]
-        self._callbacks.clear()
-        for callback in callbacks:
-            await invoke(callback)
 
     def emit_no_wait(self, message: Message) -> bool:
         if self._parent:
