@@ -9,11 +9,12 @@ when setting and getting.
 
 from __future__ import annotations
 
-from typing import Generic, Iterable, NamedTuple, TypeVar, TYPE_CHECKING, cast
+from typing import Generic, Iterable, NamedTuple, TypeVar, TYPE_CHECKING, cast, ClassVar
 
 import rich.repr
 from rich.style import Style
 
+from ._color import parse_color_tokens
 from ._help_text import (
     border_property_help_text,
     layout_property_help_text,
@@ -27,11 +28,12 @@ from ._help_text import (
     string_enum_help_text,
     color_property_help_text,
 )
-from .._border import INVISIBLE_EDGE_TYPES, normalize_border_value
+from .tokenize import tokenize_value
+from .._border import normalize_border_value
 from ..color import Color, ColorPair, ColorParseError
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING, VALID_STYLE_FLAGS
-from .errors import StyleTypeError, StyleValueError
+from .errors import StyleTypeError, StyleValueError, DeclarationError
 from .scalar import (
     get_symbols,
     UNIT_SYMBOL,
@@ -799,6 +801,8 @@ class NameListProperty:
 class ColorProperty:
     """Descriptor for getting and setting color properties."""
 
+    _supports_auto: ClassVar = False
+
     def __init__(self, default_color: Color | str) -> None:
         self._default_color = Color.parse(default_color)
 
@@ -839,8 +843,9 @@ class ColorProperty:
             if obj.set_rule(self.name, color):
                 obj.refresh(children=True)
         elif isinstance(color, str):
+            tokens = tokenize_value(color, "expression")
             try:
-                parsed_color = Color.parse(color)
+                parsed_color, is_auto = parse_color_tokens(self.name, tokens)
             except ColorParseError as error:
                 raise StyleValueError(
                     f"Invalid color value '{color}'",
@@ -848,10 +853,81 @@ class ColorProperty:
                         self.name, context="inline", error=error
                     ),
                 )
+            except DeclarationError as error:
+                raise StyleValueError(
+                    f"Invalid color value '{color}': {error.message}",
+                    help_text=color_property_help_text(
+                        self.name, context="inline", error=error
+                    ),
+                )
+
+            if is_auto:
+                if not self._supports_auto:
+                    raise StyleValueError(
+                        f"Invalid color value '{color}': cannot use 'auto' for this property",
+                        help_text=color_property_help_text(self.name, context="inline"),
+                    )
+                else:
+                    obj._color_auto = True
             if obj.set_rule(self.name, parsed_color):
                 obj.refresh(children=True)
         else:
             raise StyleValueError(f"Invalid color value {color}")
+
+
+class ForegroundColorProperty(ColorProperty):
+    """Descriptor for getting and setting color properties, also able to manage "auto" colors."""
+
+    _supports_auto = True
+
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> Color:
+        """Get a ``Color``.
+
+        If the property is "color" and the styles have a "color_auto", this value will be dynamically calculated
+        by taking into account the background colors of the attached DOMNode's ancestors.
+
+        Args:
+            obj (Styles): The ``Styles`` object.
+            objtype (type[Styles]): The ``Styles`` class.
+
+        Returns:
+            Color: The Color
+        """
+        if not obj.color_auto:
+            # Simple (and main) case: we just return the color stored in the Style rule:
+            return cast(Color, obj.get_rule(self.name, self._default_color))
+
+        # We're dealing with a "color" property that has an "auto" value: let's traverse the Node ancestors to
+        # calculate what the resulting value should be.
+        from ..dom import DOMNode
+
+        styles_node = getattr(obj, "node", None)
+        if not isinstance(styles_node, DOMNode):
+            raise ValueError(
+                "Dynamic 'auto' color can only be used with an subclass of StylesBase that has a 'node' attribute"
+            )
+        # We just repeat what `DOMNode.color` does, in a slightly simplified way.
+        # N.B. `DOMNode.color` will call this `__get__` method while it is itself traversing the DOMNode ancestors,
+        # so we loop over ancestors in a loop that is itself looping over ancestors.
+        # That's a deliberate implementation choice.
+        background = Color(0, 0, 0, 0)
+        color = Color(255, 255, 255, 0)
+        # N.B. In this loop we're using `styles.get_rule("color")` rather than `styles.color`
+        # in order to avoid infinite recursion.
+        for node in reversed(styles_node.ancestors):
+            styles = node.styles
+            if styles.has_rule("background"):
+                background += styles.background
+            if styles.color_auto:
+                # The alpha of our "color_auto" color is stored in the "color" property
+                # (which in this case is used only to bear that value; its RGB values should not be taken into account)
+                color_auto_alpha = styles.get_rule("color").a
+                color = background.get_contrast_text(color_auto_alpha)
+            elif styles.has_rule("color"):
+                color += styles.get_rule("color")  # styles.color
+        return color
 
 
 class StyleFlagsProperty:

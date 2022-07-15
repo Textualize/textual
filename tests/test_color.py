@@ -1,8 +1,12 @@
+from unittest.mock import ANY
+
 import pytest
 from rich.color import Color as RichColor
 from rich.text import Text
 
 from textual.color import Color, ColorPair, Lab, lab_to_rgb, rgb_to_lab
+from textual.css._color import parse_color_tokens
+from textual.css.tokenize import tokenize_value
 
 
 def test_rich_color():
@@ -115,22 +119,28 @@ def test_color_parse(text, expected):
     assert Color.parse(text) == expected
 
 
-@pytest.mark.parametrize("input,output", [
-    ("rgb( 300, 300 , 300 )", Color(255, 255, 255)),
-    ("rgba( 2 , 3 , 4, 1.0 )", Color(2, 3, 4, 1.0)),
-    ("hsl( 45, 25% , 25% )", Color(80, 72, 48)),
-    ("hsla( 45, 25% , 25%, 0.35 )", Color(80, 72, 48, 0.35)),
-])
+@pytest.mark.parametrize(
+    "input,output",
+    [
+        ("rgb( 300, 300 , 300 )", Color(255, 255, 255)),
+        ("rgba( 2 , 3 , 4, 1.0 )", Color(2, 3, 4, 1.0)),
+        ("hsl( 45, 25% , 25% )", Color(80, 72, 48)),
+        ("hsla( 45, 25% , 25%, 0.35 )", Color(80, 72, 48, 0.35)),
+    ],
+)
 def test_color_parse_input_has_spaces(input, output):
     assert Color.parse(input) == output
 
 
-@pytest.mark.parametrize("input,output", [
-    ("rgb(300, 300, 300)", Color(255, 255, 255)),
-    ("rgba(300, 300, 300, 300)", Color(255, 255, 255, 1.0)),
-    ("hsl(400, 200%, 250%)", Color(255, 255, 255, 1.0)),
-    ("hsla(400, 200%, 250%, 1.9)", Color(255, 255, 255, 1.0)),
-])
+@pytest.mark.parametrize(
+    "input,output",
+    [
+        ("rgb(300, 300, 300)", Color(255, 255, 255)),
+        ("rgba(300, 300, 300, 300)", Color(255, 255, 255, 1.0)),
+        ("hsl(400, 200%, 250%)", Color(255, 255, 255, 1.0)),
+        ("hsla(400, 200%, 250%, 1.9)", Color(255, 255, 255, 1.0)),
+    ],
+)
 def test_color_parse_clamp(input, output):
     assert Color.parse(input) == output
 
@@ -141,7 +151,8 @@ def test_color_parse_hsl_negative_degrees():
 
 def test_color_parse_hsla_negative_degrees():
     assert Color.parse("hsla(-45, 50%, 50%, 0.2)") == Color.parse(
-        "hsla(315, 50%, 50%, 0.2)")
+        "hsla(315, 50%, 50%, 0.2)"
+    )
 
 
 def test_color_parse_color():
@@ -219,3 +230,24 @@ def test_rgb_lab_rgb_roundtrip():
 def test_color_pair_style():
     pair = ColorPair(Color(220, 220, 220), Color(10, 20, 30))
     assert str(pair.style) == "#dcdcdc on #0a141e"
+
+
+@pytest.mark.parametrize(
+    "expression,expected_color,expected_is_auto",
+    (
+        ["red", Color(255, 0, 0), False],
+        ["rgba(255, 125, 33, 0.6)", Color(255, 125, 33, 0.6), False],
+        ["40% #405060", Color(64, 80, 96, 0.4), False],
+        ["hsl(45,25%,25%) 70%", Color(80, 72, 48, 0.7), False],
+        ["auto", Color(ANY, ANY, ANY, 1), True],
+        ["auto 25%", Color(ANY, ANY, ANY, 0.25), True],
+        ["32% auto", Color(ANY, ANY, ANY, 0.32), True],
+    ),
+)
+def test_parse_color_expression(
+    expression: str, expected_color: Color, expected_is_auto: bool
+):
+    tokens = tokenize_value(expression, "expression")
+    parsed_color, is_auto = parse_color_tokens("a_property", tokens)
+    assert parsed_color == expected_color
+    assert is_auto is expected_is_auto

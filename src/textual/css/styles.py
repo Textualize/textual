@@ -32,6 +32,7 @@ from ._style_properties import (
     StyleProperty,
     TransitionsProperty,
     FractionalProperty,
+    ForegroundColorProperty,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -52,7 +53,6 @@ from .types import (
     AlignHorizontal,
     Overflow,
     Specificity3,
-    Specificity4,
     AlignVertical,
     Visibility,
     ScrollbarGutter,
@@ -184,7 +184,7 @@ class StylesBase(ABC):
     visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
     layout = LayoutProperty()
 
-    color = ColorProperty(Color(255, 255, 255))
+    color = ForegroundColorProperty(Color(255, 255, 255))
     background = ColorProperty(Color(0, 0, 0, 0))
     text_style = StyleFlagsProperty()
 
@@ -247,6 +247,8 @@ class StylesBase(ABC):
     content_align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     content_align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
     content_align = AlignProperty()
+
+    _color_auto: bool = False
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles contains the same rules."""
@@ -435,6 +437,10 @@ class StylesBase(ABC):
             else:
                 offset_y = parent_height - height
         return offset_y
+
+    @property
+    def color_auto(self) -> bool:
+        return self._color_auto
 
 
 @rich.repr.auto
@@ -684,7 +690,11 @@ class Styles(StylesBase):
             assert self.layout is not None
             append_declaration("layout", self.layout.name)
 
-        if has_rule("color"):
+        if self._color_auto:
+            append_declaration(
+                "color", f"auto {self.color.a * 100}%" if self.color.a < 1 else "auto"
+            )
+        elif has_rule("color"):
             append_declaration("color", self.color.hex)
         if has_rule("background"):
             append_declaration("background", self.background.hex)

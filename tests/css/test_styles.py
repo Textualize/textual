@@ -1,3 +1,4 @@
+from contextlib import nullcontext as does_not_raise
 import sys
 from decimal import Decimal
 
@@ -144,6 +145,24 @@ def test_opacity_set_invalid_type_error():
     styles = RenderStyles(DOMNode(), Styles(), Styles())
     with pytest.raises(StyleValueError):
         styles.opacity = "invalid value"
+
+
+@pytest.mark.parametrize(
+    "property_,expected_result",
+    (
+        ["color", does_not_raise()],
+        ["background", pytest.raises(StyleValueError)],
+        ["tint", pytest.raises(StyleValueError)],
+        ["scrollbar_color", pytest.raises(StyleValueError)],
+        ["scrollbar_background", pytest.raises(StyleValueError)],
+    ),
+)
+def test_color_auto_can_only_be_set_for_color_property(property_: str, expected_result):
+    styles = RenderStyles(DOMNode(), Styles(), Styles())
+    with expected_result as err:
+        setattr(styles, property_, "auto")
+    if err:
+        assert "cannot use 'auto' for this property" in str(err)
 
 
 @pytest.mark.parametrize(

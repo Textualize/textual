@@ -7,7 +7,6 @@ from rich.pretty import Pretty
 from textual._color_constants import COLOR_NAME_TO_RGB
 from textual.app import App, ComposeResult
 from textual.widget import Widget
-from textual.widgets import Placeholder
 
 
 @rich.repr.auto(angular=False)
@@ -35,8 +34,7 @@ class ColorNames(App):
     def compose(self) -> ComposeResult:
         for color_name, color in COLOR_NAME_TO_RGB.items():
             color_placeholder = ColorDisplay(name=color_name)
-            is_dark_color = sum(color) < 400
-            color_placeholder.styles.color = "white" if is_dark_color else "black"
+            color_placeholder.styles.color = "auto 90%"
             color_placeholder.styles.background = color_name
             yield color_placeholder
 
