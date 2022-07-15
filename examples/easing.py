@@ -7,7 +7,7 @@ from textual.widgets import Placeholder, TreeControl, ScrollView, TreeClick
 
 
 class EasingApp(App):
-    """An app do demonstrate easing."""
+    """An app to demonstrate easing."""
 
     side = Reactive(False)
     easing = Reactive("linear")
