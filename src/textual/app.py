@@ -80,16 +80,26 @@ _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
 LayoutDefinition = "dict[str, Any]"
 
 
-DEFAULT_COLORS = ColorSystem(
-    primary="#2A4E6E",
-    secondary="#ffa62b",
-    warning="#ffa62b",
-    error="#ba3c5b",
-    success="#4EBF71",
-    accent="#1A75B4",
-    system="#5a4599",
-    dark_surface="#292929",
-)
+DEFAULT_COLORS = {
+    "dark": ColorSystem(
+        primary="#004578",
+        secondary="#ffa62b",
+        warning="#ffa62b",
+        error="#ba3c5b",
+        success="#4EBF71",
+        accent="#0178D4",
+        dark=True,
+    ),
+    "light": ColorSystem(
+        primary="#004578",
+        secondary="#ffa62b",
+        warning="#ffa62b",
+        error="#ba3c5b",
+        success="#4EBF71",
+        accent="#0178D4",
+        dark=False,
+    ),
+}
 
 
 ComposeResult = Iterable[Widget]
@@ -338,7 +348,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             dict[str, str]: A mapping of variable name to value.
         """
-        variables = self.design.generate(self.dark)
+        variables = self.design["dark" if self.dark else "light"].generate()
         return variables
 
     def watch_dark(self, dark: bool) -> None:

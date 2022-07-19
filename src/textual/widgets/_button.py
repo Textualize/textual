@@ -33,11 +33,11 @@ class Button(Widget, can_focus=True):
     Button {
         width: auto;
         height: 3;
-        background: $primary;
-        color: $text-primary;        
+        background: $panel;
+        color: $text-panel;        
         border: none;
-        border-top: tall $primary-lighten-2;
-        border-bottom: tall $primary-darken-3;
+        border-top: tall $panel-lighten-2;
+        border-bottom: tall $panel-darken-3;
         content-align: center middle;        
         text-style: bold;      
     }
@@ -47,15 +47,15 @@ class Button(Widget, can_focus=True):
     }
 
     Button:hover {
-        border-top: tall $primary-lighten-1;
-        background: $primary-darken-2;
-        color: $text-primary-darken-2;       
+        border-top: tall $panel-lighten-1;
+        background: $panel-darken-2;
+        color: $text-panel-darken-2;       
     }
 
     Button.-active {
-        background: $primary;
-        border-bottom: tall $primary-lighten-2;
-        border-top: tall $primary-darken-2;                
+        background: $panel;
+        border-bottom: tall $panel-lighten-2;
+        border-top: tall $panel-darken-2;                
     }
 
 

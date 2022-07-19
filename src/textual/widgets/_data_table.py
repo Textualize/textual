@@ -113,13 +113,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     }
     DataTable > .datatable--header {        
         text-style: bold;
-        background: $primary-darken-1;
-        color: $text-primary-darken-1;
+        background: $primary;
+        color: $text-primary;
     }
     DataTable > .datatable--fixed {
         text-style: bold;
-        background: $primary-darken-2;
-        color: $text-primary-darken-2;
+        background: $primary;
+        color: $text-primary;
     }
 
     DataTable > .datatable--odd-row {

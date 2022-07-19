@@ -71,9 +71,9 @@ class Widget(DOMNode):
 
     CSS = """
     Widget{
-        scrollbar-background: $panel-darken-2;
-        scrollbar-background-hover: $panel-darken-3;
-        scrollbar-color: $system;
+        scrollbar-background: $panel-darken-1;
+        scrollbar-background-hover: $panel-darken-2;
+        scrollbar-color: $primary-lighten-1;
         scrollbar-color-active: $warning-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;

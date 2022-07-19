@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import PurePath
-from typing import Iterator, Iterable
+from typing import Iterator, Iterable, NoReturn, Sequence
 
 from rich import print
 
-from textual.css.errors import UnresolvedVariableError
+from textual.css.tokenizer import TokenError
 from textual.css.types import Specificity3
 from ._styles_builder import StylesBuilder, DeclarationError
 from .model import (
@@ -18,6 +18,7 @@ from .model import (
     SelectorType,
 )
 from .styles import Styles
+from ..suggestions import get_suggestion
 from .tokenize import tokenize, tokenize_declarations, Token, tokenize_values
 from .tokenizer import EOFError, ReferencedBy
 
@@ -209,12 +210,20 @@ def parse_declarations(css: str, path: str) -> Styles:
     return styles_builder.styles
 
 
-def _unresolved(
-    variable_name: str, location: tuple[int, int]
-) -> UnresolvedVariableError:
-    line_idx, col_idx = location
-    return UnresolvedVariableError(
-        f"reference to undefined variable '${variable_name}' at line {line_idx + 1}, column {col_idx + 1}."
+def _unresolved(variable_name: str, variables: Sequence[str], token: Token) -> NoReturn:
+
+    message = f"reference to undefined variable '${variable_name}'"
+
+    suggested_variable = get_suggestion(variable_name, variables)
+    if suggested_variable:
+        message += f"; did you mean '{suggested_variable}'?"
+
+    raise TokenError(
+        token.path,
+        token.code,
+        token.start,
+        message,
+        end=token.end,
     )
 
 
@@ -284,9 +293,7 @@ def substitute_references(
                                 )
                             )
                     else:
-                        raise _unresolved(
-                            variable_name=ref_name, location=token.location
-                        )
+                        _unresolved(ref_name, variables.keys(), token)
                 else:
                     variables.setdefault(variable_name, []).append(token)
                     yield token
@@ -306,7 +313,7 @@ def substitute_references(
                         )
                     )
             else:
-                raise _unresolved(variable_name=variable_name, location=token.location)
+                _unresolved(variable_name, variables.keys(), token)
         else:
             yield token
 

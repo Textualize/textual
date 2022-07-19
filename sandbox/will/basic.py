@@ -179,21 +179,21 @@ app = BasicApp()
 if __name__ == "__main__":
     app.run()
 
-    from textual.geometry import Region
-    from textual.color import Color
+    # from textual.geometry import Region
+    # from textual.color import Color
 
-    print(Region.intersection.cache_info())
-    print(Region.overlaps.cache_info())
-    print(Region.union.cache_info())
-    print(Region.split_vertical.cache_info())
-    print(Region.__contains__.cache_info())
-    from textual.css.scalar import Scalar
+    # print(Region.intersection.cache_info())
+    # print(Region.overlaps.cache_info())
+    # print(Region.union.cache_info())
+    # print(Region.split_vertical.cache_info())
+    # print(Region.__contains__.cache_info())
+    # from textual.css.scalar import Scalar
 
-    print(Scalar.resolve_dimension.cache_info())
+    # print(Scalar.resolve_dimension.cache_info())
 
-    from rich.style import Style
-    from rich.cells import cached_cell_len
+    # from rich.style import Style
+    # from rich.cells import cached_cell_len
 
-    print(Style._add.cache_info())
+    # print(Style._add.cache_info())
 
-    print(cached_cell_len.cache_info())
+    # print(cached_cell_len.cache_info())
