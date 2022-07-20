@@ -2,10 +2,10 @@
 
 
 
- /* * {
+ * {
     transition: color 300ms linear, background 300ms linear;
 } 
- */
+
 
 *:hover {
   /* tint: 30% red;  
@@ -198,8 +198,8 @@ Error {
   height:3;
   background: $error;
   color: $text-error;
-  border-top: tall $error-darken-1;
-  border-bottom: tall $error-darken-1;
+  border-top: tall $error-darken-2;
+  border-bottom: tall $error-darken-2;
   
   padding: 0;
   text-style: bold;
@@ -211,8 +211,8 @@ Warning {
   height:3;
   background: $warning;
   color: $text-warning-fade-1;
-  border-top: tall $warning-darken-1;
-  border-bottom: tall $warning-darken-1;
+  border-top: tall $warning-darken-2;
+  border-bottom: tall $warning-darken-2;
   
   text-style: bold;
   align-horizontal: center;
@@ -226,8 +226,8 @@ Success {
   background: $success;
   color: $text-success;  
   
-  border-top: hkey $success-darken-1;
-  border-bottom: hkey $success-darken-1; 
+  border-top: hkey $success-darken-2;
+  border-bottom: hkey $success-darken-2; 
 
   text-style: bold ;
 

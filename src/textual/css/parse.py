@@ -211,9 +211,18 @@ def parse_declarations(css: str, path: str) -> Styles:
 
 
 def _unresolved(variable_name: str, variables: Sequence[str], token: Token) -> NoReturn:
+    """Raise a TokenError regarding an unresolved variable.
 
+    Args:
+        variable_name (str): A variable name.
+        variables (Sequence[str]): Possible choices used to generate suggestion.
+        token (Token): The Token.
+
+    Raises:
+        TokenError: Always raises a TokenError.
+
+    """
     message = f"reference to undefined variable '${variable_name}'"
-
     suggested_variable = get_suggestion(variable_name, variables)
     if suggested_variable:
         message += f"; did you mean '{suggested_variable}'?"
