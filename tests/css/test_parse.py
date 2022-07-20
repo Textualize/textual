@@ -4,8 +4,7 @@ import pytest
 
 
 from textual.color import Color
-from textual.css.errors import UnresolvedVariableError
-from textual.css.parse import substitute_references
+from textual.css.parse import substitute_references, TokenError
 from textual.css.scalar import Scalar, Unit
 from textual.css.stylesheet import Stylesheet, StylesheetParseError
 from textual.css.tokenize import tokenize
@@ -214,7 +213,7 @@ class TestVariableReferenceSubstitution:
 
     def test_undefined_variable(self):
         css = ".thing { border: $not-defined; }"
-        with pytest.raises(UnresolvedVariableError):
+        with pytest.raises(TokenError):
             list(substitute_references(tokenize(css, "")))
 
     def test_transitive_reference(self):
@@ -907,17 +906,20 @@ class TestParseText:
 class TestParseColor:
     """More in-depth tests around parsing of CSS colors"""
 
-    @pytest.mark.parametrize("value,result", [
-        ("rgb(1,255,50)", Color(1, 255, 50)),
-        ("rgb( 1, 255,50 )", Color(1, 255, 50)),
-        ("rgba( 1, 255,50,0.3 )", Color(1, 255, 50, 0.3)),
-        ("rgba( 1, 255,50, 1.3 )", Color(1, 255, 50, 1.0)),
-        ("hsl( 180, 50%, 50% )", Color(64, 191, 191)),
-        ("hsl(180,50%,50%)", Color(64, 191, 191)),
-        ("hsla(180,50%,50%,0.25)", Color(64, 191, 191, 0.25)),
-        ("hsla( 180, 50% ,50%,0.25 )", Color(64, 191, 191, 0.25)),
-        ("hsla( 180, 50% , 50% , 1.5 )", Color(64, 191, 191)),
-    ])
+    @pytest.mark.parametrize(
+        "value,result",
+        [
+            ("rgb(1,255,50)", Color(1, 255, 50)),
+            ("rgb( 1, 255,50 )", Color(1, 255, 50)),
+            ("rgba( 1, 255,50,0.3 )", Color(1, 255, 50, 0.3)),
+            ("rgba( 1, 255,50, 1.3 )", Color(1, 255, 50, 1.0)),
+            ("hsl( 180, 50%, 50% )", Color(64, 191, 191)),
+            ("hsl(180,50%,50%)", Color(64, 191, 191)),
+            ("hsla(180,50%,50%,0.25)", Color(64, 191, 191, 0.25)),
+            ("hsla( 180, 50% ,50%,0.25 )", Color(64, 191, 191, 0.25)),
+            ("hsla( 180, 50% , 50% , 1.5 )", Color(64, 191, 191)),
+        ],
+    )
     def test_rgb_and_hsl(self, value, result):
         css = f""".box {{
           color: {value};
@@ -1020,6 +1022,7 @@ class TestParseOverflow:
         assert len(stylesheet.rules) == 1
         assert styles.overflow_x == "hidden"
         assert styles.overflow_y == "auto"
+
 
 class TestParseTransition:
     @pytest.mark.parametrize(
