@@ -4,7 +4,8 @@ import pytest
 
 
 from textual.color import Color
-from textual.css.parse import substitute_references, TokenError
+from textual.css.errors import UnresolvedVariableError
+from textual.css.parse import substitute_references
 from textual.css.scalar import Scalar, Unit
 from textual.css.stylesheet import Stylesheet, StylesheetParseError
 from textual.css.tokenize import tokenize
@@ -213,7 +214,7 @@ class TestVariableReferenceSubstitution:
 
     def test_undefined_variable(self):
         css = ".thing { border: $not-defined; }"
-        with pytest.raises(TokenError):
+        with pytest.raises(UnresolvedVariableError):
             list(substitute_references(tokenize(css, "")))
 
     def test_transitive_reference(self):
