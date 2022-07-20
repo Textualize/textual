@@ -34,16 +34,6 @@ class TokenError(Exception):
             message (str): A message associated with the error.
             end (tuple[int, int]): End location of .
         """
-        """_summary_
-
-        Args:
-            path (str): Path to source or "<object>" if source is parsed from a literal.
-            code (str): The code being parsed.
-            start (tuple[int, int]): Location of the error.
-            message (str): A message associated with the error.
-            end (tuple[int, int] | None, optional): End location of the error, or None for
-                the same as start. Defaults to None.
-        """
 
         self.path = path
         self.code = code
