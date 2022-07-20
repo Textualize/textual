@@ -76,11 +76,18 @@ class TokenError(Exception):
 
         errors.append(highlighter(f" {self.path or '<unknown>'}:{line_no}:{col_no}"))
         errors.append(self._get_snippet())
-        final_message = ""
-        for is_last, message_part in loop_last(message.split(";")):
-            end = "" if is_last else "\n"
-            final_message += f"• {message_part.strip()};{end}"
-        errors.append(Padding(highlighter(Text(final_message, "red")), pad=(0, 1)))
+
+        final_message = "\n".join(
+            f"• {message_part.strip()}" for message_part in message.split(";")
+        )
+        errors.append(
+            Padding(
+                highlighter(
+                    Text(final_message, "red"),
+                ),
+                pad=(0, 1),
+            )
+        )
 
         return Group(*errors)
 

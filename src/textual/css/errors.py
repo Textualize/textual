@@ -5,6 +5,7 @@ from rich.traceback import Traceback
 
 from ._help_renderables import HelpText
 from .tokenize import Token
+from .tokenizer import TokenError
 
 
 class DeclarationError(Exception):
@@ -16,6 +17,10 @@ class DeclarationError(Exception):
 
 
 class StyleTypeError(TypeError):
+    pass
+
+
+class UnresolvedVariableError(TokenError):
     pass
 
 

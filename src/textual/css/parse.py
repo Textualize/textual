@@ -6,8 +6,8 @@ from typing import Iterator, Iterable, NoReturn, Sequence
 
 from rich import print
 
-from textual.css.tokenizer import TokenError
-from textual.css.types import Specificity3
+from .errors import UnresolvedVariableError
+from .types import Specificity3
 from ._styles_builder import StylesBuilder, DeclarationError
 from .model import (
     Declaration,
@@ -210,24 +210,24 @@ def parse_declarations(css: str, path: str) -> Styles:
     return styles_builder.styles
 
 
-def _unresolved(variable_name: str, variables: Sequence[str], token: Token) -> NoReturn:
+def _unresolved(variable_name: str, variables: Iterable[str], token: Token) -> NoReturn:
     """Raise a TokenError regarding an unresolved variable.
 
     Args:
         variable_name (str): A variable name.
-        variables (Sequence[str]): Possible choices used to generate suggestion.
+        variables (Iterable[str]): Possible choices used to generate suggestion.
         token (Token): The Token.
 
     Raises:
-        TokenError: Always raises a TokenError.
+        UnresolvedVariableError: Always raises a TokenError.
 
     """
     message = f"reference to undefined variable '${variable_name}'"
-    suggested_variable = get_suggestion(variable_name, variables)
+    suggested_variable = get_suggestion(variable_name, list(variables))
     if suggested_variable:
-        message += f"; did you mean '{suggested_variable}'?"
+        message += f"; did you mean '${suggested_variable}'?"
 
-    raise TokenError(
+    raise UnresolvedVariableError(
         token.path,
         token.code,
         token.start,
