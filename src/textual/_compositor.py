@@ -609,6 +609,7 @@ class Compositor:
         Returns:
             SegmentLines: A renderable
         """
+
         width, height = self.size
         screen_region = Region(0, 0, width, height)
 
@@ -706,7 +707,7 @@ class Compositor:
             region, clip = self.regions[widget]
             offset = region.offset
             intersection = clip.intersection
-            for dirty_region in widget.get_dirty_regions():
+            for dirty_region in widget._exchange_repaint_regions():
                 update_region = intersection(dirty_region.translate(offset))
                 if update_region:
                     add_region(update_region)
