@@ -15,7 +15,7 @@
 App > Screen {
   layout: dock;
   docks: side=left/1;
-  background: $surface;
+  background: $surfaceX;
   color: $text-surface; 
 }
 

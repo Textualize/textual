@@ -32,7 +32,7 @@ class TokenError(Exception):
             code (str): The code being parsed.
             start (tuple[int, int]): Line number of the error.
             message (str): A message associated with the error.
-            end (tuple[int, int]): End location of .
+            end (tuple[int, int] | None): End location of token, or None if not known. Defaults to None.
         """
 
         self.path = path
