@@ -71,9 +71,9 @@ class Widget(DOMNode):
 
     CSS = """
     Widget{
-        scrollbar-background: $panel-darken-2;
-        scrollbar-background-hover: $panel-darken-3;
-        scrollbar-color: $system;
+        scrollbar-background: $panel-darken-1;
+        scrollbar-background-hover: $panel-darken-2;
+        scrollbar-color: $primary-lighten-1;
         scrollbar-color-active: $warning-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
@@ -106,7 +106,10 @@ class Widget(DOMNode):
         self._horizontal_scrollbar: ScrollBar | None = None
 
         self._render_cache = RenderCache(Size(0, 0), [])
+        # Regions which need to be updated (in Widget)
         self._dirty_regions: set[Region] = set()
+        # Regions which need to be transferred from cache to screen
+        self._repaint_regions: set[Region] = set()
 
         # Cache the auto content dimensions
         # TODO: add mechanism to explicitly clear this
@@ -549,24 +552,27 @@ class Widget(DOMNode):
             *regions (Region): Regions which require a repaint.
 
         """
-
         if regions:
             content_offset = self.content_offset
             widget_regions = [region.translate(content_offset) for region in regions]
             self._dirty_regions.update(widget_regions)
+            self._repaint_regions.update(widget_regions)
             self._styles_cache.set_dirty(*widget_regions)
         else:
             self._dirty_regions.clear()
+            self._repaint_regions.clear()
             self._styles_cache.clear()
             self._dirty_regions.add(self.outer_size.region)
+            self._repaint_regions.add(self.outer_size.region)
 
-    def get_dirty_regions(self) -> Collection[Region]:
-        """Get regions which require a repaint.
+    def _exchange_repaint_regions(self) -> Collection[Region]:
+        """Get a copy of the regions which need a repaint, and clear internal cache.
 
         Returns:
             Collection[Region]: Regions to repaint.
         """
-        regions = self._dirty_regions.copy()
+        regions = self._repaint_regions.copy()
+        self._repaint_regions.clear()
         return regions
 
     def scroll_to(
@@ -956,10 +962,10 @@ class Widget(DOMNode):
         """Render the widget in to lines.
 
         Args:
-            crop (Region): Region within visible area to.
+            crop (Region): Region within visible area to render.
 
         Returns:
-            Lines: A list of list of segments
+            Lines: A list of list of segments.
         """
         lines = self._styles_cache.render_widget(self, crop)
         return lines

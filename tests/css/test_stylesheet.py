@@ -6,7 +6,7 @@ import pytest
 from textual.color import Color
 from textual.css._help_renderables import HelpText
 from textual.css.stylesheet import Stylesheet, StylesheetParseError, CssSource
-from textual.css.tokenizer import TokenizeError
+from textual.css.tokenizer import TokenError
 from textual.dom import DOMNode
 from textual.geometry import Spacing
 from textual.widget import Widget
@@ -145,7 +145,7 @@ def test_stylesheet_apply_user_css_over_widget_css():
         ["ansi_dark_cyan", pytest.raises(StylesheetParseError), None],
         ["red 4", pytest.raises(StylesheetParseError), None],  # space in it
         ["1", pytest.raises(StylesheetParseError), None],  # invalid value
-        ["()", pytest.raises(TokenizeError), None],  # invalid tokens
+        ["()", pytest.raises(TokenError), None],  # invalid tokens
     ],
 )
 def test_color_property_parsing(css_value, expectation, expected_color):

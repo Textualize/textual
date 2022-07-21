@@ -22,7 +22,7 @@ from .model import RuleSet
 from .parse import parse
 from .styles import RulesMap, Styles
 from .tokenize import tokenize_values, Token
-from .tokenizer import TokenizeError
+from .tokenizer import TokenError
 from .types import Specificity3, Specificity4
 from ..dom import DOMNode
 from .. import messages
@@ -198,7 +198,7 @@ class Stylesheet:
                     is_default_rules=is_default_rules,
                 )
             )
-        except TokenizeError:
+        except TokenError:
             raise
         except Exception as error:
             raise StylesheetError(f"failed to parse css; {error}")

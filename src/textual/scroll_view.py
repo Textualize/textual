@@ -40,16 +40,6 @@ class ScrollView(Widget):
         """Not transparent, i.e. renders something."""
         return False
 
-    def get_dirty_regions(self) -> Collection[Region]:
-        """Get regions which require a repaint.
-
-        Returns:
-            Collection[Region]: Regions to repaint.
-        """
-        regions = self._dirty_regions.copy()
-        self._dirty_regions.clear()
-        return regions
-
     def on_mount(self):
         self._refresh_scrollbars()
 

@@ -15,28 +15,33 @@ from rich.text import Text
 from .._loop import loop_last
 
 
-class TokenizeError(Exception):
+class TokenError(Exception):
     """Error raised when the CSS cannot be tokenized (syntax error)."""
 
     def __init__(
-        self, path: str, code: str, line_no: int, col_no: int, message: str
+        self,
+        path: str,
+        code: str,
+        start: tuple[int, int],
+        message: str,
+        end: tuple[int, int] | None = None,
     ) -> None:
         """
         Args:
             path (str): Path to source or "<object>" if source is parsed from a literal.
             code (str): The code being parsed.
-            line_no (int): Line number of the error.
-            col_no (int): Column number of the error.
+            start (tuple[int, int]): Line number of the error.
             message (str): A message associated with the error.
+            end (tuple[int, int] | None): End location of token, or None if not known. Defaults to None.
         """
+
         self.path = path
         self.code = code
-        self.line_no = line_no
-        self.col_no = col_no
+        self.start = start
+        self.end = end or start
         super().__init__(message)
 
-    @classmethod
-    def _get_snippet(cls, code: str, line_no: int) -> Panel:
+    def _get_snippet(self) -> Panel:
         """Get a short snippet of code around a given line number.
 
         Args:
@@ -46,9 +51,10 @@ class TokenizeError(Exception):
         Returns:
             Panel: A renderable.
         """
+        line_no = self.start[0]
         # TODO: Highlight column number
         syntax = Syntax(
-            code,
+            self.code,
             lexer="scss",
             theme="ansi_light",
             line_numbers=True,
@@ -56,6 +62,7 @@ class TokenizeError(Exception):
             line_range=(max(0, line_no - 2), line_no + 2),
             highlight_lines={line_no},
         )
+        syntax.stylize_range("reverse bold", self.start, self.end)
         return Panel(syntax, border_style="red")
 
     def __rich__(self) -> RenderableType:
@@ -63,24 +70,29 @@ class TokenizeError(Exception):
         errors: list[RenderableType] = []
 
         message = str(self)
-        errors.append(Text(" Tokenizer error in stylesheet:", style="bold red"))
+        errors.append(Text(" Error in stylesheet:", style="bold red"))
 
+        line_no, col_no = self.start
+
+        errors.append(highlighter(f" {self.path or '<unknown>'}:{line_no}:{col_no}"))
+        errors.append(self._get_snippet())
+
+        final_message = "\n".join(
+            f"• {message_part.strip()}" for message_part in message.split(";")
+        )
         errors.append(
-            highlighter(
-                f" {self.path or '<unknown>'}:{self.line_no + 1}:{self.col_no + 1}"
+            Padding(
+                highlighter(
+                    Text(final_message, "red"),
+                ),
+                pad=(0, 1),
             )
         )
-        errors.append(self._get_snippet(self.code, self.line_no + 1))
-        final_message = ""
-        for is_last, message_part in loop_last(message.split(";")):
-            end = "" if is_last else "\n"
-            final_message += f"• {message_part.strip()};{end}"
-        errors.append(Padding(highlighter(Text(final_message, "red")), pad=(0, 1)))
 
         return Group(*errors)
 
 
-class EOFError(TokenizeError):
+class EOFError(TokenError):
     pass
 
 
@@ -119,6 +131,18 @@ class Token(NamedTuple):
     code: str
     location: tuple[int, int]
     referenced_by: ReferencedBy | None = None
+
+    @property
+    def start(self) -> tuple[int, int]:
+        """Start line and column (1 indexed)."""
+        line, offset = self.location
+        return (line + 1, offset)
+
+    @property
+    def end(self) -> tuple[int, int]:
+        """End line and column (1 indexed)."""
+        line, offset = self.location
+        return (line + 1, offset + len(self.value))
 
     def with_reference(self, by: ReferencedBy | None) -> "Token":
         """Return a copy of the Token, with reference information attached.
@@ -161,19 +185,28 @@ class Tokenizer:
         col_no = self.col_no
         if line_no >= len(self.lines):
             if expect._expect_eof:
-                return Token("eof", "", self.path, self.code, (line_no, col_no), None)
+                return Token(
+                    "eof",
+                    "",
+                    self.path,
+                    self.code,
+                    (line_no + 1, col_no + 1),
+                    None,
+                )
             else:
                 raise EOFError(
-                    self.path, self.code, line_no, col_no, "Unexpected end of file"
+                    self.path,
+                    self.code,
+                    (line_no + 1, col_no + 1),
+                    "Unexpected end of file",
                 )
         line = self.lines[line_no]
         match = expect.match(line, col_no)
         if match is None:
-            raise TokenizeError(
+            raise TokenError(
                 self.path,
                 self.code,
-                line_no,
-                col_no,
+                (line_no, col_no),
                 "expected " + ", ".join(name.upper() for name in expect.names),
             )
         iter_groups = iter(match.groups())

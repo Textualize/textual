@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 
 from textual.css.tokenize import tokenize
-from textual.css.tokenizer import Token, TokenizeError
+from textual.css.tokenizer import Token, TokenError
 
 VALID_VARIABLE_NAMES = [
     "warning-text",
@@ -331,7 +331,7 @@ def test_variable_declaration_no_semicolon():
 
 def test_variable_declaration_invalid_value():
     css = "$x:(@$12x)"
-    with pytest.raises(TokenizeError):
+    with pytest.raises(TokenError):
         list(tokenize(css, ""))
 
 
