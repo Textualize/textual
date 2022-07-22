@@ -40,6 +40,8 @@ class TextWidgetBase(Widget):
         key = event.key
         if key == "escape":
             return
+        elif key == "space":
+            key = " "
 
         changed = False
         if event.is_printable:

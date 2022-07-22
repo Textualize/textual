@@ -45,6 +45,10 @@ class Callback(Event, bubble=False, verbosity=3):
         yield "callback", self.callback
 
 
+class PostScreenUpdate(Event, bubble=False):
+    """Sent after the Screen is updated"""
+
+
 class ShutdownRequest(Event):
     pass
 
@@ -210,7 +214,7 @@ class Key(InputEvent):
         Returns:
             bool: True if the key is printable. False otherwise.
         """
-        return self.key not in KEY_VALUES
+        return self.key == Keys.Space or self.key not in KEY_VALUES
 
 
 @rich.repr.auto

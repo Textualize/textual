@@ -9,12 +9,13 @@ from textual.geometry import Size
 from textual.widget import Widget
 from textual.widgets import Placeholder
 
+pytestmark = pytest.mark.integration_test
+
 SCREEN_SIZE = Size(100, 30)
 
 
 @pytest.mark.skip("Needs a rethink")
 @pytest.mark.asyncio
-@pytest.mark.integration_test  # this is a slow test, we may want to skip them in some contexts
 @pytest.mark.parametrize(
     (
         "screen_size",
