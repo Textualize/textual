@@ -304,8 +304,6 @@ class Stylesheet:
             animate (bool, optional): Animate changed rules. Defaults to ``False``.
         """
 
-        print(node)
-
         # Dictionary of rule attribute names e.g. "text_background" to list of tuples.
         # The tuples contain the rule specificity, and the value for that rule.
         # We can use this to determine, for a given rule, whether we should apply it

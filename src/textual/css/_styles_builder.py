@@ -632,30 +632,6 @@ class StylesBuilder:
         dock = tokens[0].value
         self.styles._rules["dock"] = dock
 
-    def process_docks(self, name: str, tokens: list[Token]) -> None:
-        def docks_error(name, token):
-            self.error(name, token, docks_property_help_text(name, context="css"))
-
-        docks: list[DockGroup] = []
-        for token in tokens:
-            if token.name == "key_value":
-                key, edge_name = token.value.split("=")
-                edge_name = edge_name.strip().lower()
-                edge_name, _, number = edge_name.partition("/")
-                z = 0
-                if number:
-                    if not number.isdigit():
-                        docks_error(name, token)
-                    z = int(number)
-                if edge_name not in VALID_EDGE:
-                    docks_error(name, token)
-                docks.append(DockGroup(key.strip(), cast(Edge, edge_name), z))
-            elif token.name == "bar":
-                pass
-            else:
-                docks_error(name, token)
-        self.styles._rules["docks"] = tuple(docks + [DockGroup("_default", "top", 0)])
-
     def process_layer(self, name: str, tokens: list[Token]) -> None:
         if len(tokens) > 1:
             self.error(name, tokens[1], f"unexpected tokens in dock-edge declaration")
