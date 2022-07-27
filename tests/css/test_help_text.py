@@ -98,12 +98,6 @@ def test_docks_property_help_text(styling_context):
     assert "docks" in rendered
 
 
-def test_dock_property_help_text(styling_context):
-    rendered = render(dock_property_help_text("dock", styling_context))
-    assert "Invalid value for" in rendered
-    assert "dock" in rendered
-
-
 def test_fractional_property_help_text(styling_context):
     rendered = render(fractional_property_help_text("opacity", styling_context))
     assert "Invalid value for" in rendered

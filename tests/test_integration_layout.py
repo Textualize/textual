@@ -228,7 +228,7 @@ async def test_border_edge_types_impact_on_widget_size(
 
     top_left_edge_style = app.screen.get_style_at(0, 0)
     top_left_edge_color = top_left_edge_style.color.name
-    assert top_left_edge_color == expected_top_left_edge_color
+    assert top_left_edge_color.upper() == expected_top_left_edge_color.upper()
 
     top_left_edge_char = app.get_char_at(0, 0)
     top_left_edge_char_is_a_visible_one = top_left_edge_char != " "

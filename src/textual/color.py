@@ -167,7 +167,7 @@ class Color(NamedTuple):
         """This color encoded in Rich's Color class."""
         r, g, b, _a = self
         return RichColor(
-            f"#{r:02X}{g:02X}{b:02X}", _TRUECOLOR, None, ColorTriplet(r, g, b)
+            f"#{r:02x}{g:02x}{b:02x}", _TRUECOLOR, None, ColorTriplet(r, g, b)
         )
 
     @property

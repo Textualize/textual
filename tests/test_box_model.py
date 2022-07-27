@@ -137,7 +137,7 @@ def test_height():
     box_model = get_box_model(
         styles, Size(60, 20), Size(80, 24), one, get_auto_width, get_auto_height
     )
-    assert box_model == BoxModel(Fraction(54), Fraction(20), Spacing(1, 2, 3, 4))
+    assert box_model == BoxModel(Fraction(54), Fraction(16), Spacing(1, 2, 3, 4))
 
     styles.height = "auto"
     styles.margin = 2
