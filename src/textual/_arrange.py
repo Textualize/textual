@@ -47,8 +47,8 @@ def arrange(widget: Widget, size: Size, viewport: Size) -> DockArrangeResult:
 
     for widgets in dock_layers.values():
 
-        dock_widgets, layout_widgets = partition(
-            (lambda widget: not widget.styles.dock), widgets
+        layout_widgets, dock_widgets = partition(
+            (lambda widget: widget.styles.dock), widgets
         )
 
         arrange_widgets.update(dock_widgets)

@@ -7,13 +7,13 @@ T = TypeVar("T")
 
 
 def partition(
-    pred: Callable[[T], bool], iterable: Iterable[T]
+    pred: Callable[[T], object], iterable: Iterable[T]
 ) -> tuple[list[T], list[T]]:
     """Partition a sequence in to two list from a given predicate. The first list will contain
     the values where the predicate is False, the second list will contain the remaining values.
 
     Args:
-        pred (Callable[[T], bool]): A callable that returns True or False for a given value.
+        pred (Callable[[T], object]): A callable that returns True or False for a given value.
         iterable (Iterable[T]): In Iterable of values.
 
     Returns:
@@ -25,7 +25,7 @@ def partition(
     appends = (result[0].append, result[1].append)
 
     for value in iterable:
-        appends[pred(value)](value)
+        appends[1 if pred(value) else 0](value)
     return result
 
 
