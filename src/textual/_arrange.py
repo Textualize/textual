@@ -5,16 +5,25 @@ from fractions import Fraction
 from typing import TYPE_CHECKING
 
 from .geometry import Region, Size, Spacing
-from ._layout import ArrangeResult, WidgetPlacement
+from ._layout import DockArrangeResult, WidgetPlacement
 from ._partition import partition
 
 
 if TYPE_CHECKING:
-    from ._layout import ArrangeResult
     from .widget import Widget
 
 
-def arrange(widget: Widget, size: Size, viewport: Size) -> ArrangeResult:
+def arrange(widget: Widget, size: Size, viewport: Size) -> DockArrangeResult:
+    """Arrange widgets by applying docks and calling layouts
+
+    Args:
+        widget (Widget): The parent (container) widget.
+        size (Size): The size of the available area.
+        viewport (Size): The size of the viewport (terminal).
+
+    Returns:
+        tuple[list[WidgetPlacement], set[Widget], Spacing]: Widget arrangement information.
+    """
     display_children = [child for child in widget.children if child.display]
 
     arrange_widgets: set[Widget] = set()
@@ -31,7 +40,8 @@ def arrange(widget: Widget, size: Size, viewport: Size) -> ArrangeResult:
 
     _WidgetPlacement = WidgetPlacement
 
-    top_z = 2**32 - 1
+    # TODO: This is a bit of a fudge, need to ensure it is impossible for layouts to generate this value
+    top_z = 2**31 - 1
 
     scroll_spacing = Spacing()
 
@@ -47,22 +57,14 @@ def arrange(widget: Widget, size: Size, viewport: Size) -> ArrangeResult:
         for dock_widget in dock_widgets:
             edge = dock_widget.styles.dock
 
-            (
-                widget_width_fraction,
-                widget_height_fraction,
-                margin,
-            ) = dock_widget.get_box_model(
-                size,
-                viewport,
-                Fraction(size.height if edge in ("top", "bottom") else size.width),
+            fraction_unit = Fraction(
+                size.height if edge in ("top", "bottom") else size.width
             )
+            box_model = dock_widget.get_box_model(size, viewport, fraction_unit)
+            widget_width_fraction, widget_height_fraction, margin = box_model
 
             widget_width = int(widget_width_fraction) + margin.width
             widget_height = int(widget_height_fraction) + margin.height
-
-            align_offset = dock_widget.styles.align_size(
-                (widget_width, widget_height), size
-            )
 
             if edge == "bottom":
                 dock_region = Region(
@@ -80,13 +82,18 @@ def arrange(widget: Widget, size: Size, viewport: Size) -> ArrangeResult:
                     width - widget_width, 0, widget_width, widget_height
                 )
                 right = max(right, dock_region.width)
+            else:
+                raise AssertionError("invalid value for edge")
 
+            align_offset = dock_widget.styles.align_size(
+                (widget_width, widget_height), size
+            )
             dock_region = dock_region.shrink(margin).translate(align_offset)
             add_placement(_WidgetPlacement(dock_region, dock_widget, top_z, True))
 
         dock_spacing = Spacing(top, right, bottom, left)
         region = size.region.shrink(dock_spacing)
-        layout_placements, _layout_widgets, spacing = widget.layout.arrange(
+        layout_placements, _layout_widgets = widget.layout.arrange(
             widget, layout_widgets, region.size
         )
         if _layout_widgets:
@@ -101,26 +108,4 @@ def arrange(widget: Widget, size: Size, viewport: Size) -> ArrangeResult:
 
         placements.extend(layout_placements)
 
-    result = ArrangeResult(placements, arrange_widgets, scroll_spacing)
-    return result
-
-    # dock_spacing = Spacing(top, right, bottom, left)
-    # region = region.shrink(dock_spacing)
-
-    # placements, placement_widgets, spacing = widget.layout.arrange(
-    #     widget, layout_widgets, region.size
-    # )
-    # dock_spacing += spacing
-
-    # placement_offset = region.offset
-    # if placement_offset:
-    #     placements = [
-    #         _WidgetPlacement(_region + placement_offset, widget, order, fixed)
-    #         for _region, widget, order, fixed in placements
-    #     ]
-
-    # return ArrangeResult(
-    #     (dock_placements + placements),
-    #     placement_widgets.union(layout_widgets),
-    #     dock_spacing,
-    # )
+    return placements, arrange_widgets, scroll_spacing

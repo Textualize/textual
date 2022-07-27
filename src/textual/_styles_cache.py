@@ -246,7 +246,9 @@ class StylesCache:
         line: Iterable[Segment]
         # Draw top or bottom borders (A)
         if (border_top and y == 0) or (border_bottom and y == height - 1):
-            border_color = border_top_color if y == 0 else border_bottom_color
+            border_color = background + (
+                border_top_color if y == 0 else border_bottom_color
+            )
             box_segments = get_box(
                 border_top if y == 0 else border_bottom,
                 inner,
@@ -290,9 +292,9 @@ class StylesCache:
 
             if border_left or border_right:
                 # Add left / right border
-                left_style = from_color(border_left_color.rich_color)
+                left_style = from_color((background + border_left_color).rich_color)
                 left = get_box(border_left, inner, outer, left_style)[1][0]
-                right_style = from_color(border_right_color.rich_color)
+                right_style = from_color((background + border_right_color).rich_color)
                 right = get_box(border_right, inner, outer, right_style)[1][2]
 
                 if border_left and border_right:
@@ -321,9 +323,9 @@ class StylesCache:
 
         elif outline_left or outline_right:
             # Lines in side outline
-            left_style = from_color(outline_left_color.rich_color)
+            left_style = from_color((background + outline_left_color).rich_color)
             left = get_box(outline_left, inner, outer, left_style)[1][0]
-            right_style = from_color(outline_right_color.rich_color)
+            right_style = from_color((background + outline_right_color).rich_color)
             right = get_box(outline_right, inner, outer, right_style)[1][2]
             line = line_trim(list(line), outline_left != "", outline_right != "")
             if outline_left and outline_right:

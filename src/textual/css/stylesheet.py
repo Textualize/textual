@@ -304,6 +304,8 @@ class Stylesheet:
             animate (bool, optional): Animate changed rules. Defaults to ``False``.
         """
 
+        print(node)
+
         # Dictionary of rule attribute names e.g. "text_background" to list of tuples.
         # The tuples contain the rule specificity, and the value for that rule.
         # We can use this to determine, for a given rule, whether we should apply it
@@ -405,7 +407,12 @@ class Stylesheet:
         else:
             # Not animated, so we apply the rules directly
             get_rule = rules.get
+            from ..screen import Screen
+
             for key in modified_rule_keys:
+                if isinstance(node, Screen):
+
+                    print(node, key, get_rule(key))
                 setattr(base_styles, key, get_rule(key))
 
         node.post_message_no_wait(messages.StylesUpdated(sender=node))

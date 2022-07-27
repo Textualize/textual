@@ -117,7 +117,11 @@ class Screen(Widget):
             self._refresh_layout()
             self._layout_required = False
             self._dirty_widgets.clear()
-        elif self._dirty_widgets:
+        if self._repaint_required:
+            self._dirty_widgets.add(self)
+            self._repaint_required = False
+
+        if self._dirty_widgets:
             self.update_timer.resume()
 
     def _on_update(self) -> None:

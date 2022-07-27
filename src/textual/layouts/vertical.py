@@ -60,4 +60,4 @@ class VerticalLayout(Layout):
         total_region = Region(0, 0, size.width, int(y))
         add_placement(WidgetPlacement(total_region, None, 0))
 
-        return ArrangeResult(placements, set(children))
+        return placements, set(children)

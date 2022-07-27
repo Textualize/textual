@@ -1,9 +1,9 @@
 from rich.console import RenderableType
-from rich.style import Style
+
 from rich.syntax import Syntax
 from rich.text import Text
 
-from textual.app import App
+from textual.app import App, ComposeResult
 from textual.reactive import Reactive
 from textual.widget import Widget
 from textual.widgets import Static, DataTable
@@ -98,45 +98,45 @@ class BasicApp(App, css_path="basic.css"):
         """Bind keys here."""
         self.bind("s", "toggle_class('#sidebar', '-active')")
 
-    def on_mount(self):
-        """Build layout here."""
-
+    def compose(self) -> ComposeResult:
         table = DataTable()
         self.scroll_to_target = Tweet(TweetBody())
-        self.mount(
-            header=Static(
-                Text.from_markup(
-                    "[b]This is a [u]Textual[/u] app, running in the terminal"
-                ),
+
+        yield Static(
+            Text.from_markup(
+                "[b]This is a [u]Textual[/u] app, running in the terminal"
             ),
-            content=Widget(
-                Tweet(TweetBody()),
-                Widget(
-                    Static(Syntax(CODE, "python"), classes="code"),
-                    classes="scrollable",
-                ),
-                table,
-                Error(),
-                Tweet(TweetBody(), classes="scrollbar-size-custom"),
-                Warning(),
-                Tweet(TweetBody(), classes="scroll-horizontal"),
-                Success(),
-                Tweet(TweetBody(), classes="scroll-horizontal"),
-                Tweet(TweetBody(), classes="scroll-horizontal"),
-                Tweet(TweetBody(), classes="scroll-horizontal"),
-                Tweet(TweetBody(), classes="scroll-horizontal"),
-                Tweet(TweetBody(), classes="scroll-horizontal"),
-            ),
-            footer=Widget(),
-            sidebar=Widget(
-                Widget(classes="title"),
-                Widget(classes="user"),
-                OptionItem(),
-                OptionItem(),
-                OptionItem(),
-                Widget(classes="content"),
-            ),
+            id="header",
         )
+        yield from (
+            Tweet(TweetBody()),
+            Widget(
+                Static(Syntax(CODE, "python"), classes="code"),
+                classes="scrollable",
+            ),
+            table,
+            Error(),
+            Tweet(TweetBody(), classes="scrollbar-size-custom"),
+            Warning(),
+            Tweet(TweetBody(), classes="scroll-horizontal"),
+            Success(),
+            Tweet(TweetBody(), classes="scroll-horizontal"),
+            Tweet(TweetBody(), classes="scroll-horizontal"),
+            Tweet(TweetBody(), classes="scroll-horizontal"),
+            Tweet(TweetBody(), classes="scroll-horizontal"),
+            Tweet(TweetBody(), classes="scroll-horizontal"),
+        )
+        yield Widget(id="footer")
+        yield Widget(
+            Widget(classes="title"),
+            Widget(classes="user"),
+            OptionItem(),
+            OptionItem(),
+            OptionItem(),
+            Widget(classes="content"),
+            id="sidebar",
+        )
+
         table.add_column("Foo", width=20)
         table.add_column("Bar", width=20)
         table.add_column("Baz", width=20)

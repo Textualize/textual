@@ -41,8 +41,9 @@ class DockApp(App):
 
         for n, color in zip(range(5), ["red", "green", "blue", "yellow", "magenta"]):
             thing = Static(f"Thing {n}", id=f"#thing{n}")
+            thing.styles.border = ("heavy", "rgba(0,0,0,0.2)")
             thing.styles.background = f"{color} 20%"
-            thing.styles.height = 5
+            thing.styles.height = 15
             yield thing
 
 

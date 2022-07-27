@@ -13,10 +13,15 @@
 }
 
 App > Screen {
-  layout: dock;
-  docks: side=left/1;
+    
   background: $surface;
   color: $text-surface; 
+  layers: sidebar;
+
+  color: $text-background;
+  background: $background;
+  layout: vertical;
+  
 }
 
 DataTable {
@@ -31,11 +36,12 @@ DataTable {
 #sidebar {
   color: $text-panel;
   background: $panel;
-  dock: side;
+  dock: left;
   width: 30;
   offset-x: -100%;
-  layout: dock;
+  
   transition: offset 500ms in_out_cubic;
+  layer: sidebar;
 }
 
 #sidebar.-active {
@@ -71,14 +77,7 @@ DataTable {
   height: 1;
   content-align: center middle;
   
-   
-}
-
-#content {
-  color: $text-background;
-  background: $background;
-  layout: vertical;
-  overflow-y: scroll;
+  dock: top;
 }
 
 
@@ -168,6 +167,7 @@ Tweet.scroll-horizontal TweetBody {
   height: 1;
   
   content-align: center middle;
+  dock:bottom;
 }
 
 

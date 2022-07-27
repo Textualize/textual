@@ -17,12 +17,8 @@ if TYPE_CHECKING:
     from .widget import Widget
 
 
-class ArrangeResult(NamedTuple):
-    """The result of an arrange operation."""
-
-    placements: list[WidgetPlacement]
-    widgets: set[Widget]
-    spacing: Spacing = Spacing()
+ArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget]]"
+DockArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget], Spacing]"
 
 
 class WidgetPlacement(NamedTuple):
@@ -93,6 +89,6 @@ class Layout(ABC):
         if not widget.displayed_children:
             height = container.height
         else:
-            placements, widgets = widget._arrange(Size(width, container.height))
+            placements, *_ = widget._arrange(Size(width, container.height))
             height = max(placement.region.bottom for placement in placements)
         return height

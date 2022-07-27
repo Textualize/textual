@@ -185,7 +185,7 @@ class StylesBase(ABC):
     layout = LayoutProperty()
 
     color = ColorProperty(Color(255, 255, 255))
-    background = ColorProperty(Color(0, 0, 0, 0))
+    background = ColorProperty(Color(0, 0, 0, 0), background=True)
     text_style = StyleFlagsProperty()
 
     opacity = FractionalProperty()
@@ -437,6 +437,15 @@ class StylesBase(ABC):
         return offset_y
 
     def align_size(self, child: tuple[int, int], parent: tuple[int, int]) -> Offset:
+        """Align a size according to alignment rules.
+
+        Args:
+            child (tuple[int, int]): The size of the child (width, height)
+            parent (tuple[int, int]): The size of the parent (width, height)
+
+        Returns:
+            Offset: Offset required to align the child.
+        """
         width, height = child
         parent_width, parent_height = parent
         return Offset(
