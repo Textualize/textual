@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from rich.console import RenderableType
-from rich.style import Style
+from rich.style import StyleType
 from rich.text import Text
 import rich.repr
 
@@ -12,11 +12,12 @@ from ..widget import Widget
 
 @rich.repr.auto
 class Footer(Widget):
-    def __init__(self) -> None:
+    def __init__(self, style: StyleType = "white on dark_green") -> None:
         self.keys: list[tuple[str, str]] = []
         super().__init__()
         self.layout_size = 1
         self._key_text: Text | None = None
+        self.style = style
 
     highlight_key: Reactive[str | None] = Reactive(None)
 
@@ -38,7 +39,7 @@ class Footer(Widget):
     def make_key_text(self) -> Text:
         """Create text containing all the keys."""
         text = Text(
-            style="white on dark_green",
+            style=self.style,
             no_wrap=True,
             overflow="ellipsis",
             justify="left",
