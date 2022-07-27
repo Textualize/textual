@@ -118,6 +118,7 @@ class Screen(Widget):
             self._layout_required = False
             self._dirty_widgets.clear()
         if self._repaint_required:
+            self._dirty_widgets.clear()
             self._dirty_widgets.add(self)
             self._repaint_required = False
 
