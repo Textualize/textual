@@ -883,5 +883,23 @@ class Spacing(NamedTuple):
             )
         return NotImplemented
 
+    def grow_maximum(self, other: Spacing) -> Spacing:
+        """Grow spacing with a maximum.
+
+        Args:
+            other (Spacing): Spacing object.
+
+        Returns:
+            Spacing: New spacing were the values are maximum of the two values.
+        """
+        top, right, bottom, left = self
+        other_top, other_right, other_bottom, other_left = other
+        return Spacing(
+            max(top, other_top),
+            max(right, other_right),
+            max(bottom, other_bottom),
+            max(left, other_left),
+        )
+
 
 NULL_OFFSET = Offset(0, 0)

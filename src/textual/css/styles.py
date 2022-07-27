@@ -12,7 +12,7 @@ from rich.style import Style
 
 from .._animator import Animation, EasingFunction
 from ..color import Color
-from ..geometry import Spacing
+from ..geometry import Size, Offset, Spacing
 from ._style_properties import (
     AlignProperty,
     BorderProperty,
@@ -435,6 +435,14 @@ class StylesBase(ABC):
             else:
                 offset_y = parent_height - height
         return offset_y
+
+    def align_size(self, child: tuple[int, int], parent: tuple[int, int]) -> Offset:
+        width, height = child
+        parent_width, parent_height = parent
+        return Offset(
+            self.align_width(width, parent_width),
+            self.align_height(height, parent_height),
+        )
 
 
 @rich.repr.auto

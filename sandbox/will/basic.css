@@ -15,7 +15,7 @@
 App > Screen {
   layout: dock;
   docks: side=left/1;
-  background: $surfaceX;
+  background: $surface;
   color: $text-surface; 
 }
 
@@ -59,7 +59,7 @@ DataTable {
 }
 
 #sidebar .content {
-  background: $surface;
+  background: $panel-darken-2;
   color: $text-surface;
   border-right: wide $background;
   content-align: center middle;
@@ -224,7 +224,7 @@ Success {
   height:auto;  
   box-sizing: border-box;
   background: $success;
-  color: $text-success;  
+  color: $text-success-fade-1;  
   
   border-top: hkey $success-darken-2;
   border-bottom: hkey $success-darken-2; 

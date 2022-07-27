@@ -347,9 +347,8 @@ class DOMNode(MessagePump):
     def text_style(self) -> Style:
         """Get the text style object.
 
-        A widget's style is influenced by its parent. For instance if a widgets background has an alpha,
-        then its parent's background color will show through. Additionally, widgets will inherit their
-        parent's text style (i.e. bold, italic etc).
+        A widget's style is influenced by its parent. for instance if a parent is bold, then
+        the child will also be bold.
 
         Returns:
             Style: Rich Style object.
@@ -357,17 +356,18 @@ class DOMNode(MessagePump):
 
         # TODO: Feels like there may be opportunity for caching here.
 
-        style = Style()
-        for node in reversed(self.ancestors):
-            style += node.styles.text_style
+        style = sum(
+            [node.styles.text_style for node in reversed(self.ancestors)], start=Style()
+        )
         return style
 
     @property
     def rich_style(self) -> Style:
         """Get a Rich Style object for this DOMNode."""
-        (_, _), (background, color) = self.colors
-        style = Style.from_color(color.rich_color, background.rich_color)
-        style += self.text_style
+        _, (background, color) = self.colors
+        style = (
+            Style.from_color(color.rich_color, background.rich_color) + self.text_style
+        )
         return style
 
     @property
@@ -386,7 +386,7 @@ class DOMNode(MessagePump):
                 background += styles.background
             if styles.has_rule("color"):
                 base_color = color
-                color += styles.color
+                color = styles.color
         return (base_background, base_color), (background, color)
 
     @property
@@ -394,9 +394,9 @@ class DOMNode(MessagePump):
         """Get a list of Nodes by tracing ancestors all the way back to App."""
         nodes: list[DOMNode] = [self]
         add_node = nodes.append
-        node = self
+        node: DOMNode = self
         while True:
-            node = node.parent
+            node = node._parent
             if node is None:
                 break
             add_node(node)

@@ -20,6 +20,8 @@ from typing import Callable, NamedTuple
 
 import rich.repr
 from rich.color import Color as RichColor
+from rich.color import ColorType
+from rich.color_triplet import ColorTriplet
 from rich.style import Style
 from rich.text import Text
 
@@ -28,6 +30,9 @@ from textual.css.tokenize import COMMA, OPEN_BRACE, CLOSE_BRACE, DECIMAL, PERCEN
 from textual.suggestions import get_suggestion
 from ._color_constants import COLOR_NAME_TO_RGB
 from .geometry import clamp
+
+
+_TRUECOLOR = ColorType.TRUECOLOR
 
 
 class HLS(NamedTuple):
@@ -132,11 +137,10 @@ class Color(NamedTuple):
 
     def __rich__(self) -> Text:
         """A Rich method to show the color."""
-        r, g, b, _ = self
         return Text(
             f" {self!r} ",
             style=Style.from_color(
-                self.get_contrast_text().rich_color, RichColor.from_rgb(r, g, b)
+                self.get_contrast_text().rich_color, self.rich_color
             ),
         )
 
@@ -161,9 +165,10 @@ class Color(NamedTuple):
     @property
     def rich_color(self) -> RichColor:
         """This color encoded in Rich's Color class."""
-        # TODO: This isn't cheap as I'd like - cache in a LRUCache ?
         r, g, b, _a = self
-        return RichColor.from_rgb(r, g, b)
+        return RichColor(
+            f"#{r:02X}{g:02X}{b:02X}", _TRUECOLOR, None, ColorTriplet(r, g, b)
+        )
 
     @property
     def normalized(self) -> tuple[float, float, float]:
@@ -374,7 +379,7 @@ class Color(NamedTuple):
         Returns:
             Color: New color.
         """
-        return self.darken(-amount).clamped
+        return self.darken(-amount)
 
     @lru_cache(maxsize=1024)
     def get_contrast_text(self, alpha=0.95) -> Color:

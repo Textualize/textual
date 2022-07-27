@@ -619,14 +619,18 @@ class StylesBuilder:
         self.styles.text_style = style_definition
 
     def process_dock(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
 
-        if len(tokens) > 1:
+        if len(tokens) > 1 or tokens[0].value not in VALID_EDGE:
             self.error(
                 name,
-                tokens[1],
+                tokens[0],
                 dock_property_help_text(name, context="css"),
             )
-        self.styles._rules["dock"] = tokens[0].value if tokens else ""
+
+        dock = tokens[0].value
+        self.styles._rules["dock"] = dock
 
     def process_docks(self, name: str, tokens: list[Token]) -> None:
         def docks_error(name, token):

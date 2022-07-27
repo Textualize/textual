@@ -4,11 +4,11 @@ import sys
 from collections import defaultdict
 from dataclasses import dataclass
 from operator import attrgetter
-from typing import Iterable, TYPE_CHECKING, NamedTuple, Sequence
+from typing import TYPE_CHECKING, NamedTuple, Sequence
 
 from .._layout_resolve import layout_resolve
 from ..css.types import Edge
-from ..geometry import Offset, Region, Size
+from ..geometry import Region, Size
 from .._layout import ArrangeResult, Layout, WidgetPlacement
 from ..widget import Widget
 
@@ -52,9 +52,9 @@ class DockLayout(Layout):
     def __repr__(self):
         return "<DockLayout>"
 
-    def get_docks(self, parent: Widget) -> list[Dock]:
+    def get_docks(self, parent: Widget, children: list[Widget]) -> list[Dock]:
         groups: dict[str, list[Widget]] = defaultdict(list)
-        for child in parent.displayed_children:
+        for child in children:
             assert isinstance(child, Widget)
             groups[child.styles.dock].append(child)
         docks: list[Dock] = []
@@ -63,13 +63,15 @@ class DockLayout(Layout):
             append_dock(Dock(edge, groups[name], z))
         return docks
 
-    def arrange(self, parent: Widget, size: Size) -> ArrangeResult:
+    def arrange(
+        self, parent: Widget, children: list[Widget], size: Size
+    ) -> ArrangeResult:
 
         width, height = size
         layout_region = Region(0, 0, width, height)
         layers: dict[int, Region] = defaultdict(lambda: layout_region)
 
-        docks = self.get_docks(parent)
+        docks = self.get_docks(parent, children)
 
         def make_dock_options(widget: Widget, edge: Edge) -> DockOptions:
             styles = widget.styles
@@ -181,4 +183,4 @@ class DockLayout(Layout):
 
             layers[z] = region
 
-        return placements, arranged_widgets
+        return ArrangeResult(placements, arranged_widgets)

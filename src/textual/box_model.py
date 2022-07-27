@@ -94,7 +94,7 @@ def get_box_model(
     else:
         # Explicit height set
         content_height = styles.height.resolve_dimension(
-            sizing_container, viewport, fraction_unit
+            sizing_container - styles.margin.totals, viewport, fraction_unit
         )
         if is_border_box:
             content_height -= gutter.height
