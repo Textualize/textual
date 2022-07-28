@@ -203,7 +203,11 @@ class App(MessagePump):
             app = cls(screen=screen, driver_class=driver, **kwargs)
             await app.process_messages()
 
-        asyncio.run(run_app())
+        loop = asyncio.get_event_loop()
+        try:
+            asyncio.run(run_app())
+        finally:
+            loop.close()
 
     async def push_view(self, view: ViewType) -> ViewType:
         self.register(view, self)
