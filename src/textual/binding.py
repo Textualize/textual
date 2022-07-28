@@ -47,6 +47,19 @@ class Bindings:
                 allow_forward=allow_forward,
             )
 
+    def unbind(
+        self,
+        keys: str,
+    ) -> None:
+        all_keys = [key.strip() for key in keys.split(",")]
+        for key in all_keys:
+            self.keys.pop(key, None)
+
+    def unbind_clear(
+        self,
+    ) -> None:
+        self.keys.clear()
+
     def get_key(self, key: str) -> Binding:
         try:
             return self.keys[key]
