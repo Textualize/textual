@@ -43,6 +43,12 @@ class GridArea(NamedTuple):
 
 
 class GridLayout(Layout):
+    """
+    Create a layout constrained by a set of columns and rows
+    grid layouts contains a set of columns and rows which specify the regions of the screen.
+    Areas are then added to the layout with their location and size specified by the
+    columns and rows in the area specification.
+    """
     def __init__(
         self,
         gap: tuple[int, int] | int | None = None,
@@ -119,6 +125,26 @@ class GridLayout(Layout):
         max_size: int | None = None,
         repeat: int = 1,
     ) -> None:
+        """
+        Add a column to the grid layout
+
+        Keyword arguments:
+        name -- the name of the column, can be used in area specifications
+        size -- the exact width of the column
+        fraction -- The fraction of width this column will take.
+                    For example, if there are two columns specified,
+                    column one with fraction=1 and column two with fraction=3, then
+                    column one will take up 25% of the screen width and column two will take
+                    up 75% of the screen width
+        min_size -- The minimum width this column will take, the layout manager will
+                    reduce the total size used by all columns.
+        max_size -- The max size this column will take, the layout manager will attempt to
+                    reduce the total size used by all columns.
+
+        If the size, fraction, min_size and max_size aren't specified then the column
+        will split the width equally with other columns in the row.
+        For example, two columns with just a name will each take up 50% of the screen width.
+        """
         names = (
             [name]
             if repeat == 1
@@ -147,6 +173,26 @@ class GridLayout(Layout):
         max_size: int | None = None,
         repeat: int = 1,
     ) -> None:
+        """
+        Add a row to the grid layout
+
+        Keyword arguments:
+        name -- the name f the row, can be used in area specifications
+        size -- the exact height of the row
+        fraction -- The fraction of height this row will take.
+                    For example, if there are two rows specified,
+                    row one with fraction=1 and row two with fraction=3, then
+                    row one will take up 25% of the screen height and row two will take
+                    up 75% of the screen height
+        min_size -- The minimum height this row will take, the layout manager will attempt
+                    to decrease the height of other rows.
+        max_size -- The max size this row will take, the layout manager will attempt to
+                    reduce the total size used by all rows.
+
+        If the size, fraction, min_size and max_size aren't specified then the row
+        will split the height equally with other rows in the column.
+        For example, two rows with just a name will each take up 50% of the screen height.
+        """
         names = (
             [name]
             if repeat == 1
@@ -183,6 +229,29 @@ class GridLayout(Layout):
         self.areas[name] = GridArea(column_start, column_end, row_start, row_end)
 
     def add_areas(self, **areas: str) -> None:
+        """
+        Add areas to the grid layout.
+        Each area is specified by a single string. This string contains a column and
+        row specification, separated by comma.
+        Both the column and row specification must be included.
+        Each column and row specification contains a start and an optional end.
+        The starts and ends are names added via the add_column or add_row method.
+
+        If no end is specified, the area spans only the width and height of the intersection
+        of the given column and row.
+
+        If an end is specified, the area can span multiple columns or multiple rows.
+        When you specify an area span with a start and end, include the name, a hyphen and
+        "start" or "end".
+
+        For example:
+        Let's say you have two columns, named left and right.
+        You also have a single row named mainrow which takes up the entire height.
+
+        You can specify an area that spans both columns with:
+
+        grid.add_areas(area1="left-start|right-end,mainrow")
+        """
         for name, area in areas.items():
             area = area.replace(" ", "")
             column, _, row = area.partition(",")
