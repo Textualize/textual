@@ -19,26 +19,31 @@ log = getLogger("rich")
 @rich.repr.auto(angular=False)
 class Placeholder(Widget, can_focus=True):
 
+    title: str
     has_focus: Reactive[bool] = Reactive(False)
     mouse_over: Reactive[bool] = Reactive(False)
     style: Reactive[str] = Reactive("")
     height: Reactive[int | None] = Reactive(None)
 
-    def __init__(self, *, name: str | None = None, height: int | None = None) -> None:
+    def __init__(self, *, title: str | None = None,
+                 name: str | None = None, height: int | None = None) -> None:
         super().__init__(name=name)
         self.height = height
+        self.title = title
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self.name
+        yield "title", self.title
         yield "has_focus", self.has_focus, False
         yield "mouse_over", self.mouse_over, False
 
     def render(self) -> RenderableType:
         return Panel(
             Align.center(
-                Pretty(self, no_wrap=True, overflow="ellipsis"), vertical="middle"
+                Pretty(self, no_wrap=True, overflow="ellipsis"),
+                vertical="middle"
             ),
-            title=self.__class__.__name__,
+            title=self.title,
             border_style="green" if self.mouse_over else "blue",
             box=box.HEAVY if self.has_focus else box.ROUNDED,
             style=self.style,
