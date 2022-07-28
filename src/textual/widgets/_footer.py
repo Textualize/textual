@@ -12,10 +12,11 @@ from ..widget import Widget
 
 @rich.repr.auto
 class Footer(Widget):
-    def __init__(self) -> None:
+    def __init__(self, key_text_style="white on dark_green") -> None:
         self.keys: list[tuple[str, str]] = []
         super().__init__()
         self.layout_size = 1
+        self.key_text_style = key_text_style
         self._key_text: Text | None = None
 
     highlight_key: Reactive[str | None] = Reactive(None)
@@ -38,7 +39,7 @@ class Footer(Widget):
     def make_key_text(self) -> Text:
         """Create text containing all the keys."""
         text = Text(
-            style="white on dark_green",
+            style=self.key_text_style,
             no_wrap=True,
             overflow="ellipsis",
             justify="left",
