@@ -5,7 +5,7 @@ import sys
 from typing import ClassVar, NamedTuple, TYPE_CHECKING
 
 
-from .geometry import Region, Size
+from .geometry import Region, Size, Spacing
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
@@ -16,7 +16,9 @@ else:  # pragma: no cover
 if TYPE_CHECKING:
     from .widget import Widget
 
+
 ArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget]]"
+DockArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget], Spacing]"
 
 
 class WidgetPlacement(NamedTuple):
@@ -25,6 +27,7 @@ class WidgetPlacement(NamedTuple):
     region: Region
     widget: Widget | None = None  # A widget of None means empty space
     order: int = 0
+    fixed: bool = False
 
 
 class Layout(ABC):
@@ -36,7 +39,9 @@ class Layout(ABC):
         return f"<{self.name}>"
 
     @abstractmethod
-    def arrange(self, parent: Widget, size: Size) -> ArrangeResult:
+    def arrange(
+        self, parent: Widget, children: list[Widget], size: Size
+    ) -> ArrangeResult:
         """Generate a layout map that defines where on the screen the widgets will be drawn.
 
         Args:
@@ -84,6 +89,6 @@ class Layout(ABC):
         if not widget.displayed_children:
             height = container.height
         else:
-            placements, widgets = widget._arrange(Size(width, container.height))
+            placements, *_ = widget._arrange(Size(width, container.height))
             height = max(placement.region.bottom for placement in placements)
         return height

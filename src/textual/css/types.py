@@ -12,6 +12,7 @@ else:
 
 
 Edge = Literal["top", "right", "bottom", "left"]
+DockEdge = Literal["top", "right", "bottom", "left", ""]
 EdgeType = Literal[
     "",
     "ascii",

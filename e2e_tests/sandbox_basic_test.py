@@ -14,7 +14,7 @@ if len(sys.argv) > 1:
 if len(sys.argv) > 2:
     script_time_to_live = float(sys.argv[2])
 
-e2e_root = Path(__file__).parent
+e2e_root = Path(__file__).parent / "test_apps"
 
 completed_process = None
 
@@ -22,7 +22,7 @@ completed_process = None
 def launch_sandbox_script(python_file_name: str) -> None:
     global completed_process
 
-    command = f"{sys.executable} ./test_apps/{shlex.quote(python_file_name)}.py"
+    command = f"{sys.executable} {shlex.quote(python_file_name)}.py"
     print(f"Launching command '{command}'...")
     try:
         completed_process = subprocess.run(

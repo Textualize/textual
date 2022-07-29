@@ -7,10 +7,8 @@ from textual.widget import Widget
 @pytest.mark.parametrize(
     "layout,display,expected_in_displayed_children",
     [
-        ("dock", "block", True),
         ("horizontal", "block", True),
         ("vertical", "block", True),
-        ("dock", "none", False),
         ("horizontal", "none", False),
         ("vertical", "none", False),
     ],

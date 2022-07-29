@@ -39,6 +39,7 @@ from .scalar import (
     Scalar,
     ScalarOffset,
     ScalarParseError,
+    percentage_string_to_float,
 )
 from .transition import Transition
 from ..geometry import Spacing, SpacingDimensions, clamp
@@ -47,7 +48,7 @@ if TYPE_CHECKING:
     from .._layout import Layout
     from .styles import DockGroup, Styles, StylesBase
 
-from .types import EdgeType, AlignHorizontal, AlignVertical
+from .types import DockEdge, EdgeType, AlignHorizontal, AlignVertical
 
 BorderDefinition = (
     "Sequence[tuple[EdgeType, str | Color] | None] | tuple[EdgeType, str | Color]"
@@ -533,7 +534,9 @@ class DockProperty:
     the docks themselves, and where they are located on screen.
     """
 
-    def __get__(self, obj: StylesBase, objtype: type[StylesBase] | None = None) -> str:
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> DockEdge:
         """Get the Dock property
 
         Args:
@@ -543,7 +546,7 @@ class DockProperty:
         Returns:
             str: The dock name as a string, or "" if the rule is not set.
         """
-        return obj.get_rule("dock", "_default")
+        return cast(DockEdge, obj.get_rule("dock", ""))
 
     def __set__(self, obj: Styles, dock_name: str | None):
         """Set the Dock property
@@ -799,8 +802,9 @@ class NameListProperty:
 class ColorProperty:
     """Descriptor for getting and setting color properties."""
 
-    def __init__(self, default_color: Color | str) -> None:
+    def __init__(self, default_color: Color | str, background: bool = False) -> None:
         self._default_color = Color.parse(default_color)
+        self._is_background = background
 
     def __set_name__(self, owner: StylesBase, name: str) -> None:
         self.name = name
@@ -834,22 +838,32 @@ class ColorProperty:
         _rich_traceback_omit = True
         if color is None:
             if obj.clear_rule(self.name):
-                obj.refresh(children=True)
+                obj.refresh(children=self._is_background)
         elif isinstance(color, Color):
             if obj.set_rule(self.name, color):
-                obj.refresh(children=True)
+                obj.refresh(children=self._is_background)
         elif isinstance(color, str):
-            try:
-                parsed_color = Color.parse(color)
-            except ColorParseError as error:
-                raise StyleValueError(
-                    f"Invalid color value '{color}'",
-                    help_text=color_property_help_text(
-                        self.name, context="inline", error=error
-                    ),
-                )
+            alpha = 1.0
+            parsed_color = Color(255, 255, 255)
+            for token in color.split():
+                if token.endswith("%"):
+                    try:
+                        alpha = percentage_string_to_float(token)
+                    except ValueError:
+                        raise StyleValueError(f"invalid percentage value '{token}'")
+                    continue
+                try:
+                    parsed_color = Color.parse(token)
+                except ColorParseError as error:
+                    raise StyleValueError(
+                        f"Invalid color value '{token}'",
+                        help_text=color_property_help_text(
+                            self.name, context="inline", error=error
+                        ),
+                    )
+            parsed_color = parsed_color.with_alpha(alpha)
             if obj.set_rule(self.name, parsed_color):
-                obj.refresh(children=True)
+                obj.refresh(children=self._is_background)
         else:
             raise StyleValueError(f"Invalid color value {color}")
 

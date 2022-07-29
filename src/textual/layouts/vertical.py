@@ -15,14 +15,15 @@ class VerticalLayout(Layout):
 
     name = "vertical"
 
-    def arrange(self, parent: Widget, size: Size) -> ArrangeResult:
+    def arrange(
+        self, parent: Widget, children: list[Widget], size: Size
+    ) -> ArrangeResult:
 
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
 
         parent_size = parent.outer_size
 
-        children = list(parent.children)
         styles = [child.styles for child in children if child.styles.height is not None]
         total_fraction = sum(
             [int(style.height.value) for style in styles if style.height.is_fraction]
@@ -31,7 +32,7 @@ class VerticalLayout(Layout):
 
         box_models = [
             widget.get_box_model(size, parent_size, fraction_unit)
-            for widget in parent.children
+            for widget in children
         ]
 
         margins = [
@@ -43,8 +44,7 @@ class VerticalLayout(Layout):
 
         y = Fraction(box_models[0].margin.top if box_models else 0)
 
-        displayed_children = cast("list[Widget]", parent.displayed_children)
-        for widget, box_model, margin in zip(displayed_children, box_models, margins):
+        for widget, box_model, margin in zip(children, box_models, margins):
             content_width, content_height, box_margin = box_model
             offset_x = (
                 widget.styles.align_width(
@@ -60,4 +60,4 @@ class VerticalLayout(Layout):
         total_region = Region(0, 0, size.width, int(y))
         add_placement(WidgetPlacement(total_region, None, 0))
 
-        return placements, set(displayed_children)
+        return placements, set(children)

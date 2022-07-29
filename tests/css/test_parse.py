@@ -12,7 +12,7 @@ from textual.css.tokenize import tokenize
 from textual.css.tokenizer import Token, ReferencedBy
 from textual.css.transition import Transition
 from textual.geometry import Spacing
-from textual.layouts.dock import DockLayout
+from textual.layouts.vertical import VerticalLayout
 
 
 class TestVariableReferenceSubstitution:
@@ -861,13 +861,13 @@ class TestVariableReferenceSubstitution:
 
 class TestParseLayout:
     def test_valid_layout_name(self):
-        css = "#some-widget { layout: dock; }"
+        css = "#some-widget { layout: vertical; }"
 
         stylesheet = Stylesheet()
         stylesheet.add_source(css)
 
         styles = stylesheet.rules[0].styles
-        assert isinstance(styles.layout, DockLayout)
+        assert isinstance(styles.layout, VerticalLayout)
 
     def test_invalid_layout_name(self):
         css = "#some-widget { layout: invalidlayout; }"

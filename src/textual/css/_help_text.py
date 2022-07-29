@@ -503,31 +503,19 @@ def dock_property_help_text(property_name: str, context: StylingContext) -> Help
     return HelpText(
         summary=f"Invalid value for [i]{property_name}[/] property",
         bullets=[
-            Bullet("The value must be one of the defined docks"),
+            Bullet("The value must be one of 'top', 'right', 'bottom' or 'left'"),
             *ContextSpecificBullets(
                 inline=[
                     Bullet(
-                        "Attach a widget to a dock declared on the parent",
-                        examples=[
-                            Example(
-                                f'widget.styles.dock = "left"  [dim] # assumes parent widget has declared left dock[/]'
-                            )
-                        ],
+                        "The 'dock' rule aligns a widget relative to the screen.",
+                        examples=[Example(f'header.styles.dock = "top"')],
                     )
                 ],
                 css=[
                     Bullet(
-                        "Define a dock using the [i]docks[/] property",
-                        examples=[
-                            Example("docks: [u]lhs[/]=left/2;"),
-                        ],
-                    ),
-                    Bullet(
-                        "Then attach a widget to a defined dock using the [i]dock[/] property",
-                        examples=[
-                            Example("dock: [scope.key][u]lhs[/][/];"),
-                        ],
-                    ),
+                        "The 'dock' rule aligns a widget relative to the screen.",
+                        examples=[Example(f"dock: top")],
+                    )
                 ],
             ).get_by_context(context),
         ],

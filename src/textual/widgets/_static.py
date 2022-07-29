@@ -7,6 +7,12 @@ from ..widget import Widget
 
 
 class Static(Widget):
+    CSS = """
+    Static {
+        height: auto;
+    }
+    """
+
     def __init__(
         self,
         renderable: RenderableType = "",
