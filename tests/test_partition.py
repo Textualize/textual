@@ -22,12 +22,6 @@ def test_partition():
         [6, 7, 8, 9, 10],
     )
 
-    assert partition(is_greater_than_five, [6, 7, 8, 9, 10]) == (
-        [0],
-        [6, 7, 8, 9, 10],
-    )
+    assert partition(is_greater_than_five, [6, 7, 8, 9, 10]) == ([], [6, 7, 8, 9, 10])
 
-    assert partition(is_greater_than_five, [1, 2, 3]) == (
-        [1, 2, 3],
-        [],
-    )
+    assert partition(is_greater_than_five, [1, 2, 3]) == ([1, 2, 3], [])
