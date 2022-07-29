@@ -15,7 +15,6 @@ if len(sys.argv) > 2:
     script_time_to_live = float(sys.argv[2])
 
 e2e_root = Path(__file__).parent / "test_apps"
-print(e2e_root)
 
 completed_process = None
 
