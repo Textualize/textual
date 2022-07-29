@@ -93,7 +93,7 @@ class StylesCache:
         Returns:
             Lines: Rendered lines.
         """
-        (base_background, base_color), (background, color) = widget.colors
+        base_background, _base_color, background, _color = widget.colors
         padding = widget.styles.padding + widget.scrollbar_gutter
         lines = self.render(
             widget.styles,

@@ -364,18 +364,18 @@ class DOMNode(MessagePump):
     @property
     def rich_style(self) -> Style:
         """Get a Rich Style object for this DOMNode."""
-        _, (background, color) = self.colors
+        _, _, background, color = self.colors
         style = (
             Style.from_color(color.rich_color, background.rich_color) + self.text_style
         )
         return style
 
     @property
-    def colors(self) -> tuple[tuple[Color, Color], tuple[Color, Color]]:
-        """Gets the Widgets foreground and background colors, and its parent's colors.
+    def colors(self) -> tuple[Color, Color, Color, Color]:
+        """Gets the Widgets foreground and background colors, and its parent's (base) colors.
 
         Returns:
-            tuple[tuple[Color, Color], tuple[Color, Color]]: Base colors and widget colors
+            tuple[Color, Color, Color, Color]: Tuple of (base background, base color, background, color)
         """
         base_background = background = Color(0, 0, 0, 0)
         base_color = color = Color(255, 255, 255, 0)
@@ -387,7 +387,7 @@ class DOMNode(MessagePump):
             if styles.has_rule("color"):
                 base_color = color
                 color = styles.color
-        return (base_background, base_color), (background, color)
+        return (base_background, base_color, background, color)
 
     @property
     def ancestors(self) -> list[DOMNode]:
