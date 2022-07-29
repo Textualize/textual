@@ -13,6 +13,9 @@ from ._partition import partition
 if TYPE_CHECKING:
     from .widget import Widget
 
+# TODO: This is a bit of a fudge, need to ensure it is impossible for layouts to generate this value
+TOP_Z = 2**31 - 1
+
 
 def arrange(
     widget: Widget, children: Sequence[Widget], size: Size, viewport: Size
@@ -43,10 +46,7 @@ def arrange(
     region = size.region
 
     _WidgetPlacement = WidgetPlacement
-
-    # TODO: This is a bit of a fudge, need to ensure it is impossible for layouts to generate this value
-    top_z = 2**31 - 1
-
+    top_z = TOP_Z
     scroll_spacing = Spacing()
 
     get_dock = attrgetter("styles.dock")
@@ -87,7 +87,7 @@ def arrange(
                 right = max(right, dock_region.width)
             else:
                 # Should not occur, mainly to keep Mypy happy
-                raise AssertionError("invalid value for edge")
+                raise AssertionError("invalid value for edge")  # pragma: no-cover
 
             align_offset = dock_widget.styles.align_size(
                 (widget_width, widget_height), size

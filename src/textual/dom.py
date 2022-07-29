@@ -12,7 +12,7 @@ from rich.tree import Tree
 
 from ._context import NoActiveAppError
 from ._node_list import NodeList
-from .color import Color
+from .color import Color, WHITE, BLACK
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from .css.errors import StyleValueError
@@ -379,7 +379,7 @@ class DOMNode(MessagePump):
 
         """
 
-        base_background = background = Color(0, 0, 0, 0)
+        base_background = background = BLACK
 
         for node in reversed(self.ancestors):
             styles = node.styles
@@ -395,8 +395,8 @@ class DOMNode(MessagePump):
         Returns:
             tuple[Color, Color, Color, Color]: Tuple of (base background, base color, background, color)
         """
-        base_background = background = Color(0, 0, 0, 0)
-        base_color = color = Color(255, 255, 255, 0)
+        base_background = background = WHITE
+        base_color = color = BLACK
         for node in reversed(self.ancestors):
             styles = node.styles
             if styles.has_rule("background"):
