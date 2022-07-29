@@ -1,13 +1,12 @@
-from pathlib import Path
-
 from rich.console import RenderableType
-from rich.style import Style
+
 from rich.syntax import Syntax
 from rich.text import Text
 
-from textual.app import App
+from textual.app import App, ComposeResult
+from textual.reactive import Reactive
 from textual.widget import Widget
-from textual.widgets import Static
+from textual.widgets import Static, DataTable
 
 CODE = '''
 class Offset(NamedTuple):
@@ -46,10 +45,14 @@ class Offset(NamedTuple):
 '''
 
 
-lorem = Text.from_markup(
-    """Lorem ipsum dolor sit amet, consectetur adipiscing elit. In velit libero, volutpat nec hendrerit at, faucibus in odio. Aliquam hendrerit nibh sed quam volutpat maximus. Nullam suscipit convallis lorem quis sodales. In tristique lobortis ante et dictum. Ut at finibus ipsum. In urna dolor, placerat et mi facilisis, congue sollicitudin massa. Phasellus felis turpis, cursus eu lectus et, porttitor malesuada augue. Sed feugiat volutpat velit, sollicitudin fringilla velit bibendum faucibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In velit libero, volutpat nec hendrerit at, faucibus in odio. Aliquam hendrerit nibh sed quam volutpat maximus. Nullam suscipit convallis lorem quis sodales. In tristique lobortis ante et dictum. Ut at finibus ipsum. In urna dolor, placerat et mi facilisis, congue sollicitudin massa. Phasellus felis turpis, cursus eu lectus et, porttitor malesuada augue. Sed feugiat volutpat velit, sollicitudin fringilla velit bibendum faucibus. """
-    """Lorem ipsum dolor sit amet, consectetur adipiscing elit. In velit libero, volutpat nec hendrerit at, faucibus in odio. Aliquam hendrerit nibh sed quam volutpat maximus. Nullam suscipit convallis lorem quis sodales. In tristique lobortis ante et dictum. Ut at finibus ipsum. In urna dolor, placerat et mi facilisis, congue sollicitudin massa. Phasellus felis turpis, cursus eu lectus et, porttitor malesuada augue. Sed feugiat volutpat velit, sollicitudin fringilla velit bibendum faucibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In velit libero, volutpat nec hendrerit at, faucibus in odio. Aliquam hendrerit nibh sed quam volutpat maximus. Nullam suscipit convallis lorem quis sodales. In tristique lobortis ante et dictum. Ut at finibus ipsum. In urna dolor, placerat et mi facilisis, congue sollicitudin massa. Phasellus felis turpis, cursus eu lectus et, porttitor malesuada augue. Sed feugiat volutpat velit, sollicitudin fringilla velit bibendum faucibus. """
+lorem_short = """Lorem ipsum dolor sit amet, consectetur adipiscing elit. In velit liber a a a, volutpat nec hendrerit at, faucibus in odio. Aliquam hendrerit nibh sed quam volutpat maximus. Nullam suscipit convallis lorem quis sodales. In tristique lobortis ante et dictum. Ut at finibus ipsum."""
+lorem = (
+    lorem_short
+    + """ In urna dolor, placerat et mi facilisis, congue sollicitudin massa. Phasellus felis turpis, cursus eu lectus et, porttitor malesuada augue. Sed feugiat volutpat velit, sollicitudin fringilla velit bibendum faucibus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In velit libero, volutpat nec hendrerit at, faucibus in odio. Aliquam hendrerit nibh sed quam volutpat maximus. Nullam suscipit convallis lorem quis sodales. In tristique lobortis ante et dictum. Ut at finibus ipsum. In urna dolor, placerat et mi facilisis, congue sollicitudin massa. Phasellus felis turpis, cursus eu lectus et, porttitor malesuada augue. Sed feugiat volutpat velit, sollicitudin fringilla velit bibendum faucibus. """
 )
+
+lorem_short_text = Text.from_markup(lorem_short)
+lorem_long_text = Text.from_markup(lorem * 2)
 
 
 class TweetHeader(Widget):
@@ -58,8 +61,10 @@ class TweetHeader(Widget):
 
 
 class TweetBody(Widget):
+    short_lorem = Reactive(False)
+
     def render(self) -> Text:
-        return lorem
+        return lorem_short_text if self.short_lorem else lorem_long_text
 
 
 class Tweet(Widget):
@@ -83,53 +88,64 @@ class Warning(Widget):
 
 class Success(Widget):
     def render(self) -> Text:
-        return Text("This is a success message", justify="center")
+        return Text("This is a success  message", justify="center")
 
 
-class BasicApp(App):
+class BasicApp(App, css_path="basic.css"):
     """A basic app demonstrating CSS"""
 
     def on_load(self):
         """Bind keys here."""
-        self.bind("tab", "toggle_class('#sidebar', '-active')")
+        self.bind("s", "toggle_class('#sidebar', '-active')")
 
-    def on_mount(self):
-        """Build layout here."""
-        self.mount(
-            header=Static(
-                Text.from_markup(
-                    "[b]This is a [u]Textual[/u] app, running in the terminal"
-                ),
+    def compose(self) -> ComposeResult:
+        table = DataTable()
+        self.scroll_to_target = Tweet(TweetBody())
+
+        yield Static(
+            Text.from_markup(
+                "[b]This is a [u]Textual[/u] app, running in the terminal"
             ),
-            content=Widget(
-                Tweet(
-                    TweetBody(),
-                    # Widget(
-                    #     Widget(classes={"button"}),
-                    #     Widget(classes={"button"}),
-                    #     classes={"horizontal"},
-                    # ),
-                ),
-                Widget(
-                    Static(Syntax(CODE, "python"), classes="code"),
-                    classes="scrollable",
-                ),
-                Error(),
-                Tweet(TweetBody()),
-                Warning(),
-                Tweet(TweetBody()),
-                Success(),
-            ),
-            footer=Widget(),
-            sidebar=Widget(
-                Widget(classes="title"),
-                Widget(classes="user"),
-                OptionItem(),
-                OptionItem(),
-                OptionItem(),
-                Widget(classes="content"),
-            ),
+            id="header",
         )
+        yield from (
+            Tweet(TweetBody()),
+            Widget(
+                Static(Syntax(CODE, "python"), classes="code"),
+                classes="scrollable",
+            ),
+            table,
+            Error(),
+            Tweet(TweetBody(), classes="scrollbar-size-custom"),
+            Warning(),
+            Tweet(TweetBody(), classes="scroll-horizontal"),
+            Success(),
+            Tweet(TweetBody(), classes="scroll-horizontal"),
+            Tweet(TweetBody(), classes="scroll-horizontal"),
+            Tweet(TweetBody(), classes="scroll-horizontal"),
+            Tweet(TweetBody(), classes="scroll-horizontal"),
+            Tweet(TweetBody(), classes="scroll-horizontal"),
+        )
+        yield Widget(id="footer")
+        yield Widget(
+            Widget(classes="title"),
+            Widget(classes="user"),
+            OptionItem(),
+            OptionItem(),
+            OptionItem(),
+            Widget(classes="content"),
+            id="sidebar",
+        )
+
+        table.add_column("Foo", width=20)
+        table.add_column("Bar", width=20)
+        table.add_column("Baz", width=20)
+        table.add_column("Foo", width=20)
+        table.add_column("Bar", width=20)
+        table.add_column("Baz", width=20)
+        table.zebra_stripes = True
+        for n in range(100):
+            table.add_row(*[f"Cell ([b]{n}[/b], {col})" for col in range(6)])
 
     async def on_key(self, event) -> None:
         await self.dispatch_key(event)
@@ -137,17 +153,47 @@ class BasicApp(App):
     def key_d(self):
         self.dark = not self.dark
 
+    async def key_q(self):
+        await self.shutdown()
+
     def key_x(self):
         self.panic(self.tree)
 
+    def key_escape(self):
+        self.app.bell()
 
-sandbox_folder = Path(__file__).parent
-app = BasicApp(
-    css_path=sandbox_folder / "basic.css",
-    watch_css=True,
-    log_path=sandbox_folder / "basic.log",
-    log_verbosity=0,
-)
+    def key_t(self):
+        # Pressing "t" toggles the content of the TweetBody widget, from a long "Lorem ipsum..." to a shorter one.
+        tweet_body = self.query("TweetBody").first()
+        tweet_body.short_lorem = not tweet_body.short_lorem
+
+    def key_v(self):
+        self.get_child(id="content").scroll_to_widget(self.scroll_to_target)
+
+    def key_space(self):
+        self.bell()
+
+
+app = BasicApp()
 
 if __name__ == "__main__":
     app.run()
+
+    # from textual.geometry import Region
+    # from textual.color import Color
+
+    # print(Region.intersection.cache_info())
+    # print(Region.overlaps.cache_info())
+    # print(Region.union.cache_info())
+    # print(Region.split_vertical.cache_info())
+    # print(Region.__contains__.cache_info())
+    # from textual.css.scalar import Scalar
+
+    # print(Scalar.resolve_dimension.cache_info())
+
+    # from rich.style import Style
+    # from rich.cells import cached_cell_len
+
+    # print(Style._add.cache_info())
+
+    # print(cached_cell_len.cache_info())

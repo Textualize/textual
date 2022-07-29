@@ -27,7 +27,3 @@ def partition(
     for value in iterable:
         appends[1 if pred(value) else 0](value)
     return result
-
-
-if __name__ == "__main__":
-    print(partition((lambda n: bool(n % 2)), list(range(20))))
