@@ -356,9 +356,9 @@ class DOMNode(MessagePump):
 
         # TODO: Feels like there may be opportunity for caching here.
 
-        style = sum(
-            [node.styles.text_style for node in reversed(self.ancestors)], start=Style()
-        )
+        style = Style()
+        for node in reversed(self.ancestors):
+            style += node.styles.text_style
         return style
 
     @property
