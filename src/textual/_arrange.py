@@ -83,6 +83,7 @@ def arrange(widget: Widget, size: Size, viewport: Size) -> DockArrangeResult:
                 )
                 right = max(right, dock_region.width)
             else:
+                # Should not occur, mainly to keep Mypy happy
                 raise AssertionError("invalid value for edge")
 
             align_offset = dock_widget.styles.align_size(
@@ -93,12 +94,12 @@ def arrange(widget: Widget, size: Size, viewport: Size) -> DockArrangeResult:
 
         dock_spacing = Spacing(top, right, bottom, left)
         region = size.region.shrink(dock_spacing)
-        layout_placements, _layout_widgets = widget.layout.arrange(
+        layout_placements, arranged_layout_widgets = widget.layout.arrange(
             widget, layout_widgets, region.size
         )
-        if _layout_widgets:
+        if arranged_layout_widgets:
             scroll_spacing = scroll_spacing.grow_maximum(dock_spacing)
-            arrange_widgets.update(_layout_widgets)
+            arrange_widgets.update(arranged_layout_widgets)
             placement_offset = region.offset
             if placement_offset:
                 layout_placements = [
