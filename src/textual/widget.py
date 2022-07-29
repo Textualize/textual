@@ -10,7 +10,6 @@ from typing import (
     Collection,
     Iterable,
     NamedTuple,
-    Tuple,
 )
 
 import rich.repr
@@ -25,7 +24,7 @@ from rich.text import Text
 
 from . import errors, events, messages
 from ._animator import BoundAnimator
-from ._arrange import arrange
+from ._arrange import arrange, DockArrangeResult
 from ._context import active_app
 from ._layout import ArrangeResult, Layout
 from ._segment_tools import line_crop
@@ -115,7 +114,7 @@ class Widget(DOMNode):
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
-        self._arrangement: Tuple[ArrangeResult, Spacing] | None = None
+        self._arrangement: DockArrangeResult | None = None
         self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
 
         self._styles_cache = StylesCache()
@@ -136,7 +135,7 @@ class Widget(DOMNode):
     show_vertical_scrollbar = Reactive(False, layout=True)
     show_horizontal_scrollbar = Reactive(False, layout=True)
 
-    def _arrange(self, size: Size) -> ArrangeResult:
+    def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.
 
         Args:
@@ -152,10 +151,9 @@ class Widget(DOMNode):
             and arrange_cache_key == self._arrangement_cache_key
         ):
             return self._arrangement
-        self._arrangement_cache_key = (self.children._updates, size)
 
-        self._arrangement = arrange(self, size, self.screen.size)
-
+        self._arrangement_cache_key = arrange_cache_key
+        self._arrangement = arrange(self, self.children, size, self.screen.size)
         return self._arrangement
 
     def _clear_arrangement_cache(self) -> None:

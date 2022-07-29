@@ -2,7 +2,8 @@ from __future__ import annotations
 
 
 from fractions import Fraction
-from typing import TYPE_CHECKING
+from operator import attrgetter
+from typing import Sequence, TYPE_CHECKING
 
 from .geometry import Region, Size, Spacing
 from ._layout import DockArrangeResult, WidgetPlacement
@@ -13,7 +14,9 @@ if TYPE_CHECKING:
     from .widget import Widget
 
 
-def arrange(widget: Widget, size: Size, viewport: Size) -> DockArrangeResult:
+def arrange(
+    widget: Widget, children: Sequence[Widget], size: Size, viewport: Size
+) -> DockArrangeResult:
     """Arrange widgets by applying docks and calling layouts
 
     Args:
@@ -24,13 +27,14 @@ def arrange(widget: Widget, size: Size, viewport: Size) -> DockArrangeResult:
     Returns:
         tuple[list[WidgetPlacement], set[Widget], Spacing]: Widget arrangement information.
     """
-    display_children = [child for child in widget.children if child.display]
+    display_children = [child for child in children if child.display]
 
     arrange_widgets: set[Widget] = set()
 
     dock_layers: dict[str, list[Widget]] = {}
+    dock_layers_setdefault = dock_layers.setdefault
     for child in display_children:
-        dock_layers.setdefault(child.styles.layer or "default", []).append(child)
+        dock_layers_setdefault(child.styles.layer or "default", []).append(child)
 
     width, height = size
 
@@ -45,12 +49,11 @@ def arrange(widget: Widget, size: Size, viewport: Size) -> DockArrangeResult:
 
     scroll_spacing = Spacing()
 
+    get_dock = attrgetter("styles.dock")
+
     for widgets in dock_layers.values():
 
-        layout_widgets, dock_widgets = partition(
-            (lambda widget: widget.styles.dock), widgets
-        )
-
+        layout_widgets, dock_widgets = partition(get_dock, widgets)
         arrange_widgets.update(dock_widgets)
         top = right = bottom = left = 0
 

@@ -405,12 +405,8 @@ class Stylesheet:
         else:
             # Not animated, so we apply the rules directly
             get_rule = rules.get
-            from ..screen import Screen
 
             for key in modified_rule_keys:
-                if isinstance(node, Screen):
-
-                    print(node, key, get_rule(key))
                 setattr(base_styles, key, get_rule(key))
 
         node.post_message_no_wait(messages.StylesUpdated(sender=node))
