@@ -4,6 +4,9 @@ from textual.widgets import Static
 
 class BorderApp(App):
     CSS = """
+    Screen {
+        background: white;
+    }
     Screen > Static {
         height:5;
         content-align: center middle;
@@ -13,14 +16,18 @@ class BorderApp(App):
     }    
     #static1 {
         background: red 20%;
+        color: red;
         border: solid red;
     }
     #static2 {
         background: green 20%;
+        color: green;
         border: dashed green;
+
     }
     #static3 {
         background: blue 20%;
+        color: blue;
         border: tall blue;
     }
     """
