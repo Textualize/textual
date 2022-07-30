@@ -17,3 +17,7 @@ The `Resize` event is sent to a widget when its size changes and when it is firs
 `event.container_size`
 
 : The size of the widget's container.
+
+## Code
+
+::: textual.events.Mount

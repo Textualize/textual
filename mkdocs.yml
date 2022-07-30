@@ -11,7 +11,9 @@ nav:
     - "events/mount.md"
     - "events/resize.md"
   - Styles:    
+    - "styles/display.md"
     - "styles/width.md"
+    - "styles/height.md"
   - Widgets: "/widgets/"
   - Reference:
     - "reference/app.md"

@@ -6,7 +6,7 @@ class WidthApp(App):
     CSS = """    
     Screen > Widget {     
         background: green;
-        width: 50%;
+        height: 50%;
         color: white;
     }
     """

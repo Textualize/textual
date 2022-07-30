@@ -87,8 +87,7 @@ class Action(Event):
 class Resize(Event, verbosity=2, bubble=False):
     """Sent when the app or widget has been resized."""
 
-    __slots__ = ["size"]
-    size: Size
+    __slots__ = ["size", "virtual_size", "container_size"]
 
     def __init__(
         self,
