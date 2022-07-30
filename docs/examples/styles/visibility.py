@@ -2,7 +2,7 @@ from textual.app import App
 from textual.widgets import Static
 
 
-class DisplayApp(App):
+class VisibilityApp(App):
     CSS = """    
     Screen {
         background: green;
@@ -13,15 +13,15 @@ class DisplayApp(App):
         color: blue;   
         border: heavy blue;     
     }
-    Static.remove {
-        display: none;
+    Static.invisible {
+        visibility: hidden;
     }
     """
 
     def compose(self):
         yield Static("Widget 1")
-        yield Static("widget 2", classes="remove")
+        yield Static("widget 2", classes="invisible")
         yield Static("widget 3")
 
 
-app = DisplayApp()
+app = VisibilityApp()

@@ -2,7 +2,7 @@ from textual.app import App
 from textual.widget import Widget
 
 
-class WidthApp(App):
+class HeightApp(App):
     CSS = """    
     Screen > Widget {     
         background: green;
@@ -15,4 +15,4 @@ class WidthApp(App):
         yield Widget()
 
 
-app = WidthApp()
+app = HeightApp()

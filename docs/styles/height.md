@@ -1,6 +1,6 @@
 # Height
 
-The `height` property sets a widget's height. By default, it sets the width of the content area, but if `box-sizing` is set to `border-box` it sets the width of the border area.
+The `height` style sets a widget's height. By default, it sets the width of the content area, but if `box-sizing` is set to `border-box` it sets the width of the border area.
 
 ## Example
 
