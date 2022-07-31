@@ -17,11 +17,11 @@ class BorderButtons(layout.Vertical):
     CSS = """
     BorderButtons {
         dock: left;
-        width: 20;
+        width: 24;
     }
 
     BorderButtons > Button {
-        width: 20;
+        width: 100%;
     }
     """
 
@@ -35,21 +35,17 @@ class BorderApp(App):
     """Demonstrates the border styles."""
 
     CSS = """
-    Screen {
-        background: $surface;
-    }
     Static {
         margin: 2 4;
         padding: 2 4;
-        border: solid $warning;
+        border: solid $primary;
         height: auto;
         background: $panel;
-        color: $text-panel-fade-1;
+        color: $text-panel;
     }
     """
 
     def compose(self):
-        self.dark = True
         yield BorderButtons()
         self.text = Static(TEXT)
         yield self.text
@@ -57,7 +53,7 @@ class BorderApp(App):
     def handle_pressed(self, event):
         self.text.styles.border = (
             event.button.id,
-            self.stylesheet.variables["warning"],
+            self.stylesheet.variables["primary"],
         )
         self.bell()
 
