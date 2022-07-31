@@ -197,6 +197,7 @@ class Button(Widget, can_focus=True):
         await self.emit(Button.Pressed(self))
 
     def _start_active_affect(self) -> None:
+        """Start a small animation to show the button was clicked."""
         self.add_class("-active")
         self.set_timer(
             self.ACTIVE_EFFECT_DURATION, partial(self.remove_class, "-active")

@@ -32,9 +32,7 @@ class BorderButtons(layout.Vertical):
 
 
 class BorderApp(App):
-    """Displays a pride flag."""
-
-    COLORS = ["red", "orange", "yellow", "green", "blue", "purple"]
+    """Demonstrates the border styles."""
 
     CSS = """
     Screen {
