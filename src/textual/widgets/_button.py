@@ -192,15 +192,19 @@ class Button(Widget, can_focus=True):
         if self.disabled:
             return
         # Manage the "active" effect:
+        self._start_active_affect()
+        # ...and let other components know that we've just been clicked:
+        await self.emit(Button.Pressed(self))
+
+    def _start_active_affect(self) -> None:
         self.add_class("-active")
         self.set_timer(
             self.ACTIVE_EFFECT_DURATION, partial(self.remove_class, "-active")
         )
-        # ...and let other components know that we've just been clicked:
-        await self.emit(Button.Pressed(self))
 
     async def on_key(self, event: events.Key) -> None:
         if event.key == "enter" and not self.disabled:
+            self._start_active_affect()
             await self.emit(Button.Pressed(self))
 
     @classmethod
