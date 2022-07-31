@@ -16,10 +16,10 @@ The `color` rule sets the text color of a Widget.
 ## CSS
 
 ```sass
-/* Blue background */
+/* Blue text */
 color: blue;
 
-/* 20% red backround */
+/* 20% red text */
 color: red 20%;
 
 /* RGB color */
@@ -31,7 +31,7 @@ color: rgb(100,120,200);
 You can use the same syntax as CSS, or explicitly set a Color object.
 
 ```python
-# Set blue background
+# Set blue text
 widget.styles.color = "blue"
 
 from textual.color import Color

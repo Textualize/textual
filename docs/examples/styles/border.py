@@ -8,7 +8,7 @@ class BorderApp(App):
         background: white;
     }
     Screen > Static {
-        height:5;
+        height: 5;
         content-align: center middle;
         color: white;
         margin: 1;
@@ -23,7 +23,6 @@ class BorderApp(App):
         background: green 20%;
         color: green;
         border: dashed green;
-
     }
     #static3 {
         background: blue 20%;
