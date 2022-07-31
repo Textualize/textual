@@ -26,6 +26,7 @@ nav:
     - "styles/overflow.md"
     - "styles/padding.md"
     - "styles/text_style.md"
+    - "styles/tint.md"
     - "styles/visibility.md"
     - "styles/width.md"
   - Widgets: "/widgets/"

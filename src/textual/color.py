@@ -198,7 +198,7 @@ class Color(NamedTuple):
             str: A CSS hex-style color, e.g. "#46b3de" or "#3342457f"
 
         """
-        r, g, b, a = self
+        r, g, b, a = self.clamped
         return (
             f"#{r:02X}{g:02X}{b:02X}"
             if a == 1

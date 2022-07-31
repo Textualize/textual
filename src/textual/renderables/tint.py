@@ -39,18 +39,29 @@ class Tint:
         from_rich_color = Color.from_rich_color
         style_from_color = Style.from_color
         _Segment = Segment
+
+        NULL_STYLE = Style()
         for segment in segments:
             text, style, control = segment
-            if control or style is None:
+            if control:
                 yield segment
             else:
+                style = style or NULL_STYLE
                 yield _Segment(
                     text,
                     (
                         style
                         + style_from_color(
-                            (from_rich_color(style.color) + color).rich_color,
-                            (from_rich_color(style.bgcolor) + color).rich_color,
+                            (
+                                (from_rich_color(style.color) + color).rich_color
+                                if style.color is not None
+                                else None
+                            ),
+                            (
+                                (from_rich_color(style.bgcolor) + color).rich_color
+                                if style.bgcolor is not None
+                                else None
+                            ),
                         )
                     ),
                     control,
