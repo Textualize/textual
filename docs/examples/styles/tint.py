@@ -5,9 +5,6 @@ from textual.widgets import Static
 
 class TintApp(App):
     CSS = """    
-    Screen {
-        background: green;
-    }
     Static {             
         height: 3;
         text-style: bold;
