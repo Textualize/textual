@@ -619,38 +619,18 @@ class StylesBuilder:
         self.styles.text_style = style_definition
 
     def process_dock(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
 
-        if len(tokens) > 1:
+        if len(tokens) > 1 or tokens[0].value not in VALID_EDGE:
             self.error(
                 name,
-                tokens[1],
+                tokens[0],
                 dock_property_help_text(name, context="css"),
             )
-        self.styles._rules["dock"] = tokens[0].value if tokens else ""
 
-    def process_docks(self, name: str, tokens: list[Token]) -> None:
-        def docks_error(name, token):
-            self.error(name, token, docks_property_help_text(name, context="css"))
-
-        docks: list[DockGroup] = []
-        for token in tokens:
-            if token.name == "key_value":
-                key, edge_name = token.value.split("=")
-                edge_name = edge_name.strip().lower()
-                edge_name, _, number = edge_name.partition("/")
-                z = 0
-                if number:
-                    if not number.isdigit():
-                        docks_error(name, token)
-                    z = int(number)
-                if edge_name not in VALID_EDGE:
-                    docks_error(name, token)
-                docks.append(DockGroup(key.strip(), cast(Edge, edge_name), z))
-            elif token.name == "bar":
-                pass
-            else:
-                docks_error(name, token)
-        self.styles._rules["docks"] = tuple(docks + [DockGroup("_default", "top", 0)])
+        dock = tokens[0].value
+        self.styles._rules["dock"] = dock
 
     def process_layer(self, name: str, tokens: list[Token]) -> None:
         if len(tokens) > 1:

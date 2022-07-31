@@ -54,6 +54,9 @@ class NodeList:
     def __iter__(self) -> Iterator[Widget]:
         return iter(self._nodes)
 
+    def __reversed__(self) -> Iterator[Widget]:
+        return reversed(self._nodes)
+
     @overload
     def __getitem__(self, index: int) -> Widget:
         ...

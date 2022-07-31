@@ -16,7 +16,9 @@ class HorizontalLayout(Layout):
 
     name = "horizontal"
 
-    def arrange(self, parent: Widget, size: Size) -> ArrangeResult:
+    def arrange(
+        self, parent: Widget, children: list[Widget], size: Size
+    ) -> ArrangeResult:
 
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
@@ -24,7 +26,6 @@ class HorizontalLayout(Layout):
         x = max_width = max_height = Fraction(0)
         parent_size = parent.outer_size
 
-        children = list(parent.children)
         styles = [child.styles for child in children if child.styles.width is not None]
         total_fraction = sum(
             [int(style.width.value) for style in styles if style.width.is_fraction]
@@ -33,7 +34,7 @@ class HorizontalLayout(Layout):
 
         box_models = [
             widget.get_box_model(size, parent_size, fraction_unit)
-            for widget in cast("list[Widget]", parent.children)
+            for widget in cast("list[Widget]", children)
         ]
 
         margins = [
