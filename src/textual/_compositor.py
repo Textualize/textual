@@ -26,7 +26,7 @@ from rich.segment import Segment
 from rich.style import Style
 
 from . import errors
-from .geometry import Region, Offset, Size
+from .geometry import Region, Offset, Size, Spacing
 
 from ._cells import cell_len
 from ._profile import timer
@@ -314,8 +314,7 @@ class Compositor:
             root (Widget): Top level widget.
 
         Returns:
-            map[dict[Widget, RenderRegion], Size]: A mapping of widget on to render region
-                and the "virtual size" (scrollable region)
+            tuple[CompositorMap, set[Widget]]: Compositor map and set of widgets.
         """
 
         ORIGIN = Offset(0, 0)
@@ -364,27 +363,43 @@ class Compositor:
 
                 if widget.is_container:
                     # Arrange the layout
-                    placements, arranged_widgets = widget._arrange(child_region.size)
+                    placements, arranged_widgets, spacing = widget._arrange(
+                        child_region.size
+                    )
                     widgets.update(arranged_widgets)
                     placements = sorted(placements, key=get_order)
 
                     # An offset added to all placements
-                    placement_offset = (
-                        container_region.offset + layout_offset - widget.scroll_offset
-                    )
+                    placement_offset = container_region.offset + layout_offset
+                    placement_scroll_offset = placement_offset - widget.scroll_offset
+
+                    _layers = widget.layers
+                    layers_to_index = {
+                        layer_name: index for index, layer_name in enumerate(_layers)
+                    }
+                    get_layer_index = layers_to_index.get
 
                     # Add all the widgets
-                    for sub_region, sub_widget, z in placements:
+                    for sub_region, sub_widget, z, fixed in placements:
                         # Combine regions with children to calculate the "virtual size"
-                        total_region = total_region.union(sub_region)
-                        if sub_widget is not None:
-                            add_widget(
-                                sub_widget,
-                                sub_region,
-                                sub_region + placement_offset,
-                                order + (z,),
-                                sub_clip,
-                            )
+                        if fixed:
+                            widget_region = sub_region + placement_offset
+                        else:
+                            total_region = total_region.union(sub_region.grow(spacing))
+                            widget_region = sub_region + placement_scroll_offset
+
+                        if sub_widget is None:
+                            continue
+
+                        widget_order = order + (get_layer_index(sub_widget.layer, 0), z)
+
+                        add_widget(
+                            sub_widget,
+                            sub_region,
+                            widget_region,
+                            widget_order,
+                            sub_clip,
+                        )
 
                 # Add any scrollbars
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(

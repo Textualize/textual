@@ -56,7 +56,6 @@ from .driver import Driver
 from .features import parse_features, FeatureFlag
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
-from .layouts.dock import Dock
 from .message_pump import MessagePump
 from .reactive import Reactive
 from .renderables.blank import Blank

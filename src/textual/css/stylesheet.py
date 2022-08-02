@@ -405,6 +405,7 @@ class Stylesheet:
         else:
             # Not animated, so we apply the rules directly
             get_rule = rules.get
+
             for key in modified_rule_keys:
                 setattr(base_styles, key, get_rule(key))
 
