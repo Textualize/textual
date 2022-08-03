@@ -134,9 +134,10 @@ class Screen(Widget):
             self._dirty_widgets.clear()
 
         self.update_timer.pause()
-        self.post_message_no_wait(events.PostScreenUpdate(self))
+        if self._callbacks:
+            self.post_message_no_wait(events.InvokeCallbacks(self))
 
-    async def on_post_screen_update(self, event: events.PostScreenUpdate) -> None:
+    async def on_invoke_callbacks(self, event: events.InvokeCallbacks) -> None:
         """Handle PostScreenUpdate events, which are sent after the screen is updated"""
         await self._invoke_and_clear_callbacks()
 

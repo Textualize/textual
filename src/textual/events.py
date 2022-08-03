@@ -45,7 +45,7 @@ class Callback(Event, bubble=False, verbosity=3):
         yield "callback", self.callback
 
 
-class PostScreenUpdate(Event, bubble=False):
+class InvokeCallbacks(Event, bubble=False):
     """Sent after the Screen is updated"""
 
 
