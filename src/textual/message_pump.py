@@ -199,15 +199,14 @@ class MessagePump:
         Args:
             callback (Callable): A callable.
         """
-        # We send the callback event to self, to ensure that messages preceding it
-        # in this message pump are handled first.
-        self.app.screen.post_message_no_wait(
-            events.Callback(self, partial(callback, *args, **kwargs))
-        )
+        # We send the InvokeLater message to ourselves first, to ensure we've cleared
+        # out anything already pending in our own queue.
+        message = messages.InvokeLater(self, partial(callback, *args, **kwargs))
+        self.post_message_no_wait(message)
 
-    # def on_callback(self, event: events.Callback) -> None:
-    #     # We forward Callbacks registered on to the Screen
-    #     self.app.screen.post_message_no_wait(event)
+    def handle_invoke_later(self, message: messages.InvokeLater) -> None:
+        # Forward InvokeLater message to the Screen
+        self.app.screen.post_message_no_wait(message)
 
     def close_messages_no_wait(self) -> None:
         """Request the message queue to exit."""

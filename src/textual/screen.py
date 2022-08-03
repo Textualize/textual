@@ -46,7 +46,6 @@ class Screen(Widget):
         self._dirty_widgets: set[Widget] = set()
         self._update_timer: Timer | None = None
         self._callbacks: list[Callable[[], Awaitable[None]]] = []
-        self._callbacks_ready: bool = False
 
     @property
     def is_transparent(self) -> bool:
@@ -150,9 +149,9 @@ class Screen(Widget):
             for callback in callbacks:
                 await invoke(callback)
 
-    def on_callback(self, event: events.Callback) -> None:
+    def handle_invoke_later(self, message: messages.InvokeLater) -> None:
         # Enqueue the callback function to be called later
-        self._callbacks.append(event.callback)
+        self._callbacks.append(message.callback)
 
     def _refresh_layout(self, size: Size | None = None, full: bool = False) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
