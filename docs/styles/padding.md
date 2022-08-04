@@ -2,11 +2,13 @@
 
 The padding rule adds space around the content of a widget. You can specify padding with 1, 2 or 4 numbers.
 
-- `padding: 1;` Sets a padding of 1 around all 4 edges
-- `padding: 1 2;` Sets a padding of 1 on the top and bottom edges, and a padding of two on the left and right edges
-- `padding: 1 2 3 4;` Sets a padding of one on the top edge, 2 on the right, 3 on the bottom, and 4 on the left.
+| example             |                                                                     |
+| ------------------- | ------------------------------------------------------------------- |
+| `padding: 1;`       | A single value sets a padding of 1 around all 4 edges               |
+| `padding: 1 2;`     | Two values sets the padding for the top/bottom and left/right edges |
+| `padding: 1 2 3 4;` | Four values sets top, right, bottom, and left padding independently |
 
-Padding may also be set individually, following the same pattern as above, by setting `padding-top`, `padding-right`, `padding-bottom`, or `padding-left`.
+Padding may also be set individually by setting `padding-top`, `padding-right`, `padding-bottom`, or `padding-left` to an single value.
 
 ## Example
 
