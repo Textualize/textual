@@ -40,7 +40,7 @@ class Layout(Message, verbosity=3):
 @rich.repr.auto
 class InvokeLater(Message, verbosity=3):
     def __init__(
-        self, sender: MessagePump, callback: Callable[[], Awaitable[None]]
+        self, sender: MessagePump, callback: Callable[[], Awaitable[None] | None]
     ) -> None:
         self.callback = callback
         super().__init__(sender)

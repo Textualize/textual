@@ -45,7 +45,7 @@ class Screen(Widget):
         self._compositor = Compositor()
         self._dirty_widgets: set[Widget] = set()
         self._update_timer: Timer | None = None
-        self._callbacks: list[Callable[[], Awaitable[None]]] = []
+        self._callbacks: list[Callable[[], Awaitable[None] | None]] = []
 
     @property
     def is_transparent(self) -> bool:
