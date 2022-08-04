@@ -1,23 +1,36 @@
 # Border
 
-The `border` rule enables the drawing of a box around a widget. A border is set with a border style (see below) followed by a color.
+The `border` rule enables the drawing of a box around a widget. A border is set with a border value (see below) followed by a color.
 
-- `"ascii"`
-- `"round"`
-- `"solid"`
-- `"double"`
-- `"dashed"`
-- `"heavy"`
-- `"inner"`
-- `"outer"`
-- `"hkey"`
-- `"vkey"`
-- `"tall"`
-- `"wide"`
+| Border value | Explanation                                             |
+| ------------ | ------------------------------------------------------- |
+| `"ascii"`    | A border with plus, hyphen, and vertical bar            |
+| `"blank"`    | A blank border (reserves space for a border)            |
+| `"dashed"`   | Dashed line border                                      |
+| `"double"`   | Double lined border                                     |
+| `"heavy"`    | Heavy border                                            |
+| `"hidden"`   | Alias for "none"                                        |
+| `"hkey"`     | Horizontal key-line border                              |
+| `"inner"`    | Thick solid border                                      |
+| `"none"`     | Disabled border                                         |
+| `"outer"`    | Think solid border with additional space around content |
+| `"round"`    | Rounded corners                                         |
+| `"solid"`    | Solid border                                            |
+| `"tall"`     | A solid border with extras space top and bottom         |
+| `"vkey"`     | Vertical key-line border                                |
+| `"wide"`     | A solid border with additional space left and right     |
 
 For examples `heavy white` would display a heavy white line around a widget.
 
-Borders may also be set individually with the `border-top`, `border-right`, `border-bottom` and `border-left` rules.
+Borders may also be set individually for the four edges of a widget with the `border-top`, `border-right`, `border-bottom` and `border-left` rules.
+
+## Border command
+
+The `textual` CLI has a subcommand which will let you explore the various border types:
+
+```
+textual borders
+```
 
 ## Example
 
