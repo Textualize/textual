@@ -2,11 +2,13 @@
 
 The `text-style` rule enables a number of different ways of displaying text. The value may be set to any of the following:
 
-- `"bold"` Sets **bold text**
-- `"italic"` Sets _italic text_
-- `"reverse"` Sets reverse video text (foreground and background colors reversed)
-- `"underline"` Sets <u>underline text</u>
-- `"strike"` Sets <s>strikethrough text</s>
+| Style         | Effect                                                         |
+| ------------- | -------------------------------------------------------------- |
+| `"bold"`      | **bold text**                                                  |
+| `"italic"`    | _italic text_                                                  |
+| `"reverse"`   | reverse video text (foreground and background colors reversed) |
+| `"underline"` | <u>underline text</u>                                          |
+| `"strike"`    | <s>strikethrough text</s>                                      |
 
 Text styles may be set in combination. For example "bold underline" or "reverse underline strike".
 
