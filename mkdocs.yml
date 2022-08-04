@@ -26,6 +26,8 @@ nav:
     - "styles/outline.md"
     - "styles/overflow.md"
     - "styles/padding.md"
+    - "styles/scrollbar.md"
+    - "styles/scrollbar_size.md"
     - "styles/text_style.md"
     - "styles/tint.md"
     - "styles/visibility.md"

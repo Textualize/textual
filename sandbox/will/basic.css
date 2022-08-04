@@ -100,7 +100,7 @@ Tweet {
 
 
 .scrollable {
- 
+  overflow-x: auto;
   overflow-y: scroll;
   margin: 1 2;
   height: 20;

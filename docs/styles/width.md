@@ -1,6 +1,6 @@
 # Width
 
-The `width` style sets a widget's width. By default, it sets the width of the content area, but if `box-sizing` is set to `border-box` it sets the width of the border area.
+The `width` rule sets a widget's width. By default, it sets the width of the content area, but if `box-sizing` is set to `border-box` it sets the width of the border area.
 
 ## Example
 

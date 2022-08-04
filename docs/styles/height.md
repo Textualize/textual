@@ -1,10 +1,10 @@
 # Height
 
-The `height` style sets a widget's height. By default, it sets the height of the content area, but if `box-sizing` is set to `border-box` it sets the height of the border area.
+The `height` rule sets a widget's height. By default, it sets the height of the content area, but if `box-sizing` is set to `border-box` it sets the height of the border area.
 
 ## Example
 
-=== "width.py"
+=== "height.py"
 
     ```python
     --8<-- "docs/examples/styles/height.py"

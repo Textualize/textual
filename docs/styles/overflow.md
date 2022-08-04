@@ -42,9 +42,9 @@ overflow-x: scroll;
 
 ```python
 # Hide the vertical scrollbar
-self.styles.overflow_y = "hidden"
+widget.styles.overflow_y = "hidden"
 
 # Always show the horizontal scrollbar
-self.styles.overflow_x = "scroll"
+widget.styles.overflow_x = "scroll"
 
 ```
