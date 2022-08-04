@@ -5,7 +5,7 @@ from textual.widgets import Static
 class BackgroundApp(App):
     CSS = """
     Static {
-        height:1fr;
+        height: 1fr;
         content-align: center middle;
         color: white;
     }    

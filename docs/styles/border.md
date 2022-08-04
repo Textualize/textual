@@ -16,11 +16,11 @@ The `border` rule enables the drawing of a box around a widget. A border is set 
 | `"outer"`    | Think solid border with additional space around content |
 | `"round"`    | Rounded corners                                         |
 | `"solid"`    | Solid border                                            |
-| `"tall"`     | A solid border with extras space top and bottom         |
+| `"tall"`     | Solid border with extras space top and bottom           |
 | `"vkey"`     | Vertical key-line border                                |
-| `"wide"`     | A solid border with additional space left and right     |
+| `"wide"`     | Solid border with additional space left and right       |
 
-For examples `heavy white` would display a heavy white line around a widget.
+For example `heavy white` would display a heavy white line around a widget.
 
 Borders may also be set individually for the four edges of a widget with the `border-top`, `border-right`, `border-bottom` and `border-left` rules.
 

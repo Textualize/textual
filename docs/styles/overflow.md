@@ -1,12 +1,16 @@
 # Overflow
 
-The `overflow` rule specifies if and when scrollbars should be displayed on the `x` and `y` axis. There are two values for each scrollbar, which may be set together or independently to one of the follow three values:
+The `overflow` rule specifies if and when scrollbars should be displayed on the `x` and `y` axis. The rule takes two overflow values; one for the horizontal bar (x axis), followed by the vertical bar (y-axis).
 
-- `"auto"` Automatically show the scrollbar if the content doesn't fit
-- `"hidden"` Never show the scrollbar
-- `"scroll"` Always show the scrollbar
+| Overflow value | Effect                                                                    |
+| -------------- | ------------------------------------------------------------------------- |
+| `"auto"`       | Automatically show the scrollbar if the content doesn't fit (the default) |
+| `"hidden"`     | Never show the scrollbar                                                  |
+| `"scroll"`     | Always show the scrollbar                                                 |
 
-The default is "auto" which will show the scrollbar if content doesn't fit within container, otherwise the scrollbar will be hidden.
+The default value for overflow is `"auto auto"` which will show scrollbars automatically for both scrollbars if content doesn't fit within container.
+
+Overflow may also be set independently by setting the `overflow-x` rule for the horizontal bar, and `overflow-y` for the vertical bar.
 
 ## Example
 
