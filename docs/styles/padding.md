@@ -10,6 +10,8 @@ Padding may also be set individually, following the same pattern as above, by se
 
 ## Example
 
+This example adds padding around static text.
+
 === "padding.py"
 
     ```python

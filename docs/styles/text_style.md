@@ -14,6 +14,8 @@ Text styles may be set in combination. For example "bold underline" or "reverse 
 
 ## Example
 
+Each of the three text panels has a different text style.
+
 === "text_style.py"
 
     ```python
