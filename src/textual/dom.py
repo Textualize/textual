@@ -19,7 +19,9 @@ from .css.errors import StyleValueError
 from .css.parse import parse_declarations
 from .css.styles import Styles, RenderStyles
 from .css.query import NoMatchingNodesError
+from .geometry import Region
 from .message_pump import MessagePump
+from .widget import Widget
 
 if TYPE_CHECKING:
     from .app import App
@@ -429,7 +431,10 @@ class DOMNode(MessagePump):
     def focusable_children(self) -> list[DOMNode]:
         """Get the children which may be focused."""
         # TODO: This may be the place to define order, other focus related rules
-        return [child for child in self.children if child.display and child.visible]
+        focusable = [
+            child for child in self.children if child.display and child.visible
+        ]
+        return sorted(focusable, key=_focus_sort_key)
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.
@@ -596,3 +601,8 @@ class DOMNode(MessagePump):
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         pass
+
+
+def _focus_sort_key(widget: Widget) -> tuple[int, int]:
+    x, y = widget.content_offset
+    return y, x
