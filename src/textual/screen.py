@@ -12,6 +12,7 @@ from ._callback import invoke
 
 from .geometry import Offset, Region, Size
 from ._compositor import Compositor, MapGeometry
+from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from ._timer import Timer
@@ -45,7 +46,7 @@ class Screen(Widget):
         self._compositor = Compositor()
         self._dirty_widgets: set[Widget] = set()
         self._update_timer: Timer | None = None
-        self._callbacks: list[Callable[[], Awaitable[None] | None]] = []
+        self._callbacks: list[CallbackType] = []
 
     @property
     def is_transparent(self) -> bool:

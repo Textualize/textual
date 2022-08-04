@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Callable, Awaitable
+from typing import TYPE_CHECKING, Callable, Awaitable, Union
 
 import rich.repr
 
@@ -9,6 +9,9 @@ from .message import Message
 if TYPE_CHECKING:
     from .message_pump import MessagePump
     from .widget import Widget
+
+
+CallbackType = Union[Callable[[], Awaitable[None]], Callable[[], None]]
 
 
 @rich.repr.auto
@@ -39,9 +42,7 @@ class Layout(Message, verbosity=3):
 
 @rich.repr.auto
 class InvokeLater(Message, verbosity=3):
-    def __init__(
-        self, sender: MessagePump, callback: Callable[[], Awaitable[None] | None]
-    ) -> None:
+    def __init__(self, sender: MessagePump, callback: CallbackType) -> None:
         self.callback = callback
         super().__init__(sender)
 
