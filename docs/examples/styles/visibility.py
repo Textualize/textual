@@ -20,8 +20,8 @@ class VisibilityApp(App):
 
     def compose(self):
         yield Static("Widget 1")
-        yield Static("widget 2", classes="invisible")
-        yield Static("widget 3")
+        yield Static("Widget 2", classes="invisible")
+        yield Static("Widget 3")
 
 
 app = VisibilityApp()
