@@ -17,4 +17,5 @@ class ButtonApp(App):
 
     def handle_pressed(self, event):
         self.dark = not self.dark
+        self.bell()
         event.button.label = "Lights ON" if self.dark else "Lights OFF"

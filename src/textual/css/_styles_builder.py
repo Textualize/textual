@@ -15,7 +15,6 @@ from ._help_text import (
     string_enum_help_text,
     border_property_help_text,
     layout_property_help_text,
-    docks_property_help_text,
     dock_property_help_text,
     fractional_property_help_text,
     align_help_text,

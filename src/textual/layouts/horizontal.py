@@ -30,7 +30,7 @@ class HorizontalLayout(Layout):
         total_fraction = sum(
             [int(style.width.value) for style in styles if style.width.is_fraction]
         )
-        fraction_unit = Fraction(size.height, total_fraction or 1)
+        fraction_unit = Fraction(size.width, total_fraction or 1)
 
         box_models = [
             widget.get_box_model(size, parent_size, fraction_unit)

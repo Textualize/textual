@@ -45,10 +45,13 @@ def clamp(value: T, minimum: T, maximum: T) -> T:
 
 
 class Offset(NamedTuple):
-    """A point defined by x and y coordinates."""
+    """A cell offset defined by x and y coordinates. Offsets are typically relative to the
+    top left of the terminal or other container."""
 
     x: int = 0
+    """Offset in the x-axis (horizontal)"""
     y: int = 0
+    """Offset in the y-axis (vertical)"""
 
     @property
     def is_origin(self) -> bool:
@@ -118,7 +121,10 @@ class Size(NamedTuple):
     """An area defined by its width and height."""
 
     width: int = 0
+    """The width in cells."""
+
     height: int = 0
+    """The height in cells."""
 
     def __bool__(self) -> bool:
         """A Size is Falsy if it has area 0."""
@@ -196,12 +202,32 @@ class Size(NamedTuple):
 
 
 class Region(NamedTuple):
-    """Defines a rectangular region."""
+    """Defines a rectangular region.
+
+    A Region consists a coordinate (x and y) and dimensions (width and height).
+
+    ```
+      (x, y)
+        ┌────────────────────┐ ▲
+        │                    │ │
+        │                    │ │
+        │                    │ height
+        │                    │ │
+        │                    │ │
+        └────────────────────┘ ▼
+        ◀─────── width ──────▶
+    ```
+
+    """
 
     x: int = 0
+    """Offset in the x-axis (horizontal)"""
     y: int = 0
+    """Offset in the y-axis (vertical)"""
     width: int = 0
+    """The widget of the region"""
     height: int = 0
+    """The height of the region"""
 
     @classmethod
     def from_union(
@@ -754,9 +780,13 @@ class Spacing(NamedTuple):
     """The spacing around a renderable."""
 
     top: int = 0
+    """Space from the top of a region."""
     right: int = 0
+    """Space from the left of a region."""
     bottom: int = 0
+    """Space from the bottom of a region."""
     left: int = 0
+    """Space from the left of a region."""
 
     def __bool__(self) -> bool:
         return self != (0, 0, 0, 0)

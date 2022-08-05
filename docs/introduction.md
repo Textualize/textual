@@ -42,9 +42,9 @@ The first step in all Textual applications is to import the `App` class from `te
 --8<-- "docs/examples/introduction/intro01.py"
 ```
 
-This App class is responsible for loading data, setting up the screen, managing events etc. In a real app most of the core logic of your application will be contained within methods on the this class.
+This App class is responsible for loading data, setting up the screen, managing events etc. In a real app most of the core logic of your application will be contained within methods on this class.
 
-The last two lines create an instance of the application and calls `run()`:
+The last two lines create an instance of the application and call the `run()` method:
 
 ```python hl_lines="8 9" title="intro01.py"
 --8<-- "docs/examples/introduction/intro01.py"
@@ -130,7 +130,7 @@ This script imports App as before, but also the `Widget` class from `textual.wid
 
 Widgets support many of the same events as the Application itself, and can be thought of as mini-applications in their own right. The Clock widget responds to a Mount event which is the first event received when a widget is _mounted_ (added to the App). The code in `Clock.on_mount` sets `styles.content_align` to tuple of `("center", "middle")` which tells Textual to display the Widget's content aligned to the horizontal center, and in the middle vertically. If you resize the terminal, you should find the time remains in the center.
 
-The second line in `on_mount` calls `self.set_interval` which tells Textual to invoke the `self.refresh` function once a second to refresh the Clock widget.
+The second line in `on_mount` calls `self.set_interval` which tells Textual to invoke the `self.refresh` method once per second.
 
 When Textual refreshes a widget it calls it's `render` method:
 

@@ -443,52 +443,6 @@ def layout_property_help_text(property_name: str, context: StylingContext) -> He
     )
 
 
-def docks_property_help_text(property_name: str, context: StylingContext) -> HelpText:
-    """Help text to show when the user supplies an invalid value for docks.
-
-    Args:
-        property_name (str): The name of the property
-        context (StylingContext | None): The context the property is being used in.
-
-    Returns:
-        HelpText: Renderable for displaying the help text for this property
-    """
-    property_name = _contextualize_property_name(property_name, context)
-    return HelpText(
-        summary=f"Invalid value for [i]{property_name}[/] property",
-        bullets=[
-            *ContextSpecificBullets(
-                inline=[
-                    Bullet(
-                        f"The [i]{property_name}[/] property expects an iterable of DockGroups",
-                        examples=[
-                            Example(
-                                f"widget.styles.{property_name} = [DockGroup(...), DockGroup(...)]"
-                            )
-                        ],
-                    ),
-                ],
-                css=[
-                    Bullet(
-                        f"The [i]{property_name}[/] property expects a value of the form <name>=<edge>/<zindex>...",
-                        examples=[
-                            Example(
-                                f"{property_name}: lhs=left/2;  [dim]# dock named [u]lhs[/], on [u]left[/] edge, with z-index [u]2[/]"
-                            ),
-                            Example(
-                                f"{property_name}: top=top/3 rhs=right/2;  [dim]# declaring multiple docks"
-                            ),
-                        ],
-                    ),
-                    Bullet("<name> can be any string you want"),
-                    Bullet(f"<edge> must be one of {friendly_list(VALID_EDGE)}"),
-                    Bullet(f"<zindex> must be an integer"),
-                ],
-            ).get_by_context(context)
-        ],
-    )
-
-
 def dock_property_help_text(property_name: str, context: StylingContext) -> HelpText:
     """Help text to show when the user supplies an invalid value for dock.
 

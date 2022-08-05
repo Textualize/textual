@@ -9,8 +9,6 @@ from textual.css._help_text import (
     color_property_help_text,
     border_property_help_text,
     layout_property_help_text,
-    docks_property_help_text,
-    dock_property_help_text,
     fractional_property_help_text,
     offset_property_help_text,
     align_help_text,
@@ -90,12 +88,6 @@ def test_layout_property_help_text(styling_context):
     rendered = render(layout_property_help_text("layout", styling_context))
     assert "Invalid value for" in rendered
     assert "layout" in rendered
-
-
-def test_docks_property_help_text(styling_context):
-    rendered = render(docks_property_help_text("docks", styling_context))
-    assert "Invalid value for" in rendered
-    assert "docks" in rendered
 
 
 def test_fractional_property_help_text(styling_context):

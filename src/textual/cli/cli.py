@@ -18,7 +18,7 @@ def run():
     pass
 
 
-@run.command(help="Run the Textual Devtools console")
+@run.command(help="Run the Textual Devtools console.")
 def console():
     _run_devtools()
 
@@ -157,3 +157,11 @@ def run_app(import_name: str, dev: bool) -> None:
         sys.exit(1)
 
     app.run()
+
+
+@run.command("borders")
+def borders():
+    """Explore the border styles available in Textual."""
+    from ..devtools import borders
+
+    borders.app.run()
