@@ -38,9 +38,9 @@ class OffsetApp(App):
     """
 
     def compose(self):
-        yield Static("Paul", classes="paul")
-        yield Static("Duncan", classes="duncan")
-        yield Static("Chani", classes="chani")
+        yield Static("Paul (offset 8 2)", classes="paul")
+        yield Static("Duncan (offset 4 10)", classes="duncan")
+        yield Static("Chani (offset 0 5)", classes="chani")
 
 
 app = OffsetApp()
