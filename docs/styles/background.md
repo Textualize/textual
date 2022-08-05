@@ -28,7 +28,7 @@ background: rgb(100,120,200);
 
 ## Python
 
-You can use the same syntax as CSS, or explicitly set a Color object.
+You can use the same syntax as CSS, or explicitly set a `Color` object for finer-grained control.
 
 ```python
 # Set blue background
