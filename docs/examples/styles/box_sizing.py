@@ -25,8 +25,8 @@ class BoxSizingApp(App):
     """
 
     def compose(self):
-        yield Static("Hello, World!", id="static1")
-        yield Static("Hello, World!", id="static2")
+        yield Static("I'm using border-box!", id="static1")
+        yield Static("I'm using content-box!", id="static2")
 
 
 app = BoxSizingApp()
