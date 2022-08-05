@@ -26,6 +26,7 @@ if TYPE_CHECKING:
     from .app import App
     from .css.styles import StylesBase
     from .css.query import DOMQuery
+    from ._timer import Timer
     from .screen import Screen
     from .widget import Widget
 
@@ -69,6 +70,8 @@ class DOMNode(MessagePump):
         self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
         # A mapping of class names to Styles set in COMPONENT_CLASSES
         self.component_styles: dict[str, StylesBase] = {}
+
+        self._auto_refresh_timer: Timer | None = None
 
         super().__init__()
 
@@ -592,3 +595,20 @@ class DOMNode(MessagePump):
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         pass
+
+    @property
+    def auto_refresh(self) -> float | None:
+        if self._auto_refresh_timer:
+            return self._auto_refresh_timer._interval
+        else:
+            return None
+
+    @auto_refresh.setter
+    def auto_refresh(self, interval: float | None) -> None:
+        if self._auto_refresh_timer:
+            self._auto_refresh_timer.stop_no_wait()
+
+        if interval is None:
+            self._auto_refresh_timer = None
+        else:
+            self._auto_refresh_timer = self.set_interval(interval, self.refresh)
