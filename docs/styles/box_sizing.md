@@ -2,7 +2,7 @@
 
 The `box-sizing` rule impacts how `width` and `height` rules are translated in to screen dimensions, when combined with `padding` and `border`.
 
-The default value is `border-box` which means that padding and border are included in in the width and height. This setting means that if you add padding and/or border the widget will not change in size, but you will have less space for content.
+The default value is `border-box` which means that padding and border are included in the width and height. This setting means that if you add padding and/or border the widget will not change in size, but you will have less space for content.
 
 You can set `box-sizing` to `content-box` which tells Textual that padding and border should increase the size of the widget, leaving the content area unaffected.
 
