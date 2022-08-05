@@ -32,9 +32,9 @@ class BorderApp(App):
     """
 
     def compose(self):
-        yield Static("Hello, World!", id="static1")
-        yield Static("Hello, World!", id="static2")
-        yield Static("Hello, World!", id="static3")
+        yield Static("My border is solid red", id="static1")
+        yield Static("My border is dashed green", id="static2")
+        yield Static("My border is tall blue", id="static3")
 
 
 app = BorderApp()
