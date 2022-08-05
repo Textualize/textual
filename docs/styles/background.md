@@ -37,5 +37,5 @@ widget.styles.background = "blue"
 from textual.color import Color
 # Set with a color object
 widget.styles.background = Color.parse("pink")
-
+widget.styles.background = Color(120, 60, 100)
 ```
