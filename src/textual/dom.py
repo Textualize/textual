@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from inspect import getfile
+from operator import attrgetter
 from typing import ClassVar, Iterable, Iterator, Type, TYPE_CHECKING
 
 import rich.repr
@@ -426,15 +427,6 @@ class DOMNode(MessagePump):
         """The children which don't have display: none set."""
         return [child for child in self.children if child.display]
 
-    @property
-    def focusable_children(self) -> list[DOMNode]:
-        """Get the children which may be focused."""
-        focusable = [
-            child for child in self.children if child.display and child.visible
-        ]
-        sorted_focusable = sorted(focusable, key=_focus_sort_key)
-        return sorted_focusable
-
     def get_pseudo_classes(self) -> Iterable[str]:
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.
 
@@ -600,8 +592,3 @@ class DOMNode(MessagePump):
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         pass
-
-
-def _focus_sort_key(widget: Widget) -> tuple[int, int]:
-    x, y, _, _ = widget.region_with_margin
-    return y, x

@@ -26,7 +26,7 @@ Screen {
 }
 
 #middle_pane:focus {
-    outline: #8bc34a;
+    tint: cyan 40%;
 }
 
 #right_pane {
@@ -35,7 +35,7 @@ Screen {
 }
 
 .box:focus {
-    outline: #8bc34a;
+    tint: cyan 40%;
 }
 
 #box1 {
