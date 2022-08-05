@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from fractions import Fraction
+from operator import attrgetter
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -495,6 +496,30 @@ class Widget(DOMNode):
         return window_region
 
     @property
+    def virtual_region_with_margin(self) -> Region:
+        """The widget region relative to its container (*including margin*), which may not be visible,
+        depending on the scroll offset.
+
+        Returns:
+            Region: The virtual region of the Widget, inclusive of its margin.
+        """
+        return self.virtual_region.grow(self.styles.margin)
+
+    @property
+    def focusable_children(self) -> list[Widget]:
+        """Get the children which may be focused."""
+        focusable = [
+            child for child in self.children if child.display and child.visible
+        ]
+        return sorted(focusable, key=attrgetter("_focus_sort_key"))
+
+    @property
+    def _focus_sort_key(self) -> tuple[int, int]:
+        x, y, _, _ = self.virtual_region
+        top, _, _, left = self.styles.margin
+        return y - top, x - left
+
+    @property
     def scroll_offset(self) -> Offset:
         return Offset(int(self.scroll_x), int(self.scroll_y))
 
@@ -736,7 +761,7 @@ class Widget(DOMNode):
         """
 
         # Grow the region by the margin so to keep the margin in view.
-        region = widget.virtual_region.grow(widget.styles.margin)
+        region = widget.virtual_region_with_margin
         scrolled = False
 
         while isinstance(widget.parent, Widget) and widget is not self:

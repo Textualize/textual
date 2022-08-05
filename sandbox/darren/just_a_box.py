@@ -4,10 +4,11 @@ from rich.console import RenderableType
 from rich.panel import Panel
 
 from textual.app import App, ComposeResult
+from textual.layout import Horizontal, Vertical
 from textual.widget import Widget
 
 
-class Box(Widget):
+class Box(Widget, can_focus=True):
     CSS = "#box {background: blue;}"
 
     def __init__(
@@ -20,8 +21,25 @@ class Box(Widget):
 
 
 class JustABox(App):
+    dark = True
+
     def compose(self) -> ComposeResult:
-        yield Box(id="box")
+        yield Horizontal(
+            Vertical(
+                Box(id="box1", classes="box"),
+                Box(id="box2", classes="box"),
+                Box(id="box3", classes="box"),
+                id="left_pane",
+            ),
+            Box(id="middle_pane"),
+            Vertical(
+                Box(id="box", classes="box"),
+                Box(id="box4", classes="box"),
+                Box(id="box5", classes="box"),
+                id="right_pane",
+            ),
+            id="horizontal",
+        )
 
 
 if __name__ == "__main__":
