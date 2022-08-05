@@ -44,7 +44,7 @@ The first step in all Textual applications is to import the `App` class from `te
 
 This App class is responsible for loading data, setting up the screen, managing events etc. In a real app most of the core logic of your application will be contained within methods on this class.
 
-The last two lines create an instance of the application and calls the `run()` method:
+The last two lines create an instance of the application and call the `run()` method:
 
 ```python hl_lines="8 9" title="intro01.py"
 --8<-- "docs/examples/introduction/intro01.py"
