@@ -495,6 +495,16 @@ class Widget(DOMNode):
         return window_region
 
     @property
+    def region_with_margin(self) -> Region:
+        """The widget region relative to its container (*including margin*), which may not be visible,
+        depending on the scroll offset.
+
+        Returns:
+            Region: The virtual region of the Widget, inclusive of its margin.
+        """
+        return self.virtual_region.grow(self.styles.margin)
+
+    @property
     def scroll_offset(self) -> Offset:
         return Offset(int(self.scroll_x), int(self.scroll_y))
 
@@ -736,7 +746,7 @@ class Widget(DOMNode):
         """
 
         # Grow the region by the margin so to keep the margin in view.
-        region = widget.virtual_region.grow(widget.styles.margin)
+        region = widget.region_with_margin
         scrolled = False
 
         while isinstance(widget.parent, Widget) and widget is not self:

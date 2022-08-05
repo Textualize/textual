@@ -19,15 +19,14 @@ from .css.errors import StyleValueError
 from .css.parse import parse_declarations
 from .css.styles import Styles, RenderStyles
 from .css.query import NoMatchingNodesError
-from .geometry import Region
 from .message_pump import MessagePump
-from .widget import Widget
 
 if TYPE_CHECKING:
     from .app import App
     from .css.styles import StylesBase
     from .css.query import DOMQuery
     from .screen import Screen
+    from .widget import Widget
 
 
 class NoParent(Exception):
@@ -430,11 +429,11 @@ class DOMNode(MessagePump):
     @property
     def focusable_children(self) -> list[DOMNode]:
         """Get the children which may be focused."""
-        # TODO: This may be the place to define order, other focus related rules
         focusable = [
             child for child in self.children if child.display and child.visible
         ]
-        return sorted(focusable, key=_focus_sort_key)
+        sorted_focusable = sorted(focusable, key=_focus_sort_key)
+        return sorted_focusable
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.
@@ -604,5 +603,5 @@ class DOMNode(MessagePump):
 
 
 def _focus_sort_key(widget: Widget) -> tuple[int, int]:
-    x, y = widget.content_offset
+    x, y, _, _ = widget.region_with_margin
     return y, x

@@ -1,6 +1,61 @@
-#box {
-    height: 50%;
-    width: 50%;
-    align: center middle;
+Screen {
+    height: 100vh;
+    width: 100%;
+    background: red;
+}
+
+#horizontal {
+    width: 100%;
+}
+
+.box {
+    height: 5;
+    width: 5;
+    margin: 1 10;
+}
+
+#left_pane {
+    width: 1fr;
+    background: $background;
+}
+
+#middle_pane {
+    margin-top: 4;
+    width: 1fr;
+    background: #173f5f;
+}
+
+#middle_pane:focus {
+    outline: #8bc34a;
+}
+
+#right_pane {
+    width: 1fr;
+    background: #f6d55c;
+}
+
+.box:focus {
+    outline: #8bc34a;
+}
+
+#box1 {
     background: green;
+}
+
+#box2 {
+    offset-y: 3;
+    background: hotpink;
+}
+
+#box3 {
+    background: red;
+}
+
+
+#box4 {
+    background: blue;
+}
+
+#box5 {
+    background: darkviolet;
 }
