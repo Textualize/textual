@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, Awaitable, Union
 
 import rich.repr
 
@@ -9,6 +9,9 @@ from .message import Message
 if TYPE_CHECKING:
     from .message_pump import MessagePump
     from .widget import Widget
+
+
+CallbackType = Union[Callable[[], Awaitable[None]], Callable[[], None]]
 
 
 @rich.repr.auto
@@ -35,6 +38,16 @@ class Update(Message, verbosity=3):
 class Layout(Message, verbosity=3):
     def can_replace(self, message: Message) -> bool:
         return isinstance(message, Layout)
+
+
+@rich.repr.auto
+class InvokeLater(Message, verbosity=3):
+    def __init__(self, sender: MessagePump, callback: CallbackType) -> None:
+        self.callback = callback
+        super().__init__(sender)
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "callback", self.callback
 
 
 @rich.repr.auto

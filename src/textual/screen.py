@@ -8,16 +8,18 @@ from rich.style import Style
 
 
 from . import events, messages, errors
+from ._callback import invoke
 
 from .geometry import Offset, Region, Size
 from ._compositor import Compositor, MapGeometry
+from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from ._timer import Timer
 from .widget import Widget
 
 if sys.version_info >= (3, 8):
-    from typing import Final
+    from typing import Final, Callable, Awaitable
 else:
     from typing_extensions import Final
 
@@ -31,7 +33,7 @@ class Screen(Widget):
 
     CSS = """
     Screen {
-            
+
         layout: vertical;
         overflow-y: auto;
     }
@@ -44,6 +46,7 @@ class Screen(Widget):
         self._compositor = Compositor()
         self._dirty_widgets: set[Widget] = set()
         self._update_timer: Timer | None = None
+        self._callbacks: list[CallbackType] = []
 
     @property
     def is_transparent(self) -> bool:
@@ -110,7 +113,7 @@ class Screen(Widget):
         """
         return self._compositor.find_widget(widget)
 
-    def on_idle(self, event: events.Idle) -> None:
+    async def on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
         if self._layout_required:
@@ -125,6 +128,9 @@ class Screen(Widget):
         if self._dirty_widgets:
             self.update_timer.resume()
 
+        # The Screen is idle - a good opportunity to invoke the scheduled callbacks
+        await self._invoke_and_clear_callbacks()
+
     def _on_update(self) -> None:
         """Called by the _update_timer."""
         # Render widgets together
@@ -132,7 +138,27 @@ class Screen(Widget):
             self._compositor.update_widgets(self._dirty_widgets)
             self.app._display(self._compositor.render())
             self._dirty_widgets.clear()
+
         self.update_timer.pause()
+        if self._callbacks:
+            self.post_message_no_wait(events.InvokeCallbacks(self))
+
+    async def on_invoke_callbacks(self, event: events.InvokeCallbacks) -> None:
+        """Handle PostScreenUpdate events, which are sent after the screen is updated"""
+        await self._invoke_and_clear_callbacks()
+
+    async def _invoke_and_clear_callbacks(self) -> None:
+        """If there are scheduled callbacks to run, call them and clear
+        the callback queue."""
+        if self._callbacks:
+            callbacks = self._callbacks[:]
+            self._callbacks.clear()
+            for callback in callbacks:
+                await invoke(callback)
+
+    def handle_invoke_later(self, message: messages.InvokeLater) -> None:
+        # Enqueue the callback function to be called later
+        self._callbacks.append(message.callback)
 
     def _refresh_layout(self, size: Size | None = None, full: bool = False) -> None:
         """Refresh the layout (can change size and positions of widgets)."""

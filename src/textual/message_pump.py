@@ -193,14 +193,20 @@ class MessagePump:
         return timer
 
     def call_later(self, callback: Callable, *args, **kwargs) -> None:
-        """Run a callback after processing all messages and refreshing the screen.
+        """Schedule a callback to run after all messages are processed and the screen
+        has been refreshed.
 
         Args:
             callback (Callable): A callable.
         """
-        self.post_message_no_wait(
-            events.Callback(self, partial(callback, *args, **kwargs))
-        )
+        # We send the InvokeLater message to ourselves first, to ensure we've cleared
+        # out anything already pending in our own queue.
+        message = messages.InvokeLater(self, partial(callback, *args, **kwargs))
+        self.post_message_no_wait(message)
+
+    def handle_invoke_later(self, message: messages.InvokeLater) -> None:
+        # Forward InvokeLater message to the Screen
+        self.app.screen.post_message_no_wait(message)
 
     def close_messages_no_wait(self) -> None:
         """Request the message queue to exit."""
@@ -391,9 +397,6 @@ class MessagePump:
         if self._closing or self._closed:
             return False
         return self.post_message_no_wait(message)
-
-    async def on_callback(self, event: events.Callback) -> None:
-        await invoke(event.callback)
 
     def emit_no_wait(self, message: Message) -> bool:
         if self._parent:

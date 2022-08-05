@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Iterable
 
 from rich.console import RenderableType
-from rich.style import Style
 from rich.table import Table
 from rich.text import Text
 
