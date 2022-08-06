@@ -1149,6 +1149,7 @@ class Widget(DOMNode):
 
     async def on_remove(self, event: events.Remove) -> None:
         await self.close_messages()
+        assert self.parent
         self.parent.refresh(layout=True)
 
     def on_mount(self, event: events.Mount) -> None:

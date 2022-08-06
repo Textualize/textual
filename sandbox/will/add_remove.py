@@ -1,3 +1,5 @@
+import random
+
 from textual import layout
 from textual.app import App, ComposeResult
 from textual.widgets import Button, Static
@@ -38,6 +40,7 @@ class AddRemoveApp(App):
             layout.Horizontal(
                 Button("Add", variant="success", id="add"),
                 Button("Remove", variant="error", id="remove"),
+                Button("Remove random", variant="warning", id="remove_random"),
                 id="buttons",
             ),
             layout.Vertical(id="items"),
@@ -53,6 +56,11 @@ class AddRemoveApp(App):
             things = self.query("#items Thing")
             if things:
                 things.last().remove()
+
+        elif event.button.id == "remove_random":
+            things = self.query("#items Thing")
+            if things:
+                random.choice(things).remove()
 
         self.app.bell()
 

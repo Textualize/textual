@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import rich.repr
 
-from typing import Iterator, TYPE_CHECKING
+from typing import Iterator, overload, TYPE_CHECKING
 
 
 from .match import match
@@ -64,7 +64,15 @@ class DOMQuery:
     def __iter__(self) -> Iterator[Widget]:
         return iter(self._nodes)
 
-    def __getitem__(self, index: int) -> DOMNode:
+    @overload
+    def __getitem__(self, index: int) -> Widget:
+        ...
+
+    @overload
+    def __getitem__(self, index: slice) -> list[Widget]:
+        ...
+
+    def __getitem__(self, index: int | slice) -> Widget | list[Widget]:
         return self._nodes[index]
 
     def __rich_repr__(self) -> rich.repr.Result:
