@@ -1149,6 +1149,7 @@ class Widget(DOMNode):
 
     async def on_remove(self, event: events.Remove) -> None:
         await self.close_messages()
+        self.app._unregister(self)
         assert self.parent
         self.parent.refresh(layout=True)
 

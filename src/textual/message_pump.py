@@ -216,10 +216,8 @@ class MessagePump:
         """Close message queue, and optionally wait for queue to finish processing."""
         if self._closed or self._closing:
             return
-        print(self, "close_messages")
         self._closing = True
         await self._message_queue.put(MessagePriority(None))
-        self.app._unregister(self)
         cancel_tasks = list(self._child_tasks)
         for task in cancel_tasks:
             task.cancel()
