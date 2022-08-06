@@ -398,6 +398,9 @@ class MessagePump:
             return False
         return self.post_message_no_wait(message)
 
+    async def on_callback(self, event: events.Callback) -> None:
+        await invoke(event.callback)
+
     def emit_no_wait(self, message: Message) -> bool:
         if self._parent:
             return self._parent.post_message_from_child_no_wait(message)
