@@ -21,7 +21,7 @@ class AddRemoveApp(App):
     }
     #items {
         height: 100%;
-        
+        overflow-y: scroll;
     }
     Thing {
         height: 5;
