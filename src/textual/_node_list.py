@@ -45,6 +45,12 @@ class NodeList:
             self._nodes_set.add(widget)
             self._updates += 1
 
+    def _remove(self, widget: Widget) -> None:
+        if widget in self._nodes_set:
+            del self._nodes[self._nodes.index(widget)]
+            self._nodes_set.remove(widget)
+            self._updates += 1
+
     def _clear(self) -> None:
         if self._nodes:
             self._nodes.clear()

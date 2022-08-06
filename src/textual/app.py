@@ -884,6 +884,16 @@ class App(Generic[ReturnType], DOMNode):
         for _widget_id, widget in name_widgets:
             widget.post_message_no_wait(events.Mount(sender=parent))
 
+    def unregister(self, widget: Widget) -> None:
+        """Unregister a widget.
+
+        Args:
+            widget (Widget): _description_
+        """
+        if isinstance(widget._parent, Widget):
+            widget._parent.children._remove(widget)
+        self.registry.discard(widget)
+
     async def _disconnect_devtools(self):
         await self.devtools.disconnect()
 
@@ -905,9 +915,6 @@ class App(Generic[ReturnType], DOMNode):
         while self.registry:
             child = self.registry.pop()
             await child.close_messages()
-
-    async def remove(self, child: MessagePump) -> None:
-        self.registry.remove(child)
 
     async def shutdown(self):
         await self._disconnect_devtools()

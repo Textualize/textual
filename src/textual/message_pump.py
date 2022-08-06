@@ -214,16 +214,19 @@ class MessagePump:
 
     async def close_messages(self) -> None:
         """Close message queue, and optionally wait for queue to finish processing."""
-        if self._closed:
+        if self._closed or self._closing:
             return
-
+        print(self, "close_messages")
         self._closing = True
         await self._message_queue.put(MessagePriority(None))
-        for task in self._child_tasks:
+        self.app.unregister(self)
+        cancel_tasks = list(self._child_tasks)
+        for task in cancel_tasks:
             task.cancel()
+        for task in cancel_tasks:
             await task
         self._child_tasks.clear()
-        if self._task is not None:
+        if self._task is not None and asyncio.current_task() != self._task:
             # Ensure everything is closed before returning
             await self._task
 

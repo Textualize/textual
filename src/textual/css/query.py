@@ -24,6 +24,7 @@ from .parse import parse_selectors
 
 if TYPE_CHECKING:
     from ..dom import DOMNode
+    from ..widget import Widget
 
 
 class NoMatchingNodesError(Exception):
@@ -36,14 +37,16 @@ class DOMQuery:
         self,
         node: DOMNode | None = None,
         selector: str | None = None,
-        nodes: list[DOMNode] | None = None,
+        nodes: list[Widget] | None = None,
     ) -> None:
+        from ..widget import Widget
+
         self._selector = selector
-        self._nodes: list[DOMNode] = []
+        self._nodes: list[Widget] = []
         if nodes is not None:
             self._nodes = nodes
         elif node is not None:
-            self._nodes = list(node.walk_children())
+            self._nodes = [node for node in node.walk_children()]
         else:
             self._nodes = []
 
@@ -58,8 +61,11 @@ class DOMQuery:
         """True if non-empty, otherwise False."""
         return bool(self._nodes)
 
-    def __iter__(self) -> Iterator[DOMNode]:
+    def __iter__(self) -> Iterator[Widget]:
         return iter(self._nodes)
+
+    def __getitem__(self, index: int) -> DOMNode:
+        return self._nodes[index]
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._nodes
@@ -73,6 +79,7 @@ class DOMQuery:
         Returns:
             DOMQuery: New DOM Query.
         """
+
         selector_set = parse_selectors(selector)
         query = DOMQuery(
             nodes=[_node for _node in self._nodes if match(selector_set, _node)]
@@ -94,7 +101,7 @@ class DOMQuery:
         )
         return query
 
-    def first(self) -> DOMNode:
+    def first(self) -> Widget:
         """Get the first matched node.
 
         Returns:
@@ -102,6 +109,19 @@ class DOMQuery:
         """
         if self._nodes:
             return self._nodes[0]
+        else:
+            raise NoMatchingNodesError(
+                f"No nodes match the selector {self._selector!r}"
+            )
+
+    def last(self) -> Widget:
+        """Get the last matched node.
+
+        Returns:
+            DOMNode: A DOM Node.
+        """
+        if self._nodes:
+            return self._nodes[-1]
         else:
             raise NoMatchingNodesError(
                 f"No nodes match the selector {self._selector!r}"
@@ -123,6 +143,12 @@ class DOMQuery:
         """Toggle the given class names from matched nodes."""
         for node in self._nodes:
             node.toggle_class(*class_names)
+        return self
+
+    def remove(self) -> DOMQuery:
+        """Remove matched nodes from the DOM"""
+        for node in self._nodes:
+            node.remove()
         return self
 
     def set_styles(self, css: str | None = None, **styles: str) -> DOMQuery:

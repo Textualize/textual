@@ -254,7 +254,7 @@ class DOMNode(MessagePump):
         """
         Returns: ``True`` if this DOMNode is displayed (``display != "none"``), ``False`` otherwise.
         """
-        return self.styles.display != "none"
+        return self.styles.display != "none" and not (self._closing or self._closed)
 
     @display.setter
     def display(self, new_val: bool | str) -> None:
