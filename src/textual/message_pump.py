@@ -219,7 +219,7 @@ class MessagePump:
         print(self, "close_messages")
         self._closing = True
         await self._message_queue.put(MessagePriority(None))
-        self.app.unregister(self)
+        self.app._unregister(self)
         cancel_tasks = list(self._child_tasks)
         for task in cancel_tasks:
             task.cancel()

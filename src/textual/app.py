@@ -603,7 +603,7 @@ class App(Generic[ReturnType], DOMNode):
         as keyword args they will be assigned an id of the key.
 
         """
-        self.register(self.screen, *anon_widgets, **widgets)
+        self._register(self.screen, *anon_widgets, **widgets)
 
     def mount_all(self, widgets: Iterable[Widget]) -> None:
         """Mount widgets from an iterable.
@@ -612,7 +612,7 @@ class App(Generic[ReturnType], DOMNode):
             widgets (Iterable[Widget]): An iterable of widgets.
         """
         for widget in widgets:
-            self.register(self.screen, widget)
+            self._register(self.screen, widget)
 
     def push_screen(self, screen: Screen | None = None) -> Screen:
         """Push a new screen on the screen stack.
@@ -856,7 +856,7 @@ class App(Generic[ReturnType], DOMNode):
             return True
         return False
 
-    def register(
+    def _register(
         self, parent: DOMNode, *anon_widgets: Widget, **widgets: Widget
     ) -> None:
         """Mount widget(s) so they may receive events.
@@ -878,13 +878,13 @@ class App(Generic[ReturnType], DOMNode):
                     widget.id = widget_id
                 self._register_child(parent, widget)
                 if widget.children:
-                    self.register(widget, *widget.children)
+                    self._register(widget, *widget.children)
                 apply_stylesheet(widget)
 
         for _widget_id, widget in name_widgets:
             widget.post_message_no_wait(events.Mount(sender=parent))
 
-    def unregister(self, widget: Widget) -> None:
+    def _unregister(self, widget: Widget) -> None:
         """Unregister a widget.
 
         Args:
@@ -1016,7 +1016,7 @@ class App(Generic[ReturnType], DOMNode):
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Mount):
             screen = Screen()
-            self.register(self, screen)
+            self._register(self, screen)
             self.push_screen(screen)
             await super().on_event(event)
 

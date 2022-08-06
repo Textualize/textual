@@ -40,18 +40,31 @@ class NodeList:
         return widget in self._nodes
 
     def _append(self, widget: Widget) -> None:
+        """Append a Widget.
+
+        Args:
+            widget (Widget): A widget.
+        """
         if widget not in self._nodes_set:
             self._nodes.append(widget)
             self._nodes_set.add(widget)
             self._updates += 1
 
     def _remove(self, widget: Widget) -> None:
+        """Remove a widget from the list.
+
+        Removing a widget not in the list is a null-op.
+
+        Args:
+            widget (Widget): A Widget in the list.
+        """
         if widget in self._nodes_set:
             del self._nodes[self._nodes.index(widget)]
             self._nodes_set.remove(widget)
             self._updates += 1
 
     def _clear(self) -> None:
+        """Clear the node list."""
         if self._nodes:
             self._nodes.clear()
             self._nodes_set.clear()

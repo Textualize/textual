@@ -191,7 +191,7 @@ class Widget(DOMNode):
 
 
         """
-        self.app.register(self, *anon_widgets, **widgets)
+        self.app._register(self, *anon_widgets, **widgets)
         self.screen.refresh()
 
     def compose(self) -> ComposeResult:
