@@ -598,6 +598,11 @@ class DOMNode(MessagePump):
 
     @property
     def auto_refresh(self) -> float | None:
+        """Return the currently set auto-refresh interval.
+
+        Returns:
+            the auto-refresh interval or None if not set
+        """
         if self._auto_refresh_timer:
             return self._auto_refresh_timer._interval
         else:
@@ -605,6 +610,14 @@ class DOMNode(MessagePump):
 
     @auto_refresh.setter
     def auto_refresh(self, interval: float | None) -> None:
+        """Set the auto-refresh interval.
+
+        Assigning a float value will set (or reset) the auto-refresh behaviour with the
+        provided interval value. Assigning None will disable the auto-refresh behaviour.
+
+        Args:
+            interval: the auto-refresh interval or None to disable auto-refresh
+        """
         if self._auto_refresh_timer:
             self._auto_refresh_timer.stop_no_wait()
 
