@@ -1,35 +1,37 @@
 from .widget import Widget
 
 
-class Vertical(Widget):
-    """A container widget to align children vertically."""
+class Container(Widget):
+    """Simple container widget, with vertical layout."""
 
     CSS = """
-    Vertical {
+    Container {
         layout: vertical;       
         overflow: auto;
     }    
     """
 
 
-class Horizontal(Widget):
+class Vertical(Container):
+    """A container widget to align children vertically."""
+
+
+class Horizontal(Container):
     """A container widget to align children horizontally."""
 
     CSS = """
     Horizontal {
-        layout: horizontal;
-        overflow: auto;
+        layout: horizontal;        
     }    
     """
 
 
-class Center(Widget):
+class Center(Container):
     """A container widget to align children in the center."""
 
     CSS = """
     Center {
-        layout: center;
-        overflow: auto;
+        layout: center;        
     }
     
     """
