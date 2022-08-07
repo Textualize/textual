@@ -235,10 +235,10 @@ class ScrollBar(Widget):
         if self.grabbed:
             self.release_mouse()
 
-    async def on_enter(self, event: events.Enter) -> None:
+    def on_enter(self, event: events.Enter) -> None:
         self.mouse_over = True
 
-    async def on_leave(self, event: events.Leave) -> None:
+    def on_leave(self, event: events.Leave) -> None:
         self.mouse_over = False
 
     async def action_scroll_down(self) -> None:

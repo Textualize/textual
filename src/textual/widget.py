@@ -1128,10 +1128,10 @@ class Widget(DOMNode):
             self.mount(*widgets)
             self.screen.refresh(repaint=False, layout=True)
 
-    def on_leave(self) -> None:
+    def on_leave(self, event: events.Leave) -> None:
         self.mouse_over = False
 
-    def on_enter(self) -> None:
+    def on_enter(self, event: events.Enter) -> None:
         self.mouse_over = True
 
     def on_focus(self, event: events.Focus) -> None:
