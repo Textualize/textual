@@ -21,3 +21,15 @@ class Horizontal(Widget):
         overflow: auto;
     }    
     """
+
+
+class Center(Widget):
+    """A container widget to align children in the center."""
+
+    CSS = """
+    Center {
+        layout: center;
+        overflow: auto;
+    }
+    
+    """
