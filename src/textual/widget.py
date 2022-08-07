@@ -1090,7 +1090,7 @@ class Widget(DOMNode):
         """Give input focus to this widget."""
         self.app.set_focus(self)
 
-    async def capture_mouse(self, capture: bool = True) -> None:
+    def capture_mouse(self, capture: bool = True) -> None:
         """Capture (or release) the mouse.
 
         When captured, all mouse coordinates will go to this widget even when the pointer is not directly over the widget.
@@ -1098,14 +1098,14 @@ class Widget(DOMNode):
         Args:
             capture (bool, optional): True to capture or False to release. Defaults to True.
         """
-        await self.app.capture_mouse(self if capture else None)
+        self.app.capture_mouse(self if capture else None)
 
-    async def release_mouse(self) -> None:
+    def release_mouse(self) -> None:
         """Release the mouse.
 
         Mouse events will only be sent when the mouse is over the widget.
         """
-        await self.app.capture_mouse(None)
+        self.app.capture_mouse(None)
 
     async def broker_event(self, event_name: str, event: events.Event) -> bool:
         return await self.app.broker_event(event_name, event, default_namespace=self)

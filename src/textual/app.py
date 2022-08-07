@@ -680,7 +680,7 @@ class App(Generic[ReturnType], DOMNode):
                 finally:
                     self.mouse_over = widget
 
-    async def capture_mouse(self, widget: Widget | None) -> None:
+    def capture_mouse(self, widget: Widget | None) -> None:
         """Send all mouse events to the given widget, disable mouse capture.
 
         Args:
@@ -689,12 +689,12 @@ class App(Generic[ReturnType], DOMNode):
         if widget == self.mouse_captured:
             return
         if self.mouse_captured is not None:
-            await self.mouse_captured.post_message(
+            self.mouse_captured.post_message_no_wait(
                 events.MouseRelease(self, self.mouse_position)
             )
         self.mouse_captured = widget
         if widget is not None:
-            await widget.post_message(events.MouseCapture(self, self.mouse_position))
+            widget.post_message_no_wait(events.MouseCapture(self, self.mouse_position))
 
     def panic(self, *renderables: RenderableType) -> None:
         """Exits the app then displays a message.
