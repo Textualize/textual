@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from fractions import Fraction
-from typing import cast
 
-from textual.geometry import Size, Region
-from textual._layout import ArrangeResult, Layout, WidgetPlacement
-from textual.widget import Widget
+from ..geometry import Size, Region
+from .._layout import ArrangeResult, Layout, WidgetPlacement
+from ..widget import Widget
 
 
 class CenterLayout(Layout):
