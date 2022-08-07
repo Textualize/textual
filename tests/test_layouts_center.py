@@ -1,7 +1,7 @@
-from textual.geometry import Region, Size
-from textual.widget import Widget
-from textual.layouts.center import CenterLayout
 from textual._layout import WidgetPlacement
+from textual.geometry import Region, Size
+from textual.layouts.center import CenterLayout
+from textual.widget import Widget
 
 
 def test_center_layout():

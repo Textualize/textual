@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from fractions import Fraction
 
-from ..geometry import Size, Region
 from .._layout import ArrangeResult, Layout, WidgetPlacement
+from ..geometry import Region, Size
 from ..widget import Widget
 
 
