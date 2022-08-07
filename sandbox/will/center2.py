@@ -27,6 +27,10 @@ class CenterApp(App):
         margin: 2 4;  
     }
 
+    #sidebar.hidden {
+       width: 0;
+    }
+
     Static {        
         background: $panel;
         color: $text-panel;
@@ -34,6 +38,9 @@ class CenterApp(App):
     }
     
     """
+
+    def on_mount(self) -> None:
+        self.bind("t", "toggle_class('#sidebar', 'hidden')")
 
     def compose(self):
         yield Static("Sidebar", id="sidebar")
@@ -45,4 +52,4 @@ class CenterApp(App):
         )
 
 
-app = CenterApp()
+app = CenterApp(log_verbosity=3)

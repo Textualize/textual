@@ -1040,7 +1040,9 @@ class Widget(DOMNode):
 
         if layout:
             self._layout_required = True
-            self._clear_arrangement_cache()
+            if isinstance(self._parent, Widget):
+                self._parent._clear_arrangement_cache()
+
         if repaint:
             self._set_dirty(*regions)
             self._content_width_cache = (None, 0)
