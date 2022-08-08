@@ -632,7 +632,6 @@ class Compositor:
             update_regions: set[Region] = set()
         else:
             update_regions = self._dirty_regions.copy()
-
             if screen_region in update_regions:
                 # If one of the updates is the entire screen, then we only need one update
                 full = True
