@@ -1,3 +1,5 @@
+# TODO: This is deprecated (and probably doesn't work any more)
+
 from __future__ import annotations
 
 import sys

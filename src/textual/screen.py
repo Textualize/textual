@@ -170,7 +170,6 @@ class Screen(Widget):
         self.update_timer.pause()
         try:
             hidden, shown, resized = self._compositor.reflow(self, size)
-
             Hide = events.Hide
             Show = events.Show
             for widget in hidden:

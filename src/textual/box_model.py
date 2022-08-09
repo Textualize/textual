@@ -81,7 +81,7 @@ def get_box_model(
         )
         content_width = min(content_width, max_width)
 
-    content_width = max(Fraction(1), content_width)
+    content_width = max(Fraction(0), content_width)
 
     if styles.height is None:
         # No height specified, fill the available space
