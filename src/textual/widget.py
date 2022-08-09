@@ -181,7 +181,17 @@ class Widget(DOMNode):
             self.scroll_to(0, 0, animate=False)
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
-        self.app.register(self, *anon_widgets, **widgets)
+        """Mount child widgets (making this widget a container).
+
+        Widgets may be passed as positional arguments or keyword arguments. If keyword arguments,
+        the keys will be set as the Widget's id.
+
+        Example:
+            self.mount(Static("hello"), header=Header())
+
+
+        """
+        self.app._register(self, *anon_widgets, **widgets)
         self.screen.refresh()
 
     def compose(self) -> ComposeResult:
@@ -815,6 +825,17 @@ class Widget(DOMNode):
             )
         return delta
 
+    def scroll_visible(self) -> bool:
+        """Scroll the container to make this widget visible.
+
+        Returns:
+            bool: True if the parent was scrolled.
+        """
+        parent = self.parent
+        if isinstance(parent, Widget):
+            return parent.scroll_to_widget(self)
+        return False
+
     def __init_subclass__(
         cls,
         can_focus: bool = False,
@@ -1051,6 +1072,10 @@ class Widget(DOMNode):
 
         self.check_idle()
 
+    def remove(self) -> None:
+        """Remove the Widget from the DOM (effectively deleting it)"""
+        self.post_message_no_wait(events.Remove(self))
+
     def render(self) -> RenderableType:
         """Get renderable for widget.
 
@@ -1121,6 +1146,12 @@ class Widget(DOMNode):
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)
+
+    async def on_remove(self, event: events.Remove) -> None:
+        await self.close_messages()
+        self.app._unregister(self)
+        assert self.parent
+        self.parent.refresh(layout=True)
 
     def on_mount(self, event: events.Mount) -> None:
         widgets = list(self.compose())

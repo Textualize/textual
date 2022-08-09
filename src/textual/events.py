@@ -130,6 +130,10 @@ class Unmount(Event, bubble=False):
     """Sent when a widget is unmounted, and may no longer receive messages."""
 
 
+class Remove(Event, bubble=False):
+    """Sent to a widget to ask it to remove itself from the DOM."""
+
+
 class Show(Event, bubble=False):
     """Sent when a widget has become visible."""
 
