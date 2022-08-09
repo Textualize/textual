@@ -2,7 +2,7 @@
 
 Welcome to the Textual Introduction!
 
-This is a very gentle introduction to creating Textual applications. By the end of this document you should have an understanding of the basic concepts involved in using the Textual framework.
+By the end of this page you should have a good idea of the steps involved in creating an application with Textual.
 
 ## Pre-requisites
 
@@ -12,7 +12,7 @@ This is a very gentle introduction to creating Textual applications. By the end 
 
 ## A Simple App
 
-Let's looks at the simplest possible Textual app. It doesn't do much, but will demonstrate the basic steps you will need to create any application.
+Let's looks at the simplest possible Textual app.
 
 If you would like to follow along and run the examples, navigate to the `docs/examples/introduction` directory from the command prompt. We will be looking at `intro01.py`, which you can see here:
 
@@ -26,7 +26,7 @@ Enter the following command to run the application:
 python intro01.py
 ```
 
-The command prompt should disappear and you will see a blank screen. It will look something like the following:
+The command prompt should disappear and you will see a blank screen:
 
 ```{.textual path="docs/examples/introduction/intro01.py"}
 
@@ -34,7 +34,7 @@ The command prompt should disappear and you will see a blank screen. It will loo
 
 Hit ++ctrl+c++ to exit and return to the command prompt.
 
-### The code
+### Application mode
 
 The first step in all Textual applications is to import the `App` class from `textual.app` and extend it:
 
@@ -54,15 +54,15 @@ The `run` method will put your terminal in to "application mode" which disables 
 
 ## Handling Events
 
-Most real-world applications will want to interact with the user in some way. To do this we can make use of _event handler_ methods, which are called in response to things the user does such as pressing a key(s), moving the mouse, resizing the terminal, etc.
+Most real-world applications will want to interact with the user in some way. To do this we can make use of _event handler_ methods, which are called in response to things the user does such as pressing keys, moving the mouse, resizing the terminal, etc.
 
-Each event type is represented by an event object, which is an instance of a class containing information you may need to respond the the event. For instance the `Key` event contains the key the user pressed and a `Mouse` event will contain the coordinates of the mouse cursor.
+Each event type is represented by an event object, which is an instance of a class containing information you may need to respond the the event. For instance, the `Key` event contains the key the user pressed and a `Mouse` event will contain the coordinates of the mouse cursor.
 
 !!! note
 
     Although `intro01.py` did not explicitly define any event handlers, Textual still had to respond to events to catch ++ctrl+c++, otherwise you wouldn't be able to exit the app.
 
-The next example demonstrates handling events. Try running `intro02.py` in the `docs/examples/introduction`:
+The next example demonstrates handling events. Try running `intro02.py` in the `docs/examples/introduction` directory:
 
 ```python title="intro02.py"
 --8<-- "docs/examples/introduction/intro02.py"
@@ -82,17 +82,17 @@ If you hit any of the number keys ++0++-++9++, the background will change color 
 
 There are two event handlers in this app. Event handlers start with the text `on_` followed by the name of the event in lower case. Hence `on_mount` is called for the `Mount` event, and `on_key` is called for the `Key` event.
 
-The first event handler to run is `on_mount`. The `Mount` is sent to your application immediately after entering application mode.
+The first event handler to run is `on_mount`. The `Mount` event is sent to your application immediately after entering application mode.
 
 ```python hl_lines="19 20" title="intro02.py"
 --8<-- "docs/examples/introduction/intro02.py"
 ```
 
-This `on_mount` method sets the `background` attribute of `self.styles` to `"darkblue"` which makes the background blue when the application starts. There are a lot of other properties on the Styles object, which define how your app looks. We will explore what you can do with this object later.
+This `on_mount` method sets the `background` attribute of `self.styles` to `"darkblue"` which makes the background blue when the application starts. There are a lot of other style properties which define how your app looks. We will explore those later.
 
 !!! note
 
-    You may have noticed there is no function call to repaint the screen in this example. Textual is generally quite smart in detecting when a refresh is required, and updating the screen automatically.
+    You may have noticed there is no function call to repaint the screen in this example. Textual is generally smart enough to refresh the screen automatically.
 
 The second event handler will receive `Key` events whenever you press a key on the keyboard:
 
@@ -100,7 +100,7 @@ The second event handler will receive `Key` events whenever you press a key on t
 --8<-- "docs/examples/introduction/intro02.py"
 ```
 
-This method has an `event` positional argument which will receive the event object; in this case the `Key` event. The body of the method sets the background to a corresponding color in the `COLORS` list when you press one of the digit keys. It also calls `bell()` which is a method on App that plays your terminal's bell.
+This method has an `event` positional argument which will receive the event object; in this case the `Key` event. The body of the method sets the background to a corresponding color in the `COLORS` list when you press one of the digit keys. It also calls `bell()` to plays your terminal's bell sound.
 
 !!! note
 
@@ -122,15 +122,15 @@ Here's what you will see if you run this code:
 
 ```
 
-This script imports App as before, but also the `Widget` class from `textual.widget`, which is the base class for all Widgets. To create a Clock widget we extend from the Widget base class:
+This script imports `App` and also the `Widget` class from `textual.widget`. To create a Clock widget we extend from the Widget base class:
 
 ```python title="clock01.py" hl_lines="7 8 9 10 11 12 13"
 --8<-- "docs/examples/introduction/clock01.py"
 ```
 
-Widgets support many of the same events as the Application itself, and can be thought of as mini-applications in their own right. The Clock widget responds to a Mount event which is the first event received when a widget is _mounted_ (added to the App). The code in `Clock.on_mount` sets `styles.content_align` to tuple of `("center", "middle")` which tells Textual to display the Widget's content aligned to the horizontal center, and in the middle vertically. If you resize the terminal, you should find the time remains in the center.
+Widgets support many of the same events as the Application itself, and can be thought of as mini-applications in their own right. The Clock widget responds to a Mount event which is the first event received when a widget is _mounted_ (added to the App). The code in `Clock.on_mount` sets `styles.content_align` to tuple of `("center", "middle")` which tells Textual to center align its contents. If you size the terminal you should see that the text remains centered.
 
-The second line in `on_mount` calls `self.set_interval` which tells Textual to invoke the `self.refresh` method once per second.
+The second line in `on_mount` calls `self.set_interval` which tells Textual to invoke the `self.refresh` method once per second, so our clock remains up-to-date.
 
 When Textual refreshes a widget it calls it's `render` method:
 
@@ -138,9 +138,9 @@ When Textual refreshes a widget it calls it's `render` method:
 --8<-- "docs/examples/introduction/clock01.py"
 ```
 
-The Clocks `render` method uses the datetime module to format the current date and time. It returns a string, but can also return a _Rich renderable_. Don't worry if you aren't familiar with [Rich](https://github.com/Textualize/rich), we will cover that later.
+The Clock's `render` method uses the datetime module to format the current date and time. It returns a string, but can also return a [Rich](https://github.com/Textualize/rich) _renderable_. Don't worry if you aren't familiar with Rich, we will cover that later.
 
-Before a Widget can be displayed, it must first be mounted on the app. This is typically done within the applications Mount handler, so that an application's widgets are added when the application first starts:
+Before a Widget can be displayed, it must first be mounted on the app. This is typically done within the application's Mount handler:
 
 ```python title="clock01.py" hl_lines="17 18"
 --8<-- "docs/examples/introduction/clock01.py"
@@ -149,3 +149,23 @@ Before a Widget can be displayed, it must first be mounted on the app. This is t
 In the case of the clock application, we call `mount` with an instance of the `Clock` widget.
 
 That's all there is to this Clock example. It will display the current time until you hit ++ctrl+c++
+
+## Compose
+
+Mounting "child" widgets from from an `on_mount` event is such a common pattern that Textual offers a convenience method to do that.
+
+If you implement a `compose()` method on your App or Widget, Textual will invoke it to get your "sub-widgets". This method should return an _iterable_ such as a list, but you may find it easier to use the `yield` statement to turn it in to a Python generator:
+
+```python title="clock02.py" hl_lines="17 18"
+--8<-- "docs/examples/introduction/clock02.py"
+```
+
+Here's the clock example again using `compose()` rather than `on_mount`. Any Widgets yielded from this method will be mounted on to the App or Widget. In this case we mount our Clock widget as before.
+
+More sophisticated apps will likely yield multiple widgets from `compose()`, and many widgets will also yield child widgets of their own.
+
+## Next Steps
+
+We've seen how Textual apps can respond to events, and how to mount widgets which are like mini-applications in their own right. These are key concepts in Textual which you can use to build more sophisticated apps.
+
+The Guide covers this in much more detail, and describes how arrange widgets on the screen and connect them with the core logic of your application.
