@@ -1,61 +1,24 @@
 Screen {
-    height: 100vh;
-    width: 100%;
-    background: red;
+    background: lightcoral;
 }
 
-#horizontal {
-    width: 100%;
+#left_pane {
+    background: red;
+    width: 10;
+    height: auto;
+}
+
+#middle_pane {
+    background: green;
+    width: 140;
+}
+
+#right_pane {
+    background: blue;
+    width: 10;
 }
 
 .box {
     height: 5;
-    width: 5;
-    margin: 1 10;
-}
-
-#left_pane {
-    width: 1fr;
-    background: $background;
-}
-
-#middle_pane {
-    margin-top: 4;
-    width: 1fr;
-    background: #173f5f;
-}
-
-#middle_pane:focus {
-    tint: cyan 40%;
-}
-
-#right_pane {
-    width: 1fr;
-    background: #f6d55c;
-}
-
-.box:focus {
-    tint: cyan 40%;
-}
-
-#box1 {
-    background: green;
-}
-
-#box2 {
-    offset-y: 3;
-    background: hotpink;
-}
-
-#box3 {
-    background: red;
-}
-
-
-#box4 {
-    background: blue;
-}
-
-#box5 {
-    background: darkviolet;
+    width: 15;
 }

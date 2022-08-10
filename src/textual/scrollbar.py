@@ -9,6 +9,7 @@ from rich.segment import Segment, Segments
 from rich.style import Style, StyleType
 
 from textual.reactive import Reactive
+from textual.renderables.blank import Blank
 from . import events
 from ._types import MessageTarget
 from .geometry import Offset
@@ -285,6 +286,14 @@ class ScrollBar(Widget):
                     )
                 )
             await self.emit(ScrollTo(self, x=x, y=y))
+
+
+class ScrollBarCorner(Widget):
+    def __init__(self, name: str | None = None):
+        super().__init__(name=name)
+
+    def render(self) -> RenderableType:
+        return Blank("violet")
 
 
 if __name__ == "__main__":

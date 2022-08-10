@@ -405,6 +405,7 @@ class Compositor:
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(
                     container_region
                 ):
+                    print(chrome_widget, chrome_region)
                     map[chrome_widget] = MapGeometry(
                         chrome_region + layout_offset,
                         order,
