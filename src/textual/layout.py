@@ -33,5 +33,4 @@ class Center(Container):
     Center {
         layout: center;        
     }
-    
     """
