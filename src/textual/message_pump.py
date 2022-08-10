@@ -55,7 +55,7 @@ class MessagePriority:
 
 
 class MessagePumpMeta(type):
-    """Metaclass for message pump. This exists to populate an Event class of a Widget with the
+    """Metaclass for message pump. This exists to populate a Message inner class of a Widget with the
     parent classes' name.
 
     """
