@@ -87,7 +87,8 @@ class DOMNode(MessagePump):
         Returns:
             Iterator[Type[DOMNode]]: An iterable of DOMNode classes.
         """
-        return self._css_bases(self.__class__)
+        # Node bases are in reversed order so that the base class is lower priority
+        return reversed(list(self._css_bases(self.__class__)))
 
     @classmethod
     def _css_bases(cls, base: Type[DOMNode]) -> Iterator[Type[DOMNode]]:
