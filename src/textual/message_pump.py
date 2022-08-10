@@ -317,7 +317,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         log("CLOSED", self)
 
     async def dispatch_message(self, message: Message) -> None:
-        """Dispatch a message received form the message queue.
+        """Dispatch a message received from the message queue.
 
         Args:
             message (Message): A message object
