@@ -73,6 +73,7 @@ class Widget(DOMNode):
         scrollbar-background-hover: $panel-darken-2;
         scrollbar-color: $primary-lighten-1;
         scrollbar-color-active: $warning-darken-1;
+        scrollbar-corner-color: $panel-darken-3;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
     }
@@ -344,6 +345,9 @@ class Widget(DOMNode):
 
     @property
     def scrollbar_corner(self) -> ScrollBarCorner:
+        """Return the ScrollBarCorner - the cells that appear between the
+        horizontal and vertical scrollbars (only when both are visible).
+        """
         from .scrollbar import ScrollBarCorner
 
         if self._scrollbar_corner is not None:

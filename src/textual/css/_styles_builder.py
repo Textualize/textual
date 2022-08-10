@@ -600,6 +600,7 @@ class StylesBuilder:
     process_scrollbar_color = process_color
     process_scrollbar_color_hover = process_color
     process_scrollbar_color_active = process_color
+    process_scrollbar_corner_color = process_color
     process_scrollbar_background = process_color
     process_scrollbar_background_hover = process_color
     process_scrollbar_background_active = process_color

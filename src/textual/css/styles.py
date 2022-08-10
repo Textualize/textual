@@ -126,6 +126,8 @@ class RulesMap(TypedDict, total=False):
     scrollbar_color_hover: Color
     scrollbar_color_active: Color
 
+    scrollbar_corner_color: Color
+
     scrollbar_background: Color
     scrollbar_background_hover: Color
     scrollbar_background_active: Color
@@ -230,6 +232,8 @@ class StylesBase(ABC):
     scrollbar_color = ColorProperty("ansi_bright_magenta")
     scrollbar_color_hover = ColorProperty("ansi_yellow")
     scrollbar_color_active = ColorProperty("ansi_bright_yellow")
+
+    scrollbar_corner_color = ColorProperty("#666666")
 
     scrollbar_background = ColorProperty("#555555")
     scrollbar_background_hover = ColorProperty("#444444")

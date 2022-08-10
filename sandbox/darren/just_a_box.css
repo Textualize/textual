@@ -4,7 +4,7 @@ Screen {
 
 #left_pane {
     background: red;
-    width: 10;
+    width: 30;
     height: auto;
 }
 
@@ -15,7 +15,7 @@ Screen {
 
 #right_pane {
     background: blue;
-    width: 10;
+    width: 30;
 }
 
 .box {

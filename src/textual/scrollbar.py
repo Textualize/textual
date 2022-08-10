@@ -293,7 +293,9 @@ class ScrollBarCorner(Widget):
         super().__init__(name=name)
 
     def render(self) -> RenderableType:
-        return Blank("violet")
+        styles = self.parent.styles
+        color = styles.scrollbar_corner_color
+        return Blank(color)
 
 
 if __name__ == "__main__":
