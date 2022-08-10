@@ -20,15 +20,14 @@ class Message:
         "_forwarded",
         "_no_default_action",
         "_stop_propagation",
-        "__done_event",
+        "_handler_name",
     ]
 
     sender: MessageTarget
     bubble: ClassVar[bool] = True  # Message will bubble to parent
     verbosity: ClassVar[int] = 1  # Verbosity (higher the more verbose)
-    system: ClassVar[
-        bool
-    ] = False  # Message is system related and may not be handled by client code
+    no_dispatch: ClassVar[bool] = False  # Message may not be handled by client code
+    namespace: ClassVar[str] = ""  # Namespace to disambiguate messages
 
     def __init__(self, sender: MessageTarget) -> None:
         """
@@ -43,6 +42,9 @@ class Message:
         self._forwarded = False
         self._no_default_action = False
         self._stop_propagation = False
+        self._handler_name = (
+            f"on_{self.namespace}_{self.name}" if self.namespace else f"on_{self.name}"
+        )
         super().__init__()
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -52,19 +54,27 @@ class Message:
         cls,
         bubble: bool | None = True,
         verbosity: int | None = 1,
-        system: bool | None = False,
+        no_dispatch: bool | None = False,
+        namespace: str | None = None,
     ) -> None:
         super().__init_subclass__()
         if bubble is not None:
             cls.bubble = bubble
         if verbosity is not None:
             cls.verbosity = verbosity
-        if system is not None:
-            cls.system = system
+        if no_dispatch is not None:
+            cls.no_dispatch = no_dispatch
+        if namespace is not None:
+            cls.namespace = namespace
 
     @property
     def is_forwarded(self) -> bool:
         return self._forwarded
+
+    @property
+    def handler_name(self) -> str:
+        # Property to make it read only
+        return self._handler_name
 
     def set_forwarded(self) -> None:
         """Mark this event as being forwarded."""

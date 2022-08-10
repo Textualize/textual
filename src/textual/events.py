@@ -28,11 +28,6 @@ class Event(Message):
         super().__init_subclass__(bubble=bubble, verbosity=verbosity)
 
 
-class Null(Event, verbosity=3):
-    def can_replace(self, message: Message) -> bool:
-        return isinstance(message, Null)
-
-
 @rich.repr.auto
 class Callback(Event, bubble=False, verbosity=3):
     def __init__(

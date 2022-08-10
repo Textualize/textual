@@ -50,6 +50,7 @@ class InvokeLater(Message, verbosity=3):
         yield "callback", self.callback
 
 
+# TODO: This should really be an Event
 @rich.repr.auto
 class CursorMove(Message):
     def __init__(self, sender: MessagePump, line: int) -> None:
@@ -66,7 +67,7 @@ class StylesUpdated(Message):
         return isinstance(message, StylesUpdated)
 
 
-class Prompt(Message, system=True):
+class Prompt(Message, no_dispatch=True):
     """Used to 'wake up' an event loop."""
 
     def can_replace(self, message: Message) -> bool:
