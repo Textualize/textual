@@ -61,7 +61,11 @@ class MessagePumpMeta(type):
     """
 
     def __new__(
-        cls, name: str, bases: tuple[type, ...], class_dict: dict[str, Any], **kwargs
+        cls,
+        name: str,
+        bases: tuple[type, ...],
+        class_dict: dict[str, Any],
+        **kwargs,
     ):
         namespace = camel_to_snake(name)
         isclass = inspect.isclass
@@ -69,7 +73,6 @@ class MessagePumpMeta(type):
             if isclass(value) and issubclass(value, Message):
                 if not value.namespace:
                     value.namespace = namespace
-
         class_obj = super().__new__(cls, name, bases, class_dict, **kwargs)
         return class_obj
 
