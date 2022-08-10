@@ -156,9 +156,15 @@ class Screen(Widget):
             for callback in callbacks:
                 await invoke(callback)
 
-    def handle_invoke_later(self, message: messages.InvokeLater) -> None:
-        # Enqueue the callback function to be called later
-        self._callbacks.append(message.callback)
+    def _invoke_later(self, callback: CallbackType) -> None:
+        """Enqueue a callback to be invoked after the screen is repainted.
+
+        Args:
+            callback (CallbackType): A callback.
+        """
+
+        self._callbacks.append(callback)
+        self.check_idle()
 
     def _refresh_layout(self, size: Size | None = None, full: bool = False) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
@@ -201,7 +207,7 @@ class Screen(Widget):
         if display_update is not None:
             self.app._display(display_update)
 
-    async def handle_update(self, message: messages.Update) -> None:
+    async def on_update(self, message: messages.Update) -> None:
         message.stop()
         message.prevent_default()
         widget = message.widget
@@ -209,7 +215,7 @@ class Screen(Widget):
         self._dirty_widgets.add(widget)
         self.check_idle()
 
-    async def handle_layout(self, message: messages.Layout) -> None:
+    async def on_layout(self, message: messages.Layout) -> None:
         message.stop()
         message.prevent_default()
         self._layout_required = True

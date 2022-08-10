@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from typing import Any
 import inspect
 from asyncio import CancelledError
 from asyncio import PriorityQueue, QueueEmpty, Task
@@ -10,10 +11,12 @@ from weakref import WeakSet
 
 from . import events
 from . import log
+from .case import camel_to_snake
 from ._timer import Timer, TimerCallback
 from ._callback import invoke
 from ._context import active_app, NoActiveAppError
 from .message import Message
+from .events import Event
 from . import messages
 
 if TYPE_CHECKING:
@@ -51,7 +54,27 @@ class MessagePriority:
         return self.priority > other.priority
 
 
-class MessagePump:
+class MessagePumpMeta(type):
+    """Metaclass for message pump. This exists to populate an Event class of a Widget with the
+    parent classes' name.
+
+    """
+
+    def __new__(
+        cls, name: str, bases: tuple[type, ...], class_dict: dict[str, Any], **kwargs
+    ):
+        namespace = camel_to_snake(name)
+        isclass = inspect.isclass
+        for value in class_dict.values():
+            if isclass(value) and issubclass(value, Message):
+                if not value.namespace:
+                    value.namespace = namespace
+
+        class_obj = super().__new__(cls, name, bases, class_dict, **kwargs)
+        return class_obj
+
+
+class MessagePump(metaclass=MessagePumpMeta):
     def __init__(self, parent: MessagePump | None = None) -> None:
         self._message_queue: PriorityQueue[MessagePriority] = PriorityQueue()
         self._parent = parent
@@ -204,9 +227,9 @@ class MessagePump:
         message = messages.InvokeLater(self, partial(callback, *args, **kwargs))
         self.post_message_no_wait(message)
 
-    def handle_invoke_later(self, message: messages.InvokeLater) -> None:
+    def on_invoke_later(self, message: messages.InvokeLater) -> None:
         # Forward InvokeLater message to the Screen
-        self.app.screen.post_message_no_wait(message)
+        self.app.screen._invoke_later(message.callback)
 
     def close_messages_no_wait(self) -> None:
         """Request the message queue to exit."""
@@ -290,20 +313,32 @@ class MessagePump:
 
         log("CLOSED", self)
 
-    async def dispatch_message(self, message: Message) -> bool | None:
+    async def dispatch_message(self, message: Message) -> None:
+        """Dispatch a message received form the message queue.
+
+        Args:
+            message (Message): A message object
+        """
         _rich_traceback_guard = True
-        if message.system:
-            return False
-        if isinstance(message, events.Event):
-            if not isinstance(message, events.Null):
-                await self.on_event(message)
+        if message.no_dispatch:
+            return
+
+        # Allow apps to treat events and messages separately
+        if isinstance(message, Event):
+            await self.on_event(message)
         else:
-            return await self.on_message(message)
-        return False
+            await self.on_message(message)
 
     def _get_dispatch_methods(
         self, method_name: str, message: Message
     ) -> Iterable[tuple[type, Callable[[Message], Awaitable]]]:
+        """Gets handlers from the MRO
+
+        Args:
+            method_name (str): Handler method name.
+            message (Message): Message object.
+
+        """
         for cls in self.__class__.__mro__:
             if message._no_default_action:
                 break
@@ -312,47 +347,57 @@ class MessagePump:
                 yield cls, method.__get__(self, cls)
 
     async def on_event(self, event: events.Event) -> None:
-        _rich_traceback_guard = True
+        """Called to process an event.
 
-        for cls, method in self._get_dispatch_methods(f"on_{event.name}", event):
-            log(
-                event,
-                ">>>",
-                self,
-                f"method=<{cls.__name__}.{method.__func__.__name__}>",
-                verbosity=event.verbosity,
-            )
-            await invoke(method, event)
-
-        if event.bubble and self._parent and not event._stop_propagation:
-            if event.sender == self._parent:
-                # parent is sender, so we stop propagation after parent
-                event.stop()
-            if self.is_parent_active:
-                await self._parent.post_message(event)
+        Args:
+            event (events.Event): An Event object.
+        """
+        await self.on_message(event)
 
     async def on_message(self, message: Message) -> None:
-        _rich_traceback_guard = True
-        method_name = f"handle_{message.name}"
-        method = getattr(self, method_name, None)
+        """Called to process a message.
 
-        if method is not None:
-            log(message, ">>>", self, verbosity=message.verbosity)
+        Args:
+            message (Message): A Message object.
+        """
+        _rich_traceback_guard = True
+        handler_name = message._handler_name
+
+        # Look through the MRO to find a handler
+        for cls, method in self._get_dispatch_methods(handler_name, message):
+            log(
+                message,
+                ">>>",
+                self,
+                f"method=<{cls.__name__}.{handler_name}>",
+                verbosity=message.verbosity,
+            )
             await invoke(method, message)
 
+        # Bubble messages up the DOM (if enabled on the message)
         if message.bubble and self._parent and not message._stop_propagation:
             if message.sender == self._parent:
                 # parent is sender, so we stop propagation after parent
                 message.stop()
-            if not self._parent._closed and not self._parent._closing:
+            if self.is_parent_active and not self._parent._closing:
                 await self._parent.post_message(message)
 
-    def check_idle(self):
+    def check_idle(self) -> None:
         """Prompt the message pump to call idle if the queue is empty."""
         if self._message_queue.empty():
             self.post_message_no_wait(messages.Prompt(sender=self))
 
     async def post_message(self, message: Message) -> bool:
+        """Post a message or an event to this message pump.
+
+        Args:
+            message (Message): A message object.
+
+        Returns:
+            bool: True if the messages was posted successfully, False if the message was not posted
+                (because the message pump was in the process of closing).
+        """
+
         if self._closing or self._closed:
             return False
         if not self.check_message_enabled(message):
@@ -374,6 +419,7 @@ class MessagePump:
         Returns:
             bool: True if the messages was processed.
         """
+
         if self._closing or self._closed:
             return False
         if not self.check_message_enabled(message):
@@ -382,6 +428,7 @@ class MessagePump:
         return True
 
     def post_message_no_wait(self, message: Message) -> bool:
+
         if self._closing or self._closed:
             return False
         if not self.check_message_enabled(message):

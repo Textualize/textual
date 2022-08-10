@@ -46,7 +46,7 @@ class AddRemoveApp(App):
             layout.Vertical(id="items"),
         )
 
-    def handle_pressed(self, event: Button.Pressed) -> None:
+    def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "add":
             self.count += 1
             self.query("#items").first().mount(

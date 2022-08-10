@@ -23,7 +23,6 @@ async def invoke(callback: Callable, *params: object) -> Any:
     """
     _rich_traceback_guard = True
     parameter_count = count_parameters(callback)
-
     result = callback(*params[:parameter_count])
     if isawaitable(result):
         result = await result

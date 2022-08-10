@@ -1035,7 +1035,8 @@ class App(Generic[ReturnType], DOMNode):
                 # Forward the event to the view
                 await self.screen.forward_event(event)
         elif isinstance(event, events.Paste):
-            await self.focused.forward_event(event)
+            if self.focused is not None:
+                await self.focused.forward_event(event)
         else:
             await super().on_event(event)
 
@@ -1111,11 +1112,11 @@ class App(Generic[ReturnType], DOMNode):
             return False
         return True
 
-    async def handle_update(self, message: messages.Update) -> None:
+    async def on_update(self, message: messages.Update) -> None:
         message.stop()
         self._paint()
 
-    async def handle_layout(self, message: messages.Layout) -> None:
+    async def on_layout(self, message: messages.Layout) -> None:
         message.stop()
         self._paint()
 
@@ -1167,7 +1168,7 @@ class App(Generic[ReturnType], DOMNode):
     async def action_toggle_class(self, selector: str, class_name: str) -> None:
         self.screen.query(selector).toggle_class(class_name)
 
-    def handle_terminal_supports_synchronized_output(
+    def on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput
     ) -> None:
         log("[b green]SynchronizedOutput mode is supported")

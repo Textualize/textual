@@ -27,7 +27,7 @@ class ButtonsApp(App[str]):
             Button("There can be only one"),
         )
 
-    def handle_pressed(self, event: Button.Pressed) -> None:
+    def on_button_pressed(self, event: Button.Pressed) -> None:
         self.app.bell()
 
     async def on_key(self, event: events.Key) -> None:
@@ -38,7 +38,7 @@ class ButtonsApp(App[str]):
 
 
 app = ButtonsApp(
-    log_path="textual.log", css_path="buttons.css", watch_css=True, log_verbosity=2
+    log_path="textual.log", css_path="buttons.css", watch_css=True, log_verbosity=3
 )
 
 if __name__ == "__main__":
