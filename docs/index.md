@@ -2,7 +2,11 @@
 
 Welcome to the [Textual](https://github.com/Textualize/textual) framework documentation. Built with ❤️ by [Textualize.io](https://www.textualize.io)
 
-Textual is a Python framework for building applications that run within your terminal. Known as TUIs (Text User Interfaces), such applications have a multitude of benefits:
+<hr>
+
+Textual is a Python framework for building applications that run within your terminal.
+
+Such text-based applications have a number of benefits:
 
 - **Quick to develop:** Textual is a modern Python API.
 - **Low requirements:** Run Textual apps anywhere with a Python interpreter, even single-board computers.
@@ -20,7 +24,7 @@ Textual TUIs are quick and easy to build with pure Python (not to mention _fun_)
 
 ## Installation
 
-You can install Textual via Pypi.
+You can install Textual via PyPi.
 
 If you plan on developing Textual apps, then you can install `textual[dev]`. The `[dev]` part installs a few extra dependencies for development.
 
@@ -28,7 +32,7 @@ If you plan on developing Textual apps, then you can install `textual[dev]`. The
 pip install textual[dev]
 ```
 
-If you only plan on running Textual apps, then you can drop the `[dev]` part:
+If you only plan on _running_ Textual apps, then you can drop the `[dev]` part:
 
 ```bash
 pip install textual

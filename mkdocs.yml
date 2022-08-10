@@ -6,6 +6,8 @@ nav:
   - "introduction.md"
   - Guide:
     - "guide/guide.md"
+    - "guide/events.md"
+    - "guide/devtools.md"
   - "actions.md"
   - Events:
     - "events/mount.md"

@@ -1,0 +1,37 @@
+# Textual Devtools
+
+Textual comes with a command line application of the same name. The `textual` command is a super useful tool that will help you to build apps.
+
+## Run
+
+You can run Textual apps with the `run` subcommand. If you supply a path to a Python file it will load and run the application.
+
+```bash
+textual run my_app.py
+```
+
+The `run` sub-command assumes you have a Application instance called `app` in the global scope of your Python file. If the application is called something different, you can specify it with a colon following the filename:
+
+```
+textual run my_app.py:alternative_app
+```
+
+## Console
+
+When running any terminal application, you can no longer use `print` when debugging (or log to the console). This is because anything you write to standard output would typically overwrite application content, which generally makes an unreadable mess. Fortunately Textual supplies a debug console of it's own which has some super helpful features.
+
+To use the console, open up 2 console emulators. In the first one, run the following:
+
+```bash
+textual console
+```
+
+In the other console, run your application using `textual run` and the `--dev` switch:
+
+```bash
+textual run my_app.py --dev
+```
+
+You should notice that the console will display information regarding the running application, such as events which are sent.
+
+Anything you `print` from your application will be displayed in the console window. You can also call the `log()` method on App and Widget objects for advanced formatting. Try it with `self.log(self.tree)`.
