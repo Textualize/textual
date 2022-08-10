@@ -417,31 +417,37 @@ class MessagePump(metaclass=MessagePumpMeta):
             message (Message): A message.
 
         Returns:
-            bool: True if the messages was processed.
+            bool: True if the messages was processed, False if it wasn't.
         """
-
         if self._closing or self._closed:
             return False
         if not self.check_message_enabled(message):
-            return True
+            return False
         await self._message_queue.put(MessagePriority(message, -1))
         return True
 
     def post_message_no_wait(self, message: Message) -> bool:
+        """Posts a message on the queue.
 
+        Args:
+            message (Message): A message (or Event).
+
+        Returns:
+            bool: True if the messages was processed, False if it wasn't.
+        """
         if self._closing or self._closed:
             return False
         if not self.check_message_enabled(message):
-            return True
+            return False
         self._message_queue.put_nowait(MessagePriority(message))
         return True
 
-    async def post_message_from_child(self, message: Message) -> bool:
+    async def _post_message_from_child(self, message: Message) -> bool:
         if self._closing or self._closed:
             return False
         return await self.post_message(message)
 
-    def post_message_from_child_no_wait(self, message: Message) -> bool:
+    def _post_message_from_child_no_wait(self, message: Message) -> bool:
         if self._closing or self._closed:
             return False
         return self.post_message_no_wait(message)
@@ -451,13 +457,13 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def emit_no_wait(self, message: Message) -> bool:
         if self._parent:
-            return self._parent.post_message_from_child_no_wait(message)
+            return self._parent._post_message_from_child_no_wait(message)
         else:
             return False
 
     async def emit(self, message: Message) -> bool:
         if self._parent:
-            return await self._parent.post_message_from_child(message)
+            return await self._parent._post_message_from_child(message)
         else:
             return False
 
