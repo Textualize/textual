@@ -12,7 +12,7 @@ class ButtonsApp(App[str]):
             Button.error("error", id="baz"),
         )
 
-    def handle_pressed(self, event: Button.Pressed) -> None:
+    def on_button_pressed(self, event: Button.Pressed) -> None:
         self.app.bell()
 
     async def on_key(self, event: events.Key) -> None:

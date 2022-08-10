@@ -48,7 +48,7 @@ class InputApp(App[str]):
         )
         self.mount(text_area=TextArea())
 
-    def handle_changed(self, event: TextWidgetBase.Changed) -> None:
+    def on_text_widget_base_changed(self, event: TextWidgetBase.Changed) -> None:
         try:
             value = float(event.value)
         except ValueError:

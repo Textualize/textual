@@ -50,7 +50,7 @@ class BorderApp(App):
         self.text = Static(TEXT)
         yield self.text
 
-    def handle_pressed(self, event):
+    def on_button_pressed(self, event: Button.Pressed) -> None:
         self.text.styles.border = (
             event.button.id,
             self.stylesheet.variables["primary"],

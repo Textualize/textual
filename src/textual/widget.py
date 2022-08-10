@@ -1118,13 +1118,12 @@ class Widget(DOMNode):
         Args:
             event (events.Idle): Idle event.
         """
-
         if self._repaint_required:
+            self._repaint_required = False
             self.screen.post_message_no_wait(messages.Update(self, self))
         if self._layout_required:
+            self._layout_required = False
             self.screen.post_message_no_wait(messages.Layout(self))
-        self._layout_required = False
-        self._repaint_required = False
 
     def focus(self) -> None:
         """Give input focus to this widget."""
@@ -1218,27 +1217,27 @@ class Widget(DOMNode):
             if self.scroll_up(animate=False):
                 event.stop()
 
-    def handle_scroll_to(self, message: ScrollTo) -> None:
+    def on_scroll_to(self, message: ScrollTo) -> None:
         if self.is_scrollable:
             self.scroll_to(message.x, message.y, animate=message.animate, duration=0.1)
             message.stop()
 
-    def handle_scroll_up(self, event: ScrollUp) -> None:
+    def on_scroll_up(self, event: ScrollUp) -> None:
         if self.is_scrollable:
             self.scroll_page_up()
             event.stop()
 
-    def handle_scroll_down(self, event: ScrollDown) -> None:
+    def on_scroll_down(self, event: ScrollDown) -> None:
         if self.is_scrollable:
             self.scroll_page_down()
             event.stop()
 
-    def handle_scroll_left(self, event: ScrollLeft) -> None:
+    def on_scroll_left(self, event: ScrollLeft) -> None:
         if self.is_scrollable:
             self.scroll_page_left()
             event.stop()
 
-    def handle_scroll_right(self, event: ScrollRight) -> None:
+    def on_scroll_right(self, event: ScrollRight) -> None:
         if self.is_scrollable:
             self.scroll_page_right()
             event.stop()
