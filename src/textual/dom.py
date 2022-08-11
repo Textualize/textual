@@ -524,6 +524,20 @@ class DOMNode(MessagePump):
 
         return DOMQuery(self, selector)
 
+    def query_one(self, selector: str) -> Widget:
+        """Get the first Widget matching the given selector.
+
+        Args:
+            selector (str | None, optional): A selector.
+
+        Returns:
+            Widget: A widget matching the selector.
+        """
+        from .css.query import DOMQuery
+
+        query = DOMQuery(self.screen, selector)
+        return query.first()
+
     def set_styles(self, css: str | None = None, **styles) -> None:
         """Set custom styles on this object."""
         # TODO: This can be done more efficiently

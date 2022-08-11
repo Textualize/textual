@@ -560,33 +560,6 @@ class App(Generic[ReturnType], DOMNode):
     def render(self) -> RenderableType:
         return Blank()
 
-    def query(self, selector: str | None = None) -> DOMQuery:
-        """Get a DOM query in the current screen.
-
-        Args:
-            selector (str, optional): A CSS selector or `None` for all nodes. Defaults to None.
-
-        Returns:
-            DOMQuery: A query object.
-        """
-        from .css.query import DOMQuery
-
-        return DOMQuery(self.screen, selector)
-
-    def query_one(self, selector: str) -> Widget:
-        """Get the first Widget matching the given selector.
-
-        Args:
-            selector (str | None, optional): A selector.
-
-        Returns:
-            Widget: _description_
-        """
-        from .css.query import DOMQuery
-
-        query = DOMQuery(self.screen, selector)
-        return query.first()
-
     def get_child(self, id: str) -> DOMNode:
         """Shorthand for self.screen.get_child(id: str)
         Returns the first child (immediate descendent) of this DOMNode
