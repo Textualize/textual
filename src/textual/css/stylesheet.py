@@ -137,7 +137,6 @@ class Stylesheet:
         self._rules: list[RuleSet] = []
         self.variables = variables or {}
         self.source: dict[str, CssSource] = {}
-        self._source_visited: set[str] = set()
         self._require_parse = False
 
     def __rich_repr__(self) -> rich.repr.Result:
