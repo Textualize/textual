@@ -18,7 +18,7 @@ class Box(Widget, can_focus=True):
 
 class JustABox(App):
     def compose(self) -> ComposeResult:
-
+        # yield Container(Box(classes="box"))
         yield Horizontal(
             Vertical(
                 Box(id="box1", classes="box"),

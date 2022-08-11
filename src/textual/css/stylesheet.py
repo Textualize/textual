@@ -128,7 +128,7 @@ class CssSource(NamedTuple):
 
     content: str
     is_defaults: bool
-    tie_breaker: int
+    tie_breaker: int = 0
 
 
 @rich.repr.auto(angular=True)
