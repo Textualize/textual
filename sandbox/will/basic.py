@@ -6,7 +6,8 @@ from rich.text import Text
 from textual.app import App, ComposeResult
 from textual.reactive import Reactive
 from textual.widget import Widget
-from textual.widgets import Static, DataTable
+from textual.widgets import Static, DataTable, DirectoryTree
+from textual.layout import Vertical
 
 CODE = '''
 from __future__ import annotations
@@ -130,6 +131,7 @@ class BasicApp(App, css_path="basic.css"):
                 classes="scrollable",
             ),
             table,
+            Widget(DirectoryTree("~/projects/textual"), id="tree-container"),
             Error(),
             Tweet(TweetBody(), classes="scrollbar-size-custom"),
             Warning(),

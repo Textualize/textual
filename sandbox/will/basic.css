@@ -24,6 +24,23 @@ App > Screen {
   
 }
 
+#tree-container {
+  overflow-y: auto;
+  height: 20; 
+  margin: 1 2;
+  background: $panel;
+  padding: 1 2;
+}
+
+DirectoryTree {
+    padding: 0 1;
+    height: auto;
+   
+}
+
+
+
+
 DataTable {
   /*border:heavy red;*/
   /* tint: 10% green; */
