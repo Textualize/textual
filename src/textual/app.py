@@ -560,19 +560,6 @@ class App(Generic[ReturnType], DOMNode):
     def render(self) -> RenderableType:
         return Blank()
 
-    def query(self, selector: str | None = None) -> DOMQuery:
-        """Get a DOM query in the current screen.
-
-        Args:
-            selector (str, optional): A CSS selector or `None` for all nodes. Defaults to None.
-
-        Returns:
-            DOMQuery: A query object.
-        """
-        from .css.query import DOMQuery
-
-        return DOMQuery(self.screen, selector)
-
     def get_child(self, id: str) -> DOMNode:
         """Shorthand for self.screen.get_child(id: str)
         Returns the first child (immediate descendent) of this DOMNode
@@ -763,8 +750,10 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if self.css_path is not None:
                 self.stylesheet.read(self.css_path)
-            for path, css in self.css:
-                self.stylesheet.add_source(css, path=path)
+            for path, css, tie_breaker in self.get_default_css():
+                self.stylesheet.add_source(
+                    css, path=path, is_default_css=True, tie_breaker=tie_breaker
+                )
         except Exception as error:
             self.on_exception(error)
             self._print_error_renderables()
