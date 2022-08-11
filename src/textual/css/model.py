@@ -157,6 +157,7 @@ class RuleSet:
     errors: list[tuple[Token, str]] = field(default_factory=list)
     classes: set[str] = field(default_factory=set)
     is_default_rules: bool = False
+    tie_breaker: int = 0
 
     @classmethod
     def _selector_to_css(cls, selectors: list[Selector]) -> str:

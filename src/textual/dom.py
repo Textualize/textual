@@ -88,7 +88,7 @@ class DOMNode(MessagePump):
             Iterator[Type[DOMNode]]: An iterable of DOMNode classes.
         """
         # Node bases are in reversed order so that the base class is lower priority
-        return reversed(list(self._css_bases(self.__class__)))
+        return self._css_bases(self.__class__)
 
     @classmethod
     def _css_bases(cls, base: Type[DOMNode]) -> Iterator[Type[DOMNode]]:
@@ -125,8 +125,7 @@ class DOMNode(MessagePump):
         if self._classes:
             yield "classes", " ".join(self._classes)
 
-    @property
-    def css(self) -> list[tuple[str, str]]:
+    def get_default_css(self) -> list[tuple[str, str, int]]:
         """Gets the CSS for this class and inherited from bases.
 
         Returns:
@@ -134,7 +133,7 @@ class DOMNode(MessagePump):
                 and inherited from base classes.
         """
 
-        css_stack: list[tuple[str, str]] = []
+        css_stack: list[tuple[str, str, int]] = []
 
         def get_path(base: Type[DOMNode]) -> str:
             """Get a path to the DOM Node"""
@@ -143,10 +142,10 @@ class DOMNode(MessagePump):
             except TypeError:
                 return f"{base.__name__}"
 
-        for base in self._node_bases:
+        for tie_breaker, base in enumerate(self._node_bases):
             css = base.CSS.strip()
             if css:
-                css_stack.append((get_path(base), css))
+                css_stack.append((get_path(base), css, -tie_breaker))
 
         return css_stack
 

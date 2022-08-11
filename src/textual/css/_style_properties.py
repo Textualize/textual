@@ -725,7 +725,7 @@ class StringEnumProperty:
         else:
             if value not in self._valid_values:
                 raise StyleValueError(
-                    f"{self.name} must be one of {friendly_list(self._valid_values)}",
+                    f"{self.name} must be one of {friendly_list(self._valid_values)} (received {value!r})",
                     help_text=string_enum_help_text(
                         self.name,
                         valid_values=list(self._valid_values),

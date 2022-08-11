@@ -573,6 +573,20 @@ class App(Generic[ReturnType], DOMNode):
 
         return DOMQuery(self.screen, selector)
 
+    def query_one(self, selector: str) -> Widget:
+        """Get the first Widget matching the given selector.
+
+        Args:
+            selector (str | None, optional): A selector.
+
+        Returns:
+            Widget: _description_
+        """
+        from .css.query import DOMQuery
+
+        query = DOMQuery(self.screen, selector)
+        return query.first()
+
     def get_child(self, id: str) -> DOMNode:
         """Shorthand for self.screen.get_child(id: str)
         Returns the first child (immediate descendent) of this DOMNode
@@ -763,8 +777,10 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if self.css_path is not None:
                 self.stylesheet.read(self.css_path)
-            for path, css in self.css:
-                self.stylesheet.add_source(css, path=path)
+            for path, css, tie_breaker in self.get_default_css():
+                self.stylesheet.add_source(
+                    css, path=path, is_default_css=True, tie_breaker=tie_breaker
+                )
         except Exception as error:
             self.on_exception(error)
             self._print_error_renderables()

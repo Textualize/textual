@@ -27,8 +27,7 @@ from . import errors, events, messages
 from ._animator import BoundAnimator
 from ._arrange import arrange, DockArrangeResult
 from ._context import active_app
-from ._layout import ArrangeResult, Layout
-from ._segment_tools import line_crop
+from ._layout import Layout
 from ._styles_cache import StylesCache
 from ._types import Lines
 from .box_model import BoxModel, get_box_model
@@ -206,8 +205,10 @@ class Widget(DOMNode):
             app (App): App instance.
         """
         # Parse the Widget's CSS
-        for path, css in self.css:
-            self.app.stylesheet.add_source(css, path=path, is_default_css=True)
+        for path, css, tie_breaker in self.get_default_css():
+            self.app.stylesheet.add_source(
+                css, path=path, is_default_css=True, tie_breaker=tie_breaker
+            )
 
     def get_box_model(
         self, container: Size, viewport: Size, fraction_unit: Fraction
