@@ -12,7 +12,7 @@ from rich.style import Style
 
 from .._animator import Animation, EasingFunction
 from ..color import Color
-from ..geometry import Offset, Size, Spacing
+from ..geometry import Offset, Spacing
 from ._style_properties import (
     AlignProperty,
     BorderProperty,
@@ -223,7 +223,7 @@ class StylesBase(ABC):
     layers = NameListProperty()
     transitions = TransitionsProperty()
 
-    rich_style = StyleProperty()
+    # rich_style = StyleProperty()
 
     tint = ColorProperty("transparent")
     scrollbar_color = ColorProperty("ansi_bright_magenta")
@@ -799,6 +799,12 @@ class RenderStyles(StylesBase):
     def inline(self) -> Styles:
         """Quick access to the inline styles."""
         return self._inline_styles
+
+    @property
+    def rich_style(self) -> Style:
+        """Get a Rich style for this Styles object."""
+        assert self.node is not None
+        return self.node.rich_style
 
     def __rich_repr__(self) -> rich.repr.Result:
         for rule_name in RULE_NAMES:

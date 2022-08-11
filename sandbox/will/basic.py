@@ -6,7 +6,7 @@ from rich.text import Text
 from textual.app import App, ComposeResult
 from textual.reactive import Reactive
 from textual.widget import Widget
-from textual.widgets import Static, DataTable, DirectoryTree
+from textual.widgets import Static, DataTable, DirectoryTree, Footer
 from textual.layout import Vertical
 
 CODE = '''
@@ -109,7 +109,8 @@ class BasicApp(App, css_path="basic.css"):
 
     def on_load(self):
         """Bind keys here."""
-        self.bind("s", "toggle_class('#sidebar', '-active')")
+        self.bind("s", "toggle_class('#sidebar', '-active')", description="Sidebar")
+        self.bind("d", "toggle_dark()", description="Dark mode")
 
     def compose(self) -> ComposeResult:
         table = DataTable()
@@ -142,17 +143,17 @@ class BasicApp(App, css_path="basic.css"):
             Tweet(TweetBody(), classes="scroll-horizontal"),
             Tweet(TweetBody(), classes="scroll-horizontal"),
             Tweet(TweetBody(), classes="scroll-horizontal"),
+            Widget(
+                Widget(classes="title"),
+                Widget(classes="user"),
+                OptionItem(),
+                OptionItem(),
+                OptionItem(),
+                Widget(classes="content"),
+                id="sidebar",
+            ),
         )
-        yield Widget(id="footer")
-        yield Widget(
-            Widget(classes="title"),
-            Widget(classes="user"),
-            OptionItem(),
-            OptionItem(),
-            OptionItem(),
-            Widget(classes="content"),
-            id="sidebar",
-        )
+        yield Footer()
 
         table.add_column("Foo", width=20)
         table.add_column("Bar", width=20)
@@ -167,7 +168,7 @@ class BasicApp(App, css_path="basic.css"):
     async def on_key(self, event) -> None:
         await self.dispatch_key(event)
 
-    def key_d(self):
+    def action_toggle_dark(self):
         self.dark = not self.dark
 
     async def key_q(self):

@@ -68,7 +68,7 @@ class DOMNode(MessagePump):
         self._inline_styles: Styles = Styles(self)
         self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
         # A mapping of class names to Styles set in COMPONENT_CLASSES
-        self.component_styles: dict[str, StylesBase] = {}
+        self._component_styles: dict[str, RenderStyles] = {}
 
         super().__init__()
 
@@ -79,6 +79,23 @@ class DOMNode(MessagePump):
         for base in cls._css_bases(cls):
             css_type_names.add(base.__name__.lower())
         cls._css_type_names = frozenset(css_type_names)
+
+    def get_component_styles(self, name: str) -> RenderStyles:
+        """Get a "component" styles object (must be defined in COMPONENT_CLASSES classvar).
+
+        Args:
+            name (str): Name of the component.
+
+        Raises:
+            KeyError: If the component class doesn't exist.
+
+        Returns:
+            RenderStyles: A Styles object.
+        """
+        if name not in self._component_styles:
+            raise KeyError(f"No {name!r} key in COMPONENT_CLASSES")
+        styles = self._component_styles[name]
+        return styles
 
     @property
     def _node_bases(self) -> Iterator[Type[DOMNode]]:
