@@ -13,7 +13,7 @@ from .. import events
 from ..message import Message
 from ..reactive import Reactive
 from .._types import MessageTarget
-from . import TreeControl, TreeClick, TreeNode, NodeID
+from ._tree_control import TreeControl, TreeClick, TreeNode, NodeID
 
 
 @dataclass
@@ -30,11 +30,18 @@ class FileClick(Message, bubble=True):
 
 
 class DirectoryTree(TreeControl[DirEntry]):
-    def __init__(self, path: str, name: str = None) -> None:
-        self.path = path.rstrip("/")
+    def __init__(
+        self,
+        path: str,
+        *,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ) -> None:
+        self.path = os.path.expanduser(path.rstrip("/"))
         label = os.path.basename(self.path)
-        data = DirEntry(path, True)
-        super().__init__(label, name=name, data=data)
+        data = DirEntry(self.path, True)
+        super().__init__(label, data, name=name, id=id, classes=classes)
         self.root.tree.guide_style = "black"
 
     has_focus: Reactive[bool] = Reactive(False)
@@ -50,7 +57,7 @@ class DirectoryTree(TreeControl[DirEntry]):
             node.tree.guide_style = (
                 "bold not dim red" if node.id == hover_node else "black"
             )
-        self.refresh(layout=True)
+        self.refresh()
 
     def render_node(self, node: TreeNode[DirEntry]) -> RenderableType:
         return self.render_tree_label(
@@ -81,12 +88,12 @@ class DirectoryTree(TreeControl[DirEntry]):
         if is_hover:
             label.stylize("underline")
         if is_dir:
-            label.stylize("bold magenta")
+            label.stylize("bold")
             icon = "📂" if expanded else "📁"
         else:
-            label.stylize("bright_green")
+
             icon = "📄"
-            label.highlight_regex(r"\..*$", "green")
+            label.highlight_regex(r"\..*$", "italic")
 
         if label.plain.startswith("."):
             label.stylize("dim")
@@ -112,7 +119,7 @@ class DirectoryTree(TreeControl[DirEntry]):
         await node.expand()
         self.refresh(layout=True)
 
-    async def handle_tree_click(self, message: TreeClick[DirEntry]) -> None:
+    async def on_tree_click(self, message: TreeClick[DirEntry]) -> None:
         dir_entry = message.node.data
         if not dir_entry.is_dir:
             await self.emit(FileClick(self, dir_entry.path))
