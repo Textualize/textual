@@ -110,7 +110,8 @@ class BasicApp(App, css_path="basic.css"):
     def on_load(self):
         """Bind keys here."""
         self.bind("s", "toggle_class('#sidebar', '-active')", description="Sidebar")
-        self.bind("d", "toggle_dark()", description="Dark mode")
+        self.bind("d", "toggle_dark", description="Dark mode")
+        self.bind("q", "quit", description="Quit")
 
     def compose(self) -> ComposeResult:
         table = DataTable()

@@ -97,7 +97,6 @@ class Footer(Widget):
                 meta={"@click": f"app.press('{binding.key}')", "key": binding.key},
             )
             text.append_text(key_text)
-        self.log(text)
         return text
 
     def post_render(self, renderable):
