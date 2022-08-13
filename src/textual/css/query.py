@@ -210,25 +210,25 @@ class DOMQuery:
 
     def add_class(self, *class_names: str) -> DOMQuery:
         """Add the given class name(s) to nodes."""
-        for node in self.nodes:
+        for node in self:
             node.add_class(*class_names)
         return self
 
     def remove_class(self, *class_names: str) -> DOMQuery:
         """Remove the given class names from the nodes."""
-        for node in self.nodes:
+        for node in self:
             node.remove_class(*class_names)
         return self
 
     def toggle_class(self, *class_names: str) -> DOMQuery:
         """Toggle the given class names from matched nodes."""
-        for node in self.nodes:
+        for node in self:
             node.toggle_class(*class_names)
         return self
 
     def remove(self) -> DOMQuery:
         """Remove matched nodes from the DOM"""
-        for node in self.nodes:
+        for node in self:
             node.remove()
         return self
 
@@ -240,14 +240,14 @@ class DOMQuery:
         """
         _rich_traceback_omit = True
 
-        for node in self.nodes:
+        for node in self:
             node.set_styles(**update_styles)
         if css is not None:
             try:
                 new_styles = parse_declarations(css, path="set_styles")
             except DeclarationError as error:
                 raise DeclarationError(error.name, error.token, error.message) from None
-            for node in self.nodes:
+            for node in self:
                 node._inline_styles.merge(new_styles)
                 node.refresh(layout=True)
         return self
@@ -262,6 +262,6 @@ class DOMQuery:
         Returns:
             DOMQuery: Query for chaining.
         """
-        for node in self.nodes:
+        for node in self:
             node.refresh(repaint=repaint, layout=layout)
         return self

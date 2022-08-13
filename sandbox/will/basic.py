@@ -179,7 +179,7 @@ class BasicApp(App, css_path="basic.css"):
         self.log(query)
         self.log(query.nodes)
 
-        query.set_styles("outline: solid red;")
+        query.set_styles("outline: outer red;")
 
         query = query.exclude(".scroll-horizontal")
         self.log(query)
