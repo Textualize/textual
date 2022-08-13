@@ -460,7 +460,7 @@ class DOMNode(MessagePump):
                 node._set_dirty()
                 node._layout_required = True
 
-    def add_child(self, node: DOMNode) -> None:
+    def add_child(self, node: Widget) -> None:
         """Add a new child node.
 
         Args:
@@ -469,7 +469,7 @@ class DOMNode(MessagePump):
         self.children._append(node)
         node.set_parent(self)
 
-    def add_children(self, *nodes: DOMNode, **named_nodes: DOMNode) -> None:
+    def add_children(self, *nodes: Widget, **named_nodes: Widget) -> None:
         """Add multiple children to this node.
 
         Args:
