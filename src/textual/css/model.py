@@ -133,6 +133,10 @@ class SelectorSet:
         for selector, next_selector in zip(self.selectors, self.selectors[1:]):
             selector.advance = int(next_selector.combinator != SAME)
 
+    @property
+    def css(self) -> str:
+        return RuleSet._selector_to_css(self.selectors)
+
     def __rich_repr__(self) -> rich.repr.Result:
         selectors = RuleSet._selector_to_css(self.selectors)
         yield selectors

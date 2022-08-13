@@ -164,7 +164,7 @@ class AppTest(App):
         screen.refresh(repaint=repaint, layout=layout)
         # We also have to make sure we have at least one dirty widget, or `screen._on_update()` will early return:
         screen._dirty_widgets.add(screen)
-        screen._on_update()
+        screen._on_timer_update()
 
         await let_asyncio_process_some_events()
 

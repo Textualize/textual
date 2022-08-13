@@ -16,7 +16,7 @@ App > Screen {
     
   background: $surface;
   color: $text-surface; 
-  layers: sidebar;
+  layers: base sidebar;
 
   color: $text-background;
   background: $background;
@@ -89,14 +89,7 @@ DataTable {
   content-align: center middle;
 }
 
-#header {
-  color: $text-secondary-background;
-  background: $secondary-background;
-  height: 1;
-  content-align: center middle;
-  
-  dock: top;
-}
+
 
 
 Tweet {
@@ -121,7 +114,7 @@ Tweet {
   overflow-x: auto;
   overflow-y: scroll;
   margin: 1 2;
-  height: 20;
+  height: 24;
   align-horizontal: center;
   layout: vertical;
 }

@@ -342,10 +342,13 @@ class MessagePump(metaclass=MessagePumpMeta):
             message (Message): Message object.
 
         """
+        private_method = f"_{method_name}"
         for cls in self.__class__.__mro__:
             if message._no_default_action:
                 break
-            method = cls.__dict__.get(method_name, None)
+            method = cls.__dict__.get(private_method, None) or cls.__dict__.get(
+                method_name, None
+            )
             if method is not None:
                 yield cls, method.__get__(self, cls)
 

@@ -1,14 +1,13 @@
 from textual.dom import DOMNode
 
+from textual.widget import Widget
+
 
 def test_query():
-    class Widget(DOMNode):
+    class View(Widget):
         pass
 
-    class View(DOMNode):
-        pass
-
-    class App(DOMNode):
+    class App(Widget):
         pass
 
     app = App()

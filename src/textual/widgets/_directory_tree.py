@@ -106,7 +106,7 @@ class DirectoryTree(TreeControl[DirEntry]):
         return icon_label
 
     async def on_mount(self, event: events.Mount) -> None:
-        await self.load_directory(self.root)
+        self.call_later(self.load_directory, self.root)
 
     async def load_directory(self, node: TreeNode[DirEntry]):
         path = node.data.path

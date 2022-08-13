@@ -1154,7 +1154,7 @@ class Widget(DOMNode):
         assert self.parent
         self.parent.refresh(layout=True)
 
-    def on_mount(self, event: events.Mount) -> None:
+    def _on_mount(self, event: events.Mount) -> None:
         widgets = list(self.compose())
         if widgets:
             self.mount(*widgets)

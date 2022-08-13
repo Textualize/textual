@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from inspect import getfile
-from operator import attrgetter
-from typing import ClassVar, Iterable, Iterator, Type, TYPE_CHECKING
+from typing import ClassVar, Iterable, Iterator, Type, overload, TypeVar, TYPE_CHECKING
 
 import rich.repr
 from rich.highlighter import ReprHighlighter
@@ -487,7 +486,27 @@ class DOMNode(MessagePump):
             _append(node)
             node.id = node_id
 
-    def walk_children(self, with_self: bool = True) -> Iterable[DOMNode]:
+    WalkType = TypeVar("WalkType")
+
+    @overload
+    def walk_children(
+        self,
+        require_type: type[WalkType],
+        *,
+        with_self: bool = True,
+    ) -> Iterable[WalkType]:
+        ...
+
+    @overload
+    def walk_children(self, *, with_self: bool = True) -> Iterable[DOMNode]:
+        ...
+
+    def walk_children(
+        self,
+        require_type: type[WalkType] | None = None,
+        *,
+        with_self: bool = True,
+    ) -> Iterable[DOMNode | WalkType]:
         """Generate all descendants of this node.
 
         Args:
@@ -502,12 +521,15 @@ class DOMNode(MessagePump):
         if with_self:
             yield self
 
+        check_type = require_type or DOMNode
+
         while stack:
             node = next(stack[-1], None)
             if node is None:
                 pop()
             else:
-                yield node
+                if isinstance(node, check_type):
+                    yield node
                 if node.children:
                     push(iter(node.children))
 
@@ -539,10 +561,28 @@ class DOMNode(MessagePump):
         """
         from .css.query import DOMQuery
 
-        return DOMQuery(self, selector)
+        return DOMQuery(self, filter=selector)
 
+    ExpectType = TypeVar("ExpectType")
+
+    @overload
     def query_one(self, selector: str) -> Widget:
-        """Get the first Widget matching the given selector.
+        ...
+
+    @overload
+    def query_one(self, selector: type[ExpectType]) -> ExpectType:
+        ...
+
+    @overload
+    def query_one(self, selector: str, expect_type: type[ExpectType]) -> ExpectType:
+        ...
+
+    def query_one(
+        self,
+        selector: str | type[ExpectType],
+        expect_type: type[ExpectType] | None = None,
+    ) -> ExpectType | Widget:
+        """Get the first Widget matching the given selector or selector type.
 
         Args:
             selector (str | None, optional): A selector.
@@ -552,8 +592,16 @@ class DOMNode(MessagePump):
         """
         from .css.query import DOMQuery
 
-        query = DOMQuery(self.screen, selector)
-        return query.first()
+        if isinstance(selector, str):
+            query_selector = selector
+        else:
+            query_selector = selector.__name__
+        query = DOMQuery(self.screen, filter=query_selector)
+
+        if expect_type is None:
+            return query.first()
+        else:
+            return query.first(expect_type)
 
     def set_styles(self, css: str | None = None, **styles) -> None:
         """Set custom styles on this object."""

@@ -261,6 +261,7 @@ class Stylesheet:
             content, is_defaults, source_tie_breaker = self.source[path]
             if source_tie_breaker > tie_breaker:
                 self.source[path] = CssSource(content, is_defaults, tie_breaker)
+            self._require_parse = True
             return
         self.source[path] = CssSource(css, is_default_css, tie_breaker)
         self._require_parse = True
