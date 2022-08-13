@@ -8,6 +8,12 @@ The `background` rule sets the background color of the widget.
     --8<-- "docs/examples/styles/background.py"
     ```
 
+=== "background.css"
+
+    ```sass
+    --8<-- "docs/examples/styles/background.css"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/styles/background.py"}

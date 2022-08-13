@@ -20,3 +20,7 @@ body[data-md-color-primary="black"] .excalidraw  svg  {
 body[data-md-color-primary="black"] .excalidraw svg rect {
   fill: transparent;
 }
+
+.excalidraw {
+  text-align: center;
+}

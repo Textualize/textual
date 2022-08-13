@@ -1,0 +1,17 @@
+Screen {
+    background: white;
+    color: black;
+}
+App Static {
+    background: blue 20%;
+    height: 5;
+    margin: 2;
+    padding: 1;
+    border: wide black;
+}
+#static1 {       
+    box-sizing: border-box;
+}
+#static2 {        
+    box-sizing: content-box;
+}
