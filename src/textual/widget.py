@@ -135,6 +135,16 @@ class Widget(DOMNode):
     show_vertical_scrollbar = Reactive(False, layout=True)
     show_horizontal_scrollbar = Reactive(False, layout=True)
 
+    @property
+    def allow_vertical_scroll(self) -> bool:
+        """Check if vertical scroll is permitted."""
+        return self.is_scrollable and self.show_vertical_scrollbar
+
+    @property
+    def allow_horizontal_scroll(self) -> bool:
+        """Check if horizontal scroll is permitted."""
+        return self.is_scrollable and self.show_horizontal_scrollbar
+
     def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.
 
@@ -1195,12 +1205,12 @@ class Widget(DOMNode):
                     break
 
     def on_mouse_scroll_down(self, event) -> None:
-        if self.is_scrollable:
+        if self.allow_vertical_scroll:
             if self.scroll_down(animate=False):
                 event.stop()
 
     def on_mouse_scroll_up(self, event) -> None:
-        if self.is_scrollable:
+        if self.allow_vertical_scroll:
             if self.scroll_up(animate=False):
                 event.stop()
 

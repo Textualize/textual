@@ -7,7 +7,7 @@ from textual.app import App, ComposeResult
 from textual.reactive import Reactive
 from textual.widget import Widget
 from textual.widgets import Static, DataTable, DirectoryTree, Header, Footer
-from textual.layout import Vertical
+from textual.layout import Container
 
 CODE = '''
 from __future__ import annotations
@@ -120,7 +120,7 @@ class BasicApp(App, css_path="basic.css"):
         table = DataTable()
         self.scroll_to_target = Tweet(TweetBody())
 
-        yield from (
+        yield Container(
             Tweet(TweetBody()),
             Widget(
                 Static(
@@ -141,15 +141,15 @@ class BasicApp(App, css_path="basic.css"):
             Tweet(TweetBody(), classes="scroll-horizontal"),
             Tweet(TweetBody(), classes="scroll-horizontal"),
             Tweet(TweetBody(), classes="scroll-horizontal"),
-            Widget(
-                Widget(classes="title"),
-                Widget(classes="user"),
-                OptionItem(),
-                OptionItem(),
-                OptionItem(),
-                Widget(classes="content"),
-                id="sidebar",
-            ),
+        )
+        yield Widget(
+            Widget(classes="title"),
+            Widget(classes="user"),
+            OptionItem(),
+            OptionItem(),
+            OptionItem(),
+            Widget(classes="content"),
+            id="sidebar",
         )
         yield Footer()
 

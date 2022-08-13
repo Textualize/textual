@@ -21,6 +21,8 @@ App > Screen {
   color: $text-background;
   background: $background;
   layout: vertical;
+
+  overflow: hidden;
   
 }
 
