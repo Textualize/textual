@@ -15,6 +15,9 @@ class Container(Widget):
 class Vertical(Container):
     """A container widget to align children vertically."""
 
+    # Blank CSS is important, otherwise you get a clone of Container
+    CSS = ""
+
 
 class Horizontal(Container):
     """A container widget to align children horizontally."""

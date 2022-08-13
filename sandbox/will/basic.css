@@ -16,13 +16,32 @@ App > Screen {
     
   background: $surface;
   color: $text-surface; 
-  layers: sidebar;
+  layers: base sidebar;
 
   color: $text-background;
   background: $background;
   layout: vertical;
+
+  overflow: hidden;
   
 }
+
+#tree-container {
+  overflow-y: auto;
+  height: 20; 
+  margin: 1 2;
+  background: $panel;
+  padding: 1 2;
+}
+
+DirectoryTree {
+    padding: 0 1;
+    height: auto;
+   
+}
+
+
+
 
 DataTable {
   /*border:heavy red;*/
@@ -30,7 +49,7 @@ DataTable {
   /* opacity: 50%; */
   padding: 1;
   margin: 1 2;  
-  height: 12;  
+  height: 24;  
 }
 
 #sidebar {
@@ -38,6 +57,7 @@ DataTable {
   background: $panel;
   dock: left;
   width: 30;
+  margin-bottom: 1;
   offset-x: -100%;
   
   transition: offset 500ms in_out_cubic;
@@ -71,14 +91,7 @@ DataTable {
   content-align: center middle;
 }
 
-#header {
-  color: $text-secondary-background;
-  background: $secondary-background;
-  height: 1;
-  content-align: center middle;
-  
-  dock: top;
-}
+
 
 
 Tweet {
@@ -103,7 +116,7 @@ Tweet {
   overflow-x: auto;
   overflow-y: scroll;
   margin: 1 2;
-  height: 20;
+  height: 24;
   align-horizontal: center;
   layout: vertical;
 }

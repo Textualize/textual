@@ -133,6 +133,10 @@ class SelectorSet:
         for selector, next_selector in zip(self.selectors, self.selectors[1:]):
             selector.advance = int(next_selector.combinator != SAME)
 
+    @property
+    def css(self) -> str:
+        return RuleSet._selector_to_css(self.selectors)
+
     def __rich_repr__(self) -> rich.repr.Result:
         selectors = RuleSet._selector_to_css(self.selectors)
         yield selectors
@@ -157,6 +161,7 @@ class RuleSet:
     errors: list[tuple[Token, str]] = field(default_factory=list)
     classes: set[str] = field(default_factory=set)
     is_default_rules: bool = False
+    tie_breaker: int = 0
 
     @classmethod
     def _selector_to_css(cls, selectors: list[Selector]) -> str:

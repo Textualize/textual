@@ -27,8 +27,7 @@ from . import errors, events, messages
 from ._animator import BoundAnimator
 from ._arrange import arrange, DockArrangeResult
 from ._context import active_app
-from ._layout import ArrangeResult, Layout
-from ._segment_tools import line_crop
+from ._layout import Layout
 from ._styles_cache import StylesCache
 from ._types import Lines
 from .box_model import BoxModel, get_box_model
@@ -136,6 +135,16 @@ class Widget(DOMNode):
     show_vertical_scrollbar = Reactive(False, layout=True)
     show_horizontal_scrollbar = Reactive(False, layout=True)
 
+    @property
+    def allow_vertical_scroll(self) -> bool:
+        """Check if vertical scroll is permitted."""
+        return self.is_scrollable and self.show_vertical_scrollbar
+
+    @property
+    def allow_horizontal_scroll(self) -> bool:
+        """Check if horizontal scroll is permitted."""
+        return self.is_scrollable and self.show_horizontal_scrollbar
+
     def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.
 
@@ -206,8 +215,10 @@ class Widget(DOMNode):
             app (App): App instance.
         """
         # Parse the Widget's CSS
-        for path, css in self.css:
-            self.app.stylesheet.add_source(css, path=path, is_default_css=True)
+        for path, css, tie_breaker in self.get_default_css():
+            self.app.stylesheet.add_source(
+                css, path=path, is_default_css=True, tie_breaker=tie_breaker
+            )
 
     def get_box_model(
         self, container: Size, viewport: Size, fraction_unit: Fraction
@@ -937,14 +948,12 @@ class Widget(DOMNode):
     def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
 
-    def _render_styled(self) -> RenderableType:
+    def post_render(self, renderable: RenderableType) -> RenderableType:
         """Applies style attributes to the default renderable.
 
         Returns:
             RenderableType: A new renderable.
         """
-
-        renderable = self.render()
 
         if isinstance(renderable, str):
             renderable = Text.from_markup(renderable)
@@ -1001,7 +1010,8 @@ class Widget(DOMNode):
     def _render_content(self) -> None:
         """Render all lines."""
         width, height = self.size
-        renderable = self._render_styled()
+        renderable = self.render()
+        renderable = self.post_render(renderable)
         options = self.console.options.update_dimensions(width, height).update(
             highlight=False
         )
@@ -1154,7 +1164,7 @@ class Widget(DOMNode):
         assert self.parent
         self.parent.refresh(layout=True)
 
-    def on_mount(self, event: events.Mount) -> None:
+    def _on_mount(self, event: events.Mount) -> None:
         widgets = list(self.compose())
         if widgets:
             self.mount(*widgets)
@@ -1195,12 +1205,12 @@ class Widget(DOMNode):
                     break
 
     def on_mouse_scroll_down(self, event) -> None:
-        if self.is_scrollable:
+        if self.allow_vertical_scroll:
             if self.scroll_down(animate=False):
                 event.stop()
 
     def on_mouse_scroll_up(self, event) -> None:
-        if self.is_scrollable:
+        if self.allow_vertical_scroll:
             if self.scroll_up(animate=False):
                 event.stop()
 

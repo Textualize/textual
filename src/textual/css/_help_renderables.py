@@ -78,6 +78,9 @@ class HelpText:
         self.summary = summary
         self.bullets = bullets or []
 
+    def __str__(self) -> str:
+        return self.summary
+
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:

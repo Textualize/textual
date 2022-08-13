@@ -9,11 +9,11 @@ from .tokenizer import TokenError
 
 
 class DeclarationError(Exception):
-    def __init__(self, name: str, token: Token, message: str) -> None:
+    def __init__(self, name: str, token: Token, message: str | HelpText) -> None:
         self.name = name
         self.token = token
         self.message = message
-        super().__init__(message)
+        super().__init__(str(message))
 
 
 class StyleTypeError(TypeError):

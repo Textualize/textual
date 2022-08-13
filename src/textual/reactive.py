@@ -137,7 +137,7 @@ class Reactive(Generic[ReactiveType]):
 
 
 def watch(
-    obj: Reactable, attribute_name: str, callback: Callable[[Any], Awaitable[None]]
+    obj: Reactable, attribute_name: str, callback: Callable[[Any], object]
 ) -> None:
     watcher_name = f"__{attribute_name}_watchers"
     current_value = getattr(obj, attribute_name, None)

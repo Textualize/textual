@@ -48,22 +48,23 @@ def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
             token = next(tokens)
         except EOFError:
             break
-        if token.name == "pseudo_class":
+        token_name = token.name
+        if token_name == "pseudo_class":
             selectors[-1]._add_pseudo_class(token.value.lstrip(":"))
-        elif token.name == "whitespace":
+        elif token_name == "whitespace":
             if combinator is None or combinator == CombinatorType.SAME:
                 combinator = CombinatorType.DESCENDENT
-        elif token.name == "new_selector":
+        elif token_name == "new_selector":
             rule_selectors.append(selectors[:])
             selectors.clear()
             combinator = None
-        elif token.name == "declaration_set_start":
+        elif token_name == "declaration_set_start":
             break
-        elif token.name == "combinator_child":
+        elif token_name == "combinator_child":
             combinator = CombinatorType.CHILD
         else:
             _selector, specificity = get_selector(
-                token.name, (SelectorType.TYPE, (0, 0, 0))
+                token_name, (SelectorType.TYPE, (0, 0, 0))
             )
             selectors.append(
                 Selector(
@@ -82,7 +83,10 @@ def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
 
 
 def parse_rule_set(
-    tokens: Iterator[Token], token: Token, is_default_rules: bool = False
+    tokens: Iterator[Token],
+    token: Token,
+    is_default_rules: bool = False,
+    tie_breaker: int = 0,
 ) -> Iterable[RuleSet]:
     get_selector = SELECTOR_MAP.get
     combinator: CombinatorType | None = CombinatorType.DESCENDENT
@@ -156,6 +160,7 @@ def parse_rule_set(
         styles_builder.styles,
         errors,
         is_default_rules=is_default_rules,
+        tie_breaker=tie_breaker,
     )
     rule_set._post_parse()
     yield rule_set
@@ -332,6 +337,7 @@ def parse(
     path: str | PurePath,
     variables: dict[str, str] | None = None,
     is_default_rules: bool = False,
+    tie_breaker: int = 0,
 ) -> Iterable[RuleSet]:
     """Parse CSS by tokenizing it, performing variable substitution,
     and generating rule sets from it.
@@ -350,7 +356,12 @@ def parse(
         if token is None:
             break
         if token.name.startswith("selector_start"):
-            yield from parse_rule_set(tokens, token, is_default_rules=is_default_rules)
+            yield from parse_rule_set(
+                tokens,
+                token,
+                is_default_rules=is_default_rules,
+                tie_breaker=tie_breaker,
+            )
 
 
 if __name__ == "__main__":

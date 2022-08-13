@@ -57,7 +57,7 @@ class Screen(Widget):
         """Timer used to perform updates."""
         if self._update_timer is None:
             self._update_timer = self.set_interval(
-                UPDATE_PERIOD, self._on_update, name="screen_update", pause=True
+                UPDATE_PERIOD, self._on_timer_update, name="screen_update", pause=True
             )
         return self._update_timer
 
@@ -131,7 +131,7 @@ class Screen(Widget):
         # The Screen is idle - a good opportunity to invoke the scheduled callbacks
         await self._invoke_and_clear_callbacks()
 
-    def _on_update(self) -> None:
+    def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
         # Render widgets together
         if self._dirty_widgets:
@@ -228,7 +228,7 @@ class Screen(Widget):
     async def on_resize(self, event: events.Resize) -> None:
         event.stop()
 
-    async def _on_mouse_move(self, event: events.MouseMove) -> None:
+    async def _handle_mouse_move(self, event: events.MouseMove) -> None:
         try:
             if self.app.mouse_captured:
                 widget = self.app.mouse_captured
@@ -265,7 +265,7 @@ class Screen(Widget):
 
         elif isinstance(event, events.MouseMove):
             event.style = self.get_style_at(event.screen_x, event.screen_y)
-            await self._on_mouse_move(event)
+            await self._handle_mouse_move(event)
 
         elif isinstance(event, events.MouseEvent):
             try:

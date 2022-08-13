@@ -12,7 +12,7 @@ from rich.style import Style
 
 from .._animator import Animation, EasingFunction
 from ..color import Color
-from ..geometry import Size, Offset, Spacing
+from ..geometry import Offset, Spacing
 from ._style_properties import (
     AlignProperty,
     BorderProperty,
@@ -20,6 +20,7 @@ from ._style_properties import (
     ColorProperty,
     DockProperty,
     DocksProperty,
+    FractionalProperty,
     IntegerProperty,
     LayoutProperty,
     NameListProperty,
@@ -31,32 +32,30 @@ from ._style_properties import (
     StyleFlagsProperty,
     StyleProperty,
     TransitionsProperty,
-    FractionalProperty,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
     VALID_BOX_SIZING,
     VALID_DISPLAY,
-    VALID_VISIBILITY,
     VALID_OVERFLOW,
     VALID_SCROLLBAR_GUTTER,
+    VALID_VISIBILITY,
 )
 from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
 from .transition import Transition
 from .types import (
+    AlignHorizontal,
+    AlignVertical,
     BoxSizing,
     Display,
     Edge,
-    AlignHorizontal,
     Overflow,
-    Specificity3,
-    Specificity4,
-    AlignVertical,
-    Visibility,
     ScrollbarGutter,
-    Specificity5,
+    Specificity3,
+    Specificity6,
+    Visibility,
 )
 
 if sys.version_info >= (3, 8):
@@ -65,8 +64,8 @@ else:
     from typing_extensions import TypedDict
 
 if TYPE_CHECKING:
-    from ..dom import DOMNode
     from .._layout import Layout
+    from ..dom import DOMNode
 
 
 class RulesMap(TypedDict, total=False):
@@ -223,8 +222,6 @@ class StylesBase(ABC):
     layer = NameProperty()
     layers = NameListProperty()
     transitions = TransitionsProperty()
-
-    rich_style = StyleProperty()
 
     tint = ColorProperty("transparent")
     scrollbar_color = ColorProperty("ansi_bright_magenta")
@@ -532,7 +529,8 @@ class Styles(StylesBase):
         self,
         specificity: Specificity3,
         is_default_rules: bool = False,
-    ) -> list[tuple[str, Specificity5, Any]]:
+        tie_breaker: int = 0,
+    ) -> list[tuple[str, Specificity6, Any]]:
         """Extract rules from Styles object, and apply !important css specificity as
         well as higher specificity of user CSS vs widget CSS.
 
@@ -553,12 +551,12 @@ class Styles(StylesBase):
                     0 if is_default_rules else 1,
                     1 if is_important(rule_name) else 0,
                     *specificity,
+                    tie_breaker,
                 ),
                 rule_value,
             )
             for rule_name, rule_value in self._rules.items()
         ]
-
         return rules
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -799,6 +797,12 @@ class RenderStyles(StylesBase):
     def inline(self) -> Styles:
         """Quick access to the inline styles."""
         return self._inline_styles
+
+    @property
+    def rich_style(self) -> Style:
+        """Get a Rich style for this Styles object."""
+        assert self.node is not None
+        return self.node.rich_style
 
     def __rich_repr__(self) -> rich.repr.Result:
         for rule_name in RULE_NAMES:
