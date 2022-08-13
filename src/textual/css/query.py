@@ -224,6 +224,33 @@ class DOMQuery:
         else:
             raise NoMatchingNodesError(f"No nodes match {self!r}")
 
+    @overload
+    def results(self) -> Iterator[Widget]:
+        ...
+
+    @overload
+    def results(self, filter_type: type[ExpectType]) -> Iterator[ExpectType]:
+        ...
+
+    def results(
+        self, filter_type: type[ExpectType] | None = None
+    ) -> Iterator[Widget | ExpectType]:
+        """Get query results, optionally filtered by a given type.
+
+        Args:
+            filter_type (type[ExpectType] | None): A Widget class to filter results,
+                or None for no filter. Defaults to None.
+
+        Yields:
+            Iterator[Widget | ExpectType]: An iterator of Widget instances.
+        """
+        if filter_type is None:
+            yield from self
+        else:
+            for node in self:
+                if isinstance(node, filter_type):
+                    yield node
+
     def add_class(self, *class_names: str) -> DOMQuery:
         """Add the given class name(s) to nodes."""
         for node in self:
