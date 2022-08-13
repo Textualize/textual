@@ -223,8 +223,6 @@ class StylesBase(ABC):
     layers = NameListProperty()
     transitions = TransitionsProperty()
 
-    # rich_style = StyleProperty()
-
     tint = ColorProperty("transparent")
     scrollbar_color = ColorProperty("ansi_bright_magenta")
     scrollbar_color_hover = ColorProperty("ansi_yellow")

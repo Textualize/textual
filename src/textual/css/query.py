@@ -167,10 +167,18 @@ class DOMQuery:
         ...
 
     def first(self, expect_type: type[ExpectType] | None = None) -> Widget | ExpectType:
-        """Get the first matched node.
+        """Get the *first* match node.
+
+        Args:
+            expect_type (type[ExpectType] | None, optional): Require matched node is of this type,
+                or None for any type. Defaults to None.
+
+        Raises:
+            WrongType: If the wrong type was found.
+            NoMatchingNodesError: If there are no matching nodes in the query.
 
         Returns:
-            DOMNode: A DOM Node.
+            Widget | ExpectType: The matching Widget.
         """
         if self.nodes:
             first = self.nodes[0]
@@ -192,10 +200,18 @@ class DOMQuery:
         ...
 
     def last(self, expect_type: type[ExpectType] | None = None) -> Widget | ExpectType:
-        """Get the last matched node.
+        """Get the *last* match node.
+
+        Args:
+            expect_type (type[ExpectType] | None, optional): Require matched node is of this type,
+                or None for any type. Defaults to None.
+
+        Raises:
+            WrongType: If the wrong type was found.
+            NoMatchingNodesError: If there are no matching nodes in the query.
 
         Returns:
-            DOMNode: A DOM Node.
+            Widget | ExpectType: The matching Widget.
         """
         if self.nodes:
             last = self.nodes[-1]

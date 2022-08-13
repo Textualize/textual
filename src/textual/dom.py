@@ -490,7 +490,7 @@ class DOMNode(MessagePump):
     @overload
     def walk_children(
         self,
-        require_type: type[WalkType],
+        filter_type: type[WalkType],
         *,
         with_self: bool = True,
     ) -> Iterable[WalkType]:
@@ -502,25 +502,29 @@ class DOMNode(MessagePump):
 
     def walk_children(
         self,
-        require_type: type[WalkType] | None = None,
+        filter_type: type[WalkType] | None = None,
         *,
         with_self: bool = True,
     ) -> Iterable[DOMNode | WalkType]:
-        """Generate all descendants of this node.
+        """Generate descendant nodes.
 
         Args:
-            with_self (bool, optional): Also include self in the results. Defaults to True.
+            filter_type (type[WalkType] | None, optional): Filter only this type, or None for no filter.
+                Defaults to None.
+            with_self (bool, optional): Also yield self in addition to descendants. Defaults to True.
+
+        Returns:
+            Iterable[DOMNode | WalkType]: An iterable of nodes.
 
         """
 
         stack: list[Iterator[DOMNode]] = [iter(self.children)]
         pop = stack.pop
         push = stack.append
+        check_type = filter_type or DOMNode
 
-        if with_self:
+        if with_self and isinstance(self, check_type):
             yield self
-
-        check_type = require_type or DOMNode
 
         while stack:
             node = next(stack[-1], None)
