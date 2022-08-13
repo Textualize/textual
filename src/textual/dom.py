@@ -15,7 +15,7 @@ from ._node_list import NodeList
 from .color import Color, WHITE, BLACK
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
-from .css.errors import StyleValueError
+from .css.errors import StyleValueError, DeclarationError
 from .css.parse import parse_declarations
 from .css.styles import Styles, RenderStyles
 from .css.query import NoMatchingNodesError
@@ -23,7 +23,6 @@ from .message_pump import MessagePump
 
 if TYPE_CHECKING:
     from .app import App
-    from .css.styles import StylesBase
     from .css.query import DOMQuery
     from .screen import Screen
     from .widget import Widget
@@ -603,16 +602,20 @@ class DOMNode(MessagePump):
         else:
             return query.first(expect_type)
 
-    def set_styles(self, css: str | None = None, **styles) -> None:
+    def set_styles(self, css: str | None = None, **update_styles) -> None:
         """Set custom styles on this object."""
-        # TODO: This can be done more efficiently
-        kwarg_css = "\n".join(
-            f"{key.replace('_', '-')}: {value}" for key, value in styles.items()
-        )
-        apply_css = f"{css or ''}\n{kwarg_css}\n"
-        new_styles = parse_declarations(apply_css, f"<custom styles for ${self!r}>")
-        self.styles.merge(new_styles)
-        self.refresh()
+
+        if css is not None:
+            try:
+                new_styles = parse_declarations(css, path="set_styles")
+            except DeclarationError as error:
+                raise DeclarationError(error.name, error.token, error.message) from None
+            self._inline_styles.merge(new_styles)
+            self.refresh(layout=True)
+
+        styles = self.styles
+        for key, value in update_styles.items():
+            setattr(styles, key, value)
 
     def has_class(self, *class_names: str) -> bool:
         """Check if the Node has all the given class names.

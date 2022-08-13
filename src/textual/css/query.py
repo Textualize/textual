@@ -16,14 +16,14 @@ a method which evaluates the query, such as first() and last().
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Iterator, TypeVar, overload
 
 import rich.repr
 
-from typing import Iterator, overload, TypeVar, TYPE_CHECKING
-
+from .errors import DeclarationError
 from .match import match
-from .parse import parse_selectors
 from .model import SelectorSet
+from .parse import parse_declarations, parse_selectors
 
 if TYPE_CHECKING:
     from ..dom import DOMNode
@@ -105,6 +105,9 @@ class DOMQuery:
 
     def __iter__(self) -> Iterator[Widget]:
         return iter(self.nodes)
+
+    def __reversed__(self) -> Iterator[Widget]:
+        return reversed(self.nodes)
 
     @overload
     def __getitem__(self, index: int) -> Widget:
@@ -229,14 +232,24 @@ class DOMQuery:
             node.remove()
         return self
 
-    def set_styles(self, css: str | None = None, **styles: str) -> DOMQuery:
+    def set_styles(self, css: str | None = None, **update_styles) -> DOMQuery:
         """Set styles on matched nodes.
 
         Args:
             css (str, optional): CSS declarations to parser, or None. Defaults to None.
         """
+        _rich_traceback_omit = True
+
         for node in self.nodes:
-            node.set_styles(css, **styles)
+            node.set_styles(**update_styles)
+        if css is not None:
+            try:
+                new_styles = parse_declarations(css, path="set_styles")
+            except DeclarationError as error:
+                raise DeclarationError(error.name, error.token, error.message) from None
+            for node in self.nodes:
+                node._inline_styles.merge(new_styles)
+                node.refresh(layout=True)
         return self
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> DOMQuery:

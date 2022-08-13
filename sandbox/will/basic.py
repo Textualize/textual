@@ -179,13 +179,15 @@ class BasicApp(App, css_path="basic.css"):
         self.log(query)
         self.log(query.nodes)
 
+        query.set_styles("outline: solid red;")
+
         query = query.exclude(".scroll-horizontal")
         self.log(query)
         self.log(query.nodes)
 
-        query = query.filter(".rubbish")
-        self.log(query)
-        self.log(query.first())
+        # query = query.filter(".rubbish")
+        # self.log(query)
+        # self.log(query.first())
 
     async def key_q(self):
         await self.shutdown()
