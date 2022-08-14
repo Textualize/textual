@@ -20,6 +20,7 @@ Button {
     content-align: center middle;
 }
 
+/* Matches the button container */
 .buttons {
     width: 100%;
     height: auto;
