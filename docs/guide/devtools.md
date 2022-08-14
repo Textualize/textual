@@ -1,6 +1,12 @@
-# Textual Devtools
+# Devtools
 
 Textual comes with a command line application of the same name. The `textual` command is a super useful tool that will help you to build apps.
+
+Take a moment to look through the available sub-commands. There will be even more helpful tools here in the future.
+
+```bash
+textual --help
+```
 
 ## Run
 
@@ -15,6 +21,10 @@ The `run` sub-command assumes you have a Application instance called `app` in th
 ```
 textual run my_app.py:alternative_app
 ```
+
+!!! note
+
+    If the Python file contains a call to app.run() then you can launch the file as you normally would any other Python program. Running your app via `textual run` will give you access to a few Textual features such as dev mode which auto (re) loads your CSS if you change it.
 
 ## Console
 

@@ -58,9 +58,11 @@ You may be able to guess what some of the the other rules do. We will cover thos
 
 ## The DOM
 
-The DOM, or _Document Object Model_, is a term borrowed from the web world. Textual doesn't use documents but the term has stuck. The DOM is an arrangement of widgets which form a tree. Some widgets may contain other widgets. For instance a list control widget will likely have item widgets, or a dialog widget may contain button widgets. These _child_ widgets form the branches of the tree.
+The DOM, or _Document Object Model_, is a term borrowed from the web world. Textual doesn't use documents but the term has stuck. In Textual CSS, the DOM is a an arrangement of widgets that forms a tree of sorts.
 
-Let's look at a super trivial Textual app.
+Some widgets contain other widgets: for instance a list control widget will likely also have item widgets, or a dialog widget may contain button widgets. These _child_ widgets form the branches of the tree.
+
+Let's look at a trivial Textual app.
 
 === "dom1.py"
 
@@ -119,7 +121,7 @@ To further explore the DOM, we're going to build a simple dialog with a question
     --8<-- "docs/examples/guide/dom3.py"
     ```
 
-We've added a Container to our DOM which (as the name suggests) is a container for other widgets. The container has a number of other widgets passed as positional arguments which will be added as the children of the container. Not all widgets accept child widgets in this way; for instance the Button widget doesn't need any children.
+We've added a Container to our DOM which (as the name suggests) is a container for other widgets. The container has a number of other widgets passed as positional arguments which will be added as the children of the container. Not all widgets accept child widgets in this way; for instance a Button widget doesn't need any children.
 
 Here's the DOM created by the above code:
 
@@ -175,9 +177,9 @@ Being able to iterate on the design without restarting the Python code can make 
 
 ## Selectors
 
-A selector is the text which precedes the curly braces in a set of rules. It tells textual which widgets it should apply rules to
+A selector is the text which precedes the curly braces in a set of rules. It tells textual which widgets it should apply the rules to.
 
-Selectors can target a kind of widget or a specific widget. For example you may want to style a particular button green only if it is within a dialog. Or you may want to draw a red box around a widget when it is underneath the mouse cursor. CSS selector allows you to do such things simply, without writing (Python) code.
+Selectors can target a kind of widget or a very specific widget. For instance you could have a selector that modifies all buttons, or you could target an individual button used in one dialog. This gives you a lot of flexibility in customization your user interface.
 
 Let's look at the selectors supported by Textual CSS.
 
@@ -270,9 +272,9 @@ Class name selectors may be _chained_ together by appending another full stop an
 }
 ```
 
-### Universal selectors
+### Universal selector
 
-The _universal_ selectors is specified by an asterisk and will match _all_ widgets.
+The _universal_ selectors is denoted by an asterisk and will match _all_ widgets.
 
 For example, the following will draw a red outline around all widgets:
 
@@ -351,7 +353,7 @@ We can use the following CSS to style all buttons which have a parent with an ID
 
 It is possible that several selectors match a given widget. If the same rule is applied by more than one selector then Textual needs a way to decide which rule _wins_. It does this by following these rules:
 
-- The selector with the most IDs wins. For instance `"#next"` beats `.button` and `#dialog #next` beats `#next`. If the selectors have the same number of IDs then move to the next rule.
+- The selector with the most IDs wins. For instance `#next` beats `.button` and `#dialog #next` beats `#next`. If the selectors have the same number of IDs then move to the next rule.
 
 - The selector with the most class names wins. For instance `.button.success` beats `.success`. For the purposes of specificity, pseudo classes are treated the same as regular class names, so ".button:hover" counts as _2_ class names. If the selectors have the same number of class names then move to the next rule.
 
