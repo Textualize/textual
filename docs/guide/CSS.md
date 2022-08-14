@@ -135,7 +135,7 @@ Here's the output from this example:
 
 ```
 
-You may recognize some of the elements, but it doesn't look quite right. This is because we haven't added a stylesheet.
+You may recognize some of the elements in the above screenshot, but it doesn't quite look like a dialog. This is because we haven't added a stylesheet.
 
 ## CSS files
 
@@ -165,9 +165,11 @@ With the CSS in place, the output looks very different:
 
 It is reasonable to ask why use CSS at all? Python is a powerful and expressive language. Wouldn't it be easier to do everything in your `.py` files?
 
-One advantage of CSS is that it separates how your app _looks_ from how it _works_. Setting styles in Python can generate a lot of code which can make it hard to see the more important logic in your application.
+A major advantage of CSS is that it separates how your app _looks_ from how it _works_. Setting styles in Python can generate a lot of spaghetti code which can make it hard to see the important logic in your application.
 
-Another advantage of CSS is that you can _live edit_ the styles. If you run your application with the following command, any changes you make to the CSS file will be instantly updated:
+A second advantage of CSS is that you can customize builtin and third-part widgets just as easily as you can your own app or widgets.
+
+Finally, Textual CSS allows you to _live edit_ the styles in your app. If you run your application with the following command, any changes you make to the CSS file will be instantly updated in the terminal:
 
 ```bash
 textual run my_app.py --dev
@@ -194,7 +196,7 @@ class Button(Static):
     pass
 ```
 
-To apply a border to this widget, we could have a rule such as the following:
+The following rule applies a border to this widget:
 
 ```css
 Button {
@@ -202,9 +204,7 @@ Button {
 }
 ```
 
-The type selector will also match a widget's base classes. For instance, the `Button` Python class will will also match the `Static` selector because Widget extends Static in the Python code. Similarly, it will also match `Widget` which is the base class for all widgets.
-
-So the following selector will also match our `Button`:
+The type selector will also match a widget's base classes. Consequently a `Static` selector will also style the button because the `Button` Python class extends `Static`.
 
 ```css
 Static {
@@ -213,7 +213,11 @@ Static {
 }
 ```
 
-You may have noticed that the `border` rule exists in both Static and Button. When this happens, Textual will use the most recently defined sub-class within a list of bases. So Button wins over Static, and Static wins over Widget.
+!!! note
+
+    The fact that the type selector matches base classes is a departure from browser CSS which doesn't have the same concept.
+
+You may have noticed that the `border` rule exists in both Static and Button. When this happens, Textual will use the most recently defined sub-class within a list of bases. So Button wins over Static, and Static wins over Widget (the base class of all widgets). Hence if both rules were in a stylesheet, the buttons would be "solid blue" and not "rounded white".
 
 ### ID selector
 
@@ -237,21 +241,21 @@ You can match an ID with a selector starting with a hash (`#`). Here is how you 
 
 Every widget can have a number of class names applied. The term "class" here is borrowed from web CSS, and has a different meaning to a Python class. You can think of a CSS class as a tag of sorts. Widgets with the same tag may share a particular style.
 
-CSS classes are set via the widgets `classses` parameter in the constructor. Here's an example:
+CSS classes are set via the widgets `classes` parameter in the constructor. Here's an example:
 
 ```python
 yield Button(classes="success")
 ```
 
-This button will have a single class called `"success"` which we could target via CSS to make the button green.
+This button will have a single class called `"success"` which we could target via CSS to make the button a particular color.
 
 You may also set multiple classes separated by spaces. For instance, here is a button with both an `error` class and a `disabled` class:
 
 ```python
-Button(classes="error disabled")
+yield Button(classes="error disabled")
 ```
 
-To match a Widget with a given class in CSS you can precede the class name with a dot (`.`). Here's a rule with a class selector to match the `"success"` class:
+To match a Widget with a given class in CSS you can precede the class name with a dot (`.`). Here's a rule with a class selector to match the `"success"` class name:
 
 ```css
 .success {
@@ -264,7 +268,7 @@ To match a Widget with a given class in CSS you can precede the class name with 
 
     You can apply a class name to any class, which means that widgets of different types could share classes.
 
-Class name selectors may be _chained_ together by appending another full stop and class name. The selector will match a widget that has _all_ of the class names set. For instance, the following sets a red background on widgets that have both `error` _and_ `disables` class names.
+Class name selectors may be _chained_ together by appending another full stop and class name. The selector will match a widget that has _all_ of the class names set. For instance, the following sets a red background on widgets that have both `error` _and_ `disabled` class names.
 
 ```css
 .error.disabled {
@@ -286,13 +290,15 @@ For example, the following will draw a red outline around all widgets:
 
 ### Pseudo classes
 
-Pseudo classes can be used to match widgets a given state. For instance, you might want a button to have a green background when the mouse cursor moves over it. We can do this with the `:hover` pseudo selector.
+Pseudo classes can be used to match widgets in a particular state. Psuedo classes are set automatically by Textual. For instance, you might want a button to have a green background when the mouse cursor moves over it. We can do this with the `:hover` pseudo selector.
 
 ```css
 Button:hover {
   background: green;
 }
 ```
+
+The `background: green` is only applied to the Button underneath the mouse cursor. When you move the cursor away from the button it will return to its previous background color.
 
 Here are some other such pseudo classes:
 
