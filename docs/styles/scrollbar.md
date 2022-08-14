@@ -21,6 +21,12 @@ In this example we have two panels with different scrollbar colors set for each.
     --8<-- "docs/examples/styles/scrollbars.py"
     ```
 
+=== "scrollbars.css"
+
+    ```css
+    --8<-- "docs/examples/styles/scrollbars.css"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/styles/scrollbars.py"}

@@ -12,6 +12,12 @@ This examples shows a green tint with gradually increasing alpha.
     --8<-- "docs/examples/styles/tint.py"
     ```
 
+=== "tint.css"
+
+    ```css
+    --8<-- "docs/examples/styles/tint.css"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/styles/tint.py"}

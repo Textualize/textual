@@ -12,28 +12,6 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class OverflowApp(App):
-    CSS = """
-    Screen {
-        background: $background;
-        color: black;
-    }
-   
-    Vertical {
-        width: 1fr;
-    }
-
-    Static {
-        margin: 1 2;  
-        background: blue 20%;  
-        border: blue wide;
-        height: auto;
-    }    
-
-    #right {
-        overflow-y: hidden;
-    }
-    """
-
     def compose(self):
         yield Horizontal(
             Vertical(Static(TEXT), Static(TEXT), Static(TEXT), id="left"),
@@ -41,4 +19,4 @@ class OverflowApp(App):
         )
 
 
-app = OverflowApp()
+app = OverflowApp(css_path="overflow.css")

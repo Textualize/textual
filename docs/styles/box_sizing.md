@@ -16,6 +16,12 @@ Both widgets in this example have the same height (5). The top widget has `box-s
     --8<-- "docs/examples/styles/box_sizing.py"
     ```
 
+=== "box_sizing.css"
+
+    ```css
+    --8<-- "docs/examples/styles/box_sizing.css"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/styles/box_sizing.py"}

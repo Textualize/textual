@@ -42,6 +42,12 @@ This examples shows three widgets with different border styles.
     --8<-- "docs/examples/styles/border.py"
     ```
 
+=== "border.css"
+
+    ```css
+    --8<-- "docs/examples/styles/border.css"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/styles/border.py"}

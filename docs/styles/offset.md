@@ -4,10 +4,18 @@ The `offset` rule adds an offset to the widget's position.
 
 ## Example
 
+In this example, we have 3 widgets with differing offsets.
+
 === "offset.py"
 
     ```python
     --8<-- "docs/examples/styles/offset.py"
+    ```
+
+=== "offset.css"
+
+    ```css
+    --8<-- "docs/examples/styles/offset.css"
     ```
 
 === "Output"

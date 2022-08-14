@@ -18,10 +18,16 @@ Here we split the screen in to left and right sections, each with three vertical
 
 The left side has `overflow-y: auto` (the default) and will automatically show a scrollbar. The right side has `overflow-y: hidden` which will prevent a scrollbar from being show.
 
-=== "width.py"
+=== "overflow.py"
 
     ```python
     --8<-- "docs/examples/styles/overflow.py"
+    ```
+
+=== "overflow.css"
+
+    ```css
+    --8<-- "docs/examples/styles/overflow.css"
     ```
 
 === "Output"

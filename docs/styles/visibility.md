@@ -12,6 +12,12 @@ Note that the second widget is hidden, while leaving a space where it would have
     --8<-- "docs/examples/styles/visibility.py"
     ```
 
+=== "visibility.css"
+
+    ```css
+    --8<-- "docs/examples/styles/visibility.css"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/styles/visibility.py"}

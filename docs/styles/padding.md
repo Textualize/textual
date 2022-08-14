@@ -20,6 +20,12 @@ This example adds padding around static text.
     --8<-- "docs/examples/styles/padding.py"
     ```
 
+=== "padding.css"
+
+    ```css
+    --8<-- "docs/examples/styles/padding.css"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/styles/padding.py"}

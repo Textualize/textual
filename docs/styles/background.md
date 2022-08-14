@@ -2,6 +2,10 @@
 
 The `background` rule sets the background color of the widget.
 
+## Example
+
+This example creates three widgets and applies a different background to each.
+
 === "background.py"
 
     ```python

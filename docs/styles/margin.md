@@ -12,10 +12,18 @@ Margin may also be set individually by setting `margin-top`, `margin-right`, `ma
 
 ## Example
 
+In this example we add a large margin to a some static text.
+
 === "margin.py"
 
     ```python
     --8<-- "docs/examples/styles/margin.py"
+    ```
+
+=== "margin.css"
+
+    ```css
+    --8<-- "docs/examples/styles/margin.css"
     ```
 
 === "Output"

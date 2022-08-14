@@ -36,6 +36,12 @@ This examples shows a widget with an outline. Note how the outline occludes the 
     --8<-- "docs/examples/styles/outline.py"
     ```
 
+=== "outline.css"
+
+    ```css
+    --8<-- "docs/examples/styles/outline.css"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/styles/outline.py"}

@@ -43,15 +43,18 @@ def get_box_model(
     gutter = styles.gutter
     margin = styles.margin
 
-    is_auto_width = styles.width and styles.width.is_auto
-    is_auto_height = styles.height and styles.height.is_auto
+    styles_width = styles.width
+    styles_height = styles.height
+
+    is_auto_width = styles_width and styles_width.is_auto
+    is_auto_height = styles_height and styles_height.is_auto
 
     # Container minus padding and border
     content_container = container - gutter.totals
     # The container including the content
     sizing_container = content_container if is_border_box else container
 
-    if styles.width is None:
+    if styles_width is None:
         # No width specified, fill available space
         content_width = Fraction(content_container.width - margin.width)
     elif is_auto_width:
@@ -61,10 +64,10 @@ def get_box_model(
         )
     else:
         # An explicit width
-        content_width = styles.width.resolve_dimension(
+        content_width = styles_width.resolve_dimension(
             sizing_container - styles.margin.totals, viewport, fraction_unit
         )
-        if is_border_box:
+        if is_border_box and not styles_width.is_percent:
             content_width -= gutter.width
 
     if styles.min_width is not None:
@@ -83,7 +86,7 @@ def get_box_model(
 
     content_width = max(Fraction(0), content_width)
 
-    if styles.height is None:
+    if styles_height is None:
         # No height specified, fill the available space
         content_height = Fraction(content_container.height - margin.height)
     elif is_auto_height:
@@ -93,10 +96,10 @@ def get_box_model(
         )
     else:
         # Explicit height set
-        content_height = styles.height.resolve_dimension(
+        content_height = styles_height.resolve_dimension(
             sizing_container - styles.margin.totals, viewport, fraction_unit
         )
-        if is_border_box:
+        if is_border_box and not styles_height.is_percent:
             content_height -= gutter.height
 
     if styles.min_height is not None:

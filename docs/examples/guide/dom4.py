@@ -1,7 +1,8 @@
 from textual.app import App, ComposeResult
-from textual.layout import Container
-from textual.widget import Widget
-from textual.widgets import Header, Footer
+from textual.layout import Container, Horizontal
+from textual.widgets import Header, Footer, Static, Button
+
+QUESTION = "Do you want to learn about Textual CSS?"
 
 
 class ExampleApp(App):
@@ -9,10 +10,14 @@ class ExampleApp(App):
         yield Header()
         yield Footer()
         yield Container(
-            Widget(id="widget1"),
-            Widget(id="widget2"),
-            Widget(id="widget3"),
+            Static(QUESTION, classes="question"),
+            Horizontal(
+                Button("Yes", variant="success"),
+                Button("No", variant="error"),
+                classes="buttons",
+            ),
+            id="dialog",
         )
 
 
-app = ExampleApp()
+app = ExampleApp(css_path="dom4.css")

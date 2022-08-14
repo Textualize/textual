@@ -4,10 +4,18 @@ The `width` rule sets a widget's width. By default, it sets the width of the con
 
 ## Example
 
+This example adds a widget with 50% width of the screen.
+
 === "width.py"
 
     ```python
     --8<-- "docs/examples/styles/width.py"
+    ```
+
+=== "width.css"
+
+    ```css
+    --8<-- "docs/examples/styles/width.css"
     ```
 
 === "Output"

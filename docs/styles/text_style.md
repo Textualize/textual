@@ -22,6 +22,12 @@ Each of the three text panels has a different text style.
     --8<-- "docs/examples/styles/text_style.py"
     ```
 
+=== "text_style.css"
+
+    ```css
+    --8<-- "docs/examples/styles/text_style.css"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/styles/text_style.py"}

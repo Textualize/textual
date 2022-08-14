@@ -12,6 +12,12 @@ Note that the second widget is hidden by adding the "hidden" class which sets th
     --8<-- "docs/examples/styles/display.py"
     ```
 
+=== "display.css"
+
+    ```css
+    --8<-- "docs/examples/styles/display.css"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/styles/display.py"}

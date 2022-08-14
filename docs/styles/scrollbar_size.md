@@ -14,6 +14,12 @@ In this example we modify the size of the widgets scrollbar to be _much_ larger 
     --8<-- "docs/examples/styles/scrollbar_size.py"
     ```
 
+=== "scrollbar_size.css"
+
+    ```css
+    --8<-- "docs/examples/styles/scrollbar_size.css"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/styles/scrollbar_size.py"}
