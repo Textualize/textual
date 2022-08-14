@@ -67,7 +67,7 @@ def get_box_model(
         content_width = styles_width.resolve_dimension(
             sizing_container - styles.margin.totals, viewport, fraction_unit
         )
-        if is_border_box and not styles_width.is_percent:
+        if is_border_box and styles_width.excludes_border:
             content_width -= gutter.width
 
     if styles.min_width is not None:
@@ -99,7 +99,7 @@ def get_box_model(
         content_height = styles_height.resolve_dimension(
             sizing_container - styles.margin.totals, viewport, fraction_unit
         )
-        if is_border_box and not styles_height.is_percent:
+        if is_border_box and styles_height.excludes_border:
             content_height -= gutter.height
 
     if styles.min_height is not None:
