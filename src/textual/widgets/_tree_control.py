@@ -267,7 +267,7 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
         return None
 
     def render(self) -> RenderableType:
-        self._tree.guide_style = self.component_styles["tree--guides"].node.rich_style
+        self._tree.guide_style = self._component_styles["tree--guides"].node.rich_style
         return self._tree
 
     def render_node(self, node: TreeNode[NodeDataType]) -> RenderableType:

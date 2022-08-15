@@ -23,7 +23,7 @@ from .parse import parse
 from .styles import RulesMap, Styles
 from .tokenize import tokenize_values, Token
 from .tokenizer import TokenError
-from .types import Specificity3, Specificity5
+from .types import Specificity3, Specificity6
 from ..dom import DOMNode
 from .. import messages
 
@@ -325,7 +325,7 @@ class Stylesheet:
         # We can use this to determine, for a given rule, whether we should apply it
         # or not by examining the specificity. If we have two rules for the
         # same attribute, then we can choose the most specific rule and use that.
-        rule_attributes: dict[str, list[tuple[Specificity5, object]]]
+        rule_attributes: dict[str, list[tuple[Specificity6, object]]]
         rule_attributes = defaultdict(list)
 
         _check_rule = self._check_rule
@@ -352,12 +352,12 @@ class Stylesheet:
 
         self.replace_rules(node, node_rules, animate=animate)
 
-        node.component_styles.clear()
+        node._component_styles.clear()
         for component in node.COMPONENT_CLASSES:
             virtual_node = DOMNode(classes=component)
             virtual_node.set_parent(node)
             self.apply(virtual_node, animate=False)
-            node.component_styles[component] = virtual_node.styles
+            node._component_styles[component] = virtual_node.styles
 
     @classmethod
     def replace_rules(

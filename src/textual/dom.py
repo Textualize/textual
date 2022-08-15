@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from inspect import getfile
-from operator import attrgetter
-from typing import ClassVar, Iterable, Iterator, Type, TYPE_CHECKING
+from typing import ClassVar, Iterable, Iterator, Type, overload, TypeVar, TYPE_CHECKING
 
 import rich.repr
 from rich.highlighter import ReprHighlighter
@@ -16,7 +15,7 @@ from ._node_list import NodeList
 from .color import Color, WHITE, BLACK
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
-from .css.errors import StyleValueError
+from .css.errors import StyleValueError, DeclarationError
 from .css.parse import parse_declarations
 from .css.styles import Styles, RenderStyles
 from .css.query import NoMatchingNodesError
@@ -24,7 +23,6 @@ from .message_pump import MessagePump
 
 if TYPE_CHECKING:
     from .app import App
-    from .css.styles import StylesBase
     from .css.query import DOMQuery
     from .screen import Screen
     from .widget import Widget
@@ -68,7 +66,7 @@ class DOMNode(MessagePump):
         self._inline_styles: Styles = Styles(self)
         self.styles = RenderStyles(self, self._css_styles, self._inline_styles)
         # A mapping of class names to Styles set in COMPONENT_CLASSES
-        self.component_styles: dict[str, StylesBase] = {}
+        self._component_styles: dict[str, RenderStyles] = {}
 
         super().__init__()
 
@@ -79,6 +77,23 @@ class DOMNode(MessagePump):
         for base in cls._css_bases(cls):
             css_type_names.add(base.__name__.lower())
         cls._css_type_names = frozenset(css_type_names)
+
+    def get_component_styles(self, name: str) -> RenderStyles:
+        """Get a "component" styles object (must be defined in COMPONENT_CLASSES classvar).
+
+        Args:
+            name (str): Name of the component.
+
+        Raises:
+            KeyError: If the component class doesn't exist.
+
+        Returns:
+            RenderStyles: A Styles object.
+        """
+        if name not in self._component_styles:
+            raise KeyError(f"No {name!r} key in COMPONENT_CLASSES")
+        styles = self._component_styles[name]
+        return styles
 
     @property
     def _node_bases(self) -> Iterator[Type[DOMNode]]:
@@ -445,7 +460,7 @@ class DOMNode(MessagePump):
                 node._set_dirty()
                 node._layout_required = True
 
-    def add_child(self, node: DOMNode) -> None:
+    def add_child(self, node: Widget) -> None:
         """Add a new child node.
 
         Args:
@@ -454,7 +469,7 @@ class DOMNode(MessagePump):
         self.children._append(node)
         node.set_parent(self)
 
-    def add_children(self, *nodes: DOMNode, **named_nodes: DOMNode) -> None:
+    def add_children(self, *nodes: Widget, **named_nodes: Widget) -> None:
         """Add multiple children to this node.
 
         Args:
@@ -470,19 +485,45 @@ class DOMNode(MessagePump):
             _append(node)
             node.id = node_id
 
-    def walk_children(self, with_self: bool = True) -> Iterable[DOMNode]:
-        """Generate all descendants of this node.
+    WalkType = TypeVar("WalkType")
+
+    @overload
+    def walk_children(
+        self,
+        filter_type: type[WalkType],
+        *,
+        with_self: bool = True,
+    ) -> Iterable[WalkType]:
+        ...
+
+    @overload
+    def walk_children(self, *, with_self: bool = True) -> Iterable[DOMNode]:
+        ...
+
+    def walk_children(
+        self,
+        filter_type: type[WalkType] | None = None,
+        *,
+        with_self: bool = True,
+    ) -> Iterable[DOMNode | WalkType]:
+        """Generate descendant nodes.
 
         Args:
-            with_self (bool, optional): Also include self in the results. Defaults to True.
+            filter_type (type[WalkType] | None, optional): Filter only this type, or None for no filter.
+                Defaults to None.
+            with_self (bool, optional): Also yield self in addition to descendants. Defaults to True.
+
+        Returns:
+            Iterable[DOMNode | WalkType]: An iterable of nodes.
 
         """
 
         stack: list[Iterator[DOMNode]] = [iter(self.children)]
         pop = stack.pop
         push = stack.append
+        check_type = filter_type or DOMNode
 
-        if with_self:
+        if with_self and isinstance(self, check_type):
             yield self
 
         while stack:
@@ -490,7 +531,8 @@ class DOMNode(MessagePump):
             if node is None:
                 pop()
             else:
-                yield node
+                if isinstance(node, check_type):
+                    yield node
                 if node.children:
                     push(iter(node.children))
 
@@ -522,10 +564,28 @@ class DOMNode(MessagePump):
         """
         from .css.query import DOMQuery
 
-        return DOMQuery(self, selector)
+        return DOMQuery(self, filter=selector)
 
+    ExpectType = TypeVar("ExpectType")
+
+    @overload
     def query_one(self, selector: str) -> Widget:
-        """Get the first Widget matching the given selector.
+        ...
+
+    @overload
+    def query_one(self, selector: type[ExpectType]) -> ExpectType:
+        ...
+
+    @overload
+    def query_one(self, selector: str, expect_type: type[ExpectType]) -> ExpectType:
+        ...
+
+    def query_one(
+        self,
+        selector: str | type[ExpectType],
+        expect_type: type[ExpectType] | None = None,
+    ) -> ExpectType | Widget:
+        """Get the first Widget matching the given selector or selector type.
 
         Args:
             selector (str | None, optional): A selector.
@@ -535,19 +595,31 @@ class DOMNode(MessagePump):
         """
         from .css.query import DOMQuery
 
-        query = DOMQuery(self.screen, selector)
-        return query.first()
+        if isinstance(selector, str):
+            query_selector = selector
+        else:
+            query_selector = selector.__name__
+        query = DOMQuery(self.screen, filter=query_selector)
 
-    def set_styles(self, css: str | None = None, **styles) -> None:
+        if expect_type is None:
+            return query.first()
+        else:
+            return query.first(expect_type)
+
+    def set_styles(self, css: str | None = None, **update_styles) -> None:
         """Set custom styles on this object."""
-        # TODO: This can be done more efficiently
-        kwarg_css = "\n".join(
-            f"{key.replace('_', '-')}: {value}" for key, value in styles.items()
-        )
-        apply_css = f"{css or ''}\n{kwarg_css}\n"
-        new_styles = parse_declarations(apply_css, f"<custom styles for ${self!r}>")
-        self.styles.merge(new_styles)
-        self.refresh()
+
+        if css is not None:
+            try:
+                new_styles = parse_declarations(css, path="set_styles")
+            except DeclarationError as error:
+                raise DeclarationError(error.name, error.token, error.message) from None
+            self._inline_styles.merge(new_styles)
+            self.refresh(layout=True)
+
+        styles = self.styles
+        for key, value in update_styles.items():
+            setattr(styles, key, value)
 
     def has_class(self, *class_names: str) -> bool:
         """Check if the Node has all the given class names.

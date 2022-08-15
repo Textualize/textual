@@ -61,10 +61,11 @@ def get_box_model(
         )
     else:
         # An explicit width
-        content_width = styles.width.resolve_dimension(
+        styles_width = styles.width
+        content_width = styles_width.resolve_dimension(
             sizing_container - styles.margin.totals, viewport, fraction_unit
         )
-        if is_border_box:
+        if is_border_box and styles_width.excludes_border:
             content_width -= gutter.width
 
     if styles.min_width is not None:
@@ -92,11 +93,12 @@ def get_box_model(
             get_content_height(content_container, viewport, int(content_width))
         )
     else:
+        styles_height = styles.height
         # Explicit height set
-        content_height = styles.height.resolve_dimension(
+        content_height = styles_height.resolve_dimension(
             sizing_container - styles.margin.totals, viewport, fraction_unit
         )
-        if is_border_box:
+        if is_border_box and styles_height.excludes_border:
             content_height -= gutter.height
 
     if styles.min_height is not None:

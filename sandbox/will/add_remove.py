@@ -14,9 +14,9 @@ class AddRemoveApp(App):
     CSS = """
     #buttons {
         dock: top;
-        height: auto;
+        height: auto;       
     }
-    Button {
+    #buttons Button {
         width: 1fr;
     }
     #items {
@@ -26,8 +26,8 @@ class AddRemoveApp(App):
     Thing {
         height: 5;
         background: $panel;
-        border: wide $primary;
-        margin: 0 1;
+        border: tall $primary;
+        margin: 1 1;
         content-align: center middle;
     }
     """

@@ -1082,7 +1082,6 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             bool: True if an action was processed.
         """
-        event.stop()
         try:
             style = getattr(event, "style")
         except AttributeError:
@@ -1091,6 +1090,8 @@ class App(Generic[ReturnType], DOMNode):
             modifiers, action = extract_handler_actions(event_name, style.meta)
         except NoHandler:
             return False
+        else:
+            event.stop()
         if isinstance(action, str):
             await self.action(
                 action, default_namespace=default_namespace, modifiers=modifiers

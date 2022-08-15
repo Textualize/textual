@@ -6,8 +6,8 @@ from rich.text import Text
 from textual.app import App, ComposeResult
 from textual.reactive import Reactive
 from textual.widget import Widget
-from textual.widgets import Static, DataTable, DirectoryTree
-from textual.layout import Vertical
+from textual.widgets import Static, DataTable, DirectoryTree, Header, Footer
+from textual.layout import Container
 
 CODE = '''
 from __future__ import annotations
@@ -109,19 +109,18 @@ class BasicApp(App, css_path="basic.css"):
 
     def on_load(self):
         """Bind keys here."""
-        self.bind("s", "toggle_class('#sidebar', '-active')")
+        self.bind("s", "toggle_class('#sidebar', '-active')", description="Sidebar")
+        self.bind("d", "toggle_dark", description="Dark mode")
+        self.bind("q", "quit", description="Quit")
+        self.bind("f", "query_test", description="Query test")
 
-    def compose(self) -> ComposeResult:
+    def compose(self):
+        yield Header()
+
         table = DataTable()
         self.scroll_to_target = Tweet(TweetBody())
 
-        yield Static(
-            Text.from_markup(
-                "[b]This is a [u]Textual[/u] app, running in the terminal"
-            ),
-            id="header",
-        )
-        yield from (
+        yield Container(
             Tweet(TweetBody()),
             Widget(
                 Static(
@@ -143,7 +142,6 @@ class BasicApp(App, css_path="basic.css"):
             Tweet(TweetBody(), classes="scroll-horizontal"),
             Tweet(TweetBody(), classes="scroll-horizontal"),
         )
-        yield Widget(id="footer")
         yield Widget(
             Widget(classes="title"),
             Widget(classes="user"),
@@ -153,6 +151,7 @@ class BasicApp(App, css_path="basic.css"):
             Widget(classes="content"),
             id="sidebar",
         )
+        yield Footer()
 
         table.add_column("Foo", width=20)
         table.add_column("Bar", width=20)
@@ -164,11 +163,31 @@ class BasicApp(App, css_path="basic.css"):
         for n in range(100):
             table.add_row(*[f"Cell ([b]{n}[/b], {col})" for col in range(6)])
 
+    def on_mount(self):
+        self.sub_title = "Widget demo"
+
     async def on_key(self, event) -> None:
         await self.dispatch_key(event)
 
-    def key_d(self):
+    def action_toggle_dark(self):
         self.dark = not self.dark
+
+    def action_query_test(self):
+        query = self.query("Tweet")
+        self.log(query)
+        self.log(query.nodes)
+        self.log(query)
+        self.log(query.nodes)
+
+        query.set_styles("outline: outer red;")
+
+        query = query.exclude(".scroll-horizontal")
+        self.log(query)
+        self.log(query.nodes)
+
+        # query = query.filter(".rubbish")
+        # self.log(query)
+        # self.log(query.first())
 
     async def key_q(self):
         await self.shutdown()
