@@ -4,7 +4,7 @@ Textual uses CSS to apply style to widgets. If you have any exposure to web deve
 
 ## Stylesheets
 
-CSS stands for _Cascading Stylesheets_. A stylesheet is a list of styles and rules about how the apply to a page. In the case of Textual, the stylesheet applies styles to widgets but otherwise it is the same idea.
+CSS stands for _Cascading Stylesheets_. A stylesheet is a list of styles and rules about how those styles should be applied to a page. In the case of Textual, the stylesheet applies styles to widgets but otherwise it is the same idea.
 
 !!! note
 
@@ -357,7 +357,7 @@ We can use the following CSS to style all buttons which have a parent with an ID
 
 ## Specificity
 
-It is possible that several selectors match a given widget. If the same rule is applied by more than one selector then Textual needs a way to decide which rule _wins_. It does this by following these rules:
+It is possible that several selectors match a given widget. If the same style is applied by more than one selector then Textual needs a way to decide which rule _wins_. It does this by following these rules:
 
 - The selector with the most IDs wins. For instance `#next` beats `.button` and `#dialog #next` beats `#next`. If the selectors have the same number of IDs then move to the next rule.
 
