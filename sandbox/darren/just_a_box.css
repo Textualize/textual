@@ -5,7 +5,7 @@ Screen {
 #left_pane {
     background: red;
     width: 30;
-    height: auto;
+    overflow: scroll scroll;
 }
 
 #middle_pane {
@@ -19,6 +19,6 @@ Screen {
 }
 
 .box {
-    height: 5;
-    width: 15;
+    height: 12;
+    width: 30;
 }
