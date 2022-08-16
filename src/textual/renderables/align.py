@@ -29,7 +29,6 @@ class Align:
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         lines = console.render_lines(self.renderable, options, pad=False)
-
         new_line = Segment.line()
         for line in align_lines(
             lines,
