@@ -43,6 +43,9 @@ class DOMNode(MessagePump):
     # Custom CSS
     CSS: ClassVar[str] = ""
 
+    # Default classes argument if not supplied
+    DEFAULT_CLASSES: str = ""
+
     # Virtual DOM nodes
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
 

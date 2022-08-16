@@ -81,7 +81,6 @@ class Widget(DOMNode):
         scrollbar-size-horizontal: 1;
     }
     """
-
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
     can_focus: bool = False
@@ -124,7 +123,11 @@ class Widget(DOMNode):
 
         self._styles_cache = StylesCache()
 
-        super().__init__(name=name, id=id, classes=classes)
+        super().__init__(
+            name=name,
+            id=id,
+            classes=self.DEFAULT_CLASSES if classes is None else classes,
+        )
         self.add_children(*children)
 
     virtual_size = Reactive(Size(0, 0), layout=True)
@@ -987,21 +990,16 @@ class Widget(DOMNode):
             renderable = Styled(renderable, rich_style)
 
         styles = self.styles
-        content_align = (
-            styles.content_align_horizontal,
-            styles.content_align_vertical,
+        horizontal, vertical = styles.content_align
+        # TODO: This changes the shape of the renderable and breaks alignment
+        # We need custom functionality that doesn't measure the renderable again
+        renderable = Align(
+            renderable,
+            self.size,
+            rich_style,
+            horizontal,
+            vertical,
         )
-        if content_align != ("left", "top"):
-            horizontal, vertical = content_align
-            # TODO: This changes the shape of the renderable and breaks alignment
-            # We need custom functionality that doesn't measure the renderable again
-            renderable = Align(
-                renderable,
-                self.size,
-                rich_style,
-                horizontal,
-                vertical,
-            )
 
         return renderable
 

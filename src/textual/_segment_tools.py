@@ -153,17 +153,12 @@ def align_lines(
     width, height = size
     shape_width, shape_height = Segment.get_shape(lines)
 
-    print("len lines", len(lines))
-    print(width, height)
-    print(shape_width, shape_height)
-
     def blank_lines(count: int) -> Lines:
         return [[Segment(" " * width, style)]] * count
 
     top_blank_lines = bottom_blank_lines = 0
     vertical_excess_space = max(0, height - shape_height)
-    print("VERTICAL EXCESS", vertical_excess_space)
-    print("height", height, "shape height", shape_height)
+
     if vertical == "top":
         bottom_blank_lines = vertical_excess_space
     elif vertical == "middle":
@@ -172,7 +167,6 @@ def align_lines(
     elif vertical == "bottom":
         top_blank_lines = vertical_excess_space
 
-    print(top_blank_lines)
     yield from blank_lines(top_blank_lines)
 
     horizontal_excess_space = max(0, width - shape_width)
