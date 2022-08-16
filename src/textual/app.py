@@ -668,7 +668,7 @@ class App(Generic[ReturnType], DOMNode):
         self.screen.post_message_no_wait(events.ScreenResume(self))
         return current_screen
 
-    def pop_screen(self) -> Screen:
+    def pop_screen(self, remove: bool | None = None) -> Screen:
         """Pop the current screen from the stack, and switch to the previous screen.
 
         Returns:
@@ -680,10 +680,25 @@ class App(Generic[ReturnType], DOMNode):
                 "Can't pop screen; there must be at least one screen on the stack"
             )
         screen = screen_stack.pop()
-        screen.remove()
         screen.post_message_no_wait(events.ScreenSuspend(self))
         self.screen._screen_resized(self.size)
         self.screen.post_message_no_wait(events.ScreenResume(self))
+
+        if remove is None:
+            if screen not in self.SCREENS.values():
+                screen.remove()
+            else:
+                screen.detach()
+        else:
+            if remove:
+                if screen in self.SCREENS.values():
+                    raise ScreenStackError("Can't remove screen set in App.SCREENS")
+                screen.remove()
+            else:
+                screen.detach()
+
+        print(self._registry)
+
         return screen
 
     def set_focus(self, widget: Widget | None) -> None:
@@ -692,7 +707,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widget (Widget): [description]
         """
-        self.log("set_focus", widget=widget)
         if widget == self.focused:
             # Widget is already focused
             return
@@ -910,7 +924,7 @@ class App(Generic[ReturnType], DOMNode):
         if child not in self._registry:
             parent.children._append(child)
             self._registry.add(child)
-            child.set_parent(parent)
+            child._attach(parent)
             child.on_register(self)
             child.start_messages()
             return True
@@ -948,10 +962,11 @@ class App(Generic[ReturnType], DOMNode):
         """Unregister a widget.
 
         Args:
-            widget (Widget): _description_
+            widget (Widget): A Widget to unregister
         """
         if isinstance(widget._parent, Widget):
             widget._parent.children._remove(widget)
+            widget._attach(None)
         self._registry.discard(widget)
 
     async def _disconnect_devtools(self):
@@ -964,7 +979,7 @@ class App(Generic[ReturnType], DOMNode):
             parent (Widget): The parent of the Widget.
             widget (Widget): The Widget to start.
         """
-        widget.set_parent(parent)
+        widget._attach(parent)
         widget.start_messages()
         widget.post_message_no_wait(events.Mount(sender=parent))
 

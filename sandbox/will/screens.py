@@ -8,7 +8,7 @@ class ModalScreen(Screen):
         yield Footer()
 
     def on_screen_resume(self):
-        self.query("*").refresh()
+        self.query_one(Pretty).update(self.app.screen_stack)
 
 
 class NewScreen(Screen):
@@ -25,14 +25,19 @@ class ScreenApp(App):
     ScreenApp Screen {
         background: #111144;
         color: white;
+     
+       
     }
     ScreenApp ModalScreen {
         background: #114411;
         color: white;
+        
+      
     }
-    ScreenApp Static {
-        height: 100%;        
+    ScreenApp Pretty {        
+        height: auto;        
         content-align: center middle;
+        background: white 20%;
     }
     """
 

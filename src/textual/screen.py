@@ -33,7 +33,6 @@ class Screen(Widget):
 
     CSS = """
     Screen {
-
         layout: vertical;
         overflow-y: auto;
     }

@@ -10,6 +10,9 @@ from rich.segment import Segment
 from rich.style import Style
 
 from ._cells import cell_len
+from ._types import Lines
+from .css.types import AlignHorizontal, AlignVertical
+from .geometry import Size
 
 
 def line_crop(
@@ -124,3 +127,73 @@ def line_pad(
             Segment(" " * pad_right, style),
         ]
     return list(segments)
+
+
+def align_lines(
+    lines: Lines,
+    style: Style,
+    size: Size,
+    horizontal: AlignHorizontal,
+    vertical: AlignVertical,
+) -> Iterable[list[Segment]]:
+    """Align lines.
+
+    Args:
+        lines (Lines): A list of lines.
+        style (Style): Background style.
+        size (Size): Size of container.
+        horizontal (AlignHorizontal): Horizontal alignment.
+        vertical (AlignVertical): Vertical alignment
+
+    Returns:
+        Iterable[list[Segment]]: Aligned lines.
+
+    """
+
+    width, height = size
+    shape_width, shape_height = Segment.get_shape(lines)
+
+    print("len lines", len(lines))
+    print(width, height)
+    print(shape_width, shape_height)
+
+    def blank_lines(count: int) -> Lines:
+        return [[Segment(" " * width, style)]] * count
+
+    top_blank_lines = bottom_blank_lines = 0
+    vertical_excess_space = max(0, height - shape_height)
+    print("VERTICAL EXCESS", vertical_excess_space)
+    print("height", height, "shape height", shape_height)
+    if vertical == "top":
+        bottom_blank_lines = vertical_excess_space
+    elif vertical == "middle":
+        top_blank_lines = vertical_excess_space // 2
+        bottom_blank_lines = height - top_blank_lines
+    elif vertical == "bottom":
+        top_blank_lines = vertical_excess_space
+
+    print(top_blank_lines)
+    yield from blank_lines(top_blank_lines)
+
+    horizontal_excess_space = max(0, width - shape_width)
+
+    adjust_line_length = Segment.adjust_line_length
+    if horizontal == "left":
+        for line in lines:
+            yield adjust_line_length(line, width, style, pad=True)
+
+    elif horizontal == "center":
+        left_space = horizontal_excess_space // 2
+        for line in lines:
+            yield [
+                Segment(" " * left_space, style),
+                *adjust_line_length(line, width - left_space, style, pad=True),
+            ]
+
+    elif horizontal == "right":
+        get_line_length = Segment.get_line_length
+        for line in lines:
+            left_space = width - get_line_length(line)
+            yield [*line, Segment(" " * left_space, style)]
+
+    yield from blank_lines(bottom_blank_lines)

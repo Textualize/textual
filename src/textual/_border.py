@@ -263,6 +263,8 @@ class Border:
                 else:
                     render_options = options.update_width(width)
 
+        print("LINES", self.renderable)
+        print(render_options)
         lines = console.render_lines(self.renderable, render_options)
 
         if self.outline:

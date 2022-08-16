@@ -355,7 +355,7 @@ class Stylesheet:
         node._component_styles.clear()
         for component in node.COMPONENT_CLASSES:
             virtual_node = DOMNode(classes=component)
-            virtual_node.set_parent(node)
+            virtual_node._attach(node)
             self.apply(virtual_node, animate=False)
             node._component_styles[component] = virtual_node.styles
 

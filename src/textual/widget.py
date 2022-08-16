@@ -14,7 +14,7 @@ from typing import (
 )
 
 import rich.repr
-from rich.align import Align
+
 from rich.console import Console, RenderableType
 from rich.measure import Measurement
 from rich.segment import Segment
@@ -27,6 +27,7 @@ from ._animator import BoundAnimator
 from ._arrange import arrange, DockArrangeResult
 from ._context import active_app
 from ._layout import Layout
+from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
 from .box_model import BoxModel, get_box_model
@@ -35,6 +36,8 @@ from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from .reactive import Reactive, watch
+from .renderables.align import Align
+
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
@@ -287,6 +290,7 @@ class Widget(DOMNode):
         Returns:
             int: The height of the content.
         """
+
         if self.is_container:
             assert self.layout is not None
             height = (
@@ -306,7 +310,7 @@ class Widget(DOMNode):
 
             renderable = self.render()
             options = self.console.options.update_width(width).update(highlight=False)
-            segments = self.console.render(renderable, options)
+            segments = list(self.console.render(renderable, options))
             # Cheaper than counting the lines returned from render_lines!
             height = sum(text.count("\n") for text, _, _ in segments)
             self._content_height_cache = (cache_key, height)
@@ -989,7 +993,15 @@ class Widget(DOMNode):
         )
         if content_align != ("left", "top"):
             horizontal, vertical = content_align
-            renderable = Align(renderable, horizontal, vertical=vertical)
+            # TODO: This changes the shape of the renderable and breaks alignment
+            # We need custom functionality that doesn't measure the renderable again
+            renderable = Align(
+                renderable,
+                self.size,
+                rich_style,
+                horizontal,
+                vertical,
+            )
 
         return renderable
 
@@ -1030,8 +1042,10 @@ class Widget(DOMNode):
         width, height = self.size
         renderable = self.render()
         renderable = self.post_render(renderable)
-        options = self.console.options.update_dimensions(width, height).update(
-            highlight=False
+        options = (
+            self.console.options.update_width(width)
+            .update(highlight=False)
+            .reset_height()
         )
         lines = self.console.render_lines(renderable, options)
         self._render_cache = RenderCache(self.size, lines)
@@ -1180,9 +1194,9 @@ class Widget(DOMNode):
 
     async def on_remove(self, event: events.Remove) -> None:
         await self.close_messages()
-        self.app._unregister(self)
         assert self.parent
         self.parent.refresh(layout=True)
+        self.app._unregister(self)
 
     def _on_mount(self, event: events.Mount) -> None:
         widgets = list(self.compose())

@@ -445,7 +445,10 @@ class DOMNode(MessagePump):
     def detach(self) -> None:
         if self._parent and isinstance(self._parent, DOMNode):
             self._parent.children._remove(self)
-            self.set_parent(None)
+            print(self.parent.children)
+            self._detach()
+            print("DETATCH", self)
+            print(self.app._registry)
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.
@@ -472,7 +475,7 @@ class DOMNode(MessagePump):
             node (DOMNode): A DOM node.
         """
         self.children._append(node)
-        node.set_parent(self)
+        node._attach(self)
 
     def add_children(self, *nodes: Widget, **named_nodes: Widget) -> None:
         """Add multiple children to this node.
@@ -483,10 +486,10 @@ class DOMNode(MessagePump):
         """
         _append = self.children._append
         for node in nodes:
-            node.set_parent(self)
+            node._attach(self)
             _append(node)
         for node_id, node in named_nodes.items():
-            node.set_parent(self)
+            node._attach(self)
             _append(node)
             node.id = node_id
 

@@ -2,10 +2,17 @@ from __future__ import annotations
 
 from typing import Any
 from rich.pretty import Pretty as PrettyRenderable
-from ._static import Static
+
+from ..widget import Widget
 
 
-class Pretty(Static):
+class Pretty(Widget):
+    CSS = """
+    Static {
+        height: auto;
+    }
+    """
+
     def __init__(
         self,
         object: Any,
@@ -14,10 +21,16 @@ class Pretty(Static):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
-        self._object = object
         super().__init__(
-            PrettyRenderable(self._object),
             name=name,
             id=id,
             classes=classes,
         )
+        self._renderable = PrettyRenderable(object)
+
+    def render(self) -> PrettyRenderable:
+        return self._renderable
+
+    def update(self, object: Any) -> None:
+        self._renderable = PrettyRenderable(object)
+        self.refresh()
