@@ -1139,7 +1139,8 @@ class Widget(DOMNode):
         Returns:
             RenderableType: Any renderable
         """
-        return "" if self.is_container else self.css_identifier_styled
+        render = "" if self.is_container else self.css_identifier_styled
+        return render
 
     async def action(self, action: str, *params) -> None:
         await self.app.action(action, self)

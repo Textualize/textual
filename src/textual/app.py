@@ -1087,7 +1087,7 @@ class App(Generic[ReturnType], DOMNode):
         if isinstance(event, events.Mount):
             screen = Screen(id="_default")
             self._register(self, screen)
-            self.push_screen(screen)
+            self._screen_stack.append(screen)
             await super().on_event(event)
 
         elif isinstance(event, events.InputEvent) and not event.is_forwarded:
