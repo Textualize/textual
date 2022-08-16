@@ -30,8 +30,20 @@ class Animatable(Protocol):
 
 
 class Animation(ABC):
+
+    on_complete: Callable[[], None] | None = None
+    """Callback to run after animation completes"""
+
     @abstractmethod
     def __call__(self, time: float) -> bool:  # pragma: no cover
+        """Call the animation, return a boolean indicating whether animation is in-progress or complete.
+
+        Args:
+            time (float): The current timestamp
+
+        Returns:
+            bool: True if the animation has finished, otherwise False.
+        """
         raise NotImplementedError("")
 
     def __eq__(self, other: object) -> bool:
@@ -48,6 +60,7 @@ class SimpleAnimation(Animation):
     end_value: float | Animatable
     final_value: object
     easing: EasingFunction
+    on_complete: Callable[[], None] | None = None
 
     def __call__(self, time: float) -> bool:
 
@@ -109,6 +122,7 @@ class BoundAnimator:
         duration: float | None = None,
         speed: float | None = None,
         easing: EasingFunction | str = DEFAULT_EASING,
+        on_complete: Callable[[], None] | None = None,
     ) -> None:
         easing_function = EASING[easing] if isinstance(easing, str) else easing
         return self._animator.animate(
@@ -119,6 +133,7 @@ class BoundAnimator:
             duration=duration,
             speed=speed,
             easing=easing_function,
+            on_complete=on_complete,
         )
 
 
@@ -163,6 +178,7 @@ class Animator:
         duration: float | None = None,
         speed: float | None = None,
         easing: EasingFunction | str = DEFAULT_EASING,
+        on_complete: Callable[[], None] | None = None,
     ) -> None:
         """Animate an attribute to a new value.
 
@@ -201,6 +217,7 @@ class Animator:
                 duration=duration,
                 speed=speed,
                 easing=easing_function,
+                on_complete=on_complete,
             )
         if animation is None:
             start_value = getattr(obj, attribute)
@@ -223,6 +240,7 @@ class Animator:
                 end_value=value,
                 final_value=final_value,
                 easing=easing_function,
+                on_complete=on_complete,
             )
         assert animation is not None, "animation expected to be non-None"
 
@@ -241,7 +259,11 @@ class Animator:
             animation_keys = list(self._animations.keys())
             for animation_key in animation_keys:
                 animation = self._animations[animation_key]
-                if animation(animation_time):
+                animation_complete = animation(animation_time)
+                if animation_complete:
+                    completion_callback = animation.on_complete
+                    if completion_callback is not None:
+                        completion_callback()
                     del self._animations[animation_key]
 
     def _get_time(self) -> float:
