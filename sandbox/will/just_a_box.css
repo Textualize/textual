@@ -1,0 +1,24 @@
+Screen {
+    background: lightcoral;
+}
+
+#left_pane {
+    background: red;
+    width: 30;
+    height: auto;
+}
+
+#middle_pane {
+    background: green;
+    width: 140;
+}
+
+#right_pane {
+    background: blue;
+    width: 30;
+}
+
+.box {
+    height: 5;
+    width: 15;
+}

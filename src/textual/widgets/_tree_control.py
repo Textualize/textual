@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 
-from typing import Generic, Iterator, NewType, TypeVar
+from typing import ClassVar, Generic, Iterator, NewType, TypeVar
 
 import rich.repr
 from rich.console import RenderableType
-from rich.style import Style
 from rich.text import Text, TextType
 from rich.tree import Tree
-from rich.padding import PaddingDimensions
 
+from .. import events
 from ..reactive import Reactive
 from .._types import MessageTarget
 from ..widget import Widget
@@ -169,33 +168,52 @@ class TreeClick(Generic[NodeDataType], Message, bubble=True):
         yield "node", self.node
 
 
-class TreeControl(Generic[NodeDataType], Widget):
+class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
+    CSS = """
+    TreeControl {
+        background: $panel;
+        color: $text-panel;
+        height: auto;
+        width: 100%;
+    }
+
+    TreeControl > .tree--guides {
+        color: $secondary;
+    }
+    
+    """
+
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "tree--guides",
+        "tree--labels",
+    }
+
     def __init__(
         self,
         label: TextType,
         data: NodeDataType,
         *,
         name: str | None = None,
-        padding: PaddingDimensions = (1, 1),
+        id: str | None = None,
+        classes: str | None = None,
     ) -> None:
         self.data = data
 
-        self.id = NodeID(0)
+        self.node_id = NodeID(0)
         self.nodes: dict[NodeID, TreeNode[NodeDataType]] = {}
         self._tree = Tree(label)
         self.root: TreeNode[NodeDataType] = TreeNode(
-            None, self.id, self, self._tree, label, data
+            None, self.node_id, self, self._tree, label, data
         )
 
         self._tree.label = self.root
-        self.nodes[NodeID(self.id)] = self.root
-        super().__init__(name=name)
-        self.padding = padding
+        self.nodes[NodeID(self.node_id)] = self.root
+        super().__init__(name=name, id=id, classes=classes)
 
     hover_node: Reactive[NodeID | None] = Reactive(None)
-    cursor: Reactive[NodeID] = Reactive(NodeID(0), layout=True)
-    cursor_line: Reactive[int] = Reactive(0, repaint=False)
-    show_cursor: Reactive[bool] = Reactive(False, layout=True)
+    cursor: Reactive[NodeID] = Reactive(NodeID(0))
+    cursor_line: Reactive[int] = Reactive(0)
+    show_cursor: Reactive[bool] = Reactive(False)
 
     def watch_show_cursor(self, value: bool) -> None:
         self.emit_no_wait(CursorMove(self, self.cursor_line))
@@ -211,14 +229,14 @@ class TreeControl(Generic[NodeDataType], Widget):
         data: NodeDataType,
     ) -> None:
         parent = self.nodes[node_id]
-        self.id = NodeID(self.id + 1)
+        self.node_id = NodeID(self.node_id + 1)
         child_tree = parent._tree.add(label)
         child_node: TreeNode[NodeDataType] = TreeNode(
-            parent, self.id, self, child_tree, label, data
+            parent, self.node_id, self, child_tree, label, data
         )
         parent.children.append(child_node)
         child_tree.label = child_node
-        self.nodes[self.id] = child_node
+        self.nodes[self.node_id] = child_node
 
         self.refresh(layout=True)
 
@@ -249,6 +267,7 @@ class TreeControl(Generic[NodeDataType], Widget):
         return None
 
     def render(self) -> RenderableType:
+        self._tree.guide_style = self._component_styles["tree--guides"].node.rich_style
         return self._tree
 
     def render_node(self, node: TreeNode[NodeDataType]) -> RenderableType:
@@ -307,24 +326,3 @@ class TreeControl(Generic[NodeDataType], Widget):
         if previous_node is not None:
             self.cursor_line -= 1
             self.cursor = previous_node.id
-
-
-if __name__ == "__main__":
-
-    from textual import events
-    from textual.app import App
-
-    class TreeApp(App):
-        async def on_mount(self, event: events.Mount) -> None:
-            await self.screen.dock(TreeControl("Tree Root", data="foo"))
-
-        async def handle_tree_click(self, message: TreeClick) -> None:
-            if message.node.empty:
-                await message.node.add("foo")
-                await message.node.add("bar")
-                await message.node.add("baz")
-                await message.node.expand()
-            else:
-                await message.node.toggle()
-
-    TreeApp(log_path="textual.log").run()

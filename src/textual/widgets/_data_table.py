@@ -349,9 +349,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             Lines: A list of segments per line.
         """
         if hover:
-            style += self.component_styles["datatable--highlight"].node.rich_style
+            style += self.get_component_styles("datatable--highlight").rich_style
         if cursor:
-            style += self.component_styles["datatable--cursor"].node.rich_style
+            style += self.get_component_styles("datatable--cursor").rich_style
         cell_key = (row_index, column_index, style, cursor, hover)
         if cell_key not in self._cell_render_cache:
             style += Style.from_meta({"row": row_index, "column": column_index})
@@ -394,7 +394,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         render_cell = self._render_cell
 
         if self.fixed_columns:
-            fixed_style = self.component_styles["datatable--fixed"].node.rich_style
+            fixed_style = self.get_component_styles("datatable--fixed").rich_style
             fixed_style += Style.from_meta({"fixed": True})
             fixed_row = [
                 render_cell(row_index, column.index, fixed_style, column.width)[line_no]
@@ -404,13 +404,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             fixed_row = []
 
         if row_index == -1:
-            row_style = self.component_styles["datatable--header"].node.rich_style
+            row_style = self.get_component_styles("datatable--header").rich_style
         else:
             if self.zebra_stripes:
                 component_row_style = (
                     "datatable--odd-row" if row_index % 2 else "datatable--even-row"
                 )
-                row_style = self.component_styles[component_row_style].node.rich_style
+                row_style = self.get_component_styles(component_row_style).rich_style
             else:
                 row_style = base_style
 

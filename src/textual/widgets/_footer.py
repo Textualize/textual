@@ -12,10 +12,41 @@ from ..widget import Widget
 
 @rich.repr.auto
 class Footer(Widget):
+
+    CSS = """
+    Footer {
+        background: $accent;
+        color: $text-accent;
+        dock: bottom;
+        height: 1;
+    }
+    Footer > .footer--highlight {    
+        background: $accent-darken-1;    
+        color: $text-accent-darken-1;               
+    }
+
+    Footer > .footer--highlight-key {        
+        background: $secondary;        
+        color: $text-secondary;  
+        text-style: bold;         
+    }
+
+    Footer > .footer--key {
+        text-style: bold;        
+        background: $accent-darken-2;
+        color: $text-accent-darken-2;
+    }
+    """
+
+    COMPONENT_CLASSES = {
+        "footer--description",
+        "footer--key",
+        "footer--highlight",
+        "footer--highlight-key",
+    }
+
     def __init__(self) -> None:
-        self.keys: list[tuple[str, str]] = []
         super().__init__()
-        self.layout_size = 1
         self._key_text: Text | None = None
 
     highlight_key: Reactive[str | None] = Reactive(None)
@@ -37,13 +68,19 @@ class Footer(Widget):
 
     def make_key_text(self) -> Text:
         """Create text containing all the keys."""
+        base_style = self.rich_style
         text = Text(
-            style="white on dark_green",
+            style=self.rich_style,
             no_wrap=True,
             overflow="ellipsis",
             justify="left",
             end="",
         )
+        highlight_style = self.get_component_styles("footer--highlight").rich_style
+        highlight_key_style = self.get_component_styles(
+            "footer--highlight-key"
+        ).rich_style
+        key_style = self.get_component_styles("footer--key").rich_style
         for binding in self.app.bindings.shown_keys:
             key_display = (
                 binding.key.upper()
@@ -52,12 +89,18 @@ class Footer(Widget):
             )
             hovered = self.highlight_key == binding.key
             key_text = Text.assemble(
-                (f" {key_display} ", "reverse" if hovered else "default on default"),
-                f" {binding.description} ",
+                (f" {key_display} ", highlight_key_style if hovered else key_style),
+                (
+                    f" {binding.description} ",
+                    highlight_style if hovered else base_style,
+                ),
                 meta={"@click": f"app.press('{binding.key}')", "key": binding.key},
             )
             text.append_text(key_text)
         return text
+
+    def post_render(self, renderable):
+        return renderable
 
     def render(self) -> RenderableType:
         if self._key_text is None:

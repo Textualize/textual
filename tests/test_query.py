@@ -1,14 +1,11 @@
-from textual.dom import DOMNode
+from textual.widget import Widget
 
 
 def test_query():
-    class Widget(DOMNode):
+    class View(Widget):
         pass
 
-    class View(DOMNode):
-        pass
-
-    class App(DOMNode):
+    class App(Widget):
         pass
 
     app = App()
@@ -52,7 +49,15 @@ def test_query():
         assert list(app.query("View#main")) == [main_view]
         assert list(app.query("#widget1")) == [widget1]
         assert list(app.query("#widget2")) == [widget2]
+
         assert list(app.query("Widget.float")) == [sidebar, tooltip, helpbar]
+        assert list(app.query("Widget.float").results(Widget)) == [
+            sidebar,
+            tooltip,
+            helpbar,
+        ]
+        assert list(app.query("Widget.float").results(View)) == []
+
         assert list(app.query("Widget.float.transient")) == [tooltip]
 
         assert list(app.query("App > View")) == [main_view, help_view]
