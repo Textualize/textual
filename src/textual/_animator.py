@@ -57,11 +57,11 @@ class SimpleAnimation(Animation):
     attribute: str
     start_time: float
     duration: float
-    delay: float
     start_value: float | Animatable
     end_value: float | Animatable
     final_value: object
     easing: EasingFunction
+    delay: float = 0.0
     on_complete: Callable[[], None] | None = None
 
     def __call__(self, time: float) -> bool:
