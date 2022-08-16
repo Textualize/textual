@@ -448,10 +448,7 @@ class DOMNode(MessagePump):
     def detach(self) -> None:
         if self._parent and isinstance(self._parent, DOMNode):
             self._parent.children._remove(self)
-            print(self.parent.children)
             self._detach()
-            print("DETATCH", self)
-            print(self.app._registry)
 
     def get_pseudo_classes(self) -> Iterable[str]:
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.

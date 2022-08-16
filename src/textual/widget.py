@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from itertools import islice
 from fractions import Fraction
 from operator import attrgetter
 from typing import (
@@ -989,18 +990,6 @@ class Widget(DOMNode):
         else:
             renderable = Styled(renderable, rich_style)
 
-        styles = self.styles
-        horizontal, vertical = styles.content_align
-        # TODO: This changes the shape of the renderable and breaks alignment
-        # We need custom functionality that doesn't measure the renderable again
-        renderable = Align(
-            renderable,
-            self.size,
-            rich_style,
-            horizontal,
-            vertical,
-        )
-
         return renderable
 
     def watch_mouse_over(self, value: bool) -> None:
@@ -1043,7 +1032,30 @@ class Widget(DOMNode):
         options = self.console.options.update_dimensions(width, height).update(
             highlight=False
         )
-        lines = self.console.render_lines(renderable, options)
+
+        segments = self.console.render(renderable, options)
+        lines = list(
+            islice(
+                Segment.split_and_crop_lines(
+                    segments, width, include_new_lines=False, pad=False
+                ),
+                None,
+                height,
+            )
+        )
+
+        styles = self.styles
+        align_horizontal, align_vertical = styles.content_align
+        lines = list(
+            align_lines(
+                lines,
+                Style(),
+                self.size,
+                align_horizontal,
+                align_vertical,
+            )
+        )
+
         self._render_cache = RenderCache(self.size, lines)
         self._dirty_regions.clear()
 

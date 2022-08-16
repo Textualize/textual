@@ -5,9 +5,9 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 
-from ..geometry import Size
-from ..css.types import AlignHorizontal, AlignVertical
 from .._segment_tools import align_lines
+from ..css.types import AlignHorizontal, AlignVertical
+from ..geometry import Size
 
 
 class Align:
