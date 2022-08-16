@@ -1,6 +1,4 @@
 Screen {
-    height: 100vh;
-    width: 100%;
     background: red;
 }
 
@@ -10,12 +8,13 @@ Screen {
 
 .box {
     height: 5;
-    width: 5;
+    width: 5
     margin: 1 10;
 }
 
 #left_pane {
-    width: 1fr;
+    width: 30;
+    height: 100;
     background: $background;
 }
 
