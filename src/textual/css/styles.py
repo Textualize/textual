@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import lru_cache
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
+from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast, Callable
 
 import rich.repr
 from rich.style import Style
@@ -579,6 +579,7 @@ class Styles(StylesBase):
         duration: float | None,
         speed: float | None,
         easing: EasingFunction,
+        on_complete: Callable[[], None] = None,
     ) -> Animation | None:
         from ..widget import Widget
 
@@ -594,6 +595,7 @@ class Styles(StylesBase):
                 duration=duration,
                 speed=speed,
                 easing=easing,
+                on_complete=on_complete,
             )
         return None
 
