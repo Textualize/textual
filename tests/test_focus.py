@@ -14,6 +14,7 @@ class NonFocusable(Widget, can_focus=False, can_focus_children=False):
 async def test_focus_chain():
 
     app = App()
+    app._set_active()
     app.push_screen(Screen())
 
     # Check empty focus chain
@@ -34,6 +35,7 @@ async def test_focus_chain():
 async def test_focus_next_and_previous():
 
     app = App()
+    app._set_active()
     app.push_screen(Screen())
     app.screen.add_children(
         Focusable(id="foo"),

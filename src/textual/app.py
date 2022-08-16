@@ -639,51 +639,18 @@ class App(Generic[ReturnType], DOMNode):
             self._register(self, next_screen)
         return next_screen
 
-    def push_screen(self, screen: Screen | str) -> None:
-        """Push a new screen on the screen stack.
+    def _replace_screen(self, screen: Screen, remove: bool | None = None) -> Screen:
+        """Handle the replaced screen.
 
         Args:
-            screen (Screen | str): A Screen instance or an id.
+            screen (Screen): A screen object.
+            remove (bool | None): Remove replaced screen if True. Don't remove if False.
+                If None, remove screens not in self.SCREENS.
 
         Returns:
-            Screen: Newly active screen.
+            Screen: The replaced screen
         """
-        next_screen = self._get_screen(screen)
-        self._screen_stack.append(next_screen)
-        self.screen.post_message_no_wait(events.ScreenResume(self))
-
-    def switch_screen(self, screen: Screen | str) -> Screen:
-        """Switch to a another screen.
-
-        Args:
-            screen (Screen | str): A screen instance or a named of a screen.
-
-        Returns:
-            Screen: The previous screen object.
-        """
-        next_screen = self._get_screen(screen)
-        current_screen = self._screen_stack.pop()
-        current_screen.post_message_no_wait(events.ScreenSuspend(self))
-        self._screen_stack.append(next_screen)
-        self.screen.post_message_no_wait(events.ScreenResume(self))
-        return current_screen
-
-    def pop_screen(self, remove: bool | None = None) -> Screen:
-        """Pop the current screen from the stack, and switch to the previous screen.
-
-        Returns:
-            Screen: The screen that was replaced.
-        """
-        screen_stack = self._screen_stack
-        if len(screen_stack) <= 1:
-            raise ScreenStackError(
-                "Can't pop screen; there must be at least one screen on the stack"
-            )
-        screen = screen_stack.pop()
         screen.post_message_no_wait(events.ScreenSuspend(self))
-        self.screen._screen_resized(self.size)
-        self.screen.post_message_no_wait(events.ScreenResume(self))
-
         if remove is None:
             if screen not in self.SCREENS.values():
                 screen.remove()
@@ -696,8 +663,53 @@ class App(Generic[ReturnType], DOMNode):
                 screen.remove()
             else:
                 screen.detach()
-
         return screen
+
+    def push_screen(self, screen: Screen | str) -> None:
+        """Push a new screen on the screen stack.
+
+        Args:
+            screen (Screen | str): A Screen instance or an id.
+
+        """
+        next_screen = self._get_screen(screen)
+        self._screen_stack.append(next_screen)
+        self.screen.post_message_no_wait(events.ScreenResume(self))
+
+    def switch_screen(self, screen: Screen | str, remove: bool | None) -> Screen:
+        """Switch to a another screen.
+
+        Args:
+            screen (Screen | str): A screen instance or a named of a screen.
+            remove (bool | None): Remove replaced screen if True. Don't remove if False.
+                If None, remove screens not in self.SCREENS.
+
+        Returns:
+            Screen: The previous screen object.
+        """
+        next_screen = self._get_screen(screen)
+        previous_screen = self._replace_screen(self._screen_stack.pop(), remove=remove)
+        self._screen_stack.append(next_screen)
+        self.screen.post_message_no_wait(events.ScreenResume(self))
+        return previous_screen
+
+    def pop_screen(self, remove: bool | None = None) -> Screen:
+        """Pop the current screen from the stack, and switch to the previous screen.
+
+        Returns:
+            Screen: The screen that was replaced.
+            remove (bool | None): Remove replaced screen if True. Don't remove if False.
+                If None, remove screens not in self.SCREENS.
+        """
+        screen_stack = self._screen_stack
+        if len(screen_stack) <= 1:
+            raise ScreenStackError(
+                "Can't pop screen; there must be at least one screen on the stack"
+            )
+        previous_screen = self._replace_screen(screen_stack.pop(), remove)
+        self.screen._screen_resized(self.size)
+        self.screen.post_message_no_wait(events.ScreenResume(self))
+        return previous_screen
 
     def set_focus(self, widget: Widget | None) -> None:
         """Focus (or unfocus) a widget. A focused widget will receive key events first.
