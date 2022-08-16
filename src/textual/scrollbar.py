@@ -9,6 +9,7 @@ from rich.segment import Segment, Segments
 from rich.style import Style, StyleType
 
 from textual.reactive import Reactive
+from textual.renderables.blank import Blank
 from . import events
 from ._types import MessageTarget
 from .geometry import Offset
@@ -285,6 +286,19 @@ class ScrollBar(Widget):
                     )
                 )
             await self.emit(ScrollTo(self, x=x, y=y))
+
+
+class ScrollBarCorner(Widget):
+    """Widget which fills the gap between horizontal and vertical scrollbars,
+    should they both be present."""
+
+    def __init__(self, name: str | None = None):
+        super().__init__(name=name)
+
+    def render(self) -> RenderableType:
+        styles = self.parent.styles
+        color = styles.scrollbar_corner_color
+        return Blank(color)
 
 
 if __name__ == "__main__":

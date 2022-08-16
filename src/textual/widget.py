@@ -17,7 +17,6 @@ import rich.repr
 from rich.align import Align
 from rich.console import Console, RenderableType
 from rich.measure import Measurement
-
 from rich.segment import Segment
 from rich.style import Style
 from rich.styled import Styled
@@ -46,6 +45,7 @@ if TYPE_CHECKING:
         ScrollRight,
         ScrollTo,
         ScrollUp,
+        ScrollBarCorner,
     )
 
 
@@ -73,6 +73,7 @@ class Widget(DOMNode):
         scrollbar-background-hover: $panel-darken-2;
         scrollbar-color: $primary-lighten-1;
         scrollbar-color-active: $warning-darken-1;
+        scrollbar-corner-color: $panel-darken-3;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
     }
@@ -102,6 +103,7 @@ class Widget(DOMNode):
 
         self._vertical_scrollbar: ScrollBar | None = None
         self._horizontal_scrollbar: ScrollBar | None = None
+        self._scrollbar_corner: ScrollBarCorner | None = None
 
         self._render_cache = RenderCache(Size(0, 0), [])
         # Regions which need to be updated (in Widget)
@@ -352,6 +354,19 @@ class Widget(DOMNode):
             - self.container_size.height
             + self.scrollbar_size_horizontal,
         )
+
+    @property
+    def scrollbar_corner(self) -> ScrollBarCorner:
+        """Return the ScrollBarCorner - the cells that appear between the
+        horizontal and vertical scrollbars (only when both are visible).
+        """
+        from .scrollbar import ScrollBarCorner
+
+        if self._scrollbar_corner is not None:
+            return self._scrollbar_corner
+        self._scrollbar_corner = ScrollBarCorner()
+        self.app.start_widget(self, self._scrollbar_corner)
+        return self._scrollbar_corner
 
     @property
     def vertical_scrollbar(self) -> ScrollBar:
@@ -918,15 +933,18 @@ class Widget(DOMNode):
                 _,
                 vertical_scrollbar_region,
                 horizontal_scrollbar_region,
-                _,
+                scrollbar_corner_gap,
             ) = region.split(
                 -scrollbar_size_vertical,
                 -scrollbar_size_horizontal,
             )
+            if scrollbar_corner_gap:
+                yield self.scrollbar_corner, scrollbar_corner_gap
             if vertical_scrollbar_region:
                 yield self.vertical_scrollbar, vertical_scrollbar_region
             if horizontal_scrollbar_region:
                 yield self.horizontal_scrollbar, horizontal_scrollbar_region
+
         elif show_vertical_scrollbar:
             _, scrollbar_region = region.split_vertical(-scrollbar_size_vertical)
             if scrollbar_region:

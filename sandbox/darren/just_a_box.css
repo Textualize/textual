@@ -1,60 +1,24 @@
 Screen {
-    background: red;
-}
-
-#horizontal {
-    width: 100%;
-}
-
-.box {
-    height: 5;
-    width: 5
-    margin: 1 10;
+    background: lightcoral;
 }
 
 #left_pane {
-    width: 30;
-    height: 100;
-    background: $background;
+    background: red;
+    width: 20;
+    overflow: scroll scroll;
 }
 
 #middle_pane {
-    margin-top: 4;
-    width: 1fr;
-    background: #173f5f;
-}
-
-#middle_pane:focus {
-    tint: cyan 40%;
+    background: green;
+    width: 140;
 }
 
 #right_pane {
-    width: 1fr;
-    background: #f6d55c;
-}
-
-.box:focus {
-    tint: cyan 40%;
-}
-
-#box1 {
-    background: green;
-}
-
-#box2 {
-    offset-y: 3;
-    background: hotpink;
-}
-
-#box3 {
-    background: red;
-}
-
-
-#box4 {
     background: blue;
+    width: 30;
 }
 
-#box5 {
-    background: darkviolet;
+.box {
+    height: 12;
+    width: 30;
 }
