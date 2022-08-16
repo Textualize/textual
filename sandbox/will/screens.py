@@ -4,7 +4,7 @@ from textual.widgets import Static, Footer, Pretty
 
 class ModalScreen(Screen):
     def compose(self) -> ComposeResult:
-        yield Pretty(self.app._screen_stack)
+        yield Pretty(self.app.screen_stack)
         yield Footer()
 
     def on_screen_resume(self):
@@ -13,7 +13,7 @@ class ModalScreen(Screen):
 
 class NewScreen(Screen):
     def compose(self):
-        yield Pretty(self.app._screen_stack)
+        yield Pretty(self.app.screen_stack)
         yield Footer()
 
     def on_screen_resume(self):
@@ -52,10 +52,6 @@ class ScreenApp(App):
         self.bind("3", "switch_screen('3')", description="Screen 3")
         self.bind("s", "modal_screen", description="add screen")
         self.bind("escape", "back", description="Go back")
-
-    def action_back(self) -> None:
-        self.pop_screen()
-        self.log(self.app._registry)
 
     def action_modal_screen(self) -> None:
         self.push_screen(ModalScreen())

@@ -442,6 +442,11 @@ class DOMNode(MessagePump):
         """The children which don't have display: none set."""
         return [child for child in self.children if child.display]
 
+    def detach(self) -> None:
+        if self._parent and isinstance(self._parent, DOMNode):
+            self._parent.children._remove(self)
+            self.set_parent(None)
+
     def get_pseudo_classes(self) -> Iterable[str]:
         """Get any pseudo classes applicable to this Node, e.g. hover, focus.
 

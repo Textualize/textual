@@ -21,7 +21,7 @@ from typing import (
     TypeVar,
     TYPE_CHECKING,
 )
-from weakref import WeakValueDictionary
+from weakref import WeakSet
 
 from ._ansi_sequences import SYNC_START, SYNC_END
 
@@ -183,7 +183,6 @@ class App(Generic[ReturnType], DOMNode):
         self._driver: Driver | None = None
         self._exit_renderables: list[RenderableType] = []
 
-        self._docks: list[Dock] = []
         self._action_targets = {"app", "screen"}
         self._animator = Animator(self)
         self.animate = self._animator.bind(self)
@@ -215,7 +214,7 @@ class App(Generic[ReturnType], DOMNode):
         self._require_stylesheet_update = False
         self.css_path = css_path or self.CSS_PATH
 
-        self._registry: set[DOMNode] = set()
+        self._registry: WeakSet[DOMNode] = WeakSet()
 
         self.devtools = DevtoolsClient()
         self._return_value: ReturnType | None = None
@@ -681,6 +680,7 @@ class App(Generic[ReturnType], DOMNode):
                 "Can't pop screen; there must be at least one screen on the stack"
             )
         screen = screen_stack.pop()
+        screen.remove()
         screen.post_message_no_wait(events.ScreenSuspend(self))
         self.screen._screen_resized(self.size)
         self.screen.post_message_no_wait(events.ScreenResume(self))
@@ -1222,6 +1222,12 @@ class App(Generic[ReturnType], DOMNode):
 
     async def action_pop_screen(self) -> None:
         self.pop_screen()
+
+    async def action_back(self) -> None:
+        try:
+            self.pop_screen()
+        except ScreenStackError:
+            pass
 
     async def action_add_class_(self, selector: str, class_name: str) -> None:
         self.screen.query(selector).add_class(class_name)

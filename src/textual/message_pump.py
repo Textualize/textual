@@ -122,7 +122,7 @@ class MessagePump(metaclass=MessagePumpMeta):
     def log(self, *args, **kwargs) -> None:
         return self.app.log(*args, **kwargs, _textual_calling_frame=inspect.stack()[1])
 
-    def set_parent(self, parent: MessagePump) -> None:
+    def set_parent(self, parent: MessagePump | None) -> None:
         self._parent = parent
 
     def check_message_enabled(self, message: Message) -> bool:
