@@ -267,3 +267,21 @@ def test_animator_on_complete_callback_fired_at_duration():
     animator()
 
     callback.assert_called_once_with()
+
+
+def test_animator_delay():
+    callback = Mock()
+    animate_test = AnimateTest()
+    animator = MockAnimator(Mock())
+
+    animator.animate(animate_test, "foo", 200, duration=10, on_complete=callback, delay=2.0)
+
+    # on_complete callback hasn't been called at 11 seconds,
+    # since delay=2, and duration=10. It will be called at 12s.
+    animator._time = 11
+    animator()
+    assert not callback.called
+
+    animator._time = 13
+    animator()
+    callback.assert_called_once_with()
