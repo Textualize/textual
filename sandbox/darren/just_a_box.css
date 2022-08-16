@@ -4,7 +4,7 @@ Screen {
 
 #left_pane {
     background: red;
-    width: 30;
+    width: 20;
     overflow: scroll scroll;
 }
 
