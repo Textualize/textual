@@ -579,12 +579,9 @@ class Styles(StylesBase):
         duration: float | None,
         speed: float | None,
         easing: EasingFunction,
+        delay: float = 0.0,
         on_complete: Callable[[], None] = None,
     ) -> Animation | None:
-        from ..widget import Widget
-
-        # node = self.node
-        # assert isinstance(self.node, Widget)
         if isinstance(value, ScalarOffset):
             return ScalarAnimation(
                 self.node,
@@ -595,6 +592,7 @@ class Styles(StylesBase):
                 duration=duration,
                 speed=speed,
                 easing=easing,
+                delay=delay,
                 on_complete=on_complete,
             )
         return None

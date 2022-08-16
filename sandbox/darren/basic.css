@@ -59,7 +59,6 @@ DataTable {
   width: 30;
   margin-bottom: 1;
   offset-x: -100%;
-
   transition: offset 500ms in_out_cubic 2s;
   layer: sidebar;
 }

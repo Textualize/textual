@@ -11,6 +11,7 @@ from . import _clock
 from ._easing import DEFAULT_EASING, EASING
 from ._timer import Timer
 from ._types import MessageTarget
+from .geometry import clamp
 
 if sys.version_info >= (3, 8):
     from typing import Protocol, runtime_checkable
@@ -56,6 +57,7 @@ class SimpleAnimation(Animation):
     attribute: str
     start_time: float
     duration: float
+    delay: float
     start_value: float | Animatable
     end_value: float | Animatable
     final_value: object
@@ -68,7 +70,7 @@ class SimpleAnimation(Animation):
             setattr(self.obj, self.attribute, self.final_value)
             return True
 
-        factor = min(1.0, (time - self.start_time) / self.duration)
+        factor = clamp((time - self.start_time - self.delay) / self.duration, 0.0, 1.0)
         eased_factor = self.easing(factor)
 
         if factor == 1.0:
@@ -121,6 +123,7 @@ class BoundAnimator:
         final_value: object = ...,
         duration: float | None = None,
         speed: float | None = None,
+        delay: float = 0.0,
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: Callable[[], None] | None = None,
     ) -> None:
@@ -132,6 +135,7 @@ class BoundAnimator:
             final_value=final_value,
             duration=duration,
             speed=speed,
+            delay=delay,
             easing=easing_function,
             on_complete=on_complete,
         )
@@ -177,6 +181,7 @@ class Animator:
         final_value: object = ...,
         duration: float | None = None,
         speed: float | None = None,
+        delay: float = 0.0,
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: Callable[[], None] | None = None,
     ) -> None:
@@ -189,6 +194,7 @@ class Animator:
             final_value (Any, optional): The final value, or ellipsis if it is the same as ``value``. Defaults to ....
             duration (float | None, optional): The duration of the animation, or ``None`` to use speed. Defaults to ``None``.
             speed (float | None, optional): The speed of the animation. Defaults to None.
+            delay (float): How long to delay the beginning of the animation by in seconds.
             easing (EasingFunction | str, optional): An easing function. Defaults to DEFAULT_EASING.
         """
 
@@ -202,6 +208,7 @@ class Animator:
 
         if final_value is ...:
             final_value = value
+
         start_time = self._get_time()
 
         animation_key = (id(obj), attribute)
@@ -217,6 +224,7 @@ class Animator:
                 duration=duration,
                 speed=speed,
                 easing=easing_function,
+                delay=delay,
                 on_complete=on_complete,
             )
         if animation is None:
@@ -236,6 +244,7 @@ class Animator:
                 attribute=attribute,
                 start_time=start_time,
                 duration=animation_duration,
+                delay=delay,
                 start_value=start_value,
                 end_value=value,
                 final_value=final_value,
