@@ -313,7 +313,7 @@ class Widget(DOMNode):
 
             renderable = self.render()
             options = self.console.options.update_width(width).update(highlight=False)
-            segments = list(self.console.render(renderable, options))
+            segments = self.console.render(renderable, options)
             # Cheaper than counting the lines returned from render_lines!
             height = sum(text.count("\n") for text, _, _ in segments)
             self._content_height_cache = (cache_key, height)
@@ -1040,10 +1040,8 @@ class Widget(DOMNode):
         width, height = self.size
         renderable = self.render()
         renderable = self.post_render(renderable)
-        options = (
-            self.console.options.update_width(width)
-            .update(highlight=False)
-            .reset_height()
+        options = self.console.options.update_dimensions(width, height).update(
+            highlight=False
         )
         lines = self.console.render_lines(renderable, options)
         self._render_cache = RenderCache(self.size, lines)

@@ -697,8 +697,6 @@ class App(Generic[ReturnType], DOMNode):
             else:
                 screen.detach()
 
-        print(self._registry)
-
         return screen
 
     def set_focus(self, widget: Widget | None) -> None:
