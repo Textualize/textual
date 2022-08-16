@@ -436,3 +436,11 @@ class Paste(Event, bubble=False):
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "text", self.text
+
+
+class ScreenResume(Event, bubble=False):
+    pass
+
+
+class ScreenSuspend(Event, bubble=False):
+    pass

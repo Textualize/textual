@@ -21,6 +21,7 @@ from typing import (
     TypeVar,
     TYPE_CHECKING,
 )
+from weakref import WeakValueDictionary
 
 from ._ansi_sequences import SYNC_START, SYNC_END
 
@@ -112,6 +113,10 @@ class ActionError(Exception):
     pass
 
 
+class ScreenStackError(Exception):
+    pass
+
+
 ReturnType = TypeVar("ReturnType")
 
 
@@ -125,6 +130,8 @@ class App(Generic[ReturnType], DOMNode):
         color: $text-surface;                
     }
     """
+
+    SCREENS: dict[str, Screen] = {}
 
     CSS_PATH: str | None = None
 
@@ -208,7 +215,8 @@ class App(Generic[ReturnType], DOMNode):
         self._require_stylesheet_update = False
         self.css_path = css_path or self.CSS_PATH
 
-        self.registry: set[MessagePump] = set()
+        self._registry: set[DOMNode] = set()
+
         self.devtools = DevtoolsClient()
         self._return_value: ReturnType | None = None
 
@@ -242,6 +250,11 @@ class App(Generic[ReturnType], DOMNode):
     def is_headless(self) -> bool:
         """Check if the app is running in 'headless' mode."""
         return "headless" in self.features
+
+    @property
+    def screen_stack(self) -> list[Screen]:
+        """Get a *copy* of the screen stack."""
+        return self._screen_stack.copy()
 
     def exit(self, result: ReturnType | None = None) -> None:
         """Exit the app, and return the supplied result.
@@ -503,6 +516,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         keys: str,
         action: str,
+        *,
         description: str = "",
         show: bool = True,
         key_display: str | None = None,
@@ -601,19 +615,76 @@ class App(Generic[ReturnType], DOMNode):
         for widget in widgets:
             self._register(self.screen, widget)
 
-    def push_screen(self, screen: Screen | None = None) -> Screen:
+    def _get_screen(self, screen: Screen | str) -> Screen:
+        """Get a screen and ensure it is registered.
+
+        Args:
+            screen (Screen | str): A screen instance or a named screen.
+
+        Raises:
+            KeyError: If the named screen doesn't exist.
+
+        Returns:
+            Screen: A screen instance.
+        """
+        if isinstance(screen, str):
+            try:
+                next_screen = self.SCREENS[screen]
+            except KeyError:
+                raise KeyError(
+                    "No screen called {screen!r} found in {self.__class__}.SCREENS"
+                ) from None
+        else:
+            next_screen = screen
+        if not next_screen.is_running:
+            self._register(self, next_screen)
+        return next_screen
+
+    def push_screen(self, screen: Screen | str) -> None:
         """Push a new screen on the screen stack.
 
         Args:
-            screen (Screen | None, optional): A new Screen instance or None to create
-                one internally. Defaults to None.
+            screen (Screen | str): A Screen instance or an id.
 
         Returns:
             Screen: Newly active screen.
         """
-        new_screen = Screen() if screen is None else screen
-        self._screen_stack.append(new_screen)
-        return new_screen
+        next_screen = self._get_screen(screen)
+        self._screen_stack.append(next_screen)
+        self.screen.post_message_no_wait(events.ScreenResume(self))
+
+    def switch_screen(self, screen: Screen | str) -> Screen:
+        """Switch to a another screen.
+
+        Args:
+            screen (Screen | str): A screen instance or a named of a screen.
+
+        Returns:
+            Screen: The previous screen object.
+        """
+        next_screen = self._get_screen(screen)
+        current_screen = self._screen_stack.pop()
+        current_screen.post_message_no_wait(events.ScreenSuspend(self))
+        self._screen_stack.append(next_screen)
+        self.screen.post_message_no_wait(events.ScreenResume(self))
+        return current_screen
+
+    def pop_screen(self) -> Screen:
+        """Pop the current screen from the stack, and switch to the previous screen.
+
+        Returns:
+            Screen: The screen that was replaced.
+        """
+        screen_stack = self._screen_stack
+        if len(screen_stack) <= 1:
+            raise ScreenStackError(
+                "Can't pop screen; there must be at least one screen on the stack"
+            )
+        screen = screen_stack.pop()
+        screen.post_message_no_wait(events.ScreenSuspend(self))
+        self.screen._screen_resized(self.size)
+        self.screen.post_message_no_wait(events.ScreenResume(self))
+        return screen
 
     def set_focus(self, widget: Widget | None) -> None:
         """Focus (or unfocus) a widget. A focused widget will receive key events first.
@@ -835,10 +906,10 @@ class App(Generic[ReturnType], DOMNode):
             self._require_stylesheet_update = False
             self.stylesheet.update(self, animate=True)
 
-    def _register_child(self, parent: DOMNode, child: DOMNode) -> bool:
-        if child not in self.registry:
+    def _register_child(self, parent: DOMNode, child: Widget) -> bool:
+        if child not in self._registry:
             parent.children._append(child)
-            self.registry.add(child)
+            self._registry.add(child)
             child.set_parent(parent)
             child.on_register(self)
             child.start_messages()
@@ -862,7 +933,7 @@ class App(Generic[ReturnType], DOMNode):
         apply_stylesheet = self.stylesheet.apply
 
         for widget_id, widget in name_widgets:
-            if widget not in self.registry:
+            if widget not in self._registry:
                 if widget_id is not None:
                     widget.id = widget_id
                 self._register_child(parent, widget)
@@ -881,7 +952,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         if isinstance(widget._parent, Widget):
             widget._parent.children._remove(widget)
-        self.registry.discard(widget)
+        self._registry.discard(widget)
 
     async def _disconnect_devtools(self):
         await self.devtools.disconnect()
@@ -898,11 +969,11 @@ class App(Generic[ReturnType], DOMNode):
         widget.post_message_no_wait(events.Mount(sender=parent))
 
     def is_mounted(self, widget: Widget) -> bool:
-        return widget in self.registry
+        return widget in self._registry
 
     async def close_all(self) -> None:
-        while self.registry:
-            child = self.registry.pop()
+        while self._registry:
+            child = self._registry.pop()
             await child.close_messages()
 
     async def shutdown(self):
@@ -916,10 +987,6 @@ class App(Generic[ReturnType], DOMNode):
         self.screen.refresh(repaint=repaint, layout=layout)
         self.check_idle()
 
-    def _paint(self):
-        """Perform a "paint" (draw the screen)."""
-        self._display(self.screen._compositor.render())
-
     def refresh_css(self, animate: bool = True) -> None:
         """Refresh CSS.
 
@@ -932,13 +999,14 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.update(self.app, animate=animate)
         self.screen._refresh_layout(self.size, full=True)
 
-    def _display(self, renderable: RenderableType | None) -> None:
+    def _display(self, screen: Screen, renderable: RenderableType | None) -> None:
         """Display a renderable within a sync.
 
         Args:
+            screen (Screen): Screen instance
             renderable (RenderableType): A Rich renderable.
         """
-        if renderable is None:
+        if screen is not self.screen or renderable is None:
             return
         if self._running and not self._closed and not self.is_headless:
             console = self.console
@@ -1004,7 +1072,7 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Mount):
-            screen = Screen()
+            screen = Screen(id="_default")
             self._register(self, screen)
             self.push_screen(screen)
             await super().on_event(event)
@@ -1104,11 +1172,9 @@ class App(Generic[ReturnType], DOMNode):
 
     async def on_update(self, message: messages.Update) -> None:
         message.stop()
-        self._paint()
 
     async def on_layout(self, message: messages.Layout) -> None:
         message.stop()
-        self._paint()
 
     async def on_key(self, event: events.Key) -> None:
         if event.key == "tab":
@@ -1125,7 +1191,6 @@ class App(Generic[ReturnType], DOMNode):
     async def on_resize(self, event: events.Resize) -> None:
         event.stop()
         self.screen._screen_resized(event.size)
-
         await self.screen.post_message(event)
 
     async def action_press(self, key: str) -> None:
@@ -1148,6 +1213,15 @@ class App(Generic[ReturnType], DOMNode):
         else:
             if isinstance(node, Widget):
                 self.set_focus(node)
+
+    async def action_switch_screen(self, screen: str) -> None:
+        self.switch_screen(screen)
+
+    async def action_push_screen(self, screen: str) -> None:
+        self.push_screen(screen)
+
+    async def action_pop_screen(self) -> None:
+        self.pop_screen()
 
     async def action_add_class_(self, selector: str, class_name: str) -> None:
         self.screen.query(selector).add_class(class_name)
