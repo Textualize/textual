@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-
 from dataclasses import dataclass
 from unittest.mock import Mock
 
 import pytest
-
 
 from textual._animator import Animator, SimpleAnimation
 from textual._easing import EASING, DEFAULT_EASING
@@ -185,7 +183,6 @@ class MockAnimator(Animator):
 
 
 def test_animator():
-
     target = Mock()
     animator = MockAnimator(target)
     animate_test = AnimateTest()
@@ -223,7 +220,6 @@ def test_animator():
 
 
 def test_bound_animator():
-
     target = Mock()
     animator = MockAnimator(target)
     animate_test = AnimateTest()
@@ -245,3 +241,29 @@ def test_bound_animator():
         easing=EASING[DEFAULT_EASING],
     )
     assert animator._animations[(id(animate_test), "foo")] == expected
+
+
+def test_animator_on_complete_callback_not_fired_before_duration_ends():
+    callback = Mock()
+    animate_test = AnimateTest()
+    animator = MockAnimator(Mock())
+
+    animator.animate(animate_test, "foo", 200, duration=10, on_complete=callback)
+
+    animator._time = 9
+    animator()
+
+    assert not callback.called
+
+
+def test_animator_on_complete_callback_fired_at_duration():
+    callback = Mock()
+    animate_test = AnimateTest()
+    animator = MockAnimator(Mock())
+
+    animator.animate(animate_test, "foo", 200, duration=10, on_complete=callback)
+
+    animator._time = 10
+    animator()
+
+    callback.assert_called_once_with()
