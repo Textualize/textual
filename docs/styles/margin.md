@@ -10,6 +10,14 @@ The `margin` rule adds space around the entire widget. Margin may be specified w
 
 Margin may also be set individually by setting `margin-top`, `margin-right`, `margin-bottom`, or `margin-left` to an single value.
 
+## Syntax
+
+```
+margin: <INTEGER>;
+margin: <INTEGER> <INTEGER>;
+margin: <INTEGER> <INTEGER> <INTEGER> <INTEGER>;
+```
+
 ## Example
 
 In this example we add a large margin to a some static text.

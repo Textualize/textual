@@ -12,6 +12,12 @@ The `text-style` rule enables a number of different ways of displaying text. The
 
 Text styles may be set in combination. For example "bold underline" or "reverse underline strike".
 
+## Syntax
+
+```
+text-style: <TEXT STYLE> ...
+```
+
 ## Example
 
 Each of the three text panels has a different text style.

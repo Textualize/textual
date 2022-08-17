@@ -10,6 +10,14 @@ The padding rule adds space around the content of a widget. You can specify padd
 
 Padding may also be set individually by setting `padding-top`, `padding-right`, `padding-bottom`, or `padding-left` to an single value.
 
+## Syntax
+
+```
+padding: <INTEGER>;
+padding: <INTEGER> <INTEGER>;
+padding: <INTEGER> <INTEGER> <INTEGER> <INTEGER>;
+```
+
 ## Example
 
 This example adds padding around static text.

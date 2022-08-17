@@ -2,6 +2,12 @@
 
 The `background` rule sets the background color of the widget.
 
+## Syntax
+
+```
+background: COLOR [PERCENTAGE]
+```
+
 ## Example
 
 This example creates three widgets and applies a different background to each.

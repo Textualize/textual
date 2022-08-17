@@ -2,6 +2,12 @@
 
 The `height` rule sets a widget's height. By default, it sets the height of the content area, but if `box-sizing` is set to `border-box` it sets the height of the border area.
 
+## Syntax
+
+```
+height: <SCALAR>;
+```
+
 ## Example
 
 This examples applies a widget with a height of 50% of the screen.

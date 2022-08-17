@@ -1,6 +1,14 @@
 # Offset
 
-The `offset` rule adds an offset to the widget's position.
+The `offset` rule adds an offset to the widget's position. The offset is given as two values.
+
+Coordinates may be specified individually with `offset-x` and `offset-y`.
+
+## Syntax
+
+```
+offset: <SCALAR> <SCALAR>;
+```
 
 ## Example
 

@@ -2,6 +2,12 @@
 
 The `color` rule sets the text color of a Widget.
 
+## Syntax
+
+```
+color: <COLOR> [<PERCENTAGE>];
+```
+
 ## Example
 
 This example sets a different text color to three different widgets.

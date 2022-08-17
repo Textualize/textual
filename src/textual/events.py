@@ -366,10 +366,6 @@ class Click(MouseEvent, bubble=True):
     pass
 
 
-class DoubleClick(MouseEvent, bubble=True):
-    pass
-
-
 @rich.repr.auto
 class Timer(Event, verbosity=3, bubble=False):
     __slots__ = ["time", "count", "callback"]

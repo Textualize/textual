@@ -12,6 +12,14 @@ The default value for overflow is `"auto auto"` which will show scrollbars autom
 
 Overflow may also be set independently by setting the `overflow-x` rule for the horizontal bar, and `overflow-y` for the vertical bar.
 
+## Syntax
+
+```
+overflow: [auto|hidden|scroll];
+overflow-x: [auto|hidden|scroll];
+overflow-y: [auto|hidden|scroll];
+```
+
 ## Example
 
 Here we split the screen in to left and right sections, each with three vertically scrolling widgets that do not fit in to the height of the terminal.

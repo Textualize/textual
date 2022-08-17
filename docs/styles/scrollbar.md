@@ -3,7 +3,7 @@
 There are a number of rules to set the colors used in Textual scrollbars. You won't typically need to do this, as the default themes have carefully chosen colors, but you can if you want to.
 
 | Rule                          | Color                                                   |
-|-------------------------------|---------------------------------------------------------|
+| ----------------------------- | ------------------------------------------------------- |
 | `scrollbar-color`             | Scrollbar "thumb" (movable part)                        |
 | `scrollbar-color-hover`       | Scrollbar thumb when the mouse is hovering over it      |
 | `scrollbar-color-active`      | Scrollbar thumb when it is active (being dragged)       |
@@ -12,6 +12,17 @@ There are a number of rules to set the colors used in Textual scrollbars. You wo
 | `scrollbar-background-active` | Scrollbar background when the thumb is being dragged    |
 | `scrollbar-corner-color`      | The gap between the horizontal and vertical scrollbars  |
 
+## Example:
+
+```
+scrollbar-color: <COLOR>;
+scrollbar-color-hover: <COLOR>;
+scrollbar-color-active: <COLOR>;
+scrollbar-background: <COLOR>;
+scrollbar-background-hover: <COLOR>;
+scrollbar-background-active: <COLOR>;
+scrollbar-corner-color: <COLOR>;
+```
 
 ## Example
 

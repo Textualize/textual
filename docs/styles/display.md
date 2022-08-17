@@ -2,6 +2,12 @@
 
 The `display` property defines if a Widget is displayed or not. The default value is `"block"` which will display the widget as normal. Setting the property to `"none"` will effectively make it invisible.
 
+## Syntax
+
+```
+display: [none|block];
+```
+
 ## Example
 
 Note that the second widget is hidden by adding the "hidden" class which sets the display style to None.

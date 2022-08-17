@@ -29,7 +29,7 @@ App > Screen {
 #tree-container {
   overflow-y: auto;
   height: 20; 
-  margin: 1 2;
+  margin: 1 3;
   background: $panel;
   padding: 1 2;
 }
@@ -97,7 +97,7 @@ DataTable {
 Tweet {
   height:12;
   width: 100%;
- 
+  margin: 0 2; 
   
   background: $panel;
   color: $text-panel;
