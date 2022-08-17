@@ -733,10 +733,17 @@ class App(Generic[ReturnType], DOMNode):
             str | None: The name of the screen that was uninstalled, or None if no screen was uninstalled.
         """
         if isinstance(screen, str):
-            uninstalled_screen = self._installed_screens.pop(screen)
-            self.log(f"{uninstalled_screen} UNINSTALLED name={screen!r}")
+            if screen not in self._installed_screens:
+                return None
+            uninstall_screen = self._installed_screens[screen]
+            if uninstall_screen in self._screen_stack:
+                raise ScreenStackError("Can't uninstall screen in screen stack")
+            del self._installed_screens[screen]
+            self.log(f"{uninstall_screen} UNINSTALLED name={screen!r}")
             return screen
         else:
+            if screen in self._screen_stack:
+                raise ScreenStackError("Can't uninstall screen in screen stack")
             for name, installed_screen in self._installed_screens.items():
                 if installed_screen is screen:
                     self._installed_screens.pop(name)

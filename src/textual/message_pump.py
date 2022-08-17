@@ -130,10 +130,6 @@ class MessagePump(metaclass=MessagePumpMeta):
         """
         self._parent = parent
 
-    def _detach(self) -> None:
-        """Unset the parent, removing it from the tree."""
-        self._parent = None
-
     def check_message_enabled(self, message: Message) -> bool:
         return type(message) not in self._disabled_messages
 

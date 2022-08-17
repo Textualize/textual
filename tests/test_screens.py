@@ -64,6 +64,16 @@ async def test_screens():
     assert app.screen is screen2
     assert app.screen_stack == [screen2]
 
+    # Uninstall screens
+    app.uninstall_screen(screen1)
+    assert not app.is_screen_installed(screen1)
+    app.uninstall_screen("screen3")
+    assert not app.is_screen_installed(screen1)
+
+    # Check we can't uninstall a screen on the stack
+    with pytest.raises(ScreenStackError):
+        app.uninstall_screen(screen2)
+
     # Check we can't pop last screen
     with pytest.raises(ScreenStackError):
         app.pop_screen()
