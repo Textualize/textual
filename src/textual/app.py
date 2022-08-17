@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime
 import inspect
 import io
 import os
@@ -9,9 +8,11 @@ import platform
 import sys
 import warnings
 from contextlib import redirect_stdout
+from datetime import datetime
 from pathlib import PurePath
 from time import perf_counter
 from typing import (
+    TYPE_CHECKING,
     Any,
     Generic,
     Iterable,
@@ -19,11 +20,10 @@ from typing import (
     TextIO,
     Type,
     TypeVar,
-    TYPE_CHECKING,
 )
 from weakref import WeakSet, WeakValueDictionary
 
-from ._ansi_sequences import SYNC_START, SYNC_END
+from ._ansi_sequences import SYNC_END, SYNC_START
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -39,30 +39,24 @@ from rich.protocol import is_renderable
 from rich.segment import Segments
 from rich.traceback import Traceback
 
-from . import actions
-from . import events
-from . import log
-from . import messages
+from . import actions, events, log, messages
 from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
-from ._event_broker import extract_handler_actions, NoHandler
+from ._event_broker import NoHandler, extract_handler_actions
 from .binding import Bindings, NoBinding
-from .css.stylesheet import Stylesheet
 from .css.query import NoMatchingNodesError
+from .css.stylesheet import Stylesheet
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
 from .devtools.redirect_output import StdoutRedirector
 from .dom import DOMNode
 from .driver import Driver
-from .features import parse_features, FeatureFlag
+from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
-from .message_pump import MessagePump
 from .reactive import Reactive
 from .renderables.blank import Blank
-from ._profile import timer
-
 from .screen import Screen
 from .widget import Widget
 
