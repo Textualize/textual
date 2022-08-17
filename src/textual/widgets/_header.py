@@ -83,6 +83,8 @@ class Header(Widget):
     }
     """
 
+    DEFAULT_CLASSES = "tall"
+
     async def on_click(self, event):
         self.toggle_class("tall")
 
@@ -95,7 +97,6 @@ class Header(Widget):
 
         watch(self.app, "title", set_title)
         watch(self.app, "sub_title", set_sub_title)
-        self.add_class("tall")
 
     def compose(self):
         yield HeaderIcon()

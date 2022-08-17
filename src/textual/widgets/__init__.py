@@ -17,6 +17,7 @@ __all__ = [
     "Footer",
     "Header",
     "Placeholder",
+    "Pretty",
     "Static",
     "TreeControl",
 ]

@@ -33,7 +33,6 @@ class Screen(Widget):
 
     CSS = """
     Screen {
-
         layout: vertical;
         overflow-y: auto;
     }
@@ -51,6 +50,11 @@ class Screen(Widget):
     @property
     def is_transparent(self) -> bool:
         return False
+
+    @property
+    def is_current(self) -> bool:
+        """Check if this screen is current (i.e. visible to user)."""
+        return self.app.screen is self
 
     @property
     def update_timer(self) -> Timer:
@@ -113,20 +117,22 @@ class Screen(Widget):
         """
         return self._compositor.find_widget(widget)
 
-    async def on_idle(self, event: events.Idle) -> None:
+    async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
-        if self._layout_required:
-            self._refresh_layout()
-            self._layout_required = False
-            self._dirty_widgets.clear()
-        if self._repaint_required:
-            self._dirty_widgets.clear()
-            self._dirty_widgets.add(self)
-            self._repaint_required = False
 
-        if self._dirty_widgets:
-            self.update_timer.resume()
+        if self.is_current:
+            if self._layout_required:
+                self._refresh_layout()
+                self._layout_required = False
+                self._dirty_widgets.clear()
+            if self._repaint_required:
+                self._dirty_widgets.clear()
+                self._dirty_widgets.add(self)
+                self._repaint_required = False
+
+            if self._dirty_widgets:
+                self.update_timer.resume()
 
         # The Screen is idle - a good opportunity to invoke the scheduled callbacks
         await self._invoke_and_clear_callbacks()
@@ -136,14 +142,14 @@ class Screen(Widget):
         # Render widgets together
         if self._dirty_widgets:
             self._compositor.update_widgets(self._dirty_widgets)
-            self.app._display(self._compositor.render())
+            self.app._display(self, self._compositor.render())
             self._dirty_widgets.clear()
 
         self.update_timer.pause()
         if self._callbacks:
             self.post_message_no_wait(events.InvokeCallbacks(self))
 
-    async def on_invoke_callbacks(self, event: events.InvokeCallbacks) -> None:
+    async def _on_invoke_callbacks(self, event: events.InvokeCallbacks) -> None:
         """Handle PostScreenUpdate events, which are sent after the screen is updated"""
         await self._invoke_and_clear_callbacks()
 
@@ -205,9 +211,9 @@ class Screen(Widget):
             return
         display_update = self._compositor.render(full=full)
         if display_update is not None:
-            self.app._display(display_update)
+            self.app._display(self, display_update)
 
-    async def on_update(self, message: messages.Update) -> None:
+    async def _on_update(self, message: messages.Update) -> None:
         message.stop()
         message.prevent_default()
         widget = message.widget
@@ -215,7 +221,7 @@ class Screen(Widget):
         self._dirty_widgets.add(widget)
         self.check_idle()
 
-    async def on_layout(self, message: messages.Layout) -> None:
+    async def _on_layout(self, message: messages.Layout) -> None:
         message.stop()
         message.prevent_default()
         self._layout_required = True
@@ -225,7 +231,13 @@ class Screen(Widget):
         """Called by App when the screen is resized."""
         self._refresh_layout(size, full=True)
 
-    async def on_resize(self, event: events.Resize) -> None:
+    def _on_screen_resume(self) -> None:
+        """Called by the App"""
+
+        size = self.app.size
+        self._refresh_layout(size, full=True)
+
+    async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
 
     async def _handle_mouse_move(self, event: events.MouseMove) -> None:

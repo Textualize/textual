@@ -43,7 +43,7 @@ class BasicApp(App):
         self.panic(self.app.tree)
 
     def action_dump(self):
-        self.panic(str(self.app.registry))
+        self.panic(str(self.app._registry))
 
     def action_log_tree(self):
         self.log(self.screen.tree)

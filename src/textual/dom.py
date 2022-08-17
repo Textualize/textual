@@ -43,6 +43,9 @@ class DOMNode(MessagePump):
     # Custom CSS
     CSS: ClassVar[str] = ""
 
+    # Default classes argument if not supplied
+    DEFAULT_CLASSES: str = ""
+
     # Virtual DOM nodes
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
@@ -467,7 +470,7 @@ class DOMNode(MessagePump):
             node (DOMNode): A DOM node.
         """
         self.children._append(node)
-        node.set_parent(self)
+        node._attach(self)
 
     def add_children(self, *nodes: Widget, **named_nodes: Widget) -> None:
         """Add multiple children to this node.
@@ -478,10 +481,10 @@ class DOMNode(MessagePump):
         """
         _append = self.children._append
         for node in nodes:
-            node.set_parent(self)
+            node._attach(self)
             _append(node)
         for node_id, node in named_nodes.items():
-            node.set_parent(self)
+            node._attach(self)
             _append(node)
             node.id = node_id
 
