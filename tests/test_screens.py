@@ -1,9 +1,18 @@
+import sys
+
 import pytest
 
 from textual.app import App, ScreenStackError
 from textual.screen import Screen
 
 
+skip_py310 = pytest.mark.skipif(
+    sys.version_info.minor == 10 and sys.version_info.major == 3,
+    reason="segfault on py3.10",
+)
+
+
+@skip_py310
 @pytest.mark.asyncio
 async def test_screens():
 
@@ -78,4 +87,7 @@ async def test_screens():
     with pytest.raises(ScreenStackError):
         app.pop_screen()
 
+    screen1.remove()
+    screen2.remove()
+    screen3.remove()
     await app.shutdown()
