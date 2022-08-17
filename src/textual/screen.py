@@ -53,6 +53,7 @@ class Screen(Widget):
 
     @property
     def is_current(self) -> bool:
+        """Check if this screen is current (i.e. visible to user)."""
         return self.app.screen is self
 
     @property

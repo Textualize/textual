@@ -539,10 +539,20 @@ class App(Generic[ReturnType], DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
-    def run(self) -> ReturnType | None:
-        """The entry point to run a Textual app."""
+    def run(self, quit_after: float | None = None) -> ReturnType | None:
+        """The main entry point for apps.
+
+        Args:
+            quit_after (float | None, optional): Quit after a given number of seconds, or None
+                to run forever. Defaults to None.
+
+        Returns:
+            ReturnType | None: _description_
+        """
 
         async def run_app() -> None:
+            if quit_after is not None:
+                self.set_timer(quit_after, self.shutdown)
             await self.process_messages()
 
         if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
