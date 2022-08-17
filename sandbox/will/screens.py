@@ -17,7 +17,7 @@ class NewScreen(Screen):
         yield Footer()
 
     def on_screen_resume(self):
-        self.query("*").refresh()
+        self.query_one(Pretty).update(self.app.screen_stack)
 
 
 class ScreenApp(App):
@@ -41,17 +41,16 @@ class ScreenApp(App):
     }
     """
 
-    SCREENS = {
-        "1": NewScreen("screen 1"),
-        "2": NewScreen("screen 2"),
-        "3": NewScreen("screen 3"),
-    }
-
     def compose(self) -> ComposeResult:
         yield Static("On Screen 1")
         yield Footer()
 
     def on_mount(self) -> None:
+
+        self.install_screen(NewScreen("Screen1"), name="1")
+        self.install_screen(NewScreen("Screen2"), name="2")
+        self.install_screen(NewScreen("Screen3"), name="3")
+
         self.bind("1", "switch_screen('1')", description="Screen 1")
         self.bind("2", "switch_screen('2')", description="Screen 2")
         self.bind("3", "switch_screen('3')", description="Screen 3")
@@ -63,4 +62,5 @@ class ScreenApp(App):
 
 
 app = ScreenApp()
-app.run()
+if __name__ == "__main__":
+    app.run()

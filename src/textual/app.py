@@ -21,7 +21,7 @@ from typing import (
     TypeVar,
     TYPE_CHECKING,
 )
-from weakref import WeakSet
+from weakref import WeakSet, WeakValueDictionary
 
 from ._ansi_sequences import SYNC_START, SYNC_END
 
@@ -30,6 +30,7 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal  # pragma: no cover
 
+import nanoid
 import rich
 import rich.repr
 from rich.console import Console, RenderableType
@@ -113,7 +114,11 @@ class ActionError(Exception):
     pass
 
 
-class ScreenStackError(Exception):
+class ScreenError(Exception):
+    pass
+
+
+class ScreenStackError(ScreenError):
     pass
 
 
@@ -215,6 +220,10 @@ class App(Generic[ReturnType], DOMNode):
         self.css_path = css_path or self.CSS_PATH
 
         self._registry: WeakSet[DOMNode] = WeakSet()
+
+        self._installed_screens: WeakValueDictionary[
+            str, Screen
+        ] = WeakValueDictionary()
 
         self.devtools = DevtoolsClient()
         self._return_value: ReturnType | None = None
@@ -614,7 +623,14 @@ class App(Generic[ReturnType], DOMNode):
         for widget in widgets:
             self._register(self.screen, widget)
 
-    def _get_screen(self, screen: Screen | str) -> Screen:
+    def is_screen_installed(self, screen: Screen | str) -> bool:
+        """Check if a given screen has been installed."""
+        if isinstance(screen, str):
+            return screen in self._installed_screens
+        else:
+            return screen in self._installed_screens.values()
+
+    def get_screen(self, screen: Screen | str) -> Screen:
         """Get a screen and ensure it is registered.
 
         Args:
@@ -628,41 +644,30 @@ class App(Generic[ReturnType], DOMNode):
         """
         if isinstance(screen, str):
             try:
-                next_screen = self.SCREENS[screen]
+                next_screen = self._installed_screens[screen]
             except KeyError:
-                raise KeyError(
-                    "No screen called {screen!r} found in {self.__class__}.SCREENS"
-                ) from None
+                raise KeyError("No screen called {screen!r} installed") from None
         else:
             next_screen = screen
         if not next_screen.is_running:
             self._register(self, next_screen)
         return next_screen
 
-    def _replace_screen(self, screen: Screen, remove: bool | None = None) -> Screen:
+    def _replace_screen(self, screen: Screen) -> Screen:
         """Handle the replaced screen.
 
         Args:
             screen (Screen): A screen object.
-            remove (bool | None): Remove replaced screen if True. Don't remove if False.
-                If None, remove screens not in self.SCREENS.
 
         Returns:
-            Screen: The replaced screen
+            Screen: The screen that was replaced.
+
         """
         screen.post_message_no_wait(events.ScreenSuspend(self))
-        if remove is None:
-            if screen not in self.SCREENS.values():
-                screen.remove()
-            else:
-                screen.detach()
-        else:
-            if remove:
-                if screen in self.SCREENS.values():
-                    raise ScreenStackError("Can't remove screen set in App.SCREENS")
-                screen.remove()
-            else:
-                screen.detach()
+        self.log(f"{screen} SUSPENDED")
+        if not self.is_screen_installed(screen) and screen not in self._screen_stack:
+            screen.remove()
+            self.log(f"{screen} REMOVED")
         return screen
 
     def push_screen(self, screen: Screen | str) -> None:
@@ -672,43 +677,91 @@ class App(Generic[ReturnType], DOMNode):
             screen (Screen | str): A Screen instance or an id.
 
         """
-        next_screen = self._get_screen(screen)
+        next_screen = self.get_screen(screen)
         self._screen_stack.append(next_screen)
         self.screen.post_message_no_wait(events.ScreenResume(self))
+        self.log(f"{self.screen} is current (PUSHED)")
 
-    def switch_screen(self, screen: Screen | str, remove: bool | None) -> Screen:
+    def switch_screen(self, screen: Screen | str) -> Screen:
         """Switch to a another screen.
 
         Args:
             screen (Screen | str): A screen instance or a named of a screen.
-            remove (bool | None): Remove replaced screen if True. Don't remove if False.
-                If None, remove screens not in self.SCREENS.
 
         Returns:
             Screen: The previous screen object.
         """
-        next_screen = self._get_screen(screen)
-        previous_screen = self._replace_screen(self._screen_stack.pop(), remove=remove)
+        previous_screen = self._replace_screen(self._screen_stack.pop())
+        next_screen = self.get_screen(screen)
         self._screen_stack.append(next_screen)
         self.screen.post_message_no_wait(events.ScreenResume(self))
+        self.log(f"{self.screen} is current (SWITCHED)")
         return previous_screen
 
-    def pop_screen(self, remove: bool | None = None) -> Screen:
+    def install_screen(self, screen: Screen, name: str | None = None) -> str:
+        """Install a screen.
+
+        Args:
+            screen (Screen): Screen to install.
+            name (str | None, optional): Unique name of screen or None to auto-generate.
+                Defaults to None.
+
+        Raises:
+            ScreenError: If the screen can't be installed.
+
+        Returns:
+            str: The name of the screen
+        """
+        if name is None:
+            name = nanoid.generate()
+        if name in self._installed_screens:
+            raise ScreenError(f"Can't install screen; {name!r} is already registered")
+        if screen in self._installed_screens.values():
+            raise ScreenError(
+                "Can't install screen; {screen!r} has already been installed"
+            )
+        self._installed_screens[name] = screen
+        self.get_screen(name)  # Ensures screen is running
+        self.log(f"{screen} INSTALLED name={name!r}")
+        return name
+
+    def uninstall_screen(self, screen: Screen | str) -> str | None:
+        """Uninstall a screen. If the screen was not previously installed then this
+        method is a null-op.
+
+        Args:
+            screen (Screen | str): The screen to uninstall or the name of a installed screen.
+
+        Returns:
+            str | None: The name of the screen that was uninstalled, or None if no screen was uninstalled.
+        """
+        if isinstance(screen, str):
+            uninstalled_screen = self._installed_screens.pop(screen)
+            self.log(f"{uninstalled_screen} UNINSTALLED name={screen!r}")
+            return screen
+        else:
+            for name, installed_screen in self._installed_screens.items():
+                if installed_screen is screen:
+                    self._installed_screens.pop(name)
+                    self.log(f"{screen} UNINSTALLED name={name!r}")
+                    return name
+        return None
+
+    def pop_screen(self) -> Screen:
         """Pop the current screen from the stack, and switch to the previous screen.
 
         Returns:
             Screen: The screen that was replaced.
-            remove (bool | None): Remove replaced screen if True. Don't remove if False.
-                If None, remove screens not in self.SCREENS.
         """
         screen_stack = self._screen_stack
         if len(screen_stack) <= 1:
             raise ScreenStackError(
                 "Can't pop screen; there must be at least one screen on the stack"
             )
-        previous_screen = self._replace_screen(screen_stack.pop(), remove)
+        previous_screen = self._replace_screen(screen_stack.pop())
         self.screen._screen_resized(self.size)
         self.screen.post_message_no_wait(events.ScreenResume(self))
+        self.log(f"{self.screen} is active")
         return previous_screen
 
     def set_focus(self, widget: Widget | None) -> None:

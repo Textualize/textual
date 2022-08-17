@@ -33,4 +33,4 @@ class Pretty(Widget):
 
     def update(self, object: Any) -> None:
         self._renderable = PrettyRenderable(object)
-        self.refresh()
+        self.refresh(layout=True)

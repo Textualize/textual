@@ -232,6 +232,7 @@ class Screen(Widget):
 
     def _on_screen_resume(self) -> None:
         """Called by the App"""
+
         size = self.app.size
         self._refresh_layout(size, full=True)
 
