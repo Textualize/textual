@@ -1071,8 +1071,8 @@ class App(Generic[ReturnType], DOMNode):
     async def shutdown(self):
         await self._disconnect_devtools()
         driver = self._driver
-        assert driver is not None
-        driver.disable_input()
+        if driver is not None:
+            driver.disable_input()
         await self.close_messages()
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:

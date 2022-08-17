@@ -37,7 +37,6 @@ from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from .reactive import Reactive, watch
-from .renderables.align import Align
 
 
 if TYPE_CHECKING:

@@ -77,3 +77,5 @@ async def test_screens():
     # Check we can't pop last screen
     with pytest.raises(ScreenStackError):
         app.pop_screen()
+
+    await app.shutdown()
