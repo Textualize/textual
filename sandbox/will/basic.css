@@ -98,7 +98,7 @@ Tweet {
   height:12;
   width: 100%;
  
-  
+  margin:0 2;
   background: $panel;
   color: $text-panel;
   layout: vertical;

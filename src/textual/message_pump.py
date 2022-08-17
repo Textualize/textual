@@ -122,7 +122,12 @@ class MessagePump(metaclass=MessagePumpMeta):
     def log(self, *args, **kwargs) -> None:
         return self.app.log(*args, **kwargs, _textual_calling_frame=inspect.stack()[1])
 
-    def set_parent(self, parent: MessagePump) -> None:
+    def _attach(self, parent: MessagePump) -> None:
+        """Set the parent, and therefore attach this node to the tree.
+
+        Args:
+            parent (MessagePump): Parent node.
+        """
         self._parent = parent
 
     def check_message_enabled(self, message: Message) -> bool:

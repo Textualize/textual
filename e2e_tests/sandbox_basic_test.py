@@ -34,7 +34,7 @@ def launch_sandbox_script(python_file_name: str) -> None:
 
 
 thread = threading.Thread(
-    target=launch_sandbox_script, args=(target_script_name,), daemon=True
+    target=launch_sandbox_script, args=(target_script_name,), daemon=False
 )
 thread.start()
 

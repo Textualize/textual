@@ -264,7 +264,6 @@ class Border:
                     render_options = options.update_width(width)
 
         lines = console.render_lines(self.renderable, render_options)
-
         if self.outline:
             self._crop_renderable(lines, options.max_width)
 

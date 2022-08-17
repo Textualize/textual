@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from itertools import islice
 from fractions import Fraction
 from operator import attrgetter
 from typing import (
@@ -14,7 +15,7 @@ from typing import (
 )
 
 import rich.repr
-from rich.align import Align
+
 from rich.console import Console, RenderableType
 from rich.measure import Measurement
 from rich.segment import Segment
@@ -27,6 +28,7 @@ from ._animator import BoundAnimator
 from ._arrange import arrange, DockArrangeResult
 from ._context import active_app
 from ._layout import Layout
+from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
 from .box_model import BoxModel, get_box_model
@@ -35,6 +37,7 @@ from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from .reactive import Reactive, watch
+
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
@@ -78,7 +81,6 @@ class Widget(DOMNode):
         scrollbar-size-horizontal: 1;
     }
     """
-
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
     can_focus: bool = False
@@ -121,7 +123,11 @@ class Widget(DOMNode):
 
         self._styles_cache = StylesCache()
 
-        super().__init__(name=name, id=id, classes=classes)
+        super().__init__(
+            name=name,
+            id=id,
+            classes=self.DEFAULT_CLASSES if classes is None else classes,
+        )
         self.add_children(*children)
 
     virtual_size = Reactive(Size(0, 0), layout=True)
@@ -287,6 +293,7 @@ class Widget(DOMNode):
         Returns:
             int: The height of the content.
         """
+
         if self.is_container:
             assert self.layout is not None
             height = (
@@ -982,15 +989,6 @@ class Widget(DOMNode):
         else:
             renderable = Styled(renderable, rich_style)
 
-        styles = self.styles
-        content_align = (
-            styles.content_align_horizontal,
-            styles.content_align_vertical,
-        )
-        if content_align != ("left", "top"):
-            horizontal, vertical = content_align
-            renderable = Align(renderable, horizontal, vertical=vertical)
-
         return renderable
 
     def watch_mouse_over(self, value: bool) -> None:
@@ -1033,7 +1031,30 @@ class Widget(DOMNode):
         options = self.console.options.update_dimensions(width, height).update(
             highlight=False
         )
-        lines = self.console.render_lines(renderable, options)
+
+        segments = self.console.render(renderable, options)
+        lines = list(
+            islice(
+                Segment.split_and_crop_lines(
+                    segments, width, include_new_lines=False, pad=False
+                ),
+                None,
+                height,
+            )
+        )
+
+        styles = self.styles
+        align_horizontal, align_vertical = styles.content_align
+        lines = list(
+            align_lines(
+                lines,
+                Style(),
+                self.size,
+                align_horizontal,
+                align_vertical,
+            )
+        )
+
         self._render_cache = RenderCache(self.size, lines)
         self._dirty_regions.clear()
 
@@ -1104,6 +1125,8 @@ class Widget(DOMNode):
 
     def remove(self) -> None:
         """Remove the Widget from the DOM (effectively deleting it)"""
+        for child in self.children:
+            child.remove()
         self.post_message_no_wait(events.Remove(self))
 
     def render(self) -> RenderableType:
@@ -1115,7 +1138,8 @@ class Widget(DOMNode):
         Returns:
             RenderableType: Any renderable
         """
-        return "" if self.is_container else self.css_identifier_styled
+        render = "" if self.is_container else self.css_identifier_styled
+        return render
 
     async def action(self, action: str, *params) -> None:
         await self.app.action(action, self)
@@ -1127,7 +1151,7 @@ class Widget(DOMNode):
             self.log(self, f"IS NOT RUNNING, {message!r} not sent")
         return await super().post_message(message)
 
-    def on_idle(self, event: events.Idle) -> None:
+    async def _on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.
 
         Args:
@@ -1178,9 +1202,9 @@ class Widget(DOMNode):
 
     async def on_remove(self, event: events.Remove) -> None:
         await self.close_messages()
-        self.app._unregister(self)
         assert self.parent
         self.parent.refresh(layout=True)
+        self.app._unregister(self)
 
     def _on_mount(self, event: events.Mount) -> None:
         widgets = list(self.compose())
