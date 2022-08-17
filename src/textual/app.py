@@ -631,17 +631,26 @@ class App(Generic[ReturnType], DOMNode):
             self._register(self.screen, widget)
 
     def is_screen_installed(self, screen: Screen | str) -> bool:
-        """Check if a given screen has been installed."""
+        """Check if a given screen has been installed.
+
+        Args:
+            screen (Screen | str): Either a Screen object or screen name (the `name` argument when installed).
+
+        Returns:
+            bool: True if the screen is currently installed,
+        """
         if isinstance(screen, str):
             return screen in self._installed_screens
         else:
             return screen in self._installed_screens.values()
 
     def get_screen(self, screen: Screen | str) -> Screen:
-        """Get a screen and ensure it is registered.
+        """Get an installed screen.
+
+        If the screen isn't running, it will be registered before it is run.
 
         Args:
-            screen (Screen | str): A screen instance or a named screen.
+            screen (Screen | str): Either a Screen object or screen name (the `name` argument when installed).
 
         Raises:
             KeyError: If the named screen doesn't exist.
@@ -689,21 +698,19 @@ class App(Generic[ReturnType], DOMNode):
         self.screen.post_message_no_wait(events.ScreenResume(self))
         self.log(f"{self.screen} is current (PUSHED)")
 
-    def switch_screen(self, screen: Screen | str) -> Screen:
-        """Switch to a another screen.
+    def switch_screen(self, screen: Screen | str) -> None:
+        """Switch to a another screen by replacing the top of the screen stack with a new screen.
 
         Args:
-            screen (Screen | str): A screen instance or a named of a screen.
+            screen (Screen | str): Either a Screen object or screen name (the `name` argument when installed).
 
-        Returns:
-            Screen: The previous screen object.
         """
-        previous_screen = self._replace_screen(self._screen_stack.pop())
-        next_screen = self.get_screen(screen)
-        self._screen_stack.append(next_screen)
-        self.screen.post_message_no_wait(events.ScreenResume(self))
-        self.log(f"{self.screen} is current (SWITCHED)")
-        return previous_screen
+        if self.screen is not screen:
+            self._replace_screen(self._screen_stack.pop())
+            next_screen = self.get_screen(screen)
+            self._screen_stack.append(next_screen)
+            self.screen.post_message_no_wait(events.ScreenResume(self))
+            self.log(f"{self.screen} is current (SWITCHED)")
 
     def install_screen(self, screen: Screen, name: str | None = None) -> str:
         """Install a screen.
@@ -722,7 +729,7 @@ class App(Generic[ReturnType], DOMNode):
         if name is None:
             name = nanoid.generate()
         if name in self._installed_screens:
-            raise ScreenError(f"Can't install screen; {name!r} is already registered")
+            raise ScreenError(f"Can't install screen; {name!r} is already installed")
         if screen in self._installed_screens.values():
             raise ScreenError(
                 "Can't install screen; {screen!r} has already been installed"
