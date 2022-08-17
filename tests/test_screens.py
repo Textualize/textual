@@ -10,6 +10,9 @@ async def test_screens():
     app = App()
     app._set_active()
 
+    with pytest.raises(ScreenStackError):
+        app.screen
+
     assert not app._installed_screens
 
     screen1 = Screen(name="screen1")

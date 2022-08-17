@@ -418,7 +418,10 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def screen(self) -> Screen:
-        return self._screen_stack[-1]
+        try:
+            return self._screen_stack[-1]
+        except IndexError:
+            raise ScreenStackError("No screens on stack") from None
 
     @property
     def size(self) -> Size:
