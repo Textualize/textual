@@ -1,7 +1,6 @@
-from __future__ import annotations
-
 import sys
-from typing import Awaitable, Callable, List, Optional, TYPE_CHECKING, Union
+from typing import Awaitable, Callable, List, TYPE_CHECKING, Union
+
 from rich.segment import Segment
 
 if sys.version_info >= (3, 8):
