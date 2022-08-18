@@ -963,10 +963,11 @@ class App(Generic[ReturnType], DOMNode):
             await self.dispatch_message(load_event)
 
             driver: Driver
-            if self.is_headless:
-                driver = self._driver = HeadlessDriver(self.console, self)
-            else:
-                driver = self._driver = self.driver_class(self.console, self)
+            driver_class = cast(
+                "type[Driver]",
+                HeadlessDriver if self.is_headless else self.driver_class,
+            )
+            driver = self._driver = driver_class(self.console, self)
 
             driver.start_application_mode()
             try:
