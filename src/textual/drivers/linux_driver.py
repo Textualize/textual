@@ -75,7 +75,7 @@ class LinuxDriver(Driver):
         self.console.file.write("\x1b[?2004h")
 
     def _disable_bracketed_paste(self) -> None:
-        """Disable bracketed pasgte mode."""
+        """Disable bracketed paste mode."""
         self.console.file.write("\x1b[?2004l")
 
     def _disable_mouse_support(self) -> None:
