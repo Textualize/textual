@@ -7,7 +7,7 @@ from textual.widget import Widget
 class Clock(Widget):
     def on_mount(self):
         self.styles.content_align = ("center", "middle")
-        self.set_interval(1, self.refresh)
+        self.auto_refresh = 1.0
 
     def render(self):
         return datetime.now().strftime("%c")

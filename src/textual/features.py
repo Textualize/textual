@@ -14,7 +14,7 @@ FEATURES: Final = {"devtools", "debug", "headless"}
 FeatureFlag = Literal["devtools", "debug", "headless"]
 
 
-def parse_features(features: str) -> frozenset[FeatureFlag]:
+def parse_features(features: str) -> set[FeatureFlag]:
     """Parse features env var
 
     Args:
@@ -24,11 +24,8 @@ def parse_features(features: str) -> frozenset[FeatureFlag]:
         frozenset[FeatureFlag]: A frozen set of known features.
     """
 
-    features_set = frozenset(
-        set(
-            feature.strip().lower()
-            for feature in features.split(",")
-            if feature.strip()
-        ).intersection(FEATURES)
-    )
-    return cast("frozenset[FeatureFlag]", features_set)
+    features_set = set(
+        feature.strip().lower() for feature in features.split(",") if feature.strip()
+    ).intersection(FEATURES)
+
+    return cast("set[FeatureFlag]", features_set)

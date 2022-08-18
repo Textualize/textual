@@ -47,6 +47,7 @@ from ._event_broker import NoHandler, extract_handler_actions
 from .binding import Bindings, NoBinding
 from .css.query import NoMatchingNodesError
 from .css.stylesheet import Stylesheet
+from .drivers.headless_driver import HeadlessDriver
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
 from .devtools.redirect_output import StdoutRedirector
@@ -162,7 +163,7 @@ class App(Generic[ReturnType], DOMNode):
         _init_uvloop()
 
         super().__init__()
-        self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
+        self.features: set[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
         self.console = Console(
             file=(open(os.devnull, "wt") if self.is_headless else sys.__stdout__),
@@ -539,16 +540,22 @@ class App(Generic[ReturnType], DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
-    def run(self, quit_after: float | None = None) -> ReturnType | None:
+    def run(
+        self, quit_after: float | None = None, headless: bool = False
+    ) -> ReturnType | None:
         """The main entry point for apps.
 
         Args:
             quit_after (float | None, optional): Quit after a given number of seconds, or None
                 to run forever. Defaults to None.
+            headless (bool, optional): Run in "headless" mode (don't write to stdout).
 
         Returns:
             ReturnType | None: _description_
         """
+
+        if headless:
+            self.features.add("headless")
 
         async def run_app() -> None:
             if quit_after is not None:
@@ -932,29 +939,40 @@ class App(Generic[ReturnType], DOMNode):
             self.set_interval(0.5, self.css_monitor, name="css monitor")
             self.log("[b green]STARTED[/]", self.css_monitor)
 
+        process_messages = super().process_messages
+
+        async def run_process_messages():
+            mount_event = events.Mount(sender=self)
+            await self.dispatch_message(mount_event)
+
+            self.title = self._title
+            self.stylesheet.update(self)
+            self.refresh()
+            await self.animator.start()
+            await self._ready()
+            await process_messages()
+            await self.animator.stop()
+            await self.close_all()
+
         self._running = True
         try:
             load_event = events.Load(sender=self)
             await self.dispatch_message(load_event)
 
-            driver = self._driver = self.driver_class(self.console, self)
-            driver.start_application_mode()
-            driver.enable_bracketed_paste()
-            try:
-                with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
-                    mount_event = events.Mount(sender=self)
-                    await self.dispatch_message(mount_event)
+            driver: Driver
+            if self.is_headless:
+                driver = self._driver = HeadlessDriver(self.console, self)
+            else:
+                driver = self._driver = self.driver_class(self.console, self)
 
-                    self.title = self._title
-                    self.stylesheet.update(self)
-                    self.refresh()
-                    await self.animator.start()
-                    await self._ready()
-                    await super().process_messages()
-                    await self.animator.stop()
-                    await self.close_all()
+            driver.start_application_mode()
+            try:
+                if self.is_headless:
+                    await run_process_messages()
+                else:
+                    with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
+                        await run_process_messages()
             finally:
-                driver.disable_bracketed_paste()
                 driver.stop_application_mode()
         except Exception as error:
             self.on_exception(error)
