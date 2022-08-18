@@ -36,7 +36,8 @@ from .dom import DOMNode
 from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
-from .reactive import Reactive, watch
+from .reactive import Reactive
+from ._timer import Timer
 
 
 if TYPE_CHECKING:

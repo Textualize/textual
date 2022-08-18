@@ -44,6 +44,14 @@ class WindowsDriver(Driver):
         write("\x1b[?1006l")
         self.console.file.flush()
 
+    def _enable_bracketed_paste(self) -> None:
+        """Enable bracketed paste mode."""
+        self.console.file.write("\x1b[?2004h")
+
+    def _disable_bracketed_paste(self) -> None:
+        """Disable bracketed paste mode."""
+        self.console.file.write("\x1b[?2004l")
+
     def start_application_mode(self) -> None:
 
         loop = asyncio.get_running_loop()
@@ -54,6 +62,7 @@ class WindowsDriver(Driver):
         self._enable_mouse_support()
         self.console.show_cursor(False)
         self.console.file.write("\033[?1003h\n")
+        self._enable_bracketed_paste()
 
         app = active_app.get()
 
@@ -75,6 +84,7 @@ class WindowsDriver(Driver):
             pass
 
     def stop_application_mode(self) -> None:
+        self._disable_bracketed_paste()
         self.disable_input()
         if self._restore_console:
             self._restore_console()
