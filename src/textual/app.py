@@ -557,7 +557,7 @@ class App(Generic[ReturnType], DOMNode):
 
         if headless:
             self.features = cast(
-                frozenset[FeatureFlag], self.features.union({"headless"})
+                "frozenset[FeatureFlag]", self.features.union({"headless"})
             )
 
         async def run_app() -> None:
