@@ -54,6 +54,7 @@ def arrange(
     for widgets in dock_layers.values():
 
         layout_widgets, dock_widgets = partition(get_dock, widgets)
+
         arrange_widgets.update(dock_widgets)
         top = right = bottom = left = 0
 
@@ -73,18 +74,18 @@ def arrange(
                 dock_region = Region(
                     0, height - widget_height, widget_width, widget_height
                 )
-                bottom = max(bottom, dock_region.height)
+                bottom = max(bottom, widget_height)
             elif edge == "top":
                 dock_region = Region(0, 0, widget_width, widget_height)
-                top = max(top, dock_region.height)
+                top = max(top, widget_height)
             elif edge == "left":
                 dock_region = Region(0, 0, widget_width, widget_height)
-                left = max(left, dock_region.width)
+                left = max(left, widget_width)
             elif edge == "right":
                 dock_region = Region(
                     width - widget_width, 0, widget_width, widget_height
                 )
-                right = max(right, dock_region.width)
+                right = max(right, widget_width)
             else:
                 # Should not occur, mainly to keep Mypy happy
                 raise AssertionError("invalid value for edge")  # pragma: no-cover
@@ -100,14 +101,17 @@ def arrange(
         layout_placements, arranged_layout_widgets = widget.layout.arrange(
             widget, layout_widgets, region.size
         )
+
         if arranged_layout_widgets:
             scroll_spacing = scroll_spacing.grow_maximum(dock_spacing)
             arrange_widgets.update(arranged_layout_widgets)
             placement_offset = region.offset
             if placement_offset:
                 layout_placements = [
-                    _WidgetPlacement(_region + placement_offset, widget, order, fixed)
-                    for _region, widget, order, fixed in layout_placements
+                    _WidgetPlacement(
+                        _region + placement_offset, layout_widget, order, fixed
+                    )
+                    for _region, layout_widget, order, fixed in layout_placements
                 ]
 
         placements.extend(layout_placements)

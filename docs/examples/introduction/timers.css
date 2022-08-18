@@ -1,0 +1,55 @@
+TimerWidget {
+    layout: horizontal;
+    height: 5;
+    background: $panel-darken-1;
+    border: tall $panel-darken-2;
+    margin: 1;
+    padding: 0 1;
+
+    transition: background 200ms linear;
+}
+
+TimeDisplay {
+    content-align: center middle;
+    opacity: 60%;
+    height: 3;
+}
+
+Button {
+    width: 16;    
+}
+
+#start {
+    dock: left;
+}
+
+TimerWidget.started {
+    opacity: 100%;
+    text-style: bold;
+    background: $success;
+    color: $text-success;
+    border: tall $success-darken-2;
+}
+
+TimerWidget.started #start {
+    display: none
+}
+
+TimerWidget.started #stop {
+    display: block
+}
+
+TimerWidget.started #reset {
+    visibility: hidden
+}
+
+
+#stop {
+    dock: left;
+    display: none;
+}
+
+
+Button#reset {
+    dock: right;
+}

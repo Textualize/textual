@@ -210,7 +210,7 @@ class Widget(DOMNode):
 
         """
         self.app._register(self, *anon_widgets, **widgets)
-        self.screen.refresh()
+        self.screen.refresh(layout=True)
 
     def compose(self) -> ComposeResult:
         """Yield child widgets for a container."""

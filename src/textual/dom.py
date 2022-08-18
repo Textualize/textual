@@ -625,7 +625,7 @@ class DOMNode(MessagePump):
             query_selector = selector
         else:
             query_selector = selector.__name__
-        query = DOMQuery(self.screen, filter=query_selector)
+        query = DOMQuery(self, filter=query_selector)
 
         if expect_type is None:
             return query.first()

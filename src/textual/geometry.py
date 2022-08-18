@@ -629,8 +629,8 @@ class Region(NamedTuple):
         return Region(
             x=x + left,
             y=y + top,
-            width=max(0, width - left - right),
-            height=max(0, height - top - bottom),
+            width=max(0, width - (left + right)),
+            height=max(0, height - (top + bottom)),
         )
 
     @lru_cache(maxsize=4096)
