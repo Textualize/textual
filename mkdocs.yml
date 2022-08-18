@@ -56,7 +56,7 @@ markdown_extensions:
       custom_fences:
         - name: textual
           class: textual
-          format: "!!python/name:textual._doc.format_svg"
+          format: !!python/name:textual._doc.format_svg
   - pymdownx.inlinehilite
   - pymdownx.superfences
   - pymdownx.snippets
