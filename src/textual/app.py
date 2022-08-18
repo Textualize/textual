@@ -14,6 +14,7 @@ from time import perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
+    cast,
     Generic,
     Iterable,
     Iterator,
@@ -163,7 +164,7 @@ class App(Generic[ReturnType], DOMNode):
         _init_uvloop()
 
         super().__init__()
-        self.features: set[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
+        self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
         self.console = Console(
             file=(open(os.devnull, "wt") if self.is_headless else sys.__stdout__),
@@ -555,7 +556,9 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         if headless:
-            self.features.add("headless")
+            self.features = cast(
+                frozenset[FeatureFlag], self.features.union({"headless"})
+            )
 
         async def run_app() -> None:
             if quit_after is not None:
