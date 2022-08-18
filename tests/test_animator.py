@@ -182,7 +182,7 @@ class MockAnimator(Animator):
         return self._time
 
 
-def test_animator():
+async def test_animator():
     target = Mock()
     animator = MockAnimator(target)
     animate_test = AnimateTest()
@@ -203,11 +203,11 @@ def test_animator():
     assert animator._animations[(id(animate_test), "foo")] == expected
     assert not animator._on_animation_frame_called
 
-    animator()
+    await animator()
     assert animate_test.foo == 0
 
     animator._time = 5
-    animator()
+    await animator()
     assert animate_test.foo == 50
 
     # New animation in the middle of an existing one
@@ -215,7 +215,7 @@ def test_animator():
     assert animate_test.foo == 50
 
     animator._time = 6
-    animator()
+    await animator()
     assert animate_test.foo == 200
 
 
@@ -256,7 +256,7 @@ def test_animator_on_complete_callback_not_fired_before_duration_ends():
     assert not callback.called
 
 
-def test_animator_on_complete_callback_fired_at_duration():
+async def test_animator_on_complete_callback_fired_at_duration():
     callback = Mock()
     animate_test = AnimateTest()
     animator = MockAnimator(Mock())
@@ -264,6 +264,6 @@ def test_animator_on_complete_callback_fired_at_duration():
     animator.animate(animate_test, "foo", 200, duration=10, on_complete=callback)
 
     animator._time = 10
-    animator()
+    await animator()
 
     callback.assert_called_once_with()
