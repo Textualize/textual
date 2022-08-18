@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+
 from rich.console import RenderableType
 
 from textual import events

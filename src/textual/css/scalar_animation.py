@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable
 
+from .._types import CallbackType
 from ..geometry import Offset
 from .._animator import Animation
 from .scalar import ScalarOffset
@@ -24,7 +25,7 @@ class ScalarAnimation(Animation):
         duration: float | None,
         speed: float | None,
         easing: EasingFunction,
-        on_complete: Callable[[], None] | None = None,
+        on_complete: CallbackType | None = None,
     ):
         assert (
             speed is not None or duration is not None
