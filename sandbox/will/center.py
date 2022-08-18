@@ -5,12 +5,12 @@ from textual.widgets import Static
 class CenterApp(App):
     CSS = """
     
-    Screen {
+    CenterApp Screen {
         layout: center;
         overflow: auto auto;
     }
 
-    Static {
+    CenterApp Static {
         border: wide $primary;
         background: $panel;
         width: 50;

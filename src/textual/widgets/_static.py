@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from rich.console import RenderableType
-from rich.style import Style
+
 
 from ..widget import Widget
 
