@@ -12,6 +12,7 @@ import rich.repr
 from rich.syntax import Syntax
 from rich.text import Text
 
+from ._error_tools import friendly_list
 from .._loop import loop_last
 
 
@@ -203,7 +204,7 @@ class Tokenizer:
         line = self.lines[line_no]
         match = expect.match(line, col_no)
         if match is None:
-            expected = ", ".join(" ".join(name.split("_")) for name in expect.names)
+            expected = friendly_list(" ".join(name.split("_")) for name in expect.names)
             message = f"Expected one of {expected}.; Did you forget a semicolon at the end of a line?"
             raise TokenError(
                 self.path,
