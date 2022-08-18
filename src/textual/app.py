@@ -552,7 +552,7 @@ class App(Generic[ReturnType], DOMNode):
             headless (bool, optional): Run in "headless" mode (don't write to stdout).
 
         Returns:
-            ReturnType | None: _description_
+            ReturnType | None: The return value specified in `App.exit` or None if exit wasn't called.
         """
 
         if headless:
