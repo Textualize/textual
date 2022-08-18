@@ -22,7 +22,7 @@ class RefreshApp(App[float]):
 def test_auto_refresh():
     app = RefreshApp()
 
-    elapsed = app.run(quit_after=0.5, headless=True)
+    elapsed = app.run(quit_after=1, headless=True)
     assert elapsed is not None
     # CI can run slower, so we need to give this a bit of margin
     assert elapsed >= 0.3 and elapsed < 0.5
