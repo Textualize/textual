@@ -14,13 +14,13 @@ from time import perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
-    cast,
     Generic,
     Iterable,
     Iterator,
     TextIO,
     Type,
     TypeVar,
+    cast,
 )
 from weakref import WeakSet, WeakValueDictionary
 
@@ -48,12 +48,12 @@ from ._event_broker import NoHandler, extract_handler_actions
 from .binding import Bindings, NoBinding
 from .css.query import NoMatchingNodesError
 from .css.stylesheet import Stylesheet
-from .drivers.headless_driver import HeadlessDriver
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
 from .devtools.redirect_output import StdoutRedirector
 from .dom import DOMNode
 from .driver import Driver
+from .drivers.headless_driver import HeadlessDriver
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
