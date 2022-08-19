@@ -12,11 +12,10 @@ scrollbar-gutter: [auto|stable];
 
 ### Values
 
-| Value            | Description                                    |
-|------------------|------------------------------------------------|
-| `auto` (default) | No space is reserved for a vertical scrollbar. |
-| `stable`         | Space is reserved for a vertical scrollbar.    |
-
+| Value            | Description                                      |
+|------------------|--------------------------------------------------|
+| `auto` (default) | No space is reserved for the vertical scrollbar. |
+| `stable`         | Space is reserved for the vertical scrollbar.    |
 
 ## Example
 
