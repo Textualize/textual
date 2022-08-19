@@ -21,6 +21,7 @@ nav:
     - "styles/min_width.md"
     - "styles/max_width.md"
     - "styles/height.md"
+    - "styles/layout.md"
     - "styles/margin.md"
     - "styles/offset.md"
     - "styles/outline.md"
