@@ -36,6 +36,12 @@ content-align: <HORIZONTAL> <VERTICAL>;
     --8<-- "docs/examples/styles/content_align.py"
     ```
 
+=== "content_align.css"
+
+    ```scss
+    --8<-- "docs/examples/styles/content_align.css"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/styles/content_align.py"}

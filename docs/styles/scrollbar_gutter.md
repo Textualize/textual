@@ -1,4 +1,4 @@
-# Scrollbar gutter
+# Scrollbar-gutter
 
 The `scrollbar-gutter` rule allows authors to reserve space for the vertical scrollbar.
 
@@ -26,6 +26,12 @@ terminal window.
 
     ```python
     --8<-- "docs/examples/styles/scrollbar_gutter.py"
+    ```
+
+=== "scrollbar_gutter.css"
+
+    ```scss
+    --8<-- "docs/examples/styles/scrollbar_gutter.css"
     ```
 
 === "Output"
