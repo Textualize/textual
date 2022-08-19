@@ -54,7 +54,6 @@ class TimerWidget(Static):
         button_id = event.button.id
         self.started = button_id == "start"
         if button_id == "reset":
-            self.started = False
             self.total = 0.0
             self.update_elapsed()
 
