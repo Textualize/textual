@@ -4,6 +4,20 @@ The `scrollbar-gutter` rule allows authors to reserve space for the vertical scr
 
 Setting the value to `stable` prevents unwanted layout changes when the scrollbar becomes visible.
 
+## Syntax
+
+```
+scrollbar-gutter: [auto|stable];
+```
+
+### Values
+
+| Value            | Description                                    |
+|------------------|------------------------------------------------|
+| `auto` (default) | No space is reserved for a vertical scrollbar. |
+| `stable`         | Space is reserved for a vertical scrollbar.    |
+
+
 ## Example
 
 In the example below, notice the gap reserved for the scrollbar on the right side of the
