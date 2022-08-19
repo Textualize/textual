@@ -7,6 +7,7 @@ repos:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
     -   id: check-yaml
+        args: ['--unsafe']
 -   repo: https://github.com/psf/black
     rev: 22.3.0
     hooks:
