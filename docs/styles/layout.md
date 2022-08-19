@@ -26,6 +26,12 @@ Note how the `layout` property affects the arrangement of widgets in the example
     --8<-- "docs/examples/styles/layout.py"
     ```
 
+=== "layout.css"
+
+    ```sass
+    --8<-- "docs/examples/styles/layout.css"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/styles/layout.py"}
