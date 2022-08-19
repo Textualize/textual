@@ -29,4 +29,3 @@ class ContentAlignApp(App):
 
 
 app = ContentAlignApp()
-app.run()
