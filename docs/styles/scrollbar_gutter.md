@@ -1,4 +1,4 @@
-# Scrollbar gutter
+# Scrollbar-gutter
 
 The `scrollbar-gutter` rule allows authors to reserve space for the vertical scrollbar.
 
