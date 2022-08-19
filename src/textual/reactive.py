@@ -73,7 +73,7 @@ class Reactive(Generic[ReactiveType]):
         if callable(validate_function):
             value = validate_function(value)
         if current_value != value or first_set:
-            setattr(obj, f"{self.internal_name}__first_set", True)
+            setattr(obj, f"{self.internal_name}__first_set", False)
             setattr(obj, self.internal_name, value)
             self.check_watchers(obj, name, current_value)
             if self.layout or self.repaint:

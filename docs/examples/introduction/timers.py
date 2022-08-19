@@ -12,6 +12,7 @@ class TimeDisplay(Static):
     time_delta = Reactive(0.0)
 
     def watch_time_delta(self, time_delta: float) -> None:
+        """Called when time_delta changes."""
         minutes, seconds = divmod(time_delta, 60)
         hours, minutes = divmod(minutes, 60)
         self.update(f"{hours:02.0f}:{minutes:02.0f}:{seconds:05.2f}")
@@ -25,20 +26,24 @@ class TimerWidget(Static):
     started = Reactive(False)
 
     def on_mount(self) -> None:
+        """Called when widget is first added."""
         self.update_timer = self.set_interval(1 / 30, self.update_elapsed, pause=True)
 
     def update_elapsed(self) -> None:
+        """Updates elapsed time."""
         self.query_one(TimeDisplay).time_delta = (
             self.total + monotonic() - self.start_time if self.started else self.total
         )
 
     def compose(self) -> ComposeResult:
+        """Composes the timer widget."""
         yield Button("Start", id="start", variant="success")
         yield Button("Stop", id="stop", variant="error")
         yield TimeDisplay()
         yield Button("Reset", id="reset")
 
     def watch_started(self, started: bool) -> None:
+        """Called when the 'started' attribute changes."""
         if started:
             self.start_time = monotonic()
             self.update_timer.resume()
@@ -51,6 +56,7 @@ class TimerWidget(Static):
             self.query_one("#start").focus()
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Called when a button is pressed."""
         button_id = event.button.id
         self.started = button_id == "start"
         if button_id == "reset":
@@ -62,20 +68,24 @@ class TimerApp(App):
     """Manage the timers."""
 
     def on_load(self) -> None:
+        """Called when the app first loads."""
         self.bind("a", "add_timer", description="Add")
         self.bind("r", "remove_timer", description="Remove")
 
     def compose(self) -> ComposeResult:
+        """Called to ad widgets to the app."""
         yield Header()
         yield Footer()
         yield Container(TimerWidget(), TimerWidget(), TimerWidget(), id="timers")
 
     def action_add_timer(self) -> None:
+        """An action to add a timer."""
         new_timer = TimerWidget()
         self.query_one("#timers").mount(new_timer)
         new_timer.scroll_visible()
 
     def action_remove_timer(self) -> None:
+        """Called to remove a timer."""
         timers = self.query("#timers TimerWidget")
         if timers:
             timers.last().remove()

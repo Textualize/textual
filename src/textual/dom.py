@@ -1,7 +1,16 @@
 from __future__ import annotations
 
 from inspect import getfile
-from typing import ClassVar, Iterable, Iterator, Type, overload, TypeVar, TYPE_CHECKING
+from typing import (
+    cast,
+    ClassVar,
+    Iterable,
+    Iterator,
+    Type,
+    overload,
+    TypeVar,
+    TYPE_CHECKING,
+)
 
 import rich.repr
 from rich.highlighter import ReprHighlighter
@@ -27,6 +36,14 @@ if TYPE_CHECKING:
     from .css.query import DOMQuery
     from .screen import Screen
     from .widget import Widget
+
+
+class DOMError(Exception):
+    pass
+
+
+class NoScreen(DOMError):
+    pass
 
 
 class NoParent(Exception):
@@ -197,7 +214,8 @@ class DOMNode(MessagePump):
         Returns:
             DOMNode | None: The node which is the direct parent of this node.
         """
-        return self._parent
+
+        return cast("DOMNode | None", self._parent)
 
     @property
     def screen(self) -> "Screen":
@@ -209,7 +227,8 @@ class DOMNode(MessagePump):
         node = self
         while node and not isinstance(node, Screen):
             node = node._parent
-        assert isinstance(node, Screen)
+        if not isinstance(node, Screen):
+            raise NoScreen("{self} has no screen")
         return node
 
     @property

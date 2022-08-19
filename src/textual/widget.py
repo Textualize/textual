@@ -37,7 +37,7 @@ from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from .reactive import Reactive
-from ._timer import Timer
+from .dom import NoScreen
 
 
 if TYPE_CHECKING:
@@ -516,6 +516,8 @@ class Widget(DOMNode):
         """The region occupied by this widget, relative to the Screen."""
         try:
             return self.screen.find_widget(self).region
+        except NoScreen:
+            return Region()
         except errors.NoWidget:
             return Region()
 
@@ -526,6 +528,8 @@ class Widget(DOMNode):
         """
         try:
             return self.screen.find_widget(self).virtual_region
+        except NoScreen:
+            return Region()
         except errors.NoWidget:
             return Region()
 
