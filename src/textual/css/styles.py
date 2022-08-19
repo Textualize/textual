@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 import rich.repr
 from rich.style import Style
 
+from textual._types import CallbackType
 from .._animator import Animation, EasingFunction
 from ..color import Color
 from ..geometry import Offset, Spacing
@@ -579,9 +580,9 @@ class Styles(StylesBase):
         duration: float | None,
         speed: float | None,
         easing: EasingFunction,
+        on_complete: CallbackType | None = None,
     ) -> Animation | None:
-        from ..widget import Widget
-
+        # from ..widget import Widget
         # node = self.node
         # assert isinstance(self.node, Widget)
         if isinstance(value, ScalarOffset):
@@ -594,6 +595,7 @@ class Styles(StylesBase):
                 duration=duration,
                 speed=speed,
                 easing=easing,
+                on_complete=on_complete,
             )
         return None
 

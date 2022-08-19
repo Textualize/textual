@@ -1,5 +1,6 @@
 import sys
-from typing import Awaitable, Callable, List, Optional, TYPE_CHECKING
+from typing import Awaitable, Callable, List, TYPE_CHECKING, Union
+
 from rich.segment import Segment
 
 if sys.version_info >= (3, 8):
@@ -10,8 +11,6 @@ else:
 
 if TYPE_CHECKING:
     from .message import Message
-
-Callback = Callable[[], None]
 
 
 class MessageTarget(Protocol):
@@ -34,5 +33,5 @@ class EventTarget(Protocol):
 
 
 MessageHandler = Callable[["Message"], Awaitable]
-
 Lines = List[List[Segment]]
+CallbackType = Union[Callable[[], Awaitable[None]], Callable[[], None]]

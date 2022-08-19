@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
-from .. import events, log
+from .._types import CallbackType
 from ..geometry import Offset
 from .._animator import Animation
 from .scalar import ScalarOffset
@@ -25,6 +25,7 @@ class ScalarAnimation(Animation):
         duration: float | None,
         speed: float | None,
         easing: EasingFunction,
+        on_complete: CallbackType | None = None,
     ):
         assert (
             speed is not None or duration is not None
@@ -35,6 +36,7 @@ class ScalarAnimation(Animation):
         self.attribute = attribute
         self.final_value = value
         self.easing = easing
+        self.on_complete = on_complete
 
         size = widget.outer_size
         viewport = widget.app.size
@@ -55,7 +57,6 @@ class ScalarAnimation(Animation):
         eased_factor = self.easing(factor)
 
         if eased_factor >= 1:
-            offset = self.final_value
             setattr(self.styles, self.attribute, self.final_value)
             return True
 
