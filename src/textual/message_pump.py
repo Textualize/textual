@@ -254,7 +254,8 @@ class MessagePump(metaclass=MessagePumpMeta):
         if self._closed or self._closing:
             return
         self._closing = True
-        for timer in self._timers:
+        stop_timers = list(self._timers)
+        for timer in stop_timers:
             await timer.stop()
         self._timers.clear()
         await self._message_queue.put(MessagePriority(None))
@@ -274,7 +275,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             pass
         finally:
             self._running = False
-            for timer in self._timers:
+            for timer in list(self._timers):
                 await timer.stop()
 
     async def _process_messages(self) -> None:

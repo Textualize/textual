@@ -12,6 +12,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs):
     os.environ["LINES"] = attrs.get("lines", "24")
     path = attrs.get("path")
 
+    print(f"screenshotting {path!r}")
     if path:
         cwd = os.getcwd()
         examples_path, filename = os.path.split(path)
@@ -34,4 +35,5 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs):
         app = app_vars["app"]
         app.run()
         svg = app._screenshot
+
     return svg

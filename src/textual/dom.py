@@ -105,7 +105,7 @@ class DOMNode(MessagePump):
             self._auto_refresh_timer = None
         if interval is not None:
             self._auto_refresh_timer = self.set_interval(
-                interval, self._automatic_refresh
+                interval, self._automatic_refresh, name=f"auto refresh {self!r}"
             )
         self._auto_refresh = interval
 

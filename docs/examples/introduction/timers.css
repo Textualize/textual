@@ -1,12 +1,12 @@
 TimerWidget {
     layout: horizontal;
-    height: 5;
     background: $panel-darken-1;
     border: tall $panel-darken-2;
+    height: 5;
+    min-width: 50;
     margin: 1;
     padding: 0 1;
     transition: background 300ms linear;
-    min-width: 50;
 }
 
 TimerWidget.started {   
@@ -35,6 +35,14 @@ Button {
     dock: left;
 }
 
+#stop {
+    dock: left;
+    display: none;
+}
+
+#reset {
+    dock: right;
+}
 
 TimerWidget.started #start {
     display: none
@@ -48,11 +56,3 @@ TimerWidget.started #reset {
     visibility: hidden
 }
 
-#stop {
-    dock: left;
-    display: none;
-}
-
-#reset {
-    dock: right;
-}

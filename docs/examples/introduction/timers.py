@@ -91,6 +91,6 @@ class TimerApp(App):
             timers.last().remove()
 
 
-app = TimerApp(title="TimerApp", css_path="timers.css")
+app = TimerApp(css_path="timers.css")
 if __name__ == "__main__":
     app.run()

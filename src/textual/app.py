@@ -144,7 +144,7 @@ class App(Generic[ReturnType], DOMNode):
         log_color_system: Literal[
             "auto", "standard", "256", "truecolor", "windows"
         ] = "auto",
-        title: str = "Textual Application",
+        title: str | None = None,
         css_path: str | PurePath | None = None,
         watch_css: bool = False,
     ):
@@ -189,7 +189,10 @@ class App(Generic[ReturnType], DOMNode):
         self.animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
         self.bindings = Bindings()
-        self._title = title
+        if title is None:
+            self._title = f"{self.__class__.__name__}"
+        else:
+            self._title = title
 
         self._log_console: Console | None = None
         self._log_file: TextIO | None = None
@@ -1015,7 +1018,7 @@ class App(Generic[ReturnType], DOMNode):
             self._screenshot = svg  # type: ignore
             await self.shutdown()
 
-        self.set_timer(screenshot_timer, on_screenshot)
+        self.set_timer(screenshot_timer, on_screenshot, name="screenshot timer")
 
     def on_mount(self) -> None:
         widgets = self.compose()

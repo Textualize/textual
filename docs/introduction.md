@@ -10,6 +10,11 @@ By the end of this page you should have a good idea of the steps involved in cre
 - Installed `textual` from Pypi.
 - Basic Python skills.
 
+
+```{.textual path="docs/examples/introduction/timers.py"}
+
+``` 
+
 ## A Simple App
 
 Let's looks at the simplest possible Textual app.
