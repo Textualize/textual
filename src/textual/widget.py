@@ -1183,16 +1183,16 @@ class Widget(DOMNode):
     async def broker_event(self, event_name: str, event: events.Event) -> bool:
         return await self.app.broker_event(event_name, event, default_namespace=self)
 
-    async def on_mouse_down(self, event: events.MouseUp) -> None:
+    async def _on_mouse_down(self, event: events.MouseUp) -> None:
         await self.broker_event("mouse.down", event)
 
-    async def on_mouse_up(self, event: events.MouseUp) -> None:
+    async def _on_mouse_up(self, event: events.MouseUp) -> None:
         await self.broker_event("mouse.up", event)
 
-    async def on_click(self, event: events.Click) -> None:
+    async def _on_click(self, event: events.Click) -> None:
         await self.broker_event("click", event)
 
-    async def on_key(self, event: events.Key) -> None:
+    async def _on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)
 
     def _on_mount(self, event: events.Mount) -> None:
@@ -1201,23 +1201,23 @@ class Widget(DOMNode):
             self.mount(*widgets)
             self.screen.refresh(repaint=False, layout=True)
 
-    def on_leave(self, event: events.Leave) -> None:
+    def _on_leave(self, event: events.Leave) -> None:
         self.mouse_over = False
 
-    def on_enter(self, event: events.Enter) -> None:
+    def _on_enter(self, event: events.Enter) -> None:
         self.mouse_over = True
 
-    def on_focus(self, event: events.Focus) -> None:
+    def _on_focus(self, event: events.Focus) -> None:
         self.emit_no_wait(events.DescendantFocus(self))
         self.has_focus = True
         self.refresh()
 
-    def on_blur(self, event: events.Blur) -> None:
+    def _on_blur(self, event: events.Blur) -> None:
         self.emit_no_wait(events.DescendantBlur(self))
         self.has_focus = False
         self.refresh()
 
-    def on_descendant_focus(self, event: events.DescendantFocus) -> None:
+    def _on_descendant_focus(self, event: events.DescendantFocus) -> None:
         self.descendant_has_focus = True
         if "focus-within" in self.pseudo_classes:
             sender = event.sender
@@ -1226,7 +1226,7 @@ class Widget(DOMNode):
                 if child is sender:
                     break
 
-    def on_descendant_blur(self, event: events.DescendantBlur) -> None:
+    def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
         self.descendant_has_focus = False
         if "focus-within" in self.pseudo_classes:
             sender = event.sender
@@ -1235,37 +1235,37 @@ class Widget(DOMNode):
                 if child is sender:
                     break
 
-    def on_mouse_scroll_down(self, event) -> None:
+    def _on_mouse_scroll_down(self, event) -> None:
         if self.allow_vertical_scroll:
             if self.scroll_down(animate=False):
                 event.stop()
 
-    def on_mouse_scroll_up(self, event) -> None:
+    def _on_mouse_scroll_up(self, event) -> None:
         if self.allow_vertical_scroll:
             if self.scroll_up(animate=False):
                 event.stop()
 
-    def on_scroll_to(self, message: ScrollTo) -> None:
+    def _on_scroll_to(self, message: ScrollTo) -> None:
         if self.is_scrollable:
             self.scroll_to(message.x, message.y, animate=message.animate, duration=0.1)
             message.stop()
 
-    def on_scroll_up(self, event: ScrollUp) -> None:
+    def _on_scroll_up(self, event: ScrollUp) -> None:
         if self.is_scrollable:
             self.scroll_page_up()
             event.stop()
 
-    def on_scroll_down(self, event: ScrollDown) -> None:
+    def _on_scroll_down(self, event: ScrollDown) -> None:
         if self.is_scrollable:
             self.scroll_page_down()
             event.stop()
 
-    def on_scroll_left(self, event: ScrollLeft) -> None:
+    def _on_scroll_left(self, event: ScrollLeft) -> None:
         if self.is_scrollable:
             self.scroll_page_left()
             event.stop()
 
-    def on_scroll_right(self, event: ScrollRight) -> None:
+    def _on_scroll_right(self, event: ScrollRight) -> None:
         if self.is_scrollable:
             self.scroll_page_right()
             event.stop()

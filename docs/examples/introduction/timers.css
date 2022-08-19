@@ -8,10 +8,22 @@ TimerWidget {
     transition: background 200ms linear;
 }
 
+TimerWidget.started {   
+    text-style: bold;
+    background: $success;
+    color: $text-success;
+    border: tall $success-darken-2;
+}
+
+
 TimeDisplay {
     content-align: center middle;
     opacity: 60%;
     height: 3;
+}
+
+TimerWidget.started TimeDisplay {
+    opacity: 100%;
 }
 
 Button {
@@ -22,14 +34,6 @@ Button {
     dock: left;
 }
 
-
-TimerWidget.started {
-    opacity: 100%;
-    text-style: bold;
-    background: $success;
-    color: $text-success;
-    border: tall $success-darken-2;
-}
 
 TimerWidget.started #start {
     display: none

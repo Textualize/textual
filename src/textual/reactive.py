@@ -4,7 +4,6 @@ from inspect import isawaitable
 from functools import partial
 from typing import (
     Any,
-    Awaitable,
     Callable,
     Generic,
     Type,
@@ -44,7 +43,6 @@ class Reactive(Generic[ReactiveType]):
         self._default = default
         self.layout = layout
         self.repaint = repaint
-        self._first = True
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
 
@@ -68,19 +66,16 @@ class Reactive(Generic[ReactiveType]):
         return getattr(obj, self.internal_name)
 
     def __set__(self, obj: Reactable, value: ReactiveType) -> None:
-
         name = self.name
         current_value = getattr(obj, self.internal_name, None)
         validate_function = getattr(obj, f"validate_{name}", None)
+        first_set = getattr(obj, f"{self.internal_name}__first_set", True)
         if callable(validate_function):
             value = validate_function(value)
-
-        if current_value != value or self._first:
-
-            self._first = False
+        if current_value != value or first_set:
+            setattr(obj, f"{self.internal_name}__first_set", True)
             setattr(obj, self.internal_name, value)
             self.check_watchers(obj, name, current_value)
-
             if self.layout or self.repaint:
                 obj.refresh(repaint=self.repaint, layout=self.layout)
 

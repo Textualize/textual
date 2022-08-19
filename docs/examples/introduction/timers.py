@@ -68,15 +68,15 @@ class TimerApp(App):
     def compose(self) -> ComposeResult:
         yield Header()
         yield Footer()
-        yield Container(TimerWidget(), TimerWidget(), TimerWidget())
+        yield Container(TimerWidget(), TimerWidget(), TimerWidget(), id="timers")
 
     def action_add_timer(self) -> None:
         new_timer = TimerWidget()
-        self.query_one(Container).mount(new_timer)
+        self.query_one("#timers").mount(new_timer)
         new_timer.scroll_visible()
 
     def action_remove_timer(self) -> None:
-        timers = self.query("Container TimerWidget")
+        timers = self.query("#timers TimerWidget")
         if timers:
             timers.last().remove()
 
