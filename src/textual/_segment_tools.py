@@ -188,6 +188,6 @@ def align_lines(
         get_line_length = Segment.get_line_length
         for line in lines:
             left_space = width - get_line_length(line)
-            yield [*line, Segment(" " * left_space, style)]
+            yield [Segment(" " * left_space, style), *line]
 
     yield from blank_lines(bottom_blank_lines)

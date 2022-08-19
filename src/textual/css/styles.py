@@ -762,7 +762,7 @@ class Styles(StylesBase):
             )
         elif has_rule("align_horizontal"):
             append_declaration("align-horizontal", self.align_horizontal)
-        elif has_rule("align_horizontal"):
+        elif has_rule("align_vertical"):
             append_declaration("align-vertical", self.align_vertical)
 
         if has_rule("content_align_horizontal") and has_rule("content_align_vertical"):
@@ -774,7 +774,7 @@ class Styles(StylesBase):
             append_declaration(
                 "content-align-horizontal", self.content_align_horizontal
             )
-        elif has_rule("content_align_horizontal"):
+        elif has_rule("content_align_vertical"):
             append_declaration("content-align-vertical", self.content_align_vertical)
 
         lines.sort()
