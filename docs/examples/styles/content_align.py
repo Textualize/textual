@@ -24,7 +24,7 @@ class ContentAlignApp(App):
 
     def compose(self):
         yield Static("With [i]content-align[/] you can...", id="box1")
-        yield Static("...[b]Easily center content[/]...", id="box2")
+        yield Static("...[b]Easily align content[/]...", id="box2")
         yield Static("...Horizontally [i]and[/] vertically!", id="box3")
 
 
