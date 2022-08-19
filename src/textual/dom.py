@@ -20,6 +20,7 @@ from .css.parse import parse_declarations
 from .css.styles import Styles, RenderStyles
 from .css.query import NoMatchingNodesError
 from .message_pump import MessagePump
+from ._timer import Timer
 
 if TYPE_CHECKING:
     from .app import App
@@ -71,7 +72,29 @@ class DOMNode(MessagePump):
         # A mapping of class names to Styles set in COMPONENT_CLASSES
         self._component_styles: dict[str, RenderStyles] = {}
 
+        self._auto_refresh: float | None = None
+        self._auto_refresh_timer: Timer | None = None
+
         super().__init__()
+
+    @property
+    def auto_refresh(self) -> float | None:
+        return self._auto_refresh
+
+    @auto_refresh.setter
+    def auto_refresh(self, interval: float | None) -> None:
+        if self._auto_refresh_timer is not None:
+            self._auto_refresh_timer.stop_no_wait()
+            self._auto_refresh_timer = None
+        if interval is not None:
+            self._auto_refresh_timer = self.set_interval(
+                interval, self._automatic_refresh
+            )
+        self._auto_refresh = interval
+
+    def _automatic_refresh(self) -> None:
+        """Perform an automatic refresh (set with auto_refresh property)."""
+        self.refresh()
 
     def __init_subclass__(cls, inherit_css: bool = True) -> None:
         super().__init_subclass__()

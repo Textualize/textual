@@ -20,6 +20,7 @@ from typing import (
     TextIO,
     Type,
     TypeVar,
+    cast,
 )
 from weakref import WeakSet, WeakValueDictionary
 
@@ -52,6 +53,7 @@ from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLo
 from .devtools.redirect_output import StdoutRedirector
 from .dom import DOMNode
 from .driver import Driver
+from .drivers.headless_driver import HeadlessDriver
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
@@ -539,16 +541,24 @@ class App(Generic[ReturnType], DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
-    def run(self, quit_after: float | None = None) -> ReturnType | None:
+    def run(
+        self, quit_after: float | None = None, headless: bool = False
+    ) -> ReturnType | None:
         """The main entry point for apps.
 
         Args:
             quit_after (float | None, optional): Quit after a given number of seconds, or None
                 to run forever. Defaults to None.
+            headless (bool, optional): Run in "headless" mode (don't write to stdout).
 
         Returns:
-            ReturnType | None: _description_
+            ReturnType | None: The return value specified in `App.exit` or None if exit wasn't called.
         """
+
+        if headless:
+            self.features = cast(
+                "frozenset[FeatureFlag]", self.features.union({"headless"})
+            )
 
         async def run_app() -> None:
             if quit_after is not None:
@@ -932,29 +942,41 @@ class App(Generic[ReturnType], DOMNode):
             self.set_interval(0.5, self.css_monitor, name="css monitor")
             self.log("[b green]STARTED[/]", self.css_monitor)
 
+        process_messages = super().process_messages
+
+        async def run_process_messages():
+            mount_event = events.Mount(sender=self)
+            await self.dispatch_message(mount_event)
+
+            self.title = self._title
+            self.stylesheet.update(self)
+            self.refresh()
+            await self.animator.start()
+            await self._ready()
+            await process_messages()
+            await self.animator.stop()
+            await self.close_all()
+
         self._running = True
         try:
             load_event = events.Load(sender=self)
             await self.dispatch_message(load_event)
 
-            driver = self._driver = self.driver_class(self.console, self)
-            driver.start_application_mode()
-            driver.enable_bracketed_paste()
-            try:
-                with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
-                    mount_event = events.Mount(sender=self)
-                    await self.dispatch_message(mount_event)
+            driver: Driver
+            driver_class = cast(
+                "type[Driver]",
+                HeadlessDriver if self.is_headless else self.driver_class,
+            )
+            driver = self._driver = driver_class(self.console, self)
 
-                    self.title = self._title
-                    self.stylesheet.update(self)
-                    self.refresh()
-                    await self.animator.start()
-                    await self._ready()
-                    await super().process_messages()
-                    await self.animator.stop()
-                    await self.close_all()
+            driver.start_application_mode()
+            try:
+                if self.is_headless:
+                    await run_process_messages()
+                else:
+                    with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
+                        await run_process_messages()
             finally:
-                driver.disable_bracketed_paste()
                 driver.stop_application_mode()
         except Exception as error:
             self.on_exception(error)
