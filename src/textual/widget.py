@@ -821,10 +821,14 @@ class Widget(DOMNode):
             # Adjust the region by the amount we just scrolled it, and convert to
             # it's parent's virtual coordinate system.
             region = (
-                region.translate(-scroll_offset)
-                .translate(-widget.scroll_offset)
-                .translate(container.virtual_region.offset)
-            ).intersection(container.virtual_region)
+                (
+                    region.translate(-scroll_offset)
+                    .translate(-widget.scroll_offset)
+                    .translate(container.virtual_region.offset)
+                )
+                .grow(container.styles.margin)
+                .intersection(container.virtual_region)
+            )
             widget = container
         return scrolled
 

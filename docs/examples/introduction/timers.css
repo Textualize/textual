@@ -6,6 +6,7 @@ TimerWidget {
     margin: 1;
     padding: 0 1;
     transition: background 300ms linear;
+    min-width: 50;
 }
 
 TimerWidget.started {   
