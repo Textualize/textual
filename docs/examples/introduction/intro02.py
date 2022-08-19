@@ -22,6 +22,7 @@ class ExampleApp(App):
     def on_key(self, event):
         if event.key.isdigit():
             self.styles.background = self.COLORS[int(event.key)]
+        self.refresh()
         self.bell()
 
 

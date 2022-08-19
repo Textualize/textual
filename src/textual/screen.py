@@ -33,8 +33,6 @@ class Screen(Widget):
 
     CSS = """
     Screen {
-        background: $background;
-        color: $text-background;
         layout: vertical;
         overflow-y: auto;
     }
@@ -71,7 +69,10 @@ class Screen(Widget):
         pass
 
     def render(self) -> RenderableType:
-        return Blank()
+        background = self.styles.background
+        if background.is_transparent:
+            return self.app.render()
+        return Blank(background)
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the absolute offset of a given Widget.

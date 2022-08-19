@@ -127,8 +127,8 @@ class App(Generic[ReturnType], DOMNode):
 
     CSS = """
     App {
-        background: $surface;
-        color: $text-surface;                
+        background: $background;
+        color: $text-background;             
     }
     """
 
@@ -614,7 +614,7 @@ class App(Generic[ReturnType], DOMNode):
                 self.screen.refresh(layout=True)
 
     def render(self) -> RenderableType:
-        return Blank()
+        return Blank(self.styles.background)
 
     def get_child(self, id: str) -> DOMNode:
         """Shorthand for self.screen.get_child(id: str)
