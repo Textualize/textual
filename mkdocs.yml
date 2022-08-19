@@ -10,7 +10,7 @@ nav:
   - Events:
     - "events/mount.md"
     - "events/resize.md"
-  - Styles:    
+  - Styles:
     - "styles/background.md"
     - "styles/border.md"
     - "styles/box_sizing.md"
@@ -28,6 +28,7 @@ nav:
     - "styles/padding.md"
     - "styles/scrollbar.md"
     - "styles/scrollbar_size.md"
+    - "styles/scrollbar_gutter.md"
     - "styles/text_style.md"
     - "styles/tint.md"
     - "styles/visibility.md"
@@ -60,7 +61,7 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.snippets
   - pymdownx.tabbed:
-      alternate_style: true 
+      alternate_style: true
   - pymdownx.snippets
   - markdown.extensions.attr_list
 
