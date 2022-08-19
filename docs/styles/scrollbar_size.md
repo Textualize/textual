@@ -4,7 +4,7 @@ The `scrollbar-size` rule changes the size of the scrollbars. It takes 2 integer
 
 The scrollbar dimensions may also be set individually with `scrollbar-size-horizontal` and `scrollbar-size-vertical`.
 
-# Syntax
+## Syntax
 
 ```
 scrollbar-size: <INTEGER> <INTEGER>;

@@ -30,10 +30,10 @@ Outlines may also be set individually with the `outline-top`, `outline-right`, `
 
 ```
 outline: [<COLOR>] [<BORDER VALUE>];
-outline-top: <COLOR>] [<BORDER VALUE>];
-outline-right: <COLOR>] [<BORDER VALUE>];
-outline-bottom: <COLOR>] [<BORDER VALUE>];
-outline-left: <COLOR>] [<BORDER VALUE>];
+outline-top: [<COLOR>] [<BORDER VALUE>];
+outline-right: [<COLOR>] [<BORDER VALUE>];
+outline-bottom: [<COLOR>] [<BORDER VALUE>];
+outline-left: [<COLOR>] [<BORDER VALUE>];
 ```
 
 ## Example

@@ -28,10 +28,10 @@ Borders may also be set individually for the four edges of a widget with the `bo
 
 ```
 border: [<COLOR>] [<BORDER VALUE>];
-border-top: <COLOR>] [<BORDER VALUE>];
-border-right: <COLOR>] [<BORDER VALUE>];
-border-bottom: <COLOR>] [<BORDER VALUE>];
-border-left: <COLOR>] [<BORDER VALUE>];
+border-top: [<COLOR>] [<BORDER VALUE>];
+border-right: [<COLOR>] [<BORDER VALUE>];
+border-bottom: [<COLOR>] [<BORDER VALUE>];
+border-left: [<COLOR>] [<BORDER VALUE>];
 ```
 
 ## Border command
