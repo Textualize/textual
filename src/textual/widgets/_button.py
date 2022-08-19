@@ -32,6 +32,7 @@ class Button(Widget, can_focus=True):
     CSS = """
     Button {
         width: auto;
+        min-width: 10;
         height: 3;
         background: $panel;
         color: $text-panel;        

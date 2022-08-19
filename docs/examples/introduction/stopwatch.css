@@ -1,7 +1,6 @@
-TimerWidget {
+Stopwatch {
     layout: horizontal;
     background: $panel-darken-1;
-    
     height: 5;
     min-width: 50;
     margin: 1;
@@ -9,7 +8,7 @@ TimerWidget {
     transition: background 300ms linear;
 }
 
-TimerWidget.started {   
+Stopwatch.started {   
     text-style: bold;
     background: $success;
     color: $text-success;
@@ -22,7 +21,7 @@ TimeDisplay {
     height: 3;
 }
 
-TimerWidget.started TimeDisplay {
+Stopwatch.started TimeDisplay {
     opacity: 100%;
 }
 
@@ -43,15 +42,15 @@ Button {
     dock: right;
 }
 
-TimerWidget.started #start {
+Stopwatch.started #start {
     display: none
 }
 
-TimerWidget.started #stop {
+Stopwatch.started #stop {
     display: block
 }
 
-TimerWidget.started #reset {
+Stopwatch.started #reset {
     visibility: hidden
 }
 

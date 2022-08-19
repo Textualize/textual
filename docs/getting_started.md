@@ -21,3 +21,6 @@ If you installed the dev dependencies, you have have access to the `textual` CLI
 ```python
 textual --help
 ```
+
+### Textual Console
+

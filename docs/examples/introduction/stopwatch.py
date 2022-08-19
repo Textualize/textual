@@ -9,16 +9,16 @@ from textual.widgets import Button, Header, Footer, Static
 class TimeDisplay(Static):
     """Displays the time."""
 
-    time_delta = Reactive(0.0)
+    time = Reactive(0.0)
 
-    def watch_time_delta(self, time_delta: float) -> None:
+    def watch_time(self, time: float) -> None:
         """Called when time_delta changes."""
-        minutes, seconds = divmod(time_delta, 60)
+        minutes, seconds = divmod(time, 60)
         hours, minutes = divmod(minutes, 60)
         self.update(f"{hours:02.0f}:{minutes:02.0f}:{seconds:05.2f}")
 
 
-class TimerWidget(Static):
+class Stopwatch(Static):
     """The timer widget (display + buttons)."""
 
     start_time = Reactive(0.0)
@@ -31,7 +31,7 @@ class TimerWidget(Static):
 
     def update_elapsed(self) -> None:
         """Updates elapsed time."""
-        self.query_one(TimeDisplay).time_delta = (
+        self.query_one(TimeDisplay).time = (
             self.total + monotonic() - self.start_time if self.started else self.total
         )
 
@@ -64,7 +64,7 @@ class TimerWidget(Static):
             self.update_elapsed()
 
 
-class TimerApp(App):
+class StopwatchApp(App):
     """Manage the timers."""
 
     def on_load(self) -> None:
@@ -77,11 +77,11 @@ class TimerApp(App):
         """Called to ad widgets to the app."""
         yield Header()
         yield Footer()
-        yield Container(TimerWidget(), TimerWidget(), TimerWidget(), id="timers")
+        yield Container(Stopwatch(), Stopwatch(), Stopwatch(), id="timers")
 
     def action_add_timer(self) -> None:
         """An action to add a timer."""
-        new_timer = TimerWidget()
+        new_timer = Stopwatch()
         self.query_one("#timers").mount(new_timer)
         new_timer.scroll_visible()
 
@@ -95,6 +95,6 @@ class TimerApp(App):
         self.dark = not self.dark
 
 
-app = TimerApp(css_path="timers.css")
+app = StopwatchApp(css_path="stopwatch.css")
 if __name__ == "__main__":
     app.run()
