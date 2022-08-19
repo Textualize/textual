@@ -1,6 +1,6 @@
 # Layout
 
-The `layout` property allows you to define how a widget arranges its children.
+The `layout` property defines how a widget arranges its children.
 
 ## Syntax
 
