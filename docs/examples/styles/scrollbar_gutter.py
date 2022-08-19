@@ -16,4 +16,3 @@ class ScrollbarGutterApp(App):
 
 
 app = ScrollbarGutterApp(css_path="scrollbar_gutter.css")
-app.run()
