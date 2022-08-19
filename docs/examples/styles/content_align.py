@@ -5,7 +5,7 @@ from textual.widgets import Static
 class ContentAlignApp(App):
     CSS = """
     #box1 {
-        content-align: left middle;
+        content-align: left top;
         background: $panel;
     }
     #box2 {
@@ -13,11 +13,11 @@ class ContentAlignApp(App):
         background: $panel-darken-1;
     }
     #box3 {
-        content-align: right middle;
+        content-align: right bottom;
         background: $panel-darken-2;
     }
     ContentAlignApp Static {
-        padding: 3;
+        padding: 1;
         height: 1fr;
     }
     """
