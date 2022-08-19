@@ -859,16 +859,11 @@ class Widget(DOMNode):
             )
         return delta
 
-    def scroll_visible(self) -> bool:
-        """Scroll the container to make this widget visible.
-
-        Returns:
-            bool: True if the parent was scrolled.
-        """
+    def scroll_visible(self) -> None:
+        """Scroll the container to make this widget visible."""
         parent = self.parent
         if isinstance(parent, Widget):
-            return parent.scroll_to_widget(self)
-        return False
+            self.call_later(parent.scroll_to_widget, self)
 
     def __init_subclass__(
         cls,
@@ -1126,9 +1121,7 @@ class Widget(DOMNode):
 
     def remove(self) -> None:
         """Remove the Widget from the DOM (effectively deleting it)"""
-        for child in self.children:
-            child.remove()
-        self.post_message_no_wait(events.Remove(self))
+        self.app.post_message_no_wait(events.Remove(self, widget=self))
 
     def render(self) -> RenderableType:
         """Get renderable for widget.
@@ -1158,12 +1151,13 @@ class Widget(DOMNode):
         Args:
             event (events.Idle): Idle event.
         """
-        if self._repaint_required:
-            self._repaint_required = False
-            self.screen.post_message_no_wait(messages.Update(self, self))
-        if self._layout_required:
-            self._layout_required = False
-            self.screen.post_message_no_wait(messages.Layout(self))
+        if self._parent is not None:
+            if self._repaint_required:
+                self._repaint_required = False
+                self.screen.post_message_no_wait(messages.Update(self, self))
+            if self._layout_required:
+                self._layout_required = False
+                self.screen.post_message_no_wait(messages.Layout(self))
 
     def focus(self) -> None:
         """Give input focus to this widget."""
@@ -1200,12 +1194,6 @@ class Widget(DOMNode):
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)
-
-    async def on_remove(self, event: events.Remove) -> None:
-        await self.close_messages()
-        assert self.parent
-        self.parent.refresh(layout=True)
-        self.app._unregister(self)
 
     def _on_mount(self, event: events.Mount) -> None:
         widgets = list(self.compose())

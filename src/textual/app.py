@@ -7,7 +7,7 @@ import os
 import platform
 import sys
 import warnings
-from contextlib import redirect_stdout
+from contextlib import redirect_stdout, redirect_stderr
 from datetime import datetime
 from pathlib import PurePath
 from time import perf_counter
@@ -974,8 +974,10 @@ class App(Generic[ReturnType], DOMNode):
                 if self.is_headless:
                     await run_process_messages()
                 else:
-                    with redirect_stdout(StdoutRedirector(self.devtools, self._log_file)):  # type: ignore
-                        await run_process_messages()
+                    redirector = StdoutRedirector(self.devtools, self._log_file)
+                    with redirect_stderr(redirector):
+                        with redirect_stdout(redirector):  # type: ignore
+                            await run_process_messages()
             finally:
                 driver.stop_application_mode()
         except Exception as error:
@@ -1070,9 +1072,12 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widget (Widget): A Widget to unregister
         """
+        if self.focused is widget:
+            self.focused = None
+
         if isinstance(widget._parent, Widget):
             widget._parent.children._remove(widget)
-            widget._attach(None)
+            widget._detach()
         self._registry.discard(widget)
 
     async def _disconnect_devtools(self):
@@ -1291,13 +1296,13 @@ class App(Generic[ReturnType], DOMNode):
             return False
         return True
 
-    async def on_update(self, message: messages.Update) -> None:
+    async def _on_update(self, message: messages.Update) -> None:
         message.stop()
 
-    async def on_layout(self, message: messages.Layout) -> None:
+    async def _on_layout(self, message: messages.Layout) -> None:
         message.stop()
 
-    async def on_key(self, event: events.Key) -> None:
+    async def _on_key(self, event: events.Key) -> None:
         if event.key == "tab":
             self.focus_next()
         elif event.key == "shift+tab":
@@ -1305,14 +1310,25 @@ class App(Generic[ReturnType], DOMNode):
         else:
             await self.press(event.key)
 
-    async def on_shutdown_request(self, event: events.ShutdownRequest) -> None:
+    async def _on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log("shutdown request")
         await self.close_messages()
 
-    async def on_resize(self, event: events.Resize) -> None:
+    async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
         self.screen._screen_resized(event.size)
         await self.screen.post_message(event)
+
+    async def _on_remove(self, event: events.Remove) -> None:
+        widget = event.widget
+        if widget.has_parent:
+            widget.parent.refresh(layout=True)
+
+        remove_widgets = list(widget.walk_children(Widget, with_self=True))
+        for child in remove_widgets:
+            self._unregister(child)
+        for child in remove_widgets:
+            await child.close_messages()
 
     async def action_press(self, key: str) -> None:
         await self.press(key)

@@ -16,6 +16,7 @@ MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
 if TYPE_CHECKING:
     from ._timer import Timer as TimerClass
     from ._timer import TimerCallback
+    from .widget import WIdget
 
 
 @rich.repr.auto
@@ -127,6 +128,10 @@ class Unmount(Event, bubble=False):
 
 class Remove(Event, bubble=False):
     """Sent to a widget to ask it to remove itself from the DOM."""
+
+    def __init__(self, sender: MessageTarget, widget: Widget) -> None:
+        self.widget = widget
+        super().__init__(sender)
 
 
 class Show(Event, bubble=False):

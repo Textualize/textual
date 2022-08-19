@@ -5,7 +5,6 @@ TimerWidget {
     border: tall $panel-darken-2;
     margin: 1;
     padding: 0 1;
-
     transition: background 200ms linear;
 }
 
@@ -22,6 +21,7 @@ Button {
 #start {
     dock: left;
 }
+
 
 TimerWidget.started {
     opacity: 100%;
@@ -43,13 +43,11 @@ TimerWidget.started #reset {
     visibility: hidden
 }
 
-
 #stop {
     dock: left;
     display: none;
 }
 
-
-Button#reset {
+#reset {
     dock: right;
 }

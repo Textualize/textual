@@ -29,4 +29,4 @@ class Static(Widget):
 
     def update(self, renderable: RenderableType) -> None:
         self.renderable = renderable
-        self.refresh(layout=True)
+        self.refresh()
