@@ -71,6 +71,7 @@ class TimerApp(App):
         """Called when the app first loads."""
         self.bind("a", "add_timer", description="Add")
         self.bind("r", "remove_timer", description="Remove")
+        self.bind("d", "toggle_dark", description="Dark mode")
 
     def compose(self) -> ComposeResult:
         """Called to ad widgets to the app."""
@@ -89,6 +90,9 @@ class TimerApp(App):
         timers = self.query("#timers TimerWidget")
         if timers:
             timers.last().remove()
+
+    def action_toggle_dark(self) -> None:
+        self.dark = not self.dark
 
 
 app = TimerApp(css_path="timers.css")

@@ -6,11 +6,18 @@ import os
 def format_svg(source, language, css_class, options, md, attrs, **kwargs):
     """A superfences formatter to insert a SVG screenshot."""
 
+    path = attrs.get("path")
+    press = attrs.get("press", "").split(",")
+    title = attrs.get("title")
+
     os.environ["TEXTUAL"] = "headless"
     os.environ["TEXTUAL_SCREENSHOT"] = "0.15"
+    if title:
+        os.environ["TEXTUAL_SCREENSHOT_TITLE"] = title
+    else:
+        os.environ.pop("TEXTUAL_SCREENSHOT_TITLE", None)
     os.environ["COLUMNS"] = attrs.get("columns", "80")
     os.environ["LINES"] = attrs.get("lines", "24")
-    path = attrs.get("path")
 
     print(f"screenshotting {path!r}")
     if path:
@@ -24,7 +31,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs):
             exec(source, app_vars)
 
             app = app_vars["app"]
-            app.run()
+            app.run(press=press or None)
             svg = app._screenshot
 
         finally:

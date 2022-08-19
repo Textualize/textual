@@ -4,6 +4,94 @@ Welcome to the Textual Introduction!
 
 By the end of this page you should have a good idea of the steps involved in creating an application with Textual.
 
+
+## Stopwatch Application
+
+We're going to build a stopwatch app. This app will display the elapsed time since the user hit a "Start" button. The user will be able to stop / resume / reset each stopwatch in addition to adding or removing them.
+
+This is a simple yet **fully featured** app &mdash; you could distribute this app if you wanted to!
+
+Here's what the finished app will look like:
+
+
+```{.textual path="docs/examples/introduction/timers.py"}
+```
+
+## The App class
+
+The first step in building a Textual app is to import and extend the `App` class. Here's our basic app class with a few methods which we will cover below.
+
+```python title="stopwatch01.py" 
+--8<-- "docs/examples/introduction/stopwatch01.py"
+```
+
+If you run this code, you should see something like the following:
+
+
+```{.textual path="docs/examples/introduction/stopwatch01.py"}
+```
+
+Hit the ++d++ key to toggle dark mode.
+
+```{.textual path="docs/examples/introduction/stopwatch01.py" press="d" title="TimerApp + dark"}
+```
+
+Hit ++ctrl+c++ to exit the app and return to the command prompt.
+
+### Looking at the code
+
+Let's example stopwatch01.py in more detail.
+
+```python title="stopwatch01.py" hl_lines="1 2"
+--8<-- "docs/examples/introduction/stopwatch01.py"
+```
+
+
+The first line imports the Textual `App` class. The second line imports two builtin widgets: `Footer` which shows available keys and `Header` which shows a title and the current time.
+
+Widgets are re-usable components responsible for managing a part of the screen. We will cover how to build such widgets in this introduction.
+
+
+```python title="stopwatch01.py" hl_lines="5-15"
+--8<-- "docs/examples/introduction/stopwatch01.py"
+```
+
+The App class is where most of the logic of Textual apps is written. It is responsible for loading configuration, setting up widgets, handling keys, and more.
+
+There are three methods in our stopwatch app currently. 
+
+-  **`compose()`** is where we construct a user interface with widgets. The `compose()` method may return a list of widgets, but it is generally easier to _yield_ them (making this method a generator). In the example code we yield instances of the widget classes we imported, i.e. the header and the footer.
+
+- **`on_load()`** is an _event handler_ method. Event handlers are called by Textual in response to external events like keys and mouse movements, and internal events needed to manage your application. Event handler methods begin with `on_` followed by the name of the event (in lower case). Hence, `on_load` it is called in response to the Load event which is sent just after the app starts. We're using this event to call `App.bind()` which connects a key to an _action_.
+
+- **`action_toggle_dark()`** defines an _action_ method. Actions are methods beginning with `action_` followed by the name of the action. The call to `bind()` in `on_load()` binds this action to the ++d++ key. The body of this method flips the state of the `dark` boolean to toggle dark mode.
+
+!!! note
+
+    You may have noticed that the the `toggle_dark` doesn't do anything to explicitly change the _screen_, and yet hitting ++d++ refreshes and updates the whole terminal. This is an example of _reactivity_. Changing certain attributes will schedule an automatic update.
+
+
+```python title="stopwatch01.py" hl_lines="17-19"
+--8<-- "docs/examples/introduction/stopwatch01.py"
+```
+
+The last lines in "stopwatch01.py" may be familiar to you. We create an instance of our app class, and run it within a `__name__ == "__main__"` conditional block. This is so that we could import `app` if we want to. Or we could run it with `python stopwatch01.py`. 
+
+## Timers
+
+=== "Timers Python"
+
+    ```python title="timers.py"
+    --8<-- "docs/examples/introduction/timers.py"
+    ```
+
+=== "Timers CSS"
+
+    ```python title="timers.css"
+    --8<-- "docs/examples/introduction/timers.css"
+    ```
+
+
 ## Pre-requisites
 
 - Python 3.7 or later. If you have a choice, pick the most recent version.
@@ -37,7 +125,7 @@ The command prompt should disappear and you will see a blank screen:
 
 ```
 
-Hit ++ctrl+c++ to exit and return to the command prompt.
+Hit ++Ctrl+c++ to exit and return to the command prompt.
 
 ### Application mode
 

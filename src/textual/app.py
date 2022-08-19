@@ -481,12 +481,13 @@ class App(Generic[ReturnType], DOMNode):
         """Action to save a screenshot."""
         self.save_screenshot(path)
 
-    def export_screenshot(self) -> str:
+    def export_screenshot(self, *, title: str | None = None) -> str:
         """Export a SVG screenshot of the current screen.
 
         Args:
-            path (str | None, optional): Path of the SVG to save, or None to
-                generate a path automatically. Defaults to None.
+            title (str | None, optional): The title of the exported screenshot or None
+                to use app title. Defaults to None.
+
         """
 
         console = Console(
@@ -499,7 +500,7 @@ class App(Generic[ReturnType], DOMNode):
         )
         screen_render = self.screen._compositor.render(full=True)
         console.print(screen_render)
-        return console.export_svg(title=self.title)
+        return console.export_svg(title=title or self.title)
 
     def save_screenshot(self, path: str | None = None) -> str:
         """Save a screenshot of the current screen.
@@ -545,7 +546,10 @@ class App(Generic[ReturnType], DOMNode):
         )
 
     def run(
-        self, quit_after: float | None = None, headless: bool = False
+        self,
+        quit_after: float | None = None,
+        headless: bool = False,
+        press: Iterable[str] | None = None,
     ) -> ReturnType | None:
         """The main entry point for apps.
 
@@ -566,6 +570,16 @@ class App(Generic[ReturnType], DOMNode):
         async def run_app() -> None:
             if quit_after is not None:
                 self.set_timer(quit_after, self.shutdown)
+            if press is not None:
+
+                async def press_keys():
+                    assert press
+                    for key in press:
+                        await asyncio.sleep(0.01)
+                        await self.press(key)
+
+                self.call_later(press_keys)
+
             await self.process_messages()
 
         if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
@@ -1009,12 +1023,14 @@ class App(Generic[ReturnType], DOMNode):
         except ValueError:
             return
 
+        screenshot_title = os.environ.get("TEXTUAL_SCREENSHOT_TITLE")
+
         if not screenshot_timer:
             return
 
         async def on_screenshot():
             """Used by docs plugin."""
-            svg = self.export_screenshot()
+            svg = self.export_screenshot(title=screenshot_title)
             self._screenshot = svg  # type: ignore
             await self.shutdown()
 

@@ -3,6 +3,7 @@ site_url: https://www.textualize.io/
 
 nav:
   - "index.md"
+  - "getting_started.md"
   - "introduction.md"
   - Guide:
     - "guide/guide.md"
