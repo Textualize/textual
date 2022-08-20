@@ -58,7 +58,7 @@ The first line imports the Textual `App` class. The second line imports two buil
 Widgets are re-usable components responsible for managing a part of the screen. We will cover how to build such widgets in this introduction.
 
 
-```python title="stopwatch01.py" hl_lines="5-15"
+```python title="stopwatch01.py" hl_lines="5-14"
 --8<-- "docs/examples/introduction/stopwatch01.py"
 ```
 
@@ -130,13 +130,6 @@ To see our widgets with we need to yield them from the app's `compose()` method:
 
 This new line in `Stopwatch.compose()` adds a single `Container` object which will create a scrolling list. The constructor for `Container` takes its _child_ widgets as positional arguments, to which we pass three instances of the `Stopwatch` we just built.
 
-### Setting the CSS path
-
-The `StopwatchApp` constructor has a new argument: `css_path` is set to the file `stopwatch02.css` which is blank:
-
-```python title="stopwatch02.css" 
---8<-- "docs/examples/introduction/stopwatch02.css"
-```
 
 ### The unstyled app
 
@@ -145,13 +138,106 @@ Let's see what happens when we run "stopwatch02.py":
 ```{.textual path="docs/examples/introduction/stopwatch02.py" title="stopwatch02.py"}
 ```
 
-The elements of the stopwatch application are there. The buttons are clickable and you can scroll the container, but it doesn't look much like the sketch. This is because we have yet to add any _styles_ to the CSS file.
+The elements of the stopwatch application are there. The buttons are clickable and you can scroll the container, but it doesn't look much like the sketch. This is because we have yet to apply any _styles_ to our new widget.
 
-Textual uses CSS files to define what widgets look like. With CSS we can apply styles for color, borders, alignment, positioning, animation, and more.
+## Writing Textual CSS
+
+Every widget has a `styles` object which contains information regarding how that widget will look. Setting any of the attributes on that styles object will change how Textual renders the widget.
+
+Here's how you might change the widget to use white text on a blue background:
+
+```python
+self.styles.background = "blue"
+self.styles.color = "white"
+```
+
+While its possible to set all styles for an app this way, Textual prefers to use CSS.
+
+CSS files are data files loaded by your app which contain information about what styles to apply to your widgets. 
 
 !!! note
 
     Don't worry if you have never worked with CSS before. The dialect of CSS we use is greatly simplified over web based CSS and easy to learn!
 
-## Writing Textual CSS
+To load a CSS file you can set the `css_path` attribute of your app.
 
+```python title="stopwatch03.py" hl_lines="31"
+--8<-- "docs/examples/introduction/stopwatch03.py"
+```
+
+This will tell Textual to load the following file when it starts the app:
+
+```css title="stopwatch03.css" 
+--8<-- "docs/examples/introduction/stopwatch03.css"
+```
+
+The only change was setting the css path. Our app will now look very different:
+
+```{.textual path="docs/examples/introduction/stopwatch03.py" title="stopwatch03.py"}
+```
+
+This app looks much more like our sketch. Textual has read style information from `stopwatch03.css` and applied it to the widgets. In effect setting attributes on `widget.styles`.
+
+CSS files contain a number of _declaration blocks_. Here's the first such block from `stopwatch03.css` again:
+
+```css 
+Stopwatch {
+    layout: horizontal;
+    background: $panel-darken-1;
+    height: 5;
+    padding: 1;
+    margin: 1;
+}
+```
+
+The first line tells Textual that the styles should apply to the `Stopwatch` widget. The lines between the curly brackets contain the styles themselves.
+
+Here's how the Stopwatch block in the CSS impacts our `Stopwatch` widget:
+
+<div class="excalidraw">
+--8<-- "docs/images/stopwatch_widgets.excalidraw.svg"
+</div>
+
+- `layout: horizontal` aligns child widgets from left to right rather than top to bottom.
+- `background: $panel-darken-1` sets the background color to `$panel-darken-1`. The `$` prefix picks a pre-defined color from the builtin theme. There are other ways to specify colors such as `"blue"` or `rgb(20,46,210)`.
+- `height: 5` sets the height of our widget to 5 lines of text.
+- `padding: 1` sets a padding of 1 cell around the child widgets.
+- `margin: 1` sets a margin of 1 cell around the Stopwatch widget to create a little space between widgets in the list.
+
+
+Here's the rest of `stopwatch03.css` which contains further declaration blocks:
+
+```css
+TimeDisplay {
+    content-align: center middle;
+    opacity: 60%;
+    height: 3;
+}
+
+Button {
+    width: 16;    
+}
+
+#start {
+    dock: left;
+}
+
+#stop {
+    dock: left;
+    display: none;
+}
+
+#reset {
+    dock: right;
+}
+```
+
+The `TimeDisplay` block aligns text to the center (`content-align`), fades it slightly (`opacity`), and sets its height (`height`) to 3 lines.
+
+The `Button` block sets the width (`width`) of buttons to 16 cells (character widths).
+
+The last 3 blocks have a slightly different format. When the declaration begins with a `#` then the styles will be applied to any widget with a matching "id" attribute. We've set an id attribute on the Button widgets we yielded in compose. For instance the first button has `id="start"` which matches `#start` in the CSS.
+
+The buttons have a `dock` style which aligns the widget to a given edge. The start and stop buttons are docked to the left edge, while the reset button is docked to the right edge.
+
+You may have noticed that the stop button (`#stop` in the CSS) has `display: none;`. This tells Textual to not show the button. We do this because there is no point in displaying the stop button when the timer is *not* running. Similarly we don't want to show the start button when the timer is running. We will cover how to manage such dynamic user interfaces in the next section.

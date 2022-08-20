@@ -28,6 +28,6 @@ class StopwatchApp(App):
         self.dark = not self.dark
 
 
-app = StopwatchApp()
+app = StopwatchApp(css_path="stopwatch03.css")
 if __name__ == "__main__":
     app.run()
