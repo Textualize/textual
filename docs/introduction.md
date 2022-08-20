@@ -248,7 +248,7 @@ You may have noticed that the stop button (`#stop` in the CSS) has `display: non
 
 We want our Stopwatch widget to have two states. An _unstarted_ state with a Start and Reset button, and a _started_ state with a Stop button.
 
-There are other differences between the two states. It would be nice if the stopwatch turns green when it is started. And we could make the time text bold, so it is clear it is running. It's possible to do this in code, but 
+There are other visual differences between the two states. When a stopwatch is running it should have a green background and bold text.
 
 
 ```{.textual path="docs/examples/introduction/stopwatch04.py" title="stopwatch04.py" press="tab,enter"}

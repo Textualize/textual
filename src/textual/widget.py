@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from asyncio import Lock
 from itertools import islice
 from fractions import Fraction
 from operator import attrgetter
@@ -123,6 +124,8 @@ class Widget(DOMNode):
         self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
 
         self._styles_cache = StylesCache()
+
+        self._lock = Lock()
 
         super().__init__(
             name=name,
@@ -1159,13 +1162,18 @@ class Widget(DOMNode):
         Args:
             event (events.Idle): Idle event.
         """
-        if self._parent is not None:
-            if self._repaint_required:
-                self._repaint_required = False
-                self.screen.post_message_no_wait(messages.Update(self, self))
-            if self._layout_required:
-                self._layout_required = False
-                self.screen.post_message_no_wait(messages.Layout(self))
+        if self._parent is not None and not self._closing:
+            try:
+                screen = self.screen
+            except NoScreen:
+                pass
+            else:
+                if self._repaint_required:
+                    self._repaint_required = False
+                    screen.post_message_no_wait(messages.Update(self, self))
+                if self._layout_required:
+                    self._layout_required = False
+                    screen.post_message_no_wait(messages.Layout(self))
 
     def focus(self) -> None:
         """Give input focus to this widget."""

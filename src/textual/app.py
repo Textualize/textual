@@ -57,6 +57,7 @@ from .drivers.headless_driver import HeadlessDriver
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
+from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
@@ -560,6 +561,7 @@ class App(Generic[ReturnType], DOMNode):
             quit_after (float | None, optional): Quit after a given number of seconds, or None
                 to run forever. Defaults to None.
             headless (bool, optional): Run in "headless" mode (don't write to stdout).
+            press (str, optional): An iterable of keys to simulate being pressed.
 
         Returns:
             ReturnType | None: The return value specified in `App.exit` or None if exit wasn't called.
@@ -574,18 +576,25 @@ class App(Generic[ReturnType], DOMNode):
             if quit_after is not None:
                 self.set_timer(quit_after, self.shutdown)
             if press is not None:
+                app = self
 
-                async def press_keys(app: App):
+                async def press_keys() -> None:
+                    """A task to send key events."""
                     assert press
-                    await asyncio.sleep(0.05)
+                    driver = app._driver
+                    assert driver is not None
                     for key in press:
                         print(f"press {key!r}")
-                        await app.post_message(events.Key(self, key))
-                        await asyncio.sleep(0.01)
+                        driver.send_event(events.Key(self, key))
+                        await asyncio.sleep(0.02)
 
-                self.call_later(lambda: asyncio.create_task(press_keys(self)))
+                async def press_keys_task():
+                    """Press some keys in the background."""
+                    asyncio.create_task(press_keys())
 
-            await self.process_messages()
+                await self.process_messages(ready_callback=press_keys_task)
+            else:
+                await self.process_messages()
 
         if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
             # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
@@ -933,7 +942,9 @@ class App(Generic[ReturnType], DOMNode):
             self.error_console.print(renderable)
         self._exit_renderables.clear()
 
-    async def process_messages(self) -> None:
+    async def process_messages(
+        self, ready_callback: CallbackType | None = None
+    ) -> None:
         self._set_active()
 
         if self.devtools_enabled:
@@ -975,6 +986,8 @@ class App(Generic[ReturnType], DOMNode):
             self.refresh()
             await self.animator.start()
             await self._ready()
+            if ready_callback is not None:
+                await ready_callback()
             await process_messages()
             await self.animator.stop()
             await self.close_all()
@@ -1210,11 +1223,14 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             bool: True if the key was handled by a binding, otherwise False
         """
+        print("press", key)
         try:
             binding = self.bindings.get_key(key)
         except NoBinding:
+            print("no binding")
             return False
         else:
+            print(binding)
             await self.action(binding.action)
         return True
 

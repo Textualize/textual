@@ -116,7 +116,8 @@ def import_app(import_name: str) -> App:
 @run.command("run")
 @click.argument("import_name", metavar="FILE or FILE:APP")
 @click.option("--dev", "dev", help="Enable development mode", is_flag=True)
-def run_app(import_name: str, dev: bool) -> None:
+@click.option("--press", "press", help="Comma separated keys to simulate press")
+def run_app(import_name: str, dev: bool, press: str) -> None:
     """Run a Textual app.
 
     The code to run may be given as a path (ending with .py) or as a Python
@@ -156,7 +157,8 @@ def run_app(import_name: str, dev: bool) -> None:
         console.print(str(error))
         sys.exit(1)
 
-    app.run()
+    press_keys = press.split(",") if press else None
+    app.run(press=press_keys)
 
 
 @run.command("borders")
