@@ -1,23 +1,20 @@
 from __future__ import annotations
 
 import asyncio
-from typing import Any
+from functools import total_ordering
 import inspect
-from asyncio import CancelledError
-from asyncio import PriorityQueue, QueueEmpty, Task
-from functools import partial, total_ordering
-from typing import TYPE_CHECKING, Awaitable, Iterable, Callable
+from asyncio import CancelledError, Queue, QueueEmpty, Task
+from functools import partial
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Iterable
 from weakref import WeakSet
 
-from . import events
-from . import log
-from .case import camel_to_snake
-from ._timer import Timer, TimerCallback
+from . import events, log, messages
 from ._callback import invoke
-from ._context import active_app, NoActiveAppError
-from .message import Message
+from ._context import NoActiveAppError, active_app
+from ._timer import Timer, TimerCallback
+from .case import camel_to_snake
 from .events import Event
-from . import messages
+from .message import Message
 
 if TYPE_CHECKING:
     from .app import App
@@ -33,25 +30,6 @@ class CallbackError(Exception):
 
 class MessagePumpClosed(Exception):
     pass
-
-
-@total_ordering
-class MessagePriority:
-    """Wraps a messages with a priority, and provides equality."""
-
-    __slots__ = ["message", "priority"]
-
-    def __init__(self, message: Message | None = None, priority: int = 0):
-        self.message = message
-        self.priority = priority
-
-    def __eq__(self, other: object) -> bool:
-        assert isinstance(other, MessagePriority)
-        return self.priority == other.priority
-
-    def __gt__(self, other: object) -> bool:
-        assert isinstance(other, MessagePriority)
-        return self.priority > other.priority
 
 
 class MessagePumpMeta(type):
@@ -79,7 +57,7 @@ class MessagePumpMeta(type):
 
 class MessagePump(metaclass=MessagePumpMeta):
     def __init__(self, parent: MessagePump | None = None) -> None:
-        self._message_queue: PriorityQueue[MessagePriority] = PriorityQueue()
+        self._message_queue: Queue[Message | None] = Queue()
         self._parent = parent
         self._running: bool = False
         self._closing: bool = False
@@ -158,7 +136,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                 return self._pending_message
             finally:
                 self._pending_message = None
-        message = (await self._message_queue.get()).message
+        message = await self._message_queue.get()
         if message is None:
             self._closed = True
             raise MessagePumpClosed("The message pump is now closed")
@@ -173,7 +151,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         """
         if self._pending_message is None:
             try:
-                message = self._message_queue.get_nowait().message
+                message = self._message_queue.get_nowait()
             except QueueEmpty:
                 pass
             else:
@@ -247,7 +225,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def close_messages_no_wait(self) -> None:
         """Request the message queue to exit."""
-        self._message_queue.put_nowait(MessagePriority(None))
+        self._message_queue.put_nowait(None)
 
     async def close_messages(self) -> None:
         """Close message queue, and optionally wait for queue to finish processing."""
@@ -258,7 +236,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         for timer in stop_timers:
             await timer.stop()
         self._timers.clear()
-        await self._message_queue.put(MessagePriority(None))
+        await self._message_queue.put(None)
 
         if self._task is not None and asyncio.current_task() != self._task:
             # Ensure everything is closed before returning
@@ -358,9 +336,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         for cls in self.__class__.__mro__:
             if message._no_default_action:
                 break
-            method = cls.__dict__.get(private_method, None) or cls.__dict__.get(
-                method_name, None
-            )
+            method = cls.__dict__.get(private_method) or cls.__dict__.get(method_name)
             if method is not None:
                 yield cls, method.__get__(self, cls)
 
@@ -420,7 +396,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return True
-        await self._message_queue.put(MessagePriority(message))
+        await self._message_queue.put(message)
         return True
 
     # TODO: This may not be needed, or may only be needed by the timer
@@ -437,11 +413,12 @@ class MessagePump(metaclass=MessagePumpMeta):
         Returns:
             bool: True if the messages was processed, False if it wasn't.
         """
+        # TODO: Allow priority messages to jump the queue
         if self._closing or self._closed:
             return False
         if not self.check_message_enabled(message):
             return False
-        await self._message_queue.put(MessagePriority(message, -1))
+        await self._message_queue.put(message)
         return True
 
     def post_message_no_wait(self, message: Message) -> bool:
@@ -457,7 +434,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
         if not self.check_message_enabled(message):
             return False
-        self._message_queue.put_nowait(MessagePriority(message))
+        self._message_queue.put_nowait(message)
         return True
 
     async def _post_message_from_child(self, message: Message) -> bool:

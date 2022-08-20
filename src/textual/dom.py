@@ -684,7 +684,10 @@ class DOMNode(MessagePump):
             *class_names (str): CSS class names to add.
 
         """
+        old_classes = self._classes.copy()
         self._classes.update(class_names)
+        if old_classes == self._classes:
+            return
         try:
             self.app.stylesheet.update(self.app, animate=True)
         except NoActiveAppError:
@@ -697,7 +700,10 @@ class DOMNode(MessagePump):
             *class_names (str): CSS class names to remove.
 
         """
+        old_classes = self._classes.copy()
         self._classes.difference_update(class_names)
+        if old_classes == self._classes:
+            return
         try:
             self.app.stylesheet.update(self.app, animate=True)
         except NoActiveAppError:
@@ -710,7 +716,10 @@ class DOMNode(MessagePump):
             *class_names (str): CSS class names to toggle.
 
         """
+        old_classes = self._classes.copy()
         self._classes.symmetric_difference_update(class_names)
+        if old_classes == self._classes:
+            return
         try:
             self.app.stylesheet.update(self.app, animate=True)
         except NoActiveAppError:

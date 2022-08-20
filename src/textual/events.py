@@ -16,7 +16,7 @@ MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
 if TYPE_CHECKING:
     from ._timer import Timer as TimerClass
     from ._timer import TimerCallback
-    from .widget import WIdget
+    from .widget import Widget
 
 
 @rich.repr.auto

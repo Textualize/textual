@@ -232,6 +232,7 @@ class App(Generic[ReturnType], DOMNode):
             if ((watch_css or self.debug) and self.css_path)
             else None
         )
+        self._screenshot: str | None = None
 
     def __init_subclass__(
         cls, css_path: str | None = None, inherit_css: bool = True
@@ -449,6 +450,8 @@ class App(Generic[ReturnType], DOMNode):
         """
         if verbosity > self.log_verbosity:
             return
+        if self._log_console is None and not self.devtools.is_connected:
+            return
 
         if self.devtools.is_connected and not _textual_calling_frame:
             _textual_calling_frame = inspect.stack()[1]
@@ -572,13 +575,15 @@ class App(Generic[ReturnType], DOMNode):
                 self.set_timer(quit_after, self.shutdown)
             if press is not None:
 
-                async def press_keys():
+                async def press_keys(app: App):
                     assert press
+                    await asyncio.sleep(0.05)
                     for key in press:
+                        print(f"press {key!r}")
+                        await app.post_message(events.Key(self, key))
                         await asyncio.sleep(0.01)
-                        await self.press(key)
 
-                self.call_later(press_keys)
+                self.call_later(lambda: asyncio.create_task(press_keys(self)))
 
             await self.process_messages()
 

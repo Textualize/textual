@@ -25,23 +25,6 @@ class Stopwatch(Static):
     total = Reactive(0.0)
     started = Reactive(False)
 
-    def on_mount(self) -> None:
-        """Called when widget is first added."""
-        self.update_timer = self.set_interval(1 / 30, self.update_elapsed, pause=True)
-
-    def update_elapsed(self) -> None:
-        """Updates elapsed time."""
-        self.query_one(TimeDisplay).time = (
-            self.total + monotonic() - self.start_time if self.started else self.total
-        )
-
-    def compose(self) -> ComposeResult:
-        """Composes the timer widget."""
-        yield Button("Start", id="start", variant="success")
-        yield Button("Stop", id="stop", variant="error")
-        yield TimeDisplay()
-        yield Button("Reset", id="reset")
-
     def watch_started(self, started: bool) -> None:
         """Called when the 'started' attribute changes."""
         if started:
@@ -62,6 +45,23 @@ class Stopwatch(Static):
         if button_id == "reset":
             self.total = 0.0
             self.update_elapsed()
+
+    def on_mount(self) -> None:
+        """Called when widget is first added."""
+        self.update_timer = self.set_interval(1 / 30, self.update_elapsed, pause=True)
+
+    def update_elapsed(self) -> None:
+        """Updates elapsed time."""
+        self.query_one(TimeDisplay).time = (
+            self.total + monotonic() - self.start_time if self.started else self.total
+        )
+
+    def compose(self) -> ComposeResult:
+        """Composes the timer widget."""
+        yield Button("Start", id="start", variant="success")
+        yield Button("Stop", id="stop", variant="error")
+        yield Button("Reset", id="reset")
+        yield TimeDisplay()
 
 
 class StopwatchApp(App):
@@ -87,7 +87,7 @@ class StopwatchApp(App):
 
     def action_remove_timer(self) -> None:
         """Called to remove a timer."""
-        timers = self.query("#timers TimerWidget")
+        timers = self.query("#timers Stopwatch")
         if timers:
             timers.last().remove()
 

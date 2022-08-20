@@ -1,13 +1,19 @@
-import os
+from __future__ import annotations
 
+import os
+from typing import cast, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from textual.app import App
 
 # This module defines our "Custom Fences", powered by SuperFences
 # @link https://facelessuser.github.io/pymdown-extensions/extensions/superfences/#custom-fences
-def format_svg(source, language, css_class, options, md, attrs, **kwargs):
+def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str:
     """A superfences formatter to insert a SVG screenshot."""
 
     path = attrs.get("path")
-    press = attrs.get("press", "").split(",")
+    _press = attrs.get("press", None)
+    press = _press.split(",") if _press else []
     title = attrs.get("title")
 
     os.environ["TEXTUAL"] = "headless"
@@ -27,20 +33,19 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs):
             os.chdir(examples_path)
             with open(filename, "rt") as python_code:
                 source = python_code.read()
-            app_vars = {}
+            app_vars: dict[str, object] = {}
             exec(source, app_vars)
 
-            app = app_vars["app"]
+            app: App = cast("App", app_vars["app"])
             app.run(press=press or None)
             svg = app._screenshot
-
         finally:
             os.chdir(cwd)
     else:
         app_vars = {}
         exec(source, app_vars)
-        app = app_vars["app"]
-        app.run()
+        app = cast(App, app_vars["app"])
+        app.run(press=press or None)
         svg = app._screenshot
-
+    assert svg is not None
     return svg
