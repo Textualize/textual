@@ -40,9 +40,8 @@ class Stopwatch(Static):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Called when a button is pressed."""
-        button_id = event.button.id
-        self.started = button_id == "start"
-        if button_id == "reset":
+        self.started = event.button.id == "start"
+        if event.button.id == "reset":
             self.total = 0.0
             self.update_elapsed()
 

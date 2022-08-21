@@ -4,6 +4,10 @@ Welcome to the Textual Introduction!
 
 By the end of this page you should have a good idea of the steps involved in creating an application with Textual.
 
+!!! quote
+
+    You may find this page goes in to more detail than you might expect from an introduction. I like to have complete working examples in documentation and I don't want to leave anything _as an exercise for the reader_. &mdash; **Will McGugan** (creator of Rich and Textual)
+
 
 ## Stopwatch Application
 
@@ -17,7 +21,11 @@ Here's what the finished app will look like:
 ```{.textual path="docs/examples/introduction/stopwatch.py"}
 ```
 
+### Try the code
+
 If you want to try this out before reading the rest of this introduction (we recommend it), navigate to "docs/examples/introduction" within the repository and run the following:
+
+**TODO**: instructions how to checkout repo
 
 ```bash
 python stopwatch.py
@@ -111,7 +119,7 @@ Let's add those to our app:
 --8<-- "docs/examples/introduction/stopwatch02.py"
 ```
 
-### New widgets
+### Extending widget classes
 
 We've imported two new widgets in this code: `Button`, which creates a clickable button, and `Static` which is a base class for a simple control. We've also imported `Container` from `textual.layout`. As the name suggests, `Container` is a Widget which contains other widgets. We will use this container to create a scrolling list of stopwatches.
 
@@ -246,10 +254,45 @@ You may have noticed that the stop button (`#stop` in the CSS) has `display: non
 
 ### Dynamic CSS
 
-We want our Stopwatch widget to have two states. An _unstarted_ state with a Start and Reset button, and a _started_ state with a Stop button.
+We want our Stopwatch widget to have two states: a default state with a Start and Reset button; and a _started_ state with a Stop button. When a stopwatch is started it should also have a green background and bold text.
 
-There are other visual differences between the two states. When a stopwatch is running it should have a green background and bold text.
+We can accomplish this with by defining a _CSS class_. Not to be confused with a Python class, a CSS class is like a tag you can add to a widget to modify its styles.
 
+Here's the new CSS:
 
-```{.textual path="docs/examples/introduction/stopwatch04.py" title="stopwatch04.py" press="tab,enter"}
+```sass title="stopwatch04.css" hl_lines="33-53"
+--8<-- "docs/examples/introduction/stopwatch04.css"
 ```
+
+These new rules are prefixed with `.started`. The `.` indicates that `.started` refers to a CSS class called "started". The new styles will be applied only to widgets that have these styles.
+
+Some of the new styles have more than one selector separated by a space. The space indicates that the next selector should match a style. Let's look at one of these styles:
+
+```sass
+.started #start {
+    display: none
+}
+```
+
+The purpose of this CSS is to hide the start button when the stopwatch is started. The `.started` selector matches any widget with a "started" CSS class. While "#start" matches a child widget with an id of "start". The rule "display: none" tells Textual to hide that widget.
+
+### Manipulating classes
+
+The easiest way to manipulate visuals with Textual is to modify CSS classes. This way your (Python) code can remain free of display related code which tends to be hard to maintain.
+
+You can add and remove CSS classes with the `add_class()` and `remove_class()` methods. We will use these methods to connect the started state to the Start / Stop buttons.
+
+The following code adds a event handler for the `Button.Pressed` event.
+
+```python title="stopwatch04.py" hl_lines="11-15"
+--8<-- "docs/examples/introduction/stopwatch04.py"
+```
+
+The `on_button_pressed` event handler is called when the user clicks a button. This method adds the "started" class when the "start" button was clicked, and removes the class when the "stop" button is clicked.
+
+If you run "stopwatch04.py" now you will be able to toggle between the two states by clicking the first button:
+
+```{.textual path="docs/examples/introduction/stopwatch04.py" title="stopwatch04.py" press="tab,tab,tab,enter"}
+```
+
+

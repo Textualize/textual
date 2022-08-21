@@ -8,7 +8,7 @@ class TimeDisplay(Static):
 
 
 class Stopwatch(Static):
-    def compose(self) -> ComposeResult:
+    def compose(self):
         yield Button("Start", id="start", variant="success")
         yield Button("Stop", id="stop", variant="error")
         yield Button("Reset", id="reset")

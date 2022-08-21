@@ -1,6 +1,5 @@
-from textual.app import App, ComposeResult
+from textual.app import App
 from textual.layout import Container
-from textual.reactive import Reactive
 from textual.widgets import Button, Header, Footer, Static
 
 
@@ -9,20 +8,13 @@ class TimeDisplay(Static):
 
 
 class Stopwatch(Static):
-    started = Reactive(False)
-
-    def watch_started(self, started: bool) -> None:
-        if started:
+    def on_button_pressed(self, event):
+        if event.button.id == "start":
             self.add_class("started")
-        else:
+        elif event.button.id == "stop":
             self.remove_class("started")
 
-    def on_button_pressed(self, event: Button.Pressed) -> None:
-        """Called when a button is pressed."""
-        button_id = event.button.id
-        self.started = button_id == "start"
-
-    def compose(self) -> ComposeResult:
+    def compose(self):
         yield Button("Start", id="start", variant="success")
         yield Button("Stop", id="stop", variant="error")
         yield Button("Reset", id="reset")

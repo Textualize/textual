@@ -122,6 +122,14 @@ class ScreenStackError(ScreenError):
 ReturnType = TypeVar("ReturnType")
 
 
+class _NullFile:
+    def write(self, text: str) -> None:
+        pass
+
+    def flush(self) -> None:
+        pass
+
+
 @rich.repr.auto
 class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications"""
@@ -168,7 +176,7 @@ class App(Generic[ReturnType], DOMNode):
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
         self.console = Console(
-            file=(open(os.devnull, "wt") if self.is_headless else sys.__stdout__),
+            file=(_NullFile() if self.is_headless else sys.__stdout__),
             markup=False,
             highlight=False,
             emoji=False,
@@ -584,9 +592,12 @@ class App(Generic[ReturnType], DOMNode):
                     driver = app._driver
                     assert driver is not None
                     for key in press:
-                        print(f"press {key!r}")
-                        driver.send_event(events.Key(self, key))
-                        await asyncio.sleep(0.02)
+                        if key == "_":
+                            await asyncio.sleep(0.02)
+                        else:
+                            print(f"press {key!r}")
+                            driver.send_event(events.Key(self, key))
+                            await asyncio.sleep(0.02)
 
                 async def press_keys_task():
                     """Press some keys in the background."""
@@ -1223,14 +1234,11 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             bool: True if the key was handled by a binding, otherwise False
         """
-        print("press", key)
         try:
             binding = self.bindings.get_key(key)
         except NoBinding:
-            print("no binding")
             return False
         else:
-            print(binding)
             await self.action(binding.action)
         return True
 
