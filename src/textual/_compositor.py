@@ -463,8 +463,10 @@ class Compositor:
         except KeyError:
             raise errors.NoWidget("Widget is not in layout")
 
+    @timer("get_widget_at")
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given point or None."""
+        # TODO: Optimize with some line based lookup
         contains = Region.contains
         for widget, cropped_region, region, *_ in self:
             if contains(cropped_region, x, y):

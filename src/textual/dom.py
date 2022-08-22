@@ -170,7 +170,7 @@ class DOMNode(MessagePump):
             else:
                 break
 
-    def on_register(self, app: App) -> None:
+    def _post_register(self, app: App) -> None:
         """Called when the widget is registered
 
         Args:

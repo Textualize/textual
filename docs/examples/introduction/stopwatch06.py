@@ -45,18 +45,19 @@ class TimeDisplay(Static):
 
 
 class Stopwatch(Static):
-    """A Textual app to manage stopwatches."""
+    """A stopwatch widget."""
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Event handler called when a button is pressed."""
+        button_id = event.button.id
         time_display = self.query_one(TimeDisplay)
-        if event.button.id == "start":
+        if button_id == "start":
             time_display.start()
             self.add_class("started")
-        elif event.button.id == "stop":
+        elif button_id == "stop":
             time_display.stop()
             self.remove_class("started")
-        elif event.button.id == "reset":
+        elif button_id == "reset":
             time_display.reset()
 
     def compose(self) -> ComposeResult:
@@ -68,6 +69,8 @@ class Stopwatch(Static):
 
 
 class StopwatchApp(App):
+    """A Textual app to manage stopwatches."""
+
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
         yield Header()

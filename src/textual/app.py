@@ -149,7 +149,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         driver_class: Type[Driver] | None = None,
         log_path: str | PurePath = "",
-        log_verbosity: int = 1,
+        log_verbosity: int = 0,
         log_color_system: Literal[
             "auto", "standard", "256", "truecolor", "windows"
         ] = "auto",
@@ -991,7 +991,9 @@ class App(Generic[ReturnType], DOMNode):
                 self.log(f"Couldn't connect to devtools ({self.devtools.url})")
 
         self.log("---")
+
         self.log(driver=self.driver_class)
+        self.log(log_verbosity=self.log_verbosity)
         self.log(loop=asyncio.get_running_loop())
         self.log(features=self.features)
 
@@ -1106,7 +1108,7 @@ class App(Generic[ReturnType], DOMNode):
             parent.children._append(child)
             self._registry.add(child)
             child._attach(parent)
-            child.on_register(self)
+            child._post_register(self)
             child.start_messages()
             return True
         return False

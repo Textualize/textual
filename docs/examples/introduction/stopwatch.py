@@ -7,56 +7,61 @@ from textual.widgets import Button, Header, Footer, Static
 
 
 class TimeDisplay(Static):
-    """Displays the time."""
+    """A widget to display elapsed time."""
 
-    time = Reactive(0.0)
+    start_time = Reactive(monotonic)
+    time = Reactive.init(0.0)
+    total = Reactive(0.0)
+
+    def on_mount(self) -> None:
+        """Event handler called when widget is added to the app."""
+        self.update_timer = self.set_interval(1 / 60, self.update_time, pause=True)
+
+    def update_time(self) -> None:
+        """Method to update time to current."""
+        self.time = self.total + (monotonic() - self.start_time)
 
     def watch_time(self, time: float) -> None:
-        """Called when time_delta changes."""
+        """Called when the time attribute changes."""
         minutes, seconds = divmod(time, 60)
         hours, minutes = divmod(minutes, 60)
         self.update(f"{hours:02,.0f}:{minutes:02.0f}:{seconds:05.2f}")
 
+    def start(self) -> None:
+        """Method to start (or resume) time updating."""
+        self.start_time = monotonic()
+        self.update_timer.resume()
+
+    def stop(self):
+        """Method to stop the time display updating."""
+        self.update_timer.pause()
+        self.total += monotonic() - self.start_time
+        self.time = self.total
+
+    def reset(self):
+        """Method to reset the time display to zero."""
+        self.total = 0
+        self.time = 0
+
 
 class Stopwatch(Static):
-    """The timer widget (display + buttons)."""
-
-    start_time = Reactive(0.0)
-    total = Reactive(0.0)
-    started = Reactive(False)
-
-    def watch_started(self, started: bool) -> None:
-        """Called when the 'started' attribute changes."""
-        if started:
-            self.start_time = monotonic()
-            self.update_timer.resume()
-            self.add_class("started")
-            self.query_one("#stop").focus()
-        else:
-            self.update_timer.pause()
-            self.total += monotonic() - self.start_time
-            self.remove_class("started")
-            self.query_one("#start").focus()
+    """A stopwatch widget."""
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        """Called when a button is pressed."""
-        self.started = event.button.id == "start"
-        if event.button.id == "reset":
-            self.total = 0.0
-            self.update_elapsed()
-
-    def on_mount(self) -> None:
-        """Called when widget is first added."""
-        self.update_timer = self.set_interval(1 / 30, self.update_elapsed, pause=True)
-
-    def update_elapsed(self) -> None:
-        """Updates elapsed time."""
-        self.query_one(TimeDisplay).time = (
-            self.total + monotonic() - self.start_time if self.started else self.total
-        )
+        """Event handler called when a button is pressed."""
+        button_id = event.button.id
+        time_display = self.query_one(TimeDisplay)
+        if button_id == "start":
+            time_display.start()
+            self.add_class("started")
+        elif button_id == "stop":
+            time_display.stop()
+            self.remove_class("started")
+        elif button_id == "reset":
+            time_display.reset()
 
     def compose(self) -> ComposeResult:
-        """Composes the timer widget."""
+        """Create child widgets of a stopwatch."""
         yield Button("Start", id="start", variant="success")
         yield Button("Stop", id="stop", variant="error")
         yield Button("Reset", id="reset")
@@ -68,8 +73,8 @@ class StopwatchApp(App):
 
     def on_load(self) -> None:
         """Called when the app first loads."""
-        self.bind("a", "add_timer", description="Add")
-        self.bind("r", "remove_timer", description="Remove")
+        self.bind("a", "add_stopwatch", description="Add")
+        self.bind("r", "remove_stopwatch", description="Remove")
         self.bind("d", "toggle_dark", description="Dark mode")
 
     def compose(self) -> ComposeResult:
@@ -78,13 +83,13 @@ class StopwatchApp(App):
         yield Footer()
         yield Container(Stopwatch(), Stopwatch(), Stopwatch(), id="timers")
 
-    def action_add_timer(self) -> None:
+    def action_add_stopwatch(self) -> None:
         """An action to add a timer."""
-        new_timer = Stopwatch()
-        self.query_one("#timers").mount(new_timer)
-        new_timer.scroll_visible()
+        new_stopwatch = Stopwatch()
+        self.query_one("#timers").mount(new_stopwatch)
+        new_stopwatch.scroll_visible()
 
-    def action_remove_timer(self) -> None:
+    def action_remove_stopwatch(self) -> None:
         """Called to remove a timer."""
         timers = self.query("#timers Stopwatch")
         if timers:

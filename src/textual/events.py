@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 
 @rich.repr.auto
-class Event(Message):
+class Event(Message, verbosity=2):
     def __rich_repr__(self) -> rich.repr.Result:
         return
         yield

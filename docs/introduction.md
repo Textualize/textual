@@ -22,7 +22,7 @@ This will be a simple yet **fully featured** app &mdash; you could distribute th
 Here's what the finished app will look like:
 
 
-```{.textual path="docs/examples/introduction/stopwatch.py"}
+```{.textual path="docs/examples/introduction/stopwatch.py" press="tab,enter,_,tab,enter,_,tab,_,enter,_,tab,enter,_,_"}
 ```
 
 ### Try the code
@@ -75,14 +75,13 @@ Hit the ++d++ key to toggle dark mode.
 
 Hit ++ctrl+c++ to exit the app and return to the command prompt.
 
-### Looking at the code
+### A closer look at the App class
 
 Let's examine stopwatch01.py in more detail.
 
 ```python title="stopwatch01.py" hl_lines="1 2"
 --8<-- "docs/examples/introduction/stopwatch01.py"
 ```
-
 
 The first line imports the Textual `App` class. The second line imports two builtin widgets: `Footer` which shows available keys and `Header` which shows a title and the current time.
 
@@ -114,7 +113,7 @@ There are three methods in our stopwatch app currently.
 
 The last lines in "stopwatch01.py" may be familiar to you. We create an instance of our app class, and call `run()` within a `__name__ == "__main__"` conditional block. This is so that we could import `app` if we want to. Or we could run it with `python stopwatch01.py`. 
 
-## Creating a custom widget
+## Designing a UI with widgets
 
 The header and footer are builtin widgets. For our Stopwatch application we will need to build custom widgets.
 
@@ -161,7 +160,7 @@ The new line in `Stopwatch.compose()` yields a single `Container` object which w
 
 ### The unstyled app
 
-Let's see what happens when we run "stopwatch02.py":
+Let's see what happens when we run "stopwatch02.py".
 
 ```{.textual path="docs/examples/introduction/stopwatch02.py" title="stopwatch02.py"}
 ```
@@ -170,7 +169,7 @@ The elements of the stopwatch application are there. The buttons are clickable a
 
 ## Writing Textual CSS
 
-Every widget has a `styles` object which contains information regarding how that widget will look. Setting any of the attributes on that styles object will change how Textual displays the widget.
+Every widget has a `styles` object which contains information regarding how that widget will look. Setting any of the attributes on the styles object will update the screen.
 
 Here's how you might set white text and a blue background for a widget:
 
@@ -331,62 +330,66 @@ Here we have created two reactive attributes: `start_time` and `time`. These att
 
     `Reactive` is an example of a Python _descriptor_, which allows you to dynamically create properties.
 
-The first argument to `Reactive` may be a default value, or a callable that returns the default value. In the example, the default for `start_time` is `monotonic` which is a function that returns the time. When `TimeDisplay` is mounted the `start_time` attribute will automatically be assigned the value returned by `monotonic()`.
+The first argument to `Reactive` may be a default value or a callable that returns the default value. In the example, the default for `start_time` is `monotonic` which is a function that returns the time. When `TimeDisplay` is mounted, the `start_time` attribute will be assigned the result of `monotonic()`.
 
 The `time` attribute has a simple float as the default value, so `self.time` will be `0` on start.
 
-To update the time automatically we will use the `set_interval` method which tells Textual to call a function at given intervals. The `on_mount` method does this to call `self.update_time` 60 times a second.
-
-In `update_time` we calculate the time elapsed since the widget started and assign it to `self.time`. Which brings us to one of Reactive's super-powers.
+In the `on_mount` handler method, the call to `set_interval` creates a timer object which calls `self.update_time` sixty times a second. This `update_time` method calculates the time elapsed since the widget started and assigns it to `self.time`. Which brings us to one of Reactive's super-powers.
 
 If you implement a method that begins with `watch_` followed by the name of a reactive attribute (making it a _watch method_), that method will be called when the attribute is modified.
 
 Because `watch_time` watches the `time` attribute, when we update `self.time` 60 times a second we also implicitly call `watch_time` which converts the elapsed time in to a string and updates the widget with a call to `self.update`.
 
-The end result is that all the `Stopwatch` widgets show the time elapsed since the widget was created:
+The end result is that the `Stopwatch` widgets show the time elapsed since the widget was created:
 
 ```{.textual path="docs/examples/introduction/stopwatch05.py" title="stopwatch05.py"}
 ```
 
 We've seen how we can update widgets with a timer. But we still need to wire buttons to the widget
 
-### Wiring the Stopwatch
+### Wiring buttons
 
-To make a useful stopwatch we will need to add a little more code to `TimeDisplay`, to be able to start, stop, and reset the timer.
+We need to be able to start, stop, and reset each stopwatch independently. We can do this by adding a few more methods to the `TimeDisplay` class.
 
-```python title="stopwatch06.py" hl_lines="14-44 50-60"
+
+```python title="stopwatch06.py" hl_lines="14-44 50-61"
 --8<-- "docs/examples/introduction/stopwatch06.py"
 ```
 
 Here's a summary of the changes made to `TimeDisplay`.
 
-- We've added a `total` reactive attribute to store the total time elapsed between clicking Stop and Start.
-- The call to `set_interval` has grown a `pause=True` attribute which starts the timer in pause mode. This is because we don't want to update the timer until the user hits the Start button.
-- We've stored the result of `set_interval` which returns a timer object. We will use this later to _resume_ the timer when we start the Stopwatch.
+- We've added a `total` reactive attribute to store the total time elapsed between clicking that start and stop buttons.
+- The call to `set_interval` has grown a `pause=True` argument which starts the timer in pause mode (when a timer is paused it won't run until `resume()` is called). This is because we don't want the time to update until the user hits the start button.
+- We've stored the result of `set_interval` which returns a Timer object. We will use this later to _resume_ the timer when we start the Stopwatch.
 - We've added `start()`, `stop()`, and `reset()` methods.
 
-The `on_button_pressed` method on `Stopwatch` has grown some code to manage the time display when the user clicked a button. Let's look at that in detail:
+The `on_button_pressed` method on `Stopwatch` has grown some code to manage the time display when the user clicks a button. Let's look at that in detail:
 
 ```python
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Event handler called when a button is pressed."""
+        button_id = event.button.id
         time_display = self.query_one(TimeDisplay)
-        if event.button.id == "start":
+        if button_id == "start":
             time_display.start()
             self.add_class("started")
-        elif event.button.id == "stop":
+        elif button_id == "stop":
             time_display.stop()
             self.remove_class("started")
-        elif event.button.id == "reset":
+        elif button_id == "reset":
             time_display.reset()
 ```
 
-This code supplies the missing features and makes our app really useful. If you run it now you can start and stop timers independently.
+This code supplies the missing features and makes our app useful. We've made the following changes.
 
-- The first line calls `query_one` to get a reference to the `TimeDisplay` widget. This method queries for a child widget. You may supply a Widget type or a CSS selector.
-- We call the `TimeDisplay` method that matches the button pressed.
-- We add the "started" class when the Stopwatch is started, and remove it when it is stopped.
+- The first line stores the button's id, which we will use to decide what to do in response.
+- The second line calls `query_one` to get a reference to the `TimeDisplay` widget. This method queries for a child widget. You may supply a Widget type or a CSS selector.
+- We call the method on `TimeDisplay` that matches the pressed button.
+- We add the "started" class when the Stopwatch is started, and remove it when it is stopped. This will update the Stopwatch visuals via CSS and show the buttons that match the state.
 
+If you run stopwatch06.py you will be able to use the stopwatches independently.
 
 ```{.textual path="docs/examples/introduction/stopwatch06.py" title="stopwatch06.py" press="tab,enter,_,_,tab,enter,_,tab"}
 ```
+
+The only remaining feature of the Stopwatch app let to implement is the ability to add and remove timers.

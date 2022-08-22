@@ -230,7 +230,7 @@ class Widget(DOMNode):
         return
         yield
 
-    def on_register(self, app: App) -> None:
+    def _post_register(self, app: App) -> None:
         """Called when the instance is registered.
 
         Args:
@@ -699,6 +699,7 @@ class Widget(DOMNode):
         Returns:
             bool: True if the scroll position changed, otherwise False.
         """
+        self.log(self, x, y, verbosity=0)
         scrolled_x = scrolled_y = False
         if animate:
             # TODO: configure animation speed
@@ -861,7 +862,6 @@ class Widget(DOMNode):
         Returns:
             Offset: The distance that was scrolled.
         """
-
         window = self.content_region.at_offset(self.scroll_offset)
         if spacing is not None:
             window = window.shrink(spacing)
@@ -1035,8 +1035,9 @@ class Widget(DOMNode):
 
                 self.scroll_x = self.validate_scroll_x(self.scroll_x)
                 self.scroll_y = self.validate_scroll_y(self.scroll_y)
-                self.refresh(layout=True)
-                self.call_later(self.scroll_to, self.scroll_x, self.scroll_y)
+                # self.refresh(layout=True)
+                self.scroll_to(self.scroll_x, self.scroll_y)
+                # self.call_later(self.scroll_to, self.scroll_x, self.scroll_y)
             else:
                 self.refresh()
 
@@ -1104,9 +1105,6 @@ class Widget(DOMNode):
     def get_style_at(self, x: int, y: int) -> Style:
         offset_x, offset_y = self.screen.get_offset(self)
         return self.screen.get_style_at(x + offset_x, y + offset_y)
-
-    def call_later(self, callback: Callable, *args, **kwargs) -> None:
-        self.app.call_later(callback, *args, **kwargs)
 
     async def forward_event(self, event: events.Event) -> None:
         event.set_forwarded()
