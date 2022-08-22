@@ -96,6 +96,7 @@ class StopwatchApp(App):
             timers.last().remove()
 
     def action_toggle_dark(self) -> None:
+        """An action to toggle dark mode."""
         self.dark = not self.dark
 
 
