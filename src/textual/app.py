@@ -559,9 +559,12 @@ class App(Generic[ReturnType], DOMNode):
 
     def run(
         self,
+        *,
         quit_after: float | None = None,
         headless: bool = False,
         press: Iterable[str] | None = None,
+        screenshot: bool = False,
+        screenshot_title: str | None = None,
     ) -> ReturnType | None:
         """The main entry point for apps.
 
@@ -570,6 +573,8 @@ class App(Generic[ReturnType], DOMNode):
                 to run forever. Defaults to None.
             headless (bool, optional): Run in "headless" mode (don't write to stdout).
             press (str, optional): An iterable of keys to simulate being pressed.
+            screenshot (str, optional): Take a screenshot after pressing keys (svg data stored in self._screenshot). Defaults to False.
+            screenshot_title (str | None, optional): Title of screenshot, or None to use App title. Defaults to None.
 
         Returns:
             ReturnType | None: The return value specified in `App.exit` or None if exit wasn't called.
@@ -591,13 +596,20 @@ class App(Generic[ReturnType], DOMNode):
                     assert press
                     driver = app._driver
                     assert driver is not None
+                    await asyncio.sleep(0.05)
                     for key in press:
                         if key == "_":
-                            await asyncio.sleep(0.02)
+                            print("(pause)")
+                            await asyncio.sleep(0.05)
                         else:
                             print(f"press {key!r}")
                             driver.send_event(events.Key(self, key))
                             await asyncio.sleep(0.02)
+                    if screenshot:
+                        self._screenshot = self.export_screenshot(
+                            title=screenshot_title
+                        )
+                    await self.shutdown()
 
                 async def press_keys_task():
                     """Press some keys in the background."""
@@ -866,6 +878,19 @@ class App(Generic[ReturnType], DOMNode):
                 widget.post_message_no_wait(events.Focus(self))
                 widget.emit_no_wait(events.DescendantFocus(self))
 
+    def _reset_focus(self, widget: Widget) -> None:
+        """Reset the focus when a widget is removed
+
+        Args:
+            widget (Widget): A widget that is removed.
+        """
+        for sibling in widget.siblings:
+            if sibling.can_focus:
+                sibling.focus()
+                break
+        else:
+            self.focused = None
+
     async def _set_mouse_over(self, widget: Widget | None) -> None:
         """Called when the mouse is over another widget.
 
@@ -1120,8 +1145,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widget (Widget): A Widget to unregister
         """
-        if self.focused is widget:
-            self.focused = None
+        self._reset_focus(widget)
 
         if isinstance(widget._parent, Widget):
             widget._parent.children._remove(widget)
@@ -1369,8 +1393,9 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_remove(self, event: events.Remove) -> None:
         widget = event.widget
-        if widget.has_parent:
-            widget.parent.refresh(layout=True)
+        parent = widget.parent
+        if parent is not None:
+            parent.refresh(layout=True)
 
         remove_widgets = list(widget.walk_children(Widget, with_self=True))
         for child in remove_widgets:

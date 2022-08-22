@@ -147,6 +147,17 @@ class Widget(DOMNode):
     show_horizontal_scrollbar = Reactive(False, layout=True)
 
     @property
+    def siblings(self) -> list[Widget]:
+        """Get the widget's siblings (self is removed from the return list)."""
+        parent = self.parent
+        if parent is not None:
+            siblings = list(parent.children)
+            siblings.remove(self)
+            return siblings
+        else:
+            return []
+
+    @property
     def allow_vertical_scroll(self) -> bool:
         """Check if vertical scroll is permitted."""
         return self.is_scrollable and self.show_vertical_scrollbar
@@ -1284,6 +1295,10 @@ class Widget(DOMNode):
         if self.is_scrollable:
             self.scroll_page_right()
             event.stop()
+
+    def _on_hide(self, event: events.Hide) -> None:
+        if self.has_focus:
+            self.app._reset_focus(self)
 
     def key_home(self) -> bool:
         if self.is_scrollable:
