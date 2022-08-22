@@ -13,6 +13,7 @@ from rich.repr import Result, rich_repr
 
 from . import events
 from ._callback import invoke
+from ._context import active_app
 from . import _clock
 from ._types import MessageTarget
 
@@ -119,6 +120,7 @@ class Timer:
         count = 0
         _repeat = self._repeat
         _interval = self._interval
+        await self._active.wait()
         start = _clock.get_time_no_wait()
         while _repeat is None or count <= _repeat:
             next_timer = start + ((count + 1) * _interval)
@@ -131,16 +133,20 @@ class Timer:
             if wait_time:
                 await _clock.sleep(wait_time)
             count += 1
+            await self._active.wait()
             try:
                 await self._tick(next_timer=next_timer, count=count)
             except EventTargetGone:
                 break
-            await self._active.wait()
 
     async def _tick(self, *, next_timer: float, count: int) -> None:
         """Triggers the Timer's action: either call its callback, or sends an event to its target"""
         if self._callback is not None:
-            await invoke(self._callback)
+            try:
+                await invoke(self._callback)
+            except Exception as error:
+                app = active_app.get()
+                app.on_exception(error)
         else:
             event = events.Timer(
                 self.sender,

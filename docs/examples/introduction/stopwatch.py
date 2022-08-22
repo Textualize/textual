@@ -15,7 +15,7 @@ class TimeDisplay(Static):
         """Called when time_delta changes."""
         minutes, seconds = divmod(time, 60)
         hours, minutes = divmod(minutes, 60)
-        self.update(f"{hours:02.0f}:{minutes:02.0f}:{seconds:05.2f}")
+        self.update(f"{hours:02,.0f}:{minutes:02.0f}:{seconds:05.2f}")
 
 
 class Stopwatch(Static):

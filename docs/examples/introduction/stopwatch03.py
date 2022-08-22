@@ -4,11 +4,14 @@ from textual.widgets import Button, Header, Footer, Static
 
 
 class TimeDisplay(Static):
-    pass
+    """A widget to display elapsed time."""
 
 
 class Stopwatch(Static):
-    def compose(self):
+    """A stopwatch widget."""
+
+    def compose(self) -> ComposeResult:
+        """Create child widgets of a stopwatch."""
         yield Button("Start", id="start", variant="success")
         yield Button("Stop", id="stop", variant="error")
         yield Button("Reset", id="reset")
@@ -16,15 +19,20 @@ class Stopwatch(Static):
 
 
 class StopwatchApp(App):
-    def compose(self):
+    """A Textual app to manage stopwatches."""
+
+    def compose(self) -> ComposeResult:
+        """Create child widgets for the app."""
         yield Header()
         yield Footer()
         yield Container(Stopwatch(), Stopwatch(), Stopwatch())
 
-    def on_load(self):
+    def on_load(self) -> None:
+        """Called when app first loads."""
         self.bind("d", "toggle_dark", description="Dark mode")
 
-    def action_toggle_dark(self):
+    def action_toggle_dark(self) -> None:
+        """An action to toggle dark mode."""
         self.dark = not self.dark
 
 

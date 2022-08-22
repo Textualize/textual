@@ -1,20 +1,24 @@
-from textual.app import App
+from textual.app import App, ComposeResult
 from textual.layout import Container
 from textual.widgets import Button, Header, Footer, Static
 
 
 class TimeDisplay(Static):
-    pass
+    """A widget to display elapsed time."""
 
 
 class Stopwatch(Static):
-    def on_button_pressed(self, event):
+    """A stopwatch widget."""
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Event handler called when a button is pressed."""
         if event.button.id == "start":
             self.add_class("started")
         elif event.button.id == "stop":
             self.remove_class("started")
 
-    def compose(self):
+    def compose(self) -> ComposeResult:
+        """Create child widgets of a stopwatch."""
         yield Button("Start", id="start", variant="success")
         yield Button("Stop", id="stop", variant="error")
         yield Button("Reset", id="reset")
@@ -22,15 +26,20 @@ class Stopwatch(Static):
 
 
 class StopwatchApp(App):
-    def compose(self):
+    """A Textual app to manage stopwatches."""
+
+    def compose(self) -> ComposeResult:
+        """Create child widgets for the app."""
         yield Header()
         yield Footer()
         yield Container(Stopwatch(), Stopwatch(), Stopwatch())
 
-    def on_load(self):
+    def on_load(self) -> None:
+        """Called when app first loads."""
         self.bind("d", "toggle_dark", description="Dark mode")
 
-    def action_toggle_dark(self):
+    def action_toggle_dark(self) -> None:
+        """An action to toggle dark mode."""
         self.dark = not self.dark
 
 

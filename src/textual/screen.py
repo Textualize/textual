@@ -38,7 +38,7 @@ class Screen(Widget):
     }
     """
 
-    dark = Reactive(False)
+    dark: Reactive[bool] = Reactive(False)
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
         super().__init__(name=name, id=id)

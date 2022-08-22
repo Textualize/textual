@@ -1,0 +1,88 @@
+from time import monotonic
+
+from textual.app import App, ComposeResult
+from textual.layout import Container
+from textual.reactive import Reactive
+from textual.widgets import Button, Header, Footer, Static
+
+
+class TimeDisplay(Static):
+    """A widget to display elapsed time."""
+
+    total = Reactive(0.0)
+    start_time = Reactive(monotonic)
+    time = Reactive(0.0)
+
+    def watch_time(self, time: float) -> None:
+        """Called when the time attribute changes."""
+        minutes, seconds = divmod(time, 60)
+        hours, minutes = divmod(minutes, 60)
+        self.update(f"{hours:02,.0f}:{minutes:02.0f}:{seconds:05.2f}")
+
+    def on_mount(self) -> None:
+        """Event handler called when widget is added to the app."""
+        self.update_timer = self.set_interval(1 / 60, self.update_time, pause=True)
+
+    def update_time(self) -> None:
+        """Method to update time to current."""
+        self.time = self.total + (monotonic() - self.start_time)
+
+    def start(self) -> None:
+        """Method to start (or resume) time updating."""
+        self.start_time = monotonic()
+        self.update_timer.resume()
+
+    def stop(self):
+        """Method to stop the time display updating."""
+        self.update_timer.pause()
+        self.total += monotonic() - self.start_time
+        self.time = self.total
+
+    def reset(self):
+        """Method to reset the time display to zero."""
+        self.total = 0
+        self.time = self.start_time
+
+
+class Stopwatch(Static):
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Event handler called when a button is pressed."""
+        time_display = self.query_one(TimeDisplay)
+        if event.button.id == "start":
+            time_display.start()
+            self.add_class("started")
+            self.query_one("#stop").focus()
+        elif event.button.id == "stop":
+            time_display.stop()
+            self.remove_class("started")
+            self.query_one("#start").focus()
+        elif event.button.id == "reset":
+            time_display.reset()
+
+    def compose(self) -> ComposeResult:
+        """Create child widgets of a stopwatch."""
+        yield Button("Start", id="start", variant="success")
+        yield Button("Stop", id="stop", variant="error")
+        yield Button("Reset", id="reset")
+        yield TimeDisplay("00:00:00.00")
+
+
+class StopwatchApp(App):
+    def compose(self) -> ComposeResult:
+        """Create child widgets for the app."""
+        yield Header()
+        yield Footer()
+        yield Container(Stopwatch(), Stopwatch(), Stopwatch())
+
+    def on_load(self) -> None:
+        """Event handler called when app first loads."""
+        self.bind("d", "toggle_dark", description="Dark mode")
+
+    def action_toggle_dark(self) -> None:
+        """An action to toggle dark mode."""
+        self.dark = not self.dark
+
+
+app = StopwatchApp(css_path="stopwatch04.css")
+if __name__ == "__main__":
+    app.run()

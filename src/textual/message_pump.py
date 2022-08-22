@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-from functools import total_ordering
 import inspect
 from asyncio import CancelledError, Queue, QueueEmpty, Task
 from functools import partial
@@ -15,6 +14,7 @@ from ._timer import Timer, TimerCallback
 from .case import camel_to_snake
 from .events import Event
 from .message import Message
+from .reactive import Reactive
 
 if TYPE_CHECKING:
     from .app import App
@@ -167,7 +167,7 @@ class MessagePump(metaclass=MessagePumpMeta):
     def set_timer(
         self,
         delay: float,
-        callback: TimerCallback = None,
+        callback: TimerCallback | None = None,
         *,
         name: str | None = None,
         pause: bool = False,
@@ -260,6 +260,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
 
+        await Reactive.initialize_object(self)
         while not self._closed:
             try:
                 message = await self.get_message()

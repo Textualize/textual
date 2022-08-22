@@ -6,14 +6,18 @@ By the end of this page you should have a good idea of the steps involved in cre
 
 !!! quote
 
-    You may find this page goes in to more detail than you might expect from an introduction. I like to have complete working examples in documentation and I don't want to leave anything _as an exercise for the reader_. &mdash; **Will McGugan** (creator of Rich and Textual)
+    This page goes in to more detail than you may expect from an introduction. I like documentation to have complete working examples and I wanted the first app to be realistic. 
+    
+    &mdash; **Will McGugan** (creator of Rich and Textual)
+
+
 
 
 ## Stopwatch Application
 
-We're going to build a stopwatch app. This app will display the elapsed time since the user hit a "Start" button. The user will be able to stop / resume / reset each stopwatch in addition to adding or removing them.
+We're going to build a stopwatch app. This app will display the elapsed time since the user hit a "Start" button. The user will be able to stop, resume, and reset each stopwatch in addition to adding or removing them.
 
-This is a simple yet **fully featured** app &mdash; you could distribute this app if you wanted to!
+This will be a simple yet **fully featured** app &mdash; you could distribute this app if you wanted to!
 
 Here's what the finished app will look like:
 
@@ -30,6 +34,25 @@ If you want to try this out before reading the rest of this introduction (we rec
 ```bash
 python stopwatch.py
 ```
+
+## Type hints (in brief)
+
+We're a big fan of Python type hints at Textualize. If you haven't encountered type hinting, its a way to express the types of your data, parameters, and returns. Type hinting allows tools like [Mypy](https://mypy.readthedocs.io/en/stable/) to catch potential bugs before your code runs.
+
+The following function contains type hints:
+
+```python
+def repeat(text: str, count: int) -> str:
+    return text * count
+```
+
+- Parameter types follow a colon, so `text: str` means that `text` should be a string and `count: int` means that `count` should be an integer.
+- Return types follow `->` So `-> str:` says that this method returns a string.
+
+
+!!! note
+
+    Type hints are entirely optional in Textual. We've included them in the example code but it's up to you wether you add them to your own projects.
 
 ## The App class
 
@@ -66,7 +89,7 @@ The first line imports the Textual `App` class. The second line imports two buil
 Widgets are re-usable components responsible for managing a part of the screen. We will cover how to build such widgets in this introduction.
 
 
-```python title="stopwatch01.py" hl_lines="5-14"
+```python title="stopwatch01.py" hl_lines="5-19"
 --8<-- "docs/examples/introduction/stopwatch01.py"
 ```
 
@@ -85,7 +108,7 @@ There are three methods in our stopwatch app currently.
     You may have noticed that the the `toggle_dark` doesn't do anything to explicitly change the _screen_, and yet hitting ++d++ refreshes and updates the whole terminal. This is an example of _reactivity_. Changing certain attributes will schedule an automatic update.
 
 
-```python title="stopwatch01.py" hl_lines="17-19"
+```python title="stopwatch01.py" hl_lines="22-24"
 --8<-- "docs/examples/introduction/stopwatch01.py"
 ```
 
@@ -93,18 +116,15 @@ The last lines in "stopwatch01.py" may be familiar to you. We create an instance
 
 ## Creating a custom widget
 
-The header and footer were builtin widgets. We will to build a custom widget for the stopwatches in our application.
+The header and footer are builtin widgets. For our Stopwatch application we will need to build custom widgets.
 
-Let's sketch out what we are trying to achieve here:
+Let's sketch out a design for our app:
 
 <div class="excalidraw">
 --8<-- "docs/images/stopwatch.excalidraw.svg"
 </div>
 
-
-An individual stopwatch consists of several parts, which themselves can be widgets.
-
-The Stopwatch widget consists of the be built with the following _child_ widgets:
+We will need to build a `Stopwatch` widget composed of the following _child_ widgets:
 
 - A "start" button
 - A "stop" button
@@ -113,9 +133,9 @@ The Stopwatch widget consists of the be built with the following _child_ widgets
 
 Textual has a builtin `Button` widgets which takes care of the first three components. All we need to build is the time display which will show the elapsed time in HOURS:MINUTES:SECONDS format, and the stopwatch itself.
 
-Let's add those to our app:
+Let's add those to the app. Just a skeleton for now, we will add the rest of the features as we go.
 
-```python title="stopwatch02.py" hl_lines="3 6-7 10-15 22 31"
+```python title="stopwatch02.py" hl_lines="3 6-7 10-18 28"
 --8<-- "docs/examples/introduction/stopwatch02.py"
 ```
 
@@ -169,7 +189,7 @@ CSS files are data files loaded by your app which contain information about styl
 
 Let's add a CSS file to our application.
 
-```python title="stopwatch03.py" hl_lines="31"
+```python title="stopwatch03.py" hl_lines="39"
 --8<-- "docs/examples/introduction/stopwatch03.py"
 ```
 
@@ -256,7 +276,7 @@ You may have noticed that the stop button (`#stop` in the CSS) has `display: non
 
 We want our Stopwatch widget to have two states: a default state with a Start and Reset button; and a _started_ state with a Stop button. When a stopwatch is started it should also have a green background and bold text.
 
-We can accomplish this with by defining a _CSS class_. Not to be confused with a Python class, a CSS class is like a tag you can add to a widget to modify its styles.
+We can accomplish this with a CSS _class_. Not to be confused with a Python class, a CSS class is like a tag you can add to a widget to modify its styles.
 
 Here's the new CSS:
 
@@ -266,7 +286,7 @@ Here's the new CSS:
 
 These new rules are prefixed with `.started`. The `.` indicates that `.started` refers to a CSS class called "started". The new styles will be applied only to widgets that have these styles.
 
-Some of the new styles have more than one selector separated by a space. The space indicates that the next selector should match a style. Let's look at one of these styles:
+Some of the new styles have more than one selector separated by a space. The space indicates that the rule should match the second selector if it is a child of the first. Let's look at one of these styles:
 
 ```sass
 .started #start {
@@ -274,7 +294,7 @@ Some of the new styles have more than one selector separated by a space. The spa
 }
 ```
 
-The purpose of this CSS is to hide the start button when the stopwatch is started. The `.started` selector matches any widget with a "started" CSS class. While "#start" matches a child widget with an id of "start". The rule "display: none" tells Textual to hide that widget.
+The purpose of this CSS is to hide the start button when the stopwatch has started. The `.started` selector matches any widget with a "started" CSS class. While "#start" matches a child widget with an id of "start". The rule is applied to the button, so `"display: none"` tells Textual to _hide_ the button.
 
 ### Manipulating classes
 
@@ -284,7 +304,7 @@ You can add and remove CSS classes with the `add_class()` and `remove_class()` m
 
 The following code adds a event handler for the `Button.Pressed` event.
 
-```python title="stopwatch04.py" hl_lines="11-15"
+```python title="stopwatch04.py" hl_lines="13-18"
 --8<-- "docs/examples/introduction/stopwatch04.py"
 ```
 

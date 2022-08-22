@@ -39,10 +39,55 @@ class Reactive(Generic[ReactiveType]):
         *,
         layout: bool = False,
         repaint: bool = True,
+        init: bool = False,
     ) -> None:
+        """Create a Reactive Widget attribute,
+
+        Args:
+            default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
+            layout (bool, optional): Perform a layout on change. Defaults to False.
+            repaint (bool, optional): Perform a repaint on change. Defaults to True.
+            init (bool, optional): Call watchers on initialize (post mount). Defaults to False.
+        """
         self._default = default
-        self.layout = layout
-        self.repaint = repaint
+        self._layout = layout
+        self._repaint = repaint
+        self._init = init
+
+    @classmethod
+    def init(
+        cls,
+        default: ReactiveType | Callable[[], ReactiveType],
+        *,
+        layout: bool = False,
+        repaint: bool = True,
+    ) -> Reactive:
+        """A reactive variable that calls watchers and compute on initialize (post mount).
+
+        Args:
+            default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
+            layout (bool, optional): Perform a layout on change. Defaults to False.
+            repaint (bool, optional): Perform a repaint on change. Defaults to True.
+
+        Returns:
+            Reactive: _description_
+        """
+        return cls(default, layout=layout, repaint=repaint, init=True)
+
+    @classmethod
+    async def initialize_object(cls, obj: object) -> None:
+        """Call any watchers / computes for the first time.
+
+        Args:
+            obj (Reactable): An object with Reactive descriptors
+        """
+
+        startswith = str.startswith
+        for key in obj.__class__.__dict__.keys():
+            if startswith(key, "_init_"):
+                name = key[6:]
+                default = getattr(obj, key)
+                setattr(obj, name, default() if callable(default) else default)
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
 
@@ -56,11 +101,14 @@ class Reactive(Generic[ReactiveType]):
 
         self.name = name
         self.internal_name = f"_reactive_{name}"
-        setattr(
-            owner,
-            self.internal_name,
-            self._default() if callable(self._default) else self._default,
-        )
+        default = self._default
+
+        if self._init:
+            setattr(owner, f"_init_{name}", default)
+        else:
+            setattr(
+                owner, self.internal_name, default() if callable(default) else default
+            )
 
     def __get__(self, obj: Reactable, obj_type: type[object]) -> ReactiveType:
         return getattr(obj, self.internal_name)
@@ -69,15 +117,15 @@ class Reactive(Generic[ReactiveType]):
         name = self.name
         current_value = getattr(obj, self.internal_name, None)
         validate_function = getattr(obj, f"validate_{name}", None)
-        first_set = getattr(obj, f"{self.internal_name}__first_set", True)
+        first_set = getattr(obj, f"__first_set_{self.internal_name}", True)
         if callable(validate_function):
             value = validate_function(value)
         if current_value != value or first_set:
-            setattr(obj, f"{self.internal_name}__first_set", False)
+            setattr(obj, f"__first_set_{self.internal_name}", False)
             setattr(obj, self.internal_name, value)
             self.check_watchers(obj, name, current_value)
-            if self.layout or self.repaint:
-                obj.refresh(repaint=self.repaint, layout=self.layout)
+            if self._layout or self._repaint:
+                obj.refresh(repaint=self._repaint, layout=self._layout)
 
     @classmethod
     def check_watchers(cls, obj: Reactable, name: str, old_value: Any) -> None:

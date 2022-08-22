@@ -102,7 +102,6 @@ class Widget(DOMNode):
         self._repaint_required = False
         self._default_layout = VerticalLayout()
         self._animate: BoundAnimator | None = None
-        self._reactive_watches: dict[str, Callable] = {}
         self.highlight_style: Style | None = None
 
         self._vertical_scrollbar: ScrollBar | None = None
