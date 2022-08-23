@@ -297,7 +297,7 @@ class Layout(ABC):
         self,
         console: Console,
         *,
-        crop: Region = None,
+        crop: Region | None = None,
     ) -> SegmentLines:
         """Render a layout.
 

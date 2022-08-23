@@ -7,12 +7,12 @@ from typing import Any, Callable
 
 
 @lru_cache(maxsize=2048)
-def count_parameters(func: Callable) -> int:
+def count_parameters(func: Callable[..., Any]) -> int:
     """Count the number of parameters in a callable"""
     return len(signature(func).parameters)
 
 
-async def invoke(callback: Callable, *params: object) -> Any:
+async def invoke(callback: Callable[..., Any], *params: object) -> Any:
     """Invoke a callback with an arbitrary number of parameters.
 
     Args:

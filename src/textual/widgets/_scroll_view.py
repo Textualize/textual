@@ -49,11 +49,11 @@ class ScrollView(View):
         layout.show_column("vscroll", False)
         super().__init__(name=name, layout=layout)
 
-    x: Reactive[float] = Reactive(0, repaint=False)
-    y: Reactive[float] = Reactive(0, repaint=False)
+    x: Reactive[float] = Reactive(0.0, repaint=False)
+    y: Reactive[float] = Reactive(0.0, repaint=False)
 
-    target_x: Reactive[float] = Reactive(0, repaint=False)
-    target_y: Reactive[float] = Reactive(0, repaint=False)
+    target_x: Reactive[float] = Reactive(0.0, repaint=False)
+    target_y: Reactive[float] = Reactive(0.0, repaint=False)
 
     def validate_x(self, value: float) -> float:
         return clamp(value, 0, self.max_scroll_x)

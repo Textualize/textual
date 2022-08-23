@@ -40,7 +40,7 @@ class Dock:
 
 
 class DockLayout(Layout):
-    def __init__(self, docks: list[Dock] = None) -> None:
+    def __init__(self, docks: list[Dock] | None = None) -> None:
         self.docks: list[Dock] = docks or []
         super().__init__()
 

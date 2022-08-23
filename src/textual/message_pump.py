@@ -4,7 +4,7 @@ import asyncio
 from asyncio import CancelledError
 from asyncio import Queue, QueueEmpty, Task
 from functools import partial
-from typing import TYPE_CHECKING, Awaitable, Iterable, Callable
+from typing import TYPE_CHECKING, Any, Awaitable, Iterable, Callable
 from weakref import WeakSet
 
 from . import events
@@ -39,11 +39,11 @@ class MessagePump:
         self._closed: bool = False
         self._disabled_messages: set[type[Message]] = set()
         self._pending_message: Message | None = None
-        self._task: Task | None = None
-        self._child_tasks: WeakSet[Task] = WeakSet()
+        self._task: Task[None] | None = None
+        self._child_tasks: WeakSet[Task[None]] = WeakSet()
 
     @property
-    def task(self) -> Task:
+    def task(self) -> Task[None]:
         assert self._task is not None
         return self._task
 
@@ -66,7 +66,7 @@ class MessagePump:
     def is_running(self) -> bool:
         return self._running
 
-    def log(self, *args, **kwargs) -> None:
+    def log(self, *args: Any, **kwargs: Any) -> None:
         return self.app.log(*args, **kwargs)
 
     def set_parent(self, parent: MessagePump) -> None:
@@ -122,7 +122,7 @@ class MessagePump:
     def set_timer(
         self,
         delay: float,
-        callback: TimerCallback = None,
+        callback: TimerCallback | None = None,
         *,
         name: str | None = None,
     ) -> Timer:
@@ -133,7 +133,7 @@ class MessagePump:
     def set_interval(
         self,
         interval: float,
-        callback: TimerCallback = None,
+        callback: TimerCallback | None = None,
         *,
         name: str | None = None,
         repeat: int = 0,
@@ -144,7 +144,7 @@ class MessagePump:
         self._child_tasks.add(timer.start())
         return timer
 
-    async def call_later(self, callback: Callable, *args, **kwargs) -> None:
+    async def call_later(self, callback: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
         """Run a callback after processing all messages and refreshing the screen.
 
         Args:
@@ -238,7 +238,7 @@ class MessagePump:
 
     def _get_dispatch_methods(
         self, method_name: str, message: Message
-    ) -> Iterable[Callable[[Message], Awaitable]]:
+    ) -> Iterable[Callable[[Message], Awaitable[Any]]]:
         for cls in self.__class__.__mro__:
             if message._no_default_action:
                 break

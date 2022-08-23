@@ -71,7 +71,7 @@ class Widget(MessagePump):
         self._repaint_required = False
         self._layout_required = False
         self._animate: BoundAnimator | None = None
-        self._reactive_watches: dict[str, Callable] = {}
+        self._reactive_watches: dict[str, Callable[..., Any]] = {}
         self.render_cache: RenderCache | None = None
         self.highlight_style: Style | None = None
 
@@ -99,10 +99,10 @@ class Widget(MessagePump):
     def validate_margin(self, margin: SpacingDimensions) -> Spacing:
         return Spacing.unpack(margin)
 
-    def validate_layout_offset_x(self, value) -> int:
+    def validate_layout_offset_x(self, value: float) -> int:
         return int(value)
 
-    def validate_layout_offset_y(self, value) -> int:
+    def validate_layout_offset_y(self, value: float) -> int:
         return int(value)
 
     def __init_subclass__(cls, can_focus: bool = True) -> None:
@@ -116,7 +116,7 @@ class Widget(MessagePump):
         renderable = self.render_styled()
         return renderable
 
-    def watch(self, attribute_name, callback: Callable[[Any], Awaitable[None]]) -> None:
+    def watch(self, attribute_name: str, callback: Callable[[Any], Awaitable[None]]) -> None:
         watch(self, attribute_name, callback)
 
     def render_styled(self) -> RenderableType:
@@ -223,7 +223,7 @@ class Widget(MessagePump):
         offset_x, offset_y = self.root_view.get_offset(self)
         return self.root_view.get_style_at(x + offset_x, y + offset_y)
 
-    async def call_later(self, callback: Callable, *args, **kwargs) -> None:
+    async def call_later(self, callback: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
         await self.app.call_later(callback, *args, **kwargs)
 
     async def forward_event(self, event: events.Event) -> None:
@@ -258,7 +258,7 @@ class Widget(MessagePump):
             Align.center(Pretty(self), vertical="middle"), title=self.__class__.__name__
         )
 
-    async def action(self, action: str, *params) -> None:
+    async def action(self, action: str, *params: Any) -> None:
         await self.app.action(action, self)
 
     async def post_message(self, message: Message) -> bool:

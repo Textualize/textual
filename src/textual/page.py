@@ -96,7 +96,7 @@ class PageRender:
 
 class Page(Widget):
     def __init__(
-        self, renderable: RenderableType, name: str = None, style: StyleType = ""
+        self, renderable: RenderableType, name: str | None = None, style: StyleType = ""
     ):
         self._page = PageRender(self, renderable, style=style)
         super().__init__(name=name)

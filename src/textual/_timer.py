@@ -35,7 +35,7 @@ class Timer:
         *,
         name: str | None = None,
         callback: TimerCallback | None = None,
-        repeat: int = None,
+        repeat: int | None = None,
         skip: bool = False,
         pause: bool = False,
     ) -> None:
@@ -64,7 +64,7 @@ class Timer:
             raise EventTargetGone()
         return target
 
-    def start(self) -> Task:
+    def start(self) -> Task[None]:
         """Start the timer return the task.
 
         Returns:

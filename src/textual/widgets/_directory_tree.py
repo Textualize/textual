@@ -30,7 +30,7 @@ class FileClick(Message, bubble=True):
 
 
 class DirectoryTree(TreeControl[DirEntry]):
-    def __init__(self, path: str, name: str = None) -> None:
+    def __init__(self, path: str, name: str | None = None) -> None:
         self.path = path.rstrip("/")
         label = os.path.basename(self.path)
         data = DirEntry(path, True)

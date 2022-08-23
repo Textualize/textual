@@ -142,7 +142,7 @@ class App(MessagePump):
     def view(self) -> DockView:
         return self._view_stack[-1]
 
-    def log(self, *args: Any, verbosity: int = 1, **kwargs) -> None:
+    def log(self, *args: Any, verbosity: int = 1, **kwargs: Any) -> None:
         """Write to logs.
 
         Args:
@@ -186,10 +186,10 @@ class App(MessagePump):
     @classmethod
     def run(
         cls,
-        console: Console = None,
+        console: Console | None = None,
         screen: bool = True,
-        driver: Type[Driver] = None,
-        **kwargs,
+        driver: Type[Driver] | None = None,
+        **kwargs: Any,
     ):
         """Run the app.
 
@@ -369,7 +369,7 @@ class App(MessagePump):
             except Exception:
                 self.panic()
 
-    def measure(self, renderable: RenderableType, max_width=100_000) -> int:
+    def measure(self, renderable: RenderableType, max_width: int = 100_000) -> int:
         """Get the optimal width for a widget or renderable.
 
         Args:
