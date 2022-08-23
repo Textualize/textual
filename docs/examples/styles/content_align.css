@@ -1,0 +1,20 @@
+#box1 {
+    content-align: left top;
+    background: red;
+}
+
+#box2 {
+    content-align: center middle;
+    background: green;
+}
+
+#box3 {
+    content-align: right bottom;
+    background: blue;
+}
+
+Static {
+    height: 1fr;
+    padding: 1;
+    color: white;
+}

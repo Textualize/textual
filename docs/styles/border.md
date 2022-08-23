@@ -3,7 +3,7 @@
 The `border` rule enables the drawing of a box around a widget. A border is set with a border value (see below) followed by a color.
 
 | Border value | Explanation                                             |
-| ------------ | ------------------------------------------------------- |
+| ------------ |---------------------------------------------------------|
 | `"ascii"`    | A border with plus, hyphen, and vertical bar            |
 | `"blank"`    | A blank border (reserves space for a border)            |
 | `"dashed"`   | Dashed line border                                      |

@@ -36,12 +36,13 @@ nav:
     - "events/resize.md"
     - "events/screen_resume.md"
     - "events/screen_suspend.md"
-    - "events/show.md"
-  - Styles:    
+    - "events/show.md"  
+  - Styles:
     - "styles/background.md"
     - "styles/border.md"
     - "styles/box_sizing.md"
     - "styles/color.md"
+    - "styles/content_align.md"
     - "styles/display.md"
     - "styles/min_height.md"
     - "styles/max_height.md"
@@ -55,6 +56,7 @@ nav:
     - "styles/padding.md"
     - "styles/scrollbar.md"
     - "styles/scrollbar_size.md"
+    - "styles/scrollbar_gutter.md"
     - "styles/text_style.md"
     - "styles/tint.md"
     - "styles/visibility.md"
@@ -87,7 +89,7 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.snippets
   - pymdownx.tabbed:
-      alternate_style: true 
+      alternate_style: true
   - pymdownx.snippets
   - markdown.extensions.attr_list
 
