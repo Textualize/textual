@@ -20,7 +20,15 @@ def run():
 
 @run.command(help="Run the Textual Devtools console.")
 def console():
-    _run_devtools()
+    from rich.console import Console
+
+    console = Console()
+    console.clear()
+    console.show_cursor(False)
+    try:
+        _run_devtools()
+    finally:
+        console.show_cursor(True)
 
 
 class AppFail(Exception):

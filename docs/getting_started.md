@@ -18,9 +18,6 @@ pip install textual
 
 If you installed the dev dependencies, you have have access to the `textual` CLI command. There are a number of sub-commands which will aid you in building Textual apps. See the help for more details:
 
-```python
+```bash
 textual --help
 ```
-
-### Textual Console
-

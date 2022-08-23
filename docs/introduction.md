@@ -15,7 +15,7 @@ By the end of this page you should have a good idea of the steps involved in cre
 
 ## Stopwatch Application
 
-We're going to build a stopwatch app. This app will display the elapsed time since the user hit a "Start" button. The user will be able to stop, resume, and reset each stopwatch in addition to adding or removing them.
+We're going to build a stopwatch application. It should show a list of stopwatches with a time display the user can start, stop, and reset. We also want the user to be able to add and remove stopwatches as required.
 
 This will be a simple yet **fully featured** app &mdash; you could distribute this app if you wanted to!
 

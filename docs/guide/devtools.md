@@ -28,12 +28,17 @@ textual run my_app.py:alternative_app
 
 ## Console
 
-When running any terminal application, you can no longer use `print` when debugging (or log to the console). This is because anything you write to standard output would typically overwrite application content, which generally makes an unreadable mess. Fortunately Textual supplies a debug console of it's own which has some super helpful features.
+When running any terminal application, you can no longer use `print` when debugging (or log to the console). This is because anything you write to standard output would overwrite application content, making it unreadable. Fortunately Textual supplies a debug console of it's own which has some super helpful features.
 
-To use the console, open up 2 console emulators. In the first one, run the following:
+To use the console, open up 2 terminal emulators. In the first one, run the following:
 
 ```bash
 textual console
+```
+
+This should look something like the following:
+
+```{.textual title="textual console" path="docs/examples/getting_started/console.py", press="_,_"}
 ```
 
 In the other console, run your application using `textual run` and the `--dev` switch:
@@ -42,6 +47,5 @@ In the other console, run your application using `textual run` and the `--dev` s
 textual run my_app.py --dev
 ```
 
-You should notice that the console will display information regarding the running application, such as events which are sent.
-
 Anything you `print` from your application will be displayed in the console window. You can also call the `log()` method on App and Widget objects for advanced formatting. Try it with `self.log(self.tree)`.
+
