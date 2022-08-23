@@ -10,4 +10,3 @@ class ContentAlignApp(App):
 
 
 app = ContentAlignApp(css_path="content_align.css")
-app.run()
