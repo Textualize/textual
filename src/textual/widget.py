@@ -12,6 +12,7 @@ from typing import (
     ClassVar,
     Collection,
     Iterable,
+    Iterator,
     NamedTuple,
 )
 
@@ -626,7 +627,7 @@ class Widget(DOMNode):
         Returns:
             bool: True if this widget may be scrolled.
         """
-        return self.is_container
+        return self.styles.layout is not None or bool(self.children)
 
     @property
     def layer(self) -> str:
@@ -699,7 +700,6 @@ class Widget(DOMNode):
         Returns:
             bool: True if the scroll position changed, otherwise False.
         """
-        self.log(self, x, y, verbosity=0)
         scrolled_x = scrolled_y = False
         if animate:
             # TODO: configure animation speed
@@ -1035,7 +1035,7 @@ class Widget(DOMNode):
 
                 self.scroll_x = self.validate_scroll_x(self.scroll_x)
                 self.scroll_y = self.validate_scroll_y(self.scroll_y)
-                # self.refresh(layout=True)
+                self.refresh(layout=True)
                 self.scroll_to(self.scroll_x, self.scroll_y)
                 # self.call_later(self.scroll_to, self.scroll_x, self.scroll_y)
             else:

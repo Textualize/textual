@@ -69,19 +69,19 @@ class Stopwatch(Static):
 
 
 class StopwatchApp(App):
-    """Manage the timers."""
-
-    def on_load(self) -> None:
-        """Called when the app first loads."""
-        self.bind("a", "add_stopwatch", description="Add")
-        self.bind("r", "remove_stopwatch", description="Remove")
-        self.bind("d", "toggle_dark", description="Dark mode")
+    """A Textual app to manage stopwatches."""
 
     def compose(self) -> ComposeResult:
         """Called to ad widgets to the app."""
         yield Header()
         yield Footer()
         yield Container(Stopwatch(), Stopwatch(), Stopwatch(), id="timers")
+
+    def on_load(self) -> None:
+        """Called when the app first loads."""
+        self.bind("d", "toggle_dark", description="Dark mode")
+        self.bind("a", "add_stopwatch", description="Add")
+        self.bind("r", "remove_stopwatch", description="Remove")
 
     def action_add_stopwatch(self) -> None:
         """An action to add a timer."""
@@ -91,7 +91,7 @@ class StopwatchApp(App):
 
     def action_remove_stopwatch(self) -> None:
         """Called to remove a timer."""
-        timers = self.query("#timers Stopwatch")
+        timers = self.query("Stopwatch")
         if timers:
             timers.last().remove()
 

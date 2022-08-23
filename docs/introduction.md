@@ -326,13 +326,18 @@ You can declare a reactive attribute with `textual.reactive.Reactive`. Let's use
 
 Here we have created two reactive attributes: `start_time` and `time`. These attributes will be available on `self` as if you had assigned them in `__init__`. If you write to either of these attributes the widget will update automatically.
 
-!!! info
+!!! info 
 
-    `Reactive` is an example of a Python _descriptor_, which allows you to dynamically create properties.
+    The `monotonic` function in this example is imported from the standard library `time` module. It is similar to `time.time` but won't go backwards if the system clock is changed.
 
-The first argument to `Reactive` may be a default value or a callable that returns the default value. In the example, the default for `start_time` is `monotonic` which is a function that returns the time. When `TimeDisplay` is mounted, the `start_time` attribute will be assigned the result of `monotonic()`.
+The first argument to `Reactive` may be a default value or a callable that returns the default value. In the example, the default for `start_time` is `monotonic`. When `TimeDisplay` is mounted, the `start_time` attribute will be assigned the result of `monotonic()`.
 
 The `time` attribute has a simple float as the default value, so `self.time` will be `0` on start.
+
+
+!!! info
+
+    The `time` attribute is created with `Reactive.init` which calls watch methods when the widget is mounted. See below for an explanation of watch methods.
 
 In the `on_mount` handler method, the call to `set_interval` creates a timer object which calls `self.update_time` sixty times a second. This `update_time` method calculates the time elapsed since the widget started and assigns it to `self.time`. Which brings us to one of Reactive's super-powers.
 
@@ -393,3 +398,32 @@ If you run stopwatch06.py you will be able to use the stopwatches independently.
 ```
 
 The only remaining feature of the Stopwatch app let to implement is the ability to add and remove timers.
+
+## Dynamic widgets
+
+It's convenient to build a user interface with the `compose` method. We may also want to add or remove widgets while the app is running.
+
+To add a new child widget call `mount()` on the parent. To remove a widget, call it's `remove()` method.
+
+Let's use these to implement adding and removing stopwatches to our app.
+
+```python title="stopwatch.py" hl_lines="83-84 86-90 92-96"
+--8<-- "docs/examples/introduction/stopwatch.py"
+```
+
+We've added two new actions: `action_add_stopwatch` to add a new stopwatch, and `action_remove_stopwatch`) to remove the last stopwatch. The `on_load` handler binds these actions to the ++a++ and ++r++ keys.
+
+The `action_add_stopwatch` method creates and mounts a new `Stopwatch` instance. Note the call to `query_one` with a CSS selector of `"#timers"` which gets the timer's container via its ID (assigned in `compose`). Once mounted, the new Stopwatch will appear in the terminal. That last line in `action_add_stopwatch` calls `scroll_visible` which will scroll the container to make the new Stopwatch visible (if necessary).
+
+The `action_remove_stopwatch` calls `query` with a CSS selector of `"Stopwatch"` which gets all the `Stopwatch` widgets. If there are stopwatches then the action calls `last()` to get the last stopwatch, and `remove()` to remove it.
+
+If you run `stopwatch.py` now you can add a new stopwatch with the ++a++ key and remove a stopwatch with ++r++.
+
+```{.textual path="docs/examples/introduction/stopwatch.py" press="d,a,a,a,a,a,a,a,tab,enter,_,_,_,_,tab,_"}
+```
+
+## What next?
+
+Congratulations on building your first Textual application! This introduction has covered a lot of ground. If you are the type that prefers to learn a framework by coding, feel free. You could tweak stopwatch.py or look through the examples.
+
+Read the guide for the full details on how to build sophisticated TUI applications with Textual.

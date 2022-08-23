@@ -940,12 +940,12 @@ class App(Generic[ReturnType], DOMNode):
             is_renderable(renderable) for renderable in renderables
         ), "Can only call panic with strings or Rich renderables"
 
-        prerendered = [
+        pre_rendered = [
             Segments(self.console.render(renderable, self.console.options))
             for renderable in renderables
         ]
 
-        self._exit_renderables.extend(prerendered)
+        self._exit_renderables.extend(pre_rendered)
         self.close_messages_no_wait()
 
     def on_exception(self, error: Exception) -> None:

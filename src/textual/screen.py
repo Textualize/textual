@@ -13,6 +13,7 @@ from ._callback import invoke
 from .geometry import Offset, Region, Size
 from ._compositor import Compositor, MapGeometry
 from .messages import CallbackType
+from ._profile import timer
 from .reactive import Reactive
 from .renderables.blank import Blank
 from ._timer import Timer

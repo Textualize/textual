@@ -320,13 +320,16 @@ class Stylesheet:
             animate (bool, optional): Animate changed rules. Defaults to ``False``.
         """
 
+        # TODO: Need to optimize to make applying stylesheet more efficient
+        # I think we can pre-calculate which rules may be applicable to a given node
+
         # Dictionary of rule attribute names e.g. "text_background" to list of tuples.
         # The tuples contain the rule specificity, and the value for that rule.
         # We can use this to determine, for a given rule, whether we should apply it
         # or not by examining the specificity. If we have two rules for the
         # same attribute, then we can choose the most specific rule and use that.
         rule_attributes: dict[str, list[tuple[Specificity6, object]]]
-        rule_attributes = defaultdict(list)
+        rule_attributes = {}
 
         _check_rule = self._check_rule
 
@@ -338,7 +341,9 @@ class Stylesheet:
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker
                 ):
-                    rule_attributes[key].append((rule_specificity, value))
+                    rule_attributes.setdefault(key, []).append(
+                        (rule_specificity, value)
+                    )
 
         # For each rule declared for this node, keep only the most specific one
         get_first_item = itemgetter(0)
@@ -433,11 +438,13 @@ class Stylesheet:
         apply = self.apply
         for node in root.walk_children():
             apply(node, animate=animate)
-            if isinstance(node, Widget):
+            if isinstance(node, Widget) and node.is_scrollable:
                 if node.show_vertical_scrollbar:
                     apply(node.vertical_scrollbar)
                 if node.show_horizontal_scrollbar:
                     apply(node.horizontal_scrollbar)
+                if node.show_horizontal_scrollbar and node.show_vertical_scrollbar:
+                    apply(node.scrollbar_corner)
 
 
 if __name__ == "__main__":

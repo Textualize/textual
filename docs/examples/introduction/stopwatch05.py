@@ -10,7 +10,7 @@ class TimeDisplay(Static):
     """A widget to display elapsed time."""
 
     start_time = Reactive(monotonic)
-    time = Reactive(0.0)
+    time = Reactive.init(0.0)
 
     def on_mount(self) -> None:
         """Event handler called when widget is added to the app."""
