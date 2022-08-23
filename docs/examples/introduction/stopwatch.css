@@ -30,25 +30,25 @@ Button {
     dock: right;
 }
 
-Stopwatch.started {   
+.started {   
     text-style: bold;
     background: $success;
     color: $text-success;
 }
 
-Stopwatch.started TimeDisplay {
+.started TimeDisplay {
     opacity: 100%;
 }
 
-Stopwatch.started #start {
+.started #start {
     display: none
 }
 
-Stopwatch.started #stop {
+.started #stop {
     display: block
 }
 
-Stopwatch.started #reset {
+.started #reset {
     visibility: hidden
 }
 
