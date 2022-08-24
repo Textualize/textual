@@ -78,7 +78,7 @@ class Cell:
 
 
 class Coord(NamedTuple):
-    """An object to represent the cordinate of a cell within the data table."""
+    """An object to represent the coordinate of a cell within the data table."""
 
     row: int
     column: int
