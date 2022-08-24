@@ -42,4 +42,4 @@ If you installed the dev dependencies you have have access to the `textual` CLI 
 textual --help
 ```
 
-See [devtools](getting_started.md) for more about the `textual` command.
+See [devtools](guide/devtools.md) for more about the `textual` command.
