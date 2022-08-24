@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from typing import Awaitable, Callable, Type, TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Awaitable, Callable, Type, TypeVar
 
 import rich.repr
 from rich.style import Style
 
-from . import log
-from .geometry import Offset, Size
-from .message import Message
 from ._types import MessageTarget
-from .keys import Keys, KEY_VALUES
+from .geometry import Offset, Size
+from .keys import KEY_VALUES, Keys
+from .message import Message
 
 MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
 
@@ -85,7 +84,14 @@ class Action(Event):
 
 
 class Resize(Event, verbosity=2, bubble=False):
-    """Sent when the app or widget has been resized."""
+    """Sent when the app or widget has been resized.
+    Args:
+        sender (MessageTarget): The sender of the event (the Screen).
+        size (Size): The new size of the Widget.
+        virtual_size (Size): The virtual size (scrollable size) of the Widget.
+        container_size (Size | None, optional): The size of the Widget's container widget. Defaults to None.
+
+    """
 
     __slots__ = ["size", "virtual_size", "container_size"]
 
@@ -96,14 +102,6 @@ class Resize(Event, verbosity=2, bubble=False):
         virtual_size: Size,
         container_size: Size | None = None,
     ) -> None:
-        """
-
-        Args:
-            sender (MessageTarget): The sender of the event (the Screen).
-            size (Size): The new size of the Widget.
-            virtual_size (Size): The virtual size (scrollable size) of the Widget.
-            container_size (Size | None, optional): The size of the Widget's container widget. Defaults to None.
-        """
         self.size = size
         self.virtual_size = virtual_size
         self.container_size = size if container_size is None else container_size
@@ -153,15 +151,14 @@ class MouseCapture(Event, bubble=False):
 
     When a mouse has been captures, all further mouse events will be sent to the capturing widget.
 
+
+    Args:
+        sender (MessageTarget): The sender of the event, (in this case the app).
+        mouse_position (Point): The position of the mouse when captured.
+
     """
 
     def __init__(self, sender: MessageTarget, mouse_position: Offset) -> None:
-        """
-
-        Args:
-            sender (MessageTarget): The sender of the event, (in this case the app).
-            mouse_position (Point): The position of the mouse when captured.
-        """
         super().__init__(sender)
         self.mouse_position = mouse_position
 
@@ -171,14 +168,14 @@ class MouseCapture(Event, bubble=False):
 
 @rich.repr.auto
 class MouseRelease(Event, bubble=False):
-    """Mouse has been released."""
+    """Mouse has been released.
+
+    Args:
+        sender (MessageTarget): The sender of the event, (in this case the app).
+        mouse_position (Point): The position of the mouse when released.
+    """
 
     def __init__(self, sender: MessageTarget, mouse_position: Offset) -> None:
-        """
-        Args:
-            sender (MessageTarget): The sender of the event, (in this case the app).
-            mouse_position (Point): The position of the mouse when released.
-        """
         super().__init__(sender)
         self.mouse_position = mouse_position
 
@@ -192,17 +189,16 @@ class InputEvent(Event):
 
 @rich.repr.auto
 class Key(InputEvent):
-    """Sent when the user hits a key on the keyboard"""
+    """Sent when the user hits a key on the keyboard.
+
+    Args:
+        sender (MessageTarget): The sender of the event (the App)
+        key (str): The pressed key if a single character (or a longer string for special characters)
+    """
 
     __slots__ = ["key"]
 
     def __init__(self, sender: MessageTarget, key: str) -> None:
-        """
-
-        Args:
-            sender (MessageTarget): The sender of the event (the App)
-            key (str): The pressed key if a single character (or a longer string for special characters)
-        """
         super().__init__(sender)
         self.key = key.value if isinstance(key, Keys) else key
 
@@ -215,14 +211,30 @@ class Key(InputEvent):
         isn't defined in key bindings is printable.
 
         Returns:
-            bool: True if the key is printable. False otherwise.
+            bool: True if the key is printable.
         """
         return self.key == Keys.Space or self.key not in KEY_VALUES
 
 
 @rich.repr.auto
 class MouseEvent(InputEvent, bubble=True, verbosity=2):
-    """Sent in response to a mouse event"""
+    """Sent in response to a mouse event.
+
+    Args:
+        sender (MessageTarget): The sender of the event.
+        x (int): The relative x coordinate.
+        y (int): The relative y coordinate.
+        delta_x (int): Change in x since the last message.
+        delta_y (int): Change in y since the last message.
+        button (int): Indexed of the pressed button.
+        shift (bool): True if the shift key is pressed.
+        meta (bool): True if the meta key is pressed.
+        ctrl (bool): True if the ctrl key is pressed.
+        screen_x (int, optional): The absolute x coordinate.
+        screen_y (int, optional): The absolute y coordinate.
+        style (Style, optional): The Rich Style under the mouse cursor.
+
+    """
 
     __slots__ = [
         "x",
@@ -253,22 +265,6 @@ class MouseEvent(InputEvent, bubble=True, verbosity=2):
         screen_y: int | None = None,
         style: Style | None = None,
     ) -> None:
-        """
-
-        Args:
-            sender (MessageTarget): The sender of the event.
-            x (int): The relative x coordinate.
-            y (int): The relative y coordinate.
-            delta_x (int): Change in x since the last message.
-            delta_y (int): Change in y since the last message.
-            button (int): Indexed of the pressed button.
-            shift (bool): True if the shift key is pressed.
-            meta (bool): True if the meta key is pressed.
-            ctrl (bool): True if the ctrl key is pressed.
-            screen_x (int, optional): The absolute x coordinate.
-            screen_y (int, optional): The absolute y coordinate.
-            style (Style, optional): The Rich Style under the mouse cursor.
-        """
         super().__init__(sender)
         self.x = x
         self.y = y
@@ -424,14 +420,13 @@ class Paste(Event, bubble=False):
     This event will only appear when running in a terminal emulator that supports
     bracketed paste mode. Textual will enable bracketed pastes when an app starts,
     and disable it when the app shuts down.
+
+    Args:
+        sender (MessageTarget): The sender of the event, (in this case the app).
+        text: The text that has been pasted.
     """
 
     def __init__(self, sender: MessageTarget, text: str) -> None:
-        """
-        Args:
-            sender (MessageTarget): The sender of the event, (in this case the app).
-            text: The text that has been pasted
-        """
         super().__init__(sender)
         self.text = text
 

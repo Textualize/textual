@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import sys
 from functools import lru_cache
-from operator import itemgetter, attrgetter
+from operator import attrgetter, itemgetter
 from typing import Any, Collection, NamedTuple, Tuple, TypeVar, Union, cast
 
 if sys.version_info >= (3, 10):

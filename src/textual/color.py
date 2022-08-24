@@ -9,9 +9,9 @@ exception should be when passing things to a Rich renderable, which will need to
 
 from __future__ import annotations
 
-from colorsys import rgb_to_hls, hls_to_rgb
-from functools import lru_cache
 import re
+from colorsys import hls_to_rgb, rgb_to_hls
+from functools import lru_cache
 from operator import itemgetter
 from typing import Callable, NamedTuple
 
@@ -23,11 +23,11 @@ from rich.style import Style
 from rich.text import Text
 
 from textual.css.scalar import percentage_string_to_float
-from textual.css.tokenize import COMMA, OPEN_BRACE, CLOSE_BRACE, DECIMAL, PERCENT
+from textual.css.tokenize import CLOSE_BRACE, COMMA, DECIMAL, OPEN_BRACE, PERCENT
 from textual.suggestions import get_suggestion
+
 from ._color_constants import COLOR_NAME_TO_RGB
 from .geometry import clamp
-
 
 _TRUECOLOR = ColorType.TRUECOLOR
 
