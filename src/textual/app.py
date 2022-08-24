@@ -596,7 +596,7 @@ class App(Generic[ReturnType], DOMNode):
                     assert press
                     driver = app._driver
                     assert driver is not None
-                    await asyncio.sleep(0.05)
+                    await asyncio.sleep(0.01)
                     for key in press:
                         if key == "_":
                             print("(pause)")
@@ -604,7 +604,7 @@ class App(Generic[ReturnType], DOMNode):
                         else:
                             print(f"press {key!r}")
                             driver.send_event(events.Key(self, key))
-                            await asyncio.sleep(0.02)
+                            await asyncio.sleep(0.01)
                     if screenshot:
                         self._screenshot = self.export_screenshot(
                             title=screenshot_title

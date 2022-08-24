@@ -6,8 +6,7 @@ nav:
   - "getting_started.md"
   - "introduction.md"
   - Guide:
-    - "guide/devtools.md"
-    - "guide/guide.md"    
+    - "guide/devtools.md" 
     - "guide/CSS.md"
     - "guide/events.md"
  
