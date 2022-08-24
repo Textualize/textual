@@ -345,7 +345,7 @@ mkdocs = ">=1.1"
 
 [[package]]
 name = "mkdocs-material"
-version = "8.3.9"
+version = "8.4.1"
 description = "Documentation that simply works"
 category = "dev"
 optional = false

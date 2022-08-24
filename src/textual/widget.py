@@ -12,7 +12,6 @@ from typing import (
     ClassVar,
     Collection,
     Iterable,
-    Iterator,
     NamedTuple,
 )
 

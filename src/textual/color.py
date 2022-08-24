@@ -1,12 +1,9 @@
 """
 Manages Color in Textual.
 
-All instances where the developer is presented with a color should use this class. The only
+All instances where the developer is presented with a color will use this class. The only
 exception should be when passing things to a Rich renderable, which will need to use the
 `rich_color` attribute to perform a conversion.
-
-I'm not entirely happy with burdening the user with two similar color classes. In a future
-update we might add a protocol to convert automatically so the dev could use them interchangeably.
 
 """
 

@@ -357,12 +357,13 @@ class Region(NamedTuple):
 
     @property
     def column_span(self) -> tuple[int, int]:
-        """Get the start and end column (x coord).
+        """Get the start and end columns (x coord).
 
         The end value is exclusive.
 
         Returns:
             tuple[int, int]: Pair of x coordinates (column numbers).
+
         """
         return (self.x, self.x + self.width)
 
@@ -374,6 +375,7 @@ class Region(NamedTuple):
 
         Returns:
             tuple[int, int]: Pair of y coordinates (line numbers).
+
         """
         return (self.y, self.y + self.height)
 
@@ -402,7 +404,7 @@ class Region(NamedTuple):
         """Get the area within the region.
 
         Returns:
-            int: area.
+            int: Area covered by this region.
 
         """
         return self.width * self.height
