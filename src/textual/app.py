@@ -132,7 +132,17 @@ class _NullFile:
 
 @rich.repr.auto
 class App(Generic[ReturnType], DOMNode):
-    """The base class for Textual Applications"""
+    """The base class for Textual Applications.
+
+    Args:
+        driver_class (Type[Driver] | None, optional): Driver class or ``None`` to auto-detect. Defaults to None.
+        log_path (str | PurePath, optional): Path to log file, or "" to disable. Defaults to "".
+        log_verbosity (int, optional): Log verbosity from 0-3. Defaults to 1.
+        title (str, optional): Default title of the application. Defaults to "Textual Application".
+        css_path (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
+        watch_css (bool, optional): Watch CSS for changes. Defaults to False.
+
+    """
 
     CSS = """
     App {
@@ -157,16 +167,6 @@ class App(Generic[ReturnType], DOMNode):
         css_path: str | PurePath | None = None,
         watch_css: bool = False,
     ):
-        """Textual application base class
-
-        Args:
-            driver_class (Type[Driver] | None, optional): Driver class or ``None`` to auto-detect. Defaults to None.
-            log_path (str | PurePath, optional): Path to log file, or "" to disable. Defaults to "".
-            log_verbosity (int, optional): Log verbosity from 0-3. Defaults to 1.
-            title (str, optional): Default title of the application. Defaults to "Textual Application".
-            css_path (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
-            watch_css (bool, optional): Watch CSS for changes. Defaults to False.
-        """
         # N.B. This must be done *before* we call the parent constructor, because MessagePump's
         # constructor instantiates a `asyncio.PriorityQueue` and in Python versions older than 3.10
         # this will create some first references to an asyncio loop.
@@ -255,22 +255,42 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def devtools_enabled(self) -> bool:
-        """Check if devtools are enabled."""
+        """Check if devtools are enabled.
+
+        Returns:
+            bool: True if devtools are enabled.
+
+        """
         return "devtools" in self.features
 
     @property
     def debug(self) -> bool:
-        """Check if debug mode is enabled."""
+        """Check if debug mode is enabled.
+
+        Returns:
+            bool: True if debug mode is enabled.
+
+        """
         return "debug" in self.features
 
     @property
     def is_headless(self) -> bool:
-        """Check if the app is running in 'headless' mode."""
+        """Check if the app is running in 'headless' mode.
+
+        Returns:
+            bool: True if the app is in headless mode.
+
+        """
         return "headless" in self.features
 
     @property
     def screen_stack(self) -> list[Screen]:
-        """Get a *copy* of the screen stack."""
+        """Get a *copy* of the screen stack.
+
+        Returns:
+            list[Screen]: List of screens.
+
+        """
         return self._screen_stack.copy()
 
     def exit(self, result: ReturnType | None = None) -> None:
@@ -284,7 +304,12 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def focus_chain(self) -> list[Widget]:
-        """Get widgets that may receive focus, in focus order."""
+        """Get widgets that may receive focus, in focus order.
+
+        Returns:
+            list[Widget]: List of Widgets in focus order.
+
+        """
         widgets: list[Widget] = []
         add_widget = widgets.append
         root = self.screen

@@ -2,24 +2,22 @@ from __future__ import annotations
 
 import sys
 
-from rich.console import RenderableType
 import rich.repr
+from rich.console import RenderableType
 from rich.style import Style
 
-
-from . import events, messages, errors
+from . import errors, events, messages
 from ._callback import invoke
-
-from .geometry import Offset, Region, Size
 from ._compositor import Compositor, MapGeometry
+from ._timer import Timer
 from ._types import CallbackType
+from .geometry import Offset, Region, Size
 from .reactive import Reactive
 from .renderables.blank import Blank
-from ._timer import Timer
 from .widget import Widget
 
 if sys.version_info >= (3, 8):
-    from typing import Final, Callable, Awaitable
+    from typing import Final
 else:
     from typing_extensions import Final
 
