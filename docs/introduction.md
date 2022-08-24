@@ -35,6 +35,10 @@ python stopwatch.py
 
 ## Type hints (in brief)
 
+!!! tip inline end
+
+    Type hints are entirely optional in Textual. We've included them in the example code but it's up to you wether you add them to your own projects.
+
 We're a big fan of Python type hints at Textualize. If you haven't encountered type hinting, its a way to express the types of your data, parameters, and return values. Type hinting allows tools like [Mypy](https://mypy.readthedocs.io/en/stable/) to catch potential bugs before your code runs.
 
 The following function contains type hints:
@@ -48,10 +52,6 @@ def repeat(text: str, count: int) -> str:
 - Parameter types follow a colon. So `text: str` indicates that `text` requires a string and `count: int` means that `count` requires an integer.
 - Return types follow `->`. So `-> str:` indicates that this method returns a string.
 
-
-!!! note
-
-    Type hints are entirely optional in Textual. We've included them in the example code but it's up to you wether you add them to your own projects.
 
 ## The App class
 
@@ -175,13 +175,12 @@ self.styles.background = "blue"
 self.styles.color = "white"
 ```
 
-While its possible to set all styles for an app this way, Textual prefers to use CSS.
-
-CSS files are data files loaded by your app which contain information about styles to apply to your widgets. 
-
-!!! note
+!!! info inline end
 
     Don't worry if you have never worked with CSS before. The dialect of CSS we use is greatly simplified over web based CSS and easy to learn!
+
+    
+While its possible to set all styles for an app this way, it is rarely necessary. Textual has support for CSS (Cascading Style Sheets), a technology used by web browsers. CSS files are data files loaded by your app which contain information about styles to apply to your widgets. 
 
 Let's add a CSS file to our application.
 
