@@ -103,6 +103,7 @@ class AppTest(App):
             # End of simulated time: we just shut down ourselves:
             assert not run_task.done()
             await self.shutdown()
+            await run_task
 
         return get_running_state_context_manager()
 

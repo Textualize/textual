@@ -72,7 +72,7 @@ class StopwatchApp(App):
     """A Textual app to manage stopwatches."""
 
     def compose(self) -> ComposeResult:
-        """Called to ad widgets to the app."""
+        """Called to add widgets to the app."""
         yield Header()
         yield Footer()
         yield Container(Stopwatch(), Stopwatch(), Stopwatch(), id="timers")

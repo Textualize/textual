@@ -2,7 +2,7 @@
 
 Welcome to the Textual Introduction!
 
-By the end of this page you should have a good idea of the steps involved in creating an application with Textual.
+By the end of this page you should have a solid understanding of app development with Textual.
 
 !!! quote
 
