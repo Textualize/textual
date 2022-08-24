@@ -23,13 +23,32 @@ Here's what the finished app will look like:
 ```{.textual path="docs/examples/introduction/stopwatch.py" press="tab,enter,_,tab,enter,_,tab,_,enter,_,tab,enter,_,_"}
 ```
 
-### Try the code
+### Get the code
 
-If you want to try this out before reading the rest of this introduction (we recommend it), navigate to "docs/examples/introduction" within the repository and run the following:
+If you want to try the finished Stopwatch app and following along with the code first make sure you have [textual installed](getting_started.md) then check out the [Textual](https://github.com/Textualize/textual) GitHub repository:
 
-**TODO**: instructions how to checkout repo
+=== "HTTPS"
+
+    ```bash
+    git clone https://github.com/Textualize/textual.git
+    ```
+
+=== "SSH"
+
+    ```bash
+    git clone git@github.com:Textualize/textual.git
+    ```
+
+=== "GitHub CLI"
+
+    ```bash
+    gh repo clone Textualize/textual
+    ```
+
+With the repository cloned, navigate to `/docs/examples/introduction` and run `stopwatch.py`.
 
 ```bash
+cd textual/docs/examples/introduction
 python stopwatch.py
 ```
 
