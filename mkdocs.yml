@@ -6,8 +6,8 @@ nav:
   - "getting_started.md"
   - "introduction.md"
   - Guide:
-    - "guide/guide.md"
     - "guide/devtools.md"
+    - "guide/guide.md"    
     - "guide/CSS.md"
     - "guide/events.md"
  
@@ -44,19 +44,19 @@ nav:
     - "styles/color.md"
     - "styles/content_align.md"
     - "styles/display.md"
-    - "styles/min_height.md"
-    - "styles/max_height.md"
-    - "styles/min_width.md"
-    - "styles/max_width.md"
     - "styles/height.md"
     - "styles/margin.md"
+    - "styles/max_height.md"
+    - "styles/max_width.md"
+    - "styles/min_height.md"
+    - "styles/min_width.md"
     - "styles/offset.md"
     - "styles/outline.md"
     - "styles/overflow.md"
     - "styles/padding.md"
-    - "styles/scrollbar.md"
-    - "styles/scrollbar_size.md"
     - "styles/scrollbar_gutter.md"
+    - "styles/scrollbar_size.md"
+    - "styles/scrollbar.md"
     - "styles/text_style.md"
     - "styles/tint.md"
     - "styles/visibility.md"
@@ -64,9 +64,12 @@ nav:
   - Widgets: "/widgets/"
   - Reference:
     - "reference/app.md"
+    - "reference/color.md"
+    - "reference/dom_node.md"
     - "reference/events.md"
     - "reference/geometry.md"
     - "reference/widget.md"
+
 
 markdown_extensions:
   - admonition
@@ -115,6 +118,7 @@ theme:
 plugins:
 
 - search:
+- autorefs:
 - mkdocstrings:
     default_handler: python
     handlers:

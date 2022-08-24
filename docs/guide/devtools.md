@@ -16,7 +16,7 @@ You can run Textual apps with the `run` subcommand. If you supply a path to a Py
 textual run my_app.py
 ```
 
-The `run` sub-command assumes you have a Application instance called `app` in the global scope of your Python file. If the application is called something different, you can specify it with a colon following the filename:
+The `run` sub-command assumes you have a App instance called `app` in the global scope of your Python file. If the application is called something different, you can specify it with a colon following the filename:
 
 ```
 textual run my_app.py:alternative_app
@@ -24,7 +24,7 @@ textual run my_app.py:alternative_app
 
 !!! note
 
-    If the Python file contains a call to app.run() then you can launch the file as you normally would any other Python program. Running your app via `textual run` will give you access to a few Textual features such as dev mode which auto (re) loads your CSS if you change it.
+    If the Python file contains a call to app.run() then you can launch the file as you normally would any other Python program. Running your app via `textual run` will give you access to a few Textual features such as live editing of CSS files.
 
 ## Console
 
@@ -44,7 +44,7 @@ This should look something like the following:
 In the other console, run your application using `textual run` and the `--dev` switch:
 
 ```bash
-textual run my_app.py --dev
+textual run --dev my_app.py
 ```
 
 Anything you `print` from your application will be displayed in the console window. You can also call the `log()` method on App and Widget objects for advanced formatting. Try it with `self.log(self.tree)`.

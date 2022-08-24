@@ -52,11 +52,7 @@ class NoParent(Exception):
 
 @rich.repr.auto
 class DOMNode(MessagePump):
-    """A node in a hierarchy of things forming the UI.
-
-    Nodes are mountable and may be styled with CSS.
-
-    """
+    """The base class for object that can be in the Textual DOM (App and Widget)"""
 
     # Custom CSS
     CSS: ClassVar[str] = ""
@@ -285,6 +281,12 @@ class DOMNode(MessagePump):
 
     @property
     def classes(self) -> frozenset[str]:
+        """A frozenset of the current classes set on the widget.
+
+        Returns:
+            frozenset[str]: Set of class names.
+
+        """
         return frozenset(self._classes)
 
     @property
@@ -312,7 +314,10 @@ class DOMNode(MessagePump):
     @property
     def display(self) -> bool:
         """
-        Returns: ``True`` if this DOMNode is displayed (``display != "none"``), ``False`` otherwise.
+        Check if this widget should display or note.
+
+        Returns:
+            bool: ``True`` if this DOMNode is displayed (``display != "none"``) otherwise ``False`` .
         """
         return self.styles.display != "none" and not (self._closing or self._closed)
 
@@ -484,7 +489,12 @@ class DOMNode(MessagePump):
 
     @property
     def displayed_children(self) -> list[DOMNode]:
-        """The children which don't have display: none set."""
+        """The children which don't have display: none set.
+
+        Returns:
+            list[DOMNode]: Children of this widget which will be displayed.
+
+        """
         return [child for child in self.children if child.display]
 
     def get_pseudo_classes(self) -> Iterable[str]:

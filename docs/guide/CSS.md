@@ -16,7 +16,7 @@ CSS is typically stored in an external file with the extension `.css` alongside 
 
 Let's look at some Textual CSS.
 
-```css
+```sass
 Header {
   dock: top;
   height: 3;
@@ -28,7 +28,7 @@ Header {
 
 This is an example of a CSS _rule set_. There may be many such sections in any given CSS file.
 
-The first line is a _selector_, which tells Textual which Widget(s) to modify. In the above example, the styles will be applied to a widget defined in the Python class `Header`.
+Let's break this CSS code down a bit.
 
 ```css hl_lines="1"
 Header {
@@ -40,7 +40,7 @@ Header {
 }
 ```
 
-The lines inside the curly braces contains CSS _rules_, which consist of a rule name and rule value separated by a colon and ending in a semi-colon. Such rules are typically written one per line, but you could add additional rules as long as they are separated by semi-colons.
+The first line is a _selector_ which tells Textual which Widget(s) to modify. In the above example, the styles will be applied to a widget defined in the Python class `Header`.
 
 ```css hl_lines="2 3 4 5 6"
 Header {
@@ -51,6 +51,8 @@ Header {
   color: white;
 }
 ```
+
+The lines inside the curly braces contains CSS _rules_, which consist of a rule name and rule value separated by a colon and ending in a semi-colon. Such rules are typically written one per line, but you could add additional rules as long as they are separated by semi-colons.
 
 The first rule in the above example reads `"dock: top;"`. The rule name is `dock` which tells Textual to place the widget on a edge of the screen. The text after the colon is `top` which tells Textual to dock to the _top_ of the screen. Other valid values for dock are "right", "bottom", or "left"; but `top` is naturally appropriate for a header.
 
@@ -75,7 +77,7 @@ Let's look at a trivial Textual app.
     ```{.textual path="docs/examples/guide/dom1.py"}
     ```
 
-When you run this code you will have an instance of an app (ExampleApp) in memory. This app class will also create a Screen object. In DOM terms, the Screen is a _child_ of the app.
+When you run this code you will have an instance of an `ExampleApp` in memory. This app class will also create a `Screen` object. In DOM terms, the Screen is a _child_ of the app.
 
 With the above example, the DOM will look like the following:
 
@@ -121,7 +123,7 @@ To further explore the DOM, we're going to build a simple dialog with a question
     --8<-- "docs/examples/guide/dom3.py"
     ```
 
-We've added a Container to our DOM which (as the name suggests) is a container for other widgets. The container has a number of other widgets passed as positional arguments which will be added as the children of the container. Not all widgets accept child widgets in this way; for instance a Button widget doesn't need any children.
+We've added a Container to our DOM which (as the name suggests) is a container for other widgets. The container has a number of other widgets passed as positional arguments which will be added as the children of the container. Not all widgets accept child widgets in this way. A Button widget doesn't require any children, for example.
 
 Here's the DOM created by the above code:
 
@@ -149,7 +151,7 @@ You may have noticed that some of the constructors have additional keywords argu
 
 Here's the CSS file we are applying:
 
-```python
+```sass
 --8<-- "docs/examples/guide/dom4.css"
 ```
 
@@ -175,7 +177,7 @@ Finally, Textual CSS allows you to _live edit_ the styles in your app. If you ru
 textual run my_app.py --dev
 ```
 
-Being able to iterate on the design without restarting the Python code can make it much easier to design beautiful interfaces.
+Being able to iterate on the design without restarting the Python code can make it easier and faster to design beautiful interfaces.
 
 ## Selectors
 
@@ -198,7 +200,7 @@ class Button(Static):
 
 The following rule applies a border to this widget:
 
-```css
+```sass
 Button {
   border: solid blue;
 }
@@ -206,7 +208,7 @@ Button {
 
 The type selector will also match a widget's base classes. Consequently a `Static` selector will also style the button because the `Button` Python class extends `Static`.
 
-```css
+```sass
 Static {
   background: blue;
   border: rounded white;
@@ -231,15 +233,17 @@ yield Button(id="next")
 
 You can match an ID with a selector starting with a hash (`#`). Here is how you might draw a red outline around the above button:
 
-```css
+```sass
 #next {
   outline: red;
 }
 ```
 
+A Widget's `id` attribute can not be changed after the Widget has been constructed. 
+
 ### Class-name selector
 
-Every widget can have a number of class names applied. The term "class" here is borrowed from web CSS, and has a different meaning to a Python class. You can think of a CSS class as a tag of sorts. Widgets with the same tag may share a particular style.
+Every widget can have a number of class names applied. The term "class" here is borrowed from web CSS, and has a different meaning to a Python class. You can think of a CSS class as a tag of sorts. Widgets with the same tag will share styles.
 
 CSS classes are set via the widgets `classes` parameter in the constructor. Here's an example:
 
@@ -257,7 +261,7 @@ yield Button(classes="error disabled")
 
 To match a Widget with a given class in CSS you can precede the class name with a dot (`.`). Here's a rule with a class selector to match the `"success"` class name:
 
-```css
+```sass
 .success {
   background: green;
   color: white;
@@ -270,11 +274,20 @@ To match a Widget with a given class in CSS you can precede the class name with 
 
 Class name selectors may be _chained_ together by appending another full stop and class name. The selector will match a widget that has _all_ of the class names set. For instance, the following sets a red background on widgets that have both `error` _and_ `disabled` class names.
 
-```css
+```sass
 .error.disabled {
   background: darkred;
 }
 ```
+
+Unlike the `id` attribute a Widget's classes can be changed after the Widget was created. Adding and removing CSS classes is the recommended way of changing the display while your app is running. There are a few methods you can use to manage CSS classes.
+
+- [add_class()][textual.dom.DOMNode.add_class] Adds one or more classes to a widget.
+- [remove_class()][textual.dom.DOMNode.remove_class] Removes class name(s) from a widget.
+- [toggle_class()][textual.dom.DOMNode.toggle_class] Removes a class name if it is present, or adds the name if its not already present.
+- [has_class()][textual.dom.DOMNode.has_class] Checks if a class(es) is set on a widget.
+- [classes][textual.dom.DOMNode.classes] Is a frozen set of the class(es) set on a widget.
+
 
 ### Universal selector
 
@@ -282,7 +295,7 @@ The _universal_ selectors is denoted by an asterisk and will match _all_ widgets
 
 For example, the following will draw a red outline around all widgets:
 
-```css
+```sass
 * {
   outline: solid red;
 }
@@ -292,7 +305,7 @@ For example, the following will draw a red outline around all widgets:
 
 Pseudo classes can be used to match widgets in a particular state. Psuedo classes are set automatically by Textual. For instance, you might want a button to have a green background when the mouse cursor moves over it. We can do this with the `:hover` pseudo selector.
 
-```css
+```sass
 Button:hover {
   background: green;
 }
@@ -321,7 +334,7 @@ Here's a section of DOM to illustrate this combinator:
 
 Let's say we want to make the text of the buttons in the dialog bold, but we _don't_ want to change the Button in the sidebar. We can do this with the following rule:
 
-```css hl_lines="1"
+```sass hl_lines="1"
 #dialog Button {
   text-style: bold;
 }
@@ -349,7 +362,7 @@ Let's use this to match the Button in the sidebar given the following DOM:
 
 We can use the following CSS to style all buttons which have a parent with an ID of `sidebar`:
 
-```css
+```sass
 #sidebar > Button {
   text-style: underline;
 }
@@ -375,7 +388,7 @@ The specificity rules are usually enough to fix any conflicts in your stylesheet
 
 Here's an example that makes buttons blue when hovered over with the mouse, regardless of any other selectors that match Buttons:
 
-```css hl_lines="2"
+```sass hl_lines="2"
 Button:hover {
   background: blue !important;
 }

@@ -72,6 +72,10 @@ class RenderCache(NamedTuple):
 
 @rich.repr.auto
 class Widget(DOMNode):
+    """
+    A Widget is the base class for Textual widgets. Extent this class (or a sub-class) when defining your own widgets.
+
+    """
 
     CSS = """
     Widget{
@@ -488,6 +492,11 @@ class Widget(DOMNode):
 
     @property
     def scrollbar_gutter(self) -> Spacing:
+        """Spacing required to fit scrollbar(s)
+
+        Returns:
+            Spacing: Scrollbar gutter spacing.
+        """
         gutter = Spacing(
             0, self.scrollbar_size_vertical, self.scrollbar_size_horizontal, 0
         )
@@ -495,39 +504,73 @@ class Widget(DOMNode):
 
     @property
     def gutter(self) -> Spacing:
-        """Spacing for padding / border / scrollbars."""
+        """Spacing for padding / border / scrollbars.
+
+        Returns:
+            Spacing: Additional spacing around content area.
+
+        """
         return self.styles.gutter + self.scrollbar_gutter
 
     @property
     def size(self) -> Size:
-        """The size of the content area."""
+        """The size of the content area.
+
+        Returns:
+            Size: Content area size.
+        """
         return self.content_region.size
 
     @property
     def outer_size(self) -> Size:
-        """The size of the widget (including padding and border)."""
+        """The size of the widget (including padding and border).
+
+        Returns:
+            Size: Outer size.
+        """
         return self._size
 
     @property
     def container_size(self) -> Size:
-        """The size of the container (parent widget)."""
+        """The size of the container (parent widget).
+
+        Returns:
+            Size: Container size.
+        """
         return self._container_size
 
     @property
     def content_region(self) -> Region:
-        """Gets an absolute region containing the content (minus padding and border)."""
+        """Gets an absolute region containing the content (minus padding and border).
+
+        Returns:
+            Region: Screen region that contains a widget's content.
+        """
         content_region = self.region.shrink(self.gutter)
         return content_region
 
     @property
     def content_offset(self) -> Offset:
-        """An offset from the Widget origin where the content begins."""
+        """An offset from the Widget origin where the content begins.
+
+        Returns:
+            Offset: Offset from widget's origin.
+
+        """
         x, y = self.gutter.top_left
         return Offset(x, y)
 
     @property
     def region(self) -> Region:
-        """The region occupied by this widget, relative to the Screen."""
+        """The region occupied by this widget, relative to the Screen.
+
+        Raises:
+            NoScreen: If there is no screen.
+            errors.NoWidget: If the widget is not on the screen.
+
+        Returns:
+            Region: Region within screen occupied by widget.
+        """
         try:
             return self.screen.find_widget(self).region
         except NoScreen:
@@ -596,7 +639,12 @@ class Widget(DOMNode):
 
     @property
     def console(self) -> Console:
-        """Get the current console."""
+        """Get the current console.
+
+        Returns:
+            Console: A Rich console object.
+
+        """
         return active_app.get().console
 
     @property
@@ -631,7 +679,12 @@ class Widget(DOMNode):
 
     @property
     def layer(self) -> str:
-        """Get the name of this widgets layer."""
+        """Get the name of this widgets layer.
+
+        Returns:
+            str: Name of layer.
+
+        """
         return self.styles.layer or "default"
 
     @property
