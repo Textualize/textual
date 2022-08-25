@@ -8,7 +8,7 @@ The `margin` rule adds space around the entire widget. Margin may be specified w
 | `margin: 1 2;`     | Two values sets the margin for the top/bottom and left/right edges  |
 | `margin: 1 2 3 4;` | Four values sets top, right, bottom, and left margins independently |
 
-Margin may also be set individually by setting `margin-top`, `margin-right`, `margin-bottom`, or `margin-left` to an single value.
+Margin may also be set individually by setting `margin-top`, `margin-right`, `margin-bottom`, or `margin-left` to a single value.
 
 ## Syntax
 

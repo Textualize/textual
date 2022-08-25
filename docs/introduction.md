@@ -25,7 +25,7 @@ Here's what the finished app will look like:
 
 ### Get the code
 
-If you want to try the finished Stopwatch app and following along with the code first make sure you have [textual installed](getting_started.md) then check out the [Textual](https://github.com/Textualize/textual) GitHub repository:
+If you want to try the finished Stopwatch app and follow along with the code, first make sure you have [Textual installed](getting_started.md) and then check out the [Textual](https://github.com/Textualize/textual) GitHub repository:
 
 === "HTTPS"
 
@@ -56,9 +56,9 @@ python stopwatch.py
 
 !!! tip inline end
 
-    Type hints are entirely optional in Textual. We've included them in the example code but it's up to you wether you add them to your own projects.
+    Type hints are entirely optional in Textual. We've included them in the example code but it's up to you whether you add them to your own projects.
 
-We're a big fan of Python type hints at Textualize. If you haven't encountered type hinting, its a way to express the types of your data, parameters, and return values. Type hinting allows tools like [Mypy](https://mypy.readthedocs.io/en/stable/) to catch potential bugs before your code runs.
+We're a big fan of Python type hints at Textualize. If you haven't encountered type hinting, it's a way to express the types of your data, parameters, and return values. Type hinting allows tools like [Mypy](https://mypy.readthedocs.io/en/stable/) to catch potential bugs before your code runs.
 
 The following function contains type hints:
 
@@ -112,13 +112,13 @@ Widgets are re-usable components responsible for managing a part of the screen. 
 
 The App class is where most of the logic of Textual apps is written. It is responsible for loading configuration, setting up widgets, handling keys, and more.
 
-There are three methods in our stopwatch app currently. 
+Currently, there are three methods in our stopwatch app.
 
 -  **`compose()`** is where we construct a user interface with widgets. The `compose()` method may return a list of widgets, but it is generally easier to _yield_ them (making this method a generator). In the example code we yield instances of the widget classes we imported, i.e. the header and the footer.
 
-- **`on_load()`** is an _event handler_ method. Event handlers are called by Textual in response to external events like keys and mouse movements, and internal events needed to manage your application. Event handler methods begin with `on_` followed by the name of the event (in lower case). Hence, `on_load` it is called in response to the Load event which is sent just after the app starts. We're using this event to call `App.bind()` which connects a key to an _action_.
+- **`on_load()`** is an _event handler_ method. Event handlers are called by Textual in response to external events like keys and mouse movements, and internal events needed to manage your application. Event handler methods begin with `on_` followed by the name of the event (in lower case). Hence, `on_load` is called in response to the Load event which is sent just after the app starts. We're using this event to call `App.bind()` which connects a key to an _action_.
 
-- **`action_toggle_dark()`** defines an _action_ method. Actions are methods beginning with `action_` followed by the name of the action. The call to `bind()` in `on_load()` binds this the ++d++ key to this action. The body of this method flips the state of the `dark` boolean to toggle dark mode.
+- **`action_toggle_dark()`** defines an _action_ method. Actions are methods beginning with `action_` followed by the name of the action. The call to `bind()` in `on_load()` binds this the ++d++ key to this action. The body of this method flips the state of the `dark` Boolean to toggle dark mode.
 
 !!! note
 
@@ -171,7 +171,7 @@ The Button constructor takes a label to be displayed in the button ("Start", "St
 
 ### Composing the widgets
 
-To see our widgets with we first need to yield them from the app's `compose()` method:
+To see our widgets we first need to yield them from the app's `compose()` method:
 
 The new line in `Stopwatch.compose()` yields a single `Container` object which will create a scrolling list of stopwatches. When classes contain other widgets (like `Container`) they will typically accept their child widgets as positional arguments. We want to start the app with three stopwatches, so we construct three `Stopwatch` instances and pass them to the container's constructor.
 
@@ -199,7 +199,7 @@ self.styles.color = "white"
     Don't worry if you have never worked with CSS before. The dialect of CSS we use is greatly simplified over web based CSS and easy to learn!
 
     
-While its possible to set all styles for an app this way, it is rarely necessary. Textual has support for CSS (Cascading Style Sheets), a technology used by web browsers. CSS files are data files loaded by your app which contain information about styles to apply to your widgets. 
+While it's possible to set all styles for an app this way, it is rarely necessary. Textual has support for CSS (Cascading Style Sheets), a technology used by web browsers. CSS files are data files loaded by your app which contain information about styles to apply to your widgets. 
 
 Let's add a CSS file to our application.
 
@@ -207,7 +207,7 @@ Let's add a CSS file to our application.
 --8<-- "docs/examples/introduction/stopwatch03.py"
 ```
 
-Adding the `css_path` attribute to the app constructor tells textual to load the following file when it starts the app:
+Adding the `css_path` attribute to the app constructor tells Textual to load the following file when it starts the app:
 
 ```sass title="stopwatch03.css" 
 --8<-- "docs/examples/introduction/stopwatch03.css"
@@ -284,7 +284,7 @@ The last 3 blocks have a slightly different format. When the declaration begins 
 
 The buttons have a `dock` style which aligns the widget to a given edge. The start and stop buttons are docked to the left edge, while the reset button is docked to the right edge.
 
-You may have noticed that the stop button (`#stop` in the CSS) has `display: none;`. This tells Textual to not show the button. We do this because we don't want to dsplay the stop button when the timer is *not* running. Similarly we don't want to show the start button when the timer is running. We will cover how to manage such dynamic user interfaces in the next section.
+You may have noticed that the stop button (`#stop` in the CSS) has `display: none;`. This tells Textual to not show the button. We do this because we don't want to display the stop button when the timer is *not* running. Similarly we don't want to show the start button when the timer is running. We will cover how to manage such dynamic user interfaces in the next section.
 
 ### Dynamic CSS
 
@@ -320,7 +320,7 @@ Modifying a widget's CSS classes it a convenient way to modify visuals without i
 
 You can add and remove CSS classes with the `add_class()` and `remove_class()` methods. We will use these methods to connect the started state to the Start / Stop buttons.
 
-The following code adds a event handler for the `Button.Pressed` event.
+The following code adds an event handler for the `Button.Pressed` event.
 
 ```python title="stopwatch04.py" hl_lines="13-18"
 --8<-- "docs/examples/introduction/stopwatch04.py"
@@ -418,13 +418,13 @@ If you run stopwatch06.py you will be able to use the stopwatches independently.
 ```{.textual path="docs/examples/introduction/stopwatch06.py" title="stopwatch06.py" press="tab,enter,_,_,tab,enter,_,tab"}
 ```
 
-The only remaining feature of the Stopwatch app let to implement is the ability to add and remove timers.
+The only remaining feature of the Stopwatch app left to implement is the ability to add and remove timers.
 
 ## Dynamic widgets
 
 It's convenient to build a user interface with the `compose` method. We may also want to add or remove widgets while the app is running.
 
-To add a new child widget call `mount()` on the parent. To remove a widget, call it's `remove()` method.
+To add a new child widget call `mount()` on the parent. To remove a widget, call its `remove()` method.
 
 Let's use these to implement adding and removing stopwatches to our app.
 
