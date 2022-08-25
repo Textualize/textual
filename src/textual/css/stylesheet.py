@@ -305,9 +305,11 @@ class Stylesheet:
         self.source = stylesheet.source
 
     @classmethod
-    def _check_rule(cls, rule: RuleSet, node: DOMNode) -> Iterable[Specificity3]:
+    def _check_rule(
+        cls, rule: RuleSet, css_path_nodes: list[DOMNode]
+    ) -> Iterable[Specificity3]:
         for selector_set in rule.selector_set:
-            if _check_selectors(selector_set.selectors, node.css_path_nodes):
+            if _check_selectors(selector_set.selectors, css_path_nodes):
                 yield selector_set.specificity
 
     def apply(self, node: DOMNode, animate: bool = False) -> None:
@@ -332,21 +334,47 @@ class Stylesheet:
         # same attribute, then we can choose the most specific rule and use that.
         rule_attributes: dict[str, list[tuple[Specificity6, object]]]
         rule_attributes = {}
+        rule_attributes_setdefault = rule_attributes.setdefault
 
         _check_rule = self._check_rule
 
+        css_path_nodes = node.css_path_nodes
+
+        path_ids = {path_node._id for path_node in css_path_nodes if path_node._id}
+        path_classes = {
+            class_name
+            for path_node in css_path_nodes
+            for class_name in path_node.classes
+        }
+        path_pseudo_classes = {
+            pseudo_class
+            for path_node in css_path_nodes
+            for pseudo_class in path_node.get_pseudo_classes()
+        }
+
         # Collect the rules defined in the stylesheet
         for rule in reversed(self.rules):
+            if rule.ids and not rule.ids.issubset(path_ids):
+                continue
+            if rule.classes and not rule.classes.issubset(path_classes):
+                continue
+            if rule.pseudo_classes and not rule.pseudo_classes.issubset(
+                path_pseudo_classes
+            ):
+                continue
+
             is_default_rules = rule.is_default_rules
             tie_breaker = rule.tie_breaker
-            for base_specificity in _check_rule(rule, node):
+            for base_specificity in _check_rule(rule, css_path_nodes):
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker
                 ):
-                    rule_attributes.setdefault(key, []).append(
+                    rule_attributes_setdefault(key, []).append(
                         (rule_specificity, value)
                     )
 
+        if not rule_attributes:
+            return
         # For each rule declared for this node, keep only the most specific one
         get_first_item = itemgetter(0)
         node_rules: RulesMap = cast(
@@ -382,7 +410,7 @@ class Stylesheet:
         base_styles = styles.base
 
         # Styles currently used on new rules
-        modified_rule_keys = {*base_styles.get_rules().keys(), *rules.keys()}
+        modified_rule_keys = base_styles.get_rules().keys() | rules.keys()
         # Current render rules (missing rules are filled with default)
         current_render_rules = styles.get_render_rules()
 
@@ -442,10 +470,9 @@ class Stylesheet:
             root (DOMNode): Root note to update.
             animate (bool, optional): Enable CSS animation. Defaults to False.
         """
-        print("update", root)
+
         self.update_nodes(root.walk_children(), animate=animate)
 
-    @timer("update_nodes")
     def update_nodes(self, nodes: Iterable[DOMNode], animate: bool = False) -> None:
         """Update styles for nodes.
 
@@ -455,7 +482,6 @@ class Stylesheet:
         """
         apply = self.apply
         nodes = list(nodes)
-        print(len(nodes), "NODES")
         for node in nodes:
             apply(node, animate=animate)
             if isinstance(node, Widget) and node.is_scrollable:

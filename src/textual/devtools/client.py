@@ -163,6 +163,7 @@ class DevtoolsClient:
                 if isinstance(log, str):
                     await websocket.send_str(log)
                 else:
+                    assert isinstance(log, bytes)
                     await websocket.send_bytes(log)
                 log_queue.task_done()
 
