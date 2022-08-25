@@ -194,7 +194,9 @@ class Widget(DOMNode):
         Returns:
             bool: True if horizontal and vertical scrolling is enabled.
         """
-        return self.allow_horizontal_scroll and self.allow_vertical_scroll
+        return self.is_scrollable and (
+            self.allow_horizontal_scroll or self.allow_vertical_scroll
+        )
 
     def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.
