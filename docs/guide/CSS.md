@@ -54,7 +54,7 @@ Header {
 
 The lines inside the curly braces contains CSS _rules_, which consist of a rule name and rule value separated by a colon and ending in a semi-colon. Such rules are typically written one per line, but you could add additional rules as long as they are separated by semi-colons.
 
-The first rule in the above example reads `"dock: top;"`. The rule name is `dock` which tells Textual to place the widget on a edge of the screen. The text after the colon is `top` which tells Textual to dock to the _top_ of the screen. Other valid values for dock are "right", "bottom", or "left"; but `top` is naturally appropriate for a header.
+The first rule in the above example reads `"dock: top;"`. The rule name is `dock` which tells Textual to place the widget on an edge of the screen. The text after the colon is `top` which tells Textual to dock to the _top_ of the screen. Other valid values for dock are "right", "bottom", or "left"; but `top` is naturally appropriate for a header.
 
 You may be able to guess what some of the the other rules do. We will cover those later.
 
