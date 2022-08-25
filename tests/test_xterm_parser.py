@@ -37,7 +37,7 @@ def parser():
     return XTermParser(sender=mock.sentinel, more_data=lambda: False)
 
 
-@pytest.mark.parametrize("chunk_size", [2,3,4,5,6])
+@pytest.mark.parametrize("chunk_size", [2, 3, 4, 5, 6])
 def test_varying_parser_chunk_sizes_no_missing_data(parser, chunk_size):
     end = "\x1b[8~"
     text = "ABCDEFGH"
@@ -54,7 +54,7 @@ def test_varying_parser_chunk_sizes_no_missing_data(parser, chunk_size):
 
 
 def test_bracketed_paste(parser):
-    """ When bracketed paste mode is enabled in the terminal emulator and
+    """When bracketed paste mode is enabled in the terminal emulator and
     the user pastes in some text, it will surround the pasted input
     with the escape codes "\x1b[200~" and "\x1b[201~". The text between
     these codes corresponds to a single `Paste` event in Textual.
@@ -90,7 +90,7 @@ def test_bracketed_paste_amongst_other_codes(parser):
 
 
 def test_cant_match_escape_sequence_too_long(parser):
-    """ The sequence did not match, and we hit the maximum sequence search
+    """The sequence did not match, and we hit the maximum sequence search
     length threshold, so each character should be issued as a key-press instead.
     """
     sequence = "\x1b[123456789123456789123"
@@ -109,15 +109,22 @@ def test_cant_match_escape_sequence_too_long(parser):
         assert events[index].key == character
 
 
-@pytest.mark.parametrize("chunk_size", [
-    pytest.param(2, marks=pytest.mark.xfail(reason="Fails when ESC at end of chunk")),
-    3,
-    pytest.param(4, marks=pytest.mark.xfail(reason="Fails when ESC at end of chunk")),
-    5,
-    6,
-])
+@pytest.mark.parametrize(
+    "chunk_size",
+    [
+        pytest.param(
+            2, marks=pytest.mark.xfail(reason="Fails when ESC at end of chunk")
+        ),
+        3,
+        pytest.param(
+            4, marks=pytest.mark.xfail(reason="Fails when ESC at end of chunk")
+        ),
+        5,
+        6,
+    ],
+)
 def test_unknown_sequence_followed_by_known_sequence(parser, chunk_size):
-    """ When we feed the parser an unknown sequence followed by a known
+    """When we feed the parser an unknown sequence followed by a known
     sequence. The characters in the unknown sequence are delivered as keys,
     and the known escape sequence that follows is delivered as expected.
     """
@@ -174,16 +181,19 @@ def test_double_escape(parser):
     assert [event.key for event in events] == ["escape"]
 
 
-@pytest.mark.parametrize("sequence, event_type, shift, meta", [
-    # Mouse down, with and without modifiers
-    ("\x1b[<0;50;25M", MouseDown, False, False),
-    ("\x1b[<4;50;25M", MouseDown, True, False),
-    ("\x1b[<8;50;25M", MouseDown, False, True),
-    # Mouse up, with and without modifiers
-    ("\x1b[<0;50;25m", MouseUp, False, False),
-    ("\x1b[<4;50;25m", MouseUp, True, False),
-    ("\x1b[<8;50;25m", MouseUp, False, True),
-])
+@pytest.mark.parametrize(
+    "sequence, event_type, shift, meta",
+    [
+        # Mouse down, with and without modifiers
+        ("\x1b[<0;50;25M", MouseDown, False, False),
+        ("\x1b[<4;50;25M", MouseDown, True, False),
+        ("\x1b[<8;50;25M", MouseDown, False, True),
+        # Mouse up, with and without modifiers
+        ("\x1b[<0;50;25m", MouseUp, False, False),
+        ("\x1b[<4;50;25m", MouseUp, True, False),
+        ("\x1b[<8;50;25m", MouseUp, False, True),
+    ],
+)
 def test_mouse_click(parser, sequence, event_type, shift, meta):
     """ANSI codes for mouse should be converted to Textual events"""
     events = list(parser.feed(sequence))
@@ -201,12 +211,15 @@ def test_mouse_click(parser, sequence, event_type, shift, meta):
     assert event.shift is shift
 
 
-@pytest.mark.parametrize("sequence, shift, meta, button", [
-    ("\x1b[<32;15;38M", False, False, 1),  # Click and drag
-    ("\x1b[<35;15;38M", False, False, 0),  # Basic cursor movement
-    ("\x1b[<39;15;38M", True, False, 0),  # Shift held down
-    ("\x1b[<43;15;38M", False, True, 0),  # Meta held down
-])
+@pytest.mark.parametrize(
+    "sequence, shift, meta, button",
+    [
+        ("\x1b[<32;15;38M", False, False, 1),  # Click and drag
+        ("\x1b[<35;15;38M", False, False, 0),  # Basic cursor movement
+        ("\x1b[<39;15;38M", True, False, 0),  # Shift held down
+        ("\x1b[<43;15;38M", False, True, 0),  # Meta held down
+    ],
+)
 def test_mouse_move(parser, sequence, shift, meta, button):
     events = list(parser.feed(sequence))
 
@@ -222,12 +235,15 @@ def test_mouse_move(parser, sequence, shift, meta, button):
     assert event.button == button
 
 
-@pytest.mark.parametrize("sequence", [
-    "\x1b[<64;18;25M",
-    "\x1b[<68;18;25M",
-    "\x1b[<72;18;25M",
-])
-def test_mouse_scroll_down(parser, sequence):
+@pytest.mark.parametrize(
+    "sequence",
+    [
+        "\x1b[<64;18;25M",
+        "\x1b[<68;18;25M",
+        "\x1b[<72;18;25M",
+    ],
+)
+def test_mouse_scroll_up(parser, sequence):
     """Scrolling the mouse with and without modifiers held down.
     We don't currently capture modifier keys in scroll events.
     """
@@ -237,24 +253,27 @@ def test_mouse_scroll_down(parser, sequence):
 
     event = events[0]
 
-    assert isinstance(event, MouseScrollDown)
+    assert isinstance(event, MouseScrollUp)
     assert event.x == 17
     assert event.y == 24
 
 
-@pytest.mark.parametrize("sequence, shift, meta", [
-    ("\x1b[<65;18;25M", False, False),
-    ("\x1b[<69;18;25M", True, False),
-    ("\x1b[<73;18;25M", False, True),
-])
-def test_mouse_scroll_up(parser, sequence, shift, meta):
+@pytest.mark.parametrize(
+    "sequence",
+    [
+        "\x1b[<65;18;25M",
+        "\x1b[<69;18;25M",
+        "\x1b[<73;18;25M",
+    ],
+)
+def test_mouse_scroll_down(parser, sequence):
     events = list(parser.feed(sequence))
 
     assert len(events) == 1
 
     event = events[0]
 
-    assert isinstance(event, MouseScrollUp)
+    assert isinstance(event, MouseScrollDown)
     assert event.x == 17
     assert event.y == 24
 
