@@ -359,8 +359,13 @@ class MouseScrollDown(InputEvent, verbosity=3, bubble=True):
         self.y = y
 
 
-class MouseScrollUp(MouseScrollDown, verbosity=3, bubble=True):
-    pass
+class MouseScrollUp(InputEvent, verbosity=3, bubble=True):
+    __slots__ = ["x", "y"]
+
+    def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
+        super().__init__(sender)
+        self.x = x
+        self.y = y
 
 
 class Click(MouseEvent, bubble=True):
