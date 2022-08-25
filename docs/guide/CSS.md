@@ -155,7 +155,7 @@ Here's the CSS file we are applying:
 --8<-- "docs/examples/guide/dom4.css"
 ```
 
-The CSS contains a number of rules sets with a selector and a list of rules. You can also add comments with text between `/*` and `*/` which will be ignored by Textual. Add comments to leave yourself reminders or to temporarily disable selectors.
+The CSS contains a number of rule sets with a selector and a list of rules. You can also add comments with text between `/*` and `*/` which will be ignored by Textual. Add comments to leave yourself reminders or to temporarily disable selectors.
 
 With the CSS in place, the output looks very different:
 
