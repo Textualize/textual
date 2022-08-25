@@ -11,18 +11,8 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class ScrollbarGutterApp(App):
-    CSS = """
-    Screen {
-        scrollbar-gutter: stable;
-    }
-    Static {
-        color: floralwhite;
-        background: darkmagenta;
-    }
-    """
-
     def compose(self):
-        yield Static(TEXT)
+        yield Static(TEXT, id="text-box")
 
 
-app = ScrollbarGutterApp()
+app = ScrollbarGutterApp(css_path="scrollbar_gutter.css")
