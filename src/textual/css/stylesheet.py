@@ -332,9 +332,8 @@ class Stylesheet:
         # We can use this to determine, for a given rule, whether we should apply it
         # or not by examining the specificity. If we have two rules for the
         # same attribute, then we can choose the most specific rule and use that.
-        rule_attributes: dict[str, list[tuple[Specificity6, object]]]
-        rule_attributes = {}
-        rule_attributes_setdefault = rule_attributes.setdefault
+        rule_attributes: defaultdict[str, list[tuple[Specificity6, object]]]
+        rule_attributes = defaultdict(list)
 
         _check_rule = self._check_rule
 
@@ -369,9 +368,7 @@ class Stylesheet:
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker
                 ):
-                    rule_attributes_setdefault(key, []).append(
-                        (rule_specificity, value)
-                    )
+                    rule_attributes[key].append((rule_specificity, value))
 
         if not rule_attributes:
             return
