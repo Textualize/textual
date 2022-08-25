@@ -1,6 +1,6 @@
 # MouseScrollUp
 
-The `MouseScrollUp` event is sent to a widget when scroll wheel (or trackpad equivalent) is moved _up_.
+The `MouseScrollUp` event is sent to a widget when the scroll wheel (or trackpad equivalent) is moved _up_.
 
 - [x] Bubbles
 
