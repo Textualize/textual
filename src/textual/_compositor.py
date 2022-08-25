@@ -183,6 +183,7 @@ class Compositor:
         # Note this may be a superset of self.map.keys() as some widgets may be invisible for various reasons
         self.widgets: set[Widget] = set()
 
+        # A lazy cache of visible (on screen) widgets
         self._visible_widgets: set[Widget] | None = set()
 
         # The top level widget
