@@ -714,14 +714,17 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self.screen.get_child(id)
 
-    def update_styles(self) -> None:
+    def update_styles(self, node: DOMNode | None = None) -> None:
         """Request update of styles.
 
         Should be called whenever CSS classes / pseudo classes change.
 
         """
-        self._require_stylesheet_update = True
-        self.check_idle()
+        if node is None:
+            self._require_stylesheet_update = True
+            self.check_idle()
+        else:
+            self.stylesheet.update(node, animate=True)
 
     def update_visible_styles(self) -> None:
         """Update visible styles only."""

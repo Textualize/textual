@@ -27,6 +27,8 @@ from .types import Specificity3, Specificity6
 from ..dom import DOMNode
 from .. import messages
 
+from .._profile import timer
+
 
 class StylesheetParseError(StylesheetError):
     def __init__(self, errors: StylesheetErrors) -> None:
@@ -354,7 +356,6 @@ class Stylesheet:
                 for name, specificity_rules in rule_attributes.items()
             },
         )
-
         self.replace_rules(node, node_rules, animate=animate)
 
         node._component_styles.clear()
@@ -433,6 +434,7 @@ class Stylesheet:
 
         node.post_message_no_wait(messages.StylesUpdated(sender=node))
 
+    @timer("update")
     def update(self, root: DOMNode, animate: bool = False) -> None:
         """Update styles on node and its children.
 
@@ -440,8 +442,10 @@ class Stylesheet:
             root (DOMNode): Root note to update.
             animate (bool, optional): Enable CSS animation. Defaults to False.
         """
-        self.update_nodes(root.walk_children())
+        print("update", root)
+        self.update_nodes(root.walk_children(), animate=animate)
 
+    @timer("update_nodes")
     def update_nodes(self, nodes: Iterable[DOMNode], animate: bool = False) -> None:
         """Update styles for nodes.
 
@@ -450,6 +454,8 @@ class Stylesheet:
             animate (bool, optional): Enable CSS animation. Defaults to False.
         """
         apply = self.apply
+        nodes = list(nodes)
+        print(len(nodes), "NODES")
         for node in nodes:
             apply(node, animate=animate)
             if isinstance(node, Widget) and node.is_scrollable:
