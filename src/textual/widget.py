@@ -987,7 +987,8 @@ class Widget(DOMNode):
         rich_style = self.rich_style
         if isinstance(renderable, Text):
             renderable.stylize(rich_style)
-            renderable.justify = self.styles.text_justify
+            if not renderable.justify:
+                renderable.justify = self.styles.text_justify
         else:
             renderable = Styled(renderable, rich_style)
 
