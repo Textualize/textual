@@ -982,11 +982,12 @@ class Widget(DOMNode):
         """
 
         if isinstance(renderable, str):
-            renderable = Text.from_markup(renderable)
+            renderable = Text.from_markup(renderable, justify=self.styles.text_justify)
 
         rich_style = self.rich_style
         if isinstance(renderable, Text):
             renderable.stylize(rich_style)
+            renderable.justify = self.styles.text_justify
         else:
             renderable = Styled(renderable, rich_style)
 

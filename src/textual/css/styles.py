@@ -41,6 +41,7 @@ from .constants import (
     VALID_OVERFLOW,
     VALID_SCROLLBAR_GUTTER,
     VALID_VISIBILITY,
+    VALID_JUSTIFY,
 )
 from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
@@ -56,6 +57,7 @@ from .types import (
     Specificity3,
     Specificity6,
     Visibility,
+    TextJustify,
 )
 
 if sys.version_info >= (3, 8):
@@ -141,6 +143,8 @@ class RulesMap(TypedDict, total=False):
 
     content_align_horizontal: AlignHorizontal
     content_align_vertical: AlignVertical
+
+    text_justify: TextJustify
 
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
@@ -248,6 +252,8 @@ class StylesBase(ABC):
     content_align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     content_align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
     content_align = AlignProperty()
+
+    text_justify = StringEnumProperty(VALID_JUSTIFY, "left")
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles contains the same rules."""
@@ -458,7 +464,6 @@ class StylesBase(ABC):
 @rich.repr.auto
 @dataclass
 class Styles(StylesBase):
-
     node: DOMNode | None = None
     _rules: RulesMap = field(default_factory=dict)
 

@@ -13,6 +13,7 @@ from textual.css.constants import (
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
     VALID_STYLE_FLAGS,
+    VALID_JUSTIFY,
 )
 
 if sys.version_info >= (3, 8):
@@ -644,6 +645,39 @@ def align_help_text() -> HelpText:
             Bullet(
                 f"Valid values for <vertical> are {friendly_list(VALID_ALIGN_VERTICAL)}",
             ),
+        ],
+    )
+
+
+def text_justify_help_text(context: str) -> HelpText:
+    """Help text to show when the user supplies an invalid value for the text-justify property
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property.
+    """
+    return HelpText(
+        summary="Invalid value for the [i]text-justify[/] property.",
+        bullets=[
+            *ContextSpecificBullets(
+                css=[
+                    Bullet(
+                        f"The [i]text-justify[/] property must be one of {friendly_list(VALID_JUSTIFY)}",
+                        examples=[
+                            Example("text-justify: center;"),
+                            Example("text-justify: right;"),
+                        ],
+                    )
+                ],
+                inline=[
+                    Bullet(
+                        f"The [i]text_justify[/] property must be one of {friendly_list(VALID_JUSTIFY)}",
+                        examples=[
+                            Example("widget.styles.text_justify = 'center'"),
+                            Example("widget.styles.text_justify = 'right'"),
+                        ],
+                    )
+                ],
+            ).get_by_context(context)
         ],
     )
 
