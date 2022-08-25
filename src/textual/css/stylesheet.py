@@ -459,7 +459,6 @@ class Stylesheet:
 
         node.post_message_no_wait(messages.StylesUpdated(sender=node))
 
-    @timer("update")
     def update(self, root: DOMNode, animate: bool = False) -> None:
         """Update styles on node and its children.
 

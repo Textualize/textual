@@ -65,12 +65,12 @@ class Screen(Widget):
 
     @property
     def widgets(self) -> list[Widget]:
-        """Get visible widgets."""
+        """Get all widgets."""
         return list(self._compositor.map.keys())
 
     @property
     def visible_widgets(self) -> list[Widget]:
-        """Get visible widgets."""
+        """Get a list of visible widgets."""
         return list(self._compositor.visible_widgets)
 
     def watch_dark(self, dark: bool) -> None:

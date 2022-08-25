@@ -310,6 +310,11 @@ class Compositor:
 
     @property
     def visible_widgets(self) -> set[Widget]:
+        """Get a set of visible widgets.
+
+        Returns:
+            set[Widget]: Widgets in the screen.
+        """
         if self._visible_widgets is None:
             in_screen = self.size.region.__contains__
             self._visible_widgets = {
