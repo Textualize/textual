@@ -147,7 +147,7 @@ To add a stylesheet we need to pass the path to a CSS file via the app classes' 
 --8<-- "docs/examples/guide/dom4.py"
 ```
 
-You may have noticed that some of the constructors have additional keywords argument: `id` and `classes`. These are used by the CSS to identify parts of the DOM. We will cover these in the next section.
+You may have noticed that some of the constructors have additional keyword argument: `id` and `classes`. These are used by the CSS to identify parts of the DOM. We will cover these in the next section.
 
 Here's the CSS file we are applying:
 
