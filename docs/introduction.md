@@ -45,7 +45,7 @@ If you want to try the finished Stopwatch app and following along with the code 
     gh repo clone Textualize/textual
     ```
 
-With the repository cloned, navigate to `/docs/examples/introduction` and run `stopwatch.py`.
+With the repository cloned, navigate to `docs/examples/introduction` and run `stopwatch.py`.
 
 ```bash
 cd textual/docs/examples/introduction
@@ -69,7 +69,7 @@ def repeat(text: str, count: int) -> str:
 ```
 
 - Parameter types follow a colon. So `text: str` indicates that `text` requires a string and `count: int` means that `count` requires an integer.
-- Return types follow `->`. So `-> str:` indicates that this method returns a string.
+- Return types follow `->`. So `-> str:` indicates this method returns a string.
 
 
 ## The App class
@@ -335,7 +335,7 @@ If you run "stopwatch04.py" now you will be able to toggle between the two state
 
 ## Reactive attributes
 
-A reoccurring theme in Textual is that you rarely need to explicitly update a widget. It is possible: you can call `refresh()` to display new data. However, Textual prefers to do this automatically via _reactive_ attributes.
+A reoccurring theme in Textual is that you rarely need to explicitly update a widget. It is possible: you can call [`refresh()`][textual.widget.Widget.refresh] to display new data. However, Textual prefers to do this automatically via _reactive_ attributes.
 
 You can declare a reactive attribute with `textual.reactive.Reactive`. Let's use this feature to create a timer that displays elapsed time and keeps it updated.
 

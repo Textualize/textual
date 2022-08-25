@@ -29,7 +29,7 @@ from .css.parse import parse_declarations
 from .css.styles import Styles, RenderStyles
 from .css.query import NoMatchingNodesError
 from .message_pump import MessagePump
-from ._timer import Timer
+from .timer import Timer
 
 if TYPE_CHECKING:
     from .app import App
@@ -515,7 +515,7 @@ class DOMNode(MessagePump):
                 node._set_dirty()
                 node._layout_required = True
 
-    def add_child(self, node: Widget) -> None:
+    def _add_child(self, node: Widget) -> None:
         """Add a new child node.
 
         Args:
@@ -524,7 +524,7 @@ class DOMNode(MessagePump):
         self.children._append(node)
         node._attach(self)
 
-    def add_children(self, *nodes: Widget, **named_nodes: Widget) -> None:
+    def _add_children(self, *nodes: Widget, **named_nodes: Widget) -> None:
         """Add multiple children to this node.
 
         Args:

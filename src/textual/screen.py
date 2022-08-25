@@ -9,7 +9,7 @@ from rich.style import Style
 from . import errors, events, messages
 from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
-from ._timer import Timer
+from .timer import Timer
 from ._types import CallbackType
 from .geometry import Offset, Region, Size
 from .reactive import Reactive

@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from . import _clock
 from ._callback import invoke
 from ._easing import DEFAULT_EASING, EASING
-from ._timer import Timer
+from .timer import Timer
 from ._types import MessageTarget, CallbackType
 
 if sys.version_info >= (3, 8):

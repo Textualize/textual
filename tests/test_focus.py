@@ -20,7 +20,7 @@ async def test_focus_chain():
     # Check empty focus chain
     assert not app.focus_chain
 
-    app.screen.add_children(
+    app.screen._add_children(
         Focusable(id="foo"),
         NonFocusable(id="bar"),
         Focusable(Focusable(id="Paul"), id="container1"),
@@ -37,7 +37,7 @@ async def test_focus_next_and_previous():
     app = App()
     app._set_active()
     app.push_screen(Screen())
-    app.screen.add_children(
+    app.screen._add_children(
         Focusable(id="foo"),
         NonFocusable(id="bar"),
         Focusable(Focusable(id="Paul"), id="container1"),

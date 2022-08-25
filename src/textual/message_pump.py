@@ -1,3 +1,11 @@
+"""
+
+A message pump is a class that processes messages.
+
+It is a base class for the App, Screen, and Widgets.
+
+"""
+
 from __future__ import annotations
 
 import asyncio
@@ -10,7 +18,7 @@ from weakref import WeakSet
 from . import events, log, messages
 from ._callback import invoke
 from ._context import NoActiveAppError, active_app
-from ._timer import Timer, TimerCallback
+from .timer import Timer, TimerCallback
 from .case import camel_to_snake
 from .events import Event
 from .message import Message
@@ -81,6 +89,9 @@ class MessagePump(metaclass=MessagePumpMeta):
         """
         Get the current app.
 
+        Returns:
+            App: The current app.
+
         Raises:
             NoActiveAppError: if no active app could be found for the current asyncio context
         """
@@ -90,14 +101,17 @@ class MessagePump(metaclass=MessagePumpMeta):
             raise NoActiveAppError()
 
     @property
-    def is_parent_active(self):
-        return self._parent and not self._parent._closed and not self._parent._closing
+    def is_parent_active(self) -> bool:
+        return bool(
+            self._parent and not self._parent._closed and not self._parent._closing
+        )
 
     @property
     def is_running(self) -> bool:
         return self._running
 
     def log(self, *args, **kwargs) -> None:
+        """Write to logs or devtools."""
         return self.app.log(*args, **kwargs, _textual_calling_frame=inspect.stack()[1])
 
     def _attach(self, parent: MessagePump) -> None:
@@ -123,7 +137,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Enable processing of messages types."""
         self._disabled_messages.difference_update(messages)
 
-    async def get_message(self) -> Message:
+    async def _get_message(self) -> Message:
         """Get the next event on the queue, or None if queue is closed.
 
         Returns:
@@ -142,7 +156,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             raise MessagePumpClosed("The message pump is now closed")
         return message
 
-    def peek_message(self) -> Message | None:
+    def _peek_message(self) -> Message | None:
         """Peek the message at the head of the queue (does not remove it from the queue),
         or return None if the queue is empty.
 
@@ -172,6 +186,17 @@ class MessagePump(metaclass=MessagePumpMeta):
         name: str | None = None,
         pause: bool = False,
     ) -> Timer:
+        """Make a function call after a delay.
+
+        Args:
+            delay (float): Time to wait before invoking callback.
+            callback (TimerCallback | None, optional): Callback to call after time has expired.. Defaults to None.
+            name (str | None, optional): Name of the timer (for debug). Defaults to None.
+            pause (bool, optional): Start timer paused. Defaults to False.
+
+        Returns:
+            Timer: A timer object.
+        """
         timer = Timer(
             self,
             delay,
@@ -194,6 +219,18 @@ class MessagePump(metaclass=MessagePumpMeta):
         repeat: int = 0,
         pause: bool = False,
     ):
+        """Call a function at periodic intervals.
+
+        Args:
+            interval (float): Time between calls.
+            callback (TimerCallback | None, optional): Function to call. Defaults to None.
+            name (str | None, optional): Name of the timer object. Defaults to None.
+            repeat (int, optional): Number of times to repeat the call or 0 for continuous. Defaults to 0.
+            pause (bool, optional): Start the timer paused. Defaults to False.
+
+        Returns:
+            Timer: A timer object.
+        """
         timer = Timer(
             self,
             interval,
@@ -209,7 +246,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def call_later(self, callback: Callable, *args, **kwargs) -> None:
         """Schedule a callback to run after all messages are processed and the screen
-        has been refreshed.
+        has been refreshed. Positional and keyword arguments are passed to the callable.
 
         Args:
             callback (Callable): A callable.
@@ -219,15 +256,15 @@ class MessagePump(metaclass=MessagePumpMeta):
         message = messages.InvokeLater(self, partial(callback, *args, **kwargs))
         self.post_message_no_wait(message)
 
-    def on_invoke_later(self, message: messages.InvokeLater) -> None:
+    def _on_invoke_later(self, message: messages.InvokeLater) -> None:
         # Forward InvokeLater message to the Screen
         self.app.screen._invoke_later(message.callback)
 
-    def close_messages_no_wait(self) -> None:
+    def _close_messages_no_wait(self) -> None:
         """Request the message queue to exit."""
         self._message_queue.put_nowait(None)
 
-    async def close_messages(self) -> None:
+    async def _close_messages(self) -> None:
         """Close message queue, and optionally wait for queue to finish processing."""
         if self._closed or self._closing:
             return
@@ -242,13 +279,14 @@ class MessagePump(metaclass=MessagePumpMeta):
             # Ensure everything is closed before returning
             await self._task
 
-    def start_messages(self) -> None:
-        self._task = asyncio.create_task(self.process_messages())
+    def _start_messages(self) -> None:
+        """Start messages task."""
+        self._task = asyncio.create_task(self._process_messages())
 
-    async def process_messages(self) -> None:
+    async def _process_messages(self) -> None:
         self._running = True
         try:
-            await self._process_messages()
+            await self._process_messages_loop()
         except CancelledError:
             pass
         finally:
@@ -256,14 +294,14 @@ class MessagePump(metaclass=MessagePumpMeta):
             for timer in list(self._timers):
                 await timer.stop()
 
-    async def _process_messages(self) -> None:
+    async def _process_messages_loop(self) -> None:
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
 
         await Reactive.initialize_object(self)
         while not self._closed:
             try:
-                message = await self.get_message()
+                message = await self._get_message()
             except MessagePumpClosed:
                 break
             except CancelledError:
@@ -274,18 +312,18 @@ class MessagePump(metaclass=MessagePumpMeta):
             # Combine any pending messages that may supersede this one
             while not (self._closed or self._closing):
                 try:
-                    pending = self.peek_message()
+                    pending = self._peek_message()
                 except MessagePumpClosed:
                     break
                 if pending is None or not message.can_replace(pending):
                     break
                 try:
-                    message = await self.get_message()
+                    message = await self._get_message()
                 except MessagePumpClosed:
                     break
 
             try:
-                await self.dispatch_message(message)
+                await self._dispatch_message(message)
             except CancelledError:
                 raise
             except Exception as error:
@@ -307,7 +345,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
         log("CLOSED", self)
 
-    async def dispatch_message(self, message: Message) -> None:
+    async def _dispatch_message(self, message: Message) -> None:
         """Dispatch a message received from the message queue.
 
         Args:
@@ -458,6 +496,14 @@ class MessagePump(metaclass=MessagePumpMeta):
             return False
 
     async def emit(self, message: Message) -> bool:
+        """Send a message to the _parent_.
+
+        Args:
+            message (Message): A message object.
+
+        Returns:
+            bool: _True if the message was posted successfully.
+        """
         if self._parent:
             return await self._parent._post_message_from_child(message)
         else:

@@ -64,7 +64,7 @@ def arrange(
             fraction_unit = Fraction(
                 size.height if edge in ("top", "bottom") else size.width
             )
-            box_model = dock_widget.get_box_model(size, viewport, fraction_unit)
+            box_model = dock_widget._get_box_model(size, viewport, fraction_unit)
             widget_width_fraction, widget_height_fraction, margin = box_model
 
             widget_width = int(widget_width_fraction) + margin.width
@@ -98,7 +98,7 @@ def arrange(
 
         dock_spacing = Spacing(top, right, bottom, left)
         region = size.region.shrink(dock_spacing)
-        layout_placements, arranged_layout_widgets = widget.layout.arrange(
+        layout_placements, arranged_layout_widgets = widget._layout.arrange(
             widget, layout_widgets, region.size
         )
 

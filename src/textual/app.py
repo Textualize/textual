@@ -300,7 +300,7 @@ class App(Generic[ReturnType], DOMNode):
             result (ReturnType | None, optional): Return value. Defaults to None.
         """
         self._return_value = result
-        self.close_messages_no_wait()
+        self._close_messages_no_wait()
 
     @property
     def focus_chain(self) -> list[Widget]:
@@ -458,6 +458,14 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def screen(self) -> Screen:
+        """Get the current screen.
+
+        Raises:
+            ScreenStackError: If there are no screens on the stack.
+
+        Returns:
+            Screen: The currently active screen.
+        """
         try:
             return self._screen_stack[-1]
         except IndexError:
@@ -465,6 +473,11 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def size(self) -> Size:
+        """Get the size of the terminal.
+
+        Returns:
+            Size: SIze of the terminal
+        """
         return Size(*self.console.size)
 
     def log(
@@ -640,9 +653,9 @@ class App(Generic[ReturnType], DOMNode):
                     """Press some keys in the background."""
                     asyncio.create_task(press_keys())
 
-                await self.process_messages(ready_callback=press_keys_task)
+                await self._process_messages(ready_callback=press_keys_task)
             else:
-                await self.process_messages()
+                await self._process_messages()
 
         if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
             # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
@@ -971,7 +984,7 @@ class App(Generic[ReturnType], DOMNode):
         ]
 
         self._exit_renderables.extend(pre_rendered)
-        self.close_messages_no_wait()
+        self._close_messages_no_wait()
 
     def on_exception(self, error: Exception) -> None:
         """Called with an unhandled exception.
@@ -996,14 +1009,14 @@ class App(Generic[ReturnType], DOMNode):
         self._exit_renderables.append(
             Segments(self.console.render(traceback, self.console.options))
         )
-        self.close_messages_no_wait()
+        self._close_messages_no_wait()
 
     def _print_error_renderables(self) -> None:
         for renderable in self._exit_renderables:
             self.error_console.print(renderable)
         self._exit_renderables.clear()
 
-    async def process_messages(
+    async def _process_messages(
         self, ready_callback: CallbackType | None = None
     ) -> None:
         self._set_active()
@@ -1038,11 +1051,11 @@ class App(Generic[ReturnType], DOMNode):
             self.set_interval(0.5, self.css_monitor, name="css monitor")
             self.log("[b green]STARTED[/]", self.css_monitor)
 
-        process_messages = super().process_messages
+        process_messages = super()._process_messages
 
         async def run_process_messages():
             mount_event = events.Mount(sender=self)
-            await self.dispatch_message(mount_event)
+            await self._dispatch_message(mount_event)
 
             self.title = self._title
             self.stylesheet.update(self)
@@ -1058,7 +1071,7 @@ class App(Generic[ReturnType], DOMNode):
         self._running = True
         try:
             load_event = events.Load(sender=self)
-            await self.dispatch_message(load_event)
+            await self._dispatch_message(load_event)
 
             driver: Driver
             driver_class = cast(
@@ -1134,7 +1147,7 @@ class App(Generic[ReturnType], DOMNode):
             self._registry.add(child)
             child._attach(parent)
             child._post_register(self)
-            child.start_messages()
+            child._start_messages()
             return True
         return False
 
@@ -1190,7 +1203,7 @@ class App(Generic[ReturnType], DOMNode):
             widget (Widget): The Widget to start.
         """
         widget._attach(parent)
-        widget.start_messages()
+        widget._start_messages()
         widget.post_message_no_wait(events.Mount(sender=parent))
 
     def is_mounted(self, widget: Widget) -> bool:
@@ -1199,14 +1212,14 @@ class App(Generic[ReturnType], DOMNode):
     async def close_all(self) -> None:
         while self._registry:
             child = self._registry.pop()
-            await child.close_messages()
+            await child._close_messages()
 
     async def shutdown(self):
         await self._disconnect_devtools()
         driver = self._driver
         if driver is not None:
             driver.disable_input()
-        await self.close_messages()
+        await self._close_messages()
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         self.screen.refresh(repaint=repaint, layout=layout)
@@ -1343,9 +1356,9 @@ class App(Generic[ReturnType], DOMNode):
             action_target = default_namespace or self
             action_name = target
 
-        await self.dispatch_action(action_target, action_name, params)
+        await self._dispatch_action(action_target, action_name, params)
 
-    async def dispatch_action(
+    async def _dispatch_action(
         self, namespace: object, action_name: str, params: Any
     ) -> None:
         log(
@@ -1362,7 +1375,7 @@ class App(Generic[ReturnType], DOMNode):
         if callable(method):
             await invoke(method, *params)
 
-    async def broker_event(
+    async def _broker_event(
         self, event_name: str, event: events.Event, default_namespace: object | None
     ) -> bool:
         """Allow the app an opportunity to dispatch events to action system.
@@ -1411,7 +1424,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log("shutdown request")
-        await self.close_messages()
+        await self._close_messages()
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
@@ -1428,7 +1441,7 @@ class App(Generic[ReturnType], DOMNode):
         for child in remove_widgets:
             self._unregister(child)
         for child in remove_widgets:
-            await child.close_messages()
+            await child._close_messages()
 
     async def action_press(self, key: str) -> None:
         await self.press(key)

@@ -21,7 +21,7 @@ def test_nodes_take_display_property_into_account_when_they_display_their_childr
 
     screen = Screen()
     screen.styles.layout = layout
-    screen.add_child(widget)
+    screen._add_child(widget)
 
     displayed_children = screen.displayed_children
     assert isinstance(displayed_children, list)

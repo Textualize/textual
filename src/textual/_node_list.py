@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterator, overload, TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterator, Sequence, overload
 
 import rich.repr
 
@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 @rich.repr.auto(angular=True)
-class NodeList:
+class NodeList(Sequence):
     """
     A container for widgets that forms one level of hierarchy.
 

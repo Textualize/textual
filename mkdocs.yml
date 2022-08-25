@@ -67,6 +67,8 @@ nav:
     - "reference/dom_node.md"
     - "reference/events.md"
     - "reference/geometry.md"
+    - "reference/message_pump.md"
+    - "reference/timer.md"
     - "reference/widget.md"
 
 
