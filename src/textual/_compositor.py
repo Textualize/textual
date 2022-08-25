@@ -183,6 +183,8 @@ class Compositor:
         # Note this may be a superset of self.map.keys() as some widgets may be invisible for various reasons
         self.widgets: set[Widget] = set()
 
+        self._visible_widgets: set[Widget] | None = set()
+
         # The top level widget
         self.root: Widget | None = None
 
@@ -269,6 +271,7 @@ class Compositor:
         # Replace map and widgets
         self.map = map
         self.widgets = widgets
+        self._visible_widgets = None
 
         # Get a map of regions
         self.regions = {
@@ -304,6 +307,17 @@ class Compositor:
             shown=shown_widgets,
             resized=resized_widgets,
         )
+
+    @property
+    def visible_widgets(self) -> set[Widget]:
+        if self._visible_widgets is None:
+            in_screen = self.size.region.__contains__
+            self._visible_widgets = {
+                widget
+                for widget, (region, clip) in self.regions.items()
+                if in_screen(region)
+            }
+        return self._visible_widgets
 
     def _arrange_root(
         self, root: Widget, size: Size
@@ -467,8 +481,9 @@ class Compositor:
         """Get the widget under the given point or None."""
         # TODO: Optimize with some line based lookup
         contains = Region.contains
+        is_visible = self.visible_widgets.__contains__
         for widget, cropped_region, region, *_ in self:
-            if contains(cropped_region, x, y):
+            if is_visible(widget) and contains(cropped_region, x, y):
                 return widget, region
         raise errors.NoWidget(f"No widget under screen coordinate ({x}, {y})")
 

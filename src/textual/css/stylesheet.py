@@ -434,9 +434,23 @@ class Stylesheet:
         node.post_message_no_wait(messages.StylesUpdated(sender=node))
 
     def update(self, root: DOMNode, animate: bool = False) -> None:
-        """Update a node and its children."""
+        """Update styles on node and its children.
+
+        Args:
+            root (DOMNode): Root note to update.
+            animate (bool, optional): Enable CSS animation. Defaults to False.
+        """
+        self.update_nodes(root.walk_children())
+
+    def update_nodes(self, nodes: Iterable[DOMNode], animate: bool = False) -> None:
+        """Update styles for nodes.
+
+        Args:
+            nodes (DOMNode): Nodes to update.
+            animate (bool, optional): Enable CSS animation. Defaults to False.
+        """
         apply = self.apply
-        for node in root.walk_children():
+        for node in nodes:
             apply(node, animate=animate)
             if isinstance(node, Widget) and node.is_scrollable:
                 if node.show_vertical_scrollbar:

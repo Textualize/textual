@@ -723,6 +723,10 @@ class App(Generic[ReturnType], DOMNode):
         self._require_stylesheet_update = True
         self.check_idle()
 
+    def update_visible_styles(self) -> None:
+        """Update visible styles only."""
+        self.stylesheet.update_nodes(self.screen.visible_widgets)
+
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
         """Mount widgets. Widgets specified as positional args, or keywords args. If supplied
         as keyword args they will be assigned an id of the key.
