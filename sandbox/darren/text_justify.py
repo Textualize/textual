@@ -36,8 +36,4 @@ class TextJustify(App):
 app = TextJustify(css_path="text_justify.scss", watch_css=True)
 
 if __name__ == "__main__":
-    from rich.console import Console
-
-    console = Console()
-    text = Text(TEXT)
-    console.print(TEXT, justify="full")
+    app.run()
