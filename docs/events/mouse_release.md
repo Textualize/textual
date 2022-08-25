@@ -1,6 +1,6 @@
 # MouseRelease
 
-The `MouseRelease` event is sent to a widget it is no longer receiving mouse events outside of its borders.
+The `MouseRelease` event is sent to a widget when it is no longer receiving mouse events outside of its borders.
 
 - [ ] Bubbles
 

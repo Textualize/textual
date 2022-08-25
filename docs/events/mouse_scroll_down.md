@@ -1,6 +1,6 @@
 # MouseScrollDown
 
-The `MouseScrollDown` event is sent to a widget when scroll wheel (or trackpad equivalent) is moved _down_.
+The `MouseScrollDown` event is sent to a widget when the scroll wheel (or trackpad equivalent) is moved _down_.
 
 - [x] Bubbles
 
