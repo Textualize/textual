@@ -699,7 +699,7 @@ class DOMNode(MessagePump):
         if old_classes == self._classes:
             return
         try:
-            self.app.stylesheet.update(self.app, animate=True)
+            self.app.stylesheet.update(self, animate=True)
         except NoActiveAppError:
             pass
 
@@ -715,7 +715,7 @@ class DOMNode(MessagePump):
         if old_classes == self._classes:
             return
         try:
-            self.app.stylesheet.update(self.app, animate=True)
+            self.app.stylesheet.update(self, animate=True)
         except NoActiveAppError:
             pass
 
@@ -731,7 +731,7 @@ class DOMNode(MessagePump):
         if old_classes == self._classes:
             return
         try:
-            self.app.stylesheet.update(self.app, animate=True)
+            self.app.stylesheet.update(self, animate=True)
         except NoActiveAppError:
             pass
 
