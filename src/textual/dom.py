@@ -144,6 +144,10 @@ class DOMNode(MessagePump):
         # Node bases are in reversed order so that the base class is lower priority
         return self._css_bases(self.__class__)
 
+    @property
+    def css_types(self) -> set[str]:
+        return {cls.__name__ for cls in self._css_bases(self.__class__)}
+
     @classmethod
     def _css_bases(cls, base: Type[DOMNode]) -> Iterator[Type[DOMNode]]:
         """Get the DOMNode base classes, which inherit CSS.
@@ -310,6 +314,22 @@ class DOMNode(MessagePump):
             node = node._parent
             append(node)
         return result[::-1]
+
+    @property
+    def _selector_names(self) -> list[str]:
+        """Get a set of selectors applicable to this widget.
+
+        Returns:
+            set[str]: Set of selector names.
+        """
+        selectors: list[str] = [
+            *(f".{class_name}" for class_name in self._classes),
+            *(f":{class_name}" for class_name in self.get_pseudo_classes()),
+            *self.css_types,
+        ]
+        if self._id is not None:
+            selectors.append(f"#{self._id}")
+        return selectors
 
     @property
     def display(self) -> bool:

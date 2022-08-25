@@ -323,10 +323,6 @@ class Stylesheet:
                 rule will be applied.
             animate (bool, optional): Animate changed rules. Defaults to ``False``.
         """
-
-        # TODO: Need to optimize to make applying stylesheet more efficient
-        # I think we can pre-calculate which rules may be applicable to a given node
-
         # Dictionary of rule attribute names e.g. "text_background" to list of tuples.
         # The tuples contain the rule specificity, and the value for that rule.
         # We can use this to determine, for a given rule, whether we should apply it
@@ -338,28 +334,13 @@ class Stylesheet:
         _check_rule = self._check_rule
 
         css_path_nodes = node.css_path_nodes
-
-        path_ids = {path_node._id for path_node in css_path_nodes if path_node._id}
-        path_classes = {
-            class_name
-            for path_node in css_path_nodes
-            for class_name in path_node.classes
-        }
-        path_pseudo_classes = {
-            pseudo_class
-            for path_node in css_path_nodes
-            for pseudo_class in path_node.get_pseudo_classes()
+        selector_names = {
+            selector for node in css_path_nodes for selector in node._selector_names
         }
 
         # Collect the rules defined in the stylesheet
         for rule in reversed(self.rules):
-            if rule.ids and not rule.ids.issubset(path_ids):
-                continue
-            if rule.classes and not rule.classes.issubset(path_classes):
-                continue
-            if rule.pseudo_classes and not rule.pseudo_classes.issubset(
-                path_pseudo_classes
-            ):
+            if rule.selector_names and not rule.selector_names.issubset(selector_names):
                 continue
 
             is_default_rules = rule.is_default_rules
