@@ -110,9 +110,33 @@ class MessagePump(metaclass=MessagePumpMeta):
     def is_running(self) -> bool:
         return self._running
 
-    def log(self, *args, **kwargs) -> None:
-        """Write to logs or devtools."""
-        return self.app.log(*args, **kwargs, _textual_calling_frame=inspect.stack()[1])
+    def log(
+        self,
+        *args: Any,
+        verbosity: int = 1,
+        **kwargs,
+    ) -> None:
+        """Write to logs or devtools.
+
+        Positional args will logged. Keyword args will be prefixed with the key.
+
+        Example:
+            ```python
+            data = [1,2,3]
+            self.log("Hello, World", state=data)
+            self.log(self.tree)
+            self.log(locals())
+            ```
+
+        Args:
+            verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
+        """
+        return self.app.log(
+            *args,
+            **kwargs,
+            verbosity=verbosity,
+            _textual_calling_frame=inspect.stack()[1],
+        )
 
     def _attach(self, parent: MessagePump) -> None:
         """Set the parent, and therefore attach this node to the tree.

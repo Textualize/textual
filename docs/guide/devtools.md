@@ -47,5 +47,5 @@ In the other console, run your application using `textual run` and the `--dev` s
 textual run --dev my_app.py
 ```
 
-Anything you `print` from your application will be displayed in the console window. You can also call the `log()` method on App and Widget objects for advanced formatting. Try it with `self.log(self.tree)`.
+Anything you `print` from your application will be displayed in the console window. You can also call the [`log()`][textual.message_pump.MessagePump.log] method on App and Widget objects for advanced formatting. Try it with `self.log(self.tree)`.
 

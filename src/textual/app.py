@@ -487,13 +487,20 @@ class App(Generic[ReturnType], DOMNode):
         _textual_calling_frame: inspect.FrameInfo | None = None,
         **kwargs,
     ) -> None:
-        """Write to logs.
+        """Write to logs or devtools.
+
+        Positional args will logged. Keyword args will be prefixed with the key.
+
+        Example:
+            ```python
+            data = [1,2,3]
+            self.log("Hello, World", state=data)
+            self.log(self.tree)
+            self.log(locals())
+            ```
 
         Args:
-            *objects (Any): Positional arguments are converted to string and written to logs.
             verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
-            _textual_calling_frame (inspect.FrameInfo | None): The frame info to include in
-                the log message sent to the devtools server.
         """
         if verbosity > self.log_verbosity:
             return
