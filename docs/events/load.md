@@ -1,4 +1,4 @@
-# Mount
+# Load
 
 The `Load` event is sent to the app prior to switching the terminal in to application mode.
 
