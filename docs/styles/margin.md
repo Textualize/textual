@@ -20,7 +20,7 @@ margin: <INTEGER> <INTEGER> <INTEGER> <INTEGER>;
 
 ## Example
 
-In this example we add a large margin to a some static text.
+In this example we add a large margin to some static text.
 
 === "margin.py"
 

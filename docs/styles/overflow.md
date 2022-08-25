@@ -24,7 +24,7 @@ overflow-y: [auto|hidden|scroll];
 
 Here we split the screen in to left and right sections, each with three vertically scrolling widgets that do not fit in to the height of the terminal.
 
-The left side has `overflow-y: auto` (the default) and will automatically show a scrollbar. The right side has `overflow-y: hidden` which will prevent a scrollbar from being show.
+The left side has `overflow-y: auto` (the default) and will automatically show a scrollbar. The right side has `overflow-y: hidden` which will prevent a scrollbar from being shown.
 
 === "overflow.py"
 

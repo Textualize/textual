@@ -181,9 +181,9 @@ Being able to iterate on the design without restarting the Python code can make 
 
 ## Selectors
 
-A selector is the text which precedes the curly braces in a set of rules. It tells textual which widgets it should apply the rules to.
+A selector is the text which precedes the curly braces in a set of rules. It tells Textual which widgets it should apply the rules to.
 
-Selectors can target a kind of widget or a very specific widget. For instance you could have a selector that modifies all buttons, or you could target an individual button used in one dialog. This gives you a lot of flexibility in customization your user interface.
+Selectors can target a kind of widget or a very specific widget. For instance you could have a selector that modifies all buttons, or you could target an individual button used in one dialog. This gives you a lot of flexibility in customizing your user interface.
 
 Let's look at the selectors supported by Textual CSS.
 
@@ -245,7 +245,7 @@ A Widget's `id` attribute can not be changed after the Widget has been construct
 
 Every widget can have a number of class names applied. The term "class" here is borrowed from web CSS, and has a different meaning to a Python class. You can think of a CSS class as a tag of sorts. Widgets with the same tag will share styles.
 
-CSS classes are set via the widgets `classes` parameter in the constructor. Here's an example:
+CSS classes are set via the widget's `classes` parameter in the constructor. Here's an example:
 
 ```python
 yield Button(classes="success")
@@ -280,18 +280,18 @@ Class name selectors may be _chained_ together by appending another full stop an
 }
 ```
 
-Unlike the `id` attribute a Widget's classes can be changed after the Widget was created. Adding and removing CSS classes is the recommended way of changing the display while your app is running. There are a few methods you can use to manage CSS classes.
+Unlike the `id` attribute, a widget's classes can be changed after the widget was created. Adding and removing CSS classes is the recommended way of changing the display while your app is running. There are a few methods you can use to manage CSS classes.
 
 - [add_class()][textual.dom.DOMNode.add_class] Adds one or more classes to a widget.
 - [remove_class()][textual.dom.DOMNode.remove_class] Removes class name(s) from a widget.
-- [toggle_class()][textual.dom.DOMNode.toggle_class] Removes a class name if it is present, or adds the name if its not already present.
+- [toggle_class()][textual.dom.DOMNode.toggle_class] Removes a class name if it is present, or adds the name if it's not already present.
 - [has_class()][textual.dom.DOMNode.has_class] Checks if a class(es) is set on a widget.
 - [classes][textual.dom.DOMNode.classes] Is a frozen set of the class(es) set on a widget.
 
 
 ### Universal selector
 
-The _universal_ selectors is denoted by an asterisk and will match _all_ widgets.
+The _universal_ selector is denoted by an asterisk and will match _all_ widgets.
 
 For example, the following will draw a red outline around all widgets:
 
@@ -340,9 +340,9 @@ Let's say we want to make the text of the buttons in the dialog bold, but we _do
 }
 ```
 
-The `#dialog Button` selector matches all buttons that are below the widget with an id of "dialog". No other buttons will be matched.
+The `#dialog Button` selector matches all buttons that are below the widget with an ID of "dialog". No other buttons will be matched.
 
-As with all selectors you can combine as many as you wish. The following will match a `Button` that is under a `Horizontal` widget _and_ under a widget with an id of `"dialog"`:
+As with all selectors, you can combine as many as you wish. The following will match a `Button` that is under a `Horizontal` widget _and_ under a widget with an id of `"dialog"`:
 
 ```css
 #dialog Horizontal Button {

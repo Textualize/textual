@@ -16,7 +16,7 @@ You can run Textual apps with the `run` subcommand. If you supply a path to a Py
 textual run my_app.py
 ```
 
-The `run` sub-command assumes you have a App instance called `app` in the global scope of your Python file. If the application is called something different, you can specify it with a colon following the filename:
+The `run` sub-command assumes you have an App instance called `app` in the global scope of your Python file. If the application is called something different, you can specify it with a colon following the filename:
 
 ```
 textual run my_app.py:alternative_app
@@ -28,7 +28,7 @@ textual run my_app.py:alternative_app
 
 ## Console
 
-When running any terminal application, you can no longer use `print` when debugging (or log to the console). This is because anything you write to standard output would overwrite application content, making it unreadable. Fortunately Textual supplies a debug console of it's own which has some super helpful features.
+When running any terminal application, you can no longer use `print` when debugging (or log to the console). This is because anything you write to standard output would overwrite application content, making it unreadable. Fortunately Textual supplies a debug console of its own which has some super helpful features.
 
 To use the console, open up 2 terminal emulators. In the first one, run the following:
 
