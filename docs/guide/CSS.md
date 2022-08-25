@@ -60,7 +60,7 @@ You may be able to guess what some of the the other rules do. We will cover thos
 
 ## The DOM
 
-The DOM, or _Document Object Model_, is a term borrowed from the web world. Textual doesn't use documents but the term has stuck. In Textual CSS, the DOM is a an arrangement of widgets that forms a tree of sorts.
+The DOM, or _Document Object Model_, is a term borrowed from the web world. Textual doesn't use documents but the term has stuck. In Textual CSS, the DOM is a an arrangement of widgets you can visualize as a tree-like structure.
 
 Some widgets contain other widgets: for instance, a list control widget will likely also have item widgets, or a dialog widget may contain button widgets. These _child_ widgets form the branches of the tree.
 
