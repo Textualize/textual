@@ -98,7 +98,7 @@ This doesn't look much like a tree yet. Let's add a header and a footer to this 
     ```{.textual path="docs/examples/guide/dom2.py"}
     ```
 
-With a header and a footer widget the DOM look the this:
+With a header and a footer widget the DOM looks the this:
 
 <div class="excalidraw">
 --8<-- "docs/images/dom2.excalidraw.svg"
