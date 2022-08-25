@@ -87,6 +87,7 @@ class DOMNode(MessagePump):
 
         self._auto_refresh: float | None = None
         self._auto_refresh_timer: Timer | None = None
+        self._css_types = {cls.__name__ for cls in self._css_bases(self.__class__)}
 
         super().__init__()
 
@@ -143,10 +144,6 @@ class DOMNode(MessagePump):
         """
         # Node bases are in reversed order so that the base class is lower priority
         return self._css_bases(self.__class__)
-
-    @property
-    def css_types(self) -> set[str]:
-        return {cls.__name__ for cls in self._css_bases(self.__class__)}
 
     @classmethod
     def _css_bases(cls, base: Type[DOMNode]) -> Iterator[Type[DOMNode]]:
@@ -325,7 +322,7 @@ class DOMNode(MessagePump):
         selectors: list[str] = [
             *(f".{class_name}" for class_name in self._classes),
             *(f":{class_name}" for class_name in self.get_pseudo_classes()),
-            *self.css_types,
+            *self._css_types,
         ]
         if self._id is not None:
             selectors.append(f"#{self._id}")
