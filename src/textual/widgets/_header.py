@@ -15,7 +15,7 @@ class HeaderIcon(Widget):
     HeaderIcon {
         dock: left;
         padding: 0 1;
-        width: 10;
+        width: 8;
         content-align: left middle;
     }
     """
