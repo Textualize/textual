@@ -40,7 +40,7 @@ Header {
 }
 ```
 
-The first line is a _selector_ which tells Textual which Widget(s) to modify. In the above example, the styles will be applied to a widget defined in the Python class `Header`.
+The first line is a _selector_ which tells Textual which Widget(s) to modify. In the above example, the styles will be applied to a widget defined by the Python class `Header`.
 
 ```css hl_lines="2 3 4 5 6"
 Header {
