@@ -10,19 +10,19 @@ TEXT = (
 )
 
 
-class TextJustify(App):
+class TextAlign(App):
     def compose(self) -> ComposeResult:
-        left = Static("[b]Left justified[/]\n" + TEXT, id="one")
+        left = Static("[b]Left aligned[/]\n" + TEXT, id="one")
         yield left
 
-        right = Static("[b]Center justified[/]\n" + TEXT, id="two")
+        right = Static("[b]Center aligned[/]\n" + TEXT, id="two")
         yield right
 
-        center = Static("[b]Right justified[/]\n" + TEXT, id="three")
+        center = Static("[b]Right aligned[/]\n" + TEXT, id="three")
         yield center
 
-        full = Static("[b]Full justified[/]\n" + TEXT, id="four")
+        full = Static("[b]Justified[/]\n" + TEXT, id="four")
         yield full
 
 
-app = TextJustify(css_path="text_justify.css")
+app = TextAlign(css_path="text_align.css")

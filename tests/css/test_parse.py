@@ -1134,14 +1134,14 @@ class TestParsePadding:
 
 class TestParseTextJustify:
     @pytest.mark.parametrize("valid_justify", ["left", "center", "full", "right"])
-    def test_text_justify(self, valid_justify):
-        css = f"#foo {{ text-justify: {valid_justify} }}"
+    def test_text_align(self, valid_justify):
+        css = f"#foo {{ text-align: {valid_justify} }}"
         stylesheet = Stylesheet()
         stylesheet.add_source(css)
-        assert stylesheet.rules[0].styles.text_justify == valid_justify
+        assert stylesheet.rules[0].styles.text_align == valid_justify
 
-    def test_text_justify_invalid(self):
-        css = "#foo { text-justify: invalid-value; }"
+    def test_text_align_invalid(self):
+        css = "#foo { text-align: invalid-value; }"
         stylesheet = Stylesheet()
         with pytest.raises(StylesheetParseError):
             stylesheet.add_source(css)
@@ -1149,8 +1149,8 @@ class TestParseTextJustify:
         rules = stylesheet._parse_rules(css, "foo")
         assert rules[0].errors
 
-    def test_text_justify_empty_uses_default(self):
-        css = "#foo { text-justify: ; }"
+    def test_text_align_empty_uses_default(self):
+        css = "#foo { text-align: ; }"
         stylesheet = Stylesheet()
         stylesheet.add_source(css)
-        assert stylesheet.rules[0].styles.text_justify == "left"
+        assert stylesheet.rules[0].styles.text_align == "left"

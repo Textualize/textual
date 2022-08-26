@@ -13,7 +13,7 @@ from textual.css.constants import (
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
     VALID_STYLE_FLAGS,
-    VALID_JUSTIFY,
+    VALID_TEXT_ALIGN,
 )
 
 if sys.version_info >= (3, 8):
@@ -649,31 +649,31 @@ def align_help_text() -> HelpText:
     )
 
 
-def text_justify_help_text(context: str) -> HelpText:
-    """Help text to show when the user supplies an invalid value for the text-justify property
+def text_align_help_text(context: str) -> HelpText:
+    """Help text to show when the user supplies an invalid value for the text-align property
 
     Returns:
         HelpText: Renderable for displaying the help text for this property.
     """
     return HelpText(
-        summary="Invalid value for the [i]text-justify[/] property.",
+        summary="Invalid value for the [i]text-align[/] property.",
         bullets=[
             *ContextSpecificBullets(
                 css=[
                     Bullet(
-                        f"The [i]text-justify[/] property must be one of {friendly_list(VALID_JUSTIFY)}",
+                        f"The [i]text-align[/] property must be one of {friendly_list(VALID_TEXT_ALIGN)}",
                         examples=[
-                            Example("text-justify: center;"),
-                            Example("text-justify: right;"),
+                            Example("text-align: center;"),
+                            Example("text-align: right;"),
                         ],
                     )
                 ],
                 inline=[
                     Bullet(
-                        f"The [i]text_justify[/] property must be one of {friendly_list(VALID_JUSTIFY)}",
+                        f"The [i]text_align[/] property must be one of {friendly_list(VALID_TEXT_ALIGN)}",
                         examples=[
-                            Example("widget.styles.text_justify = 'center'"),
-                            Example("widget.styles.text_justify = 'right'"),
+                            Example("widget.styles.text_align = 'center'"),
+                            Example("widget.styles.text_align = 'right'"),
                         ],
                     )
                 ],

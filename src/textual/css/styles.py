@@ -31,7 +31,6 @@ from ._style_properties import (
     SpacingProperty,
     StringEnumProperty,
     StyleFlagsProperty,
-    StyleProperty,
     TransitionsProperty,
 )
 from .constants import (
@@ -42,7 +41,7 @@ from .constants import (
     VALID_OVERFLOW,
     VALID_SCROLLBAR_GUTTER,
     VALID_VISIBILITY,
-    VALID_JUSTIFY,
+    VALID_TEXT_ALIGN,
 )
 from .scalar import Scalar, ScalarOffset, Unit
 from .scalar_animation import ScalarAnimation
@@ -145,7 +144,7 @@ class RulesMap(TypedDict, total=False):
     content_align_horizontal: AlignHorizontal
     content_align_vertical: AlignVertical
 
-    text_justify: TextJustify
+    text_align: TextJustify
 
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
@@ -254,7 +253,7 @@ class StylesBase(ABC):
     content_align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
     content_align = AlignProperty()
 
-    text_justify = StringEnumProperty(VALID_JUSTIFY, "left")
+    text_align = StringEnumProperty(VALID_TEXT_ALIGN, "start")
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles contains the same rules."""
