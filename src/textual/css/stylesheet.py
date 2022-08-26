@@ -4,10 +4,10 @@ import os
 from collections import defaultdict
 from operator import itemgetter
 from pathlib import Path, PurePath
-from typing import cast, Iterable, NamedTuple
+from typing import Iterable, NamedTuple, cast
 
 import rich.repr
-from rich.console import RenderableType, RenderResult, Console, ConsoleOptions
+from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.markup import render
 from rich.padding import Padding
 from rich.panel import Panel
@@ -15,17 +15,18 @@ from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 
-from textual.widget import Widget
+from .. import messages
+from .._profile import timer
+from ..dom import DOMNode
+from ..widget import Widget
 from .errors import StylesheetError
 from .match import _check_selectors
 from .model import RuleSet
 from .parse import parse
 from .styles import RulesMap, Styles
-from .tokenize import tokenize_values, Token
+from .tokenize import Token, tokenize_values
 from .tokenizer import TokenError
 from .types import Specificity3, Specificity6
-from ..dom import DOMNode
-from .. import messages
 
 
 class StylesheetParseError(StylesheetError):
@@ -135,6 +136,7 @@ class CssSource(NamedTuple):
 class Stylesheet:
     def __init__(self, *, variables: dict[str, str] | None = None) -> None:
         self._rules: list[RuleSet] = []
+        self._rules_map: dict[str, list[RuleSet]] | None = None
         self.variables = variables or {}
         self.source: dict[str, CssSource] = {}
         self._require_parse = False
@@ -144,11 +146,31 @@ class Stylesheet:
 
     @property
     def rules(self) -> list[RuleSet]:
+        """List of rule sets.
+
+        Returns:
+            list[RuleSet]: List of rules sets for this stylesheet.
+        """
         if self._require_parse:
             self.parse()
             self._require_parse = False
         assert self._rules is not None
         return self._rules
+
+    @property
+    def rules_map(self) -> dict[str, list[RuleSet]]:
+        """Structure that maps a selector on to a list of rules.
+
+        Returns:
+            dict[str, list[RuleSet]]: Mapping of selector to rule sets.
+        """
+        if self._rules_map is None:
+            rules_map: dict[str, list[RuleSet]] = defaultdict(list)
+            for rule in self.rules:
+                for name in rule.selector_names:
+                    rules_map[name].append(rule)
+            self._rules_map = dict(rules_map)
+        return self._rules_map
 
     @property
     def css(self) -> str:
@@ -283,6 +305,7 @@ class Stylesheet:
             add_rules(css_rules)
         self._rules = rules
         self._require_parse = False
+        self._rules_map = None
 
     def reparse(self) -> None:
         """Re-parse source, applying new variables.
@@ -300,15 +323,24 @@ class Stylesheet:
             )
         stylesheet.parse()
         self._rules = stylesheet.rules
+        self._rules_map = None
         self.source = stylesheet.source
 
     @classmethod
-    def _check_rule(cls, rule: RuleSet, node: DOMNode) -> Iterable[Specificity3]:
+    def _check_rule(
+        cls, rule: RuleSet, css_path_nodes: list[DOMNode]
+    ) -> Iterable[Specificity3]:
         for selector_set in rule.selector_set:
-            if _check_selectors(selector_set.selectors, node.css_path_nodes):
+            if _check_selectors(selector_set.selectors, css_path_nodes):
                 yield selector_set.specificity
 
-    def apply(self, node: DOMNode, animate: bool = False) -> None:
+    def apply(
+        self,
+        node: DOMNode,
+        *,
+        limit_rules: set[RuleSet] | None = None,
+        animate: bool = False,
+    ) -> None:
         """Apply the stylesheet to a DOM node.
 
         Args:
@@ -319,32 +351,34 @@ class Stylesheet:
                 rule will be applied.
             animate (bool, optional): Animate changed rules. Defaults to ``False``.
         """
-
-        # TODO: Need to optimize to make applying stylesheet more efficient
-        # I think we can pre-calculate which rules may be applicable to a given node
-
         # Dictionary of rule attribute names e.g. "text_background" to list of tuples.
         # The tuples contain the rule specificity, and the value for that rule.
         # We can use this to determine, for a given rule, whether we should apply it
         # or not by examining the specificity. If we have two rules for the
         # same attribute, then we can choose the most specific rule and use that.
-        rule_attributes: dict[str, list[tuple[Specificity6, object]]]
-        rule_attributes = {}
+        rule_attributes: defaultdict[str, list[tuple[Specificity6, object]]]
+        rule_attributes = defaultdict(list)
 
         _check_rule = self._check_rule
+        css_path_nodes = node.css_path_nodes
 
+        rules: Iterable[RuleSet]
+        if limit_rules:
+            rules = [rule for rule in reversed(self.rules) if rule in limit_rules]
+        else:
+            rules = reversed(self.rules)
         # Collect the rules defined in the stylesheet
-        for rule in reversed(self.rules):
+        for rule in rules:
             is_default_rules = rule.is_default_rules
             tie_breaker = rule.tie_breaker
-            for base_specificity in _check_rule(rule, node):
+            for base_specificity in _check_rule(rule, css_path_nodes):
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker
                 ):
-                    rule_attributes.setdefault(key, []).append(
-                        (rule_specificity, value)
-                    )
+                    rule_attributes[key].append((rule_specificity, value))
 
+        if not rule_attributes:
+            return
         # For each rule declared for this node, keep only the most specific one
         get_first_item = itemgetter(0)
         node_rules: RulesMap = cast(
@@ -354,7 +388,6 @@ class Stylesheet:
                 for name, specificity_rules in rule_attributes.items()
             },
         )
-
         self.replace_rules(node, node_rules, animate=animate)
 
         node._component_styles.clear()
@@ -381,7 +414,7 @@ class Stylesheet:
         base_styles = styles.base
 
         # Styles currently used on new rules
-        modified_rule_keys = {*base_styles.get_rules().keys(), *rules.keys()}
+        modified_rule_keys = base_styles.get_rules().keys() | rules.keys()
         # Current render rules (missing rules are filled with default)
         current_render_rules = styles.get_render_rules()
 
@@ -434,10 +467,34 @@ class Stylesheet:
         node.post_message_no_wait(messages.StylesUpdated(sender=node))
 
     def update(self, root: DOMNode, animate: bool = False) -> None:
-        """Update a node and its children."""
+        """Update styles on node and its children.
+
+        Args:
+            root (DOMNode): Root note to update.
+            animate (bool, optional): Enable CSS animation. Defaults to False.
+        """
+
+        self.update_nodes(root.walk_children(), animate=animate)
+
+    def update_nodes(self, nodes: Iterable[DOMNode], animate: bool = False) -> None:
+        """Update styles for nodes.
+
+        Args:
+            nodes (DOMNode): Nodes to update.
+            animate (bool, optional): Enable CSS animation. Defaults to False.
+        """
+
+        rules_map = self.rules_map
         apply = self.apply
-        for node in root.walk_children():
-            apply(node, animate=animate)
+
+        for node in nodes:
+            rules = {
+                rule
+                for name in node._selector_names
+                if name in rules_map
+                for rule in rules_map[name]
+            }
+            apply(node, limit_rules=rules, animate=animate)
             if isinstance(node, Widget) and node.is_scrollable:
                 if node.show_vertical_scrollbar:
                     apply(node.vertical_scrollbar)

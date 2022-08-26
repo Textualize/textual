@@ -224,7 +224,7 @@ class App(Generic[ReturnType], DOMNode):
         self.design = DEFAULT_COLORS
 
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
-        self._require_stylesheet_update = False
+        self._require_stylesheet_update: set[DOMNode] = set()
         self.css_path = css_path or self.CSS_PATH
 
         self._registry: WeakSet[DOMNode] = WeakSet()
@@ -714,13 +714,18 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self.screen.get_child(id)
 
-    def update_styles(self) -> None:
+    def update_styles(self, node: DOMNode | None = None) -> None:
         """Request update of styles.
 
         Should be called whenever CSS classes / pseudo classes change.
 
         """
-        self._require_stylesheet_update = True
+        self._require_stylesheet_update.add(self.screen if node is None else node)
+        self.check_idle()
+
+    def update_visible_styles(self) -> None:
+        """Update visible styles only."""
+        self._require_stylesheet_update.update(self.screen.visible_widgets)
         self.check_idle()
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
@@ -1137,16 +1142,21 @@ class App(Generic[ReturnType], DOMNode):
 
         self.set_timer(screenshot_timer, on_screenshot, name="screenshot timer")
 
-    def on_mount(self) -> None:
+    def _on_mount(self) -> None:
         widgets = self.compose()
         if widgets:
             self.mount_all(widgets)
 
-    async def on_idle(self) -> None:
+    def _on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
         if self._require_stylesheet_update:
-            self._require_stylesheet_update = False
-            self.stylesheet.update(self, animate=True)
+            nodes: set[DOMNode] = {
+                child
+                for node in self._require_stylesheet_update
+                for child in node.walk_children()
+            }
+            self._require_stylesheet_update.clear()
+            self.stylesheet.update_nodes(nodes, animate=True)
 
     def _register_child(self, parent: DOMNode, child: Widget) -> bool:
         if child not in self._registry:

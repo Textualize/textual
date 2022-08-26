@@ -183,6 +183,9 @@ class Compositor:
         # Note this may be a superset of self.map.keys() as some widgets may be invisible for various reasons
         self.widgets: set[Widget] = set()
 
+        # A lazy cache of visible (on screen) widgets
+        self._visible_widgets: set[Widget] | None = set()
+
         # The top level widget
         self.root: Widget | None = None
 
@@ -269,6 +272,7 @@ class Compositor:
         # Replace map and widgets
         self.map = map
         self.widgets = widgets
+        self._visible_widgets = None
 
         # Get a map of regions
         self.regions = {
@@ -304,6 +308,22 @@ class Compositor:
             shown=shown_widgets,
             resized=resized_widgets,
         )
+
+    @property
+    def visible_widgets(self) -> set[Widget]:
+        """Get a set of visible widgets.
+
+        Returns:
+            set[Widget]: Widgets in the screen.
+        """
+        if self._visible_widgets is None:
+            in_screen = self.size.region.__contains__
+            self._visible_widgets = {
+                widget
+                for widget, (region, clip) in self.regions.items()
+                if in_screen(region)
+            }
+        return self._visible_widgets
 
     def _arrange_root(
         self, root: Widget, size: Size

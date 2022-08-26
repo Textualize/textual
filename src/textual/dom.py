@@ -87,6 +87,7 @@ class DOMNode(MessagePump):
 
         self._auto_refresh: float | None = None
         self._auto_refresh_timer: Timer | None = None
+        self._css_types = {cls.__name__ for cls in self._css_bases(self.__class__)}
 
         super().__init__()
 
@@ -310,6 +311,23 @@ class DOMNode(MessagePump):
             node = node._parent
             append(node)
         return result[::-1]
+
+    @property
+    def _selector_names(self) -> list[str]:
+        """Get a set of selectors applicable to this widget.
+
+        Returns:
+            set[str]: Set of selector names.
+        """
+        selectors: list[str] = [
+            "*",
+            *(f".{class_name}" for class_name in self._classes),
+            *(f":{class_name}" for class_name in self.get_pseudo_classes()),
+            *self._css_types,
+        ]
+        if self._id is not None:
+            selectors.append(f"#{self._id}")
+        return selectors
 
     @property
     def display(self) -> bool:
@@ -699,7 +717,7 @@ class DOMNode(MessagePump):
         if old_classes == self._classes:
             return
         try:
-            self.app.stylesheet.update(self.app, animate=True)
+            self.app.update_styles(self)
         except NoActiveAppError:
             pass
 
@@ -715,7 +733,7 @@ class DOMNode(MessagePump):
         if old_classes == self._classes:
             return
         try:
-            self.app.stylesheet.update(self.app, animate=True)
+            self.app.update_styles(self)
         except NoActiveAppError:
             pass
 
@@ -731,7 +749,7 @@ class DOMNode(MessagePump):
         if old_classes == self._classes:
             return
         try:
-            self.app.stylesheet.update(self.app, animate=True)
+            self.app.update_styles(self)
         except NoActiveAppError:
             pass
 

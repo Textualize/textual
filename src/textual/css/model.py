@@ -159,9 +159,13 @@ class RuleSet:
     selector_set: list[SelectorSet] = field(default_factory=list)
     styles: Styles = field(default_factory=Styles)
     errors: list[tuple[Token, str]] = field(default_factory=list)
-    classes: set[str] = field(default_factory=set)
+
     is_default_rules: bool = False
     tie_breaker: int = 0
+    selector_names: set[str] = field(default_factory=set)
+
+    def __hash__(self):
+        return id(self)
 
     @classmethod
     def _selector_to_css(cls, selectors: list[Selector]) -> str:
@@ -195,11 +199,37 @@ class RuleSet:
     def _post_parse(self) -> None:
         """Called after the RuleSet is parsed."""
         # Build a set of the class names that have been updated
-        update = self.classes.update
+
         class_type = SelectorType.CLASS
+        id_type = SelectorType.ID
+        type_type = SelectorType.TYPE
+        universal_type = SelectorType.UNIVERSAL
+
+        update_selectors = self.selector_names.update
+
         for selector_set in self.selector_set:
-            update(
+            update_selectors(
+                "*"
+                for selector in selector_set.selectors
+                if selector.type == universal_type
+            )
+            update_selectors(
                 selector.name
                 for selector in selector_set.selectors
+                if selector.type == type_type
+            )
+            update_selectors(
+                f".{selector.name}"
+                for selector in selector_set.selectors
                 if selector.type == class_type
+            )
+            update_selectors(
+                f"#{selector.name}"
+                for selector in selector_set.selectors
+                if selector.type == id_type
+            )
+            update_selectors(
+                f":{pseudo_class}"
+                for selector in selector_set.selectors
+                for pseudo_class in selector.pseudo_classes
             )
