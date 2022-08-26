@@ -10,7 +10,7 @@ height: <SCALAR>;
 
 ## Example
 
-This examples applies a widget with a height of 50% of the screen.
+This examples creates a widget with a height of 50% of the screen.
 
 === "height.py"
 
