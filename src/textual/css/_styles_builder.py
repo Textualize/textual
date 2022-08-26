@@ -629,7 +629,7 @@ class StylesBuilder:
             self.error(
                 name,
                 tokens[0],
-                text_align_help_text("css"),
+                text_align_help_text(),
             )
 
         self.styles._rules["text_align"] = tokens[0].value

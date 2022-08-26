@@ -9,7 +9,6 @@ from textual.css._help_renderables import Example, Bullet, HelpText
 from textual.css.constants import (
     VALID_BORDER,
     VALID_LAYOUT,
-    VALID_EDGE,
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
     VALID_STYLE_FLAGS,
@@ -649,7 +648,7 @@ def align_help_text() -> HelpText:
     )
 
 
-def text_align_help_text(context: str) -> HelpText:
+def text_align_help_text() -> HelpText:
     """Help text to show when the user supplies an invalid value for the text-align property
 
     Returns:
@@ -658,26 +657,13 @@ def text_align_help_text(context: str) -> HelpText:
     return HelpText(
         summary="Invalid value for the [i]text-align[/] property.",
         bullets=[
-            *ContextSpecificBullets(
-                css=[
-                    Bullet(
-                        f"The [i]text-align[/] property must be one of {friendly_list(VALID_TEXT_ALIGN)}",
-                        examples=[
-                            Example("text-align: center;"),
-                            Example("text-align: right;"),
-                        ],
-                    )
+            Bullet(
+                f"The [i]text-align[/] property must be one of {friendly_list(VALID_TEXT_ALIGN)}",
+                examples=[
+                    Example("text-align: center;"),
+                    Example("text-align: right;"),
                 ],
-                inline=[
-                    Bullet(
-                        f"The [i]text_align[/] property must be one of {friendly_list(VALID_TEXT_ALIGN)}",
-                        examples=[
-                            Example("widget.styles.text_align = 'center'"),
-                            Example("widget.styles.text_align = 'right'"),
-                        ],
-                    )
-                ],
-            ).get_by_context(context)
+            )
         ],
     )
 
