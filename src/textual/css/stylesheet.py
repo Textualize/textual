@@ -360,12 +360,7 @@ class Stylesheet:
         rule_attributes = defaultdict(list)
 
         _check_rule = self._check_rule
-
         css_path_nodes = node.css_path_nodes
-
-        selector_names = {
-            selector for node in css_path_nodes for selector in node._selector_names
-        }
 
         rules: Iterable[RuleSet]
         if limit_rules:
@@ -374,9 +369,6 @@ class Stylesheet:
             rules = reversed(self.rules)
         # Collect the rules defined in the stylesheet
         for rule in rules:
-            if rule.selector_names and not rule.selector_names.issubset(selector_names):
-                continue
-
             is_default_rules = rule.is_default_rules
             tie_breaker = rule.tie_breaker
             for base_specificity in _check_rule(rule, css_path_nodes):
@@ -499,7 +491,8 @@ class Stylesheet:
             rules = {
                 rule
                 for name in node._selector_names
-                for rule in rules_map.get(name, [])
+                if name in rules_map
+                for rule in rules_map[name]
             }
             apply(node, limit_rules=rules, animate=animate)
             if isinstance(node, Widget) and node.is_scrollable:
