@@ -320,6 +320,7 @@ class DOMNode(MessagePump):
             set[str]: Set of selector names.
         """
         selectors: list[str] = [
+            "*",
             *(f".{class_name}" for class_name in self._classes),
             *(f":{class_name}" for class_name in self.get_pseudo_classes()),
             *self._css_types,
@@ -716,7 +717,7 @@ class DOMNode(MessagePump):
         if old_classes == self._classes:
             return
         try:
-            self.app.stylesheet.update(self, animate=True)
+            self.app.update_styles(self)
         except NoActiveAppError:
             pass
 
@@ -732,7 +733,7 @@ class DOMNode(MessagePump):
         if old_classes == self._classes:
             return
         try:
-            self.app.stylesheet.update(self, animate=True)
+            self.app.update_styles(self)
         except NoActiveAppError:
             pass
 
@@ -748,7 +749,7 @@ class DOMNode(MessagePump):
         if old_classes == self._classes:
             return
         try:
-            self.app.stylesheet.update(self, animate=True)
+            self.app.update_styles(self)
         except NoActiveAppError:
             pass
 

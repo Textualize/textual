@@ -160,10 +160,12 @@ class RuleSet:
     styles: Styles = field(default_factory=Styles)
     errors: list[tuple[Token, str]] = field(default_factory=list)
 
-    ids: set[str] = field(default_factory=set)
     is_default_rules: bool = False
     tie_breaker: int = 0
     selector_names: set[str] = field(default_factory=set)
+
+    def __hash__(self):
+        return id(self)
 
     @classmethod
     def _selector_to_css(cls, selectors: list[Selector]) -> str:
@@ -200,10 +202,22 @@ class RuleSet:
 
         class_type = SelectorType.CLASS
         id_type = SelectorType.ID
+        type_type = SelectorType.TYPE
+        universal_type = SelectorType.UNIVERSAL
 
         update_selectors = self.selector_names.update
 
         for selector_set in self.selector_set:
+            update_selectors(
+                "*"
+                for selector in selector_set.selectors
+                if selector.type == universal_type
+            )
+            update_selectors(
+                selector.name
+                for selector in selector_set.selectors
+                if selector.type == type_type
+            )
             update_selectors(
                 f".{selector.name}"
                 for selector in selector_set.selectors

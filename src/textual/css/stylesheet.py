@@ -312,7 +312,13 @@ class Stylesheet:
             if _check_selectors(selector_set.selectors, css_path_nodes):
                 yield selector_set.specificity
 
-    def apply(self, node: DOMNode, animate: bool = False) -> None:
+    def apply(
+        self,
+        node: DOMNode,
+        *,
+        limit_rules: set[RuleSet] | None = None,
+        animate: bool = False,
+    ) -> None:
         """Apply the stylesheet to a DOM node.
 
         Args:
@@ -334,12 +340,18 @@ class Stylesheet:
         _check_rule = self._check_rule
 
         css_path_nodes = node.css_path_nodes
+
         selector_names = {
             selector for node in css_path_nodes for selector in node._selector_names
         }
 
+        rules: Iterable[RuleSet]
+        if limit_rules:
+            rules = [rule for rule in reversed(self.rules) if rule in limit_rules]
+        else:
+            rules = reversed(self.rules)
         # Collect the rules defined in the stylesheet
-        for rule in reversed(self.rules):
+        for rule in rules:
             if rule.selector_names and not rule.selector_names.issubset(selector_names):
                 continue
 
@@ -457,10 +469,17 @@ class Stylesheet:
             nodes (DOMNode): Nodes to update.
             animate (bool, optional): Enable CSS animation. Defaults to False.
         """
+
+        rules_map: defaultdict[str, list[RuleSet]] = defaultdict(list)
+        for rule in self.rules:
+            for name in rule.selector_names:
+                rules_map[name].append(rule)
+
         apply = self.apply
-        nodes = list(nodes)
+
         for node in nodes:
-            apply(node, animate=animate)
+            rules = {rule for name in node._selector_names for rule in rules_map[name]}
+            apply(node, limit_rules=rules, animate=animate)
             if isinstance(node, Widget) and node.is_scrollable:
                 if node.show_vertical_scrollbar:
                     apply(node.vertical_scrollbar)
