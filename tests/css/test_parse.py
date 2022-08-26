@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pytest
 
-
 from textual.color import Color
 from textual.css.errors import UnresolvedVariableError
 from textual.css.parse import substitute_references
@@ -1131,3 +1130,21 @@ class TestParsePadding:
         stylesheet = Stylesheet()
         stylesheet.add_source(css)
         assert stylesheet.rules[0].styles.padding == Spacing(2, 3, -1, 1)
+
+
+class TestParseTextJustify:
+    @pytest.mark.parametrize("valid_justify", ["left", "center", "full", "right"])
+    def test_text_justify(self, valid_justify):
+        css = f"#foo {{ text-justify: {valid_justify} }}"
+        stylesheet = Stylesheet()
+        stylesheet.add_source(css)
+        assert stylesheet.rules[0].styles.text_justify == valid_justify
+
+    def test_text_justify_invalid(self):
+        css = "#foo { text-justify: invalid-value }"
+        stylesheet = Stylesheet()
+        with pytest.raises(StylesheetParseError):
+            stylesheet.add_source(css)
+            stylesheet.parse()
+        rules = stylesheet._parse_rules(css, "foo")
+        assert rules[0].errors
