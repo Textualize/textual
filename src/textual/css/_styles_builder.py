@@ -621,6 +621,7 @@ class StylesBuilder:
         self.styles.text_style = style_definition
 
     def process_text_justify(self, name: str, tokens: list[Token]) -> None:
+        """Process a text-justify declaration"""
         if not tokens:
             return
 
