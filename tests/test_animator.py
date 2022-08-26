@@ -243,7 +243,7 @@ def test_bound_animator():
     assert animator._animations[(id(animate_test), "foo")] == expected
 
 
-def test_animator_on_complete_callback_not_fired_before_duration_ends():
+async def test_animator_on_complete_callback_not_fired_before_duration_ends():
     callback = Mock()
     animate_test = AnimateTest()
     animator = MockAnimator(Mock())
@@ -251,7 +251,7 @@ def test_animator_on_complete_callback_not_fired_before_duration_ends():
     animator.animate(animate_test, "foo", 200, duration=10, on_complete=callback)
 
     animator._time = 9
-    animator()
+    await animator()
 
     assert not callback.called
 

@@ -6,6 +6,12 @@ The default value is `border-box` which means that padding and border are includ
 
 You can set `box-sizing` to `content-box` which tells Textual that padding and border should increase the size of the widget, leaving the content area unaffected.
 
+## Syntax
+
+```
+box-sizing: [border-box|content-box];
+```
+
 ## Example
 
 Both widgets in this example have the same height (5). The top widget has `box-sizing: border-box` which means that padding and border reduces the space for content. The bottom widget has `box-sizing: content-box` which increases the size of the widget to compensate for padding and border.
@@ -14,6 +20,12 @@ Both widgets in this example have the same height (5). The top widget has `box-s
 
     ```python
     --8<-- "docs/examples/styles/box_sizing.py"
+    ```
+
+=== "box_sizing.css"
+
+    ```css
+    --8<-- "docs/examples/styles/box_sizing.css"
     ```
 
 === "Output"

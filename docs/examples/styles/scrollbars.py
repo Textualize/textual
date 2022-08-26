@@ -13,37 +13,9 @@ Where the fear has gone there will be nothing. Only I will remain.
 
 
 class ScrollbarApp(App):
-    CSS = """
-
-    Screen {
-        background: #212121;
-        color: white 80%;
-        layout: horizontal;
-    }
-    
-    Static {
-        padding: 1 2;
-    }
-
-    .panel1 {
-        width: 1fr;
-        scrollbar-color: green;
-        scrollbar-background: #bbb;
-        padding: 1 2;        
-    } 
-
-    .panel2 {
-        width: 1fr;
-        scrollbar-color: yellow;
-        scrollbar-background: purple;
-        padding: 1 2;
-    }   
-    
-    """
-
     def compose(self):
         yield layout.Vertical(Static(TEXT * 5), classes="panel1")
         yield layout.Vertical(Static(TEXT * 5), classes="panel2")
 
 
-app = ScrollbarApp()
+app = ScrollbarApp(css_path="scrollbars.css")

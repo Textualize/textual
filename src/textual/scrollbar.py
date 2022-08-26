@@ -232,14 +232,14 @@ class ScrollBar(Widget):
             style=scrollbar_style,
         )
 
-    def on_hide(self, event: events.Hide) -> None:
+    def _on_hide(self, event: events.Hide) -> None:
         if self.grabbed:
             self.release_mouse()
 
-    def on_enter(self, event: events.Enter) -> None:
+    def _on_enter(self, event: events.Enter) -> None:
         self.mouse_over = True
 
-    def on_leave(self, event: events.Leave) -> None:
+    def _on_leave(self, event: events.Leave) -> None:
         self.mouse_over = False
 
     async def action_scroll_down(self) -> None:
@@ -254,18 +254,18 @@ class ScrollBar(Widget):
     def action_released(self) -> None:
         self.capture_mouse(False)
 
-    async def on_mouse_up(self, event: events.MouseUp) -> None:
+    async def _on_mouse_up(self, event: events.MouseUp) -> None:
         if self.grabbed:
             self.release_mouse()
 
-    def on_mouse_capture(self, event: events.MouseCapture) -> None:
+    def _on_mouse_capture(self, event: events.MouseCapture) -> None:
         self.grabbed = event.mouse_position
         self.grabbed_position = self.position
 
-    def on_mouse_release(self, event: events.MouseRelease) -> None:
+    def _on_mouse_release(self, event: events.MouseRelease) -> None:
         self.grabbed = None
 
-    async def on_mouse_move(self, event: events.MouseMove) -> None:
+    async def _on_mouse_move(self, event: events.MouseMove) -> None:
         if self.grabbed and self.window_size:
             x: float | None = None
             y: float | None = None

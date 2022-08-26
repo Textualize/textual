@@ -268,7 +268,7 @@ async def test_scrollbar_gutter(
 
     text_widget = TextWidget()
     text_widget.styles.height = "auto"
-    container.add_child(text_widget)
+    container._add_child(text_widget)
 
     class MyTestApp(AppTest):
         def compose(self) -> ComposeResult:

@@ -11,31 +11,10 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class TextStyleApp(App):
-    CSS = """
-    Screen {
-        layout: horizontal;    
-    }
-    Static {
-        width:1fr;        
-    }    
-    #static1 {
-        background: red 30%;
-        text-style: bold;
-    }
-    #static2 {
-        background: green 30%;
-        text-style: italic;
-    }
-    #static3 {
-        background: blue 30%;
-        text-style: reverse;
-    }
-    """
-
     def compose(self):
         yield Static(TEXT, id="static1")
         yield Static(TEXT, id="static2")
         yield Static(TEXT, id="static3")
 
 
-app = TextStyleApp()
+app = TextStyleApp(css_path="text_style.css")

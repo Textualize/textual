@@ -2,6 +2,12 @@
 
 The `min-width` rules sets a minimum width for a widget.
 
+## Syntax
+
+```
+min-width: <SCALAR>;
+```
+
 ## CSS
 
 ```sass

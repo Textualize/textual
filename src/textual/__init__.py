@@ -6,6 +6,7 @@ __all__ = ["log", "panic"]
 
 
 def log(*args: object, verbosity: int = 0, **kwargs) -> None:
+    # TODO: There may be an early-out here for when there is no endpoint for logs
     from ._context import active_app
 
     app = active_app.get()

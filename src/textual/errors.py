@@ -7,3 +7,7 @@ class TextualError(Exception):
 
 class NoWidget(TextualError):
     """Specified widget was not found."""
+
+
+class RenderError(TextualError):
+    """An object could not be rendered."""

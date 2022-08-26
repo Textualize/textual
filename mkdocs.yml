@@ -3,13 +3,39 @@ site_url: https://www.textualize.io/
 
 nav:
   - "index.md"
+  - "getting_started.md"
   - "introduction.md"
   - Guide:
-    - "guide/guide.md"
+    - "guide/devtools.md" 
+    - "guide/CSS.md"
+    - "guide/events.md"
+ 
   - "actions.md"
   - Events:
+    - "events/blur.md"
+    - "events/descendant_blur.md"
+    - "events/descendant_focus.md"
+    - "events/enter.md"
+    - "events/enter.md"
+    - "events/focus.md"
+    - "events/hide.md"
+    - "events/key.md"
+    - "events/leave.md"
+    - "events/load.md"
     - "events/mount.md"
+    - "events/mouse_capture.md"
+    - "events/mouse_click.md"
+    - "events/mouse_down.md"
+    - "events/mouse_move.md"
+    - "events/mouse_release.md"
+    - "events/mouse_scroll_down.md"
+    - "events/mouse_scroll_up.md"
+    - "events/mouse_up.md"
+    - "events/paste.md"
     - "events/resize.md"
+    - "events/screen_resume.md"
+    - "events/screen_suspend.md"
+    - "events/show.md"  
   - Styles:
     - "styles/background.md"
     - "styles/border.md"
@@ -17,19 +43,19 @@ nav:
     - "styles/color.md"
     - "styles/content_align.md"
     - "styles/display.md"
-    - "styles/min_height.md"
-    - "styles/max_height.md"
-    - "styles/min_width.md"
-    - "styles/max_width.md"
     - "styles/height.md"
     - "styles/margin.md"
+    - "styles/max_height.md"
+    - "styles/max_width.md"
+    - "styles/min_height.md"
+    - "styles/min_width.md"
     - "styles/offset.md"
     - "styles/outline.md"
     - "styles/overflow.md"
     - "styles/padding.md"
-    - "styles/scrollbar.md"
-    - "styles/scrollbar_size.md"
     - "styles/scrollbar_gutter.md"
+    - "styles/scrollbar_size.md"
+    - "styles/scrollbar.md"
     - "styles/text_style.md"
     - "styles/tint.md"
     - "styles/visibility.md"
@@ -37,14 +63,25 @@ nav:
   - Widgets: "/widgets/"
   - Reference:
     - "reference/app.md"
+    - "reference/color.md"
+    - "reference/dom_node.md"
     - "reference/events.md"
     - "reference/geometry.md"
+    - "reference/message_pump.md"
+    - "reference/timer.md"
     - "reference/widget.md"
 
+
 markdown_extensions:
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - md_in_html
   - admonition
   - def_list
   - meta
+  
   - toc:
       permalink: true
       baselevel: 1
@@ -88,6 +125,7 @@ theme:
 plugins:
 
 - search:
+- autorefs:
 - mkdocstrings:
     default_handler: python
     handlers:

@@ -11,22 +11,8 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class PaddingApp(App):
-    CSS = """
-
-    Screen {
-        background: white;
-        color: blue;
-    }
-   
-    Static {
-        padding: 4 8;  
-        background: blue 20%;  
-    }    
-    
-    """
-
     def compose(self):
         yield Static(TEXT)
 
 
-app = PaddingApp()
+app = PaddingApp(css_path="padding.css")

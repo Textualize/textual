@@ -31,7 +31,7 @@ class VerticalLayout(Layout):
         fraction_unit = Fraction(size.height, total_fraction or 1)
 
         box_models = [
-            widget.get_box_model(size, parent_size, fraction_unit)
+            widget._get_box_model(size, parent_size, fraction_unit)
             for widget in children
         ]
 

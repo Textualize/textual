@@ -12,16 +12,30 @@ The default value for overflow is `"auto auto"` which will show scrollbars autom
 
 Overflow may also be set independently by setting the `overflow-x` rule for the horizontal bar, and `overflow-y` for the vertical bar.
 
+## Syntax
+
+```
+overflow: [auto|hidden|scroll];
+overflow-x: [auto|hidden|scroll];
+overflow-y: [auto|hidden|scroll];
+```
+
 ## Example
 
 Here we split the screen in to left and right sections, each with three vertically scrolling widgets that do not fit in to the height of the terminal.
 
-The left side has `overflow-y: auto` (the default) and will automatically show a scrollbar. The right side has `overflow-y: hidden` which will prevent a scrollbar from being show.
+The left side has `overflow-y: auto` (the default) and will automatically show a scrollbar. The right side has `overflow-y: hidden` which will prevent a scrollbar from being shown.
 
-=== "width.py"
+=== "overflow.py"
 
     ```python
     --8<-- "docs/examples/styles/overflow.py"
+    ```
+
+=== "overflow.css"
+
+    ```css
+    --8<-- "docs/examples/styles/overflow.css"
     ```
 
 === "Output"

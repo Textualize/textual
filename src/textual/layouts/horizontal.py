@@ -33,7 +33,7 @@ class HorizontalLayout(Layout):
         fraction_unit = Fraction(size.width, total_fraction or 1)
 
         box_models = [
-            widget.get_box_model(size, parent_size, fraction_unit)
+            widget._get_box_model(size, parent_size, fraction_unit)
             for widget in cast("list[Widget]", children)
         ]
 
@@ -46,9 +46,9 @@ class HorizontalLayout(Layout):
 
         x = Fraction(box_models[0].margin.left if box_models else 0)
 
-        displayed_children = cast("list[Widget]", parent.displayed_children)
+        displayed_children = [child for child in children if child.display]
 
-        for widget, box_model, margin in zip(displayed_children, box_models, margins):
+        for widget, box_model, margin in zip(children, box_models, margins):
             content_width, content_height, box_margin = box_model
             offset_y = (
                 widget.styles.align_height(

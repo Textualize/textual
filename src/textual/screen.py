@@ -2,24 +2,22 @@ from __future__ import annotations
 
 import sys
 
-from rich.console import RenderableType
 import rich.repr
+from rich.console import RenderableType
 from rich.style import Style
 
-
-from . import events, messages, errors
+from . import errors, events, messages
 from ._callback import invoke
-
-from .geometry import Offset, Region, Size
 from ._compositor import Compositor, MapGeometry
+from .timer import Timer
 from ._types import CallbackType
+from .geometry import Offset, Region, Size
 from .reactive import Reactive
 from .renderables.blank import Blank
-from ._timer import Timer
 from .widget import Widget
 
 if sys.version_info >= (3, 8):
-    from typing import Final, Callable, Awaitable
+    from typing import Final
 else:
     from typing_extensions import Final
 
@@ -38,7 +36,7 @@ class Screen(Widget):
     }
     """
 
-    dark = Reactive(False)
+    dark: Reactive[bool] = Reactive(False)
 
     def __init__(self, name: str | None = None, id: str | None = None) -> None:
         super().__init__(name=name, id=id)
@@ -69,7 +67,10 @@ class Screen(Widget):
         pass
 
     def render(self) -> RenderableType:
-        return Blank()
+        background = self.styles.background
+        if background.is_transparent:
+            return self.app.render()
+        return Blank(background)
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the absolute offset of a given Widget.

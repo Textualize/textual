@@ -2,6 +2,12 @@
 
 The `min-height` rule sets a minimum height for a widget.
 
+## Syntax
+
+```
+min-height: <SCALAR>;
+```
+
 ## CSS
 
 ```sass

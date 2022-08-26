@@ -6,22 +6,22 @@ from pathlib import Path
 from typing import Iterable
 
 from importlib_metadata import version
-from rich.containers import Renderables
-from rich.style import Style
-from rich.text import Text
 
 if sys.version_info >= (3, 8):
     from typing import Literal
 else:
     from typing_extensions import Literal
 
-from rich.console import Console
 from rich.align import Align
-from rich.console import ConsoleOptions, RenderResult
+from rich.console import Console, ConsoleOptions, RenderResult
 from rich.markup import escape
 from rich.rule import Rule
 from rich.segment import Segment, Segments
+from rich.style import Style
 from rich.table import Table
+from rich.text import Text
+
+from textual._border import Border
 
 DevConsoleMessageLevel = Literal["info", "warning", "error"]
 
@@ -30,17 +30,17 @@ class DevConsoleHeader:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        lines = Renderables(
-            [
-                f"[bold]Textual Development Console [magenta]v{version('textual')}",
-                "[magenta]Run a Textual app with the environment variable [b]TEXTUAL=devtools[/] to connect.",
-                "[magenta]Press [b]Ctrl+C[/] to quit.",
-            ]
+        preamble = Text.from_markup(
+            f"[bold]Textual Development Console [magenta]v{version('textual')}\n"
+            "[magenta]Run a Textual app with [reverse]textual run --dev my_app.py[/] to connect.\n"
+            "[magenta]Press [reverse]Ctrl+C[/] to quit."
         )
         render_options = options.update(width=options.max_width - 4)
-        lines = console.render_lines(lines, render_options)
-        new_line = Segment("\n")
+        lines = console.render_lines(preamble, render_options)
+
+        new_line = Segment.line()
         padding = Segment("▌", Style.parse("bright_magenta"))
+
         for line in lines:
             yield padding
             yield from line
