@@ -4,10 +4,10 @@ import os
 from collections import defaultdict
 from operator import itemgetter
 from pathlib import Path, PurePath
-from typing import cast, Iterable, NamedTuple
+from typing import Iterable, NamedTuple, cast
 
 import rich.repr
-from rich.console import RenderableType, RenderResult, Console, ConsoleOptions
+from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.markup import render
 from rich.padding import Padding
 from rich.panel import Panel
@@ -15,19 +15,18 @@ from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 
-from textual.widget import Widget
+from .. import messages
+from .._profile import timer
+from ..dom import DOMNode
+from ..widget import Widget
 from .errors import StylesheetError
 from .match import _check_selectors
 from .model import RuleSet
 from .parse import parse
 from .styles import RulesMap, Styles
-from .tokenize import tokenize_values, Token
+from .tokenize import Token, tokenize_values
 from .tokenizer import TokenError
 from .types import Specificity3, Specificity6
-from ..dom import DOMNode
-from .. import messages
-
-from .._profile import timer
 
 
 class StylesheetParseError(StylesheetError):
@@ -137,6 +136,7 @@ class CssSource(NamedTuple):
 class Stylesheet:
     def __init__(self, *, variables: dict[str, str] | None = None) -> None:
         self._rules: list[RuleSet] = []
+        self._rules_map: dict[str, list[RuleSet]] | None = None
         self.variables = variables or {}
         self.source: dict[str, CssSource] = {}
         self._require_parse = False
@@ -146,11 +146,31 @@ class Stylesheet:
 
     @property
     def rules(self) -> list[RuleSet]:
+        """List of rule sets.
+
+        Returns:
+            list[RuleSet]: List of rules sets for this stylesheet.
+        """
         if self._require_parse:
             self.parse()
             self._require_parse = False
         assert self._rules is not None
         return self._rules
+
+    @property
+    def rules_map(self) -> dict[str, list[RuleSet]]:
+        """Structure that maps a selector on to a list of rules.
+
+        Returns:
+            dict[str, list[RuleSet]]: Mapping of selector to rule sets.
+        """
+        if self._rules_map is None:
+            rules_map: dict[str, list[RuleSet]] = defaultdict(list)
+            for rule in self.rules:
+                for name in rule.selector_names:
+                    rules_map[name].append(rule)
+            self._rules_map = dict(rules_map)
+        return self._rules_map
 
     @property
     def css(self) -> str:
@@ -285,6 +305,7 @@ class Stylesheet:
             add_rules(css_rules)
         self._rules = rules
         self._require_parse = False
+        self._rules_map = None
 
     def reparse(self) -> None:
         """Re-parse source, applying new variables.
@@ -302,6 +323,7 @@ class Stylesheet:
             )
         stylesheet.parse()
         self._rules = stylesheet.rules
+        self._rules_map = None
         self.source = stylesheet.source
 
     @classmethod
@@ -470,15 +492,15 @@ class Stylesheet:
             animate (bool, optional): Enable CSS animation. Defaults to False.
         """
 
-        rules_map: defaultdict[str, list[RuleSet]] = defaultdict(list)
-        for rule in self.rules:
-            for name in rule.selector_names:
-                rules_map[name].append(rule)
-
+        rules_map = self.rules_map
         apply = self.apply
 
         for node in nodes:
-            rules = {rule for name in node._selector_names for rule in rules_map[name]}
+            rules = {
+                rule
+                for name in node._selector_names
+                for rule in rules_map.get(name, [])
+            }
             apply(node, limit_rules=rules, animate=animate)
             if isinstance(node, Widget) and node.is_scrollable:
                 if node.show_vertical_scrollbar:
