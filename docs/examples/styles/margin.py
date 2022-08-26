@@ -11,23 +11,8 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class MarginApp(App):
-    CSS = """
-
-    Screen {
-        background: white;
-        color: black;
-    }
-   
-    Static {
-        margin: 4 8;  
-        background: blue 20%;  
-        border: blue wide;
-    }    
-    
-    """
-
     def compose(self):
         yield Static(TEXT)
 
 
-app = MarginApp()
+app = MarginApp(css_path="margin.css")

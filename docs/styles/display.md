@@ -2,6 +2,12 @@
 
 The `display` property defines if a Widget is displayed or not. The default value is `"block"` which will display the widget as normal. Setting the property to `"none"` will effectively make it invisible.
 
+## Syntax
+
+```
+display: [none|block];
+```
+
 ## Example
 
 Note that the second widget is hidden by adding the "hidden" class which sets the display style to None.
@@ -10,6 +16,12 @@ Note that the second widget is hidden by adding the "hidden" class which sets th
 
     ```python
     --8<-- "docs/examples/styles/display.py"
+    ```
+
+=== "display.css"
+
+    ```css
+    --8<-- "docs/examples/styles/display.css"
     ```
 
 === "Output"

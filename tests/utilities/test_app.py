@@ -70,7 +70,7 @@ class AppTest(App):
         waiting_duration_after_yield: float = 0,
     ) -> AsyncContextManager[ClockMock]:
         async def run_app() -> None:
-            await self.process_messages()
+            await self._process_messages()
 
         @contextlib.asynccontextmanager
         async def get_running_state_context_manager():
@@ -103,6 +103,7 @@ class AppTest(App):
             # End of simulated time: we just shut down ourselves:
             assert not run_task.done()
             await self.shutdown()
+            await run_task
 
         return get_running_state_context_manager()
 

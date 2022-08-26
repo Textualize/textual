@@ -1,0 +1,23 @@
+Screen {
+    background: #212121;
+    color: white 80%;
+    layout: horizontal;
+}
+
+Static {
+    padding: 1 2;
+}
+
+.panel1 {
+    width: 1fr;
+    scrollbar-color: green;
+    scrollbar-background: #bbb;
+    padding: 1 2;        
+} 
+
+.panel2 {
+    width: 1fr;
+    scrollbar-color: yellow;
+    scrollbar-background: purple;
+    padding: 1 2;
+}   

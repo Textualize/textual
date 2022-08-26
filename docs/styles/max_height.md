@@ -1,6 +1,12 @@
 # Max-height
 
-The `max-height` rule sets a maximum width for a widget.
+The `max-height` rule sets a maximum height for a widget.
+
+## Syntax
+
+```
+max-height: <SCALAR>;
+```
 
 ## CSS
 

@@ -24,7 +24,7 @@ class CenterLayout(Layout):
         fraction_unit = Fraction(size.width)
 
         for widget in children:
-            width, height, margin = widget.get_box_model(
+            width, height, margin = widget._get_box_model(
                 size, parent_size, fraction_unit
             )
             margin_width = width + margin.width

@@ -2,6 +2,12 @@
 
 The tint rule blends a color with the widget. The color should likely have an _alpha_ component, or the end result would obscure the widget content.
 
+## Syntax
+
+```
+tint: <COLOR> [<PERCENTAGE>];
+```
+
 ## Example
 
 This examples shows a green tint with gradually increasing alpha.
@@ -10,6 +16,12 @@ This examples shows a green tint with gradually increasing alpha.
 
     ```python
     --8<-- "docs/examples/styles/tint.py"
+    ```
+
+=== "tint.css"
+
+    ```css
+    --8<-- "docs/examples/styles/tint.css"
     ```
 
 === "Output"

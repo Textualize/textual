@@ -192,6 +192,11 @@ class Scalar(NamedTuple):
         return f"{int(value) if value.is_integer() else value}{self.symbol}"
 
     @property
+    def is_cells(self) -> bool:
+        """Check if the Scalar is explicit cells."""
+        return self.unit == Unit.CELLS
+
+    @property
     def is_percent(self) -> bool:
         """Check if the Scalar is a percentage unit."""
         return self.unit == Unit.PERCENT

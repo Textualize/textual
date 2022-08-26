@@ -243,6 +243,6 @@ if __name__ == "__main__":
 
     class MyApp(App):
         async def on_mount(self, event: events.Mount) -> None:
-            self.set_timer(5, callback=self.close_messages)
+            self.set_timer(5, callback=self._close_messages)
 
     MyApp.run()

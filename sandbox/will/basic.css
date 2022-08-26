@@ -97,6 +97,7 @@ DataTable {
 Tweet {
   height:12;
   width: 100%;
+  margin: 0 2;
  
   margin:0 2;
   background: $panel;
@@ -109,6 +110,7 @@ Tweet {
   /* scrollbar-gutter: stable; */
   align-horizontal: center;
   box-sizing: border-box;
+
 }
 
 

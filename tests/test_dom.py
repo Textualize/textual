@@ -32,10 +32,10 @@ def parent():
     child1 = DOMNode(id="child1")
     child2 = DOMNode(id="child2")
     grandchild1 = DOMNode(id="grandchild1")
-    child1.add_child(grandchild1)
+    child1._add_child(grandchild1)
 
-    parent.add_child(child1)
-    parent.add_child(child2)
+    parent._add_child(child1)
+    parent._add_child(child2)
 
     yield parent
 

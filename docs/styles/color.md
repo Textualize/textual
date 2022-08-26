@@ -2,10 +2,26 @@
 
 The `color` rule sets the text color of a Widget.
 
+## Syntax
+
+```
+color: <COLOR> [<PERCENTAGE>];
+```
+
+## Example
+
+This example sets a different text color to three different widgets.
+
 === "color.py"
 
     ```python
     --8<-- "docs/examples/styles/color.py"
+    ```
+
+=== "color.css"
+
+    ```css
+    --8<-- "docs/examples/styles/color.css"
     ```
 
 === "Output"

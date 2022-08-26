@@ -9,7 +9,7 @@ from rich.text import Text
 
 from textual import events, _clock
 from textual._text_backend import TextEditorBackend
-from textual._timer import Timer
+from textual.timer import Timer
 from textual._types import MessageTarget
 from textual.app import ComposeResult
 from textual.geometry import Size, clamp

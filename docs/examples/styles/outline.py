@@ -12,20 +12,8 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class OutlineApp(App):
-    CSS = """
-    Screen {
-        background: white;
-        color: black;
-    }
-    Static {
-        margin: 4 8;
-        background: green 20%;
-        outline: wide green;
-    }
-    """
-
     def compose(self):
         yield Static(TEXT)
 
 
-app = OutlineApp()
+app = OutlineApp(css_path="outline.css")
