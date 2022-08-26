@@ -130,7 +130,6 @@ class BasicApp(App, css_path="basic.css"):
                 classes="scrollable",
             ),
             table,
-            Widget(DirectoryTree("~/projects/textual"), id="tree-container"),
             Error(),
             Tweet(TweetBody(), classes="scrollbar-size-custom"),
             Warning(),

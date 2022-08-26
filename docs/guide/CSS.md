@@ -56,8 +56,6 @@ The lines inside the curly braces contains CSS _rules_, which consist of a rule 
 
 The first rule in the above example reads `"dock: top;"`. The rule name is `dock` which tells Textual to place the widget on an edge of the screen. The text after the colon is `top` which tells Textual to dock to the _top_ of the screen. Other valid values for `dock` are "right", "bottom", or "left"; but `top` is most appropriate for a header.
 
-You may be able to guess what some of the the other rules do. We will cover those later.
-
 ## The DOM
 
 The DOM, or _Document Object Model_, is a term borrowed from the web world. Textual doesn't use documents but the term has stuck. In Textual CSS, the DOM is a an arrangement of widgets you can visualize as a tree-like structure.
@@ -189,7 +187,7 @@ Let's look at the selectors supported by Textual CSS.
 
 ### Type selector
 
-The _type_ selector matches the name of the (Python) class, which is literally the name of the class in your Python code. For example, the following widget can be matched with a `Button` selector:
+The _type_ selector matches the name of the (Python) class. For example, the following widget can be matched with a `Button` selector:
 
 ```python
 from textual.widgets import Widget
@@ -320,7 +318,7 @@ Here are some other pseudo classes:
 
 ## Combinators
 
-More sophisticated selectors can be created by combining simple selectors. The rule that combines selectors is know as a _combinator_.
+More sophisticated selectors can be created by combining simple selectors. The logic used to combine selectors is know as a _combinator_.
 
 ### Descendant combinator
 
