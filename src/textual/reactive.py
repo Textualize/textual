@@ -70,7 +70,7 @@ class Reactive(Generic[ReactiveType]):
             repaint (bool, optional): Perform a repaint on change. Defaults to True.
 
         Returns:
-            Reactive: _description_
+            Reactive: A Reactive instance which calls watchers or initialize.
         """
         return cls(default, layout=layout, repaint=repaint, init=True)
 

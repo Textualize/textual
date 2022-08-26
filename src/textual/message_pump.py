@@ -214,7 +214,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
         Args:
             delay (float): Time to wait before invoking callback.
-            callback (TimerCallback | None, optional): Callback to call after time has expired.. Defaults to None.
+            callback (TimerCallback | None, optional): Callback to call after time has expired. Defaults to None.
             name (str | None, optional): Name of the timer (for debug). Defaults to None.
             pause (bool, optional): Start timer paused. Defaults to False.
 

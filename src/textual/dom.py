@@ -314,7 +314,7 @@ class DOMNode(MessagePump):
     @property
     def display(self) -> bool:
         """
-        Check if this widget should display or note.
+        Check if this widget should display or not.
 
         Returns:
             bool: ``True`` if this DOMNode is displayed (``display != "none"``) otherwise ``False`` .

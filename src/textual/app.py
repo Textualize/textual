@@ -138,7 +138,7 @@ class App(Generic[ReturnType], DOMNode):
         driver_class (Type[Driver] | None, optional): Driver class or ``None`` to auto-detect. Defaults to None.
         log_path (str | PurePath, optional): Path to log file, or "" to disable. Defaults to "".
         log_verbosity (int, optional): Log verbosity from 0-3. Defaults to 1.
-        title (str, optional): Default title of the application. Defaults to "Textual Application".
+        title (str | None, optional): Title of the application. If ``None``, the title is set to the name of the ``App`` subclass. Defaults to ``None``.
         css_path (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
         watch_css (bool, optional): Watch CSS for changes. Defaults to False.
 
@@ -476,7 +476,7 @@ class App(Generic[ReturnType], DOMNode):
         """Get the size of the terminal.
 
         Returns:
-            Size: SIze of the terminal
+            Size: Size of the terminal
         """
         return Size(*self.console.size)
 
@@ -618,7 +618,7 @@ class App(Generic[ReturnType], DOMNode):
                 to run forever. Defaults to None.
             headless (bool, optional): Run in "headless" mode (don't write to stdout).
             press (str, optional): An iterable of keys to simulate being pressed.
-            screenshot (str, optional): Take a screenshot after pressing keys (svg data stored in self._screenshot). Defaults to False.
+            screenshot (bool, optional): Take a screenshot after pressing keys (svg data stored in self._screenshot). Defaults to False.
             screenshot_title (str | None, optional): Title of screenshot, or None to use App title. Defaults to None.
 
         Returns:

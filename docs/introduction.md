@@ -335,7 +335,7 @@ If you run "stopwatch04.py" now you will be able to toggle between the two state
 
 ## Reactive attributes
 
-A reoccurring theme in Textual is that you rarely need to explicitly update a widget. It is possible: you can call [`refresh()`][textual.widget.Widget.refresh] to display new data. However, Textual prefers to do this automatically via _reactive_ attributes.
+A recurring theme in Textual is that you rarely need to explicitly update a widget. It is possible: you can call [`refresh()`][textual.widget.Widget.refresh] to display new data. However, Textual prefers to do this automatically via _reactive_ attributes.
 
 You can declare a reactive attribute with `textual.reactive.Reactive`. Let's use this feature to create a timer that displays elapsed time and keeps it updated.
 
@@ -343,7 +343,7 @@ You can declare a reactive attribute with `textual.reactive.Reactive`. Let's use
 --8<-- "docs/examples/introduction/stopwatch05.py"
 ```
 
-We have added two reactive attributes: `start_time` will contain the time in seconds when the stopwatch was started, and `time` will contain time to be displayed on the Stopwatch.
+We have added two reactive attributes: `start_time` will contain the time in seconds when the stopwatch was started, and `time` will contain the time to be displayed on the Stopwatch.
 
 Both attributes will be available on `self` as if you had assigned them in `__init__`. If you write to either of these attributes the widget will update automatically.
 
@@ -358,7 +358,7 @@ The `time` attribute has a simple float as the default value, so `self.time` wil
 
 !!! info
 
-    The `time` attribute is created with `Reactive.init` which calls watch methods when the widget is mounted. See below for an explanation of watch methods.
+    The `time` attribute is created with `Reactive.init` which calls _watch methods_ when the widget is mounted. See below for an explanation of watch methods.
 
 In the `on_mount` method the call to `set_interval` creates a timer object which runs `self.update_time` sixty times a second. This `update_time` method calculates the time elapsed since the widget started and assigns it to `self.time`. Which brings us to one of Reactive's super-powers.
 
@@ -371,7 +371,7 @@ The end result is that the `Stopwatch` widgets show the time elapsed since the w
 ```{.textual path="docs/examples/introduction/stopwatch05.py" title="stopwatch05.py"}
 ```
 
-We've seen how we can update widgets with a timer. But we still need to wire up the buttons so we can operate Stopwatches independently.
+We've seen how we can update widgets with a timer, but we still need to wire up the buttons so we can operate Stopwatches independently.
 
 ### Wiring buttons
 

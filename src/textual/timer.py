@@ -41,7 +41,7 @@ class Timer:
         sender (MessageTarget): The sender of the event.
         name (str | None, optional): A name to assign the event (for debugging). Defaults to None.
         callback (TimerCallback | None, optional): A optional callback to invoke when the event is handled. Defaults to None.
-        repeat (int | None, optional): The number of times to repeat the timer, or None for no repeat. Defaults to None.
+        repeat (int | None, optional): The number of times to repeat the timer, or None to repeat forever. Defaults to None.
         skip (bool, optional): Enable skipping of scheduled events that couldn't be sent in time. Defaults to True.
         pause (bool, optional): Start the timer paused. Defaults to False.
     """
