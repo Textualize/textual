@@ -88,7 +88,6 @@ class StopwatchApp(App):
         new_stopwatch = Stopwatch()
         self.query_one("#timers").mount(new_stopwatch)
         new_stopwatch.scroll_visible()
-        self.sub_title = str(len(self.query("Stopwatch")))
 
     def action_remove_stopwatch(self) -> None:
         """Called to remove a timer."""
