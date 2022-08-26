@@ -1141,10 +1141,16 @@ class TestParseTextJustify:
         assert stylesheet.rules[0].styles.text_justify == valid_justify
 
     def test_text_justify_invalid(self):
-        css = "#foo { text-justify: invalid-value }"
+        css = "#foo { text-justify: invalid-value; }"
         stylesheet = Stylesheet()
         with pytest.raises(StylesheetParseError):
             stylesheet.add_source(css)
             stylesheet.parse()
         rules = stylesheet._parse_rules(css, "foo")
         assert rules[0].errors
+
+    def test_text_justify_empty_uses_default(self):
+        css = "#foo { text-justify: ; }"
+        stylesheet = Stylesheet()
+        stylesheet.add_source(css)
+        assert stylesheet.rules[0].styles.text_justify == "left"
