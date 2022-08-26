@@ -39,7 +39,7 @@ ScrollbarGutter = Literal["auto", "stable"]
 BoxSizing = Literal["border-box", "content-box"]
 Overflow = Literal["scroll", "hidden", "auto"]
 EdgeStyle = Tuple[EdgeType, Color]
-TextJustify = Literal["left", "center", "right", "full"]
+TextAlign = Literal["left", "start", "center", "right", "end", "justify"]
 
 Specificity3 = Tuple[int, int, int]
 Specificity4 = Tuple[int, int, int, int]

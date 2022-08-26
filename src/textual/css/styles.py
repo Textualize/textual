@@ -57,7 +57,7 @@ from .types import (
     Specificity3,
     Specificity6,
     Visibility,
-    TextJustify,
+    TextAlign,
 )
 
 if sys.version_info >= (3, 8):
@@ -144,7 +144,7 @@ class RulesMap(TypedDict, total=False):
     content_align_horizontal: AlignHorizontal
     content_align_vertical: AlignVertical
 
-    text_align: TextJustify
+    text_align: TextAlign
 
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
