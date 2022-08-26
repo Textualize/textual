@@ -54,7 +54,7 @@ Header {
 
 The lines inside the curly braces contains CSS _rules_, which consist of a rule name and rule value separated by a colon and ending in a semi-colon. Such rules are typically written one per line, but you could add additional rules as long as they are separated by semi-colons.
 
-The first rule in the above example reads `"dock: top;"`. The rule name is `dock` which tells Textual to place the widget on an edge of the screen. The text after the colon is `top` which tells Textual to dock to the _top_ of the screen. Other valid values for dock are "right", "bottom", or "left"; but `top` is naturally appropriate for a header.
+The first rule in the above example reads `"dock: top;"`. The rule name is `dock` which tells Textual to place the widget on an edge of the screen. The text after the colon is `top` which tells Textual to dock to the _top_ of the screen. Other valid values for `dock` are "right", "bottom", or "left"; but `top` is most appropriate for a header.
 
 You may be able to guess what some of the the other rules do. We will cover those later.
 
@@ -77,7 +77,7 @@ Let's look at a trivial Textual app.
     ```{.textual path="docs/examples/guide/dom1.py"}
     ```
 
-When you run this code you will have an instance of an `ExampleApp` in memory. This app class will also create a `Screen` object. In DOM terms, the Screen is a _child_ of the app.
+When you run this code you will have an instance of an `ExampleApp` in memory. This app class will also create a `Screen` object. In DOM terms, the `Screen` is a _child_ of `ExampleApp`.
 
 With the above example, the DOM will look like the following:
 
@@ -169,7 +169,7 @@ It is reasonable to ask why use CSS at all? Python is a powerful and expressive 
 
 A major advantage of CSS is that it separates how your app _looks_ from how it _works_. Setting styles in Python can generate a lot of spaghetti code which can make it hard to see the important logic in your application.
 
-A second advantage of CSS is that you can customize builtin and third-part widgets just as easily as you can your own app or widgets.
+A second advantage of CSS is that you can customize builtin and third-party widgets just as easily as you can your own app or widgets.
 
 Finally, Textual CSS allows you to _live edit_ the styles in your app. If you run your application with the following command, any changes you make to the CSS file will be instantly updated in the terminal:
 
@@ -177,7 +177,7 @@ Finally, Textual CSS allows you to _live edit_ the styles in your app. If you ru
 textual run my_app.py --dev
 ```
 
-Being able to iterate on the design without restarting the Python code can make it easier and faster to design beautiful interfaces.
+Being able to iterate on the design without restarting the application makes it easier and faster to design beautiful interfaces.
 
 ## Selectors
 
@@ -270,7 +270,7 @@ To match a Widget with a given class in CSS you can precede the class name with 
 
 !!! note
 
-    You can apply a class name to any class, which means that widgets of different types could share classes.
+    You can apply a class name to any widget, which means that widgets of different types could share classes.
 
 Class name selectors may be _chained_ together by appending another full stop and class name. The selector will match a widget that has _all_ of the class names set. For instance, the following sets a red background on widgets that have both `error` _and_ `disabled` class names.
 
@@ -313,7 +313,7 @@ Button:hover {
 
 The `background: green` is only applied to the Button underneath the mouse cursor. When you move the cursor away from the button it will return to its previous background color.
 
-Here are some other such pseudo classes:
+Here are some other pseudo classes:
 
 - `:focus` Matches widgets which have input focus.
 - `:focus-within` Matches widgets with a focused a child widget.
@@ -324,7 +324,7 @@ More sophisticated selectors can be created by combining simple selectors. The r
 
 ### Descendant combinator
 
-If you separate two selectors with a space it will match widgets with the second selector that have a parent that matches the first selector.
+If you separate two selectors with a space it will match widgets with the second selector that have an ancestor that matches the first selector.
 
 Here's a section of DOM to illustrate this combinator:
 

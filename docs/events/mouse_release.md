@@ -8,4 +8,4 @@ The `MouseRelease` event is sent to a widget when it is no longer receiving mous
 
 | attribute        | type   | purpose                                      |
 | ---------------- | ------ | -------------------------------------------- |
-| `mouse_position` | Offset | Mouse coordinates when the mouse was release |
+| `mouse_position` | Offset | Mouse coordinates when the mouse was released |
