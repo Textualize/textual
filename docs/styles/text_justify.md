@@ -2,6 +2,8 @@
 
 The `text-justify` rule justifies text within a widget.
 
+This property is not the same as the `text-justify` property in browser CSS.
+
 ## Syntax
 
 ```
@@ -19,8 +21,7 @@ text-justify: [left|center|right|full];
 
 ## Example
 
-In this example, we can see, from top to bottom,
- `left`, `center`, `right`, and `full` justified text respectively.
+This example shows, from top to bottom: `left`, `center`, `right`, and `full` justified text.
 
 === "text_justify.py"
 
@@ -38,3 +39,19 @@ In this example, we can see, from top to bottom,
 
     ```{.textual path="docs/examples/styles/text_justify.py"}
     ```
+
+## CSS
+
+```sass
+/* Set text in all Widgets to be right justified */
+Widget {
+    text-justify: right;
+}
+```
+
+## Python
+
+```python
+# Set text in the widget to be right justified
+widget.styles.text_justify = "right"
+```

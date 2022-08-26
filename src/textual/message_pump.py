@@ -242,7 +242,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         name: str | None = None,
         repeat: int = 0,
         pause: bool = False,
-    ):
+    ) -> Timer:
         """Call a function at periodic intervals.
 
         Args:

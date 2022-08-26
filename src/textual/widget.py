@@ -1382,9 +1382,6 @@ class Widget(DOMNode):
     def render(self) -> RenderableType:
         """Get renderable for widget.
 
-        Args:
-            style (Styles): The Styles object for this Widget.
-
         Returns:
             RenderableType: Any renderable
         """
