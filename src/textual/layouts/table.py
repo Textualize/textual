@@ -23,10 +23,8 @@ class TableLayout(Layout):
         styles = parent.styles
         row_scalars = styles.table_rows or [Scalar.parse("1fr")]
         column_scalars = styles.table_columns or [Scalar.parse("1fr")]
-
         gutter_horizontal = styles.table_gutter_horizontal
         gutter_vertical = styles.table_gutter_vertical
-
         viewport = parent.screen.size
 
         def cell_coords(column_count: int, row_count: int) -> Iterable[tuple[int, int]]:
@@ -83,12 +81,8 @@ class TableLayout(Layout):
         except StopIteration:
             pass
 
-        columns = resolve(
-            column_scalars, size.width, gutter_vertical, size, parent.screen.size
-        )
-        rows = resolve(
-            row_scalars, size.height, gutter_horizontal, size, parent.screen.size
-        )
+        columns = resolve(column_scalars, size.width, gutter_vertical, size, viewport)
+        rows = resolve(row_scalars, size.height, gutter_horizontal, size, viewport)
 
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
