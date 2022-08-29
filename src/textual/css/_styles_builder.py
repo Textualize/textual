@@ -868,6 +868,8 @@ class StylesBuilder:
     process_table_gutter_vertical = _process_integer
     process_column_span = _process_integer
     process_row_span = _process_integer
+    process_table_size_columns = _process_integer
+    process_table_size_rows = _process_integer
 
     def process_table_gutter(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
@@ -891,6 +893,32 @@ class StylesBuilder:
                 self.error(name, token, integer_help_text(name))
             value = max(0, int(token.value))
             self.styles._rules["table_gutter_vertical"] = value
+
+        else:
+            self.error(name, tokens[0], "expected two integers here")
+
+    def process_table_size(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        if len(tokens) == 1:
+            token = tokens[0]
+            if token.name != "number":
+                self.error(name, token, integer_help_text(name))
+            value = max(0, int(token.value))
+            self.styles._rules["table_size_columns"] = value
+            self.styles._rules["table_size_rows"] = 0
+
+        elif len(tokens) == 2:
+            token = tokens[0]
+            if token.name != "number":
+                self.error(name, token, integer_help_text(name))
+            value = max(0, int(token.value))
+            self.styles._rules["table_size_columns"] = value
+            token = tokens[1]
+            if token.name != "number":
+                self.error(name, token, integer_help_text(name))
+            value = max(0, int(token.value))
+            self.styles._rules["table_size_rows"] = value
 
         else:
             self.error(name, tokens[0], "expected two integers here")

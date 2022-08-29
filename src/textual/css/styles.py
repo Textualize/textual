@@ -143,6 +143,8 @@ class RulesMap(TypedDict, total=False):
     content_align_horizontal: AlignHorizontal
     content_align_vertical: AlignVertical
 
+    table_size_rows: int
+    table_size_columns: int
     table_gutter_horizontal: int
     table_gutter_vertical: int
     table_rows: tuple[Scalar, ...]
@@ -261,6 +263,8 @@ class StylesBase(ABC):
     table_rows = ScalarListProperty()
     table_columns = ScalarListProperty()
 
+    table_size_columns = IntegerProperty(default=1, layout=True)
+    table_size_rows = IntegerProperty(default=0, layout=True)
     table_gutter_horizontal = IntegerProperty(default=0, layout=True)
     table_gutter_vertical = IntegerProperty(default=0, layout=True)
 

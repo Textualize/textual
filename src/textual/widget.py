@@ -189,7 +189,7 @@ class Widget(DOMNode):
 
     @property
     def _allow_scroll(self) -> bool:
-        """Check if both axes may be scrolled.
+        """Check if both axis may be scrolled.
 
         Returns:
             bool: True if horizontal and vertical scrolling is enabled.
@@ -668,7 +668,7 @@ class Widget(DOMNode):
 
     @property
     def _focus_sort_key(self) -> tuple[int, int]:
-        """Key function to sort widgets in to focus order."""
+        """Key function to sort widgets in to tfocus order."""
         x, y, _, _ = self.virtual_region
         top, _, _, left = self.styles.margin
         return y - top, x - left

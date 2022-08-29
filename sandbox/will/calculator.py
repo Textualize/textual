@@ -29,7 +29,6 @@ class CalculatorApp(App):
             Button("=", variant="warning"),
             id="calculator",
         )
-        self.dark = True
 
 
 app = CalculatorApp(css_path="calculator.css")
