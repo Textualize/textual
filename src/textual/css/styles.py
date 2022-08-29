@@ -797,12 +797,12 @@ class Styles(StylesBase):
             )
         elif has_rule("content_align_vertical"):
             append_declaration("content-align-vertical", self.content_align_vertical)
-        elif has_rule("table_size_columns"):
+        elif has_rule("table_columns"):
             append_declaration(
                 "table-columns",
                 " ".join(str(scalar) for scalar in self.table_columns or ()),
             )
-        elif has_rule("table_size_rows"):
+        elif has_rule("table_rows"):
             append_declaration(
                 "table-rows",
                 " ".join(str(scalar) for scalar in self.table_rows or ()),
@@ -810,7 +810,7 @@ class Styles(StylesBase):
         elif has_rule("table_size_columns"):
             append_declaration("table-size-columns", str(self.table_size_columns))
         elif has_rule("table_size_rows"):
-            append_declaration("table-size-rows", str(self.table_size_columns))
+            append_declaration("table-size-rows", str(self.table_size_rows))
         elif has_rule("table_gutter_horizontal"):
             append_declaration(
                 "table-gutter-horizontal", str(self.table_gutter_horizontal)
