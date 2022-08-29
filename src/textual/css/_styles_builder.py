@@ -8,22 +8,24 @@ import rich.repr
 from ._error_tools import friendly_list
 from ._help_renderables import HelpText
 from ._help_text import (
-    spacing_invalid_value_help_text,
-    spacing_wrong_number_of_values_help_text,
-    scalar_help_text,
-    color_property_help_text,
-    string_enum_help_text,
+    align_help_text,
     border_property_help_text,
-    layout_property_help_text,
+    color_property_help_text,
     dock_property_help_text,
     fractional_property_help_text,
-    align_help_text,
+    integer_help_text,
+    layout_property_help_text,
     offset_property_help_text,
     offset_single_axis_help_text,
-    style_flags_property_help_text,
     property_invalid_value_help_text,
+    scalar_help_text,
     scrollbar_size_property_help_text,
     scrollbar_size_single_axis_help_text,
+    spacing_invalid_value_help_text,
+    spacing_wrong_number_of_values_help_text,
+    string_enum_help_text,
+    style_flags_property_help_text,
+    table_rows_or_columns_help_text,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -824,6 +826,74 @@ class StylesBuilder:
             if value == 0:
                 self.error(name, token, scrollbar_size_single_axis_help_text(name))
             self.styles._rules["scrollbar_size_horizontal"] = value
+
+    def _process_table_rows_or_columns(self, name: str, tokens: list[Token]) -> None:
+        scalars: list[Scalar] = []
+        for token in tokens:
+            if token.name == "number":
+                scalars.append(Scalar.from_number(float(token.value)))
+            elif token.name == "scalar":
+                scalars.append(
+                    Scalar.parse(
+                        token.value,
+                        percent_unit=Unit.WIDTH if name == "rows" else Unit.HEIGHT,
+                    )
+                )
+            else:
+                self.error(
+                    name,
+                    token,
+                    table_rows_or_columns_help_text(name, token.value, context="css"),
+                )
+        self.styles._rules[name.replace("-", "_")] = scalars
+
+    process_table_rows = _process_table_rows_or_columns
+    process_table_columns = _process_table_rows_or_columns
+
+    def _process_integer(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        if len(tokens) != 1:
+            self.error(name, tokens[0], integer_help_text(name))
+        else:
+            token = tokens[0]
+            if token.name != "number" or not token.value.isdigit():
+                self.error(name, token, integer_help_text(name))
+            value = int(token.value)
+            if value == 0:
+                self.error(name, token, integer_help_text(name))
+            self.styles._rules[name.replace("-", "_")] = value
+
+    process_table_gutter_horizontal = _process_integer
+    process_table_gutter_vertical = _process_integer
+    process_column_span = _process_integer
+    process_row_span = _process_integer
+
+    def process_table_gutter(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        if len(tokens) == 1:
+            token = tokens[0]
+            if token.name != "number":
+                self.error(name, token, integer_help_text(name))
+            value = max(0, int(token.value))
+            self.styles._rules["table_gutter_horizontal"] = value
+            self.styles._rules["table_gutter_vertical"] = value
+
+        elif len(tokens) == 2:
+            token = tokens[0]
+            if token.name != "number":
+                self.error(name, token, integer_help_text(name))
+            value = max(0, int(token.value))
+            self.styles._rules["table_gutter_horizontal"] = value
+            token = tokens[1]
+            if token.name != "number":
+                self.error(name, token, integer_help_text(name))
+            value = max(0, int(token.value))
+            self.styles._rules["table_gutter_vertical"] = value
+
+        else:
+            self.error(name, tokens[0], "expected two integers here")
 
     def _get_suggested_property_name_for_rule(self, rule_name: str) -> str | None:
         """

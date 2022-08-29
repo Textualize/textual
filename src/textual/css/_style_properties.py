@@ -194,6 +194,43 @@ class ScalarProperty:
             obj.refresh(layout=True)
 
 
+class ScalarListProperty:
+    def __set_name__(self, owner: Styles, name: str) -> None:
+        self.name = name
+
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> tuple[Scalar, ...] | None:
+        value = obj.get_rule(self.name)
+        return value
+
+    def __set__(
+        self, obj: StylesBase, value: str | Iterable[str | float] | None
+    ) -> None:
+        if value is None:
+            obj.clear_rule(self.name)
+            obj.refresh(layout=True)
+            return
+        parse_values: Iterable[str | float]
+        if isinstance(value, str):
+            parse_values = value.split()
+        else:
+            parse_values = value
+
+        scalars = []
+        for parse_value in parse_values:
+            if isinstance(parse_value, (int, float)):
+                scalars.append(Scalar.from_number(parse_value))
+            else:
+                scalars.append(
+                    Scalar.parse(parse_value)
+                    if isinstance(parse_value, str)
+                    else parse_value
+                )
+        if obj.set_rule(self.name, tuple(scalars)):
+            obj.refresh(layout=True)
+
+
 class BoxProperty:
     """Descriptor for getting and setting outlines and borders along a single edge.
     For example "border-right", "outline-bottom", etc.

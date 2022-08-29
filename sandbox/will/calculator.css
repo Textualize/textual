@@ -1,0 +1,28 @@
+#calculator {
+    layout: table;
+    table-columns: 1fr 1fr 1fr 1fr;
+    table-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+    table-gutter: 1 2;
+    margin: 1;
+    min-height:23;
+}
+
+.display {
+    column-span: 4;
+    content-align: center middle;
+    height: 100%;
+    background: $panel-darken-2;
+}
+
+Button {
+    width: 100%;
+    height: 100%;    
+}
+
+.special {
+    tint: $text-panel 20%;
+}
+
+.zero {
+    column-span: 2;
+}

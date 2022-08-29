@@ -27,11 +27,11 @@ from ._style_properties import (
     NameListProperty,
     NameProperty,
     OffsetProperty,
+    ScalarListProperty,
     ScalarProperty,
     SpacingProperty,
     StringEnumProperty,
     StyleFlagsProperty,
-    StyleProperty,
     TransitionsProperty,
 )
 from .constants import (
@@ -143,6 +143,14 @@ class RulesMap(TypedDict, total=False):
     content_align_horizontal: AlignHorizontal
     content_align_vertical: AlignVertical
 
+    table_gutter_horizontal: int
+    table_gutter_vertical: int
+    table_rows: tuple[Scalar, ...]
+    table_columns: tuple[Scalar, ...]
+
+    row_span: int
+    column_span: int
+
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
 RULE_NAMES_SET = frozenset(RULE_NAMES)
@@ -249,6 +257,15 @@ class StylesBase(ABC):
     content_align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     content_align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
     content_align = AlignProperty()
+
+    table_rows = ScalarListProperty()
+    table_columns = ScalarListProperty()
+
+    table_gutter_horizontal = IntegerProperty(default=0, layout=True)
+    table_gutter_vertical = IntegerProperty(default=0, layout=True)
+
+    row_span = IntegerProperty(default=1, layout=True)
+    column_span = IntegerProperty(default=1, layout=True)
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles contains the same rules."""
