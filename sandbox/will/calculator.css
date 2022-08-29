@@ -1,3 +1,7 @@
+Screen {
+    overflow: auto;
+}
+
 #calculator {
     layout: table;
     table-size: 4;
@@ -5,12 +9,13 @@
     table-columns: 1fr;
     table-rows: 1fr;
     margin: 1 2;
-    min-height:23;
+    min-height:23;  
+    min-width: 40; 
 }
 
 Button {
     width: 100%;
-    height: 100%;
+    height: 100%;    
 }
 
 .display {

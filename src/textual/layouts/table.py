@@ -139,16 +139,18 @@ class TableLayout(Layout):
             y = rows[row][0]
             x2, cell_width = columns[min(max_column, column + column_span)]
             y2, cell_height = rows[min(max_row, row + row_span)]
+            cell_size = Size(cell_width + x2 - x, cell_height + y2 - y)
             width, height, margin = widget._get_box_model(
-                Size(
-                    x2 - x + cell_width,
-                    y2 - y + cell_height,
-                ),
+                cell_size,
                 viewport,
                 fraction_unit,
             )
-            region = Region(x, y, int(width), int(height)).shrink(margin)
+            region = (
+                Region(x, y, int(width), int(height))
+                .shrink(margin)
+                .clip_size(cell_size)
+            )
             add_placement(WidgetPlacement(region, widget))
             add_widget(widget)
 
-        return placements, {*widgets}
+        return (placements, set(widgets))
