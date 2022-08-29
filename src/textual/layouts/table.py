@@ -94,9 +94,11 @@ class TableLayout(Layout):
             y = rows[row][0]
             x2, cell_width = columns[min(max_column, column + column_span)]
             y2, cell_height = rows[min(max_row, row + row_span)]
-
             width, height, margin = widget._get_box_model(
-                Size(x2 - x + cell_width, y2 - y + cell_height),
+                Size(
+                    x2 - x + cell_width,
+                    y2 - y + cell_height,
+                ),
                 viewport,
                 fraction_unit,
             )
