@@ -2,23 +2,14 @@ Screen {
     background: lightcoral;
 }
 
-#left_pane {
-    background: red;
-    width: 20
-    overflow: scroll scroll;
-}
-
-#middle_pane {
-    background: green;
-    width: 140;
-}
-
-#right_pane {
-    background: blue;
-    width: 30;
-}
-
-.box {
+.box1 {
+    background: orangered;
     height: 12;
     width: 30;
+}
+
+.box2 {
+    background: blueviolet;
+    height: 6;
+    width: 12;
 }

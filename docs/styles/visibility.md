@@ -1,12 +1,19 @@
 # Visibility
 
-The `visibility` rule may be used to make a widget invisible while still reserving spacing for it. The default value is `"visible"` which will cause the Widget to be displayed as normal. Setting the value to `"hidden"` will cause the Widget to become invisible.
+The `visibility` rule may be used to make a widget invisible while still reserving spacing for it.
 
 ## Syntax
 
 ```
-visibility: [hidden|visible];
+visibility: [visible|hidden];
 ```
+
+### Values
+
+| Value               | Description                            |
+|---------------------|----------------------------------------|
+| `visible` (default) | The widget will be displayed as normal |
+| `hidden`            | The widget will be invisible           |
 
 ## Example
 
