@@ -317,29 +317,3 @@ class Animator:
         # N.B. We could remove this method and always call `self._timer.get_time()` internally,
         # but it's handy to have in mocking situations
         return _clock.get_time_no_wait()
-
-
-if __name__ == "__main__":
-
-    async def run():
-        async def do(num):
-            print(num)
-
-        async def delayed(callable, *args):
-            await callable(*args)
-
-        async def delayed_long(callable, *args):
-            await asyncio.sleep(5)
-            await callable(*args)
-
-        tasks = []
-        for num in range(10):
-            if num == 2:
-                task = asyncio.create_task(delayed_long(do, num))
-            else:
-                task = asyncio.create_task(delayed(do, num))
-            tasks.append(task)
-
-        await asyncio.wait(tasks)
-
-    asyncio.run(run())
