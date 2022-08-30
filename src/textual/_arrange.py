@@ -48,7 +48,7 @@ def arrange(
     _WidgetPlacement = WidgetPlacement
     top_z = TOP_Z
     scroll_spacing = Spacing()
-
+    null_spacing = Spacing()
     get_dock = attrgetter("styles.dock")
 
     for widgets in dock_layers.values():
@@ -94,7 +94,9 @@ def arrange(
                 (widget_width, widget_height), size
             )
             dock_region = dock_region.shrink(margin).translate(align_offset)
-            add_placement(_WidgetPlacement(dock_region, dock_widget, top_z, True))
+            add_placement(
+                _WidgetPlacement(dock_region, null_spacing, dock_widget, top_z, True)
+            )
 
         dock_spacing = Spacing(top, right, bottom, left)
         region = size.region.shrink(dock_spacing)
@@ -109,9 +111,9 @@ def arrange(
             if placement_offset:
                 layout_placements = [
                     _WidgetPlacement(
-                        _region + placement_offset, layout_widget, order, fixed
+                        _region + placement_offset, margin, layout_widget, order, fixed
                     )
-                    for _region, layout_widget, order, fixed in layout_placements
+                    for _region, margin, layout_widget, order, fixed in layout_placements
                 ]
 
         placements.extend(layout_placements)

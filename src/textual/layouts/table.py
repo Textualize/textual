@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Iterable
 from .._layout import ArrangeResult, Layout, WidgetPlacement
 from .._resolve import resolve
 from ..css.scalar import Scalar
-from ..geometry import Region, Size
+from ..geometry import Region, Size, Spacing
 
 if TYPE_CHECKING:
     from ..widget import Widget
@@ -132,6 +132,7 @@ class TableLayout(Layout):
         add_widget = widgets.append
         max_column = len(columns) - 1
         max_row = len(rows) - 1
+        margin = Spacing()
         for widget, (column, row, column_span, row_span) in cell_size_map.items():
             x = columns[column][0]
             if row > max_row:
@@ -150,7 +151,7 @@ class TableLayout(Layout):
                 .shrink(margin)
                 .clip_size(cell_size)
             )
-            add_placement(WidgetPlacement(region, widget))
+            add_placement(WidgetPlacement(region, margin, widget))
             add_widget(widget)
 
         return (placements, set(widgets))

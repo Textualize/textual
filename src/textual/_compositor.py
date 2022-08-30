@@ -400,16 +400,15 @@ class Compositor:
                     get_layer_index = layers_to_index.get
 
                     # Add all the widgets
-                    for sub_region, sub_widget, z, fixed in placements:
+                    for sub_region, margin, sub_widget, z, fixed in placements:
                         # Combine regions with children to calculate the "virtual size"
                         if fixed:
                             widget_region = sub_region + placement_offset
                         else:
-                            total_region = total_region.union(sub_region.grow(spacing))
+                            total_region = total_region.union(
+                                sub_region.grow(spacing + margin)
+                            )
                             widget_region = sub_region + placement_scroll_offset
-
-                        if sub_widget is None:
-                            continue
 
                         widget_order = order + (get_layer_index(sub_widget.layer, 0), z)
 
