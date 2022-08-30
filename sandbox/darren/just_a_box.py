@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import asyncio
-
 from rich.console import RenderableType
 
 from textual import events
@@ -23,17 +21,20 @@ class Box(Widget, can_focus=True):
 
 class JustABox(App):
     def compose(self) -> ComposeResult:
-        self.box = Box()
+        self.box = Box(classes="box1")
         yield self.box
+        yield Box(classes="box2")
 
     def key_a(self):
-        self.animator.animate(
-            self.box.styles,
-            "opacity",
-            value=0.0,
-            duration=2.0,
-            on_complete=self.box.remove,
-        )
+        self.box.styles.display = "none"
+        # self.box.styles.visibility = "hidden"
+        # self.animator.animate(
+        #     self.box.styles,
+        #     "opacity",
+        #     value=0.0,
+        #     duration=2.0,
+        #     on_complete=self.box.remove,
+        # )
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)

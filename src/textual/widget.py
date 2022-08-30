@@ -1,14 +1,11 @@
 from __future__ import annotations
 
 from asyncio import Lock
-from itertools import islice
 from fractions import Fraction
+from itertools import islice
 from operator import attrgetter
 from typing import (
     TYPE_CHECKING,
-    Any,
-    Awaitable,
-    Callable,
     ClassVar,
     Collection,
     Iterable,
@@ -16,8 +13,7 @@ from typing import (
 )
 
 import rich.repr
-
-from rich.console import Console, RenderableType
+from rich.console import Console, RenderableType, JustifyMethod
 from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
@@ -33,13 +29,13 @@ from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
 from .box_model import BoxModel, get_box_model
+from .css.constants import VALID_TEXT_ALIGN
 from .dom import DOMNode
+from .dom import NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from .reactive import Reactive
-from .dom import NoScreen
-
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
@@ -1215,11 +1211,15 @@ class Widget(DOMNode):
         """
 
         if isinstance(renderable, str):
-            renderable = Text.from_markup(renderable)
+            justify = _get_rich_justify(self.styles.text_align)
+            renderable = Text.from_markup(renderable, justify=justify)
 
         rich_style = self.rich_style
         if isinstance(renderable, Text):
             renderable.stylize(rich_style)
+            if not renderable.justify:
+                justify = _get_rich_justify(self.styles.text_align)
+                renderable.justify = justify
         else:
             renderable = Styled(renderable, rich_style)
 
@@ -1379,9 +1379,6 @@ class Widget(DOMNode):
 
     def render(self) -> RenderableType:
         """Get renderable for widget.
-
-        Args:
-            style (Styles): The Styles object for this Widget.
 
         Returns:
             RenderableType: Any renderable
@@ -1580,3 +1577,22 @@ class Widget(DOMNode):
             self.scroll_page_up()
             return True
         return False
+
+
+def _get_rich_justify(css_align: str) -> JustifyMethod:
+    """Given the value for CSS text-align, return the analogous argument
+    for the Rich text `justify` parameter.
+
+    Args:
+        css_align: The value of text-align CSS property.
+
+    Returns:
+        JustifyMethod: The Rich JustifyMethod that corresponds to the text-align
+            value
+    """
+    assert css_align in VALID_TEXT_ALIGN
+    return {
+        "start": "left",
+        "end": "right",
+        "justify": "full",
+    }.get(css_align, css_align)

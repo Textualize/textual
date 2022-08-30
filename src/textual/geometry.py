@@ -632,7 +632,7 @@ class Region(NamedTuple):
         """Move the offset of the Region.
 
         Args:
-            translate (tuple[int, int]): Offset to add to region.
+            offset (tuple[int, int]): Offset to add to region.
 
         Returns:
             Region: A new region shifted by (x, y)

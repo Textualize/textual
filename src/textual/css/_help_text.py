@@ -9,10 +9,10 @@ from textual.css._help_renderables import Example, Bullet, HelpText
 from textual.css.constants import (
     VALID_BORDER,
     VALID_LAYOUT,
-    VALID_EDGE,
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
     VALID_STYLE_FLAGS,
+    VALID_TEXT_ALIGN,
 )
 
 if sys.version_info >= (3, 8):
@@ -666,6 +666,26 @@ def align_help_text() -> HelpText:
             Bullet(
                 f"Valid values for <vertical> are {friendly_list(VALID_ALIGN_VERTICAL)}",
             ),
+        ],
+    )
+
+
+def text_align_help_text() -> HelpText:
+    """Help text to show when the user supplies an invalid value for the text-align property
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property.
+    """
+    return HelpText(
+        summary="Invalid value for the [i]text-align[/] property.",
+        bullets=[
+            Bullet(
+                f"The [i]text-align[/] property must be one of {friendly_list(VALID_TEXT_ALIGN)}",
+                examples=[
+                    Example("text-align: center;"),
+                    Example("text-align: right;"),
+                ],
+            )
         ],
     )
 
