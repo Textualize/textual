@@ -90,6 +90,8 @@ class TableLayout(Layout):
             child_styles = child.styles
             column_span = child_styles.column_span or 1
             row_span = child_styles.row_span or 1
+            # Find a slot where this cell fits
+            # A cell on a previous row may have a row span
             while True:
                 column, row = cell_coord
                 coords = widget_coords(column, row, column_span, row_span)
@@ -108,6 +110,7 @@ class TableLayout(Layout):
                     continue
             cell_coord = next_coord()
 
+        # Resolve columns / rows
         columns = resolve(
             repeat_scalars(column_scalars, table_size_columns),
             size.width,
