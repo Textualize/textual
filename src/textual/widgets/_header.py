@@ -15,7 +15,7 @@ class HeaderIcon(Widget):
     HeaderIcon {
         dock: left;
         padding: 0 1;
-        width: 10;
+        width: 8;
         content-align: left middle;
     }
     """
@@ -41,7 +41,7 @@ class HeaderClock(Widget):
     """
 
     def on_mount(self) -> None:
-        self.set_interval(1, callback=self.refresh)
+        self.set_interval(1, callback=self.refresh, name=f"update header clock")
 
     def render(self):
         return Text(datetime.now().time().strftime("%X"))
@@ -83,6 +83,8 @@ class Header(Widget):
     }
     """
 
+    DEFAULT_CLASSES = "tall"
+
     async def on_click(self, event):
         self.toggle_class("tall")
 
@@ -95,7 +97,6 @@ class Header(Widget):
 
         watch(self.app, "title", set_title)
         watch(self.app, "sub_title", set_sub_title)
-        self.add_class("tall")
 
     def compose(self):
         yield HeaderIcon()

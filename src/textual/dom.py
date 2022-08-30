@@ -1,7 +1,16 @@
 from __future__ import annotations
 
 from inspect import getfile
-from typing import ClassVar, Iterable, Iterator, Type, overload, TypeVar, TYPE_CHECKING
+from typing import (
+    cast,
+    ClassVar,
+    Iterable,
+    Iterator,
+    Type,
+    overload,
+    TypeVar,
+    TYPE_CHECKING,
+)
 
 import rich.repr
 from rich.highlighter import ReprHighlighter
@@ -20,6 +29,7 @@ from .css.parse import parse_declarations
 from .css.styles import Styles, RenderStyles
 from .css.query import NoMatchingNodesError
 from .message_pump import MessagePump
+from .timer import Timer
 
 if TYPE_CHECKING:
     from .app import App
@@ -28,20 +38,27 @@ if TYPE_CHECKING:
     from .widget import Widget
 
 
+class DOMError(Exception):
+    pass
+
+
+class NoScreen(DOMError):
+    pass
+
+
 class NoParent(Exception):
     pass
 
 
 @rich.repr.auto
 class DOMNode(MessagePump):
-    """A node in a hierarchy of things forming the UI.
-
-    Nodes are mountable and may be styled with CSS.
-
-    """
+    """The base class for object that can be in the Textual DOM (App and Widget)"""
 
     # Custom CSS
     CSS: ClassVar[str] = ""
+
+    # Default classes argument if not supplied
+    DEFAULT_CLASSES: str = ""
 
     # Virtual DOM nodes
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
@@ -68,7 +85,30 @@ class DOMNode(MessagePump):
         # A mapping of class names to Styles set in COMPONENT_CLASSES
         self._component_styles: dict[str, RenderStyles] = {}
 
+        self._auto_refresh: float | None = None
+        self._auto_refresh_timer: Timer | None = None
+        self._css_types = {cls.__name__ for cls in self._css_bases(self.__class__)}
+
         super().__init__()
+
+    @property
+    def auto_refresh(self) -> float | None:
+        return self._auto_refresh
+
+    @auto_refresh.setter
+    def auto_refresh(self, interval: float | None) -> None:
+        if self._auto_refresh_timer is not None:
+            self._auto_refresh_timer.stop_no_wait()
+            self._auto_refresh_timer = None
+        if interval is not None:
+            self._auto_refresh_timer = self.set_interval(
+                interval, self._automatic_refresh, name=f"auto refresh {self!r}"
+            )
+        self._auto_refresh = interval
+
+    def _automatic_refresh(self) -> None:
+        """Perform an automatic refresh (set with auto_refresh property)."""
+        self.refresh()
 
     def __init_subclass__(cls, inherit_css: bool = True) -> None:
         super().__init_subclass__()
@@ -127,7 +167,7 @@ class DOMNode(MessagePump):
             else:
                 break
 
-    def on_register(self, app: App) -> None:
+    def _post_register(self, app: App) -> None:
         """Called when the widget is registered
 
         Args:
@@ -171,7 +211,8 @@ class DOMNode(MessagePump):
         Returns:
             DOMNode | None: The node which is the direct parent of this node.
         """
-        return self._parent
+
+        return cast("DOMNode | None", self._parent)
 
     @property
     def screen(self) -> "Screen":
@@ -183,7 +224,8 @@ class DOMNode(MessagePump):
         node = self
         while node and not isinstance(node, Screen):
             node = node._parent
-        assert isinstance(node, Screen)
+        if not isinstance(node, Screen):
+            raise NoScreen(f"{self} has no screen")
         return node
 
     @property
@@ -240,6 +282,12 @@ class DOMNode(MessagePump):
 
     @property
     def classes(self) -> frozenset[str]:
+        """A frozenset of the current classes set on the widget.
+
+        Returns:
+            frozenset[str]: Set of class names.
+
+        """
         return frozenset(self._classes)
 
     @property
@@ -265,9 +313,29 @@ class DOMNode(MessagePump):
         return result[::-1]
 
     @property
+    def _selector_names(self) -> list[str]:
+        """Get a set of selectors applicable to this widget.
+
+        Returns:
+            set[str]: Set of selector names.
+        """
+        selectors: list[str] = [
+            "*",
+            *(f".{class_name}" for class_name in self._classes),
+            *(f":{class_name}" for class_name in self.get_pseudo_classes()),
+            *self._css_types,
+        ]
+        if self._id is not None:
+            selectors.append(f"#{self._id}")
+        return selectors
+
+    @property
     def display(self) -> bool:
         """
-        Returns: ``True`` if this DOMNode is displayed (``display != "none"``), ``False`` otherwise.
+        Check if this widget should display or not.
+
+        Returns:
+            bool: ``True`` if this DOMNode is displayed (``display != "none"``) otherwise ``False`` .
         """
         return self.styles.display != "none" and not (self._closing or self._closed)
 
@@ -439,7 +507,12 @@ class DOMNode(MessagePump):
 
     @property
     def displayed_children(self) -> list[DOMNode]:
-        """The children which don't have display: none set."""
+        """The children which don't have display: none set.
+
+        Returns:
+            list[DOMNode]: Children of this widget which will be displayed.
+
+        """
         return [child for child in self.children if child.display]
 
     def get_pseudo_classes(self) -> Iterable[str]:
@@ -460,16 +533,16 @@ class DOMNode(MessagePump):
                 node._set_dirty()
                 node._layout_required = True
 
-    def add_child(self, node: Widget) -> None:
+    def _add_child(self, node: Widget) -> None:
         """Add a new child node.
 
         Args:
             node (DOMNode): A DOM node.
         """
         self.children._append(node)
-        node.set_parent(self)
+        node._attach(self)
 
-    def add_children(self, *nodes: Widget, **named_nodes: Widget) -> None:
+    def _add_children(self, *nodes: Widget, **named_nodes: Widget) -> None:
         """Add multiple children to this node.
 
         Args:
@@ -478,10 +551,10 @@ class DOMNode(MessagePump):
         """
         _append = self.children._append
         for node in nodes:
-            node.set_parent(self)
+            node._attach(self)
             _append(node)
         for node_id, node in named_nodes.items():
-            node.set_parent(self)
+            node._attach(self)
             _append(node)
             node.id = node_id
 
@@ -599,7 +672,7 @@ class DOMNode(MessagePump):
             query_selector = selector
         else:
             query_selector = selector.__name__
-        query = DOMQuery(self.screen, filter=query_selector)
+        query = DOMQuery(self, filter=query_selector)
 
         if expect_type is None:
             return query.first()
@@ -639,9 +712,12 @@ class DOMNode(MessagePump):
             *class_names (str): CSS class names to add.
 
         """
+        old_classes = self._classes.copy()
         self._classes.update(class_names)
+        if old_classes == self._classes:
+            return
         try:
-            self.app.stylesheet.update(self.app, animate=True)
+            self.app.update_styles(self)
         except NoActiveAppError:
             pass
 
@@ -652,9 +728,12 @@ class DOMNode(MessagePump):
             *class_names (str): CSS class names to remove.
 
         """
+        old_classes = self._classes.copy()
         self._classes.difference_update(class_names)
+        if old_classes == self._classes:
+            return
         try:
-            self.app.stylesheet.update(self.app, animate=True)
+            self.app.update_styles(self)
         except NoActiveAppError:
             pass
 
@@ -665,9 +744,12 @@ class DOMNode(MessagePump):
             *class_names (str): CSS class names to toggle.
 
         """
+        old_classes = self._classes.copy()
         self._classes.symmetric_difference_update(class_names)
+        if old_classes == self._classes:
+            return
         try:
-            self.app.stylesheet.update(self.app, animate=True)
+            self.app.update_styles(self)
         except NoActiveAppError:
             pass
 

@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import asyncio
+
 from rich.console import RenderableType
-from rich.panel import Panel
 
 from textual import events
 from textual.app import App, ComposeResult
@@ -17,7 +18,7 @@ class Box(Widget, can_focus=True):
         super().__init__(*children, id=id, classes=classes)
 
     def render(self) -> RenderableType:
-        return Panel("Box")
+        return "Box"
 
 
 class JustABox(App):
@@ -30,8 +31,7 @@ class JustABox(App):
             self.box.styles,
             "opacity",
             value=0.0,
-            duration=1.0,
-            delay=5.0,
+            duration=2.0,
             on_complete=self.box.remove,
         )
 

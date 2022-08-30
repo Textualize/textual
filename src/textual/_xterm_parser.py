@@ -63,7 +63,7 @@ class XTermParser(Parser[events.Event]):
             event: events.Event
             if buttons & 64:
                 event = (
-                    events.MouseScrollDown if button == 1 else events.MouseScrollUp
+                    events.MouseScrollUp if button == 1 else events.MouseScrollDown
                 )(sender, x, y)
             else:
                 event = (

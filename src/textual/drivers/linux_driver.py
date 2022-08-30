@@ -70,6 +70,14 @@ class LinuxDriver(Driver):
         # Note: E.g. lxterminal understands 1000h, but not the urxvt or sgr
         #       extensions.
 
+    def _enable_bracketed_paste(self) -> None:
+        """Enable bracketed paste mode."""
+        self.console.file.write("\x1b[?2004h")
+
+    def _disable_bracketed_paste(self) -> None:
+        """Disable bracketed paste mode."""
+        self.console.file.write("\x1b[?2004l")
+
     def _disable_mouse_support(self) -> None:
         write = self.console.file.write
         write("\x1b[?1000l")  #
@@ -130,6 +138,7 @@ class LinuxDriver(Driver):
         send_size_event()
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
+        self._enable_bracketed_paste()
 
     def _request_terminal_sync_mode_support(self):
         self.console.file.write("\033[?2026$p")
@@ -168,6 +177,7 @@ class LinuxDriver(Driver):
             pass
 
     def stop_application_mode(self) -> None:
+        self._disable_bracketed_paste()
         self.disable_input()
 
         if self.attrs_before is not None:
@@ -233,6 +243,6 @@ if __name__ == "__main__":
 
     class MyApp(App):
         async def on_mount(self, event: events.Mount) -> None:
-            self.set_timer(5, callback=self.close_messages)
+            self.set_timer(5, callback=self._close_messages)
 
     MyApp.run()

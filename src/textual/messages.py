@@ -1,17 +1,15 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Callable, Awaitable, Union
+from typing import TYPE_CHECKING
 
 import rich.repr
 
+from ._types import CallbackType
 from .message import Message
 
 
 if TYPE_CHECKING:
     from .message_pump import MessagePump
     from .widget import Widget
-
-
-CallbackType = Union[Callable[[], Awaitable[None]], Callable[[], None]]
 
 
 @rich.repr.auto

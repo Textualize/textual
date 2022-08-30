@@ -5,5 +5,6 @@ from ._directory_tree import DirectoryTree as DirectoryTree
 from ._footer import Footer as Footer
 from ._header import Header as Header
 from ._placeholder import Placeholder as Placeholder
+from ._pretty import Pretty as Pretty
 from ._static import Static as Static
 from ._tree_control import TreeControl as TreeControl

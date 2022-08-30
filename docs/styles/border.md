@@ -3,7 +3,7 @@
 The `border` rule enables the drawing of a box around a widget. A border is set with a border value (see below) followed by a color.
 
 | Border value | Explanation                                             |
-| ------------ | ------------------------------------------------------- |
+| ------------ |---------------------------------------------------------|
 | `"ascii"`    | A border with plus, hyphen, and vertical bar            |
 | `"blank"`    | A blank border (reserves space for a border)            |
 | `"dashed"`   | Dashed line border                                      |
@@ -24,6 +24,16 @@ For example `heavy white` would display a heavy white line around a widget.
 
 Borders may also be set individually for the four edges of a widget with the `border-top`, `border-right`, `border-bottom` and `border-left` rules.
 
+## Syntax
+
+```
+border: [<COLOR>] [<BORDER VALUE>];
+border-top: [<COLOR>] [<BORDER VALUE>];
+border-right: [<COLOR>] [<BORDER VALUE>];
+border-bottom: [<COLOR>] [<BORDER VALUE>];
+border-left: [<COLOR>] [<BORDER VALUE>];
+```
+
 ## Border command
 
 The `textual` CLI has a subcommand which will let you explore the various border types:
@@ -40,6 +50,12 @@ This examples shows three widgets with different border styles.
 
     ```python
     --8<-- "docs/examples/styles/border.py"
+    ```
+
+=== "border.css"
+
+    ```css
+    --8<-- "docs/examples/styles/border.css"
     ```
 
 === "Output"

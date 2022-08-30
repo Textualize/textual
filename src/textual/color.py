@@ -1,20 +1,17 @@
 """
 Manages Color in Textual.
 
-All instances where the developer is presented with a color should use this class. The only
+All instances where the developer is presented with a color will use this class. The only
 exception should be when passing things to a Rich renderable, which will need to use the
 `rich_color` attribute to perform a conversion.
-
-I'm not entirely happy with burdening the user with two similar color classes. In a future
-update we might add a protocol to convert automatically so the dev could use them interchangeably.
 
 """
 
 from __future__ import annotations
 
-from colorsys import rgb_to_hls, hls_to_rgb
-from functools import lru_cache
 import re
+from colorsys import hls_to_rgb, rgb_to_hls
+from functools import lru_cache
 from operator import itemgetter
 from typing import Callable, NamedTuple
 
@@ -26,11 +23,11 @@ from rich.style import Style
 from rich.text import Text
 
 from textual.css.scalar import percentage_string_to_float
-from textual.css.tokenize import COMMA, OPEN_BRACE, CLOSE_BRACE, DECIMAL, PERCENT
+from textual.css.tokenize import CLOSE_BRACE, COMMA, DECIMAL, OPEN_BRACE, PERCENT
 from textual.suggestions import get_suggestion
+
 from ._color_constants import COLOR_NAME_TO_RGB
 from .geometry import clamp
-
 
 _TRUECOLOR = ColorType.TRUECOLOR
 
@@ -39,16 +36,22 @@ class HLS(NamedTuple):
     """A color in HLS format."""
 
     h: float
+    """Hue"""
     l: float
+    """Lightness"""
     s: float
+    """Saturation"""
 
 
 class HSV(NamedTuple):
     """A color in HSV format."""
 
     h: float
+    """Hue"""
     s: float
+    """Saturation"""
     v: float
+    """Value"""
 
 
 class Lab(NamedTuple):
@@ -103,9 +106,13 @@ class Color(NamedTuple):
     """A class to represent a single RGB color with alpha."""
 
     r: int
+    """Red component (0-255)"""
     g: int
+    """Green component (0-255)"""
     b: int
+    """Blue component (0-255)"""
     a: float = 1.0
+    """Alpha component (0-1)"""
 
     @classmethod
     def from_rich_color(cls, rich_color: RichColor) -> Color:
@@ -146,12 +153,22 @@ class Color(NamedTuple):
 
     @property
     def is_transparent(self) -> bool:
-        """Check if the color is transparent, i.e. has 0 alpha."""
+        """Check if the color is transparent, i.e. has 0 alpha.
+
+        Returns:
+            bool: True if transparent, otherwise False.
+
+        """
         return self.a == 0
 
     @property
     def clamped(self) -> Color:
-        """Get a color with all components saturated to maximum and minimum values."""
+        """Get a color with all components saturated to maximum and minimum values.
+
+        Returns:
+            Color: A color object.
+
+        """
         r, g, b, a = self
         _clamp = clamp
         color = Color(
@@ -164,7 +181,11 @@ class Color(NamedTuple):
 
     @property
     def rich_color(self) -> RichColor:
-        """This color encoded in Rich's Color class."""
+        """This color encoded in Rich's Color class.
+
+        Returns:
+            RichColor: A color object as used by Rich.
+        """
         r, g, b, _a = self
         return RichColor(
             f"#{r:02x}{g:02x}{b:02x}", _TRUECOLOR, None, ColorTriplet(r, g, b)
@@ -172,25 +193,43 @@ class Color(NamedTuple):
 
     @property
     def normalized(self) -> tuple[float, float, float]:
-        """A tuple of the color components normalized to between 0 and 1."""
+        """A tuple of the color components normalized to between 0 and 1.
+
+        Returns:
+            tuple[float, float, float]: Normalized components.
+
+        """
         r, g, b, _a = self
         return (r / 255, g / 255, b / 255)
 
     @property
     def rgb(self) -> tuple[int, int, int]:
-        """Get just the red, green, and blue components."""
+        """Get just the red, green, and blue components.
+
+        Returns:
+            tuple[int, int, int]: Color components
+        """
         r, g, b, _ = self
         return (r, g, b)
 
     @property
     def hls(self) -> HLS:
-        """Get the color as HLS."""
+        """Get the color as HLS.
+
+        Returns:
+            HLS:
+        """
         r, g, b = self.normalized
         return HLS(*rgb_to_hls(r, g, b))
 
     @property
     def brightness(self) -> float:
-        """Get the human perceptual brightness."""
+        """Get the human perceptual brightness.
+
+        Returns:
+            float: Brightness value (0-1).
+
+        """
         r, g, b = self.normalized
         brightness = (299 * r + 587 * g + 114 * b) / 1000
         return brightness

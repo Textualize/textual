@@ -12,3 +12,15 @@ h3 .doc-heading code {
   font-family: "Roboto Mono", "SFMono-Regular", Consolas, "Courier New", Courier,
     monospace;
 }
+
+body[data-md-color-primary="black"] .excalidraw  svg  {  
+  filter: invert(100%) hue-rotate(180deg);
+}
+
+body[data-md-color-primary="black"] .excalidraw svg rect {
+  fill: transparent;
+}
+
+.excalidraw {
+  text-align: center;
+}

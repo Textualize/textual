@@ -8,10 +8,10 @@ from typing import Any, Callable, TypeVar
 from dataclasses import dataclass
 
 from . import _clock
+from ._callback import invoke
 from ._easing import DEFAULT_EASING, EASING
-from ._timer import Timer
-from ._types import MessageTarget
-from .geometry import clamp
+from .timer import Timer
+from ._types import MessageTarget, CallbackType
 
 if sys.version_info >= (3, 8):
     from typing import Protocol, runtime_checkable
@@ -32,7 +32,7 @@ class Animatable(Protocol):
 
 class Animation(ABC):
 
-    on_complete: Callable[[], None] | None = None
+    on_complete: CallbackType | None = None
     """Callback to run after animation completes"""
 
     @abstractmethod
@@ -61,8 +61,7 @@ class SimpleAnimation(Animation):
     end_value: float | Animatable
     final_value: object
     easing: EasingFunction
-    delay: float = 0.0
-    on_complete: Callable[[], None] | None = None
+    on_complete: CallbackType | None = None
 
     def __call__(self, time: float) -> bool:
 
@@ -70,7 +69,7 @@ class SimpleAnimation(Animation):
             setattr(self.obj, self.attribute, self.final_value)
             return True
 
-        factor = clamp((time - self.start_time - self.delay) / self.duration, 0.0, 1.0)
+        factor = min(1.0, (time - self.start_time) / self.duration)
         eased_factor = self.easing(factor)
 
         if factor == 1.0:
@@ -123,9 +122,8 @@ class BoundAnimator:
         final_value: object = ...,
         duration: float | None = None,
         speed: float | None = None,
-        delay: float = 0.0,
         easing: EasingFunction | str = DEFAULT_EASING,
-        on_complete: Callable[[], None] | None = None,
+        on_complete: CallbackType | None = None,
     ) -> None:
         easing_function = EASING[easing] if isinstance(easing, str) else easing
         return self._animator.animate(
@@ -135,7 +133,6 @@ class BoundAnimator:
             final_value=final_value,
             duration=duration,
             speed=speed,
-            delay=delay,
             easing=easing_function,
             on_complete=on_complete,
         )
@@ -181,9 +178,8 @@ class Animator:
         final_value: object = ...,
         duration: float | None = None,
         speed: float | None = None,
-        delay: float = 0.0,
         easing: EasingFunction | str = DEFAULT_EASING,
-        on_complete: Callable[[], None] | None = None,
+        on_complete: CallbackType | None = None,
     ) -> None:
         """Animate an attribute to a new value.
 
@@ -194,7 +190,6 @@ class Animator:
             final_value (Any, optional): The final value, or ellipsis if it is the same as ``value``. Defaults to ....
             duration (float | None, optional): The duration of the animation, or ``None`` to use speed. Defaults to ``None``.
             speed (float | None, optional): The speed of the animation. Defaults to None.
-            delay (float): How long to delay the beginning of the animation by in seconds.
             easing (EasingFunction | str, optional): An easing function. Defaults to DEFAULT_EASING.
         """
 
@@ -208,7 +203,6 @@ class Animator:
 
         if final_value is ...:
             final_value = value
-
         start_time = self._get_time()
 
         animation_key = (id(obj), attribute)
@@ -224,7 +218,6 @@ class Animator:
                 duration=duration,
                 speed=speed,
                 easing=easing_function,
-                delay=delay,
                 on_complete=on_complete,
             )
         if animation is None:
@@ -244,7 +237,6 @@ class Animator:
                 attribute=attribute,
                 start_time=start_time,
                 duration=animation_duration,
-                delay=delay,
                 start_value=start_value,
                 end_value=value,
                 final_value=final_value,
@@ -260,7 +252,7 @@ class Animator:
         self._animations[animation_key] = animation
         self._timer.resume()
 
-    def __call__(self) -> None:
+    async def __call__(self) -> None:
         if not self._animations:
             self._timer.pause()
         else:
@@ -272,7 +264,7 @@ class Animator:
                 if animation_complete:
                     completion_callback = animation.on_complete
                     if completion_callback is not None:
-                        completion_callback()
+                        await invoke(completion_callback)
                     del self._animations[animation_key]
 
     def _get_time(self) -> float:

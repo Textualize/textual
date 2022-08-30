@@ -13,26 +13,8 @@ Where the fear has gone there will be nothing. Only I will remain.
 
 
 class ScrollbarApp(App):
-    CSS = """
-    Screen {
-        background: white;
-        color: blue 80%;
-        layout: horizontal;
-    }
-    
-    Static {
-        padding: 1 2;
-        width: 200;
-    }
-
-    .panel {
-        scrollbar-size: 10 4;
-        padding: 1 2;        
-    }     
-    """
-
     def compose(self):
         yield layout.Vertical(Static(TEXT * 5), classes="panel")
 
 
-app = ScrollbarApp()
+app = ScrollbarApp(css_path="scrollbar_size.css")

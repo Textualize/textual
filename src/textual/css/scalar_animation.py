@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable
 
-from ..geometry import Offset, clamp
+from .._types import CallbackType
+from ..geometry import Offset
 from .._animator import Animation
 from .scalar import ScalarOffset
 from .._animator import EasingFunction
@@ -24,8 +25,7 @@ class ScalarAnimation(Animation):
         duration: float | None,
         speed: float | None,
         easing: EasingFunction,
-        delay: float = 0.0,
-        on_complete: Callable[[], None] | None = None,
+        on_complete: CallbackType | None = None,
     ):
         assert (
             speed is not None or duration is not None
@@ -36,7 +36,6 @@ class ScalarAnimation(Animation):
         self.attribute = attribute
         self.final_value = value
         self.easing = easing
-        self.delay = delay
         self.on_complete = on_complete
 
         size = widget.outer_size
@@ -53,7 +52,8 @@ class ScalarAnimation(Animation):
             self.duration = duration
 
     def __call__(self, time: float) -> bool:
-        factor = clamp((time - self.start_time - self.delay) / self.duration, 0.0, 1.0)
+
+        factor = min(1.0, (time - self.start_time) / self.duration)
         eased_factor = self.easing(factor)
 
         if eased_factor >= 1:

@@ -5,11 +5,12 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import lru_cache
 from operator import attrgetter
-from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast, Callable
+from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 
 import rich.repr
 from rich.style import Style
 
+from textual._types import CallbackType
 from .._animator import Animation, EasingFunction
 from ..color import Color
 from ..geometry import Offset, Spacing
@@ -579,9 +580,11 @@ class Styles(StylesBase):
         duration: float | None,
         speed: float | None,
         easing: EasingFunction,
-        delay: float = 0.0,
-        on_complete: Callable[[], None] = None,
+        on_complete: CallbackType | None = None,
     ) -> Animation | None:
+        # from ..widget import Widget
+        # node = self.node
+        # assert isinstance(self.node, Widget)
         if isinstance(value, ScalarOffset):
             return ScalarAnimation(
                 self.node,
@@ -592,7 +595,6 @@ class Styles(StylesBase):
                 duration=duration,
                 speed=speed,
                 easing=easing,
-                delay=delay,
                 on_complete=on_complete,
             )
         return None
@@ -760,7 +762,7 @@ class Styles(StylesBase):
             )
         elif has_rule("align_horizontal"):
             append_declaration("align-horizontal", self.align_horizontal)
-        elif has_rule("align_horizontal"):
+        elif has_rule("align_vertical"):
             append_declaration("align-vertical", self.align_vertical)
 
         if has_rule("content_align_horizontal") and has_rule("content_align_vertical"):
@@ -772,7 +774,7 @@ class Styles(StylesBase):
             append_declaration(
                 "content-align-horizontal", self.content_align_horizontal
             )
-        elif has_rule("content_align_horizontal"):
+        elif has_rule("content_align_vertical"):
             append_declaration("content-align-vertical", self.content_align_vertical)
 
         lines.sort()

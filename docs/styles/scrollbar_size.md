@@ -4,6 +4,12 @@ The `scrollbar-size` rule changes the size of the scrollbars. It takes 2 integer
 
 The scrollbar dimensions may also be set individually with `scrollbar-size-horizontal` and `scrollbar-size-vertical`.
 
+## Syntax
+
+```
+scrollbar-size: <INTEGER> <INTEGER>;
+```
+
 ## Example
 
 In this example we modify the size of the widgets scrollbar to be _much_ larger than usual.
@@ -12,6 +18,12 @@ In this example we modify the size of the widgets scrollbar to be _much_ larger 
 
     ```python
     --8<-- "docs/examples/styles/scrollbar_size.py"
+    ```
+
+=== "scrollbar_size.css"
+
+    ```css
+    --8<-- "docs/examples/styles/scrollbar_size.css"
     ```
 
 === "Output"

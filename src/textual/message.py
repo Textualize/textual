@@ -11,7 +11,12 @@ from ._types import MessageTarget
 
 @rich.repr.auto
 class Message:
-    """Base class for a message."""
+    """Base class for a message.
+
+    Args:
+        sender (MessageTarget): The sender of the message / event.
+
+    """
 
     __slots__ = [
         "sender",
@@ -30,12 +35,6 @@ class Message:
     namespace: ClassVar[str] = ""  # Namespace to disambiguate messages
 
     def __init__(self, sender: MessageTarget) -> None:
-        """
-
-        Args:
-            sender (MessageTarget): The sender of the message / event.
-        """
-
         self.sender = sender
         self.name = camel_to_snake(self.__class__.__name__.replace("Message", ""))
         self.time = _clock.get_time_no_wait()

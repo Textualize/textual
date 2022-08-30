@@ -26,6 +26,16 @@ For example `heavy white` would display a heavy white line around a widget.
 
 Outlines may also be set individually with the `outline-top`, `outline-right`, `outline-bottom` and `outline-left` rules.
 
+## Syntax
+
+```
+outline: [<COLOR>] [<BORDER VALUE>];
+outline-top: [<COLOR>] [<BORDER VALUE>];
+outline-right: [<COLOR>] [<BORDER VALUE>];
+outline-bottom: [<COLOR>] [<BORDER VALUE>];
+outline-left: [<COLOR>] [<BORDER VALUE>];
+```
+
 ## Example
 
 This examples shows a widget with an outline. Note how the outline occludes the text area.
@@ -34,6 +44,12 @@ This examples shows a widget with an outline. Note how the outline occludes the 
 
     ```python
     --8<-- "docs/examples/styles/outline.py"
+    ```
+
+=== "outline.css"
+
+    ```css
+    --8<-- "docs/examples/styles/outline.css"
     ```
 
 === "Output"

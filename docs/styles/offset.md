@@ -1,13 +1,29 @@
 # Offset
 
-The `offset` rule adds an offset to the widget's position.
+The `offset` rule adds an offset to the widget's position. The offset is given as two values.
+
+Coordinates may be specified individually with `offset-x` and `offset-y`.
+
+## Syntax
+
+```
+offset: <SCALAR> <SCALAR>;
+```
 
 ## Example
+
+In this example, we have 3 widgets with differing offsets.
 
 === "offset.py"
 
     ```python
     --8<-- "docs/examples/styles/offset.py"
+    ```
+
+=== "offset.css"
+
+    ```css
+    --8<-- "docs/examples/styles/offset.css"
     ```
 
 === "Output"

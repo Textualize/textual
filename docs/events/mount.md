@@ -6,12 +6,6 @@ The mount event is typically used to set the initial state of a widget or to add
 
 - [ ] Bubbles
 
-## Parameters
+## Attributes
 
-`sender`
-
-: The sender of the widget
-
-## Code
-
-::: textual.events.Mount
+_No additional attributes_
