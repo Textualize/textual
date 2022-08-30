@@ -26,7 +26,7 @@ Button {
     background: $panel-darken-1;
 }
 
-#ac,#c,#plus_minus,#percent {
+#ac,#c,#plus-minus,#percent {
     tint: $primary 20%;
 }
 
