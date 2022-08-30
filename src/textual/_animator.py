@@ -1,23 +1,25 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 import asyncio
 import sys
-from typing import Any, Callable, TypeVar
-
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from functools import partial
+from typing import Any, Callable, TypeVar, TYPE_CHECKING
 
 from . import _clock
 from ._callback import invoke
 from ._easing import DEFAULT_EASING, EASING
+from ._types import CallbackType
 from .timer import Timer
-from ._types import MessageTarget, CallbackType
 
 if sys.version_info >= (3, 8):
     from typing import Protocol, runtime_checkable
 else:  # pragma: no cover
     from typing_extensions import Protocol, runtime_checkable
 
+if TYPE_CHECKING:
+    from textual.app import App
 
 EasingFunction = Callable[[float], float]
 
@@ -31,7 +33,6 @@ class Animatable(Protocol):
 
 
 class Animation(ABC):
-
     on_complete: CallbackType | None = None
     """Callback to run after animation completes"""
 
@@ -64,7 +65,6 @@ class SimpleAnimation(Animation):
     on_complete: CallbackType | None = None
 
     def __call__(self, time: float) -> bool:
-
         if self.duration == 0:
             setattr(self.obj, self.attribute, self.final_value)
             return True
@@ -122,6 +122,7 @@ class BoundAnimator:
         final_value: object = ...,
         duration: float | None = None,
         speed: float | None = None,
+        delay: float = 0.0,
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
     ) -> None:
@@ -133,6 +134,7 @@ class BoundAnimator:
             final_value=final_value,
             duration=duration,
             speed=speed,
+            delay=delay,
             easing=easing_function,
             on_complete=on_complete,
         )
@@ -141,7 +143,7 @@ class BoundAnimator:
 class Animator:
     """An object to manage updates to a given attribute over a period of time."""
 
-    def __init__(self, target: MessageTarget, frames_per_second: int = 60) -> None:
+    def __init__(self, target: App, frames_per_second: int = 60) -> None:
         self._animations: dict[tuple[object, str], Animation] = {}
         self.target = target
         self._timer = Timer(
@@ -179,6 +181,7 @@ class Animator:
         duration: float | None = None,
         speed: float | None = None,
         easing: EasingFunction | str = DEFAULT_EASING,
+        delay: float = 0.0,
         on_complete: CallbackType | None = None,
     ) -> None:
         """Animate an attribute to a new value.
@@ -191,8 +194,49 @@ class Animator:
             duration (float | None, optional): The duration of the animation, or ``None`` to use speed. Defaults to ``None``.
             speed (float | None, optional): The speed of the animation. Defaults to None.
             easing (EasingFunction | str, optional): An easing function. Defaults to DEFAULT_EASING.
+            delay (float, optional): Number of seconds to delay the start of the animation by. Defaults to 0.
+            on_complete (CallbackType | None, optional): Callback to run after the animation completes.
         """
+        animate_callback = partial(
+            self._animate,
+            obj,
+            attribute,
+            value,
+            final_value=final_value,
+            duration=duration,
+            speed=speed,
+            easing=easing,
+            on_complete=on_complete,
+        )
+        if delay:
+            self.target.set_timer(delay, animate_callback)
+        else:
+            animate_callback()
 
+    def _animate(
+        self,
+        obj: object,
+        attribute: str,
+        value: Any,
+        *,
+        final_value: object = ...,
+        duration: float | None = None,
+        speed: float | None = None,
+        easing: EasingFunction | str = DEFAULT_EASING,
+        on_complete: CallbackType | None = None,
+    ):
+        """Animate an attribute to a new value.
+
+        Args:
+            obj (object): The object containing the attribute.
+            attribute (str): The name of the attribute.
+            value (Any): The destination value of the attribute.
+            final_value (Any, optional): The final value, or ellipsis if it is the same as ``value``. Defaults to ....
+            duration (float | None, optional): The duration of the animation, or ``None`` to use speed. Defaults to ``None``.
+            speed (float | None, optional): The speed of the animation. Defaults to None.
+            easing (EasingFunction | str, optional): An easing function. Defaults to DEFAULT_EASING.
+            on_complete (CallbackType | None, optional): Callback to run after the animation completes.
+        """
         if not hasattr(obj, attribute):
             raise AttributeError(
                 f"Can't animate attribute {attribute!r} on {obj!r}; attribute does not exist"
@@ -203,6 +247,7 @@ class Animator:
 
         if final_value is ...:
             final_value = value
+
         start_time = self._get_time()
 
         animation_key = (id(obj), attribute)
@@ -272,3 +317,29 @@ class Animator:
         # N.B. We could remove this method and always call `self._timer.get_time()` internally,
         # but it's handy to have in mocking situations
         return _clock.get_time_no_wait()
+
+
+if __name__ == "__main__":
+
+    async def run():
+        async def do(num):
+            print(num)
+
+        async def delayed(callable, *args):
+            await callable(*args)
+
+        async def delayed_long(callable, *args):
+            await asyncio.sleep(5)
+            await callable(*args)
+
+        tasks = []
+        for num in range(10):
+            if num == 2:
+                task = asyncio.create_task(delayed_long(do, num))
+            else:
+                task = asyncio.create_task(delayed(do, num))
+            tasks.append(task)
+
+        await asyncio.wait(tasks)
+
+    asyncio.run(run())

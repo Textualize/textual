@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import asyncio
-
 from rich.console import RenderableType
 
 from textual import events
@@ -32,6 +30,7 @@ class JustABox(App):
             "opacity",
             value=0.0,
             duration=2.0,
+            delay=2.0,
             on_complete=self.box.remove,
         )
 

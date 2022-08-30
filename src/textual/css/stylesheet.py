@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from collections import defaultdict
+from functools import partial
 from operator import itemgetter
 from pathlib import Path, PurePath
 from typing import Iterable, NamedTuple, cast
