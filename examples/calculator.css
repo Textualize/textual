@@ -10,7 +10,7 @@ Screen {
     table-rows: 2fr 1fr 1fr 1fr 1fr 1fr;
     margin: 1 2;
     min-height:25;  
-    min-width: 50; 
+    min-width: 26; 
 }
 
 Button {
@@ -23,11 +23,12 @@ Button {
     content-align: right middle;
     padding: 0 1;
     height: 100%;
-    background: $panel-darken-1;
+    background: $primary-lighten-2;
+    color: $text-primary-lighten-2;
 }
 
 #ac,#c,#plus-minus,#percent {
-    tint: $primary 20%;
+    tint: $primary 25%;    
 }
 
 #number-0 {
