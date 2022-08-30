@@ -111,7 +111,7 @@ class ScrollBarRender:
             step_size = virtual_size / size
 
             start = int(position / step_size * 9)
-            end = start + max(8, int(ceil(window_size / step_size * 9)))
+            end = start + max(9, int(ceil(window_size / step_size * 9)))
 
             start_index, start_bar = divmod(start, 9)
             end_index, end_bar = divmod(end, 9)
