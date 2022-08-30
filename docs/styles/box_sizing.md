@@ -1,6 +1,6 @@
 # Box-sizing
 
-The `box-sizing` rule impacts how `width` and `height` rules are translated in to screen dimensions, when combined with `padding` and `border`.
+The `box-sizing` property determines how the width and height of a widget are calculated.
 
 ## Syntax
 
