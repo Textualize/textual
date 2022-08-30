@@ -36,7 +36,7 @@ class CalculatorApp(App):
             Static(id="numbers"),
             Button("AC", id="ac"),
             Button("C", id="c"),
-            Button("+/-", id="plus_minus"),
+            Button("+/-", id="plus-minus"),
             Button("%", id="percent"),
             Button("÷", id="divide", variant="warning"),
             Button("7", id="number-7"),
@@ -84,7 +84,7 @@ class CalculatorApp(App):
         if button_id.startswith("number-"):
             number = button_id.partition("-")[-1]
             self.numbers = self.value = self.value.lstrip("0") + number
-        elif button_id == "plus_minus":
+        elif button_id == "plus-minus":
             self.numbers = self.value = str(Decimal(self.value or "0") * -1)
         elif button_id == "percent":
             self.numbers = self.value = str(Decimal(self.value or "0") / Decimal(100))
