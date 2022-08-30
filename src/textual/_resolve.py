@@ -71,32 +71,3 @@ def resolve(
     ]
 
     return results
-
-
-if __name__ == "__main__":
-
-    dimensions = [Scalar.parse("3"), Scalar.parse("1fr"), Scalar.parse("1")]
-
-    print(resolve(dimensions, 20, 1, Size(40, 20), Size(40, 20)))
-
-    print(
-        resolve(
-            [Scalar.parse("1fr"), Scalar.parse("1fr")],
-            20,
-            1,
-            Size(40, 20),
-            Size(40, 20),
-        )
-    )
-
-    print(
-        resolve(
-            [
-                Scalar.parse("1fr"),
-            ],
-            20,
-            1,
-            Size(40, 20),
-            Size(40, 20),
-        )
-    )
