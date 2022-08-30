@@ -6,7 +6,7 @@ from .scalar import ScalarOffset
 from .._animator import Animation
 from .._animator import EasingFunction
 from .._types import CallbackType
-from ..geometry import Offset, clamp
+from ..geometry import Offset
 
 if TYPE_CHECKING:
     from ..widget import Widget
@@ -51,7 +51,7 @@ class ScalarAnimation(Animation):
             self.duration = duration
 
     def __call__(self, time: float) -> bool:
-        factor = clamp((time - self.start_time) / self.duration, 0.0, 1.0)
+        factor = min(1.0, (time - self.start_time) / self.duration)
         eased_factor = self.easing(factor)
 
         if eased_factor >= 1:
