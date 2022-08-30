@@ -1,12 +1,7 @@
 # Overflow
 
-The `overflow` rule specifies if and when scrollbars should be displayed on the `x` and `y` axis. The rule takes two overflow values; one for the horizontal bar (x axis), followed by the vertical bar (y-axis).
-
-| Overflow value | Effect                                                                    |
-| -------------- | ------------------------------------------------------------------------- |
-| `"auto"`       | Automatically show the scrollbar if the content doesn't fit (the default) |
-| `"hidden"`     | Never show the scrollbar                                                  |
-| `"scroll"`     | Always show the scrollbar                                                 |
+The `overflow` rule specifies if and when scrollbars should be displayed on the `x` and `y` axis.
+The rule takes two overflow values; one for the horizontal bar (x-axis), followed by the vertical bar (y-axis).
 
 The default value for overflow is `"auto auto"` which will show scrollbars automatically for both scrollbars if content doesn't fit within container.
 
@@ -20,11 +15,20 @@ overflow-x: [auto|hidden|scroll];
 overflow-y: [auto|hidden|scroll];
 ```
 
+### Values
+
+| Value            | Description                                             |
+|------------------|---------------------------------------------------------|
+| `auto` (default) | Automatically show the scrollbar if content doesn't fit |
+| `hidden`         | Never show the scrollbar                                |
+| `scroll`         | Always show the scrollbar                               |
+
 ## Example
 
 Here we split the screen in to left and right sections, each with three vertically scrolling widgets that do not fit in to the height of the terminal.
 
-The left side has `overflow-y: auto` (the default) and will automatically show a scrollbar. The right side has `overflow-y: hidden` which will prevent a scrollbar from being shown.
+The left side has `overflow-y: auto` (the default) and will automatically show a scrollbar.
+The right side has `overflow-y: hidden` which will prevent a scrollbar from being shown.
 
 === "overflow.py"
 

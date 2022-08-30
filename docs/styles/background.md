@@ -5,7 +5,7 @@ The `background` rule sets the background color of the widget.
 ## Syntax
 
 ```
-background: COLOR [PERCENTAGE]
+background: <COLOR> [<PERCENTAGE>];
 ```
 
 ## Example
