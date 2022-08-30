@@ -20,9 +20,13 @@ class Box(Widget, can_focus=True):
 
 
 class JustABox(App):
+    def on_load(self):
+        self.bind("s", "toggle_class('#sidebar', '-active')", description="Sidebar")
+
     def compose(self) -> ComposeResult:
         self.box = Box()
         yield self.box
+        yield Widget(id="sidebar")
 
     def key_a(self):
         self.animator.animate(
