@@ -1,0 +1,113 @@
+from decimal import Decimal
+
+from textual.app import App
+from textual.layout import Container
+from textual.reactive import Reactive
+from textual.widgets import Button, Static
+
+
+class CalculatorApp(App):
+    """A working 'desktop' calculator."""
+
+    numbers = Reactive.init("0")
+    show_ac = Reactive(True)
+    left = Reactive.var(Decimal("0"))
+    right = Reactive.var(Decimal("0"))
+    value = Reactive.var("")
+    operator = Reactive.var("plus")
+
+    def watch_numbers(self, value: str) -> None:
+        """Called when numbers is updated."""
+        # Update the Numbers widget
+        self.query_one("#numbers", Static).update(value)
+
+    def compute_show_ac(self) -> bool:
+        """Compute switch to show AC or C button"""
+        return self.value in ("", "0") and self.numbers == "0"
+
+    def watch_show_ac(self, show_ac: bool) -> None:
+        """Called when show_ac changes."""
+        self.query_one("#c").display = not show_ac
+        self.query_one("#ac").display = show_ac
+
+    def compose(self):
+        """Add our buttons."""
+        yield Container(
+            Static(id="numbers"),
+            Button("AC", id="ac"),
+            Button("C", id="c"),
+            Button("+/-", id="plus_minus"),
+            Button("%", id="percent"),
+            Button("÷", id="divide"),
+            Button("7", id="7"),
+            Button("8", id="8"),
+            Button("9", id="9"),
+            Button("×", id="multiply", variant="warning"),
+            Button("4", id="4"),
+            Button("5", id="5"),
+            Button("6", id="6"),
+            Button("-", id="minus", variant="warning"),
+            Button("1", id="1"),
+            Button("2", id="2"),
+            Button("3", id="3"),
+            Button("+", id="plus", variant="warning"),
+            Button("0", id="0", classes="operator zero"),
+            Button(".", id="point"),
+            Button("=", id="equals", variant="warning"),
+            id="calculator",
+        )
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Called when a button is pressed."""
+
+        button_id = event.button.id
+        assert button_id is not None
+
+        self.bell()  # Terminal bell
+
+        def do_math() -> None:
+            """Does the math: LEFT OPERATOR RIGHT"""
+            try:
+                if self.operator == "plus":
+                    self.left += self.right
+                elif self.operator == "minus":
+                    self.left -= self.right
+                elif self.operator == "divide":
+                    self.left /= self.right
+                elif self.operator == "multiply":
+                    self.left *= self.right
+                self.numbers = str(self.left)
+                self.value = ""
+            except Exception:
+                self.display = "Error"
+
+        if button_id.isdecimal():
+            self.numbers = self.value = self.value.lstrip("0") + button_id
+        elif button_id == "plus_minus":
+            self.numbers = self.value = str(Decimal(self.value or "0") * -1)
+        elif button_id == "percent":
+            self.numbers = self.value = str(Decimal(self.value or "0") / Decimal(100))
+        elif button_id == "point":
+            if "." not in self.value:
+                self.numbers = self.value = (self.value or "0") + "."
+        elif button_id == "ac":
+            self.value = ""
+            self.left = self.right = Decimal(0)
+            self.operator = "plus"
+            self.numbers = "0"
+        elif button_id == "c":
+            self.value = ""
+            self.numbers = "0"
+        elif button_id in ("plus", "minus", "divide", "multiply"):
+            self.right = Decimal(self.value or "0")
+            do_math()
+            self.operator = button_id
+        elif button_id == "equals":
+            if self.value:
+                self.right = Decimal(self.value)
+            do_math()
+
+
+app = CalculatorApp(css_path="calculator.css")
+if __name__ == "__main__":
+    app.run()
