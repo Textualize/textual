@@ -2,12 +2,14 @@ Screen {
     overflow: auto;
 }
 
+
+
 #calculator {
     layout: table;
     table-size: 4;
     table-gutter: 1 2;
     table-columns: 1fr;
-    table-rows: 1fr;
+    table-rows: 2fr 1fr 1fr 1fr 1fr 1fr;
     margin: 1 2;
     min-height:23;  
     min-width: 40; 
