@@ -12,7 +12,7 @@ There are a number of rules to set the colors used in Textual scrollbars. You wo
 | `scrollbar-background-active` | Scrollbar background when the thumb is being dragged    |
 | `scrollbar-corner-color`      | The gap between the horizontal and vertical scrollbars  |
 
-## Example:
+## Syntax
 
 ```
 scrollbar-color: <COLOR>;

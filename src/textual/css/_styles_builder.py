@@ -24,6 +24,7 @@ from ._help_text import (
     property_invalid_value_help_text,
     scrollbar_size_property_help_text,
     scrollbar_size_single_axis_help_text,
+    text_align_help_text,
 )
 from .constants import (
     VALID_ALIGN_HORIZONTAL,
@@ -36,6 +37,7 @@ from .constants import (
     VALID_VISIBILITY,
     VALID_STYLE_FLAGS,
     VALID_SCROLLBAR_GUTTER,
+    VALID_TEXT_ALIGN,
 )
 from .errors import DeclarationError, StyleValueError
 from .model import Declaration
@@ -617,6 +619,20 @@ class StylesBuilder:
 
         style_definition = " ".join(token.value for token in tokens)
         self.styles.text_style = style_definition
+
+    def process_text_align(self, name: str, tokens: list[Token]) -> None:
+        """Process a text-align declaration"""
+        if not tokens:
+            return
+
+        if len(tokens) > 1 or tokens[0].value not in VALID_TEXT_ALIGN:
+            self.error(
+                name,
+                tokens[0],
+                text_align_help_text(),
+            )
+
+        self.styles._rules["text_align"] = tokens[0].value
 
     def process_dock(self, name: str, tokens: list[Token]) -> None:
         if not tokens:

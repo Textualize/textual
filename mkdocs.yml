@@ -6,10 +6,10 @@ nav:
   - "getting_started.md"
   - "introduction.md"
   - Guide:
-    - "guide/devtools.md" 
+    - "guide/devtools.md"
     - "guide/CSS.md"
     - "guide/events.md"
- 
+
   - "actions.md"
   - Events:
     - "events/blur.md"
@@ -35,7 +35,7 @@ nav:
     - "events/resize.md"
     - "events/screen_resume.md"
     - "events/screen_suspend.md"
-    - "events/show.md"  
+    - "events/show.md"
   - Styles:
     - "styles/background.md"
     - "styles/border.md"
@@ -54,9 +54,10 @@ nav:
     - "styles/outline.md"
     - "styles/overflow.md"
     - "styles/padding.md"
+    - "styles/scrollbar.md"
     - "styles/scrollbar_gutter.md"
     - "styles/scrollbar_size.md"
-    - "styles/scrollbar.md"
+    - "styles/text_align.md"
     - "styles/text_style.md"
     - "styles/tint.md"
     - "styles/visibility.md"
@@ -82,7 +83,7 @@ markdown_extensions:
   - admonition
   - def_list
   - meta
-  
+
   - toc:
       permalink: true
       baselevel: 1
