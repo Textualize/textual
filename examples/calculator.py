@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from textual.app import App
+from textual.app import App, ComposeResult
 from textual.layout import Container
 from textual.reactive import Reactive
 from textual.widgets import Button, Static
@@ -9,8 +9,8 @@ from textual.widgets import Button, Static
 class CalculatorApp(App):
     """A working 'desktop' calculator."""
 
-    numbers = Reactive.init("0")
-    show_ac = Reactive(True)
+    numbers = Reactive.var("0")
+    show_ac = Reactive.var(True)
     left = Reactive.var(Decimal("0"))
     right = Reactive.var(Decimal("0"))
     value = Reactive.var("")
@@ -30,7 +30,7 @@ class CalculatorApp(App):
         self.query_one("#c").display = not show_ac
         self.query_one("#ac").display = show_ac
 
-    def compose(self):
+    def compose(self) -> ComposeResult:
         """Add our buttons."""
         yield Container(
             Static(id="numbers"),
@@ -38,20 +38,20 @@ class CalculatorApp(App):
             Button("C", id="c"),
             Button("+/-", id="plus_minus"),
             Button("%", id="percent"),
-            Button("÷", id="divide"),
-            Button("7", id="7"),
-            Button("8", id="8"),
-            Button("9", id="9"),
+            Button("÷", id="divide", variant="warning"),
+            Button("7", id="number-7"),
+            Button("8", id="number-8"),
+            Button("9", id="number-9"),
             Button("×", id="multiply", variant="warning"),
-            Button("4", id="4"),
-            Button("5", id="5"),
-            Button("6", id="6"),
+            Button("4", id="number-4"),
+            Button("5", id="number-5"),
+            Button("6", id="number-6"),
             Button("-", id="minus", variant="warning"),
-            Button("1", id="1"),
-            Button("2", id="2"),
-            Button("3", id="3"),
+            Button("1", id="number-1"),
+            Button("2", id="number-2"),
+            Button("3", id="number-3"),
             Button("+", id="plus", variant="warning"),
-            Button("0", id="0", classes="operator zero"),
+            Button("0", id="number-0"),
             Button(".", id="point"),
             Button("=", id="equals", variant="warning"),
             id="calculator",
@@ -79,10 +79,11 @@ class CalculatorApp(App):
                 self.numbers = str(self.left)
                 self.value = ""
             except Exception:
-                self.display = "Error"
+                self.numbers = "Error"
 
-        if button_id.isdecimal():
-            self.numbers = self.value = self.value.lstrip("0") + button_id
+        if button_id.startswith("number-"):
+            number = button_id.partition("-")[-1]
+            self.numbers = self.value = self.value.lstrip("0") + number
         elif button_id == "plus_minus":
             self.numbers = self.value = str(Decimal(self.value or "0") * -1)
         elif button_id == "percent":

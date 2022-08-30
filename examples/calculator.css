@@ -23,13 +23,13 @@ Button {
     content-align: right middle;
     padding: 0 1;
     height: 100%;
-    background: $panel-darken-2;
+    background: $panel-darken-1;
 }
 
-.special {
-    tint: $text-panel 20%;
+#ac,#c,#plus_minus,#percent {
+    tint: $primary 20%;
 }
 
-.zero {
+#number-0 {
     column-span: 2;
 }
