@@ -709,7 +709,7 @@ class DOMNode(MessagePump):
         """Add or remove class(es) based on a condition.
 
         Args:
-            add (bool): _description_
+            add (bool):  Add the classes if True, otherwise remove them.
         """
         if add:
             self.add_class(*class_names)
