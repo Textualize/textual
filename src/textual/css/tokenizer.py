@@ -45,10 +45,6 @@ class TokenError(Exception):
     def _get_snippet(self) -> Panel:
         """Get a short snippet of code around a given line number.
 
-        Args:
-            code (str): The code.
-            line_no (int): Line number.
-
         Returns:
             Panel: A renderable.
         """

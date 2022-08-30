@@ -2,8 +2,22 @@
 
 The `border` rule enables the drawing of a box around a widget. A border is set with a border value (see below) followed by a color.
 
-| Border value | Explanation                                             |
-| ------------ |---------------------------------------------------------|
+Borders may also be set individually for the four edges of a widget with the `border-top`, `border-right`, `border-bottom` and `border-left` rules.
+
+## Syntax
+
+```
+border: [<COLOR>] [<BORDER VALUE>];
+border-top: [<COLOR>] [<BORDER VALUE>];
+border-right: [<COLOR>] [<BORDER VALUE>];
+border-bottom: [<COLOR>] [<BORDER VALUE>];
+border-left: [<COLOR>] [<BORDER VALUE>];
+```
+
+### Values
+
+| Border value | Description                                             |
+|--------------|---------------------------------------------------------|
 | `"ascii"`    | A border with plus, hyphen, and vertical bar            |
 | `"blank"`    | A blank border (reserves space for a border)            |
 | `"dashed"`   | Dashed line border                                      |
@@ -20,19 +34,7 @@ The `border` rule enables the drawing of a box around a widget. A border is set 
 | `"vkey"`     | Vertical key-line border                                |
 | `"wide"`     | Solid border with additional space left and right       |
 
-For example `heavy white` would display a heavy white line around a widget.
-
-Borders may also be set individually for the four edges of a widget with the `border-top`, `border-right`, `border-bottom` and `border-left` rules.
-
-## Syntax
-
-```
-border: [<COLOR>] [<BORDER VALUE>];
-border-top: [<COLOR>] [<BORDER VALUE>];
-border-right: [<COLOR>] [<BORDER VALUE>];
-border-bottom: [<COLOR>] [<BORDER VALUE>];
-border-left: [<COLOR>] [<BORDER VALUE>];
-```
+For example, `heavy white` would display a heavy white line around a widget.
 
 ## Border command
 

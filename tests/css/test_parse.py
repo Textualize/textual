@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pytest
 
-
 from textual.color import Color
 from textual.css.errors import UnresolvedVariableError
 from textual.css.parse import substitute_references
@@ -1132,3 +1131,27 @@ class TestParsePadding:
         stylesheet = Stylesheet()
         stylesheet.add_source(css)
         assert stylesheet.rules[0].styles.padding == Spacing(2, 3, -1, 1)
+
+
+class TestParseTextAlign:
+    @pytest.mark.parametrize("valid_align", ["left", "start", "center", "right", "end", "justify"])
+    def test_text_align(self, valid_align):
+        css = f"#foo {{ text-align: {valid_align} }}"
+        stylesheet = Stylesheet()
+        stylesheet.add_source(css)
+        assert stylesheet.rules[0].styles.text_align == valid_align
+
+    def test_text_align_invalid(self):
+        css = "#foo { text-align: invalid-value; }"
+        stylesheet = Stylesheet()
+        with pytest.raises(StylesheetParseError):
+            stylesheet.add_source(css)
+            stylesheet.parse()
+        rules = stylesheet._parse_rules(css, "foo")
+        assert rules[0].errors
+
+    def test_text_align_empty_uses_default(self):
+        css = "#foo { text-align: ; }"
+        stylesheet = Stylesheet()
+        stylesheet.add_source(css)
+        assert stylesheet.rules[0].styles.text_align == "start"

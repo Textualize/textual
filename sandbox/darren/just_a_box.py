@@ -24,8 +24,9 @@ class JustABox(App):
         self.bind("s", "toggle_class('#sidebar', '-active')", description="Sidebar")
 
     def compose(self) -> ComposeResult:
-        self.box = Box()
+        self.box = Box(classes="box1")
         yield self.box
+        yield Box(classes="box2")
         yield Widget(id="sidebar")
 
     def key_a(self):

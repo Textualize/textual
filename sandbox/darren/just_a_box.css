@@ -16,7 +16,14 @@ Screen {
   offset-x: 0;
 }
 
-.box {
+.box1 {
+    background: orangered;
     height: 12;
     width: 30;
+}
+
+.box2 {
+    background: blueviolet;
+    height: 6;
+    width: 12;
 }
