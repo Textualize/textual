@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from textual.app import App, ComposeResult
+from textual import events
 from textual.layout import Container
 from textual.reactive import Reactive
 from textual.widgets import Button, Static
@@ -15,6 +16,17 @@ class CalculatorApp(App):
     right = Reactive.var(Decimal("0"))
     value = Reactive.var("")
     operator = Reactive.var("plus")
+
+    KEY_MAP = {
+        "+": "plus",
+        "-": "minus",
+        ".": "point",
+        "*": "multiply",
+        "/": "divide",
+        "_": "plus-minus",
+        "%": "percent",
+        "=": "equals",
+    }
 
     def watch_numbers(self, value: str) -> None:
         """Called when numbers is updated."""
@@ -34,10 +46,10 @@ class CalculatorApp(App):
         """Add our buttons."""
         yield Container(
             Static(id="numbers"),
-            Button("AC", id="ac"),
-            Button("C", id="c"),
-            Button("+/-", id="plus-minus"),
-            Button("%", id="percent"),
+            Button("AC", id="ac", variant="primary"),
+            Button("C", id="c", variant="primary"),
+            Button("+/-", id="plus-minus", variant="primary"),
+            Button("%", id="percent", variant="primary"),
             Button("÷", id="divide", variant="warning"),
             Button("7", id="number-7"),
             Button("8", id="number-8"),
@@ -56,6 +68,22 @@ class CalculatorApp(App):
             Button("=", id="equals", variant="warning"),
             id="calculator",
         )
+
+    def on_key(self, event: events.Key) -> None:
+        """Called when the user presses a key."""
+
+        def press(button_id: str) -> None:
+            self.query_one(f"#{button_id}", Button).press()
+            self.set_focus(None)
+
+        key = event.key
+        if key.isdecimal():
+            press(f"number-{key}")
+        elif key == "c":
+            press("c")
+            press("ac")
+        elif key in self.KEY_MAP:
+            press(self.KEY_MAP[key])
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Called when a button is pressed."""

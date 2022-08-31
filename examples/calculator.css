@@ -27,10 +27,6 @@ Button {
     color: $text-primary-lighten-2;
 }
 
-#ac,#c,#plus-minus,#percent {
-    tint: $primary 25%;    
-}
-
 #number-0 {
     column-span: 2;
 }
