@@ -18,7 +18,7 @@ Percentage values will be clamped between 0% and 100%.
 
 ## Example
 
-This example shows, from top to bottom, increase opacity values.
+This example shows, from top to bottom, increasing opacity values.
 
 === "opacity.py"
 
