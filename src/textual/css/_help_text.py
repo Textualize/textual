@@ -608,7 +608,29 @@ def scrollbar_size_single_axis_help_text(property_name: str) -> HelpText:
         summary=f"Invalid value for [i]{property_name}[/]",
         bullets=[
             Bullet(
-                markup=f"The [i]{property_name}[/] property can only be set to a positive integer, greather than zero",
+                markup=f"The [i]{property_name}[/] property can only be set to a positive integer, greater than zero",
+                examples=[
+                    Example(f"{property_name}: 2;"),
+                ],
+            ),
+        ],
+    )
+
+
+def integer_help_text(property_name: str) -> HelpText:
+    """Help text to show when the user supplies an invalid integer value.
+
+    Args:
+        property_name (str): The name of the property
+
+    Returns:
+        HelpText: Renderable for displaying the help text for this property
+    """
+    return HelpText(
+        summary=f"Invalid value for [i]{property_name}[/]",
+        bullets=[
+            Bullet(
+                markup=f"An integer value is expected here",
                 examples=[
                     Example(f"{property_name}: 2;"),
                 ],
@@ -731,4 +753,13 @@ def style_flags_property_help_text(
                 ],
             ).get_by_context(context),
         ],
+    )
+
+
+def table_rows_or_columns_help_text(
+    property_name: str, value: str, context: StylingContext
+):
+    property_name = _contextualize_property_name(property_name, context)
+    return HelpText(
+        summary=f"Invalid value '{value}' in [i]{property_name}[/] property"
     )

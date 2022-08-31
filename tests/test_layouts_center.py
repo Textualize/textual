@@ -1,5 +1,5 @@
 from textual._layout import WidgetPlacement
-from textual.geometry import Region, Size
+from textual.geometry import Region, Size, Spacing
 from textual.layouts.center import CenterLayout
 from textual.widget import Widget
 
@@ -19,13 +19,8 @@ def test_center_layout():
     expected = [
         WidgetPlacement(
             region=Region(x=25, y=7, width=10, height=5),
+            margin=Spacing(),
             widget=child,
-            order=0,
-            fixed=False,
-        ),
-        WidgetPlacement(
-            region=Region(x=25, y=7, width=10, height=5),
-            widget=None,
             order=0,
             fixed=False,
         ),

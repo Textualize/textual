@@ -25,7 +25,8 @@ class WidgetPlacement(NamedTuple):
     """The position, size, and relative order of a widget within its parent."""
 
     region: Region
-    widget: Widget | None = None  # A widget of None means empty space
+    margin: Spacing
+    widget: Widget
     order: int = 0
     fixed: bool = False
 

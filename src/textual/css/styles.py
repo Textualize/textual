@@ -27,6 +27,7 @@ from ._style_properties import (
     NameListProperty,
     NameProperty,
     OffsetProperty,
+    ScalarListProperty,
     ScalarProperty,
     SpacingProperty,
     StringEnumProperty,
@@ -144,6 +145,16 @@ class RulesMap(TypedDict, total=False):
     content_align_horizontal: AlignHorizontal
     content_align_vertical: AlignVertical
 
+    table_size_rows: int
+    table_size_columns: int
+    table_gutter_horizontal: int
+    table_gutter_vertical: int
+    table_rows: tuple[Scalar, ...]
+    table_columns: tuple[Scalar, ...]
+
+    row_span: int
+    column_span: int
+
     text_align: TextAlign
 
 
@@ -252,6 +263,17 @@ class StylesBase(ABC):
     content_align_horizontal = StringEnumProperty(VALID_ALIGN_HORIZONTAL, "left")
     content_align_vertical = StringEnumProperty(VALID_ALIGN_VERTICAL, "top")
     content_align = AlignProperty()
+
+    table_rows = ScalarListProperty()
+    table_columns = ScalarListProperty()
+
+    table_size_columns = IntegerProperty(default=1, layout=True)
+    table_size_rows = IntegerProperty(default=0, layout=True)
+    table_gutter_horizontal = IntegerProperty(default=0, layout=True)
+    table_gutter_vertical = IntegerProperty(default=0, layout=True)
+
+    row_span = IntegerProperty(default=1, layout=True)
+    column_span = IntegerProperty(default=1, layout=True)
 
     text_align = StringEnumProperty(VALID_TEXT_ALIGN, "start")
 
@@ -780,6 +802,30 @@ class Styles(StylesBase):
             )
         elif has_rule("content_align_vertical"):
             append_declaration("content-align-vertical", self.content_align_vertical)
+        elif has_rule("table_columns"):
+            append_declaration(
+                "table-columns",
+                " ".join(str(scalar) for scalar in self.table_columns or ()),
+            )
+        elif has_rule("table_rows"):
+            append_declaration(
+                "table-rows",
+                " ".join(str(scalar) for scalar in self.table_rows or ()),
+            )
+        elif has_rule("table_size_columns"):
+            append_declaration("table-size-columns", str(self.table_size_columns))
+        elif has_rule("table_size_rows"):
+            append_declaration("table-size-rows", str(self.table_size_rows))
+        elif has_rule("table_gutter_horizontal"):
+            append_declaration(
+                "table-gutter-horizontal", str(self.table_gutter_horizontal)
+            )
+        elif has_rule("table_gutter_vertical"):
+            append_declaration("table-gutter-vertical", str(self.table_gutter_vertical))
+        elif has_rule("row_span"):
+            append_declaration("row-span", str(self.row_span))
+        elif has_rule("column_span"):
+            append_declaration("column-span", str(self.column_span))
 
         lines.sort()
         return lines

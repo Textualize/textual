@@ -17,7 +17,6 @@ class CenterLayout(Layout):
     ) -> ArrangeResult:
 
         placements: list[WidgetPlacement] = []
-        total_regions: list[Region] = []
 
         parent_size = parent.outer_size
         container_width, container_height = size
@@ -32,8 +31,6 @@ class CenterLayout(Layout):
             x = margin.left + max(0, (container_width - margin_width) // 2)
             y = margin.top + max(0, (container_height - margin_height) // 2)
             region = Region(x, y, int(width), int(height))
-            total_regions.append(region.grow(margin))
-            placements.append(WidgetPlacement(region, widget, 0))
+            placements.append(WidgetPlacement(region, margin, widget, 0))
 
-        placements.append(WidgetPlacement(Region.from_union(total_regions), None, 0))
         return placements, set(children)

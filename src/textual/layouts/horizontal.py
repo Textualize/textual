@@ -61,11 +61,8 @@ class HorizontalLayout(Layout):
             max_height = max(
                 max_height, content_height + offset_y + box_model.margin.bottom
             )
-            add_placement(WidgetPlacement(region, widget, 0))
+            add_placement(WidgetPlacement(region, box_model.margin, widget, 0))
             x = next_x + margin
             max_width = x
-
-        total_region = Region(0, 0, int(max_width), int(max_height))
-        add_placement(WidgetPlacement(total_region, None, 0))
 
         return placements, set(displayed_children)

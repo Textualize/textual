@@ -54,10 +54,7 @@ class VerticalLayout(Layout):
             )
             next_y = y + content_height
             region = Region(offset_x, int(y), int(content_width), int(next_y) - int(y))
-            add_placement(WidgetPlacement(region, widget, 0))
+            add_placement(WidgetPlacement(region, box_model.margin, widget, 0))
             y = next_y + margin
-
-        total_region = Region(0, 0, size.width, int(y))
-        add_placement(WidgetPlacement(total_region, None, 0))
 
         return placements, set(children)

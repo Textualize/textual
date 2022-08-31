@@ -4,16 +4,16 @@ from math import ceil
 
 import rich.repr
 from rich.color import Color
-from rich.console import ConsoleOptions, RenderResult, RenderableType
+from rich.console import ConsoleOptions, RenderableType, RenderResult
 from rich.segment import Segment, Segments
 from rich.style import Style, StyleType
 
-from textual.reactive import Reactive
-from textual.renderables.blank import Blank
 from . import events
 from ._types import MessageTarget
 from .geometry import Offset
 from .message import Message
+from .reactive import Reactive
+from .renderables.blank import Blank
 from .widget import Widget
 
 
@@ -86,7 +86,6 @@ class ScrollBarRender:
         virtual_size: float = 50,
         window_size: float = 20,
         position: float = 0,
-        ascii_only: bool = False,
         thickness: int = 1,
         vertical: bool = True,
         back_color: Color = Color.parse("#555555"),
@@ -94,15 +93,9 @@ class ScrollBarRender:
     ) -> Segments:
 
         if vertical:
-            if ascii_only:
-                bars = ["|", "|", "|", "|", "|", "|", "|", "|"]
-            else:
-                bars = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
+            bars = [" ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
         else:
-            if ascii_only:
-                bars = ["-", "-", "-", "-", "-", "-", "-", "-"]
-            else:
-                bars = ["█", "▉", "▊", "▋", "▌", "▍", "▎", "▏"]
+            bars = ["█", "▉", "▊", "▋", "▌", "▍", "▎", "▏", " "]
 
         back = back_color
         bar = bar_color
@@ -117,11 +110,11 @@ class ScrollBarRender:
         if window_size and size and virtual_size and size != virtual_size:
             step_size = virtual_size / size
 
-            start = int(position / step_size * 8)
-            end = start + max(8, int(ceil(window_size / step_size * 8)))
+            start = int(position / step_size * 9)
+            end = start + max(9, int(ceil(window_size / step_size * 9)))
 
-            start_index, start_bar = divmod(start, 8)
-            end_index, end_bar = divmod(end, 8)
+            start_index, start_bar = divmod(start, 9)
+            end_index, end_bar = divmod(end, 9)
 
             upper = {"@click": "scroll_up"}
             lower = {"@click": "scroll_down"}
@@ -138,14 +131,14 @@ class ScrollBarRender:
 
             if start_index < len(segments):
                 segments[start_index] = _Segment(
-                    bars[7 - start_bar] * width_thickness,
+                    bars[8 - start_bar] * width_thickness,
                     _Style(bgcolor=back, color=bar, meta=foreground_meta)
                     if vertical
                     else _Style(bgcolor=bar, color=back, meta=foreground_meta),
                 )
             if end_index < len(segments):
                 segments[end_index] = _Segment(
-                    bars[7 - end_bar] * width_thickness,
+                    bars[8 - end_bar] * width_thickness,
                     _Style(bgcolor=bar, color=back, meta=foreground_meta)
                     if vertical
                     else _Style(bgcolor=back, color=bar, meta=foreground_meta),
@@ -296,6 +289,7 @@ class ScrollBarCorner(Widget):
         super().__init__(name=name)
 
     def render(self) -> RenderableType:
+        assert self.parent is not None
         styles = self.parent.styles
         color = styles.scrollbar_corner_color
         return Blank(color)

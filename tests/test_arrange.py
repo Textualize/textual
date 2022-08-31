@@ -24,14 +24,10 @@ def test_arrange_dock_top():
         container, [child, header], Size(80, 24), Size(80, 24)
     )
     assert placements == [
-        WidgetPlacement(Region(0, 0, 80, 1), header, order=TOP_Z, fixed=True),
-        WidgetPlacement(Region(0, 1, 80, 23), child, order=0, fixed=False),
         WidgetPlacement(
-            region=Region(x=0, y=1, width=80, height=23),
-            widget=None,
-            order=0,
-            fixed=False,
+            Region(0, 0, 80, 1), Spacing(), header, order=TOP_Z, fixed=True
         ),
+        WidgetPlacement(Region(0, 1, 80, 23), Spacing(), child, order=0, fixed=False),
     ]
     assert widgets == {child, header}
     assert spacing == Spacing(1, 0, 0, 0)
@@ -48,14 +44,10 @@ def test_arrange_dock_left():
         container, [child, header], Size(80, 24), Size(80, 24)
     )
     assert placements == [
-        WidgetPlacement(Region(0, 0, 10, 24), header, order=TOP_Z, fixed=True),
-        WidgetPlacement(Region(10, 0, 70, 24), child, order=0, fixed=False),
         WidgetPlacement(
-            region=Region(x=10, y=0, width=70, height=24),
-            widget=None,
-            order=0,
-            fixed=False,
+            Region(0, 0, 10, 24), Spacing(), header, order=TOP_Z, fixed=True
         ),
+        WidgetPlacement(Region(10, 0, 70, 24), Spacing(), child, order=0, fixed=False),
     ]
     assert widgets == {child, header}
     assert spacing == Spacing(0, 0, 0, 10)
@@ -72,14 +64,10 @@ def test_arrange_dock_right():
         container, [child, header], Size(80, 24), Size(80, 24)
     )
     assert placements == [
-        WidgetPlacement(Region(70, 0, 10, 24), header, order=TOP_Z, fixed=True),
-        WidgetPlacement(Region(0, 0, 70, 24), child, order=0, fixed=False),
         WidgetPlacement(
-            region=Region(x=0, y=0, width=70, height=24),
-            widget=None,
-            order=0,
-            fixed=False,
+            Region(70, 0, 10, 24), Spacing(), header, order=TOP_Z, fixed=True
         ),
+        WidgetPlacement(Region(0, 0, 70, 24), Spacing(), child, order=0, fixed=False),
     ]
     assert widgets == {child, header}
     assert spacing == Spacing(0, 10, 0, 0)
@@ -96,14 +84,10 @@ def test_arrange_dock_bottom():
         container, [child, header], Size(80, 24), Size(80, 24)
     )
     assert placements == [
-        WidgetPlacement(Region(0, 23, 80, 1), header, order=TOP_Z, fixed=True),
-        WidgetPlacement(Region(0, 0, 80, 23), child, order=0, fixed=False),
         WidgetPlacement(
-            region=Region(x=0, y=0, width=80, height=23),
-            widget=None,
-            order=0,
-            fixed=False,
+            Region(0, 23, 80, 1), Spacing(), header, order=TOP_Z, fixed=True
         ),
+        WidgetPlacement(Region(0, 0, 80, 23), Spacing(), child, order=0, fixed=False),
     ]
     assert widgets == {child, header}
     assert spacing == Spacing(0, 0, 1, 0)

@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 from .._layout import Layout
-from .horizontal import HorizontalLayout
-from .vertical import VerticalLayout
 from .center import CenterLayout
-
+from .horizontal import HorizontalLayout
+from .table import TableLayout
+from .vertical import VerticalLayout
 
 LAYOUT_MAP: dict[str, type[Layout]] = {
-    "vertical": VerticalLayout,
-    "horizontal": HorizontalLayout,
     "center": CenterLayout,
+    "horizontal": HorizontalLayout,
+    "table": TableLayout,
+    "vertical": VerticalLayout,
 }
 
 

@@ -185,7 +185,7 @@ class Widget(DOMNode):
 
     @property
     def _allow_scroll(self) -> bool:
-        """Check if both axes may be scrolled.
+        """Check if both axis may be scrolled.
 
         Returns:
             bool: True if horizontal and vertical scrolling is enabled.
