@@ -40,7 +40,7 @@ This example shows, from top to bottom, increasing opacity values.
 ## CSS
 
 ```sass
-/* Set the text to be "half-faded" against the background of the widget */
+/* Fade the widget to 50% against its parent's background */
 Widget {
     opacity: 50%;
 }
@@ -49,6 +49,6 @@ Widget {
 ## Python
 
 ```python
-# Set the text to be "half-faded" against the background of the widget
+# Fade the widget to 50% against its parent's background
 widget.styles.opacity = "50%"
 ```

@@ -24,6 +24,7 @@ Screen {
 
 Static {
     height: 1fr;
+    border: outer dodgerblue;
     background: lightseagreen;
     content-align: center middle;
     text-style: bold;
