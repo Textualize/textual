@@ -143,13 +143,13 @@ class BoundAnimator:
 class Animator:
     """An object to manage updates to a given attribute over a period of time."""
 
-    def __init__(self, target: App, frames_per_second: int = 60) -> None:
+    def __init__(self, app: App, frames_per_second: int = 60) -> None:
         self._animations: dict[tuple[object, str], Animation] = {}
-        self.target = target
+        self.app = app
         self._timer = Timer(
-            target,
+            app,
             1 / frames_per_second,
-            target,
+            app,
             name="Animator",
             callback=self,
             pause=True,
@@ -209,7 +209,7 @@ class Animator:
             on_complete=on_complete,
         )
         if delay:
-            self.target.set_timer(delay, animate_callback)
+            self.app.set_timer(delay, animate_callback)
         else:
             animate_callback()
 
