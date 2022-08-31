@@ -57,6 +57,7 @@ class Button(Widget, can_focus=True):
         background: $panel;
         border-bottom: tall $panel-lighten-2;
         border-top: tall $panel-darken-2;                
+        tint: $background 30%;
     }
 
     /* Primary variant */
@@ -72,10 +73,6 @@ class Button(Widget, can_focus=True):
         background: $primary-darken-2;
         color: $text-primary-darken-2;
 
-    }
-
-    Button.-active {
-        tint: $background 30%;
     }
 
     Button.-primary.-active {
