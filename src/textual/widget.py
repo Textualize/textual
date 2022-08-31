@@ -1266,6 +1266,7 @@ class Widget(DOMNode):
         width, height = self.size
         renderable = self.render()
         renderable = self.post_render(renderable)
+        renderable = self.apply_opacity(renderable)
         options = self._console.options.update_dimensions(width, height).update(
             highlight=False
         )
