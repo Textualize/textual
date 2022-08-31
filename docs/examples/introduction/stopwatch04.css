@@ -9,12 +9,12 @@ Stopwatch {
 
 TimeDisplay {
     content-align: center middle;
-    opacity: 60%;
+    text-opacity: 60%;
     height: 3;
 }
 
 Button {
-    width: 16;    
+    width: 16;
 }
 
 #start {
@@ -30,14 +30,14 @@ Button {
     dock: right;
 }
 
-.started {   
+.started {
     text-style: bold;
     background: $success;
     color: $text-success;
 }
 
 .started TimeDisplay {
-    opacity: 100%;
+    text-opacity: 100%;
 }
 
 .started #start {

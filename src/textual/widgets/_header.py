@@ -29,14 +29,14 @@ class HeaderClock(Widget):
     """Display a clock on the right of the header."""
 
     CSS = """
-    HeaderClock {        
+    HeaderClock {
         dock: right;
         width: auto;
         padding: 0 1;
         background: $secondary-background-lighten-1;
         color: $text-secondary-background;
-        opacity: 85%;      
-        content-align: center middle;  
+        text-opacity: 85%;
+        content-align: center middle;
     }
     """
 
@@ -51,9 +51,9 @@ class HeaderTitle(Widget):
     """Display the title / subtitle in the header."""
 
     CSS = """
-    HeaderTitle {               
+    HeaderTitle {
         content-align: center middle;
-        width: 100%;        
+        width: 100%;
     }
     """
 
@@ -79,7 +79,7 @@ class Header(Widget):
         height: 1;
     }
     Header.tall {
-        height: 3;        
+        height: 3;
     }
     """
 

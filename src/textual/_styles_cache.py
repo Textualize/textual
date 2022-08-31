@@ -237,8 +237,8 @@ class StylesCache:
             Returns:
                 list[Segment]: New list of segments
             """
-            if styles.opacity != 1.0:
-                segments = Opacity.process_segments(segments, styles.opacity)
+            if styles.text_opacity != 1.0:
+                segments = Opacity.process_segments(segments, styles.text_opacity)
             if styles.tint.a:
                 segments = Tint.process_segments(segments, styles.tint)
             return segments if isinstance(segments, list) else list(segments)

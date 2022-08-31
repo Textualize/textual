@@ -332,7 +332,7 @@ class StylesBuilder:
                     "visibility", valid_values=list(VALID_VISIBILITY), context="css"
                 )
 
-    def process_opacity(self, name: str, tokens: list[Token]) -> None:
+    def process_text_opacity(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
             return
         token = tokens[0]
@@ -342,16 +342,17 @@ class StylesBuilder:
         else:
             token_name = token.name
             value = token.value
+            rule_name = name.replace("-", "_")
             if token_name == "scalar" and value.endswith("%"):
                 try:
-                    opacity = percentage_string_to_float(value)
-                    self.styles.set_rule(name, opacity)
+                    text_opacity = percentage_string_to_float(value)
+                    self.styles.set_rule(rule_name, text_opacity)
                 except ValueError:
                     error = True
             elif token_name == "number":
                 try:
-                    opacity = clamp(float(value), 0, 1)
-                    self.styles.set_rule(name, opacity)
+                    text_opacity = clamp(float(value), 0, 1)
+                    self.styles.set_rule(rule_name, text_opacity)
                 except ValueError:
                     error = True
             else:

@@ -26,15 +26,15 @@ class JustABox(App):
         yield Box(classes="box2")
 
     def key_a(self):
-        self.box.styles.display = "none"
+        # self.box.styles.display = "none"
         # self.box.styles.visibility = "hidden"
-        # self.animator.animate(
-        #     self.box.styles,
-        #     "opacity",
-        #     value=0.0,
-        #     duration=2.0,
-        #     on_complete=self.box.remove,
-        # )
+        self.animator.animate(
+            self.box.styles,
+            "text_opacity",
+            value=0.0,
+            duration=2.0,
+            on_complete=self.box.remove,
+        )
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)
