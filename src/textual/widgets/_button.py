@@ -64,7 +64,7 @@ class Button(Widget, can_focus=True):
     Button.-primary {
         background: $primary;
         color: $text-primary;
-        border-top: tall $primary-lighten-2;
+        border-top: tall $primary-lighten-3;
         border-bottom: tall $primary-darken-3;
       
     }
