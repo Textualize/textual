@@ -332,7 +332,7 @@ class StylesBuilder:
                     "visibility", valid_values=list(VALID_VISIBILITY), context="css"
                 )
 
-    def process_text_opacity(self, name: str, tokens: list[Token]) -> None:
+    def _process_fractional(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
             return
         token = tokens[0]
@@ -360,6 +360,9 @@ class StylesBuilder:
 
         if error:
             self.error(name, token, fractional_property_help_text(name, context="css"))
+
+    process_opacity = _process_fractional
+    process_text_opacity = _process_fractional
 
     def _process_space(self, name: str, tokens: list[Token]) -> None:
         space: list[int] = []
