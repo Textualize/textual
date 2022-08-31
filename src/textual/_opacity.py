@@ -22,6 +22,9 @@ def _apply_opacity(
             have identical foreground and background colors to input segments.
     """
     _Segment = Segment
+    from_rich_color = Color.from_rich_color
+    from_color = Style.from_color
+    blend = base_background.blend
     for segment in segments:
         text, style, _ = segment
         if not style:
@@ -30,13 +33,13 @@ def _apply_opacity(
 
         blended_style = style
         if style.color:
-            color = Color.from_rich_color(style.color)
-            blended_foreground = base_background.blend(color, factor=opacity)
-            blended_style += Style.from_color(color=blended_foreground.rich_color)
+            color = from_rich_color(style.color)
+            blended_foreground = blend(color, factor=opacity)
+            blended_style += from_color(color=blended_foreground.rich_color)
 
         if style.bgcolor:
-            bgcolor = Color.from_rich_color(style.bgcolor)
-            blended_background = base_background.blend(bgcolor, factor=opacity)
-            blended_style += Style.from_color(bgcolor=blended_background.rich_color)
+            bgcolor = from_rich_color(style.bgcolor)
+            blended_background = blend(bgcolor, factor=opacity)
+            blended_style += from_color(bgcolor=blended_background.rich_color)
 
         yield _Segment(text, blended_style)
