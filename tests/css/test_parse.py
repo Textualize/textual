@@ -1039,8 +1039,9 @@ class TestParseTransition:
     def test_various_duration_formats(self, duration, parsed_duration):
         easing = "in_out_cubic"
         transition_property = "offset"
+        delay = duration
         css = f"""#some-widget {{
-            transition: {transition_property} {duration} {easing} {duration};
+            transition: {transition_property} {duration} {easing} {delay};
         }}
         """
         stylesheet = Stylesheet()

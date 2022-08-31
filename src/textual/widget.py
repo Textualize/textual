@@ -1210,16 +1210,19 @@ class Widget(DOMNode):
             RenderableType: A new renderable.
         """
 
+        text_justify = (
+            _get_rich_justify(self.styles.text_align)
+            if self.styles.has_rule("text_align")
+            else None
+        )
         if isinstance(renderable, str):
-            justify = _get_rich_justify(self.styles.text_align)
-            renderable = Text.from_markup(renderable, justify=justify)
+            renderable = Text.from_markup(renderable, justify=text_justify)
 
         rich_style = self.rich_style
         if isinstance(renderable, Text):
             renderable.stylize(rich_style)
-            if not renderable.justify:
-                justify = _get_rich_justify(self.styles.text_align)
-                renderable.justify = justify
+            if text_justify is not None and renderable.justify is None:
+                renderable.justify = text_justify
         else:
             renderable = Styled(renderable, rich_style)
 

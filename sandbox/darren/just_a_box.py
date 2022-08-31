@@ -20,19 +20,22 @@ class Box(Widget, can_focus=True):
 
 
 class JustABox(App):
+    def on_load(self):
+        self.bind("s", "toggle_class('#sidebar', '-active')", description="Sidebar")
+
     def compose(self) -> ComposeResult:
         self.box = Box(classes="box1")
         yield self.box
         yield Box(classes="box2")
+        yield Widget(id="sidebar")
 
     def key_a(self):
-        # self.box.styles.display = "none"
-        # self.box.styles.visibility = "hidden"
         self.animator.animate(
             self.box.styles,
             "text_opacity",
             value=0.0,
             duration=2.0,
+            delay=2.0,
             on_complete=self.box.remove,
         )
 
