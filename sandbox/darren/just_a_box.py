@@ -25,18 +25,20 @@ class JustABox(App):
 
     def compose(self) -> ComposeResult:
         self.box = Box(classes="box1")
+        self.box.styles.opacity = "50%"
         yield self.box
         yield Box(classes="box2")
         yield Widget(id="sidebar")
 
     def key_a(self):
+        self._animate_out()
+
+    def _animate_out(self):
+        def p():
+            print("done")
+
         self.animator.animate(
-            self.box.styles,
-            "text_opacity",
-            value=0.0,
-            duration=2.0,
-            delay=2.0,
-            on_complete=self.box.remove,
+            self.box.styles, "opacity", value=0.0, duration=2.0, on_complete=p
         )
 
     async def on_key(self, event: events.Key) -> None:

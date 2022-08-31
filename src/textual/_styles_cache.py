@@ -246,7 +246,7 @@ class StylesCache:
                 segments = _apply_widget_opacity(
                     segments, base_background, styles.opacity
                 )
-
+            segments = list(segments)
             return segments if isinstance(segments, list) else list(segments)
 
         line: Iterable[Segment]

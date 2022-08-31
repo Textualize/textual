@@ -4,7 +4,6 @@ from rich.segment import Segment
 from rich.style import Style
 
 from textual.color import Color
-from textual.renderables._blend_colors import blend_colors
 
 
 def _apply_widget_opacity(
@@ -19,12 +18,19 @@ def _apply_widget_opacity(
             yield segment
             continue
 
-        color = style.color
-        bgcolor = style.bgcolor
-        if color and color.triplet and bgcolor and bgcolor.triplet:
-            blended_foreground = blend_colors(color, base_background, ratio=opacity)
-            blended_background = blend_colors(bgcolor, base_background, ratio=opacity)
-            blended_style = Style(color=blended_foreground, bgcolor=blended_background)
-            yield _Segment(text, style + blended_style)
-        else:
-            yield segment
+        blended_style = style
+        if style.color:
+            color = Color.from_rich_color(style.color)
+            blended_foreground = base_background.blend(color, factor=opacity)
+            blended_style = style + Style.from_color(
+                color=blended_foreground.rich_color
+            )
+
+        if style.bgcolor:
+            bgcolor = Color.from_rich_color(style.bgcolor)
+            blended_background = base_background.blend(bgcolor, factor=opacity)
+            blended_style = blended_style + Style.from_color(
+                bgcolor=blended_background.rich_color
+            )
+
+        yield _Segment(text, blended_style)
