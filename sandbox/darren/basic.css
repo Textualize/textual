@@ -59,8 +59,7 @@ DataTable {
   width: 30;
   margin-bottom: 1;
   offset-x: -100%;
-
-  transition: offset 500ms in_out_cubic;
+  transition: offset 500ms in_out_cubic 2s;
   layer: sidebar;
 }
 
@@ -97,9 +96,8 @@ DataTable {
 Tweet {
   height:12;
   width: 100%;
-  margin: 0 2;
 
-  margin:0 2;
+
   background: $panel;
   color: $text-panel;
   layout: vertical;
@@ -110,7 +108,6 @@ Tweet {
   /* scrollbar-gutter: stable; */
   align-horizontal: center;
   box-sizing: border-box;
-
 }
 
 
