@@ -32,15 +32,11 @@ def _apply_opacity(
         if style.color:
             color = Color.from_rich_color(style.color)
             blended_foreground = base_background.blend(color, factor=opacity)
-            blended_style = style + Style.from_color(
-                color=blended_foreground.rich_color
-            )
+            blended_style += Style.from_color(color=blended_foreground.rich_color)
 
         if style.bgcolor:
             bgcolor = Color.from_rich_color(style.bgcolor)
             blended_background = base_background.blend(bgcolor, factor=opacity)
-            blended_style = blended_style + Style.from_color(
-                bgcolor=blended_background.rich_color
-            )
+            blended_style += Style.from_color(bgcolor=blended_background.rich_color)
 
         yield _Segment(text, blended_style)
