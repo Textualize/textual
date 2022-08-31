@@ -18,8 +18,8 @@ from ..message import Message
 from ..reactive import Reactive
 from ..widget import Widget
 
-ButtonVariant = Literal["default", "success", "warning", "error"]
-_VALID_BUTTON_VARIANTS = {"default", "success", "warning", "error"}
+ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
+_VALID_BUTTON_VARIANTS = {"default", "primary", "success", "warning", "error"}
 
 
 class InvalidButtonVariant(Exception):
@@ -57,6 +57,29 @@ class Button(Widget, can_focus=True):
         background: $panel;
         border-bottom: tall $panel-lighten-2;
         border-top: tall $panel-darken-2;                
+        tint: $background 30%;
+    }
+
+    /* Primary variant */
+    Button.-primary {
+        background: $primary;
+        color: $text-primary;
+        border-top: tall $primary-lighten-3;
+        border-bottom: tall $primary-darken-3;
+      
+    }
+
+    Button.-primary:hover {
+        background: $primary-darken-2;
+        color: $text-primary-darken-2;
+
+    }
+
+    Button.-primary.-active {
+        background: $primary;
+        border-bottom: tall $primary-lighten-3;
+        border-top: tall $primary-darken-3;
+    
     }
 
 
@@ -188,14 +211,18 @@ class Button(Widget, can_focus=True):
         label.stylize(self.text_style)
         return label
 
-    async def on_click(self, event: events.Click) -> None:
+    async def _on_click(self, event: events.Click) -> None:
         event.stop()
-        if self.disabled:
+        self.press()
+
+    def press(self) -> None:
+        """Respond to a button press."""
+        if self.disabled or not self.display:
             return
         # Manage the "active" effect:
         self._start_active_affect()
         # ...and let other components know that we've just been clicked:
-        await self.emit(Button.Pressed(self))
+        self.emit_no_wait(Button.Pressed(self))
 
     def _start_active_affect(self) -> None:
         """Start a small animation to show the button was clicked."""
@@ -204,7 +231,7 @@ class Button(Widget, can_focus=True):
             self.ACTIVE_EFFECT_DURATION, partial(self.remove_class, "-active")
         )
 
-    async def on_key(self, event: events.Key) -> None:
+    async def _on_key(self, event: events.Key) -> None:
         if event.key == "enter" and not self.disabled:
             self._start_active_affect()
             await self.emit(Button.Pressed(self))

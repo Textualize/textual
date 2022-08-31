@@ -705,6 +705,17 @@ class DOMNode(MessagePump):
         """
         return self._classes.issuperset(class_names)
 
+    def set_class(self, add: bool, *class_names: str) -> None:
+        """Add or remove class(es) based on a condition.
+
+        Args:
+            add (bool):  Add the classes if True, otherwise remove them.
+        """
+        if add:
+            self.add_class(*class_names)
+        else:
+            self.remove_class(*class_names)
+
     def add_class(self, *class_names: str) -> None:
         """Add class names to this Node.
 

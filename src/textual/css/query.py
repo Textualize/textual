@@ -251,6 +251,19 @@ class DOMQuery:
                 if isinstance(node, filter_type):
                     yield node
 
+    def set_class(self, add: bool, *class_names: str) -> DOMQuery:
+        """Set the given class name(s) according to a condition.
+
+        Args:
+            add (bool): Add the classes if True, otherwise remove them.
+
+        Returns:
+            DOMQuery: Self.
+        """
+        for node in self:
+            node.set_class(add, *class_names)
+        return self
+
     def add_class(self, *class_names: str) -> DOMQuery:
         """Add the given class name(s) to nodes."""
         for node in self:

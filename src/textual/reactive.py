@@ -75,6 +75,21 @@ class Reactive(Generic[ReactiveType]):
         return cls(default, layout=layout, repaint=repaint, init=True)
 
     @classmethod
+    def var(
+        cls,
+        default: ReactiveType | Callable[[], ReactiveType],
+    ) -> Reactive:
+        """A reactive variable that doesn't update or layout.
+
+        Args:
+            default (ReactiveType | Callable[[], ReactiveType]):  A default value or callable that returns a default.
+
+        Returns:
+            Reactive: A Reactive descriptor.
+        """
+        return cls(default, layout=False, repaint=False, init=True)
+
+    @classmethod
     async def initialize_object(cls, obj: object) -> None:
         """Call any watchers / computes for the first time.
 
