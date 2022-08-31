@@ -7,7 +7,7 @@ from rich.segment import Segment
 from rich.style import Style
 
 from ._border import get_box, render_row
-from ._opacity import _apply_widget_opacity
+from ._opacity import _apply_opacity
 from ._segment_tools import line_crop, line_pad, line_trim
 from ._types import Lines
 from .color import Color
@@ -243,9 +243,7 @@ class StylesCache:
             if styles.tint.a:
                 segments = Tint.process_segments(segments, styles.tint)
             if styles.opacity != 1.0:
-                segments = _apply_widget_opacity(
-                    segments, base_background, styles.opacity
-                )
+                segments = _apply_opacity(segments, base_background, styles.opacity)
             segments = list(segments)
             return segments if isinstance(segments, list) else list(segments)
 

@@ -6,7 +6,7 @@ from rich.style import Style
 from textual.color import Color
 
 
-def _apply_widget_opacity(
+def _apply_opacity(
     segments: Iterable[Segment],
     base_background: Color,
     opacity: float,
