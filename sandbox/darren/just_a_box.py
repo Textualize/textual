@@ -10,5 +10,5 @@ class JustABox(App):
 
 
 if __name__ == "__main__":
-    app = JustABox(css_path="just_a_box.css", watch_css=True)
+    app = JustABox(css_path="../darren/just_a_box.css", watch_css=True)
     app.run()
