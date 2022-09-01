@@ -93,9 +93,9 @@ class ScrollBarRender:
     ) -> Segments:
 
         if vertical:
-            bars = [" ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
+            bars = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", " "]
         else:
-            bars = ["█", "▉", "▊", "▋", "▌", "▍", "▎", "▏", " "]
+            bars = ["▉", "▊", "▋", "▌", "▍", "▎", "▏", " "]
 
         back = back_color
         bar = bar_color
@@ -110,11 +110,11 @@ class ScrollBarRender:
         if window_size and size and virtual_size and size != virtual_size:
             step_size = virtual_size / size
 
-            start = int(position / step_size * 9)
-            end = start + max(9, int(ceil(window_size / step_size * 9)))
+            start = int(position / step_size * 8)
+            end = start + max(8, int(ceil(window_size / step_size * 8)))
 
-            start_index, start_bar = divmod(start, 9)
-            end_index, end_bar = divmod(end, 9)
+            start_index, start_bar = divmod(start, 8)
+            end_index, end_bar = divmod(end, 8)
 
             upper = {"@click": "scroll_up"}
             lower = {"@click": "scroll_down"}
@@ -130,19 +130,23 @@ class ScrollBarRender:
             ] * (end_index - start_index)
 
             if start_index < len(segments):
-                segments[start_index] = _Segment(
-                    bars[8 - start_bar] * width_thickness,
-                    _Style(bgcolor=back, color=bar, meta=foreground_meta)
-                    if vertical
-                    else _Style(bgcolor=bar, color=back, meta=foreground_meta),
-                )
+                bar_character = bars[7 - start_bar]
+                if bar_character != " ":
+                    segments[start_index] = _Segment(
+                        bar_character * width_thickness,
+                        _Style(bgcolor=back, color=bar, meta=foreground_meta)
+                        if vertical
+                        else _Style(bgcolor=bar, color=back, meta=foreground_meta),
+                    )
             if end_index < len(segments):
-                segments[end_index] = _Segment(
-                    bars[8 - end_bar] * width_thickness,
-                    _Style(bgcolor=bar, color=back, meta=foreground_meta)
-                    if vertical
-                    else _Style(bgcolor=back, color=bar, meta=foreground_meta),
-                )
+                bar_character = bars[7 - end_bar]
+                if bar_character != " ":
+                    segments[end_index] = _Segment(
+                        bar_character * width_thickness,
+                        _Style(bgcolor=bar, color=back, meta=foreground_meta)
+                        if vertical
+                        else _Style(bgcolor=back, color=bar, meta=foreground_meta),
+                    )
         else:
             style = _Style(bgcolor=back)
             segments = [_Segment(blank, style=style)] * int(size)

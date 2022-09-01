@@ -468,7 +468,7 @@ class Widget(DOMNode):
         self.app.start_widget(self, scroll_bar)
         return scroll_bar
 
-    def _refresh_scrollbars(self) -> None:
+    def _refresh_scrollbars(self) -> tuple[bool, bool]:
         """Refresh scrollbar visibility."""
         if not self.is_scrollable:
             return
@@ -498,6 +498,8 @@ class Widget(DOMNode):
         self.show_vertical_scrollbar = show_vertical
         self.horizontal_scrollbar.display = show_horizontal
         self.vertical_scrollbar.display = show_vertical
+
+        return show_horizontal, show_vertical
 
     @property
     def scrollbars_enabled(self) -> tuple[bool, bool]:
@@ -1248,16 +1250,19 @@ class Widget(DOMNode):
                 width, height = self.container_size
                 if self.show_vertical_scrollbar:
                     self.vertical_scrollbar.window_virtual_size = virtual_size.height
-                    self.vertical_scrollbar.window_size = height
+                    self.vertical_scrollbar.window_size = (
+                        height - self.scrollbar_size_horizontal
+                    )
                 if self.show_horizontal_scrollbar:
                     self.horizontal_scrollbar.window_virtual_size = virtual_size.width
-                    self.horizontal_scrollbar.window_size = width
+                    self.horizontal_scrollbar.window_size = (
+                        width - self.scrollbar_size_vertical
+                    )
 
                 self.scroll_x = self.validate_scroll_x(self.scroll_x)
                 self.scroll_y = self.validate_scroll_y(self.scroll_y)
                 self.refresh(layout=True)
                 self.scroll_to(self.scroll_x, self.scroll_y)
-                # self.call_later(self.scroll_to, self.scroll_x, self.scroll_y)
             else:
                 self.refresh()
 
