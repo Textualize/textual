@@ -9,7 +9,7 @@ import sys
 import warnings
 from contextlib import redirect_stdout, redirect_stderr
 from datetime import datetime
-from pathlib import PurePath
+from pathlib import PurePath, Path
 from time import perf_counter
 from typing import (
     Any,
@@ -225,8 +225,18 @@ class App(Generic[ReturnType], DOMNode):
         self._require_stylesheet_update: set[DOMNode] = set()
 
         css_path = css_path or self.CSS_PATH
-        if isinstance(css_path, str):
-            css_path = _make_path_object_relative(css_path, self) if css_path else None
+        if css_path is None:
+            css_path = None
+        else:
+            if isinstance(css_path, str):
+                css_path = Path(css_path)
+
+            is_relative_path = not css_path.is_absolute()
+            if is_relative_path:
+                # We want the CSS path to be resolved from the location of the App subclass
+                css_path = (
+                    _make_path_object_relative(css_path, self) if css_path else None
+                )
 
         self.css_path = css_path
 
