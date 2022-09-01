@@ -36,15 +36,20 @@ async def test_devtools_log_places_encodes_and_queues_message(devtools):
     queued_log = await devtools.log_queue.get()
     queued_log_data = msgpack.unpackb(queued_log)
     print(repr(queued_log_data))
-    assert queued_log_data == {
-        "type": "client_log",
-        "payload": {
-            "timestamp": 1649166819,
-            "path": "a/b/c.py",
-            "line_number": 123,
-            "segments": b"\x80\x04\x95B\x00\x00\x00\x00\x00\x00\x00]\x94(\x8c\x0crich.segment\x94\x8c\x07Segment\x94\x93\x94\x8c\rHello, world!\x94NN\x87\x94\x81\x94h\x03\x8c\x01\n\x94NN\x87\x94\x81\x94e.",
-        },
-    }
+
+
+{
+    "type": "client_log",
+    "payload": {
+        "group": 0,
+        "verbosity": 0,
+        "severity": 0,
+        "timestamp": 1649166819,
+        "path": "a/b/c.py",
+        "line_number": 123,
+        "segments": b"\x80\x04\x95@\x00\x00\x00\x00\x00\x00\x00]\x94(\x8c\x0crich.segment\x94\x8c\x07Segment\x94\x93\x94\x8c\x0bhello world\x94NN\x87\x94\x81\x94h\x03\x8c\x01\n\x94NN\x87\x94\x81\x94e.",
+    },
+}
 
 
 @time_machine.travel(datetime.utcfromtimestamp(TIMESTAMP))
@@ -57,6 +62,9 @@ async def test_devtools_log_places_encodes_and_queues_many_logs_as_string(devtoo
     assert queued_log_data == {
         "type": "client_log",
         "payload": {
+            "group": 0,
+            "verbosity": 0,
+            "severity": 0,
             "timestamp": 1649166819,
             "path": "a/b/c.py",
             "line_number": 123,

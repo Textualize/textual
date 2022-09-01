@@ -139,7 +139,7 @@ class DevtoolsClient:
         log_queue = self.log_queue
         websocket = self.websocket
 
-        async def update_console():
+        async def update_console() -> None:
             """Coroutine function scheduled as a Task, which listens on
             the websocket for updates from the server regarding any changes
             in the server Console dimensions. When the client learns of this
@@ -153,7 +153,7 @@ class DevtoolsClient:
                         payload = message_json["payload"]
                         self.console.width = payload["width"]
                         self.console.height = payload["height"]
-                        self.verbose = payload["verbose"]
+                        self.verbose = payload.get("verbose", False)
 
         async def send_queued_logs():
             """Coroutine function which is scheduled as a Task, which consumes
@@ -215,10 +215,10 @@ class DevtoolsClient:
 
     def log(
         self,
-        group: LogGroup,
-        verbosity: LogVerbosity,
-        severity: LogSeverity,
         log: DevtoolsLog,
+        group: LogGroup = LogGroup.UNDEFINED,
+        verbosity: LogVerbosity = LogVerbosity.NORMAL,
+        severity: LogSeverity = LogSeverity.NORMAL,
     ) -> None:
         """Queue a log to be sent to the devtools server for display.
 

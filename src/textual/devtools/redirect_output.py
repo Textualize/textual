@@ -98,8 +98,8 @@ class StdoutRedirector:
         batched_log = "".join(cast(str, log.objects_or_string) for log in log_batch)
         batched_log = batched_log.rstrip()
         self.devtools.log(
+            DevtoolsLog(batched_log, caller=log_batch[-1].caller),
             LogGroup.PRINT,
             LogVerbosity.NORMAL,
             LogSeverity.NORMAL,
-            DevtoolsLog(batched_log, caller=log_batch[-1].caller),
         )

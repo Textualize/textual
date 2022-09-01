@@ -100,7 +100,7 @@ class DevtoolsService:
             {
                 "type": "server_info",
                 "payload": {
-                    "width": self.console.width - 4,
+                    "width": self.console.width,
                     "height": self.console.height,
                     "verbose": self.verbose,
                 },
@@ -181,7 +181,7 @@ class ClientHandler:
             type = message["type"]
             if type == "client_log":
                 payload = message["payload"]
-                if LogGroup(payload["group"]).name in self.service.exclude:
+                if LogGroup(payload.get("group", 0)).name in self.service.exclude:
                     continue
                 encoded_segments = payload["segments"]
                 segments = pickle.loads(encoded_segments)
@@ -198,9 +198,9 @@ class ClientHandler:
                         path=payload["path"],
                         line_number=payload["line_number"],
                         unix_timestamp=payload["timestamp"],
-                        group=payload["group"],
-                        verbosity=payload["verbosity"],
-                        severity=payload["severity"],
+                        group=payload.get("group", 0),
+                        verbosity=payload.get("verbosity", 0),
+                        severity=payload.get("severity", 0),
                     )
                 )
                 last_message_time = message_time

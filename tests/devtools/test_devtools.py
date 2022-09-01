@@ -37,6 +37,9 @@ def test_log_message_render(console):
         path="abc/hello.py",
         line_number=123,
         unix_timestamp=TIMESTAMP,
+        group=0,
+        verbosity=0,
+        severity=0,
     )
     table = next(iter(message.__rich_console__(console, console.options)))
 
@@ -52,7 +55,7 @@ def test_log_message_render(console):
     local_time = datetime.fromtimestamp(TIMESTAMP)
     string_timestamp = local_time.time()
 
-    assert left == f"[dim]{string_timestamp}"
+    assert left.plain == f"[{string_timestamp}] UNDEFINED"
     assert right.align == "right"
     assert "hello.py:123" in right.renderable
 

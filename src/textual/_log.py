@@ -2,6 +2,7 @@ from enum import Enum, auto
 
 
 class LogGroup(Enum):
+    UNDEFINED = 0
     EVENT = auto()
     DEBUG = auto()
     INFO = auto()

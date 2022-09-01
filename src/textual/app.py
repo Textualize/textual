@@ -511,10 +511,10 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if len(objects) == 1 and not kwargs:
                 self.devtools.log(
+                    DevtoolsLog(objects, caller=_textual_calling_frame),
                     group,
                     verbosity,
                     severity,
-                    DevtoolsLog(objects, caller=_textual_calling_frame),
                 )
             else:
                 output = " ".join(str(arg) for arg in objects)
@@ -524,10 +524,10 @@ class App(Generic[ReturnType], DOMNode):
                     )
                     output = f"{output} {key_values}" if output else key_values
                 self.devtools.log(
+                    DevtoolsLog(output, caller=_textual_calling_frame),
                     group,
                     verbosity,
                     severity,
-                    DevtoolsLog(output, caller=_textual_calling_frame),
                 )
         except Exception as error:
             self.on_exception(error)
