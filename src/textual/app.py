@@ -224,19 +224,14 @@ class App(Generic[ReturnType], DOMNode):
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
         self._require_stylesheet_update: set[DOMNode] = set()
 
+        # We want the CSS path to be resolved from the location of the App subclass
         css_path = css_path or self.CSS_PATH
         if css_path is None:
             css_path = None
         else:
             if isinstance(css_path, str):
                 css_path = Path(css_path)
-
-            is_relative_path = not css_path.is_absolute()
-            if is_relative_path:
-                # We want the CSS path to be resolved from the location of the App subclass
-                css_path = (
-                    _make_path_object_relative(css_path, self) if css_path else None
-                )
+            css_path = _make_path_object_relative(css_path, self) if css_path else None
 
         self.css_path = css_path
 
