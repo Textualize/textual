@@ -1396,7 +1396,7 @@ class Widget(DOMNode):
         if not self.check_message_enabled(message):
             return True
         if not self.is_running:
-            self.log(self, f"IS NOT RUNNING, {message!r} not sent")
+            self.log.warning(self, f"IS NOT RUNNING, {message!r} not sent")
         return await super().post_message(message)
 
     async def _on_idle(self, event: events.Idle) -> None:

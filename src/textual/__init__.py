@@ -77,14 +77,19 @@ class Logger:
         return Logger(self._app, LogGroup.EVENT)
 
     @property
+    def debug(self) -> Logger:
+        """A debug logger."""
+        return Logger(self._app, LogGroup.DEBUG)
+
+    @property
     def info(self) -> Logger:
         """An info logger."""
         return Logger(self._app, LogGroup.INFO)
 
     @property
-    def debug(self) -> Logger:
-        """A debug logger."""
-        return Logger(self._app, LogGroup.DEBUG)
+    def warning(self) -> Logger:
+        """An info logger."""
+        return Logger(self._app, LogGroup.WARNING)
 
     @property
     def error(self) -> Logger:
