@@ -206,7 +206,7 @@ class App(Generic[ReturnType], DOMNode):
         else:
             self._title = title
 
-        self._logger = Logger(self)
+        self._logger = Logger()
 
         self.bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
         self._refresh_required = False
@@ -1034,9 +1034,9 @@ class App(Generic[ReturnType], DOMNode):
         if self.devtools_enabled:
             try:
                 await self.devtools.connect()
-                self.log(f"Connected to devtools ({self.devtools.url})")
+                self.log(f"Connected to devtools ( {self.devtools.url} )")
             except DevtoolsConnectionError:
-                self.log(f"Couldn't connect to devtools ({self.devtools.url})")
+                self.log(f"Couldn't connect to devtools ( {self.devtools.url} )")
 
         self.log("---")
 

@@ -22,26 +22,26 @@ class ScrollMessage(Message, bubble=False):
 
 
 @rich.repr.auto
-class ScrollUp(ScrollMessage):
+class ScrollUp(ScrollMessage, verbose=True):
     """Message sent when clicking above handle."""
 
 
 @rich.repr.auto
-class ScrollDown(ScrollMessage):
+class ScrollDown(ScrollMessage, verbose=True):
     """Message sent when clicking below handle."""
 
 
 @rich.repr.auto
-class ScrollLeft(ScrollMessage):
+class ScrollLeft(ScrollMessage, verbose=True):
     """Message sent when clicking above handle."""
 
 
 @rich.repr.auto
-class ScrollRight(ScrollMessage):
+class ScrollRight(ScrollMessage, verbose=True):
     """Message sent when clicking below handle."""
 
 
-class ScrollTo(ScrollMessage):
+class ScrollTo(ScrollMessage, verbose=True):
     """Message sent when click and dragging handle."""
 
     def __init__(
