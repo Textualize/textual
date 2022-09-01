@@ -17,6 +17,8 @@ from ._log import LogGroup, LogVerbosity, LogSeverity
 
 @rich.repr.auto
 class Logger:
+    """A Textual logger."""
+
     def __init__(
         self,
         app: App,
@@ -95,19 +97,6 @@ class Logger:
     def error(self) -> Logger:
         """An error logger."""
         return Logger(self._app, LogGroup.ERROR)
-
-
-log = Logger(LogGroup.INFO)
-
-
-# def log(*args: object, verbosity: int = 0, **kwargs) -> None:
-#     # TODO: There may be an early-out here for when there is no endpoint for logs
-#     from ._context import active_app
-
-#     app = active_app.get()
-
-#     caller = inspect.stack()[1]
-#     app.log(*args, verbosity=verbosity, _textual_calling_frame=caller, **kwargs)
 
 
 def panic(*args: RenderableType) -> None:
