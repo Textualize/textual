@@ -18,9 +18,9 @@ from rich.markup import escape
 from rich.rule import Rule
 from rich.segment import Segment, Segments
 from rich.style import Style
+from rich.styled import Styled
 from rich.table import Table
 from rich.text import Text
-
 from textual._log import LogGroup
 
 DevConsoleMessageLevel = Literal["info", "warning", "error"]
@@ -90,18 +90,24 @@ class DevConsoleLog:
         file_and_line = escape(f"{Path(self.path).name}:{self.line_number}")
         group = LogGroup(self.group).name
         time = local_time.time()
+        message = Text(
+            f":warning-emoji:  [{time}] {group}"
+            if self.severity
+            else f"[{time}] {group}"
+        )
+        message.stylize("dim")
+
         table.add_row(
-            (
-                f":warning-emoji:  [dim]{time} {group}"
-                if self.severity
-                else f"[dim][{time}] ({group.lower()})"
-            ),
+            message,
             Align.right(
                 Text(f"{file_and_line}", style=Style(dim=True, link=file_link))
             ),
         )
         yield table
-        yield Segments(self.segments)
+        if group == "PRINT":
+            yield Styled(Segments(self.segments), "bold")
+        else:
+            yield Segments(self.segments)
 
 
 class DevConsoleNotice:

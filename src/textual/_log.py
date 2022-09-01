@@ -7,6 +7,7 @@ class LogGroup(Enum):
     INFO = auto()
     WARNING = auto()
     ERROR = auto()
+    PRINT = auto()
 
 
 class LogVerbosity(Enum):

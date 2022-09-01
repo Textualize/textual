@@ -16,6 +16,7 @@ from rich.console import Console
 from rich.markup import escape
 import msgpack
 
+from textual._log import LogGroup
 from textual.devtools.renderables import (
     DevConsoleLog,
     DevConsoleNotice,
@@ -30,15 +31,22 @@ class DevtoolsService:
     responsible for tracking connected client applications.
     """
 
-    def __init__(self, update_frequency: float, verbose: bool = False) -> None:
+    def __init__(
+        self,
+        update_frequency: float,
+        verbose: bool = False,
+        exclude: list[str] | None = None,
+    ) -> None:
         """
         Args:
             update_frequency (float): The number of seconds to wait between
                 sending updates of the console size to connected clients.
             verbose (bool): Enable verbose logging on client.
+            exclude (list[str]): List of log groups to exclude from output.
         """
         self.update_frequency = update_frequency
         self.verbose = verbose
+        self.exclude = set(name.upper() for name in exclude) if exclude else set()
         self.console = Console()
         self.shutdown_event = asyncio.Event()
         self.clients: list[ClientHandler] = []
@@ -92,7 +100,7 @@ class DevtoolsService:
             {
                 "type": "server_info",
                 "payload": {
-                    "width": self.console.width,
+                    "width": self.console.width - 4,
                     "height": self.console.height,
                     "verbose": self.verbose,
                 },
@@ -173,6 +181,8 @@ class ClientHandler:
             type = message["type"]
             if type == "client_log":
                 payload = message["payload"]
+                if LogGroup(payload["group"]).name in self.service.exclude:
+                    continue
                 encoded_segments = payload["segments"]
                 segments = pickle.loads(encoded_segments)
                 message_time = time()

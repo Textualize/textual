@@ -337,12 +337,12 @@ class MouseMove(MouseEvent, bubble=True, verbose=True):
 
 
 @rich.repr.auto
-class MouseDown(MouseEvent, bubble=True):
+class MouseDown(MouseEvent, bubble=True, verbose=True):
     pass
 
 
 @rich.repr.auto
-class MouseUp(MouseEvent, bubble=True):
+class MouseUp(MouseEvent, bubble=True, verbose=True):
     pass
 
 
@@ -407,11 +407,11 @@ class Blur(Event, bubble=False):
     pass
 
 
-class DescendantFocus(Event, bubble=True):
+class DescendantFocus(Event, bubble=True, verbose=True):
     pass
 
 
-class DescendantBlur(Event, bubble=True):
+class DescendantBlur(Event, bubble=True, verbose=True):
     pass
 
 

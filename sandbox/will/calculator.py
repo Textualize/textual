@@ -72,6 +72,8 @@ class CalculatorApp(App):
     def on_key(self, event: events.Key) -> None:
         """Called when the user presses a key."""
 
+        print(f"KEY {event} was pressed!")
+
         def press(button_id: str) -> None:
             self.query_one(f"#{button_id}", Button).press()
             self.set_focus(None)

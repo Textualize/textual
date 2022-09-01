@@ -20,14 +20,15 @@ def run():
 
 @run.command(help="Run the Textual Devtools console.")
 @click.option("-v", "verbose", help="Enable verbose logs.", is_flag=True)
-def console(verbose: bool = False):
+@click.option("-x", "--exclude", "exclude", help="Exclude log group(s)", multiple=True)
+def console(verbose: bool, exclude: list[str]) -> None:
     from rich.console import Console
 
     console = Console()
     console.clear()
     console.show_cursor(False)
     try:
-        _run_devtools(verbose=verbose)
+        _run_devtools(verbose=verbose, exclude=exclude)
     finally:
         console.show_cursor(True)
 
