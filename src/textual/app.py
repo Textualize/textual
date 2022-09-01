@@ -9,11 +9,9 @@ import sys
 import warnings
 from contextlib import redirect_stdout, redirect_stderr
 from datetime import datetime
-from pathlib import PurePath, Path
+from pathlib import PurePath
 from time import perf_counter
-from types import ModuleType
 from typing import (
-    TYPE_CHECKING,
     Any,
     Generic,
     Iterable,
@@ -65,8 +63,6 @@ from .renderables.blank import Blank
 from .screen import Screen
 from .widget import Widget
 
-if TYPE_CHECKING:
-    from .css.query import DOMQuery
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
