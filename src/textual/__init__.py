@@ -9,9 +9,6 @@ from rich.console import RenderableType
 __all__ = ["log", "panic"]
 
 
-if TYPE_CHECKING:
-    from .app import App
-
 from ._log import LogGroup, LogVerbosity, LogSeverity
 
 
@@ -21,18 +18,15 @@ class Logger:
 
     def __init__(
         self,
-        app: App,
         group: LogGroup = LogGroup.INFO,
         verbosity: LogVerbosity = LogVerbosity.NORMAL,
         severity: LogSeverity = LogSeverity.NORMAL,
     ) -> None:
-        self._app = app
         self._group = group
         self._verbosity = verbosity
         self._severity = severity
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self._app
         yield self._group, LogGroup.INFO
         yield self._verbosity, LogVerbosity.NORMAL
         yield self._severity, LogSeverity.NORMAL
@@ -61,42 +55,45 @@ class Logger:
             Logger: New logger.
         """
         verbosity = LogVerbosity.HIGH if verbose else LogVerbosity.NORMAL
-        return Logger(self._app, self._group, verbosity, LogSeverity.NORMAL)
+        return Logger(self._group, verbosity, LogSeverity.NORMAL)
 
     @property
     def verbose(self) -> Logger:
         """A verbose logger."""
-        return Logger(self._app, self._group, LogVerbosity.HIGH)
+        return Logger(self._group, LogVerbosity.HIGH)
 
     @property
     def critical(self) -> Logger:
         """A critical logger."""
-        return Logger(self._app, self._group, self._verbosity, LogSeverity.CRITICAL)
+        return Logger(self._group, self._verbosity, LogSeverity.CRITICAL)
 
     @property
     def event(self) -> Logger:
         """An event logger."""
-        return Logger(self._app, LogGroup.EVENT)
+        return Logger(LogGroup.EVENT)
 
     @property
     def debug(self) -> Logger:
         """A debug logger."""
-        return Logger(self._app, LogGroup.DEBUG)
+        return Logger(LogGroup.DEBUG)
 
     @property
     def info(self) -> Logger:
         """An info logger."""
-        return Logger(self._app, LogGroup.INFO)
+        return Logger(LogGroup.INFO)
 
     @property
     def warning(self) -> Logger:
         """An info logger."""
-        return Logger(self._app, LogGroup.WARNING)
+        return Logger(LogGroup.WARNING)
 
     @property
     def error(self) -> Logger:
         """An error logger."""
-        return Logger(self._app, LogGroup.ERROR)
+        return Logger(LogGroup.ERROR)
+
+
+log = Logger()
 
 
 def panic(*args: RenderableType) -> None:
