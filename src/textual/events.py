@@ -19,17 +19,17 @@ if TYPE_CHECKING:
 
 
 @rich.repr.auto
-class Event(Message, verbosity=2):
+class Event(Message):
     def __rich_repr__(self) -> rich.repr.Result:
         return
         yield
 
-    def __init_subclass__(cls, bubble: bool = True, verbosity: int = 1) -> None:
-        super().__init_subclass__(bubble=bubble, verbosity=verbosity)
+    def __init_subclass__(cls, bubble: bool = True, verbose: bool = False) -> None:
+        super().__init_subclass__(bubble=bubble, verbose=verbose)
 
 
 @rich.repr.auto
-class Callback(Event, bubble=False, verbosity=3):
+class Callback(Event, bubble=False, verbose=True):
     def __init__(
         self, sender: MessageTarget, callback: Callable[[], Awaitable[None]]
     ) -> None:
@@ -40,7 +40,7 @@ class Callback(Event, bubble=False, verbosity=3):
         yield "callback", self.callback
 
 
-class InvokeCallbacks(Event, bubble=False):
+class InvokeCallbacks(Event, bubble=False, verbose=True):
     """Sent after the Screen is updated"""
 
 
@@ -83,7 +83,7 @@ class Action(Event):
         yield "action", self.action
 
 
-class Resize(Event, verbosity=2, bubble=False):
+class Resize(Event, bubble=False):
     """Sent when the app or widget has been resized.
     Args:
         sender (MessageTarget): The sender of the event (the Screen).
@@ -116,12 +116,8 @@ class Resize(Event, verbosity=2, bubble=False):
         yield "container_size", self.container_size, self.size
 
 
-class Mount(Event, bubble=False):
+class Mount(Event, bubble=False, verbose=True):
     """Sent when a widget is *mounted* and may receive messages."""
-
-
-class Unmount(Event, bubble=False):
-    """Sent when a widget is unmounted, and may no longer receive messages."""
 
 
 class Remove(Event, bubble=False):
@@ -217,7 +213,7 @@ class Key(InputEvent):
 
 
 @rich.repr.auto
-class MouseEvent(InputEvent, bubble=True, verbosity=2):
+class MouseEvent(InputEvent, bubble=True):
     """Sent in response to a mouse event.
 
     Args:
@@ -336,7 +332,7 @@ class MouseEvent(InputEvent, bubble=True, verbosity=2):
 
 
 @rich.repr.auto
-class MouseMove(MouseEvent, verbosity=3, bubble=True):
+class MouseMove(MouseEvent, bubble=True, verbose=True):
     """Sent when the mouse cursor moves."""
 
 
@@ -350,7 +346,7 @@ class MouseUp(MouseEvent, bubble=True):
     pass
 
 
-class MouseScrollDown(InputEvent, verbosity=3, bubble=True):
+class MouseScrollDown(InputEvent, bubble=True, verbose=True):
     __slots__ = ["x", "y"]
 
     def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
@@ -359,7 +355,7 @@ class MouseScrollDown(InputEvent, verbosity=3, bubble=True):
         self.y = y
 
 
-class MouseScrollUp(InputEvent, verbosity=3, bubble=True):
+class MouseScrollUp(InputEvent, bubble=True, verbose=True):
     __slots__ = ["x", "y"]
 
     def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
@@ -373,7 +369,7 @@ class Click(MouseEvent, bubble=True):
 
 
 @rich.repr.auto
-class Timer(Event, verbosity=3, bubble=False):
+class Timer(Event, bubble=False, verbose=True):
     __slots__ = ["time", "count", "callback"]
 
     def __init__(
@@ -395,11 +391,11 @@ class Timer(Event, verbosity=3, bubble=False):
         yield "count", self.count
 
 
-class Enter(Event, bubble=False):
+class Enter(Event, bubble=False, verbose=True):
     pass
 
 
-class Leave(Event, bubble=False):
+class Leave(Event, bubble=False, verbose=True):
     pass
 
 
@@ -411,11 +407,11 @@ class Blur(Event, bubble=False):
     pass
 
 
-class DescendantFocus(Event, verbosity=2, bubble=True):
+class DescendantFocus(Event, bubble=True):
     pass
 
 
-class DescendantBlur(Event, verbosity=2, bubble=True):
+class DescendantBlur(Event, bubble=True):
     pass
 
 

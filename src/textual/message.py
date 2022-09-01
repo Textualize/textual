@@ -30,7 +30,7 @@ class Message:
 
     sender: MessageTarget
     bubble: ClassVar[bool] = True  # Message will bubble to parent
-    verbosity: ClassVar[int] = 1  # Verbosity (higher the more verbose)
+    verbose: ClassVar[bool] = False  # Message is verbose
     no_dispatch: ClassVar[bool] = False  # Message may not be handled by client code
     namespace: ClassVar[str] = ""  # Namespace to disambiguate messages
 
@@ -52,15 +52,14 @@ class Message:
     def __init_subclass__(
         cls,
         bubble: bool | None = True,
-        verbosity: int | None = 1,
+        verbose: bool = False,
         no_dispatch: bool | None = False,
         namespace: str | None = None,
     ) -> None:
         super().__init_subclass__()
         if bubble is not None:
             cls.bubble = bubble
-        if verbosity is not None:
-            cls.verbosity = verbosity
+        cls.verbose = verbose
         if no_dispatch is not None:
             cls.no_dispatch = no_dispatch
         if namespace is not None:

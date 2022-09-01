@@ -7,7 +7,7 @@ import os
 import platform
 import sys
 import warnings
-from contextlib import redirect_stdout, redirect_stderr
+from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import PurePath
 from time import perf_counter
@@ -40,7 +40,16 @@ from rich.protocol import is_renderable
 from rich.segment import Segments
 from rich.traceback import Traceback
 
-from . import actions, events, log, messages
+from . import (
+    Logger,
+    LogSeverity,
+    LogGroup,
+    LogVerbosity,
+    actions,
+    events,
+    log,
+    messages,
+)
 from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
@@ -136,7 +145,6 @@ class App(Generic[ReturnType], DOMNode):
 
     Args:
         driver_class (Type[Driver] | None, optional): Driver class or ``None`` to auto-detect. Defaults to None.
-        log_path (str | PurePath, optional): Path to log file, or "" to disable. Defaults to "".
         log_verbosity (int, optional): Log verbosity from 0-3. Defaults to 1.
         title (str | None, optional): Title of the application. If ``None``, the title is set to the name of the ``App`` subclass. Defaults to ``None``.
         css_path (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
@@ -158,11 +166,6 @@ class App(Generic[ReturnType], DOMNode):
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
-        log_path: str | PurePath = "",
-        log_verbosity: int = 0,
-        log_color_system: Literal[
-            "auto", "standard", "256", "truecolor", "windows"
-        ] = "auto",
         title: str | None = None,
         css_path: str | PurePath | None = None,
         watch_css: bool = False,
@@ -203,20 +206,7 @@ class App(Generic[ReturnType], DOMNode):
         else:
             self._title = title
 
-        self._log_console: Console | None = None
-        self._log_file: TextIO | None = None
-        if log_path:
-            self._log_file = open(log_path, "wt")
-            self._log_console = Console(
-                file=self._log_file,
-                color_system=log_color_system,
-                markup=False,
-                emoji=False,
-                highlight=False,
-                width=100,
-            )
-
-        self.log_verbosity = log_verbosity
+        self._logger = Logger(self)
 
         self.bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
         self._refresh_required = False
@@ -480,10 +470,16 @@ class App(Generic[ReturnType], DOMNode):
         """
         return Size(*self.console.size)
 
-    def log(
+    @property
+    def log(self) -> Logger:
+        return self._logger
+
+    def _log(
         self,
+        group: LogGroup,
+        verbosity: LogVerbosity,
+        severity: LogSeverity,
         *objects: Any,
-        verbosity: int = 1,
         _textual_calling_frame: inspect.FrameInfo | None = None,
         **kwargs,
     ) -> None:
@@ -502,22 +498,24 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
         """
-        if verbosity > self.log_verbosity:
-            return
-        if self._log_console is None and not self.devtools.is_connected:
+
+        if not self.devtools.is_connected:
             return
 
-        if self.devtools.is_connected and not _textual_calling_frame:
+        if verbosity.value > LogVerbosity.NORMAL.value and not self.devtools.verbose:
+            return
+
+        if not _textual_calling_frame:
             _textual_calling_frame = inspect.stack()[1]
 
         try:
             if len(objects) == 1 and not kwargs:
-                if self._log_console is not None:
-                    self._log_console.print(objects[0])
-                if self.devtools.is_connected:
-                    self.devtools.log(
-                        DevtoolsLog(objects, caller=_textual_calling_frame)
-                    )
+                self.devtools.log(
+                    group,
+                    verbosity,
+                    severity,
+                    DevtoolsLog(objects, caller=_textual_calling_frame),
+                )
             else:
                 output = " ".join(str(arg) for arg in objects)
                 if kwargs:
@@ -525,12 +523,12 @@ class App(Generic[ReturnType], DOMNode):
                         f"{key}={value!r}" for key, value in kwargs.items()
                     )
                     output = f"{output} {key_values}" if output else key_values
-                if self._log_console is not None:
-                    self._log_console.print(output, soft_wrap=True)
-                if self.devtools.is_connected:
-                    self.devtools.log(
-                        DevtoolsLog(output, caller=_textual_calling_frame)
-                    )
+                self.devtools.log(
+                    group,
+                    verbosity,
+                    severity,
+                    DevtoolsLog(output, caller=_textual_calling_frame),
+                )
         except Exception as error:
             self.on_exception(error)
 
@@ -687,8 +685,8 @@ class App(Generic[ReturnType], DOMNode):
                 self.log(f"<stylesheet> loaded {self.css_path!r} in {elapsed:.0f} ms")
             except Exception as error:
                 # TODO: Catch specific exceptions
+                self.log.error(error)
                 self.bell()
-                self.log(error)
             else:
                 self.stylesheet = stylesheet
                 self.reset_styles()
@@ -1043,7 +1041,6 @@ class App(Generic[ReturnType], DOMNode):
         self.log("---")
 
         self.log(driver=self.driver_class)
-        self.log(log_verbosity=self.log_verbosity)
         self.log(loop=asyncio.get_running_loop())
         self.log(features=self.features)
 
@@ -1060,7 +1057,7 @@ class App(Generic[ReturnType], DOMNode):
             return
 
         if self.css_monitor:
-            self.set_interval(0.5, self.css_monitor, name="css monitor")
+            self.set_interval(0.25, self.css_monitor, name="css monitor")
             self.log("[b green]STARTED[/]", self.css_monitor)
 
         process_messages = super()._process_messages
@@ -1097,7 +1094,7 @@ class App(Generic[ReturnType], DOMNode):
                 if self.is_headless:
                     await run_process_messages()
                 else:
-                    redirector = StdoutRedirector(self.devtools, self._log_file)
+                    redirector = StdoutRedirector(self.devtools)
                     with redirect_stderr(redirector):
                         with redirect_stdout(redirector):  # type: ignore
                             await run_process_messages()
@@ -1110,13 +1107,6 @@ class App(Generic[ReturnType], DOMNode):
             self._print_error_renderables()
             if self.devtools.is_connected:
                 await self._disconnect_devtools()
-                if self._log_console is not None:
-                    self._log_console.print(
-                        f"Disconnected from devtools ({self.devtools.url})"
-                    )
-            if self._log_file is not None:
-                self._log_file.close()
-                self._log_console = None
 
     async def _ready(self) -> None:
         """Called immediately prior to processing messages.

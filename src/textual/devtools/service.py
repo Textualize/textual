@@ -30,13 +30,15 @@ class DevtoolsService:
     responsible for tracking connected client applications.
     """
 
-    def __init__(self, update_frequency: float) -> None:
+    def __init__(self, update_frequency: float, verbose: bool = False) -> None:
         """
         Args:
             update_frequency (float): The number of seconds to wait between
                 sending updates of the console size to connected clients.
+            verbose (bool): Enable verbose logging on client.
         """
         self.update_frequency = update_frequency
+        self.verbose = verbose
         self.console = Console()
         self.shutdown_event = asyncio.Event()
         self.clients: list[ClientHandler] = []
@@ -44,7 +46,7 @@ class DevtoolsService:
     async def start(self):
         """Starts devtools tasks"""
         self.size_poll_task = asyncio.create_task(self._console_size_poller())
-        self.console.print(DevConsoleHeader())
+        self.console.print(DevConsoleHeader(verbose=self.verbose))
 
     @property
     def clients_connected(self) -> bool:
@@ -58,6 +60,7 @@ class DevtoolsService:
         """
         current_width = self.console.width
         current_height = self.console.height
+        await self._send_server_info_to_all()
         while not self.shutdown_event.is_set():
             width = self.console.width
             height = self.console.height
@@ -91,6 +94,7 @@ class DevtoolsService:
                 "payload": {
                     "width": self.console.width,
                     "height": self.console.height,
+                    "verbose": self.verbose,
                 },
             }
         )
@@ -168,10 +172,8 @@ class ClientHandler:
 
             type = message["type"]
             if type == "client_log":
-                path = message["payload"]["path"]
-                line_number = message["payload"]["line_number"]
-                timestamp = message["payload"]["timestamp"]
-                encoded_segments = message["payload"]["segments"]
+                payload = message["payload"]
+                encoded_segments = payload["segments"]
                 segments = pickle.loads(encoded_segments)
                 message_time = time()
                 if (
@@ -183,9 +185,12 @@ class ClientHandler:
                 self.service.console.print(
                     DevConsoleLog(
                         segments=segments,
-                        path=path,
-                        line_number=line_number,
-                        unix_timestamp=timestamp,
+                        path=payload["path"],
+                        line_number=payload["line_number"],
+                        unix_timestamp=payload["timestamp"],
+                        group=payload["group"],
+                        verbosity=payload["verbosity"],
+                        severity=payload["severity"],
                     )
                 )
                 last_message_time = message_time
