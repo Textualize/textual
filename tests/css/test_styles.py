@@ -120,7 +120,7 @@ def test_render_styles_border():
 
 def test_get_opacity_default():
     styles = RenderStyles(DOMNode(), Styles(), Styles())
-    assert styles.opacity == 1.0
+    assert styles.text_opacity == 1.0
 
 
 @pytest.mark.parametrize(
@@ -136,14 +136,14 @@ def test_get_opacity_default():
 )
 def test_opacity_set_then_get(set_value, expected):
     styles = RenderStyles(DOMNode(), Styles(), Styles())
-    styles.opacity = set_value
-    assert styles.opacity == expected
+    styles.text_opacity = set_value
+    assert styles.text_opacity == expected
 
 
 def test_opacity_set_invalid_type_error():
     styles = RenderStyles(DOMNode(), Styles(), Styles())
     with pytest.raises(StyleValueError):
-        styles.opacity = "invalid value"
+        styles.text_opacity = "invalid value"
 
 
 @pytest.mark.parametrize(

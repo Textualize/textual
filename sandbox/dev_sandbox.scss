@@ -54,7 +54,7 @@ Widget:hover {
 }
 
 #footer {
-  opacity: 1;
+  text-opacity: 1;
   color: $text;
   background: $background;
   height: 3;
@@ -62,5 +62,5 @@ Widget:hover {
 }
 
 #footer.dim {
-  opacity: 0.5;
+  text-opacity: 0.5;
 }

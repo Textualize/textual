@@ -1,0 +1,31 @@
+#zero-opacity {
+    opacity: 0%;
+}
+
+#quarter-opacity {
+    opacity: 25%;
+}
+
+#half-opacity {
+    opacity: 50%;
+}
+
+#three-quarter-opacity {
+    opacity: 75%;
+}
+
+#full-opacity {
+    opacity: 100%;
+}
+
+Screen {
+    background: antiquewhite;
+}
+
+Static {
+    height: 1fr;
+    border: outer dodgerblue;
+    background: lightseagreen;
+    content-align: center middle;
+    text-style: bold;
+}

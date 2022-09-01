@@ -88,6 +88,7 @@ class RulesMap(TypedDict, total=False):
     text_style: Style
 
     opacity: float
+    text_opacity: float
 
     padding: Spacing
     margin: Spacing
@@ -185,6 +186,7 @@ class StylesBase(ABC):
         "color",
         "background",
         "opacity",
+        "text_opacity",
         "tint",
         "scrollbar_color",
         "scrollbar_color_hover",
@@ -205,6 +207,7 @@ class StylesBase(ABC):
     text_style = StyleFlagsProperty()
 
     opacity = FractionalProperty()
+    text_opacity = FractionalProperty()
 
     padding = SpacingProperty()
     margin = SpacingProperty()
