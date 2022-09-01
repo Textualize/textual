@@ -24,4 +24,4 @@ class LogSeverity(Enum):
     """Tags log messages as being more severe."""
 
     NORMAL = 0
-    CRITICAL = 1
+    CRITICAL = 1  # Draws attention to the log message
