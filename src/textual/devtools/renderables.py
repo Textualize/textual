@@ -92,7 +92,7 @@ class DevConsoleLog:
         time = local_time.time()
         message = Text(
             f":warning-emoji:  [{time}] {group}"
-            if self.severity
+            if self.severity > 0
             else f"[{time}] {group}"
         )
         message.stylize("dim")
