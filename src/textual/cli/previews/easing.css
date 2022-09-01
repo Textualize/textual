@@ -1,0 +1,8 @@
+EasingButtons > Button {
+    width: 100%;
+}
+EasingButtons {
+    dock: left;
+    width: 20;
+    overflow: auto auto;
+}

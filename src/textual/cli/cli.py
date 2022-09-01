@@ -172,6 +172,14 @@ def run_app(import_name: str, dev: bool, press: str) -> None:
 @run.command("borders")
 def borders():
     """Explore the border styles available in Textual."""
-    from ..devtools import borders
+    from textual.cli.previews import borders
 
     borders.app.run()
+
+
+@run.command("easing")
+def easing():
+    """Explore the animation easing functions available in Textual."""
+    from textual.cli.previews import easing
+
+    easing.app.run()
