@@ -9,7 +9,7 @@ class Clickable(Static):
 
 class SpacingApp(App):
     def compose(self):
-        yield Clickable()
+        yield Static(id="2332")
 
 
 app = SpacingApp(css_path="spacing.css")
