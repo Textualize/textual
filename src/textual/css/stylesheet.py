@@ -209,7 +209,7 @@ class Stylesheet:
             css (str): String containing Textual CSS.
             path (str | PurePath): Path to CSS or unique identifier
             is_default_rules (bool): True if the rules we're extracting are
-                default (i.e. in Widget.CSS) rules. False if they're from user defined CSS.
+                default (i.e. in Widget.DEFAULT_CSS) rules. False if they're from user defined CSS.
 
         Raises:
             StylesheetError: If the CSS is invalid.
