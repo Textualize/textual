@@ -26,6 +26,8 @@ TOKEN = "[a-zA-Z][a-zA-Z0-9_-]*"
 STRING = r"\".*?\""
 VARIABLE_REF = r"\$[a-zA-Z0-9_\-]+"
 
+IDENTIFIER = r"[a-zA-Z_\-][a-zA-Z0-9_\-]*"
+
 # Values permitted in variable and rule declarations.
 DECLARATION_VALUES = {
     "scalar": SCALAR,
@@ -44,8 +46,8 @@ DECLARATION_VALUES = {
 expect_root_scope = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
-    selector_start_id=r"\#[a-zA-Z_\-][a-zA-Z0-9_\-]*",
-    selector_start_class=r"\.[a-zA-Z_\-][a-zA-Z0-9_\-]*",
+    selector_start_id=r"\#" + IDENTIFIER,
+    selector_start_class=r"\." + IDENTIFIER,
     selector_start_universal=r"\*",
     selector_start=r"[a-zA-Z_\-]+",
     variable_name=rf"{VARIABLE_REF}:",

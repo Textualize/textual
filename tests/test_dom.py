@@ -2,7 +2,7 @@ import pytest
 
 from textual.css.errors import StyleValueError
 from textual.css.query import NoMatchingNodesError
-from textual.dom import DOMNode
+from textual.dom import DOMNode, BadIdentifier
 
 
 def test_display_default():
@@ -55,3 +55,23 @@ def test_get_child_no_matching_child(parent):
 def test_get_child_only_immediate_descendents(parent):
     with pytest.raises(NoMatchingNodesError):
         parent.get_child(id="grandchild1")
+
+
+def test_validate():
+    with pytest.raises(BadIdentifier):
+        DOMNode(id="23")
+    with pytest.raises(BadIdentifier):
+        DOMNode(id=".3")
+    with pytest.raises(BadIdentifier):
+        DOMNode(classes="+2323")
+    with pytest.raises(BadIdentifier):
+        DOMNode(classes="foo 22")
+
+    node = DOMNode()
+    node.add_class("foo")
+    with pytest.raises(BadIdentifier):
+        node.add_class("1")
+    with pytest.raises(BadIdentifier):
+        node.remove_class("1")
+    with pytest.raises(BadIdentifier):
+        node.toggle_class("1")
