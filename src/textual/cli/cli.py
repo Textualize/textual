@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+import runpy
 from typing import cast, TYPE_CHECKING
 
 from importlib_metadata import version
@@ -57,15 +59,11 @@ def import_app(import_name: str) -> App:
     lib, _colon, name = import_name.partition(":")
 
     if lib.endswith(".py"):
-        # We're assuming the user wants to load a .py file
+        path = os.path.abspath(lib)
         try:
-            with open(lib) as python_file:
-                py_code = python_file.read()
+            global_vars = runpy.run_path(path)
         except Exception as error:
             raise AppFail(str(error))
-
-        global_vars: dict[str, object] = {}
-        exec(py_code, global_vars)
 
         if name:
             # User has given a name, use that

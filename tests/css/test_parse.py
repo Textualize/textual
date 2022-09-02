@@ -1099,15 +1099,15 @@ class TestParseOpacity:
         ],
     )
     def test_opacity_to_styles(self, css_value, styles_value):
-        css = f"#some-widget {{ opacity: {css_value} }}"
+        css = f"#some-widget {{ text-opacity: {css_value} }}"
         stylesheet = Stylesheet()
         stylesheet.add_source(css)
 
-        assert stylesheet.rules[0].styles.opacity == styles_value
+        assert stylesheet.rules[0].styles.text_opacity == styles_value
         assert not stylesheet.rules[0].errors
 
     def test_opacity_invalid_value(self):
-        css = "#some-widget { opacity: 123x }"
+        css = "#some-widget { text-opacity: 123x }"
         stylesheet = Stylesheet()
 
         with pytest.raises(StylesheetParseError):

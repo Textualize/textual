@@ -1,29 +1,8 @@
 Screen {
-    background: lightcoral;
-}
-
-#sidebar {
-  color: $text-panel;
-  background: $panel;
-  dock: left;
-  width: 30;
-  offset-x: -100%;
-  transition: offset 500ms in_out_cubic 2s;
-  layer: sidebar;
-}
-
-#sidebar.-active {
-  offset-x: 0;
+    background: darkslategrey;
 }
 
 .box1 {
-    background: orangered;
-    height: 12;
-    width: 30;
-}
-
-.box2 {
-    background: blueviolet;
-    height: 6;
-    width: 12;
+    background: darkmagenta;
+    width: auto;
 }

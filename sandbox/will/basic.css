@@ -46,7 +46,7 @@ DirectoryTree {
 DataTable {
   /*border:heavy red;*/
   /* tint: 10% green; */
-  /* opacity: 50%; */
+  /* text-opacity: 50%; */
   padding: 1;
   margin: 1 2;
   height: 24;

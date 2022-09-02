@@ -8,12 +8,12 @@ Stopwatch {
 
 TimeDisplay {
     content-align: center middle;
-    opacity: 60%;
+    text-opacity: 60%;
     height: 3;
 }
 
 Button {
-    width: 16;    
+    width: 16;
 }
 
 #start {

@@ -31,7 +31,7 @@ def _get_blended_style_cached(
     )
 
 
-class Opacity:
+class TextOpacity:
     """Blend foreground in to background."""
 
     def __init__(self, renderable: RenderableType, opacity: float = 1.0) -> None:
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     )
     console.print(panel)
 
-    opacity_panel = Opacity(panel, opacity=0.5)
+    opacity_panel = TextOpacity(panel, opacity=0.5)
     console.print(opacity_panel)
 
     def frange(start, end, step):

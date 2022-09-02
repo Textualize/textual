@@ -7,11 +7,12 @@ from rich.segment import Segment
 from rich.style import Style
 
 from ._border import get_box, render_row
+from ._opacity import _apply_opacity
 from ._segment_tools import line_crop, line_pad, line_trim
 from ._types import Lines
 from .color import Color
 from .geometry import Region, Size, Spacing
-from .renderables.opacity import Opacity
+from .renderables.text_opacity import TextOpacity
 from .renderables.tint import Tint
 
 if sys.version_info >= (3, 10):
@@ -237,10 +238,13 @@ class StylesCache:
             Returns:
                 list[Segment]: New list of segments
             """
-            if styles.opacity != 1.0:
-                segments = Opacity.process_segments(segments, styles.opacity)
+            if styles.text_opacity != 1.0:
+                segments = TextOpacity.process_segments(segments, styles.text_opacity)
             if styles.tint.a:
                 segments = Tint.process_segments(segments, styles.tint)
+            if styles.opacity != 1.0:
+                segments = _apply_opacity(segments, base_background, styles.opacity)
+            segments = list(segments)
             return segments if isinstance(segments, list) else list(segments)
 
         line: Iterable[Segment]

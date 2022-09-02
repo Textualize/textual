@@ -4,33 +4,33 @@
 
  * {
     transition: color 300ms linear, background 300ms linear;
-} 
+}
 
 
 *:hover {
-  /* tint: 30% red;  
+  /* tint: 30% red;
   /* outline: heavy red; */
 }
 
 App > Screen {
-    
+
   background: $surface;
-  color: $text-surface; 
+  color: $text-surface;
   layers: sidebar;
 
   color: $text-background;
   background: $background;
   layout: vertical;
-  
+
 }
 
 DataTable {
   /*border:heavy red;*/
   /* tint: 10% green; */
-  /* opacity: 50%; */
+  /* text-opacity: 50%; */
   padding: 1;
-  margin: 1 2;  
-  height: 12;  
+  margin: 1 2;
+  height: 12;
 }
 
 #sidebar {
@@ -39,7 +39,7 @@ DataTable {
   dock: left;
   width: 30;
   offset-x: -100%;
-  
+
   transition: offset 500ms in_out_cubic;
   layer: sidebar;
 }
@@ -76,7 +76,7 @@ DataTable {
   background: $secondary-background;
   height: 1;
   content-align: center middle;
-  
+
   dock: top;
 }
 
@@ -84,8 +84,8 @@ DataTable {
 Tweet {
   height:12;
   width: 100%;
- 
-  
+
+
   background: $panel;
   color: $text-panel;
   layout: vertical;
@@ -100,7 +100,7 @@ Tweet {
 
 
 .scrollable {
- 
+
   overflow-y: scroll;
   margin: 1 2;
   height: 20;
@@ -108,9 +108,9 @@ Tweet {
   layout: vertical;
 }
 
-.code {  
+.code {
   height: auto;
-  
+
 }
 
 
@@ -120,12 +120,12 @@ TweetHeader {
   color: $text-accent
 }
 
-TweetBody {  
+TweetBody {
   width: 100%;
   background: $panel;
   color: $text-panel;
-  height: auto; 
-  padding: 0 1 0 0; 
+  height: auto;
+  padding: 0 1 0 0;
 }
 
 Tweet.scroll-horizontal TweetBody {
@@ -145,7 +145,7 @@ Tweet.scroll-horizontal TweetBody {
   /* padding: 1 0 0 0 ; */
 
   transition: background 400ms in_out_cubic, color 400ms in_out_cubic;
- 
+
 }
 
 .button:hover {
@@ -165,7 +165,7 @@ Tweet.scroll-horizontal TweetBody {
   color: $text-accent;
   background: $accent;
   height: 1;
-  
+
   content-align: center middle;
   dock:bottom;
 }
@@ -200,7 +200,7 @@ Error {
   color: $text-error;
   border-top: tall $error-darken-2;
   border-bottom: tall $error-darken-2;
-  
+
   padding: 0;
   text-style: bold;
   align-horizontal: center;
@@ -213,21 +213,21 @@ Warning {
   color: $text-warning-fade-1;
   border-top: tall $warning-darken-2;
   border-bottom: tall $warning-darken-2;
-  
+
   text-style: bold;
   align-horizontal: center;
 }
 
 Success {
   width: 100%;
-  
-  height:auto;  
+
+  height:auto;
   box-sizing: border-box;
   background: $success;
-  color: $text-success-fade-1;  
-  
+  color: $text-success-fade-1;
+
   border-top: hkey $success-darken-2;
-  border-bottom: hkey $success-darken-2; 
+  border-bottom: hkey $success-darken-2;
 
   text-style: bold ;
 

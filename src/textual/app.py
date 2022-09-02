@@ -9,10 +9,9 @@ import sys
 import warnings
 from contextlib import redirect_stdout, redirect_stderr
 from datetime import datetime
-from pathlib import PurePath
+from pathlib import PurePath, Path
 from time import perf_counter
 from typing import (
-    TYPE_CHECKING,
     Any,
     Generic,
     Iterable,
@@ -25,6 +24,7 @@ from typing import (
 from weakref import WeakSet, WeakValueDictionary
 
 from ._ansi_sequences import SYNC_END, SYNC_START
+from ._path import _make_path_object_relative
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -63,8 +63,6 @@ from .renderables.blank import Blank
 from .screen import Screen
 from .widget import Widget
 
-if TYPE_CHECKING:
-    from .css.query import DOMQuery
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
@@ -147,7 +145,7 @@ class App(Generic[ReturnType], DOMNode):
     CSS = """
     App {
         background: $background;
-        color: $text-background;             
+        color: $text-background;
     }
     """
 
@@ -225,7 +223,15 @@ class App(Generic[ReturnType], DOMNode):
 
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
         self._require_stylesheet_update: set[DOMNode] = set()
-        self.css_path = css_path or self.CSS_PATH
+
+        # We want the CSS path to be resolved from the location of the App subclass
+        css_path = css_path or self.CSS_PATH
+        if css_path is not None:
+            if isinstance(css_path, str):
+                css_path = Path(css_path)
+            css_path = _make_path_object_relative(css_path, self) if css_path else None
+
+        self.css_path = css_path
 
         self._registry: WeakSet[DOMNode] = WeakSet()
 

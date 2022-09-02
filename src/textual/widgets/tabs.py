@@ -14,7 +14,7 @@ from textual import events
 from textual._layout_resolve import layout_resolve, Edge
 from textual.keys import Keys
 from textual.reactive import Reactive
-from textual.renderables.opacity import Opacity
+from textual.renderables.text_opacity import TextOpacity
 from textual.renderables.underline_bar import UnderlineBar
 from textual.widget import Widget
 
@@ -125,7 +125,7 @@ class TabsRenderable:
                     style=inactive_tab_style
                     + Style.from_meta({"@click": f"range_clicked('{tab.name}')"}),
                 )
-                dimmed_tab_content = Opacity(
+                dimmed_tab_content = TextOpacity(
                     tab_content, opacity=self.inactive_text_opacity
                 )
                 segments = console.render(dimmed_tab_content)
