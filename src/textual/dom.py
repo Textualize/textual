@@ -82,8 +82,8 @@ class NoParent(Exception):
 class DOMNode(MessagePump):
     """The base class for object that can be in the Textual DOM (App and Widget)"""
 
-    # Custom CSS
-    CSS: ClassVar[str] = ""
+    # CSS defaults
+    DEFAULT_CSS: ClassVar[str] = ""
 
     # Default classes argument if not supplied
     DEFAULT_CLASSES: str = ""
@@ -233,7 +233,7 @@ class DOMNode(MessagePump):
                 return f"{base.__name__}"
 
         for tie_breaker, base in enumerate(self._node_bases):
-            css = base.CSS.strip()
+            css = base.DEFAULT_CSS.strip()
             if css:
                 css_stack.append((get_path(base), css, -tie_breaker))
 

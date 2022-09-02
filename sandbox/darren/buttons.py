@@ -23,7 +23,9 @@ class ButtonsApp(App[str]):
 
 
 app = ButtonsApp(
-    log_path="textual.log", css_path="buttons.css", watch_css=True, log_verbosity=2
+    log_path="textual.log",
+    css_path="buttons.css",
+    watch_css=True,
 )
 
 if __name__ == "__main__":

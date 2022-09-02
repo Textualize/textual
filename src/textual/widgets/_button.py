@@ -29,7 +29,7 @@ class InvalidButtonVariant(Exception):
 class Button(Widget, can_focus=True):
     """A simple clickable button."""
 
-    CSS = """
+    DEFAULT_CSS = """
     Button {
         width: auto;
         min-width: 10;

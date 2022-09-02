@@ -7,7 +7,7 @@ import os
 import platform
 import sys
 import warnings
-from contextlib import redirect_stdout, redirect_stderr
+from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import PurePath, Path
 from time import perf_counter
@@ -40,7 +40,16 @@ from rich.protocol import is_renderable
 from rich.segment import Segments
 from rich.traceback import Traceback
 
-from . import actions, events, log, messages
+from . import (
+    Logger,
+    LogSeverity,
+    LogGroup,
+    LogVerbosity,
+    actions,
+    events,
+    log,
+    messages,
+)
 from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
@@ -134,7 +143,6 @@ class App(Generic[ReturnType], DOMNode):
 
     Args:
         driver_class (Type[Driver] | None, optional): Driver class or ``None`` to auto-detect. Defaults to None.
-        log_path (str | PurePath, optional): Path to log file, or "" to disable. Defaults to "".
         log_verbosity (int, optional): Log verbosity from 0-3. Defaults to 1.
         title (str | None, optional): Title of the application. If ``None``, the title is set to the name of the ``App`` subclass. Defaults to ``None``.
         css_path (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
@@ -142,7 +150,11 @@ class App(Generic[ReturnType], DOMNode):
 
     """
 
-    CSS = """
+    # Inline CSS for quick scripts (generally css_path should be preferred.)
+    CSS = ""
+
+    # Default (lowest priority) CSS
+    DEFAULT_CSS = """
     App {
         background: $background;
         color: $text-background;
@@ -156,11 +168,6 @@ class App(Generic[ReturnType], DOMNode):
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
-        log_path: str | PurePath = "",
-        log_verbosity: int = 0,
-        log_color_system: Literal[
-            "auto", "standard", "256", "truecolor", "windows"
-        ] = "auto",
         title: str | None = None,
         css_path: str | PurePath | None = None,
         watch_css: bool = False,
@@ -201,20 +208,7 @@ class App(Generic[ReturnType], DOMNode):
         else:
             self._title = title
 
-        self._log_console: Console | None = None
-        self._log_file: TextIO | None = None
-        if log_path:
-            self._log_file = open(log_path, "wt")
-            self._log_console = Console(
-                file=self._log_file,
-                color_system=log_color_system,
-                markup=False,
-                emoji=False,
-                highlight=False,
-                width=100,
-            )
-
-        self.log_verbosity = log_verbosity
+        self._logger = Logger()
 
         self.bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
         self._refresh_required = False
@@ -486,10 +480,16 @@ class App(Generic[ReturnType], DOMNode):
         """
         return Size(*self.console.size)
 
-    def log(
+    @property
+    def log(self) -> Logger:
+        return self._logger
+
+    def _log(
         self,
+        group: LogGroup,
+        verbosity: LogVerbosity,
+        severity: LogSeverity,
         *objects: Any,
-        verbosity: int = 1,
         _textual_calling_frame: inspect.FrameInfo | None = None,
         **kwargs,
     ) -> None:
@@ -508,22 +508,24 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
         """
-        if verbosity > self.log_verbosity:
-            return
-        if self._log_console is None and not self.devtools.is_connected:
+
+        if not self.devtools.is_connected:
             return
 
-        if self.devtools.is_connected and not _textual_calling_frame:
+        if verbosity.value > LogVerbosity.NORMAL.value and not self.devtools.verbose:
+            return
+
+        if not _textual_calling_frame:
             _textual_calling_frame = inspect.stack()[1]
 
         try:
             if len(objects) == 1 and not kwargs:
-                if self._log_console is not None:
-                    self._log_console.print(objects[0])
-                if self.devtools.is_connected:
-                    self.devtools.log(
-                        DevtoolsLog(objects, caller=_textual_calling_frame)
-                    )
+                self.devtools.log(
+                    DevtoolsLog(objects, caller=_textual_calling_frame),
+                    group,
+                    verbosity,
+                    severity,
+                )
             else:
                 output = " ".join(str(arg) for arg in objects)
                 if kwargs:
@@ -531,14 +533,14 @@ class App(Generic[ReturnType], DOMNode):
                         f"{key}={value!r}" for key, value in kwargs.items()
                     )
                     output = f"{output} {key_values}" if output else key_values
-                if self._log_console is not None:
-                    self._log_console.print(output, soft_wrap=True)
-                if self.devtools.is_connected:
-                    self.devtools.log(
-                        DevtoolsLog(output, caller=_textual_calling_frame)
-                    )
+                self.devtools.log(
+                    DevtoolsLog(output, caller=_textual_calling_frame),
+                    group,
+                    verbosity,
+                    severity,
+                )
         except Exception as error:
-            self.on_exception(error)
+            self._handle_exception(error)
 
     def action_screenshot(self, path: str | None = None) -> None:
         """Action to save a screenshot."""
@@ -683,7 +685,6 @@ class App(Generic[ReturnType], DOMNode):
     async def _on_css_change(self) -> None:
         """Called when the CSS changes (if watch_css is True)."""
         if self.css_path is not None:
-
             try:
                 time = perf_counter()
                 stylesheet = self.stylesheet.copy()
@@ -693,8 +694,8 @@ class App(Generic[ReturnType], DOMNode):
                 self.log(f"<stylesheet> loaded {self.css_path!r} in {elapsed:.0f} ms")
             except Exception as error:
                 # TODO: Catch specific exceptions
+                self.log.error(error)
                 self.bell()
-                self.log(error)
             else:
                 self.stylesheet = stylesheet
                 self.reset_styles()
@@ -963,9 +964,9 @@ class App(Generic[ReturnType], DOMNode):
             if self.mouse_over != widget:
                 try:
                     if self.mouse_over is not None:
-                        await self.mouse_over.forward_event(events.Leave(self))
+                        await self.mouse_over._forward_event(events.Leave(self))
                     if widget is not None:
-                        await widget.forward_event(events.Enter(self))
+                        await widget._forward_event(events.Enter(self))
                 finally:
                     self.mouse_over = widget
 
@@ -1004,7 +1005,7 @@ class App(Generic[ReturnType], DOMNode):
         self._exit_renderables.extend(pre_rendered)
         self._close_messages_no_wait()
 
-    def on_exception(self, error: Exception) -> None:
+    def _handle_exception(self, error: Exception) -> None:
         """Called with an unhandled exception.
 
         Args:
@@ -1042,14 +1043,13 @@ class App(Generic[ReturnType], DOMNode):
         if self.devtools_enabled:
             try:
                 await self.devtools.connect()
-                self.log(f"Connected to devtools ({self.devtools.url})")
+                self.log(f"Connected to devtools ( {self.devtools.url} )")
             except DevtoolsConnectionError:
-                self.log(f"Couldn't connect to devtools ({self.devtools.url})")
+                self.log(f"Couldn't connect to devtools ( {self.devtools.url} )")
 
         self.log("---")
 
         self.log(driver=self.driver_class)
-        self.log(log_verbosity=self.log_verbosity)
         self.log(loop=asyncio.get_running_loop())
         self.log(features=self.features)
 
@@ -1060,13 +1060,23 @@ class App(Generic[ReturnType], DOMNode):
                 self.stylesheet.add_source(
                     css, path=path, is_default_css=True, tie_breaker=tie_breaker
                 )
+            if self.CSS:
+                try:
+                    app_css_path = (
+                        f"{inspect.getfile(self.__class__)}:{self.__class__.__name__}"
+                    )
+                except TypeError:
+                    app_css_path = f"{self.__class__.__name__}"
+                self.stylesheet.add_source(
+                    self.CSS, path=app_css_path, is_default_css=False
+                )
         except Exception as error:
-            self.on_exception(error)
+            self._handle_exception(error)
             self._print_error_renderables()
             return
 
         if self.css_monitor:
-            self.set_interval(0.5, self.css_monitor, name="css monitor")
+            self.set_interval(0.25, self.css_monitor, name="css monitor")
             self.log("[b green]STARTED[/]", self.css_monitor)
 
         process_messages = super()._process_messages
@@ -1084,7 +1094,7 @@ class App(Generic[ReturnType], DOMNode):
                 await ready_callback()
             await process_messages()
             await self.animator.stop()
-            await self.close_all()
+            await self._close_all()
 
         self._running = True
         try:
@@ -1103,26 +1113,19 @@ class App(Generic[ReturnType], DOMNode):
                 if self.is_headless:
                     await run_process_messages()
                 else:
-                    redirector = StdoutRedirector(self.devtools, self._log_file)
+                    redirector = StdoutRedirector(self.devtools)
                     with redirect_stderr(redirector):
                         with redirect_stdout(redirector):  # type: ignore
                             await run_process_messages()
             finally:
                 driver.stop_application_mode()
         except Exception as error:
-            self.on_exception(error)
+            self._handle_exception(error)
         finally:
             self._running = False
             self._print_error_renderables()
             if self.devtools.is_connected:
                 await self._disconnect_devtools()
-                if self._log_console is not None:
-                    self._log_console.print(
-                        f"Disconnected from devtools ({self.devtools.url})"
-                    )
-            if self._log_file is not None:
-                self._log_file.close()
-                self._log_console = None
 
     async def _ready(self) -> None:
         """Called immediately prior to processing messages.
@@ -1218,7 +1221,7 @@ class App(Generic[ReturnType], DOMNode):
     async def _disconnect_devtools(self):
         await self.devtools.disconnect()
 
-    def start_widget(self, parent: Widget, widget: Widget) -> None:
+    def _start_widget(self, parent: Widget, widget: Widget) -> None:
         """Start a widget (run it's task) so that it can receive messages.
 
         Args:
@@ -1232,7 +1235,7 @@ class App(Generic[ReturnType], DOMNode):
     def is_mounted(self, widget: Widget) -> bool:
         return widget in self._registry
 
-    async def close_all(self) -> None:
+    async def _close_all(self) -> None:
         while self._registry:
             child = self._registry.pop()
             await child._close_messages()
@@ -1276,7 +1279,7 @@ class App(Generic[ReturnType], DOMNode):
                 try:
                     console.print(renderable)
                 except Exception as error:
-                    self.on_exception(error)
+                    self._handle_exception(error)
             finally:
                 self._end_update()
             console.file.flush()
@@ -1345,16 +1348,16 @@ class App(Generic[ReturnType], DOMNode):
             if isinstance(event, events.Key) and self.focused is not None:
                 # Key events are sent direct to focused widget
                 if self.bindings.allow_forward(event.key):
-                    await self.focused.forward_event(event)
+                    await self.focused._forward_event(event)
                 else:
                     # Key has allow_forward=False which disallows forward to focused widget
                     await super().on_event(event)
             else:
                 # Forward the event to the view
-                await self.screen.forward_event(event)
+                await self.screen._forward_event(event)
         elif isinstance(event, events.Paste):
             if self.focused is not None:
-                await self.focused.forward_event(event)
+                await self.focused._forward_event(event)
         else:
             await super().on_event(event)
 
@@ -1511,7 +1514,7 @@ class App(Generic[ReturnType], DOMNode):
     async def action_toggle_class(self, selector: str, class_name: str) -> None:
         self.screen.query(selector).toggle_class(class_name)
 
-    def on_terminal_supports_synchronized_output(
+    def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput
     ) -> None:
         log("[b green]SynchronizedOutput mode is supported")

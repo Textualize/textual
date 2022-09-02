@@ -8,5 +8,6 @@ Static {
     background: blue 20%;
     height: 100%;
     margin: 2 4;
-    min-width: 30;
+    min-width: 80;
+    min-height: 40;
 }

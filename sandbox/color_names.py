@@ -23,7 +23,7 @@ class ColorDisplay(Widget, can_focus=True):
 
 
 class ColorNames(App):
-    CSS = """
+    DEFAULT_CSS = """
     ColorDisplay {
         height: 1;
     }

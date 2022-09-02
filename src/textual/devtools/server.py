@@ -36,8 +36,8 @@ async def _on_startup(app: Application) -> None:
     await service.start()
 
 
-def _run_devtools() -> None:
-    app = _make_devtools_aiohttp_app()
+def _run_devtools(verbose: bool, exclude: list[str] | None = None) -> None:
+    app = _make_devtools_aiohttp_app(verbose=verbose, exclude=exclude)
 
     def noop_print(_: str):
         return None
@@ -47,14 +47,17 @@ def _run_devtools() -> None:
 
 def _make_devtools_aiohttp_app(
     size_change_poll_delay_secs: float = DEFAULT_SIZE_CHANGE_POLL_DELAY_SECONDS,
+    verbose: bool = False,
+    exclude: list[str] | None = None,
 ) -> Application:
     app = Application()
 
     app.on_shutdown.append(_on_shutdown)
     app.on_startup.append(_on_startup)
 
+    app["verbose"] = verbose
     app["service"] = DevtoolsService(
-        update_frequency=size_change_poll_delay_secs,
+        update_frequency=size_change_poll_delay_secs, verbose=verbose, exclude=exclude
     )
 
     app.add_routes(
