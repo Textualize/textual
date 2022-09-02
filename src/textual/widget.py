@@ -430,7 +430,7 @@ class Widget(DOMNode):
         if self._scrollbar_corner is not None:
             return self._scrollbar_corner
         self._scrollbar_corner = ScrollBarCorner()
-        self.app.start_widget(self, self._scrollbar_corner)
+        self.app._start_widget(self, self._scrollbar_corner)
         return self._scrollbar_corner
 
     @property
@@ -447,7 +447,7 @@ class Widget(DOMNode):
         self._vertical_scrollbar = scroll_bar = ScrollBar(
             vertical=True, name="vertical", thickness=self.scrollbar_size_vertical
         )
-        self.app.start_widget(self, scroll_bar)
+        self.app._start_widget(self, scroll_bar)
         return scroll_bar
 
     @property
@@ -465,7 +465,7 @@ class Widget(DOMNode):
             vertical=False, name="horizontal", thickness=self.scrollbar_size_horizontal
         )
 
-        self.app.start_widget(self, scroll_bar)
+        self.app._start_widget(self, scroll_bar)
         return scroll_bar
 
     def _refresh_scrollbars(self) -> None:
@@ -1335,7 +1335,7 @@ class Widget(DOMNode):
         offset_x, offset_y = self.screen.get_offset(self)
         return self.screen.get_style_at(x + offset_x, y + offset_y)
 
-    async def forward_event(self, event: events.Event) -> None:
+    async def _forward_event(self, event: events.Event) -> None:
         event.set_forwarded()
         await self.post_message(event)
 

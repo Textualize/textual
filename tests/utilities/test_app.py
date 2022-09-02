@@ -169,7 +169,7 @@ class AppTest(App):
 
         await let_asyncio_process_some_events()
 
-    def on_exception(self, error: Exception) -> None:
+    def _handle_exception(self, error: Exception) -> None:
         # In tests we want the errors to be raised, rather than printed to a Console
         raise error
 

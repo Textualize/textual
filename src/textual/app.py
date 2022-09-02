@@ -538,7 +538,7 @@ class App(Generic[ReturnType], DOMNode):
                         DevtoolsLog(output, caller=_textual_calling_frame)
                     )
         except Exception as error:
-            self.on_exception(error)
+            self._handle_exception(error)
 
     def action_screenshot(self, path: str | None = None) -> None:
         """Action to save a screenshot."""
@@ -963,9 +963,9 @@ class App(Generic[ReturnType], DOMNode):
             if self.mouse_over != widget:
                 try:
                     if self.mouse_over is not None:
-                        await self.mouse_over.forward_event(events.Leave(self))
+                        await self.mouse_over._forward_event(events.Leave(self))
                     if widget is not None:
-                        await widget.forward_event(events.Enter(self))
+                        await widget._forward_event(events.Enter(self))
                 finally:
                     self.mouse_over = widget
 
@@ -1004,7 +1004,7 @@ class App(Generic[ReturnType], DOMNode):
         self._exit_renderables.extend(pre_rendered)
         self._close_messages_no_wait()
 
-    def on_exception(self, error: Exception) -> None:
+    def _handle_exception(self, error: Exception) -> None:
         """Called with an unhandled exception.
 
         Args:
@@ -1061,7 +1061,7 @@ class App(Generic[ReturnType], DOMNode):
                     css, path=path, is_default_css=True, tie_breaker=tie_breaker
                 )
         except Exception as error:
-            self.on_exception(error)
+            self._handle_exception(error)
             self._print_error_renderables()
             return
 
@@ -1084,7 +1084,7 @@ class App(Generic[ReturnType], DOMNode):
                 await ready_callback()
             await process_messages()
             await self.animator.stop()
-            await self.close_all()
+            await self._close_all()
 
         self._running = True
         try:
@@ -1110,7 +1110,7 @@ class App(Generic[ReturnType], DOMNode):
             finally:
                 driver.stop_application_mode()
         except Exception as error:
-            self.on_exception(error)
+            self._handle_exception(error)
         finally:
             self._running = False
             self._print_error_renderables()
@@ -1218,7 +1218,7 @@ class App(Generic[ReturnType], DOMNode):
     async def _disconnect_devtools(self):
         await self.devtools.disconnect()
 
-    def start_widget(self, parent: Widget, widget: Widget) -> None:
+    def _start_widget(self, parent: Widget, widget: Widget) -> None:
         """Start a widget (run it's task) so that it can receive messages.
 
         Args:
@@ -1232,7 +1232,7 @@ class App(Generic[ReturnType], DOMNode):
     def is_mounted(self, widget: Widget) -> bool:
         return widget in self._registry
 
-    async def close_all(self) -> None:
+    async def _close_all(self) -> None:
         while self._registry:
             child = self._registry.pop()
             await child._close_messages()
@@ -1276,7 +1276,7 @@ class App(Generic[ReturnType], DOMNode):
                 try:
                     console.print(renderable)
                 except Exception as error:
-                    self.on_exception(error)
+                    self._handle_exception(error)
             finally:
                 self._end_update()
             console.file.flush()
@@ -1345,16 +1345,16 @@ class App(Generic[ReturnType], DOMNode):
             if isinstance(event, events.Key) and self.focused is not None:
                 # Key events are sent direct to focused widget
                 if self.bindings.allow_forward(event.key):
-                    await self.focused.forward_event(event)
+                    await self.focused._forward_event(event)
                 else:
                     # Key has allow_forward=False which disallows forward to focused widget
                     await super().on_event(event)
             else:
                 # Forward the event to the view
-                await self.screen.forward_event(event)
+                await self.screen._forward_event(event)
         elif isinstance(event, events.Paste):
             if self.focused is not None:
-                await self.focused.forward_event(event)
+                await self.focused._forward_event(event)
         else:
             await super().on_event(event)
 
@@ -1511,7 +1511,7 @@ class App(Generic[ReturnType], DOMNode):
     async def action_toggle_class(self, selector: str, class_name: str) -> None:
         self.screen.query(selector).toggle_class(class_name)
 
-    def on_terminal_supports_synchronized_output(
+    def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput
     ) -> None:
         log("[b green]SynchronizedOutput mode is supported")
