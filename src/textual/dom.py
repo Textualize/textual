@@ -61,8 +61,8 @@ def check_identifiers(description: str, *names: str) -> None:
     for name in names:
         if match(name) is None:
             raise BadIdentifier(
-                f"{name!r} is invalid {description}; "
-                "identifiers must contain only letters, numbers, underscores, hyphens, and must not begin with a number."
+                f"{name!r} is an invalid {description}; "
+                "identifiers must contain only letters, numbers, underscores, or hyphens, and must not begin with a number."
             )
 
 
