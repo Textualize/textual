@@ -327,7 +327,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             except CancelledError:
                 raise
             except Exception as error:
-                self.app.on_exception(error)
+                self.app._handle_exception(error)
                 break
             finally:
                 self._message_queue.task_done()
@@ -340,7 +340,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                             try:
                                 await invoke(method, event)
                             except Exception as error:
-                                self.app.on_exception(error)
+                                self.app._handle_exception(error)
                                 break
 
         log("CLOSED", self)

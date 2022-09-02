@@ -218,7 +218,7 @@ class Screen(Widget):
                         )
                     )
         except Exception as error:
-            self.app.on_exception(error)
+            self.app._handle_exception(error)
             return
         display_update = self._compositor.render(full=full)
         if display_update is not None:
@@ -277,9 +277,9 @@ class Screen(Widget):
                 style=event.style,
             )
             mouse_event.set_forwarded()
-            await widget.forward_event(mouse_event)
+            await widget._forward_event(mouse_event)
 
-    async def forward_event(self, event: events.Event) -> None:
+    async def _forward_event(self, event: events.Event) -> None:
         if event.is_forwarded:
             return
         event.set_forwarded()
@@ -307,7 +307,7 @@ class Screen(Widget):
                     event.set_forwarded()
                     await self.post_message(event)
                 else:
-                    await widget.forward_event(event.offset(-region.x, -region.y))
+                    await widget._forward_event(event.offset(-region.x, -region.y))
 
         elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
             try:
@@ -319,6 +319,6 @@ class Screen(Widget):
                 if scroll_widget is self:
                     await self.post_message(event)
                 else:
-                    await scroll_widget.forward_event(event)
+                    await scroll_widget._forward_event(event)
         else:
             await self.post_message(event)
