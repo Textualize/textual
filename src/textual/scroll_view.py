@@ -87,15 +87,19 @@ class ScrollView(Widget):
             width, height = self.container_size
             if self.show_vertical_scrollbar:
                 self.vertical_scrollbar.window_virtual_size = virtual_size.height
-                self.vertical_scrollbar.window_size = height
+                self.vertical_scrollbar.window_size = (
+                    height - self.scrollbar_size_horizontal
+                )
             if self.show_horizontal_scrollbar:
                 self.horizontal_scrollbar.window_virtual_size = virtual_size.width
-                self.horizontal_scrollbar.window_size = width
+                self.horizontal_scrollbar.window_size = (
+                    width - self.scrollbar_size_vertical
+                )
 
             self.scroll_x = self.validate_scroll_x(self.scroll_x)
             self.scroll_y = self.validate_scroll_y(self.scroll_y)
             self.refresh(layout=False)
-            self.call_later(self.scroll_to, self.scroll_x, self.scroll_y)
+            self.scroll_to(self.scroll_x, self.scroll_y)
 
     def render(self) -> RenderableType:
         """Render the scrollable region (if `render_lines` is not implemented).
