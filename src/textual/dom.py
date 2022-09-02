@@ -111,7 +111,6 @@ class DOMNode(MessagePump):
 
         _classes = classes.split() if classes else []
         check_identifiers("class name", *_classes)
-
         self._classes.update(_classes)
 
         self.children = NodeList()
