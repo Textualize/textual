@@ -571,7 +571,7 @@ class Styles(StylesBase):
         Args:
             specificity (Specificity3): A node specificity.
             is_default_rules (bool): True if the rules we're extracting are
-                default (i.e. in Widget.CSS) rules. False if they're from user defined CSS.
+                default (i.e. in Widget.DEFAULT_CSS) rules. False if they're from user defined CSS.
 
         Returns:
             list[tuple[str, Specificity5, Any]]]: A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.

@@ -16,7 +16,7 @@ class ScrollView(Widget):
 
     """
 
-    CSS = """
+    DEFAULT_CSS = """
     
     ScrollView {     
         overflow-y: auto;

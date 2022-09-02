@@ -110,7 +110,7 @@ async def test_composition_of_vertical_container_with_children(
     expected_placeholders_offset_x: int,
 ):
     class VerticalContainer(Widget):
-        CSS = (
+        DEFAULT_CSS = (
             """
         VerticalContainer {
             layout: vertical;
@@ -304,7 +304,7 @@ async def test_scrollbar_size_impact_on_the_layout(
     class LargeWidgetContainer(Widget):
         # TODO: Once textual#581 ("Default versus User CSS") is solved the following CSS should just use the
         #  "LargeWidgetContainer" selector, without having to use a more specific one to be able to override Widget's CSS:
-        CSS = """
+        DEFAULT_CSS = """
         #large-widget-container {
             width: 20;
             height: 20;
