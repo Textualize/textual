@@ -5,7 +5,7 @@ from textual.widget import Widget
 
 class FiftyApp(App):
 
-    CSS = """
+    DEFAULT_CSS = """
     Screen {
         layout: vertical;
     }
@@ -23,6 +23,7 @@ class FiftyApp(App):
     def compose(self):
         yield layout.Horizontal(Widget(), Widget())
         yield layout.Horizontal(Widget(), Widget())
+
 
 app = FiftyApp()
 if __name__ == "__main__":

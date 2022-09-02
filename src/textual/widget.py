@@ -72,7 +72,7 @@ class Widget(DOMNode):
 
     """
 
-    CSS = """
+    DEFAULT_CSS = """
     Widget{
         scrollbar-background: $panel-darken-1;
         scrollbar-background-hover: $panel-darken-2;

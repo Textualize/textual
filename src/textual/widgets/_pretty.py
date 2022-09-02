@@ -7,7 +7,7 @@ from ..widget import Widget
 
 
 class Pretty(Widget):
-    CSS = """
+    DEFAULT_CSS = """
     Static {
         height: auto;
     }

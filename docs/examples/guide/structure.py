@@ -7,7 +7,7 @@ from textual.widget import Widget
 class Clock(Widget):
     """A clock app."""
 
-    CSS = """
+    DEFAULT_CSS = """
     Clock {
         content-align: center middle;
     }

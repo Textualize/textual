@@ -29,7 +29,7 @@ UPDATE_PERIOD: Final = 1 / 60
 class Screen(Widget):
     """A widget for the root of the app."""
 
-    CSS = """
+    DEFAULT_CSS = """
     Screen {
         layout: vertical;
         overflow-y: auto;

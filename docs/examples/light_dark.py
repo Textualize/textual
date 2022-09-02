@@ -4,7 +4,7 @@ from textual.widgets import Button
 
 class ButtonApp(App):
 
-    CSS = """
+    DEFAULT_CSS = """
     Button {
         width: 100%;
     }

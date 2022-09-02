@@ -112,7 +112,7 @@ class TextInput(TextWidgetBase, can_focus=True):
             suggestion will be displayed as dim text similar to suggestion text in the zsh or fish shells.
     """
 
-    CSS = """
+    DEFAULT_CSS = """
     TextInput {
         width: auto;
         background: $surface;
@@ -417,7 +417,7 @@ class TextInput(TextWidgetBase, can_focus=True):
 
 
 class TextArea(Widget):
-    CSS = """
+    DEFAULT_CSS = """
     TextArea { overflow: auto auto; height: 5; background: $primary-darken-1; }
 """
 
@@ -428,7 +428,7 @@ class TextArea(Widget):
 class TextAreaChild(TextWidgetBase, can_focus=True):
     # TODO: Not nearly ready for prime-time, but it exists to help
     #  model the superclass.
-    CSS = "TextAreaChild { height: auto; background: $primary-darken-1; }"
+    DEFAULT_CSS = "TextAreaChild { height: auto; background: $primary-darken-1; }"
     STOP_PROPAGATE = {"tab", "shift+tab"}
 
     def render(self) -> RenderableType:

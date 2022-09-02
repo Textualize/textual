@@ -11,7 +11,7 @@ from ..reactive import Reactive, watch
 class HeaderIcon(Widget):
     """Display an 'icon' on the left of the header."""
 
-    CSS = """
+    DEFAULT_CSS = """
     HeaderIcon {
         dock: left;
         padding: 0 1;
@@ -28,7 +28,7 @@ class HeaderIcon(Widget):
 class HeaderClock(Widget):
     """Display a clock on the right of the header."""
 
-    CSS = """
+    DEFAULT_CSS = """
     HeaderClock {
         dock: right;
         width: auto;
@@ -50,7 +50,7 @@ class HeaderClock(Widget):
 class HeaderTitle(Widget):
     """Display the title / subtitle in the header."""
 
-    CSS = """
+    DEFAULT_CSS = """
     HeaderTitle {
         content-align: center middle;
         width: 100%;
@@ -70,7 +70,7 @@ class HeaderTitle(Widget):
 class Header(Widget):
     """A header widget with icon and clock."""
 
-    CSS = """
+    DEFAULT_CSS = """
     Header {
         dock: top;
         width: 100%;

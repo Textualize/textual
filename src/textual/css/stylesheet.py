@@ -555,7 +555,7 @@ if __name__ == "__main__":
     print(app.tree)
     print()
 
-    CSS = """
+    DEFAULT_CSS = """
     App > View {
         layout: dock;
         docks: sidebar=left | widgets=top;

@@ -9,7 +9,7 @@ placeholders_count = 12
 
 
 class VerticalContainer(Widget):
-    CSS = """
+    DEFAULT_CSS = """
     VerticalContainer {
         layout: vertical;
         overflow: hidden auto;
@@ -26,7 +26,7 @@ class VerticalContainer(Widget):
 
 
 class Introduction(Widget):
-    CSS = """
+    DEFAULT_CSS = """
     Introduction {
         background: indigo;
         color: white;

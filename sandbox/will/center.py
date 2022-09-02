@@ -3,7 +3,7 @@ from textual.widgets import Static
 
 
 class CenterApp(App):
-    CSS = """
+    DEFAULT_CSS = """
     
     CenterApp Screen {
         layout: center;

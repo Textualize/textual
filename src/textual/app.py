@@ -142,7 +142,11 @@ class App(Generic[ReturnType], DOMNode):
 
     """
 
-    CSS = """
+    # Inline CSS for quick scripts (generally css_path should be preferred.)
+    CSS = ""
+
+    # Default (lowest priority) CSS
+    DEFAULT_CSS = """
     App {
         background: $background;
         color: $text-background;
@@ -683,7 +687,6 @@ class App(Generic[ReturnType], DOMNode):
     async def _on_css_change(self) -> None:
         """Called when the CSS changes (if watch_css is True)."""
         if self.css_path is not None:
-
             try:
                 time = perf_counter()
                 stylesheet = self.stylesheet.copy()
@@ -1059,6 +1062,16 @@ class App(Generic[ReturnType], DOMNode):
             for path, css, tie_breaker in self.get_default_css():
                 self.stylesheet.add_source(
                     css, path=path, is_default_css=True, tie_breaker=tie_breaker
+                )
+            if self.CSS:
+                try:
+                    app_css_path = (
+                        f"{inspect.getfile(self.__class__)}:{self.__class__.__name__}"
+                    )
+                except TypeError:
+                    app_css_path = f"{self.__class__.__name__}"
+                self.stylesheet.add_source(
+                    self.CSS, path=app_css_path, is_default_css=False
                 )
         except Exception as error:
             self.on_exception(error)
