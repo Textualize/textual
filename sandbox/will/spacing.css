@@ -9,4 +9,5 @@ Static {
     height: 100%;
     margin: 2 4;
     min-width: 30;
+    visibility: hidden;
 }
