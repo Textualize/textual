@@ -97,7 +97,7 @@ async def test_print_strings_containing_newline_flushed(devtools):
 
 
 @time_machine.travel(datetime.fromtimestamp(TIMESTAMP))
-async def test_flush_flushes_buffered_logs(devtools, in_memory_logfile):
+async def test_flush_flushes_buffered_logs(devtools):
     await devtools._stop_log_queue_processing()
 
     redirector = StdoutRedirector(devtools)
