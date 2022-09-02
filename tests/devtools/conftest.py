@@ -27,8 +27,3 @@ async def devtools(aiohttp_client, server):
     yield devtools
     await devtools.disconnect()
     await client.close()
-
-
-@pytest.fixture
-def in_memory_logfile():
-    yield StringIO()

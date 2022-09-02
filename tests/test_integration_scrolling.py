@@ -48,7 +48,7 @@ async def test_scroll_to_widget(
     last_screen_expected_placeholder_ids: Sequence[int],
 ):
     class VerticalContainer(Widget):
-        CSS = """
+        DEFAULT_CSS = """
         VerticalContainer {
             layout: vertical;
             overflow: hidden auto;
@@ -60,7 +60,7 @@ async def test_scroll_to_widget(
         """
 
     class MyTestApp(AppTest):
-        CSS = """
+        DEFAULT_CSS = """
         Placeholder {
             height: 5; /* minimal height to see the name of a Placeholder */
         }

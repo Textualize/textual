@@ -25,20 +25,11 @@ from textual.geometry import Size, Region
 
 
 class AppTest(App):
-    def __init__(
-        self,
-        *,
-        test_name: str,
-        size: Size,
-        log_verbosity: int = 2,
-    ):
+    def __init__(self, *, test_name: str, size: Size):
         # Tests will log in "/tests/test.[test name].log":
         log_path = Path(__file__).parent.parent / f"test.{test_name}.log"
         super().__init__(
             driver_class=DriverTest,
-            log_path=log_path,
-            log_verbosity=log_verbosity,
-            log_color_system="256",
         )
 
         # Let's disable all features by default

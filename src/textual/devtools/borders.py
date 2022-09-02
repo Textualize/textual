@@ -14,7 +14,7 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class BorderButtons(layout.Vertical):
-    CSS = """
+    DEFAULT_CSS = """
     BorderButtons {
         dock: left;
         width: 24;
@@ -34,7 +34,7 @@ class BorderButtons(layout.Vertical):
 class BorderApp(App):
     """Demonstrates the border styles."""
 
-    CSS = """
+    DEFAULT_CSS = """
     Static {
         margin: 2 4;
         padding: 2 4;

@@ -11,7 +11,7 @@ class Thing(Static):
 
 
 class AddRemoveApp(App):
-    CSS = """
+    DEFAULT_CSS = """
     #buttons {
         dock: top;
         height: auto;       

@@ -4,7 +4,7 @@ from textual.widgets import Static
 
 
 class CenterApp(App):
-    CSS = """
+    DEFAULT_CSS = """
 
     #sidebar {
         dock: left;
@@ -52,4 +52,4 @@ class CenterApp(App):
         )
 
 
-app = CenterApp(log_verbosity=3)
+app = CenterApp()

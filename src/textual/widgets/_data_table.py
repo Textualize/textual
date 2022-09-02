@@ -106,7 +106,7 @@ class Coord(NamedTuple):
 
 class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
-    CSS = """
+    DEFAULT_CSS = """
     DataTable {
         background: $surface;
         color: $text-surface;       

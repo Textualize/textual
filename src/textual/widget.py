@@ -72,7 +72,7 @@ class Widget(DOMNode):
 
     """
 
-    CSS = """
+    DEFAULT_CSS = """
     Widget{
         scrollbar-background: $panel-darken-1;
         scrollbar-background-hover: $panel-darken-2;
@@ -1248,16 +1248,19 @@ class Widget(DOMNode):
                 width, height = self.container_size
                 if self.show_vertical_scrollbar:
                     self.vertical_scrollbar.window_virtual_size = virtual_size.height
-                    self.vertical_scrollbar.window_size = height
+                    self.vertical_scrollbar.window_size = (
+                        height - self.scrollbar_size_horizontal
+                    )
                 if self.show_horizontal_scrollbar:
                     self.horizontal_scrollbar.window_virtual_size = virtual_size.width
-                    self.horizontal_scrollbar.window_size = width
+                    self.horizontal_scrollbar.window_size = (
+                        width - self.scrollbar_size_vertical
+                    )
 
                 self.scroll_x = self.validate_scroll_x(self.scroll_x)
                 self.scroll_y = self.validate_scroll_y(self.scroll_y)
                 self.refresh(layout=True)
                 self.scroll_to(self.scroll_x, self.scroll_y)
-                # self.call_later(self.scroll_to, self.scroll_x, self.scroll_y)
             else:
                 self.refresh()
 
@@ -1396,7 +1399,7 @@ class Widget(DOMNode):
         if not self.check_message_enabled(message):
             return True
         if not self.is_running:
-            self.log(self, f"IS NOT RUNNING, {message!r} not sent")
+            self.log.warning(self, f"IS NOT RUNNING, {message!r} not sent")
         return await super().post_message(message)
 
     async def _on_idle(self, event: events.Idle) -> None:

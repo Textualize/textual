@@ -13,6 +13,8 @@ from typing import Type, Any, NamedTuple
 from rich.console import Console
 from rich.segment import Segment
 
+from .._log import LogGroup, LogVerbosity, LogSeverity
+
 
 class DevtoolsDependenciesMissingError(Exception):
     """Raise when the required devtools dependencies are not installed in the environment"""
@@ -115,6 +117,7 @@ class DevtoolsClient:
         self.websocket: ClientWebSocketResponse | None = None
         self.log_queue: Queue[str | bytes | Type[ClientShutdown]] | None = None
         self.spillover: int = 0
+        self.verbose: bool = False
 
     async def connect(self) -> None:
         """Connect to the devtools server.
@@ -136,7 +139,7 @@ class DevtoolsClient:
         log_queue = self.log_queue
         websocket = self.websocket
 
-        async def update_console():
+        async def update_console() -> None:
             """Coroutine function scheduled as a Task, which listens on
             the websocket for updates from the server regarding any changes
             in the server Console dimensions. When the client learns of this
@@ -150,6 +153,7 @@ class DevtoolsClient:
                         payload = message_json["payload"]
                         self.console.width = payload["width"]
                         self.console.height = payload["height"]
+                        self.verbose = payload.get("verbose", False)
 
         async def send_queued_logs():
             """Coroutine function which is scheduled as a Task, which consumes
@@ -209,7 +213,13 @@ class DevtoolsClient:
             return False
         return not (self.session.closed or self.websocket.closed)
 
-    def log(self, log: DevtoolsLog) -> None:
+    def log(
+        self,
+        log: DevtoolsLog,
+        group: LogGroup = LogGroup.UNDEFINED,
+        verbosity: LogVerbosity = LogVerbosity.NORMAL,
+        severity: LogSeverity = LogSeverity.NORMAL,
+    ) -> None:
         """Queue a log to be sent to the devtools server for display.
 
         Args:
@@ -227,6 +237,9 @@ class DevtoolsClient:
             {
                 "type": "client_log",
                 "payload": {
+                    "group": group.value,
+                    "verbosity": verbosity.value,
+                    "severity": severity.value,
                     "timestamp": int(time()),
                     "path": getattr(log.caller, "filename", ""),
                     "line_number": getattr(log.caller, "lineno", 0),

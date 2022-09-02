@@ -21,7 +21,7 @@ class NewScreen(Screen):
 
 
 class ScreenApp(App):
-    CSS = """
+    DEFAULT_CSS = """
     ScreenApp Screen {
         background: #111144;
         color: white;

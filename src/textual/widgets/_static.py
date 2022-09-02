@@ -25,7 +25,7 @@ def _check_renderable(renderable: object):
 
 
 class Static(Widget):
-    CSS = """
+    DEFAULT_CSS = """
     Static {
         height: auto;
     }

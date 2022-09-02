@@ -13,7 +13,7 @@ from ..widget import Widget
 @rich.repr.auto
 class Footer(Widget):
 
-    CSS = """
+    DEFAULT_CSS = """
     Footer {
         background: $accent;
         color: $text-accent;
