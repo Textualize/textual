@@ -61,9 +61,7 @@ class InputApp(App[str]):
             self.celsius.value = f"{celsius:.1f}"
 
 
-app = InputApp(
-    log_path="textual.log", css_path="input.scss", watch_css=True, log_verbosity=2
-)
+app = InputApp(log_path="textual.log", css_path="input.scss", watch_css=True)
 
 if __name__ == "__main__":
     result = app.run()

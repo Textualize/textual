@@ -52,4 +52,4 @@ class CenterApp(App):
         )
 
 
-app = CenterApp(log_verbosity=3)
+app = CenterApp()
