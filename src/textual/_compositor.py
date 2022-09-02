@@ -487,7 +487,7 @@ class Compositor:
         # TODO: Optimize with some line based lookup
         contains = Region.contains
         for widget, cropped_region, region, *_ in self:
-            if contains(cropped_region, x, y):
+            if contains(cropped_region, x, y) and widget.visible:
                 return widget, region
         raise errors.NoWidget(f"No widget under screen coordinate ({x}, {y})")
 
