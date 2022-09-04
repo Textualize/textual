@@ -70,7 +70,5 @@ Textual is a framework for building applications that run within your terminal. 
 
 === "Example 2"
 
-    ```{.textual path="docs/examples/introduction/timers.py"}
 
-    ```
 

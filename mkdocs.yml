@@ -7,9 +7,13 @@ nav:
   - "introduction.md"
   - Guide:
     - "guide/devtools.md"
+    - "guide/layout.md"
     - "guide/CSS.md"
     - "guide/events.md"
-
+  - How to:
+    - "how-to/animation.md"
+    - "how-to/mouse-and-keyboard.md"
+    - "how-to/scroll.md"
   - "actions.md"
   - Events:
     - "events/blur.md"

@@ -112,6 +112,11 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     @property
     def log(self) -> Logger:
+        """Get a logger for this object.
+
+        Returns:
+            Logger: A logger.
+        """
         return self.app._logger
 
     def _attach(self, parent: MessagePump) -> None:
