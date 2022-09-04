@@ -62,7 +62,7 @@ class FileSearchApp(App):
         self.file_table.filter = event.value
 
 
-app = FileSearchApp(log_path="textual.log", css_path="file_search.scss", watch_css=True)
+app = FileSearchApp(css_path="file_search.scss", watch_css=True)
 
 if __name__ == "__main__":
     result = app.run()

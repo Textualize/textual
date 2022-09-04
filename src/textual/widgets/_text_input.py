@@ -40,12 +40,9 @@ class TextWidgetBase(Widget):
         key = event.key
         if key == "escape":
             return
-        elif key == "space":
-            key = " "
-
         changed = False
-        if event.is_printable:
-            changed = self._editor.insert(key)
+        if event.char is not None and event.is_printable:
+            changed = self._editor.insert(event.char)
         elif key == "ctrl+h":
             changed = self._editor.delete_back()
         elif key == "ctrl+d":
@@ -59,10 +56,10 @@ class TextWidgetBase(Widget):
         elif key == "end" or key == "ctrl+e":
             self._editor.cursor_text_end()
 
+        self.refresh(layout=True)
+
         if changed:
             self.post_message_no_wait(self.Changed(self, value=self._editor.content))
-
-        self.refresh(layout=True)
 
     def _apply_cursor_to_text(self, display_text: Text, index: int) -> Text:
         if index < 0:
@@ -115,10 +112,9 @@ class TextInput(TextWidgetBase, can_focus=True):
     DEFAULT_CSS = """
     TextInput {
         width: auto;
-        background: $surface;
         height: 3;
-        padding: 0 1;
-        content-align: left middle;
+        padding: 1;
+        background: $surface;
     }
     """
 
@@ -165,11 +161,15 @@ class TextInput(TextWidgetBase, can_focus=True):
         self._editor.cursor_text_end()
         self.refresh()
 
-    def on_resize(self, event: events.Resize) -> None:
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        # TODO: Why does this need +2 ?
+        return min(cell_len(self._editor.content) + 2, container.width)
+
+    def _on_resize(self, event: events.Resize) -> None:
         # Ensure the cursor remains visible when the widget is resized
         self._reset_visible_range()
 
-    def on_click(self, event: events.Click) -> None:
+    def _on_click(self, event: events.Click) -> None:
         """When the user clicks on the text input, the cursor moves to the
         character that was clicked on. Double-width characters makes this more
         difficult."""

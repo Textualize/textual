@@ -517,7 +517,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         Args:
             event (events.Key): A key event.
         """
-        key_method = getattr(self, f"key_{event.key}", None)
+        key_method = getattr(self, f"key_{event.key_name}", None)
         if key_method is not None:
             if await invoke(key_method, event):
                 event.prevent_default()
