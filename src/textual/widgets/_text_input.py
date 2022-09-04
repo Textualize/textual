@@ -169,7 +169,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         # Ensure the cursor remains visible when the widget is resized
         self._reset_visible_range()
 
-    def _on_click(self, event: events.Click) -> None:
+    async def _on_click(self, event: events.Click) -> None:
         """When the user clicks on the text input, the cursor moves to the
         character that was clicked on. Double-width characters makes this more
         difficult."""
@@ -198,7 +198,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         self._editor.cursor_index = new_cursor_index
         self.refresh()
 
-    def on_paste(self, event: events.Paste) -> None:
+    def _on_paste(self, event: events.Paste) -> None:
         """Handle Paste event by stripping newlines from the text, and inserting
         the text at the cursor position, sliding the visible window if required."""
         text = "".join(event.text.splitlines())
@@ -288,7 +288,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         """True if the cursor is at the right edge of the content area"""
         return self._visible_content_to_cursor_cell_len == self.content_region.width
 
-    def on_key(self, event: events.Key) -> None:
+    def _on_key(self, event: events.Key) -> None:
         key = event.key
         if key in self.STOP_PROPAGATE:
             event.stop()
@@ -446,7 +446,7 @@ class TextAreaChild(TextWidgetBase, can_focus=True):
     ) -> int:
         return self._editor.content.count("\n") + 1 + 2
 
-    def on_key(self, event: events.Key) -> None:
+    def _on_key(self, event: events.Key) -> None:
         if event.key in self.STOP_PROPAGATE:
             event.stop()
 
@@ -457,5 +457,5 @@ class TextAreaChild(TextWidgetBase, can_focus=True):
         elif event.key == "escape":
             self.app.focused = None
 
-    def on_focus(self, event: events.Focus) -> None:
+    def _on_focus(self, event: events.Focus) -> None:
         self.refresh(layout=True)
