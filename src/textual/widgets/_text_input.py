@@ -115,6 +115,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         height: 3;
         padding: 1;
         background: $surface;
+        content-align: left middle;
     }
     """
 
