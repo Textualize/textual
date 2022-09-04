@@ -140,12 +140,12 @@ class XTermParser(Parser[events.Event]):
                     peek_buffer = yield self.peek_buffer()
                     if not peek_buffer:
                         # An escape arrived without any following characters
-                        on_token(events.Key(self.sender, key="escape"))
+                        on_token(events.Key(self.sender, "escape", "\x1b"))
                         continue
                     if peek_buffer and peek_buffer[0] == ESC:
                         # There is an escape in the buffer, so ESC ESC has arrived
                         yield read1()
-                        on_token(events.Key(self.sender, key="escape"))
+                        on_token(events.Key(self.sender, "escape", "\x1b"))
                         # If there is no further data, it is not part of a sequence,
                         # So we don't need to go in to the loop
                         if len(peek_buffer) == 1 and not more_data():
