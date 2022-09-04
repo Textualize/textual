@@ -188,18 +188,26 @@ class Key(InputEvent):
     """Sent when the user hits a key on the keyboard.
 
     Args:
-        sender (MessageTarget): The sender of the event (the App)
-        key (str): The pressed key if a single character (or a longer string for special characters)
+        sender (MessageTarget): The sender of the event (the App).
+        key (str): A key name (textual.keys.Keys).
+        char (str | None, optional): A printable character or None if it is not printable.
     """
 
-    __slots__ = ["key"]
+    __slots__ = ["key", "char"]
 
-    def __init__(self, sender: MessageTarget, key: str) -> None:
+    def __init__(self, sender: MessageTarget, key: str, char: str | None) -> None:
         super().__init__(sender)
-        self.key = key.value if isinstance(key, Keys) else key
+        self.key = key
+        self.char = (key if len(key) == 1 else None) if char is None else char
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "key", self.key
+        yield "char", self.char, None
+
+    @property
+    def key_name(self) -> str | None:
+        """Name of a key suitable for use as a Python identifier."""
+        return self.key.replace("+", "_")
 
     @property
     def is_printable(self) -> bool:
@@ -209,7 +217,7 @@ class Key(InputEvent):
         Returns:
             bool: True if the key is printable.
         """
-        return self.key == Keys.Space or self.key not in KEY_VALUES
+        return False if self.char is None else self.char.isprintable()
 
 
 @rich.repr.auto

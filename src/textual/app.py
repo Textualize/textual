@@ -656,7 +656,9 @@ class App(Generic[ReturnType], DOMNode):
                             await asyncio.sleep(0.05)
                         else:
                             print(f"press {key!r}")
-                            driver.send_event(events.Key(self, key))
+                            driver.send_event(
+                                events.Key(self, key, key if len(key) == 1 else None)
+                            )
                             await asyncio.sleep(0.01)
                     if screenshot:
                         self._screenshot = self.export_screenshot(
