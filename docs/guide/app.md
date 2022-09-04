@@ -88,7 +88,22 @@ The following example imports a builtin Welcome widget and yields it from compos
 
 When you run this code, Textual will *mount* the Welcome widget which contains a Markdown content area and a button:
 
-```{.textual path="docs/examples/app/widgets01.py"}
+```{.textual path="docs/examples/app/widgets01.py" title="widgets01.py" }
 ```
 
 Notice the `on_button_pressed` method which handles the [Button.Pressed][textual.widgets.Button] event send by the button contained in the Welcome widget. The handlers calls [App.exit()][textual.app.App] to exit the app.
+
+### Mounting
+
+While composing is the preferred way of adding widgets when your app starts it is sometimes necessary to add new widget(s) in response to events. You can do this by calling [mount()](textual.widget.Widget.mount) which will add a new widget to the UI.
+
+Here's an app which adds the welcome widget in response to any key press:
+
+```python title="widgets02.py" 
+--8<-- "docs/examples/app/widgets02.py"
+```
+
+When you first run this you will get a blank screen. Press any key to add the welcome widget. You can even press a key multiple times to add several widgets.
+
+```{.textual path="docs/examples/app/widgets02.py" title="widgets02.py" press="a,a,a,down,down,down,down,down,down,_,_,_,_,_,_"}
+```
