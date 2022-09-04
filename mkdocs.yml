@@ -6,6 +6,7 @@ nav:
   - "getting_started.md"
   - "introduction.md"
   - Guide:
+    - "guide/app.md"
     - "guide/devtools.md"
     - "guide/layout.md"
     - "guide/CSS.md"
@@ -68,9 +69,16 @@ nav:
     - "styles/tint.md"
     - "styles/visibility.md"
     - "styles/width.md"
-  - Widgets: "/widgets/"
+  - Widgets: 
+    - "widgets/button.md"
+    - "widgets/data_table.md"
+    - "widgets/footer.md"
+    - "widgets/header.md"
+    - "widgets/static.md"
+    - "widgets/tree_control.md"
   - Reference:
     - "reference/app.md"
+    - "reference/button.md"
     - "reference/color.md"
     - "reference/dom_node.md"
     - "reference/events.md"
@@ -98,6 +106,7 @@ markdown_extensions:
       custom_checkbox: true
   - pymdownx.highlight:
       anchor_linenums: true
+  - pymdownx.inlinehilite
   - pymdownx.superfences:
       custom_fences:
         - name: textual

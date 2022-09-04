@@ -92,6 +92,11 @@ class Logger:
         """An error logger."""
         return Logger(LogGroup.ERROR)
 
+    @property
+    def system(self) -> Logger:
+        """A system logger."""
+        return Logger(LogGroup.SYSTEM)
+
 
 log = Logger()
 

@@ -1,5 +1,13 @@
 # Devtools
 
+!!! note inline end
+
+    If you don't have the `textual` command on your path, you may have forgotten so install with the `dev` switch.
+    
+    See [getting started](../getting_started.md#installation) for details.
+
+
+
 Textual comes with a command line application of the same name. The `textual` command is a super useful tool that will help you to build apps.
 
 Take a moment to look through the available sub-commands. There will be even more helpful tools here in the future.
@@ -7,6 +15,7 @@ Take a moment to look through the available sub-commands. There will be even mor
 ```bash
 textual --help
 ```
+
 
 ## Run
 
@@ -28,9 +37,9 @@ textual run my_app.py:alternative_app
 
 ## Console
 
-When running any terminal application, you can no longer use `print` when debugging (or log to the console). This is because anything you write to standard output would overwrite application content, making it unreadable. Fortunately Textual supplies a debug console of its own which has some super helpful features.
+When running a terminal application, you will generally no longer be able to use `print` when debugging (or log to the console). This is because anything you write to standard output would overwrite application content, making it unreadable. Fortunately Textual supplies a debug console of its own which has some super helpful features.
 
-To use the console, open up 2 terminal emulators. Run the following in one of the terminals:
+To use the console, open up **two** terminal emulators. Run the following in one of the terminals:
 
 ```bash
 textual console
@@ -41,22 +50,63 @@ You should see the Textual devtools welcome message:
 ```{.textual title="textual console" path="docs/examples/getting_started/console.py", press="_,_"}
 ```
 
-In the other console, run your application using `textual run` and the `--dev` switch:
+In the other console, run your application with `textual run` and the `--dev` switch:
 
 ```bash
 textual run --dev my_app.py
 ```
 
-Anything you `print` from your application will be displayed in the console window.
+Anything you `print` from your application will be displayed in the console window. Textual will also write log messages to this window which may be helpful when debugging your application.
 
-### Textual log
+### Verbosity
 
-In addition to printing strings, Textual console supports more advanced formatting in logs. To write advanced logs import `log` from `textual` as follows:
+Textual writes log messages to inform you about certain events, such as when the user presses a key or clicks on the terminal. To avoid swamping you with too much information, some events are marked as "verbose" and will be excluded from the logs. If you want to see these log messages, you can add the `-v` switch.
+
+```bash
+textual console -v
+```
+
+## Textual log
+
+In addition to simple strings, Textual console supports [Rich](https://rich.readthedocs.io/en/latest/) formatting. To write rich logs, import `log` as follows:
 
 ```python
 from textual import log
 ```
 
-You can logs strings, other Python data types which will be pretty printed in the console. You can also log [Rich renderables](https://rich.readthedocs.io/en/stable/protocol.html). 
+This method will pretty print data structures (like lists and dicts) as well as [Rich renderables](https://rich.readthedocs.io/en/stable/protocol.html). Here are some examples:
 
+```python
+log("Hello, World")  # simple string
+log(locals())  # Log local variables
+log(children=self.children, pi=3.141592)  # key/values
+log(self.tree)  # Rich renderables
+```
+
+Textual log messages may contain [console Markup](https://rich.readthedocs.io/en/stable/markup.html):
+
+```python
+log("[bold red]DANGER![/] We're having too much fun")
+```
+
+### Log method
+
+There's a convenient shortcut to `log` available on the App and Widget objects you can use in event handlers:
+
+```python
+from textual.app import App
+
+class LogApp(App):
+
+    def on_load(self):
+        self.log("In the log handler!", pi=3.141529)
+
+    def on_mount(self):
+        self.log(self.tree)
+
+app = LogApp()
+if __name__ == "__main__":
+    app.run()
+
+```
 

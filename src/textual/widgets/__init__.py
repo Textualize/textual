@@ -21,6 +21,7 @@ __all__ = [
     "Static",
     "TextInput",
     "TreeControl",
+    "Welcome",
 ]
 
 
