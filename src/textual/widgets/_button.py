@@ -45,7 +45,8 @@ class Button(Widget, can_focus=True):
     }
 
     Button.-disabled {
-        opacity: 0.6;
+        opacity: 0.4;
+        text-opacity: 0.7;
     }
 
     Button:focus {
@@ -84,7 +85,6 @@ class Button(Widget, can_focus=True):
         background: $primary;
         border-bottom: tall $primary-lighten-3;
         border-top: tall $primary-darken-3;
-    
     }
 
 
@@ -94,13 +94,11 @@ class Button(Widget, can_focus=True):
         color: $text-success;
         border-top: tall $success-lighten-2;
         border-bottom: tall $success-darken-3;
-      
     }
 
     Button.-success:hover {
         background: $success-darken-2;
         color: $text-success-darken-2;
-
     }
 
     Button.-success.-active {
@@ -198,6 +196,11 @@ class Button(Widget, can_focus=True):
     label: Reactive[RenderableType] = Reactive("")
     variant = Reactive.init("default")
     disabled = Reactive(False)
+
+    def watch_mouse_over(self, value: bool) -> None:
+        """Update from CSS if mouse over state changes."""
+        if not self.disabled:
+            self.app.update_styles(self)
 
     def validate_variant(self, variant: str) -> str:
         if variant not in _VALID_BUTTON_VARIANTS:

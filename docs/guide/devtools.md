@@ -27,7 +27,7 @@ textual run my_app.py
 
 The `run` sub-command assumes you have an App instance called `app` in the global scope of your Python file. If the application is called something different, you can specify it with a colon following the filename:
 
-```
+```bash
 textual run my_app.py:alternative_app
 ```
 
@@ -35,9 +35,22 @@ textual run my_app.py:alternative_app
 
     If the Python file contains a call to app.run() then you can launch the file as you normally would any other Python program. Running your app via `textual run` will give you access to a few Textual features such as live editing of CSS files.
 
+
+## Live editing
+
+If you combine the `run` command with the `--dev` switch your app will run in *development mode*.
+
+```bash
+textual run --dev my_app.py
+```
+
+One of the the features of *dev* mode is live editing of CSS files: any changes to your CSS will be reflected in the terminal a few milliseconds later.
+
+This is a great feature for iterating on your app's look and feel. Open the CSS in your editor and have your app running in a terminal. Edits to your CSS will appear almost immediately after you save. 
+
 ## Console
 
-When running a terminal application, you will generally no longer be able to use `print` when debugging (or log to the console). This is because anything you write to standard output would overwrite application content, making it unreadable. Fortunately Textual supplies a debug console of its own which has some super helpful features.
+When building a typical terminal application you are generally unable to use `print` when debugging (or log to the console). This is because anything you write to standard output will overwrite application content. Textual has a solution to this in the form of a debug console which restores `print` and adds a few additional features to help you debug.
 
 To use the console, open up **two** terminal emulators. Run the following in one of the terminals:
 
@@ -57,6 +70,7 @@ textual run --dev my_app.py
 ```
 
 Anything you `print` from your application will be displayed in the console window. Textual will also write log messages to this window which may be helpful when debugging your application.
+
 
 ### Verbosity
 
@@ -91,7 +105,7 @@ log("[bold red]DANGER![/] We're having too much fun")
 
 ### Log method
 
-There's a convenient shortcut to `log` available on the App and Widget objects you can use in event handlers:
+There's a convenient shortcut to `log` available on the App and Widget objects. This is useful in event handlers. Here's an example:
 
 ```python
 from textual.app import App

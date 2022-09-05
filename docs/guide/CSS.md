@@ -10,7 +10,7 @@ CSS stands for _Cascading Stylesheets_. A stylesheet is a list of styles and rul
 
     Depending on what you want to build with Textual, you may not need to learn Textual CSS at all. Widgets are packaged with CSS styles so apps with exclusively pre-built widgets may not need any additional CSS.
 
-Textual CSS defines a set of rules which apply visual _styles_ to your application and widgets. These style can customize a large variety of visual settings, such as color, border, size, alignment; and more dynamic features such as animation and hover effects. As powerful as it is, CSS in Textual is quite straightforward.
+Textual CSS defines a set of rules which apply visual _styles_ to your application and widgets. These style can customize settings for properties such as color, border, size, alignment; and more dynamic features such as animation and hover effects. As powerful as it is, CSS in Textual is quite straightforward.
 
 CSS is typically stored in an external file with the extension `.css` alongside your Python code.
 
@@ -30,7 +30,7 @@ This is an example of a CSS _rule set_. There may be many such sections in any g
 
 Let's break this CSS code down a bit.
 
-```css hl_lines="1"
+```sass hl_lines="1"
 Header {
   dock: top;
   height: 3;
@@ -42,7 +42,7 @@ Header {
 
 The first line is a _selector_ which tells Textual which Widget(s) to modify. In the above example, the styles will be applied to a widget defined by the Python class `Header`.
 
-```css hl_lines="2 3 4 5 6"
+```sass hl_lines="2 3 4 5 6"
 Header {
   dock: top;
   height: 3;
@@ -58,7 +58,7 @@ The first rule in the above example reads `"dock: top;"`. The rule name is `dock
 
 ## The DOM
 
-The DOM, or _Document Object Model_, is a term borrowed from the web world. Textual doesn't use documents but the term has stuck. In Textual CSS, the DOM is a an arrangement of widgets you can visualize as a tree-like structure.
+The DOM, or _Document Object Model_, is a term borrowed from the web world. Textual doesn't use documents but the term has stuck. In Textual CSS, the DOM is an arrangement of widgets you can visualize as a tree-like structure.
 
 Some widgets contain other widgets: for instance, a list control widget will likely also have item widgets, or a dialog widget may contain button widgets. These _child_ widgets form the branches of the tree.
 

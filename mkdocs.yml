@@ -4,13 +4,17 @@ site_url: https://www.textualize.io/
 nav:
   - "index.md"
   - "getting_started.md"
-  - "introduction.md"
+  - "tutorial.md"
   - Guide:
-    - "guide/app.md"
     - "guide/devtools.md"
-    - "guide/layout.md"
+    - "guide/app.md"
     - "guide/CSS.md"
+    - "guide/layout.md"
     - "guide/events.md"
+    - "guide/actions.md"
+    - "guide/reactivity.md"
+    - "guide/widgets.md"
+    - "guide/screens.md"
   - How to:
     - "how-to/animation.md"
     - "how-to/mouse-and-keyboard.md"
