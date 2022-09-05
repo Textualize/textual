@@ -4,7 +4,6 @@ from types import GeneratorType
 from typing import TYPE_CHECKING, Iterable
 
 if TYPE_CHECKING:
-
     from .app import ComposeResult
     from .widget import Widget
 
@@ -28,17 +27,18 @@ def _compose(compose_result: ComposeResult) -> Iterable[Widget]:
             or a generator.
 
     Returns:
-        Iterable[Widget]: In iterable if widgets.
+        Iterable[Widget]: An iterable if widgets.
 
     """
 
-    if not isinstance(compose_result, GeneratorType):
-        return compose_result
-
-    try:
-        widget = next(compose_result)
-        while True:
-            yield widget
-            widget = compose_result.send(widget)
-    except StopIteration:
-        pass
+    if isinstance(compose_result, GeneratorType):
+        try:
+            widget = next(compose_result)
+            send = compose_result.send
+            while True:
+                yield widget
+                widget = send(widget)
+        except StopIteration:
+            pass
+    else:
+        yield from compose_result

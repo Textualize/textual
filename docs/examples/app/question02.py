@@ -5,9 +5,9 @@ from textual.widgets import Static, Button
 class QuestionApp(App[str]):
     def compose(self) -> ComposeResult:
         yield Static("Do you love Textual?")
-        yield (yes := Button("Yes", id="yes"))
+        yes = yield Button("Yes", id="yes")
         yes.variant = "primary"
-        yield (no := Button("No", id="no"))
+        no = yield Button("No", id="no")
         no.variant = "error"
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
