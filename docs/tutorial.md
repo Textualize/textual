@@ -6,7 +6,7 @@ By the end of this page you should have a solid understanding of app development
 
 !!! quote
 
-    I've always thought the secret sauce in making a popular framework is for it to be fun. I hope you enjoy this tutorial!
+    I've always thought the secret sauce in making a popular framework is for it to be fun.
     
     &mdash; **Will McGugan** (creator of Rich and Textual)
 
