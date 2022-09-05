@@ -9,21 +9,13 @@ import sys
 import warnings
 from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
-from pathlib import PurePath, Path
+from pathlib import Path, PurePath
 from time import perf_counter
-from typing import (
-    Any,
-    Generic,
-    Iterable,
-    Iterator,
-    TextIO,
-    Type,
-    TypeVar,
-    cast,
-)
+from typing import Any, Generator, Generic, Iterable, Iterator, Type, TypeVar, cast
 from weakref import WeakSet, WeakValueDictionary
 
 from ._ansi_sequences import SYNC_END, SYNC_START
+from ._compose import _compose
 from ._path import _make_path_object_relative
 
 if sys.version_info >= (3, 8):
@@ -42,8 +34,8 @@ from rich.traceback import Traceback
 
 from . import (
     Logger,
-    LogSeverity,
     LogGroup,
+    LogSeverity,
     LogVerbosity,
     actions,
     events,
@@ -71,7 +63,6 @@ from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
 from .widget import Widget
-
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
@@ -107,7 +98,7 @@ DEFAULT_COLORS = {
 }
 
 
-ComposeResult = Iterable[Widget]
+ComposeResult = Iterable[Widget] | Generator[Widget, Widget, None]
 
 
 class AppError(Exception):
@@ -394,6 +385,9 @@ class App(Generic[ReturnType], DOMNode):
         """Yield child widgets for a container."""
         return
         yield
+
+    def _compose(self) -> Iterable[Widget]:
+        return _compose(self.compose())
 
     def get_css_variables(self) -> dict[str, str]:
         """Get a mapping of variables used to pre-populate CSS.
@@ -1155,7 +1149,7 @@ class App(Generic[ReturnType], DOMNode):
         self.set_timer(screenshot_timer, on_screenshot, name="screenshot timer")
 
     def _on_mount(self) -> None:
-        widgets = self.compose()
+        widgets = self._compose()
         if widgets:
             self.mount_all(widgets)
 
@@ -1189,9 +1183,7 @@ class App(Generic[ReturnType], DOMNode):
             parent (Widget): Parent Widget
         """
         if not anon_widgets and not widgets:
-            raise AppError(
-                "Nothing to mount, did you forget parent as first positional arg?"
-            )
+            return
         name_widgets: Iterable[tuple[str | None, Widget]]
         name_widgets = [*((None, widget) for widget in anon_widgets), *widgets.items()]
         apply_stylesheet = self.stylesheet.apply

@@ -44,6 +44,10 @@ class Button(Widget, can_focus=True):
         text-style: bold;      
     }
 
+    Button.-disabled {
+        opacity: 0.6;
+    }
+
     Button:focus {
         text-style: bold reverse;        
     }
@@ -183,22 +187,32 @@ class Button(Widget, can_focus=True):
         if label is None:
             label = self.css_identifier_styled
 
-        self.label: Text = label
+        self.label = label
 
         self.disabled = disabled
         if disabled:
             self.add_class("-disabled")
 
-        if variant in _VALID_BUTTON_VARIANTS:
-            if variant != "default":
-                self.add_class(f"-{variant}")
+        self.variant = variant
 
-        else:
+    label: Reactive[RenderableType] = Reactive("")
+    variant = Reactive.init("default")
+    disabled = Reactive(False)
+
+    def validate_variant(self, variant: str) -> str:
+        if variant not in _VALID_BUTTON_VARIANTS:
             raise InvalidButtonVariant(
                 f"Valid button variants are {friendly_list(_VALID_BUTTON_VARIANTS)}"
             )
+        return variant
 
-    label: Reactive[RenderableType] = Reactive("")
+    def watch_variant(self, old_variant: str, variant: str):
+        self.remove_class(f"_{old_variant}")
+        self.add_class(f"-{variant}")
+
+    def watch_disabled(self, disabled: bool) -> None:
+        self.set_class(disabled, "-disabled")
+        self.can_focus = not disabled
 
     def validate_label(self, label: RenderableType) -> RenderableType:
         """Parse markup for self.label"""

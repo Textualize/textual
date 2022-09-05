@@ -4,16 +4,11 @@ from asyncio import Lock
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
-from typing import (
-    TYPE_CHECKING,
-    ClassVar,
-    Collection,
-    Iterable,
-    NamedTuple,
-)
+from types import GeneratorType
+from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple
 
 import rich.repr
-from rich.console import Console, RenderableType, JustifyMethod
+from rich.console import Console, JustifyMethod, RenderableType
 from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
@@ -22,7 +17,8 @@ from rich.text import Text
 
 from . import errors, events, messages
 from ._animator import BoundAnimator
-from ._arrange import arrange, DockArrangeResult
+from ._arrange import DockArrangeResult, arrange
+from ._compose import _compose
 from ._context import active_app
 from ._layout import Layout
 from ._segment_tools import align_lines
@@ -30,8 +26,7 @@ from ._styles_cache import StylesCache
 from ._types import Lines
 from .box_model import BoxModel, get_box_model
 from .css.constants import VALID_TEXT_ALIGN
-from .dom import DOMNode
-from .dom import NoScreen
+from .dom import DOMNode, NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
@@ -41,12 +36,12 @@ if TYPE_CHECKING:
     from .app import App, ComposeResult
     from .scrollbar import (
         ScrollBar,
+        ScrollBarCorner,
         ScrollDown,
         ScrollLeft,
         ScrollRight,
         ScrollTo,
         ScrollUp,
-        ScrollBarCorner,
     )
 
 
@@ -239,7 +234,7 @@ class Widget(DOMNode):
             # reset the scroll position if the scrollbar is hidden.
             self.scroll_to(0, 0, animate=False)
 
-    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
+    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> int:
         """Mount child widgets (making this widget a container).
 
         Widgets may be passed as positional arguments or keyword arguments. If keyword arguments,
@@ -272,6 +267,9 @@ class Widget(DOMNode):
         """
         return
         yield
+
+    def _compose(self) -> Iterable[Widget]:
+        return _compose(self.compose())
 
     def _post_register(self, app: App) -> None:
         """Called when the instance is registered.
@@ -1458,10 +1456,9 @@ class Widget(DOMNode):
         await self.dispatch_key(event)
 
     def _on_mount(self, event: events.Mount) -> None:
-        widgets = list(self.compose())
-        if widgets:
-            self.mount(*widgets)
-            self.screen.refresh(repaint=False, layout=True)
+        widgets = self._compose()
+        self.mount(*widgets)
+        self.screen.refresh(repaint=False, layout=True)
 
     def _on_leave(self, event: events.Leave) -> None:
         self.mouse_over = False

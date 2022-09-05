@@ -107,3 +107,34 @@ When you first run this you will get a blank screen. Press any key to add the we
 
 ```{.textual path="docs/examples/app/widgets02.py" title="widgets02.py" press="a,a,a,down,down,down,down,down,down,_,_,_,_,_,_"}
 ```
+
+### Exiting
+
+An app will run until you call [App.exit()](textual.app.App.exit) which will exit application mode and the [run](textual.app.App.run) method will return. If this is the last line in your code you will return to the command prompt.
+
+The exit method will also accept an optional positional value to be returned by `run()`. The following example uses this to return the `id` (identifier) of a clicked button.
+
+```python title="question01.py" 
+--8<-- "docs/examples/app/question01.py"
+```
+
+Running this app will give you the following:
+
+```{.textual path="docs/examples/app/question01.py"}
+```
+
+Clicking either of those buttons will exit the app, and the `run()` method will return either `"yes"` or `"no"` depending on button clicked.
+
+#### Typing 
+
+You may have noticed that we subclassed `App[str]` rather than the usual `App`.
+
+```python title="question01.py" hl_lines="5"
+--8<-- "docs/examples/app/question01.py"
+```
+
+The addition of `[str]` tells Mypy that `run()` is expected to return a string. It may also return `None` if `sys.exit()` is called without a return value, so the return type of `run` will be `str | None`.
+
+!!! note
+
+    Type annotations are entirely optional (but recommended) with Textual.
