@@ -3,11 +3,11 @@ Screen {
 }
 
 #calculator {
-    layout: table;
-    table-size: 4;
-    table-gutter: 1 2;
-    table-columns: 1fr;
-    table-rows: 2fr 1fr 1fr 1fr 1fr 1fr;
+    layout: grid;
+    grid-size: 4;
+    grid-gutter: 1 2;
+    grid-columns: 1fr;
+    grid-rows: 2fr 1fr 1fr 1fr 1fr 1fr;
     margin: 1 2;
     min-height:25;  
     min-width: 26; 

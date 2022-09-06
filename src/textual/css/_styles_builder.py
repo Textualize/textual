@@ -847,7 +847,7 @@ class StylesBuilder:
                 self.error(name, token, scrollbar_size_single_axis_help_text(name))
             self.styles._rules["scrollbar_size_horizontal"] = value
 
-    def _process_table_rows_or_columns(self, name: str, tokens: list[Token]) -> None:
+    def _process_grid_rows_or_columns(self, name: str, tokens: list[Token]) -> None:
         scalars: list[Scalar] = []
         for token in tokens:
             if token.name == "number":
@@ -867,8 +867,8 @@ class StylesBuilder:
                 )
         self.styles._rules[name.replace("-", "_")] = scalars
 
-    process_table_rows = _process_table_rows_or_columns
-    process_table_columns = _process_table_rows_or_columns
+    process_grid_rows = _process_grid_rows_or_columns
+    process_grid_columns = _process_grid_rows_or_columns
 
     def _process_integer(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
@@ -884,14 +884,14 @@ class StylesBuilder:
                 self.error(name, token, integer_help_text(name))
             self.styles._rules[name.replace("-", "_")] = value
 
-    process_table_gutter_horizontal = _process_integer
-    process_table_gutter_vertical = _process_integer
+    process_grid_gutter_horizontal = _process_integer
+    process_grid_gutter_vertical = _process_integer
     process_column_span = _process_integer
     process_row_span = _process_integer
-    process_table_size_columns = _process_integer
-    process_table_size_rows = _process_integer
+    process_grid_size_columns = _process_integer
+    process_grid_size_rows = _process_integer
 
-    def process_table_gutter(self, name: str, tokens: list[Token]) -> None:
+    def process_grid_gutter(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
             return
         if len(tokens) == 1:
@@ -899,25 +899,25 @@ class StylesBuilder:
             if token.name != "number":
                 self.error(name, token, integer_help_text(name))
             value = max(0, int(token.value))
-            self.styles._rules["table_gutter_horizontal"] = value
-            self.styles._rules["table_gutter_vertical"] = value
+            self.styles._rules["grid_gutter_horizontal"] = value
+            self.styles._rules["grid_gutter_vertical"] = value
 
         elif len(tokens) == 2:
             token = tokens[0]
             if token.name != "number":
                 self.error(name, token, integer_help_text(name))
             value = max(0, int(token.value))
-            self.styles._rules["table_gutter_horizontal"] = value
+            self.styles._rules["grid_gutter_horizontal"] = value
             token = tokens[1]
             if token.name != "number":
                 self.error(name, token, integer_help_text(name))
             value = max(0, int(token.value))
-            self.styles._rules["table_gutter_vertical"] = value
+            self.styles._rules["grid_gutter_vertical"] = value
 
         else:
             self.error(name, tokens[0], "expected two integers here")
 
-    def process_table_size(self, name: str, tokens: list[Token]) -> None:
+    def process_grid_size(self, name: str, tokens: list[Token]) -> None:
         if not tokens:
             return
         if len(tokens) == 1:
@@ -925,20 +925,20 @@ class StylesBuilder:
             if token.name != "number":
                 self.error(name, token, integer_help_text(name))
             value = max(0, int(token.value))
-            self.styles._rules["table_size_columns"] = value
-            self.styles._rules["table_size_rows"] = 0
+            self.styles._rules["grid_size_columns"] = value
+            self.styles._rules["grid_size_rows"] = 0
 
         elif len(tokens) == 2:
             token = tokens[0]
             if token.name != "number":
                 self.error(name, token, integer_help_text(name))
             value = max(0, int(token.value))
-            self.styles._rules["table_size_columns"] = value
+            self.styles._rules["grid_size_columns"] = value
             token = tokens[1]
             if token.name != "number":
                 self.error(name, token, integer_help_text(name))
             value = max(0, int(token.value))
-            self.styles._rules["table_size_rows"] = value
+            self.styles._rules["grid_size_rows"] = value
 
         else:
             self.error(name, tokens[0], "expected two integers here")

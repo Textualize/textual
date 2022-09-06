@@ -1,8 +1,8 @@
 Screen {
-    layout: table;
-    table-columns: 2fr 1fr 1fr;
-    table-rows: 1fr 1fr;
-    table-gutter: 1 2;
+    layout: grid;
+    grid-columns: 2fr 1fr 1fr;
+    grid-rows: 1fr 1fr;
+    grid-gutter: 1 2;
 }
 
 Static {
