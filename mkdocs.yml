@@ -16,6 +16,7 @@ nav:
     - "guide/actions.md"
     - "guide/reactivity.md"
     - "guide/widgets.md"
+    - "guide/animator.md"
     - "guide/screens.md"
   - How to:
     - "how-to/index.md"
