@@ -25,7 +25,7 @@ Here's what the finished app will look like:
 
 ### Get the code
 
-If you want to try the finished Stopwatch app and follow along with the code, first make sure you have [Textual installed](getting_started.md) and then check out the [Textual](https://github.com/Textualize/textual) GitHub repository:
+If you want to try the finished Stopwatch app and follow along with the code, first make sure you have [Textual installed](getting_started.md) then check out the [Textual](https://github.com/Textualize/textual) repository:
 
 === "HTTPS"
 
