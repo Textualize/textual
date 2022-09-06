@@ -233,7 +233,7 @@ class Widget(DOMNode):
             # reset the scroll position if the scrollbar is hidden.
             self.scroll_to(0, 0, animate=False)
 
-    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> int:
+    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
         """Mount child widgets (making this widget a container).
 
         Widgets may be passed as positional arguments or keyword arguments. If keyword arguments,
