@@ -15,7 +15,6 @@ from typing import Any, Generator, Generic, Iterable, Iterator, Type, TypeVar, c
 from weakref import WeakSet, WeakValueDictionary
 
 from ._ansi_sequences import SYNC_END, SYNC_START
-from ._compose import _compose
 from ._path import _make_path_object_relative
 
 if sys.version_info >= (3, 8):
@@ -385,9 +384,6 @@ class App(Generic[ReturnType], DOMNode):
         """Yield child widgets for a container."""
         return
         yield
-
-    def _compose(self) -> Iterable[Widget]:
-        return _compose(self.compose())
 
     def get_css_variables(self) -> dict[str, str]:
         """Get a mapping of variables used to pre-populate CSS.
@@ -1149,7 +1145,7 @@ class App(Generic[ReturnType], DOMNode):
         self.set_timer(screenshot_timer, on_screenshot, name="screenshot timer")
 
     def _on_mount(self) -> None:
-        widgets = self._compose()
+        widgets = self.compose()
         if widgets:
             self.mount_all(widgets)
 

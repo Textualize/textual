@@ -18,7 +18,6 @@ from rich.text import Text
 from . import errors, events, messages
 from ._animator import BoundAnimator
 from ._arrange import DockArrangeResult, arrange
-from ._compose import _compose
 from ._context import active_app
 from ._layout import Layout
 from ._segment_tools import align_lines
@@ -267,9 +266,6 @@ class Widget(DOMNode):
         """
         return
         yield
-
-    def _compose(self) -> Iterable[Widget]:
-        return _compose(self.compose())
 
     def _post_register(self, app: App) -> None:
         """Called when the instance is registered.
@@ -1456,7 +1452,7 @@ class Widget(DOMNode):
         await self.dispatch_key(event)
 
     def _on_mount(self, event: events.Mount) -> None:
-        widgets = self._compose()
+        widgets = self.compose()
         self.mount(*widgets)
         self.screen.refresh(repaint=False, layout=True)
 
