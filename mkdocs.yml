@@ -8,8 +8,8 @@ nav:
   - Guide:
     - "guide/devtools.md"
     - "guide/app.md"
-    - "guide/CSS.md"
     - "guide/styles.md"
+    - "guide/CSS.md"
     - "guide/layout.md"
     - "guide/events.md"
     - "guide/actions.md"
