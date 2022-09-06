@@ -391,3 +391,7 @@ Button:hover {
   background: blue !important;
 }
 ```
+
+## CSS Variables
+
+TODO: Variables
