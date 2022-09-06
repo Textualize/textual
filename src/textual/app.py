@@ -97,7 +97,7 @@ DEFAULT_COLORS = {
 }
 
 
-ComposeResult = "Iterable[Widget] | Generator[Widget, Widget, None]"
+ComposeResult = Iterable[Widget]
 
 
 class AppError(Exception):
