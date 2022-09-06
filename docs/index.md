@@ -4,7 +4,7 @@ Welcome to the [Textual](https://github.com/Textualize/textual) framework docume
 
 <hr>
 
-Textual is a framework for building applications that run within your terminal. Such Text User Interfaces (TUIs) have a number of advantages over traditional web and desktop apps.
+Textual is a framework for building applications that run within your terminal. Text User Interfaces (TUIs) have a number of advantages over web and desktop apps.
 
 <div class="grid cards" markdown>
 

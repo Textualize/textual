@@ -41,7 +41,7 @@ One such event is the *mount* event which is sent to an application after it ent
 
 !!! info
 
-    You may have noticed we use the term "send" and "sent" in relation to event handler methods in preference to "calling". This is because Textual uses a message passing system where events are passed (or *sent*) between components. We will cover the details in [events][events.md].
+    You may have noticed we use the term "send" and "sent" in relation to event handler methods in preference to "calling". This is because Textual uses a message passing system where events are passed (or *sent*) between components. We will cover the details in [events][./events.md].
 
 Another such event is the *key* event which is sent when the user presses a key. The following example contains handlers for both those events:
 
@@ -99,7 +99,7 @@ Notice the `on_button_pressed` method which handles the [Button.Pressed][textual
 
 ### Mounting
 
-While composing is the preferred way of adding widgets when your app starts it is sometimes necessary to add new widget(s) in response to events. You can do this by calling [mount()](textual.widget.Widget.mount) which will add a new widget to the UI.
+While composing is the preferred way of adding widgets when your app starts it is sometimes necessary to add new widget(s) in response to events. You can do this by calling [mount()][textual.widget.Widget.mount] which will add a new widget to the UI.
 
 Here's an app which adds the welcome widget in response to any key press:
 
@@ -114,7 +114,7 @@ When you first run this you will get a blank screen. Press any key to add the we
 
 ### Exiting
 
-An app will run until you call [App.exit()](textual.app.App.exit) which will exit application mode and the [run](textual.app.App.run) method will return. If this is the last line in your code you will return to the command prompt.
+An app will run until you call [App.exit()][textual.app.App.exit] which will exit application mode and the [run][textual.app.App.run] method will return. If this is the last line in your code you will return to the command prompt.
 
 The exit method will also accept an optional positional value to be returned by `run()`. The following example uses this to return the `id` (identifier) of a clicked button.
 

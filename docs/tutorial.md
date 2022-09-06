@@ -68,8 +68,9 @@ def repeat(text: str, count: int) -> str:
     return text * count
 ```
 
-- Parameter types follow a colon. So `text: str` indicates that `text` requires a string and `count: int` means that `count` requires an integer.
-- Return types follow `->`. So `-> str:` indicates this method returns a string.
+Parameter types follow a colon. So `text: str` indicates that `text` requires a string and `count: int` means that `count` requires an integer.
+
+Return types follow `->`. So `-> str:` indicates this method returns a string.
 
 
 ## The App class
