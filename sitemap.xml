@@ -156,6 +156,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://www.textualize.io/guide/animator/</loc>
+         <lastmod>2022-09-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://www.textualize.io/guide/app/</loc>
          <lastmod>2022-09-06</lastmod>
          <changefreq>daily</changefreq>
@@ -252,6 +257,11 @@
     </url>
     <url>
          <loc>https://www.textualize.io/reference/message_pump/</loc>
+         <lastmod>2022-09-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://www.textualize.io/reference/reactive/</loc>
          <lastmod>2022-09-06</lastmod>
          <changefreq>daily</changefreq>
     </url>

@@ -516,6 +516,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -724,6 +726,26 @@
   
   <span class="md-ellipsis">
     Widgets
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/animator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animator
   </span>
   
 
@@ -948,8 +970,6 @@
       
         
       
-        
-      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -1038,26 +1058,6 @@
   
   <span class="md-ellipsis">
     DescendantFocus
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../events/enter/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    None
   </span>
   
 
@@ -2764,8 +2764,9 @@
 
 <h1 id="layout">Layout<a class="headerlink" href="#layout" title="Permanent link">&para;</a></h1>
 <p>The <code>layout</code> property defines how a widget arranges its children.</p>
+<p>See <a href="../../guide/layout/">layout</a> guide for more information.</p>
 <h2 id="syntax">Syntax<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>layout: [vertical|horizontal|center];
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>layout: [center|grid|horizontal|vertical];
 </code></pre></div>
 <h3 id="values">Values<a class="headerlink" href="#values" title="Permanent link">&para;</a></h3>
 <table>
@@ -2777,16 +2778,20 @@
 </thead>
 <tbody>
 <tr>
-<td><code>vertical</code> (default)</td>
-<td>Child widgets will be arranged along the vertical axis, from top to bottom.</td>
+<td><code>center</code></td>
+<td>A single child widget will be placed in the center.</td>
+</tr>
+<tr>
+<td><code>grid</code></td>
+<td>Child widgets will be arranged in a grid.</td>
 </tr>
 <tr>
 <td><code>horizontal</code></td>
 <td>Child widgets will be arranged along the horizontal axis, from left to right.</td>
 </tr>
 <tr>
-<td><code>center</code></td>
-<td>A single child widget will be placed in the center.</td>
+<td><code>vertical</code> (default)</td>
+<td>Child widgets will be arranged along the vertical axis, from top to bottom.</td>
 </tr>
 </tbody>
 </table>

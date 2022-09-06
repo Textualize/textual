@@ -518,6 +518,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
@@ -713,9 +715,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#typing" class="md-nav__link">
+  <a href="#return-type" class="md-nav__link">
     <span class="md-ellipsis">
-      Typing
+      Return type
     </span>
   </a>
   
@@ -895,6 +897,26 @@
   
   <span class="md-ellipsis">
     Widgets
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../animator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animator
   </span>
   
 
@@ -1119,8 +1141,6 @@
       
         
       
-        
-      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -1209,26 +1229,6 @@
   
   <span class="md-ellipsis">
     DescendantFocus
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../events/enter/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    None
   </span>
   
 
@@ -2862,9 +2862,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#typing" class="md-nav__link">
+  <a href="#return-type" class="md-nav__link">
     <span class="md-ellipsis">
-      Typing
+      Return type
     </span>
   </a>
   
@@ -3849,7 +3849,7 @@
 </svg>
 </p>
 <p>Clicking either of those buttons will exit the app, and the <code>run()</code> method will return either <code>"yes"</code> or <code>"no"</code> depending on button clicked.</p>
-<h4 id="typing">Typing<a class="headerlink" href="#typing" title="Permanent link">&para;</a></h4>
+<h4 id="return-type">Return type<a class="headerlink" href="#return-type" title="Permanent link">&para;</a></h4>
 <p>You may have noticed that we subclassed <code>App[str]</code> rather than the usual <code>App</code>.</p>
 <div class="highlight"><span class="filename">question01.py</span><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span><span class="p">,</span> <span class="n">Button</span>
@@ -3870,7 +3870,8 @@
 <a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>    <span class="n">reply</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 <a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
 </code></pre></div>
-<p>The addition of <code>[str]</code> tells Mypy that <code>run()</code> is expected to return a string. It may also return <code>None</code> if <code>sys.exit()</code> is called without a return value, so the return type of <code>run</code> will be <code>str | None</code>.</p>
+<p>The addition of <code>[str]</code> tells Mypy that <code>run()</code> is expected to return a string. It may also return <code>None</code> if <a class="autorefs autorefs-internal" href="../../reference/app/#textual.app.App.exit">App.exit()</a> is called without a return value, so the return type of <code>run</code> will be <code>str | None</code>.</p>
+<p>You can change the type to match the values you intend to pass to App.exit()][textual.app.App.exit].</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Type annotations are entirely optional (but recommended) with Textual.</p>
