@@ -338,7 +338,7 @@ If you run "stopwatch04.py" now you will be able to toggle between the two state
 
 A recurring theme in Textual is that you rarely need to explicitly update a widget. It is possible: you can call [`refresh()`][textual.widget.Widget.refresh] to display new data. However, Textual prefers to do this automatically via _reactive_ attributes.
 
-You can declare a reactive attribute with `textual.reactive.Reactive`. Let's use this feature to create a timer that displays elapsed time and keeps it updated.
+You can declare a reactive attribute with [Reactive][textual.reactive.Reactive]. Let's use this feature to create a timer that displays elapsed time and keeps it updated.
 
 ```python title="stopwatch04.py" hl_lines="1 5 12-27"
 --8<-- "docs/examples/tutorial/stopwatch05.py"
