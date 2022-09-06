@@ -222,6 +222,7 @@ class Compositor:
             for y in range(region_y, region_y + height):
                 setdefault(y, []).append(span)
 
+        slice_remaining = slice(1, None)
         for y, ranges in sorted(inline_ranges.items()):
             if len(ranges) == 1:
                 # Special case of 1 span
@@ -229,7 +230,7 @@ class Compositor:
             else:
                 ranges.sort()
                 x1, x2 = ranges[0]
-                for next_x1, next_x2 in ranges[1:]:
+                for next_x1, next_x2 in ranges[slice_remaining]:
                     if next_x1 <= x2:
                         if next_x2 > x2:
                             x2 = next_x2
