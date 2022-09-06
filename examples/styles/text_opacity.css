@@ -1,0 +1,25 @@
+#zero-opacity {
+    text-opacity: 0%;
+}
+
+#quarter-opacity {
+    text-opacity: 25%;
+}
+
+#half-opacity {
+    text-opacity: 50%;
+}
+
+#three-quarter-opacity {
+    text-opacity: 75%;
+}
+
+#full-opacity {
+    text-opacity: 100%;
+}
+
+Static {
+    height: 1fr;
+    text-align: center;
+    text-style: bold;
+}

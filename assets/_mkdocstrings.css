@@ -1,0 +1,36 @@
+
+/* Don't capitalize names. */
+h5.doc-heading {
+  text-transform: none !important;
+}
+
+/* Avoid breaking parameters name, etc. in table cells. */
+.doc-contents td code {
+  word-break: normal !important;
+}
+
+/* For pieces of Markdown rendered in table cells. */
+.doc-contents td p {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Max width for docstring sections tables. */
+.doc .md-typeset__table,
+.doc .md-typeset__table table {
+  display: table !important;
+  width: 100%;
+}
+.doc .md-typeset__table tr {
+  display: table-row;
+}
+
+/* Avoid line breaks in rendered fields. */
+.field-body p {
+  display: inline;
+}
+
+/* Defaults in Spacy table style. */
+.doc-param-default {
+  float: right;
+}

@@ -1,0 +1,24 @@
+#one {
+  text-align: left;
+  background: lightblue;
+
+}
+
+#two {
+  text-align: center;
+  background: indianred;
+}
+
+#three {
+  text-align: right;
+  background: palegreen;
+}
+
+#four {
+  text-align: justify;
+  background: palevioletred;
+}
+
+Static {
+  padding: 1;
+}
