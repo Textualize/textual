@@ -6,6 +6,7 @@ nav:
   - "getting_started.md"
   - "tutorial.md"
   - Guide:
+    - "guide/index.md"
     - "guide/devtools.md"
     - "guide/app.md"
     - "guide/styles.md"
@@ -17,11 +18,12 @@ nav:
     - "guide/widgets.md"
     - "guide/screens.md"
   - How to:
+    - "how-to/index.md"
     - "how-to/animation.md"
     - "how-to/mouse-and-keyboard.md"
-    - "how-to/scroll.md"
-  - "actions.md"
+    - "how-to/scroll.md"  
   - Events:
+    - "events/index.md"
     - "events/blur.md"
     - "events/descendant_blur.md"
     - "events/descendant_focus.md"
@@ -47,6 +49,7 @@ nav:
     - "events/screen_suspend.md"
     - "events/show.md"
   - Styles:
+    - "styles/index.md"
     - "styles/background.md"
     - "styles/border.md"
     - "styles/box_sizing.md"
@@ -75,6 +78,7 @@ nav:
     - "styles/visibility.md"
     - "styles/width.md"
   - Widgets: 
+    - "widgets/index.md"
     - "widgets/button.md"
     - "widgets/data_table.md"
     - "widgets/footer.md"
@@ -82,6 +86,7 @@ nav:
     - "widgets/static.md"
     - "widgets/tree_control.md"
   - Reference:
+    - "reference/index.md"
     - "reference/app.md"
     - "reference/button.md"
     - "reference/color.md"
@@ -128,8 +133,9 @@ markdown_extensions:
 theme:
   name: material
   custom_dir: custom_theme
-  # features:
-  #   - navigation.tabs
+  features:
+    - navigation.tabs
+    - navigation.indexes
   palette:
   - media: "(prefers-color-scheme: light)"
     scheme: default
