@@ -30,11 +30,6 @@ class WidgetPlacement(NamedTuple):
     order: int = 0
     fixed: bool = False
 
-    @property
-    def margin_region(self) -> Region:
-        """Get region with margin applied."""
-        return self.region.grow(self.margin)
-
 
 class Layout(ABC):
     """Responsible for arranging Widgets in a view and rendering them."""
@@ -96,5 +91,8 @@ class Layout(ABC):
             height = container.height
         else:
             placements, *_ = widget._arrange(Size(width, container.height))
-            height = max(placement.margin_region.bottom for placement in placements)
+            height = max(
+                placement.region.bottom + placement.margin.bottom
+                for placement in placements
+            )
         return height
