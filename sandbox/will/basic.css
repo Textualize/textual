@@ -30,7 +30,7 @@ App > Screen {
   overflow-y: auto;
   height: 20;
   margin: 1 2;
-  background: $panel;
+  background: $surface;
   padding: 1 2;
 }
 

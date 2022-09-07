@@ -11,9 +11,8 @@ from rich.text import Text
 
 from .. import events
 from ..message import Message
-from ..reactive import Reactive
 from .._types import MessageTarget
-from ._tree_control import TreeControl, TreeClick, TreeNode, NodeID
+from ._tree_control import TreeControl, TreeNode
 
 
 @dataclass
@@ -91,6 +90,9 @@ class DirectoryTree(TreeControl[DirEntry]):
         icon_label.apply_meta(meta)
         return icon_label
 
+    def on_styles_updated(self) -> None:
+        self.render_tree_label.cache_clear()
+
     def on_mount(self) -> None:
         self.call_later(self.load_directory, self.root)
 
@@ -105,7 +107,9 @@ class DirectoryTree(TreeControl[DirEntry]):
         node.expand()
         self.refresh(layout=True)
 
-    async def on_tree_control_node_selected(self, message: TreeClick[DirEntry]) -> None:
+    async def on_tree_control_node_selected(
+        self, message: TreeControl.NodeSelected[DirEntry]
+    ) -> None:
         dir_entry = message.node.data
         if not dir_entry.is_dir:
             await self.emit(FileClick(self, dir_entry.path))

@@ -5,6 +5,7 @@ from typing import ClassVar, Generic, Iterator, NewType, TypeVar
 
 import rich.repr
 from rich.console import RenderableType
+from rich.style import Style
 from rich.text import Text, TextType
 from rich.tree import Tree
 
@@ -21,6 +22,7 @@ NodeID = NewType("NodeID", int)
 
 
 NodeDataType = TypeVar("NodeDataType")
+EventNodeDataType = TypeVar("EventNodeDataType")
 
 
 @rich.repr.auto
@@ -159,21 +161,11 @@ class TreeNode(Generic[NodeDataType]):
         return self._control.render_node(self)
 
 
-@rich.repr.auto
-class TreeClick(Generic[NodeDataType], Message, bubble=True):
-    def __init__(self, sender: MessageTarget, node: TreeNode[NodeDataType]) -> None:
-        self.node = node
-        super().__init__(sender)
-
-    def __rich_repr__(self) -> rich.repr.Result:
-        yield "node", self.node
-
-
 class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
     DEFAULT_CSS = """
     TreeControl {
-        background: $panel;
-        color: $text-panel;
+        background: $surface;
+        color: $text-surface;
         height: auto;
         width: 100%;
     }
@@ -183,7 +175,13 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
     }
 
     TreeControl > .tree--guides-highlight {
-        color: $secondary;
+        color: $success;
+        text-style: uu;
+        
+    }
+
+    TreeControl > .tree--guides-cursor {
+        color: $secondary;        
         text-style: bold;
     }
 
@@ -201,12 +199,15 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "tree--guides",
         "tree--guides-highlight",
+        "tree--guides-cursor",
         "tree--labels",
         "tree--cursor",
     }
 
-    class NodeSelected(Message, bubble=False):
-        def __init__(self, sender: MessageTarget, node: TreeNode[NodeDataType]) -> None:
+    class NodeSelected(Generic[EventNodeDataType], Message, bubble=False):
+        def __init__(
+            self, sender: MessageTarget, node: TreeNode[EventNodeDataType]
+        ) -> None:
             self.node = node
             super().__init__(sender)
 
@@ -238,32 +239,9 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
     cursor_line: Reactive[int] = Reactive(0)
     show_cursor: Reactive[bool] = Reactive(False)
 
-    def watch_show_cursor(self, value: bool) -> None:
-        line_region = Region(0, self.cursor_line, self.size.width, 1)
-        self.emit_no_wait(messages.ScrollToRegion(self, line_region))
-
     def watch_cursor_line(self, value: int) -> None:
         line_region = Region(0, value, self.size.width, 1)
         self.emit_no_wait(messages.ScrollToRegion(self, line_region))
-
-    def watch_hover_node(self, previous_hover_node: NodeID, hover_node: NodeID) -> None:
-        previous_hover = self.nodes.get(previous_hover_node)
-        if previous_hover is not None:
-            previous_hover._tree.guide_style = self._guide_style
-        hover = self.nodes.get(hover_node)
-        if hover is not None:
-            hover._tree.guide_style = self._highlight_guide_style
-        self.refresh()
-
-    def watch_cursor(self, previous_cursor_node: NodeID, cursor_node: NodeID) -> None:
-
-        previous_cursor = self.nodes.get(previous_cursor_node)
-        if previous_cursor is not None:
-            previous_cursor._tree.guide_style = self._guide_style
-        cursor = self.nodes.get(cursor_node)
-        if cursor is not None:
-            cursor._tree.guide_style = self._highlight_guide_style
-        self.refresh()
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         def get_size(tree: Tree) -> int:
@@ -321,6 +299,23 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
         return None
 
     def render(self) -> RenderableType:
+        guide_style = self._guide_style
+
+        def update_guide_style(tree: Tree) -> None:
+            tree.guide_style = guide_style
+            for child in tree.children:
+                if child.expanded:
+                    update_guide_style(child)
+
+        update_guide_style(self._tree)
+        if self.hover_node is not None:
+            hover = self.nodes.get(self.hover_node)
+            if hover is not None:
+                hover._tree.guide_style = self._highlight_guide_style
+        if self.cursor is not None and self.show_cursor:
+            cursor = self.nodes.get(self.cursor)
+            if cursor is not None:
+                cursor._tree.guide_style = self._cursor_guide_style
         return self._tree
 
     def render_node(self, node: TreeNode[NodeDataType]) -> RenderableType:
@@ -343,11 +338,32 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
         self.post_message_no_wait(self.NodeSelected(self, node))
 
     def on_mount(self) -> None:
-        self._guide_style = self.get_component_styles("tree--guides").rich_style
-        self._highlight_guide_style = self.get_component_styles(
-            "tree--guides-highlight"
-        ).rich_style
         self._tree.guide_style = self._guide_style
+
+    @property
+    def _guide_style(self) -> Style:
+        return self.get_component_styles("tree--guides").rich_style
+
+    @property
+    def _highlight_guide_style(self) -> Style:
+        return self.get_component_styles("tree--guides-highlight").rich_style
+
+    @property
+    def _cursor_guide_style(self) -> Style:
+        return self.get_component_styles("tree--guides-cursor").rich_style
+
+    def on_styles_updated(self) -> None:
+        guide_style = self._guide_style
+
+        def update_guide_style(tree: Tree) -> None:
+            tree.guide_style = guide_style
+            for child in tree.children:
+                if child.expanded:
+                    update_guide_style(child)
+
+        update_guide_style(self._tree)
+        self._render_cache = None
+        self.refresh()
 
     def on_mouse_move(self, event: events.MouseMove) -> None:
         self.hover_node = event.style.meta.get("tree_node")
