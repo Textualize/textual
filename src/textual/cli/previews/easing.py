@@ -10,7 +10,8 @@ from textual.reactive import Reactive
 from textual.scrollbar import ScrollBarRender
 from textual.widget import Widget
 from textual.widgets import Button, Static, Footer
-from textual.widgets.text_input import TextWidgetBase, TextInput
+from textual.widgets import TextInput
+from textual.widgets._text_input import TextWidgetBase
 
 VIRTUAL_SIZE = 100
 WINDOW_SIZE = 10
