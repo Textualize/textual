@@ -9,3 +9,4 @@ from ._pretty import Pretty as Pretty
 from ._static import Static as Static
 from ._text_input import TextInput as TextInput
 from ._tree_control import TreeControl as TreeControl
+from ._welcome import Welcome as Welcome

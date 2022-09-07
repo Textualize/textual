@@ -9,18 +9,9 @@ import sys
 import warnings
 from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
-from pathlib import PurePath, Path
+from pathlib import Path, PurePath
 from time import perf_counter
-from typing import (
-    Any,
-    Generic,
-    Iterable,
-    Iterator,
-    TextIO,
-    Type,
-    TypeVar,
-    cast,
-)
+from typing import Any, Generator, Generic, Iterable, Iterator, Type, TypeVar, cast
 from weakref import WeakSet, WeakValueDictionary
 
 from ._ansi_sequences import SYNC_END, SYNC_START
@@ -42,8 +33,8 @@ from rich.traceback import Traceback
 
 from . import (
     Logger,
-    LogSeverity,
     LogGroup,
+    LogSeverity,
     LogVerbosity,
     actions,
     events,
@@ -71,7 +62,6 @@ from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
 from .widget import Widget
-
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
@@ -143,7 +133,6 @@ class App(Generic[ReturnType], DOMNode):
 
     Args:
         driver_class (Type[Driver] | None, optional): Driver class or ``None`` to auto-detect. Defaults to None.
-        log_verbosity (int, optional): Log verbosity from 0-3. Defaults to 1.
         title (str | None, optional): Title of the application. If ``None``, the title is set to the name of the ``App`` subclass. Defaults to ``None``.
         css_path (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
         watch_css (bool, optional): Watch CSS for changes. Defaults to False.
@@ -693,7 +682,9 @@ class App(Generic[ReturnType], DOMNode):
                 stylesheet.read(self.css_path)
                 stylesheet.parse()
                 elapsed = (perf_counter() - time) * 1000
-                self.log(f"<stylesheet> loaded {self.css_path!r} in {elapsed:.0f} ms")
+                self.log.system(
+                    f"<stylesheet> loaded {self.css_path!r} in {elapsed:.0f} ms"
+                )
             except Exception as error:
                 # TODO: Catch specific exceptions
                 self.log.error(error)
@@ -803,10 +794,10 @@ class App(Generic[ReturnType], DOMNode):
 
         """
         screen.post_message_no_wait(events.ScreenSuspend(self))
-        self.log(f"{screen} SUSPENDED")
+        self.log.system(f"{screen} SUSPENDED")
         if not self.is_screen_installed(screen) and screen not in self._screen_stack:
             screen.remove()
-            self.log(f"{screen} REMOVED")
+            self.log.system(f"{screen} REMOVED")
         return screen
 
     def push_screen(self, screen: Screen | str) -> None:
@@ -819,7 +810,7 @@ class App(Generic[ReturnType], DOMNode):
         next_screen = self.get_screen(screen)
         self._screen_stack.append(next_screen)
         self.screen.post_message_no_wait(events.ScreenResume(self))
-        self.log(f"{self.screen} is current (PUSHED)")
+        self.log.system(f"{self.screen} is current (PUSHED)")
 
     def switch_screen(self, screen: Screen | str) -> None:
         """Switch to a another screen by replacing the top of the screen stack with a new screen.
@@ -833,7 +824,7 @@ class App(Generic[ReturnType], DOMNode):
             next_screen = self.get_screen(screen)
             self._screen_stack.append(next_screen)
             self.screen.post_message_no_wait(events.ScreenResume(self))
-            self.log(f"{self.screen} is current (SWITCHED)")
+            self.log.system(f"{self.screen} is current (SWITCHED)")
 
     def install_screen(self, screen: Screen, name: str | None = None) -> str:
         """Install a screen.
@@ -859,7 +850,7 @@ class App(Generic[ReturnType], DOMNode):
             )
         self._installed_screens[name] = screen
         self.get_screen(name)  # Ensures screen is running
-        self.log(f"{screen} INSTALLED name={name!r}")
+        self.log.system(f"{screen} INSTALLED name={name!r}")
         return name
 
     def uninstall_screen(self, screen: Screen | str) -> str | None:
@@ -879,7 +870,7 @@ class App(Generic[ReturnType], DOMNode):
             if uninstall_screen in self._screen_stack:
                 raise ScreenStackError("Can't uninstall screen in screen stack")
             del self._installed_screens[screen]
-            self.log(f"{uninstall_screen} UNINSTALLED name={screen!r}")
+            self.log.system(f"{uninstall_screen} UNINSTALLED name={screen!r}")
             return screen
         else:
             if screen in self._screen_stack:
@@ -887,7 +878,7 @@ class App(Generic[ReturnType], DOMNode):
             for name, installed_screen in self._installed_screens.items():
                 if installed_screen is screen:
                     self._installed_screens.pop(name)
-                    self.log(f"{screen} UNINSTALLED name={name!r}")
+                    self.log.system(f"{screen} UNINSTALLED name={name!r}")
                     return name
         return None
 
@@ -905,7 +896,7 @@ class App(Generic[ReturnType], DOMNode):
         previous_screen = self._replace_screen(screen_stack.pop())
         self.screen._screen_resized(self.size)
         self.screen.post_message_no_wait(events.ScreenResume(self))
-        self.log(f"{self.screen} is active")
+        self.log.system(f"{self.screen} is active")
         return previous_screen
 
     def set_focus(self, widget: Widget | None) -> None:
@@ -1045,15 +1036,15 @@ class App(Generic[ReturnType], DOMNode):
         if self.devtools_enabled:
             try:
                 await self.devtools.connect()
-                self.log(f"Connected to devtools ( {self.devtools.url} )")
+                self.log.system(f"Connected to devtools ( {self.devtools.url} )")
             except DevtoolsConnectionError:
-                self.log(f"Couldn't connect to devtools ( {self.devtools.url} )")
+                self.log.system(f"Couldn't connect to devtools ( {self.devtools.url} )")
 
-        self.log("---")
+        self.log.system("---")
 
-        self.log(driver=self.driver_class)
-        self.log(loop=asyncio.get_running_loop())
-        self.log(features=self.features)
+        self.log.system(driver=self.driver_class)
+        self.log.system(loop=asyncio.get_running_loop())
+        self.log.system(features=self.features)
 
         try:
             if self.css_path is not None:
@@ -1079,7 +1070,7 @@ class App(Generic[ReturnType], DOMNode):
 
         if self.css_monitor:
             self.set_interval(0.25, self.css_monitor, name="css monitor")
-            self.log("[b green]STARTED[/]", self.css_monitor)
+            self.log.system("[b green]STARTED[/]", self.css_monitor)
 
         process_messages = super()._process_messages
 
@@ -1188,9 +1179,7 @@ class App(Generic[ReturnType], DOMNode):
             parent (Widget): Parent Widget
         """
         if not anon_widgets and not widgets:
-            raise AppError(
-                "Nothing to mount, did you forget parent as first positional arg?"
-            )
+            return
         name_widgets: Iterable[tuple[str | None, Widget]]
         name_widgets = [*((None, widget) for widget in anon_widgets), *widgets.items()]
         apply_stylesheet = self.stylesheet.apply

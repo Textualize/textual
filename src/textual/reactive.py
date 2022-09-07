@@ -1,19 +1,10 @@
 from __future__ import annotations
 
-from inspect import isawaitable
 from functools import partial
-from typing import (
-    Any,
-    Callable,
-    Generic,
-    Type,
-    Union,
-    TypeVar,
-    TYPE_CHECKING,
-)
+from inspect import isawaitable
+from typing import TYPE_CHECKING, Any, Callable, Generic, Type, TypeVar, Union
 
 from . import events
-
 from ._callback import count_parameters, invoke
 from ._types import MessageTarget
 
@@ -31,7 +22,15 @@ T = TypeVar("T")
 
 
 class Reactive(Generic[ReactiveType]):
-    """Reactive descriptor."""
+    """Reactive descriptor.
+
+    Args:
+        default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
+        layout (bool, optional): Perform a layout on change. Defaults to False.
+        repaint (bool, optional): Perform a repaint on change. Defaults to True.
+        init (bool, optional): Call watchers on initialize (post mount). Defaults to False.
+
+    """
 
     def __init__(
         self,
@@ -41,14 +40,6 @@ class Reactive(Generic[ReactiveType]):
         repaint: bool = True,
         init: bool = False,
     ) -> None:
-        """Create a Reactive Widget attribute,
-
-        Args:
-            default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
-            layout (bool, optional): Perform a layout on change. Defaults to False.
-            repaint (bool, optional): Perform a repaint on change. Defaults to True.
-            init (bool, optional): Call watchers on initialize (post mount). Defaults to False.
-        """
         self._default = default
         self._layout = layout
         self._repaint = repaint
@@ -138,12 +129,12 @@ class Reactive(Generic[ReactiveType]):
         if current_value != value or first_set:
             setattr(obj, f"__first_set_{self.internal_name}", False)
             setattr(obj, self.internal_name, value)
-            self.check_watchers(obj, name, current_value)
+            self._check_watchers(obj, name, current_value)
             if self._layout or self._repaint:
                 obj.refresh(repaint=self._repaint, layout=self._layout)
 
     @classmethod
-    def check_watchers(cls, obj: Reactable, name: str, old_value: Any) -> None:
+    def _check_watchers(cls, obj: Reactable, name: str, old_value: Any) -> None:
 
         internal_name = f"_reactive_{name}"
         value = getattr(obj, internal_name)
@@ -158,7 +149,7 @@ class Reactive(Generic[ReactiveType]):
                 watch_result = watch_function(value)
             if isawaitable(watch_result):
                 await watch_result
-            await Reactive.compute(obj)
+            await Reactive._compute(obj)
 
         watch_function = getattr(obj, f"watch_{name}", None)
         if callable(watch_function):
@@ -182,7 +173,7 @@ class Reactive(Generic[ReactiveType]):
             )
 
     @classmethod
-    async def compute(cls, obj: Reactable) -> None:
+    async def _compute(cls, obj: Reactable) -> None:
         _rich_traceback_guard = True
         computes = getattr(obj, "__computes", [])
         for compute in computes:
@@ -203,4 +194,4 @@ def watch(
         setattr(obj, watcher_name, set())
     watchers = getattr(obj, watcher_name)
     watchers.add(callback)
-    Reactive.check_watchers(obj, attribute_name, current_value)
+    Reactive._check_watchers(obj, attribute_name, current_value)

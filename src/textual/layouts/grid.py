@@ -12,21 +12,21 @@ if TYPE_CHECKING:
     from ..widget import Widget
 
 
-class TableLayout(Layout):
-    """Used to layout Widgets in to a table."""
+class GridLayout(Layout):
+    """Used to layout Widgets in to a grid."""
 
-    name = "table"
+    name = "grid"
 
     def arrange(
         self, parent: Widget, children: list[Widget], size: Size
     ) -> ArrangeResult:
         styles = parent.styles
-        row_scalars = styles.table_rows or [Scalar.parse("1fr")]
-        column_scalars = styles.table_columns or [Scalar.parse("1fr")]
-        gutter_horizontal = styles.table_gutter_horizontal
-        gutter_vertical = styles.table_gutter_vertical
-        table_size_columns = max(1, styles.table_size_columns)
-        table_size_rows = styles.table_size_rows
+        row_scalars = styles.grid_rows or [Scalar.parse("1fr")]
+        column_scalars = styles.grid_columns or [Scalar.parse("1fr")]
+        gutter_horizontal = styles.grid_gutter_horizontal
+        gutter_vertical = styles.grid_gutter_vertical
+        table_size_columns = max(1, styles.grid_size_columns)
+        table_size_rows = styles.grid_size_rows
         viewport = parent.screen.size
 
         def cell_coords(column_count: int) -> Iterable[tuple[int, int]]:

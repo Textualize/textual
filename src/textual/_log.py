@@ -11,6 +11,7 @@ class LogGroup(Enum):
     WARNING = 4
     ERROR = 5
     PRINT = 6
+    SYSTEM = 7
 
 
 class LogVerbosity(Enum):
