@@ -10,7 +10,7 @@ from rich.style import Style, StyleType
 
 from . import events
 from ._types import MessageTarget
-from .geometry import Offset, clamp
+from .geometry import Offset
 from .message import Message
 from .reactive import Reactive
 from .renderables.blank import Blank
