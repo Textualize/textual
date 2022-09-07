@@ -107,6 +107,6 @@ def _try_float(string: str) -> float | None:
         return None
 
 
-app = EasingApp(css_path="easing.css", watch_css=True)
+app = EasingApp(css_path="easing.css")
 if __name__ == "__main__":
     app.run()
