@@ -84,6 +84,7 @@ nav:
     - "widgets/footer.md"
     - "widgets/header.md"
     - "widgets/static.md"
+    - "widgets/text_input.md"
     - "widgets/tree_control.md"
   - Reference:
     - "reference/index.md"
