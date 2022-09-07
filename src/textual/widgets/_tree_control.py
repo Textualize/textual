@@ -8,7 +8,7 @@ from rich.console import RenderableType
 from rich.text import Text, TextType
 from rich.tree import Tree
 
-from ..geometry import Region
+from ..geometry import Region, Size
 from .. import events
 from ..reactive import Reactive
 from .._types import MessageTarget
@@ -264,6 +264,15 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
         if cursor is not None:
             cursor._tree.guide_style = self._highlight_guide_style
         self.refresh()
+
+    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        def get_size(tree: Tree) -> int:
+            return 1 + sum(
+                get_size(child) if child.expanded else 1 for child in tree.children
+            )
+
+        size = get_size(self._tree)
+        return size
 
     def add(
         self,
