@@ -169,7 +169,7 @@ class TreeClick(Generic[NodeDataType], Message, bubble=True):
 
 
 class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
-    CSS = """
+    DEFAULT_CSS = """
     TreeControl {
         background: $panel;
         color: $text-panel;

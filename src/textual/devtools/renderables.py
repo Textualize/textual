@@ -18,15 +18,18 @@ from rich.markup import escape
 from rich.rule import Rule
 from rich.segment import Segment, Segments
 from rich.style import Style
+from rich.styled import Styled
 from rich.table import Table
 from rich.text import Text
-
-from textual._border import Border
+from textual._log import LogGroup
 
 DevConsoleMessageLevel = Literal["info", "warning", "error"]
 
 
 class DevConsoleHeader:
+    def __init__(self, verbose: bool = False) -> None:
+        self.verbose = verbose
+
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
@@ -35,6 +38,8 @@ class DevConsoleHeader:
             "[magenta]Run a Textual app with [reverse]textual run --dev my_app.py[/] to connect.\n"
             "[magenta]Press [reverse]Ctrl+C[/] to quit."
         )
+        if self.verbose:
+            preamble.append(Text.from_markup("\n[cyan]Verbose logs enabled"))
         render_options = options.update(width=options.max_width - 4)
         lines = console.render_lines(preamble, render_options)
 
@@ -63,11 +68,17 @@ class DevConsoleLog:
         path: str,
         line_number: int,
         unix_timestamp: int,
+        group: int,
+        verbosity: int,
+        severity: int,
     ) -> None:
         self.segments = segments
         self.path = path
         self.line_number = line_number
         self.unix_timestamp = unix_timestamp
+        self.group = group
+        self.verbosity = verbosity
+        self.severity = severity
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -77,14 +88,26 @@ class DevConsoleLog:
 
         file_link = escape(f"file://{Path(self.path).absolute()}")
         file_and_line = escape(f"{Path(self.path).name}:{self.line_number}")
+        group = LogGroup(self.group).name
+        time = local_time.time()
+        message = Text(
+            f":warning-emoji:  [{time}] {group}"
+            if self.severity > 0
+            else f"[{time}] {group}"
+        )
+        message.stylize("dim")
+
         table.add_row(
-            f"[dim]{local_time.time()}",
+            message,
             Align.right(
                 Text(f"{file_and_line}", style=Style(dim=True, link=file_link))
             ),
         )
         yield table
-        yield Segments(self.segments)
+        if group == "PRINT":
+            yield Styled(Segments(self.segments), "bold")
+        else:
+            yield Segments(self.segments)
 
 
 class DevConsoleNotice:

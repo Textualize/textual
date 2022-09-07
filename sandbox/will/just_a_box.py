@@ -10,7 +10,7 @@ from textual.widget import Widget
 
 
 class Box(Widget, can_focus=True):
-    CSS = "#box {background: blue;}"
+    DEFAULT_CSS = "#box {background: blue;}"
 
     def render(self) -> RenderableType:
         return Panel("Box")

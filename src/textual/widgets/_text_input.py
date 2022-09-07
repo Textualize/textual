@@ -40,12 +40,9 @@ class TextWidgetBase(Widget):
         key = event.key
         if key == "escape":
             return
-        elif key == "space":
-            key = " "
-
         changed = False
-        if event.is_printable:
-            changed = self._editor.insert(key)
+        if event.char is not None and event.is_printable:
+            changed = self._editor.insert(event.char)
         elif key == "ctrl+h":
             changed = self._editor.delete_back()
         elif key == "ctrl+d":
@@ -59,10 +56,10 @@ class TextWidgetBase(Widget):
         elif key == "end" or key == "ctrl+e":
             self._editor.cursor_text_end()
 
+        self.refresh(layout=True)
+
         if changed:
             self.post_message_no_wait(self.Changed(self, value=self._editor.content))
-
-        self.refresh(layout=True)
 
     def _apply_cursor_to_text(self, display_text: Text, index: int) -> Text:
         if index < 0:
@@ -112,12 +109,12 @@ class TextInput(TextWidgetBase, can_focus=True):
             suggestion will be displayed as dim text similar to suggestion text in the zsh or fish shells.
     """
 
-    CSS = """
+    DEFAULT_CSS = """
     TextInput {
         width: auto;
-        background: $surface;
         height: 3;
-        padding: 0 1;
+        padding: 1;
+        background: $surface;
         content-align: left middle;
     }
     """
@@ -165,11 +162,15 @@ class TextInput(TextWidgetBase, can_focus=True):
         self._editor.cursor_text_end()
         self.refresh()
 
-    def on_resize(self, event: events.Resize) -> None:
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        # TODO: Why does this need +2 ?
+        return min(cell_len(self._editor.content) + 2, container.width)
+
+    def _on_resize(self, event: events.Resize) -> None:
         # Ensure the cursor remains visible when the widget is resized
         self._reset_visible_range()
 
-    def on_click(self, event: events.Click) -> None:
+    async def _on_click(self, event: events.Click) -> None:
         """When the user clicks on the text input, the cursor moves to the
         character that was clicked on. Double-width characters makes this more
         difficult."""
@@ -198,7 +199,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         self._editor.cursor_index = new_cursor_index
         self.refresh()
 
-    def on_paste(self, event: events.Paste) -> None:
+    def _on_paste(self, event: events.Paste) -> None:
         """Handle Paste event by stripping newlines from the text, and inserting
         the text at the cursor position, sliding the visible window if required."""
         text = "".join(event.text.splitlines())
@@ -288,7 +289,7 @@ class TextInput(TextWidgetBase, can_focus=True):
         """True if the cursor is at the right edge of the content area"""
         return self._visible_content_to_cursor_cell_len == self.content_region.width
 
-    def on_key(self, event: events.Key) -> None:
+    def _on_key(self, event: events.Key) -> None:
         key = event.key
         if key in self.STOP_PROPAGATE:
             event.stop()
@@ -417,7 +418,7 @@ class TextInput(TextWidgetBase, can_focus=True):
 
 
 class TextArea(Widget):
-    CSS = """
+    DEFAULT_CSS = """
     TextArea { overflow: auto auto; height: 5; background: $primary-darken-1; }
 """
 
@@ -428,7 +429,7 @@ class TextArea(Widget):
 class TextAreaChild(TextWidgetBase, can_focus=True):
     # TODO: Not nearly ready for prime-time, but it exists to help
     #  model the superclass.
-    CSS = "TextAreaChild { height: auto; background: $primary-darken-1; }"
+    DEFAULT_CSS = "TextAreaChild { height: auto; background: $primary-darken-1; }"
     STOP_PROPAGATE = {"tab", "shift+tab"}
 
     def render(self) -> RenderableType:
@@ -446,7 +447,7 @@ class TextAreaChild(TextWidgetBase, can_focus=True):
     ) -> int:
         return self._editor.content.count("\n") + 1 + 2
 
-    def on_key(self, event: events.Key) -> None:
+    def _on_key(self, event: events.Key) -> None:
         if event.key in self.STOP_PROPAGATE:
             event.stop()
 
@@ -457,5 +458,5 @@ class TextAreaChild(TextWidgetBase, can_focus=True):
         elif event.key == "escape":
             self.app.focused = None
 
-    def on_focus(self, event: events.Focus) -> None:
+    def _on_focus(self, event: events.Focus) -> None:
         self.refresh(layout=True)

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 @rich.repr.auto
-class Update(Message, verbosity=3):
+class Update(Message, verbose=True):
     def __init__(self, sender: MessagePump, widget: Widget):
         super().__init__(sender)
         self.widget = widget
@@ -33,13 +33,13 @@ class Update(Message, verbosity=3):
 
 
 @rich.repr.auto
-class Layout(Message, verbosity=3):
+class Layout(Message, verbose=True):
     def can_replace(self, message: Message) -> bool:
         return isinstance(message, Layout)
 
 
 @rich.repr.auto
-class InvokeLater(Message, verbosity=3):
+class InvokeLater(Message, verbose=True):
     def __init__(self, sender: MessagePump, callback: CallbackType) -> None:
         self.callback = callback
         super().__init__(sender)

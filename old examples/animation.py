@@ -35,4 +35,4 @@ class SmoothApp(App):
         # self.set_timer(10, lambda: self.action("quit"))
 
 
-SmoothApp.run(log_path="textual.log", log_verbosity=2)
+SmoothApp.run(log_path="textual.log")

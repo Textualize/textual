@@ -5,7 +5,7 @@ from textual.widgets import DirectoryTree
 
 
 class TreeApp(App):
-    CSS = """
+    DEFAULT_CSS = """
     Screen {
         overflow: auto;
 

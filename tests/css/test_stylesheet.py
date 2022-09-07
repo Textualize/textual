@@ -106,16 +106,18 @@ def test_stylesheet_apply_user_css_over_widget_css():
     user_css = ".a {color: red; tint: yellow;}"
 
     class MyWidget(Widget):
-        CSS = ".a {color: blue !important; background: lime;}"
+        DEFAULT_CSS = ".a {color: blue !important; background: lime;}"
 
     node = MyWidget()
     node.add_class("a")
 
     stylesheet = _make_user_stylesheet(user_css)
-    stylesheet.add_source(MyWidget.CSS, "widget.py:MyWidget", is_default_css=True)
+    stylesheet.add_source(
+        MyWidget.DEFAULT_CSS, "widget.py:MyWidget", is_default_css=True
+    )
     stylesheet.apply(node)
 
-    # The node is red because user CSS overrides Widget.CSS
+    # The node is red because user CSS overrides Widget.DEFAULT_CSS
     assert node.styles.color == Color(255, 0, 0)
     # The background colour defined in the Widget still applies, since user CSS doesn't override it
     assert node.styles.background == Color(0, 255, 0)

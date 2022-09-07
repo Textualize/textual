@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import inspect
-from io import TextIOWrapper
+
 from typing import TYPE_CHECKING, cast
-from textual.devtools.client import DevtoolsLog
+from .client import DevtoolsLog
+from .._log import LogGroup, LogVerbosity, LogSeverity
 
 if TYPE_CHECKING:
-    from textual.devtools.client import DevtoolsClient
+    from .devtools.client import DevtoolsClient
 
 
 class StdoutRedirector:
@@ -17,16 +18,13 @@ class StdoutRedirector:
     log file.
     """
 
-    def __init__(
-        self, devtools: DevtoolsClient, log_file: TextIOWrapper | None
-    ) -> None:
+    def __init__(self, devtools: DevtoolsClient) -> None:
         """
         Args:
             devtools (DevtoolsClient): The running Textual app instance.
             log_file (TextIOWrapper): The log file for the Textual App.
         """
         self.devtools = devtools
-        self.log_file = log_file
         self._buffer: list[DevtoolsLog] = []
 
     def write(self, string: str) -> None:
@@ -38,7 +36,7 @@ class StdoutRedirector:
             string (str): The string to write to the buffer.
         """
 
-        if not (self.devtools.is_connected or self.log_file is not None):
+        if not self.devtools.is_connected:
             return
 
         caller = inspect.stack()[1]
@@ -59,7 +57,6 @@ class StdoutRedirector:
         the devtools server and the log file. In the case of the devtools,
         where possible, log messages will be batched and sent as one.
         """
-        self._write_to_log_file()
         self._write_to_devtools()
         self._buffer.clear()
 
@@ -81,20 +78,6 @@ class StdoutRedirector:
         if log_batch:
             self._log_devtools_batched(log_batch)
 
-    def _write_to_log_file(self) -> None:
-        """Write the contents of the buffer to the log file."""
-        if not self.log_file:
-            return
-
-        try:
-            log_text = "".join(str(log.objects_or_string) for log in self._buffer)
-            self.log_file.write(log_text)
-            self.log_file.flush()
-        except OSError:
-            # An error writing to the log file should not be
-            # considered fatal.
-            pass
-
     def _log_devtools_batched(self, log_batch: list[DevtoolsLog]) -> None:
         """Write a single batch of logs to devtools. A batch means contiguous logs
         which have been written from the same line number and file path.
@@ -114,4 +97,9 @@ class StdoutRedirector:
         # that the log message content is a string. The cast below tells mypy this.
         batched_log = "".join(cast(str, log.objects_or_string) for log in log_batch)
         batched_log = batched_log.rstrip()
-        self.devtools.log(DevtoolsLog(batched_log, caller=log_batch[-1].caller))
+        self.devtools.log(
+            DevtoolsLog(batched_log, caller=log_batch[-1].caller),
+            LogGroup.PRINT,
+            LogVerbosity.NORMAL,
+            LogSeverity.NORMAL,
+        )

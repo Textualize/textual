@@ -1,31 +1,31 @@
-# Introduction
+# Tutorial
 
-Welcome to the Textual Introduction!
+Welcome to the Textual Tutorial!
 
-By the end of this page you should have a solid understanding of app development with Textual.
+By the end of this page you should have a solid understanding of app development with Textual. 
 
 !!! quote
 
-    This page goes in to more detail than you may expect from an introduction. I like documentation to have complete working examples and I wanted the first app to be realistic. 
+    I've always thought the secret sauce in making a popular framework is for it to be fun.
     
     &mdash; **Will McGugan** (creator of Rich and Textual)
 
 
 ## Stopwatch Application
 
-We're going to build a stopwatch application. It should show a list of stopwatches with a time display the user can start, stop, and reset. We also want the user to be able to add and remove stopwatches as required.
+We're going to build a stopwatch application. This application should show a list of stopwatches with a time display the user can start, stop, and reset. We also want the user to be able to add and remove stopwatches as required.
 
 This will be a simple yet **fully featured** app &mdash; you could distribute this app if you wanted to!
 
 Here's what the finished app will look like:
 
 
-```{.textual path="docs/examples/introduction/stopwatch.py" press="tab,enter,_,tab,enter,_,tab,_,enter,_,tab,enter,_,_"}
+```{.textual path="docs/examples/tutorial/stopwatch.py" press="tab,enter,_,tab,enter,_,tab,_,enter,_,tab,enter,_,_"}
 ```
 
 ### Get the code
 
-If you want to try the finished Stopwatch app and follow along with the code, first make sure you have [Textual installed](getting_started.md) and then check out the [Textual](https://github.com/Textualize/textual) GitHub repository:
+If you want to try the finished Stopwatch app and follow along with the code, first make sure you have [Textual installed](getting_started.md) then check out the [Textual](https://github.com/Textualize/textual) repository:
 
 === "HTTPS"
 
@@ -45,10 +45,10 @@ If you want to try the finished Stopwatch app and follow along with the code, fi
     gh repo clone Textualize/textual
     ```
 
-With the repository cloned, navigate to `docs/examples/introduction` and run `stopwatch.py`.
+With the repository cloned, navigate to `docs/examples/tutorial` and run `stopwatch.py`.
 
 ```bash
-cd textual/docs/examples/introduction
+cd textual/docs/examples/tutorial
 python stopwatch.py
 ```
 
@@ -58,7 +58,7 @@ python stopwatch.py
 
     Type hints are entirely optional in Textual. We've included them in the example code but it's up to you whether you add them to your own projects.
 
-We're a big fan of Python type hints at Textualize. If you haven't encountered type hinting, it's a way to express the types of your data, parameters, and return values. Type hinting allows tools like [Mypy](https://mypy.readthedocs.io/en/stable/) to catch potential bugs before your code runs.
+We're a big fan of Python type hints at Textualize. If you haven't encountered type hinting, it's a way to express the types of your data, parameters, and return values. Type hinting allows tools like [Mypy](https://mypy.readthedocs.io/en/stable/) to catch bugs before your code runs.
 
 The following function contains type hints:
 
@@ -68,8 +68,9 @@ def repeat(text: str, count: int) -> str:
     return text * count
 ```
 
-- Parameter types follow a colon. So `text: str` indicates that `text` requires a string and `count: int` means that `count` requires an integer.
-- Return types follow `->`. So `-> str:` indicates this method returns a string.
+Parameter types follow a colon. So `text: str` indicates that `text` requires a string and `count: int` means that `count` requires an integer.
+
+Return types follow `->`. So `-> str:` indicates this method returns a string.
 
 
 ## The App class
@@ -77,18 +78,18 @@ def repeat(text: str, count: int) -> str:
 The first step in building a Textual app is to import and extend the `App` class. Here's our basic app class with a few methods we will cover below.
 
 ```python title="stopwatch01.py" 
---8<-- "docs/examples/introduction/stopwatch01.py"
+--8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
 If you run this code, you should see something like the following:
 
 
-```{.textual path="docs/examples/introduction/stopwatch01.py"}
+```{.textual path="docs/examples/tutorial/stopwatch01.py"}
 ```
 
 Hit the ++d++ key to toggle dark mode.
 
-```{.textual path="docs/examples/introduction/stopwatch01.py" press="d" title="TimerApp + dark"}
+```{.textual path="docs/examples/tutorial/stopwatch01.py" press="d" title="TimerApp + dark"}
 ```
 
 Hit ++ctrl+c++ to exit the app and return to the command prompt.
@@ -98,27 +99,27 @@ Hit ++ctrl+c++ to exit the app and return to the command prompt.
 Let's examine stopwatch01.py in more detail.
 
 ```python title="stopwatch01.py" hl_lines="1 2"
---8<-- "docs/examples/introduction/stopwatch01.py"
+--8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
 The first line imports the Textual `App` class. The second line imports two builtin widgets: `Footer` which shows available keys and `Header` which shows a title and the current time.
 
-Widgets are re-usable components responsible for managing a part of the screen. We will cover how to build such widgets in this introduction.
+Widgets are re-usable components responsible for managing a part of the screen. We will cover how to build such widgets in this tutorial.
 
 
 ```python title="stopwatch01.py" hl_lines="5-19"
---8<-- "docs/examples/introduction/stopwatch01.py"
+--8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
 The App class is where most of the logic of Textual apps is written. It is responsible for loading configuration, setting up widgets, handling keys, and more.
 
 Currently, there are three methods in our stopwatch app.
 
--  **`compose()`** is where we construct a user interface with widgets. The `compose()` method may return a list of widgets, but it is generally easier to _yield_ them (making this method a generator). In the example code we yield instances of the widget classes we imported, i.e. the header and the footer.
+-  `compose()` is where we construct a user interface with widgets. The `compose()` method may return a list of widgets, but it is generally easier to _yield_ them (making this method a generator). In the example code we yield instances of the widget classes we imported, i.e. the header and the footer.
 
-- **`on_load()`** is an _event handler_ method. Event handlers are called by Textual in response to external events like keys and mouse movements, and internal events needed to manage your application. Event handler methods begin with `on_` followed by the name of the event (in lower case). Hence, `on_load` is called in response to the Load event which is sent just after the app starts. We're using this event to call `App.bind()` which connects a key to an _action_.
+- `on_load()` is an _event handler_ method. Event handlers are called by Textual in response to external events like keys and mouse movements, and internal events needed to manage your application. Event handler methods begin with `on_` followed by the name of the event (in lower case). Hence, `on_load` is called in response to the Load event which is sent just after the app starts. We're using this event to call `App.bind()` which connects a key to an _action_.
 
-- **`action_toggle_dark()`** defines an _action_ method. Actions are methods beginning with `action_` followed by the name of the action. The call to `bind()` in `on_load()` binds this the ++d++ key to this action. The body of this method flips the state of the `dark` Boolean to toggle dark mode.
+- `action_toggle_dark()` defines an _action_ method. Actions are methods beginning with `action_` followed by the name of the action. The call to `bind()` in `on_load()` binds this the ++d++ key to this action. The body of this method flips the state of the `dark` Boolean to toggle dark mode.
 
 !!! note
 
@@ -126,7 +127,7 @@ Currently, there are three methods in our stopwatch app.
 
 
 ```python title="stopwatch01.py" hl_lines="22-24"
---8<-- "docs/examples/introduction/stopwatch01.py"
+--8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
 The last few lines create an instance of the app at the module scope. Followed by a call to `run()` within a `__name__ == "__main__"` block. This is so that we could import `app` if we want to. Or we could run it with `python stopwatch01.py`. 
@@ -153,7 +154,7 @@ Textual has a builtin `Button` widget which takes care of the first three compon
 Let's add those to the app. Just a skeleton for now, we will add the rest of the features as we go.
 
 ```python title="stopwatch02.py" hl_lines="3 6-7 10-18 28"
---8<-- "docs/examples/introduction/stopwatch02.py"
+--8<-- "docs/examples/tutorial/stopwatch02.py"
 ```
 
 ### Extending widget classes
@@ -180,7 +181,7 @@ The new line in `Stopwatch.compose()` yields a single `Container` object which w
 
 Let's see what happens when we run "stopwatch02.py".
 
-```{.textual path="docs/examples/introduction/stopwatch02.py" title="stopwatch02.py"}
+```{.textual path="docs/examples/tutorial/stopwatch02.py" title="stopwatch02.py"}
 ```
 
 The elements of the stopwatch application are there. The buttons are clickable and you can scroll the container but it doesn't look like the sketch. This is because we have yet to apply any _styles_ to our new widgets.
@@ -204,18 +205,18 @@ While it's possible to set all styles for an app this way, it is rarely necessar
 Let's add a CSS file to our application.
 
 ```python title="stopwatch03.py" hl_lines="39"
---8<-- "docs/examples/introduction/stopwatch03.py"
+--8<-- "docs/examples/tutorial/stopwatch03.py"
 ```
 
 Adding the `css_path` attribute to the app constructor tells Textual to load the following file when it starts the app:
 
 ```sass title="stopwatch03.css" 
---8<-- "docs/examples/introduction/stopwatch03.css"
+--8<-- "docs/examples/tutorial/stopwatch03.css"
 ```
 
 If we run the app now, it will look *very* different.
 
-```{.textual path="docs/examples/introduction/stopwatch03.py" title="stopwatch03.py"}
+```{.textual path="docs/examples/tutorial/stopwatch03.py" title="stopwatch03.py"}
 ```
 
 This app looks much more like our sketch. Textual has read style information from `stopwatch03.css` and applied it to the widgets. 
@@ -295,7 +296,7 @@ We can accomplish this with a CSS _class_. Not to be confused with a Python clas
 Here's the new CSS:
 
 ```sass title="stopwatch04.css" hl_lines="33-53"
---8<-- "docs/examples/introduction/stopwatch04.css"
+--8<-- "docs/examples/tutorial/stopwatch04.css"
 ```
 
 These new rules are prefixed with `.started`. The `.` indicates that `.started` refers to a CSS class called "started". The new styles will be applied only to widgets that have this CSS class.
@@ -323,24 +324,24 @@ You can add and remove CSS classes with the `add_class()` and `remove_class()` m
 The following code adds an event handler for the `Button.Pressed` event.
 
 ```python title="stopwatch04.py" hl_lines="13-18"
---8<-- "docs/examples/introduction/stopwatch04.py"
+--8<-- "docs/examples/tutorial/stopwatch04.py"
 ```
 
 The `on_button_pressed` event handler is called when the user clicks a button. This method adds the "started" class when the "start" button was clicked, and removes the class when the "stop" button is clicked.
 
 If you run "stopwatch04.py" now you will be able to toggle between the two states by clicking the first button:
 
-```{.textual path="docs/examples/introduction/stopwatch04.py" title="stopwatch04.py" press="tab,tab,tab,enter"}
+```{.textual path="docs/examples/tutorial/stopwatch04.py" title="stopwatch04.py" press="tab,tab,tab,enter"}
 ```
 
 ## Reactive attributes
 
 A recurring theme in Textual is that you rarely need to explicitly update a widget. It is possible: you can call [`refresh()`][textual.widget.Widget.refresh] to display new data. However, Textual prefers to do this automatically via _reactive_ attributes.
 
-You can declare a reactive attribute with `textual.reactive.Reactive`. Let's use this feature to create a timer that displays elapsed time and keeps it updated.
+You can declare a reactive attribute with [Reactive][textual.reactive.Reactive]. Let's use this feature to create a timer that displays elapsed time and keeps it updated.
 
 ```python title="stopwatch04.py" hl_lines="1 5 12-27"
---8<-- "docs/examples/introduction/stopwatch05.py"
+--8<-- "docs/examples/tutorial/stopwatch05.py"
 ```
 
 We have added two reactive attributes: `start_time` will contain the time in seconds when the stopwatch was started, and `time` will contain the time to be displayed on the Stopwatch.
@@ -368,7 +369,7 @@ Because `watch_time` watches the `time` attribute, when we update `self.time` 60
 
 The end result is that the `Stopwatch` widgets show the time elapsed since the widget was created:
 
-```{.textual path="docs/examples/introduction/stopwatch05.py" title="stopwatch05.py"}
+```{.textual path="docs/examples/tutorial/stopwatch05.py" title="stopwatch05.py"}
 ```
 
 We've seen how we can update widgets with a timer, but we still need to wire up the buttons so we can operate Stopwatches independently.
@@ -379,7 +380,7 @@ We need to be able to start, stop, and reset each stopwatch independently. We ca
 
 
 ```python title="stopwatch06.py" hl_lines="14-44 50-61"
---8<-- "docs/examples/introduction/stopwatch06.py"
+--8<-- "docs/examples/tutorial/stopwatch06.py"
 ```
 
 Here's a summary of the changes made to `TimeDisplay`.
@@ -415,7 +416,7 @@ This code supplies missing features and makes our app useful. We've made the fol
 
 If you run stopwatch06.py you will be able to use the stopwatches independently.
 
-```{.textual path="docs/examples/introduction/stopwatch06.py" title="stopwatch06.py" press="tab,enter,_,_,tab,enter,_,tab"}
+```{.textual path="docs/examples/tutorial/stopwatch06.py" title="stopwatch06.py" press="tab,enter,_,_,tab,enter,_,tab"}
 ```
 
 The only remaining feature of the Stopwatch app left to implement is the ability to add and remove timers.
@@ -429,7 +430,7 @@ To add a new child widget call `mount()` on the parent. To remove a widget, call
 Let's use these to implement adding and removing stopwatches to our app.
 
 ```python title="stopwatch.py" hl_lines="83-84 86-90 92-96"
---8<-- "docs/examples/introduction/stopwatch.py"
+--8<-- "docs/examples/tutorial/stopwatch.py"
 ```
 
 We've added two new actions: `action_add_stopwatch` to add a new stopwatch, and `action_remove_stopwatch` to remove the last stopwatch. The `on_load` handler binds these actions to the ++a++ and ++r++ keys.
@@ -440,11 +441,11 @@ The `action_remove_stopwatch` calls `query` with a CSS selector of `"Stopwatch"`
 
 If you run `stopwatch.py` now you can add a new stopwatch with the ++a++ key and remove a stopwatch with ++r++.
 
-```{.textual path="docs/examples/introduction/stopwatch.py" press="d,a,a,a,a,a,a,a,tab,enter,_,_,_,_,tab,_"}
+```{.textual path="docs/examples/tutorial/stopwatch.py" press="d,a,a,a,a,a,a,a,tab,enter,_,_,_,_,tab,_"}
 ```
 
 ## What next?
 
-Congratulations on building your first Textual application! This introduction has covered a lot of ground. If you are the type that prefers to learn a framework by coding, feel free. You could tweak stopwatch.py or look through the examples.
+Congratulations on building your first Textual application! This tutorial has covered a lot of ground. If you are the type that prefers to learn a framework by coding, feel free. You could tweak stopwatch.py or look through the examples.
 
 Read the guide for the full details on how to build sophisticated TUI applications with Textual.

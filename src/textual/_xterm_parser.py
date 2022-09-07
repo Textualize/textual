@@ -101,7 +101,7 @@ class XTermParser(Parser[events.Event]):
                 key_events = sequence_to_key_events(character)
                 for event in key_events:
                     if event.key == "escape":
-                        event = events.Key(event.sender, key="^")
+                        event = events.Key(event.sender, "^", None)
                     on_token(event)
 
         while not self.is_eof:
@@ -140,12 +140,12 @@ class XTermParser(Parser[events.Event]):
                     peek_buffer = yield self.peek_buffer()
                     if not peek_buffer:
                         # An escape arrived without any following characters
-                        on_token(events.Key(self.sender, key="escape"))
+                        on_token(events.Key(self.sender, "escape", "\x1b"))
                         continue
                     if peek_buffer and peek_buffer[0] == ESC:
                         # There is an escape in the buffer, so ESC ESC has arrived
                         yield read1()
-                        on_token(events.Key(self.sender, key="escape"))
+                        on_token(events.Key(self.sender, "escape", "\x1b"))
                         # If there is no further data, it is not part of a sequence,
                         # So we don't need to go in to the loop
                         if len(peek_buffer) == 1 and not more_data():
@@ -229,7 +229,21 @@ class XTermParser(Parser[events.Event]):
                         on_token(event)
 
     def _sequence_to_key_events(self, sequence: str) -> Iterable[events.Key]:
-        default = (sequence,) if len(sequence) == 1 else ()
-        keys = ANSI_SEQUENCES_KEYS.get(sequence, default)
-        for key in keys:
-            yield events.Key(self.sender, key)
+        """Map a sequence of code points on to a sequence of keys.
+
+        Args:
+            sequence (str): Sequence of code points.
+
+        Returns:
+            Iterable[events.Key]: keys
+
+        """
+
+        keys = ANSI_SEQUENCES_KEYS.get(sequence)
+        if keys is not None:
+            for key in keys:
+                yield events.Key(
+                    self.sender, key.value, sequence if len(sequence) == 1 else None
+                )
+        elif len(sequence) == 1:
+            yield events.Key(self.sender, sequence, sequence)

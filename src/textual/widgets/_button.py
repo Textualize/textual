@@ -29,10 +29,11 @@ class InvalidButtonVariant(Exception):
 class Button(Widget, can_focus=True):
     """A simple clickable button."""
 
-    CSS = """
+    DEFAULT_CSS = """
     Button {
         width: auto;
-        min-width: 10;
+        min-width: 16;
+        width: auto;
         height: 3;
         background: $panel;
         color: $text-panel;        
@@ -41,6 +42,11 @@ class Button(Widget, can_focus=True):
         border-bottom: tall $panel-darken-3;
         content-align: center middle;        
         text-style: bold;      
+    }
+
+    Button.-disabled {
+        opacity: 0.4;
+        text-opacity: 0.7;
     }
 
     Button:focus {
@@ -79,7 +85,6 @@ class Button(Widget, can_focus=True):
         background: $primary;
         border-bottom: tall $primary-lighten-3;
         border-top: tall $primary-darken-3;
-    
     }
 
 
@@ -89,13 +94,11 @@ class Button(Widget, can_focus=True):
         color: $text-success;
         border-top: tall $success-lighten-2;
         border-bottom: tall $success-darken-3;
-      
     }
 
     Button.-success:hover {
         background: $success-darken-2;
         color: $text-success-darken-2;
-
     }
 
     Button.-success.-active {
@@ -182,22 +185,37 @@ class Button(Widget, can_focus=True):
         if label is None:
             label = self.css_identifier_styled
 
-        self.label: Text = label
+        self.label = label
 
         self.disabled = disabled
         if disabled:
             self.add_class("-disabled")
 
-        if variant in _VALID_BUTTON_VARIANTS:
-            if variant != "default":
-                self.add_class(f"-{variant}")
+        self.variant = variant
 
-        else:
+    label: Reactive[RenderableType] = Reactive("")
+    variant = Reactive.init("default")
+    disabled = Reactive(False)
+
+    def watch_mouse_over(self, value: bool) -> None:
+        """Update from CSS if mouse over state changes."""
+        if not self.disabled:
+            self.app.update_styles(self)
+
+    def validate_variant(self, variant: str) -> str:
+        if variant not in _VALID_BUTTON_VARIANTS:
             raise InvalidButtonVariant(
                 f"Valid button variants are {friendly_list(_VALID_BUTTON_VARIANTS)}"
             )
+        return variant
 
-    label: Reactive[RenderableType] = Reactive("")
+    def watch_variant(self, old_variant: str, variant: str):
+        self.remove_class(f"_{old_variant}")
+        self.add_class(f"-{variant}")
+
+    def watch_disabled(self, disabled: bool) -> None:
+        self.set_class(disabled, "-disabled")
+        self.can_focus = not disabled
 
     def validate_label(self, label: RenderableType) -> RenderableType:
         """Parse markup for self.label"""

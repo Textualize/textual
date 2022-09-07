@@ -91,5 +91,8 @@ class Layout(ABC):
             height = container.height
         else:
             placements, *_ = widget._arrange(Size(width, container.height))
-            height = max(placement.region.bottom for placement in placements)
+            height = max(
+                placement.region.bottom + placement.margin.bottom
+                for placement in placements
+            )
         return height

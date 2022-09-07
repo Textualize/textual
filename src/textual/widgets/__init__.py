@@ -19,7 +19,9 @@ __all__ = [
     "Placeholder",
     "Pretty",
     "Static",
+    "TextInput",
     "TreeControl",
+    "Welcome",
 ]
 
 

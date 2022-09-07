@@ -158,7 +158,7 @@ class Timer:
                 await invoke(self._callback)
             except Exception as error:
                 app = active_app.get()
-                app.on_exception(error)
+                app._handle_exception(error)
         else:
             event = events.Timer(
                 self.sender,

@@ -15,7 +15,7 @@ from functools import partial
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, Iterable
 from weakref import WeakSet
 
-from . import events, log, messages
+from . import events, log, messages, Logger
 from ._callback import invoke
 from ._context import NoActiveAppError, active_app
 from .timer import Timer, TimerCallback
@@ -110,33 +110,14 @@ class MessagePump(metaclass=MessagePumpMeta):
     def is_running(self) -> bool:
         return self._running
 
-    def log(
-        self,
-        *args: Any,
-        verbosity: int = 1,
-        **kwargs,
-    ) -> None:
-        """Write to logs or devtools.
+    @property
+    def log(self) -> Logger:
+        """Get a logger for this object.
 
-        Positional args will logged. Keyword args will be prefixed with the key.
-
-        Example:
-            ```python
-            data = [1,2,3]
-            self.log("Hello, World", state=data)
-            self.log(self.tree)
-            self.log(locals())
-            ```
-
-        Args:
-            verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
+        Returns:
+            Logger: A logger.
         """
-        return self.app.log(
-            *args,
-            **kwargs,
-            verbosity=verbosity,
-            _textual_calling_frame=inspect.stack()[1],
-        )
+        return self.app._logger
 
     def _attach(self, parent: MessagePump) -> None:
         """Set the parent, and therefore attach this node to the tree.
@@ -351,7 +332,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             except CancelledError:
                 raise
             except Exception as error:
-                self.app.on_exception(error)
+                self.app._handle_exception(error)
                 break
             finally:
                 self._message_queue.task_done()
@@ -364,7 +345,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                             try:
                                 await invoke(method, event)
                             except Exception as error:
-                                self.app.on_exception(error)
+                                self.app._handle_exception(error)
                                 break
 
         log("CLOSED", self)
@@ -422,12 +403,11 @@ class MessagePump(metaclass=MessagePumpMeta):
 
         # Look through the MRO to find a handler
         for cls, method in self._get_dispatch_methods(handler_name, message):
-            log(
+            log.event.verbosity(message.verbose)(
                 message,
                 ">>>",
                 self,
                 f"method=<{cls.__name__}.{handler_name}>",
-                verbosity=message.verbosity,
             )
             await invoke(method, message)
 
@@ -542,7 +522,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         Args:
             event (events.Key): A key event.
         """
-        key_method = getattr(self, f"key_{event.key}", None)
+        key_method = getattr(self, f"key_{event.key_name}", None)
         if key_method is not None:
             if await invoke(key_method, event):
                 event.prevent_default()

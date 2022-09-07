@@ -37,9 +37,7 @@ class ButtonsApp(App[str]):
         self.dark = not self.dark
 
 
-app = ButtonsApp(
-    log_path="textual.log", css_path="buttons.css", watch_css=True, log_verbosity=3
-)
+app = ButtonsApp(log_path="textual.log", css_path="buttons.css", watch_css=True)
 
 if __name__ == "__main__":
     result = app.run()

@@ -4,16 +4,11 @@ from asyncio import Lock
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
-from typing import (
-    TYPE_CHECKING,
-    ClassVar,
-    Collection,
-    Iterable,
-    NamedTuple,
-)
+from types import GeneratorType
+from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple
 
 import rich.repr
-from rich.console import Console, RenderableType, JustifyMethod
+from rich.console import Console, JustifyMethod, RenderableType
 from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
@@ -22,7 +17,7 @@ from rich.text import Text
 
 from . import errors, events, messages
 from ._animator import BoundAnimator
-from ._arrange import arrange, DockArrangeResult
+from ._arrange import DockArrangeResult, arrange
 from ._context import active_app
 from ._layout import Layout
 from ._segment_tools import align_lines
@@ -30,8 +25,7 @@ from ._styles_cache import StylesCache
 from ._types import Lines
 from .box_model import BoxModel, get_box_model
 from .css.constants import VALID_TEXT_ALIGN
-from .dom import DOMNode
-from .dom import NoScreen
+from .dom import DOMNode, NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
@@ -41,12 +35,12 @@ if TYPE_CHECKING:
     from .app import App, ComposeResult
     from .scrollbar import (
         ScrollBar,
+        ScrollBarCorner,
         ScrollDown,
         ScrollLeft,
         ScrollRight,
         ScrollTo,
         ScrollUp,
-        ScrollBarCorner,
     )
 
 
@@ -72,7 +66,7 @@ class Widget(DOMNode):
 
     """
 
-    CSS = """
+    DEFAULT_CSS = """
     Widget{
         scrollbar-background: $panel-darken-1;
         scrollbar-background-hover: $panel-darken-2;
@@ -430,7 +424,7 @@ class Widget(DOMNode):
         if self._scrollbar_corner is not None:
             return self._scrollbar_corner
         self._scrollbar_corner = ScrollBarCorner()
-        self.app.start_widget(self, self._scrollbar_corner)
+        self.app._start_widget(self, self._scrollbar_corner)
         return self._scrollbar_corner
 
     @property
@@ -447,7 +441,7 @@ class Widget(DOMNode):
         self._vertical_scrollbar = scroll_bar = ScrollBar(
             vertical=True, name="vertical", thickness=self.scrollbar_size_vertical
         )
-        self.app.start_widget(self, scroll_bar)
+        self.app._start_widget(self, scroll_bar)
         return scroll_bar
 
     @property
@@ -465,7 +459,7 @@ class Widget(DOMNode):
             vertical=False, name="horizontal", thickness=self.scrollbar_size_horizontal
         )
 
-        self.app.start_widget(self, scroll_bar)
+        self.app._start_widget(self, scroll_bar)
         return scroll_bar
 
     def _refresh_scrollbars(self) -> None:
@@ -1248,16 +1242,19 @@ class Widget(DOMNode):
                 width, height = self.container_size
                 if self.show_vertical_scrollbar:
                     self.vertical_scrollbar.window_virtual_size = virtual_size.height
-                    self.vertical_scrollbar.window_size = height
+                    self.vertical_scrollbar.window_size = (
+                        height - self.scrollbar_size_horizontal
+                    )
                 if self.show_horizontal_scrollbar:
                     self.horizontal_scrollbar.window_virtual_size = virtual_size.width
-                    self.horizontal_scrollbar.window_size = width
+                    self.horizontal_scrollbar.window_size = (
+                        width - self.scrollbar_size_vertical
+                    )
 
                 self.scroll_x = self.validate_scroll_x(self.scroll_x)
                 self.scroll_y = self.validate_scroll_y(self.scroll_y)
                 self.refresh(layout=True)
                 self.scroll_to(self.scroll_x, self.scroll_y)
-                # self.call_later(self.scroll_to, self.scroll_x, self.scroll_y)
             else:
                 self.refresh()
 
@@ -1335,7 +1332,7 @@ class Widget(DOMNode):
         offset_x, offset_y = self.screen.get_offset(self)
         return self.screen.get_style_at(x + offset_x, y + offset_y)
 
-    async def forward_event(self, event: events.Event) -> None:
+    async def _forward_event(self, event: events.Event) -> None:
         event.set_forwarded()
         await self.post_message(event)
 
@@ -1396,7 +1393,7 @@ class Widget(DOMNode):
         if not self.check_message_enabled(message):
             return True
         if not self.is_running:
-            self.log(self, f"IS NOT RUNNING, {message!r} not sent")
+            self.log.warning(self, f"IS NOT RUNNING, {message!r} not sent")
         return await super().post_message(message)
 
     async def _on_idle(self, event: events.Idle) -> None:
@@ -1455,10 +1452,9 @@ class Widget(DOMNode):
         await self.dispatch_key(event)
 
     def _on_mount(self, event: events.Mount) -> None:
-        widgets = list(self.compose())
-        if widgets:
-            self.mount(*widgets)
-            self.screen.refresh(repaint=False, layout=True)
+        widgets = self.compose()
+        self.mount(*widgets)
+        self.screen.refresh(repaint=False, layout=True)
 
     def _on_leave(self, event: events.Leave) -> None:
         self.mouse_over = False

@@ -4,7 +4,7 @@ Welcome to the [Textual](https://github.com/Textualize/textual) framework docume
 
 <hr>
 
-Textual is a framework for building applications that run within your terminal. Such Text User Interfaces (TUIs) have a number of advantages over traditional web and desktop apps.
+Textual is a framework for building applications that run within your terminal. Text User Interfaces (TUIs) have a number of advantages over web and desktop apps.
 
 <div class="grid cards" markdown>
 
@@ -59,18 +59,10 @@ Textual is a framework for building applications that run within your terminal. 
 <hr>
 
 
+```{.textual path="docs/examples/demo.py" columns=100 lines=48}
 
-<!-- TODO: More examples split in to tabs  -->
+```
 
-=== "Example 1"
+TODO: Add more example screenshots
 
-    ```{.textual path="docs/examples/demo.py" columns=100 lines=48}
-
-    ```
-
-=== "Example 2"
-
-    ```{.textual path="docs/examples/introduction/timers.py"}
-
-    ```
 

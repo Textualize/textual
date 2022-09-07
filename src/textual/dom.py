@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from inspect import getfile
+import re
 from typing import (
     cast,
     ClassVar,
@@ -27,6 +28,7 @@ from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from .css.errors import StyleValueError, DeclarationError
 from .css.parse import parse_declarations
 from .css.styles import Styles, RenderStyles
+from .css.tokenize import IDENTIFIER
 from .css.query import NoMatchingNodesError
 from .message_pump import MessagePump
 from .timer import Timer
@@ -36,6 +38,32 @@ if TYPE_CHECKING:
     from .css.query import DOMQuery
     from .screen import Screen
     from .widget import Widget
+
+
+_re_identifier = re.compile(IDENTIFIER)
+
+
+class BadIdentifier(Exception):
+    """raised by check_identifiers."""
+
+
+def check_identifiers(description: str, *names: str) -> None:
+    """Validate identifier and raise an error if it fails.
+
+    Args:
+        description (str): Description of where identifier is used for error message.
+        names (list[str]): Identifiers to check.
+
+    Returns:
+        bool: True if the name is valid.
+    """
+    match = _re_identifier.match
+    for name in names:
+        if match(name) is None:
+            raise BadIdentifier(
+                f"{name!r} is an invalid {description}; "
+                "identifiers must contain only letters, numbers, underscores, or hyphens, and must not begin with a number."
+            )
 
 
 class DOMError(Exception):
@@ -54,8 +82,8 @@ class NoParent(Exception):
 class DOMNode(MessagePump):
     """The base class for object that can be in the Textual DOM (App and Widget)"""
 
-    # Custom CSS
-    CSS: ClassVar[str] = ""
+    # CSS defaults
+    DEFAULT_CSS: ClassVar[str] = ""
 
     # Default classes argument if not supplied
     DEFAULT_CLASSES: str = ""
@@ -75,9 +103,16 @@ class DOMNode(MessagePump):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
+        self._classes = set()
         self._name = name
-        self._id = id
-        self._classes: set[str] = set() if classes is None else set(classes.split())
+        self._id = None
+        if id is not None:
+            self.id = id
+
+        _classes = classes.split() if classes else []
+        check_identifiers("class name", *_classes)
+        self._classes.update(_classes)
+
         self.children = NodeList()
         self._css_styles: Styles = Styles(self)
         self._inline_styles: Styles = Styles(self)
@@ -198,7 +233,7 @@ class DOMNode(MessagePump):
                 return f"{base.__name__}"
 
         for tie_breaker, base in enumerate(self._node_bases):
-            css = base.CSS.strip()
+            css = base.DEFAULT_CSS.strip()
             if css:
                 css_stack.append((get_path(base), css, -tie_breaker))
 
@@ -248,6 +283,8 @@ class DOMNode(MessagePump):
             ValueError: If the ID has already been set.
 
         """
+        check_identifiers("id", new_id)
+
         if self._id is not None:
             raise ValueError(
                 f"Node 'id' attribute may not be changed once set (current id={self._id!r})"
@@ -723,6 +760,7 @@ class DOMNode(MessagePump):
             *class_names (str): CSS class names to add.
 
         """
+        check_identifiers("class name", *class_names)
         old_classes = self._classes.copy()
         self._classes.update(class_names)
         if old_classes == self._classes:
@@ -739,6 +777,7 @@ class DOMNode(MessagePump):
             *class_names (str): CSS class names to remove.
 
         """
+        check_identifiers("class name", *class_names)
         old_classes = self._classes.copy()
         self._classes.difference_update(class_names)
         if old_classes == self._classes:
@@ -755,6 +794,7 @@ class DOMNode(MessagePump):
             *class_names (str): CSS class names to toggle.
 
         """
+        check_identifiers("class name", *class_names)
         old_classes = self._classes.copy()
         self._classes.symmetric_difference_update(class_names)
         if old_classes == self._classes:

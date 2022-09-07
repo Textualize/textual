@@ -3,14 +3,14 @@ Screen {
 }
 
 #calculator {
-    layout: table;
-    table-size: 4;
-    table-gutter: 1 2;
-    table-columns: 1fr;
-    table-rows: 2fr 1fr 1fr 1fr 1fr 1fr;
+    layout: grid;
+    grid-size: 4;
+    grid-gutter: 1 2;
+    grid-columns: 1fr;
+    grid-rows: 2fr 1fr 1fr 1fr 1fr 1fr;
     margin: 1 2;
-    min-height:26;  
-    min-width: 50; 
+    min-height:25;  
+    min-width: 26; 
 }
 
 Button {
@@ -18,18 +18,15 @@ Button {
     height: 100%;    
 }
 
-.display {
+#numbers {
     column-span: 4;
     content-align: right middle;
     padding: 0 1;
     height: 100%;
-    background: $panel-darken-2;
+    background: $primary-lighten-2;
+    color: $text-primary-lighten-2;
 }
 
-.special {
-    tint: $text-panel 20%;
-}
-
-.zero {
+#number-0 {
     column-span: 2;
 }
