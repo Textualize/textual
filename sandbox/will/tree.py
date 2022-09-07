@@ -5,16 +5,10 @@ from textual.widgets import DirectoryTree
 
 
 class TreeApp(App):
-    DEFAULT_CSS = """
-    Screen {
-        overflow: auto;
-
-    }
-        """
-
     def compose(self):
         tree = DirectoryTree("~/projects")
         yield Container(tree)
+        tree.focus()
 
 
 app = TreeApp()

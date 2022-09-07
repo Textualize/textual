@@ -44,21 +44,6 @@ class DirectoryTree(TreeControl[DirEntry]):
         super().__init__(label, data, name=name, id=id, classes=classes)
         self.root.tree.guide_style = "black"
 
-    has_focus: Reactive[bool] = Reactive(False)
-
-    def on_focus(self) -> None:
-        self.has_focus = True
-
-    def on_blur(self) -> None:
-        self.has_focus = False
-
-    async def watch_hover_node(self, hover_node: NodeID) -> None:
-        for node in self.nodes.values():
-            node.tree.guide_style = (
-                "bold not dim red" if node.id == hover_node else "black"
-            )
-        self.refresh()
-
     def render_node(self, node: TreeNode[DirEntry]) -> RenderableType:
         return self.render_tree_label(
             node,
@@ -99,13 +84,14 @@ class DirectoryTree(TreeControl[DirEntry]):
             label.stylize("dim")
 
         if is_cursor and has_focus:
-            label.stylize("reverse")
+            cursor_style = self.get_component_styles("tree--cursor").rich_style
+            label.stylize(cursor_style)
 
         icon_label = Text(f"{icon} ", no_wrap=True, overflow="ellipsis") + label
         icon_label.apply_meta(meta)
         return icon_label
 
-    async def on_mount(self, event: events.Mount) -> None:
+    def on_mount(self) -> None:
         self.call_later(self.load_directory, self.root)
 
     async def load_directory(self, node: TreeNode[DirEntry]):
@@ -113,22 +99,23 @@ class DirectoryTree(TreeControl[DirEntry]):
         directory = sorted(
             list(scandir(path)), key=lambda entry: (not entry.is_dir(), entry.name)
         )
+        self.log(directory)
         for entry in directory:
-            await node.add(entry.name, DirEntry(entry.path, entry.is_dir()))
+            node.add(entry.name, DirEntry(entry.path, entry.is_dir()))
         node.loaded = True
-        await node.expand()
+        node.expand()
         self.refresh(layout=True)
 
-    async def on_tree_click(self, message: TreeClick[DirEntry]) -> None:
+    async def on_tree_control_node_selected(self, message: TreeClick[DirEntry]) -> None:
         dir_entry = message.node.data
         if not dir_entry.is_dir:
             await self.emit(FileClick(self, dir_entry.path))
         else:
             if not message.node.loaded:
                 await self.load_directory(message.node)
-                await message.node.expand()
+                message.node.expand()
             else:
-                await message.node.toggle()
+                message.node.toggle()
 
 
 if __name__ == "__main__":

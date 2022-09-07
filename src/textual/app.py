@@ -240,7 +240,7 @@ class App(Generic[ReturnType], DOMNode):
 
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
-    dark: Reactive[bool] = Reactive(False)
+    dark: Reactive[bool] = Reactive(True)
 
     @property
     def devtools_enabled(self) -> bool:

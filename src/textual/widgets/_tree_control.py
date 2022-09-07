@@ -8,12 +8,13 @@ from rich.console import RenderableType
 from rich.text import Text, TextType
 from rich.tree import Tree
 
+from ..geometry import Region
 from .. import events
 from ..reactive import Reactive
 from .._types import MessageTarget
 from ..widget import Widget
 from ..message import Message
-from ..messages import CursorMove
+from .. import messages
 
 
 NodeID = NewType("NodeID", int)
@@ -141,16 +142,16 @@ class TreeNode(Generic[NodeDataType]):
             sibling = node
         return None
 
-    async def expand(self, expanded: bool = True) -> None:
+    def expand(self, expanded: bool = True) -> None:
         self._expanded = expanded
         self._tree.expanded = expanded
         self._control.refresh(layout=True)
 
-    async def toggle(self) -> None:
-        await self.expand(not self._expanded)
+    def toggle(self) -> None:
+        self.expand(not self._expanded)
 
-    async def add(self, label: TextType, data: NodeDataType) -> None:
-        await self._control.add(self.id, label, data=data)
+    def add(self, label: TextType, data: NodeDataType) -> None:
+        self._control.add(self.id, label, data=data)
         self._control.refresh(layout=True)
         self._empty = False
 
@@ -178,15 +179,36 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
     }
 
     TreeControl > .tree--guides {
+        color: $success;
+    }
+
+    TreeControl > .tree--guides-highlight {
         color: $secondary;
+        text-style: bold;
+    }
+
+    TreeControl > .tree--labels {
+        color: $text-panel;
+    }
+
+    TreeControl > .tree--cursor {
+        background: $secondary;
+        color: $text-secondary;
     }
     
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "tree--guides",
+        "tree--guides-highlight",
         "tree--labels",
+        "tree--cursor",
     }
+
+    class NodeSelected(Message, bubble=False):
+        def __init__(self, sender: MessageTarget, node: TreeNode[NodeDataType]) -> None:
+            self.node = node
+            super().__init__(sender)
 
     def __init__(
         self,
@@ -202,6 +224,7 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
         self.node_id = NodeID(0)
         self.nodes: dict[NodeID, TreeNode[NodeDataType]] = {}
         self._tree = Tree(label)
+
         self.root: TreeNode[NodeDataType] = TreeNode(
             None, self.node_id, self, self._tree, label, data
         )
@@ -216,21 +239,43 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
     show_cursor: Reactive[bool] = Reactive(False)
 
     def watch_show_cursor(self, value: bool) -> None:
-        self.emit_no_wait(CursorMove(self, self.cursor_line))
+        line_region = Region(0, self.cursor_line, self.size.width, 1)
+        self.emit_no_wait(messages.ScrollToRegion(self, line_region))
 
     def watch_cursor_line(self, value: int) -> None:
-        if self.show_cursor:
-            self.emit_no_wait(CursorMove(self, value + self.gutter.top))
+        line_region = Region(0, value, self.size.width, 1)
+        self.emit_no_wait(messages.ScrollToRegion(self, line_region))
 
-    async def add(
+    def watch_hover_node(self, previous_hover_node: NodeID, hover_node: NodeID) -> None:
+        previous_hover = self.nodes.get(previous_hover_node)
+        if previous_hover is not None:
+            previous_hover._tree.guide_style = self._guide_style
+        hover = self.nodes.get(hover_node)
+        if hover is not None:
+            hover._tree.guide_style = self._highlight_guide_style
+        self.refresh()
+
+    def watch_cursor(self, previous_cursor_node: NodeID, cursor_node: NodeID) -> None:
+
+        previous_cursor = self.nodes.get(previous_cursor_node)
+        if previous_cursor is not None:
+            previous_cursor._tree.guide_style = self._guide_style
+        cursor = self.nodes.get(cursor_node)
+        if cursor is not None:
+            cursor._tree.guide_style = self._highlight_guide_style
+        self.refresh()
+
+    def add(
         self,
         node_id: NodeID,
         label: TextType,
         data: NodeDataType,
     ) -> None:
+
         parent = self.nodes[node_id]
         self.node_id = NodeID(self.node_id + 1)
         child_tree = parent._tree.add(label)
+        child_tree.guide_style = self._guide_style
         child_node: TreeNode[NodeDataType] = TreeNode(
             parent, self.node_id, self, child_tree, label, data
         )
@@ -267,12 +312,12 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
         return None
 
     def render(self) -> RenderableType:
-        self._tree.guide_style = self._component_styles["tree--guides"].node.rich_style
         return self._tree
 
     def render_node(self, node: TreeNode[NodeDataType]) -> RenderableType:
+        label_style = self.get_component_styles("tree--labels").rich_style
         label = (
-            Text(node.label, no_wrap=True, overflow="ellipsis")
+            Text(node.label, no_wrap=True, style=label_style, overflow="ellipsis")
             if isinstance(node.label, str)
             else node.label
         )
@@ -281,33 +326,77 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
         label.apply_meta({"@click": f"click_label({node.id})", "tree_node": node.id})
         return label
 
-    async def action_click_label(self, node_id: NodeID) -> None:
+    def action_click_label(self, node_id: NodeID) -> None:
         node = self.nodes[node_id]
         self.cursor = node.id
         self.cursor_line = self.find_cursor() or 0
-        self.show_cursor = False
-        await self.post_message(TreeClick(self, node))
+        self.show_cursor = True
+        self.post_message_no_wait(self.NodeSelected(self, node))
 
-    async def on_mouse_move(self, event: events.MouseMove) -> None:
+    def on_mount(self) -> None:
+        self._guide_style = self.get_component_styles("tree--guides").rich_style
+        self._highlight_guide_style = self.get_component_styles(
+            "tree--guides-highlight"
+        ).rich_style
+        self._tree.guide_style = self._guide_style
+
+    def on_mouse_move(self, event: events.MouseMove) -> None:
         self.hover_node = event.style.meta.get("tree_node")
 
     async def on_key(self, event: events.Key) -> None:
         await self.dispatch_key(event)
 
-    async def key_down(self, event: events.Key) -> None:
+    def key_down(self, event: events.Key) -> None:
         event.stop()
-        await self.cursor_down()
+        self.cursor_down()
 
-    async def key_up(self, event: events.Key) -> None:
+    def key_up(self, event: events.Key) -> None:
         event.stop()
-        await self.cursor_up()
+        self.cursor_up()
 
-    async def key_enter(self, event: events.Key) -> None:
+    def key_pagedown(self) -> None:
+        assert self.parent is not None
+        height = self.container_viewport.height
+
+        cursor = self.cursor
+        cursor_line = self.cursor_line
+        for _ in range(height):
+            cursor_node = self.nodes[cursor]
+            next_node = cursor_node.next_node
+            if next_node is not None:
+                cursor_line += 1
+                cursor = next_node.id
+        self.cursor = cursor
+        self.cursor_line = cursor_line
+
+    def key_pageup(self) -> None:
+        assert self.parent is not None
+        height = self.container_viewport.height
+        cursor = self.cursor
+        cursor_line = self.cursor_line
+        for _ in range(height):
+            cursor_node = self.nodes[cursor]
+            previous_node = cursor_node.previous_node
+            if previous_node is not None:
+                cursor_line -= 1
+                cursor = previous_node.id
+        self.cursor = cursor
+        self.cursor_line = cursor_line
+
+    def key_home(self) -> None:
+        self.cursor_line = 0
+        self.cursor = NodeID(0)
+
+    def key_end(self) -> None:
+        self.cursor = self.nodes[NodeID(0)].children[-1].id
+        self.cursor_line = self.find_cursor() or 0
+
+    def key_enter(self, event: events.Key) -> None:
         cursor_node = self.nodes[self.cursor]
         event.stop()
-        await self.post_message(TreeClick(self, cursor_node))
+        self.post_message_no_wait(self.NodeSelected(self, cursor_node))
 
-    async def cursor_down(self) -> None:
+    def cursor_down(self) -> None:
         if not self.show_cursor:
             self.show_cursor = True
             return
@@ -317,7 +406,7 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
             self.cursor_line += 1
             self.cursor = next_node.id
 
-    async def cursor_up(self) -> None:
+    def cursor_up(self) -> None:
         if not self.show_cursor:
             self.show_cursor = True
             return
