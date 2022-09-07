@@ -5,14 +5,11 @@ from textual.widgets import Static
 
 
 class JustABox(App):
-
-    css_path = "../darren/just_a_box.css"
-
     def compose(self) -> ComposeResult:
         yield Static("Hello, world!", classes="box1")
 
 
-app = JustABox(watch_css=True)
+app = JustABox(watch_css=True, css_path="../darren/just_a_box.css")
 
 if __name__ == "__main__":
     app.run()
