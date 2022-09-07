@@ -352,19 +352,6 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
     def _cursor_guide_style(self) -> Style:
         return self.get_component_styles("tree--guides-cursor").rich_style
 
-    def on_styles_updated(self) -> None:
-        guide_style = self._guide_style
-
-        def update_guide_style(tree: Tree) -> None:
-            tree.guide_style = guide_style
-            for child in tree.children:
-                if child.expanded:
-                    update_guide_style(child)
-
-        update_guide_style(self._tree)
-        self._render_cache = None
-        self.refresh()
-
     def on_mouse_move(self, event: events.MouseMove) -> None:
         self.hover_node = event.style.meta.get("tree_node")
 
