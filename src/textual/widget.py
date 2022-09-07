@@ -4,7 +4,6 @@ from asyncio import Lock
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
-from types import GeneratorType
 from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple
 
 import rich.repr
@@ -612,6 +611,18 @@ class Widget(DOMNode):
             return Region()
 
     @property
+    def container_viewport(self) -> Region:
+        """The viewport region (parent window)
+
+        Returns:
+            Region: The region that contains this widget.
+        """
+        if self.parent is None:
+            return self.size.region
+        assert isinstance(self.parent, Widget)
+        return self.parent.region
+
+    @property
     def virtual_region(self) -> Region:
         """The widget region relative to it's container. Which may not be visible,
         depending on scroll offset.
@@ -1080,7 +1091,7 @@ class Widget(DOMNode):
             self.scroll_relative(
                 delta.x or None,
                 delta.y or None,
-                animate=animate,
+                animate=animate if (abs(delta_y) > 1 or delta_x) else False,
                 duration=0.2,
             )
         return delta
@@ -1093,13 +1104,19 @@ class Widget(DOMNode):
 
     def __init_subclass__(
         cls,
-        can_focus: bool = False,
-        can_focus_children: bool = True,
+        can_focus: bool | None = None,
+        can_focus_children: bool | None = None,
         inherit_css: bool = True,
     ) -> None:
+        base = cls.__mro__[0]
         super().__init_subclass__(inherit_css=inherit_css)
-        cls.can_focus = can_focus
-        cls.can_focus_children = can_focus_children
+        if issubclass(base, Widget):
+            cls.can_focus = base.can_focus if can_focus is None else can_focus
+            cls.can_focus_children = (
+                base.can_focus_children
+                if can_focus_children is None
+                else can_focus_children
+            )
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "id", self.id, None
@@ -1529,49 +1546,52 @@ class Widget(DOMNode):
         if self.has_focus:
             self.app._reset_focus(self)
 
-    def key_home(self) -> bool:
+    def _on_scroll_to_region(self, message: messages.ScrollToRegion) -> None:
+        self.scroll_to_region(message.region, animate=True)
+
+    def _key_home(self) -> bool:
         if self._allow_scroll:
             self.scroll_home()
             return True
         return False
 
-    def key_end(self) -> bool:
+    def _key_end(self) -> bool:
         if self._allow_scroll:
             self.scroll_end()
             return True
         return False
 
-    def key_left(self) -> bool:
+    def _key_left(self) -> bool:
         if self.allow_horizontal_scroll:
             self.scroll_left()
             return True
         return False
 
-    def key_right(self) -> bool:
+    def _key_right(self) -> bool:
         if self.allow_horizontal_scroll:
             self.scroll_right()
             return True
         return False
 
-    def key_down(self) -> bool:
+    def _key_down(self) -> bool:
         if self.allow_vertical_scroll:
             self.scroll_down()
             return True
         return False
 
-    def key_up(self) -> bool:
+    def _key_up(self) -> bool:
         if self.allow_vertical_scroll:
             self.scroll_up()
             return True
         return False
 
-    def key_pagedown(self) -> bool:
+    def _key_pagedown(self) -> bool:
         if self.allow_vertical_scroll:
             self.scroll_page_down()
             return True
         return False
 
-    def key_pageup(self) -> bool:
+    def _key_pageup(self) -> bool:
         if self.allow_vertical_scroll:
             self.scroll_page_up()
             return True

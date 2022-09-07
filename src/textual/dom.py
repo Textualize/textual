@@ -488,7 +488,8 @@ class DOMNode(MessagePump):
         """Get a Rich Style object for this DOMNode."""
         _, _, background, color = self.colors
         style = (
-            Style.from_color(color.rich_color, background.rich_color) + self.text_style
+            Style.from_color((background + color).rich_color, background.rich_color)
+            + self.text_style
         )
         return style
 

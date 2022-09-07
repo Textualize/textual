@@ -899,11 +899,12 @@ class App(Generic[ReturnType], DOMNode):
         self.log.system(f"{self.screen} is active")
         return previous_screen
 
-    def set_focus(self, widget: Widget | None) -> None:
+    def set_focus(self, widget: Widget | None, scroll_visible: bool = False) -> None:
         """Focus (or unfocus) a widget. A focused widget will receive key events first.
 
         Args:
-            widget (Widget): [description]
+            widget (Widget): Widget to focus.
+            scroll_visible (bool, optional): Scroll widget in to view.
         """
         if widget == self.focused:
             # Widget is already focused
@@ -924,7 +925,8 @@ class App(Generic[ReturnType], DOMNode):
                 # Change focus
                 self.focused = widget
                 # Send focus event
-                self.screen.scroll_to_widget(widget)
+                if scroll_visible:
+                    self.screen.scroll_to_widget(widget)
                 widget.post_message_no_wait(events.Focus(self))
                 widget.emit_no_wait(events.DescendantFocus(self))
 

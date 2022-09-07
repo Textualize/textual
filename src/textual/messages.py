@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 import rich.repr
 
+from .geometry import Region
 from ._types import CallbackType
 from .message import Message
 
@@ -39,7 +40,7 @@ class Layout(Message, verbose=True):
 
 
 @rich.repr.auto
-class InvokeLater(Message, verbose=True):
+class InvokeLater(Message, verbose=True, bubble=False):
     def __init__(self, sender: MessagePump, callback: CallbackType) -> None:
         self.callback = callback
         super().__init__(sender)
@@ -48,11 +49,12 @@ class InvokeLater(Message, verbose=True):
         yield "callback", self.callback
 
 
-# TODO: This should really be an Event
 @rich.repr.auto
-class CursorMove(Message):
-    def __init__(self, sender: MessagePump, line: int) -> None:
-        self.line = line
+class ScrollToRegion(Message, bubble=False):
+    """Ask the parent to scroll a given region in to view."""
+
+    def __init__(self, sender: MessagePump, region: Region) -> None:
+        self.region = region
         super().__init__(sender)
 
 
