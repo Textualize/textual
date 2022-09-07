@@ -21,7 +21,7 @@ END_POSITION = float(VIRTUAL_SIZE - WINDOW_SIZE)
 
 class EasingButtons(Widget):
     def compose(self) -> ComposeResult:
-        for easing in sorted([e for e in EASING if e != "round"], reverse=True):
+        for easing in sorted(EASING, reverse=True):
             yield Button(easing, id=easing)
 
 
