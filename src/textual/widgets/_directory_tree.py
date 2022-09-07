@@ -99,7 +99,6 @@ class DirectoryTree(TreeControl[DirEntry]):
         directory = sorted(
             list(scandir(path)), key=lambda entry: (not entry.is_dir(), entry.name)
         )
-        self.log(directory)
         for entry in directory:
             node.add(entry.name, DirEntry(entry.path, entry.is_dir()))
         node.loaded = True
