@@ -1082,7 +1082,6 @@ class Widget(DOMNode):
         window = self.content_region.at_offset(self.scroll_offset)
         if spacing is not None:
             window = window.shrink(spacing)
-        self.log(window=window, region=region)
         delta_x, delta_y = Region.get_scroll_to_visible(window, region)
         scroll_x, scroll_y = self.scroll_offset
         delta = Offset(
@@ -1093,7 +1092,7 @@ class Widget(DOMNode):
             self.scroll_relative(
                 delta.x or None,
                 delta.y or None,
-                animate=animate if abs(delta_y) > 1 else False,
+                animate=animate if (abs(delta_y) > 1 or delta_x) else False,
                 duration=0.2,
             )
         return delta
