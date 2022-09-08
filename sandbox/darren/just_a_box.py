@@ -9,6 +9,7 @@ class JustABox(App):
         yield Static("Hello, world!", classes="box1")
 
 
+app = JustABox(watch_css=True, css_path="../darren/just_a_box.css")
+
 if __name__ == "__main__":
-    app = JustABox(css_path="../darren/just_a_box.css", watch_css=True)
     app.run()

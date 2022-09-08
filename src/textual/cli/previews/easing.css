@@ -1,0 +1,40 @@
+EasingButtons > Button {
+    width: 100%;
+}
+EasingButtons {
+    dock: left;
+    overflow: auto auto;
+    width: 20;
+}
+
+#bar-container {
+    content-align: center middle;
+}
+
+#duration-input {
+    width: 30;
+}
+
+#inputs {
+    padding: 1;
+    height: auto;
+    dock: top;
+}
+
+Bar {
+    width: 1fr;
+}
+
+#other {
+    width: 1fr;
+    background: #555555;
+    padding: 1;
+    height: 100%;
+    border-left: vkey $background;
+}
+
+#opacity-widget {
+    padding: 1;
+    background: $panel;
+    border: wide #969696;
+}

@@ -100,6 +100,8 @@ class ScrollBarRender:
         back = back_color
         bar = bar_color
 
+        len_bars = len(bars)
+
         width_thickness = thickness if vertical else 1
 
         _Segment = Segment
@@ -110,11 +112,11 @@ class ScrollBarRender:
         if window_size and size and virtual_size and size != virtual_size:
             step_size = virtual_size / size
 
-            start = int(position / step_size * 8)
-            end = start + max(8, int(ceil(window_size / step_size * 8)))
+            start = int(position / step_size * len_bars)
+            end = start + max(len_bars, int(ceil(window_size / step_size * len_bars)))
 
-            start_index, start_bar = divmod(start, 8)
-            end_index, end_bar = divmod(end, 8)
+            start_index, start_bar = divmod(max(0, start), len_bars)
+            end_index, end_bar = divmod(max(0, end), len_bars)
 
             upper = {"@click": "scroll_up"}
             lower = {"@click": "scroll_down"}
@@ -129,8 +131,9 @@ class ScrollBarRender:
                 _Segment(blank, _Style(bgcolor=bar, meta=foreground_meta))
             ] * (end_index - start_index)
 
+            # Apply the smaller bar characters to head and tail of scrollbar for more "granularity"
             if start_index < len(segments):
-                bar_character = bars[7 - start_bar]
+                bar_character = bars[len_bars - 1 - start_bar]
                 if bar_character != " ":
                     segments[start_index] = _Segment(
                         bar_character * width_thickness,
@@ -139,7 +142,7 @@ class ScrollBarRender:
                         else _Style(bgcolor=bar, color=back, meta=foreground_meta),
                     )
             if end_index < len(segments):
-                bar_character = bars[7 - end_bar]
+                bar_character = bars[len_bars - 1 - end_bar]
                 if bar_character != " ":
                     segments[end_index] = _Segment(
                         bar_character * width_thickness,
