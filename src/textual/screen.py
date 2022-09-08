@@ -300,8 +300,11 @@ class Screen(Widget):
             except errors.NoWidget:
                 self.app.set_focus(None)
             else:
-                if isinstance(event, events.MouseDown) and widget.can_focus:
-                    self.app.set_focus(widget)
+                if isinstance(event, events.MouseUp) and widget.can_focus:
+                    if self.app.focused is not widget:
+                        self.app.set_focus(widget)
+                        event.stop()
+                        return
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
                 if widget is self:
                     event.set_forwarded()
