@@ -2,6 +2,7 @@
 
 In Textual, the *layout* defines how widgets will be arranged (or *laid out*) inside a container.
 Textual supports a number of layouts which can be set either via a widgets `styles` object or via CSS.
+Layouts can be used for both high-level positioning of widgets on screen, and for positioning of nested widgets.
 
 ## Vertical
 
@@ -39,16 +40,16 @@ Inside `vertical_layout.css`, we assign `layout: vertical` to `Screen`.
 
     The `layout: vertical` CSS isn't *strictly* necessary in this case, since Screens use a `vertical` layout by default.
 
-You might also have noticed that the child widgets are the same width as the screen, despite nothing in our CSS file requesting this.
+We've assigned each child `.box` a height of `1fr`, to ensure they're each allocated an equal portion of the available height.
+
+You might also have noticed that the child widgets are the same width as the screen, despite nothing in our CSS file suggesting this.
 This is because widgets automatically expand to the width of their parent container (in this case, the `Screen`).
 
-Just like other styles, `layout` can be adjusted at runtime by modifying the `styles` of a widget.
+Just like other styles, `layout` can be adjusted at runtime by modifying the `styles` of a `Widget` instance.
 
 ```python
-widget.styles.layout = "horizontal"
+widget.styles.layout = "vertical"
 ```
-
-TODO: Link back to styles `fr` docs inside the guide.
 
 ## Horizontal
 
@@ -120,6 +121,7 @@ and the final widget yielded appears at the bottom.
 
 The `grid` layout arranges widgets within a grid.
 Widgets can span multiple rows or columns to create more complex layouts.
+The Textual grid layout has very little in common with browser-based CSS Grid.
 The diagram below hints at what can be achieved using `layout: grid`.
 
 <div class="excalidraw">
@@ -192,20 +194,39 @@ We'll make the first column take up half of the screen width, with the other two
 Since our `grid-size` is three (meaning it has three columns), our `grid-columns` declaration has three space-separated values.
 Each of these values sets the width of a column.
 The first value refers to the left-most column, the second value refers to the next column, and so on.
+In the example above, we've given the left-most column a width of `2fr` and the other columns widths of `1fr`.
+As a result, the first column is allocated double the width of the other columns.
 
-!!! note
+Similarly, we can adjust the heights of rows using `grid-rows`.
+Now we'll use `%` units to adjust the first row of our grid to `15%` height,
+and the second row to `85%` height (whilst retaining the `grid-columns` change from above).
 
-    You can also specify a single value for `grid-column`, and that value will be applied as the width of *all* columns. For example, `grid-column: 12;` is the semantically equivalent to `grid-column: 12 12 12;` in a 3-column grid layout.
+=== "grid_layout4_row_col_adjust.py"
 
-### Adjusting cell sizes
+    ```python
+    --8<-- "docs/examples/guide/grid_layout4_row_col_adjust.py"
+    ```
 
+=== "grid_layout4_row_col_adjust.css"
 
+    ```sass hl_lines="5"
+    --8<-- "docs/examples/guide/grid_layout4_row_col_adjust.css"
+    ```
 
-TODO: Let's start with a simple example (maybe a grid with 2 rows, 3 columns?)
+=== "Output"
 
-TODO: Show off tweaking some CSS, and how that affects the grid.
+    ```{.textual path="docs/examples/guide/grid_layout4_row_col_adjust.py"}
+    ```
 
-TODO: We probably want to link to the reference docs for grid here. Unlikely we'll be able to cover the properties exhaustively?
+If you don't specify enough values in a `grid-columns` or `grid-rows` declaration, the values you _have_ provided will be "repeated".
+For example, if your grid has four columns (`grid-size: 4;`), then `grid-columns: 2 4;` is equivalent to `grid-columns: 2 4 2 4;`.
+If the grid instead had three columns, then `grid-columns: 2 4;` is equivalent to `grid-columns: 2 4 2;`.
+
+### Adjusting cell spans
+
+You can also adjust the number of rows and columns an individual cell spans across.
+
+TODO: Continue this section
 
 ## Docking
 
