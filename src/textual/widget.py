@@ -1435,9 +1435,14 @@ class Widget(DOMNode):
                     self._layout_required = False
                     screen.post_message_no_wait(messages.Layout(self))
 
-    def focus(self) -> None:
-        """Give input focus to this widget."""
-        self.app.set_focus(self)
+    def focus(self, scroll_visible: bool = True) -> None:
+        """Give focus to this widget.
+
+        Args:
+            scroll_visible (bool, optional): Scroll parent to make this widget
+                visible. Defaults to True.
+        """
+        self.app.set_focus(self, scroll_visible=scroll_visible)
 
     def capture_mouse(self, capture: bool = True) -> None:
         """Capture (or release) the mouse.
