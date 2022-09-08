@@ -544,7 +544,7 @@ class DOMNode(MessagePump):
         return nodes
 
     @property
-    def displayed_children(self) -> list[DOMNode]:
+    def displayed_children(self) -> list[Widget]:
         """The children which don't have display: none set.
 
         Returns:

@@ -7,8 +7,13 @@ from operator import attrgetter
 from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple
 
 import rich.repr
-from rich.console import Console, JustifyMethod, RenderableType
-from rich.measure import Measurement
+from rich.console import (
+    Console,
+    ConsoleRenderable,
+    Measurement,
+    JustifyMethod,
+    RenderableType,
+)
 from rich.segment import Segment
 from rich.style import Style
 from rich.styled import Styled
@@ -313,17 +318,15 @@ class Widget(DOMNode):
         """
         if self.is_container:
             assert self._layout is not None
-            return (
-                self._layout.get_content_width(self, container, viewport)
-                + self.scrollbar_size_vertical
-            )
+            return self._layout.get_content_width(self, container, viewport)
 
         cache_key = container.width
         if self._content_width_cache[0] == cache_key:
             return self._content_width_cache[1]
 
         console = self.app.console
-        renderable = self.render()
+        renderable = self.post_render(self.render())
+
         measurement = Measurement.get(
             console,
             console.options.update_width(container.width),
@@ -509,18 +512,18 @@ class Widget(DOMNode):
     @property
     def scrollbar_size_vertical(self) -> int:
         """Get the width used by the *vertical* scrollbar."""
-        return (
-            self.styles.scrollbar_size_vertical if self.show_vertical_scrollbar else 0
-        )
+        styles = self.styles
+        if styles.scrollbar_gutter == "stable" and styles.overflow_y == "auto":
+            return styles.scrollbar_size_vertical
+        return styles.scrollbar_size_vertical if self.show_vertical_scrollbar else 0
 
     @property
     def scrollbar_size_horizontal(self) -> int:
         """Get the height used by the *horizontal* scrollbar."""
-        return (
-            self.styles.scrollbar_size_horizontal
-            if self.show_horizontal_scrollbar
-            else 0
-        )
+        styles = self.styles
+        if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
+            return self.styles.scrollbar_size_horizontal
+        return styles.scrollbar_size_horizontal if self.show_horizontal_scrollbar else 0
 
     @property
     def scrollbar_gutter(self) -> Spacing:
@@ -1214,7 +1217,7 @@ class Widget(DOMNode):
         if self.descendant_has_focus:
             yield "focus-within"
 
-    def post_render(self, renderable: RenderableType) -> RenderableType:
+    def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
         """Applies style attributes to the default renderable.
 
         Returns:
