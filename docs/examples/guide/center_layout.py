@@ -4,9 +4,9 @@ from textual.widgets import Static
 
 class CenterLayoutExample(App):
     def compose(self) -> ComposeResult:
-        yield Static("Three", id="top")
+        yield Static("One", id="top")
         yield Static("Two", id="middle")
-        yield Static("One", id="bottom")
+        yield Static("Three", id="bottom")
 
 
 app = CenterLayoutExample(css_path="center_layout.css")
