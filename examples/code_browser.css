@@ -6,10 +6,10 @@
 CodeBrowser.-show-tree #tree-view {
     display: block;
     dock: left;
-    height: 100%;
+    height: 100%;    
     width: auto;
-    background: $surface; 
-    
+    max-width:50%;
+    background: $surface;     
 }
 
 CodeBrowser{

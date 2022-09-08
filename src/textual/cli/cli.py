@@ -39,7 +39,7 @@ class AppFail(Exception):
     pass
 
 
-def import_app(import_name: str) -> App:
+def import_app(import_name: str, argv: list[str]) -> App:
     """Import an app from it's import name.
 
     Args:
@@ -63,9 +63,11 @@ def import_app(import_name: str) -> App:
     if lib.endswith(".py"):
         path = os.path.abspath(lib)
         try:
-            global_vars = runpy.run_path(path)
+            global_vars = runpy.run_path(path, {})
         except Exception as error:
             raise AppFail(str(error))
+
+        global_vars["sys"].argv = [path, *argv]
 
         if name:
             # User has given a name, use that
@@ -85,7 +87,7 @@ def import_app(import_name: str) -> App:
                 # Find a App class or instance that is *not* the base class
                 apps = [
                     value
-                    for key, value in global_vars.items()
+                    for value in global_vars.values()
                     if (
                         isinstance(value, App)
                         or (inspect.isclass(value) and issubclass(value, App))
@@ -121,11 +123,17 @@ def import_app(import_name: str) -> App:
     return cast(App, app)
 
 
-@run.command("run")
+@run.command(
+    "run",
+    context_settings={
+        "ignore_unknown_options": True,
+    },
+)
 @click.argument("import_name", metavar="FILE or FILE:APP")
 @click.option("--dev", "dev", help="Enable development mode", is_flag=True)
 @click.option("--press", "press", help="Comma separated keys to simulate press")
-def run_app(import_name: str, dev: bool, press: str) -> None:
+@click.argument("argv", nargs=-1, type=click.UNPROCESSED)
+def run_app(import_name: str, dev: bool, press: str, argv: list[str]) -> None:
     """Run a Textual app.
 
     The code to run may be given as a path (ending with .py) or as a Python
@@ -157,7 +165,7 @@ def run_app(import_name: str, dev: bool, press: str) -> None:
     os.environ["TEXTUAL"] = ",".join(sorted(features))
 
     try:
-        app = import_app(import_name)
+        app = import_app(import_name, argv)
     except AppFail as error:
         from rich.console import Console
 
