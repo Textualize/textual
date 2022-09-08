@@ -22,6 +22,7 @@ from rich.tree import Tree
 
 from ._context import NoActiveAppError
 from ._node_list import NodeList
+from .binding import Bindings, BindingType
 from .color import Color, WHITE, BLACK
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
@@ -91,6 +92,9 @@ class DOMNode(MessagePump):
     # Virtual DOM nodes
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
+    # Mapping of key bindings
+    BINDINGS: ClassVar[list[BindingType]] = []
+
     # True if this node inherits the CSS from the base class.
     _inherit_css: ClassVar[bool] = True
     # List of names of base class (lower cased) that inherit CSS
@@ -123,6 +127,7 @@ class DOMNode(MessagePump):
         self._auto_refresh: float | None = None
         self._auto_refresh_timer: Timer | None = None
         self._css_types = {cls.__name__ for cls in self._css_bases(self.__class__)}
+        self._bindings = Bindings(self.BINDINGS)
 
         super().__init__()
 
@@ -475,21 +480,25 @@ class DOMNode(MessagePump):
         Returns:
             Style: Rich Style object.
         """
-
-        # TODO: Feels like there may be opportunity for caching here.
-
-        style = Style()
-        for node in reversed(self.ancestors):
-            style += node.styles.text_style
-        return style
+        return Style.combine(
+            node.styles.text_style for node in reversed(self.ancestors)
+        )
 
     @property
     def rich_style(self) -> Style:
         """Get a Rich Style object for this DOMNode."""
-        _, _, background, color = self.colors
-        style = (
-            Style.from_color((background + color).rich_color, background.rich_color)
-            + self.text_style
+        background = WHITE
+        color = BLACK
+        style = Style()
+        for node in reversed(self.ancestors):
+            styles = node.styles
+            if styles.has_rule("background"):
+                background += styles.background
+            if styles.has_rule("color"):
+                color = styles.color
+            style += styles.text_style
+        style += Style.from_color(
+            (background + color).rich_color, background.rich_color
         )
         return style
 
@@ -501,9 +510,7 @@ class DOMNode(MessagePump):
             tuple[Color, Color]: Tuple of (base background, background)
 
         """
-
         base_background = background = BLACK
-
         for node in reversed(self.ancestors):
             styles = node.styles
             if styles.has_rule("background"):
@@ -533,15 +540,13 @@ class DOMNode(MessagePump):
     @property
     def ancestors(self) -> list[DOMNode]:
         """Get a list of Nodes by tracing ancestors all the way back to App."""
-        nodes: list[DOMNode] = [self]
+        nodes: list[MessagePump | None] = []
         add_node = nodes.append
-        node: DOMNode = self
-        while True:
-            node = node._parent
-            if node is None:
-                break
+        node: MessagePump | None = self
+        while node is not None:
             add_node(node)
-        return nodes
+            node = node._parent
+        return cast(list[DOMNode], nodes)
 
     @property
     def displayed_children(self) -> list[Widget]:

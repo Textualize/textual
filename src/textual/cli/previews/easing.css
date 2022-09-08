@@ -27,7 +27,7 @@ Bar {
 
 #other {
     width: 1fr;
-    background: #555555;
+    background: $panel;
     padding: 1;
     height: 100%;
     border-left: vkey $background;
@@ -35,6 +35,7 @@ Bar {
 
 #opacity-widget {
     padding: 1;
-    background: $panel;
-    border: wide #969696;
+    background: $warning;
+    color: $text-warning;
+    border: wide $background;
 }

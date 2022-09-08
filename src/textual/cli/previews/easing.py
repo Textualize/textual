@@ -29,12 +29,30 @@ class Bar(Widget):
     position = Reactive.init(START_POSITION)
     animation_running = Reactive(False)
 
+    DEFAULT_CSS = """
+    
+    Bar {
+        background: $surface;
+        color: $error;
+    }
+
+    Bar.-active {
+        background: $surface;
+        color: $success;
+    }
+    
+    """
+
+    def watch_animation_running(self, running: bool) -> None:
+        self.set_class(running, "-active")
+
     def render(self) -> RenderableType:
+
         return ScrollBarRender(
             virtual_size=VIRTUAL_SIZE,
             window_size=WINDOW_SIZE,
             position=self.position,
-            style="green" if self.animation_running else "red",
+            style=self.rich_style,
         )
 
 

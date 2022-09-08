@@ -7,13 +7,8 @@ from operator import attrgetter
 from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple
 
 import rich.repr
-from rich.console import (
-    Console,
-    ConsoleRenderable,
-    Measurement,
-    JustifyMethod,
-    RenderableType,
-)
+from rich.console import Console, ConsoleRenderable, JustifyMethod, RenderableType
+from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.styled import Styled
@@ -27,6 +22,7 @@ from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
+from .binding import NoBinding
 from .box_model import BoxModel, get_box_model
 from .css.constants import VALID_TEXT_ALIGN
 from .dom import DOMNode, NoScreen
@@ -522,7 +518,7 @@ class Widget(DOMNode):
         """Get the height used by the *horizontal* scrollbar."""
         styles = self.styles
         if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
-            return self.styles.scrollbar_size_horizontal
+            return styles.scrollbar_size_horizontal
         return styles.scrollbar_size_horizontal if self.show_horizontal_scrollbar else 0
 
     @property
@@ -1474,7 +1470,12 @@ class Widget(DOMNode):
         await self.broker_event("click", event)
 
     async def _on_key(self, event: events.Key) -> None:
-        await self.dispatch_key(event)
+        try:
+            binding = self._bindings.get_key(event.key)
+        except NoBinding:
+            await self.dispatch_key(event)
+        else:
+            await self.action(binding.action)
 
     def _on_mount(self, event: events.Mount) -> None:
         widgets = self.compose()

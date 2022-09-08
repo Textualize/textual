@@ -2,6 +2,7 @@ import sys
 
 from rich.syntax import Syntax
 from rich.traceback import Traceback
+
 from textual.app import App, ComposeResult
 from textual.layout import Container, Vertical
 from textual.reactive import Reactive
@@ -9,17 +10,21 @@ from textual.widgets import DirectoryTree, Footer, Header, Static
 
 
 class CodeBrowser(App):
+    """Textual code browser app."""
+
+    BINDINGS = [
+        ("t", "toggle_tree", "Toggle Tree"),
+        ("q", "quit", "Quit"),
+    ]
 
     show_tree = Reactive.init(True)
 
     def watch_show_tree(self, show_tree: bool) -> None:
+        """Called when show_tree is modified."""
         self.set_class(show_tree, "-show-tree")
 
-    def on_load(self) -> None:
-        self.bind("t", "toggle_tree", description="Toggle Tree")
-        self.bind("q", "quit", description="Quit")
-
     def compose(self) -> ComposeResult:
+        """Compose our UI."""
         path = "./" if len(sys.argv) < 2 else sys.argv[1]
         yield Header()
         yield Container(
@@ -29,6 +34,7 @@ class CodeBrowser(App):
         yield Footer()
 
     def on_directory_tree_file_click(self, event: DirectoryTree.FileClick) -> None:
+        """Called when the user click a file in the directory tree."""
         code_view = self.query_one("#code", Static)
         try:
             syntax = Syntax.from_path(
