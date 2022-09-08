@@ -13,7 +13,7 @@ from ..geometry import Region, Size
 from .. import events
 from ..reactive import Reactive
 from .._types import MessageTarget
-from ..widget import Widget
+from ..widgets import Static
 from ..message import Message
 from .. import messages
 
@@ -161,7 +161,7 @@ class TreeNode(Generic[NodeDataType]):
         return self._control.render_node(self)
 
 
-class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
+class TreeControl(Generic[NodeDataType], Static, can_focus=True):
     DEFAULT_CSS = """
     TreeControl {
         background: $surface;

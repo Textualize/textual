@@ -8,6 +8,7 @@ class Container(Widget):
     Container {
         layout: vertical;       
         overflow: auto;
+      
     }    
     """
 
