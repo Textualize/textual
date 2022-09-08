@@ -581,7 +581,7 @@ class Widget(DOMNode):
         Returns:
             Region: Screen region that contains a widget's content.
         """
-        content_region = self.region.shrink(self.gutter)
+        content_region = self.region.shrink(self.styles.gutter)
         return content_region
 
     @property

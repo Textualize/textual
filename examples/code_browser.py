@@ -31,9 +31,15 @@ class CodeBrowser(App):
     def on_directory_tree_file_click(self, event: DirectoryTree.FileClick) -> None:
         code_view = self.query_one("#code", Static)
         try:
-            syntax = Syntax.from_path(event.path, line_numbers=True, word_wrap=True)
+            syntax = Syntax.from_path(
+                event.path,
+                line_numbers=True,
+                word_wrap=True,
+                indent_guides=True,
+                theme="monokai",
+            )
         except Exception:
-            code_view.update(Traceback())
+            code_view.update(Traceback(theme="monokai", width=None))
             self.sub_title = "ERROR"
         else:
             code_view.update(syntax)
