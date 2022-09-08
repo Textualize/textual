@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import runpy
+import shlex
 from typing import cast, TYPE_CHECKING
 
 from importlib_metadata import version
@@ -39,7 +40,7 @@ class AppFail(Exception):
     pass
 
 
-def import_app(import_name: str, argv: list[str]) -> App:
+def import_app(import_name: str) -> App:
     """Import an app from it's import name.
 
     Args:
@@ -58,6 +59,7 @@ def import_app(import_name: str, argv: list[str]) -> App:
 
     from textual.app import App
 
+    import_name, *argv = shlex.split(import_name)
     lib, _colon, name = import_name.partition(":")
 
     if lib.endswith(".py"):
@@ -132,8 +134,7 @@ def import_app(import_name: str, argv: list[str]) -> App:
 @click.argument("import_name", metavar="FILE or FILE:APP")
 @click.option("--dev", "dev", help="Enable development mode", is_flag=True)
 @click.option("--press", "press", help="Comma separated keys to simulate press")
-@click.argument("argv", nargs=-1, type=click.UNPROCESSED)
-def run_app(import_name: str, dev: bool, press: str, argv: list[str]) -> None:
+def run_app(import_name: str, dev: bool, press: str) -> None:
     """Run a Textual app.
 
     The code to run may be given as a path (ending with .py) or as a Python
@@ -142,13 +143,18 @@ def run_app(import_name: str, dev: bool, press: str, argv: list[str]) -> None:
 
     Here are some examples:
 
-    textual run foo.py
+        textual run foo.py
 
-    textual run foo.py:MyApp
+        textual run foo.py:MyApp
 
-    textual run module.foo
+        textual run module.foo
 
-    textual run module.foo:MyApp
+        textual run module.foo:MyApp
+
+    If you are running a file and want to pass command line arguments, wrap the filename and arguments
+    in quotes:
+
+        textual run "foo.py arg --option"
 
     """
 
@@ -163,9 +169,8 @@ def run_app(import_name: str, dev: bool, press: str, argv: list[str]) -> None:
         features.add("devtools")
 
     os.environ["TEXTUAL"] = ",".join(sorted(features))
-
     try:
-        app = import_app(import_name, argv)
+        app = import_app(import_name)
     except AppFail as error:
         from rich.console import Console
 
