@@ -321,10 +321,13 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def bindings(self) -> Bindings:
+        """Get current bindings."""
         if self.focused is None:
             return self._bindings
         else:
-            return Bindings.merge(node._bindings for node in self.focused.ancestors)
+            return Bindings.merge(
+                node._bindings for node in reversed(self.focused.ancestors)
+            )
 
     def _set_active(self) -> None:
         """Set this app to be the currently active app."""
@@ -1325,7 +1328,7 @@ class App(Generic[ReturnType], DOMNode):
             bool: True if the key was handled by a binding, otherwise False
         """
         try:
-            binding = self._bindings.get_key(key)
+            binding = self.bindings.get_key(key)
         except NoBinding:
             return False
         else:
