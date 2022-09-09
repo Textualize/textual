@@ -118,4 +118,4 @@ def arrange(
 
         placements.extend(layout_placements)
 
-    return placements, arrange_widgets, scroll_spacing
+    return placements[::-1], arrange_widgets, scroll_spacing
