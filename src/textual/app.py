@@ -200,6 +200,7 @@ class App(Generic[ReturnType], DOMNode):
         self._logger = Logger(self._log)
 
         self._bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
+        self._bindings.bind("f2", "screenshot", show=False)
         self._refresh_required = False
 
         self.design = DEFAULT_COLORS

@@ -13,7 +13,7 @@ class CodeBrowser(App):
     """Textual code browser app."""
 
     BINDINGS = [
-        ("t", "toggle_tree", "Toggle Tree"),
+        ("f", "toggle_files", "Toggle Files"),
         ("q", "quit", "Quit"),
     ]
 
@@ -52,7 +52,7 @@ class CodeBrowser(App):
             self.query_one("#code-view").scroll_home(animate=False)
             self.sub_title = event.path
 
-    def action_toggle_tree(self) -> None:
+    def action_toggle_files(self) -> None:
         self.show_tree = not self.show_tree
 
 
