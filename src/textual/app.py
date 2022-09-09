@@ -11,7 +11,7 @@ from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
 from time import perf_counter
-from typing import Any, Generator, Generic, Iterable, Iterator, Type, TypeVar, cast
+from typing import Any, Generic, Iterable, Iterator, Type, TypeVar, cast
 from weakref import WeakSet, WeakValueDictionary
 
 from ._ansi_sequences import SYNC_END, SYNC_START
