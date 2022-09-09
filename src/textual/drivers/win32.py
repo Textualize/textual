@@ -220,11 +220,9 @@ class EventMonitor(threading.Thread):
         self.target = target
         self.exit_event = exit_event
         self.process_event = process_event
-        self.app.log("event monitor constructed")
         super().__init__()
 
     def run(self) -> None:
-        self.app.log("event monitor thread started")
         exit_requested = self.exit_event.is_set
         parser = XTermParser(self.target, lambda: False)
 
@@ -280,8 +278,7 @@ class EventMonitor(threading.Thread):
                     self.on_size_change(*new_size)
 
         except Exception as error:
-            self.app.log("EVENT MONITOR ERROR", error)
-        self.app.log("event monitor thread finished")
+            self.app.log.error("EVENT MONITOR ERROR", error)
 
     def on_size_change(self, width: int, height: int) -> None:
         """Called when terminal size changes."""

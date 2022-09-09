@@ -197,7 +197,7 @@ class App(Generic[ReturnType], DOMNode):
         else:
             self._title = title
 
-        self._logger = Logger()
+        self._logger = Logger(self._log)
 
         self._bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
         self._refresh_required = False
