@@ -546,7 +546,7 @@ class DOMNode(MessagePump):
         while node is not None:
             add_node(node)
             node = node._parent
-        return cast(list[DOMNode], nodes)
+        return cast("list[DOMNode]", nodes)
 
     @property
     def displayed_children(self) -> list[Widget]:

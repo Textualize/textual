@@ -334,7 +334,7 @@ If you run "stopwatch04.py" now you will be able to toggle between the two state
 
 ## Reactive attributes
 
-A recurring theme in Textual is that you rarely need to explicitly update a widget. It is possible: you can call [`refresh()`][textual.widget.Widget.refresh] to display new data. However, Textual prefers to do this automatically via _reactive_ attributes.
+A recurring theme in Textual is that you rarely need to explicitly update a widget. It is possible: you can call [refresh()][textual.widget.Widget.refresh] to display new data. However, Textual prefers to do this automatically via _reactive_ attributes.
 
 You can declare a reactive attribute with [reactive][textual.reactive.reactive]. Let's use this feature to create a timer that displays elapsed time and keeps it updated.
 
@@ -355,7 +355,7 @@ The first argument to `reactive` may be a default value or a callable that retur
 The `time` attribute has a simple float as the default value, so `self.time` will be `0` on start.
 
 
-The `on_mount` method is an event handler which is called then the widget is first added to the application (or _mounted_). In this method we call `set_interval` to create a timer which calls `self.update_time` sixty times a second. This `update_time` method calculates the time elapsed since the widget started and assigns it to `self.time`. Which brings us to one of Reactive's super-powers.
+The `on_mount` method is an event handler which is called then the widget is first added to the application (or _mounted_). In this method we call [set_interval()][textual.message_pump.MessagePump.set_interval] to create a timer which calls `self.update_time` sixty times a second. This `update_time` method calculates the time elapsed since the widget started and assigns it to `self.time`. Which brings us to one of Reactive's super-powers.
 
 If you implement a method that begins with `watch_` followed by the name of a reactive attribute (making it a _watch method_), that method will be called when the attribute is modified.
 
@@ -380,7 +380,7 @@ We need to be able to start, stop, and reset each stopwatch independently. We ca
 Here's a summary of the changes made to `TimeDisplay`.
 
 - We've added a `total` reactive attribute to store the total time elapsed between clicking that start and stop buttons.
-- The call to `set_interval` has grown a `pause=True` argument which starts the timer in pause mode (when a timer is paused it won't run until `resume()` is called). This is because we don't want the time to update until the user hits the start button.
+- The call to `set_interval` has grown a `pause=True` argument which starts the timer in pause mode (when a timer is paused it won't run until [resume()][textual.timer.Timer.resume] is called). This is because we don't want the time to update until the user hits the start button.
 - We've stored the result of `set_interval` which returns a Timer object. We will use this later to _resume_ the timer when we start the Stopwatch.
 - We've added `start()`, `stop()`, and `reset()` methods.
 
