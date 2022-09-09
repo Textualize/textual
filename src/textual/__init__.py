@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import sys
 import inspect
-from typing import TYPE_CHECKING
+from typing import Callable, TYPE_CHECKING
 
 import rich.repr
 from rich.console import RenderableType
@@ -9,7 +10,19 @@ from rich.console import RenderableType
 __all__ = ["log", "panic"]
 
 
+from ._context import active_app
 from ._log import LogGroup, LogVerbosity, LogSeverity
+
+if TYPE_CHECKING:
+    from .app import App
+
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:  # pragma: no cover
+    from typing_extensions import TypeAlias
+
+
+LogCallable: TypeAlias = "Callable"
 
 
 @rich.repr.auto
@@ -18,13 +31,22 @@ class Logger:
 
     def __init__(
         self,
+        log_callable: LogCallable | None,
         group: LogGroup = LogGroup.INFO,
         verbosity: LogVerbosity = LogVerbosity.NORMAL,
         severity: LogSeverity = LogSeverity.NORMAL,
     ) -> None:
+        self._log = log_callable
         self._group = group
         self._verbosity = verbosity
         self._severity = severity
+
+    @property
+    def log(self) -> LogCallable:
+        if self._log is None:
+            app = active_app.get()
+            return app._log
+        return self._log
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._group, LogGroup.INFO
@@ -32,11 +54,8 @@ class Logger:
         yield self._severity, LogSeverity.NORMAL
 
     def __call__(self, *args: object, **kwargs) -> None:
-        from ._context import active_app
-
-        app = active_app.get()
         caller = inspect.stack()[1]
-        app._log(
+        self.log(
             self._group,
             self._verbosity,
             self._severity,
@@ -55,50 +74,50 @@ class Logger:
             Logger: New logger.
         """
         verbosity = LogVerbosity.HIGH if verbose else LogVerbosity.NORMAL
-        return Logger(self._group, verbosity, LogSeverity.NORMAL)
+        return Logger(self._log, self._group, verbosity, LogSeverity.NORMAL)
 
     @property
     def verbose(self) -> Logger:
         """A verbose logger."""
-        return Logger(self._group, LogVerbosity.HIGH)
+        return Logger(self._log, self._group, LogVerbosity.HIGH)
 
     @property
     def critical(self) -> Logger:
         """A critical logger."""
-        return Logger(self._group, self._verbosity, LogSeverity.CRITICAL)
+        return Logger(self._log, self._group, self._verbosity, LogSeverity.CRITICAL)
 
     @property
     def event(self) -> Logger:
         """An event logger."""
-        return Logger(LogGroup.EVENT)
+        return Logger(self._log, LogGroup.EVENT)
 
     @property
     def debug(self) -> Logger:
         """A debug logger."""
-        return Logger(LogGroup.DEBUG)
+        return Logger(self._log, LogGroup.DEBUG)
 
     @property
     def info(self) -> Logger:
         """An info logger."""
-        return Logger(LogGroup.INFO)
+        return Logger(self._log, LogGroup.INFO)
 
     @property
     def warning(self) -> Logger:
         """An info logger."""
-        return Logger(LogGroup.WARNING)
+        return Logger(self._log, LogGroup.WARNING)
 
     @property
     def error(self) -> Logger:
         """An error logger."""
-        return Logger(LogGroup.ERROR)
+        return Logger(self._log, LogGroup.ERROR)
 
     @property
     def system(self) -> Logger:
         """A system logger."""
-        return Logger(LogGroup.SYSTEM)
+        return Logger(self._log, LogGroup.SYSTEM)
 
 
-log = Logger()
+log = Logger(None)
 
 
 def panic(*args: RenderableType) -> None:
