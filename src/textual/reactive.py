@@ -187,9 +187,22 @@ class Reactive(Generic[ReactiveType]):
             setattr(obj, compute, value)
 
 
+reactive = Reactive.init
+"""Create a reactive attribute."""
+var = Reactive.var
+"""Create a reactive attribute that doesn't refresh."""
+
+
 def watch(
     obj: Reactable, attribute_name: str, callback: Callable[[Any], object]
 ) -> None:
+    """Watch a reactive variable on an object.
+
+    Args:
+        obj (Reactable): The parent object.
+        attribute_name (str): The attribute to watch.
+        callback (Callable[[Any], object]): A callable to call when the attribute changes.
+    """
     watcher_name = f"__{attribute_name}_watchers"
     current_value = getattr(obj, attribute_name, None)
     if not hasattr(obj, watcher_name):

@@ -31,7 +31,10 @@ class Focusable1(Focusable):
 
 class Focusable2(Focusable):
     CSS = ""
-    BINDINGS = [("b", "app.bell", "Beep"), ("f1", "app.quit", "QUIT")]
+    BINDINGS = [
+        ("b", "app.bell", "Beep"),
+        ("f1", "app.quit", "QUIT"),
+    ]
 
     def render(self) -> str:
         return repr(self)

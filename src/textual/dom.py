@@ -670,7 +670,7 @@ class DOMNode(MessagePump):
         raise NoMatchingNodesError(f"No child found with id={id!r}")
 
     def query(self, selector: str | None = None) -> DOMQuery:
-        """Get a DOM query.
+        """Get a DOM query matching a selector.
 
         Args:
             selector (str, optional): A CSS selector or `None` for all nodes. Defaults to None.
@@ -705,9 +705,11 @@ class DOMNode(MessagePump):
 
         Args:
             selector (str | None, optional): A selector.
+            expect_type (type, optional): Require the object be of the supplied type, or None for any type.
+                Defaults to None.
 
         Returns:
-            Widget: A widget matching the selector.
+            Widget | ExpectType: A widget matching the selector.
         """
         from .css.query import DOMQuery
 

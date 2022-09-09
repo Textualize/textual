@@ -1,1 +1,1 @@
-::: textual.reactive.Reactive
+::: textual.reactive
