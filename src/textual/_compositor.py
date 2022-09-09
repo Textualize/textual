@@ -461,6 +461,7 @@ class Compositor:
 
     @property
     def layers(self) -> list[tuple[Widget, MapGeometry]]:
+        """Get widgets and geometry in layer order."""
         if self._layers is None:
             self._layers = sorted(
                 self.map.items(), key=lambda item: item[1].order, reverse=True
@@ -476,7 +477,7 @@ class Compositor:
         """
         layers = self.layers
         intersection = Region.intersection
-        for widget, (region, _order, clip, virtual_size, container_size, *_) in layers:
+        for widget, (region, _order, clip, virtual_size, container_size, _) in layers:
             yield (
                 widget,
                 intersection(region, clip),
