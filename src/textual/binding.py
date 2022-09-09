@@ -70,7 +70,7 @@ class Bindings:
         """
         keys: dict[str, Binding] = {}
         for _bindings in bindings:
-            keys |= _bindings.keys
+            keys.update(_bindings.keys)
         return Bindings(keys.values())
 
     @property
