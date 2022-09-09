@@ -200,7 +200,7 @@ class App(Generic[ReturnType], DOMNode):
         self._logger = Logger(self._log)
 
         self._bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
-        self._bindings.bind("f2", "screenshot", show=False)
+        self._bindings.bind("f2", "screenshot(None, '~/Desktop')", show=False)
         self._refresh_required = False
 
         self.design = DEFAULT_COLORS
@@ -542,9 +542,9 @@ class App(Generic[ReturnType], DOMNode):
         except Exception as error:
             self._handle_exception(error)
 
-    def action_screenshot(self, path: str | None = None) -> None:
+    def action_screenshot(self, filename: str | None, path: str = "~/") -> None:
         """Action to save a screenshot."""
-        self.save_screenshot(path)
+        self.save_screenshot(filename, path)
 
     def export_screenshot(self, *, title: str | None = None) -> str:
         """Export a SVG screenshot of the current screen.
@@ -567,7 +567,7 @@ class App(Generic[ReturnType], DOMNode):
         console.print(screen_render)
         return console.export_svg(title=title or self.title)
 
-    def save_screenshot(self, path: str | None = None) -> str:
+    def save_screenshot(self, filename: str | None = None, path: str = "./") -> str:
         """Save a screenshot of the current screen.
 
         Args:
@@ -578,11 +578,12 @@ class App(Generic[ReturnType], DOMNode):
             str: Filename of screenshot.
         """
         self.bell()
-        if path is None:
-            svg_path = f"{self.title.lower()}_{datetime.now().isoformat()}.svg"
-            svg_path = svg_path.replace("/", "_").replace("\\", "_")
+        if filename is None:
+            svg_filename = f"{self.title.lower()}_{datetime.now().isoformat()}.svg"
+            svg_filename = svg_filename.replace("/", "_").replace("\\", "_")
         else:
-            svg_path = path
+            svg_filename = filename
+        svg_path = os.path.expanduser(os.path.join(path, svg_filename))
         screenshot_svg = self.export_screenshot()
         with open(svg_path, "w") as svg_file:
             svg_file.write(screenshot_svg)
