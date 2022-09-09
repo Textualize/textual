@@ -1,4 +1,33 @@
+[![Supported Python Versions](https://img.shields.io/pypi/pyversions/textual/0.1.18)](https://pypi.org/project/textual/) [![PyPI version](https://badge.fury.io/py/textual.svg)](https://badge.fury.io/py/textual)
+
 # Textual
+
+
+Textual is a Python framework for creating applications within your terminal&mdash;powered by [Rich](https://github.com/Textualize/rich).
+
+Build sophisticated Text User Interfaces (TUIs) with just your Python skills.
+
+## Preview
+
+This is the [code_browser.py](./examples/code_browser.py) example which clocks in at 61 lines, *including* docstrings and blank lines.
+
+https://user-images.githubusercontent.com/554369/189388764-c589ffc2-e178-49ba-a8fa-f8d530bd55a0.mov
+
+## Compatibility
+
+Textual runs on Linux, MacOS, and Windows. Rich requires Python 3.7 or above.
+
+## Installing
+
+Install Textual via pip:
+
+```
+pip install textual[dev]
+```
+
+The addition of `[dev]` installs some additional development tools.
+
+## Features
 
 
 ![calculator screenshot](./imgs/calculator.svg)
