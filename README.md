@@ -11,7 +11,11 @@ Build sophisticated Text User Interfaces (TUIs) with just your Python skills.
 
 This is the [code_browser.py](./examples/code_browser.py) example which clocks in at 61 lines, *including* docstrings and blank lines.
 
-https://user-images.githubusercontent.com/554369/189388764-c589ffc2-e178-49ba-a8fa-f8d530bd55a0.mov
+
+
+https://user-images.githubusercontent.com/554369/189394703-364b5caa-97e0-45db-907d-7b1620d6411f.mov
+
+
 
 ## Compatibility
 
