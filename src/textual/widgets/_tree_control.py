@@ -342,15 +342,15 @@ class TreeControl(Generic[NodeDataType], Static, can_focus=True):
 
     @property
     def _guide_style(self) -> Style:
-        return self.get_component_styles("tree--guides").rich_style
+        return self.get_component_rich_style("tree--guides")
 
     @property
     def _highlight_guide_style(self) -> Style:
-        return self.get_component_styles("tree--guides-highlight").rich_style
+        return self.get_component_rich_style("tree--guides-highlight")
 
     @property
     def _cursor_guide_style(self) -> Style:
-        return self.get_component_styles("tree--guides-cursor").rich_style
+        return self.get_component_rich_style("tree--guides-cursor")
 
     def on_mouse_move(self, event: events.MouseMove) -> None:
         self.hover_node = event.style.meta.get("tree_node")

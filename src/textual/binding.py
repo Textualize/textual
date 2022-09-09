@@ -12,7 +12,11 @@ else:  # pragma: no cover
     from typing_extensions import TypeAlias
 
 
-BindingType: TypeAlias = "Binding | tuple[str, str] | tuple[str, str, str]"
+BindingType: TypeAlias = "Binding | tuple[str, str, str]"
+
+
+class BindingError(Exception):
+    """A binding related error."""
 
 
 class NoBinding(Exception):
@@ -39,6 +43,10 @@ class Bindings:
                 if isinstance(binding, Binding):
                     yield binding
                 else:
+                    if len(binding) != 3:
+                        raise BindingError(
+                            f"BINDINGS must contain a tuple of three strings, not {binding!r}"
+                        )
                     yield Binding(*binding)
 
         self.keys: MutableMapping[str, Binding] = (

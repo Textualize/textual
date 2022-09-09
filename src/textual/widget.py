@@ -117,6 +117,7 @@ class Widget(DOMNode):
         self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
 
         self._styles_cache = StylesCache()
+        self._rich_style_cache: dict[str, Style] = {}
 
         self._lock = Lock()
 
@@ -187,6 +188,21 @@ class Widget(DOMNode):
         return self.is_scrollable and (
             self.allow_horizontal_scroll or self.allow_vertical_scroll
         )
+
+    def get_component_rich_style(self, name: str) -> Style:
+        """Get a *Rich* style for a component.
+
+        Args:
+            name (str): Name of component.
+
+        Returns:
+            Style: A Rich style object.
+        """
+        style = self._rich_style_cache.get(name)
+        if style is None:
+            style = self.get_component_styles(name).rich_style
+            self._rich_style_cache[name] = style
+        return style
 
     def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.
@@ -1383,6 +1399,7 @@ class Widget(DOMNode):
             self._set_dirty(*regions)
             self._content_width_cache = (None, 0)
             self._content_height_cache = (None, 0)
+            self._rich_style_cache.clear()
             self._repaint_required = True
             if isinstance(self.parent, Widget) and self.styles.auto_dimensions:
                 self.parent.refresh(layout=True)
@@ -1459,6 +1476,9 @@ class Widget(DOMNode):
 
     async def broker_event(self, event_name: str, event: events.Event) -> bool:
         return await self.app._broker_event(event_name, event, default_namespace=self)
+
+    def _on_syles_updated(self) -> None:
+        self._rich_style_cache.clear()
 
     async def _on_mouse_down(self, event: events.MouseUp) -> None:
         await self.broker_event("mouse.down", event)

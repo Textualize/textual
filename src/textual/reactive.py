@@ -3,6 +3,8 @@ from __future__ import annotations
 from functools import partial
 from inspect import isawaitable
 from typing import TYPE_CHECKING, Any, Callable, Generic, Type, TypeVar, Union
+from weakref import WeakSet
+
 
 from . import events
 from ._callback import count_parameters, invoke
@@ -191,7 +193,7 @@ def watch(
     watcher_name = f"__{attribute_name}_watchers"
     current_value = getattr(obj, attribute_name, None)
     if not hasattr(obj, watcher_name):
-        setattr(obj, watcher_name, set())
+        setattr(obj, watcher_name, WeakSet())
     watchers = getattr(obj, watcher_name)
     watchers.add(callback)
     Reactive._check_watchers(obj, attribute_name, current_value)

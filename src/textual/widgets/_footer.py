@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from rich.console import RenderableType
-from rich.style import Style
+
 from rich.text import Text
 import rich.repr
 
 from .. import events
-from ..reactive import Reactive
+from ..reactive import Reactive, watch
 from ..widget import Widget
 
 
@@ -55,6 +55,14 @@ class Footer(Widget):
         """If highlight key changes we need to regenerate the text."""
         self._key_text = None
 
+    def on_mount(self) -> None:
+        watch(self.app, "focused", self._focus_changed)
+
+    def _focus_changed(self, focused: Widget | None) -> None:
+        self.log("FOCUS CHANGED", focused)
+        self._key_text = None
+        self.refresh()
+
     async def on_mouse_move(self, event: events.MouseMove) -> None:
         """Store any key we are moving over."""
         self.highlight_key = event.style.meta.get("key")
@@ -76,11 +84,9 @@ class Footer(Widget):
             justify="left",
             end="",
         )
-        highlight_style = self.get_component_styles("footer--highlight").rich_style
-        highlight_key_style = self.get_component_styles(
-            "footer--highlight-key"
-        ).rich_style
-        key_style = self.get_component_styles("footer--key").rich_style
+        highlight_style = self.get_component_rich_style("footer--highlight")
+        highlight_key_style = self.get_component_rich_style("footer--highlight-key")
+        key_style = self.get_component_rich_style("footer--key")
         for binding in self.app.bindings.shown_keys:
             key_display = (
                 binding.key.upper()

@@ -154,6 +154,8 @@ class App(Generic[ReturnType], DOMNode):
 
     CSS_PATH: str | None = None
 
+    focused: Reactive[Widget | None] = Reactive(None)
+
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
@@ -181,7 +183,6 @@ class App(Generic[ReturnType], DOMNode):
         self._screen_stack: list[Screen] = []
         self._sync_available = False
 
-        self.focused: Widget | None = None
         self.mouse_over: Widget | None = None
         self.mouse_captured: Widget | None = None
         self._driver: Driver | None = None
