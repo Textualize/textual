@@ -402,7 +402,9 @@ class Compositor:
                     get_layer_index = layers_to_index.get
 
                     # Add all the widgets
-                    for sub_region, margin, sub_widget, z, fixed in placements:
+                    for sub_region, margin, sub_widget, z, fixed in reversed(
+                        placements
+                    ):
                         # Combine regions with children to calculate the "virtual size"
                         if fixed:
                             widget_region = sub_region + placement_offset
@@ -462,12 +464,9 @@ class Compositor:
     @property
     def layers(self) -> list[tuple[Widget, MapGeometry]]:
         """Get widgets and geometry in layer order."""
-        index_one = itemgetter(1)
         if self._layers is None:
             self._layers = sorted(
-                self.map.items(),
-                key=lambda item: index_one(index_one(item)),
-                reverse=True,
+                self.map.items(), key=lambda item: item[1].order, reverse=True
             )
         return self._layers
 

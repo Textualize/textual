@@ -30,14 +30,14 @@ def arrange(
     Returns:
         tuple[list[WidgetPlacement], set[Widget], Spacing]: Widget arrangement information.
     """
-    display_children = [child for child in children if child.display]
 
     arrange_widgets: set[Widget] = set()
 
     dock_layers: dict[str, list[Widget]] = {}
     dock_layers_setdefault = dock_layers.setdefault
-    for child in display_children:
-        dock_layers_setdefault(child.styles.layer or "default", []).append(child)
+    for child in children:
+        if child.display:
+            dock_layers_setdefault(child.styles.layer or "default", []).append(child)
 
     width, height = size
 
@@ -103,7 +103,6 @@ def arrange(
         layout_placements, arranged_layout_widgets = widget._layout.arrange(
             widget, layout_widgets, region.size
         )
-
         if arranged_layout_widgets:
             scroll_spacing = scroll_spacing.grow_maximum(dock_spacing)
             arrange_widgets.update(arranged_layout_widgets)
@@ -118,4 +117,4 @@ def arrange(
 
         placements.extend(layout_placements)
 
-    return placements[::-1], arrange_widgets, scroll_spacing
+    return placements, arrange_widgets, scroll_spacing
