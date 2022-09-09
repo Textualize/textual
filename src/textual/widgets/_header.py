@@ -31,7 +31,7 @@ class HeaderClock(Widget):
     DEFAULT_CSS = """
     HeaderClock {
         dock: right;
-        width: auto;
+        width: 10;
         padding: 0 1;
         background: $secondary-background-lighten-1;
         color: $text-secondary-background;

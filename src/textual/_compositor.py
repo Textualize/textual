@@ -344,7 +344,6 @@ class Compositor:
 
         map: CompositorMap = {}
         widgets: set[Widget] = set()
-        get_order = attrgetter("order")
 
         def add_widget(
             widget: Widget,
