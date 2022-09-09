@@ -13,7 +13,7 @@ By the end of this page you should have a solid understanding of app development
 
 ## Stopwatch Application
 
-We're going to build a stopwatch application. This application should show a list of stopwatches with a time display the user can start, stop, and reset. We also want the user to be able to add and remove stopwatches as required.
+We're going to build a stopwatch application. This application should show a list of stopwatches with buttons to start, stop, and reset the stopwatches. We also want the user to be able to add and remove stopwatches as required.
 
 This will be a simple yet **fully featured** app &mdash; you could distribute this app if you wanted to!
 
@@ -87,7 +87,7 @@ If you run this code, you should see something like the following:
 ```{.textual path="docs/examples/tutorial/stopwatch01.py"}
 ```
 
-Hit the ++d++ key to toggle dark mode.
+Hit the ++d++ key to toggle between light and dark mode.
 
 ```{.textual path="docs/examples/tutorial/stopwatch01.py" press="d" title="TimerApp + dark"}
 ```
@@ -102,35 +102,31 @@ Let's examine stopwatch01.py in more detail.
 --8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
-The first line imports the Textual `App` class. The second line imports two builtin widgets: `Footer` which shows available keys and `Header` which shows a title and the current time.
+The first line imports the Textual `App` class. The second line imports two builtin widgets: `Footer` which shows available keys and `Header` which shows a title and the current time. Widgets are re-usable components responsible for managing a part of the screen. We will cover how to build such widgets in this tutorial.
 
-Widgets are re-usable components responsible for managing a part of the screen. We will cover how to build such widgets in this tutorial.
+The following lines define the app itself:
 
-
-```python title="stopwatch01.py" hl_lines="5-19"
+```python title="stopwatch01.py" hl_lines="5-17"
 --8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
 The App class is where most of the logic of Textual apps is written. It is responsible for loading configuration, setting up widgets, handling keys, and more.
 
-Currently, there are three methods in our stopwatch app.
+Here's what the above app defines:
+
+- `BINDINGS` is a list of tuples that maps (or *binds*) keys to actions in your app. The first value in the tuple is the key; the second value is the name of the action; the final value is a short description. The name of the action (`"toggle_dark"`) is mapped on to the `"action_toggle_dark"` method (see below) which is called when you hit the ++d++ key.
 
 -  `compose()` is where we construct a user interface with widgets. The `compose()` method may return a list of widgets, but it is generally easier to _yield_ them (making this method a generator). In the example code we yield instances of the widget classes we imported, i.e. the header and the footer.
 
-- `on_load()` is an _event handler_ method. Event handlers are called by Textual in response to external events like keys and mouse movements, and internal events needed to manage your application. Event handler methods begin with `on_` followed by the name of the event (in lower case). Hence, `on_load` is called in response to the Load event which is sent just after the app starts. We're using this event to call `App.bind()` which connects a key to an _action_.
+- `action_toggle_dark()` defines an _action_ method. Actions are methods beginning with `action_` followed by the name of the action. The `BINDINGS` list above tells Textual to run this action when the user hits the ++d++ key.
 
-- `action_toggle_dark()` defines an _action_ method. Actions are methods beginning with `action_` followed by the name of the action. The call to `bind()` in `on_load()` binds this the ++d++ key to this action. The body of this method flips the state of the `dark` Boolean to toggle dark mode.
-
-!!! note
-
-    You may have noticed that `action_toggle_dark` doesn't do anything to explicitly change the _screen_, and yet hitting ++d++ updates the terminal. Textual is able to detect changes that should update the screen.
-
-
-```python title="stopwatch01.py" hl_lines="22-24"
+```python title="stopwatch01.py" hl_lines="20-22"
 --8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
-The last few lines create an instance of the app at the module scope. Followed by a call to `run()` within a `__name__ == "__main__"` block. This is so that we could import `app` if we want to. Or we could run it with `python stopwatch01.py`. 
+The final three lines create an instance of the app and call [run()][textual.app.App.run] method within a `__name__ == "__main__"` block. This is so we can call `python stopwatch01.py` to run the app, or we could import `stopwatch01` as part of a larger application.
+
+It's the run method that puts the terminal in to *application mode* so that Textual can take over updating the terminal and handling keyboard and mouse input.
 
 ## Designing a UI with widgets
 
@@ -149,11 +145,11 @@ We will need to build a `Stopwatch` widget composed of the following _child_ wid
 - A "Reset" button
 - A time display
 
-Textual has a builtin `Button` widget which takes care of the first three components. All we need to build is the time display widget which will show the elapsed time in HOURS:MINUTES:SECONDS format, and the stopwatch widget itself.
+Textual has a builtin `Button` widget which takes care of the first three components. All we need to build is the time display widget which will show the elapsed time and the stopwatch widget itself.
 
 Let's add those to the app. Just a skeleton for now, we will add the rest of the features as we go.
 
-```python title="stopwatch02.py" hl_lines="3 6-7 10-18 28"
+```python title="stopwatch02.py" hl_lines="3 6-7 10-18 30"
 --8<-- "docs/examples/tutorial/stopwatch02.py"
 ```
 
@@ -163,16 +159,16 @@ We've imported two new widgets in this code: `Button`, which creates a clickable
 
 We're extending Static as a foundation for our `TimeDisplay` widget. There are no methods on this class yet. 
 
-The Stopwatch class also extends Static to define a new widget. This class has a `compose()` method which yields its child widgets, consisting of three `Button` objects and a single `TimeDisplay`. These are all we need to build a stopwatch as in the sketch.
+The Stopwatch class extends Static to define a new widget. This class has a `compose()` method which yields its child widgets, consisting of three `Button` objects and a single `TimeDisplay`. These are all we need to build a stopwatch as in the sketch.
 
 The Button constructor takes a label to be displayed in the button ("Start", "Stop", or "Reset"). Additionally some of the buttons set the following parameters:
 
-- **`id`** is an identifier we can use to tell the buttons apart in code and apply styles. More on that later.
-- **`variant`** is a string which selects a default style. The "success" variant makes the button green, and the "error" variant makes it red. 
+- `id` is an identifier we can use to tell the buttons apart in code and apply styles. More on that later.
+- `variant` is a string which selects a default style. The "success" variant makes the button green, and the "error" variant makes it red. 
 
 ### Composing the widgets
 
-To see our widgets we first need to yield them from the app's `compose()` method:
+To add widgets to our application we first need to yield them from the app's `compose()` method:
 
 The new line in `Stopwatch.compose()` yields a single `Container` object which will create a scrolling list of stopwatches. When classes contain other widgets (like `Container`) they will typically accept their child widgets as positional arguments. We want to start the app with three stopwatches, so we construct three `Stopwatch` instances and pass them to the container's constructor.
 
@@ -204,7 +200,7 @@ While it's possible to set all styles for an app this way, it is rarely necessar
 
 Let's add a CSS file to our application.
 
-```python title="stopwatch03.py" hl_lines="39"
+```python title="stopwatch03.py" hl_lines="37"
 --8<-- "docs/examples/tutorial/stopwatch03.py"
 ```
 
@@ -301,6 +297,10 @@ Here's the new CSS:
 
 These new rules are prefixed with `.started`. The `.` indicates that `.started` refers to a CSS class called "started". The new styles will be applied only to widgets that have this CSS class.
 
+<div class="excalidraw">
+--8<-- "docs/images/css_stopwatch.excalidraw.svg"
+</div>
+
 Some of the new styles have more than one selector separated by a space. The space indicates that the rule should match the second selector if it is a child of the first. Let's look at one of these styles:
 
 ```sass
@@ -309,38 +309,36 @@ Some of the new styles have more than one selector separated by a space. The spa
 }
 ```
 
-The purpose of this CSS is to hide the start button when the stopwatch has started.
+The `.started` selector matches any widget with a `"started"` CSS class. While `#start` matches a child widget with an ID of "start". So it matches the Start button only for Stopwatches in a started state.
 
-The `.started` selector matches any widget with a "started" CSS class. While "#start" matches a child widget with an ID of "start". So it matches the Start button only for Stopwatches in a started state.
-
-The rule is `"display: none"` which tells Textual to _hide_ the button.
+The rule is `"display: none"` which tells Textual to hide the button.
 
 ### Manipulating classes
 
-Modifying a widget's CSS classes it a convenient way to modify visuals without introducing a lot of display related code which tends to be hard to maintain.
+Modifying a widget's CSS classes it a convenient way to modify visuals without introducing a lot of messy display related code.
 
-You can add and remove CSS classes with the `add_class()` and `remove_class()` methods. We will use these methods to connect the started state to the Start / Stop buttons.
+You can add and remove CSS classes with the [add_class()][textual.dom.DOMNode.add_class] and [remove_class()][textual.dom.DOMNode.remove_class] methods. We will use these methods to connect the started state to the Start / Stop buttons.
 
-The following code adds an event handler for the `Button.Pressed` event.
+The following code will start or stop the stopwatches in response to clicking a button.
 
 ```python title="stopwatch04.py" hl_lines="13-18"
 --8<-- "docs/examples/tutorial/stopwatch04.py"
 ```
 
-The `on_button_pressed` event handler is called when the user clicks a button. This method adds the "started" class when the "start" button was clicked, and removes the class when the "stop" button is clicked.
+The `on_button_pressed` method is an *event handler*. Event handlers are methods called by Textual in response to an *event* such as a key press, mouse click, etc. Event handlers begin with `on_` followed by the name of the event they will handler. Hence `on_button_pressed` will handle the button pressed event.
 
 If you run "stopwatch04.py" now you will be able to toggle between the two states by clicking the first button:
 
-```{.textual path="docs/examples/tutorial/stopwatch04.py" title="stopwatch04.py" press="tab,tab,tab,enter"}
+```{.textual path="docs/examples/tutorial/stopwatch04.py" title="stopwatch04.py" press="tab,tab,tab,enter,_,_"}
 ```
 
 ## Reactive attributes
 
-A recurring theme in Textual is that you rarely need to explicitly update a widget. It is possible: you can call [`refresh()`][textual.widget.Widget.refresh] to display new data. However, Textual prefers to do this automatically via _reactive_ attributes.
+A recurring theme in Textual is that you rarely need to explicitly update a widget. It is possible: you can call [refresh()][textual.widget.Widget.refresh] to display new data. However, Textual prefers to do this automatically via _reactive_ attributes.
 
-You can declare a reactive attribute with [Reactive][textual.reactive.Reactive]. Let's use this feature to create a timer that displays elapsed time and keeps it updated.
+You can declare a reactive attribute with [reactive][textual.reactive.reactive]. Let's use this feature to create a timer that displays elapsed time and keeps it updated.
 
-```python title="stopwatch04.py" hl_lines="1 5 12-27"
+```python title="stopwatch05.py" hl_lines="1 5 12-27"
 --8<-- "docs/examples/tutorial/stopwatch05.py"
 ```
 
@@ -352,16 +350,12 @@ Both attributes will be available on `self` as if you had assigned them in `__in
 
     The `monotonic` function in this example is imported from the standard library `time` module. It is similar to `time.time` but won't go backwards if the system clock is changed.
 
-The first argument to `Reactive` may be a default value or a callable that returns the default value. The default for `start_time` is `monotonic`. When `TimeDisplay` is mounted, the `start_time` attribute will be assigned the result of `monotonic()`.
+The first argument to `reactive` may be a default value or a callable that returns the default value. The default for `start_time` is `monotonic`. When `TimeDisplay` is added to the app, the `start_time` attribute will be set to the result of `monotonic()`.
 
 The `time` attribute has a simple float as the default value, so `self.time` will be `0` on start.
 
 
-!!! info
-
-    The `time` attribute is created with `Reactive.init` which calls _watch methods_ when the widget is mounted. See below for an explanation of watch methods.
-
-In the `on_mount` method the call to `set_interval` creates a timer object which runs `self.update_time` sixty times a second. This `update_time` method calculates the time elapsed since the widget started and assigns it to `self.time`. Which brings us to one of Reactive's super-powers.
+The `on_mount` method is an event handler which is called then the widget is first added to the application (or _mounted_). In this method we call [set_interval()][textual.message_pump.MessagePump.set_interval] to create a timer which calls `self.update_time` sixty times a second. This `update_time` method calculates the time elapsed since the widget started and assigns it to `self.time`. Which brings us to one of Reactive's super-powers.
 
 If you implement a method that begins with `watch_` followed by the name of a reactive attribute (making it a _watch method_), that method will be called when the attribute is modified.
 
@@ -379,18 +373,18 @@ We've seen how we can update widgets with a timer, but we still need to wire up 
 We need to be able to start, stop, and reset each stopwatch independently. We can do this by adding a few more methods to the `TimeDisplay` class.
 
 
-```python title="stopwatch06.py" hl_lines="14-44 50-61"
+```python title="stopwatch06.py" hl_lines="14 30-44 50-61"
 --8<-- "docs/examples/tutorial/stopwatch06.py"
 ```
 
 Here's a summary of the changes made to `TimeDisplay`.
 
 - We've added a `total` reactive attribute to store the total time elapsed between clicking that start and stop buttons.
-- The call to `set_interval` has grown a `pause=True` argument which starts the timer in pause mode (when a timer is paused it won't run until `resume()` is called). This is because we don't want the time to update until the user hits the start button.
+- The call to `set_interval` has grown a `pause=True` argument which starts the timer in pause mode (when a timer is paused it won't run until [resume()][textual.timer.Timer.resume] is called). This is because we don't want the time to update until the user hits the start button.
 - We've stored the result of `set_interval` which returns a Timer object. We will use this later to _resume_ the timer when we start the Stopwatch.
 - We've added `start()`, `stop()`, and `reset()` methods.
 
-The `on_button_pressed` method on `Stopwatch` has grown some code to manage the time display when the user clicks a button. Let's look at that in detail:
+In addition, the `on_button_pressed` method on `Stopwatch` has grown some code to manage the time display when the user clicks a button. Let's look at that in detail:
 
 ```python
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -412,7 +406,7 @@ This code supplies missing features and makes our app useful. We've made the fol
 - The first line retrieves the button's ID, which we will use to decide what to do in response.
 - The second line calls `query_one` to get a reference to the `TimeDisplay` widget.
 - We call the method on `TimeDisplay` that matches the pressed button.
-- We add the "started" class when the Stopwatch is started, and remove it when it is stopped. This will update the Stopwatch visuals via CSS.
+- We add the "started" class when the Stopwatch is started (`self.add_class("started)`), and remove it (`self.remove_class("started")`) when it is stopped. This will update the Stopwatch visuals via CSS.
 
 If you run stopwatch06.py you will be able to use the stopwatches independently.
 
@@ -429,15 +423,19 @@ To add a new child widget call `mount()` on the parent. To remove a widget, call
 
 Let's use these to implement adding and removing stopwatches to our app.
 
-```python title="stopwatch.py" hl_lines="83-84 86-90 92-96"
+```python title="stopwatch.py" hl_lines="76-77 86-90 92-96"
 --8<-- "docs/examples/tutorial/stopwatch.py"
 ```
 
-We've added two new actions: `action_add_stopwatch` to add a new stopwatch, and `action_remove_stopwatch` to remove the last stopwatch. The `on_load` handler binds these actions to the ++a++ and ++r++ keys.
+Here's a summary of the changes:
 
-The `action_add_stopwatch` method creates and mounts a new `Stopwatch` instance. Note the call to `query_one` with a CSS selector of `"#timers"` which gets the timer's container via its ID (assigned in `compose`). Once mounted, the new Stopwatch will appear in the terminal. That last line in `action_add_stopwatch` calls `scroll_visible` which will scroll the container to make the new Stopwatch visible (if necessary).
+- Added `action_add_stopwatch` to add a new stopwatch.
+- Added `action_remove_stopwatch` to remove a stopwatch.
+- Added keybindings for the actions.
 
-The `action_remove_stopwatch` calls `query` with a CSS selector of `"Stopwatch"` which gets all the `Stopwatch` widgets. If there are stopwatches then the action calls `last()` to get the last stopwatch, and `remove()` to remove it.
+The `action_add_stopwatch` method creates and mounts a new stopwatch. Note the call to [query_one()][textual.dom.DOMNode.query_one] with a CSS selector of `"#timers"` which gets the timer's container via its ID. Once mounted, the new Stopwatch will appear in the terminal. That last line in `action_add_stopwatch` calls [scroll_visible()][textual.widget.Widget.scroll_visible] which will scroll the container to make the new Stopwatch visible (if required).
+
+The `action_remove_stopwatch` function calls [query()][textual.dom.DOMNode.query] with a CSS selector of `"Stopwatch"` which gets all the `Stopwatch` widgets. If there are stopwatches then the action calls [last()][textual.css.query.DOMQuery.last] to get the last stopwatch, and [remove()][textual.css.query.DOMQuery.remove] to remove it.
 
 If you run `stopwatch.py` now you can add a new stopwatch with the ++a++ key and remove a stopwatch with ++r++.
 

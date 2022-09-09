@@ -2,16 +2,16 @@ from time import monotonic
 
 from textual.app import App, ComposeResult
 from textual.layout import Container
-from textual.reactive import Reactive
+from textual.reactive import reactive
 from textual.widgets import Button, Header, Footer, Static
 
 
 class TimeDisplay(Static):
     """A widget to display elapsed time."""
 
-    start_time = Reactive(monotonic)
-    time = Reactive.init(0.0)
-    total = Reactive(0.0)
+    start_time = reactive(monotonic)
+    time = reactive(0.0)
+    total = reactive(0.0)
 
     def on_mount(self) -> None:
         """Event handler called when widget is added to the app."""
@@ -71,17 +71,17 @@ class Stopwatch(Static):
 class StopwatchApp(App):
     """A Textual app to manage stopwatches."""
 
+    BINDINGS = [
+        ("d", "toggle_dark", "Toggle dark mode"),
+        ("a", "add_stopwatch", "Add"),
+        ("r", "remove_stopwatch", "Remove"),
+    ]
+
     def compose(self) -> ComposeResult:
         """Called to add widgets to the app."""
         yield Header()
         yield Footer()
         yield Container(Stopwatch(), Stopwatch(), Stopwatch(), id="timers")
-
-    def on_load(self) -> None:
-        """Called when the app first loads."""
-        self.bind("d", "toggle_dark", description="Dark mode")
-        self.bind("a", "add_stopwatch", description="Add")
-        self.bind("r", "remove_stopwatch", description="Remove")
 
     def action_add_stopwatch(self) -> None:
         """An action to add a timer."""

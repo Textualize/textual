@@ -7,13 +7,8 @@ from operator import attrgetter
 from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple
 
 import rich.repr
-from rich.console import (
-    Console,
-    ConsoleRenderable,
-    Measurement,
-    JustifyMethod,
-    RenderableType,
-)
+from rich.console import Console, ConsoleRenderable, JustifyMethod, RenderableType
+from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.styled import Styled
@@ -27,6 +22,7 @@ from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
+from .binding import NoBinding
 from .box_model import BoxModel, get_box_model
 from .css.constants import VALID_TEXT_ALIGN
 from .dom import DOMNode, NoScreen
@@ -121,6 +117,7 @@ class Widget(DOMNode):
         self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
 
         self._styles_cache = StylesCache()
+        self._rich_style_cache: dict[str, Style] = {}
 
         self._lock = Lock()
 
@@ -191,6 +188,21 @@ class Widget(DOMNode):
         return self.is_scrollable and (
             self.allow_horizontal_scroll or self.allow_vertical_scroll
         )
+
+    def get_component_rich_style(self, name: str) -> Style:
+        """Get a *Rich* style for a component.
+
+        Args:
+            name (str): Name of component.
+
+        Returns:
+            Style: A Rich style object.
+        """
+        style = self._rich_style_cache.get(name)
+        if style is None:
+            style = self.get_component_styles(name).rich_style
+            self._rich_style_cache[name] = style
+        return style
 
     def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.
@@ -522,7 +534,7 @@ class Widget(DOMNode):
         """Get the height used by the *horizontal* scrollbar."""
         styles = self.styles
         if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
-            return self.styles.scrollbar_size_horizontal
+            return styles.scrollbar_size_horizontal
         return styles.scrollbar_size_horizontal if self.show_horizontal_scrollbar else 0
 
     @property
@@ -1387,6 +1399,7 @@ class Widget(DOMNode):
             self._set_dirty(*regions)
             self._content_width_cache = (None, 0)
             self._content_height_cache = (None, 0)
+            self._rich_style_cache.clear()
             self._repaint_required = True
             if isinstance(self.parent, Widget) and self.styles.auto_dimensions:
                 self.parent.refresh(layout=True)
@@ -1464,6 +1477,9 @@ class Widget(DOMNode):
     async def broker_event(self, event_name: str, event: events.Event) -> bool:
         return await self.app._broker_event(event_name, event, default_namespace=self)
 
+    def _on_styles_updated(self) -> None:
+        self._rich_style_cache.clear()
+
     async def _on_mouse_down(self, event: events.MouseUp) -> None:
         await self.broker_event("mouse.down", event)
 
@@ -1474,7 +1490,12 @@ class Widget(DOMNode):
         await self.broker_event("click", event)
 
     async def _on_key(self, event: events.Key) -> None:
-        await self.dispatch_key(event)
+        try:
+            binding = self._bindings.get_key(event.key)
+        except NoBinding:
+            await self.dispatch_key(event)
+        else:
+            await self.action(binding.action)
 
     def _on_mount(self, event: events.Mount) -> None:
         widgets = self.compose()

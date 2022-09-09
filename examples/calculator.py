@@ -3,19 +3,19 @@ from decimal import Decimal
 from textual.app import App, ComposeResult
 from textual import events
 from textual.layout import Container
-from textual.reactive import Reactive
+from textual.reactive import var
 from textual.widgets import Button, Static
 
 
 class CalculatorApp(App):
     """A working 'desktop' calculator."""
 
-    numbers = Reactive.var("0")
-    show_ac = Reactive.var(True)
-    left = Reactive.var(Decimal("0"))
-    right = Reactive.var(Decimal("0"))
-    value = Reactive.var("")
-    operator = Reactive.var("plus")
+    numbers = var("0")
+    show_ac = var(True)
+    left = var(Decimal("0"))
+    right = var(Decimal("0"))
+    value = var("")
+    operator = var("plus")
 
     KEY_MAP = {
         "+": "plus",
