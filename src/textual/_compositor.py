@@ -462,9 +462,12 @@ class Compositor:
     @property
     def layers(self) -> list[tuple[Widget, MapGeometry]]:
         """Get widgets and geometry in layer order."""
+        index_one = itemgetter(1)
         if self._layers is None:
             self._layers = sorted(
-                self.map.items(), key=lambda item: item[1].order, reverse=True
+                self.map.items(),
+                key=lambda item: index_one(index_one(item)),
+                reverse=True,
             )
         return self._layers
 
