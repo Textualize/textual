@@ -1,0 +1,14 @@
+Screen {
+    layout: grid;
+    grid-size: 3;
+}
+
+#two {
+    column-span: 2;
+    tint: magenta 40%;
+}
+
+.box {
+    height: 100%;
+    border: solid green;
+}

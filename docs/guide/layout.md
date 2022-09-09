@@ -166,7 +166,7 @@ a third row has been created to accommodate the seventh widget.
 Now that we know how to define a simple uniform grid, let's look at how we can
 customize it to create more complex layouts.
 
-### Adjusting row and column sizes
+### Row and column sizes
 
 You can adjust the width of columns and the height of rows in your grid using the `grid-columns` and `grid-rows` properties respectively.
 These properties let you specify dimensions on a column-by-column or row-by-row basis.
@@ -197,9 +197,9 @@ The first value refers to the left-most column, the second value refers to the n
 In the example above, we've given the left-most column a width of `2fr` and the other columns widths of `1fr`.
 As a result, the first column is allocated double the width of the other columns.
 
-Similarly, we can adjust the heights of rows using `grid-rows`.
-Now we'll use `%` units to adjust the first row of our grid to `15%` height,
-and the second row to `85%` height (whilst retaining the `grid-columns` change from above).
+Similarly, we can adjust the height of a row using `grid-rows`.
+In the example that follows, we use `%` units to adjust the first row of our grid to `15%` height,
+and the second row to `85%` height (while retaining the `grid-columns` change from above).
 
 === "grid_layout4_row_col_adjust.py"
 
@@ -222,11 +222,105 @@ If you don't specify enough values in a `grid-columns` or `grid-rows` declaratio
 For example, if your grid has four columns (`grid-size: 4;`), then `grid-columns: 2 4;` is equivalent to `grid-columns: 2 4 2 4;`.
 If the grid instead had three columns, then `grid-columns: 2 4;` is equivalent to `grid-columns: 2 4 2;`.
 
-### Adjusting cell spans
+### Cell spans
 
 You can also adjust the number of rows and columns an individual cell spans across.
 
-TODO: Continue this section
+Let's return to our original, uniform, 2x3 grid so that we can more clearly illustrate the effect
+of modifying the row and column spans of cells.
+
+```{.textual path="docs/examples/guide/grid_layout1.py"}
+```
+
+To make a single cell span multiple rows or columns in the grid, we need to be able to select it using CSS.
+To do this, we'll add an ID to the widget inside our `compose` method.
+Then, we can set the `row-span` and `column-span` properties on this ID using CSS.
+
+Let's add an ID of `#two` to the second widget yielded from `compose`, and give it a `column-span` of 2 in our CSS to make that widget span across two columns.
+We'll also add a slight tint using `tint: magenta 40%;` to draw attention to this widget.
+The relevant changes are highlighted in the Python and CSS files below.
+
+=== "grid_layout5_col_span.py"
+
+    ```python hl_lines="8"
+    --8<-- "docs/examples/guide/grid_layout5_col_span.py"
+    ```
+
+=== "grid_layout5_col_span.css"
+
+    ```sass hl_lines="6-9"
+    --8<-- "docs/examples/guide/grid_layout5_col_span.css"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/grid_layout5_col_span.py"}
+    ```
+
+Notice that the widget expands to fill columns to the _right_ of its original position.
+Since `#two` now spans two cells instead of one, all the widgets that follow it are shifted along one cell in the grid to accommodate.
+As a result, the final widget wraps on to a new row at the bottom of the grid.
+
+!!! note
+
+    In the example above, setting the `column-span` of `#two` to be 3 (instead of 2) would have the same effect, since there are only 2 columns available (including `#two`'s original column).
+
+We can similarly adjust the `row-span` of a cell to have it span multiple rows.
+This can be used in conjunction with `column-span` — a cell can span multiple rows _and_ columns.
+The example below shows `row-span` in action.
+We again target widget `#two` in our CSS, and add a `row-span: 2;` declaration.
+
+=== "grid_layout6_row_span.py"
+
+    ```python
+    --8<-- "docs/examples/guide/grid_layout6_row_span.py"
+    ```
+
+=== "grid_layout6_row_span.css"
+
+    ```sass hl_lines="8"
+    --8<-- "docs/examples/guide/grid_layout6_row_span.css"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/grid_layout6_row_span.py"}
+    ```
+
+Widget `#two` now spans two columns and two rows, covering a total of four cells.
+Notice how the other cells are moved to accommodate this change.
+
+### Gutter
+
+The spacing between cells in the grid can be adjusted using the `grid-gutter` CSS property.
+By default, cells have no gutter, so the every edge of every cell touches an edge of a neighboring cell.
+Gutter is applied across the entire grid, so `grid-gutter` should be used on a widget with `layout: grid` (_not_ on a child/cell widget).
+
+To better illustrate gutter, let's set our `Screen` background color to `lightgreen`, and the background color of the widgets we yield to `darkslategrey`.
+Now if we add `grid-gutter: 1;` to our grid, one cell of spacing appears between the cells and reveals the light green background of the `Screen`.
+
+=== "grid_layout7_gutter.py"
+
+    ```python
+    --8<-- "docs/examples/guide/grid_layout7_gutter.py"
+    ```
+
+=== "grid_layout7_gutter.css"
+
+    ```sass hl_lines="4"
+    --8<-- "docs/examples/guide/grid_layout7_gutter.css"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/grid_layout7_gutter.py"}
+    ```
+
+!!! tip
+
+    You can also supply two values to the `grid-gutter` property to set vertical and horizontal gutters respectively.
+    Since terminal cells are typically two times taller than they are wide,
+    it's common to set the horizontal gutter equal to double the vertical gutter (e.g. `grid-gutter: 1 2;`) in order to achieve visually consistent spacing around grid cells.
 
 ## Docking
 
