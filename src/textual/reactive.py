@@ -187,10 +187,37 @@ class Reactive(Generic[ReactiveType]):
             setattr(obj, compute, value)
 
 
-reactive = Reactive.init
-"""Create a reactive attribute."""
-var = Reactive.var
-"""Create a reactive attribute that doesn't refresh."""
+class reactive(Reactive[ReactiveType]):
+    """Create a reactive attribute.
+
+    Args:
+        default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
+        layout (bool, optional): Perform a layout on change. Defaults to False.
+        repaint (bool, optional): Perform a repaint on change. Defaults to True.
+        init (bool, optional): Call watchers on initialize (post mount). Defaults to False.
+
+    """
+
+    def __init__(
+        self,
+        default: ReactiveType | Callable[[], ReactiveType],
+        *,
+        layout: bool = False,
+        repaint: bool = True,
+        init: bool = True,
+    ) -> None:
+        super().__init__(default, layout=layout, repaint=repaint, init=init)
+
+
+class var(Reactive[ReactiveType]):
+    """Create a reactive attribute (with no auto-refresh).
+
+    Args:
+        default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
+    """
+
+    def __init__(self, default: ReactiveType | Callable[[], ReactiveType]) -> None:
+        super().__init__(default, layout=False, repaint=False, init=True)
 
 
 def watch(
