@@ -25,6 +25,10 @@ else:  # pragma: no cover
 LogCallable: TypeAlias = "Callable"
 
 
+class LoggerError(Exception):
+    """Raised when the logger failed."""
+
+
 @rich.repr.auto
 class Logger:
     """A Textual logger."""
@@ -44,7 +48,10 @@ class Logger:
     @property
     def log(self) -> LogCallable:
         if self._log is None:
-            app = active_app.get()
+            try:
+                app = active_app.get()
+            except LookupError:
+                raise LoggerError("Unable to log without an active app.") from None
             return app._log
         return self._log
 
@@ -55,14 +62,19 @@ class Logger:
 
     def __call__(self, *args: object, **kwargs) -> None:
         caller = inspect.stack()[1]
-        self.log(
-            self._group,
-            self._verbosity,
-            self._severity,
-            *args,
-            _textual_calling_frame=caller,
-            **kwargs,
-        )
+        try:
+            self.log(
+                self._group,
+                self._verbosity,
+                self._severity,
+                *args,
+                _textual_calling_frame=caller,
+                **kwargs,
+            )
+        except LoggerError:
+            # If there is not active app, try printing
+            print_args = (*args, *[f"{key}={value!r}" for key, value in kwargs.items()])
+            print(*print_args)
 
     def verbosity(self, verbose: bool) -> Logger:
         """Get a new logger with selective verbosity.
