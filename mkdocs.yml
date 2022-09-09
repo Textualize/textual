@@ -22,12 +22,12 @@ nav:
     - "how-to/index.md"
     - "how-to/animation.md"
     - "how-to/mouse-and-keyboard.md"
-    - "how-to/scroll.md"  
+    - "how-to/scroll.md"
   - Events:
     - "events/index.md"
     - "events/blur.md"
     - "events/descendant_blur.md"
-    - "events/descendant_focus.md"    
+    - "events/descendant_focus.md"
     - "events/enter.md"
     - "events/focus.md"
     - "events/hide.md"
@@ -77,7 +77,7 @@ nav:
     - "styles/tint.md"
     - "styles/visibility.md"
     - "styles/width.md"
-  - Widgets: 
+  - Widgets:
     - "widgets/index.md"
     - "widgets/button.md"
     - "widgets/data_table.md"
@@ -137,6 +137,7 @@ theme:
   features:
     - navigation.tabs
     - navigation.indexes
+    - navigation.tabs.sticky
   palette:
   - media: "(prefers-color-scheme: light)"
     scheme: default
