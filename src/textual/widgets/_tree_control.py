@@ -164,8 +164,8 @@ class TreeNode(Generic[NodeDataType]):
 class TreeControl(Generic[NodeDataType], Static, can_focus=True):
     DEFAULT_CSS = """
     TreeControl {
-        background: $surface;
-        color: $text-surface;
+        background: $panel;
+        color: $text-panel;
         height: auto;
         width: 100%;
     }

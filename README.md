@@ -2,6 +2,7 @@
 
 # Textual
 
+Textual is a Python framework for creating applications within your terminal.
 
 Textual is a Python framework for creating applications within your terminal&mdash;powered by [Rich](https://github.com/Textualize/rich).
 
