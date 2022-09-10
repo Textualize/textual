@@ -4,7 +4,7 @@
 
 ![Textual splash image](./imgs/textual.png)
 
-Textual is a Python framework for creating applications within your terminal.
+Textual is a Python framework for creating interactive applications within your terminal.
 
 <details>
   <summary> 🎬 Code browser </summary>
