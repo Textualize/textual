@@ -29,7 +29,7 @@ Install Textual via pip:
 pip install textual[dev]
 ```
 
-The addition of `[dev]` installs some additional development tools.
+The addition of `[dev]` installs Textual development tools.
 
 ## Features
 
