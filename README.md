@@ -1,5 +1,3 @@
-[![Supported Python Versions](https://img.shields.io/pypi/pyversions/textual/0.1.18)](https://pypi.org/project/textual/) [![PyPI version](https://badge.fury.io/py/textual.svg)](https://badge.fury.io/py/textual)
-
 # Textual
 
 ![Textual splash image](./imgs/textual.png)
