@@ -200,7 +200,6 @@ class App(Generic[ReturnType], DOMNode):
         self._logger = Logger(self._log)
 
         self._bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
-        self._bindings.bind("f2", "screenshot(None, '~/Desktop')", show=False)
         self._refresh_required = False
 
         self.design = DEFAULT_COLORS
@@ -544,6 +543,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def action_screenshot(self, filename: str | None, path: str = "~/") -> None:
         """Action to save a screenshot."""
+        self.bell()
         self.save_screenshot(filename, path)
 
     def export_screenshot(self, *, title: str | None = None) -> str:
@@ -567,8 +567,13 @@ class App(Generic[ReturnType], DOMNode):
         console.print(screen_render)
         return console.export_svg(title=title or self.title)
 
-    def save_screenshot(self, filename: str | None = None, path: str = "./") -> str:
-        """Save a screenshot of the current screen.
+    def save_screenshot(
+        self,
+        filename: str | None = None,
+        path: str = "./",
+        time_format: str = "%Y-%m-%d %X %f",
+    ) -> str:
+        """Save a SVG screenshot of the current screen.
 
         Args:
             path (str | None, optional): Path to SVG to save or None to pick
@@ -577,9 +582,10 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             str: Filename of screenshot.
         """
-        self.bell()
         if filename is None:
-            svg_filename = f"{self.title.lower()}_{datetime.now().isoformat()}.svg"
+            svg_filename = (
+                f"{self.title.lower()} {datetime.now().strftime(time_format)}.svg"
+            )
             svg_filename = svg_filename.replace("/", "_").replace("\\", "_")
         else:
             svg_filename = filename
