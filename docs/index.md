@@ -59,7 +59,11 @@ Textual is a framework for building applications that run within your terminal. 
 <hr>
 
 
-```{.textual path="docs/examples/demo.py" columns=100 lines=48}
+```{.textual path="examples/calculator.py" columns=100 lines=40}
+
+```
+
+```{.textual path="examples/pride.py"}
 
 ```
 

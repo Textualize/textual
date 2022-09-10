@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import runpy
 import os
+import shlex
 from typing import cast, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -13,7 +14,9 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
     """A superfences formatter to insert a SVG screenshot."""
 
     try:
-        path: str = attrs["path"]
+        cmd: list[str] = shlex.split(attrs["path"])
+        path = cmd[0]
+
         _press = attrs.get("press", None)
         press = [*_press.split(",")] if _press else ["_"]
         title = attrs.get("title")
@@ -26,6 +29,8 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
         cwd = os.getcwd()
         try:
             app_vars = runpy.run_path(path)
+            if "sys" in app_vars:
+                app_vars["sys"].argv = cmd
             app: App = cast("App", app_vars["app"])
             app.run(
                 quit_after=5,
