@@ -6,8 +6,6 @@
 
 Textual is a Python framework for creating applications within your terminal&mdash;powered by [Rich](https://github.com/Textualize/rich).
 
-Build sophisticated Text User Interfaces (TUIs) with just your Python skills.
-
 <details>
   <summary>Video preview</summary>
 
