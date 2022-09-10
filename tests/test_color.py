@@ -2,7 +2,7 @@ import pytest
 from rich.color import Color as RichColor
 from rich.text import Text
 
-from textual.color import Color, ColorPair, Lab, lab_to_rgb, rgb_to_lab
+from textual.color import Color, Lab, lab_to_rgb, rgb_to_lab
 
 
 def test_rich_color():
@@ -29,22 +29,6 @@ def test_css():
     """Check conversion to CSS style"""
     assert Color(10, 20, 30, 1.0).css == "rgb(10,20,30)"
     assert Color(10, 20, 30, 0.5).css == "rgba(10,20,30,0.5)"
-
-
-def test_colorpair_style():
-    """Test conversion of colorpair to style."""
-
-    # Black on white
-    assert (
-        str(ColorPair(Color.parse("#000000"), Color.parse("#ffffff")).style)
-        == "#000000 on #ffffff"
-    )
-
-    # 50% black on white
-    assert (
-        str(ColorPair(Color.parse("rgba(0,0,0,0.5)"), Color.parse("#ffffff")).style)
-        == "#7f7f7f on #ffffff"
-    )
 
 
 def test_rgb():
@@ -221,8 +205,3 @@ def test_rgb_lab_rgb_roundtrip():
                 assert c_.r == pytest.approx(r, abs=1)
                 assert c_.g == pytest.approx(g, abs=1)
                 assert c_.b == pytest.approx(b, abs=1)
-
-
-def test_color_pair_style():
-    pair = ColorPair(Color(220, 220, 220), Color(10, 20, 30))
-    assert str(pair.style) == "#dcdcdc on #0a141e"

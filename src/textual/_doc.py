@@ -50,3 +50,32 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
         import traceback
 
         traceback.print_exception(error)
+
+
+def rich(source, language, css_class, options, md, attrs, **kwargs) -> str:
+    """A superfences formatter to insert a SVG screenshot."""
+
+    from rich.console import Console
+    import io
+
+    title = attrs.get("title", "Rich")
+
+    console = Console(
+        file=io.StringIO(),
+        record=True,
+        force_terminal=True,
+        color_system="truecolor",
+    )
+    error_console = Console(stderr=True)
+
+    globals: dict = {}
+    try:
+        exec(source, globals)
+    except Exception:
+        error_console.print_exception()
+        console.bell()
+
+    if "output" in globals:
+        console.print(globals["output"])
+    output_svg = console.export_svg(title=title)
+    return output_svg

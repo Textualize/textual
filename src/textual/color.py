@@ -1,9 +1,31 @@
 """
-Manages Color in Textual.
+This module contains a powerful Color class which Textual uses to expose colors.
 
-All instances where the developer is presented with a color will use this class. The only
-exception should be when passing things to a Rich renderable, which will need to use the
-`rich_color` attribute to perform a conversion.
+The only exception would be for Rich renderables, which require a rich.color.Color instance.
+You can convert from a Textual color to a Rich color with the [rich_color][textual.color.Color.rich_color] property.
+
+## Named colors
+
+The following named colors are used by the [parse][textual.color.Color.parse] method.
+
+```{.rich title="colors"}
+from textual._color_constants import COLOR_NAME_TO_RGB
+from rich.table import Table
+from rich.text import Text
+table = Table("Name", "RGB", "Color", expand=True, highlight=True)
+
+for name, triplet in sorted(COLOR_NAME_TO_RGB.items()):
+    if len(triplet) != 3:
+        continue
+    r, g, b = triplet
+    table.add_row(
+        f'"{name}"',
+        f"rgb({r}, {g}, {b})",
+        Text("                    ", style=f"on rgb({r},{g},{b})")
+    )
+output = table
+```
+
 
 """
 
@@ -87,23 +109,21 @@ split_pairs4: Callable[[str], tuple[str, str, str, str]] = itemgetter(
 
 
 class ColorParseError(Exception):
-    """A color failed to parse"""
+    """A color failed to parse.
+
+    Args:
+        message (str): the error message
+        suggested_color (str | None): a close color we can suggest. Defaults to None.
+    """
 
     def __init__(self, message: str, suggested_color: str | None = None):
-        """
-        Creates a new ColorParseError
-
-        Args:
-            message (str): the error message
-            suggested_color (str | None): a close color we can suggest. Defaults to None.
-        """
         super().__init__(message)
         self.suggested_color = suggested_color
 
 
 @rich.repr.auto
 class Color(NamedTuple):
-    """A class to represent a single RGB color with alpha."""
+    """A class to represent a RGB color with an alpha component."""
 
     r: int
     """Red component (0-255)"""
@@ -310,7 +330,29 @@ class Color(NamedTuple):
     @classmethod
     @lru_cache(maxsize=1024 * 4)
     def parse(cls, color_text: str | Color) -> Color:
-        """Parse a string containing a CSS-style color.
+        """Parse a string containing a named color or CSS-style color.
+
+        Colors may be parsed from the following formats:
+
+        Text beginning with a `#` is parsed as hex:
+
+        R, G, and B must be hex digits (0-9A-F)
+
+        - `#RGB`
+        - `#RRGGBB`
+        - `#RRGGBBAA`
+
+        Text in the following formats is parsed as decimal values:
+
+        RED, GREEN, and BLUE must be numbers between 0 and 255.
+        ALPHA should ba a value between 0 and 1.
+
+        - `rgb(RED,GREEN,BLUE)`
+        - `rgba(RED,GREEN,BLUE,ALPHA)`
+        - `hsl(RED,GREEN,BLUE)`
+        - `hsl(RED,GREEN,BLUE,ALPHA)`
+
+        All other text will raise a `ColorParseError`.
 
         Args:
             color_text (str | Color): Text with a valid color format. Color objects will
@@ -445,43 +487,6 @@ BLACK = Color(0, 0, 0)
 TRANSPARENT = Color(0, 0, 0, 0)
 
 
-class ColorPair(NamedTuple):
-    """A pair of colors for foreground and background."""
-
-    foreground: Color
-    background: Color
-
-    def __rich_repr__(self) -> rich.repr.Result:
-        yield "foreground", self.foreground
-        yield "background", self.background
-
-    @property
-    def style(self) -> Style:
-        """A Rich style with foreground and background."""
-        return self._get_style()
-
-    @lru_cache(maxsize=1024 * 4)
-    def _get_style(self) -> Style:
-        """Get a Rich style, foreground adjusted for transparency."""
-        r, g, b, a = self.foreground
-        if a == 0:
-            return Style.from_color(
-                self.background.rich_color, self.background.rich_color
-            )
-        elif a == 1:
-            return Style.from_color(
-                self.foreground.rich_color, self.background.rich_color
-            )
-        else:
-            r2, g2, b2, _ = self.background
-            return Style.from_color(
-                RichColor.from_rgb(
-                    r + (r2 - r) * a, g + (g2 - g) * a, b + (b2 - b) * a
-                ),
-                self.background.rich_color,
-            )
-
-
 def rgb_to_lab(rgb: Color) -> Lab:
     """Convert an RGB color to the CIE-L*ab format.
 
@@ -534,27 +539,3 @@ def lab_to_rgb(lab: Lab) -> Color:
     b = 1.055 * pow(b, 1 / 2.4) - 0.055 if b > 0.0031308 else 12.92 * b
 
     return Color(int(r * 255), int(g * 255), int(b * 255))
-
-
-if __name__ == "__main__":
-
-    from rich import print
-
-    c1 = Color.parse("#112233")
-    print(c1, c1.hex, c1.css)
-
-    c2 = Color.parse("#11223344")
-    print(c2)
-
-    c3 = Color.parse("rgb(10,20,30)")
-    print(c3)
-
-    c4 = Color.parse("rgba(10,20,30,0.5)")
-    print(c4, c4.hex, c4.css)
-
-    p1 = ColorPair(c4, c1)
-    print(p1)
-
-    print(p1.style)
-
-    print(Color.parse("dark_blue"))
