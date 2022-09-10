@@ -2,19 +2,20 @@
 
 # Textual
 
-Textual is a Python framework for creating applications within your terminal.
+![Textual splash image](./imgs/textual.png)
 
 Textual is a Python framework for creating applications within your terminal&mdash;powered by [Rich](https://github.com/Textualize/rich).
 
 Build sophisticated Text User Interfaces (TUIs) with just your Python skills.
 
-## Preview
+<details>
+  <summary>Video preview</summary>
 
-This is the [code_browser.py](./examples/code_browser.py) example which clocks in at 61 lines, *including* docstrings and blank lines.
+  This is the [code_browser.py](./examples/code_browser.py) example which clocks in at 61 lines, *including* docstrings and blank lines.
 
-
-
-https://user-images.githubusercontent.com/554369/189394703-364b5caa-97e0-45db-907d-7b1620d6411f.mov
+  https://user-images.githubusercontent.com/554369/189394703-364b5caa-97e0-45db-907d-7b1620d6411f.mov
+  
+ </details>
 
 
 
