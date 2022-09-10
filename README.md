@@ -4,12 +4,13 @@
 
 ![Textual splash image](./imgs/textual.png)
 
-Textual is a Python framework for creating applications within your terminal&mdash;powered by [Rich](https://github.com/Textualize/rich).
+Textual is a Python framework for creating applications within your terminal.
 
 <details>
-  <summary>Video preview</summary>
+  <summary> 🎬 Code browser </summary>
+  <hr>
 
-  This is the [code_browser.py](./examples/code_browser.py) example which clocks in at 61 lines, *including* docstrings and blank lines.
+  This is the [code_browser.py](./examples/code_browser.py) example which clocks in at 61 lines (*including* docstrings and blank lines).
 
   https://user-images.githubusercontent.com/554369/189394703-364b5caa-97e0-45db-907d-7b1620d6411f.mov
   
@@ -18,9 +19,9 @@ Textual is a Python framework for creating applications within your terminal&mda
 
 ## About
 
-Textual adds interactivity to [Rich](https://github.com/Textualize/rich) with a Python API you can use to build sophisticated applications. Inspired by modern web development, Textual makes app building both quick and easy.
+Textual adds interactivity to [Rich](https://github.com/Textualize/rich) with a Python API inspired by modern development development.
 
-On modern terminal software (installed by default on most system) Textual apps can use **16.7 million** colors with mouse support and smooth flicker-free animation. A powerful layout engine and re-usable components makes it possible to build apps that rival the desktop and web. 
+On modern terminal software (installed by default on most system) Textual apps can use **16.7 million** colors with mouse support and smooth flicker-free animation. A powerful layout engine and re-usable components makes it possible to build apps that rival the desktop and web experience. 
 
 ## Compatibility
 
@@ -36,13 +37,44 @@ pip install textual[dev]
 
 The addition of `[dev]` installs Textual development tools.
 
-## Features
+
+## Examples
 
 
+The Textual repository comes with a number of examples you can experiment with or use as a template for your own projects.
+
+<details>  
+  <summary> 📷 Calculator </summary>
+  <hr>
+  
+This is [calculator.py](./examples/calculator.py) which demonstrates Textual grid layouts.
+  
 ![calculator screenshot](./imgs/calculator.svg)
+</details>
 
+<details>
+  <summary> 📷 Code browser </summary>
+  <hr>
+
+  This is [code_browser.py](./examples/code_browser.py) which demonstrates the directory tree widget.
+  
 ![code browser screenshot](./imgs/codebrowser.svg)
+  
+</details>
 
+
+<details>
+  <summary> 📷 Stopwatch </summary>
+  <hr>
+
+  This is the Stopwatch example from the tutorial.
+  
+### Light theme 
+  
 ![stopwatch light screenshot](./imgs/stopwatch_light.svg)
 
+### Dark theme
+  
 ![stopwatch dark screenshot](./imgs/stopwatch_dark.svg)
+
+</details>
