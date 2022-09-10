@@ -38,8 +38,42 @@ pip install textual[dev]
 The addition of `[dev]` installs Textual development tools.
 
 
-## Examples
+## Reference commands
 
+The `textual` command has a few sub-commands to preview Textual styles.
+
+<details>  
+  <summary> 🎬 Easing reference </summary>
+  <hr>
+  
+This is the *easing* reference which demonstrates the easing parameter on animation, with both movement and opacity. You can run it with the following command:
+  
+```bash
+textual easing
+```
+
+https://user-images.githubusercontent.com/554369/189485538-31e794ff-61d7-4faf-902a-6e90a9d76e5b.mov
+
+ </details>
+
+<details>  
+  <summary> 🎬 Borders reference </summary>
+  <hr>
+  
+This is the borders reference which demonstrates some of the borders styles in Textual. You can run it with the following command:
+  
+```bash
+textual borders
+```
+  
+
+https://user-images.githubusercontent.com/554369/189485735-cb2b4135-caee-46d7-a118-66cd7ed9eef5.mov
+
+
+  
+</details>
+
+## Examples
 
 The Textual repository comes with a number of examples you can experiment with or use as a template for your own projects.
 
