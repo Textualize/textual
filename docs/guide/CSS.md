@@ -75,7 +75,7 @@ Let's look at a trivial Textual app.
     ```{.textual path="docs/examples/guide/dom1.py"}
     ```
 
-When you run this code you will have an instance of an `ExampleApp` in memory. This app class will also create a `Screen` object. In DOM terms, the `Screen` is a _child_ of `ExampleApp`.
+This example creates an instance of `ExampleApp`, which will implicitly create a `Screen` object. In DOM terms, the `Screen` is a _child_ of `ExampleApp`.
 
 With the above example, the DOM will look like the following:
 
@@ -139,7 +139,7 @@ You may recognize some of the elements in the above screenshot, but it doesn't q
 
 ## CSS files
 
-To add a stylesheet we need to pass the path to a CSS file via the app classes' `css_path` argument:
+To add a stylesheet we pass the path to the app with the `css_path` parameter:
 
 ```python hl_lines="23"
 --8<-- "docs/examples/guide/dom4.py"
@@ -163,7 +163,7 @@ With the CSS in place, the output looks very different:
 
 ### Why CSS?
 
-It is reasonable to ask why use CSS at all? Python is a powerful and expressive language. Wouldn't it be easier to do everything in your `.py` files?
+It is reasonable to ask why use CSS at all? Python is a powerful and expressive language. Wouldn't it be easier to set styles in your `.py` files?
 
 A major advantage of CSS is that it separates how your app _looks_ from how it _works_. Setting styles in Python can generate a lot of spaghetti code which can make it hard to see the important logic in your application.
 

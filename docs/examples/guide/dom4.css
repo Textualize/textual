@@ -2,9 +2,9 @@
 /* The top level dialog (a Container) */
 #dialog {
     margin: 4 8;
-    background: darkblue 20%;
-    color: darkblue;
-    border: tall darkblue;
+    background: $primary;
+    color: $text-primary;
+    border: tall $text-primary;
     padding: 1 2;
 }
 
