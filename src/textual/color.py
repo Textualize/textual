@@ -10,16 +10,19 @@ The following named colors are used by the [parse][textual.color.Color.parse] me
 
 ```{.rich title="colors"}
 from textual._color_constants import COLOR_NAME_TO_RGB
+from textual.color import Color
 from rich.table import Table
 from rich.text import Text
-table = Table("Name", "RGB", "Color", expand=True, highlight=True)
+table = Table("Name", "hex", "RGB", "Color", expand=True, highlight=True)
 
 for name, triplet in sorted(COLOR_NAME_TO_RGB.items()):
     if len(triplet) != 3:
         continue
+    color = Color(*triplet)
     r, g, b = triplet
     table.add_row(
         f'"{name}"',
+        f"{color.hex}",
         f"rgb({r}, {g}, {b})",
         Text("                    ", style=f"on rgb({r},{g},{b})")
     )
@@ -64,6 +67,16 @@ class HLS(NamedTuple):
     s: float
     """Saturation"""
 
+    @property
+    def css(self) -> str:
+        """HLS in css format."""
+        h, l, s = self
+
+        def as_str(number: float) -> str:
+            return f"{number:.1f}".rstrip("0").rstrip(".")
+
+        return f"hsl({as_str(h*360)},{as_str(s*100)}%,{as_str(l*100)}%)"
+
 
 class HSV(NamedTuple):
     """A color in HSV format."""
@@ -99,11 +112,11 @@ hsla{OPEN_BRACE}({DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{COMMA}{DECIMAL}){CLOS
 )
 
 # Fast way to split a string of 6 characters in to 3 pairs of 2 characters
-split_pairs3: Callable[[str], tuple[str, str, str]] = itemgetter(
+_split_pairs3: Callable[[str], tuple[str, str, str]] = itemgetter(
     slice(0, 2), slice(2, 4), slice(4, 6)
 )
 # Fast way to split a string of 8 characters in to 4 pairs of 2 characters
-split_pairs4: Callable[[str], tuple[str, str, str, str]] = itemgetter(
+_split_pairs4: Callable[[str], tuple[str, str, str, str]] = itemgetter(
     slice(0, 2), slice(2, 4), slice(4, 6), slice(6, 8)
 )
 
@@ -237,7 +250,7 @@ class Color(NamedTuple):
         """Get the color as HLS.
 
         Returns:
-            HLS:
+            HLS: Color in HLS format.
         """
         r, g, b = self.normalized
         return HLS(*rgb_to_hls(r, g, b))
@@ -350,7 +363,7 @@ class Color(NamedTuple):
         - `rgb(RED,GREEN,BLUE)`
         - `rgba(RED,GREEN,BLUE,ALPHA)`
         - `hsl(RED,GREEN,BLUE)`
-        - `hsl(RED,GREEN,BLUE,ALPHA)`
+        - `hsla(RED,GREEN,BLUE,ALPHA)`
 
         All other text will raise a `ColorParseError`.
 
@@ -402,10 +415,10 @@ class Color(NamedTuple):
                 int(f"{a}{a}", 16) / 255.0,
             )
         elif rgb_hex is not None:
-            r, g, b = [int(pair, 16) for pair in split_pairs3(rgb_hex)]
+            r, g, b = [int(pair, 16) for pair in _split_pairs3(rgb_hex)]
             color = cls(r, g, b, 1.0)
         elif rgba_hex is not None:
-            r, g, b, a = [int(pair, 16) for pair in split_pairs4(rgba_hex)]
+            r, g, b, a = [int(pair, 16) for pair in _split_pairs4(rgba_hex)]
             color = cls(r, g, b, a / 255.0)
         elif rgb is not None:
             r, g, b = [clamp(int(float(value)), 0, 255) for value in rgb.split(",")]
