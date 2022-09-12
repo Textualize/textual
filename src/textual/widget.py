@@ -4,7 +4,7 @@ from asyncio import Lock
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
-from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple
+from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple, cast
 
 import rich.repr
 from rich.console import Console, ConsoleRenderable, JustifyMethod, RenderableType
@@ -42,6 +42,13 @@ if TYPE_CHECKING:
         ScrollTo,
         ScrollUp,
     )
+
+
+_JUSTIFY_MAP: dict[str, JustifyMethod] = {
+    "start": "left",
+    "end": "right",
+    "justify": "full",
+}
 
 
 class RenderCache(NamedTuple):
@@ -1240,12 +1247,11 @@ class Widget(DOMNode):
         Returns:
             RenderableType: A new renderable.
         """
+        text_justify: JustifyMethod | None = None
+        if self.styles.has_rule("text_align"):
+            text_align: JustifyMethod = cast(JustifyMethod, self.styles.text_align)
+            text_justify = _JUSTIFY_MAP.get(text_align, text_align)
 
-        text_justify = (
-            _get_rich_justify(self.styles.text_align)
-            if self.styles.has_rule("text_align")
-            else None
-        )
         if isinstance(renderable, str):
             renderable = Text.from_markup(renderable, justify=text_justify)
 
@@ -1431,10 +1437,23 @@ class Widget(DOMNode):
         render = "" if self.is_container else self.css_identifier_styled
         return render
 
-    async def action(self, action: str, *params) -> None:
+    async def action(self, action: str) -> None:
+        """Perform a given action, with this widget as the default namespace.
+
+        Args:
+            action (str): Action encoded as a string.
+        """
         await self.app.action(action, self)
 
     async def post_message(self, message: Message) -> bool:
+        """Post a message to this widget.
+
+        Args:
+            message (Message): Message to post.
+
+        Returns:
+            bool: True if the message was posted, False if this widget was closed / closing.
+        """
         if not self.check_message_enabled(message):
             return True
         if not self.is_running:
@@ -1472,7 +1491,7 @@ class Widget(DOMNode):
     def capture_mouse(self, capture: bool = True) -> None:
         """Capture (or release) the mouse.
 
-        When captured, all mouse coordinates will go to this widget even when the pointer is not directly over the widget.
+        When captured, mouse events will go to this widget even when the pointer is not directly over the widget.
 
         Args:
             capture (bool, optional): True to capture or False to release. Defaults to True.
@@ -1641,22 +1660,3 @@ class Widget(DOMNode):
             self.scroll_page_up()
             return True
         return False
-
-
-def _get_rich_justify(css_align: str) -> JustifyMethod:
-    """Given the value for CSS text-align, return the analogous argument
-    for the Rich text `justify` parameter.
-
-    Args:
-        css_align: The value of text-align CSS property.
-
-    Returns:
-        JustifyMethod: The Rich JustifyMethod that corresponds to the text-align
-            value
-    """
-    assert css_align in VALID_TEXT_ALIGN
-    return {
-        "start": "left",
-        "end": "right",
-        "justify": "full",
-    }.get(css_align, css_align)
