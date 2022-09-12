@@ -13,9 +13,9 @@ from .color import Color, WHITE
 NUMBER_OF_SHADES = 3
 
 # Where no content exists
-DEFAULT_DARK_BACKGROUND = "#000000"
+DEFAULT_DARK_BACKGROUND = "#121212"
 # What text usually goes on top off
-DEFAULT_DARK_SURFACE = "#121212"
+DEFAULT_DARK_SURFACE = "#292929"
 
 DEFAULT_LIGHT_SURFACE = "#f5f5f5"
 DEFAULT_LIGHT_BACKGROUND = "#efefef"

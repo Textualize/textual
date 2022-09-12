@@ -22,7 +22,7 @@ for name, triplet in sorted(COLOR_NAME_TO_RGB.items()):
     r, g, b = triplet
     table.add_row(
         f'"{name}"',
-        f"{color.hex}",
+        Text(f"{color.hex}", "bold green"),
         f"rgb({r}, {g}, {b})",
         Text("                    ", style=f"on rgb({r},{g},{b})")
     )
@@ -273,7 +273,7 @@ class Color(NamedTuple):
         """The color in CSS hex form, with 6 digits for RGB, and 8 digits for RGBA.
 
         Returns:
-            str: A CSS hex-style color, e.g. "#46b3de" or "#3342457f"
+            str: A CSS hex-style color, e.g. `"#46b3de"` or `"#3342457f"`
 
         """
         r, g, b, a = self.clamped
@@ -288,7 +288,7 @@ class Color(NamedTuple):
         """The color in CSS rgb or rgba form.
 
         Returns:
-            str: A CSS style color, e.g. "rgb(10,20,30)" or "rgb(50,70,80,0.5)"
+            str: A CSS style color, e.g. `"rgb(10,20,30)"` or `"rgb(50,70,80,0.5)"`
 
         """
         r, g, b, a = self
