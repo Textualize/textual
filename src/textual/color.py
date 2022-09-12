@@ -57,20 +57,20 @@ from .geometry import clamp
 _TRUECOLOR = ColorType.TRUECOLOR
 
 
-class HLS(NamedTuple):
+class HSL(NamedTuple):
     """A color in HLS format."""
 
     h: float
     """Hue"""
-    l: float
-    """Lightness"""
     s: float
     """Saturation"""
+    l: float
+    """Lightness"""
 
     @property
     def css(self) -> str:
-        """HLS in css format."""
-        h, l, s = self
+        """HSL in css format."""
+        h, s, l = self
 
         def as_str(number: float) -> str:
             return f"{number:.1f}".rstrip("0").rstrip(".")
@@ -161,7 +161,7 @@ class Color(NamedTuple):
         return cls(r, g, b)
 
     @classmethod
-    def from_hls(cls, h: float, l: float, s: float) -> Color:
+    def from_hsl(cls, h: float, s: float, l: float) -> Color:
         """Create a color from HLS components.
 
         Args:
@@ -246,14 +246,15 @@ class Color(NamedTuple):
         return (r, g, b)
 
     @property
-    def hls(self) -> HLS:
-        """Get the color as HLS.
+    def hsl(self) -> HSL:
+        """Get the color as HSL.
 
         Returns:
-            HLS: Color in HLS format.
+            HSL: Color in HSL format.
         """
         r, g, b = self.normalized
-        return HLS(*rgb_to_hls(r, g, b))
+        h, l, s = rgb_to_hls(r, g, b)
+        return HSL(h, s, l)
 
     @property
     def brightness(self) -> float:
@@ -438,14 +439,14 @@ class Color(NamedTuple):
             h = float(h) % 360 / 360
             s = percentage_string_to_float(s)
             l = percentage_string_to_float(l)
-            color = Color.from_hls(h, l, s)
+            color = Color.from_hsl(h, s, l)
         elif hsla is not None:
             h, s, l, a = hsla.split(",")
             h = float(h) % 360 / 360
             s = percentage_string_to_float(s)
             l = percentage_string_to_float(l)
             a = clamp(float(a), 0.0, 1.0)
-            color = Color.from_hls(h, l, s).with_alpha(a)
+            color = Color.from_hsl(h, s, l).with_alpha(a)
         else:
             raise AssertionError("Can't get here if RE_COLOR matches")
         return color

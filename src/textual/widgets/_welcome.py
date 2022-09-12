@@ -30,8 +30,8 @@ class Welcome(Static):
         Welcome {
             width: 100%;
             height: 100%;
-            margin: 1 2;
-            
+            padding: 1 2;
+            background: $surface;
         }
 
         Welcome Container {
@@ -53,6 +53,5 @@ class Welcome(Static):
     """
 
     def compose(self) -> ComposeResult:
-
         yield Container(Static(Markdown(WELCOME_MD), id="text"), id="md")
         yield Button("OK", id="close", variant="success")

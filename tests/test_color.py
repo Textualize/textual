@@ -38,12 +38,12 @@ def test_rgb():
 def test_hls():
 
     red = Color(200, 20, 32)
-    print(red.hls)
-    assert red.hls == pytest.approx(
-        (0.9888888888888889, 0.43137254901960786, 0.818181818181818)
+    print(red.hsl)
+    assert red.hsl == pytest.approx(
+        (0.9888888888888889, 0.818181818181818, 0.43137254901960786)
     )
-    assert Color.from_hls(
-        0.9888888888888889, 0.43137254901960786, 0.818181818181818
+    assert Color.from_hsl(
+        0.9888888888888889, 0.818181818181818, 0.43137254901960786
     ).normalized == pytest.approx(red.normalized, rel=1e-5)
 
 
