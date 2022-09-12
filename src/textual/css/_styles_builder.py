@@ -580,7 +580,9 @@ class StylesBuilder:
         alpha: float | None = None
 
         for token in tokens:
-            if token.name == "scalar":
+            if token.name == "token" and token.value == "auto":
+                self.styles._rules["auto_color"] = True
+            elif token.name == "scalar":
                 alpha_scalar = Scalar.parse(token.value)
                 if alpha_scalar.unit != Unit.PERCENT:
                     self.error(name, token, "alpha must be given as a percentage.")

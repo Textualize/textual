@@ -279,7 +279,7 @@ class Color(NamedTuple):
         r, g, b, _ = self
         return Color(r, g, b, alpha)
 
-    def blend(self, destination: Color, factor: float) -> Color:
+    def blend(self, destination: Color, factor: float, alpha: float = 1) -> Color:
         """Generate a new color between two colors.
 
         Args:
@@ -299,6 +299,7 @@ class Color(NamedTuple):
             int(r1 + (r2 - r1) * factor),
             int(g1 + (g2 - g1) * factor),
             int(b1 + (b2 - b1) * factor),
+            alpha,
         )
 
     def __add__(self, other: object) -> Color:
@@ -407,7 +408,7 @@ class Color(NamedTuple):
         """
         l, a, b = rgb_to_lab(self)
         l -= amount * 100
-        return lab_to_rgb(Lab(l, a, b)).clamped
+        return lab_to_rgb(Lab(l, a, b), self.a).clamped
 
     def lighten(self, amount: float) -> Color:
         """Lighten the color by a given amount.
@@ -508,7 +509,7 @@ def rgb_to_lab(rgb: Color) -> Lab:
     return Lab(116 * y - 16, 500 * (x - y), 200 * (y - z))
 
 
-def lab_to_rgb(lab: Lab) -> Color:
+def lab_to_rgb(lab: Lab, alpha: float = 1.0) -> Color:
     """Convert a CIE-L*ab color to RGB.
 
     Uses the standard RGB color space with a D65/2⁰ standard illuminant.
@@ -533,7 +534,7 @@ def lab_to_rgb(lab: Lab) -> Color:
     g = 1.055 * pow(g, 1 / 2.4) - 0.055 if g > 0.0031308 else 12.92 * g
     b = 1.055 * pow(b, 1 / 2.4) - 0.055 if b > 0.0031308 else 12.92 * b
 
-    return Color(int(r * 255), int(g * 255), int(b * 255))
+    return Color(int(r * 255), int(g * 255), int(b * 255), alpha)
 
 
 if __name__ == "__main__":

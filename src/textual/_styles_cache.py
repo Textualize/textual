@@ -271,9 +271,9 @@ class StylesCache:
             pad_bottom and y >= height - gutter.bottom
         ):
             background_style = from_color(bgcolor=background.rich_color)
-            left_style = from_color(color=border_left_color.rich_color)
+            left_style = from_color(color=(background + border_left_color).rich_color)
             left = get_box(border_left, inner, outer, left_style)[1][0]
-            right_style = from_color(color=border_right_color.rich_color)
+            right_style = from_color(color=(background + border_right_color).rich_color)
             right = get_box(border_right, inner, outer, right_style)[1][2]
             if border_left and border_right:
                 line = [left, Segment(" " * (width - 2), background_style), right]

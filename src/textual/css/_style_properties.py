@@ -102,6 +102,11 @@ class IntegerProperty(GenericProperty[int, int]):
             raise StyleValueError(f"Expected a number here, got f{value}")
 
 
+class BooleanProperty(GenericProperty[bool, bool]):
+    def validate_value(self, value: object) -> bool:
+        return bool(value)
+
+
 class ScalarProperty:
     """Descriptor for getting and setting scalar properties. Scalars are numeric values with a unit, e.g. "50vh"."""
 

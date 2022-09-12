@@ -1,0 +1,20 @@
+Container {
+    height: auto;
+    background: $surface;
+    margin: 1 2;
+  
+}
+
+Panel {
+    height: auto;
+    background: $surface;
+    margin: 1 2;
+    padding: 1 2;
+}
+
+Content {
+    background: $surface;
+    padding: 1 2;
+    margin: 1 2;
+    color: auto 95%;
+}
