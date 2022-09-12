@@ -50,14 +50,6 @@ class RenderCache(NamedTuple):
     size: Size
     lines: Lines
 
-    @property
-    def cursor_line(self) -> int | None:
-        for index, line in enumerate(self.lines):
-            for _text, style, _control in line:
-                if style and style._meta and style.meta.get("cursor", False):
-                    return index
-        return None
-
 
 @rich.repr.auto
 class Widget(DOMNode):
