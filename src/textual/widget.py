@@ -313,6 +313,8 @@ class Widget(DOMNode):
     def get_content_width(self, container: Size, viewport: Size) -> int:
         """Gets the width of the content area.
 
+        May be overridden in a subclass.
+
         Args:
             container (Size): Size of the container (immediate parent) widget.
             viewport (Size): Size of the viewport.
@@ -342,6 +344,8 @@ class Widget(DOMNode):
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         """Gets the height (number of lines) in the content area.
+
+        May be overridden in a subclass.
 
         Args:
             container (Size): Size of the container (immediate parent) widget.
@@ -435,7 +439,7 @@ class Widget(DOMNode):
 
     @property
     def vertical_scrollbar(self) -> ScrollBar:
-        """Get a vertical scrollbar (create if necessary)
+        """Get a vertical scrollbar (create if necessary).
 
         Returns:
             ScrollBar: ScrollBar Widget.
@@ -452,7 +456,7 @@ class Widget(DOMNode):
 
     @property
     def horizontal_scrollbar(self) -> ScrollBar:
-        """Get a vertical scrollbar (create if necessary)
+        """Get a vertical scrollbar (create if necessary).
 
         Returns:
             ScrollBar: ScrollBar Widget.
@@ -515,7 +519,11 @@ class Widget(DOMNode):
 
     @property
     def scrollbar_size_vertical(self) -> int:
-        """Get the width used by the *vertical* scrollbar."""
+        """Get the width used by the *vertical* scrollbar.
+
+        Returns:
+            int: Number of columns in the vertical scrollbar.
+        """
         styles = self.styles
         if styles.scrollbar_gutter == "stable" and styles.overflow_y == "auto":
             return styles.scrollbar_size_vertical
@@ -523,7 +531,11 @@ class Widget(DOMNode):
 
     @property
     def scrollbar_size_horizontal(self) -> int:
-        """Get the height used by the *horizontal* scrollbar."""
+        """Get the height used by the *horizontal* scrollbar.
+
+        Returns:
+            int: Number of rows in the horizontal scrollbar.
+        """
         styles = self.styles
         if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
             return styles.scrollbar_size_horizontal
@@ -531,7 +543,7 @@ class Widget(DOMNode):
 
     @property
     def scrollbar_gutter(self) -> Spacing:
-        """Spacing required to fit scrollbar(s)
+        """Spacing required to fit scrollbar(s).
 
         Returns:
             Spacing: Scrollbar gutter spacing.
@@ -619,7 +631,7 @@ class Widget(DOMNode):
 
     @property
     def container_viewport(self) -> Region:
-        """The viewport region (parent window)
+        """The viewport region (parent window).
 
         Returns:
             Region: The region that contains this widget.
@@ -1079,6 +1091,7 @@ class Widget(DOMNode):
 
         Args:
             region (Region): A region that should be visible.
+            spacing (Spacing | None, optional): Optional spacing around the region. Defaults to None.
             animate (bool, optional): Enable animation. Defaults to True.
             spacing (Spacing): Space to subtract from the window region.
 
@@ -1254,9 +1267,16 @@ class Widget(DOMNode):
         """Update from CSS if has focus state changes."""
         self.app.update_styles(self)
 
-    def size_updated(
+    def _size_updated(
         self, size: Size, virtual_size: Size, container_size: Size
     ) -> None:
+        """Called when the widget's size is updated.
+
+        Args:
+            size (Size): Screen size.
+            virtual_size (Size): Virtual (scrollable) size.
+            container_size (Size): Container size (size of parent).
+        """
         if self._size != size or self.virtual_size != virtual_size:
             self._size = size
             self.virtual_size = virtual_size
