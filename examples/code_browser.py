@@ -42,10 +42,10 @@ class CodeBrowser(App):
                 line_numbers=True,
                 word_wrap=True,
                 indent_guides=True,
-                theme="monokai",
+                theme="github-dark",
             )
         except Exception:
-            code_view.update(Traceback(theme="monokai", width=None))
+            code_view.update(Traceback(theme="github-dark", width=None))
             self.sub_title = "ERROR"
         else:
             code_view.update(syntax)

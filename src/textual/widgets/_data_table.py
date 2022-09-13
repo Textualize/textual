@@ -109,17 +109,17 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     DEFAULT_CSS = """
     DataTable {
         background: $surface;
-        color: $text-surface;       
+        color: $text;       
     }
     DataTable > .datatable--header {        
         text-style: bold;
         background: $primary;
-        color: $text-primary;
+        color: $text;
     }
     DataTable > .datatable--fixed {
         text-style: bold;
         background: $primary;
-        color: $text-primary;
+        color: $text;
     }
 
     DataTable > .datatable--odd-row {
@@ -132,7 +132,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     DataTable >  .datatable--cursor {
         background: $secondary;
-        color: $text-secondary;
+        color: $text;
     }
 
     .-dark-mode DataTable > .datatable--even-row {

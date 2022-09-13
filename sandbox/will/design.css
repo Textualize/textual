@@ -1,19 +1,22 @@
+Screen {
+    background: $surface;
+}
+
 Container {
     height: auto;
-    background: $surface;
-    margin: 1 2;
-  
+    background: $boost;
+    
 }
 
 Panel {
     height: auto;
-    background: $surface;
+    background: $boost;
     margin: 1 2;
-    padding: 1 2;
+
 }
 
 Content {
-    background: $surface;
+    background: $boost;
     padding: 1 2;
     margin: 1 2;
     color: auto 95%;

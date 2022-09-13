@@ -19,6 +19,7 @@ EasingButtons {
     padding: 1;
     height: auto;
     dock: top;
+    background: $boost;
 }
 
 Bar {
@@ -36,6 +37,6 @@ Bar {
 #opacity-widget {
     padding: 1;
     background: $warning;
-    color: $text-warning;
+    color: $text;
     border: wide $background;
 }

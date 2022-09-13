@@ -250,6 +250,17 @@ class Color(NamedTuple):
         )
 
     @property
+    def hex6(self) -> str:
+        """The color in CSS hex form, with 6 digits for RGB. Alpha is ignored.
+
+        Returns:
+            str: A CSS hex-style color, e.g. "#46b3de"
+
+        """
+        r, g, b, a = self.clamped
+        return f"#{r:02X}{g:02X}{b:02X}"
+
+    @property
     def css(self) -> str:
         """The color in CSS rgb or rgba form.
 
@@ -397,29 +408,31 @@ class Color(NamedTuple):
         return color
 
     @lru_cache(maxsize=1024)
-    def darken(self, amount: float) -> Color:
+    def darken(self, amount: float, alpha: float | None = None) -> Color:
         """Darken the color by a given amount.
 
         Args:
             amount (float): Value between 0-1 to reduce luminance by.
+            alpha (float | None, optional): Alpha component for new color or None to copy alpha. Defaults to None.
 
         Returns:
             Color: New color.
         """
         l, a, b = rgb_to_lab(self)
         l -= amount * 100
-        return lab_to_rgb(Lab(l, a, b), self.a).clamped
+        return lab_to_rgb(Lab(l, a, b), self.a if alpha is None else alpha).clamped
 
-    def lighten(self, amount: float) -> Color:
+    def lighten(self, amount: float, alpha: float | None = None) -> Color:
         """Lighten the color by a given amount.
 
         Args:
             amount (float): Value between 0-1 to increase luminance by.
+            alpha (float | None, optional): Alpha component for new color or None to copy alpha. Defaults to None.
 
         Returns:
             Color: New color.
         """
-        return self.darken(-amount)
+        return self.darken(-amount, alpha)
 
     @lru_cache(maxsize=1024)
     def get_contrast_text(self, alpha=0.95) -> Color:

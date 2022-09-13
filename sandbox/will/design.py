@@ -21,14 +21,13 @@ class DesignApp(App):
     def compose(self):
         yield Header()
         yield Footer()
-        yield Panel(
+        yield Container(
             Content("content"),
             Panel(
                 Content("more content"),
                 Content("more content"),
             ),
         )
-        yield Panel(Static("Hello World"))
 
 
 app = DesignApp(css_path="design.css")

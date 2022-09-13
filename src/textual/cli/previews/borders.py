@@ -41,7 +41,7 @@ class BorderApp(App):
         border: solid $primary;
         height: auto;
         background: $panel;
-        color: $text-panel;
+        color: $text;
     }
     """
 
