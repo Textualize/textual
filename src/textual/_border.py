@@ -63,7 +63,7 @@ BORDER_LOCATIONS: dict[
     "hkey": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "vkey": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "tall": ((2, 0, 1), (2, 0, 1), (2, 0, 1)),
-    "wide": ((1, 1, 1), (3, 1, 4), (1, 1, 1)),
+    "wide": ((1, 1, 1), (0, 1, 3), (1, 1, 1)),
 }
 
 INVISIBLE_EDGE_TYPES = cast("frozenset[EdgeType]", frozenset(("", "none", "hidden")))
@@ -110,14 +110,13 @@ def get_box(
         (lbottom1, lbottom2, lbottom3),
     ) = BORDER_LOCATIONS[name]
 
-    styles: tuple[Style, ...] = (inner_style + style, outer_style + style)
-    inner, outer = styles
-
-    from_color = Style.from_color
-    styles += (
-        from_color(outer.bgcolor, inner.color),
-        from_color(inner.color, inner.bgcolor),
-        from_color(inner.bgcolor, outer.color),
+    inner = inner_style + style
+    outer = outer_style + style
+    styles = (
+        inner_style + style,
+        outer_style + style,
+        Style.from_color(outer.bgcolor, inner.color),
+        Style.from_color(inner.bgcolor, outer.color),
     )
 
     return (
