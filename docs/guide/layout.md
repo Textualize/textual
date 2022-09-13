@@ -405,7 +405,7 @@ The code below shows a simple sidebar implementation.
 If we run the app above and scroll down, the body text will scroll but the sidebar does not (note the position of the scrollbar in the output shown above).
 
 Docking multiple widgets to the same edge will result in overlap.
-Just like in the `center` layout, the first widget yielded from `compose` will appear below widgets yielded after.
+Just like in the `center` layout, the first widget yielded from `compose` will appear on below widgets yielded after it.
 Let's dock a second sidebar, `#another-sidebar`, to the left of the screen.
 This new sidebar is double the width of the one previous one, and has a `deeppink` background.
 
@@ -467,7 +467,7 @@ However, using CSS we can define our own layers and assign widgets to them.
 
 ## Offsets
 
-Widgets have a relative offset which is added to the widget's location, _after_ its location has been determined via its layout.
+Widgets have a relative offset which is added to the widget's location, _after_ its location has been determined via its parent's layout.
 This means that if a widget hasn't had its offset modified using CSS or Python code, it will have an offset of `(0, 0)`.
 
 <div class="excalidraw">
@@ -483,9 +483,12 @@ The offset of a widget can be set using the `offset` CSS property.
 For example, `offset: 4 -2;` will shift the target widget 4 terminal cells to the right, and 2 terminal cells up.
 
 The example below illustrates `offset` further.
-Notice that the `#parent` container has `layout: center`, meaning all three of the widgets we yield from `compose` have origins in the center of it.
-In the CSS we apply and offset of `12 4` to `#box2`, moving it to the right and down a little.
-In the case of `#box3` we apply and offset of `-12 -4`, which shifts it to the left and up.
+The `#parent` container has `layout: center`, meaning all four of the widgets we yield from `compose` have an origin in the center of it.
+
+* We make no adjustments to the offset of `#box1` in the CSS - it remains in its original position, and thus has offset `(0, 0)`.
+* We apply and offset of `12 4` to `#box2`, moving it to the right and down a little.
+* In the case of `#box3` we apply and offset of `-12 -4`, which shifts it to the left and up.
+* `#box4` at the bottom left of the screen illustrates clipping. A child widget will be clipped by its parents region, meaning any part of the child which extends beyond the parent region will not be visible.
 
 === "Output"
 
@@ -494,13 +497,13 @@ In the case of `#box3` we apply and offset of `-12 -4`, which shifts it to the l
 
 === "offset.py"
 
-    ```python hl_lines="14"
+    ```python
     --8<-- "docs/examples/guide/layout/offset.py"
     ```
 
 === "offset.css"
 
-    ```sass
+    ```sass hl_lines="25 30 35"
     --8<-- "docs/examples/guide/layout/offset.css"
     ```
 
@@ -509,11 +512,60 @@ In the case of `#box3` we apply and offset of `-12 -4`, which shifts it to the l
 
 Offset is commonly used with animation.
 You may have a sidebar, for example, with its initial offset set such that it is hidden off to the left of the screen.
-On pressing a button, the offset can be animated to `(0, 0)`, animating the sidebar in from the left, back to its origin position as defined by the layout.
+On pressing a button, the offset can be eased to `(0, 0)`, animating the sidebar in from the left, back to its origin position as defined by the layout.
 
-## Combining Layouts (????)
+## Putting it all together
 
-TODO: The sections above show layouts in isolation. Maybe we should mention how we can combine multiple layouts in a single app?
-For example, we might scaffold out the core of our app using grid, but many of our widgets will just need vertical/horizontal
-etc, and our app may use docks.
-Perhaps a more complete example showing multiple layout features being used together would tie everything together nicely?
+The sections above show how the various layouts in Textual can be used to position widgets on screen.
+In a real application, you'll make use of several layouts.
+You might choose to structure the scaffolding of your app using `layout: grid;`, with individual widgets laying out their children using `horizontal` or `vertical` layouts.
+If one of your widgets is particularly complex, perhaps it'll use `layout: grid;` itself.
+
+The example below shows how an advanced layout can be built by combining the various techniques described on this page.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/layout/combining_layouts.py"}
+    ```
+
+=== "combining_layouts.py"
+
+    ```python
+    --8<-- "docs/examples/guide/layout/combining_layouts.py"
+    ```
+
+=== "combining_layouts.css"
+
+    ```sass hl_lines="4"
+    --8<-- "docs/examples/guide/layout/combining_layouts.css"
+    ```
+
+At the top of the application we have a header.
+This header is yielded from our `compose` method using `yield Header()`.
+As mentioned earlier, `Header` is a builtin Textual widget which internally contains a `dock: top;`.
+Since it's yielded directly from `compose`, it gets docked to the top of `Screen` (the terminal window).
+
+The body of the application is contained within the widget `#app-grid` which uses a grid layout.
+
+This grid consists of two columns (`grid-size: 2`).
+The left pane (with the blue border) is the first cell within our grid.
+It has ID `#left-pane`, and is set to span two rows using `row-span: 2;`.
+
+The left pane `#left-pane` itself is a `layout.Vertical` container widget.
+This widget internally contains some CSS which sets `layout: vertical`, resulting in vertically arranged children.
+
+The next cell in the grid layout is `#top-right`, which has the pink-red border.
+This grid cell makes use of a horizontal layout.
+
+The final cell in our grid is located at the bottom right of the screen.
+It has a green border, and this cell is itself is a grid layout!
+
+As you can see, combining layouts lets you build complex layouts with very little code!
+
+[//]: # (TODO: The sections above show layouts in isolation. Maybe we should mention how we can combine multiple layouts in a single app?)
+
+[//]: # (For example, we might scaffold out the core of our app using grid, but many of our widgets will just need vertical/horizontal)
+
+[//]: # (etc, and our app may use docks.)
+
+[//]: # (Perhaps a more complete example showing multiple layout features being used together would tie everything together nicely?)

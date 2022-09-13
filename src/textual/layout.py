@@ -6,10 +6,9 @@ class Container(Widget):
 
     DEFAULT_CSS = """
     Container {
-        layout: vertical;       
+        layout: vertical;
         overflow: auto;
-      
-    }    
+    }
     """
 
 
@@ -25,8 +24,8 @@ class Horizontal(Container):
 
     DEFAULT_CSS = """
     Horizontal {
-        layout: horizontal;        
-    }    
+        layout: horizontal;
+    }
     """
 
 
@@ -35,6 +34,6 @@ class Center(Container):
 
     DEFAULT_CSS = """
     Center {
-        layout: center;        
+        layout: center;
     }
     """

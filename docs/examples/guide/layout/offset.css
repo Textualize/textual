@@ -4,14 +4,15 @@ Screen {
 
 #parent {
     layout: center;
-    background: $panel;
-    width: 52;
+    background: #9e9e9e;
+    width: 60;
     height: 20;
 }
 
 Box {
     color: auto;
     width: auto;
+    height: auto;
     padding: 1 2;
 }
 
@@ -27,4 +28,9 @@ Box {
 #box3 {
     background: lightseagreen;
     offset: -12 -4;
+}
+
+#box4 {
+    background: darkred;
+    offset: -26 10;
 }

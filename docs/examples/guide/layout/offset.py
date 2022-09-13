@@ -8,7 +8,7 @@ from textual.widgets import Static
 class Box(Static):
     def render(self) -> RenderableType:
         x, y = self.styles.offset
-        return f"offset = ({x}, {y})"
+        return f"{self.id}: offset = ({x}, {y})"
 
 
 class OffsetExample(App):
@@ -17,6 +17,7 @@ class OffsetExample(App):
             Box(id="box1"),
             Box(id="box2"),
             Box(id="box3"),
+            Box(id="box4"),
             id="parent",
         )
 
