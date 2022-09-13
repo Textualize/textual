@@ -189,8 +189,6 @@ async def test_composition_of_vertical_container_with_children(
                 "outer",
                 "hkey",
                 "vkey",
-                "tall",
-                "wide",
             ]
         ],
     ),
