@@ -38,10 +38,10 @@ class BorderApp(App):
     Static {
         margin: 2 4;
         padding: 2 4;
-        border: solid $primary;
+        border: solid $secondary;
         height: auto;
         background: $panel;
-        color: $text-panel;
+        color: $text;
     }
     """
 
@@ -53,7 +53,7 @@ class BorderApp(App):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         self.text.styles.border = (
             event.button.id,
-            self.stylesheet.variables["primary"],
+            self.stylesheet.variables["secondary"],
         )
         self.bell()
 

@@ -16,25 +16,22 @@ class Footer(Widget):
     DEFAULT_CSS = """
     Footer {
         background: $accent;
-        color: $text-accent;
+        color: $text;
         dock: bottom;
         height: 1;
     }
     Footer > .footer--highlight {    
-        background: $accent-darken-1;    
-        color: $text-accent-darken-1;               
+        background: $accent-darken-1;         
     }
 
     Footer > .footer--highlight-key {        
-        background: $secondary;        
-        color: $text-secondary;  
+        background: $secondary;                
         text-style: bold;         
     }
 
     Footer > .footer--key {
         text-style: bold;        
-        background: $accent-darken-2;
-        color: $text-accent-darken-2;
+        background: $accent-darken-2;        
     }
     """
 

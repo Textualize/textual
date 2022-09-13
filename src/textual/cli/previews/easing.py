@@ -79,7 +79,9 @@ class EasingApp(App):
 
         yield EasingButtons()
         yield layout.Vertical(
-            layout.Vertical(Static("Animation Duration:"), duration_input, id="inputs"),
+            layout.Horizontal(
+                Static("Animation Duration:", id="label"), duration_input, id="inputs"
+            ),
             layout.Horizontal(
                 self.animated_bar,
                 layout.Container(self.opacity_widget, id="other"),

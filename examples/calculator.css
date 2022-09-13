@@ -24,7 +24,7 @@ Button {
     padding: 0 1;
     height: 100%;
     background: $primary-lighten-2;
-    color: $text-primary-lighten-2;
+    color: $text;
 }
 
 #number-0 {

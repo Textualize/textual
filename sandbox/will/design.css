@@ -1,0 +1,23 @@
+Screen {
+    background: $surface;
+}
+
+Container {
+    height: auto;
+    background: $boost;
+    
+}
+
+Panel {
+    height: auto;
+    background: $boost;
+    margin: 1 2;
+
+}
+
+Content {
+    background: $boost;
+    padding: 1 2;
+    margin: 1 2;
+    color: auto 95%;
+}

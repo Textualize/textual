@@ -1,3 +1,7 @@
+Screen {
+    background: $surface-darken-1;
+}
+
 #tree-view {
     display: none;
     scrollbar-gutter: stable;
@@ -9,16 +13,16 @@ CodeBrowser.-show-tree #tree-view {
     dock: left;
     height: 100%;            
     max-width: 50%;
-    background: $surface;     
+    background: $surface;    
 }
 
 CodeBrowser{
-    background: $surface-darken-1;    
+    background: $background;    
 }
 
 DirectoryTree {
+    padding-right: 1;   
     padding-right: 1;
-   
 }
 
 #code {

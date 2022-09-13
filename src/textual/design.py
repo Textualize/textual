@@ -15,7 +15,7 @@ NUMBER_OF_SHADES = 3
 # Where no content exists
 DEFAULT_DARK_BACKGROUND = "#000000"
 # What text usually goes on top off
-DEFAULT_DARK_SURFACE = "#292929"
+DEFAULT_DARK_SURFACE = "#121212"
 
 DEFAULT_LIGHT_SURFACE = "#f5f5f5"
 DEFAULT_LIGHT_BACKGROUND = "#efefef"
@@ -38,6 +38,7 @@ class ColorSystem:
         "secondary-background",
         "surface",
         "panel",
+        "boost",
         "warning",
         "error",
         "success",
@@ -55,6 +56,7 @@ class ColorSystem:
         background: str | None = None,
         surface: str | None = None,
         panel: str | None = None,
+        boost: str | None = None,
         dark: bool = False,
         luminosity_spread: float = 0.15,
         text_alpha: float = 0.95,
@@ -73,6 +75,7 @@ class ColorSystem:
         self.background = parse(background)
         self.surface = parse(surface)
         self.panel = parse(panel)
+        self.boost = parse(boost)
         self._dark = dark
         self._luminosity_spread = luminosity_spread
         self._text_alpha = text_alpha
@@ -126,6 +129,8 @@ class ColorSystem:
         else:
             panel = self.panel
 
+        boost = self.boost or background.get_contrast_text(1.0).with_alpha(0.07)
+
         colors: dict[str, str] = {}
 
         def luminosity_range(spread) -> Iterable[tuple[str, float]]:
@@ -153,6 +158,7 @@ class ColorSystem:
             ("secondary-background", secondary),
             ("background", background),
             ("panel", panel),
+            ("boost", boost),
             ("surface", surface),
             ("warning", warning),
             ("error", error),
@@ -178,14 +184,10 @@ class ColorSystem:
                 else:
                     shade_color = color.lighten(luminosity_delta)
                     colors[f"{name}{shade_name}"] = shade_color.hex
-                for fade in range(3):
-                    text_color = shade_color.get_contrast_text(text_alpha)
-                    if fade > 0:
-                        text_color = text_color.blend(shade_color, fade * 0.1 + 0.15)
-                        on_name = f"text-{name}{shade_name}-fade-{fade}"
-                    else:
-                        on_name = f"text-{name}{shade_name}"
-                    colors[on_name] = text_color.hex
+
+        colors["text"] = "auto 95%"
+        colors["text-muted"] = "auto 80%"
+        colors["text-disabled"] = "auto 60%"
 
         return colors
 
@@ -206,16 +208,12 @@ def show_design(light: ColorSystem, dark: ColorSystem) -> Table:
     def make_shades(system: ColorSystem):
         colors = system.generate()
         for name in system.shades:
-            background = colors[name]
-            foreground = colors[f"text-{name}"]
-            text = Text(f"{background} ", style=f"{foreground} on {background}")
-            for fade in range(3):
-                foreground = colors[
-                    f"text-{name}-fade-{fade}" if fade else f"text-{name}"
-                ]
-                text.append(f"{name} ", style=f"{foreground} on {background}")
+            background = Color.parse(colors[name]).with_alpha(1.0)
+            foreground = background + background.get_contrast_text(0.9)
 
-            yield Padding(text, 1, style=f"{foreground} on {background}")
+            text = Text(name)
+
+            yield Padding(text, 1, style=f"{foreground.hex6} on {background.hex6}")
 
     table = Table(box=None, expand=True)
     table.add_column("Light", justify="center")
