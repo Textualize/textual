@@ -11,7 +11,7 @@ from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
 from time import perf_counter
-from typing import Any, Generator, Generic, Iterable, Iterator, Type, TypeVar, cast
+from typing import Any, Generic, Iterable, Iterator, Type, TypeVar, cast
 from weakref import WeakSet, WeakValueDictionary
 
 from ._ansi_sequences import SYNC_END, SYNC_START
@@ -154,6 +154,8 @@ class App(Generic[ReturnType], DOMNode):
 
     CSS_PATH: str | None = None
 
+    focused: Reactive[Widget | None] = Reactive(None)
+
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
@@ -181,7 +183,6 @@ class App(Generic[ReturnType], DOMNode):
         self._screen_stack: list[Screen] = []
         self._sync_available = False
 
-        self.focused: Widget | None = None
         self.mouse_over: Widget | None = None
         self.mouse_captured: Widget | None = None
         self._driver: Driver | None = None
@@ -191,15 +192,14 @@ class App(Generic[ReturnType], DOMNode):
         self._animator = Animator(self)
         self.animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
-        self.bindings = Bindings()
         if title is None:
             self._title = f"{self.__class__.__name__}"
         else:
             self._title = title
 
-        self._logger = Logger()
+        self._logger = Logger(self._log)
 
-        self.bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
+        self._bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
         self._refresh_required = False
 
         self.design = DEFAULT_COLORS
@@ -318,6 +318,16 @@ class App(Generic[ReturnType], DOMNode):
                         add_widget(node)
 
         return widgets
+
+    @property
+    def bindings(self) -> Bindings:
+        """Get current bindings."""
+        if self.focused is None:
+            return self._bindings
+        else:
+            return Bindings.merge(
+                node._bindings for node in reversed(self.focused.ancestors)
+            )
 
     def _set_active(self) -> None:
         """Set this app to be the currently active app."""
@@ -595,7 +605,7 @@ class App(Generic[ReturnType], DOMNode):
             show (bool, optional): Show key in UI. Defaults to True.
             key_display (str, optional): Replacement text for key, or None to use default. Defaults to None.
         """
-        self.bindings.bind(
+        self._bindings.bind(
             keys, action, description, show=show, key_display=key_display
         )
 
@@ -899,7 +909,7 @@ class App(Generic[ReturnType], DOMNode):
         self.log.system(f"{self.screen} is active")
         return previous_screen
 
-    def set_focus(self, widget: Widget | None, scroll_visible: bool = False) -> None:
+    def set_focus(self, widget: Widget | None, scroll_visible: bool = True) -> None:
         """Focus (or unfocus) a widget. A focused widget will receive key events first.
 
         Args:
@@ -1355,15 +1365,14 @@ class App(Generic[ReturnType], DOMNode):
             await super().on_event(event)
 
     async def action(
-        self,
-        action: str,
-        default_namespace: object | None = None,
-        modifiers: set[str] | None = None,
+        self, action: str, default_namespace: object | None = None
     ) -> None:
         """Perform an action.
 
         Args:
             action (str): Action encoded in a string.
+            default_namespace (object | None): Namespace to use if not provided in the action,
+                or None to use app. Defaults to None.
         """
         target, params = actions.parse(action)
         if "." in target:
@@ -1412,15 +1421,13 @@ class App(Generic[ReturnType], DOMNode):
         except AttributeError:
             return False
         try:
-            modifiers, action = extract_handler_actions(event_name, style.meta)
+            _modifiers, action = extract_handler_actions(event_name, style.meta)
         except NoHandler:
             return False
         else:
             event.stop()
         if isinstance(action, str):
-            await self.action(
-                action, default_namespace=default_namespace, modifiers=modifiers
-            )
+            await self.action(action, default_namespace=default_namespace)
         elif callable(action):
             await action()
         else:

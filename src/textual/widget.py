@@ -7,7 +7,7 @@ from operator import attrgetter
 from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple
 
 import rich.repr
-from rich.console import Console, JustifyMethod, RenderableType
+from rich.console import Console, ConsoleRenderable, JustifyMethod, RenderableType
 from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
@@ -22,6 +22,7 @@ from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
+from .binding import NoBinding
 from .box_model import BoxModel, get_box_model
 from .css.constants import VALID_TEXT_ALIGN
 from .dom import DOMNode, NoScreen
@@ -116,6 +117,7 @@ class Widget(DOMNode):
         self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
 
         self._styles_cache = StylesCache()
+        self._rich_style_cache: dict[str, Style] = {}
 
         self._lock = Lock()
 
@@ -186,6 +188,21 @@ class Widget(DOMNode):
         return self.is_scrollable and (
             self.allow_horizontal_scroll or self.allow_vertical_scroll
         )
+
+    def get_component_rich_style(self, name: str) -> Style:
+        """Get a *Rich* style for a component.
+
+        Args:
+            name (str): Name of component.
+
+        Returns:
+            Style: A Rich style object.
+        """
+        style = self._rich_style_cache.get(name)
+        if style is None:
+            style = self.get_component_styles(name).rich_style
+            self._rich_style_cache[name] = style
+        return style
 
     def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.
@@ -313,17 +330,15 @@ class Widget(DOMNode):
         """
         if self.is_container:
             assert self._layout is not None
-            return (
-                self._layout.get_content_width(self, container, viewport)
-                + self.scrollbar_size_vertical
-            )
+            return self._layout.get_content_width(self, container, viewport)
 
         cache_key = container.width
         if self._content_width_cache[0] == cache_key:
             return self._content_width_cache[1]
 
         console = self.app.console
-        renderable = self.render()
+        renderable = self.post_render(self.render())
+
         measurement = Measurement.get(
             console,
             console.options.update_width(container.width),
@@ -509,18 +524,18 @@ class Widget(DOMNode):
     @property
     def scrollbar_size_vertical(self) -> int:
         """Get the width used by the *vertical* scrollbar."""
-        return (
-            self.styles.scrollbar_size_vertical if self.show_vertical_scrollbar else 0
-        )
+        styles = self.styles
+        if styles.scrollbar_gutter == "stable" and styles.overflow_y == "auto":
+            return styles.scrollbar_size_vertical
+        return styles.scrollbar_size_vertical if self.show_vertical_scrollbar else 0
 
     @property
     def scrollbar_size_horizontal(self) -> int:
         """Get the height used by the *horizontal* scrollbar."""
-        return (
-            self.styles.scrollbar_size_horizontal
-            if self.show_horizontal_scrollbar
-            else 0
-        )
+        styles = self.styles
+        if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
+            return styles.scrollbar_size_horizontal
+        return styles.scrollbar_size_horizontal if self.show_horizontal_scrollbar else 0
 
     @property
     def scrollbar_gutter(self) -> Spacing:
@@ -578,7 +593,7 @@ class Widget(DOMNode):
         Returns:
             Region: Screen region that contains a widget's content.
         """
-        content_region = self.region.shrink(self.gutter)
+        content_region = self.region.shrink(self.styles.gutter)
         return content_region
 
     @property
@@ -1214,7 +1229,7 @@ class Widget(DOMNode):
         if self.descendant_has_focus:
             yield "focus-within"
 
-    def post_render(self, renderable: RenderableType) -> RenderableType:
+    def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
         """Applies style attributes to the default renderable.
 
         Returns:
@@ -1384,6 +1399,7 @@ class Widget(DOMNode):
             self._set_dirty(*regions)
             self._content_width_cache = (None, 0)
             self._content_height_cache = (None, 0)
+            self._rich_style_cache.clear()
             self._repaint_required = True
             if isinstance(self.parent, Widget) and self.styles.auto_dimensions:
                 self.parent.refresh(layout=True)
@@ -1432,9 +1448,14 @@ class Widget(DOMNode):
                     self._layout_required = False
                     screen.post_message_no_wait(messages.Layout(self))
 
-    def focus(self) -> None:
-        """Give input focus to this widget."""
-        self.app.set_focus(self)
+    def focus(self, scroll_visible: bool = True) -> None:
+        """Give focus to this widget.
+
+        Args:
+            scroll_visible (bool, optional): Scroll parent to make this widget
+                visible. Defaults to True.
+        """
+        self.app.set_focus(self, scroll_visible=scroll_visible)
 
     def capture_mouse(self, capture: bool = True) -> None:
         """Capture (or release) the mouse.
@@ -1456,6 +1477,9 @@ class Widget(DOMNode):
     async def broker_event(self, event_name: str, event: events.Event) -> bool:
         return await self.app._broker_event(event_name, event, default_namespace=self)
 
+    def _on_styles_updated(self) -> None:
+        self._rich_style_cache.clear()
+
     async def _on_mouse_down(self, event: events.MouseUp) -> None:
         await self.broker_event("mouse.down", event)
 
@@ -1466,7 +1490,12 @@ class Widget(DOMNode):
         await self.broker_event("click", event)
 
     async def _on_key(self, event: events.Key) -> None:
-        await self.dispatch_key(event)
+        try:
+            binding = self._bindings.get_key(event.key)
+        except NoBinding:
+            await self.dispatch_key(event)
+        else:
+            await self.action(binding.action)
 
     def _on_mount(self, event: events.Mount) -> None:
         widgets = self.compose()

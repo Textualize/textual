@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import runpy
+import shlex
 from typing import cast, TYPE_CHECKING
 
 from importlib_metadata import version
@@ -58,14 +59,18 @@ def import_app(import_name: str) -> App:
 
     from textual.app import App
 
+    import_name, *argv = shlex.split(import_name)
     lib, _colon, name = import_name.partition(":")
 
     if lib.endswith(".py"):
         path = os.path.abspath(lib)
         try:
-            global_vars = runpy.run_path(path)
+            global_vars = runpy.run_path(path, {})
         except Exception as error:
             raise AppFail(str(error))
+
+        if "sys" in global_vars:
+            global_vars["sys"].argv = [path, *argv]
 
         if name:
             # User has given a name, use that
@@ -85,7 +90,7 @@ def import_app(import_name: str) -> App:
                 # Find a App class or instance that is *not* the base class
                 apps = [
                     value
-                    for key, value in global_vars.items()
+                    for value in global_vars.values()
                     if (
                         isinstance(value, App)
                         or (inspect.isclass(value) and issubclass(value, App))
@@ -121,7 +126,12 @@ def import_app(import_name: str) -> App:
     return cast(App, app)
 
 
-@run.command("run")
+@run.command(
+    "run",
+    context_settings={
+        "ignore_unknown_options": True,
+    },
+)
 @click.argument("import_name", metavar="FILE or FILE:APP")
 @click.option("--dev", "dev", help="Enable development mode", is_flag=True)
 @click.option("--press", "press", help="Comma separated keys to simulate press")
@@ -134,13 +144,18 @@ def run_app(import_name: str, dev: bool, press: str) -> None:
 
     Here are some examples:
 
-    textual run foo.py
+        textual run foo.py
 
-    textual run foo.py:MyApp
+        textual run foo.py:MyApp
 
-    textual run module.foo
+        textual run module.foo
 
-    textual run module.foo:MyApp
+        textual run module.foo:MyApp
+
+    If you are running a file and want to pass command line arguments, wrap the filename and arguments
+    in quotes:
+
+        textual run "foo.py arg --option"
 
     """
 
@@ -155,7 +170,6 @@ def run_app(import_name: str, dev: bool, press: str) -> None:
         features.add("devtools")
 
     os.environ["TEXTUAL"] = ",".join(sorted(features))
-
     try:
         app = import_app(import_name)
     except AppFail as error:

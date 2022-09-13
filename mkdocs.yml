@@ -96,6 +96,7 @@ nav:
     - "reference/geometry.md"
     - "reference/message_pump.md"
     - "reference/timer.md"
+    - "reference/query.md"
     - "reference/widget.md"
 
 

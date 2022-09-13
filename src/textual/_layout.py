@@ -65,9 +65,14 @@ class Layout(ABC):
             int: Width of the content.
         """
         width: int | None = None
+        widget_gutter = widget.gutter.width
         for child in widget.displayed_children:
             if not child.is_container:
-                child_width = child.get_content_width(container, viewport)
+                child_width = (
+                    child.get_content_width(container, viewport)
+                    + widget_gutter
+                    + child.gutter.width
+                )
                 width = child_width if width is None else max(width, child_width)
         if width is None:
             width = container.width

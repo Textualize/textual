@@ -31,7 +31,7 @@ class HeaderClock(Widget):
     DEFAULT_CSS = """
     HeaderClock {
         dock: right;
-        width: auto;
+        width: 10;
         padding: 0 1;
         background: $secondary-background-lighten-1;
         color: $text-secondary-background;
@@ -63,7 +63,8 @@ class HeaderTitle(Widget):
     def render(self) -> Text:
         text = Text(self.text, no_wrap=True, overflow="ellipsis")
         if self.sub_text:
-            text.append(f" - {self.sub_text}", "dim")
+            text.append(" — ")
+            text.append(self.sub_text, "dim")
         return text
 
 
@@ -83,7 +84,12 @@ class Header(Widget):
     }
     """
 
+    tall = Reactive(True)
+
     DEFAULT_CLASSES = "tall"
+
+    def watch_tall(self, tall: bool) -> None:
+        self.set_class(tall, "tall")
 
     async def on_click(self, event):
         self.toggle_class("tall")

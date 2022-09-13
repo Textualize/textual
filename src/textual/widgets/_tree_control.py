@@ -13,7 +13,7 @@ from ..geometry import Region, Size
 from .. import events
 from ..reactive import Reactive
 from .._types import MessageTarget
-from ..widget import Widget
+from ..widgets import Static
 from ..message import Message
 from .. import messages
 
@@ -161,7 +161,7 @@ class TreeNode(Generic[NodeDataType]):
         return self._control.render_node(self)
 
 
-class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
+class TreeControl(Generic[NodeDataType], Static, can_focus=True):
     DEFAULT_CSS = """
     TreeControl {
         background: $surface;
@@ -342,15 +342,15 @@ class TreeControl(Generic[NodeDataType], Widget, can_focus=True):
 
     @property
     def _guide_style(self) -> Style:
-        return self.get_component_styles("tree--guides").rich_style
+        return self.get_component_rich_style("tree--guides")
 
     @property
     def _highlight_guide_style(self) -> Style:
-        return self.get_component_styles("tree--guides-highlight").rich_style
+        return self.get_component_rich_style("tree--guides-highlight")
 
     @property
     def _cursor_guide_style(self) -> Style:
-        return self.get_component_styles("tree--guides-cursor").rich_style
+        return self.get_component_rich_style("tree--guides-cursor")
 
     def on_mouse_move(self, event: events.MouseMove) -> None:
         self.hover_node = event.style.meta.get("tree_node")

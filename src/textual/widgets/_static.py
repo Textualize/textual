@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from rich.console import RenderableType
-
 from rich.protocol import is_renderable
 
+from ..reactive import Reactive
 from ..errors import RenderError
 from ..widget import Widget
 
@@ -49,4 +49,4 @@ class Static(Widget):
     def update(self, renderable: RenderableType) -> None:
         _check_renderable(renderable)
         self.renderable = renderable
-        self.refresh()
+        self.refresh(layout=True)

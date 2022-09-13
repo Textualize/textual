@@ -178,6 +178,7 @@ class Compositor:
     def __init__(self) -> None:
         # A mapping of Widget on to its "render location" (absolute position / depth)
         self.map: CompositorMap = {}
+        self._layers: list[tuple[Widget, MapGeometry]] | None = None
 
         # All widgets considered in the arrangement
         # Note this may be a superset of self.map.keys() as some widgets may be invisible for various reasons
@@ -255,6 +256,7 @@ class Compositor:
             ReflowResult: Hidden shown and resized widgets
         """
         self._cuts = None
+        self._layers = None
         self.root = parent
         self.size = size
 
@@ -342,7 +344,6 @@ class Compositor:
 
         map: CompositorMap = {}
         widgets: set[Widget] = set()
-        get_order = attrgetter("order")
 
         def add_widget(
             widget: Widget,
@@ -388,7 +389,6 @@ class Compositor:
                         child_region.size
                     )
                     widgets.update(arranged_widgets)
-                    placements = sorted(placements, key=get_order)
 
                     # An offset added to all placements
                     placement_offset = container_region.offset + layout_offset
@@ -401,7 +401,9 @@ class Compositor:
                     get_layer_index = layers_to_index.get
 
                     # Add all the widgets
-                    for sub_region, margin, sub_widget, z, fixed in placements:
+                    for sub_region, margin, sub_widget, z, fixed in reversed(
+                        placements
+                    ):
                         # Combine regions with children to calculate the "virtual size"
                         if fixed:
                             widget_region = sub_region + placement_offset
@@ -458,6 +460,15 @@ class Compositor:
         add_widget(root, size.region, size.region, (0,), size.region)
         return map, widgets
 
+    @property
+    def layers(self) -> list[tuple[Widget, MapGeometry]]:
+        """Get widgets and geometry in layer order."""
+        if self._layers is None:
+            self._layers = sorted(
+                self.map.items(), key=lambda item: item[1].order, reverse=True
+            )
+        return self._layers
+
     def __iter__(self) -> Iterator[tuple[Widget, Region, Region, Size, Size]]:
         """Iterate map with information regarding each widget and is position
 
@@ -465,9 +476,9 @@ class Compositor:
             Iterator[tuple[Widget, Region, Region, Size, Size]]: Iterates a tuple of
                 Widget, clip region, region, virtual size, and container size.
         """
-        layers = sorted(self.map.items(), key=lambda item: item[1].order, reverse=True)
+        layers = self.layers
         intersection = Region.intersection
-        for widget, (region, _order, clip, virtual_size, container_size, *_) in layers:
+        for widget, (region, _order, clip, virtual_size, container_size, _) in layers:
             yield (
                 widget,
                 intersection(region, clip),

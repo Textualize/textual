@@ -21,14 +21,13 @@ class DirEntry:
     is_dir: bool
 
 
-@rich.repr.auto
-class FileClick(Message, bubble=True):
-    def __init__(self, sender: MessageTarget, path: str) -> None:
-        self.path = path
-        super().__init__(sender)
-
-
 class DirectoryTree(TreeControl[DirEntry]):
+    @rich.repr.auto
+    class FileClick(Message, bubble=True):
+        def __init__(self, sender: MessageTarget, path: str) -> None:
+            self.path = path
+            super().__init__(sender)
+
     def __init__(
         self,
         path: str,
@@ -112,7 +111,7 @@ class DirectoryTree(TreeControl[DirEntry]):
     ) -> None:
         dir_entry = message.node.data
         if not dir_entry.is_dir:
-            await self.emit(FileClick(self, dir_entry.path))
+            await self.emit(self.FileClick(self, dir_entry.path))
         else:
             if not message.node.loaded:
                 await self.load_directory(message.node)

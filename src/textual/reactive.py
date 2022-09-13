@@ -3,6 +3,8 @@ from __future__ import annotations
 from functools import partial
 from inspect import isawaitable
 from typing import TYPE_CHECKING, Any, Callable, Generic, Type, TypeVar, Union
+from weakref import WeakSet
+
 
 from . import events
 from ._callback import count_parameters, invoke
@@ -185,13 +187,53 @@ class Reactive(Generic[ReactiveType]):
             setattr(obj, compute, value)
 
 
+class reactive(Reactive[ReactiveType]):
+    """Create a reactive attribute.
+
+    Args:
+        default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
+        layout (bool, optional): Perform a layout on change. Defaults to False.
+        repaint (bool, optional): Perform a repaint on change. Defaults to True.
+        init (bool, optional): Call watchers on initialize (post mount). Defaults to False.
+
+    """
+
+    def __init__(
+        self,
+        default: ReactiveType | Callable[[], ReactiveType],
+        *,
+        layout: bool = False,
+        repaint: bool = True,
+        init: bool = True,
+    ) -> None:
+        super().__init__(default, layout=layout, repaint=repaint, init=init)
+
+
+class var(Reactive[ReactiveType]):
+    """Create a reactive attribute (with no auto-refresh).
+
+    Args:
+        default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
+    """
+
+    def __init__(self, default: ReactiveType | Callable[[], ReactiveType]) -> None:
+        super().__init__(default, layout=False, repaint=False, init=True)
+
+
 def watch(
     obj: Reactable, attribute_name: str, callback: Callable[[Any], object]
 ) -> None:
+    """Watch a reactive variable on an object.
+
+    Args:
+        obj (Reactable): The parent object.
+        attribute_name (str): The attribute to watch.
+        callback (Callable[[Any], object]): A callable to call when the attribute changes.
+    """
     watcher_name = f"__{attribute_name}_watchers"
     current_value = getattr(obj, attribute_name, None)
     if not hasattr(obj, watcher_name):
-        setattr(obj, watcher_name, set())
+        setattr(obj, watcher_name, WeakSet())
     watchers = getattr(obj, watcher_name)
     watchers.add(callback)
     Reactive._check_watchers(obj, attribute_name, current_value)

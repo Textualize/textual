@@ -1,5 +1,22 @@
 from __future__ import annotations
+
+import sys
+import rich.repr
+
 from dataclasses import dataclass
+from typing import Iterable, MutableMapping
+
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:  # pragma: no cover
+    from typing_extensions import TypeAlias
+
+
+BindingType: TypeAlias = "Binding | tuple[str, str, str]"
+
+
+class BindingError(Exception):
+    """A binding related error."""
 
 
 class NoBinding(Exception):
@@ -11,16 +28,50 @@ class Binding:
     key: str
     action: str
     description: str
-    show: bool = False
+    show: bool = True
     key_display: str | None = None
     allow_forward: bool = True
 
 
+@rich.repr.auto
 class Bindings:
     """Manage a set of bindings."""
 
-    def __init__(self) -> None:
-        self.keys: dict[str, Binding] = {}
+    def __init__(self, bindings: Iterable[BindingType] | None = None) -> None:
+        def make_bindings(bindings: Iterable[BindingType]) -> Iterable[Binding]:
+            for binding in bindings:
+                if isinstance(binding, Binding):
+                    yield binding
+                else:
+                    if len(binding) != 3:
+                        raise BindingError(
+                            f"BINDINGS must contain a tuple of three strings, not {binding!r}"
+                        )
+                    yield Binding(*binding)
+
+        self.keys: MutableMapping[str, Binding] = (
+            {binding.key: binding for binding in make_bindings(bindings)}
+            if bindings
+            else {}
+        )
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self.keys
+
+    @classmethod
+    def merge(cls, bindings: Iterable[Bindings]) -> Bindings:
+        """Merge a bindings. Subsequence bound keys override initial keys.
+
+        Args:
+            bindings (Iterable[Bindings]): A number of bindings.
+
+        Returns:
+            Bindings: New bindings.
+        """
+        keys: dict[str, Binding] = {}
+        for _bindings in bindings:
+            keys.update(_bindings.keys)
+        return Bindings(keys.values())
 
     @property
     def shown_keys(self) -> list[Binding]:
@@ -58,23 +109,3 @@ class Bindings:
         if binding is None:
             return True
         return binding.allow_forward
-
-
-class BindingStack:
-    """Manage a stack of bindings."""
-
-    def __init__(self, *bindings: Bindings) -> None:
-        self._stack: list[Bindings] = list(bindings)
-
-    def push(self, bindings: Bindings) -> None:
-        self._stack.append(bindings)
-
-    def pop(self) -> Bindings:
-        return self._stack.pop()
-
-    def get_key(self, key: str) -> Binding:
-        for bindings in reversed(self._stack):
-            binding = bindings.keys.get(key, None)
-            if binding is not None:
-                return binding
-        raise NoBinding(f"No binding for {key}") from None
