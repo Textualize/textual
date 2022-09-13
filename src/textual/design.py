@@ -127,7 +127,9 @@ class ColorSystem:
         boost = self.boost or background.get_contrast_text(1.0).with_alpha(0.07)
 
         if self.panel is None:
-            panel = surface.blend(primary, luminosity_spread) + boost
+            panel = surface.blend(primary, luminosity_spread)
+            if dark:
+                panel += boost
         else:
             panel = self.panel
 
