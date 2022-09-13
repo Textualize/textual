@@ -160,8 +160,8 @@ the child widgets will be "stacked" on top of each other, as demonstrated below.
     --8<-- "docs/examples/guide/layout/center_layout.css"
     ```
 
-Notice that the first widget yielded from `compose` appears at the top of the stack,
-and the final widget yielded appears at the bottom.
+Widgets are drawn in the order they are yielded from `compose`.
+The first yielded widget appears at the bottom, and widgets yielded after it are stacked on top.
 
 ## Grid
 
