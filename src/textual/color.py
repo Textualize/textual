@@ -295,7 +295,8 @@ class Color(NamedTuple):
 
         Args:
             destination (Color): Another color.
-            factor (float): A blend factor, 0 -> 1
+            factor (float): A blend factor, 0 -> 1.
+            alpha (float | None): New alpha for result. Defaults to 1.
 
         Returns:
             Color: A new color.
