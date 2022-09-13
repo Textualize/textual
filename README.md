@@ -19,7 +19,7 @@ Textual is a Python framework for creating interactive applications that run in 
 
 Textual adds interactivity to [Rich](https://github.com/Textualize/rich) with a Python API inspired by modern development development.
 
-On modern terminal software (installed by default on most system) Textual apps can use **16.7 million** colors with mouse support and smooth flicker-free animation. A powerful layout engine and re-usable components makes it possible to build apps that rival the desktop and web experience. 
+On modern terminal software (installed by default on most systems), Textual apps can use **16.7 million** colors with mouse support and smooth flicker-free animation. A powerful layout engine and re-usable components makes it possible to build apps that rival the desktop and web experience. 
 
 ## Compatibility
 
