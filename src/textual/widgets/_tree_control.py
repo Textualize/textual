@@ -164,8 +164,8 @@ class TreeNode(Generic[NodeDataType]):
 class TreeControl(Generic[NodeDataType], Static, can_focus=True):
     DEFAULT_CSS = """
     TreeControl {
-        background: $panel;
-        color: $text-panel;
+        background: $surface;
+        color: $text;
         height: auto;
         width: 100%;
     }
@@ -176,8 +176,7 @@ class TreeControl(Generic[NodeDataType], Static, can_focus=True):
 
     TreeControl > .tree--guides-highlight {
         color: $success;
-        text-style: uu;
-        
+        text-style: uu;   
     }
 
     TreeControl > .tree--guides-cursor {
@@ -186,12 +185,12 @@ class TreeControl(Generic[NodeDataType], Static, can_focus=True):
     }
 
     TreeControl > .tree--labels {
-        color: $text-panel;
+        color: $text;
     }
 
     TreeControl > .tree--cursor {
         background: $secondary;
-        color: $text-secondary;
+        color: $text;
     }
     
     """

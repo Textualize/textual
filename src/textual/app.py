@@ -146,7 +146,7 @@ class App(Generic[ReturnType], DOMNode):
     DEFAULT_CSS = """
     App {
         background: $background;
-        color: $text-background;
+        color: $text;
     }
     """
 
@@ -540,6 +540,10 @@ class App(Generic[ReturnType], DOMNode):
                 )
         except Exception as error:
             self._handle_exception(error)
+
+    def action_toggle_dark(self) -> None:
+        """Action to toggle dark mode."""
+        self.dark = not self.dark
 
     def action_screenshot(self, filename: str | None, path: str = "~/") -> None:
         """Action to save a screenshot."""

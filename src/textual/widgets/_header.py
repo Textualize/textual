@@ -34,7 +34,7 @@ class HeaderClock(Widget):
         width: 10;
         padding: 0 1;
         background: $secondary-background-lighten-1;
-        color: $text-secondary-background;
+        color: $text;
         text-opacity: 85%;
         content-align: center middle;
     }
@@ -76,7 +76,7 @@ class Header(Widget):
         dock: top;
         width: 100%;
         background: $secondary-background;
-        color: $text-secondary-background;
+        color: $text;
         height: 1;
     }
     Header.tall {
