@@ -17,11 +17,12 @@ CodeBrowser.-show-tree #tree-view {
 }
 
 CodeBrowser{
-    background: $surface-darken-1;    
+    background: $background;    
 }
 
 DirectoryTree {
     padding-right: 1;   
+    padding-right: 1;
 }
 
 #code {

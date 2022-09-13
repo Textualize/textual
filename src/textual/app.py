@@ -545,9 +545,10 @@ class App(Generic[ReturnType], DOMNode):
         """Action to toggle dark mode."""
         self.dark = not self.dark
 
-    def action_screenshot(self, path: str | None = None) -> None:
+    def action_screenshot(self, filename: str | None, path: str = "~/") -> None:
         """Action to save a screenshot."""
-        self.save_screenshot(path)
+        self.bell()
+        self.save_screenshot(filename, path)
 
     def export_screenshot(self, *, title: str | None = None) -> str:
         """Export a SVG screenshot of the current screen.
@@ -570,22 +571,31 @@ class App(Generic[ReturnType], DOMNode):
         console.print(screen_render)
         return console.export_svg(title=title or self.title)
 
-    def save_screenshot(self, path: str | None = None) -> str:
-        """Save a screenshot of the current screen.
+    def save_screenshot(
+        self,
+        filename: str | None = None,
+        path: str = "./",
+        time_format: str = "%Y-%m-%d %X %f",
+    ) -> str:
+        """Save a SVG screenshot of the current screen.
 
         Args:
-            path (str | None, optional): Path to SVG to save or None to pick
-                a filename automatically. Defaults to None.
+            filename (str | None, optional): Filename of SVG screenshot, or None to auto-generate
+                a filename with the date and time. Defaults to None.
+            path (str, optional): Path to directory for output. Defaults to current working directory.
+            time_format(str, optional): Time format to use if filename is None. Defaults to "%Y-%m-%d %X %f".
 
         Returns:
             str: Filename of screenshot.
         """
-        self.bell()
-        if path is None:
-            svg_path = f"{self.title.lower()}_{datetime.now().isoformat()}.svg"
-            svg_path = svg_path.replace("/", "_").replace("\\", "_")
+        if filename is None:
+            svg_filename = (
+                f"{self.title.lower()} {datetime.now().strftime(time_format)}.svg"
+            )
+            svg_filename = svg_filename.replace("/", "_").replace("\\", "_")
         else:
-            svg_path = path
+            svg_filename = filename
+        svg_path = os.path.expanduser(os.path.join(path, svg_filename))
         screenshot_svg = self.export_screenshot()
         with open(svg_path, "w") as svg_file:
             svg_file.write(screenshot_svg)
