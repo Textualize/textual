@@ -213,7 +213,7 @@ class BasicApp(App, css_path="basic.css"):
 app = BasicApp()
 
 if __name__ == "__main__":
-    app.run()
+    app.run(quit_after=2)
 
     # from textual.geometry import Region
     # from textual.color import Color
