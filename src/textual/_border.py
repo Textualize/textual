@@ -113,8 +113,8 @@ def get_box(
     inner = inner_style + style
     outer = outer_style + style
     styles = (
-        inner_style + style,
-        outer_style + style,
+        inner,
+        outer,
         Style.from_color(outer.bgcolor, inner.color),
         Style.from_color(inner.bgcolor, outer.color),
     )
