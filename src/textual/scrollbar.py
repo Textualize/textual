@@ -213,7 +213,7 @@ class ScrollBar(Widget):
 
     def render(self) -> RenderableType:
         styles = self.parent.styles
-        background = self.parent.background_colors[1] + (
+        background = (
             styles.scrollbar_background_hover
             if self.mouse_over
             else styles.scrollbar_background

@@ -103,6 +103,8 @@ class IntegerProperty(GenericProperty[int, int]):
 
 
 class BooleanProperty(GenericProperty[bool, bool]):
+    """A property that requires a True or False value."""
+
     def validate_value(self, value: object) -> bool:
         return bool(value)
 
