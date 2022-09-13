@@ -33,7 +33,7 @@ Button {
 .started {
     text-style: bold;
     background: $success;
-    color: $text-success;
+    color: $text;
 }
 
 .started TimeDisplay {

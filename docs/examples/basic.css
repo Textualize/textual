@@ -15,10 +15,10 @@
 App > Screen {
 
   background: $surface;
-  color: $text-surface;
+  color: $text;
   layers: base sidebar;
 
-  color: $text-background;
+  color: $text;
   background: $background;
   layout: vertical;
 
@@ -53,7 +53,7 @@ DataTable {
 }
 
 #sidebar {
-  color: $text-panel;
+  color: $text;
   background: $panel;
   dock: left;
   width: 30;
@@ -71,7 +71,7 @@ DataTable {
 #sidebar .title {
   height: 1;
   background: $primary-background-darken-1;
-  color: $text-primary-background-darken-1;
+  color: $text-muted;
   border-right: wide $background;
   content-align: center middle;
 }
@@ -79,14 +79,14 @@ DataTable {
 #sidebar .user {
   height: 8;
   background: $panel-darken-1;
-  color: $text-panel-darken-1;
+  color: $text-muted;
   border-right: wide $background;
   content-align: center middle;
 }
 
 #sidebar .content {
   background: $panel-darken-2;
-  color: $text-surface;
+  color: $text;
   border-right: wide $background;
   content-align: center middle;
 }
@@ -100,7 +100,7 @@ Tweet {
   margin: 0 2;
 
   background: $panel;
-  color: $text-panel;
+  color: $text;
   layout: vertical;
   /* border: outer $primary; */
   padding: 1;
@@ -130,13 +130,13 @@ Tweet {
 TweetHeader {
   height:1;
   background: $accent;
-  color: $text-accent
+  color: $text
 }
 
 TweetBody {
   width: 100%;
   background: $panel;
-  color: $text-panel;
+  color: $text;
   height: auto;
   padding: 0 1 0 0;
 }
@@ -147,7 +147,7 @@ Tweet.scroll-horizontal TweetBody {
 
 .button {
   background: $accent;
-  color: $text-accent;
+  color: $text;
   width:20;
   height: 3;
   /* border-top: hidden  $accent-darken-3;  */
@@ -163,7 +163,7 @@ Tweet.scroll-horizontal TweetBody {
 
 .button:hover {
   background: $accent-lighten-1;
-  color: $text-accent-lighten-1;
+  color: $text-disabled;
   width: 20;
   height: 3;
   border: tall $accent-darken-1;
@@ -175,7 +175,7 @@ Tweet.scroll-horizontal TweetBody {
 }
 
 #footer {
-  color: $text-accent;
+  color: $text;
   background: $accent;
   height: 1;
 
@@ -198,7 +198,7 @@ OptionItem {
 
 OptionItem:hover {
   height: 3;
-  color: $text-primary;
+  color: $text;
   background: $primary-darken-1;
   /* border-top: hkey $accent2-darken-3;
   border-bottom: hkey $accent2-darken-3; */
@@ -210,7 +210,7 @@ Error {
   width: 100%;
   height:3;
   background: $error;
-  color: $text-error;
+  color: $text;
   border-top: tall $error-darken-2;
   border-bottom: tall $error-darken-2;
 
@@ -223,7 +223,7 @@ Warning {
   width: 100%;
   height:3;
   background: $warning;
-  color: $text-warning-fade-1;
+  color: $text-muted;
   border-top: tall $warning-darken-2;
   border-bottom: tall $warning-darken-2;
 
@@ -237,7 +237,7 @@ Success {
   height:auto;
   box-sizing: border-box;
   background: $success;
-  color: $text-success-fade-1;
+  color: $text-muted;
 
   border-top: hkey $success-darken-2;
   border-bottom: hkey $success-darken-2;
