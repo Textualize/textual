@@ -33,10 +33,9 @@ class Button(Widget, can_focus=True):
     Button {
         width: auto;
         min-width: 16;
-        width: auto;
         height: 3;
         background: $panel;
-        color: auto;      
+        color: $text;      
         border: none;
         border-top: tall $panel-lighten-2;
         border-bottom: tall $panel-darken-3;
