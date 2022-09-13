@@ -13,6 +13,13 @@ EasingButtons {
 
 #duration-input {
     width: 30;
+    background: $boost;
+    padding: 0 1;
+    border: tall transparent;
+}
+
+#duration-input:focus {
+    border: tall $accent;
 }
 
 #inputs {
@@ -39,4 +46,9 @@ Bar {
     background: $warning;
     color: $text;
     border: wide $background;
+}
+
+#label {
+    width: auto;
+    padding: 1;
 }
