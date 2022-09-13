@@ -31,13 +31,13 @@ class Welcome(Static):
             width: 100%;
             height: 100%;
             margin: 1 2;
-            
+
         }
 
         Welcome Container {
             padding: 1;
             background: $panel;
-            color: $text-panel;
+            color: $text;
         }
 
         Welcome #text {
