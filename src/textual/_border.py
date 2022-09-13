@@ -111,11 +111,13 @@ def get_box(
     ) = BORDER_LOCATIONS[name]
 
     styles: tuple[Style, ...] = (inner_style + style, outer_style + style)
+    inner, outer = styles
 
+    from_color = Style.from_color
     styles += (
-        Style.from_color(styles[1].bgcolor, styles[0].color),
-        Style.from_color(styles[0].color, styles[0].bgcolor),
-        Style.from_color(styles[0].bgcolor, styles[1].color),
+        from_color(outer.bgcolor, inner.color),
+        from_color(inner.color, inner.bgcolor),
+        from_color(inner.bgcolor, outer.color),
     )
 
     return (
