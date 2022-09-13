@@ -124,12 +124,12 @@ class ColorSystem:
             background = self.background or Color.parse(DEFAULT_LIGHT_BACKGROUND)
             surface = self.surface or Color.parse(DEFAULT_LIGHT_SURFACE)
 
+        boost = self.boost or background.get_contrast_text(1.0).with_alpha(0.07)
+
         if self.panel is None:
-            panel = surface.blend(primary, luminosity_spread)
+            panel = surface.blend(primary, luminosity_spread) + boost
         else:
             panel = self.panel
-
-        boost = self.boost or background.get_contrast_text(1.0).with_alpha(0.07)
 
         colors: dict[str, str] = {}
 

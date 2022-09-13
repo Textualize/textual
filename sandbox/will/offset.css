@@ -1,0 +1,21 @@
+Screen {
+    layout: center;
+}
+
+#parent {
+    width: 32;
+    height: 8;
+    background: $panel;
+}
+
+#tag {
+    color: $text;
+    background: $success;
+    padding: 2 4;
+    width: auto;
+    offset: -8 -4;
+}
+
+#child {
+    background: red;
+}
