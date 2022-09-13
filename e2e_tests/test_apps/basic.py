@@ -6,42 +6,55 @@ from rich.text import Text
 from textual.app import App, ComposeResult
 from textual.reactive import Reactive
 from textual.widget import Widget
-from textual.widgets import Static, DataTable
+from textual.widgets import Static, DataTable, DirectoryTree, Header, Footer
+from textual.layout import Container
 
 CODE = '''
-class Offset(NamedTuple):
-    """A point defined by x and y coordinates."""
+from __future__ import annotations
 
-    x: int = 0
-    y: int = 0
+from typing import Iterable, TypeVar
 
-    @property
-    def is_origin(self) -> bool:
-        """Check if the point is at the origin (0, 0)"""
-        return self == (0, 0)
+T = TypeVar("T")
 
-    def __bool__(self) -> bool:
-        return self != (0, 0)
 
-    def __add__(self, other: object) -> Offset:
-        if isinstance(other, tuple):
-            _x, _y = self
-            x, y = other
-            return Offset(_x + x, _y + y)
-        return NotImplemented
+def loop_first(values: Iterable[T]) -> Iterable[tuple[bool, T]]:
+    """Iterate and generate a tuple with a flag for first value."""
+    iter_values = iter(values)
+    try:
+        value = next(iter_values)
+    except StopIteration:
+        return
+    yield True, value
+    for value in iter_values:
+        yield False, value
 
-    def __sub__(self, other: object) -> Offset:
-        if isinstance(other, tuple):
-            _x, _y = self
-            x, y = other
-            return Offset(_x - x, _y - y)
-        return NotImplemented
 
-    def __mul__(self, other: object) -> Offset:
-        if isinstance(other, (float, int)):
-            x, y = self
-            return Offset(int(x * other), int(y * other))
-        return NotImplemented
+def loop_last(values: Iterable[T]) -> Iterable[tuple[bool, T]]:
+    """Iterate and generate a tuple with a flag for last value."""
+    iter_values = iter(values)
+    try:
+        previous_value = next(iter_values)
+    except StopIteration:
+        return
+    for value in iter_values:
+        yield False, previous_value
+        previous_value = value
+    yield True, previous_value
+
+
+def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
+    """Iterate and generate a tuple with a flag for first and last value."""
+    iter_values = iter(values)
+    try:
+        previous_value = next(iter_values)
+    except StopIteration:
+        return
+    first = True
+    for value in iter_values:
+        yield first, False, previous_value
+        first = False
+        previous_value = value
+    yield first, True, previous_value
 '''
 
 
@@ -96,25 +109,28 @@ class BasicApp(App, css_path="basic.css"):
 
     def on_load(self):
         """Bind keys here."""
-        self.bind("s", "toggle_class('#sidebar', '-active')")
+        self.bind("s", "toggle_class('#sidebar', '-active')", description="Sidebar")
+        self.bind("d", "toggle_dark", description="Dark mode")
+        self.bind("q", "quit", description="Quit")
+        self.bind("f", "query_test", description="Query test")
 
-    def compose(self) -> ComposeResult:
+    def compose(self):
+        yield Header()
+
         table = DataTable()
         self.scroll_to_target = Tweet(TweetBody())
 
-        yield Static(
-            Text.from_markup(
-                "[b]This is a [u]Textual[/u] app, running in the terminal"
-            ),
-            id="header",
-        )
-        yield from (
+        yield Container(
             Tweet(TweetBody()),
             Widget(
-                Static(Syntax(CODE, "python"), classes="code"),
+                Static(
+                    Syntax(CODE, "python", line_numbers=True, indent_guides=True),
+                    classes="code",
+                ),
                 classes="scrollable",
             ),
             table,
+            Widget(DirectoryTree("~/"), id="tree-container"),
             Error(),
             Tweet(TweetBody(), classes="scrollbar-size-custom"),
             Warning(),
@@ -126,7 +142,6 @@ class BasicApp(App, css_path="basic.css"):
             Tweet(TweetBody(), classes="scroll-horizontal"),
             Tweet(TweetBody(), classes="scroll-horizontal"),
         )
-        yield Widget(id="footer")
         yield Widget(
             Widget(classes="title"),
             Widget(classes="user"),
@@ -136,6 +151,7 @@ class BasicApp(App, css_path="basic.css"):
             Widget(classes="content"),
             id="sidebar",
         )
+        yield Footer()
 
         table.add_column("Foo", width=20)
         table.add_column("Bar", width=20)
@@ -147,11 +163,31 @@ class BasicApp(App, css_path="basic.css"):
         for n in range(100):
             table.add_row(*[f"Cell ([b]{n}[/b], {col})" for col in range(6)])
 
+    def on_mount(self):
+        self.sub_title = "Widget demo"
+
     async def on_key(self, event) -> None:
         await self.dispatch_key(event)
 
-    def key_d(self):
+    def action_toggle_dark(self):
         self.dark = not self.dark
+
+    def action_query_test(self):
+        query = self.query("Tweet")
+        self.log(query)
+        self.log(query.nodes)
+        self.log(query)
+        self.log(query.nodes)
+
+        query.set_styles("outline: outer red;")
+
+        query = query.exclude(".scroll-horizontal")
+        self.log(query)
+        self.log(query.nodes)
+
+        # query = query.filter(".rubbish")
+        # self.log(query)
+        # self.log(query.first())
 
     async def key_q(self):
         await self.shutdown()
@@ -177,7 +213,7 @@ class BasicApp(App, css_path="basic.css"):
 app = BasicApp()
 
 if __name__ == "__main__":
-    app.run(quit_after=2)
+    app.run()
 
     # from textual.geometry import Region
     # from textual.color import Color
