@@ -1,0 +1,30 @@
+Screen {
+    layout: center;
+}
+
+#parent {
+    layout: center;
+    background: $panel;
+    width: 52;
+    height: 20;
+}
+
+Box {
+    color: auto;
+    width: auto;
+    padding: 1 2;
+}
+
+#box1 {
+    background: $primary;
+}
+
+#box2 {
+    background: $secondary;
+    offset: 12 4;
+}
+
+#box3 {
+    background: lightseagreen;
+    offset: -12 -4;
+}

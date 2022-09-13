@@ -68,6 +68,8 @@ For example, if we swap out `height: 1fr;` for `height: 10;` in the example abov
 
 With the parent container in focus, we can use our mouse wheel, trackpad, or keyboard to scroll it.
 
+[//]: # (TODO: Mention layout.Vertical, layout.Horizontal etc utility containers)
+
 ## Horizontal
 
 The `horizontal` layout arranges child widgets horizontally, from left to right.
@@ -266,7 +268,7 @@ and the second row to `85%` height (while retaining the `grid-columns` change fr
 
 If you don't specify enough values in a `grid-columns` or `grid-rows` declaration, the values you _have_ provided will be "repeated".
 For example, if your grid has four columns (`grid-size: 4;`), then `grid-columns: 2 4;` is equivalent to `grid-columns: 2 4 2 4;`.
-If the grid instead had three columns, then `grid-columns: 2 4;` is equivalent to `grid-columns: 2 4 2;`.
+If the grid instead had three columns, then `grid-columns: 2 4;` would be equivalent to `grid-columns: 2 4 2;`.
 
 ### Cell spans
 
@@ -403,9 +405,9 @@ The code below shows a simple sidebar implementation.
 If we run the app above and scroll down, the body text will scroll but the sidebar does not (note the position of the scrollbar in the output shown above).
 
 Docking multiple widgets to the same edge will result in overlap.
-Just like in the `center` layout, the first widget yielded from `compose` will appear on top.
+Just like in the `center` layout, the first widget yielded from `compose` will appear below widgets yielded after.
 Let's dock a second sidebar, `#another-sidebar`, to the left of the screen.
-This new sidebar is double the width of the one above, and has a `deeppink` background.
+This new sidebar is double the width of the one previous one, and has a `deeppink` background.
 
 === "Output"
 
@@ -414,7 +416,7 @@ This new sidebar is double the width of the one above, and has a `deeppink` back
 
 === "dock_layout2_sidebar.py"
 
-    ```python hl_lines="15"
+    ```python hl_lines="14"
     --8<-- "docs/examples/guide/layout/dock_layout2_sidebar.py"
     ```
 
@@ -424,8 +426,8 @@ This new sidebar is double the width of the one above, and has a `deeppink` back
     --8<-- "docs/examples/guide/layout/dock_layout2_sidebar.css"
     ```
 
-Notice that the original sidebar (`#sidebar`) appears on top of the newly docked widget.
-This is because `#sidebar` was yielded _before_ `#another-sidebar` inside the `compose` method.
+[//]: # (Notice that the original sidebar &#40;`#sidebar`&#41; appears on top of the newly docked widget.)
+[//]: # (This is because `#sidebar` was yielded _before_ `#another-sidebar` inside the `compose` method.)
 
 Of course, we can also dock widgets to multiple edges within the same container.
 The built-in `Header` widget contains some internal CSS which docks it to the top.
@@ -438,7 +440,7 @@ We can yield it inside `compose`, and without any additional CSS, we get a heade
 
 === "dock_layout3_sidebar_header.py"
 
-    ```python
+    ```python hl_lines="14"
     --8<-- "docs/examples/guide/layout/dock_layout3_sidebar_header.py"
     ```
 
@@ -461,17 +463,53 @@ Widgets on higher layers will appear on top of widgets on lower layers.
 By default, Textual draws everything on a single layer.
 However, using CSS we can define our own layers and assign widgets to them.
 
-
+[//]: # (TODO: Continue this section after ordering stuff resolved)
 
 ## Offsets
 
-Widgets have a relative offset which is added to the widget's location, after its location has been determined via its layout.
+Widgets have a relative offset which is added to the widget's location, _after_ its location has been determined via its layout.
+This means that if a widget hasn't had its offset modified using CSS or Python code, it will have an offset of `(0, 0)`.
 
 <div class="excalidraw">
 --8<-- "docs/images/layout/offset.excalidraw.svg"
 </div>
 
-TODO: What happens when you check the position of a widget that has offset? Do you get the position inclusive of offset back, or the original position (excluding offset)?
+The offset of a widget can be set using the `offset` CSS property.
+`offset` takes two values.
+
+* The first value defines the `x` (horizontal) offset. Positive values will shift the widget to the right. Negative values will shift the widget to the left.
+* The second value defines the `y` (vertical) offset. Positive values will shift the widget down. Negative values will shift the widget up.
+
+For example, `offset: 4 -2;` will shift the target widget 4 terminal cells to the right, and 2 terminal cells up.
+
+The example below illustrates `offset` further.
+Notice that the `#parent` container has `layout: center`, meaning all three of the widgets we yield from `compose` have origins in the center of it.
+In the CSS we apply and offset of `12 4` to `#box2`, moving it to the right and down a little.
+In the case of `#box3` we apply and offset of `-12 -4`, which shifts it to the left and up.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/layout/offset.py"}
+    ```
+
+=== "offset.py"
+
+    ```python hl_lines="14"
+    --8<-- "docs/examples/guide/layout/offset.py"
+    ```
+
+=== "offset.css"
+
+    ```sass
+    --8<-- "docs/examples/guide/layout/offset.css"
+    ```
+
+
+[//]: # (TODO Link the word animation below to animation docs)
+
+Offset is commonly used with animation.
+You may have a sidebar, for example, with its initial offset set such that it is hidden off to the left of the screen.
+On pressing a button, the offset can be animated to `(0, 0)`, animating the sidebar in from the left, back to its origin position as defined by the layout.
 
 ## Combining Layouts (????)
 
