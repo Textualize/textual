@@ -617,4 +617,4 @@ This grid cell makes use of a horizontal layout.
 The final cell in our grid is located at the bottom right of the screen.
 It has a green border, and this cell itself uses a grid layout.
 
-As you can see, combining layouts lets you build design complex apps with very little code!
+As you can see, combining layouts lets you design complex apps with very little code!
