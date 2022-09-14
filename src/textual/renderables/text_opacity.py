@@ -1,6 +1,7 @@
 import functools
 from typing import Iterable
 
+from rich.cells import cell_len
 from rich.color import Color
 from rich.console import ConsoleOptions, Console, RenderResult, RenderableType
 from rich.segment import Segment
@@ -67,11 +68,16 @@ class TextOpacity:
 
             color = style.color
             bgcolor = style.bgcolor
-            if color and color.triplet and bgcolor and bgcolor.triplet:
-                color_style = _get_blended_style_cached(bgcolor, color, opacity)
-                yield _Segment(text, style + color_style)
+
+            if opacity > 0:
+                if color and color.triplet and bgcolor and bgcolor.triplet:
+                    color_style = _get_blended_style_cached(bgcolor, color, opacity)
+                    yield _Segment(text, style + color_style)
+                else:
+                    yield segment
             else:
-                yield segment
+                empty_text = cell_len(text) * " "
+                yield _Segment(empty_text, Style.from_color(bgcolor=bgcolor))
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
