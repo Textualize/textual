@@ -411,7 +411,7 @@ Docked widgets will not scroll out of view, making them ideal for sticky headers
 --8<-- "docs/images/layout/dock.excalidraw.svg"
 </div>
 
-To dock a widget to the edge, add the `dock: <EDGE>;` property to it, where `<EDGE>` is one of `top`, `right`, `bottom`, or `left`.
+To dock a widget to an edge, add a `dock: <EDGE>;` declaration to it, where `<EDGE>` is one of `top`, `right`, `bottom`, or `left`.
 For example, a sidebar similar to that shown in the diagram above can be achieved using `dock: left;`.
 The code below shows a simple sidebar implementation.
 
