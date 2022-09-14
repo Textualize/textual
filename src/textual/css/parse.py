@@ -301,9 +301,7 @@ def substitute_references(
                         for _token in reference_tokens:
                             yield _token.with_reference(
                                 ReferencedBy(
-                                    name=ref_name,
-                                    location=ref_location,
-                                    length=ref_length,
+                                    ref_name, ref_location, ref_length, token.code
                                 )
                             )
                     else:
@@ -318,13 +316,10 @@ def substitute_references(
                 variable_tokens = variables[variable_name]
                 ref_location = token.location
                 ref_length = len(token.value)
-                for token in variable_tokens:
-                    yield token.with_reference(
-                        ReferencedBy(
-                            name=variable_name,
-                            location=ref_location,
-                            length=ref_length,
-                        )
+                ref_code = token.code
+                for _token in variable_tokens:
+                    yield _token.with_reference(
+                        ReferencedBy(variable_name, ref_location, ref_length, ref_code)
                     )
             else:
                 _unresolved(variable_name, variables.keys(), token)
@@ -336,6 +331,7 @@ def parse(
     css: str,
     path: str | PurePath,
     variables: dict[str, str] | None = None,
+    variable_tokens: dict[str, list[Token]] | None = None,
     is_default_rules: bool = False,
     tie_breaker: int = 0,
 ) -> Iterable[RuleSet]:
@@ -349,7 +345,11 @@ def parse(
         is_default_rules (bool): True if the rules we're extracting are
             default (i.e. in Widget.DEFAULT_CSS) rules. False if they're from user defined CSS.
     """
-    variable_tokens = tokenize_values(variables or {})
+
+    reference_tokens = tokenize_values(variables) if variables is not None else {}
+    if variable_tokens:
+        reference_tokens.update(variable_tokens)
+
     tokens = iter(substitute_references(tokenize(css, path), variable_tokens))
     while True:
         token = next(tokens, None)

@@ -16,6 +16,7 @@ from ..color import Color
 from ..geometry import Offset, Spacing
 from ._style_properties import (
     AlignProperty,
+    BooleanProperty,
     BorderProperty,
     BoxProperty,
     ColorProperty,
@@ -83,6 +84,7 @@ class RulesMap(TypedDict, total=False):
     visibility: Visibility
     layout: "Layout"
 
+    auto_color: bool
     color: Color
     background: Color
     text_style: Style
@@ -183,6 +185,7 @@ class StylesBase(ABC):
         "min_height",
         "max_width",
         "max_height",
+        "auto_color",
         "color",
         "background",
         "opacity",
@@ -202,6 +205,7 @@ class StylesBase(ABC):
     visibility = StringEnumProperty(VALID_VISIBILITY, "visible")
     layout = LayoutProperty()
 
+    auto_color = BooleanProperty(default=False)
     color = ColorProperty(Color(255, 255, 255))
     background = ColorProperty(Color(0, 0, 0, 0), background=True)
     text_style = StyleFlagsProperty()

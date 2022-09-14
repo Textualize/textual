@@ -74,7 +74,6 @@ class DirectoryTree(TreeControl[DirEntry]):
             label.stylize("bold")
             icon = "📂" if expanded else "📁"
         else:
-
             icon = "📄"
             label.highlight_regex(r"\..*$", "italic")
 

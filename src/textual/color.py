@@ -284,6 +284,17 @@ class Color(NamedTuple):
         )
 
     @property
+    def hex6(self) -> str:
+        """The color in CSS hex form, with 6 digits for RGB. Alpha is ignored.
+
+        Returns:
+            str: A CSS hex-style color, e.g. "#46b3de"
+
+        """
+        r, g, b, a = self.clamped
+        return f"#{r:02X}{g:02X}{b:02X}"
+
+    @property
     def css(self) -> str:
         """The color in CSS rgb or rgba form.
 
@@ -313,12 +324,13 @@ class Color(NamedTuple):
         r, g, b, _ = self
         return Color(r, g, b, alpha)
 
-    def blend(self, destination: Color, factor: float) -> Color:
+    def blend(self, destination: Color, factor: float, alpha: float = 1) -> Color:
         """Generate a new color between two colors.
 
         Args:
             destination (Color): Another color.
-            factor (float): A blend factor, 0 -> 1
+            factor (float): A blend factor, 0 -> 1.
+            alpha (float | None): New alpha for result. Defaults to 1.
 
         Returns:
             Color: A new color.
@@ -333,6 +345,7 @@ class Color(NamedTuple):
             int(r1 + (r2 - r1) * factor),
             int(g1 + (g2 - g1) * factor),
             int(b1 + (b2 - b1) * factor),
+            alpha,
         )
 
     def __add__(self, other: object) -> Color:
@@ -452,29 +465,31 @@ class Color(NamedTuple):
         return color
 
     @lru_cache(maxsize=1024)
-    def darken(self, amount: float) -> Color:
+    def darken(self, amount: float, alpha: float | None = None) -> Color:
         """Darken the color by a given amount.
 
         Args:
             amount (float): Value between 0-1 to reduce luminance by.
+            alpha (float | None, optional): Alpha component for new color or None to copy alpha. Defaults to None.
 
         Returns:
             Color: New color.
         """
         l, a, b = rgb_to_lab(self)
         l -= amount * 100
-        return lab_to_rgb(Lab(l, a, b)).clamped
+        return lab_to_rgb(Lab(l, a, b), self.a if alpha is None else alpha).clamped
 
-    def lighten(self, amount: float) -> Color:
+    def lighten(self, amount: float, alpha: float | None = None) -> Color:
         """Lighten the color by a given amount.
 
         Args:
             amount (float): Value between 0-1 to increase luminance by.
+            alpha (float | None, optional): Alpha component for new color or None to copy alpha. Defaults to None.
 
         Returns:
             Color: New color.
         """
-        return self.darken(-amount)
+        return self.darken(-amount, alpha)
 
     @lru_cache(maxsize=1024)
     def get_contrast_text(self, alpha=0.95) -> Color:
@@ -527,7 +542,7 @@ def rgb_to_lab(rgb: Color) -> Lab:
     return Lab(116 * y - 16, 500 * (x - y), 200 * (y - z))
 
 
-def lab_to_rgb(lab: Lab) -> Color:
+def lab_to_rgb(lab: Lab, alpha: float = 1.0) -> Color:
     """Convert a CIE-L*ab color to RGB.
 
     Uses the standard RGB color space with a D65/2⁰ standard illuminant.
@@ -552,4 +567,4 @@ def lab_to_rgb(lab: Lab) -> Color:
     g = 1.055 * pow(g, 1 / 2.4) - 0.055 if g > 0.0031308 else 12.92 * g
     b = 1.055 * pow(b, 1 / 2.4) - 0.055 if b > 0.0031308 else 12.92 * b
 
-    return Color(int(r * 255), int(g * 255), int(b * 255))
+    return Color(int(r * 255), int(g * 255), int(b * 255), alpha)

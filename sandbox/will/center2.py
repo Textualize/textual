@@ -33,7 +33,7 @@ class CenterApp(App):
 
     Static {        
         background: $panel;
-        color: $text-panel;
+        color: $text;
         content-align: center middle;
     }
     

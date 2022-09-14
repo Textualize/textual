@@ -37,7 +37,7 @@ class Welcome(Static):
         Welcome Container {
             padding: 1;
             background: $panel;
-            color: $text-panel;
+            color: $text;
         }
 
         Welcome #text {

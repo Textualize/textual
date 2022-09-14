@@ -39,8 +39,8 @@ BORDER_CHARS: dict[EdgeType, tuple[str, str, str]] = {
     "outer": ("▛▀▜", "▌ ▐", "▙▄▟"),
     "hkey": ("▔▔▔", "   ", "▁▁▁"),
     "vkey": ("▏ ▕", "▏ ▕", "▏ ▕"),
-    "tall": ("▕▔▏", "▕ ▏", "▕▁▏"),
-    "wide": ("▁▁▁", "▏ ▕", "▔▔▔"),
+    "tall": ("▊▔▎", "▊ ▎", "▊▁▎"),
+    "wide": ("▁▁▁", "▎ ▋", "▔▔▔"),
 }
 
 # Some of the borders are on the widget background and some are on the background of the parent
@@ -62,8 +62,8 @@ BORDER_LOCATIONS: dict[
     "outer": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "hkey": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
     "vkey": ((0, 0, 0), (0, 0, 0), (0, 0, 0)),
-    "tall": ((1, 0, 1), (1, 0, 1), (1, 0, 1)),
-    "wide": ((1, 1, 1), (0, 1, 0), (1, 1, 1)),
+    "tall": ((2, 0, 1), (2, 0, 1), (2, 0, 1)),
+    "wide": ((1, 1, 1), (0, 1, 3), (1, 1, 1)),
 }
 
 INVISIBLE_EDGE_TYPES = cast("frozenset[EdgeType]", frozenset(("", "none", "hidden")))
@@ -81,7 +81,10 @@ Borders: TypeAlias = Tuple[EdgeStyle, EdgeStyle, EdgeStyle, EdgeStyle]
 
 @lru_cache(maxsize=1024)
 def get_box(
-    name: EdgeType, inner_style: Style, outer_style: Style, style: Style
+    name: EdgeType,
+    inner_style: Style,
+    outer_style: Style,
+    style: Style,
 ) -> BoxSegments:
     """Get segments used to render a box.
 
@@ -107,23 +110,30 @@ def get_box(
         (lbottom1, lbottom2, lbottom3),
     ) = BORDER_LOCATIONS[name]
 
-    styles = (inner_style, outer_style)
+    inner = inner_style + style
+    outer = outer_style + style
+    styles = (
+        inner,
+        outer,
+        Style.from_color(outer.bgcolor, inner.color),
+        Style.from_color(inner.bgcolor, outer.color),
+    )
 
     return (
         (
-            _Segment(top1, styles[ltop1] + style),
-            _Segment(top2, styles[ltop2] + style),
-            _Segment(top3, styles[ltop3] + style),
+            _Segment(top1, styles[ltop1]),
+            _Segment(top2, styles[ltop2]),
+            _Segment(top3, styles[ltop3]),
         ),
         (
-            _Segment(mid1, styles[lmid1] + style),
-            _Segment(mid2, styles[lmid2] + style),
-            _Segment(mid3, styles[lmid3] + style),
+            _Segment(mid1, styles[lmid1]),
+            _Segment(mid2, styles[lmid2]),
+            _Segment(mid3, styles[lmid3]),
         ),
         (
-            _Segment(bottom1, styles[lbottom1] + style),
-            _Segment(bottom2, styles[lbottom2] + style),
-            _Segment(bottom3, styles[lbottom3] + style),
+            _Segment(bottom1, styles[lbottom1]),
+            _Segment(bottom2, styles[lbottom2]),
+            _Segment(bottom3, styles[lbottom3]),
         ),
     )
 

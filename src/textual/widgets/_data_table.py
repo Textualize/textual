@@ -109,17 +109,17 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     DEFAULT_CSS = """
     DataTable {
         background: $surface;
-        color: $text-surface;       
+        color: $text;       
     }
     DataTable > .datatable--header {        
         text-style: bold;
         background: $primary;
-        color: $text-primary;
+        color: $text;
     }
     DataTable > .datatable--fixed {
         text-style: bold;
         background: $primary;
-        color: $text-primary;
+        color: $text;
     }
 
     DataTable > .datatable--odd-row {
@@ -132,7 +132,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     DataTable >  .datatable--cursor {
         background: $secondary;
-        color: $text-secondary;
+        color: $text;
     }
 
     .-dark-mode DataTable > .datatable--even-row {
@@ -557,7 +557,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def _scroll_cursor_in_to_view(self, animate: bool = False) -> None:
         region = self._get_cell_region(self.cursor_row, self.cursor_column)
-        spacing = self._get_cell_border()
+        spacing = self._get_cell_border() + self.scrollbar_gutter
         self.scroll_to_region(region, animate=animate, spacing=spacing)
 
     def on_click(self, event: events.Click) -> None:

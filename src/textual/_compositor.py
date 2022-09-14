@@ -14,7 +14,7 @@ without having to render the entire screen.
 from __future__ import annotations
 
 from itertools import chain
-from operator import attrgetter, itemgetter
+from operator import itemgetter
 import sys
 from typing import Callable, cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
 
@@ -26,7 +26,7 @@ from rich.segment import Segment
 from rich.style import Style
 
 from . import errors
-from .geometry import Region, Offset, Size, Spacing
+from .geometry import Region, Offset, Size
 
 from ._cells import cell_len
 from ._profile import timer
@@ -55,7 +55,7 @@ class MapGeometry(NamedTuple):
     """Defines the absolute location of a Widget."""
 
     region: Region  # The (screen) region occupied by the widget
-    order: tuple[int, ...]  # A tuple of ints defining the painting order
+    order: tuple[tuple[int, ...], ...]  # A tuple of ints defining the painting order
     clip: Region  # A region to clip the widget by (if a Widget is within a container)
     virtual_size: Size  # The virtual size  (scrollable region) of a widget if it is a container
     container_size: Size  # The container size (area not occupied by scrollbars)
@@ -344,12 +344,14 @@ class Compositor:
 
         map: CompositorMap = {}
         widgets: set[Widget] = set()
+        layer_order: int = 0
 
         def add_widget(
             widget: Widget,
             virtual_region: Region,
             region: Region,
-            order: tuple[int, ...],
+            order: tuple[tuple[int, ...], ...],
+            layer_order: int,
             clip: Region,
         ) -> None:
             """Called recursively to place a widget and its children in the map.
@@ -413,15 +415,19 @@ class Compositor:
                             )
                             widget_region = sub_region + placement_scroll_offset
 
-                        widget_order = order + (get_layer_index(sub_widget.layer, 0), z)
+                        widget_order = order + (
+                            (get_layer_index(sub_widget.layer, 0), z, layer_order),
+                        )
 
                         add_widget(
                             sub_widget,
                             sub_region,
                             widget_region,
                             widget_order,
+                            layer_order,
                             sub_clip,
                         )
+                        layer_order -= 1
 
                 # Add any scrollbars
                 for chrome_widget, chrome_region in widget._arrange_scrollbars(
@@ -457,7 +463,7 @@ class Compositor:
                 )
 
         # Add top level (root) widget
-        add_widget(root, size.region, size.region, (0,), size.region)
+        add_widget(root, size.region, size.region, ((0,),), layer_order, size.region)
         return map, widgets
 
     @property

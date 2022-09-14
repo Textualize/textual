@@ -33,11 +33,10 @@ class Button(Widget, can_focus=True):
     Button {
         width: auto;
         min-width: 16;
-        width: auto;
         height: 3;
         background: $panel;
-        color: $text-panel;        
-        border: none;
+        color: $text;      
+        border: none;        
         border-top: tall $panel-lighten-2;
         border-bottom: tall $panel-darken-3;
         content-align: center middle;        
@@ -56,7 +55,7 @@ class Button(Widget, can_focus=True):
     Button:hover {
         border-top: tall $panel-lighten-1;
         background: $panel-darken-2;
-        color: $text-panel-darken-2;       
+        color: $text;
     }
 
     Button.-active {
@@ -69,7 +68,7 @@ class Button(Widget, can_focus=True):
     /* Primary variant */
     Button.-primary {
         background: $primary;
-        color: $text-primary;
+        color: $text;
         border-top: tall $primary-lighten-3;
         border-bottom: tall $primary-darken-3;
       
@@ -77,8 +76,8 @@ class Button(Widget, can_focus=True):
 
     Button.-primary:hover {
         background: $primary-darken-2;
-        color: $text-primary-darken-2;
-
+        color: $text;
+        border-top: tall $primary-lighten-2;
     }
 
     Button.-primary.-active {
@@ -91,14 +90,14 @@ class Button(Widget, can_focus=True):
     /* Success variant */
     Button.-success {
         background: $success;
-        color: $text-success;
+        color: $text;
         border-top: tall $success-lighten-2;
         border-bottom: tall $success-darken-3;
     }
 
     Button.-success:hover {
         background: $success-darken-2;
-        color: $text-success-darken-2;
+        color: $text;
     }
 
     Button.-success.-active {
@@ -111,14 +110,14 @@ class Button(Widget, can_focus=True):
     /* Warning variant */
     Button.-warning {
         background: $warning;
-        color: $text-warning;       
+        color: $text;
         border-top: tall $warning-lighten-2;
         border-bottom: tall $warning-darken-3;
     }
 
     Button.-warning:hover {
         background: $warning-darken-2;
-        color: $text-warning-darken-1;
+        color: $text;
        
     }
 
@@ -132,7 +131,7 @@ class Button(Widget, can_focus=True):
     /* Error variant */
     Button.-error {
         background: $error;
-        color: $text-error;
+        color: $text;
         border-top: tall $error-lighten-2;
         border-bottom: tall $error-darken-3;
      
@@ -140,7 +139,7 @@ class Button(Widget, can_focus=True):
 
     Button.-error:hover {
         background: $error-darken-1;
-        color: $text-error-darken-2;
+        color: $text;
 
     }
 

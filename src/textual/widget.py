@@ -1070,7 +1070,9 @@ class Widget(DOMNode):
 
         while isinstance(widget.parent, Widget) and widget is not self:
             container = widget.parent
-            scroll_offset = container.scroll_to_region(region, animate=animate)
+            scroll_offset = container.scroll_to_region(
+                region, spacing=widget.parent.gutter, animate=animate
+            )
             if scroll_offset:
                 scrolled = True
 
@@ -1108,6 +1110,10 @@ class Widget(DOMNode):
         window = self.content_region.at_offset(self.scroll_offset)
         if spacing is not None:
             window = window.shrink(spacing)
+
+        if window in region:
+            return Offset()
+
         delta_x, delta_y = Region.get_scroll_to_visible(window, region)
         scroll_x, scroll_y = self.scroll_offset
         delta = Offset(
