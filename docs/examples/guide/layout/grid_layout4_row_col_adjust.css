@@ -2,7 +2,7 @@ Screen {
     layout: grid;
     grid-size: 3;
     grid-columns: 2fr 1fr 1fr;
-    grid-rows: 15% 85%;
+    grid-rows: 25% 75%;
 }
 
 .box {

@@ -33,25 +33,25 @@ The example below demonstrates how children are arranged inside a container with
 
 Notice that the first widget yielded from the `compose` method appears at the top of the display,
 the second widget appears below it, and so on.
-Inside `vertical_layout.css`, we assign `layout: vertical` to `Screen`.
-`Screen` is the parent container of the widgets yielded from the `App.compose` method.
+Inside `vertical_layout.css`, we've assigned `layout: vertical` to `Screen`.
+`Screen` is the parent container of the widgets yielded from the `App.compose` method, and can be thought of as the terminal window itself.
 
 !!! note
 
     The `layout: vertical` CSS isn't *strictly* necessary in this case, since Screens use a `vertical` layout by default.
 
-We've assigned each child `.box` a height of `1fr`, to ensure they're each allocated an equal portion of the available height.
+We've assigned each child `.box` a height of `1fr`, which ensures they're each allocated an equal portion of the available height.
 
 You might also have noticed that the child widgets are the same width as the screen, despite nothing in our CSS file suggesting this.
-This is because widgets automatically expand to the width of their parent container (in this case, the `Screen`).
+This is because widgets expand to the width of their parent container (in this case, the `Screen`).
 
-Just like other styles, `layout` can be adjusted at runtime by modifying the `styles` of a `Widget` instance.
+Just like other styles, `layout` can be adjusted at runtime by modifying the `styles` of a `Widget` instance:
 
 ```python
 widget.styles.layout = "vertical"
 ```
 
-Using `fr` units above guaranteed that the children fill the available height of the parent.
+Using `fr` units guarantees that the children fill the available height of the parent.
 However, if the total height of the children exceeds the available space, then Textual will automatically add
 a scrollbar to the parent `Screen`.
 
@@ -67,8 +67,6 @@ For example, if we swap out `height: 1fr;` for `height: 10;` in the example abov
 [//]: # (TODO: Add link to "focus" docs in paragraph below.)
 
 With the parent container in focus, we can use our mouse wheel, trackpad, or keyboard to scroll it.
-
-[//]: # (TODO: Mention layout.Vertical, layout.Horizontal etc utility containers)
 
 ## Horizontal
 
@@ -165,6 +163,36 @@ the child widgets will be "stacked" on top of each other, as demonstrated below.
 Widgets are drawn in the order they are yielded from `compose`.
 The first yielded widget appears at the bottom, and widgets yielded after it are stacked on top.
 
+## Utility containers
+
+Textual comes with several "container" widgets.
+These are `layout.Vertical`, `layout.Horizontal`, and `layout.Center`.
+Internally, these widgets contain some default CSS containing a `layout` declaration.
+
+The example below shows how we can combine these containers to create a simple 2x2 grid.
+Inside a single `Horizontal` container, we place two `Vertical` containers.
+In other words, we have a single row containing two columns.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/layout/utility_containers.py"}
+    ```
+
+=== "utility_containers.py"
+
+    ```python
+    --8<-- "docs/examples/guide/layout/utility_containers.py"
+    ```
+
+=== "utility_containers.css"
+
+    ```sass hl_lines="2"
+    --8<-- "docs/examples/guide/layout/utility_containers.css"
+    ```
+
+You may be tempted to use many levels of nested utility containers in order to build advanced, grid-like layouts.
+However, Textual comes with a more powerful mechanism for achieving this known as _grid layout_, which we'll discuss next.
+
 ## Grid
 
 The `grid` layout arranges widgets within a grid.
@@ -176,8 +204,8 @@ The diagram below hints at what can be achieved using `layout: grid`.
 --8<-- "docs/images/layout/grid.excalidraw.svg"
 </div>
 
-To get started with grid layout, you'll define the number of columns in your grid using the `grid-size` CSS property and set `layout: grid`.
-When you yield widgets from the `compose` method, they will be inserted into the "cells" of your grid in left-to-right, top-to-bottom order.
+To get started with grid layout, you define the number of columns in your grid using the `grid-size` CSS property and set `layout: grid`.
+When you yield widgets from the `compose` method, they're inserted into the "cells" of your grid in left-to-right, top-to-bottom order.
 Grid rows are created "on-demand", so you can yield as many widgets as required from compose,
 and if all cells on the current row are occupied, it will be placed in the first cell of a new row.
 
@@ -219,7 +247,7 @@ customize it to create more complex layouts.
 You can adjust the width of columns and the height of rows in your grid using the `grid-columns` and `grid-rows` properties respectively.
 These properties let you specify dimensions on a column-by-column or row-by-row basis.
 
-Continuing on from our six cell example above, let's adjust the width of the columns using `grid-columns`.
+Continuing on from our earlier 2x3 example grid, let's adjust the width of the columns using `grid-columns`.
 We'll make the first column take up half of the screen width, with the other two columns sharing the remaining space equally.
 
 === "Output"
@@ -243,11 +271,11 @@ Since our `grid-size` is three (meaning it has three columns), our `grid-columns
 Each of these values sets the width of a column.
 The first value refers to the left-most column, the second value refers to the next column, and so on.
 In the example above, we've given the left-most column a width of `2fr` and the other columns widths of `1fr`.
-As a result, the first column is allocated double the width of the other columns.
+As a result, the first column is allocated twice the width of the other columns.
 
 Similarly, we can adjust the height of a row using `grid-rows`.
-In the example that follows, we use `%` units to adjust the first row of our grid to `15%` height,
-and the second row to `85%` height (while retaining the `grid-columns` change from above).
+In the following example, we use `%` units to adjust the first row of our grid to `25%` height,
+and the second row to `75%` height (while retaining the `grid-columns` change from above).
 
 === "Output"
 
@@ -267,15 +295,14 @@ and the second row to `85%` height (while retaining the `grid-columns` change fr
     ```
 
 If you don't specify enough values in a `grid-columns` or `grid-rows` declaration, the values you _have_ provided will be "repeated".
-For example, if your grid has four columns (`grid-size: 4;`), then `grid-columns: 2 4;` is equivalent to `grid-columns: 2 4 2 4;`.
-If the grid instead had three columns, then `grid-columns: 2 4;` would be equivalent to `grid-columns: 2 4 2;`.
+For example, if your grid has four columns (i.e. `grid-size: 4;`), then `grid-columns: 2 4;` is equivalent to `grid-columns: 2 4 2 4;`.
+If it instead had three columns, then `grid-columns: 2 4;` would be equivalent to `grid-columns: 2 4 2;`.
 
 ### Cell spans
 
-You can also adjust the number of rows and columns an individual cell spans across.
+You can adjust the number of rows and columns an individual cell spans across.
 
-Let's return to our original, uniform, 2x3 grid so that we can more clearly illustrate the effect
-of modifying the row and column spans of cells.
+Let's return to our original, uniform, 2x3 grid to more clearly illustrate the effect of modifying the row spans and column spans of cells:
 
 ```{.textual path="docs/examples/guide/layout/grid_layout1.py"}
 ```
@@ -285,7 +312,7 @@ To do this, we'll add an ID to the widget inside our `compose` method.
 Then, we can set the `row-span` and `column-span` properties on this ID using CSS.
 
 Let's add an ID of `#two` to the second widget yielded from `compose`, and give it a `column-span` of 2 in our CSS to make that widget span across two columns.
-We'll also add a slight tint using `tint: magenta 40%;` to draw attention to this widget.
+We'll also add a slight tint using `tint: magenta 40%;` to draw attention to it.
 The relevant changes are highlighted in the Python and CSS files below.
 
 === "Output"
@@ -306,7 +333,7 @@ The relevant changes are highlighted in the Python and CSS files below.
     ```
 
 Notice that the widget expands to fill columns to the _right_ of its original position.
-Since `#two` now spans two cells instead of one, all the widgets that follow it are shifted along one cell in the grid to accommodate.
+Since `#two` now spans two cells instead of one, all widgets that follow it are shifted along one cell in the grid to accommodate.
 As a result, the final widget wraps on to a new row at the bottom of the grid.
 
 !!! note
@@ -314,9 +341,9 @@ As a result, the final widget wraps on to a new row at the bottom of the grid.
     In the example above, setting the `column-span` of `#two` to be 3 (instead of 2) would have the same effect, since there are only 2 columns available (including `#two`'s original column).
 
 We can similarly adjust the `row-span` of a cell to have it span multiple rows.
-This can be used in conjunction with `column-span` — a cell can span multiple rows _and_ columns.
+This can be used in conjunction with `column-span`, meaning one cell may span multiple rows and columns.
 The example below shows `row-span` in action.
-We again target widget `#two` in our CSS, and add a `row-span: 2;` declaration.
+We again target widget `#two` in our CSS, and add a `row-span: 2;` declaration to it.
 
 === "Output"
 
@@ -337,15 +364,15 @@ We again target widget `#two` in our CSS, and add a `row-span: 2;` declaration.
 
 Widget `#two` now spans two columns and two rows, covering a total of four cells.
 Notice how the other cells are moved to accommodate this change.
-The widget that previously occupied a single cell now occupies four cells, thus displacing three cells on to a new row.
+The widget that previously occupied a single cell now occupies four cells, thus displacing three cells to a new row.
 
 ### Gutter
 
 The spacing between cells in the grid can be adjusted using the `grid-gutter` CSS property.
-By default, cells have no gutter, so the every edge of every cell touches an edge of a neighboring cell.
+By default, cells have no gutter, meaning their edges touch each other.
 Gutter is applied across every cell in the grid, so `grid-gutter` must be used on a widget with `layout: grid` (_not_ on a child/cell widget).
 
-To better illustrate gutter, let's set our `Screen` background color to `lightgreen`, and the background color of the widgets we yield to `darkslategrey`.
+To better illustrate gutter, let's set our `Screen` background color to `lightgreen`, and the background color of the widgets we yield to `darkmagenta`.
 Now if we add `grid-gutter: 1;` to our grid, one cell of spacing appears between the cells and reveals the light green background of the `Screen`.
 
 === "Output"
@@ -364,6 +391,9 @@ Now if we add `grid-gutter: 1;` to our grid, one cell of spacing appears between
     ```sass hl_lines="4"
     --8<-- "docs/examples/guide/layout/grid_layout7_gutter.css"
     ```
+
+Notice that gutter only applies _between_ the cells in a grid, pushing them away from each other.
+It doesn't add any spacing between cells and the edges of the parent container.
 
 !!! tip
 
@@ -426,8 +456,8 @@ This new sidebar is double the width of the one previous one, and has a `deeppin
     --8<-- "docs/examples/guide/layout/dock_layout2_sidebar.css"
     ```
 
-[//]: # (Notice that the original sidebar &#40;`#sidebar`&#41; appears on top of the newly docked widget.)
-[//]: # (This is because `#sidebar` was yielded _before_ `#another-sidebar` inside the `compose` method.)
+Notice that the original sidebar (`#sidebar`) appears on top of the newly docked widget.
+This is because `#sidebar` was yielded _after_ `#another-sidebar` inside the `compose` method.
 
 Of course, we can also dock widgets to multiple edges within the same container.
 The built-in `Header` widget contains some internal CSS which docks it to the top.
@@ -450,20 +480,46 @@ We can yield it inside `compose`, and without any additional CSS, we get a heade
     --8<-- "docs/examples/guide/layout/dock_layout3_sidebar_header.css"
     ```
 
-[//]: # (TODO: Continue this section, make it lead nicely into layers by giving a use-case for them...)
+If we wished for the sidebar to appear below the header, it'd simply be a case of yielding the sidebar before we yield the header.
 
 ## Layers
 
-It's sometimes desirable to control how widgets overlap with each other.
-In Textual, this can be achieved using _layers_.
-You may be familiar with layers if you've ever used image editing software.
-A layer can be thought of as a transparent sheet of paper which widgets are drawn on to.
-Layers control the "z-index" a widget is drawn on.
-Widgets on higher layers will appear on top of widgets on lower layers.
-By default, Textual draws everything on a single layer.
-However, using CSS we can define our own layers and assign widgets to them.
+The order which widgets are yielded isn't the only thing that affects the order in which they're painted.
+Textual also has the concept of _layers_, which you may be familiar with if you've ever used image editing software.
 
-[//]: # (TODO: Continue this section after ordering stuff resolved)
+When drawing widgets, Textual will first draw on _lower_ layers, working its way up to higher layers.
+As such, widgets on higher layers will be drawn on top of those on lower layers.
+Layers take precedence over yield order.
+
+Layer names need to be defined in advance, using a `layers` CSS declaration on a widget.
+Descendants of this widget can then be assigned to one of these layers using a `layer` declaration.
+
+The `layers` declaration takes a space-separated list of layer names.
+The leftmost name is the lowest layer, and the rightmost is the highest layer.
+Therefore, if you assign a descendant to the rightmost layer name, it'll be drawn on the top layer and will be visible above all other descendants.
+An example `layers` declaration looks like: `layers: one two three;`.
+
+In the example below, `#box1` is yielded before `#box2`, and so you would typically expect `#box2` to appear on top.
+However, in this case, both `#box1` and `#box2` are assigned to layers.
+From the `layers: below above;` declaration, we can see that the layer `above` is on top of the `below` layer.
+Since `#box1` is on the higher layer, it is drawn on top.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/layout/layers.py"}
+    ```
+
+=== "layers.py"
+
+    ```python
+    --8<-- "docs/examples/guide/layout/layers.py"
+    ```
+
+=== "layers.css"
+
+    ```sass hl_lines="3 15 19"
+    --8<-- "docs/examples/guide/layout/layers.css"
+    ```
 
 ## Offsets
 
@@ -518,7 +574,7 @@ On pressing a button, the offset can be eased to `(0, 0)`, animating the sidebar
 
 The sections above show how the various layouts in Textual can be used to position widgets on screen.
 In a real application, you'll make use of several layouts.
-You might choose to structure the scaffolding of your app using `layout: grid;`, with individual widgets laying out their children using `horizontal` or `vertical` layouts.
+You might choose to build the high-level structure of your app using `layout: grid;`, with individual widgets laying out their children using `horizontal` or `vertical` layouts.
 If one of your widgets is particularly complex, perhaps it'll use `layout: grid;` itself.
 
 The example below shows how an advanced layout can be built by combining the various techniques described on this page.
@@ -546,6 +602,7 @@ As mentioned earlier, `Header` is a builtin Textual widget which internally cont
 Since it's yielded directly from `compose`, it gets docked to the top of `Screen` (the terminal window).
 
 The body of the application is contained within the widget `#app-grid` which uses a grid layout.
+The cells of the grid have been given blue, pink, and green borders.
 
 This grid consists of two columns (`grid-size: 2`).
 The left pane (with the blue border) is the first cell within our grid.
@@ -558,14 +615,6 @@ The next cell in the grid layout is `#top-right`, which has the pink-red border.
 This grid cell makes use of a horizontal layout.
 
 The final cell in our grid is located at the bottom right of the screen.
-It has a green border, and this cell is itself is a grid layout!
+It has a green border, and this cell itself uses a grid layout.
 
-As you can see, combining layouts lets you build complex layouts with very little code!
-
-[//]: # (TODO: The sections above show layouts in isolation. Maybe we should mention how we can combine multiple layouts in a single app?)
-
-[//]: # (For example, we might scaffold out the core of our app using grid, but many of our widgets will just need vertical/horizontal)
-
-[//]: # (etc, and our app may use docks.)
-
-[//]: # (Perhaps a more complete example showing multiple layout features being used together would tie everything together nicely?)
+As you can see, combining layouts lets you build design complex apps with very little code!
