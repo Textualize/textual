@@ -557,7 +557,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def _scroll_cursor_in_to_view(self, animate: bool = False) -> None:
         region = self._get_cell_region(self.cursor_row, self.cursor_column)
-        spacing = self._get_cell_border()
+        spacing = self._get_cell_border() + self.scrollbar_gutter
         self.scroll_to_region(region, animate=animate, spacing=spacing)
 
     def on_click(self, event: events.Click) -> None:
