@@ -3,6 +3,7 @@
 The `MouseUp` event is sent to a widget when the user releases a mouse button.
 
 - [x] Bubbles
+- [x] Verbose
 
 ## Attributes
 
@@ -18,4 +19,3 @@ The `MouseUp` event is sent to a widget when the user releases a mouse button.
 | `ctrl`     | bool | Ctrl key pressed if True                  |
 | `screen_x` | int  | Mouse x coordinate relative to the screen |
 | `screen_y` | int  | Mouse y coordinate relative to the screen |
-

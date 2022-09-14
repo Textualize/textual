@@ -3,6 +3,7 @@
 The `Leave` event is sent to a widget when the mouse pointer moves off a widget.
 
 - [ ] Bubbles
+- [x] Verbose
 
 ## Attributes
 
