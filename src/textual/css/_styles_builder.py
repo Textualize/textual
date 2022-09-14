@@ -1,10 +1,16 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import cast, Iterable, NoReturn, Sequence
+from typing import Iterable, NoReturn, Sequence, cast
 
 import rich.repr
 
+from .._border import BorderValue, normalize_border_value
+from .._duration import _duration_as_seconds
+from .._easing import EASING
+from ..color import Color, ColorParseError
+from ..geometry import Spacing, SpacingDimensions, clamp
+from ..suggestions import get_suggestion
 from ._error_tools import friendly_list
 from ._help_renderables import HelpText
 from ._help_text import (
@@ -33,34 +39,28 @@ from .constants import (
     VALID_ALIGN_VERTICAL,
     VALID_BORDER,
     VALID_BOX_SIZING,
-    VALID_EDGE,
     VALID_DISPLAY,
+    VALID_EDGE,
     VALID_OVERFLOW,
-    VALID_VISIBILITY,
-    VALID_STYLE_FLAGS,
     VALID_SCROLLBAR_GUTTER,
+    VALID_STYLE_FLAGS,
     VALID_TEXT_ALIGN,
+    VALID_VISIBILITY,
 )
 from .errors import DeclarationError, StyleValueError
 from .model import Declaration
 from .scalar import (
     Scalar,
-    ScalarOffset,
-    Unit,
     ScalarError,
+    ScalarOffset,
     ScalarParseError,
+    Unit,
     percentage_string_to_float,
 )
-from .styles import DockGroup, Styles
+from .styles import Styles
 from .tokenize import Token
 from .transition import Transition
-from .types import BoxSizing, Edge, Display, Overflow, Visibility, EdgeType
-from .._border import normalize_border_value, BorderValue
-from ..color import Color, ColorParseError
-from .._duration import _duration_as_seconds
-from .._easing import EASING
-from ..geometry import Spacing, SpacingDimensions, clamp
-from ..suggestions import get_suggestion
+from .types import BoxSizing, Display, Edge, EdgeType, Overflow, Visibility
 
 
 def _join_tokens(tokens: Iterable[Token], joiner: str = "") -> str:
@@ -434,6 +434,7 @@ class StylesBuilder:
     process_padding_left = _process_space_partial
 
     def _parse_border(self, name: str, tokens: list[Token]) -> BorderValue:
+
         border_type: EdgeType = "solid"
         border_color = Color(0, 255, 0)
 
@@ -553,7 +554,7 @@ class StylesBuilder:
             self.styles._rules["offset"] = ScalarOffset(x, y)
 
     def process_layout(self, name: str, tokens: list[Token]) -> None:
-        from ..layouts.factory import get_layout, MissingLayout
+        from ..layouts.factory import MissingLayout, get_layout
 
         if tokens:
             if len(tokens) != 1:
@@ -602,7 +603,6 @@ class StylesBuilder:
 
         if color is not None or alpha is not None:
             if alpha is not None:
-
                 color = (color or Color(255, 255, 255)).with_alpha(alpha)
             self.styles._rules[name] = color
 

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Iterable
 
+import rich.repr
 from rich.console import Console, ConsoleOptions, RenderResult
-
 from rich.highlighter import ReprHighlighter
 from rich.markup import render
 from rich.text import Text
@@ -42,6 +42,7 @@ class Example:
         yield _markup_and_highlight(f"  [dim]e.g. [/][i]{self.markup}[/]")
 
 
+@rich.repr.auto
 class Bullet:
     """Renderable for a single 'bullet point' containing information and optionally some examples
         pertaining to that information.
@@ -59,10 +60,11 @@ class Bullet:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-        yield _markup_and_highlight(f"{self.markup}")
+        yield _markup_and_highlight(self.markup)
         yield from self.examples
 
 
+@rich.repr.auto
 class HelpText:
     """Renderable for help text - the user is shown this when they
     encounter a style-related error (e.g. setting a style property to an invalid

@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import os
 from collections import defaultdict
-from functools import partial
 from operator import itemgetter
 from pathlib import Path, PurePath
-from typing import Iterable, NamedTuple, cast
+from typing import Iterable, NamedTuple, Sequence, cast
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -39,20 +38,15 @@ class StylesheetParseError(StylesheetError):
 
 
 class StylesheetErrors:
-    def __init__(
-        self, rules: list[RuleSet], variables: dict[str, str] | None = None
-    ) -> None:
+    def __init__(self, rules: list[RuleSet]) -> None:
         self.rules = rules
         self.variables: dict[str, str] = {}
-        self._css_variables: dict[str, list[Token]] = {}
-        if variables:
-            self.set_variables(variables)
 
     @classmethod
     def _get_snippet(cls, code: str, line_no: int) -> RenderableType:
         syntax = Syntax(
             code,
-            lexer="scss",
+            lexer="sass",
             theme="ansi_light",
             line_numbers=True,
             indent_guides=True,
@@ -60,11 +54,6 @@ class StylesheetErrors:
             highlight_lines={line_no},
         )
         return syntax
-
-    def set_variables(self, variable_map: dict[str, str]) -> None:
-        """Pre-populate CSS variables."""
-        self.variables.update(variable_map)
-        self._css_variables = tokenize_values(self.variables)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -105,7 +94,10 @@ class StylesheetErrors:
                 title = Text.assemble(Text("Error at ", style="bold red"), path_text)
                 yield ""
                 yield Panel(
-                    self._get_snippet(token.code, line_no),
+                    self._get_snippet(
+                        token.referenced_by.code if token.referenced_by else token.code,
+                        line_no,
+                    ),
                     title=title,
                     title_align="left",
                     border_style="red",
@@ -138,12 +130,19 @@ class Stylesheet:
     def __init__(self, *, variables: dict[str, str] | None = None) -> None:
         self._rules: list[RuleSet] = []
         self._rules_map: dict[str, list[RuleSet]] | None = None
-        self.variables = variables or {}
+        self._variables = variables or {}
+        self.__variable_tokens: dict[str, list[Token]] | None = None
         self.source: dict[str, CssSource] = {}
         self._require_parse = False
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield list(self.source.keys())
+
+    @property
+    def _variable_tokens(self) -> dict[str, list[Token]]:
+        if self.__variable_tokens is None:
+            self.__variable_tokens = tokenize_values(self._variables)
+        return self.__variable_tokens
 
     @property
     def rules(self) -> list[RuleSet]:
@@ -183,7 +182,7 @@ class Stylesheet:
         Returns:
             Stylesheet: New stylesheet.
         """
-        stylesheet = Stylesheet(variables=self.variables.copy())
+        stylesheet = Stylesheet(variables=self._variables.copy())
         stylesheet.source = self.source.copy()
         return stylesheet
 
@@ -193,7 +192,8 @@ class Stylesheet:
         Args:
             variables (dict[str, str]): A mapping of name to variable.
         """
-        self.variables = variables
+        self._variables = variables
+        self._variables_tokens = None
 
     def _parse_rules(
         self,
@@ -222,7 +222,7 @@ class Stylesheet:
                 parse(
                     css,
                     path,
-                    variables=self.variables,
+                    variable_tokens=self._variable_tokens,
                     is_default_rules=is_default_rules,
                     tie_breaker=tie_breaker,
                 )
@@ -317,7 +317,7 @@ class Stylesheet:
 
         """
         # Do this in a fresh Stylesheet so if there are errors we don't break self.
-        stylesheet = Stylesheet(variables=self.variables)
+        stylesheet = Stylesheet(variables=self._variables)
         for path, (css, is_defaults, tie_breaker) in self.source.items():
             stylesheet.add_source(
                 css, path, is_default_css=is_defaults, tie_breaker=tie_breaker
