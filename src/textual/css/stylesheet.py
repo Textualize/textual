@@ -46,7 +46,7 @@ class StylesheetErrors:
     def _get_snippet(cls, code: str, line_no: int) -> RenderableType:
         syntax = Syntax(
             code,
-            lexer="sass",
+            lexer="scss",
             theme="ansi_light",
             line_numbers=True,
             indent_guides=True,
