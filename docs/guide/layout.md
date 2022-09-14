@@ -504,7 +504,7 @@ To add a widget to the topmost layer in this case, you'd add a declaration of `l
 In the example below, `#box1` is yielded before `#box2`.
 Given our earlier discussion on yield order, you'd expect `#box2` to appear on top.
 However, in this case, both `#box1` and `#box2` are assigned to layers.
-From the `layers: below above;` declaration, we can see that the layer named `above` is on top of the `below` layer.
+From the `layers: below above;` declaration inside `layers.css`, we can see that the layer named `above` is on top of the `below` layer.
 Since `#box1` is on the higher layer, it is drawn on top of `#box2`.
 
 === "Output"
