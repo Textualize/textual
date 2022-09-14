@@ -118,6 +118,7 @@ class ReferencedBy(NamedTuple):
     name: str
     location: tuple[int, int]
     length: int
+    code: str
 
 
 @rich.repr.auto
@@ -209,6 +210,7 @@ class Tokenizer:
                 message,
             )
         iter_groups = iter(match.groups())
+
         next(iter_groups)
 
         for name, value in zip(expect.names, iter_groups):

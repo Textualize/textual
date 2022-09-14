@@ -36,7 +36,7 @@ class Button(Widget, can_focus=True):
         height: 3;
         background: $panel;
         color: $text;      
-        border: none;
+        border: none;        
         border-top: tall $panel-lighten-2;
         border-bottom: tall $panel-darken-3;
         content-align: center middle;        

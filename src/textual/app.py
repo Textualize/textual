@@ -28,7 +28,7 @@ import rich.repr
 from rich.console import Console, RenderableType
 from rich.measure import Measurement
 from rich.protocol import is_renderable
-from rich.segment import Segments
+from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
 from . import (
@@ -1016,11 +1016,12 @@ class App(Generic[ReturnType], DOMNode):
             is_renderable(renderable) for renderable in renderables
         ), "Can only call panic with strings or Rich renderables"
 
-        pre_rendered = [
-            Segments(self.console.render(renderable, self.console.options))
-            for renderable in renderables
-        ]
+        def render(renderable: RenderableType) -> list[Segment]:
+            """Render a panic renderables."""
+            segments = list(self.console.render(renderable, self.console.options))
+            return segments
 
+        pre_rendered = [Segments(render(renderable)) for renderable in renderables]
         self._exit_renderables.extend(pre_rendered)
         self._close_messages_no_wait()
 
