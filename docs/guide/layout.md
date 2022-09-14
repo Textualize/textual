@@ -497,12 +497,15 @@ Descendants of this widget can then be assigned to one of these layers using a `
 The `layers` declaration takes a space-separated list of layer names.
 The leftmost name is the lowest layer, and the rightmost is the highest layer.
 Therefore, if you assign a descendant to the rightmost layer name, it'll be drawn on the top layer and will be visible above all other descendants.
-An example `layers` declaration looks like: `layers: one two three;`.
 
-In the example below, `#box1` is yielded before `#box2`, and so you would typically expect `#box2` to appear on top.
+An example `layers` declaration looks like: `layers: one two three;`.
+To add a widget to the topmost layer in this case, you'd add a declaration of `layer: three;` to it.
+
+In the example below, `#box1` is yielded before `#box2`.
+Given our earlier discussion on yield order, you'd expect `#box2` to appear on top.
 However, in this case, both `#box1` and `#box2` are assigned to layers.
-From the `layers: below above;` declaration, we can see that the layer `above` is on top of the `below` layer.
-Since `#box1` is on the higher layer, it is drawn on top.
+From the `layers: below above;` declaration, we can see that the layer named `above` is on top of the `below` layer.
+Since `#box1` is on the higher layer, it is drawn on top of `#box2`.
 
 === "Output"
 
