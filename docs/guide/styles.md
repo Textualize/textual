@@ -184,7 +184,7 @@ With the width set to 50% and the height set to 80%, the widget will keep those 
     ```{.textual path="docs/examples/guide/styles/dimensions03.py" columns="120" lines="40"}
     ```
 
-Percentage units are useful for widgets that occupy a portion of the screen, but it can be hard to specify some arrangements. For instance if we want to divide the screen in to thirds, we would have to set a dimension to `33.3333333333%` which is awkward. Textual supports `fr` units which is often better than percentage based units for these situtations.
+Percentage units are useful for widgets that occupy a portion of the screen, but it can be hard to specify some arrangements. For instance if we want to divide the screen in to thirds, we would have to set a dimension to `33.3333333333%` which is awkward. Textual supports `fr` units which is often better than percentage based units for these situations.
 
 When specifying `fr` units for a given dimensions, Textual will divide the available space by the total `fr` units on a dimension. That space will then be divided amongst the widgets as a proportion of their individual `fr` value.
 
@@ -236,7 +236,7 @@ You can also set padding to a tuple of four values which applies padding to each
 
 ### Border 
 
-The [border](../styles/border.md) styles draw a border around a widget. To add a border set `syles.border` to a tuple of two values. The first values is the border type. The second value is the border color which will accept any value that works with  [color](../styles/color.md) and [background][color](../styles/background.md).
+The [border](../styles/border.md) style draws a border around a widget. To add a border set `syles.border` to a tuple of two values. The first value is the border type, which should be a string. The second value is the border color which will accept any value that works with  [color](../styles/color.md) and [background](../styles/background.md).
 
 The following example adds a border around a widget:
 
@@ -247,6 +247,13 @@ The following example adds a border around a widget:
 Here is the result:
 
 ```{.textual path="docs/examples/guide/styles/border01.py"}
+```
+
+There are many other border types. Run the following from the command prompt to preview them,
+
+
+```bash
+textual borders
 ```
 
 ### Outline
@@ -266,9 +273,9 @@ Outline can be useful to emphasize a widget, but be mindful that it may obscure 
 
 ### Box sizing
 
-When you set padding or border on a widget it reduces the size of the content area. In other words, setting padding or border doesn't change the width of the widget.
+When you set padding or border it reduces the size of the widget's content area. In other words, setting padding or border won't change the width or height of the widget.
 
-This is generally desirable when you arrange things on screen so you can add border or padding without breaking your layout. Occasionally though you may want to keep the size of the content area constant and grow the size of the widget to fit padding and border. The [box-sizing](../styles/box_sizing.md) style allows you to switch between these two modes.
+This is generally desirable when you arrange things on screen as you can add border or padding without breaking your layout. Occasionally though you may want to keep the size of the content area constant and grow the size of the widget to fit padding and border. The [box-sizing](../styles/box_sizing.md) style allows you to switch between these two modes.
 
 If you set `box_sizing` to `"content-box"` then space required for padding and border will be added to the widget dimensions. The default value of `box_sizing` is `"border-box"`. Compare the following diagram to the previous box model diagram.
 

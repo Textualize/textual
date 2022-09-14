@@ -19,7 +19,7 @@ class OutlineApp(App):
     def on_mount(self) -> None:
         self.widget.styles.background = "darkblue"
         self.widget.styles.width = "50%"
-        self.widget.styles.outline = ("tall", "yellow")
+        self.widget.styles.outline = ("heavy", "yellow")
 
 
 app = OutlineApp()

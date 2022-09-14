@@ -19,7 +19,7 @@ class BorderApp(App):
     def on_mount(self) -> None:
         self.widget.styles.background = "darkblue"
         self.widget.styles.width = "50%"
-        self.widget.styles.border = ("tall", "yellow")
+        self.widget.styles.border = ("heavy", "yellow")
 
 
 app = BorderApp()
