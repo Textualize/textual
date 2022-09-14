@@ -3,8 +3,8 @@
 #dialog {
     margin: 4 8;
     background: $primary;
-    color: $text-primary;
-    border: tall $text-primary;
+    color: $text;
+    border: tall $background;
     padding: 1 2;
 }
 

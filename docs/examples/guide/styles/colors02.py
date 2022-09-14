@@ -5,12 +5,14 @@ from textual.widgets import Static
 
 class ColorApp(App):
     def compose(self) -> ComposeResult:
-        self.widgets = [Static(f"Textual {n+1}") for n in range(10)]
+        self.widgets = [Static("") for n in range(10)]
         yield from self.widgets
 
     def on_mount(self) -> None:
         for index, widget in enumerate(self.widgets, 1):
-            widget.styles.background = Color(191, 78, 96, index * 0.1)
+            alpha = index * 0.1
+            widget.update(f"alpha={alpha:.1f}")
+            widget.styles.background = Color(191, 78, 96, a=alpha)
 
 
 app = ColorApp()
