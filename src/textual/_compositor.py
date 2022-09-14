@@ -604,19 +604,28 @@ class Compositor:
         # up to this point.
         _rich_traceback_guard = True
 
+        def is_visible(widget: Widget) -> bool:
+            """Return True if the widget is (literally) visible by examining various
+            properties which affect whether it can be seen or not."""
+            return (
+                widget.visible
+                and not widget.is_transparent
+                and widget.styles.opacity > 0
+            )
+
         if self.map:
             if crop:
                 overlaps = crop.overlaps
                 mapped_regions = [
                     (widget, region, order, clip)
                     for widget, (region, order, clip, *_) in self.map.items()
-                    if widget.visible and not widget.is_transparent and overlaps(crop)
+                    if is_visible(widget) and overlaps(crop)
                 ]
             else:
                 mapped_regions = [
                     (widget, region, order, clip)
                     for widget, (region, order, clip, *_) in self.map.items()
-                    if widget.visible and not widget.is_transparent
+                    if is_visible(widget)
                 ]
 
             widget_regions = sorted(mapped_regions, key=itemgetter(2), reverse=True)

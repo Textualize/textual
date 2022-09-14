@@ -3,7 +3,7 @@ Screen {
     background: darkslategrey;
 }
 
-.box1 {
+#box1 {
     background: darkmagenta;
     width: auto;
     padding: 4 8;
