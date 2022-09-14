@@ -41,7 +41,7 @@ One such event is the *mount* event which is sent to an application after it ent
 
 !!! info
 
-    You may have noticed we use the term "send" and "sent" in relation to event handler methods in preference to "calling". This is because Textual uses a message passing system where events are passed (or *sent*) between components. We will cover the details in [events][./events.md].
+    You may have noticed we use the term "send" and "sent" in relation to event handler methods in preference to "calling". This is because Textual uses a message passing system where events are passed (or *sent*) between components. We will cover the details in [events](./events.md).
 
 Another such event is the *key* event which is sent when the user presses a key. The following example contains handlers for both those events:
 
@@ -49,18 +49,18 @@ Another such event is the *key* event which is sent when the user presses a key.
 --8<-- "docs/examples/app/event01.py"
 ```
 
-The `on_mount` handler sets the `self.styles.background` attribute to `"darkblue"` which (as you can probably guess) turns the background blue. Since the mount event is sent immediately after entering application mode, you will see a blue screen when you run the code:
+The `on_mount` handler sets the `self.screen.styles.background` attribute to `"darkblue"` which (as you can probably guess) turns the background blue. Since the mount event is sent immediately after entering application mode, you will see a blue screen when you run this code.
 
 ```{.textual path="docs/examples/app/event01.py" hl_lines="23-25"}
 ```
 
-The key event handler (`on_key`) specifies an `event` parameter which will receive a [events.Key][textual.events.Key] instance. Every event has an associated event object which will be passed to the handler method if it is present in the method's parameter list.
+The key event handler (`on_key`) specifies an `event` parameter which will receive a [Key][textual.events.Key] instance. Every event has an associated event object which will be passed to the handler method if it is present in the method's parameter list.
 
 !!! note
 
     It is unusual (but not unprecedented) for a method's parameters to affect how it is called. Textual accomplishes this by inspecting the method prior to calling it.
 
-For some events, such as the key event, the event object contains additional information. In the case of [events.Key][textual.events.Key] it will contain the key that was pressed.
+For some events, such as the key event, the event object contains additional information. In the case of [Key][textual.events.Key] it will contain the key that was pressed.
 
 The `on_key` method above uses the `key` attribute on the Key event to change the background color if any of the keys ++0++ to ++9++ are pressed.
 
@@ -177,3 +177,7 @@ Here's the question app with classvar CSS:
 ```python title="question03.py" hl_lines="6-24"
 --8<-- "docs/examples/app/question03.py"
 ```
+
+## What's next
+
+In the following chapter we will learn more about how to apply styles to you widgets and app.
