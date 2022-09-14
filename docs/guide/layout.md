@@ -544,7 +544,7 @@ The `#parent` container has `layout: center`, meaning all four of the widgets we
 * We make no adjustments to the offset of `#box1` in the CSS - it remains in its original position, and thus has offset `(0, 0)`.
 * We apply and offset of `12 4` to `#box2`, moving it to the right and down a little.
 * In the case of `#box3` we apply and offset of `-12 -4`, which shifts it to the left and up.
-* `#box4` at the bottom left of the screen illustrates clipping. A child widget will be clipped by its parents region, meaning any part of the child which extends beyond the parent region will not be visible.
+* `#box4` at the bottom left of the screen illustrates clipping. A child widget will be clipped by its parent's region, meaning any part of the child which extends beyond the parent region will not be visible.
 
 === "Output"
 
