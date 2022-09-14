@@ -6,35 +6,39 @@ class Container(Widget):
 
     DEFAULT_CSS = """
     Container {
-        layout: vertical;       
+        layout: vertical;
         overflow: auto;
-      
-    }    
+    }
     """
 
 
-class Vertical(Container):
+class Vertical(Widget):
     """A container widget to align children vertically."""
 
-    # Blank CSS is important, otherwise you get a clone of Container
-    DEFAULT_CSS = ""
+    DEFAULT_CSS = """
+    Vertical {
+        layout: vertical;
+        overflow-y: auto;
+    }
+    """
 
 
-class Horizontal(Container):
+class Horizontal(Widget):
     """A container widget to align children horizontally."""
 
     DEFAULT_CSS = """
     Horizontal {
-        layout: horizontal;        
-    }    
+        layout: horizontal;
+        overflow-x: hidden;
+    }
     """
 
 
-class Center(Container):
+class Center(Widget):
     """A container widget to align children in the center."""
 
     DEFAULT_CSS = """
     Center {
-        layout: center;        
+        layout: center;
     }
     """

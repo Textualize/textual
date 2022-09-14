@@ -10,7 +10,8 @@ when it has focus.
 
 ## Example
 
-Clicking any of the buttons in the example app below will result in a ring of the terminal bell.
+The example below shows each button variant, and its disabled equivalent.
+Clicking any of the non-disabled buttons in the example app below will result in a ring of the terminal bell.
 
 === "Output"
 
@@ -31,11 +32,11 @@ Clicking any of the buttons in the example app below will result in a ring of th
 
 ## Reactive Attributes
 
-| Name       | Type   | Default     | Description                                                                                                            |
-|------------|--------|-------------|------------------------------------------------------------------------------------------------------------------------|
-| `label`    | `str`  | `""`        | The text that appears inside the button.                                                                               |
-| `variant`  | `str`  | `"default"` | Semantic styling variant. One of `default`, `primary`, `success`, `warning`, `error`.                                  |
-| `disabled` | `bool` | `False`     | Whether the button is disabled or not. Disabled buttons cannot be clicked, and are styled in a way that suggests this. |
+| Name       | Type   | Default     | Description                                                                                                                       |
+|------------|--------|-------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `label`    | `str`  | `""`        | The text that appears inside the button.                                                                                          |
+| `variant`  | `str`  | `"default"` | Semantic styling variant. One of `default`, `primary`, `success`, `warning`, `error`.                                             |
+| `disabled` | `bool` | `False`     | Whether the button is disabled or not. Disabled buttons cannot be focused or clicked, and are styled in a way that suggests this. |
 
 ## Events
 
