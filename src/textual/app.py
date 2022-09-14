@@ -1017,11 +1017,11 @@ class App(Generic[ReturnType], DOMNode):
         ), "Can only call panic with strings or Rich renderables"
 
         def render(renderable: RenderableType) -> list[Segment]:
+            """Render a panic renderables."""
             segments = list(self.console.render(renderable, self.console.options))
             return segments
 
         pre_rendered = [Segments(render(renderable)) for renderable in renderables]
-
         self._exit_renderables.extend(pre_rendered)
         self._close_messages_no_wait()
 
