@@ -4,7 +4,7 @@ import os
 from collections import defaultdict
 from operator import itemgetter
 from pathlib import Path, PurePath
-from typing import Iterable, NamedTuple, Sequence, cast
+from typing import Iterable, NamedTuple, cast
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
