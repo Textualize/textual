@@ -1,0 +1,36 @@
+Screen {
+    layout: center;
+}
+
+#parent {
+    layout: center;
+    background: #9e9e9e;
+    width: 60;
+    height: 20;
+}
+
+Box {
+    color: auto;
+    width: auto;
+    height: auto;
+    padding: 1 2;
+}
+
+#box1 {
+    background: $primary;
+}
+
+#box2 {
+    background: $secondary;
+    offset: 12 4;
+}
+
+#box3 {
+    background: lightseagreen;
+    offset: -12 -4;
+}
+
+#box4 {
+    background: darkred;
+    offset: -26 10;
+}

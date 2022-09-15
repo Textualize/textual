@@ -552,9 +552,7 @@ class DocksProperty:
 
 class DockProperty:
     """Descriptor for getting and setting the dock property. The dock property
-    allows you to specify which dock you wish a Widget to be attached to. This
-    should be used in conjunction with the "docks" property which lets you define
-    the docks themselves, and where they are located on screen.
+    allows you to specify which edge you want to fix a Widget to.
     """
 
     def __get__(

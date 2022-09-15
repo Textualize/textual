@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import Enum
 
 
 class LogGroup(Enum):
@@ -19,10 +19,3 @@ class LogVerbosity(Enum):
 
     NORMAL = 0
     HIGH = 1
-
-
-class LogSeverity(Enum):
-    """Tags log messages as being more severe."""
-
-    NORMAL = 0
-    CRITICAL = 1  # Draws attention to the log message

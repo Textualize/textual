@@ -4,7 +4,7 @@ import inspect
 
 from typing import TYPE_CHECKING, cast
 from .client import DevtoolsLog
-from .._log import LogGroup, LogVerbosity, LogSeverity
+from .._log import LogGroup, LogVerbosity
 
 if TYPE_CHECKING:
     from .devtools.client import DevtoolsClient
@@ -101,5 +101,4 @@ class StdoutRedirector:
             DevtoolsLog(batched_log, caller=log_batch[-1].caller),
             LogGroup.PRINT,
             LogVerbosity.NORMAL,
-            LogSeverity.NORMAL,
         )

@@ -1,0 +1,50 @@
+#app-grid {
+    layout: grid;
+    grid-size: 2;  /* two columns */
+    grid-columns: 1fr;
+    grid-rows: 1fr;
+}
+
+#left-pane > Static {
+    background: $boost;
+    color: auto;
+    margin-bottom: 1;
+    padding: 1;
+}
+
+#left-pane {
+    row-span: 2;
+    background: $panel;
+    border: dodgerblue;
+}
+
+#top-right {
+    background: $panel;
+    border: mediumvioletred;
+}
+
+#top-right > Static {
+    width: auto;
+    height: 100%;
+    margin-right: 1;
+    background: $boost;
+}
+
+#bottom-right {
+    layout: grid;
+    grid-size: 3;
+    grid-columns: 1fr;
+    grid-rows: 1fr;
+    grid-gutter: 1;
+    background: $panel;
+    border: greenyellow;
+}
+
+#bottom-right-final {
+    column-span: 2;
+}
+
+#bottom-right > Static {
+    height: 100%;
+    background: $boost;
+}
