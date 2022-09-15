@@ -197,21 +197,32 @@ However, Textual comes with a more powerful mechanism for achieving this known a
 
 The `grid` layout arranges widgets within a grid.
 Widgets can span multiple rows and columns to create complex layouts.
-Grid layouts in Textual have very little in common with browser-based CSS Grid.
 The diagram below hints at what can be achieved using `layout: grid`.
 
 <div class="excalidraw">
 --8<-- "docs/images/layout/grid.excalidraw.svg"
 </div>
 
-To get started with grid layout, you define the number of columns in your grid using the `grid-size` CSS property and set `layout: grid`.
-When you yield widgets from the `compose` method, they're inserted into the "cells" of your grid in left-to-right, top-to-bottom order.
-Grid rows are created "on-demand", so you can yield as many widgets as required from compose,
-and if all cells on the current row are occupied, it will be placed in the first cell of a new row.
+!!! note
 
-Let's create a simple grid with two rows and three columns. In our CSS, we'll specify that we want three
-columns by writing `grid-size: 3`. Then, we'll yield six widgets from `compose`, in order to fully occupy two rows
-in the grid.
+    Grid layouts in Textual have very little in common with browser-based CSS Grid.
+
+To get started with grid layout, you define the number of columns and rows in your grid using the `grid-size` CSS property and set `layout: grid`.
+When you yield widgets from the `compose` method, they're inserted into the "cells" of your grid in left-to-right, top-to-bottom order.
+
+For example, `grid-size: 3 2;` defines a grid with 3 columns and 2 rows.
+We can now yield 6 widgets from our `compose` method, and they'll be inserted into all available cells in the grid.
+
+```{.textual path="docs/examples/guide/layout/grid_layout1.py"}
+```
+
+If we were to yield a seventh widget from our `compose` method, it would not be visible as the grid does not contain enough cells to accommodate it.
+
+We can optionally omit the number of rows from `grid-size`, and Textual will create them "on-demand" based on the number of widgets yielded from `compose`.
+Widgets will be inserted into the grid in the order they're yielded, and when all cells in a row become occupied, a new row will be created to accommodate the next widget.
+
+Let's create a simple grid with three columns. In our CSS, we'll specify this using `grid-size: 3`.
+Then, we'll yield six widgets from `compose`, in order to fully occupy two rows in the grid.
 
 === "Output"
 
@@ -230,7 +241,7 @@ in the grid.
     --8<-- "docs/examples/guide/layout/grid_layout1.css"
     ```
 
-To further illustrate the "on-demand" nature of `layout: grid`, here's what happens when you modify the example
+To further illustrate the "on-demand" nature of `layout: grid` when the number of rows is omitted, here's what happens when you modify the example
 above to yield an additional widget (for a total of seven widgets).
 
 ```{.textual path="docs/examples/guide/layout/grid_layout2.py"}
@@ -244,8 +255,8 @@ customize it to create more complex layouts.
 
 ### Row and column sizes
 
-You can adjust the width of columns and the height of rows in your grid using the `grid-columns` and `grid-rows` properties respectively.
-These properties let you specify dimensions on a column-by-column or row-by-row basis.
+You can adjust the width of columns and the height of rows in your grid using the `grid-columns` and `grid-rows` properties.
+These properties can take multiple values, letting you specify dimensions on a column-by-column or row-by-row basis.
 
 Continuing on from our earlier 2x3 example grid, let's adjust the width of the columns using `grid-columns`.
 We'll make the first column take up half of the screen width, with the other two columns sharing the remaining space equally.
