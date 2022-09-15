@@ -403,7 +403,7 @@ Here's an example of how you might define a variable called `$border`:
 $border: wide green;
 ```
 
-With our variable assigned, we can now write `$border` and it will be substituted with `wide green`.
+With our variable assigned, we can write `$border` and it will be substituted with `wide green`.
 Consider the following snippet:
 
 ```scss
