@@ -238,7 +238,7 @@ You can match an ID with a selector starting with a hash (`#`). Here is how you 
 }
 ```
 
-A Widget's `id` attribute can not be changed after the Widget has been constructed. 
+A Widget's `id` attribute can not be changed after the Widget has been constructed.
 
 ### Class-name selector
 
@@ -395,4 +395,45 @@ Button:hover {
 
 ## CSS Variables
 
-TODO: Variables
+You can define variables to reduce repetition and encourage consistency in your CSS.
+Variables in Textual CSS are prefixed with `$`.
+Here's an example of how you might define a variable called `$border`:
+
+```scss
+$border: wide green;
+```
+
+With our variable assigned, we can write `$border` and it will be substituted with `wide green`.
+Consider the following snippet:
+
+```scss
+#foo {
+  border: $border;
+}
+```
+
+This will be translated into:
+
+```scss
+#foo {
+  border: wide green;
+}
+```
+
+Variables allow us to define reusable styling in a single place.
+If we decide we want to change some aspect of our design in the future, we only have to update a single variable.
+
+!!! note
+
+    Variables can only be used in the _values_ of a CSS declaration. You cannot, for example, refer to a variable insid ea
+
+Variables can refer to other variables.
+Let's say we define a variable `$success: lime;`.
+Our `$border` variable could then be updated to `$border: wide $success;`, which will
+be translated to `$border: wide lime;`.
+
+Textual CSS ships with a number of builtin variables.
+These can be used in CSS without any additional imports or declarations.
+For more information on these builtin variables, see [this page](#).
+
+[//]: # (TODO: Fill in the link above when builtin style variables are documented)
