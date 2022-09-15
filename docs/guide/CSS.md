@@ -404,7 +404,7 @@ $border: wide green;
 ```
 
 With our variable assigned, we can now write `$border` and it will be substituted with `wide green`.
-For example, consider the following snippet:
+Consider the following snippet:
 
 ```scss
 #foo {
