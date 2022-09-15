@@ -258,7 +258,7 @@ textual borders
 
 ### Outline
 
-[Outline](../styles/outline.md) is similar to border and is set in the same way. The difference is that outline will not change the size of the widget, and may overlap the content area. The following examples sets an outline on a widget:
+[Outline](../styles/outline.md) is similar to border and is set in the same way. The difference is that outline will not change the size of the widget, and may overlap the content area. The following example sets an outline on a widget:
 
 ```python title="outline01.py" hl_lines="22"
 --8<-- "docs/examples/guide/styles/outline01.py"
