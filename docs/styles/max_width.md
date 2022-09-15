@@ -16,7 +16,7 @@ max-width: <SCALAR>;
 max-width: 10;
 
 /* Set a maximum width of 25% of the screen width */
-max-width: 25vh;
+max-width: 25vw;
 ```
 
 ## Python
@@ -27,5 +27,4 @@ widget.styles.max_width = 10
 
 # Set the maximum width to 25% of the screen width
 widget.styles.max_width = "25vw"
-
 ```

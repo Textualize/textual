@@ -5,7 +5,7 @@ The `color` rule sets the text color of a Widget.
 ## Syntax
 
 ```
-color: <COLOR> [<PERCENTAGE>];
+color: <COLOR> | auto [<PERCENTAGE>];
 ```
 
 ## Example
@@ -40,6 +40,9 @@ color: red 20%;
 
 /* RGB color */
 color: rgb(100,120,200);
+
+/* Automatically choose color with suitable contrast for readability */
+color: auto;
 ```
 
 ## Python
