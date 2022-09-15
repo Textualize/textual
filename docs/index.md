@@ -67,6 +67,10 @@ Textual is a framework for building applications that run within your terminal. 
 
 ```
 
-TODO: Add more example screenshots
+```{.textual path="docs/examples/tutorial/stopwatch.py" press="d,enter,_"}
+```
+
+```{.textual path="docs/examples/app/widgets01.py"}
+```
 
 
