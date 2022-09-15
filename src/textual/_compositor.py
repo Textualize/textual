@@ -607,7 +607,11 @@ class Compositor:
         def is_visible(widget: Widget) -> bool:
             """Return True if the widget is (literally) visible by examining various
             properties which affect whether it can be seen or not."""
-            return widget.styles.visibility != "hidden" and widget.styles.opacity > 0
+            return (
+                widget.visible
+                and not widget.is_transparent
+                and widget.styles.opacity > 0
+            )
 
         if self.map:
             if crop:
