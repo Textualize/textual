@@ -1,462 +1,467 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://docs.textualize.io/textual/</loc>
+         <loc>https://textual.textualize.io/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/getting_started/</loc>
+         <loc>https://textual.textualize.io/getting_started/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/tutorial/</loc>
+         <loc>https://textual.textualize.io/tutorial/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/</loc>
+         <loc>https://textual.textualize.io/events/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/blur/</loc>
+         <loc>https://textual.textualize.io/events/blur/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/descendant_blur/</loc>
+         <loc>https://textual.textualize.io/events/descendant_blur/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/descendant_focus/</loc>
+         <loc>https://textual.textualize.io/events/descendant_focus/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/enter/</loc>
+         <loc>https://textual.textualize.io/events/enter/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/focus/</loc>
+         <loc>https://textual.textualize.io/events/focus/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/hide/</loc>
+         <loc>https://textual.textualize.io/events/hide/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/key/</loc>
+         <loc>https://textual.textualize.io/events/key/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/leave/</loc>
+         <loc>https://textual.textualize.io/events/leave/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/load/</loc>
+         <loc>https://textual.textualize.io/events/load/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/mount/</loc>
+         <loc>https://textual.textualize.io/events/mount/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/mouse_capture/</loc>
+         <loc>https://textual.textualize.io/events/mouse_capture/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/mouse_click/</loc>
+         <loc>https://textual.textualize.io/events/mouse_click/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/mouse_down/</loc>
+         <loc>https://textual.textualize.io/events/mouse_down/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/mouse_move/</loc>
+         <loc>https://textual.textualize.io/events/mouse_move/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/mouse_release/</loc>
+         <loc>https://textual.textualize.io/events/mouse_release/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/mouse_scroll_down/</loc>
+         <loc>https://textual.textualize.io/events/mouse_scroll_down/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/mouse_scroll_up/</loc>
+         <loc>https://textual.textualize.io/events/mouse_scroll_up/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/mouse_up/</loc>
+         <loc>https://textual.textualize.io/events/mouse_up/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/paste/</loc>
+         <loc>https://textual.textualize.io/events/paste/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/resize/</loc>
+         <loc>https://textual.textualize.io/events/resize/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/screen_resume/</loc>
+         <loc>https://textual.textualize.io/events/screen_resume/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/screen_suspend/</loc>
+         <loc>https://textual.textualize.io/events/screen_suspend/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/events/show/</loc>
+         <loc>https://textual.textualize.io/events/show/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/examples/styles/</loc>
+         <loc>https://textual.textualize.io/examples/styles/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/guide/</loc>
+         <loc>https://textual.textualize.io/guide/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/guide/CSS/</loc>
+         <loc>https://textual.textualize.io/guide/CSS/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/guide/actions/</loc>
+         <loc>https://textual.textualize.io/guide/actions/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/guide/animator/</loc>
+         <loc>https://textual.textualize.io/guide/animator/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/guide/app/</loc>
+         <loc>https://textual.textualize.io/guide/app/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/guide/devtools/</loc>
+         <loc>https://textual.textualize.io/guide/devtools/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/guide/events/</loc>
+         <loc>https://textual.textualize.io/guide/events/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/guide/layout/</loc>
+         <loc>https://textual.textualize.io/guide/layout/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/guide/reactivity/</loc>
+         <loc>https://textual.textualize.io/guide/reactivity/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/guide/screens/</loc>
+         <loc>https://textual.textualize.io/guide/screens/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/guide/styles/</loc>
+         <loc>https://textual.textualize.io/guide/styles/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/guide/widgets/</loc>
+         <loc>https://textual.textualize.io/guide/widgets/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/how-to/</loc>
+         <loc>https://textual.textualize.io/how-to/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/how-to/animation/</loc>
+         <loc>https://textual.textualize.io/how-to/animation/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/how-to/mouse-and-keyboard/</loc>
+         <loc>https://textual.textualize.io/how-to/mouse-and-keyboard/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/how-to/scroll/</loc>
+         <loc>https://textual.textualize.io/how-to/scroll/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/reference/</loc>
+         <loc>https://textual.textualize.io/reference/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/reference/app/</loc>
+         <loc>https://textual.textualize.io/reference/app/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/reference/button/</loc>
+         <loc>https://textual.textualize.io/reference/button/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/reference/color/</loc>
+         <loc>https://textual.textualize.io/reference/color/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/reference/dom_node/</loc>
+         <loc>https://textual.textualize.io/reference/dom_node/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/reference/events/</loc>
+         <loc>https://textual.textualize.io/reference/events/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/reference/geometry/</loc>
+         <loc>https://textual.textualize.io/reference/geometry/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/reference/message_pump/</loc>
+         <loc>https://textual.textualize.io/reference/message_pump/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/reference/query/</loc>
+         <loc>https://textual.textualize.io/reference/query/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/reference/reactive/</loc>
+         <loc>https://textual.textualize.io/reference/reactive/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/reference/timer/</loc>
+         <loc>https://textual.textualize.io/reference/screen/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/reference/widget/</loc>
+         <loc>https://textual.textualize.io/reference/timer/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/</loc>
+         <loc>https://textual.textualize.io/reference/widget/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/background/</loc>
+         <loc>https://textual.textualize.io/styles/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/border/</loc>
+         <loc>https://textual.textualize.io/styles/background/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/box_sizing/</loc>
+         <loc>https://textual.textualize.io/styles/border/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/color/</loc>
+         <loc>https://textual.textualize.io/styles/box_sizing/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/content_align/</loc>
+         <loc>https://textual.textualize.io/styles/color/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/display/</loc>
+         <loc>https://textual.textualize.io/styles/content_align/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/height/</loc>
+         <loc>https://textual.textualize.io/styles/display/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/layout/</loc>
+         <loc>https://textual.textualize.io/styles/height/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/margin/</loc>
+         <loc>https://textual.textualize.io/styles/layout/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/max_height/</loc>
+         <loc>https://textual.textualize.io/styles/margin/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/max_width/</loc>
+         <loc>https://textual.textualize.io/styles/max_height/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/min_height/</loc>
+         <loc>https://textual.textualize.io/styles/max_width/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/min_width/</loc>
+         <loc>https://textual.textualize.io/styles/min_height/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/offset/</loc>
+         <loc>https://textual.textualize.io/styles/min_width/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/opacity/</loc>
+         <loc>https://textual.textualize.io/styles/offset/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/outline/</loc>
+         <loc>https://textual.textualize.io/styles/opacity/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/overflow/</loc>
+         <loc>https://textual.textualize.io/styles/outline/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/padding/</loc>
+         <loc>https://textual.textualize.io/styles/overflow/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/scrollbar/</loc>
+         <loc>https://textual.textualize.io/styles/padding/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/scrollbar_gutter/</loc>
+         <loc>https://textual.textualize.io/styles/scrollbar/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/scrollbar_size/</loc>
+         <loc>https://textual.textualize.io/styles/scrollbar_gutter/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/text_align/</loc>
+         <loc>https://textual.textualize.io/styles/scrollbar_size/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/text_opacity/</loc>
+         <loc>https://textual.textualize.io/styles/text_align/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/text_style/</loc>
+         <loc>https://textual.textualize.io/styles/text_opacity/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/tint/</loc>
+         <loc>https://textual.textualize.io/styles/text_style/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/visibility/</loc>
+         <loc>https://textual.textualize.io/styles/tint/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/styles/width/</loc>
+         <loc>https://textual.textualize.io/styles/visibility/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/widgets/</loc>
+         <loc>https://textual.textualize.io/styles/width/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/widgets/button/</loc>
+         <loc>https://textual.textualize.io/widgets/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/widgets/data_table/</loc>
+         <loc>https://textual.textualize.io/widgets/button/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/widgets/footer/</loc>
+         <loc>https://textual.textualize.io/widgets/data_table/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/widgets/header/</loc>
+         <loc>https://textual.textualize.io/widgets/footer/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/widgets/static/</loc>
+         <loc>https://textual.textualize.io/widgets/header/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/widgets/text_input/</loc>
+         <loc>https://textual.textualize.io/widgets/static/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://docs.textualize.io/textual/widgets/tree_control/</loc>
+         <loc>https://textual.textualize.io/widgets/text_input/</loc>
+         <lastmod>2022-09-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://textual.textualize.io/widgets/tree_control/</loc>
          <lastmod>2022-09-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
