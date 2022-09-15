@@ -1,5 +1,6 @@
 site_name: Textual
-site_url: https://docs.textualize.io/
+site_url: https://docs.textualize.io/textual/
+repo_url: https://github.com/textualize/textual/
 
 nav:
   - "index.md"
