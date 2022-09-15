@@ -20,6 +20,8 @@ if TYPE_CHECKING:
 
 @rich.repr.auto
 class Event(Message):
+    """The base class for all events."""
+
     def __rich_repr__(self) -> rich.repr.Result:
         return
         yield

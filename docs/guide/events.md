@@ -14,7 +14,7 @@ Event classes (as used in event handlers) extend the [Event][textual.events.Even
 
 Every Textual app and widget contains a *message queue*. You can think of a message queue as orders at a restaurant. The chef takes an order and makes the dish. Orders that arrive while the chef is cooking are placed in a line. When the chef has finished a dish they pick up the first order that was added.
 
-Textual processes messages in the same way. Messages are picked off the message queue and processed by a handler method. This guarantees messages and events are processed even if your code can not handle them right way. 
+Textual processes messages in the same way. Messages are picked off the message queue and processed (cooked) by a handler method. This guarantees messages and events are processed even if your code can not handle them right way. 
 
 This processing of messages is done within an asyncio Task which is started when you mount the widget. The task monitors an asyncio queue for new messages. When a message arrives, the task dispatches it to the appropriate handler method. Once all messages have been processed the task goes back to waiting for messages.
 
