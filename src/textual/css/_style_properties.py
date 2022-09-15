@@ -28,7 +28,7 @@ from ._help_text import (
     color_property_help_text,
 )
 from .._border import INVISIBLE_EDGE_TYPES, normalize_border_value
-from ..color import Color, ColorPair, ColorParseError
+from ..color import Color, ColorParseError
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING, VALID_STYLE_FLAGS
 from .errors import StyleTypeError, StyleValueError
@@ -457,27 +457,6 @@ class BorderProperty:
                 help_text=border_property_help_text(self.name, context="inline"),
             )
         obj.refresh(layout=self._layout)
-
-
-class StyleProperty:
-    """Descriptor for getting the Rich style."""
-
-    DEFAULT_STYLE = Style()
-
-    def __get__(
-        self, obj: StylesBase, objtype: type[StylesBase] | None = None
-    ) -> Style:
-        """Get the Style
-
-        Args:
-            obj (Styles): The ``Styles`` object
-            objtype (type[Styles]): The ``Styles`` class
-
-        Returns:
-            A ``Style`` object.
-        """
-        style = ColorPair(obj.color, obj.background).style + obj.text_style
-        return style
 
 
 class SpacingProperty:

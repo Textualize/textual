@@ -1102,6 +1102,8 @@ class App(Generic[ReturnType], DOMNode):
         process_messages = super()._process_messages
 
         async def run_process_messages():
+            compose_event = events.Compose(sender=self)
+            await self._dispatch_message(compose_event)
             mount_event = events.Mount(sender=self)
             await self._dispatch_message(mount_event)
 
@@ -1171,10 +1173,9 @@ class App(Generic[ReturnType], DOMNode):
 
         self.set_timer(screenshot_timer, on_screenshot, name="screenshot timer")
 
-    def _on_mount(self) -> None:
+    def _on_compose(self) -> None:
         widgets = self.compose()
-        if widgets:
-            self.mount_all(widgets)
+        self.mount_all(widgets)
 
     def _on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
@@ -1353,7 +1354,7 @@ class App(Generic[ReturnType], DOMNode):
     async def on_event(self, event: events.Event) -> None:
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
-        if isinstance(event, events.Mount):
+        if isinstance(event, events.Compose):
             screen = Screen(id="_default")
             self._register(self, screen)
             self._screen_stack.append(screen)

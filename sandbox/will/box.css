@@ -1,0 +1,28 @@
+Screen {
+    background: white;
+    color:black;
+}
+
+#box1 {
+    width: 10;
+    height: 5;
+    background: red 40%;
+    box-sizing: content-box;
+}
+
+
+#box2 {
+    width: 10;
+    height: 5;
+    padding: 1;
+    background:blue 40%;
+    box-sizing: content-box;
+}
+
+#box3 {
+    width: 10;
+    height: 5;
+    background:green 40%;
+    border: heavy;
+    box-sizing: content-box;
+}

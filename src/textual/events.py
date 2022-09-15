@@ -116,6 +116,10 @@ class Resize(Event, bubble=False):
         yield "container_size", self.container_size, self.size
 
 
+class Compose(Event, bubble=False, verbose=True):
+    """Sent to a widget to request it to compose and mount children."""
+
+
 class Mount(Event, bubble=False, verbose=True):
     """Sent when a widget is *mounted* and may receive messages."""
 

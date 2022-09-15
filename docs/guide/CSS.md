@@ -4,13 +4,14 @@ Textual uses CSS to apply style to widgets. If you have any exposure to web deve
 
 ## Stylesheets
 
-CSS stands for _Cascading Stylesheets_. A stylesheet is a list of styles and rules about how those styles should be applied to a page. In the case of Textual, the stylesheet applies styles to widgets but otherwise it is the same idea.
+CSS stands for _Cascading Stylesheets_. A stylesheet is a list of styles and rules about how those styles should be applied to a page. In the case of Textual, the stylesheet applies [styles](./styles.md) to widgets but otherwise it is the same idea.
 
 !!! note
 
-    Depending on what you want to build with Textual, you may not need to learn Textual CSS at all. Widgets are packaged with CSS styles so apps with exclusively pre-built widgets may not need any additional CSS.
+    Depending on what you want to build with Textual, you may not need to learn Textual CSS at all. Widgets are packaged with CSS styles so apps may not need any additional CSS.
 
-Textual CSS defines a set of rules which apply visual _styles_ to your application and widgets. These style can customize settings for properties such as color, border, size, alignment; and more dynamic features such as animation and hover effects. As powerful as it is, CSS in Textual is quite straightforward.
+
+When Textual loads CSS it sets attributes of your widgets's `style` object. The effect is the same as if you had set attributes in Python.
 
 CSS is typically stored in an external file with the extension `.css` alongside your Python code.
 
@@ -40,7 +41,7 @@ Header {
 }
 ```
 
-The first line is a _selector_ which tells Textual which Widget(s) to modify. In the above example, the styles will be applied to a widget defined by the Python class `Header`.
+The first line is a _selector_ which tells Textual which widget(s) to modify. In the above example, the styles will be applied to a widget defined by the Python class `Header`.
 
 ```sass hl_lines="2 3 4 5 6"
 Header {
@@ -54,7 +55,7 @@ Header {
 
 The lines inside the curly braces contains CSS _rules_, which consist of a rule name and rule value separated by a colon and ending in a semi-colon. Such rules are typically written one per line, but you could add additional rules as long as they are separated by semi-colons.
 
-The first rule in the above example reads `"dock: top;"`. The rule name is `dock` which tells Textual to place the widget on an edge of the screen. The text after the colon is `top` which tells Textual to dock to the _top_ of the screen. Other valid values for `dock` are "right", "bottom", or "left"; but `top` is most appropriate for a header.
+The first rule in the above example reads `"dock: top;"`. The rule name is `dock` which tells Textual to place the widget on an edge of the screen. The text after the colon is `top` which tells Textual to dock to the _top_ of the screen. Other valid values for `dock` are "right", "bottom", or "left"; but "top" is most appropriate for a header.
 
 ## The DOM
 
@@ -75,7 +76,7 @@ Let's look at a trivial Textual app.
     ```{.textual path="docs/examples/guide/dom1.py"}
     ```
 
-When you run this code you will have an instance of an `ExampleApp` in memory. This app class will also create a `Screen` object. In DOM terms, the `Screen` is a _child_ of `ExampleApp`.
+This example creates an instance of `ExampleApp`, which will implicitly create a `Screen` object. In DOM terms, the `Screen` is a _child_ of `ExampleApp`.
 
 With the above example, the DOM will look like the following:
 
@@ -139,7 +140,7 @@ You may recognize some of the elements in the above screenshot, but it doesn't q
 
 ## CSS files
 
-To add a stylesheet we need to pass the path to a CSS file via the app classes' `css_path` argument:
+To add a stylesheet we pass the path to the app with the `css_path` parameter:
 
 ```python hl_lines="23"
 --8<-- "docs/examples/guide/dom4.py"
@@ -163,7 +164,7 @@ With the CSS in place, the output looks very different:
 
 ### Why CSS?
 
-It is reasonable to ask why use CSS at all? Python is a powerful and expressive language. Wouldn't it be easier to do everything in your `.py` files?
+It is reasonable to ask why use CSS at all? Python is a powerful and expressive language. Wouldn't it be easier to set styles in your `.py` files?
 
 A major advantage of CSS is that it separates how your app _looks_ from how it _works_. Setting styles in Python can generate a lot of spaghetti code which can make it hard to see the important logic in your application.
 
