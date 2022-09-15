@@ -165,8 +165,6 @@ class BasicApp(App, css_path="basic.css"):
 
     def on_mount(self):
         self.sub_title = "Widget demo"
-        self.log.warning("This is a warning!")
-        self.log.error("This is an error")
 
     async def on_key(self, event) -> None:
         await self.dispatch_key(event)
