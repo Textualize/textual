@@ -1,0 +1,21 @@
+Screen {
+    layout: center;
+}
+
+#bottom {
+    width: 20;
+    height: 20;
+    background: red;
+}
+
+#middle {
+    width: 26;
+    height: 12;
+    background: green;
+}
+
+#top {
+    width: 32;
+    height: 6;
+    background: blue;
+}
