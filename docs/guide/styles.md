@@ -39,7 +39,7 @@ The compose method stores a reference to the widget before yielding it. In the m
 ```{.textual path="docs/examples/guide/styles/widget.py"}
 ```
 
-Widgets will occupy the full width of the screen and as many lines as required to fit in the vertical direction.
+Widgets will occupy the full width of their container and as many lines as required to fit in the vertical direction.
 
 Note how the combined height of the widget is three rows in the terminal. This is because a border adds two rows (and two columns). If you were to remove the line that sets the border style, the widget would occupy a single row.
 
