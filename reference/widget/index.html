@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://www.textualize.io/reference/widget/">
+        <link rel="canonical" href="https://docs.textualize.io/textual/reference/widget/">
       
       
         
@@ -2156,6 +2156,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -2299,6 +2301,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/text_input/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TextInput
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/tree_control/" class="md-nav__link">
         
   
@@ -2336,6 +2358,8 @@
       
         
           
+        
+      
         
       
         
@@ -2557,6 +2581,26 @@
                 
   
   
+  
+    <li class="md-nav__item">
+      <a href="../query/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Query
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -2664,6 +2708,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widget.Widget.container_viewport" class="md-nav__link">
+    <span class="md-ellipsis">
+      container_viewport()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widget.Widget.content_offset" class="md-nav__link">
     <span class="md-ellipsis">
       content_offset()
@@ -2694,6 +2747,15 @@
   <a href="#textual.widget.Widget.focusable_children" class="md-nav__link">
     <span class="md-ellipsis">
       focusable_children()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widget.Widget.get_component_rich_style" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_component_rich_style()
     </span>
   </a>
   
@@ -3289,6 +3351,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widget.Widget.container_viewport" class="md-nav__link">
+    <span class="md-ellipsis">
+      container_viewport()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widget.Widget.content_offset" class="md-nav__link">
     <span class="md-ellipsis">
       content_offset()
@@ -3319,6 +3390,15 @@
   <a href="#textual.widget.Widget.focusable_children" class="md-nav__link">
     <span class="md-ellipsis">
       focusable_children()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widget.Widget.get_component_rich_style" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_component_rich_style()
     </span>
   </a>
   
@@ -4094,6 +4174,46 @@
 
 
 
+<h2 id="textual.widget.Widget.container_viewport" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">container_viewport</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.container_viewport" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>The viewport region (parent window)</p>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>Region</code></td>          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="../geometry/#textual.geometry.Region">Region</a></code>
+          </td>
+          <td><p>The region that contains this widget.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h2 id="textual.widget.Widget.content_offset" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">content_offset</span><span class="p">()</span></code>
   
@@ -4175,14 +4295,39 @@
 
 
 <h2 id="textual.widget.Widget.focus" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">focus</span><span class="p">()</span></code>
+<code class="highlight language-python"><span class="n">focus</span><span class="p">(</span><span class="n">scroll_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 <a href="#textual.widget.Widget.focus" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
   <div class="doc doc-contents ">
   
-      <p>Give input focus to this widget.</p>
+      <p>Give focus to this widget.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>scroll_visible</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Scroll parent to make this widget
+visible. Defaults to True.</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
   </div>
 
@@ -4220,6 +4365,66 @@
                 <code>list[<a class="autorefs autorefs-internal" title="textual.widget.Widget" href="#textual.widget.Widget">Widget</a>]</code>
           </td>
           <td><p>list[Widget]: List of widgets that can receive focus.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="textual.widget.Widget.get_component_rich_style" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_component_rich_style</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></code>
+
+<a href="#textual.widget.Widget.get_component_rich_style" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Get a <em>Rich</em> style for a component.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>name</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Name of component.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>Style</code></td>          <td>
+                <code><span title="rich.style.Style">Style</span></code>
+          </td>
+          <td><p>A Rich style object.</p></td>
         </tr>
     </tbody>
   </table>
@@ -4898,7 +5103,7 @@ the keys will be set as the Widget's id.</p>
     <tbody>
         <tr>
 <td><code>RenderableType</code></td>          <td>
-                <code><span title="rich.console.RenderableType">RenderableType</span></code>
+                <code><span title="rich.console.ConsoleRenderable">ConsoleRenderable</span></code>
           </td>
           <td><p>A new renderable.</p></td>
         </tr>
@@ -6765,7 +6970,7 @@ depending on the scroll offset.</p>
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="../timer/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Timer" rel="prev">
+        <a href="../query/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Query" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -6774,7 +6979,7 @@ depending on the scroll offset.</p>
               <span class="md-footer__direction">
                 Previous
               </span>
-              Timer
+              Query
             </div>
           </div>
         </a>

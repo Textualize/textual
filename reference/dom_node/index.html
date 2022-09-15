@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://www.textualize.io/reference/dom_node/">
+        <link rel="canonical" href="https://docs.textualize.io/textual/reference/dom_node/">
       
       
         
@@ -2156,6 +2156,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -2299,6 +2301,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/text_input/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TextInput
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/tree_control/" class="md-nav__link">
         
   
@@ -2336,6 +2358,8 @@
       
         
           
+        
+      
         
       
         
@@ -2868,6 +2892,26 @@
   
   <span class="md-ellipsis">
     Timer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../query/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Query
   </span>
   
 
@@ -3533,8 +3577,8 @@
 <code class="highlight language-python"><span class="n">display</span><span class="p">()</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.display" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -3595,7 +3639,7 @@
     <tbody>
         <tr>
           <td>
-                <code>list[<a class="autorefs autorefs-internal" title="textual.dom.DOMNode" href="#textual.dom.DOMNode">DOMNode</a>]</code>
+                <code>list[<a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a>]</code>
           </td>
           <td><p>list[DOMNode]: Children of this widget which will be displayed.</p></td>
         </tr>
@@ -3921,8 +3965,8 @@ and inherited from base classes.</p></td>
 <code class="highlight language-python"><span class="nb">id</span><span class="p">()</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.id" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -4028,7 +4072,7 @@ and inherited from base classes.</p></td>
 
   <div class="doc doc-contents ">
   
-      <p>Get a DOM query.</p>
+      <p>Get a DOM query matching a selector.</p>
 
   <p><strong>Parameters:</strong></p>
   <table>
@@ -4065,7 +4109,7 @@ and inherited from base classes.</p></td>
     <tbody>
         <tr>
 <td><code>DOMQuery</code></td>          <td>
-                <code><span title="textual.css.query.DOMQuery">DOMQuery</span></code>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.DOMQuery" href="../query/#textual.css.query.DOMQuery">DOMQuery</a></code>
           </td>
           <td><p>A query object.</p></td>
         </tr>
@@ -4111,6 +4155,17 @@ and inherited from base classes.</p></td>
               <em>required</em>
           </td>
         </tr>
+        <tr>
+          <td><code>expect_type</code></td>
+          <td>
+                <code>type</code>
+          </td>
+          <td><p>Require the object be of the supplied type, or None for any type.
+Defaults to None.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -4118,16 +4173,16 @@ and inherited from base classes.</p></td>
   <table>
     <thead>
       <tr>
-<th>Name</th>        <th>Type</th>
+        <th>Type</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-<td><code>Widget</code></td>          <td>
+          <td>
                 <code><span title="textual.dom.DOMNode.ExpectType">ExpectType</span> | <a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
           </td>
-          <td><p>A widget matching the selector.</p></td>
+          <td><p>Widget | ExpectType: A widget matching the selector.</p></td>
         </tr>
     </tbody>
   </table>

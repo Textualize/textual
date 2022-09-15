@@ -21,15 +21,13 @@ class Stopwatch(Static):
 class StopwatchApp(App):
     """A Textual app to manage stopwatches."""
 
+    BINDINGS = [("d", "toggle_dark", "Toggle dark mode")]
+
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
         yield Header()
         yield Footer()
         yield Container(Stopwatch(), Stopwatch(), Stopwatch())
-
-    def on_load(self) -> None:
-        """Called when app first loads."""
-        self.bind("d", "toggle_dark", description="Dark mode")
 
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""

@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://www.textualize.io/reference/reactive/">
+        <link rel="canonical" href="https://docs.textualize.io/textual/reference/reactive/">
       
       
         
@@ -74,7 +74,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#textual.reactive.Reactive" class="md-skip">
+        <a href="#textual.reactive" class="md-skip">
           Skip to content
         </a>
       
@@ -2154,6 +2154,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -2297,6 +2299,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/text_input/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TextInput
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/tree_control/" class="md-nav__link">
         
   
@@ -2332,6 +2354,8 @@
       
         
           
+        
+      
         
       
         
@@ -2555,6 +2579,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../query/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Query
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../widget/" class="md-nav__link">
         
   
@@ -2601,15 +2645,25 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#textual.reactive.Reactive" class="md-nav__link">
+  <a href="#textual.reactive" class="md-nav__link">
     <span class="md-ellipsis">
-      textual.reactive.Reactive
+      textual.reactive
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.reactive.Reactive" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reactive
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reactive">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#textual.reactive.Reactive.init" class="md-nav__link">
     <span class="md-ellipsis">
       init()
@@ -2617,8 +2671,8 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#textual.reactive.Reactive.initialize_object" class="md-nav__link">
     <span class="md-ellipsis">
       initialize_object()
@@ -2626,11 +2680,43 @@
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#textual.reactive.Reactive.var" class="md-nav__link">
     <span class="md-ellipsis">
       var()
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.reactive.reactive" class="md-nav__link">
+    <span class="md-ellipsis">
+      reactive
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.reactive.var" class="md-nav__link">
+    <span class="md-ellipsis">
+      var
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.reactive.watch" class="md-nav__link">
+    <span class="md-ellipsis">
+      watch()
     </span>
   </a>
   
@@ -2652,11 +2738,35 @@
 
   <h1>Reactive</h1>
 
+<div class="doc doc-object doc-module">
+
+
+<a id="textual.reactive"></a>
+  <div class="doc doc-contents first">
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
 <div class="doc doc-object doc-class">
 
 
-<a id="textual.reactive.Reactive"></a>
-  <div class="doc doc-contents first">
+
+<h2 id="textual.reactive.Reactive" class="doc doc-heading">
+        <code>Reactive</code>
+
+
+<a href="#textual.reactive.Reactive" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
       <p class="doc doc-class-bases">
         Bases: <code><span title="typing.Generic">Generic</span>[<span title="textual.reactive.ReactiveType">ReactiveType</span>]</code></p>
 
@@ -2735,14 +2845,14 @@
 
 
 
-<h2 id="textual.reactive.Reactive.init" class="doc doc-heading">
+<h3 id="textual.reactive.Reactive.init" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">init</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">repaint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#textual.reactive.Reactive.init" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#textual.reactive.Reactive.init" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
@@ -2819,15 +2929,15 @@
 
 
 
-<h2 id="textual.reactive.Reactive.initialize_object" class="doc doc-heading">
+<h3 id="textual.reactive.Reactive.initialize_object" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">initialize_object</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
       <small class="doc doc-label doc-label-async"><code>async</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#textual.reactive.Reactive.initialize_object" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#textual.reactive.Reactive.initialize_object" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
@@ -2866,14 +2976,14 @@
 
 
 
-<h2 id="textual.reactive.Reactive.var" class="doc doc-heading">
+<h3 id="textual.reactive.Reactive.var" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">var</span><span class="p">(</span><span class="n">default</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#textual.reactive.Reactive.var" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#textual.reactive.Reactive.var" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
@@ -2918,6 +3028,235 @@
                 <code><a class="autorefs autorefs-internal" title="textual.reactive.Reactive" href="#textual.reactive.Reactive">Reactive</a></code>
           </td>
           <td><p>A Reactive descriptor.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="textual.reactive.reactive" class="doc doc-heading">
+        <code>reactive</code>
+
+
+<a href="#textual.reactive.reactive" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="textual.reactive.Reactive" href="#textual.reactive.Reactive">Reactive</a>[<span title="textual.reactive.ReactiveType">ReactiveType</span>]</code></p>
+
+  
+      <p>Create a reactive attribute.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>default</code></td>
+          <td>
+                <code><span title="textual.reactive.ReactiveType">ReactiveType</span> | <span title="typing.Callable">Callable</span>[[], <span title="textual.reactive.ReactiveType">ReactiveType</span>]</code>
+          </td>
+          <td><p>A default value or callable that returns a default.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>layout</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Perform a layout on change. Defaults to False.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>repaint</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Perform a repaint on change. Defaults to True.</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>init</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Call watchers on initialize (post mount). Defaults to False.</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="textual.reactive.var" class="doc doc-heading">
+        <code>var</code>
+
+
+<a href="#textual.reactive.var" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="textual.reactive.Reactive" href="#textual.reactive.Reactive">Reactive</a>[<span title="textual.reactive.ReactiveType">ReactiveType</span>]</code></p>
+
+  
+      <p>Create a reactive attribute (with no auto-refresh).</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>default</code></td>
+          <td>
+                <code><span title="textual.reactive.ReactiveType">ReactiveType</span> | <span title="typing.Callable">Callable</span>[[], <span title="textual.reactive.ReactiveType">ReactiveType</span>]</code>
+          </td>
+          <td><p>A default value or callable that returns a default.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="textual.reactive.watch" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">watch</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span></code>
+
+<a href="#textual.reactive.watch" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Watch a reactive variable on an object.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>obj</code></td>
+          <td>
+                <code><span title="textual.reactive.Reactable">Reactable</span></code>
+          </td>
+          <td><p>The parent object.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>attribute_name</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>The attribute to watch.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>callback</code></td>
+          <td>
+                <code><span title="typing.Callable">Callable</span>[[<span title="typing.Any">Any</span>], object]</code>
+          </td>
+          <td><p>A callable to call when the attribute changes.</p></td>
+          <td>
+              <em>required</em>
+          </td>
         </tr>
     </tbody>
   </table>

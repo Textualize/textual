@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://www.textualize.io/reference/app/">
+        <link rel="canonical" href="https://docs.textualize.io/textual/reference/app/">
       
       
         
@@ -2156,6 +2156,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -2299,6 +2301,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/text_input/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TextInput
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/tree_control/" class="md-nav__link">
         
   
@@ -2336,6 +2358,8 @@
       
         
           
+        
+      
         
       
         
@@ -2468,6 +2492,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.app.App.action_toggle_dark" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_toggle_dark()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.app.App.bell" class="md-nav__link">
     <span class="md-ellipsis">
       bell()
@@ -2480,6 +2513,15 @@
   <a href="#textual.app.App.bind" class="md-nav__link">
     <span class="md-ellipsis">
       bind()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.app.App.bindings" class="md-nav__link">
+    <span class="md-ellipsis">
+      bindings()
     </span>
   </a>
   
@@ -2982,6 +3024,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../query/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Query
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../widget/" class="md-nav__link">
         
   
@@ -3055,6 +3117,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.app.App.action_toggle_dark" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_toggle_dark()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.app.App.bell" class="md-nav__link">
     <span class="md-ellipsis">
       bell()
@@ -3067,6 +3138,15 @@
   <a href="#textual.app.App.bind" class="md-nav__link">
     <span class="md-ellipsis">
       bind()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.app.App.bindings" class="md-nav__link">
+    <span class="md-ellipsis">
+      bindings()
     </span>
   </a>
   
@@ -3514,7 +3594,7 @@
 
 
 <h2 id="textual.app.App.action" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">action</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">default_namespace</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">modifiers</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">action</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">default_namespace</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
@@ -3548,6 +3628,17 @@
               <em>required</em>
           </td>
         </tr>
+        <tr>
+          <td><code>default_namespace</code></td>
+          <td>
+                <code>object | None</code>
+          </td>
+          <td><p>Namespace to use if not provided in the action,
+or None to use app. Defaults to None.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -3560,7 +3651,7 @@
 
 
 <h2 id="textual.app.App.action_screenshot" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">action_screenshot</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">action_screenshot</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;~/&#39;</span><span class="p">)</span></code>
 
 <a href="#textual.app.App.action_screenshot" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -3568,6 +3659,24 @@
   <div class="doc doc-contents ">
   
       <p>Action to save a screenshot.</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="textual.app.App.action_toggle_dark" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">action_toggle_dark</span><span class="p">()</span></code>
+
+<a href="#textual.app.App.action_toggle_dark" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Action to toggle dark mode.</p>
 
   </div>
 
@@ -3668,6 +3777,28 @@
         </tr>
     </tbody>
   </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="textual.app.App.bindings" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">bindings</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.app.App.bindings" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Get current bindings.</p>
 
   </div>
 
@@ -4982,14 +5113,14 @@ to run forever. Defaults to None.</p></td>
 
 
 <h2 id="textual.app.App.save_screenshot" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">save_screenshot</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">save_screenshot</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> </span><span class="si">%X</span><span class="s1"> </span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span></code>
 
 <a href="#textual.app.App.save_screenshot" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
   <div class="doc doc-contents ">
   
-      <p>Save a screenshot of the current screen.</p>
+      <p>Save a SVG screenshot of the current screen.</p>
 
   <p><strong>Parameters:</strong></p>
   <table>
@@ -5003,14 +5134,34 @@ to run forever. Defaults to None.</p></td>
     </thead>
     <tbody>
         <tr>
-          <td><code>path</code></td>
+          <td><code>filename</code></td>
           <td>
                 <code>str | None</code>
           </td>
-          <td><p>Path to SVG to save or None to pick
-a filename automatically. Defaults to None.</p></td>
+          <td><p>Filename of SVG screenshot, or None to auto-generate
+a filename with the date and time. Defaults to None.</p></td>
           <td>
                 <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Path to directory for output. Defaults to current working directory.</p></td>
+          <td>
+                <code>&#39;./&#39;</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>time_format(str,</code></td>
+          <td>
+                <code>optional</code>
+          </td>
+          <td><p>Time format to use if filename is None. Defaults to "%Y-%m-%d %X %f".</p></td>
+          <td>
+              <em>required</em>
           </td>
         </tr>
     </tbody>
@@ -5141,7 +5292,7 @@ a filename automatically. Defaults to None.</p></td>
 
 
 <h2 id="textual.app.App.set_focus" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">set_focus</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">set_focus</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">scroll_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 <a href="#textual.app.App.set_focus" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -5166,9 +5317,19 @@ a filename automatically. Defaults to None.</p></td>
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
           </td>
-          <td><p>[description]</p></td>
+          <td><p>Widget to focus.</p></td>
           <td>
               <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>scroll_visible</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Scroll widget in to view.</p></td>
+          <td>
+                <code>True</code>
           </td>
         </tr>
     </tbody>

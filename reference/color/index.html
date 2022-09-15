@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://www.textualize.io/reference/color/">
+        <link rel="canonical" href="https://docs.textualize.io/textual/reference/color/">
       
       
         
@@ -2156,6 +2156,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -2299,6 +2301,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/text_input/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TextInput
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/tree_control/" class="md-nav__link">
         
   
@@ -2336,6 +2358,8 @@
       
         
           
+        
+      
         
       
         
@@ -2611,6 +2635,15 @@
   <a href="#textual.color.Color.hex" class="md-nav__link">
     <span class="md-ellipsis">
       hex()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.color.Color.hex6" class="md-nav__link">
+    <span class="md-ellipsis">
+      hex6()
     </span>
   </a>
   
@@ -2967,6 +3000,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../query/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Query
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../widget/" class="md-nav__link">
         
   
@@ -3143,6 +3196,15 @@
   <a href="#textual.color.Color.hex" class="md-nav__link">
     <span class="md-ellipsis">
       hex()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.color.Color.hex6" class="md-nav__link">
+    <span class="md-ellipsis">
+      hex6()
     </span>
   </a>
   
@@ -3543,7 +3605,7 @@ exception should be when passing things to a Rich renderable, which will need to
 
 
 <h3 id="textual.color.Color.blend" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">blend</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">factor</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">blend</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></code>
 
 <a href="#textual.color.Color.blend" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -3578,9 +3640,19 @@ exception should be when passing things to a Rich renderable, which will need to
           <td>
                 <code>float</code>
           </td>
-          <td><p>A blend factor, 0 -&gt; 1</p></td>
+          <td><p>A blend factor, 0 -&gt; 1.</p></td>
           <td>
               <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>alpha</code></td>
+          <td>
+                <code>float | None</code>
+          </td>
+          <td><p>New alpha for result. Defaults to 1.</p></td>
+          <td>
+                <code>1</code>
           </td>
         </tr>
     </tbody>
@@ -3733,7 +3805,7 @@ exception should be when passing things to a Rich renderable, which will need to
 
 
 <h3 id="textual.color.Color.darken" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">darken</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">darken</span><span class="p">(</span><span class="n">amount</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-cached"><code>cached</code></small>
@@ -3765,6 +3837,16 @@ exception should be when passing things to a Rich renderable, which will need to
           <td><p>Value between 0-1 to reduce luminance by.</p></td>
           <td>
               <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>alpha</code></td>
+          <td>
+                <code>float | None</code>
+          </td>
+          <td><p>Alpha component for new color or None to copy alpha. Defaults to None.</p></td>
+          <td>
+                <code>None</code>
           </td>
         </tr>
     </tbody>
@@ -4049,6 +4131,46 @@ Defaults to 0.95.</p></td>
 
 
 
+<h3 id="textual.color.Color.hex6" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">hex6</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.color.Color.hex6" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>The color in CSS hex form, with 6 digits for RGB. Alpha is ignored.</p>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>str</code></td>          <td>
+                <code>str</code>
+          </td>
+          <td><p>A CSS hex-style color, e.g. "#46b3de"</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.color.Color.hls" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">hls</span><span class="p">()</span></code>
   
@@ -4130,7 +4252,7 @@ Defaults to 0.95.</p></td>
 
 
 <h3 id="textual.color.Color.lighten" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">lighten</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">lighten</span><span class="p">(</span><span class="n">amount</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 <a href="#textual.color.Color.lighten" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -4158,6 +4280,16 @@ Defaults to 0.95.</p></td>
           <td><p>Value between 0-1 to increase luminance by.</p></td>
           <td>
               <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>alpha</code></td>
+          <td>
+                <code>float | None</code>
+          </td>
+          <td><p>Alpha component for new color or None to copy alpha. Defaults to None.</p></td>
+          <td>
+                <code>None</code>
           </td>
         </tr>
     </tbody>
@@ -4863,7 +4995,7 @@ be returned unmodified.</p></td>
 
 
 <h2 id="textual.color.lab_to_rgb" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">lab_to_rgb</span><span class="p">(</span><span class="n">lab</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">lab_to_rgb</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span></code>
 
 <a href="#textual.color.lab_to_rgb" class="headerlink" title="Permanent link">&para;</a></h2>
 
