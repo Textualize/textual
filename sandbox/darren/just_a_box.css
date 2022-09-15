@@ -1,8 +1,13 @@
+$box_color: darkmagenta;
+$success: lime;
+$border: wide $success;
+
 Screen {
     background: darkslategrey;
 }
 
 .box1 {
-    background: darkmagenta;
+    background: $box_color;
+    border: $border;
     width: auto;
 }
