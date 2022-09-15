@@ -1,0 +1,7 @@
+#sidebar {
+    dock: left;
+    width: 15;
+    height: 100%;
+    color: #0f2b41;
+    background: dodgerblue;
+}
