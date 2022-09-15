@@ -54,7 +54,7 @@ You can set a color value to one of a number of pre-defined color constants, suc
 Here's how you would set the screen background to lime:
 
 ```python
-widget.styles.background = "lime"
+self.screen.styles.background = "lime"
 ```
 
 In addition to color names, you can also use any of the following ways of expressing a color:
