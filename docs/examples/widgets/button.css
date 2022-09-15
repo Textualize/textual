@@ -1,0 +1,12 @@
+Button {
+    margin: 1 2;
+}
+
+Horizontal > Vertical {
+    width: 24;
+}
+
+.header {
+    margin: 1 0 0 2;
+    text-style: bold;
+}
