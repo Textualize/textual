@@ -3,6 +3,7 @@
 The `Resize` event is sent to a widget when its size changes and when it is first made visible.
 
 - [x] Bubbles
+- [ ] Verbose
 
 ## Attributes
 

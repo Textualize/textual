@@ -249,14 +249,7 @@ class Region(NamedTuple):
     """The height of the region."""
 
     @classmethod
-    def from_union(
-        cls,
-        regions: Collection[Region],
-        _get_x=itemgetter(0),
-        _get_y=itemgetter(1),
-        _get_right=attrgetter("right"),
-        _get_bottom=attrgetter("bottom"),
-    ) -> Region:
+    def from_union(cls, regions: Collection[Region]) -> Region:
         """Create a Region from the union of other regions.
 
         Args:
@@ -267,10 +260,10 @@ class Region(NamedTuple):
         """
         if not regions:
             raise ValueError("At least one region expected")
-        min_x = min(regions, key=_get_x).x
-        max_x = max(regions, key=_get_right).right
-        min_y = min(regions, key=_get_y).y
-        max_y = max(regions, key=_get_bottom).bottom
+        min_x = min(regions, key=itemgetter(0)).x
+        max_x = max(regions, key=attrgetter("right")).right
+        min_y = min(regions, key=itemgetter(1)).y
+        max_y = max(regions, key=attrgetter("bottom")).bottom
         return cls(min_x, min_y, max_x - min_x, max_y - min_y)
 
     @classmethod

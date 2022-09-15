@@ -68,7 +68,7 @@ class ScrollView(Widget):
         """
         return self.virtual_size.height
 
-    def size_updated(
+    def _size_updated(
         self, size: Size, virtual_size: Size, container_size: Size
     ) -> None:
         """Called when size is updated.

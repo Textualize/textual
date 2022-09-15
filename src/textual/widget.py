@@ -4,7 +4,7 @@ from asyncio import Lock
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
-from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple
+from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple, cast
 
 import rich.repr
 from rich.console import Console, ConsoleRenderable, JustifyMethod, RenderableType
@@ -44,19 +44,18 @@ if TYPE_CHECKING:
     )
 
 
+_JUSTIFY_MAP: dict[str, JustifyMethod] = {
+    "start": "left",
+    "end": "right",
+    "justify": "full",
+}
+
+
 class RenderCache(NamedTuple):
     """Stores results of a previous render."""
 
     size: Size
     lines: Lines
-
-    @property
-    def cursor_line(self) -> int | None:
-        for index, line in enumerate(self.lines):
-            for _text, style, _control in line:
-                if style and style._meta and style.meta.get("cursor", False):
-                    return index
-        return None
 
 
 @rich.repr.auto
@@ -321,6 +320,8 @@ class Widget(DOMNode):
     def get_content_width(self, container: Size, viewport: Size) -> int:
         """Gets the width of the content area.
 
+        May be overridden in a subclass.
+
         Args:
             container (Size): Size of the container (immediate parent) widget.
             viewport (Size): Size of the viewport.
@@ -350,6 +351,8 @@ class Widget(DOMNode):
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         """Gets the height (number of lines) in the content area.
+
+        May be overridden in a subclass.
 
         Args:
             container (Size): Size of the container (immediate parent) widget.
@@ -443,7 +446,7 @@ class Widget(DOMNode):
 
     @property
     def vertical_scrollbar(self) -> ScrollBar:
-        """Get a vertical scrollbar (create if necessary)
+        """Get a vertical scrollbar (create if necessary).
 
         Returns:
             ScrollBar: ScrollBar Widget.
@@ -460,7 +463,7 @@ class Widget(DOMNode):
 
     @property
     def horizontal_scrollbar(self) -> ScrollBar:
-        """Get a vertical scrollbar (create if necessary)
+        """Get a vertical scrollbar (create if necessary).
 
         Returns:
             ScrollBar: ScrollBar Widget.
@@ -523,7 +526,11 @@ class Widget(DOMNode):
 
     @property
     def scrollbar_size_vertical(self) -> int:
-        """Get the width used by the *vertical* scrollbar."""
+        """Get the width used by the *vertical* scrollbar.
+
+        Returns:
+            int: Number of columns in the vertical scrollbar.
+        """
         styles = self.styles
         if styles.scrollbar_gutter == "stable" and styles.overflow_y == "auto":
             return styles.scrollbar_size_vertical
@@ -531,7 +538,11 @@ class Widget(DOMNode):
 
     @property
     def scrollbar_size_horizontal(self) -> int:
-        """Get the height used by the *horizontal* scrollbar."""
+        """Get the height used by the *horizontal* scrollbar.
+
+        Returns:
+            int: Number of rows in the horizontal scrollbar.
+        """
         styles = self.styles
         if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
             return styles.scrollbar_size_horizontal
@@ -539,7 +550,7 @@ class Widget(DOMNode):
 
     @property
     def scrollbar_gutter(self) -> Spacing:
-        """Spacing required to fit scrollbar(s)
+        """Spacing required to fit scrollbar(s).
 
         Returns:
             Spacing: Scrollbar gutter spacing.
@@ -627,7 +638,7 @@ class Widget(DOMNode):
 
     @property
     def container_viewport(self) -> Region:
-        """The viewport region (parent window)
+        """The viewport region (parent window).
 
         Returns:
             Region: The region that contains this widget.
@@ -1059,7 +1070,9 @@ class Widget(DOMNode):
 
         while isinstance(widget.parent, Widget) and widget is not self:
             container = widget.parent
-            scroll_offset = container.scroll_to_region(region, animate=animate)
+            scroll_offset = container.scroll_to_region(
+                region, spacing=widget.parent.gutter, animate=animate
+            )
             if scroll_offset:
                 scrolled = True
 
@@ -1087,6 +1100,7 @@ class Widget(DOMNode):
 
         Args:
             region (Region): A region that should be visible.
+            spacing (Spacing | None, optional): Optional spacing around the region. Defaults to None.
             animate (bool, optional): Enable animation. Defaults to True.
             spacing (Spacing): Space to subtract from the window region.
 
@@ -1096,6 +1110,10 @@ class Widget(DOMNode):
         window = self.content_region.at_offset(self.scroll_offset)
         if spacing is not None:
             window = window.shrink(spacing)
+
+        if window in region:
+            return Offset()
+
         delta_x, delta_y = Region.get_scroll_to_visible(window, region)
         scroll_x, scroll_y = self.scroll_offset
         delta = Offset(
@@ -1235,12 +1253,11 @@ class Widget(DOMNode):
         Returns:
             RenderableType: A new renderable.
         """
+        text_justify: JustifyMethod | None = None
+        if self.styles.has_rule("text_align"):
+            text_align: JustifyMethod = cast(JustifyMethod, self.styles.text_align)
+            text_justify = _JUSTIFY_MAP.get(text_align, text_align)
 
-        text_justify = (
-            _get_rich_justify(self.styles.text_align)
-            if self.styles.has_rule("text_align")
-            else None
-        )
         if isinstance(renderable, str):
             renderable = Text.from_markup(renderable, justify=text_justify)
 
@@ -1262,9 +1279,16 @@ class Widget(DOMNode):
         """Update from CSS if has focus state changes."""
         self.app.update_styles(self)
 
-    def size_updated(
+    def _size_updated(
         self, size: Size, virtual_size: Size, container_size: Size
     ) -> None:
+        """Called when the widget's size is updated.
+
+        Args:
+            size (Size): Screen size.
+            virtual_size (Size): Virtual (scrollable) size.
+            container_size (Size): Container size (size of parent).
+        """
         if self._size != size or self.virtual_size != virtual_size:
             self._size = size
             self.virtual_size = virtual_size
@@ -1419,10 +1443,23 @@ class Widget(DOMNode):
         render = "" if self.is_container else self.css_identifier_styled
         return render
 
-    async def action(self, action: str, *params) -> None:
+    async def action(self, action: str) -> None:
+        """Perform a given action, with this widget as the default namespace.
+
+        Args:
+            action (str): Action encoded as a string.
+        """
         await self.app.action(action, self)
 
     async def post_message(self, message: Message) -> bool:
+        """Post a message to this widget.
+
+        Args:
+            message (Message): Message to post.
+
+        Returns:
+            bool: True if the message was posted, False if this widget was closed / closing.
+        """
         if not self.check_message_enabled(message):
             return True
         if not self.is_running:
@@ -1460,7 +1497,7 @@ class Widget(DOMNode):
     def capture_mouse(self, capture: bool = True) -> None:
         """Capture (or release) the mouse.
 
-        When captured, all mouse coordinates will go to this widget even when the pointer is not directly over the widget.
+        When captured, mouse events will go to this widget even when the pointer is not directly over the widget.
 
         Args:
             capture (bool, optional): True to capture or False to release. Defaults to True.
@@ -1496,6 +1533,10 @@ class Widget(DOMNode):
             await self.dispatch_key(event)
         else:
             await self.action(binding.action)
+
+    def _on_compose(self, event: events.Compose) -> None:
+        widgets = self.compose()
+        self.app.mount_all(widgets)
 
     def _on_mount(self, event: events.Mount) -> None:
         widgets = self.compose()
@@ -1625,22 +1666,3 @@ class Widget(DOMNode):
             self.scroll_page_up()
             return True
         return False
-
-
-def _get_rich_justify(css_align: str) -> JustifyMethod:
-    """Given the value for CSS text-align, return the analogous argument
-    for the Rich text `justify` parameter.
-
-    Args:
-        css_align: The value of text-align CSS property.
-
-    Returns:
-        JustifyMethod: The Rich JustifyMethod that corresponds to the text-align
-            value
-    """
-    assert css_align in VALID_TEXT_ALIGN
-    return {
-        "start": "left",
-        "end": "right",
-        "justify": "full",
-    }.get(css_align, css_align)

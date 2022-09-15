@@ -33,6 +33,10 @@ When you call [App.run()][textual.app.App.run] Textual puts the terminal in to a
 
 If you hit ++ctrl+c++ Textual will exit application mode and return you to the command prompt. Any content you had in the terminal prior to application mode will be restored.
 
+!!! tip
+
+    A side effect of application mode is that you may no longer be able to select and copy text in the usual way. Terminals typically offer a way to bypass this limit with a key modifier. On iTerm you can select text if you hold the ++option++ key. See the documentation for your terminal software for how to select text in application mode.
+
 ## Events
 
 Textual has an event system you can use to respond to key presses, mouse actions, and internal state changes. Event handlers are methods which are prefixed with `on_` followed by the name of the event.
@@ -41,7 +45,7 @@ One such event is the *mount* event which is sent to an application after it ent
 
 !!! info
 
-    You may have noticed we use the term "send" and "sent" in relation to event handler methods in preference to "calling". This is because Textual uses a message passing system where events are passed (or *sent*) between components. We will cover the details in [events][./events.md].
+    You may have noticed we use the term "send" and "sent" in relation to event handler methods in preference to "calling". This is because Textual uses a message passing system where events are passed (or *sent*) between components. We will cover the details in [events](./events.md).
 
 Another such event is the *key* event which is sent when the user presses a key. The following example contains handlers for both those events:
 
@@ -49,18 +53,18 @@ Another such event is the *key* event which is sent when the user presses a key.
 --8<-- "docs/examples/app/event01.py"
 ```
 
-The `on_mount` handler sets the `self.styles.background` attribute to `"darkblue"` which (as you can probably guess) turns the background blue. Since the mount event is sent immediately after entering application mode, you will see a blue screen when you run the code:
+The `on_mount` handler sets the `self.screen.styles.background` attribute to `"darkblue"` which (as you can probably guess) turns the background blue. Since the mount event is sent immediately after entering application mode, you will see a blue screen when you run this code.
 
 ```{.textual path="docs/examples/app/event01.py" hl_lines="23-25"}
 ```
 
-The key event handler (`on_key`) specifies an `event` parameter which will receive a [events.Key][textual.events.Key] instance. Every event has an associated event object which will be passed to the handler method if it is present in the method's parameter list.
+The key event handler (`on_key`) specifies an `event` parameter which will receive a [Key][textual.events.Key] instance. Every event has an associated event object which will be passed to the handler method if it is present in the method's parameter list.
 
 !!! note
 
     It is unusual (but not unprecedented) for a method's parameters to affect how it is called. Textual accomplishes this by inspecting the method prior to calling it.
 
-For some events, such as the key event, the event object contains additional information. In the case of [events.Key][textual.events.Key] it will contain the key that was pressed.
+For some events, such as the key event, the event object contains additional information. In the case of [Key][textual.events.Key] it will contain the key that was pressed.
 
 The `on_key` method above uses the `key` attribute on the Key event to change the background color if any of the keys ++0++ to ++9++ are pressed.
 
@@ -68,7 +72,7 @@ The `on_key` method above uses the `key` attribute on the Key event to change th
 
 Textual is powered by Python's [asyncio](https://docs.python.org/3/library/asyncio.html) framework which uses the `async` and `await` keywords to coordinate events.
 
-Textual knows to *await* your event handlers if they are generators (i.e. prefixed with the `async` keyword).
+Textual knows to *await* your event handlers if they are coroutines (i.e. prefixed with the `async` keyword).
 
 !!! note
 
@@ -95,7 +99,7 @@ When you run this code, Textual will *mount* the Welcome widget which contains a
 ```{.textual path="docs/examples/app/widgets01.py"}
 ```
 
-Notice the `on_button_pressed` method which handles the [Button.Pressed][textual.widgets.Button] event sent by a button contained in the Welcome widget. The handler calls [App.exit()][textual.app.App] to exit the app.
+Notice the `on_button_pressed` method which handles the [Button.Pressed][textual.widgets.Button] event sent by a button contained in the Welcome widget. The handler calls [App.exit()][textual.app.App.exit] to exit the app.
 
 ### Mounting
 
@@ -137,9 +141,7 @@ You may have noticed that we subclassed `App[str]` rather than the usual `App`.
 --8<-- "docs/examples/app/question01.py"
 ```
 
-The addition of `[str]` tells Mypy that `run()` is expected to return a string. It may also return `None` if [App.exit()][textual.app.App.exit] is called without a return value, so the return type of `run` will be `str | None`.
-
-You can change the type to match the values you intend to pass to App.exit()][textual.app.App.exit].
+The addition of `[str]` tells Mypy that `run()` is expected to return a string. It may also return `None` if [App.exit()][textual.app.App.exit] is called without a return value, so the return type of `run` will be `str | None`. Replace the `str` in `[str]` with the type of the value you intend to call the exit method with.
 
 !!! note
 
@@ -149,7 +151,7 @@ You can change the type to match the values you intend to pass to App.exit()][te
 
 Textual apps can reference [CSS](CSS.md) files which define how your app and widgets will look, while keeping your Python code free of display related code (which tends to be messy).
 
-The following chapter on [Textual CSS](CSS.md) will describe how to use CSS in detail. For now lets look at how your app references external CSS files.
+The chapter on [Textual CSS](CSS.md) describes how to use CSS in detail. For now lets look at how your app references external CSS files.
 
 The following example sets the `css_path` attribute on the app:
 
@@ -177,3 +179,7 @@ Here's the question app with classvar CSS:
 ```python title="question03.py" hl_lines="6-24"
 --8<-- "docs/examples/app/question03.py"
 ```
+
+## What's next
+
+In the following chapter we will learn more about how to apply styles to you widgets and app.

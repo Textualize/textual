@@ -150,7 +150,7 @@ class GridLayout(Layout):
                 fraction_unit,
             )
             region = (
-                Region(x, y, int(width), int(height))
+                Region(x, y, int(width + margin.width), int(height + margin.height))
                 .shrink(margin)
                 .clip_size(cell_size)
             )

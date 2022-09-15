@@ -1,5 +1,6 @@
 site_name: Textual
-site_url: https://www.textualize.io/
+site_url: https://textual.textualize.io/
+repo_url: https://github.com/textualize/textual/
 
 nav:
   - "index.md"
@@ -124,6 +125,9 @@ markdown_extensions:
         - name: textual
           class: textual
           format: !!python/name:textual._doc.format_svg
+        - name: rich
+          class: rich
+          format: !!python/name:textual._doc.rich
   - pymdownx.inlinehilite
   - pymdownx.superfences
   - pymdownx.snippets

@@ -211,7 +211,9 @@ class Screen(Widget):
                 virtual_size,
                 container_size,
             ) in self._compositor:
-                widget.size_updated(unclipped_region.size, virtual_size, container_size)
+                widget._size_updated(
+                    unclipped_region.size, virtual_size, container_size
+                )
                 if widget in send_resize:
                     widget.post_message_no_wait(
                         events.Resize(

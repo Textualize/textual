@@ -97,7 +97,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(0, 4),
-                referenced_by=ReferencedBy(name="x", location=(0, 28), length=2),
+                referenced_by=ReferencedBy(
+                    name="x", location=(0, 28), length=2, code=css
+                ),
             ),
             Token(
                 name="declaration_end",
@@ -191,7 +193,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(0, 3),
-                referenced_by=ReferencedBy(name="x", location=(0, 27), length=2),
+                referenced_by=ReferencedBy(
+                    name="x", location=(0, 27), length=2, code=css
+                ),
             ),
             Token(
                 name="declaration_end",
@@ -273,7 +277,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(0, 4),
-                referenced_by=ReferencedBy(name="x", location=(1, 4), length=2),
+                referenced_by=ReferencedBy(
+                    name="x", location=(1, 4), length=2, code=css
+                ),
             ),
             Token(
                 name="variable_value_end",
@@ -337,7 +343,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(0, 4),
-                referenced_by=ReferencedBy(name="y", location=(2, 17), length=2),
+                referenced_by=ReferencedBy(
+                    name="y", location=(2, 17), length=2, code=css
+                ),
             ),
             Token(
                 name="whitespace",
@@ -446,7 +454,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(0, 4),
-                referenced_by=ReferencedBy(name="x", location=(1, 6), length=2),
+                referenced_by=ReferencedBy(
+                    name="x", location=(1, 6), length=2, code=css
+                ),
             ),
             Token(
                 name="whitespace",
@@ -454,7 +464,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(0, 5),
-                referenced_by=ReferencedBy(name="x", location=(1, 6), length=2),
+                referenced_by=ReferencedBy(
+                    name="x", location=(1, 6), length=2, code=css
+                ),
             ),
             Token(
                 name="number",
@@ -462,7 +474,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(0, 6),
-                referenced_by=ReferencedBy(name="x", location=(1, 6), length=2),
+                referenced_by=ReferencedBy(
+                    name="x", location=(1, 6), length=2, code=css
+                ),
             ),
             Token(
                 name="whitespace",
@@ -542,7 +556,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(1, 4),
-                referenced_by=ReferencedBy(name="y", location=(2, 17), length=2),
+                referenced_by=ReferencedBy(
+                    name="y", location=(2, 17), length=2, code=css
+                ),
             ),
             Token(
                 name="whitespace",
@@ -550,7 +566,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(1, 5),
-                referenced_by=ReferencedBy(name="y", location=(2, 17), length=2),
+                referenced_by=ReferencedBy(
+                    name="y", location=(2, 17), length=2, code=css
+                ),
             ),
             Token(
                 name="number",
@@ -558,7 +576,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(0, 4),
-                referenced_by=ReferencedBy(name="y", location=(2, 17), length=2),
+                referenced_by=ReferencedBy(
+                    name="y", location=(2, 17), length=2, code=css
+                ),
             ),
             Token(
                 name="whitespace",
@@ -566,7 +586,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(0, 5),
-                referenced_by=ReferencedBy(name="y", location=(2, 17), length=2),
+                referenced_by=ReferencedBy(
+                    name="y", location=(2, 17), length=2, code=css
+                ),
             ),
             Token(
                 name="number",
@@ -574,7 +596,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(0, 6),
-                referenced_by=ReferencedBy(name="y", location=(2, 17), length=2),
+                referenced_by=ReferencedBy(
+                    name="y", location=(2, 17), length=2, code=css
+                ),
             ),
             Token(
                 name="whitespace",
@@ -582,7 +606,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(1, 8),
-                referenced_by=ReferencedBy(name="y", location=(2, 17), length=2),
+                referenced_by=ReferencedBy(
+                    name="y", location=(2, 17), length=2, code=css
+                ),
             ),
             Token(
                 name="number",
@@ -590,7 +616,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(1, 9),
-                referenced_by=ReferencedBy(name="y", location=(2, 17), length=2),
+                referenced_by=ReferencedBy(
+                    name="y", location=(2, 17), length=2, code=css
+                ),
             ),
             Token(
                 name="whitespace",
@@ -715,7 +743,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(0, 4),
-                referenced_by=ReferencedBy(name="x", location=(1, 20), length=2),
+                referenced_by=ReferencedBy(
+                    name="x", location=(1, 20), length=2, code=css
+                ),
             ),
             Token(
                 name="declaration_end",
@@ -845,7 +875,9 @@ class TestVariableReferenceSubstitution:
                 path="",
                 code=css,
                 location=(0, 7),
-                referenced_by=ReferencedBy(name="x", location=(0, 26), length=2),
+                referenced_by=ReferencedBy(
+                    name="x", location=(0, 26), length=2, code=css
+                ),
             ),
             Token(
                 name="declaration_set_end",
@@ -1134,7 +1166,9 @@ class TestParsePadding:
 
 
 class TestParseTextAlign:
-    @pytest.mark.parametrize("valid_align", ["left", "start", "center", "right", "end", "justify"])
+    @pytest.mark.parametrize(
+        "valid_align", ["left", "start", "center", "right", "end", "justify"]
+    )
     def test_text_align(self, valid_align):
         css = f"#foo {{ text-align: {valid_align} }}"
         stylesheet = Stylesheet()
