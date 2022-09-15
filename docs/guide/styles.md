@@ -191,7 +191,7 @@ When specifying `fr` units for a given dimension, Textual will divide the availa
 Let's look at an example. We will create two widgets, one with a height of `"2fr"` and one with a height of `"1fr"`.
 
 ```python title="dimensions04.py" hl_lines="24-25"
---8<-- "docs/examples/guide/styles/dimensions02.py"
+--8<-- "docs/examples/guide/styles/dimensions04.py"
 ```
 
 The total `fr` units for height is 3. The first widget will have a screen height of two thirds because its height style is set to `2fr`. The second widget's height styles is `1fr` so its screen height will be a third. Here's what that looks like.
