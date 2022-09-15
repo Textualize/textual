@@ -1,5 +1,5 @@
 site_name: Textual
-site_url: https://www.textualize.io/
+site_url: https://docs.textualize.io/
 
 nav:
   - "index.md"
