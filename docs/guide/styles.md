@@ -5,13 +5,13 @@ In this chapter will explore how you can apply styles to your application to cre
 
 ## Styles object
 
-Every Textual widget class provides a `styles` object which contains a number of attributes. These attributes tell Textual how the widget should be displayed, and how it should be positioned on the screen relative to other widgets. You can set any of these styles in your code and Textual will update the screen accordingly.
+Every Textual widget class provides a `styles` object which contains a number of attributes. These attributes tell Textual how the widget should be displayed. Setting any of these attributes will update the screen accordingly.
 
 !!! note
 
     These docs use the term *screen* to describe the contents of the terminal, which will typically be a window on your desktop.
 
-Let's look at a simple example which sets the styles on `screen` (a special widget that represents the screen).
+Let's look at a simple example which sets styles on `screen` (a special widget that represents the screen).
 
 ```python title="screen.py" hl_lines="6-7"
 --8<-- "docs/examples/guide/styles/screen.py"
@@ -41,9 +41,9 @@ The compose method stores a reference to the widget before yielding it. In the m
 
 Widgets will occupy the full width of the screen and as many lines as required to fit in the vertical direction.
 
-Note how the combined height of the widget is three rows in the terminal. This is because a border adds two rows (and two columns). If you were to remove the line that sets the border style, the widget would occupy only a single row.
+Note how the combined height of the widget is three rows in the terminal. This is because a border adds two rows (and two columns). If you were to remove the line that sets the border style, the widget would occupy a single row.
 
-Widgets will also wrap text by default. If you were to replace `"Textual"` with a long paragraph of text, the widget will expand downwards to fit.
+Widgets will wrap text by default. If you were to replace `"Textual"` with a long paragraph of text, the widget will expand downwards to fit.
 
 ## Colors
 
@@ -64,7 +64,7 @@ In addition to color names, you can also use any of the following ways of expres
 - HSL colors start with `hsl` followed by a angle between 0 and 360 and two percentage values, representing Hue, Saturation and Lightness. For example `hsl(0,100%,50%)` is intense red and `hsl(280,60%,49%)` is *dark orchid*
 
 
-The background and color styles will also accept a [color][textual.color.Color] object which is convenient if you want to create colors dynamically.
+The background and color styles will also accept a [color][textual.color.Color] object which can be used to create colors dynamically.
 
 The following example adds three widgets and sets color styles.
 
@@ -79,9 +79,9 @@ Here is the output:
 
 ### Alpha
 
-Textual (and computers in general) represents color internally as a tuple of three values for the red, green, and blue components.
+Textual represents color internally as a tuple of three values for the red, green, and blue components.
 
-Textual support a common fourth value called *alpha* which can makes a color translucent. If you set alpha on a background color, Textual will blend the background with the color beneath it. If you set alpha on the text color, then Textual will blend the text with the background color.
+Textual support a common fourth value called *alpha* which can make a color translucent. If you set alpha on a background color, Textual will blend the background with the color beneath it. If you set alpha on the text color, then Textual will blend the text with the background color.
 
 There are a few ways you can set alpha on a color in Textual.
 
@@ -95,14 +95,14 @@ The following examples shows what happens when you set alpha on background color
 --8<-- "docs/examples/guide/styles/colors02.py"
 ```
 
-We set the `background` style to a color with an alpha that ranges from 0.1 to 1. Notice that an alpha of 0.1 the background almost matches the screen, but at 1.0 it is a solid color.
+Notice that an alpha of 0.1 the background almost matches the screen, but at 1.0 it is a solid color. 
 
 ```{.textual path="docs/examples/guide/styles/colors02.py"}
 ```
 
 ## Dimensions
 
-Widgets occupy a rectangular region of the screen, which may be as small as a single character or as large as the screen. Potentially *larger* if [scrolling][#] is enabled.
+Widgets occupy a rectangular region of the screen, which may be as small as a single character or as large as the screen. Potentially *larger* if [scrolling](#) is enabled.
 
 ### Box Model
 
@@ -152,7 +152,7 @@ If you run this you will see the height of the widget now grows to accommodate t
 
 #### Units
 
-Given the size of the terminal is flexible it is often limiting to specify dimensions explicitly. Textual offers a few different *units* which allow you to specify dimensions relative to the screen or container.
+Textual offers a few different *units* which allow you to specify dimensions relative to the screen or container. Relative units can better make use of available space if the user resizes the terminal.
 
 - Percentage units are given as a string containing a number followed by a percentage symbol, e.g. `"50%"`. Setting a dimension to a percentage unit will cause it to fit in that percentage of the available space. For instance, setting width to `"50%"` will cause the width of the widget to be half the available space.
 - View units are similar to percentage units, but explicitly reference a dimension. The `vw` unit sets a dimension to a percentage of the terminal *width*, and `vh` sets a dimension to a percentage of the terminal *height*.
@@ -166,7 +166,7 @@ The following example demonstrates applying percentage units:
 --8<-- "docs/examples/guide/styles/dimensions03.py"
 ```
 
-With the width set to 50% and the height set to 80%, the widget will keep those relative dimensions when resizing the terminal window:
+With the width set to `"50%"` and the height set to `"80%"`, the widget will keep those relative dimensions when resizing the terminal window:
 
 
 === "60 x 20"
@@ -184,7 +184,7 @@ With the width set to 50% and the height set to 80%, the widget will keep those 
     ```{.textual path="docs/examples/guide/styles/dimensions03.py" columns="120" lines="40"}
     ```
 
-Percentage units are useful for widgets that occupy a portion of the screen, but it can be hard to specify some arrangements. For instance if we want to divide the screen in to thirds, we would have to set a dimension to `33.3333333333%` which is awkward. Textual supports `fr` units which is often better than percentage based units for these situations.
+Percentage units are useful for widgets that occupy a relative portion of the screen, but it can be problematic for some proportions. For instance if we want to divide the screen in to thirds, we would have to set a dimension to `33.3333333333%` which is awkward. Textual supports `fr` units which is often better than percentage based units for these situations.
 
 When specifying `fr` units for a given dimensions, Textual will divide the available space by the total `fr` units on a dimension. That space will then be divided amongst the widgets as a proportion of their individual `fr` value.
 
@@ -206,11 +206,11 @@ The same units may also be used to set limits on a dimension. The following styl
 - [min-width](../styles/min_width.md) sets a minimum width.
 - [max-width](../styles/max_width.md) sets a maximum width.
 - [min-height](../styles/min_height.md) sets a minimum height.
-- [max-width](../styles/max_width.md) sets a maximum height.
+- [max-height](../styles/max_hright.md) sets a maximum height.
 
 ### Padding
 
-Padding adds space around your content which can often aid readability. Setting the [padding](../styles/padding.md) property to an integer will add that number additional rows and columns around the content area. The following example sets padding to 2:
+Padding adds space around your content which can aid readability. Setting [padding](../styles/padding.md) to an integer will add that number additional rows and columns around the content area. The following example sets padding to 2:
 
 ```python title="padding01.py" hl_lines="22"
 --8<-- "docs/examples/guide/styles/padding01.py"
@@ -221,7 +221,7 @@ Notice the additional space around the text:
 ```{.textual path="docs/examples/guide/styles/padding01.py"}
 ```
 
-You can also set padding to a tuple of two integers which will apply padding to the top/bottom and left/right. The following example sets padding to `(2, 4)` which adds two rows to the top and bottom of the widget, and 4 columns to the left and right of the widget.
+You can also set padding to a tuple of two integers which will apply padding to the top/bottom and left/right edges. The following example sets padding to `(2, 4)` which adds two rows to the top and bottom of the widget, and 4 columns to the left and right of the widget.
 
 ```python title="padding02.py" hl_lines="22"
 --8<-- "docs/examples/guide/styles/padding02.py"
@@ -249,7 +249,7 @@ Here is the result:
 ```{.textual path="docs/examples/guide/styles/border01.py"}
 ```
 
-There are many other border types. Run the following from the command prompt to preview them,
+There are many other border types. Run the following from the command prompt to preview them.
 
 
 ```bash
@@ -277,7 +277,7 @@ When you set padding or border it reduces the size of the widget's content area.
 
 This is generally desirable when you arrange things on screen as you can add border or padding without breaking your layout. Occasionally though you may want to keep the size of the content area constant and grow the size of the widget to fit padding and border. The [box-sizing](../styles/box_sizing.md) style allows you to switch between these two modes.
 
-If you set `box_sizing` to `"content-box"` then space required for padding and border will be added to the widget dimensions. The default value of `box_sizing` is `"border-box"`. Compare the following diagram to the previous box model diagram.
+If you set `box_sizing` to `"content-box"` then space required for padding and border will be added to the widget dimensions. The default value of `box_sizing` is `"border-box"`. Compare the box model diagram for content box to the previous box model diagram.
 
 <div class="excalidraw">
 --8<-- "docs/images/styles/content_box.excalidraw.svg"
@@ -317,4 +317,4 @@ Notice how each widget has an additional two rows and columns around the border.
 
 We've covered the most fundamental styles used by Textual apps, but there are many more which you can use to customize many aspects of how your app looks. See the [Styles reference](../styles/index.md) for a comprehensive list.
 
-In the next chapter we will discuss Textual CSS which is a very powerful way of applying styles to widgets that keeps your code free of style attributes.
+In the next chapter we will discuss Textual CSS which is a powerful way of applying styles to widgets that keeps your code free of style attributes.

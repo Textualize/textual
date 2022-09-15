@@ -33,6 +33,10 @@ When you call [App.run()][textual.app.App.run] Textual puts the terminal in to a
 
 If you hit ++ctrl+c++ Textual will exit application mode and return you to the command prompt. Any content you had in the terminal prior to application mode will be restored.
 
+!!! tip
+
+    A side effect of application mode is that you may no longer be able to select and copy text in the usual way. Terminals typically offer a way to bypass this limit with a key modifier. On iTerm you can select text if you hold the ++option++ key. See the documentation for your terminal software for how to select text in application mode.
+
 ## Events
 
 Textual has an event system you can use to respond to key presses, mouse actions, and internal state changes. Event handlers are methods which are prefixed with `on_` followed by the name of the event.
@@ -68,7 +72,7 @@ The `on_key` method above uses the `key` attribute on the Key event to change th
 
 Textual is powered by Python's [asyncio](https://docs.python.org/3/library/asyncio.html) framework which uses the `async` and `await` keywords to coordinate events.
 
-Textual knows to *await* your event handlers if they are generators (i.e. prefixed with the `async` keyword).
+Textual knows to *await* your event handlers if they are coroutines (i.e. prefixed with the `async` keyword).
 
 !!! note
 
@@ -95,7 +99,7 @@ When you run this code, Textual will *mount* the Welcome widget which contains a
 ```{.textual path="docs/examples/app/widgets01.py"}
 ```
 
-Notice the `on_button_pressed` method which handles the [Button.Pressed][textual.widgets.Button] event sent by a button contained in the Welcome widget. The handler calls [App.exit()][textual.app.App] to exit the app.
+Notice the `on_button_pressed` method which handles the [Button.Pressed][textual.widgets.Button] event sent by a button contained in the Welcome widget. The handler calls [App.exit()][textual.app.App.exit] to exit the app.
 
 ### Mounting
 
@@ -137,9 +141,7 @@ You may have noticed that we subclassed `App[str]` rather than the usual `App`.
 --8<-- "docs/examples/app/question01.py"
 ```
 
-The addition of `[str]` tells Mypy that `run()` is expected to return a string. It may also return `None` if [App.exit()][textual.app.App.exit] is called without a return value, so the return type of `run` will be `str | None`.
-
-You can change the type to match the values you intend to pass to App.exit()][textual.app.App.exit].
+The addition of `[str]` tells Mypy that `run()` is expected to return a string. It may also return `None` if [App.exit()][textual.app.App.exit] is called without a return value, so the return type of `run` will be `str | None`. Replace the `str` in `[str]` with the type of the value you intend to call the exit method with.
 
 !!! note
 
@@ -149,7 +151,7 @@ You can change the type to match the values you intend to pass to App.exit()][te
 
 Textual apps can reference [CSS](CSS.md) files which define how your app and widgets will look, while keeping your Python code free of display related code (which tends to be messy).
 
-The following chapter on [Textual CSS](CSS.md) will describe how to use CSS in detail. For now lets look at how your app references external CSS files.
+The chapter on [Textual CSS](CSS.md) describes how to use CSS in detail. For now lets look at how your app references external CSS files.
 
 The following example sets the `css_path` attribute on the app:
 
