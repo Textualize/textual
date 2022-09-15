@@ -518,6 +518,8 @@ However, in this case, both `#box1` and `#box2` are assigned to layers.
 From the `layers: below above;` declaration inside `layers.css`, we can see that the layer named `above` is on top of the `below` layer.
 Since `#box1` is on the higher layer, it is drawn on top of `#box2`.
 
+[//]: # (NOTE: the example below also appears in the layers and layer style reference)
+
 === "Output"
 
     ```{.textual path="docs/examples/guide/layout/layers.py"}
