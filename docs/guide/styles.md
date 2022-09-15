@@ -102,7 +102,7 @@ Notice that an alpha of 0.1 the background almost matches the screen, but at 1.0
 
 ## Dimensions
 
-Widgets occupy a rectangular region of the screen, which may be as small as a single character or as large as the screen. Potentially *larger* if [scrolling](#) is enabled.
+Widgets occupy a rectangular region of the screen, which may be as small as a single character or as large as the screen (potentially *larger* if [scrolling](#) is enabled).
 
 ### Box Model
 
