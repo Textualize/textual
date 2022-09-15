@@ -608,8 +608,9 @@ class Compositor:
             """Return True if the widget is (literally) visible by examining various
             properties which affect whether it can be seen or not."""
             return (
-                widget.visible
-                and not widget.is_transparent
+                widget.styles.visibility != "hidden"
+                and not widget.is_scrollable
+                and widget.styles.background.is_transparent
                 and widget.styles.opacity > 0
             )
 
