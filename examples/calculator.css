@@ -4,12 +4,12 @@ Screen {
 
 #calculator {
     layout: grid;
-    grid-size: 2;
+    grid-size: 4;
     grid-gutter: 1 2;
     grid-columns: 1fr;
     grid-rows: 2fr 1fr 1fr 1fr 1fr 1fr;
     margin: 1 2;
-    min-height:25;
+    min-height: 25;
     min-width: 26;
 }
 
