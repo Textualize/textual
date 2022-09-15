@@ -59,7 +59,7 @@ class ScrollToRegion(Message, bubble=False):
 
 
 @rich.repr.auto
-class StylesUpdated(Message):
+class StylesUpdated(Message, verbose=True):
     def __init__(self, sender: MessagePump) -> None:
         super().__init__(sender)
 

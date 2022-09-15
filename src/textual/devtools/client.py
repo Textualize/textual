@@ -13,7 +13,7 @@ from typing import Type, Any, NamedTuple
 from rich.console import Console
 from rich.segment import Segment
 
-from .._log import LogGroup, LogVerbosity, LogSeverity
+from .._log import LogGroup, LogVerbosity
 
 
 class DevtoolsDependenciesMissingError(Exception):
@@ -218,7 +218,6 @@ class DevtoolsClient:
         log: DevtoolsLog,
         group: LogGroup = LogGroup.UNDEFINED,
         verbosity: LogVerbosity = LogVerbosity.NORMAL,
-        severity: LogSeverity = LogSeverity.NORMAL,
     ) -> None:
         """Queue a log to be sent to the devtools server for display.
 
@@ -239,7 +238,6 @@ class DevtoolsClient:
                 "payload": {
                     "group": group.value,
                     "verbosity": verbosity.value,
-                    "severity": severity.value,
                     "timestamp": int(time()),
                     "path": getattr(log.caller, "filename", ""),
                     "line_number": getattr(log.caller, "lineno", 0),

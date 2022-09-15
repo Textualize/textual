@@ -34,7 +34,6 @@ from rich.traceback import Traceback
 from . import (
     Logger,
     LogGroup,
-    LogSeverity,
     LogVerbosity,
     actions,
     events,
@@ -487,7 +486,6 @@ class App(Generic[ReturnType], DOMNode):
         self,
         group: LogGroup,
         verbosity: LogVerbosity,
-        severity: LogSeverity,
         *objects: Any,
         _textual_calling_frame: inspect.FrameInfo | None = None,
         **kwargs,
@@ -523,7 +521,6 @@ class App(Generic[ReturnType], DOMNode):
                     DevtoolsLog(objects, caller=_textual_calling_frame),
                     group,
                     verbosity,
-                    severity,
                 )
             else:
                 output = " ".join(str(arg) for arg in objects)
@@ -536,7 +533,6 @@ class App(Generic[ReturnType], DOMNode):
                     DevtoolsLog(output, caller=_textual_calling_frame),
                     group,
                     verbosity,
-                    severity,
                 )
         except Exception as error:
             self._handle_exception(error)
@@ -1533,7 +1529,7 @@ class App(Generic[ReturnType], DOMNode):
     def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput
     ) -> None:
-        log("[b green]SynchronizedOutput mode is supported")
+        log.system("[b green]SynchronizedOutput mode is supported")
         self._sync_available = True
 
     def _begin_update(self) -> None:

@@ -90,24 +90,29 @@ class DevConsoleLog:
         file_and_line = escape(f"{Path(self.path).name}:{self.line_number}")
         group = LogGroup(self.group).name
         time = local_time.time()
-        message = Text(
-            f":warning-emoji:  [{time}] {group}"
-            if self.severity > 0
-            else f"[{time}] {group}"
-        )
-        message.stylize("dim")
+
+        group_text = Text(group)
+        if group == "WARNING":
+            group_text.stylize("bold yellow reverse")
+        elif group == "ERROR":
+            group_text.stylize("bold red reverse")
+        else:
+            group_text.stylize("dim")
+
+        log_message = Text.assemble((f"[{time}]", "dim"), " ", group_text)
 
         table.add_row(
-            message,
+            log_message,
             Align.right(
                 Text(f"{file_and_line}", style=Style(dim=True, link=file_link))
             ),
         )
         yield table
+
         if group == "PRINT":
             yield Styled(Segments(self.segments), "bold")
         else:
-            yield Segments(self.segments)
+            yield from self.segments
 
 
 class DevConsoleNotice:
