@@ -184,7 +184,7 @@ With the width set to `"50%"` and the height set to `"80%"`, the widget will kee
     ```{.textual path="docs/examples/guide/styles/dimensions03.py" columns="120" lines="40"}
     ```
 
-Percentage units are useful for widgets that occupy a relative portion of the screen, but it can be problematic for some proportions. For instance if we want to divide the screen in to thirds, we would have to set a dimension to `33.3333333333%` which is awkward. Textual supports `fr` units which is often better than percentage based units for these situations.
+Percentage units are useful for widgets that occupy a relative portion of the screen, but they can be problematic for some proportions. For instance, if we want to divide the screen into thirds, we would have to set a dimension to `33.3333333333%` which is awkward. Textual supports `fr` units which are often better than percentage-based units for these situations.
 
 When specifying `fr` units for a given dimensions, Textual will divide the available space by the total `fr` units on a dimension. That space will then be divided amongst the widgets as a proportion of their individual `fr` value.
 
