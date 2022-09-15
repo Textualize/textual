@@ -232,7 +232,7 @@ Compare the output of this example to the previous example:
 ```{.textual path="docs/examples/guide/styles/padding02.py"}
 ```
 
-You can also set padding to a tuple of four values which applies padding to each edge individually. The first value it the padding for the top of the widget, followed by the right of the widget, then bottom, then left.
+You can also set padding to a tuple of four values which applies padding to each edge individually. The first value is the padding for the top of the widget, followed by the right of the widget, then bottom, then left.
 
 ### Border 
 
