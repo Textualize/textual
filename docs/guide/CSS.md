@@ -425,7 +425,7 @@ If we decide we want to change some aspect of our design in the future, we only 
 
 !!! note
 
-    Variables can only be used in the _values_ of a CSS declaration. You cannot, for example, refer to a variable insid ea
+    Variables can only be used in the _values_ of a CSS declaration. You cannot, for example, refer to a variable inside a selector.
 
 Variables can also refer to other variables.
 For example, say we define a variable `$success: lime;`.
