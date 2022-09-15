@@ -81,7 +81,7 @@ Here is the output:
 
 Textual represents color internally as a tuple of three values for the red, green, and blue components.
 
-Textual support a common fourth value called *alpha* which can make a color translucent. If you set alpha on a background color, Textual will blend the background with the color beneath it. If you set alpha on the text color, then Textual will blend the text with the background color.
+Textual supports a common fourth value called *alpha* which can make a color translucent. If you set alpha on a background color, Textual will blend the background with the color beneath it. If you set alpha on the text color, then Textual will blend the text with the background color.
 
 There are a few ways you can set alpha on a color in Textual.
 
