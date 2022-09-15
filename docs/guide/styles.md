@@ -64,7 +64,7 @@ In addition to color names, you can also use any of the following ways of expres
 - HSL colors start with `hsl` followed by a angle between 0 and 360 and two percentage values, representing Hue, Saturation and Lightness. For example `hsl(0,100%,50%)` is intense red and `hsl(280,60%,49%)` is *dark orchid*
 
 
-The background and color styles will also accept a [color][textual.color.Color] object which can be used to create colors dynamically.
+The background and color styles also accept a [Color][textual.color.Color] object which can be used to create colors dynamically.
 
 The following example adds three widgets and sets color styles.
 
