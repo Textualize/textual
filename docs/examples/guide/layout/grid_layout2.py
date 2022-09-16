@@ -4,7 +4,7 @@ from textual.widgets import Static
 
 class GridLayoutExample(App):
     def compose(self) -> ComposeResult:
-        yield Static("One", classes="box")
+        yield Static("Oneeee", classes="box")
         yield Static("Two", classes="box")
         yield Static("Three", classes="box")
         yield Static("Four", classes="box")

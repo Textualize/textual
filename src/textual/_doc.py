@@ -3,15 +3,16 @@ from __future__ import annotations
 import runpy
 import os
 import shlex
-from typing import cast, TYPE_CHECKING
+from typing import cast, TYPE_CHECKING, Iterable
 
 if TYPE_CHECKING:
     from textual.app import App
 
+
 # This module defines our "Custom Fences", powered by SuperFences
 # @link https://facelessuser.github.io/pymdown-extensions/extensions/superfences/#custom-fences
 def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str:
-    """A superfences formatter to insert a SVG screenshot."""
+    """A superfences formatter to insert an SVG screenshot."""
 
     try:
         cmd: list[str] = shlex.split(attrs["path"])
@@ -21,25 +22,13 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
         press = [*_press.split(",")] if _press else ["_"]
         title = attrs.get("title")
 
-        os.environ["COLUMNS"] = attrs.get("columns", "80")
-        os.environ["LINES"] = attrs.get("lines", "24")
-
         print(f"screenshotting {path!r}")
 
         cwd = os.getcwd()
         try:
-            app_vars = runpy.run_path(path)
-            if "sys" in app_vars:
-                app_vars["sys"].argv = cmd
-            app: App = cast("App", app_vars["app"])
-            app.run(
-                quit_after=5,
-                press=press or ["ctrl+c"],
-                headless=True,
-                screenshot=True,
-                screenshot_title=title,
-            )
-            svg = app._screenshot
+            rows = int(attrs.get("lines", 24))
+            columns = int(attrs.get("columns", 80))
+            svg = take_svg_screenshot(path, press, title, terminal_size=(rows, columns))
         finally:
             os.chdir(cwd)
 
@@ -52,8 +41,40 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
         traceback.print_exception(error)
 
 
+def take_svg_screenshot(
+    app_path: str,
+    press: Iterable[str] = ("_",),
+    title: str | None = None,
+    terminal_size: tuple[int, int] = (24, 80),
+) -> str:
+    rows, columns = terminal_size
+
+    os.environ["COLUMNS"] = str(columns)
+    os.environ["LINES"] = str(rows)
+
+    app_vars = runpy.run_path(app_path)
+    if "sys" in app_vars:
+        cmd: list[str] = shlex.split(app_path)
+        app_vars["sys"].argv = cmd
+
+    app: App = cast("App", app_vars["app"])
+
+    if title is None:
+        title = app.title
+
+    app.run(
+        quit_after=5,
+        press=press or ["ctrl+c"],
+        headless=True,
+        screenshot=True,
+        screenshot_title=title,
+    )
+    svg = app._screenshot
+    return svg
+
+
 def rich(source, language, css_class, options, md, attrs, **kwargs) -> str:
-    """A superfences formatter to insert a SVG screenshot."""
+    """A superfences formatter to insert an SVG screenshot."""
 
     from rich.console import Console
     import io

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Textual Snapshot Test Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row mb-4" style="background-color:#F4F8F7;">
+        <div class="col-8 p-4">
+            <h4>
+                <strong>Textual</strong> Snapshot Tests
+            </h4>
+            <span class="text-muted">Showing diffs for {{ fails }} mismatched snapshot(s)</span>
+        </div>
+        <div class="col p-4">
+            <div class="w-100 d-flex justify-content-end mb-1 mt-2">
+                <span class="text-danger">
+                    <strong>{{ diffs | length }}</strong> snapshots changed
+                </span>
+                <span class="text-muted mx-2">
+                    ·
+                </span>
+                <span class="text-success">
+                    <strong>{{ passes }}</strong> snapshots matched
+                </span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar bg-danger" role="progressbar" aria-label="Segment one"
+                     style="width: {{ fail_percentage }}%"
+                     aria-valuenow="{{ fails }}" aria-valuemin="0" aria-valuemax="{{ num_snapshot_tests }}"></div>
+                <div class="progress-bar bg-success" role="progressbar" aria-label="Segment two"
+                     style="width: {{ pass_percentage }}%"
+                     aria-valuenow="{{ num_snapshot_tests }}" aria-valuemin="0"
+                     aria-valuemax="{{ num_snapshot_tests }}"></div>
+            </div>
+        </div>
+    </div>
+
+    {% for diff in diffs %}
+        <div class="row mb-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <div>
+                            <strong class="font-monospace">
+                                {{ diff.test_name }}
+                            </strong>
+                            <span class="text-muted">({{ "%.2f"|format(diff.file_similarity) }}% similar)</span>
+                        </div>
+                        <span class="text-muted">{{ diff.path }}:{{ diff.line_number }}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                {{ diff.actual }}
+                                <div class="w-100 d-flex justify-content-center mt-1">
+                                    <span class="small">Output from test</span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                {{ diff.snapshot }}
+                                <div class="w-100 d-flex justify-content-center mt-1">
+                                    <span class="small">Historical snapshot</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="row" style="background-color:#F4F8F7;">
+        <div class="col">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <p class="card-text">If you're happy with the change, run pytest with the <span class="font-monospace text-primary">--snapshot-update</span> flag to update the snapshot.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="row">
+    <div class="col">
+        <div class="w-100 d-flex p-4 justify-content-center">
+            <p class="text-muted">Report generated at UTC {{ now }}.</p>
+        </div>
+    </div>
+</div>
+
+</div>
+
+</body>
+</html>
