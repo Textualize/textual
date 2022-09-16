@@ -922,135 +922,241 @@ class Widget(DOMNode):
             duration=duration,
         )
 
-    def scroll_home(self, *, animate: bool = True) -> bool:
+    def scroll_home(
+        self,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+    ) -> bool:
         """Scroll to home position.
 
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
+            speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
 
         Returns:
             bool: True if any scrolling was done.
         """
-        return self.scroll_to(0, 0, animate=animate, duration=1)
+        if speed is None and duration is None:
+            duration = 1.0
+        return self.scroll_to(0, 0, animate=animate, speed=speed, duration=duration)
 
-    def scroll_end(self, *, animate: bool = True) -> bool:
+    def scroll_end(
+        self,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+    ) -> bool:
         """Scroll to the end of the container.
 
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
+            speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
 
         Returns:
             bool: True if any scrolling was done.
 
         """
-        return self.scroll_to(0, self.max_scroll_y, animate=animate, duration=1)
+        if speed is None and duration is None:
+            duration = 1.0
+        return self.scroll_to(
+            0, self.max_scroll_y, animate=animate, speed=speed, duration=duration
+        )
 
-    def scroll_left(self, *, animate: bool = True) -> bool:
+    def scroll_left(
+        self,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+    ) -> bool:
         """Scroll one cell left.
 
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
+            speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
 
         Returns:
             bool: True if any scrolling was done.
 
         """
-        return self.scroll_to(x=self.scroll_target_x - 1, animate=animate)
+        return self.scroll_to(
+            x=self.scroll_target_x - 1, animate=animate, speed=speed, duration=duration
+        )
 
-    def scroll_right(self, *, animate: bool = True) -> bool:
+    def scroll_right(
+        self,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+    ) -> bool:
         """Scroll on cell right.
 
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
+            speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
 
         Returns:
             bool: True if any scrolling was done.
 
         """
-        return self.scroll_to(x=self.scroll_target_x + 1, animate=animate)
+        return self.scroll_to(
+            x=self.scroll_target_x + 1, animate=animate, speed=speed, duration=duration
+        )
 
-    def scroll_down(self, *, animate: bool = True) -> bool:
+    def scroll_down(
+        self,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+    ) -> bool:
         """Scroll one line down.
 
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
+            speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
 
         Returns:
             bool: True if any scrolling was done.
 
         """
-        return self.scroll_to(y=self.scroll_target_y + 1, animate=animate)
+        return self.scroll_to(
+            y=self.scroll_target_y + 1, animate=animate, speed=speed, duration=duration
+        )
 
-    def scroll_up(self, *, animate: bool = True) -> bool:
+    def scroll_up(
+        self,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+    ) -> bool:
         """Scroll one line up.
 
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
+            speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
 
         Returns:
             bool: True if any scrolling was done.
 
         """
-        return self.scroll_to(y=self.scroll_target_y - 1, animate=animate)
+        return self.scroll_to(
+            y=self.scroll_target_y - 1, animate=animate, speed=speed, duration=duration
+        )
 
-    def scroll_page_up(self, *, animate: bool = True) -> bool:
+    def scroll_page_up(
+        self,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+    ) -> bool:
         """Scroll one page up.
 
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
+            speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
 
         Returns:
             bool: True if any scrolling was done.
 
         """
         return self.scroll_to(
-            y=self.scroll_target_y - self.container_size.height, animate=animate
+            y=self.scroll_target_y - self.container_size.height,
+            animate=animate,
+            speed=speed,
+            duration=duration,
         )
 
-    def scroll_page_down(self, *, animate: bool = True) -> bool:
+    def scroll_page_down(
+        self,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+    ) -> bool:
         """Scroll one page down.
 
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
+            speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
 
         Returns:
             bool: True if any scrolling was done.
 
         """
         return self.scroll_to(
-            y=self.scroll_target_y + self.container_size.height, animate=animate
+            y=self.scroll_target_y + self.container_size.height,
+            animate=animate,
+            speed=speed,
+            duration=duration,
         )
 
-    def scroll_page_left(self, *, animate: bool = True) -> bool:
+    def scroll_page_left(
+        self,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+    ) -> bool:
         """Scroll one page left.
 
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
+            speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
 
         Returns:
             bool: True if any scrolling was done.
 
         """
+        if speed is None and duration is None:
+            duration = 0.3
         return self.scroll_to(
             x=self.scroll_target_x - self.container_size.width,
             animate=animate,
-            duration=0.3,
+            speed=speed,
+            duration=duration,
         )
 
-    def scroll_page_right(self, *, animate: bool = True) -> bool:
+    def scroll_page_right(
+        self,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+    ) -> bool:
         """Scroll one page right.
 
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
+            speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
 
         Returns:
             bool: True if any scrolling was done.
 
         """
+        if speed is None and duration is None:
+            duration = 0.3
         return self.scroll_to(
             x=self.scroll_target_x + self.container_size.width,
             animate=animate,
-            duration=0.3,
+            speed=speed,
+            duration=duration,
         )
 
     def scroll_to_widget(self, widget: Widget, *, animate: bool = True) -> bool:
@@ -1294,25 +1400,26 @@ class Widget(DOMNode):
             self.virtual_size = virtual_size
             self._container_size = container_size
             if self.is_scrollable:
-                self._refresh_scrollbars()
-                width, height = self.container_size
-                if self.show_vertical_scrollbar:
-                    self.vertical_scrollbar.window_virtual_size = virtual_size.height
-                    self.vertical_scrollbar.window_size = (
-                        height - self.scrollbar_size_horizontal
-                    )
-                if self.show_horizontal_scrollbar:
-                    self.horizontal_scrollbar.window_virtual_size = virtual_size.width
-                    self.horizontal_scrollbar.window_size = (
-                        width - self.scrollbar_size_vertical
-                    )
-
-                self.scroll_x = self.validate_scroll_x(self.scroll_x)
-                self.scroll_y = self.validate_scroll_y(self.scroll_y)
+                self._scroll_update(virtual_size)
                 self.refresh(layout=True)
                 self.scroll_to(self.scroll_x, self.scroll_y)
             else:
                 self.refresh()
+
+    def _scroll_update(self, virtual_size):
+        self._refresh_scrollbars()
+        width, height = self.container_size
+        if self.show_vertical_scrollbar:
+            self.vertical_scrollbar.window_virtual_size = virtual_size.height
+            self.vertical_scrollbar.window_size = (
+                height - self.scrollbar_size_horizontal
+            )
+        if self.show_horizontal_scrollbar:
+            self.horizontal_scrollbar.window_virtual_size = virtual_size.width
+            self.horizontal_scrollbar.window_size = width - self.scrollbar_size_vertical
+
+        self.scroll_x = self.validate_scroll_x(self.scroll_x)
+        self.scroll_y = self.validate_scroll_y(self.scroll_y)
 
     def _render_content(self) -> None:
         """Render all lines."""

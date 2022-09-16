@@ -4,11 +4,9 @@ We've used event handler methods in many of the examples in this guide. This cha
 
 ## Messages
 
-Events are a particular kind of *message* which is sent by Textual in response to input and other state changes. Events are reserved for use by Textual but you can create messages for the purpose of coordinating between widgets in your app.
+Events are a particular kind of *message* which is sent by Textual in response to input and other state changes. Events are reserved for use by Textual but you can also create custom messages for the purpose of coordinating between widgets in your app.
 
-More on that later, but for now keep in mind that events are also messages, and anything that is true of messages is also true of events.
-
-Event classes (as used in event handlers) extend the [Event][textual.events.Event] class, which itself extends the [Message][textual.message.Message] class. 
+More on that later, but for now keep in mind that events are also messages, and anything that is true of messages is true of events.
 
 ## Message Queue
 
@@ -20,7 +18,7 @@ This processing of messages is done within an asyncio Task which is started when
 
 If you aren't yet familiar with asyncio, you can consider this part to be black box and trust that Textual will get events to your handler methods.
 
-By way of an example, let's consider what happens if the user types "Text" in to a text input widget. When the user hits the ++t++ key it is translated in to a [key][textual.events.Key] event and sent to the widget's message queue. Ditto for ++e++, ++x++, and ++t++. 
+By way of an example, let's consider what happens if you were to type "Text" in to a text input widget. When you hit the ++t++ key it is translated in to a [key][textual.events.Key] event and sent to the widget's message queue. Ditto for ++e++, ++x++, and ++t++. 
 
 The widget's task will pick the first key event from the queue (for the ++t++ key) and call the `on_key` handler to update the display.
 
@@ -38,7 +36,30 @@ When the `on_key` method returns, Textual will get the next event off the the qu
 --8<-- "docs/images/events/queue2.excalidraw.svg"
 </div>
 
+## Creating Messages
+
 ## Handlers
+
+
+### Naming
+
+Let's explore how Textual decides what method to call for a given event.
+
+- Start with `"on_"`.
+- Add the messages namespace (if any) converted from CamelCase to snake_case plus an underscore `"_"`
+- Add the name of the class converted from CamelCase to snake_case.
+
+### Default behaviors
+
+You may be familiar with using Python's [super](https://docs.python.org/3/library/functions.html#super) function to call a function defined in a base class. You will not have to do this for Textual event handlers as Textual will automatically call any handler methods defined in the base class *after* the current handler has run. This allows textual to run any default behavior for the given event.
+
+For instance if a widget defines an `on_key` handler it will run when the user hits a key. Textual will also run `Widget.on_key`, which allows Textual to respond to any key bindings. This is generally desirable, but you can prevent Textual from running the base class handler by calling [prevent_default()][textual.message.Message.prevent_default] on the event object.
+
+For the case of key events, you may want to prevent the default behavior for keys that you handle by calling `event.prevent_default()`, but allow the base class to handle all other keys.
+
+### Bubbling
+
+
 
 
 <hr> 

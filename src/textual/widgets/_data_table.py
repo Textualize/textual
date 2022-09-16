@@ -20,7 +20,7 @@ from ..geometry import clamp, Region, Size, Spacing
 from ..reactive import Reactive
 from .._profile import timer
 from ..scroll_view import ScrollView
-from ..widget import Widget
+
 from .. import messages
 
 
@@ -155,6 +155,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def __init__(
         self,
+        *,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -521,18 +522,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             y += scroll_y
 
         return self._render_line(y, scroll_x, scroll_x + width, style)
-
-    def render_lines(self, crop: Region) -> Lines:
-        """Render the widget in to lines.
-
-        Args:
-            crop (Region): Region within visible area to.
-
-        Returns:
-            Lines: A list of list of segments
-        """
-        lines = self._styles_cache.render_widget(self, crop)
-        return lines
 
     def on_mouse_move(self, event: events.MouseMove):
         meta = event.style.meta
