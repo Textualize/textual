@@ -20,11 +20,13 @@ class TextLog(ScrollView, can_focus=True):
     """
 
     max_lines: var[int | None] = var(None)
+    min_width: var[int] = var(78)
 
     def __init__(
         self,
         *,
         max_lines: int | None = None,
+        min_width: int = 78,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -34,6 +36,7 @@ class TextLog(ScrollView, can_focus=True):
         self._line_cache: LRUCache[tuple[int, int, int, int], list[Segment]]
         self._line_cache = LRUCache(1024)
         self.max_width: int = 0
+        self.min_width = min_width
         super().__init__(name=name, id=id, classes=classes)
 
     def write(self, content: RenderableType) -> None:
@@ -43,10 +46,12 @@ class TextLog(ScrollView, can_focus=True):
             content (RenderableType): Rich renderable (or text).
         """
         console = self.app.console
-        width = self.size.width or 80
-        lines = self.app.console.render_lines(
-            content, console.options.update_width(width)
+        width = max(self.min_width, self.size.width or self.min_width)
+        segments = self.app.console.render(
+            content,
+            console.options.update_width(width).update(overflow="ignore", no_wrap=True),
         )
+        lines = list(Segment.split_lines(segments))
         self.max_width = max(
             self.max_width,
             max(sum(segment.cell_length for segment in _line) for _line in lines),
@@ -56,7 +61,7 @@ class TextLog(ScrollView, can_focus=True):
         if self.max_lines is not None:
             self.lines = self.lines[-self.max_lines :]
         self.virtual_size = Size(self.max_width, len(self.lines))
-        self.scroll_end(animate=True, speed=100)
+        self.scroll_end(animate=False, speed=100)
 
     def clear(self) -> None:
         """Clear the text log."""

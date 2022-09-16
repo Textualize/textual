@@ -234,9 +234,10 @@ class Widget(DOMNode):
         Args:
             value (bool): Show horizontal scrollbar flag.
         """
-        if not value:
-            # reset the scroll position if the scrollbar is hidden.
-            self.scroll_to(0, 0, animate=False)
+        self.refresh(layout=True)
+        # if not value:
+        #     # reset the scroll position if the scrollbar is hidden.
+        #     self.scroll_to(0, 0, animate=False)
 
     def watch_show_vertical_scrollbar(self, value: bool) -> None:
         """Watch function for show_vertical_scrollbar attribute.
@@ -244,9 +245,10 @@ class Widget(DOMNode):
         Args:
             value (bool): Show vertical scrollbar flag.
         """
-        if not value:
-            # reset the scroll position if the scrollbar is hidden.
-            self.scroll_to(0, 0, animate=False)
+        self.refresh(layout=True)
+        # if not value:
+        #     # reset the scroll position if the scrollbar is hidden.
+        #     self.scroll_to(0, 0, animate=False)
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
         """Mount child widgets (making this widget a container).
@@ -504,6 +506,11 @@ class Widget(DOMNode):
             show_vertical = True
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
+
+        if show_vertical and not show_horizontal:
+            show_horizontal = (
+                self.virtual_size.width + styles.scrollbar_size_vertical > width
+            )
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
