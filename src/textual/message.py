@@ -71,10 +71,11 @@ class Message:
 
     @property
     def handler_name(self) -> str:
+        """The name of the handler associated with this message."""
         # Property to make it read only
         return self._handler_name
 
-    def set_forwarded(self) -> None:
+    def _set_forwarded(self) -> None:
         """Mark this event as being forwarded."""
         self._forwarded = True
 
@@ -90,7 +91,8 @@ class Message:
         return False
 
     def prevent_default(self, prevent: bool = True) -> Message:
-        """Suppress the default action.
+        """Suppress the default action(s). This will prevent handlers in any base classes
+        from being called.
 
         Args:
             prevent (bool, optional): True if the default action should be suppressed,

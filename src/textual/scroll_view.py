@@ -71,6 +71,22 @@ class ScrollView(Widget):
     def watch_virtual_size(self, virtual_size: Size) -> None:
         self._scroll_update(virtual_size)
 
+    def watch_show_horizontal_scrollbar(self, value: bool) -> None:
+        """Watch function for show_horizontal_scrollbar attribute.
+
+        Args:
+            value (bool): Show horizontal scrollbar flag.
+        """
+        self.refresh(layout=True)
+
+    def watch_show_vertical_scrollbar(self, value: bool) -> None:
+        """Watch function for show_vertical_scrollbar attribute.
+
+        Args:
+            value (bool): Show vertical scrollbar flag.
+        """
+        self.refresh(layout=True)
+
     def _size_updated(
         self, size: Size, virtual_size: Size, container_size: Size
     ) -> None:

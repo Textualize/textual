@@ -234,10 +234,10 @@ class Widget(DOMNode):
         Args:
             value (bool): Show horizontal scrollbar flag.
         """
-        self.refresh(layout=True)
-        # if not value:
-        #     # reset the scroll position if the scrollbar is hidden.
-        #     self.scroll_to(0, 0, animate=False)
+        # self.refresh(layout=True)
+        if not value:
+            # reset the scroll position if the scrollbar is hidden.
+            self.scroll_to(0, 0, animate=False)
 
     def watch_show_vertical_scrollbar(self, value: bool) -> None:
         """Watch function for show_vertical_scrollbar attribute.
@@ -245,10 +245,10 @@ class Widget(DOMNode):
         Args:
             value (bool): Show vertical scrollbar flag.
         """
-        self.refresh(layout=True)
-        # if not value:
-        #     # reset the scroll position if the scrollbar is hidden.
-        #     self.scroll_to(0, 0, animate=False)
+        # self.refresh(layout=True)
+        if not value:
+            # reset the scroll position if the scrollbar is hidden.
+            self.scroll_to(0, 0, animate=False)
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
         """Mount child widgets (making this widget a container).
@@ -507,7 +507,7 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
-        if show_vertical and not show_horizontal:
+        if show_vertical and not show_horizontal and overflow_x == "auto":
             show_horizontal = (
                 self.virtual_size.width + styles.scrollbar_size_vertical > width
             )
@@ -853,7 +853,7 @@ class Widget(DOMNode):
             y (int | None, optional): Y coordinate (row) to scroll to, or None for no change. Defaults to None.
             animate (bool, optional): Animate to new scroll position. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
-            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is None.
 
         Returns:
             bool: True if the scroll position changed, otherwise False.
@@ -895,8 +895,8 @@ class Widget(DOMNode):
                 scroll_y = self.scroll_y
                 self.scroll_target_y = self.scroll_y = y
                 scrolled_y = scroll_y != self.scroll_y
-            if scrolled_x or scrolled_y:
-                self.refresh(repaint=False, layout=True)
+            # if scrolled_x or scrolled_y:
+            #     self.refresh(repaint=False, layout=False)
 
         return scrolled_x or scrolled_y
 
@@ -916,7 +916,7 @@ class Widget(DOMNode):
             y (int | None, optional): Y distance (rows) to scroll, or ``None`` for no change. Defaults to None.
             animate (bool, optional): Animate to new scroll position. Defaults to False.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
-            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is None.
 
         Returns:
             bool: True if the scroll position changed, otherwise False.
@@ -941,7 +941,7 @@ class Widget(DOMNode):
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
-            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is None.
 
         Returns:
             bool: True if any scrolling was done.
@@ -962,7 +962,7 @@ class Widget(DOMNode):
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
-            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is None.
 
         Returns:
             bool: True if any scrolling was done.
@@ -986,7 +986,7 @@ class Widget(DOMNode):
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
-            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is None.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1008,7 +1008,7 @@ class Widget(DOMNode):
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
-            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is None.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1030,7 +1030,7 @@ class Widget(DOMNode):
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
-            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is None.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1052,7 +1052,7 @@ class Widget(DOMNode):
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
-            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is None.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1074,7 +1074,7 @@ class Widget(DOMNode):
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
-            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is None.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1099,7 +1099,7 @@ class Widget(DOMNode):
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
-            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is None.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1124,7 +1124,7 @@ class Widget(DOMNode):
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
-            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is None.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1151,7 +1151,7 @@ class Widget(DOMNode):
         Args:
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
-            duration (float | None, optional): Duration of animation, if animate is True and speed is False.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is None.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1408,8 +1408,8 @@ class Widget(DOMNode):
             self._container_size = container_size
             if self.is_scrollable:
                 self._scroll_update(virtual_size)
-                self.refresh(layout=True)
-                self.scroll_to(self.scroll_x, self.scroll_y)
+                # self.refresh(layout=True)
+                # self.scroll_to(self.scroll_x, self.scroll_y)
             else:
                 self.refresh()
 
