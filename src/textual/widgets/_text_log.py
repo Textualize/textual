@@ -16,17 +16,20 @@ class TextLog(ScrollView, can_focus=True):
     TextLog{
         background: $surface;
         color: $text;       
+        overflow-y: scroll;
     }
     """
 
     max_lines: var[int | None] = var(None)
     min_width: var[int] = var(78)
+    wrap: var[bool] = var(False)
 
     def __init__(
         self,
         *,
         max_lines: int | None = None,
         min_width: int = 78,
+        wrap: bool = False,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -37,7 +40,11 @@ class TextLog(ScrollView, can_focus=True):
         self._line_cache = LRUCache(1024)
         self.max_width: int = 0
         self.min_width = min_width
+        self.wrap = wrap
         super().__init__(name=name, id=id, classes=classes)
+
+    def _on_styles_updated(self) -> None:
+        self._line_cache.clear()
 
     def write(self, content: RenderableType) -> None:
         """Write text or a rich renderable.
@@ -47,10 +54,11 @@ class TextLog(ScrollView, can_focus=True):
         """
         console = self.app.console
         width = max(self.min_width, self.size.width or self.min_width)
-        segments = self.app.console.render(
-            content,
-            console.options.update_width(width).update(overflow="ignore", no_wrap=True),
-        )
+
+        render_options = console.options.update_width(width)
+        if not self.wrap:
+            render_options = render_options.update(overflow="ignore", no_wrap=True)
+        segments = self.app.console.render(content, render_options)
         lines = list(Segment.split_lines(segments))
         self.max_width = max(
             self.max_width,
