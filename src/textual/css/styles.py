@@ -870,7 +870,7 @@ class RenderStyles(StylesBase):
 
     @property
     def animate(self) -> BoundAnimator:
-        """Get an animator to animate attributes on this widget.
+        """Get an animator to animate style.
 
         Example:
             ```python

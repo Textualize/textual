@@ -243,7 +243,6 @@ class Widget(DOMNode):
         Args:
             value (bool): Show horizontal scrollbar flag.
         """
-        # self.refresh(layout=True)
         if not value:
             # reset the scroll position if the scrollbar is hidden.
             self.scroll_to(0, 0, animate=False)
@@ -254,7 +253,6 @@ class Widget(DOMNode):
         Args:
             value (bool): Show vertical scrollbar flag.
         """
-        # self.refresh(layout=True)
         if not value:
             # reset the scroll position if the scrollbar is hidden.
             self.scroll_to(0, 0, animate=False)
@@ -1465,12 +1463,15 @@ class Widget(DOMNode):
             self._container_size = container_size
             if self.is_scrollable:
                 self._scroll_update(virtual_size)
-                # self.refresh(layout=True)
-                # self.scroll_to(self.scroll_x, self.scroll_y)
             else:
                 self.refresh()
 
-    def _scroll_update(self, virtual_size):
+    def _scroll_update(self, virtual_size: Size) -> None:
+        """Update scrollbars visiblity and dimensions.
+
+        Args:
+            virtual_size (Size): Virtual size.
+        """
         self._refresh_scrollbars()
         width, height = self.container_size
         if self.show_vertical_scrollbar:

@@ -480,22 +480,6 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._message_queue.put_nowait(message)
         return True
 
-    def forward_message(self, target: MessagePump, message: Message) -> None:
-        """Forward a message. Ensures that a message is sent after processing all messages
-        in this message pump.
-
-        Args:
-            target (MessagePump): Where to forward the message to.
-            message (Message): The message.
-        """
-
-        forward = messages.ForwardMessage(self, target, message)
-        self._message_queue.put_nowait(forward)
-        self.check_idle()
-
-    async def _on_forward_message(self, message: messages.ForwardMessage) -> None:
-        await message.target.post_message(message.message)
-
     async def _post_message_from_child(self, message: Message) -> bool:
         if self._closing or self._closed:
             return False
