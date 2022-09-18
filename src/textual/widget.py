@@ -498,8 +498,6 @@ class Widget(DOMNode):
         overflow_y = styles.overflow_y
         width, height = self.container_size
 
-        previous_show_vertical = self.show_vertical_scrollbar
-
         show_horizontal = self.show_horizontal_scrollbar
         if overflow_x == "hidden":
             show_horizontal = False
@@ -515,16 +513,6 @@ class Widget(DOMNode):
             show_vertical = True
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
-
-        # if (
-        #     not previous_show_vertical
-        #     and show_vertical
-        #     and show_horizontal
-        #     and overflow_x == "auto"
-        # ):
-        #     show_horizontal = (
-        #         self.virtual_size.width - styles.scrollbar_size_vertical > width
-        #     )
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
@@ -909,8 +897,6 @@ class Widget(DOMNode):
                 scroll_y = self.scroll_y
                 self.scroll_target_y = self.scroll_y = y
                 scrolled_y = scroll_y != self.scroll_y
-            # if scrolled_x or scrolled_y:
-            #     self.refresh(repaint=False, layout=False)
 
         return scrolled_x or scrolled_y
 
