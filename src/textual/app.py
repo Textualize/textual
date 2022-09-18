@@ -583,7 +583,7 @@ class App(Generic[ReturnType], DOMNode):
             filename (str | None, optional): Filename of SVG screenshot, or None to auto-generate
                 a filename with the date and time. Defaults to None.
             path (str, optional): Path to directory for output. Defaults to current working directory.
-            time_format(str, optional): Time format to use if filename is None. Defaults to "%Y-%m-%d %X %f".
+            time_format (str, optional): Time format to use if filename is None. Defaults to "%Y-%m-%d %X %f".
 
         Returns:
             str: Filename of screenshot.
@@ -1213,6 +1213,8 @@ class App(Generic[ReturnType], DOMNode):
         apply_stylesheet = self.stylesheet.apply
 
         for widget_id, widget in name_widgets:
+            if not isinstance(widget, Widget):
+                raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
                 if widget_id is not None:
                     widget.id = widget_id

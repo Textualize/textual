@@ -16,10 +16,6 @@ CodeBrowser.-show-tree #tree-view {
     background: $surface;    
 }
 
-CodeBrowser{
-    background: $background;    
-}
-
 DirectoryTree {
     padding-right: 1;   
     padding-right: 1;

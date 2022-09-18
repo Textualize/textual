@@ -18,6 +18,7 @@ class BorderButtons(layout.Vertical):
     BorderButtons {
         dock: left;
         width: 24;
+        overflow-y: scroll;
     }
 
     BorderButtons > Button {

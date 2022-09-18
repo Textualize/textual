@@ -30,6 +30,7 @@ from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from .reactive import Reactive
+from .render import measure
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
@@ -61,7 +62,9 @@ class RenderCache(NamedTuple):
 @rich.repr.auto
 class Widget(DOMNode):
     """
-    A Widget is the base class for Textual widgets. Extent this class (or a sub-class) when defining your own widgets.
+    A Widget is the base class for Textual widgets.
+
+    See also [static][textual.widgets._static.Static] for starting point for your own widgets.
 
     """
 
@@ -80,6 +83,7 @@ class Widget(DOMNode):
 
     can_focus: bool = False
     can_focus_children: bool = True
+    fluid = Reactive(True)
 
     def __init__(
         self,
@@ -317,6 +321,8 @@ class Widget(DOMNode):
             self.get_content_width,
             self.get_content_height,
         )
+        self.log(self)
+        self.log(box_model)
         return box_model
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
@@ -342,12 +348,10 @@ class Widget(DOMNode):
         console = self.app.console
         renderable = self.post_render(self.render())
 
-        measurement = Measurement.get(
-            console,
-            console.options.update_width(container.width),
-            renderable,
-        )
-        width = measurement.maximum
+        width = measure(console, renderable, container.width)
+        if self.fluid:
+            width = min(width, container.width)
+
         self._content_width_cache = (cache_key, width)
         return width
 
@@ -493,6 +497,8 @@ class Widget(DOMNode):
         overflow_y = styles.overflow_y
         width, height = self.container_size
 
+        previous_show_vertical = self.show_vertical_scrollbar
+
         show_horizontal = self.show_horizontal_scrollbar
         if overflow_x == "hidden":
             show_horizontal = False
@@ -509,10 +515,15 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
-        if show_vertical and not show_horizontal and overflow_x == "auto":
-            show_horizontal = (
-                self.virtual_size.width + styles.scrollbar_size_vertical > width
-            )
+        # if (
+        #     not previous_show_vertical
+        #     and show_vertical
+        #     and show_horizontal
+        #     and overflow_x == "auto"
+        # ):
+        #     show_horizontal = (
+        #         self.virtual_size.width - styles.scrollbar_size_vertical > width
+        #     )
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
@@ -1168,12 +1179,21 @@ class Widget(DOMNode):
             duration=duration,
         )
 
-    def scroll_to_widget(self, widget: Widget, *, animate: bool = True) -> bool:
+    def scroll_to_widget(
+        self,
+        widget: Widget,
+        *,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+    ) -> bool:
         """Scroll scrolling to bring a widget in to view.
 
         Args:
             widget (Widget): A descendant widget.
             animate (bool, optional): True to animate, or False to jump. Defaults to True.
+            speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is None.
 
         Returns:
             bool: True if any scrolling has occurred in any descendant, otherwise False.
@@ -1186,7 +1206,11 @@ class Widget(DOMNode):
         while isinstance(widget.parent, Widget) and widget is not self:
             container = widget.parent
             scroll_offset = container.scroll_to_region(
-                region, spacing=widget.parent.gutter, animate=animate
+                region,
+                spacing=widget.parent.gutter,
+                animate=animate,
+                speed=speed,
+                duration=duration,
             )
             if scroll_offset:
                 scrolled = True
@@ -1206,7 +1230,13 @@ class Widget(DOMNode):
         return scrolled
 
     def scroll_to_region(
-        self, region: Region, *, spacing: Spacing | None = None, animate: bool = True
+        self,
+        region: Region,
+        *,
+        spacing: Spacing | None = None,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
     ) -> Offset:
         """Scrolls a given region in to view, if required.
 
@@ -1216,8 +1246,9 @@ class Widget(DOMNode):
         Args:
             region (Region): A region that should be visible.
             spacing (Spacing | None, optional): Optional spacing around the region. Defaults to None.
-            animate (bool, optional): Enable animation. Defaults to True.
-            spacing (Spacing): Space to subtract from the window region.
+            animate (bool, optional): True to animate, or False to jump. Defaults to True.
+            speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
+            duration (float | None, optional): Duration of animation, if animate is True and speed is None.
 
         Returns:
             Offset: The distance that was scrolled.
@@ -1236,19 +1267,39 @@ class Widget(DOMNode):
             clamp(scroll_y + delta_y, 0, self.max_scroll_y) - scroll_y,
         )
         if delta:
+            if speed is None and duration is None:
+                duration = 0.2
             self.scroll_relative(
                 delta.x or None,
                 delta.y or None,
                 animate=animate if (abs(delta_y) > 1 or delta_x) else False,
-                duration=0.2,
+                speed=speed,
+                duration=duration,
             )
         return delta
 
-    def scroll_visible(self) -> None:
-        """Scroll the container to make this widget visible."""
+    def scroll_visible(
+        self,
+        animate: bool = True,
+        speed: float | None = None,
+        duration: float | None = None,
+    ) -> None:
+        """Scroll the container to make this widget visible.
+
+        Args:
+            animate (bool, optional): _description_. Defaults to True.
+            speed (float | None, optional): _description_. Defaults to None.
+            duration (float | None, optional): _description_. Defaults to None.
+        """
         parent = self.parent
         if isinstance(parent, Widget):
-            self.call_later(parent.scroll_to_widget, self)
+            self.call_later(
+                parent.scroll_to_widget,
+                self,
+                animate=animate,
+                speed=speed,
+                duration=duration,
+            )
 
     def __init_subclass__(
         cls,
@@ -1476,7 +1527,10 @@ class Widget(DOMNode):
         """
         if self._dirty_regions:
             self._render_content()
-        line = self._render_cache.lines[y]
+        try:
+            line = self._render_cache.lines[y]
+        except IndexError:
+            line = [Segment(" " * self.size.width, self.rich_style)]
         return line
 
     def render_lines(self, crop: Region) -> Lines:
@@ -1657,7 +1711,11 @@ class Widget(DOMNode):
     def _on_mount(self, event: events.Mount) -> None:
         widgets = self.compose()
         self.mount(*widgets)
-        self.screen.refresh(repaint=False, layout=True)
+        # Preset scrollbars if not automatic
+        if self.styles.overflow_y == "scroll":
+            self.show_vertical_scrollbar = True
+        if self.styles.overflow_x == "scroll":
+            self.show_horizontal_scrollbar = True
 
     def _on_leave(self, event: events.Leave) -> None:
         self.mouse_over = False
