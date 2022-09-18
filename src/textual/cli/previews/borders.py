@@ -35,8 +35,8 @@ class BorderButtons(layout.Vertical):
 class BorderApp(App):
     """Demonstrates the border styles."""
 
-    DEFAULT_CSS = """
-    Static {
+    CSS = """
+    #text {
         margin: 2 4;
         padding: 2 4;
         border: solid $secondary;
@@ -48,7 +48,7 @@ class BorderApp(App):
 
     def compose(self):
         yield BorderButtons()
-        self.text = Static(TEXT)
+        self.text = Static(TEXT, id="text")
         yield self.text
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
