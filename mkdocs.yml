@@ -100,6 +100,7 @@ nav:
     - "reference/query.md"
     - "reference/reactive.md"
     - "reference/screen.md"
+    - "reference/static.md"
     - "reference/timer.md"
     - "reference/widget.md"
 
