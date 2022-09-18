@@ -1619,6 +1619,11 @@ class Widget(DOMNode):
         return render
 
     def _render(self) -> ConsoleRenderable | RichCast:
+        """Get renderable, promoting str to text as required.
+
+        Returns:
+            ConsoleRenderable | RichCast: A renderable
+        """
         renderable = self.render()
         if isinstance(renderable, str):
             return Text(renderable)
