@@ -3,6 +3,8 @@ from textual.widgets import Static, Button
 
 
 class QuestionApp(App[str]):
+    CSS_PATH = "question02.css"
+
     def compose(self) -> ComposeResult:
         yield Static("Do you love Textual?", id="question")
         yield Button("Yes", id="yes", variant="primary")
@@ -12,7 +14,7 @@ class QuestionApp(App[str]):
         self.exit(event.button.id)
 
 
-app = QuestionApp(css_path="question02.css")
 if __name__ == "__main__":
+    app = QuestionApp()
     reply = app.run()
     print(reply)

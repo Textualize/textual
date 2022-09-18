@@ -111,7 +111,7 @@ Both Header and Footer are children of the Screen object.
 
 To further explore the DOM, we're going to build a simple dialog with a question and two buttons. To do this we're going import and use a few more builtin widgets:
 
-- `texual.layout.Container` For our top-level dialog.
+- `textual.layout.Container` For our top-level dialog.
 - `textual.layout.Horizontal` To arrange widgets left to right.
 - `textual.widgets.Static` For simple content.
 - `textual.widgets.Button` For a clickable button.
@@ -140,13 +140,13 @@ You may recognize some of the elements in the above screenshot, but it doesn't q
 
 ## CSS files
 
-To add a stylesheet we pass the path to the app with the `css_path` parameter:
+To add a stylesheet set the `CSS_PATH` classvar to a relative path:
 
-```python hl_lines="23"
+```python hl_lines="9"
 --8<-- "docs/examples/guide/dom4.py"
 ```
 
-You may have noticed that some of the constructors have additional keyword argument: `id` and `classes`. These are used by the CSS to identify parts of the DOM. We will cover these in the next section.
+You may have noticed that some of the constructors have additional keyword arguments: `id` and `classes`. These are used by the CSS to identify parts of the DOM. We will cover these in the next section.
 
 Here's the CSS file we are applying:
 

@@ -27,6 +27,6 @@ class MarginApp(App):
         self.widget2.styles.margin = 2
 
 
-app = MarginApp()
 if __name__ == "__main__":
+    app = MarginApp()
     app.run()

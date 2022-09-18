@@ -12,6 +12,8 @@ class Box(Static):
 
 
 class OffsetExample(App):
+    CSS_PATH = "offset.css"
+
     def compose(self) -> ComposeResult:
         yield layout.Container(
             Box(id="box1"),
@@ -22,6 +24,6 @@ class OffsetExample(App):
         )
 
 
-app = OffsetExample(css_path="offset.css")
 if __name__ == "__main__":
+    app = OffsetExample()
     app.run()

@@ -3,6 +3,8 @@ from textual.widgets import Static
 
 
 class GridLayoutExample(App):
+    CSS_PATH = "grid_layout4_row_col_adjust.css"
+
     def compose(self) -> ComposeResult:
         yield Static("One", classes="box")
         yield Static("Two", classes="box")
@@ -12,6 +14,6 @@ class GridLayoutExample(App):
         yield Static("Six", classes="box")
 
 
-app = GridLayoutExample(css_path="grid_layout4_row_col_adjust.css")
 if __name__ == "__main__":
+    app = GridLayoutExample()
     app.run()

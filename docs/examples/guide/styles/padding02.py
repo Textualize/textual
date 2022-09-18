@@ -22,6 +22,6 @@ class PaddingApp(App):
         self.widget.styles.padding = (2, 4)
 
 
-app = PaddingApp()
 if __name__ == "__main__":
+    app = PaddingApp()
     app.run()

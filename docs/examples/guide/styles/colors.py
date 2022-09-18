@@ -12,6 +12,6 @@ class WidgetApp(App):
         self.widget.styles.border = ("heavy", "white")
 
 
-app = WidgetApp()
 if __name__ == "__main__":
+    app = WidgetApp()
     app.run()

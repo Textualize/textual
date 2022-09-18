@@ -11,6 +11,8 @@ class Thing(Widget):
 
 
 class AlignApp(App):
+    CSS_PATH = "align.css"
+
     def on_load(self):
         self.bind("t", "log_tree")
 
@@ -23,7 +25,6 @@ class AlignApp(App):
         self.log(self.screen.tree)
 
 
-app = AlignApp(css_path="align.css")
-
 if __name__ == "__main__":
+    app = AlignApp(css_path="align.css")
     app.run()

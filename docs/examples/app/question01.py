@@ -12,7 +12,7 @@ class QuestionApp(App[str]):
         self.exit(event.button.id)
 
 
-app = QuestionApp()
 if __name__ == "__main__":
+    app = QuestionApp()
     reply = app.run()
     print(reply)

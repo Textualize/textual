@@ -4,6 +4,8 @@ from textual.widgets import Button, Static
 
 
 class ButtonsApp(App):
+    CSS_PATH = "button.css"
+
     def compose(self) -> ComposeResult:
         yield layout.Horizontal(
             layout.Vertical(
@@ -28,7 +30,6 @@ class ButtonsApp(App):
         self.app.bell()
 
 
-app = ButtonsApp(css_path="button.css")
-
 if __name__ == "__main__":
+    app = ButtonsApp()
     result = app.run()

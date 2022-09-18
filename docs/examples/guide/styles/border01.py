@@ -22,6 +22,6 @@ class BorderApp(App):
         self.widget.styles.border = ("heavy", "yellow")
 
 
-app = BorderApp()
 if __name__ == "__main__":
+    app = BorderApp()
     app.run()

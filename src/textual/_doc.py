@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-import runpy
 import os
+import runpy
 import shlex
-from typing import cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
+
+from textual._import_app import AppFail, import_app
 
 if TYPE_CHECKING:
     from textual.app import App
@@ -28,10 +30,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
 
         cwd = os.getcwd()
         try:
-            app_vars = runpy.run_path(path)
-            if "sys" in app_vars:
-                app_vars["sys"].argv = cmd
-            app: App = cast("App", app_vars["app"])
+            app = import_app(path)
             app.run(
                 quit_after=5,
                 press=press or ["ctrl+c"],
@@ -55,8 +54,9 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
 def rich(source, language, css_class, options, md, attrs, **kwargs) -> str:
     """A superfences formatter to insert a SVG screenshot."""
 
-    from rich.console import Console
     import io
+
+    from rich.console import Console
 
     title = attrs.get("title", "Rich")
 

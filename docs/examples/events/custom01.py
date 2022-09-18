@@ -43,6 +43,6 @@ class ColorApp(App):
         self.screen.styles.animate("background", message.color, duration=0.5)
 
 
-app = ColorApp()
 if __name__ == "__main__":
+    app = ColorApp()
     app.run()

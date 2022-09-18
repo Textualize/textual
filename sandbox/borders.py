@@ -61,7 +61,6 @@ class MyTestApp(App):
         self.bind("q", "quit")
 
 
-app = MyTestApp()
-
 if __name__ == "__main__":
+    app = MyTestApp()
     app.run()

@@ -15,6 +15,8 @@ from textual.widgets import Static, TextInput
 class DictionaryApp(App):
     """Searches ab dictionary API as-you-type."""
 
+    CSS_PATH = "dictionary.css"
+
     def compose(self) -> ComposeResult:
         yield TextInput(placeholder="Search for a word")
         yield Vertical(Static(id="results", fluid=False), id="results-container")
@@ -38,6 +40,6 @@ class DictionaryApp(App):
             self.query_one("#results", Static).update(JSON(results))
 
 
-app = DictionaryApp(css_path="dictionary.css")
 if __name__ == "__main__":
+    app = DictionaryApp()
     app.run()

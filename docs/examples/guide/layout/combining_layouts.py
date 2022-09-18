@@ -4,6 +4,8 @@ from textual.widgets import Static, Header
 
 
 class CombiningLayoutsExample(App):
+    CSS_PATH = "combining_layouts.css"
+
     def compose(self) -> ComposeResult:
         yield Header()
         yield layout.Container(
@@ -38,6 +40,6 @@ class CombiningLayoutsExample(App):
         print(self.stylesheet.variables["boost-lighten-2"])
 
 
-app = CombiningLayoutsExample(css_path="combining_layouts.css")
 if __name__ == "__main__":
+    app = CombiningLayoutsExample()
     app.run()

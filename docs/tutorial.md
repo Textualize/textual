@@ -200,11 +200,11 @@ While it's possible to set all styles for an app this way, it is rarely necessar
 
 Let's add a CSS file to our application.
 
-```python title="stopwatch03.py" hl_lines="37"
+```python title="stopwatch03.py" hl_lines="24"
 --8<-- "docs/examples/tutorial/stopwatch03.py"
 ```
 
-Adding the `css_path` attribute to the app constructor tells Textual to load the following file when it starts the app:
+Adding the `CSS_PATH` class variable tells Textual to load the following file when it starts the app:
 
 ```sass title="stopwatch03.css" 
 --8<-- "docs/examples/tutorial/stopwatch03.css"
@@ -423,7 +423,7 @@ To add a new child widget call `mount()` on the parent. To remove a widget, call
 
 Let's use these to implement adding and removing stopwatches to our app.
 
-```python title="stopwatch.py" hl_lines="76-77 86-90 92-96"
+```python title="stopwatch.py" hl_lines="78-79 88-92 94-98"
 --8<-- "docs/examples/tutorial/stopwatch.py"
 ```
 

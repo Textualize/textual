@@ -10,6 +10,7 @@ The first step in building a Textual app is to import the [App][textual.app.App]
 --8<-- "docs/examples/app/simple01.py"
 ```
 
+
 ### The run method
 
 To run an app we create an instance and call [run()][textual.app.App.run].
@@ -153,9 +154,9 @@ Textual apps can reference [CSS](CSS.md) files which define how your app and wid
 
 The chapter on [Textual CSS](CSS.md) describes how to use CSS in detail. For now lets look at how your app references external CSS files.
 
-The following example sets the `css_path` attribute on the app:
+The following example enables loading of CSS by adding a `CSS_PATH` class variable:
 
-```python title="question02.py" hl_lines="15"
+```python title="question02.py" hl_lines="6"
 --8<-- "docs/examples/app/question02.py"
 ```
 
@@ -172,7 +173,9 @@ When `"question02.py"` runs it will load `"question02.css"` and update the app a
 
 ### Classvar CSS
 
-While external CSS files are recommended for most applications, and enable some cool features like *live editing* (see below), you can also specify the CSS directly within the Python code. To do this you can set the `CSS` class variable on the app which contains the CSS content.
+While external CSS files are recommended for most applications, and enable some cool features like *live editing*, you can also specify the CSS directly within the Python code. 
+
+To do this set a `CSS` class variable on the app to a string containing your CSS.
 
 Here's the question app with classvar CSS:
 

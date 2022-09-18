@@ -7,6 +7,6 @@ class ScreenApp(App):
         self.screen.styles.border = ("heavy", "white")
 
 
-app = ScreenApp()
 if __name__ == "__main__":
+    app = ScreenApp()
     app.run()

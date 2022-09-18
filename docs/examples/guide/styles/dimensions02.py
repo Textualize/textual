@@ -22,6 +22,6 @@ class DimensionsApp(App):
         self.widget.styles.height = "auto"
 
 
-app = DimensionsApp()
 if __name__ == "__main__":
+    app = DimensionsApp()
     app.run()
