@@ -111,7 +111,7 @@ class EasingApp(App):
         self.animated_bar.position = value
         self.opacity_widget.styles.opacity = 1 - value / END_POSITION
 
-    def on_text_widget_base_changed(self, event: TextWidgetBase.Changed):
+    def on_text_input_changed(self, event: TextInput.Changed):
         if event.sender.id == "duration-input":
             new_duration = _try_float(event.value)
             if new_duration is not None:

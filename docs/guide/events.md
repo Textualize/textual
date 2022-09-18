@@ -110,9 +110,24 @@ The message class is defined within the widget class itself. This is not strictl
 - If reduces the amount of imports. If you were to import ColorButton, you have access to the message class via `ColorButton.Selected`.
 - It creates a namespace for the handler. So rather than `on_selected`, the handler name becomes `on_color_button_selected`. This makes it less likely that your chosen name will clash with another message.
 
+
+## Sending events
+
+In the previous example we used [emit()][textual.message_pump.MessagePump.emit] to send an event to it's parent. We could also have used [emit_no_wait()][textual.message_pump.MessagePump.emit_no_wait] for non async code. Sending messages in this way allows you to write custom widgets without needing to know in what context they will be used.
+
+There are other ways of sending (posting) messages, which you may need to use less frequently.
+
+- [post_message][textual.message_pump.MessagePump.post_message] To post a message to a particular event.
+- [post_message_no_wait][textual.message_pump.MessagePump.post_message_no_wait] The non-async version of `post_message`.
+
+
+## Message handlers
+
+Most of the logic in a Textual app will be written in message handlers. Let's explore handlers in more detail.
+
 ### Handler naming
 
-Let's recap on the scheme that Textual uses to map messages classes on to a Python method name.
+Textual uses the following scheme to map messages classes on to a Python method.
 
 - Start with `"on_"`.
 - Add the messages namespace (if any) converted from CamelCase to snake_case plus an underscore `"_"`
@@ -122,12 +137,56 @@ Let's recap on the scheme that Textual uses to map messages classes on to a Pyth
 --8<-- "docs/images/events/naming.excalidraw.svg"
 </div>
 
-### Sending events
+### Handler arguments
 
-In the previous example we used [emit()][textual.message_pump.MessagePump.emit] to send an event to it's parent. We could also have used [emit_no_wait()][textual.message_pump.MessagePump.emit_no_wait] for non async code. Sending messages in this way allows you to write custom widgets without needing to know in what context they will be used.
+Message handler methods can be written with or without a positional argument. If you add a positional argument, Textual will call the handler with the event object. The following handler (taken from custom01.py above) contains a `message` parameter. The body of the code makes use of the message to set a preset color.
 
-There are other ways of sending (posting) messages, which you may need to use less frequently.
+```python
+    def on_color_button_selected(self, message: ColorButton.Selected) -> None:
+        self.screen.styles.animate("background", message.color, duration=0.5)
+```
 
-- [post_message][textual.message_pump.MessagePump.post_message] To post a message to a particular event.
-- [post_message_no_wait][textual.message_pump.MessagePump.post_message_no_wait] The non-async version of `post_message`.
+If the body of your handler doesn't require any information in the message you can omit it from the method signature. If we just want to play a bell noise when the button is clicked, we could write our handler like this:
 
+```python
+    def on_color_button_selected(self) -> None:
+        self.app.bell()
+```
+
+This pattern is a convenience that saves writing out a parameter that may not be used.
+
+### Async handlers
+
+Method handlers may be coroutines. If you prefix your handlers with the `async` keyword, Textual will `await` them. This lets your handler use the `await` keyword for asynchronous APIs.
+
+If your event handlers are coroutines it will allow multiple events to be processed concurrently, but bear in mind an individual widget (or app) will not be able to pick up a new message from the message queue until the handler has returned. This is rarely a problem in practice; as long has handlers return within a few milliseconds the UI will remain responsive. But slow handlers might make your app hard to use.
+
+!!! info
+
+    To re-use the chef analogy, if an order comes in for beef wellington (which takes a while to cook), orders may start to pile up and customers may have to wait for their meal. The _solution_ would be to have another chef work on the wellington while the first chef picks up new orders.
+
+Network access is a common cause of slow handlers. If you try to retrieve a file from the internet, the message handler may take anything up to a few seconds to return, which would prevent the widget or app from updating during that time. The solution is to launch a new asyncio task to do the network task in the background.
+
+Let's look at an example which looks up word definitions from an [api](https://dictionaryapi.dev/) as you type.
+
+!!! note
+
+    You will need to install [httpx](https://www.python-httpx.org/) with `pip install httpx` to run this example.
+
+=== "dictionary.py"
+
+    ```python title="dictionary.py" hl_lines="26"
+    --8<-- "docs/examples/events/dictionary.py"
+    ```
+=== "dictionary.css"
+
+    ```python title="dictionary.css" 
+    --8<-- "docs/examples/events/dictionary.css"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/events/dictionary.py" press="tab,t,e,x,t,_,_,_,_,_,_,_,_,_,_,_"}
+    ```
+
+Note the highlighted line in the above code which calls `asyncio.create_task` to run coroutine in the background. Without this you would find typing in to the text box to be unresponsive.

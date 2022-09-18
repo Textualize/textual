@@ -7,8 +7,13 @@ from operator import attrgetter
 from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple, cast
 
 import rich.repr
-from rich.console import Console, ConsoleRenderable, JustifyMethod, RenderableType
-from rich.measure import Measurement
+from rich.console import (
+    Console,
+    ConsoleRenderable,
+    RichCast,
+    JustifyMethod,
+    RenderableType,
+)
 from rich.segment import Segment
 from rich.style import Style
 from rich.styled import Styled
@@ -74,7 +79,7 @@ class Widget(DOMNode):
         scrollbar-background-hover: $panel-darken-2;
         scrollbar-color: $primary-lighten-1;
         scrollbar-color-active: $warning-darken-1;
-        scrollbar-corner-color: $panel-darken-3;
+        scrollbar-corner-color: $panel-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
     }
@@ -321,8 +326,6 @@ class Widget(DOMNode):
             self.get_content_width,
             self.get_content_height,
         )
-        self.log(self)
-        self.log(box_model)
         return box_model
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
@@ -346,7 +349,7 @@ class Widget(DOMNode):
             return self._content_width_cache[1]
 
         console = self.app.console
-        renderable = self.post_render(self.render())
+        renderable = self._render()
 
         width = measure(console, renderable, container.width)
         if self.fluid:
@@ -1427,13 +1430,14 @@ class Widget(DOMNode):
         if isinstance(renderable, str):
             renderable = Text.from_markup(renderable, justify=text_justify)
 
-        rich_style = self.rich_style
-        if isinstance(renderable, Text):
-            renderable.stylize(rich_style)
-            if text_justify is not None and renderable.justify is None:
-                renderable.justify = text_justify
-        else:
-            renderable = Styled(renderable, rich_style)
+        if (
+            isinstance(renderable, Text)
+            and text_justify is not None
+            and renderable.justify is None
+        ):
+            renderable.justify = text_justify
+
+        renderable = Styled(renderable, self.rich_style)
 
         return renderable
 
@@ -1612,6 +1616,12 @@ class Widget(DOMNode):
         """
         render = "" if self.is_container else self.css_identifier_styled
         return render
+
+    def _render(self) -> ConsoleRenderable | RichCast:
+        renderable = self.render()
+        if isinstance(renderable, str):
+            return Text(renderable)
+        return renderable
 
     async def action(self, action: str) -> None:
         """Perform a given action, with this widget as the default namespace.

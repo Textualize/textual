@@ -1305,21 +1305,6 @@ class App(Generic[ReturnType], DOMNode):
                 self._end_update()
             console.file.flush()
 
-    def measure(self, renderable: RenderableType, max_width=100_000) -> int:
-        """Get the optimal width for a widget or renderable.
-
-        Args:
-            renderable (RenderableType): A renderable (including Widget)
-            max_width ([type], optional): Maximum width. Defaults to 100_000.
-
-        Returns:
-            int: Number of cells required to render.
-        """
-        measurement = Measurement.get(
-            self.console, self.console.options.update(max_width=max_width), renderable
-        )
-        return measurement.maximum
-
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given coordinates.
 

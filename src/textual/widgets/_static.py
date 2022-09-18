@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from rich.console import RenderableType
 from rich.protocol import is_renderable
+from rich.text import Text
 
+from ..reactive import reactive
 from ..errors import RenderError
 from ..widget import Widget
 
@@ -41,20 +43,39 @@ class Static(Widget):
     }
     """
 
+    fluid = reactive(True, layout=True)
+    _renderable: RenderableType
+
     def __init__(
         self,
         renderable: RenderableType = "",
         *,
         fluid: bool = True,
+        markup: bool = True,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
 
         super().__init__(name=name, id=id, classes=classes)
-        self._renderable = renderable
         self.fluid = fluid
+        self.markup = markup
+        self.renderable = renderable
         _check_renderable(renderable)
+
+    @property
+    def renderable(self) -> RenderableType:
+        return self._renderable or ""
+
+    @renderable.setter
+    def renderable(self, renderable: RenderableType) -> None:
+        if isinstance(renderable, str):
+            if self.markup:
+                self._renderable = Text.from_markup(renderable)
+            else:
+                self._renderable = Text(renderable)
+        else:
+            self._renderable = renderable
 
     def render(self) -> RenderableType:
         """Get a rich renderable for the widget's content.
@@ -64,12 +85,12 @@ class Static(Widget):
         """
         return self._renderable
 
-    def update(self, renderable: RenderableType) -> None:
+    def update(self, renderable: RenderableType = "", home: bool = False) -> None:
         """Update the widget contents.
 
         Args:
             renderable (RenderableType): A new rich renderable.
         """
         _check_renderable(renderable)
-        self._renderable = renderable
+        self.renderable = renderable
         self.refresh(layout=True)
