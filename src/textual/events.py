@@ -26,9 +26,6 @@ class Event(Message):
         return
         yield
 
-    def __init_subclass__(cls, bubble: bool = True, verbose: bool = False) -> None:
-        super().__init_subclass__(bubble=bubble, verbose=verbose)
-
 
 @rich.repr.auto
 class Callback(Event, bubble=False, verbose=True):

@@ -30,7 +30,7 @@ class Update(Message, verbose=True):
 
     def can_replace(self, message: Message) -> bool:
         # Update messages can replace update for the same widget
-        return isinstance(message, Update) and self == message
+        return isinstance(message, Update) and self.widget == message.widget
 
 
 @rich.repr.auto
@@ -59,7 +59,7 @@ class ScrollToRegion(Message, bubble=False):
 
 
 @rich.repr.auto
-class StylesUpdated(Message):
+class StylesUpdated(Message, verbose=True):
     def __init__(self, sender: MessagePump) -> None:
         super().__init__(sender)
 
@@ -79,3 +79,18 @@ class TerminalSupportsSynchronizedOutput(Message):
     Used to make the App aware that the terminal emulator supports synchronised output.
     @link https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036
     """
+
+
+@rich.repr.auto
+class ForwardMessage(Message):
+    def __init__(
+        self, sender: MessagePump, target: MessagePump, message: Message
+    ) -> None:
+        super().__init__(sender)
+        self.target = target
+        self.message = message
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield from super().__rich_repr__()
+        yield "target", self.target
+        yield "message", self.message

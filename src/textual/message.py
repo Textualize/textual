@@ -6,7 +6,7 @@ import rich.repr
 
 from . import _clock
 from .case import camel_to_snake
-from ._types import MessageTarget
+from ._types import MessageTarget as MessageTarget
 
 
 @rich.repr.auto
@@ -36,7 +36,7 @@ class Message:
 
     def __init__(self, sender: MessageTarget) -> None:
         self.sender = sender
-        self.name = camel_to_snake(self.__class__.__name__.replace("Message", ""))
+        self.name = camel_to_snake(self.__class__.__name__)
         self.time = _clock.get_time_no_wait()
         self._forwarded = False
         self._no_default_action = False

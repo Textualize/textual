@@ -56,7 +56,6 @@ class Footer(Widget):
         watch(self.app, "focused", self._focus_changed)
 
     def _focus_changed(self, focused: Widget | None) -> None:
-        self.log("FOCUS CHANGED", focused)
         self._key_text = None
         self.refresh()
 

@@ -6,7 +6,7 @@ By the end of this page you should have a solid understanding of app development
 
 !!! quote
 
-    I've always thought the secret sauce in making a popular framework is for it to be fun.
+    If you want people to build things, make it fun.
     
     &mdash; **Will McGugan** (creator of Rich and Textual)
 
@@ -329,7 +329,7 @@ The `on_button_pressed` method is an *event handler*. Event handlers are methods
 
 If you run "stopwatch04.py" now you will be able to toggle between the two states by clicking the first button:
 
-```{.textual path="docs/examples/tutorial/stopwatch04.py" title="stopwatch04.py" press="tab,tab,tab,enter,_,_"}
+```{.textual path="docs/examples/tutorial/stopwatch04.py" title="stopwatch04.py" press="tab,tab,tab,_,enter,_,_,_"}
 ```
 
 ## Reactive attributes

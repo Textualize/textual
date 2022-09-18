@@ -108,8 +108,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     DEFAULT_CSS = """
     DataTable {
-        background: $surface;
-        color: $text;       
+
+        color: $text;           
     }
     DataTable > .datatable--header {        
         text-style: bold;
