@@ -3,7 +3,7 @@ from textual.app import App, ComposeResult
 from textual.widgets import Button, Static
 
 
-class ButtonsApp(App):
+class ButtonsApp(App[str]):
     CSS_PATH = "button.css"
 
     def compose(self) -> ComposeResult:
@@ -26,10 +26,11 @@ class ButtonsApp(App):
             ),
         )
 
-    def on_button_pressed(self, _event: Button.Pressed) -> None:
+    def on_button_pressed(self, event: Button.Pressed) -> None:
         self.app.bell()
+        self.exit(str(event.button))
 
 
 if __name__ == "__main__":
     app = ButtonsApp()
-    result = app.run()
+    print(app.run())
