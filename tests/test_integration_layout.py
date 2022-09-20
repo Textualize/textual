@@ -271,12 +271,6 @@ async def test_border_edge_types_impact_on_widget_size(
             ("overflow: auto", "scrollbar-size-horizontal: 3"),
             Size(20 - SCROLL_V_SIZE, 20 - 3),
         ],
-        # scrollbar needed only vertically, custom scrollbar size
-        [
-            Size(20, 30),
-            ("overflow: auto", "scrollbar-size: 3 3"),
-            Size(20 - 3, 20),
-        ],
         # scrollbar needed only horizontally, custom scrollbar size
         [
             Size(30, 20),
@@ -314,6 +308,7 @@ async def test_scrollbar_size_impact_on_the_layout(
         )
 
     large_widget = LargeWidget()
+    large_widget.expand = False
     container = LargeWidgetContainer(large_widget, id="large-widget-container")
 
     class MyTestApp(AppTest):
