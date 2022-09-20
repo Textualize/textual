@@ -114,7 +114,7 @@ In the previous example we used [emit()][textual.message_pump.MessagePump.emit] 
 
 There are other ways of sending (posting) messages, which you may need to use less frequently.
 
-- [post_message][textual.message_pump.MessagePump.post_message] To post a message to a particular event.
+- [post_message][textual.message_pump.MessagePump.post_message] To post a message to a particular widget.
 - [post_message_no_wait][textual.message_pump.MessagePump.post_message_no_wait] The non-async version of `post_message`.
 
 
