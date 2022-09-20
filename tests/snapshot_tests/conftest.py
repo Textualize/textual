@@ -15,6 +15,7 @@ from _pytest.terminal import TerminalReporter
 from jinja2 import Template
 from rich.console import Console
 from rich.panel import Panel
+from syrupy import SnapshotAssertion
 
 from textual._doc import take_svg_screenshot
 
@@ -24,8 +25,13 @@ snapshot_pass = pytest.StashKey[bool]()
 
 
 @pytest.fixture
-def snap_compare(snapshot, request: FixtureRequest) -> Callable[[str], bool]:
-    def compare(app_path: str, snapshot) -> bool:
+def snap_compare(snapshot: SnapshotAssertion, request: FixtureRequest) -> Callable[[str], bool]:
+    """
+    This fixture returns a function which can be used to compare the output of a Textual
+    app with the output of the same app in the past. This is snapshot testing, and it
+    used to catch regressions in output.
+    """
+    def compare(app_path: str, snapshot: SnapshotAssertion) -> bool:
         node = request.node
         actual_screenshot = take_svg_screenshot(app_path)
         result = snapshot == actual_screenshot
