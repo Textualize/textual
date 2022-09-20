@@ -19,10 +19,9 @@ def test_simple_text_opacity(text):
     )
 
 
-def test_value_zero_sets_foreground_color_to_background_color(text):
-    foreground = background = "0;255;0"
+def test_value_zero_doesnt_render_the_text(text):
     assert render(TextOpacity(text, opacity=0)) == (
-        f"\x1b[38;2;{foreground};48;2;{background}mHello, world!{STOP}"
+        f"\x1b[48;2;0;255;0m             {STOP}"
     )
 
 

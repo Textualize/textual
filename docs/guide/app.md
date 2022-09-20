@@ -84,7 +84,7 @@ Widgets are self-contained components responsible for generating the output for 
 
 Widgets can be as simple as a piece of text, a button, or a fully-fledge component like a text editor or file browser (which may contain widgets of their own).
 
-### Composing 
+### Composing
 
 To add widgets to your app implement a [`compose()`][textual.app.App.compose] method which should return a iterable of Widget instances. A list would work, but it is convenient to yield widgets, making the method a *generator*.
 
@@ -107,7 +107,7 @@ While composing is the preferred way of adding widgets when your app starts it i
 
 Here's an app which adds the welcome widget in response to any key press:
 
-```python title="widgets02.py" 
+```python title="widgets02.py"
 --8<-- "docs/examples/app/widgets02.py"
 ```
 
@@ -122,7 +122,7 @@ An app will run until you call [App.exit()][textual.app.App.exit] which will exi
 
 The exit method will also accept an optional positional value to be returned by `run()`. The following example uses this to return the `id` (identifier) of a clicked button.
 
-```python title="question01.py" 
+```python title="question01.py"
 --8<-- "docs/examples/app/question01.py"
 ```
 
@@ -161,7 +161,7 @@ The following example sets the `css_path` attribute on the app:
 
 If the path is relative (as it is above) then it is taken as relative to where the app is defined. Hence this example references `"question01.css"` in the same directory as the Python code. Here is that CSS file:
 
-```sass title="question02.css" 
+```sass title="question02.css"
 --8<-- "docs/examples/app/question02.css"
 ```
 
