@@ -174,8 +174,6 @@ class ColorSystem:
         for name, color in COLORS:
             is_dark_shade = dark and name in DARK_SHADES
             spread = luminosity_spread
-            if name == "panel":
-                spread /= 2
             for shade_name, luminosity_delta in luminosity_range(spread):
                 if is_dark_shade:
                     dark_background = background.blend(color, 0.15)
@@ -188,8 +186,8 @@ class ColorSystem:
                     colors[f"{name}{shade_name}"] = shade_color.hex
 
         colors["text"] = "auto 95%"
-        colors["text-muted"] = "auto 80%"
-        colors["text-disabled"] = "auto 60%"
+        colors["text-muted"] = "auto 50%"
+        colors["text-disabled"] = "auto 30%"
 
         return colors
 

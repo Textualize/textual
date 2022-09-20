@@ -20,6 +20,7 @@ __all__ = [
     "Pretty",
     "Static",
     "TextInput",
+    "TextLog",
     "TreeControl",
     "Welcome",
 ]

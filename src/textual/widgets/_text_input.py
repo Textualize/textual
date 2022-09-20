@@ -86,6 +86,8 @@ class TextWidgetBase(Widget):
         return display_text
 
     class Changed(Message, bubble=True):
+        namespace = "text_input"
+
         def __init__(self, sender: MessageTarget, value: str) -> None:
             """Message posted when the user changes the value in a TextInput
 
@@ -116,8 +118,16 @@ class TextInput(TextWidgetBase, can_focus=True):
         padding: 1;
         background: $surface;
         content-align: left middle;
+        color: $text;
+    }
+    TextInput .text-input--placeholder {
+        color: $text-muted;
     }
     """
+
+    COMPONENT_CLASSES = {
+        "text-input--placeholder",
+    }
 
     def __init__(
         self,
@@ -269,7 +279,10 @@ class TextInput(TextWidgetBase, can_focus=True):
         else:
             # The user has not entered text - show the placeholder
             display_text = Text(
-                self.placeholder, "dim", no_wrap=True, overflow="ignore"
+                self.placeholder,
+                self.get_component_rich_style("text-input--placeholder"),
+                no_wrap=True,
+                overflow="ignore",
             )
             if show_cursor:
                 display_text = self._apply_cursor_to_text(display_text, 0)

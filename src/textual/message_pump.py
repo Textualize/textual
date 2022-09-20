@@ -364,7 +364,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         if isinstance(message, Event):
             await self.on_event(message)
         else:
-            await self.on_message(message)
+            await self._on_message(message)
 
     def _get_dispatch_methods(
         self, method_name: str, message: Message
@@ -390,9 +390,9 @@ class MessagePump(metaclass=MessagePumpMeta):
         Args:
             event (events.Event): An Event object.
         """
-        await self.on_message(event)
+        await self._on_message(event)
 
-    async def on_message(self, message: Message) -> None:
+    async def _on_message(self, message: Message) -> None:
         """Called to process a message.
 
         Args:
@@ -444,7 +444,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     # TODO: This may not be needed, or may only be needed by the timer
     # Consider removing or making private
-    async def post_priority_message(self, message: Message) -> bool:
+    async def _post_priority_message(self, message: Message) -> bool:
         """Post a "priority" messages which will be processes prior to regular messages.
 
         Note that you should rarely need this in a regular app. It exists primarily to allow
@@ -494,6 +494,14 @@ class MessagePump(metaclass=MessagePumpMeta):
         await invoke(event.callback)
 
     def emit_no_wait(self, message: Message) -> bool:
+        """Send a message to the _parent_, non async version.
+
+        Args:
+            message (Message): A message object.
+
+        Returns:
+            bool: True if the message was posted successfully.
+        """
         if self._parent:
             return self._parent._post_message_from_child_no_wait(message)
         else:
@@ -506,7 +514,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             message (Message): A message object.
 
         Returns:
-            bool: _True if the message was posted successfully.
+            bool: True if the message was posted successfully.
         """
         if self._parent:
             return await self._parent._post_message_from_child(message)

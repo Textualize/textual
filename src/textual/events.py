@@ -20,12 +20,11 @@ if TYPE_CHECKING:
 
 @rich.repr.auto
 class Event(Message):
+    """The base class for all events."""
+
     def __rich_repr__(self) -> rich.repr.Result:
         return
         yield
-
-    def __init_subclass__(cls, bubble: bool = True, verbose: bool = False) -> None:
-        super().__init_subclass__(bubble=bubble, verbose=verbose)
 
 
 @rich.repr.auto

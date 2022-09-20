@@ -73,7 +73,7 @@ def rich(source, language, css_class, options, md, attrs, **kwargs) -> str:
         exec(source, globals)
     except Exception:
         error_console.print_exception()
-        console.bell()
+        # console.bell()
 
     if "output" in globals:
         console.print(globals["output"])
