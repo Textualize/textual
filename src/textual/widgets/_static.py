@@ -31,7 +31,8 @@ class Static(Widget):
     Args:
         renderable (RenderableType, optional): A Rich renderable, or string containing console markup.
             Defaults to "".
-        fluid (bool, optional): Enable fluid content (adapts to size of window). Defaults to True.
+        expand (bool, optional): Rich renderable may expand beyond optimal. Defaults to False.
+        shrink (bool, optional): Rich renderable may shrink below optional. Defaults to False.
         name (str | None, optional): Name of widget. Defaults to None.
         id (str | None, optional): ID of Widget. Defaults to None.
         classes (str | None, optional): Space separated list of class names. Defaults to None.
@@ -43,14 +44,16 @@ class Static(Widget):
     }
     """
 
-    fluid = reactive(True, layout=True)
+    expand = reactive(False)
+    shrink = reactive(False)
     _renderable: RenderableType
 
     def __init__(
         self,
         renderable: RenderableType = "",
         *,
-        fluid: bool = True,
+        expand: bool = False,
+        shrink: bool = False,
         markup: bool = True,
         name: str | None = None,
         id: str | None = None,
@@ -58,7 +61,8 @@ class Static(Widget):
     ) -> None:
 
         super().__init__(name=name, id=id, classes=classes)
-        self.fluid = fluid
+        self.expand = expand
+        self.shrink = shrink
         self.markup = markup
         self.renderable = renderable
         _check_renderable(renderable)

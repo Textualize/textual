@@ -18,9 +18,12 @@ CodeBrowser.-show-tree #tree-view {
 
 DirectoryTree {
     padding-right: 1;   
-    padding-right: 1;
 }
 
+#code-view {
+    overflow: auto scroll;      
+    
+}
 #code {
     width: auto;
 }

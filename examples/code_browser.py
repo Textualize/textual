@@ -30,7 +30,7 @@ class CodeBrowser(App):
         yield Header()
         yield Container(
             Vertical(DirectoryTree(path), id="tree-view"),
-            Vertical(Static(id="code"), id="code-view"),
+            Vertical(Static(id="code", expand=True), id="code-view"),
         )
         yield Footer()
 
@@ -41,7 +41,7 @@ class CodeBrowser(App):
             syntax = Syntax.from_path(
                 event.path,
                 line_numbers=True,
-                word_wrap=True,
+                word_wrap=False,
                 indent_guides=True,
                 theme="github-dark",
             )
@@ -54,6 +54,7 @@ class CodeBrowser(App):
             self.sub_title = event.path
 
     def action_toggle_files(self) -> None:
+        """Called in response to key binding."""
         self.show_tree = not self.show_tree
 
 

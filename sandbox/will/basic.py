@@ -104,8 +104,10 @@ class Success(Static):
         return Text("This is a success  message", justify="center")
 
 
-class BasicApp(App, css_path="basic.css"):
+class BasicApp(App):
     """A basic app demonstrating CSS"""
+
+    CSS_PATH = "basic.css"
 
     def on_load(self):
         """Bind keys here."""
