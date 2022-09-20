@@ -138,7 +138,7 @@ def pytest_terminal_summary(
     .. versionadded:: 4.2
         The ``config`` parameter.
     """
-    diffs = config._textual_snapshots
+    diffs = getattr(config, "_textual_snapshots", None)
     if diffs:
         snapshot_report_location = config._textual_snapshot_html_report
         console = Console()
