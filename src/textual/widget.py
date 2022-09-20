@@ -87,8 +87,13 @@ class Widget(DOMNode):
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
     can_focus: bool = False
+    """Widget may receive focus."""
     can_focus_children: bool = True
-    fluid = Reactive(True)
+    """Widget's children may receive focus."""
+    expand = Reactive(True)
+    """Rich renderable may expand."""
+    shrink = Reactive(True)
+    """Rich renderable may shrink."""
 
     def __init__(
         self,
@@ -237,26 +242,6 @@ class Widget(DOMNode):
         """Clear arrangement cache, forcing a new arrange operation."""
         self._arrangement = None
 
-    def watch_show_horizontal_scrollbar(self, value: bool) -> None:
-        """Watch function for show_horizontal_scrollbar attribute.
-
-        Args:
-            value (bool): Show horizontal scrollbar flag.
-        """
-        if not value:
-            # reset the scroll position if the scrollbar is hidden.
-            self.scroll_to(0, 0, animate=False)
-
-    def watch_show_vertical_scrollbar(self, value: bool) -> None:
-        """Watch function for show_vertical_scrollbar attribute.
-
-        Args:
-            value (bool): Show vertical scrollbar flag.
-        """
-        if not value:
-            # reset the scroll position if the scrollbar is hidden.
-            self.scroll_to(0, 0, animate=False)
-
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
         """Mount child widgets (making this widget a container).
 
@@ -350,7 +335,9 @@ class Widget(DOMNode):
         renderable = self._render()
 
         width = measure(console, renderable, container.width)
-        if self.fluid:
+        if self.expand:
+            width = max(container.width, width)
+        if self.shrink:
             width = min(width, container.width)
 
         self._content_width_cache = (cache_key, width)
@@ -513,6 +500,11 @@ class Widget(DOMNode):
             show_vertical = True
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
+
+        if overflow_x == "auto" and show_vertical and not show_horizontal:
+            show_horizontal = (
+                self.virtual_size.width + styles.scrollbar_size_vertical > width
+            )
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical

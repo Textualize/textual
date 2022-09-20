@@ -13,9 +13,10 @@ def measure(console: Console, renderable: RenderableType, default: int) -> int:
     Returns:
         int: Width in cells
     """
+    width = default
     renderable = rich_cast(renderable)
     get_console_width = getattr(renderable, "__rich_measure__", None)
     if get_console_width is not None:
-        render_width = get_console_width(console, console.options).normalize().maximum
-        return max(0, render_width)
-    return default
+        render_width = get_console_width(console, console.options).maximum
+        width = max(0, render_width)
+    return width

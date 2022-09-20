@@ -18,6 +18,7 @@ App > Screen {
   layers: base sidebar;  
   layout: vertical;
   overflow: hidden;
+
 }
 
 #tree-container {
