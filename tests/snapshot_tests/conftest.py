@@ -5,10 +5,10 @@ from functools import partial
 from operator import attrgetter
 from os import PathLike
 from pathlib import Path
-from typing import Union, List, Optional, Any, Callable
+from typing import Union, List, Optional, Callable
 
 import pytest
-from _pytest.fixtures import FixtureDef, SubRequest, FixtureRequest
+from _pytest.fixtures import FixtureRequest
 from jinja2 import Template
 from rich.console import Console
 from rich.panel import Panel
@@ -49,20 +49,6 @@ class SvgSnapshotDiff:
     line_number: int
 
 
-#
-# def pytest_runtestloop(session: "Session") -> Optional[object]:
-
-@pytest.hookimpl(hookwrapper=True)
-def pytest_pyfunc_call(pyfuncitem: "pytest.Function") -> Optional[object]:
-    """Call underlying test function.
-
-    Stops at first non-None result, see :ref:`firstresult`.
-    """
-    # Before
-    yield
-    # After
-
-
 def pytest_runtest_teardown(item: pytest.Item, nextitem: Optional[pytest.Item]) -> None:
     """Called to perform the teardown phase for a test item.
 
@@ -77,26 +63,6 @@ def pytest_runtest_teardown(item: pytest.Item, nextitem: Optional[pytest.Item]) 
         calling just enough finalizers so that nextitem only needs to call
         setup functions.
     """
-
-
-@pytest.hookimpl(hookwrapper=True)
-def pytest_fixture_setup(
-    fixturedef: FixtureDef[Any], request: SubRequest
-) -> Optional[object]:
-    """Perform fixture setup execution.
-
-    :returns: The return value of the call to the fixture function.
-
-    Stops at first non-None result, see :ref:`firstresult`.
-
-    .. note::
-        If the fixture function returns None, other implementations of
-        this hook function will continue to be called, according to the
-        behavior of the :ref:`firstresult` option.
-    """
-    value = yield
-    value = value.get_result()
-    value = repr(value)
 
 
 def pytest_sessionfinish(
@@ -120,7 +86,9 @@ def pytest_sessionfinish(
                 SvgSnapshotDiff(
                     snapshot=str(snapshot_svg),
                     actual=str(actual_svg),
-                    file_similarity=100 * difflib.SequenceMatcher(a=str(snapshot_svg), b=str(actual_svg)).ratio(),
+                    file_similarity=100 * difflib.SequenceMatcher(a=str(snapshot_svg),
+                                                                  b=str(
+                                                                      actual_svg)).ratio(),
                     test_name=name,
                     path=path,
                     line_number=line_index + 1,
@@ -143,8 +111,8 @@ def pytest_sessionfinish(
         diffs=diffs,
         passes=num_snapshots_passing,
         fails=num_fails,
-        pass_percentage=100*(num_snapshots_passing/num_snapshot_tests),
-        fail_percentage=100*(num_fails/num_snapshot_tests),
+        pass_percentage=100 * (num_snapshots_passing / (num_snapshot_tests + 1)),
+        fail_percentage=100 * (num_fails / (num_snapshot_tests + 1)),
         num_snapshot_tests=num_snapshot_tests,
         now=datetime.utcnow()
     )
