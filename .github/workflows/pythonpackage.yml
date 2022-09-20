@@ -43,3 +43,8 @@ jobs:
         run: |
           source $VENV
           python e2e_tests/sandbox_basic_test.py basic 2.0
+      - name: Upload snapshot report
+        uses: actions/upload-artifact@v3
+        with:
+          name: snapshot-report-textual
+          path: tests/snapshot_tests/output/snapshot_report.html

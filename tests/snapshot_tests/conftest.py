@@ -1,4 +1,6 @@
 import difflib
+import os
+import sys
 from dataclasses import dataclass
 from datetime import datetime
 from functools import partial
@@ -92,7 +94,9 @@ def pytest_sessionfinish(
                 )
             )
 
-    if diffs:
+    # TODO: Skipping writing artifacts on Windows on CI for now
+    is_windows_ci = sys.platform == "win32" and os.getenv("CI") is not None
+    if diffs and not is_windows_ci:
         diff_sort_key = attrgetter("file_similarity")
         diffs = list(reversed(sorted(diffs, key=diff_sort_key)))
 
