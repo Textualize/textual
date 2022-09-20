@@ -104,7 +104,9 @@ def pytest_sessionfinish(
         snapshot_template_path = (
             conftest_path.parent / "snapshot_report_template.jinja2"
         )
-        snapshot_report_path = conftest_path.parent / "output/snapshot_report.html"
+        snapshot_report_path_dir = conftest_path.parent / "output"
+        snapshot_report_path_dir.mkdir(parents=True, exist_ok=True)
+        snapshot_report_path = snapshot_report_path_dir / "snapshot_report.html"
 
         template = Template(snapshot_template_path.read_text())
 
