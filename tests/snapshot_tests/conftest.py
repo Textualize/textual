@@ -112,8 +112,8 @@ def pytest_sessionfinish(
             diffs=diffs,
             passes=num_snapshots_passing,
             fails=num_fails,
-            pass_percentage=100 * (num_snapshots_passing / (num_snapshot_tests + 1)),
-            fail_percentage=100 * (num_fails / (num_snapshot_tests + 1)),
+            pass_percentage=100 * (num_snapshots_passing / max(num_snapshot_tests, 1)),
+            fail_percentage=100 * (num_fails / max(num_snapshot_tests, 1)),
             num_snapshot_tests=num_snapshot_tests,
             now=datetime.utcnow()
         )
