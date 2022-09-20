@@ -6,6 +6,8 @@ QUESTION = "Do you want to learn about Textual CSS?"
 
 
 class ExampleApp(App):
+    CSS_PATH = "dom4.css"
+
     def compose(self) -> ComposeResult:
         yield Header()
         yield Footer()
@@ -20,4 +22,6 @@ class ExampleApp(App):
         )
 
 
-app = ExampleApp(css_path="dom4.css")
+if __name__ == "__main__":
+    app = ExampleApp()
+    app.run()

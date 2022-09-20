@@ -25,6 +25,6 @@ class EventApp(App):
             self.screen.styles.background = self.COLORS[int(event.key)]
 
 
-app = EventApp()
 if __name__ == "__main__":
+    app = EventApp()
     app.run()
