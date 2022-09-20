@@ -12,6 +12,7 @@ from textual.widgets import DirectoryTree, Footer, Header, Static
 class CodeBrowser(App):
     """Textual code browser app."""
 
+    CSS_PATH = "code_browser.css"
     BINDINGS = [
         ("f", "toggle_files", "Toggle Files"),
         ("q", "quit", "Quit"),
@@ -56,6 +57,5 @@ class CodeBrowser(App):
         self.show_tree = not self.show_tree
 
 
-app = CodeBrowser(css_path="code_browser.css")
 if __name__ == "__main__":
-    app.run()
+    CodeBrowser().run()

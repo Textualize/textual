@@ -8,13 +8,14 @@ TEXT = Text.from_markup(" ".join(str(n) * 5 for n in range(12)))
 
 
 class AutoApp(App):
+    CSS_PATH = "auto_test.css"
+
     def compose(self) -> ComposeResult:
         yield Vertical(
             Static(TEXT, classes="test"), Static(TEXT, id="test", classes="test")
         )
 
 
-app = AutoApp(css_path="auto_test.css")
-
 if __name__ == "__main__":
+    app = AutoApp()
     app.run()

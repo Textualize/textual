@@ -15,7 +15,5 @@ class PrideApp(App):
             yield stripe
 
 
-app = PrideApp()
-
 if __name__ == "__main__":
-    app.run()
+    PrideApp().run()

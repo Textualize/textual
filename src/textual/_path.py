@@ -24,7 +24,10 @@ def _make_path_object_relative(path: str | PurePath, obj: object) -> Path:
         return path
 
     # Otherwise (relative path), resolve it relative to obj...
-    subclass_module = sys.modules[obj.__module__]
-    subclass_path = Path(inspect.getfile(subclass_module))
+    base_path = getattr(obj, "_BASE_PATH", None)
+    if base_path is not None:
+        subclass_path = Path(base_path)
+    else:
+        subclass_path = Path(inspect.getfile(obj.__class__))
     resolved_path = (subclass_path.parent / path).resolve()
     return resolved_path

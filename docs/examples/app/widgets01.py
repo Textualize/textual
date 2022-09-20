@@ -10,6 +10,6 @@ class WelcomeApp(App):
         self.exit()
 
 
-app = WelcomeApp()
 if __name__ == "__main__":
+    app = WelcomeApp()
     app.run()

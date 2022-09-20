@@ -19,6 +19,6 @@ class ColorApp(App):
         self.widget3.styles.background = Color(191, 78, 96)
 
 
-app = ColorApp()
 if __name__ == "__main__":
+    app = ColorApp()
     app.run()

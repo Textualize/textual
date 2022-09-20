@@ -9,6 +9,6 @@ class ButtonsApp(App):
         yield Button("Chani")
 
 
-app = ButtonsApp()
 if __name__ == "__main__":
+    app = ButtonsApp()
     app.run()

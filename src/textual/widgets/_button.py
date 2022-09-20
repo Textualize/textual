@@ -9,6 +9,7 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal  # pragma: no cover
 
+import rich.repr
 from rich.console import RenderableType
 from rich.text import Text, TextType
 
@@ -16,7 +17,7 @@ from .. import events
 from ..css._error_tools import friendly_list
 from ..message import Message
 from ..reactive import Reactive
-from ..widget import Widget
+from ..widgets import Static
 
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
 _VALID_BUTTON_VARIANTS = {"default", "primary", "success", "warning", "error"}
@@ -26,7 +27,7 @@ class InvalidButtonVariant(Exception):
     pass
 
 
-class Button(Widget, can_focus=True):
+class Button(Static, can_focus=True):
     """A simple clickable button."""
 
     DEFAULT_CSS = """
@@ -195,6 +196,11 @@ class Button(Widget, can_focus=True):
     label: Reactive[RenderableType] = Reactive("")
     variant = Reactive.init("default")
     disabled = Reactive(False)
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield from super().__rich_repr__()
+        yield "variant", self.variant, "default"
+        yield "disabled", self.disabled, False
 
     def watch_mouse_over(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""

@@ -151,6 +151,7 @@ class App(Generic[ReturnType], DOMNode):
 
     SCREENS: dict[str, Screen] = {}
 
+    _BASE_PATH: str | None = None
     CSS_PATH: str | None = None
 
     focused: Reactive[Widget | None] = Reactive(None)
@@ -230,12 +231,6 @@ class App(Generic[ReturnType], DOMNode):
             else None
         )
         self._screenshot: str | None = None
-
-    def __init_subclass__(
-        cls, css_path: str | None = None, inherit_css: bool = True
-    ) -> None:
-        super().__init_subclass__(inherit_css=inherit_css)
-        cls.CSS_PATH = css_path
 
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")

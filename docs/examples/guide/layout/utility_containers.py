@@ -4,6 +4,8 @@ from textual.widgets import Static
 
 
 class UtilityContainersExample(App):
+    CSS_PATH = "utility_containers.css"
+
     def compose(self) -> ComposeResult:
         yield layout.Horizontal(
             layout.Vertical(
@@ -19,6 +21,6 @@ class UtilityContainersExample(App):
         )
 
 
-app = UtilityContainersExample(css_path="utility_containers.css")
 if __name__ == "__main__":
+    app = UtilityContainersExample()
     app.run()
