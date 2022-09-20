@@ -59,7 +59,6 @@ testpaths = ["tests"]
 addopts = "--strict-markers"
 markers = [
     "integration_test: marks tests as slow integration tests (deselect with '-m \"not integration_test\"')",
-    "snapshot: marks test as a snapshot test",
 ]
 
 [build-system]
