@@ -133,9 +133,6 @@ def pytest_terminal_summary(
     :param _pytest.terminal.TerminalReporter terminalreporter: The internal terminal reporter object.
     :param int exitstatus: The exit status that will be reported back to the OS.
     :param pytest.Config config: The pytest config object.
-
-    .. versionadded:: 4.2
-        The ``config`` parameter.
     """
     diffs = getattr(config, "_textual_snapshots", None)
     console = Console()
