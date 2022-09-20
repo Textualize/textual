@@ -224,7 +224,7 @@ CSS files contain a number of _declaration blocks_. Here's the first such block 
 ```sass 
 Stopwatch {
     layout: horizontal;
-    background: $panel-darken-1;
+    background: $boost;
     height: 5;
     padding: 1;
     margin: 1;
@@ -240,7 +240,7 @@ Here's how this CSS code changes how the `Stopwatch` widget is displayed.
 </div>
 
 - `layout: horizontal` aligns child widgets horizontally from left to right.
-- `background: $panel-darken-1` sets the background color to `$panel-darken-1`. The `$` prefix picks a pre-defined color from the builtin theme. There are other ways to specify colors such as `"blue"` or `rgb(20,46,210)`.
+- `background: $boost` sets the background color to `$boost`. The `$` prefix picks a pre-defined color from the builtin theme. There are other ways to specify colors such as `"blue"` or `rgb(20,46,210)`.
 - `height: 5` sets the height of our widget to 5 lines of text.
 - `padding: 1` sets a padding of 1 cell around the child widgets.
 - `margin: 1` sets a margin of 1 cell around the Stopwatch widget to create a little space between widgets in the list.
