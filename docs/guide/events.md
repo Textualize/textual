@@ -154,7 +154,7 @@ This pattern is a convenience that saves writing out a parameter that may not be
 
 ### Async handlers
 
-Method handlers may be coroutines. If you prefix your handlers with the `async` keyword, Textual will `await` them. This lets your handler use the `await` keyword for asynchronous APIs.
+Message handlers may be coroutines. If you prefix your handlers with the `async` keyword, Textual will `await` them. This lets your handler use the `await` keyword for asynchronous APIs.
 
 If your event handlers are coroutines it will allow multiple events to be processed concurrently, but bear in mind an individual widget (or app) will not be able to pick up a new message from its message queue until the handler has returned. This is rarely a problem in practice; as long has handlers return within a few milliseconds the UI will remain responsive. But slow handlers might make your app hard to use.
 
