@@ -97,7 +97,7 @@ def pytest_sessionfinish(
 
     if diffs:
         diff_sort_key = attrgetter("file_similarity")
-        diffs = sorted(diffs, key=diff_sort_key)
+        diffs = list(reversed(sorted(diffs, key=diff_sort_key)))
 
         conftest_path = Path(__file__)
         snapshot_template_path = conftest_path.parent / "snapshot_report_template.jinja2"
