@@ -66,8 +66,8 @@ def pytest_runtest_teardown(item: pytest.Item, nextitem: Optional[pytest.Item]) 
 
 
 def pytest_sessionfinish(
-    session: "pytest.Session",
-    exitstatus: Union[int, "pytest.ExitCode"],
+    session: pytest.Session,
+    exitstatus: Union[int, pytest.ExitCode],
 ) -> None:
     """Called after whole test run finished, right before returning the exit status to the system.
 
@@ -125,7 +125,7 @@ def pytest_sessionfinish(
 
 
 def pytest_terminal_summary(
-    terminalreporter: "pytest.TerminalReporter",
+    terminalreporter: pytest.TerminalReporter,
     exitstatus: pytest.ExitCode,
     config: pytest.Config,
 ) -> None:
