@@ -1,11 +1,12 @@
 import asyncio
+from typing import Any
 
 try:
     import httpx
 except ImportError:
     raise ImportError("Please install httpx with 'pip install httpx' ")
 
-from rich.json import JSON
+from rich.markdown import Markdown
 
 from textual.app import App, ComposeResult
 from textual.layout import Vertical
@@ -34,10 +35,26 @@ class DictionaryApp(App):
         """Looks up a word."""
         url = f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}"
         async with httpx.AsyncClient() as client:
-            results = (await client.get(url)).text
+            results = (await client.get(url)).json()
 
         if word == self.query_one(TextInput).value:
-            self.query_one("#results", Static).update(JSON(results))
+            markdown = self.make_word_markdown(results)
+            self.query_one("#results", Static).update(Markdown(markdown))
+
+    def make_word_markdown(self, results: list[Any]) -> str:
+        """Convert the results in to markdown."""
+        lines = []
+        for result in results:
+            lines.append(f"# {result['word']}")
+            lines.append("")
+            for meaning in result.get("meanings", []):
+                lines.append(f"_{meaning['partOfSpeech']}_")
+                lines.append("")
+                for definition in meaning.get("definitions", []):
+                    lines.append(f" - {definition['definition']}")
+                lines.append("---")
+
+        return "\n".join(lines)
 
 
 if __name__ == "__main__":
