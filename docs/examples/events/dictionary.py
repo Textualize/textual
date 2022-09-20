@@ -3,7 +3,7 @@ import asyncio
 try:
     import httpx
 except ImportError:
-    raise ImportError("Please install http with 'pip install httpx' ")
+    raise ImportError("Please install httpx with 'pip install httpx' ")
 
 from rich.json import JSON
 
