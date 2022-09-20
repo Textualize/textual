@@ -44,7 +44,7 @@ jobs:
           source $VENV
           python e2e_tests/sandbox_basic_test.py basic 2.0
       - name: Upload snapshot report
-        if: matrix.os != 'windows-latest'
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: snapshot-report-textual
