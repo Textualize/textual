@@ -44,8 +44,6 @@ class Static(Widget):
     }
     """
 
-    expand = reactive(False)
-    shrink = reactive(False)
     _renderable: RenderableType
 
     def __init__(
