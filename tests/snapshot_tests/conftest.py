@@ -52,22 +52,6 @@ class SvgSnapshotDiff:
     line_number: int
 
 
-def pytest_runtest_teardown(item: pytest.Item, nextitem: Optional[pytest.Item]) -> None:
-    """Called to perform the teardown phase for a test item.
-
-    The default implementation runs the finalizers and calls ``teardown()``
-    on ``item`` and all of its parents (which need to be torn down). This
-    includes running the teardown phase of fixtures required by the item (if
-    they go out of scope).
-
-    :param nextitem:
-        The scheduled-to-be-next test item (None if no further test item is
-        scheduled). This argument is used to perform exact teardowns, i.e.
-        calling just enough finalizers so that nextitem only needs to call
-        setup functions.
-    """
-
-
 def pytest_sessionfinish(
     session: Session,
     exitstatus: Union[int, ExitCode],
