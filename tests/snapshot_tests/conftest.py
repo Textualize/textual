@@ -25,12 +25,15 @@ snapshot_pass = pytest.StashKey[bool]()
 
 
 @pytest.fixture
-def snap_compare(snapshot: SnapshotAssertion, request: FixtureRequest) -> Callable[[str], bool]:
+def snap_compare(
+    snapshot: SnapshotAssertion, request: FixtureRequest
+) -> Callable[[str], bool]:
     """
     This fixture returns a function which can be used to compare the output of a Textual
     app with the output of the same app in the past. This is snapshot testing, and it
     used to catch regressions in output.
     """
+
     def compare(app_path: str, snapshot: SnapshotAssertion) -> bool:
         node = request.node
         actual_screenshot = take_svg_screenshot(app_path)
@@ -79,9 +82,10 @@ def pytest_sessionfinish(
                 SvgSnapshotDiff(
                     snapshot=str(snapshot_svg),
                     actual=str(actual_svg),
-                    file_similarity=100 * difflib.SequenceMatcher(a=str(snapshot_svg),
-                                                                  b=str(
-                                                                      actual_svg)).ratio(),
+                    file_similarity=100
+                    * difflib.SequenceMatcher(
+                        a=str(snapshot_svg), b=str(actual_svg)
+                    ).ratio(),
                     test_name=name,
                     path=path,
                     line_number=line_index + 1,
@@ -93,7 +97,9 @@ def pytest_sessionfinish(
         diffs = list(reversed(sorted(diffs, key=diff_sort_key)))
 
         conftest_path = Path(__file__)
-        snapshot_template_path = conftest_path.parent / "snapshot_report_template.jinja2"
+        snapshot_template_path = (
+            conftest_path.parent / "snapshot_report_template.jinja2"
+        )
         snapshot_report_path = conftest_path.parent / "output/snapshot_report.html"
 
         template = Template(snapshot_template_path.read_text())
@@ -108,7 +114,7 @@ def pytest_sessionfinish(
             pass_percentage=100 * (num_snapshots_passing / max(num_snapshot_tests, 1)),
             fail_percentage=100 * (num_fails / max(num_snapshot_tests, 1)),
             num_snapshot_tests=num_snapshot_tests,
-            now=datetime.utcnow()
+            now=datetime.utcnow(),
         )
         with open(snapshot_report_path, "wt") as snapshot_file:
             snapshot_file.write(rendered_report)
@@ -137,5 +143,7 @@ def pytest_terminal_summary(
         snapshot_report_location = config._textual_snapshot_html_report
         summary_panel = Panel(
             f"[b]Report available for {len(diffs)} snapshot test failures.[/]\n\nView the report at:\n\n[blue]{snapshot_report_location}[/]",
-            title="[b red]Textual Snapshot Test Summary", padding=1)
+            title="[b red]Textual Snapshot Test Summary",
+            padding=1,
+        )
         console.print(summary_panel)
