@@ -95,32 +95,33 @@ def pytest_sessionfinish(
                 )
             )
 
-    diff_sort_key = attrgetter("file_similarity")
-    diffs = sorted(diffs, key=diff_sort_key)
+    if diffs:
+        diff_sort_key = attrgetter("file_similarity")
+        diffs = sorted(diffs, key=diff_sort_key)
 
-    conftest_path = Path(__file__)
-    snapshot_template_path = conftest_path.parent / "snapshot_report_template.jinja2"
-    snapshot_report_path = conftest_path.parent / "snapshot_report.html"
+        conftest_path = Path(__file__)
+        snapshot_template_path = conftest_path.parent / "snapshot_report_template.jinja2"
+        snapshot_report_path = conftest_path.parent / "snapshot_report.html"
 
-    template = Template(snapshot_template_path.read_text())
+        template = Template(snapshot_template_path.read_text())
 
-    num_fails = len(diffs)
-    num_snapshot_tests = len(diffs) + num_snapshots_passing
+        num_fails = len(diffs)
+        num_snapshot_tests = len(diffs) + num_snapshots_passing
 
-    rendered_report = template.render(
-        diffs=diffs,
-        passes=num_snapshots_passing,
-        fails=num_fails,
-        pass_percentage=100 * (num_snapshots_passing / (num_snapshot_tests + 1)),
-        fail_percentage=100 * (num_fails / (num_snapshot_tests + 1)),
-        num_snapshot_tests=num_snapshot_tests,
-        now=datetime.utcnow()
-    )
-    with open(snapshot_report_path, "wt") as snapshot_file:
-        snapshot_file.write(rendered_report)
+        rendered_report = template.render(
+            diffs=diffs,
+            passes=num_snapshots_passing,
+            fails=num_fails,
+            pass_percentage=100 * (num_snapshots_passing / (num_snapshot_tests + 1)),
+            fail_percentage=100 * (num_fails / (num_snapshot_tests + 1)),
+            num_snapshot_tests=num_snapshot_tests,
+            now=datetime.utcnow()
+        )
+        with open(snapshot_report_path, "wt") as snapshot_file:
+            snapshot_file.write(rendered_report)
 
-    session.config._textual_snapshots = diffs
-    session.config._textual_snapshot_html_report = snapshot_report_path
+        session.config._textual_snapshots = diffs
+        session.config._textual_snapshot_html_report = snapshot_report_path
 
 
 def pytest_terminal_summary(
@@ -138,9 +139,10 @@ def pytest_terminal_summary(
         The ``config`` parameter.
     """
     diffs = config._textual_snapshots
-    snapshot_report_location = config._textual_snapshot_html_report
-    console = Console()
-    summary_panel = Panel(
-        f"[b]Report available for {len(diffs)} snapshot test failures.[/]\n\nView the report at:\n\n[blue]{snapshot_report_location}[/]",
-        title="[b red]Textual Snapshot Test Summary", padding=1)
-    console.print(summary_panel)
+    if diffs:
+        snapshot_report_location = config._textual_snapshot_html_report
+        console = Console()
+        summary_panel = Panel(
+            f"[b]Report available for {len(diffs)} snapshot test failures.[/]\n\nView the report at:\n\n[blue]{snapshot_report_location}[/]",
+            title="[b red]Textual Snapshot Test Summary", padding=1)
+        console.print(summary_panel)

@@ -13,8 +13,7 @@
 }
 
 App > Screen {
-
-  background: $background;
+  
   color: $text;
   layers: base sidebar;  
   layout: vertical;
@@ -22,10 +21,11 @@ App > Screen {
 }
 
 #tree-container {
+  background: $panel;
   overflow-y: auto;
   height: 20;
   margin: 1 2;
-  background: $surface;
+  
   padding: 1 2;
 }
 
@@ -36,13 +36,18 @@ DirectoryTree {
 }
 
 
-
+#table-container {
+  background: $panel;
+  height: auto;
+  margin: 1 2;
+}
 
 DataTable {
   /*border:heavy red;*/
   /* tint: 10% green; */
   /* text-opacity: 50%; */
-  padding: 1;
+  background: $surface;
+  padding: 1 2;
   margin: 1 2;
   height: 24;
 }
@@ -101,7 +106,7 @@ Tweet {
   /* border: outer $primary; */
   padding: 1;
   border: wide $panel;
-  overflow: auto;
+  
   /* scrollbar-gutter: stable; */
   align-horizontal: center;
   box-sizing: border-box;
@@ -138,8 +143,14 @@ TweetBody {
   padding: 0 1 0 0;
 }
 
+Tweet.scroll-horizontal {
+
+  overflow-x: auto;
+}
+
 Tweet.scroll-horizontal TweetBody {
   width: 350;
+  
 }
 
 .button {
@@ -182,7 +193,7 @@ Tweet.scroll-horizontal TweetBody {
 
 
 #sidebar .content {
-  layout: vertical
+  layout: vertical;
 }
 
 OptionItem {

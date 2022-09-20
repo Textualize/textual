@@ -34,6 +34,6 @@ class StopwatchApp(App):
         self.dark = not self.dark
 
 
-app = StopwatchApp()
 if __name__ == "__main__":
+    app = StopwatchApp()
     app.run()

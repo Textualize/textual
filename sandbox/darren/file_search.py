@@ -58,7 +58,7 @@ class FileSearchApp(App):
         self.mount(file_table_wrapper=Widget(self.file_table))
         self.mount(search_bar=self.search_bar)
 
-    def on_text_widget_base_changed(self, event: TextWidgetBase.Changed) -> None:
+    def on_text_input_changed(self, event: TextInput.Changed) -> None:
         self.file_table.filter = event.value
 
 

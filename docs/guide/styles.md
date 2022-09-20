@@ -206,7 +206,7 @@ The same units may also be used to set limits on a dimension. The following styl
 - [min-width](../styles/min_width.md) sets a minimum width.
 - [max-width](../styles/max_width.md) sets a maximum width.
 - [min-height](../styles/min_height.md) sets a minimum height.
-- [max-height](../styles/max_hright.md) sets a maximum height.
+- [max-height](../styles/max_height.md) sets a maximum height.
 
 ### Padding
 

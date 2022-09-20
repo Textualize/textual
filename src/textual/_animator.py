@@ -117,7 +117,7 @@ class BoundAnimator:
     def __call__(
         self,
         attribute: str,
-        value: float,
+        value: float | Animatable,
         *,
         final_value: object = ...,
         duration: float | None = None,

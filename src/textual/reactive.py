@@ -94,8 +94,9 @@ class Reactive(Generic[ReactiveType]):
         for key in obj.__class__.__dict__.keys():
             if startswith(key, "_init_"):
                 name = key[6:]
-                default = getattr(obj, key)
-                setattr(obj, name, default() if callable(default) else default)
+                if not hasattr(obj, name):
+                    default = getattr(obj, key)
+                    setattr(obj, name, default() if callable(default) else default)
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
 

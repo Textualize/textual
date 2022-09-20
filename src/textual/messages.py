@@ -30,7 +30,7 @@ class Update(Message, verbose=True):
 
     def can_replace(self, message: Message) -> bool:
         # Update messages can replace update for the same widget
-        return isinstance(message, Update) and self == message
+        return isinstance(message, Update) and self.widget == message.widget
 
 
 @rich.repr.auto

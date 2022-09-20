@@ -92,16 +92,20 @@ nav:
     - "widgets/text_input.md"
     - "widgets/tree_control.md"
   - Reference:
-    - "reference/index.md"
     - "reference/app.md"
     - "reference/button.md"
     - "reference/color.md"
     - "reference/dom_node.md"
     - "reference/events.md"
     - "reference/geometry.md"
+    - "reference/index.md"
     - "reference/message_pump.md"
-    - "reference/timer.md"
+    - "reference/message.md"
     - "reference/query.md"
+    - "reference/reactive.md"
+    - "reference/screen.md"
+    - "reference/static.md"
+    - "reference/timer.md"
     - "reference/widget.md"
 
 

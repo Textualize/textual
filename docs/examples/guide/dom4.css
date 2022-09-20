@@ -2,7 +2,7 @@
 /* The top level dialog (a Container) */
 #dialog {
     margin: 4 8;
-    background: $primary;
+    background: $panel;
     color: $text;
     border: tall $background;
     padding: 1 2;

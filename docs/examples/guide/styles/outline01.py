@@ -22,6 +22,6 @@ class OutlineApp(App):
         self.widget.styles.outline = ("heavy", "yellow")
 
 
-app = OutlineApp()
 if __name__ == "__main__":
+    app = OutlineApp()
     app.run()

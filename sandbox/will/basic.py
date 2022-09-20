@@ -7,7 +7,7 @@ from textual.app import App, ComposeResult
 from textual.reactive import Reactive
 from textual.widget import Widget
 from textual.widgets import Static, DataTable, DirectoryTree, Header, Footer
-from textual.layout import Container
+from textual.layout import Container, Vertical
 
 CODE = '''
 from __future__ import annotations
@@ -68,38 +68,38 @@ lorem_short_text = Text.from_markup(lorem_short)
 lorem_long_text = Text.from_markup(lorem * 2)
 
 
-class TweetHeader(Widget):
+class TweetHeader(Static):
     def render(self) -> RenderableType:
         return Text("Lorem Impsum", justify="center")
 
 
-class TweetBody(Widget):
+class TweetBody(Static):
     short_lorem = Reactive(False)
 
     def render(self) -> Text:
         return lorem_short_text if self.short_lorem else lorem_long_text
 
 
-class Tweet(Widget):
+class Tweet(Vertical):
     pass
 
 
-class OptionItem(Widget):
+class OptionItem(Static):
     def render(self) -> Text:
         return Text("Option")
 
 
-class Error(Widget):
+class Error(Static):
     def render(self) -> Text:
         return Text("This is an error message", justify="center")
 
 
-class Warning(Widget):
+class Warning(Static):
     def render(self) -> Text:
         return Text("This is a warning message", justify="center")
 
 
-class Success(Widget):
+class Success(Static):
     def render(self) -> Text:
         return Text("This is a success  message", justify="center")
 
@@ -120,17 +120,22 @@ class BasicApp(App, css_path="basic.css"):
         table = DataTable()
         self.scroll_to_target = Tweet(TweetBody())
 
-        yield Container(
+        yield Vertical(
             Tweet(TweetBody()),
-            Widget(
+            Container(
                 Static(
-                    Syntax(CODE, "python", line_numbers=True, indent_guides=True),
+                    Syntax(
+                        CODE,
+                        "python",
+                        line_numbers=True,
+                        indent_guides=True,
+                    ),
                     classes="code",
                 ),
                 classes="scrollable",
             ),
-            table,
-            Widget(DirectoryTree("~/"), id="tree-container"),
+            Container(table, id="table-container"),
+            Container(DirectoryTree("~/"), id="tree-container"),
             Error(),
             Tweet(TweetBody(), classes="scrollbar-size-custom"),
             Warning(),
@@ -143,12 +148,12 @@ class BasicApp(App, css_path="basic.css"):
             Tweet(TweetBody(), classes="scroll-horizontal"),
         )
         yield Widget(
-            Widget(classes="title"),
-            Widget(classes="user"),
+            Static("Title", classes="title"),
+            Static("Content", classes="user"),
             OptionItem(),
             OptionItem(),
             OptionItem(),
-            Widget(classes="content"),
+            Static(classes="content"),
             id="sidebar",
         )
         yield Footer()

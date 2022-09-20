@@ -15,6 +15,6 @@ class ColorApp(App):
             widget.styles.background = Color(191, 78, 96, a=alpha)
 
 
-app = ColorApp()
 if __name__ == "__main__":
+    app = ColorApp()
     app.run()

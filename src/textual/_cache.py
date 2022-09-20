@@ -45,6 +45,14 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         self._lock = Lock()
         super().__init__()
 
+    @property
+    def maxsize(self) -> int:
+        return self._maxsize
+
+    @maxsize.setter
+    def maxsize(self, maxsize: int) -> None:
+        self._maxsize = maxsize
+
     def __bool__(self) -> bool:
         return bool(self._cache)
 

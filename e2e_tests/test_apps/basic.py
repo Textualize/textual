@@ -104,8 +104,10 @@ class Success(Widget):
         return Text("This is a success  message", justify="center")
 
 
-class BasicApp(App, css_path="basic.css"):
+class BasicApp(App):
     """A basic app demonstrating CSS"""
+
+    CSS_PATH = "basic.css"
 
     def on_load(self):
         """Bind keys here."""
@@ -210,9 +212,8 @@ class BasicApp(App, css_path="basic.css"):
         self.bell()
 
 
-app = BasicApp()
-
 if __name__ == "__main__":
+    app = BasicApp()
     app.run(quit_after=2)
 
     # from textual.geometry import Region

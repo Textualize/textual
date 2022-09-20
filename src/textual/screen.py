@@ -220,6 +220,7 @@ class Screen(Widget):
                             self, unclipped_region.size, virtual_size, container_size
                         )
                     )
+
         except Exception as error:
             self.app._handle_exception(error)
             return
@@ -279,13 +280,13 @@ class Screen(Widget):
                 screen_y=event.screen_y,
                 style=event.style,
             )
-            mouse_event.set_forwarded()
+            mouse_event._set_forwarded()
             await widget._forward_event(mouse_event)
 
     async def _forward_event(self, event: events.Event) -> None:
         if event.is_forwarded:
             return
-        event.set_forwarded()
+        event._set_forwarded()
         if isinstance(event, (events.Enter, events.Leave)):
             await self.post_message(event)
 
@@ -310,7 +311,7 @@ class Screen(Widget):
                         return
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
                 if widget is self:
-                    event.set_forwarded()
+                    event._set_forwarded()
                     await self.post_message(event)
                 else:
                     await widget._forward_event(event.offset(-region.x, -region.y))

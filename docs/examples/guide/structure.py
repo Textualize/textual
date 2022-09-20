@@ -25,6 +25,6 @@ class ClockApp(App):
         yield Clock()
 
 
-app = ClockApp()
 if __name__ == "__main__":
+    app = ClockApp()
     app.run()

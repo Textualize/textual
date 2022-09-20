@@ -1,9 +1,12 @@
 from __future__ import annotations
 
-import runpy
 import os
+import runpy
 import shlex
 from typing import cast, TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, cast
+
+from textual._import_app import AppFail, import_app
 
 if TYPE_CHECKING:
     from textual.app import App
@@ -51,14 +54,7 @@ def take_svg_screenshot(
 
     os.environ["COLUMNS"] = str(columns)
     os.environ["LINES"] = str(rows)
-
-    app_vars = runpy.run_path(app_path)
-    if "sys" in app_vars:
-        cmd: list[str] = shlex.split(app_path)
-        app_vars["sys"].argv = cmd
-
-    app: App = cast("App", app_vars["app"])
-
+    app = import_app(app_path)
     if title is None:
         title = app.title
 
@@ -76,8 +72,9 @@ def take_svg_screenshot(
 def rich(source, language, css_class, options, md, attrs, **kwargs) -> str:
     """A superfences formatter to insert an SVG screenshot."""
 
-    from rich.console import Console
     import io
+
+    from rich.console import Console
 
     title = attrs.get("title", "Rich")
 
@@ -94,7 +91,7 @@ def rich(source, language, css_class, options, md, attrs, **kwargs) -> str:
         exec(source, globals)
     except Exception:
         error_console.print_exception()
-        console.bell()
+        # console.bell()
 
     if "output" in globals:
         console.print(globals["output"])

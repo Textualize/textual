@@ -225,7 +225,9 @@ class ScrollBar(Widget):
         scrollbar_style = Style.from_color(color.rich_color, background.rich_color)
         return ScrollBarRender(
             virtual_size=self.window_virtual_size,
-            window_size=self.window_size,
+            window_size=(
+                self.window_size if self.window_size < self.window_virtual_size else 0
+            ),
             position=self.position,
             thickness=self.thickness,
             vertical=self.vertical,

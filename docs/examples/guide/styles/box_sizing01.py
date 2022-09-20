@@ -33,6 +33,6 @@ class BoxSizing(App):
         self.widget2.styles.box_sizing = "content-box"
 
 
-app = BoxSizing()
 if __name__ == "__main__":
+    app = BoxSizing()
     app.run()

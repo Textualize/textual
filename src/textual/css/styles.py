@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 import rich.repr
 from rich.style import Style
 
-from textual._types import CallbackType
-from .._animator import Animation, EasingFunction
+from .._types import CallbackType
+from .._animator import Animation, EasingFunction, BoundAnimator
 from ..color import Color
 from ..geometry import Offset, Spacing
 from ._style_properties import (
@@ -850,6 +850,7 @@ class RenderStyles(StylesBase):
         self.node = node
         self._base_styles = base
         self._inline_styles = inline_styles
+        self._animate: BoundAnimator | None = None
 
     @property
     def base(self) -> Styles:
@@ -866,6 +867,23 @@ class RenderStyles(StylesBase):
         """Get a Rich style for this Styles object."""
         assert self.node is not None
         return self.node.rich_style
+
+    @property
+    def animate(self) -> BoundAnimator:
+        """Get an animator to animate style.
+
+        Example:
+            ```python
+            self.animate("brightness", 0.5)
+            ```
+
+        Returns:
+            BoundAnimator: An animator bound to this widget.
+        """
+        if self._animate is None:
+            self._animate = self.node.app.animator.bind(self)
+        assert self._animate is not None
+        return self._animate
 
     def __rich_repr__(self) -> rich.repr.Result:
         for rule_name in RULE_NAMES:

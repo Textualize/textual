@@ -25,6 +25,6 @@ class DimensionsApp(App):
         self.widget2.styles.height = "1fr"
 
 
-app = DimensionsApp()
 if __name__ == "__main__":
+    app = DimensionsApp()
     app.run()

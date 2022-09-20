@@ -151,6 +151,7 @@ class App(Generic[ReturnType], DOMNode):
 
     SCREENS: dict[str, Screen] = {}
 
+    _BASE_PATH: str | None = None
     CSS_PATH: str | None = None
 
     focused: Reactive[Widget | None] = Reactive(None)
@@ -230,12 +231,6 @@ class App(Generic[ReturnType], DOMNode):
             else None
         )
         self._screenshot: str | None = None
-
-    def __init_subclass__(
-        cls, css_path: str | None = None, inherit_css: bool = True
-    ) -> None:
-        super().__init_subclass__(inherit_css=inherit_css)
-        cls.CSS_PATH = css_path
 
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
@@ -579,7 +574,7 @@ class App(Generic[ReturnType], DOMNode):
             filename (str | None, optional): Filename of SVG screenshot, or None to auto-generate
                 a filename with the date and time. Defaults to None.
             path (str, optional): Path to directory for output. Defaults to current working directory.
-            time_format(str, optional): Time format to use if filename is None. Defaults to "%Y-%m-%d %X %f".
+            time_format (str, optional): Time format to use if filename is None. Defaults to "%Y-%m-%d %X %f".
 
         Returns:
             str: Filename of screenshot.
@@ -1209,6 +1204,8 @@ class App(Generic[ReturnType], DOMNode):
         apply_stylesheet = self.stylesheet.apply
 
         for widget_id, widget in name_widgets:
+            if not isinstance(widget, Widget):
+                raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
                 if widget_id is not None:
                     widget.id = widget_id
@@ -1298,21 +1295,6 @@ class App(Generic[ReturnType], DOMNode):
             finally:
                 self._end_update()
             console.file.flush()
-
-    def measure(self, renderable: RenderableType, max_width=100_000) -> int:
-        """Get the optimal width for a widget or renderable.
-
-        Args:
-            renderable (RenderableType): A renderable (including Widget)
-            max_width ([type], optional): Maximum width. Defaults to 100_000.
-
-        Returns:
-            int: Number of cells required to render.
-        """
-        measurement = Measurement.get(
-            self.console, self.console.options.update(max_width=max_width), renderable
-        )
-        return measurement.maximum
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given coordinates.
