@@ -101,7 +101,7 @@ def pytest_sessionfinish(
 
         conftest_path = Path(__file__)
         snapshot_template_path = conftest_path.parent / "snapshot_report_template.jinja2"
-        snapshot_report_path = conftest_path.parent / "snapshot_report.html"
+        snapshot_report_path = conftest_path.parent / "output/snapshot_report.html"
 
         template = Template(snapshot_template_path.read_text())
 
@@ -139,9 +139,9 @@ def pytest_terminal_summary(
         The ``config`` parameter.
     """
     diffs = getattr(config, "_textual_snapshots", None)
+    console = Console()
     if diffs:
         snapshot_report_location = config._textual_snapshot_html_report
-        console = Console()
         summary_panel = Panel(
             f"[b]Report available for {len(diffs)} snapshot test failures.[/]\n\nView the report at:\n\n[blue]{snapshot_report_location}[/]",
             title="[b red]Textual Snapshot Test Summary", padding=1)
