@@ -8,7 +8,10 @@ from pathlib import Path
 from typing import Union, List, Optional, Callable
 
 import pytest
+from _pytest.config import ExitCode
 from _pytest.fixtures import FixtureRequest
+from _pytest.main import Session
+from _pytest.terminal import TerminalReporter
 from jinja2 import Template
 from rich.console import Console
 from rich.panel import Panel
@@ -66,8 +69,8 @@ def pytest_runtest_teardown(item: pytest.Item, nextitem: Optional[pytest.Item]) 
 
 
 def pytest_sessionfinish(
-    session: pytest.Session,
-    exitstatus: Union[int, pytest.ExitCode],
+    session: Session,
+    exitstatus: Union[int, ExitCode],
 ) -> None:
     """Called after whole test run finished, right before returning the exit status to the system.
 
@@ -125,8 +128,8 @@ def pytest_sessionfinish(
 
 
 def pytest_terminal_summary(
-    terminalreporter: pytest.TerminalReporter,
-    exitstatus: pytest.ExitCode,
+    terminalreporter: TerminalReporter,
+    exitstatus: ExitCode,
     config: pytest.Config,
 ) -> None:
     """Add a section to terminal summary reporting.
