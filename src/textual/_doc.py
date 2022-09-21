@@ -56,7 +56,6 @@ def take_svg_screenshot(
     if app is None:
         app = import_app(app_path)
 
-    app.console.legacy_windows = False
     if title is None:
         title = app.title
 

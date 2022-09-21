@@ -176,6 +176,7 @@ class App(Generic[ReturnType], DOMNode):
             markup=False,
             highlight=False,
             emoji=False,
+            legacy_windows=False,
         )
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()

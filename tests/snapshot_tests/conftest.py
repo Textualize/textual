@@ -1,6 +1,5 @@
 import difflib
 import os
-import pprint
 from dataclasses import dataclass
 from datetime import datetime
 from functools import partial
@@ -15,14 +14,13 @@ from _pytest.fixtures import FixtureRequest
 from _pytest.main import Session
 from _pytest.terminal import TerminalReporter
 from jinja2 import Template
-from rich import inspect
 from rich.console import Console
 from rich.panel import Panel
 from syrupy import SnapshotAssertion
 
-from textual.app import App
 from textual._doc import take_svg_screenshot
 from textual._import_app import import_app
+from textual.app import App
 
 TEXTUAL_SNAPSHOT_SVG_KEY = pytest.StashKey[str]()
 TEXTUAL_ACTUAL_SVG_KEY = pytest.StashKey[str]()
