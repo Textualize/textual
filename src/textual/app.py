@@ -97,6 +97,7 @@ DEFAULT_COLORS = {
 
 
 ComposeResult = Iterable[Widget]
+RenderResult = RenderableType
 
 
 class AppError(Exception):

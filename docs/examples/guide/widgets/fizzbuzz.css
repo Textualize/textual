@@ -1,0 +1,9 @@
+Screen {
+    layout: center;
+}
+
+FizzBuzz {
+    width: auto;
+    height: auto;
+    background: $panel;    
+}

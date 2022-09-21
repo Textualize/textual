@@ -502,12 +502,10 @@ class Color(NamedTuple):
         Returns:
             Color: A new color, either an off-white or off-black
         """
-        white = self.blend(WHITE, alpha)
-        black = self.blend(BLACK, alpha)
         brightness = self.brightness
-        white_contrast = abs(brightness - white.brightness)
-        black_contrast = abs(brightness - black.brightness)
-        return white if white_contrast > black_contrast else black
+        white_contrast = abs(brightness - WHITE.brightness)
+        black_contrast = abs(brightness - BLACK.brightness)
+        return (WHITE if white_contrast > black_contrast else BLACK).with_alpha(alpha)
 
 
 # Color constants

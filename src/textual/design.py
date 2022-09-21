@@ -185,7 +185,7 @@ class ColorSystem:
                     shade_color = color.lighten(luminosity_delta)
                     colors[f"{name}{shade_name}"] = shade_color.hex
 
-        colors["text"] = "auto 95%"
+        colors["text"] = "auto 90%"
         colors["text-muted"] = "auto 50%"
         colors["text-disabled"] = "auto 30%"
 

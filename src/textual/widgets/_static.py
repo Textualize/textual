@@ -4,7 +4,6 @@ from rich.console import RenderableType
 from rich.protocol import is_renderable
 from rich.text import Text
 
-from ..reactive import reactive
 from ..errors import RenderError
 from ..widget import Widget
 
@@ -87,11 +86,11 @@ class Static(Widget):
         """
         return self._renderable
 
-    def update(self, renderable: RenderableType = "", home: bool = False) -> None:
-        """Update the widget contents.
+    def update(self, renderable: RenderableType) -> None:
+        """Update the widget's content area with new text or Rich renderable.
 
         Args:
-            renderable (RenderableType): A new rich renderable.
+            renderable (RenderableType, optional): A new rich renderable.
         """
         _check_renderable(renderable)
         self.renderable = renderable
