@@ -95,8 +95,8 @@ def pytest_sessionfinish(
             )
 
     # TODO: Skipping writing artifacts on Windows on CI for now
-    is_windows_ci = sys.platform == "win32" and os.getenv("CI") is not None
-    if diffs and not is_windows_ci:
+    # is_windows_ci = sys.platform == "win32" and os.getenv("CI") is not None
+    if diffs:
         diff_sort_key = attrgetter("file_similarity")
         diffs = list(reversed(sorted(diffs, key=diff_sort_key)))
 
