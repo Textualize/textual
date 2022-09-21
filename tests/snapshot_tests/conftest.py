@@ -1,6 +1,4 @@
 import difflib
-import os
-import sys
 from dataclasses import dataclass
 from datetime import datetime
 from functools import partial
@@ -122,7 +120,7 @@ def pytest_sessionfinish(
             num_snapshot_tests=num_snapshot_tests,
             now=datetime.utcnow(),
         )
-        with open(snapshot_report_path, "w+") as snapshot_file:
+        with open(snapshot_report_path, "w+", encoding="utf-8") as snapshot_file:
             snapshot_file.write(rendered_report)
 
         session.config._textual_snapshots = diffs
