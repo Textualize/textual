@@ -6,7 +6,7 @@ class CenterLayoutExample(App):
     CSS_PATH = "center_layout.css"
 
     def compose(self) -> ComposeResult:
-        yield Static("Onee", id="bottom")
+        yield Static("One", id="bottom")
         yield Static("Two", id="middle")
         yield Static("Three", id="top")
 
