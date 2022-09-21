@@ -8,6 +8,8 @@
           integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
 </head>
 <body>
+
+
 <div class="container-fluid">
     <div class="row mb-4" style="background-color:#F4F8F7;">
         <div class="col-8 p-4">
@@ -51,20 +53,81 @@
                             </strong>
                             <span class="text-muted">({{ "%.2f"|format(diff.file_similarity) }}% source similarity)</span>
                         </div>
-                        <span class="text-muted">{{ diff.path }}:{{ diff.line_number }}</span>
+                        <div class="text-muted">
+                            {{ diff.path }}:{{ diff.line_number }}
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
                                 {{ diff.actual }}
                                 <div class="w-100 d-flex justify-content-center mt-1">
-                                    <span class="small">Output from test</span>
+                                    <span class="small">Output from test (<a href="#" class="link-primary mb-0"
+                                                                             data-bs-toggle="modal"
+                                                                             data-bs-target="#environmentModal">More info</a>)</span>
                                 </div>
                             </div>
                             <div class="col">
                                 {{ diff.snapshot }}
                                 <div class="w-100 d-flex justify-content-center mt-1">
                                     <span class="small">Historical snapshot</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal modal-lg fade" id="environmentModal" tabindex="-1"
+                         aria-labelledby="environmentModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="environmentModalLabel">More info for <span
+                                            class="font-monospace">{{ diff.test_name }}</span></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body overflow-auto">
+                                    <h5>Textual App State</h5>
+                                    <table class="table mb-4">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Variable</th>
+                                            <th scope="col">Value</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td class="font-monospace">app.console.legacy_windows</td>
+                                            <td class="font-monospace">{{ diff.app.console.legacy_windows }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="font-monospace">app.console.size</td>
+                                            <td class="font-monospace">{{ diff.app.console.size }}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <h5>Environment (<span class="font-monospace">os.environ</span>)</h5>
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Variable</th>
+                                            <th scope="col">Value</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for key, value in diff.environment.items() %}
+                                            <tr>
+                                                <td class="font-monospace">{{ key }}</td>
+                                                <td class="font-monospace">{{ value }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -78,21 +141,28 @@
         <div class="col">
             <div class="card bg-light">
                 <div class="card-body">
-                    <p class="card-text">If you're happy with the change, run pytest with the <span class="font-monospace text-primary">--snapshot-update</span> flag to update the snapshot.</p>
+                    <p class="card-text">If you're happy with the test output, run pytest with the <span
+                            class="font-monospace text-primary">--snapshot-update</span> flag to update the snapshot.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 
-<div class="row">
-    <div class="col">
-        <div class="w-100 d-flex p-4 justify-content-center">
-            <p class="text-muted">Report generated at UTC {{ now }}.</p>
+    <div class="row">
+        <div class="col">
+            <div class="w-100 d-flex p-4 justify-content-center">
+                <p class="text-muted">Report generated at UTC {{ now }}.</p>
+            </div>
         </div>
     </div>
-</div>
 
 </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
 
 </body>
 </html>

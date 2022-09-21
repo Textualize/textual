@@ -1,4 +1,6 @@
 import difflib
+import os
+import pprint
 from dataclasses import dataclass
 from datetime import datetime
 from functools import partial
@@ -13,15 +15,19 @@ from _pytest.fixtures import FixtureRequest
 from _pytest.main import Session
 from _pytest.terminal import TerminalReporter
 from jinja2 import Template
+from rich import inspect
 from rich.console import Console
 from rich.panel import Panel
 from syrupy import SnapshotAssertion
 
+from textual.app import App
 from textual._doc import take_svg_screenshot
+from textual._import_app import import_app
 
-snapshot_svg_key = pytest.StashKey[str]()
-actual_svg_key = pytest.StashKey[str]()
-snapshot_pass = pytest.StashKey[bool]()
+TEXTUAL_SNAPSHOT_SVG_KEY = pytest.StashKey[str]()
+TEXTUAL_ACTUAL_SVG_KEY = pytest.StashKey[str]()
+TEXTUAL_SNAPSHOT_PASS = pytest.StashKey[bool]()
+TEXTUAL_APP_KEY = pytest.StashKey[App]()
 
 
 @pytest.fixture
@@ -36,15 +42,17 @@ def snap_compare(
 
     def compare(app_path: str, snapshot: SnapshotAssertion) -> bool:
         node = request.node
-        actual_screenshot = take_svg_screenshot(app_path)
+        app = import_app(app_path)
+        actual_screenshot = take_svg_screenshot(app=app)
         result = snapshot == actual_screenshot
 
         if result is False:
             # The split and join below is a mad hack, sorry...
-            node.stash[snapshot_svg_key] = "\n".join(str(snapshot).splitlines()[1:-1])
-            node.stash[actual_svg_key] = actual_screenshot
+            node.stash[TEXTUAL_SNAPSHOT_SVG_KEY] = "\n".join(str(snapshot).splitlines()[1:-1])
+            node.stash[TEXTUAL_ACTUAL_SVG_KEY] = actual_screenshot
+            node.stash[TEXTUAL_APP_KEY] = app
         else:
-            node.stash[snapshot_pass] = True
+            node.stash[TEXTUAL_SNAPSHOT_PASS] = True
 
         return result
 
@@ -59,6 +67,8 @@ class SvgSnapshotDiff:
     file_similarity: float
     path: PathLike
     line_number: int
+    app: App
+    environment: dict
 
 
 def pytest_sessionfinish(
@@ -73,22 +83,28 @@ def pytest_sessionfinish(
     diffs: List[SvgSnapshotDiff] = []
     num_snapshots_passing = 0
     for item in session.items:
-        num_snapshots_passing += int(item.stash.get(snapshot_pass, False))
-        snapshot_svg = item.stash.get(snapshot_svg_key, None)
-        actual_svg = item.stash.get(actual_svg_key, None)
-        if snapshot_svg and actual_svg:
+
+        # Grab the data our fixture attached to the pytest node
+        num_snapshots_passing += int(item.stash.get(TEXTUAL_SNAPSHOT_PASS, False))
+        snapshot_svg = item.stash.get(TEXTUAL_SNAPSHOT_SVG_KEY, None)
+        actual_svg = item.stash.get(TEXTUAL_ACTUAL_SVG_KEY, None)
+        app = item.stash.get(TEXTUAL_APP_KEY, None)
+
+        if snapshot_svg and actual_svg and app:
             path, line_index, name = item.reportinfo()
             diffs.append(
                 SvgSnapshotDiff(
                     snapshot=str(snapshot_svg),
                     actual=str(actual_svg),
                     file_similarity=100
-                    * difflib.SequenceMatcher(
+                                    * difflib.SequenceMatcher(
                         a=str(snapshot_svg), b=str(actual_svg)
                     ).ratio(),
                     test_name=name,
                     path=path,
                     line_number=line_index + 1,
+                    app=app,
+                    environment=dict(os.environ),
                 )
             )
 

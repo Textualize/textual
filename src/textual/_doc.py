@@ -4,6 +4,7 @@ import os
 import shlex
 from typing import Iterable
 
+from textual.app import App
 from textual._import_app import import_app
 
 # This module defines our "Custom Fences", powered by SuperFences
@@ -25,7 +26,9 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
         try:
             rows = int(attrs.get("lines", 24))
             columns = int(attrs.get("columns", 80))
-            svg = take_svg_screenshot(path, press, title, terminal_size=(rows, columns))
+            svg = take_svg_screenshot(
+                None, path, press, title, terminal_size=(rows, columns)
+            )
         finally:
             os.chdir(cwd)
 
@@ -39,8 +42,9 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
 
 
 def take_svg_screenshot(
-    app_path: str,
-    press: Iterable[str] = ("_", "_"),
+    app: App | None = None,
+    app_path: str | None = None,
+    press: Iterable[str] = ("_",),
     title: str | None = None,
     terminal_size: tuple[int, int] = (24, 80),
 ) -> str:
@@ -48,7 +52,10 @@ def take_svg_screenshot(
 
     os.environ["COLUMNS"] = str(columns)
     os.environ["LINES"] = str(rows)
-    app = import_app(app_path)
+
+    if app is None:
+        app = import_app(app_path)
+
     app.console.legacy_windows = False
     if title is None:
         title = app.title
