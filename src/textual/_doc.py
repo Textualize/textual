@@ -1,16 +1,10 @@
 from __future__ import annotations
 
 import os
-import runpy
 import shlex
-from typing import cast, TYPE_CHECKING, Iterable
-from typing import TYPE_CHECKING, cast
+from typing import Iterable
 
-from textual._import_app import AppFail, import_app
-
-if TYPE_CHECKING:
-    from textual.app import App
-
+from textual._import_app import import_app
 
 # This module defines our "Custom Fences", powered by SuperFences
 # @link https://facelessuser.github.io/pymdown-extensions/extensions/superfences/#custom-fences
@@ -55,6 +49,7 @@ def take_svg_screenshot(
     os.environ["COLUMNS"] = str(columns)
     os.environ["LINES"] = str(rows)
     app = import_app(app_path)
+    app.console.legacy_windows = False
     if title is None:
         title = app.title
 
