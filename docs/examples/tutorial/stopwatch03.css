@@ -1,6 +1,6 @@
 Stopwatch {
     layout: horizontal;
-    background: $panel-darken-1;
+    background: $boost;
     height: 5;
     padding: 1;
     margin: 1;

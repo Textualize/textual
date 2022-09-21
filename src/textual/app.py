@@ -664,6 +664,9 @@ class App(Generic[ReturnType], DOMNode):
                                 events.Key(self, key, key if len(key) == 1 else None)
                             )
                             await asyncio.sleep(0.01)
+
+                    await app._animator.wait_for_idle()
+
                     if screenshot:
                         self._screenshot = self.export_screenshot(
                             title=screenshot_title
