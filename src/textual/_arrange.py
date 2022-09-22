@@ -98,7 +98,7 @@ def arrange(
             )
 
         dock_spacing = Spacing(top, right, bottom, left)
-        region = size.region.shrink(dock_spacing)
+        region = region.shrink(dock_spacing)
         layout_placements, arranged_layout_widgets = widget._layout.arrange(
             widget, layout_widgets, region.size
         )

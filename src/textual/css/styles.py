@@ -21,7 +21,6 @@ from ._style_properties import (
     BoxProperty,
     ColorProperty,
     DockProperty,
-    DocksProperty,
     FractionalProperty,
     IntegerProperty,
     LayoutProperty,
@@ -720,14 +719,6 @@ class Styles(StylesBase):
             append_declaration("offset", f"{x} {y}")
         if has_rule("dock"):
             append_declaration("dock", rules["dock"])
-        if has_rule("docks"):
-            append_declaration(
-                "docks",
-                " ".join(
-                    (f"{name}={edge}/{z}" if z else f"{name}={edge}")
-                    for name, edge, z in rules["docks"]
-                ),
-            )
         if has_rule("layers"):
             append_declaration("layers", " ".join(self.layers))
         if has_rule("layer"):
