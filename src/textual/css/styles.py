@@ -115,7 +115,6 @@ class RulesMap(TypedDict, total=False):
     max_height: Scalar
 
     dock: str
-    docks: tuple[DockGroup, ...]
 
     overflow_x: Overflow
     overflow_y: Overflow
@@ -238,7 +237,6 @@ class StylesBase(ABC):
     max_height = ScalarProperty(percent_unit=Unit.HEIGHT, allow_auto=False)
 
     dock = DockProperty()
-    docks = DocksProperty()
 
     overflow_x = StringEnumProperty(VALID_OVERFLOW, "hidden")
     overflow_y = StringEnumProperty(VALID_OVERFLOW, "hidden")
@@ -946,7 +944,6 @@ if __name__ == "__main__":
     styles.visibility = "hidden"
     styles.border = ("solid", "rgb(10,20,30)")
     styles.outline_right = ("solid", "red")
-    styles.docks = "foo bar"
     styles.text_style = "italic"
     styles.dock = "bar"
     styles.layers = "foo bar"
