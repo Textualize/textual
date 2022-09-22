@@ -558,6 +558,7 @@ class App(Generic[ReturnType], DOMNode):
             force_terminal=True,
             color_system="truecolor",
             record=True,
+            legacy_windows=False,
         )
         screen_render = self.screen._compositor.render(full=True)
         console.print(screen_render)
