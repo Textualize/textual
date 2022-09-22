@@ -511,45 +511,6 @@ class SpacingProperty:
                 obj.refresh(layout=True)
 
 
-class DocksProperty:
-    """Descriptor for getting and setting the docks property. This property
-    is used to define docks and their location on screen.
-    """
-
-    def __get__(
-        self, obj: StylesBase, objtype: type[StylesBase] | None = None
-    ) -> tuple[DockGroup, ...]:
-        """Get the Docks property
-
-        Args:
-            obj (Styles): The ``Styles`` object.
-            objtype (type[Styles]): The ``Styles`` class.
-
-        Returns:
-            tuple[DockGroup, ...]: A ``tuple`` containing the defined docks.
-        """
-        if obj.has_rule("docks"):
-            return obj.get_rule("docks")
-        from .styles import DockGroup
-
-        return (DockGroup("_default", "top", 1),)
-
-    def __set__(self, obj: StylesBase, docks: Iterable[DockGroup] | None):
-        """Set the Docks property
-
-        Args:
-            obj (Styles): The ``Styles`` object.
-            docks (Iterable[DockGroup]): Iterable of DockGroups
-        """
-        _rich_traceback_omit = True
-        if docks is None:
-            if obj.clear_rule("docks"):
-                obj.refresh(layout=True)
-        else:
-            if obj.set_rule("docks", tuple(docks)):
-                obj.refresh(layout=True)
-
-
 class DockProperty:
     """Descriptor for getting and setting the dock property. The dock property
     allows you to specify which edge you want to fix a Widget to.

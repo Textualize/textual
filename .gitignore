@@ -113,3 +113,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Snapshot testing report output directory
+tests/snapshot_tests/output

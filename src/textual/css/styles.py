@@ -21,7 +21,6 @@ from ._style_properties import (
     BoxProperty,
     ColorProperty,
     DockProperty,
-    DocksProperty,
     FractionalProperty,
     IntegerProperty,
     LayoutProperty,
@@ -115,7 +114,6 @@ class RulesMap(TypedDict, total=False):
     max_height: Scalar
 
     dock: str
-    docks: tuple[DockGroup, ...]
 
     overflow_x: Overflow
     overflow_y: Overflow
@@ -238,7 +236,6 @@ class StylesBase(ABC):
     max_height = ScalarProperty(percent_unit=Unit.HEIGHT, allow_auto=False)
 
     dock = DockProperty()
-    docks = DocksProperty()
 
     overflow_x = StringEnumProperty(VALID_OVERFLOW, "hidden")
     overflow_y = StringEnumProperty(VALID_OVERFLOW, "hidden")
@@ -722,14 +719,6 @@ class Styles(StylesBase):
             append_declaration("offset", f"{x} {y}")
         if has_rule("dock"):
             append_declaration("dock", rules["dock"])
-        if has_rule("docks"):
-            append_declaration(
-                "docks",
-                " ".join(
-                    (f"{name}={edge}/{z}" if z else f"{name}={edge}")
-                    for name, edge, z in rules["docks"]
-                ),
-            )
         if has_rule("layers"):
             append_declaration("layers", " ".join(self.layers))
         if has_rule("layer"):
@@ -946,7 +935,6 @@ if __name__ == "__main__":
     styles.visibility = "hidden"
     styles.border = ("solid", "rgb(10,20,30)")
     styles.outline_right = ("solid", "red")
-    styles.docks = "foo bar"
     styles.text_style = "italic"
     styles.dock = "bar"
     styles.layers = "foo bar"
