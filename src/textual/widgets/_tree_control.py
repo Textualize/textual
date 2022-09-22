@@ -164,10 +164,10 @@ class TreeNode(Generic[NodeDataType]):
 class TreeControl(Generic[NodeDataType], Static, can_focus=True):
     DEFAULT_CSS = """
     TreeControl {   
-        
         color: $text;
         height: auto;
         width: 100%;
+        link-style: not underline;
     }
 
     TreeControl > .tree--guides {
@@ -324,8 +324,8 @@ class TreeControl(Generic[NodeDataType], Static, can_focus=True):
             if isinstance(node.label, str)
             else node.label
         )
-        if node.id == self.hover_node:
-            label.stylize("underline")
+        # if node.id == self.hover_node:
+        #     label.stylize("underline")
         label.apply_meta({"@click": f"click_label({node.id})", "tree_node": node.id})
         return label
 

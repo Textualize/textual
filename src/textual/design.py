@@ -115,7 +115,6 @@ class ColorSystem:
 
         dark = self._dark
         luminosity_spread = self._luminosity_spread
-        text_alpha = self._text_alpha
 
         if dark:
             background = self.background or Color.parse(DEFAULT_DARK_BACKGROUND)
@@ -123,6 +122,8 @@ class ColorSystem:
         else:
             background = self.background or Color.parse(DEFAULT_LIGHT_BACKGROUND)
             surface = self.surface or Color.parse(DEFAULT_LIGHT_SURFACE)
+
+        foreground = background.inverse
 
         boost = self.boost or background.get_contrast_text(1.0).with_alpha(0.07)
 
@@ -159,6 +160,7 @@ class ColorSystem:
             ("primary-background", primary),
             ("secondary-background", secondary),
             ("background", background),
+            ("foregroud", foreground),
             ("panel", panel),
             ("boost", boost),
             ("surface", surface),

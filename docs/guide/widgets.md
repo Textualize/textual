@@ -94,7 +94,7 @@ This app will "play" fizz buzz by displaying a table of the first 15 numbers and
 
 === "fizzbuzz.css"
 
-    ```sass title="hello03.css" hl_lines="32-35"
+    ```sass title="fizzbuzz.css" hl_lines="32-35"
     --8<-- "docs/examples/guide/widgets/fizzbuzz.css"
     ```
 
@@ -103,18 +103,49 @@ This app will "play" fizz buzz by displaying a table of the first 15 numbers and
     ```{.textual path="docs/examples/guide/widgets/fizzbuzz.py"}
     ```
 
+
+## Default CSS
+
+When building an app it is best to keep all your CSS in an external file. This allows you to see all your CSS in one place, and to enable live editing. However if you are building Textual widgets in an external library it can be convenient to bundle code and CSS within the widget itself. You can do this by adding a `DEFAULT_CSS` class variable inside your widget class.
+
+Textual's builtin widgets bundle CSS in this way, which is why you can see nicely styled widgets without having to cut and paste code in to your CSS file.
+
+Here's the Hello example again, this time the widget has embedded default CSS:
+
+=== "hello04.py"
+
+    ```python title="hello04.py" hl_lines="8-18"
+    --8<-- "docs/examples/guide/widgets/hello04.py"
+    ```
+
+=== "hello04.css"
+
+    ```sass title="hello04.css" 
+    --8<-- "docs/examples/guide/widgets/hello04.css"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/hello04.py"}
+    ```
+
+
+
+### Default specificity
+
+CSS defined within `DEFAULT_CSS` has an automatically lower [specificity](./CSS.md#specificity) than CSS read from either the App's `CSS` class variable or an external stylesheet. In practice this means that your app's CSS will take precedence over any CSS bundled with widgets.
+
 ## Content size 
 
 If you use a rich renderable as content, Textual can auto-detect the dimensions of the output which will become the content area of the widget.
 
+## Compound widgets
 
+
+## Line API
 
 TODO: Widgets docs
 
-- What is a widget
-- Defining a basic widget
-  - Base classes Widget or Static
-  - Text widgets
-  - Rich renderable widgets
-- Complete widget
-- Render line widget API
+- Content size
+- Compound widgets
+- Line API

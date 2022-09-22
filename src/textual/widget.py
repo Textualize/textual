@@ -10,13 +10,14 @@ import rich.repr
 from rich.console import (
     Console,
     ConsoleRenderable,
+    ConsoleOptions,
     RichCast,
     JustifyMethod,
     RenderableType,
+    RenderResult,
 )
 from rich.segment import Segment
-from rich.style import Style
-from rich.styled import Styled
+from rich.style import Style, StyleType
 from rich.text import Text
 
 from . import errors, events, messages
@@ -57,6 +58,49 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 }
 
 
+class _Styled:
+    """Apply a style to a renderable.
+
+    Args:
+        renderable (RenderableType): Any renderable.
+        style (StyleType): A style to apply across the entire renderable.
+    """
+
+    def __init__(
+        self, renderable: "RenderableType", style: Style, link_style: Style
+    ) -> None:
+        self.renderable = renderable
+        self.style = style
+        self.link_style = link_style
+
+    def __rich_console__(
+        self, console: "Console", options: "ConsoleOptions"
+    ) -> "RenderResult":
+        style = console.get_style(self.style)
+        result_segments = console.render(self.renderable, options)
+
+        _Segment = Segment
+        if style:
+            apply = style.__add__
+            result_segments = (
+                _Segment(text, apply(_style), control)
+                for text, _style, control in result_segments
+            )
+        link_style = self.link_style
+        if link_style:
+            result_segments = (
+                _Segment(
+                    text,
+                    style
+                    if style._meta is None
+                    else (link_style + style if "click" in style.meta else style),
+                    control,
+                )
+                for text, style, control in result_segments
+            )
+        return result_segments
+
+
 class RenderCache(NamedTuple):
     """Stores results of a previous render."""
 
@@ -82,6 +126,9 @@ class Widget(DOMNode):
         scrollbar-corner-color: $panel-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
+        link-style: underline;
+        hover-background: $boost;        
+        hover-style: not underline;
     }
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
@@ -94,6 +141,8 @@ class Widget(DOMNode):
     """Rich renderable may expand."""
     shrink = Reactive(True)
     """Rich renderable may shrink."""
+
+    hover_style: Reactive[Style] = Reactive(Style)
 
     def __init__(
         self,
@@ -131,7 +180,7 @@ class Widget(DOMNode):
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, Style] = {}
-
+        self._link_styles: dict[str, Style] = {}
         self._lock = Lock()
 
         super().__init__(
@@ -382,6 +431,13 @@ class Widget(DOMNode):
             self._content_height_cache = (cache_key, height)
 
         return height
+
+    def watch_hover_style(self, old_style: Style, new_style: Style) -> None:
+        self._link_styles.pop(old_style.link_id, None)
+        if new_style.link_id:
+            meta = new_style.meta
+            if "@click" in meta:
+                self._link_styles[new_style.link_id] = self.link_hover_style
 
     def watch_scroll_x(self, new_value: float) -> None:
         self.horizontal_scrollbar.position = int(new_value)
@@ -797,6 +853,26 @@ class Widget(DOMNode):
             if node.styles.has_rule("layers"):
                 return node.styles.layers
         return ("default",)
+
+    @property
+    def link_style(self) -> Style:
+        styles = self.styles
+        base, _, background, color = self.colors
+        style = styles.link_style + Style.from_color(
+            (color + styles.link_color).rich_color,
+            (background + styles.link_background).rich_color,
+        )
+        return style
+
+    @property
+    def link_hover_style(self) -> Style:
+        styles = self.styles
+        base, _, background, color = self.colors
+        style = styles.hover_style + Style.from_color(
+            (color + styles.hover_color).rich_color,
+            (background + styles.hover_background).rich_color,
+        )
+        return style
 
     def _set_dirty(self, *regions: Region) -> None:
         """Set the Widget as 'dirty' (requiring re-paint).
@@ -1413,7 +1489,7 @@ class Widget(DOMNode):
         ):
             renderable.justify = text_justify
 
-        renderable = Styled(renderable, self.rich_style)
+        renderable = _Styled(renderable, self.rich_style, self.link_style)
 
         return renderable
 

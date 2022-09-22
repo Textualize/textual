@@ -107,8 +107,11 @@ class Coord(NamedTuple):
 class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     DEFAULT_CSS = """
+    App.-dark DataTable {
+        background:;
+    }
     DataTable {
-
+        background: $surface ;
         color: $text;           
     }
     DataTable > .datatable--header {        
