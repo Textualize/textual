@@ -72,33 +72,13 @@ class MapGeometry(NamedTuple):
 CompositorMap: TypeAlias = "dict[Widget, MapGeometry]"
 
 
-def style_links(
-    segments: Iterable[Segment], link_map: dict[str, Style]
-) -> Iterable[Segment]:
-
-    if not link_map:
-        return segments
-
-    _Segment = Segment
-    link_map_get = link_map.get
-
-    segments = [
-        _Segment(text, link_map_get(style._link_id, style) if style else None, control)
-        for text, style, control in segments
-    ]
-    return segments
-
-
 @rich.repr.auto(angular=True)
 class LayoutUpdate:
     """A renderable containing the result of a render for a given region."""
 
-    def __init__(
-        self, lines: Lines, region: Region, link_map: dict[str, Style]
-    ) -> None:
+    def __init__(self, lines: Lines, region: Region) -> None:
         self.lines = lines
         self.region = region
-        self.link_map = link_map
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -108,7 +88,7 @@ class LayoutUpdate:
         move_to = Control.move_to
         for last, (y, line) in loop_last(enumerate(self.lines, self.region.y)):
             yield move_to(x, y)
-            yield from style_links(line, self.link_map)
+            yield from line
             if not last:
                 yield new_line
 
@@ -125,7 +105,6 @@ class ChopsUpdate:
         chops: list[dict[int, list[Segment] | None]],
         spans: list[tuple[int, int, int]],
         chop_ends: list[list[int]],
-        link_map: dict[str, Style],
     ) -> None:
         """A renderable which updates chops (fragments of lines).
 
@@ -137,7 +116,6 @@ class ChopsUpdate:
         self.chops = chops
         self.spans = spans
         self.chop_ends = chop_ends
-        self.link_map = link_map
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -149,7 +127,6 @@ class ChopsUpdate:
         last_y = self.spans[-1][0]
 
         _cell_len = cell_len
-        link_map = self.link_map
 
         for y, x1, x2 in self.spans:
             line = chops[y]
@@ -158,8 +135,6 @@ class ChopsUpdate:
                 # TODO: crop to x extents
                 if segments is None:
                     continue
-
-                segments = style_links(segments, link_map)
 
                 if x > x2 or end <= x1:
                     continue
@@ -229,23 +204,6 @@ class Compositor:
         # Regions that require an update
         self._dirty_regions: set[Region] = set()
 
-        self._link_map: dict[str, Style] | None = None
-
-    @property
-    def link_map(self) -> dict[str, Style]:
-        """A mapping of link ids on to styles."""
-        if self._link_map is None:
-            self._link_map = cast(
-                "dict[str,Style]",
-                reduce(
-                    __or__,
-                    (widget._link_styles for widget in self.map.keys()),
-                    {},
-                ),
-            )
-
-        return self._link_map
-
     @classmethod
     def _regions_to_spans(
         cls, regions: Iterable[Region]
@@ -300,7 +258,6 @@ class Compositor:
         """
         self._cuts = None
         self._layers = None
-        self._link_map = None
         self.root = parent
         self.size = size
 
@@ -788,10 +745,10 @@ class Compositor:
 
         if full:
             render_lines = self._assemble_chops(chops)
-            return LayoutUpdate(render_lines, screen_region, self.link_map)
+            return LayoutUpdate(render_lines, screen_region)
         else:
             chop_ends = [cut_set[1:] for cut_set in cuts]
-            return ChopsUpdate(chops, spans, chop_ends, self.link_map)
+            return ChopsUpdate(chops, spans, chop_ends)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions

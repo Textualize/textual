@@ -29,6 +29,25 @@ if TYPE_CHECKING:
 RenderLineCallback: TypeAlias = Callable[[int], List[Segment]]
 
 
+def _style_links(
+    segments: Iterable[Segment], link_id: str, link_style: Style
+) -> list[Segment]:
+
+    _Segment = Segment
+
+    segments = [
+        _Segment(
+            text,
+            (link_style + style if style else None)
+            if (style and style._link_id == link_id)
+            else style,
+            control,
+        )
+        for text, style, control in segments
+    ]
+    return segments
+
+
 class StylesCache:
     """Responsible for rendering CSS Styles and keeping a cached of rendered lines.
 
@@ -106,6 +125,14 @@ class StylesCache:
             padding=styles.padding,
             crop=crop,
         )
+        if widget.hover_style.link_id:
+            link_hover_style = widget.link_hover_style
+            if link_hover_style:
+                lines = [
+                    _style_links(line, widget.hover_style.link_id, link_hover_style)
+                    for line in lines
+                ]
+
         return lines
 
     def render(
