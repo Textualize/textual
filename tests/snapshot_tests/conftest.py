@@ -1,12 +1,13 @@
+from __future__ import annotations
+
 import difflib
 import os
 from dataclasses import dataclass
 from datetime import datetime
-from functools import partial
 from operator import attrgetter
 from os import PathLike
 from pathlib import Path
-from typing import Union, List, Optional, Callable
+from typing import Union, List, Optional, Callable, Iterable
 
 import pytest
 from _pytest.config import ExitCode
@@ -15,7 +16,6 @@ from _pytest.main import Session
 from _pytest.terminal import TerminalReporter
 from jinja2 import Template
 from rich.console import Console
-from rich.panel import Panel
 from syrupy import SnapshotAssertion
 
 from textual._doc import take_svg_screenshot
@@ -38,10 +38,32 @@ def snap_compare(
     used to catch regressions in output.
     """
 
-    def compare(app_path: str, snapshot: SnapshotAssertion) -> bool:
+    def compare(
+        app_path: str,
+        press: Iterable[str] = ("_",),
+        terminal_size: tuple[int, int] = (24, 80),
+    ) -> bool:
+        """
+        Compare a current screenshot of the app running at app_path, with
+        a previously accepted (validated by human) snapshot stored on disk.
+        When the `--snapshot-update` flag is supplied (provided by syrupy),
+        the snapshot on disk will be updated to match the current screenshot.
+
+        Args:
+            app_path (str): The path of the app.
+            press (Iterable[str]): Key presses to run before taking screenshot. "_" is a short pause.
+            terminal_size (tuple[int, int]): A pair of integers (rows, columns), representing terminal size.
+
+        Returns:
+            bool: True if the screenshot matches the snapshot.
+        """
         node = request.node
         app = import_app(app_path)
-        actual_screenshot = take_svg_screenshot(app=app)
+        actual_screenshot = take_svg_screenshot(
+            app=app,
+            press=press,
+            terminal_size=terminal_size,
+        )
         result = snapshot == actual_screenshot
 
         if result is False:
@@ -54,11 +76,14 @@ def snap_compare(
 
         return result
 
-    return partial(compare, snapshot=snapshot)
+    return compare
 
 
 @dataclass
 class SvgSnapshotDiff:
+    """Model representing a diff between current screenshot of an app,
+    and the snapshot on disk. This is ultimately intended to be used in
+    a Jinja2 template."""
     snapshot: Optional[str]
     actual: Optional[str]
     test_name: str
@@ -74,9 +99,7 @@ def pytest_sessionfinish(
     exitstatus: Union[int, ExitCode],
 ) -> None:
     """Called after whole test run finished, right before returning the exit status to the system.
-
-    :param pytest.Session session: The pytest session object.
-    :param int exitstatus: The status which pytest will return to the system.
+    Generates the snapshot report and writes it to disk.
     """
     diffs: List[SvgSnapshotDiff] = []
     num_snapshots_passing = 0
@@ -106,8 +129,6 @@ def pytest_sessionfinish(
                 )
             )
 
-    # TODO: Skipping writing artifacts on Windows on CI for now
-    # is_windows_ci = sys.platform == "win32" and os.getenv("CI") is not None
     if diffs:
         diff_sort_key = attrgetter("file_similarity")
         diffs = sorted(diffs, key=diff_sort_key)
@@ -147,10 +168,7 @@ def pytest_terminal_summary(
     config: pytest.Config,
 ) -> None:
     """Add a section to terminal summary reporting.
-
-    :param _pytest.terminal.TerminalReporter terminalreporter: The internal terminal reporter object.
-    :param int exitstatus: The exit status that will be reported back to the OS.
-    :param pytest.Config config: The pytest config object.
+    Displays the link to the snapshot report that was generated in a prior hook.
     """
     diffs = getattr(config, "_textual_snapshots", None)
     console = Console()

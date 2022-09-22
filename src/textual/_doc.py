@@ -7,6 +7,7 @@ from typing import Iterable
 from textual.app import App
 from textual._import_app import import_app
 
+
 # This module defines our "Custom Fences", powered by SuperFences
 # @link https://facelessuser.github.io/pymdown-extensions/extensions/superfences/#custom-fences
 def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str:
@@ -48,6 +49,20 @@ def take_svg_screenshot(
     title: str | None = None,
     terminal_size: tuple[int, int] = (24, 80),
 ) -> str:
+    """
+
+    Args:
+        app: An app instance. Must be supplied if app_path is not.
+        app_path: A path to an app. Must be supplied if app is not.
+        press: Key presses to run before taking screenshot. "_" is a short pause.
+        title: The terminal title in the output image.
+        terminal_size: A pair of integers (rows, columns), representing terminal size.
+
+    Returns:
+        str: An SVG string, showing the content of the terminal window at the time
+            the screenshot was taken.
+
+    """
     rows, columns = terminal_size
 
     os.environ["COLUMNS"] = str(columns)
