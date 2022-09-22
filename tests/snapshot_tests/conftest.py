@@ -110,7 +110,7 @@ def pytest_sessionfinish(
     # is_windows_ci = sys.platform == "win32" and os.getenv("CI") is not None
     if diffs:
         diff_sort_key = attrgetter("file_similarity")
-        diffs = list(reversed(sorted(diffs, key=diff_sort_key)))
+        diffs = sorted(diffs, key=diff_sort_key)
 
         conftest_path = Path(__file__)
         snapshot_template_path = (
@@ -156,9 +156,8 @@ def pytest_terminal_summary(
     console = Console()
     if diffs:
         snapshot_report_location = config._textual_snapshot_html_report
-        summary_panel = Panel(
-            f"[b]Report available for {len(diffs)} snapshot test failures.[/]\n\nView the report at:\n\n[blue]{snapshot_report_location}[/]",
-            title="[b red]Textual Snapshot Test Summary",
-            padding=1,
-        )
-        console.print(summary_panel)
+        console.rule("[b red]Textual Snapshot Report", style="red")
+        console.print(f"\n[black on red]{len(diffs)} mismatched snapshots[/]\n"
+                      f"\n[b]View the [link=file://{snapshot_report_location}]failure report[/].\n")
+        console.print(f"[dim]{snapshot_report_location}\n")
+        console.rule(style="red")
