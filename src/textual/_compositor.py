@@ -75,7 +75,7 @@ CompositorMap: TypeAlias = "dict[Widget, MapGeometry]"
 def style_links(
     segments: Iterable[Segment], link_map: dict[str, Style]
 ) -> Iterable[Segment]:
-    return segments
+
     if not link_map:
         return segments
 
@@ -83,7 +83,7 @@ def style_links(
     link_map_get = link_map.get
 
     segments = [
-        _Segment(text, link_map_get(style.link_id, style) if style else None, control)
+        _Segment(text, link_map_get(style._link_id, style) if style else None, control)
         for text, style, control in segments
     ]
     return segments

@@ -93,7 +93,7 @@ class _Styled:
                     text,
                     style
                     if style._meta is None
-                    else (link_style + style if "click" in style.meta else style),
+                    else (link_style + style if "@click" in style.meta else style),
                     control,
                 )
                 for text, style, control in result_segments

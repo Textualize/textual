@@ -51,21 +51,21 @@ The addition of the CSS has completely transformed our custom widget.
 ```{.textual path="docs/examples/guide/widgets/hello02.py"}
 ```
 
-### Static widget
+## Static widget
 
-While you can extend the Widget class, it is generally preferable to extend a subclass for a better starting point. The [Static][textual.widgets.Static] class is a widget subclass which caches the result of render, and provides an [update()][textual.widgets.Static.update] method to update the content area.
+While you can extend the Widget class, a subclass will typically be a better starting point. The [Static][textual.widgets.Static] class is a widget subclass which caches the result of render, and provides an [update()][textual.widgets.Static.update] method to update the content area.
 
 Let's use Static to create a widget which cycles through "hello" in various languages.
 
 === "hello03.py"
 
-    ```python title="hello03.py" 
+    ```python title="hello03.py" hl_lines="24-36"
     --8<-- "docs/examples/guide/widgets/hello03.py"
     ```
 
 === "hello03.css"
 
-    ```sass title="hello03.css" hl_lines="32-35"
+    ```sass title="hello03.css" 
     --8<-- "docs/examples/guide/widgets/hello03.css"
     ```
 
@@ -76,13 +76,77 @@ Let's use Static to create a widget which cycles through "hello" in various lang
 
 Note that there is no `render()` method on this widget. The Static class is handling the render for us. Instead we call `update()` when we want to update the content within the widget.
 
-The `next_word` method updates the greeting. We call this method from the mount handler to get the first word, and from an click handler to cycle through the hellos when we click the widget. 
+The `next_word` method updates the greeting. We call this method from the mount handler to get the first word, and from an click handler to cycle through the greetings when we click the widget. 
+
+### Default CSS
+
+When building an app it is best to keep your CSS in an external file. This allows you to see all your CSS in one place, and to enable live editing. However if you intent to distribute a widget (via PyPI for instance) it can be convenient to bundle the code and CSS together. You can do this by adding a `DEFAULT_CSS` class variable inside your widget class.
+
+Textual's builtin widgets bundle CSS in this way, which is why you can see nicely styled widgets without having to copy any CSS code.
+
+Here's the Hello example again, this time the widget has embedded default CSS:
+
+=== "hello04.py"
+
+    ```python title="hello04.py" hl_lines="27-36"
+    --8<-- "docs/examples/guide/widgets/hello04.py"
+    ```
+
+=== "hello04.css"
+
+    ```sass title="hello04.css" 
+    --8<-- "docs/examples/guide/widgets/hello04.css"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/hello04.py"}
+    ```
+
+
+#### Default specificity
+
+CSS defined within `DEFAULT_CSS` has an automatically lower [specificity](./CSS.md#specificity) than CSS read from either the App's `CSS` class variable or an external stylesheet. In practice this means that your app's CSS will take precedence over any CSS bundled with widgets.
+
+
+## Text links
+
+Text in a widget may be marked up with links which perform an action when clicked. Links in console markup use the following format:
+
+```
+"Click [@click='app.bell']Me[/]"
+```
+
+The `@click` tag introduces a click handler, which runs the `app.bell` action. 
+
+Let's use markup links in the hello example so that the greeting becomes a link which updates the widget.
+
+
+=== "hello05.py"
+
+    ```python title="hello05.py"  hl_lines="24-33"
+    --8<-- "docs/examples/guide/widgets/hello05.py"
+    ```
+
+=== "hello05.css"
+
+    ```sass title="hello05.css"
+    --8<-- "docs/examples/guide/widgets/hello05.css"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/hello05.py" press="_"}
+    ```
+
+If you run this example you will see that the greeting has been underlined, which indicates it is clickable. If you click on the greeting it will run the `next_word` action which updates the next word.
+
 
 ## Rich renderables
 
-In previous examples we've set strings as content for Widgets. You can also use special objects called [renderables](https://rich.readthedocs.io/en/latest/protocol.html) which can produce more advanced visuals in a Textual app. You can use any renderable defined in [Rich](https://github.com/Textualize/rich) or third party libraries.
+In previous examples we've set strings as content for Widgets. You can also use special objects called [renderables](https://rich.readthedocs.io/en/latest/protocol.html) for advanced visuals. You can use any renderable defined in [Rich](https://github.com/Textualize/rich) or third party libraries.
 
-Lets make a widget that uses a Rich table for its content. The following app is a solution of the classic [fizzbuzz](https://en.wikipedia.org/wiki/Fizz_buzz) problem often used to screen software engineers in job interviews. The problem is this: Count up from 1 to 100, when the number is divisible by 3, output "fizz"; when the number is divisible by 5, output "buzz"; and when the number is divisible by both 3 and 5 output "fizzbuzz".
+Lets make a widget that uses a Rich table for its content. The following app is a solution to the classic [fizzbuzz](https://en.wikipedia.org/wiki/Fizz_buzz) problem often used to screen software engineers in job interviews. The problem is this: Count up from 1 to 100, when the number is divisible by 3, output "fizz"; when the number is divisible by 5, output "buzz"; and when the number is divisible by both 3 and 5 output "fizzbuzz".
 
 This app will "play" fizz buzz by displaying a table of the first 15 numbers and columns for fizz and buzz.
 
@@ -102,38 +166,6 @@ This app will "play" fizz buzz by displaying a table of the first 15 numbers and
 
     ```{.textual path="docs/examples/guide/widgets/fizzbuzz.py"}
     ```
-
-
-## Default CSS
-
-When building an app it is best to keep all your CSS in an external file. This allows you to see all your CSS in one place, and to enable live editing. However if you are building Textual widgets in an external library it can be convenient to bundle code and CSS within the widget itself. You can do this by adding a `DEFAULT_CSS` class variable inside your widget class.
-
-Textual's builtin widgets bundle CSS in this way, which is why you can see nicely styled widgets without having to cut and paste code in to your CSS file.
-
-Here's the Hello example again, this time the widget has embedded default CSS:
-
-=== "hello04.py"
-
-    ```python title="hello04.py" hl_lines="8-18"
-    --8<-- "docs/examples/guide/widgets/hello04.py"
-    ```
-
-=== "hello04.css"
-
-    ```sass title="hello04.css" 
-    --8<-- "docs/examples/guide/widgets/hello04.css"
-    ```
-
-=== "Output"
-
-    ```{.textual path="docs/examples/guide/widgets/hello04.py"}
-    ```
-
-
-
-### Default specificity
-
-CSS defined within `DEFAULT_CSS` has an automatically lower [specificity](./CSS.md#specificity) than CSS read from either the App's `CSS` class variable or an external stylesheet. In practice this means that your app's CSS will take precedence over any CSS bundled with widgets.
 
 ## Content size 
 
