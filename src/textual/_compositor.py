@@ -14,8 +14,7 @@ without having to render the entire screen.
 from __future__ import annotations
 
 from itertools import chain
-from functools import reduce
-from operator import itemgetter, __or__
+from operator import itemgetter
 import sys
 from typing import Callable, cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
 
@@ -776,4 +775,3 @@ class Compositor:
                     add_region(update_region)
 
         self._dirty_regions.update(regions)
-        self._link_map = None

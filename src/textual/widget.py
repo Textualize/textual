@@ -365,9 +365,7 @@ class Widget(DOMNode):
         return box_model
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
-        """Gets the width of the content area.
-
-        May be overridden in a subclass.
+        """Called by textual to get the width of the content area. May be overridden in a subclass.
 
         Args:
             container (Size): Size of the container (immediate parent) widget.
@@ -397,9 +395,7 @@ class Widget(DOMNode):
         return width
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
-        """Gets the height (number of lines) in the content area.
-
-        May be overridden in a subclass.
+        """Called by Textual to get the height of the content area. May be overridden in a subclass.
 
         Args:
             container (Size): Size of the container (immediate parent) widget.

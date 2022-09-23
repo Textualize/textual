@@ -150,34 +150,54 @@ Lets make a widget that uses a Rich table for its content. The following app is 
 
 This app will "play" fizz buzz by displaying a table of the first 15 numbers and columns for fizz and buzz.
 
-=== "fizzbuzz.py"
+=== "fizzbuzz01.py"
 
-    ```python title="fizzbuzz.py" hl_lines="18"
-    --8<-- "docs/examples/guide/widgets/fizzbuzz.py"
+    ```python title="fizzbuzz01.py" hl_lines="18"
+    --8<-- "docs/examples/guide/widgets/fizzbuzz01.py"
     ```
 
-=== "fizzbuzz.css"
+=== "fizzbuzz01.css"
 
-    ```sass title="fizzbuzz.css" hl_lines="32-35"
-    --8<-- "docs/examples/guide/widgets/fizzbuzz.css"
+    ```sass title="fizzbuzz01.css" hl_lines="32-35"
+    --8<-- "docs/examples/guide/widgets/fizzbuzz01.css"
     ```
 
 === "Output"
 
-    ```{.textual path="docs/examples/guide/widgets/fizzbuzz.py"}
+    ```{.textual path="docs/examples/guide/widgets/fizzbuzz01.py"}
     ```
 
 ## Content size 
 
-If you use a rich renderable as content, Textual can auto-detect the dimensions of the output which will become the content area of the widget.
+Textual will auto-detect the dimensions of the content area from rich renderables if width or height is set to `auto`. You can override auto dimensions by implementing [get_content_width()][textual.widget.Widget.get_content_width] or [get_content_height()][textual.widget.Widget.get_content_height].
+
+Let's modify the default width for the fizzbuzz example. By default, the table will be just wide enough to fix the columns. Let's force it to be 50 characters wide.
+
+
+=== "fizzbuzz02.py"
+
+    ```python title="fizzbuzz02.py" hl_lines="10 21-23"
+    --8<-- "docs/examples/guide/widgets/fizzbuzz02.py"
+    ```
+
+=== "fizzbuzz02.css"
+
+    ```sass title="fizzbuzz02.css" 
+    --8<-- "docs/examples/guide/widgets/fizzbuzz02.css"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/fizzbuzz02.py"}
+    ```
+
+Note that we've added `expand=True` to tell the Table to expand beyond the optimal width, so that it fills the 50 characters returned by `get_content_width`.
+
 
 ## Compound widgets
 
+TODO: Explanation of compound widgets
 
 ## Line API
 
-TODO: Widgets docs
-
-- Content size
-- Compound widgets
-- Line API
+TODO: Explanation of line API

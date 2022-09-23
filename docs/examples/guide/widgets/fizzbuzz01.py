@@ -19,7 +19,7 @@ class FizzBuzz(Static):
 
 
 class FizzBuzzApp(App):
-    CSS_PATH = "fizzbuzz.css"
+    CSS_PATH = "fizzbuzz01.css"
 
     def compose(self) -> ComposeResult:
         yield FizzBuzz()
