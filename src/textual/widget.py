@@ -17,7 +17,7 @@ from rich.console import (
     RenderResult,
 )
 from rich.segment import Segment
-from rich.style import Style, StyleType
+from rich.style import Style
 from rich.text import Text
 
 from . import errors, events, messages
@@ -30,7 +30,6 @@ from ._styles_cache import StylesCache
 from ._types import Lines
 from .binding import NoBinding
 from .box_model import BoxModel, get_box_model
-from .css.constants import VALID_TEXT_ALIGN
 from .dom import DOMNode, NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
@@ -67,7 +66,7 @@ class _Styled:
     """
 
     def __init__(
-        self, renderable: "RenderableType", style: Style, link_style: Style
+        self, renderable: "RenderableType", style: Style, link_style: Style | None
     ) -> None:
         self.renderable = renderable
         self.style = style
@@ -93,7 +92,7 @@ class _Styled:
                     text,
                     style
                     if style._meta is None
-                    else (link_style + style if "@click" in style.meta else style),
+                    else (style + link_style if "@click" in style.meta else style),
                     control,
                 )
                 for text, style, control in result_segments
@@ -126,9 +125,12 @@ class Widget(DOMNode):
         scrollbar-corner-color: $panel-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
+        link-background:;        
+        link-color: $text;
         link-style: underline;
-        hover-background: $boost;        
-        hover-style: not underline;
+        hover-background: $accent;   
+        hover-color: $text;     
+        hover-style: bold not underline;
     }
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
@@ -141,6 +143,8 @@ class Widget(DOMNode):
     """Rich renderable may expand."""
     shrink = Reactive(True)
     """Rich renderable may shrink."""
+    auto_links = Reactive(True)
+    """Widget will highlight links automatically."""
 
     hover_style: Reactive[Style] = Reactive(Style)
 
@@ -180,7 +184,7 @@ class Widget(DOMNode):
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, Style] = {}
-        self._link_styles: dict[str, Style] = {}
+        self._stabilized_scrollbar_size: Size | None = None
         self._lock = Lock()
 
         super().__init__(
@@ -432,13 +436,6 @@ class Widget(DOMNode):
 
         return height
 
-    def watch_hover_style(self, old_style: Style, new_style: Style) -> None:
-        self._link_styles.pop(old_style.link_id, None)
-        if new_style.link_id:
-            meta = new_style.meta
-            if "@click" in meta:
-                self._link_styles[new_style.link_id] = self.link_hover_style
-
     def watch_scroll_x(self, new_value: float) -> None:
         self.horizontal_scrollbar.position = int(new_value)
         self.refresh(layout=True)
@@ -557,10 +554,16 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
-        if overflow_x == "auto" and show_vertical and not show_horizontal:
+        if (
+            overflow_x == "auto"
+            and show_vertical
+            and not show_horizontal
+            and self._stabilized_scrollbar_size != self.container_size
+        ):
             show_horizontal = (
                 self.virtual_size.width + styles.scrollbar_size_vertical > width
             )
+            self._stabilized_scrollbar_size = self.container_size
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
@@ -856,21 +859,35 @@ class Widget(DOMNode):
 
     @property
     def link_style(self) -> Style:
+        """Style of links."""
         styles = self.styles
-        base, _, background, color = self.colors
+        _, background = self.background_colors
+        link_background = background + styles.link_background
+        link_color = link_background + (
+            link_background.get_contrast_text(styles.link_color.a)
+            if styles.auto_link_color
+            else styles.link_color
+        )
         style = styles.link_style + Style.from_color(
-            (color + styles.link_color).rich_color,
-            (background + styles.link_background).rich_color,
+            link_color.rich_color,
+            link_background.rich_color,
         )
         return style
 
     @property
     def link_hover_style(self) -> Style:
+        """Style of links with mouse hover."""
         styles = self.styles
-        base, _, background, color = self.colors
+        _, background = self.background_colors
+        hover_background = background + styles.hover_background
+        hover_color = hover_background + (
+            hover_background.get_contrast_text(styles.hover_color.a)
+            if styles.auto_hover_color
+            else styles.hover_color
+        )
         style = styles.hover_style + Style.from_color(
-            (color + styles.hover_color).rich_color,
-            (background + styles.hover_background).rich_color,
+            hover_color.rich_color,
+            hover_background.rich_color,
         )
         return style
 
@@ -1489,7 +1506,9 @@ class Widget(DOMNode):
         ):
             renderable.justify = text_justify
 
-        renderable = _Styled(renderable, self.rich_style, self.link_style)
+        renderable = _Styled(
+            renderable, self.rich_style, self.link_style if self.auto_links else None
+        )
 
         return renderable
 
@@ -1789,6 +1808,7 @@ class Widget(DOMNode):
 
     def _on_leave(self, event: events.Leave) -> None:
         self.mouse_over = False
+        self.hover_style = Style()
 
     def _on_enter(self, event: events.Enter) -> None:
         self.mouse_over = True

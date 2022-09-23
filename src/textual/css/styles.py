@@ -161,10 +161,12 @@ class RulesMap(TypedDict, total=False):
     text_align: TextAlign
 
     link_color: Color
+    auto_link_color: bool
     link_background: Color
     link_style: Style
 
     hover_color: Color
+    auto_hover_color: bool
     hover_background: Color
     hover_style: Style
 
@@ -297,10 +299,12 @@ class StylesBase(ABC):
     text_align = StringEnumProperty(VALID_TEXT_ALIGN, "start")
 
     link_color = ColorProperty("transparent")
+    auto_link_color = BooleanProperty(False)
     link_background = ColorProperty("transparent")
     link_style = StyleFlagsProperty()
 
     hover_color = ColorProperty("transparent")
+    auto_hover_color = BooleanProperty(False)
     hover_background = ColorProperty("transparent")
     hover_style = StyleFlagsProperty()
 

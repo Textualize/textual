@@ -581,8 +581,12 @@ class StylesBuilder:
         alpha: float | None = None
 
         for token in tokens:
-            if name == "color" and token.name == "token" and token.value == "auto":
-                self.styles._rules["auto_color"] = True
+            if (
+                "background" not in name
+                and token.name == "token"
+                and token.value == "auto"
+            ):
+                self.styles._rules[f"auto_{name}"] = True
             elif token.name == "scalar":
                 alpha_scalar = Scalar.parse(token.value)
                 if alpha_scalar.unit != Unit.PERCENT:

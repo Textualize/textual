@@ -45,6 +45,7 @@ class Footer(Widget):
     def __init__(self) -> None:
         super().__init__()
         self._key_text: Text | None = None
+        self.auto_links = False
 
     highlight_key: Reactive[str | None] = Reactive(None)
 
