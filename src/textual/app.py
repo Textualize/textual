@@ -176,6 +176,7 @@ class App(Generic[ReturnType], DOMNode):
             markup=False,
             highlight=False,
             emoji=False,
+            legacy_windows=False,
         )
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
@@ -557,6 +558,7 @@ class App(Generic[ReturnType], DOMNode):
             force_terminal=True,
             color_system="truecolor",
             record=True,
+            legacy_windows=False,
         )
         screen_render = self.screen._compositor.render(full=True)
         console.print(screen_render)
