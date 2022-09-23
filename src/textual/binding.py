@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import sys
+from copy import copy
+
 import rich.repr
 
 from dataclasses import dataclass
@@ -10,7 +12,6 @@ if sys.version_info >= (3, 10):
     from typing import TypeAlias
 else:  # pragma: no cover
     from typing_extensions import TypeAlias
-
 
 BindingType: TypeAlias = "Binding | tuple[str, str, str]"
 
@@ -41,7 +42,14 @@ class Bindings:
         def make_bindings(bindings: Iterable[BindingType]) -> Iterable[Binding]:
             for binding in bindings:
                 if isinstance(binding, Binding):
-                    yield binding
+                    binding_keys = binding.key.split(",")
+                    if len(binding_keys) > 1:
+                        for key in binding_keys:
+                            new_binding = copy(binding)
+                            new_binding.key = key
+                            yield new_binding
+                    else:
+                        yield binding
                 else:
                     if len(binding) != 3:
                         raise BindingError(
