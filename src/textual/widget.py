@@ -10,13 +10,14 @@ import rich.repr
 from rich.console import (
     Console,
     ConsoleRenderable,
+    ConsoleOptions,
     RichCast,
     JustifyMethod,
     RenderableType,
+    RenderResult,
 )
 from rich.segment import Segment
 from rich.style import Style
-from rich.styled import Styled
 from rich.text import Text
 
 from . import errors, events, messages
@@ -29,7 +30,6 @@ from ._styles_cache import StylesCache
 from ._types import Lines
 from .binding import NoBinding
 from .box_model import BoxModel, get_box_model
-from .css.constants import VALID_TEXT_ALIGN
 from .dom import DOMNode, NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
@@ -57,6 +57,49 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 }
 
 
+class _Styled:
+    """Apply a style to a renderable.
+
+    Args:
+        renderable (RenderableType): Any renderable.
+        style (StyleType): A style to apply across the entire renderable.
+    """
+
+    def __init__(
+        self, renderable: "RenderableType", style: Style, link_style: Style | None
+    ) -> None:
+        self.renderable = renderable
+        self.style = style
+        self.link_style = link_style
+
+    def __rich_console__(
+        self, console: "Console", options: "ConsoleOptions"
+    ) -> "RenderResult":
+        style = console.get_style(self.style)
+        result_segments = console.render(self.renderable, options)
+
+        _Segment = Segment
+        if style:
+            apply = style.__add__
+            result_segments = (
+                _Segment(text, apply(_style), control)
+                for text, _style, control in result_segments
+            )
+        link_style = self.link_style
+        if link_style:
+            result_segments = (
+                _Segment(
+                    text,
+                    style
+                    if style._meta is None
+                    else (style + link_style if "@click" in style.meta else style),
+                    control,
+                )
+                for text, style, control in result_segments
+            )
+        return result_segments
+
+
 class RenderCache(NamedTuple):
     """Stores results of a previous render."""
 
@@ -82,6 +125,12 @@ class Widget(DOMNode):
         scrollbar-corner-color: $panel-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
+        link-background:;        
+        link-color: $text;
+        link-style: underline;
+        hover-background: $accent;   
+        hover-color: $text;     
+        hover-style: bold not underline;
     }
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
@@ -94,6 +143,10 @@ class Widget(DOMNode):
     """Rich renderable may expand."""
     shrink = Reactive(True)
     """Rich renderable may shrink."""
+    auto_links = Reactive(True)
+    """Widget will highlight links automatically."""
+
+    hover_style: Reactive[Style] = Reactive(Style)
 
     def __init__(
         self,
@@ -131,7 +184,7 @@ class Widget(DOMNode):
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, Style] = {}
-
+        self._stabilized_scrollbar_size: Size | None = None
         self._lock = Lock()
 
         super().__init__(
@@ -312,9 +365,7 @@ class Widget(DOMNode):
         return box_model
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
-        """Gets the width of the content area.
-
-        May be overridden in a subclass.
+        """Called by textual to get the width of the content area. May be overridden in a subclass.
 
         Args:
             container (Size): Size of the container (immediate parent) widget.
@@ -344,9 +395,7 @@ class Widget(DOMNode):
         return width
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
-        """Gets the height (number of lines) in the content area.
-
-        May be overridden in a subclass.
+        """Called by Textual to get the height of the content area. May be overridden in a subclass.
 
         Args:
             container (Size): Size of the container (immediate parent) widget.
@@ -501,10 +550,16 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
-        if overflow_x == "auto" and show_vertical and not show_horizontal:
+        if (
+            overflow_x == "auto"
+            and show_vertical
+            and not show_horizontal
+            and self._stabilized_scrollbar_size != self.container_size
+        ):
             show_horizontal = (
                 self.virtual_size.width + styles.scrollbar_size_vertical > width
             )
+            self._stabilized_scrollbar_size = self.container_size
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
@@ -797,6 +852,40 @@ class Widget(DOMNode):
             if node.styles.has_rule("layers"):
                 return node.styles.layers
         return ("default",)
+
+    @property
+    def link_style(self) -> Style:
+        """Style of links."""
+        styles = self.styles
+        _, background = self.background_colors
+        link_background = background + styles.link_background
+        link_color = link_background + (
+            link_background.get_contrast_text(styles.link_color.a)
+            if styles.auto_link_color
+            else styles.link_color
+        )
+        style = styles.link_style + Style.from_color(
+            link_color.rich_color,
+            link_background.rich_color,
+        )
+        return style
+
+    @property
+    def link_hover_style(self) -> Style:
+        """Style of links with mouse hover."""
+        styles = self.styles
+        _, background = self.background_colors
+        hover_background = background + styles.hover_background
+        hover_color = hover_background + (
+            hover_background.get_contrast_text(styles.hover_color.a)
+            if styles.auto_hover_color
+            else styles.hover_color
+        )
+        style = styles.hover_style + Style.from_color(
+            hover_color.rich_color,
+            hover_background.rich_color,
+        )
+        return style
 
     def _set_dirty(self, *regions: Region) -> None:
         """Set the Widget as 'dirty' (requiring re-paint).
@@ -1413,7 +1502,9 @@ class Widget(DOMNode):
         ):
             renderable.justify = text_justify
 
-        renderable = Styled(renderable, self.rich_style)
+        renderable = _Styled(
+            renderable, self.rich_style, self.link_style if self.auto_links else None
+        )
 
         return renderable
 
@@ -1713,6 +1804,7 @@ class Widget(DOMNode):
 
     def _on_leave(self, event: events.Leave) -> None:
         self.mouse_over = False
+        self.hover_style = Style()
 
     def _on_enter(self, event: events.Enter) -> None:
         self.mouse_over = True

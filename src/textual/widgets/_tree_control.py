@@ -5,7 +5,7 @@ from typing import ClassVar, Generic, Iterator, NewType, TypeVar
 
 import rich.repr
 from rich.console import RenderableType
-from rich.style import Style
+from rich.style import Style, NULL_STYLE
 from rich.text import Text, TextType
 from rich.tree import Tree
 
@@ -164,10 +164,10 @@ class TreeNode(Generic[NodeDataType]):
 class TreeControl(Generic[NodeDataType], Static, can_focus=True):
     DEFAULT_CSS = """
     TreeControl {   
-        
         color: $text;
         height: auto;
         width: 100%;
+        link-style: not underline;
     }
 
     TreeControl > .tree--guides {
@@ -219,6 +219,7 @@ class TreeControl(Generic[NodeDataType], Static, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
+        super().__init__(name=name, id=id, classes=classes)
         self.data = data
 
         self.node_id = NodeID(0)
@@ -231,7 +232,8 @@ class TreeControl(Generic[NodeDataType], Static, can_focus=True):
 
         self._tree.label = self.root
         self.nodes[NodeID(self.node_id)] = self.root
-        super().__init__(name=name, id=id, classes=classes)
+
+        self.auto_links = False
 
     hover_node: Reactive[NodeID | None] = Reactive(None)
     cursor: Reactive[NodeID] = Reactive(NodeID(0))

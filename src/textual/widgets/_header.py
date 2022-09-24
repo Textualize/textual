@@ -79,20 +79,20 @@ class Header(Widget):
         color: $text;
         height: 1;
     }
-    Header.tall {
+    Header.-tall {
         height: 3;
     }
     """
 
     tall = Reactive(True)
 
-    DEFAULT_CLASSES = "tall"
+    DEFAULT_CLASSES = "-tall"
 
     def watch_tall(self, tall: bool) -> None:
-        self.set_class(tall, "tall")
+        self.set_class(tall, "-tall")
 
     async def on_click(self, event):
-        self.toggle_class("tall")
+        self.toggle_class("-tall")
 
     def on_mount(self) -> None:
         def set_title(title: str) -> None:

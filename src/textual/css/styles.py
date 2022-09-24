@@ -158,6 +158,16 @@ class RulesMap(TypedDict, total=False):
 
     text_align: TextAlign
 
+    link_color: Color
+    auto_link_color: bool
+    link_background: Color
+    link_style: Style
+
+    hover_color: Color
+    auto_hover_color: bool
+    hover_background: Color
+    hover_style: Style
+
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
 RULE_NAMES_SET = frozenset(RULE_NAMES)
@@ -195,6 +205,10 @@ class StylesBase(ABC):
         "scrollbar_background",
         "scrollbar_background_hover",
         "scrollbar_background_active",
+        "link_color",
+        "link_background",
+        "hover_color",
+        "hover_background",
     }
 
     node: DOMNode | None = None
@@ -280,6 +294,16 @@ class StylesBase(ABC):
     column_span = IntegerProperty(default=1, layout=True)
 
     text_align = StringEnumProperty(VALID_TEXT_ALIGN, "start")
+
+    link_color = ColorProperty("transparent")
+    auto_link_color = BooleanProperty(False)
+    link_background = ColorProperty("transparent")
+    link_style = StyleFlagsProperty()
+
+    hover_color = ColorProperty("transparent")
+    auto_hover_color = BooleanProperty(False)
+    hover_background = ColorProperty("transparent")
+    hover_style = StyleFlagsProperty()
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles contains the same rules."""

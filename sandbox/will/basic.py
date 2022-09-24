@@ -124,17 +124,18 @@ class BasicApp(App):
 
         yield Vertical(
             Tweet(TweetBody()),
-            Container(
+            Tweet(
                 Static(
                     Syntax(
                         CODE,
                         "python",
+                        theme="ansi_dark",
                         line_numbers=True,
                         indent_guides=True,
                     ),
                     classes="code",
                 ),
-                classes="scrollable",
+                classes="tall",
             ),
             Container(table, id="table-container"),
             Container(DirectoryTree("~/"), id="tree-container"),

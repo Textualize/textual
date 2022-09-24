@@ -6,7 +6,7 @@ import rich.repr
 from rich.color import Color
 from rich.console import ConsoleOptions, RenderableType, RenderResult
 from rich.segment import Segment, Segments
-from rich.style import Style, StyleType
+from rich.style import NULL_STYLE, Style, StyleType
 
 from . import events
 from ._types import MessageTarget
@@ -118,8 +118,8 @@ class ScrollBarRender:
             start_index, start_bar = divmod(max(0, start), len_bars)
             end_index, end_bar = divmod(max(0, end), len_bars)
 
-            upper = {"@click": "scroll_up"}
-            lower = {"@click": "scroll_down"}
+            upper = {"@mouse.up": "scroll_up"}
+            lower = {"@mouse.up": "scroll_down"}
 
             upper_back_segment = Segment(blank, _Style(bgcolor=back, meta=upper))
             lower_back_segment = Segment(blank, _Style(bgcolor=back, meta=lower))
@@ -189,6 +189,17 @@ class ScrollBarRender:
 
 @rich.repr.auto
 class ScrollBar(Widget):
+
+    DEFAULT_CSS = """
+    ScrollBar {
+        hover-color: ;
+        hover-background:;
+        hover-style: ;
+        link-color: transparent;
+        link-background: transparent;
+    }
+    """
+
     def __init__(
         self, vertical: bool = True, name: str | None = None, *, thickness: int = 1
     ) -> None:
@@ -196,6 +207,7 @@ class ScrollBar(Widget):
         self.thickness = thickness
         self.grabbed_position: float = 0
         super().__init__(name=name)
+        self.auto_links = False
 
     window_virtual_size: Reactive[int] = Reactive(100)
     window_size: Reactive[int] = Reactive(0)

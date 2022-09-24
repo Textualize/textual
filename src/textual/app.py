@@ -97,6 +97,7 @@ DEFAULT_COLORS = {
 
 
 ComposeResult = Iterable[Widget]
+RenderResult = RenderableType
 
 
 class AppError(Exception):
@@ -1315,7 +1316,8 @@ class App(Generic[ReturnType], DOMNode):
 
     def bell(self) -> None:
         """Play the console 'bell'."""
-        self.console.bell()
+        if not self.is_headless:
+            self.console.bell()
 
     async def press(self, key: str) -> bool:
         """Handle a key press.

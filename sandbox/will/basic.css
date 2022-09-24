@@ -6,6 +6,9 @@
     transition: color 300ms linear, background 300ms linear;
 }
 
+Tweet.tall {
+  height: 24;
+}
 
 *:hover {
   /* tint: 30% red;
@@ -47,8 +50,8 @@ DataTable {
   /*border:heavy red;*/
   /* tint: 10% green; */
   /* text-opacity: 50%; */
-  background: $surface;
-  padding: 1 2;
+ 
+  
   margin: 1 2;
   height: 24;
 }
@@ -118,6 +121,7 @@ Tweet {
 .scrollable {
   overflow-x: auto;
   overflow-y: scroll;
+  padding: 0 2;
   margin: 1 2;
   height: 24;
   align-horizontal: center;
@@ -125,8 +129,7 @@ Tweet {
 }
 
 .code {
-  height: auto;
-
+  height: auto;  
 }
 
 

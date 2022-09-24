@@ -185,6 +185,12 @@ class Color(NamedTuple):
         )
 
     @property
+    def inverse(self) -> Color:
+        """The inverse of this color."""
+        r, g, b, a = self
+        return Color(255 - r, 255 - g, 255 - b, a)
+
+    @property
     def is_transparent(self) -> bool:
         """Check if the color is transparent, i.e. has 0 alpha.
 
@@ -502,12 +508,10 @@ class Color(NamedTuple):
         Returns:
             Color: A new color, either an off-white or off-black
         """
-        white = self.blend(WHITE, alpha)
-        black = self.blend(BLACK, alpha)
         brightness = self.brightness
-        white_contrast = abs(brightness - white.brightness)
-        black_contrast = abs(brightness - black.brightness)
-        return white if white_contrast > black_contrast else black
+        white_contrast = abs(brightness - WHITE.brightness)
+        black_contrast = abs(brightness - BLACK.brightness)
+        return (WHITE if white_contrast > black_contrast else BLACK).with_alpha(alpha)
 
 
 # Color constants

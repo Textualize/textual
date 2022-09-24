@@ -280,6 +280,7 @@ class Screen(Widget):
                 screen_y=event.screen_y,
                 style=event.style,
             )
+            widget.hover_style = event.style
             mouse_event._set_forwarded()
             await widget._forward_event(mouse_event)
 
