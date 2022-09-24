@@ -205,3 +205,7 @@ def test_rgb_lab_rgb_roundtrip():
                 assert c_.r == pytest.approx(r, abs=1)
                 assert c_.g == pytest.approx(g, abs=1)
                 assert c_.b == pytest.approx(b, abs=1)
+
+
+def test_inverse():
+    assert Color(55, 0, 255, 0.1).inverse == Color(200, 255, 0, 0.1)
