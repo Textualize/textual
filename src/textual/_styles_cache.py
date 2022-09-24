@@ -49,7 +49,7 @@ def style_links(
         _Segment(
             text,
             (style + link_style if style is not None else None)
-            if (style and style._link_id == link_id)
+            if (style and not style._null and style._link_id == link_id)
             else style,
             control,
         )
