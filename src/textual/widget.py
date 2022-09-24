@@ -28,6 +28,7 @@ from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
+from .css.scalar import ScalarOffset
 from .binding import NoBinding
 from .box_model import BoxModel, get_box_model
 from .dom import DOMNode, NoScreen
@@ -254,6 +255,14 @@ class Widget(DOMNode):
         return self.is_scrollable and (
             self.allow_horizontal_scroll or self.allow_vertical_scroll
         )
+
+    @property
+    def offset(self) -> Offset:
+        return self.styles.offset.resolve(self.size, self.app.size)
+
+    @offset.setter
+    def offset(self, offset: Offset) -> None:
+        self.styles.offset = ScalarOffset.from_offset(offset)
 
     def get_component_rich_style(self, name: str) -> Style:
         """Get a *Rich* style for a component.
@@ -1526,7 +1535,11 @@ class Widget(DOMNode):
             virtual_size (Size): Virtual (scrollable) size.
             container_size (Size): Container size (size of parent).
         """
-        if self._size != size or self.virtual_size != virtual_size:
+        if (
+            self._size != size
+            or self.virtual_size != virtual_size
+            or self._container_size != container_size
+        ):
             self._size = size
             self.virtual_size = virtual_size
             self._container_size = container_size
@@ -1543,6 +1556,7 @@ class Widget(DOMNode):
         """
         self._refresh_scrollbars()
         width, height = self.container_size
+
         if self.show_vertical_scrollbar:
             self.vertical_scrollbar.window_virtual_size = virtual_size.height
             self.vertical_scrollbar.window_size = (

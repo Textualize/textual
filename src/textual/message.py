@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import ClassVar, TYPE_CHECKING
 
 import rich.repr
 
 from . import _clock
 from .case import camel_to_snake
 from ._types import MessageTarget as MessageTarget
+
+if TYPE_CHECKING:
+    from .widget import Widget
 
 
 @rich.repr.auto
@@ -109,3 +112,11 @@ class Message:
         """
         self._stop_propagation = stop
         return self
+
+    async def _bubble_to(self, widget: Widget) -> None:
+        """Bubble to a widget (typically the parent).
+
+        Args:
+            widget (Widget): Target of bubble.
+        """
+        await widget.post_message(self)

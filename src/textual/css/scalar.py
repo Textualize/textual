@@ -327,6 +327,14 @@ class ScalarOffset(NamedTuple):
         """Get a null scalar offset (0, 0)."""
         return NULL_SCALAR
 
+    @classmethod
+    def from_offset(cls, offset: tuple[int, int]) -> ScalarOffset:
+        x, y = offset
+        return cls(
+            Scalar(x, Unit.CELLS, Unit.WIDTH),
+            Scalar(y, Unit.CELLS, Unit.HEIGHT),
+        )
+
     def __bool__(self) -> bool:
         x, y = self
         return bool(x.value or y.value)

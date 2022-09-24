@@ -14,6 +14,7 @@ nav:
     - "guide/CSS.md"
     - "guide/layout.md"
     - "guide/events.md"
+    - "guide/input.md"
     - "guide/actions.md"
     - "guide/reactivity.md"
     - "guide/widgets.md"

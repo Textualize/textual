@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import unicodedata
 import re
 from typing import Any, Callable, Generator, Iterable
 
@@ -228,7 +229,9 @@ class XTermParser(Parser[events.Event]):
                     for event in sequence_to_key_events(character):
                         on_token(event)
 
-    def _sequence_to_key_events(self, sequence: str) -> Iterable[events.Key]:
+    def _sequence_to_key_events(
+        self, sequence: str, _unicode_name=unicodedata.name
+    ) -> Iterable[events.Key]:
         """Map a sequence of code points on to a sequence of keys.
 
         Args:
@@ -246,4 +249,16 @@ class XTermParser(Parser[events.Event]):
                     self.sender, key.value, sequence if len(sequence) == 1 else None
                 )
         elif len(sequence) == 1:
-            yield events.Key(self.sender, sequence, sequence)
+            try:
+                if not sequence.isalnum():
+                    name = (
+                        _unicode_name(sequence)
+                        .lower()
+                        .replace("-", "_")
+                        .replace(" ", "_")
+                    )
+                else:
+                    name = sequence
+                yield events.Key(self.sender, name, sequence)
+            except:
+                yield events.Key(self.sender, sequence, sequence)

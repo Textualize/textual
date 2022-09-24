@@ -501,13 +501,39 @@ class Compositor:
             raise errors.NoWidget("Widget is not in layout")
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
-        """Get the widget under the given point or None."""
+        """Get the widget under a given coordinate.
+
+        Args:
+            x (int): X Coordinate.
+            y (int): Y Coordinate.
+
+        Raises:
+            errors.NoWidget: If there is not widget underneath (x, y).
+
+        Returns:
+            tuple[Widget, Region]: A tuple of the widget and its region.
+        """
         # TODO: Optimize with some line based lookup
         contains = Region.contains
         for widget, cropped_region, region, *_ in self:
             if contains(cropped_region, x, y) and widget.visible:
                 return widget, region
         raise errors.NoWidget(f"No widget under screen coordinate ({x}, {y})")
+
+    def get_widgets_at(self, x: int, y: int) -> Iterable[tuple[Widget, Region]]:
+        """Get all widgets under a given coordinate.
+
+        Args:
+            x (int): X coordinate.
+            y (int): Y coordinate.
+
+        Returns:
+            Iterable[tuple[Widget, Region]]: Sequence of (WIDGET, REGION) tuples.
+        """
+        contains = Region.contains
+        for widget, cropped_region, region, *_ in self:
+            if contains(cropped_region, x, y) and widget.visible:
+                yield widget, region
 
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the Style at the given cell or Style.null()

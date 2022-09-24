@@ -675,7 +675,17 @@ class DOMNode(MessagePump):
                 return child
         raise NoMatchingNodesError(f"No child found with id={id!r}")
 
-    def query(self, selector: str | None = None) -> DOMQuery:
+    ExpectType = TypeVar("ExpectType", bound="Widget")
+
+    @overload
+    def query(self, selector: str | None) -> DOMQuery:
+        ...
+
+    @overload
+    def query(self, selector: type[ExpectType]) -> DOMQuery[ExpectType]:
+        ...
+
+    def query(self, selector: str | type | None = None) -> DOMQuery:
         """Get a DOM query matching a selector.
 
         Args:
@@ -686,9 +696,13 @@ class DOMNode(MessagePump):
         """
         from .css.query import DOMQuery
 
-        return DOMQuery(self, filter=selector)
+        query: str | None
+        if isinstance(selector, str) or selector is None:
+            query = selector
+        else:
+            query = selector.__name__
 
-    ExpectType = TypeVar("ExpectType")
+        return DOMQuery(self, filter=query)
 
     @overload
     def query_one(self, selector: str) -> Widget:
@@ -723,7 +737,7 @@ class DOMNode(MessagePump):
             query_selector = selector
         else:
             query_selector = selector.__name__
-        query = DOMQuery(self, filter=query_selector)
+        query: DOMQuery[Widget] = DOMQuery(self, filter=query_selector)
 
         if expect_type is None:
             return query.first()
