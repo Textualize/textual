@@ -691,24 +691,19 @@ use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "rich"
-version = "12.6.0a1"
+version = "12.6.0a2"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 category = "main"
 optional = false
-python-versions = "^3.6.3"
-develop = true
+python-versions = ">=3.6.3,<4.0.0"
 
 [package.dependencies]
-commonmark = "^0.9.0"
-pygments = "^2.6.0"
-typing-extensions = {version = ">=4.0.0, <5.0", markers = "python_version < \"3.9\""}
+commonmark = ">=0.9.0,<0.10.0"
+pygments = ">=2.6.0,<3.0.0"
+typing-extensions = {version = ">=4.0.0,<5.0", markers = "python_version < \"3.9\""}
 
 [package.extras]
 jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
-
-[package.source]
-type = "directory"
-url = "../rich"
 
 [[package]]
 name = "six"
@@ -720,8 +715,8 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "syrupy"
-version = "3.0.0"
-description = "PyTest Snapshot Test Utility"
+version = "3.0.2"
+description = "Pytest Snapshot Test Utility"
 category = "dev"
 optional = false
 python-versions = ">=3.7,<4"
@@ -846,7 +841,7 @@ dev = ["aiohttp", "click", "msgpack"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "7c5f4afc8cc0d0be1fa26c2db1f48c28226f3fcc33e3938b4d2d57f73d17e74c"
+content-hash = "b1ad14eaa7ccba5153501b10981f6910409ea084e6e6ab66364bfe362c66ae90"
 
 [metadata.files]
 aiohttp = []
