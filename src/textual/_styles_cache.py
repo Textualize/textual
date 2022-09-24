@@ -32,13 +32,23 @@ RenderLineCallback: TypeAlias = Callable[[int], List[Segment]]
 def style_links(
     segments: Iterable[Segment], link_id: str, link_style: Style
 ) -> list[Segment]:
+    """Apply a style to the given link id.
+
+    Args:
+        segments (Iterable[Segment]): Segments.
+        link_id (str): A link id.
+        link_style (Style): Style to apply.
+
+    Returns:
+        list[Segment]: A list of new segments.
+    """
 
     _Segment = Segment
 
     segments = [
         _Segment(
             text,
-            (style + link_style if style else None)
+            (style + link_style if style is not None else None)
             if (style and style._link_id == link_id)
             else style,
             control,
