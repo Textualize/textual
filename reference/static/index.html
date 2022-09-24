@@ -3059,13 +3059,23 @@ Defaults to "".</p></td>
           </td>
         </tr>
         <tr>
-          <td><code>fluid</code></td>
+          <td><code>expand</code></td>
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Enable fluid content (adapts to size of window). Defaults to True.</p></td>
+          <td><p>Rich renderable may expand beyond optimal. Defaults to False.</p></td>
           <td>
-                <code>True</code>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>shrink</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Rich renderable may shrink below optional. Defaults to False.</p></td>
+          <td>
+                <code>False</code>
           </td>
         </tr>
         <tr>
@@ -3156,14 +3166,14 @@ Defaults to "".</p></td>
 
 
 <h2 id="textual.widgets._static.Static.update" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">update</span><span class="p">(</span><span class="n">renderable</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">home</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">update</span><span class="p">(</span><span class="n">renderable</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></code>
 
 <a href="#textual.widgets._static.Static.update" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
   <div class="doc doc-contents ">
   
-      <p>Update the widget contents.</p>
+      <p>Update the widget's content area with new text or Rich renderable.</p>
 
   <p><strong>Parameters:</strong></p>
   <table>
@@ -3181,7 +3191,7 @@ Defaults to "".</p></td>
           <td>
                 <code><span title="rich.console.RenderableType">RenderableType</span></code>
           </td>
-          <td><p>A new rich renderable.</p></td>
+          <td><p>A new rich renderable. Defaults to empty renderable;</p></td>
           <td>
                 <code>&#39;&#39;</code>
           </td>

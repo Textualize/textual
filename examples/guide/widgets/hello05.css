@@ -1,0 +1,12 @@
+Screen {
+    layout: center;
+}
+
+Hello {
+    width: 40;
+    height: 9;
+    padding: 1 2;
+    background: $panel;
+    border: $secondary tall;
+    content-align: center middle;
+}

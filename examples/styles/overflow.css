@@ -9,8 +9,9 @@ Vertical {
 
 Static {
     margin: 1 2;  
-    background: blue 20%;  
-    border: blue wide;
+    background: green 80%;  
+    border: green wide;
+    color: white 90%;
     height: auto;
 }    
 

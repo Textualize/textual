@@ -19,7 +19,7 @@ class DictionaryApp(App):
 
     def compose(self) -> ComposeResult:
         yield TextInput(placeholder="Search for a word")
-        yield Vertical(Static(id="results", fluid=False), id="results-container")
+        yield Vertical(Static(id="results"), id="results-container")
 
     async def on_text_input_changed(self, message: TextInput.Changed) -> None:
         """A coroutine to handle a text changed message."""
