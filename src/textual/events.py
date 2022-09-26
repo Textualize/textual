@@ -318,17 +318,31 @@ class MouseEvent(InputEvent, bubble=True):
 
     @property
     def offset(self) -> Offset:
-        """The mouse coordinate as an offset."""
+        """The mouse coordinate as an offset.
+
+        Returns:
+            Offset: Mouse coordinate.
+
+        """
         return Offset(self.x, self.y)
 
     @property
     def screen_offset(self) -> Offset:
-        """Mouse coordinate relative to the screen."""
+        """Mouse coordinate relative to the screen.
+
+        Returns:
+            Offset: Mouse coordinate.
+        """
         return Offset(self.screen_x, self.screen_y)
 
     @property
     def delta(self) -> Offset:
-        """Mouse coordinate delta (change since last event)."""
+        """Mouse coordinate delta (change since last event).
+
+        Returns:
+            Offset: Mouse coordinate.
+
+        """
         return Offset(self.delta_x, self.delta_y)
 
     @property

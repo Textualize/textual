@@ -29,15 +29,15 @@ Note the key event handler on the app which logs all key events. if you press an
 
 There are two main attributes on a key event. The `key` attribute is the _name_ of the key which may be a single character, or a longer identifier. Textual insures that the `key` attribute could always be used in a method name.
 
-Key events also contain a `char` attribute which contains a printable character.
+Key events also contain a `char` attribute which contains single character if it is printable, or ``None`` if it is not printable (like a function key which has no corresponding character).
 
-To illustrate the difference, try `key01.py` with the space key. You should see something like the following:
+To illustrate the difference between `key` ad `char`, try `key01.py` with the space key. You should see something like the following:
 
 ```{.textual path="docs/examples/guide/input/key01.py", press="space,_"}
 
 ```
 
-The `key` attribute contains the word "space" while the `char` attribute contains a literal space.
+Note that he `key` attribute contains the word "space" while the `char` attribute contains a literal space.
 
 ### Key methods
 
@@ -53,7 +53,7 @@ Note the addition of a `key_space` method which is called in response to the spa
 
 !!! note
 
-    Consider key methods to be a convenience for experimenting with Textual features. In nearly all cases, key [bindings](#bindings) and actions are referable.
+    Consider key methods to be a convenience for experimenting with Textual features. In nearly all cases, key [bindings](#bindings) and [actions](../guide/actions.md) are preferable.
 
 ## Input focus
 
@@ -84,7 +84,7 @@ The app splits the screen in to quarters, with a TextLog widget in each quarter.
 
     the `:focus` CSS pseudo-selector can be used to apply a style to the focused widget.
 
-You can also move focus by pressing the ++tab++ key which moves the focus to the next widget. Pressing ++shift+tab++ moves the focus in the opposite direction.
+You can move focus by pressing the ++tab++ key to focus the next widget. Pressing ++shift+tab++ moves the focus in the opposite direction.
 
 ### Controlling focus
 
@@ -119,7 +119,7 @@ The following example binds the keys ++r++, ++g++, and ++b++ to an action which 
     ```{.textual path="docs/examples/guide/input/binding01.py", press="r,g,b,b"}
     ```
 
-Note how the footer displays bindings and makes them clickable, as an alternative to pressing the key.
+Note how the footer displays bindings and makes them clickable.
 
 ### Binding class
 
@@ -156,7 +156,7 @@ The following example shows mouse movements being used to _attach_ a widget to t
 
 === "mouse01.py"
 
-    ```python title="mouse01.py" hl_lines="12-14"
+    ```python title="mouse01.py" hl_lines="11-13"
     --8<-- "docs/examples/guide/input/mouse01.py"
     ```
 
@@ -181,6 +181,10 @@ Call [release_mouse][textual.widget.Widget.release_mouse] to restore the default
     If you capture the mouse, be aware you might get negative mouse coordinates if the cursor is to the left of the widget.
 
 Textual will send a [MouseCapture](../events/mouse_capture.md) event when the mouse is captured, and a [MouseRelease](../events/mouse_release.md) event when it is released.
+
+### Enter and Leave events
+
+Textual will send a [Enter](../events/enter.md) event to a widget when the mouse cursor first moves over it, and a [Leave](../events/leave) event when the cursor moves off a widget. 
 
 ### Click events
 

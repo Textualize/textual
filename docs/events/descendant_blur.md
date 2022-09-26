@@ -8,3 +8,7 @@ The `DescendantBlur` event is sent to a widget when one of its children loses fo
 ## Attributes
 
 _No other attributes_
+
+## Code
+
+::: textual.events.DescendantBlur
