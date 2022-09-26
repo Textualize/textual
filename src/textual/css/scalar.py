@@ -329,6 +329,14 @@ class ScalarOffset(NamedTuple):
 
     @classmethod
     def from_offset(cls, offset: tuple[int, int]) -> ScalarOffset:
+        """Create a Scalar offset from a tuple of integers.
+
+        Args:
+            offset (tuple[int, int]): Offset in cells.
+
+        Returns:
+            ScalarOffset: New offset.
+        """
         x, y = offset
         return cls(
             Scalar(x, Unit.CELLS, Unit.WIDTH),
@@ -344,6 +352,15 @@ class ScalarOffset(NamedTuple):
         yield None, str(self.y)
 
     def resolve(self, size: Size, viewport: Size) -> Offset:
+        """Resolve the offset in to cells.
+
+        Args:
+            size (Size): Size of container.
+            viewport (Size): Size of viewport.
+
+        Returns:
+            Offset: Offset in cells.
+        """
         x, y = self
         return Offset(
             round(x.resolve_dimension(size, viewport)),
@@ -362,8 +379,7 @@ def percentage_string_to_float(string: str) -> float:
     """
     string = string.strip()
     if string.endswith("%"):
-        percentage = string[:-1]
-        float_percentage = clamp(float(percentage) / 100, 0, 1)
+        float_percentage = clamp(float(string[:-1]) / 100.0, 0.0, 1.0)
     else:
         float_percentage = float(string)
     return float_percentage
