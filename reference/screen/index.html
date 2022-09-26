@@ -531,6 +531,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -685,6 +687,27 @@
   
   <span class="md-ellipsis">
     Events and Messages
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/input/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Input
     
   </span>
   
@@ -1266,7 +1289,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_click/" class="md-nav__link">
+      <a href="../../events/click/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2902,6 +2925,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.Screen.get_widgets_at" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_widgets_at()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.Screen.is_current" class="md-nav__link">
     <span class="md-ellipsis">
       is_current()
@@ -3095,6 +3127,15 @@
   <a href="#textual.screen.Screen.get_widget_at" class="md-nav__link">
     <span class="md-ellipsis">
       get_widget_at()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.screen.Screen.get_widgets_at" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_widgets_at()
     </span>
   </a>
   
@@ -3464,6 +3505,76 @@
                 <code>tuple[<a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a>, <a class="autorefs autorefs-internal" title="textual.geometry.Region" href="../geometry/#textual.geometry.Region">Region</a>]</code>
           </td>
           <td><p>tuple[Widget, Region]: Widget and screen region.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.screen.Screen.get_widgets_at" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_widgets_at</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></code>
+
+<a href="#textual.screen.Screen.get_widgets_at" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Get all widgets under a given coordinate.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>x</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td><p>X coordinate.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>y</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td><p>Y coordinate.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing.Iterable">Iterable</span>[tuple[<a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a>, <a class="autorefs autorefs-internal" title="textual.geometry.Region" href="../geometry/#textual.geometry.Region">Region</a>]]</code>
+          </td>
+          <td><p>Iterable[tuple[Widget, Region]]: Sequence of (WIDGET, REGION) tuples.</p></td>
         </tr>
     </tbody>
   </table>

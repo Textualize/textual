@@ -531,6 +531,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -685,6 +687,27 @@
   
   <span class="md-ellipsis">
     Events and Messages
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/input/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Input
     
   </span>
   
@@ -1268,7 +1291,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mouse_click/" class="md-nav__link">
+      <a href="../click/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1466,6 +1489,24 @@
   <a href="#attributes" class="md-nav__link">
     <span class="md-ellipsis">
       Attributes
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.events.Paste" class="md-nav__link">
+    <span class="md-ellipsis">
+      textual.events.Paste
     </span>
   </a>
   
@@ -2973,6 +3014,24 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.events.Paste" class="md-nav__link">
+    <span class="md-ellipsis">
+      textual.events.Paste
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3016,6 +3075,78 @@
 </tr>
 </tbody>
 </table>
+<h2 id="code">Code<a class="headerlink" href="#code" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+<a id="textual.events.Paste"></a>
+  <div class="doc doc-contents first">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="../../reference/events/#textual.events.Event">Event</a></code></p>
+
+  
+      <p>Event containing text that was pasted into the Textual application.
+This event will only appear when running in a terminal emulator that supports
+bracketed paste mode. Textual will enable bracketed pastes when an app starts,
+and disable it when the app shuts down.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>sender</code></td>
+          <td>
+                <code><span title="textual._types.MessageTarget">MessageTarget</span></code>
+          </td>
+          <td><p>The sender of the event, (in this case the app).</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>text</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>The text that has been pasted.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
 
 
 

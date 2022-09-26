@@ -531,6 +531,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -685,6 +687,27 @@
   
   <span class="md-ellipsis">
     Events and Messages
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/input/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Input
     
   </span>
   
@@ -1266,7 +1289,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../events/mouse_click/" class="md-nav__link">
+      <a href="../../events/click/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2839,6 +2862,48 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="MouseEvent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.events.MouseEvent.delta" class="md-nav__link">
+    <span class="md-ellipsis">
+      delta()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.events.MouseEvent.offset" class="md-nav__link">
+    <span class="md-ellipsis">
+      offset()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.events.MouseEvent.screen_offset" class="md-nav__link">
+    <span class="md-ellipsis">
+      screen_offset()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.events.MouseEvent.style" class="md-nav__link">
+    <span class="md-ellipsis">
+      style()
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -3246,6 +3311,48 @@
       MouseEvent
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="MouseEvent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.events.MouseEvent.delta" class="md-nav__link">
+    <span class="md-ellipsis">
+      delta()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.events.MouseEvent.offset" class="md-nav__link">
+    <span class="md-ellipsis">
+      offset()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.events.MouseEvent.screen_offset" class="md-nav__link">
+    <span class="md-ellipsis">
+      screen_offset()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.events.MouseEvent.style" class="md-nav__link">
+    <span class="md-ellipsis">
+      style()
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -3919,6 +4026,149 @@ configuration and binding keys.</p>
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.events.MouseEvent.delta" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">delta</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.events.MouseEvent.delta" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Mouse coordinate delta (change since last event).</p>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>Offset</code></td>          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
+          </td>
+          <td><p>Mouse coordinate.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.events.MouseEvent.offset" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">offset</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.events.MouseEvent.offset" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>The mouse coordinate as an offset.</p>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>Offset</code></td>          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
+          </td>
+          <td><p>Mouse coordinate.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.events.MouseEvent.screen_offset" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">screen_offset</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.events.MouseEvent.screen_offset" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Mouse coordinate relative to the screen.</p>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>Offset</code></td>          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
+          </td>
+          <td><p>Mouse coordinate.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.events.MouseEvent.style" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">style</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+<a href="#textual.events.MouseEvent.style" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>The (Rich) Style under the cursor.</p>
+
+  </div>
+
+</div>
 
 
 

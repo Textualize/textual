@@ -531,6 +531,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -685,6 +687,27 @@
   
   <span class="md-ellipsis">
     Events and Messages
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/input/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Input
     
   </span>
   
@@ -1303,6 +1326,24 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.events.MouseCapture" class="md-nav__link">
+    <span class="md-ellipsis">
+      textual.events.MouseCapture
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1318,7 +1359,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mouse_click/" class="md-nav__link">
+      <a href="../click/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2973,6 +3014,24 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.events.MouseCapture" class="md-nav__link">
+    <span class="md-ellipsis">
+      textual.events.MouseCapture
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3016,6 +3075,76 @@
 </tr>
 </tbody>
 </table>
+<h2 id="code">Code<a class="headerlink" href="#code" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+<a id="textual.events.MouseCapture"></a>
+  <div class="doc doc-contents first">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="../../reference/events/#textual.events.Event">Event</a></code></p>
+
+  
+      <p>Sent when the mouse has been captured.</p>
+<p>When a mouse has been captures, all further mouse events will be sent to the capturing widget.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>sender</code></td>
+          <td>
+                <code><span title="textual._types.MessageTarget">MessageTarget</span></code>
+          </td>
+          <td><p>The sender of the event, (in this case the app).</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>mouse_position</code></td>
+          <td>
+                <code>Point</code>
+          </td>
+          <td><p>The position of the mouse when captured.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
 
 
 
@@ -3054,7 +3183,7 @@
       
       
         
-        <a href="../mouse_click/" class="md-footer__link md-footer__link--next" aria-label="Next: Click" rel="next">
+        <a href="../click/" class="md-footer__link md-footer__link--next" aria-label="Next: Click" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">

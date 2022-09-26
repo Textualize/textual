@@ -1,0 +1,24 @@
+Screen {
+    layers: log ball;
+}
+
+TextLog {
+    layer: log;
+}
+
+PlayArea { 
+    background: transparent;
+    layer: ball;
+    
+}
+Ball {
+    layer: ball;
+    width: auto;
+    height: 1;
+    background: $secondary;
+    border: tall $secondary;    
+    color: $background;
+    box-sizing: content-box;
+    text-style: bold;
+    padding: 0 4;
+}

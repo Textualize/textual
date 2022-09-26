@@ -531,6 +531,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -685,6 +687,27 @@
   
   <span class="md-ellipsis">
     Events and Messages
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/input/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Input
     
   </span>
   
@@ -1219,6 +1242,42 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.events.Key" class="md-nav__link">
+    <span class="md-ellipsis">
+      textual.events.Key
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.events.Key.is_printable" class="md-nav__link">
+    <span class="md-ellipsis">
+      is_printable()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.events.Key.key_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      key_name()
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1318,7 +1377,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mouse_click/" class="md-nav__link">
+      <a href="../click/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2973,6 +3032,42 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.events.Key" class="md-nav__link">
+    <span class="md-ellipsis">
+      textual.events.Key
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.events.Key.is_printable" class="md-nav__link">
+    <span class="md-ellipsis">
+      is_printable()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.events.Key.key_name" class="md-nav__link">
+    <span class="md-ellipsis">
+      key_name()
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3012,10 +3107,157 @@
 <tr>
 <td><code>key</code></td>
 <td>str</td>
-<td>The key that was pressed</td>
+<td>Name of the key that was pressed.</td>
+</tr>
+<tr>
+<td><code>char</code></td>
+<td>str or None</td>
+<td>The character that was pressed, or None it isn't printable.</td>
 </tr>
 </tbody>
 </table>
+<h2 id="code">Code<a class="headerlink" href="#code" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+<a id="textual.events.Key"></a>
+  <div class="doc doc-contents first">
+      <p class="doc doc-class-bases">
+        Bases: <code><span title="textual.events.InputEvent">InputEvent</span></code></p>
+
+  
+      <p>Sent when the user hits a key on the keyboard.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>sender</code></td>
+          <td>
+                <code><span title="textual._types.MessageTarget">MessageTarget</span></code>
+          </td>
+          <td><p>The sender of the event (the App).</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>key</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>A key name (textual.keys.Keys).</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>char</code></td>
+          <td>
+                <code>str | None</code>
+          </td>
+          <td><p>A printable character or None if it is not printable.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="textual.events.Key.is_printable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_printable</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.events.Key.is_printable" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return True if the key is printable. Currently, we assume any key event that
+isn't defined in key bindings is printable.</p>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>bool</code></td>          <td>
+                <code>bool</code>
+          </td>
+          <td><p>True if the key is printable.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="textual.events.Key.key_name" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">key_name</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.events.Key.key_name" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Name of a key suitable for use as a Python identifier.</p>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
 
 
 
