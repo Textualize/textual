@@ -258,6 +258,11 @@ class Widget(DOMNode):
 
     @property
     def offset(self) -> Offset:
+        """Widget offset from origin.
+
+        Returns:
+            Offset: Relative offset.
+        """
         return self.styles.offset.resolve(self.size, self.app.size)
 
     @offset.setter
