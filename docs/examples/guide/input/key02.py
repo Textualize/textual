@@ -3,19 +3,17 @@ from textual.widgets import TextLog
 from textual import events
 
 
-class KeyLogger(TextLog):
-    def on_key(self, event: events.Key) -> None:
-        self.write(event)
-
-
 class InputApp(App):
     """App to display key events."""
 
-    CSS_PATH = "input02.css"
-
     def compose(self) -> ComposeResult:
-        yield KeyLogger()
-        yield KeyLogger()
+        yield TextLog()
+
+    def on_key(self, event: events.Key) -> None:
+        self.query_one(TextLog).write(event)
+
+    def key_space(self) -> None:
+        self.bell()
 
 
 if __name__ == "__main__":

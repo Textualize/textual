@@ -43,7 +43,7 @@ class TextWidgetBase(Widget):
         changed = False
         if event.char is not None and event.is_printable:
             changed = self._editor.insert(event.char)
-        elif key == "ctrl+h":
+        elif key == "backspace":
             changed = self._editor.delete_back()
         elif key == "ctrl+d":
             changed = self._editor.delete_forward()
@@ -358,7 +358,7 @@ class TextInput(TextWidgetBase, can_focus=True):
                     )
                 else:
                     self.app.bell()
-        elif key == "ctrl+h":
+        elif key == "backspace":
             if cursor_index == start and self._editor.query_cursor_left():
                 self._slide_window(-1)
             self._update_suggestion(event)

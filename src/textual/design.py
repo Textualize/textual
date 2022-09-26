@@ -160,7 +160,7 @@ class ColorSystem:
             ("primary-background", primary),
             ("secondary-background", secondary),
             ("background", background),
-            ("foregroud", foreground),
+            ("foreground", foreground),
             ("panel", panel),
             ("boost", boost),
             ("surface", surface),

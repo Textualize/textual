@@ -38,7 +38,7 @@ nav:
     - "events/load.md"
     - "events/mount.md"
     - "events/mouse_capture.md"
-    - "events/mouse_click.md"
+    - "events/click.md"
     - "events/mouse_down.md"
     - "events/mouse_move.md"
     - "events/mouse_release.md"

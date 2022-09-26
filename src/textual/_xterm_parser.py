@@ -13,7 +13,7 @@ from ._types import MessageTarget
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search
 # to be unsuccessful?
-from .keys import Keys
+from .keys import KEY_NAME_REPLACEMENTS
 
 _MAX_SEQUENCE_SEARCH_THRESHOLD = 20
 
@@ -102,7 +102,7 @@ class XTermParser(Parser[events.Event]):
                 key_events = sequence_to_key_events(character)
                 for event in key_events:
                     if event.key == "escape":
-                        event = events.Key(event.sender, "^", None)
+                        event = events.Key(event.sender, "circumflex_accent", "^")
                     on_token(event)
 
         while not self.is_eof:
@@ -259,6 +259,7 @@ class XTermParser(Parser[events.Event]):
                     )
                 else:
                     name = sequence
+                name = KEY_NAME_REPLACEMENTS.get(name, name)
                 yield events.Key(self.sender, name, sequence)
             except:
                 yield events.Key(self.sender, sequence, sequence)

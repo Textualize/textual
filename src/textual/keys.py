@@ -200,4 +200,9 @@ class Keys(str, Enum):
     ShiftControlEnd = ControlShiftEnd
 
 
-KEY_VALUES = frozenset(Keys.__members__.values())
+# Unicode db contains some obscure names
+# This mapping replaces them with more common terms
+KEY_NAME_REPLACEMENTS = {
+    "solidus": "slash",
+    "reverse_solidus": "backslash",
+}

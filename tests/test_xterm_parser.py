@@ -101,12 +101,12 @@ def test_cant_match_escape_sequence_too_long(parser):
     assert all(isinstance(event, Key) for event in events)
 
     # When we backtrack '\x1b' is translated to '^'
-    assert events[0].key == "^"
+    assert events[0].key == "circumflex_accent"
 
     # The rest of the characters correspond to the expected key presses
     events = events[1:]
     for index, character in enumerate(sequence[1:]):
-        assert events[index].key == character
+        assert events[index].char == character
 
 
 @pytest.mark.parametrize(
@@ -141,9 +141,9 @@ def test_unknown_sequence_followed_by_known_sequence(parser, chunk_size):
     events = list(itertools.chain.from_iterable(list(event) for event in events))
 
     assert [event.key for event in events] == [
-        "^",
-        "[",
-        "?",
+        "circumflex_accent",
+        "left_square_bracket",
+        "question_mark",
         "end",
     ]
 
