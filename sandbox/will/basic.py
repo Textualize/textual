@@ -7,7 +7,7 @@ from textual.app import App, ComposeResult
 from textual.reactive import Reactive
 from textual.widget import Widget
 from textual.widgets import Static, DataTable, DirectoryTree, Header, Footer
-from textual.layout import Container, Vertical
+from textual.containers import Container, Vertical
 
 CODE = '''
 from __future__ import annotations

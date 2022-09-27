@@ -25,14 +25,14 @@ class Hello(Static):
     """Display a greeting."""
 
     DEFAULT_CSS = """
-        Hello {
+    Hello {
         width: 40;
         height: 9;
         padding: 1 2;
         background: $panel;
         border: $secondary tall;
         content-align: center middle;
-        }
+    }
     """
 
     def on_mount(self) -> None:

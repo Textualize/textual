@@ -449,13 +449,21 @@ class StylesBase(ABC):
         styles.node = node
         return styles
 
-    def get_transition(self, key: str) -> Transition | None:
+    def _get_transition(self, key: str) -> Transition | None:
+        """Get a transition.
+
+        Args:
+            key (str): Transition key.
+
+        Returns:
+            Transition | None: Transition object or None it no transition exists.
+        """
         if key in self.ANIMATABLE:
             return self.transitions.get(key, None)
         else:
             return None
 
-    def align_width(self, width: int, parent_width: int) -> int:
+    def _align_width(self, width: int, parent_width: int) -> int:
         """Align the width dimension.
 
         Args:
@@ -474,7 +482,7 @@ class StylesBase(ABC):
                 offset_x = parent_width - width
         return offset_x
 
-    def align_height(self, height: int, parent_height: int) -> int:
+    def _align_height(self, height: int, parent_height: int) -> int:
         """Align the height dimensions
 
         Args:
@@ -493,7 +501,7 @@ class StylesBase(ABC):
                 offset_y = parent_height - height
         return offset_y
 
-    def align_size(self, child: tuple[int, int], parent: tuple[int, int]) -> Offset:
+    def _align_size(self, child: tuple[int, int], parent: tuple[int, int]) -> Offset:
         """Align a size according to alignment rules.
 
         Args:
@@ -506,8 +514,8 @@ class StylesBase(ABC):
         width, height = child
         parent_width, parent_height = parent
         return Offset(
-            self.align_width(width, parent_width),
-            self.align_height(height, parent_height),
+            self._align_width(width, parent_width),
+            self._align_height(height, parent_height),
         )
 
 

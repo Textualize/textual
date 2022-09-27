@@ -10,12 +10,6 @@
     height: auto;
 }
 
-#center-layout {
-    layout: center;
-    background: darkslateblue;
-    height: 7;
-}
-
 Static {
     margin: 1;
     width: 12;

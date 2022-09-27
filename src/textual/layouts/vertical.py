@@ -44,17 +44,15 @@ class VerticalLayout(Layout):
 
         y = Fraction(box_models[0].margin.top if box_models else 0)
 
+        _Region = Region
+        _WidgetPlacement = WidgetPlacement
         for widget, box_model, margin in zip(children, box_models, margins):
             content_width, content_height, box_margin = box_model
-            offset_x = (
-                widget.styles.align_width(
-                    int(content_width), size.width - box_margin.width
-                )
-                + box_model.margin.left
-            )
             next_y = y + content_height
-            region = Region(offset_x, int(y), int(content_width), int(next_y) - int(y))
-            add_placement(WidgetPlacement(region, box_model.margin, widget, 0))
+            region = _Region(
+                box_margin.left, int(y), int(content_width), int(next_y) - int(y)
+            )
+            add_placement(_WidgetPlacement(region, box_model.margin, widget, 0))
             y = next_y + margin
 
         return placements, set(children)

@@ -43,7 +43,9 @@ Widgets will occupy the full width of their container and as many lines as requi
 
 Note how the combined height of the widget is three rows in the terminal. This is because a border adds two rows (and two columns). If you were to remove the line that sets the border style, the widget would occupy a single row.
 
-Widgets will wrap text by default. If you were to replace `"Textual"` with a long paragraph of text, the widget will expand downwards to fit.
+!!! information
+
+    Widgets will wrap text by default. If you were to replace `"Textual"` with a long paragraph of text, the widget will expand downwards to fit.
 
 ## Colors
 
@@ -184,7 +186,7 @@ With the width set to `"50%"` and the height set to `"80%"`, the widget will kee
     ```{.textual path="docs/examples/guide/styles/dimensions03.py" columns="120" lines="40"}
     ```
 
-Percentage units are useful for widgets that occupy a relative portion of the screen, but they can be problematic for some proportions. For instance, if we want to divide the screen into thirds, we would have to set a dimension to `33.3333333333%` which is awkward. Textual supports `fr` units which are often better than percentage-based units for these situations.
+Percentage units can be problematic for some relative values. For instance, if we want to divide the screen into thirds, we would have to set a dimension to `33.3333333333%` which is awkward. Textual supports `fr` units which are often better than percentage-based units for these situations.
 
 When specifying `fr` units for a given dimension, Textual will divide the available space by the sum of the `fr` units on that dimension. That space will then be divided amongst the widgets as a proportion of their individual `fr` values.
 
@@ -292,7 +294,9 @@ If you set `box_sizing` to `"content-box"` then space required for padding and b
     </div>
 
 
-The following example creates two widgets which have a width of 30, a height of 6, and a border and padding of 1. The second widget has `box_sizing` set to `"content-box"`.
+The following example creates two widgets with a width of 30, a height of 6, and a border and padding of 1.
+The first widget has the default `box_sizing` (`"border-box"`).
+The second widget sets `box_sizing` to `"content-box"`.
 
 ```python title="box_sizing01.py" hl_lines="33"
 --8<-- "docs/examples/guide/styles/box_sizing01.py"
@@ -307,9 +311,9 @@ The padding and border of the first widget is subtracted from the height leaving
 
 Margin is similar to padding in that it adds space, but unlike padding, [margin](../styles/margin.md) is outside of the widget's border. It is used to add space between widgets.
 
-The following example creates two widgets, each with a padding of 2.
+The following example creates two widgets, each with a margin of 2.
 
-```python title="margin01.py" hl_lines="33"
+```python title="margin01.py" hl_lines="26-27"
 --8<-- "docs/examples/guide/styles/margin01.py"
 ```
 

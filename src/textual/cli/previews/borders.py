@@ -1,7 +1,7 @@
 from textual.app import App, ComposeResult
 from textual.constants import BORDERS
 from textual.widgets import Button, Static
-from textual import layout
+from textual.containers import Vertical
 
 
 TEXT = """I must not fear.
@@ -13,7 +13,7 @@ And when it has gone past, I will turn the inner eye to see its path.
 Where the fear has gone there will be nothing. Only I will remain."""
 
 
-class BorderButtons(layout.Vertical):
+class BorderButtons(Vertical):
     DEFAULT_CSS = """
     BorderButtons {
         dock: left;

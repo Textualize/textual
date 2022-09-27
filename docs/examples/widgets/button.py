@@ -1,5 +1,5 @@
-from textual import layout
 from textual.app import App, ComposeResult
+from textual.containers import Horizontal, Vertical
 from textual.widgets import Button, Static
 
 
@@ -7,8 +7,8 @@ class ButtonsApp(App[str]):
     CSS_PATH = "button.css"
 
     def compose(self) -> ComposeResult:
-        yield layout.Horizontal(
-            layout.Vertical(
+        yield Horizontal(
+            Vertical(
                 Static("Standard Buttons", classes="header"),
                 Button("Default"),
                 Button("Primary!", variant="primary"),
@@ -16,7 +16,7 @@ class ButtonsApp(App[str]):
                 Button.warning("Warning!"),
                 Button.error("Error!"),
             ),
-            layout.Vertical(
+            Vertical(
                 Static("Disabled Buttons", classes="header"),
                 Button("Default", disabled=True),
                 Button("Primary!", variant="primary", disabled=True),

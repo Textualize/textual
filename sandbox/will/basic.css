@@ -112,7 +112,7 @@ Tweet {
   border: wide $panel;
   
   /* scrollbar-gutter: stable; */
-  align-horizontal: center;
+  
   box-sizing: border-box;
 
 }
@@ -124,7 +124,7 @@ Tweet {
   padding: 0 2;
   margin: 1 2;
   height: 24;
-  align-horizontal: center;
+  
   layout: vertical;
 }
 
@@ -228,7 +228,7 @@ Error {
 
   padding: 0;
   text-style: bold;
-  align-horizontal: center;
+  content-align: center middle;
 }
 
 Warning {
@@ -240,7 +240,7 @@ Warning {
   border-bottom: tall $warning-darken-2;
 
   text-style: bold;
-  align-horizontal: center;
+  content-align: center middle;
 }
 
 Success {
@@ -256,7 +256,7 @@ Success {
 
   text-style: bold ;
 
-  align-horizontal: center;
+  content-align: center middle;
 }
 
 

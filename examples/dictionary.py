@@ -11,7 +11,7 @@ except ImportError:
 from rich.markdown import Markdown
 
 from textual.app import App, ComposeResult
-from textual.layout import Vertical
+from textual.containers import Vertical
 from textual.widgets import Static, TextInput
 
 

@@ -40,7 +40,7 @@ If you hit ++ctrl+c++ Textual will exit application mode and return you to the c
 
 ## Events
 
-Textual has an event system you can use to respond to key presses, mouse actions, and internal state changes. Event handlers are methods which are prefixed with `on_` followed by the name of the event.
+Textual has an event system you can use to respond to key presses, mouse actions, and internal state changes. Event handlers are methods prefixed with `on_` followed by the name of the event.
 
 One such event is the *mount* event which is sent to an application after it enters application mode. You can respond to this event by defining a method called `on_mount`.
 
@@ -59,15 +59,15 @@ The `on_mount` handler sets the `self.screen.styles.background` attribute to `"d
 ```{.textual path="docs/examples/app/event01.py" hl_lines="23-25"}
 ```
 
-The key event handler (`on_key`) specifies an `event` parameter which will receive a [Key][textual.events.Key] instance. Every event has an associated event object which will be passed to the handler method if it is present in the method's parameter list.
+The key event handler (`on_key`) has an `event` parameter which will receive a [Key][textual.events.Key] instance. Every event has an associated event object which will be passed to the handler method if it is present in the method's parameter list.
 
 !!! note
 
     It is unusual (but not unprecedented) for a method's parameters to affect how it is called. Textual accomplishes this by inspecting the method prior to calling it.
 
-For some events, such as the key event, the event object contains additional information. In the case of [Key][textual.events.Key] it will contain the key that was pressed.
+For some events contains additional information. In the case of [Key][textual.events.Key] it will contain the key that was pressed.
 
-The `on_key` method above uses the `key` attribute on the Key event to change the background color if any of the keys ++0++ to ++9++ are pressed.
+The `on_key` method above changes the background color if any of the keys from ++0++ to ++9++ are pressed.
 
 ### Async events
 
@@ -81,7 +81,7 @@ Textual knows to *await* your event handlers if they are coroutines (i.e. prefix
 
 ## Widgets
 
-Widgets are self-contained components responsible for generating the output for a portion of the screen and can respond to events in much the same way as the App. Most apps that do anything interesting will contain at least one (and probably many) widgets which together form a User Interface.
+Widgets are self-contained components responsible for generating the output for a portion of the screen. Widgets respond to events in much the same way as the App. Most apps that do anything interesting will contain at least one (and probably many) widgets which together form a User Interface.
 
 Widgets can be as simple as a piece of text, a button, or a fully-fledge component like a text editor or file browser (which may contain widgets of their own).
 
@@ -106,7 +106,7 @@ Notice the `on_button_pressed` method which handles the [Button.Pressed][textual
 
 While composing is the preferred way of adding widgets when your app starts it is sometimes necessary to add new widget(s) in response to events. You can do this by calling [mount()][textual.widget.Widget.mount] which will add a new widget to the UI.
 
-Here's an app which adds the welcome widget in response to any key press:
+Here's an app which adds a welcome widget in response to any key press:
 
 ```python title="widgets02.py"
 --8<-- "docs/examples/app/widgets02.py"

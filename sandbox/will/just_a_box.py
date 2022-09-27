@@ -5,7 +5,7 @@ from rich.panel import Panel
 
 from textual import events
 from textual.app import App, ComposeResult
-from textual.layout import Container, Horizontal, Vertical
+from textual.containers import Container, Horizontal, Vertical
 from textual.widget import Widget
 
 

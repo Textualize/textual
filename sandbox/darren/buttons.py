@@ -1,11 +1,12 @@
-from textual import layout, events
+from textual import events
 from textual.app import App, ComposeResult
+from textual.containers import Vertical
 from textual.widgets import Button
 
 
 class ButtonsApp(App[str]):
     def compose(self) -> ComposeResult:
-        yield layout.Vertical(
+        yield Vertical(
             Button("default", id="foo"),
             Button.success("success", id="bar"),
             Button.warning("warning", id="baz"),
