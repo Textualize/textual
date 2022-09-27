@@ -97,13 +97,13 @@ class ScrollView(Widget):
             virtual_size (Size): New virtual size.
             container_size (Size): New container size.
         """
-
-        virtual_size = self.virtual_size
-        if self._size != size:
+        if self._size != size or virtual_size != self.virtual_size:
             self._size = size
-            self._container_size = size
+            virtual_size = self.virtual_size
+            self._container_size = size - self.gutter.totals
             self._scroll_update(virtual_size)
             self.scroll_to(self.scroll_x, self.scroll_y)
+            self.refresh()
 
     def render(self) -> RenderableType:
         """Render the scrollable region (if `render_lines` is not implemented).

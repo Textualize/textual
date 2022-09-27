@@ -7,7 +7,6 @@ from rich.style import Style
 
 from ._types import MessageTarget
 from .geometry import Offset, Size
-from .keys import KEY_VALUES, Keys
 from .message import Message
 
 MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
@@ -318,14 +317,44 @@ class MouseEvent(InputEvent, bubble=True):
         yield "ctrl", self.ctrl, False
 
     @property
+    def offset(self) -> Offset:
+        """The mouse coordinate as an offset.
+
+        Returns:
+            Offset: Mouse coordinate.
+
+        """
+        return Offset(self.x, self.y)
+
+    @property
+    def screen_offset(self) -> Offset:
+        """Mouse coordinate relative to the screen.
+
+        Returns:
+            Offset: Mouse coordinate.
+        """
+        return Offset(self.screen_x, self.screen_y)
+
+    @property
+    def delta(self) -> Offset:
+        """Mouse coordinate delta (change since last event).
+
+        Returns:
+            Offset: Mouse coordinate.
+
+        """
+        return Offset(self.delta_x, self.delta_y)
+
+    @property
     def style(self) -> Style:
+        """The (Rich) Style under the cursor."""
         return self._style or Style()
 
     @style.setter
     def style(self, style: Style) -> None:
         self._style = style
 
-    def offset(self, x: int, y: int) -> MouseEvent:
+    def _apply_offset(self, x: int, y: int) -> MouseEvent:
         return self.__class__(
             self.sender,
             x=self.x + x,
@@ -343,7 +372,7 @@ class MouseEvent(InputEvent, bubble=True):
 
 
 @rich.repr.auto
-class MouseMove(MouseEvent, bubble=True, verbose=True):
+class MouseMove(MouseEvent, bubble=False, verbose=True):
     """Sent when the mouse cursor moves."""
 
 

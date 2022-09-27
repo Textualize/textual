@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from typing import Iterable
 
 import rich.repr
 from rich.console import RenderableType
@@ -105,6 +106,18 @@ class Screen(Widget):
             tuple[Widget, Region]: Widget and screen region.
         """
         return self._compositor.get_widget_at(x, y)
+
+    def get_widgets_at(self, x: int, y: int) -> Iterable[tuple[Widget, Region]]:
+        """Get all widgets under a given coordinate.
+
+        Args:
+            x (int): X coordinate.
+            y (int): Y coordinate.
+
+        Returns:
+            Iterable[tuple[Widget, Region]]: Sequence of (WIDGET, REGION) tuples.
+        """
+        return self._compositor.get_widgets_at(x, y)
 
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the style under a given coordinate.
@@ -315,7 +328,9 @@ class Screen(Widget):
                     event._set_forwarded()
                     await self.post_message(event)
                 else:
-                    await widget._forward_event(event.offset(-region.x, -region.y))
+                    await widget._forward_event(
+                        event._apply_offset(-region.x, -region.y)
+                    )
 
         elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
             try:

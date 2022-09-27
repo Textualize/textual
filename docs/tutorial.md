@@ -75,7 +75,7 @@ Return types follow `->`. So `-> str:` indicates this method returns a string.
 
 ## The App class
 
-The first step in building a Textual app is to import and extend the `App` class. Here's our basic app class with a few methods we will cover below.
+The first step in building a Textual app is to import and extend the `App` class. Here's a basic app class we will use as a starting point for the stopwatch app.
 
 ```python title="stopwatch01.py" 
 --8<-- "docs/examples/tutorial/stopwatch01.py"
@@ -114,9 +114,9 @@ The App class is where most of the logic of Textual apps is written. It is respo
 
 Here's what the above app defines:
 
-- `BINDINGS` is a list of tuples that maps (or *binds*) keys to actions in your app. The first value in the tuple is the key; the second value is the name of the action; the final value is a short description. The name of the action (`"toggle_dark"`) is mapped on to the `"action_toggle_dark"` method (see below) which is called when you hit the ++d++ key.
+- `BINDINGS` is a list of tuples that maps (or *binds*) keys to actions in your app. The first value in the tuple is the key; the second value is the name of the action; the final value is a short description. We have a single binding which maps the ++d++ key on to the "toggle_dark" action.
 
--  `compose()` is where we construct a user interface with widgets. The `compose()` method may return a list of widgets, but it is generally easier to _yield_ them (making this method a generator). In the example code we yield instances of the widget classes we imported, i.e. the header and the footer.
+-  `compose()` is where we construct a user interface with widgets. The `compose()` method may return a list of widgets, but it is generally easier to _yield_ them (making this method a generator). In the example code we yield an instance of each of the widget classes we imported, i.e. `Header()` and `Footer()`.
 
 - `action_toggle_dark()` defines an _action_ method. Actions are methods beginning with `action_` followed by the name of the action. The `BINDINGS` list above tells Textual to run this action when the user hits the ++d++ key.
 
@@ -124,9 +124,7 @@ Here's what the above app defines:
 --8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
-The final three lines create an instance of the app and call [run()][textual.app.App.run] method within a `__name__ == "__main__"` block. This is so we can call `python stopwatch01.py` to run the app, or we could import `stopwatch01` as part of a larger application.
-
-It's the run method that puts the terminal in to *application mode* so that Textual can take over updating the terminal and handling keyboard and mouse input.
+The final three lines create an instance of the app and call [run()][textual.app.App.run] which puts your terminal in to *application mode* and runs the app until you exit with ++ctrl+c++. This happens within a `__name__ == "__main__"` block so we could run the app with `python stopwatch01.py` or import it as part of a larger project.
 
 ## Designing a UI with widgets
 

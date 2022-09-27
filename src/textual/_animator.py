@@ -276,7 +276,12 @@ class Animator:
             if duration is not None:
                 animation_duration = duration
             else:
-                animation_duration = abs(value - start_value) / (speed or 50)
+                if hasattr(value, "get_distance_to"):
+                    animation_duration = value.get_distance_to(start_value) / (
+                        speed or 50
+                    )
+                else:
+                    animation_duration = abs(value - start_value) / (speed or 50)
 
             animation = SimpleAnimation(
                 obj,

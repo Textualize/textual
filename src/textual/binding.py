@@ -26,11 +26,17 @@ class NoBinding(Exception):
 @dataclass
 class Binding:
     key: str
+    """Key to bind."""
     action: str
+    """Action to bind to."""
     description: str
+    """Description of action."""
     show: bool = True
+    """Show the action in Footer, or False to hide."""
     key_display: str | None = None
+    """How the key should be shown in footer."""
     allow_forward: bool = True
+    """Allow forwarding from app to focused widget."""
 
 
 @rich.repr.auto

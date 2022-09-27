@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+from typing import cast
+
 from rich.console import RenderableType
+from rich.pretty import Pretty
+from rich.protocol import is_renderable
 from rich.segment import Segment
 
 from ..reactive import var
@@ -46,19 +50,26 @@ class TextLog(ScrollView, can_focus=True):
     def _on_styles_updated(self) -> None:
         self._line_cache.clear()
 
-    def write(self, content: RenderableType) -> None:
+    def write(self, content: RenderableType | object) -> None:
         """Write text or a rich renderable.
 
         Args:
             content (RenderableType): Rich renderable (or text).
         """
+
+        renderable: RenderableType
+        if not is_renderable(content):
+            renderable = Pretty(content)
+        else:
+            renderable = cast(RenderableType, content)
+
         console = self.app.console
         width = max(self.min_width, self.size.width or self.min_width)
 
         render_options = console.options.update_width(width)
         if not self.wrap:
             render_options = render_options.update(overflow="ignore", no_wrap=True)
-        segments = self.app.console.render(content, render_options)
+        segments = self.app.console.render(renderable, render_options)
         lines = list(Segment.split_lines(segments))
         self.max_width = max(
             self.max_width,

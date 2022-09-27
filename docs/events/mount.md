@@ -10,3 +10,7 @@ The mount event is typically used to set the initial state of a widget or to add
 ## Attributes
 
 _No additional attributes_
+
+## Code
+
+::: textual.events.Mount

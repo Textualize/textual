@@ -15,7 +15,7 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x05": (Keys.ControlE,),  # Control-E (end)
     "\x06": (Keys.ControlF,),  # Control-F (cursor forward)
     "\x07": (Keys.ControlG,),  # Control-G
-    "\x08": (Keys.ControlH,),  # Control-H (8) (Identical to '\b')
+    "\x08": (Keys.Backspace,),  # Control-H (8) (Identical to '\b')
     "\x09": (Keys.Tab,),  # Control-I (9) (Identical to '\t')
     "\x0a": (Keys.ControlJ,),  # Control-J (10) (Identical to '\n')
     "\x0b": (Keys.ControlK,),  # Control-K (delete until end of line; vertical tab)
@@ -47,7 +47,7 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     # handle backspace and control-h individually for the few terminals that
     # support it. (Most terminals send ControlH when backspace is pressed.)
     # See: http://www.ibb.net/~anne/keyboard.html
-    "\x7f": (Keys.ControlH,),
+    "\x7f": (Keys.Backspace,),
     "\x1b\x7f": (Keys.ControlW,),
     # Various
     "\x1b[1~": (Keys.Home,),  # tmux

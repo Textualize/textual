@@ -1447,7 +1447,8 @@ class App(Generic[ReturnType], DOMNode):
         elif event.key == "shift+tab":
             self.focus_previous()
         else:
-            await self.press(event.key)
+            if not (await self.press(event.key)):
+                await self.dispatch_key(event)
 
     async def _on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log("shutdown request")

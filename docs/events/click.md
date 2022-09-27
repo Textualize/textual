@@ -16,6 +16,10 @@ The `Click` event is sent to a widget when the user clicks a mouse button.
 | `button`   | int  | Index of mouse button                     |
 | `shift`    | bool | Shift key pressed if True                 |
 | `meta`     | bool | Meta key pressed if True                  |
-| `ctrl`     | bool | Ctrl key pressed if True                 |
+| `ctrl`     | bool | Ctrl key pressed if True                  |
 | `screen_x` | int  | Mouse x coordinate relative to the screen |
 | `screen_y` | int  | Mouse y coordinate relative to the screen |
+
+## Code
+
+::: textual.events.Click
