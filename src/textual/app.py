@@ -977,7 +977,7 @@ class App(Generic[ReturnType], DOMNode):
                 finally:
                     self.mouse_over = None
         else:
-            if self.mouse_over != widget:
+            if self.mouse_over is not widget:
                 try:
                     if self.mouse_over is not None:
                         await self.mouse_over._forward_event(events.Leave(self))

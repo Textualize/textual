@@ -147,7 +147,8 @@ class Widget(DOMNode):
     auto_links = Reactive(True)
     """Widget will highlight links automatically."""
 
-    hover_style: Reactive[Style] = Reactive(Style)
+    hover_style: Reactive[Style] = Reactive(Style, repaint=False)
+    highlight_link_id: Reactive[str] = Reactive("")
 
     def __init__(
         self,
@@ -445,6 +446,12 @@ class Widget(DOMNode):
             self._content_height_cache = (cache_key, height)
 
         return height
+
+    def watch_hover_style(
+        self, previous_hover_style: Style, hover_style: Style
+    ) -> None:
+        if self.auto_links:
+            self.highlight_link_id = hover_style.link_id
 
     def watch_scroll_x(self, new_value: float) -> None:
         self.horizontal_scrollbar.position = int(new_value)
