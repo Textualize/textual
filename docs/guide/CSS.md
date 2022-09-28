@@ -1,17 +1,12 @@
 # Textual CSS
 
-Textual uses CSS to apply style to widgets. If you have any exposure to web development you will have encountered CSS, but don't worry if you haven't: this section will get you up to speed.
+Textual uses CSS to apply style to widgets. If you have any exposure to web development you will have encountered CSS, but don't worry if you haven't: this chapter will get you up to speed.
 
 ## Stylesheets
 
-CSS stands for _Cascading Stylesheets_. A stylesheet is a list of styles and rules about how those styles should be applied to a page. In the case of Textual, the stylesheet applies [styles](./styles.md) to widgets but otherwise it is the same idea.
+CSS stands for _Cascading Stylesheets_. A stylesheet is a list of styles and rules about how those styles should be applied to a web page. In the case of Textual, the stylesheet applies [styles](./styles.md) to widgets but otherwise it is the same idea.
 
-!!! note
-
-    Depending on what you want to build with Textual, you may not need to learn Textual CSS at all. Widgets are packaged with CSS styles so apps may not need any additional CSS.
-
-
-When Textual loads CSS it sets attributes of your widgets's `style` object. The effect is the same as if you had set attributes in Python.
+When Textual loads CSS it sets attributes on your widgets' `style` object. The effect is the same as if you had set attributes in Python.
 
 CSS is typically stored in an external file with the extension `.css` alongside your Python code.
 
@@ -87,10 +82,11 @@ With the above example, the DOM will look like the following:
 This doesn't look much like a tree yet. Let's add a header and a footer to this application, which will create more _branches_ of the tree:
 
 === "dom2.py"
-
-    ```python
+    
+    ```python hl_lines="7 8"
     --8<-- "docs/examples/guide/dom2.py"
     ```
+
 
 === "Output"
 
@@ -105,7 +101,7 @@ With a header and a footer widget the DOM looks the this:
 
 !!! note
 
-    We've simplified the above example somewhat. Both the Header and Footer widgets contain children of their own. When building an app with pre-built widgets you rarely need to know how they are constructed unless you plan on changing the styles for the individual components.
+    We've simplified the above example somewhat. Both the Header and Footer widgets contain children of their own. When building an app with pre-built widgets you rarely need to know how they are constructed unless you plan on changing the styles of individual components.
 
 Both Header and Footer are children of the Screen object.
 
@@ -432,8 +428,3 @@ Let's say we define a variable `$success: lime;`.
 Our `$border` variable could then be updated to `$border: wide $success;`, which will
 be translated to `$border: wide lime;`.
 
-Textual CSS ships with a number of builtin variables.
-These can be used in CSS without any additional imports or declarations.
-For more information on these builtin variables, see [this page](#).
-
-[//]: # (TODO: Fill in the link above when builtin style variables are documented)

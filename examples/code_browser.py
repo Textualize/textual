@@ -11,9 +11,8 @@ import sys
 
 from rich.syntax import Syntax
 from rich.traceback import Traceback
-
 from textual.app import App, ComposeResult
-from textual.layout import Container, Vertical
+from textual.containers import Container, Vertical
 from textual.reactive import var
 from textual.widgets import DirectoryTree, Footer, Header, Static
 

@@ -1,5 +1,5 @@
-from textual import layout
 from textual.app import App, ComposeResult
+from textual.containers import Horizontal, Vertical
 from textual.widgets import Static
 
 
@@ -7,13 +7,13 @@ class UtilityContainersExample(App):
     CSS_PATH = "utility_containers.css"
 
     def compose(self) -> ComposeResult:
-        yield layout.Horizontal(
-            layout.Vertical(
+        yield Horizontal(
+            Vertical(
                 Static("One"),
                 Static("Two"),
                 classes="column",
             ),
-            layout.Vertical(
+            Vertical(
                 Static("Three"),
                 Static("Four"),
                 classes="column",

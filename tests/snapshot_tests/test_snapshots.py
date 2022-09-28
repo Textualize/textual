@@ -14,10 +14,6 @@ def test_layers(snap_compare):
     assert snap_compare("docs/examples/guide/layout/layers.py")
 
 
-def test_center_layout(snap_compare):
-    assert snap_compare("docs/examples/guide/layout/center_layout.py")
-
-
 def test_horizontal_layout(snap_compare):
     assert snap_compare("docs/examples/guide/layout/horizontal_layout.py")
 

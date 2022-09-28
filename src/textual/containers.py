@@ -13,7 +13,7 @@ class Container(Widget):
 
 
 class Vertical(Widget):
-    """A container widget to align children vertically."""
+    """A container widget which aligns children vertically."""
 
     DEFAULT_CSS = """
     Vertical {
@@ -24,7 +24,7 @@ class Vertical(Widget):
 
 
 class Horizontal(Widget):
-    """A container widget to align children horizontally."""
+    """A container widget which aligns children horizontally."""
 
     DEFAULT_CSS = """
     Horizontal {
@@ -34,11 +34,11 @@ class Horizontal(Widget):
     """
 
 
-class Center(Widget):
-    """A container widget to align children in the center."""
+class Grid(Widget):
+    """A container widget with grid alignment."""
 
     DEFAULT_CSS = """
-    Center {
-        layout: center;
-    }
+    Grid {
+        layout: grid;
+    }    
     """

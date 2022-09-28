@@ -188,7 +188,7 @@ Textual will send a [Enter](../events/enter.md) event to a widget when the mouse
 
 ### Click events
 
-There are three events associated with clicking a button on your mouse. When the button is initially pressed, Textual sends a [MouseDown](../events/mouse_down.md) event, followed by [MouseUp](../events/mouse_up.md) when the button is released. Textual then sends a final [Click](../events/mouse_click.md) event.
+There are three events associated with clicking a button on your mouse. When the button is initially pressed, Textual sends a [MouseDown](../events/mouse_down.md) event, followed by [MouseUp](../events/mouse_up.md) when the button is released. Textual then sends a final [Click](../events/click.md) event.
 
 If you want your app to respond to a mouse click you should prefer the Click event (and not MouseDown or MouseUp). This is because a future version of Textual may support other pointing devices which don't have up and down states.
 

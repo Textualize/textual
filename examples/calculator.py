@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from textual.app import App, ComposeResult
 from textual import events
-from textual.layout import Container
+from textual.containers import Container
 from textual.reactive import var
 from textual.widgets import Button, Static
 

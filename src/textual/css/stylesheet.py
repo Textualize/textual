@@ -444,7 +444,7 @@ class Stylesheet:
 
                 # Check if this can / should be animated
                 if is_animatable(key) and new_render_value != old_render_value:
-                    transition = new_styles.get_transition(key)
+                    transition = new_styles._get_transition(key)
                     if transition is not None:
                         duration, easing, delay = transition
                         node.app.animator.animate(

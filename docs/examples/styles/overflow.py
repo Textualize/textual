@@ -1,6 +1,6 @@
 from textual.app import App
 from textual.widgets import Static
-from textual.layout import Horizontal, Vertical
+from textual.containers import Horizontal, Vertical
 
 TEXT = """I must not fear.
 Fear is the mind-killer.

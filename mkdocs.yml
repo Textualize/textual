@@ -51,7 +51,8 @@ nav:
     - "events/screen_suspend.md"
     - "events/show.md"
   - Styles:
-    - "styles/index.md"
+    - "styles/index.md"    
+    - "styles/align.md"
     - "styles/background.md"
     - "styles/border.md"
     - "styles/box_sizing.md"
@@ -96,6 +97,7 @@ nav:
     - "reference/app.md"
     - "reference/button.md"
     - "reference/color.md"
+    - "reference/containers.md"
     - "reference/dom_node.md"
     - "reference/events.md"
     - "reference/geometry.md"
