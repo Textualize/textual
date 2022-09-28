@@ -184,6 +184,7 @@ class Reactive(Generic[ReactiveType]):
                 compute_method = getattr(obj, f"compute_{compute}")
             except AttributeError:
                 continue
+
             value = await invoke(compute_method)
             setattr(obj, compute, value)
 

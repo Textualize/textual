@@ -7,6 +7,7 @@ from ._header import Header as Header
 from ._placeholder import Placeholder as Placeholder
 from ._pretty import Pretty as Pretty
 from ._static import Static as Static
+from ._input import Input as Input
 from ._text_input import TextInput as TextInput
 from ._text_log import TextLog as TextLog
 from ._tree_control import TreeControl as TreeControl

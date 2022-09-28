@@ -1,5 +1,5 @@
 from textual.app import App
-from textual.widgets import TextInput
+from textual.widgets import Input
 
 
 class InputApp(App):
@@ -11,7 +11,9 @@ class InputApp(App):
     """
 
     def compose(self):
-        yield TextInput(initial="foo")
+        yield Input("foo")
 
 
-app = InputApp()
+if __name__ == "__main__":
+    app = InputApp()
+    app.run()
