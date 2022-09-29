@@ -696,6 +696,10 @@ class Widget(DOMNode):
         return Offset(x, y)
 
     @property
+    def content_size(self) -> Size:
+        return self.region.shrink(self.styles.gutter).size
+
+    @property
     def region(self) -> Region:
         """The region occupied by this widget, relative to the Screen.
 

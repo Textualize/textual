@@ -112,7 +112,7 @@ class Reactive(Generic[ReactiveType]):
         self.internal_name = f"_reactive_{name}"
         default = self._default
 
-        if self._init:
+        if self._init and 0:
             setattr(owner, f"_init_{name}", default)
         else:
             setattr(

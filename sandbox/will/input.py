@@ -5,8 +5,8 @@ from textual.widgets import Input
 class InputApp(App):
 
     CSS = """
-    TextInput {
-       
+    Input {
+       width: 20;
     }
     """
 
