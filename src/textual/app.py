@@ -539,8 +539,12 @@ class App(Generic[ReturnType], DOMNode):
         self.dark = not self.dark
 
     def action_screenshot(self, filename: str | None, path: str = "~/") -> None:
-        """Action to save a screenshot."""
-        self.bell()
+        """Save an SVG "screenshot". This action will save a SVG file containing the current contents of the screen.
+
+        Args:
+            filename (str | None, optional): Filename of screenshot, or None to auto-generate. Defaults to None.
+            path (str, optional): Path to directory. Defaults to "~/".
+        """
         self.save_screenshot(filename, path)
 
     def export_screenshot(self, *, title: str | None = None) -> str:
@@ -1490,15 +1494,22 @@ class App(Generic[ReturnType], DOMNode):
         await self.press(key)
 
     async def action_quit(self) -> None:
+        """Quit the app as soon as possible."""
         await self.shutdown()
 
     async def action_bang(self) -> None:
         1 / 0
 
     async def action_bell(self) -> None:
+        """Play the terminal 'bell'."""
         self.bell()
 
     async def action_focus(self, widget_id: str) -> None:
+        """Focus the given widget.
+
+        Args:
+            widget_id (str): _description_
+        """
         try:
             node = self.query(f"#{widget_id}").first()
         except NoMatchingNodesError:
