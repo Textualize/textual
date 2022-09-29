@@ -8,7 +8,7 @@ Action methods are methods on your app or widgets prefixed with `action_`. Aside
 
 !!! information
 
-    Action methods may be coroutines (prefixed with `async`).
+    Action methods may be coroutines (methods with the `async` keyword).
 
 Let's write an app with a simple action.
 
@@ -16,9 +16,9 @@ Let's write an app with a simple action.
 --8<-- "docs/examples/guide/actions/actions01.py"
 ```
 
-The `action_set_background` method is an action which sets the background of the screen. The key handler calls this action if you press the ++r++ key to set the background color to red.
+The `action_set_background` method is an action which sets the background of the screen. The key handler above will call this action if you press the ++r++ key.
 
-Although it is possible (and occasionally useful) to call action methods in this way, they are intended to be parsed from an _action string_. For instance, the string `"set_background('red')"` is an action string that would call `self.action_set_background('red')`.
+Although it is possible (and occasionally useful) to call action methods in this way, they are intended to be parsed from an _action string_. For instance, the string `"set_background('red')"` is an action string which would call `self.action_set_background('red')`.
 
 The following example replaces the immediate call with a call to [action()][textual.widgets.Widget.action] which parses an action string and dispatches it to the appropriate method.
 
@@ -26,9 +26,9 @@ The following example replaces the immediate call with a call to [action()][text
 --8<-- "docs/examples/guide/actions/actions02.py"
 ```
 
-Note that the `action()` method is a coroutine so `on_key` needs to be prefixed with the `async` key.
+Note that the `action()` method is a coroutine so `on_key` needs to be prefixed with the `async` keyword.
 
-You will not typically need this in a real app as Textual will run actions in links or key bindings. Before we discuss these, let's have a look at the syntax for action strings.
+You will not typically need this in a real app as Textual will run actions in links or key bindings. Before we discuss these, let's have a closer look at the syntax for action strings.
 
 ## Syntax
 
@@ -56,7 +56,7 @@ Consequently `"set_background('blue')"` is a valid action string, but `"set_back
 
 ## Links
 
-Actions may be embedded in links with console markup, which you can introduce the `@click` tag.
+Actions may be embedded as links within console markup. You can create such links with a  `@click` tag.
 
 The following example mounts simple static text with embedded action links.
 
@@ -71,7 +71,7 @@ The following example mounts simple static text with embedded action links.
     ```{.textual path="docs/examples/guide/actions/actions03.py"}
     ```
 
-When you click any of the links, Textual runs the `"set_background"` action to change the background to the given color.
+When you click any of the links, Textual runs the `"set_background"` action to change the background to the given color and plays the terminals bell.
 
 ## Bindings
 
