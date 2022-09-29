@@ -1,0 +1,11 @@
+Screen {
+    layout: grid;
+    grid-size: 1;
+    grid-gutter: 2 4;
+    grid-rows: 1fr;
+}
+
+ColorSwitcher {
+   height: 100%;
+   margin: 2 4;
+}
