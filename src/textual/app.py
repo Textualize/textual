@@ -1508,7 +1508,7 @@ class App(Generic[ReturnType], DOMNode):
         """Focus the given widget.
 
         Args:
-            widget_id (str): _description_
+            widget_id (str): ID of widget to focus.
         """
         try:
             node = self.query(f"#{widget_id}").first()
