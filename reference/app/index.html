@@ -1616,6 +1616,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -1652,6 +1654,27 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/align/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Align
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -2553,6 +2576,8 @@
         
       
         
+      
+        
           
         
       
@@ -2670,6 +2695,33 @@
   <a href="#textual.app.App.action" class="md-nav__link">
     <span class="md-ellipsis">
       action()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.app.App.action_bell" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_bell()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.app.App.action_focus" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_focus()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.app.App.action_quit" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_quit()
     </span>
   </a>
   
@@ -3110,6 +3162,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Containers
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../dom_node/" class="md-nav__link">
         
   
@@ -3381,6 +3454,33 @@
   <a href="#textual.app.App.action" class="md-nav__link">
     <span class="md-ellipsis">
       action()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.app.App.action_bell" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_bell()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.app.App.action_focus" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_focus()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.app.App.action_quit" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_quit()
     </span>
   </a>
   
@@ -3918,6 +4018,114 @@ or None to use app. Defaults to None.</p></td>
     </tbody>
   </table>
 
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>bool</code></td>          <td>
+                <code>bool</code>
+          </td>
+          <td><p>True if the event has handled.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="textual.app.App.action_bell" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">action_bell</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.app.App.action_bell" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Play the terminal 'bell'.</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="textual.app.App.action_focus" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">action_focus</span><span class="p">(</span><span class="n">widget_id</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.app.App.action_focus" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Focus the given widget.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>widget_id</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p><em>description</em></p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="textual.app.App.action_quit" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">action_quit</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.app.App.action_quit" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Quit the app as soon as possible.</p>
+
   </div>
 
 </div>
@@ -3934,7 +4142,41 @@ or None to use app. Defaults to None.</p></td>
 
   <div class="doc doc-contents ">
   
-      <p>Action to save a screenshot.</p>
+      <p>Save an SVG "screenshot". This action will save a SVG file containing the current contents of the screen.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>filename</code></td>
+          <td>
+                <code>str | None</code>
+          </td>
+          <td><p>Filename of screenshot, or None to auto-generate. Defaults to None.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>path</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Path to directory. Defaults to "~/".</p></td>
+          <td>
+                <code>&#39;~/&#39;</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
   </div>
 

@@ -1818,6 +1818,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -1854,6 +1856,27 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/align/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Align
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -2753,6 +2776,8 @@
         
       
         
+      
+        
           
         
       
@@ -2861,6 +2886,27 @@
   
   <span class="md-ellipsis">
     Color
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Containers
     
   </span>
   
@@ -4178,7 +4224,7 @@
 <div class="tabbed-block">
 <div class="highlight"><span class="filename">mouse01.py</span><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">textual</span> <span class="kn">import</span> <span class="n">events</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kn">from</span> <span class="nn">textual.layout</span> <span class="kn">import</span> <span class="n">Container</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">Container</span>
 <a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span><span class="p">,</span> <span class="n">TextLog</span>
 <a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
 <a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
@@ -4250,7 +4296,7 @@
 <h3 id="enter-and-leave-events">Enter and Leave events<a class="headerlink" href="#enter-and-leave-events" title="Permanent link">&para;</a></h3>
 <p>Textual will send a <a href="../../events/enter/">Enter</a> event to a widget when the mouse cursor first moves over it, and a <a href="../events/leave">Leave</a> event when the cursor moves off a widget. </p>
 <h3 id="click-events">Click events<a class="headerlink" href="#click-events" title="Permanent link">&para;</a></h3>
-<p>There are three events associated with clicking a button on your mouse. When the button is initially pressed, Textual sends a <a href="../../events/mouse_down/">MouseDown</a> event, followed by <a href="../../events/mouse_up/">MouseUp</a> when the button is released. Textual then sends a final <a href="../events/mouse_click.md">Click</a> event.</p>
+<p>There are three events associated with clicking a button on your mouse. When the button is initially pressed, Textual sends a <a href="../../events/mouse_down/">MouseDown</a> event, followed by <a href="../../events/mouse_up/">MouseUp</a> when the button is released. Textual then sends a final <a href="../../events/click/">Click</a> event.</p>
 <p>If you want your app to respond to a mouse click you should prefer the Click event (and not MouseDown or MouseUp). This is because a future version of Textual may support other pointing devices which don't have up and down states.</p>
 <h3 id="scroll-events">Scroll events<a class="headerlink" href="#scroll-events" title="Permanent link">&para;</a></h3>
 <p>Most mice have a scroll wheel which you can use to scroll window underneath the cursor. Scrollable containers in Textual will handle these automatically, but you can handle <a href="../../events/mouse_scroll_down/">MouseDown</a> and <a href="../events/mouse_scroll_up">MouseUp</a> if you want build your own scrolling functionality.</p>

@@ -1,6 +1,6 @@
 Screen {
     layout: grid;
-    grid-size: 3;
+    grid-size: 3 2;
 }
 
 .box {

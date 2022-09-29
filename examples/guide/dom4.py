@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.layout import Container, Horizontal
+from textual.containers import Container, Horizontal
 from textual.widgets import Header, Footer, Static, Button
 
 QUESTION = "Do you want to learn about Textual CSS?"

@@ -1618,6 +1618,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
@@ -1654,6 +1656,27 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../align/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Align
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -2645,6 +2668,8 @@
         
       
         
+      
+        
           
         
       
@@ -2753,6 +2778,27 @@
   
   <span class="md-ellipsis">
     Color
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Containers
     
   </span>
   
@@ -3116,10 +3162,6 @@
 </thead>
 <tbody>
 <tr>
-<td><code>center</code></td>
-<td>A single child widget will be placed in the center.</td>
-</tr>
-<tr>
 <td><code>grid</code></td>
 <td>Child widgets will be arranged in a grid.</td>
 </tr>
@@ -3138,33 +3180,28 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">layout.py</label><label for="__tabbed_1_2">layout.css</label><label for="__tabbed_1_3">Output</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">textual</span> <span class="kn">import</span> <span class="n">layout</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span> <span class="nn">textual.widget</span> <span class="kn">import</span> <span class="n">Widget</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">Container</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="k">class</span> <span class="nc">LayoutApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="k">yield</span> <span class="n">layout</span><span class="o">.</span><span class="n">Container</span><span class="p">(</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Layout&quot;</span><span class="p">),</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Is&quot;</span><span class="p">),</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Vertical&quot;</span><span class="p">),</span>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;vertical-layout&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>        <span class="p">)</span>
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>        <span class="k">yield</span> <span class="n">layout</span><span class="o">.</span><span class="n">Container</span><span class="p">(</span>
-<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Layout&quot;</span><span class="p">),</span>
-<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Is&quot;</span><span class="p">),</span>
-<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Horizontal&quot;</span><span class="p">),</span>
-<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;horizontal-layout&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>        <span class="p">)</span>
-<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>        <span class="k">yield</span> <span class="n">layout</span><span class="o">.</span><span class="n">Container</span><span class="p">(</span>
-<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Center&quot;</span><span class="p">),</span>
-<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;center-layout&quot;</span><span class="p">,</span>
-<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>        <span class="p">)</span>
-<a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a>
-<a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a>
-<a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a><span class="n">app</span> <span class="o">=</span> <span class="n">LayoutApp</span><span class="p">(</span><span class="n">css_path</span><span class="o">=</span><span class="s2">&quot;layout.css&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">class</span> <span class="nc">LayoutApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="k">yield</span> <span class="n">Container</span><span class="p">(</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Layout&quot;</span><span class="p">),</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Is&quot;</span><span class="p">),</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Vertical&quot;</span><span class="p">),</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;vertical-layout&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>        <span class="p">)</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>        <span class="k">yield</span> <span class="n">Container</span><span class="p">(</span>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Layout&quot;</span><span class="p">),</span>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Is&quot;</span><span class="p">),</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>            <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Horizontal&quot;</span><span class="p">),</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;horizontal-layout&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>        <span class="p">)</span>
+<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>
+<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>
+<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="n">app</span> <span class="o">=</span> <span class="n">LayoutApp</span><span class="p">(</span><span class="n">css_path</span><span class="o">=</span><span class="s2">&quot;layout.css&quot;</span><span class="p">)</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -3180,18 +3217,12 @@
 <a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="no">auto</span><span class="err">;</span><span class="w"></span>
 <a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="err">}</span><span class="w"></span>
 <a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="nn">#center-layout</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">    </span><span class="na">layout</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="err">;</span><span class="w"></span>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">    </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">darkslateblue</span><span class="err">;</span><span class="w"></span>
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">    </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="mi">7</span><span class="err">;</span><span class="w"></span>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="err">}</span><span class="w"></span>
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="nt">Static</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">    </span><span class="na">margin</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="err">;</span><span class="w"></span>
-<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">12</span><span class="err">;</span><span class="w"></span>
-<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="w">    </span><span class="na">color</span><span class="o">:</span><span class="w"> </span><span class="ni">black</span><span class="err">;</span><span class="w"></span>
-<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="w">    </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">yellowgreen</span><span class="err">;</span><span class="w"></span>
-<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="err">}</span><span class="w"></span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="nt">Static</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">    </span><span class="na">margin</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">12</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">    </span><span class="na">color</span><span class="o">:</span><span class="w"> </span><span class="ni">black</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">    </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">yellowgreen</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="err">}</span><span class="w"></span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -3216,135 +3247,134 @@
         font-weight: 700;
     }
 
-    .terminal-1694452642-matrix {
+    .terminal-526994674-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-1694452642-title {
+    .terminal-526994674-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-1694452642-r1 { fill: #f3e5f3 }
-.terminal-1694452642-r2 { fill: #c5c8c6 }
-.terminal-1694452642-r3 { fill: #000000 }
-.terminal-1694452642-r4 { fill: #e5f3f3 }
-.terminal-1694452642-r5 { fill: #ecebf3 }
-.terminal-1694452642-r6 { fill: #e7e7e7 }
+    .terminal-526994674-r1 { fill: #f3e5f3 }
+.terminal-526994674-r2 { fill: #c5c8c6 }
+.terminal-526994674-r3 { fill: #000000 }
+.terminal-526994674-r4 { fill: #e5f3f3 }
+.terminal-526994674-r5 { fill: #e7e7e7 }
     </style>
 
     <defs>
-    <clipPath id="terminal-1694452642-clip-terminal">
+    <clipPath id="terminal-526994674-clip-terminal">
       <rect x="0" y="0" width="975.0" height="584.5999999999999" />
     </clipPath>
-    <clipPath id="terminal-1694452642-line-0">
+    <clipPath id="terminal-526994674-line-0">
     <rect x="0" y="1.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-1">
+<clipPath id="terminal-526994674-line-1">
     <rect x="0" y="25.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-2">
+<clipPath id="terminal-526994674-line-2">
     <rect x="0" y="50.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-3">
+<clipPath id="terminal-526994674-line-3">
     <rect x="0" y="74.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-4">
+<clipPath id="terminal-526994674-line-4">
     <rect x="0" y="99.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-5">
+<clipPath id="terminal-526994674-line-5">
     <rect x="0" y="123.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-6">
+<clipPath id="terminal-526994674-line-6">
     <rect x="0" y="147.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-7">
+<clipPath id="terminal-526994674-line-7">
     <rect x="0" y="172.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-8">
+<clipPath id="terminal-526994674-line-8">
     <rect x="0" y="196.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-9">
+<clipPath id="terminal-526994674-line-9">
     <rect x="0" y="221.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-10">
+<clipPath id="terminal-526994674-line-10">
     <rect x="0" y="245.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-11">
+<clipPath id="terminal-526994674-line-11">
     <rect x="0" y="269.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-12">
+<clipPath id="terminal-526994674-line-12">
     <rect x="0" y="294.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-13">
+<clipPath id="terminal-526994674-line-13">
     <rect x="0" y="318.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-14">
+<clipPath id="terminal-526994674-line-14">
     <rect x="0" y="343.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-15">
+<clipPath id="terminal-526994674-line-15">
     <rect x="0" y="367.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-16">
+<clipPath id="terminal-526994674-line-16">
     <rect x="0" y="391.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-17">
+<clipPath id="terminal-526994674-line-17">
     <rect x="0" y="416.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-18">
+<clipPath id="terminal-526994674-line-18">
     <rect x="0" y="440.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-19">
+<clipPath id="terminal-526994674-line-19">
     <rect x="0" y="465.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-20">
+<clipPath id="terminal-526994674-line-20">
     <rect x="0" y="489.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-21">
+<clipPath id="terminal-526994674-line-21">
     <rect x="0" y="513.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1694452642-line-22">
+<clipPath id="terminal-526994674-line-22">
     <rect x="0" y="538.3" width="976" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-1694452642-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">Textual</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-526994674-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">Textual</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-1694452642-clip-terminal)">
-    <rect fill="#8b008b" x="0" y="1.5" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="0" y="1.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="12.2" y="25.9" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="85.4" y="25.9" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="158.6" y="25.9" width="817.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="0" y="50.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="12.2" y="74.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="36.6" y="74.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="158.6" y="74.7" width="817.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="0" y="99.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="12.2" y="123.5" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="109.8" y="123.5" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="158.6" y="123.5" width="817.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="0" y="147.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#008b8b" x="0" y="172.3" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#008b8b" x="0" y="172.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#008b8b" x="0" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="12.2" y="196.7" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="85.4" y="196.7" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#008b8b" x="158.6" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="170.8" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="195.2" y="196.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#008b8b" x="317.2" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="329.4" y="196.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="451.4" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#008b8b" x="475.8" y="196.7" width="500.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#008b8b" x="0" y="221.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#483d8b" x="0" y="245.5" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#483d8b" x="0" y="245.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#483d8b" x="0" y="269.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#483d8b" x="0" y="294.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#483d8b" x="0" y="318.7" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="414.8" y="318.7" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="488" y="318.7" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#483d8b" x="561.2" y="318.7" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#483d8b" x="0" y="343.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#483d8b" x="0" y="367.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#483d8b" x="0" y="391.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="416.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="440.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="562.7" width="976" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-1694452642-matrix">
-    <text class="terminal-1694452642-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-1694452642-line-0)">
-</text><text class="terminal-1694452642-r3" x="12.2" y="44.4" textLength="73.2" clip-path="url(#terminal-1694452642-line-1)">Layout</text><text class="terminal-1694452642-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-1694452642-line-1)">
-</text><text class="terminal-1694452642-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-1694452642-line-2)">
-</text><text class="terminal-1694452642-r3" x="12.2" y="93.2" textLength="24.4" clip-path="url(#terminal-1694452642-line-3)">Is</text><text class="terminal-1694452642-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-1694452642-line-3)">
-</text><text class="terminal-1694452642-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-1694452642-line-4)">
-</text><text class="terminal-1694452642-r3" x="12.2" y="142" textLength="97.6" clip-path="url(#terminal-1694452642-line-5)">Vertical</text><text class="terminal-1694452642-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-1694452642-line-5)">
-</text><text class="terminal-1694452642-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-1694452642-line-6)">
-</text><text class="terminal-1694452642-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-1694452642-line-7)">
-</text><text class="terminal-1694452642-r3" x="12.2" y="215.2" textLength="73.2" clip-path="url(#terminal-1694452642-line-8)">Layout</text><text class="terminal-1694452642-r3" x="170.8" y="215.2" textLength="24.4" clip-path="url(#terminal-1694452642-line-8)">Is</text><text class="terminal-1694452642-r3" x="329.4" y="215.2" textLength="122" clip-path="url(#terminal-1694452642-line-8)">Horizontal</text><text class="terminal-1694452642-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-1694452642-line-8)">
-</text><text class="terminal-1694452642-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-1694452642-line-9)">
-</text><text class="terminal-1694452642-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-1694452642-line-10)">
-</text><text class="terminal-1694452642-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-1694452642-line-11)">
-</text><text class="terminal-1694452642-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-1694452642-line-12)">
-</text><text class="terminal-1694452642-r3" x="414.8" y="337.2" textLength="73.2" clip-path="url(#terminal-1694452642-line-13)">Center</text><text class="terminal-1694452642-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-1694452642-line-13)">
-</text><text class="terminal-1694452642-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-1694452642-line-14)">
-</text><text class="terminal-1694452642-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-1694452642-line-15)">
-</text><text class="terminal-1694452642-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-1694452642-line-16)">
-</text><text class="terminal-1694452642-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-1694452642-line-17)">
-</text><text class="terminal-1694452642-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-1694452642-line-18)">
-</text><text class="terminal-1694452642-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-1694452642-line-19)">
-</text><text class="terminal-1694452642-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-1694452642-line-20)">
-</text><text class="terminal-1694452642-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-1694452642-line-21)">
-</text><text class="terminal-1694452642-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-1694452642-line-22)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-526994674-clip-terminal)">
+    <rect fill="#8b008b" x="0" y="1.5" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="0" y="1.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="12.2" y="25.9" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="85.4" y="25.9" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="158.6" y="25.9" width="817.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="0" y="50.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="12.2" y="74.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="36.6" y="74.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="158.6" y="74.7" width="817.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="0" y="99.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="12.2" y="123.5" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="109.8" y="123.5" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="158.6" y="123.5" width="817.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#8b008b" x="0" y="147.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#008b8b" x="0" y="172.3" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#008b8b" x="0" y="172.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#008b8b" x="0" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="12.2" y="196.7" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="85.4" y="196.7" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#008b8b" x="158.6" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="170.8" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="195.2" y="196.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#008b8b" x="317.2" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="329.4" y="196.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#9acd32" x="451.4" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#008b8b" x="475.8" y="196.7" width="500.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#008b8b" x="0" y="221.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="245.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="269.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="294.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="318.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="343.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="367.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="391.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="416.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="440.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="0" y="562.7" width="976" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-526994674-matrix">
+    <text class="terminal-526994674-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-526994674-line-0)">
+</text><text class="terminal-526994674-r3" x="12.2" y="44.4" textLength="73.2" clip-path="url(#terminal-526994674-line-1)">Layout</text><text class="terminal-526994674-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-526994674-line-1)">
+</text><text class="terminal-526994674-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-526994674-line-2)">
+</text><text class="terminal-526994674-r3" x="12.2" y="93.2" textLength="24.4" clip-path="url(#terminal-526994674-line-3)">Is</text><text class="terminal-526994674-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-526994674-line-3)">
+</text><text class="terminal-526994674-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-526994674-line-4)">
+</text><text class="terminal-526994674-r3" x="12.2" y="142" textLength="97.6" clip-path="url(#terminal-526994674-line-5)">Vertical</text><text class="terminal-526994674-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-526994674-line-5)">
+</text><text class="terminal-526994674-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-526994674-line-6)">
+</text><text class="terminal-526994674-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-526994674-line-7)">
+</text><text class="terminal-526994674-r3" x="12.2" y="215.2" textLength="73.2" clip-path="url(#terminal-526994674-line-8)">Layout</text><text class="terminal-526994674-r3" x="170.8" y="215.2" textLength="24.4" clip-path="url(#terminal-526994674-line-8)">Is</text><text class="terminal-526994674-r3" x="329.4" y="215.2" textLength="122" clip-path="url(#terminal-526994674-line-8)">Horizontal</text><text class="terminal-526994674-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-526994674-line-8)">
+</text><text class="terminal-526994674-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-526994674-line-9)">
+</text><text class="terminal-526994674-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-526994674-line-10)">
+</text><text class="terminal-526994674-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-526994674-line-11)">
+</text><text class="terminal-526994674-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-526994674-line-12)">
+</text><text class="terminal-526994674-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-526994674-line-13)">
+</text><text class="terminal-526994674-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-526994674-line-14)">
+</text><text class="terminal-526994674-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-526994674-line-15)">
+</text><text class="terminal-526994674-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-526994674-line-16)">
+</text><text class="terminal-526994674-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-526994674-line-17)">
+</text><text class="terminal-526994674-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-526994674-line-18)">
+</text><text class="terminal-526994674-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-526994674-line-19)">
+</text><text class="terminal-526994674-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-526994674-line-20)">
+</text><text class="terminal-526994674-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-526994674-line-21)">
+</text><text class="terminal-526994674-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-526994674-line-22)">
 </text>
     </g>
     </g>

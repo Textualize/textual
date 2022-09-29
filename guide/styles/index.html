@@ -1821,6 +1821,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -1857,6 +1859,27 @@
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/align/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Align
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -2756,6 +2779,8 @@
         
       
         
+      
+        
           
         
       
@@ -2864,6 +2889,27 @@
   
   <span class="md-ellipsis">
     Color
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Containers
     
   </span>
   
@@ -3675,7 +3721,10 @@
 </p>
 <p>Widgets will occupy the full width of their container and as many lines as required to fit in the vertical direction.</p>
 <p>Note how the combined height of the widget is three rows in the terminal. This is because a border adds two rows (and two columns). If you were to remove the line that sets the border style, the widget would occupy a single row.</p>
+<div class="admonition information">
+<p class="admonition-title">Information</p>
 <p>Widgets will wrap text by default. If you were to replace <code>"Textual"</code> with a long paragraph of text, the widget will expand downwards to fit.</p>
+</div>
 <h2 id="colors">Colors<a class="headerlink" href="#colors" title="Permanent link">&para;</a></h2>
 <p>There are a number of style attribute which accept colors. The most commonly used are <a href="../../styles/color/">color</a> which sets the default color of text on a widget, and <a href="..styles/background/md">background</a> which sets the background color (beneath the text).</p>
 <p>You can set a color value to one of a number of pre-defined color constants, such as "crimson", "lime", and "palegreen". You can find a full list in the <a href="../../reference/color/#textual.color--named-colors">Color reference</a>.</p>
@@ -5037,7 +5086,7 @@
 </div>
 </div>
 </div>
-<p>Percentage units are useful for widgets that occupy a relative portion of the screen, but they can be problematic for some proportions. For instance, if we want to divide the screen into thirds, we would have to set a dimension to <code>33.3333333333%</code> which is awkward. Textual supports <code>fr</code> units which are often better than percentage-based units for these situations.</p>
+<p>Percentage units can be problematic for some relative values. For instance, if we want to divide the screen into thirds, we would have to set a dimension to <code>33.3333333333%</code> which is awkward. Textual supports <code>fr</code> units which are often better than percentage-based units for these situations.</p>
 <p>When specifying <code>fr</code> units for a given dimension, Textual will divide the available space by the sum of the <code>fr</code> units on that dimension. That space will then be divided amongst the widgets as a proportion of their individual <code>fr</code> values.</p>
 <p>Let's look at an example. We will create two widgets, one with a height of <code>"2fr"</code> and one with a height of <code>"1fr"</code>.</p>
 <div class="highlight"><span class="filename">dimensions04.py</span><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
@@ -6019,7 +6068,9 @@
 </div>
 </div>
 </div>
-<p>The following example creates two widgets which have a width of 30, a height of 6, and a border and padding of 1. The second widget has <code>box_sizing</code> set to <code>"content-box"</code>.</p>
+<p>The following example creates two widgets with a width of 30, a height of 6, and a border and padding of 1.
+The first widget has the default <code>box_sizing</code> (<code>"border-box"</code>).
+The second widget sets <code>box_sizing</code> to <code>"content-box"</code>.</p>
 <div class="highlight"><span class="filename">box_sizing01.py</span><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
 <a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
@@ -6216,7 +6267,7 @@
 </p>
 <h3 id="margin">Margin<a class="headerlink" href="#margin" title="Permanent link">&para;</a></h3>
 <p>Margin is similar to padding in that it adds space, but unlike padding, <a href="../../styles/margin/">margin</a> is outside of the widget's border. It is used to add space between widgets.</p>
-<p>The following example creates two widgets, each with a padding of 2.</p>
+<p>The following example creates two widgets, each with a margin of 2.</p>
 <div class="highlight"><span class="filename">margin01.py</span><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
 <a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
@@ -6242,9 +6293,9 @@
 <a id="__codelineno-15-23" name="__codelineno-15-23" href="#__codelineno-15-23"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">widget2</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">background</span> <span class="o">=</span> <span class="s2">&quot;darkgreen&quot;</span>
 <a id="__codelineno-15-24" name="__codelineno-15-24" href="#__codelineno-15-24"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">widget1</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">border</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;heavy&quot;</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span><span class="p">)</span>
 <a id="__codelineno-15-25" name="__codelineno-15-25" href="#__codelineno-15-25"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">widget2</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">border</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;heavy&quot;</span><span class="p">,</span> <span class="s2">&quot;white&quot;</span><span class="p">)</span>
-<a id="__codelineno-15-26" name="__codelineno-15-26" href="#__codelineno-15-26"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">widget1</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="mi">2</span>
-<a id="__codelineno-15-27" name="__codelineno-15-27" href="#__codelineno-15-27"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">widget2</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="mi">2</span>
-<a id="__codelineno-15-28" name="__codelineno-15-28" href="#__codelineno-15-28"></a>
+<a id="__codelineno-15-26" name="__codelineno-15-26" href="#__codelineno-15-26"></a><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">widget1</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="mi">2</span>
+</span><a id="__codelineno-15-27" name="__codelineno-15-27" href="#__codelineno-15-27"></a><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">widget2</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="mi">2</span>
+</span><a id="__codelineno-15-28" name="__codelineno-15-28" href="#__codelineno-15-28"></a>
 <a id="__codelineno-15-29" name="__codelineno-15-29" href="#__codelineno-15-29"></a>
 <a id="__codelineno-15-30" name="__codelineno-15-30" href="#__codelineno-15-30"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
 <a id="__codelineno-15-31" name="__codelineno-15-31" href="#__codelineno-15-31"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">MarginApp</span><span class="p">()</span>

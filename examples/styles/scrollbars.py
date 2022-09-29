@@ -1,5 +1,5 @@
 from textual.app import App
-from textual import layout
+from textual.containers import Vertical
 from textual.widgets import Static
 
 TEXT = """I must not fear.
@@ -14,8 +14,8 @@ Where the fear has gone there will be nothing. Only I will remain.
 
 class ScrollbarApp(App):
     def compose(self):
-        yield layout.Vertical(Static(TEXT * 5), classes="panel1")
-        yield layout.Vertical(Static(TEXT * 5), classes="panel2")
+        yield Vertical(Static(TEXT * 5), classes="panel1")
+        yield Vertical(Static(TEXT * 5), classes="panel2")
 
 
 app = ScrollbarApp(css_path="scrollbars.css")
