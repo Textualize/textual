@@ -13,26 +13,23 @@ without having to render the entire screen.
 
 from __future__ import annotations
 
-from itertools import chain
-from collections import defaultdict
-from operator import itemgetter
 import sys
-from typing import Callable, cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
+from itertools import chain
+from operator import itemgetter
+from typing import TYPE_CHECKING, Callable, Iterable, Iterator, NamedTuple, cast
 
 import rich.repr
-
-from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
+from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.control import Control
 from rich.segment import Segment
 from rich.style import Style
 
 from . import errors
-from .geometry import Region, Offset, Size
-
 from ._cells import cell_len
-from ._profile import timer
 from ._loop import loop_last
+from ._profile import timer
 from ._types import Lines
+from .geometry import Offset, Region, Size
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
