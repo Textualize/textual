@@ -332,7 +332,6 @@ class Compositor:
             }
         return self._visible_widgets
 
-    @timer("arrange")
     def _arrange_root(
         self, root: Widget, size: Size
     ) -> tuple[CompositorMap, set[Widget]]:
@@ -485,20 +484,19 @@ class Compositor:
         """Visible widgets and regions in layers order."""
 
         if self._layers_visible is None:
-            with timer("CALC LAYERS"):
-                layers_visible: dict[int, list[tuple[Widget, Region]]]
-                screen_region = self.size.region
-                _, screen_height = self.size
-                layers_visible = {y: [] for y in screen_region.line_range}
+            layers_visible: dict[int, list[tuple[Widget, Region]]]
+            screen_region = self.size.region
+            _, screen_height = self.size
+            layers_visible = {y: [] for y in screen_region.line_range}
 
-                visible_intersection = screen_region.intersection
+            visible_intersection = screen_region.intersection
 
-                for widget, region, *_ in self:
-                    (_x, y, _width, height) = region
-                    if y + height > 0 and y < screen_height:
-                        for y in visible_intersection(region).line_range:
-                            layers_visible[y].append((widget, region))
-                self._layers_visible = layers_visible
+            for widget, region, *_ in self:
+                (_x, y, _width, height) = region
+                if y + height > 0 and y < screen_height:
+                    for y in visible_intersection(region).line_range:
+                        layers_visible[y].append((widget, region))
+            self._layers_visible = layers_visible
         return self._layers_visible
 
     def __iter__(self) -> Iterator[tuple[Widget, Region, Region, Size, Size]]:
