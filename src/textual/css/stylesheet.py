@@ -369,9 +369,12 @@ class Stylesheet:
         else:
             rules = reversed(self.rules)
         # Collect the rules defined in the stylesheet
+        node._has_hover_style = False
         for rule in rules:
             is_default_rules = rule.is_default_rules
             tie_breaker = rule.tie_breaker
+            if ":hover" in rule.selector_names:
+                node._has_hover_style = True
             for base_specificity in _check_rule(rule, css_path_nodes):
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker

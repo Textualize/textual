@@ -204,7 +204,7 @@ class Button(Static, can_focus=True):
 
     def watch_mouse_over(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
-        if not self.disabled:
+        if self._has_hover_style and not self.disabled:
             self.app.update_styles(self)
 
     def validate_variant(self, variant: str) -> str:

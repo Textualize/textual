@@ -543,11 +543,6 @@ class Compositor:
         for widget, region in self.layers_visible.get(y, []):
             if contains(region, x, y) and widget.visible:
                 return widget, region
-
-        # contains = Region.contains
-        # for widget, cropped_region, region, *_ in self:
-        #     if contains(cropped_region, x, y) and widget.visible:
-        #         return widget, region
         raise errors.NoWidget(f"No widget under screen coordinate ({x}, {y})")
 
     def get_widgets_at(self, x: int, y: int) -> Iterable[tuple[Widget, Region]]:
@@ -564,11 +559,6 @@ class Compositor:
         for widget, region in self.layers_visible.get(y, []):
             if contains(region, x, y) and widget.visible:
                 yield widget, region
-
-        # contains = Region.contains
-        # for widget, cropped_region, region, *_ in self:
-        #     if contains(cropped_region, x, y) and widget.visible:
-        #         yield widget, region
 
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the Style at the given cell or Style.null()
