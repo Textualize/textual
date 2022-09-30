@@ -11,7 +11,7 @@ class InputApp(App):
     """
 
     def compose(self):
-        yield Input("foo")
+        yield Input("你123456789界", placeholder="Type something")
 
 
 if __name__ == "__main__":

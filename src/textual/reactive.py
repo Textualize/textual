@@ -112,7 +112,7 @@ class Reactive(Generic[ReactiveType]):
         self.internal_name = f"_reactive_{name}"
         default = self._default
 
-        if self._init and 0:
+        if self._init:
             setattr(owner, f"_init_{name}", default)
         else:
             setattr(
@@ -127,7 +127,7 @@ class Reactive(Generic[ReactiveType]):
         current_value = getattr(obj, self.internal_name, None)
         validate_function = getattr(obj, f"validate_{name}", None)
         first_set = getattr(obj, f"__first_set_{self.internal_name}", True)
-        if callable(validate_function):
+        if callable(validate_function) and not first_set:
             value = validate_function(value)
         if current_value != value or first_set:
             setattr(obj, f"__first_set_{self.internal_name}", False)
