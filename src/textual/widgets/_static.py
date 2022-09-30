@@ -86,7 +86,7 @@ class Static(Widget):
         """
         return self._renderable
 
-    def update(self, renderable: RenderableType = "", *, layout: bool = False) -> None:
+    def update(self, renderable: RenderableType = "", *, layout: bool = True) -> None:
         """Update the widget's content area with new text or Rich renderable.
 
         Args:
