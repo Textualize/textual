@@ -539,8 +539,12 @@ class App(Generic[ReturnType], DOMNode):
         self.dark = not self.dark
 
     def action_screenshot(self, filename: str | None, path: str = "~/") -> None:
-        """Action to save a screenshot."""
-        self.bell()
+        """Save an SVG "screenshot". This action will save a SVG file containing the current contents of the screen.
+
+        Args:
+            filename (str | None, optional): Filename of screenshot, or None to auto-generate. Defaults to None.
+            path (str, optional): Path to directory. Defaults to "~/".
+        """
         self.save_screenshot(filename, path)
 
     def export_screenshot(self, *, title: str | None = None) -> str:
@@ -1366,30 +1370,43 @@ class App(Generic[ReturnType], DOMNode):
             await super().on_event(event)
 
     async def action(
-        self, action: str, default_namespace: object | None = None
-    ) -> None:
+        self,
+        action: str | tuple[str, tuple[str, ...]],
+        default_namespace: object | None = None,
+    ) -> bool:
         """Perform an action.
 
         Args:
             action (str): Action encoded in a string.
             default_namespace (object | None): Namespace to use if not provided in the action,
                 or None to use app. Defaults to None.
+
+        Returns:
+            bool: True if the event has handled.
         """
-        target, params = actions.parse(action)
+        if isinstance(action, str):
+            target, params = actions.parse(action)
+        else:
+            target, params = action
+        implicit_destination = True
         if "." in target:
             destination, action_name = target.split(".", 1)
             if destination not in self._action_targets:
                 raise ActionError("Action namespace {destination} is not known")
             action_target = getattr(self, destination)
+            implicit_destination = True
         else:
             action_target = default_namespace or self
             action_name = target
 
-        await self._dispatch_action(action_target, action_name, params)
+        handled = await self._dispatch_action(action_target, action_name, params)
+        if not handled and implicit_destination and not isinstance(action_target, App):
+            handled = await self.app._dispatch_action(self.app, action_name, params)
+        return handled
 
     async def _dispatch_action(
         self, namespace: object, action_name: str, params: Any
-    ) -> None:
+    ) -> bool:
         log(
             "<action>",
             namespace=namespace,
@@ -1403,6 +1420,8 @@ class App(Generic[ReturnType], DOMNode):
             log(f"<action> {action_name!r} has no target")
         if callable(method):
             await invoke(method, *params)
+            return True
+        return False
 
     async def _broker_event(
         self, event_name: str, event: events.Event, default_namespace: object | None
@@ -1427,7 +1446,7 @@ class App(Generic[ReturnType], DOMNode):
             return False
         else:
             event.stop()
-        if isinstance(action, str):
+        if isinstance(action, (str, tuple)):
             await self.action(action, default_namespace=default_namespace)
         elif callable(action):
             await action()
@@ -1475,15 +1494,22 @@ class App(Generic[ReturnType], DOMNode):
         await self.press(key)
 
     async def action_quit(self) -> None:
+        """Quit the app as soon as possible."""
         await self.shutdown()
 
     async def action_bang(self) -> None:
         1 / 0
 
     async def action_bell(self) -> None:
+        """Play the terminal 'bell'."""
         self.bell()
 
     async def action_focus(self, widget_id: str) -> None:
+        """Focus the given widget.
+
+        Args:
+            widget_id (str): ID of widget to focus.
+        """
         try:
             node = self.query(f"#{widget_id}").first()
         except NoMatchingNodesError:

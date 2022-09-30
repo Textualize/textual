@@ -13,25 +13,23 @@ without having to render the entire screen.
 
 from __future__ import annotations
 
+import sys
 from itertools import chain
 from operator import itemgetter
-import sys
-from typing import Callable, cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, Iterable, Iterator, NamedTuple, cast
 
 import rich.repr
-
-from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
+from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.control import Control
 from rich.segment import Segment
 from rich.style import Style
 
 from . import errors
-from .geometry import Region, Offset, Size
-
 from ._cells import cell_len
-from ._profile import timer
 from ._loop import loop_last
+from ._profile import timer
 from ._types import Lines
+from .geometry import Offset, Region, Size
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
@@ -203,6 +201,8 @@ class Compositor:
         # Regions that require an update
         self._dirty_regions: set[Region] = set()
 
+        self._layers_visible: dict[int, list[tuple[Widget, Region]]] | None = None
+
     @classmethod
     def _regions_to_spans(
         cls, regions: Iterable[Region]
@@ -257,6 +257,7 @@ class Compositor:
         """
         self._cuts = None
         self._layers = None
+        self._layers_visible = None
         self.root = parent
         self.size = size
 
@@ -475,6 +476,26 @@ class Compositor:
             )
         return self._layers
 
+    @property
+    def layers_visible(self) -> dict[int, list[tuple[Widget, Region]]]:
+        """Visible widgets and regions in layers order."""
+
+        if self._layers_visible is None:
+            layers_visible: dict[int, list[tuple[Widget, Region]]]
+            screen_region = self.size.region
+            _, screen_height = self.size
+            layers_visible = {y: [] for y in screen_region.line_range}
+
+            visible_intersection = screen_region.intersection
+
+            for widget, region, *_ in self:
+                (_x, y, _width, height) = region
+                if y + height > 0 and y < screen_height:
+                    for y in visible_intersection(region).line_range:
+                        layers_visible[y].append((widget, region))
+            self._layers_visible = layers_visible
+        return self._layers_visible
+
     def __iter__(self) -> Iterator[tuple[Widget, Region, Region, Size, Size]]:
         """Iterate map with information regarding each widget and is position
 
@@ -514,9 +535,10 @@ class Compositor:
             tuple[Widget, Region]: A tuple of the widget and its region.
         """
         # TODO: Optimize with some line based lookup
+
         contains = Region.contains
-        for widget, cropped_region, region, *_ in self:
-            if contains(cropped_region, x, y) and widget.visible:
+        for widget, region in self.layers_visible.get(y, []):
+            if contains(region, x, y) and widget.visible:
                 return widget, region
         raise errors.NoWidget(f"No widget under screen coordinate ({x}, {y})")
 
@@ -531,8 +553,8 @@ class Compositor:
             Iterable[tuple[Widget, Region]]: Sequence of (WIDGET, REGION) tuples.
         """
         contains = Region.contains
-        for widget, cropped_region, region, *_ in self:
-            if contains(cropped_region, x, y) and widget.visible:
+        for widget, region in self.layers_visible.get(y, []):
+            if contains(region, x, y) and widget.visible:
                 yield widget, region
 
     def get_style_at(self, x: int, y: int) -> Style:

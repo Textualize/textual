@@ -1535,7 +1535,8 @@ class Widget(DOMNode):
 
     def watch_mouse_over(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
-        self.app.update_styles(self)
+        if self._has_hover_style:
+            self.app.update_styles(self)
 
     def watch_has_focus(self, value: bool) -> None:
         """Update from CSS if has focus state changes."""
