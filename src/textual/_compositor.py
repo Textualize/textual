@@ -490,7 +490,6 @@ class Compositor:
                 y: layer.append for y, layer in layers_visible.items()
             }
             intersection = Region.intersection
-            # for widget, cropped_region, region, *_ in self:
             for widget, (region, _, clip, _, _, _) in self.layers:
                 cropped_region = intersection(region, clip)
                 _x, region_y, _width, height = cropped_region
