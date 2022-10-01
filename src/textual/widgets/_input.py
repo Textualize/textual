@@ -1,21 +1,23 @@
 from __future__ import annotations
 
-from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
-from rich.cells import cell_len
+from rich.cells import cell_len, get_character_cell_size
+from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.highlighter import Highlighter
 from rich.segment import Segment
 from rich.text import Text
 
 from .. import events
+from .._segment_tools import line_crop
 from ..binding import Binding
 from ..geometry import Size
-from .._segment_tools import line_crop
 from ..message import Message, MessageTarget
 from ..reactive import reactive
 from ..widget import Widget
 
 
 class _InputRenderable:
+    """Render the input content."""
+
     def __init__(self, input: Input, cursor_visible: bool) -> None:
         self.input = input
         self.cursor_visible = cursor_visible
@@ -57,8 +59,11 @@ class Input(Widget, can_focus=True):
         color: $text;        
         padding: 0 2;
         border: tall $background;
-        width: auto;
+        width: 100%;
         height: 1;
+    }
+    Input.-disabled {
+        opacity: 0.6;
     }
     Input:focus {
        border: tall $accent;
@@ -77,6 +82,9 @@ class Input(Widget, can_focus=True):
         Binding("left", "cursor_left", "cursor left"),
         Binding("right", "cursor_right", "cursor right"),
         Binding("backspace", "delete_left", "delete left"),
+        Binding("home", "home", "Home"),
+        Binding("end", "end", "Home"),
+        Binding("ctrl+d", "delete_right", "Delete"),
     ]
 
     COMPONENT_CLASSES = {"input--cursor", "input--placeholder"}
@@ -87,10 +95,8 @@ class Input(Widget, can_focus=True):
     cursor_position = reactive(0)
     view_position = reactive(0)
     placeholder = reactive("")
-
     complete = reactive("")
     width = reactive(1)
-
     _cursor_visible = reactive(True)
     password = reactive(False)
     max_size: reactive[int | None] = reactive(None)
@@ -110,11 +116,13 @@ class Input(Widget, can_focus=True):
         self.highlighter = highlighter
 
     def _position_to_cell(self, position: int) -> int:
+        """Convert an index within the value to cell position."""
         cell_offset = cell_len(self.value[:position])
         return cell_offset
 
     @property
     def _cursor_offset(self) -> int:
+        """Get the cell offset of the cursor."""
         offset = self._position_to_cell(self.cursor_position)
         if self._cursor_at_end:
             offset += 1
@@ -133,7 +141,7 @@ class Input(Widget, can_focus=True):
         new_view_position = max(0, min(view_position, self.cursor_width - width))
         return new_view_position
 
-    def watch_cursor_position(self, old_position: int, new_position: int) -> None:
+    def watch_cursor_position(self, cursor_position: int) -> None:
         width = self.content_size.width
         view_start = self.view_position
         view_end = view_start + width
@@ -145,10 +153,13 @@ class Input(Widget, can_focus=True):
         else:
             self.view_position = self.view_position
 
+    async def watch_value(self, value: str) -> None:
+        await self.emit(self.Changed(self, value))
+
     @property
     def cursor_width(self) -> int:
+        """Get the width of the input (with extra space for cursor at the end)."""
         if self.placeholder and not self.value:
-
             return cell_len(self.placeholder)
         return self._position_to_cell(len(self.value)) + 1
 
@@ -171,7 +182,7 @@ class Input(Widget, can_focus=True):
             super().__init__(sender)
             self.value = value
 
-    class Updated(Message, bubble=True):
+    class Submitted(Message, bubble=True):
         """Value was updated via enter key or blur."""
 
         def __init__(self, sender: MessageTarget, value: str) -> None:
@@ -180,6 +191,7 @@ class Input(Widget, can_focus=True):
 
     @property
     def _value(self) -> Text:
+        """Value rendered as text."""
         if self.password:
             return Text("•" * len(self.value), no_wrap=True, overflow="ignore")
         else:
@@ -188,23 +200,20 @@ class Input(Widget, can_focus=True):
                 text = self.highlighter(text)
             return text
 
-    @property
-    def _complete(self) -> Text:
-        return Text(self.complete, no_wrap=True, overflow="ignore")
-
     def get_content_width(self, container: Size, viewport: Size) -> int:
         return self.cursor_width
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         return 1
 
-    def toggle_cursor(self) -> None:
+    def _toggle_cursor(self) -> None:
+        """Toggle visibility of cursor."""
         self._cursor_visible = not self._cursor_visible
 
     def on_mount(self) -> None:
         self.blink_timer = self.set_interval(
             0.5,
-            self.toggle_cursor,
+            self._toggle_cursor,
             pause=not (self.cursor_blink and self.has_focus),
         )
 
@@ -220,14 +229,37 @@ class Input(Widget, can_focus=True):
         self._cursor_visible = True
         if self.cursor_blink:
             self.blink_timer.reset()
-        event.prevent_default()
 
         # Do key bindings first
         if await self.handle_key(event):
+            event.stop()
+        elif event.key == "tab":
             return
-
-        if event.char is not None:
+        elif event.is_printable:
+            event.stop()
+            assert event.char is not None
             self.insert_text_at_cursor(event.char)
+        event.prevent_default()
+
+    def on_paste(self, event: events.Paste) -> None:
+        line = event.text.splitlines()[0]
+        self.insert_text_at_cursor(line)
+
+    def on_click(self, event: events.Click) -> None:
+        offset = event.get_content_offset(self)
+        if offset is None:
+            return
+        event.stop()
+        click_x = offset.x + self.view_position
+        cell_offset = 0
+        _cell_size = get_character_cell_size
+        for index, char in enumerate(self.value):
+            if cell_offset >= click_x:
+                self.cursor_position = index
+                break
+            cell_offset += _cell_size(char)
+        else:
+            self.cursor_position = len(self.value)
 
     def insert_text_at_cursor(self, text: str) -> None:
         if self.cursor_position > len(self.value):
@@ -246,6 +278,20 @@ class Input(Widget, can_focus=True):
     def action_cursor_right(self) -> None:
         self.cursor_position += 1
 
+    def action_home(self) -> None:
+        self.cursor_position = 0
+
+    def action_end(self) -> None:
+        self.cursor_position = len(self.value)
+
+    def action_delete_right(self) -> None:
+        value = self.value
+        delete_position = self.cursor_position
+        before = value[:delete_position]
+        after = value[delete_position + 1 :]
+        self.value = f"{before}{after}"
+        self.cursor_position = delete_position
+
     def action_delete_left(self) -> None:
         if self.cursor_position == len(self.value):
             self.value = self.value[:-1]
@@ -257,3 +303,6 @@ class Input(Widget, can_focus=True):
             after = value[delete_position + 1 :]
             self.value = f"{before}{after}"
             self.cursor_position = delete_position
+
+    async def action_submit(self) -> None:
+        await self.emit(self.Submitted(self, self.value))
