@@ -1563,11 +1563,10 @@ class Widget(DOMNode):
             self._container_size = container_size
             if self.is_scrollable:
                 self._scroll_update(virtual_size)
-            else:
-                self.refresh()
+            self.refresh()
 
     def _scroll_update(self, virtual_size: Size) -> None:
-        """Update scrollbars visiblity and dimensions.
+        """Update scrollbars visibility and dimensions.
 
         Args:
             virtual_size (Size): Virtual size.

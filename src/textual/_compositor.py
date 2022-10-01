@@ -490,7 +490,6 @@ class Compositor:
             layers_visible = {y: [] for y in screen_region.line_range}
 
             visible_intersection = screen_region.intersection
-
             for widget, cropped_region, region, *_ in self:
                 (_x, y, _width, height) = cropped_region
                 if y + height > 0 and y < screen_height:
