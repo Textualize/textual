@@ -357,9 +357,6 @@ class TreeControl(Generic[NodeDataType], Static, can_focus=True):
     def on_mouse_move(self, event: events.MouseMove) -> None:
         self.hover_node = event.style.meta.get("tree_node")
 
-    async def on_key(self, event: events.Key) -> None:
-        await self.dispatch_key(event)
-
     def key_down(self, event: events.Key) -> None:
         event.stop()
         self.cursor_down()
