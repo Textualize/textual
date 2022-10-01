@@ -486,10 +486,17 @@ class Compositor:
         if self._layers_visible is None:
             layers_visible: dict[int, list[tuple[Widget, Region, Region]]]
             layers_visible = {y: [] for y in range(self.size.height)}
-            for widget, cropped_region, region, *_ in self:
-                _x, y, _width, height = cropped_region
-                for y in range(y, y + height):
-                    layers_visible[y].append((widget, cropped_region, region))
+            layers_visible_appends = {
+                y: layer.append for y, layer in layers_visible.items()
+            }
+            intersection = Region.intersection
+            # for widget, cropped_region, region, *_ in self:
+            for widget, (region, _, clip, _, _, _) in self.layers:
+                cropped_region = intersection(region, clip)
+                _x, region_y, _width, height = cropped_region
+                widget_location = (widget, cropped_region, region)
+                for y in range(region_y, region_y + height):
+                    layers_visible_appends[y](widget_location)
             self._layers_visible = layers_visible
         return self._layers_visible
 
