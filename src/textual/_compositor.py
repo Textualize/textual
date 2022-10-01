@@ -202,9 +202,7 @@ class Compositor:
         self._dirty_regions: set[Region] = set()
 
         # Mapping of line numbers on to lists of widget and regions
-        self._layers_visible: dict[
-            int, list[tuple[Widget, Region, Region]]
-        ] | None = None
+        self._layers_visible: list[list[tuple[Widget, Region, Region]]] | None = None
 
     @classmethod
     def _regions_to_spans(
@@ -480,15 +478,13 @@ class Compositor:
         return self._layers
 
     @property
-    def layers_visible(self) -> dict[int, list[tuple[Widget, Region, Region]]]:
+    def layers_visible(self) -> list[list[tuple[Widget, Region, Region]]]:
         """Visible widgets and regions in layers order."""
         screen_height = self.size.height
         if self._layers_visible is None:
-            layers_visible: dict[int, list[tuple[Widget, Region, Region]]]
-            layers_visible = {y: [] for y in range(self.size.height)}
-            layers_visible_appends = {
-                y: layer.append for y, layer in layers_visible.items()
-            }
+            layers_visible: list[list[tuple[Widget, Region, Region]]]
+            layers_visible = [[] for y in range(self.size.height)]
+            layers_visible_appends = [layer.append for layer in layers_visible]
             intersection = Region.intersection
             _range = range
             for widget, (region, _, clip, _, _, _) in self.layers:
@@ -541,7 +537,7 @@ class Compositor:
         """
 
         contains = Region.contains
-        for widget, cropped_region, region in self.layers_visible.get(y, []):
+        for widget, cropped_region, region in self.layers_visible[y]:
             if contains(cropped_region, x, y) and widget.visible:
                 return widget, region
         raise errors.NoWidget(f"No widget under screen coordinate ({x}, {y})")
