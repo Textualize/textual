@@ -482,7 +482,7 @@ class Compositor:
     @property
     def layers_visible(self) -> dict[int, list[tuple[Widget, Region, Region]]]:
         """Visible widgets and regions in layers order."""
-
+        screen_height = self.size.height
         if self._layers_visible is None:
             layers_visible: dict[int, list[tuple[Widget, Region, Region]]]
             layers_visible = {y: [] for y in range(self.size.height)}
@@ -490,28 +490,30 @@ class Compositor:
                 y: layer.append for y, layer in layers_visible.items()
             }
             intersection = Region.intersection
+            _range = range
             for widget, (region, _, clip, _, _, _) in self.layers:
-                cropped_region = intersection(region, clip)
-                _x, region_y, _width, height = cropped_region
-                widget_location = (widget, cropped_region, region)
-                for y in range(region_y, region_y + height):
-                    layers_visible_appends[y](widget_location)
+                _x, y, _width, height = region
+                if -height <= y < screen_height:
+                    cropped_region = intersection(region, clip)
+                    _x, region_y, _width, region_height = cropped_region
+                    if region_height:
+                        widget_location = (widget, cropped_region, region)
+                        for y in _range(region_y, region_y + region_height):
+                            layers_visible_appends[y](widget_location)
             self._layers_visible = layers_visible
         return self._layers_visible
 
-    def __iter__(self) -> Iterator[tuple[Widget, Region, Region, Size, Size]]:
+    def __iter__(self) -> Iterator[tuple[Widget, Region, Size, Size]]:
         """Iterate map with information regarding each widget and is position
 
         Yields:
             Iterator[tuple[Widget, Region, Region, Size, Size]]: Iterates a tuple of
-                Widget, clip region, region, virtual size, and container size.
+                Widget, region, virtual size, and container size.
         """
         layers = self.layers
-        intersection = Region.intersection
         for widget, (region, _order, clip, virtual_size, container_size, _) in layers:
             yield (
                 widget,
-                intersection(region, clip),
                 region,
                 virtual_size,
                 container_size,
