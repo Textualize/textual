@@ -71,6 +71,7 @@ class Timer:
         self._skip = skip
         self._active = Event()
         self._task: Task | None = None
+        self._reset: bool = False
         if not pause:
             self._active.set()
 
@@ -116,6 +117,11 @@ class Timer:
         """
         self._active.clear()
 
+    def reset(self) -> None:
+        """Reset the timer, so it starts from the beginning."""
+        self._active.set()
+        self._reset = True
+
     def resume(self) -> None:
         """Resume a paused timer."""
         self._active.set()
@@ -144,8 +150,14 @@ class Timer:
             wait_time = max(0, next_timer - now)
             if wait_time:
                 await _clock.sleep(wait_time)
+
             count += 1
             await self._active.wait()
+            if self._reset:
+                start = _clock.get_time_no_wait()
+                count = 0
+                self._reset = False
+                continue
             try:
                 await self._tick(next_timer=next_timer, count=count)
             except EventTargetGone:

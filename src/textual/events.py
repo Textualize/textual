@@ -354,6 +354,19 @@ class MouseEvent(InputEvent, bubble=True):
     def style(self, style: Style) -> None:
         self._style = style
 
+    def get_content_offset(self, widget: Widget) -> Offset | None:
+        """Get offset within a widget's content area, or None if offset is not in content (i.e. padding or border).
+
+        Args:
+            widget (Widget): Widget receiving the event.
+
+        Returns:
+            Offset | None: An offset where the origin is at the top left of the content area.
+        """
+        if self.offset not in widget.content_region:
+            return None
+        return self.offset - widget.gutter.top_left
+
     def _apply_offset(self, x: int, y: int) -> MouseEvent:
         return self.__class__(
             self.sender,

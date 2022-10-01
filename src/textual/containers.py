@@ -42,3 +42,14 @@ class Grid(Widget):
         layout: grid;
     }    
     """
+
+
+class Content(Widget, can_focus=True, can_focus_children=False):
+    """A container for content such as text."""
+
+    DEFAULT_CSS = """
+    Vertical {
+        layout: vertical;
+        overflow-y: auto;
+    }
+    """

@@ -1,17 +1,19 @@
 from textual.app import App
-from textual.widgets import TextInput
+from textual.widgets import Input
 
 
 class InputApp(App):
 
     CSS = """
-    TextInput {
-       
+    Input {
+       width: 20;
     }
     """
 
     def compose(self):
-        yield TextInput(initial="foo")
+        yield Input("你123456789界", placeholder="Type something")
 
 
-app = InputApp()
+if __name__ == "__main__":
+    app = InputApp()
+    app.run()

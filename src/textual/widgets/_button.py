@@ -185,7 +185,7 @@ class Button(Static, can_focus=True):
         if label is None:
             label = self.css_identifier_styled
 
-        self.label = label
+        self.label = self.validate_label(label)
 
         self.disabled = disabled
         if disabled:

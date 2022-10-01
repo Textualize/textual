@@ -127,7 +127,7 @@ class Reactive(Generic[ReactiveType]):
         current_value = getattr(obj, self.internal_name, None)
         validate_function = getattr(obj, f"validate_{name}", None)
         first_set = getattr(obj, f"__first_set_{self.internal_name}", True)
-        if callable(validate_function):
+        if callable(validate_function) and not first_set:
             value = validate_function(value)
         if current_value != value or first_set:
             setattr(obj, f"__first_set_{self.internal_name}", False)
@@ -184,6 +184,7 @@ class Reactive(Generic[ReactiveType]):
                 compute_method = getattr(obj, f"compute_{compute}")
             except AttributeError:
                 continue
+
             value = await invoke(compute_method)
             setattr(obj, compute, value)
 

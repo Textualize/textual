@@ -696,6 +696,11 @@ class Widget(DOMNode):
         return Offset(x, y)
 
     @property
+    def content_size(self) -> Size:
+        """Get the size of the content area."""
+        return self.region.shrink(self.styles.gutter).size
+
+    @property
     def region(self) -> Region:
         """The region occupied by this widget, relative to the Screen.
 
@@ -1558,11 +1563,10 @@ class Widget(DOMNode):
             self._container_size = container_size
             if self.is_scrollable:
                 self._scroll_update(virtual_size)
-            else:
-                self.refresh()
+            self.refresh()
 
     def _scroll_update(self, virtual_size: Size) -> None:
-        """Update scrollbars visiblity and dimensions.
+        """Update scrollbars visibility and dimensions.
 
         Args:
             virtual_size (Size): Virtual size.
@@ -1809,12 +1813,15 @@ class Widget(DOMNode):
         await self.broker_event("click", event)
 
     async def _on_key(self, event: events.Key) -> None:
+        await self.handle_key(event)
+
+    async def handle_key(self, event: events.Key) -> bool:
         try:
             binding = self._bindings.get_key(event.key)
         except NoBinding:
-            await self.dispatch_key(event)
-        else:
-            await self.action(binding.action)
+            return await self.dispatch_key(event)
+        await self.action(binding.action)
+        return True
 
     def _on_compose(self, event: events.Compose) -> None:
         widgets = self.compose()
