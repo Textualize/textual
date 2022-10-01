@@ -327,7 +327,6 @@ class TreeControl(Generic[NodeDataType], Static, can_focus=True):
             else node.label
         )
         if node.id == self.hover_node:
-            1 / 0
             label.stylize("underline")
         label.apply_meta({"@click": f"click_label({node.id})", "tree_node": node.id})
         return label
