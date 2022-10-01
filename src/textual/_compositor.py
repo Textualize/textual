@@ -485,16 +485,11 @@ class Compositor:
 
         if self._layers_visible is None:
             layers_visible: dict[int, list[tuple[Widget, Region, Region]]]
-            screen_region = self.size.region
-            _, screen_height = self.size
-            layers_visible = {y: [] for y in screen_region.line_range}
-
-            visible_intersection = screen_region.intersection
+            layers_visible = {y: [] for y in range(self.size.height)}
             for widget, cropped_region, region, *_ in self:
-                (_x, y, _width, height) = cropped_region
-                if y + height > 0 and y < screen_height:
-                    for y in visible_intersection(cropped_region).line_range:
-                        layers_visible[y].append((widget, cropped_region, region))
+                _x, y, _width, height = cropped_region
+                for y in range(y, y + height):
+                    layers_visible[y].append((widget, cropped_region, region))
             self._layers_visible = layers_visible
         return self._layers_visible
 
