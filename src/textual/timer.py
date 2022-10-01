@@ -118,6 +118,7 @@ class Timer:
         self._active.clear()
 
     def reset(self) -> None:
+        """Reset the timer, so it starts from the beginning."""
         self._active.set()
         self._reset = True
 

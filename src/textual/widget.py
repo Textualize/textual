@@ -697,6 +697,7 @@ class Widget(DOMNode):
 
     @property
     def content_size(self) -> Size:
+        """Get the size of the content area."""
         return self.region.shrink(self.styles.gutter).size
 
     @property
