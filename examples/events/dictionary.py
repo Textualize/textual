@@ -8,7 +8,7 @@ except ImportError:
 from rich.json import JSON
 from textual.app import App, ComposeResult
 from textual.containers import Vertical
-from textual.widgets import Static, TextInput
+from textual.widgets import Static, Input
 
 
 class DictionaryApp(App):
@@ -17,10 +17,10 @@ class DictionaryApp(App):
     CSS_PATH = "dictionary.css"
 
     def compose(self) -> ComposeResult:
-        yield TextInput(placeholder="Search for a word")
+        yield Input(placeholder="Search for a word")
         yield Vertical(Static(id="results"), id="results-container")
 
-    async def on_text_input_changed(self, message: TextInput.Changed) -> None:
+    async def on_input_changed(self, message: Input.Changed) -> None:
         """A coroutine to handle a text changed message."""
         if message.value:
             # Look up the word in the background
@@ -35,7 +35,7 @@ class DictionaryApp(App):
         async with httpx.AsyncClient() as client:
             results = (await client.get(url)).text
 
-        if word == self.query_one(TextInput).value:
+        if word == self.query_one(Input).value:
             self.query_one("#results", Static).update(JSON(results))
 
 
