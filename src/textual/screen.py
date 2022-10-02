@@ -218,7 +218,6 @@ class Screen(Widget):
             send_resize = shown | resized
             ResizeEvent = events.Resize
 
-            _size_updated = Widget._size_updated
             layers = self._compositor.layers
             for widget, (
                 region,
@@ -228,7 +227,7 @@ class Screen(Widget):
                 container_size,
                 _,
             ) in layers:
-                _size_updated(widget, region.size, virtual_size, container_size)
+                widget._size_updated(region.size, virtual_size, container_size)
                 if widget in send_resize:
                     widget.post_message_no_wait(
                         ResizeEvent(self, region.size, virtual_size, container_size)
