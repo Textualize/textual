@@ -216,22 +216,21 @@ class Screen(Widget):
 
             # We want to send a resize event to widgets that were just added or change since last layout
             send_resize = shown | resized
+            ResizeEvent = events.Resize
 
-            for (
-                widget,
-                _region,
-                unclipped_region,
+            layers = self._compositor.layers
+            for widget, (
+                region,
+                _order,
+                _clip,
                 virtual_size,
                 container_size,
-            ) in self._compositor:
-                widget._size_updated(
-                    unclipped_region.size, virtual_size, container_size
-                )
+                _,
+            ) in layers:
+                widget._size_updated(region.size, virtual_size, container_size)
                 if widget in send_resize:
                     widget.post_message_no_wait(
-                        events.Resize(
-                            self, unclipped_region.size, virtual_size, container_size
-                        )
+                        ResizeEvent(self, region.size, virtual_size, container_size)
                     )
 
         except Exception as error:
