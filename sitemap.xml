@@ -501,12 +501,12 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://textual.textualize.io/widgets/static/</loc>
+         <loc>https://textual.textualize.io/widgets/input/</loc>
          <lastmod>2022-10-03</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://textual.textualize.io/widgets/text_input/</loc>
+         <loc>https://textual.textualize.io/widgets/static/</loc>
          <lastmod>2022-10-03</lastmod>
          <changefreq>daily</changefreq>
     </url>
