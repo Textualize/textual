@@ -329,7 +329,7 @@ class Widget(DOMNode):
 
         """
         self.app._register(self, *anon_widgets, **widgets)
-        self.screen.refresh(layout=True)
+        self.app.screen.refresh(layout=True)
 
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.

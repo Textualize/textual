@@ -178,9 +178,8 @@ plugins:
     default_handler: python
     handlers:
         python:
-          rendering:
-            show_source: false
-          selection:
+          options:
+            show_source: false          
             filters:
               - "!^_"
               - "^__init__$"
