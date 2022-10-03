@@ -256,7 +256,7 @@ class Colorizer(App):
         await self.bind("g", "color('green')")
         await self.bind("b", "color('blue')")
 
-    async def action_color(self, color:str) -> None:
+    async def action_color(self, color: str) -> None:
         self.background = f"on {color}"
 
 
