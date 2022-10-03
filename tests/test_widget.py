@@ -39,7 +39,7 @@ def test_widget_content_width():
             self.text = text
 
             super().__init__(id=id)
-            self.expand = False
+            self.expand = True
 
         def render(self) -> str:
             return self.text
