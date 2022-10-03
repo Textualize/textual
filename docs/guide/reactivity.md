@@ -120,6 +120,7 @@ The following example modifies "refresh01.py" so that the greeting has an automa
     ```python hl_lines="10"
     --8<-- "docs/examples/guide/reactivity/refresh02.py"
     ```
+
     1. This attribute will update the layout when changed. 
 
 === "refresh02.css"
