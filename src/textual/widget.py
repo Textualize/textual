@@ -9,13 +9,14 @@ from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple, ca
 import rich.repr
 from rich.console import (
     Console,
-    ConsoleRenderable,
     ConsoleOptions,
-    RichCast,
+    ConsoleRenderable,
     JustifyMethod,
     RenderableType,
     RenderResult,
+    RichCast,
 )
+from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
@@ -28,9 +29,9 @@ from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
-from .css.scalar import ScalarOffset
 from .binding import NoBinding
 from .box_model import BoxModel, get_box_model
+from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
@@ -99,6 +100,11 @@ class _Styled:
                 for text, style, control in result_segments
             )
         return result_segments
+
+    def __rich_measure__(
+        self, console: "Console", options: "ConsoleOptions"
+    ) -> Measurement:
+        return self.renderable.__rich_measure__(console, options)
 
 
 class RenderCache(NamedTuple):
@@ -401,9 +407,9 @@ class Widget(DOMNode):
         renderable = self._render()
 
         width = measure(console, renderable, container.width)
-        if self.expand:
+        if not self.expand:
             width = max(container.width, width)
-        if self.shrink:
+        if not self.shrink:
             width = min(width, container.width)
 
         self._content_width_cache = (cache_key, width)

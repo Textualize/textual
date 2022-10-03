@@ -49,8 +49,8 @@ class Static(Widget):
         self,
         renderable: RenderableType = "",
         *,
-        expand: bool = False,
-        shrink: bool = False,
+        expand: bool = True,
+        shrink: bool = True,
         markup: bool = True,
         name: str | None = None,
         id: str | None = None,
@@ -86,13 +86,12 @@ class Static(Widget):
         """
         return self._renderable
 
-    def update(self, renderable: RenderableType = "", *, layout: bool = True) -> None:
+    def update(self, renderable: RenderableType = "") -> None:
         """Update the widget's content area with new text or Rich renderable.
 
         Args:
             renderable (RenderableType, optional): A new rich renderable. Defaults to empty renderable;
-            layout (bool, optional): Perform a layout. Defaults to True.
         """
         _check_renderable(renderable)
         self.renderable = renderable
-        self.refresh(layout=layout)
+        self.refresh(layout=True)

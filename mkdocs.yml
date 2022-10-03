@@ -3,8 +3,9 @@ site_url: https://textual.textualize.io/
 repo_url: https://github.com/textualize/textual/
 
 nav:
-  - "index.md"
-  - "getting_started.md"
+  - Introduction:
+    - "index.md"
+    - "getting_started.md"
   - "tutorial.md"
   - Guide:
     - "guide/index.md"
@@ -154,6 +155,7 @@ theme:
     - navigation.tabs
     - navigation.indexes
     - navigation.tabs.sticky
+    - content.code.annotate
   palette:
   - media: "(prefers-color-scheme: light)"
     scheme: default
