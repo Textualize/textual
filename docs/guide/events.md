@@ -20,9 +20,9 @@ This processing of messages is done within an asyncio Task which is started when
 
     The FastAPI docs have an [excellent introduction](https://fastapi.tiangolo.com/async/) to Python async programming.
 
-By way of an example, let's consider what happens if you were to type "Text" in to a `TextInput` widget. When you hit the ++t++ key, Textual creates a [key][textual.events.Key] event and sends it to the widget's message queue. Ditto for ++e++, ++x++, and ++t++. 
+By way of an example, let's consider what happens if you were to type "Text" in to a `Input` widget. When you hit the ++t++ key, Textual creates a [key][textual.events.Key] event and sends it to the widget's message queue. Ditto for ++e++, ++x++, and ++t++. 
 
-The widget's task will pick the first message from the queue (a key event for the ++t++ key) and call the `on_key` method with the event as the first argument. In other words it will call `TextInput.on_key(event)`, which updates the display to show the new letter.
+The widget's task will pick the first message from the queue (a key event for the ++t++ key) and call the `on_key` method with the event as the first argument. In other words it will call `Input.on_key(event)`, which updates the display to show the new letter.
 
 <div class="excalidraw">
 --8<-- "docs/images/events/queue.excalidraw.svg"
