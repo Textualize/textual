@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 import sys
-from copy import copy
-
-import rich.repr
-
 from dataclasses import dataclass
 from typing import Iterable, MutableMapping
+
+import rich.repr
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
@@ -24,7 +22,7 @@ class NoBinding(Exception):
     """A binding was not found."""
 
 
-@dataclass
+@dataclass(frozen=True)
 class Binding:
     key: str
     action: str
@@ -45,8 +43,14 @@ class Bindings:
                     binding_keys = binding.key.split(",")
                     if len(binding_keys) > 1:
                         for key in binding_keys:
-                            new_binding = copy(binding)
-                            new_binding.key = key
+                            new_binding = Binding(
+                                key=key,
+                                action=binding.action,
+                                description=binding.description,
+                                show=binding.show,
+                                key_display=binding.key_display,
+                                allow_forward=binding.allow_forward,
+                            )
                             yield new_binding
                     else:
                         yield binding
