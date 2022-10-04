@@ -200,7 +200,7 @@ The following example uses a computed attribute. It displays three inputs for th
 
 === "computed01.py"
 
-    ```python hl_lines="12-18 30 32"
+    ```python hl_lines="25-26 28-29"
     --8<-- "docs/examples/guide/reactivity/computed01.py"
     ```
 
