@@ -256,7 +256,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         total_width = sum(column.width for column in self.columns)
         self.virtual_size = Size(
             total_width,
-            len(self._y_offsets) + (self.header_height if self.show_header else 0),
+            max(len(self._y_offsets), (self.header_height if self.show_header else 0)),
         )
 
     def _get_cell_region(self, row_index: int, column_index: int) -> Region:
@@ -557,6 +557,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if meta:
             self.cursor_cell = Coord(meta["row"], meta["column"])
             self._scroll_cursor_in_to_view()
+            event.stop()
 
     def key_down(self, event: events.Key):
         self.cursor_cell = self.cursor_cell.down()

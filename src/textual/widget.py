@@ -1666,7 +1666,11 @@ class Widget(DOMNode):
         Returns:
             Style: A rich Style object.
         """
-        offset_x, offset_y = self.screen.get_offset(self)
+        widget, region = self.screen.get_widget_at(x, y)
+        if widget is not self:
+            return Style()
+        offset_x, offset_y = region.offset
+        # offset_x, offset_y = self.screen.get_offset(self)
         return self.screen.get_style_at(x + offset_x, y + offset_y)
 
     async def _forward_event(self, event: events.Event) -> None:
