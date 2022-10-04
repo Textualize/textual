@@ -25,13 +25,14 @@ def _check_renderable(renderable: object):
 
 
 class Static(Widget):
-    """A widget to display simple static content, or use as a base- lass for more complex widgets.
+    """A widget to display simple static content, or use as a base class for more complex widgets.
 
     Args:
         renderable (RenderableType, optional): A Rich renderable, or string containing console markup.
             Defaults to "".
         expand (bool, optional): Rich renderable may expand beyond optimal. Defaults to False.
-        shrink (bool, optional): Rich renderable may shrink below optional. Defaults to False.
+        shrink (bool, optional): Rich renderable may shrink below optimal. Defaults to False.
+        markup (bool, optional): True if markup should be parsed and rendered. Defaults to True.
         name (str | None, optional): Name of widget. Defaults to None.
         id (str | None, optional): ID of Widget. Defaults to None.
         classes (str | None, optional): Space separated list of class names. Defaults to None.
