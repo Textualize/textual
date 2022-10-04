@@ -49,6 +49,8 @@ The `Input.Changed` message is sent when the value in the text input changes.
 
 ### Submitted
 
+The `Input.Submitted` message is sent when you press ++enter++ with the text field submitted.
+
 - [x] Bubbles
 
 #### Attributes
@@ -61,7 +63,6 @@ The `Input.Changed` message is sent when the value in the text input changes.
 ## Additional Notes
 
 * The spacing around the text content is due to border. To remove it, set `border: none;` in your CSS.
-*
 
 ## See Also
 
