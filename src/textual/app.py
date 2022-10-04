@@ -931,7 +931,7 @@ class App(Generic[ReturnType], DOMNode):
             widget (Widget): Widget to focus.
             scroll_visible (bool, optional): Scroll widget in to view.
         """
-        if widget == self.focused:
+        if widget is self.focused:
             # Widget is already focused
             return
 
