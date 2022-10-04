@@ -30,8 +30,8 @@ class Static(Widget):
     Args:
         renderable (RenderableType, optional): A Rich renderable, or string containing console markup.
             Defaults to "".
-        expand (bool, optional): Rich renderable may expand beyond optimal. Defaults to False.
-        shrink (bool, optional): Rich renderable may shrink below optional. Defaults to False.
+        expand (bool, optional): Expand content if required to fill container. Defaults to False.
+        shrink (bool, optional): Shrink content if required to fill container. Defaults to False.
         name (str | None, optional): Name of widget. Defaults to None.
         id (str | None, optional): ID of Widget. Defaults to None.
         classes (str | None, optional): Space separated list of class names. Defaults to None.
@@ -49,8 +49,8 @@ class Static(Widget):
         self,
         renderable: RenderableType = "",
         *,
-        expand: bool = True,
-        shrink: bool = True,
+        expand: bool = False,
+        shrink: bool = False,
         markup: bool = True,
         name: str | None = None,
         id: str | None = None,

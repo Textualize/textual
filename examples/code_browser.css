@@ -21,7 +21,8 @@ DirectoryTree {
 }
 
 #code-view {
-    overflow: auto scroll;          
+    overflow: auto scroll;  
+    min-width: 100%;        
 }
 #code {
     width: auto;    

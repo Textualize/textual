@@ -407,9 +407,9 @@ class Widget(DOMNode):
         renderable = self._render()
 
         width = measure(console, renderable, container.width)
-        if not self.expand:
+        if self.expand:
             width = max(container.width, width)
-        if not self.shrink:
+        if self.shrink:
             width = min(width, container.width)
 
         self._content_width_cache = (cache_key, width)
