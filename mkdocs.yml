@@ -102,6 +102,7 @@ nav:
     - "reference/events.md"
     - "reference/footer.md"
     - "reference/geometry.md"
+    - "reference/header.md"
     - "reference/index.md"
     - "reference/message_pump.md"
     - "reference/message.md"

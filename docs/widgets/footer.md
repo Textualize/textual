@@ -15,7 +15,7 @@ widget. Notice how the `Footer` automatically displays the keybind.
     ```{.textual path="docs/examples/widgets/footer.py"}
     ```
 
-=== "button.py"
+=== "footer.py"
 
     ```python
     --8<-- "docs/examples/widgets/footer.py"
