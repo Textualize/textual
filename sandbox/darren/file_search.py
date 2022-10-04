@@ -11,7 +11,7 @@ from textual.app import App
 from textual.geometry import Size
 from textual.reactive import Reactive
 from textual.widget import Widget
-from textual.widgets.text_input import TextInput, TextWidgetBase
+from textual.widgets._input import Input
 
 
 def get_files() -> list[Path]:
@@ -53,12 +53,12 @@ class FileSearchApp(App):
 
     def on_mount(self) -> None:
         self.file_table = FileTable(id="file_table", files=list(Path.cwd().iterdir()))
-        self.search_bar = TextInput(placeholder="Search for files...")
-        self.search_bar.focus()
-        self.mount(file_table_wrapper=Widget(self.file_table))
+        self.search_bar = Input(placeholder="Search for files...")
+        # self.search_bar.focus()
         self.mount(search_bar=self.search_bar)
+        self.mount(file_table_wrapper=Widget(self.file_table))
 
-    def on_text_input_changed(self, event: TextInput.Changed) -> None:
+    def on_input_changed(self, event: Input.Changed) -> None:
         self.file_table.filter = event.value
 
 

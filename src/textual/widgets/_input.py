@@ -56,7 +56,7 @@ class Input(Widget, can_focus=True):
     DEFAULT_CSS = """
     Input {
         background: $boost;
-        color: $text;        
+        color: $text;
         padding: 0 2;
         border: tall $background;
         width: 100%;
@@ -82,9 +82,9 @@ class Input(Widget, can_focus=True):
         Binding("left", "cursor_left", "cursor left"),
         Binding("right", "cursor_right", "cursor right"),
         Binding("backspace", "delete_left", "delete left"),
-        Binding("home", "home", "Home"),
-        Binding("end", "end", "Home"),
-        Binding("ctrl+d", "delete_right", "Delete"),
+        Binding("home", "home", "home"),
+        Binding("end", "end", "end"),
+        Binding("ctrl+d", "delete_right", "delete right"),
     ]
 
     COMPONENT_CLASSES = {"input--cursor", "input--placeholder"}

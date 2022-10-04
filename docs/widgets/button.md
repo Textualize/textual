@@ -38,11 +38,11 @@ Clicking any of the non-disabled buttons in the example app below will result in
 | `variant`  | `str`  | `"default"` | Semantic styling variant. One of `default`, `primary`, `success`, `warning`, `error`.                                             |
 | `disabled` | `bool` | `False`     | Whether the button is disabled or not. Disabled buttons cannot be focused or clicked, and are styled in a way that suggests this. |
 
-## Events
+## Messages
 
 ### Pressed
 
-The `Button.Pressed` event is sent when the button is pressed.
+The `Button.Pressed` message is sent when the button is pressed.
 
 - [x] Bubbles
 

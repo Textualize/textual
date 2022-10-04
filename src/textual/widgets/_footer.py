@@ -20,18 +20,18 @@ class Footer(Widget):
         dock: bottom;
         height: 1;
     }
-    Footer > .footer--highlight {    
-        background: $accent-darken-1;         
+    Footer > .footer--highlight {
+        background: $accent-darken-1;
     }
 
-    Footer > .footer--highlight-key {        
-        background: $secondary;                
-        text-style: bold;         
+    Footer > .footer--highlight-key {
+        background: $secondary;
+        text-style: bold;
     }
 
     Footer > .footer--key {
-        text-style: bold;        
-        background: $accent-darken-2;        
+        text-style: bold;
+        background: $accent-darken-2;
     }
     """
 
@@ -65,7 +65,7 @@ class Footer(Widget):
         self.highlight_key = event.style.meta.get("key")
 
     async def on_leave(self, event: events.Leave) -> None:
-        """Clear any highlight when the mouse leave the widget"""
+        """Clear any highlight when the mouse leaves the widget"""
         self.highlight_key = None
 
     def __rich_repr__(self) -> rich.repr.Result:
