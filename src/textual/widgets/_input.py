@@ -85,6 +85,7 @@ class Input(Widget, can_focus=True):
         Binding("home", "home", "home"),
         Binding("end", "end", "end"),
         Binding("ctrl+d", "delete_right", "delete right"),
+        Binding("enter", "submit", "Submit"),
     ]
 
     COMPONENT_CLASSES = {"input--cursor", "input--placeholder"}
@@ -154,6 +155,8 @@ class Input(Widget, can_focus=True):
             self.view_position = self.view_position
 
     async def watch_value(self, value: str) -> None:
+        if self.styles.auto_dimensions:
+            self.refresh(layout=True)
         await self.emit(self.Changed(self, value))
 
     @property
@@ -178,16 +181,18 @@ class Input(Widget, can_focus=True):
     class Changed(Message, bubble=True):
         """Value was changed."""
 
-        def __init__(self, sender: MessageTarget, value: str) -> None:
+        def __init__(self, sender: Input, value: str) -> None:
             super().__init__(sender)
             self.value = value
+            self.input = sender
 
     class Submitted(Message, bubble=True):
         """Value was updated via enter key or blur."""
 
-        def __init__(self, sender: MessageTarget, value: str) -> None:
+        def __init__(self, sender: Input, value: str) -> None:
             super().__init__(sender)
             self.value = value
+            self.input = sender
 
     @property
     def _value(self) -> Text:
@@ -233,7 +238,7 @@ class Input(Widget, can_focus=True):
         # Do key bindings first
         if await self.handle_key(event):
             event.stop()
-        elif event.key == "tab":
+        elif event.key in ("tab", "shift+tab"):
             return
         elif event.is_printable:
             event.stop()

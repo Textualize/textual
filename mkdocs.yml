@@ -3,8 +3,9 @@ site_url: https://textual.textualize.io/
 repo_url: https://github.com/textualize/textual/
 
 nav:
-  - "index.md"
-  - "getting_started.md"
+  - Introduction:
+    - "index.md"
+    - "getting_started.md"
   - "tutorial.md"
   - Guide:
     - "guide/index.md"
@@ -85,11 +86,12 @@ nav:
     - "styles/visibility.md"
     - "styles/width.md"
   - Widgets:
-    - "widgets/index.md"
     - "widgets/button.md"
     - "widgets/data_table.md"
     - "widgets/footer.md"
     - "widgets/header.md"
+    - "widgets/index.md"
+    - "widgets/input.md"
     - "widgets/static.md"
     - "widgets/input.md"
     - "widgets/tree_control.md"
@@ -156,13 +158,14 @@ theme:
     - navigation.tabs
     - navigation.indexes
     - navigation.tabs.sticky
+    - content.code.annotate
   palette:
   - media: "(prefers-color-scheme: light)"
     scheme: default
     accent: purple
     toggle:
       icon: material/weather-sunny
-      name: Switch to dark mode
+      name: Switch to dark modeTask was destroyed but it is pending!
   - media: "(prefers-color-scheme: dark)"
     scheme: slate
     primary: black
@@ -178,9 +181,8 @@ plugins:
     default_handler: python
     handlers:
         python:
-          rendering:
+          options:
             show_source: false
-          selection:
             filters:
               - "!^_"
               - "^__init__$"

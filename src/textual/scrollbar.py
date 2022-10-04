@@ -271,6 +271,7 @@ class ScrollBar(Widget):
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
         if self.grabbed:
             self.release_mouse()
+        event.stop()
 
     def _on_mouse_capture(self, event: events.MouseCapture) -> None:
         self.grabbed = event.mouse_position
@@ -278,6 +279,7 @@ class ScrollBar(Widget):
 
     def _on_mouse_release(self, event: events.MouseRelease) -> None:
         self.grabbed = None
+        event.stop()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         if self.grabbed and self.window_size:
@@ -300,6 +302,10 @@ class ScrollBar(Widget):
                     )
                 )
             await self.emit(ScrollTo(self, x=x, y=y))
+        event.stop()
+
+    async def _on_click(self, event: events.Click) -> None:
+        event.stop()
 
 
 class ScrollBarCorner(Widget):

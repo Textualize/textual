@@ -1,4 +1,5 @@
-# Welcome
+
+# Introduction
 
 Welcome to the [Textual](https://github.com/Textualize/textual) framework documentation. Built with ❤️ by [Textualize.io](https://www.textualize.io)
 

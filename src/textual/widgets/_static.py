@@ -30,8 +30,8 @@ class Static(Widget):
     Args:
         renderable (RenderableType, optional): A Rich renderable, or string containing console markup.
             Defaults to "".
-        expand (bool, optional): Rich renderable may expand beyond optimal. Defaults to False.
-        shrink (bool, optional): Rich renderable may shrink below optimal. Defaults to False.
+        expand (bool, optional): Expand content if required to fill container. Defaults to False.
+        shrink (bool, optional): Shrink content if required to fill container. Defaults to False.
         markup (bool, optional): True if markup should be parsed and rendered. Defaults to True.
         name (str | None, optional): Name of widget. Defaults to None.
         id (str | None, optional): ID of Widget. Defaults to None.
@@ -87,13 +87,12 @@ class Static(Widget):
         """
         return self._renderable
 
-    def update(self, renderable: RenderableType = "", *, layout: bool = True) -> None:
+    def update(self, renderable: RenderableType = "") -> None:
         """Update the widget's content area with new text or Rich renderable.
 
         Args:
             renderable (RenderableType, optional): A new rich renderable. Defaults to empty renderable;
-            layout (bool, optional): Perform a layout. Defaults to True.
         """
         _check_renderable(renderable)
         self.renderable = renderable
-        self.refresh(layout=layout)
+        self.refresh(layout=True)

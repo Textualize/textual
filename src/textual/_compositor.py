@@ -553,7 +553,7 @@ class Compositor:
             Iterable[tuple[Widget, Region]]: Sequence of (WIDGET, REGION) tuples.
         """
         contains = Region.contains
-        for widget, cropped_region, region in self.layers_visible.get(y, []):
+        for widget, cropped_region, region in self.layers_visible[y]:
             if contains(cropped_region, x, y) and widget.visible:
                 yield widget, region
 
