@@ -8,7 +8,7 @@ The `MouseMove` event is sent to a widget when the mouse pointer is moved over a
 ## Attributes
 
 | attribute  | type | purpose                                   |
-| ---------- | ---- | ----------------------------------------- |
+|------------|------|-------------------------------------------|
 | `x`        | int  | Mouse x coordinate, relative to Widget    |
 | `y`        | int  | Mouse y coordinate, relative to Widget    |
 | `delta_x`  | int  | Change in x since last mouse event        |

@@ -91,7 +91,7 @@ nav:
     - "widgets/footer.md"
     - "widgets/header.md"
     - "widgets/static.md"
-    - "widgets/text_input.md"
+    - "widgets/input.md"
     - "widgets/tree_control.md"
   - Reference:
     - "reference/app.md"

@@ -4,6 +4,9 @@
 
 A simple header widget which docks itself to the top of the parent container.
 
+- [ ] Focusable
+- [ ] Container
+
 ## Example
 
 The example below shows an app with a `Header`.

@@ -5,6 +5,9 @@
 A widget which displays a static renderable content.
 Can be used for simple text labels, but can also contain more complex Rich renderables.
 
+- [ ] Focusable
+- [x] Container
+
 ## Example
 
 The example below shows how you can use a `Static` widget as a simple text label.

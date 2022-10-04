@@ -5,6 +5,9 @@
 A simple footer widget which is docked to the bottom of its parent container. Displays
 available keybindings for the currently focused widget.
 
+- [ ] Focusable
+- [ ] Container
+
 ## Example
 
 The example below shows an app with a single keybinding that contains only a `Footer`
