@@ -3,9 +3,11 @@ from __future__ import annotations
 from typing import cast
 
 from rich.console import RenderableType
+from rich.highlighter import ReprHighlighter
 from rich.pretty import Pretty
 from rich.protocol import is_renderable
 from rich.segment import Segment
+from rich.text import Text
 
 from ..reactive import var
 from ..geometry import Size, Region
@@ -27,6 +29,7 @@ class TextLog(ScrollView, can_focus=True):
     max_lines: var[int | None] = var(None)
     min_width: var[int] = var(78)
     wrap: var[bool] = var(False)
+    highlight: var[bool] = var(False)
 
     def __init__(
         self,
@@ -34,6 +37,7 @@ class TextLog(ScrollView, can_focus=True):
         max_lines: int | None = None,
         min_width: int = 78,
         wrap: bool = False,
+        highlight: bool = False,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -45,6 +49,8 @@ class TextLog(ScrollView, can_focus=True):
         self.max_width: int = 0
         self.min_width = min_width
         self.wrap = wrap
+        self.highlight = highlight
+        self.highlighter = ReprHighlighter()
         super().__init__(name=name, id=id, classes=classes)
 
     def _on_styles_updated(self) -> None:
@@ -61,7 +67,13 @@ class TextLog(ScrollView, can_focus=True):
         if not is_renderable(content):
             renderable = Pretty(content)
         else:
-            renderable = cast(RenderableType, content)
+            if isinstance(content, str):
+                if self.highlight:
+                    renderable = self.highlighter(content)
+                else:
+                    renderable = Text(content)
+            else:
+                renderable = cast(RenderableType, content)
 
         console = self.app.console
         width = max(self.min_width, self.size.width or self.min_width)

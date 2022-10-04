@@ -2,7 +2,7 @@ All you need to get started building Textual apps.
 
 ## Requirements
 
-Textual requires Python 3.7 or later (if you have a choice, pick the most recent Python). Textual runs on Linux, MacOS, Windows and probably any OS where Python also runs.
+Textual requires Python 3.7 or later (if you have a choice, pick the most recent Python). Textual runs on Linux, macOS, Windows and probably any OS where Python also runs.
 
 !!! info inline end "Your platform"
 
@@ -10,7 +10,7 @@ Textual requires Python 3.7 or later (if you have a choice, pick the most recent
 
     All Linux distros come with a terminal emulator that can run Textual apps.
 
-    ### :material-apple: MacOS
+    ### :material-apple: macOS
 
     The default terminal app is limited to 256 colors. We recommend installing a newer terminal such as [iterm2](https://iterm2.com/), [Kitty](https://sw.kovidgoyal.net/kitty/), or [WezTerm](https://wezfurlong.org/wezterm/).
 

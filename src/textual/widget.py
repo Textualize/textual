@@ -9,13 +9,14 @@ from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple, ca
 import rich.repr
 from rich.console import (
     Console,
-    ConsoleRenderable,
     ConsoleOptions,
-    RichCast,
+    ConsoleRenderable,
     JustifyMethod,
     RenderableType,
     RenderResult,
+    RichCast,
 )
+from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
@@ -28,9 +29,9 @@ from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
-from .css.scalar import ScalarOffset
 from .binding import NoBinding
 from .box_model import BoxModel, get_box_model
+from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
@@ -99,6 +100,11 @@ class _Styled:
                 for text, style, control in result_segments
             )
         return result_segments
+
+    def __rich_measure__(
+        self, console: "Console", options: "ConsoleOptions"
+    ) -> Measurement:
+        return self.renderable.__rich_measure__(console, options)
 
 
 class RenderCache(NamedTuple):
@@ -323,7 +329,7 @@ class Widget(DOMNode):
 
         """
         self.app._register(self, *anon_widgets, **widgets)
-        self.screen.refresh(layout=True)
+        self.app.screen.refresh(layout=True)
 
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.
@@ -1660,7 +1666,11 @@ class Widget(DOMNode):
         Returns:
             Style: A rich Style object.
         """
-        offset_x, offset_y = self.screen.get_offset(self)
+        widget, region = self.screen.get_widget_at(x, y)
+        if widget is not self:
+            return Style()
+        offset_x, offset_y = region.offset
+        # offset_x, offset_y = self.screen.get_offset(self)
         return self.screen.get_style_at(x + offset_x, y + offset_y)
 
     async def _forward_event(self, event: events.Event) -> None:
