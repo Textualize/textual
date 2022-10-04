@@ -40,8 +40,13 @@ class Screen(Widget):
 
     dark: Reactive[bool] = Reactive(False)
 
-    def __init__(self, name: str | None = None, id: str | None = None) -> None:
-        super().__init__(name=name, id=id)
+    def __init__(
+        self,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ) -> None:
+        super().__init__(name=name, id=id, classes=classes)
         self._compositor = Compositor()
         self._dirty_widgets: set[Widget] = set()
         self._update_timer: Timer | None = None
