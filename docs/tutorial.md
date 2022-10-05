@@ -378,7 +378,7 @@ We've seen how we can update widgets with a timer, but we still need to wire up 
 We need to be able to start, stop, and reset each stopwatch independently. We can do this by adding a few more methods to the `TimeDisplay` class.
 
 
-```python title="stopwatch06.py" hl_lines="14 30-44 50-61"
+```python title="stopwatch06.py" hl_lines="14 18 30-44 50-61"
 --8<-- "docs/examples/tutorial/stopwatch06.py"
 ```
 
