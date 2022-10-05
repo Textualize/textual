@@ -11,7 +11,7 @@ __all__ = ["log", "panic"]
 
 
 from ._context import active_app
-from ._log import LogGroup, LogVerbosity, LogSeverity
+from ._log import LogGroup, LogVerbosity
 
 if TYPE_CHECKING:
     from .app import App
@@ -38,12 +38,10 @@ class Logger:
         log_callable: LogCallable | None,
         group: LogGroup = LogGroup.INFO,
         verbosity: LogVerbosity = LogVerbosity.NORMAL,
-        severity: LogSeverity = LogSeverity.NORMAL,
     ) -> None:
         self._log = log_callable
         self._group = group
         self._verbosity = verbosity
-        self._severity = severity
 
     @property
     def log(self) -> LogCallable:
@@ -58,7 +56,6 @@ class Logger:
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._group, LogGroup.INFO
         yield self._verbosity, LogVerbosity.NORMAL
-        yield self._severity, LogSeverity.NORMAL
 
     def __call__(self, *args: object, **kwargs) -> None:
         caller = inspect.stack()[1]
@@ -66,7 +63,6 @@ class Logger:
             self.log(
                 self._group,
                 self._verbosity,
-                self._severity,
                 *args,
                 _textual_calling_frame=caller,
                 **kwargs,
@@ -86,7 +82,7 @@ class Logger:
             Logger: New logger.
         """
         verbosity = LogVerbosity.HIGH if verbose else LogVerbosity.NORMAL
-        return Logger(self._log, self._group, verbosity, LogSeverity.NORMAL)
+        return Logger(self._log, self._group, verbosity)
 
     @property
     def verbose(self) -> Logger:
@@ -94,38 +90,33 @@ class Logger:
         return Logger(self._log, self._group, LogVerbosity.HIGH)
 
     @property
-    def critical(self) -> Logger:
-        """A critical logger."""
-        return Logger(self._log, self._group, self._verbosity, LogSeverity.CRITICAL)
-
-    @property
     def event(self) -> Logger:
-        """An event logger."""
+        """Logs events."""
         return Logger(self._log, LogGroup.EVENT)
 
     @property
     def debug(self) -> Logger:
-        """A debug logger."""
+        """Logs debug messages."""
         return Logger(self._log, LogGroup.DEBUG)
 
     @property
     def info(self) -> Logger:
-        """An info logger."""
+        """Logs information."""
         return Logger(self._log, LogGroup.INFO)
 
     @property
     def warning(self) -> Logger:
-        """An info logger."""
+        """Logs warnings."""
         return Logger(self._log, LogGroup.WARNING)
 
     @property
     def error(self) -> Logger:
-        """An error logger."""
+        """Logs errors."""
         return Logger(self._log, LogGroup.ERROR)
 
     @property
     def system(self) -> Logger:
-        """A system logger."""
+        """Logs system information."""
         return Logger(self._log, LogGroup.SYSTEM)
 
 

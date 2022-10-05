@@ -13,18 +13,17 @@ CodeBrowser.-show-tree #tree-view {
     dock: left;
     height: 100%;            
     max-width: 50%;
-    background: $surface;    
-}
-
-CodeBrowser{
-    background: $background;    
+    background: #151C25;    
 }
 
 DirectoryTree {
     padding-right: 1;   
-    padding-right: 1;
 }
 
+#code-view {
+    overflow: auto scroll;  
+    min-width: 100%;        
+}
 #code {
-    width: auto;
+    width: auto;    
 }

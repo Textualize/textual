@@ -49,6 +49,7 @@ def arrange(
     scroll_spacing = Spacing()
     null_spacing = Spacing()
     get_dock = attrgetter("styles.dock")
+    styles = widget.styles
 
     for widgets in dock_layers.values():
 
@@ -89,7 +90,7 @@ def arrange(
                 # Should not occur, mainly to keep Mypy happy
                 raise AssertionError("invalid value for edge")  # pragma: no-cover
 
-            align_offset = dock_widget.styles.align_size(
+            align_offset = dock_widget.styles._align_size(
                 (widget_width, widget_height), size
             )
             dock_region = dock_region.shrink(margin).translate(align_offset)
@@ -98,14 +99,24 @@ def arrange(
             )
 
         dock_spacing = Spacing(top, right, bottom, left)
-        region = size.region.shrink(dock_spacing)
+        region = region.shrink(dock_spacing)
         layout_placements, arranged_layout_widgets = widget._layout.arrange(
             widget, layout_widgets, region.size
         )
         if arranged_layout_widgets:
             scroll_spacing = scroll_spacing.grow_maximum(dock_spacing)
             arrange_widgets.update(arranged_layout_widgets)
+
             placement_offset = region.offset
+            if styles.align_horizontal != "left" or styles.align_vertical != "top":
+                placement_size = Region.from_union(
+                    [
+                        placement.region.grow(placement.margin)
+                        for placement in layout_placements
+                    ]
+                ).size
+                placement_offset += styles._align_size(placement_size, size)
+
             if placement_offset:
                 layout_placements = [
                     _WidgetPlacement(

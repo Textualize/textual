@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from typing import Iterable
 
 import rich.repr
 from rich.console import RenderableType
@@ -106,6 +107,18 @@ class Screen(Widget):
         """
         return self._compositor.get_widget_at(x, y)
 
+    def get_widgets_at(self, x: int, y: int) -> Iterable[tuple[Widget, Region]]:
+        """Get all widgets under a given coordinate.
+
+        Args:
+            x (int): X coordinate.
+            y (int): Y coordinate.
+
+        Returns:
+            Iterable[tuple[Widget, Region]]: Sequence of (WIDGET, REGION) tuples.
+        """
+        return self._compositor.get_widgets_at(x, y)
+
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the style under a given coordinate.
 
@@ -203,21 +216,23 @@ class Screen(Widget):
 
             # We want to send a resize event to widgets that were just added or change since last layout
             send_resize = shown | resized
+            ResizeEvent = events.Resize
 
-            for (
-                widget,
-                _region,
-                unclipped_region,
+            layers = self._compositor.layers
+            for widget, (
+                region,
+                _order,
+                _clip,
                 virtual_size,
                 container_size,
-            ) in self._compositor:
-                widget.size_updated(unclipped_region.size, virtual_size, container_size)
+                _,
+            ) in layers:
+                widget._size_updated(region.size, virtual_size, container_size)
                 if widget in send_resize:
                     widget.post_message_no_wait(
-                        events.Resize(
-                            self, unclipped_region.size, virtual_size, container_size
-                        )
+                        ResizeEvent(self, region.size, virtual_size, container_size)
                     )
+
         except Exception as error:
             self.app._handle_exception(error)
             return
@@ -277,13 +292,14 @@ class Screen(Widget):
                 screen_y=event.screen_y,
                 style=event.style,
             )
-            mouse_event.set_forwarded()
+            widget.hover_style = event.style
+            mouse_event._set_forwarded()
             await widget._forward_event(mouse_event)
 
     async def _forward_event(self, event: events.Event) -> None:
         if event.is_forwarded:
             return
-        event.set_forwarded()
+        event._set_forwarded()
         if isinstance(event, (events.Enter, events.Leave)):
             await self.post_message(event)
 
@@ -308,10 +324,12 @@ class Screen(Widget):
                         return
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
                 if widget is self:
-                    event.set_forwarded()
+                    event._set_forwarded()
                     await self.post_message(event)
                 else:
-                    await widget._forward_event(event.offset(-region.x, -region.y))
+                    await widget._forward_event(
+                        event._apply_offset(-region.x, -region.y)
+                    )
 
         elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
             try:

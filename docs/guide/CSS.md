@@ -1,16 +1,12 @@
 # Textual CSS
 
-Textual uses CSS to apply style to widgets. If you have any exposure to web development you will have encountered CSS, but don't worry if you haven't: this section will get you up to speed.
+Textual uses CSS to apply style to widgets. If you have any exposure to web development you will have encountered CSS, but don't worry if you haven't: this chapter will get you up to speed.
 
 ## Stylesheets
 
-CSS stands for _Cascading Stylesheets_. A stylesheet is a list of styles and rules about how those styles should be applied to a page. In the case of Textual, the stylesheet applies styles to widgets but otherwise it is the same idea.
+CSS stands for _Cascading Stylesheets_. A stylesheet is a list of styles and rules about how those styles should be applied to a web page. In the case of Textual, the stylesheet applies [styles](./styles.md) to widgets but otherwise it is the same idea.
 
-!!! note
-
-    Depending on what you want to build with Textual, you may not need to learn Textual CSS at all. Widgets are packaged with CSS styles so apps with exclusively pre-built widgets may not need any additional CSS.
-
-Textual CSS defines a set of rules which apply visual _styles_ to your application and widgets. These style can customize settings for properties such as color, border, size, alignment; and more dynamic features such as animation and hover effects. As powerful as it is, CSS in Textual is quite straightforward.
+When Textual loads CSS it sets attributes on your widgets' `style` object. The effect is the same as if you had set attributes in Python.
 
 CSS is typically stored in an external file with the extension `.css` alongside your Python code.
 
@@ -40,7 +36,7 @@ Header {
 }
 ```
 
-The first line is a _selector_ which tells Textual which Widget(s) to modify. In the above example, the styles will be applied to a widget defined by the Python class `Header`.
+The first line is a _selector_ which tells Textual which widget(s) to modify. In the above example, the styles will be applied to a widget defined by the Python class `Header`.
 
 ```sass hl_lines="2 3 4 5 6"
 Header {
@@ -54,7 +50,7 @@ Header {
 
 The lines inside the curly braces contains CSS _rules_, which consist of a rule name and rule value separated by a colon and ending in a semi-colon. Such rules are typically written one per line, but you could add additional rules as long as they are separated by semi-colons.
 
-The first rule in the above example reads `"dock: top;"`. The rule name is `dock` which tells Textual to place the widget on an edge of the screen. The text after the colon is `top` which tells Textual to dock to the _top_ of the screen. Other valid values for `dock` are "right", "bottom", or "left"; but `top` is most appropriate for a header.
+The first rule in the above example reads `"dock: top;"`. The rule name is `dock` which tells Textual to place the widget on an edge of the screen. The text after the colon is `top` which tells Textual to dock to the _top_ of the screen. Other valid values for `dock` are "right", "bottom", or "left"; but "top" is most appropriate for a header.
 
 ## The DOM
 
@@ -75,7 +71,7 @@ Let's look at a trivial Textual app.
     ```{.textual path="docs/examples/guide/dom1.py"}
     ```
 
-When you run this code you will have an instance of an `ExampleApp` in memory. This app class will also create a `Screen` object. In DOM terms, the `Screen` is a _child_ of `ExampleApp`.
+This example creates an instance of `ExampleApp`, which will implicitly create a `Screen` object. In DOM terms, the `Screen` is a _child_ of `ExampleApp`.
 
 With the above example, the DOM will look like the following:
 
@@ -86,10 +82,11 @@ With the above example, the DOM will look like the following:
 This doesn't look much like a tree yet. Let's add a header and a footer to this application, which will create more _branches_ of the tree:
 
 === "dom2.py"
-
-    ```python
+    
+    ```python hl_lines="7 8"
     --8<-- "docs/examples/guide/dom2.py"
     ```
+
 
 === "Output"
 
@@ -104,13 +101,13 @@ With a header and a footer widget the DOM looks the this:
 
 !!! note
 
-    We've simplified the above example somewhat. Both the Header and Footer widgets contain children of their own. When building an app with pre-built widgets you rarely need to know how they are constructed unless you plan on changing the styles for the individual components.
+    We've simplified the above example somewhat. Both the Header and Footer widgets contain children of their own. When building an app with pre-built widgets you rarely need to know how they are constructed unless you plan on changing the styles of individual components.
 
 Both Header and Footer are children of the Screen object.
 
 To further explore the DOM, we're going to build a simple dialog with a question and two buttons. To do this we're going import and use a few more builtin widgets:
 
-- `texual.layout.Container` For our top-level dialog.
+- `textual.layout.Container` For our top-level dialog.
 - `textual.layout.Horizontal` To arrange widgets left to right.
 - `textual.widgets.Static` For simple content.
 - `textual.widgets.Button` For a clickable button.
@@ -139,13 +136,13 @@ You may recognize some of the elements in the above screenshot, but it doesn't q
 
 ## CSS files
 
-To add a stylesheet we need to pass the path to a CSS file via the app classes' `css_path` argument:
+To add a stylesheet set the `CSS_PATH` classvar to a relative path:
 
-```python hl_lines="23"
+```python hl_lines="9"
 --8<-- "docs/examples/guide/dom4.py"
 ```
 
-You may have noticed that some of the constructors have additional keyword argument: `id` and `classes`. These are used by the CSS to identify parts of the DOM. We will cover these in the next section.
+You may have noticed that some of the constructors have additional keyword arguments: `id` and `classes`. These are used by the CSS to identify parts of the DOM. We will cover these in the next section.
 
 Here's the CSS file we are applying:
 
@@ -163,7 +160,7 @@ With the CSS in place, the output looks very different:
 
 ### Why CSS?
 
-It is reasonable to ask why use CSS at all? Python is a powerful and expressive language. Wouldn't it be easier to do everything in your `.py` files?
+It is reasonable to ask why use CSS at all? Python is a powerful and expressive language. Wouldn't it be easier to set styles in your `.py` files?
 
 A major advantage of CSS is that it separates how your app _looks_ from how it _works_. Setting styles in Python can generate a lot of spaghetti code which can make it hard to see the important logic in your application.
 
@@ -237,7 +234,7 @@ You can match an ID with a selector starting with a hash (`#`). Here is how you 
 }
 ```
 
-A Widget's `id` attribute can not be changed after the Widget has been constructed. 
+A Widget's `id` attribute can not be changed after the Widget has been constructed.
 
 ### Class-name selector
 
@@ -394,4 +391,40 @@ Button:hover {
 
 ## CSS Variables
 
-TODO: Variables
+You can define variables to reduce repetition and encourage consistency in your CSS.
+Variables in Textual CSS are prefixed with `$`.
+Here's an example of how you might define a variable called `$border`:
+
+```scss
+$border: wide green;
+```
+
+With our variable assigned, we can write `$border` and it will be substituted with `wide green`.
+Consider the following snippet:
+
+```scss
+#foo {
+  border: $border;
+}
+```
+
+This will be translated into:
+
+```scss
+#foo {
+  border: wide green;
+}
+```
+
+Variables allow us to define reusable styling in a single place.
+If we decide we want to change some aspect of our design in the future, we only have to update a single variable.
+
+!!! note
+
+    Variables can only be used in the _values_ of a CSS declaration. You cannot, for example, refer to a variable inside a selector.
+
+Variables can refer to other variables.
+Let's say we define a variable `$success: lime;`.
+Our `$border` variable could then be updated to `$border: wide $success;`, which will
+be translated to `$border: wide lime;`.
+

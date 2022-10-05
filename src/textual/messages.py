@@ -30,7 +30,7 @@ class Update(Message, verbose=True):
 
     def can_replace(self, message: Message) -> bool:
         # Update messages can replace update for the same widget
-        return isinstance(message, Update) and self == message
+        return isinstance(message, Update) and self.widget == message.widget
 
 
 @rich.repr.auto
@@ -59,7 +59,7 @@ class ScrollToRegion(Message, bubble=False):
 
 
 @rich.repr.auto
-class StylesUpdated(Message):
+class StylesUpdated(Message, verbose=True):
     def __init__(self, sender: MessagePump) -> None:
         super().__init__(sender)
 

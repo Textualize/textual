@@ -315,7 +315,7 @@ See the [tree.py](https://github.com/willmcgugan/rich/blob/master/examples/tree.
 <details>
 <summary>Columns</summary>
 
-Rich can render content in neat [columns](https://rich.readthedocs.io/en/latest/columns.html) with equal or optimal width. Here's a very basic clone of the (MacOS / Linux) `ls` command which displays a directory listing in columns:
+Rich can render content in neat [columns](https://rich.readthedocs.io/en/latest/columns.html) with equal or optimal width. Here's a very basic clone of the (macOS / Linux) `ls` command which displays a directory listing in columns:
 
 ```python
 import os

@@ -1,0 +1,13 @@
+#color-inputs {
+    dock: top;
+    height: auto;
+}
+
+Input {
+    width: 1fr;
+}
+
+#color {
+    height: 100%;
+    border: tall $secondary;
+}

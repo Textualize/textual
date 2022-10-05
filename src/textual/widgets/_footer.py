@@ -12,6 +12,7 @@ from ..widget import Widget
 
 @rich.repr.auto
 class Footer(Widget):
+    """A simple header widget which docks itself to the top of the parent container."""
 
     DEFAULT_CSS = """
     Footer {
@@ -20,18 +21,18 @@ class Footer(Widget):
         dock: bottom;
         height: 1;
     }
-    Footer > .footer--highlight {    
-        background: $accent-darken-1;         
+    Footer > .footer--highlight {
+        background: $accent-darken-1;
     }
 
-    Footer > .footer--highlight-key {        
-        background: $secondary;                
-        text-style: bold;         
+    Footer > .footer--highlight-key {
+        background: $secondary;
+        text-style: bold;
     }
 
     Footer > .footer--key {
-        text-style: bold;        
-        background: $accent-darken-2;        
+        text-style: bold;
+        background: $accent-darken-2;
     }
     """
 
@@ -45,6 +46,7 @@ class Footer(Widget):
     def __init__(self) -> None:
         super().__init__()
         self._key_text: Text | None = None
+        self.auto_links = False
 
     highlight_key: Reactive[str | None] = Reactive(None)
 
@@ -56,7 +58,6 @@ class Footer(Widget):
         watch(self.app, "focused", self._focus_changed)
 
     def _focus_changed(self, focused: Widget | None) -> None:
-        self.log("FOCUS CHANGED", focused)
         self._key_text = None
         self.refresh()
 
@@ -65,7 +66,7 @@ class Footer(Widget):
         self.highlight_key = event.style.meta.get("key")
 
     async def on_leave(self, event: events.Leave) -> None:
-        """Clear any highlight when the mouse leave the widget"""
+        """Clear any highlight when the mouse leaves the widget"""
         self.highlight_key = None
 
     def __rich_repr__(self) -> rich.repr.Result:

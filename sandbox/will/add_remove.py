@@ -1,6 +1,6 @@
 import random
 
-from textual import layout
+from textual.containers import Horizontal, Vertical
 from textual.app import App, ComposeResult
 from textual.widgets import Button, Static
 
@@ -36,14 +36,14 @@ class AddRemoveApp(App):
         self.count = 0
 
     def compose(self) -> ComposeResult:
-        yield layout.Vertical(
-            layout.Horizontal(
+        yield Vertical(
+            Horizontal(
                 Button("Add", variant="success", id="add"),
                 Button("Remove", variant="error", id="remove"),
                 Button("Remove random", variant="warning", id="remove_random"),
                 id="buttons",
             ),
-            layout.Vertical(id="items"),
+            Vertical(id="items"),
         )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import unicodedata
 import re
 from typing import Any, Callable, Generator, Iterable
 
@@ -12,7 +13,7 @@ from ._types import MessageTarget
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search
 # to be unsuccessful?
-from .keys import Keys
+from .keys import KEY_NAME_REPLACEMENTS
 
 _MAX_SEQUENCE_SEARCH_THRESHOLD = 20
 
@@ -101,7 +102,7 @@ class XTermParser(Parser[events.Event]):
                 key_events = sequence_to_key_events(character)
                 for event in key_events:
                     if event.key == "escape":
-                        event = events.Key(event.sender, "^", None)
+                        event = events.Key(event.sender, "circumflex_accent", "^")
                     on_token(event)
 
         while not self.is_eof:
@@ -228,7 +229,9 @@ class XTermParser(Parser[events.Event]):
                     for event in sequence_to_key_events(character):
                         on_token(event)
 
-    def _sequence_to_key_events(self, sequence: str) -> Iterable[events.Key]:
+    def _sequence_to_key_events(
+        self, sequence: str, _unicode_name=unicodedata.name
+    ) -> Iterable[events.Key]:
         """Map a sequence of code points on to a sequence of keys.
 
         Args:
@@ -246,4 +249,17 @@ class XTermParser(Parser[events.Event]):
                     self.sender, key.value, sequence if len(sequence) == 1 else None
                 )
         elif len(sequence) == 1:
-            yield events.Key(self.sender, sequence, sequence)
+            try:
+                if not sequence.isalnum():
+                    name = (
+                        _unicode_name(sequence)
+                        .lower()
+                        .replace("-", "_")
+                        .replace(" ", "_")
+                    )
+                else:
+                    name = sequence
+                name = KEY_NAME_REPLACEMENTS.get(name, name)
+                yield events.Key(self.sender, name, sequence)
+            except:
+                yield events.Key(self.sender, sequence, sequence)

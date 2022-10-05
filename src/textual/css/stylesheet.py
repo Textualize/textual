@@ -369,9 +369,12 @@ class Stylesheet:
         else:
             rules = reversed(self.rules)
         # Collect the rules defined in the stylesheet
+        node._has_hover_style = False
         for rule in rules:
             is_default_rules = rule.is_default_rules
             tie_breaker = rule.tie_breaker
+            if ":hover" in rule.selector_names:
+                node._has_hover_style = True
             for base_specificity in _check_rule(rule, css_path_nodes):
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker
@@ -444,7 +447,7 @@ class Stylesheet:
 
                 # Check if this can / should be animated
                 if is_animatable(key) and new_render_value != old_render_value:
-                    transition = new_styles.get_transition(key)
+                    transition = new_styles._get_transition(key)
                     if transition is not None:
                         duration, easing, delay = transition
                         node.app.animator.animate(
@@ -504,99 +507,3 @@ class Stylesheet:
                     apply(node.horizontal_scrollbar)
                 if node.show_horizontal_scrollbar and node.show_vertical_scrollbar:
                     apply(node.scrollbar_corner)
-
-
-if __name__ == "__main__":
-    from rich.traceback import install
-
-    install(show_locals=True)
-
-    class Widget(DOMNode):
-        pass
-
-    class View(DOMNode):
-        pass
-
-    class App(DOMNode):
-        pass
-
-    app = App()
-    main_view = View(id="main")
-    help_view = View(id="help")
-    app._add_child(main_view)
-    app._add_child(help_view)
-
-    widget1 = Widget(id="widget1")
-    widget2 = Widget(id="widget2")
-    sidebar = Widget(id="sidebar")
-    sidebar.add_class("float")
-
-    helpbar = Widget(id="helpbar")
-    helpbar.add_class("float")
-
-    main_view._add_child(widget1)
-    main_view._add_child(widget2)
-    main_view._add_child(sidebar)
-
-    sub_view = View(id="sub")
-    sub_view.add_class("-subview")
-    main_view._add_child(sub_view)
-
-    tooltip = Widget(id="tooltip")
-    tooltip.add_class("float", "transient")
-    sub_view._add_child(tooltip)
-
-    help = Widget(id="markdown")
-    help_view._add_child(help)
-    help_view._add_child(helpbar)
-
-    from rich import print
-
-    print(app.tree)
-    print()
-
-    DEFAULT_CSS = """
-    App > View {
-        layout: dock;
-        docks: sidebar=left | widgets=top;
-    }
-
-    #sidebar {
-        dock-group: sidebar;
-    }
-
-    #widget1 {
-        text: on blue;
-        dock-group: widgets;
-    }
-
-    #widget2 {
-        text: on red;
-        dock-group: widgets;
-    }
-
-    """
-
-    stylesheet = Stylesheet()
-    stylesheet.add_source(CSS)
-
-    print(stylesheet.css)
-
-    # print(stylesheet.error_renderable)
-
-    # print(widget1.styles)
-
-    # stylesheet.apply(widget1)
-
-    # print(widget1.styles)
-
-    # print(stylesheet.css)
-
-    # from .query import DOMQuery
-
-    # tests = ["View", "App > View", "Widget.float", ".float.transient", "*"]
-
-    # for test in tests:
-    #     print("")
-    #     print(f"[b]{test}")
-    #     print(app.query(test))

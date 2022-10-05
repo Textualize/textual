@@ -16,7 +16,7 @@ a method which evaluates the query, such as first() and last().
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterator, TypeVar, overload
+from typing import Generic, TYPE_CHECKING, Iterator, TypeVar, overload
 
 import rich.repr
 
@@ -42,8 +42,11 @@ class WrongType(QueryError):
     pass
 
 
+QueryType = TypeVar("QueryType", bound="Widget")
+
+
 @rich.repr.auto(angular=True)
-class DOMQuery:
+class DOMQuery(Generic[QueryType]):
     __slots__ = [
         "_node",
         "_nodes",
@@ -78,7 +81,7 @@ class DOMQuery:
         return self._node
 
     @property
-    def nodes(self) -> list[Widget]:
+    def nodes(self) -> list[QueryType]:
         """Lazily evaluate nodes."""
         from ..widget import Widget
 
@@ -103,21 +106,21 @@ class DOMQuery:
         """True if non-empty, otherwise False."""
         return bool(self.nodes)
 
-    def __iter__(self) -> Iterator[Widget]:
+    def __iter__(self) -> Iterator[QueryType]:
         return iter(self.nodes)
 
-    def __reversed__(self) -> Iterator[Widget]:
+    def __reversed__(self) -> Iterator[QueryType]:
         return reversed(self.nodes)
 
     @overload
-    def __getitem__(self, index: int) -> Widget:
+    def __getitem__(self, index: int) -> QueryType:
         ...
 
     @overload
-    def __getitem__(self, index: slice) -> list[Widget]:
+    def __getitem__(self, index: slice) -> list[QueryType]:
         ...
 
-    def __getitem__(self, index: int | slice) -> Widget | list[Widget]:
+    def __getitem__(self, index: int | slice) -> QueryType | list[QueryType]:
         return self.nodes[index]
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -133,7 +136,7 @@ class DOMQuery:
                 for selectors in self._excludes
             )
 
-    def filter(self, selector: str) -> DOMQuery:
+    def filter(self, selector: str) -> DOMQuery[QueryType]:
         """Filter this set by the given CSS selector.
 
         Args:
@@ -145,7 +148,7 @@ class DOMQuery:
 
         return DOMQuery(self.node, filter=selector, parent=self)
 
-    def exclude(self, selector: str) -> DOMQuery:
+    def exclude(self, selector: str) -> DOMQuery[QueryType]:
         """Exclude nodes that match a given selector.
 
         Args:
@@ -166,7 +169,9 @@ class DOMQuery:
     def first(self, expect_type: type[ExpectType]) -> ExpectType:
         ...
 
-    def first(self, expect_type: type[ExpectType] | None = None) -> Widget | ExpectType:
+    def first(
+        self, expect_type: type[ExpectType] | None = None
+    ) -> QueryType | ExpectType:
         """Get the *first* match node.
 
         Args:
@@ -199,7 +204,9 @@ class DOMQuery:
     def last(self, expect_type: type[ExpectType]) -> ExpectType:
         ...
 
-    def last(self, expect_type: type[ExpectType] | None = None) -> Widget | ExpectType:
+    def last(
+        self, expect_type: type[ExpectType] | None = None
+    ) -> QueryType | ExpectType:
         """Get the *last* match node.
 
         Args:
@@ -251,7 +258,7 @@ class DOMQuery:
                 if isinstance(node, filter_type):
                     yield node
 
-    def set_class(self, add: bool, *class_names: str) -> DOMQuery:
+    def set_class(self, add: bool, *class_names: str) -> DOMQuery[QueryType]:
         """Set the given class name(s) according to a condition.
 
         Args:
@@ -264,31 +271,33 @@ class DOMQuery:
             node.set_class(add, *class_names)
         return self
 
-    def add_class(self, *class_names: str) -> DOMQuery:
+    def add_class(self, *class_names: str) -> DOMQuery[QueryType]:
         """Add the given class name(s) to nodes."""
         for node in self:
             node.add_class(*class_names)
         return self
 
-    def remove_class(self, *class_names: str) -> DOMQuery:
+    def remove_class(self, *class_names: str) -> DOMQuery[QueryType]:
         """Remove the given class names from the nodes."""
         for node in self:
             node.remove_class(*class_names)
         return self
 
-    def toggle_class(self, *class_names: str) -> DOMQuery:
+    def toggle_class(self, *class_names: str) -> DOMQuery[QueryType]:
         """Toggle the given class names from matched nodes."""
         for node in self:
             node.toggle_class(*class_names)
         return self
 
-    def remove(self) -> DOMQuery:
+    def remove(self) -> DOMQuery[QueryType]:
         """Remove matched nodes from the DOM"""
         for node in self:
             node.remove()
         return self
 
-    def set_styles(self, css: str | None = None, **update_styles) -> DOMQuery:
+    def set_styles(
+        self, css: str | None = None, **update_styles
+    ) -> DOMQuery[QueryType]:
         """Set styles on matched nodes.
 
         Args:
@@ -308,7 +317,9 @@ class DOMQuery:
                 node.refresh(layout=True)
         return self
 
-    def refresh(self, *, repaint: bool = True, layout: bool = False) -> DOMQuery:
+    def refresh(
+        self, *, repaint: bool = True, layout: bool = False
+    ) -> DOMQuery[QueryType]:
         """Refresh matched nodes.
 
         Args:

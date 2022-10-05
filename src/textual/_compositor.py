@@ -13,25 +13,23 @@ without having to render the entire screen.
 
 from __future__ import annotations
 
+import sys
 from itertools import chain
 from operator import itemgetter
-import sys
-from typing import Callable, cast, Iterator, Iterable, NamedTuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, Iterable, Iterator, NamedTuple, cast
 
 import rich.repr
-
-from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
+from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.control import Control
 from rich.segment import Segment
 from rich.style import Style
 
 from . import errors
-from .geometry import Region, Offset, Size
-
 from ._cells import cell_len
-from ._profile import timer
 from ._loop import loop_last
+from ._profile import timer
 from ._types import Lines
+from .geometry import Offset, Region, Size
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
@@ -203,6 +201,9 @@ class Compositor:
         # Regions that require an update
         self._dirty_regions: set[Region] = set()
 
+        # Mapping of line numbers on to lists of widget and regions
+        self._layers_visible: list[list[tuple[Widget, Region, Region]]] | None = None
+
     @classmethod
     def _regions_to_spans(
         cls, regions: Iterable[Region]
@@ -257,6 +258,7 @@ class Compositor:
         """
         self._cuts = None
         self._layers = None
+        self._layers_visible = None
         self.root = parent
         self.size = size
 
@@ -475,19 +477,39 @@ class Compositor:
             )
         return self._layers
 
-    def __iter__(self) -> Iterator[tuple[Widget, Region, Region, Size, Size]]:
+    @property
+    def layers_visible(self) -> list[list[tuple[Widget, Region, Region]]]:
+        """Visible widgets and regions in layers order."""
+        screen_height = self.size.height
+        if self._layers_visible is None:
+            layers_visible: list[list[tuple[Widget, Region, Region]]]
+            layers_visible = [[] for y in range(self.size.height)]
+            layers_visible_appends = [layer.append for layer in layers_visible]
+            intersection = Region.intersection
+            _range = range
+            for widget, (region, _, clip, _, _, _) in self.layers:
+                _x, y, _width, height = region
+                if -height <= y < screen_height:
+                    cropped_region = intersection(region, clip)
+                    _x, region_y, _width, region_height = cropped_region
+                    if region_height:
+                        widget_location = (widget, cropped_region, region)
+                        for y in _range(region_y, region_y + region_height):
+                            layers_visible_appends[y](widget_location)
+            self._layers_visible = layers_visible
+        return self._layers_visible
+
+    def __iter__(self) -> Iterator[tuple[Widget, Region, Size, Size]]:
         """Iterate map with information regarding each widget and is position
 
         Yields:
             Iterator[tuple[Widget, Region, Region, Size, Size]]: Iterates a tuple of
-                Widget, clip region, region, virtual size, and container size.
+                Widget, region, virtual size, and container size.
         """
         layers = self.layers
-        intersection = Region.intersection
         for widget, (region, _order, clip, virtual_size, container_size, _) in layers:
             yield (
                 widget,
-                intersection(region, clip),
                 region,
                 virtual_size,
                 container_size,
@@ -501,13 +523,39 @@ class Compositor:
             raise errors.NoWidget("Widget is not in layout")
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
-        """Get the widget under the given point or None."""
-        # TODO: Optimize with some line based lookup
+        """Get the widget under a given coordinate.
+
+        Args:
+            x (int): X Coordinate.
+            y (int): Y Coordinate.
+
+        Raises:
+            errors.NoWidget: If there is not widget underneath (x, y).
+
+        Returns:
+            tuple[Widget, Region]: A tuple of the widget and its region.
+        """
+
         contains = Region.contains
-        for widget, cropped_region, region, *_ in self:
+        for widget, cropped_region, region in self.layers_visible[y]:
             if contains(cropped_region, x, y) and widget.visible:
                 return widget, region
         raise errors.NoWidget(f"No widget under screen coordinate ({x}, {y})")
+
+    def get_widgets_at(self, x: int, y: int) -> Iterable[tuple[Widget, Region]]:
+        """Get all widgets under a given coordinate.
+
+        Args:
+            x (int): X coordinate.
+            y (int): Y coordinate.
+
+        Returns:
+            Iterable[tuple[Widget, Region]]: Sequence of (WIDGET, REGION) tuples.
+        """
+        contains = Region.contains
+        for widget, cropped_region, region in self.layers_visible[y]:
+            if contains(cropped_region, x, y) and widget.visible:
+                yield widget, region
 
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the Style at the given cell or Style.null()
@@ -604,19 +652,28 @@ class Compositor:
         # up to this point.
         _rich_traceback_guard = True
 
+        def is_visible(widget: Widget) -> bool:
+            """Return True if the widget is (literally) visible by examining various
+            properties which affect whether it can be seen or not."""
+            return (
+                widget.visible
+                and not widget.is_transparent
+                and widget.styles.opacity > 0
+            )
+
         if self.map:
             if crop:
                 overlaps = crop.overlaps
                 mapped_regions = [
                     (widget, region, order, clip)
                     for widget, (region, order, clip, *_) in self.map.items()
-                    if widget.visible and not widget.is_transparent and overlaps(crop)
+                    if is_visible(widget) and overlaps(crop)
                 ]
             else:
                 mapped_regions = [
                     (widget, region, order, clip)
                     for widget, (region, order, clip, *_) in self.map.items()
-                    if widget.visible and not widget.is_transparent
+                    if is_visible(widget)
                 ]
 
             widget_regions = sorted(mapped_regions, key=itemgetter(2), reverse=True)

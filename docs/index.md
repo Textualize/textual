@@ -1,4 +1,5 @@
-# Welcome
+
+# Introduction
 
 Welcome to the [Textual](https://github.com/Textualize/textual) framework documentation. Built with ❤️ by [Textualize.io](https://www.textualize.io)
 
@@ -59,10 +60,24 @@ Textual is a framework for building applications that run within your terminal. 
 <hr>
 
 
-```{.textual path="docs/examples/demo.py" columns=100 lines=48}
-
+```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,_,_,_,_,_,_,_,_"}
 ```
 
-TODO: Add more example screenshots
+```{.textual path="examples/pride.py"}
+```
+
+```{.textual path="docs/examples/tutorial/stopwatch.py" columns="100" lines="30" press="d,tab,enter,_,_"}
+```
+
+
+```{.textual path="docs/examples/events/dictionary.py" columns="100" lines="30" press="tab,_,t,e,x,t,_,_,_,_,_,_,_,_,_,_,_,_,_"}
+```
+
+
+```{.textual path="docs/examples/guide/layout/combining_layouts.py" columns="100", lines="30"}
+```
+
+```{.textual path="docs/examples/app/widgets01.py"}
+```
 
 

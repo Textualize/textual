@@ -1,14 +1,11 @@
-from textual import layout
 from textual.app import App, ComposeResult
+from textual.containers import Vertical
 from textual.widgets import Static
 
 
 class OffsetExample(App):
     def compose(self) -> ComposeResult:
-        yield layout.Vertical(
-            Static("Child", id="child"),
-            id="parent"
-        )
+        yield Vertical(Static("Child", id="child"), id="parent")
         yield Static("Tag", id="tag")
 
 

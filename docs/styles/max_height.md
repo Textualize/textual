@@ -22,10 +22,10 @@ max-height: 25vh;
 ## Python
 
 ```python
-# Set the maximum width to 10 rows
+# Set the maximum height to 10 rows
 widget.styles.max_height = 10
 
-# Set the maximum width to 25% of the screen width
-widget.styles.max_height = "25vw"
+# Set the maximum height to 25% of the screen height
+widget.styles.max_height = "25vh"
 
 ```

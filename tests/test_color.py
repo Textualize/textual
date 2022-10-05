@@ -2,7 +2,7 @@ import pytest
 from rich.color import Color as RichColor
 from rich.text import Text
 
-from textual.color import Color, ColorPair, Lab, lab_to_rgb, rgb_to_lab
+from textual.color import Color, Lab, lab_to_rgb, rgb_to_lab
 
 
 def test_rich_color():
@@ -31,22 +31,6 @@ def test_css():
     assert Color(10, 20, 30, 0.5).css == "rgba(10,20,30,0.5)"
 
 
-def test_colorpair_style():
-    """Test conversion of colorpair to style."""
-
-    # Black on white
-    assert (
-        str(ColorPair(Color.parse("#000000"), Color.parse("#ffffff")).style)
-        == "#000000 on #ffffff"
-    )
-
-    # 50% black on white
-    assert (
-        str(ColorPair(Color.parse("rgba(0,0,0,0.5)"), Color.parse("#ffffff")).style)
-        == "#7f7f7f on #ffffff"
-    )
-
-
 def test_rgb():
     assert Color(10, 20, 30, 0.55).rgb == (10, 20, 30)
 
@@ -54,12 +38,12 @@ def test_rgb():
 def test_hls():
 
     red = Color(200, 20, 32)
-    print(red.hls)
-    assert red.hls == pytest.approx(
-        (0.9888888888888889, 0.43137254901960786, 0.818181818181818)
+    print(red.hsl)
+    assert red.hsl == pytest.approx(
+        (0.9888888888888889, 0.818181818181818, 0.43137254901960786)
     )
-    assert Color.from_hls(
-        0.9888888888888889, 0.43137254901960786, 0.818181818181818
+    assert Color.from_hsl(
+        0.9888888888888889, 0.818181818181818, 0.43137254901960786
     ).normalized == pytest.approx(red.normalized, rel=1e-5)
 
 
@@ -223,6 +207,5 @@ def test_rgb_lab_rgb_roundtrip():
                 assert c_.b == pytest.approx(b, abs=1)
 
 
-def test_color_pair_style():
-    pair = ColorPair(Color(220, 220, 220), Color(10, 20, 30))
-    assert str(pair.style) == "#dcdcdc on #0a141e"
+def test_inverse():
+    assert Color(55, 0, 255, 0.1).inverse == Color(200, 255, 0, 0.1)

@@ -118,9 +118,8 @@ class LogApp(App):
     def on_mount(self):
         self.log(self.tree)
 
-app = LogApp()
 if __name__ == "__main__":
-    app.run()
+    LogApp.run()
 
 ```
 

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import ClassVar, TYPE_CHECKING
 
 import rich.repr
 
 from . import _clock
 from .case import camel_to_snake
-from ._types import MessageTarget
+from ._types import MessageTarget as MessageTarget
+
+if TYPE_CHECKING:
+    from .widget import Widget
 
 
 @rich.repr.auto
@@ -36,7 +39,7 @@ class Message:
 
     def __init__(self, sender: MessageTarget) -> None:
         self.sender = sender
-        self.name = camel_to_snake(self.__class__.__name__.replace("Message", ""))
+        self.name = camel_to_snake(self.__class__.__name__)
         self.time = _clock.get_time_no_wait()
         self._forwarded = False
         self._no_default_action = False
@@ -71,10 +74,11 @@ class Message:
 
     @property
     def handler_name(self) -> str:
+        """The name of the handler associated with this message."""
         # Property to make it read only
         return self._handler_name
 
-    def set_forwarded(self) -> None:
+    def _set_forwarded(self) -> None:
         """Mark this event as being forwarded."""
         self._forwarded = True
 
@@ -90,7 +94,8 @@ class Message:
         return False
 
     def prevent_default(self, prevent: bool = True) -> Message:
-        """Suppress the default action.
+        """Suppress the default action(s). This will prevent handlers in any base classes
+        from being called.
 
         Args:
             prevent (bool, optional): True if the default action should be suppressed,
@@ -107,3 +112,11 @@ class Message:
         """
         self._stop_propagation = stop
         return self
+
+    async def _bubble_to(self, widget: Widget) -> None:
+        """Bubble to a widget (typically the parent).
+
+        Args:
+            widget (Widget): Target of bubble.
+        """
+        await widget.post_message(self)

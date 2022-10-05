@@ -1,7 +1,7 @@
 from textual.app import App, ComposeResult
 from textual.constants import BORDERS
 from textual.widgets import Button, Static
-from textual import layout
+from textual.containers import Vertical
 
 
 TEXT = """I must not fear.
@@ -13,11 +13,12 @@ And when it has gone past, I will turn the inner eye to see its path.
 Where the fear has gone there will be nothing. Only I will remain."""
 
 
-class BorderButtons(layout.Vertical):
+class BorderButtons(Vertical):
     DEFAULT_CSS = """
     BorderButtons {
         dock: left;
         width: 24;
+        overflow-y: scroll;
     }
 
     BorderButtons > Button {
@@ -34,8 +35,8 @@ class BorderButtons(layout.Vertical):
 class BorderApp(App):
     """Demonstrates the border styles."""
 
-    DEFAULT_CSS = """
-    Static {
+    CSS = """
+    #text {
         margin: 2 4;
         padding: 2 4;
         border: solid $secondary;
@@ -47,7 +48,7 @@ class BorderApp(App):
 
     def compose(self):
         yield BorderButtons()
-        self.text = Static(TEXT)
+        self.text = Static(TEXT, id="text")
         yield self.text
 
     def on_button_pressed(self, event: Button.Pressed) -> None:

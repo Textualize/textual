@@ -7,7 +7,6 @@ from rich.style import Style
 
 from ._types import MessageTarget
 from .geometry import Offset, Size
-from .keys import KEY_VALUES, Keys
 from .message import Message
 
 MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
@@ -20,12 +19,11 @@ if TYPE_CHECKING:
 
 @rich.repr.auto
 class Event(Message):
+    """The base class for all events."""
+
     def __rich_repr__(self) -> rich.repr.Result:
         return
         yield
-
-    def __init_subclass__(cls, bubble: bool = True, verbose: bool = False) -> None:
-        super().__init_subclass__(bubble=bubble, verbose=verbose)
 
 
 @rich.repr.auto
@@ -114,6 +112,10 @@ class Resize(Event, bubble=False):
         yield "size", self.size
         yield "virtual_size", self.virtual_size
         yield "container_size", self.container_size, self.size
+
+
+class Compose(Event, bubble=False, verbose=True):
+    """Sent to a widget to request it to compose and mount children."""
 
 
 class Mount(Event, bubble=False, verbose=True):
@@ -315,14 +317,57 @@ class MouseEvent(InputEvent, bubble=True):
         yield "ctrl", self.ctrl, False
 
     @property
+    def offset(self) -> Offset:
+        """The mouse coordinate as an offset.
+
+        Returns:
+            Offset: Mouse coordinate.
+
+        """
+        return Offset(self.x, self.y)
+
+    @property
+    def screen_offset(self) -> Offset:
+        """Mouse coordinate relative to the screen.
+
+        Returns:
+            Offset: Mouse coordinate.
+        """
+        return Offset(self.screen_x, self.screen_y)
+
+    @property
+    def delta(self) -> Offset:
+        """Mouse coordinate delta (change since last event).
+
+        Returns:
+            Offset: Mouse coordinate.
+
+        """
+        return Offset(self.delta_x, self.delta_y)
+
+    @property
     def style(self) -> Style:
+        """The (Rich) Style under the cursor."""
         return self._style or Style()
 
     @style.setter
     def style(self, style: Style) -> None:
         self._style = style
 
-    def offset(self, x: int, y: int) -> MouseEvent:
+    def get_content_offset(self, widget: Widget) -> Offset | None:
+        """Get offset within a widget's content area, or None if offset is not in content (i.e. padding or border).
+
+        Args:
+            widget (Widget): Widget receiving the event.
+
+        Returns:
+            Offset | None: An offset where the origin is at the top left of the content area.
+        """
+        if self.offset not in widget.content_region:
+            return None
+        return self.offset - widget.gutter.top_left
+
+    def _apply_offset(self, x: int, y: int) -> MouseEvent:
         return self.__class__(
             self.sender,
             x=self.x + x,
@@ -340,7 +385,7 @@ class MouseEvent(InputEvent, bubble=True):
 
 
 @rich.repr.auto
-class MouseMove(MouseEvent, bubble=True, verbose=True):
+class MouseMove(MouseEvent, bubble=False, verbose=True):
     """Sent when the mouse cursor moves."""
 
 

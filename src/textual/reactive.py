@@ -94,8 +94,9 @@ class Reactive(Generic[ReactiveType]):
         for key in obj.__class__.__dict__.keys():
             if startswith(key, "_init_"):
                 name = key[6:]
-                default = getattr(obj, key)
-                setattr(obj, name, default() if callable(default) else default)
+                if not hasattr(obj, name):
+                    default = getattr(obj, key)
+                    setattr(obj, name, default() if callable(default) else default)
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
 
@@ -126,17 +127,19 @@ class Reactive(Generic[ReactiveType]):
         current_value = getattr(obj, self.internal_name, None)
         validate_function = getattr(obj, f"validate_{name}", None)
         first_set = getattr(obj, f"__first_set_{self.internal_name}", True)
-        if callable(validate_function):
+        if callable(validate_function) and not first_set:
             value = validate_function(value)
         if current_value != value or first_set:
             setattr(obj, f"__first_set_{self.internal_name}", False)
             setattr(obj, self.internal_name, value)
-            self._check_watchers(obj, name, current_value)
+            self._check_watchers(obj, name, current_value, first_set=first_set)
             if self._layout or self._repaint:
                 obj.refresh(repaint=self._repaint, layout=self._layout)
 
     @classmethod
-    def _check_watchers(cls, obj: Reactable, name: str, old_value: Any) -> None:
+    def _check_watchers(
+        cls, obj: Reactable, name: str, old_value: Any, first_set: bool = False
+    ) -> None:
 
         internal_name = f"_reactive_{name}"
         value = getattr(obj, internal_name)
@@ -174,6 +177,11 @@ class Reactive(Generic[ReactiveType]):
                 )
             )
 
+        if not first_set:
+            obj.post_message_no_wait(
+                events.Callback(obj, callback=partial(Reactive._compute, obj))
+            )
+
     @classmethod
     async def _compute(cls, obj: Reactable) -> None:
         _rich_traceback_guard = True
@@ -183,6 +191,7 @@ class Reactive(Generic[ReactiveType]):
                 compute_method = getattr(obj, f"compute_{compute}")
             except AttributeError:
                 continue
+
             value = await invoke(compute_method)
             setattr(obj, compute, value)
 
@@ -194,7 +203,7 @@ class reactive(Reactive[ReactiveType]):
         default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
         layout (bool, optional): Perform a layout on change. Defaults to False.
         repaint (bool, optional): Perform a repaint on change. Defaults to True.
-        init (bool, optional): Call watchers on initialize (post mount). Defaults to False.
+        init (bool, optional): Call watchers on initialize (post mount). Defaults to True.
 
     """
 

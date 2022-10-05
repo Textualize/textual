@@ -20,7 +20,7 @@ from ..geometry import clamp, Region, Size, Spacing
 from ..reactive import Reactive
 from .._profile import timer
 from ..scroll_view import ScrollView
-from ..widget import Widget
+
 from .. import messages
 
 
@@ -107,9 +107,12 @@ class Coord(NamedTuple):
 class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     DEFAULT_CSS = """
+    App.-dark DataTable {
+        background:;
+    }
     DataTable {
-        background: $surface;
-        color: $text;       
+        background: $surface ;
+        color: $text;           
     }
     DataTable > .datatable--header {        
         text-style: bold;
@@ -155,6 +158,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def __init__(
         self,
+        *,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -252,7 +256,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         total_width = sum(column.width for column in self.columns)
         self.virtual_size = Size(
             total_width,
-            len(self._y_offsets) + (self.header_height if self.show_header else 0),
+            max(len(self._y_offsets), (self.header_height if self.show_header else 0)),
         )
 
     def _get_cell_region(self, row_index: int, column_index: int) -> Region:
@@ -522,18 +526,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         return self._render_line(y, scroll_x, scroll_x + width, style)
 
-    def render_lines(self, crop: Region) -> Lines:
-        """Render the widget in to lines.
-
-        Args:
-            crop (Region): Region within visible area to.
-
-        Returns:
-            Lines: A list of list of segments
-        """
-        lines = self._styles_cache.render_widget(self, crop)
-        return lines
-
     def on_mouse_move(self, event: events.MouseMove):
         meta = event.style.meta
         if meta:
@@ -565,6 +557,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if meta:
             self.cursor_cell = Coord(meta["row"], meta["column"])
             self._scroll_cursor_in_to_view()
+            event.stop()
 
     def key_down(self, event: events.Key):
         self.cursor_cell = self.cursor_cell.down()

@@ -6,6 +6,9 @@
     transition: color 300ms linear, background 300ms linear;
 }
 
+Tweet.tall {
+  height: 24;
+}
 
 *:hover {
   /* tint: 30% red;
@@ -13,19 +16,20 @@
 }
 
 App > Screen {
-
-  background: $background;
+  
   color: $text;
   layers: base sidebar;  
   layout: vertical;
   overflow: hidden;
+
 }
 
 #tree-container {
+  background: $panel;
   overflow-y: auto;
   height: 20;
   margin: 1 2;
-  background: $surface;
+  
   padding: 1 2;
 }
 
@@ -36,13 +40,18 @@ DirectoryTree {
 }
 
 
-
+#table-container {
+  background: $panel;
+  height: auto;
+  margin: 1 2;
+}
 
 DataTable {
   /*border:heavy red;*/
   /* tint: 10% green; */
   /* text-opacity: 50%; */
-  padding: 1;
+ 
+  
   margin: 1 2;
   height: 24;
 }
@@ -101,9 +110,9 @@ Tweet {
   /* border: outer $primary; */
   padding: 1;
   border: wide $panel;
-  overflow: auto;
+  
   /* scrollbar-gutter: stable; */
-  align-horizontal: center;
+  
   box-sizing: border-box;
 
 }
@@ -112,15 +121,15 @@ Tweet {
 .scrollable {
   overflow-x: auto;
   overflow-y: scroll;
+  padding: 0 2;
   margin: 1 2;
   height: 24;
-  align-horizontal: center;
+  
   layout: vertical;
 }
 
 .code {
-  height: auto;
-
+  height: auto;  
 }
 
 
@@ -138,8 +147,14 @@ TweetBody {
   padding: 0 1 0 0;
 }
 
+Tweet.scroll-horizontal {
+
+  overflow-x: auto;
+}
+
 Tweet.scroll-horizontal TweetBody {
   width: 350;
+  
 }
 
 .button {
@@ -182,7 +197,7 @@ Tweet.scroll-horizontal TweetBody {
 
 
 #sidebar .content {
-  layout: vertical
+  layout: vertical;
 }
 
 OptionItem {
@@ -213,7 +228,7 @@ Error {
 
   padding: 0;
   text-style: bold;
-  align-horizontal: center;
+  content-align: center middle;
 }
 
 Warning {
@@ -225,7 +240,7 @@ Warning {
   border-bottom: tall $warning-darken-2;
 
   text-style: bold;
-  align-horizontal: center;
+  content-align: center middle;
 }
 
 Success {
@@ -241,7 +256,7 @@ Success {
 
   text-style: bold ;
 
-  align-horizontal: center;
+  content-align: center middle;
 }
 
 

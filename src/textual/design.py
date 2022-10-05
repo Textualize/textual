@@ -13,7 +13,7 @@ from .color import Color, WHITE
 NUMBER_OF_SHADES = 3
 
 # Where no content exists
-DEFAULT_DARK_BACKGROUND = "#000000"
+DEFAULT_DARK_BACKGROUND = "#121212"
 # What text usually goes on top off
 DEFAULT_DARK_SURFACE = "#121212"
 
@@ -115,7 +115,6 @@ class ColorSystem:
 
         dark = self._dark
         luminosity_spread = self._luminosity_spread
-        text_alpha = self._text_alpha
 
         if dark:
             background = self.background or Color.parse(DEFAULT_DARK_BACKGROUND)
@@ -123,6 +122,8 @@ class ColorSystem:
         else:
             background = self.background or Color.parse(DEFAULT_LIGHT_BACKGROUND)
             surface = self.surface or Color.parse(DEFAULT_LIGHT_SURFACE)
+
+        foreground = background.inverse
 
         boost = self.boost or background.get_contrast_text(1.0).with_alpha(0.07)
 
@@ -159,6 +160,7 @@ class ColorSystem:
             ("primary-background", primary),
             ("secondary-background", secondary),
             ("background", background),
+            ("foreground", foreground),
             ("panel", panel),
             ("boost", boost),
             ("surface", surface),
@@ -174,8 +176,6 @@ class ColorSystem:
         for name, color in COLORS:
             is_dark_shade = dark and name in DARK_SHADES
             spread = luminosity_spread
-            if name == "panel":
-                spread /= 2
             for shade_name, luminosity_delta in luminosity_range(spread):
                 if is_dark_shade:
                     dark_background = background.blend(color, 0.15)
@@ -187,9 +187,9 @@ class ColorSystem:
                     shade_color = color.lighten(luminosity_delta)
                     colors[f"{name}{shade_name}"] = shade_color.hex
 
-        colors["text"] = "auto 95%"
-        colors["text-muted"] = "auto 80%"
-        colors["text-disabled"] = "auto 60%"
+        colors["text"] = "auto 90%"
+        colors["text-muted"] = "auto 50%"
+        colors["text-disabled"] = "auto 30%"
 
         return colors
 

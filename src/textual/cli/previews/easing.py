@@ -1,17 +1,14 @@
 from __future__ import annotations
 
 from rich.console import RenderableType
-
-from textual import layout
 from textual._easing import EASING
-from textual.app import ComposeResult, App
+from textual.app import App, ComposeResult
 from textual.cli.previews.borders import TEXT
+from textual.containers import Container, Horizontal, Vertical
 from textual.reactive import Reactive
 from textual.scrollbar import ScrollBarRender
 from textual.widget import Widget
-from textual.widgets import Button, Static, Footer
-from textual.widgets import TextInput
-from textual.widgets._text_input import TextWidgetBase
+from textual.widgets import Button, Footer, Static, Input
 
 VIRTUAL_SIZE = 100
 WINDOW_SIZE = 10
@@ -47,7 +44,6 @@ class Bar(Widget):
         self.set_class(running, "-active")
 
     def render(self) -> RenderableType:
-
         return ScrollBarRender(
             virtual_size=VIRTUAL_SIZE,
             window_size=WINDOW_SIZE,
@@ -69,22 +65,20 @@ class EasingApp(App):
     def compose(self) -> ComposeResult:
         self.animated_bar = Bar()
         self.animated_bar.position = START_POSITION
-        duration_input = TextInput(
-            placeholder="Duration", initial="1.0", id="duration-input"
-        )
+        duration_input = Input("1.0", placeholder="Duration", id="duration-input")
 
         self.opacity_widget = Static(
             f"[b]Welcome to Textual![/]\n\n{TEXT}", id="opacity-widget"
         )
 
         yield EasingButtons()
-        yield layout.Vertical(
-            layout.Horizontal(
+        yield Vertical(
+            Horizontal(
                 Static("Animation Duration:", id="label"), duration_input, id="inputs"
             ),
-            layout.Horizontal(
+            Horizontal(
                 self.animated_bar,
-                layout.Container(self.opacity_widget, id="other"),
+                Container(self.opacity_widget, id="other"),
             ),
             Footer(),
         )
@@ -111,7 +105,7 @@ class EasingApp(App):
         self.animated_bar.position = value
         self.opacity_widget.styles.opacity = 1 - value / END_POSITION
 
-    def on_text_widget_base_changed(self, event: TextWidgetBase.Changed):
+    def on_input_changed(self, event: Input.Changed):
         if event.sender.id == "duration-input":
             new_duration = _try_float(event.value)
             if new_duration is not None:

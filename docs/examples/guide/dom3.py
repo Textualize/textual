@@ -1,6 +1,6 @@
 from textual.app import App, ComposeResult
-from textual.layout import Container, Horizontal
-from textual.widgets import Header, Footer, Static, Button
+from textual.containers import Container, Horizontal
+from textual.widgets import Button, Footer, Header, Static
 
 QUESTION = "Do you want to learn about Textual CSS?"
 
@@ -20,4 +20,6 @@ class ExampleApp(App):
         )
 
 
-app = ExampleApp()
+if __name__ == "__main__":
+    app = ExampleApp()
+    app.run()

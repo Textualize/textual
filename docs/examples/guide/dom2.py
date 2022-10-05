@@ -8,4 +8,6 @@ class ExampleApp(App):
         yield Footer()
 
 
-app = ExampleApp()
+if __name__ == "__main__":
+    app = ExampleApp()
+    app.run()

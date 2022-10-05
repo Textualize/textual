@@ -117,7 +117,7 @@ class BoundAnimator:
     def __call__(
         self,
         attribute: str,
-        value: float,
+        value: float | Animatable,
         *,
         final_value: object = ...,
         duration: float | None = None,
@@ -154,10 +154,11 @@ class Animator:
             callback=self,
             pause=True,
         )
+        self._idle_event = asyncio.Event()
 
     async def start(self) -> None:
         """Start the animator task."""
-
+        self._idle_event.set()
         self._timer.start()
 
     async def stop(self) -> None:
@@ -275,7 +276,12 @@ class Animator:
             if duration is not None:
                 animation_duration = duration
             else:
-                animation_duration = abs(value - start_value) / (speed or 50)
+                if hasattr(value, "get_distance_to"):
+                    animation_duration = value.get_distance_to(start_value) / (
+                        speed or 50
+                    )
+                else:
+                    animation_duration = abs(value - start_value) / (speed or 50)
 
             animation = SimpleAnimation(
                 obj,
@@ -296,10 +302,12 @@ class Animator:
 
         self._animations[animation_key] = animation
         self._timer.resume()
+        self._idle_event.clear()
 
     async def __call__(self) -> None:
         if not self._animations:
             self._timer.pause()
+            self._idle_event.set()
         else:
             animation_time = self._get_time()
             animation_keys = list(self._animations.keys())
@@ -317,3 +325,7 @@ class Animator:
         # N.B. We could remove this method and always call `self._timer.get_time()` internally,
         # but it's handy to have in mocking situations
         return _clock.get_time_no_wait()
+
+    async def wait_for_idle(self) -> None:
+        """Wait for any animations to complete."""
+        await self._idle_event.wait()

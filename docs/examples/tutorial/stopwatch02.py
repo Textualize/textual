@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.layout import Container
+from textual.containers import Container
 from textual.widgets import Button, Header, Footer, Static
 
 
@@ -34,6 +34,6 @@ class StopwatchApp(App):
         self.dark = not self.dark
 
 
-app = StopwatchApp()
 if __name__ == "__main__":
+    app = StopwatchApp()
     app.run()

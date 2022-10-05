@@ -1,9 +1,34 @@
 """
-Manages Color in Textual.
+This module contains a powerful Color class which Textual uses to expose colors.
 
-All instances where the developer is presented with a color will use this class. The only
-exception should be when passing things to a Rich renderable, which will need to use the
-`rich_color` attribute to perform a conversion.
+The only exception would be for Rich renderables, which require a rich.color.Color instance.
+You can convert from a Textual color to a Rich color with the [rich_color][textual.color.Color.rich_color] property.
+
+## Named colors
+
+The following named colors are used by the [parse][textual.color.Color.parse] method.
+
+```{.rich title="colors"}
+from textual._color_constants import COLOR_NAME_TO_RGB
+from textual.color import Color
+from rich.table import Table
+from rich.text import Text
+table = Table("Name", "hex", "RGB", "Color", expand=True, highlight=True)
+
+for name, triplet in sorted(COLOR_NAME_TO_RGB.items()):
+    if len(triplet) != 3:
+        continue
+    color = Color(*triplet)
+    r, g, b = triplet
+    table.add_row(
+        f'"{name}"',
+        Text(f"{color.hex}", "bold green"),
+        f"rgb({r}, {g}, {b})",
+        Text("                    ", style=f"on rgb({r},{g},{b})")
+    )
+output = table
+```
+
 
 """
 
@@ -32,15 +57,25 @@ from .geometry import clamp
 _TRUECOLOR = ColorType.TRUECOLOR
 
 
-class HLS(NamedTuple):
+class HSL(NamedTuple):
     """A color in HLS format."""
 
     h: float
     """Hue"""
-    l: float
-    """Lightness"""
     s: float
     """Saturation"""
+    l: float
+    """Lightness"""
+
+    @property
+    def css(self) -> str:
+        """HSL in css format."""
+        h, s, l = self
+
+        def as_str(number: float) -> str:
+            return f"{number:.1f}".rstrip("0").rstrip(".")
+
+        return f"hsl({as_str(h*360)},{as_str(s*100)}%,{as_str(l*100)}%)"
 
 
 class HSV(NamedTuple):
@@ -77,33 +112,31 @@ hsla{OPEN_BRACE}({DECIMAL}{COMMA}{PERCENT}{COMMA}{PERCENT}{COMMA}{DECIMAL}){CLOS
 )
 
 # Fast way to split a string of 6 characters in to 3 pairs of 2 characters
-split_pairs3: Callable[[str], tuple[str, str, str]] = itemgetter(
+_split_pairs3: Callable[[str], tuple[str, str, str]] = itemgetter(
     slice(0, 2), slice(2, 4), slice(4, 6)
 )
 # Fast way to split a string of 8 characters in to 4 pairs of 2 characters
-split_pairs4: Callable[[str], tuple[str, str, str, str]] = itemgetter(
+_split_pairs4: Callable[[str], tuple[str, str, str, str]] = itemgetter(
     slice(0, 2), slice(2, 4), slice(4, 6), slice(6, 8)
 )
 
 
 class ColorParseError(Exception):
-    """A color failed to parse"""
+    """A color failed to parse.
+
+    Args:
+        message (str): the error message
+        suggested_color (str | None): a close color we can suggest. Defaults to None.
+    """
 
     def __init__(self, message: str, suggested_color: str | None = None):
-        """
-        Creates a new ColorParseError
-
-        Args:
-            message (str): the error message
-            suggested_color (str | None): a close color we can suggest. Defaults to None.
-        """
         super().__init__(message)
         self.suggested_color = suggested_color
 
 
 @rich.repr.auto
 class Color(NamedTuple):
-    """A class to represent a single RGB color with alpha."""
+    """A class to represent a RGB color with an alpha component."""
 
     r: int
     """Red component (0-255)"""
@@ -128,7 +161,7 @@ class Color(NamedTuple):
         return cls(r, g, b)
 
     @classmethod
-    def from_hls(cls, h: float, l: float, s: float) -> Color:
+    def from_hsl(cls, h: float, s: float, l: float) -> Color:
         """Create a color from HLS components.
 
         Args:
@@ -150,6 +183,12 @@ class Color(NamedTuple):
                 self.get_contrast_text().rich_color, self.rich_color
             ),
         )
+
+    @property
+    def inverse(self) -> Color:
+        """The inverse of this color."""
+        r, g, b, a = self
+        return Color(255 - r, 255 - g, 255 - b, a)
 
     @property
     def is_transparent(self) -> bool:
@@ -213,14 +252,15 @@ class Color(NamedTuple):
         return (r, g, b)
 
     @property
-    def hls(self) -> HLS:
-        """Get the color as HLS.
+    def hsl(self) -> HSL:
+        """Get the color as HSL.
 
         Returns:
-            HLS:
+            HSL: Color in HSL format.
         """
         r, g, b = self.normalized
-        return HLS(*rgb_to_hls(r, g, b))
+        h, l, s = rgb_to_hls(r, g, b)
+        return HSL(h, s, l)
 
     @property
     def brightness(self) -> float:
@@ -239,7 +279,7 @@ class Color(NamedTuple):
         """The color in CSS hex form, with 6 digits for RGB, and 8 digits for RGBA.
 
         Returns:
-            str: A CSS hex-style color, e.g. "#46b3de" or "#3342457f"
+            str: A CSS hex-style color, e.g. `"#46b3de"` or `"#3342457f"`
 
         """
         r, g, b, a = self.clamped
@@ -265,7 +305,7 @@ class Color(NamedTuple):
         """The color in CSS rgb or rgba form.
 
         Returns:
-            str: A CSS style color, e.g. "rgb(10,20,30)" or "rgb(50,70,80,0.5)"
+            str: A CSS style color, e.g. `"rgb(10,20,30)"` or `"rgb(50,70,80,0.5)"`
 
         """
         r, g, b, a = self
@@ -323,7 +363,29 @@ class Color(NamedTuple):
     @classmethod
     @lru_cache(maxsize=1024 * 4)
     def parse(cls, color_text: str | Color) -> Color:
-        """Parse a string containing a CSS-style color.
+        """Parse a string containing a named color or CSS-style color.
+
+        Colors may be parsed from the following formats:
+
+        Text beginning with a `#` is parsed as hex:
+
+        R, G, and B must be hex digits (0-9A-F)
+
+        - `#RGB`
+        - `#RRGGBB`
+        - `#RRGGBBAA`
+
+        Text in the following formats is parsed as decimal values:
+
+        RED, GREEN, and BLUE must be numbers between 0 and 255.
+        ALPHA should ba a value between 0 and 1.
+
+        - `rgb(RED,GREEN,BLUE)`
+        - `rgba(RED,GREEN,BLUE,ALPHA)`
+        - `hsl(RED,GREEN,BLUE)`
+        - `hsla(RED,GREEN,BLUE,ALPHA)`
+
+        All other text will raise a `ColorParseError`.
 
         Args:
             color_text (str | Color): Text with a valid color format. Color objects will
@@ -373,10 +435,10 @@ class Color(NamedTuple):
                 int(f"{a}{a}", 16) / 255.0,
             )
         elif rgb_hex is not None:
-            r, g, b = [int(pair, 16) for pair in split_pairs3(rgb_hex)]
+            r, g, b = [int(pair, 16) for pair in _split_pairs3(rgb_hex)]
             color = cls(r, g, b, 1.0)
         elif rgba_hex is not None:
-            r, g, b, a = [int(pair, 16) for pair in split_pairs4(rgba_hex)]
+            r, g, b, a = [int(pair, 16) for pair in _split_pairs4(rgba_hex)]
             color = cls(r, g, b, a / 255.0)
         elif rgb is not None:
             r, g, b = [clamp(int(float(value)), 0, 255) for value in rgb.split(",")]
@@ -396,14 +458,14 @@ class Color(NamedTuple):
             h = float(h) % 360 / 360
             s = percentage_string_to_float(s)
             l = percentage_string_to_float(l)
-            color = Color.from_hls(h, l, s)
+            color = Color.from_hsl(h, s, l)
         elif hsla is not None:
             h, s, l, a = hsla.split(",")
             h = float(h) % 360 / 360
             s = percentage_string_to_float(s)
             l = percentage_string_to_float(l)
             a = clamp(float(a), 0.0, 1.0)
-            color = Color.from_hls(h, l, s).with_alpha(a)
+            color = Color.from_hsl(h, s, l).with_alpha(a)
         else:
             raise AssertionError("Can't get here if RE_COLOR matches")
         return color
@@ -446,55 +508,16 @@ class Color(NamedTuple):
         Returns:
             Color: A new color, either an off-white or off-black
         """
-        white = self.blend(WHITE, alpha)
-        black = self.blend(BLACK, alpha)
         brightness = self.brightness
-        white_contrast = abs(brightness - white.brightness)
-        black_contrast = abs(brightness - black.brightness)
-        return white if white_contrast > black_contrast else black
+        white_contrast = abs(brightness - WHITE.brightness)
+        black_contrast = abs(brightness - BLACK.brightness)
+        return (WHITE if white_contrast > black_contrast else BLACK).with_alpha(alpha)
 
 
 # Color constants
 WHITE = Color(255, 255, 255)
 BLACK = Color(0, 0, 0)
 TRANSPARENT = Color(0, 0, 0, 0)
-
-
-class ColorPair(NamedTuple):
-    """A pair of colors for foreground and background."""
-
-    foreground: Color
-    background: Color
-
-    def __rich_repr__(self) -> rich.repr.Result:
-        yield "foreground", self.foreground
-        yield "background", self.background
-
-    @property
-    def style(self) -> Style:
-        """A Rich style with foreground and background."""
-        return self._get_style()
-
-    @lru_cache(maxsize=1024 * 4)
-    def _get_style(self) -> Style:
-        """Get a Rich style, foreground adjusted for transparency."""
-        r, g, b, a = self.foreground
-        if a == 0:
-            return Style.from_color(
-                self.background.rich_color, self.background.rich_color
-            )
-        elif a == 1:
-            return Style.from_color(
-                self.foreground.rich_color, self.background.rich_color
-            )
-        else:
-            r2, g2, b2, _ = self.background
-            return Style.from_color(
-                RichColor.from_rgb(
-                    r + (r2 - r) * a, g + (g2 - g) * a, b + (b2 - b) * a
-                ),
-                self.background.rich_color,
-            )
 
 
 def rgb_to_lab(rgb: Color) -> Lab:
@@ -549,27 +572,3 @@ def lab_to_rgb(lab: Lab, alpha: float = 1.0) -> Color:
     b = 1.055 * pow(b, 1 / 2.4) - 0.055 if b > 0.0031308 else 12.92 * b
 
     return Color(int(r * 255), int(g * 255), int(b * 255), alpha)
-
-
-if __name__ == "__main__":
-
-    from rich import print
-
-    c1 = Color.parse("#112233")
-    print(c1, c1.hex, c1.css)
-
-    c2 = Color.parse("#11223344")
-    print(c2)
-
-    c3 = Color.parse("rgb(10,20,30)")
-    print(c3)
-
-    c4 = Color.parse("rgba(10,20,30,0.5)")
-    print(c4, c4.hex, c4.css)
-
-    p1 = ColorPair(c4, c1)
-    print(p1)
-
-    print(p1.style)
-
-    print(Color.parse("dark_blue"))

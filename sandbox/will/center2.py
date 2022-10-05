@@ -1,5 +1,5 @@
 from textual.app import App
-from textual.layout import Vertical, Center
+from textual.containers import Vertical, Center
 from textual.widgets import Static
 
 

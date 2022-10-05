@@ -10,3 +10,7 @@ The load event is typically used to do any setup actions required by the app tha
 ## Attributes
 
 _No additional attributes_
+
+## Code
+
+::: textual.events.Load

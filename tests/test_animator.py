@@ -60,7 +60,7 @@ def test_simple_animation():
     assert animate_test.foo == 40.0
 
     assert animation(time + 2.9) is False  # Not quite final value
-    assert pytest.approx(animate_test.foo, 49.0)
+    assert animate_test.foo == pytest.approx(49.0)
 
     assert animation(time + 3.0) is True  # True to indicate animation is complete
     assert animate_test.foo is None  # This is final_value
@@ -161,7 +161,7 @@ def test_animatable():
     assert animate_test.bar.value == 40.0
 
     assert animation(time + 2.9) is False
-    assert pytest.approx(animate_test.bar.value, 49.0)
+    assert animate_test.bar.value == pytest.approx(49.0)
 
     assert animation(time + 3.0) is True  # True to indicate animation is complete
     assert animate_test.bar.value == 50.0

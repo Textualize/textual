@@ -1,0 +1,13 @@
+Screen {
+    align: center middle;
+}
+
+.box {
+    width: 40;
+    height: 5;
+    margin: 1;
+    padding: 1;
+    background: green;
+    color: white 90%;
+    border: heavy white;
+}

@@ -11,3 +11,7 @@ The `MouseScrollDown` event is sent to a widget when the scroll wheel (or trackp
 |-----------|------|----------------------------------------|
 | `x`       | int  | Mouse x coordinate, relative to Widget |
 | `y`       | int  | Mouse y coordinate, relative to Widget |
+
+## Code
+
+::: textual.events.MouseScrollDown

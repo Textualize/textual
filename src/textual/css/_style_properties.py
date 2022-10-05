@@ -28,7 +28,7 @@ from ._help_text import (
     color_property_help_text,
 )
 from .._border import INVISIBLE_EDGE_TYPES, normalize_border_value
-from ..color import Color, ColorPair, ColorParseError
+from ..color import Color, ColorParseError
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING, VALID_STYLE_FLAGS
 from .errors import StyleTypeError, StyleValueError
@@ -459,27 +459,6 @@ class BorderProperty:
         obj.refresh(layout=self._layout)
 
 
-class StyleProperty:
-    """Descriptor for getting the Rich style."""
-
-    DEFAULT_STYLE = Style()
-
-    def __get__(
-        self, obj: StylesBase, objtype: type[StylesBase] | None = None
-    ) -> Style:
-        """Get the Style
-
-        Args:
-            obj (Styles): The ``Styles`` object
-            objtype (type[Styles]): The ``Styles`` class
-
-        Returns:
-            A ``Style`` object.
-        """
-        style = ColorPair(obj.color, obj.background).style + obj.text_style
-        return style
-
-
 class SpacingProperty:
     """Descriptor for getting and setting spacing properties (e.g. padding and margin)."""
 
@@ -532,50 +511,9 @@ class SpacingProperty:
                 obj.refresh(layout=True)
 
 
-class DocksProperty:
-    """Descriptor for getting and setting the docks property. This property
-    is used to define docks and their location on screen.
-    """
-
-    def __get__(
-        self, obj: StylesBase, objtype: type[StylesBase] | None = None
-    ) -> tuple[DockGroup, ...]:
-        """Get the Docks property
-
-        Args:
-            obj (Styles): The ``Styles`` object.
-            objtype (type[Styles]): The ``Styles`` class.
-
-        Returns:
-            tuple[DockGroup, ...]: A ``tuple`` containing the defined docks.
-        """
-        if obj.has_rule("docks"):
-            return obj.get_rule("docks")
-        from .styles import DockGroup
-
-        return (DockGroup("_default", "top", 1),)
-
-    def __set__(self, obj: StylesBase, docks: Iterable[DockGroup] | None):
-        """Set the Docks property
-
-        Args:
-            obj (Styles): The ``Styles`` object.
-            docks (Iterable[DockGroup]): Iterable of DockGroups
-        """
-        _rich_traceback_omit = True
-        if docks is None:
-            if obj.clear_rule("docks"):
-                obj.refresh(layout=True)
-        else:
-            if obj.set_rule("docks", tuple(docks)):
-                obj.refresh(layout=True)
-
-
 class DockProperty:
     """Descriptor for getting and setting the dock property. The dock property
-    allows you to specify which dock you wish a Widget to be attached to. This
-    should be used in conjunction with the "docks" property which lets you define
-    the docks themselves, and where they are located on screen.
+    allows you to specify which edge you want to fix a Widget to.
     """
 
     def __get__(

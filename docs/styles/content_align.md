@@ -1,6 +1,6 @@
 # Content-align
 
-The `content-align` property allows you to align content _inside_ a widget.
+The `content-align` style aligns content _inside_ a widget.
 
 You can specify the alignment of content on both the horizontal and vertical axes.
 
@@ -15,7 +15,7 @@ content-align: <HORIZONTAL> <VERTICAL>;
 #### `HORIZONTAL`
 
 | Value            | Description                                        |
-|------------------|----------------------------------------------------|
+| ---------------- | -------------------------------------------------- |
 | `left` (default) | Align content on the left of the horizontal axis   |
 | `center`         | Align content in the center of the horizontal axis |
 | `right`          | Align content on the right of the horizontal axis  |
@@ -23,7 +23,7 @@ content-align: <HORIZONTAL> <VERTICAL>;
 #### `VERTICAL`
 
 | Value           | Description                                      |
-|-----------------|--------------------------------------------------|
+| --------------- | ------------------------------------------------ |
 | `top` (default) | Align content at the top of the vertical axis    |
 | `middle`        | Align content in the middle of the vertical axis |
 | `bottom`        | Align content at the bottom of the vertical axis |

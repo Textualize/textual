@@ -1,7 +1,7 @@
 from ..app import ComposeResult
 from ._static import Static
 from ._button import Button
-from ..layout import Container
+from ..containers import Container
 
 from rich.markdown import Markdown
 
@@ -26,12 +26,10 @@ Where the fear has gone there will be nothing. Only I will remain."
 class Welcome(Static):
 
     DEFAULT_CSS = """
-
         Welcome {
             width: 100%;
-            height: 100%;
-            margin: 1 2;
-
+            height: 100%;         
+            background: $surface;
         }
 
         Welcome Container {
@@ -46,13 +44,10 @@ class Welcome(Static):
 
         Welcome #close {
             dock: bottom;
-            width: 100%;
-            margin-top: 1;
+            width: 100%;        
         }
-
     """
 
     def compose(self) -> ComposeResult:
-
         yield Container(Static(Markdown(WELCOME_MD), id="text"), id="md")
         yield Button("OK", id="close", variant="success")

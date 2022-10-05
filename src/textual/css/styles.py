@@ -10,8 +10,8 @@ from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 import rich.repr
 from rich.style import Style
 
-from textual._types import CallbackType
-from .._animator import Animation, EasingFunction
+from .._types import CallbackType
+from .._animator import Animation, EasingFunction, BoundAnimator
 from ..color import Color
 from ..geometry import Offset, Spacing
 from ._style_properties import (
@@ -21,7 +21,6 @@ from ._style_properties import (
     BoxProperty,
     ColorProperty,
     DockProperty,
-    DocksProperty,
     FractionalProperty,
     IntegerProperty,
     LayoutProperty,
@@ -115,7 +114,6 @@ class RulesMap(TypedDict, total=False):
     max_height: Scalar
 
     dock: str
-    docks: tuple[DockGroup, ...]
 
     overflow_x: Overflow
     overflow_y: Overflow
@@ -160,6 +158,16 @@ class RulesMap(TypedDict, total=False):
 
     text_align: TextAlign
 
+    link_color: Color
+    auto_link_color: bool
+    link_background: Color
+    link_style: Style
+
+    hover_color: Color
+    auto_hover_color: bool
+    hover_background: Color
+    hover_style: Style
+
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
 RULE_NAMES_SET = frozenset(RULE_NAMES)
@@ -197,6 +205,10 @@ class StylesBase(ABC):
         "scrollbar_background",
         "scrollbar_background_hover",
         "scrollbar_background_active",
+        "link_color",
+        "link_background",
+        "hover_color",
+        "hover_background",
     }
 
     node: DOMNode | None = None
@@ -238,7 +250,6 @@ class StylesBase(ABC):
     max_height = ScalarProperty(percent_unit=Unit.HEIGHT, allow_auto=False)
 
     dock = DockProperty()
-    docks = DocksProperty()
 
     overflow_x = StringEnumProperty(VALID_OVERFLOW, "hidden")
     overflow_y = StringEnumProperty(VALID_OVERFLOW, "hidden")
@@ -283,6 +294,16 @@ class StylesBase(ABC):
     column_span = IntegerProperty(default=1, layout=True)
 
     text_align = StringEnumProperty(VALID_TEXT_ALIGN, "start")
+
+    link_color = ColorProperty("transparent")
+    auto_link_color = BooleanProperty(False)
+    link_background = ColorProperty("transparent")
+    link_style = StyleFlagsProperty()
+
+    hover_color = ColorProperty("transparent")
+    auto_hover_color = BooleanProperty(False)
+    hover_background = ColorProperty("transparent")
+    hover_style = StyleFlagsProperty()
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles contains the same rules."""
@@ -428,13 +449,21 @@ class StylesBase(ABC):
         styles.node = node
         return styles
 
-    def get_transition(self, key: str) -> Transition | None:
+    def _get_transition(self, key: str) -> Transition | None:
+        """Get a transition.
+
+        Args:
+            key (str): Transition key.
+
+        Returns:
+            Transition | None: Transition object or None it no transition exists.
+        """
         if key in self.ANIMATABLE:
             return self.transitions.get(key, None)
         else:
             return None
 
-    def align_width(self, width: int, parent_width: int) -> int:
+    def _align_width(self, width: int, parent_width: int) -> int:
         """Align the width dimension.
 
         Args:
@@ -453,7 +482,7 @@ class StylesBase(ABC):
                 offset_x = parent_width - width
         return offset_x
 
-    def align_height(self, height: int, parent_height: int) -> int:
+    def _align_height(self, height: int, parent_height: int) -> int:
         """Align the height dimensions
 
         Args:
@@ -472,7 +501,7 @@ class StylesBase(ABC):
                 offset_y = parent_height - height
         return offset_y
 
-    def align_size(self, child: tuple[int, int], parent: tuple[int, int]) -> Offset:
+    def _align_size(self, child: tuple[int, int], parent: tuple[int, int]) -> Offset:
         """Align a size according to alignment rules.
 
         Args:
@@ -485,8 +514,8 @@ class StylesBase(ABC):
         width, height = child
         parent_width, parent_height = parent
         return Offset(
-            self.align_width(width, parent_width),
-            self.align_height(height, parent_height),
+            self._align_width(width, parent_width),
+            self._align_height(height, parent_height),
         )
 
 
@@ -722,14 +751,6 @@ class Styles(StylesBase):
             append_declaration("offset", f"{x} {y}")
         if has_rule("dock"):
             append_declaration("dock", rules["dock"])
-        if has_rule("docks"):
-            append_declaration(
-                "docks",
-                " ".join(
-                    (f"{name}={edge}/{z}" if z else f"{name}={edge}")
-                    for name, edge, z in rules["docks"]
-                ),
-            )
         if has_rule("layers"):
             append_declaration("layers", " ".join(self.layers))
         if has_rule("layer"):
@@ -850,6 +871,7 @@ class RenderStyles(StylesBase):
         self.node = node
         self._base_styles = base
         self._inline_styles = inline_styles
+        self._animate: BoundAnimator | None = None
 
     @property
     def base(self) -> Styles:
@@ -866,6 +888,23 @@ class RenderStyles(StylesBase):
         """Get a Rich style for this Styles object."""
         assert self.node is not None
         return self.node.rich_style
+
+    @property
+    def animate(self) -> BoundAnimator:
+        """Get an animator to animate style.
+
+        Example:
+            ```python
+            self.animate("brightness", 0.5)
+            ```
+
+        Returns:
+            BoundAnimator: An animator bound to this widget.
+        """
+        if self._animate is None:
+            self._animate = self.node.app.animator.bind(self)
+        assert self._animate is not None
+        return self._animate
 
     def __rich_repr__(self) -> rich.repr.Result:
         for rule_name in RULE_NAMES:
@@ -928,7 +967,6 @@ if __name__ == "__main__":
     styles.visibility = "hidden"
     styles.border = ("solid", "rgb(10,20,30)")
     styles.outline_right = ("solid", "red")
-    styles.docks = "foo bar"
     styles.text_style = "italic"
     styles.dock = "bar"
     styles.layers = "foo bar"

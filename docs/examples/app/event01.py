@@ -18,13 +18,13 @@ class EventApp(App):
     ]
 
     def on_mount(self) -> None:
-        self.styles.background = "darkblue"
+        self.screen.styles.background = "darkblue"
 
     def on_key(self, event: events.Key) -> None:
         if event.key.isdecimal():
-            self.styles.background = self.COLORS[int(event.key)]
+            self.screen.styles.background = self.COLORS[int(event.key)]
 
 
-app = EventApp()
 if __name__ == "__main__":
+    app = EventApp()
     app.run()

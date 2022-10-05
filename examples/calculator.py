@@ -2,13 +2,15 @@ from decimal import Decimal
 
 from textual.app import App, ComposeResult
 from textual import events
-from textual.layout import Container
+from textual.containers import Container
 from textual.reactive import var
 from textual.widgets import Button, Static
 
 
 class CalculatorApp(App):
     """A working 'desktop' calculator."""
+
+    CSS_PATH = "calculator.css"
 
     numbers = var("0")
     show_ac = var(True)
@@ -137,6 +139,5 @@ class CalculatorApp(App):
             do_math()
 
 
-app = CalculatorApp(css_path="calculator.css")
 if __name__ == "__main__":
-    app.run()
+    CalculatorApp().run()

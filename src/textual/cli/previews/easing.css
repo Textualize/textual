@@ -3,7 +3,7 @@ EasingButtons > Button {
 }
 EasingButtons {
     dock: left;
-    overflow: auto auto;
+    overflow-y: scroll;
     width: 20;
 }
 

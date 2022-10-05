@@ -1,16 +1,15 @@
 from __future__ import annotations
 
 import sys
-import rich.repr
-
 from dataclasses import dataclass
 from typing import Iterable, MutableMapping
+
+import rich.repr
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
 else:  # pragma: no cover
     from typing_extensions import TypeAlias
-
 
 BindingType: TypeAlias = "Binding | tuple[str, str, str]"
 
@@ -23,14 +22,20 @@ class NoBinding(Exception):
     """A binding was not found."""
 
 
-@dataclass
+@dataclass(frozen=True)
 class Binding:
     key: str
+    """Key to bind."""
     action: str
+    """Action to bind to."""
     description: str
+    """Description of action."""
     show: bool = True
+    """Show the action in Footer, or False to hide."""
     key_display: str | None = None
+    """How the key should be shown in footer."""
     allow_forward: bool = True
+    """Allow forwarding from app to focused widget."""
 
 
 @rich.repr.auto
@@ -41,7 +46,20 @@ class Bindings:
         def make_bindings(bindings: Iterable[BindingType]) -> Iterable[Binding]:
             for binding in bindings:
                 if isinstance(binding, Binding):
-                    yield binding
+                    binding_keys = binding.key.split(",")
+                    if len(binding_keys) > 1:
+                        for key in binding_keys:
+                            new_binding = Binding(
+                                key=key,
+                                action=binding.action,
+                                description=binding.description,
+                                show=binding.show,
+                                key_display=binding.key_display,
+                                allow_forward=binding.allow_forward,
+                            )
+                            yield new_binding
+                    else:
+                        yield binding
                 else:
                     if len(binding) != 3:
                         raise BindingError(

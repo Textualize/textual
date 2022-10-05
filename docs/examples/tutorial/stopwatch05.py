@@ -1,7 +1,7 @@
 from time import monotonic
 
 from textual.app import App, ComposeResult
-from textual.layout import Container
+from textual.containers import Container
 from textual.reactive import reactive
 from textual.widgets import Button, Header, Footer, Static
 
@@ -48,6 +48,7 @@ class Stopwatch(Static):
 class StopwatchApp(App):
     """A Textual app to manage stopwatches."""
 
+    CSS_PATH = "stopwatch04.css"
     BINDINGS = [("d", "toggle_dark", "Toggle dark mode")]
 
     def compose(self) -> ComposeResult:
@@ -61,6 +62,6 @@ class StopwatchApp(App):
         self.dark = not self.dark
 
 
-app = StopwatchApp(css_path="stopwatch04.css")
 if __name__ == "__main__":
+    app = StopwatchApp()
     app.run()

@@ -34,7 +34,6 @@ from rich.traceback import Traceback
 from . import (
     Logger,
     LogGroup,
-    LogSeverity,
     LogVerbosity,
     actions,
     events,
@@ -98,6 +97,7 @@ DEFAULT_COLORS = {
 
 
 ComposeResult = Iterable[Widget]
+RenderResult = RenderableType
 
 
 class AppError(Exception):
@@ -152,6 +152,7 @@ class App(Generic[ReturnType], DOMNode):
 
     SCREENS: dict[str, Screen] = {}
 
+    _BASE_PATH: str | None = None
     CSS_PATH: str | None = None
 
     focused: Reactive[Widget | None] = Reactive(None)
@@ -176,6 +177,7 @@ class App(Generic[ReturnType], DOMNode):
             markup=False,
             highlight=False,
             emoji=False,
+            legacy_windows=False,
         )
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
@@ -231,12 +233,6 @@ class App(Generic[ReturnType], DOMNode):
             else None
         )
         self._screenshot: str | None = None
-
-    def __init_subclass__(
-        cls, css_path: str | None = None, inherit_css: bool = True
-    ) -> None:
-        super().__init_subclass__(inherit_css=inherit_css)
-        cls.CSS_PATH = css_path
 
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
@@ -487,7 +483,6 @@ class App(Generic[ReturnType], DOMNode):
         self,
         group: LogGroup,
         verbosity: LogVerbosity,
-        severity: LogSeverity,
         *objects: Any,
         _textual_calling_frame: inspect.FrameInfo | None = None,
         **kwargs,
@@ -523,7 +518,6 @@ class App(Generic[ReturnType], DOMNode):
                     DevtoolsLog(objects, caller=_textual_calling_frame),
                     group,
                     verbosity,
-                    severity,
                 )
             else:
                 output = " ".join(str(arg) for arg in objects)
@@ -536,7 +530,6 @@ class App(Generic[ReturnType], DOMNode):
                     DevtoolsLog(output, caller=_textual_calling_frame),
                     group,
                     verbosity,
-                    severity,
                 )
         except Exception as error:
             self._handle_exception(error)
@@ -546,8 +539,12 @@ class App(Generic[ReturnType], DOMNode):
         self.dark = not self.dark
 
     def action_screenshot(self, filename: str | None, path: str = "~/") -> None:
-        """Action to save a screenshot."""
-        self.bell()
+        """Save an SVG "screenshot". This action will save a SVG file containing the current contents of the screen.
+
+        Args:
+            filename (str | None, optional): Filename of screenshot, or None to auto-generate. Defaults to None.
+            path (str, optional): Path to directory. Defaults to "~/".
+        """
         self.save_screenshot(filename, path)
 
     def export_screenshot(self, *, title: str | None = None) -> str:
@@ -566,6 +563,7 @@ class App(Generic[ReturnType], DOMNode):
             force_terminal=True,
             color_system="truecolor",
             record=True,
+            legacy_windows=False,
         )
         screen_render = self.screen._compositor.render(full=True)
         console.print(screen_render)
@@ -583,7 +581,7 @@ class App(Generic[ReturnType], DOMNode):
             filename (str | None, optional): Filename of SVG screenshot, or None to auto-generate
                 a filename with the date and time. Defaults to None.
             path (str, optional): Path to directory for output. Defaults to current working directory.
-            time_format(str, optional): Time format to use if filename is None. Defaults to "%Y-%m-%d %X %f".
+            time_format (str, optional): Time format to use if filename is None. Defaults to "%Y-%m-%d %X %f".
 
         Returns:
             str: Filename of screenshot.
@@ -673,6 +671,9 @@ class App(Generic[ReturnType], DOMNode):
                                 events.Key(self, key, key if len(key) == 1 else None)
                             )
                             await asyncio.sleep(0.01)
+
+                    await app._animator.wait_for_idle()
+
                     if screenshot:
                         self._screenshot = self.export_screenshot(
                             title=screenshot_title
@@ -980,7 +981,7 @@ class App(Generic[ReturnType], DOMNode):
                 finally:
                     self.mouse_over = None
         else:
-            if self.mouse_over != widget:
+            if self.mouse_over is not widget:
                 try:
                     if self.mouse_over is not None:
                         await self.mouse_over._forward_event(events.Leave(self))
@@ -1102,6 +1103,8 @@ class App(Generic[ReturnType], DOMNode):
         process_messages = super()._process_messages
 
         async def run_process_messages():
+            compose_event = events.Compose(sender=self)
+            await self._dispatch_message(compose_event)
             mount_event = events.Mount(sender=self)
             await self._dispatch_message(mount_event)
 
@@ -1171,10 +1174,9 @@ class App(Generic[ReturnType], DOMNode):
 
         self.set_timer(screenshot_timer, on_screenshot, name="screenshot timer")
 
-    def _on_mount(self) -> None:
+    def _on_compose(self) -> None:
         widgets = self.compose()
-        if widgets:
-            self.mount_all(widgets)
+        self.mount_all(widgets)
 
     def _on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
@@ -1212,6 +1214,8 @@ class App(Generic[ReturnType], DOMNode):
         apply_stylesheet = self.stylesheet.apply
 
         for widget_id, widget in name_widgets:
+            if not isinstance(widget, Widget):
+                raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
                 if widget_id is not None:
                     widget.id = widget_id
@@ -1302,21 +1306,6 @@ class App(Generic[ReturnType], DOMNode):
                 self._end_update()
             console.file.flush()
 
-    def measure(self, renderable: RenderableType, max_width=100_000) -> int:
-        """Get the optimal width for a widget or renderable.
-
-        Args:
-            renderable (RenderableType): A renderable (including Widget)
-            max_width ([type], optional): Maximum width. Defaults to 100_000.
-
-        Returns:
-            int: Number of cells required to render.
-        """
-        measurement = Measurement.get(
-            self.console, self.console.options.update(max_width=max_width), renderable
-        )
-        return measurement.maximum
-
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given coordinates.
 
@@ -1331,7 +1320,8 @@ class App(Generic[ReturnType], DOMNode):
 
     def bell(self) -> None:
         """Play the console 'bell'."""
-        self.console.bell()
+        if not self.is_headless:
+            self.console.bell()
 
     async def press(self, key: str) -> bool:
         """Handle a key press.
@@ -1353,7 +1343,7 @@ class App(Generic[ReturnType], DOMNode):
     async def on_event(self, event: events.Event) -> None:
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
-        if isinstance(event, events.Mount):
+        if isinstance(event, events.Compose):
             screen = Screen(id="_default")
             self._register(self, screen)
             self._screen_stack.append(screen)
@@ -1380,30 +1370,43 @@ class App(Generic[ReturnType], DOMNode):
             await super().on_event(event)
 
     async def action(
-        self, action: str, default_namespace: object | None = None
-    ) -> None:
+        self,
+        action: str | tuple[str, tuple[str, ...]],
+        default_namespace: object | None = None,
+    ) -> bool:
         """Perform an action.
 
         Args:
             action (str): Action encoded in a string.
             default_namespace (object | None): Namespace to use if not provided in the action,
                 or None to use app. Defaults to None.
+
+        Returns:
+            bool: True if the event has handled.
         """
-        target, params = actions.parse(action)
+        if isinstance(action, str):
+            target, params = actions.parse(action)
+        else:
+            target, params = action
+        implicit_destination = True
         if "." in target:
             destination, action_name = target.split(".", 1)
             if destination not in self._action_targets:
                 raise ActionError("Action namespace {destination} is not known")
             action_target = getattr(self, destination)
+            implicit_destination = True
         else:
             action_target = default_namespace or self
             action_name = target
 
-        await self._dispatch_action(action_target, action_name, params)
+        handled = await self._dispatch_action(action_target, action_name, params)
+        if not handled and implicit_destination and not isinstance(action_target, App):
+            handled = await self.app._dispatch_action(self.app, action_name, params)
+        return handled
 
     async def _dispatch_action(
         self, namespace: object, action_name: str, params: Any
-    ) -> None:
+    ) -> bool:
         log(
             "<action>",
             namespace=namespace,
@@ -1417,6 +1420,8 @@ class App(Generic[ReturnType], DOMNode):
             log(f"<action> {action_name!r} has no target")
         if callable(method):
             await invoke(method, *params)
+            return True
+        return False
 
     async def _broker_event(
         self, event_name: str, event: events.Event, default_namespace: object | None
@@ -1441,7 +1446,7 @@ class App(Generic[ReturnType], DOMNode):
             return False
         else:
             event.stop()
-        if isinstance(action, str):
+        if isinstance(action, (str, tuple)):
             await self.action(action, default_namespace=default_namespace)
         elif callable(action):
             await action()
@@ -1461,7 +1466,8 @@ class App(Generic[ReturnType], DOMNode):
         elif event.key == "shift+tab":
             self.focus_previous()
         else:
-            await self.press(event.key)
+            if not (await self.press(event.key)):
+                await self.dispatch_key(event)
 
     async def _on_shutdown_request(self, event: events.ShutdownRequest) -> None:
         log("shutdown request")
@@ -1488,15 +1494,22 @@ class App(Generic[ReturnType], DOMNode):
         await self.press(key)
 
     async def action_quit(self) -> None:
+        """Quit the app as soon as possible."""
         await self.shutdown()
 
     async def action_bang(self) -> None:
         1 / 0
 
     async def action_bell(self) -> None:
+        """Play the terminal 'bell'."""
         self.bell()
 
     async def action_focus(self, widget_id: str) -> None:
+        """Focus the given widget.
+
+        Args:
+            widget_id (str): ID of widget to focus.
+        """
         try:
             node = self.query(f"#{widget_id}").first()
         except NoMatchingNodesError:
@@ -1532,7 +1545,7 @@ class App(Generic[ReturnType], DOMNode):
     def _on_terminal_supports_synchronized_output(
         self, message: messages.TerminalSupportsSynchronizedOutput
     ) -> None:
-        log("[b green]SynchronizedOutput mode is supported")
+        log.system("[b green]SynchronizedOutput mode is supported")
         self._sync_available = True
 
     def _begin_update(self) -> None:

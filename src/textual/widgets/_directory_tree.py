@@ -7,6 +7,7 @@ import os.path
 
 from rich.console import RenderableType
 import rich.repr
+
 from rich.text import Text
 
 from .. import events
