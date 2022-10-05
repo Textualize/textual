@@ -301,7 +301,7 @@ We'll also add a slight tint using `tint: magenta 40%;` to draw attention to it.
 
 === "grid_layout5_col_span.py"
 
-    ```python 
+    ```python
     --8<-- "docs/examples/guide/layout/grid_layout5_col_span.py"
     ```
 
@@ -544,7 +544,7 @@ The example below shows how an advanced layout can be built by combining the var
 
 === "combining_layouts.css"
 
-    ```sass 
+    ```sass
     --8<-- "docs/examples/guide/layout/combining_layouts.css"
     ```
 

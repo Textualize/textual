@@ -663,8 +663,12 @@ class App(Generic[ReturnType], DOMNode):
                     await asyncio.sleep(0.01)
                     for key in press:
                         if key == "_":
-                            print("(pause)")
+                            print("(pause 50ms)")
                             await asyncio.sleep(0.05)
+                        elif key.startswith("wait:"):
+                            _, wait_ms = key.split(":")
+                            print(f"(pause {wait_ms}ms)")
+                            await asyncio.sleep(float(wait_ms) / 1000)
                         else:
                             print(f"press {key!r}")
                             driver.send_event(
