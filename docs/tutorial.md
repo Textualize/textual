@@ -161,7 +161,7 @@ We've imported two new widgets in this code: `Button`, which creates a clickable
 
 We've defined an empty `TimeDisplay` widget by extending `Static`. We will flesh this out later. 
 
-The Stopwatch widget also class extends `Static`. This class has a `compose()` method which yields child widgets, consisting of three `Button` objects and a single `TimeDisplay`. These widgets will form the stopwatch in our sketch.
+The Stopwatch widget class also extends `Static`. This class has a `compose()` method which yields child widgets, consisting of three `Button` objects and a single `TimeDisplay` object. These widgets will form the stopwatch in our sketch.
 
 #### The buttons
 
