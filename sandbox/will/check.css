@@ -1,11 +1,10 @@
 Screen {
-    layout: center;
+    align: center middle;
 }
 
 Container {
     width: 50;
     height: 15;
     background: $boost;
-    layout: center;
-    
+    align: center middle;
 }
