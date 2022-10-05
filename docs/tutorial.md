@@ -432,7 +432,7 @@ Let's use these methods to implement adding and removing stopwatches to our app.
 
 Here's a summary of the changes:
 
-- The Container object in StopWatchApp grew an ID of "timers"
+- The Container object in StopWatchApp grew a "timers" ID.
 - Added `action_add_stopwatch` to add a new stopwatch.
 - Added `action_remove_stopwatch` to remove a stopwatch.
 - Added keybindings for the actions.
