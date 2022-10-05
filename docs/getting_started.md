@@ -40,7 +40,7 @@ pip install textual==0.2.0b3
 
 ## Textual CLI
 
-If you installed the dev dependencies you have have access to the `textual` CLI command. There are a number of sub-commands which will aid you in building Textual apps.
+If you installed the dev dependencies you have access to the `textual` CLI command. There are a number of sub-commands which will aid you in building Textual apps.
 
 ```bash
 textual --help
