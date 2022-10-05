@@ -25,14 +25,18 @@ You can install Textual via PyPI.
 If you plan on developing Textual apps, then you should install `textual[dev]`. The `[dev]` part installs a few extra dependencies for development.
 
 ```bash
-pip install "textual[dev]"
+pip install "textual[dev]==0.2.0b1"
 ```
 
 If you only plan on _running_ Textual apps, then you can drop the `[dev]` part:
 
 ```bash
-pip install textual
+pip install textual==0.2.0.b1
 ```
+
+!!! important
+
+    There may be a more recent beta version since the time of writing. Check the [release history](https://pypi.org/project/textual/#history) for a more recent version.
 
 ## Textual CLI
 
