@@ -230,7 +230,7 @@ async = ["aiofiles (>=0.7,<1.0)"]
 
 [[package]]
 name = "identify"
-version = "2.5.5"
+version = "2.5.6"
 description = "File identification library for Python"
 category = "dev"
 optional = false
@@ -842,7 +842,7 @@ dev = ["aiohttp", "click", "msgpack"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "d976cf5f1d28001eecafb074b02e644f16c971828be5a115d1c3b9b2db49fc70"
+content-hash = "6289417d4b26235ab102bacd8444ece650647bfd11e60b2b26709664052a28c0"
 
 [metadata.files]
 aiohttp = []
