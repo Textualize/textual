@@ -153,7 +153,7 @@ Textual has a builtin `Button` widget which takes care of the first three compon
 
 Let's add those to the app. Just a skeleton for now, we will add the rest of the features as we go.
 
-```python title="stopwatch02.py" hl_lines="3 6-7 10-18 30"
+```python title="stopwatch02.py" hl_lines="2-3 6-7 10-18 30"
 --8<-- "docs/examples/tutorial/stopwatch02.py"
 ```
 
