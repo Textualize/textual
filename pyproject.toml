@@ -2,9 +2,10 @@
 name = "textual"
 version = "0.2.0b1"
 homepage = "https://github.com/Textualize/textual"
-description = "Text User Interface using Rich"
-authors = ["Will McGugan <willmcgugan@gmail.com>"]
+description = "Modern Text User Interface framework"
+authors = ["Will McGugan <will@textualize.io>"]
 license = "MIT"
+readme = "README.md"
 classifiers = [
     "Development Status :: 1 - Planning",
     "Environment :: Console",
