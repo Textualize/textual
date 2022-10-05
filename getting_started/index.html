@@ -2788,6 +2788,10 @@
         
       
         
+      
+        
+      
+        
           
         
       
@@ -2982,11 +2986,55 @@
   
   
     <li class="md-nav__item">
+      <a href="../reference/footer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Footer
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../reference/geometry/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Geometry
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/header/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Header
     
   </span>
   
@@ -3304,11 +3352,15 @@
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <p>You can install Textual via PyPI.</p>
 <p>If you plan on developing Textual apps, then you should install <code>textual[dev]</code>. The <code>[dev]</code> part installs a few extra dependencies for development.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip install <span class="s2">&quot;textual[dev]&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip install <span class="s2">&quot;textual[dev]==0.2.0b1&quot;</span>
 </code></pre></div>
 <p>If you only plan on <em>running</em> Textual apps, then you can drop the <code>[dev]</code> part:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip install textual
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip install <span class="nv">textual</span><span class="o">==</span><span class="m">0</span>.2.0.b1
 </code></pre></div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>There may be a more recent beta version since the time of writing. Check the <a href="https://pypi.org/project/textual/#history">release history</a> for a more recent version.</p>
+</div>
 <h2 id="textual-cli">Textual CLI<a class="headerlink" href="#textual-cli" title="Permanent link">&para;</a></h2>
 <p>If you installed the dev dependencies you have have access to the <code>textual</code> CLI command. There are a number of sub-commands which will aid you in building Textual apps.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>textual --help
