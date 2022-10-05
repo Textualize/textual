@@ -47,7 +47,7 @@ The app class has a new `SCREENS` class variable. Textual uses this class variab
 
 ## Named screens
 
-Named screens can be defined with the apps `SCREENS` class variables. This is typically used for screens that exists for the lifetime of your app. The name of the screen may be used interchangeably with screen objects in much of the screen API.
+You can associate a screen with a name by defining a `SCREENS` class variable in your app, which should be dict that maps names on to Screen objects. The name of the screen may be used interchangeably with screen objects in much of the screen API.
 
 You can also _install_ new named screens dynamically with the [install_screen][textual.app.App.install_screen] method. The following example installs the `BSOD` screen in a mount handler rather than from the `SCREENS` variable.
 
