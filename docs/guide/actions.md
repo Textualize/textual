@@ -131,9 +131,25 @@ Textual supports the following builtin actions which are defined on the app.
     options:
         show_root_heading: false
 
+### Push screen
+
+::: textual.app.App.action_push_screen
+
+
+### Pop screen
+
+::: textual.app.App.action_pop_screen
+
+
 ### Screenshot
 
 ::: textual.app.App.action_screenshot
+
+
+### Switch screen
+
+::: textual.app.App.action_switch_screen
+
 
 ### Toggle_dark
 

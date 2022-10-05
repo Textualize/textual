@@ -10,7 +10,7 @@ from .. import events
 from .._segment_tools import line_crop
 from ..binding import Binding
 from ..geometry import Size
-from ..message import Message, MessageTarget
+from ..message import Message
 from ..reactive import reactive
 from ..widget import Widget
 
