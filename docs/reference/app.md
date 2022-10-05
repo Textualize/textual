@@ -1,1 +1,1 @@
-::: textual.app.App
+::: textual.app

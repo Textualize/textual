@@ -223,7 +223,7 @@ class Size(NamedTuple):
 class Region(NamedTuple):
     """Defines a rectangular region.
 
-    A Region consists a coordinate (x and y) and dimensions (width and height).
+    A Region consists of a coordinate (x and y) and dimensions (width and height).
 
     ```
       (x, y)
