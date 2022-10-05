@@ -1,7 +1,5 @@
 # Input
 
-## Description
-
 A single-line text input widget.
 
 - [x] Focusable
@@ -13,7 +11,7 @@ The example below shows how you might create a simple form using two `Input` wid
 
 === "Output"
 
-    ```{.textual path="docs/examples/widgets/input.py"}
+    ```{.textual path="docs/examples/widgets/input.py" press="tab,D,a,r,r,e,n"}
     ```
 
 === "input.py"
@@ -25,7 +23,7 @@ The example below shows how you might create a simple form using two `Input` wid
 ## Reactive Attributes
 
 | Name              | Type   | Default | Description                                                     |
-|-------------------|--------|---------|-----------------------------------------------------------------|
+| ----------------- | ------ | ------- | --------------------------------------------------------------- |
 | `cursor_blink`    | `bool` | `True`  | True if cursor blinking is enabled.                             |
 | `value`           | `str`  | `""`    | The value currently in the text input.                          |
 | `cursor_position` | `int`  | `0`     | The index of the cursor in the value string.                    |
@@ -43,7 +41,7 @@ The `Input.Changed` message is sent when the value in the text input changes.
 #### Attributes
 
 | attribute | type  | purpose                          |
-|-----------|-------|----------------------------------|
+| --------- | ----- | -------------------------------- |
 | `value`   | `str` | The new value in the text input. |
 
 
@@ -56,7 +54,7 @@ The `Input.Submitted` message is sent when you press ++enter++ with the text fie
 #### Attributes
 
 | attribute | type  | purpose                          |
-|-----------|-------|----------------------------------|
+| --------- | ----- | -------------------------------- |
 | `value`   | `str` | The new value in the text input. |
 
 

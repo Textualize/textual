@@ -93,7 +93,6 @@ nav:
     - "widgets/index.md"
     - "widgets/input.md"
     - "widgets/static.md"
-    - "widgets/input.md"
     - "widgets/tree_control.md"
   - Reference:
     - "reference/app.md"

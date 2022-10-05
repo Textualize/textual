@@ -1,7 +1,5 @@
 # Footer
 
-## Description
-
 A simple footer widget which is docked to the bottom of its parent container. Displays
 available keybindings for the currently focused widget.
 
@@ -27,7 +25,7 @@ widget. Notice how the `Footer` automatically displays the keybind.
 ## Reactive Attributes
 
 | Name            | Type  | Default | Description                                                                                               |
-|-----------------|-------|---------|-----------------------------------------------------------------------------------------------------------|
+| --------------- | ----- | ------- | --------------------------------------------------------------------------------------------------------- |
 | `highlight_key` | `str` | `None`  | Stores the currently highlighted key. This is typically the key the cursor is hovered over in the footer. |
 
 ## Messages

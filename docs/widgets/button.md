@@ -1,6 +1,5 @@
 # Button
 
-## Description
 
 A simple button widget which can be pressed using a mouse click or by pressing ++return++
 when it has focus.
@@ -33,7 +32,7 @@ Clicking any of the non-disabled buttons in the example app below will result in
 ## Reactive Attributes
 
 | Name       | Type   | Default     | Description                                                                                                                       |
-|------------|--------|-------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| ---------- | ------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | `label`    | `str`  | `""`        | The text that appears inside the button.                                                                                          |
 | `variant`  | `str`  | `"default"` | Semantic styling variant. One of `default`, `primary`, `success`, `warning`, `error`.                                             |
 | `disabled` | `bool` | `False`     | Whether the button is disabled or not. Disabled buttons cannot be focused or clicked, and are styled in a way that suggests this. |

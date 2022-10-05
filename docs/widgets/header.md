@@ -1,7 +1,5 @@
 # Header
 
-## Description
-
 A simple header widget which docks itself to the top of the parent container.
 
 - [ ] Focusable
@@ -25,7 +23,7 @@ The example below shows an app with a `Header`.
 ## Reactive Attributes
 
 | Name   | Type   | Default | Description                                                                                                                                                                                      |
-|--------|--------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------ | ------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `tall` | `bool` | `True`  | Whether the `Header` widget is displayed as tall or not. The tall variant is 3 cells tall by default. The non-tall variant is a single cell tall. This can be toggled by clicking on the header. |
 
 ## Messages

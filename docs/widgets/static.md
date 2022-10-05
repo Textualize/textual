@@ -1,8 +1,6 @@
 # Static
 
-## Description
-
-A widget which displays a static renderable content.
+A widget which displays static content.
 Can be used for simple text labels, but can also contain more complex Rich renderables.
 
 - [ ] Focusable
