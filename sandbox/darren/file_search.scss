@@ -1,12 +1,8 @@
 Screen {
- 
- 
+
 }
 
 #file_table_wrapper {
-  dock: bottom;
-  height: auto;
-  overflow: auto auto;
   scrollbar-color: $accent-darken-1;
 }
 
@@ -15,7 +11,5 @@ Screen {
 }
 
 #search_bar {
-  dock: bottom;
-  background: $accent;
   height: 1;
 }
