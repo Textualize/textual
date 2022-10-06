@@ -54,6 +54,7 @@ class HeaderTitle(Widget):
     HeaderTitle {
         content-align: center middle;
         width: 100%;
+        margin-right: 10;
     }
     """
 
@@ -88,10 +89,27 @@ class Header(Widget):
 
     DEFAULT_CLASSES = "-tall"
 
+    def __init__(
+        self,
+        show_clock: bool = False,
+        *,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ):
+        super().__init__(name=name, id=id, classes=classes)
+        self.show_clock = show_clock
+
+    def compose(self):
+        yield HeaderIcon()
+        yield HeaderTitle()
+        if self.show_clock:
+            yield HeaderClock()
+
     def watch_tall(self, tall: bool) -> None:
         self.set_class(tall, "-tall")
 
-    async def on_click(self, event):
+    def on_click(self):
         self.toggle_class("-tall")
 
     def on_mount(self) -> None:
@@ -103,8 +121,3 @@ class Header(Widget):
 
         watch(self.app, "title", set_title)
         watch(self.app, "sub_title", set_sub_title)
-
-    def compose(self):
-        yield HeaderIcon()
-        yield HeaderTitle()
-        yield HeaderClock()
