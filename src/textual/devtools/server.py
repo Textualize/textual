@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from aiohttp.web import run_app
 from aiohttp.web_app import Application
 from aiohttp.web_request import Request
@@ -42,7 +43,7 @@ def _run_devtools(verbose: bool, exclude: list[str] | None = None) -> None:
     def noop_print(_: str):
         return None
 
-    run_app(app, port=DEVTOOLS_PORT, print=noop_print)
+    run_app(app, port=DEVTOOLS_PORT, print=noop_print, loop=asyncio.get_event_loop())
 
 
 def _make_devtools_aiohttp_app(
