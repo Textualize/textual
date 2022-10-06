@@ -52,7 +52,7 @@ You can animate `float` values and any type which implements the `Animatable` pr
 
 To implement the `Animatable` protocol, add a `def blend(self: T, destination: T, factor: float) -> T` method to the class.
 The `blend` method should return a new object which represents `self` blended with `destination` by a factor of `factor`.
-The animator will repeatedly call this method to retrieve the current value to display for the current.
+The animator will repeatedly call this method to retrieve the current animated value.
 
 An example of an object which implements this protocol is [Color][textual.color.Color].
 It follows that you can use `animate` to animate from one `Color` to another.
@@ -131,7 +131,7 @@ You can preview the built-in easing functions by running `textual easing`, and c
 To run some code when the animation completes, you can pass a callable object as the `on_complete` argument to the `animate` method.
 Here's how we might extend the example above to ring the terminal bell when the animation ends:
 
-```python hl_lines="14"
+```python hl_lines="15"
 --8<-- "docs/examples/guide/animator/animation03.py"
 ```
 
