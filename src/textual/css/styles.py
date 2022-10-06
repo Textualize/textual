@@ -11,7 +11,7 @@ import rich.repr
 from rich.style import Style
 
 from .._types import CallbackType
-from .._animator import Animation, EasingFunction, BoundAnimator
+from .._animator import BoundAnimator, DEFAULT_EASING, Animatable, EasingFunction
 from ..color import Color
 from ..geometry import Offset, Spacing
 from ._style_properties import (
@@ -889,22 +889,44 @@ class RenderStyles(StylesBase):
         assert self.node is not None
         return self.node.rich_style
 
-    @property
-    def animate(self) -> BoundAnimator:
-        """Get an animator to animate style.
+    def animate(
+        self,
+        attribute: str,
+        value: float | Animatable,
+        *,
+        final_value: object = ...,
+        duration: float | None = None,
+        speed: float | None = None,
+        delay: float = 0.0,
+        easing: EasingFunction | str = DEFAULT_EASING,
+        on_complete: CallbackType | None = None,
+    ) -> None:
+        """Animate an attribute.
 
-        Example:
-            ```python
-            self.animate("brightness", 0.5)
-            ```
+        Args:
+            attribute (str): Name of the attribute to animate.
+            value (float | Animatable): The value to animate to.
+            final_value (object, optional): The final value of the animation. Defaults to `value` if not set.
+            duration (float | None, optional): The duration of the animate. Defaults to None.
+            speed (float | None, optional): The speed of the animation. Defaults to None.
+            delay (float, optional): A delay (in seconds) before the animation starts. Defaults to 0.0.
+            easing (EasingFunction | str, optional): An easing method. Defaults to "in_out_cubic".
+            on_complete (CallbackType | None, optional): A callable to invoke when the animation is finished. Defaults to None.
 
-        Returns:
-            BoundAnimator: An animator bound to this widget.
         """
         if self._animate is None:
             self._animate = self.node.app.animator.bind(self)
         assert self._animate is not None
-        return self._animate
+        self._animate(
+            attribute,
+            value,
+            final_value=final_value,
+            duration=duration,
+            speed=speed,
+            delay=delay,
+            easing=easing,
+            on_complete=on_complete,
+        )
 
     def __rich_repr__(self) -> rich.repr.Result:
         for rule_name in RULE_NAMES:
