@@ -38,12 +38,12 @@ class TableApp(App):
         table = self.table = DataTable(id="data")
         yield table
 
-        table.add_column("Foo", width=20)
-        table.add_column("Bar", width=60)
-        table.add_column("Baz", width=20)
-        table.add_column("Foo", width=16)
-        table.add_column("Bar", width=16)
-        table.add_column("Baz", width=16)
+        table.add_column("Foo")
+        table.add_column("Bar")
+        table.add_column("Baz")
+        table.add_column("Foo")
+        table.add_column("Bar")
+        table.add_column("Baz")
 
         for n in range(200):
             height = 1
