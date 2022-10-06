@@ -20,7 +20,7 @@ nav:
     - "guide/actions.md"
     - "guide/reactivity.md"
     - "guide/widgets.md"
-    - "guide/animator.md"
+    - "guide/animation.md"
     - "guide/screens.md"
   - How to:
     - "how-to/index.md"
@@ -95,7 +95,7 @@ nav:
     - "widgets/input.md"
     - "widgets/static.md"
     - "widgets/tree_control.md"
-  - Reference:
+  - Reference:    
     - "reference/app.md"
     - "reference/button.md"
     - "reference/color.md"

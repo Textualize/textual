@@ -22,7 +22,7 @@ from rich.style import Style
 from rich.text import Text
 
 from . import errors, events, messages
-from ._animator import BoundAnimator
+from ._animator import BoundAnimator, DEFAULT_EASING, Animatable, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._context import active_app
 from ._layout import Layout
@@ -36,6 +36,7 @@ from .dom import DOMNode, NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
+from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
 
@@ -816,22 +817,44 @@ class Widget(DOMNode):
         """
         return active_app.get().console
 
-    @property
-    def animate(self) -> BoundAnimator:
-        """Get an animator to animate attributes on this widget.
+    def animate(
+        self,
+        attribute: str,
+        value: float | Animatable,
+        *,
+        final_value: object = ...,
+        duration: float | None = None,
+        speed: float | None = None,
+        delay: float = 0.0,
+        easing: EasingFunction | str = DEFAULT_EASING,
+        on_complete: CallbackType | None = None,
+    ) -> None:
+        """Animate an attribute.
 
-        Example:
-            ```python
-            self.animate("brightness", 0.5)
-            ```
+        Args:
+            attribute (str): Name of the attribute to animate.
+            value (float | Animatable): The value to animate to.
+            final_value (object, optional): The final value of the animation. Defaults to `value` if not set.
+            duration (float | None, optional): The duration of the animate. Defaults to None.
+            speed (float | None, optional): The speed of the animation. Defaults to None.
+            delay (float, optional): A delay (in seconds) before the animation starts. Defaults to 0.0.
+            easing (EasingFunction | str, optional): An easing method. Defaults to "in_out_cubic".
+            on_complete (CallbackType | None, optional): A callable to invoke when the animation is finished. Defaults to None.
 
-        Returns:
-            BoundAnimator: An animator bound to this widget.
         """
         if self._animate is None:
             self._animate = self.app.animator.bind(self)
         assert self._animate is not None
-        return self._animate
+        self._animate(
+            attribute,
+            value,
+            final_value=final_value,
+            duration=duration,
+            speed=speed,
+            delay=delay,
+            easing=easing,
+            on_complete=on_complete,
+        )
 
     @property
     def _layout(self) -> Layout:

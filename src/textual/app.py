@@ -31,7 +31,7 @@ from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
 from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
-from ._animator import Animator
+from ._animator import Animator, DEFAULT_EASING, Animatable, EasingFunction
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
@@ -183,7 +183,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self._action_targets = {"app", "screen"}
         self._animator = Animator(self)
-        self.animate = self._animator.bind(self)
+        self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
         if title is None:
             self._title = f"{self.__class__.__name__}"
@@ -229,6 +229,42 @@ class App(Generic[ReturnType], DOMNode):
     title: Reactive[str] = Reactive("Textual")
     sub_title: Reactive[str] = Reactive("")
     dark: Reactive[bool] = Reactive(True)
+
+    def animate(
+        self,
+        attribute: str,
+        value: float | Animatable,
+        *,
+        final_value: object = ...,
+        duration: float | None = None,
+        speed: float | None = None,
+        delay: float = 0.0,
+        easing: EasingFunction | str = DEFAULT_EASING,
+        on_complete: CallbackType | None = None,
+    ) -> None:
+        """Animate an attribute.
+
+        Args:
+            attribute (str): Name of the attribute to animate.
+            value (float | Animatable): The value to animate to.
+            final_value (object, optional): The final value of the animation. Defaults to `value` if not set.
+            duration (float | None, optional): The duration of the animate. Defaults to None.
+            speed (float | None, optional): The speed of the animation. Defaults to None.
+            delay (float, optional): A delay (in seconds) before the animation starts. Defaults to 0.0.
+            easing (EasingFunction | str, optional): An easing method. Defaults to "in_out_cubic".
+            on_complete (CallbackType | None, optional): A callable to invoke when the animation is finished. Defaults to None.
+
+        """
+        self._animate(
+            attribute,
+            value,
+            final_value=final_value,
+            duration=duration,
+            speed=speed,
+            delay=delay,
+            easing=easing,
+            on_complete=on_complete,
+        )
 
     @property
     def devtools_enabled(self) -> bool:
