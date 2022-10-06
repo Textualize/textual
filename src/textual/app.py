@@ -1100,6 +1100,7 @@ class App(Generic[ReturnType], DOMNode):
             mount_event = events.Mount(sender=self)
             await self._dispatch_message(mount_event)
 
+            Reactive.initialize_object(self)
             self.title = self._title
             self.stylesheet.update(self)
             self.refresh()
