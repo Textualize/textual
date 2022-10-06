@@ -106,5 +106,5 @@ If the callback passed to `on_complete` is awaitable, then Textual will await it
 
 You can delay the start of an animation using the `delay` parameter of the `animate` method.
 This parameter accepts a `float` value representing the number of seconds to delay the animation by.
-For example, `self.box.styles.animate("opacity", value=0.0, duration=2.0, delay=5.0)` would delay the start of the animation by five seconds,
-meaning the total duration between making the call and the animation completing would be seven seconds.
+For example, `self.box.styles.animate("opacity", value=0.0, duration=2.0, delay=5.0)` delays the start of the animation by five seconds,
+meaning the total duration between making the call to `animate` and the animation completing is seven seconds.
