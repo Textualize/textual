@@ -642,6 +642,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
         async def run_app() -> None:
+
             if quit_after is not None:
                 self.set_timer(quit_after, self.shutdown)
             if press is not None:
@@ -1100,6 +1101,7 @@ class App(Generic[ReturnType], DOMNode):
             mount_event = events.Mount(sender=self)
             await self._dispatch_message(mount_event)
 
+            Reactive.initialize_object(self)
             self.title = self._title
             self.stylesheet.update(self)
             self.refresh()

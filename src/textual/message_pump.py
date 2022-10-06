@@ -286,6 +286,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def _start_messages(self) -> None:
         """Start messages task."""
+        Reactive.initialize_object(self)
         self._task = asyncio.create_task(self._process_messages())
 
     async def _process_messages(self) -> None:
@@ -303,7 +304,6 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
 
-        await Reactive.initialize_object(self)
         while not self._closed:
             try:
                 message = await self._get_message()
