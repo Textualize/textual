@@ -287,7 +287,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return cell_region
 
     def add_columns(self, *labels: TextType) -> None:
-        """Add a number of columns:
+        """Add a number of columns.
 
         Args:
             *labels: Column headers.
@@ -346,7 +346,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.check_idle()
 
     def add_rows(self, rows: Iterable[Iterable[CellType]]) -> None:
-        """Add a number of rows
+        """Add a number of rows.
 
         Args:
             rows (Iterable[Iterable[CellType]]): Iterable of rows. A row is an iterable of cells.
