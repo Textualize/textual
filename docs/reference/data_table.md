@@ -1,1 +1,1 @@
-::: textual.widget.DataTable
+::: textual.widgets.DataTable

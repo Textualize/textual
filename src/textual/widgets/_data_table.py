@@ -574,14 +574,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return segments
 
     def render_line(self, y: int) -> list[Segment]:
-        """Render a line of content.
-
-        Args:
-            y (int): Y Coordinate of line.
-
-        Returns:
-            list[Segment]: A rendered line.
-        """
         width, height = self.size
         scroll_x, scroll_y = self.scroll_offset
         fixed_top_row_count = sum(
