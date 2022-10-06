@@ -59,7 +59,7 @@ It follows that you can use `animate` to animate from one `Color` to another.
 
 ## Animating widget attributes
 
-You can animate non-`style` attributes on widgets too, assuming they implement `Animatable`.
+You can animate non-`style` attributes on widgets too, assuming they are `floats` or are `Animatable`.
 Again, the animation system will take care of updating the attribute on the widget as time progresses.
 
 If the attribute being animated is [reactive](./reactivity.md), Textual can refresh the display each time the animator updates the value.
