@@ -23,8 +23,7 @@ The app below contains a single `Static` widget which is immediately animated to
 --8<-- "docs/examples/guide/animator/animation01.py"
 ```
 
-Internally, the animator deals with updating the value of the `opacity` attribute
-on the `styles` object.
+Internally, the animator deals with updating the value of the `opacity` attribute on the `styles` object.
 In a single line, we've achieved a fading animation:
 
 
@@ -85,7 +84,11 @@ The example below shows how we can use the `linear` easing function to ensure ou
 
 Note that the only change we had to make was to pass `easing="linear"` into the `animate` method.
 
-You can preview the different easing functions by running `textual easing`, and clicking the buttons on the left of the window.
+!!! note
+
+    If you wish to use a custom easing function, you can pass a callable that accepts a `float` as input and returns a `float` as the argument for `easing`.
+
+You can preview the built-in easing functions by running `textual easing`, and clicking the buttons on the left of the window.
 
 ## Completion callbacks
 
@@ -98,3 +101,10 @@ Here's how we might extend the example above to ring the terminal bell when the 
 
 Awaitable callbacks are also supported.
 If the callback passed to `on_complete` is awaitable, then Textual will await it for you.
+
+## Delaying animations
+
+You can delay the start of an animation using the `delay` parameter of the `animate` method.
+This parameter accepts a `float` value representing the number of seconds to delay the animation by.
+For example, `self.box.styles.animate("opacity", value=0.0, duration=2.0, delay=5.0)` would delay the start of the animation by five seconds,
+meaning the total duration between making the call and the animation completing would be seven seconds.
