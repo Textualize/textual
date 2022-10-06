@@ -70,7 +70,11 @@ class HeaderTitle(Widget):
 
 
 class Header(Widget):
-    """A header widget with icon and clock."""
+    """A header widget with icon and clock.
+
+    Args:
+        show_clock (bool, optional): True if the clock should be shown on the right of the header.
+    """
 
     DEFAULT_CSS = """
     Header {
