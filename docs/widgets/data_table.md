@@ -35,4 +35,4 @@ The example below populates a table with CSV data.
 
 ## See Also
 
-* [Table][textual.widgets.DataTable] code reference
+* [DataTable][textual.widgets.DataTable] code reference
