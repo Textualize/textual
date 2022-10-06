@@ -7,7 +7,7 @@ Ths chapter discusses how to use Textual's animation system.
 
 Textual's animator can change an attribute from one value to another in fixed increments over a period of time. You can apply this to [styles](styles.md) such `offset` to move widgets around the screen, and `opacity` to create fading effects.
 
-Apps and widgets both have a [animate][textual.app.App.animate] method which will animate properties on those objects. Additionally, `styles` objects have an identical `animate` method which will animate styles.
+Apps and widgets both have an [animate][textual.app.App.animate] method which will animate properties on those objects. Additionally, `styles` objects have an identical `animate` method which will animate styles.
 
 Let's look at an example of how we can animate the opacity of a widget to make it fade out.
 The following example app contains a single `Static` widget which is immediately animated to an opacity of `0.0` (making it invisible) over a duration of two seconds.
