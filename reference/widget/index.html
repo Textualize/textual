@@ -828,11 +828,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/animator/" class="md-nav__link">
+      <a href="../../guide/animation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Animator
+    Animation
     
   </span>
   
@@ -4849,38 +4849,105 @@
 
 
 <h2 id="textual.widget.Widget.animate" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">animate</span><span class="p">()</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
+<code class="highlight language-python"><span class="n">animate</span><span class="p">(</span><span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">final_value</span><span class="o">=</span><span class="bp">Ellipsis</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">easing</span><span class="o">=</span><span class="n">DEFAULT_EASING</span><span class="p">,</span> <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 <a href="#textual.widget.Widget.animate" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
   <div class="doc doc-contents ">
   
-      <p>Get an animator to animate attributes on this widget.</p>
+      <p>Animate an attribute.</p>
 
-<details class="example">
-  <summary>Example</summary>
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="bp">self</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span><span class="s2">&quot;brightness&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
-</code></pre></div>
-</details>
-  <p><strong>Returns:</strong></p>
+  <p><strong>Parameters:</strong></p>
   <table>
     <thead>
       <tr>
-<th>Name</th>        <th>Type</th>
+        <th>Name</th>
+        <th>Type</th>
         <th>Description</th>
+        <th>Default</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-<td><code>BoundAnimator</code></td>          <td>
-                <code><span title="textual._animator.BoundAnimator">BoundAnimator</span></code>
+          <td><code>attribute</code></td>
+          <td>
+                <code>str</code>
           </td>
-          <td><p>An animator bound to this widget.</p></td>
+          <td><p>Name of the attribute to animate.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>value</code></td>
+          <td>
+                <code>float | <span title="textual._animator.Animatable">Animatable</span></code>
+          </td>
+          <td><p>The value to animate to.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>final_value</code></td>
+          <td>
+                <code>object</code>
+          </td>
+          <td><p>The final value of the animation. Defaults to <code>value</code> if not set.</p></td>
+          <td>
+                <code>Ellipsis</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>duration</code></td>
+          <td>
+                <code>float | None</code>
+          </td>
+          <td><p>The duration of the animate. Defaults to None.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>speed</code></td>
+          <td>
+                <code>float | None</code>
+          </td>
+          <td><p>The speed of the animation. Defaults to None.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>delay</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>A delay (in seconds) before the animation starts. Defaults to 0.0.</p></td>
+          <td>
+                <code>0.0</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>easing</code></td>
+          <td>
+                <code><span title="textual._animator.EasingFunction">EasingFunction</span> | str</code>
+          </td>
+          <td><p>An easing method. Defaults to "in_out_cubic".</p></td>
+          <td>
+                <code>DEFAULT_EASING</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>on_complete</code></td>
+          <td>
+                <code><span title="textual.messages.CallbackType">CallbackType</span> | None</code>
+          </td>
+          <td><p>A callable to invoke when the animation is finished. Defaults to None.</p></td>
+          <td>
+                <code>None</code>
+          </td>
         </tr>
     </tbody>
   </table>
