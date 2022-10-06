@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.widgets import Static, Footer
+from textual.widgets import Static, Footer, Header
 
 
 class JustABox(App):
@@ -12,6 +12,7 @@ class JustABox(App):
     ]
 
     def compose(self) -> ComposeResult:
+        yield Header()
         yield Static("Hello, world!", id="box1")
         yield Footer()
 
