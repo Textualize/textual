@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     Reactable = Union[Widget, App]
 
 
-ReactiveType = TypeVar("ReactiveType", covariant=True)
+ReactiveType = TypeVar("ReactiveType")
 
 
 T = TypeVar("T")
@@ -83,7 +83,7 @@ class Reactive(Generic[ReactiveType]):
         return cls(default, layout=False, repaint=False, init=True)
 
     @classmethod
-    async def initialize_object(cls, obj: object) -> None:
+    def initialize_object(cls, obj: object) -> None:
         """Call any watchers / computes for the first time.
 
         Args:

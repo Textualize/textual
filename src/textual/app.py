@@ -26,20 +26,11 @@ import nanoid
 import rich
 import rich.repr
 from rich.console import Console, RenderableType
-from rich.measure import Measurement
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
-from . import (
-    Logger,
-    LogGroup,
-    LogVerbosity,
-    actions,
-    events,
-    log,
-    messages,
-)
+from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
 from ._animator import Animator
 from ._callback import invoke
 from ._context import active_app
@@ -113,7 +104,7 @@ class ScreenError(Exception):
 
 
 class ScreenStackError(ScreenError):
-    pass
+    """Raised when attempting to pop the last screen from the stack."""
 
 
 ReturnType = TypeVar("ReturnType")
@@ -223,6 +214,7 @@ class App(Generic[ReturnType], DOMNode):
         self._installed_screens: WeakValueDictionary[
             str, Screen
         ] = WeakValueDictionary()
+        self._installed_screens.update(**self.SCREENS)
 
         self.devtools = DevtoolsClient()
         self._return_value: ReturnType | None = None
@@ -805,7 +797,7 @@ class App(Generic[ReturnType], DOMNode):
             try:
                 next_screen = self._installed_screens[screen]
             except KeyError:
-                raise KeyError("No screen called {screen!r} installed") from None
+                raise KeyError(f"No screen called {screen!r} installed") from None
         else:
             next_screen = screen
         if not next_screen.is_running:
@@ -833,7 +825,7 @@ class App(Generic[ReturnType], DOMNode):
         """Push a new screen on the screen stack.
 
         Args:
-            screen (Screen | str): A Screen instance or an id.
+            screen (Screen | str): A Screen instance or the name of an installed screen.
 
         """
         next_screen = self.get_screen(screen)
@@ -935,7 +927,7 @@ class App(Generic[ReturnType], DOMNode):
             widget (Widget): Widget to focus.
             scroll_visible (bool, optional): Scroll widget in to view.
         """
-        if widget == self.focused:
+        if widget is self.focused:
             # Widget is already focused
             return
 
@@ -1112,6 +1104,7 @@ class App(Generic[ReturnType], DOMNode):
             mount_event = events.Mount(sender=self)
             await self._dispatch_message(mount_event)
 
+            Reactive.initialize_object(self)
             self.title = self._title
             self.stylesheet.update(self)
             self.refresh()

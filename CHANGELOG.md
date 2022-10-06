@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.2.0] - Unreleased
 
+### Added
+
+- CSS support
+- Too numerous to mention
+
 ## [0.1.15] - 2022-01-31
 
 ### Added

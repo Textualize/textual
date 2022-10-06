@@ -1,6 +1,7 @@
 site_name: Textual
 site_url: https://textual.textualize.io/
 repo_url: https://github.com/textualize/textual/
+edit_uri: edit/css/docs/
 
 nav:
   - Introduction:
@@ -52,7 +53,7 @@ nav:
     - "events/screen_suspend.md"
     - "events/show.md"
   - Styles:
-    - "styles/index.md"    
+    - "styles/index.md"
     - "styles/align.md"
     - "styles/background.md"
     - "styles/border.md"
@@ -101,7 +102,9 @@ nav:
     - "reference/containers.md"
     - "reference/dom_node.md"
     - "reference/events.md"
+    - "reference/footer.md"
     - "reference/geometry.md"
+    - "reference/header.md"
     - "reference/index.md"
     - "reference/message_pump.md"
     - "reference/message.md"
@@ -179,7 +182,7 @@ plugins:
     handlers:
         python:
           options:
-            show_source: false          
+            show_source: false
             filters:
               - "!^_"
               - "^__init__$"

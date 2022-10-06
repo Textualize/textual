@@ -35,13 +35,13 @@ If you want to try the finished Stopwatch app and follow along with the code, fi
 === "HTTPS"
 
     ```bash
-    git clone https://github.com/Textualize/textual.git
+    git clone -b css https://github.com/Textualize/textual.git
     ```
 
 === "SSH"
 
     ```bash
-    git clone git@github.com:Textualize/textual.git
+    git clone -b css git@github.com:Textualize/textual.git
     ```
 
 === "GitHub CLI"
@@ -49,6 +49,7 @@ If you want to try the finished Stopwatch app and follow along with the code, fi
     ```bash
     gh repo clone Textualize/textual
     ```
+
 
 With the repository cloned, navigate to `docs/examples/tutorial` and run `stopwatch.py`.
 
@@ -152,7 +153,7 @@ Textual has a builtin `Button` widget which takes care of the first three compon
 
 Let's add those to the app. Just a skeleton for now, we will add the rest of the features as we go.
 
-```python title="stopwatch02.py" hl_lines="3 6-7 10-18 30"
+```python title="stopwatch02.py" hl_lines="2-3 6-7 10-18 30"
 --8<-- "docs/examples/tutorial/stopwatch02.py"
 ```
 
@@ -160,7 +161,7 @@ We've imported two new widgets in this code: `Button`, which creates a clickable
 
 We've defined an empty `TimeDisplay` widget by extending `Static`. We will flesh this out later. 
 
-The Stopwatch widget also class extends `Static`. This class has a `compose()` method which yields child widgets, consisting of three `Button` objects and a single `TimeDisplay`. These widgets will form the stopwatch in our sketch.
+The Stopwatch widget class also extends `Static`. This class has a `compose()` method which yields child widgets, consisting of three `Button` objects and a single `TimeDisplay` object. These widgets will form the stopwatch in our sketch.
 
 #### The buttons
 
@@ -377,7 +378,7 @@ We've seen how we can update widgets with a timer, but we still need to wire up 
 We need to be able to start, stop, and reset each stopwatch independently. We can do this by adding a few more methods to the `TimeDisplay` class.
 
 
-```python title="stopwatch06.py" hl_lines="14 30-44 50-61"
+```python title="stopwatch06.py" hl_lines="14 18 30-44 50-61"
 --8<-- "docs/examples/tutorial/stopwatch06.py"
 ```
 
@@ -431,6 +432,7 @@ Let's use these methods to implement adding and removing stopwatches to our app.
 
 Here's a summary of the changes:
 
+- The Container object in StopWatchApp grew a "timers" ID.
 - Added `action_add_stopwatch` to add a new stopwatch.
 - Added `action_remove_stopwatch` to remove a stopwatch.
 - Added keybindings for the actions.
