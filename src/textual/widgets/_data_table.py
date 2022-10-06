@@ -346,7 +346,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._require_update_dimensions = True
         self.check_idle()
 
-    def add_rows(self, rows: Iterable[Iterable[CellType]]) -> None:        
+    def add_rows(self, rows: Iterable[Iterable[CellType]]) -> None:
         """Add a number of rows.
 
         Args:
