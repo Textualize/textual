@@ -62,6 +62,8 @@ class Column:
 
     @property
     def render_width(self) -> int:
+        """Width in cells, required to render a column."""
+        # +2 is to account for space padding either side of the cell
         if self.auto_width:
             return self.content_width + 2
         else:
@@ -286,7 +288,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return cell_region
 
     def add_columns(self, *labels: TextType) -> None:
-        """Add a number of columns:
+        """Add a number of columns.
 
         Args:
             *labels: Column headers.
@@ -344,8 +346,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._require_update_dimensions = True
         self.check_idle()
 
-    def add_rows(self, rows: Iterable[Iterable[CellType]]) -> None:
-        """Add a number of rows
+    def add_rows(self, rows: Iterable[Iterable[CellType]]) -> None:        
+        """Add a number of rows.
 
         Args:
             rows (Iterable[Iterable[CellType]]): Iterable of rows. A row is an iterable of cells.
