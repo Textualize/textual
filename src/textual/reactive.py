@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     Reactable = Union[Widget, App]
 
 
-ReactiveType = TypeVar("ReactiveType", covariant=True)
+ReactiveType = TypeVar("ReactiveType")
 
 
 T = TypeVar("T")

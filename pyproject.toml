@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.2.0b4"
+version = "0.2.0b5"
 homepage = "https://github.com/Textualize/textual"
 description = "Modern Text User Interface framework"
 authors = ["Will McGugan <will@textualize.io>"]
@@ -19,14 +19,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 include = [
-    "src/textual/py.typed",
-    "src/textual/cli/py.typed",
-    "src/textual/css/py.typed",
-    "src/textual/devtools/py.typed",
-    "src/textual/drivers/py.typed",
-    "src/textual/layouts/py.typed",
-    "src/textual/renderables/py.typed",
-    "src/textual/widgets/py.typed"    
+    "src/textual/py.typed"   
 ]
 
 [tool.poetry.scripts]
