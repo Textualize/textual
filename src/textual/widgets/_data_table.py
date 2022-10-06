@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from itertools import chain
 import sys
-from typing import ClassVar, Generic, NamedTuple, TypeVar, cast
+from dataclasses import dataclass, field
+from itertools import chain, zip_longest
+from typing import ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
 
 from rich.console import RenderableType
 from rich.padding import Padding
@@ -12,17 +12,15 @@ from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text, TextType
 
-from .. import events
+from .. import events, messages
 from .._cache import LRUCache
+from .._profile import timer
 from .._segment_tools import line_crop
 from .._types import Lines
-from ..geometry import clamp, Region, Size, Spacing
+from ..geometry import Region, Size, Spacing, clamp
 from ..reactive import Reactive
-from .._profile import timer
+from ..render import measure
 from ..scroll_view import ScrollView
-
-from .. import messages
-
 
 if sys.version_info >= (3, 8):
     from typing import Literal
@@ -55,9 +53,19 @@ class Column:
     """Table column."""
 
     label: Text
-    width: int
+    width: int = 0
     visible: bool = False
     index: int = 0
+
+    content_width: int = 0
+    auto_width: bool = False
+
+    @property
+    def render_width(self) -> int:
+        if self.auto_width:
+            return self.content_width + 2
+        else:
+            return self.width + 2
 
 
 @dataclass
@@ -168,23 +176,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.rows: dict[int, Row] = {}
         self.data: dict[int, list[CellType]] = {}
         self.row_count = 0
-
         self._y_offsets: list[tuple[int, int]] = []
-
         self._row_render_cache: LRUCache[
             tuple[int, int, Style, int, int], tuple[Lines, Lines]
         ]
         self._row_render_cache = LRUCache(1000)
-
         self._cell_render_cache: LRUCache[tuple[int, int, Style, bool, bool], Lines]
         self._cell_render_cache = LRUCache(10000)
-
         self._line_cache: LRUCache[
             tuple[int, int, int, int, int, int, Style], list[Segment]
         ]
         self._line_cache = LRUCache(1000)
 
         self._line_no = 0
+        self._require_update_dimensions: bool = False
+        self._new_rows: set[int] = set()
 
     show_header = Reactive(True)
     fixed_rows = Reactive(0)
@@ -251,9 +257,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         column = clamp(column, self.fixed_columns, len(self.columns) - 1)
         return Coord(row, column)
 
-    def _update_dimensions(self) -> None:
+    def _update_dimensions(self, new_rows: Iterable[int]) -> None:
         """Called to recalculate the virtual (scrollable) size."""
-        total_width = sum(column.width for column in self.columns)
+        for row_index in new_rows:
+            for column, renderable in zip(
+                self.columns, self._get_row_renderables(row_index)
+            ):
+                content_width = measure(self.app.console, renderable, 1)
+                column.content_width = max(column.content_width, content_width)
+
+        total_width = sum(column.render_width for column in self.columns)
         self.virtual_size = Size(
             total_width,
             max(len(self._y_offsets), (self.header_height if self.show_header else 0)),
@@ -263,8 +276,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if row_index not in self.rows:
             return Region(0, 0, 0, 0)
         row = self.rows[row_index]
-        x = sum(column.width for column in self.columns[:column_index])
-        width = self.columns[column_index].width
+        x = sum(column.render_width for column in self.columns[:column_index])
+        width = self.columns[column_index].render_width
         height = row.height
         y = row.y
         if self.show_header:
@@ -272,25 +285,52 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cell_region = Region(x, y, width, height)
         return cell_region
 
-    def add_column(self, label: TextType, *, width: int = 10) -> None:
+    def add_columns(self, *labels: TextType) -> None:
+        """Add a number of columns:
+
+        Args:
+            *labels: Column headers.
+
+        """
+        for label in labels:
+            self.add_column(label, width=None)
+
+    def add_column(self, label: TextType, *, width: int | None = None) -> None:
         """Add a column to the table.
 
         Args:
-            label (TextType): A str or Text object containing the label (shown top of column)
-            width (int, optional): Width of the column in cells. Defaults to 10.
+            label (TextType): A str or Text object containing the label (shown top of column).
+            width (int, optional): Width of the column in cells or None to fit content. Defaults to None.
         """
         text_label = Text.from_markup(label) if isinstance(label, str) else label
-        self.columns.append(Column(text_label, width, index=len(self.columns)))
-        self._update_dimensions()
-        self.refresh()
+
+        content_width = measure(self.app.console, text_label, 1)
+        if width is None:
+            column = Column(
+                text_label,
+                content_width,
+                index=len(self.columns),
+                content_width=content_width,
+                auto_width=True,
+            )
+        else:
+            column = Column(
+                text_label, width, content_width=content_width, index=len(self.columns)
+            )
+
+        self.columns.append(column)
+        self._require_update_dimensions = True
+        self.check_idle()
 
     def add_row(self, *cells: CellType, height: int = 1) -> None:
         """Add a row.
 
         Args:
+            *cells: Positional arguments should contain cell data.
             height (int, optional): The height of a row (in lines). Defaults to 1.
         """
         row_index = self.row_count
+
         self.data[row_index] = list(cells)
         self.rows[row_index] = Row(row_index, height, self._line_no)
 
@@ -299,10 +339,34 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         self.row_count += 1
         self._line_no += height
-        self._update_dimensions()
-        self.refresh()
+
+        self._new_rows.add(row_index)
+        self._require_update_dimensions = True
+        self.check_idle()
+
+    def add_rows(self, rows: Iterable[Iterable[CellType]]) -> None:
+        """Add a number of rows
+
+        Args:
+            rows (Iterable[Iterable[CellType]]): Iterable of rows. A row is an iterable of cells.
+        """
+        for row in rows:
+            self.add_row(*row)
+
+    def on_idle(self) -> None:
+        if self._require_update_dimensions:
+            self._require_update_dimensions = False
+            new_rows = self._new_rows.copy()
+            self._new_rows.clear()
+            self._update_dimensions(new_rows)
 
     def refresh_cell(self, row_index: int, column_index: int) -> None:
+        """Refresh a cell.
+
+        Args:
+            row_index (int): Row index.
+            column_index (int): Column index.
+        """
         if row_index < 0 or column_index < 0:
             return
         region = self._get_cell_region(row_index, column_index)
@@ -330,7 +394,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if data is None:
             return [empty for _ in self.columns]
         else:
-            return [default_cell_formatter(datum) or empty for datum in data]
+            return [
+                Text() if datum is None else default_cell_formatter(datum) or empty
+                for datum, _ in zip_longest(data, range(len(self.columns)))
+            ]
 
     def _render_cell(
         self,
@@ -401,7 +468,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             fixed_style = self.get_component_styles("datatable--fixed").rich_style
             fixed_style += Style.from_meta({"fixed": True})
             fixed_row = [
-                render_cell(row_index, column.index, fixed_style, column.width)[line_no]
+                render_cell(row_index, column.index, fixed_style, column.render_width)[
+                    line_no
+                ]
                 for column in self.columns[: self.fixed_columns]
             ]
         else:
@@ -423,7 +492,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 row_index,
                 column.index,
                 row_style,
-                column.width,
+                column.render_width,
                 cursor=cursor_column == column.index,
                 hover=hover_column == column.index,
             )[line_no]
@@ -490,7 +559,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             cursor_column=cursor_column,
             hover_column=hover_column,
         )
-        fixed_width = sum(column.width for column in self.columns[: self.fixed_columns])
+        fixed_width = sum(
+            column.render_width for column in self.columns[: self.fixed_columns]
+        )
 
         fixed_line: list[Segment] = list(chain.from_iterable(fixed)) if fixed else []
         scrollable_line: list[Segment] = list(chain.from_iterable(scrollable))
@@ -534,9 +605,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             except KeyError:
                 pass
 
-    async def on_key(self, event) -> None:
-        await self.dispatch_key(event)
-
     def _get_cell_border(self) -> Spacing:
         top = self.header_height if self.show_header else 0
         top += sum(
@@ -544,7 +612,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             for row_index in range(self.fixed_rows)
             if row_index in self.rows
         )
-        left = sum(column.width for column in self.columns[: self.fixed_columns])
+        left = sum(column.render_width for column in self.columns[: self.fixed_columns])
         return Spacing(top, 0, 0, left)
 
     def _scroll_cursor_in_to_view(self, animate: bool = False) -> None:
