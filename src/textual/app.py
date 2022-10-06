@@ -642,7 +642,6 @@ class App(Generic[ReturnType], DOMNode):
             )
 
         async def run_app() -> None:
-
             if quit_after is not None:
                 self.set_timer(quit_after, self.shutdown)
             if press is not None:
