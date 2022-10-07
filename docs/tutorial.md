@@ -320,7 +320,7 @@ The rule is `"display: none"` which tells Textual to hide the button.
 
 ### Manipulating classes
 
-Modifying a widget's CSS class is a convenient way to modify visuals without introducing a lot of messy display related code.
+Modifying a widget's CSS classes is a convenient way to update visuals without introducing a lot of messy display related code.
 
 You can add and remove CSS classes with the [add_class()][textual.dom.DOMNode.add_class] and [remove_class()][textual.dom.DOMNode.remove_class] methods. We will use these methods to connect the started state to the Start / Stop buttons.
 
