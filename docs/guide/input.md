@@ -125,7 +125,7 @@ Note how the footer displays bindings and makes them clickable.
 !!! tip
 
     Multiple keys can be bound to a single action comma-separating them.
-    For example, `("r,t", "add_bar('red')", "Add Red")` means both ++r++ and ++t++ are bound to `add_bar`.
+    For example, `("r,t", "add_bar('red')", "Add Red")` means both ++r++ and ++t++ are bound to `add_bar('red')`.
 
 ### Binding class
 
