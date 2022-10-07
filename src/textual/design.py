@@ -15,7 +15,7 @@ NUMBER_OF_SHADES = 3
 # Where no content exists
 DEFAULT_DARK_BACKGROUND = "#121212"
 # What text usually goes on top off
-DEFAULT_DARK_SURFACE = "#121212"
+DEFAULT_DARK_SURFACE = "#1e1e1e"
 
 DEFAULT_LIGHT_SURFACE = "#f5f5f5"
 DEFAULT_LIGHT_BACKGROUND = "#efefef"
@@ -125,10 +125,10 @@ class ColorSystem:
 
         foreground = background.inverse
 
-        boost = self.boost or background.get_contrast_text(1.0).with_alpha(0.07)
+        boost = self.boost or background.get_contrast_text(1.0).with_alpha(0.04)
 
         if self.panel is None:
-            panel = surface.blend(primary, luminosity_spread)
+            panel = surface.blend(primary, 0.1)
             if dark:
                 panel += boost
         else:
