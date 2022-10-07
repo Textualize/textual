@@ -86,7 +86,15 @@ def run_app(import_name: str, dev: bool, press: str) -> None:
         sys.exit(1)
 
     press_keys = press.split(",") if press else None
-    app.run(press=press_keys)
+    result = app.run(press=press_keys)
+
+    if result is not None:
+        from rich.console import Console
+        from rich.pretty import Pretty
+
+        console = Console()
+        console.print("[b]The app returned:")
+        console.print(Pretty(result))
 
 
 @run.command("borders")

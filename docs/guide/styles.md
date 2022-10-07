@@ -62,12 +62,12 @@ In addition to color names, you can also use any of the following ways of expres
 
 - RGB hex colors starts with a `#` followed by three pairs of one or two hex digits; one for the red, green, and blue color components. For example, `#f00` is an intense red color, and `#9932CC` is *dark orchid*.
 - RGB decimal color start with `rgb` followed by a tuple of three numbers in the range 0 to 255. For example `rgb(255,0,0)` is intense red, and `rgb(153,50,204)` is *dark orchid*.
-- HSL colors start with `hsl` followed by a angle between 0 and 360 and two percentage values, representing Hue, Saturation and Lightness. For example `hsl(0,100%,50%)` is intense red and `hsl(280,60%,49%)` is *dark orchid*
+- HSL colors start with `hsl` followed by a angle between 0 and 360 and two percentage values, representing Hue, Saturation and Lightness. For example `hsl(0,100%,50%)` is intense red and `hsl(280,60%,49%)` is *dark orchid*.
 
 
 The background and color styles also accept a [Color][textual.color.Color] object which can be used to create colors dynamically.
 
-The following example adds three widgets and sets color styles.
+The following example adds three widgets and sets their color styles.
 
 ```python title="colors01.py" hl_lines="16-19"
 --8<-- "docs/examples/guide/styles/colors01.py"
@@ -103,7 +103,7 @@ Notice that an alpha of 0.1 the background almost matches the screen, but at 1.0
 
 ## Dimensions
 
-Widgets occupy a rectangular region of the screen, which may be as small as a single character or as large as the screen (potentially *larger* if [scrolling](#) is enabled).
+Widgets occupy a rectangular region of the screen, which may be as small as a single character or as large as the screen (potentially *larger* if [scrolling](../styles/overflow.md) is enabled).
 
 ### Box Model
 
@@ -146,7 +146,7 @@ Let's set the height to auto and see what happens.
 --8<-- "docs/examples/guide/styles/dimensions02.py"
 ```
 
-If you run this you will see the height of the widget now grows to accommodate the full text.:
+If you run this you will see the height of the widget now grows to accommodate the full text:
 
 ```{.textual path="docs/examples/guide/styles/dimensions02.py"}
 ```
@@ -195,7 +195,7 @@ Let's look at an example. We will create two widgets, one with a height of `"2fr
 --8<-- "docs/examples/guide/styles/dimensions04.py"
 ```
 
-The total `fr` units for height is 3. The first widget will have a screen height of two thirds because its height style is set to `2fr`. The second widget's height styles is `1fr` so its screen height will be a third. Here's what that looks like.
+The total `fr` units for height is 3. The first widget will have a screen height of two thirds because its height style is set to `2fr`. The second widget's height styles is `1fr` so its screen height will be one third. Here's what that looks like.
 
 ```{.textual path="docs/examples/guide/styles/dimensions04.py"}
 ```
@@ -222,7 +222,7 @@ Notice the additional space around the text:
 ```{.textual path="docs/examples/guide/styles/padding01.py"}
 ```
 
-You can also set padding to a tuple of two integers which will apply padding to the top/bottom and left/right edges. The following example sets padding to `(2, 4)` which adds two rows to the top and bottom of the widget, and 4 columns to the left and right of the widget.
+You can also set padding to a tuple of *two* integers which will apply padding to the top/bottom and left/right edges. The following example sets padding to `(2, 4)` which adds two rows to the top and bottom of the widget, and 4 columns to the left and right of the widget.
 
 ```python title="padding02.py" hl_lines="22"
 --8<-- "docs/examples/guide/styles/padding02.py"
@@ -233,7 +233,7 @@ Compare the output of this example to the previous example:
 ```{.textual path="docs/examples/guide/styles/padding02.py"}
 ```
 
-You can also set padding to a tuple of four values which applies padding to each edge individually. The first value is the padding for the top of the widget, followed by the right of the widget, then bottom, then left.
+You can also set padding to a tuple of *four* values which applies padding to each edge individually. The first value is the padding for the top of the widget, followed by the right of the widget, then bottom, then left.
 
 ### Border 
 
