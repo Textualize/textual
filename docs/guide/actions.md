@@ -102,7 +102,7 @@ The following example defines a custom widget with its own `set_background` acti
     --8<-- "docs/examples/guide/actions/actions05.py"
     ```
 
-=== "actions05.sass"
+=== "actions05.css"
 
     ```sass title="actions05.css" 
     --8<-- "docs/examples/guide/actions/actions05.css"
