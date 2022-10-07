@@ -5,7 +5,6 @@ A message pump is a class that processes messages.
 It is a base class for the App, Screen, and Widgets.
 
 """
-
 from __future__ import annotations
 
 import asyncio
@@ -18,6 +17,8 @@ from weakref import WeakSet
 from . import events, log, messages, Logger
 from ._callback import invoke
 from ._context import NoActiveAppError, active_app
+from .errors import DuplicateKeyHandlers
+from .keys import _get_key_aliases
 from .timer import Timer, TimerCallback
 from .case import camel_to_snake
 from .events import Event
@@ -417,7 +418,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                 # parent is sender, so we stop propagation after parent
                 message.stop()
             if self.is_parent_active and not self._parent._closing:
-                await message._bubble_to(self._parent)
+                await message.bubble_to(self._parent)
 
     def check_idle(self) -> None:
         """Prompt the message pump to call idle if the queue is empty."""
@@ -526,20 +527,52 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Dispatch a key event to method.
 
         This method will call the method named 'key_<event.key>' if it exists.
+        Some keys have aliases. The first alias found will be invoked if it exists.
+        If multiple handlers exist that match the key, an exception is raised.
 
         Args:
             event (events.Key): A key event.
 
         Returns:
             bool: True if key was handled, otherwise False.
+
+        Raises:
+            DuplicateKeyHandlers: When there's more than 1 handler that could handle this key.
         """
-        key_method = getattr(self, f"key_{event.key_name}", None) or getattr(
-            self, f"_key_{event.key_name}", None
-        )
-        if key_method is not None:
-            await invoke(key_method, event)
-            return True
-        return False
+
+        def get_key_handler(key: str) -> Callable | None:
+            """Look for the public and private handler methods by name on self."""
+            public_handler = getattr(self, f"key_{key}", None)
+            private_handler = getattr(self, f"_key_{key}", None)
+            if public_handler and private_handler:
+                raise DuplicateKeyHandlers(
+                    f"Conflicting handlers for key press {key!r}. "
+                    f"We found both {public_handler!r} and {private_handler!r}, and didn't know which to call. "
+                    f"Consider combining them into a single handler. ",
+                )
+
+            return public_handler or private_handler
+
+        invoked = False
+        key_name = event.key_name
+        if not key_name:
+            return invoked
+
+        key_aliases = _get_key_aliases(key_name)
+        for key_alias in key_aliases:
+            key_method = get_key_handler(key_alias.replace("+", "_"))
+            if key_method is not None:
+                if invoked:
+                    # Ensure we only invoke a single handler, raise an exception if the user
+                    # has supplied multiple handlers which could handle the current key press.
+                    raise DuplicateKeyHandlers(
+                        f"Conflicting key handlers found for a single key press. "
+                        f"The conflicting handler is {key_alias!r}."
+                    )
+                await invoke(key_method, event)
+                invoked = True
+
+        return invoked
 
     async def on_timer(self, event: events.Timer) -> None:
         event.prevent_default()
