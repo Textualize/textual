@@ -1552,12 +1552,23 @@ class App(Generic[ReturnType], DOMNode):
                 self.set_focus(node)
 
     async def action_switch_screen(self, screen: str) -> None:
+        """Switches to another screen.
+
+        Args:
+            screen (str): Name of the screen.
+        """
         self.switch_screen(screen)
 
     async def action_push_screen(self, screen: str) -> None:
+        """Pushes a screen on to the screen stack and makes it active.
+
+        Args:
+            screen (str): Name of the screen.
+        """
         self.push_screen(screen)
 
     async def action_pop_screen(self) -> None:
+        """Removes the topmost screen and makes the new topmost screen active."""
         self.pop_screen()
 
     async def action_back(self) -> None:

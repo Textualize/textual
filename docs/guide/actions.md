@@ -8,11 +8,11 @@ Action methods are methods on your app or widgets prefixed with `action_`. Aside
 
 !!! information
 
-    Action methods may be coroutines (methods with the `async` keyword).
+    Action methods may be coroutines (defined with the `async` keyword).
 
 Let's write an app with a simple action.
 
-```python title="actions01.py" hl_lines="6-8"
+```python title="actions01.py" hl_lines="6-8 12"
 --8<-- "docs/examples/guide/actions/actions01.py"
 ```
 
@@ -36,7 +36,7 @@ Action strings have a simple syntax, which for the most part replicates Python's
 
 !!! important
 
-    As much as they look like Python code, Textual does **not** call Python's `eval` function or similar to compile action strings.
+    As much as they *look* like Python code, Textual does **not** call Python's `eval` function or similar to compile action strings.
 
 Action strings have the following format:
 
@@ -75,7 +75,7 @@ When you click any of the links, Textual runs the `"set_background"` action to c
 
 ## Bindings
 
-Textual will also run actions that are bound to keys. The following example adds key [bindings](./input.md#bindings) for the ++r++, ++g++, and ++b++ keys which call the `"set_background"` action.
+Textual will also run actions bound to keys. The following example adds key [bindings](./input.md#bindings) for the ++r++, ++g++, and ++b++ keys which call the `"set_background"` action.
 
 === "actions04.py"
 
@@ -102,7 +102,7 @@ The following example defines a custom widget with its own `set_background` acti
     --8<-- "docs/examples/guide/actions/actions05.py"
     ```
 
-=== "actions05.py"
+=== "actions05.sass"
 
     ```sass title="actions05.css" 
     --8<-- "docs/examples/guide/actions/actions05.css"
@@ -158,6 +158,3 @@ Textual supports the following builtin actions which are defined on the app.
 ### Quit
 
 ::: textual.app.App.action_quit
-
-
-*TODO:* document more actions

@@ -111,7 +111,7 @@ class MyWidget(Widget):
 
 ### Layout
 
-The smart refresh feature will update the content area of a widget, but will not change its size. If modifying an attribute should change the size of the widget, you should set `layout=True` on the reactive attribute. This ensures that your CSS layout will update accordingly.
+The smart refresh feature will update the content area of a widget, but will not change its size. If modifying an attribute should change the size of the widget, you can set `layout=True` on the reactive attribute. This ensures that your CSS layout will update accordingly.
 
 The following example modifies "refresh01.py" so that the greeting has an automatic width.
 
@@ -138,9 +138,11 @@ If you type in to the input now, the greeting will expand to fit the content. If
 
 ## Validation
 
-The next superpower we will look at is _validation_. If you add a method that begins with `validate_` followed by the name of your attribute, it will be called when you assign a value to that attribute. This method should accept the incoming value as a positional argument, and return the value to set (which may be the same or a different value).
+The next superpower we will look at is _validation_, which can check and potentially modify a value you assign to a reactive attribute.
 
-A common use for this is to restrict numbers to a given range. The following example keeps a count. There is a button to increase the count, and a button to decrease it. 
+If you add a method that begins with `validate_` followed by the name of your attribute, it will be called when you assign a value to that attribute. This method should accept the incoming value as a positional argument, and return the value to set (which may be the same or a different value).
+
+A common use for this is to restrict numbers to a given range. The following example keeps a count. There is a button to increase the count, and a button to decrease it. The validation ensures that the count will never go above 10 or below zero.
 
 === "validate01.py"
 
@@ -159,7 +161,7 @@ A common use for this is to restrict numbers to a given range. The following exa
     ```{.textual path="docs/examples/guide/reactivity/validate01.py"}
     ```
 
-If you click the buttons in the above example it will show the current count. When `self.count` is modified in the button handler, Textual runs `validate_count` which limits self.count` to a maximum of 10, and stops it going below zero.
+If you click the buttons in the above example it will show the current count. When `self.count` is modified in the button handler, Textual runs `validate_count` which performs the validation to limit the value of count.
 
 ## Watch methods
 
@@ -218,8 +220,10 @@ The following example uses a computed attribute. It displays three inputs for th
     ```{.textual path="docs/examples/guide/reactivity/computed01.py"}
     ```
 
-Note the `compute_color` method which combines the color components into a [Color][textual.color.Color] object. When the _result_ of this method changes, Textual calls `watch_color` which uses the new color as a background.
+Note the `compute_color` method which combines the color components into a [Color][textual.color.Color] object. It will be recalculated when any of the `red` , `green`, or `blue` attributes are modified.
+
+When the result of `compute_color` changes, Textual will also call `watch_color` since `color` still has the [watch method](#watch-methods) superpower.
 
 !!! note
 
-    You should avoid doing anything slow or cpu-intensive in a compute method. Textual calls compute methods on an object when _any_ reactive attribute changes, so it can known when it changes.
+    It is best to avoid doing anything slow or cpu-intensive in a compute method. Textual calls compute methods on an object when _any_ reactive attribute changes.

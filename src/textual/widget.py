@@ -147,7 +147,7 @@ class Widget(DOMNode):
     """Widget may receive focus."""
     can_focus_children: bool = True
     """Widget's children may receive focus."""
-    expand = Reactive(True)
+    expand = Reactive(False)
     """Rich renderable may expand."""
     shrink = Reactive(True)
     """Rich renderable may shrink."""
