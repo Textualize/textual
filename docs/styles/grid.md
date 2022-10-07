@@ -51,4 +51,4 @@ The spacing between grid cells is because of the `grid-gutter` declaration.
 
 !!! warning
 
-    Grid properties will only work when the layout of the widget is set to `grid`.
+    The properties listed on this page will only work when the layout is `grid`.
