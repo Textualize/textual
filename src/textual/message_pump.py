@@ -588,7 +588,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 def _raise_duplicate_key_handlers_error(
     key_name: str, first_handler: str, second_handler: str
 ) -> None:
-    """Raises exception if user presses a key and there are multiple candidate key handler methods for it."""
+    """Raise exception for case where user presses a key and there are multiple candidate key handler methods for it."""
     raise DuplicateKeyHandlers(
         f"Multiple handlers for key press {key_name!r}.\n"
         f"We found both {first_handler!r} and {second_handler!r}, "
