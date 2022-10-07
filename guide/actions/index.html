@@ -3701,7 +3701,7 @@
 <p>Action methods are methods on your app or widgets prefixed with <code>action_</code>. Aside from the prefix these are regular methods which you could call directly if you wished.</p>
 <div class="admonition information">
 <p class="admonition-title">Information</p>
-<p>Action methods may be coroutines (methods with the <code>async</code> keyword).</p>
+<p>Action methods may be coroutines (defined with the <code>async</code> keyword).</p>
 </div>
 <p>Let's write an app with a simple action.</p>
 <div class="highlight"><span class="filename">actions01.py</span><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
@@ -3715,8 +3715,8 @@
 </span><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="k">def</span> <span class="nf">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">events</span><span class="o">.</span><span class="n">Key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;r&quot;</span><span class="p">:</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">action_set_background</span><span class="p">(</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="hll">            <span class="bp">self</span><span class="o">.</span><span class="n">action_set_background</span><span class="p">(</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+</span><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
 <a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
 <a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">ActionsApp</span><span class="p">()</span>
@@ -3749,7 +3749,7 @@
 <p>Action strings have a simple syntax, which for the most part replicates Python's function call syntax.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>As much as they look like Python code, Textual does <strong>not</strong> call Python's <code>eval</code> function or similar to compile action strings.</p>
+<p>As much as they <em>look</em> like Python code, Textual does <strong>not</strong> call Python's <code>eval</code> function or similar to compile action strings.</p>
 </div>
 <p>Action strings have the following format:</p>
 <ul>
@@ -3969,7 +3969,7 @@
 </div>
 <p>When you click any of the links, Textual runs the <code>"set_background"</code> action to change the background to the given color and plays the terminals bell.</p>
 <h2 id="bindings">Bindings<a class="headerlink" href="#bindings" title="Permanent link">&para;</a></h2>
-<p>Textual will also run actions that are bound to keys. The following example adds key <a href="../input/#bindings">bindings</a> for the <span class="keys"><kbd class="key-r">R</kbd></span>, <span class="keys"><kbd class="key-g">G</kbd></span>, and <span class="keys"><kbd class="key-b">B</kbd></span> keys which call the <code>"set_background"</code> action.</p>
+<p>Textual will also run actions bound to keys. The following example adds key <a href="../input/#bindings">bindings</a> for the <span class="keys"><kbd class="key-r">R</kbd></span>, <span class="keys"><kbd class="key-g">G</kbd></span>, and <span class="keys"><kbd class="key-b">B</kbd></span> keys which call the <code>"set_background"</code> action.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">actions04.py</label><label for="__tabbed_2_2">Output</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
@@ -4165,7 +4165,7 @@
 <h2 id="namespaces">Namespaces<a class="headerlink" href="#namespaces" title="Permanent link">&para;</a></h2>
 <p>Textual will look for action methods on the widget or app where they are used. If we were to create a <a href="../widgets/#custom-widgets">custom widget</a> it can have its own set of actions.</p>
 <p>The following example defines a custom widget with its own <code>set_background</code> action.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">actions05.py</label><label for="__tabbed_3_2">actions05.py</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">actions05.py</label><label for="__tabbed_3_2">actions05.sass</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><span class="filename">actions05.py</span><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
@@ -4253,6 +4253,32 @@
 
 <a id="textual.app.App.action_push_screen"></a>
   <div class="doc doc-contents first">
+  
+      <p>Pushes a screen on to the screen stack and makes it active.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>screen</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Name of the screen.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
   </div>
 
@@ -4264,6 +4290,8 @@
 
 <a id="textual.app.App.action_pop_screen"></a>
   <div class="doc doc-contents first">
+  
+      <p>Removes the topmost screen and makes the new topmost screen active.</p>
 
   </div>
 
@@ -4322,6 +4350,32 @@
 
 <a id="textual.app.App.action_switch_screen"></a>
   <div class="doc doc-contents first">
+  
+      <p>Switches to another screen.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>screen</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Name of the screen.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
   </div>
 
@@ -4351,7 +4405,7 @@
 
   </div>
 
-</div><p><em>TODO:</em> document more actions</p>
+</div>
 
 
 

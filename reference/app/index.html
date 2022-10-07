@@ -2848,6 +2848,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.action_pop_screen" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_pop_screen()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.action_push_screen" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_push_screen()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.action_quit" class="md-nav__link">
     <span class="md-ellipsis">
       action_quit()
@@ -2860,6 +2878,15 @@
   <a href="#textual.app.App.action_screenshot" class="md-nav__link">
     <span class="md-ellipsis">
       action_screenshot()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.action_switch_screen" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_switch_screen()
     </span>
   </a>
   
@@ -3698,6 +3725,24 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.action_pop_screen" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_pop_screen()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.action_push_screen" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_push_screen()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.action_quit" class="md-nav__link">
     <span class="md-ellipsis">
       action_quit()
@@ -3710,6 +3755,15 @@
   <a href="#textual.app.App.action_screenshot" class="md-nav__link">
     <span class="md-ellipsis">
       action_screenshot()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.action_switch_screen" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_switch_screen()
     </span>
   </a>
   
@@ -4379,6 +4433,74 @@ or None to use app. Defaults to None.</p></td>
 
 
 
+<h3 id="textual.app.App.action_pop_screen" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">action_pop_screen</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.app.App.action_pop_screen" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Removes the topmost screen and makes the new topmost screen active.</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.app.App.action_push_screen" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">action_push_screen</span><span class="p">(</span><span class="n">screen</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.app.App.action_push_screen" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Pushes a screen on to the screen stack and makes it active.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>screen</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Name of the screen.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.app.App.action_quit" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">action_quit</span><span class="p">()</span></code>
   
@@ -4440,6 +4562,52 @@ or None to use app. Defaults to None.</p></td>
           <td><p>Path to directory. Defaults to "~/".</p></td>
           <td>
                 <code>&#39;~/&#39;</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.app.App.action_switch_screen" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">action_switch_screen</span><span class="p">(</span><span class="n">screen</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.app.App.action_switch_screen" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Switches to another screen.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>screen</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>Name of the screen.</p></td>
+          <td>
+              <em>required</em>
           </td>
         </tr>
     </tbody>
