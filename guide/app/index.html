@@ -3688,7 +3688,7 @@
 <p>One such event is the <em>mount</em> event which is sent to an application after it enters application mode. You can respond to this event by defining a method called <code>on_mount</code>.</p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>You may have noticed we use the term "send" and "sent" in relation to event handler methods in preference to "calling". This is because Textual uses a message passing system where events are passed (or <em>sent</em>) between components. We will cover the details in <a href="../events/">events</a>.</p>
+<p>You may have noticed we use the term "send" and "sent" in relation to event handler methods in preference to "calling". This is because Textual uses a message passing system where events are passed (or <em>sent</em>) between components. See <a href="../events/">events</a> for details.</p>
 </div>
 <p>Another such event is the <em>key</em> event which is sent when the user presses a key. The following example contains handlers for both those events:</p>
 <div class="highlight"><span class="filename">event01.py</span><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
@@ -3879,21 +3879,20 @@
 <p class="admonition-title">Note</p>
 <p>It is unusual (but not unprecedented) for a method's parameters to affect how it is called. Textual accomplishes this by inspecting the method prior to calling it.</p>
 </div>
-<p>For some events contains additional information. In the case of <a class="autorefs autorefs-internal" href="../../reference/events/#textual.events.Key">Key</a> it will contain the key that was pressed.</p>
-<p>The <code>on_key</code> method above changes the background color if any of the keys from <span class="keys"><kbd class="key-0">0</kbd></span> to <span class="keys"><kbd class="key-9">9</kbd></span> are pressed.</p>
+<p>Some events contain additional information you can inspect in the handler. The <a class="autorefs autorefs-internal" href="../../reference/events/#textual.events.Key">Key</a> event has a <code>key</code> attribute which is the name of the key that was pressed. The <code>on_key</code> method above uses this attribute to change the background color if any of the keys from <span class="keys"><kbd class="key-0">0</kbd></span> to <span class="keys"><kbd class="key-9">9</kbd></span> are pressed.</p>
 <h3 id="async-events">Async events<a class="headerlink" href="#async-events" title="Permanent link">&para;</a></h3>
-<p>Textual is powered by Python's <a href="https://docs.python.org/3/library/asyncio.html">asyncio</a> framework which uses the <code>async</code> and <code>await</code> keywords to coordinate events.</p>
-<p>Textual knows to <em>await</em> your event handlers if they are coroutines (i.e. prefixed with the <code>async</code> keyword).</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Don't worry if you aren't familiar with the async programming in Python. You can build many apps without using them.</p>
+<p>Textual is powered by Python's <a href="https://docs.python.org/3/library/asyncio.html">asyncio</a> framework which uses the <code>async</code> and <code>await</code> keywords.</p>
+<p>Textual knows to <em>await</em> your event handlers if they are coroutines (i.e. prefixed with the <code>async</code> keyword). Regular functions are generally fine unless you plan on integrating other async libraries (such as <a href="https://www.python-httpx.org/">httpx</a> for reading data from the internet).</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For a friendly introduction to async programming in Python, see FastAPI's <a href="https://fastapi.tiangolo.com/async/">concurrent burgers</a> article.</p>
 </div>
 <h2 id="widgets">Widgets<a class="headerlink" href="#widgets" title="Permanent link">&para;</a></h2>
 <p>Widgets are self-contained components responsible for generating the output for a portion of the screen. Widgets respond to events in much the same way as the App. Most apps that do anything interesting will contain at least one (and probably many) widgets which together form a User Interface.</p>
 <p>Widgets can be as simple as a piece of text, a button, or a fully-fledge component like a text editor or file browser (which may contain widgets of their own).</p>
 <h3 id="composing">Composing<a class="headerlink" href="#composing" title="Permanent link">&para;</a></h3>
 <p>To add widgets to your app implement a <a class="autorefs autorefs-internal" href="../../reference/app/#textual.app.App.compose"><code>compose()</code></a> method which should return an iterable of Widget instances. A list would work, but it is convenient to yield widgets, making the method a <em>generator</em>.</p>
-<p>The following example imports a builtin Welcome widget and yields it from compose.</p>
+<p>The following example imports a builtin Welcome widget and yields it from <code>App.compose()</code>.</p>
 <div class="highlight"><span class="filename">widgets01.py</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Welcome</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
@@ -3910,7 +3909,7 @@
 <a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">WelcomeApp</span><span class="p">()</span>
 <a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
-<p>When you run this code, Textual will <em>mount</em> the Welcome widget which contains a Markdown content area and a button:</p>
+<p>When you run this code, Textual will <em>mount</em> the Welcome widget which contains Markdown content and a button:</p>
 <p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
     <!-- Generated with Rich https://www.textualize.io -->
     <style>
@@ -4672,9 +4671,9 @@
 <a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="k">class</span> <span class="nc">QuestionApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
 <a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="hll">    <span class="n">CSS</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 </span><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="hll"><span class="s2">    Screen {</span>
-</span><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="hll"><span class="s2">        layout: table;</span>
-</span><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="hll"><span class="s2">        table-size: 2;</span>
-</span><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="hll"><span class="s2">        table-gutter: 2; </span>
+</span><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="hll"><span class="s2">        layout: grid;</span>
+</span><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="hll"><span class="s2">        grid-size: 2;</span>
+</span><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="hll"><span class="s2">        grid-gutter: 2; </span>
 </span><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="hll"><span class="s2">        padding: 2;   </span>
 </span><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="hll"><span class="s2">    }</span>
 </span><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="hll"><span class="s2">    #question {</span>

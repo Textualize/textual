@@ -3912,10 +3912,10 @@
 <ul>
 <li>RGB hex colors starts with a <code>#</code> followed by three pairs of one or two hex digits; one for the red, green, and blue color components. For example, <code>#f00</code> is an intense red color, and <code>#9932CC</code> is <em>dark orchid</em>.</li>
 <li>RGB decimal color start with <code>rgb</code> followed by a tuple of three numbers in the range 0 to 255. For example <code>rgb(255,0,0)</code> is intense red, and <code>rgb(153,50,204)</code> is <em>dark orchid</em>.</li>
-<li>HSL colors start with <code>hsl</code> followed by a angle between 0 and 360 and two percentage values, representing Hue, Saturation and Lightness. For example <code>hsl(0,100%,50%)</code> is intense red and <code>hsl(280,60%,49%)</code> is <em>dark orchid</em></li>
+<li>HSL colors start with <code>hsl</code> followed by a angle between 0 and 360 and two percentage values, representing Hue, Saturation and Lightness. For example <code>hsl(0,100%,50%)</code> is intense red and <code>hsl(280,60%,49%)</code> is <em>dark orchid</em>.</li>
 </ul>
 <p>The background and color styles also accept a <a class="autorefs autorefs-internal" href="../../reference/color/#textual.color.Color">Color</a> object which can be used to create colors dynamically.</p>
-<p>The following example adds three widgets and sets color styles.</p>
+<p>The following example adds three widgets and sets their color styles.</p>
 <div class="highlight"><span class="filename">colors01.py</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span> <span class="nn">textual.color</span> <span class="kn">import</span> <span class="n">Color</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
@@ -4290,7 +4290,7 @@
 </svg>
 </p>
 <h2 id="dimensions">Dimensions<a class="headerlink" href="#dimensions" title="Permanent link">&para;</a></h2>
-<p>Widgets occupy a rectangular region of the screen, which may be as small as a single character or as large as the screen (potentially <em>larger</em> if <a href="#">scrolling</a> is enabled).</p>
+<p>Widgets occupy a rectangular region of the screen, which may be as small as a single character or as large as the screen (potentially <em>larger</em> if <a href="../../styles/overflow/">scrolling</a> is enabled).</p>
 <h3 id="box-model">Box Model<a class="headerlink" href="#box-model" title="Permanent link">&para;</a></h3>
 <p>The following styles influence the dimensions of a widget.</p>
 <ul>
@@ -4534,7 +4534,7 @@
 <a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">DimensionsApp</span><span class="p">()</span>
 <a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
-<p>If you run this you will see the height of the widget now grows to accommodate the full text.:</p>
+<p>If you run this you will see the height of the widget now grows to accommodate the full text:</p>
 <p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
     <!-- Generated with Rich https://www.textualize.io -->
     <style>
@@ -5297,7 +5297,7 @@
 <a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">DimensionsApp</span><span class="p">()</span>
 <a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
-<p>The total <code>fr</code> units for height is 3. The first widget will have a screen height of two thirds because its height style is set to <code>2fr</code>. The second widget's height styles is <code>1fr</code> so its screen height will be a third. Here's what that looks like.</p>
+<p>The total <code>fr</code> units for height is 3. The first widget will have a screen height of two thirds because its height style is set to <code>2fr</code>. The second widget's height styles is <code>1fr</code> so its screen height will be one third. Here's what that looks like.</p>
 <p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
     <!-- Generated with Rich https://www.textualize.io -->
     <style>
@@ -5641,7 +5641,7 @@
     </g>
 </svg>
 </p>
-<p>You can also set padding to a tuple of two integers which will apply padding to the top/bottom and left/right edges. The following example sets padding to <code>(2, 4)</code> which adds two rows to the top and bottom of the widget, and 4 columns to the left and right of the widget.</p>
+<p>You can also set padding to a tuple of <em>two</em> integers which will apply padding to the top/bottom and left/right edges. The following example sets padding to <code>(2, 4)</code> which adds two rows to the top and bottom of the widget, and 4 columns to the left and right of the widget.</p>
 <div class="highlight"><span class="filename">padding02.py</span><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
@@ -5823,7 +5823,7 @@
     </g>
 </svg>
 </p>
-<p>You can also set padding to a tuple of four values which applies padding to each edge individually. The first value is the padding for the top of the widget, followed by the right of the widget, then bottom, then left.</p>
+<p>You can also set padding to a tuple of <em>four</em> values which applies padding to each edge individually. The first value is the padding for the top of the widget, followed by the right of the widget, then bottom, then left.</p>
 <h3 id="border">Border<a class="headerlink" href="#border" title="Permanent link">&para;</a></h3>
 <p>The <a href="../../styles/border/">border</a> style draws a border around a widget. To add a border set <code>syles.border</code> to a tuple of two values. The first value is the border type, which should be a string. The second value is the border color which will accept any value that works with  <a href="../../styles/color/">color</a> and <a href="../../styles/background/">background</a>.</p>
 <p>The following example adds a border around a widget:</p>
