@@ -540,39 +540,38 @@ class MessagePump(metaclass=MessagePumpMeta):
             DuplicateKeyHandlers: When there's more than 1 handler that could handle this key.
         """
 
-        def get_key_handler(key: str) -> Callable | None:
+        def get_key_handler(pump: MessagePump, key: str) -> Callable | None:
             """Look for the public and private handler methods by name on self."""
-            public_handler = getattr(self, f"key_{key}", None)
-            private_handler = getattr(self, f"_key_{key}", None)
+            public_handler_name = f"key_{key}"
+            public_handler = getattr(pump, public_handler_name, None)
+
+            private_handler_name = f"_key_{key}"
+            private_handler = getattr(pump, private_handler_name, None)
+
             if public_handler and private_handler:
-                raise DuplicateKeyHandlers(
-                    f"Conflicting handlers for key press {key!r}. "
-                    f"We found both {public_handler!r} and {private_handler!r}, and didn't know which to call. "
-                    f"Consider combining them into a single handler. ",
+                _raise_duplicate_key_handlers_error(
+                    key, public_handler_name, private_handler_name
                 )
 
             return public_handler or private_handler
 
-        invoked = False
+        invoked_method = None
         key_name = event.key_name
         if not key_name:
-            return invoked
+            return invoked_method is not None
 
-        key_aliases = _get_key_aliases(key_name)
+        key_aliases = _get_key_aliases(event.key)
         for key_alias in key_aliases:
-            key_method = get_key_handler(key_alias.replace("+", "_"))
+            key_method = get_key_handler(self, key_alias.replace("+", "_"))
             if key_method is not None:
-                if invoked:
-                    # Ensure we only invoke a single handler, raise an exception if the user
-                    # has supplied multiple handlers which could handle the current key press.
-                    raise DuplicateKeyHandlers(
-                        f"Conflicting key handlers found for a single key press. "
-                        f"The conflicting handler is {key_alias!r}."
+                if invoked_method:
+                    _raise_duplicate_key_handlers_error(
+                        key_name, invoked_method.__name__, key_method.__name__
                     )
                 await invoke(key_method, event)
-                invoked = True
+                invoked_method = key_method
 
-        return invoked
+        return invoked_method is not None
 
     async def on_timer(self, event: events.Timer) -> None:
         event.prevent_default()
@@ -584,3 +583,15 @@ class MessagePump(metaclass=MessagePumpMeta):
                 raise CallbackError(
                     f"unable to run callback {event.callback!r}; {error}"
                 )
+
+
+def _raise_duplicate_key_handlers_error(
+    key_name: str, first_handler: str, second_handler: str
+) -> None:
+    """Raises exception if user presses a key and there are multiple candidate key handler methods for it."""
+    raise DuplicateKeyHandlers(
+        f"Multiple handlers for key press {key_name!r}.\n"
+        f"We found both {first_handler!r} and {second_handler!r}, "
+        f"and didn't know which to call.\n"
+        f"Consider combining them into a single handler.",
+    )
