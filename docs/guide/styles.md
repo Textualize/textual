@@ -2,7 +2,6 @@
 
 In this chapter will explore how you can apply styles to your application to create beautiful user interfaces.
 
-
 ## Styles object
 
 Every Textual widget class provides a `styles` object which contains a number of attributes. These attributes tell Textual how the widget should be displayed. Setting any of these attributes will update the screen accordingly.

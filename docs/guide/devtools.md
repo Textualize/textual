@@ -6,8 +6,6 @@
     
     See [getting started](../getting_started.md#installation) for details.
 
-
-
 Textual comes with a command line application of the same name. The `textual` command is a super useful tool that will help you to build apps.
 
 Take a moment to look through the available sub-commands. There will be even more helpful tools here in the future.
