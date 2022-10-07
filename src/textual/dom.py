@@ -690,7 +690,7 @@ class DOMNode(MessagePump):
         """Get a DOM query matching a selector.
 
         Args:
-            selector (str, optional): A CSS selector or `None` for all nodes. Defaults to None.
+            selector (str | type | None, optional): A CSS selector or `None` for all nodes. Defaults to None.
 
         Returns:
             DOMQuery: A query object.
@@ -725,7 +725,7 @@ class DOMNode(MessagePump):
         """Get the first Widget matching the given selector or selector type.
 
         Args:
-            selector (str | None, optional): A selector.
+            selector (str | type, optional): A selector.
             expect_type (type, optional): Require the object be of the supplied type, or None for any type.
                 Defaults to None.
 

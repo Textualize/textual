@@ -16,7 +16,7 @@ a method which evaluates the query, such as first() and last().
 
 from __future__ import annotations
 
-from typing import Generic, TYPE_CHECKING, Iterator, TypeVar, overload
+from typing import cast, Generic, TYPE_CHECKING, Iterator, TypeVar, overload
 
 import rich.repr
 
@@ -64,7 +64,7 @@ class DOMQuery(Generic[QueryType]):
     ) -> None:
 
         self._node = node
-        self._nodes: list[Widget] | None = None
+        self._nodes: list[QueryType] | None = None
         self._filters: list[tuple[SelectorSet, ...]] = (
             parent._filters.copy() if parent else []
         )
@@ -96,7 +96,7 @@ class DOMQuery(Generic[QueryType]):
                 for node in nodes
                 if not any(match(selector_set, node) for selector_set in self._excludes)
             ]
-            self._nodes = nodes
+            self._nodes = cast("list[QueryType]", nodes)
         return self._nodes
 
     def __len__(self) -> int:
