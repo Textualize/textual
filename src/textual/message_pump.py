@@ -558,7 +558,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         invoked_method = None
         key_name = event.key_name
         if not key_name:
-            return invoked_method is not None
+            return False
 
         key_aliases = _get_key_aliases(event.key)
         for key_alias in key_aliases:
