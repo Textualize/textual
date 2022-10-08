@@ -1310,7 +1310,8 @@ class App(Generic[ReturnType], DOMNode):
         await self._close_messages()
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
-        self.screen.refresh(repaint=repaint, layout=layout)
+        if self._screen_stack:
+            self.screen.refresh(repaint=repaint, layout=layout)
         self.check_idle()
 
     def refresh_css(self, animate: bool = True) -> None:
