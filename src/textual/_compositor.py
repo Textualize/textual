@@ -183,7 +183,7 @@ class Compositor:
         self.widgets: set[Widget] = set()
 
         # Mapping of visible widgets on to their region, and clip region
-        self.visible_widgets: dict[Widget, tuple[Region, Region]] = {}
+        self._visible_widgets: dict[Widget, tuple[Region, Region]] | None = None
 
         # The top level widget
         self.root: Widget | None = None
@@ -255,6 +255,7 @@ class Compositor:
         self._cuts = None
         self._layers = None
         self._layers_visible = None
+        self._visible_widgets = None
         self.root = parent
         self.size = size
 
@@ -275,22 +276,6 @@ class Compositor:
         self.widgets = widgets
 
         screen = size.region
-        in_screen = screen.overlaps
-        overlaps = Region.overlaps
-
-        # Widgets and regions in render order
-        visible_widgets = sorted(
-            [
-                (order, widget, region, clip)
-                for widget, (region, order, clip, _, _, _) in map.items()
-                if in_screen(region) and overlaps(clip, region)
-            ],
-            key=itemgetter(0),
-            reverse=True,
-        )
-        self.visible_widgets = {
-            widget: (region, clip) for _, widget, region, clip in visible_widgets
-        }
 
         # Widgets with changed size
         resized_widgets = {
@@ -320,6 +305,30 @@ class Compositor:
             shown=shown_widgets,
             resized=resized_widgets,
         )
+
+    @property
+    def visible_widgets(self) -> dict[Widget, tuple[Region, Region]]:
+        """Get a mapping of widgets on to region and clip.
+
+        Returns:
+            dict[Widget, tuple[Region, Region]]: visible widget mapping.
+        """
+        if self._visible_widgets is None:
+            screen = self.size.region
+            in_screen = screen.overlaps
+            overlaps = Region.overlaps
+
+            # Widgets and regions in render order
+            visible_widgets = [
+                (order, widget, region, clip)
+                for widget, (region, order, clip, _, _, _) in self.map.items()
+                if in_screen(region) and overlaps(clip, region)
+            ]
+            visible_widgets.sort(key=itemgetter(0), reverse=True)
+            self._visible_widgets = {
+                widget: (region, clip) for _, widget, region, clip in visible_widgets
+            }
+        return self._visible_widgets
 
     def _arrange_root(
         self, root: Widget, size: Size
@@ -646,7 +655,7 @@ class Compositor:
             widget_regions = [
                 (widget, region, clip)
                 for widget, (region, clip) in visible_widgets.items()
-                if is_visible(widget) and crop_overlaps(clip)
+                if crop_overlaps(clip) and is_visible(widget)
             ]
         else:
             widget_regions = [

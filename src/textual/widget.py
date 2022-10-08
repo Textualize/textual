@@ -1733,8 +1733,8 @@ class Widget(DOMNode):
             self._content_height_cache = (None, 0)
             self._rich_style_cache.clear()
             self._repaint_required = True
-            if isinstance(self.parent, Widget) and self.styles.auto_dimensions:
-                self.parent.refresh(layout=True)
+            # if isinstance(self.parent, Widget) and self.styles.auto_dimensions:
+            #     self.parent.refresh(layout=True)
 
         self.check_idle()
 

@@ -643,7 +643,7 @@ class Styles(StylesBase):
         speed: float | None,
         easing: EasingFunction,
         on_complete: CallbackType | None = None,
-    ) -> Animation | None:
+    ) -> ScalarAnimation | None:
         # from ..widget import Widget
         # node = self.node
         # assert isinstance(self.node, Widget)
