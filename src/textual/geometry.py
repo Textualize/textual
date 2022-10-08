@@ -346,7 +346,8 @@ class Region(NamedTuple):
 
     def __bool__(self) -> bool:
         """A Region is considered False when it has no area."""
-        return bool(self.width and self.height)
+        _, _, width, height = self
+        return width * height > 0
 
     @property
     def column_span(self) -> tuple[int, int]:
@@ -603,6 +604,7 @@ class Region(NamedTuple):
             raise TypeError(f"a tuple of two integers is required, not {point!r}")
         return (x2 > ox >= x1) and (y2 > oy >= y1)
 
+    @lru_cache(maxsize=1024)
     def contains_region(self, other: Region) -> bool:
         """Check if a region is entirely contained within this region.
 

@@ -126,7 +126,7 @@ class AppTest(App):
             widget, region = self.get_widget_at(x, y)
         except errors.NoWidget:
             return ""
-        if widget not in self.screen._compositor.regions:
+        if widget not in self.screen._compositor.visible_widgets:
             return ""
 
         x -= region.x
