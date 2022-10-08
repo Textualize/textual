@@ -796,9 +796,9 @@ class Compositor:
         """
         regions: list[Region] = []
         add_region = regions.append
-        get_widget = self.map.__getitem__
+        get_widget = self.visible_widgets.__getitem__
         for widget in self.visible_widgets.keys() & widgets:
-            region, _, clip, _, _, _ = get_widget(widget)
+            region, clip = get_widget(widget)
             offset = region.offset
             intersection = clip.intersection
             for dirty_region in widget._exchange_repaint_regions():
