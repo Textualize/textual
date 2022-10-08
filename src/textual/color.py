@@ -311,6 +311,17 @@ class Color(NamedTuple):
         r, g, b, a = self
         return f"rgb({r},{g},{b})" if a == 1 else f"rgba({r},{g},{b},{a})"
 
+    @property
+    def monochrome(self) -> Color:
+        """Get a monochrome version of this color.
+
+        Returns:
+            Color: A new monochrome color.
+        """
+        r, g, b, a = self
+        gray = round(r * 0.2126 + g * 0.7152 + b * 0.0722)
+        return Color(gray, gray, gray, a)
+
     def __rich_repr__(self) -> rich.repr.Result:
         r, g, b, a = self
         yield r
