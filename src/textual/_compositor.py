@@ -16,7 +16,7 @@ from __future__ import annotations
 import sys
 from itertools import chain
 from operator import itemgetter
-from typing import TYPE_CHECKING, Callable, Iterable, Iterator, NamedTuple, cast
+from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, cast
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
