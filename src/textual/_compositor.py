@@ -278,7 +278,7 @@ class Compositor:
         in_screen = screen.overlaps
         overlaps = Region.overlaps
 
-        # Get a map of regions
+        # Widgets and regions in render order
         visible_widgets = sorted(
             [
                 (order, widget, region, clip)
@@ -471,40 +471,22 @@ class Compositor:
     @property
     def layers_visible(self) -> list[list[tuple[Widget, Region, Region]]]:
         """Visible widgets and regions in layers order."""
-        screen_height = self.size.height
+
         if self._layers_visible is None:
             layers_visible: list[list[tuple[Widget, Region, Region]]]
             layers_visible = [[] for y in range(self.size.height)]
             layers_visible_appends = [layer.append for layer in layers_visible]
             intersection = Region.intersection
             _range = range
-            for widget, (region, _, clip, _, _, _) in self.layers:
-                _x, y, _width, height = region
-                if -height <= y < screen_height:
-                    cropped_region = intersection(region, clip)
-                    _x, region_y, _width, region_height = cropped_region
-                    if region_height:
-                        widget_location = (widget, cropped_region, region)
-                        for y in _range(region_y, region_y + region_height):
-                            layers_visible_appends[y](widget_location)
+            for widget, (region, clip) in self.visible_widgets.items():
+                cropped_region = intersection(region, clip)
+                _x, region_y, _width, region_height = cropped_region
+                if region_height:
+                    widget_location = (widget, cropped_region, region)
+                    for y in _range(region_y, region_y + region_height):
+                        layers_visible_appends[y](widget_location)
             self._layers_visible = layers_visible
         return self._layers_visible
-
-    def __iter__(self) -> Iterator[tuple[Widget, Region, Size, Size]]:
-        """Iterate map with information regarding each widget and is position
-
-        Yields:
-            Iterator[tuple[Widget, Region, Region, Size, Size]]: Iterates a tuple of
-                Widget, region, virtual size, and container size.
-        """
-        layers = self.layers
-        for widget, (region, _order, clip, virtual_size, container_size, _) in layers:
-            yield (
-                widget,
-                region,
-                virtual_size,
-                container_size,
-            )
 
     def get_offset(self, widget: Widget) -> Offset:
         """Get the offset of a widget."""
@@ -618,7 +600,7 @@ class Compositor:
         intersection = Region.intersection
         extend = list.extend
 
-        for region, order, clip, *_ in self.map.values():
+        for region, clip in self.visible_widgets.values():
             region = intersection(region, clip)
             if region and (region in screen_region):
                 x, y, region_width, region_height = region
@@ -751,7 +733,7 @@ class Compositor:
         cut_segments: Iterable[list[Segment]]
 
         # Go through all the renders in reverse order and fill buckets with no render
-        renders = list(self._get_renders(crop))
+        renders = self._get_renders(crop)
         intersection = Region.intersection
 
         for region, clip, lines in renders:
