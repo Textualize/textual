@@ -182,18 +182,14 @@ class Compositor:
         # Note this may be a superset of self.map.keys() as some widgets may be invisible for various reasons
         self.widgets: set[Widget] = set()
 
-        # A lazy cache of visible (on screen) widgets
-        self._visible_widgets: set[Widget] | None = set()
+        # Mapping of visible widgets on to their region, and clip region
+        self.visible_widgets: dict[Widget, tuple[Region, Region]] = {}
 
         # The top level widget
         self.root: Widget | None = None
 
         # Dimensions of the arrangement
         self.size = Size(0, 0)
-
-        # A mapping of Widget on to region, and clip region
-        # The clip region can be considered the window through which a widget is viewed
-        self.regions: dict[Widget, tuple[Region, Region]] = {}
 
         # The points in each line where the line bisects the left and right edges of the widget
         self._cuts: list[list[int]] | None = None
@@ -277,11 +273,23 @@ class Compositor:
         # Replace map and widgets
         self.map = map
         self.widgets = widgets
-        self._visible_widgets = None
+
+        screen = size.region
+        in_screen = screen.overlaps
+        overlaps = Region.overlaps
 
         # Get a map of regions
-        self.regions = {
-            widget: (region, clip) for widget, (region, _order, clip, *_) in map.items()
+        visible_widgets = sorted(
+            [
+                (order, widget, region, clip)
+                for widget, (region, order, clip, _, _, _) in map.items()
+                if in_screen(region) and overlaps(clip, region)
+            ],
+            key=itemgetter(0),
+            reverse=True,
+        )
+        self.visible_widgets = {
+            widget: (region, clip) for _, widget, region, clip in visible_widgets
         }
 
         # Widgets with changed size
@@ -293,7 +301,6 @@ class Compositor:
 
         # Gets pairs of tuples of (Widget, MapGeometry) which have changed
         # i.e. if something is moved / deleted / added
-        screen = size.region
 
         if screen not in self._dirty_regions:
             crop_screen = screen.intersection
@@ -313,22 +320,6 @@ class Compositor:
             shown=shown_widgets,
             resized=resized_widgets,
         )
-
-    @property
-    def visible_widgets(self) -> set[Widget]:
-        """Get a set of visible widgets.
-
-        Returns:
-            set[Widget]: Widgets in the screen.
-        """
-        if self._visible_widgets is None:
-            in_screen = self.size.region.__contains__
-            self._visible_widgets = {
-                widget
-                for widget, (region, clip) in self.regions.items()
-                if in_screen(region)
-            }
-        return self._visible_widgets
 
     def _arrange_root(
         self, root: Widget, size: Size
@@ -571,7 +562,7 @@ class Compositor:
             widget, region = self.get_widget_at(x, y)
         except errors.NoWidget:
             return Style.null()
-        if widget not in self.regions:
+        if widget not in self.visible_widgets:
             return Style.null()
 
         x -= region.x
@@ -652,6 +643,9 @@ class Compositor:
         # up to this point.
         _rich_traceback_guard = True
 
+        if not self.map:
+            return
+
         def is_visible(widget: Widget) -> bool:
             """Return True if the widget is (literally) visible by examining various
             properties which affect whether it can be seen or not."""
@@ -661,45 +655,42 @@ class Compositor:
                 and widget.styles.opacity > 0
             )
 
-        if self.map:
-            if crop:
-                overlaps = crop.overlaps
-                mapped_regions = [
-                    (widget, region, order, clip)
-                    for widget, (region, order, clip, *_) in self.map.items()
-                    if is_visible(widget) and overlaps(crop)
-                ]
-            else:
-                mapped_regions = [
-                    (widget, region, order, clip)
-                    for widget, (region, order, clip, *_) in self.map.items()
-                    if is_visible(widget)
-                ]
+        _Region = Region
 
-            widget_regions = sorted(mapped_regions, key=itemgetter(2), reverse=True)
+        visible_widgets = self.visible_widgets
+
+        if crop:
+            crop_overlaps = crop.overlaps
+            widget_regions = [
+                (widget, region, clip)
+                for widget, (region, clip) in visible_widgets.items()
+                if is_visible(widget) and crop_overlaps(clip)
+            ]
         else:
-            widget_regions = []
+            widget_regions = [
+                (widget, region, clip)
+                for widget, (region, clip) in visible_widgets.items()
+                if is_visible(widget)
+            ]
 
-        intersection = Region.intersection
-        overlaps = Region.overlaps
+        intersection = _Region.intersection
+        contains_region = _Region.contains_region
 
-        for widget, region, _order, clip in widget_regions:
-            if not region:
-                continue
-            if region in clip:
-                lines = widget.render_lines(Region(0, 0, region.width, region.height))
-                yield region, clip, lines
-            elif overlaps(clip, region):
+        for widget, region, clip in widget_regions:
+            if contains_region(clip, region):
+                yield region, clip, widget.render_lines(
+                    _Region(0, 0, region.width, region.height)
+                )
+            else:
                 clipped_region = intersection(region, clip)
                 if not clipped_region:
                     continue
                 new_x, new_y, new_width, new_height = clipped_region
                 delta_x = new_x - region.x
                 delta_y = new_y - region.y
-                lines = widget.render_lines(
-                    Region(delta_x, delta_y, new_width, new_height)
+                yield region, clip, widget.render_lines(
+                    _Region(delta_x, delta_y, new_width, new_height)
                 )
-                yield region, clip, lines
 
     @classmethod
     def _assemble_chops(
@@ -760,7 +751,7 @@ class Compositor:
         cut_segments: Iterable[list[Segment]]
 
         # Go through all the renders in reverse order and fill buckets with no render
-        renders = self._get_renders(crop)
+        renders = list(self._get_renders(crop))
         intersection = Region.intersection
 
         for region, clip, lines in renders:
@@ -813,8 +804,9 @@ class Compositor:
         """
         regions: list[Region] = []
         add_region = regions.append
-        for widget in self.regions.keys() & widgets:
-            region, clip = self.regions[widget]
+        get_widget = self.map.__getitem__
+        for widget in self.visible_widgets.keys() & widgets:
+            region, _, clip, _, _, _ = get_widget(widget)
             offset = region.offset
             intersection = clip.intersection
             for dirty_region in widget._exchange_repaint_regions():
