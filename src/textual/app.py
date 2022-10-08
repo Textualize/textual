@@ -35,6 +35,7 @@ from ._animator import Animator, DEFAULT_EASING, Animatable, EasingFunction
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
+from ._filter import LineFilter, Monochrome
 from .binding import Bindings, NoBinding
 from .css.query import NoMatchingNodesError
 from .css.stylesheet import Stylesheet
@@ -163,12 +164,18 @@ class App(Generic[ReturnType], DOMNode):
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
+        self._filter: LineFilter | None = None
+        environ = dict(os.environ)
+        no_color = environ.pop("NO_COLOR", None)
+        if no_color is not None:
+            self._filter = Monochrome()
         self.console = Console(
             file=(_NullFile() if self.is_headless else sys.__stdout__),
             markup=False,
             highlight=False,
             emoji=False,
             legacy_windows=False,
+            _environ=environ,
         )
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()

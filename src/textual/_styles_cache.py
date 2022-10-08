@@ -7,6 +7,7 @@ from rich.segment import Segment
 from rich.style import Style
 
 from ._border import get_box, render_row
+from ._filter import LineFilter
 from ._opacity import _apply_opacity
 from ._segment_tools import line_crop, line_pad, line_trim
 from ._types import Lines
@@ -134,6 +135,7 @@ class StylesCache:
             content_size=widget.content_region.size,
             padding=styles.padding,
             crop=crop,
+            filter=widget.app._filter,
         )
         if widget.auto_links:
             _style_links = style_links
@@ -163,6 +165,7 @@ class StylesCache:
         content_size: Size | None = None,
         padding: Spacing | None = None,
         crop: Region | None = None,
+        filter: LineFilter | None = None,
     ) -> Lines:
         """Render a widget content plus CSS styles.
 
@@ -212,6 +215,8 @@ class StylesCache:
                 self._cache[y] = line
             else:
                 line = self._cache[y]
+            if filter:
+                line = filter.filter(line)
             add_line(line)
         self._dirty_lines.difference_update(crop.line_range)
 
