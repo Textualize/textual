@@ -1680,21 +1680,22 @@ class Widget(DOMNode):
         return lines
 
     def get_style_at(self, x: int, y: int) -> Style:
-        """Get the Rich style at a given screen offset.
+        """Get the Rich style in a widget at a given relative offset.
 
         Args:
-            x (int): X coordinate relative to the screen.
-            y (int): Y coordinate relative to the screen.
+            x (int): X coordinate relative to the widget.
+            y (int): Y coordinate relative to the widget.
 
         Returns:
             Style: A rich Style object.
         """
-        widget, region = self.screen.get_widget_at(x, y)
+        offset = Offset(x, y)
+        screen_offset = offset + self.region.offset
+
+        widget, _ = self.screen.get_widget_at(*screen_offset)
         if widget is not self:
             return Style()
-        offset_x, offset_y = region.offset
-        # offset_x, offset_y = self.screen.get_offset(self)
-        return self.screen.get_style_at(x + offset_x, y + offset_y)
+        return self.screen.get_style_at(*screen_offset)
 
     async def _forward_event(self, event: events.Event) -> None:
         event._set_forwarded()

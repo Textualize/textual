@@ -519,9 +519,10 @@ class Compositor:
         """
 
         contains = Region.contains
-        for widget, cropped_region, region in self.layers_visible[y]:
-            if contains(cropped_region, x, y) and widget.visible:
-                return widget, region
+        if len(self.layers_visible) > y >= 0:
+            for widget, cropped_region, region in self.layers_visible[y]:
+                if contains(cropped_region, x, y) and widget.visible:
+                    return widget, region
         raise errors.NoWidget(f"No widget under screen coordinate ({x}, {y})")
 
     def get_widgets_at(self, x: int, y: int) -> Iterable[tuple[Widget, Region]]:
