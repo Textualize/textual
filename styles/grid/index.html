@@ -19,7 +19,7 @@
     
     
       
-        <title>Grid properties - Textual</title>
+        <title>Grid - Textual</title>
       
     
     
@@ -75,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#grid-properties" class="md-skip">
+        <a href="#grid" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Grid properties
+              Grid
             
           </span>
         </div>
@@ -1925,7 +1925,7 @@
           
   
   <span class="md-ellipsis">
-    Grid properties
+    Grid
     
   </span>
   
@@ -1938,7 +1938,7 @@
         
   
   <span class="md-ellipsis">
-    Grid properties
+    Grid
     
   </span>
   
@@ -3257,7 +3257,7 @@
   </a>
 
 
-<h1 id="grid-properties">Grid properties<a class="headerlink" href="#grid-properties" title="Permanent link">&para;</a></h1>
+<h1 id="grid">Grid<a class="headerlink" href="#grid" title="Permanent link">&para;</a></h1>
 <p>There are a number of properties relating to the Textual <code>grid</code> layout.</p>
 <p>For an in-depth look at the grid layout, visit the grid <a href="../../guide/layout/#grid">guide</a>.</p>
 <table>
@@ -3295,14 +3295,226 @@
 </tbody>
 </table>
 <h2 id="syntax">Syntax<a class="headerlink" href="#syntax" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="na">grid-size</span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">INTEGER</span><span class="o">&gt;</span><span class="w"> </span><span class="p">[</span><span class="o">&lt;</span><span class="n">INTEGER</span><span class="o">&gt;</span><span class="p">]</span><span class="err">;</span><span class="w">  </span><span class="cm">/* columns first, then rows </span><span class="c">*/</span><span class="w"></span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="na">grid-rows</span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">SCALAR</span><span class="o">&gt;</span><span class="w"> </span><span class="o">...</span><span class="err">;</span><span class="w"></span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="na">grid-columns</span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">SCALAR</span><span class="o">&gt;</span><span class="w"> </span><span class="o">...</span><span class="err">;</span><span class="w"></span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="na">grid-gutter</span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">SCALAR</span><span class="o">&gt;</span><span class="err">;</span><span class="w"></span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="na">row-span</span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">INTEGER</span><span class="o">&gt;</span><span class="err">;</span><span class="w"></span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="na">column-span</span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">INTEGER</span><span class="o">&gt;</span><span class="err">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="na">grid-size</span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">INTEGER</span><span class="o">&gt;</span><span class="w"> </span><span class="p">[</span><span class="o">&lt;</span><span class="n">INTEGER</span><span class="o">&gt;</span><span class="p">]</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="cm">/* columns first, then rows */</span><span class="w"></span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="na">grid-rows</span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">SCALAR</span><span class="o">&gt;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="o">.</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="na">grid-columns</span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">SCALAR</span><span class="o">&gt;</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="o">.</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="na">grid-gutter</span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">SCALAR</span><span class="o">&gt;</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="na">row-span</span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">INTEGER</span><span class="o">&gt;</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="na">column-span</span><span class="o">:</span><span class="w"> </span><span class="o">&lt;</span><span class="n">INTEGER</span><span class="o">&gt;</span><span class="err">;</span><span class="w"></span>
 </code></pre></div>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
+<p>The example below shows all the properties above in action.
+The <code>grid-size: 3 4;</code> declaration sets the grid to 3 columns and 4 rows.
+The first cell of the grid, tinted magenta, shows a cell spanning multiple rows and columns.
+The spacing between grid cells is because of the <code>grid-gutter</code> declaration.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Output</label><label for="__tabbed_1_2">grid.py</label><label for="__tabbed_1_3">grid.css</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generated with Rich https://www.textualize.io -->
+    <style>
+
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Regular"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+        font-style: normal;
+        font-weight: 400;
+    }
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Bold"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+        font-style: bold;
+        font-weight: 700;
+    }
+
+    .terminal-3809632944-matrix {
+        font-family: Fira Code, monospace;
+        font-size: 20px;
+        line-height: 24.4px;
+        font-variant-east-asian: full-width;
+    }
+
+    .terminal-3809632944-title {
+        font-size: 18px;
+        font-weight: bold;
+        font-family: arial;
+    }
+
+    .terminal-3809632944-r1 { fill: #c5c8c6 }
+.terminal-3809632944-r2 { fill: #e1e1e1 }
+.terminal-3809632944-r3 { fill: #731077 }
+.terminal-3809632944-r4 { fill: #161c1d }
+    </style>
+
+    <defs>
+    <clipPath id="terminal-3809632944-clip-terminal">
+      <rect x="0" y="0" width="975.0" height="584.5999999999999" />
+    </clipPath>
+    <clipPath id="terminal-3809632944-line-0">
+    <rect x="0" y="1.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-1">
+    <rect x="0" y="25.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-2">
+    <rect x="0" y="50.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-3">
+    <rect x="0" y="74.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-4">
+    <rect x="0" y="99.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-5">
+    <rect x="0" y="123.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-6">
+    <rect x="0" y="147.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-7">
+    <rect x="0" y="172.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-8">
+    <rect x="0" y="196.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-9">
+    <rect x="0" y="221.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-10">
+    <rect x="0" y="245.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-11">
+    <rect x="0" y="269.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-12">
+    <rect x="0" y="294.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-13">
+    <rect x="0" y="318.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-14">
+    <rect x="0" y="343.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-15">
+    <rect x="0" y="367.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-16">
+    <rect x="0" y="391.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-17">
+    <rect x="0" y="416.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-18">
+    <rect x="0" y="440.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-19">
+    <rect x="0" y="465.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-20">
+    <rect x="0" y="489.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-21">
+    <rect x="0" y="513.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-3809632944-line-22">
+    <rect x="0" y="538.3" width="976" height="24.65"/>
+            </clipPath>
+    </defs>
+
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-3809632944-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">Textual</text>
+            <g transform="translate(26,22)">
+            <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
+            <circle cx="22" cy="0" r="7" fill="#febc2e"/>
+            <circle cx="44" cy="0" r="7" fill="#28c840"/>
+            </g>
+        
+    <g transform="translate(9, 41)" clip-path="url(#terminal-3809632944-clip-terminal)">
+    <rect fill="#cd81f0" x="0" y="1.5" width="646.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="1.5" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="24.4" y="25.9" width="134.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="158.6" y="25.9" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="683.2" y="25.9" width="134.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="817.4" y="25.9" width="158.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="50.3" width="646.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="50.3" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="74.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="24.4" y="74.7" width="146.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="170.8" y="74.7" width="475.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="74.7" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="24.4" y="99.1" width="183" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="207.4" y="99.1" width="439.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="99.1" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="123.5" width="646.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="123.5" width="329.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="147.9" width="646.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="147.9" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="172.3" width="646.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="172.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="683.2" y="172.3" width="134.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="817.4" y="172.3" width="158.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="196.7" width="646.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="196.7" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="221.1" width="646.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="221.1" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="245.5" width="646.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="245.5" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="269.9" width="646.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="269.9" width="329.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="294.3" width="646.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="294.3" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="318.7" width="646.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="683.2" y="318.7" width="134.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="817.4" y="318.7" width="158.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="343.1" width="646.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="343.1" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="367.5" width="646.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="367.5" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#cd81f0" x="0" y="391.9" width="646.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="391.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="391.9" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="416.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="0" y="440.7" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="317.2" y="440.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="329.4" y="440.7" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="440.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="440.7" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="0" y="465.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="24.4" y="465.1" width="134.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="158.6" y="465.1" width="158.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="317.2" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="329.4" y="465.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="353.8" y="465.1" width="134.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="488" y="465.1" width="158.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="465.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="683.2" y="465.1" width="134.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="817.4" y="465.1" width="158.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="0" y="489.5" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="317.2" y="489.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="329.4" y="489.5" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="489.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="489.5" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="0" y="513.9" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="317.2" y="513.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="329.4" y="513.9" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="513.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="513.9" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="0" y="538.3" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="317.2" y="538.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="329.4" y="538.3" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="538.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="538.3" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="0" y="562.7" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="317.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="329.4" y="562.7" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="646.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#add8e6" x="658.8" y="562.7" width="317.2" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-3809632944-matrix">
+    <text class="terminal-3809632944-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-3809632944-line-0)">
+</text><text class="terminal-3809632944-r3" x="24.4" y="44.4" textLength="134.2" clip-path="url(#terminal-3809632944-line-1)">Grid&#160;cell&#160;1</text><text class="terminal-3809632944-r4" x="683.2" y="44.4" textLength="134.2" clip-path="url(#terminal-3809632944-line-1)">Grid&#160;cell&#160;2</text><text class="terminal-3809632944-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-3809632944-line-1)">
+</text><text class="terminal-3809632944-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-3809632944-line-2)">
+</text><text class="terminal-3809632944-r3" x="24.4" y="93.2" textLength="146.4" clip-path="url(#terminal-3809632944-line-3)">row-span:&#160;3;</text><text class="terminal-3809632944-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-3809632944-line-3)">
+</text><text class="terminal-3809632944-r3" x="24.4" y="117.6" textLength="183" clip-path="url(#terminal-3809632944-line-4)">column-span:&#160;2;</text><text class="terminal-3809632944-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-3809632944-line-4)">
+</text><text class="terminal-3809632944-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-3809632944-line-5)">
+</text><text class="terminal-3809632944-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-3809632944-line-6)">
+</text><text class="terminal-3809632944-r4" x="683.2" y="190.8" textLength="134.2" clip-path="url(#terminal-3809632944-line-7)">Grid&#160;cell&#160;3</text><text class="terminal-3809632944-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-3809632944-line-7)">
+</text><text class="terminal-3809632944-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-3809632944-line-8)">
+</text><text class="terminal-3809632944-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-3809632944-line-9)">
+</text><text class="terminal-3809632944-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-3809632944-line-10)">
+</text><text class="terminal-3809632944-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-3809632944-line-11)">
+</text><text class="terminal-3809632944-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-3809632944-line-12)">
+</text><text class="terminal-3809632944-r4" x="683.2" y="337.2" textLength="134.2" clip-path="url(#terminal-3809632944-line-13)">Grid&#160;cell&#160;4</text><text class="terminal-3809632944-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-3809632944-line-13)">
+</text><text class="terminal-3809632944-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-3809632944-line-14)">
+</text><text class="terminal-3809632944-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-3809632944-line-15)">
+</text><text class="terminal-3809632944-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-3809632944-line-16)">
+</text><text class="terminal-3809632944-r1" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-3809632944-line-17)">
+</text><text class="terminal-3809632944-r1" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-3809632944-line-18)">
+</text><text class="terminal-3809632944-r4" x="24.4" y="483.6" textLength="134.2" clip-path="url(#terminal-3809632944-line-19)">Grid&#160;cell&#160;5</text><text class="terminal-3809632944-r4" x="353.8" y="483.6" textLength="134.2" clip-path="url(#terminal-3809632944-line-19)">Grid&#160;cell&#160;6</text><text class="terminal-3809632944-r4" x="683.2" y="483.6" textLength="134.2" clip-path="url(#terminal-3809632944-line-19)">Grid&#160;cell&#160;7</text><text class="terminal-3809632944-r1" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-3809632944-line-19)">
+</text><text class="terminal-3809632944-r1" x="976" y="508" textLength="12.2" clip-path="url(#terminal-3809632944-line-20)">
+</text><text class="terminal-3809632944-r1" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-3809632944-line-21)">
+</text><text class="terminal-3809632944-r1" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-3809632944-line-22)">
+</text>
+    </g>
+    </g>
+</svg>
+</p>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">class</span> <span class="nc">GridApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Grid cell 1</span><span class="se">\n\n</span><span class="s2">row-span: 3;</span><span class="se">\n</span><span class="s2">column-span: 2;&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;static1&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Grid cell 2&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;static2&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Grid cell 3&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;static3&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Grid cell 4&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;static4&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Grid cell 5&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;static5&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Grid cell 6&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;static6&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Grid cell 7&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;static7&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
+<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>
+<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="n">app</span> <span class="o">=</span> <span class="n">GridApp</span><span class="p">(</span><span class="n">css_path</span><span class="o">=</span><span class="s2">&quot;grid.css&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">Screen</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="na">layout</span><span class="o">:</span><span class="w"> </span><span class="no">grid</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="na">grid-size</span><span class="o">:</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="mi">4</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="na">grid-rows</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">fr</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="na">grid-columns</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">fr</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="na">grid-gutter</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="err">}</span><span class="w"></span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="nt">Static</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="na">color</span><span class="o">:</span><span class="w"> </span><span class="no">auto</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">lightblue</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">    </span><span class="na">padding</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="err">}</span><span class="w"></span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="nn">#static1</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">    </span><span class="na">tint</span><span class="o">:</span><span class="w"> </span><span class="ni">magenta</span><span class="w"> </span><span class="mi">40</span><span class="kt">%</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">    </span><span class="na">row-span</span><span class="o">:</span><span class="w"> </span><span class="mi">3</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">    </span><span class="na">column-span</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span><span class="w"></span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="err">}</span><span class="w"></span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The properties listed on this page will only work when the layout is <code>grid</code>.</p>
+</div>
 
 
 
