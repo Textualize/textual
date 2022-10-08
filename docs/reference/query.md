@@ -1,1 +1,1 @@
-::: textual.css.query.DOMQuery
+::: textual.css.query

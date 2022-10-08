@@ -31,15 +31,15 @@ if TYPE_CHECKING:
 
 
 class QueryError(Exception):
-    pass
+    """Base class for a query related error."""
 
 
 class NoMatchingNodesError(QueryError):
-    pass
+    """No nodes matched the query."""
 
 
 class WrongType(QueryError):
-    pass
+    """Query result was not of the correct type."""
 
 
 QueryType = TypeVar("QueryType", bound="Widget")
@@ -172,7 +172,7 @@ class DOMQuery(Generic[QueryType]):
     def first(
         self, expect_type: type[ExpectType] | None = None
     ) -> QueryType | ExpectType:
-        """Get the *first* match node.
+        """Get the *first* matching node.
 
         Args:
             expect_type (type[ExpectType] | None, optional): Require matched node is of this type,
@@ -207,7 +207,7 @@ class DOMQuery(Generic[QueryType]):
     def last(
         self, expect_type: type[ExpectType] | None = None
     ) -> QueryType | ExpectType:
-        """Get the *last* match node.
+        """Get the *last* matching node.
 
         Args:
             expect_type (type[ExpectType] | None, optional): Require matched node is of this type,
