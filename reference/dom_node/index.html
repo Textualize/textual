@@ -563,6 +563,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -679,6 +681,28 @@
   
   <span class="md-ellipsis">
     Textual CSS
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/queries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DOM Queries
     
   </span>
   
@@ -3169,6 +3193,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.visible" class="md-nav__link">
+    <span class="md-ellipsis">
+      visible()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.dom.DOMNode.walk_children" class="md-nav__link">
     <span class="md-ellipsis">
       walk_children()
@@ -3763,6 +3796,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.visible" class="md-nav__link">
+    <span class="md-ellipsis">
+      visible()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.dom.DOMNode.walk_children" class="md-nav__link">
     <span class="md-ellipsis">
       walk_children()
@@ -4094,8 +4136,8 @@
 <code class="highlight language-python"><span class="n">display</span><span class="p">()</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.display" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -4234,7 +4276,7 @@
     <tbody>
         <tr>
           <td>
-                <code><span title="textual.css.query.NoMatchingNodesError">NoMatchingNodesError</span></code>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.NoMatches" href="../query/#textual.css.query.NoMatches">NoMatches</a></code>
           </td>
           <td><p>if no children could be found for this ID</p></td>
         </tr>
@@ -4482,8 +4524,8 @@ and inherited from base classes.</p></td>
 <code class="highlight language-python"><span class="nb">id</span><span class="p">()</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.id" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -4675,7 +4717,7 @@ and inherited from base classes.</p></td>
         <tr>
           <td><code>expect_type</code></td>
           <td>
-                <code>type</code>
+                <code>type | None</code>
           </td>
           <td><p>Require the object be of the supplied type, or None for any type.
 Defaults to None.</p></td>
@@ -4988,6 +5030,47 @@ the child will also be bold.</p>
                 <code><span title="rich.tree.Tree">Tree</span></code>
           </td>
           <td><p>A Rich object which may be printed.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="textual.dom.DOMNode.visible" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">visible</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+<a href="#textual.dom.DOMNode.visible" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Check if the node is visible or None.</p>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>bool</code></td>          <td>
+                <code>bool</code>
+          </td>
+          <td><p>True if the node is visible.</p></td>
         </tr>
     </tbody>
   </table>

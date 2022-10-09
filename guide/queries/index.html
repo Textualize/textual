@@ -8,7 +8,7 @@
       
       
       
-        <link rel="canonical" href="https://textual.textualize.io/events/screen_resume/">
+        <link rel="canonical" href="https://textual.textualize.io/guide/queries/">
       
       
         
@@ -19,7 +19,7 @@
     
     
       
-        <title>ScreenResume - Textual</title>
+        <title>DOM Queries - Textual</title>
       
     
     
@@ -75,7 +75,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#screenresume" class="md-skip">
+        <a href="#dom-queries" class="md-skip">
           Skip to content
         </a>
       
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ScreenResume
+              DOM Queries
             
           </span>
         </div>
@@ -239,6 +239,8 @@
       
         
 
+  
+
 
 
 
@@ -247,7 +249,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../guide/" class="md-tabs__link">
+        <a href="../" class="md-tabs__link md-tabs__link--active">
           
   
     
@@ -285,8 +287,6 @@
       
         
 
-  
-
 
 
 
@@ -295,7 +295,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../" class="md-tabs__link md-tabs__link--active">
+        <a href="../../events/" class="md-tabs__link">
           
   
     
@@ -531,6 +531,8 @@
       
   
   
+    
+  
   
     
     
@@ -567,17 +569,17 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
         
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../guide/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -610,7 +612,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/devtools/" class="md-nav__link">
+      <a href="../devtools/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -632,7 +634,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/app/" class="md-nav__link">
+      <a href="../app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -654,7 +656,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/styles/" class="md-nav__link">
+      <a href="../styles/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -676,7 +678,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/CSS/" class="md-nav__link">
+      <a href="../CSS/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -696,9 +698,31 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../guide/queries/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    DOM Queries
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -709,6 +733,113 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#query-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      Query one
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#making-queries" class="md-nav__link">
+    <span class="md-ellipsis">
+      Making queries
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Making queries">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query-selectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Query selectors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#results" class="md-nav__link">
+    <span class="md-ellipsis">
+      Results
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#query-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      Query objects
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#first-and-last" class="md-nav__link">
+    <span class="md-ellipsis">
+      First and last
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filter
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exclude" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exclude
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#loop-free-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Loop-free operations
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -720,7 +851,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/layout/" class="md-nav__link">
+      <a href="../layout/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -742,7 +873,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/events/" class="md-nav__link">
+      <a href="../events/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -764,7 +895,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/input/" class="md-nav__link">
+      <a href="../input/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -786,7 +917,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/actions/" class="md-nav__link">
+      <a href="../actions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -808,7 +939,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/reactivity/" class="md-nav__link">
+      <a href="../reactivity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -830,7 +961,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/widgets/" class="md-nav__link">
+      <a href="../widgets/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -852,7 +983,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/animation/" class="md-nav__link">
+      <a href="../animation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -874,7 +1005,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guide/screens/" class="md-nav__link">
+      <a href="../screens/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1031,8 +1162,6 @@
       
   
   
-    
-  
   
     
     
@@ -1089,17 +1218,17 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
+          <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
         
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../" class="md-nav__link ">
+            <a href="../../events/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -1132,7 +1261,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../blur/" class="md-nav__link">
+      <a href="../../events/blur/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1154,7 +1283,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../descendant_blur/" class="md-nav__link">
+      <a href="../../events/descendant_blur/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1176,7 +1305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../descendant_focus/" class="md-nav__link">
+      <a href="../../events/descendant_focus/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1198,7 +1327,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../enter/" class="md-nav__link">
+      <a href="../../events/enter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1220,7 +1349,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../focus/" class="md-nav__link">
+      <a href="../../events/focus/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1242,7 +1371,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../hide/" class="md-nav__link">
+      <a href="../../events/hide/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1264,7 +1393,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../key/" class="md-nav__link">
+      <a href="../../events/key/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1286,7 +1415,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../leave/" class="md-nav__link">
+      <a href="../../events/leave/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1308,7 +1437,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../load/" class="md-nav__link">
+      <a href="../../events/load/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1330,7 +1459,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mount/" class="md-nav__link">
+      <a href="../../events/mount/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1352,7 +1481,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mouse_capture/" class="md-nav__link">
+      <a href="../../events/mouse_capture/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1374,7 +1503,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../click/" class="md-nav__link">
+      <a href="../../events/click/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1396,7 +1525,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mouse_down/" class="md-nav__link">
+      <a href="../../events/mouse_down/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1418,7 +1547,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mouse_move/" class="md-nav__link">
+      <a href="../../events/mouse_move/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1440,7 +1569,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mouse_release/" class="md-nav__link">
+      <a href="../../events/mouse_release/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1462,7 +1591,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mouse_scroll_down/" class="md-nav__link">
+      <a href="../../events/mouse_scroll_down/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1484,7 +1613,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mouse_scroll_up/" class="md-nav__link">
+      <a href="../../events/mouse_scroll_up/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1506,7 +1635,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../mouse_up/" class="md-nav__link">
+      <a href="../../events/mouse_up/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1528,7 +1657,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../paste/" class="md-nav__link">
+      <a href="../../events/paste/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1550,7 +1679,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../resize/" class="md-nav__link">
+      <a href="../../events/resize/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1570,31 +1699,9 @@
                 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    ScreenResume
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../events/screen_resume/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1605,53 +1712,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#attributes" class="md-nav__link">
-    <span class="md-ellipsis">
-      Attributes
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#code" class="md-nav__link">
-    <span class="md-ellipsis">
-      Code
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.ScreenResume" class="md-nav__link">
-    <span class="md-ellipsis">
-      textual.events.ScreenResume
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1663,7 +1723,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../screen_suspend/" class="md-nav__link">
+      <a href="../../events/screen_suspend/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1685,7 +1745,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../show/" class="md-nav__link">
+      <a href="../../events/show/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3253,27 +3313,87 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#attributes" class="md-nav__link">
+  <a href="#query-one" class="md-nav__link">
     <span class="md-ellipsis">
-      Attributes
+      Query one
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#code" class="md-nav__link">
+  <a href="#making-queries" class="md-nav__link">
     <span class="md-ellipsis">
-      Code
+      Making queries
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Making queries">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#query-selectors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Query selectors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#results" class="md-nav__link">
+    <span class="md-ellipsis">
+      Results
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#query-objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      Query objects
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#textual.events.ScreenResume" class="md-nav__link">
+  <a href="#first-and-last" class="md-nav__link">
     <span class="md-ellipsis">
-      textual.events.ScreenResume
+      First and last
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filter
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exclude" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exclude
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#loop-free-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Loop-free operations
     </span>
   </a>
   
@@ -3293,37 +3413,117 @@
                 
                   
 
-  <a href="https://github.com/textualize/textual/edit/css/docs/events/screen_resume.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/textualize/textual/edit/css/docs/guide/queries.md" title="Edit this page" class="md-content__button md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
-<h1 id="screenresume">ScreenResume<a class="headerlink" href="#screenresume" title="Permanent link">&para;</a></h1>
-<p>The <code>ScreenResume</code> event is sent to a <strong>Screen</strong> when it becomes current.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-<h2 id="attributes">Attributes<a class="headerlink" href="#attributes" title="Permanent link">&para;</a></h2>
-<p><em>No other attributes</em></p>
-<h2 id="code">Code<a class="headerlink" href="#code" title="Permanent link">&para;</a></h2>
-
-
-<div class="doc doc-object doc-class">
-
-
-<a id="textual.events.ScreenResume"></a>
-  <div class="doc doc-contents first">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="../../reference/events/#textual.events.Event">Event</a></code></p>
-
-
-
-
-  </div>
-
+<h1 id="dom-queries">DOM Queries<a class="headerlink" href="#dom-queries" title="Permanent link">&para;</a></h1>
+<p>In the previous chapter we introduced the <a href="../CSS/#the-dom">DOM</a> which is how Textual apps keep track of widgets. We saw how you can apply styles to the DOM with CSS <a href="../CSS/#selectors">selectors</a>.</p>
+<p>Selectors are a very useful idea and can do more that apply styles. We can also find widgets in Python code with selectors, and make updates to widgets in a simple expressive way. Let's look at how!</p>
+<h2 id="query-one">Query one<a class="headerlink" href="#query-one" title="Permanent link">&para;</a></h2>
+<p>The <a class="autorefs autorefs-internal" href="../../reference/dom_node/#textual.dom.DOMNode.query_one">query_one</a> method gets a single widget in an app or other widget. If you call it with a selector it will return the first matching widget.</p>
+<p>Let's say we have a widget with an ID of <code>send</code> and we want to get a reference to it in our app. We could do this with the following:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">send_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="s2">&quot;#send&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>If there is no widget with an ID of <code>send</code>, Textual will raise a <a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.NoMatches">NoMatches</a> exception. Otherwise it will return the matched widget.</p>
+<p>You can also add a second parameter for the expected type. </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">send_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="s2">&quot;#send&quot;</span><span class="p">,</span> <span class="n">Button</span><span class="p">)</span>
+</code></pre></div>
+<p>If the matched widget is <em>not</em> a button (i.e. if <code>isinstance(widget, Button)</code> equals <code>False</code>), Textual will raise a <a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.WrongType">WrongType</a> exception.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The second parameter allows type-checkers like MyPy know the exact return type. Without it, MyPy would only know the result of <code>query_one</code> is a Widget (the base class).</p>
 </div>
+<h2 id="making-queries">Making queries<a class="headerlink" href="#making-queries" title="Permanent link">&para;</a></h2>
+<p>Apps and widgets have a <a class="autorefs autorefs-internal" href="../../reference/dom_node/#textual.dom.DOMNode.query">query</a> method which finds (or queries) widgets. This method returns a <a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery">DOMQuery</a> object which is a list-like container of widgets.</p>
+<p>If you call <code>query</code> with no arguments, you will get back a <code>DOMQuery</code> containing all widgets. This method is <em>recursive</em>, meaning it will also return child widgets (as many levels as required).</p>
+<p>Here's how you might iterate over all the widgets in your app:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">():</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+</code></pre></div>
+<p>Called on the <code>app</code>, this will retrieve all widgets in the app. If you call the same method on a widget, it will return the children of that widget.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All the query and related methods work on both App and Widget sub-classes.</p>
+</div>
+<h3 id="query-selectors">Query selectors<a class="headerlink" href="#query-selectors" title="Permanent link">&para;</a></h3>
+<p>You can call <code>query</code> with a CSS selector. Let's look a few examples:</p>
+<p>If we want to find all the button widgets, we could do something like the following:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">for</span> <span class="n">button</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">):</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+</code></pre></div>
+<p>Any selector that works in CSS will work with the <code>query</code> method. For instance, if we want to find all the disabled buttons in a Dialog widget, we could do this: </p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">for</span> <span class="n">button</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Dialog Button.disabled&quot;</span><span class="p">):</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The selector <code>Dialog Button.disabled</code> says find all the <code>Button</code> with a CSS class of <code>disabled</code> that are a child of a <code>Dialog</code> widget.</p>
+</div>
+<h3 id="results">Results<a class="headerlink" href="#results" title="Permanent link">&para;</a></h3>
+<p>Query objects have a <a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery.results">results</a> method which is an alternative way of iterating over widgets. If you supply a type (i.e. a Widget class) then this method will generate only objects of that type.</p>
+<p>The following example queries for widgets with the <code>disabled</code> CSS class and iterates over just the Button objects.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">for</span> <span class="n">button</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;.disabled&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">results</span><span class="p">(</span><span class="n">Button</span><span class="p">):</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>This method allows type-checkers like MyPy to know the exact type of the object in the loop. Without it, MyPy would only know that <code>button</code> is a <code>Widget</code> (the base class).</p>
+</div>
+<h2 id="query-objects">Query objects<a class="headerlink" href="#query-objects" title="Permanent link">&para;</a></h2>
+<p>We've seen that the <a class="autorefs autorefs-internal" href="../../reference/dom_node/#textual.dom.DOMNode.query">query</a> method returns a <a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery">DOMQuery</a> object you can iterate over in a for loop. Query objects behave like Python lists and support all of the same operations (such as <code>query[0]</code>, <code>len(query)</code> ,<code>reverse(query)</code> etc). They also have a number of other methods to simplify retrieving and modifying widgets.</p>
+<h2 id="first-and-last">First and last<a class="headerlink" href="#first-and-last" title="Permanent link">&para;</a></h2>
+<p>The <a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery.first">first</a> and <a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery.last">last</a> methods return the first or last matching widget from the selector, respectively.</p>
+<p>Here's how we might find the <em>last</em> button in an app:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">last_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+</code></pre></div>
+<p>If there are no buttons, Textual will raise a <a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.NoMatches">NoMatches</a> exception. Otherwise it will return a button widget.</p>
+<p>Both <code>first()</code> and <code>last()</code> accept an <code>expect_type</code> argument that should be the class of the widget you are expecting. Let's say we want to get the last widget with class <code>.disabled</code>, and we want to check it really is a button. We could do this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">disabled_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;.disabled&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">(</span><span class="n">Button</span><span class="p">)</span>
+</code></pre></div>
+<p>The query selects all widgets with a <code>disabled</code> CSS class. The <code>last</code> method gets the last disabled widget and checks it is a <code>Button</code> and not any other kind of widget.</p>
+<p>If the last widget is <em>not</em> a button, Textual will raise a <a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.WrongType">WrongType</a> exception.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Specifying the expected type allows type-checkers like MyPy to know the exact return type.</p>
+</div>
+<h2 id="filter">Filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h2>
+<p>Query objects have a <a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery.filter">filter</a> method which further refines a query. This method will return a new query object which widgets that match both the original query <em>and</em> the new selector</p>
+<p>Let's say we have a query which gets all the buttons in an app, and we want a new query object with just the disabled buttons. We could write something like this:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Get all the Buttons</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">buttons_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">)</span> 
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># Buttons with &#39;disabled&#39; CSS class</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">disabled_buttons</span> <span class="o">=</span> <span class="n">buttons_query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;.disabled&quot;</span><span class="p">)</span> 
+</code></pre></div>
+<p>Iterating over <code>disabled_buttons</code> will give us all the disabled buttons.</p>
+<h2 id="exclude">Exclude<a class="headerlink" href="#exclude" title="Permanent link">&para;</a></h2>
+<p>Query objects have a <a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery.exclude">exclude</a> method which is the logical opposite of <a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery.filter">filter</a>. The <code>exclude</code> method removes any widgets from the query object which match a selector.</p>
+<p>Here's how we could get all the buttons which <em>don't</em> have the <code>disabled</code> class set.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Get all the Buttons</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">buttons_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># Remove all the Buttons with the &#39;disabled&#39; CSS class</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">enabled_buttons</span> <span class="o">=</span> <span class="n">buttons_query</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="s2">&quot;.disabled&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="loop-free-operations">Loop-free operations<a class="headerlink" href="#loop-free-operations" title="Permanent link">&para;</a></h2>
+<p>Once you have a query object, you can loop over it to call methods on the matched widgets. Query objects also support a number of methods which make an update to every matched widget without an explicit loop.</p>
+<p>For instance, let's say we want to disable all buttons in an app. We could do this by calling <a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery.add_class">add_class()</a> on a query object.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">add_class</span><span class="p">(</span><span class="s2">&quot;disabled&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>This single line is equivalent to the following:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">):</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    <span class="n">widget</span><span class="o">.</span><span class="n">add_class</span><span class="p">(</span><span class="s2">&quot;disabled&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Here are the other loop-free methods on query objects:</p>
+<ul>
+<li><a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery.set_class">set_class</a> Sets a CSS class (or classes) on matched widgets.</li>
+<li><a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery.add_class">add_class</a> Adds a CSS class (or classes) to matched widgets.</li>
+<li><a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery.remove_class">remove_class</a> Removes a CSS class (or classes) from matched widgets.</li>
+<li><a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery.toggle_class">toggle_class</a> Sets a CSS class (or classes) if it is not set, or removes the class (or classes) if they are set on the matched widgets.</li>
+<li><a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery.remove">remove</a> Removes matched widgets from the DOM.</li>
+<li><a class="autorefs autorefs-internal" href="../../reference/query/#textual.css.query.DOMQuery.refresh">refresh</a> Refreshes matched widgets.</li>
+</ul>
 
 
 
@@ -3346,7 +3546,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="../resize/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Resize" rel="prev">
+        <a href="../CSS/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Textual CSS" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -3355,20 +3555,20 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Resize
+              Textual CSS
             </div>
           </div>
         </a>
       
       
         
-        <a href="../screen_suspend/" class="md-footer__link md-footer__link--next" aria-label="Next: ScreenSuspend" rel="next">
+        <a href="../layout/" class="md-footer__link md-footer__link--next" aria-label="Next: Layout" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              ScreenSuspend
+              Layout
             </div>
           </div>
           <div class="md-footer__button md-icon">
