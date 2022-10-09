@@ -26,7 +26,7 @@ If the matched widget is *not* a button (i.e. if `isinstance(widget, Button)` eq
 
 !!! tip
 
-    The second parameter allows type-checkers like MyPy know the exact return type. Without it, MyPy would only know the result of `query_one` is a Widget (the base class).
+    The second parameter allows type-checkers like MyPy to know the exact return type. Without it, MyPy would only know the result of `query_one` is a Widget (the base class).
 
 ## Making queries
 
