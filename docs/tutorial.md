@@ -199,7 +199,10 @@ While it's possible to set all styles for an app this way, it is rarely necessar
 
 !!! info
 
-    The dialect of CSS used in Textual is greatly simplified over web based CSS and much easier to learn!
+    The dialect of CSS used in Textual is greatly simplified over web based CSS and much easier to learn.
+
+
+CSS makes it easy to iterate on the design of your app and enables [live-editing](./guide/devtools.md#live-editing) &mdash; you can edit CSS and see the changes without restarting the app!
 
 
 Let's add a CSS file to our application.

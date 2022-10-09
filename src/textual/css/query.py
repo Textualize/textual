@@ -34,7 +34,7 @@ class QueryError(Exception):
     """Base class for a query related error."""
 
 
-class NoMatchingNodesError(QueryError):
+class NoMatches(QueryError):
     """No nodes matched the query."""
 
 
@@ -180,7 +180,7 @@ class DOMQuery(Generic[QueryType]):
 
         Raises:
             WrongType: If the wrong type was found.
-            NoMatchingNodesError: If there are no matching nodes in the query.
+            NoMatches: If there are no matching nodes in the query.
 
         Returns:
             Widget | ExpectType: The matching Widget.
@@ -194,7 +194,7 @@ class DOMQuery(Generic[QueryType]):
                     )
             return first
         else:
-            raise NoMatchingNodesError(f"No nodes match {self!r}")
+            raise NoMatches(f"No nodes match {self!r}")
 
     @overload
     def last(self) -> Widget:
@@ -215,7 +215,7 @@ class DOMQuery(Generic[QueryType]):
 
         Raises:
             WrongType: If the wrong type was found.
-            NoMatchingNodesError: If there are no matching nodes in the query.
+            NoMatches: If there are no matching nodes in the query.
 
         Returns:
             Widget | ExpectType: The matching Widget.
@@ -229,7 +229,7 @@ class DOMQuery(Generic[QueryType]):
                     )
             return last
         else:
-            raise NoMatchingNodesError(f"No nodes match {self!r}")
+            raise NoMatches(f"No nodes match {self!r}")
 
     @overload
     def results(self) -> Iterator[Widget]:

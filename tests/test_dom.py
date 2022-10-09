@@ -1,7 +1,7 @@
 import pytest
 
 from textual.css.errors import StyleValueError
-from textual.css.query import NoMatchingNodesError
+from textual.css.query import NoMatches
 from textual.dom import DOMNode, BadIdentifier
 
 
@@ -48,12 +48,12 @@ def test_get_child_gets_first_child(parent):
 
 
 def test_get_child_no_matching_child(parent):
-    with pytest.raises(NoMatchingNodesError):
+    with pytest.raises(NoMatches):
         parent.get_child(id="doesnt-exist")
 
 
 def test_get_child_only_immediate_descendents(parent):
-    with pytest.raises(NoMatchingNodesError):
+    with pytest.raises(NoMatches):
         parent.get_child(id="grandchild1")
 
 
