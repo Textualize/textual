@@ -37,7 +37,7 @@ from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
 from .binding import Bindings, NoBinding
-from .css.query import NoMatchingNodesError
+from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
@@ -774,7 +774,7 @@ class App(Generic[ReturnType], DOMNode):
             DOMNode: The first child of this node with the specified ID.
 
         Raises:
-            NoMatchingNodesError: if no children could be found for this ID
+            NoMatches: if no children could be found for this ID
         """
         return self.screen.get_child(id)
 
@@ -1553,7 +1553,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         try:
             node = self.query(f"#{widget_id}").first()
-        except NoMatchingNodesError:
+        except NoMatches:
             pass
         else:
             if isinstance(node, Widget):
