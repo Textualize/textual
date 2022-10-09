@@ -131,7 +131,7 @@ Iterating over `disabled_buttons` will give us all the disabled buttons.
 
 ## Exclude
 
-Query objects have a [exclude][textual.css.query.DOMQuery.exclude] method which is the logical opposite of [filter][textual.css.query.DOMQuery.filter]. The `exclude` method removes any widgets from the query object which match a selector.
+Query objects have an [exclude][textual.css.query.DOMQuery.exclude] method which is the logical opposite of [filter][textual.css.query.DOMQuery.filter]. The `exclude` method removes any widgets from the query object which match a selector.
 
 Here's how we could get all the buttons which *don't* have the `disabled` class set.
 
