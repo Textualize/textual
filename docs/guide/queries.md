@@ -4,7 +4,7 @@ In the previous chapter we introduced the [DOM](../guide/CSS.md#the-dom) which i
 
 Selectors are a very useful idea and can do more that apply styles. We can also find widgets in Python code with selectors, and make updates to widgets in a simple expressive way. Let's look at how!
 
-## Query one 
+## Query one
 
 The [query_one][textual.dom.DOMNode.query_one] method gets a single widget in an app or other widget. If you call it with a selector it will return the first matching widget.
 
@@ -16,7 +16,7 @@ send_button = self.query_one("#send")
 
 If there is no widget with an ID of `send`, Textual will raise a [NoMatches][textual.css.query.NoMatches] exception. Otherwise it will return the matched widget.
 
-You can also add a second parameter for the expected type. 
+You can also add a second parameter for the expected type.
 
 ```python
 send_button = self.query_one("#send", Button)
@@ -58,7 +58,7 @@ for button in self.query("Button"):
     print(button)
 ```
 
-Any selector that works in CSS will work with the `query` method. For instance, if we want to find all the disabled buttons in a Dialog widget, we could do this: 
+Any selector that works in CSS will work with the `query` method. For instance, if we want to find all the disabled buttons in a Dialog widget, we could do this:
 
 ```python
 for button in self.query("Dialog Button.disabled"):
@@ -122,9 +122,9 @@ Let's say we have a query which gets all the buttons in an app, and we want a ne
 
 ```python
 # Get all the Buttons
-buttons_query = self.query("Button") 
+buttons_query = self.query("Button")
 # Buttons with 'disabled' CSS class
-disabled_buttons = buttons_query.filter(".disabled") 
+disabled_buttons = buttons_query.filter(".disabled")
 ```
 
 Iterating over `disabled_buttons` will give us all the disabled buttons.
