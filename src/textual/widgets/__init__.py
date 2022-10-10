@@ -5,7 +5,7 @@ from ._header import Header
 from ._placeholder import Placeholder
 from ._scroll_view import ScrollView
 from ._static import Static
-from ._tab_bar import TabBar
+from ._tab_bar import Tab, TabBar
 from ._tree_control import TreeControl, TreeClick, TreeNode, NodeID
 
 __all__ = [
@@ -19,6 +19,7 @@ __all__ = [
     "Placeholder",
     "ScrollView",
     "Static",
+    "Tab",
     "TabBar",
     "TreeClick",
     "TreeControl",
