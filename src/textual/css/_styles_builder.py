@@ -622,8 +622,8 @@ class StylesBuilder:
 
     process_link_color = process_color
     process_link_background = process_color
-    process_hover_color = process_color
-    process_hover_background = process_color
+    process_link_hover_color = process_color
+    process_link_hover_background = process_color
 
     def process_text_style(self, name: str, tokens: list[Token]) -> None:
         for token in tokens:
@@ -639,7 +639,7 @@ class StylesBuilder:
         self.styles._rules[name.replace("-", "_")] = style_definition
 
     process_link_style = process_text_style
-    process_hover_style = process_text_style
+    process_link_hover_style = process_text_style
 
     def process_text_align(self, name: str, tokens: list[Token]) -> None:
         """Process a text-align declaration"""

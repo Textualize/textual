@@ -133,12 +133,12 @@ class Widget(DOMNode):
         scrollbar-corner-color: $panel-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
-        link-background:;        
+        link-background:;
         link-color: $text;
         link-style: underline;
-        hover-background: $accent;   
-        hover-color: $text;     
-        hover-style: bold not underline;
+        link-hover-background: $accent;
+        link-hover-color: $text;
+        link-hover-style: bold not underline;
     }
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
@@ -930,13 +930,13 @@ class Widget(DOMNode):
         """Style of links with mouse hover."""
         styles = self.styles
         _, background = self.background_colors
-        hover_background = background + styles.hover_background
+        hover_background = background + styles.link_hover_background
         hover_color = hover_background + (
-            hover_background.get_contrast_text(styles.hover_color.a)
-            if styles.auto_hover_color
-            else styles.hover_color
+            hover_background.get_contrast_text(styles.link_hover_color.a)
+            if styles.auto_link_hover_color
+            else styles.link_hover_color
         )
-        style = styles.hover_style + Style.from_color(
+        style = styles.link_hover_style + Style.from_color(
             hover_color.rich_color,
             hover_background.rich_color,
         )
