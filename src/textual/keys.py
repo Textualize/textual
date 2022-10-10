@@ -178,10 +178,6 @@ class Keys(str, Enum):
     ScrollUp = "<scroll-up>"
     ScrollDown = "<scroll-down>"
 
-    CPRResponse = "<cursor-position-response>"
-    Vt100MouseEvent = "<vt100-mouse-event>"
-    WindowsMouseEvent = "<windowshift+mouse-event>"
-
     # For internal use: key which is ignored.
     # (The key binding for this key should not do anything.)
     Ignore = "<ignore>"
@@ -205,6 +201,7 @@ class Keys(str, Enum):
 KEY_NAME_REPLACEMENTS = {
     "solidus": "slash",
     "reverse_solidus": "backslash",
+    "commercial_at": "at",
 }
 
 # Some keys have aliases. For example, if you press `ctrl+m` on your keyboard,
@@ -213,8 +210,8 @@ KEY_NAME_REPLACEMENTS = {
 KEY_ALIASES = {
     "tab": ["ctrl+i"],
     "enter": ["ctrl+m"],
-    "escape": ["ctrl+["],
-    "ctrl+@": ["ctrl+space"],
+    "escape": ["ctrl+left_square_brace"],
+    "ctrl+at": ["ctrl+space"],
     "ctrl+j": ["newline"],
 }
 
