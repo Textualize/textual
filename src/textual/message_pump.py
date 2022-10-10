@@ -548,11 +548,6 @@ class MessagePump(metaclass=MessagePumpMeta):
             private_handler_name = f"_key_{key}"
             private_handler = getattr(pump, private_handler_name, None)
 
-            if public_handler and private_handler:
-                _raise_duplicate_key_handlers_error(
-                    key, public_handler_name, private_handler_name
-                )
-
             return public_handler or private_handler
 
         invoked_method = None
@@ -560,9 +555,8 @@ class MessagePump(metaclass=MessagePumpMeta):
         if not key_name:
             return False
 
-        key_aliases = _get_key_aliases(event.key)
-        for key_alias in key_aliases:
-            key_method = get_key_handler(self, key_alias.replace("+", "_"))
+        for key_alias in event.key_aliases:
+            key_method = get_key_handler(self, key_alias)
             if key_method is not None:
                 if invoked_method:
                     _raise_duplicate_key_handlers_error(

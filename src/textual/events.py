@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Awaitable, Callable, Type, TypeVar
+from typing import TYPE_CHECKING, Awaitable, Callable, Type, TypeVar, Iterable
 
 import rich.repr
 from rich.style import Style
 
 from ._types import MessageTarget
 from .geometry import Offset, Size
+from .keys import _get_key_aliases
 from .message import Message
 
 MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
@@ -209,7 +210,13 @@ class Key(InputEvent):
     @property
     def key_name(self) -> str | None:
         """Name of a key suitable for use as a Python identifier."""
-        return self.key.replace("+", "_")
+        return _normalize_key(self.key)
+
+    @property
+    def key_aliases(self) -> Iterable[str]:
+        """Get the aliases for the key, including the key itself"""
+        for alias in _get_key_aliases(self.key):
+            yield _normalize_key(alias)
 
     @property
     def is_printable(self) -> bool:
@@ -220,6 +227,11 @@ class Key(InputEvent):
             bool: True if the key is printable.
         """
         return False if self.char is None else self.char.isprintable()
+
+
+def _normalize_key(key: str) -> str:
+    """Convert the key string to a name suitable for use as a Python identifier."""
+    return key.replace("+", "_")
 
 
 @rich.repr.auto

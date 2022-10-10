@@ -47,14 +47,6 @@ class DuplicateHandlersWidget(Widget):
         self.called_by = self.key_ctrl_i
 
 
-async def test_dispatch_key_raises_when_public_and_private_handlers():
-    """When both a public and private handler exists for one key, we fail fast via exception."""
-    widget = DuplicateHandlersWidget()
-    with pytest.raises(DuplicateKeyHandlers):
-        await widget.dispatch_key(Key(widget, key="x", char="x"))
-    assert widget.called_by is None
-
-
 async def test_dispatch_key_raises_when_conflicting_handler_aliases():
     """If you've got a handler for e.g. ctrl+i and a handler for tab, that's probably a mistake.
     In the terminal, they're the same thing, so we fail fast via exception here."""
