@@ -11,6 +11,17 @@ REPOS = ["rich", "textual"]
 REPOS_DIRECTORY = "/home/<user>/repositories/"
 
 
+class MyTab(Tab):
+    @property
+    def color(self) -> str:
+        if self.hover:
+            return "on blue"
+        elif self.selected:
+            return "on yellow"
+        else:
+            return ""
+
+
 class MyTabBar(TabBar):
     def init_grid(self, grid: GridLayout) -> None:
         max_row = len(self._tabs)
@@ -29,7 +40,9 @@ class ReadMe(App):
             with open(f"{REPOS_DIRECTORY}{repo_name}/README.md", "r") as f:
                 content = Markdown(f.read())
 
-            tabs.append(Tab(content, name=repo_name))
+            # Create duplicated tabs to show possibilities about colors
+            tabs.append(Tab(content, name=f"{repo_name} RED"))
+            tabs.append(MyTab(content, name=f"{repo_name} BLUE"))
 
         # Create the main view, used by TabBar to change content
         main_view = ScrollView()
