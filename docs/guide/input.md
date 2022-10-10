@@ -27,17 +27,17 @@ Note the key event handler on the app which logs all key events. if you press an
 
 ### Attributes
 
-There are two main attributes on a key event. The `key` attribute is the _name_ of the key which may be a single character, or a longer identifier. Textual insures that the `key` attribute could always be used in a method name.
+There are two main attributes on a key event. The `key` attribute is the _name_ of the key which may be a single character, or a longer identifier. Textual ensures that the `key` attribute could always be used in a method name.
 
 Key events also contain a `char` attribute which contains single character if it is printable, or ``None`` if it is not printable (like a function key which has no corresponding character).
 
-To illustrate the difference between `key` ad `char`, try `key01.py` with the space key. You should see something like the following:
+To illustrate the difference between `key` and `char`, try `key01.py` with the space key. You should see something like the following:
 
 ```{.textual path="docs/examples/guide/input/key01.py", press="space,_"}
 
 ```
 
-Note that he `key` attribute contains the word "space" while the `char` attribute contains a literal space.
+Note that the `key` attribute contains the word "space" while the `char` attribute contains a literal space.
 
 ### Key methods
 
@@ -98,7 +98,8 @@ When a widget receives focus, it is sent a [Focus](../events/focus.md) event. Wh
 
 Keys may be associated with [actions](../guide/actions.md) for a given widget. This association is known as a key _binding_.
 
-To create bindings, add a `BINDINGS` class variable to your app or widget. This should be a list of tuples of three strings. The first value is the key, the second is the action, the third value is a short human readable description.
+To create bindings, add a `BINDINGS` class variable to your app or widget. This should be a list of tuples of three strings.
+The first value is the key, the second is the action, the third value is a short human readable description.
 
 The following example binds the keys ++r++, ++g++, and ++b++ to an action which adds a bar widget to the screen.
 
@@ -121,6 +122,11 @@ The following example binds the keys ++r++, ++g++, and ++b++ to an action which 
 
 Note how the footer displays bindings and makes them clickable.
 
+!!! tip
+
+    Multiple keys can be bound to a single action by comma-separating them.
+    For example, `("r,t", "add_bar('red')", "Add Red")` means both ++r++ and ++t++ are bound to `add_bar('red')`.
+
 ### Binding class
 
 The tuple of three strings may be enough for simple bindings, but you can also replace the tuple with a [Binding][textual.binding.Binding] instance which exposes a few more options.
@@ -139,7 +145,7 @@ Textual will send events in response to mouse movement and mouse clicks. These e
 
     The trackpad (and possibly other pointer devices) are treated the same as the mouse in terminals.
 
-Terminal coordinates are given by a pair values named `x` and `y`. The X coordinate is an offset in characters, extending from the left to the right of the screen. The Y coordinate is an offset in _lines_, extending from the top of the screen to the bottom. 
+Terminal coordinates are given by a pair values named `x` and `y`. The X coordinate is an offset in characters, extending from the left to the right of the screen. The Y coordinate is an offset in _lines_, extending from the top of the screen to the bottom.
 
 Coordinates may be relative to the screen, so `(0, 0)` would be the top left of the screen. Coordinates may also be relative to a widget, where `(0, 0)` would be the top left of the widget itself.
 
@@ -184,7 +190,7 @@ Textual will send a [MouseCapture](../events/mouse_capture.md) event when the mo
 
 ### Enter and Leave events
 
-Textual will send a [Enter](../events/enter.md) event to a widget when the mouse cursor first moves over it, and a [Leave](../events/leave) event when the cursor moves off a widget. 
+Textual will send a [Enter](../events/enter.md) event to a widget when the mouse cursor first moves over it, and a [Leave](../events/leave) event when the cursor moves off a widget.
 
 ### Click events
 
@@ -199,4 +205,3 @@ Most mice have a scroll wheel which you can use to scroll window underneath the 
 !!! information
 
     Terminal emulators will typically convert trackpad gestures in to scroll events.
-
