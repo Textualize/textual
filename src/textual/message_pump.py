@@ -418,7 +418,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                 # parent is sender, so we stop propagation after parent
                 message.stop()
             if self.is_parent_active and not self._parent._closing:
-                await message.bubble_to(self._parent)
+                await message._bubble_to(self._parent)
 
     def check_idle(self) -> None:
         """Prompt the message pump to call idle if the queue is empty."""
