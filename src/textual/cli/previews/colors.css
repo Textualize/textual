@@ -1,0 +1,75 @@
+ColorButtons {
+    dock: left;
+    overflow-y: auto;
+    width: 30;
+}
+
+ColorButtons > Button {        
+    width: 30;
+}
+
+ColorsView {
+    width: 100%;
+    height: 100%;
+    align: center middle;
+    overflow-x: auto;
+    background: $background;
+    scrollbar-gutter: stable;
+}
+
+ColorItem {
+    layout: horizontal;    
+    height: 3;
+    width: 1fr;
+}
+
+ColorBar {
+    height: auto;
+    width: 1fr;
+    content-align: center middle;
+}
+
+ColorBar.label {
+    width: 2fr;
+
+}
+
+ColorItem {
+    width: 100%;
+    padding: 1 2;    
+}
+
+ColorGroup {
+    margin: 2 0;
+    width: 80;    
+    height: auto;
+    padding: 1 4 2 4;
+    background: $surface;    
+    border: wide $surface;
+}
+
+
+ColorGroup.-active {
+    border: wide $secondary;
+}
+
+.text {
+    color: $text;
+}
+
+.muted {
+    color: $text-muted;
+}
+
+
+.disabled {
+    color: $text-disabled;
+}
+
+
+ColorLabel {
+    padding: 0 0 1 0;
+    content-align: center middle;
+    color: $text;
+    text-style: bold;
+}

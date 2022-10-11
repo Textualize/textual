@@ -9,7 +9,6 @@ from .geometry import Region, Size, Spacing
 from ._layout import DockArrangeResult, WidgetPlacement
 from ._partition import partition
 
-
 if TYPE_CHECKING:
     from .widget import Widget
 
@@ -115,7 +114,7 @@ def arrange(
                         for placement in layout_placements
                     ]
                 ).size
-                placement_offset += styles._align_size(placement_size, size)
+                placement_offset += styles._align_size(placement_size, size).clamped
 
             if placement_offset:
                 layout_placements = [
