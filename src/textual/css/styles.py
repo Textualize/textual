@@ -902,12 +902,12 @@ class Styles(StylesBase):
         if has_rule("link_style"):
             append_declaration("link-style", str(self.link_style))
 
-        if has_rule("hover_color"):
-            append_declaration("hover-color", self.hover_color.css)
-        if has_rule("hover_background"):
-            append_declaration("hover-background", self.hover_background.css)
-        if has_rule("hover_style"):
-            append_declaration("hover-style", str(self.hover_style))
+        if has_rule("link_hover_color"):
+            append_declaration("link-hover-color", self.link_hover_color.css)
+        if has_rule("link_hover_background"):
+            append_declaration("link-hover-background", self.link_hover_background.css)
+        if has_rule("link_hover_style"):
+            append_declaration("link-hover-style", str(self.link_hover_style))
 
         lines.sort()
         return lines

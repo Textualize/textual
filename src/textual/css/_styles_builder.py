@@ -60,7 +60,7 @@ from .scalar import (
 from .styles import Styles
 from .tokenize import Token
 from .transition import Transition
-from .types import BoxSizing, Display, Edge, EdgeType, Overflow, Visibility
+from .types import BoxSizing, Display, EdgeType, Overflow, Visibility
 
 
 def _join_tokens(tokens: Iterable[Token], joiner: str = "") -> str:
@@ -580,6 +580,7 @@ class StylesBuilder:
         color: Color | None = None
         alpha: float | None = None
 
+        self.styles._rules[f"auto_{name}"] = False
         for token in tokens:
             if (
                 "background" not in name
