@@ -1,7 +1,7 @@
 # Layout
 
 In Textual, the *layout* defines how widgets will be arranged (or *laid out*) inside a container.
-Textual supports a number of layouts which can be set either via a widgets `styles` object or via CSS.
+Textual supports a number of layouts which can be set either via a widget's `styles` object or via CSS.
 Layouts can be used for both high-level positioning of widgets on screen, and for positioning of nested widgets.
 
 ## Vertical
