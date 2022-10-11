@@ -53,3 +53,5 @@ The second `Static` uses CSS to customize the link color, background, and style.
 ## See Also
 
 * An [introduction to links](../guide/actions.md#links) in the Actions guide.
+
+[//]: # (TODO: Links are documented twice in the guide, and one will likely be removed. Check the link above still works after that.)
