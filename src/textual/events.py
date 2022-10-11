@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Awaitable, Callable, Type, TypeVar, Iterable
+from typing import TYPE_CHECKING, Awaitable, Callable, Type, TypeVar
 
 import rich.repr
 from rich.style import Style
@@ -202,6 +202,7 @@ class Key(InputEvent):
         super().__init__(sender)
         self.key = key
         self.char = (key if len(key) == 1 else None) if char is None else char
+        self._key_aliases = [_normalize_key(alias) for alias in _get_key_aliases(key)]
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "key", self.key
@@ -213,10 +214,9 @@ class Key(InputEvent):
         return _normalize_key(self.key)
 
     @property
-    def key_aliases(self) -> Iterable[str]:
+    def key_aliases(self) -> list[str]:
         """Get the aliases for the key, including the key itself"""
-        for alias in _get_key_aliases(self.key):
-            yield _normalize_key(alias)
+        return self._key_aliases
 
     @property
     def is_printable(self) -> bool:
