@@ -1,9 +1,8 @@
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
-from textual.reactive import var
-from textual.widgets import Button, Static, Footer
-
 from textual.design import ColorSystem
+from textual.widget import Widget
+from textual.widgets import Button, Footer, Static
 
 
 class ColorButtons(Vertical):
@@ -49,7 +48,7 @@ class ColorsView(Vertical):
         variables = self.app.stylesheet._variables
         for color_name in ColorSystem.COLOR_NAMES:
 
-            items = [ColorLabel(f'"{color_name}"')]
+            items: list[Widget] = [ColorLabel(f'"{color_name}"')]
             for level in LEVELS:
                 color = f"{color_name}-{level}" if level else color_name
                 item = ColorItem(
