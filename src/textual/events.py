@@ -194,6 +194,9 @@ class Key(InputEvent):
         sender (MessageTarget): The sender of the event (the App).
         key (str): A key name (textual.keys.Keys).
         char (str | None, optional): A printable character or None if it is not printable.
+
+    Attributes:
+        key_aliases (list[str]): The aliases for the key, including the key itself
     """
 
     __slots__ = ["key", "char"]
@@ -202,7 +205,7 @@ class Key(InputEvent):
         super().__init__(sender)
         self.key = key
         self.char = (key if len(key) == 1 else None) if char is None else char
-        self._key_aliases = [_normalize_key(alias) for alias in _get_key_aliases(key)]
+        self.key_aliases = [_normalize_key(alias) for alias in _get_key_aliases(key)]
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "key", self.key
@@ -212,11 +215,6 @@ class Key(InputEvent):
     def key_name(self) -> str | None:
         """Name of a key suitable for use as a Python identifier."""
         return _normalize_key(self.key)
-
-    @property
-    def key_aliases(self) -> list[str]:
-        """Get the aliases for the key, including the key itself"""
-        return self._key_aliases
 
     @property
     def is_printable(self) -> bool:
