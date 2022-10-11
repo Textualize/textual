@@ -10,6 +10,7 @@ from __future__ import annotations
 import asyncio
 import inspect
 from asyncio import CancelledError, Queue, QueueEmpty, Task
+from time import time
 from functools import partial
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, Iterable
 from weakref import WeakSet
@@ -75,6 +76,8 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._pending_message: Message | None = None
         self._task: Task | None = None
         self._timers: WeakSet[Timer] = WeakSet()
+        self._last_idle: float = time()
+        self._max_idle: float | None = None
 
     @property
     def task(self) -> Task:
@@ -337,7 +340,12 @@ class MessagePump(metaclass=MessagePumpMeta):
                 break
             finally:
                 self._message_queue.task_done()
-                if self._message_queue.empty():
+                current_time = time()
+                if self._message_queue.empty() or (
+                    self._max_idle is not None
+                    and current_time - self._last_idle > self._max_idle
+                ):
+                    self._last_idle = current_time
                     if not self._closed:
                         event = events.Idle(self)
                         for _cls, method in self._get_dispatch_methods(
