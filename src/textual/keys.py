@@ -1,9 +1,9 @@
-from dataclasses import dataclass
+from __future__ import annotations
+
 from enum import Enum
 
+
 # Adapted from prompt toolkit https://github.com/prompt-toolkit/python-prompt-toolkit/blob/master/prompt_toolkit/keys.py
-
-
 class Keys(str, Enum):
     """
     List of keys for use in key bindings.
@@ -178,10 +178,6 @@ class Keys(str, Enum):
     ScrollUp = "<scroll-up>"
     ScrollDown = "<scroll-down>"
 
-    CPRResponse = "<cursor-position-response>"
-    Vt100MouseEvent = "<vt100-mouse-event>"
-    WindowsMouseEvent = "<windowshift+mouse-event>"
-
     # For internal use: key which is ignored.
     # (The key binding for this key should not do anything.)
     Ignore = "<ignore>"
@@ -205,4 +201,21 @@ class Keys(str, Enum):
 KEY_NAME_REPLACEMENTS = {
     "solidus": "slash",
     "reverse_solidus": "backslash",
+    "commercial_at": "at",
 }
+
+# Some keys have aliases. For example, if you press `ctrl+m` on your keyboard,
+# it's treated the same way as if you press `enter`. Key handlers `key_ctrl_m` and
+# `key_enter` are both valid in this case.
+KEY_ALIASES = {
+    "tab": ["ctrl+i"],
+    "enter": ["ctrl+m"],
+    "escape": ["ctrl+left_square_brace"],
+    "ctrl+at": ["ctrl+space"],
+    "ctrl+j": ["newline"],
+}
+
+
+def _get_key_aliases(key: str) -> list[str]:
+    """Return all aliases for the given key, including the key itself"""
+    return [key] + KEY_ALIASES.get(key, [])

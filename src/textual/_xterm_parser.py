@@ -241,7 +241,6 @@ class XTermParser(Parser[events.Event]):
             Iterable[events.Key]: keys
 
         """
-
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
         if keys is not None:
             for key in keys:

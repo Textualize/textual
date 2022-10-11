@@ -7,6 +7,7 @@ from rich.style import Style
 
 from ._types import MessageTarget
 from .geometry import Offset, Size
+from .keys import _get_key_aliases
 from .message import Message
 
 MouseEventT = TypeVar("MouseEventT", bound="MouseEvent")
@@ -193,6 +194,9 @@ class Key(InputEvent):
         sender (MessageTarget): The sender of the event (the App).
         key (str): A key name (textual.keys.Keys).
         char (str | None, optional): A printable character or None if it is not printable.
+
+    Attributes:
+        key_aliases (list[str]): The aliases for the key, including the key itself
     """
 
     __slots__ = ["key", "char"]
@@ -201,6 +205,7 @@ class Key(InputEvent):
         super().__init__(sender)
         self.key = key
         self.char = (key if len(key) == 1 else None) if char is None else char
+        self.key_aliases = [_normalize_key(alias) for alias in _get_key_aliases(key)]
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "key", self.key
@@ -209,7 +214,7 @@ class Key(InputEvent):
     @property
     def key_name(self) -> str | None:
         """Name of a key suitable for use as a Python identifier."""
-        return self.key.replace("+", "_")
+        return _normalize_key(self.key)
 
     @property
     def is_printable(self) -> bool:
@@ -220,6 +225,11 @@ class Key(InputEvent):
             bool: True if the key is printable.
         """
         return False if self.char is None else self.char.isprintable()
+
+
+def _normalize_key(key: str) -> str:
+    """Convert the key string to a name suitable for use as a Python identifier."""
+    return key.replace("+", "_")
 
 
 @rich.repr.auto
