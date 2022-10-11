@@ -30,7 +30,7 @@ from .css.errors import StyleValueError, DeclarationError
 from .css.parse import parse_declarations
 from .css.styles import Styles, RenderStyles
 from .css.tokenize import IDENTIFIER
-from .css.query import NoMatchingNodesError
+from .css.query import NoMatches
 from .message_pump import MessagePump
 from .timer import Timer
 
@@ -405,6 +405,11 @@ class DOMNode(MessagePump):
 
     @property
     def visible(self) -> bool:
+        """Check if the node is visible or None.
+
+        Returns:
+            bool: True if the node is visible.
+        """
         return self.styles.visibility != "hidden"
 
     @visible.setter
@@ -669,12 +674,12 @@ class DOMNode(MessagePump):
             DOMNode: The first child of this node with the ID.
 
         Raises:
-            NoMatchingNodesError: if no children could be found for this ID
+            NoMatches: if no children could be found for this ID
         """
         for child in self.children:
             if child.id == id:
                 return child
-        raise NoMatchingNodesError(f"No child found with id={id!r}")
+        raise NoMatches(f"No child found with id={id!r}")
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
@@ -690,7 +695,7 @@ class DOMNode(MessagePump):
         """Get a DOM query matching a selector.
 
         Args:
-            selector (str, optional): A CSS selector or `None` for all nodes. Defaults to None.
+            selector (str | type | None, optional): A CSS selector or `None` for all nodes. Defaults to None.
 
         Returns:
             DOMQuery: A query object.
@@ -725,8 +730,8 @@ class DOMNode(MessagePump):
         """Get the first Widget matching the given selector or selector type.
 
         Args:
-            selector (str | None, optional): A selector.
-            expect_type (type, optional): Require the object be of the supplied type, or None for any type.
+            selector (str | type): A selector.
+            expect_type (type | None, optional): Require the object be of the supplied type, or None for any type.
                 Defaults to None.
 
         Returns:

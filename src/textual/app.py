@@ -35,8 +35,9 @@ from ._animator import Animator, DEFAULT_EASING, Animatable, EasingFunction
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
+from ._filter import LineFilter, Monochrome
 from .binding import Bindings, NoBinding
-from .css.query import NoMatchingNodesError
+from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
@@ -163,12 +164,18 @@ class App(Generic[ReturnType], DOMNode):
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
+        self._filter: LineFilter | None = None
+        environ = dict(os.environ)
+        no_color = environ.pop("NO_COLOR", None)
+        if no_color is not None:
+            self._filter = Monochrome()
         self.console = Console(
             file=(_NullFile() if self.is_headless else sys.__stdout__),
             markup=False,
             highlight=False,
             emoji=False,
             legacy_windows=False,
+            _environ=environ,
         )
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
@@ -767,7 +774,7 @@ class App(Generic[ReturnType], DOMNode):
             DOMNode: The first child of this node with the specified ID.
 
         Raises:
-            NoMatchingNodesError: if no children could be found for this ID
+            NoMatches: if no children could be found for this ID
         """
         return self.screen.get_child(id)
 
@@ -1303,7 +1310,8 @@ class App(Generic[ReturnType], DOMNode):
         await self._close_messages()
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
-        self.screen.refresh(repaint=repaint, layout=layout)
+        if self._screen_stack:
+            self.screen.refresh(repaint=repaint, layout=layout)
         self.check_idle()
 
     def refresh_css(self, animate: bool = True) -> None:
@@ -1545,19 +1553,30 @@ class App(Generic[ReturnType], DOMNode):
         """
         try:
             node = self.query(f"#{widget_id}").first()
-        except NoMatchingNodesError:
+        except NoMatches:
             pass
         else:
             if isinstance(node, Widget):
                 self.set_focus(node)
 
     async def action_switch_screen(self, screen: str) -> None:
+        """Switches to another screen.
+
+        Args:
+            screen (str): Name of the screen.
+        """
         self.switch_screen(screen)
 
     async def action_push_screen(self, screen: str) -> None:
+        """Pushes a screen on to the screen stack and makes it active.
+
+        Args:
+            screen (str): Name of the screen.
+        """
         self.push_screen(screen)
 
     async def action_pop_screen(self) -> None:
+        """Removes the topmost screen and makes the new topmost screen active."""
         self.pop_screen()
 
     async def action_back(self) -> None:

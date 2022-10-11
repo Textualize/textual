@@ -147,7 +147,7 @@ class Widget(DOMNode):
     """Widget may receive focus."""
     can_focus_children: bool = True
     """Widget's children may receive focus."""
-    expand = Reactive(True)
+    expand = Reactive(False)
     """Rich renderable may expand."""
     shrink = Reactive(True)
     """Rich renderable may shrink."""
@@ -1680,21 +1680,22 @@ class Widget(DOMNode):
         return lines
 
     def get_style_at(self, x: int, y: int) -> Style:
-        """Get the Rich style at a given screen offset.
+        """Get the Rich style in a widget at a given relative offset.
 
         Args:
-            x (int): X coordinate relative to the screen.
-            y (int): Y coordinate relative to the screen.
+            x (int): X coordinate relative to the widget.
+            y (int): Y coordinate relative to the widget.
 
         Returns:
             Style: A rich Style object.
         """
-        widget, region = self.screen.get_widget_at(x, y)
+        offset = Offset(x, y)
+        screen_offset = offset + self.region.offset
+
+        widget, _ = self.screen.get_widget_at(*screen_offset)
         if widget is not self:
             return Style()
-        offset_x, offset_y = region.offset
-        # offset_x, offset_y = self.screen.get_offset(self)
-        return self.screen.get_style_at(x + offset_x, y + offset_y)
+        return self.screen.get_style_at(*screen_offset)
 
     async def _forward_event(self, event: events.Event) -> None:
         event._set_forwarded()
@@ -1733,8 +1734,6 @@ class Widget(DOMNode):
             self._content_height_cache = (None, 0)
             self._rich_style_cache.clear()
             self._repaint_required = True
-            if isinstance(self.parent, Widget) and self.styles.auto_dimensions:
-                self.parent.refresh(layout=True)
 
         self.check_idle()
 

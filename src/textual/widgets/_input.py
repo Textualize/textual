@@ -79,13 +79,13 @@ class Input(Widget, can_focus=True):
     """
 
     BINDINGS = [
-        Binding("left", "cursor_left", "cursor left"),
-        Binding("right", "cursor_right", "cursor right"),
-        Binding("backspace", "delete_left", "delete left"),
-        Binding("home", "home", "home"),
-        Binding("end", "end", "end"),
-        Binding("ctrl+d", "delete_right", "delete right"),
-        Binding("enter", "submit", "Submit"),
+        Binding("left", "cursor_left", "cursor left", show=False),
+        Binding("right", "cursor_right", "cursor right", show=False),
+        Binding("backspace", "delete_left", "delete left", show=False),
+        Binding("home", "home", "home", show=False),
+        Binding("end", "end", "end", show=False),
+        Binding("ctrl+d", "delete_right", "delete right", show=False),
+        Binding("enter", "submit", "Submit", show=False),
     ]
 
     COMPONENT_CLASSES = {"input--cursor", "input--placeholder"}
@@ -237,14 +237,14 @@ class Input(Widget, can_focus=True):
 
         # Do key bindings first
         if await self.handle_key(event):
+            event.prevent_default()
             event.stop()
-        elif event.key in ("tab", "shift+tab"):
             return
         elif event.is_printable:
             event.stop()
             assert event.char is not None
             self.insert_text_at_cursor(event.char)
-        event.prevent_default()
+            event.prevent_default()
 
     def on_paste(self, event: events.Paste) -> None:
         line = event.text.splitlines()[0]
@@ -267,6 +267,11 @@ class Input(Widget, can_focus=True):
             self.cursor_position = len(self.value)
 
     def insert_text_at_cursor(self, text: str) -> None:
+        """Insert new text at the cursor, move the cursor to the end of the new text.
+
+        Args:
+            text (str): new text to insert.
+        """
         if self.cursor_position > len(self.value):
             self.value += text
             self.cursor_position = len(self.value)

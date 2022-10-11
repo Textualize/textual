@@ -67,6 +67,7 @@ else:
     from typing_extensions import TypedDict
 
 if TYPE_CHECKING:
+    from .._animator import Animation
     from .._layout import Layout
     from ..dom import DOMNode
 
@@ -643,7 +644,7 @@ class Styles(StylesBase):
         speed: float | None,
         easing: EasingFunction,
         on_complete: CallbackType | None = None,
-    ) -> Animation | None:
+    ) -> ScalarAnimation | None:
         # from ..widget import Widget
         # node = self.node
         # assert isinstance(self.node, Widget)
@@ -765,29 +766,57 @@ class Styles(StylesBase):
             append_declaration("background", self.background.hex)
         if has_rule("text_style"):
             append_declaration("text-style", str(get_rule("text_style")))
+        if has_rule("tint"):
+            append_declaration("tint", self.tint.css)
 
-        if has_rule("overflow-x"):
+        if has_rule("overflow_x"):
             append_declaration("overflow-x", self.overflow_x)
-        if has_rule("overflow-y"):
+        if has_rule("overflow_y"):
             append_declaration("overflow-y", self.overflow_y)
-        if has_rule("scrollbar-gutter"):
+
+        if has_rule("scrollbar_color"):
+            append_declaration("scrollbar-color", self.scrollbar_color.css)
+        if has_rule("scrollbar_color_hover"):
+            append_declaration("scrollbar-color-hover", self.scrollbar_color_hover.css)
+        if has_rule("scrollbar_color_active"):
+            append_declaration(
+                "scrollbar-color-active", self.scrollbar_color_active.css
+            )
+
+        if has_rule("scrollbar_corner_color"):
+            append_declaration(
+                "scrollbar-corner-color", self.scrollbar_corner_color.css
+            )
+
+        if has_rule("scrollbar_background"):
+            append_declaration("scrollbar-background", self.scrollbar_background.css)
+        if has_rule("scrollbar_background_hover"):
+            append_declaration(
+                "scrollbar-background-hover", self.scrollbar_background_hover.css
+            )
+        if has_rule("scrollbar_background_active"):
+            append_declaration(
+                "scrollbar-background-active", self.scrollbar_background_active.css
+            )
+
+        if has_rule("scrollbar_gutter"):
             append_declaration("scrollbar-gutter", self.scrollbar_gutter)
-        if has_rule("scrollbar-size"):
+        if has_rule("scrollbar_size"):
             append_declaration(
                 "scrollbar-size",
                 f"{self.scrollbar_size_horizontal} {self.scrollbar_size_vertical}",
             )
         else:
-            if has_rule("scrollbar-size-horizontal"):
+            if has_rule("scrollbar_size_horizontal"):
                 append_declaration(
                     "scrollbar-size-horizontal", str(self.scrollbar_size_horizontal)
                 )
-            if has_rule("scrollbar-size-vertical"):
+            if has_rule("scrollbar_size_vertical"):
                 append_declaration(
                     "scrollbar-size-vertical", str(self.scrollbar_size_vertical)
                 )
 
-        if has_rule("box-sizing"):
+        if has_rule("box_sizing"):
             append_declaration("box-sizing", self.box_sizing)
         if has_rule("width"):
             append_declaration("width", str(self.width))
@@ -830,30 +859,55 @@ class Styles(StylesBase):
             )
         elif has_rule("content_align_vertical"):
             append_declaration("content-align-vertical", self.content_align_vertical)
-        elif has_rule("grid_columns"):
+
+        if has_rule("text_align"):
+            append_declaration("text-align", self.text_align)
+
+        if has_rule("opacity"):
+            append_declaration("opacity", str(self.opacity))
+        if has_rule("text_opacity"):
+            append_declaration("text-opacity", str(self.text_opacity))
+
+        if has_rule("grid_columns"):
             append_declaration(
                 "grid-columns",
                 " ".join(str(scalar) for scalar in self.grid_columns or ()),
             )
-        elif has_rule("grid_rows"):
+        if has_rule("grid_rows"):
             append_declaration(
                 "grid-rows",
                 " ".join(str(scalar) for scalar in self.grid_rows or ()),
             )
-        elif has_rule("grid_size_columns"):
+        if has_rule("grid_size_columns"):
             append_declaration("grid-size-columns", str(self.grid_size_columns))
-        elif has_rule("grid_size_rows"):
+        if has_rule("grid_size_rows"):
             append_declaration("grid-size-rows", str(self.grid_size_rows))
-        elif has_rule("grid_gutter_horizontal"):
+
+        if has_rule("grid_gutter_horizontal"):
             append_declaration(
                 "grid-gutter-horizontal", str(self.grid_gutter_horizontal)
             )
-        elif has_rule("grid_gutter_vertical"):
+        if has_rule("grid_gutter_vertical"):
             append_declaration("grid-gutter-vertical", str(self.grid_gutter_vertical))
-        elif has_rule("row_span"):
+
+        if has_rule("row_span"):
             append_declaration("row-span", str(self.row_span))
-        elif has_rule("column_span"):
+        if has_rule("column_span"):
             append_declaration("column-span", str(self.column_span))
+
+        if has_rule("link_color"):
+            append_declaration("link-color", self.link_color.css)
+        if has_rule("link_background"):
+            append_declaration("link-background", self.link_background.css)
+        if has_rule("link_style"):
+            append_declaration("link-style", str(self.link_style))
+
+        if has_rule("hover_color"):
+            append_declaration("hover-color", self.hover_color.css)
+        if has_rule("hover_background"):
+            append_declaration("hover-background", self.hover_background.css)
+        if has_rule("hover_style"):
+            append_declaration("hover-style", str(self.hover_style))
 
         lines.sort()
         return lines

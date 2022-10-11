@@ -46,7 +46,7 @@ One such event is the *mount* event which is sent to an application after it ent
 
 !!! info
 
-    You may have noticed we use the term "send" and "sent" in relation to event handler methods in preference to "calling". This is because Textual uses a message passing system where events are passed (or *sent*) between components. We will cover the details in [events](./events.md).
+    You may have noticed we use the term "send" and "sent" in relation to event handler methods in preference to "calling". This is because Textual uses a message passing system where events are passed (or *sent*) between components. See [events](./events.md) for details.
 
 Another such event is the *key* event which is sent when the user presses a key. The following example contains handlers for both those events:
 
@@ -65,19 +65,18 @@ The key event handler (`on_key`) has an `event` parameter which will receive a [
 
     It is unusual (but not unprecedented) for a method's parameters to affect how it is called. Textual accomplishes this by inspecting the method prior to calling it.
 
-For some events contains additional information. In the case of [Key][textual.events.Key] it will contain the key that was pressed.
-
-The `on_key` method above changes the background color if any of the keys from ++0++ to ++9++ are pressed.
+Some events contain additional information you can inspect in the handler. The [Key][textual.events.Key] event has a `key` attribute which is the name of the key that was pressed. The `on_key` method above uses this attribute to change the background color if any of the keys from ++0++ to ++9++ are pressed.
 
 ### Async events
 
-Textual is powered by Python's [asyncio](https://docs.python.org/3/library/asyncio.html) framework which uses the `async` and `await` keywords to coordinate events.
+Textual is powered by Python's [asyncio](https://docs.python.org/3/library/asyncio.html) framework which uses the `async` and `await` keywords.
 
-Textual knows to *await* your event handlers if they are coroutines (i.e. prefixed with the `async` keyword).
+Textual knows to *await* your event handlers if they are coroutines (i.e. prefixed with the `async` keyword). Regular functions are generally fine unless you plan on integrating other async libraries (such as [httpx](https://www.python-httpx.org/) for reading data from the internet).
 
-!!! note
+!!! tip
 
-    Don't worry if you aren't familiar with the async programming in Python. You can build many apps without using them.
+    For a friendly introduction to async programming in Python, see FastAPI's [concurrent burgers](https://fastapi.tiangolo.com/async/) article.
+    
 
 ## Widgets
 
@@ -89,13 +88,13 @@ Widgets can be as simple as a piece of text, a button, or a fully-fledge compone
 
 To add widgets to your app implement a [`compose()`][textual.app.App.compose] method which should return an iterable of Widget instances. A list would work, but it is convenient to yield widgets, making the method a *generator*.
 
-The following example imports a builtin Welcome widget and yields it from compose.
+The following example imports a builtin Welcome widget and yields it from `App.compose()`.
 
 ```python title="widgets01.py"
 --8<-- "docs/examples/app/widgets01.py"
 ```
 
-When you run this code, Textual will *mount* the Welcome widget which contains a Markdown content area and a button:
+When you run this code, Textual will *mount* the Welcome widget which contains Markdown content and a button:
 
 ```{.textual path="docs/examples/app/widgets01.py"}
 ```

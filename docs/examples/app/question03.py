@@ -5,9 +5,9 @@ from textual.widgets import Static, Button
 class QuestionApp(App[str]):
     CSS = """
     Screen {
-        layout: table;
-        table-size: 2;
-        table-gutter: 2; 
+        layout: grid;
+        grid-size: 2;
+        grid-gutter: 2; 
         padding: 2;   
     }
     #question {

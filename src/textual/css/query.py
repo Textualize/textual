@@ -16,7 +16,7 @@ a method which evaluates the query, such as first() and last().
 
 from __future__ import annotations
 
-from typing import Generic, TYPE_CHECKING, Iterator, TypeVar, overload
+from typing import cast, Generic, TYPE_CHECKING, Iterator, TypeVar, overload
 
 import rich.repr
 
@@ -31,15 +31,15 @@ if TYPE_CHECKING:
 
 
 class QueryError(Exception):
-    pass
+    """Base class for a query related error."""
 
 
-class NoMatchingNodesError(QueryError):
-    pass
+class NoMatches(QueryError):
+    """No nodes matched the query."""
 
 
 class WrongType(QueryError):
-    pass
+    """Query result was not of the correct type."""
 
 
 QueryType = TypeVar("QueryType", bound="Widget")
@@ -64,7 +64,7 @@ class DOMQuery(Generic[QueryType]):
     ) -> None:
 
         self._node = node
-        self._nodes: list[Widget] | None = None
+        self._nodes: list[QueryType] | None = None
         self._filters: list[tuple[SelectorSet, ...]] = (
             parent._filters.copy() if parent else []
         )
@@ -96,7 +96,7 @@ class DOMQuery(Generic[QueryType]):
                 for node in nodes
                 if not any(match(selector_set, node) for selector_set in self._excludes)
             ]
-            self._nodes = nodes
+            self._nodes = cast("list[QueryType]", nodes)
         return self._nodes
 
     def __len__(self) -> int:
@@ -172,7 +172,7 @@ class DOMQuery(Generic[QueryType]):
     def first(
         self, expect_type: type[ExpectType] | None = None
     ) -> QueryType | ExpectType:
-        """Get the *first* match node.
+        """Get the *first* matching node.
 
         Args:
             expect_type (type[ExpectType] | None, optional): Require matched node is of this type,
@@ -180,7 +180,7 @@ class DOMQuery(Generic[QueryType]):
 
         Raises:
             WrongType: If the wrong type was found.
-            NoMatchingNodesError: If there are no matching nodes in the query.
+            NoMatches: If there are no matching nodes in the query.
 
         Returns:
             Widget | ExpectType: The matching Widget.
@@ -194,7 +194,7 @@ class DOMQuery(Generic[QueryType]):
                     )
             return first
         else:
-            raise NoMatchingNodesError(f"No nodes match {self!r}")
+            raise NoMatches(f"No nodes match {self!r}")
 
     @overload
     def last(self) -> Widget:
@@ -207,7 +207,7 @@ class DOMQuery(Generic[QueryType]):
     def last(
         self, expect_type: type[ExpectType] | None = None
     ) -> QueryType | ExpectType:
-        """Get the *last* match node.
+        """Get the *last* matching node.
 
         Args:
             expect_type (type[ExpectType] | None, optional): Require matched node is of this type,
@@ -215,7 +215,7 @@ class DOMQuery(Generic[QueryType]):
 
         Raises:
             WrongType: If the wrong type was found.
-            NoMatchingNodesError: If there are no matching nodes in the query.
+            NoMatches: If there are no matching nodes in the query.
 
         Returns:
             Widget | ExpectType: The matching Widget.
@@ -229,7 +229,7 @@ class DOMQuery(Generic[QueryType]):
                     )
             return last
         else:
-            raise NoMatchingNodesError(f"No nodes match {self!r}")
+            raise NoMatches(f"No nodes match {self!r}")
 
     @overload
     def results(self) -> Iterator[Widget]:

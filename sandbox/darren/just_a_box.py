@@ -24,6 +24,10 @@ class JustABox(App):
         box = self.query_one("#box1")
         self.animator.animate(box.styles, "opacity", value=0.0, duration=1)
 
+    def key_d(self):
+        print(self.screen.styles.get_rules())
+        print(self.screen.styles.css)
+
 
 app = JustABox(watch_css=True, css_path="../darren/just_a_box.css")
 

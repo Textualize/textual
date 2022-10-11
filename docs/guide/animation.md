@@ -1,11 +1,11 @@
 # Animation
 
-Ths chapter discusses how to use Textual's animation system.
+Ths chapter discusses how to use Textual's animation system to create visual effects such as movement, blending, and fading.
 
 
 ## Animating styles
 
-Textual's animator can change an attribute from one value to another in fixed increments over a period of time. You can apply this to [styles](styles.md) such `offset` to move widgets around the screen, and `opacity` to create fading effects.
+Textual's animator can change an attribute from one value to another in fixed increments over a period of time. You can apply animations to [styles](styles.md) such `offset` to move widgets around the screen, and `opacity` to create fading effects.
 
 Apps and widgets both have an [animate][textual.app.App.animate] method which will animate properties on those objects. Additionally, `styles` objects have an identical `animate` method which will animate styles.
 
@@ -55,7 +55,14 @@ For instance, if you animate a value at 0 to 10 with a speed of 2, it will compl
 
 The easing function determines the journey a value takes on its way to the target value.
 It could move at a constant pace, or it might start off slow then accelerate towards its final value.
-Textual supports a number of [easing functions](https://easings.net/). Run the following from the command prompt to preview them.
+Textual supports a number of [easing functions](https://easings.net/).
+
+<div class="excalidraw">
+--8<-- "docs/images/animation/animation.excalidraw.svg"
+</div>
+
+
+Run the following from the command prompt to preview them.
 
 ```bash
 textual easing

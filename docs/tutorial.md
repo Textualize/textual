@@ -199,7 +199,10 @@ While it's possible to set all styles for an app this way, it is rarely necessar
 
 !!! info
 
-    The dialect of CSS used in Textual is greatly simplified over web based CSS and much easier to learn!
+    The dialect of CSS used in Textual is greatly simplified over web based CSS and much easier to learn.
+
+
+CSS makes it easy to iterate on the design of your app and enables [live-editing](./guide/devtools.md#live-editing) &mdash; you can edit CSS and see the changes without restarting the app!
 
 
 Let's add a CSS file to our application.
@@ -320,7 +323,7 @@ The rule is `"display: none"` which tells Textual to hide the button.
 
 ### Manipulating classes
 
-Modifying a widget's CSS classes it a convenient way to modify visuals without introducing a lot of messy display related code.
+Modifying a widget's CSS classes is a convenient way to update visuals without introducing a lot of messy display related code.
 
 You can add and remove CSS classes with the [add_class()][textual.dom.DOMNode.add_class] and [remove_class()][textual.dom.DOMNode.remove_class] methods. We will use these methods to connect the started state to the Start / Stop buttons.
 

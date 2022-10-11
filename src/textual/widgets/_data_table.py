@@ -269,9 +269,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 column.content_width = max(column.content_width, content_width)
 
         total_width = sum(column.render_width for column in self.columns)
+        header_height = self.header_height if self.show_header else 0
         self.virtual_size = Size(
             total_width,
-            max(len(self._y_offsets), (self.header_height if self.show_header else 0)),
+            len(self._y_offsets) + header_height,
         )
 
     def _get_cell_region(self, row_index: int, column_index: int) -> Region:
