@@ -76,7 +76,7 @@ class Offset(NamedTuple):
             Offset: New offset.
         """
         x, y = self
-        return Offset(max(x, 0), max(y, 0))
+        return Offset(0 if x < 0 else x, 0 if y < 0 else y)
 
     def __bool__(self) -> bool:
         return self != (0, 0)

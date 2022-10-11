@@ -29,6 +29,10 @@ ColorBar {
     content-align: center middle;
 }
 
+ColorBar.label {
+    width: 2fr;
+
+}
 
 ColorItem {
     width: 100%;
@@ -37,7 +41,7 @@ ColorItem {
 
 ColorGroup {
     margin: 2 0;
-    width: 110;    
+    width: 80;    
     height: auto;
     padding: 2 4;
     background: $surface;    
