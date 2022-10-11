@@ -439,13 +439,8 @@ class App(Generic[ReturnType], DOMNode):
         """Watches the dark bool."""
 
         self.screen.dark = dark
-        if dark:
-            self.add_class("-dark-mode")
-            self.remove_class("-light-mode")
-        else:
-            self.remove_class("-dark-mode")
-            self.add_class("-light-mode")
-
+        self.set_class(dark, "-dark-mode")
+        self.set_class(not dark, "-light-mode")
         self.refresh_css()
 
     def get_driver_class(self) -> Type[Driver]:
@@ -1000,12 +995,13 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widget (Widget): A widget that is removed.
         """
-        for sibling in widget.siblings:
-            if sibling.can_focus:
-                sibling.focus()
-                break
-        else:
-            self.focused = None
+        if self.focused is widget:
+            for sibling in widget.siblings:
+                if sibling.can_focus:
+                    sibling.focus()
+                    break
+            else:
+                self.focused = None
 
     async def _set_mouse_over(self, widget: Widget | None) -> None:
         """Called when the mouse is over another widget.

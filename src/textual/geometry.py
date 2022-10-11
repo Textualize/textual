@@ -68,6 +68,16 @@ class Offset(NamedTuple):
         """
         return self == (0, 0)
 
+    @property
+    def clamped(self) -> Offset:
+        """Ensure x and y are above zero.
+
+        Returns:
+            Offset: New offset.
+        """
+        x, y = self
+        return Offset(max(x, 0), max(y, 0))
+
     def __bool__(self) -> bool:
         return self != (0, 0)
 

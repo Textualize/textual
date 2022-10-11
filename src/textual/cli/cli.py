@@ -111,3 +111,11 @@ def easing():
     from textual.cli.previews import easing
 
     easing.app.run()
+
+
+@run.command("colors")
+def colors():
+    """Explore the design system."""
+    from textual.cli.previews import colors
+
+    colors.app.run()

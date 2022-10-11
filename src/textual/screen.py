@@ -80,9 +80,6 @@ class Screen(Widget):
         """Get a list of visible widgets."""
         return list(self._compositor.visible_widgets)
 
-    def watch_dark(self, dark: bool) -> None:
-        pass
-
     def render(self) -> RenderableType:
         background = self.styles.background
         if background.is_transparent:
