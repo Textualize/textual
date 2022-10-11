@@ -51,6 +51,7 @@ class Screen(Widget):
         self._dirty_widgets: set[Widget] = set()
         self._update_timer: Timer | None = None
         self._callbacks: list[CallbackType] = []
+        self._max_idle = UPDATE_PERIOD
 
     @property
     def is_transparent(self) -> bool:
