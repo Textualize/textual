@@ -43,7 +43,7 @@ ColorGroup {
     margin: 2 0;
     width: 80;    
     height: auto;
-    padding: 2 4;
+    padding: 1 4 2 4;
     background: $surface;    
     border: wide $surface;
 }
@@ -68,7 +68,7 @@ ColorGroup.-active {
 
 
 ColorLabel {
-    padding: 1 0;
+    padding: 0 0 1 0;
     content-align: center middle;
     color: $text;
     text-style: bold;
