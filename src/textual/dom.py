@@ -684,14 +684,16 @@ class DOMNode(MessagePump):
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
     @overload
-    def query(self, selector: str | None) -> DOMQuery:
+    def query(self, selector: str | None) -> DOMQuery[Widget]:
         ...
 
     @overload
     def query(self, selector: type[ExpectType]) -> DOMQuery[ExpectType]:
         ...
 
-    def query(self, selector: str | type | None = None) -> DOMQuery:
+    def query(
+        self, selector: str | type[ExpectType] | None = None
+    ) -> DOMQuery[Widget] | DOMQuery[ExpectType]:
         """Get a DOM query matching a selector.
 
         Args:
