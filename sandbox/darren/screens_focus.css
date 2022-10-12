@@ -5,5 +5,5 @@ Focusable {
 }
 
 Focusable:focus {
-    outline: wide dodgerblue;
+    outline: solid dodgerblue;
 }
