@@ -24,7 +24,6 @@ class _Clock:
         await asyncio.sleep(seconds)
 
 
-# That's our target for mocking time! :-)
 _clock = _Clock()
 
 

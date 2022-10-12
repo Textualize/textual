@@ -19,7 +19,6 @@ from ._callback import invoke
 from ._context import NoActiveAppError, active_app
 from ._time import time
 from .errors import DuplicateKeyHandlers
-from .keys import _get_key_aliases
 from .timer import Timer, TimerCallback
 from .case import camel_to_snake
 from .events import Event

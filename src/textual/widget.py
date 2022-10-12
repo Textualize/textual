@@ -469,8 +469,8 @@ class Widget(DOMNode):
     def watch_scroll_y(self, new_value: float) -> None:
         if self.show_vertical_scrollbar:
             self.vertical_scrollbar.position = int(new_value)
-            self.refresh(layout=True)
             self.vertical_scrollbar.refresh()
+            self.refresh(layout=True)
 
     def validate_scroll_x(self, value: float) -> float:
         return clamp(value, 0, self.max_scroll_x)

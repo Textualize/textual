@@ -9,3 +9,5 @@ if WINDOWS:
     time = perf_counter
 else:
     time = monotonic
+
+time = monotonic
