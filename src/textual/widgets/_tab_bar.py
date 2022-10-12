@@ -56,6 +56,8 @@ class Tab(Widget):
 
 @rich.repr.auto
 class TabBar(DockView):
+    SIZE = 3
+
     def __init__(
         self,
         tabs: list[Tab],
@@ -73,7 +75,7 @@ class TabBar(DockView):
     def init_grid(self, grid: GridLayout) -> None:
         max_column = len(self._tabs)
         grid.add_column("col", repeat=max_column)
-        grid.add_row("bar", size=3)
+        grid.add_row("bar", size=self.SIZE)
 
     async def on_mount(self, event: events.Mount) -> None:
         grid = await self.dock_grid()

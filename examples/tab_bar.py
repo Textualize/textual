@@ -23,10 +23,12 @@ class MyTab(Tab):
 
 
 class MyTabBar(TabBar):
+    SIZE = 3
+
     def init_grid(self, grid: GridLayout) -> None:
         max_row = len(self._tabs)
         grid.add_column("col")
-        grid.add_row("bar", repeat=max_row, size=10)
+        grid.add_row("bar", repeat=max_row, size=self.SIZE)
 
 
 class ReadMe(App):
@@ -51,11 +53,11 @@ class ReadMe(App):
         if False:
             # On top (default) :
             tab_bar = TabBar(tabs, main_view)
-            await self.view.dock(tab_bar, edge="top", size=20)
+            await self.view.dock(tab_bar, edge="top", size=tab_bar.SIZE)
         else:
             # On left (by overriding init_grid):
             tab_bar = MyTabBar(tabs, main_view)
-            await self.view.dock(tab_bar, edge="left", size=20)
+            await self.view.dock(tab_bar, edge="left", size=tab_bar.SIZE)
 
         await self.view.dock(main_view)
 
