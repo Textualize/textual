@@ -1,4 +1,11 @@
-from time import perf_counter
+import platform
+from time import monotonic, perf_counter
+
+PLATFORM = platform.system()
+WINDOWS = PLATFORM == "Windows"
 
 
-time = perf_counter
+if WINDOWS:
+    time = perf_counter
+else:
+    time = monotonic
