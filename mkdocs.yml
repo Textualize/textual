@@ -68,6 +68,7 @@ nav:
     - "styles/layer.md"
     - "styles/layers.md"
     - "styles/layout.md"
+    - "styles/links.md"
     - "styles/margin.md"
     - "styles/max_height.md"
     - "styles/max_width.md"
@@ -96,7 +97,7 @@ nav:
     - "widgets/input.md"
     - "widgets/static.md"
     - "widgets/tree_control.md"
-  - Reference:    
+  - Reference:
     - "reference/app.md"
     - "reference/button.md"
     - "reference/color.md"

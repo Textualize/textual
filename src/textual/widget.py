@@ -136,9 +136,9 @@ class Widget(DOMNode):
         link-background:;
         link-color: $text;
         link-style: underline;
-        hover-background: $accent;
-        hover-color: $text;
-        hover-style: bold not underline;
+        link-hover-background: $accent;
+        link-hover-color: $text;
+        link-hover-style: bold not underline;
     }
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
@@ -461,14 +461,16 @@ class Widget(DOMNode):
             self.highlight_link_id = hover_style.link_id
 
     def watch_scroll_x(self, new_value: float) -> None:
-        self.horizontal_scrollbar.position = int(new_value)
-        self.refresh(layout=True)
-        self.horizontal_scrollbar.refresh()
+        if self.show_horizontal_scrollbar:
+            self.horizontal_scrollbar.position = int(new_value)
+            self.horizontal_scrollbar.refresh()
+            self.refresh(layout=True)
 
     def watch_scroll_y(self, new_value: float) -> None:
-        self.vertical_scrollbar.position = int(new_value)
-        self.refresh(layout=True)
-        self.vertical_scrollbar.refresh()
+        if self.show_vertical_scrollbar:
+            self.vertical_scrollbar.position = int(new_value)
+            self.vertical_scrollbar.refresh()
+            self.refresh(layout=True)
 
     def validate_scroll_x(self, value: float) -> float:
         return clamp(value, 0, self.max_scroll_x)
@@ -930,13 +932,13 @@ class Widget(DOMNode):
         """Style of links with mouse hover."""
         styles = self.styles
         _, background = self.background_colors
-        hover_background = background + styles.hover_background
+        hover_background = background + styles.link_hover_background
         hover_color = hover_background + (
-            hover_background.get_contrast_text(styles.hover_color.a)
-            if styles.auto_hover_color
-            else styles.hover_color
+            hover_background.get_contrast_text(styles.link_hover_color.a)
+            if styles.auto_link_hover_color
+            else styles.link_hover_color
         )
-        style = styles.hover_style + Style.from_color(
+        style = styles.link_hover_style + Style.from_color(
             hover_color.rich_color,
             hover_background.rich_color,
         )

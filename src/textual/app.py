@@ -11,7 +11,7 @@ from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
 from time import perf_counter
-from typing import Any, Generic, Iterable, Iterator, Type, TypeVar, cast
+from typing import Any, Generic, Iterable, Iterator, Type, TypeVar, cast, Union
 from weakref import WeakSet, WeakValueDictionary
 
 from ._ansi_sequences import SYNC_END, SYNC_START
@@ -119,6 +119,9 @@ class _NullFile:
         pass
 
 
+CSSPathType = Union[str, PurePath, None]
+
+
 @rich.repr.auto
 class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications.
@@ -145,13 +148,13 @@ class App(Generic[ReturnType], DOMNode):
     SCREENS: dict[str, Screen] = {}
 
     _BASE_PATH: str | None = None
-    CSS_PATH: str | None = None
+    CSS_PATH: CSSPathType = None
 
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
         title: str | None = None,
-        css_path: str | PurePath | None = None,
+        css_path: CSSPathType = None,
         watch_css: bool = False,
     ):
         # N.B. This must be done *before* we call the parent constructor, because MessagePump's
@@ -433,8 +436,8 @@ class App(Generic[ReturnType], DOMNode):
         self,
         group: LogGroup,
         verbosity: LogVerbosity,
+        _textual_calling_frame: inspect.FrameInfo,
         *objects: Any,
-        _textual_calling_frame: inspect.FrameInfo | None = None,
         **kwargs,
     ) -> None:
         """Write to logs or devtools.
@@ -458,9 +461,6 @@ class App(Generic[ReturnType], DOMNode):
 
         if verbosity.value > LogVerbosity.NORMAL.value and not self.devtools.verbose:
             return
-
-        if not _textual_calling_frame:
-            _textual_calling_frame = inspect.stack()[1]
 
         try:
             if len(objects) == 1 and not kwargs:

@@ -16,7 +16,6 @@ from rich.syntax import Syntax
 from rich.text import Text
 
 from .. import messages
-from .._profile import timer
 from ..dom import DOMNode
 from ..widget import Widget
 from .errors import StylesheetError
@@ -368,6 +367,7 @@ class Stylesheet:
             rules = [rule for rule in reversed(self.rules) if rule in limit_rules]
         else:
             rules = reversed(self.rules)
+
         # Collect the rules defined in the stylesheet
         node._has_hover_style = False
         for rule in rules:

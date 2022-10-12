@@ -6,7 +6,6 @@ import base64
 import json
 import pickle
 from json import JSONDecodeError
-from time import time
 from typing import cast
 
 from aiohttp import WSMessage, WSMsgType
@@ -17,6 +16,7 @@ from rich.markup import escape
 import msgpack
 
 from textual._log import LogGroup
+from textual._time import time
 from textual.devtools.renderables import (
     DevConsoleLog,
     DevConsoleNotice,

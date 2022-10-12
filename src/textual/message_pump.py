@@ -10,21 +10,20 @@ from __future__ import annotations
 import asyncio
 import inspect
 from asyncio import CancelledError, Queue, QueueEmpty, Task
-from time import time
 from functools import partial
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, Iterable
 from weakref import WeakSet
 
-from . import events, log, messages, Logger
+from . import Logger, events, log, messages
 from ._callback import invoke
 from ._context import NoActiveAppError, active_app
-from .errors import DuplicateKeyHandlers
-from .keys import _get_key_aliases
-from .timer import Timer, TimerCallback
+from ._time import time
 from .case import camel_to_snake
+from .errors import DuplicateKeyHandlers
 from .events import Event
 from .message import Message
 from .reactive import Reactive
+from .timer import Timer, TimerCallback
 
 if TYPE_CHECKING:
     from .app import App
