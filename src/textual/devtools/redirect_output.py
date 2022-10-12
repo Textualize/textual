@@ -39,7 +39,7 @@ class StdoutRedirector:
         if not self.devtools.is_connected:
             return
 
-        caller = inspect.stack()[1]
+        caller = inspect.stack(0)[1]
         self._buffer.append(DevtoolsLog(string, caller=caller))
 
         # By default, `print` adds a "\n" suffix which results in a buffer

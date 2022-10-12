@@ -540,7 +540,7 @@ class App(Generic[ReturnType], DOMNode):
             return
 
         if not _textual_calling_frame:
-            _textual_calling_frame = inspect.stack()[1]
+            _textual_calling_frame = inspect.stack(0)[1]
 
         try:
             if len(objects) == 1 and not kwargs:
