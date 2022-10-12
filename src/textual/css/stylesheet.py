@@ -425,6 +425,9 @@ class Stylesheet:
         # Calculate replacement rules (defaults + new rules)
         new_styles = Styles(node, rules)
 
+        print(node.id)
+        print(new_styles)
+
         if new_styles == base_styles:
             # Nothing to change, return early
             return

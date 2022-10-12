@@ -52,7 +52,6 @@ if TYPE_CHECKING:
         ScrollUp,
     )
 
-
 _JUSTIFY_MAP: dict[str, JustifyMethod] = {
     "start": "left",
     "end": "right",
@@ -133,11 +132,11 @@ class Widget(DOMNode):
         scrollbar-corner-color: $panel-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
-        link-background:;        
+        link-background:;
         link-color: $text;
         link-style: underline;
-        hover-background: $accent;   
-        hover-color: $text;     
+        hover-background: $accent;
+        hover-color: $text;
         hover-style: bold not underline;
     }
     """
@@ -1887,22 +1886,16 @@ class Widget(DOMNode):
         self.refresh()
 
     def _on_descendant_focus(self, event: events.DescendantFocus) -> None:
-        self.descendant_has_focus = True
-        if "focus-within" in self.pseudo_classes:
-            sender = event.sender
-            for child in self.walk_children(False):
-                child.refresh()
-                if child is sender:
-                    break
+        if not self.descendant_has_focus:
+            self.descendant_has_focus = True
 
     def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
-        self.descendant_has_focus = False
+        if self.descendant_has_focus:
+            self.descendant_has_focus = False
+
+    def watch_descendant_has_focus(self, value: bool) -> None:
         if "focus-within" in self.pseudo_classes:
-            sender = event.sender
-            for child in self.walk_children(False):
-                child.refresh()
-                if child is sender:
-                    break
+            self.app._require_stylesheet_update.add(self)
 
     def _on_mouse_scroll_down(self, event) -> None:
         if self.allow_vertical_scroll:
