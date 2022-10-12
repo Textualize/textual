@@ -27,7 +27,7 @@ from ._help_text import (
     string_enum_help_text,
     color_property_help_text,
 )
-from .._border import INVISIBLE_EDGE_TYPES, normalize_border_value
+from .._border import normalize_border_value
 from ..color import Color, ColorParseError
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING, VALID_STYLE_FLAGS

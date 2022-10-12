@@ -32,7 +32,7 @@ VALID_BORDER: Final[set[EdgeType]] = {
     "wide",
 }
 VALID_EDGE: Final = {"top", "right", "bottom", "left"}
-VALID_LAYOUT: Final = {"vertical", "horizontal", "center", "grid"}
+VALID_LAYOUT: Final = {"vertical", "horizontal", "grid"}
 
 VALID_BOX_SIZING: Final = {"border-box", "content-box"}
 VALID_OVERFLOW: Final = {"scroll", "hidden", "auto"}
