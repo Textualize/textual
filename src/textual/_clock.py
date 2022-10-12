@@ -1,5 +1,6 @@
 import asyncio
-from time import monotonic
+
+from ._time import time
 
 
 """
@@ -14,16 +15,15 @@ by mocking the few functions exposed by this module.
 # (so mocking public APIs such as `get_time` wouldn't affect direct references to then that were done during imports)
 class _Clock:
     async def get_time(self) -> float:
-        return self.get_time_no_wait()
+        return time()
 
     def get_time_no_wait(self) -> float:
-        return monotonic()
+        return time()
 
     async def sleep(self, seconds: float) -> None:
         await asyncio.sleep(seconds)
 
 
-# That's our target for mocking time! :-)
 _clock = _Clock()
 
 

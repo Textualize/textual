@@ -513,8 +513,8 @@ class App(Generic[ReturnType], DOMNode):
         self,
         group: LogGroup,
         verbosity: LogVerbosity,
+        _textual_calling_frame: inspect.FrameInfo,
         *objects: Any,
-        _textual_calling_frame: inspect.FrameInfo | None = None,
         **kwargs,
     ) -> None:
         """Write to logs or devtools.
@@ -538,9 +538,6 @@ class App(Generic[ReturnType], DOMNode):
 
         if verbosity.value > LogVerbosity.NORMAL.value and not self.devtools.verbose:
             return
-
-        if not _textual_calling_frame:
-            _textual_calling_frame = inspect.stack()[1]
 
         try:
             if len(objects) == 1 and not kwargs:

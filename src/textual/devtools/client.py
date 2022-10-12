@@ -3,12 +3,11 @@ from __future__ import annotations
 import asyncio
 import inspect
 import json
-
 import pickle
-from time import time
-from asyncio import Queue, Task, QueueFull
+from asyncio import Queue, QueueFull, Task
 from io import StringIO
-from typing import Type, Any, NamedTuple
+from time import time
+from typing import Any, NamedTuple, Type
 
 from rich.console import Console
 from rich.segment import Segment
@@ -22,12 +21,12 @@ class DevtoolsDependenciesMissingError(Exception):
 
 try:
     import aiohttp
+    import msgpack
     from aiohttp import (
-        ClientResponseError,
         ClientConnectorError,
+        ClientResponseError,
         ClientWebSocketResponse,
     )
-    import msgpack
 except ImportError:
     # TODO: Add link to documentation on how to install devtools
     raise DevtoolsDependenciesMissingError(
