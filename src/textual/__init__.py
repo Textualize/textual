@@ -44,6 +44,14 @@ class Logger:
         self._verbosity = verbosity
 
     @property
+    def app(self) -> App:
+        try:
+            app = active_app.get()
+        except LookupError:
+            raise LoggerError("Unable to log without an active app.") from None
+        return app
+
+    @property
     def log(self) -> LogCallable:
         if self._log is None:
             try:
@@ -58,9 +66,13 @@ class Logger:
         yield self._verbosity, LogVerbosity.NORMAL
 
     def __call__(self, *args: object, **kwargs) -> None:
-        caller = inspect.stack()[1]
+        app = self.app
+        if not app.devtools.is_connected:
+            return
+        caller = inspect.stack(0)[1]
+        _log = self._log or app._log
         try:
-            self.log(
+            _log(
                 self._group,
                 self._verbosity,
                 *args,
