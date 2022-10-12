@@ -691,7 +691,9 @@ class DOMNode(MessagePump):
     def query(self, selector: type[ExpectType]) -> DOMQuery[ExpectType]:
         ...
 
-    def query(self, selector: str | type[ExpectType] | None = None) -> DOMQuery[Widget] | DOMQuery[ExpectType]:
+    def query(
+        self, selector: str | type[ExpectType] | None = None
+    ) -> DOMQuery[Widget] | DOMQuery[ExpectType]:
         """Get a DOM query matching a selector.
 
         Args:
