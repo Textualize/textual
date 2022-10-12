@@ -75,8 +75,8 @@ class Logger:
             _log(
                 self._group,
                 self._verbosity,
-                *args,
                 _textual_calling_frame=caller,
+                *args,
                 **kwargs,
             )
         except LoggerError:
