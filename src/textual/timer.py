@@ -1,7 +1,7 @@
 """
 
 Timer objects are created by [set_interval][textual.message_pump.MessagePump.set_interval] or
-    [set_interval][textual.message_pump.MessagePump.set_timer].
+    [set_timer][textual.message_pump.MessagePump.set_timer].
 
 """
 
