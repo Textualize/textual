@@ -1,0 +1,9 @@
+Focusable {
+    padding: 1 2;
+    background: $panel;
+    margin-bottom: 1;
+}
+
+Focusable:focus {
+    outline: wide dodgerblue;
+}

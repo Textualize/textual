@@ -243,7 +243,7 @@ class Tabs(Widget):
             return
 
         if event.key == Keys.Escape:
-            self.app.set_focus(None)
+            self.screen.set_focus(None)
         elif event.key == Keys.Right:
             self.activate_next_tab()
         elif event.key == Keys.Left:

@@ -133,11 +133,11 @@ class Widget(DOMNode):
         scrollbar-corner-color: $panel-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
-        link-background:;        
+        link-background:;
         link-color: $text;
         link-style: underline;
-        hover-background: $accent;   
-        hover-color: $text;     
+        hover-background: $accent;
+        hover-color: $text;
         hover-style: bold not underline;
     }
     """
@@ -1811,7 +1811,7 @@ class Widget(DOMNode):
             scroll_visible (bool, optional): Scroll parent to make this widget
                 visible. Defaults to True.
         """
-        self.app.set_focus(self, scroll_visible=scroll_visible)
+        self.screen.set_focus(self, scroll_visible=scroll_visible)
 
     def capture_mouse(self, capture: bool = True) -> None:
         """Capture (or release) the mouse.
