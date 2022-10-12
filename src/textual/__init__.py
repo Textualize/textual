@@ -54,7 +54,10 @@ class Logger:
             raise LoggerError("Unable to log without an active app.") from None
         if not app.devtools.is_connected:
             return
-        caller = inspect.stack(0)[1]
+
+        previous_frame = inspect.currentframe().f_back
+        caller = inspect.getframeinfo(previous_frame)
+
         _log = self._log or app._log
         try:
             _log(
