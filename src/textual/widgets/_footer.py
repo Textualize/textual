@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from collections import defaultdict
+
 from rich.console import RenderableType
 
 from rich.text import Text
@@ -85,12 +87,22 @@ class Footer(Widget):
         highlight_style = self.get_component_rich_style("footer--highlight")
         highlight_key_style = self.get_component_rich_style("footer--highlight-key")
         key_style = self.get_component_rich_style("footer--key")
-        for binding in self.app.bindings.shown_keys:
-            key_display = (
+
+        bindings = self.app.bindings.shown_keys
+
+        action_to_bindings = defaultdict(list)
+        for binding in bindings:
+            action_to_bindings[binding.action].append(binding)
+
+        for action, bindings in action_to_bindings.items():
+            key_displays = [
                 binding.key.upper()
                 if binding.key_display is None
                 else binding.key_display
-            )
+                for binding in bindings
+            ]
+            key_display = "/".join(key_displays)
+            binding = bindings[0]
             hovered = self.highlight_key == binding.key
             key_text = Text.assemble(
                 (f" {key_display} ", highlight_key_style if hovered else key_style),
