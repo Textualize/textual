@@ -19,8 +19,8 @@ class CustomScreen(Screen):
 
 class ScreensFocusApp(App):
     BINDINGS = [
-        Binding("plus_sign", "push_new_screen", "Push"),
-        Binding("hyphen_minus", "pop_top_screen", "Pop"),
+        Binding("plus", "push_new_screen", "Push"),
+        Binding("minus", "pop_top_screen", "Pop"),
     ]
 
     def compose(self) -> ComposeResult:
