@@ -119,6 +119,9 @@ class _NullFile:
         pass
 
 
+CSSPathType = str | PurePath | None
+
+
 @rich.repr.auto
 class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications.
@@ -145,7 +148,7 @@ class App(Generic[ReturnType], DOMNode):
     SCREENS: dict[str, Screen] = {}
 
     _BASE_PATH: str | None = None
-    CSS_PATH: str | None = None
+    CSS_PATH: CSSPathType = None
 
     focused: Reactive[Widget | None] = Reactive(None)
 
@@ -153,7 +156,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         driver_class: Type[Driver] | None = None,
         title: str | None = None,
-        css_path: str | PurePath | None = None,
+        css_path: CSSPathType = None,
         watch_css: bool = False,
     ):
         # N.B. This must be done *before* we call the parent constructor, because MessagePump's
