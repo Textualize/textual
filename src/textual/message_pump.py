@@ -14,16 +14,16 @@ from functools import partial
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, Iterable
 from weakref import WeakSet
 
-from . import events, log, messages, Logger
+from . import Logger, events, log, messages
 from ._callback import invoke
 from ._context import NoActiveAppError, active_app
 from ._time import time
-from .errors import DuplicateKeyHandlers
-from .timer import Timer, TimerCallback
 from .case import camel_to_snake
+from .errors import DuplicateKeyHandlers
 from .events import Event
 from .message import Message
 from .reactive import Reactive
+from .timer import Timer, TimerCallback
 
 if TYPE_CHECKING:
     from .app import App
