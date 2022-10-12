@@ -101,7 +101,7 @@ class Footer(Widget):
                 else binding.key_display
                 for binding in bindings
             ]
-            key_display = "/".join(key_displays)
+            key_display = "·".join(key_displays)
             binding = bindings[0]
             hovered = self.highlight_key == binding.key
             key_text = Text.assemble(

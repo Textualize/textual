@@ -244,10 +244,16 @@ class Screen(Widget):
         Args:
             widget (Widget | None): Widget to focus, or None to un-focus.
             scroll_visible (bool, optional): Scroll widget in to view.
+
+        Raises:
+            NoWidget: If you pass a Widget that doesn't exist in this Screen.
         """
         if widget is self.focused:
             # Widget is already focused
             return
+
+        # Raises NoWidget if the widget isn't on this Screen.
+        self.find_widget(widget)
 
         if widget is None:
             # No focus, so blur currently focused widget if it exists

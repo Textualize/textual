@@ -47,14 +47,26 @@ class Bindings:
             for binding in bindings:
                 if isinstance(binding, Binding):
                     binding_keys = binding.key.split(",")
+
+                    # If there's a key display, split it and associate it with the keys
+                    key_displays = (
+                        binding.key_display.split(",") if binding.key_display else []
+                    )
+                    if len(binding_keys) == len(key_displays):
+                        keys_and_displays = zip(binding_keys, key_displays)
+                    else:
+                        keys_and_displays = [
+                            (key, binding.key_display) for key in binding_keys
+                        ]
+
                     if len(binding_keys) > 1:
-                        for key in binding_keys:
+                        for key, display in keys_and_displays:
                             new_binding = Binding(
                                 key=key,
                                 action=binding.action,
                                 description=binding.description,
                                 show=binding.show,
-                                key_display=binding.key_display,
+                                key_display=display,
                                 allow_forward=binding.allow_forward,
                             )
                             yield new_binding

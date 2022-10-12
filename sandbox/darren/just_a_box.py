@@ -10,7 +10,11 @@ class JustABox(App):
         Binding(
             key="ctrl+t", action="text_fade_out", description="text-opacity fade out"
         ),
-        Binding(key="o,f,w", action="widget_fade_out", description="opacity fade out"),
+        Binding(
+            key="o,f,w",
+            action="widget_fade_out",
+            description="opacity fade out",
+        ),
     ]
 
     def compose(self) -> ComposeResult:
