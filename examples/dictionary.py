@@ -12,6 +12,7 @@ from rich.markdown import Markdown
 from textual.app import App, ComposeResult
 from textual.containers import Content
 from textual.widgets import Static, Input
+from textual.debounce import debounce
 
 
 class DictionaryApp(App):
@@ -28,6 +29,7 @@ class DictionaryApp(App):
         # Give the input focus, so we can start typing straight away
         self.query_one(Input).focus()
 
+    @debounce(0.250)
     async def on_input_changed(self, message: Input.Changed) -> None:
         """A coroutine to handle a text changed message."""
         if message.value:
