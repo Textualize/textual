@@ -5,7 +5,6 @@ import inspect
 import json
 
 import pickle
-from time import time
 from asyncio import Queue, Task, QueueFull
 from io import StringIO
 from typing import Type, Any, NamedTuple
@@ -13,6 +12,7 @@ from typing import Type, Any, NamedTuple
 from rich.console import Console
 from rich.segment import Segment
 
+from .._time import time
 from .._log import LogGroup, LogVerbosity
 
 

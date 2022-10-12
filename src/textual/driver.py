@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import asyncio
-from time import time
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from . import events
+from ._time import time
 from ._types import MessageTarget
 
 if TYPE_CHECKING:

@@ -10,7 +10,6 @@ from __future__ import annotations
 import asyncio
 import inspect
 from asyncio import CancelledError, Queue, QueueEmpty, Task
-from time import time
 from functools import partial
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, Iterable
 from weakref import WeakSet
@@ -18,6 +17,7 @@ from weakref import WeakSet
 from . import events, log, messages, Logger
 from ._callback import invoke
 from ._context import NoActiveAppError, active_app
+from ._time import time
 from .errors import DuplicateKeyHandlers
 from .keys import _get_key_aliases
 from .timer import Timer, TimerCallback

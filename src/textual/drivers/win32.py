@@ -263,6 +263,11 @@ class EventMonitor(threading.Thread):
                         key_event = input_record.Event.KeyEvent
                         key = key_event.uChar.UnicodeChar
                         if key_event.bKeyDown or key == "\x1b":
+                            if (
+                                key_event.dwControlKeyState
+                                and key_event.wVirtualKeyCode == 0
+                            ):
+                                continue
                             append_key(key)
                     elif event_type == WINDOW_BUFFER_SIZE_EVENT:
                         # Window size changed, store size

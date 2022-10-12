@@ -3,7 +3,7 @@ Timer context manager, only used in debug.
 
 """
 
-from time import time
+from ._time import time
 
 import contextlib
 from typing import Generator
