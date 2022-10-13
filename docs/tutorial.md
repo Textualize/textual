@@ -222,7 +222,7 @@ If we run the app now, it will look *very* different.
 ```{.textual path="docs/examples/tutorial/stopwatch03.py" title="stopwatch03.py"}
 ```
 
-This app looks much more like our sketch. let's look at how the Textual uses `stopwatch03.css` to apply styles.
+This app looks much more like our sketch. Let's look at how the Textual uses `stopwatch03.css` to apply styles.
 
 ### CSS basics
 
