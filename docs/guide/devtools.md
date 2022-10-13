@@ -3,7 +3,7 @@
 !!! note inline end
 
     If you don't have the `textual` command on your path, you may have forgotten so install with the `dev` switch.
-    
+
     See [getting started](../getting_started.md#installation) for details.
 
 Textual comes with a command line application of the same name. The `textual` command is a super useful tool that will help you to build apps.
@@ -44,7 +44,7 @@ textual run --dev my_app.py
 
 One of the the features of *dev* mode is live editing of CSS files: any changes to your CSS will be reflected in the terminal a few milliseconds later.
 
-This is a great feature for iterating on your app's look and feel. Open the CSS in your editor and have your app running in a terminal. Edits to your CSS will appear almost immediately after you save. 
+This is a great feature for iterating on your app's look and feel. Open the CSS in your editor and have your app running in a terminal. Edits to your CSS will appear almost immediately after you save.
 
 ## Console
 
@@ -120,4 +120,3 @@ if __name__ == "__main__":
     LogApp.run()
 
 ```
-
