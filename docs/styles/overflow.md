@@ -50,7 +50,7 @@ The right side has `overflow-y: hidden` which will prevent a scrollbar from bein
 ## CSS
 
 ```sass
-/* Automatic scrollbars on both axies (the default) */
+/* Automatic scrollbars on both axes (the default) */
 overflow: auto auto;
 
 /* Hide the vertical scrollbar */
