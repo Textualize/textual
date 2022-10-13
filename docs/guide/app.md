@@ -76,7 +76,7 @@ Textual knows to *await* your event handlers if they are coroutines (i.e. prefix
 !!! tip
 
     For a friendly introduction to async programming in Python, see FastAPI's [concurrent burgers](https://fastapi.tiangolo.com/async/) article.
-    
+
 
 ## Widgets
 
@@ -172,7 +172,7 @@ When `"question02.py"` runs it will load `"question02.css"` and update the app a
 
 ### Classvar CSS
 
-While external CSS files are recommended for most applications, and enable some cool features like *live editing*, you can also specify the CSS directly within the Python code. 
+While external CSS files are recommended for most applications, and enable some cool features like *live editing*, you can also specify the CSS directly within the Python code.
 
 To do this set a `CSS` class variable on the app to a string containing your CSS.
 
