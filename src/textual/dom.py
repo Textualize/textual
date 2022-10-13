@@ -670,7 +670,7 @@ class DOMNode(MessagePump):
         """
 
         def walk_depth_first() -> Iterable[DOMNode]:
-            """Walk the tree breadth first (parent's first)."""
+            """Walk the tree depth first (parents first)."""
             stack: list[Iterator[DOMNode]] = [iter(self.children)]
             pop = stack.pop
             push = stack.append
@@ -678,7 +678,6 @@ class DOMNode(MessagePump):
 
             if with_self and isinstance(self, check_type):
                 yield self
-
             while stack:
                 node = next(stack[-1], None)
                 if node is None:
@@ -690,28 +689,29 @@ class DOMNode(MessagePump):
                         push(iter(node.children))
 
         def walk_breadth_first() -> Iterable[DOMNode]:
-            """Walk the tree depth first (children first)."""
+            """Walk the tree breadth first (children first)."""
             queue: deque[DOMNode] = deque()
             popleft = queue.popleft
             extend = queue.extend
+            check_type = filter_type or DOMNode
 
-            if with_self:
+            if with_self and isinstance(self, check_type):
                 yield self
-            queue.extend(self.children)
-
+            extend(self.children)
             while queue:
                 node = popleft()
-                yield node
+                if isinstance(node, check_type):
+                    yield node
                 extend(node.children)
 
         node_generator = (
             walk_depth_first() if method == "depth" else walk_breadth_first()
         )
 
+        nodes = list(node_generator)
         if reverse:
-            yield from reversed(list(node_generator))
-        else:
-            yield from node_generator
+            nodes.reverse()
+        yield from nodes
 
     def get_child(self, id: str) -> DOMNode:
         """Return the first child (immediate descendent) of this node with the given ID.
