@@ -184,4 +184,4 @@ Here's the question app with classvar CSS:
 
 ## What's next
 
-In the following chapter we will learn more about how to apply styles to you widgets and app.
+In the following chapter we will learn more about how to apply styles to your widgets and app.
