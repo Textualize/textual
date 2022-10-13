@@ -1,8 +1,8 @@
 import pytest
 
-from textual.geometry import Size
-from textual.css.scalar import Scalar
 from textual._resolve import resolve
+from textual.css.scalar import Scalar
+from textual.geometry import Size
 
 
 def test_resolve_empty():

@@ -42,6 +42,4 @@ EdgeStyle = Tuple[EdgeType, Color]
 TextAlign = Literal["left", "start", "center", "right", "end", "justify"]
 
 Specificity3 = Tuple[int, int, int]
-Specificity4 = Tuple[int, int, int, int]
-Specificity5 = Tuple[int, int, int, int, int]
 Specificity6 = Tuple[int, int, int, int, int, int]

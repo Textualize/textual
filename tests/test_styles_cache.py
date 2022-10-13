@@ -3,11 +3,11 @@ from __future__ import annotations
 from rich.segment import Segment
 from rich.style import Style
 
-from textual.color import Color
-from textual.geometry import Region, Size
-from textual.css.styles import Styles
 from textual._styles_cache import StylesCache
 from textual._types import Lines
+from textual.color import Color
+from textual.css.styles import Styles
+from textual.geometry import Region, Size
 
 
 def _extract_content(lines: Lines):

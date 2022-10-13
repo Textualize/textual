@@ -31,9 +31,9 @@ def import_app(import_name: str) -> App:
     import importlib
     import sys
 
-    from textual.app import App
+    from textual.app import App, WINDOWS
 
-    import_name, *argv = shlex.split(import_name)
+    import_name, *argv = shlex.split(import_name, posix=not WINDOWS)
     lib, _colon, name = import_name.partition(":")
 
     if lib.endswith(".py"):

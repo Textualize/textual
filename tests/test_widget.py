@@ -1,5 +1,4 @@
 import pytest
-from rich.style import Style
 
 from textual.app import App
 from textual.css.errors import StyleValueError

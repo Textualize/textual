@@ -528,7 +528,6 @@ class Color(NamedTuple):
 # Color constants
 WHITE = Color(255, 255, 255)
 BLACK = Color(0, 0, 0)
-TRANSPARENT = Color(0, 0, 0, 0)
 
 
 def rgb_to_lab(rgb: Color) -> Lab:

@@ -1,12 +1,12 @@
 from datetime import datetime
 
+import msgpack
 import pytest
 import time_machine
 from rich.align import Align
 from rich.console import Console
 from rich.segment import Segment
 
-import msgpack
 from tests.utilities.render import wait_for_predicate
 from textual.devtools.renderables import DevConsoleLog, DevConsoleNotice
 

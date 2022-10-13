@@ -13,7 +13,6 @@ from rich.syntax import Syntax
 from rich.text import Text
 
 from ._error_tools import friendly_list
-from .._loop import loop_last
 
 
 class TokenError(Exception):
