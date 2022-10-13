@@ -102,7 +102,7 @@ Hit ++ctrl+c++ to exit the app and return to the command prompt.
 
 ### A closer look at the App class
 
-Let's examine stopwatch01.py in more detail.
+Let's examine `stopwatch01.py` in more detail.
 
 ```python title="stopwatch01.py" hl_lines="1 2"
 --8<-- "docs/examples/tutorial/stopwatch01.py"
@@ -179,7 +179,7 @@ The new line in `Stopwatch.compose()` yields a single `Container` object which w
 
 ### The unstyled app
 
-Let's see what happens when we run "stopwatch02.py".
+Let's see what happens when we run `stopwatch02.py`.
 
 ```{.textual path="docs/examples/tutorial/stopwatch02.py" title="stopwatch02.py"}
 ```
@@ -335,7 +335,7 @@ The following code will start or stop the stopwatches in response to clicking a 
 
 The `on_button_pressed` method is an *event handler*. Event handlers are methods called by Textual in response to an *event* such as a key press, mouse click, etc. Event handlers begin with `on_` followed by the name of the event they will handler. Hence `on_button_pressed` will handle the button pressed event.
 
-If you run "stopwatch04.py" now you will be able to toggle between the two states by clicking the first button:
+If you run `stopwatch04.py` now you will be able to toggle between the two states by clicking the first button:
 
 ```{.textual path="docs/examples/tutorial/stopwatch04.py" title="stopwatch04.py" press="tab,tab,tab,_,enter,_,_,_"}
 ```
@@ -416,7 +416,7 @@ This code supplies missing features and makes our app useful. We've made the fol
 - We call the method on `TimeDisplay` that matches the pressed button.
 - We add the `"started"` class when the Stopwatch is started (`self.add_class("started")`), and remove it (`self.remove_class("started")`) when it is stopped. This will update the Stopwatch visuals via CSS.
 
-If you run stopwatch06.py you will be able to use the stopwatches independently.
+If you run `stopwatch06.py` you will be able to use the stopwatches independently.
 
 ```{.textual path="docs/examples/tutorial/stopwatch06.py" title="stopwatch06.py" press="tab,enter,_,_,tab,enter,_,tab"}
 ```
@@ -451,6 +451,6 @@ If you run `stopwatch.py` now you can add a new stopwatch with the ++a++ key and
 
 ## What next?
 
-Congratulations on building your first Textual application! This tutorial has covered a lot of ground. If you are the type that prefers to learn a framework by coding, feel free. You could tweak stopwatch.py or look through the examples.
+Congratulations on building your first Textual application! This tutorial has covered a lot of ground. If you are the type that prefers to learn a framework by coding, feel free. You could tweak `stopwatch.py` or look through the examples.
 
 Read the guide for the full details on how to build sophisticated TUI applications with Textual.
