@@ -150,8 +150,6 @@ class App(Generic[ReturnType], DOMNode):
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
 
-    focused: Reactive[Widget | None] = Reactive(None)
-
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
@@ -326,36 +324,15 @@ class App(Generic[ReturnType], DOMNode):
         self._close_messages_no_wait()
 
     @property
-    def focus_chain(self) -> list[Widget]:
-        """Get widgets that may receive focus, in focus order.
-
-        Returns:
-            list[Widget]: List of Widgets in focus order.
-
-        """
-        widgets: list[Widget] = []
-        add_widget = widgets.append
-        root = self.screen
-        stack: list[Iterator[Widget]] = [iter(root.focusable_children)]
-        pop = stack.pop
-        push = stack.append
-
-        while stack:
-            node = next(stack[-1], None)
-            if node is None:
-                pop()
-            else:
-                if node.is_container and node.can_focus_children:
-                    push(iter(node.focusable_children))
-                else:
-                    if node.can_focus:
-                        add_widget(node)
-
-        return widgets
+    def focused(self) -> Widget | None:
+        """Get the widget that is focused on the currently active screen."""
+        return self.screen.focused
 
     @property
     def bindings(self) -> Bindings:
-        """Get current bindings."""
+        """Get current bindings. If no widget is focused, then the app-level bindings
+        are returned. If a widget is focused, then any bindings present between that widget
+        and the App in the DOM are merged and returned."""
         if self.focused is None:
             return self._bindings
         else:
@@ -366,63 +343,6 @@ class App(Generic[ReturnType], DOMNode):
     def _set_active(self) -> None:
         """Set this app to be the currently active app."""
         active_app.set(self)
-
-    def _move_focus(self, direction: int = 0) -> Widget | None:
-        """Move the focus in the given direction.
-
-        Args:
-            direction (int, optional): 1 to move forward, -1 to move backward, or
-                0 to highlight the current focus.
-
-        Returns:
-            Widget | None: Newly focused widget, or None for no focus.
-        """
-        focusable_widgets = self.focus_chain
-
-        if not focusable_widgets:
-            # Nothing focusable, so nothing to do
-            return self.focused
-        if self.focused is None:
-            # Nothing currently focused, so focus the first one
-            self.set_focus(focusable_widgets[0])
-        else:
-            try:
-                # Find the index of the currently focused widget
-                current_index = focusable_widgets.index(self.focused)
-            except ValueError:
-                # Focused widget was removed in the interim, start again
-                self.set_focus(focusable_widgets[0])
-            else:
-                # Only move the focus if we are currently showing the focus
-                if direction:
-                    current_index = (current_index + direction) % len(focusable_widgets)
-                    self.set_focus(focusable_widgets[current_index])
-
-        return self.focused
-
-    def show_focus(self) -> Widget | None:
-        """Highlight the currently focused widget.
-
-        Returns:
-            Widget | None: Focused widget, or None for no focus.
-        """
-        return self._move_focus(0)
-
-    def focus_next(self) -> Widget | None:
-        """Focus the next widget.
-
-        Returns:
-            Widget | None: Newly focused widget, or None for no focus.
-        """
-        return self._move_focus(1)
-
-    def focus_previous(self) -> Widget | None:
-        """Focus the previous widget.
-
-        Returns:
-            Widget | None: Newly focused widget, or None for no focus.
-        """
-        return self._move_focus(-1)
 
     def compose(self) -> ComposeResult:
         """Yield child widgets for a container."""
@@ -872,7 +792,7 @@ class App(Generic[ReturnType], DOMNode):
         self.log.system(f"{self.screen} is current (PUSHED)")
 
     def switch_screen(self, screen: Screen | str) -> None:
-        """Switch to a another screen by replacing the top of the screen stack with a new screen.
+        """Switch to another screen by replacing the top of the screen stack with a new screen.
 
         Args:
             screen (Screen | str): Either a Screen object or screen name (the `name` argument when installed).
@@ -965,43 +885,7 @@ class App(Generic[ReturnType], DOMNode):
             widget (Widget): Widget to focus.
             scroll_visible (bool, optional): Scroll widget in to view.
         """
-        if widget is self.focused:
-            # Widget is already focused
-            return
-
-        if widget is None:
-            # No focus, so blur currently focused widget if it exists
-            if self.focused is not None:
-                self.focused.post_message_no_wait(events.Blur(self))
-                self.focused.emit_no_wait(events.DescendantBlur(self))
-                self.focused = None
-        elif widget.can_focus:
-            if self.focused != widget:
-                if self.focused is not None:
-                    # Blur currently focused widget
-                    self.focused.post_message_no_wait(events.Blur(self))
-                    self.focused.emit_no_wait(events.DescendantBlur(self))
-                # Change focus
-                self.focused = widget
-                # Send focus event
-                if scroll_visible:
-                    self.screen.scroll_to_widget(widget)
-                widget.post_message_no_wait(events.Focus(self))
-                widget.emit_no_wait(events.DescendantFocus(self))
-
-    def _reset_focus(self, widget: Widget) -> None:
-        """Reset the focus when a widget is removed
-
-        Args:
-            widget (Widget): A widget that is removed.
-        """
-        if self.focused is widget:
-            for sibling in widget.siblings:
-                if sibling.can_focus:
-                    sibling.focus()
-                    break
-            else:
-                self.focused = None
+        self.screen.set_focus(widget, scroll_visible)
 
     async def _set_mouse_over(self, widget: Widget | None) -> None:
         """Called when the mouse is over another widget.
@@ -1269,7 +1153,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widget (Widget): A Widget to unregister
         """
-        self._reset_focus(widget)
+        widget.screen._reset_focus(widget)
 
         if isinstance(widget._parent, Widget):
             widget._parent.children._remove(widget)
@@ -1391,14 +1275,14 @@ class App(Generic[ReturnType], DOMNode):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
             if isinstance(event, events.Key) and self.focused is not None:
-                # Key events are sent direct to focused widget
+                # Key events are sent direct to focused widget of the currently active screen
                 if self.bindings.allow_forward(event.key):
                     await self.focused._forward_event(event)
                 else:
                     # Key has allow_forward=False which disallows forward to focused widget
                     await super().on_event(event)
             else:
-                # Forward the event to the view
+                # Forward the event to the currently active Screen
                 await self.screen._forward_event(event)
         elif isinstance(event, events.Paste):
             if self.focused is not None:
@@ -1499,9 +1383,9 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_key(self, event: events.Key) -> None:
         if event.key == "tab":
-            self.focus_next()
+            self.screen.focus_next()
         elif event.key == "shift+tab":
-            self.focus_previous()
+            self.screen.focus_previous()
         else:
             if not (await self.press(event.key)):
                 await self.dispatch_key(event)

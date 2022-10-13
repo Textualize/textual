@@ -7,7 +7,7 @@ from .client import DevtoolsLog
 from .._log import LogGroup, LogVerbosity
 
 if TYPE_CHECKING:
-    from .devtools.client import DevtoolsClient
+    from .client import DevtoolsClient
 
 
 class StdoutRedirector:
