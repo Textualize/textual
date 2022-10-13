@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-from collections import deque
-from inspect import getfile
 import re
 import sys
+from collections import deque
+from inspect import getfile
 from typing import (
-    cast,
+    TYPE_CHECKING,
     ClassVar,
     Iterable,
     Iterator,
     Type,
-    overload,
     TypeVar,
-    TYPE_CHECKING,
+    cast,
+    overload,
 )
 
 import rich.repr
@@ -25,14 +25,14 @@ from rich.tree import Tree
 from ._context import NoActiveAppError
 from ._node_list import NodeList
 from .binding import Bindings, BindingType
-from .color import Color, WHITE, BLACK
+from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
-from .css.errors import StyleValueError, DeclarationError
+from .css.errors import DeclarationError, StyleValueError
 from .css.parse import parse_declarations
-from .css.styles import Styles, RenderStyles
-from .css.tokenize import IDENTIFIER
 from .css.query import NoMatches
+from .css.styles import RenderStyles, Styles
+from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
 from .timer import Timer
 
@@ -43,7 +43,7 @@ if TYPE_CHECKING:
     from .widget import Widget
 
 if sys.version_info >= (3, 8):
-    from typing import Literal, Iterable, Sequence
+    from typing import Literal
 else:
     from typing_extensions import Literal
 
