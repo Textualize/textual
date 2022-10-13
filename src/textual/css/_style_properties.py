@@ -283,9 +283,10 @@ class BoxProperty:
             StyleSyntaxError: If the string supplied for the color has invalid syntax.
         """
         _rich_traceback_omit = True
+
         if border is None:
             if obj.clear_rule(self.name):
-                obj.refresh()
+                obj.refresh(layout=True)
         else:
             _type, color = border
             new_value = border
@@ -301,8 +302,13 @@ class BoxProperty:
                     )
             elif isinstance(color, Color):
                 new_value = (_type, color)
+            current_value: tuple[str, Color] = cast(
+                "tuple[str, Color]", obj.get_rule(self.name)
+            )
+            has_edge = current_value and current_value[0]
+            new_edge = bool(_type)
             if obj.set_rule(self.name, new_value):
-                obj.refresh()
+                obj.refresh(layout=has_edge != new_edge)
 
 
 @rich.repr.auto
