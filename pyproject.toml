@@ -54,6 +54,7 @@ pytest-aiohttp = "^1.0.4"
 time-machine = "^2.6.0"
 Jinja2 = "<3.1.0"
 syrupy = "^3.0.0"
+httpx = "^0.23.0"
 
 [tool.black]
 includes = "src"
