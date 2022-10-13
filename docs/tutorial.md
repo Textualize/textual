@@ -374,7 +374,7 @@ The end result is that the `Stopwatch` widgets show the time elapsed since the w
 ```{.textual path="docs/examples/tutorial/stopwatch05.py" title="stopwatch05.py"}
 ```
 
-We've seen how we can update widgets with a timer, but we still need to wire up the buttons so we can operate Stopwatches independently.
+We've seen how we can update widgets with a timer, but we still need to wire up the buttons so we can operate stopwatches independently.
 
 ### Wiring buttons
 
