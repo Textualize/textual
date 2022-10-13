@@ -195,7 +195,7 @@ Let's look at an example. We will create two widgets, one with a height of `"2fr
 --8<-- "docs/examples/guide/styles/dimensions04.py"
 ```
 
-The total `fr` units for height is 3. The first widget will have a screen height of two thirds because its height style is set to `2fr`. The second widget's height styles is `1fr` so its screen height will be one third. Here's what that looks like.
+The total `fr` units for height is 3. The first widget will have a screen height of two thirds because its height style is set to `2fr`. The second widget's height style is `1fr` so its screen height will be one third. Here's what that looks like.
 
 ```{.textual path="docs/examples/guide/styles/dimensions04.py"}
 ```
