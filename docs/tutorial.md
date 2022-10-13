@@ -157,7 +157,7 @@ Let's add those to the app. Just a skeleton for now, we will add the rest of the
 --8<-- "docs/examples/tutorial/stopwatch02.py"
 ```
 
-We've imported two new widgets in this code: `Button`, which creates a clickable button, and `Static` which is a base class for a simple control. We've also imported `Container` from `textual.containers` which (as the name suggests) is a Widget which contains other widgets.
+We've imported two new widgets in this code: `Button`, which creates a clickable button, and `Static` which is a base class for a simple control. We've also imported `Container` from `textual.containers` which (as the name suggests) is a `Widget` which contains other widgets.
 
 We've defined an empty `TimeDisplay` widget by extending `Static`. We will flesh this out later.
 
