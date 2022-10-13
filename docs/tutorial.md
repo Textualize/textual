@@ -284,7 +284,7 @@ The `TimeDisplay` block aligns text to the center (`content-align`), fades it sl
 
 The `Button` block sets the width (`width`) of buttons to 16 cells (character widths).
 
-The last 3 blocks have a slightly different format. When the declaration begins with a `#` then the styles will be applied to widgets with a matching "id" attribute. We've set an ID on the `Button` widgets we yielded in compose. For instance the first button has `id="start"` which matches `#start` in the CSS.
+The last 3 blocks have a slightly different format. When the declaration begins with a `#` then the styles will be applied to widgets with a matching "id" attribute. We've set an ID on the `Button` widgets we yielded in `compose`. For instance the first button has `id="start"` which matches `#start` in the CSS.
 
 The buttons have a `dock` style which aligns the widget to a given edge. The start and stop buttons are docked to the left edge, while the reset button is docked to the right edge.
 
