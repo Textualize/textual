@@ -708,10 +708,13 @@ class DOMNode(MessagePump):
             walk_depth_first() if method == "depth" else walk_breadth_first()
         )
 
+        # We want a snapshot of the DOM at this point
+        # So that is doesn't change mid-walk
         nodes = list(node_generator)
         if reverse:
-            nodes.reverse()
-        yield from nodes
+            yield from reversed(nodes)
+        else:
+            yield from nodes
 
     def get_child(self, id: str) -> DOMNode:
         """Return the first child (immediate descendent) of this node with the given ID.
