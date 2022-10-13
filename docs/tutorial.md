@@ -350,7 +350,7 @@ You can declare a reactive attribute with [reactive][textual.reactive.reactive].
 --8<-- "docs/examples/tutorial/stopwatch05.py"
 ```
 
-We have added two reactive attributes: `start_time` will contain the time in seconds when the stopwatch was started, and `time` will contain the time to be displayed on the Stopwatch.
+We have added two reactive attributes: `start_time` will contain the time in seconds when the stopwatch was started, and `time` will contain the time to be displayed on the `Stopwatch`.
 
 Both attributes will be available on `self` as if you had assigned them in `__init__`. If you write to either of these attributes the widget will update automatically.
 
