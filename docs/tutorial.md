@@ -64,7 +64,7 @@ python stopwatch.py
 
     Type hints are entirely optional in Textual. We've included them in the example code but it's up to you whether you add them to your own projects.
 
-We're a big fan of Python type hints at Textualize. If you haven't encountered type hinting, it's a way to express the types of your data, parameters, and return values. Type hinting allows tools like [Mypy](https://mypy.readthedocs.io/en/stable/) to catch bugs before your code runs.
+We're a big fan of Python type hints at Textualize. If you haven't encountered type hinting, it's a way to express the types of your data, parameters, and return values. Type hinting allows tools like [mypy](https://mypy.readthedocs.io/en/stable/) to catch bugs before your code runs.
 
 The following function contains type hints:
 
