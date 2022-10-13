@@ -573,7 +573,7 @@ class Styles(StylesBase):
         if self.node is not None:
             self.node.refresh(layout=layout)
             if children:
-                for child in self.node.walk_children(with_self=False):
+                for child in self.node.walk_children(with_self=False, reverse=True):
                     child.refresh(layout=layout)
 
     def reset(self) -> None:

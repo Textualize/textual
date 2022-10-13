@@ -77,27 +77,63 @@ def test_validate():
         node.toggle_class("1")
 
 
-def test_walk_children(parent):
-    children = [node.id for node in parent.walk_children(with_self=False)]
-    assert children == ["child1", "grandchild1", "child2"]
+@pytest.fixture
+def search():
+    """
+        a
+       / \
+      b   c
+     /   / \
+    d   e   f
+    """
+    a = DOMNode(id="a")
+    b = DOMNode(id="b")
+    c = DOMNode(id="c")
+    d = DOMNode(id="d")
+    e = DOMNode(id="e")
+    f = DOMNode(id="f")
+
+    a._add_child(b)
+    a._add_child(c)
+    b._add_child(d)
+    c._add_child(e)
+    c._add_child(f)
+
+    yield a
 
 
-def test_walk_children_with_self(parent):
-    children = [node.id for node in parent.walk_children(with_self=True)]
-    assert children == ["parent", "child1", "grandchild1", "child2"]
-
-
-def test_walk_children_depth(parent):
+def test_walk_children_depth(search):
     children = [
-        node.id for node in parent.walk_children(with_self=False, method="depth")
+        node.id for node in search.walk_children(method="depth", with_self=False)
+    ]
+    assert children == ["b", "d", "c", "e", "f"]
+
+
+def test_walk_children_with_self_depth(search):
+    children = [
+        node.id for node in search.walk_children(method="depth", with_self=True)
+    ]
+    assert children == ["a", "b", "d", "c", "e", "f"]
+
+
+def test_walk_children_breadth(search):
+    children = [
+        node.id for node in search.walk_children(with_self=False, method="breadth")
     ]
     print(children)
-    assert children == ["grandchild1", "child1", "child2"]
+    assert children == ["b", "c", "d", "e", "f"]
 
 
-def test_walk_children_with_self_depth(parent):
+def test_walk_children_with_self_breadth(search):
     children = [
-        node.id for node in parent.walk_children(with_self=True, method="depth")
+        node.id for node in search.walk_children(with_self=True, method="breadth")
     ]
     print(children)
-    assert children == ["grandchild1", "child1", "child2", "parent"]
+    assert children == ["a", "b", "c", "d", "e", "f"]
+
+    children = [
+        node.id
+        for node in search.walk_children(with_self=True, method="breadth", reverse=True)
+    ]
+
+    assert children == ["f", "e", "d", "c", "b", "a"]

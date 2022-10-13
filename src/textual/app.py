@@ -37,7 +37,7 @@ from .css.stylesheet import Stylesheet
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
 from .devtools.redirect_output import StdoutRedirector
-from .dom import DOMNode
+from .dom import DOMNode, NoScreen
 from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
 from .features import FeatureFlag, parse_features
@@ -1142,7 +1142,10 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widget (Widget): A Widget to unregister
         """
-        widget.screen._reset_focus(widget)
+        try:
+            widget.screen._reset_focus(widget)
+        except NoScreen:
+            pass
 
         if isinstance(widget._parent, Widget):
             widget._parent.children._remove(widget)
@@ -1394,8 +1397,8 @@ class App(Generic[ReturnType], DOMNode):
         if parent is not None:
             parent.refresh(layout=True)
 
-        remove_widgets = list(
-            widget.walk_children(Widget, with_self=True, method="depth")
+        remove_widgets = widget.walk_children(
+            Widget, with_self=True, method="depth", reverse=True
         )
         for child in remove_widgets:
             self._unregister(child)
