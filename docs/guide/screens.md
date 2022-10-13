@@ -24,7 +24,7 @@ Let's look at a simple example of writing a screen class to simulate Window's [b
 
 === "screen01.py"
 
-    ```python title="screen01.py" hl_lines="17-23 28"
+    ```python title="screen01.py" hl_lines="18-24 29"
     --8<-- "docs/examples/guide/screens/screen01.py"
     ```
 
@@ -53,7 +53,7 @@ You can also _install_ new named screens dynamically with the [install_screen][t
 
 === "screen02.py"
 
-    ```python title="screen02.py" hl_lines="30-31"
+    ```python title="screen02.py" hl_lines="31-32"
     --8<-- "docs/examples/guide/screens/screen02.py"
     ```
 
