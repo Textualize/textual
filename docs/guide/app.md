@@ -141,7 +141,7 @@ You may have noticed that we subclassed `App[str]` rather than the usual `App`.
 --8<-- "docs/examples/app/question01.py"
 ```
 
-The addition of `[str]` tells Mypy that `run()` is expected to return a string. It may also return `None` if [App.exit()][textual.app.App.exit] is called without a return value, so the return type of `run` will be `str | None`. Replace the `str` in `[str]` with the type of the value you intend to call the exit method with.
+The addition of `[str]` tells mypy that `run()` is expected to return a string. It may also return `None` if [App.exit()][textual.app.App.exit] is called without a return value, so the return type of `run` will be `str | None`. Replace the `str` in `[str]` with the type of the value you intend to call the exit method with.
 
 !!! note
 
