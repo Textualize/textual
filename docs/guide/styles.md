@@ -96,7 +96,7 @@ The following example shows what happens when you set alpha on background colors
 --8<-- "docs/examples/guide/styles/colors02.py"
 ```
 
-Notice that an alpha of 0.1 the background almost matches the screen, but at 1.0 it is a solid color.
+Notice that at an alpha of 0.1 the background almost matches the screen, but at 1.0 it is a solid color.
 
 ```{.textual path="docs/examples/guide/styles/colors02.py"}
 ```
