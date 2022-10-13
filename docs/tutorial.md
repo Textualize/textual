@@ -414,7 +414,7 @@ This code supplies missing features and makes our app useful. We've made the fol
 - The first line retrieves `id` attribute of the button that was pressed. We can use this to decide what to do in response.
 - The second line calls `query_one` to get a reference to the `TimeDisplay` widget.
 - We call the method on `TimeDisplay` that matches the pressed button.
-- We add the `"started"` class when the Stopwatch is started (`self.add_class("started)`), and remove it (`self.remove_class("started")`) when it is stopped. This will update the Stopwatch visuals via CSS.
+- We add the `"started"` class when the Stopwatch is started (`self.add_class("started")`), and remove it (`self.remove_class("started")`) when it is stopped. This will update the Stopwatch visuals via CSS.
 
 If you run stopwatch06.py you will be able to use the stopwatches independently.
 
