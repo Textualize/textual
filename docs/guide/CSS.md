@@ -298,7 +298,7 @@ For example, the following will draw a red outline around all widgets:
 
 ### Pseudo classes
 
-Pseudo classes can be used to match widgets in a particular state. Psuedo classes are set automatically by Textual. For instance, you might want a button to have a green background when the mouse cursor moves over it. We can do this with the `:hover` pseudo selector.
+Pseudo classes can be used to match widgets in a particular state. Pseudo classes are set automatically by Textual. For instance, you might want a button to have a green background when the mouse cursor moves over it. We can do this with the `:hover` pseudo selector.
 
 ```sass
 Button:hover {

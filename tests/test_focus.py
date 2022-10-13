@@ -12,13 +12,14 @@ class NonFocusable(Widget, can_focus=False, can_focus_children=False):
 
 
 async def test_focus_chain():
-
     app = App()
     app._set_active()
     app.push_screen(Screen())
 
+    screen = app.screen
+
     # Check empty focus chain
-    assert not app.focus_chain
+    assert not screen.focus_chain
 
     app.screen._add_children(
         Focusable(id="foo"),
@@ -28,16 +29,18 @@ async def test_focus_chain():
         Focusable(id="baz"),
     )
 
-    focused = [widget.id for widget in app.focus_chain]
+    focused = [widget.id for widget in screen.focus_chain]
     assert focused == ["foo", "Paul", "baz"]
 
 
 async def test_focus_next_and_previous():
-
     app = App()
     app._set_active()
     app.push_screen(Screen())
-    app.screen._add_children(
+
+    screen = app.screen
+
+    screen._add_children(
         Focusable(id="foo"),
         NonFocusable(id="bar"),
         Focusable(Focusable(id="Paul"), id="container1"),
@@ -45,9 +48,9 @@ async def test_focus_next_and_previous():
         Focusable(id="baz"),
     )
 
-    assert app.focus_next().id == "foo"
-    assert app.focus_next().id == "Paul"
-    assert app.focus_next().id == "baz"
+    assert screen.focus_next().id == "foo"
+    assert screen.focus_next().id == "Paul"
+    assert screen.focus_next().id == "baz"
 
-    assert app.focus_previous().id == "Paul"
-    assert app.focus_previous().id == "foo"
+    assert screen.focus_previous().id == "Paul"
+    assert screen.focus_previous().id == "foo"

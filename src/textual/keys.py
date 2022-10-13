@@ -202,6 +202,9 @@ KEY_NAME_REPLACEMENTS = {
     "solidus": "slash",
     "reverse_solidus": "backslash",
     "commercial_at": "at",
+    "hyphen_minus": "minus",
+    "plus_sign": "plus",
+    "low_line": "underscore",
 }
 
 # Some keys have aliases. For example, if you press `ctrl+m` on your keyboard,

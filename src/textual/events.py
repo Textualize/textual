@@ -373,7 +373,7 @@ class MouseEvent(InputEvent, bubble=True):
         Returns:
             Offset | None: An offset where the origin is at the top left of the content area.
         """
-        if self.offset not in widget.content_region:
+        if self.screen_offset not in widget.content_region:
             return None
         return self.offset - widget.gutter.top_left
 

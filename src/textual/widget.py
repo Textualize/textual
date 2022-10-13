@@ -52,7 +52,6 @@ if TYPE_CHECKING:
         ScrollUp,
     )
 
-
 _JUSTIFY_MAP: dict[str, JustifyMethod] = {
     "start": "left",
     "end": "right",
@@ -1813,7 +1812,7 @@ class Widget(DOMNode):
             scroll_visible (bool, optional): Scroll parent to make this widget
                 visible. Defaults to True.
         """
-        self.app.set_focus(self, scroll_visible=scroll_visible)
+        self.screen.set_focus(self, scroll_visible=scroll_visible)
 
     def capture_mouse(self, capture: bool = True) -> None:
         """Capture (or release) the mouse.
@@ -1889,22 +1888,16 @@ class Widget(DOMNode):
         self.refresh()
 
     def _on_descendant_focus(self, event: events.DescendantFocus) -> None:
-        self.descendant_has_focus = True
-        if "focus-within" in self.pseudo_classes:
-            sender = event.sender
-            for child in self.walk_children(False):
-                child.refresh()
-                if child is sender:
-                    break
+        if not self.descendant_has_focus:
+            self.descendant_has_focus = True
 
     def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
-        self.descendant_has_focus = False
+        if self.descendant_has_focus:
+            self.descendant_has_focus = False
+
+    def watch_descendant_has_focus(self, value: bool) -> None:
         if "focus-within" in self.pseudo_classes:
-            sender = event.sender
-            for child in self.walk_children(False):
-                child.refresh()
-                if child is sender:
-                    break
+            self.app._require_stylesheet_update.add(self)
 
     def _on_mouse_scroll_down(self, event) -> None:
         if self.allow_vertical_scroll:

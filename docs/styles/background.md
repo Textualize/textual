@@ -35,7 +35,7 @@ This example creates three widgets and applies a different background to each.
 /* Blue background */
 background: blue;
 
-/* 20% red backround */
+/* 20% red background */
 background: red 20%;
 
 /* RGB color */

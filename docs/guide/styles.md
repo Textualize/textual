@@ -237,7 +237,7 @@ You can also set padding to a tuple of *four* values which applies padding to ea
 
 ### Border 
 
-The [border](../styles/border.md) style draws a border around a widget. To add a border set `syles.border` to a tuple of two values. The first value is the border type, which should be a string. The second value is the border color which will accept any value that works with  [color](../styles/color.md) and [background](../styles/background.md).
+The [border](../styles/border.md) style draws a border around a widget. To add a border set `styles.border` to a tuple of two values. The first value is the border type, which should be a string. The second value is the border color which will accept any value that works with  [color](../styles/color.md) and [background](../styles/background.md).
 
 The following example adds a border around a widget:
 
