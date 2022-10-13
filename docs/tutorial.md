@@ -1,18 +1,18 @@
 ---
 hide:
-  - navigation  
+  - navigation
 ---
 
 # Tutorial
 
 Welcome to the Textual Tutorial!
 
-By the end of this page you should have a solid understanding of app development with Textual. 
+By the end of this page you should have a solid understanding of app development with Textual.
 
 !!! quote
 
     If you want people to build things, make it fun.
-    
+
     &mdash; **Will McGugan** (creator of Rich and Textual)
 
 
@@ -83,7 +83,7 @@ Return types follow `->`. So `-> str:` indicates this method returns a string.
 
 The first step in building a Textual app is to import and extend the `App` class. Here's a basic app class we will use as a starting point for the stopwatch app.
 
-```python title="stopwatch01.py" 
+```python title="stopwatch01.py"
 --8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
@@ -134,7 +134,7 @@ The final three lines create an instance of the app and calls the [run()][textua
 
 ## Designing a UI with widgets
 
-Textual comes with a number of builtin widgets, like Header and Footer, which are versatile and re-usable. We will need to build some custom widgets for the stopwatch. Before we dive in to that, let's first sketch a design for the app &mdash; so we know what we're aiming for. 
+Textual comes with a number of builtin widgets, like Header and Footer, which are versatile and re-usable. We will need to build some custom widgets for the stopwatch. Before we dive in to that, let's first sketch a design for the app &mdash; so we know what we're aiming for.
 
 <div class="excalidraw">
 --8<-- "docs/images/stopwatch.excalidraw.svg"
@@ -157,9 +157,9 @@ Let's add those to the app. Just a skeleton for now, we will add the rest of the
 --8<-- "docs/examples/tutorial/stopwatch02.py"
 ```
 
-We've imported two new widgets in this code: `Button`, which creates a clickable button, and `Static` which is a base class for a simple control. We've also imported `Container` from `textual.containers` which (as the name suggests) is a Widget which contains other widgets. 
+We've imported two new widgets in this code: `Button`, which creates a clickable button, and `Static` which is a base class for a simple control. We've also imported `Container` from `textual.containers` which (as the name suggests) is a Widget which contains other widgets.
 
-We've defined an empty `TimeDisplay` widget by extending `Static`. We will flesh this out later. 
+We've defined an empty `TimeDisplay` widget by extending `Static`. We will flesh this out later.
 
 The Stopwatch widget class also extends `Static`. This class has a `compose()` method which yields child widgets, consisting of three `Button` objects and a single `TimeDisplay` object. These widgets will form the stopwatch in our sketch.
 
@@ -168,7 +168,7 @@ The Stopwatch widget class also extends `Static`. This class has a `compose()` m
 The Button constructor takes a label to be displayed in the button (`"Start"`, `"Stop"`, or `"Reset"`). Additionally some of the buttons set the following parameters:
 
 - `id` is an identifier we can use to tell the buttons apart in code and apply styles. More on that later.
-- `variant` is a string which selects a default style. The "success" variant makes the button green, and the "error" variant makes it red. 
+- `variant` is a string which selects a default style. The "success" variant makes the button green, and the "error" variant makes it red.
 
 ### Composing the widgets
 
@@ -194,8 +194,8 @@ Every widget has a `styles` object with a number of attributes that impact how t
 self.styles.background = "blue"
 self.styles.color = "white"
 ```
-    
-While it's possible to set all styles for an app this way, it is rarely necessary. Textual has support for CSS (Cascading Style Sheets), a technology used by web browsers. CSS files are data files loaded by your app which contain information about styles to apply to your widgets. 
+
+While it's possible to set all styles for an app this way, it is rarely necessary. Textual has support for CSS (Cascading Style Sheets), a technology used by web browsers. CSS files are data files loaded by your app which contain information about styles to apply to your widgets.
 
 !!! info
 
@@ -213,7 +213,7 @@ Let's add a CSS file to our application.
 
 Adding the `CSS_PATH` class variable tells Textual to load the following file when the app starts:
 
-```sass title="stopwatch03.css" 
+```sass title="stopwatch03.css"
 --8<-- "docs/examples/tutorial/stopwatch03.css"
 ```
 
@@ -228,7 +228,7 @@ This app looks much more like our sketch. let's look at how the Textual uses `st
 
 CSS files contain a number of _declaration blocks_. Here's the first such block from `stopwatch03.css` again:
 
-```sass 
+```sass
 Stopwatch {
     layout: horizontal;
     background: $boost;
@@ -263,7 +263,7 @@ TimeDisplay {
 }
 
 Button {
-    width: 16;    
+    width: 16;
 }
 
 #start {
@@ -354,7 +354,7 @@ We have added two reactive attributes: `start_time` will contain the time in sec
 
 Both attributes will be available on `self` as if you had assigned them in `__init__`. If you write to either of these attributes the widget will update automatically.
 
-!!! info 
+!!! info
 
     The `monotonic` function in this example is imported from the standard library `time` module. It is similar to `time.time` but won't go backwards if the system clock is changed.
 
