@@ -10,7 +10,7 @@ Textual requires that there be at least one screen object and will create one im
 
 !!! tip
 
-    Try printing `widget.parent` to see what object your widget is connected to. 
+    Try printing `widget.parent` to see what object your widget is connected to.
 
 <div class="excalidraw">
 --8<-- "docs/images/dom1.excalidraw.svg"
@@ -30,7 +30,7 @@ Let's look at a simple example of writing a screen class to simulate Window's [b
 
 === "screen01.css"
 
-    ```sass title="screen01.css" 
+    ```sass title="screen01.css"
     --8<-- "docs/examples/guide/screens/screen01.css"
     ```
 
@@ -59,7 +59,7 @@ You can also _install_ new named screens dynamically with the [install_screen][t
 
 === "screen02.css"
 
-    ```sass title="screen02.css" 
+    ```sass title="screen02.css"
     --8<-- "docs/examples/guide/screens/screen02.css"
     ```
 
@@ -96,7 +96,7 @@ You can also push screens with the `"app.push_screen"` action, which requires th
 
 ### Pop screen
 
-The [pop_screen][textual.app.App.pop_screen] method removes the top-most screen from the stack, and makes the new top screen active. 
+The [pop_screen][textual.app.App.pop_screen] method removes the top-most screen from the stack, and makes the new top screen active.
 
 !!! note
 
@@ -115,7 +115,7 @@ You can also pop screens with the `"app.pop_screen"` action.
 
 ### Switch screen
 
-The [switch_screen][textual.app.App.switch_screen] method replaces the top of the stack with a new screen. 
+The [switch_screen][textual.app.App.switch_screen] method replaces the top of the stack with a new screen.
 
 <div class="excalidraw">
 --8<-- "docs/images/screens/switch_screen.excalidraw.svg"
@@ -139,7 +139,7 @@ Screens can be used to implement modal dialogs. The following example pushes a s
 
 === "modal01.css"
 
-    ```sass title="modal01.css" 
+    ```sass title="modal01.css"
     --8<-- "docs/examples/guide/screens/modal01.css"
     ```
 
@@ -147,5 +147,5 @@ Screens can be used to implement modal dialogs. The following example pushes a s
 
     ```{.textual path="docs/examples/guide/screens/modal01.py" press="q,_"}
     ```
-  
+
 Note the `request_quit` action in the app which pushes a new instance of `QuitScreen`. This makes the quit screen active. if you click cancel, the quit screen calls `pop_screen` to return the default screen. This also removes and deletes the `QuitScreen` object.
