@@ -1936,7 +1936,7 @@ class Widget(DOMNode):
 
     def _on_hide(self, event: events.Hide) -> None:
         if self.has_focus:
-            self.app._reset_focus(self)
+            self.screen._reset_focus(self)
 
     def _on_scroll_to_region(self, message: messages.ScrollToRegion) -> None:
         self.scroll_to_region(message.region, animate=True)
