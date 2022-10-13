@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import ast
-from typing import Any, Tuple
 import re
 
 
@@ -41,12 +40,3 @@ def parse(action: str) -> tuple[str, tuple[object, ...]]:
         action_name,
         action_params if isinstance(action_params, tuple) else (action_params,),
     )
-
-
-if __name__ == "__main__":
-
-    print(parse("foo"))
-
-    print(parse("view.toggle('side')"))
-
-    print(parse("view.toggle"))

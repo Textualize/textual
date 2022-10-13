@@ -9,12 +9,12 @@ from . import messages
 from ._ansi_sequences import ANSI_SEQUENCES_KEYS
 from ._parser import Awaitable, Parser, TokenCallback
 from ._types import MessageTarget
+from .keys import KEY_NAME_REPLACEMENTS
+
 
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search
 # to be unsuccessful?
-from .keys import KEY_NAME_REPLACEMENTS
-
 _MAX_SEQUENCE_SEARCH_THRESHOLD = 20
 
 _re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[\d;]+[mM]|M...)\Z")

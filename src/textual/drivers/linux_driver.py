@@ -17,7 +17,6 @@ if TYPE_CHECKING:
 import rich.repr
 
 from .. import log
-from .. import events
 from ..driver import Driver
 from ..geometry import Size
 from .._types import MessageTarget

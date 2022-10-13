@@ -11,16 +11,11 @@ from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
 from time import perf_counter
-from typing import Any, Generic, Iterable, Iterator, Type, TypeVar, cast, Union
+from typing import Any, Generic, Iterable, Type, TypeVar, cast, Union
 from weakref import WeakSet, WeakValueDictionary
 
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._path import _make_path_object_relative
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal  # pragma: no cover
 
 import nanoid
 import rich
@@ -131,7 +126,6 @@ class App(Generic[ReturnType], DOMNode):
         title (str | None, optional): Title of the application. If ``None``, the title is set to the name of the ``App`` subclass. Defaults to ``None``.
         css_path (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
         watch_css (bool, optional): Watch CSS for changes. Defaults to False.
-
     """
 
     # Inline CSS for quick scripts (generally css_path should be preferred.)
@@ -700,11 +694,6 @@ class App(Generic[ReturnType], DOMNode):
 
         """
         self._require_stylesheet_update.add(self.screen if node is None else node)
-        self.check_idle()
-
-    def update_visible_styles(self) -> None:
-        """Update visible styles only."""
-        self._require_stylesheet_update.update(self.screen.visible_widgets)
         self.check_idle()
 
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:

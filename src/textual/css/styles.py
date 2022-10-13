@@ -67,7 +67,6 @@ else:
     from typing_extensions import TypedDict
 
 if TYPE_CHECKING:
-    from .._animator import Animation
     from .._layout import Layout
     from ..dom import DOMNode
 
