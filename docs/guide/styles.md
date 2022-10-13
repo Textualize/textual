@@ -88,7 +88,7 @@ There are a few ways you can set alpha on a color in Textual.
 
 - You can set the alpha value of a color by adding a fourth digit or pair of digits to a hex color. The extra digits form an alpha component which ranges from 0 for completely transparent to 255 (completely opaque). Any value between 0 and 255 will be translucent. For example `"#9932CC7f"` is a dark orchid which is roughly 50% translucent.
 - You can also set alpha with the `rgba` format, which is identical to `rgb` with the additional of a fourth value that should be between 0 and 1, where 0 is invisible and 1 is opaque. For example `"rgba(192,78,96,0.5)"`.
-- You can add the `a` parameter on a [Color][textual.color.Color] object. For example `Color(192, 78, 96, a=0.5)` creates a translucent dark orchid. 
+- You can add the `a` parameter on a [Color][textual.color.Color] object. For example `Color(192, 78, 96, a=0.5)` creates a translucent dark orchid.
 
 The following examples shows what happens when you set alpha on background colors:
 
@@ -96,7 +96,7 @@ The following examples shows what happens when you set alpha on background color
 --8<-- "docs/examples/guide/styles/colors02.py"
 ```
 
-Notice that an alpha of 0.1 the background almost matches the screen, but at 1.0 it is a solid color. 
+Notice that an alpha of 0.1 the background almost matches the screen, but at 1.0 it is a solid color.
 
 ```{.textual path="docs/examples/guide/styles/colors02.py"}
 ```
@@ -110,7 +110,7 @@ Widgets occupy a rectangular region of the screen, which may be as small as a si
 The following styles influence the dimensions of a widget.
 
 - [width](../styles/width.md) and [height](../styles/width.md) define the size of the widget.
-- [padding](../styles/padding.md) adds optional space around the content area. 
+- [padding](../styles/padding.md) adds optional space around the content area.
 - [border](../styles/border.md) draws an optional rectangular border around the padding and the content area.
 
 Additionally, the [margin](../styles/margin.md) style adds space around a widget's border, which isn't technically part of the widget, but provides visual separation between widgets.
@@ -235,7 +235,7 @@ Compare the output of this example to the previous example:
 
 You can also set padding to a tuple of *four* values which applies padding to each edge individually. The first value is the padding for the top of the widget, followed by the right of the widget, then bottom, then left.
 
-### Border 
+### Border
 
 The [border](../styles/border.md) style draws a border around a widget. To add a border set `styles.border` to a tuple of two values. The first value is the border type, which should be a string. The second value is the border color which will accept any value that works with  [color](../styles/color.md) and [background](../styles/background.md).
 
@@ -301,7 +301,7 @@ The second widget sets `box_sizing` to `"content-box"`.
 --8<-- "docs/examples/guide/styles/box_sizing01.py"
 ```
 
-The padding and border of the first widget is subtracted from the height leaving only 2 lines in the content area. The second widget also has a height of 6, but the padding and border adds additional height so that the content area remains 6 lines. 
+The padding and border of the first widget is subtracted from the height leaving only 2 lines in the content area. The second widget also has a height of 6, but the padding and border adds additional height so that the content area remains 6 lines.
 
 ```{.textual path="docs/examples/guide/styles/box_sizing01.py"}
 ```
