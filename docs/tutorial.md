@@ -250,7 +250,7 @@ Here's how this CSS code changes how the `Stopwatch` widget is displayed.
 - `background: $boost` sets the background color to `$boost`. The `$` prefix picks a pre-defined color from the builtin theme. There are other ways to specify colors such as `"blue"` or `rgb(20,46,210)`.
 - `height: 5` sets the height of our widget to 5 lines of text.
 - `padding: 1` sets a padding of 1 cell around the child widgets.
-- `margin: 1` sets a margin of 1 cell around the Stopwatch widget to create a little space between widgets in the list.
+- `margin: 1` sets a margin of 1 cell around the `Stopwatch` widget to create a little space between widgets in the list.
 
 
 Here's the rest of `stopwatch03.css` which contains further declaration blocks:
