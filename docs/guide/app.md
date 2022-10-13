@@ -86,7 +86,7 @@ Widgets can be as simple as a piece of text, a button, or a fully-fledged compon
 
 ### Composing
 
-To add widgets to your app implement a [`compose()`][textual.app.App.compose] method which should return an iterable of Widget instances. A list would work, but it is convenient to yield widgets, making the method a *generator*.
+To add widgets to your app implement a [`compose()`][textual.app.App.compose] method which should return an iterable of `Widget` instances. A list would work, but it is convenient to yield widgets, making the method a *generator*.
 
 The following example imports a builtin Welcome widget and yields it from `App.compose()`.
 
