@@ -1394,7 +1394,9 @@ class App(Generic[ReturnType], DOMNode):
         if parent is not None:
             parent.refresh(layout=True)
 
-        remove_widgets = list(widget.walk_children(Widget, with_self=True))
+        remove_widgets = list(
+            widget.walk_children(Widget, with_self=True, method="depth")
+        )
         for child in remove_widgets:
             self._unregister(child)
         for child in remove_widgets:

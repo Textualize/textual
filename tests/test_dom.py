@@ -75,3 +75,29 @@ def test_validate():
         node.remove_class("1")
     with pytest.raises(BadIdentifier):
         node.toggle_class("1")
+
+
+def test_walk_children(parent):
+    children = [node.id for node in parent.walk_children(with_self=False)]
+    assert children == ["child1", "grandchild1", "child2"]
+
+
+def test_walk_children_with_self(parent):
+    children = [node.id for node in parent.walk_children(with_self=True)]
+    assert children == ["parent", "child1", "grandchild1", "child2"]
+
+
+def test_walk_children_depth(parent):
+    children = [
+        node.id for node in parent.walk_children(with_self=False, method="depth")
+    ]
+    print(children)
+    assert children == ["grandchild1", "child1", "child2"]
+
+
+def test_walk_children_with_self_depth(parent):
+    children = [
+        node.id for node in parent.walk_children(with_self=True, method="depth")
+    ]
+    print(children)
+    assert children == ["grandchild1", "child1", "child2", "parent"]

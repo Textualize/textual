@@ -1,0 +1,9 @@
+ Focusable {
+     padding: 3 6;
+     background: blue 20%;
+ }
+
+ Focusable :focus {
+     border: solid red;
+ }
+
