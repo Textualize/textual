@@ -19,7 +19,7 @@ classifiers = [
     "Typing :: Typed",
 ]
 include = [
-    "src/textual/py.typed"   
+    "src/textual/py.typed"
 ]
 
 [tool.poetry.scripts]
