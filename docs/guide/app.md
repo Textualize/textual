@@ -88,18 +88,18 @@ Widgets can be as simple as a piece of text, a button, or a fully-fledged compon
 
 To add widgets to your app implement a [`compose()`][textual.app.App.compose] method which should return an iterable of `Widget` instances. A list would work, but it is convenient to yield widgets, making the method a *generator*.
 
-The following example imports a builtin Welcome widget and yields it from `App.compose()`.
+The following example imports a builtin `Welcome` widget and yields it from `App.compose()`.
 
 ```python title="widgets01.py"
 --8<-- "docs/examples/app/widgets01.py"
 ```
 
-When you run this code, Textual will *mount* the Welcome widget which contains Markdown content and a button:
+When you run this code, Textual will *mount* the `Welcome` widget which contains Markdown content and a button:
 
 ```{.textual path="docs/examples/app/widgets01.py"}
 ```
 
-Notice the `on_button_pressed` method which handles the [Button.Pressed][textual.widgets.Button] event sent by a button contained in the Welcome widget. The handler calls [App.exit()][textual.app.App.exit] to exit the app.
+Notice the `on_button_pressed` method which handles the [Button.Pressed][textual.widgets.Button] event sent by a button contained in the `Welcome` widget. The handler calls [App.exit()][textual.app.App.exit] to exit the app.
 
 ### Mounting
 
