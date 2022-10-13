@@ -292,7 +292,7 @@ You may have noticed that the stop button (`#stop` in the CSS) has `display: non
 
 ### Dynamic CSS
 
-We want our Stopwatch widget to have two states: a default state with a Start and Reset button; and a _started_ state with a Stop button. When a stopwatch is started it should also have a green background and bold text.
+We want our `Stopwatch` widget to have two states: a default state with a Start and Reset button; and a _started_ state with a Stop button. When a stopwatch is started it should also have a green background and bold text.
 
 <div class="excalidraw">
 --8<-- "docs/images/css_stopwatch.excalidraw.svg"
