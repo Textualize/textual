@@ -155,7 +155,7 @@ markdown_extensions:
 
 theme:
   name: material
-  custom_dir: custom_theme
+  custom_dir: docs/custom_theme
   features:
     - navigation.tabs
     - navigation.indexes

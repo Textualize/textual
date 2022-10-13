@@ -29,10 +29,6 @@ if TYPE_CHECKING:
     from .app import App
 
 
-class NoParent(Exception):
-    pass
-
-
 class CallbackError(Exception):
     pass
 

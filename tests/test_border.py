@@ -1,7 +1,7 @@
 from rich.segment import Segment
 from rich.style import Style
 
-from textual._border import get_box, render_row
+from textual._border import render_row
 
 
 def test_border_render_row():

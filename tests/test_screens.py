@@ -5,7 +5,6 @@ import pytest
 from textual.app import App, ScreenStackError
 from textual.screen import Screen
 
-
 skip_py310 = pytest.mark.skipif(
     sys.version_info.minor == 10 and sys.version_info.major == 3,
     reason="segfault on py3.10",

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import PurePath
-from typing import Iterator, Iterable, NoReturn, Sequence
+from typing import Iterator, Iterable, NoReturn
 
 from rich import print
 

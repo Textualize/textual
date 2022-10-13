@@ -75,10 +75,6 @@ class NoScreen(DOMError):
     pass
 
 
-class NoParent(Exception):
-    pass
-
-
 @rich.repr.auto
 class DOMNode(MessagePump):
     """The base class for object that can be in the Textual DOM (App and Widget)"""

@@ -3,11 +3,11 @@ import types
 from asyncio import Queue
 from datetime import datetime
 
+import msgpack
 import time_machine
 from aiohttp.web_ws import WebSocketResponse
 from rich.console import ConsoleDimensions
 from rich.panel import Panel
-import msgpack
 
 from tests.utilities.render import wait_for_predicate
 from textual.devtools.client import DevtoolsClient

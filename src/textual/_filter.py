@@ -15,7 +15,6 @@ class LineFilter(ABC):
     @abstractmethod
     def filter(self, segments: list[Segment]) -> list[Segment]:
         """Transform a list of segments."""
-        ...
 
 
 class Monochrome(LineFilter):

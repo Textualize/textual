@@ -67,7 +67,6 @@ else:
     from typing_extensions import TypedDict
 
 if TYPE_CHECKING:
-    from .._animator import Animation
     from .._layout import Layout
     from ..dom import DOMNode
 
@@ -608,7 +607,7 @@ class Styles(StylesBase):
                 default (i.e. in Widget.DEFAULT_CSS) rules. False if they're from user defined CSS.
 
         Returns:
-            list[tuple[str, Specificity5, Any]]]: A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
+            list[tuple[str, Specificity6, Any]]]: A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
         """
         is_important = self.important.__contains__
 
