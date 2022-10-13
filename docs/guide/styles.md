@@ -1,6 +1,6 @@
 # Styles
 
-In this chapter will explore how you can apply styles to your application to create beautiful user interfaces.
+In this chapter we will explore how you can apply styles to your application to create beautiful user interfaces.
 
 ## Styles object
 
