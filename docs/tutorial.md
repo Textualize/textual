@@ -317,7 +317,7 @@ Some of the new styles have more than one selector separated by a space. The spa
 }
 ```
 
-The `.started` selector matches any widget with a `"started"` CSS class. While `#start` matches a child widget with an ID of "start". So it matches the Start button only for Stopwatches in a started state.
+The `.started` selector matches any widget with a `"started"` CSS class. While `#start` matches a child widget with an ID of `"start"`. So it matches the Start button only for Stopwatches in a started state.
 
 The rule is `"display: none"` which tells Textual to hide the button.
 
