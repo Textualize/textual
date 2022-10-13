@@ -103,7 +103,7 @@ log("[bold red]DANGER![/] We're having too much fun")
 
 ### Log method
 
-There's a convenient shortcut to `log` available on the App and Widget objects. This is useful in event handlers. Here's an example:
+There's a convenient shortcut to `log` available on the `App` and `Widget` objects. This is useful in event handlers. Here's an example:
 
 ```python
 from textual.app import App
