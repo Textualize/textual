@@ -22,6 +22,7 @@ from ..geometry import Size
 from .._types import MessageTarget
 from .._xterm_parser import XTermParser
 from .._profile import timer
+from .. import events
 
 
 @rich.repr.auto
@@ -234,7 +235,6 @@ class LinuxDriver(Driver):
 
 if __name__ == "__main__":
     from rich.console import Console
-    from .. import events
 
     console = Console()
 
