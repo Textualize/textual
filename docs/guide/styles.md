@@ -138,7 +138,7 @@ Note how the text wraps in the widget, and is cropped because it doesn't fit in 
 
 #### Auto dimensions
 
-In practice, we generally want the size of a widget to adapt to it's content, which we can do by setting a dimension to `"auto"`.
+In practice, we generally want the size of a widget to adapt to its content, which we can do by setting a dimension to `"auto"`.
 
 Let's set the height to auto and see what happens.
 
