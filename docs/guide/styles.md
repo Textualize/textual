@@ -90,7 +90,7 @@ There are a few ways you can set alpha on a color in Textual.
 - You can also set alpha with the `rgba` format, which is identical to `rgb` with the additional of a fourth value that should be between 0 and 1, where 0 is invisible and 1 is opaque. For example `"rgba(192,78,96,0.5)"`.
 - You can add the `a` parameter on a [Color][textual.color.Color] object. For example `Color(192, 78, 96, a=0.5)` creates a translucent dark orchid.
 
-The following examples shows what happens when you set alpha on background colors:
+The following example shows what happens when you set alpha on background colors:
 
 ```python title="colors01.py" hl_lines="12-15"
 --8<-- "docs/examples/guide/styles/colors02.py"
