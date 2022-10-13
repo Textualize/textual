@@ -23,7 +23,7 @@ You can run Textual apps with the `run` subcommand. If you supply a path to a Py
 textual run my_app.py
 ```
 
-The `run` sub-command assumes you have an App instance called `app` in the global scope of your Python file. If the application is called something different, you can specify it with a colon following the filename:
+The `run` sub-command assumes you have an `App` instance called `app` in the global scope of your Python file. If the application is called something different, you can specify it with a colon following the filename:
 
 ```bash
 textual run my_app.py:alternative_app
