@@ -548,4 +548,4 @@ The example below shows how an advanced layout can be built by combining the var
     --8<-- "docs/examples/guide/layout/combining_layouts.css"
     ```
 
-Textual layouts make it easy design build real-life applications with relatively little code.
+Textual layouts make it easy to design and build real-life applications with relatively little code.
