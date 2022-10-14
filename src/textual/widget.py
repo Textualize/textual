@@ -1857,10 +1857,6 @@ class Widget(DOMNode):
         await self.action(binding.action)
         return True
 
-    def _on_compose(self, event: events.Compose) -> None:
-        widgets = self.compose()
-        self.app.mount_all(widgets)
-
     def _on_mount(self, event: events.Mount) -> None:
         widgets = self.compose()
         self.mount(*widgets)
