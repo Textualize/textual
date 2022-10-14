@@ -218,7 +218,7 @@ You may have noticed that the `border` rule exists in both Static and Button. Wh
 
 ### ID selector
 
-Every Widget can have a single `id` attribute, which is set via the constructor. The ID should be unique to it's container.
+Every Widget can have a single `id` attribute, which is set via the constructor. The ID should be unique to its container.
 
 Here's an example of a widget with an ID:
 
