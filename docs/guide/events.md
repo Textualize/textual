@@ -12,7 +12,7 @@ More on that later, but for now keep in mind that events are also messages, and 
 
 Every [App][textual.app.App] and [Widget][textual.widget.Widget] object contains a *message queue*. You can think of a message queue as orders at a restaurant. The chef takes an order and makes the dish. Orders that arrive while the chef is cooking are placed in a line. When the chef has finished a dish they pick up the next order in the line.
 
-Textual processes messages in the same way. Messages are picked off a queue and processed (cooked) by a handler method. This guarantees messages and events are processed even if your code can not handle them right way. 
+Textual processes messages in the same way. Messages are picked off a queue and processed (cooked) by a handler method. This guarantees messages and events are processed even if your code can not handle them right way.
 
 This processing of messages is done within an asyncio Task which is started when you mount the widget. The task monitors a queue for new messages and dispatches them to the appropriate handler when they arrive.
 
@@ -20,7 +20,7 @@ This processing of messages is done within an asyncio Task which is started when
 
     The FastAPI docs have an [excellent introduction](https://fastapi.tiangolo.com/async/) to Python async programming.
 
-By way of an example, let's consider what happens if you were to type "Text" in to a `Input` widget. When you hit the ++t++ key, Textual creates a [key][textual.events.Key] event and sends it to the widget's message queue. Ditto for ++e++, ++x++, and ++t++. 
+By way of an example, let's consider what happens if you were to type "Text" in to a `Input` widget. When you hit the ++t++ key, Textual creates a [key][textual.events.Key] event and sends it to the widget's message queue. Ditto for ++e++, ++x++, and ++t++.
 
 The widget's task will pick the first message from the queue (a key event for the ++t++ key) and call the `on_key` method with the event as the first argument. In other words it will call `Input.on_key(event)`, which updates the display to show the new letter.
 
@@ -69,7 +69,7 @@ After Textual calls `Button.on_key` the event _bubbles_ to the button's parent a
 --8<-- "docs/images/events/bubble2.excalidraw.svg"
 </div>
 
-As before, the event bubbles to it's parent (the App class).
+As before, the event bubbles to its parent (the App class).
 
 <div class="excalidraw">
 --8<-- "docs/images/events/bubble3.excalidraw.svg"
@@ -177,7 +177,7 @@ Let's look at an example which looks up word definitions from an [api](https://d
     ```
 === "dictionary.css"
 
-    ```python title="dictionary.css" 
+    ```python title="dictionary.css"
     --8<-- "docs/examples/events/dictionary.css"
     ```
 
@@ -186,4 +186,4 @@ Let's look at an example which looks up word definitions from an [api](https://d
     ```{.textual path="docs/examples/events/dictionary.py" press="tab,t,e,x,t,_,_,_,_,_,_,_,_,_,_,_"}
     ```
 
-Note the highlighted line in the above code which calls `asyncio.create_task` to run coroutine in the background. Without this you would find typing in to the text box to be unresponsive.
+Note the highlighted line in the above code which calls `asyncio.create_task` to run a coroutine in the background. Without this you would find typing in to the text box to be unresponsive.
