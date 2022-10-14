@@ -1823,6 +1823,7 @@ class Widget(DOMNode):
         self.screen.set_focus(self, scroll_visible=scroll_visible)
 
     def reset_focus(self) -> None:
+        """Reset the focus (move it to the next available widget)."""
         try:
             self.screen._reset_focus(self)
         except NoScreen:
