@@ -1137,8 +1137,6 @@ class App(Generic[ReturnType], DOMNode):
                     self._register(widget, *widget.children)
                 apply_stylesheet(widget)
 
-        # for _widget_id, widget in name_widgets:
-        #     widget.post_message_no_wait(events.Mount(sender=parent))
         registered_widgets = [widget for _, widget in name_widgets]
         return registered_widgets
 
