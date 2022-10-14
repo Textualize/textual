@@ -468,7 +468,7 @@ If we wished for the sidebar to appear below the header, it'd simply be a case o
 
 ## Layers
 
-Textual has a concept of _layers_ which gives you finely grained control over the order widgets are place.
+Textual has a concept of _layers_ which gives you finely grained control over the order widgets are placed.
 
 When drawing widgets, Textual will first draw on _lower_ layers, working its way up to higher layers.
 As such, widgets on higher layers will be drawn on top of those on lower layers.
