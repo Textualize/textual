@@ -89,14 +89,16 @@ class Reactive(Generic[ReactiveType]):
         Args:
             obj (Reactable): An object with Reactive descriptors
         """
-
-        startswith = str.startswith
-        for key in obj.__class__.__dict__.keys():
-            if startswith(key, "_init_"):
-                name = key[6:]
-                if not hasattr(obj, name):
-                    default = getattr(obj, key)
-                    setattr(obj, name, default() if callable(default) else default)
+        if not hasattr(obj, "__reactive_initialized"):
+            startswith = str.startswith
+            for key in obj.__class__.__dict__.keys():
+                if startswith(key, "_init_"):
+                    name = key[6:]
+                    if not hasattr(obj, name):
+                        default = getattr(obj, key)
+                        default_value = default() if callable(default) else default
+                        setattr(obj, name, default_value)
+        setattr(obj, "__reactive_initialized", True)
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
 
@@ -111,15 +113,16 @@ class Reactive(Generic[ReactiveType]):
         self.name = name
         self.internal_name = f"_reactive_{name}"
         default = self._default
-
-        if self._init:
-            setattr(owner, f"_init_{name}", default)
-        else:
-            setattr(
-                owner, self.internal_name, default() if callable(default) else default
-            )
+        setattr(owner, f"_init_{name}", default)
 
     def __get__(self, obj: Reactable, obj_type: type[object]) -> ReactiveType:
+        if not hasattr(obj, self.internal_name):
+            init_name = f"_init_{self.name}"
+            if hasattr(obj, init_name):
+                default = getattr(obj, init_name)
+                default_value = default() if callable(default) else default
+                setattr(obj, self.name, default_value)
+                return default_value
         return getattr(obj, self.internal_name)
 
     def __set__(self, obj: Reactable, value: ReactiveType) -> None:

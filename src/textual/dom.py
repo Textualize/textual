@@ -662,7 +662,7 @@ class DOMNode(MessagePump):
                 Defaults to None.
             with_self (bool, optional): Also yield self in addition to descendants. Defaults to True.
             method (Literal["breadth", "depth"], optional): One of "depth" or "breadth". Defaults to "depth".
-            reverse (bool, optional): Reverse the order (bottom up). Defaults to False
+            reverse (bool, optional): Reverse the order (bottom up). Defaults to False.
 
         Returns:
             Iterable[DOMNode | WalkType]: An iterable of nodes.

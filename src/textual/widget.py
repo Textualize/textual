@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from asyncio import Lock
+from asyncio import Lock, wait
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
@@ -1857,9 +1857,18 @@ class Widget(DOMNode):
         await self.action(binding.action)
         return True
 
-    def _on_mount(self, event: events.Mount) -> None:
-        widgets = self.compose()
+    async def _on_compose(self, event: events.Compose) -> None:
+        widgets = list(self.compose())
         self.mount(*widgets)
+        aws = [widget._mounted.wait() for widget in widgets]
+        if aws:
+            await wait(aws)
+        Reactive.initialize_object(self)
+        await self.post_message(events.Mount(self))
+
+    def _on_mount(self, event: events.Mount) -> None:
+        # widgets = self.compose()
+        # self.mount(*widgets)
         # Preset scrollbars if not automatic
         if self.styles.overflow_y == "scroll":
             self.show_vertical_scrollbar = True

@@ -144,6 +144,10 @@ class App(Generic[ReturnType], DOMNode):
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
 
+    title: Reactive[str] = Reactive("Textual")
+    sub_title: Reactive[str] = Reactive("")
+    dark: Reactive[bool] = Reactive(True)
+
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
@@ -227,10 +231,6 @@ class App(Generic[ReturnType], DOMNode):
             else None
         )
         self._screenshot: str | None = None
-
-    title: Reactive[str] = Reactive("Textual")
-    sub_title: Reactive[str] = Reactive("")
-    dark: Reactive[bool] = Reactive(True)
 
     def animate(
         self,
@@ -696,21 +696,24 @@ class App(Generic[ReturnType], DOMNode):
         self._require_stylesheet_update.add(self.screen if node is None else node)
         self.check_idle()
 
-    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
+    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> list[Widget]:
         """Mount widgets. Widgets specified as positional args, or keywords args. If supplied
         as keyword args they will be assigned an id of the key.
 
         """
-        self._register(self.screen, *anon_widgets, **widgets)
+        mounted_widgets = self._register(self.screen, *anon_widgets, **widgets)
+        return mounted_widgets
 
-    def mount_all(self, widgets: Iterable[Widget]) -> None:
+    def mount_all(self, widgets: Iterable[Widget]) -> list[Widget]:
         """Mount widgets from an iterable.
 
         Args:
             widgets (Iterable[Widget]): An iterable of widgets.
         """
-        for widget in widgets:
+        mounted_widgets = list(widgets)
+        for widget in mounted_widgets:
             self._register(self.screen, widget)
+        return mounted_widgets
 
     def is_screen_installed(self, screen: Screen | str) -> bool:
         """Check if a given screen has been installed.
@@ -1011,12 +1014,12 @@ class App(Generic[ReturnType], DOMNode):
         process_messages = super()._process_messages
 
         async def run_process_messages():
+            Reactive.initialize_object(self)
             compose_event = events.Compose(sender=self)
             await self._dispatch_message(compose_event)
             mount_event = events.Mount(sender=self)
             await self._dispatch_message(mount_event)
 
-            Reactive.initialize_object(self)
             self.title = self._title
             self.stylesheet.update(self)
             self.refresh()
@@ -1083,9 +1086,12 @@ class App(Generic[ReturnType], DOMNode):
 
         self.set_timer(screenshot_timer, on_screenshot, name="screenshot timer")
 
-    def _on_compose(self) -> None:
-        widgets = self.compose()
+    async def _on_compose(self) -> None:
+        widgets = list(self.compose())
         self.mount_all(widgets)
+        aws = [widget._mounted.wait() for widget in widgets]
+        if aws:
+            await asyncio.wait(aws)
 
     def _on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
@@ -1110,15 +1116,15 @@ class App(Generic[ReturnType], DOMNode):
 
     def _register(
         self, parent: DOMNode, *anon_widgets: Widget, **widgets: Widget
-    ) -> None:
+    ) -> list[Widget]:
         """Mount widget(s) so they may receive events.
 
         Args:
             parent (Widget): Parent Widget
         """
         if not anon_widgets and not widgets:
-            return
-        name_widgets: Iterable[tuple[str | None, Widget]]
+            return []
+        name_widgets: list[tuple[str | None, Widget]]
         name_widgets = [*((None, widget) for widget in anon_widgets), *widgets.items()]
         apply_stylesheet = self.stylesheet.apply
 
@@ -1133,8 +1139,10 @@ class App(Generic[ReturnType], DOMNode):
                     self._register(widget, *widget.children)
                 apply_stylesheet(widget)
 
-        for _widget_id, widget in name_widgets:
-            widget.post_message_no_wait(events.Mount(sender=parent))
+        # for _widget_id, widget in name_widgets:
+        #     widget.post_message_no_wait(events.Mount(sender=parent))
+        registered_widgets = [widget for _, widget in name_widgets]
+        return registered_widgets
 
     def _unregister(self, widget: Widget) -> None:
         """Unregister a widget.
@@ -1164,7 +1172,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         widget._attach(parent)
         widget._start_messages()
-        widget.post_message_no_wait(events.Mount(sender=parent))
+        # widget.post_message_no_wait(events.Mount(sender=parent))
 
     def is_mounted(self, widget: Widget) -> bool:
         return widget in self._registry

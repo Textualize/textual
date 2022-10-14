@@ -73,6 +73,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._timers: WeakSet[Timer] = WeakSet()
         self._last_idle: float = time()
         self._max_idle: float | None = None
+        self._mounted = asyncio.Event()
 
     @property
     def task(self) -> Task:
@@ -285,8 +286,8 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def _start_messages(self) -> None:
         """Start messages task."""
-        Reactive.initialize_object(self)
         self._task = asyncio.create_task(self._process_messages())
+        self.post_message_no_wait(events.Compose(sender=self))
 
     async def _process_messages(self) -> None:
         self._running = True
@@ -331,9 +332,12 @@ class MessagePump(metaclass=MessagePumpMeta):
             except CancelledError:
                 raise
             except Exception as error:
+                self._mounted.set()
                 self.app._handle_exception(error)
                 break
             finally:
+                if isinstance(message, events.Mount):
+                    self._mounted.set()
                 self._message_queue.task_done()
                 current_time = time()
                 if self._message_queue.empty() or (
