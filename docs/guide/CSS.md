@@ -187,7 +187,7 @@ Let's look at the selectors supported by Textual CSS.
 The _type_ selector matches the name of the (Python) class. For example, the following widget can be matched with a `Button` selector:
 
 ```python
-from textual.widgets import Widget
+from textual.widgets import Static
 
 class Button(Static):
     pass
