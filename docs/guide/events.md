@@ -69,7 +69,7 @@ After Textual calls `Button.on_key` the event _bubbles_ to the button's parent a
 --8<-- "docs/images/events/bubble2.excalidraw.svg"
 </div>
 
-As before, the event bubbles to it's parent (the App class).
+As before, the event bubbles to its parent (the App class).
 
 <div class="excalidraw">
 --8<-- "docs/images/events/bubble3.excalidraw.svg"
