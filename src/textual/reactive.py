@@ -118,16 +118,15 @@ class Reactive(Generic[ReactiveType]):
     def __get__(self, obj: Reactable, obj_type: type[object]) -> ReactiveType:
         if not hasattr(obj, self.internal_name):
             init_name = f"_init_{self.name}"
-            if hasattr(obj, init_name):
-                default = getattr(obj, init_name)
-                default_value = default() if callable(default) else default
-                setattr(obj, self.name, default_value)
-                return default_value
+            default = getattr(obj, init_name)
+            default_value = default() if callable(default) else default
+            setattr(obj, self.internal_name, default_value)
+            return default_value
         return getattr(obj, self.internal_name)
 
     def __set__(self, obj: Reactable, value: ReactiveType) -> None:
         name = self.name
-        current_value = getattr(obj, self.internal_name, None)
+        current_value = getattr(obj, self.name)
         validate_function = getattr(obj, f"validate_{name}", None)
         first_set = getattr(obj, f"__first_set_{self.internal_name}", True)
         if callable(validate_function) and not first_set:

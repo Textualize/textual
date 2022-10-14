@@ -73,7 +73,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._timers: WeakSet[Timer] = WeakSet()
         self._last_idle: float = time()
         self._max_idle: float | None = None
-        self._mounted = asyncio.Event()
+        self._mounted_event = asyncio.Event()
 
     @property
     def task(self) -> Task:
@@ -279,7 +279,6 @@ class MessagePump(metaclass=MessagePumpMeta):
             await timer.stop()
         self._timers.clear()
         await self._message_queue.put(None)
-
         if self._task is not None and asyncio.current_task() != self._task:
             # Ensure everything is closed before returning
             await self._task
@@ -332,12 +331,12 @@ class MessagePump(metaclass=MessagePumpMeta):
             except CancelledError:
                 raise
             except Exception as error:
-                self._mounted.set()
+                self._mounted_event.set()
                 self.app._handle_exception(error)
                 break
             finally:
                 if isinstance(message, events.Mount):
-                    self._mounted.set()
+                    self._mounted_event.set()
                 self._message_queue.task_done()
                 current_time = time()
                 if self._message_queue.empty() or (

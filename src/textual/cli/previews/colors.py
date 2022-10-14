@@ -68,8 +68,12 @@ class ColorsApp(App):
     BINDINGS = [("d", "toggle_dark", "Toggle dark mode")]
 
     def compose(self) -> ComposeResult:
-        yield Content(ColorButtons(), ColorsView())
+        yield Content(ColorButtons())
         yield Footer()
+
+    def on_mount(self) -> None:
+        content = self.query_one("Content", Content)
+        content.mount(ColorsView())
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         self.query(ColorGroup).remove_class("-active")

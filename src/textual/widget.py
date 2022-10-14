@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from asyncio import Lock, wait
+from asyncio import Lock, wait, create_task
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
@@ -57,6 +57,13 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
     "end": "right",
     "justify": "full",
 }
+
+
+async def _wait_for_mount(widgets: list[Widget]) -> None:
+    """Wait for widget to be mounted."""
+    aws = [create_task(widget._mounted_event.wait()) for widget in widgets]
+    if aws:
+        await wait(aws)
 
 
 class _Styled:
@@ -1812,7 +1819,14 @@ class Widget(DOMNode):
             scroll_visible (bool, optional): Scroll parent to make this widget
                 visible. Defaults to True.
         """
+
         self.screen.set_focus(self, scroll_visible=scroll_visible)
+
+    def reset_focus(self) -> None:
+        try:
+            self.screen._reset_focus(self)
+        except NoScreen:
+            pass
 
     def capture_mouse(self, capture: bool = True) -> None:
         """Capture (or release) the mouse.
@@ -1860,16 +1874,10 @@ class Widget(DOMNode):
     async def _on_compose(self, event: events.Compose) -> None:
         widgets = list(self.compose())
         self.mount(*widgets)
-        aws = [widget._mounted.wait() for widget in widgets]
-        if aws:
-            await wait(aws)
-        Reactive.initialize_object(self)
+        await _wait_for_mount(widgets)
         await self.post_message(events.Mount(self))
 
     def _on_mount(self, event: events.Mount) -> None:
-        # widgets = self.compose()
-        # self.mount(*widgets)
-        # Preset scrollbars if not automatic
         if self.styles.overflow_y == "scroll":
             self.show_vertical_scrollbar = True
         if self.styles.overflow_x == "scroll":
@@ -1941,7 +1949,7 @@ class Widget(DOMNode):
 
     def _on_hide(self, event: events.Hide) -> None:
         if self.has_focus:
-            self.screen._reset_focus(self)
+            self.reset_focus()
 
     def _on_scroll_to_region(self, message: messages.ScrollToRegion) -> None:
         self.scroll_to_region(message.region, animate=True)

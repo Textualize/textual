@@ -47,7 +47,7 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
-from .widget import Widget
+from .widget import Widget, _wait_for_mount
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
@@ -1089,9 +1089,7 @@ class App(Generic[ReturnType], DOMNode):
     async def _on_compose(self) -> None:
         widgets = list(self.compose())
         self.mount_all(widgets)
-        aws = [widget._mounted.wait() for widget in widgets]
-        if aws:
-            await asyncio.wait(aws)
+        await _wait_for_mount(widgets)
 
     def _on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
@@ -1150,11 +1148,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widget (Widget): A Widget to unregister
         """
-        try:
-            widget.screen._reset_focus(widget)
-        except NoScreen:
-            pass
-
+        widget.reset_focus()
         if isinstance(widget._parent, Widget):
             widget._parent.children._remove(widget)
             widget._detach()
@@ -1402,16 +1396,17 @@ class App(Generic[ReturnType], DOMNode):
     async def _on_remove(self, event: events.Remove) -> None:
         widget = event.widget
         parent = widget.parent
-        if parent is not None:
-            parent.refresh(layout=True)
+
+        widget.reset_focus()
 
         remove_widgets = widget.walk_children(
             Widget, with_self=True, method="depth", reverse=True
         )
         for child in remove_widgets:
-            self._unregister(child)
-        for child in remove_widgets:
             await child._close_messages()
+            self._unregister(child)
+        if parent is not None:
+            parent.refresh(layout=True)
 
     async def action_press(self, key: str) -> None:
         await self.press(key)
