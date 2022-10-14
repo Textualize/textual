@@ -82,7 +82,7 @@ With the above example, the DOM will look like the following:
 This doesn't look much like a tree yet. Let's add a header and a footer to this application, which will create more _branches_ of the tree:
 
 === "dom2.py"
-    
+
     ```python hl_lines="7 8"
     --8<-- "docs/examples/guide/dom2.py"
     ```
@@ -427,4 +427,3 @@ Variables can refer to other variables.
 Let's say we define a variable `$success: lime;`.
 Our `$border` variable could then be updated to `$border: wide $success;`, which will
 be translated to `$border: wide lime;`.
-
