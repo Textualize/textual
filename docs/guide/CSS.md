@@ -369,7 +369,7 @@ It is possible that several selectors match a given widget. If the same style is
 
 - The selector with the most IDs wins. For instance `#next` beats `.button` and `#dialog #next` beats `#next`. If the selectors have the same number of IDs then move to the next rule.
 
-- The selector with the most class names wins. For instance `.button.success` beats `.success`. For the purposes of specificity, pseudo classes are treated the same as regular class names, so ".button:hover" counts as _2_ class names. If the selectors have the same number of class names then move to the next rule.
+- The selector with the most class names wins. For instance `.button.success` beats `.success`. For the purposes of specificity, pseudo classes are treated the same as regular class names, so `.button:hover` counts as _2_ class names. If the selectors have the same number of class names then move to the next rule.
 
 - The selector with the most types wins. For instance `Container Button` beats `Button`.
 
