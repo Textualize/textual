@@ -105,7 +105,7 @@ With a header and a footer widget the DOM looks the this:
 
 Both Header and Footer are children of the Screen object.
 
-To further explore the DOM, we're going to build a simple dialog with a question and two buttons. To do this we're going import and use a few more builtin widgets:
+To further explore the DOM, we're going to build a simple dialog with a question and two buttons. To do this we're going to import and use a few more builtin widgets:
 
 - `textual.layout.Container` For our top-level dialog.
 - `textual.layout.Horizontal` To arrange widgets left to right.
