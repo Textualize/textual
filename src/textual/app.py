@@ -1164,7 +1164,6 @@ class App(Generic[ReturnType], DOMNode):
         """
         widget._attach(parent)
         widget._start_messages()
-        # widget.post_message_no_wait(events.Mount(sender=parent))
 
     def is_mounted(self, widget: Widget) -> bool:
         return widget in self._registry
