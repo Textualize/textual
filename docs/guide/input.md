@@ -156,7 +156,7 @@ Coordinates may be relative to the screen, so `(0, 0)` would be the top left of 
 
 ### Mouse movements
 
-When you move the mouse cursor over a widget it will receive [MouseMove](../events/mouse_move.md) events which contain the coordinate of the mouse and information about what modified keys (++ctrl++, ++shift++ etc).
+When you move the mouse cursor over a widget it will receive [MouseMove](../events/mouse_move.md) events which contain the coordinate of the mouse and information about what modified keys (++ctrl++, ++shift++ etc) are held down.
 
 The following example shows mouse movements being used to _attach_ a widget to the mouse cursor.
 
