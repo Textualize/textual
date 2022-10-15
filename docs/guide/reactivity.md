@@ -167,7 +167,7 @@ If you click the buttons in the above example it will show the current count. Wh
 
 Watch methods are another superpower. Textual will call watch methods when reactive attributes are modified. Watch methods begin with `watch_` followed by the name of the attribute. If the watch method accepts a positional argument, it will be called with the new assigned value. If the watch method accepts *two* positional arguments, it will be called with both the *old* value and the *new* value.
 
-The follow app will display any color you type in to the input. Try it with a valid color in Textual CSS. For example `"darkorchid"` or `"#52de44".
+The following app will display any color you type in to the input. Try it with a valid color in Textual CSS. For example `"darkorchid"` or `"#52de44".
 
 === "watch01.py"
 
