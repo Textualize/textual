@@ -1218,7 +1218,7 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.set_variables(self.get_css_variables())
         stylesheet.reparse()
         stylesheet.update(self.app, animate=animate)
-        # self.screen._refresh_layout(self.size, full=True)
+        self.screen._refresh_layout(self.size, full=True)
 
     def _display(self, screen: Screen, renderable: RenderableType | None) -> None:
         """Display a renderable within a sync.
