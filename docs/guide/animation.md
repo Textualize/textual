@@ -5,7 +5,7 @@ Ths chapter discusses how to use Textual's animation system to create visual eff
 
 ## Animating styles
 
-Textual's animator can change an attribute from one value to another in fixed increments over a period of time. You can apply animations to [styles](styles.md) such `offset` to move widgets around the screen, and `opacity` to create fading effects.
+Textual's animator can change an attribute from one value to another in fixed increments over a period of time. You can apply animations to [styles](styles.md) such as `offset` to move widgets around the screen, and `opacity` to create fading effects.
 
 Apps and widgets both have an [animate][textual.app.App.animate] method which will animate properties on those objects. Additionally, `styles` objects have an identical `animate` method which will animate styles.
 
