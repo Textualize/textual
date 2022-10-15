@@ -10,7 +10,7 @@ This chapter will discuss how to make your app respond to input in the form of k
 
 ## Keyboard input
 
-The most fundamental way to receive input in via [Key](./events/key) events. Let's write an app to show key events as you type.
+The most fundamental way to receive input is via [Key](./events/key) events. Let's write an app to show key events as you type.
 
 === "key01.py"
 
