@@ -39,15 +39,15 @@ Let's look at a simple example of writing a screen class to simulate Window's [b
     ```{.textual path="docs/examples/guide/screens/screen01.py" press="b,_"}
     ```
 
-If you run this you will see an empty screen. Hit the ++b++ screen to show a blue screen of death. Hit ++escape++ to return to the default screen.
+If you run this you will see an empty screen. Hit the ++b++ key to show a blue screen of death. Hit ++escape++ to return to the default screen.
 
 The `BSOD` class above defines a screen with a key binding and compose method. These should be familiar as they work in the same way as apps.
 
-The app class has a new `SCREENS` class variable. Textual uses this class variable to associated a name with screen object (the name is used to reference screens in the screen API). Also in the app is a key binding associated with the action `"push_screen('bsod')"`. The screen class has a similar action `"pop_screen"` bound to the ++escape++ key. We will cover these actions below.
+The app class has a new `SCREENS` class variable. Textual uses this class variable to associate a name with screen object (the name is used to reference screens in the screen API). Also in the app is a key binding associated with the action `"push_screen('bsod')"`. The screen class has a similar action `"pop_screen"` bound to the ++escape++ key. We will cover these actions below.
 
 ## Named screens
 
-You can associate a screen with a name by defining a `SCREENS` class variable in your app, which should be dict that maps names on to Screen objects. The name of the screen may be used interchangeably with screen objects in much of the screen API.
+You can associate a screen with a name by defining a `SCREENS` class variable in your app, which should be a `dict` that maps names on to `Screen` objects. The name of the screen may be used interchangeably with screen objects in much of the screen API.
 
 You can also _install_ new named screens dynamically with the [install_screen][textual.app.App.install_screen] method. The following example installs the `BSOD` screen in a mount handler rather than from the `SCREENS` variable.
 
@@ -68,7 +68,7 @@ You can also _install_ new named screens dynamically with the [install_screen][t
     ```{.textual path="docs/examples/guide/screens/screen02.py" press="b,_"}
     ```
 
-Although both do the same thing, we recommend the `SCREENS` for screens that exist for the lifetime of your app.
+Although both do the same thing, we recommend `SCREENS` for screens that exist for the lifetime of your app.
 
 ### Uninstalling screens
 
