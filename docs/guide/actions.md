@@ -42,7 +42,7 @@ Action strings have the following format:
 
 - The name of an action on is own will call the action method with no parameters. For example, an action string of `"bell"` will call `action_bell()`.
 - Actions may be followed by braces containing Python objects. For example, the action string `set_background("red")` will call `action_set_background("red")`.
-- Actions may be prefixed with a _namespace_ (see below) follow by a dot. 
+- Actions may be prefixed with a _namespace_ (see below) follow by a dot.
 
 <div class="excalidraw">
 --8<-- "docs/images/actions/format.excalidraw.svg"
@@ -104,7 +104,7 @@ The following example defines a custom widget with its own `set_background` acti
 
 === "actions05.css"
 
-    ```sass title="actions05.css" 
+    ```sass title="actions05.css"
     --8<-- "docs/examples/guide/actions/actions05.css"
     ```
 
