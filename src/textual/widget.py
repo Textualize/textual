@@ -1849,6 +1849,7 @@ class Widget(DOMNode):
         """
 
         def set_focus(widget: Widget):
+            """Callback to set the focus."""
             widget.screen.set_focus(self, scroll_visible=scroll_visible)
 
         self.app.call_later(set_focus, self)
