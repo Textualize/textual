@@ -76,7 +76,7 @@ Let's use Static to create a widget which cycles through "hello" in various lang
 
 Note that there is no `render()` method on this widget. The Static class is handling the render for us. Instead we call `update()` when we want to update the content within the widget.
 
-The `next_word` method updates the greeting. We call this method from the mount handler to get the first word, and from an click handler to cycle through the greetings when we click the widget.
+The `next_word` method updates the greeting. We call this method from the mount handler to get the first word, and from a click handler to cycle through the greetings when we click the widget.
 
 ### Default CSS
 
