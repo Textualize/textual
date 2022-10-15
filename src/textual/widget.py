@@ -70,7 +70,7 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 
 
 class AwaitMount:
-    """An awaitable returned by mount().
+    """An awaitable returned by mount() and mount_all().
 
     Example:
         await self.mount(Static("foo"))
@@ -359,11 +359,12 @@ class Widget(DOMNode):
             self.mount(Static("hello"), header=Header())
             ```
 
+        Returns:
+            AwaitMount: An awaitable that waits for widgets to be mounted.
+
         """
         mounted_widgets = self.app._register(self, *anon_widgets, **widgets)
         return AwaitMount(mounted_widgets)
-        # self.app.screen.refresh(layout=True)
-        # self.refresh(layout=True)
 
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.
