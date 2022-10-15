@@ -78,7 +78,7 @@ The following example shows how focus works in practice.
     ```{.textual path="docs/examples/guide/input/key03.py", press="tab,H,e,l,l,o,tab,W,o,r,l,d,!,_"}
     ```
 
-The app splits the screen in to quarters, with a TextLog widget in each quarter. If you click any of the text logs, you should see that it is highlighted to show that thw widget has focus. Key events will be sent to the focused widget only.
+The app splits the screen in to quarters, with a `TextLog` widget in each quarter. If you click any of the text logs, you should see that it is highlighted to show that thw widget has focus. Key events will be sent to the focused widget only.
 
 !!! tip
 
