@@ -26,7 +26,7 @@ Let's create a simple custom widget to display a greeting.
 
 The three highlighted lines define a custom widget class with just a [render()][textual.widget.Widget.render] method. Textual will display whatever is returned from render in the content area of your widget. We have returned a string in the code above, but there are other possible return types which we will cover later.
 
-Note that the text contains tags in square brackets, i.e. `[b]`. This is [console markup](https://rich.readthedocs.io/en/latest/markup.html) which allows you to embed various styles within your content. If you run this you will find that `World` is in bold. 
+Note that the text contains tags in square brackets, i.e. `[b]`. This is [console markup](https://rich.readthedocs.io/en/latest/markup.html) which allows you to embed various styles within your content. If you run this you will find that `World` is in bold.
 
 ```{.textual path="docs/examples/guide/widgets/hello01.py"}
 ```
@@ -65,7 +65,7 @@ Let's use Static to create a widget which cycles through "hello" in various lang
 
 === "hello03.css"
 
-    ```sass title="hello03.css" 
+    ```sass title="hello03.css"
     --8<-- "docs/examples/guide/widgets/hello03.css"
     ```
 
@@ -76,7 +76,7 @@ Let's use Static to create a widget which cycles through "hello" in various lang
 
 Note that there is no `render()` method on this widget. The Static class is handling the render for us. Instead we call `update()` when we want to update the content within the widget.
 
-The `next_word` method updates the greeting. We call this method from the mount handler to get the first word, and from an click handler to cycle through the greetings when we click the widget. 
+The `next_word` method updates the greeting. We call this method from the mount handler to get the first word, and from an click handler to cycle through the greetings when we click the widget.
 
 ### Default CSS
 
@@ -94,7 +94,7 @@ Here's the Hello example again, this time the widget has embedded default CSS:
 
 === "hello04.css"
 
-    ```sass title="hello04.css" 
+    ```sass title="hello04.css"
     --8<-- "docs/examples/guide/widgets/hello04.css"
     ```
 
@@ -117,7 +117,7 @@ Text in a widget may be marked up with links which perform an action when clicke
 "Click [@click='app.bell']Me[/]"
 ```
 
-The `@click` tag introduces a click handler, which runs the `app.bell` action. 
+The `@click` tag introduces a click handler, which runs the `app.bell` action.
 
 Let's use markup links in the hello example so that the greeting becomes a link which updates the widget.
 
@@ -167,7 +167,7 @@ This app will "play" fizz buzz by displaying a table of the first 15 numbers and
     ```{.textual path="docs/examples/guide/widgets/fizzbuzz01.py"}
     ```
 
-## Content size 
+## Content size
 
 Textual will auto-detect the dimensions of the content area from rich renderables if width or height is set to `auto`. You can override auto dimensions by implementing [get_content_width()][textual.widget.Widget.get_content_width] or [get_content_height()][textual.widget.Widget.get_content_height].
 
@@ -182,7 +182,7 @@ Let's modify the default width for the fizzbuzz example. By default, the table w
 
 === "fizzbuzz02.css"
 
-    ```sass title="fizzbuzz02.css" 
+    ```sass title="fizzbuzz02.css"
     --8<-- "docs/examples/guide/widgets/fizzbuzz02.css"
     ```
 
