@@ -198,7 +198,7 @@ Compute methods are the final superpower offered by the `reactive` descriptor. T
 
 You could be forgiven in thinking this sounds a lot like Python's property decorator. The difference is that Textual will cache the value of compute methods, and update them when any other reactive attribute changes.
 
-The following example uses a computed attribute. It displays three inputs for the each color component (red, green, and blue). If you enter numbers in to these inputs, the background color of another widget changes.
+The following example uses a computed attribute. It displays three inputs for each color component (red, green, and blue). If you enter numbers in to these inputs, the background color of another widget changes.
 
 === "computed01.py"
 
