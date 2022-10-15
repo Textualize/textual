@@ -326,6 +326,9 @@ class MessagePump(metaclass=MessagePumpMeta):
                 except MessagePumpClosed:
                     break
 
+            is_mount = isinstance(message, events.Mount)
+            if is_mount:
+                Reactive._initialize_object(self)
             try:
                 await self._dispatch_message(message)
             except CancelledError:
@@ -335,10 +338,13 @@ class MessagePump(metaclass=MessagePumpMeta):
                 self.app._handle_exception(error)
                 break
             finally:
-                if isinstance(message, events.Mount):
+                if is_mount:
                     self._mounted_event.set()
+
                 self._message_queue.task_done()
                 current_time = time()
+
+                # Insert idle events
                 if self._message_queue.empty() or (
                     self._max_idle is not None
                     and current_time - self._last_idle > self._max_idle

@@ -336,7 +336,8 @@ class Widget(DOMNode):
 
         """
         self.app._register(self, *anon_widgets, **widgets)
-        self.app.screen.refresh(layout=True)
+        # self.app.screen.refresh(layout=True)
+        # self.refresh(layout=True)
 
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.
@@ -1820,7 +1821,10 @@ class Widget(DOMNode):
                 visible. Defaults to True.
         """
 
-        self.screen.set_focus(self, scroll_visible=scroll_visible)
+        def set_focus(widget: Widget):
+            widget.screen.set_focus(self, scroll_visible=scroll_visible)
+
+        self.app.call_later(set_focus, self)
 
     def reset_focus(self) -> None:
         """Reset the focus (move it to the next available widget)."""

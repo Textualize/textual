@@ -37,7 +37,7 @@ from .css.stylesheet import Stylesheet
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
 from .devtools.redirect_output import StdoutRedirector
-from .dom import DOMNode, NoScreen
+from .dom import DOMNode
 from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
 from .features import FeatureFlag, parse_features
@@ -1014,15 +1014,18 @@ class App(Generic[ReturnType], DOMNode):
         process_messages = super()._process_messages
 
         async def run_process_messages():
-            Reactive.initialize_object(self)
+
             compose_event = events.Compose(sender=self)
             await self._dispatch_message(compose_event)
             mount_event = events.Mount(sender=self)
             await self._dispatch_message(mount_event)
 
+            Reactive._initialize_object(self)
+
             self.title = self._title
             self.stylesheet.update(self)
             self.refresh()
+
             await self.animator.start()
             await self._ready()
             if ready_callback is not None:
@@ -1166,6 +1169,14 @@ class App(Generic[ReturnType], DOMNode):
         widget._start_messages()
 
     def is_mounted(self, widget: Widget) -> bool:
+        """Check if a widget is mounted.
+
+        Args:
+            widget (Widget): A widget.
+
+        Returns:
+            bool: True of the widget is mounted.
+        """
         return widget in self._registry
 
     async def _close_all(self) -> None:
@@ -1195,7 +1206,7 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.set_variables(self.get_css_variables())
         stylesheet.reparse()
         stylesheet.update(self.app, animate=animate)
-        self.screen._refresh_layout(self.size, full=True)
+        # self.screen._refresh_layout(self.size, full=True)
 
     def _display(self, screen: Screen, renderable: RenderableType | None) -> None:
         """Display a renderable within a sync.
@@ -1387,7 +1398,6 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
-        self.screen._screen_resized(event.size)
         await self.screen.post_message(event)
 
     async def _on_remove(self, event: events.Remove) -> None:

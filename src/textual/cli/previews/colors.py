@@ -72,6 +72,9 @@ class ColorsApp(App):
         yield Footer()
 
     def on_mount(self) -> None:
+        self.call_later(self.update_view)
+
+    def update_view(self) -> None:
         content = self.query_one("Content", Content)
         content.mount(ColorsView())
 

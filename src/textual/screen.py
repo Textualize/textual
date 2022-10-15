@@ -387,12 +387,12 @@ class Screen(Widget):
 
     def _on_screen_resume(self) -> None:
         """Called by the App"""
-
         size = self.app.size
         self._refresh_layout(size, full=True)
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
+        self._screen_resized(event.size)
 
     async def _handle_mouse_move(self, event: events.MouseMove) -> None:
         try:
