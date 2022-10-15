@@ -43,7 +43,7 @@ If you run this you will see an empty screen. Hit the ++b++ key to show a blue s
 
 The `BSOD` class above defines a screen with a key binding and compose method. These should be familiar as they work in the same way as apps.
 
-The app class has a new `SCREENS` class variable. Textual uses this class variable to associated a name with screen object (the name is used to reference screens in the screen API). Also in the app is a key binding associated with the action `"push_screen('bsod')"`. The screen class has a similar action `"pop_screen"` bound to the ++escape++ key. We will cover these actions below.
+The app class has a new `SCREENS` class variable. Textual uses this class variable to associate a name with screen object (the name is used to reference screens in the screen API). Also in the app is a key binding associated with the action `"push_screen('bsod')"`. The screen class has a similar action `"pop_screen"` bound to the ++escape++ key. We will cover these actions below.
 
 ## Named screens
 
