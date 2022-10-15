@@ -29,7 +29,7 @@ Note the key event handler on the app which logs all key events. If you press an
 
 There are two main attributes on a key event. The `key` attribute is the _name_ of the key which may be a single character, or a longer identifier. Textual ensures that the `key` attribute could always be used in a method name.
 
-Key events also contain a `char` attribute which contains single character if it is printable, or ``None`` if it is not printable (like a function key which has no corresponding character).
+Key events also contain a `char` attribute which contains a single character if it is printable, or ``None`` if it is not printable (like a function key which has no corresponding character).
 
 To illustrate the difference between `key` and `char`, try `key01.py` with the space key. You should see something like the following:
 
