@@ -15,7 +15,7 @@ A widget is a component of your UI responsible for managing a rectangular region
 
 There is a growing collection of [builtin widgets](../widgets/index.md) in Textual, but you can build entirely custom widgets that work in the same way.
 
-The first step in building a widget is to import and extend a widget class. This can either be [Widget][textual.widget.Widget] which is the base class of all widgets, or one of it's subclasses.
+The first step in building a widget is to import and extend a widget class. This can either be [Widget][textual.widget.Widget] which is the base class of all widgets, or one of its subclasses.
 
 Let's create a simple custom widget to display a greeting.
 
