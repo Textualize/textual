@@ -33,9 +33,9 @@ The `reactive` constructor accepts a default value as the first positional argum
 
 !!! information
 
-    Textual uses Python's _descriptor protocol_ to create reactive attributes, which is the same protocol used by the builtin `property` decorator. 
+    Textual uses Python's _descriptor protocol_ to create reactive attributes, which is the same protocol used by the builtin `property` decorator.
 
-You can get and set these attributes in the same way as if you had assigned them in a `__init__` method. For instance `self.name = "Jessica"`, `self.count += 1`, or `print(self.is_cool)`.
+You can get and set these attributes in the same way as if you had assigned them in an `__init__` method. For instance `self.name = "Jessica"`, `self.count += 1`, or `print(self.is_cool)`.
 
 ### Dynamic defaults
 
@@ -69,7 +69,7 @@ The first superpower we will look at is "smart refresh". When you modify a react
 
 !!! information
 
-    If you modify multiple reactive attribute, Textual will only do a single refresh to minimize updates.
+    If you modify multiple reactive attributes, Textual will only do a single refresh to minimize updates.
 
 Let's look at an example which illustrates this. In the following app, the value of an input is used to update a "Hello, World!" type greeting.
 
@@ -81,7 +81,7 @@ Let's look at an example which illustrates this. In the following app, the value
 
 === "refresh01.css"
 
-    ```sass 
+    ```sass
     --8<-- "docs/examples/guide/reactivity/refresh01.css"
     ```
 
@@ -121,7 +121,7 @@ The following example modifies "refresh01.py" so that the greeting has an automa
     --8<-- "docs/examples/guide/reactivity/refresh02.py"
     ```
 
-    1. This attribute will update the layout when changed. 
+    1. This attribute will update the layout when changed.
 
 === "refresh02.css"
 
@@ -152,7 +152,7 @@ A common use for this is to restrict numbers to a given range. The following exa
 
 === "validate01.css"
 
-    ```sass 
+    ```sass
     --8<-- "docs/examples/guide/reactivity/validate01.css"
     ```
 
@@ -167,7 +167,7 @@ If you click the buttons in the above example it will show the current count. Wh
 
 Watch methods are another superpower. Textual will call watch methods when reactive attributes are modified. Watch methods begin with `watch_` followed by the name of the attribute. If the watch method accepts a positional argument, it will be called with the new assigned value. If the watch method accepts *two* positional arguments, it will be called with both the *old* value and the *new* value.
 
-The follow app will display any color you type in to the input. Try it with a valid color in Textual CSS. For example `"darkorchid"` or `"#52de44".
+The following app will display any color you type in to the input. Try it with a valid color in Textual CSS. For example `"darkorchid"` or `"#52de44"`.
 
 === "watch01.py"
 
@@ -181,7 +181,7 @@ The follow app will display any color you type in to the input. Try it with a va
 
 === "watch01.css"
 
-    ```sass 
+    ```sass
     --8<-- "docs/examples/guide/reactivity/watch01.css"
     ```
 
@@ -196,9 +196,9 @@ The color is parsed in `on_input_submitted` and assigned to `self.color`. Becaus
 
 Compute methods are the final superpower offered by the `reactive` descriptor. Textual runs compute methods to calculate the value of a reactive attribute. Compute methods begin with `compute_` followed by the name of the reactive value.
 
-You could be forgiven in thinking this sounds a lot like Python's property decorator. The difference is that Textual will cache the value of compute methods, and update them when any other reactive attribute changes. 
+You could be forgiven in thinking this sounds a lot like Python's property decorator. The difference is that Textual will cache the value of compute methods, and update them when any other reactive attribute changes.
 
-The following example uses a computed attribute. It displays three inputs for the each color component (red, green, and blue). If you enter numbers in to these inputs, the background color of another widget changes.
+The following example uses a computed attribute. It displays three inputs for each color component (red, green, and blue). If you enter numbers in to these inputs, the background color of another widget changes.
 
 === "computed01.py"
 
@@ -211,7 +211,7 @@ The following example uses a computed attribute. It displays three inputs for th
 
 === "computed01.css"
 
-    ```sass 
+    ```sass
     --8<-- "docs/examples/guide/reactivity/computed01.css"
     ```
 
