@@ -71,7 +71,7 @@ The following example mounts simple static text with embedded action links.
     ```{.textual path="docs/examples/guide/actions/actions03.py"}
     ```
 
-When you click any of the links, Textual runs the `"set_background"` action to change the background to the given color and plays the terminals bell.
+When you click any of the links, Textual runs the `"set_background"` action to change the background to the given color and plays the terminal's bell.
 
 ## Bindings
 
