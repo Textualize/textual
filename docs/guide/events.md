@@ -183,7 +183,7 @@ Let's look at an example which looks up word definitions from an [api](https://d
 
 === "Output"
 
-    ```{.textual path="docs/examples/events/dictionary.py" press="tab,t,e,x,t,_,_,_,_,_,_,_,_,_,_,_"}
+    ```{.textual path="docs/examples/events/dictionary.py" press="t,e,x,t,_,_,_,_,_,_,_,_,_,_,_"}
     ```
 
 Note the highlighted line in the above code which calls `asyncio.create_task` to run coroutine in the background. Without this you would find typing in to the text box to be unresponsive.

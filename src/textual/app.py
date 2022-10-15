@@ -47,7 +47,7 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
-from .widget import Widget, _wait_for_mount
+from .widget import AwaitMount, Widget
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
@@ -696,15 +696,15 @@ class App(Generic[ReturnType], DOMNode):
         self._require_stylesheet_update.add(self.screen if node is None else node)
         self.check_idle()
 
-    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> list[Widget]:
+    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> AwaitMount:
         """Mount widgets. Widgets specified as positional args, or keywords args. If supplied
         as keyword args they will be assigned an id of the key.
 
         """
         mounted_widgets = self._register(self.screen, *anon_widgets, **widgets)
-        return mounted_widgets
+        return AwaitMount(mounted_widgets)
 
-    def mount_all(self, widgets: Iterable[Widget]) -> list[Widget]:
+    def mount_all(self, widgets: Iterable[Widget]) -> AwaitMount:
         """Mount widgets from an iterable.
 
         Args:
@@ -713,7 +713,7 @@ class App(Generic[ReturnType], DOMNode):
         mounted_widgets = list(widgets)
         for widget in mounted_widgets:
             self._register(self.screen, widget)
-        return mounted_widgets
+        return AwaitMount(mounted_widgets)
 
     def is_screen_installed(self, screen: Screen | str) -> bool:
         """Check if a given screen has been installed.
@@ -1011,14 +1011,13 @@ class App(Generic[ReturnType], DOMNode):
             self.set_interval(0.25, self.css_monitor, name="css monitor")
             self.log.system("[b green]STARTED[/]", self.css_monitor)
 
-        process_messages = super()._process_messages
-
         async def run_process_messages():
 
-            compose_event = events.Compose(sender=self)
-            await self._dispatch_message(compose_event)
-            mount_event = events.Mount(sender=self)
-            await self._dispatch_message(mount_event)
+            try:
+                await self._dispatch_message(events.Compose(sender=self))
+                await self._dispatch_message(events.Mount(sender=self))
+            finally:
+                self._mounted_event.set()
 
             Reactive._initialize_object(self)
 
@@ -1030,7 +1029,18 @@ class App(Generic[ReturnType], DOMNode):
             await self._ready()
             if ready_callback is not None:
                 await ready_callback()
-            await process_messages()
+
+            self._running = True
+
+            try:
+                await self._process_messages_loop()
+            except asyncio.CancelledError:
+                pass
+            finally:
+                self._running = False
+                for timer in list(self._timers):
+                    await timer.stop()
+
             await self.animator.stop()
             await self._close_all()
 
@@ -1065,6 +1075,9 @@ class App(Generic[ReturnType], DOMNode):
             if self.devtools.is_connected:
                 await self._disconnect_devtools()
 
+    async def _pre_process(self) -> None:
+        pass
+
     async def _ready(self) -> None:
         """Called immediately prior to processing messages.
 
@@ -1091,8 +1104,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_compose(self) -> None:
         widgets = list(self.compose())
-        self.mount_all(widgets)
-        await _wait_for_mount(widgets)
+        await self.mount_all(widgets)
 
     def _on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""

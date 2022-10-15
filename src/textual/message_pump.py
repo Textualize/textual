@@ -286,10 +286,12 @@ class MessagePump(metaclass=MessagePumpMeta):
     def _start_messages(self) -> None:
         """Start messages task."""
         self._task = asyncio.create_task(self._process_messages())
-        self.post_message_no_wait(events.Compose(sender=self))
 
     async def _process_messages(self) -> None:
         self._running = True
+
+        await self._pre_process()
+
         try:
             await self._process_messages_loop()
         except CancelledError:
@@ -298,6 +300,18 @@ class MessagePump(metaclass=MessagePumpMeta):
             self._running = False
             for timer in list(self._timers):
                 await timer.stop()
+
+    async def _pre_process(self) -> None:
+        """Procedure to run before processing messages."""
+        # Dispatch compose and mount messages without going through loop
+        # These events must occur in this order, and at the start.
+        try:
+            await self._dispatch_message(events.Compose(sender=self))
+            await self._dispatch_message(events.Mount(sender=self))
+        finally:
+            # This is critical, mount may be waiting
+            self._mounted_event.set()
+        Reactive._initialize_object(self)
 
     async def _process_messages_loop(self) -> None:
         """Process messages until the queue is closed."""
@@ -326,9 +340,6 @@ class MessagePump(metaclass=MessagePumpMeta):
                 except MessagePumpClosed:
                     break
 
-            is_mount = isinstance(message, events.Mount)
-            if is_mount:
-                Reactive._initialize_object(self)
             try:
                 await self._dispatch_message(message)
             except CancelledError:
@@ -338,8 +349,6 @@ class MessagePump(metaclass=MessagePumpMeta):
                 self.app._handle_exception(error)
                 break
             finally:
-                if is_mount:
-                    self._mounted_event.set()
 
                 self._message_queue.task_done()
                 current_time = time()

@@ -3,8 +3,8 @@ from textual.widgets import Welcome
 
 
 class WelcomeApp(App):
-    def on_key(self) -> None:
-        self.mount(Welcome())
+    async def on_key(self) -> None:
+        await self.mount(Welcome())
 
     def on_button_pressed(self) -> None:
         self.exit()
