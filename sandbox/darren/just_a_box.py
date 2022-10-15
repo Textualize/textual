@@ -14,6 +14,7 @@ class JustABox(App):
             key="o,f,w",
             action="widget_fade_out",
             description="opacity fade out",
+            key_display="o or f or w",
         ),
     ]
 

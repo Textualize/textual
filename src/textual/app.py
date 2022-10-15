@@ -325,10 +325,10 @@ class App(Generic[ReturnType], DOMNode):
     @property
     def bindings(self) -> Bindings:
         """Get current bindings. If no widget is focused, then the app-level bindings
-        are returned. If a widget is focused, then any bindings present between that widget
-        and the App in the DOM are merged and returned."""
+        are returned. If a widget is focused, then any bindings present in the active
+        screen and app are merged and returned."""
         if self.focused is None:
-            return self._bindings
+            return Bindings.merge([self.screen._bindings, self._bindings])
         else:
             return Bindings.merge(
                 node._bindings for node in reversed(self.focused.ancestors)
