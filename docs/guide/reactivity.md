@@ -69,7 +69,7 @@ The first superpower we will look at is "smart refresh". When you modify a react
 
 !!! information
 
-    If you modify multiple reactive attribute, Textual will only do a single refresh to minimize updates.
+    If you modify multiple reactive attributes, Textual will only do a single refresh to minimize updates.
 
 Let's look at an example which illustrates this. In the following app, the value of an input is used to update a "Hello, World!" type greeting.
 
