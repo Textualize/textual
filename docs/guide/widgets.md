@@ -191,7 +191,7 @@ Let's modify the default width for the fizzbuzz example. By default, the table w
     ```{.textual path="docs/examples/guide/widgets/fizzbuzz02.py"}
     ```
 
-Note that we've added `expand=True` to tell the Table to expand beyond the optimal width, so that it fills the 50 characters returned by `get_content_width`.
+Note that we've added `expand=True` to tell the `Table` to expand beyond the optimal width, so that it fills the 50 characters returned by `get_content_width`.
 
 
 ## Compound widgets
