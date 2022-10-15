@@ -200,7 +200,7 @@ If you want your app to respond to a mouse click you should prefer the Click eve
 
 ### Scroll events
 
-Most mice have a scroll wheel which you can use to scroll window underneath the cursor. Scrollable containers in Textual will handle these automatically, but you can handle [MouseDown](../events/mouse_scroll_down.md) and [MouseUp](../events/mouse_scroll_up) if you want build your own scrolling functionality.
+Most mice have a scroll wheel which you can use to scroll the window underneath the cursor. Scrollable containers in Textual will handle these automatically, but you can handle [MouseDown](../events/mouse_scroll_down.md) and [MouseUp](../events/mouse_scroll_up) if you want build your own scrolling functionality.
 
 !!! information
 
