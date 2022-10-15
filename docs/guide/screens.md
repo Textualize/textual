@@ -39,7 +39,7 @@ Let's look at a simple example of writing a screen class to simulate Window's [b
     ```{.textual path="docs/examples/guide/screens/screen01.py" press="b,_"}
     ```
 
-If you run this you will see an empty screen. Hit the ++b++ screen to show a blue screen of death. Hit ++escape++ to return to the default screen.
+If you run this you will see an empty screen. Hit the ++b++ key to show a blue screen of death. Hit ++escape++ to return to the default screen.
 
 The `BSOD` class above defines a screen with a key binding and compose method. These should be familiar as they work in the same way as apps.
 
