@@ -35,7 +35,7 @@ The `reactive` constructor accepts a default value as the first positional argum
 
     Textual uses Python's _descriptor protocol_ to create reactive attributes, which is the same protocol used by the builtin `property` decorator.
 
-You can get and set these attributes in the same way as if you had assigned them in a `__init__` method. For instance `self.name = "Jessica"`, `self.count += 1`, or `print(self.is_cool)`.
+You can get and set these attributes in the same way as if you had assigned them in an `__init__` method. For instance `self.name = "Jessica"`, `self.count += 1`, or `print(self.is_cool)`.
 
 ### Dynamic defaults
 
