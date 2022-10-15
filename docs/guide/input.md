@@ -23,7 +23,7 @@ The most fundamental way to receive input is via [Key](./events/key) events. Let
     ```{.textual path="docs/examples/guide/input/key01.py", press="T,e,x,t,u,a,l,!,_"}
     ```
 
-Note the key event handler on the app which logs all key events. if you press any key it will show up on the screen.
+Note the key event handler on the app which logs all key events. If you press any key it will show up on the screen.
 
 ### Attributes
 
