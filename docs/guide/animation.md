@@ -77,7 +77,7 @@ You can specify which easing method to use via the `easing` parameter on the `an
 
 ## Completion callbacks
 
-You can pass an callable to the animator via the `on_complete` parameter. Textual will run the callable when the animation has completed. 
+You can pass an callable to the animator via the `on_complete` parameter. Textual will run the callable when the animation has completed.
 
 ## Delaying animations
 
