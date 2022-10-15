@@ -68,7 +68,7 @@ You can also _install_ new named screens dynamically with the [install_screen][t
     ```{.textual path="docs/examples/guide/screens/screen02.py" press="b,_"}
     ```
 
-Although both do the same thing, we recommend the `SCREENS` for screens that exist for the lifetime of your app.
+Although both do the same thing, we recommend `SCREENS` for screens that exist for the lifetime of your app.
 
 ### Uninstalling screens
 
