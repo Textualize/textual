@@ -1,4 +1,5 @@
-from textual.app import App, Screen, ComposeResult
+from textual.app import App, ComposeResult
+from textual.screen import Screen
 from textual.widgets import Static
 
 
