@@ -249,7 +249,7 @@ class Stylesheet:
                 css = css_file.read()
             path = os.path.abspath(filename)
         except Exception as error:
-            raise StylesheetError(f"unable to read {filename!r}; {error}")
+            raise StylesheetError(f"unable to read CSS file {filename!r}") from None
         self.source[str(path)] = CssSource(css, False, 0)
         self._require_parse = True
 
