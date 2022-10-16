@@ -6,6 +6,8 @@ We have many new features in the pipeline. This page will keep track that work.
 
 ## Features
 
+High-level features we plan on implementing.
+
 - [ ] Command interface
     * [ ] Command menu
     * [ ] Fuzzy search
@@ -13,7 +15,9 @@ We have many new features in the pipeline. This page will keep track that work.
 - [x] Devtools
     * [ ] Browser-inspired devtools interface with integrate DOM view, log, and REPL
 - [ ] Reactive state
-- [ ] Themes 
+- [x] Themes 
+    * [ ] Customize via config 
+    * [ ] Builtin theme editor
 
 ## Widgets
 
