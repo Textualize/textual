@@ -148,7 +148,7 @@ class Hide(Event, bubble=False):
 class MouseCapture(Event, bubble=False):
     """Sent when the mouse has been captured.
 
-    When a mouse has been captures, all further mouse events will be sent to the capturing widget.
+    When a mouse has been captured, all further mouse events will be sent to the capturing widget.
 
 
     Args:
