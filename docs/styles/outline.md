@@ -43,7 +43,7 @@ For example, `heavy white` would display a heavy white line around a widget.
 
 ## Example
 
-This examples shows a widget with an outline. Note how the outline occludes the text area.
+This example shows a widget with an outline. Note how the outline occludes the text area.
 
 === "outline.py"
 
