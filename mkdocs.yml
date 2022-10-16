@@ -6,8 +6,7 @@ edit_uri: edit/css/docs/
 nav:
   - Introduction:
     - "index.md"
-    - "getting_started.md"
-    - "help.md"
+    - "getting_started.md"  
   - "tutorial.md"
   - Guide:
     - "guide/index.md"

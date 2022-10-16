@@ -47,3 +47,7 @@ textual --help
 ```
 
 See [devtools](guide/devtools.md) for more about the `textual` command.
+
+## Need help?
+
+See the [help](./help.md) page for how to get help with Textual, or to report bugs.
