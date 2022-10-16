@@ -28,6 +28,7 @@ Widgets are key to making user friendly interfaces. The builtin widgets should c
     * [ ] Row / Column select
     * [ ] API to update cells / rows 
     * [ ] Lazy loading API
+- [ ] Drop-down menus
 - [ ] Form Widget
     * [ ] Serialization / Deserialization
     * [ ] Export to `attrs` objects
@@ -47,6 +48,8 @@ Widgets are key to making user friendly interfaces. The builtin widgets should c
   - [ ] Candlestick chars
 - [ ] Progress bars
     * [ ] Style variants (solid, thin etc)
+- [ ] Radio boxes
+- [ ] Sparklines
 - [ ] Tabs
 - [ ] TextArea (multi-line input)
     * [ ] Basic controls
