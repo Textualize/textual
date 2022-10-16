@@ -89,11 +89,11 @@ nav:
     - "styles/visibility.md"
     - "styles/width.md"
   - Widgets:
+    - "widgets/index.md"
     - "widgets/button.md"
     - "widgets/data_table.md"
     - "widgets/footer.md"
     - "widgets/header.md"
-    - "widgets/index.md"
     - "widgets/input.md"
     - "widgets/static.md"
     - "widgets/tree_control.md"
