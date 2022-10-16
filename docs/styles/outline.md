@@ -78,6 +78,6 @@ outline-left:outer red;
 # Set a heavy white outline
 widget.outline = ("heavy", "white)
 
-                  # Set a red outline on the left
-                  widget.outline_left = ("outer", "red)
+# Set a red outline on the left
+widget.outline_left = ("outer", "red)
 ```
