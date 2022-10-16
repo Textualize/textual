@@ -17,7 +17,7 @@ display: [none|block];
 
 ## Example
 
-Note that the second widget is hidden by adding the "hidden" class which sets the display style to None.
+Note that the second widget is hidden by adding the `"remove"` class which sets the display style to None.
 
 === "display.py"
 

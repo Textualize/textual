@@ -43,7 +43,7 @@ For example, `heavy white` would display a heavy white line around a widget.
 
 ## Example
 
-This examples shows a widget with an outline. Note how the outline occludes the text area.
+This example shows a widget with an outline. Note how the outline occludes the text area.
 
 === "outline.py"
 
@@ -78,6 +78,6 @@ outline-left:outer red;
 # Set a heavy white outline
 widget.outline = ("heavy", "white)
 
-                  # Set a red outline on the left
-                  widget.outline_left = ("outer", "red)
+# Set a red outline on the left
+widget.outline_left = ("outer", "red)
 ```
