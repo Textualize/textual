@@ -51,7 +51,9 @@ This is the *easing* reference which demonstrates the easing parameter on animat
 textual easing
 ```
 
-https://user-images.githubusercontent.com/554369/189485538-31e794ff-61d7-4faf-902a-6e90a9d76e5b.mov
+
+https://user-images.githubusercontent.com/554369/196157100-352852a6-2b09-4dc8-a888-55b53570aff9.mov
+
 
  </details>
 
