@@ -360,7 +360,7 @@ class Widget(DOMNode):
             ```
 
         Returns:
-            AwaitMount: An awaitable that waits for widgets to be mounted.
+            AwaitMount: An awaitable object that waits for widgets to be mounted.
 
         """
         mounted_widgets = self.app._register(self, *anon_widgets, **widgets)
