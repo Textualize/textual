@@ -9,7 +9,7 @@ Here's where to go if you need help with Textual.
 
 ## Bugs and feature requests
 
-Report bugs via GitHub on the Textual [issues](https://github.com/Textualize/textual/issues) page. You can also post feature requests via Github issues, but see the [roadmap](./roadmap.md) first.
+Report bugs via GitHub on the Textual [issues](https://github.com/Textualize/textual/issues) page. You can also post feature requests via GitHub issues, but see the [roadmap](./roadmap.md) first.
 
 ## Forum
 
