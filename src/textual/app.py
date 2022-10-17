@@ -700,6 +700,9 @@ class App(Generic[ReturnType], DOMNode):
         """Mount widgets. Widgets specified as positional args, or keywords args. If supplied
         as keyword args they will be assigned an id of the key.
 
+        Returns:
+            AwaitMount: An awaitable object that waits for widgets to be mounted.
+
         """
         mounted_widgets = self._register(self.screen, *anon_widgets, **widgets)
         return AwaitMount(mounted_widgets)
@@ -1133,7 +1136,11 @@ class App(Generic[ReturnType], DOMNode):
         """Register widget(s) so they may receive events.
 
         Args:
-            parent (Widget): Parent Widget
+            parent (Widget): Parent Widget.
+
+        Returns:
+            list[Widget]: List of modified widgets.
+
         """
         if not anon_widgets and not widgets:
             return []
