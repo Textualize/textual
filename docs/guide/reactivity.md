@@ -226,4 +226,8 @@ When the result of `compute_color` changes, Textual will also call `watch_color`
 
 !!! note
 
-    It is best to avoid doing anything slow or cpu-intensive in a compute method. Textual calls compute methods on an object when _any_ reactive attribute changes.
+    Textual will first attempt to call the compute method for a reactive attribute, followed by the validate method, and finally the watch method.
+
+!!! note
+
+    It is best to avoid doing anything slow or CPU-intensive in a compute method. Textual calls compute methods on an object when _any_ reactive attribute changes.
