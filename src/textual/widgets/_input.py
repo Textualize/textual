@@ -305,10 +305,15 @@ class Input(Widget, can_focus=True):
         self.cursor_position = delete_position
 
     def action_delete_left(self) -> None:
+        if self.cursor_position <= 0:
+            # Cursor at the start, so nothing to delete
+            return
         if self.cursor_position == len(self.value):
+            # Delete from end
             self.value = self.value[:-1]
             self.cursor_position = len(self.value)
         else:
+            # Cursor in the middle
             value = self.value
             delete_position = self.cursor_position - 1
             before = value[:delete_position]
