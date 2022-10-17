@@ -2,7 +2,7 @@
 
 We ([textualize.io](https://www.textualize.io/)) are actively building and maintaining Textual. 
 
-We have many new features in the pipeline. This page will keep track that work.
+We have many new features in the pipeline. This page will keep track of that work.
 
 ## Features
 
@@ -13,7 +13,7 @@ High-level features we plan on implementing.
     * [ ] Fuzzy search
 - [ ] Configuration (.toml based extensible configuration format)
 - [x] Devtools
-    * [ ] Browser-inspired devtools interface with integrate DOM view, log, and REPL
+    * [ ] Browser-inspired devtools interface with integrated DOM view, log, and REPL
 - [ ] Reactive state
 - [x] Themes 
     * [ ] Customize via config 
@@ -25,6 +25,7 @@ Widgets are key to making user friendly interfaces. The builtin widgets should c
 
 - [x] Buttons
     * [x] Error / warning variants
+- [ ] Color picker
 - [x] Checkbox
 - [ ] Content switcher
 - [x] DataTable
@@ -32,6 +33,7 @@ Widgets are key to making user friendly interfaces. The builtin widgets should c
     * [ ] Row / Column select
     * [ ] API to update cells / rows 
     * [ ] Lazy loading API
+- [ ] Date picker
 - [ ] Drop-down menus
 - [ ] Form Widget
     * [ ] Serialization / Deserialization
@@ -45,7 +47,7 @@ Widgets are key to making user friendly interfaces. The builtin widgets should c
     * [ ] Validation
     * [ ] Error / warning states
     * [ ] Template types: IP address, physical units (weight, volume), currency, credit card etc
-- [ ] Markdown viewer (more dynamic that Rich markdown, with scrollable code areas / collapseable sections)
+- [ ] Markdown viewer (more dynamic than Rich markdown, with scrollable code areas / collapseable sections)
 - [ ] Plots
   - [ ] bar chart
   - [ ] line chart
