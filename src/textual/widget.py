@@ -1,10 +1,20 @@
 from __future__ import annotations
 
-from asyncio import Lock
+from asyncio import Lock, wait, create_task
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
-from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple, cast
+from typing import (
+    Awaitable,
+    Generator,
+    TYPE_CHECKING,
+    ClassVar,
+    Collection,
+    Iterable,
+    NamedTuple,
+    Sequence,
+    cast,
+)
 
 import rich.repr
 from rich.console import (
@@ -22,7 +32,7 @@ from rich.style import Style
 from rich.text import Text
 
 from . import errors, events, messages
-from ._animator import BoundAnimator
+from ._animator import BoundAnimator, DEFAULT_EASING, Animatable, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._context import active_app
 from ._layout import Layout
@@ -36,6 +46,7 @@ from .dom import DOMNode, NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
 from .layouts.vertical import VerticalLayout
 from .message import Message
+from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
 
@@ -51,12 +62,33 @@ if TYPE_CHECKING:
         ScrollUp,
     )
 
-
 _JUSTIFY_MAP: dict[str, JustifyMethod] = {
     "start": "left",
     "end": "right",
     "justify": "full",
 }
+
+
+class AwaitMount:
+    """An awaitable returned by mount() and mount_all().
+
+    Example:
+        await self.mount(Static("foo"))
+
+    """
+
+    def __init__(self, widgets: Sequence[Widget]) -> None:
+        self._widgets = widgets
+
+    def __await__(self) -> Generator[None, None, None]:
+        async def await_mount() -> None:
+            aws = [
+                create_task(widget._mounted_event.wait()) for widget in self._widgets
+            ]
+            if aws:
+                await wait(aws)
+
+        return await_mount().__await__()
 
 
 class _Styled:
@@ -132,12 +164,12 @@ class Widget(DOMNode):
         scrollbar-corner-color: $panel-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
-        link-background:;        
+        link-background:;
         link-color: $text;
         link-style: underline;
-        hover-background: $accent;   
-        hover-color: $text;     
-        hover-style: bold not underline;
+        link-hover-background: $accent;
+        link-hover-color: $text;
+        link-hover-style: bold not underline;
     }
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
@@ -146,7 +178,7 @@ class Widget(DOMNode):
     """Widget may receive focus."""
     can_focus_children: bool = True
     """Widget's children may receive focus."""
-    expand = Reactive(True)
+    expand = Reactive(False)
     """Rich renderable may expand."""
     shrink = Reactive(True)
     """Rich renderable may shrink."""
@@ -316,7 +348,7 @@ class Widget(DOMNode):
         """Clear arrangement cache, forcing a new arrange operation."""
         self._arrangement = None
 
-    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
+    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> AwaitMount:
         """Mount child widgets (making this widget a container).
 
         Widgets may be passed as positional arguments or keyword arguments. If keyword arguments,
@@ -327,9 +359,12 @@ class Widget(DOMNode):
             self.mount(Static("hello"), header=Header())
             ```
 
+        Returns:
+            AwaitMount: An awaitable object that waits for widgets to be mounted.
+
         """
-        self.app._register(self, *anon_widgets, **widgets)
-        self.app.screen.refresh(layout=True)
+        mounted_widgets = self.app._register(self, *anon_widgets, **widgets)
+        return AwaitMount(mounted_widgets)
 
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.
@@ -460,14 +495,16 @@ class Widget(DOMNode):
             self.highlight_link_id = hover_style.link_id
 
     def watch_scroll_x(self, new_value: float) -> None:
-        self.horizontal_scrollbar.position = int(new_value)
-        self.refresh(layout=True)
-        self.horizontal_scrollbar.refresh()
+        if self.show_horizontal_scrollbar:
+            self.horizontal_scrollbar.position = int(new_value)
+            self.horizontal_scrollbar.refresh()
+            self.refresh(layout=True)
 
     def watch_scroll_y(self, new_value: float) -> None:
-        self.vertical_scrollbar.position = int(new_value)
-        self.refresh(layout=True)
-        self.vertical_scrollbar.refresh()
+        if self.show_vertical_scrollbar:
+            self.vertical_scrollbar.position = int(new_value)
+            self.vertical_scrollbar.refresh()
+            self.refresh(layout=True)
 
     def validate_scroll_x(self, value: float) -> float:
         return clamp(value, 0, self.max_scroll_x)
@@ -816,22 +853,44 @@ class Widget(DOMNode):
         """
         return active_app.get().console
 
-    @property
-    def animate(self) -> BoundAnimator:
-        """Get an animator to animate attributes on this widget.
+    def animate(
+        self,
+        attribute: str,
+        value: float | Animatable,
+        *,
+        final_value: object = ...,
+        duration: float | None = None,
+        speed: float | None = None,
+        delay: float = 0.0,
+        easing: EasingFunction | str = DEFAULT_EASING,
+        on_complete: CallbackType | None = None,
+    ) -> None:
+        """Animate an attribute.
 
-        Example:
-            ```python
-            self.animate("brightness", 0.5)
-            ```
+        Args:
+            attribute (str): Name of the attribute to animate.
+            value (float | Animatable): The value to animate to.
+            final_value (object, optional): The final value of the animation. Defaults to `value` if not set.
+            duration (float | None, optional): The duration of the animate. Defaults to None.
+            speed (float | None, optional): The speed of the animation. Defaults to None.
+            delay (float, optional): A delay (in seconds) before the animation starts. Defaults to 0.0.
+            easing (EasingFunction | str, optional): An easing method. Defaults to "in_out_cubic".
+            on_complete (CallbackType | None, optional): A callable to invoke when the animation is finished. Defaults to None.
 
-        Returns:
-            BoundAnimator: An animator bound to this widget.
         """
         if self._animate is None:
             self._animate = self.app.animator.bind(self)
         assert self._animate is not None
-        return self._animate
+        self._animate(
+            attribute,
+            value,
+            final_value=final_value,
+            duration=duration,
+            speed=speed,
+            delay=delay,
+            easing=easing,
+            on_complete=on_complete,
+        )
 
     @property
     def _layout(self) -> Layout:
@@ -907,13 +966,13 @@ class Widget(DOMNode):
         """Style of links with mouse hover."""
         styles = self.styles
         _, background = self.background_colors
-        hover_background = background + styles.hover_background
+        hover_background = background + styles.link_hover_background
         hover_color = hover_background + (
-            hover_background.get_contrast_text(styles.hover_color.a)
-            if styles.auto_hover_color
-            else styles.hover_color
+            hover_background.get_contrast_text(styles.link_hover_color.a)
+            if styles.auto_link_hover_color
+            else styles.link_hover_color
         )
-        style = styles.hover_style + Style.from_color(
+        style = styles.link_hover_style + Style.from_color(
             hover_color.rich_color,
             hover_background.rich_color,
         )
@@ -1657,21 +1716,22 @@ class Widget(DOMNode):
         return lines
 
     def get_style_at(self, x: int, y: int) -> Style:
-        """Get the Rich style at a given screen offset.
+        """Get the Rich style in a widget at a given relative offset.
 
         Args:
-            x (int): X coordinate relative to the screen.
-            y (int): Y coordinate relative to the screen.
+            x (int): X coordinate relative to the widget.
+            y (int): Y coordinate relative to the widget.
 
         Returns:
             Style: A rich Style object.
         """
-        widget, region = self.screen.get_widget_at(x, y)
+        offset = Offset(x, y)
+        screen_offset = offset + self.region.offset
+
+        widget, _ = self.screen.get_widget_at(*screen_offset)
         if widget is not self:
             return Style()
-        offset_x, offset_y = region.offset
-        # offset_x, offset_y = self.screen.get_offset(self)
-        return self.screen.get_style_at(x + offset_x, y + offset_y)
+        return self.screen.get_style_at(*screen_offset)
 
     async def _forward_event(self, event: events.Event) -> None:
         event._set_forwarded()
@@ -1710,13 +1770,12 @@ class Widget(DOMNode):
             self._content_height_cache = (None, 0)
             self._rich_style_cache.clear()
             self._repaint_required = True
-            if isinstance(self.parent, Widget) and self.styles.auto_dimensions:
-                self.parent.refresh(layout=True)
 
         self.check_idle()
 
     def remove(self) -> None:
         """Remove the Widget from the DOM (effectively deleting it)"""
+        self.display = False
         self.app.post_message_no_wait(events.Remove(self, widget=self))
 
     def render(self) -> RenderableType:
@@ -1788,7 +1847,22 @@ class Widget(DOMNode):
             scroll_visible (bool, optional): Scroll parent to make this widget
                 visible. Defaults to True.
         """
-        self.app.set_focus(self, scroll_visible=scroll_visible)
+
+        def set_focus(widget: Widget):
+            """Callback to set the focus."""
+            try:
+                widget.screen.set_focus(self, scroll_visible=scroll_visible)
+            except NoScreen:
+                pass
+
+        self.app.call_later(set_focus, self)
+
+    def reset_focus(self) -> None:
+        """Reset the focus (move it to the next available widget)."""
+        try:
+            self.screen._reset_focus(self)
+        except NoScreen:
+            pass
 
     def capture_mouse(self, capture: bool = True) -> None:
         """Capture (or release) the mouse.
@@ -1833,14 +1907,11 @@ class Widget(DOMNode):
         await self.action(binding.action)
         return True
 
-    def _on_compose(self, event: events.Compose) -> None:
-        widgets = self.compose()
-        self.app.mount_all(widgets)
+    async def _on_compose(self, event: events.Compose) -> None:
+        widgets = list(self.compose())
+        await self.mount(*widgets)
 
     def _on_mount(self, event: events.Mount) -> None:
-        widgets = self.compose()
-        self.mount(*widgets)
-        # Preset scrollbars if not automatic
         if self.styles.overflow_y == "scroll":
             self.show_vertical_scrollbar = True
         if self.styles.overflow_x == "scroll":
@@ -1864,22 +1935,16 @@ class Widget(DOMNode):
         self.refresh()
 
     def _on_descendant_focus(self, event: events.DescendantFocus) -> None:
-        self.descendant_has_focus = True
-        if "focus-within" in self.pseudo_classes:
-            sender = event.sender
-            for child in self.walk_children(False):
-                child.refresh()
-                if child is sender:
-                    break
+        if not self.descendant_has_focus:
+            self.descendant_has_focus = True
 
     def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
-        self.descendant_has_focus = False
+        if self.descendant_has_focus:
+            self.descendant_has_focus = False
+
+    def watch_descendant_has_focus(self, value: bool) -> None:
         if "focus-within" in self.pseudo_classes:
-            sender = event.sender
-            for child in self.walk_children(False):
-                child.refresh()
-                if child is sender:
-                    break
+            self.app._require_stylesheet_update.add(self)
 
     def _on_mouse_scroll_down(self, event) -> None:
         if self.allow_vertical_scroll:
@@ -1918,7 +1983,7 @@ class Widget(DOMNode):
 
     def _on_hide(self, event: events.Hide) -> None:
         if self.has_focus:
-            self.app._reset_focus(self)
+            self.reset_focus()
 
     def _on_scroll_to_region(self, message: messages.ScrollToRegion) -> None:
         self.scroll_to_region(message.region, animate=True)

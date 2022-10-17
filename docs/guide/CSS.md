@@ -82,7 +82,7 @@ With the above example, the DOM will look like the following:
 This doesn't look much like a tree yet. Let's add a header and a footer to this application, which will create more _branches_ of the tree:
 
 === "dom2.py"
-    
+
     ```python hl_lines="7 8"
     --8<-- "docs/examples/guide/dom2.py"
     ```
@@ -105,7 +105,7 @@ With a header and a footer widget the DOM looks the this:
 
 Both Header and Footer are children of the Screen object.
 
-To further explore the DOM, we're going to build a simple dialog with a question and two buttons. To do this we're going import and use a few more builtin widgets:
+To further explore the DOM, we're going to build a simple dialog with a question and two buttons. To do this we're going to import and use a few more builtin widgets:
 
 - `textual.layout.Container` For our top-level dialog.
 - `textual.layout.Horizontal` To arrange widgets left to right.
@@ -187,7 +187,7 @@ Let's look at the selectors supported by Textual CSS.
 The _type_ selector matches the name of the (Python) class. For example, the following widget can be matched with a `Button` selector:
 
 ```python
-from textual.widgets import Widget
+from textual.widgets import Static
 
 class Button(Static):
     pass
@@ -218,7 +218,7 @@ You may have noticed that the `border` rule exists in both Static and Button. Wh
 
 ### ID selector
 
-Every Widget can have a single `id` attribute, which is set via the constructor. The ID should be unique to it's container.
+Every Widget can have a single `id` attribute, which is set via the constructor. The ID should be unique to its container.
 
 Here's an example of a widget with an ID:
 
@@ -280,7 +280,7 @@ Unlike the `id` attribute, a widget's classes can be changed after the widget wa
 - [add_class()][textual.dom.DOMNode.add_class] Adds one or more classes to a widget.
 - [remove_class()][textual.dom.DOMNode.remove_class] Removes class name(s) from a widget.
 - [toggle_class()][textual.dom.DOMNode.toggle_class] Removes a class name if it is present, or adds the name if it's not already present.
-- [has_class()][textual.dom.DOMNode.has_class] Checks if a class(es) is set on a widget.
+- [has_class()][textual.dom.DOMNode.has_class] Checks if one or more classes are set on a widget.
 - [classes][textual.dom.DOMNode.classes] Is a frozen set of the class(es) set on a widget.
 
 
@@ -298,7 +298,7 @@ For example, the following will draw a red outline around all widgets:
 
 ### Pseudo classes
 
-Pseudo classes can be used to match widgets in a particular state. Psuedo classes are set automatically by Textual. For instance, you might want a button to have a green background when the mouse cursor moves over it. We can do this with the `:hover` pseudo selector.
+Pseudo classes can be used to match widgets in a particular state. Pseudo classes are set automatically by Textual. For instance, you might want a button to have a green background when the mouse cursor moves over it. We can do this with the `:hover` pseudo selector.
 
 ```sass
 Button:hover {
@@ -369,7 +369,7 @@ It is possible that several selectors match a given widget. If the same style is
 
 - The selector with the most IDs wins. For instance `#next` beats `.button` and `#dialog #next` beats `#next`. If the selectors have the same number of IDs then move to the next rule.
 
-- The selector with the most class names wins. For instance `.button.success` beats `.success`. For the purposes of specificity, pseudo classes are treated the same as regular class names, so ".button:hover" counts as _2_ class names. If the selectors have the same number of class names then move to the next rule.
+- The selector with the most class names wins. For instance `.button.success` beats `.success`. For the purposes of specificity, pseudo classes are treated the same as regular class names, so `.button:hover` counts as _2_ class names. If the selectors have the same number of class names then move to the next rule.
 
 - The selector with the most types wins. For instance `Container Button` beats `Button`.
 
@@ -427,4 +427,3 @@ Variables can refer to other variables.
 Let's say we define a variable `$success: lime;`.
 Our `$border` variable could then be updated to `$border: wide $success;`, which will
 be translated to `$border: wide lime;`.
-

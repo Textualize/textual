@@ -6,7 +6,7 @@ import rich.repr
 from rich.color import Color
 from rich.console import ConsoleOptions, RenderableType, RenderResult
 from rich.segment import Segment, Segments
-from rich.style import NULL_STYLE, Style, StyleType
+from rich.style import Style, StyleType
 
 from . import events
 from ._types import MessageTarget
@@ -192,9 +192,9 @@ class ScrollBar(Widget):
 
     DEFAULT_CSS = """
     ScrollBar {
-        hover-color: ;
-        hover-background:;
-        hover-style: ;
+        link-hover-color: ;
+        link-hover-background:;
+        link-hover-style: ;
         link-color: transparent;
         link-background: transparent;
     }

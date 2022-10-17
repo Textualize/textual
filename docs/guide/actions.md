@@ -8,11 +8,11 @@ Action methods are methods on your app or widgets prefixed with `action_`. Aside
 
 !!! information
 
-    Action methods may be coroutines (methods with the `async` keyword).
+    Action methods may be coroutines (defined with the `async` keyword).
 
 Let's write an app with a simple action.
 
-```python title="actions01.py" hl_lines="6-8"
+```python title="actions01.py" hl_lines="6-8 12"
 --8<-- "docs/examples/guide/actions/actions01.py"
 ```
 
@@ -36,13 +36,13 @@ Action strings have a simple syntax, which for the most part replicates Python's
 
 !!! important
 
-    As much as they look like Python code, Textual does **not** call Python's `eval` function or similar to compile action strings.
+    As much as they *look* like Python code, Textual does **not** call Python's `eval` function or similar to compile action strings.
 
 Action strings have the following format:
 
 - The name of an action on is own will call the action method with no parameters. For example, an action string of `"bell"` will call `action_bell()`.
 - Actions may be followed by braces containing Python objects. For example, the action string `set_background("red")` will call `action_set_background("red")`.
-- Actions may be prefixed with a _namespace_ (see below) follow by a dot. 
+- Actions may be prefixed with a _namespace_ (see below) follow by a dot.
 
 <div class="excalidraw">
 --8<-- "docs/images/actions/format.excalidraw.svg"
@@ -50,7 +50,7 @@ Action strings have the following format:
 
 ### Parameters
 
-If the action strings contains parameters, these must be valid Python literals. Which means you can include numbers, strings, dicts, lists etc. but you can't include variables or references to any other python symbols.
+If the action string contains parameters, these must be valid Python literals. Which means you can include numbers, strings, dicts, lists etc. but you can't include variables or references to any other python symbol.
 
 Consequently `"set_background('blue')"` is a valid action string, but `"set_background(new_color)"` is not &mdash; because `new_color` is a variable and not a literal.
 
@@ -71,11 +71,11 @@ The following example mounts simple static text with embedded action links.
     ```{.textual path="docs/examples/guide/actions/actions03.py"}
     ```
 
-When you click any of the links, Textual runs the `"set_background"` action to change the background to the given color and plays the terminals bell.
+When you click any of the links, Textual runs the `"set_background"` action to change the background to the given color and plays the terminal's bell.
 
 ## Bindings
 
-Textual will also run actions that are bound to keys. The following example adds key [bindings](./input.md#bindings) for the ++r++, ++g++, and ++b++ keys which call the `"set_background"` action.
+Textual will also run actions bound to keys. The following example adds key [bindings](./input.md#bindings) for the ++r++, ++g++, and ++b++ keys which call the `"set_background"` action.
 
 === "actions04.py"
 
@@ -102,9 +102,9 @@ The following example defines a custom widget with its own `set_background` acti
     --8<-- "docs/examples/guide/actions/actions05.py"
     ```
 
-=== "actions05.py"
+=== "actions05.css"
 
-    ```sass title="actions05.css" 
+    ```sass title="actions05.css"
     --8<-- "docs/examples/guide/actions/actions05.css"
     ```
 
@@ -131,9 +131,25 @@ Textual supports the following builtin actions which are defined on the app.
     options:
         show_root_heading: false
 
+### Push screen
+
+::: textual.app.App.action_push_screen
+
+
+### Pop screen
+
+::: textual.app.App.action_pop_screen
+
+
 ### Screenshot
 
 ::: textual.app.App.action_screenshot
+
+
+### Switch screen
+
+::: textual.app.App.action_switch_screen
+
 
 ### Toggle_dark
 
@@ -142,6 +158,3 @@ Textual supports the following builtin actions which are defined on the app.
 ### Quit
 
 ::: textual.app.App.action_quit
-
-
-*TODO:* document more actions

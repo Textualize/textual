@@ -1,0 +1,52 @@
+*:focus {
+  tint: red 20%;
+}
+
+#info {
+  background: $primary;
+  dock: top;
+  height: 3;
+  padding: 1;
+}
+
+#body {
+  dock: top;
+}
+
+#left_list {
+  width: 50%;
+}
+
+#right_list {
+  width: 50%;
+}
+
+#footer {
+  height: 1;
+  background: $secondary;
+  padding: 0 1;
+  dock: bottom;
+}
+
+.list:focus-within {
+  background: $panel-lighten-1;
+  outline-top:  $accent-lighten-1;
+  outline-bottom:  $accent-lighten-1;
+}
+
+.list {
+  background: $surface;
+  border-top: hkey $surface-darken-1;
+}
+
+.list-item {
+  background: $surface;
+  height: auto;
+  border: $surface-darken-1 tall;
+  padding: 0 1;
+}
+
+.list-item:focus {
+  background: $surface-darken-1;
+  outline: $accent tall;
+}

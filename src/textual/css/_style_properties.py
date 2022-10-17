@@ -27,7 +27,7 @@ from ._help_text import (
     string_enum_help_text,
     color_property_help_text,
 )
-from .._border import INVISIBLE_EDGE_TYPES, normalize_border_value
+from .._border import normalize_border_value
 from ..color import Color, ColorParseError
 from ._error_tools import friendly_list
 from .constants import NULL_SPACING, VALID_STYLE_FLAGS
@@ -46,7 +46,7 @@ from ..geometry import Spacing, SpacingDimensions, clamp
 
 if TYPE_CHECKING:
     from .._layout import Layout
-    from .styles import DockGroup, Styles, StylesBase
+    from .styles import Styles, StylesBase
 
 from .types import DockEdge, EdgeType, AlignHorizontal, AlignVertical
 
@@ -283,9 +283,10 @@ class BoxProperty:
             StyleSyntaxError: If the string supplied for the color has invalid syntax.
         """
         _rich_traceback_omit = True
+
         if border is None:
             if obj.clear_rule(self.name):
-                obj.refresh()
+                obj.refresh(layout=True)
         else:
             _type, color = border
             new_value = border
@@ -301,8 +302,13 @@ class BoxProperty:
                     )
             elif isinstance(color, Color):
                 new_value = (_type, color)
+            current_value: tuple[str, Color] = cast(
+                "tuple[str, Color]", obj.get_rule(self.name)
+            )
+            has_edge = current_value and current_value[0]
+            new_edge = bool(_type)
             if obj.set_rule(self.name, new_value):
-                obj.refresh()
+                obj.refresh(layout=has_edge != new_edge)
 
 
 @rich.repr.auto
@@ -409,12 +415,37 @@ class BorderProperty:
         """
         _rich_traceback_omit = True
         top, right, bottom, left = self._properties
+
+        border_spacing = Edges(
+            getattr(obj, top),
+            getattr(obj, right),
+            getattr(obj, bottom),
+            getattr(obj, left),
+        ).spacing
+
+        def check_refresh() -> None:
+            """Check if an update requires a layout"""
+            if not self._layout:
+                obj.refresh()
+            else:
+                layout = (
+                    Edges(
+                        getattr(obj, top),
+                        getattr(obj, right),
+                        getattr(obj, bottom),
+                        getattr(obj, left),
+                    ).spacing
+                    != border_spacing
+                )
+                obj.refresh(layout=layout)
+
         if border is None:
             clear_rule = obj.clear_rule
             clear_rule(top)
             clear_rule(right)
             clear_rule(bottom)
             clear_rule(left)
+            check_refresh()
             return
         if isinstance(border, tuple) and len(border) == 2:
             _border = normalize_border_value(border)
@@ -422,6 +453,7 @@ class BorderProperty:
             setattr(obj, right, _border)
             setattr(obj, bottom, _border)
             setattr(obj, left, _border)
+            check_refresh()
             return
 
         count = len(border)
@@ -456,7 +488,7 @@ class BorderProperty:
                 "expected 1, 2, or 4 values",
                 help_text=border_property_help_text(self.name, context="inline"),
             )
-        obj.refresh(layout=self._layout)
+        check_refresh()
 
 
 class SpacingProperty:

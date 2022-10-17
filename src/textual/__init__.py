@@ -43,28 +43,28 @@ class Logger:
         self._group = group
         self._verbosity = verbosity
 
-    @property
-    def log(self) -> LogCallable:
-        if self._log is None:
-            try:
-                app = active_app.get()
-            except LookupError:
-                raise LoggerError("Unable to log without an active app.") from None
-            return app._log
-        return self._log
-
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._group, LogGroup.INFO
         yield self._verbosity, LogVerbosity.NORMAL
 
     def __call__(self, *args: object, **kwargs) -> None:
-        caller = inspect.stack()[1]
         try:
-            self.log(
+            app = active_app.get()
+        except LookupError:
+            raise LoggerError("Unable to log without an active app.") from None
+        if not app.devtools.is_connected:
+            return
+
+        previous_frame = inspect.currentframe().f_back
+        caller = inspect.getframeinfo(previous_frame)
+
+        _log = self._log or app._log
+        try:
+            _log(
                 self._group,
                 self._verbosity,
+                caller,
                 *args,
-                _textual_calling_frame=caller,
                 **kwargs,
             )
         except LoggerError:

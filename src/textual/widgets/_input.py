@@ -10,7 +10,7 @@ from .. import events
 from .._segment_tools import line_crop
 from ..binding import Binding
 from ..geometry import Size
-from ..message import Message, MessageTarget
+from ..message import Message
 from ..reactive import reactive
 from ..widget import Widget
 
@@ -79,19 +79,19 @@ class Input(Widget, can_focus=True):
     """
 
     BINDINGS = [
-        Binding("left", "cursor_left", "cursor left"),
-        Binding("right", "cursor_right", "cursor right"),
-        Binding("backspace", "delete_left", "delete left"),
-        Binding("home", "home", "home"),
-        Binding("end", "end", "end"),
-        Binding("ctrl+d", "delete_right", "delete right"),
-        Binding("enter", "submit", "Submit"),
+        Binding("left", "cursor_left", "cursor left", show=False),
+        Binding("right", "cursor_right", "cursor right", show=False),
+        Binding("backspace", "delete_left", "delete left", show=False),
+        Binding("home", "home", "home", show=False),
+        Binding("end", "end", "end", show=False),
+        Binding("ctrl+d", "delete_right", "delete right", show=False),
+        Binding("enter", "submit", "Submit", show=False),
     ]
 
     COMPONENT_CLASSES = {"input--cursor", "input--placeholder"}
 
     cursor_blink = reactive(True)
-    value = reactive("", layout=True)
+    value = reactive("", layout=True, init=False)
     input_scroll_offset = reactive(0)
     cursor_position = reactive(0)
     view_position = reactive(0)
@@ -104,17 +104,20 @@ class Input(Widget, can_focus=True):
 
     def __init__(
         self,
-        value: str = "",
+        value: str | None = None,
         placeholder: str = "",
         highlighter: Highlighter | None = None,
+        password: bool = False,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
-        self.value = value
+        if value is not None:
+            self.value = value
         self.placeholder = placeholder
         self.highlighter = highlighter
+        self.password = password
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""
@@ -167,7 +170,6 @@ class Input(Widget, can_focus=True):
         return self._position_to_cell(len(self.value)) + 1
 
     def render(self) -> RenderableType:
-        self.view_position = self.view_position
         if not self.value:
             placeholder = Text(self.placeholder)
             placeholder.stylize(self.get_component_rich_style("input--placeholder"))
@@ -237,14 +239,14 @@ class Input(Widget, can_focus=True):
 
         # Do key bindings first
         if await self.handle_key(event):
+            event.prevent_default()
             event.stop()
-        elif event.key in ("tab", "shift+tab"):
             return
         elif event.is_printable:
             event.stop()
             assert event.char is not None
             self.insert_text_at_cursor(event.char)
-        event.prevent_default()
+            event.prevent_default()
 
     def on_paste(self, event: events.Paste) -> None:
         line = event.text.splitlines()[0]
@@ -267,6 +269,11 @@ class Input(Widget, can_focus=True):
             self.cursor_position = len(self.value)
 
     def insert_text_at_cursor(self, text: str) -> None:
+        """Insert new text at the cursor, move the cursor to the end of the new text.
+
+        Args:
+            text (str): new text to insert.
+        """
         if self.cursor_position > len(self.value):
             self.value += text
             self.cursor_position = len(self.value)
@@ -298,10 +305,15 @@ class Input(Widget, can_focus=True):
         self.cursor_position = delete_position
 
     def action_delete_left(self) -> None:
+        if self.cursor_position <= 0:
+            # Cursor at the start, so nothing to delete
+            return
         if self.cursor_position == len(self.value):
+            # Delete from end
             self.value = self.value[:-1]
             self.cursor_position = len(self.value)
         else:
+            # Cursor in the middle
             value = self.value
             delete_position = self.cursor_position - 1
             before = value[:delete_position]

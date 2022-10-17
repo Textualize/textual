@@ -1,6 +1,6 @@
 # Textual Guide
 
-Welcome to the Textual Guide! An in-depth reference on how to build app with Textual.
+Welcome to the Textual Guide! An in-depth reference on how to build apps with Textual.
 
 ## Example code
 

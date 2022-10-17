@@ -14,11 +14,12 @@ from rich.console import Console
 from textual import events, errors
 from textual._ansi_sequences import SYNC_START
 from textual._clock import _Clock
-from textual.app import WINDOWS
 from textual._context import active_app
 from textual.app import App, ComposeResult
+from textual.app import WINDOWS
 from textual.driver import Driver
 from textual.geometry import Size, Region
+
 
 # N.B. These classes would better be named TestApp/TestConsole/TestDriver/etc,
 # but it makes pytest emit warning as it will try to collect them as classes containing test cases :-/
@@ -126,7 +127,7 @@ class AppTest(App):
             widget, region = self.get_widget_at(x, y)
         except errors.NoWidget:
             return ""
-        if widget not in self.screen._compositor.regions:
+        if widget not in self.screen._compositor.visible_widgets:
             return ""
 
         x -= region.x

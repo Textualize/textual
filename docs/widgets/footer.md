@@ -9,7 +9,7 @@ available keybindings for the currently focused widget.
 ## Example
 
 The example below shows an app with a single keybinding that contains only a `Footer`
-widget. Notice how the `Footer` automatically displays the keybind.
+widget. Notice how the `Footer` automatically displays the keybinding.
 
 === "Output"
 

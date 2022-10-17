@@ -126,6 +126,19 @@ class BoundAnimator:
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
     ) -> None:
+        """Animate an attribute.
+
+        Args:
+            attribute (str): Name of the attribute to animate.
+            value (float | Animatable): The value to animate to.
+            final_value (object, optional): The final value of the animation. Defaults to `value` if not set.
+            duration (float | None, optional): The duration of the animate. Defaults to None.
+            speed (float | None, optional): The speed of the animation. Defaults to None.
+            delay (float, optional): A delay (in seconds) before the animation starts. Defaults to 0.0.
+            easing (EasingFunction | str, optional): An easing method. Defaults to "in_out_cubic".
+            on_complete (CallbackType | None, optional): A callable to invoke when the animation is finished. Defaults to None.
+
+        """
         easing_function = EASING[easing] if isinstance(easing, str) else easing
         return self._animator.animate(
             self._obj,
@@ -191,7 +204,7 @@ class Animator:
             obj (object): The object containing the attribute.
             attribute (str): The name of the attribute.
             value (Any): The destination value of the attribute.
-            final_value (Any, optional): The final value, or ellipsis if it is the same as ``value``. Defaults to ....
+            final_value (Any, optional): The final value, or ellipsis if it is the same as ``value``. Defaults to Ellipsis/
             duration (float | None, optional): The duration of the animation, or ``None`` to use speed. Defaults to ``None``.
             speed (float | None, optional): The speed of the animation. Defaults to None.
             easing (EasingFunction | str, optional): An easing function. Defaults to DEFAULT_EASING.

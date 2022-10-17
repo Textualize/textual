@@ -75,6 +75,13 @@ def test_offset_is_origin():
     assert not Offset(1, 0).is_origin
 
 
+def test_clamped():
+    assert Offset(-10, 0).clamped == Offset(0, 0)
+    assert Offset(-10, -5).clamped == Offset(0, 0)
+    assert Offset(5, -5).clamped == Offset(5, 0)
+    assert Offset(5, 10).clamped == Offset(5, 10)
+
+
 def test_offset_add():
     assert Offset(1, 1) + Offset(2, 2) == Offset(3, 3)
     assert Offset(1, 2) + Offset(3, 4) == Offset(4, 6)

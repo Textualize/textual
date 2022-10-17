@@ -46,7 +46,7 @@ One such event is the *mount* event which is sent to an application after it ent
 
 !!! info
 
-    You may have noticed we use the term "send" and "sent" in relation to event handler methods in preference to "calling". This is because Textual uses a message passing system where events are passed (or *sent*) between components. We will cover the details in [events](./events.md).
+    You may have noticed we use the term "send" and "sent" in relation to event handler methods in preference to "calling". This is because Textual uses a message passing system where events are passed (or *sent*) between components. See [events](./events.md) for details.
 
 Another such event is the *key* event which is sent when the user presses a key. The following example contains handlers for both those events:
 
@@ -65,42 +65,41 @@ The key event handler (`on_key`) has an `event` parameter which will receive a [
 
     It is unusual (but not unprecedented) for a method's parameters to affect how it is called. Textual accomplishes this by inspecting the method prior to calling it.
 
-For some events contains additional information. In the case of [Key][textual.events.Key] it will contain the key that was pressed.
-
-The `on_key` method above changes the background color if any of the keys from ++0++ to ++9++ are pressed.
+Some events contain additional information you can inspect in the handler. The [Key][textual.events.Key] event has a `key` attribute which is the name of the key that was pressed. The `on_key` method above uses this attribute to change the background color if any of the keys from ++0++ to ++9++ are pressed.
 
 ### Async events
 
-Textual is powered by Python's [asyncio](https://docs.python.org/3/library/asyncio.html) framework which uses the `async` and `await` keywords to coordinate events.
+Textual is powered by Python's [asyncio](https://docs.python.org/3/library/asyncio.html) framework which uses the `async` and `await` keywords.
 
-Textual knows to *await* your event handlers if they are coroutines (i.e. prefixed with the `async` keyword).
+Textual knows to *await* your event handlers if they are coroutines (i.e. prefixed with the `async` keyword). Regular functions are generally fine unless you plan on integrating other async libraries (such as [httpx](https://www.python-httpx.org/) for reading data from the internet).
 
-!!! note
+!!! tip
 
-    Don't worry if you aren't familiar with the async programming in Python. You can build many apps without using them.
+    For a friendly introduction to async programming in Python, see FastAPI's [concurrent burgers](https://fastapi.tiangolo.com/async/) article.
+
 
 ## Widgets
 
 Widgets are self-contained components responsible for generating the output for a portion of the screen. Widgets respond to events in much the same way as the App. Most apps that do anything interesting will contain at least one (and probably many) widgets which together form a User Interface.
 
-Widgets can be as simple as a piece of text, a button, or a fully-fledge component like a text editor or file browser (which may contain widgets of their own).
+Widgets can be as simple as a piece of text, a button, or a fully-fledged component like a text editor or file browser (which may contain widgets of their own).
 
 ### Composing
 
-To add widgets to your app implement a [`compose()`][textual.app.App.compose] method which should return an iterable of Widget instances. A list would work, but it is convenient to yield widgets, making the method a *generator*.
+To add widgets to your app implement a [`compose()`][textual.app.App.compose] method which should return an iterable of `Widget` instances. A list would work, but it is convenient to yield widgets, making the method a *generator*.
 
-The following example imports a builtin Welcome widget and yields it from compose.
+The following example imports a builtin `Welcome` widget and yields it from `App.compose()`.
 
 ```python title="widgets01.py"
 --8<-- "docs/examples/app/widgets01.py"
 ```
 
-When you run this code, Textual will *mount* the Welcome widget which contains a Markdown content area and a button:
+When you run this code, Textual will *mount* the `Welcome` widget which contains Markdown content and a button:
 
 ```{.textual path="docs/examples/app/widgets01.py"}
 ```
 
-Notice the `on_button_pressed` method which handles the [Button.Pressed][textual.widgets.Button] event sent by a button contained in the Welcome widget. The handler calls [App.exit()][textual.app.App.exit] to exit the app.
+Notice the `on_button_pressed` method which handles the [Button.Pressed][textual.widgets.Button] event sent by a button contained in the `Welcome` widget. The handler calls [App.exit()][textual.app.App.exit] to exit the app.
 
 ### Mounting
 
@@ -142,7 +141,7 @@ You may have noticed that we subclassed `App[str]` rather than the usual `App`.
 --8<-- "docs/examples/app/question01.py"
 ```
 
-The addition of `[str]` tells Mypy that `run()` is expected to return a string. It may also return `None` if [App.exit()][textual.app.App.exit] is called without a return value, so the return type of `run` will be `str | None`. Replace the `str` in `[str]` with the type of the value you intend to call the exit method with.
+The addition of `[str]` tells mypy that `run()` is expected to return a string. It may also return `None` if [App.exit()][textual.app.App.exit] is called without a return value, so the return type of `run` will be `str | None`. Replace the `str` in `[str]` with the type of the value you intend to call the exit method with.
 
 !!! note
 
@@ -152,7 +151,7 @@ The addition of `[str]` tells Mypy that `run()` is expected to return a string. 
 
 Textual apps can reference [CSS](CSS.md) files which define how your app and widgets will look, while keeping your Python code free of display related code (which tends to be messy).
 
-The chapter on [Textual CSS](CSS.md) describes how to use CSS in detail. For now lets look at how your app references external CSS files.
+The chapter on [Textual CSS](CSS.md) describes how to use CSS in detail. For now let's look at how your app references external CSS files.
 
 The following example enables loading of CSS by adding a `CSS_PATH` class variable:
 
@@ -173,7 +172,7 @@ When `"question02.py"` runs it will load `"question02.css"` and update the app a
 
 ### Classvar CSS
 
-While external CSS files are recommended for most applications, and enable some cool features like *live editing*, you can also specify the CSS directly within the Python code. 
+While external CSS files are recommended for most applications, and enable some cool features like *live editing*, you can also specify the CSS directly within the Python code.
 
 To do this set a `CSS` class variable on the app to a string containing your CSS.
 
@@ -185,4 +184,4 @@ Here's the question app with classvar CSS:
 
 ## What's next
 
-In the following chapter we will learn more about how to apply styles to you widgets and app.
+In the following chapter we will learn more about how to apply styles to your widgets and app.

@@ -1,3 +1,0 @@
-# Animator
-
-TODO: Animator docs

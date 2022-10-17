@@ -1,0 +1,20 @@
+Screen {
+    layout: grid;
+    grid-size: 3 4;
+    grid-rows: 1fr;
+    grid-columns: 1fr;
+    grid-gutter: 1;
+}
+
+Static {
+    color: auto;
+    background: lightblue;
+    height: 100%;
+    padding: 1 2;
+}
+
+#static1 {
+    tint: magenta 40%;
+    row-span: 3;
+    column-span: 2;
+}

@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from rich.console import RenderableType
+from collections import defaultdict
 
-from rich.text import Text
 import rich.repr
+from rich.console import RenderableType
+from rich.text import Text
 
 from .. import events
 from ..reactive import Reactive, watch
@@ -55,7 +56,7 @@ class Footer(Widget):
         self._key_text = None
 
     def on_mount(self) -> None:
-        watch(self.app, "focused", self._focus_changed)
+        watch(self.screen, "focused", self._focus_changed)
 
     def _focus_changed(self, focused: Widget | None) -> None:
         self._key_text = None
@@ -85,7 +86,15 @@ class Footer(Widget):
         highlight_style = self.get_component_rich_style("footer--highlight")
         highlight_key_style = self.get_component_rich_style("footer--highlight-key")
         key_style = self.get_component_rich_style("footer--key")
-        for binding in self.app.bindings.shown_keys:
+
+        bindings = self.app.bindings.shown_keys
+
+        action_to_bindings = defaultdict(list)
+        for binding in bindings:
+            action_to_bindings[binding.action].append(binding)
+
+        for action, bindings in action_to_bindings.items():
+            binding = bindings[0]
             key_display = (
                 binding.key.upper()
                 if binding.key_display is None

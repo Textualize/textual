@@ -1,7 +1,6 @@
 from rich.segment import Segment
 from rich.style import Style
 
-
 from textual._segment_tools import line_crop, line_trim, line_pad
 
 

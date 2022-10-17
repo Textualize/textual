@@ -1,7 +1,7 @@
 import pytest
 
 from textual.css.errors import StyleValueError
-from textual.css.query import NoMatchingNodesError
+from textual.css.query import NoMatches
 from textual.dom import DOMNode, BadIdentifier
 
 
@@ -48,12 +48,12 @@ def test_get_child_gets_first_child(parent):
 
 
 def test_get_child_no_matching_child(parent):
-    with pytest.raises(NoMatchingNodesError):
+    with pytest.raises(NoMatches):
         parent.get_child(id="doesnt-exist")
 
 
 def test_get_child_only_immediate_descendents(parent):
-    with pytest.raises(NoMatchingNodesError):
+    with pytest.raises(NoMatches):
         parent.get_child(id="grandchild1")
 
 
@@ -75,3 +75,65 @@ def test_validate():
         node.remove_class("1")
     with pytest.raises(BadIdentifier):
         node.toggle_class("1")
+
+
+@pytest.fixture
+def search():
+    """
+        a
+       / \
+      b   c
+     /   / \
+    d   e   f
+    """
+    a = DOMNode(id="a")
+    b = DOMNode(id="b")
+    c = DOMNode(id="c")
+    d = DOMNode(id="d")
+    e = DOMNode(id="e")
+    f = DOMNode(id="f")
+
+    a._add_child(b)
+    a._add_child(c)
+    b._add_child(d)
+    c._add_child(e)
+    c._add_child(f)
+
+    yield a
+
+
+def test_walk_children_depth(search):
+    children = [
+        node.id for node in search.walk_children(method="depth", with_self=False)
+    ]
+    assert children == ["b", "d", "c", "e", "f"]
+
+
+def test_walk_children_with_self_depth(search):
+    children = [
+        node.id for node in search.walk_children(method="depth", with_self=True)
+    ]
+    assert children == ["a", "b", "d", "c", "e", "f"]
+
+
+def test_walk_children_breadth(search):
+    children = [
+        node.id for node in search.walk_children(with_self=False, method="breadth")
+    ]
+    print(children)
+    assert children == ["b", "c", "d", "e", "f"]
+
+
+def test_walk_children_with_self_breadth(search):
+    children = [
+        node.id for node in search.walk_children(with_self=True, method="breadth")
+    ]
+    print(children)
+    assert children == ["a", "b", "c", "d", "e", "f"]
+
+    children = [
+        node.id
+        for node in search.walk_children(with_self=True, method="breadth", reverse=True)
+    ]
+
+    assert children == ["f", "e", "d", "c", "b", "a"]

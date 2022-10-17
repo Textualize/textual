@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import asyncio
-from time import time
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from . import events
+from . import _clock, events
 from ._types import MessageTarget
 
 if TYPE_CHECKING:
@@ -20,7 +19,7 @@ class Driver(ABC):
         self._target = target
         self._debug = debug
         self._loop = asyncio.get_running_loop()
-        self._mouse_down_time = time()
+        self._mouse_down_time = _clock.get_time_no_wait()
 
     def send_event(self, event: events.Event) -> None:
         asyncio.run_coroutine_threadsafe(

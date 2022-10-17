@@ -1,10 +1,9 @@
-import json
 from contextlib import redirect_stdout
 from datetime import datetime
 
+import msgpack
 import time_machine
 
-import msgpack
 from textual.devtools.redirect_output import StdoutRedirector
 
 TIMESTAMP = 1649166819

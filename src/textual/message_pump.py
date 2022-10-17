@@ -5,7 +5,6 @@ A message pump is a class that processes messages.
 It is a base class for the App, Screen, and Widgets.
 
 """
-
 from __future__ import annotations
 
 import asyncio
@@ -15,21 +14,19 @@ from functools import partial
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, Iterable
 from weakref import WeakSet
 
-from . import events, log, messages, Logger
+from . import Logger, events, log, messages
 from ._callback import invoke
 from ._context import NoActiveAppError, active_app
-from .timer import Timer, TimerCallback
+from ._time import time
 from .case import camel_to_snake
+from .errors import DuplicateKeyHandlers
 from .events import Event
 from .message import Message
 from .reactive import Reactive
+from .timer import Timer, TimerCallback
 
 if TYPE_CHECKING:
     from .app import App
-
-
-class NoParent(Exception):
-    pass
 
 
 class CallbackError(Exception):
@@ -74,6 +71,9 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._pending_message: Message | None = None
         self._task: Task | None = None
         self._timers: WeakSet[Timer] = WeakSet()
+        self._last_idle: float = time()
+        self._max_idle: float | None = None
+        self._mounted_event = asyncio.Event()
 
     @property
     def task(self) -> Task:
@@ -279,7 +279,6 @@ class MessagePump(metaclass=MessagePumpMeta):
             await timer.stop()
         self._timers.clear()
         await self._message_queue.put(None)
-
         if self._task is not None and asyncio.current_task() != self._task:
             # Ensure everything is closed before returning
             await self._task
@@ -290,6 +289,9 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     async def _process_messages(self) -> None:
         self._running = True
+
+        await self._pre_process()
+
         try:
             await self._process_messages_loop()
         except CancelledError:
@@ -299,11 +301,22 @@ class MessagePump(metaclass=MessagePumpMeta):
             for timer in list(self._timers):
                 await timer.stop()
 
+    async def _pre_process(self) -> None:
+        """Procedure to run before processing messages."""
+        # Dispatch compose and mount messages without going through loop
+        # These events must occur in this order, and at the start.
+        try:
+            await self._dispatch_message(events.Compose(sender=self))
+            await self._dispatch_message(events.Mount(sender=self))
+        finally:
+            # This is critical, mount may be waiting
+            self._mounted_event.set()
+        Reactive._initialize_object(self)
+
     async def _process_messages_loop(self) -> None:
         """Process messages until the queue is closed."""
         _rich_traceback_guard = True
 
-        await Reactive.initialize_object(self)
         while not self._closed:
             try:
                 message = await self._get_message()
@@ -332,11 +345,20 @@ class MessagePump(metaclass=MessagePumpMeta):
             except CancelledError:
                 raise
             except Exception as error:
+                self._mounted_event.set()
                 self.app._handle_exception(error)
                 break
             finally:
+
                 self._message_queue.task_done()
-                if self._message_queue.empty():
+                current_time = time()
+
+                # Insert idle events
+                if self._message_queue.empty() or (
+                    self._max_idle is not None
+                    and current_time - self._last_idle > self._max_idle
+                ):
+                    self._last_idle = current_time
                     if not self._closed:
                         event = events.Idle(self)
                         for _cls, method in self._get_dispatch_methods(
@@ -526,20 +548,45 @@ class MessagePump(metaclass=MessagePumpMeta):
         """Dispatch a key event to method.
 
         This method will call the method named 'key_<event.key>' if it exists.
+        Some keys have aliases. The first alias found will be invoked if it exists.
+        If multiple handlers exist that match the key, an exception is raised.
 
         Args:
             event (events.Key): A key event.
 
         Returns:
             bool: True if key was handled, otherwise False.
+
+        Raises:
+            DuplicateKeyHandlers: When there's more than 1 handler that could handle this key.
         """
-        key_method = getattr(self, f"key_{event.key_name}", None) or getattr(
-            self, f"_key_{event.key_name}", None
-        )
-        if key_method is not None:
-            await invoke(key_method, event)
-            return True
-        return False
+
+        def get_key_handler(pump: MessagePump, key: str) -> Callable | None:
+            """Look for the public and private handler methods by name on self."""
+            public_handler_name = f"key_{key}"
+            public_handler = getattr(pump, public_handler_name, None)
+
+            private_handler_name = f"_key_{key}"
+            private_handler = getattr(pump, private_handler_name, None)
+
+            return public_handler or private_handler
+
+        invoked_method = None
+        key_name = event.key_name
+        if not key_name:
+            return False
+
+        for key_alias in event.key_aliases:
+            key_method = get_key_handler(self, key_alias)
+            if key_method is not None:
+                if invoked_method:
+                    _raise_duplicate_key_handlers_error(
+                        key_name, invoked_method.__name__, key_method.__name__
+                    )
+                await invoke(key_method, event)
+                invoked_method = key_method
+
+        return invoked_method is not None
 
     async def on_timer(self, event: events.Timer) -> None:
         event.prevent_default()
@@ -551,3 +598,15 @@ class MessagePump(metaclass=MessagePumpMeta):
                 raise CallbackError(
                     f"unable to run callback {event.callback!r}; {error}"
                 )
+
+
+def _raise_duplicate_key_handlers_error(
+    key_name: str, first_handler: str, second_handler: str
+) -> None:
+    """Raise exception for case where user presses a key and there are multiple candidate key handler methods for it."""
+    raise DuplicateKeyHandlers(
+        f"Multiple handlers for key press {key_name!r}.\n"
+        f"We found both {first_handler!r} and {second_handler!r}, "
+        f"and didn't know which to call.\n"
+        f"Consider combining them into a single handler.",
+    )

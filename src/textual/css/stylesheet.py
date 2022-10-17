@@ -16,7 +16,6 @@ from rich.syntax import Syntax
 from rich.text import Text
 
 from .. import messages
-from .._profile import timer
 from ..dom import DOMNode
 from ..widget import Widget
 from .errors import StylesheetError
@@ -250,7 +249,7 @@ class Stylesheet:
                 css = css_file.read()
             path = os.path.abspath(filename)
         except Exception as error:
-            raise StylesheetError(f"unable to read {filename!r}; {error}")
+            raise StylesheetError(f"unable to read CSS file {filename!r}") from None
         self.source[str(path)] = CssSource(css, False, 0)
         self._require_parse = True
 
@@ -368,6 +367,7 @@ class Stylesheet:
             rules = [rule for rule in reversed(self.rules) if rule in limit_rules]
         else:
             rules = reversed(self.rules)
+
         # Collect the rules defined in the stylesheet
         node._has_hover_style = False
         for rule in rules:
@@ -424,7 +424,6 @@ class Stylesheet:
 
         # Calculate replacement rules (defaults + new rules)
         new_styles = Styles(node, rules)
-
         if new_styles == base_styles:
             # Nothing to change, return early
             return

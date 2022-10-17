@@ -68,6 +68,16 @@ class Offset(NamedTuple):
         """
         return self == (0, 0)
 
+    @property
+    def clamped(self) -> Offset:
+        """Ensure x and y are above zero.
+
+        Returns:
+            Offset: New offset.
+        """
+        x, y = self
+        return Offset(0 if x < 0 else x, 0 if y < 0 else y)
+
     def __bool__(self) -> bool:
         return self != (0, 0)
 
@@ -223,7 +233,7 @@ class Size(NamedTuple):
 class Region(NamedTuple):
     """Defines a rectangular region.
 
-    A Region consists a coordinate (x and y) and dimensions (width and height).
+    A Region consists of a coordinate (x and y) and dimensions (width and height).
 
     ```
       (x, y)
@@ -346,7 +356,8 @@ class Region(NamedTuple):
 
     def __bool__(self) -> bool:
         """A Region is considered False when it has no area."""
-        return bool(self.width and self.height)
+        _, _, width, height = self
+        return width * height > 0
 
     @property
     def column_span(self) -> tuple[int, int]:
@@ -603,6 +614,7 @@ class Region(NamedTuple):
             raise TypeError(f"a tuple of two integers is required, not {point!r}")
         return (x2 > ox >= x1) and (y2 > oy >= y1)
 
+    @lru_cache(maxsize=1024)
     def contains_region(self, other: Region) -> bool:
         """Check if a region is entirely contained within this region.
 

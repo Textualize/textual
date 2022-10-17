@@ -31,6 +31,13 @@ def test_css():
     assert Color(10, 20, 30, 0.5).css == "rgba(10,20,30,0.5)"
 
 
+def test_monochrome():
+    assert Color(10, 20, 30).monochrome == Color(19, 19, 19)
+    assert Color(10, 20, 30, 0.5).monochrome == Color(19, 19, 19, 0.5)
+    assert Color(255, 255, 255).monochrome == Color(255, 255, 255)
+    assert Color(0, 0, 0).monochrome == Color(0, 0, 0)
+
+
 def test_rgb():
     assert Color(10, 20, 30, 0.55).rgb == (10, 20, 30)
 

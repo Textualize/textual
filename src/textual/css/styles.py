@@ -11,7 +11,7 @@ import rich.repr
 from rich.style import Style
 
 from .._types import CallbackType
-from .._animator import Animation, EasingFunction, BoundAnimator
+from .._animator import BoundAnimator, DEFAULT_EASING, Animatable, EasingFunction
 from ..color import Color
 from ..geometry import Offset, Spacing
 from ._style_properties import (
@@ -163,10 +163,10 @@ class RulesMap(TypedDict, total=False):
     link_background: Color
     link_style: Style
 
-    hover_color: Color
-    auto_hover_color: bool
-    hover_background: Color
-    hover_style: Style
+    link_hover_color: Color
+    auto_link_hover_color: bool
+    link_hover_background: Color
+    link_hover_style: Style
 
 
 RULE_NAMES = list(RulesMap.__annotations__.keys())
@@ -207,8 +207,8 @@ class StylesBase(ABC):
         "scrollbar_background_active",
         "link_color",
         "link_background",
-        "hover_color",
-        "hover_background",
+        "link_hover_color",
+        "link_hover_background",
     }
 
     node: DOMNode | None = None
@@ -300,10 +300,10 @@ class StylesBase(ABC):
     link_background = ColorProperty("transparent")
     link_style = StyleFlagsProperty()
 
-    hover_color = ColorProperty("transparent")
-    auto_hover_color = BooleanProperty(False)
-    hover_background = ColorProperty("transparent")
-    hover_style = StyleFlagsProperty()
+    link_hover_color = ColorProperty("transparent")
+    auto_link_hover_color = BooleanProperty(False)
+    link_hover_background = ColorProperty("transparent")
+    link_hover_style = StyleFlagsProperty()
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles contains the same rules."""
@@ -573,7 +573,7 @@ class Styles(StylesBase):
         if self.node is not None:
             self.node.refresh(layout=layout)
             if children:
-                for child in self.node.walk_children(with_self=False):
+                for child in self.node.walk_children(with_self=False, reverse=True):
                     child.refresh(layout=layout)
 
     def reset(self) -> None:
@@ -607,7 +607,7 @@ class Styles(StylesBase):
                 default (i.e. in Widget.DEFAULT_CSS) rules. False if they're from user defined CSS.
 
         Returns:
-            list[tuple[str, Specificity5, Any]]]: A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
+            list[tuple[str, Specificity6, Any]]]: A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
         """
         is_important = self.important.__contains__
 
@@ -643,7 +643,7 @@ class Styles(StylesBase):
         speed: float | None,
         easing: EasingFunction,
         on_complete: CallbackType | None = None,
-    ) -> Animation | None:
+    ) -> ScalarAnimation | None:
         # from ..widget import Widget
         # node = self.node
         # assert isinstance(self.node, Widget)
@@ -765,29 +765,57 @@ class Styles(StylesBase):
             append_declaration("background", self.background.hex)
         if has_rule("text_style"):
             append_declaration("text-style", str(get_rule("text_style")))
+        if has_rule("tint"):
+            append_declaration("tint", self.tint.css)
 
-        if has_rule("overflow-x"):
+        if has_rule("overflow_x"):
             append_declaration("overflow-x", self.overflow_x)
-        if has_rule("overflow-y"):
+        if has_rule("overflow_y"):
             append_declaration("overflow-y", self.overflow_y)
-        if has_rule("scrollbar-gutter"):
+
+        if has_rule("scrollbar_color"):
+            append_declaration("scrollbar-color", self.scrollbar_color.css)
+        if has_rule("scrollbar_color_hover"):
+            append_declaration("scrollbar-color-hover", self.scrollbar_color_hover.css)
+        if has_rule("scrollbar_color_active"):
+            append_declaration(
+                "scrollbar-color-active", self.scrollbar_color_active.css
+            )
+
+        if has_rule("scrollbar_corner_color"):
+            append_declaration(
+                "scrollbar-corner-color", self.scrollbar_corner_color.css
+            )
+
+        if has_rule("scrollbar_background"):
+            append_declaration("scrollbar-background", self.scrollbar_background.css)
+        if has_rule("scrollbar_background_hover"):
+            append_declaration(
+                "scrollbar-background-hover", self.scrollbar_background_hover.css
+            )
+        if has_rule("scrollbar_background_active"):
+            append_declaration(
+                "scrollbar-background-active", self.scrollbar_background_active.css
+            )
+
+        if has_rule("scrollbar_gutter"):
             append_declaration("scrollbar-gutter", self.scrollbar_gutter)
-        if has_rule("scrollbar-size"):
+        if has_rule("scrollbar_size"):
             append_declaration(
                 "scrollbar-size",
                 f"{self.scrollbar_size_horizontal} {self.scrollbar_size_vertical}",
             )
         else:
-            if has_rule("scrollbar-size-horizontal"):
+            if has_rule("scrollbar_size_horizontal"):
                 append_declaration(
                     "scrollbar-size-horizontal", str(self.scrollbar_size_horizontal)
                 )
-            if has_rule("scrollbar-size-vertical"):
+            if has_rule("scrollbar_size_vertical"):
                 append_declaration(
                     "scrollbar-size-vertical", str(self.scrollbar_size_vertical)
                 )
 
-        if has_rule("box-sizing"):
+        if has_rule("box_sizing"):
             append_declaration("box-sizing", self.box_sizing)
         if has_rule("width"):
             append_declaration("width", str(self.width))
@@ -830,30 +858,55 @@ class Styles(StylesBase):
             )
         elif has_rule("content_align_vertical"):
             append_declaration("content-align-vertical", self.content_align_vertical)
-        elif has_rule("grid_columns"):
+
+        if has_rule("text_align"):
+            append_declaration("text-align", self.text_align)
+
+        if has_rule("opacity"):
+            append_declaration("opacity", str(self.opacity))
+        if has_rule("text_opacity"):
+            append_declaration("text-opacity", str(self.text_opacity))
+
+        if has_rule("grid_columns"):
             append_declaration(
                 "grid-columns",
                 " ".join(str(scalar) for scalar in self.grid_columns or ()),
             )
-        elif has_rule("grid_rows"):
+        if has_rule("grid_rows"):
             append_declaration(
                 "grid-rows",
                 " ".join(str(scalar) for scalar in self.grid_rows or ()),
             )
-        elif has_rule("grid_size_columns"):
+        if has_rule("grid_size_columns"):
             append_declaration("grid-size-columns", str(self.grid_size_columns))
-        elif has_rule("grid_size_rows"):
+        if has_rule("grid_size_rows"):
             append_declaration("grid-size-rows", str(self.grid_size_rows))
-        elif has_rule("grid_gutter_horizontal"):
+
+        if has_rule("grid_gutter_horizontal"):
             append_declaration(
                 "grid-gutter-horizontal", str(self.grid_gutter_horizontal)
             )
-        elif has_rule("grid_gutter_vertical"):
+        if has_rule("grid_gutter_vertical"):
             append_declaration("grid-gutter-vertical", str(self.grid_gutter_vertical))
-        elif has_rule("row_span"):
+
+        if has_rule("row_span"):
             append_declaration("row-span", str(self.row_span))
-        elif has_rule("column_span"):
+        if has_rule("column_span"):
             append_declaration("column-span", str(self.column_span))
+
+        if has_rule("link_color"):
+            append_declaration("link-color", self.link_color.css)
+        if has_rule("link_background"):
+            append_declaration("link-background", self.link_background.css)
+        if has_rule("link_style"):
+            append_declaration("link-style", str(self.link_style))
+
+        if has_rule("link_hover_color"):
+            append_declaration("link-hover-color", self.link_hover_color.css)
+        if has_rule("link_hover_background"):
+            append_declaration("link-hover-background", self.link_hover_background.css)
+        if has_rule("link_hover_style"):
+            append_declaration("link-hover-style", str(self.link_hover_style))
 
         lines.sort()
         return lines
@@ -889,22 +942,44 @@ class RenderStyles(StylesBase):
         assert self.node is not None
         return self.node.rich_style
 
-    @property
-    def animate(self) -> BoundAnimator:
-        """Get an animator to animate style.
+    def animate(
+        self,
+        attribute: str,
+        value: float | Animatable,
+        *,
+        final_value: object = ...,
+        duration: float | None = None,
+        speed: float | None = None,
+        delay: float = 0.0,
+        easing: EasingFunction | str = DEFAULT_EASING,
+        on_complete: CallbackType | None = None,
+    ) -> None:
+        """Animate an attribute.
 
-        Example:
-            ```python
-            self.animate("brightness", 0.5)
-            ```
+        Args:
+            attribute (str): Name of the attribute to animate.
+            value (float | Animatable): The value to animate to.
+            final_value (object, optional): The final value of the animation. Defaults to `value` if not set.
+            duration (float | None, optional): The duration of the animate. Defaults to None.
+            speed (float | None, optional): The speed of the animation. Defaults to None.
+            delay (float, optional): A delay (in seconds) before the animation starts. Defaults to 0.0.
+            easing (EasingFunction | str, optional): An easing method. Defaults to "in_out_cubic".
+            on_complete (CallbackType | None, optional): A callable to invoke when the animation is finished. Defaults to None.
 
-        Returns:
-            BoundAnimator: An animator bound to this widget.
         """
         if self._animate is None:
             self._animate = self.node.app.animator.bind(self)
         assert self._animate is not None
-        return self._animate
+        self._animate(
+            attribute,
+            value,
+            final_value=final_value,
+            duration=duration,
+            speed=speed,
+            delay=delay,
+            easing=easing,
+            on_complete=on_complete,
+        )
 
     def __rich_repr__(self) -> rich.repr.Result:
         for rule_name in RULE_NAMES:

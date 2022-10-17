@@ -11,3 +11,7 @@ class NoWidget(TextualError):
 
 class RenderError(TextualError):
     """An object could not be rendered."""
+
+
+class DuplicateKeyHandlers(TextualError):
+    """More than one handler for a single key press. E.g. key_ctrl_i and key_tab handlers both found on one object."""

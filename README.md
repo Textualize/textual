@@ -10,14 +10,15 @@ Textual is a Python framework for creating interactive applications that run in 
 
   This is the [code_browser.py](./examples/code_browser.py) example which clocks in at 61 lines (*including* docstrings and blank lines).
 
-  https://user-images.githubusercontent.com/554369/189394703-364b5caa-97e0-45db-907d-7b1620d6411f.mov
+
+https://user-images.githubusercontent.com/554369/196156524-5edea78c-1226-4103-91f3-e82d6a52bd2b.mov  
   
  </details>
 
 
 ## About
 
-Textual adds interactivity to [Rich](https://github.com/Textualize/rich) with a Python API inspired by modern development development.
+Textual adds interactivity to [Rich](https://github.com/Textualize/rich) with a Python API inspired by modern web development.
 
 On modern terminal software (installed by default on most systems), Textual apps can use **16.7 million** colors with mouse support and smooth flicker-free animation. A powerful layout engine and re-usable components makes it possible to build apps that rival the desktop and web experience. 
 
@@ -50,7 +51,9 @@ This is the *easing* reference which demonstrates the easing parameter on animat
 textual easing
 ```
 
-https://user-images.githubusercontent.com/554369/189485538-31e794ff-61d7-4faf-902a-6e90a9d76e5b.mov
+
+https://user-images.githubusercontent.com/554369/196157100-352852a6-2b09-4dc8-a888-55b53570aff9.mov
+
 
  </details>
 
@@ -63,9 +66,9 @@ This is the borders reference which demonstrates some of the borders styles in T
 ```bash
 textual borders
 ```
-  
 
-https://user-images.githubusercontent.com/554369/189485735-cb2b4135-caee-46d7-a118-66cd7ed9eef5.mov
+
+https://user-images.githubusercontent.com/554369/196158235-4b45fb78-053d-4fd5-b285-e09b4f1c67a8.mov
 
 
   

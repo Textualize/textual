@@ -32,6 +32,5 @@ class EventTarget(Protocol):
         ...
 
 
-MessageHandler = Callable[["Message"], Awaitable]
 Lines = List[List[Segment]]
 CallbackType = Union[Callable[[], Awaitable[None]], Callable[[], None]]

@@ -1,11 +1,12 @@
 site_name: Textual
 site_url: https://textual.textualize.io/
 repo_url: https://github.com/textualize/textual/
+edit_uri: edit/css/docs/
 
 nav:
   - Introduction:
     - "index.md"
-    - "getting_started.md"
+    - "getting_started.md"  
   - "tutorial.md"
   - Guide:
     - "guide/index.md"
@@ -13,14 +14,16 @@ nav:
     - "guide/app.md"
     - "guide/styles.md"
     - "guide/CSS.md"
+    - "guide/queries.md"
     - "guide/layout.md"
     - "guide/events.md"
     - "guide/input.md"
     - "guide/actions.md"
     - "guide/reactivity.md"
     - "guide/widgets.md"
-    - "guide/animator.md"
+    - "guide/animation.md"
     - "guide/screens.md"
+  - "roadmap.md"
   - How to:
     - "how-to/index.md"
     - "how-to/animation.md"
@@ -66,6 +69,7 @@ nav:
     - "styles/layer.md"
     - "styles/layers.md"
     - "styles/layout.md"
+    - "styles/links.md"
     - "styles/margin.md"
     - "styles/max_height.md"
     - "styles/max_width.md"
@@ -86,11 +90,11 @@ nav:
     - "styles/visibility.md"
     - "styles/width.md"
   - Widgets:
+    - "widgets/index.md"
     - "widgets/button.md"
     - "widgets/data_table.md"
     - "widgets/footer.md"
     - "widgets/header.md"
-    - "widgets/index.md"
     - "widgets/input.md"
     - "widgets/static.md"
     - "widgets/tree_control.md"
@@ -113,6 +117,8 @@ nav:
     - "reference/static.md"
     - "reference/timer.md"
     - "reference/widget.md"
+  - "help.md"
+
 
 
 markdown_extensions:
@@ -152,7 +158,7 @@ markdown_extensions:
 
 theme:
   name: material
-  custom_dir: custom_theme
+  custom_dir: docs/custom_theme
   features:
     - navigation.tabs
     - navigation.indexes

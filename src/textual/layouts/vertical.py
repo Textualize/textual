@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from fractions import Fraction
-from typing import cast, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from ..geometry import Region, Size
 from .._layout import ArrangeResult, Layout, WidgetPlacement

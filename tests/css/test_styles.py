@@ -123,6 +123,18 @@ def test_get_opacity_default():
     assert styles.text_opacity == 1.0
 
 
+def test_styles_css_property():
+    css = "opacity: 50%; text-opacity: 20%; background: green; color: red; tint: dodgerblue 20%;"
+    styles = Styles().parse(css, path="")
+    assert styles.css == (
+        "background: #008000;\n"
+        "color: #FF0000;\n"
+        "opacity: 0.5;\n"
+        "text-opacity: 0.2;\n"
+        "tint: rgba(30,144,255,0.2);"
+    )
+
+
 @pytest.mark.parametrize(
     "set_value, expected",
     [

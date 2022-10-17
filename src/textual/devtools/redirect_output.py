@@ -7,7 +7,7 @@ from .client import DevtoolsLog
 from .._log import LogGroup, LogVerbosity
 
 if TYPE_CHECKING:
-    from .devtools.client import DevtoolsClient
+    from .client import DevtoolsClient
 
 
 class StdoutRedirector:
@@ -39,7 +39,9 @@ class StdoutRedirector:
         if not self.devtools.is_connected:
             return
 
-        caller = inspect.stack()[1]
+        previous_frame = inspect.currentframe().f_back
+        caller = inspect.getframeinfo(previous_frame)
+
         self._buffer.append(DevtoolsLog(string, caller=caller))
 
         # By default, `print` adds a "\n" suffix which results in a buffer
