@@ -1130,7 +1130,7 @@ class App(Generic[ReturnType], DOMNode):
     def _register(
         self, parent: DOMNode, *anon_widgets: Widget, **widgets: Widget
     ) -> list[Widget]:
-        """Mount widget(s) so they may receive events.
+        """Register widget(s) so they may receive events.
 
         Args:
             parent (Widget): Parent Widget
