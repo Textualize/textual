@@ -91,7 +91,7 @@ class Input(Widget, can_focus=True):
     COMPONENT_CLASSES = {"input--cursor", "input--placeholder"}
 
     cursor_blink = reactive(True)
-    value = reactive("", layout=True)
+    value = reactive("", layout=True, init=False)
     input_scroll_offset = reactive(0)
     cursor_position = reactive(0)
     view_position = reactive(0)
@@ -104,7 +104,7 @@ class Input(Widget, can_focus=True):
 
     def __init__(
         self,
-        value: str = "",
+        value: str | None = None,
         placeholder: str = "",
         highlighter: Highlighter | None = None,
         password: bool = False,
@@ -113,7 +113,8 @@ class Input(Widget, can_focus=True):
         classes: str | None = None,
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
-        self.value = value
+        if value is not None:
+            self.value = value
         self.placeholder = placeholder
         self.highlighter = highlighter
         self.password = password
@@ -169,7 +170,6 @@ class Input(Widget, can_focus=True):
         return self._position_to_cell(len(self.value)) + 1
 
     def render(self) -> RenderableType:
-        self.view_position = self.view_position
         if not self.value:
             placeholder = Text(self.placeholder)
             placeholder.stylize(self.get_component_rich_style("input--placeholder"))
