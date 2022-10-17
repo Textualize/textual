@@ -1,0 +1,9 @@
+Screen {
+    align: center middle;
+}
+
+#test {
+    border: solid white;
+    background: blue;
+}
+

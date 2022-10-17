@@ -114,7 +114,9 @@ def arrange(
                         for placement in layout_placements
                     ]
                 ).size
-                placement_offset += styles._align_size(placement_size, size).clamped
+                placement_offset += styles._align_size(
+                    placement_size, region.size
+                ).clamped
 
             if placement_offset:
                 layout_placements = [
