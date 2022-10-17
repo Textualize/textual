@@ -93,7 +93,7 @@ class Input(Widget, can_focus=True):
     cursor_blink = reactive(True)
     value = reactive("", layout=True, init=False)
     input_scroll_offset = reactive(0)
-    cursor_position = reactive(0, init=False)
+    cursor_position = reactive(0)
     view_position = reactive(0)
     placeholder = reactive("")
     complete = reactive("")
@@ -118,7 +118,6 @@ class Input(Widget, can_focus=True):
         self.placeholder = placeholder
         self.highlighter = highlighter
         self.password = password
-        self.view_position = 0
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""
