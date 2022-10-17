@@ -37,7 +37,7 @@ from .css.stylesheet import Stylesheet
 from .design import ColorSystem
 from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
 from .devtools.redirect_output import StdoutRedirector
-from .dom import DOMNode, NoScreen
+from .dom import DOMNode
 from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
 from .features import FeatureFlag, parse_features
@@ -47,7 +47,7 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
-from .widget import Widget
+from .widget import AwaitMount, Widget
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
@@ -144,6 +144,10 @@ class App(Generic[ReturnType], DOMNode):
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
 
+    title: Reactive[str] = Reactive("Textual")
+    sub_title: Reactive[str] = Reactive("")
+    dark: Reactive[bool] = Reactive(True)
+
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
@@ -227,10 +231,6 @@ class App(Generic[ReturnType], DOMNode):
             else None
         )
         self._screenshot: str | None = None
-
-    title: Reactive[str] = Reactive("Textual")
-    sub_title: Reactive[str] = Reactive("")
-    dark: Reactive[bool] = Reactive(True)
 
     def animate(
         self,
@@ -696,21 +696,24 @@ class App(Generic[ReturnType], DOMNode):
         self._require_stylesheet_update.add(self.screen if node is None else node)
         self.check_idle()
 
-    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
+    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> AwaitMount:
         """Mount widgets. Widgets specified as positional args, or keywords args. If supplied
         as keyword args they will be assigned an id of the key.
 
         """
-        self._register(self.screen, *anon_widgets, **widgets)
+        mounted_widgets = self._register(self.screen, *anon_widgets, **widgets)
+        return AwaitMount(mounted_widgets)
 
-    def mount_all(self, widgets: Iterable[Widget]) -> None:
+    def mount_all(self, widgets: Iterable[Widget]) -> AwaitMount:
         """Mount widgets from an iterable.
 
         Args:
             widgets (Iterable[Widget]): An iterable of widgets.
         """
-        for widget in widgets:
+        mounted_widgets = list(widgets)
+        for widget in mounted_widgets:
             self._register(self.screen, widget)
+        return AwaitMount(mounted_widgets)
 
     def is_screen_installed(self, screen: Screen | str) -> bool:
         """Check if a given screen has been installed.
@@ -1008,23 +1011,36 @@ class App(Generic[ReturnType], DOMNode):
             self.set_interval(0.25, self.css_monitor, name="css monitor")
             self.log.system("[b green]STARTED[/]", self.css_monitor)
 
-        process_messages = super()._process_messages
-
         async def run_process_messages():
-            compose_event = events.Compose(sender=self)
-            await self._dispatch_message(compose_event)
-            mount_event = events.Mount(sender=self)
-            await self._dispatch_message(mount_event)
 
-            Reactive.initialize_object(self)
+            try:
+                await self._dispatch_message(events.Compose(sender=self))
+                await self._dispatch_message(events.Mount(sender=self))
+            finally:
+                self._mounted_event.set()
+
+            Reactive._initialize_object(self)
+
             self.title = self._title
             self.stylesheet.update(self)
             self.refresh()
+
             await self.animator.start()
             await self._ready()
             if ready_callback is not None:
                 await ready_callback()
-            await process_messages()
+
+            self._running = True
+
+            try:
+                await self._process_messages_loop()
+            except asyncio.CancelledError:
+                pass
+            finally:
+                self._running = False
+                for timer in list(self._timers):
+                    await timer.stop()
+
             await self.animator.stop()
             await self._close_all()
 
@@ -1059,6 +1075,9 @@ class App(Generic[ReturnType], DOMNode):
             if self.devtools.is_connected:
                 await self._disconnect_devtools()
 
+    async def _pre_process(self) -> None:
+        pass
+
     async def _ready(self) -> None:
         """Called immediately prior to processing messages.
 
@@ -1083,9 +1102,9 @@ class App(Generic[ReturnType], DOMNode):
 
         self.set_timer(screenshot_timer, on_screenshot, name="screenshot timer")
 
-    def _on_compose(self) -> None:
-        widgets = self.compose()
-        self.mount_all(widgets)
+    async def _on_compose(self) -> None:
+        widgets = list(self.compose())
+        await self.mount_all(widgets)
 
     def _on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
@@ -1110,15 +1129,15 @@ class App(Generic[ReturnType], DOMNode):
 
     def _register(
         self, parent: DOMNode, *anon_widgets: Widget, **widgets: Widget
-    ) -> None:
-        """Mount widget(s) so they may receive events.
+    ) -> list[Widget]:
+        """Register widget(s) so they may receive events.
 
         Args:
             parent (Widget): Parent Widget
         """
         if not anon_widgets and not widgets:
-            return
-        name_widgets: Iterable[tuple[str | None, Widget]]
+            return []
+        name_widgets: list[tuple[str | None, Widget]]
         name_widgets = [*((None, widget) for widget in anon_widgets), *widgets.items()]
         apply_stylesheet = self.stylesheet.apply
 
@@ -1133,8 +1152,8 @@ class App(Generic[ReturnType], DOMNode):
                     self._register(widget, *widget.children)
                 apply_stylesheet(widget)
 
-        for _widget_id, widget in name_widgets:
-            widget.post_message_no_wait(events.Mount(sender=parent))
+        registered_widgets = [widget for _, widget in name_widgets]
+        return registered_widgets
 
     def _unregister(self, widget: Widget) -> None:
         """Unregister a widget.
@@ -1142,11 +1161,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widget (Widget): A Widget to unregister
         """
-        try:
-            widget.screen._reset_focus(widget)
-        except NoScreen:
-            pass
-
+        widget.reset_focus()
         if isinstance(widget._parent, Widget):
             widget._parent.children._remove(widget)
             widget._detach()
@@ -1164,9 +1179,16 @@ class App(Generic[ReturnType], DOMNode):
         """
         widget._attach(parent)
         widget._start_messages()
-        widget.post_message_no_wait(events.Mount(sender=parent))
 
     def is_mounted(self, widget: Widget) -> bool:
+        """Check if a widget is mounted.
+
+        Args:
+            widget (Widget): A widget.
+
+        Returns:
+            bool: True of the widget is mounted.
+        """
         return widget in self._registry
 
     async def _close_all(self) -> None:
@@ -1388,22 +1410,22 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
-        self.screen._screen_resized(event.size)
         await self.screen.post_message(event)
 
     async def _on_remove(self, event: events.Remove) -> None:
         widget = event.widget
         parent = widget.parent
-        if parent is not None:
-            parent.refresh(layout=True)
+
+        widget.reset_focus()
 
         remove_widgets = widget.walk_children(
             Widget, with_self=True, method="depth", reverse=True
         )
         for child in remove_widgets:
-            self._unregister(child)
-        for child in remove_widgets:
             await child._close_messages()
+            self._unregister(child)
+        if parent is not None:
+            parent.refresh(layout=True)
 
     async def action_press(self, key: str) -> None:
         await self.press(key)

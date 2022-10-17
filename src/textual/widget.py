@@ -1,10 +1,20 @@
 from __future__ import annotations
 
-from asyncio import Lock
+from asyncio import Lock, wait, create_task
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
-from typing import TYPE_CHECKING, ClassVar, Collection, Iterable, NamedTuple, cast
+from typing import (
+    Awaitable,
+    Generator,
+    TYPE_CHECKING,
+    ClassVar,
+    Collection,
+    Iterable,
+    NamedTuple,
+    Sequence,
+    cast,
+)
 
 import rich.repr
 from rich.console import (
@@ -57,6 +67,28 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
     "end": "right",
     "justify": "full",
 }
+
+
+class AwaitMount:
+    """An awaitable returned by mount() and mount_all().
+
+    Example:
+        await self.mount(Static("foo"))
+
+    """
+
+    def __init__(self, widgets: Sequence[Widget]) -> None:
+        self._widgets = widgets
+
+    def __await__(self) -> Generator[None, None, None]:
+        async def await_mount() -> None:
+            aws = [
+                create_task(widget._mounted_event.wait()) for widget in self._widgets
+            ]
+            if aws:
+                await wait(aws)
+
+        return await_mount().__await__()
 
 
 class _Styled:
@@ -316,7 +348,7 @@ class Widget(DOMNode):
         """Clear arrangement cache, forcing a new arrange operation."""
         self._arrangement = None
 
-    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> None:
+    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> AwaitMount:
         """Mount child widgets (making this widget a container).
 
         Widgets may be passed as positional arguments or keyword arguments. If keyword arguments,
@@ -327,9 +359,12 @@ class Widget(DOMNode):
             self.mount(Static("hello"), header=Header())
             ```
 
+        Returns:
+            AwaitMount: An awaitable that waits for widgets to be mounted.
+
         """
-        self.app._register(self, *anon_widgets, **widgets)
-        self.app.screen.refresh(layout=True)
+        mounted_widgets = self.app._register(self, *anon_widgets, **widgets)
+        return AwaitMount(mounted_widgets)
 
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.
@@ -1812,7 +1847,19 @@ class Widget(DOMNode):
             scroll_visible (bool, optional): Scroll parent to make this widget
                 visible. Defaults to True.
         """
-        self.screen.set_focus(self, scroll_visible=scroll_visible)
+
+        def set_focus(widget: Widget):
+            """Callback to set the focus."""
+            widget.screen.set_focus(self, scroll_visible=scroll_visible)
+
+        self.app.call_later(set_focus, self)
+
+    def reset_focus(self) -> None:
+        """Reset the focus (move it to the next available widget)."""
+        try:
+            self.screen._reset_focus(self)
+        except NoScreen:
+            pass
 
     def capture_mouse(self, capture: bool = True) -> None:
         """Capture (or release) the mouse.
@@ -1857,10 +1904,11 @@ class Widget(DOMNode):
         await self.action(binding.action)
         return True
 
+    async def _on_compose(self, event: events.Compose) -> None:
+        widgets = list(self.compose())
+        await self.mount(*widgets)
+
     def _on_mount(self, event: events.Mount) -> None:
-        widgets = self.compose()
-        self.mount(*widgets)
-        # Preset scrollbars if not automatic
         if self.styles.overflow_y == "scroll":
             self.show_vertical_scrollbar = True
         if self.styles.overflow_x == "scroll":
@@ -1932,7 +1980,7 @@ class Widget(DOMNode):
 
     def _on_hide(self, event: events.Hide) -> None:
         if self.has_focus:
-            self.screen._reset_focus(self)
+            self.reset_focus()
 
     def _on_scroll_to_region(self, message: messages.ScrollToRegion) -> None:
         self.scroll_to_region(message.region, animate=True)

@@ -7,6 +7,9 @@ class ModalScreen(Screen):
         yield Pretty(self.app.screen_stack)
         yield Footer()
 
+    def on_mount(self) -> None:
+        pretty = self.query_one("Pretty")
+
     def on_screen_resume(self):
         self.query_one(Pretty).update(self.app.screen_stack)
 

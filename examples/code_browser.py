@@ -30,7 +30,7 @@ class CodeBrowser(App):
 
     def watch_show_tree(self, show_tree: bool) -> None:
         """Called when show_tree is modified."""
-        self.set_class(show_tree, "-show-tree")
+        self.set_class(show_tree, "-show-tree")        
 
     def compose(self) -> ComposeResult:
         """Compose our UI."""

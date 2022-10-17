@@ -6,7 +6,7 @@ edit_uri: edit/css/docs/
 nav:
   - Introduction:
     - "index.md"
-    - "getting_started.md"
+    - "getting_started.md"  
   - "tutorial.md"
   - Guide:
     - "guide/index.md"
@@ -23,6 +23,7 @@ nav:
     - "guide/widgets.md"
     - "guide/animation.md"
     - "guide/screens.md"
+  - "roadmap.md"
   - How to:
     - "how-to/index.md"
     - "how-to/animation.md"
@@ -116,6 +117,8 @@ nav:
     - "reference/static.md"
     - "reference/timer.md"
     - "reference/widget.md"
+  - "help.md"
+
 
 
 markdown_extensions:

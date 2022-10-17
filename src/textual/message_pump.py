@@ -73,6 +73,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._timers: WeakSet[Timer] = WeakSet()
         self._last_idle: float = time()
         self._max_idle: float | None = None
+        self._mounted_event = asyncio.Event()
 
     @property
     def task(self) -> Task:
@@ -278,18 +279,19 @@ class MessagePump(metaclass=MessagePumpMeta):
             await timer.stop()
         self._timers.clear()
         await self._message_queue.put(None)
-
         if self._task is not None and asyncio.current_task() != self._task:
             # Ensure everything is closed before returning
             await self._task
 
     def _start_messages(self) -> None:
         """Start messages task."""
-        Reactive.initialize_object(self)
         self._task = asyncio.create_task(self._process_messages())
 
     async def _process_messages(self) -> None:
         self._running = True
+
+        await self._pre_process()
+
         try:
             await self._process_messages_loop()
         except CancelledError:
@@ -298,6 +300,18 @@ class MessagePump(metaclass=MessagePumpMeta):
             self._running = False
             for timer in list(self._timers):
                 await timer.stop()
+
+    async def _pre_process(self) -> None:
+        """Procedure to run before processing messages."""
+        # Dispatch compose and mount messages without going through loop
+        # These events must occur in this order, and at the start.
+        try:
+            await self._dispatch_message(events.Compose(sender=self))
+            await self._dispatch_message(events.Mount(sender=self))
+        finally:
+            # This is critical, mount may be waiting
+            self._mounted_event.set()
+        Reactive._initialize_object(self)
 
     async def _process_messages_loop(self) -> None:
         """Process messages until the queue is closed."""
@@ -331,11 +345,15 @@ class MessagePump(metaclass=MessagePumpMeta):
             except CancelledError:
                 raise
             except Exception as error:
+                self._mounted_event.set()
                 self.app._handle_exception(error)
                 break
             finally:
+
                 self._message_queue.task_done()
                 current_time = time()
+
+                # Insert idle events
                 if self._message_queue.empty() or (
                     self._max_idle is not None
                     and current_time - self._last_idle > self._max_idle
