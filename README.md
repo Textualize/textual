@@ -10,7 +10,8 @@ Textual is a Python framework for creating interactive applications that run in 
 
   This is the [code_browser.py](./examples/code_browser.py) example which clocks in at 61 lines (*including* docstrings and blank lines).
 
-  https://user-images.githubusercontent.com/554369/189394703-364b5caa-97e0-45db-907d-7b1620d6411f.mov
+
+https://user-images.githubusercontent.com/554369/196156524-5edea78c-1226-4103-91f3-e82d6a52bd2b.mov  
   
  </details>
 
