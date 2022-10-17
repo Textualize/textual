@@ -42,6 +42,7 @@ class TextLog(ScrollView, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
+        super().__init__(name=name, id=id, classes=classes)
         self.max_lines = max_lines
         self.lines: list[list[Segment]] = []
         self._line_cache: LRUCache[tuple[int, int, int, int], list[Segment]]
@@ -51,7 +52,6 @@ class TextLog(ScrollView, can_focus=True):
         self.wrap = wrap
         self.highlight = highlight
         self.highlighter = ReprHighlighter()
-        super().__init__(name=name, id=id, classes=classes)
 
     def _on_styles_updated(self) -> None:
         self._line_cache.clear()
