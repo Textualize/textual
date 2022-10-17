@@ -107,6 +107,7 @@ class Input(Widget, can_focus=True):
         value: str = "",
         placeholder: str = "",
         highlighter: Highlighter | None = None,
+        password: bool = False,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -115,6 +116,7 @@ class Input(Widget, can_focus=True):
         self.value = value
         self.placeholder = placeholder
         self.highlighter = highlighter
+        self.password = password
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""

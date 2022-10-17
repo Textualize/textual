@@ -76,30 +76,30 @@ Textual knows to *await* your event handlers if they are coroutines (i.e. prefix
 !!! tip
 
     For a friendly introduction to async programming in Python, see FastAPI's [concurrent burgers](https://fastapi.tiangolo.com/async/) article.
-    
+
 
 ## Widgets
 
 Widgets are self-contained components responsible for generating the output for a portion of the screen. Widgets respond to events in much the same way as the App. Most apps that do anything interesting will contain at least one (and probably many) widgets which together form a User Interface.
 
-Widgets can be as simple as a piece of text, a button, or a fully-fledge component like a text editor or file browser (which may contain widgets of their own).
+Widgets can be as simple as a piece of text, a button, or a fully-fledged component like a text editor or file browser (which may contain widgets of their own).
 
 ### Composing
 
-To add widgets to your app implement a [`compose()`][textual.app.App.compose] method which should return an iterable of Widget instances. A list would work, but it is convenient to yield widgets, making the method a *generator*.
+To add widgets to your app implement a [`compose()`][textual.app.App.compose] method which should return an iterable of `Widget` instances. A list would work, but it is convenient to yield widgets, making the method a *generator*.
 
-The following example imports a builtin Welcome widget and yields it from `App.compose()`.
+The following example imports a builtin `Welcome` widget and yields it from `App.compose()`.
 
 ```python title="widgets01.py"
 --8<-- "docs/examples/app/widgets01.py"
 ```
 
-When you run this code, Textual will *mount* the Welcome widget which contains Markdown content and a button:
+When you run this code, Textual will *mount* the `Welcome` widget which contains Markdown content and a button:
 
 ```{.textual path="docs/examples/app/widgets01.py"}
 ```
 
-Notice the `on_button_pressed` method which handles the [Button.Pressed][textual.widgets.Button] event sent by a button contained in the Welcome widget. The handler calls [App.exit()][textual.app.App.exit] to exit the app.
+Notice the `on_button_pressed` method which handles the [Button.Pressed][textual.widgets.Button] event sent by a button contained in the `Welcome` widget. The handler calls [App.exit()][textual.app.App.exit] to exit the app.
 
 ### Mounting
 
@@ -141,7 +141,7 @@ You may have noticed that we subclassed `App[str]` rather than the usual `App`.
 --8<-- "docs/examples/app/question01.py"
 ```
 
-The addition of `[str]` tells Mypy that `run()` is expected to return a string. It may also return `None` if [App.exit()][textual.app.App.exit] is called without a return value, so the return type of `run` will be `str | None`. Replace the `str` in `[str]` with the type of the value you intend to call the exit method with.
+The addition of `[str]` tells mypy that `run()` is expected to return a string. It may also return `None` if [App.exit()][textual.app.App.exit] is called without a return value, so the return type of `run` will be `str | None`. Replace the `str` in `[str]` with the type of the value you intend to call the exit method with.
 
 !!! note
 
@@ -151,7 +151,7 @@ The addition of `[str]` tells Mypy that `run()` is expected to return a string. 
 
 Textual apps can reference [CSS](CSS.md) files which define how your app and widgets will look, while keeping your Python code free of display related code (which tends to be messy).
 
-The chapter on [Textual CSS](CSS.md) describes how to use CSS in detail. For now lets look at how your app references external CSS files.
+The chapter on [Textual CSS](CSS.md) describes how to use CSS in detail. For now let's look at how your app references external CSS files.
 
 The following example enables loading of CSS by adding a `CSS_PATH` class variable:
 
@@ -172,7 +172,7 @@ When `"question02.py"` runs it will load `"question02.css"` and update the app a
 
 ### Classvar CSS
 
-While external CSS files are recommended for most applications, and enable some cool features like *live editing*, you can also specify the CSS directly within the Python code. 
+While external CSS files are recommended for most applications, and enable some cool features like *live editing*, you can also specify the CSS directly within the Python code.
 
 To do this set a `CSS` class variable on the app to a string containing your CSS.
 
@@ -184,4 +184,4 @@ Here's the question app with classvar CSS:
 
 ## What's next
 
-In the following chapter we will learn more about how to apply styles to you widgets and app.
+In the following chapter we will learn more about how to apply styles to your widgets and app.

@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from collections import defaultdict
 
-from rich.console import RenderableType
-
-from rich.text import Text
 import rich.repr
+from rich.console import RenderableType
+from rich.text import Text
 
 from .. import events
 from ..reactive import Reactive, watch
@@ -95,14 +94,12 @@ class Footer(Widget):
             action_to_bindings[binding.action].append(binding)
 
         for action, bindings in action_to_bindings.items():
-            key_displays = [
+            binding = bindings[0]
+            key_display = (
                 binding.key.upper()
                 if binding.key_display is None
                 else binding.key_display
-                for binding in bindings
-            ]
-            key_display = "·".join(key_displays)
-            binding = bindings[0]
+            )
             hovered = self.highlight_key == binding.key
             key_text = Text.assemble(
                 (f" {key_display} ", highlight_key_style if hovered else key_style),

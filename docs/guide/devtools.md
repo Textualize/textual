@@ -3,7 +3,7 @@
 !!! note inline end
 
     If you don't have the `textual` command on your path, you may have forgotten so install with the `dev` switch.
-    
+
     See [getting started](../getting_started.md#installation) for details.
 
 Textual comes with a command line application of the same name. The `textual` command is a super useful tool that will help you to build apps.
@@ -23,7 +23,9 @@ You can run Textual apps with the `run` subcommand. If you supply a path to a Py
 textual run my_app.py
 ```
 
-The `run` sub-command assumes you have an App instance called `app` in the global scope of your Python file. If the application is called something different, you can specify it with a colon following the filename:
+The `run` sub-command will first look for a `App` instance called `app` in the global scope of your Python file. If there is no `app`, it will create an instance of the first `App` class it finds and run that.
+
+Alternatively, you can add the name of an `App` instance or class after a colon to run a specific app in the Python file. Here's an example: 
 
 ```bash
 textual run my_app.py:alternative_app
@@ -44,7 +46,7 @@ textual run --dev my_app.py
 
 One of the the features of *dev* mode is live editing of CSS files: any changes to your CSS will be reflected in the terminal a few milliseconds later.
 
-This is a great feature for iterating on your app's look and feel. Open the CSS in your editor and have your app running in a terminal. Edits to your CSS will appear almost immediately after you save. 
+This is a great feature for iterating on your app's look and feel. Open the CSS in your editor and have your app running in a terminal. Edits to your CSS will appear almost immediately after you save.
 
 ## Console
 
@@ -103,7 +105,7 @@ log("[bold red]DANGER![/] We're having too much fun")
 
 ### Log method
 
-There's a convenient shortcut to `log` available on the App and Widget objects. This is useful in event handlers. Here's an example:
+There's a convenient shortcut to `log` available on the `App` and `Widget` objects. This is useful in event handlers. Here's an example:
 
 ```python
 from textual.app import App
@@ -120,4 +122,3 @@ if __name__ == "__main__":
     LogApp.run()
 
 ```
-

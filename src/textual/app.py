@@ -325,10 +325,10 @@ class App(Generic[ReturnType], DOMNode):
     @property
     def bindings(self) -> Bindings:
         """Get current bindings. If no widget is focused, then the app-level bindings
-        are returned. If a widget is focused, then any bindings present between that widget
-        and the App in the DOM are merged and returned."""
+        are returned. If a widget is focused, then any bindings present in the active
+        screen and app are merged and returned."""
         if self.focused is None:
-            return self._bindings
+            return Bindings.merge([self.screen._bindings, self._bindings])
         else:
             return Bindings.merge(
                 node._bindings for node in reversed(self.focused.ancestors)
@@ -483,7 +483,7 @@ class App(Generic[ReturnType], DOMNode):
         self.dark = not self.dark
 
     def action_screenshot(self, filename: str | None, path: str = "~/") -> None:
-        """Save an SVG "screenshot". This action will save a SVG file containing the current contents of the screen.
+        """Save an SVG "screenshot". This action will save an SVG file containing the current contents of the screen.
 
         Args:
             filename (str | None, optional): Filename of screenshot, or None to auto-generate. Defaults to None.
@@ -492,7 +492,7 @@ class App(Generic[ReturnType], DOMNode):
         self.save_screenshot(filename, path)
 
     def export_screenshot(self, *, title: str | None = None) -> str:
-        """Export a SVG screenshot of the current screen.
+        """Export an SVG screenshot of the current screen.
 
         Args:
             title (str | None, optional): The title of the exported screenshot or None
@@ -519,7 +519,7 @@ class App(Generic[ReturnType], DOMNode):
         path: str = "./",
         time_format: str = "%Y-%m-%d %X %f",
     ) -> str:
-        """Save a SVG screenshot of the current screen.
+        """Save an SVG screenshot of the current screen.
 
         Args:
             filename (str | None, optional): Filename of SVG screenshot, or None to auto-generate

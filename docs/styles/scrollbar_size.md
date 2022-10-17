@@ -12,7 +12,7 @@ scrollbar-size: <INTEGER> <INTEGER>;
 
 ## Example
 
-In this example we modify the size of the widgets scrollbar to be _much_ larger than usual.
+In this example we modify the size of the widget's scrollbar to be _much_ larger than usual.
 
 === "scrollbar_size.py"
 
