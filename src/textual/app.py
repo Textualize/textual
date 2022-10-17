@@ -60,7 +60,6 @@ _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
 
 LayoutDefinition = "dict[str, Any]"
 
-
 DEFAULT_COLORS = {
     "dark": ColorSystem(
         primary="#004578",
@@ -81,7 +80,6 @@ DEFAULT_COLORS = {
         dark=False,
     ),
 }
-
 
 ComposeResult = Iterable[Widget]
 RenderResult = RenderableType
@@ -178,7 +176,6 @@ class App(Generic[ReturnType], DOMNode):
         )
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
-        self._title = title
         self._screen_stack: list[Screen] = []
         self._sync_available = False
 
@@ -192,9 +189,9 @@ class App(Generic[ReturnType], DOMNode):
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
         if title is None:
-            self._title = f"{self.__class__.__name__}"
+            self.title = f"{self.__class__.__name__}"
         else:
-            self._title = title
+            self.title = title
 
         self._logger = Logger(self._log)
 
@@ -1021,7 +1018,6 @@ class App(Generic[ReturnType], DOMNode):
 
             Reactive._initialize_object(self)
 
-            self.title = self._title
             self.stylesheet.update(self)
             self.refresh()
 
