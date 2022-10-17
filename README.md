@@ -66,9 +66,9 @@ This is the borders reference which demonstrates some of the borders styles in T
 ```bash
 textual borders
 ```
-  
 
-https://user-images.githubusercontent.com/554369/189485735-cb2b4135-caee-46d7-a118-66cd7ed9eef5.mov
+
+https://user-images.githubusercontent.com/554369/196158235-4b45fb78-053d-4fd5-b285-e09b4f1c67a8.mov
 
 
   
