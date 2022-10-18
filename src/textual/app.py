@@ -1317,6 +1317,8 @@ class App(Generic[ReturnType], DOMNode):
                 if not await self.check_bindings(event.key, universal=True):
                     forward_target = self.focused or self.screen
                     await forward_target._forward_event(event)
+            else:
+                await self.screen._forward_event(event)
 
         elif isinstance(event, events.Paste):
             if self.focused is not None:
