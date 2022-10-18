@@ -1,5 +1,6 @@
 from textual import containers as layout
 from textual.app import App, ComposeResult
+from textual.binding import Binding
 from textual.widgets import Static, Input
 
 
@@ -9,6 +10,8 @@ class Label(Static, can_focus=True):
 
 class FocusKeybindsApp(App):
     dark = True
+
+    BINDINGS = [Binding("a", "private_handler", "Private Handler")]
 
     def on_load(self) -> None:
         self.bind("1", "focus('widget1')")
@@ -54,6 +57,9 @@ class FocusKeybindsApp(App):
     def key_p(self):
         print(self.app.focused.parent)
         print(self.app.focused)
+
+    def _action_private_handler(self):
+        print("inside private handler!")
 
 
 app = FocusKeybindsApp(css_path="focus_keybinds.css", watch_css=True)
