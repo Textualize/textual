@@ -196,7 +196,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self._logger = Logger(self._log)
 
-        self._bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
+        self._bindings.bind("ctrl+c", "quit", show=False, universal=True)
         self._refresh_required = False
 
         self.design = DEFAULT_COLORS
@@ -1282,11 +1282,12 @@ class App(Generic[ReturnType], DOMNode):
             namespace_bindings = [(node, node._bindings) for node in focused.ancestors]
         return namespace_bindings
 
-    async def check_bindings(self, key: str) -> bool:
+    async def check_bindings(self, key: str, universal: bool = False) -> bool:
         """Handle a key press.
 
         Args:
             key (str): A key
+            universal (bool): Check universal keys if True, otherwise non-universal keys.
 
         Returns:
             bool: True if the key was handled by a binding, otherwise False
@@ -1294,7 +1295,7 @@ class App(Generic[ReturnType], DOMNode):
 
         for namespace, bindings in self._binding_chain:
             binding = bindings.keys.get(key)
-            if binding is not None:
+            if binding is not None and binding.universal == universal:
                 await self.action(binding.action, default_namespace=namespace)
                 return True
         return False
@@ -1312,11 +1313,11 @@ class App(Generic[ReturnType], DOMNode):
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
-            if isinstance(event, events.Key):
-                forward_target = self.focused or self.screen
-                await forward_target._forward_event(event)
-            else:
                 await self.screen._forward_event(event)
+            elif isinstance(event, events.Key):
+                if not await self.check_bindings(event.key, universal=True):
+                    forward_target = self.focused or self.screen
+                    await forward_target._forward_event(event)
 
         elif isinstance(event, events.Paste):
             if self.focused is not None:

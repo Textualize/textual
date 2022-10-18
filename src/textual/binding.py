@@ -34,7 +34,7 @@ class Binding:
     """Show the action in Footer, or False to hide."""
     key_display: str | None = None
     """How the key should be shown in footer."""
-    allow_forward: bool = True
+    universal: bool = False
     """Allow forwarding from app to focused widget."""
 
 
@@ -55,7 +55,7 @@ class Bindings:
                                 description=binding.description,
                                 show=binding.show,
                                 key_display=binding.key_display,
-                                allow_forward=binding.allow_forward,
+                                universal=binding.universal,
                             )
                             yield new_binding
                     else:
@@ -103,7 +103,7 @@ class Bindings:
         description: str = "",
         show: bool = True,
         key_display: str | None = None,
-        allow_forward: bool = True,
+        universal: bool = False,
     ) -> None:
         all_keys = [key.strip() for key in keys.split(",")]
         for key in all_keys:
@@ -113,7 +113,7 @@ class Bindings:
                 description,
                 show=show,
                 key_display=key_display,
-                allow_forward=allow_forward,
+                universal=universal,
             )
 
     def get_key(self, key: str) -> Binding:
@@ -126,4 +126,4 @@ class Bindings:
         binding = self.keys.get(key, None)
         if binding is None:
             return True
-        return binding.allow_forward
+        return not binding.universal
