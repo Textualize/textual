@@ -93,6 +93,11 @@ class Bindings:
 
     @property
     def shown_keys(self) -> list[Binding]:
+        """A list of bindings for shown keys.
+
+        Returns:
+            list[Binding]: Shown bindings.
+        """
         keys = [binding for binding in self.keys.values() if binding.show]
         return keys
 
@@ -117,6 +122,17 @@ class Bindings:
             )
 
     def get_key(self, key: str) -> Binding:
+        """Get a binding if it exists.
+
+        Args:
+            key (str): Key to look up.
+
+        Raises:
+            NoBinding: If the binding does not exist.
+
+        Returns:
+            Binding: A binding object for the key,
+        """
         try:
             return self.keys[key]
         except KeyError:
