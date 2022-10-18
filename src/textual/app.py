@@ -1265,8 +1265,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def _binding_chain(self) -> list[tuple[DOMNode, Bindings]]:
-        """Get a chain of nodes and bindings to consider. Goes from focused widget to app, or
-        screen to app.
+        """Get a chain of nodes and bindings to consider. If no widget is focused, returns the bindings from both the screen and the app level bindings. Otherwise, combines all the bindings from the currently focused node up the DOM to the root App.
 
         Returns:
             list[tuple[DOMNode, Bindings]]: List of DOM nodes and their bindings.
