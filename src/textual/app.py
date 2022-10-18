@@ -327,7 +327,7 @@ class App(Generic[ReturnType], DOMNode):
         screen and app are merged and returned."""
 
         namespace_binding_map: dict[str, tuple[DOMNode, Binding]] = {}
-        for namespace, bindings in self._binding_chain:
+        for namespace, bindings in reversed(self._binding_chain):
             for key, binding in bindings.keys.items():
                 namespace_binding_map[key] = (namespace, binding)
 
@@ -1265,8 +1265,8 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def _binding_chain(self) -> list[tuple[DOMNode, Bindings]]:
-        """Get a chain of nodes and bindings to consider. Goes from app to focused
-        widget, or app to screen.
+        """Get a chain of nodes and bindings to consider. Goes from focused widget to app, or
+        screen to app.
 
         Returns:
             list[tuple[DOMNode, Bindings]]: List of DOM nodes and their bindings.
@@ -1275,13 +1275,11 @@ class App(Generic[ReturnType], DOMNode):
         namespace_bindings: list[tuple[DOMNode, Bindings]]
         if focused is None:
             namespace_bindings = [
-                (self, self._bindings),
                 (self.screen, self.screen._bindings),
+                (self, self._bindings),
             ]
         else:
-            namespace_bindings = [
-                (node, node._bindings) for node in reversed(focused.ancestors)
-            ]
+            namespace_bindings = [(node, node._bindings) for node in focused.ancestors]
         return namespace_bindings
 
     async def check_bindings(self, key: str) -> bool:
@@ -1294,7 +1292,7 @@ class App(Generic[ReturnType], DOMNode):
             bool: True if the key was handled by a binding, otherwise False
         """
 
-        for namespace, bindings in reversed(self._binding_chain):
+        for namespace, bindings in self._binding_chain:
             binding = bindings.keys.get(key)
             if binding is not None:
                 await self.action(binding.action, default_namespace=namespace)
