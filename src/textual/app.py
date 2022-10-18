@@ -321,12 +321,12 @@ class App(Generic[ReturnType], DOMNode):
         return self.screen.focused
 
     @property
-    def namespace_bindings(self) -> dict[str, tuple[object, Binding]]:
+    def namespace_bindings(self) -> dict[str, tuple[DOMNode, Binding]]:
         """Get current bindings. If no widget is focused, then the app-level bindings
         are returned. If a widget is focused, then any bindings present in the active
         screen and app are merged and returned."""
 
-        namespace_binding_map: dict[str, tuple[object, Binding]] = {}
+        namespace_binding_map: dict[str, tuple[DOMNode, Binding]] = {}
         for namespace, bindings in self._binding_chain:
             for key, binding in bindings.keys.items():
                 namespace_binding_map[key] = (namespace, binding)
@@ -1265,7 +1265,8 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def _binding_chain(self) -> list[tuple[DOMNode, Bindings]]:
-        """Get a chain of nodes and bindings to consider.
+        """Get a chain of nodes and bindings to consider. Goes from app to focused
+        widget, or app to screen.
 
         Returns:
             list[tuple[DOMNode, Bindings]]: List of DOM nodes and their bindings.
