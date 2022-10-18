@@ -230,13 +230,16 @@ class Screen(Widget):
         Args:
             widget (Widget): A widget that is removed.
         """
+        print("_reset_focus", widget)
         if self.focused is widget:
             for sibling in widget.siblings:
                 if sibling.can_focus:
+                    print("MOVED focus to", sibling)
                     sibling.focus()
                     break
             else:
                 self.focused = None
+                print("RESET FOCUS in _reset_focus")
 
     def set_focus(self, widget: Widget | None, scroll_visible: bool = True) -> None:
         """Focus (or un-focus) a widget. A focused widget will receive key events first.
@@ -255,6 +258,7 @@ class Screen(Widget):
                 self.focused.post_message_no_wait(events.Blur(self))
                 self.focused.emit_no_wait(events.DescendantBlur(self))
                 self.focused = None
+                print("FOCUSED", None)
         elif widget.can_focus:
             if self.focused != widget:
                 if self.focused is not None:
@@ -263,6 +267,7 @@ class Screen(Widget):
                     self.focused.emit_no_wait(events.DescendantBlur(self))
                 # Change focus
                 self.focused = widget
+                print("FOCUSED", widget)
                 # Send focus event
                 if scroll_visible:
                     self.screen.scroll_to_widget(widget)
