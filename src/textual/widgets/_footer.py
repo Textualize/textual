@@ -87,7 +87,11 @@ class Footer(Widget):
         highlight_key_style = self.get_component_rich_style("footer--highlight-key")
         key_style = self.get_component_rich_style("footer--key")
 
-        bindings = self.app.bindings.shown_keys
+        bindings = [
+            binding
+            for (_namespace, binding) in self.app.namespace_bindings.values()
+            if binding.show
+        ]
 
         action_to_bindings = defaultdict(list)
         for binding in bindings:
@@ -107,7 +111,10 @@ class Footer(Widget):
                     f" {binding.description} ",
                     highlight_style if hovered else base_style,
                 ),
-                meta={"@click": f"app.press('{binding.key}')", "key": binding.key},
+                meta={
+                    "@click": f"app.check_binding('{binding.key}')",
+                    "key": binding.key,
+                },
             )
             text.append_text(key_text)
         return text

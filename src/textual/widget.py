@@ -1900,12 +1900,7 @@ class Widget(DOMNode):
         await self.handle_key(event)
 
     async def handle_key(self, event: events.Key) -> bool:
-        try:
-            binding = self._bindings.get_key(event.key)
-        except NoBinding:
-            return await self.dispatch_key(event)
-        await self.action(binding.action)
-        return True
+        return await self.dispatch_key(event)
 
     async def _on_compose(self, event: events.Compose) -> None:
         widgets = list(self.compose())

@@ -571,6 +571,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
             return public_handler or private_handler
 
+        handled = False
         invoked_method = None
         key_name = event.key_name
         if not key_name:
@@ -583,10 +584,10 @@ class MessagePump(metaclass=MessagePumpMeta):
                     _raise_duplicate_key_handlers_error(
                         key_name, invoked_method.__name__, key_method.__name__
                     )
-                await invoke(key_method, event)
+                handled = await invoke(key_method, event)
                 invoked_method = key_method
 
-        return invoked_method is not None
+        return handled
 
     async def on_timer(self, event: events.Timer) -> None:
         event.prevent_default()
