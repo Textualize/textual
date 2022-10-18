@@ -3,7 +3,7 @@ from textual.layouts.horizontal import HorizontalLayout
 from textual.widget import Widget
 
 
-class WidgetWithContentDimensions(Widget):
+class SizedWidget(Widget):
     """Simple Widget wrapped allowing you to modify the return values for
     get_content_width and get_content_height via the constructor."""
 
@@ -25,9 +25,9 @@ class WidgetWithContentDimensions(Widget):
 
 
 CHILDREN = [
-    WidgetWithContentDimensions(content_width=10, content_height=5),
-    WidgetWithContentDimensions(content_width=4, content_height=2),
-    WidgetWithContentDimensions(content_width=12, content_height=3),
+    SizedWidget(content_width=10, content_height=5),
+    SizedWidget(content_width=4, content_height=2),
+    SizedWidget(content_width=12, content_height=3),
 ]
 
 
