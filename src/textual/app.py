@@ -7,6 +7,7 @@ import os
 import platform
 import sys
 import warnings
+from collections import defaultdict
 from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
@@ -31,7 +32,7 @@ from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
-from .binding import Bindings, NoBinding
+from .binding import Binding, Bindings, NoBinding
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -320,16 +321,29 @@ class App(Generic[ReturnType], DOMNode):
         return self.screen.focused
 
     @property
-    def bindings(self) -> Bindings:
+    def namespace_bindings(self) -> dict[str, tuple[object, Binding]]:
         """Get current bindings. If no widget is focused, then the app-level bindings
         are returned. If a widget is focused, then any bindings present in the active
         screen and app are merged and returned."""
-        if self.focused is None:
-            return Bindings.merge([self.screen._bindings, self._bindings])
+
+        focused = self.focused
+        namespace_bindings: list[tuple[object, Bindings]]
+        if focused is None:
+            namespace_bindings = [
+                (self, self._bindings),
+                (self.screen, self.screen._bindings),
+            ]
         else:
-            return Bindings.merge(
-                node._bindings for node in reversed(self.focused.ancestors)
-            )
+            namespace_bindings = [
+                (node, node._bindings) for node in reversed(focused.ancestors)
+            ]
+
+        namespace_binding_map: dict[str, tuple[object, Binding]] = {}
+        for namespace, bindings in namespace_bindings:
+            for key, binding in bindings.keys.items():
+                namespace_binding_map[key] = (namespace, binding)
+
+        return namespace_binding_map
 
     def _set_active(self) -> None:
         """Set this app to be the currently active app."""
@@ -1261,7 +1275,7 @@ class App(Generic[ReturnType], DOMNode):
         if not self.is_headless:
             self.console.bell()
 
-    async def press(self, key: str) -> bool:
+    async def check_bindings(self, key: str) -> bool:
         """Handle a key press.
 
         Args:
@@ -1271,11 +1285,11 @@ class App(Generic[ReturnType], DOMNode):
             bool: True if the key was handled by a binding, otherwise False
         """
         try:
-            binding = self.bindings.get_key(key)
-        except NoBinding:
+            namespace, binding = self.namespace_bindings[key]
+        except KeyError:
             return False
         else:
-            await self.action(binding.action)
+            await self.action(binding.action, default_namespace=namespace)
         return True
 
     async def on_event(self, event: events.Event) -> None:
@@ -1291,16 +1305,12 @@ class App(Generic[ReturnType], DOMNode):
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
-            if isinstance(event, events.Key) and self.focused is not None:
-                # Key events are sent direct to focused widget of the currently active screen
-                if self.bindings.allow_forward(event.key):
-                    await self.focused._forward_event(event)
-                else:
-                    # Key has allow_forward=False which disallows forward to focused widget
-                    await super().on_event(event)
+            if isinstance(event, events.Key):
+                forward_target = self.focused or self.screen
+                await forward_target._forward_event(event)
             else:
-                # Forward the event to the currently active Screen
                 await self.screen._forward_event(event)
+
         elif isinstance(event, events.Paste):
             if self.focused is not None:
                 await self.focused._forward_event(event)
@@ -1404,7 +1414,7 @@ class App(Generic[ReturnType], DOMNode):
         elif event.key == "shift+tab":
             self.screen.focus_previous()
         else:
-            if not (await self.press(event.key)):
+            if not (await self.check_bindings(event.key)):
                 await self.dispatch_key(event)
 
     async def _on_shutdown_request(self, event: events.ShutdownRequest) -> None:
@@ -1430,8 +1440,8 @@ class App(Generic[ReturnType], DOMNode):
         if parent is not None:
             parent.refresh(layout=True)
 
-    async def action_press(self, key: str) -> None:
-        await self.press(key)
+    async def action_check_binding(self, key: str) -> None:
+        await self.check_bindings(key)
 
     async def action_quit(self) -> None:
         """Quit the app as soon as possible."""
