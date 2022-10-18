@@ -3,6 +3,8 @@ from textual.binding import Binding
 from textual.screen import Screen
 from textual.widgets import Static, Footer, Input
 
+from some_text import TEXT
+
 
 class Focusable(Static, can_focus=True):
     pass
@@ -10,11 +12,11 @@ class Focusable(Static, can_focus=True):
 
 class CustomScreen(Screen):
     def compose(self) -> ComposeResult:
-        yield Focusable(f"Screen {id(self)} - two")
+        yield Focusable(f"Screen {id(self)} - two {TEXT}")
         yield Focusable(f"Screen {id(self)} - three")
         yield Focusable(f"Screen {id(self)} - four")
         yield Input(placeholder="Text input")
-        yield Footer()
+        # yield Footer()
 
 
 class ScreensFocusApp(App):
@@ -30,7 +32,7 @@ class ScreensFocusApp(App):
         yield Focusable("App - two")
         yield Focusable("App - three")
         yield Focusable("App - four")
-        yield Footer()
+        # yield Footer()
 
     def action_push_new_screen(self):
         self.push_screen(CustomScreen())

@@ -1,14 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import click
 from importlib_metadata import version
 from textual.devtools.server import _run_devtools
 from textual._import_app import import_app, AppFail
-
-if TYPE_CHECKING:
-    from textual.app import App
 
 
 @click.group()

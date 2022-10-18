@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import runpy
 import shlex
+from pathlib import Path
 from typing import cast, TYPE_CHECKING
 
 
@@ -38,6 +39,7 @@ def import_app(import_name: str) -> App:
 
     if lib.endswith(".py"):
         path = os.path.abspath(lib)
+        sys.path.append(str(Path(path).parent))
         try:
             global_vars = runpy.run_path(path, {})
         except Exception as error:
