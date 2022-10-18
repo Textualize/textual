@@ -1419,14 +1419,36 @@ class App(Generic[ReturnType], DOMNode):
         widget = event.widget
         parent = widget.parent
 
-        remove_widgets = widget.walk_children(
-            Widget, with_self=True, method="depth", reverse=True
+        # Get the list of all the widgets that are about to be removed.
+        remove_widgets = list(
+            widget.walk_children(Widget, with_self=True, method="depth", reverse=True)
         )
+
+        # Of the list of widgets to be removed, let's great a set of those
+        # that can receive focus -- we're about to go on a focus hunt and
+        # this can be a subset of the above.
+        remove_focusable = {widget for widget in remove_widgets if widget.can_focus}
+
+        # Assume that we aren't going to move focus at all.
+        settle_focus = self.screen.focused
+
+        # If there are more items in the focus chain than there are items to
+        # be removed that can receive focus...
+        if len(widget.screen.focus_chain) >= len(remove_focusable):
+            # ...go and seek the previous widget in the focus chain that
+            # isn't going to be removed.
+            while settle_focus is not None and settle_focus in remove_widgets:
+                settle_focus = self.screen.focus_from(settle_focus, -1)
+        else:
+            # It seems we can't settle on anywhere to focus.
+            settle_focus = None
+
         for child in remove_widgets:
-            if self.focused is child:
-                child.screen.focus_previous()
             await child._close_messages()
             self._unregister(child)
+
+        self.screen.set_focus(settle_focus)
+
         if parent is not None:
             parent.refresh(layout=True)
 
