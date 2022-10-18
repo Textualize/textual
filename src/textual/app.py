@@ -1424,9 +1424,10 @@ class App(Generic[ReturnType], DOMNode):
             widget.walk_children(Widget, with_self=True, method="depth", reverse=True)
         )
 
-        # Of the list of widgets to be removed, let's great a set of those
+        # Of the list of widgets to be removed, let's get a set of those
         # that can receive focus -- we're about to go on a focus hunt and
-        # this can be a subset of the above.
+        # this can be a subset of the above (that is: it's possible that not
+        # every widget we're about to remove is one that can hold focus).
         remove_focusable = {widget for widget in remove_widgets if widget.can_focus}
 
         # Assume that we aren't going to move focus at all.
