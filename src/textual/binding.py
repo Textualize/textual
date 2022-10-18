@@ -121,9 +121,3 @@ class Bindings:
             return self.keys[key]
         except KeyError:
             raise NoBinding(f"No binding for {key}") from None
-
-    def allow_forward(self, key: str) -> bool:
-        binding = self.keys.get(key, None)
-        if binding is None:
-            return True
-        return not binding.universal
