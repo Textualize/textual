@@ -9,11 +9,14 @@ class CheckboxApp(App):
 
     def compose(self) -> ComposeResult:
         yield Footer()
-        yield Container(Checkbox())
+        yield Container(Checkbox(id="check", animate=True))
 
     def action_switch(self) -> None:
         checkbox = self.query_one(Checkbox)
-        checkbox.value = not checkbox.value
+        checkbox.toggle()
+
+    def key_f(self):
+        print(self.app.focused)
 
 
 app = CheckboxApp(css_path="check.css")

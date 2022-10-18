@@ -1,26 +1,35 @@
 from __future__ import annotations
 
+from typing import ClassVar
+
 from rich.console import RenderableType
 
-
-from .. import events
+from ..binding import Binding
 from ..geometry import Size
+from ..message import Message
 from ..reactive import reactive
 from ..widget import Widget
 from ..scrollbar import ScrollBarRender
 
 
 class Checkbox(Widget, can_focus=True):
+    """A checkbox widget. Represents a boolean value. Can be toggled by clicking
+    on it or by pressing the enter key or space bar while it has focus.
+
+    Args:
+        value (bool, optional): The initial value of the checkbox. Defaults to False.
+        animate (bool, optional): True if the checkbox should animate when toggled. Defaults to True.
+    """
+
     DEFAULT_CSS = """
-    
+
     Checkbox {
         border: tall transparent;
-        background: $panel ;
-        height: 1;
-        width: 10;
+        background: $panel;
+        height: auto;
+        width: auto;
         padding: 0 2;
     }
-
 
     Checkbox > .checkbox--switch {
         background: $panel-darken-2;
@@ -28,7 +37,7 @@ class Checkbox(Widget, can_focus=True):
     }
 
     Checkbox:hover {
-        border: tall $background !important;
+        border: tall $background;
     }
 
     Checkbox:focus {
@@ -36,7 +45,7 @@ class Checkbox(Widget, can_focus=True):
     }
 
     Checkbox.-on {
-       
+
     }
 
     Checkbox.-on > .checkbox--switch {
@@ -44,15 +53,39 @@ class Checkbox(Widget, can_focus=True):
     }
     """
 
-    COMPONENT_CLASSES = {
+    BINDINGS = [
+        Binding("enter,space", "toggle", "toggle", show=False),
+    ]
+
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
         "checkbox--switch",
     }
 
-    on = reactive(False)
+    value = reactive(False, init=False)
     slider_pos = reactive(0.0)
 
-    def watch_on(self, on: bool) -> None:
-        self.animate("slider_pos", 1.0 if on else 0.0, duration=0.3)
+    def __init__(
+        self,
+        value: bool | None = None,
+        *,
+        animate: bool = True,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ):
+        super().__init__(name=name, id=id, classes=classes)
+        if value:
+            self.slider_pos = 1.0
+            self._reactive_value = value
+        self._should_animate = animate
+
+    def watch_value(self, value: bool) -> None:
+        target_slider_pos = 1.0 if value else 0.0
+        if self._should_animate:
+            self.animate("slider_pos", target_slider_pos, duration=0.3)
+        else:
+            self.slider_pos = target_slider_pos
+        self.emit_no_wait(self.Changed(self, self.value))
 
     def watch_slider_pos(self, slider_pos: float) -> None:
         self.set_class(slider_pos == 1, "-on")
@@ -73,5 +106,21 @@ class Checkbox(Widget, can_focus=True):
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         return 1
 
-    def on_click(self, event: events.Click) -> None:
-        self.on = not self.on
+    def on_click(self) -> None:
+        self.toggle()
+
+    def action_toggle(self) -> None:
+        self.toggle()
+
+    def toggle(self) -> None:
+        """Toggle the checkbox value. As a result of the value changing,
+        a Checkbox.Changed message will be emitted."""
+        self.value = not self.value
+
+    class Changed(Message, bubble=True):
+        """Checkbox was toggled."""
+
+        def __init__(self, sender: Checkbox, value: bool) -> None:
+            super().__init__(sender)
+            self.value = value
+            self.input = sender

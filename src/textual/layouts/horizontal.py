@@ -64,3 +64,33 @@ class HorizontalLayout(Layout):
             x = next_x + margin
 
         return placements, set(displayed_children)
+
+    def get_content_width(self, widget: Widget, container: Size, viewport: Size) -> int:
+        """Get the width of the content. In Horizontal layout, the content width of
+        a widget is the sum of the widths of its children.
+
+        Args:
+            widget (Widget): The container widget.
+            container (Size): The container size.
+            viewport (Size): The viewport size.
+
+        Returns:
+            int: Width of the content.
+        """
+        width: int | None = None
+        gutter_width = widget.gutter.width
+        for child in widget.displayed_children:
+            if not child.is_container:
+                child_width = (
+                    child.get_content_width(container, viewport)
+                    + gutter_width
+                    + child.gutter.width
+                )
+                if width is None:
+                    width = child_width
+                else:
+                    width += child_width
+        if width is None:
+            width = container.width
+
+        return width
