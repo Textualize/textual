@@ -584,7 +584,9 @@ class MessagePump(metaclass=MessagePumpMeta):
                     _raise_duplicate_key_handlers_error(
                         key_name, invoked_method.__name__, key_method.__name__
                     )
-                handled = await invoke(key_method, event)
+                # If key handlers return False, then they are not considered handled
+                # This allows key handlers to do some conditional logic
+                handled = (await invoke(key_method, event)) != False
                 invoked_method = key_method
 
         return handled
