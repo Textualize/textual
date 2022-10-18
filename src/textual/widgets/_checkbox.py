@@ -66,7 +66,7 @@ class Checkbox(Widget, can_focus=True):
 
     def __init__(
         self,
-        value: bool | None = None,
+        value: bool = None,
         *,
         animate: bool = True,
         name: str | None = None,

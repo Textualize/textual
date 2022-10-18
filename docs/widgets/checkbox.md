@@ -7,50 +7,51 @@ A simple checkbox widget which stores a boolean value.
 
 ## Example
 
-The example below shows each button variant, and its disabled equivalent.
-Clicking any of the non-disabled buttons in the example app below will result in a ring of the terminal bell.
+The example below shows checkboxes in various states.
 
 === "Output"
 
-    ```{.textual path="docs/examples/widgets/button.py"}
+    ```{.textual path="docs/examples/widgets/checkbox.py"}
     ```
 
-=== "button.py"
+=== "checkbox.py"
 
     ```python
-    --8<-- "docs/examples/widgets/button.py"
+    --8<-- "docs/examples/widgets/checkbox.py"
     ```
 
-=== "button.css"
+=== "checkbox.css"
 
     ```css
-    --8<-- "docs/examples/widgets/button.css"
+    --8<-- "docs/examples/widgets/checkbox.css"
     ```
 
 ## Reactive Attributes
 
-| Name       | Type   | Default     | Description                                                                                                                       |
-|------------|--------|-------------|-----------------------------------------------------------------------------------------------------------------------------------|
-| `label`    | `str`  | `""`        | The text that appears inside the button.                                                                                          |
-| `variant`  | `str`  | `"default"` | Semantic styling variant. One of `default`, `primary`, `success`, `warning`, `error`.                                             |
-| `disabled` | `bool` | `False`     | Whether the button is disabled or not. Disabled buttons cannot be focused or clicked, and are styled in a way that suggests this. |
+| Name    | Type   | Default | Description                        |
+|---------|--------|---------|------------------------------------|
+| `value` | `bool` | `False` | The default value of the checkbox. |
 
 ## Messages
 
 ### Pressed
 
-The `Button.Pressed` message is sent when the button is pressed.
+The `Checkbox.Changed` message is sent when the checkbox is toggled.
 
 - [x] Bubbles
 
 #### Attributes
 
-_No other attributes_
+| attribute | type   | purpose                        |
+|-----------|--------|--------------------------------|
+| `value`   | `bool` | The new value of the checkbox. |
 
 ## Additional Notes
 
-* The spacing between the text and the edges of a button are due to border, _not_ padding. To create a button with zero visible padding, use the `border: none;` declaration.
+- To remove the spacing around a checkbox, set `border: none;` and `padding: 0;`.
+- The `.checkbox--switch` component class can be used to change the color and background of the switch.
+- When focused, the ++enter++ or ++space++ keys can be used to toggle the checkbox.
 
 ## See Also
 
-* [Button](../reference/button.md) code reference
+- [Checkbox](../reference/checkbox.md) code reference

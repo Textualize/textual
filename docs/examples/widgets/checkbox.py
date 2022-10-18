@@ -5,6 +5,7 @@ from textual.widgets import Checkbox, Static
 
 class CheckboxApp(App):
     def compose(self) -> ComposeResult:
+        yield Static("[b]Example checkboxes\n", classes="label")
         yield Horizontal(
             Static("off:     ", classes="label"), Checkbox(), classes="container"
         )
@@ -19,6 +20,15 @@ class CheckboxApp(App):
         yield Horizontal(
             Static("focused: ", classes="label"), focused_checkbox, classes="container"
         )
+
+        yield Horizontal(
+            Static("custom:  ", classes="label"),
+            Checkbox(id="custom-design"),
+            classes="container",
+        )
+
+    def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
+        print(event.value)
 
 
 app = CheckboxApp(css_path="checkbox.css")

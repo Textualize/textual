@@ -17,3 +17,12 @@ Checkbox {
     content-align: center middle;
     width: auto;
 }
+
+#custom-design {
+    background: darkslategrey;
+}
+
+#custom-design > .checkbox--switch {
+    color: dodgerblue;
+    background: darkslateblue;
+}
