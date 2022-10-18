@@ -255,7 +255,6 @@ class Screen(Widget):
                 self.focused.post_message_no_wait(events.Blur(self))
                 self.focused.emit_no_wait(events.DescendantBlur(self))
                 self.focused = None
-                print("FOCUSED", None)
         elif widget.can_focus:
             if self.focused != widget:
                 if self.focused is not None:
@@ -264,7 +263,6 @@ class Screen(Widget):
                     self.focused.emit_no_wait(events.DescendantBlur(self))
                 # Change focus
                 self.focused = widget
-                print("FOCUSED", widget)
                 # Send focus event
                 if scroll_visible:
                     self.screen.scroll_to_widget(widget)
