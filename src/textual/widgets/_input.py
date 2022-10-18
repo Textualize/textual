@@ -239,12 +239,10 @@ class Input(Widget, can_focus=True):
 
         # Do key bindings first
         if await self.handle_key(event):
-            print("HANDLE KEY STOPPED")
             event.prevent_default()
             event.stop()
             return
         elif event.is_printable:
-            print("PRINTABLE STOPPED")
             event.stop()
             assert event.char is not None
             self.insert_text_at_cursor(event.char)
