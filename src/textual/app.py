@@ -1369,13 +1369,25 @@ class App(Generic[ReturnType], DOMNode):
             params=params,
         )
         _rich_traceback_guard = True
-        method_name = f"action_{action_name}"
-        method = getattr(namespace, method_name, None)
-        if method is None:
-            log(f"<action> {action_name!r} has no target")
-        if callable(method):
-            await invoke(method, *params)
+
+        public_method_name = f"action_{action_name}"
+        private_method_name = f"_{public_method_name}"
+
+        private_method = getattr(namespace, private_method_name, None)
+        public_method = getattr(namespace, public_method_name, None)
+
+        if private_method is None and public_method is None:
+            log(
+                f"<action> {action_name!r} has no target. Couldn't find methods {public_method_name!r} or {private_method_name!r}"
+            )
+
+        if callable(private_method):
+            await invoke(private_method, *params)
             return True
+        elif callable(public_method):
+            await invoke(public_method, *params)
+            return True
+
         return False
 
     async def _broker_event(
