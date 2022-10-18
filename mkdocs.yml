@@ -6,7 +6,7 @@ edit_uri: edit/css/docs/
 nav:
   - Introduction:
     - "index.md"
-    - "getting_started.md"  
+    - "getting_started.md"
   - "tutorial.md"
   - Guide:
     - "guide/index.md"
@@ -92,6 +92,7 @@ nav:
   - Widgets:
     - "widgets/index.md"
     - "widgets/button.md"
+    - "widgets/checkbox.md"
     - "widgets/data_table.md"
     - "widgets/footer.md"
     - "widgets/header.md"

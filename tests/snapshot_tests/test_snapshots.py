@@ -24,3 +24,9 @@ def test_vertical_layout(snap_compare):
 
 def test_dock_layout_sidebar(snap_compare):
     assert snap_compare("docs/examples/guide/layout/dock_layout2_sidebar.py")
+
+
+def test_checkboxes(snap_compare):
+    """Tests checkboxes but also acts a regression test for using
+    width: auto in a Horizontal layout context."""
+    assert snap_compare("docs/examples/widgets/checkbox.py")

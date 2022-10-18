@@ -85,7 +85,7 @@ class Input(Widget, can_focus=True):
         Binding("home", "home", "home", show=False),
         Binding("end", "end", "end", show=False),
         Binding("ctrl+d", "delete_right", "delete right", show=False),
-        Binding("enter", "submit", "Submit", show=False),
+        Binding("enter", "submit", "submit", show=False),
     ]
 
     COMPONENT_CLASSES = {"input--cursor", "input--placeholder"}
@@ -179,22 +179,6 @@ class Input(Widget, can_focus=True):
                     placeholder.stylize(cursor_style, 0, 1)
             return placeholder
         return _InputRenderable(self, self._cursor_visible)
-
-    class Changed(Message, bubble=True):
-        """Value was changed."""
-
-        def __init__(self, sender: Input, value: str) -> None:
-            super().__init__(sender)
-            self.value = value
-            self.input = sender
-
-    class Submitted(Message, bubble=True):
-        """Value was updated via enter key or blur."""
-
-        def __init__(self, sender: Input, value: str) -> None:
-            super().__init__(sender)
-            self.value = value
-            self.input = sender
 
     @property
     def _value(self) -> Text:
@@ -323,3 +307,19 @@ class Input(Widget, can_focus=True):
 
     async def action_submit(self) -> None:
         await self.emit(self.Submitted(self, self.value))
+
+    class Changed(Message, bubble=True):
+        """Value was changed."""
+
+        def __init__(self, sender: Input, value: str) -> None:
+            super().__init__(sender)
+            self.value = value
+            self.input = sender
+
+    class Submitted(Message, bubble=True):
+        """Value was updated via enter key or blur."""
+
+        def __init__(self, sender: Input, value: str) -> None:
+            super().__init__(sender)
+            self.value = value
+            self.input = sender

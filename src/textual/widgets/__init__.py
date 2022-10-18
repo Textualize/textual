@@ -11,6 +11,7 @@ if typing.TYPE_CHECKING:
 # `__init__.pyi` file in this same folder - otherwise text editors and type checkers won't be able to "see" them.
 __all__ = [
     "Button",
+    "Checkbox",
     "DataTable",
     "DirectoryTree",
     "Footer",

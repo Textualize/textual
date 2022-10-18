@@ -1,0 +1,10 @@
+Screen {
+    align: center middle;
+}
+
+Container {
+    width: 50;
+    height: 15;
+    background: $boost;
+    align: center middle;
+}
