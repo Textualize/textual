@@ -196,7 +196,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self._logger = Logger(self._log)
 
-        self._bindings.bind("ctrl+c", "quit", show=False, allow_forward=False)
+        self._bindings.bind("ctrl+c", "quit", show=False, universal=True)
         self._refresh_required = False
 
         self.design = DEFAULT_COLORS
@@ -321,25 +321,13 @@ class App(Generic[ReturnType], DOMNode):
         return self.screen.focused
 
     @property
-    def namespace_bindings(self) -> dict[str, tuple[object, Binding]]:
+    def namespace_bindings(self) -> dict[str, tuple[DOMNode, Binding]]:
         """Get current bindings. If no widget is focused, then the app-level bindings
         are returned. If a widget is focused, then any bindings present in the active
         screen and app are merged and returned."""
 
-        focused = self.focused
-        namespace_bindings: list[tuple[object, Bindings]]
-        if focused is None:
-            namespace_bindings = [
-                (self, self._bindings),
-                (self.screen, self.screen._bindings),
-            ]
-        else:
-            namespace_bindings = [
-                (node, node._bindings) for node in reversed(focused.ancestors)
-            ]
-
-        namespace_binding_map: dict[str, tuple[object, Binding]] = {}
-        for namespace, bindings in namespace_bindings:
+        namespace_binding_map: dict[str, tuple[DOMNode, Binding]] = {}
+        for namespace, bindings in reversed(self._binding_chain):
             for key, binding in bindings.keys.items():
                 namespace_binding_map[key] = (namespace, binding)
 
@@ -1275,22 +1263,41 @@ class App(Generic[ReturnType], DOMNode):
         if not self.is_headless:
             self.console.bell()
 
-    async def check_bindings(self, key: str) -> bool:
+    @property
+    def _binding_chain(self) -> list[tuple[DOMNode, Bindings]]:
+        """Get a chain of nodes and bindings to consider. If no widget is focused, returns the bindings from both the screen and the app level bindings. Otherwise, combines all the bindings from the currently focused node up the DOM to the root App.
+
+        Returns:
+            list[tuple[DOMNode, Bindings]]: List of DOM nodes and their bindings.
+        """
+        focused = self.focused
+        namespace_bindings: list[tuple[DOMNode, Bindings]]
+        if focused is None:
+            namespace_bindings = [
+                (self.screen, self.screen._bindings),
+                (self, self._bindings),
+            ]
+        else:
+            namespace_bindings = [(node, node._bindings) for node in focused.ancestors]
+        return namespace_bindings
+
+    async def check_bindings(self, key: str, universal: bool = False) -> bool:
         """Handle a key press.
 
         Args:
             key (str): A key
+            universal (bool): Check universal keys if True, otherwise non-universal keys.
 
         Returns:
             bool: True if the key was handled by a binding, otherwise False
         """
-        try:
-            namespace, binding = self.namespace_bindings[key]
-        except KeyError:
-            return False
-        else:
-            await self.action(binding.action, default_namespace=namespace)
-        return True
+
+        for namespace, bindings in self._binding_chain:
+            binding = bindings.keys.get(key)
+            if binding is not None and binding.universal == universal:
+                await self.action(binding.action, default_namespace=namespace)
+                return True
+        return False
 
     async def on_event(self, event: events.Event) -> None:
         # Handle input events that haven't been forwarded
@@ -1305,11 +1312,11 @@ class App(Generic[ReturnType], DOMNode):
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
-            if isinstance(event, events.Key):
-                forward_target = self.focused or self.screen
-                await forward_target._forward_event(event)
-            else:
                 await self.screen._forward_event(event)
+            elif isinstance(event, events.Key):
+                if not await self.check_bindings(event.key, universal=True):
+                    forward_target = self.focused or self.screen
+                    await forward_target._forward_event(event)
 
         elif isinstance(event, events.Paste):
             if self.focused is not None:
@@ -1440,7 +1447,7 @@ class App(Generic[ReturnType], DOMNode):
         if parent is not None:
             parent.refresh(layout=True)
 
-    async def action_check_binding(self, key: str) -> None:
+    async def action_check_bindings(self, key: str) -> None:
         await self.check_bindings(key)
 
     async def action_quit(self) -> None:
