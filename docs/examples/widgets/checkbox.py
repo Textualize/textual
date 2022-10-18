@@ -27,9 +27,6 @@ class CheckboxApp(App):
             classes="container",
         )
 
-    def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
-        print(event.value)
-
 
 app = CheckboxApp(css_path="checkbox.css")
 if __name__ == "__main__":
