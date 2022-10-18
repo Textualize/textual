@@ -2570,6 +2570,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -2620,6 +2622,28 @@
   
   <span class="md-ellipsis">
     Button
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/checkbox/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Checkbox
     
   </span>
   
@@ -3034,18 +3058,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.app.App.bindings" class="md-nav__link">
+  <a href="#textual.app.App.capture_mouse" class="md-nav__link">
     <span class="md-ellipsis">
-      bindings()
+      capture_mouse()
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.app.App.capture_mouse" class="md-nav__link">
+  <a href="#textual.app.App.check_bindings" class="md-nav__link">
     <span class="md-ellipsis">
-      capture_mouse()
+      check_bindings()
     </span>
   </a>
   
@@ -3214,6 +3238,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.namespace_bindings" class="md-nav__link">
+    <span class="md-ellipsis">
+      namespace_bindings()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.panic" class="md-nav__link">
     <span class="md-ellipsis">
       panic()
@@ -3226,15 +3259,6 @@
   <a href="#textual.app.App.pop_screen" class="md-nav__link">
     <span class="md-ellipsis">
       pop_screen()
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.app.App.press" class="md-nav__link">
-    <span class="md-ellipsis">
-      press()
     </span>
   </a>
   
@@ -3905,18 +3929,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.app.App.bindings" class="md-nav__link">
+  <a href="#textual.app.App.capture_mouse" class="md-nav__link">
     <span class="md-ellipsis">
-      bindings()
+      capture_mouse()
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.app.App.capture_mouse" class="md-nav__link">
+  <a href="#textual.app.App.check_bindings" class="md-nav__link">
     <span class="md-ellipsis">
-      capture_mouse()
+      check_bindings()
     </span>
   </a>
   
@@ -4085,6 +4109,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.namespace_bindings" class="md-nav__link">
+    <span class="md-ellipsis">
+      namespace_bindings()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.panic" class="md-nav__link">
     <span class="md-ellipsis">
       panic()
@@ -4097,15 +4130,6 @@
   <a href="#textual.app.App.pop_screen" class="md-nav__link">
     <span class="md-ellipsis">
       pop_screen()
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.app.App.press" class="md-nav__link">
-    <span class="md-ellipsis">
-      press()
     </span>
   </a>
   
@@ -4923,30 +4947,6 @@ or None to use app. Defaults to None.</p></td>
 
 
 
-<h3 id="textual.app.App.bindings" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">bindings</span><span class="p">()</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#textual.app.App.bindings" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Get current bindings. If no widget is focused, then the app-level bindings
-are returned. If a widget is focused, then any bindings present in the active
-screen and app are merged and returned.</p>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
 <h3 id="textual.app.App.capture_mouse" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">capture_mouse</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span></code>
 
@@ -4977,6 +4977,80 @@ screen and app are merged and returned.</p>
           <td>
               <em>required</em>
           </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.app.App.check_bindings" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">check_bindings</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">universal</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.app.App.check_bindings" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Handle a key press.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>key</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>A key</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>universal</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Check universal keys if True, otherwise non-universal keys.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>bool</code></td>          <td>
+                <code>bool</code>
+          </td>
+          <td><p>True if the key was handled by a binding, otherwise False</p></td>
         </tr>
     </tbody>
   </table>
@@ -5842,6 +5916,30 @@ as keyword args they will be assigned an id of the key.</p>
 
 
 
+<h3 id="textual.app.App.namespace_bindings" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">namespace_bindings</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.app.App.namespace_bindings" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Get current bindings. If no widget is focused, then the app-level bindings
+are returned. If a widget is focused, then any bindings present in the active
+screen and app are merged and returned.</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.app.App.panic" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">panic</span><span class="p">(</span><span class="o">*</span><span class="n">renderables</span><span class="p">)</span></code>
 
@@ -5908,70 +6006,6 @@ as keyword args they will be assigned an id of the key.</p>
                 <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a></code>
           </td>
           <td><p>The screen that was replaced.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.app.App.press" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">press</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-async"><code>async</code></small>
-  </span>
-
-<a href="#textual.app.App.press" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Handle a key press.</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>key</code></td>
-          <td>
-                <code>str</code>
-          </td>
-          <td><p>A key</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-<th>Name</th>        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-<td><code>bool</code></td>          <td>
-                <code>bool</code>
-          </td>
-          <td><p>True if the key was handled by a binding, otherwise False</p></td>
         </tr>
     </tbody>
   </table>
