@@ -326,20 +326,8 @@ class App(Generic[ReturnType], DOMNode):
         are returned. If a widget is focused, then any bindings present in the active
         screen and app are merged and returned."""
 
-        focused = self.focused
-        namespace_bindings: list[tuple[object, Bindings]]
-        if focused is None:
-            namespace_bindings = [
-                (self, self._bindings),
-                (self.screen, self.screen._bindings),
-            ]
-        else:
-            namespace_bindings = [
-                (node, node._bindings) for node in reversed(focused.ancestors)
-            ]
-
         namespace_binding_map: dict[str, tuple[object, Binding]] = {}
-        for namespace, bindings in namespace_bindings:
+        for namespace, bindings in self._binding_chain:
             for key, binding in bindings.keys.items():
                 namespace_binding_map[key] = (namespace, binding)
 
@@ -1275,6 +1263,26 @@ class App(Generic[ReturnType], DOMNode):
         if not self.is_headless:
             self.console.bell()
 
+    @property
+    def _binding_chain(self) -> list[tuple[DOMNode, Bindings]]:
+        """Get a chain of nodes and bindings to consider.
+
+        Returns:
+            list[tuple[DOMNode, Bindings]]: List of DOM nodes and their bindings.
+        """
+        focused = self.focused
+        namespace_bindings: list[tuple[DOMNode, Bindings]]
+        if focused is None:
+            namespace_bindings = [
+                (self, self._bindings),
+                (self.screen, self.screen._bindings),
+            ]
+        else:
+            namespace_bindings = [
+                (node, node._bindings) for node in reversed(focused.ancestors)
+            ]
+        return namespace_bindings
+
     async def check_bindings(self, key: str) -> bool:
         """Handle a key press.
 
@@ -1284,13 +1292,13 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             bool: True if the key was handled by a binding, otherwise False
         """
-        try:
-            namespace, binding = self.namespace_bindings[key]
-        except KeyError:
-            return False
-        else:
-            await self.action(binding.action, default_namespace=namespace)
-        return True
+
+        for namespace, bindings in reversed(self._binding_chain):
+            binding = bindings.keys.get(key)
+            if binding is not None:
+                await self.action(binding.action, default_namespace=namespace)
+                return True
+        return False
 
     async def on_event(self, event: events.Event) -> None:
         # Handle input events that haven't been forwarded
@@ -1440,7 +1448,7 @@ class App(Generic[ReturnType], DOMNode):
         if parent is not None:
             parent.refresh(layout=True)
 
-    async def action_check_binding(self, key: str) -> None:
+    async def action_check_bindings(self, key: str) -> None:
         await self.check_bindings(key)
 
     async def action_quit(self) -> None:

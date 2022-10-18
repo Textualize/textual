@@ -112,7 +112,7 @@ class Footer(Widget):
                     highlight_style if hovered else base_style,
                 ),
                 meta={
-                    "@click": f"app.check_binding('{binding.key}')",
+                    "@click": f"app.check_bindings('{binding.key}')",
                     "key": binding.key,
                 },
             )
