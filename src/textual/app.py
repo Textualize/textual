@@ -1434,7 +1434,7 @@ class App(Generic[ReturnType], DOMNode):
 
         # If there are more items in the focus chain than there are items to
         # be removed that can receive focus...
-        if len(widget.screen.focus_chain) >= len(remove_focusable):
+        if len(widget.screen.focus_chain) > len(remove_focusable):
             # ...go and seek the previous widget in the focus chain that
             # isn't going to be removed.
             while settle_focus is not None and settle_focus in remove_widgets:
