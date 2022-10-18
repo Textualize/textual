@@ -175,6 +175,41 @@ class Screen(Widget):
 
         return widgets
 
+    def focus_from(self, widget: Widget | None, direction: int = 0) -> Widget | None:
+        """Locate a candidate widget given a focus direction.
+
+        Args:
+            direction (int, optional): 1 to locate forward, -1 to locate backward, or
+                0 to keep the current focus.
+
+        Returns:
+            Widget | None: The candidate widget, or None for no focus.
+        """
+        focusable_widgets = self.focus_chain
+
+        if not focusable_widgets:
+            # Nothing focusable, so nothing to do
+            return None
+        if widget is None:
+            # No widget given so the first in the chain is the best
+            # candidate from here.
+            return focusable_widgets[0]
+        else:
+            try:
+                # Find the index of the widget to seek from.
+                current_index = focusable_widgets.index(widget)
+            except ValueError:
+                # That widget was removed in the interim, start again
+                return focusable_widgets[0]
+            else:
+                # Only seek a new widget if we've been given a direction.
+                if direction:
+                    return focusable_widgets[
+                        (current_index + direction) % len(focusable_widgets)
+                    ]
+
+        return None
+
     def _move_focus(self, direction: int = 0) -> Widget | None:
         """Move the focus in the given direction.
 
@@ -185,27 +220,7 @@ class Screen(Widget):
         Returns:
             Widget | None: Newly focused widget, or None for no focus.
         """
-        focusable_widgets = self.focus_chain
-
-        if not focusable_widgets:
-            # Nothing focusable, so nothing to do
-            return self.focused
-        if self.focused is None:
-            # Nothing currently focused, so focus the first one
-            self.set_focus(focusable_widgets[0])
-        else:
-            try:
-                # Find the index of the currently focused widget
-                current_index = focusable_widgets.index(self.focused)
-            except ValueError:
-                # Focused widget was removed in the interim, start again
-                self.set_focus(focusable_widgets[0])
-            else:
-                # Only move the focus if we are currently showing the focus
-                if direction:
-                    current_index = (current_index + direction) % len(focusable_widgets)
-                    self.set_focus(focusable_widgets[current_index])
-
+        self.set_focus(self.focus_from(self.focused, direction))
         return self.focused
 
     def focus_next(self) -> Widget | None:
