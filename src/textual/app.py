@@ -1313,8 +1313,7 @@ class App(Generic[ReturnType], DOMNode):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
                 await self.screen._forward_event(event)
-
-            if isinstance(event, events.Key):
+            elif isinstance(event, events.Key):
                 if not await self.check_bindings(event.key, universal=True):
                     forward_target = self.focused or self.screen
                     await forward_target._forward_event(event)
