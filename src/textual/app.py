@@ -1454,8 +1454,8 @@ class App(Generic[ReturnType], DOMNode):
         widget = event.widget
         parent = widget.parent
 
-        remove_widgets = list(
-            widget.walk_children(Widget, with_self=True, method="depth", reverse=True)
+        remove_widgets = widget.walk_children(
+            Widget, with_self=True, method="depth", reverse=True
         )
 
         if self.screen.focused in remove_widgets:
