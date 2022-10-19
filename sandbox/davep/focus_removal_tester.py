@@ -8,11 +8,19 @@ from textual.containers import Container
 from textual.widgets import Static, Header, Footer, Button
 
 
+class LeftButton(Button):
+    pass
+
+
+class RightButton(Button):
+    pass
+
+
 class NonFocusParent(Static):
     def compose(self):
-        yield Button("Do Not Press")
+        yield LeftButton("Do Not Press")
         yield Static("Test")
-        yield Button("Really Do Not Press")
+        yield RightButton("Really Do Not Press")
 
 
 class FocusRemovalTester(App[None]):
