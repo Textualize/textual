@@ -7,7 +7,7 @@ See [layout](../guide/layout.md) guide for more information.
 ## Syntax
 
 ```
-layout: [center|grid|horizontal|vertical];
+layout: [grid|horizontal|vertical];
 ```
 
 ### Values
