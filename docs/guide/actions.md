@@ -12,7 +12,7 @@ Action methods are methods on your app or widgets prefixed with `action_`. Aside
 
 Let's write an app with a simple action.
 
-```python title="actions01.py" hl_lines="6-8 12"
+```python title="actions01.py" hl_lines="6-7 11"
 --8<-- "docs/examples/guide/actions/actions01.py"
 ```
 
