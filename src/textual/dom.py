@@ -708,8 +708,8 @@ class DOMNode(MessagePump):
             walk_depth_first() if method == "depth" else walk_breadth_first()
         )
 
-        # We want a snapshot of the DOM at this point
-        # So that is doesn't change mid-walk
+        # We want a snapshot of the DOM at this point So that it doesn't
+        # change mid-walk
         nodes = list(node_generator)
         if reverse:
             yield from reversed(nodes)
