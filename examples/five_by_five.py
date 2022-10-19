@@ -230,7 +230,7 @@ class Game(Screen):
 
     def action_navigate(self, row: int, col: int) -> None:
         """Navigate to a new cell by the given offsets."""
-        if self.focused and isinstance(self.focused, GameCell):
+        if isinstance(self.focused, GameCell):
             self.set_focus(
                 self.cell(
                     (self.focused.row + row) % self.SIZE,
@@ -240,7 +240,7 @@ class Game(Screen):
 
     def action_move(self) -> None:
         """Make a move on the current cell."""
-        if self.focused and isinstance(self.focused, GameCell):
+        if isinstance(self.focused, GameCell):
             self.focused.press()
 
     def on_mount(self) -> None:
