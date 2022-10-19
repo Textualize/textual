@@ -22,7 +22,7 @@ Although it is possible (and occasionally useful) to call action methods in this
 
 The following example replaces the immediate call with a call to [action()][textual.widgets.Widget.action] which parses an action string and dispatches it to the appropriate method.
 
-```python title="actions02.py" hl_lines="10-12"
+```python title="actions02.py" hl_lines="9-11"
 --8<-- "docs/examples/guide/actions/actions02.py"
 ```
 
