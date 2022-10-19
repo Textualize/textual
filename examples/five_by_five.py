@@ -96,6 +96,8 @@ class GameCell(Button):
     def __init__(self, row: int, col: int) -> None:
         """Initialise the game cell."""
         super().__init__("", id=self.at(row, col))
+        self.row = row
+        self.col = col
 
 
 class GameGrid(Widget):
@@ -188,21 +190,12 @@ class Game(Screen):
 
         :param GameCell cell: The cell to toggle the cells around.
         """
-        # Abusing the ID as a data- attribute too (or a cargo instance
-        # variable if you're old enough to have worked with Clipper).
-        # Textual doesn't have anything like it at the moment:
-        #
-        # https://twitter.com/davepdotorg/status/1555822341170597888
-        #
-        # but given the reply it may do at some point.
-        if cell.id:
-            row, col = map(int, cell.id.split("-")[1:])
-            self.toggle_cell(row - 1, col)
-            self.toggle_cell(row + 1, col)
-            self.toggle_cell(row, col)
-            self.toggle_cell(row, col - 1)
-            self.toggle_cell(row, col + 1)
-            self.query_one(GameHeader).on = self.on_count
+        self.toggle_cell(cell.row - 1, cell.col)
+        self.toggle_cell(cell.row + 1, cell.col)
+        self.toggle_cell(cell.row, cell.col)
+        self.toggle_cell(cell.row, cell.col - 1)
+        self.toggle_cell(cell.row, cell.col + 1)
+        self.query_one(GameHeader).on = self.on_count
 
     def make_move_on(self, cell: GameCell) -> None:
         """Make a move on the given cell.
