@@ -46,7 +46,7 @@ Textual offers a convenient way of handling specific keys. If you create a metho
 Let's add a key method to the example code.
 
 ```python title="key02.py" hl_lines="15-16"
---8<-- "docs/examples/guide/input/key01.py"
+--8<-- "docs/examples/guide/input/key02.py"
 ```
 
 Note the addition of a `key_space` method which is called in response to the space key, and plays the terminal bell noise.
