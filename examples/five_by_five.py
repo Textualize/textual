@@ -10,6 +10,7 @@ from textual.widget import Widget
 from textual.widgets import Footer, Button, Static
 from textual.css.query import DOMQuery
 from textual.reactive import reactive
+from textual.binding import Binding
 
 from rich.markdown import Markdown
 
@@ -118,14 +119,14 @@ class Game(Screen):
 
     #: The bindings for the main game grid.
     BINDINGS = [
-        ("n", "new_game", "New Game"),
-        ("h,question_mark", "app.push_screen('help')", "Help"),
-        ("q", "quit", "Quit"),
-        ("up,w", "navigate(-1,0)", "Move Up"),
-        ("down,s", "navigate(1,0)", "Move Down"),
-        ("left,a", "navigate(0,-1)", "Move Left"),
-        ("right,d", "navigate(0,1)", "Move Right"),
-        ("space", "move", "Toggle"),
+        Binding("n", "new_game", "New Game"),
+        Binding("h,question_mark", "app.push_screen('help')", "Help"),
+        Binding("q", "quit", "Quit"),
+        Binding("up,w", "navigate(-1,0)", "Move Up", False),
+        Binding("down,s", "navigate(1,0)", "Move Down", False),
+        Binding("left,a", "navigate(0,-1)", "Move Left", False),
+        Binding("right,d", "navigate(0,1)", "Move Right", False),
+        Binding("space", "move", "Toggle", False),
     ]
 
     @property
