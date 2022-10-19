@@ -354,10 +354,6 @@ class Color(NamedTuple):
         Returns:
             Color: A new color.
         """
-        if factor == 0:
-            return self if alpha is None else self.with_alpha(alpha)
-        elif factor == 1:
-            return destination if alpha is None else destination.with_alpha(alpha)
         r1, g1, b1, a1 = self
         r2, g2, b2, a2 = destination
         return Color(

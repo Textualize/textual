@@ -1339,6 +1339,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             bool: True if the event has handled.
         """
+        print("ACTION", action, default_namespace)
         if isinstance(action, str):
             target, params = actions.parse(action)
         else:

@@ -1,19 +1,16 @@
- * {
-    transition:background 300ms linear, color 300ms linear; 
-}
 
 Screen {
     layers: base overlay notes;
-    overflow: hidden;
-  
+    overflow: hidden;  
 }
 
 
 Sidebar {    
-    width: 30;
+    width: 40;
     background: $panel;   
     transition: offset 500ms in_out_cubic;    
     layer: overlay;
+    
 }
 
 Sidebar.-hidden {
@@ -21,7 +18,6 @@ Sidebar.-hidden {
 }
 
 Sidebar Title {
-   
     background: $boost;
     color: $text;
     padding: 2 4;
@@ -31,37 +27,71 @@ Sidebar Title {
 }
 
 
+OptionGroup {
+    background: $boost;
+    height: 1fr;
+    border-right: vkey $background;
+}
+
+Option {
+    margin: 1 0 0 1;
+    height: 3;
+    padding: 1 2;
+    background: $boost;  
+    border: tall $panel;  
+    text-align: center;
+}
+
+Option:hover {
+    background: $primary 20%;
+    color: $text;
+}
+
 Body {
     height: 100%;
     overflow-y: auto;
+    width: 100%;
+    background: $surface;    
+
+}
+
+AboveFold {    
+    width: 100%;
+    height: 100%;
     align: center middle;
-    background: $surface;
 }
 
 Welcome {
-    background: $panel;
-    height: auto;
-    margin: 1 2;
-    padding: 1 2;
-    max-width: 60;
-    border: wide $accent;
+    background: $boost;
+    height: auto;    
+    max-width: 100;
+    min-width: 40;
+    border: wide $primary;
+    padding: 1 2;  
+    box-sizing: border-box;
 }
 
-#dark-switcher {
+Welcome Button {
     width: 100%;
-    height: 5;
-    align: center middle;
+    margin-top: 1;
 }
 
-DarkSwitch {
-    
-    background: $panel-lighten-1;
+Column {
+    height: auto;
+    align: center top;    
+}
+
+
+DarkSwitch {    
+    background: $panel;
+    padding: 1;
     dock: bottom;
     height: auto;
     border-right: vkey $background;
 }
 
 DarkSwitch .label {
+    
     padding: 1 2;
     color: $text-muted;
 }
@@ -74,16 +104,54 @@ Screen > Container {
 
 TextLog {
     background: $surface;
-    color: rgba(255,255,255,0.9);
+    color: $text;
     height: 50vh;
     dock: bottom;
     layer: notes;
-    
+    border-top: hkey $primary;
     offset-y: 0;
-    transition: offset 200ms in_out_cubic;    
+    transition: offset 200ms in_out_cubic;  
+    padding: 0 1;  
 }
 
 TextLog.-hidden {
     offset-y: 100%;
     transition: offset 200ms in_out_cubic;    
+}
+
+Section {    
+    height: auto;
+    min-width: 40;  
+    margin: 2 2;  
+}
+
+SectionTitle {
+    padding: 1 2;
+    background: $boost;
+    text-align: center;
+    text-style: bold;
+}
+
+Text {
+    margin: 1 0;
+}
+
+QuickAccess {
+    width: 30;
+    dock: left;
+    
+}
+
+LocationLink {
+    margin: 1 0 0 1;
+    height: 1;
+    padding: 0 2;
+    background: $boost;  
+    border: tall $surface;  
+    text-align: center;
+}
+
+LocationLink:hover {
+    background: $primary 20%;
+    color: $text;
 }

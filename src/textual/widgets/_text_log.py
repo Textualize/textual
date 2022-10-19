@@ -86,8 +86,9 @@ class TextLog(ScrollView, can_focus=True):
         render_options = console.options.update_width(width)
         if not self.wrap:
             render_options = render_options.update(overflow="ignore", no_wrap=True)
-        segments = self.app.console.render(renderable, render_options)
+        segments = self.app.console.render(renderable, render_options.update_width(80))
         lines = list(Segment.split_lines(segments))
+
         self.max_width = max(
             self.max_width,
             max(sum(segment.cell_length for segment in _line) for _line in lines),
@@ -108,7 +109,7 @@ class TextLog(ScrollView, can_focus=True):
     def render_line(self, y: int) -> list[Segment]:
         scroll_x, scroll_y = self.scroll_offset
         line = self._render_line(scroll_y + y, scroll_x, self.size.width)
-        line = list(Segment.apply_style(line, post_style=self.rich_style))
+        line = list(Segment.apply_style(line, self.rich_style))
         return line
 
     def render_lines(self, crop: Region) -> Lines:
