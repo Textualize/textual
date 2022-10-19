@@ -45,27 +45,28 @@ class Bindings:
     def __init__(self, bindings: Iterable[BindingType] | None = None) -> None:
         def make_bindings(bindings: Iterable[BindingType]) -> Iterable[Binding]:
             for binding in bindings:
-                if isinstance(binding, Binding):
-                    binding_keys = binding.key.split(",")
-                    if len(binding_keys) > 1:
-                        for key in binding_keys:
-                            new_binding = Binding(
-                                key=key,
-                                action=binding.action,
-                                description=binding.description,
-                                show=binding.show,
-                                key_display=binding.key_display,
-                                universal=binding.universal,
-                            )
-                            yield new_binding
-                    else:
-                        yield binding
-                else:
+                # If it's a tuple of length 3, convert into a Binding first
+                if isinstance(binding, tuple):
                     if len(binding) != 3:
                         raise BindingError(
                             f"BINDINGS must contain a tuple of three strings, not {binding!r}"
                         )
-                    yield Binding(*binding)
+                    binding = Binding(*binding)
+
+                binding_keys = binding.key.split(",")
+                if len(binding_keys) > 1:
+                    for key in binding_keys:
+                        new_binding = Binding(
+                            key=key,
+                            action=binding.action,
+                            description=binding.description,
+                            show=binding.show,
+                            key_display=binding.key_display,
+                            universal=binding.universal,
+                        )
+                        yield new_binding
+                else:
+                    yield binding
 
         self.keys: MutableMapping[str, Binding] = (
             {binding.key: binding for binding in make_bindings(bindings)}
