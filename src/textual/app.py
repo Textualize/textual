@@ -6,8 +6,8 @@ import io
 import os
 import platform
 import sys
+import unicodedata
 import warnings
-from collections import defaultdict
 from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
@@ -32,7 +32,7 @@ from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
-from .binding import Binding, Bindings, NoBinding
+from .binding import Binding, Bindings
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -44,6 +44,7 @@ from .drivers.headless_driver import HeadlessDriver
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
+from .keys import REPLACED_KEYS
 from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
@@ -611,10 +612,15 @@ class App(Generic[ReturnType], DOMNode):
                             print(f"(pause {wait_ms}ms)")
                             await asyncio.sleep(float(wait_ms) / 1000)
                         else:
-                            print(f"press {key!r}")
-                            driver.send_event(
-                                events.Key(self, key, key if len(key) == 1 else None)
-                            )
+                            original_key = REPLACED_KEYS.get(key, key)
+                            try:
+                                char = unicodedata.lookup(
+                                    original_key.upper().replace("_", " ")
+                                )
+                            except KeyError:
+                                char = key if len(key) == 1 else None
+                            print(f"press {key!r} (char={char!r})")
+                            driver.send_event(events.Key(self, key, char))
                             await asyncio.sleep(0.01)
 
                     await app._animator.wait_for_idle()
