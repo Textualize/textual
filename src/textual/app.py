@@ -139,18 +139,18 @@ class App(Generic[ReturnType], DOMNode):
     """
 
     SCREENS: dict[str, Screen] = {}
-
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
+    TITLE: str | None = None
+    SUB_TITLE: str | None = None
 
-    title: Reactive[str] = Reactive("Textual")
+    title: Reactive[str] = Reactive("")
     sub_title: Reactive[str] = Reactive("")
     dark: Reactive[bool] = Reactive(True)
 
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
-        title: str | None = None,
         css_path: CSSPathType = None,
         watch_css: bool = False,
     ):
@@ -189,10 +189,10 @@ class App(Generic[ReturnType], DOMNode):
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
-        if title is None:
-            self.title = f"{self.__class__.__name__}"
-        else:
-            self.title = title
+        self.title = (
+            self.TITLE if self.TITLE is not None else f"{self.__class__.__name__}"
+        )
+        self.sub_title = self.SUB_TITLE if self.SUB_TITLE is not None else ""
 
         self._logger = Logger(self._log)
 

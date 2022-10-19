@@ -644,9 +644,6 @@ class Styles(StylesBase):
         easing: EasingFunction,
         on_complete: CallbackType | None = None,
     ) -> ScalarAnimation | None:
-        # from ..widget import Widget
-        # node = self.node
-        # assert isinstance(self.node, Widget)
         if isinstance(value, ScalarOffset):
             return ScalarAnimation(
                 self.node,

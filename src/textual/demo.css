@@ -1,0 +1,89 @@
+ * {
+    transition:background 300ms linear, color 300ms linear; 
+}
+
+Screen {
+    layers: base overlay notes;
+    overflow: hidden;
+  
+}
+
+
+Sidebar {    
+    width: 30;
+    background: $panel;   
+    transition: offset 500ms in_out_cubic;    
+    layer: overlay;
+}
+
+Sidebar.-hidden {
+    offset-x: -100%;
+}
+
+Sidebar Title {
+   
+    background: $boost;
+    color: $text;
+    padding: 2 4;
+    border-right: vkey $background;
+    dock: top;
+    text-align: center;
+}
+
+
+Body {
+    height: 100%;
+    overflow-y: auto;
+    align: center middle;
+    background: $surface;
+}
+
+Welcome {
+    background: $panel;
+    height: auto;
+    margin: 1 2;
+    padding: 1 2;
+    max-width: 60;
+    border: wide $accent;
+}
+
+#dark-switcher {
+    width: 100%;
+    height: 5;
+    align: center middle;
+}
+
+DarkSwitch {
+    
+    background: $panel-lighten-1;
+    dock: bottom;
+    height: auto;
+    border-right: vkey $background;
+}
+
+DarkSwitch .label {
+    padding: 1 2;
+    color: $text-muted;
+}
+
+
+Screen > Container {
+    height: 100%;
+    overflow: hidden;
+}
+
+TextLog {
+    background: $surface;
+    color: rgba(255,255,255,0.9);
+    height: 50vh;
+    dock: bottom;
+    layer: notes;
+    
+    offset-y: 0;
+    transition: offset 200ms in_out_cubic;    
+}
+
+TextLog.-hidden {
+    offset-y: 100%;
+    transition: offset 200ms in_out_cubic;    
+}
