@@ -155,15 +155,25 @@ class Game(Screen):
         for cell in self.query(GameCell):
             cell.disabled = not playable
 
+    def cell(self, row: int, col: int) -> GameCell:
+        """Get the cell at a given location.
+
+        :param int row: The row of the cell to get.
+        :param int col: The column of the cell to get.
+        :returns: The cell at that location.
+        :rtype: GameCell
+        """
+        return self.query_one(f"#{GameCell.at(row,col)}", GameCell)
+
     def new_game(self) -> None:
         """Start a new game."""
         self.query_one(GameHeader).moves = 0
         self.on_cells.remove_class("on")
         self.query_one(WinnerMessage).hide()
+        middle = self.cell(self.SIZE // 2, self.SIZE // 2)
+        self.toggle_cells(middle)
+        self.set_focus(middle)
         self.game_playable(True)
-        self.toggle_cells(
-            self.query_one(f"#{GameCell.at(self.SIZE // 2,self.SIZE // 2 )}", GameCell)
-        )
 
     def compose(self) -> ComposeResult:
         """Compose the application screen."""
@@ -183,7 +193,7 @@ class Game(Screen):
         it with an invalid cell coordinate.
         """
         if 0 <= row <= (self.SIZE - 1) and 0 <= col <= (self.SIZE - 1):
-            self.query_one(f"#{GameCell.at(row, col)}", GameCell).toggle_class("on")
+            self.cell(row, col).toggle_class("on")
 
     _PATTERN: Final = (-1, 1, 0, 0, 0)
 
