@@ -12,6 +12,7 @@ from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
 from .timer import Timer
 from ._types import CallbackType
+from .dom import DOMNode
 from .geometry import Offset, Region, Size
 from .reactive import Reactive
 from .renderables.blank import Blank
@@ -223,19 +224,51 @@ class Screen(Widget):
         """
         return self._move_focus(-1)
 
-    def _reset_focus(self, widget: Widget) -> None:
+    def _reset_focus(
+        self, widget: Widget, avoiding: list[DOMNode] | None = None
+    ) -> None:
         """Reset the focus when a widget is removed
 
         Args:
             widget (Widget): A widget that is removed.
+            avoiding (list[DOMNode] | None, optional): Optional list of nodes to avoid.
         """
-        if self.focused is widget:
-            for sibling in widget.siblings:
-                if sibling.can_focus:
-                    sibling.focus()
-                    break
-            else:
-                self.focused = None
+
+        avoiding = avoiding or []
+
+        # Make this a NOP if we're being asked to deal with a widget that
+        # isn't actually the currently-focused widget.
+        if self.focused is not widget:
+            return
+
+        # Grab the list of widgets that we can set focus to.
+        focusable_widgets = self.focus_chain
+        if not focusable_widgets:
+            # If there's nothing to focus... give up now.
+            return
+
+        try:
+            # Find the location of the widget we're taking focus from, in
+            # the focus chain.
+            widget_index = focusable_widgets.index(widget)
+        except ValueError:
+            # Seems we can't find it. There's no good reason this should
+            # happen but, on the off-chance, let's go into a "no focus" state.
+            self.set_focus(None)
+            return
+
+        # Now go looking for something before it, that isn't about to be
+        # removed, and which can receive focus, and go focus that.
+        chosen: DOMNode | None = None
+        for candidate in reversed(
+            focusable_widgets[widget_index + 1 :] + focusable_widgets[:widget_index]
+        ):
+            if candidate not in avoiding and candidate.can_focus:
+                chosen = candidate
+                break
+
+        # Go with the what was found.
+        self.set_focus(chosen)
 
     def set_focus(self, widget: Widget | None, scroll_visible: bool = True) -> None:
         """Focus (or un-focus) a widget. A focused widget will receive key events first.
