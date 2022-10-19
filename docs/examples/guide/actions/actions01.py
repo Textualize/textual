@@ -5,7 +5,6 @@ from textual import events
 class ActionsApp(App):
     def action_set_background(self, color: str) -> None:
         self.screen.styles.background = color
-        self.bell()
 
     def on_key(self, event: events.Key) -> None:
         if event.key == "r":

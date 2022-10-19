@@ -206,6 +206,7 @@ KEY_NAME_REPLACEMENTS = {
     "plus_sign": "plus",
     "low_line": "underscore",
 }
+REPLACED_KEYS = {value: key for key, value in KEY_NAME_REPLACEMENTS.items()}
 
 # Some keys have aliases. For example, if you press `ctrl+m` on your keyboard,
 # it's treated the same way as if you press `enter`. Key handlers `key_ctrl_m` and

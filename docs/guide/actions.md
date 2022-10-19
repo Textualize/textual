@@ -12,7 +12,7 @@ Action methods are methods on your app or widgets prefixed with `action_`. Aside
 
 Let's write an app with a simple action.
 
-```python title="actions01.py" hl_lines="6-8 12"
+```python title="actions01.py" hl_lines="6-7 11"
 --8<-- "docs/examples/guide/actions/actions01.py"
 ```
 
@@ -22,7 +22,7 @@ Although it is possible (and occasionally useful) to call action methods in this
 
 The following example replaces the immediate call with a call to [action()][textual.widgets.Widget.action] which parses an action string and dispatches it to the appropriate method.
 
-```python title="actions02.py" hl_lines="10-12"
+```python title="actions02.py" hl_lines="9-11"
 --8<-- "docs/examples/guide/actions/actions02.py"
 ```
 
@@ -71,7 +71,7 @@ The following example mounts simple static text with embedded action links.
     ```{.textual path="docs/examples/guide/actions/actions03.py"}
     ```
 
-When you click any of the links, Textual runs the `"set_background"` action to change the background to the given color and plays the terminal's bell.
+When you click any of the links, Textual runs the `"set_background"` action to change the background to the given color.
 
 ## Bindings
 
