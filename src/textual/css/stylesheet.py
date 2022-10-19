@@ -192,7 +192,7 @@ class Stylesheet:
             variables (dict[str, str]): A mapping of name to variable.
         """
         self._variables = variables
-        self._variables_tokens = None
+        self.__variable_tokens = None
 
     def _parse_rules(
         self,

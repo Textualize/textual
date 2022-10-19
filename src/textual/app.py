@@ -353,8 +353,6 @@ class App(Generic[ReturnType], DOMNode):
 
     def watch_dark(self, dark: bool) -> None:
         """Watches the dark bool."""
-
-        self.screen.dark = dark
         self.set_class(dark, "-dark-mode")
         self.set_class(not dark, "-light-mode")
         self.refresh_css()
