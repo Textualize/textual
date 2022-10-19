@@ -93,8 +93,6 @@ class CalculatorApp(App):
         button_id = event.button.id
         assert button_id is not None
 
-        self.bell()  # Terminal bell
-
         def do_math() -> None:
             """Does the math: LEFT OPERATOR RIGHT"""
             try:
