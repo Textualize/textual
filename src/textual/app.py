@@ -1419,11 +1419,16 @@ class App(Generic[ReturnType], DOMNode):
         widget = event.widget
         parent = widget.parent
 
-        widget.reset_focus()
-
-        remove_widgets = widget.walk_children(
-            Widget, with_self=True, method="depth", reverse=True
+        remove_widgets = list(
+            widget.walk_children(Widget, with_self=True, method="depth", reverse=True)
         )
+
+        if self.screen.focused in remove_widgets:
+            self.screen._reset_focus(
+                self.screen.focused,
+                [to_remove for to_remove in remove_widgets if to_remove.can_focus],
+            )
+
         for child in remove_widgets:
             await child._close_messages()
             self._unregister(child)
