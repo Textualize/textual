@@ -18,7 +18,7 @@ class Help(Screen):
     """The help screen for the application."""
 
     #: Bindings for the help screen.
-    BINDINGS = [("esc,space,q,h,question_mark", "app.pop_screen", "Close")]
+    BINDINGS = [("escape,space,q,h,question_mark", "app.pop_screen", "Close")]
 
     def compose(self) -> ComposeResult:
         """Compose the game's help."""
