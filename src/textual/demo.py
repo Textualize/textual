@@ -76,8 +76,6 @@ WELCOME_MD = """
 
 Textual is a framework for creating sophisticated applications with the terminal.
 
-Powered by **Rich**
-
 """
 
 
@@ -135,9 +133,34 @@ DATA = {
 
 WIDGETS_MD = """
 
-Textual widgets are powerful self-container components.
+Textual widgets are powerful interactive components.
 
 Build your own or use the builtin widgets.
+
+- **Input** Text / Password input.
+- **Button** Clickable button with a number of styles.
+- **Checkbox** A checkbox to toggle between states.
+- **DataTable** A spreadsheet-like widget for navigating data. Cells may contain text or Rich renderables.
+- **TreeControl** An generic tree with expandable nodes.
+- **DirectoryTree** A tree of file and folders.
+- *... many more planned ...* 
+
+"""
+
+
+MESSAGE = """
+We hope you enjoy using Textual.
+
+Here are some links. You can click these!
+
+[@click="app.open_link('https://textual.textualize.io')"]Textual Docs[/]
+
+[@click="app.open_link('https://github.com/Textualize/textual')"]Textual GitHub Repository[/]
+
+[@click="app.open_link('https://github.com/Textualize/rich')"]Rich GitHub Repository[/]
+
+
+Built with ♥  by [@click="app.open_link(https://www.textualize.io)"]Textualize.io[/]
 
 """
 
@@ -147,11 +170,7 @@ class Body(Container):
 
 
 class Title(Static):
-    def action_open_docs(self) -> None:
-        self.app.bell()
-        import webbrowser
-
-        webbrowser.open("https://textual.textualize.io")
+    pass
 
 
 class DarkSwitch(Horizontal):
@@ -163,7 +182,7 @@ class DarkSwitch(Horizontal):
         watch(self.app, "dark", self.on_dark_change)
 
     def on_dark_change(self, dark: bool) -> None:
-        self.query_one(Checkbox).value = dark
+        self.query_one(Checkbox).value = self.app.dark
 
     def on_checkbox_changed(self, event: Checkbox.Changed) -> None:
         self.app.dark = event.value
@@ -187,11 +206,14 @@ class SectionTitle(Static):
     pass
 
 
+class Message(Static):
+    pass
+
+
 class Sidebar(Container):
     def compose(self) -> ComposeResult:
-        yield Title("[@click=open_docs]Textual Demo[/]")
-        yield OptionGroup()
-
+        yield Title("Textual Demo")
+        yield OptionGroup(Message(MESSAGE))
         yield DarkSwitch()
 
 
@@ -240,7 +262,7 @@ class DemoApp(App):
     TITLE = "Textual Demo"
     BINDINGS = [
         ("ctrl+s", "app.toggle_class('Sidebar', '-hidden')", "Sidebar"),
-        ("ctrl+d", "app.toggle_dark", "Toggle Dark mode"),
+        ("ctrl+t", "app.toggle_dark", "Toggle Dark mode"),
         ("f1", "app.toggle_class('TextLog', '-hidden')", "Notes"),
         Binding("ctrl+c,ctrl+q", "app.quit", "Quit", show=True),
     ]
@@ -249,9 +271,6 @@ class DemoApp(App):
 
     def add_note(self, renderable: RenderableType) -> None:
         self.query_one(TextLog).write(renderable)
-
-    def on_mount(self) -> None:
-        self.add_note("Textual Demo app is running")
 
     def compose(self) -> ComposeResult:
         yield Container(
@@ -300,7 +319,14 @@ class DemoApp(App):
         )
         yield Footer()
 
+    def action_open_link(self, link: str) -> None:
+        self.app.bell()
+        import webbrowser
+
+        webbrowser.open(link)
+
     def on_mount(self) -> None:
+        self.add_note("Textual Demo app is running")
         table = self.query_one(DataTable)
         table.add_column("Foo", width=20)
         table.add_column("Bar", width=20)

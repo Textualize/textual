@@ -19,11 +19,12 @@ Sidebar.-hidden {
 
 Sidebar Title {
     background: $boost;
-    color: $text;
+    color: $secondary;
     padding: 2 4;
     border-right: vkey $background;
     dock: top;
     text-align: center;
+    text-style: bold;
 }
 
 
@@ -79,6 +80,7 @@ Welcome Button {
 
 Column {
     height: auto;
+    min-height: 100vh;
     align: center top;    
 }
 
@@ -97,6 +99,10 @@ DarkSwitch .label {
     color: $text-muted;
 }
 
+DarkSwitch Checkbox {
+    background: $boost;
+}
+
 
 Screen > Container {
     height: 100%;
@@ -112,7 +118,7 @@ TextLog {
     border-top: hkey $primary;
     offset-y: 0;
     transition: offset 400ms in_out_cubic;  
-    padding: 0 1;  
+    padding: 0 1 1 1;  
 }
 
 TextLog.-hidden {
@@ -133,6 +139,8 @@ SectionTitle {
     text-align: center;
     text-style: bold;
 }
+
+
 
 Text {
     margin: 1 0;
@@ -189,4 +197,9 @@ LoginForm Button{
 LoginForm .label {
     padding: 1 2;
     text-align: right;
+}
+
+Message {
+    margin: 0 1;
+  
 }
