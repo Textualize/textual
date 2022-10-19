@@ -118,7 +118,7 @@ class Game(Screen):
 
     #: The bindings for the main game grid.
     BINDINGS = [
-        ("n", "reset", "New Game"),
+        ("n", "new_game", "New Game"),
         ("h,question_mark", "app.push_screen('help')", "Help"),
         ("q", "quit", "Quit"),
         ("up,w", "navigate(-1,0)", "Move Up"),
@@ -170,16 +170,6 @@ class Game(Screen):
         """
         return self.query_one(f"#{GameCell.at(row,col)}", GameCell)
 
-    def new_game(self) -> None:
-        """Start a new game."""
-        self.query_one(GameHeader).moves = 0
-        self.on_cells.remove_class("on")
-        self.query_one(WinnerMessage).hide()
-        middle = self.cell(self.SIZE // 2, self.SIZE // 2)
-        self.toggle_cells(middle)
-        self.set_focus(middle)
-        self.game_playable(True)
-
     def compose(self) -> ComposeResult:
         """Compose the application screen."""
         yield GameHeader()
@@ -227,9 +217,15 @@ class Game(Screen):
         """React to a press of a button on the game grid."""
         self.make_move_on(cast(GameCell, event.button))
 
-    def action_reset(self) -> None:
-        """Reset the game."""
-        self.new_game()
+    def action_new_game(self) -> None:
+        """Start a new game."""
+        self.query_one(GameHeader).moves = 0
+        self.on_cells.remove_class("on")
+        self.query_one(WinnerMessage).hide()
+        middle = self.cell(self.SIZE // 2, self.SIZE // 2)
+        self.toggle_cells(middle)
+        self.set_focus(middle)
+        self.game_playable(True)
 
     def action_navigate(self, row: int, col: int) -> None:
         """Navigate to a new cell by the given offsets."""
@@ -248,7 +244,7 @@ class Game(Screen):
 
     def on_mount(self) -> None:
         """Get the game started when we first mount."""
-        self.new_game()
+        self.action_new_game()
 
 
 class FiveByFive(App[None]):
