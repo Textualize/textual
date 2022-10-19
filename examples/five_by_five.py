@@ -185,16 +185,15 @@ class Game(Screen):
         if 0 <= row <= (self.SIZE - 1) and 0 <= col <= (self.SIZE - 1):
             self.query_one(f"#{GameCell.at(row, col)}", GameCell).toggle_class("on")
 
+    _PATTERN: Final = (-1, 1, 0, 0, 0)
+
     def toggle_cells(self, cell: GameCell) -> None:
         """Toggle a 5x5 pattern around the given cell.
 
         :param GameCell cell: The cell to toggle the cells around.
         """
-        self.toggle_cell(cell.row - 1, cell.col)
-        self.toggle_cell(cell.row + 1, cell.col)
-        self.toggle_cell(cell.row, cell.col)
-        self.toggle_cell(cell.row, cell.col - 1)
-        self.toggle_cell(cell.row, cell.col + 1)
+        for row, col in zip(self._PATTERN, reversed(self._PATTERN)):
+            self.toggle_cell(cell.row + row, cell.col + col)
         self.query_one(GameHeader).on = self.on_count
 
     def make_move_on(self, cell: GameCell) -> None:
