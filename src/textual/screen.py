@@ -38,7 +38,6 @@ class Screen(Widget):
     }
     """
 
-    dark: Reactive[bool] = Reactive(False)
     focused: Reactive[Widget | None] = Reactive(None)
 
     def __init__(
