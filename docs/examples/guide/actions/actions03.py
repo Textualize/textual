@@ -15,7 +15,6 @@ class ActionsApp(App):
 
     def action_set_background(self, color: str) -> None:
         self.screen.styles.background = color
-        self.bell()
 
 
 if __name__ == "__main__":

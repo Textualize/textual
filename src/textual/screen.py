@@ -263,7 +263,7 @@ class Screen(Widget):
         for candidate in reversed(
             focusable_widgets[widget_index + 1 :] + focusable_widgets[:widget_index]
         ):
-            if candidate not in avoiding and candidate.can_focus:
+            if candidate not in avoiding:
                 chosen = candidate
                 break
 
