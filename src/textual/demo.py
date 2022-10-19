@@ -1,13 +1,73 @@
+from rich import box
 from rich.console import RenderableType
 from rich.markdown import Markdown
 from rich.syntax import Syntax
+from rich.pretty import Pretty
+from rich.table import Table
 from rich.text import Text
 
 from textual.app import App, ComposeResult
-
+from textual.binding import Binding
 from textual.containers import Container, Horizontal
 from textual.reactive import reactive, watch
-from textual.widgets import Header, Footer, Static, Button, Checkbox, TextLog
+from textual.widgets import (
+    DataTable,
+    Header,
+    Footer,
+    Static,
+    Button,
+    Checkbox,
+    TextLog,
+    Input,
+)
+
+from_markup = Text.from_markup
+
+example_table = Table(
+    show_edge=False,
+    show_header=True,
+    expand=True,
+    row_styles=["none", "dim"],
+    box=box.SIMPLE,
+)
+example_table.add_column(from_markup("[green]Date"), style="green", no_wrap=True)
+example_table.add_column(from_markup("[blue]Title"), style="blue")
+example_table.add_column(
+    from_markup("[cyan]Production Budget"),
+    style="cyan",
+    justify="right",
+    no_wrap=True,
+)
+example_table.add_column(
+    from_markup("[magenta]Box Office"),
+    style="magenta",
+    justify="right",
+    no_wrap=True,
+)
+example_table.add_row(
+    "Dec 20, 2019",
+    "Star Wars: The Rise of Skywalker",
+    "$275,000,000",
+    "$375,126,118",
+)
+example_table.add_row(
+    "May 25, 2018",
+    from_markup("[b]Solo[/]: A Star Wars Story"),
+    "$275,000,000",
+    "$393,151,347",
+)
+example_table.add_row(
+    "Dec 15, 2017",
+    "Star Wars Ep. VIII: The Last Jedi",
+    "$262,000,000",
+    from_markup("[bold]$1,332,539,889[/bold]"),
+)
+example_table.add_row(
+    "May 19, 1999",
+    from_markup("Star Wars Ep. [b]I[/b]: [i]The phantom Menace"),
+    "$115,000,000",
+    "$1,027,044,677",
+)
 
 
 WELCOME_MD = """
@@ -18,7 +78,17 @@ Textual is a framework for creating sophisticated applications with the terminal
 
 Powered by **Rich**
 
-GITHUB: https://github.com/Textualize/textual
+"""
+
+
+RICH_MD = """
+
+Textual is built on Rich, one of the most popular libraries for Python.
+
+Use any Rich *renderable* to add content to a Textual App (this text is rendered with Markdown).
+
+Here are some examples:
+
 
 """
 
@@ -50,6 +120,26 @@ Sidebar {
 Sidebar.-hidden {
     offset-x: -100%;
 }"""
+
+DATA = {
+    "foo": [
+        3.1427,
+        (
+            "Paul Atreides",
+            "Vladimir Harkonnen",
+            "Thufir Hawat",
+            "Gurney Halleck" "Duncan Idaho",
+        ),
+    ],
+}
+
+WIDGETS_MD = """
+
+Textual widgets are powerful self-container components.
+
+Build your own or use the builtin widgets.
+
+"""
 
 
 class Body(Container):
@@ -86,7 +176,7 @@ class Welcome(Container):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         self.app.add_note("[b magenta]Start!")
-        self.app.query_one(".location-first").scroll_visible(speed=50)
+        self.app.query_one(".location-first").scroll_visible(speed=50, top=True)
 
 
 class OptionGroup(Container):
@@ -97,24 +187,10 @@ class SectionTitle(Static):
     pass
 
 
-class Option(Static):
-    def __init__(self, label: str, reveal: str) -> None:
-        super().__init__(label)
-        self.reveal = reveal
-
-    def on_click(self) -> None:
-        self.app.query_one(self.reveal).scroll_visible()
-        self.app.add_note(f"Scrolling to [b]{self.reveal}[/b]")
-
-
 class Sidebar(Container):
     def compose(self) -> ComposeResult:
         yield Title("[@click=open_docs]Textual Demo[/]")
-        yield OptionGroup(
-            Option("TOP", ".location-top"),
-            Option("First", ".location-first"),
-            Option("Baz", ""),
-        )
+        yield OptionGroup()
 
         yield DarkSwitch()
 
@@ -145,17 +221,28 @@ class LocationLink(Static):
         self.reveal = reveal
 
     def on_click(self) -> None:
-        self.app.query_one(self.reveal).scroll_visible()
+        self.app.query_one(self.reveal).scroll_visible(top=True)
         self.app.add_note(f"Scrolling to [b]{self.reveal}[/b]")
+
+
+class LoginForm(Container):
+    def compose(self) -> ComposeResult:
+        yield Static("Username", classes="label")
+        yield Input(placeholder="Username")
+        yield Static("Password", classes="label")
+        yield Input(placeholder="Password", password=True)
+        yield Static()
+        yield Button("Login", variant="primary")
 
 
 class DemoApp(App):
     CSS_PATH = "demo.css"
     TITLE = "Textual Demo"
     BINDINGS = [
-        ("s", "app.toggle_class('Sidebar', '-hidden')", "Sidebar"),
-        ("d", "app.toggle_dark", "Toggle Dark mode"),
-        ("n", "app.toggle_class('TextLog', '-hidden')", "Notes"),
+        ("ctrl+s", "app.toggle_class('Sidebar', '-hidden')", "Sidebar"),
+        ("ctrl+d", "app.toggle_dark", "Toggle Dark mode"),
+        ("f1", "app.toggle_class('TextLog', '-hidden')", "Notes"),
+        Binding("ctrl+c,ctrl+q", "app.quit", "Quit", show=True),
     ]
 
     show_sidebar = reactive(False)
@@ -174,10 +261,20 @@ class DemoApp(App):
             Body(
                 QuickAccess(
                     LocationLink("TOP", ".location-top"),
-                    LocationLink("First", ".location-first"),
-                    LocationLink("Baz", ""),
+                    LocationLink("Rich", ".location-rich"),
+                    LocationLink("CSS", ".location-css"),
+                    LocationLink("Widgets", ".location-widgets"),
                 ),
                 AboveFold(Welcome(), classes="location-top"),
+                Column(
+                    Section(
+                        SectionTitle("Rich"),
+                        Text(Markdown(RICH_MD)),
+                        Static(Pretty(DATA, indent_guides=True), classes="pretty pad"),
+                        Static(example_table, classes="table pad"),
+                    ),
+                    classes="location-rich location-first",
+                ),
                 Column(
                     Section(
                         SectionTitle("CSS"),
@@ -188,11 +285,32 @@ class DemoApp(App):
                             )
                         ),
                     ),
-                    classes="location-first",
+                    classes="location-css",
+                ),
+                Column(
+                    Section(
+                        SectionTitle("Widgets"),
+                        Text(Markdown(WIDGETS_MD)),
+                        LoginForm(),
+                        DataTable(),
+                    ),
+                    classes="location-widgets",
                 ),
             ),
         )
         yield Footer()
+
+    def on_mount(self) -> None:
+        table = self.query_one(DataTable)
+        table.add_column("Foo", width=20)
+        table.add_column("Bar", width=20)
+        table.add_column("Baz", width=20)
+        table.add_column("Foo", width=20)
+        table.add_column("Bar", width=20)
+        table.add_column("Baz", width=20)
+        table.zebra_stripes = True
+        for n in range(20):
+            table.add_row(*[f"Cell ([b]{n}[/b], {col})" for col in range(6)])
 
 
 app = DemoApp()

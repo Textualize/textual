@@ -49,7 +49,7 @@ Option:hover {
 
 Body {
     height: 100%;
-    overflow-y: auto;
+    overflow-y: scroll;
     width: 100%;
     background: $surface;    
 
@@ -68,6 +68,7 @@ Welcome {
     min-width: 40;
     border: wide $primary;
     padding: 1 2;  
+    margin: 1 2;
     box-sizing: border-box;
 }
 
@@ -110,19 +111,20 @@ TextLog {
     layer: notes;
     border-top: hkey $primary;
     offset-y: 0;
-    transition: offset 200ms in_out_cubic;  
+    transition: offset 400ms in_out_cubic;  
     padding: 0 1;  
 }
 
 TextLog.-hidden {
     offset-y: 100%;
-    transition: offset 200ms in_out_cubic;    
+       
 }
 
 Section {    
     height: auto;
     min-width: 40;  
-    margin: 2 2;  
+    margin: 1 2 4 2;  
+
 }
 
 SectionTitle {
@@ -145,13 +147,46 @@ QuickAccess {
 LocationLink {
     margin: 1 0 0 1;
     height: 1;
-    padding: 0 2;
-    background: $boost;  
-    border: tall $surface;  
-    text-align: center;
+    padding: 1 2;
+    background: $boost;
+    color: $text;  
+
+    content-align: center middle;
 }
 
 LocationLink:hover {
-    background: $primary 20%;
+    background: $accent;
     color: $text;
+    text-style: bold;
+}
+
+
+.pad {
+    margin: 1 0;
+}
+
+DataTable {
+    height: 10;
+}
+
+LoginForm {
+    height: auto;
+    margin: 1 0;
+    padding: 1 2;
+    layout: grid;
+    grid-size: 2;
+    grid-rows: 4;
+    grid-columns: 12 1fr;
+    background: $boost;
+    border: wide $background; 
+}
+
+LoginForm Button{
+    margin: 0 1;
+    width: 100%;
+}
+
+LoginForm .label {
+    padding: 1 2;
+    text-align: right;
 }

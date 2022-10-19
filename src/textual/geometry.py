@@ -307,7 +307,9 @@ class Region(NamedTuple):
         return cls(x, y, width, height)
 
     @classmethod
-    def get_scroll_to_visible(cls, window_region: Region, region: Region) -> Offset:
+    def get_scroll_to_visible(
+        cls, window_region: Region, region: Region, *, top: bool = False
+    ) -> Offset:
         """Calculate the smallest offset required to translate a window so that it contains
         another region.
 
@@ -316,6 +318,7 @@ class Region(NamedTuple):
         Args:
             window_region (Region): The window region.
             region (Region): The region to move inside the window.
+            top (bool, optional): Get offset to top of window. Defaults to False
 
         Returns:
             Offset: An offset required to add to region to move it inside window_region.
@@ -327,7 +330,7 @@ class Region(NamedTuple):
 
         window_left, window_top, window_right, window_bottom = window_region.corners
         region = region.crop_size(window_region.size)
-        left, top, right, bottom = region.corners
+        left, top_, right, bottom = region.corners
         delta_x = delta_y = 0
 
         if not (
@@ -343,15 +346,18 @@ class Region(NamedTuple):
             )
 
         if not (
-            (window_bottom > top >= window_top)
+            (window_bottom > top_ >= window_top)
             and (window_bottom > bottom >= window_top)
         ):
             # The window needs to scroll on the Y axis to bring region in to view
-            delta_y = min(
-                top - window_top,
-                top - (window_bottom - region.height),
-                key=abs,
-            )
+            if top:
+                delta_y = top_ - window_top
+            else:
+                delta_y = min(
+                    top_ - window_top,
+                    top_ - (window_bottom - region.height),
+                    key=abs,
+                )
         return Offset(delta_x, delta_y)
 
     def __bool__(self) -> bool:

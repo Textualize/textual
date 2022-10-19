@@ -1345,6 +1345,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        top: bool = False,
     ) -> bool:
         """Scroll scrolling to bring a widget in to view.
 
@@ -1370,6 +1371,7 @@ class Widget(DOMNode):
                 animate=animate,
                 speed=speed,
                 duration=duration,
+                top=top,
             )
             if scroll_offset:
                 scrolled = True
@@ -1396,6 +1398,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        top: bool = False,
     ) -> Offset:
         """Scrolls a given region in to view, if required.
 
@@ -1408,6 +1411,7 @@ class Widget(DOMNode):
             animate (bool, optional): True to animate, or False to jump. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            top (bool, optional): Scroll region to top of container. Defaults to False.
 
         Returns:
             Offset: The distance that was scrolled.
@@ -1419,7 +1423,7 @@ class Widget(DOMNode):
         if window in region:
             return Offset()
 
-        delta_x, delta_y = Region.get_scroll_to_visible(window, region)
+        delta_x, delta_y = Region.get_scroll_to_visible(window, region, top=top)
         scroll_x, scroll_y = self.scroll_offset
         delta = Offset(
             clamp(scroll_x + delta_x, 0, self.max_scroll_x) - scroll_x,
@@ -1440,8 +1444,10 @@ class Widget(DOMNode):
     def scroll_visible(
         self,
         animate: bool = True,
+        *,
         speed: float | None = None,
         duration: float | None = None,
+        top: bool = False,
     ) -> None:
         """Scroll the container to make this widget visible.
 
@@ -1449,6 +1455,7 @@ class Widget(DOMNode):
             animate (bool, optional): _description_. Defaults to True.
             speed (float | None, optional): _description_. Defaults to None.
             duration (float | None, optional): _description_. Defaults to None.
+            top (bool, optional): Scroll to top of container. Defaults to False.
         """
         parent = self.parent
         if isinstance(parent, Widget):
@@ -1458,6 +1465,7 @@ class Widget(DOMNode):
                 animate=animate,
                 speed=speed,
                 duration=duration,
+                top=top,
             )
 
     def __init_subclass__(
