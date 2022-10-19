@@ -121,6 +121,11 @@ class Game(Screen):
         ("n", "reset", "New Game"),
         ("h,question_mark", "app.push_screen('help')", "Help"),
         ("q", "quit", "Quit"),
+        ("up,w", "navigate(-1,0)", "Move Up"),
+        ("down,s", "navigate(1,0)", "Move Down"),
+        ("left,a", "navigate(0,-1)", "Move Left"),
+        ("right,d", "navigate(0,1)", "Move Right"),
+        ("space", "move", "Toggle"),
     ]
 
     @property
@@ -226,6 +231,21 @@ class Game(Screen):
         """Reset the game."""
         self.new_game()
 
+    def action_navigate(self, row: int, col: int) -> None:
+        """Navigate to a new cell by the given offsets."""
+        if self.focused and isinstance(self.focused, GameCell):
+            self.set_focus(
+                self.cell(
+                    (self.focused.row + row) % self.SIZE,
+                    (self.focused.col + col) % self.SIZE,
+                )
+            )
+
+    def action_move(self) -> None:
+        """Make a move on the current cell."""
+        if self.focused and isinstance(self.focused, GameCell):
+            self.focused.press()
+
     def on_mount(self) -> None:
         """Get the game started when we first mount."""
         self.new_game()
@@ -241,7 +261,7 @@ class FiveByFive(App[None]):
     SCREENS = {"help": Help()}
 
     #: App-level bindings.
-    BINDINGS = [("d", "app.toggle_dark", "Toggle Dark Mode")]
+    BINDINGS = [("D", "app.toggle_dark", "Toggle Dark Mode")]
 
     def __init__(self) -> None:
         """Constructor."""
