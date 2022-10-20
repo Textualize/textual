@@ -315,7 +315,7 @@ class FiveByFive(App[None]):
     SCREENS = {"help": Help()}
 
     #: App-level bindings.
-    BINDINGS = [("D", "toggle_dark", "Toggle Dark Mode")]
+    BINDINGS = [("ctrl+d", "toggle_dark", "Toggle Dark Mode")]
 
     def __init__(self) -> None:
         """Constructor."""
