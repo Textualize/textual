@@ -84,6 +84,7 @@ class EasingApp(App):
         )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
+        self.bell()
         self.animated_bar.animation_running = True
 
         def _animation_complete():
