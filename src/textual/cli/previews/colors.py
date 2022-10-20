@@ -45,7 +45,6 @@ class ColorsView(Vertical):
             "lighten-3",
         ]
 
-        variables = self.app.stylesheet._variables
         for color_name in ColorSystem.COLOR_NAMES:
 
             items: list[Widget] = [ColorLabel(f'"{color_name}"')]
@@ -55,8 +54,8 @@ class ColorsView(Vertical):
                     ColorBar(f"${color}", classes="text label"),
                     ColorBar(f"$text-muted", classes="muted"),
                     ColorBar(f"$text-disabled", classes="disabled"),
+                    classes=color,
                 )
-                item.styles.background = variables[color]
                 items.append(item)
 
             yield ColorGroup(*items, id=f"group-{color_name}")
@@ -83,12 +82,6 @@ class ColorsApp(App):
         group = self.query_one(f"#group-{event.button.id}", ColorGroup)
         group.add_class("-active")
         group.scroll_visible(speed=150)
-
-    def action_toggle_dark(self) -> None:
-        content = self.query_one("Content", Content)
-        self.dark = not self.dark
-        content.mount(ColorsView())
-        content.query("ColorsView").first().remove()
 
 
 app = ColorsApp()
