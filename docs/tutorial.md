@@ -35,13 +35,13 @@ If you want to try the finished Stopwatch app and follow along with the code, fi
 === "HTTPS"
 
     ```bash
-    git clone -b css https://github.com/Textualize/textual.git
+    git clone https://github.com/Textualize/textual.git
     ```
 
 === "SSH"
 
     ```bash
-    git clone -b css git@github.com:Textualize/textual.git
+    git clone git@github.com:Textualize/textual.git
     ```
 
 === "GitHub CLI"

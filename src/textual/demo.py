@@ -119,7 +119,8 @@ DATA = {
             "Paul Atreides",
             "Vladimir Harkonnen",
             "Thufir Hawat",
-            "Gurney Halleck" "Duncan Idaho",
+            "Gurney Halleck",
+            "Duncan Idaho",
         ),
     ],
 }
@@ -307,23 +308,32 @@ class DemoApp(App):
             Body(
                 QuickAccess(
                     LocationLink("TOP", ".location-top"),
+                    LocationLink("Widgets", ".location-widgets"),
                     LocationLink("Rich content", ".location-rich"),
                     LocationLink("CSS", ".location-css"),
-                    LocationLink("Widgets", ".location-widgets"),
                 ),
                 AboveFold(Welcome(), classes="location-top"),
+                Column(
+                    Section(
+                        SectionTitle("Widgets"),
+                        Text(Markdown(WIDGETS_MD)),
+                        LoginForm(),
+                        DataTable(),
+                    ),
+                    classes="location-widgets location-first",
+                ),
                 Column(
                     Section(
                         SectionTitle("Rich"),
                         Text(Markdown(RICH_MD)),
                         SubTitle("Pretty Printed data (try resizing the terminal)"),
                         Static(Pretty(DATA, indent_guides=True), classes="pretty pad"),
-                        SubTitle("Tables"),
-                        Static(example_table, classes="table pad"),
                         SubTitle("JSON"),
                         Window(Static(JSON(JSON_EXAMPLE), expand=True), classes="pad"),
+                        SubTitle("Tables"),
+                        Static(example_table, classes="table pad"),
                     ),
-                    classes="location-rich location-first",
+                    classes="location-rich",
                 ),
                 Column(
                     Section(
@@ -336,15 +346,6 @@ class DemoApp(App):
                         ),
                     ),
                     classes="location-css",
-                ),
-                Column(
-                    Section(
-                        SectionTitle("Widgets"),
-                        Text(Markdown(WIDGETS_MD)),
-                        LoginForm(),
-                        DataTable(),
-                    ),
-                    classes="location-widgets",
                 ),
             ),
         )
