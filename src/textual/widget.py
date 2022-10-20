@@ -262,6 +262,18 @@ class Widget(DOMNode):
             return []
 
     @property
+    def visible_siblings(self) -> list[Widget]:
+        """A list of siblings which will be shown.
+
+        Returns:
+            list[Widget]: List of siblings.
+        """
+        siblings = [
+            widget for widget in self.siblings if widget.visible and widget.display
+        ]
+        return siblings
+
+    @property
     def allow_vertical_scroll(self) -> bool:
         """Check if vertical scroll is permitted.
 
@@ -1576,9 +1588,12 @@ class Widget(DOMNode):
             yield "hover"
         if self.has_focus:
             yield "focus"
-        focused = self.screen.focused
-        if focused and self in focused.ancestors:
-            yield "focus-within"
+        try:
+            focused = self.screen.focused
+            if focused and self in focused.ancestors:
+                yield "focus-within"
+        except NoScreen:
+            pass
 
     def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
         """Applies style attributes to the default renderable.

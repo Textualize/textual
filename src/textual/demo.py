@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from rich import box
 from rich.console import RenderableType
 from rich.markdown import Markdown
@@ -303,6 +305,7 @@ class DemoApp(App):
         self.query_one(TextLog).write(renderable)
 
     def compose(self) -> ComposeResult:
+        example_css = "\n".join(Path(self.css_path).read_text().splitlines()[:50])
         yield Container(
             Sidebar(classes="-hidden"),
             Header(show_clock=True),
@@ -341,9 +344,15 @@ class DemoApp(App):
                     Section(
                         SectionTitle("CSS"),
                         Text(Markdown(CSS_MD)),
-                        Static(
-                            Syntax(
-                                EXAMPLE_CSS, "css", theme="material", line_numbers=True
+                        Window(
+                            Static(
+                                Syntax(
+                                    example_css,
+                                    "css",
+                                    theme="material",
+                                    line_numbers=True,
+                                ),
+                                expand=True,
                             )
                         ),
                     ),

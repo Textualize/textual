@@ -225,7 +225,7 @@ class Screen(Widget):
         return self._move_focus(-1)
 
     def _reset_focus(
-        self, widget: Widget, avoiding: list[DOMNode] | None = None
+        self, widget: Widget, avoiding: list[Widget] | None = None
     ) -> None:
         """Reset the focus when a widget is removed
 
@@ -252,14 +252,20 @@ class Screen(Widget):
             # the focus chain.
             widget_index = focusable_widgets.index(widget)
         except ValueError:
-            # Seems we can't find it. There's no good reason this should
-            # happen but, on the off-chance, let's go into a "no focus" state.
-            self.set_focus(None)
+            # widget is not in focusable widgets
+            # It may have been made invisible
+            # Move to a sibling if possible
+            for sibling in widget.visible_siblings:
+                if sibling not in avoiding and sibling.can_focus:
+                    self.set_focus(sibling)
+                    break
+            else:
+                self.set_focus(None)
             return
 
         # Now go looking for something before it, that isn't about to be
         # removed, and which can receive focus, and go focus that.
-        chosen: DOMNode | None = None
+        chosen: Widget | None = None
         for candidate in reversed(
             focusable_widgets[widget_index + 1 :] + focusable_widgets[:widget_index]
         ):
@@ -368,6 +374,7 @@ class Screen(Widget):
             hidden, shown, resized = self._compositor.reflow(self, size)
             Hide = events.Hide
             Show = events.Show
+
             for widget in hidden:
                 widget.post_message_no_wait(Hide(self))
             for widget in shown:
