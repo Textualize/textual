@@ -122,10 +122,10 @@ class Game(Screen):
         Binding("n", "new_game", "New Game"),
         Binding("question_mark", "app.push_screen('help')", "Help", key_display="?"),
         Binding("q", "quit", "Quit"),
-        Binding("up,w", "navigate(-1,0)", "Move Up", False),
-        Binding("down,s", "navigate(1,0)", "Move Down", False),
-        Binding("left,a", "navigate(0,-1)", "Move Left", False),
-        Binding("right,d", "navigate(0,1)", "Move Right", False),
+        Binding("up,w,k", "navigate(-1,0)", "Move Up", False),
+        Binding("down,s,j", "navigate(1,0)", "Move Down", False),
+        Binding("left,a,h", "navigate(0,-1)", "Move Left", False),
+        Binding("right,d,l", "navigate(0,1)", "Move Right", False),
         Binding("space", "move", "Toggle", False),
     ]
 
