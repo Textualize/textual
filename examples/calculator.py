@@ -27,6 +27,7 @@ class CalculatorApp(App):
         "plus_minus_sign": "plus-minus",
         "percent_sign": "percent",
         "equals_sign": "equals",
+        "enter": "equals",
     }
 
     def watch_numbers(self, value: str) -> None:
