@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from rich import box
 from rich.console import RenderableType
 from rich.markdown import Markdown
@@ -288,7 +290,7 @@ class DemoApp(App):
     CSS_PATH = "demo.css"
     TITLE = "Textual Demo"
     BINDINGS = [
-        ("ctrl+b", "app.toggle_class('Sidebar', '-hidden')", "Sidebar"),
+        ("ctrl+b", "toggle_sidebar", "Sidebar"),
         ("ctrl+t", "app.toggle_dark", "Toggle Dark mode"),
         ("ctrl+s", "app.screenshot()", "Screenshot"),
         ("f1", "app.toggle_class('TextLog', '-hidden')", "Notes"),
@@ -356,6 +358,16 @@ class DemoApp(App):
         import webbrowser
 
         webbrowser.open(link)
+
+    def action_toggle_sidebar(self) -> None:
+        self.bell()
+        sidebar = self.query_one(Sidebar)
+        if sidebar.has_class("-hidden"):
+            sidebar.remove_class("-hidden")
+        else:
+            if sidebar.query("*:focus"):
+                self.screen.set_focus(None)
+            sidebar.add_class("-hidden")
 
     def on_mount(self) -> None:
         self.add_note("Textual Demo app is running")

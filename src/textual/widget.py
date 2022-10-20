@@ -238,7 +238,6 @@ class Widget(DOMNode):
     auto_width = Reactive(True)
     auto_height = Reactive(True)
     has_focus = Reactive(False)
-    descendant_has_focus = Reactive(False)
     mouse_over = Reactive(False)
     scroll_x = Reactive(0.0, repaint=False, layout=False)
     scroll_y = Reactive(0.0, repaint=False, layout=False)
@@ -1577,7 +1576,8 @@ class Widget(DOMNode):
             yield "hover"
         if self.has_focus:
             yield "focus"
-        if self.descendant_has_focus:
+        focused = self.screen.focused
+        if focused and self in focused.ancestors:
             yield "focus-within"
 
     def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
@@ -1927,26 +1927,17 @@ class Widget(DOMNode):
         self.mouse_over = True
 
     def _on_focus(self, event: events.Focus) -> None:
-        self.emit_no_wait(events.DescendantFocus(self))
+        for node in self.ancestors:
+            if node._has_focus_within:
+                self.app.update_styles(node)
         self.has_focus = True
         self.refresh()
 
     def _on_blur(self, event: events.Blur) -> None:
-        self.emit_no_wait(events.DescendantBlur(self))
+        if any(node._has_focus_within for node in self.ancestors):
+            self.app.update_styles(self)
         self.has_focus = False
         self.refresh()
-
-    def _on_descendant_focus(self, event: events.DescendantFocus) -> None:
-        if not self.descendant_has_focus:
-            self.descendant_has_focus = True
-
-    def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
-        if self.descendant_has_focus:
-            self.descendant_has_focus = False
-
-    def watch_descendant_has_focus(self, value: bool) -> None:
-        if "focus-within" in self.pseudo_classes:
-            self.app._require_stylesheet_update.add(self)
 
     def _on_mouse_scroll_down(self, event) -> None:
         if self.allow_vertical_scroll:

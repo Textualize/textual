@@ -140,6 +140,7 @@ class DOMNode(MessagePump):
         self._css_types = {cls.__name__ for cls in self._css_bases(self.__class__)}
         self._bindings = Bindings(self.BINDINGS)
         self._has_hover_style: bool = False
+        self._has_focus_within: bool = False
 
         super().__init__()
 

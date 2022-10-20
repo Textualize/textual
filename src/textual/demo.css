@@ -16,6 +16,10 @@ Sidebar {
     
 }
 
+Sidebar:focus-within {
+    offset: 0 0 !important;    
+}
+
 Sidebar.-hidden {
     offset-x: -100%;
 }
@@ -125,10 +129,16 @@ TextLog {
     padding: 0 1 1 1;  
 }
 
-TextLog.-hidden {
-    offset-y: 100%;
-       
+
+TextLog:focus {
+    offset: 0 0 !important;
 }
+
+TextLog.-hidden {
+    offset-y: 100%;       
+}
+
+
 
 Section {    
     height: auto;
