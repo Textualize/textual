@@ -1,3 +1,6 @@
+ *  {
+    transition: background 250ms linear, color 250ms linear;
+}
 
 Screen {
     layers: base overlay notes;
@@ -30,6 +33,7 @@ Sidebar Title {
 
 OptionGroup {
     background: $boost;
+    color: $text;
     height: 1fr;
     border-right: vkey $background;
 }
@@ -179,7 +183,7 @@ LocationLink:hover {
 }
 
 DataTable {
-    height: 10;
+    height: 16;
 }
 
 LoginForm {
@@ -216,6 +220,7 @@ TreeControl {
 
 
 Window {
+    background: $boost;
     overflow: auto;
     height: auto;
     max-height: 16;

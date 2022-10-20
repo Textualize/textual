@@ -93,6 +93,7 @@ Here's an example of some CSS used in this app:
 
 """
 
+
 EXAMPLE_CSS = """\
 Screen {
     layers: base overlay notes;
@@ -286,8 +287,9 @@ class DemoApp(App):
     CSS_PATH = "demo.css"
     TITLE = "Textual Demo"
     BINDINGS = [
-        ("ctrl+s", "app.toggle_class('Sidebar', '-hidden')", "Sidebar"),
+        ("ctrl+b", "app.toggle_class('Sidebar', '-hidden')", "Sidebar"),
         ("ctrl+t", "app.toggle_dark", "Toggle Dark mode"),
+        ("ctrl+s", "app.screenshot()", "Screenshot"),
         ("f1", "app.toggle_class('TextLog', '-hidden')", "Notes"),
         Binding("ctrl+c,ctrl+q", "app.quit", "Quit", show=True),
     ]
@@ -300,12 +302,12 @@ class DemoApp(App):
     def compose(self) -> ComposeResult:
         yield Container(
             Sidebar(classes="-hidden"),
-            Header(),
+            Header(show_clock=True),
             TextLog(classes="-hidden", wrap=False, highlight=True, markup=True),
             Body(
                 QuickAccess(
                     LocationLink("TOP", ".location-top"),
-                    LocationLink("Rich", ".location-rich"),
+                    LocationLink("Rich content", ".location-rich"),
                     LocationLink("CSS", ".location-css"),
                     LocationLink("Widgets", ".location-widgets"),
                 ),
@@ -319,7 +321,7 @@ class DemoApp(App):
                         SubTitle("Tables"),
                         Static(example_table, classes="table pad"),
                         SubTitle("JSON"),
-                        Window(Static(JSON(JSON_EXAMPLE), expand=True, classes="pad")),
+                        Window(Static(JSON(JSON_EXAMPLE), expand=True), classes="pad"),
                     ),
                     classes="location-rich location-first",
                 ),
@@ -366,6 +368,18 @@ class DemoApp(App):
         table.zebra_stripes = True
         for n in range(20):
             table.add_row(*[f"Cell ([b]{n}[/b], {col})" for col in range(6)])
+        self.query_one("Welcome Button", Button).focus()
+
+    def action_screenshot(self, filename: str | None = None, path: str = "./") -> None:
+        """Save an SVG "screenshot". This action will save an SVG file containing the current contents of the screen.
+
+        Args:
+            filename (str | None, optional): Filename of screenshot, or None to auto-generate. Defaults to None.
+            path (str, optional): Path to directory. Defaults to "~/".
+        """
+        self.bell()
+        path = self.save_screenshot(filename, path)
+        self.add_note(f"Screenshot saved to {path!r}")
 
 
 app = DemoApp()

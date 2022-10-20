@@ -480,7 +480,7 @@ class App(Generic[ReturnType], DOMNode):
         """Action to toggle dark mode."""
         self.dark = not self.dark
 
-    def action_screenshot(self, filename: str | None, path: str = "~/") -> None:
+    def action_screenshot(self, filename: str | None = None, path: str = "./") -> None:
         """Save an SVG "screenshot". This action will save an SVG file containing the current contents of the screen.
 
         Args:

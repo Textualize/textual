@@ -349,18 +349,28 @@ class Color(NamedTuple):
         Args:
             destination (Color): Another color.
             factor (float): A blend factor, 0 -> 1.
-            alpha (float | None): New alpha for result. Defaults to 1.
+            alpha (float | None): New alpha for result. Defaults to None.
 
         Returns:
             Color: A new color.
         """
+        if factor == 0:
+            return self
+        elif factor == 1:
+            return destination
         r1, g1, b1, a1 = self
         r2, g2, b2, a2 = destination
+
+        if alpha is None:
+            new_alpha = a1 + (a2 - a1) * factor
+        else:
+            new_alpha = alpha
+
         return Color(
             int(r1 + (r2 - r1) * factor),
             int(g1 + (g2 - g1) * factor),
             int(b1 + (b2 - b1) * factor),
-            a1 + (a2 - a1) * factor if alpha is None else alpha,
+            new_alpha,
         )
 
     def __add__(self, other: object) -> Color:
