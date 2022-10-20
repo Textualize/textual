@@ -136,20 +136,20 @@ class Game(Screen):
     ]
 
     @property
-    def on_cells(self) -> DOMQuery[GameCell]:
+    def filled_cells(self) -> DOMQuery[GameCell]:
         """The collection of cells that are currently turned on.
 
         :type: DOMQuery[GameCell]
         """
-        return cast(DOMQuery[GameCell], self.query("GameCell.on"))
+        return cast(DOMQuery[GameCell], self.query("GameCell.filled"))
 
     @property
-    def on_count(self) -> int:
+    def filled_count(self) -> int:
         """The number of cells that are turned on.
 
         :type: int
         """
-        return len(self.on_cells)
+        return len(self.filled_cells)
 
     @property
     def all_on(self) -> bool:
@@ -157,7 +157,7 @@ class Game(Screen):
 
         :type: bool
         """
-        return self.on_count == self.SIZE * self.SIZE
+        return self.filled_count == self.SIZE * self.SIZE
 
     def game_playable(self, playable: bool) -> None:
         """Mark the game as playable, or not.
@@ -195,7 +195,7 @@ class Game(Screen):
         it with an invalid cell coordinate.
         """
         if 0 <= row <= (self.SIZE - 1) and 0 <= col <= (self.SIZE - 1):
-            self.cell(row, col).toggle_class("on")
+            self.cell(row, col).toggle_class("filled")
 
     _PATTERN: Final = (-1, 1, 0, 0, 0)
 
@@ -206,7 +206,7 @@ class Game(Screen):
         """
         for row, col in zip(self._PATTERN, reversed(self._PATTERN)):
             self.toggle_cell(cell.row + row, cell.col + col)
-        self.query_one(GameHeader).on = self.on_count
+        self.query_one(GameHeader).on = self.filled_count
 
     def make_move_on(self, cell: GameCell) -> None:
         """Make a move on the given cell.
@@ -227,7 +227,7 @@ class Game(Screen):
     def action_new_game(self) -> None:
         """Start a new game."""
         self.query_one(GameHeader).moves = 0
-        self.on_cells.remove_class("on")
+        self.filled_cells.remove_class("filled")
         self.query_one(WinnerMessage).hide()
         middle = self.cell(self.SIZE // 2, self.SIZE // 2)
         self.toggle_cells(middle)

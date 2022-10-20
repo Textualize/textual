@@ -47,12 +47,12 @@ GameCell:hover {
     border: round $panel;
 }
 
-GameCell.on {
+GameCell.filled {
     background: $secondary;
     border: round $secondary-darken-1;
 }
 
-GameCell.on:hover {
+GameCell.filled:hover {
     background: $secondary-lighten-1;
     border: round $secondary;
 }
