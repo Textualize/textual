@@ -19,7 +19,7 @@ class Help(Screen):
     """The help screen for the application."""
 
     #: Bindings for the help screen.
-    BINDINGS = [("escape,space,q,question_mark", "app.pop_screen", "Close")]
+    BINDINGS = [("escape,space,q,question_mark", "pop_screen", "Close")]
 
     def compose(self) -> ComposeResult:
         """Compose the game's help."""
@@ -120,7 +120,7 @@ class Game(Screen):
     #: The bindings for the main game grid.
     BINDINGS = [
         Binding("n", "new_game", "New Game"),
-        Binding("question_mark", "app.push_screen('help')", "Help", key_display="?"),
+        Binding("question_mark", "push_screen('help')", "Help", key_display="?"),
         Binding("q", "quit", "Quit"),
         Binding("up,w,k", "navigate(-1,0)", "Move Up", False),
         Binding("down,s,j", "navigate(1,0)", "Move Down", False),
@@ -258,7 +258,7 @@ class FiveByFive(App[None]):
     SCREENS = {"help": Help()}
 
     #: App-level bindings.
-    BINDINGS = [("D", "app.toggle_dark", "Toggle Dark Mode")]
+    BINDINGS = [("D", "toggle_dark", "Toggle Dark Mode")]
 
     def __init__(self) -> None:
         """Constructor."""
