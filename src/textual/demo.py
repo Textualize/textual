@@ -5,6 +5,7 @@ from rich.syntax import Syntax
 from rich.pretty import Pretty
 from rich.table import Table
 from rich.text import Text
+from rich.json import JSON
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -32,12 +33,7 @@ example_table = Table(
 )
 example_table.add_column(from_markup("[green]Date"), style="green", no_wrap=True)
 example_table.add_column(from_markup("[blue]Title"), style="blue")
-example_table.add_column(
-    from_markup("[cyan]Production Budget"),
-    style="cyan",
-    justify="right",
-    no_wrap=True,
-)
+
 example_table.add_column(
     from_markup("[magenta]Box Office"),
     style="magenta",
@@ -47,25 +43,21 @@ example_table.add_column(
 example_table.add_row(
     "Dec 20, 2019",
     "Star Wars: The Rise of Skywalker",
-    "$275,000,000",
     "$375,126,118",
 )
 example_table.add_row(
     "May 25, 2018",
     from_markup("[b]Solo[/]: A Star Wars Story"),
-    "$275,000,000",
     "$393,151,347",
 )
 example_table.add_row(
     "Dec 15, 2017",
     "Star Wars Ep. VIII: The Last Jedi",
-    "$262,000,000",
     from_markup("[bold]$1,332,539,889[/bold]"),
 )
 example_table.add_row(
     "May 19, 1999",
     from_markup("Star Wars Ep. [b]I[/b]: [i]The phantom Menace"),
-    "$115,000,000",
     "$1,027,044,677",
 )
 
@@ -74,16 +66,16 @@ WELCOME_MD = """
 
 ## Textual Demo
 
-Textual is a framework for creating sophisticated applications with the terminal.
+**Welcome**! Textual is a framework for creating sophisticated applications with the terminal.
 
 """
 
 
 RICH_MD = """
 
-Textual is built on Rich, one of the most popular libraries for Python.
+Textual is built on **Rich**, the popular Python library for advanced terminal output.
 
-Use any Rich *renderable* to add content to a Textual App (this text is rendered with Markdown).
+Add content to your Textual App with Rich *renderables* (this text is written in Markdown and formatted with Rich's Markdown class).
 
 Here are some examples:
 
@@ -162,6 +154,31 @@ Here are some links. You can click these!
 
 Built with ♥  by [@click="app.open_link(https://www.textualize.io)"]Textualize.io[/]
 
+"""
+
+
+JSON_EXAMPLE = """{
+    "glossary": {
+        "title": "example glossary",
+		"GlossDiv": {
+            "title": "S",
+			"GlossList": {
+                "GlossEntry": {
+                    "ID": "SGML",
+					"SortAs": "SGML",
+					"GlossTerm": "Standard Generalized Markup Language",
+					"Acronym": "SGML",
+					"Abbrev": "ISO 8879:1986",
+					"GlossDef": {
+                        "para": "A meta-markup language, used to create markup languages such as DocBook.",
+						"GlossSeeAlso": ["GML", "XML"]
+                    },
+					"GlossSee": "markup"
+                }
+            }
+        }
+    }
+}
 """
 
 
@@ -257,6 +274,14 @@ class LoginForm(Container):
         yield Button("Login", variant="primary")
 
 
+class Window(Container):
+    pass
+
+
+class SubTitle(Static):
+    pass
+
+
 class DemoApp(App):
     CSS_PATH = "demo.css"
     TITLE = "Textual Demo"
@@ -289,8 +314,12 @@ class DemoApp(App):
                     Section(
                         SectionTitle("Rich"),
                         Text(Markdown(RICH_MD)),
+                        SubTitle("Pretty Printed data (try resizing the terminal)"),
                         Static(Pretty(DATA, indent_guides=True), classes="pretty pad"),
+                        SubTitle("Tables"),
                         Static(example_table, classes="table pad"),
+                        SubTitle("JSON"),
+                        Window(Static(JSON(JSON_EXAMPLE), expand=True, classes="pad")),
                     ),
                     classes="location-rich location-first",
                 ),

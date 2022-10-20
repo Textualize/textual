@@ -140,7 +140,12 @@ SectionTitle {
     text-style: bold;
 }
 
-
+SubTitle {    
+    padding-top: 1;
+    border-bottom: heavy $panel;
+    color: $text;
+    text-style: bold;
+}
 
 Text {
     margin: 1 0;
@@ -202,4 +207,20 @@ LoginForm .label {
 Message {
     margin: 0 1;
   
+}
+
+
+TreeControl {
+    margin: 1 0;
+}
+
+
+Window {
+    overflow: auto;
+    height: auto;
+    max-height: 16;
+}
+
+Window > Static {
+    width: auto;
 }
