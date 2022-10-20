@@ -258,7 +258,7 @@ class FiveByFive(App[None]):
     """Main 5x5 application class."""
 
     #: The name of the stylesheet for the app.
-    CSS_PATH = Path(__file__).with_suffix(".css")
+    CSS_PATH = "five_by_five.css"
 
     #: The pre-loaded screens for the application.
     SCREENS = {"help": Help()}
