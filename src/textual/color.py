@@ -375,7 +375,7 @@ class Color(NamedTuple):
 
     def __add__(self, other: object) -> Color:
         if isinstance(other, Color):
-            new_color = self.blend(other, other.a)
+            new_color = self.blend(other, other.a, alpha=1.0)
             return new_color
         return NotImplemented
 
