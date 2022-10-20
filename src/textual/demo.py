@@ -369,7 +369,7 @@ class DemoApp(App):
         webbrowser.open(link)
 
     def action_toggle_sidebar(self) -> None:
-        self.bell()
+
         sidebar = self.query_one(Sidebar)
         if sidebar.has_class("-hidden"):
             sidebar.remove_class("-hidden")
