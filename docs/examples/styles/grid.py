@@ -14,5 +14,3 @@ class GridApp(App):
 
 
 app = GridApp(css_path="grid.css")
-if __name__ == "__main__":
-    app.run()

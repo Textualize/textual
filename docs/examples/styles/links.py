@@ -13,6 +13,3 @@ class LinksApp(App):
 
 
 app = LinksApp(css_path="links.css")
-
-if __name__ == "__main__":
-    app.run()
