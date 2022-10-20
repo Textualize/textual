@@ -1,7 +1,13 @@
 """Simple version of 5x5, developed for/with Textual."""
 
 from pathlib import Path
-from typing import Final, cast
+from typing import cast
+import sys
+
+if sys.version_info >= (3, 8):
+    from typing import Final
+else:
+    from typing_extensions import Final
 
 from textual.containers import Horizontal
 from textual.app import App, ComposeResult
