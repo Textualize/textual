@@ -81,8 +81,8 @@ class GameHeader(Widget):
     #: Keep track of how many moves the player has made.
     moves = reactive(0)
 
-    #: Keep track of how many cells are turned on.
-    on = reactive(0)
+    #: Keep track of how many cells are filled.
+    filled = reactive(0)
 
     def compose(self) -> ComposeResult:
         """Compose the game header.
@@ -104,13 +104,13 @@ class GameHeader(Widget):
         """
         self.query_one("#moves", Static).update(f"Moves: {moves}")
 
-    def watch_on(self, on: int):
+    def watch_filled(self, filled: int):
         """Watch the on-count reactive and update when it changes.
 
         Args:
-            on (int): The number of cells that are currently on.
+            filled (int): The number of cells that are currently on.
         """
-        self.query_one("#progress", Static).update(f"On: {on}")
+        self.query_one("#progress", Static).update(f"Filled: {filled}")
 
 
 class GameCell(Button):
@@ -185,8 +185,8 @@ class Game(Screen):
         return len(self.filled_cells)
 
     @property
-    def all_on(self) -> bool:
-        """bool: Are all the cells turned on?"""
+    def all_filled(self) -> bool:
+        """bool: Are all the cells filled?"""
         return self.filled_count == self.SIZE * self.SIZE
 
     def game_playable(self, playable: bool) -> None:
@@ -245,7 +245,7 @@ class Game(Screen):
         """
         for row, col in zip(self._PATTERN, reversed(self._PATTERN)):
             self.toggle_cell(cell.row + row, cell.col + col)
-        self.query_one(GameHeader).on = self.filled_count
+        self.query_one(GameHeader).filled = self.filled_count
 
     def make_move_on(self, cell: GameCell) -> None:
         """Make a move on the given cell.
@@ -258,7 +258,7 @@ class Game(Screen):
         """
         self.toggle_cells(cell)
         self.query_one(GameHeader).moves += 1
-        if self.all_on:
+        if self.all_filled:
             self.query_one(WinnerMessage).show(self.query_one(GameHeader).moves)
             self.game_playable(False)
 
