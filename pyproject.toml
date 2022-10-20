@@ -1,11 +1,12 @@
-[tool.poetry]
+[project]
 name = "textual"
+dynamic = ["readme"]
 version = "0.3.0"
-homepage = "https://github.com/Textualize/textual"
 description = "Modern Text User Interface framework"
-authors = ["Will McGugan <will@textualize.io>"]
+authors = [
+    { name = "Will McGugan", email = "will@textualize.io" },
+]
 license = "MIT"
-readme = "README.md"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
@@ -19,42 +20,40 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Typing :: Typed",
 ]
-include = [
-    "src/textual/py.typed"   
+requires-python = ">=3.7"
+dependencies = [
+    "importlib-metadata >= 4.11.3, <5",
+    "nanoid >= 2.0.0",
+    "rich >= 12.6.0, <13",
+    "typing-extensions >= 4.0.0, <5; python_version < '3.10'",
 ]
 
-[tool.poetry.scripts]
+[project.optional-dependencies]
+dev = [
+    "aiohttp >= 3.8.1",
+    "click >= 8.1.2",
+    "msgpack >= 1.0.3",
+]
+
+[project.scripts]
 textual = "textual.cli.cli:run"
 
-[tool.poetry.dependencies]
-python = "^3.7"
-rich = "^12.6.0"
-#rich = {path="../rich", develop=true}
-importlib-metadata = "^4.11.3"
-typing-extensions = { version = "^4.0.0", python = "<3.10" }
+[project.urls]
+Homepage = "https://github.com/Textualize/textual"
 
-# Dependencies below are required for devtools only
-aiohttp = { version = ">=3.8.1", optional = true }
-click = {version = ">=8.1.2", optional = true}
-msgpack = { version = ">=1.0.3", optional = true }
-nanoid = ">=2.0.0"
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/markdown"
+fragments = [
+    { path = "README.md" },
+]
 
-[tool.poetry.extras]
-dev = ["aiohttp", "click", "msgpack"]
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '(?<=\]\()\./(.+?\.py)(?=\))'
+replacement = 'https://github.com/Textualize/textual/blob/main/\1'
 
-[tool.poetry.dev-dependencies]
-pytest = "^7.1.3"
-black = "^22.3.0"
-mypy = "^0.982"
-pytest-cov = "^2.12.1"
-mkdocs = "^1.3.0"
-mkdocstrings = {extras = ["python"], version = "^0.19.0"}
-mkdocs-material = "^8.2.15"
-pre-commit = "^2.13.0"
-pytest-aiohttp = "^1.0.4"
-time-machine = "^2.6.0"
-Jinja2 = "<3.1.0"
-syrupy = "^3.0.0"
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
+pattern = '(?<=\]\()\./(.+?\.(png|svg))(?=\))'
+replacement = 'https://raw.githubusercontent.com/Textualize/textual/main/\1'
 
 [tool.black]
 includes = "src"
@@ -68,5 +67,5 @@ markers = [
 ]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ['hatchling>=1.11.1', 'hatch-fancy-pypi-readme>=22.5.0']
+build-backend = 'hatchling.build'
