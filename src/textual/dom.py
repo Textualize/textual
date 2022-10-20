@@ -278,7 +278,7 @@ class DOMNode(MessagePump):
         while node and not isinstance(node, Screen):
             node = node._parent
         if not isinstance(node, Screen):
-            raise NoScreen(f"node has no screen")
+            raise NoScreen("node has no screen")
         return node
 
     @property

@@ -610,8 +610,6 @@ class Styles(StylesBase):
             list[tuple[str, Specificity6, Any]]]: A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
         """
         is_important = self.important.__contains__
-        if self.important:
-            print(self._rules)
         rules = [
             (
                 rule_name,

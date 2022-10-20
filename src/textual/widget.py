@@ -1590,10 +1590,16 @@ class Widget(DOMNode):
             yield "focus"
         try:
             focused = self.screen.focused
-            if focused and self in focused.ancestors:
-                yield "focus-within"
         except NoScreen:
             pass
+        else:
+            if focused:
+                node = focused
+                while node is not None:
+                    if node is self:
+                        yield "focus-within"
+                        break
+                    node = node._parent
 
     def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
         """Applies style attributes to the default renderable.

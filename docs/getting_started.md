@@ -25,13 +25,13 @@ You can install Textual via PyPI.
 If you plan on developing Textual apps, then you should install `textual[dev]`. The `[dev]` part installs a few extra dependencies for development.
 
 ```
-pip install "textual[dev]"
+pip install "textual[dev]==0.2.0b8"
 ```
 
 If you only plan on _running_ Textual apps, then you can drop the `[dev]` part:
 
 ```
-pip install textual
+pip install textual==0.2.0b8
 ```
 
 ## Demo
@@ -55,19 +55,19 @@ The Textual repository comes with a number of example apps. To try out the examp
 === "HTTPS"
 
     ```bash
-    git clone https://github.com/Textualize/textual.git
+    git clone -b css https://github.com/Textualize/textual.git
     ```
 
 === "SSH"
 
     ```bash
-    git clone git@github.com:Textualize/textual.git
+    git clone -b css git@github.com:Textualize/textual.git
     ```
 
 === "GitHub CLI"
 
     ```bash
-    gh repo clone Textualize/textual
+    gh repo clone -b css Textualize/textual
     ```
 
 
