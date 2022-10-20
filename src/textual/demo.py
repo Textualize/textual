@@ -73,7 +73,7 @@ WELCOME_MD = """
 
 RICH_MD = """
 
-Textual is built on **Rich**, the popular Python library for advanced terminal output.
+Textual is built on [Rich](https://github.com/Textualize/rich), the popular Python library for advanced terminal output.
 
 Add content to your Textual App with Rich *renderables* (this text is written in Markdown and formatted with Rich's Markdown class).
 
@@ -137,7 +137,7 @@ Build your own or use the builtin widgets.
 - **DataTable** A spreadsheet-like widget for navigating data. Cells may contain text or Rich renderables.
 - **TreeControl** An generic tree with expandable nodes.
 - **DirectoryTree** A tree of file and folders.
-- *... many more planned ...* 
+- *... [many more planned](https://textual.textualize.io/roadmap/) ...* 
 
 """
 
