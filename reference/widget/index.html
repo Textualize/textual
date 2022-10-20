@@ -3951,6 +3951,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widget.Widget.visible_siblings" class="md-nav__link">
+    <span class="md-ellipsis">
+      visible_siblings()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widget.Widget.watch_has_focus" class="md-nav__link">
     <span class="md-ellipsis">
       watch_has_focus()
@@ -4699,6 +4708,15 @@
   <a href="#textual.widget.Widget.virtual_region_with_margin" class="md-nav__link">
     <span class="md-ellipsis">
       virtual_region_with_margin()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widget.Widget.visible_siblings" class="md-nav__link">
+    <span class="md-ellipsis">
+      visible_siblings()
     </span>
   </a>
   
@@ -6196,8 +6214,8 @@ the keys will be set as the Widget's id.</p>
 <code class="highlight language-python"><span class="n">offset</span><span class="p">()</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.widget.Widget.offset" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -7680,7 +7698,7 @@ do this automatically.</p>
 
 
 <h2 id="textual.widget.Widget.scroll_to_region" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">scroll_to_region</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">animate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">scroll_to_region</span><span class="p">(</span><span class="n">region</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">animate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 <a href="#textual.widget.Widget.scroll_to_region" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -7752,6 +7770,16 @@ the scrollable area.</p>
                 <code>None</code>
           </td>
         </tr>
+        <tr>
+          <td><code>top</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Scroll region to top of container. Defaults to False.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -7782,7 +7810,7 @@ the scrollable area.</p>
 
 
 <h2 id="textual.widget.Widget.scroll_to_widget" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">scroll_to_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">animate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">scroll_to_widget</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">animate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 <a href="#textual.widget.Widget.scroll_to_widget" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -7952,7 +7980,7 @@ the scrollable area.</p>
 
 
 <h2 id="textual.widget.Widget.scroll_visible" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">scroll_visible</span><span class="p">(</span><span class="n">animate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">scroll_visible</span><span class="p">(</span><span class="n">animate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 <a href="#textual.widget.Widget.scroll_visible" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -8000,6 +8028,16 @@ the scrollable area.</p>
           <td><p><em>description</em>. Defaults to None.</p></td>
           <td>
                 <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>top</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Scroll to top of container. Defaults to False.</p></td>
+          <td>
+                <code>False</code>
           </td>
         </tr>
     </tbody>
@@ -8368,6 +8406,46 @@ depending on the scroll offset.</p>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="../geometry/#textual.geometry.Region">Region</a></code>
           </td>
           <td><p>The virtual region of the Widget, inclusive of its margin.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="textual.widget.Widget.visible_siblings" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">visible_siblings</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.visible_siblings" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>A list of siblings which will be shown.</p>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code>list[<a class="autorefs autorefs-internal" title="textual.widget.Widget" href="#textual.widget.Widget">Widget</a>]</code>
+          </td>
+          <td><p>list[Widget]: List of siblings.</p></td>
         </tr>
     </tbody>
   </table>

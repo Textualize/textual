@@ -27,7 +27,6 @@ class ButtonsApp(App[str]):
         )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        self.app.bell()
         self.exit(str(event.button))
 
 

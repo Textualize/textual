@@ -6173,7 +6173,7 @@ top left of the terminal or other container.</p>
 
 
 <h3 id="textual.geometry.Region.get_scroll_to_visible" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_scroll_to_visible</span><span class="p">(</span><span class="n">window_region</span><span class="p">,</span> <span class="n">region</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">get_scroll_to_visible</span><span class="p">(</span><span class="n">window_region</span><span class="p">,</span> <span class="n">region</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -6217,6 +6217,16 @@ another region.</p>
           <td><p>The region to move inside the window.</p></td>
           <td>
               <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>top</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Get offset to top of window. Defaults to False</p></td>
+          <td>
+                <code>False</code>
           </td>
         </tr>
     </tbody>
