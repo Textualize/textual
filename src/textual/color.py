@@ -341,13 +341,15 @@ class Color(NamedTuple):
         r, g, b, _ = self
         return Color(r, g, b, alpha)
 
-    def blend(self, destination: Color, factor: float, alpha: float = 1) -> Color:
+    def blend(
+        self, destination: Color, factor: float, alpha: float | None = None
+    ) -> Color:
         """Generate a new color between two colors.
 
         Args:
             destination (Color): Another color.
             factor (float): A blend factor, 0 -> 1.
-            alpha (float | None): New alpha for result. Defaults to 1.
+            alpha (float | None): New alpha for result. Defaults to None.
 
         Returns:
             Color: A new color.
@@ -356,18 +358,24 @@ class Color(NamedTuple):
             return self
         elif factor == 1:
             return destination
-        r1, g1, b1, _ = self
-        r2, g2, b2, _ = destination
+        r1, g1, b1, a1 = self
+        r2, g2, b2, a2 = destination
+
+        if alpha is None:
+            new_alpha = a1 + (a2 - a1) * factor
+        else:
+            new_alpha = alpha
+
         return Color(
             int(r1 + (r2 - r1) * factor),
             int(g1 + (g2 - g1) * factor),
             int(b1 + (b2 - b1) * factor),
-            alpha,
+            new_alpha,
         )
 
     def __add__(self, other: object) -> Color:
         if isinstance(other, Color):
-            new_color = self.blend(other, other.a)
+            new_color = self.blend(other, other.a, alpha=1.0)
             return new_color
         return NotImplemented
 
