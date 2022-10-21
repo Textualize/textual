@@ -1,8 +1,0 @@
- * {
-    transition: color 300ms linear, background 300ms linear;
-}
-
-#another-box {
-    background: $boost;
-    padding: 1 2;
-}
