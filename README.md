@@ -4,17 +4,6 @@
 
 Textual is a Python framework for creating interactive applications that run in your terminal.
 
-<details>
-  <summary> 🎬 Code browser </summary>
-  <hr>
-
-  This is the [code_browser.py](./examples/code_browser.py) example which clocks in at 61 lines (*including* docstrings and blank lines).
-
-
-https://user-images.githubusercontent.com/554369/196156524-5edea78c-1226-4103-91f3-e82d6a52bd2b.mov  
-  
- </details>
-
 
 ## About
 
@@ -91,6 +80,18 @@ https://user-images.githubusercontent.com/554369/196158235-4b45fb78-053d-4fd5-b2
 
 The Textual repository comes with a number of examples you can experiment with or use as a template for your own projects.
 
+
+<details>
+  <summary> 🎬 Code browser </summary>
+  <hr>
+
+  This is the [code_browser.py](./examples/code_browser.py) example which clocks in at 61 lines (*including* docstrings and blank lines).
+
+https://user-images.githubusercontent.com/554369/197188237-88d3f7e4-4e5f-40b5-b996-c47b19ee2f49.mov
+
+ </details>
+
+
 <details>  
   <summary> 📷 Calculator </summary>
   <hr>
@@ -98,16 +99,6 @@ The Textual repository comes with a number of examples you can experiment with o
 This is [calculator.py](./examples/calculator.py) which demonstrates Textual grid layouts.
   
 ![calculator screenshot](./imgs/calculator.svg)
-</details>
-
-<details>
-  <summary> 📷 Code browser </summary>
-  <hr>
-
-  This is [code_browser.py](./examples/code_browser.py) which demonstrates the directory tree widget.
-  
-![code browser screenshot](./imgs/codebrowser.svg)
-  
 </details>
 
 
