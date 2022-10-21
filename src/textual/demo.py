@@ -252,7 +252,7 @@ class Column(Container):
     pass
 
 
-class Text(Static):
+class TextContent(Static):
     pass
 
 
@@ -288,6 +288,14 @@ class SubTitle(Static):
     pass
 
 
+class Notification(Static):
+    def on_mount(self) -> None:
+        self.set_timer(3, self.remove)
+
+    def on_click(self) -> None:
+        self.remove()
+
+
 class DemoApp(App):
     CSS_PATH = "demo.css"
     TITLE = "Textual Demo"
@@ -321,7 +329,7 @@ class DemoApp(App):
                 Column(
                     Section(
                         SectionTitle("Widgets"),
-                        Text(Markdown(WIDGETS_MD)),
+                        TextContent(Markdown(WIDGETS_MD)),
                         LoginForm(),
                         DataTable(),
                     ),
@@ -330,7 +338,7 @@ class DemoApp(App):
                 Column(
                     Section(
                         SectionTitle("Rich"),
-                        Text(Markdown(RICH_MD)),
+                        TextContent(Markdown(RICH_MD)),
                         SubTitle("Pretty Printed data (try resizing the terminal)"),
                         Static(Pretty(DATA, indent_guides=True), classes="pretty pad"),
                         SubTitle("JSON"),
@@ -343,7 +351,7 @@ class DemoApp(App):
                 Column(
                     Section(
                         SectionTitle("CSS"),
-                        Text(Markdown(CSS_MD)),
+                        TextContent(Markdown(CSS_MD)),
                         Window(
                             Static(
                                 Syntax(
@@ -401,7 +409,9 @@ class DemoApp(App):
         """
         self.bell()
         path = self.save_screenshot(filename, path)
-        self.add_note(f"Screenshot saved to {path!r}")
+        message = Text.assemble("Screenshot saved to ", (f"'{path}'", "bold green"))
+        self.add_note(message)
+        self.screen.mount(Notification(message))
 
 
 app = DemoApp()

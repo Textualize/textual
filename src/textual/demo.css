@@ -3,10 +3,22 @@
 }
 
 Screen {
-    layers: base overlay notes;
+    layers: base overlay notes notifications;
     overflow: hidden;  
 }
 
+
+Notification {
+    dock: bottom;
+    layer: notification;
+    width: auto;
+    margin: 2 4;
+    padding: 1 2;
+    background: $background;
+    color: $text;
+    height: auto;
+    
+}
 
 Sidebar {    
     width: 40;
@@ -161,7 +173,7 @@ SubTitle {
     text-style: bold;
 }
 
-Text {
+TextContent {
     margin: 1 0;
 }
 
