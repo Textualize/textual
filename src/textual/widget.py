@@ -238,7 +238,6 @@ class Widget(DOMNode):
     auto_width = Reactive(True)
     auto_height = Reactive(True)
     has_focus = Reactive(False)
-    descendant_has_focus = Reactive(False)
     mouse_over = Reactive(False)
     scroll_x = Reactive(0.0, repaint=False, layout=False)
     scroll_y = Reactive(0.0, repaint=False, layout=False)
@@ -261,6 +260,18 @@ class Widget(DOMNode):
             return siblings
         else:
             return []
+
+    @property
+    def visible_siblings(self) -> list[Widget]:
+        """A list of siblings which will be shown.
+
+        Returns:
+            list[Widget]: List of siblings.
+        """
+        siblings = [
+            widget for widget in self.siblings if widget.visible and widget.display
+        ]
+        return siblings
 
     @property
     def allow_vertical_scroll(self) -> bool:
@@ -1345,6 +1356,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        top: bool = False,
     ) -> bool:
         """Scroll scrolling to bring a widget in to view.
 
@@ -1370,6 +1382,7 @@ class Widget(DOMNode):
                 animate=animate,
                 speed=speed,
                 duration=duration,
+                top=top,
             )
             if scroll_offset:
                 scrolled = True
@@ -1396,6 +1409,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        top: bool = False,
     ) -> Offset:
         """Scrolls a given region in to view, if required.
 
@@ -1408,6 +1422,7 @@ class Widget(DOMNode):
             animate (bool, optional): True to animate, or False to jump. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            top (bool, optional): Scroll region to top of container. Defaults to False.
 
         Returns:
             Offset: The distance that was scrolled.
@@ -1419,7 +1434,7 @@ class Widget(DOMNode):
         if window in region:
             return Offset()
 
-        delta_x, delta_y = Region.get_scroll_to_visible(window, region)
+        delta_x, delta_y = Region.get_scroll_to_visible(window, region, top=top)
         scroll_x, scroll_y = self.scroll_offset
         delta = Offset(
             clamp(scroll_x + delta_x, 0, self.max_scroll_x) - scroll_x,
@@ -1440,8 +1455,10 @@ class Widget(DOMNode):
     def scroll_visible(
         self,
         animate: bool = True,
+        *,
         speed: float | None = None,
         duration: float | None = None,
+        top: bool = False,
     ) -> None:
         """Scroll the container to make this widget visible.
 
@@ -1449,6 +1466,7 @@ class Widget(DOMNode):
             animate (bool, optional): _description_. Defaults to True.
             speed (float | None, optional): _description_. Defaults to None.
             duration (float | None, optional): _description_. Defaults to None.
+            top (bool, optional): Scroll to top of container. Defaults to False.
         """
         parent = self.parent
         if isinstance(parent, Widget):
@@ -1458,6 +1476,7 @@ class Widget(DOMNode):
                 animate=animate,
                 speed=speed,
                 duration=duration,
+                top=top,
             )
 
     def __init_subclass__(
@@ -1569,8 +1588,18 @@ class Widget(DOMNode):
             yield "hover"
         if self.has_focus:
             yield "focus"
-        if self.descendant_has_focus:
-            yield "focus-within"
+        try:
+            focused = self.screen.focused
+        except NoScreen:
+            pass
+        else:
+            if focused:
+                node = focused
+                while node is not None:
+                    if node is self:
+                        yield "focus-within"
+                        break
+                    node = node._parent
 
     def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
         """Applies style attributes to the default renderable.
@@ -1919,26 +1948,17 @@ class Widget(DOMNode):
         self.mouse_over = True
 
     def _on_focus(self, event: events.Focus) -> None:
-        self.emit_no_wait(events.DescendantFocus(self))
+        for node in self.ancestors:
+            if node._has_focus_within:
+                self.app.update_styles(node)
         self.has_focus = True
         self.refresh()
 
     def _on_blur(self, event: events.Blur) -> None:
-        self.emit_no_wait(events.DescendantBlur(self))
+        if any(node._has_focus_within for node in self.ancestors):
+            self.app.update_styles(self)
         self.has_focus = False
         self.refresh()
-
-    def _on_descendant_focus(self, event: events.DescendantFocus) -> None:
-        if not self.descendant_has_focus:
-            self.descendant_has_focus = True
-
-    def _on_descendant_blur(self, event: events.DescendantBlur) -> None:
-        if self.descendant_has_focus:
-            self.descendant_has_focus = False
-
-    def watch_descendant_has_focus(self, value: bool) -> None:
-        if "focus-within" in self.pseudo_classes:
-            self.app._require_stylesheet_update.add(self)
 
     def _on_mouse_scroll_down(self, event) -> None:
         if self.allow_vertical_scroll:

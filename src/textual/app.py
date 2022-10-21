@@ -140,18 +140,18 @@ class App(Generic[ReturnType], DOMNode):
     """
 
     SCREENS: dict[str, Screen] = {}
-
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
+    TITLE: str | None = None
+    SUB_TITLE: str | None = None
 
-    title: Reactive[str] = Reactive("Textual")
+    title: Reactive[str] = Reactive("")
     sub_title: Reactive[str] = Reactive("")
     dark: Reactive[bool] = Reactive(True)
 
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
-        title: str | None = None,
         css_path: CSSPathType = None,
         watch_css: bool = False,
     ):
@@ -190,10 +190,10 @@ class App(Generic[ReturnType], DOMNode):
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
-        if title is None:
-            self.title = f"{self.__class__.__name__}"
-        else:
-            self.title = title
+        self.title = (
+            self.TITLE if self.TITLE is not None else f"{self.__class__.__name__}"
+        )
+        self.sub_title = self.SUB_TITLE if self.SUB_TITLE is not None else ""
 
         self._logger = Logger(self._log)
 
@@ -480,7 +480,7 @@ class App(Generic[ReturnType], DOMNode):
         """Action to toggle dark mode."""
         self.dark = not self.dark
 
-    def action_screenshot(self, filename: str | None, path: str = "~/") -> None:
+    def action_screenshot(self, filename: str | None = None, path: str = "./") -> None:
         """Save an SVG "screenshot". This action will save an SVG file containing the current contents of the screen.
 
         Args:
@@ -1345,6 +1345,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             bool: True if the event has handled.
         """
+        print("ACTION", action, default_namespace)
         if isinstance(action, str):
             target, params = actions.parse(action)
         else:

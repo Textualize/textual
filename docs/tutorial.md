@@ -47,7 +47,7 @@ If you want to try the finished Stopwatch app and follow along with the code, fi
 === "GitHub CLI"
 
     ```bash
-    gh repo clone Textualize/textual
+    gh repo clone -b css Textualize/textual
     ```
 
 

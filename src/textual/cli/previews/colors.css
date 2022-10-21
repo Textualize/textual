@@ -1,6 +1,3 @@
- * {
-    transition: color 300ms linear, background 300ms linear;
-}
 
 ColorButtons {
     dock: left;

@@ -58,10 +58,13 @@ class ScalarAnimation(Animation):
             setattr(self.styles, self.attribute, self.final_value)
             return True
 
-        offset = self.start + (self.destination - self.start) * eased_factor
-        current = self.styles._rules[self.attribute]
-        if current != offset:
-            setattr(self.styles, f"{self.attribute}", offset)
+        if hasattr(self.start, "blend"):
+            value = self.start.blend(self.destination, eased_factor)
+        else:
+            value = self.start + (self.destination - self.start) * eased_factor
+        current = self.styles._rules.get(self.attribute)
+        if current != value:
+            setattr(self.styles, f"{self.attribute}", value)
 
         return False
 

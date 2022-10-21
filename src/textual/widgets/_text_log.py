@@ -30,6 +30,7 @@ class TextLog(ScrollView, can_focus=True):
     min_width: var[int] = var(78)
     wrap: var[bool] = var(False)
     highlight: var[bool] = var(False)
+    markup: var[bool] = var(False)
 
     def __init__(
         self,
@@ -38,6 +39,7 @@ class TextLog(ScrollView, can_focus=True):
         min_width: int = 78,
         wrap: bool = False,
         highlight: bool = False,
+        markup: bool = False,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -51,6 +53,7 @@ class TextLog(ScrollView, can_focus=True):
         self.min_width = min_width
         self.wrap = wrap
         self.highlight = highlight
+        self.markup = markup
         self.highlighter = ReprHighlighter()
 
     def _on_styles_updated(self) -> None:
@@ -68,6 +71,8 @@ class TextLog(ScrollView, can_focus=True):
             renderable = Pretty(content)
         else:
             if isinstance(content, str):
+                if self.markup:
+                    content = Text.from_markup(content)
                 if self.highlight:
                     renderable = self.highlighter(content)
                 else:
@@ -81,8 +86,9 @@ class TextLog(ScrollView, can_focus=True):
         render_options = console.options.update_width(width)
         if not self.wrap:
             render_options = render_options.update(overflow="ignore", no_wrap=True)
-        segments = self.app.console.render(renderable, render_options)
+        segments = self.app.console.render(renderable, render_options.update_width(80))
         lines = list(Segment.split_lines(segments))
+
         self.max_width = max(
             self.max_width,
             max(sum(segment.cell_length for segment in _line) for _line in lines),
@@ -102,7 +108,9 @@ class TextLog(ScrollView, can_focus=True):
 
     def render_line(self, y: int) -> list[Segment]:
         scroll_x, scroll_y = self.scroll_offset
-        return self._render_line(scroll_y + y, scroll_x, self.size.width)
+        line = self._render_line(scroll_y + y, scroll_x, self.size.width)
+        line = list(Segment.apply_style(line, self.rich_style))
+        return line
 
     def render_lines(self, crop: Region) -> Lines:
         """Render the widget in to lines.

@@ -58,8 +58,8 @@ class HeaderTitle(Widget):
     }
     """
 
-    text: Reactive[str] = Reactive("Hello World")
-    sub_text = Reactive("Test")
+    text: Reactive[str] = Reactive("")
+    sub_text = Reactive("")
 
     def render(self) -> Text:
         text = Text(self.text, no_wrap=True, overflow="ellipsis")
@@ -89,9 +89,9 @@ class Header(Widget):
     }
     """
 
-    tall = Reactive(True)
+    tall = Reactive(False)
 
-    DEFAULT_CLASSES = "-tall"
+    DEFAULT_CLASSES = ""
 
     def __init__(
         self,
