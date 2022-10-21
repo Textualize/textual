@@ -9,9 +9,9 @@ We have many new features in the pipeline. This page will keep track of that wor
 High-level features we plan on implementing.
 
 - [ ] Accessibility
-  - [x] Monochrome mode
-  - [ ] High contrast theme
-  - [ ] Color blind themes
+    * [x] Monochrome mode
+    * [ ] High contrast theme
+    * [ ] Color blind themes
 - [ ] Command interface
     * [ ] Command menu
     * [ ] Fuzzy search
