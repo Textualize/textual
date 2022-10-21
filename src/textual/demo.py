@@ -405,7 +405,7 @@ class DemoApp(App):
 
         Args:
             filename (str | None, optional): Filename of screenshot, or None to auto-generate. Defaults to None.
-            path (str, optional): Path to directory. Defaults to "~/".
+            path (str, optional): Path to directory. Defaults to "./".
         """
         self.bell()
         path = self.save_screenshot(filename, path)
