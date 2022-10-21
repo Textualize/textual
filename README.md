@@ -39,43 +39,6 @@ python -m textual
 
 Head over to the [Textual documentation](http://textual.textualize.io/) to start building!
 
-## Reference commands
-
-The `textual` command has a few sub-commands to preview Textual styles.
-
-<details>  
-  <summary> 🎬 Easing reference </summary>
-  <hr>
-  
-This is the *easing* reference which demonstrates the easing parameter on animation, with both movement and opacity. You can run it with the following command:
-  
-```bash
-textual easing
-```
-
-
-https://user-images.githubusercontent.com/554369/196157100-352852a6-2b09-4dc8-a888-55b53570aff9.mov
-
-
- </details>
-
-<details>  
-  <summary> 🎬 Borders reference </summary>
-  <hr>
-  
-This is the borders reference which demonstrates some of the borders styles in Textual. You can run it with the following command:
-  
-```bash
-textual borders
-```
-
-
-https://user-images.githubusercontent.com/554369/196158235-4b45fb78-053d-4fd5-b285-e09b4f1c67a8.mov
-
-
-  
-</details>
-
 ## Examples
 
 The Textual repository comes with a number of examples you can experiment with or use as a template for your own projects.
@@ -116,4 +79,43 @@ This is [calculator.py](./examples/calculator.py) which demonstrates Textual gri
   
 ![stopwatch dark screenshot](./imgs/stopwatch_dark.svg)
 
+</details>
+
+
+
+## Reference commands
+
+The `textual` command has a few sub-commands to preview Textual styles.
+
+<details>  
+  <summary> 🎬 Easing reference </summary>
+  <hr>
+  
+This is the *easing* reference which demonstrates the easing parameter on animation, with both movement and opacity. You can run it with the following command:
+  
+```bash
+textual easing
+```
+
+
+https://user-images.githubusercontent.com/554369/196157100-352852a6-2b09-4dc8-a888-55b53570aff9.mov
+
+
+ </details>
+
+<details>  
+  <summary> 🎬 Borders reference </summary>
+  <hr>
+  
+This is the borders reference which demonstrates some of the borders styles in Textual. You can run it with the following command:
+  
+```bash
+textual borders
+```
+
+
+https://user-images.githubusercontent.com/554369/196158235-4b45fb78-053d-4fd5-b285-e09b4f1c67a8.mov
+
+
+  
 </details>
