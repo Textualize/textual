@@ -24,6 +24,7 @@ class CalculatorApp(App):
         "asterisk": "multiply",
         "slash": "divide",
         "underscore": "plus-minus",
+        "full_stop": "point",
         "plus_minus_sign": "plus-minus",
         "percent_sign": "percent",
         "equals_sign": "equals",

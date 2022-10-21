@@ -612,6 +612,13 @@ class App(Generic[ReturnType], DOMNode):
                             print(f"(pause {wait_ms}ms)")
                             await asyncio.sleep(float(wait_ms) / 1000)
                         else:
+                            if len(key) == 1 and not key.isalnum():
+                                key = (
+                                    unicodedata.name(key)
+                                    .lower()
+                                    .replace("-", "_")
+                                    .replace(" ", "_")
+                                )
                             original_key = REPLACED_KEYS.get(key, key)
                             try:
                                 char = unicodedata.lookup(
@@ -620,7 +627,8 @@ class App(Generic[ReturnType], DOMNode):
                             except KeyError:
                                 char = key if len(key) == 1 else None
                             print(f"press {key!r} (char={char!r})")
-                            driver.send_event(events.Key(self, key, char))
+                            key_event = events.Key(self, key, char)
+                            driver.send_event(key_event)
                             await asyncio.sleep(0.01)
 
                     await app._animator.wait_for_idle()
