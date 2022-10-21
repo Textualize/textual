@@ -36,6 +36,19 @@ pip install textual[dev]
 
 The addition of `[dev]` installs Textual development tools.
 
+## Demo
+
+Run the following command to see a little of what Textual can do:
+
+```
+python -m textual
+```
+
+![Textual demo](./imgs/demo.svg)
+
+## Documentation
+
+Head over to the [Textual documentation](http://textual.textualize.io/) to start building!
 
 ## Reference commands
 
