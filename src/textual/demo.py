@@ -4,26 +4,26 @@ from pathlib import Path
 
 from rich import box
 from rich.console import RenderableType
+from rich.json import JSON
 from rich.markdown import Markdown
-from rich.syntax import Syntax
 from rich.pretty import Pretty
+from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
-from rich.json import JSON
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Container, Horizontal
 from textual.reactive import reactive, watch
 from textual.widgets import (
-    DataTable,
-    Header,
-    Footer,
-    Static,
     Button,
     Checkbox,
-    TextLog,
+    DataTable,
+    Footer,
+    Header,
     Input,
+    Static,
+    TextLog,
 )
 
 from_markup = Text.from_markup
@@ -77,7 +77,7 @@ WELCOME_MD = """
 
 RICH_MD = """
 
-Textual is built on [Rich](https://github.com/Textualize/rich), the popular Python library for advanced terminal output.
+Textual is built on **Rich**, the popular Python library for advanced terminal output.
 
 Add content to your Textual App with Rich *renderables* (this text is written in Markdown and formatted with Rich's Markdown class).
 
@@ -141,7 +141,7 @@ Build your own or use the builtin widgets.
 - **DataTable** A spreadsheet-like widget for navigating data. Cells may contain text or Rich renderables.
 - **TreeControl** An generic tree with expandable nodes.
 - **DirectoryTree** A tree of file and folders.
-- *... [many more planned](https://textual.textualize.io/roadmap/) ...* 
+- *... many more planned ...* 
 
 """
 
