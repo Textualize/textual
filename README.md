@@ -131,6 +131,26 @@ textual borders
 
 https://user-images.githubusercontent.com/554369/196158235-4b45fb78-053d-4fd5-b285-e09b4f1c67a8.mov
 
+  
+</details>
+
+
+<details>  
+  <summary> 🎬 Colors reference </summary>
+  <hr>
+  
+This is a reference for Textual's color design system.
+  
+```bash
+textual borders
+```
+
+
+
+https://user-images.githubusercontent.com/554369/197357417-2d407aac-8969-44d3-8250-eea45df79d57.mov
+
+
 
   
 </details>
+
