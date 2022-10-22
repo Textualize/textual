@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 import sys
 from fractions import Fraction
-from typing import cast, List, Optional, Sequence
+from typing import cast, Sequence
+
 
 if sys.version_info >= (3, 8):
     from typing import Protocol
@@ -10,15 +12,25 @@ else:
     from typing_extensions import Protocol  # pragma: no cover
 
 
-class Edge(Protocol):
+class EdgeProtocol(Protocol):
     """Any object that defines an edge (such as Layout)."""
 
-    size: Optional[int] = None
-    fraction: int = 1
+    # Size of edge in cells, or None for no fixed size
+    size: int | None
+    # Portion of flexible space to use if size is None
+    fraction: int
+    # Minimum size for edge, in cells
+    min_size: int
+
+
+@dataclass
+class Edge:
+    size: int | None = None
+    fraction: int | None = 1
     min_size: int = 1
 
 
-def layout_resolve(total: int, edges: Sequence[Edge]) -> List[int]:
+def layout_resolve(total: int, edges: Sequence[EdgeProtocol]) -> list[int]:
     """Divide total space to satisfy size, fraction, and min_size, constraints.
 
     The returned list of integers should add up to total in most cases, unless it is
@@ -29,52 +41,58 @@ def layout_resolve(total: int, edges: Sequence[Edge]) -> List[int]:
 
     Args:
         total (int): Total number of characters.
-        edges (List[Edge]): Edges within total space.
+        edges (Sequence[Edge]): Edges within total space.
 
     Returns:
-        List[int]: Number of characters for each edge.
+        list[int]: Number of characters for each edge.
     """
     # Size of edge or None for yet to be determined
     sizes = [(edge.size or None) for edge in edges]
 
-    _Fraction = Fraction
+    if None not in sizes:
+        # No flexible edges
+        return cast("list[int]", sizes)
 
-    # While any edges haven't been calculated
-    while None in sizes:
-        # Get flexible edges and index to map these back on to sizes list
-        flexible_edges = [
-            (index, edge)
-            for index, (size, edge) in enumerate(zip(sizes, edges))
-            if size is None
+    # Get flexible edges and index to map these back on to sizes list
+    flexible_edges = [
+        (index, edge)
+        for index, (size, edge) in enumerate(zip(sizes, edges))
+        if size is None
+    ]
+    # Remaining space in total
+    remaining = total - sum([size or 0 for size in sizes])
+    if remaining <= 0:
+        # No room for flexible edges
+        return [
+            ((edge.min_size or 1) if size is None else size)
+            for size, edge in zip(sizes, edges)
         ]
-        # Remaining space in total
-        remaining = total - sum(size or 0 for size in sizes)
-        if remaining <= 0:
-            # No room for flexible edges
-            return [
-                ((edge.min_size or 1) if size is None else size)
-                for size, edge in zip(sizes, edges)
-            ]
+
+    # Get the total fraction value for all flexible edges
+    total_flexible = sum([(edge.fraction or 1) for _, edge in flexible_edges])
+    while flexible_edges:
         # Calculate number of characters in a ratio portion
-        portion = _Fraction(
-            remaining, sum((edge.fraction or 1) for _, edge in flexible_edges)
-        )
+        portion = Fraction(remaining, total_flexible)
 
         # If any edges will be less than their minimum, replace size with the minimum
-        for index, edge in flexible_edges:
-            if portion * edge.fraction <= edge.min_size:
+        for flexible_index, (index, edge) in enumerate(flexible_edges):
+            if portion * edge.fraction < edge.min_size:
+                # This flexible edge will be smaller than its minimum size
+                # We need to fix the size and redistribute the outstanding space
                 sizes[index] = edge.min_size
+                remaining -= edge.min_size
+                total_flexible -= edge.fraction or 1
+                del flexible_edges[flexible_index]
                 # New fixed size will invalidate calculations, so we need to repeat the process
                 break
         else:
             # Distribute flexible space and compensate for rounding error
             # Since edge sizes can only be integers we need to add the remainder
             # to the following line
-            remainder = _Fraction(0)
+            remainder = Fraction(0)
             for index, edge in flexible_edges:
-                size, remainder = divmod(portion * edge.fraction + remainder, 1)
-                sizes[index] = size
+                sizes[index], remainder = divmod(portion * edge.fraction + remainder, 1)
             break
 
     # Sizes now contains integers only
-    return cast(List[int], sizes)
+    return cast("list[int]", sizes)

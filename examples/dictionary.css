@@ -1,0 +1,26 @@
+Screen {
+    background: $panel;
+}
+
+Input {
+    dock: top;
+    margin: 1 0;
+}
+
+#results {
+    width: auto;   
+    min-height: 100%;
+    padding: 0 1;    
+}
+
+#results-container {
+    background: $background 50%;
+    margin: 0 0 1 0;
+    height: 100%;
+    overflow: hidden auto;
+    border: tall $background;
+}
+
+#results-container:focus {
+    border: tall $accent;
+}

@@ -1,215 +1,145 @@
-"""
-
-A Textual app to create a fully working calculator, modelled after MacOS Calculator.
-
-"""
-
 from decimal import Decimal
 
-from rich.align import Align
-from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
-from rich.padding import Padding
-from rich.text import Text
-
-from textual.app import App
-from textual.reactive import Reactive
-from textual.views import GridView
-from textual.widget import Widget
-from textual.widgets import Button, ButtonPressed
-
-try:
-    from pyfiglet import Figlet
-except ImportError:
-    print("Please install pyfiglet to run this example")
-    raise
+from textual.app import App, ComposeResult
+from textual import events
+from textual.containers import Container
+from textual.css.query import NoMatches
+from textual.reactive import var
+from textual.widgets import Button, Static
 
 
-class FigletText:
-    """A renderable to generate figlet text that adapts to fit the container."""
+class CalculatorApp(App):
+    """A working 'desktop' calculator."""
 
-    def __init__(self, text: str) -> None:
-        self.text = text
+    CSS_PATH = "calculator.css"
 
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        """Build a Rich renderable to render the Figlet text."""
-        size = min(options.max_width / 2, options.max_height)
-        if size < 4:
-            yield Text(self.text, style="bold")
-        else:
-            if size < 7:
-                font_name = "mini"
-            elif size < 8:
-                font_name = "small"
-            elif size < 10:
-                font_name = "standard"
-            else:
-                font_name = "big"
-            font = Figlet(font=font_name, width=options.max_width)
-            yield Text(font.renderText(self.text).rstrip("\n"), style="bold")
+    numbers = var("0")
+    show_ac = var(True)
+    left = var(Decimal("0"))
+    right = var(Decimal("0"))
+    value = var("")
+    operator = var("plus")
 
-
-class Numbers(Widget):
-    """The digital display of the calculator."""
-
-    value = Reactive("0")
-
-    def render(self) -> RenderableType:
-        """Build a Rich renderable to render the calculator display."""
-        return Padding(
-            Align.right(FigletText(self.value), vertical="middle"),
-            (0, 1),
-            style="white on rgb(51,51,51)",
-        )
-
-
-class Calculator(GridView):
-    """A working calculator app."""
-
-    DARK = "white on rgb(51,51,51)"
-    LIGHT = "black on rgb(165,165,165)"
-    YELLOW = "white on rgb(255,159,7)"
-
-    BUTTON_STYLES = {
-        "AC": LIGHT,
-        "C": LIGHT,
-        "+/-": LIGHT,
-        "%": LIGHT,
-        "/": YELLOW,
-        "X": YELLOW,
-        "-": YELLOW,
-        "+": YELLOW,
-        "=": YELLOW,
+    NAME_MAP = {
+        "asterisk": "multiply",
+        "slash": "divide",
+        "underscore": "plus-minus",
+        "full_stop": "point",
+        "plus_minus_sign": "plus-minus",
+        "percent_sign": "percent",
+        "equals_sign": "equals",
+        "enter": "equals",
     }
 
-    display = Reactive("0")
-    show_ac = Reactive(True)
-
-    def watch_display(self, value: str) -> None:
-        """Called when self.display is modified."""
-        # self.numbers is a widget that displays the calculator result
-        # Setting the attribute value changes the display
-        # This allows us to write self.display = "100" to update the display
-        self.numbers.value = value
+    def watch_numbers(self, value: str) -> None:
+        """Called when numbers is updated."""
+        # Update the Numbers widget
+        self.query_one("#numbers", Static).update(value)
 
     def compute_show_ac(self) -> bool:
-        """Compute show_ac reactive value."""
-        # Condition to show AC button over C
-        return self.value in ("", "0") and self.display == "0"
+        """Compute switch to show AC or C button"""
+        return self.value in ("", "0") and self.numbers == "0"
 
     def watch_show_ac(self, show_ac: bool) -> None:
-        """When the show_ac attribute change we need to update the buttons."""
-        # Show AC and hide C or vice versa
-        self.c.visible = not show_ac
-        self.ac.visible = show_ac
+        """Called when show_ac changes."""
+        self.query_one("#c").display = not show_ac
+        self.query_one("#ac").display = show_ac
 
-    def on_mount(self) -> None:
-        """Event when widget is first mounted (added to a parent view)."""
-
-        # Attributes to store the current calculation
-        self.left = Decimal("0")
-        self.right = Decimal("0")
-        self.value = ""
-        self.operator = "+"
-
-        # The calculator display
-        self.numbers = Numbers()
-        self.numbers.style_border = "bold"
-
-        def make_button(text: str, style: str) -> Button:
-            """Create a button with the given Figlet label."""
-            return Button(FigletText(text), style=style, name=text)
-
-        # Make all the buttons
-        self.buttons = {
-            name: make_button(name, self.BUTTON_STYLES.get(name, self.DARK))
-            for name in "+/-,%,/,7,8,9,X,4,5,6,-,1,2,3,+,.,=".split(",")
-        }
-
-        # Buttons that have to be treated specially
-        self.zero = make_button("0", self.DARK)
-        self.ac = make_button("AC", self.LIGHT)
-        self.c = make_button("C", self.LIGHT)
-        self.c.visible = False
-
-        # Set basic grid settings
-        self.grid.set_gap(2, 1)
-        self.grid.set_gutter(1)
-        self.grid.set_align("center", "center")
-
-        # Create rows / columns / areas
-        self.grid.add_column("col", max_size=30, repeat=4)
-        self.grid.add_row("numbers", max_size=15)
-        self.grid.add_row("row", max_size=15, repeat=5)
-        self.grid.add_areas(
-            clear="col1,row1",
-            numbers="col1-start|col4-end,numbers",
-            zero="col1-start|col2-end,row5",
-        )
-        # Place out widgets in to the layout
-        self.grid.place(clear=self.c)
-        self.grid.place(
-            *self.buttons.values(), clear=self.ac, numbers=self.numbers, zero=self.zero
+    def compose(self) -> ComposeResult:
+        """Add our buttons."""
+        yield Container(
+            Static(id="numbers"),
+            Button("AC", id="ac", variant="primary"),
+            Button("C", id="c", variant="primary"),
+            Button("+/-", id="plus-minus", variant="primary"),
+            Button("%", id="percent", variant="primary"),
+            Button("÷", id="divide", variant="warning"),
+            Button("7", id="number-7"),
+            Button("8", id="number-8"),
+            Button("9", id="number-9"),
+            Button("×", id="multiply", variant="warning"),
+            Button("4", id="number-4"),
+            Button("5", id="number-5"),
+            Button("6", id="number-6"),
+            Button("-", id="minus", variant="warning"),
+            Button("1", id="number-1"),
+            Button("2", id="number-2"),
+            Button("3", id="number-3"),
+            Button("+", id="plus", variant="warning"),
+            Button("0", id="number-0"),
+            Button(".", id="point"),
+            Button("=", id="equals", variant="warning"),
+            id="calculator",
         )
 
-    def handle_button_pressed(self, message: ButtonPressed) -> None:
-        """A message sent by the button widget"""
+    def on_key(self, event: events.Key) -> None:
+        """Called when the user presses a key."""
 
-        assert isinstance(message.sender, Button)
-        button_name = message.sender.name
+        def press(button_id: str) -> None:
+            try:
+                self.query_one(f"#{button_id}", Button).press()
+            except NoMatches:
+                pass
+            self.set_focus(None)
+
+        key = event.key
+        if key.isdecimal():
+            press(f"number-{key}")
+        elif key == "c":
+            press("c")
+            press("ac")
+        else:
+            press(self.NAME_MAP.get(key, key))
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Called when a button is pressed."""
+
+        button_id = event.button.id
+        assert button_id is not None
 
         def do_math() -> None:
             """Does the math: LEFT OPERATOR RIGHT"""
-            self.log(self.left, self.operator, self.right)
             try:
-                if self.operator == "+":
+                if self.operator == "plus":
                     self.left += self.right
-                elif self.operator == "-":
+                elif self.operator == "minus":
                     self.left -= self.right
-                elif self.operator == "/":
+                elif self.operator == "divide":
                     self.left /= self.right
-                elif self.operator == "X":
+                elif self.operator == "multiply":
                     self.left *= self.right
-                self.display = str(self.left)
+                self.numbers = str(self.left)
                 self.value = ""
-                self.log("=", self.left)
             except Exception:
-                self.display = "Error"
+                self.numbers = "Error"
 
-        if button_name.isdigit():
-            self.display = self.value = self.value.lstrip("0") + button_name
-        elif button_name == "+/-":
-            self.display = self.value = str(Decimal(self.value or "0") * -1)
-        elif button_name == "%":
-            self.display = self.value = str(Decimal(self.value or "0") / Decimal(100))
-        elif button_name == ".":
+        if button_id.startswith("number-"):
+            number = button_id.partition("-")[-1]
+            self.numbers = self.value = self.value.lstrip("0") + number
+        elif button_id == "plus-minus":
+            self.numbers = self.value = str(Decimal(self.value or "0") * -1)
+        elif button_id == "percent":
+            self.numbers = self.value = str(Decimal(self.value or "0") / Decimal(100))
+        elif button_id == "point":
             if "." not in self.value:
-                self.display = self.value = (self.value or "0") + "."
-        elif button_name == "AC":
+                self.numbers = self.value = (self.value or "0") + "."
+        elif button_id == "ac":
             self.value = ""
             self.left = self.right = Decimal(0)
-            self.operator = "+"
-            self.display = "0"
-        elif button_name == "C":
+            self.operator = "plus"
+            self.numbers = "0"
+        elif button_id == "c":
             self.value = ""
-            self.display = "0"
-        elif button_name in ("+", "-", "/", "X"):
+            self.numbers = "0"
+        elif button_id in ("plus", "minus", "divide", "multiply"):
             self.right = Decimal(self.value or "0")
             do_math()
-            self.operator = button_name
-        elif button_name == "=":
+            self.operator = button_id
+        elif button_id == "equals":
             if self.value:
                 self.right = Decimal(self.value)
             do_math()
 
 
-class CalculatorApp(App):
-    """The Calculator Application"""
-
-    async def on_mount(self) -> None:
-        """Mount the calculator widget."""
-        await self.view.dock(Calculator())
-
-
-CalculatorApp.run(title="Calculator Test", log="textual.log")
+if __name__ == "__main__":
+    CalculatorApp().run()

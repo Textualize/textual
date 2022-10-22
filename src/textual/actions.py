@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import ast
-from typing import Any, Tuple
 import re
 
 
@@ -12,7 +11,18 @@ class ActionError(Exception):
 re_action_params = re.compile(r"([\w\.]+)(\(.*?\))")
 
 
-def parse(action: str) -> tuple[str, tuple[Any, ...]]:
+def parse(action: str) -> tuple[str, tuple[object, ...]]:
+    """Parses an action string.
+
+    Args:
+        action (str): String containing action.
+
+    Raises:
+        ActionError: If the action has invalid syntax.
+
+    Returns:
+        tuple[str, tuple[object, ...]]: Action name and parameters
+    """
     params_match = re_action_params.match(action)
     if params_match is not None:
         action_name, action_params_str = params_match.groups()
@@ -30,12 +40,3 @@ def parse(action: str) -> tuple[str, tuple[Any, ...]]:
         action_name,
         action_params if isinstance(action_params, tuple) else (action_params,),
     )
-
-
-if __name__ == "__main__":
-
-    print(parse("foo"))
-
-    print(parse("view.toggle('side')"))
-
-    print(parse("view.toggle"))

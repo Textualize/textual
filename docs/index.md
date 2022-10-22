@@ -1,25 +1,83 @@
-# Welcome to Textual documentation
 
-Textual is a framework for rapidly creating _text user interfaces_ (TUIs from here on) with Python.
+# Introduction
 
-A TUI is an application that lives within a terminal, which can have mouse and keyboard support and user interface elements like windows and panels, but is rendered purely with text. They have a number of advantages over GUI applications: they can be launched from the command line, and return to the command line, and they work over ssh.
+Welcome to the [Textual](https://github.com/Textualize/textual) framework documentation. Built with ❤️ by [Textualize.io](https://www.textualize.io)
 
-Creating a TUI can be challenging. It may be easier to create a GUI or web application than it is to build a TUI with traditional techniques. Often projects that could use one or the other never manage to ship either.
+<hr>
 
-Textual seeks to lower the difficulty level of building a TUI by borrowing developments from the web world and to a lesser extent desktop applications. The goal is for it to be as easy to develop a TUI for your project as it would be to add a command line interface.
+Textual is a framework for building applications that run within your terminal. Text User Interfaces (TUIs) have a number of advantages over web and desktop apps.
 
-Textual also offers a number of enhancements over traditional TUI applications by taking advantage of improvements to terminal software and the hardware it runs on. Terminals are a far cry from their roots in ancient hardware and dial-up modems, yet much of the software that runs on them hasn't kept pace.
+<div class="grid cards" markdown>
 
-## Commands
+-   :material-clock-fast:{ .lg .middle } :material-language-python:{. lg .middle } __Rapid development__
 
-- `mkdocs new [dir-name]` - Create a new project.
-- `mkdocs serve` - Start the live-reloading docs server.
-- `mkdocs build` - Build the documentation site.
-- `mkdocs -h` - Print help message and exit.
+    ---
 
-## Project layout
+    Uses your existing Python skills to build beautiful user interfaces.
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+
+-   :material-raspberry-pi:{ .lg .middle } __Low requirements__
+
+    ---
+
+    Low system requirements. Run Textual on a single board computer if you want to.
+
+  
+
+-   :material-microsoft-windows:{ .lg .middle } :material-apple:{ .lg .middle } :fontawesome-brands-linux:{ .lg .middle } __Cross platform__
+
+    ---
+
+    Textual runs just about everywhere.
+
+    
+
+-   :material-network:{ .lg .middle } __Remote__
+
+    ---
+
+    Textual apps can run over SSH.
+
+
+-   :fontawesome-solid-terminal:{ .lg .middle } __CLI Integration__
+
+    ---
+
+    Textual apps can be launched and run from the command prompt.
+
+
+
+-   :material-scale-balance:{ .lg .middle } __Open Source, MIT__
+
+    ---
+
+    Textual is licensed under MIT.
+    
+
+</div>
+
+
+<hr>
+
+
+```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,_,_,_,_,_,_,_,_"}
+```
+
+```{.textual path="examples/pride.py"}
+```
+
+```{.textual path="docs/examples/tutorial/stopwatch.py" columns="100" lines="30" press="d,tab,enter,_,_"}
+```
+
+
+```{.textual path="docs/examples/events/dictionary.py" columns="100" lines="30" press="tab,_,t,e,x,t,_,_,_,_,_,_,_,_,_,_,_,_,_"}
+```
+
+
+```{.textual path="docs/examples/guide/layout/combining_layouts.py" columns="100", lines="30"}
+```
+
+```{.textual path="docs/examples/app/widgets01.py"}
+```
+
+

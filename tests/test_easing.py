@@ -8,7 +8,6 @@ import pytest
 
 from textual._easing import EASING
 
-
 POINTS = [
     0.0,
     0.05,

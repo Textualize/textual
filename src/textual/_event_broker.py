@@ -24,5 +24,4 @@ def extract_handler_actions(event_name: str, meta: dict[str, Any]) -> HandlerArg
 
 
 if __name__ == "__main__":
-
     print(extract_handler_actions("mouse.down", {"@mouse.down.hot": "app.bell()"}))

@@ -1,0 +1,22 @@
+Screen {
+    align: center middle;
+    layers: below above;
+}
+
+Static {
+    width: 28;
+    height: 8;
+    color: auto;
+    content-align: center middle;
+}
+
+#box1 {
+    background: darkcyan;
+    layer: above;
+}
+
+#box2 {
+    layer: below;
+    background: orange;
+    offset: 12 6;
+}

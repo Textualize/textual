@@ -2,12 +2,15 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+    rev: v4.3.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
     -   id: check-yaml
+        args: ['--unsafe']
 -   repo: https://github.com/psf/black
-    rev: 21.8b0
+    rev: 22.3.0
     hooks:
     -   id: black
+        exclude: ^tests/
+exclude: ^tests/snapshot_tests

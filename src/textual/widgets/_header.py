@@ -1,76 +1,127 @@
+from __future__ import annotations
+
 from datetime import datetime
-from logging import getLogger
 
-from rich.console import Console, ConsoleOptions, RenderableType
-from rich.panel import Panel
-from rich.repr import rich_repr, Result
-from rich.style import StyleType
-from rich.table import Table
-from rich.text import TextType
+from rich.text import Text
 
-from .. import events
 from ..widget import Widget
-from ..reactive import watch, Reactive
+from ..reactive import Reactive, watch
 
-log = getLogger("rich")
+
+class HeaderIcon(Widget):
+    """Display an 'icon' on the left of the header."""
+
+    DEFAULT_CSS = """
+    HeaderIcon {
+        dock: left;
+        padding: 0 1;
+        width: 8;
+        content-align: left middle;
+    }
+    """
+    icon = Reactive("⭘")
+
+    def render(self):
+        return self.icon
+
+
+class HeaderClock(Widget):
+    """Display a clock on the right of the header."""
+
+    DEFAULT_CSS = """
+    HeaderClock {
+        dock: right;
+        width: 10;
+        padding: 0 1;
+        background: $secondary-background-lighten-1;
+        color: $text;
+        text-opacity: 85%;
+        content-align: center middle;
+    }
+    """
+
+    def on_mount(self) -> None:
+        self.set_interval(1, callback=self.refresh, name=f"update header clock")
+
+    def render(self):
+        return Text(datetime.now().time().strftime("%X"))
+
+
+class HeaderTitle(Widget):
+    """Display the title / subtitle in the header."""
+
+    DEFAULT_CSS = """
+    HeaderTitle {
+        content-align: center middle;
+        width: 100%;
+        margin-right: 10;
+    }
+    """
+
+    text: Reactive[str] = Reactive("")
+    sub_text = Reactive("")
+
+    def render(self) -> Text:
+        text = Text(self.text, no_wrap=True, overflow="ellipsis")
+        if self.sub_text:
+            text.append(" — ")
+            text.append(self.sub_text, "dim")
+        return text
 
 
 class Header(Widget):
+    """A header widget with icon and clock.
+
+    Args:
+        show_clock (bool, optional): True if the clock should be shown on the right of the header.
+    """
+
+    DEFAULT_CSS = """
+    Header {
+        dock: top;
+        width: 100%;
+        background: $secondary-background;
+        color: $text;
+        height: 1;
+    }
+    Header.-tall {
+        height: 3;
+    }
+    """
+
+    tall = Reactive(False)
+
+    DEFAULT_CLASSES = ""
+
     def __init__(
         self,
+        show_clock: bool = False,
         *,
-        tall: bool = True,
-        style: StyleType = "white on dark_green",
-        clock: bool = True,
-    ) -> None:
-        super().__init__()
-        self.tall = tall
-        self.style = style
-        self.clock = clock
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+    ):
+        super().__init__(name=name, id=id, classes=classes)
+        self.show_clock = show_clock
 
-    tall: Reactive[bool] = Reactive(True, layout=True)
-    style: Reactive[StyleType] = Reactive("white on blue")
-    clock: Reactive[bool] = Reactive(True)
-    title: Reactive[str] = Reactive("")
-    sub_title: Reactive[str] = Reactive("")
+    def compose(self):
+        yield HeaderIcon()
+        yield HeaderTitle()
+        if self.show_clock:
+            yield HeaderClock()
 
-    @property
-    def full_title(self) -> str:
-        return f"{self.title} - {self.sub_title}" if self.sub_title else self.title
+    def watch_tall(self, tall: bool) -> None:
+        self.set_class(tall, "-tall")
 
-    def __rich_repr__(self) -> Result:
-        yield self.title
+    def on_click(self):
+        self.toggle_class("-tall")
 
-    async def watch_tall(self, tall: bool) -> None:
-        self.layout_size = 3 if tall else 1
+    def on_mount(self) -> None:
+        def set_title(title: str) -> None:
+            self.query_one(HeaderTitle).text = title
 
-    def get_clock(self) -> str:
-        return datetime.now().time().strftime("%X")
-
-    def render(self) -> RenderableType:
-        header_table = Table.grid(padding=(0, 1), expand=True)
-        header_table.style = self.style
-        header_table.add_column(justify="left", ratio=0, width=8)
-        header_table.add_column("title", justify="center", ratio=1)
-        header_table.add_column("clock", justify="right", width=8)
-        header_table.add_row(
-            "🐞", self.full_title, self.get_clock() if self.clock else ""
-        )
-        header: RenderableType
-        header = Panel(header_table, style=self.style) if self.tall else header_table
-        return header
-
-    async def on_mount(self, event: events.Mount) -> None:
-        self.set_interval(1.0, callback=self.refresh)
-
-        async def set_title(title: str) -> None:
-            self.title = title
-
-        async def set_sub_title(sub_title: str) -> None:
-            self.sub_title = sub_title
+        def set_sub_title(sub_title: str) -> None:
+            self.query_one(HeaderTitle).sub_text = sub_title
 
         watch(self.app, "title", set_title)
         watch(self.app, "sub_title", set_sub_title)
-
-    async def on_click(self, event: events.Click) -> None:
-        self.tall = not self.tall

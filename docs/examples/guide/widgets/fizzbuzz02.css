@@ -1,0 +1,10 @@
+Screen {
+    align: center middle;
+}
+
+FizzBuzz {
+    width: auto;
+    height: auto;
+    background: $primary;
+    color: $text;    
+}

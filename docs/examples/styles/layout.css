@@ -1,0 +1,18 @@
+#vertical-layout {
+    layout: vertical;
+    background: darkmagenta;
+    height: auto;
+}
+
+#horizontal-layout {
+    layout: horizontal;
+    background: darkcyan;
+    height: auto;
+}
+
+Static {
+    margin: 1;
+    width: 12;
+    color: black;
+    background: yellowgreen;
+}

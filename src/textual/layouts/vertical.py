@@ -1,64 +1,58 @@
 from __future__ import annotations
 
-from typing import Iterable
+from fractions import Fraction
+from typing import TYPE_CHECKING
 
-from ..geometry import Offset, Region, Size, Spacing, SpacingDimensions
-from ..layout import Layout, WidgetPlacement
-from ..widget import Widget
-from .._loop import loop_last
+from ..geometry import Region, Size
+from .._layout import ArrangeResult, Layout, WidgetPlacement
+
+if TYPE_CHECKING:
+    from ..widget import Widget
 
 
 class VerticalLayout(Layout):
-    def __init__(
-        self,
-        *,
-        auto_width: bool = False,
-        z: int = 0,
-        gutter: SpacingDimensions = (0, 0, 0, 0),
-    ):
-        self.auto_width = auto_width
-        self.z = z
-        self.gutter = Spacing.unpack(gutter)
-        self._widgets: list[Widget] = []
-        self._max_widget_width = 0
-        super().__init__()
+    """Used to layout Widgets vertically on screen, from top to bottom."""
 
-    def add(self, widget: Widget) -> None:
-        self._widgets.append(widget)
-        self._max_widget_width = max(widget.app.measure(widget), self._max_widget_width)
+    name = "vertical"
 
-    def clear(self) -> None:
-        del self._widgets[:]
-        self._max_widget_width = 0
+    def arrange(
+        self, parent: Widget, children: list[Widget], size: Size
+    ) -> ArrangeResult:
 
-    def get_widgets(self) -> Iterable[Widget]:
-        return self._widgets
+        placements: list[WidgetPlacement] = []
+        add_placement = placements.append
 
-    def arrange(self, size: Size, scroll: Offset) -> Iterable[WidgetPlacement]:
-        index = 0
-        width, _height = size
-        gutter = self.gutter
-        x, y = self.gutter.top_left
-        render_width = (
-            max(width, self._max_widget_width)
-            if self.auto_width
-            else width - gutter.width
+        parent_size = parent.outer_size
+
+        styles = [child.styles for child in children if child.styles.height is not None]
+        total_fraction = sum(
+            [int(style.height.value) for style in styles if style.height.is_fraction]
         )
+        fraction_unit = Fraction(size.height, total_fraction or 1)
 
-        total_width = render_width
+        box_models = [
+            widget._get_box_model(size, parent_size, fraction_unit)
+            for widget in children
+        ]
 
-        gutter_height = max(gutter.top, gutter.bottom)
+        margins = [
+            max((box1.margin.bottom, box2.margin.top))
+            for box1, box2 in zip(box_models, box_models[1:])
+        ]
+        if box_models:
+            margins.append(box_models[-1].margin.bottom)
 
-        for last, widget in loop_last(self._widgets):
-            if (
-                not widget.render_cache
-                or widget.render_cache.size.width != render_width
-            ):
-                widget.render_lines_free(render_width)
-            assert widget.render_cache is not None
-            render_height = widget.render_cache.size.height
-            region = Region(x, y, render_width, render_height)
-            yield WidgetPlacement(region, widget, (self.z, index))
-            y += render_height + (gutter.bottom if last else gutter_height)
+        y = Fraction(box_models[0].margin.top if box_models else 0)
 
-        yield WidgetPlacement(Region(0, 0, total_width + gutter.width, y))
+        _Region = Region
+        _WidgetPlacement = WidgetPlacement
+        for widget, box_model, margin in zip(children, box_models, margins):
+            content_width, content_height, box_margin = box_model
+            next_y = y + content_height
+            region = _Region(
+                box_margin.left, int(y), int(content_width), int(next_y) - int(y)
+            )
+            add_placement(_WidgetPlacement(region, box_model.margin, widget, 0))
+            y = next_y + margin
+
+        return placements, set(children)

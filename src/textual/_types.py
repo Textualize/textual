@@ -1,5 +1,6 @@
 import sys
-from typing import Awaitable, Callable, List, Optional, TYPE_CHECKING
+from typing import Awaitable, Callable, List, TYPE_CHECKING, Union
+
 from rich.segment import Segment
 
 if sys.version_info >= (3, 8):
@@ -9,15 +10,14 @@ else:
 
 
 if TYPE_CHECKING:
-    from .events import Event
     from .message import Message
-
-Callback = Callable[[], None]
-# IntervalID = int
 
 
 class MessageTarget(Protocol):
     async def post_message(self, message: "Message") -> bool:
+        ...
+
+    async def _post_priority_message(self, message: "Message") -> bool:
         ...
 
     def post_message_no_wait(self, message: "Message") -> bool:
@@ -32,6 +32,5 @@ class EventTarget(Protocol):
         ...
 
 
-MessageHandler = Callable[["Message"], Awaitable]
-
 Lines = List[List[Segment]]
+CallbackType = Union[Callable[[], Awaitable[None]], Callable[[], None]]

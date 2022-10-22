@@ -1,0 +1,10 @@
+Screen {
+    background: white;
+    color: black;
+}
+
+Static {
+    margin: 4 8;  
+    background: blue 20%;  
+    border: blue wide;
+}    

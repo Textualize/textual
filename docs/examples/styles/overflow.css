@@ -1,0 +1,20 @@
+Screen {
+    background: $background;
+    color: black;
+}
+
+Vertical {
+    width: 1fr;
+}
+
+Static {
+    margin: 1 2;  
+    background: green 80%;  
+    border: green wide;
+    color: white 90%;
+    height: auto;
+}    
+
+#right {
+    overflow-y: hidden;
+}

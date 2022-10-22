@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.0] - 2022-10-23
+
+### Added
+
+- CSS support
+- Too numerous to mention
 ## [0.1.18] - 2022-04-30
 
 ### Changed

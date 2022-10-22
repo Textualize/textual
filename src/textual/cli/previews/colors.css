@@ -1,0 +1,329 @@
+
+ColorButtons {
+    dock: left;
+    overflow-y: auto;
+    width: 30;
+}
+
+ColorButtons > Button {
+    width: 30;
+}
+
+ColorsView {
+    width: 100%;
+    height: 100%;
+    align: center middle;
+    overflow-x: auto;
+    background: $background;
+    scrollbar-gutter: stable;
+}
+
+ColorItem {
+    layout: horizontal;
+    height: 3;
+    width: 1fr;
+}
+
+ColorBar {
+    height: auto;
+    width: 1fr;
+    content-align: center middle;
+}
+
+ColorBar.label {
+    width: 2fr;
+
+}
+
+ColorItem {
+    width: 100%;
+    padding: 1 2;
+}
+
+ColorGroup {
+    margin: 2 0;
+    width: 80;
+    height: auto;
+    padding: 1 4 2 4;
+    background: $surface;
+    border: wide $surface;
+}
+
+
+ColorGroup.-active {
+    border: wide $secondary;
+}
+
+.text {
+    color: $text;
+}
+
+.muted {
+    color: $text-muted;
+}
+
+
+.disabled {
+    color: $text-disabled;
+}
+
+
+ColorLabel {
+    padding: 0 0 1 0;
+    content-align: center middle;
+    color: $text;
+    text-style: bold;
+}
+
+.primary-darken-3 {
+    background: $primary-darken-3;
+}
+.primary-darken-2 {
+    background: $primary-darken-2;
+}
+.primary-darken-1 {
+    background: $primary-darken-1;
+}
+.primary {
+    background: $primary;
+}
+.primary-lighten-1 {
+    background: $primary-lighten-1;
+}
+.primary-lighten-2 {
+    background: $primary-lighten-2;
+}
+.primary-lighten-3 {
+    background: $primary-lighten-3;
+}
+.secondary-darken-3 {
+    background: $secondary-darken-3;
+}
+.secondary-darken-2 {
+    background: $secondary-darken-2;
+}
+.secondary-darken-1 {
+    background: $secondary-darken-1;
+}
+.secondary {
+    background: $secondary;
+}
+.secondary-lighten-1 {
+    background: $secondary-lighten-1;
+}
+.secondary-lighten-2 {
+    background: $secondary-lighten-2;
+}
+.secondary-lighten-3 {
+    background: $secondary-lighten-3;
+}
+.background-darken-3 {
+    background: $background-darken-3;
+}
+.background-darken-2 {
+    background: $background-darken-2;
+}
+.background-darken-1 {
+    background: $background-darken-1;
+}
+.background {
+    background: $background;
+}
+.background-lighten-1 {
+    background: $background-lighten-1;
+}
+.background-lighten-2 {
+    background: $background-lighten-2;
+}
+.background-lighten-3 {
+    background: $background-lighten-3;
+}
+.primary-background-darken-3 {
+    background: $primary-background-darken-3;
+}
+.primary-background-darken-2 {
+    background: $primary-background-darken-2;
+}
+.primary-background-darken-1 {
+    background: $primary-background-darken-1;
+}
+.primary-background {
+    background: $primary-background;
+}
+.primary-background-lighten-1 {
+    background: $primary-background-lighten-1;
+}
+.primary-background-lighten-2 {
+    background: $primary-background-lighten-2;
+}
+.primary-background-lighten-3 {
+    background: $primary-background-lighten-3;
+}
+.secondary-background-darken-3 {
+    background: $secondary-background-darken-3;
+}
+.secondary-background-darken-2 {
+    background: $secondary-background-darken-2;
+}
+.secondary-background-darken-1 {
+    background: $secondary-background-darken-1;
+}
+.secondary-background {
+    background: $secondary-background;
+}
+.secondary-background-lighten-1 {
+    background: $secondary-background-lighten-1;
+}
+.secondary-background-lighten-2 {
+    background: $secondary-background-lighten-2;
+}
+.secondary-background-lighten-3 {
+    background: $secondary-background-lighten-3;
+}
+.surface-darken-3 {
+    background: $surface-darken-3;
+}
+.surface-darken-2 {
+    background: $surface-darken-2;
+}
+.surface-darken-1 {
+    background: $surface-darken-1;
+}
+.surface {
+    background: $surface;
+}
+.surface-lighten-1 {
+    background: $surface-lighten-1;
+}
+.surface-lighten-2 {
+    background: $surface-lighten-2;
+}
+.surface-lighten-3 {
+    background: $surface-lighten-3;
+}
+.panel-darken-3 {
+    background: $panel-darken-3;
+}
+.panel-darken-2 {
+    background: $panel-darken-2;
+}
+.panel-darken-1 {
+    background: $panel-darken-1;
+}
+.panel {
+    background: $panel;
+}
+.panel-lighten-1 {
+    background: $panel-lighten-1;
+}
+.panel-lighten-2 {
+    background: $panel-lighten-2;
+}
+.panel-lighten-3 {
+    background: $panel-lighten-3;
+}
+.boost-darken-3 {
+    background: $boost-darken-3;
+}
+.boost-darken-2 {
+    background: $boost-darken-2;
+}
+.boost-darken-1 {
+    background: $boost-darken-1;
+}
+.boost {
+    background: $boost;
+}
+.boost-lighten-1 {
+    background: $boost-lighten-1;
+}
+.boost-lighten-2 {
+    background: $boost-lighten-2;
+}
+.boost-lighten-3 {
+    background: $boost-lighten-3;
+}
+.warning-darken-3 {
+    background: $warning-darken-3;
+}
+.warning-darken-2 {
+    background: $warning-darken-2;
+}
+.warning-darken-1 {
+    background: $warning-darken-1;
+}
+.warning {
+    background: $warning;
+}
+.warning-lighten-1 {
+    background: $warning-lighten-1;
+}
+.warning-lighten-2 {
+    background: $warning-lighten-2;
+}
+.warning-lighten-3 {
+    background: $warning-lighten-3;
+}
+.error-darken-3 {
+    background: $error-darken-3;
+}
+.error-darken-2 {
+    background: $error-darken-2;
+}
+.error-darken-1 {
+    background: $error-darken-1;
+}
+.error {
+    background: $error;
+}
+.error-lighten-1 {
+    background: $error-lighten-1;
+}
+.error-lighten-2 {
+    background: $error-lighten-2;
+}
+.error-lighten-3 {
+    background: $error-lighten-3;
+}
+.success-darken-3 {
+    background: $success-darken-3;
+}
+.success-darken-2 {
+    background: $success-darken-2;
+}
+.success-darken-1 {
+    background: $success-darken-1;
+}
+.success {
+    background: $success;
+}
+.success-lighten-1 {
+    background: $success-lighten-1;
+}
+.success-lighten-2 {
+    background: $success-lighten-2;
+}
+.success-lighten-3 {
+    background: $success-lighten-3;
+}
+.accent-darken-3 {
+    background: $accent-darken-3;
+}
+.accent-darken-2 {
+    background: $accent-darken-2;
+}
+.accent-darken-1 {
+    background: $accent-darken-1;
+}
+.accent {
+    background: $accent;
+}
+.accent-lighten-1 {
+    background: $accent-lighten-1;
+}
+.accent-lighten-2 {
+    background: $accent-lighten-2;
+}
+.accent-lighten-3 {
+    background: $accent-lighten-3;
+}

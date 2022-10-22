@@ -7,8 +7,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python-version: ["3.7", "3.8", "3.9"]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
     defaults:
       run:
         shell: bash
@@ -25,7 +25,7 @@ jobs:
           version: 1.1.6
           virtualenvs-in-project: true
       - name: Install dependencies
-        run: poetry install
+        run: poetry install --extras "dev"
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       - name: Format check with black
         run: |
@@ -39,11 +39,9 @@ jobs:
         run: |
           source $VENV
           pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing
-      - name: Upload code coverage
-        uses: codecov/codecov-action@v1.0.10
+      - name: Upload snapshot report
+        if: always()
+        uses: actions/upload-artifact@v3
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.xml
-          name: rich
-          flags: unittests
-          env_vars: OS,PYTHON
+          name: snapshot-report-textual
+          path: tests/snapshot_tests/output/snapshot_report.html
