@@ -458,10 +458,10 @@ class App(Generic[ReturnType], DOMNode):
             verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
         """
 
-        if not self.devtools_enabled:
+        devtools = self.devtools
+        if devtools is None or not devtools.is_connected:
             return
 
-        devtools = self.devtools
         if verbosity.value > LogVerbosity.NORMAL.value and not devtools.verbose:
             return
 
@@ -1090,7 +1090,7 @@ class App(Generic[ReturnType], DOMNode):
                 if self.is_headless:
                     await run_process_messages()
                 else:
-                    if self.devtools_enabled:
+                    if self.devtools_enabled and self.devtools.is_connected:
                         devtools = self.devtools
                         assert devtools is not None
                         from .devtools.redirect_output import StdoutRedirector
