@@ -84,7 +84,7 @@ This is [calculator.py](./examples/calculator.py) which demonstrates Textual gri
   <summary> 📷 Stopwatch </summary>
   <hr>
 
-  This is the Stopwatch example from the tutorial.
+  This is the Stopwatch example from the [tutorial](https://textual.textualize.io/tutorial/).
   
 ### Light theme 
   
