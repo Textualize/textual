@@ -81,18 +81,16 @@ This is [calculator.py](https://github.com/Textualize/textual/blob/abs-readme-li
 
 
 <details>
-  <summary> 📷 Stopwatch </summary>
+  <summary> 🎬 Stopwatch </summary>
   <hr>
 
   This is the Stopwatch example from the [tutorial](https://textual.textualize.io/tutorial/).
   
-### Light theme 
-  
-![stopwatch light screenshot](https://raw.githubusercontent.com/Textualize/textual/main/imgs/stopwatch_light.svg)
 
-### Dark theme
-  
-![stopwatch dark screenshot](https://raw.githubusercontent.com/Textualize/textual/main/imgs/stopwatch_dark.svg)
+
+https://user-images.githubusercontent.com/554369/197360718-0c834ef5-6285-4d37-85cf-23eed4aa56c5.mov
+
+
 
 </details>
 
