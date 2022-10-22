@@ -1,6 +1,6 @@
 # Textual
 
-![Textual splash image](./imgs/textual.png)
+![Textual splash image](https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png)
 
 Textual is a Python framework for creating interactive applications that run in your terminal.
 
@@ -48,7 +48,7 @@ Run the following command to see a little of what Textual can do:
 python -m textual
 ```
 
-![Textual demo](./imgs/demo.svg)
+![Textual demo](https://raw.githubusercontent.com/Textualize/textual/main/imgs/demo.svg)
 
 ## Documentation
 
@@ -63,7 +63,7 @@ The Textual repository comes with a number of examples you can experiment with o
   <summary> 🎬 Code browser </summary>
   <hr>
 
-  This is the [code_browser.py](./examples/code_browser.py) example which clocks in at 61 lines (*including* docstrings and blank lines).
+  This is the [code_browser.py](https://github.com/Textualize/textual/blob/abs-readme-links/examples/code_browser.py) example which clocks in at 61 lines (*including* docstrings and blank lines).
 
 https://user-images.githubusercontent.com/554369/197188237-88d3f7e4-4e5f-40b5-b996-c47b19ee2f49.mov
 
@@ -74,9 +74,9 @@ https://user-images.githubusercontent.com/554369/197188237-88d3f7e4-4e5f-40b5-b9
   <summary> 📷 Calculator </summary>
   <hr>
   
-This is [calculator.py](./examples/calculator.py) which demonstrates Textual grid layouts.
+This is [calculator.py](https://github.com/Textualize/textual/blob/abs-readme-links/examples/calculator.py) which demonstrates Textual grid layouts.
   
-![calculator screenshot](./imgs/calculator.svg)
+![calculator screenshot](https://raw.githubusercontent.com/Textualize/textual/main/imgs/calculator.svg)
 </details>
 
 
@@ -88,11 +88,11 @@ This is [calculator.py](./examples/calculator.py) which demonstrates Textual gri
   
 ### Light theme 
   
-![stopwatch light screenshot](./imgs/stopwatch_light.svg)
+![stopwatch light screenshot](https://raw.githubusercontent.com/Textualize/textual/main/imgs/stopwatch_light.svg)
 
 ### Dark theme
   
-![stopwatch dark screenshot](./imgs/stopwatch_dark.svg)
+![stopwatch dark screenshot](https://raw.githubusercontent.com/Textualize/textual/main/imgs/stopwatch_dark.svg)
 
 </details>
 
