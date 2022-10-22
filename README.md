@@ -48,7 +48,7 @@ Run the following command to see a little of what Textual can do:
 python -m textual
 ```
 
-![Textual demo](https://raw.githubusercontent.com/Textualize/textual/main/imgs/demo.svg)
+![Textual demo](https://raw.githubusercontent.com/Textualize/textual/main/imgs/demo.png)
 
 ## Documentation
 
@@ -76,7 +76,7 @@ https://user-images.githubusercontent.com/554369/197188237-88d3f7e4-4e5f-40b5-b9
   
 This is [calculator.py](https://github.com/Textualize/textual/blob/abs-readme-links/examples/calculator.py) which demonstrates Textual grid layouts.
   
-![calculator screenshot](https://raw.githubusercontent.com/Textualize/textual/main/imgs/calculator.svg)
+![calculator screenshot](https://raw.githubusercontent.com/Textualize/textual/main/imgs/calculator.png)
 </details>
 
 
