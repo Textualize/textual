@@ -4,6 +4,21 @@
 
 Textual is a Python framework for creating interactive applications that run in your terminal.
 
+<details>  
+  <summary> 🎬 Demonstration </summary>
+  <hr>
+  
+A quick run through of some Textual features.
+  
+
+
+https://user-images.githubusercontent.com/554369/197355913-65d3c125-493d-4c05-a590-5311f16c40ff.mov
+
+
+
+ </details>
+
+
 
 ## About
 
