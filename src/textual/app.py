@@ -228,9 +228,10 @@ class App(Generic[ReturnType], DOMNode):
             from .devtools.client import DevtoolsClient
         except ImportError:
             # Dev dependencies not installed
-            self.devtools = None
+            pass
         else:
-            self.devtools = DevtoolsClient()
+            if "devtools" in self.features:
+                self.devtools = DevtoolsClient()
 
         self._return_value: ReturnType | None = None
 
@@ -1090,7 +1091,7 @@ class App(Generic[ReturnType], DOMNode):
                 if self.is_headless:
                     await run_process_messages()
                 else:
-                    if self.devtools_enabled and self.devtools.is_connected:
+                    if self.devtools is not None:
                         devtools = self.devtools
                         assert devtools is not None
                         from .devtools.redirect_output import StdoutRedirector
