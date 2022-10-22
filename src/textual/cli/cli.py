@@ -4,8 +4,6 @@ import sys
 
 import click
 from importlib_metadata import version
-from rich.console import Console
-
 
 from textual._import_app import import_app, AppFail
 
