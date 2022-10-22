@@ -279,16 +279,6 @@ class App(Generic[ReturnType], DOMNode):
         )
 
     @property
-    def devtools_enabled(self) -> bool:
-        """Check if devtools are enabled.
-
-        Returns:
-            bool: True if devtools are enabled.
-
-        """
-        return "devtools" in self.features and self.devtools is not None
-
-    @property
     def debug(self) -> bool:
         """Check if debug mode is enabled.
 
@@ -1000,8 +990,7 @@ class App(Generic[ReturnType], DOMNode):
     ) -> None:
         self._set_active()
 
-        if self.devtools_enabled:
-            assert self.devtools is not None
+        if self.devtools is not None:
             from .devtools.client import DevtoolsConnectionError
 
             try:
