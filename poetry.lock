@@ -356,7 +356,7 @@ mkdocs = ">=1.1"
 
 [[package]]
 name = "mkdocs-material"
-version = "8.5.6"
+version = "8.5.7"
 description = "Documentation that simply works"
 category = "dev"
 optional = false
@@ -373,11 +373,11 @@ requests = ">=2.26"
 
 [[package]]
 name = "mkdocs-material-extensions"
-version = "1.0.3"
-description = "Extension pack for Python Markdown."
+version = "1.1"
+description = "Extension pack for Python Markdown and MkDocs Material."
 category = "dev"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [[package]]
 name = "mkdocstrings"
@@ -961,10 +961,7 @@ mkdocs-autorefs = [
     {file = "mkdocs_autorefs-0.4.1-py3-none-any.whl", hash = "sha256:a2248a9501b29dc0cc8ba4c09f4f47ff121945f6ce33d760f145d6f89d313f5b"},
 ]
 mkdocs-material = []
-mkdocs-material-extensions = [
-    {file = "mkdocs-material-extensions-1.0.3.tar.gz", hash = "sha256:bfd24dfdef7b41c312ede42648f9eb83476ea168ec163b613f9abd12bbfddba2"},
-    {file = "mkdocs_material_extensions-1.0.3-py3-none-any.whl", hash = "sha256:a82b70e533ce060b2a5d9eb2bc2e1be201cf61f901f93704b4acf6e3d5983a44"},
-]
+mkdocs-material-extensions = []
 mkdocstrings = [
     {file = "mkdocstrings-0.19.0-py3-none-any.whl", hash = "sha256:3217d510d385c961f69385a670b2677e68e07b5fea4a504d86bf54c006c87c7d"},
     {file = "mkdocstrings-0.19.0.tar.gz", hash = "sha256:efa34a67bad11229d532d89f6836a8a215937548623b64f3698a1df62e01cc3e"},

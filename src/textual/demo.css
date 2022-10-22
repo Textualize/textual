@@ -252,3 +252,11 @@ Window {
 Window > Static {
     width: auto;
 }
+
+
+Version {
+    color: $text-disabled;
+    dock: bottom;
+    text-align: center;
+    padding: 1;
+}
