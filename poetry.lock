@@ -556,7 +556,7 @@ plugins = ["importlib-metadata"]
 
 [[package]]
 name = "pymdown-extensions"
-version = "9.6"
+version = "9.7"
 description = "Extension pack for Python Markdown."
 category = "dev"
 optional = false
