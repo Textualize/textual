@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from importlib_metadata import version
 from pathlib import Path
 
 from rich import box
@@ -199,7 +200,7 @@ class Title(Static):
 class DarkSwitch(Horizontal):
     def compose(self) -> ComposeResult:
         yield Checkbox(value=self.app.dark)
-        yield Static("Dark mode", classes="label")
+        yield Static("Dark mode toggle", classes="label")
 
     def on_mount(self) -> None:
         watch(self.app, "dark", self.on_dark_change)
@@ -233,10 +234,15 @@ class Message(Static):
     pass
 
 
+class Version(Static):
+    def render(self) -> RenderableType:
+        return f"[b]v{version('textual')}"
+
+
 class Sidebar(Container):
     def compose(self) -> ComposeResult:
         yield Title("Textual Demo")
-        yield OptionGroup(Message(MESSAGE))
+        yield OptionGroup(Message(MESSAGE), Version())
         yield DarkSwitch()
 
 
@@ -377,8 +383,8 @@ class DemoApp(App):
         webbrowser.open(link)
 
     def action_toggle_sidebar(self) -> None:
-
         sidebar = self.query_one(Sidebar)
+        self.set_focus(None)
         if sidebar.has_class("-hidden"):
             sidebar.remove_class("-hidden")
         else:
