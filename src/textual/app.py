@@ -224,13 +224,13 @@ class App(Generic[ReturnType], DOMNode):
         self._installed_screens.update(**self.SCREENS)
 
         self.devtools: DevtoolsClient | None = None
-        try:
-            from .devtools.client import DevtoolsClient
-        except ImportError:
-            # Dev dependencies not installed
-            pass
-        else:
-            if "devtools" in self.features:
+        if "devtools" in self.features:
+            try:
+                from .devtools.client import DevtoolsClient
+            except ImportError:
+                # Dev dependencies not installed
+                pass
+            else:
                 self.devtools = DevtoolsClient()
 
         self._return_value: ReturnType | None = None
