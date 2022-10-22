@@ -52,7 +52,7 @@ def _run_devtools(verbose: bool, exclude: list[str] | None = None) -> None:
 
         print()
         print("[bold red]Couldn't start server")
-        print("Is there another instance of [reverse]textual devtools[/] running?")
+        print("Is there another instance of [reverse]textual console[/] running?")
 
 
 def _make_devtools_aiohttp_app(

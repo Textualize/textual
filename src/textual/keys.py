@@ -14,7 +14,6 @@ class Keys(str, Enum):
 
     value: str
 
-    Space = "space"
     Escape = "escape"  # Also Control-[
     ShiftEscape = "shift+escape"
     Return = "return"
@@ -185,6 +184,7 @@ class Keys(str, Enum):
     # Some 'Key' aliases (for backwardshift+compatibility).
     ControlSpace = "ctrl-at"
     Tab = "tab"
+    Space = "space"
     Enter = "enter"
     Backspace = "backspace"
 
