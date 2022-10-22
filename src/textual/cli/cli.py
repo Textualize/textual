@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import sys
+
 import click
 from importlib_metadata import version
-from textual.devtools.server import _run_devtools
+from rich.console import Console
+
+
 from textual._import_app import import_app, AppFail
 
 
@@ -16,7 +20,9 @@ def run():
 @click.option("-v", "verbose", help="Enable verbose logs.", is_flag=True)
 @click.option("-x", "--exclude", "exclude", help="Exclude log group(s)", multiple=True)
 def console(verbose: bool, exclude: list[str]) -> None:
+    """Launch the textual console."""
     from rich.console import Console
+    from textual.devtools.server import _run_devtools
 
     console = Console()
     console.clear()

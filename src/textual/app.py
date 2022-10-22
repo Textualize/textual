@@ -12,7 +12,7 @@ from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
 from time import perf_counter
-from typing import Any, Generic, Iterable, Type, TypeVar, cast, Union
+from typing import Any, Generic, Iterable, Type, TYPE_CHECKING, TypeVar, cast, Union
 from weakref import WeakSet, WeakValueDictionary
 
 from ._ansi_sequences import SYNC_END, SYNC_START
@@ -36,8 +36,6 @@ from .binding import Binding, Bindings
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
-from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
-from .devtools.redirect_output import StdoutRedirector
 from .dom import DOMNode
 from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
@@ -50,6 +48,10 @@ from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
 from .widget import AwaitMount, Widget
+
+if TYPE_CHECKING:
+    from .devtools.client import DevtoolsClient
+
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
@@ -221,7 +223,15 @@ class App(Generic[ReturnType], DOMNode):
         ] = WeakValueDictionary()
         self._installed_screens.update(**self.SCREENS)
 
-        self.devtools = DevtoolsClient()
+        self.devtools: DevtoolsClient | None = None
+        try:
+            from .devtools.client import DevtoolsClient
+        except ImportError:
+            # Dev dependencies not installed
+            self.devtools = None
+        else:
+            self.devtools = DevtoolsClient()
+
         self._return_value: ReturnType | None = None
 
         self.css_monitor = (
@@ -275,7 +285,7 @@ class App(Generic[ReturnType], DOMNode):
             bool: True if devtools are enabled.
 
         """
-        return "devtools" in self.features
+        return "devtools" in self.features and self.devtools is not None
 
     @property
     def debug(self) -> bool:
@@ -448,15 +458,18 @@ class App(Generic[ReturnType], DOMNode):
             verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
         """
 
-        if not self.devtools.is_connected:
+        devtools = self.devtools
+        if devtools is None:
             return
 
-        if verbosity.value > LogVerbosity.NORMAL.value and not self.devtools.verbose:
+        if verbosity.value > LogVerbosity.NORMAL.value and not devtools.verbose:
             return
 
         try:
+            from .devtools.client import DevtoolsLog
+
             if len(objects) == 1 and not kwargs:
-                self.devtools.log(
+                devtools.log(
                     DevtoolsLog(objects, caller=_textual_calling_frame),
                     group,
                     verbosity,
@@ -468,7 +481,7 @@ class App(Generic[ReturnType], DOMNode):
                         f"{key}={value!r}" for key, value in kwargs.items()
                     )
                     output = f"{output} {key_values}" if output else key_values
-                self.devtools.log(
+                devtools.log(
                     DevtoolsLog(output, caller=_textual_calling_frame),
                     group,
                     verbosity,
@@ -987,6 +1000,9 @@ class App(Generic[ReturnType], DOMNode):
         self._set_active()
 
         if self.devtools_enabled:
+            assert self.devtools is not None
+            from .devtools.client import DevtoolsConnectionError
+
             try:
                 await self.devtools.connect()
                 self.log.system(f"Connected to devtools ( {self.devtools.url} )")
@@ -1074,10 +1090,21 @@ class App(Generic[ReturnType], DOMNode):
                 if self.is_headless:
                     await run_process_messages()
                 else:
-                    redirector = StdoutRedirector(self.devtools)
-                    with redirect_stderr(redirector):
-                        with redirect_stdout(redirector):  # type: ignore
-                            await run_process_messages()
+                    if self.devtools_enabled:
+                        devtools = self.devtools
+                        assert devtools is not None
+                        from .devtools.redirect_output import StdoutRedirector
+
+                        redirector = StdoutRedirector(devtools)
+                        with redirect_stderr(redirector):
+                            with redirect_stdout(redirector):  # type: ignore
+                                await run_process_messages()
+                    else:
+                        null_file = _NullFile()
+                        with redirect_stderr(null_file):
+                            with redirect_stdout(null_file):
+                                await run_process_messages()
+
             finally:
                 driver.stop_application_mode()
         except Exception as error:
@@ -1085,7 +1112,7 @@ class App(Generic[ReturnType], DOMNode):
         finally:
             self._running = False
             self._print_error_renderables()
-            if self.devtools.is_connected:
+            if self.devtools is not None and self.devtools.is_connected:
                 await self._disconnect_devtools()
 
     async def _pre_process(self) -> None:
@@ -1185,7 +1212,8 @@ class App(Generic[ReturnType], DOMNode):
         self._registry.discard(widget)
 
     async def _disconnect_devtools(self):
-        await self.devtools.disconnect()
+        if self.devtools is not None:
+            await self.devtools.disconnect()
 
     def _start_widget(self, parent: Widget, widget: Widget) -> None:
         """Start a widget (run it's task) so that it can receive messages.

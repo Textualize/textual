@@ -52,7 +52,7 @@ class Logger:
             app = active_app.get()
         except LookupError:
             raise LoggerError("Unable to log without an active app.") from None
-        if not app.devtools.is_connected:
+        if not app.devtools_enabled:
             return
 
         previous_frame = inspect.currentframe().f_back
