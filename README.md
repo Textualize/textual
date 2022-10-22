@@ -63,7 +63,7 @@ The Textual repository comes with a number of examples you can experiment with o
   <summary> 🎬 Code browser </summary>
   <hr>
 
-  This is the [code_browser.py](https://raw.githubusercontent.com/Textualize/textual/main/examples/code_browser.py) example which clocks in at 61 lines (*including* docstrings and blank lines).
+  This is the [code_browser.py](https://github.com/Textualize/textual/blob/abs-readme-links/examples/code_browser.py) example which clocks in at 61 lines (*including* docstrings and blank lines).
 
 https://user-images.githubusercontent.com/554369/197188237-88d3f7e4-4e5f-40b5-b996-c47b19ee2f49.mov
 
@@ -74,7 +74,7 @@ https://user-images.githubusercontent.com/554369/197188237-88d3f7e4-4e5f-40b5-b9
   <summary> 📷 Calculator </summary>
   <hr>
   
-This is [calculator.py](https://raw.githubusercontent.com/Textualize/textual/main/examples/calculator.py) which demonstrates Textual grid layouts.
+This is [calculator.py](https://github.com/Textualize/textual/blob/abs-readme-links/examples/calculator.py) which demonstrates Textual grid layouts.
   
 ![calculator screenshot](https://raw.githubusercontent.com/Textualize/textual/main/imgs/calculator.svg)
 </details>
