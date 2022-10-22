@@ -457,11 +457,11 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
         """
-
-        devtools = self.devtools
-        if devtools is None:
+        
+        if not self.devtools_enabled:
             return
 
+        devtools = self.devtools
         if verbosity.value > LogVerbosity.NORMAL.value and not devtools.verbose:
             return
 

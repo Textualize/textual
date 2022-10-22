@@ -1,17 +1,11 @@
 from __future__ import annotations
 
 import asyncio
-
-try:
-    from aiohttp.web import run_app
-    from aiohttp.web_app import Application
-    from aiohttp.web_request import Request
-    from aiohttp.web_routedef import get
-    from aiohttp.web_ws import WebSocketResponse
-except ImportError:
-    raise ImportError(
-        "Textual Devtools requires installation of the 'dev' extra dependencies."
-    )
+from aiohttp.web import run_app
+from aiohttp.web_app import Application
+from aiohttp.web_request import Request
+from aiohttp.web_routedef import get
+from aiohttp.web_ws import WebSocketResponse
 
 from textual.devtools.client import DEVTOOLS_PORT
 from textual.devtools.service import DevtoolsService
