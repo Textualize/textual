@@ -140,7 +140,7 @@ https://user-images.githubusercontent.com/554369/196158235-4b45fb78-053d-4fd5-b2
 This is a reference for Textual's color design system.
   
 ```bash
-textual borders
+textual colors
 ```
 
 
