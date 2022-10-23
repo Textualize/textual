@@ -159,7 +159,7 @@ Here are some links. You can click these!
 [@click="app.open_link('https://github.com/Textualize/rich')"]Rich GitHub Repository[/]
 
 
-Built with ♥  by [@click="app.open_link(https://www.textualize.io)"]Textualize.io[/]
+Built with ♥  by [@click="app.open_link('https://www.textualize.io')"]Textualize.io[/]
 
 """
 
