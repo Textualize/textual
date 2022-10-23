@@ -48,18 +48,18 @@ Widgets are key to making user friendly interfaces. The builtin widgets should c
     * [ ] Export to `attrs` objects
     * [ ] Export to `PyDantic` objects
 - [ ] Image support
-  - [ ] Half block
-  - [ ] Braille
-  - [ ] Sixels, and other image extensions
+    * [ ] Half block
+    * [ ] Braille
+    * [ ] Sixels, and other image extensions
 - [x] Input
     * [ ] Validation
     * [ ] Error / warning states
     * [ ] Template types: IP address, physical units (weight, volume), currency, credit card etc
 - [ ] Markdown viewer (more dynamic than Rich markdown, with scrollable code areas / collapsible sections)
 - [ ] Plots
-  - [ ] bar chart
-  - [ ] line chart
-  - [ ] Candlestick chars
+    * [ ] bar chart
+    * [ ] line chart
+    * [ ] Candlestick chars
 - [ ] Progress bars
     * [ ] Style variants (solid, thin etc)
 - [ ] Radio boxes
