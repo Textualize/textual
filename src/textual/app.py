@@ -125,7 +125,6 @@ class App(Generic[ReturnType], DOMNode):
 
     Args:
         driver_class (Type[Driver] | None, optional): Driver class or ``None`` to auto-detect. Defaults to None.
-        title (str | None, optional): Title of the application. If ``None``, the title is set to the name of the ``App`` subclass. Defaults to ``None``.
         css_path (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
         watch_css (bool, optional): Watch CSS for changes. Defaults to False.
     """
