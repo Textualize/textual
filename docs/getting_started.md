@@ -25,13 +25,13 @@ You can install Textual via PyPI.
 If you plan on developing Textual apps, then you should install `textual[dev]`. The `[dev]` part installs a few extra dependencies for development.
 
 ```
-pip install "textual[dev]==0.2.0"
+pip install "textual[dev]"
 ```
 
 If you only plan on _running_ Textual apps, then you can drop the `[dev]` part:
 
 ```
-pip install textual==0.2.0
+pip install textual
 ```
 
 ## Demo
@@ -44,7 +44,7 @@ python -m textual
 
 If Textual is installed you should see the following:
 
-```{.textual path="src/textual/demo.py" columns="127" lines="53" press="enter,_,_,_,_,_,_,tab,w,i,l,l"}
+```{.textual path="src/textual/demo.py" columns="127" lines="53" press="enter,_,_,_,_,_,_,tab,_,w,i,l,l"}
 ```
 
 ## Examples
