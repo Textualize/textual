@@ -166,7 +166,7 @@ theme:
     accent: purple
     toggle:
       icon: material/weather-sunny
-      name: Switch to dark modeTask was destroyed but it is pending!
+      name: Switch to dark mode
   - media: "(prefers-color-scheme: dark)"
     scheme: slate
     primary: black
