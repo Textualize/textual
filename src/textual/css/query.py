@@ -20,7 +20,7 @@ from typing import cast, Generic, TYPE_CHECKING, Iterator, TypeVar, overload
 
 import rich.repr
 
-from .errors import DeclarationError
+from .errors import DeclarationError, TokenError
 from .match import match
 from .model import SelectorSet
 from .parse import parse_declarations, parse_selectors
@@ -32,6 +32,10 @@ if TYPE_CHECKING:
 
 class QueryError(Exception):
     """Base class for a query related error."""
+
+
+class InvalidQueryFormat(QueryError):
+    """Query did not parse correctly."""
 
 
 class NoMatches(QueryError):
@@ -72,9 +76,17 @@ class DOMQuery(Generic[QueryType]):
             parent._excludes.copy() if parent else []
         )
         if filter is not None:
-            self._filters.append(parse_selectors(filter))
+            try:
+                self._filters.append(parse_selectors(filter))
+            except TokenError:
+                # TODO: More helpful errors
+                raise InvalidQueryFormat(f"Unable to parse filter {filter!r} as query")
+
         if exclude is not None:
-            self._excludes.append(parse_selectors(exclude))
+            try:
+                self._excludes.append(parse_selectors(exclude))
+            except TokenError:
+                raise InvalidQueryFormat(f"Unable to parse filter {filter!r} as query")
 
     @property
     def node(self) -> DOMNode:

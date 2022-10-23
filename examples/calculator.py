@@ -28,7 +28,8 @@ class CalculatorApp(App):
         "plus_minus_sign": "plus-minus",
         "percent_sign": "percent",
         "equals_sign": "equals",
-        "enter": "equals",
+        "minus": "minus",
+        "plus": "plus",
     }
 
     def watch_numbers(self, value: str) -> None:
@@ -80,7 +81,6 @@ class CalculatorApp(App):
                 self.query_one(f"#{button_id}", Button).press()
             except NoMatches:
                 pass
-            self.set_focus(None)
 
         key = event.key
         if key.isdecimal():
@@ -89,7 +89,9 @@ class CalculatorApp(App):
             press("c")
             press("ac")
         else:
-            press(self.NAME_MAP.get(key, key))
+            button_id = self.NAME_MAP.get(key)
+            if button_id is not None:
+                press(self.NAME_MAP.get(key, key))
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Called when a button is pressed."""
