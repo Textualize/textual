@@ -1,6 +1,6 @@
 import pytest
 
-from textual.binding import Bindings, Binding
+from textual.binding import Bindings, Binding, BindingError
 
 BINDING1 = Binding("a,b", action="action1", description="description1")
 BINDING2 = Binding("c", action="action2", description="description2")
@@ -29,3 +29,9 @@ def test_bindings_merge_overlap():
         "a": another_binding,
         "b": Binding("b", action="action1", description="description1"),
     }
+
+def test_bad_binding_tuple():
+    with pytest.raises(BindingError):
+        _ = Bindings((("a", "action"),))
+    with pytest.raises(BindingError):
+        _ = Bindings((("a", "action", "description","too much"),))
