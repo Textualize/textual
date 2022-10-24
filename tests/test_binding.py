@@ -1,3 +1,5 @@
+from string import ascii_lowercase
+
 import pytest
 
 from textual.binding import Bindings, Binding, BindingError, NoBinding
@@ -38,3 +40,11 @@ def test_bad_binding_tuple():
 
 def test_binding_from_tuples():
     assert Bindings((( BINDING2.key, BINDING2.action, BINDING2.description),)).get_key("c") == BINDING2
+
+def test_shown():
+    bindings = Bindings([
+        Binding(
+            key, action=f"action_{key}", description=f"Emits {key}",show=bool(ord(key)%2)
+        ) for key in ascii_lowercase
+    ])
+    assert len(bindings.shown_keys)==(len(ascii_lowercase)/2)
