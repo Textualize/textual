@@ -35,3 +35,6 @@ def test_bad_binding_tuple():
         _ = Bindings((("a", "action"),))
     with pytest.raises(BindingError):
         _ = Bindings((("a", "action", "description","too much"),))
+
+def test_binding_from_tuples():
+    assert Bindings((( BINDING2.key, BINDING2.action, BINDING2.description),)).get_key("c") == BINDING2
