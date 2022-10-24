@@ -2,8 +2,9 @@ from pathlib import Path
 
 import pytest
 
-
 # --- Layout related stuff ---
+from textual.widgets import Input
+
 
 def test_grid_layout_basic(snap_compare):
     assert snap_compare("docs/examples/guide/layout/grid_layout1.py")
@@ -38,13 +39,6 @@ def test_dock_layout_sidebar(snap_compare):
 # When adding a new widget, ideally we should also create a snapshot test
 # from these examples which test rendering and simple interactions with it.
 
-# before snapshot test:
-# src/textual/widgets/_checkbox.py              47     47     0%   1-126
-# before testing presses in snapshot test:
-# src/textual/widgets/_checkbox.py              47     11    77%   83-88, 110, 113, 118, 124-126
-# after testing presses in snapshot test:
-# src/textual/widgets/_checkbox.py              47      2    96%   87, 110
-
 def test_checkboxes(snap_compare):
     """Tests checkboxes but also acts a regression test for using
     width: auto in a Horizontal layout context."""
@@ -60,9 +54,18 @@ def test_checkboxes(snap_compare):
 
 
 def test_input_and_focus(snap_compare):
-    first_field = ["tab"] + list("Darren")  # Focus first input, write "Darren"
-    second_field = ["tab"] + list("Burns")  # Tab focus to second input, write "Burns"
-    assert snap_compare("docs/examples/widgets/input.py", press=first_field + second_field)
+    press = [
+        "tab",
+        *list("Darren"),  # Focus first input, write "Darren"
+        "tab",
+        *list("Burns"),  # Tab focus to second input, write "Burns"
+    ]
+    assert snap_compare("docs/examples/widgets/input.py", press=press)
+
+    # Assert that the state of the Input is what we'd expect
+    input: Input = snap_compare.app.query_one(Input)
+    assert input.value == "Darren"
+    assert input.cursor_position == 6
 
 
 def test_buttons_render(snap_compare):
@@ -70,8 +73,6 @@ def test_buttons_render(snap_compare):
     assert snap_compare("docs/examples/widgets/button.py", press=["tab"])
 
 
-# src/textual/widgets/_data_table.py           312    312     0%
-# src/textual/widgets/_data_table.py           312     85    73%
 def test_datatable_render(snap_compare):
     press = ["tab", "down", "down", "right", "up", "left"]
     assert snap_compare("docs/examples/widgets/data_table.py", press=press)
@@ -83,6 +84,7 @@ def test_footer_render(snap_compare):
 
 def test_header_render(snap_compare):
     assert snap_compare("docs/examples/widgets/header.py")
+
 
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
