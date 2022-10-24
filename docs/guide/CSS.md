@@ -206,7 +206,7 @@ The type selector will also match a widget's base classes. Consequently a `Stati
 ```sass
 Static {
   background: blue;
-  border: rounded white;
+  border: round white;
 }
 ```
 
@@ -214,7 +214,7 @@ Static {
 
     The fact that the type selector matches base classes is a departure from browser CSS which doesn't have the same concept.
 
-You may have noticed that the `border` rule exists in both Static and Button. When this happens, Textual will use the most recently defined sub-class within a list of bases. So Button wins over Static, and Static wins over Widget (the base class of all widgets). Hence if both rules were in a stylesheet, the buttons would be "solid blue" and not "rounded white".
+You may have noticed that the `border` rule exists in both Static and Button. When this happens, Textual will use the most recently defined sub-class within a list of bases. So Button wins over Static, and Static wins over Widget (the base class of all widgets). Hence if both rules were in a stylesheet, the buttons would be "solid blue" and not "round white".
 
 ### ID selector
 
