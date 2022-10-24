@@ -33,12 +33,27 @@ def test_dock_layout_sidebar(snap_compare):
     assert snap_compare("docs/examples/guide/layout/dock_layout2_sidebar.py")
 
 
-# --- Interacting with widgets ---
+# --- Widgets - rendering and basic interactions ---
+
+# before snapshot test:
+# src/textual/widgets/_checkbox.py              47     47     0%   1-126
+# before testing presses in snapshot test:
+# src/textual/widgets/_checkbox.py              47     11    77%   83-88, 110, 113, 118, 124-126
+# after testing presses in snapshot test:
+# src/textual/widgets/_checkbox.py              47      2    96%   87, 110
 
 def test_checkboxes(snap_compare):
     """Tests checkboxes but also acts a regression test for using
     width: auto in a Horizontal layout context."""
-    assert snap_compare("docs/examples/widgets/checkbox.py")
+    press = [
+        "shift+tab",
+        "enter",  # toggle off
+        "shift+tab",
+        "wait:20",
+        "enter",  # toggle on
+        "wait:20",
+    ]
+    assert snap_compare("docs/examples/widgets/checkbox.py", press=press)
 
 
 def test_input_and_focus(snap_compare):
@@ -50,6 +65,12 @@ def test_input_and_focus(snap_compare):
 def test_buttons_render(snap_compare):
     # Testing button rendering. We press tab to focus the first button too.
     assert snap_compare("docs/examples/widgets/button.py", press=["tab"])
+
+
+# src/textual/widgets/_data_table.py           312    312     0%
+# src/textual/widgets/_data_table.py           312     85    73%
+def test_datatable_render(snap_compare):
+    assert snap_compare("docs/examples/widgets/data_table.py")
 
 
 # --- CSS properties ---
