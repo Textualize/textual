@@ -3,6 +3,7 @@ from decimal import Decimal
 from textual.app import App, ComposeResult
 from textual import events
 from textual.containers import Container
+from textual.css.query import NoMatches
 from textual.reactive import var
 from textual.widgets import Button, Static
 
@@ -19,15 +20,15 @@ class CalculatorApp(App):
     value = var("")
     operator = var("plus")
 
-    KEY_MAP = {
-        "+": "plus",
-        "-": "minus",
-        ".": "point",
-        "*": "multiply",
-        "/": "divide",
-        "_": "plus-minus",
-        "%": "percent",
-        "=": "equals",
+    NAME_MAP = {
+        "asterisk": "multiply",
+        "slash": "divide",
+        "underscore": "plus-minus",
+        "full_stop": "point",
+        "plus_minus_sign": "plus-minus",
+        "percent_sign": "percent",
+        "equals_sign": "equals",
+        "enter": "equals",
     }
 
     def watch_numbers(self, value: str) -> None:
@@ -75,7 +76,10 @@ class CalculatorApp(App):
         """Called when the user presses a key."""
 
         def press(button_id: str) -> None:
-            self.query_one(f"#{button_id}", Button).press()
+            try:
+                self.query_one(f"#{button_id}", Button).press()
+            except NoMatches:
+                pass
             self.set_focus(None)
 
         key = event.key
@@ -84,8 +88,8 @@ class CalculatorApp(App):
         elif key == "c":
             press("c")
             press("ac")
-        elif key in self.KEY_MAP:
-            press(self.KEY_MAP[key])
+        else:
+            press(self.NAME_MAP.get(key, key))
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Called when a button is pressed."""

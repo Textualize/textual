@@ -8,13 +8,21 @@ We have many new features in the pipeline. This page will keep track of that wor
 
 High-level features we plan on implementing.
 
+- [ ] Accessibility
+    * [ ] Integration with screen readers
+    * [x] Monochrome mode
+    * [ ] High contrast theme
+    * [ ] Color blind themes
 - [ ] Command interface
     * [ ] Command menu
     * [ ] Fuzzy search
 - [ ] Configuration (.toml based extensible configuration format)
-- [x] Devtools
-    * [ ] Browser-inspired devtools interface with integrated DOM view, log, and REPL
-- [ ] Reactive state
+- [x] Console 
+- [ ] Devtools
+    * [ ] Integrated log 
+    * [ ] DOM tree view 
+    * [ ] REPL
+- [ ] Reactive state abstraction
 - [x] Themes 
     * [ ] Customize via config 
     * [ ] Builtin theme editor
@@ -40,25 +48,26 @@ Widgets are key to making user friendly interfaces. The builtin widgets should c
     * [ ] Export to `attrs` objects
     * [ ] Export to `PyDantic` objects
 - [ ] Image support
-  - [ ] Half block
-  - [ ] Braile
-  - [ ] Sixels, and other image extensions
+    * [ ] Half block
+    * [ ] Braille
+    * [ ] Sixels, and other image extensions
 - [x] Input
     * [ ] Validation
     * [ ] Error / warning states
     * [ ] Template types: IP address, physical units (weight, volume), currency, credit card etc
-- [ ] Markdown viewer (more dynamic than Rich markdown, with scrollable code areas / collapseable sections)
+- [ ] Markdown viewer (more dynamic than Rich markdown, with scrollable code areas / collapsible sections)
 - [ ] Plots
-  - [ ] bar chart
-  - [ ] line chart
-  - [ ] Candlestick chars
+    * [ ] bar chart
+    * [ ] line chart
+    * [ ] Candlestick chars
 - [ ] Progress bars
     * [ ] Style variants (solid, thin etc)
 - [ ] Radio boxes
-- [ ] Sparklines
+- [ ] Spark-lines
 - [ ] Tabs
 - [ ] TextArea (multi-line input)
     * [ ] Basic controls
-    * [ ] Syntax highlighting
     * [ ] Indentation guides
     * [ ] Smart features for various languages
+    * [ ] Syntax highlighting
+    

@@ -610,7 +610,6 @@ class Styles(StylesBase):
             list[tuple[str, Specificity6, Any]]]: A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
         """
         is_important = self.important.__contains__
-
         rules = [
             (
                 rule_name,
@@ -644,9 +643,6 @@ class Styles(StylesBase):
         easing: EasingFunction,
         on_complete: CallbackType | None = None,
     ) -> ScalarAnimation | None:
-        # from ..widget import Widget
-        # node = self.node
-        # assert isinstance(self.node, Widget)
         if isinstance(value, ScalarOffset):
             return ScalarAnimation(
                 self.node,

@@ -12,7 +12,7 @@ from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
 from time import perf_counter
-from typing import Any, Generic, Iterable, Type, TypeVar, cast, Union
+from typing import Any, Generic, Iterable, Type, TYPE_CHECKING, TypeVar, cast, Union
 from weakref import WeakSet, WeakValueDictionary
 
 from ._ansi_sequences import SYNC_END, SYNC_START
@@ -36,8 +36,6 @@ from .binding import Binding, Bindings
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
-from .devtools.client import DevtoolsClient, DevtoolsConnectionError, DevtoolsLog
-from .devtools.redirect_output import StdoutRedirector
 from .dom import DOMNode
 from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
@@ -50,6 +48,10 @@ from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
 from .widget import AwaitMount, Widget
+
+if TYPE_CHECKING:
+    from .devtools.client import DevtoolsClient
+
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
@@ -123,7 +125,6 @@ class App(Generic[ReturnType], DOMNode):
 
     Args:
         driver_class (Type[Driver] | None, optional): Driver class or ``None`` to auto-detect. Defaults to None.
-        title (str | None, optional): Title of the application. If ``None``, the title is set to the name of the ``App`` subclass. Defaults to ``None``.
         css_path (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
         watch_css (bool, optional): Watch CSS for changes. Defaults to False.
     """
@@ -140,18 +141,18 @@ class App(Generic[ReturnType], DOMNode):
     """
 
     SCREENS: dict[str, Screen] = {}
-
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
+    TITLE: str | None = None
+    SUB_TITLE: str | None = None
 
-    title: Reactive[str] = Reactive("Textual")
+    title: Reactive[str] = Reactive("")
     sub_title: Reactive[str] = Reactive("")
     dark: Reactive[bool] = Reactive(True)
 
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
-        title: str | None = None,
         css_path: CSSPathType = None,
         watch_css: bool = False,
     ):
@@ -190,10 +191,10 @@ class App(Generic[ReturnType], DOMNode):
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
-        if title is None:
-            self.title = f"{self.__class__.__name__}"
-        else:
-            self.title = title
+        self.title = (
+            self.TITLE if self.TITLE is not None else f"{self.__class__.__name__}"
+        )
+        self.sub_title = self.SUB_TITLE if self.SUB_TITLE is not None else ""
 
         self._logger = Logger(self._log)
 
@@ -221,7 +222,16 @@ class App(Generic[ReturnType], DOMNode):
         ] = WeakValueDictionary()
         self._installed_screens.update(**self.SCREENS)
 
-        self.devtools = DevtoolsClient()
+        self.devtools: DevtoolsClient | None = None
+        if "devtools" in self.features:
+            try:
+                from .devtools.client import DevtoolsClient
+            except ImportError:
+                # Dev dependencies not installed
+                pass
+            else:
+                self.devtools = DevtoolsClient()
+
         self._return_value: ReturnType | None = None
 
         self.css_monitor = (
@@ -266,16 +276,6 @@ class App(Generic[ReturnType], DOMNode):
             easing=easing,
             on_complete=on_complete,
         )
-
-    @property
-    def devtools_enabled(self) -> bool:
-        """Check if devtools are enabled.
-
-        Returns:
-            bool: True if devtools are enabled.
-
-        """
-        return "devtools" in self.features
 
     @property
     def debug(self) -> bool:
@@ -448,15 +448,18 @@ class App(Generic[ReturnType], DOMNode):
             verbosity (int, optional): Verbosity level 0-3. Defaults to 1.
         """
 
-        if not self.devtools.is_connected:
+        devtools = self.devtools
+        if devtools is None or not devtools.is_connected:
             return
 
-        if verbosity.value > LogVerbosity.NORMAL.value and not self.devtools.verbose:
+        if verbosity.value > LogVerbosity.NORMAL.value and not devtools.verbose:
             return
 
         try:
+            from .devtools.client import DevtoolsLog
+
             if len(objects) == 1 and not kwargs:
-                self.devtools.log(
+                devtools.log(
                     DevtoolsLog(objects, caller=_textual_calling_frame),
                     group,
                     verbosity,
@@ -468,7 +471,7 @@ class App(Generic[ReturnType], DOMNode):
                         f"{key}={value!r}" for key, value in kwargs.items()
                     )
                     output = f"{output} {key_values}" if output else key_values
-                self.devtools.log(
+                devtools.log(
                     DevtoolsLog(output, caller=_textual_calling_frame),
                     group,
                     verbosity,
@@ -480,7 +483,7 @@ class App(Generic[ReturnType], DOMNode):
         """Action to toggle dark mode."""
         self.dark = not self.dark
 
-    def action_screenshot(self, filename: str | None, path: str = "~/") -> None:
+    def action_screenshot(self, filename: str | None = None, path: str = "./") -> None:
         """Save an SVG "screenshot". This action will save an SVG file containing the current contents of the screen.
 
         Args:
@@ -612,6 +615,13 @@ class App(Generic[ReturnType], DOMNode):
                             print(f"(pause {wait_ms}ms)")
                             await asyncio.sleep(float(wait_ms) / 1000)
                         else:
+                            if len(key) == 1 and not key.isalnum():
+                                key = (
+                                    unicodedata.name(key)
+                                    .lower()
+                                    .replace("-", "_")
+                                    .replace(" ", "_")
+                                )
                             original_key = REPLACED_KEYS.get(key, key)
                             try:
                                 char = unicodedata.lookup(
@@ -620,7 +630,8 @@ class App(Generic[ReturnType], DOMNode):
                             except KeyError:
                                 char = key if len(key) == 1 else None
                             print(f"press {key!r} (char={char!r})")
-                            driver.send_event(events.Key(self, key, char))
+                            key_event = events.Key(self, key, char)
+                            driver.send_event(key_event)
                             await asyncio.sleep(0.01)
 
                     await app._animator.wait_for_idle()
@@ -978,7 +989,9 @@ class App(Generic[ReturnType], DOMNode):
     ) -> None:
         self._set_active()
 
-        if self.devtools_enabled:
+        if self.devtools is not None:
+            from .devtools.client import DevtoolsConnectionError
+
             try:
                 await self.devtools.connect()
                 self.log.system(f"Connected to devtools ( {self.devtools.url} )")
@@ -1066,10 +1079,21 @@ class App(Generic[ReturnType], DOMNode):
                 if self.is_headless:
                     await run_process_messages()
                 else:
-                    redirector = StdoutRedirector(self.devtools)
-                    with redirect_stderr(redirector):
-                        with redirect_stdout(redirector):  # type: ignore
-                            await run_process_messages()
+                    if self.devtools is not None:
+                        devtools = self.devtools
+                        assert devtools is not None
+                        from .devtools.redirect_output import StdoutRedirector
+
+                        redirector = StdoutRedirector(devtools)
+                        with redirect_stderr(redirector):
+                            with redirect_stdout(redirector):  # type: ignore
+                                await run_process_messages()
+                    else:
+                        null_file = _NullFile()
+                        with redirect_stderr(null_file):
+                            with redirect_stdout(null_file):
+                                await run_process_messages()
+
             finally:
                 driver.stop_application_mode()
         except Exception as error:
@@ -1077,7 +1101,7 @@ class App(Generic[ReturnType], DOMNode):
         finally:
             self._running = False
             self._print_error_renderables()
-            if self.devtools.is_connected:
+            if self.devtools is not None and self.devtools.is_connected:
                 await self._disconnect_devtools()
 
     async def _pre_process(self) -> None:
@@ -1177,7 +1201,8 @@ class App(Generic[ReturnType], DOMNode):
         self._registry.discard(widget)
 
     async def _disconnect_devtools(self):
-        await self.devtools.disconnect()
+        if self.devtools is not None:
+            await self.devtools.disconnect()
 
     def _start_widget(self, parent: Widget, widget: Widget) -> None:
         """Start a widget (run it's task) so that it can receive messages.
@@ -1345,6 +1370,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             bool: True if the event has handled.
         """
+        print("ACTION", action, default_namespace)
         if isinstance(action, str):
             target, params = actions.parse(action)
         else:
@@ -1353,7 +1379,7 @@ class App(Generic[ReturnType], DOMNode):
         if "." in target:
             destination, action_name = target.split(".", 1)
             if destination not in self._action_targets:
-                raise ActionError("Action namespace {destination} is not known")
+                raise ActionError(f"Action namespace {destination} is not known")
             action_target = getattr(self, destination)
             implicit_destination = True
         else:

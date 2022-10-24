@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "textual"
-version = "0.2.0b7"
+version = "0.2.1"
 homepage = "https://github.com/Textualize/textual"
 description = "Modern Text User Interface framework"
 authors = ["Will McGugan <will@textualize.io>"]
 license = "MIT"
 readme = "README.md"
 classifiers = [
-    "Development Status :: 1 - Planning",
+    "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "Operating System :: MacOS",

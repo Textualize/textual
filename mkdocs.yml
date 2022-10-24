@@ -24,11 +24,6 @@ nav:
     - "guide/animation.md"
     - "guide/screens.md"
   - "roadmap.md"
-  - How to:
-    - "how-to/index.md"
-    - "how-to/animation.md"
-    - "how-to/mouse-and-keyboard.md"
-    - "how-to/scroll.md"
   - Events:
     - "events/index.md"
     - "events/blur.md"
@@ -171,7 +166,7 @@ theme:
     accent: purple
     toggle:
       icon: material/weather-sunny
-      name: Switch to dark modeTask was destroyed but it is pending!
+      name: Switch to dark mode
   - media: "(prefers-color-scheme: dark)"
     scheme: slate
     primary: black

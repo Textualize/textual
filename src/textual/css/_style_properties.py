@@ -856,6 +856,7 @@ class ColorProperty:
         elif isinstance(color, Color):
             if obj.set_rule(self.name, color):
                 obj.refresh(children=self._is_background)
+
         elif isinstance(color, str):
             alpha = 1.0
             parsed_color = Color(255, 255, 255)

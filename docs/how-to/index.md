@@ -1,3 +1,0 @@
-# How to ...
-
-For those who want more focused information on Textual features.

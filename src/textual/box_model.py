@@ -80,6 +80,8 @@ def get_box_model(
         max_width = styles.max_width.resolve_dimension(
             content_container, viewport, fraction_unit
         )
+        if is_border_box:
+            max_width -= gutter.width
         content_width = min(content_width, max_width)
 
     content_width = max(Fraction(0), content_width)

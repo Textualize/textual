@@ -35,13 +35,13 @@ If you want to try the finished Stopwatch app and follow along with the code, fi
 === "HTTPS"
 
     ```bash
-    git clone -b css https://github.com/Textualize/textual.git
+    git clone https://github.com/Textualize/textual.git
     ```
 
 === "SSH"
 
     ```bash
-    git clone -b css git@github.com:Textualize/textual.git
+    git clone git@github.com:Textualize/textual.git
     ```
 
 === "GitHub CLI"
@@ -222,7 +222,7 @@ If we run the app now, it will look *very* different.
 ```{.textual path="docs/examples/tutorial/stopwatch03.py" title="stopwatch03.py"}
 ```
 
-This app looks much more like our sketch. Let's look at how the Textual uses `stopwatch03.css` to apply styles.
+This app looks much more like our sketch. Let's look at how Textual uses `stopwatch03.css` to apply styles.
 
 ### CSS basics
 
@@ -381,14 +381,15 @@ We've seen how we can update widgets with a timer, but we still need to wire up 
 We need to be able to start, stop, and reset each stopwatch independently. We can do this by adding a few more methods to the `TimeDisplay` class.
 
 
-```python title="stopwatch06.py" hl_lines="14 18 30-44 50-61"
+```python title="stopwatch06.py" hl_lines="14 18 22 30-44 50-61"
 --8<-- "docs/examples/tutorial/stopwatch06.py"
 ```
 
 Here's a summary of the changes made to `TimeDisplay`.
 
-- We've added a `total` reactive attribute to store the total time elapsed between clicking that start and stop buttons.
+- We've added a `total` reactive attribute to store the total time elapsed between clicking the start and stop buttons.
 - The call to `set_interval` has grown a `pause=True` argument which starts the timer in pause mode (when a timer is paused it won't run until [resume()][textual.timer.Timer.resume] is called). This is because we don't want the time to update until the user hits the start button.
+- The `update_time` method now adds `total` to the current time to account for the time between any previous clicks of the start and stop buttons.
 - We've stored the result of `set_interval` which returns a Timer object. We will use this later to _resume_ the timer when we start the Stopwatch.
 - We've added `start()`, `stop()`, and `reset()` methods.
 
