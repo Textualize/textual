@@ -37,7 +37,7 @@ def path_tester(obj_type: Type[App[None]], str_type: Type[App[None]], intended_r
     )
 
 def test_relative_path():
-    path_tester(RelativePathObjectApp, RelativePathStrApp, ((Path(__file__).absolute().parent ) / "test.css"))
+    path_tester(RelativePathObjectApp, RelativePathStrApp, ((Path(__file__).absolute().parent ) / "test.css").absolute())
 
 def test_absolute_path():
-    path_tester(AbsolutePathObjectApp, AbsolutePathStrApp, Path("/tmp/test.css"))
+    path_tester(AbsolutePathObjectApp, AbsolutePathStrApp, Path("/tmp/test.css").absolute())
