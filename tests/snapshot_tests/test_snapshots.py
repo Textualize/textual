@@ -2,9 +2,11 @@ from pathlib import Path
 
 import pytest
 
-# --- Layout related stuff ---
+from textual.app import App
 from textual.widgets import Input
 
+
+# --- Layout related stuff ---
 
 def test_grid_layout_basic(snap_compare):
     assert snap_compare("docs/examples/guide/layout/grid_layout1.py")
@@ -63,7 +65,8 @@ def test_input_and_focus(snap_compare):
     assert snap_compare("docs/examples/widgets/input.py", press=press)
 
     # Assert that the state of the Input is what we'd expect
-    input: Input = snap_compare.app.query_one(Input)
+    app: App = snap_compare.app
+    input: Input = app.query_one(Input)
     assert input.value == "Darren"
     assert input.cursor_position == 6
 

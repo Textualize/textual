@@ -2,7 +2,7 @@ import csv
 import io
 
 from textual.app import App, ComposeResult
-from textual.widgets import DataTable, Header
+from textual.widgets import DataTable
 
 CSV = """lane,swimmer,country,time
 4,Joseph Schooling,Singapore,50.39
@@ -17,7 +17,6 @@ CSV = """lane,swimmer,country,time
 
 class TableApp(App):
     def compose(self) -> ComposeResult:
-        yield Header()
         yield DataTable()
 
     def on_mount(self) -> None:
