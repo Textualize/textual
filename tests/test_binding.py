@@ -1,6 +1,6 @@
 import pytest
 
-from textual.binding import Bindings, Binding, BindingError
+from textual.binding import Bindings, Binding, BindingError, NoBinding
 
 BINDING1 = Binding("a,b", action="action1", description="description1")
 BINDING2 = Binding("c", action="action2", description="description2")
@@ -14,13 +14,13 @@ def bindings():
 def test_bindings_get_key(bindings):
     assert bindings.get_key("b") == Binding("b", action="action1", description="description1")
     assert bindings.get_key("c") == BINDING2
-
+    with pytest.raises(NoBinding):
+        bindings.get_key("control+meta+alt+shift+super+hyper+t")
 
 def test_bindings_merge_simple(bindings):
     left = Bindings([BINDING1])
     right = Bindings([BINDING2])
     assert Bindings.merge([left, right]).keys == bindings.keys
-
 
 def test_bindings_merge_overlap():
     left = Bindings([BINDING1])
