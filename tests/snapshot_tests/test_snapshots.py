@@ -34,6 +34,9 @@ def test_dock_layout_sidebar(snap_compare):
 
 
 # --- Widgets - rendering and basic interactions ---
+# Each widget should have a canonical example that is display in the docs.
+# When adding a new widget, ideally we should also create a snapshot test
+# from these examples which test rendering and simple interactions with it.
 
 # before snapshot test:
 # src/textual/widgets/_checkbox.py              47     47     0%   1-126
@@ -70,7 +73,12 @@ def test_buttons_render(snap_compare):
 # src/textual/widgets/_data_table.py           312    312     0%
 # src/textual/widgets/_data_table.py           312     85    73%
 def test_datatable_render(snap_compare):
-    assert snap_compare("docs/examples/widgets/data_table.py")
+    press = ["tab", "down", "down", "right", "up", "left"]
+    assert snap_compare("docs/examples/widgets/data_table.py", press=press)
+
+
+def test_footer_render(snap_compare):
+    assert snap_compare("docs/examples/widgets/footer.py")
 
 
 # --- CSS properties ---
