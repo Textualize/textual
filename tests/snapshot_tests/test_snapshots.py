@@ -1,4 +1,4 @@
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import pytest
 
@@ -94,7 +94,7 @@ def test_header_render(snap_compare):
 # If any of these change, something has likely broken, so snapshot each of them.
 
 PATHS = [
-    str(path) for path in Path("docs/examples/styles").iterdir() if path.suffix == ".py"
+    str(PurePosixPath(path)) for path in Path("docs/examples/styles").iterdir() if path.suffix == ".py"
 ]
 
 
