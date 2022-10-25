@@ -1,7 +1,7 @@
 import pytest
 
 from textual.widget import Widget
-from textual.css.query import WrongType, NoMatches
+from textual.css.query import InvalidQueryFormat, WrongType, NoMatches
 
 
 def test_query():
@@ -165,3 +165,15 @@ def test_query_classes():
     # Remove the test class from everything using toggle_class.
     app.query(ClassTest).toggle_class("test")
     assert len(app.query(".test"))==0
+
+def test_invalid_query():
+    class App(Widget):
+        pass
+
+    app = App()
+
+    with pytest.raises(InvalidQueryFormat):
+        app.query("#3")
+
+    with pytest.raises(InvalidQueryFormat):
+        app.query("#foo").exclude("#2")
