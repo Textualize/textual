@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.2] - Unreleased
+
+### Changed
+
+- DOMQuery now raises InvalidQueryFormat in response to invalid query strings, rather than cryptic CSS error
+
 ## [0.2.1] - 2022-10-23
 
 ### Changed

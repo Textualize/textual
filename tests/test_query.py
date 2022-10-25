@@ -1,4 +1,7 @@
+import pytest
+
 from textual.widget import Widget
+from textual.css.query import InvalidQueryFormat
 
 
 def test_query():
@@ -78,3 +81,16 @@ def test_query():
         assert list(app.query("#widget1, #widget2")) == [widget1, widget2]
         assert list(app.query("#widget1 , #widget2")) == [widget1, widget2]
         assert list(app.query("#widget1, #widget2, App")) == [app, widget1, widget2]
+
+
+def test_invalid_query():
+    class App(Widget):
+        pass
+
+    app = App()
+
+    with pytest.raises(InvalidQueryFormat):
+        app.query("#3")
+
+    with pytest.raises(InvalidQueryFormat):
+        app.query("#foo").exclude("#2")
