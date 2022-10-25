@@ -58,6 +58,16 @@ def test_query():
 
         assert list(app.query("Widget.float")) == [sidebar, tooltip, helpbar]
         assert list(app.query(Widget).filter(".float")) == [sidebar, tooltip, helpbar]
+        assert list(
+            app.query(Widget)
+            .exclude("App")
+            .exclude("#sub")
+            .exclude("#markdown")
+            .exclude("#main")
+            .exclude("#help")
+            .exclude("#widget1")
+            .exclude("#widget2")
+        ) == [sidebar, tooltip, helpbar]
         assert list(reversed(app.query("Widget.float"))) == [helpbar, tooltip, sidebar]
         assert list(app.query("Widget.float").results(Widget)) == [
             sidebar,
