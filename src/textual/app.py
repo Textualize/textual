@@ -1021,7 +1021,6 @@ class App(Generic[ReturnType], DOMNode):
                 self.stylesheet.add_source(
                     self.CSS, path=app_css_path, is_default_css=False
                 )
-                print(self.stylesheet)
         except Exception as error:
             self._handle_exception(error)
             self._print_error_renderables()
