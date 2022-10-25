@@ -59,6 +59,7 @@ def snap_compare(
         """
         node = request.node
         app = import_app(app_path)
+        compare.app = app
         actual_screenshot = take_svg_screenshot(
             app=app,
             press=press,

@@ -605,7 +605,7 @@ class App(Generic[ReturnType], DOMNode):
                     assert press
                     driver = app._driver
                     assert driver is not None
-                    await asyncio.sleep(0.01)
+                    await asyncio.sleep(0.02)
                     for key in press:
                         if key == "_":
                             print("(pause 50ms)")
@@ -632,7 +632,13 @@ class App(Generic[ReturnType], DOMNode):
                             print(f"press {key!r} (char={char!r})")
                             key_event = events.Key(self, key, char)
                             driver.send_event(key_event)
-                            await asyncio.sleep(0.01)
+                            # TODO: A bit of a fudge - extra sleep after tabbing to help guard against race
+                            #  condition between widget-level key handling and app/screen level handling.
+                            #  More information here: https://github.com/Textualize/textual/issues/1009
+                            #  This conditional sleep can be removed after that issue is closed.
+                            if key == "tab":
+                                await asyncio.sleep(0.05)
+                            await asyncio.sleep(0.02)
 
                     await app._animator.wait_for_idle()
 
