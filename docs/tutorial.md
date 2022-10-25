@@ -108,7 +108,7 @@ Let's examine `stopwatch01.py` in more detail.
 --8<-- "docs/examples/tutorial/stopwatch01.py"
 ```
 
-The first line imports the Textual `App` class, which we will use as the base class for our App. The second line imports two builtin widgets: `Footer` which shows a bar at the bottom of the screen with current keys, and `Header` which shows a title and the current time at the top of the screen. Widgets are re-usable components responsible for managing a part of the screen. We will cover how to build widgets in this tutorial.
+The first line imports the Textual `App` class, which we will use as the base class for our App. The second line imports two builtin widgets: `Footer` which shows a bar at the bottom of the screen with bound keys, and `Header` which shows a title at the top of the screen. Widgets are re-usable components responsible for managing a part of the screen. We will cover how to build widgets in this tutorial.
 
 The following lines define the app itself:
 
@@ -233,8 +233,9 @@ Stopwatch {
     layout: horizontal;
     background: $boost;
     height: 5;
-    padding: 1;
     margin: 1;
+    min-width: 50;
+    padding: 1;
 }
 ```
 
@@ -249,8 +250,9 @@ Here's how this CSS code changes how the `Stopwatch` widget is displayed.
 - `layout: horizontal` aligns child widgets horizontally from left to right.
 - `background: $boost` sets the background color to `$boost`. The `$` prefix picks a pre-defined color from the builtin theme. There are other ways to specify colors such as `"blue"` or `rgb(20,46,210)`.
 - `height: 5` sets the height of our widget to 5 lines of text.
-- `padding: 1` sets a padding of 1 cell around the child widgets.
 - `margin: 1` sets a margin of 1 cell around the `Stopwatch` widget to create a little space between widgets in the list.
+- `min-width: 50` sets the minimum width of our widget to 50 cells.
+- `padding: 1` sets a padding of 1 cell around the child widgets.
 
 
 Here's the rest of `stopwatch03.css` which contains further declaration blocks:
