@@ -117,3 +117,51 @@ def test_query():
             _ = app.query(".float").first(View)
         with pytest.raises(WrongType):
             _ = app.query(".float").last(View)
+
+
+def test_query_classes():
+
+    class App(Widget):
+        pass
+
+    class ClassTest(Widget):
+        pass
+
+    CHILD_COUNT=100
+
+    # Create a fake app to hold everything else.
+    app = App()
+
+    # Now spin up a bunch of children.
+    for n in range(CHILD_COUNT):
+        app._add_child(ClassTest(id=f"child{n}"))
+
+    # Let's just be 100% sure everything was created fine.
+    assert len(app.query(ClassTest))==CHILD_COUNT
+
+    # Now, let's check there are *no* children with the test class.
+    assert len(app.query(".test"))==0
+
+    # Add the test class to everything and then check again.
+    app.query(ClassTest).add_class("test")
+    assert len(app.query(".test"))==CHILD_COUNT
+
+    # Remove the test class from everything then try again.
+    app.query(ClassTest).remove_class("test")
+    assert len(app.query(".test"))==0
+
+    # Add the test class to everything using set_class.
+    app.query(ClassTest).set_class(True, "test")
+    assert len(app.query(".test"))==CHILD_COUNT
+
+    # Remove the test class from everything using set_class.
+    app.query(ClassTest).set_class(False, "test")
+    assert len(app.query(".test"))==0
+
+    # Add the test class to everything using toggle_class.
+    app.query(ClassTest).toggle_class("test")
+    assert len(app.query(".test"))==CHILD_COUNT
+
+    # Remove the test class from everything using toggle_class.
+    app.query(ClassTest).toggle_class("test")
+    assert len(app.query(".test"))==0
