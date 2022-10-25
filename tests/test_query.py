@@ -47,6 +47,9 @@ def test_query():
         assert list(app.query(".frob")) == []
         assert list(app.query("#frob")) == []
 
+        assert app.query("App")
+        assert not app.query("NotAnApp")
+
         assert list(app.query("App")) == [app]
         assert list(app.query("#main")) == [main_view]
         assert list(app.query("View#main")) == [main_view]
