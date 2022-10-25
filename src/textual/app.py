@@ -541,7 +541,7 @@ class App(Generic[ReturnType], DOMNode):
             svg_filename = filename
         svg_path = os.path.expanduser(os.path.join(path, svg_filename))
         screenshot_svg = self.export_screenshot()
-        with open(svg_path, "w") as svg_file:
+        with open(svg_path, "w", encoding="utf-8") as svg_file:
             svg_file.write(screenshot_svg)
         return svg_path
 
