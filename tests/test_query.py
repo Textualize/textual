@@ -74,6 +74,11 @@ def test_query():
             tooltip,
             helpbar,
         ]
+        assert list(app.query("Widget.float").results()) == [
+            sidebar,
+            tooltip,
+            helpbar,
+        ]
         assert list(app.query("Widget.float").results(View)) == []
 
         assert app.query("Widget.float")[0] == sidebar
