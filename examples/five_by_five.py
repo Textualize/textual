@@ -159,7 +159,7 @@ class GameGrid(Widget):
 class Game(Screen):
     """Main 5x5 game grid screen."""
 
-    SIZE = 5
+    SIZE: Final = 5
     """The size of the game grid. Clue's in the name really."""
 
     BINDINGS = [
