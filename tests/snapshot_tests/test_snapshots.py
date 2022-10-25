@@ -58,9 +58,9 @@ def test_checkboxes(snap_compare):
 def test_input_and_focus(snap_compare):
     press = [
         "tab",
-        *list("Darren"),  # Focus first input, write "Darren"
+        *"Darren",  # Focus first input, write "Darren"
         "tab",
-        *list("Burns"),  # Tab focus to second input, write "Burns"
+        *"Burns",  # Tab focus to second input, write "Burns"
     ]
     assert snap_compare("docs/examples/widgets/input.py", press=press)
 
