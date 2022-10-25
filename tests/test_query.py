@@ -1,4 +1,7 @@
+import pytest
+
 from textual.widget import Widget
+from textual.css.query import WrongType, NoMatches
 
 
 def test_query():
@@ -78,3 +81,16 @@ def test_query():
         assert list(app.query("#widget1, #widget2")) == [widget1, widget2]
         assert list(app.query("#widget1 , #widget2")) == [widget1, widget2]
         assert list(app.query("#widget1, #widget2, App")) == [app, widget1, widget2]
+
+        assert app.query(".float").first() == sidebar
+        assert app.query(".float").last() == helpbar
+
+        with pytest.raises(NoMatches):
+            _ = app.query(".no_such_class").first()
+        with pytest.raises(NoMatches):
+            _ = app.query(".no_such_class").last()
+
+        with pytest.raises(WrongType):
+            _ = app.query(".float").first(View)
+        with pytest.raises(WrongType):
+            _ = app.query(".float").last(View)
