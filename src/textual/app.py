@@ -518,7 +518,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         filename: str | None = None,
         path: str = "./",
-        time_format: str = "%Y-%m-%d %X %f",
+        time_format: str = "%Y%m%d %H%M%S %f",
     ) -> str:
         """Save an SVG screenshot of the current screen.
 
