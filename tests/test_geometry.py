@@ -295,6 +295,10 @@ def test_size_sub():
         Size(1, 2) - "foo"
 
 
+def test_size_line_range():
+    assert Size(20, 0).line_range == range(0)
+    assert Size(0, 20).line_range == range(20)
+
 def test_region_x_extents():
     assert Region(5, 10, 20, 30).column_span == (5, 25)
 
