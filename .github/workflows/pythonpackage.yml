@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
     defaults:
       run:
         shell: bash
@@ -22,7 +22,7 @@ jobs:
       - name: Install and configure Poetry
         uses: snok/install-poetry@v1.1.6
         with:
-          version: 1.1.6
+          version: 1.3.3
           virtualenvs-in-project: true
       - name: Install dependencies
         run: poetry install --extras "dev"
