@@ -3,7 +3,7 @@ from pathlib import Path, PurePosixPath
 import pytest
 
 from textual.app import App
-from textual.widgets import Input
+from textual.widgets import Input, Button
 
 
 # --- Layout related stuff ---
@@ -69,11 +69,16 @@ def test_input_and_focus(snap_compare):
     input: Input = app.query_one(Input)
     assert input.value == "Darren"
     assert input.cursor_position == 6
+    assert input.view_position == 0
 
 
 def test_buttons_render(snap_compare):
     # Testing button rendering. We press tab to focus the first button too.
     assert snap_compare("docs/examples/widgets/button.py", press=["tab"])
+
+    app = snap_compare.app
+    button: Button = app.query_one(Button)
+    assert app.focused is button
 
 
 def test_datatable_render(snap_compare):
