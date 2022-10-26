@@ -1162,6 +1162,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             parent (Widget): Parent Widget.
+            *widgets (Widget): The widget to register.
 
         Returns:
             list[Widget]: List of modified widgets.
