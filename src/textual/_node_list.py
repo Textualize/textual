@@ -62,6 +62,23 @@ class NodeList(Sequence):
             self._nodes_set.add(widget)
             self._updates += 1
 
+    def _index(self, widget: Widget) -> int:
+        """Get the index of the given widget.
+
+        Args:
+            widget (Widget): The widget to location in the list.
+
+        Returns:
+            int: The index of the widget.
+
+        Raises:
+            ValueError: If the widget could not be found in the list.
+        """
+        # Note, while this is trivial, it's currently in a method of its own
+        # to highlight the fact that, if this code goes forward, we may need
+        # to do something to very efficiently locate a widget in the list.
+        return self._nodes.index(widget)
+
     def _insert_before(self, sibling: Widget, widget: Widget) -> None:
         """Insert a widget before another widget in the list.
 
@@ -70,7 +87,7 @@ class NodeList(Sequence):
             widget (Widget): The widget to insert.
         """
         if widget not in self._nodes_set:
-            self._insert(self._nodes.index(sibling), widget)
+            self._insert(self._index(sibling), widget)
 
     def _insert_after(self, sibling: Widget, widget: Widget) -> None:
         """Insert a widget after another widget in the list.
@@ -80,7 +97,7 @@ class NodeList(Sequence):
             widget (Widget): The widget to insert.
         """
         if widget not in self._nodes_set:
-            self._insert(self._nodes.index(sibling) + 1, widget)
+            self._insert(self._index(sibling) + 1, widget)
 
     def _remove(self, widget: Widget) -> None:
         """Remove a widget from the list.
