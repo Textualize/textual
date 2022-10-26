@@ -430,7 +430,7 @@ The Stopwatch app creates widgets when it starts via the `compose` method. We wi
 
 Let's use these methods to implement adding and removing stopwatches to our app.
 
-```python title="stopwatch.py" hl_lines="78-79 88-92 94-98"
+```python title="stopwatch.py" hl_lines="78-79 86 88-92 94-98"
 --8<-- "docs/examples/tutorial/stopwatch.py"
 ```
 
