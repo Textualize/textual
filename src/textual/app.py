@@ -731,7 +731,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widgets (Iterable[Widget]): An iterable of widgets.
         """
-        return self.mount(*list(widgets))
+        return self.mount(*widgets)
 
     def is_screen_installed(self, screen: Screen | str) -> bool:
         """Check if a given screen has been installed.
