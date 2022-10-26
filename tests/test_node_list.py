@@ -61,6 +61,29 @@ def test_insert_before_start():
     nodes._insert_before(sibling, widget)
     assert list(nodes) == [widget, sibling]
 
+def test_insert_after_missing():
+    """Do we get an error if we try and insert after a widget that doesn't exist?"""
+    with pytest.raises(ValueError):
+        NodeList()._insert_after(Widget(), Widget())
+
+def test_insert_after_start():
+    """Do we correctly insert at the start of a list?"""
+    nodes = NodeList()
+    sibling = Widget()
+    nodes._append(sibling)
+    widget = Widget()
+    nodes._insert_after(sibling, widget)
+    assert list(nodes) == [sibling, widget]
+
+def test_insert_before_start():
+    """Do we correctly insert at the start of a list?"""
+    nodes = NodeList()
+    sibling = Widget()
+    nodes._append(sibling)
+    widget = Widget()
+    nodes._insert_before(sibling, widget)
+    assert list(nodes) == [widget, sibling]
+
 def test_truthy():
     """Does a node list act as a truthy object?"""
     nodes = NodeList()

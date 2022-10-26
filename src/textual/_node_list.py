@@ -72,6 +72,16 @@ class NodeList(Sequence):
         if widget not in self._nodes_set:
             self._insert(self._nodes.index(sibling), widget)
 
+    def _insert_after(self, sibling: Widget, widget: Widget) -> None:
+        """Insert a widget after another widget in the list.
+
+        Args:
+            sibling (Widget): The widget to insert after.
+            widget (Widget): The widget to insert.
+        """
+        if widget not in self._nodes_set:
+            self._insert(self._nodes.index(sibling) + 1, widget)
+
     def _remove(self, widget: Widget) -> None:
         """Remove a widget from the list.
 
