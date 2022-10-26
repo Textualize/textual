@@ -165,7 +165,7 @@ The Stopwatch widget class also extends `Static`. This class has a `compose()` m
 
 #### The buttons
 
-The Button constructor takes a label to be displayed in the button (`"Start"`, `"Stop"`, or `"Reset"`). Additionally some of the buttons set the following parameters:
+The Button constructor takes a label to be displayed in the button (`"Start"`, `"Stop"`, or `"Reset"`). Additionally, some of the buttons set the following parameters:
 
 - `id` is an identifier we can use to tell the buttons apart in code and apply styles. More on that later.
 - `variant` is a string which selects a default style. The "success" variant makes the button green, and the "error" variant makes it red.
@@ -290,7 +290,7 @@ The last 3 blocks have a slightly different format. When the declaration begins 
 
 The buttons have a `dock` style which aligns the widget to a given edge. The start and stop buttons are docked to the left edge, while the reset button is docked to the right edge.
 
-You may have noticed that the stop button (`#stop` in the CSS) has `display: none;`. This tells Textual to not show the button. We do this because we don't want to display the stop button when the timer is *not* running. Similarly we don't want to show the start button when the timer is running. We will cover how to manage such dynamic user interfaces in the next section.
+You may have noticed that the stop button (`#stop` in the CSS) has `display: none;`. This tells Textual to not show the button. We do this because we don't want to display the stop button when the timer is *not* running. Similarly, we don't want to show the start button when the timer is running. We will cover how to manage such dynamic user interfaces in the next section.
 
 ### Dynamic CSS
 
@@ -335,7 +335,7 @@ The following code will start or stop the stopwatches in response to clicking a 
 --8<-- "docs/examples/tutorial/stopwatch04.py"
 ```
 
-The `on_button_pressed` method is an *event handler*. Event handlers are methods called by Textual in response to an *event* such as a key press, mouse click, etc. Event handlers begin with `on_` followed by the name of the event they will handler. Hence `on_button_pressed` will handle the button pressed event.
+The `on_button_pressed` method is an *event handler*. Event handlers are methods called by Textual in response to an *event* such as a key press, mouse click, etc. Event handlers begin with `on_` followed by the name of the event they will handle. Hence `on_button_pressed` will handle the button pressed event.
 
 If you run `stopwatch04.py` now you will be able to toggle between the two states by clicking the first button:
 
