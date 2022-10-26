@@ -19,6 +19,32 @@ def test_repeat_add_one():
         nodes._append(widget)
     assert len(nodes)==1
 
+def test_insert_one():
+    """Does inserting a node into an empty node list add that node?"""
+    nodes = NodeList()
+    nodes._insert(0, Widget())
+    assert len(nodes)==1
+
+def test_repeat_insert_one():
+    """Does inserting the same item to the node list ignore the additional inserts?"""
+    nodes = NodeList()
+    widget = Widget()
+    for _ in range(1000):
+        nodes._insert(0, widget)
+    assert len(nodes)==1
+
+def test_insert_mid():
+    """Does inserting a widget into the middle of a list insert correctly?"""
+    nodes = NodeList()
+    widget = Widget()
+    for _ in range(1000):
+        nodes._append(Widget())
+    nodes._insert(500,widget)
+    assert nodes[499] != widget
+    assert nodes[500] == widget
+    assert nodes[501] != widget
+    assert widget in nodes
+
 def test_truthy():
     """Does a node list act as a truthy object?"""
     nodes = NodeList()
