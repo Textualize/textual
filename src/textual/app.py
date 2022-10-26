@@ -1181,8 +1181,6 @@ class App(Generic[ReturnType], DOMNode):
                 apply_stylesheet(widget)
 
         return list(widgets)
-        # registered_widgets = [widget for _, widget in widgets]
-        # return registered_widgets
 
     def _unregister(self, widget: Widget) -> None:
         """Unregister a widget.
