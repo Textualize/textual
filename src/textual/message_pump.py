@@ -266,7 +266,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         self.app.screen._invoke_later(message.callback)
 
     def _close_messages_no_wait(self) -> None:
-        """Request the message queue to exit."""
+        """Request the message queue to immediately exit."""
         self._message_queue.put_nowait(messages.CloseMessages(sender=self))
 
     async def _on_close_messages(self, message: messages.CloseMessages) -> None:
@@ -374,8 +374,6 @@ class MessagePump(metaclass=MessagePumpMeta):
                                 self.app._handle_exception(error)
                                 break
 
-        # log("CLOSED", self)
-
     async def _dispatch_message(self, message: Message) -> None:
         """Dispatch a message received from the message queue.
 
@@ -439,7 +437,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             dispatched = True
             await invoke(method, message)
         if not dispatched:
-            log.event.verbose(message, ">>>", self, "method=None")
+            log.event.verbosity(message.verbose)(message, ">>>", self, "method=None")
 
         # Bubble messages up the DOM (if enabled on the message)
         if message.bubble and self._parent and not message._stop_propagation:

@@ -2049,6 +2049,3 @@ class Widget(DOMNode):
             self.scroll_page_up()
             return True
         return False
-
-    # def _on_un_mount(self) -> None:
-    #     self.log.debug("UNMOUNTED", self)
