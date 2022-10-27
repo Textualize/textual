@@ -267,7 +267,10 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def _close_messages_no_wait(self) -> None:
         """Request the message queue to exit."""
-        self._message_queue.put_nowait(None)
+        self._message_queue.put_nowait(messages.CloseMessages(sender=self))
+
+    async def _on_close_messages(self, message: messages.CloseMessages) -> None:
+        await self._close_messages()
 
     async def _close_messages(self) -> None:
         """Close message queue, and optionally wait for queue to finish processing."""
@@ -278,6 +281,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         for timer in stop_timers:
             await timer.stop()
         self._timers.clear()
+        await self._message_queue.put(events.UnMount(sender=self))
         await self._message_queue.put(None)
         if self._task is not None and asyncio.current_task() != self._task:
             # Ensure everything is closed before returning
@@ -370,7 +374,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                                 self.app._handle_exception(error)
                                 break
 
-        log("CLOSED", self)
+        # log("CLOSED", self)
 
     async def _dispatch_message(self, message: Message) -> None:
         """Dispatch a message received from the message queue.
@@ -424,6 +428,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         handler_name = message._handler_name
 
         # Look through the MRO to find a handler
+        dispatched = False
         for cls, method in self._get_dispatch_methods(handler_name, message):
             log.event.verbosity(message.verbose)(
                 message,
@@ -431,7 +436,10 @@ class MessagePump(metaclass=MessagePumpMeta):
                 self,
                 f"method=<{cls.__name__}.{handler_name}>",
             )
+            dispatched = True
             await invoke(method, message)
+        if not dispatched:
+            log.event.verbose(message, ">>>", self, "method=None")
 
         # Bubble messages up the DOM (if enabled on the message)
         if message.bubble and self._parent and not message._stop_propagation:

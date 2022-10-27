@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from contextlib import asynccontextmanager
 import inspect
 import io
 import os
@@ -241,6 +242,11 @@ class App(Generic[ReturnType], DOMNode):
         )
         self._screenshot: str | None = None
 
+    @property
+    def return_value(self) -> ReturnType | None:
+        """Get the return type."""
+        return self._return_value
+
     def animate(
         self,
         attribute: str,
@@ -314,7 +320,7 @@ class App(Generic[ReturnType], DOMNode):
             result (ReturnType | None, optional): Return value. Defaults to None.
         """
         self._return_value = result
-        self._close_messages_no_wait()
+        self.post_message_no_wait(messages.ExitApp(sender=self))
 
     @property
     def focused(self) -> Widget | None:
@@ -566,6 +572,95 @@ class App(Generic[ReturnType], DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
+    @classmethod
+    async def _press_keys(cls, app: App, press: Iterable[str]) -> None:
+        """A task to send key events."""
+        assert press
+        driver = app._driver
+        assert driver is not None
+        await asyncio.sleep(0.02)
+        for key in press:
+            if key == "_":
+                print("(pause 50ms)")
+                await asyncio.sleep(0.05)
+            elif key.startswith("wait:"):
+                _, wait_ms = key.split(":")
+                print(f"(pause {wait_ms}ms)")
+                await asyncio.sleep(float(wait_ms) / 1000)
+            else:
+                if len(key) == 1 and not key.isalnum():
+                    key = (
+                        unicodedata.name(key)
+                        .lower()
+                        .replace("-", "_")
+                        .replace(" ", "_")
+                    )
+                original_key = REPLACED_KEYS.get(key, key)
+                char: str | None
+                try:
+                    char = unicodedata.lookup(original_key.upper().replace("_", " "))
+                except KeyError:
+                    char = key if len(key) == 1 else None
+                print(f"press {key!r} (char={char!r})")
+                key_event = events.Key(app, key, char)
+                driver.send_event(key_event)
+                # TODO: A bit of a fudge - extra sleep after tabbing to help guard against race
+                #  condition between widget-level key handling and app/screen level handling.
+                #  More information here: https://github.com/Textualize/textual/issues/1009
+                #  This conditional sleep can be removed after that issue is closed.
+                if key == "tab":
+                    await asyncio.sleep(0.05)
+                await asyncio.sleep(0.02)
+        await app._animator.wait_for_idle()
+        print("EXITING")
+        app.exit()
+
+    @asynccontextmanager
+    async def run_async(
+        self,
+        *,
+        headless: bool = False,
+        quit_after: float | None = None,
+        press: Iterable[str] | None = None,
+    ):
+        """Run the app asynchronously. This is an async context manager, which shuts down the app on exit.
+
+        Example:
+            async def run_app():
+                app = MyApp()
+                async with app.run_async() as result:
+                    print(result)
+
+        Args:
+            quit_after (float | None, optional): Quit after a given number of seconds, or None
+                to run forever. Defaults to None.
+            headless (bool, optional): Run in "headless" mode (don't write to stdout).
+            press (str, optional): An iterable of keys to simulate being pressed.
+
+        """
+        app = self
+        if headless:
+            app.features = cast(
+                "frozenset[FeatureFlag]", app.features.union({"headless"})
+            )
+
+        if quit_after is not None:
+            app.set_timer(quit_after, app.exit)
+
+        if press is not None:
+
+            async def press_keys_task():
+                asyncio.create_task(self._press_keys(app, press))
+
+            await app._process_messages(ready_callback=press_keys_task)
+
+        else:
+            await app._process_messages()
+
+        yield app.return_value
+
+        await app._shutdown()
+
     def run(
         self,
         *,
@@ -589,72 +684,12 @@ class App(Generic[ReturnType], DOMNode):
             ReturnType | None: The return value specified in `App.exit` or None if exit wasn't called.
         """
 
-        if headless:
-            self.features = cast(
-                "frozenset[FeatureFlag]", self.features.union({"headless"})
-            )
-
         async def run_app() -> None:
-            if quit_after is not None:
-                self.set_timer(quit_after, self.shutdown)
-            if press is not None:
-                app = self
-
-                async def press_keys() -> None:
-                    """A task to send key events."""
-                    assert press
-                    driver = app._driver
-                    assert driver is not None
-                    await asyncio.sleep(0.02)
-                    for key in press:
-                        if key == "_":
-                            print("(pause 50ms)")
-                            await asyncio.sleep(0.05)
-                        elif key.startswith("wait:"):
-                            _, wait_ms = key.split(":")
-                            print(f"(pause {wait_ms}ms)")
-                            await asyncio.sleep(float(wait_ms) / 1000)
-                        else:
-                            if len(key) == 1 and not key.isalnum():
-                                key = (
-                                    unicodedata.name(key)
-                                    .lower()
-                                    .replace("-", "_")
-                                    .replace(" ", "_")
-                                )
-                            original_key = REPLACED_KEYS.get(key, key)
-                            try:
-                                char = unicodedata.lookup(
-                                    original_key.upper().replace("_", " ")
-                                )
-                            except KeyError:
-                                char = key if len(key) == 1 else None
-                            print(f"press {key!r} (char={char!r})")
-                            key_event = events.Key(self, key, char)
-                            driver.send_event(key_event)
-                            # TODO: A bit of a fudge - extra sleep after tabbing to help guard against race
-                            #  condition between widget-level key handling and app/screen level handling.
-                            #  More information here: https://github.com/Textualize/textual/issues/1009
-                            #  This conditional sleep can be removed after that issue is closed.
-                            if key == "tab":
-                                await asyncio.sleep(0.05)
-                            await asyncio.sleep(0.02)
-
-                    await app._animator.wait_for_idle()
-
-                    if screenshot:
-                        self._screenshot = self.export_screenshot(
-                            title=screenshot_title
-                        )
-                    await self.shutdown()
-
-                async def press_keys_task():
-                    """Press some keys in the background."""
-                    asyncio.create_task(press_keys())
-
-                await self._process_messages(ready_callback=press_keys_task)
-            else:
-                await self._process_messages()
+            async with self.run_async(
+                quit_after=quit_after, headless=headless, press=press
+            ):
+                if screenshot:
+                    self._screenshot = self.export_screenshot(title=screenshot_title)
 
         if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
             # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
@@ -663,8 +698,107 @@ class App(Generic[ReturnType], DOMNode):
             # However, this works with Python<3.10:
             event_loop = asyncio.get_event_loop()
             event_loop.run_until_complete(run_app())
+        return self.return_value
 
-        return self._return_value
+    # def run(
+    #     self,
+    #     *,
+    #     quit_after: float | None = None,
+    #     headless: bool = False,
+    #     press: Iterable[str] | None = None,
+    #     screenshot: bool = False,
+    #     screenshot_title: str | None = None,
+    # ) -> ReturnType | None:
+    #     """The main entry point for apps.
+
+    #     Args:
+    #         quit_after (float | None, optional): Quit after a given number of seconds, or None
+    #             to run forever. Defaults to None.
+    #         headless (bool, optional): Run in "headless" mode (don't write to stdout).
+    #         press (str, optional): An iterable of keys to simulate being pressed.
+    #         screenshot (bool, optional): Take a screenshot after pressing keys (svg data stored in self._screenshot). Defaults to False.
+    #         screenshot_title (str | None, optional): Title of screenshot, or None to use App title. Defaults to None.
+
+    #     Returns:
+    #         ReturnType | None: The return value specified in `App.exit` or None if exit wasn't called.
+    #     """
+
+    #     if headless:
+    #         self.features = cast(
+    #             "frozenset[FeatureFlag]", self.features.union({"headless"})
+    #         )
+
+    #     async def run_app() -> None:
+    #         if quit_after is not None:
+    #             self.set_timer(quit_after, self.shutdown)
+    #         if press is not None:
+    #             app = self
+
+    #             async def press_keys() -> None:
+    #                 """A task to send key events."""
+    #                 assert press
+    #                 driver = app._driver
+    #                 assert driver is not None
+    #                 await asyncio.sleep(0.02)
+    #                 for key in press:
+    #                     if key == "_":
+    #                         print("(pause 50ms)")
+    #                         await asyncio.sleep(0.05)
+    #                     elif key.startswith("wait:"):
+    #                         _, wait_ms = key.split(":")
+    #                         print(f"(pause {wait_ms}ms)")
+    #                         await asyncio.sleep(float(wait_ms) / 1000)
+    #                     else:
+    #                         if len(key) == 1 and not key.isalnum():
+    #                             key = (
+    #                                 unicodedata.name(key)
+    #                                 .lower()
+    #                                 .replace("-", "_")
+    #                                 .replace(" ", "_")
+    #                             )
+    #                         original_key = REPLACED_KEYS.get(key, key)
+    #                         try:
+    #                             char = unicodedata.lookup(
+    #                                 original_key.upper().replace("_", " ")
+    #                             )
+    #                         except KeyError:
+    #                             char = key if len(key) == 1 else None
+    #                         print(f"press {key!r} (char={char!r})")
+    #                         key_event = events.Key(self, key, char)
+    #                         driver.send_event(key_event)
+    #                         # TODO: A bit of a fudge - extra sleep after tabbing to help guard against race
+    #                         #  condition between widget-level key handling and app/screen level handling.
+    #                         #  More information here: https://github.com/Textualize/textual/issues/1009
+    #                         #  This conditional sleep can be removed after that issue is closed.
+    #                         if key == "tab":
+    #                             await asyncio.sleep(0.05)
+    #                         await asyncio.sleep(0.02)
+
+    #                 await app._animator.wait_for_idle()
+
+    #                 if screenshot:
+    #                     self._screenshot = self.export_screenshot(
+    #                         title=screenshot_title
+    #                     )
+    #                 await self.shutdown()
+
+    #             async def press_keys_task():
+    #                 """Press some keys in the background."""
+    #                 asyncio.create_task(press_keys())
+
+    #             await self._process_messages(ready_callback=press_keys_task)
+    #         else:
+    #             await self._process_messages()
+
+    #     if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
+    #         # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
+    #         asyncio.run(run_app())
+    #     else:
+    #         # However, this works with Python<3.10:
+    #         event_loop = asyncio.get_event_loop()
+    #         event_loop.run_until_complete(run_app())
+
+    #     return self._return_value
 
     async def _on_css_change(self) -> None:
         """Called when the CSS changes (if watch_css is True)."""
@@ -1037,7 +1171,7 @@ class App(Generic[ReturnType], DOMNode):
             self.log.system("[b green]STARTED[/]", self.css_monitor)
 
         async def run_process_messages():
-
+            """The main message look, invoke below."""
             try:
                 await self._dispatch_message(events.Compose(sender=self))
                 await self._dispatch_message(events.Mount(sender=self))
@@ -1066,7 +1200,6 @@ class App(Generic[ReturnType], DOMNode):
                     await timer.stop()
 
             await self.animator.stop()
-            await self._close_all()
 
         self._running = True
         try:
@@ -1104,11 +1237,11 @@ class App(Generic[ReturnType], DOMNode):
                 driver.stop_application_mode()
         except Exception as error:
             self._handle_exception(error)
-        finally:
-            self._running = False
-            self._print_error_renderables()
-            if self.devtools is not None and self.devtools.is_connected:
-                await self._disconnect_devtools()
+        # finally:
+        #     self._running = False
+        #     self._print_error_renderables()
+        #     if self.devtools is not None and self.devtools.is_connected:
+        #         await self._disconnect_devtools()
 
     async def _pre_process(self) -> None:
         pass
@@ -1133,7 +1266,7 @@ class App(Generic[ReturnType], DOMNode):
             """Used by docs plugin."""
             svg = self.export_screenshot(title=screenshot_title)
             self._screenshot = svg  # type: ignore
-            await self.shutdown()
+            self.exit()
 
         self.set_timer(screenshot_timer, on_screenshot, name="screenshot timer")
 
@@ -1232,16 +1365,39 @@ class App(Generic[ReturnType], DOMNode):
         return widget in self._registry
 
     async def _close_all(self) -> None:
-        while self._registry:
-            child = self._registry.pop()
+        """Close all message pumps."""
+
+        # Close all screens on the stack
+        for screen in self._screen_stack:
+            await self._prune_node(screen)
+
+        # Close pre-defined screens
+        for screen in self.SCREENS.values():
+            if screen._running:
+                await self._prune_node(screen)
+
+        # Close any remaining nodes
+        # Should be empty by now
+        remaining_nodes = list(self._registry)
+        for child in remaining_nodes:
             await child._close_messages()
 
-    async def shutdown(self):
-        await self._disconnect_devtools()
+    async def _shutdown(self) -> None:
         driver = self._driver
         if driver is not None:
             driver.disable_input()
+        await self._close_all()
         await self._close_messages()
+
+        await self._dispatch_message(events.UnMount(sender=self))
+
+        self._running = False
+        self._print_error_renderables()
+        if self.devtools is not None and self.devtools.is_connected:
+            await self._disconnect_devtools()
+
+    async def _on_exit_app(self) -> None:
+        await self._message_queue.put(None)
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         if self._screen_stack:
@@ -1496,18 +1652,64 @@ class App(Generic[ReturnType], DOMNode):
                 [to_remove for to_remove in remove_widgets if to_remove.can_focus],
             )
 
-        for child in remove_widgets:
-            await child._close_messages()
-            self._unregister(child)
+        await self._prune_node(widget)
+
+        # for child in remove_widgets:
+        #     await child._close_messages()
+        #     self._unregister(child)
         if parent is not None:
             parent.refresh(layout=True)
+
+    def _walk_children(self, root: Widget) -> Iterable[list[Widget]]:
+        """Walk children depth first, generating widgets and a list of their siblings.
+
+        Returns:
+            Iterable[list[Widget]]:
+
+        """
+        stack: list[Widget] = [root]
+        pop = stack.pop
+        push = stack.append
+
+        while stack:
+            widget = pop()
+            if widget.children:
+                yield list(widget.children)
+            for child in widget.children:
+                push(child)
+
+    async def _prune_node(self, root: Widget) -> None:
+        """Remove a node and its children. Children are removed before parents.
+
+        Args:
+            root (Widget): Node to remove.
+        """
+        # Pruning a node that has been removed is a no-op
+        if root not in self._registry:
+            return
+
+        node_children = list(self._walk_children(root))
+
+        for children in reversed(node_children):
+            # Closing children can be done asynchronously.
+            close_messages = [
+                child._close_messages() for child in children if child._running
+            ]
+            # TODO: What if a message pump refuses to exit?
+            if close_messages:
+                await asyncio.gather(*close_messages)
+                for child in children:
+                    self._unregister(child)
+
+        await root._close_messages()
+        self._unregister(root)
 
     async def action_check_bindings(self, key: str) -> None:
         await self.check_bindings(key)
 
     async def action_quit(self) -> None:
         """Quit the app as soon as possible."""
-        await self.shutdown()
+        self.exit()
 
     async def action_bang(self) -> None:
         1 / 0

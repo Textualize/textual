@@ -123,6 +123,10 @@ class Mount(Event, bubble=False, verbose=True):
     """Sent when a widget is *mounted* and may receive messages."""
 
 
+class UnMount(Mount, bubble=False, verbose=False):
+    """Sent when a widget is unmounted and may not longer receive messages."""
+
+
 class Remove(Event, bubble=False):
     """Sent to a widget to ask it to remove itself from the DOM."""
 

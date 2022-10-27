@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - DOMQuery now raises InvalidQueryFormat in response to invalid query strings, rather than cryptic CSS error
 
+### Added
+
+- Added App.run_async method
+
 ## [0.2.1] - 2022-10-23
 
 ### Changed
