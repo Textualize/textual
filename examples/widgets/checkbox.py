@@ -7,7 +7,9 @@ class CheckboxApp(App):
     def compose(self) -> ComposeResult:
         yield Static("[b]Example checkboxes\n", classes="label")
         yield Horizontal(
-            Static("off:     ", classes="label"), Checkbox(), classes="container"
+            Static("off:     ", classes="label"),
+            Checkbox(animate=False),
+            classes="container",
         )
         yield Horizontal(
             Static("on:      ", classes="label"),
