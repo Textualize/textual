@@ -21,9 +21,8 @@ if __name__ == "__main__":
     from rich import print
 
     async def run_app():
-        async with app.run_async(quit_after=5) as result:
-            print(result)
-            print(app.tree)
+        async with app.run_managed() as pilot:
+            await pilot.pause(5)
 
     import asyncio
 

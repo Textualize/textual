@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import os
 import shlex
 from typing import Iterable
@@ -69,19 +70,32 @@ def take_svg_screenshot(
     os.environ["LINES"] = str(rows)
 
     if app is None:
+        assert app_path is not None
         app = import_app(app_path)
+
+    assert app is not None
 
     if title is None:
         title = app.title
 
-    app.run(
-        quit_after=5,
-        press=press or ["ctrl+c"],
-        headless=True,
-        screenshot=True,
-        screenshot_title=title,
-    )
-    svg = app._screenshot
+    svg: str = ""
+
+    async def run_app(app: App) -> None:
+        nonlocal svg
+        async with app.run_managed(headless=True) as pilot:
+            await pilot.press(*press)
+            svg = app.export_screenshot(title=title)
+
+    asyncio.run(run_app(app))
+
+    # app.run(
+    #     quit_after=5,
+    #     press=press or ["ctrl+c"],
+    #     headless=True,
+    #     screenshot=True,
+    #     screenshot_title=title,
+    # )
+
     return svg
 
 

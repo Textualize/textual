@@ -13,7 +13,17 @@ from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
 from time import perf_counter
-from typing import Any, Generic, Iterable, Type, TYPE_CHECKING, TypeVar, cast, Union
+from typing import (
+    Any,
+    Callable,
+    Generic,
+    Iterable,
+    Type,
+    TYPE_CHECKING,
+    TypeVar,
+    cast,
+    Union,
+)
 from weakref import WeakSet, WeakValueDictionary
 
 from ._ansi_sequences import SYNC_END, SYNC_START
@@ -171,7 +181,7 @@ class App(Generic[ReturnType], DOMNode):
         if no_color is not None:
             self._filter = Monochrome()
         self.console = Console(
-            file=(_NullFile() if self.is_headless else sys.__stdout__),
+            file=sys.__stdout__ if sys.__stdout__ is not None else _NullFile(),
             markup=False,
             highlight=False,
             emoji=False,
@@ -301,7 +311,7 @@ class App(Generic[ReturnType], DOMNode):
             bool: True if the app is in headless mode.
 
         """
-        return "headless" in self.features
+        return False if self._driver is None else self._driver.is_headless
 
     @property
     def screen_stack(self) -> list[Screen]:
@@ -572,10 +582,9 @@ class App(Generic[ReturnType], DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
-    @classmethod
-    async def _press_keys(cls, app: App, press: Iterable[str]) -> None:
+    async def _press_keys(self, press: Iterable[str]) -> None:
         """A task to send key events."""
-        assert press
+        app = self
         driver = app._driver
         assert driver is not None
         await asyncio.sleep(0.02)
@@ -612,16 +621,44 @@ class App(Generic[ReturnType], DOMNode):
                     await asyncio.sleep(0.05)
                 await asyncio.sleep(0.02)
         await app._animator.wait_for_idle()
-        print("EXITING")
-        app.exit()
 
     @asynccontextmanager
+    async def run_managed(self, headless: bool = False):
+        """Context manager to run the app.
+
+        Args:
+            headless (bool, optional): Enable headless mode. Defaults to False.
+
+        """
+
+        from ._pilot import Pilot
+
+        ready_event = asyncio.Event()
+
+        async def on_ready():
+            ready_event.set()
+
+        async def run_app(app: App) -> None:
+            await app._process_messages(ready_callback=on_ready, headless=headless)
+
+        self._set_active()
+        asyncio.create_task(run_app(self))
+
+        # Wait for the app to be ready
+        await ready_event.wait()
+
+        # Yield a pilot object
+        yield Pilot(self)
+
+        await self._shutdown()
+
     async def run_async(
         self,
         *,
         headless: bool = False,
         quit_after: float | None = None,
         press: Iterable[str] | None = None,
+        ready_callback: Callable | None = None,
     ):
         """Run the app asynchronously. This is an async context manager, which shuts down the app on exit.
 
@@ -639,33 +676,26 @@ class App(Generic[ReturnType], DOMNode):
 
         """
         app = self
-        if headless:
-            app.features = cast(
-                "frozenset[FeatureFlag]", app.features.union({"headless"})
-            )
 
         if quit_after is not None:
             app.set_timer(quit_after, app.exit)
 
-        if press is not None:
-
-            async def press_keys_task():
+        async def app_ready() -> None:
+            """Called by the message loop when the app is ready."""
+            if press:
                 asyncio.create_task(self._press_keys(app, press))
+            if ready_callback is not None:
+                await invoke(ready_callback)
 
-            await app._process_messages(ready_callback=press_keys_task)
-
-        else:
-            await app._process_messages()
-
-        yield app.return_value
-
+        await app._process_messages(ready_callback=app_ready, headless=headless)
         await app._shutdown()
+        return app.return_value
 
     def run(
         self,
         *,
-        quit_after: float | None = None,
         headless: bool = False,
+        quit_after: float | None = None,
         press: Iterable[str] | None = None,
         screenshot: bool = False,
         screenshot_title: str | None = None,
@@ -673,9 +703,9 @@ class App(Generic[ReturnType], DOMNode):
         """The main entry point for apps.
 
         Args:
+            headless (bool, optional): Run in "headless" mode (don't write to stdout).
             quit_after (float | None, optional): Quit after a given number of seconds, or None
                 to run forever. Defaults to None.
-            headless (bool, optional): Run in "headless" mode (don't write to stdout).
             press (str, optional): An iterable of keys to simulate being pressed.
             screenshot (bool, optional): Take a screenshot after pressing keys (svg data stored in self._screenshot). Defaults to False.
             screenshot_title (str | None, optional): Title of screenshot, or None to use App title. Defaults to None.
@@ -685,11 +715,18 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         async def run_app() -> None:
-            async with self.run_async(
-                quit_after=quit_after, headless=headless, press=press
-            ):
+            """Run the app."""
+
+            def take_screenshot() -> None:
                 if screenshot:
                     self._screenshot = self.export_screenshot(title=screenshot_title)
+
+            await self.run_async(
+                quit_after=quit_after,
+                headless=headless,
+                press=press,
+                ready_callback=take_screenshot,
+            )
 
         if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
             # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
@@ -699,106 +736,6 @@ class App(Generic[ReturnType], DOMNode):
             event_loop = asyncio.get_event_loop()
             event_loop.run_until_complete(run_app())
         return self.return_value
-
-    # def run(
-    #     self,
-    #     *,
-    #     quit_after: float | None = None,
-    #     headless: bool = False,
-    #     press: Iterable[str] | None = None,
-    #     screenshot: bool = False,
-    #     screenshot_title: str | None = None,
-    # ) -> ReturnType | None:
-    #     """The main entry point for apps.
-
-    #     Args:
-    #         quit_after (float | None, optional): Quit after a given number of seconds, or None
-    #             to run forever. Defaults to None.
-    #         headless (bool, optional): Run in "headless" mode (don't write to stdout).
-    #         press (str, optional): An iterable of keys to simulate being pressed.
-    #         screenshot (bool, optional): Take a screenshot after pressing keys (svg data stored in self._screenshot). Defaults to False.
-    #         screenshot_title (str | None, optional): Title of screenshot, or None to use App title. Defaults to None.
-
-    #     Returns:
-    #         ReturnType | None: The return value specified in `App.exit` or None if exit wasn't called.
-    #     """
-
-    #     if headless:
-    #         self.features = cast(
-    #             "frozenset[FeatureFlag]", self.features.union({"headless"})
-    #         )
-
-    #     async def run_app() -> None:
-    #         if quit_after is not None:
-    #             self.set_timer(quit_after, self.shutdown)
-    #         if press is not None:
-    #             app = self
-
-    #             async def press_keys() -> None:
-    #                 """A task to send key events."""
-    #                 assert press
-    #                 driver = app._driver
-    #                 assert driver is not None
-    #                 await asyncio.sleep(0.02)
-    #                 for key in press:
-    #                     if key == "_":
-    #                         print("(pause 50ms)")
-    #                         await asyncio.sleep(0.05)
-    #                     elif key.startswith("wait:"):
-    #                         _, wait_ms = key.split(":")
-    #                         print(f"(pause {wait_ms}ms)")
-    #                         await asyncio.sleep(float(wait_ms) / 1000)
-    #                     else:
-    #                         if len(key) == 1 and not key.isalnum():
-    #                             key = (
-    #                                 unicodedata.name(key)
-    #                                 .lower()
-    #                                 .replace("-", "_")
-    #                                 .replace(" ", "_")
-    #                             )
-    #                         original_key = REPLACED_KEYS.get(key, key)
-    #                         try:
-    #                             char = unicodedata.lookup(
-    #                                 original_key.upper().replace("_", " ")
-    #                             )
-    #                         except KeyError:
-    #                             char = key if len(key) == 1 else None
-    #                         print(f"press {key!r} (char={char!r})")
-    #                         key_event = events.Key(self, key, char)
-    #                         driver.send_event(key_event)
-    #                         # TODO: A bit of a fudge - extra sleep after tabbing to help guard against race
-    #                         #  condition between widget-level key handling and app/screen level handling.
-    #                         #  More information here: https://github.com/Textualize/textual/issues/1009
-    #                         #  This conditional sleep can be removed after that issue is closed.
-    #                         if key == "tab":
-    #                             await asyncio.sleep(0.05)
-    #                         await asyncio.sleep(0.02)
-
-    #                 await app._animator.wait_for_idle()
-
-    #                 if screenshot:
-    #                     self._screenshot = self.export_screenshot(
-    #                         title=screenshot_title
-    #                     )
-    #                 await self.shutdown()
-
-    #             async def press_keys_task():
-    #                 """Press some keys in the background."""
-    #                 asyncio.create_task(press_keys())
-
-    #             await self._process_messages(ready_callback=press_keys_task)
-    #         else:
-    #             await self._process_messages()
-
-    #     if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
-    #         # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
-    #         asyncio.run(run_app())
-    #     else:
-    #         # However, this works with Python<3.10:
-    #         event_loop = asyncio.get_event_loop()
-    #         event_loop.run_until_complete(run_app())
-
-    #     return self._return_value
 
     async def _on_css_change(self) -> None:
         """Called when the CSS changes (if watch_css is True)."""
@@ -1125,7 +1062,7 @@ class App(Generic[ReturnType], DOMNode):
         self._exit_renderables.clear()
 
     async def _process_messages(
-        self, ready_callback: CallbackType | None = None
+        self, ready_callback: CallbackType | None = None, headless: bool = False
     ) -> None:
         self._set_active()
 
@@ -1185,8 +1122,11 @@ class App(Generic[ReturnType], DOMNode):
 
             await self.animator.start()
             await self._ready()
+
             if ready_callback is not None:
-                await ready_callback()
+                ready_result = ready_callback()
+                if inspect.isawaitable(ready_result):
+                    await ready_result
 
             self._running = True
 
@@ -1209,13 +1149,13 @@ class App(Generic[ReturnType], DOMNode):
             driver: Driver
             driver_class = cast(
                 "type[Driver]",
-                HeadlessDriver if self.is_headless else self.driver_class,
+                HeadlessDriver if headless else self.driver_class,
             )
             driver = self._driver = driver_class(self.console, self)
 
             driver.start_application_mode()
             try:
-                if self.is_headless:
+                if headless:
                     await run_process_messages()
                 else:
                     if self.devtools is not None:

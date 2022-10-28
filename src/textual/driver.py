@@ -21,6 +21,11 @@ class Driver(ABC):
         self._loop = asyncio.get_running_loop()
         self._mouse_down_time = _clock.get_time_no_wait()
 
+    @property
+    def is_headless(self) -> bool:
+        """Check if the driver is 'headless'"""
+        return False
+
     def send_event(self, event: events.Event) -> None:
         asyncio.run_coroutine_threadsafe(
             self._target.post_message(event), loop=self._loop

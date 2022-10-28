@@ -9,6 +9,10 @@ from .. import events
 class HeadlessDriver(Driver):
     """A do-nothing driver for testing."""
 
+    @property
+    def is_headless(self) -> bool:
+        return True
+
     def _get_terminal_size(self) -> tuple[int, int]:
         width: int | None = 80
         height: int | None = 25
