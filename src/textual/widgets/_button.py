@@ -215,7 +215,7 @@ class Button(Static, can_focus=True):
         return variant
 
     def watch_variant(self, old_variant: str, variant: str):
-        self.remove_class(f"_{old_variant}")
+        self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
 
     def watch_disabled(self, disabled: bool) -> None:
