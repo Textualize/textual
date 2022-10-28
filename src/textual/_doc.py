@@ -6,6 +6,7 @@ import shlex
 from typing import Iterable
 
 from textual.app import App
+from textual.pilot import Pilot
 from textual._import_app import import_app
 
 
@@ -78,23 +79,16 @@ def take_svg_screenshot(
     if title is None:
         title = app.title
 
-    svg: str = ""
+    svg: str | None = ""
 
-    async def run_app(app: App) -> None:
-        nonlocal svg
-        async with app.run_managed(headless=True) as pilot:
-            await pilot.press(*press)
-            svg = app.export_screenshot(title=title)
+    async def auto_pilot(pilot: Pilot) -> None:
+        app = pilot.app
+        await pilot.press(*press)
+        svg = app.export_screenshot(title=title)
+        app.exit(svg)
 
-    asyncio.run(run_app(app))
-
-    # app.run(
-    #     quit_after=5,
-    #     press=press or ["ctrl+c"],
-    #     headless=True,
-    #     screenshot=True,
-    #     screenshot_title=title,
-    # )
+    svg = app.run(headless=True, auto_pilot=auto_pilot)
+    assert svg is not None
 
     return svg
 

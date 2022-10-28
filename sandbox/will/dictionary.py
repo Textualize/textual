@@ -70,13 +70,13 @@ class DictionaryApp(App):
 if __name__ == "__main__":
     app = DictionaryApp()
 
-    async def run():
-        async with app.run_managed() as pilot:
-            await pilot.press(*"Hello")
-            await pilot.pause(2)
-            await pilot.press(*" World!")
-            await pilot.pause(3)
+    from textual.pilot import Pilot
 
-    import asyncio
+    async def auto_pilot(pilot: Pilot) -> None:
+        await pilot.press(*"Hello")
+        await pilot.pause(2)
+        await pilot.press(*" World!")
+        await pilot.pause(3)
+        pilot.app.exit()
 
-    asyncio.run(run())
+    app.run(auto_pilot=auto_pilot)

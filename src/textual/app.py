@@ -15,7 +15,9 @@ from pathlib import Path, PurePath
 from time import perf_counter
 from typing import (
     Any,
+    Awaitable,
     Callable,
+    Coroutine,
     Generic,
     Iterable,
     Type,
@@ -62,7 +64,12 @@ from .widget import AwaitMount, Widget
 
 if TYPE_CHECKING:
     from .devtools.client import DevtoolsClient
+    from .pilot import Pilot
 
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:  # pragma: no cover
+    from typing_extensions import TypeAlias
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
@@ -98,6 +105,10 @@ DEFAULT_COLORS = {
 
 ComposeResult = Iterable[Widget]
 RenderResult = RenderableType
+
+
+# AutopilotCallbackType: TypeAlias = "Callable[[Pilot], Awaitable[None]]"
+AutopilotCallbackType: TypeAlias = "Callable[[Pilot], Coroutine[Any, Any, None]]"
 
 
 class AppError(Exception):
@@ -582,13 +593,13 @@ class App(Generic[ReturnType], DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
-    async def _press_keys(self, press: Iterable[str]) -> None:
+    async def _press_keys(self, keys: Iterable[str]) -> None:
         """A task to send key events."""
         app = self
         driver = app._driver
         assert driver is not None
         await asyncio.sleep(0.02)
-        for key in press:
+        for key in keys:
             if key == "_":
                 print("(pause 50ms)")
                 await asyncio.sleep(0.05)
@@ -622,70 +633,30 @@ class App(Generic[ReturnType], DOMNode):
                 await asyncio.sleep(0.02)
         await app._animator.wait_for_idle()
 
-    @asynccontextmanager
-    async def run_managed(self, headless: bool = False):
-        """Context manager to run the app.
-
-        Args:
-            headless (bool, optional): Enable headless mode. Defaults to False.
-
-        """
-
-        from ._pilot import Pilot
-
-        ready_event = asyncio.Event()
-
-        async def on_ready():
-            ready_event.set()
-
-        async def run_app(app: App) -> None:
-            await app._process_messages(ready_callback=on_ready, headless=headless)
-
-        self._set_active()
-        asyncio.create_task(run_app(self))
-
-        # Wait for the app to be ready
-        await ready_event.wait()
-
-        # Yield a pilot object
-        yield Pilot(self)
-
-        await self._shutdown()
-
     async def run_async(
         self,
         *,
         headless: bool = False,
-        quit_after: float | None = None,
-        press: Iterable[str] | None = None,
-        ready_callback: Callable | None = None,
-    ):
-        """Run the app asynchronously. This is an async context manager, which shuts down the app on exit.
-
-        Example:
-            async def run_app():
-                app = MyApp()
-                async with app.run_async() as result:
-                    print(result)
+        auto_pilot: AutopilotCallbackType,
+    ) -> ReturnType | None:
+        """Run the app asynchronously.
 
         Args:
-            quit_after (float | None, optional): Quit after a given number of seconds, or None
-                to run forever. Defaults to None.
-            headless (bool, optional): Run in "headless" mode (don't write to stdout).
-            press (str, optional): An iterable of keys to simulate being pressed.
+            headless (bool, optional): Run in headless mode (no output). Defaults to False.
+            auto_pilot (AutopilotCallbackType): An auto pilot coroutine.
 
+        Returns:
+            ReturnType | None: App return value.
         """
-        app = self
+        from .pilot import Pilot
 
-        if quit_after is not None:
-            app.set_timer(quit_after, app.exit)
+        app = self
 
         async def app_ready() -> None:
             """Called by the message loop when the app is ready."""
-            if press:
-                asyncio.create_task(self._press_keys(app, press))
-            if ready_callback is not None:
-                await invoke(ready_callback)
+            if auto_pilot is not None:
+                pilot = Pilot(app)
+                asyncio.create_task(auto_pilot(pilot))
 
         await app._process_messages(ready_callback=app_ready, headless=headless)
         await app._shutdown()
@@ -695,37 +666,23 @@ class App(Generic[ReturnType], DOMNode):
         self,
         *,
         headless: bool = False,
-        quit_after: float | None = None,
-        press: Iterable[str] | None = None,
-        screenshot: bool = False,
-        screenshot_title: str | None = None,
+        auto_pilot: AutopilotCallbackType,
     ) -> ReturnType | None:
-        """The main entry point for apps.
+        """Run the app.
 
         Args:
-            headless (bool, optional): Run in "headless" mode (don't write to stdout).
-            quit_after (float | None, optional): Quit after a given number of seconds, or None
-                to run forever. Defaults to None.
-            press (str, optional): An iterable of keys to simulate being pressed.
-            screenshot (bool, optional): Take a screenshot after pressing keys (svg data stored in self._screenshot). Defaults to False.
-            screenshot_title (str | None, optional): Title of screenshot, or None to use App title. Defaults to None.
+            headless (bool, optional): Run in headless mode (no output). Defaults to False.
+            auto_pilot (AutopilotCallbackType): An auto pilot coroutine.
 
         Returns:
-            ReturnType | None: The return value specified in `App.exit` or None if exit wasn't called.
+            ReturnType | None: App return value.
         """
 
         async def run_app() -> None:
             """Run the app."""
-
-            def take_screenshot() -> None:
-                if screenshot:
-                    self._screenshot = self.export_screenshot(title=screenshot_title)
-
             await self.run_async(
-                quit_after=quit_after,
                 headless=headless,
-                press=press,
-                ready_callback=take_screenshot,
+                auto_pilot=auto_pilot,
             )
 
         if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
