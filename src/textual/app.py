@@ -444,7 +444,11 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             Size: Size of the terminal
         """
-        return Size(*self.console.size)
+        if self._driver is not None and self._driver._size is not None:
+            width, height = self._driver._size
+        else:
+            width, height = self.console.size
+        return Size(width, height)
 
     @property
     def log(self) -> Logger:
@@ -526,10 +530,11 @@ class App(Generic[ReturnType], DOMNode):
                 to use app title. Defaults to None.
 
         """
-
+        assert self._driver is not None, "App must be running"
+        width, height = self.size
         console = Console(
-            width=self.console.width,
-            height=self.console.height,
+            width=width,
+            height=height,
             file=io.StringIO(),
             force_terminal=True,
             color_system="truecolor",
@@ -669,12 +674,15 @@ class App(Generic[ReturnType], DOMNode):
         self,
         *,
         headless: bool = False,
+        size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
         """Run the app asynchronously.
 
         Args:
             headless (bool, optional): Run in headless mode (no output). Defaults to False.
+            size (tuple[int, int] | None, optional): Force terminal size to `(WIDTH, HEIGHT)`,
+                or None to auto-detect. Defaults to None.
             auto_pilot (AutopilotCallbackType): An auto pilot coroutine.
 
         Returns:
@@ -707,6 +715,7 @@ class App(Generic[ReturnType], DOMNode):
             await app._process_messages(
                 ready_callback=None if auto_pilot is None else app_ready,
                 headless=headless,
+                terminal_size=size,
             )
         finally:
             if auto_pilot_task is not None:
@@ -719,12 +728,15 @@ class App(Generic[ReturnType], DOMNode):
         self,
         *,
         headless: bool = False,
+        size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
         """Run the app.
 
         Args:
             headless (bool, optional): Run in headless mode (no output). Defaults to False.
+            size (tuple[int, int] | None, optional): Force terminal size to `(WIDTH, HEIGHT)`,
+                or None to auto-detect. Defaults to None.
             auto_pilot (AutopilotCallbackType): An auto pilot coroutine.
 
         Returns:
@@ -735,6 +747,7 @@ class App(Generic[ReturnType], DOMNode):
             """Run the app."""
             await self.run_async(
                 headless=headless,
+                size=size,
                 auto_pilot=auto_pilot,
             )
 
@@ -1072,7 +1085,10 @@ class App(Generic[ReturnType], DOMNode):
         self._exit_renderables.clear()
 
     async def _process_messages(
-        self, ready_callback: CallbackType | None = None, headless: bool = False
+        self,
+        ready_callback: CallbackType | None = None,
+        headless: bool = False,
+        terminal_size: tuple[int, int] | None = None,
     ) -> None:
         self._set_active()
 
@@ -1161,7 +1177,7 @@ class App(Generic[ReturnType], DOMNode):
                 "type[Driver]",
                 HeadlessDriver if headless else self.driver_class,
             )
-            driver = self._driver = driver_class(self.console, self)
+            driver = self._driver = driver_class(self.console, self, size=terminal_size)
 
             driver.start_application_mode()
             try:

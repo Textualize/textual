@@ -30,7 +30,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
             rows = int(attrs.get("lines", 24))
             columns = int(attrs.get("columns", 80))
             svg = take_svg_screenshot(
-                None, path, press, title, terminal_size=(rows, columns)
+                None, path, press, title, terminal_size=(columns, rows)
             )
         finally:
             os.chdir(cwd)
@@ -49,7 +49,7 @@ def take_svg_screenshot(
     app_path: str | None = None,
     press: Iterable[str] = ("_",),
     title: str | None = None,
-    terminal_size: tuple[int, int] = (24, 80),
+    terminal_size: tuple[int, int] = (80, 24),
 ) -> str:
     """
 
@@ -65,10 +65,6 @@ def take_svg_screenshot(
             the screenshot was taken.
 
     """
-    rows, columns = terminal_size
-
-    os.environ["COLUMNS"] = str(columns)
-    os.environ["LINES"] = str(rows)
 
     if app is None:
         assert app_path is not None
@@ -85,7 +81,11 @@ def take_svg_screenshot(
         svg = app.export_screenshot(title=title)
         app.exit(svg)
 
-    svg = app.run(headless=True, auto_pilot=auto_pilot)
+    svg = app.run(
+        headless=True,
+        auto_pilot=auto_pilot,
+        size=terminal_size,
+    )
     assert svg is not None
 
     return svg

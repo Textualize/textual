@@ -14,6 +14,8 @@ class HeadlessDriver(Driver):
         return True
 
     def _get_terminal_size(self) -> tuple[int, int]:
+        if self._size is not None:
+            return self._size
         width: int | None = 80
         height: int | None = 25
         import shutil
