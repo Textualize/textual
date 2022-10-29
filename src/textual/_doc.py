@@ -19,7 +19,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
         path = cmd[0]
 
         _press = attrs.get("press", None)
-        press = [*_press.split(",")] if _press else ["_"]
+        press = [*_press.split(",")] if _press else []
         title = attrs.get("title")
 
         print(f"screenshotting {path!r}")
