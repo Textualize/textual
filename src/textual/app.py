@@ -1605,9 +1605,6 @@ class App(Generic[ReturnType], DOMNode):
 
         await self._prune_node(widget)
 
-        # for child in remove_widgets:
-        #     await child._close_messages()
-        #     self._unregister(child)
         if parent is not None:
             parent.refresh(layout=True)
 
@@ -1625,7 +1622,7 @@ class App(Generic[ReturnType], DOMNode):
         while stack:
             widget = pop()
             if widget.children:
-                yield list(widget.children)
+                yield [*widget.children, *widget._get_virtual_dom()]
             for child in widget.children:
                 push(child)
 

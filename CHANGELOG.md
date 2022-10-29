@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.2.2] - Unreleased
 
+### Fixed
+
+- Fixed issue where scrollbars weren't being unmounted
+
 ### Changed
 
 - DOMQuery now raises InvalidQueryFormat in response to invalid query strings, rather than cryptic CSS error
@@ -19,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added App.run_async method
 - Added App.run_test context manager
 - Added auto_pilot to App.run and App.run_async
+- Added Widget._get_virtual_dom to get scrollbars
 
 ## [0.2.1] - 2022-10-23
 

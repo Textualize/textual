@@ -4,6 +4,7 @@ from __future__ import annotations
 import click
 from importlib_metadata import version
 
+from textual.pilot import Pilot
 from textual._import_app import import_app, AppFail
 
 
@@ -84,7 +85,12 @@ def run_app(import_name: str, dev: bool, press: str) -> None:
         sys.exit(1)
 
     press_keys = press.split(",") if press else None
-    result = app.run(press=press_keys)
+
+    async def run_press_keys(pilot: Pilot) -> None:
+        if press_keys is not None:
+            await pilot.press(*press_keys)
+
+    result = app.run(auto_pilot=run_press_keys)
 
     if result is not None:
         from rich.console import Console
