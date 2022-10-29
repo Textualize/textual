@@ -35,7 +35,8 @@ class Pilot:
             *key: Keys to press.
 
         """
-        await self._app._press_keys(keys)
+        if keys:
+            await self._app._press_keys(keys)
 
     async def pause(self, delay: float = 50 / 1000) -> None:
         """Insert a pause.

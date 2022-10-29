@@ -47,7 +47,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
 def take_svg_screenshot(
     app: App | None = None,
     app_path: str | None = None,
-    press: Iterable[str] = ("_",),
+    press: Iterable[str] = (),
     title: str | None = None,
     terminal_size: tuple[int, int] = (80, 24),
 ) -> str:
