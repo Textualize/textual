@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from asyncio import Task
 from contextlib import asynccontextmanager
 import inspect
 import io
@@ -15,7 +16,6 @@ from pathlib import Path, PurePath
 from time import perf_counter
 from typing import (
     Any,
-    Awaitable,
     Callable,
     Coroutine,
     Generic,
@@ -654,7 +654,7 @@ class App(Generic[ReturnType], DOMNode):
             await app._process_messages(ready_callback=on_app_ready, headless=headless)
 
         # Launch the app in the "background"
-        asyncio.create_task(run_app(app))
+        app_task = asyncio.create_task(run_app(app))
 
         # Wait until the app has performed all startup routines.
         await app_ready_event.wait()
@@ -664,12 +664,13 @@ class App(Generic[ReturnType], DOMNode):
 
         # Shutdown the app cleanly
         await app._shutdown()
+        await app_task
 
     async def run_async(
         self,
         *,
         headless: bool = False,
-        auto_pilot: AutopilotCallbackType,
+        auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
         """Run the app asynchronously.
 
@@ -684,8 +685,11 @@ class App(Generic[ReturnType], DOMNode):
 
         app = self
 
+        auto_pilot_task: Task | None = None
+
         async def app_ready() -> None:
             """Called by the message loop when the app is ready."""
+            nonlocal auto_pilot_task
             if auto_pilot is not None:
 
                 async def run_auto_pilot(pilot) -> None:
@@ -696,17 +700,25 @@ class App(Generic[ReturnType], DOMNode):
                         raise
 
                 pilot = Pilot(app)
-                asyncio.create_task(run_auto_pilot(pilot))
+                auto_pilot_task = asyncio.create_task(run_auto_pilot(pilot))
 
-        await app._process_messages(ready_callback=app_ready, headless=headless)
-        await app._shutdown()
+        try:
+            await app._process_messages(
+                ready_callback=None if auto_pilot is None else app_ready,
+                headless=headless,
+            )
+        finally:
+            if auto_pilot_task is not None:
+                await auto_pilot_task
+            await app._shutdown()
+
         return app.return_value
 
     def run(
         self,
         *,
         headless: bool = False,
-        auto_pilot: AutopilotCallbackType,
+        auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
         """Run the app.
 
@@ -1287,8 +1299,10 @@ class App(Generic[ReturnType], DOMNode):
             parent (Widget): The parent of the Widget.
             widget (Widget): The Widget to start.
         """
+
         widget._attach(parent)
         widget._start_messages()
+        self.app._registry.add(widget)
 
     def is_mounted(self, widget: Widget) -> bool:
         """Check if a widget is mounted.
@@ -1321,6 +1335,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _shutdown(self) -> None:
         driver = self._driver
+        self._running = False
         if driver is not None:
             driver.disable_input()
         await self._close_all()
@@ -1328,7 +1343,6 @@ class App(Generic[ReturnType], DOMNode):
 
         await self._dispatch_message(events.UnMount(sender=self))
 
-        self._running = False
         self._print_error_renderables()
         if self.devtools is not None and self.devtools.is_connected:
             await self._disconnect_devtools()

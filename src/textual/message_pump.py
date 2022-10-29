@@ -155,7 +155,9 @@ class MessagePump(metaclass=MessagePumpMeta):
                 return self._pending_message
             finally:
                 self._pending_message = None
+
         message = await self._message_queue.get()
+
         if message is None:
             self._closed = True
             raise MessagePumpClosed("The message pump is now closed")
@@ -289,7 +291,8 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def _start_messages(self) -> None:
         """Start messages task."""
-        self._task = asyncio.create_task(self._process_messages())
+        if self.app._running:
+            self._task = asyncio.create_task(self._process_messages())
 
     async def _process_messages(self) -> None:
         self._running = True

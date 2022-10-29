@@ -595,7 +595,6 @@ class Widget(DOMNode):
             vertical=False, name="horizontal", thickness=self.scrollbar_size_horizontal
         )
         self._horizontal_scrollbar.display = False
-
         self.app._start_widget(self, scroll_bar)
         return scroll_bar
 
