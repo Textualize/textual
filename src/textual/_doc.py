@@ -79,8 +79,6 @@ def take_svg_screenshot(
     if title is None:
         title = app.title
 
-    svg: str | None = ""
-
     async def auto_pilot(pilot: Pilot) -> None:
         app = pilot.app
         await pilot.press(*press)
