@@ -633,6 +633,38 @@ class App(Generic[ReturnType], DOMNode):
                 await asyncio.sleep(0.02)
         await app._animator.wait_for_idle()
 
+    @asynccontextmanager
+    async def run_test(self, *, headless: bool = True):
+        """An asynchronous context manager for testing app.
+
+        Args:
+            headless (bool, optional): Run in headless mode (no output or input). Defaults to True.
+
+        """
+        from .pilot import Pilot
+
+        app = self
+        app_ready_event = asyncio.Event()
+
+        def on_app_ready() -> None:
+            """Called when app is ready to process events."""
+            app_ready_event.set()
+
+        async def run_app(app) -> None:
+            await app._process_messages(ready_callback=on_app_ready, headless=headless)
+
+        # Launch the app in the "background"
+        asyncio.create_task(run_app(app))
+
+        # Wait until the app has performed all startup routines.
+        await app_ready_event.wait()
+
+        # Context manager returns pilot object to manipulate the app
+        yield Pilot(app)
+
+        # Shutdown the app cleanly
+        await app._shutdown()
+
     async def run_async(
         self,
         *,
@@ -655,8 +687,16 @@ class App(Generic[ReturnType], DOMNode):
         async def app_ready() -> None:
             """Called by the message loop when the app is ready."""
             if auto_pilot is not None:
+
+                async def run_auto_pilot(pilot) -> None:
+                    try:
+                        await auto_pilot(pilot)
+                    except Exception:
+                        app.exit()
+                        raise
+
                 pilot = Pilot(app)
-                asyncio.create_task(auto_pilot(pilot))
+                asyncio.create_task(run_auto_pilot(pilot))
 
         await app._process_messages(ready_callback=app_ready, headless=headless)
         await app._shutdown()

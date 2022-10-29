@@ -10,10 +10,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - DOMQuery now raises InvalidQueryFormat in response to invalid query strings, rather than cryptic CSS error
+- Dropped quit_after, screenshot, and screenshot_title from App.run, which can all be done via auto_pilot
+- Widgets are now closed in reversed DOM order
 
 ### Added
 
+- Added Unmount event
 - Added App.run_async method
+- Added App.run_test context manager
+- Added auto_pilot to App.run and App.run_async
 
 ## [0.2.1] - 2022-10-23
 

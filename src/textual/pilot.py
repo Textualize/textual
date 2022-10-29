@@ -17,10 +17,15 @@ class Pilot:
         self._app = app
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "app", "self._app"
+        yield "app", self._app
 
     @property
     def app(self) -> App:
+        """Get a reference to the application.
+
+        Returns:
+            App: The App instance.
+        """
         return self._app
 
     async def press(self, *keys: str) -> None:
@@ -39,3 +44,11 @@ class Pilot:
             delay (float, optional): Seconds to pause. Defaults to 50ms.
         """
         await asyncio.sleep(delay)
+
+    async def exit(self, result: object) -> None:
+        """Exit the app with the given result.
+
+        Args:
+            result (object): The app result returned by `run` or `run_async`.
+        """
+        self.app.exit(result)
