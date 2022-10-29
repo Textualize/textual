@@ -691,7 +691,9 @@ class App(Generic[ReturnType], DOMNode):
             nonlocal auto_pilot_task
             if auto_pilot is not None:
 
-                async def run_auto_pilot(pilot) -> None:
+                async def run_auto_pilot(
+                    auto_pilot: AutopilotCallbackType, pilot: Pilot
+                ) -> None:
                     try:
                         await auto_pilot(pilot)
                     except Exception:
@@ -699,7 +701,7 @@ class App(Generic[ReturnType], DOMNode):
                         raise
 
                 pilot = Pilot(app)
-                auto_pilot_task = asyncio.create_task(run_auto_pilot(pilot))
+                auto_pilot_task = asyncio.create_task(run_auto_pilot(auto_pilot, pilot))
 
         try:
             await app._process_messages(
