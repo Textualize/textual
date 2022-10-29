@@ -107,7 +107,6 @@ ComposeResult = Iterable[Widget]
 RenderResult = RenderableType
 
 
-# AutopilotCallbackType: TypeAlias = "Callable[[Pilot], Awaitable[None]]"
 AutopilotCallbackType: TypeAlias = "Callable[[Pilot], Coroutine[Any, Any, None]]"
 
 
@@ -1117,7 +1116,7 @@ class App(Generic[ReturnType], DOMNode):
             self.log.system("[b green]STARTED[/]", self.css_monitor)
 
         async def run_process_messages():
-            """The main message look, invoke below."""
+            """The main message loop, invoke below."""
             try:
                 await self._dispatch_message(events.Compose(sender=self))
                 await self._dispatch_message(events.Mount(sender=self))
@@ -1186,11 +1185,6 @@ class App(Generic[ReturnType], DOMNode):
                 driver.stop_application_mode()
         except Exception as error:
             self._handle_exception(error)
-        # finally:
-        #     self._running = False
-        #     self._print_error_renderables()
-        #     if self.devtools is not None and self.devtools.is_connected:
-        #         await self._disconnect_devtools()
 
     async def _pre_process(self) -> None:
         pass
@@ -1320,7 +1314,10 @@ class App(Generic[ReturnType], DOMNode):
 
         # Close all screens on the stack
         for screen in self._screen_stack:
-            await self._prune_node(screen)
+            if screen._running:
+                await self._prune_node(screen)
+
+        self._screen_stack.clear()
 
         # Close pre-defined screens
         for screen in self.SCREENS.values():
