@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added App.run_test context manager
 - Added auto_pilot to App.run and App.run_async
 - Added Widget._get_virtual_dom to get scrollbars
+- Added size parameter to run and run_async
 
 ## [0.2.1] - 2022-10-23
 
