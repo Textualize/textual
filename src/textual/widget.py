@@ -82,11 +82,13 @@ class AwaitMount:
 
     def __await__(self) -> Generator[None, None, None]:
         async def await_mount() -> None:
-            aws = [
-                create_task(widget._mounted_event.wait()) for widget in self._widgets
-            ]
-            if aws:
-                await wait(aws)
+            if self._widgets:
+                aws = [
+                    create_task(widget._mounted_event.wait())
+                    for widget in self._widgets
+                ]
+                if aws:
+                    await wait(aws)
 
         return await_mount().__await__()
 
