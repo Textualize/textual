@@ -283,7 +283,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         for timer in stop_timers:
             await timer.stop()
         self._timers.clear()
-        await self._message_queue.put(events.UnMount(sender=self))
+        await self._message_queue.put(events.Unmount(sender=self))
         await self._message_queue.put(None)
         if self._task is not None and asyncio.current_task() != self._task:
             # Ensure everything is closed before returning

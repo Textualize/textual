@@ -638,11 +638,18 @@ class App(Generic[ReturnType], DOMNode):
         await app._animator.wait_for_idle()
 
     @asynccontextmanager
-    async def run_test(self, *, headless: bool = True):
+    async def run_test(
+        self,
+        *,
+        headless: bool = True,
+        size: tuple[int, int] | None = (80, 24),
+    ):
         """An asynchronous context manager for testing app.
 
         Args:
             headless (bool, optional): Run in headless mode (no output or input). Defaults to True.
+            size (tuple[int, int] | None, optional): Force terminal size to `(WIDTH, HEIGHT)`,
+                or None to auto-detect. Defaults to None.
 
         """
         from .pilot import Pilot
@@ -655,7 +662,11 @@ class App(Generic[ReturnType], DOMNode):
             app_ready_event.set()
 
         async def run_app(app) -> None:
-            await app._process_messages(ready_callback=on_app_ready, headless=headless)
+            await app._process_messages(
+                ready_callback=on_app_ready,
+                headless=headless,
+                terminal_size=size,
+            )
 
         # Launch the app in the "background"
         app_task = asyncio.create_task(run_app(app))
@@ -1135,24 +1146,30 @@ class App(Generic[ReturnType], DOMNode):
 
         async def run_process_messages():
             """The main message loop, invoke below."""
+
+            async def invoke_ready_callback() -> None:
+                if ready_callback is not None:
+                    ready_result = ready_callback()
+                    if inspect.isawaitable(ready_result):
+                        await ready_result
+
             try:
-                await self._dispatch_message(events.Compose(sender=self))
-                await self._dispatch_message(events.Mount(sender=self))
+                try:
+                    await self._dispatch_message(events.Compose(sender=self))
+                    await self._dispatch_message(events.Mount(sender=self))
+                finally:
+                    self._mounted_event.set()
+
+                Reactive._initialize_object(self)
+
+                self.stylesheet.update(self)
+                self.refresh()
+
+                await self.animator.start()
+
             finally:
-                self._mounted_event.set()
-
-            Reactive._initialize_object(self)
-
-            self.stylesheet.update(self)
-            self.refresh()
-
-            await self.animator.start()
-            await self._ready()
-
-            if ready_callback is not None:
-                ready_result = ready_callback()
-                if inspect.isawaitable(ready_result):
-                    await ready_result
+                await self._ready()
+                await invoke_ready_callback()
 
             self._running = True
 
@@ -1356,7 +1373,7 @@ class App(Generic[ReturnType], DOMNode):
         await self._close_all()
         await self._close_messages()
 
-        await self._dispatch_message(events.UnMount(sender=self))
+        await self._dispatch_message(events.Unmount(sender=self))
 
         self._print_error_renderables()
         if self.devtools is not None and self.devtools.is_connected:
