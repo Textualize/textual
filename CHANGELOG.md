@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Widgets are now closed in reversed DOM order
 - Input widget justify hardcoded to left to prevent text-align interference
 - Changed `textual run` so that it patches `argv` in more situations
+- DOM classes and IDs are now always treated fully case-sensitive https://github.com/Textualize/textual/issues/1047
 
 ### Added
 

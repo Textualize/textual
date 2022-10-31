@@ -108,7 +108,7 @@ class DOMNode(MessagePump):
 
     # True if this node inherits the CSS from the base class.
     _inherit_css: ClassVar[bool] = True
-    # List of names of base class (lower cased) that inherit CSS
+    # List of names of base classes that inherit CSS
     _css_type_names: ClassVar[frozenset[str]] = frozenset()
 
     def __init__(
@@ -168,7 +168,7 @@ class DOMNode(MessagePump):
         cls._inherit_css = inherit_css
         css_type_names: set[str] = set()
         for base in cls._css_bases(cls):
-            css_type_names.add(base.__name__.lower())
+            css_type_names.add(base.__name__)
         cls._css_type_names = frozenset(css_type_names)
 
     def get_component_styles(self, name: str) -> RenderStyles:
