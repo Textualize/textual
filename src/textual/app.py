@@ -241,7 +241,7 @@ class App(Generic[ReturnType], DOMNode):
             # When value(s) are supplied for CSS_PATH, we normalise them to a list of Paths.
             if isinstance(css_path, str):
                 css_paths = [Path(css_path)]
-            elif isinstance(css_path, Path):
+            elif isinstance(css_path, PurePath):
                 css_paths = [css_path]
             elif isinstance(css_path, list):
                 css_paths = []
