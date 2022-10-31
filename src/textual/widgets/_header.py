@@ -64,7 +64,6 @@ class HeaderTitle(Widget):
 
     DEFAULT_CSS = """
     HeaderTitle {
-        layer: title;
         content-align: center middle;
         width: 100%;
     }
@@ -90,7 +89,6 @@ class Header(Widget):
 
     DEFAULT_CSS = """
     Header {
-        layers: title decoration;
         dock: top;
         width: 100%;
         background: $secondary-background;
