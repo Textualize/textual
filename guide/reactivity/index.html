@@ -957,6 +957,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Watch methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-are-watch-methods-called" class="md-nav__link">
+    <span class="md-ellipsis">
+      When are watch methods called?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2827,6 +2842,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -3114,6 +3131,28 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/pilot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pilot
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/query/" class="md-nav__link">
         
   
@@ -3375,6 +3414,21 @@
       Watch methods
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Watch methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-are-watch-methods-called" class="md-nav__link">
+    <span class="md-ellipsis">
+      When are watch methods called?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -4110,7 +4164,11 @@
 </div>
 <p>If you click the buttons in the above example it will show the current count. When <code>self.count</code> is modified in the button handler, Textual runs <code>validate_count</code> which performs the validation to limit the value of count.</p>
 <h2 id="watch-methods">Watch methods<a class="headerlink" href="#watch-methods" title="Permanent link">&para;</a></h2>
-<p>Watch methods are another superpower. Textual will call watch methods when reactive attributes are modified. Watch methods begin with <code>watch_</code> followed by the name of the attribute. If the watch method accepts a positional argument, it will be called with the new assigned value. If the watch method accepts <em>two</em> positional arguments, it will be called with both the <em>old</em> value and the <em>new</em> value.</p>
+<p>Watch methods are another superpower.
+Textual will call watch methods when reactive attributes are modified.
+Watch methods begin with <code>watch_</code> followed by the name of the attribute.
+If the watch method accepts a positional argument, it will be called with the new assigned value.
+If the watch method accepts <em>two</em> positional arguments, it will be called with both the <em>old</em> value and the <em>new</em> value.</p>
 <p>The following app will display any color you type in to the input. Try it with a valid color in Textual CSS. For example <code>"darkorchid"</code> or <code>"#52de44"</code>.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">watch01.py</label><label for="__tabbed_4_2">watch01.css</label><label for="__tabbed_4_3">Output</label></div>
 <div class="tabbed-content">
@@ -4339,6 +4397,10 @@
 </div>
 </div>
 <p>The color is parsed in <code>on_input_submitted</code> and assigned to <code>self.color</code>. Because <code>color</code> is reactive, Textual also calls <code>watch_color</code> with the old and new values.</p>
+<h3 id="when-are-watch-methods-called">When are watch methods called?<a class="headerlink" href="#when-are-watch-methods-called" title="Permanent link">&para;</a></h3>
+<p>Textual only calls watch methods if the value of a reactive attribute <em>changes</em>.
+If the newly assigned value is the same as the previous value, the watch method is not called.
+You can override this behaviour by passing <code>always_update=True</code> to <code>reactive</code>.</p>
 <h2 id="compute-methods">Compute methods<a class="headerlink" href="#compute-methods" title="Permanent link">&para;</a></h2>
 <p>Compute methods are the final superpower offered by the <code>reactive</code> descriptor. Textual runs compute methods to calculate the value of a reactive attribute. Compute methods begin with <code>compute_</code> followed by the name of the reactive value.</p>
 <p>You could be forgiven in thinking this sounds a lot like Python's property decorator. The difference is that Textual will cache the value of compute methods, and update them when any other reactive attribute changes.</p>

@@ -2692,6 +2692,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
@@ -2962,6 +2964,28 @@
   
   <span class="md-ellipsis">
     Message
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pilot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pilot
     
   </span>
   
@@ -3441,6 +3465,16 @@
                 <code>False</code>
           </td>
         </tr>
+        <tr>
+          <td><code>always_update(bool,</code></td>
+          <td>
+                <code>optional</code>
+          </td>
+          <td><p>Call watchers even when the new value equals the old value. Defaults to False.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -3463,7 +3497,7 @@
 
 
 <h3 id="textual.reactive.Reactive.init" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">init</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">repaint</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">init</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">repaint</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">always_update</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -3515,6 +3549,16 @@
           <td><p>Perform a repaint on change. Defaults to True.</p></td>
           <td>
                 <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>always_update(bool,</code></td>
+          <td>
+                <code>optional</code>
+          </td>
+          <td><p>Call watchers even when the new value equals the old value. Defaults to False.</p></td>
+          <td>
+              <em>required</em>
           </td>
         </tr>
     </tbody>
@@ -3681,6 +3725,16 @@
           <td><p>Call watchers on initialize (post mount). Defaults to True.</p></td>
           <td>
                 <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>always_update(bool,</code></td>
+          <td>
+                <code>optional</code>
+          </td>
+          <td><p>Call watchers even when the new value equals the old value. Defaults to False.</p></td>
+          <td>
+              <em>required</em>
           </td>
         </tr>
     </tbody>

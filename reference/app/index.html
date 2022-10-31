@@ -2692,6 +2692,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
@@ -3124,9 +3126,36 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.return_value" class="md-nav__link">
+    <span class="md-ellipsis">
+      return_value()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.run" class="md-nav__link">
     <span class="md-ellipsis">
       run()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.run_async" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_async()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.run_test" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_test()
     </span>
   </a>
   
@@ -3447,6 +3476,28 @@
   
   <span class="md-ellipsis">
     Message
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pilot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pilot
     
   </span>
   
@@ -3986,9 +4037,36 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.return_value" class="md-nav__link">
+    <span class="md-ellipsis">
+      return_value()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.run" class="md-nav__link">
     <span class="md-ellipsis">
       run()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.run_async" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_async()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.run_test" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_test()
     </span>
   </a>
   
@@ -4165,16 +4243,6 @@
           <td><p>Driver class or <code>None</code> to auto-detect. Defaults to None.</p></td>
           <td>
                 <code>None</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>title</code></td>
-          <td>
-                <code>str | None</code>
-          </td>
-          <td><p>Title of the application. If <code>None</code>, the title is set to the name of the <code>App</code> subclass. Defaults to <code>None</code>.</p></td>
-          <td>
-              <em>required</em>
           </td>
         </tr>
         <tr>
@@ -5240,7 +5308,6 @@ with the given ID.</p>
   <div class="doc doc-contents ">
   
       <p>Get an installed screen.</p>
-<p>If the screen isn't running, it will be registered before it is run.</p>
 
   <p><strong>Parameters:</strong></p>
   <table>
@@ -5453,10 +5520,10 @@ Defaults to None.</p></td>
     </thead>
     <tbody>
         <tr>
-<td><code>str</code></td>          <td>
-                <code>str</code>
+<td><code>AwaitMount</code></td>          <td>
+                <code><span title="textual.widget.AwaitMount">AwaitMount</span></code>
           </td>
-          <td><p>The name of the screen</p></td>
+          <td><p>An awaitable that awaits the mounting of the screen and its children.</p></td>
         </tr>
     </tbody>
   </table>
@@ -5894,15 +5961,37 @@ screen and app are merged and returned.</p>
 
 
 
+<h3 id="textual.app.App.return_value" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">return_value</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.app.App.return_value" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Get the return type.</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.app.App.run" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">run</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">quit_after</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">headless</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">press</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">screenshot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">screenshot_title</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">run</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">headless</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_pilot</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 <a href="#textual.app.App.run" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
   
-      <p>The main entry point for apps.</p>
+      <p>Run the app.</p>
 
   <p><strong>Parameters:</strong></p>
   <table>
@@ -5916,52 +6005,32 @@ screen and app are merged and returned.</p>
     </thead>
     <tbody>
         <tr>
-          <td><code>quit_after</code></td>
-          <td>
-                <code>float | None</code>
-          </td>
-          <td><p>Quit after a given number of seconds, or None
-to run forever. Defaults to None.</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-        <tr>
           <td><code>headless</code></td>
           <td>
                 <code>bool</code>
           </td>
-          <td><p>Run in "headless" mode (don't write to stdout).</p></td>
+          <td><p>Run in headless mode (no output). Defaults to False.</p></td>
           <td>
                 <code>False</code>
           </td>
         </tr>
         <tr>
-          <td><code>press</code></td>
+          <td><code>size</code></td>
           <td>
-                <code>str</code>
+                <code>tuple[int, int] | None</code>
           </td>
-          <td><p>An iterable of keys to simulate being pressed.</p></td>
+          <td><p>Force terminal size to <code>(WIDTH, HEIGHT)</code>,
+or None to auto-detect. Defaults to None.</p></td>
           <td>
                 <code>None</code>
           </td>
         </tr>
         <tr>
-          <td><code>screenshot</code></td>
+          <td><code>auto_pilot</code></td>
           <td>
-                <code>bool</code>
+                <code><span title="textual.app.AutopilotCallbackType">AutopilotCallbackType</span></code>
           </td>
-          <td><p>Take a screenshot after pressing keys (svg data stored in self._screenshot). Defaults to False.</p></td>
-          <td>
-                <code>False</code>
-          </td>
-        </tr>
-        <tr>
-          <td><code>screenshot_title</code></td>
-          <td>
-                <code>str | None</code>
-          </td>
-          <td><p>Title of screenshot, or None to use App title. Defaults to None.</p></td>
+          <td><p>An auto pilot coroutine.</p></td>
           <td>
                 <code>None</code>
           </td>
@@ -5982,7 +6051,149 @@ to run forever. Defaults to None.</p></td>
           <td>
                 <code><span title="textual.app.ReturnType">ReturnType</span> | None</code>
           </td>
-          <td><p>ReturnType | None: The return value specified in <code>App.exit</code> or None if exit wasn't called.</p></td>
+          <td><p>ReturnType | None: App return value.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.app.App.run_async" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">run_async</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">headless</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_pilot</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.app.App.run_async" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Run the app asynchronously.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>headless</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Run in headless mode (no output). Defaults to False.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>size</code></td>
+          <td>
+                <code>tuple[int, int] | None</code>
+          </td>
+          <td><p>Force terminal size to <code>(WIDTH, HEIGHT)</code>,
+or None to auto-detect. Defaults to None.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>auto_pilot</code></td>
+          <td>
+                <code><span title="textual.app.AutopilotCallbackType">AutopilotCallbackType</span></code>
+          </td>
+          <td><p>An auto pilot coroutine.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="textual.app.ReturnType">ReturnType</span> | None</code>
+          </td>
+          <td><p>ReturnType | None: App return value.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.app.App.run_test" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">run_test</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">headless</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">24</span><span class="p">))</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.app.App.run_test" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>An asynchronous context manager for testing app.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>headless</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Run in headless mode (no output or input). Defaults to True.</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>size</code></td>
+          <td>
+                <code>tuple[int, int] | None</code>
+          </td>
+          <td><p>Force terminal size to <code>(WIDTH, HEIGHT)</code>,
+or None to auto-detect. Defaults to None.</p></td>
+          <td>
+                <code>(80, 24)</code>
+          </td>
         </tr>
     </tbody>
   </table>
@@ -5996,7 +6207,7 @@ to run forever. Defaults to None.</p></td>
 
 
 <h3 id="textual.app.App.save_screenshot" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">save_screenshot</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> </span><span class="si">%X</span><span class="s1"> </span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">save_screenshot</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1"> %H%M%S </span><span class="si">%f</span><span class="s1">&#39;</span><span class="p">)</span></code>
 
 <a href="#textual.app.App.save_screenshot" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -6044,7 +6255,7 @@ a filename with the date and time. Defaults to None.</p></td>
           </td>
           <td><p>Time format to use if filename is None. Defaults to "%Y-%m-%d %X %f".</p></td>
           <td>
-                <code>&#39;%Y-%m-%d %X %f&#39;</code>
+                <code>&#39;%Y%m%d %H%M%S %f&#39;</code>
           </td>
         </tr>
     </tbody>
