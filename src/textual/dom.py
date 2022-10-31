@@ -121,6 +121,7 @@ class DOMNode(MessagePump):
         self._classes = set()
         self._name = name
         self._id = None
+        self._cmp_id = None
         if id is not None:
             self.id = id
 
@@ -308,6 +309,7 @@ class DOMNode(MessagePump):
                 f"Node 'id' attribute may not be changed once set (current id={self._id!r})"
             )
         self._id = new_id
+        self._cmp_id = new_id.lower()
         return new_id
 
     @property

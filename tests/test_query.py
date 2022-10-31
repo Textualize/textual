@@ -18,7 +18,7 @@ def test_query():
     app._add_child(help_view)
 
     widget1 = Widget(id="widget1")
-    widget2 = Widget(id="widget2")
+    widget2 = Widget(id="Widget2") # Note case.
     sidebar = Widget(id="sidebar")
     sidebar.add_class("float")
 
@@ -54,7 +54,9 @@ def test_query():
         assert list(app.query("#main")) == [main_view]
         assert list(app.query("View#main")) == [main_view]
         assert list(app.query("#widget1")) == [widget1]
+        assert list(app.query("#Widget1")) == [widget1] # Note case.
         assert list(app.query("#widget2")) == [widget2]
+        assert list(app.query("#Widget2")) == [widget2] # Note case.
 
         assert list(app.query("Widget.float")) == [sidebar, tooltip, helpbar]
         assert list(app.query(Widget).filter(".float")) == [sidebar, tooltip, helpbar]

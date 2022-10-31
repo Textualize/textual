@@ -108,7 +108,7 @@ class Selector:
         return True
 
     def _check_id(self, node: DOMNode) -> bool:
-        if not node.id == self._name_lower:
+        if (node._cmp_id is None) or (node._cmp_id.lower() != self._name_lower):
             return False
         if self.pseudo_classes and not node.has_pseudo_class(*self.pseudo_classes):
             return False
