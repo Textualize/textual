@@ -4,7 +4,7 @@ We've used event handler methods in many of the examples in this guide. This cha
 
 ## Messages
 
-Events are a particular kind of *message* sent by Textual in response to input and other state changes. Events are reserved for use by Textual but you can also create custom messages for the purpose of coordinating between widgets in your app.
+Events are a particular kind of *message* sent by Textual in response to input and other state changes. Events are reserved for use by Textual, but you can also create custom messages for the purpose of coordinating between widgets in your app.
 
 More on that later, but for now keep in mind that events are also messages, and anything that is true of messages is true of events.
 
@@ -12,7 +12,7 @@ More on that later, but for now keep in mind that events are also messages, and 
 
 Every [App][textual.app.App] and [Widget][textual.widget.Widget] object contains a *message queue*. You can think of a message queue as orders at a restaurant. The chef takes an order and makes the dish. Orders that arrive while the chef is cooking are placed in a line. When the chef has finished a dish they pick up the next order in the line.
 
-Textual processes messages in the same way. Messages are picked off a queue and processed (cooked) by a handler method. This guarantees messages and events are processed even if your code can not handle them right way.
+Textual processes messages in the same way. Messages are picked off a queue and processed (cooked) by a handler method. This guarantees messages and events are processed even if your code can not handle them right away.
 
 This processing of messages is done within an asyncio Task which is started when you mount the widget. The task monitors a queue for new messages and dispatches them to the appropriate handler when they arrive.
 
@@ -28,7 +28,7 @@ The widget's task will pick the first message from the queue (a key event for th
 --8<-- "docs/images/events/queue.excalidraw.svg"
 </div>
 
-When the `on_key` method returns, Textual will get the next event from the the queue and repeat the process for the remaining keys. At some point the queue will be empty and the widget is said to be in an *idle* state.
+When the `on_key` method returns, Textual will get the next event from the queue and repeat the process for the remaining keys. At some point the queue will be empty and the widget is said to be in an *idle* state.
 
 !!! note
 
@@ -75,7 +75,7 @@ As before, the event bubbles to its parent (the App class).
 --8<-- "docs/images/events/bubble3.excalidraw.svg"
 </div>
 
-The App class is always the root of the DOM, so there is no where for the event to bubble to.
+The App class is always the root of the DOM, so there is nowhere for the event to bubble to.
 
 ### Stopping bubbling
 
@@ -110,7 +110,7 @@ The message class is defined within the widget class itself. This is not strictl
 
 ## Sending events
 
-In the previous example we used [emit()][textual.message_pump.MessagePump.emit] to send an event to it's parent. We could also have used [emit_no_wait()][textual.message_pump.MessagePump.emit_no_wait] for non async code. Sending messages in this way allows you to write custom widgets without needing to know in what context they will be used.
+In the previous example we used [emit()][textual.message_pump.MessagePump.emit] to send an event to its parent. We could also have used [emit_no_wait()][textual.message_pump.MessagePump.emit_no_wait] for non async code. Sending messages in this way allows you to write custom widgets without needing to know in what context they will be used.
 
 There are other ways of sending (posting) messages, which you may need to use less frequently.
 
@@ -127,7 +127,7 @@ Most of the logic in a Textual app will be written in message handlers. Let's ex
 Textual uses the following scheme to map messages classes on to a Python method.
 
 - Start with `"on_"`.
-- Add the messages namespace (if any) converted from CamelCase to snake_case plus an underscore `"_"`
+- Add the messages' namespace (if any) converted from CamelCase to snake_case plus an underscore `"_"`
 - Add the name of the class converted from CamelCase to snake_case.
 
 <div class="excalidraw">
@@ -156,7 +156,7 @@ This pattern is a convenience that saves writing out a parameter that may not be
 
 Message handlers may be coroutines. If you prefix your handlers with the `async` keyword, Textual will `await` them. This lets your handler use the `await` keyword for asynchronous APIs.
 
-If your event handlers are coroutines it will allow multiple events to be processed concurrently, but bear in mind an individual widget (or app) will not be able to pick up a new message from its message queue until the handler has returned. This is rarely a problem in practice; as long has handlers return within a few milliseconds the UI will remain responsive. But slow handlers might make your app hard to use.
+If your event handlers are coroutines it will allow multiple events to be processed concurrently, but bear in mind an individual widget (or app) will not be able to pick up a new message from its message queue until the handler has returned. This is rarely a problem in practice; as long as handlers return within a few milliseconds the UI will remain responsive. But slow handlers might make your app hard to use.
 
 !!! info
 

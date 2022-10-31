@@ -44,7 +44,7 @@ If you combine the `run` command with the `--dev` switch your app will run in *d
 textual run --dev my_app.py
 ```
 
-One of the the features of *dev* mode is live editing of CSS files: any changes to your CSS will be reflected in the terminal a few milliseconds later.
+One of the features of *dev* mode is live editing of CSS files: any changes to your CSS will be reflected in the terminal a few milliseconds later.
 
 This is a great feature for iterating on your app's look and feel. Open the CSS in your editor and have your app running in a terminal. Edits to your CSS will appear almost immediately after you save.
 
