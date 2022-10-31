@@ -861,8 +861,6 @@ class App(Generic[ReturnType], DOMNode):
     def get_screen(self, screen: Screen | str) -> Screen:
         """Get an installed screen.
 
-        If the screen isn't running, it will be registered before it is run.
-
         Args:
             screen (Screen | str): Either a Screen object or screen name (the `name` argument when installed).
 
@@ -879,9 +877,29 @@ class App(Generic[ReturnType], DOMNode):
                 raise KeyError(f"No screen called {screen!r} installed") from None
         else:
             next_screen = screen
-        if not next_screen.is_running:
-            self._register(self, next_screen)
         return next_screen
+
+    def _get_screen(self, screen: Screen | str) -> tuple[Screen, AwaitMount]:
+        """Get an installed screen and a await mount object.
+
+        If the screen isn't running, it will be registered before it is run.
+
+        Args:
+            screen (Screen | str): Either a Screen object or screen name (the `name` argument when installed).
+
+        Raises:
+            KeyError: If the named screen doesn't exist.
+
+        Returns:
+            tuple[Screen, AwaitMount]: A screen instance and an awaitable that awaits the children mounting.
+
+        """
+        _screen = self.get_screen(screen)
+        if not _screen.is_running:
+            widgets = self._register(self, _screen)
+            return (_screen, AwaitMount(widgets))
+        else:
+            return (_screen, AwaitMount([]))
 
     def _replace_screen(self, screen: Screen) -> Screen:
         """Handle the replaced screen.
@@ -900,19 +918,20 @@ class App(Generic[ReturnType], DOMNode):
             self.log.system(f"{screen} REMOVED")
         return screen
 
-    def push_screen(self, screen: Screen | str) -> None:
+    def push_screen(self, screen: Screen | str) -> AwaitMount:
         """Push a new screen on the screen stack.
 
         Args:
             screen (Screen | str): A Screen instance or the name of an installed screen.
 
         """
-        next_screen = self.get_screen(screen)
+        next_screen, await_mount = self._get_screen(screen)
         self._screen_stack.append(next_screen)
         self.screen.post_message_no_wait(events.ScreenResume(self))
         self.log.system(f"{self.screen} is current (PUSHED)")
+        return await_mount
 
-    def switch_screen(self, screen: Screen | str) -> None:
+    def switch_screen(self, screen: Screen | str) -> AwaitMount:
         """Switch to another screen by replacing the top of the screen stack with a new screen.
 
         Args:
@@ -921,12 +940,14 @@ class App(Generic[ReturnType], DOMNode):
         """
         if self.screen is not screen:
             self._replace_screen(self._screen_stack.pop())
-            next_screen = self.get_screen(screen)
+            next_screen, await_mount = self._get_screen(screen)
             self._screen_stack.append(next_screen)
             self.screen.post_message_no_wait(events.ScreenResume(self))
             self.log.system(f"{self.screen} is current (SWITCHED)")
+            return await_mount
+        return AwaitMount([])
 
-    def install_screen(self, screen: Screen, name: str | None = None) -> str:
+    def install_screen(self, screen: Screen, name: str | None = None) -> AwaitMount:
         """Install a screen.
 
         Args:
@@ -938,7 +959,7 @@ class App(Generic[ReturnType], DOMNode):
             ScreenError: If the screen can't be installed.
 
         Returns:
-            str: The name of the screen
+            AwaitMount: An awaitable that awaits the mounting of the screen and its children.
         """
         if name is None:
             name = nanoid.generate()
@@ -949,9 +970,9 @@ class App(Generic[ReturnType], DOMNode):
                 "Can't install screen; {screen!r} has already been installed"
             )
         self._installed_screens[name] = screen
-        self.get_screen(name)  # Ensures screen is running
+        _screen, await_mount = self._get_screen(name)  # Ensures screen is running
         self.log.system(f"{screen} INSTALLED name={name!r}")
-        return name
+        return await_mount
 
     def uninstall_screen(self, screen: Screen | str) -> str | None:
         """Uninstall a screen. If the screen was not previously installed then this

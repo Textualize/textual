@@ -29,11 +29,10 @@ async def test_unmount():
 
     class UnmountApp(App):
         async def on_mount(self) -> None:
-            self.push_screen(MyScreen(id="main"))
+            await self.push_screen(MyScreen(id="main"))
 
     app = UnmountApp()
     async with app.run_test() as pilot:
-        await pilot.pause()  # TODO remove when push_screen is awaitable
         await pilot.exit(None)
 
     expected = [

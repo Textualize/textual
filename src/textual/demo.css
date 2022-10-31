@@ -114,13 +114,14 @@ DarkSwitch {
 }
 
 DarkSwitch .label {
-    
+    width: 1fr;
     padding: 1 2;
     color: $text-muted;
 }
 
 DarkSwitch Checkbox {
     background: $boost;
+    dock: left;
 }
 
 
