@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - DOMQuery now raises InvalidQueryFormat in response to invalid query strings, rather than cryptic CSS error
 - Dropped quit_after, screenshot, and screenshot_title from App.run, which can all be done via auto_pilot
 - Widgets are now closed in reversed DOM order
+- Input widget justify hardcoded to left to prevent text-align interference
 - Changed `textual run` so that it patches `argv` in more situations
 
 ### Added
@@ -32,8 +33,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added auto_pilot to App.run and App.run_async
 - Added Widget._get_virtual_dom to get scrollbars
 - Added size parameter to run and run_async
+- Added always_update to reactive
 - Returned an awaitable from push_screen, switch_screen, and install_screen https://github.com/Textualize/textual/pull/1061
-
 
 ## [0.2.1] - 2022-10-23
 

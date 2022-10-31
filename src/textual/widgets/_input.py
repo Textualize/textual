@@ -171,7 +171,7 @@ class Input(Widget, can_focus=True):
 
     def render(self) -> RenderableType:
         if not self.value:
-            placeholder = Text(self.placeholder)
+            placeholder = Text(self.placeholder, justify="left")
             placeholder.stylize(self.get_component_rich_style("input--placeholder"))
             if self.has_focus:
                 cursor_style = self.get_component_rich_style("input--cursor")
