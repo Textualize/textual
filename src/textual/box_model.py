@@ -20,7 +20,8 @@ def get_box_model(
     styles: StylesBase,
     container: Size,
     viewport: Size,
-    fraction_unit: Fraction,
+    width_fraction: Fraction,
+    height_fraction: Fraction,
     get_content_width: Callable[[Size, Size], int],
     get_content_height: Callable[[Size, Size, int], int],
 ) -> BoxModel:
@@ -63,7 +64,7 @@ def get_box_model(
         # An explicit width
         styles_width = styles.width
         content_width = styles_width.resolve_dimension(
-            sizing_container - styles.margin.totals, viewport, fraction_unit
+            sizing_container - styles.margin.totals, viewport, width_fraction
         )
         if is_border_box and styles_width.excludes_border:
             content_width -= gutter.width
@@ -71,14 +72,14 @@ def get_box_model(
     if styles.min_width is not None:
         # Restrict to minimum width, if set
         min_width = styles.min_width.resolve_dimension(
-            content_container, viewport, fraction_unit
+            content_container, viewport, width_fraction
         )
         content_width = max(content_width, min_width)
 
     if styles.max_width is not None:
         # Restrict to maximum width, if set
         max_width = styles.max_width.resolve_dimension(
-            content_container, viewport, fraction_unit
+            content_container, viewport, width_fraction
         )
         if is_border_box:
             max_width -= gutter.width
@@ -98,7 +99,7 @@ def get_box_model(
         styles_height = styles.height
         # Explicit height set
         content_height = styles_height.resolve_dimension(
-            sizing_container - styles.margin.totals, viewport, fraction_unit
+            sizing_container - styles.margin.totals, viewport, height_fraction
         )
         if is_border_box and styles_height.excludes_border:
             content_height -= gutter.height
@@ -106,14 +107,14 @@ def get_box_model(
     if styles.min_height is not None:
         # Restrict to minimum height, if set
         min_height = styles.min_height.resolve_dimension(
-            content_container, viewport, fraction_unit
+            content_container, viewport, height_fraction
         )
         content_height = max(content_height, min_height)
 
     if styles.max_height is not None:
         # Restrict maximum height, if set
         max_height = styles.max_height.resolve_dimension(
-            content_container, viewport, fraction_unit
+            content_container, viewport, height_fraction
         )
         content_height = min(content_height, max_height)
 

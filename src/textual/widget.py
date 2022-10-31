@@ -409,7 +409,11 @@ class Widget(DOMNode):
             )
 
     def _get_box_model(
-        self, container: Size, viewport: Size, fraction_unit: Fraction
+        self,
+        container: Size,
+        viewport: Size,
+        width_fraction: Fraction,
+        height_fraction: Fraction,
     ) -> BoxModel:
         """Process the box model for this widget.
 
@@ -425,7 +429,8 @@ class Widget(DOMNode):
             self.styles,
             container,
             viewport,
-            fraction_unit,
+            width_fraction,
+            height_fraction,
             self.get_content_width,
             self.get_content_height,
         )
@@ -1930,8 +1935,13 @@ class Widget(DOMNode):
     async def handle_key(self, event: events.Key) -> bool:
         return await self.dispatch_key(event)
 
-    async def _on_compose(self, event: events.Compose) -> None:
-        widgets = list(self.compose())
+    async def _on_compose(self) -> None:
+        try:
+            widgets = list(self.compose())
+        except TypeError as error:
+            raise TypeError(
+                f"{self!r} compose() returned an invalid response; {error}"
+            ) from None
         await self.mount(*widgets)
 
     def _on_mount(self, event: events.Mount) -> None:
