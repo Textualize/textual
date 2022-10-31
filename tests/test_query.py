@@ -54,7 +54,9 @@ def test_query():
         assert list(app.query("#main")) == [main_view]
         assert list(app.query("View#main")) == [main_view]
         assert list(app.query("#widget1")) == [widget1]
+        assert list(app.query("#Widget1")) == [] # Note case.
         assert list(app.query("#widget2")) == [widget2]
+        assert list(app.query("#Widget2")) == [] # Note case.
 
         assert list(app.query("Widget.float")) == [sidebar, tooltip, helpbar]
         assert list(app.query(Widget).filter(".float")) == [sidebar, tooltip, helpbar]
