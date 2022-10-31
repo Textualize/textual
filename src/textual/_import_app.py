@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import sys
 import runpy
 import shlex
 from pathlib import Path
@@ -30,7 +31,6 @@ def import_app(import_name: str) -> App:
 
     import inspect
     import importlib
-    import sys
 
     from textual.app import App, WINDOWS
 
@@ -45,8 +45,7 @@ def import_app(import_name: str) -> App:
         except Exception as error:
             raise AppFail(str(error))
 
-        if "sys" in global_vars:
-            global_vars["sys"].argv = [path, *argv]
+        sys.argv = [path, *argv]
 
         if name:
             # User has given a name, use that
