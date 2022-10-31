@@ -196,11 +196,11 @@ The following app will display any color you type in to the input. Try it with a
 
 The color is parsed in `on_input_submitted` and assigned to `self.color`. Because `color` is reactive, Textual also calls `watch_color` with the old and new values.
 
-!! warning
+### When are watch methods called?
 
-    Textual only calls watch methods if the value of a reactive attribute changes.
-    If the newly assigned value is the same as the previous value, the watch method is not called.
-    You can override this behaviour by passing `always_update=True`.
+Textual only calls watch methods if the value of a reactive attribute _changes_.
+If the newly assigned value is the same as the previous value, the watch method is not called.
+You can override this behaviour by passing `always_update=True` to `reactive`.
 
 ## Compute methods
 
