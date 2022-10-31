@@ -102,15 +102,15 @@ Here's an example of some CSS used in this app:
 EXAMPLE_CSS = """\
 Screen {
     layers: base overlay notes;
-    overflow: hidden;  
+    overflow: hidden;
 }
 
-Sidebar {    
+Sidebar {
     width: 40;
-    background: $panel;   
-    transition: offset 500ms in_out_cubic;    
+    background: $panel;
+    transition: offset 500ms in_out_cubic;
     layer: overlay;
-    
+
 }
 
 Sidebar.-hidden {
@@ -142,7 +142,7 @@ Build your own or use the builtin widgets.
 - **DataTable** A spreadsheet-like widget for navigating data. Cells may contain text or Rich renderables.
 - **TreeControl** An generic tree with expandable nodes.
 - **DirectoryTree** A tree of file and folders.
-- *... many more planned ...* 
+- *... many more planned ...*
 
 """
 
@@ -319,7 +319,7 @@ class DemoApp(App):
         self.query_one(TextLog).write(renderable)
 
     def compose(self) -> ComposeResult:
-        example_css = "\n".join(Path(self.css_path).read_text().splitlines()[:50])
+        example_css = "\n".join(Path(self.css_path[0]).read_text().splitlines()[:50])
         yield Container(
             Sidebar(classes="-hidden"),
             Header(show_clock=True),
