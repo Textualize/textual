@@ -89,4 +89,4 @@ async def test_screens():
     screen1.remove()
     screen2.remove()
     screen3.remove()
-    await app.shutdown()
+    await app._shutdown()

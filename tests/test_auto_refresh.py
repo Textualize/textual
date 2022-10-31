@@ -1,6 +1,8 @@
+import asyncio
 from time import time
 
 from textual.app import App
+from textual.pilot import Pilot
 
 
 class RefreshApp(App[float]):
@@ -22,7 +24,10 @@ class RefreshApp(App[float]):
 def test_auto_refresh():
     app = RefreshApp()
 
-    elapsed = app.run(quit_after=1, headless=True)
+    async def quit_after(pilot: Pilot) -> None:
+        await asyncio.sleep(1)
+
+    elapsed = app.run(auto_pilot=quit_after, headless=True)
     assert elapsed is not None
     # CI can run slower, so we need to give this a bit of margin
     assert 0.2 <= elapsed < 0.8

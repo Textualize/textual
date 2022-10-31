@@ -359,6 +359,20 @@ class Widget(DOMNode):
         """Clear arrangement cache, forcing a new arrange operation."""
         self._arrangement = None
 
+    def _get_virtual_dom(self) -> Iterable[Widget]:
+        """Get widgets not part of the DOM.
+
+        Returns:
+            Iterable[Widget]: An iterable of Widgets.
+
+        """
+        if self._horizontal_scrollbar is not None:
+            yield self._horizontal_scrollbar
+        if self._vertical_scrollbar is not None:
+            yield self._vertical_scrollbar
+        if self._scrollbar_corner is not None:
+            yield self._scrollbar_corner
+
     def mount(self, *anon_widgets: Widget, **widgets: Widget) -> AwaitMount:
         """Mount child widgets (making this widget a container).
 
@@ -587,6 +601,7 @@ class Widget(DOMNode):
         Returns:
             ScrollBar: ScrollBar Widget.
         """
+
         from .scrollbar import ScrollBar
 
         if self._horizontal_scrollbar is not None:
@@ -595,13 +610,12 @@ class Widget(DOMNode):
             vertical=False, name="horizontal", thickness=self.scrollbar_size_horizontal
         )
         self._horizontal_scrollbar.display = False
-
         self.app._start_widget(self, scroll_bar)
         return scroll_bar
 
     def _refresh_scrollbars(self) -> None:
         """Refresh scrollbar visibility."""
-        if not self.is_scrollable:
+        if not self.is_scrollable or not self.container_size:
             return
 
         styles = self.styles

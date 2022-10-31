@@ -107,6 +107,7 @@ nav:
     - "reference/index.md"
     - "reference/message_pump.md"
     - "reference/message.md"
+    - "reference/pilot.md"
     - "reference/query.md"
     - "reference/reactive.md"
     - "reference/screen.md"

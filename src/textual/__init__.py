@@ -51,7 +51,9 @@ class Logger:
         try:
             app = active_app.get()
         except LookupError:
-            raise LoggerError("Unable to log without an active app.") from None
+            print_args = (*args, *[f"{key}={value!r}" for key, value in kwargs.items()])
+            print(*print_args)
+            return
         if app.devtools is None or not app.devtools.is_connected:
             return
 
