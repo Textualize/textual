@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed issue where scrollbars weren't being unmounted
+- Fixed fr units for horizontal and vertical layouts https://github.com/Textualize/textual/pull/1067
+- Fixed `textual run` breaking sys.argv https://github.com/Textualize/textual/issues/1064
+- Fixed footer not updating styles when toggling dark mode
 
 ### Changed
 
@@ -25,6 +28,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added auto_pilot to App.run and App.run_async
 - Added Widget._get_virtual_dom to get scrollbars
 - Added size parameter to run and run_async
+- Returned an awaitable from push_screen, switch_screen, and install_screen https://github.com/Textualize/textual/pull/1061
+
 
 ## [0.2.1] - 2022-10-23
 
