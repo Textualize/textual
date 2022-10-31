@@ -85,6 +85,10 @@ def test_header_render(snap_compare):
     assert snap_compare("docs/examples/widgets/header.py")
 
 
+def test_textlog_max_lines(snap_compare):
+    assert snap_compare("tests/snapshots/textlog_max_lines.py", press=[*"abcde", "_"])
+
+
 def test_fr_units(snap_compare):
     assert snap_compare("tests/snapshots/fr_units.py")
 
