@@ -1,11 +1,22 @@
 from __future__ import annotations
 
+import sys
 from fractions import Fraction
 from itertools import accumulate
-from typing import cast, Sequence
+from typing import cast, Sequence, TYPE_CHECKING
 
+from .box_model import BoxModel
 from .css.scalar import Scalar
 from .geometry import Size
+
+if TYPE_CHECKING:
+    from .widget import Widget
+
+
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 
 def resolve(
@@ -71,3 +82,79 @@ def resolve(
     ]
 
     return results
+
+
+def resolve_box_models(
+    dimensions: list[Scalar | None],
+    widgets: list[Widget],
+    size: Size,
+    parent_size: Size,
+    dimension: Literal["width", "height"] = "width",
+) -> list[BoxModel]:
+    """Resolve box models for a list of dimensions
+
+    Args:
+        dimensions (list[Scalar  |  None]): A list of Scalars or Nones for each dimension.
+        widgets (list[Widget]): Widgets in resolve.
+        size (Size): size of container.
+        parent_size (Size): Size of parent.
+        dimensions (Literal["width", "height"]): Which dimension to resolve.
+
+    Returns:
+        list[BoxModel]: List of resolved box models.
+    """
+
+    fraction_width = Fraction(size.width)
+    fraction_height = Fraction(size.height)
+    box_models: list[BoxModel | None] = [
+        (
+            None
+            if dimension is not None and dimension.is_fraction
+            else widget._get_box_model(
+                size, parent_size, fraction_width, fraction_height
+            )
+        )
+        for (dimension, widget) in zip(dimensions, widgets)
+    ]
+
+    if dimension == "width":
+        total_remaining = sum(
+            box_model.width for box_model in box_models if box_model is not None
+        )
+        remaining_space = max(0, size.width - total_remaining)
+    else:
+        total_remaining = sum(
+            box_model.height for box_model in box_models if box_model is not None
+        )
+        remaining_space = max(0, size.height - total_remaining)
+
+    fraction_unit = Fraction(
+        remaining_space,
+        int(
+            sum(
+                dimension.value
+                for dimension in dimensions
+                if dimension and dimension.is_fraction
+            )
+        )
+        or 1,
+    )
+    if dimension == "width":
+        width_fraction = fraction_unit
+        height_fraction = Fraction(size.height)
+    else:
+        width_fraction = Fraction(size.width)
+        height_fraction = fraction_unit
+
+    box_models = [
+        box_model
+        or widget._get_box_model(
+            size,
+            parent_size,
+            width_fraction,
+            height_fraction,
+        )
+        for widget, box_model in zip(widgets, box_models)
+    ]
+
+    return cast("list[BoxModel]", box_models)

@@ -85,6 +85,10 @@ def test_header_render(snap_compare):
     assert snap_compare("docs/examples/widgets/header.py")
 
 
+def test_fr_units(snap_compare):
+    assert snap_compare("tests/snapshots/fr_units.py")
+
+
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
 # If any of these change, something has likely broken, so snapshot each of them.

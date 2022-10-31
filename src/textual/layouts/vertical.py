@@ -3,6 +3,7 @@ from __future__ import annotations
 from fractions import Fraction
 from typing import TYPE_CHECKING
 
+from .._resolve import resolve_box_models
 from ..geometry import Region, Size
 from .._layout import ArrangeResult, Layout, WidgetPlacement
 
@@ -21,19 +22,15 @@ class VerticalLayout(Layout):
 
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
-
         parent_size = parent.outer_size
 
-        styles = [child.styles for child in children if child.styles.height is not None]
-        total_fraction = sum(
-            [int(style.height.value) for style in styles if style.height.is_fraction]
+        box_models = resolve_box_models(
+            [child.styles.height for child in children],
+            children,
+            size,
+            parent_size,
+            dimension="height",
         )
-        fraction_unit = Fraction(size.height, total_fraction or 1)
-
-        box_models = [
-            widget._get_box_model(size, parent_size, fraction_unit)
-            for widget in children
-        ]
 
         margins = [
             max((box1.margin.bottom, box2.margin.top))

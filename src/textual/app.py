@@ -1271,7 +1271,12 @@ class App(Generic[ReturnType], DOMNode):
         self.set_timer(screenshot_timer, on_screenshot, name="screenshot timer")
 
     async def _on_compose(self) -> None:
-        widgets = list(self.compose())
+        try:
+            widgets = list(self.compose())
+        except TypeError as error:
+            raise TypeError(
+                f"{self!r} compose() returned an invalid response; {error}"
+            ) from None
         await self.mount_all(widgets)
 
     def _on_idle(self) -> None:

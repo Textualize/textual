@@ -145,9 +145,7 @@ class GridLayout(Layout):
             y2, cell_height = rows[min(max_row, row + row_span)]
             cell_size = Size(cell_width + x2 - x, cell_height + y2 - y)
             width, height, margin = widget._get_box_model(
-                cell_size,
-                viewport,
-                fraction_unit,
+                cell_size, viewport, fraction_unit, fraction_unit
             )
             region = (
                 Region(x, y, int(width + margin.width), int(height + margin.height))

@@ -60,10 +60,9 @@ def arrange(
         for dock_widget in dock_widgets:
             edge = dock_widget.styles.dock
 
-            fraction_unit = Fraction(
-                size.height if edge in ("top", "bottom") else size.width
+            box_model = dock_widget._get_box_model(
+                size, viewport, Fraction(size.width), Fraction(size.height)
             )
-            box_model = dock_widget._get_box_model(size, viewport, fraction_unit)
             widget_width_fraction, widget_height_fraction, margin = box_model
 
             widget_width = int(widget_width_fraction) + margin.width
