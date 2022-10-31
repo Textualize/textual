@@ -52,7 +52,7 @@ def snap_compare(
         Args:
             app_path (str): The path of the app.
             press (Iterable[str]): Key presses to run before taking screenshot. "_" is a short pause.
-            terminal_size (tuple[int, int]): A pair of integers (WIDTH, SIZE), representing terminal size.
+            terminal_size (tuple[int, int]): A pair of integers (WIDTH, HEIGHT), representing terminal size.
 
         Returns:
             bool: True if the screenshot matches the snapshot.

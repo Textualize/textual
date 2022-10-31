@@ -119,6 +119,10 @@ class Footer(Widget):
             text.append_text(key_text)
         return text
 
+    def _on_styles_updated(self) -> None:
+        self._key_text = None
+        self.refresh()
+
     def post_render(self, renderable):
         return renderable
 
