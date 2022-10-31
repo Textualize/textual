@@ -1644,7 +1644,7 @@ class App(Generic[ReturnType], DOMNode):
         """Walk children depth first, generating widgets and a list of their siblings.
 
         Returns:
-            Iterable[list[Widget]]:
+            Iterable[list[Widget]]: The child widgets of root.
 
         """
         stack: list[Widget] = [root]
