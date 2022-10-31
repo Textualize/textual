@@ -46,7 +46,7 @@ class TextLog(ScrollView, can_focus=True):
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
         self.max_lines = max_lines
-        self.start_line: int = 0
+        self._start_line: int = 0
         self.lines: list[list[Segment]] = []
         self._line_cache: LRUCache[tuple[int, int, int, int], list[Segment]]
         self._line_cache = LRUCache(1024)
@@ -97,7 +97,7 @@ class TextLog(ScrollView, can_focus=True):
         self.lines.extend(lines)
 
         if self.max_lines is not None and len(self.lines) > self.max_lines:
-            self.start_line += len(self.lines) - self.max_lines
+            self._start_line += len(self.lines) - self.max_lines
             self.refresh()
             self.lines = self.lines[-self.max_lines :]
         self.virtual_size = Size(self.max_width, len(self.lines))
@@ -106,7 +106,7 @@ class TextLog(ScrollView, can_focus=True):
     def clear(self) -> None:
         """Clear the text log."""
         del self.lines[:]
-        self.start_line = 0
+        self._start_line = 0
         self.max_width = 0
         self.virtual_size = Size(self.max_width, len(self.lines))
         self.refresh()
@@ -134,7 +134,7 @@ class TextLog(ScrollView, can_focus=True):
         if y >= len(self.lines):
             return [Segment(" " * width, self.rich_style)]
 
-        key = (y + self.start_line, scroll_x, width, self.max_width)
+        key = (y + self._start_line, scroll_x, width, self.max_width)
         if key in self._line_cache:
             return self._line_cache[key]
 
