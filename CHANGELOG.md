@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed how the app title in a `Header` is centred https://github.com/Textualize/textual/issues/1060
 - Fixed the swapping of button variants https://github.com/Textualize/textual/issues/1048
 - Fixed reserved characters in screenshots https://github.com/Textualize/textual/issues/993
+- Fixed queries against IDs not being fully case-insensitive https://github.com/Textualize/textual/issues/1047
 
 ### Changed
 
