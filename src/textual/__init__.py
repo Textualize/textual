@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import sys
 import inspect
-from typing import Callable, TYPE_CHECKING
+import sys
+from typing import Callable
 
 import rich.repr
 from rich.console import RenderableType
@@ -12,9 +12,6 @@ __all__ = ["log", "panic"]
 
 from ._context import active_app
 from ._log import LogGroup, LogVerbosity
-
-if TYPE_CHECKING:
-    from .app import App
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
