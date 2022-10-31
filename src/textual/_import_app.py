@@ -45,7 +45,7 @@ def import_app(import_name: str) -> App:
         except Exception as error:
             raise AppFail(str(error))
 
-        sys.argv = [path, *argv]
+        sys.argv[:] = [path, *argv]
 
         if name:
             # User has given a name, use that
