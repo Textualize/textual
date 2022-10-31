@@ -157,4 +157,4 @@ def resolve_box_models(
         for widget, box_model in zip(widgets, box_models)
     ]
 
-    return cast(list[BoxModel], box_models)
+    return cast("list[BoxModel]", box_models)
