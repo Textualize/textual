@@ -31,6 +31,8 @@ def get_box_model(
         styles (StylesBase): Styles object.
         container (Size): The size of the widget container.
         viewport (Size): The viewport size.
+        width_fraction (Fraction): A fraction used for 1 `fr` unit on the width dimension.
+        height_fraction (Fraction):A fraction used for 1 `fr` unit on the height dimension.
         get_auto_width (Callable): A callable which accepts container size and parent size and returns a width.
         get_auto_height (Callable): A callable which accepts container size and parent size and returns a height.
 

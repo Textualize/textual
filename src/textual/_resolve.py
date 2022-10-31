@@ -143,8 +143,8 @@ def resolve_box_models(
         width_fraction = fraction_unit
         height_fraction = Fraction(size.height)
     else:
-        height_fraction = fraction_unit
         width_fraction = Fraction(size.width)
+        height_fraction = fraction_unit
 
     box_models = [
         box_model

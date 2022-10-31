@@ -420,7 +420,8 @@ class Widget(DOMNode):
         Args:
             container (Size): The size of the container widget (with a layout)
             viewport (Size): The viewport size.
-            fraction_unit (Fraction): The unit used for `fr` units.
+            width_fraction (Fraction): A fraction used for 1 `fr` unit on the width dimension.
+            height_fraction (Fraction):A fraction used for 1 `fr` unit on the height dimension.
 
         Returns:
             BoxModel: The size and margin for this widget.
