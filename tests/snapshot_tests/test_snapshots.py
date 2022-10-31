@@ -97,7 +97,7 @@ def test_header_render(snap_compare):
 
 
 def test_fr_units(snap_compare):
-    assert snap_compare("tests/snapshots/test_fr.py")
+    assert snap_compare("tests/snapshots/fr_units.py")
 
 
 # --- CSS properties ---
