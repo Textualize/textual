@@ -161,6 +161,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.3.0]: https://github.com/Textualize/textual/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/Textualize/textual/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/Textualize/textual/compare/v0.1.18...v0.2.0
 [0.1.18]: https://github.com/Textualize/textual/compare/v0.1.17...v0.1.18
