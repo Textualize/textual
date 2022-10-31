@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.2.2] - Unreleased
+## [0.3.0] - 2022-10-31
 
 ### Fixed
 
@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed how the app title in a `Header` is centred https://github.com/Textualize/textual/issues/1060
 - Fixed the swapping of button variants https://github.com/Textualize/textual/issues/1048
 - Fixed reserved characters in screenshots https://github.com/Textualize/textual/issues/993
+- Fixed issue with TextLog max_lines https://github.com/Textualize/textual/issues/1058
 
 ### Changed
 

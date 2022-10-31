@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.2.1"
+version = "0.3.0"
 homepage = "https://github.com/Textualize/textual"
 description = "Modern Text User Interface framework"
 authors = ["Will McGugan <will@textualize.io>"]
@@ -16,6 +16,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Typing :: Typed",
 ]
 include = [
