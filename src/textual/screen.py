@@ -12,7 +12,6 @@ from ._callback import invoke
 from ._compositor import Compositor, MapGeometry
 from .timer import Timer
 from ._types import CallbackType
-from .dom import DOMNode
 from .geometry import Offset, Region, Size
 from .reactive import Reactive
 from .renderables.blank import Blank
@@ -61,7 +60,12 @@ class Screen(Widget):
     @property
     def is_current(self) -> bool:
         """Check if this screen is current (i.e. visible to user)."""
-        return self.app.screen is self
+        from .app import ScreenStackError
+
+        try:
+            return self.app.screen is self
+        except ScreenStackError:
+            return False
 
     @property
     def update_timer(self) -> Timer:

@@ -119,8 +119,12 @@ class Compose(Event, bubble=False, verbose=True):
     """Sent to a widget to request it to compose and mount children."""
 
 
-class Mount(Event, bubble=False, verbose=True):
+class Mount(Event, bubble=False, verbose=False):
     """Sent when a widget is *mounted* and may receive messages."""
+
+
+class Unmount(Mount, bubble=False, verbose=False):
+    """Sent when a widget is unmounted and may not longer receive messages."""
 
 
 class Remove(Event, bubble=False):

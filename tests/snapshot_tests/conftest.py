@@ -41,7 +41,7 @@ def snap_compare(
     def compare(
         app_path: str,
         press: Iterable[str] = ("_",),
-        terminal_size: tuple[int, int] = (24, 80),
+        terminal_size: tuple[int, int] = (80, 24),
     ) -> bool:
         """
         Compare a current screenshot of the app running at app_path, with
@@ -52,14 +52,13 @@ def snap_compare(
         Args:
             app_path (str): The path of the app.
             press (Iterable[str]): Key presses to run before taking screenshot. "_" is a short pause.
-            terminal_size (tuple[int, int]): A pair of integers (rows, columns), representing terminal size.
+            terminal_size (tuple[int, int]): A pair of integers (WIDTH, SIZE), representing terminal size.
 
         Returns:
             bool: True if the screenshot matches the snapshot.
         """
         node = request.node
         app = import_app(app_path)
-        compare.app = app
         actual_screenshot = take_svg_screenshot(
             app=app,
             press=press,
@@ -69,7 +68,9 @@ def snap_compare(
 
         if result is False:
             # The split and join below is a mad hack, sorry...
-            node.stash[TEXTUAL_SNAPSHOT_SVG_KEY] = "\n".join(str(snapshot).splitlines()[1:-1])
+            node.stash[TEXTUAL_SNAPSHOT_SVG_KEY] = "\n".join(
+                str(snapshot).splitlines()[1:-1]
+            )
             node.stash[TEXTUAL_ACTUAL_SVG_KEY] = actual_screenshot
             node.stash[TEXTUAL_APP_KEY] = app
         else:
@@ -85,6 +86,7 @@ class SvgSnapshotDiff:
     """Model representing a diff between current screenshot of an app,
     and the snapshot on disk. This is ultimately intended to be used in
     a Jinja2 template."""
+
     snapshot: Optional[str]
     actual: Optional[str]
     test_name: str
@@ -119,7 +121,7 @@ def pytest_sessionfinish(
                     snapshot=str(snapshot_svg),
                     actual=str(actual_svg),
                     file_similarity=100
-                                    * difflib.SequenceMatcher(
+                    * difflib.SequenceMatcher(
                         a=str(snapshot_svg), b=str(actual_svg)
                     ).ratio(),
                     test_name=name,
@@ -176,7 +178,9 @@ def pytest_terminal_summary(
     if diffs:
         snapshot_report_location = config._textual_snapshot_html_report
         console.rule("[b red]Textual Snapshot Report", style="red")
-        console.print(f"\n[black on red]{len(diffs)} mismatched snapshots[/]\n"
-                      f"\n[b]View the [link=file://{snapshot_report_location}]failure report[/].\n")
+        console.print(
+            f"\n[black on red]{len(diffs)} mismatched snapshots[/]\n"
+            f"\n[b]View the [link=file://{snapshot_report_location}]failure report[/].\n"
+        )
         console.print(f"[dim]{snapshot_report_location}\n")
         console.rule(style="red")

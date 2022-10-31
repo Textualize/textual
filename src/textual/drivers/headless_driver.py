@@ -9,7 +9,13 @@ from .. import events
 class HeadlessDriver(Driver):
     """A do-nothing driver for testing."""
 
+    @property
+    def is_headless(self) -> bool:
+        return True
+
     def _get_terminal_size(self) -> tuple[int, int]:
+        if self._size is not None:
+            return self._size
         width: int | None = 80
         height: int | None = 25
         import shutil

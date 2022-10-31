@@ -5,6 +5,7 @@ import shlex
 from typing import Iterable
 
 from textual.app import App
+from textual.pilot import Pilot
 from textual._import_app import import_app
 
 
@@ -18,7 +19,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
         path = cmd[0]
 
         _press = attrs.get("press", None)
-        press = [*_press.split(",")] if _press else ["_"]
+        press = [*_press.split(",")] if _press else []
         title = attrs.get("title")
 
         print(f"screenshotting {path!r}")
@@ -28,7 +29,7 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
             rows = int(attrs.get("lines", 24))
             columns = int(attrs.get("columns", 80))
             svg = take_svg_screenshot(
-                None, path, press, title, terminal_size=(rows, columns)
+                None, path, press, title, terminal_size=(columns, rows)
             )
         finally:
             os.chdir(cwd)
@@ -45,9 +46,9 @@ def format_svg(source, language, css_class, options, md, attrs, **kwargs) -> str
 def take_svg_screenshot(
     app: App | None = None,
     app_path: str | None = None,
-    press: Iterable[str] = ("_",),
+    press: Iterable[str] = (),
     title: str | None = None,
-    terminal_size: tuple[int, int] = (24, 80),
+    terminal_size: tuple[int, int] = (80, 24),
 ) -> str:
     """
 
@@ -63,25 +64,29 @@ def take_svg_screenshot(
             the screenshot was taken.
 
     """
-    rows, columns = terminal_size
-
-    os.environ["COLUMNS"] = str(columns)
-    os.environ["LINES"] = str(rows)
 
     if app is None:
+        assert app_path is not None
         app = import_app(app_path)
+
+    assert app is not None
 
     if title is None:
         title = app.title
 
-    app.run(
-        quit_after=5,
-        press=press or ["ctrl+c"],
+    async def auto_pilot(pilot: Pilot) -> None:
+        app = pilot.app
+        await pilot.press(*press)
+        svg = app.export_screenshot(title=title)
+        app.exit(svg)
+
+    svg = app.run(
         headless=True,
-        screenshot=True,
-        screenshot_title=title,
+        auto_pilot=auto_pilot,
+        size=terminal_size,
     )
-    svg = app._screenshot
+    assert svg is not None
+
     return svg
 
 

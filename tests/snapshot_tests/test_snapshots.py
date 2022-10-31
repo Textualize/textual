@@ -66,21 +66,10 @@ def test_input_and_focus(snap_compare):
     ]
     assert snap_compare("docs/examples/widgets/input.py", press=press)
 
-    # Assert that the state of the Input is what we'd expect
-    app: App = snap_compare.app
-    input: Input = app.query_one(Input)
-    assert input.value == "Darren"
-    assert input.cursor_position == 6
-    assert input.view_position == 0
-
 
 def test_buttons_render(snap_compare):
     # Testing button rendering. We press tab to focus the first button too.
     assert snap_compare("docs/examples/widgets/button.py", press=["tab"])
-
-    app = snap_compare.app
-    button: Button = app.query_one(Button)
-    assert app.focused is button
 
 
 def test_datatable_render(snap_compare):
@@ -98,6 +87,10 @@ def test_header_render(snap_compare):
 
 def test_textlog_max_lines(snap_compare):
     assert snap_compare("tests/snapshots/textlog_max_lines.py", press=list("abcde"))
+
+
+def test_fr_units(snap_compare):
+    assert snap_compare("tests/snapshots/fr_units.py")
 
 
 # --- CSS properties ---

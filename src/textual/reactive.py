@@ -5,7 +5,6 @@ from inspect import isawaitable
 from typing import TYPE_CHECKING, Any, Callable, Generic, Type, TypeVar, Union
 from weakref import WeakSet
 
-
 from . import events
 from ._callback import count_parameters, invoke
 from ._types import MessageTarget
@@ -15,7 +14,6 @@ if TYPE_CHECKING:
     from .widget import Widget
 
     Reactable = Union[Widget, App]
-
 
 ReactiveType = TypeVar("ReactiveType")
 
@@ -37,7 +35,7 @@ class Reactive(Generic[ReactiveType]):
         layout (bool, optional): Perform a layout on change. Defaults to False.
         repaint (bool, optional): Perform a repaint on change. Defaults to True.
         init (bool, optional): Call watchers on initialize (post mount). Defaults to False.
-
+        always_update(bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
     """
 
     def __init__(
@@ -47,11 +45,13 @@ class Reactive(Generic[ReactiveType]):
         layout: bool = False,
         repaint: bool = True,
         init: bool = False,
+        always_update: bool = False,
     ) -> None:
         self._default = default
         self._layout = layout
         self._repaint = repaint
         self._init = init
+        self._always_update = always_update
 
     @classmethod
     def init(
@@ -60,6 +60,7 @@ class Reactive(Generic[ReactiveType]):
         *,
         layout: bool = False,
         repaint: bool = True,
+        always_update: bool = False,
     ) -> Reactive:
         """A reactive variable that calls watchers and compute on initialize (post mount).
 
@@ -67,11 +68,17 @@ class Reactive(Generic[ReactiveType]):
             default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
             layout (bool, optional): Perform a layout on change. Defaults to False.
             repaint (bool, optional): Perform a repaint on change. Defaults to True.
-
+            always_update(bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
         Returns:
             Reactive: A Reactive instance which calls watchers or initialize.
         """
-        return cls(default, layout=layout, repaint=repaint, init=True)
+        return cls(
+            default,
+            layout=layout,
+            repaint=repaint,
+            init=True,
+            always_update=always_update,
+        )
 
     @classmethod
     def var(
@@ -153,7 +160,7 @@ class Reactive(Generic[ReactiveType]):
         if callable(validate_function) and not first_set:
             value = validate_function(value)
         # If the value has changed, or this is the first time setting the value
-        if current_value != value or first_set:
+        if current_value != value or first_set or self._always_update:
             # Set the first set flag to False
             setattr(obj, f"__first_set_{self.internal_name}", False)
             # Store the internal value
@@ -259,7 +266,7 @@ class reactive(Reactive[ReactiveType]):
         layout (bool, optional): Perform a layout on change. Defaults to False.
         repaint (bool, optional): Perform a repaint on change. Defaults to True.
         init (bool, optional): Call watchers on initialize (post mount). Defaults to True.
-
+        always_update(bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
     """
 
     def __init__(
@@ -269,8 +276,15 @@ class reactive(Reactive[ReactiveType]):
         layout: bool = False,
         repaint: bool = True,
         init: bool = True,
+        always_update: bool = False,
     ) -> None:
-        super().__init__(default, layout=layout, repaint=repaint, init=init)
+        super().__init__(
+            default,
+            layout=layout,
+            repaint=repaint,
+            init=init,
+            always_update=always_update,
+        )
 
 
 class var(Reactive[ReactiveType]):

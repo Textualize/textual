@@ -2,8 +2,8 @@ Stopwatch {
     layout: horizontal;
     background: $boost;
     height: 5;
-    min-width: 50;
     margin: 1;
+    min-width: 50;
     padding: 1;
 }
 
