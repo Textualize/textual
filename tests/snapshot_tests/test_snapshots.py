@@ -8,6 +8,7 @@ from textual.widgets import Input, Button
 
 # --- Layout related stuff ---
 
+
 def test_grid_layout_basic(snap_compare):
     assert snap_compare("docs/examples/guide/layout/grid_layout1.py")
 
@@ -40,6 +41,7 @@ def test_dock_layout_sidebar(snap_compare):
 # Each widget should have a canonical example that is display in the docs.
 # When adding a new widget, ideally we should also create a snapshot test
 # from these examples which test rendering and simple interactions with it.
+
 
 def test_checkboxes(snap_compare):
     """Tests checkboxes but also acts a regression test for using
@@ -94,12 +96,18 @@ def test_header_render(snap_compare):
     assert snap_compare("docs/examples/widgets/header.py")
 
 
+def test_textlog_max_lines(snap_compare):
+    assert snap_compare("tests/snapshots/textlog_max_lines.py", press=list("abcde"))
+
+
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
 # If any of these change, something has likely broken, so snapshot each of them.
 
 PATHS = [
-    str(PurePosixPath(path)) for path in Path("docs/examples/styles").iterdir() if path.suffix == ".py"
+    str(PurePosixPath(path))
+    for path in Path("docs/examples/styles").iterdir()
+    if path.suffix == ".py"
 ]
 
 
