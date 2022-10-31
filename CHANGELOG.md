@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed issue where scrollbars weren't being unmounted
+- Fixed fr units for horizontal and vertical layouts https://github.com/Textualize/textual/pull/1067
+- Fixed `textual run` breaking sys.argv https://github.com/Textualize/textual/issues/1064
+- Fixed footer not updating styles when toggling dark mode
+- Fixed how the app title in a `Header` is centred https://github.com/Textualize/textual/issues/1060
+- Fixed the swapping of button variants https://github.com/Textualize/textual/issues/1048
+- Fixed reserved characters in screenshots https://github.com/Textualize/textual/issues/993
 
 ### Changed
 
@@ -17,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Dropped quit_after, screenshot, and screenshot_title from App.run, which can all be done via auto_pilot
 - Widgets are now closed in reversed DOM order
 - Input widget justify hardcoded to left to prevent text-align interference
+- Changed `textual run` so that it patches `argv` in more situations
 
 ### Added
 
@@ -27,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added Widget._get_virtual_dom to get scrollbars
 - Added size parameter to run and run_async
 - Added always_update to reactive
+- Returned an awaitable from push_screen, switch_screen, and install_screen https://github.com/Textualize/textual/pull/1061
 
 ## [0.2.1] - 2022-10-23
 
