@@ -5,7 +5,7 @@ from textual.screen import Screen
 
 
 async def test_unmount():
-    """Text unmount events are received in reverse DOM order."""
+    """Test unmount events are received in reverse DOM order."""
     unmount_ids: list[str] = []
 
     class UnmountWidget(Container):
