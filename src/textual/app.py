@@ -156,7 +156,6 @@ class App(Generic[ReturnType], DOMNode):
 
     Raises:
         CssPathError: When the supplied CSS path(s) are an unexpected type.
-
     """
 
     # Inline CSS for quick scripts (generally css_path should be preferred.)

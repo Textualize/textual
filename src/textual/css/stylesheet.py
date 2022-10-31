@@ -281,6 +281,7 @@ class Stylesheet:
                 Defaults to None.
             is_default_css (bool): True if the CSS is defined in the Widget, False if the CSS is defined
                 in a user stylesheet.
+            tie_breaker (int): Integer representing the priority of this source.
 
         Raises:
             StylesheetError: If the CSS could not be read.
