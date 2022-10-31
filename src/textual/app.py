@@ -158,10 +158,11 @@ class App(Generic[ReturnType], DOMNode):
         CssPathError: When the supplied CSS path(s) are an unexpected type.
     """
 
-    # Inline CSS for quick scripts (generally css_path should be preferred.)
     CSS = ""
+    """Inline CSS, useful for quick scripts. This is loaded after CSS_PATH,
+    and therefore takes priority in the event of a specificity clash."""
 
-    # Default (lowest priority) CSS
+    # Default (the lowest priority) CSS
     DEFAULT_CSS = """
     App {
         background: $background;
