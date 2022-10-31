@@ -36,12 +36,12 @@ class Button(Static, can_focus=True):
         min-width: 16;
         height: 3;
         background: $panel;
-        color: $text;      
-        border: none;        
+        color: $text;
+        border: none;
         border-top: tall $panel-lighten-2;
         border-bottom: tall $panel-darken-3;
-        content-align: center middle;        
-        text-style: bold;      
+        content-align: center middle;
+        text-style: bold;
     }
 
     Button.-disabled {
@@ -50,7 +50,7 @@ class Button(Static, can_focus=True):
     }
 
     Button:focus {
-        text-style: bold reverse;        
+        text-style: bold reverse;
     }
 
     Button:hover {
@@ -62,7 +62,7 @@ class Button(Static, can_focus=True):
     Button.-active {
         background: $panel;
         border-bottom: tall $panel-lighten-2;
-        border-top: tall $panel-darken-2;                
+        border-top: tall $panel-darken-2;
         tint: $background 30%;
     }
 
@@ -72,7 +72,7 @@ class Button(Static, can_focus=True):
         color: $text;
         border-top: tall $primary-lighten-3;
         border-bottom: tall $primary-darken-3;
-      
+
     }
 
     Button.-primary:hover {
@@ -107,7 +107,7 @@ class Button(Static, can_focus=True):
         border-top: tall $success-darken-2;
     }
 
-   
+
     /* Warning variant */
     Button.-warning {
         background: $warning;
@@ -119,7 +119,7 @@ class Button(Static, can_focus=True):
     Button.-warning:hover {
         background: $warning-darken-2;
         color: $text;
-       
+
     }
 
     Button.-warning.-active {
@@ -127,7 +127,7 @@ class Button(Static, can_focus=True):
         border-bottom: tall $warning-lighten-2;
         border-top: tall $warning-darken-2;
     }
-   
+
 
     /* Error variant */
     Button.-error {
@@ -135,7 +135,7 @@ class Button(Static, can_focus=True):
         color: $text;
         border-top: tall $error-lighten-2;
         border-bottom: tall $error-darken-3;
-     
+
     }
 
     Button.-error:hover {
@@ -215,7 +215,7 @@ class Button(Static, can_focus=True):
         return variant
 
     def watch_variant(self, old_variant: str, variant: str):
-        self.remove_class(f"_{old_variant}")
+        self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
 
     def watch_disabled(self, disabled: bool) -> None:

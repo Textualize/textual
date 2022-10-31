@@ -1,7 +1,7 @@
 import pytest
 
 from textual.widget import Widget
-from textual.css.query import InvalidQueryFormat
+from textual.css.query import InvalidQueryFormat, WrongType, NoMatches
 
 
 def test_query():
@@ -47,6 +47,9 @@ def test_query():
         assert list(app.query(".frob")) == []
         assert list(app.query("#frob")) == []
 
+        assert app.query("App")
+        assert not app.query("NotAnApp")
+
         assert list(app.query("App")) == [app]
         assert list(app.query("#main")) == [main_view]
         assert list(app.query("View#main")) == [main_view]
@@ -54,12 +57,32 @@ def test_query():
         assert list(app.query("#widget2")) == [widget2]
 
         assert list(app.query("Widget.float")) == [sidebar, tooltip, helpbar]
+        assert list(app.query(Widget).filter(".float")) == [sidebar, tooltip, helpbar]
+        assert list(
+            app.query(Widget)
+            .exclude("App")
+            .exclude("#sub")
+            .exclude("#markdown")
+            .exclude("#main")
+            .exclude("#help")
+            .exclude("#widget1")
+            .exclude("#widget2")
+        ) == [sidebar, tooltip, helpbar]
+        assert list(reversed(app.query("Widget.float"))) == [helpbar, tooltip, sidebar]
         assert list(app.query("Widget.float").results(Widget)) == [
             sidebar,
             tooltip,
             helpbar,
         ]
+        assert list(app.query("Widget.float").results()) == [
+            sidebar,
+            tooltip,
+            helpbar,
+        ]
         assert list(app.query("Widget.float").results(View)) == []
+
+        assert app.query("Widget.float")[0] == sidebar
+        assert app.query("Widget.float")[0:2] == [sidebar, tooltip]
 
         assert list(app.query("Widget.float.transient")) == [tooltip]
 
@@ -82,6 +105,66 @@ def test_query():
         assert list(app.query("#widget1 , #widget2")) == [widget1, widget2]
         assert list(app.query("#widget1, #widget2, App")) == [app, widget1, widget2]
 
+        assert app.query(".float").first() == sidebar
+        assert app.query(".float").last() == helpbar
+
+        with pytest.raises(NoMatches):
+            _ = app.query(".no_such_class").first()
+        with pytest.raises(NoMatches):
+            _ = app.query(".no_such_class").last()
+
+        with pytest.raises(WrongType):
+            _ = app.query(".float").first(View)
+        with pytest.raises(WrongType):
+            _ = app.query(".float").last(View)
+
+
+def test_query_classes():
+
+    class App(Widget):
+        pass
+
+    class ClassTest(Widget):
+        pass
+
+    CHILD_COUNT=100
+
+    # Create a fake app to hold everything else.
+    app = App()
+
+    # Now spin up a bunch of children.
+    for n in range(CHILD_COUNT):
+        app._add_child(ClassTest(id=f"child{n}"))
+
+    # Let's just be 100% sure everything was created fine.
+    assert len(app.query(ClassTest))==CHILD_COUNT
+
+    # Now, let's check there are *no* children with the test class.
+    assert len(app.query(".test"))==0
+
+    # Add the test class to everything and then check again.
+    app.query(ClassTest).add_class("test")
+    assert len(app.query(".test"))==CHILD_COUNT
+
+    # Remove the test class from everything then try again.
+    app.query(ClassTest).remove_class("test")
+    assert len(app.query(".test"))==0
+
+    # Add the test class to everything using set_class.
+    app.query(ClassTest).set_class(True, "test")
+    assert len(app.query(".test"))==CHILD_COUNT
+
+    # Remove the test class from everything using set_class.
+    app.query(ClassTest).set_class(False, "test")
+    assert len(app.query(".test"))==0
+
+    # Add the test class to everything using toggle_class.
+    app.query(ClassTest).toggle_class("test")
+    assert len(app.query(".test"))==CHILD_COUNT
+
+    # Remove the test class from everything using toggle_class.
+    app.query(ClassTest).toggle_class("test")
+    assert len(app.query(".test"))==0
 
 def test_invalid_query():
     class App(Widget):

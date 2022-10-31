@@ -549,7 +549,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         filename: str | None = None,
         path: str = "./",
-        time_format: str = "%Y-%m-%d %X %f",
+        time_format: str = "%Y%m%d %H%M%S %f",
     ) -> str:
         """Save an SVG screenshot of the current screen.
 
@@ -566,12 +566,13 @@ class App(Generic[ReturnType], DOMNode):
             svg_filename = (
                 f"{self.title.lower()} {datetime.now().strftime(time_format)}.svg"
             )
-            svg_filename = svg_filename.replace("/", "_").replace("\\", "_")
+            for reserved in '<>:"/\\|?*':
+                svg_filename = svg_filename.replace(reserved, "_")
         else:
             svg_filename = filename
         svg_path = os.path.expanduser(os.path.join(path, svg_filename))
         screenshot_svg = self.export_screenshot()
-        with open(svg_path, "w") as svg_file:
+        with open(svg_path, "w", encoding="utf-8") as svg_file:
             svg_file.write(screenshot_svg)
         return svg_path
 

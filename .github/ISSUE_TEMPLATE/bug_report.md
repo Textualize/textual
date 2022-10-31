@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
-Textual is currently in active development. I will try to keep the sample functional, but I make no guarantee anything will run right now.
+Please give a brief but clear explanation of what the issue is. Let us know what the behaviour you expect is, and what is actually happening. Let us know what operating system you are running on, and what terminal you are using.
 
-Unless this is a blatant bug, you might want to open a discussion for now.
+Feel free to add screenshots and/or videos. These can be very helpful!
+
+If you can, include a complete working example that demonstrates the bug. Please check it can run without modifications.

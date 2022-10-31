@@ -1,5 +1,5 @@
 $animation-type: linear;
-$animatin-speed: 175ms;
+$animation-speed: 175ms;
 
 Game {
     align: center middle;
@@ -43,7 +43,7 @@ GameCell {
     height: 100%;
     background: $surface;
     border: round $surface-darken-1;
-    transition: background $animatin-speed $animation-type, color $animatin-speed $animation-type;
+    transition: background $animation-speed $animation-type, color $animation-speed $animation-type;
 }
 
 GameCell:hover {

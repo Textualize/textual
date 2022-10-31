@@ -11,6 +11,8 @@ import sys
 
 from rich.syntax import Syntax
 from rich.traceback import Traceback
+
+from textual import events
 from textual.app import App, ComposeResult
 from textual.containers import Container, Vertical
 from textual.reactive import var
@@ -30,7 +32,7 @@ class CodeBrowser(App):
 
     def watch_show_tree(self, show_tree: bool) -> None:
         """Called when show_tree is modified."""
-        self.set_class(show_tree, "-show-tree")        
+        self.set_class(show_tree, "-show-tree")
 
     def compose(self) -> ComposeResult:
         """Compose our UI."""
@@ -41,6 +43,9 @@ class CodeBrowser(App):
             Vertical(Static(id="code", expand=True), id="code-view"),
         )
         yield Footer()
+
+    def on_mount(self, event: events.Mount) -> None:
+        self.query_one(DirectoryTree).focus()
 
     def on_directory_tree_file_click(self, event: DirectoryTree.FileClick) -> None:
         """Called when the user click a file in the directory tree."""
