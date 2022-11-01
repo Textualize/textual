@@ -161,7 +161,7 @@ With the CSS in place, the output looks very different:
 
 ### Using multiple CSS files
 
-You can also set the `CSS_PATH` class variable to a list of paths, and they'll be loaded in order.
+You can also set the `CSS_PATH` class variable to a list of paths. Textual will combine the rules from all of the supplied paths.
 
 ### Why CSS?
 
