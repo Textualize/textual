@@ -97,6 +97,7 @@ class SvgSnapshotDiff:
     """Model representing a diff between current screenshot of an app,
     and the snapshot on disk. This is ultimately intended to be used in
     a Jinja2 template."""
+
     snapshot: Optional[str]
     actual: Optional[str]
     test_name: str
@@ -126,14 +127,17 @@ def pytest_sessionfinish(
 
         if app:
             path, line_index, name = item.reportinfo()
+            similarity = (
+                100
+                * difflib.SequenceMatcher(
+                    a=str(snapshot_svg), b=str(actual_svg)
+                ).ratio()
+            )
             diffs.append(
                 SvgSnapshotDiff(
                     snapshot=str(snapshot_svg),
                     actual=str(actual_svg),
-                    file_similarity=100
-                                    * difflib.SequenceMatcher(
-                        a=str(snapshot_svg), b=str(actual_svg)
-                    ).ratio(),
+                    file_similarity=similarity,
                     test_name=name,
                     path=path,
                     line_number=line_index + 1,
