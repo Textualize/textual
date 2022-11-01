@@ -51,7 +51,7 @@ from .reactive import Reactive
 from .render import measure
 
 if TYPE_CHECKING:
-    from .app import App, ComposeResult
+    from .app import App, ComposeResult, MountSpot
     from .scrollbar import (
         ScrollBar,
         ScrollBarCorner,
@@ -375,16 +375,29 @@ class Widget(DOMNode):
         if self._scrollbar_corner is not None:
             yield self._scrollbar_corner
 
-    def mount(self, *widgets: Widget) -> AwaitMount:
-        """Mount child widgets (making this widget a container).
+    def mount(
+        self, *widgets: Widget, before: MountSpot = None, after: MountSpot = None
+    ) -> AwaitMount:
+        """Mount widgets below this widget (making this widget a container).
 
         Args:
             *widgets (Widget): The widget(s) to mount.
+            before (MountSpot, optional): Optional location to mount before.
+            after (MountSpot, optional): Optional location to mount after.
 
         Returns:
             AwaitMount: An awaitable object that waits for widgets to be mounted.
+
+        Raises:
+            MountError: If there is a problem with the mount request.
+
+        Note:
+            Only one of ``before`` or ``after`` can be provided. If both are
+            provided a ``MountError`` will be raised.
         """
-        return AwaitMount(self.app._register(self, *widgets))
+        return AwaitMount(
+            self.app._register(self, *widgets, before=before, after=after)
+        )
 
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.

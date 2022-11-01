@@ -13,6 +13,7 @@ from typing import (
     TypeVar,
     cast,
     overload,
+    Union,
 )
 
 import rich.repr
@@ -894,3 +895,56 @@ class DOMNode(MessagePump):
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
         pass
+
+    DOMSpot = Union[int, str, "DOMQuery[Widget]", "Widget", None]
+    """The type of a relative location of a node in the DOM."""
+
+    def _find_spot(self, spot: DOMSpot) -> tuple["DOMNode", int]:
+        """Collapse a number of DOM location identifiers into a parent/child-index pair.
+
+        Args:
+            spot (DOMSpot): The spot to find.
+
+        Returns:
+            tuple[DOMNode, int]: The parent and the location in its child list.
+
+        Raises:
+            ValueError: If a given node can't be located amongst children.
+
+        The rules of this method are:
+
+        - Given ``None``, parent is ``self`` and location is ``-1``.
+        - Given an integer, parent is ``self`` and location is the integer value.
+        - Given a DOMNode, parent is the node's parent and location is
+          where the widget is found in the parent's ``children``. If it
+          can't be found a ``ValueError`` will be raised.
+        - Given a query result, the ``first`` node is used. The code then
+          falls to acting as if a DOMNode were given.
+        - Given a string, it is used to perform a query and then the result
+          is used as if a query result were given.
+        """
+
+        from .widget import Widget
+
+        # None pretty much means "at the end of our child list."
+        if spot is None:
+            return cast(Widget, self), -1
+
+        # A numeric location means at that point in our child list.
+        if isinstance(spot, int):
+            return cast(Widget, self), spot
+
+        # We've got a widget that has a parent; let's look for that in our children.
+        if isinstance(spot, DOMNode):
+            try:
+                return cast(DOMNode, spot.parent), spot.parent.children._index(spot)
+            except ValueError:
+                raise DOMError(f"{spot!r} is not a child of {self!r}") from None
+
+        # Do we have a string? If we do, cast that into a query.
+        if isinstance(spot, str):
+            spot = self.query(spot)
+
+        # At this point, we should have a query of some description. So
+        # let's now descend into it and see.
+        return spot.first(DOMNode).parent._find_spot(spot.first(DOMNode))

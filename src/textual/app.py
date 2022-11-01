@@ -822,16 +822,29 @@ class App(Generic[ReturnType], DOMNode):
         self._require_stylesheet_update.add(self.screen if node is None else node)
         self.check_idle()
 
-    def mount(self, *widgets: Widget) -> AwaitMount:
-        """Mount the given widgets.
+    def mount(
+        self, *widgets: Widget, before: MountSpot = None, after: MountSpot = None
+    ) -> AwaitMount:
+        """Mount the given widgets relative to the app's screen.
 
         Args:
             *widgets (Widget): The widget(s) to mount.
+            before (MountSpot, optional): Optional location to mount before.
+            after (MountSpot, optional): Optional location to mount after.
 
         Returns:
             AwaitMount: An awaitable object that waits for widgets to be mounted.
+
+        Raises:
+            MountError: If there is a problem with the mount request.
+
+        Note:
+            Only one of ``before`` or ``after`` can be provided. If both are
+            provided a ``MountError`` will be raised.
         """
-        return AwaitMount(self._register(self.screen, *widgets))
+        return AwaitMount(
+            self._register(self.screen, *widgets, before=before, after=after)
+        )
 
     def mount_all(self, widgets: Iterable[Widget]) -> AwaitMount:
         """Mount widgets from an iterable.
@@ -1300,12 +1313,20 @@ class App(Generic[ReturnType], DOMNode):
             return True
         return False
 
-    def _register(self, parent: DOMNode, *widgets: Widget) -> list[Widget]:
+    def _register(
+        self,
+        parent: DOMNode,
+        *widgets: Widget,
+        before: MountSpot = None,
+        after: MountSpot = None,
+    ) -> list[Widget]:
         """Register widget(s) so they may receive events.
 
         Args:
             parent (DOMNode): Parent node.
             *widgets: The widget(s) to register.
+            before (MountSpot, optional): Optional location to mount before.
+            after (MountSpot, optional): Optional location to mount after.
 
         Returns:
             list[Widget]: List of modified widgets.
