@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-import sys
 from dataclasses import dataclass
 from typing import Iterable, MutableMapping
 
 import rich.repr
 
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:  # pragma: no cover
-    from typing_extensions import TypeAlias
+from textual._typing import TypeAlias
 
 BindingType: TypeAlias = "Binding | tuple[str, str, str]"
 

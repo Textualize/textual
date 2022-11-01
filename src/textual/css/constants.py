@@ -1,13 +1,8 @@
 from __future__ import annotations
-import sys
 import typing
 
-if sys.version_info >= (3, 8):
-    from typing import Final
-else:
-    from typing_extensions import Final  # pragma: no cover
-
 from ..geometry import Spacing
+from .._typing import Final
 
 if typing.TYPE_CHECKING:
     from .types import EdgeType

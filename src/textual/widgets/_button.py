@@ -1,13 +1,7 @@
 from __future__ import annotations
 
-import sys
 from functools import partial
 from typing import cast
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal  # pragma: no cover
 
 import rich.repr
 from rich.console import RenderableType
@@ -18,6 +12,7 @@ from ..css._error_tools import friendly_list
 from ..message import Message
 from ..reactive import Reactive
 from ..widgets import Static
+from .._typing import Literal
 
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
 _VALID_BUTTON_VARIANTS = {"default", "primary", "success", "warning", "error"}
