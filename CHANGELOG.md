@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `init` param to reactive.watch
+- `CSS_PATH` can now be a list of CSS files https://github.com/Textualize/textual/pull/1079
 
 ## [0.3.0] - 2022-10-31
 
