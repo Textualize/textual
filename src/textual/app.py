@@ -847,27 +847,27 @@ class App(Generic[ReturnType], DOMNode):
         self._require_stylesheet_update.add(self.screen if node is None else node)
         self.check_idle()
 
-    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> AwaitMount:
-        """Mount widgets. Widgets specified as positional args, or keywords args. If supplied
-        as keyword args they will be assigned an id of the key.
+    def mount(self, *widgets: Widget) -> AwaitMount:
+        """Mount the given widgets.
+
+        Args:
+            *widgets (Widget): The widget(s) to mount.
 
         Returns:
             AwaitMount: An awaitable object that waits for widgets to be mounted.
-
         """
-        mounted_widgets = self._register(self.screen, *anon_widgets, **widgets)
-        return AwaitMount(mounted_widgets)
+        return AwaitMount(self._register(self.screen, *widgets))
 
     def mount_all(self, widgets: Iterable[Widget]) -> AwaitMount:
         """Mount widgets from an iterable.
 
         Args:
             widgets (Iterable[Widget]): An iterable of widgets.
+
+        Returns:
+            AwaitMount: An awaitable object that waits for widgets to be mounted.
         """
-        mounted_widgets = list(widgets)
-        for widget in mounted_widgets:
-            self._register(self.screen, widget)
-        return AwaitMount(mounted_widgets)
+        return self.mount(*widgets)
 
     def is_screen_installed(self, screen: Screen | str) -> bool:
         """Check if a given screen has been installed.
@@ -1325,37 +1325,33 @@ class App(Generic[ReturnType], DOMNode):
             return True
         return False
 
-    def _register(
-        self, parent: DOMNode, *anon_widgets: Widget, **widgets: Widget
-    ) -> list[Widget]:
+    def _register(self, parent: DOMNode, *widgets: Widget) -> list[Widget]:
         """Register widget(s) so they may receive events.
 
         Args:
-            parent (Widget): Parent Widget.
+            parent (DOMNode): Parent node.
+            *widgets: The widget(s) to register.
 
         Returns:
             list[Widget]: List of modified widgets.
 
         """
-        if not anon_widgets and not widgets:
+
+        if not widgets:
             return []
-        name_widgets: list[tuple[str | None, Widget]]
-        name_widgets = [*((None, widget) for widget in anon_widgets), *widgets.items()]
+
         apply_stylesheet = self.stylesheet.apply
 
-        for widget_id, widget in name_widgets:
+        for widget in widgets:
             if not isinstance(widget, Widget):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
-                if widget_id is not None:
-                    widget.id = widget_id
                 self._register_child(parent, widget)
                 if widget.children:
                     self._register(widget, *widget.children)
                 apply_stylesheet(widget)
 
-        registered_widgets = [widget for _, widget in name_widgets]
-        return registered_widgets
+        return list(widgets)
 
     def _unregister(self, widget: Widget) -> None:
         """Unregister a widget.

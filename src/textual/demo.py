@@ -203,7 +203,7 @@ class DarkSwitch(Horizontal):
         yield Static("Dark mode toggle", classes="label")
 
     def on_mount(self) -> None:
-        watch(self.app, "dark", self.on_dark_change)
+        watch(self.app, "dark", self.on_dark_change, init=False)
 
     def on_dark_change(self, dark: bool) -> None:
         self.query_one(Checkbox).value = self.app.dark

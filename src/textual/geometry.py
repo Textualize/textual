@@ -427,7 +427,7 @@ class Region(NamedTuple):
             Offset: Top left offset.
 
         """
-        return Offset(self.x, self.y)
+        return Offset(*self[:2])
 
     @property
     def bottom_left(self) -> Offset:
@@ -470,7 +470,7 @@ class Region(NamedTuple):
             Size: Size of the region.
 
         """
-        return Size(self.width, self.height)
+        return Size(*self[2:])
 
     @property
     def corners(self) -> tuple[int, int, int, int]:

@@ -299,7 +299,10 @@ class var(Reactive[ReactiveType]):
 
 
 def watch(
-    obj: Reactable, attribute_name: str, callback: Callable[[Any], object]
+    obj: Reactable,
+    attribute_name: str,
+    callback: Callable[[Any], object],
+    init: bool = True,
 ) -> None:
     """Watch a reactive variable on an object.
 
@@ -307,6 +310,7 @@ def watch(
         obj (Reactable): The parent object.
         attribute_name (str): The attribute to watch.
         callback (Callable[[Any], object]): A callable to call when the attribute changes.
+        init (bool, optional): True to call watcher initialization. Defaults to True.
     """
     watcher_name = f"__{attribute_name}_watchers"
     current_value = getattr(obj, attribute_name, None)
@@ -314,4 +318,5 @@ def watch(
         setattr(obj, watcher_name, WeakSet())
     watchers = getattr(obj, watcher_name)
     watchers.add(callback)
-    Reactive._check_watchers(obj, attribute_name, current_value)
+    if init:
+        Reactive._check_watchers(obj, attribute_name, current_value)
