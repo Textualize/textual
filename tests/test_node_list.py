@@ -21,6 +21,16 @@ def test_repeat_add_one():
         nodes._append(widget)
     assert len(nodes)==1
 
+def test_insert():
+    nodes = NodeList()
+    widget1 = Widget()
+    widget2 = Widget()
+    widget3 = Widget()
+    nodes._append(widget1)
+    nodes._append(widget3)
+    nodes._insert(1,widget2)
+    assert list(nodes) == [widget1,widget2,widget3]
+
 def test_truthy():
     """Does a node list act as a truthy object?"""
     nodes = NodeList()

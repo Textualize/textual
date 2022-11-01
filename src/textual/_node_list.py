@@ -64,6 +64,17 @@ class NodeList(Sequence):
             self._nodes_set.add(widget)
             self._updates += 1
 
+    def _insert(self, index: int, widget: Widget) -> None:
+        """Insert a Widget.
+
+        Args:
+            widget (Widget): A widget.
+        """
+        if widget not in self._nodes_set:
+            self._nodes.insert(index, widget)
+            self._nodes_set.add(widget)
+            self._updates += 1
+
     def _remove(self, widget: Widget) -> None:
         """Remove a widget from the list.
 
