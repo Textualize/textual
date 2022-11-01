@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from operator import attrgetter
 from os import PathLike
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Union, List, Optional, Callable, Iterable
 
 import pytest
@@ -24,6 +24,7 @@ from textual.app import App
 
 TEXTUAL_SNAPSHOT_SVG_KEY = pytest.StashKey[str]()
 TEXTUAL_ACTUAL_SVG_KEY = pytest.StashKey[str]()
+TEXTUAL_SNAPSHOT_NAME_KEY = pytest.StashKey[str]()
 TEXTUAL_SNAPSHOT_PASS = pytest.StashKey[bool]()
 TEXTUAL_APP_KEY = pytest.StashKey[App]()
 
@@ -31,7 +32,7 @@ TEXTUAL_APP_KEY = pytest.StashKey[App]()
 @pytest.fixture
 def snap_compare(
     snapshot: SnapshotAssertion, request: FixtureRequest
-) -> Callable[[str], bool]:
+) -> Callable[[str | PurePath], bool]:
     """
     This fixture returns a function which can be used to compare the output of a Textual
     app with the output of the same app in the past. This is snapshot testing, and it
@@ -39,9 +40,10 @@ def snap_compare(
     """
 
     def compare(
-        app_path: str,
+        app_path: str | PurePath,
         press: Iterable[str] = ("_",),
         terminal_size: tuple[int, int] = (80, 24),
+        snapshot_name: str | None = None,
     ) -> bool:
         """
         Compare a current screenshot of the app running at app_path, with
@@ -53,26 +55,38 @@ def snap_compare(
             app_path (str): The path of the app.
             press (Iterable[str]): Key presses to run before taking screenshot. "_" is a short pause.
             terminal_size (tuple[int, int]): A pair of integers (WIDTH, HEIGHT), representing terminal size.
+            snapshot_name (str | None): The name of the snapshot, or None to use the test name/pytest nodeid.
 
         Returns:
             bool: True if the screenshot matches the snapshot.
         """
         node = request.node
-        app = import_app(app_path)
+        path = Path(app_path)
+        if path.is_absolute():
+            # If the user supplies an absolute path, just use it directly.
+            app = import_app(str(path.resolve()))
+        else:
+            # If a relative path is supplied by the user, it's relative to the location of the pytest node,
+            # NOT the location that `pytest` was invoked from.
+            node_path = node.path.parent
+            resolved = (node_path / app_path).resolve()
+            app = import_app(str(resolved))
+
         actual_screenshot = take_svg_screenshot(
             app=app,
             press=press,
             terminal_size=terminal_size,
         )
-        result = snapshot == actual_screenshot
+        result = snapshot(name=snapshot_name) == actual_screenshot
 
         if result is False:
             # The split and join below is a mad hack, sorry...
             node.stash[TEXTUAL_SNAPSHOT_SVG_KEY] = "\n".join(
-                str(snapshot).splitlines()[1:-1]
+                str(snapshot(name=snapshot_name)).splitlines()[1:-1]
             )
             node.stash[TEXTUAL_ACTUAL_SVG_KEY] = actual_screenshot
             node.stash[TEXTUAL_APP_KEY] = app
+            node.stash[TEXTUAL_SNAPSHOT_NAME_KEY] = snapshot_name
         else:
             node.stash[TEXTUAL_SNAPSHOT_PASS] = True
 
@@ -86,7 +100,6 @@ class SvgSnapshotDiff:
     """Model representing a diff between current screenshot of an app,
     and the snapshot on disk. This is ultimately intended to be used in
     a Jinja2 template."""
-
     snapshot: Optional[str]
     actual: Optional[str]
     test_name: str
@@ -95,6 +108,7 @@ class SvgSnapshotDiff:
     line_number: int
     app: App
     environment: dict
+    custom_snapshot_name: Optional[str]
 
 
 def pytest_sessionfinish(
@@ -112,16 +126,17 @@ def pytest_sessionfinish(
         num_snapshots_passing += int(item.stash.get(TEXTUAL_SNAPSHOT_PASS, False))
         snapshot_svg = item.stash.get(TEXTUAL_SNAPSHOT_SVG_KEY, None)
         actual_svg = item.stash.get(TEXTUAL_ACTUAL_SVG_KEY, None)
+        snapshot_name = item.stash.get(TEXTUAL_SNAPSHOT_NAME_KEY, None)
         app = item.stash.get(TEXTUAL_APP_KEY, None)
 
-        if snapshot_svg and actual_svg and app:
+        if app:
             path, line_index, name = item.reportinfo()
             diffs.append(
                 SvgSnapshotDiff(
                     snapshot=str(snapshot_svg),
                     actual=str(actual_svg),
                     file_similarity=100
-                    * difflib.SequenceMatcher(
+                                    * difflib.SequenceMatcher(
                         a=str(snapshot_svg), b=str(actual_svg)
                     ).ratio(),
                     test_name=name,
@@ -129,6 +144,7 @@ def pytest_sessionfinish(
                     line_number=line_index + 1,
                     app=app,
                     environment=dict(os.environ),
+                    custom_snapshot_name=snapshot_name,
                 )
             )
 
