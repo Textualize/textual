@@ -248,10 +248,23 @@ class Stylesheet:
             with open(filename, "rt") as css_file:
                 css = css_file.read()
             path = os.path.abspath(filename)
-        except Exception as error:
+        except Exception:
             raise StylesheetError(f"unable to read CSS file {filename!r}") from None
         self.source[str(path)] = CssSource(css, False, 0)
         self._require_parse = True
+
+    def read_all(self, paths: list[PurePath]) -> None:
+        """Read multiple CSS files, in order.
+
+        Args:
+            paths (list[PurePath]): The paths of the CSS files to read, in order.
+
+        Raises:
+            StylesheetError: If the CSS could not be read.
+            StylesheetParseError: If the CSS is invalid.
+        """
+        for path in paths:
+            self.read(path)
 
     def add_source(
         self,
@@ -268,6 +281,7 @@ class Stylesheet:
                 Defaults to None.
             is_default_css (bool): True if the CSS is defined in the Widget, False if the CSS is defined
                 in a user stylesheet.
+            tie_breaker (int): Integer representing the priority of this source.
 
         Raises:
             StylesheetError: If the CSS could not be read.

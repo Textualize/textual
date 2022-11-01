@@ -25,6 +25,7 @@ from typing import (
     TypeVar,
     cast,
     Union,
+    List,
 )
 from weakref import WeakSet, WeakValueDictionary
 
@@ -126,6 +127,10 @@ class ScreenStackError(ScreenError):
     """Raised when attempting to pop the last screen from the stack."""
 
 
+class CssPathError(Exception):
+    """Raised when supplied CSS path(s) are invalid."""
+
+
 ReturnType = TypeVar("ReturnType")
 
 
@@ -137,23 +142,27 @@ class _NullFile:
         pass
 
 
-CSSPathType = Union[str, PurePath, None]
+CSSPathType = Union[str, PurePath, List[Union[str, PurePath]], None]
 
 
 @rich.repr.auto
 class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications.
-
     Args:
         driver_class (Type[Driver] | None, optional): Driver class or ``None`` to auto-detect. Defaults to None.
-        css_path (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
+        css_path (str | PurePath | list[str | PurePath] | None, optional): Path to CSS or ``None`` for no CSS file.
+            Defaults to None. To load multiple CSS files, pass a list of strings or paths which will be loaded in order.
         watch_css (bool, optional): Watch CSS for changes. Defaults to False.
+
+    Raises:
+        CssPathError: When the supplied CSS path(s) are an unexpected type.
     """
 
-    # Inline CSS for quick scripts (generally css_path should be preferred.)
     CSS = ""
+    """Inline CSS, useful for quick scripts. This is loaded after CSS_PATH,
+    and therefore takes priority in the event of a specificity clash."""
 
-    # Default (lowest priority) CSS
+    # Default (the lowest priority) CSS
     DEFAULT_CSS = """
     App {
         background: $background;
@@ -227,15 +236,30 @@ class App(Generic[ReturnType], DOMNode):
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
         self._require_stylesheet_update: set[DOMNode] = set()
 
-        # We want the CSS path to be resolved from the location of the App subclass
         css_path = css_path or self.CSS_PATH
         if css_path is not None:
+            # When value(s) are supplied for CSS_PATH, we normalise them to a list of Paths.
             if isinstance(css_path, str):
-                css_path = Path(css_path)
-            css_path = _make_path_object_relative(css_path, self) if css_path else None
+                css_paths = [Path(css_path)]
+            elif isinstance(css_path, PurePath):
+                css_paths = [css_path]
+            elif isinstance(css_path, list):
+                css_paths = []
+                for path in css_path:
+                    css_paths.append(Path(path) if isinstance(path, str) else path)
+            else:
+                raise CssPathError(
+                    "Expected a str, Path or list[str | Path] for the CSS_PATH."
+                )
 
-        self.css_path = css_path
+            # We want the CSS path to be resolved from the location of the App subclass
+            css_paths = [
+                _make_path_object_relative(css_path, self) for css_path in css_paths
+            ]
+        else:
+            css_paths = []
 
+        self.css_path = css_paths
         self._registry: WeakSet[DOMNode] = WeakSet()
 
         self._installed_screens: WeakValueDictionary[
@@ -774,15 +798,16 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_css_change(self) -> None:
         """Called when the CSS changes (if watch_css is True)."""
-        if self.css_path is not None:
+        css_paths = self.css_path
+        if css_paths:
             try:
                 time = perf_counter()
                 stylesheet = self.stylesheet.copy()
-                stylesheet.read(self.css_path)
+                stylesheet.read_all(css_paths)
                 stylesheet.parse()
                 elapsed = (perf_counter() - time) * 1000
                 self.log.system(
-                    f"<stylesheet> loaded {self.css_path!r} in {elapsed:.0f} ms"
+                    f"<stylesheet> loaded {len(css_paths)} CSS files in {elapsed:.0f} ms"
                 )
             except Exception as error:
                 # TODO: Catch specific exceptions
@@ -1141,8 +1166,8 @@ class App(Generic[ReturnType], DOMNode):
         self.log.system(features=self.features)
 
         try:
-            if self.css_path is not None:
-                self.stylesheet.read(self.css_path)
+            if self.css_path:
+                self.stylesheet.read_all(self.css_path)
             for path, css, tie_breaker in self.get_default_css():
                 self.stylesheet.add_source(
                     css, path=path, is_default_css=True, tie_breaker=tie_breaker

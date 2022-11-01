@@ -35,7 +35,12 @@ def import_app(import_name: str) -> App:
     from textual.app import App, WINDOWS
 
     import_name, *argv = shlex.split(import_name, posix=not WINDOWS)
+    drive, import_name = os.path.splitdrive(import_name)
+
     lib, _colon, name = import_name.partition(":")
+
+    if drive:
+        lib = os.path.join(drive, os.sep, lib)
 
     if lib.endswith(".py"):
         path = os.path.abspath(lib)
@@ -62,7 +67,7 @@ def import_app(import_name: str) -> App:
                 except KeyError:
                     raise AppFail(f"App {name!r} not found in {lib!r}")
             else:
-                # Find a App class or instance that is *not* the base class
+                # Find an App class or instance that is *not* the base class
                 apps = [
                     value
                     for value in global_vars.values()
