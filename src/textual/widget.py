@@ -375,23 +375,16 @@ class Widget(DOMNode):
         if self._scrollbar_corner is not None:
             yield self._scrollbar_corner
 
-    def mount(self, *anon_widgets: Widget, **widgets: Widget) -> AwaitMount:
+    def mount(self, *widgets: Widget) -> AwaitMount:
         """Mount child widgets (making this widget a container).
 
-        Widgets may be passed as positional arguments or keyword arguments. If keyword arguments,
-        the keys will be set as the Widget's id.
-
-        Example:
-            ```python
-            self.mount(Static("hello"), header=Header())
-            ```
+        Args:
+            *widgets (Widget): The widget(s) to mount.
 
         Returns:
             AwaitMount: An awaitable object that waits for widgets to be mounted.
-
         """
-        mounted_widgets = self.app._register(self, *anon_widgets, **widgets)
-        return AwaitMount(mounted_widgets)
+        return AwaitMount(self.app._register(self, *widgets))
 
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.

@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.4.0] - Unreleased
+
+### Changed
+
+- Dropped support for mounting "named" and "anonymous" widgets via
+  `App.mount` and `Widget.mount`. Both methods now simply take one or more
+  widgets as positional arguments.
+
 ## [0.3.0] - 2022-10-31
 
 ### Fixed
