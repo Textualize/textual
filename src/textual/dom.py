@@ -609,21 +609,16 @@ class DOMNode(MessagePump):
         self.children._append(node)
         node._attach(self)
 
-    def _add_children(self, *nodes: Widget, **named_nodes: Widget) -> None:
+    def _add_children(self, *nodes: Widget) -> None:
         """Add multiple children to this node.
 
         Args:
             *nodes (DOMNode): Positional args should be new DOM nodes.
-            **named_nodes (DOMNode): Keyword args will be assigned the argument name as an ID.
         """
         _append = self.children._append
         for node in nodes:
             node._attach(self)
             _append(node)
-        for node_id, node in named_nodes.items():
-            node._attach(self)
-            _append(node)
-            node.id = node_id
 
     WalkType = TypeVar("WalkType")
 

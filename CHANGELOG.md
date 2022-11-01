@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.4.0] - Unreleased
 
+### Changed
+
+- Dropped support for mounting "named" and "anonymous" widgets via
+  `App.mount` and `Widget.mount`. Both methods now simply take one or more
+  widgets as positional arguments.
+
 ### Added
 
 - Added `init` param to reactive.watch
