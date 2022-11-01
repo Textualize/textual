@@ -1,13 +1,7 @@
 from __future__ import annotations
 
-import sys
-
 from typing import cast
-
-if sys.version_info >= (3, 8):
-    from typing import Final, Literal
-else:
-    from typing_extensions import Final, Literal
+from textual._typing import Final, Literal
 
 FEATURES: Final = {"devtools", "debug", "headless"}
 

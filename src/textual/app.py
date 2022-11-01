@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-from asyncio import Task
-from contextlib import asynccontextmanager
 import inspect
 import io
 import os
@@ -10,14 +8,14 @@ import platform
 import sys
 import unicodedata
 import warnings
+from asyncio import Task
+from contextlib import asynccontextmanager
 from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
 from time import perf_counter
 from typing import (
     Any,
-    Callable,
-    Coroutine,
     Generic,
     Iterable,
     Type,
@@ -27,9 +25,6 @@ from typing import (
     Union,
 )
 from weakref import WeakSet, WeakValueDictionary
-
-from ._ansi_sequences import SYNC_END, SYNC_START
-from ._path import _make_path_object_relative
 
 import nanoid
 import rich
@@ -41,10 +36,13 @@ from rich.traceback import Traceback
 
 from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
 from ._animator import Animator, DEFAULT_EASING, Animatable, EasingFunction
+from ._ansi_sequences import SYNC_END, SYNC_START
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
+from ._path import _make_path_object_relative
+from ._typing import TypeAlias
 from .binding import Binding, Bindings
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
@@ -65,11 +63,6 @@ from .widget import AwaitMount, Widget
 if TYPE_CHECKING:
     from .devtools.client import DevtoolsClient
     from .pilot import Pilot
-
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:  # pragma: no cover
-    from typing_extensions import TypeAlias
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
