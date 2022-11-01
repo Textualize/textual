@@ -1,3 +1,5 @@
+import pytest
+
 from textual.widget import Widget
 from textual._node_list import NodeList
 
@@ -34,6 +36,15 @@ def test_contains():
     nodes._append(widget)
     assert widget in nodes
     assert Widget() not in nodes
+
+def test_index():
+    """Can we get the index of a widget in the list?"""
+    widget = Widget()
+    nodes = NodeList()
+    with pytest.raises(ValueError):
+        _ = nodes._index(widget)
+    nodes._append(widget)
+    assert nodes._index(widget) == 0
 
 def test_remove():
     """Can we remove a widget we've added?"""
