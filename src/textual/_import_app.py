@@ -35,7 +35,10 @@ def import_app(import_name: str) -> App:
     from textual.app import App, WINDOWS
 
     import_name, *argv = shlex.split(import_name, posix=not WINDOWS)
-    lib, _colon, name = import_name.rpartition(":")
+    if ":" in import_name:
+        lib, _colon, name = import_name.rpartition(":")
+    else:
+        lib, name = import_name, ""
 
     if lib.endswith(".py"):
         path = os.path.abspath(lib)
