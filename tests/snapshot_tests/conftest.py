@@ -24,7 +24,6 @@ from textual.app import App
 
 TEXTUAL_SNAPSHOT_SVG_KEY = pytest.StashKey[str]()
 TEXTUAL_ACTUAL_SVG_KEY = pytest.StashKey[str]()
-TEXTUAL_SNAPSHOT_NAME_KEY = pytest.StashKey[str]()
 TEXTUAL_SNAPSHOT_PASS = pytest.StashKey[bool]()
 TEXTUAL_APP_KEY = pytest.StashKey[App]()
 
@@ -43,7 +42,6 @@ def snap_compare(
         app_path: str | PurePath,
         press: Iterable[str] = ("_",),
         terminal_size: tuple[int, int] = (80, 24),
-        snapshot_name: str | None = None,
     ) -> bool:
         """
         Compare a current screenshot of the app running at app_path, with
@@ -55,7 +53,6 @@ def snap_compare(
             app_path (str): The path of the app.
             press (Iterable[str]): Key presses to run before taking screenshot. "_" is a short pause.
             terminal_size (tuple[int, int]): A pair of integers (WIDTH, HEIGHT), representing terminal size.
-            snapshot_name (str | None): The name of the snapshot, or None to use the test name/pytest nodeid.
 
         Returns:
             bool: True if the screenshot matches the snapshot.
@@ -77,16 +74,15 @@ def snap_compare(
             press=press,
             terminal_size=terminal_size,
         )
-        result = snapshot(name=snapshot_name) == actual_screenshot
+        result = snapshot == actual_screenshot
 
         if result is False:
             # The split and join below is a mad hack, sorry...
             node.stash[TEXTUAL_SNAPSHOT_SVG_KEY] = "\n".join(
-                str(snapshot(name=snapshot_name)).splitlines()[1:-1]
+                str(snapshot).splitlines()[1:-1]
             )
             node.stash[TEXTUAL_ACTUAL_SVG_KEY] = actual_screenshot
             node.stash[TEXTUAL_APP_KEY] = app
-            node.stash[TEXTUAL_SNAPSHOT_NAME_KEY] = snapshot_name
         else:
             node.stash[TEXTUAL_SNAPSHOT_PASS] = True
 
@@ -108,7 +104,6 @@ class SvgSnapshotDiff:
     line_number: int
     app: App
     environment: dict
-    custom_snapshot_name: Optional[str]
 
 
 def pytest_sessionfinish(
@@ -126,7 +121,6 @@ def pytest_sessionfinish(
         num_snapshots_passing += int(item.stash.get(TEXTUAL_SNAPSHOT_PASS, False))
         snapshot_svg = item.stash.get(TEXTUAL_SNAPSHOT_SVG_KEY, None)
         actual_svg = item.stash.get(TEXTUAL_ACTUAL_SVG_KEY, None)
-        snapshot_name = item.stash.get(TEXTUAL_SNAPSHOT_NAME_KEY, None)
         app = item.stash.get(TEXTUAL_APP_KEY, None)
 
         if app:
@@ -144,7 +138,6 @@ def pytest_sessionfinish(
                     line_number=line_index + 1,
                     app=app,
                     environment=dict(os.environ),
-                    custom_snapshot_name=snapshot_name,
                 )
             )
 

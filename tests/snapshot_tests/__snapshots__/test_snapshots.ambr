@@ -344,7 +344,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/align.py][canonical_css_align]
+# name: test_css_property[align.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -502,7 +502,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/background.py][canonical_css_background]
+# name: test_css_property[background.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -657,7 +657,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/border.py][canonical_css_border]
+# name: test_css_property[border.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -815,7 +815,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/box_sizing.py][canonical_css_box_sizing]
+# name: test_css_property[box_sizing.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -971,7 +971,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/color.py][canonical_css_color]
+# name: test_css_property[color.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -1128,7 +1128,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/content_align.py][canonical_css_content_align]
+# name: test_css_property[content_align.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -1285,7 +1285,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/display.py][canonical_css_display]
+# name: test_css_property[display.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -1441,7 +1441,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/grid.py][canonical_css_grid]
+# name: test_css_property[grid.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -1598,7 +1598,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/height.py][canonical_css_height]
+# name: test_css_property[height.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -1754,7 +1754,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/layout.py][canonical_css_layout]
+# name: test_css_property[layout.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -1912,7 +1912,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/links.py][canonical_css_links]
+# name: test_css_property[links.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -2069,7 +2069,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/margin.py][canonical_css_margin]
+# name: test_css_property[margin.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -2226,7 +2226,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/offset.py][canonical_css_offset]
+# name: test_css_property[offset.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -2384,7 +2384,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/opacity.py][canonical_css_opacity]
+# name: test_css_property[opacity.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -2547,7 +2547,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/outline.py][canonical_css_outline]
+# name: test_css_property[outline.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -2704,7 +2704,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/overflow.py][canonical_css_overflow]
+# name: test_css_property[overflow.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -2863,7 +2863,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/padding.py][canonical_css_padding]
+# name: test_css_property[padding.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -3018,7 +3018,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/scrollbar_gutter.py][canonical_css_scrollbar_gutter]
+# name: test_css_property[scrollbar_gutter.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -3174,7 +3174,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/scrollbar_size.py][canonical_css_scrollbar_size]
+# name: test_css_property[scrollbar_size.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -3330,7 +3330,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/scrollbars.py][canonical_css_scrollbars]
+# name: test_css_property[scrollbars.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -3487,7 +3487,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/text_align.py][canonical_css_text_align]
+# name: test_css_property[text_align.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -3649,7 +3649,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/text_opacity.py][canonical_css_text_opacity]
+# name: test_css_property[text_opacity.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -3807,7 +3807,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/text_style.py][canonical_css_text_style]
+# name: test_css_property[text_style.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -3965,7 +3965,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/tint.py][canonical_css_tint]
+# name: test_css_property[tint.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -4129,7 +4129,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/visibility.py][canonical_css_visibility]
+# name: test_css_property[visibility.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->
@@ -4285,7 +4285,7 @@
   
   '''
 # ---
-# name: test_css_property_snapshot[/Users/darrenburns/code/textual/docs/examples/styles/width.py][canonical_css_width]
+# name: test_css_property[width.py]
   '''
   <svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
       <!-- Generated with Rich https://www.textualize.io -->

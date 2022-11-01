@@ -1,9 +1,10 @@
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
 import pytest
 
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
 LAYOUT_EXAMPLES_DIR = Path("../../docs/examples/guide/layout")
+STYLES_EXAMPLES_DIR = Path("../../docs/examples/styles")
 
 
 # --- Layout related stuff ---
@@ -96,15 +97,16 @@ def test_fr_units(snap_compare):
 # If any of these change, something has likely broken, so snapshot each of them.
 
 PATHS = [
-    str(PurePosixPath(path.resolve()))
-    for path in (Path(__file__).parent / "../../docs/examples/styles").iterdir()
+    path.name
+    for path in (Path(__file__).parent / STYLES_EXAMPLES_DIR).iterdir()
     if path.suffix == ".py"
 ]
 
 
-@pytest.mark.parametrize("path", PATHS)
-def test_css_property_snapshot(path, snap_compare):
-    assert snap_compare(path, snapshot_name=f"canonical_css_{Path(path).stem}")
+@pytest.mark.parametrize("file_name", PATHS)
+def test_css_property(file_name, snap_compare):
+    path_to_app = STYLES_EXAMPLES_DIR / file_name
+    assert snap_compare(path_to_app)
 
 
 def test_multiple_css(snap_compare):

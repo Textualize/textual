@@ -96,22 +96,13 @@
                                                 <h4>No history for this test</h4>
                                                 <p class="lead">If you're happy with the content on the left,
                                                     save it to disk by running pytest with the <code>--snapshot-update</code> flag.</p>
-
-
                                                 <h5>Unexpected?</h5>
                                                 <p class="lead">
                                                     Snapshots are named after the name of the test you call <code>snap_compare</code> in by default.
                                                     <br>
-                                                    {% if diff.custom_snapshot_name %}
-                                                        However, in this case, a custom snapshot name <code>{{ diff.custom_snapshot_name }}</code> was used.
-                                                        <br>
-                                                        We couldn't find a historical snapshot with this name.
-                                                        Use <code>--snapshot-update</code> to create a snapshot with this name.
-                                                    {% else %}
-                                                        If you've renamed a test, the association between the snapshot and the test is lost,
-                                                        and you'll need to run with <code>--snapshot-update</code> to associate the snapshot
-                                                        with the new test name.
-                                                    {% endif %}
+                                                    If you've renamed a test, the association between the snapshot and the test is lost,
+                                                    and you'll need to run with <code>--snapshot-update</code> to associate the snapshot
+                                                    with the new test name.
                                                     </p>
                                             </div>
                                         </div>
@@ -121,9 +112,6 @@
                                 <div class="w-100 d-flex justify-content-center mt-1">
                                     <span class="small">
                                         Historical snapshot
-                                        {% if diff.custom_snapshot_name %}
-                                            (custom snapshot name = "{{ diff.custom_snapshot_name }}")
-                                        {% endif %}
                                     </span>
                                 </div>
                                 {% endif %}
