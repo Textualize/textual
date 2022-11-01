@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   `App.mount` and `Widget.mount`. Both methods now simply take one or more
   widgets as positional arguments.
 
+### Added
+
+- Added `init` param to reactive.watch
+
 ## [0.3.0] - 2022-10-31
 
 ### Fixed
