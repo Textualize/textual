@@ -924,6 +924,8 @@ class DOMNode(MessagePump):
           is used as if a query result were given.
         """
 
+        # Due the the circular reference between DOMNode and Widget, we need
+        # to inline import Widget here.
         from .widget import Widget
 
         # None pretty much means "at the end of our child list."
@@ -934,10 +936,18 @@ class DOMNode(MessagePump):
         if isinstance(spot, int):
             return cast(Widget, self), spot
 
-        # We've got a widget that has a parent; let's look for that in our children.
+        # We've got a DOM node...
         if isinstance(spot, DOMNode):
+            # ...it really should have a parent for any of this to make
+            # sense. So let's raise an exception if it doesn't have one.
+            if spot.parent is None:
+                raise DOMError(
+                    f"Unable to find relative location of {spot!r} because it has no parent"
+                )
+            # At this point it's safe to go looking for its numeric location
+            # amongst its siblings.
             try:
-                return cast(DOMNode, spot.parent), spot.parent.children._index(spot)
+                return spot.parent, spot.parent.children._index(spot)
             except ValueError:
                 raise DOMError(f"{spot!r} is not a child of {self!r}") from None
 
@@ -945,6 +955,7 @@ class DOMNode(MessagePump):
         if isinstance(spot, str):
             spot = self.query(spot)
 
-        # At this point, we should have a query of some description. So
-        # let's now descend into it and see.
-        return spot.first(DOMNode).parent._find_spot(spot.first(DOMNode))
+        # At this point, we should have a query of some description. The
+        # query could have multiple hits; as a choice, let's take the first
+        # hit in the query and go around doing a Widget find.
+        return self._find_spot(spot.first(Widget))
