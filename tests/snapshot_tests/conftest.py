@@ -50,7 +50,8 @@ def snap_compare(
         the snapshot on disk will be updated to match the current screenshot.
 
         Args:
-            app_path (str): The path of the app.
+            app_path (str): The path of the app. Relative paths are relative to the location of the
+                test this function is called from.
             press (Iterable[str]): Key presses to run before taking screenshot. "_" is a short pause.
             terminal_size (tuple[int, int]): A pair of integers (WIDTH, HEIGHT), representing terminal size.
 
