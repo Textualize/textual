@@ -1384,9 +1384,15 @@ class App(Generic[ReturnType], DOMNode):
         if not widgets:
             return []
 
-        apply_stylesheet = self.stylesheet.apply
+        new_widgets = list(widgets)
+        if before is not None or after is not None:
+            # There's a before or after, which means there's going to be an
+            # insertion, so make it easier to get the new things in the
+            # correct order.
+            new_widgets = reversed(new_widgets)
 
-        for widget in widgets:
+        apply_stylesheet = self.stylesheet.apply
+        for widget in new_widgets:
             if not isinstance(widget, Widget):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
