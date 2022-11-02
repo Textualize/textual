@@ -679,11 +679,12 @@ class App(Generic[ReturnType], DOMNode):
         app._set_active()
 
         # Context manager returns pilot object to manipulate the app
-        yield Pilot(app)
-
-        # Shutdown the app cleanly
-        await app._shutdown()
-        await app_task
+        try:
+            yield Pilot(app)
+        finally:
+            # Shutdown the app cleanly
+            await app._shutdown()
+            await app_task
 
     async def run_async(
         self,
