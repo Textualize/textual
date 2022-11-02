@@ -675,6 +675,9 @@ class App(Generic[ReturnType], DOMNode):
         # Wait until the app has performed all startup routines.
         await app_ready_event.wait()
 
+        # Get the app in an active state.
+        app._set_active()
+
         # Context manager returns pilot object to manipulate the app
         yield Pilot(app)
 
