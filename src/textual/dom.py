@@ -13,7 +13,6 @@ from typing import (
     TypeVar,
     cast,
     overload,
-    Union,
 )
 
 import rich.repr
