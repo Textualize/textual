@@ -823,14 +823,17 @@ class App(Generic[ReturnType], DOMNode):
         self.check_idle()
 
     def mount(
-        self, *widgets: Widget, before: MountSpot = None, after: MountSpot = None
+        self,
+        *widgets: Widget,
+        before: int | str | Widget | None = None,
+        after: int | str | Widget | None = None,
     ) -> AwaitMount:
         """Mount the given widgets relative to the app's screen.
 
         Args:
             *widgets (Widget): The widget(s) to mount.
-            before (MountSpot, optional): Optional location to mount before.
-            after (MountSpot, optional): Optional location to mount after.
+            before (int | str | Widget, optional): Optional location to mount before.
+            after (int | str | Widget, optional): Optional location to mount after.
 
         Returns:
             AwaitMount: An awaitable object that waits for widgets to be mounted.
@@ -842,20 +845,32 @@ class App(Generic[ReturnType], DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
-        return AwaitMount(
-            self._register(self.screen, *widgets, before=before, after=after)
-        )
+        return self.screen.mount(*widgets, before=before, after=after)
 
-    def mount_all(self, widgets: Iterable[Widget]) -> AwaitMount:
+    def mount_all(
+        self,
+        widgets: Iterable[Widget],
+        before: int | str | Widget | None = None,
+        after: int | str | Widget | None = None,
+    ) -> AwaitMount:
         """Mount widgets from an iterable.
 
         Args:
             widgets (Iterable[Widget]): An iterable of widgets.
+            before (int | str | Widget, optional): Optional location to mount before.
+            after (int | str | Widget, optional): Optional location to mount after.
 
         Returns:
             AwaitMount: An awaitable object that waits for widgets to be mounted.
+
+        Raises:
+            MountError: If there is a problem with the mount request.
+
+        Note:
+            Only one of ``before`` or ``after`` can be provided. If both are
+            provided a ``MountError`` will be raised.
         """
-        return self.mount(*widgets)
+        return self.mount(*widgets, before=before, after=after)
 
     def is_screen_installed(self, screen: Screen | str) -> bool:
         """Check if a given screen has been installed.
@@ -1303,31 +1318,64 @@ class App(Generic[ReturnType], DOMNode):
             self._require_stylesheet_update.clear()
             self.stylesheet.update_nodes(nodes, animate=True)
 
-    def _register_child(self, parent: DOMNode, child: Widget) -> bool:
+    def _register_child(
+        self, parent: DOMNode, child: Widget, before: int | None, after: int | None
+    ) -> bool:
+
+        # Let's be 100% sure that we've not been asked to do a before and an
+        # after at the same time. It's possible that we can remove this
+        # check later on, but for the purposes of development right now,
+        # it's likely a good idea to keep it here to check assumptions in
+        # the rest of the code.
+        if before is not None and after is not None:
+            raise AppError(
+                "A child can only be registered before or after, not before and after"
+            )
+
+        # If we don't already know about this widget...
         if child not in self._registry:
-            parent.children._append(child)
+
+            # Now to figure out where to place it. If we've got a `before`...
+            if before is not None:
+                # ...it's safe to NodeList._insert before that location.
+                parent.children._insert(before, child)
+            elif after is not None and after != -1:
+                # In this case we've got an after. -1 holds the special
+                # position (for now) of meaning "okay really what I mean is
+                # do an append, like if I'd asked to add with no before or
+                # after". So... we insert before the next item in the node
+                # list, iff after isn't -1.
+                parent.children._insert(after + 1, child)
+            else:
+                # At this point we appear to not be adding before or after,
+                # or we've got a before/after value that really means
+                # "please append". So...
+                parent.children._append(child)
+
+            # Now that the widget is in the NodeList of its parent, sort out
+            # the rest of the admin.
             self._registry.add(child)
             child._attach(parent)
             child._post_register(self)
             child._start_messages()
             return True
+
         return False
 
     def _register(
         self,
         parent: DOMNode,
         *widgets: Widget,
-        before: MountSpot = None,
-        after: MountSpot = None,
+        before: int | None = None,
+        after: int | None = None,
     ) -> list[Widget]:
         """Register widget(s) so they may receive events.
 
         Args:
             parent (DOMNode): Parent node.
             *widgets: The widget(s) to register.
-            before (MountSpot, optional): Optional location to mount before.
-            after (MountSpot, optional): Optional location to mount after.
-
+            before (int, optional): A location to mount before.
+            after (int, option): A location to mount after.
         Returns:
             list[Widget]: List of modified widgets.
 
@@ -1342,7 +1390,7 @@ class App(Generic[ReturnType], DOMNode):
             if not isinstance(widget, Widget):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
-                self._register_child(parent, widget)
+                self._register_child(parent, widget, before, after)
                 if widget.children:
                     self._register(widget, *widget.children)
                 apply_stylesheet(widget)

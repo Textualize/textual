@@ -51,7 +51,7 @@ from .reactive import Reactive
 from .render import measure
 
 if TYPE_CHECKING:
-    from .app import App, ComposeResult, MountSpot
+    from .app import App, ComposeResult
     from .scrollbar import (
         ScrollBar,
         ScrollBarCorner,
@@ -375,15 +375,70 @@ class Widget(DOMNode):
         if self._scrollbar_corner is not None:
             yield self._scrollbar_corner
 
+    class MountError(Exception):
+        """Error raised when there was a problem with the mount request."""
+
+    def _find_mount_point(self, spot: int | str | "Widget") -> tuple["Widget", int]:
+        """Attempt to locate the point where the caller wants to mount something.
+
+        Args:
+            spot (int | str | Widget): The spot to find.
+
+        Returns:
+            tuple[Widget, int]: The parent and the location in its child list.
+
+        Raises:
+            Widget.MountError: If there was an error finding where to mount a widget.
+
+        The rules of this method are:
+
+        - Given an ``int``, parent is ``self`` and location is the integer value.
+        - Given a ``Widget``, parent is the widget's parent and location is
+          where the widget is found in the parent's ``children``. If it
+          can't be found a ``MountError`` will be raised.
+        - Given a string, it is used to perform a ``query_one`` and then the
+          result is used as if a ``Widget`` had been given.
+        """
+
+        # A numeric location means at that point in our child list.
+        if isinstance(spot, int):
+            return self, spot
+
+        # If we've got a string, that should be treated like a query that
+        # can be passed to query_one. So let's use that to get a widget to
+        # work on.
+        if isinstance(spot, str):
+            spot = self.query_one(spot, Widget)
+
+        # At this point we should have a widget, either because we got given
+        # one, or because we pulled one out of the query. First off, does it
+        # have a parent? There's no way we can use it as a sibling to make
+        # mounting decisions if it doesn't have a parent.
+        if spot.parent is None:
+            raise self.MountError(
+                f"Unable to find relative location of {spot!r} because it has no parent"
+            )
+
+        # We've got a widget. It has a parent. It has (zero or more)
+        # children. We should be able to go looking for the widget's
+        # location amongst its parent's children.
+        try:
+            return spot.parent, spot.parent.children._index(spot)
+        except ValueError:
+            raise self.MountError(f"{spot!r} is not a child of {self!r}") from None
+
     def mount(
-        self, *widgets: Widget, before: MountSpot = None, after: MountSpot = None
+        self,
+        *widgets: Widget,
+        before: int | str | Widget | None = None,
+        after: int | str | Widget | None = None,
     ) -> AwaitMount:
         """Mount widgets below this widget (making this widget a container).
 
         Args:
             *widgets (Widget): The widget(s) to mount.
-            before (MountSpot, optional): Optional location to mount before.
-            after (MountSpot, optional): Optional location to mount after.
+            before (int | str | Widget, optional): Optional location to mount before.
+            after (int | str | Widget, optional): Optional location to mount after.
 
         Returns:
             AwaitMount: An awaitable object that waits for widgets to be mounted.
@@ -395,8 +450,27 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
+
+        # Saying you want to mount before *and* after something is an error.
+        if before is not None and after is not None:
+            raise self.MountError(
+                "Only one of `before` or `after` can be handled -- not both"
+            )
+
+        # Decide the final resting place depending on what we've been asked
+        # to do.
+        if before is not None:
+            parent, before = self._find_mount_point(before)
+            self.log.debug(f"MOUNT under {parent!r} before {before!r} ")
+        elif after is not None:
+            parent, after = self._find_mount_point(after)
+            self.log.debug(f"MOUNT under {parent!r} after {after!r} ")
+        else:
+            parent = self
+            self.log.debug(f"MOUNT under {self!r} at the end of the child list")
+
         return AwaitMount(
-            self.app._register(self, *widgets, before=before, after=after)
+            self.app._register(parent, *widgets, before=before, after=after)
         )
 
     def compose(self) -> ComposeResult:
