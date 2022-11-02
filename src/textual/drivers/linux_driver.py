@@ -11,6 +11,8 @@ import tty
 from typing import Any, TYPE_CHECKING
 from threading import Event, Thread
 
+from textual._event_queue import EventQueue
+
 if TYPE_CHECKING:
     from rich.console import Console
 
@@ -19,7 +21,6 @@ import rich.repr
 from .. import log
 from ..driver import Driver
 from ..geometry import Size
-from .._types import MessageTarget
 from .._xterm_parser import XTermParser
 from .._profile import timer
 from .. import events
@@ -32,12 +33,12 @@ class LinuxDriver(Driver):
     def __init__(
         self,
         console: "Console",
-        target: "MessageTarget",
+        event_queue: EventQueue,
         *,
         debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
-        super().__init__(console, target, debug=debug, size=size)
+        super().__init__(console, event_queue, debug=debug, size=size)
         self.fileno = sys.stdin.fileno()
         self.attrs_before: list[Any] | None = None
         self.exit_event = Event()
@@ -99,9 +100,11 @@ class LinuxDriver(Driver):
             terminal_size = self._get_terminal_size()
             width, height = terminal_size
             textual_size = Size(width, height)
-            event = events.Resize(self._target, textual_size, textual_size)
+            event = events.Resize(
+                self._event_queue.destination, textual_size, textual_size
+            )
             asyncio.run_coroutine_threadsafe(
-                self._target.post_message(event),
+                self._event_queue.push(event),
                 loop=loop,
             )
 
@@ -215,7 +218,7 @@ class LinuxDriver(Driver):
                     return True
             return False
 
-        parser = XTermParser(self._target, more_data, self._debug)
+        parser = XTermParser(self._event_queue, more_data, self._debug)
         feed = parser.feed
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode

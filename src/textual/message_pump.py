@@ -453,6 +453,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                 message.stop()
             if self.is_parent_active and not self._parent._closing:
                 final_bubble = False
+                print(f"bubbling {message} to {self._parent}")
                 await message._bubble_to(self._parent)
 
         return final_bubble

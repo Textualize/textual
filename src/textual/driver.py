@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from . import _clock, events
+from ._event_queue import EventQueue
 from ._types import MessageTarget
 
 if TYPE_CHECKING:
@@ -15,13 +16,13 @@ class Driver(ABC):
     def __init__(
         self,
         console: "Console",
-        target: "MessageTarget",
+        event_queue: EventQueue,
         *,
         debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
         self.console = console
-        self._target = target
+        self._event_queue = event_queue
         self._debug = debug
         self._size = size
         self._loop = asyncio.get_running_loop()
@@ -33,9 +34,7 @@ class Driver(ABC):
         return False
 
     def send_event(self, event: events.Event) -> None:
-        asyncio.run_coroutine_threadsafe(
-            self._target.post_message(event), loop=self._loop
-        )
+        asyncio.run_coroutine_threadsafe(self._event_queue.push(event), loop=self._loop)
 
     def process_event(self, event: events.Event) -> None:
         """Performs some additional processing of events."""

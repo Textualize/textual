@@ -20,12 +20,12 @@ class WindowsDriver(Driver):
     def __init__(
         self,
         console: "Console",
-        target: "MessageTarget",
+        event_queue: "MessageTarget",
         *,
         debug: bool = False,
         size: tuple[int, int] | None = None,
     ) -> None:
-        super().__init__(console, target, debug=debug, size=size)
+        super().__init__(console, event_queue, debug=debug, size=size)
         self.in_fileno = sys.stdin.fileno()
         self.out_fileno = sys.stdout.fileno()
 
@@ -72,7 +72,7 @@ class WindowsDriver(Driver):
         app = active_app.get()
 
         self._event_thread = win32.EventMonitor(
-            loop, app, self._target, self.exit_event, self.process_event
+            loop, app, self._event_queue, self.exit_event, self.process_event
         )
         self._event_thread.start()
 

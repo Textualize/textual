@@ -52,6 +52,7 @@ from .design import ColorSystem
 from .dom import DOMNode
 from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
+from .events import Event
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
@@ -1237,7 +1238,9 @@ class App(Generic[ReturnType], DOMNode):
                 "type[Driver]",
                 HeadlessDriver if headless else self.driver_class,
             )
-            driver = self._driver = driver_class(self.console, self, size=terminal_size)
+            driver = self._driver = driver_class(
+                self.console, self._event_queue, size=terminal_size
+            )
 
             driver.start_application_mode()
             try:
@@ -1414,6 +1417,8 @@ class App(Generic[ReturnType], DOMNode):
         self._running = False
         if driver is not None:
             driver.disable_input()
+        await self._event_queue.shutdown()
+
         await self._close_all()
         await self._close_messages()
 
@@ -1517,13 +1522,9 @@ class App(Generic[ReturnType], DOMNode):
                 return True
         return False
 
-    async def post_message(self, message: Message) -> bool:
-        # TODO: We need to determine whether to process the message as normal,
-        #  or whether to process it on the InputQueue.
-        #  Also need to make sure to start the InputQueue in the app constructor (?)
-        return await super().post_message(message)
-
     async def on_event(self, event: events.Event) -> None:
+        print(f"App received event {event}")
+
         handling_complete = False
         if isinstance(event, events.Compose):
             screen = Screen(id="_default")
@@ -1541,6 +1542,7 @@ class App(Generic[ReturnType], DOMNode):
             elif isinstance(event, events.Key):
                 if not await self.check_bindings(event.key, universal=True):
                     forward_target = self.focused or self.screen
+                    print(f"forwarding key to target {forward_target}")
                     await forward_target._forward_event(event)
             else:
                 await self.screen._forward_event(event)
@@ -1551,9 +1553,9 @@ class App(Generic[ReturnType], DOMNode):
         else:
             handling_complete = await super().on_event(event)
 
-        if handling_complete:
-            # TODO: Tell EventQueue to continue by setting the event.
-            pass
+        if handling_complete or event.is_forwarded:
+            print(f"App: handling complete of event {event}, enabling event queue")
+            self._event_queue.enable()
 
     async def action(
         self,
