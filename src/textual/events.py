@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from typing import TYPE_CHECKING, Awaitable, Callable, Type, TypeVar
 
 import rich.repr
@@ -187,7 +188,16 @@ class MouseRelease(Event, bubble=False):
 
 
 class InputEvent(Event):
-    pass
+    def __init__(self, sender: MessageTarget):
+        super().__init__(sender)
+        self._handled_event = asyncio.Event()
+
+    async def wait_until_handled(self) -> bool:
+        return await self._handled_event.wait()
+
+    def stop(self, stop: bool = True) -> Message:
+        self._handled_event.set()
+        return super().stop(stop)
 
 
 @rich.repr.auto
