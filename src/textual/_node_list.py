@@ -39,7 +39,7 @@ class NodeList(Sequence):
     def __contains__(self, widget: Widget) -> bool:
         return widget in self._nodes
 
-    def _index(self, widget: Widget) -> int:
+    def index(self, widget: Widget) -> int:
         """Return the index of the given widget.
 
         Args:
