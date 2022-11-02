@@ -188,16 +188,7 @@ class MouseRelease(Event, bubble=False):
 
 
 class InputEvent(Event):
-    def __init__(self, sender: MessageTarget):
-        super().__init__(sender)
-        self._handled_event = asyncio.Event()
-
-    async def wait_until_handled(self) -> bool:
-        return await self._handled_event.wait()
-
-    def stop(self, stop: bool = True) -> Message:
-        self._handled_event.set()
-        return super().stop(stop)
+    pass
 
 
 @rich.repr.auto

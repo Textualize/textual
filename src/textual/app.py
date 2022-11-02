@@ -41,6 +41,7 @@ from ._ansi_sequences import SYNC_END, SYNC_START
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
+from ._event_queue import EventQueue
 from ._filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
 from ._typing import TypeAlias
@@ -55,6 +56,7 @@ from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
 from .keys import REPLACED_KEYS
+from .message import Message
 from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
@@ -99,7 +101,6 @@ DEFAULT_COLORS = {
 
 ComposeResult = Iterable[Widget]
 RenderResult = RenderableType
-
 
 AutopilotCallbackType: TypeAlias = "Callable[[Pilot], Coroutine[Any, Any, None]]"
 
@@ -278,6 +279,8 @@ class App(Generic[ReturnType], DOMNode):
             else None
         )
         self._screenshot: str | None = None
+        # TODO: Determine where to shutdown the event queue
+        self._event_queue = EventQueue(destination=self)
 
     @property
     def return_value(self) -> ReturnType | None:
@@ -1205,8 +1208,8 @@ class App(Generic[ReturnType], DOMNode):
                 self.stylesheet.update(self)
                 self.refresh()
 
-                await self.animator.start()
-
+                self.animator.start()
+                self._event_queue.start()
             finally:
                 await self._ready()
                 await invoke_ready_callback()
@@ -1514,16 +1517,23 @@ class App(Generic[ReturnType], DOMNode):
                 return True
         return False
 
+    async def post_message(self, message: Message) -> bool:
+        # TODO: We need to determine whether to process the message as normal,
+        #  or whether to process it on the InputQueue.
+        #  Also need to make sure to start the InputQueue in the app constructor (?)
+        return await super().post_message(message)
+
     async def on_event(self, event: events.Event) -> None:
-        # Handle input events that haven't been forwarded
-        # If the event has been forwarded it may have bubbled up back to the App
+        handling_complete = False
         if isinstance(event, events.Compose):
             screen = Screen(id="_default")
             self._register(self, screen)
             self._screen_stack.append(screen)
-            await super().on_event(event)
+            handling_complete = await super().on_event(event)
 
         elif isinstance(event, events.InputEvent) and not event.is_forwarded:
+            # Handle input events that haven't been forwarded
+            # If the event has been forwarded it may have bubbled up back to the App
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
@@ -1539,7 +1549,11 @@ class App(Generic[ReturnType], DOMNode):
             if self.focused is not None:
                 await self.focused._forward_event(event)
         else:
-            await super().on_event(event)
+            handling_complete = await super().on_event(event)
+
+        if handling_complete:
+            # TODO: Tell EventQueue to continue by setting the event.
+            pass
 
     async def action(
         self,

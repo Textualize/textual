@@ -170,7 +170,7 @@ class Animator:
         )
         self._idle_event = asyncio.Event()
 
-    async def start(self) -> None:
+    def start(self) -> None:
         """Start the animator task."""
         self._idle_event.set()
         self._timer.start()

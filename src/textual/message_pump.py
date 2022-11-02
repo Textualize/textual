@@ -411,19 +411,22 @@ class MessagePump(metaclass=MessagePumpMeta):
             if method is not None:
                 yield cls, method.__get__(self, cls)
 
-    async def on_event(self, event: events.Event) -> None:
+    async def on_event(self, event: events.Event) -> bool:
         """Called to process an event.
 
         Args:
             event (events.Event): An Event object.
         """
-        await self._on_message(event)
+        return await self._on_message(event)
 
-    async def _on_message(self, message: Message) -> None:
+    async def _on_message(self, message: Message) -> bool:
         """Called to process a message.
 
         Args:
             message (Message): A Message object.
+
+        Returns:
+            bool: True if the message has stopped bubbling.
         """
         _rich_traceback_guard = True
         handler_name = message._handler_name
@@ -443,12 +446,16 @@ class MessagePump(metaclass=MessagePumpMeta):
             log.event.verbosity(message.verbose)(message, ">>>", self, "method=None")
 
         # Bubble messages up the DOM (if enabled on the message)
+        final_bubble = True
         if message.bubble and self._parent and not message._stop_propagation:
             if message.sender == self._parent:
                 # parent is sender, so we stop propagation after parent
                 message.stop()
             if self.is_parent_active and not self._parent._closing:
+                final_bubble = False
                 await message._bubble_to(self._parent)
+
+        return final_bubble
 
     def check_idle(self) -> None:
         """Prompt the message pump to call idle if the queue is empty."""
