@@ -461,13 +461,10 @@ class Widget(DOMNode):
         # to do.
         if before is not None:
             parent, before = self._find_mount_point(before)
-            self.log.debug(f"MOUNT under {parent!r} before {before!r} ")
         elif after is not None:
             parent, after = self._find_mount_point(after)
-            self.log.debug(f"MOUNT under {parent!r} after {after!r} ")
         else:
             parent = self
-            self.log.debug(f"MOUNT under {self!r} at the end of the child list")
 
         return AwaitMount(
             self.app._register(parent, *widgets, before=before, after=after)
