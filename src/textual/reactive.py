@@ -3,7 +3,6 @@ from __future__ import annotations
 from functools import partial
 from inspect import isawaitable
 from typing import TYPE_CHECKING, Any, Callable, Generic, Type, TypeVar, Union
-from weakref import WeakSet
 
 from . import events
 from ._callback import count_parameters, invoke
@@ -102,6 +101,7 @@ class Reactive(Generic[ReactiveType]):
         Args:
             obj (Reactable): An object with Reactive descriptors
         """
+
         if not hasattr(obj, "__reactive_initialized"):
             startswith = str.startswith
             for key in obj.__class__.__dict__:
@@ -115,6 +115,16 @@ class Reactive(Generic[ReactiveType]):
                         # Set the default vale (calls `__set__`)
                         setattr(obj, name, default_value)
         setattr(obj, "__reactive_initialized", True)
+
+    @classmethod
+    def _reset_object(cls, obj: object) -> None:
+        """Reset reactive structures on object (to avoid reference cycles).
+
+        Args:
+            obj (object): A reactive object.
+        """
+        getattr(obj, "__watchers", {}).clear()
+        getattr(obj, "__computes", []).clear()
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
 
@@ -224,8 +234,7 @@ class Reactive(Generic[ReactiveType]):
             )
 
         # Check for watchers set via `watch`
-        watcher_name = f"__{name}_watchers"
-        watchers = getattr(obj, watcher_name, ())
+        watchers: list[Callable] = getattr(obj, "__watchers", {}).get(name, [])
         for watcher in watchers:
             obj.post_message_no_wait(
                 events.Callback(
@@ -312,11 +321,11 @@ def watch(
         callback (Callable[[Any], object]): A callable to call when the attribute changes.
         init (bool, optional): True to call watcher initialization. Defaults to True.
     """
-    watcher_name = f"__{attribute_name}_watchers"
-    current_value = getattr(obj, attribute_name, None)
-    if not hasattr(obj, watcher_name):
-        setattr(obj, watcher_name, WeakSet())
-    watchers = getattr(obj, watcher_name)
-    watchers.add(callback)
+
+    if not hasattr(obj, "__watchers"):
+        setattr(obj, "__watchers", {})
+    watchers: dict[str, list[Callable]] = getattr(obj, "__watchers")
+    watchers.setdefault(attribute_name, []).append(callback)
     if init:
+        current_value = getattr(obj, attribute_name, None)
         Reactive._check_watchers(obj, attribute_name, current_value)
