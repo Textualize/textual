@@ -158,8 +158,7 @@ class ChopsUpdate:
                 yield new_line
 
     def __rich_repr__(self) -> rich.repr.Result:
-        return
-        yield
+        yield from ()
 
 
 @rich.repr.auto(angular=True)

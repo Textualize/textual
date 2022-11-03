@@ -383,8 +383,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def compose(self) -> ComposeResult:
         """Yield child widgets for a container."""
-        return
-        yield
+        yield from ()
 
     def get_css_variables(self) -> dict[str, str]:
         """Get a mapping of variables used to pre-populate CSS.
