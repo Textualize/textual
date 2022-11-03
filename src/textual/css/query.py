@@ -42,6 +42,10 @@ class NoMatches(QueryError):
     """No nodes matched the query."""
 
 
+class TooManyMatches(QueryError):
+    """Too many nodes matched the query."""
+
+
 class WrongType(QueryError):
     """Query result was not of the correct type."""
 
@@ -207,6 +211,49 @@ class DOMQuery(Generic[QueryType]):
             return first
         else:
             raise NoMatches(f"No nodes match {self!r}")
+
+    @overload
+    def only_one(self) -> Widget:
+        ...
+
+    @overload
+    def only_one(self, expect_type: type[ExpectType]) -> ExpectType:
+        ...
+
+    def only_one(
+        self, expect_type: type[ExpectType] | None = None
+    ) -> Widget | ExpectType:
+        """Get the *only* matching node.
+
+        Args:
+            expect_type (type[ExpectType] | None, optional): Require matched node is of this type,
+                or None for any type. Defaults to None.
+
+        Raises:
+            WrongType: If the wrong type was found.
+            TooManyMatches: If there is more than one matching node in the query.
+
+        Returns:
+            Widget | ExpectType: The matching Widget.
+        """
+        # Call on first to get the first item. Here we'll use all of the
+        # testing and checking it provides.
+        the_one = self.first(expect_type) if expect_type is not None else self.first()
+        try:
+            # Now see if we can access a subsequent item in the nodes. There
+            # should *not* be anything there, so we *should* get an
+            # IndexError. We *could* have just checked the length of the
+            # query, but the idea here is to do the check as cheaply as
+            # possible.
+            _ = self.nodes[1]
+            raise TooManyMatches(
+                "Call to only_one resulted in more than one matched node"
+            )
+        except IndexError:
+            # The IndexError was got, that's a good thing in this case. So
+            # we return what we found.
+            pass
+        return the_one
 
     @overload
     def last(self) -> Widget:
