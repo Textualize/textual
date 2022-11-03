@@ -101,6 +101,8 @@ def import_app(import_name: str) -> App:
         except AttributeError:
             raise AppFail(f"Unable to find {name!r} in {module!r}")
 
+        sys.argv[:] = [import_name, *argv]
+
     if inspect.isclass(app) and issubclass(app, App):
         app = app()
 
