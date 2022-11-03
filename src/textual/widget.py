@@ -485,8 +485,7 @@ class Widget(DOMNode):
             ```
 
         """
-        return
-        yield
+        yield from ()
 
     def _post_register(self, app: App) -> None:
         """Called when the instance is registered.
