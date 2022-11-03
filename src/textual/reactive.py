@@ -324,7 +324,10 @@ def watch(
     if not hasattr(obj, "__watchers"):
         setattr(obj, "__watchers", {})
     watchers: dict[str, list[Callable]] = getattr(obj, "__watchers")
-    watchers.setdefault(attribute_name, []).append(callback)
+    watcher_list = watchers.setdefault(attribute_name, [])
+    if callback in watcher_list:
+        return
+    watcher_list.append(callback)
     if init:
         current_value = getattr(obj, attribute_name, None)
         Reactive._check_watchers(obj, attribute_name, current_value)
