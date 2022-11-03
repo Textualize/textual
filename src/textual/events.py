@@ -83,7 +83,7 @@ class Action(Event):
         yield "action", self.action
 
 
-class Resize(Event, bubble=False):
+class Resize(Event, bubble=False, exclusive=True):
     """Sent when the app or widget has been resized.
     Args:
         sender (MessageTarget): The sender of the event (the Screen).
@@ -192,7 +192,7 @@ class InputEvent(Event):
 
 
 @rich.repr.auto
-class Key(InputEvent):
+class Key(InputEvent, exclusive=True):
     """Sent when the user hits a key on the keyboard.
 
     Args:
@@ -238,7 +238,7 @@ def _normalize_key(key: str) -> str:
 
 
 @rich.repr.auto
-class MouseEvent(InputEvent, bubble=True):
+class MouseEvent(InputEvent, bubble=True, exclusive=True):
     """Sent in response to a mouse event.
 
     Args:
@@ -400,21 +400,21 @@ class MouseEvent(InputEvent, bubble=True):
 
 
 @rich.repr.auto
-class MouseMove(MouseEvent, bubble=False, verbose=True):
+class MouseMove(MouseEvent, bubble=False, verbose=True, exclusive=True):
     """Sent when the mouse cursor moves."""
 
 
 @rich.repr.auto
-class MouseDown(MouseEvent, bubble=True, verbose=True):
+class MouseDown(MouseEvent, bubble=True, verbose=True, exclusive=True):
     pass
 
 
 @rich.repr.auto
-class MouseUp(MouseEvent, bubble=True, verbose=True):
+class MouseUp(MouseEvent, bubble=True, verbose=True, exclusive=True):
     pass
 
 
-class MouseScrollDown(InputEvent, bubble=True, verbose=True):
+class MouseScrollDown(InputEvent, bubble=True, verbose=True, exclusive=True):
     __slots__ = ["x", "y"]
 
     def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
@@ -423,7 +423,7 @@ class MouseScrollDown(InputEvent, bubble=True, verbose=True):
         self.y = y
 
 
-class MouseScrollUp(InputEvent, bubble=True, verbose=True):
+class MouseScrollUp(InputEvent, bubble=True, verbose=True, exclusive=True):
     __slots__ = ["x", "y"]
 
     def __init__(self, sender: MessageTarget, x: int, y: int) -> None:
@@ -432,7 +432,7 @@ class MouseScrollUp(InputEvent, bubble=True, verbose=True):
         self.y = y
 
 
-class Click(MouseEvent, bubble=True):
+class Click(MouseEvent, bubble=True, exclusive=True):
     pass
 
 
@@ -459,11 +459,11 @@ class Timer(Event, bubble=False, verbose=True):
         yield "count", self.count
 
 
-class Enter(Event, bubble=False, verbose=True):
+class Enter(Event, bubble=False, verbose=True, exclusive=True):
     pass
 
 
-class Leave(Event, bubble=False, verbose=True):
+class Leave(Event, bubble=False, verbose=True, exclusive=True):
     pass
 
 
@@ -484,7 +484,7 @@ class DescendantBlur(Event, bubble=True, verbose=True):
 
 
 @rich.repr.auto
-class Paste(Event, bubble=False):
+class Paste(Event, bubble=False, exclusive=True):
     """Event containing text that was pasted into the Textual application.
     This event will only appear when running in a terminal emulator that supports
     bracketed paste mode. Textual will enable bracketed pastes when an app starts,

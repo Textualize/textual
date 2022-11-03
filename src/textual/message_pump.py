@@ -20,7 +20,7 @@ from ._context import NoActiveAppError, active_app
 from ._time import time
 from .case import camel_to_snake
 from .errors import DuplicateKeyHandlers
-from .events import Event
+from .events import Event, InputEvent
 from .message import Message
 from .reactive import Reactive
 from .timer import Timer, TimerCallback
@@ -291,7 +291,7 @@ class MessagePump(metaclass=MessagePumpMeta):
 
     def _start_messages(self) -> None:
         """Start messages task."""
-        if self.app._running:
+        if self.app.is_running:
             self._task = asyncio.create_task(self._process_messages())
 
     async def _process_messages(self) -> None:
@@ -452,7 +452,7 @@ class MessagePump(metaclass=MessagePumpMeta):
                 final_bubble = False
                 await message._bubble_to(self._parent)
 
-        if final_bubble:
+        if final_bubble and message.exclusive:
             self.app._event_queue.enable()
 
     def check_idle(self) -> None:

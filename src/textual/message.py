@@ -37,6 +37,7 @@ class Message:
     verbose: ClassVar[bool] = False  # Message is verbose
     no_dispatch: ClassVar[bool] = False  # Message may not be handled by client code
     namespace: ClassVar[str] = ""  # Namespace to disambiguate messages
+    exclusive: ClassVar[bool] = False  # Pause processing until this event is handled
 
     def __init__(self, sender: MessageTarget) -> None:
         self.sender = sender
@@ -59,6 +60,7 @@ class Message:
         verbose: bool = False,
         no_dispatch: bool | None = False,
         namespace: str | None = None,
+        exclusive: bool = False,
     ) -> None:
         super().__init_subclass__()
         if bubble is not None:
@@ -68,6 +70,7 @@ class Message:
             cls.no_dispatch = no_dispatch
         if namespace is not None:
             cls.namespace = namespace
+        cls.exclusive = exclusive
 
     @property
     def is_forwarded(self) -> bool:

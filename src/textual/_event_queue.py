@@ -4,7 +4,7 @@ import asyncio
 from asyncio import Queue, Task, create_task
 
 from textual._types import MessageTarget
-from textual.events import Event, Key, InputEvent
+from textual.events import Event
 
 
 class EventQueue:
@@ -38,13 +38,11 @@ class EventQueue:
                 self._queue.task_done()
                 break
 
-            handle_before_proceeding = isinstance(event, InputEvent)
+            handle_before_proceeding = event.exclusive
             if handle_before_proceeding:
-                print("disabling input")
                 disable()
             await post_message(event)
             if handle_before_proceeding:
-                print("enabling input")
                 await wait_until_handled()
 
             self._queue.task_done()
