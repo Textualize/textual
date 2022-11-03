@@ -13,6 +13,9 @@ from contextlib import asynccontextmanager
 from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
+from queue import Queue
+from ._profile import timer
+import threading
 from time import perf_counter
 from typing import (
     Any,
@@ -135,6 +138,45 @@ class _NullFile:
         pass
 
 
+class _WriterThread(threading.Thread):
+    """A thread / file-like to do writes to stdout in the background."""
+
+    def __init__(self) -> None:
+        super().__init__(daemon=True)
+        self._queue: Queue[str | None | threading.Event] = Queue(10)
+        self._file = sys.__stdout__
+
+    def write(self, text: str) -> None:
+        self._queue.put(text)
+
+    def isatty(self) -> bool:
+        return True
+
+    def fileno(self) -> int:
+        return self._file.fileno()
+
+    def flush(self) -> None:
+        event = threading.Event()
+        self._queue.put(event)
+        event.wait()
+        self._file.flush()
+
+    def run(self) -> None:
+        write = self._file.write
+        while True:
+            text: str | threading.Event | None = self._queue.get()
+            if isinstance(text, threading.Event):
+                text.set()
+                continue
+            if text is None:
+                break
+            write(text)
+
+    def stop(self) -> None:
+        self._queue.put(None)
+        self.join()
+
+
 CSSPathType = Union[str, PurePath, List[Union[str, PurePath]], None]
 
 
@@ -192,8 +234,17 @@ class App(Generic[ReturnType], DOMNode):
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
             self._filter = Monochrome()
+
+        self._writer_thread: _WriterThread | None = None
+        if sys.__stdout__ is None:
+            file = _NullFile()
+        else:
+            self._writer_thread = _WriterThread()
+            self._writer_thread.start()
+            file = self._writer_thread
+
         self.console = Console(
-            file=sys.__stdout__ if sys.__stdout__ is not None else _NullFile(),
+            file=file,
             markup=False,
             highlight=False,
             emoji=False,
@@ -1501,6 +1552,9 @@ class App(Generic[ReturnType], DOMNode):
         self._print_error_renderables()
         if self.devtools is not None and self.devtools.is_connected:
             await self._disconnect_devtools()
+
+        if self._writer_thread is not None:
+            self._writer_thread.stop()
 
     async def _on_exit_app(self) -> None:
         await self._message_queue.put(None)
