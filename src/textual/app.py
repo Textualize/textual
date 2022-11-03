@@ -1342,7 +1342,16 @@ class App(Generic[ReturnType], DOMNode):
 
     def _register_child(
         self, parent: DOMNode, child: Widget, before: int | None, after: int | None
-    ) -> bool:
+    ) -> None:
+        """Register a widget as a child of another.
+
+        Args:
+            parent (DOMNode): Parent node.
+            child (Widget): The child widget to register.
+            widgets: The widget to register.
+            before (int, optional): A location to mount before.
+            after (int, option): A location to mount after.
+        """
 
         # Let's be 100% sure that we've not been asked to do a before and an
         # after at the same time. It's possible that we can remove this
@@ -1378,9 +1387,6 @@ class App(Generic[ReturnType], DOMNode):
             child._attach(parent)
             child._post_register(self)
             child._start_messages()
-            return True
-
-        return False
 
     def _register(
         self,
