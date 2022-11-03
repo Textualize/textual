@@ -654,7 +654,7 @@ class App(Generic[ReturnType], DOMNode):
         # TODO: We need a means of checking whether all events in an app have been handled
         #  rather than this sleep.
         if keys:
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0.15)
         await app._animator.wait_for_idle()
 
     @asynccontextmanager
