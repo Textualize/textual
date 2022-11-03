@@ -101,7 +101,6 @@ class Reactive(Generic[ReactiveType]):
         Args:
             obj (Reactable): An object with Reactive descriptors
         """
-
         if not hasattr(obj, "__reactive_initialized"):
             startswith = str.startswith
             for key in obj.__class__.__dict__:
