@@ -471,6 +471,7 @@ class Screen(Widget):
 
         elif isinstance(event, events.MouseMove):
             event.style = self.get_style_at(event.screen_x, event.screen_y)
+            print(f"Screen._forward_event {event}")
             await self._handle_mouse_move(event)
 
         elif isinstance(event, events.MouseEvent):

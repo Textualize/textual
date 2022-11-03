@@ -32,28 +32,38 @@ class EventQueue:
         post_message = self.destination.post_message
         wait_until_handled = self._wait_until_handled
         disable = self.disable
+
+        # TODO: This sometimes seems to stop apps being shut down?
         while True:
             print("getting next event")
             event = await get_event()
             print(f"got event {event}")
             if event is None:
+                self._queue.task_done()
                 break
 
-            requires_handling = isinstance(event, InputEvent)
-            if requires_handling:
+            handle_before_proceeding = isinstance(event, InputEvent)
+            if handle_before_proceeding:
                 print("disabling event queue")
                 disable()
 
             print(f"posting event to destination {self.destination}")
             await post_message(event)
 
-            if requires_handling:
+            if handle_before_proceeding:
                 print(f"waiting for event to be handled...")
                 await wait_until_handled()
 
+            self._queue.task_done()
+
     async def _wait_until_handled(self):
-        await self._running.wait()
+        # TODO: Handle timeouts properly
+        try:
+            await asyncio.wait_for(self._running.wait(), timeout=0.5)
+        except Exception:
+            pass
 
     async def shutdown(self):
         await self._queue.put(None)
-        await self._task
+        if self._task:
+            await self._task

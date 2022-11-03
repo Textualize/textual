@@ -411,13 +411,13 @@ class MessagePump(metaclass=MessagePumpMeta):
             if method is not None:
                 yield cls, method.__get__(self, cls)
 
-    async def on_event(self, event: events.Event) -> bool:
+    async def on_event(self, event: events.Event) -> None:
         """Called to process an event.
 
         Args:
             event (events.Event): An Event object.
         """
-        return await self._on_message(event)
+        await self._on_message(event)
 
     async def _on_message(self, message: Message) -> bool:
         """Called to process a message.
@@ -428,6 +428,9 @@ class MessagePump(metaclass=MessagePumpMeta):
         Returns:
             bool: True if the message has stopped bubbling.
         """
+
+        print(f"_on_message {message}")
+
         _rich_traceback_guard = True
         handler_name = message._handler_name
 

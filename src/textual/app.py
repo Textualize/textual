@@ -654,9 +654,9 @@ class App(Generic[ReturnType], DOMNode):
                 #  condition between widget-level key handling and app/screen level handling.
                 #  More information here: https://github.com/Textualize/textual/issues/1009
                 #  This conditional sleep can be removed after that issue is closed.
-                if key == "tab":
-                    await asyncio.sleep(0.05)
-                await asyncio.sleep(0.02)
+                # if key == "tab":
+                #     await asyncio.sleep(0.05)
+        await asyncio.sleep(0.05)
         await app._animator.wait_for_idle()
 
     @asynccontextmanager
@@ -1210,7 +1210,6 @@ class App(Generic[ReturnType], DOMNode):
                 self.refresh()
 
                 self.animator.start()
-                self._event_queue.start()
             finally:
                 await self._ready()
                 await invoke_ready_callback()
@@ -1244,6 +1243,7 @@ class App(Generic[ReturnType], DOMNode):
 
             driver.start_application_mode()
             try:
+                self._event_queue.start()
                 if headless:
                     await run_process_messages()
                 else:
@@ -1525,12 +1525,11 @@ class App(Generic[ReturnType], DOMNode):
     async def on_event(self, event: events.Event) -> None:
         print(f"App received event {event}")
 
-        handling_complete = False
         if isinstance(event, events.Compose):
             screen = Screen(id="_default")
             self._register(self, screen)
             self._screen_stack.append(screen)
-            handling_complete = await super().on_event(event)
+            await super().on_event(event)
 
         elif isinstance(event, events.InputEvent) and not event.is_forwarded:
             # Handle input events that haven't been forwarded
@@ -1551,11 +1550,13 @@ class App(Generic[ReturnType], DOMNode):
             if self.focused is not None:
                 await self.focused._forward_event(event)
         else:
-            handling_complete = await super().on_event(event)
+            await super().on_event(event)
 
-        if handling_complete or event.is_forwarded:
-            print(f"App: handling complete of event {event}, enabling event queue")
+    async def _on_message(self, message: Message) -> bool:
+        final_bubble = await super()._on_message(message)
+        if final_bubble:
             self._event_queue.enable()
+        return final_bubble
 
     async def action(
         self,
