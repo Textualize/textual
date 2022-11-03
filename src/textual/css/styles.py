@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import lru_cache
@@ -60,11 +59,7 @@ from .types import (
     Visibility,
     TextAlign,
 )
-
-if sys.version_info >= (3, 8):
-    from typing import TypedDict
-else:
-    from typing_extensions import TypedDict
+from .._typing import TypedDict
 
 if TYPE_CHECKING:
     from .._layout import Layout

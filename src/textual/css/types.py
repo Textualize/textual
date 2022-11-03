@@ -1,15 +1,9 @@
 from __future__ import annotations
 
-import sys
 from typing import Tuple
 
 from ..color import Color
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
+from .._typing import Literal
 
 Edge = Literal["top", "right", "bottom", "left"]
 DockEdge = Literal["top", "right", "bottom", "left", ""]
