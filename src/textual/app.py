@@ -624,7 +624,6 @@ class App(Generic[ReturnType], DOMNode):
         app = self
         driver = app._driver
         assert driver is not None
-        await asyncio.sleep(0.02)
         for key in keys:
             if key == "_":
                 print("(pause 50ms)")
@@ -651,7 +650,7 @@ class App(Generic[ReturnType], DOMNode):
                 key_event = events.Key(app, key, char)
                 driver.send_event(key_event)
 
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.15)
         await app._animator.wait_for_idle()
 
     @asynccontextmanager
