@@ -6,7 +6,7 @@ from threading import Event, Thread
 from typing import TYPE_CHECKING, Callable
 
 from .._context import active_app
-from .._types import MessageTarget
+from .._event_queue import EventQueue
 from ..driver import Driver
 from . import win32
 
@@ -20,7 +20,7 @@ class WindowsDriver(Driver):
     def __init__(
         self,
         console: "Console",
-        event_queue: "MessageTarget",
+        event_queue: EventQueue,
         *,
         debug: bool = False,
         size: tuple[int, int] | None = None,
@@ -72,7 +72,11 @@ class WindowsDriver(Driver):
         app = active_app.get()
 
         self._event_thread = win32.EventMonitor(
-            loop, app, self._event_queue, self.exit_event, self.process_event
+            loop,
+            app,
+            self._event_queue.destination,
+            self.exit_event,
+            self.process_event,
         )
         self._event_thread.start()
 
@@ -84,7 +88,7 @@ class WindowsDriver(Driver):
                 if self._event_thread is not None:
                     self._event_thread.join()
                     self._event_thread = None
-        except Exception as error:
+        except Exception:
             # TODO: log this
             pass
 
