@@ -1,43 +1,38 @@
-from typing import Type
+from __future__ import annotations
 from pathlib import Path
+import pytest
 
 from textual.app import App
 
-class RelativePathObjectApp(App[None]):
+APP_DIR = Path(__file__).parent
 
+
+class RelativePathObjectApp(App[None]):
     CSS_PATH = Path("test.css")
 
-class RelativePathStrApp(App[None]):
 
+class RelativePathStrApp(App[None]):
     CSS_PATH = "test.css"
 
-class AbsolutePathObjectApp(App[None]):
 
+class AbsolutePathObjectApp(App[None]):
     CSS_PATH = Path("/tmp/test.css")
 
-class AbsolutePathStrApp(App[None]):
 
+class AbsolutePathStrApp(App[None]):
     CSS_PATH = "/tmp/test.css"
 
-def path_tester(obj_type: Type[App[None]], str_type: Type[App[None]], intended_result: Path) -> None:
-    assert isinstance(obj_type().css_path,Path), (
-        "CSS_PATH didn't stay as an object"
-    )
-    assert isinstance(str_type().css_path,Path), (
-        "CSS_PATH wasn't converted from str to Path"
-    )
-    assert obj_type().css_path == intended_result, (
-        "CSS_PATH doesn't match the intended result."
-    )
-    assert str_type().css_path == intended_result, (
-        "CSS_PATH doesn't match the intended result."
-    )
-    assert str_type().css_path == obj_type().css_path, (
-        "CSS_PATH str to Path conversion gave a different result"
-    )
 
-def test_relative_path():
-    path_tester(RelativePathObjectApp, RelativePathStrApp, ((Path(__file__).absolute().parent ) / "test.css").absolute())
+class ListPathApp(App[None]):
+    CSS_PATH = ["test.css", Path("/another/path.css")]
 
-def test_absolute_path():
-    path_tester(AbsolutePathObjectApp, AbsolutePathStrApp, Path("/tmp/test.css").absolute())
+
+@pytest.mark.parametrize("app,expected_css_path_attribute", [
+    (RelativePathObjectApp(), [APP_DIR / "test.css"]),
+    (RelativePathStrApp(), [APP_DIR / "test.css"]),
+    (AbsolutePathObjectApp(), [Path("/tmp/test.css")]),
+    (AbsolutePathStrApp(), [Path("/tmp/test.css")]),
+    (ListPathApp(), [APP_DIR / "test.css", Path("/another/path.css")]),
+])
+def test_css_paths_of_various_types(app, expected_css_path_attribute):
+    assert app.css_path == [path.absolute() for path in expected_css_path_attribute]

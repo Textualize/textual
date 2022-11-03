@@ -1,16 +1,9 @@
-import sys
 from decimal import Decimal
-
-if sys.version_info >= (3, 10):
-    from typing import Literal
-else:  # pragma: no cover
-    from typing_extensions import Literal
 
 import pytest
 
 from rich.style import Style
 
-from textual.app import ComposeResult
 from textual.color import Color
 from textual.css.errors import StyleValueError
 from textual.css.scalar import Scalar, Unit

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import sys
 from dataclasses import dataclass
-from typing import Iterable
+from typing import Iterable, Sequence
 
+from textual._typing import Literal
 from textual.color import ColorParseError
 from textual.css._help_renderables import Example, Bullet, HelpText
 from textual.css.constants import (
@@ -14,11 +14,6 @@ from textual.css.constants import (
     VALID_STYLE_FLAGS,
     VALID_TEXT_ALIGN,
 )
-
-if sys.version_info >= (3, 8):
-    from typing import Literal, Iterable, Sequence
-else:
-    from typing_extensions import Literal
 
 from textual.css._error_tools import friendly_list
 from textual.css.scalar import SYMBOL_UNIT

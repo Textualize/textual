@@ -1,16 +1,10 @@
 from __future__ import annotations
 
-import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
 from importlib_metadata import version
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 from rich.align import Align
 from rich.console import Console, ConsoleOptions, RenderResult
@@ -22,6 +16,7 @@ from rich.styled import Styled
 from rich.table import Table
 from rich.text import Text
 from textual._log import LogGroup
+from textual._typing import Literal
 
 DevConsoleMessageLevel = Literal["info", "warning", "error"]
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 from pathlib import PurePath
 from typing import Callable
@@ -9,20 +11,20 @@ from ._callback import invoke
 
 @rich.repr.auto
 class FileMonitor:
-    """Monitors a file for changes and invokes a callback when it does."""
+    """Monitors files for changes and invokes a callback when it does."""
 
-    def __init__(self, path: PurePath, callback: Callable) -> None:
-        self.path = path
+    def __init__(self, paths: list[PurePath], callback: Callable) -> None:
+        self.paths = paths
         self.callback = callback
-        self._modified = self._get_modified()
+        self._modified = self._get_last_modified_time()
 
-    def _get_modified(self) -> float:
-        """Get the modified time for a file being watched."""
-        return os.stat(self.path).st_mtime
+    def _get_last_modified_time(self) -> float:
+        """Get the most recent modified time out of all files being watched."""
+        return max(os.stat(path).st_mtime for path in self.paths)
 
     def check(self) -> bool:
-        """Check the monitored file. Return True if it was changed."""
-        modified = self._get_modified()
+        """Check the monitored files. Return True if any were changed since the last modification time."""
+        modified = self._get_last_modified_time()
         changed = modified != self._modified
         self._modified = modified
         return changed
@@ -32,5 +34,5 @@ class FileMonitor:
             await self.on_change()
 
     async def on_change(self) -> None:
-        """Called when file changes."""
+        """Called when any of the monitored files change."""
         await invoke(self.callback)

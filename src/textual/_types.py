@@ -1,13 +1,8 @@
-import sys
 from typing import Awaitable, Callable, List, TYPE_CHECKING, Union
 
 from rich.segment import Segment
 
-if sys.version_info >= (3, 8):
-    from typing import Protocol
-else:
-    from typing_extensions import Protocol
-
+from textual._typing import Protocol
 
 if TYPE_CHECKING:
     from .message import Message

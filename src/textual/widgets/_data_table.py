@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from dataclasses import dataclass, field
 from itertools import chain, zip_longest
 from typing import ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
@@ -14,18 +13,13 @@ from rich.text import Text, TextType
 
 from .. import events, messages
 from .._cache import LRUCache
-from .._profile import timer
 from .._segment_tools import line_crop
 from .._types import Lines
 from ..geometry import Region, Size, Spacing, clamp
 from ..reactive import Reactive
 from ..render import measure
 from ..scroll_view import ScrollView
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
+from .._typing import Literal
 
 CursorType = Literal["cell", "row", "column"]
 CELL: CursorType = "cell"
@@ -115,16 +109,15 @@ class Coord(NamedTuple):
 
 
 class DataTable(ScrollView, Generic[CellType], can_focus=True):
-
     DEFAULT_CSS = """
     App.-dark DataTable {
         background:;
     }
     DataTable {
         background: $surface ;
-        color: $text;           
+        color: $text;
     }
-    DataTable > .datatable--header {        
+    DataTable > .datatable--header {
         text-style: bold;
         background: $primary;
         color: $text;
@@ -136,7 +129,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     }
 
     DataTable > .datatable--odd-row {
-        
+
     }
 
     DataTable > .datatable--even-row {

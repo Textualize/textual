@@ -5,7 +5,6 @@ from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
 from typing import (
-    Awaitable,
     Generator,
     TYPE_CHECKING,
     ClassVar,
