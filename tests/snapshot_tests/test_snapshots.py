@@ -49,9 +49,7 @@ def test_checkboxes(snap_compare):
         "shift+tab",
         "enter",  # toggle off
         "shift+tab",
-        "wait:20",  # wait for animation
         "enter",  # toggle on
-        "wait:20",  # wait for animation
     ]
     assert snap_compare(WIDGET_EXAMPLES_DIR / "checkbox.py", press=press)
 

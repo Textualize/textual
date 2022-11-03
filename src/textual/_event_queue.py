@@ -28,14 +28,15 @@ class EventQueue:
         await self._queue.put(event)
 
     async def _process_events(self) -> None:
-        get_event = self._queue.get
+        queue = self._queue
+        get_event = queue.get
         post_message = self.destination.post_message
         wait_until_handled = self._wait_until_handled
         disable = self.disable
         while True:
             event = await get_event()
             if event is None:
-                self._queue.task_done()
+                queue.task_done()
                 break
 
             handle_before_proceeding = event.exclusive
@@ -45,7 +46,7 @@ class EventQueue:
             if handle_before_proceeding:
                 await wait_until_handled()
 
-            self._queue.task_done()
+            queue.task_done()
 
     async def _wait_until_handled(self):
         # TODO: Handle timeouts properly

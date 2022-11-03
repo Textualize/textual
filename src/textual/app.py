@@ -623,11 +623,12 @@ class App(Generic[ReturnType], DOMNode):
         """A task to send key events."""
         app = self
         driver = app._driver
+        keys = list(keys)
         assert driver is not None
         for key in keys:
             if key == "_":
                 print("(pause 50ms)")
-                # await asyncio.sleep(0.05)
+                await asyncio.sleep(0.05)
             elif key.startswith("wait:"):
                 _, wait_ms = key.split(":")
                 print(f"(pause {wait_ms}ms)")
@@ -650,7 +651,10 @@ class App(Generic[ReturnType], DOMNode):
                 key_event = events.Key(app, key, char)
                 driver.send_event(key_event)
 
-        await asyncio.sleep(0.15)
+        # TODO: We need a means of checking whether all events in an app have been handled
+        #  rather than this sleep.
+        if keys:
+            await asyncio.sleep(0.1)
         await app._animator.wait_for_idle()
 
     @asynccontextmanager
@@ -1656,10 +1660,6 @@ class App(Generic[ReturnType], DOMNode):
         else:
             if not (await self.check_bindings(event.key)):
                 await self.dispatch_key(event)
-
-    async def _on_shutdown_request(self, event: events.ShutdownRequest) -> None:
-        log("shutdown request")
-        await self._close_messages()
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()

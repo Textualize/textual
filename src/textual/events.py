@@ -44,22 +44,12 @@ class InvokeCallbacks(Event, bubble=False, verbose=True):
     """Sent after the Screen is updated"""
 
 
-class ShutdownRequest(Event):
-    pass
-
-
-class Shutdown(Event):
-    pass
-
-
 class Load(Event, bubble=False):
     """
     Sent when the App is running but *before* the terminal is in application mode.
 
     Use this event to run any set up that doesn't require any visuals such as loading
     configuration and binding keys.
-
-
     """
 
 
@@ -68,7 +58,6 @@ class Idle(Event, bubble=False):
 
     This is a pseudo-event in that it is created by the Textual system and doesn't go
     through the usual message queue.
-
     """
 
 
