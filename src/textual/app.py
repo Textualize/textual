@@ -1333,7 +1333,7 @@ class App(Generic[ReturnType], DOMNode):
         # the rest of the code.
         if before is not None and after is not None:
             raise AppError(
-                "A child can only be registered before or after, not before and after"
+                "Only one of 'before' and 'after' may be specified."
             )
 
         # If we don't already know about this widget...
