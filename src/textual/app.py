@@ -1350,9 +1350,7 @@ class App(Generic[ReturnType], DOMNode):
         # it's likely a good idea to keep it here to check assumptions in
         # the rest of the code.
         if before is not None and after is not None:
-            raise AppError(
-                "Only one of 'before' and 'after' may be specified."
-            )
+            raise AppError("Only one of 'before' and 'after' may be specified.")
 
         # If we don't already know about this widget...
         if child not in self._registry:
