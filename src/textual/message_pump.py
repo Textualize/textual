@@ -419,18 +419,12 @@ class MessagePump(metaclass=MessagePumpMeta):
         """
         await self._on_message(event)
 
-    async def _on_message(self, message: Message) -> bool:
+    async def _on_message(self, message: Message) -> None:
         """Called to process a message.
 
         Args:
             message (Message): A Message object.
-
-        Returns:
-            bool: True if the message has stopped bubbling.
         """
-
-        print(f"_on_message {message}")
-
         _rich_traceback_guard = True
         handler_name = message._handler_name
 
@@ -456,10 +450,10 @@ class MessagePump(metaclass=MessagePumpMeta):
                 message.stop()
             if self.is_parent_active and not self._parent._closing:
                 final_bubble = False
-                print(f"bubbling {message} to {self._parent}")
                 await message._bubble_to(self._parent)
 
-        return final_bubble
+        if final_bubble:
+            self.app._event_queue.enable()
 
     def check_idle(self) -> None:
         """Prompt the message pump to call idle if the queue is empty."""

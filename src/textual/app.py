@@ -628,7 +628,7 @@ class App(Generic[ReturnType], DOMNode):
         for key in keys:
             if key == "_":
                 print("(pause 50ms)")
-                await asyncio.sleep(0.05)
+                # await asyncio.sleep(0.05)
             elif key.startswith("wait:"):
                 _, wait_ms = key.split(":")
                 print(f"(pause {wait_ms}ms)")
@@ -656,7 +656,7 @@ class App(Generic[ReturnType], DOMNode):
                 #  This conditional sleep can be removed after that issue is closed.
                 # if key == "tab":
                 #     await asyncio.sleep(0.05)
-        await asyncio.sleep(0.05)
+        await asyncio.sleep(0.1)
         await app._animator.wait_for_idle()
 
     @asynccontextmanager
@@ -1523,8 +1523,6 @@ class App(Generic[ReturnType], DOMNode):
         return False
 
     async def on_event(self, event: events.Event) -> None:
-        print(f"App received event {event}")
-
         if isinstance(event, events.Compose):
             screen = Screen(id="_default")
             self._register(self, screen)
@@ -1541,7 +1539,6 @@ class App(Generic[ReturnType], DOMNode):
             elif isinstance(event, events.Key):
                 if not await self.check_bindings(event.key, universal=True):
                     forward_target = self.focused or self.screen
-                    print(f"forwarding key to target {forward_target}")
                     await forward_target._forward_event(event)
             else:
                 await self.screen._forward_event(event)
@@ -1551,12 +1548,6 @@ class App(Generic[ReturnType], DOMNode):
                 await self.focused._forward_event(event)
         else:
             await super().on_event(event)
-
-    async def _on_message(self, message: Message) -> bool:
-        final_bubble = await super()._on_message(message)
-        if final_bubble:
-            self._event_queue.enable()
-        return final_bubble
 
     async def action(
         self,

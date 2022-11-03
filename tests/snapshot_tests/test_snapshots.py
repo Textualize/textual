@@ -71,7 +71,6 @@ def test_buttons_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab"])
 
 
-@pytest.mark.skip(reason="Temporarily disabled while I work on event queue...")
 def test_datatable_render(snap_compare):
     press = ["tab", "down", "down", "right", "up", "left"]
     assert snap_compare(WIDGET_EXAMPLES_DIR / "data_table.py", press=press)
