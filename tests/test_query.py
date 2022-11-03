@@ -1,7 +1,7 @@
 import pytest
 
 from textual.widget import Widget
-from textual.css.query import InvalidQueryFormat, WrongType, NoMatches
+from textual.css.query import InvalidQueryFormat, WrongType, NoMatches, TooManyMatches
 
 
 def test_query():
@@ -82,6 +82,10 @@ def test_query():
             helpbar,
         ]
         assert list(app.query("Widget.float").results(View)) == []
+        assert app.query_one("#widget1") == widget1
+        assert app.query_one("#widget1", Widget) == widget1
+        with pytest.raises(TooManyMatches):
+            _ = app.query_one(Widget)
 
         assert app.query("Widget.float")[0] == sidebar
         assert app.query("Widget.float")[0:2] == [sidebar, tooltip]
