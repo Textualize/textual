@@ -38,6 +38,20 @@ async def test_mount_via_app() -> None:
         assert pilot.app.screen.children[-1] == ultimate
 
     async with App().run_test() as pilot:
+        # Mount a widget before -2, which is "before the penultimate".
+        penpenultimate = Static(id="penpenultimate")
+        await pilot.app.mount_all(widgets)
+        await pilot.app.mount(penpenultimate, before=-2)
+        assert pilot.app.screen.children[-3] == penpenultimate
+
+    async with App().run_test() as pilot:
+        # Mount a widget after -2, which is "before the end".
+        penultimate = Static(id="penultimate")
+        await pilot.app.mount_all(widgets)
+        await pilot.app.mount(penultimate, after=-2)
+        assert pilot.app.screen.children[-2] == penultimate
+
+    async with App().run_test() as pilot:
         # Mount a widget before 0, which is "at the start".
         start = Static(id="start")
         await pilot.app.mount_all(widgets)
