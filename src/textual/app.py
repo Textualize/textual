@@ -143,7 +143,7 @@ class _WriterThread(threading.Thread):
 
     def __init__(self) -> None:
         super().__init__(daemon=True)
-        self._queue: Queue[str | None | threading.Event] = Queue(10)
+        self._queue: Queue[str | None | threading.Event] = Queue(16)
         self._file = sys.__stdout__
 
     def write(self, text: str) -> None:
