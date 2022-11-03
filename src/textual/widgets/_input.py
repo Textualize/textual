@@ -217,7 +217,6 @@ class Input(Widget, can_focus=True):
             self.blink_timer.resume()
 
     async def on_key(self, event: events.Key) -> None:
-        print(f"Input received {event}")
         self._cursor_visible = True
         if self.cursor_blink:
             self.blink_timer.reset()

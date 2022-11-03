@@ -651,7 +651,7 @@ class App(Generic[ReturnType], DOMNode):
                 key_event = events.Key(app, key, char)
                 driver.send_event(key_event)
 
-        await asyncio.sleep(0.05)
+        await asyncio.sleep(0.1)
         await app._animator.wait_for_idle()
 
     @asynccontextmanager
