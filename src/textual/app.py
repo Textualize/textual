@@ -6,27 +6,25 @@ import io
 import os
 import platform
 import sys
+import threading
 import unicodedata
 import warnings
 from asyncio import Task
-from contextlib import asynccontextmanager
-from contextlib import redirect_stderr, redirect_stdout
+from contextlib import asynccontextmanager, redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
 from queue import Queue
-from ._profile import timer
-import threading
 from time import perf_counter
 from typing import (
+    TYPE_CHECKING,
     Any,
     Generic,
     Iterable,
-    Type,
-    TYPE_CHECKING,
-    TypeVar,
-    cast,
-    Union,
     List,
+    Type,
+    TypeVar,
+    Union,
+    cast,
 )
 from weakref import WeakSet, WeakValueDictionary
 
@@ -39,7 +37,7 @@ from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
 from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
-from ._animator import Animator, DEFAULT_EASING, Animatable, EasingFunction
+from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._callback import invoke
 from ._context import active_app
