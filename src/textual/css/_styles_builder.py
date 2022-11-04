@@ -672,7 +672,7 @@ class StylesBuilder:
 
     def process_layer(self, name: str, tokens: list[Token]) -> None:
         if len(tokens) > 1:
-            self.error(name, tokens[1], f"unexpected tokens in dock-edge declaration")
+            self.error(name, tokens[1], "unexpected tokens in dock-edge declaration")
         self.styles._rules["layer"] = tokens[0].value
 
     def process_layers(self, name: str, tokens: list[Token]) -> None:
