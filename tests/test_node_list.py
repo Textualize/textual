@@ -1,3 +1,5 @@
+import pytest
+
 from textual.widget import Widget
 from textual._node_list import NodeList
 
@@ -19,6 +21,16 @@ def test_repeat_add_one():
         nodes._append(widget)
     assert len(nodes)==1
 
+def test_insert():
+    nodes = NodeList()
+    widget1 = Widget()
+    widget2 = Widget()
+    widget3 = Widget()
+    nodes._append(widget1)
+    nodes._append(widget3)
+    nodes._insert(1,widget2)
+    assert list(nodes) == [widget1,widget2,widget3]
+
 def test_truthy():
     """Does a node list act as a truthy object?"""
     nodes = NodeList()
@@ -34,6 +46,15 @@ def test_contains():
     nodes._append(widget)
     assert widget in nodes
     assert Widget() not in nodes
+
+def test_index():
+    """Can we get the index of a widget in the list?"""
+    widget = Widget()
+    nodes = NodeList()
+    with pytest.raises(ValueError):
+        _ = nodes.index(widget)
+    nodes._append(widget)
+    assert nodes.index(widget) == 0
 
 def test_remove():
     """Can we remove a widget we've added?"""

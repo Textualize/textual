@@ -284,6 +284,7 @@ class MessagePump(metaclass=MessagePumpMeta):
             await timer.stop()
         self._timers.clear()
         await self._message_queue.put(events.Unmount(sender=self))
+        Reactive._reset_object(self)
         await self._message_queue.put(None)
         if self._task is not None and asyncio.current_task() != self._task:
             # Ensure everything is closed before returning
