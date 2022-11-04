@@ -162,12 +162,14 @@ class _WriterThread(threading.Thread):
         write = self._file.write
         flush = self._file.flush
         get = self._queue.get
+        qsize = self._queue.qsize
         while True:
+            if not qsize():
+                flush()
             text: str | None = get()
             if text is None:
                 break
             write(text)
-            flush()
 
     def stop(self) -> None:
         self._queue.put(None)
