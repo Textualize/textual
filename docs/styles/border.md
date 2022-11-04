@@ -7,11 +7,11 @@ Borders may also be set individually for the four edges of a widget with the `bo
 ## Syntax
 
 ```
-border: [<COLOR>] [<BORDER VALUE>];
-border-top: [<COLOR>] [<BORDER VALUE>];
-border-right: [<COLOR>] [<BORDER VALUE>];
-border-bottom: [<COLOR>] [<BORDER VALUE>];
-border-left: [<COLOR>] [<BORDER VALUE>];
+border: [<BORDER VALUE>] [<COLOR>];
+border-top: [<BORDER VALUE>] [<COLOR>];
+border-right: [<BORDER VALUE>] [<COLOR>];
+border-bottom: [<BORDER VALUE>] [<COLOR>];
+border-left: [<BORDER VALUE>] [<COLOR>];
 ```
 
 ### Values
