@@ -13,8 +13,7 @@ from ..widget import Widget
 
 @rich.repr.auto
 class Footer(Widget):
-    """A simple footer widget which docks itself to the bottom of the parent container.
-    """
+    """A simple footer widget which docks itself to the bottom of the parent container."""
 
     DEFAULT_CSS = """
     Footer {
