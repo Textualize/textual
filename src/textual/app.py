@@ -143,7 +143,7 @@ class _WriterThread(threading.Thread):
 
     def __init__(self) -> None:
         super().__init__(daemon=True)
-        self._queue: Queue[str | None | threading.Event] = Queue(16)
+        self._queue: Queue[str | None] = Queue(32)
         self._file = sys.__stdout__
 
     def write(self, text: str) -> None:
@@ -156,21 +156,18 @@ class _WriterThread(threading.Thread):
         return self._file.fileno()
 
     def flush(self) -> None:
-        event = threading.Event()
-        self._queue.put(event)
-        event.wait()
-        self._file.flush()
+        return
 
     def run(self) -> None:
         write = self._file.write
+        flush = self._file.flush
+        get = self._queue.get
         while True:
-            text: str | threading.Event | None = self._queue.get()
-            if isinstance(text, threading.Event):
-                text.set()
-                continue
+            text: str | None = get()
             if text is None:
                 break
             write(text)
+            flush()
 
     def stop(self) -> None:
         self._queue.put(None)
