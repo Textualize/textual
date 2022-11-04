@@ -279,16 +279,14 @@ class DOMQuery(Generic[QueryType]):
         Returns:
             Widget | ExpectType: The matching Widget.
         """
-        if self.nodes:
-            last = self.nodes[-1]
-            if expect_type is not None:
-                if not isinstance(last, expect_type):
-                    raise WrongType(
-                        f"Query value is wrong type; expected {expect_type}, got {type(last)}"
-                    )
-            return last
-        else:
+        if not self.nodes:
             raise NoMatches(f"No nodes match {self!r}")
+        last = self.nodes[-1]
+        if expect_type is not None and not isinstance(last, expect_type):
+            raise WrongType(
+                f"Query value is wrong type; expected {expect_type}, got {type(last)}"
+            )
+        return last
 
     @overload
     def results(self) -> Iterator[Widget]:
