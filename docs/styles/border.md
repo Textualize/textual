@@ -1,6 +1,6 @@
 # Border
 
-The `border` rule enables the drawing of a box around a widget. A border is set with a border value (see below) followed by a color.
+The `border` rule enables the drawing of a box around a widget. A border is set with a border value (see below) followed by a color, or the other way around.
 
 Borders may also be set individually for the four edges of a widget with the `border-top`, `border-right`, `border-bottom` and `border-left` rules.
 
