@@ -129,6 +129,8 @@ ReturnType = TypeVar("ReturnType")
 
 
 class _NullFile:
+    """A file-like where writes go nowhere."""
+
     def write(self, text: str) -> None:
         pass
 
