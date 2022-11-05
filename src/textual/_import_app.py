@@ -16,7 +16,7 @@ class AppFail(Exception):
     pass
 
 
-def shebang_python(candidate: Path):
+def shebang_python(candidate: Path) -> bool:
     """Does the given file look like it's run with Python?
 
     Args:
