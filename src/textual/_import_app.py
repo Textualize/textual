@@ -28,9 +28,9 @@ def shebang_python(candidate: Path) -> bool:
     try:
         with candidate.open("rb") as source:
             first_line = source.readline()
-        return first_line.startswith(b"#!") and b"python" in first_line
     except IOError:
         return False
+    return first_line.startswith(b"#!") and b"python" in first_line
 
 
 def import_app(import_name: str) -> App:
