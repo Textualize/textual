@@ -2,7 +2,7 @@
 
 Textual's color design system consists of a number of predefined colors and guidelines for how to use them in your app.
 
-You don't have to follow these guidelines, but if you do, you will be able to mix builtin widgets with third party widgets and your own creations, without color clashes.
+You don't have to follow these guidelines, but if you do, you will be able to mix builtin widgets with third party widgets and your own creations, without worrying about clashing colors.
 
 ## System
 
@@ -22,7 +22,7 @@ MyWidget {
 
 ### Base Colors
 
-The following table contains the name and description of each of the 12 *base* colors. You can use these colors as given, or one of the 6 [additional shades](#shades).
+The following table contains the names and descriptions of each of the 12 *base* colors. You can use these colors as given, or one of the 6 [additional shades](#shades).
 
 
 | Color                   | Description                                                                                                                                         |
@@ -66,7 +66,7 @@ The design system defines three CSS variables you should use for text color.
 
 - `$text` sets the color of text in your app. Most text in your app should have this color.
 - `$text-muted` sets a slightly faded text color. Use this for text which has lower importance. For instance a sub-title or supplementary information.
-- `$text-disabled` sets faded out text, which indicates it has been disabled. For instance, menu items which are not applicable and can't be clicked.
+- `$text-disabled` sets faded out text which indicates it has been disabled. For instance, menu items which are not applicable and can't be clicked.
 
 You can set these colors via the [color](../styles/color.md) property. The design system uses `auto` colors for text, which means that Textual will pick either white or black (whichever has better contrast).
 
@@ -78,9 +78,9 @@ You can set these colors via the [color](../styles/color.md) property. The desig
 
 In a future version of Textual you will be able to modify theme colors directly, and allow user's to configure preferred themes.
 
-## Color Reference
+## Theme Reference
 
-```{.rich title="Textual Design System"}
+```{.rich title="Textual Theme Colors"}
 from rich import print
 from textual.app import DEFAULT_COLORS
 from textual.design import show_design
