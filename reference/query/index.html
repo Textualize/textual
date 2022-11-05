@@ -581,6 +581,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -697,6 +699,28 @@
   
   <span class="md-ellipsis">
     Textual CSS
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Design System
     
   </span>
   
@@ -3122,6 +3146,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.css.query.DOMQuery.only_one" class="md-nav__link">
+    <span class="md-ellipsis">
+      only_one()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.css.query.DOMQuery.refresh" class="md-nav__link">
     <span class="md-ellipsis">
       refresh()
@@ -3211,6 +3244,15 @@
   <a href="#textual.css.query.QueryError" class="md-nav__link">
     <span class="md-ellipsis">
       QueryError
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.css.query.TooManyMatches" class="md-nav__link">
+    <span class="md-ellipsis">
+      TooManyMatches
     </span>
   </a>
   
@@ -3470,6 +3512,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.css.query.DOMQuery.only_one" class="md-nav__link">
+    <span class="md-ellipsis">
+      only_one()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.css.query.DOMQuery.refresh" class="md-nav__link">
     <span class="md-ellipsis">
       refresh()
@@ -3565,6 +3616,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.css.query.TooManyMatches" class="md-nav__link">
+    <span class="md-ellipsis">
+      TooManyMatches
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.css.query.WrongType" class="md-nav__link">
     <span class="md-ellipsis">
       WrongType
@@ -3587,7 +3647,7 @@
                 
                   
 
-  <a href="https://github.com/textualize/textual/edit/css/docs/reference/query.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/textualize/textual/edit/main/docs/reference/query.md" title="Edit this page" class="md-content__button md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
@@ -3984,6 +4044,91 @@ or None for any type. Defaults to None.</p></td>
 
 
 
+<h3 id="textual.css.query.DOMQuery.only_one" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">only_one</span><span class="p">(</span><span class="n">expect_type</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#textual.css.query.DOMQuery.only_one" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Get the <em>only</em> matching node.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>expect_type</code></td>
+          <td>
+                <code>type[<span title="textual.css.query.DOMQuery.ExpectType">ExpectType</span>] | None</code>
+          </td>
+          <td><p>Require matched node is of this type,
+or None for any type. Defaults to None.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Raises:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.WrongType" href="#textual.css.query.WrongType">WrongType</a></code>
+          </td>
+          <td><p>If the wrong type was found.</p></td>
+        </tr>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.TooManyMatches" href="#textual.css.query.TooManyMatches">TooManyMatches</a></code>
+          </td>
+          <td><p>If there is more than one matching node in the query.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | <span title="textual.css.query.DOMQuery.ExpectType">ExpectType</span></code>
+          </td>
+          <td><p>Widget | ExpectType: The matching Widget.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.css.query.DOMQuery.refresh" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">refresh</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">repaint</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
@@ -4340,6 +4485,30 @@ or None for no filter. Defaults to None.</p></td>
 
   
       <p>Base class for a query related error.</p>
+
+
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="textual.css.query.TooManyMatches" class="doc doc-heading">
+        <code>TooManyMatches</code>
+
+
+<a href="#textual.css.query.TooManyMatches" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="textual.css.query.QueryError" href="#textual.css.query.QueryError">QueryError</a></code></p>
+
+  
+      <p>Too many nodes matched the query.</p>
 
 
 

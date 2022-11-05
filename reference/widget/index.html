@@ -581,6 +581,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -697,6 +699,28 @@
   
   <span class="md-ellipsis">
     Textual CSS
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Design System
     
   </span>
   
@@ -3213,6 +3237,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widget.Widget.MountError" class="md-nav__link">
+    <span class="md-ellipsis">
+      MountError
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widget.Widget.action" class="md-nav__link">
     <span class="md-ellipsis">
       action()
@@ -3976,6 +4009,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widget.Widget.MountError" class="md-nav__link">
+    <span class="md-ellipsis">
+      MountError
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widget.Widget.action" class="md-nav__link">
     <span class="md-ellipsis">
       action()
@@ -4637,7 +4679,7 @@
                 
                   
 
-  <a href="https://github.com/textualize/textual/edit/css/docs/reference/widget.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/textualize/textual/edit/main/docs/reference/widget.md" title="Edit this page" class="md-content__button md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
@@ -4774,6 +4816,30 @@
 
 </div>
 
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="textual.widget.Widget.MountError" class="doc doc-heading">
+        <code>MountError</code>
+
+
+<a href="#textual.widget.Widget.MountError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code>Exception</code></p>
+
+  
+      <p>Error raised when there was a problem with the mount request.</p>
+
+
+
+  </div>
+
+</div>
 
 
 <div class="doc doc-object doc-function">
@@ -6042,22 +6108,59 @@ visible. Defaults to True.</p></td>
 
 
 <h2 id="textual.widget.Widget.mount" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">mount</span><span class="p">(</span><span class="o">*</span><span class="n">anon_widgets</span><span class="p">,</span> <span class="o">**</span><span class="n">widgets</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">mount</span><span class="p">(</span><span class="o">*</span><span class="n">widgets</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 <a href="#textual.widget.Widget.mount" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
   <div class="doc doc-contents ">
   
-      <p>Mount child widgets (making this widget a container).</p>
-<p>Widgets may be passed as positional arguments or keyword arguments. If keyword arguments,
-the keys will be set as the Widget's id.</p>
+      <p>Mount widgets below this widget (making this widget a container).</p>
 
-<details class="example">
-  <summary>Example</summary>
-  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="bp">self</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="n">Static</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">),</span> <span class="n">header</span><span class="o">=</span><span class="n">Header</span><span class="p">())</span>
-</code></pre></div>
-</details>
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>*widgets</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="#textual.widget.Widget">Widget</a></code>
+          </td>
+          <td><p>The widget(s) to mount.</p></td>
+          <td>
+                <code>()</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>before</code></td>
+          <td>
+                <code>int | str | <a class="autorefs autorefs-internal" title="textual.widget.Widget" href="#textual.widget.Widget">Widget</a></code>
+          </td>
+          <td><p>Optional location to mount before.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>after</code></td>
+          <td>
+                <code>int | str | <a class="autorefs autorefs-internal" title="textual.widget.Widget" href="#textual.widget.Widget">Widget</a></code>
+          </td>
+          <td><p>Optional location to mount after.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
   <p><strong>Returns:</strong></p>
   <table>
     <thead>
@@ -6076,6 +6179,29 @@ the keys will be set as the Widget's id.</p>
     </tbody>
   </table>
 
+  <p><strong>Raises:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget.MountError" href="#textual.widget.Widget.MountError">MountError</a></code>
+          </td>
+          <td><p>If there is a problem with the mount request.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+<details class="note">
+  <summary>Note</summary>
+  <p>Only one of <code>before</code> or <code>after</code> can be provided. If both are
+provided a <code>MountError</code> will be raised.</p>
+</details>
   </div>
 
 </div>

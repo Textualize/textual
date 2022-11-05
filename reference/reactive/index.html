@@ -581,6 +581,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -697,6 +699,28 @@
   
   <span class="md-ellipsis">
     Textual CSS
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Design System
     
   </span>
   
@@ -3371,7 +3395,7 @@
                 
                   
 
-  <a href="https://github.com/textualize/textual/edit/css/docs/reference/reactive.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/textualize/textual/edit/main/docs/reference/reactive.md" title="Edit this page" class="md-content__button md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
@@ -3832,7 +3856,7 @@
 
 
 <h2 id="textual.reactive.watch" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">watch</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">watch</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 <a href="#textual.reactive.watch" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -3880,6 +3904,16 @@
           <td><p>A callable to call when the attribute changes.</p></td>
           <td>
               <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>init</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>True to call watcher initialization. Defaults to True.</p></td>
+          <td>
+                <code>True</code>
           </td>
         </tr>
     </tbody>

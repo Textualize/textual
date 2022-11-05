@@ -581,6 +581,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -697,6 +699,28 @@
   
   <span class="md-ellipsis">
     Textual CSS
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Design System
     
   </span>
   
@@ -2802,6 +2826,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.CSS" class="md-nav__link">
+    <span class="md-ellipsis">
+      CSS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.action" class="md-nav__link">
     <span class="md-ellipsis">
       action()
@@ -3244,6 +3277,15 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.app.CssPathError" class="md-nav__link">
+    <span class="md-ellipsis">
+      CssPathError
+    </span>
+  </a>
   
 </li>
       
@@ -3713,6 +3755,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.CSS" class="md-nav__link">
+    <span class="md-ellipsis">
+      CSS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.action" class="md-nav__link">
     <span class="md-ellipsis">
       action()
@@ -4159,6 +4210,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.app.CssPathError" class="md-nav__link">
+    <span class="md-ellipsis">
+      CssPathError
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.app.ScreenStackError" class="md-nav__link">
     <span class="md-ellipsis">
       ScreenStackError
@@ -4181,7 +4241,7 @@
                 
                   
 
-  <a href="https://github.com/textualize/textual/edit/css/docs/reference/app.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/textualize/textual/edit/main/docs/reference/app.md" title="Edit this page" class="md-content__button md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
@@ -4248,9 +4308,10 @@
         <tr>
           <td><code>css_path</code></td>
           <td>
-                <code>str | <span title="pathlib.PurePath">PurePath</span> | None</code>
+                <code>str | <span title="pathlib.PurePath">PurePath</span> | list[str | <span title="pathlib.PurePath">PurePath</span>] | None</code>
           </td>
-          <td><p>Path to CSS or <code>None</code> for no CSS file. Defaults to None.</p></td>
+          <td><p>Path to CSS or <code>None</code> for no CSS file.
+Defaults to None. To load multiple CSS files, pass a list of strings or paths which will be loaded in order.</p></td>
           <td>
                 <code>None</code>
           </td>
@@ -4268,6 +4329,24 @@
     </tbody>
   </table>
 
+  <p><strong>Raises:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.app.CssPathError" href="#textual.app.CssPathError">CssPathError</a></code>
+          </td>
+          <td><p>When the supplied CSS path(s) are an unexpected type.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
 
 
   
@@ -4279,6 +4358,28 @@
 
 
 
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.app.App.CSS" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">CSS</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.app.App.CSS" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Inline CSS, useful for quick scripts. This is loaded after CSS_PATH,
+and therefore takes priority in the event of a specificity clash.</p>
+  </div>
+
+</div>
 
 
 
@@ -5697,15 +5798,58 @@ Defaults to None.</p></td>
 
 
 <h3 id="textual.app.App.mount" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">mount</span><span class="p">(</span><span class="o">*</span><span class="n">anon_widgets</span><span class="p">,</span> <span class="o">**</span><span class="n">widgets</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">mount</span><span class="p">(</span><span class="o">*</span><span class="n">widgets</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 <a href="#textual.app.App.mount" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
   
-      <p>Mount widgets. Widgets specified as positional args, or keywords args. If supplied
-as keyword args they will be assigned an id of the key.</p>
+      <p>Mount the given widgets relative to the app's screen.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>*widgets</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
+          </td>
+          <td><p>The widget(s) to mount.</p></td>
+          <td>
+                <code>()</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>before</code></td>
+          <td>
+                <code>int | str | <a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
+          </td>
+          <td><p>Optional location to mount before.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>after</code></td>
+          <td>
+                <code>int | str | <a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
+          </td>
+          <td><p>Optional location to mount after.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
   <p><strong>Returns:</strong></p>
   <table>
@@ -5725,6 +5869,29 @@ as keyword args they will be assigned an id of the key.</p>
     </tbody>
   </table>
 
+  <p><strong>Raises:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code>MountError</code>
+          </td>
+          <td><p>If there is a problem with the mount request.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+<details class="note">
+  <summary>Note</summary>
+  <p>Only one of <code>before</code> or <code>after</code> can be provided. If both are
+provided a <code>MountError</code> will be raised.</p>
+</details>
   </div>
 
 </div>
@@ -5734,7 +5901,7 @@ as keyword args they will be assigned an id of the key.</p>
 
 
 <h3 id="textual.app.App.mount_all" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">mount_all</span><span class="p">(</span><span class="n">widgets</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">mount_all</span><span class="p">(</span><span class="n">widgets</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 <a href="#textual.app.App.mount_all" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -5764,9 +5931,70 @@ as keyword args they will be assigned an id of the key.</p>
               <em>required</em>
           </td>
         </tr>
+        <tr>
+          <td><code>before</code></td>
+          <td>
+                <code>int | str | <a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
+          </td>
+          <td><p>Optional location to mount before.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>after</code></td>
+          <td>
+                <code>int | str | <a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
+          </td>
+          <td><p>Optional location to mount after.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>AwaitMount</code></td>          <td>
+                <code><span title="textual.widget.AwaitMount">AwaitMount</span></code>
+          </td>
+          <td><p>An awaitable object that waits for widgets to be mounted.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Raises:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code>MountError</code>
+          </td>
+          <td><p>If there is a problem with the mount request.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+<details class="note">
+  <summary>Note</summary>
+  <p>Only one of <code>before</code> or <code>after</code> can be provided. If both are
+provided a <code>MountError</code> will be raised.</p>
+</details>
   </div>
 
 </div>
@@ -6616,6 +6844,30 @@ method is a null-op.</p>
 
 
   </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="textual.app.CssPathError" class="doc doc-heading">
+        <code>CssPathError</code>
+
+
+<a href="#textual.app.CssPathError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code>Exception</code></p>
+
+  
+      <p>Raised when supplied CSS path(s) are invalid.</p>
+
+
 
   </div>
 
