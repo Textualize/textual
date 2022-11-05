@@ -52,8 +52,8 @@ class ColorsView(Vertical):
                 color = f"{color_name}-{level}" if level else color_name
                 item = ColorItem(
                     ColorBar(f"${color}", classes="text label"),
-                    ColorBar(f"$text-muted", classes="muted"),
-                    ColorBar(f"$text-disabled", classes="disabled"),
+                    ColorBar("$text-muted", classes="muted"),
+                    ColorBar("$text-disabled", classes="disabled"),
                     classes=color,
                 )
                 items.append(item)
