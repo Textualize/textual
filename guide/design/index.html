@@ -754,13 +754,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#system" class="md-nav__link">
+  <a href="#designing-with-colors" class="md-nav__link">
     <span class="md-ellipsis">
-      System
+      Designing with Colors
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="System">
+    <nav class="md-nav" aria-label="Designing with Colors">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -769,21 +769,6 @@
       Base Colors
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Base Colors">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#color-preview" class="md-nav__link">
-    <span class="md-ellipsis">
-      Color Preview
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -825,6 +810,15 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#color-preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Color Preview
+    </span>
+  </a>
   
 </li>
       
@@ -3566,13 +3560,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#system" class="md-nav__link">
+  <a href="#designing-with-colors" class="md-nav__link">
     <span class="md-ellipsis">
-      System
+      Designing with Colors
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="System">
+    <nav class="md-nav" aria-label="Designing with Colors">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3581,21 +3575,6 @@
       Base Colors
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Base Colors">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#color-preview" class="md-nav__link">
-    <span class="md-ellipsis">
-      Color Preview
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -3641,6 +3620,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#color-preview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Color Preview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#theme-reference" class="md-nav__link">
     <span class="md-ellipsis">
       Theme Reference
@@ -3670,19 +3658,23 @@
 
 
 <h1 id="design-system">Design System<a class="headerlink" href="#design-system" title="Permanent link">&para;</a></h1>
-<p>Textual's color design system consists of a number of predefined colors and guidelines for how to use them in your app.</p>
+<p>Textual's design system consists of a number of predefined colors and guidelines for how to use them in your app.</p>
 <p>You don't have to follow these guidelines, but if you do, you will be able to mix builtin widgets with third party widgets and your own creations, without worrying about clashing colors.</p>
-<h2 id="system">System<a class="headerlink" href="#system" title="Permanent link">&para;</a></h2>
-<p>Textual's color system is based on Google's Material, modified to suite the terminal.</p>
-<p>You can use Textual's colors via <a href="../CSS/#css-variables">CSS variables</a>, which may be applied to the <a href="../../styles/background/">background</a> and <a href="../../styles/color/">color</a> rules, or other rules that accepts colors. </p>
+<div class="admonition information">
+<p class="admonition-title">Information</p>
+<p>Textual's color system is based on Google's Material design system, modified to suite the terminal.</p>
+</div>
+<h2 id="designing-with-colors">Designing with Colors<a class="headerlink" href="#designing-with-colors" title="Permanent link">&para;</a></h2>
+<p>Textual pre-defines a number of colors in <a href="../CSS/#css-variables">CSS variables</a>. For instance, the CSS variable <code>$primary</code> is set to <code>#004578</code> (the blue used in headers). You can use <code>$primary</code> in place of the color in the <a href="../../styles/background/">background</a> and <a href="../../styles/color/">color</a> rules, or other any other rule that accepts a color.</p>
 <p>Here's an example of CSS that uses color variables:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">MyWidget</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="nv">$primary</span><span class="err">;</span><span class="w"></span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="na">color</span><span class="o">:</span><span class="w"> </span><span class="nv">$text</span><span class="err">;</span><span class="w"></span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="err">}</span><span class="w"></span>
 </code></pre></div>
+<p>Using variables rather than explicit colors allows Textual to apply color themes. Textual supplies a default light and dark theme, but in the future many more themes will be available.</p>
 <h3 id="base-colors">Base Colors<a class="headerlink" href="#base-colors" title="Permanent link">&para;</a></h3>
-<p>The following table contains the names and descriptions of each of the 12 <em>base</em> colors. You can use these colors as given, or one of the 6 <a href="#shades">additional shades</a>.</p>
+<p>There are 12 <em>base</em> colors defined in the color scheme. The following table lists each of the color names (as used in CSS) and a description of where to use them.</p>
 <table>
 <thead>
 <tr>
@@ -3741,12 +3733,13 @@
 </tr>
 </tbody>
 </table>
-<h4 id="color-preview">Color Preview<a class="headerlink" href="#color-preview" title="Permanent link">&para;</a></h4>
-<p>Run the following from the command line to preview the colors defined in the color system:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>textual colors
-</code></pre></div>
 <h3 id="shades">Shades<a class="headerlink" href="#shades" title="Permanent link">&para;</a></h3>
-<p>For every color, Textual generates 3 dark shades and 3 light shades. Add <code>-lighten-1</code>, <code>-lighten-2</code>, or <code>-lighten-3</code> to the color's CSS variable get lighter shades (3 is the lightest). Similarly, you can add <code>-darken-1</code>, <code>-darken-2</code>, and <code>-darken-3</code> to a color to get the darker shades (3 is the darkest).</p>
+<p>For every color, Textual generates 3 dark shades and 3 light shades.</p>
+<ul>
+<li>Add <code>-lighten-1</code>, <code>-lighten-2</code>, or <code>-lighten-3</code> to the color's variable name to get lighter shades (3 is the lightest).</li>
+<li>Add <code>-darken-1</code>, <code>-darken-2</code>, and <code>-darken-3</code> to a color to get the darker shades (3 is the darkest).</li>
+</ul>
+<p>For example, <code>$secondary-darken-1</code> is a slightly darkened <code>$secondary</code>, and <code>$error-lighten-3</code> is a very light version of the <code>$error</code> color.</p>
 <h3 id="dark-mode">Dark mode<a class="headerlink" href="#dark-mode" title="Permanent link">&para;</a></h3>
 <p>There are two color themes in Textual, a light mode and dark mode. You can switch between them by toggling the <code>dark</code> attribute on the App class.</p>
 <p>In dark mode <code>$background</code> and <code>$surface</code> are off-black. Dark mode also set <code>$primary-background</code> and <code>$secondary-background</code> to dark versions of <code>$primary</code> and <code>$secondary</code>.</p>
@@ -3760,11 +3753,16 @@
 <p>You can set these colors via the <a href="../../styles/color/">color</a> property. The design system uses <code>auto</code> colors for text, which means that Textual will pick either white or black (whichever has better contrast).</p>
 <div class="admonition information">
 <p class="admonition-title">Information</p>
-<p>These text colors all have some alpha applied, which means that even <code>$text</code> isn't pure white or pure black. This is done because blending in a little of the background color produces text that is not so harsh on the eyes.</p>
+<p>These text colors all have some alpha applied, so that even <code>$text</code> isn't pure white or pure black. This is done because blending in a little of the background color produces text that is not so harsh on the eyes.</p>
 </div>
 <h3 id="theming">Theming<a class="headerlink" href="#theming" title="Permanent link">&para;</a></h3>
-<p>In a future version of Textual you will be able to modify theme colors directly, and allow user's to configure preferred themes.</p>
+<p>In a future version of Textual you will be able to modify theme colors directly, and allow users to configure preferred themes.</p>
+<h2 id="color-preview">Color Preview<a class="headerlink" href="#color-preview" title="Permanent link">&para;</a></h2>
+<p>Run the following from the command line to preview the colors defined in the color system:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>textual colors
+</code></pre></div>
 <h2 id="theme-reference">Theme Reference<a class="headerlink" href="#theme-reference" title="Permanent link">&para;</a></h2>
+<p>Here's a list of the colors defined in the default light and dark themes.</p>
 <p><svg class="rich-terminal" viewBox="0 0 994 6223.2" xmlns="http://www.w3.org/2000/svg">
     <!-- Generated with Rich https://www.textualize.io -->
     <style>
