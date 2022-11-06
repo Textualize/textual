@@ -79,9 +79,6 @@ def take_svg_screenshot(
     if title is None:
         title = app.title
 
-    screenshot_cache = Path(SCREENSHOT_CACHE)
-    screenshot_cache.mkdir(exist_ok=True)
-
     def get_cache_key(app: App) -> str:
         hash = hashlib.md5()
         file_paths = [app_path] + app.css_path
@@ -91,9 +88,13 @@ def take_svg_screenshot(
         cache_key = f"{hash.hexdigest()}.svg"
         return cache_key
 
-    screenshot_path = screenshot_cache / get_cache_key(app)
-    if screenshot_path.exists():
-        return screenshot_path.read_text()
+    if app_path is not None:
+        screenshot_cache = Path(SCREENSHOT_CACHE)
+        screenshot_cache.mkdir(exist_ok=True)
+
+        screenshot_path = screenshot_cache / get_cache_key(app)
+        if screenshot_path.exists():
+            return screenshot_path.read_text()
 
     async def auto_pilot(pilot: Pilot) -> None:
         app = pilot.app
@@ -107,7 +108,8 @@ def take_svg_screenshot(
         size=terminal_size,
     )
 
-    screenshot_path.write_text(svg)
+    if app_path is not None:
+        screenshot_path.write_text(svg)
 
     assert svg is not None
 
