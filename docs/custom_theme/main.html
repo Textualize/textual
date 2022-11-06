@@ -14,12 +14,7 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="{{ page.canonical_url | url }}">
 <meta property="og:site_name" content="Textual Documentation">
-
-{% if page.meta and page.meta.description %}
-<meta property="og:description" content="{{ page.meta.description }}" />
-{% elif config.site_description %}
-<meta property="og:description" content="{{ config.site_description }}" />
-{% endif %}
+<meta property="og:description" content="Textual is a TUI framework for Python, inspired by modern web development.">
 
 <meta property="og:image" content="https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png">
 
