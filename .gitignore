@@ -122,3 +122,6 @@ sandbox/
 
 # Cache of screenshots used in the docs
 .screenshot_cache
+
+# Used by mkdocs-material social plugin
+.cache
