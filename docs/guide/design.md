@@ -1,17 +1,20 @@
 # Design System
 
-Textual's color design system consists of a number of predefined colors and guidelines for how to use them in your app.
+Textual's design system consists of a number of predefined colors and guidelines for how to use them in your app.
 
 You don't have to follow these guidelines, but if you do, you will be able to mix builtin widgets with third party widgets and your own creations, without worrying about clashing colors.
 
-## System
 
-Textual's color system is based on Google's Material, modified to suite the terminal.
+!!! information
 
-You can use Textual's colors via [CSS variables](../guide/CSS.md#css-variables), which may be applied to the [background](../styles/background.md) and [color](../styles/color.md) rules, or other rules that accepts colors. 
+    Textual's color system is based on Google's Material design system, modified to suite the terminal.
+
+
+## Designing with Colors
+
+Textual pre-defines a number of colors in [CSS variables](../guide/CSS.md#css-variables). For instance, the CSS variable `$primary` is set to `#004578` (the blue used in headers). You can use `$primary` in place of the color in the [background](../styles/background.md) and [color](../styles/color.md) rules, or other any other rule that accepts a color.
 
 Here's an example of CSS that uses color variables:
- 
 
 ```sass
 MyWidget {
@@ -20,10 +23,12 @@ MyWidget {
 }
 ```
 
+Using variables rather than explicit colors allows Textual to apply color themes. Textual supplies a default light and dark theme, but in the future many more themes will be available.
+
+
 ### Base Colors
 
-The following table contains the names and descriptions of each of the 12 *base* colors. You can use these colors as given, or one of the 6 [additional shades](#shades).
-
+There are 12 *base* colors defined in the color scheme. The following table lists each of the color names (as used in CSS) and a description of where to use them.
 
 | Color                   | Description                                                                                                                                         |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -41,24 +46,21 @@ The following table contains the names and descriptions of each of the 12 *base*
 | `$accent`               | Used sparingly to draw attention to a part of the UI (typically borders around focused widgets).                                                    |
 
 
-#### Color Preview
-
-Run the following from the command line to preview the colors defined in the color system:
-
-```bash
-textual colors
-```
-
-
 ### Shades
 
-For every color, Textual generates 3 dark shades and 3 light shades. Add `-lighten-1`, `-lighten-2`, or `-lighten-3` to the color's CSS variable get lighter shades (3 is the lightest). Similarly, you can add `-darken-1`, `-darken-2`, and `-darken-3` to a color to get the darker shades (3 is the darkest).
+For every color, Textual generates 3 dark shades and 3 light shades.
+
+- Add `-lighten-1`, `-lighten-2`, or `-lighten-3` to the color's variable name to get lighter shades (3 is the lightest).
+- Add `-darken-1`, `-darken-2`, and `-darken-3` to a color to get the darker shades (3 is the darkest).
+
+For example, `$secondary-darken-1` is a slightly darkened `$secondary`, and `$error-lighten-3` is a very light version of the `$error` color.
 
 ### Dark mode
 
 There are two color themes in Textual, a light mode and dark mode. You can switch between them by toggling the `dark` attribute on the App class.
 
 In dark mode `$background` and `$surface` are off-black. Dark mode also set `$primary-background` and `$secondary-background` to dark versions of `$primary` and `$secondary`.
+
 
 ### Text color
 
@@ -72,13 +74,24 @@ You can set these colors via the [color](../styles/color.md) property. The desig
 
 !!! information
 
-    These text colors all have some alpha applied, which means that even `$text` isn't pure white or pure black. This is done because blending in a little of the background color produces text that is not so harsh on the eyes.
+    These text colors all have some alpha applied, so that even `$text` isn't pure white or pure black. This is done because blending in a little of the background color produces text that is not so harsh on the eyes.
 
 ### Theming
 
-In a future version of Textual you will be able to modify theme colors directly, and allow user's to configure preferred themes.
+In a future version of Textual you will be able to modify theme colors directly, and allow users to configure preferred themes.
+
+
+## Color Preview
+
+Run the following from the command line to preview the colors defined in the color system:
+
+```bash
+textual colors
+```
 
 ## Theme Reference
+
+Here's a list of the colors defined in the default light and dark themes.
 
 ```{.rich title="Textual Theme Colors"}
 from rich import print
