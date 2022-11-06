@@ -98,6 +98,7 @@ nav:
       - "widgets/static.md"
       - "widgets/tree_control.md"
   - API:
+    - "api/index.md"
     - "api/app.md"
     - "api/button.md"
     - "api/color.md"
@@ -107,7 +108,6 @@ nav:
     - "api/footer.md"
     - "api/geometry.md"
     - "api/header.md"
-    - "api/index.md"
     - "api/message_pump.md"
     - "api/message.md"
     - "api/pilot.md"
