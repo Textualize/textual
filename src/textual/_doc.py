@@ -1,12 +1,17 @@
 from __future__ import annotations
 
+import hashlib
 import os
+from pathlib import Path
 import shlex
 from typing import Iterable
 
 from textual.app import App
 from textual.pilot import Pilot
 from textual._import_app import import_app
+
+
+SCREENSHOT_CACHE = ".screenshot_cache"
 
 
 # This module defines our "Custom Fences", powered by SuperFences
@@ -74,6 +79,22 @@ def take_svg_screenshot(
     if title is None:
         title = app.title
 
+    screenshot_cache = Path(SCREENSHOT_CACHE)
+    screenshot_cache.mkdir(exist_ok=True)
+
+    def get_cache_key(app: App) -> str:
+        hash = hashlib.md5()
+        file_paths = [app_path] + app.css_path
+        for path in file_paths:
+            with open(path, "rb") as source_file:
+                hash.update(source_file.read())
+        cache_key = f"{hash.hexdigest()}.svg"
+        return cache_key
+
+    screenshot_path = screenshot_cache / get_cache_key(app)
+    if screenshot_path.exists():
+        return screenshot_path.read_text()
+
     async def auto_pilot(pilot: Pilot) -> None:
         app = pilot.app
         await pilot.press(*press)
@@ -85,6 +106,9 @@ def take_svg_screenshot(
         auto_pilot=auto_pilot,
         size=terminal_size,
     )
+
+    screenshot_path.write_text(svg)
+
     assert svg is not None
 
     return svg

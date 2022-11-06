@@ -119,3 +119,6 @@ tests/snapshot_tests/output
 
 # Sandbox folder - convenient place for us to develop small test apps without leaving the repo
 sandbox/
+
+# Cache of screenshots used in the docs
+.screenshot_cache
