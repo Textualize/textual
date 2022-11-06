@@ -85,6 +85,7 @@ def take_svg_screenshot(
         for path in file_paths:
             with open(path, "rb") as source_file:
                 hash.update(source_file.read())
+        hash.update(f"{press}-{title}-{terminal_size}".encode("utf-8"))
         cache_key = f"{hash.hexdigest()}.svg"
         return cache_key
 
