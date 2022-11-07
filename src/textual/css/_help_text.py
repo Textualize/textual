@@ -326,7 +326,7 @@ def color_property_help_text(
             Bullet(
                 f"The [i]{property_name}[/] property can only be set to a valid color"
             ),
-            Bullet(f"Colors can be specified using hex, RGB, or ANSI color names"),
+            Bullet("Colors can be specified using hex, RGB, or ANSI color names"),
             *ContextSpecificBullets(
                 inline=[
                     Bullet(
@@ -393,7 +393,7 @@ def border_property_help_text(property_name: str, context: StylingContext) -> He
                         f"Valid values for <bordertype> are:\n{friendly_list(VALID_BORDER)}"
                     ),
                     Bullet(
-                        f"Colors can be specified using hex, RGB, or ANSI color names"
+                        "Colors can be specified using hex, RGB, or ANSI color names"
                     ),
                 ],
                 css=[
@@ -408,7 +408,7 @@ def border_property_help_text(property_name: str, context: StylingContext) -> He
                         f"Valid values for <bordertype> are:\n{friendly_list(VALID_BORDER)}"
                     ),
                     Bullet(
-                        f"Colors can be specified using hex, RGB, or ANSI color names"
+                        "Colors can be specified using hex, RGB, or ANSI color names"
                     ),
                 ],
             ).get_by_context(context),
@@ -457,13 +457,13 @@ def dock_property_help_text(property_name: str, context: StylingContext) -> Help
                 inline=[
                     Bullet(
                         "The 'dock' rule aligns a widget relative to the screen.",
-                        examples=[Example(f'header.styles.dock = "top"')],
+                        examples=[Example('header.styles.dock = "top"')],
                     )
                 ],
                 css=[
                     Bullet(
                         "The 'dock' rule aligns a widget relative to the screen.",
-                        examples=[Example(f"dock: top")],
+                        examples=[Example("dock: top")],
                     )
                 ],
             ).get_by_context(context),
@@ -625,7 +625,7 @@ def integer_help_text(property_name: str) -> HelpText:
         summary=f"Invalid value for [i]{property_name}[/]",
         bullets=[
             Bullet(
-                markup=f"An integer value is expected here",
+                markup="An integer value is expected here",
                 examples=[
                     Example(f"{property_name}: 2;"),
                 ],
