@@ -15,14 +15,15 @@ if typing.TYPE_CHECKING:
     from ._directory_tree import DirectoryTree
     from ._footer import Footer
     from ._header import Header
-    from ._placeholder import Placeholder
+    from ._list_view import ListView
+    from ._list_item import ListItem
     from ._pretty import Pretty
+    from ._placeholder import Placeholder
     from ._static import Static
     from ._input import Input
     from ._text_log import TextLog
     from ._tree_control import TreeControl
     from ._welcome import Welcome
-    from ._list_view import ListView, ListItem
 
 __all__ = [
     "Button",

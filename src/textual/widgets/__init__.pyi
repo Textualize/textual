@@ -6,7 +6,7 @@ from ._directory_tree import DirectoryTree as DirectoryTree
 from ._footer import Footer as Footer
 from ._header import Header as Header
 from ._list_view import ListView as ListView
-from ._list_view import ListItem as ListItem
+from ._list_item import ListItem as ListItem
 from ._placeholder import Placeholder as Placeholder
 from ._pretty import Pretty as Pretty
 from ._static import Static as Static
