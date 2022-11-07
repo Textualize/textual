@@ -29,8 +29,8 @@ async def test_focus_chain():
         Focusable(id="baz"),
     )
 
-    focused = [widget.id for widget in screen.focus_chain]
-    assert focused == ["foo", "Paul", "baz"]
+    focused_chain = [widget.id for widget in screen.focus_chain]
+    assert focused_chain == ["foo", "container1", "Paul", "baz"]
 
 
 async def test_focus_next_and_previous():
@@ -49,8 +49,10 @@ async def test_focus_next_and_previous():
     )
 
     assert screen.focus_next().id == "foo"
+    assert screen.focus_next().id == "container1"
     assert screen.focus_next().id == "Paul"
     assert screen.focus_next().id == "baz"
 
     assert screen.focus_previous().id == "Paul"
+    assert screen.focus_previous().id == "container1"
     assert screen.focus_previous().id == "foo"
