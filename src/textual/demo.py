@@ -219,7 +219,7 @@ class Welcome(Container):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         self.app.add_note("[b magenta]Start!")
-        self.app.query_one(".location-first").scroll_visible(speed=50, top=True)
+        self.app.query_one(".location-first").scroll_visible(duration=0.5, top=True)
 
 
 class OptionGroup(Container):
@@ -272,7 +272,7 @@ class LocationLink(Static):
         self.reveal = reveal
 
     def on_click(self) -> None:
-        self.app.query_one(self.reveal).scroll_visible(top=True)
+        self.app.query_one(self.reveal).scroll_visible(top=True, duration=0.5)
         self.app.add_note(f"Scrolling to [b]{self.reveal}[/b]")
 
 

@@ -6,24 +6,25 @@ import io
 import os
 import platform
 import sys
+import threading
 import unicodedata
 import warnings
 from asyncio import Task
-from contextlib import asynccontextmanager
-from contextlib import redirect_stderr, redirect_stdout
+from contextlib import asynccontextmanager, redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
+from queue import Queue
 from time import perf_counter
 from typing import (
+    TYPE_CHECKING,
     Any,
     Generic,
     Iterable,
-    Type,
-    TYPE_CHECKING,
-    TypeVar,
-    cast,
-    Union,
     List,
+    Type,
+    TypeVar,
+    Union,
+    cast,
 )
 from weakref import WeakSet, WeakValueDictionary
 
@@ -36,14 +37,14 @@ from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
 from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
-from ._animator import Animator, DEFAULT_EASING, Animatable, EasingFunction
+from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
-from ._typing import TypeAlias
+from ._typing import TypeAlias, Final
 from .binding import Binding, Bindings
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
@@ -128,11 +129,75 @@ ReturnType = TypeVar("ReturnType")
 
 
 class _NullFile:
+    """A file-like where writes go nowhere."""
+
     def write(self, text: str) -> None:
         pass
 
     def flush(self) -> None:
         pass
+
+
+MAX_QUEUED_WRITES: Final[int] = 30
+
+
+class _WriterThread(threading.Thread):
+    """A thread / file-like to do writes to stdout in the background."""
+
+    def __init__(self) -> None:
+        super().__init__(daemon=True)
+        self._queue: Queue[str | None] = Queue(MAX_QUEUED_WRITES)
+        self._file = sys.__stdout__
+
+    def write(self, text: str) -> None:
+        """Write text. Text will be enqueued for writing.
+
+        Args:
+            text (str): Text to write to the file.
+        """
+        self._queue.put(text)
+
+    def isatty(self) -> bool:
+        """Pretend to be a terminal.
+
+        Returns:
+            bool: True if this is a tty.
+        """
+        return True
+
+    def fileno(self) -> int:
+        """Get file handle number.
+
+        Returns:
+            int: File number of proxied file.
+        """
+        return self._file.fileno()
+
+    def flush(self) -> None:
+        """Flush the file (a no-op, because flush is done in the thread)."""
+        return
+
+    def run(self) -> None:
+        """Run the thread."""
+        write = self._file.write
+        flush = self._file.flush
+        get = self._queue.get
+        qsize = self._queue.qsize
+        # Read from the queue, write to the file.
+        # Flush when there is a break.
+        while True:
+            text: str | None = get()
+            empty = qsize() == 0
+            if text is None:
+                break
+            write(text)
+            if empty:
+                flush()
+
+    def stop(self) -> None:
+        """Stop the thread, and block until it finished."""
+        self._queue.put(None)
+        self.join()
 
 
 CSSPathType = Union[str, PurePath, List[Union[str, PurePath]], None]
@@ -192,8 +257,17 @@ class App(Generic[ReturnType], DOMNode):
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
             self._filter = Monochrome()
+
+        self._writer_thread: _WriterThread | None = None
+        if sys.__stdout__ is None:
+            file = _NullFile()
+        else:
+            self._writer_thread = _WriterThread()
+            self._writer_thread.start()
+            file = self._writer_thread
+
         self.console = Console(
-            file=sys.__stdout__ if sys.__stdout__ is not None else _NullFile(),
+            file=file,
             markup=False,
             highlight=False,
             emoji=False,
@@ -1501,6 +1575,9 @@ class App(Generic[ReturnType], DOMNode):
         self._print_error_renderables()
         if self.devtools is not None and self.devtools.is_connected:
             await self._disconnect_devtools()
+
+        if self._writer_thread is not None:
+            self._writer_thread.stop()
 
     async def _on_exit_app(self) -> None:
         await self._message_queue.put(None)

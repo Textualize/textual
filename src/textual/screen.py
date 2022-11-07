@@ -18,8 +18,8 @@ from .renderables.blank import Blank
 from .widget import Widget
 
 
-# Screen updates will be batched so that they don't happen more often than 60 times per second:
-UPDATE_PERIOD: Final = 1 / 60
+# Screen updates will be batched so that they don't happen more often than 120 times per second:
+UPDATE_PERIOD: Final[float] = 1 / 120
 
 
 @rich.repr.auto
