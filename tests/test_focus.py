@@ -33,8 +33,8 @@ def test_focus_chain():
         ChildrenFocusableOnly(Focusable(id="child")),
     )
 
-    focused_chain = [widget.id for widget in screen.focus_chain]
-    assert focused_chain == ["foo", "container1", "Paul", "baz", "child"]
+    focus_chain = [widget.id for widget in screen.focus_chain]
+    assert focus_chain == ["foo", "container1", "Paul", "baz", "child"]
 
 
 def test_focus_next_and_previous():
