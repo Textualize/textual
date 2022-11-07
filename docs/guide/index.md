@@ -1,4 +1,4 @@
-# Textual Guide
+# Guide
 
 Welcome to the Textual Guide! An in-depth reference on how to build apps with Textual.
 

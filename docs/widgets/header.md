@@ -32,4 +32,4 @@ This widget sends no messages.
 
 ## See Also
 
-* [Header](../reference/header.md) code reference
+* [Header](../api/header.md) code reference

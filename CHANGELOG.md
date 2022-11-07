@@ -15,12 +15,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `DOMNode.query_one` now raises a `TooManyMatches` exception if there is
   more than one matching node.
   https://github.com/Textualize/textual/issues/1096
+- `App.mount` and `Widget.mount` have new `before` and `after` parameters https://github.com/Textualize/textual/issues/778
 
 ### Added
 
 - Added `init` param to reactive.watch
 - `CSS_PATH` can now be a list of CSS files https://github.com/Textualize/textual/pull/1079
 - Added `DOMQuery.only_one` https://github.com/Textualize/textual/issues/1096
+- Writes to stdout are now done in a thread, for smoother animation. https://github.com/Textualize/textual/pull/1104
 
 ## [0.3.0] - 2022-10-31
 

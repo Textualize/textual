@@ -8,7 +8,7 @@ You can convert from a Textual color to a Rich color with the [rich_color][textu
 
 The following named colors are used by the [parse][textual.color.Color.parse] method.
 
-```{.rich title="colors"}
+```{.rich columns="80" title="colors"}
 from textual._color_constants import COLOR_NAME_TO_RGB
 from textual.color import Color
 from rich.table import Table

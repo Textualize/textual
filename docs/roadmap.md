@@ -1,3 +1,9 @@
+---
+hide:
+  - navigation
+---
+
+
 # Roadmap
 
 We ([textualize.io](https://www.textualize.io/)) are actively building and maintaining Textual. 

@@ -39,4 +39,4 @@ This widget sends no messages.
 
 ## See Also
 
-* [Footer](../reference/footer.md) code reference
+* [Footer](../api/footer.md) code reference
