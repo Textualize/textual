@@ -44,7 +44,7 @@ from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
-from ._typing import TypeAlias
+from ._typing import TypeAlias, Final
 from .binding import Binding, Bindings
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
@@ -138,31 +138,53 @@ class _NullFile:
         pass
 
 
+MAX_QUEUED_WRITES: Final[int] = 30
+
+
 class _WriterThread(threading.Thread):
     """A thread / file-like to do writes to stdout in the background."""
 
     def __init__(self) -> None:
         super().__init__(daemon=True)
-        self._queue: Queue[str | None] = Queue(32)
+        self._queue: Queue[str | None] = Queue(MAX_QUEUED_WRITES)
         self._file = sys.__stdout__
 
     def write(self, text: str) -> None:
+        """Write text. Text will be enqueued for writing.
+
+        Args:
+            text (str): Text to write to the file.
+        """
         self._queue.put(text)
 
     def isatty(self) -> bool:
+        """Pretend to be a terminal.
+
+        Returns:
+            bool: True if this is a tty.
+        """
         return True
 
     def fileno(self) -> int:
+        """Get file handle number.
+
+        Returns:
+            int: File number of proxied file.
+        """
         return self._file.fileno()
 
     def flush(self) -> None:
+        """Flush the file (a no-op, because flush is done in the thread)."""
         return
 
     def run(self) -> None:
+        """Run the thread."""
         write = self._file.write
         flush = self._file.flush
         get = self._queue.get
         qsize = self._queue.qsize
+        # Read from the queue, write to the file.
+        # Flush when there is a break.
         while True:
             text: str | None = get()
             empty = qsize() == 0
@@ -173,6 +195,7 @@ class _WriterThread(threading.Thread):
                 flush()
 
     def stop(self) -> None:
+        """Stop the thread, and block until it finished."""
         self._queue.put(None)
         self.join()
 
