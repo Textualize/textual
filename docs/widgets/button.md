@@ -55,4 +55,4 @@ _No other attributes_
 
 ## See Also
 
-* [Button](../reference/button.md) code reference
+* [Button](../api/button.md) code reference

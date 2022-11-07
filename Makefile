@@ -11,8 +11,10 @@ format:
 format-check:
 	black --check src
 docs-serve:
+	rm -rf .screenshot_cache
 	mkdocs serve
 docs-build:
 	mkdocs build
 docs-deploy:
+	rm -rf .screenshot_cache
 	mkdocs gh-deploy

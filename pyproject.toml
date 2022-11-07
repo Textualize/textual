@@ -56,6 +56,9 @@ time-machine = "^2.6.0"
 Jinja2 = "<3.1.0"
 syrupy = "^3.0.0"
 
+[tool.poetry.group.dev.dependencies]
+mkdocs-rss-plugin = "^1.5.0"
+
 [tool.black]
 includes = "src"
 
