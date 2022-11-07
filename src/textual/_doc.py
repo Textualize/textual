@@ -1,12 +1,17 @@
 from __future__ import annotations
 
+import hashlib
 import os
+from pathlib import Path
 import shlex
 from typing import Iterable
 
 from textual.app import App
 from textual.pilot import Pilot
 from textual._import_app import import_app
+
+
+SCREENSHOT_CACHE = ".screenshot_cache"
 
 
 # This module defines our "Custom Fences", powered by SuperFences
@@ -74,6 +79,24 @@ def take_svg_screenshot(
     if title is None:
         title = app.title
 
+    def get_cache_key(app: App) -> str:
+        hash = hashlib.md5()
+        file_paths = [app_path] + app.css_path
+        for path in file_paths:
+            with open(path, "rb") as source_file:
+                hash.update(source_file.read())
+        hash.update(f"{press}-{title}-{terminal_size}".encode("utf-8"))
+        cache_key = f"{hash.hexdigest()}.svg"
+        return cache_key
+
+    if app_path is not None:
+        screenshot_cache = Path(SCREENSHOT_CACHE)
+        screenshot_cache.mkdir(exist_ok=True)
+
+        screenshot_path = screenshot_cache / get_cache_key(app)
+        if screenshot_path.exists():
+            return screenshot_path.read_text()
+
     async def auto_pilot(pilot: Pilot) -> None:
         app = pilot.app
         await pilot.press(*press)
@@ -85,6 +108,10 @@ def take_svg_screenshot(
         auto_pilot=auto_pilot,
         size=terminal_size,
     )
+
+    if app_path is not None:
+        screenshot_path.write_text(svg)
+
     assert svg is not None
 
     return svg
@@ -99,11 +126,16 @@ def rich(source, language, css_class, options, md, attrs, **kwargs) -> str:
 
     title = attrs.get("title", "Rich")
 
+    rows = int(attrs.get("lines", 24))
+    columns = int(attrs.get("columns", 80))
+
     console = Console(
         file=io.StringIO(),
         record=True,
         force_terminal=True,
         color_system="truecolor",
+        width=columns,
+        height=rows,
     )
     error_console = Console(stderr=True)
 

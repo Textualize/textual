@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import inspect
-import sys
 from typing import Callable
 
 import rich.repr
@@ -12,11 +11,7 @@ __all__ = ["log", "panic"]
 
 from ._context import active_app
 from ._log import LogGroup, LogVerbosity
-
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:  # pragma: no cover
-    from typing_extensions import TypeAlias
+from ._typing import TypeAlias
 
 
 LogCallable: TypeAlias = "Callable"

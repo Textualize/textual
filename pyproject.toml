@@ -55,6 +55,10 @@ replacement = 'https://github.com/Textualize/textual/blob/main/\1'
 pattern = '(?<=\]\()\./(.+?\.(png|svg))(?=\))'
 replacement = 'https://raw.githubusercontent.com/Textualize/textual/main/\1'
 
+[tool.poetry.group.dev.dependencies]
+mkdocs-rss-plugin = "^1.5.0"
+
+
 [tool.black]
 includes = "src"
 

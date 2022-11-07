@@ -155,8 +155,7 @@ class Parser(Generic[T]):
                 yield popleft()
 
     def parse(self, on_token: Callable[[T], None]) -> Generator[Awaitable, str, None]:
-        return
-        yield
+        yield from ()
 
 
 if __name__ == "__main__":

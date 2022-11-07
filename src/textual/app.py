@@ -1,35 +1,32 @@
 from __future__ import annotations
 
 import asyncio
-from asyncio import Task
-from contextlib import asynccontextmanager
 import inspect
 import io
 import os
 import platform
 import sys
+import threading
 import unicodedata
 import warnings
-from contextlib import redirect_stderr, redirect_stdout
+from asyncio import Task
+from contextlib import asynccontextmanager, redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
+from queue import Queue
 from time import perf_counter
 from typing import (
+    TYPE_CHECKING,
     Any,
-    Callable,
-    Coroutine,
     Generic,
     Iterable,
+    List,
     Type,
-    TYPE_CHECKING,
     TypeVar,
-    cast,
     Union,
+    cast,
 )
 from weakref import WeakSet, WeakValueDictionary
-
-from ._ansi_sequences import SYNC_END, SYNC_START
-from ._path import _make_path_object_relative
 
 import nanoid
 import rich
@@ -40,11 +37,14 @@ from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
 from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
-from ._animator import Animator, DEFAULT_EASING, Animatable, EasingFunction
+from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
+from ._ansi_sequences import SYNC_END, SYNC_START
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
+from ._path import _make_path_object_relative
+from ._typing import TypeAlias, Final
 from .binding import Binding, Bindings
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
@@ -65,11 +65,6 @@ from .widget import AwaitMount, Widget
 if TYPE_CHECKING:
     from .devtools.client import DevtoolsClient
     from .pilot import Pilot
-
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:  # pragma: no cover
-    from typing_extensions import TypeAlias
 
 PLATFORM = platform.system()
 WINDOWS = PLATFORM == "Windows"
@@ -126,10 +121,16 @@ class ScreenStackError(ScreenError):
     """Raised when attempting to pop the last screen from the stack."""
 
 
+class CssPathError(Exception):
+    """Raised when supplied CSS path(s) are invalid."""
+
+
 ReturnType = TypeVar("ReturnType")
 
 
 class _NullFile:
+    """A file-like where writes go nowhere."""
+
     def write(self, text: str) -> None:
         pass
 
@@ -137,23 +138,89 @@ class _NullFile:
         pass
 
 
-CSSPathType = Union[str, PurePath, None]
+MAX_QUEUED_WRITES: Final[int] = 30
+
+
+class _WriterThread(threading.Thread):
+    """A thread / file-like to do writes to stdout in the background."""
+
+    def __init__(self) -> None:
+        super().__init__(daemon=True)
+        self._queue: Queue[str | None] = Queue(MAX_QUEUED_WRITES)
+        self._file = sys.__stdout__
+
+    def write(self, text: str) -> None:
+        """Write text. Text will be enqueued for writing.
+
+        Args:
+            text (str): Text to write to the file.
+        """
+        self._queue.put(text)
+
+    def isatty(self) -> bool:
+        """Pretend to be a terminal.
+
+        Returns:
+            bool: True if this is a tty.
+        """
+        return True
+
+    def fileno(self) -> int:
+        """Get file handle number.
+
+        Returns:
+            int: File number of proxied file.
+        """
+        return self._file.fileno()
+
+    def flush(self) -> None:
+        """Flush the file (a no-op, because flush is done in the thread)."""
+        return
+
+    def run(self) -> None:
+        """Run the thread."""
+        write = self._file.write
+        flush = self._file.flush
+        get = self._queue.get
+        qsize = self._queue.qsize
+        # Read from the queue, write to the file.
+        # Flush when there is a break.
+        while True:
+            text: str | None = get()
+            empty = qsize() == 0
+            if text is None:
+                break
+            write(text)
+            if empty:
+                flush()
+
+    def stop(self) -> None:
+        """Stop the thread, and block until it finished."""
+        self._queue.put(None)
+        self.join()
+
+
+CSSPathType = Union[str, PurePath, List[Union[str, PurePath]], None]
 
 
 @rich.repr.auto
 class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications.
-
     Args:
         driver_class (Type[Driver] | None, optional): Driver class or ``None`` to auto-detect. Defaults to None.
-        css_path (str | PurePath | None, optional): Path to CSS or ``None`` for no CSS file. Defaults to None.
+        css_path (str | PurePath | list[str | PurePath] | None, optional): Path to CSS or ``None`` for no CSS file.
+            Defaults to None. To load multiple CSS files, pass a list of strings or paths which will be loaded in order.
         watch_css (bool, optional): Watch CSS for changes. Defaults to False.
+
+    Raises:
+        CssPathError: When the supplied CSS path(s) are an unexpected type.
     """
 
-    # Inline CSS for quick scripts (generally css_path should be preferred.)
     CSS = ""
+    """Inline CSS, useful for quick scripts. This is loaded after CSS_PATH,
+    and therefore takes priority in the event of a specificity clash."""
 
-    # Default (lowest priority) CSS
+    # Default (the lowest priority) CSS
     DEFAULT_CSS = """
     App {
         background: $background;
@@ -190,8 +257,17 @@ class App(Generic[ReturnType], DOMNode):
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
             self._filter = Monochrome()
+
+        self._writer_thread: _WriterThread | None = None
+        if sys.__stdout__ is None:
+            file = _NullFile()
+        else:
+            self._writer_thread = _WriterThread()
+            self._writer_thread.start()
+            file = self._writer_thread
+
         self.console = Console(
-            file=sys.__stdout__ if sys.__stdout__ is not None else _NullFile(),
+            file=file,
             markup=False,
             highlight=False,
             emoji=False,
@@ -227,15 +303,30 @@ class App(Generic[ReturnType], DOMNode):
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
         self._require_stylesheet_update: set[DOMNode] = set()
 
-        # We want the CSS path to be resolved from the location of the App subclass
         css_path = css_path or self.CSS_PATH
         if css_path is not None:
+            # When value(s) are supplied for CSS_PATH, we normalise them to a list of Paths.
             if isinstance(css_path, str):
-                css_path = Path(css_path)
-            css_path = _make_path_object_relative(css_path, self) if css_path else None
+                css_paths = [Path(css_path)]
+            elif isinstance(css_path, PurePath):
+                css_paths = [css_path]
+            elif isinstance(css_path, list):
+                css_paths = []
+                for path in css_path:
+                    css_paths.append(Path(path) if isinstance(path, str) else path)
+            else:
+                raise CssPathError(
+                    "Expected a str, Path or list[str | Path] for the CSS_PATH."
+                )
 
-        self.css_path = css_path
+            # We want the CSS path to be resolved from the location of the App subclass
+            css_paths = [
+                _make_path_object_relative(css_path, self) for css_path in css_paths
+            ]
+        else:
+            css_paths = []
 
+        self.css_path = css_paths
         self._registry: WeakSet[DOMNode] = WeakSet()
 
         self._installed_screens: WeakValueDictionary[
@@ -366,8 +457,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def compose(self) -> ComposeResult:
         """Yield child widgets for a container."""
-        return
-        yield
+        yield from ()
 
     def get_css_variables(self) -> dict[str, str]:
         """Get a mapping of variables used to pre-populate CSS.
@@ -675,12 +765,16 @@ class App(Generic[ReturnType], DOMNode):
         # Wait until the app has performed all startup routines.
         await app_ready_event.wait()
 
-        # Context manager returns pilot object to manipulate the app
-        yield Pilot(app)
+        # Get the app in an active state.
+        app._set_active()
 
-        # Shutdown the app cleanly
-        await app._shutdown()
-        await app_task
+        # Context manager returns pilot object to manipulate the app
+        try:
+            yield Pilot(app)
+        finally:
+            # Shutdown the app cleanly
+            await app._shutdown()
+            await app_task
 
     async def run_async(
         self,
@@ -774,15 +868,16 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_css_change(self) -> None:
         """Called when the CSS changes (if watch_css is True)."""
-        if self.css_path is not None:
+        css_paths = self.css_path
+        if css_paths:
             try:
                 time = perf_counter()
                 stylesheet = self.stylesheet.copy()
-                stylesheet.read(self.css_path)
+                stylesheet.read_all(css_paths)
                 stylesheet.parse()
                 elapsed = (perf_counter() - time) * 1000
                 self.log.system(
-                    f"<stylesheet> loaded {self.css_path!r} in {elapsed:.0f} ms"
+                    f"<stylesheet> loaded {len(css_paths)} CSS files in {elapsed:.0f} ms"
                 )
             except Exception as error:
                 # TODO: Catch specific exceptions
@@ -822,27 +917,55 @@ class App(Generic[ReturnType], DOMNode):
         self._require_stylesheet_update.add(self.screen if node is None else node)
         self.check_idle()
 
-    def mount(self, *widgets: Widget) -> AwaitMount:
-        """Mount the given widgets.
+    def mount(
+        self,
+        *widgets: Widget,
+        before: int | str | Widget | None = None,
+        after: int | str | Widget | None = None,
+    ) -> AwaitMount:
+        """Mount the given widgets relative to the app's screen.
 
         Args:
             *widgets (Widget): The widget(s) to mount.
+            before (int | str | Widget, optional): Optional location to mount before.
+            after (int | str | Widget, optional): Optional location to mount after.
 
         Returns:
             AwaitMount: An awaitable object that waits for widgets to be mounted.
-        """
-        return AwaitMount(self._register(self.screen, *widgets))
 
-    def mount_all(self, widgets: Iterable[Widget]) -> AwaitMount:
+        Raises:
+            MountError: If there is a problem with the mount request.
+
+        Note:
+            Only one of ``before`` or ``after`` can be provided. If both are
+            provided a ``MountError`` will be raised.
+        """
+        return self.screen.mount(*widgets, before=before, after=after)
+
+    def mount_all(
+        self,
+        widgets: Iterable[Widget],
+        before: int | str | Widget | None = None,
+        after: int | str | Widget | None = None,
+    ) -> AwaitMount:
         """Mount widgets from an iterable.
 
         Args:
             widgets (Iterable[Widget]): An iterable of widgets.
+            before (int | str | Widget, optional): Optional location to mount before.
+            after (int | str | Widget, optional): Optional location to mount after.
 
         Returns:
             AwaitMount: An awaitable object that waits for widgets to be mounted.
+
+        Raises:
+            MountError: If there is a problem with the mount request.
+
+        Note:
+            Only one of ``before`` or ``after`` can be provided. If both are
+            provided a ``MountError`` will be raised.
         """
-        return self.mount(*widgets)
+        return self.mount(*widgets, before=before, after=after)
 
     def is_screen_installed(self, screen: Screen | str) -> bool:
         """Check if a given screen has been installed.
@@ -1141,8 +1264,8 @@ class App(Generic[ReturnType], DOMNode):
         self.log.system(features=self.features)
 
         try:
-            if self.css_path is not None:
-                self.stylesheet.read(self.css_path)
+            if self.css_path:
+                self.stylesheet.read_all(self.css_path)
             for path, css, tie_breaker in self.get_default_css():
                 self.stylesheet.add_source(
                     css, path=path, is_default_css=True, tie_breaker=tie_breaker
@@ -1290,23 +1413,68 @@ class App(Generic[ReturnType], DOMNode):
             self._require_stylesheet_update.clear()
             self.stylesheet.update_nodes(nodes, animate=True)
 
-    def _register_child(self, parent: DOMNode, child: Widget) -> bool:
+    def _register_child(
+        self, parent: DOMNode, child: Widget, before: int | None, after: int | None
+    ) -> None:
+        """Register a widget as a child of another.
+
+        Args:
+            parent (DOMNode): Parent node.
+            child (Widget): The child widget to register.
+            widgets: The widget to register.
+            before (int, optional): A location to mount before.
+            after (int, option): A location to mount after.
+        """
+
+        # Let's be 100% sure that we've not been asked to do a before and an
+        # after at the same time. It's possible that we can remove this
+        # check later on, but for the purposes of development right now,
+        # it's likely a good idea to keep it here to check assumptions in
+        # the rest of the code.
+        if before is not None and after is not None:
+            raise AppError("Only one of 'before' and 'after' may be specified.")
+
+        # If we don't already know about this widget...
         if child not in self._registry:
-            parent.children._append(child)
+
+            # Now to figure out where to place it. If we've got a `before`...
+            if before is not None:
+                # ...it's safe to NodeList._insert before that location.
+                parent.children._insert(before, child)
+            elif after is not None and after != -1:
+                # In this case we've got an after. -1 holds the special
+                # position (for now) of meaning "okay really what I mean is
+                # do an append, like if I'd asked to add with no before or
+                # after". So... we insert before the next item in the node
+                # list, iff after isn't -1.
+                parent.children._insert(after + 1, child)
+            else:
+                # At this point we appear to not be adding before or after,
+                # or we've got a before/after value that really means
+                # "please append". So...
+                parent.children._append(child)
+
+            # Now that the widget is in the NodeList of its parent, sort out
+            # the rest of the admin.
             self._registry.add(child)
             child._attach(parent)
             child._post_register(self)
             child._start_messages()
-            return True
-        return False
 
-    def _register(self, parent: DOMNode, *widgets: Widget) -> list[Widget]:
+    def _register(
+        self,
+        parent: DOMNode,
+        *widgets: Widget,
+        before: int | None = None,
+        after: int | None = None,
+    ) -> list[Widget]:
         """Register widget(s) so they may receive events.
 
         Args:
             parent (DOMNode): Parent node.
             *widgets: The widget(s) to register.
-
+            before (int, optional): A location to mount before.
+            after (int, option): A location to mount after.
         Returns:
             list[Widget]: List of modified widgets.
 
@@ -1315,13 +1483,19 @@ class App(Generic[ReturnType], DOMNode):
         if not widgets:
             return []
 
-        apply_stylesheet = self.stylesheet.apply
+        new_widgets = list(widgets)
+        if before is not None or after is not None:
+            # There's a before or after, which means there's going to be an
+            # insertion, so make it easier to get the new things in the
+            # correct order.
+            new_widgets = reversed(new_widgets)
 
-        for widget in widgets:
+        apply_stylesheet = self.stylesheet.apply
+        for widget in new_widgets:
             if not isinstance(widget, Widget):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
-                self._register_child(parent, widget)
+                self._register_child(parent, widget, before, after)
                 if widget.children:
                     self._register(widget, *widget.children)
                 apply_stylesheet(widget)
@@ -1401,6 +1575,9 @@ class App(Generic[ReturnType], DOMNode):
         self._print_error_renderables()
         if self.devtools is not None and self.devtools.is_connected:
             await self._disconnect_devtools()
+
+        if self._writer_thread is not None:
+            self._writer_thread.stop()
 
     async def _on_exit_app(self) -> None:
         await self._message_queue.put(None)

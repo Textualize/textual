@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-import sys
 from collections import deque
 from inspect import getfile
 from typing import (
@@ -42,19 +41,9 @@ if TYPE_CHECKING:
     from .screen import Screen
     from .widget import Widget
 
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
-
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:  # pragma: no cover
-    from typing_extensions import TypeAlias
-
+from textual._typing import Literal, TypeAlias
 
 _re_identifier = re.compile(IDENTIFIER)
-
 
 WalkMethod: TypeAlias = Literal["depth", "breadth"]
 
@@ -794,10 +783,7 @@ class DOMNode(MessagePump):
             query_selector = selector.__name__
         query: DOMQuery[Widget] = DOMQuery(self, filter=query_selector)
 
-        if expect_type is None:
-            return query.first()
-        else:
-            return query.first(expect_type)
+        return query.only_one() if expect_type is None else query.only_one(expect_type)
 
     def set_styles(self, css: str | None = None, **update_styles) -> None:
         """Set custom styles on this object."""

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from functools import lru_cache
 from typing import cast, Tuple, Union
 
@@ -11,11 +10,7 @@ from rich.style import Style
 
 from .color import Color
 from .css.types import EdgeStyle, EdgeType
-
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:  # pragma: no cover
-    from typing_extensions import TypeAlias
+from ._typing import TypeAlias
 
 INNER = 1
 OUTER = 2

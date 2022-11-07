@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from typing import Iterable, Iterator
 
 import rich.repr
@@ -13,17 +12,14 @@ from ._compositor import Compositor, MapGeometry
 from .timer import Timer
 from ._types import CallbackType
 from .geometry import Offset, Region, Size
+from ._typing import Final
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .widget import Widget
 
-if sys.version_info >= (3, 8):
-    from typing import Final
-else:
-    from typing_extensions import Final
 
-# Screen updates will be batched so that they don't happen more often than 60 times per second:
-UPDATE_PERIOD: Final = 1 / 60
+# Screen updates will be batched so that they don't happen more often than 120 times per second:
+UPDATE_PERIOD: Final[float] = 1 / 120
 
 
 @rich.repr.auto

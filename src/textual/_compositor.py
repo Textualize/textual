@@ -13,10 +13,9 @@ without having to render the entire screen.
 
 from __future__ import annotations
 
-import sys
 from itertools import chain
 from operator import itemgetter
-from typing import TYPE_CHECKING, Callable, Iterable, NamedTuple, cast
+from typing import TYPE_CHECKING, Iterable, NamedTuple, cast
 
 import rich.repr
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -27,15 +26,9 @@ from rich.style import Style
 from . import errors
 from ._cells import cell_len
 from ._loop import loop_last
-from ._profile import timer
 from ._types import Lines
 from .geometry import Offset, Region, Size
-
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:  # pragma: no cover
-    from typing_extensions import TypeAlias
-
+from ._typing import TypeAlias
 
 if TYPE_CHECKING:
     from .widget import Widget
@@ -165,8 +158,7 @@ class ChopsUpdate:
                 yield new_line
 
     def __rich_repr__(self) -> rich.repr.Result:
-        return
-        yield
+        yield from ()
 
 
 @rich.repr.auto(angular=True)

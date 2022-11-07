@@ -39,6 +39,20 @@ class NodeList(Sequence):
     def __contains__(self, widget: Widget) -> bool:
         return widget in self._nodes
 
+    def index(self, widget: Widget) -> int:
+        """Return the index of the given widget.
+
+        Args:
+            widget (Widget): The widget to find in the node list.
+
+        Returns:
+            int: The index of the widget in the node list.
+
+        Raises:
+            ValueError: If the widget is not in the node list.
+        """
+        return self._nodes.index(widget)
+
     def _append(self, widget: Widget) -> None:
         """Append a Widget.
 
@@ -47,6 +61,17 @@ class NodeList(Sequence):
         """
         if widget not in self._nodes_set:
             self._nodes.append(widget)
+            self._nodes_set.add(widget)
+            self._updates += 1
+
+    def _insert(self, index: int, widget: Widget) -> None:
+        """Insert a Widget.
+
+        Args:
+            widget (Widget): A widget.
+        """
+        if widget not in self._nodes_set:
+            self._nodes.insert(index, widget)
             self._nodes_set.add(widget)
             self._updates += 1
 
