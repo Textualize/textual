@@ -7,7 +7,7 @@ You don't have to follow these guidelines, but if you do, you will be able to mi
 
 !!! information
 
-    Textual's color system is based on Google's Material design system, modified to suite the terminal.
+    Textual's color system is based on Google's Material design system, modified to suit the terminal.
 
 
 ## Designing with Colors
