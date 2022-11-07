@@ -213,7 +213,7 @@ def show_design(light: ColorSystem, dark: ColorSystem) -> Table:
             background = Color.parse(colors[name]).with_alpha(1.0)
             foreground = background + background.get_contrast_text(0.9)
 
-            text = Text(name)
+            text = Text(f"${name}")
 
             yield Padding(text, 1, style=f"{foreground.hex6} on {background.hex6}")
 
