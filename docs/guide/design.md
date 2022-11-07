@@ -12,7 +12,7 @@ You don't have to follow these guidelines, but if you do, you will be able to mi
 
 ## Designing with Colors
 
-Textual pre-defines a number of colors in [CSS variables](../guide/CSS.md#css-variables). For instance, the CSS variable `$primary` is set to `#004578` (the blue used in headers). You can use `$primary` in place of the color in the [background](../styles/background.md) and [color](../styles/color.md) rules, or other any other rule that accepts a color.
+Textual pre-defines a number of colors as [CSS variables](../guide/CSS.md#css-variables). For instance, the CSS variable `$primary` is set to `#004578` (the blue used in headers). You can use `$primary` in place of the color in the [background](../styles/background.md) and [color](../styles/color.md) rules, or other any other rule that accepts a color.
 
 Here's an example of CSS that uses color variables:
 
