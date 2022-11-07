@@ -22,7 +22,7 @@ if typing.TYPE_CHECKING:
     from ._text_log import TextLog
     from ._tree_control import TreeControl
     from ._welcome import Welcome
-    from ._list import ListView, ListItem
+    from ._list_view import ListView, ListItem
 
 __all__ = [
     "Button",
@@ -31,6 +31,8 @@ __all__ = [
     "DirectoryTree",
     "Footer",
     "Header",
+    "ListItem",
+    "ListView",
     "Placeholder",
     "Pretty",
     "Static",
