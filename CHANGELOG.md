@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.4.0] - 2022-11-08
 
+https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
+
 ### Changed
 
 - Dropped support for mounting "named" and "anonymous" widgets via
