@@ -71,17 +71,12 @@ class StylesheetErrors:
 
                 if token.referenced_by:
                     line_idx, col_idx = token.referenced_by.location
-                    line_no, col_no = line_idx + 1, col_idx + 1
-                    path_string = (
-                        f"{path.absolute() if path else filename}:{line_no}:{col_no}"
-                    )
                 else:
                     line_idx, col_idx = token.location
-                    line_no, col_no = line_idx + 1, col_idx + 1
-                    path_string = (
-                        f"{path.absolute() if path else filename}:{line_no}:{col_no}"
-                    )
-
+                line_no, col_no = line_idx + 1, col_idx + 1
+                path_string = (
+                    f"{path.absolute() if path else filename}:{line_no}:{col_no}"
+                )
                 link_style = Style(
                     link=f"file://{path.absolute()}",
                     color="red",
