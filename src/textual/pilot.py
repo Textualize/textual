@@ -32,7 +32,7 @@ class Pilot:
         """Simulate key-presses.
 
         Args:
-            *key: Keys to press.
+            *keys: Keys to press.
 
         """
         if keys:

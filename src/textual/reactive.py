@@ -68,6 +68,7 @@ class Reactive(Generic[ReactiveType]):
             layout (bool, optional): Perform a layout on change. Defaults to False.
             repaint (bool, optional): Perform a repaint on change. Defaults to True.
             always_update(bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
+
         Returns:
             Reactive: A Reactive instance which calls watchers or initialize.
         """
