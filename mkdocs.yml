@@ -175,7 +175,7 @@ theme:
       name: Switch to dark mode
   - media: "(prefers-color-scheme: dark)"
     scheme: slate
-    primary: indigo
+    primary: black
     toggle:
       icon: material/weather-night
       name: Switch to light mode
@@ -189,6 +189,7 @@ plugins:
       as_creation: date
     categories:
       - categories
+      - release
       - tags 
 - search:
 - autorefs:
