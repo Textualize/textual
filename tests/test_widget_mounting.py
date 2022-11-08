@@ -2,6 +2,7 @@ import pytest
 
 from textual.app import App
 from textual.widgets import Static
+from textual.css.query import TooManyMatches
 
 async def test_mount_via_app() -> None:
     """Perform mount tests via the app."""
@@ -94,20 +95,9 @@ async def test_mount_via_app() -> None:
         with pytest.raises(Static.MountError):
             await pilot.app.mount(Static(), after=Static())
 
-    # TODO: At the moment query_one() simply takes a query and returns the
-    # .first() item. As such doing a query_one() that gets more than one
-    # thing isn't an error, it just skims off the first thing. OTOH the
-    # intention of before= and after= with a selector is that an exception
-    # will be thrown -- the exception being the own that should be thrown
-    # from query_one(). So, this test here is a TODO test because we'll wait
-    # for a change to query_one() and then its exception will just bubble
-    # up.
-    #
-    # See https://github.com/Textualize/textual/issues/1096
-    #
-    # async with App().run_test() as pilot:
-    #     # Make sure we get an error if we try and mount with a selector that
-    #     # results in more than one hit.
-    #     await pilot.app.mount_all(widgets)
-    #     with pytest.raises( ?Something? ):
-    #         await pilot.app.mount(Static(), before="Static")
+    async with App().run_test() as pilot:
+        # Make sure we get an error if we try and mount with a selector that
+        # results in more than one hit.
+        await pilot.app.mount_all(widgets)
+        with pytest.raises(TooManyMatches):
+            await pilot.app.mount(Static(), before="Static")
