@@ -42,8 +42,9 @@ Textual needs much of the same kind of operations as the [JS API](https://develo
 
 ## Faster Updates
 
-Textual will now write to stdout in a thread. The upshot of this is that Textual can work on the next update before the terminal has displayed the previous frame.
+Textual now writes to stdout in a thread. The upshot of this is that Textual can work on the next update before the terminal has displayed the previous frame.
 
+This means smoother updates all round! You may notice this when scrolling and animating, but even if you don't you will have more CPU cycles to play with.
 
 <div class="excalidraw">
 --8<-- "docs/blog/images/faster-updates.excalidraw.svg"
