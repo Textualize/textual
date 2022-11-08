@@ -259,13 +259,12 @@ class Scalar(NamedTuple):
         """
         if token.lower() == "auto":
             scalar = cls(1.0, Unit.AUTO, Unit.AUTO)
-        else:
-            match = _MATCH_SCALAR(token)
-            if match is None:
-                raise ScalarParseError(f"{token!r} is not a valid scalar")
-            value, unit_name = match.groups()
-            scalar = cls(float(value), SYMBOL_UNIT[unit_name or ""], percent_unit)
-        return scalar
+            return scalar
+        match = _MATCH_SCALAR(token)
+        if match is None:
+            raise ScalarParseError(f"{token!r} is not a valid scalar")
+        value, unit_name = match.groups()
+        scalar = cls(float(value), SYMBOL_UNIT[unit_name or ""], percent_unit)
 
     @lru_cache(maxsize=4096)
     def resolve_dimension(
