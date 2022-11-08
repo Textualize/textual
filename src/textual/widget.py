@@ -189,6 +189,9 @@ class Widget(DOMNode):
     hover_style: Reactive[Style] = Reactive(Style, repaint=False)
     highlight_link_id: Reactive[str] = Reactive("")
 
+    class WidgetError(Exception):
+        """Base widget error."""
+
     def __init__(
         self,
         *children: Widget,
@@ -233,6 +236,10 @@ class Widget(DOMNode):
             id=id,
             classes=self.DEFAULT_CLASSES if classes is None else classes,
         )
+
+        if self in children:
+            raise self.WidgetError("A widget can't be its own parent")
+
         self._add_children(*children)
 
     virtual_size = Reactive(Size(0, 0), layout=True)
@@ -374,7 +381,7 @@ class Widget(DOMNode):
         if self._scrollbar_corner is not None:
             yield self._scrollbar_corner
 
-    class MountError(Exception):
+    class MountError(WidgetError):
         """Error raised when there was a problem with the mount request."""
 
     def _find_mount_point(self, spot: int | str | "Widget") -> tuple["Widget", int]:

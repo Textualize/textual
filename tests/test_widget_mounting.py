@@ -1,13 +1,23 @@
 import pytest
 
 from textual.app import App
+from textual.widget import Widget
 from textual.widgets import Static
+
+class SelfOwn(Widget):
+    """Test a widget that tries to own itself."""
+    def __init__(self) -> None:
+        super().__init__(self)
 
 async def test_mount_via_app() -> None:
     """Perform mount tests via the app."""
 
     # Make a background set of widgets.
     widgets = [Static(id=f"starter-{n}") for n in range( 10 )]
+
+    async with App().run_test() as pilot:
+        with pytest.raises(Widget.WidgetError):
+            await pilot.app.mount(SelfOwn())
 
     async with App().run_test() as pilot:
         # Mount the first one and make sure it's there.
