@@ -1,14 +1,24 @@
 import pytest
 
 from textual.app import App
+from textual.widget import Widget, WidgetError, MountError
 from textual.widgets import Static
 from textual.css.query import TooManyMatches
+
+class SelfOwn(Widget):
+    """Test a widget that tries to own itself."""
+    def __init__(self) -> None:
+        super().__init__(self)
 
 async def test_mount_via_app() -> None:
     """Perform mount tests via the app."""
 
     # Make a background set of widgets.
     widgets = [Static(id=f"starter-{n}") for n in range( 10 )]
+
+    async with App().run_test() as pilot:
+        with pytest.raises(WidgetError):
+            await pilot.app.mount(SelfOwn())
 
     async with App().run_test() as pilot:
         # Mount the first one and make sure it's there.
@@ -83,16 +93,16 @@ async def test_mount_via_app() -> None:
     async with App().run_test() as pilot:
         # Make sure we get told off for trying to before and after.
         await pilot.app.mount_all(widgets)
-        with pytest.raises(Static.MountError):
+        with pytest.raises(MountError):
             await pilot.app.mount(Static(), before=2, after=2)
 
     async with App().run_test() as pilot:
         # Make sure we get told off trying to mount relative to something
         # that isn't actually in the DOM.
         await pilot.app.mount_all(widgets)
-        with pytest.raises(Static.MountError):
+        with pytest.raises(MountError):
             await pilot.app.mount(Static(), before=Static())
-        with pytest.raises(Static.MountError):
+        with pytest.raises(MountError):
             await pilot.app.mount(Static(), after=Static())
 
     async with App().run_test() as pilot:
