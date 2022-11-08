@@ -151,6 +151,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://textual.textualize.io/blog/2022/11/08/version-040/</loc>
+         <lastmod>2022-11-08</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://textual.textualize.io/events/</loc>
          <lastmod>2022-11-08</lastmod>
          <changefreq>daily</changefreq>
@@ -572,6 +577,11 @@
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/archive/2022/</loc>
+         <lastmod>2022-11-08</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://textual.textualize.io/blog/category/release/</loc>
          <lastmod>2022-11-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
