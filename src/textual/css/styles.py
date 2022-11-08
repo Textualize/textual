@@ -556,10 +556,9 @@ class Styles(StylesBase):
         """
         if value is None:
             return self._rules.pop(rule, None) is not None
-        else:
-            current = self._rules.get(rule)
-            self._rules[rule] = value
-            return current != value
+        current = self._rules.get(rule)
+        self._rules[rule] = value
+        return current != value
 
     def get_rule(self, rule: str, default: object = None) -> object:
         return self._rules.get(rule, default)
