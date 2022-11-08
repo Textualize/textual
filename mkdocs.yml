@@ -109,6 +109,7 @@ nav:
     - "api/footer.md"
     - "api/geometry.md"
     - "api/header.md"
+    - "api/list_view.md"
     - "api/message_pump.md"
     - "api/message.md"
     - "api/pilot.md"
@@ -184,12 +185,12 @@ plugins:
 
 - blog:
 - rss:
-    match_path: blog/posts/.* 
+    match_path: blog/posts/.*
     date_from_meta:
       as_creation: date
     categories:
       - categories
-      - tags 
+      - tags
 - search:
 - autorefs:
 - mkdocstrings:
