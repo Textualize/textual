@@ -1,3 +1,2 @@
 # Textual Blog
 
-New blog
