@@ -1616,7 +1616,6 @@ class App(Generic[ReturnType], DOMNode):
                 self._begin_update()
                 try:
                     try:
-                        print(renderable)
                         console.print(renderable)
                     except Exception as error:
                         self._handle_exception(error)
