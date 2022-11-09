@@ -1652,7 +1652,9 @@ class App(Generic[ReturnType], DOMNode):
                 (self, self._bindings),
             ]
         else:
-            namespace_bindings = [(node, node._bindings) for node in focused.ancestors]
+            namespace_bindings = [
+                (node, node._bindings) for node in focused.ancestors_with_self
+            ]
         return namespace_bindings
 
     async def check_bindings(self, key: str, universal: bool = False) -> bool:

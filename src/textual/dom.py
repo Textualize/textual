@@ -488,7 +488,7 @@ class DOMNode(MessagePump):
             Style: Rich Style object.
         """
         return Style.combine(
-            node.styles.text_style for node in reversed(self.ancestors)
+            node.styles.text_style for node in reversed(self.ancestors_with_self)
         )
 
     @property
@@ -497,7 +497,7 @@ class DOMNode(MessagePump):
         background = WHITE
         color = BLACK
         style = Style()
-        for node in reversed(self.ancestors):
+        for node in reversed(self.ancestors_with_self):
             styles = node.styles
             if styles.has_rule("background"):
                 background += styles.background
@@ -520,7 +520,7 @@ class DOMNode(MessagePump):
 
         """
         base_background = background = BLACK
-        for node in reversed(self.ancestors):
+        for node in reversed(self.ancestors_with_self):
             styles = node.styles
             if styles.has_rule("background"):
                 base_background = background
@@ -536,7 +536,7 @@ class DOMNode(MessagePump):
         """
         base_background = background = WHITE
         base_color = color = BLACK
-        for node in reversed(self.ancestors):
+        for node in reversed(self.ancestors_with_self):
             styles = node.styles
             if styles.has_rule("background"):
                 base_background = background
@@ -551,8 +551,11 @@ class DOMNode(MessagePump):
         return (base_background, base_color, background, color)
 
     @property
-    def ancestors(self) -> list[DOMNode]:
-        """Get a list of Nodes by tracing ancestors all the way back to App."""
+    def ancestors_with_self(self) -> list[DOMNode]:
+        """list[DOMNode]: A list of Nodes by tracing a path all the way back to App.
+
+        Note: This is inclusive of ``self``.
+        """
         nodes: list[MessagePump | None] = []
         add_node = nodes.append
         node: MessagePump | None = self
@@ -560,6 +563,12 @@ class DOMNode(MessagePump):
             add_node(node)
             node = node._parent
         return cast("list[DOMNode]", nodes)
+
+    @property
+    def ancestors(self) -> list[DOMNode]:
+        """list[DOMNode]: A list of ancestor nodes Nodes by tracing ancestors all the way back to App."""
+        nodes = self.ancestors_with_self
+        return nodes[1:] if nodes else nodes
 
     @property
     def displayed_children(self) -> list[Widget]:

@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.5.0] - Unreleased
+
+### Changed
+
+- `DOMNode.ancestors` no longer includes `self`.
+- Added `DOMNode.ancestors_with_self`, which retains the old behaviour of
+  `DOMNode.ancestors`.
+
 ## [0.4.0] - 2022-11-08
 
 https://textual.textualize.io/blog/2022/11/08/version-040/#version-040

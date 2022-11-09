@@ -1054,7 +1054,7 @@ class Widget(DOMNode):
         Returns:
             tuple[str, ...]: Tuple of layer names.
         """
-        for node in self.ancestors:
+        for node in self.ancestors_with_self:
             if not isinstance(node, Widget):
                 break
             if node.styles.has_rule("layers"):
@@ -2059,14 +2059,14 @@ class Widget(DOMNode):
         self.mouse_over = True
 
     def _on_focus(self, event: events.Focus) -> None:
-        for node in self.ancestors:
+        for node in self.ancestors_with_self:
             if node._has_focus_within:
                 self.app.update_styles(node)
         self.has_focus = True
         self.refresh()
 
     def _on_blur(self, event: events.Blur) -> None:
-        if any(node._has_focus_within for node in self.ancestors):
+        if any(node._has_focus_within for node in self.ancestors_with_self):
             self.app.update_styles(self)
         self.has_focus = False
         self.refresh()
