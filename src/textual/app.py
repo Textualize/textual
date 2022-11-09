@@ -1824,6 +1824,11 @@ class App(Generic[ReturnType], DOMNode):
         await self.screen.post_message(event)
 
     async def _on_remove(self, event: events.Remove) -> None:
+        """Handle a remove event.
+
+        Args:
+            event (events.Remove): The remove event.
+        """
 
         # We've been given a list of widgets to remove, but removing those
         # will also result in other (descendent) widgets being removed. So
