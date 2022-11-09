@@ -1860,12 +1860,10 @@ class App(Generic[ReturnType], DOMNode):
         # a candidate for removal. Note that we retain the ordering of the
         # original walk at the top as it's depth-first and so should be the
         # order we want to go in from here on.
-        pruned_remove: list[Widget] = [
+        pruned_remove = [
             widget
             for widget in everything_to_remove
-            if not any(
-                ancestor in everything_to_remove for ancestor in widget.ancestors
-            )
+            if dedupe_to_remove.isdisjoint(widget.ancestors)
         ]
 
         # Now that we know that minimal set of widgets, we go through them
