@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Watchers are now called immediately when setting the attribute if they are synchronous. https://github.com/Textualize/textual/pull/1145
 - `DOMNode.ancestors` no longer includes `self`.
 - Added `DOMNode.ancestors_with_self`, which retains the old behaviour of
   `DOMNode.ancestors`.
