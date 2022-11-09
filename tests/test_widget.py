@@ -116,7 +116,7 @@ def test_get_widget_by_id_no_matching_child(parent):
         parent.get_widget_by_id(id="i-dont-exist")
 
 
-def test_get_widget_by_id_non_immediate_descendants(parent, hierarchy_app):
+def test_get_widget_by_id_non_immediate_descendants(parent):
     result = parent.get_widget_by_id("grandchild1")
     assert result.id == "grandchild1"
 
