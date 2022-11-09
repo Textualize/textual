@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.5.0] - Unreleased
+
+### Added
+
+- Add get_child_by_id and get_widget_by_id, remove get_child https://github.com/Textualize/textual/pull/1146
+
 ## [0.4.0] - 2022-11-08
 
 https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
