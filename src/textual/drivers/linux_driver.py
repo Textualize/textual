@@ -176,6 +176,7 @@ class LinuxDriver(Driver):
                 self.exit_event.set()
                 if self._key_thread is not None:
                     self._key_thread.join()
+                self.exit_event.clear()
                 termios.tcflush(self.fileno, termios.TCIFLUSH)
         except Exception as error:
             # TODO: log this

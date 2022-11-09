@@ -84,6 +84,7 @@ class WindowsDriver(Driver):
                 if self._event_thread is not None:
                     self._event_thread.join()
                     self._event_thread = None
+                self.exit_event.clear()
         except Exception as error:
             # TODO: log this
             pass
