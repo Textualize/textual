@@ -6,7 +6,7 @@ from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
 from textual.dom import DOMNode
 from textual.geometry import Size
-from textual.widget import Widget
+from textual.widget import Widget, MountError
 
 
 @pytest.mark.parametrize(
@@ -94,7 +94,7 @@ async def parent(hierarchy_app):
     yield hierarchy_app.get_widget_by_id("parent")
 
 
-async def test_get_child_by_id_gets_first_child(parent):
+def test_get_child_by_id_gets_first_child(parent):
     child = parent.get_child_by_id(id="child1")
     assert child.id == "child1"
     assert child.get_child_by_id(id="grandchild1").id == "grandchild1"
@@ -139,3 +139,20 @@ def test_get_widgets_app_delegated(hierarchy_app, parent):
     # Check that the grandchild (descendant of the default screen) is found
     grandchild = hierarchy_app.get_widget_by_id("grandchild1")
     assert grandchild.id == "grandchild1"
+
+
+def test_widget_mount_ids_must_be_unique_mounting_all_in_one_go(parent):
+    widget1 = Widget(id="hello")
+    widget2 = Widget(id="hello")
+
+    with pytest.raises(MountError):
+        parent.mount(widget1, widget2)
+
+
+def test_widget_mount_ids_must_be_unique_mounting_multiple_calls(parent):
+    widget1 = Widget(id="hello")
+    widget2 = Widget(id="hello")
+
+    parent.mount(widget1)
+    with pytest.raises(MountError):
+        parent.mount(widget2)

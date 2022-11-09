@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from asyncio import Lock, wait, create_task
+from collections import Counter
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
@@ -497,9 +498,24 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
-        incoming_ids = {widget.id for widget in widgets}
-        existing_ids = {widget.id for widget in self.children}
-        intersection = incoming_ids.intersection(existing_ids)
+
+        # Check for duplicate IDs in the incoming widgets
+        ids_to_mount = [widget.id for widget in widgets if widget.id is not None]
+        unique_ids = set(ids_to_mount)
+        num_unique_ids = len(unique_ids)
+        num_widgets_with_ids = len(ids_to_mount)
+        if num_unique_ids != num_widgets_with_ids:
+            counter = Counter(widget.id for widget in widgets)
+            for widget_id, count in counter.items():
+                if count > 1:
+                    raise MountError(
+                        f"Tried to insert {count!r} widgets with the same ID {widget_id!r}. "
+                        f"Widget IDs must be unique."
+                    )
+
+        # Check for duplicate IDs between the widgets to mount and existing children.
+        child_ids = self.children._nodes_by_id.keys()
+        intersection = unique_ids.intersection(child_ids)
         if intersection:
             conflicting_id = intersection.pop()
             conflicting_widget = self.get_child_by_id(conflicting_id)
