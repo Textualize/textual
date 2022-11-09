@@ -497,6 +497,16 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
+        incoming_ids = {widget.id for widget in widgets}
+        existing_ids = {widget.id for widget in self.children}
+        intersection = incoming_ids.intersection(existing_ids)
+        if intersection:
+            conflicting_id = intersection.pop()
+            conflicting_widget = self.get_child_by_id(conflicting_id)
+            raise MountError(
+                f"Tried to insert a widget with ID {conflicting_id!r}, but a widget {conflicting_widget!r} "
+                f"already exists with that ID. Widget IDs must be unique."
+            )
 
         # Saying you want to mount before *and* after something is an error.
         if before is not None and after is not None:
