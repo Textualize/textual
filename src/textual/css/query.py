@@ -20,6 +20,8 @@ from typing import cast, Generic, TYPE_CHECKING, Iterator, TypeVar, overload
 
 import rich.repr
 
+from .. import events
+from .._context import active_app
 from .errors import DeclarationError, TokenError
 from .match import match
 from .model import SelectorSet
@@ -348,8 +350,8 @@ class DOMQuery(Generic[QueryType]):
 
     def remove(self) -> DOMQuery[QueryType]:
         """Remove matched nodes from the DOM"""
-        for node in self:
-            node.remove()
+        app = active_app.get()
+        app.post_message_no_wait(events.Remove(app, widgets=list(self)))
         return self
 
     def set_styles(
