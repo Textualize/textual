@@ -128,5 +128,5 @@ class NodeList(Sequence):
     def __getitem__(self, index: slice) -> list[Widget]:
         ...
 
-    def __getitem__(self, index: int | slice | str) -> Widget | list[Widget]:
+    def __getitem__(self, index: int | slice) -> Widget | list[Widget]:
         return self._nodes[index]
