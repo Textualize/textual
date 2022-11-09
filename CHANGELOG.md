@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.5.0] - Unreleased
 
+
+### Added
+
+- Add easing parameter to Widget.scroll_* methods https://github.com/Textualize/textual/pull/1144
+
 ### Changed
 
 - Watchers are now called immediately when setting the attribute if they are synchronous. https://github.com/Textualize/textual/pull/1145
+
 
 ## [0.4.0] - 2022-11-08
 
