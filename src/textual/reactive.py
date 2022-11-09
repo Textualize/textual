@@ -220,13 +220,16 @@ class Reactive(Generic[ReactiveType]):
 
         def invoke_watcher(
             watch_function: Callable, old_value: object, value: object
-        ) -> None:
+        ) -> bool:
             """Invoke a watch function.
 
             Args:
                 watch_function (Callable): A watch function, which may be sync or async.
                 old_value (object): The old value of the attribute.
                 value (object): The new value of the attribute.
+
+            Returns:
+                bool: True if the watcher was run, or False if it was posted.
             """
             _rich_traceback_omit = True
             if count_parameters(watch_function) == 2:
@@ -240,19 +243,29 @@ class Reactive(Generic[ReactiveType]):
                         sender=obj, callback=partial(await_watcher, watch_result)
                     )
                 )
+                return False
+            else:
+                return True
 
+        # Compute is only required if a watcher runs immediately, not if they were posted.
+        require_compute = False
         watch_function = getattr(obj, f"watch_{name}", None)
         if callable(watch_function):
-            invoke_watcher(watch_function, old_value, value)
+            require_compute = require_compute or invoke_watcher(
+                watch_function, old_value, value
+            )
 
         watchers: list[Callable] = getattr(obj, "__watchers", {}).get(name, [])
         for watcher in watchers:
-            invoke_watcher(watcher, old_value, value)
+            require_compute = require_compute or invoke_watcher(
+                watcher, old_value, value
+            )
 
-        # Run computes
-        obj.post_message_no_wait(
-            events.Callback(sender=obj, callback=partial(Reactive._compute, obj))
-        )
+        if require_compute:
+            # Run computes
+            obj.post_message_no_wait(
+                events.Callback(sender=obj, callback=partial(Reactive._compute, obj))
+            )
 
     @classmethod
     async def _compute(cls, obj: Reactable) -> None:
