@@ -1875,7 +1875,7 @@ class App(Generic[ReturnType], DOMNode):
             if widget.parent is not None:
                 widget.parent.children._remove(widget)
 
-        # Havnig done that, it's now safe for us to start the process of
+        # Having done that, it's now safe for us to start the process of
         # winding down all of the affected widgets. We do that by pruning
         # just the roots of each affected branch, and letting the normal
         # prune process take care of all the offspring.
