@@ -40,6 +40,7 @@ from ._styles_cache import StylesCache
 from ._types import Lines
 from .binding import NoBinding
 from .box_model import BoxModel, get_box_model
+from .css.query import NoMatches
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
@@ -331,6 +332,44 @@ class Widget(DOMNode):
     @offset.setter
     def offset(self, offset: Offset) -> None:
         self.styles.offset = ScalarOffset.from_offset(offset)
+
+    def get_child_by_id(self, id: str) -> Widget:
+        """Return the first child (immediate descendent) of this node with the given ID.
+
+        Args:
+            id (str): The ID of the child.
+
+        Returns:
+            DOMNode: The first child of this node with the ID.
+
+        Raises:
+            NoMatches: if no children could be found for this ID
+        """
+        child = self.children._get_by_id(id)
+        if child is not None:
+            return child
+        raise NoMatches(f"No child found with id={id!r}")
+
+    def get_widget_by_id(self, id: str) -> Widget:
+        """Return the first descendant widget with the given ID.
+        Performs a breadth-first search rooted at this node, but this node won't match
+        if it has a matching id.
+
+        Args:
+            id (str): The ID to search for in the subtree
+
+        Returns:
+            DOMNode: The first descendant encountered with this ID.
+
+        Raises:
+            NoMatches: if no children could be found for this ID
+        """
+        for child in self.walk_children(method="depth"):
+            try:
+                return child.get_child_by_id(id)
+            except NoMatches:
+                pass
+        raise NoMatches(f"No descendant found with id={id!r}")
 
     def get_component_rich_style(self, name: str) -> Style:
         """Get a *Rich* style for a component.

@@ -1,7 +1,10 @@
 import pytest
+import rich
 
-from textual.app import App
+from textual.app import App, ComposeResult
 from textual.css.errors import StyleValueError
+from textual.css.query import NoMatches
+from textual.dom import DOMNode
 from textual.geometry import Size
 from textual.widget import Widget
 
@@ -64,3 +67,65 @@ def test_widget_content_width():
     height = widget3.get_content_height(Size(20, 20), Size(80, 24), width)
     assert width == 3
     assert height == 3
+
+
+class GetByIdApp(App):
+    def compose(self) -> ComposeResult:
+        grandchild1 = Widget(id="grandchild1")
+        child1 = Widget(grandchild1, id="child1")
+        child2 = Widget(id="child2")
+
+        yield Widget(
+            child1,
+            child2,
+            id="parent",
+        )
+
+
+@pytest.fixture
+async def hierarchy_app():
+    app = GetByIdApp()
+    async with app.run_test():
+        yield app
+
+
+@pytest.fixture
+async def parent(hierarchy_app):
+    yield hierarchy_app.get_widget_by_id("parent")
+
+
+async def test_get_child_by_id_gets_first_child(parent):
+    child = parent.get_child_by_id(id="child1")
+    assert child.id == "child1"
+    assert child.get_child_by_id(id="grandchild1").id == "grandchild1"
+    assert parent.get_child_by_id(id="child2").id == "child2"
+
+
+def test_get_child_by_id_no_matching_child(parent):
+    with pytest.raises(NoMatches):
+        parent.get_child_by_id(id="doesnt-exist")
+
+
+def test_get_child_by_id_only_immediate_descendents(parent):
+    with pytest.raises(NoMatches):
+        parent.get_child_by_id(id="grandchild1")
+
+
+def test_get_widget_by_id_no_matching_child(parent):
+    with pytest.raises(NoMatches):
+        parent.get_widget_by_id(id="i-dont-exist")
+
+
+def test_get_widget_by_id_non_immediate_descendants(parent, hierarchy_app):
+    result = parent.get_widget_by_id("grandchild1")
+    assert result.id == "grandchild1"
+
+
+def test_get_widget_by_id_immediate_descendants(parent):
+    result = parent.get_widget_by_id("child1")
+    assert result.id == "child1"
+
+
+def test_get_widget_by_id_doesnt_return_self(parent):
+    with pytest.raises(NoMatches):
+        parent.get_widget_by_id("parent")

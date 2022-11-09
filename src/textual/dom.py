@@ -674,7 +674,7 @@ class DOMNode(MessagePump):
                         push(iter(node.children))
 
         def walk_breadth_first() -> Iterable[DOMNode]:
-            """Walk the tree breadth first (children first)."""
+            """Walk the tree breadth first (children first) (level order traversal)"""
             queue: deque[DOMNode] = deque()
             popleft = queue.popleft
             extend = queue.extend
@@ -699,23 +699,6 @@ class DOMNode(MessagePump):
         if reverse:
             nodes.reverse()
         return nodes
-
-    def get_child(self, id: str) -> DOMNode:
-        """Return the first child (immediate descendent) of this node with the given ID.
-
-        Args:
-            id (str): The ID of the child.
-
-        Returns:
-            DOMNode: The first child of this node with the ID.
-
-        Raises:
-            NoMatches: if no children could be found for this ID
-        """
-        for child in self.children:
-            if child.id == id:
-                return child
-        raise NoMatches(f"No child found with id={id!r}")
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 

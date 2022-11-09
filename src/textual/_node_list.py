@@ -21,6 +21,12 @@ class NodeList(Sequence):
         # The nodes in the list
         self._nodes: list[Widget] = []
         self._nodes_set: set[Widget] = set()
+
+        # We cache widgets by their IDs too for a quick lookup
+        # Note that only widgets with IDs are cached like this, so
+        # this cache will likely hold fewer values than self._nodes.
+        self._nodes_by_id: dict[str, Widget] = {}
+
         # Increments when list is updated (used for caching)
         self._updates = 0
 
@@ -53,6 +59,9 @@ class NodeList(Sequence):
         """
         return self._nodes.index(widget)
 
+    def _get_by_id(self, widget_id: str) -> Widget | None:
+        return self._nodes_by_id.get(widget_id)
+
     def _append(self, widget: Widget) -> None:
         """Append a Widget.
 
@@ -62,6 +71,9 @@ class NodeList(Sequence):
         if widget not in self._nodes_set:
             self._nodes.append(widget)
             self._nodes_set.add(widget)
+            widget_id = widget.id
+            if widget_id is not None and widget_id not in self._nodes_by_id:
+                self._nodes_by_id[widget_id] = widget
             self._updates += 1
 
     def _insert(self, index: int, widget: Widget) -> None:
@@ -73,6 +85,9 @@ class NodeList(Sequence):
         if widget not in self._nodes_set:
             self._nodes.insert(index, widget)
             self._nodes_set.add(widget)
+            widget_id = widget.id
+            if widget_id is not None and widget_id not in self._nodes_by_id:
+                self._nodes_by_id[widget_id] = widget
             self._updates += 1
 
     def _remove(self, widget: Widget) -> None:
@@ -86,6 +101,9 @@ class NodeList(Sequence):
         if widget in self._nodes_set:
             del self._nodes[self._nodes.index(widget)]
             self._nodes_set.remove(widget)
+            widget_id = widget.id
+            if widget_id in self._nodes_by_id:
+                del self._nodes_by_id[widget_id]
             self._updates += 1
 
     def _clear(self) -> None:
@@ -93,6 +111,7 @@ class NodeList(Sequence):
         if self._nodes:
             self._nodes.clear()
             self._nodes_set.clear()
+            self._nodes_by_id.clear()
             self._updates += 1
 
     def __iter__(self) -> Iterator[Widget]:
@@ -109,5 +128,5 @@ class NodeList(Sequence):
     def __getitem__(self, index: slice) -> list[Widget]:
         ...
 
-    def __getitem__(self, index: int | slice) -> Widget | list[Widget]:
+    def __getitem__(self, index: int | slice | str) -> Widget | list[Widget]:
         return self._nodes[index]
