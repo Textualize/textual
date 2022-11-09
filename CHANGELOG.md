@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `DOMNode.ancestors` no longer includes `self`.
 - Added `DOMNode.ancestors_with_self`, which retains the old behaviour of
   `DOMNode.ancestors`.
+- Improved the speed of `DOMQuery.remove`.
 
 ## [0.4.0] - 2022-11-08
 
