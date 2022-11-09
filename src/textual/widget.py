@@ -432,7 +432,7 @@ class Widget(DOMNode):
         # children. We should be able to go looking for the widget's
         # location amongst its parent's children.
         try:
-            return spot.parent, spot.parent.children.index(spot)
+            return cast("Widget", spot.parent), spot.parent.children.index(spot)
         except ValueError:
             raise MountError(f"{spot!r} is not a child of {self!r}") from None
 
