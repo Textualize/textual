@@ -1863,13 +1863,17 @@ class App(Generic[ReturnType], DOMNode):
             )
         ]
 
+        # Now that we know that minimal set of widgets, we go through them
+        # and get their parents to forget about them. This has the effect of
+        # snipping each affected branch from the DOM.
         for widget in pruned_remove:
             if widget.parent is not None:
                 widget.parent.children._remove(widget)
 
-        # Now that we have the minimal set of widgets that need to be
-        # removed from the DOM, to get the effect of removing everything
-        # affected, let's go prune them.
+        # Havnig done that, it's now safe for us to start the process of
+        # winding down all of the affected widgets. We do that by pruning
+        # just the roots of each affected branch, and letting the normal
+        # prune process take care of all the offspring.
         for widget in pruned_remove:
             await self._prune_node(widget)
 
