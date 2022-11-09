@@ -165,7 +165,7 @@ class Reactive(Generic[ReactiveType]):
             # Set and return the value
             setattr(obj, self.internal_name, default_value)
             if self._init:
-                self._check_watchers(obj, self.name, default_value, first_set=True)
+                self._check_watchers(obj, self.name, default_value)
             return default_value
         return value
 
@@ -187,15 +187,13 @@ class Reactive(Generic[ReactiveType]):
             # Store the internal value
             setattr(obj, self.internal_name, value)
             # Check all watchers
-            self._check_watchers(obj, name, current_value, first_set=first_set)
+            self._check_watchers(obj, name, current_value)
             # Refresh according to descriptor flags
             if self._layout or self._repaint:
                 obj.refresh(repaint=self._repaint, layout=self._layout)
 
     @classmethod
-    def _check_watchers(
-        cls, obj: Reactable, name: str, old_value: Any, first_set: bool = False
-    ) -> None:
+    def _check_watchers(cls, obj: Reactable, name: str, old_value: Any):
         """Check watchers, and call watch methods / computes
 
         Args:
