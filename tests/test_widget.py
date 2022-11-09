@@ -129,3 +129,13 @@ def test_get_widget_by_id_immediate_descendants(parent):
 def test_get_widget_by_id_doesnt_return_self(parent):
     with pytest.raises(NoMatches):
         parent.get_widget_by_id("parent")
+
+
+def test_get_widgets_app_delegated(hierarchy_app, parent):
+    # Check that get_child_by_id finds the parent, which is a child of the default Screen
+    queried_parent = hierarchy_app.get_child_by_id("parent")
+    assert queried_parent is parent
+
+    # Check that the grandchild (descendant of the default screen) is found
+    grandchild = hierarchy_app.get_widget_by_id("grandchild1")
+    assert grandchild.id == "grandchild1"
