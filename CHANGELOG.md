@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Watchers are now called immediately when setting the attribute if they are synchronous. https://github.com/Textualize/textual/pull/1145
+- Widget.call_later has been renamed to Widget.call_after_refresh.
+
+### Added
+
+- Added Widget.call_later which invokes a callback on idle.
 
 ## [0.4.0] - 2022-11-08
 

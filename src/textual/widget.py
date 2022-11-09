@@ -1576,7 +1576,7 @@ class Widget(DOMNode):
         """
         parent = self.parent
         if isinstance(parent, Widget):
-            self.call_later(
+            self.call_after_refresh(
                 parent.scroll_to_widget,
                 self,
                 animate=animate,
@@ -1989,7 +1989,7 @@ class Widget(DOMNode):
             except NoScreen:
                 pass
 
-        self.app.call_later(set_focus, self)
+        self.app.call_after_refresh(set_focus, self)
 
     def reset_focus(self) -> None:
         """Reset the focus (move it to the next available widget)."""
