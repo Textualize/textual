@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Add get_child_by_id and get_widget_by_id, remove get_child https://github.com/Textualize/textual/pull/1146
 
+### Changed
+
+- Watchers are now called immediately when setting the attribute if they are synchronous. https://github.com/Textualize/textual/pull/1145
+
 ## [0.4.0] - 2022-11-08
 
 https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
