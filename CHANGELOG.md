@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.5.0] - Unreleased
 
+### Added
+
 - Add get_child_by_id and get_widget_by_id, remove get_child https://github.com/Textualize/textual/pull/1146
 - Add easing parameter to Widget.scroll_* methods https://github.com/Textualize/textual/pull/1144
 
