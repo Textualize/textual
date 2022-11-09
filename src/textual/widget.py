@@ -1910,7 +1910,7 @@ class Widget(DOMNode):
 
     def remove(self) -> None:
         """Remove the Widget from the DOM (effectively deleting it)"""
-        self.app.post_message_no_wait(events.Remove(self, widget=self))
+        self.app.post_message_no_wait(events.Remove(self, widgets=[self]))
 
     def render(self) -> RenderableType:
         """Get renderable for widget.

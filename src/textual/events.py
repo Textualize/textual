@@ -127,10 +127,10 @@ class Unmount(Mount, bubble=False, verbose=False):
 
 
 class Remove(Event, bubble=False):
-    """Sent to a widget to ask it to remove itself from the DOM."""
+    """Sent to the app to ask it to remove one or more widgets from the DOM."""
 
-    def __init__(self, sender: MessageTarget, widget: Widget) -> None:
-        self.widget = widget
+    def __init__(self, sender: MessageTarget, widgets: list[Widget]) -> None:
+        self.widgets = widgets
         super().__init__(sender)
 
 

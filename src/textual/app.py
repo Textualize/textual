@@ -1822,7 +1822,7 @@ class App(Generic[ReturnType], DOMNode):
         await self.screen.post_message(event)
 
     async def _on_remove(self, event: events.Remove) -> None:
-        widget = event.widget
+        widget = event.widgets[0]
         parent = widget.parent
 
         remove_widgets = widget.walk_children(
