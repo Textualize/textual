@@ -567,8 +567,7 @@ class DOMNode(MessagePump):
     @property
     def ancestors(self) -> list[DOMNode]:
         """list[DOMNode]: A list of ancestor nodes Nodes by tracing ancestors all the way back to App."""
-        nodes = self.ancestors_with_self
-        return nodes[1:] if nodes else nodes
+        return self.ancestors_with_self[1:]
 
     @property
     def displayed_children(self) -> list[Widget]:
