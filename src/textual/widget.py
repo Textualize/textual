@@ -147,6 +147,14 @@ class RenderCache(NamedTuple):
     lines: Lines
 
 
+class WidgetError(Exception):
+    """Base widget error."""
+
+
+class MountError(WidgetError):
+    """Error raised when there was a problem with the mount request."""
+
+
 @rich.repr.auto
 class Widget(DOMNode):
     """
@@ -233,6 +241,10 @@ class Widget(DOMNode):
             id=id,
             classes=self.DEFAULT_CLASSES if classes is None else classes,
         )
+
+        if self in children:
+            raise WidgetError("A widget can't be its own parent")
+
         self._add_children(*children)
 
     virtual_size = Reactive(Size(0, 0), layout=True)
@@ -374,9 +386,6 @@ class Widget(DOMNode):
         if self._scrollbar_corner is not None:
             yield self._scrollbar_corner
 
-    class MountError(Exception):
-        """Error raised when there was a problem with the mount request."""
-
     def _find_mount_point(self, spot: int | str | "Widget") -> tuple["Widget", int]:
         """Attempt to locate the point where the caller wants to mount something.
 
@@ -387,7 +396,7 @@ class Widget(DOMNode):
             tuple[Widget, int]: The parent and the location in its child list.
 
         Raises:
-            Widget.MountError: If there was an error finding where to mount a widget.
+            MountError: If there was an error finding where to mount a widget.
 
         The rules of this method are:
 
@@ -414,7 +423,7 @@ class Widget(DOMNode):
         # have a parent? There's no way we can use it as a sibling to make
         # mounting decisions if it doesn't have a parent.
         if spot.parent is None:
-            raise self.MountError(
+            raise MountError(
                 f"Unable to find relative location of {spot!r} because it has no parent"
             )
 
@@ -424,7 +433,7 @@ class Widget(DOMNode):
         try:
             return spot.parent, spot.parent.children.index(spot)
         except ValueError:
-            raise self.MountError(f"{spot!r} is not a child of {self!r}") from None
+            raise MountError(f"{spot!r} is not a child of {self!r}") from None
 
     def mount(
         self,
@@ -452,7 +461,7 @@ class Widget(DOMNode):
 
         # Saying you want to mount before *and* after something is an error.
         if before is not None and after is not None:
-            raise self.MountError(
+            raise MountError(
                 "Only one of `before` or `after` can be handled -- not both"
             )
 
