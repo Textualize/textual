@@ -109,8 +109,8 @@ async def test_remove_move_focus():
         assert pilot.app.focused is not None
         assert pilot.app.focused == buttons[9]
 
-async def test_remove_order():
-    """The removal of a top-level widget should cause bottom-first removal."""
+async def test_widget_remove_order():
+    """A Widget.remove of a top-level widget should cause bottom-first removal."""
 
     removals: list[str] = []
 
@@ -123,4 +123,20 @@ async def test_remove_order():
             Removable(Removable(Removable(id="grandchild"), id="child"), id="parent")
         )
         await pilot.app.screen.children[0].remove()
+        assert removals == ["grandchild", "child", "parent"]
+
+async def test_query_remove_order():
+    """A DOMQuery.remove of a top-level widget should cause bottom-first removal."""
+
+    removals: list[str] = []
+
+    class Removable(Container):
+        def on_unmount( self, _ ):
+            removals.append(self.id if self.id is not None else "unknown")
+
+    async with App().run_test() as pilot:
+        await pilot.app.mount(
+            Removable(Removable(Removable(id="grandchild"), id="child"), id="parent")
+        )
+        await pilot.app.query(Removable).remove()
         assert removals == ["grandchild", "child", "parent"]
