@@ -1802,11 +1802,19 @@ class App(Generic[ReturnType], DOMNode):
         event.stop()
         await self.screen.post_message(event)
 
-    async def _on_remove(self, event: events.Remove) -> None:
-        """Handle a remove event.
+    def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
+        """Detach a list of widgets from the DOM.
 
         Args:
-            event (events.Remove): The remove event.
+            widgets (list[Widget]): The list of widgets to detach from the DOM.
+
+        Returns:
+            list[Widget]: The list of widgets that should be pruned.
+
+        Note:
+            A side-effect of calling this function is that each parent of
+            each affected widget will be made to forget about the affected
+            child.
         """
 
         # We've been given a list of widgets to remove, but removing those
@@ -1815,7 +1823,7 @@ class App(Generic[ReturnType], DOMNode):
         # be in the DOM by the time we've finished. Note that, at this
         # point, it's entirely possible that there will be duplicates.
         everything_to_remove: list[Widget] = []
-        for widget in event.widgets:
+        for widget in widgets:
             everything_to_remove.extend(
                 widget.walk_children(
                     Widget, with_self=True, method="depth", reverse=True
@@ -1838,11 +1846,9 @@ class App(Generic[ReturnType], DOMNode):
         # In other words: find the smallest set of ancestors in the DOM that
         # will remove the widgets requested for removal, and also ensure
         # that all knock-on effects happen too.
-        request_remove = set(event.widgets)
+        request_remove = set(widgets)
         pruned_remove = [
-            widget
-            for widget in event.widgets
-            if request_remove.isdisjoint(widget.ancestors)
+            widget for widget in widgets if request_remove.isdisjoint(widget.ancestors)
         ]
 
         # Now that we know that minimal set of widgets, we go through them
@@ -1852,14 +1858,26 @@ class App(Generic[ReturnType], DOMNode):
             if widget.parent is not None:
                 widget.parent.children._remove(widget)
 
-        # Having done that, it's now safe for us to start the process of
-        # winding down all of the affected widgets. We do that by pruning
-        # just the roots of each affected branch, and letting the normal
-        # prune process take care of all the offspring.
-        for widget in pruned_remove:
-            await self._prune_node(widget)
+        # Return the list of widgets that should end up being sent off in a
+        # prune event.
+        return pruned_remove
 
-        # And finally, redraw all the things!
+    async def _on_prune(self, event: events.Prune) -> None:
+        """Handle a prune event.
+
+        Args:
+            event (events.Prune): The prune event.
+        """
+
+        try:
+            # Prune all the widgets.
+            for widget in event.widgets:
+                await self._prune_node(widget)
+        finally:
+            # Finally, flag that we're done.
+            event.finished_flag.set()
+
+        # Flag that the layout needs refreshing.
         self.refresh(layout=True)
 
     def _walk_children(self, root: Widget) -> Iterable[list[Widget]]:

@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from .timer import Timer as TimerClass
     from .timer import TimerCallback
     from .widget import Widget
+    import asyncio
 
 
 @rich.repr.auto
@@ -126,12 +127,21 @@ class Unmount(Mount, bubble=False, verbose=False):
     """Sent when a widget is unmounted and may not longer receive messages."""
 
 
-class Remove(Event, bubble=False):
-    """Sent to the app to ask it to remove one or more widgets from the DOM."""
+class Prune(Event, bubble=False):
+    """Sent to the app to ask it to prune one or more widgets from the DOM."""
 
-    def __init__(self, sender: MessageTarget, widgets: list[Widget]) -> None:
-        self.widgets = widgets
+    def __init__(
+        self, sender: MessageTarget, widgets: list[Widget], finished_flag: asyncio.Event
+    ) -> None:
+        """Initialise the event.
+
+        Args:
+            widgets (list[Widgets]): The list of widgets to prune.
+            finished_flag (asyncio.Event): An asyncio Event to that will be flagged when the prune is done.
+        """
         super().__init__(sender)
+        self.finished_flag = finished_flag
+        self.widgets = widgets
 
 
 class Show(Event, bubble=False):

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from asyncio import Lock, wait, create_task
+from asyncio import Lock, wait, create_task, Event as AsyncEvent
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
@@ -49,6 +49,7 @@ from .message import Message
 from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
+from .await_remove import AwaitRemove
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
@@ -1990,9 +1991,17 @@ class Widget(DOMNode):
 
         self.check_idle()
 
-    def remove(self) -> None:
+    def remove(self) -> AwaitRemove:
         """Remove the Widget from the DOM (effectively deleting it)"""
-        self.app.post_message_no_wait(events.Remove(self, widgets=[self]))
+        prune_finished_event = AsyncEvent()
+        self.app.post_message_no_wait(
+            events.Prune(
+                self,
+                widgets=self.app._detach_from_dom([self]),
+                finished_flag=prune_finished_event,
+            )
+        )
+        return AwaitRemove(prune_finished_event)
 
     def render(self) -> RenderableType:
         """Get renderable for widget.

@@ -17,11 +17,13 @@ a method which evaluates the query, such as first() and last().
 from __future__ import annotations
 
 from typing import cast, Generic, TYPE_CHECKING, Iterator, TypeVar, overload
+import asyncio
 
 import rich.repr
 
 from .. import events
 from .._context import active_app
+from ..await_remove import AwaitRemove
 from .errors import DeclarationError, TokenError
 from .match import match
 from .model import SelectorSet
@@ -348,11 +350,18 @@ class DOMQuery(Generic[QueryType]):
             node.toggle_class(*class_names)
         return self
 
-    def remove(self) -> DOMQuery[QueryType]:
+    def remove(self) -> AwaitRemove:
         """Remove matched nodes from the DOM"""
+        prune_finished_event = asyncio.Event()
         app = active_app.get()
-        app.post_message_no_wait(events.Remove(app, widgets=list(self)))
-        return self
+        app.post_message_no_wait(
+            events.Prune(
+                app,
+                widgets=app._detach_from_dom(list(self)),
+                finished_flag=prune_finished_event,
+            )
+        )
+        return AwaitRemove(prune_finished_event)
 
     def set_styles(
         self, css: str | None = None, **update_styles
