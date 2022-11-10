@@ -1853,16 +1853,15 @@ class App(Generic[ReturnType], DOMNode):
                 [to_remove for to_remove in dedupe_to_remove if to_remove.can_focus],
             )
 
-        # Next, we want to go through the full set of everything to remove
-        # and reduce it to the minimal set of things that need removing. In
-        # other words, for any given branch that is going to have things
-        # removed, we need to just keep the topmost node in the DOM that is
-        # a candidate for removal. Note that we retain the ordering of the
-        # original walk at the top as it's depth-first and so should be the
-        # order we want to go in from here on.
+        # Next, we go through the set of widgets we've been asked to remove
+        # and try and find the minimal collection of widgets that will
+        # result in everything else that should be removed, being removed.
+        # In other words: find the smallest set of ancestors in the DOM that
+        # will remove the widgets requested for removal, and also ensure
+        # that all knock-on effects happen too.
         pruned_remove = [
             widget
-            for widget in everything_to_remove
+            for widget in event.widgets
             if dedupe_to_remove.isdisjoint(widget.ancestors)
         ]
 
