@@ -300,9 +300,9 @@ class Button(Static, can_focus=True):
         Args:
             label (str): The text that appears within the button.
             disabled (bool): Whether the button is disabled or not.
-            name: The name of the button.
-            id: The ID of the button in the DOM.
-            classes: The CSS classes of the button.
+            name (str | None, optional): The name of the button.
+            id (str | None, optional): The ID of the button in the DOM.
+            classes (str | None, optional): The CSS classes of the button.
 
         Returns:
             Button: A Button widget of the 'warning' variant.
