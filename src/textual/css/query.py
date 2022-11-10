@@ -351,7 +351,11 @@ class DOMQuery(Generic[QueryType]):
         return self
 
     def remove(self) -> AwaitRemove:
-        """Remove matched nodes from the DOM"""
+        """Remove matched nodes from the DOM.
+
+        Returns:
+            AwaitRemove: An awaitable object that waits for the widget to be removed.
+        """
         prune_finished_event = asyncio.Event()
         app = active_app.get()
         app.post_message_no_wait(
