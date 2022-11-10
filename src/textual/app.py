@@ -60,7 +60,7 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
-from .widget import AwaitMount, Widget
+from .widget import AwaitMount, Widget, MountError
 
 if TYPE_CHECKING:
     from .devtools.client import DevtoolsClient

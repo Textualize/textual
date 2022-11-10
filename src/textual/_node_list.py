@@ -8,6 +8,10 @@ if TYPE_CHECKING:
     from .widget import Widget
 
 
+class DuplicateIds(Exception):
+    pass
+
+
 @rich.repr.auto(angular=True)
 class NodeList(Sequence):
     """
@@ -72,7 +76,8 @@ class NodeList(Sequence):
             self._nodes.append(widget)
             self._nodes_set.add(widget)
             widget_id = widget.id
-            if widget_id is not None and widget_id not in self._nodes_by_id:
+            if widget_id is not None:
+                self._ensure_unique_id(widget_id)
                 self._nodes_by_id[widget_id] = widget
             self._updates += 1
 
@@ -86,9 +91,17 @@ class NodeList(Sequence):
             self._nodes.insert(index, widget)
             self._nodes_set.add(widget)
             widget_id = widget.id
-            if widget_id is not None and widget_id not in self._nodes_by_id:
+            if widget_id is not None:
+                self._ensure_unique_id(widget_id)
                 self._nodes_by_id[widget_id] = widget
             self._updates += 1
+
+    def _ensure_unique_id(self, widget_id: str) -> None:
+        if widget_id in self._nodes_by_id:
+            raise DuplicateIds(
+                f"Tried to insert a widget with ID {widget_id!r}, but a widget {self._nodes_by_id[widget_id]!r} "
+                f"already exists with that ID. Widget IDs must be unique."
+            )
 
     def _remove(self, widget: Widget) -> None:
         """Remove a widget from the list.

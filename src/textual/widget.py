@@ -513,17 +513,6 @@ class Widget(DOMNode):
                         f"Widget IDs must be unique."
                     )
 
-        # Check for duplicate IDs between the widgets to mount and existing children.
-        child_ids = self.children._nodes_by_id.keys()
-        intersection = unique_ids.intersection(child_ids)
-        if intersection:
-            conflicting_id = intersection.pop()
-            conflicting_widget = self.get_child_by_id(conflicting_id)
-            raise MountError(
-                f"Tried to insert a widget with ID {conflicting_id!r}, but a widget {conflicting_widget!r} "
-                f"already exists with that ID. Widget IDs must be unique."
-            )
-
         # Saying you want to mount before *and* after something is an error.
         if before is not None and after is not None:
             raise MountError(

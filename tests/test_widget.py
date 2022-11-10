@@ -1,6 +1,7 @@
 import pytest
 import rich
 
+from textual._node_list import DuplicateIds
 from textual.app import App, ComposeResult
 from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
@@ -154,5 +155,5 @@ def test_widget_mount_ids_must_be_unique_mounting_multiple_calls(parent):
     widget2 = Widget(id="hello")
 
     parent.mount(widget1)
-    with pytest.raises(MountError):
+    with pytest.raises(DuplicateIds):
         parent.mount(widget2)
