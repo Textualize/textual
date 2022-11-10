@@ -128,7 +128,12 @@ class Unmount(Mount, bubble=False, verbose=False):
 
 
 class Prune(Event, bubble=False):
-    """Sent to the app to ask it to prune one or more widgets from the DOM."""
+    """Sent to the app to ask it to prune one or more widgets from the DOM.
+
+    Attributes:
+        widgets (list[Widgets]): The list of widgets to prune.
+        finished_flag (asyncio.Event): An asyncio Event to that will be flagged when the prune is done.
+    """
 
     def __init__(
         self, sender: MessageTarget, widgets: list[Widget], finished_flag: asyncio.Event
