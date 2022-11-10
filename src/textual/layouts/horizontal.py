@@ -72,20 +72,12 @@ class HorizontalLayout(Layout):
         Returns:
             int: Width of the content.
         """
-        width: int | None = None
-        for child in widget.displayed_children:
-            if child.is_container:
-                width += child.get_content_width(widget.size, viewport)
-            else:
-                child_margin = child.styles.margin.width
-                child_width = child.outer_size.width + child_margin
-
-                if width is None:
-                    width = child_width
-                else:
-                    width += child_width
-
-        if width is None:
+        if not widget.displayed_children:
             width = container.width
-
+        else:
+            placements, *_ = widget._arrange(container)
+            width = max(
+                placement.region.right + placement.margin.right
+                for placement in placements
+            )
         return width
