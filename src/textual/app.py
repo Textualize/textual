@@ -355,7 +355,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def return_value(self) -> ReturnType | None:
-        """Get the return type."""
+        """ReturnType | None: The return type of the app."""
         return self._return_value
 
     def animate(
@@ -396,32 +396,17 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def debug(self) -> bool:
-        """Check if debug mode is enabled.
-
-        Returns:
-            bool: True if debug mode is enabled.
-
-        """
+        """bool: Is debug mode is enabled?"""
         return "debug" in self.features
 
     @property
     def is_headless(self) -> bool:
-        """Check if the app is running in 'headless' mode.
-
-        Returns:
-            bool: True if the app is in headless mode.
-
-        """
+        """bool: Is the app running in 'headless' mode?"""
         return False if self._driver is None else self._driver.is_headless
 
     @property
     def screen_stack(self) -> list[Screen]:
-        """Get a *copy* of the screen stack.
-
-        Returns:
-            list[Screen]: List of screens.
-
-        """
+        """list[Screen]: A *copy* of the screen stack."""
         return self._screen_stack.copy()
 
     def exit(self, result: ReturnType | None = None) -> None:
@@ -435,7 +420,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def focused(self) -> Widget | None:
-        """Get the widget that is focused on the currently active screen."""
+        """Widget | None: the widget that is focused on the currently active screen."""
         return self.screen.focused
 
     @property
@@ -514,13 +499,10 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def screen(self) -> Screen:
-        """Get the current screen.
+        """Screen: The current screen.
 
         Raises:
             ScreenStackError: If there are no screens on the stack.
-
-        Returns:
-            Screen: The currently active screen.
         """
         try:
             return self._screen_stack[-1]
@@ -529,11 +511,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def size(self) -> Size:
-        """Get the size of the terminal.
-
-        Returns:
-            Size: Size of the terminal
-        """
+        """Size: The size of the terminal."""
         if self._driver is not None and self._driver._size is not None:
             width, height = self._driver._size
         else:
@@ -542,6 +520,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def log(self) -> Logger:
+        """Logger: The logger object."""
         return self._logger
 
     def _log(
