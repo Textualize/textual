@@ -92,7 +92,7 @@ class DirectoryTree(TreeControl[DirEntry]):
         self.render_tree_label.cache_clear()
 
     def on_mount(self) -> None:
-        self.call_later(self.load_directory, self.root)
+        self.call_after_refresh(self.load_directory, self.root)
 
     async def load_directory(self, node: TreeNode[DirEntry]):
         path = node.data.path
