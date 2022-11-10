@@ -122,7 +122,9 @@ async def test_widget_remove_order():
         await pilot.app.mount(
             Removable(Removable(Removable(id="grandchild"), id="child"), id="parent")
         )
+        assert len(pilot.app.screen.walk_children(with_self=False)) == 3
         await pilot.app.screen.children[0].remove()
+        assert len(pilot.app.screen.walk_children(with_self=False)) == 0
         assert removals == ["grandchild", "child", "parent"]
 
 async def test_query_remove_order():
@@ -138,5 +140,7 @@ async def test_query_remove_order():
         await pilot.app.mount(
             Removable(Removable(Removable(id="grandchild"), id="child"), id="parent")
         )
+        assert len(pilot.app.screen.walk_children(with_self=False)) == 3
         await pilot.app.query(Removable).remove()
+        assert len(pilot.app.screen.walk_children(with_self=False)) == 0
         assert removals == ["grandchild", "child", "parent"]
