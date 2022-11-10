@@ -7,14 +7,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.5.0] - Unreleased
 
+
+### Added
+
+- Add easing parameter to Widget.scroll_* methods https://github.com/Textualize/textual/pull/1144
+- Added Widget.call_later which invokes a callback on idle.
+- `DOMNode.ancestors` no longer includes `self`.
+- Added `DOMNode.ancestors_with_self`, which retains the old behaviour of
+  `DOMNode.ancestors`.
+- Improved the speed of `DOMQuery.remove`.
+
+
 ### Changed
 
 - Watchers are now called immediately when setting the attribute if they are synchronous. https://github.com/Textualize/textual/pull/1145
 - Widget.call_later has been renamed to Widget.call_after_refresh.
 
-### Added
-
-- Added Widget.call_later which invokes a callback on idle.
 
 ## [0.4.0] - 2022-11-08
 
