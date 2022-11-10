@@ -1859,10 +1859,11 @@ class App(Generic[ReturnType], DOMNode):
         # In other words: find the smallest set of ancestors in the DOM that
         # will remove the widgets requested for removal, and also ensure
         # that all knock-on effects happen too.
+        request_remove = set(event.widgets)
         pruned_remove = [
             widget
             for widget in event.widgets
-            if dedupe_to_remove.isdisjoint(widget.ancestors)
+            if request_remove.isdisjoint(widget.ancestors)
         ]
 
         # Now that we know that minimal set of widgets, we go through them
