@@ -1,0 +1,24 @@
+.widget {
+    background: olivedrab;
+    width: 10;
+    margin: 1;
+}
+
+#dock-1 {
+    dock: left;
+    background: dodgerblue;
+    width: 5;
+}
+
+#dock-2 {
+    dock: left;
+    background: mediumvioletred;
+    margin: 3;
+    width: 20;
+}
+
+#horizontal {
+    width: auto;
+    height: auto;
+    background: darkslateblue;
+}

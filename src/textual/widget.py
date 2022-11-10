@@ -550,6 +550,8 @@ class Widget(DOMNode):
         """
         if self.is_container:
             assert self._layout is not None
+            print(self)
+            print(self._layout)
             return self._layout.get_content_width(self, container, viewport)
 
         cache_key = container.width

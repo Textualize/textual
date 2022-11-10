@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from fractions import Fraction
 
+import rich
+
 from .._resolve import resolve_box_models
 from ..geometry import Size, Region
 from .._layout import ArrangeResult, Layout, WidgetPlacement
@@ -80,4 +82,5 @@ class HorizontalLayout(Layout):
                 placement.region.right + placement.margin.right
                 for placement in placements
             )
+            rich.print(placements)
         return width
