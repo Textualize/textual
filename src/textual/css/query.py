@@ -354,7 +354,7 @@ class DOMQuery(Generic[QueryType]):
         """Remove matched nodes from the DOM.
 
         Returns:
-            AwaitRemove: An awaitable object that waits for the widget to be removed.
+            AwaitRemove: An awaitable object that waits for the widgets to be removed.
         """
         prune_finished_event = asyncio.Event()
         app = active_app.get()
