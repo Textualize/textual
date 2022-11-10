@@ -16,13 +16,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `DOMNode.ancestors_with_self`, which retains the old behaviour of
   `DOMNode.ancestors`.
 - Improved the speed of `DOMQuery.remove`.
-
+- Added DataTable.clear
 
 ### Changed
 
 - Watchers are now called immediately when setting the attribute if they are synchronous. https://github.com/Textualize/textual/pull/1145
 - Widget.call_later has been renamed to Widget.call_after_refresh.
 
+### Fixed
+
+- Fixed DataTable row not updating after add https://github.com/Textualize/textual/issues/1026
 
 ## [0.4.0] - 2022-11-08
 
