@@ -1992,7 +1992,11 @@ class Widget(DOMNode):
         self.check_idle()
 
     def remove(self) -> AwaitRemove:
-        """Remove the Widget from the DOM (effectively deleting it)"""
+        """Remove the Widget from the DOM (effectively deleting it)
+
+        Returns:
+            AwaitRemove: An awaitable object that waits for the widget to be removed.
+        """
         prune_finished_event = AsyncEvent()
         self.app.post_message_no_wait(
             events.Prune(
