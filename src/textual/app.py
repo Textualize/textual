@@ -1652,7 +1652,9 @@ class App(Generic[ReturnType], DOMNode):
                 (self, self._bindings),
             ]
         else:
-            namespace_bindings = [(node, node._bindings) for node in focused.ancestors]
+            namespace_bindings = [
+                (node, node._bindings) for node in focused.ancestors_with_self
+            ]
         return namespace_bindings
 
     async def check_bindings(self, key: str, universal: bool = False) -> bool:
@@ -1822,23 +1824,64 @@ class App(Generic[ReturnType], DOMNode):
         await self.screen.post_message(event)
 
     async def _on_remove(self, event: events.Remove) -> None:
-        widget = event.widget
-        parent = widget.parent
+        """Handle a remove event.
 
-        remove_widgets = widget.walk_children(
-            Widget, with_self=True, method="depth", reverse=True
-        )
+        Args:
+            event (events.Remove): The remove event.
+        """
 
-        if self.screen.focused in remove_widgets:
-            self.screen._reset_focus(
-                self.screen.focused,
-                [to_remove for to_remove in remove_widgets if to_remove.can_focus],
+        # We've been given a list of widgets to remove, but removing those
+        # will also result in other (descendent) widgets being removed. So
+        # to start with let's get a list of everything that's not going to
+        # be in the DOM by the time we've finished. Note that, at this
+        # point, it's entirely possible that there will be duplicates.
+        everything_to_remove: list[Widget] = []
+        for widget in event.widgets:
+            everything_to_remove.extend(
+                widget.walk_children(
+                    Widget, with_self=True, method="depth", reverse=True
+                )
             )
 
-        await self._prune_node(widget)
+        # Next up, let's quickly create a deduped collection of things to
+        # remove and ensure that, if one of them is the focused widget,
+        # focus gets moved to somewhere else.
+        dedupe_to_remove = set(everything_to_remove)
+        if self.screen.focused in dedupe_to_remove:
+            self.screen._reset_focus(
+                self.screen.focused,
+                [to_remove for to_remove in dedupe_to_remove if to_remove.can_focus],
+            )
 
-        if parent is not None:
-            parent.refresh(layout=True)
+        # Next, we go through the set of widgets we've been asked to remove
+        # and try and find the minimal collection of widgets that will
+        # result in everything else that should be removed, being removed.
+        # In other words: find the smallest set of ancestors in the DOM that
+        # will remove the widgets requested for removal, and also ensure
+        # that all knock-on effects happen too.
+        request_remove = set(event.widgets)
+        pruned_remove = [
+            widget
+            for widget in event.widgets
+            if request_remove.isdisjoint(widget.ancestors)
+        ]
+
+        # Now that we know that minimal set of widgets, we go through them
+        # and get their parents to forget about them. This has the effect of
+        # snipping each affected branch from the DOM.
+        for widget in pruned_remove:
+            if widget.parent is not None:
+                widget.parent.children._remove(widget)
+
+        # Having done that, it's now safe for us to start the process of
+        # winding down all of the affected widgets. We do that by pruning
+        # just the roots of each affected branch, and letting the normal
+        # prune process take care of all the offspring.
+        for widget in pruned_remove:
+            await self._prune_node(widget)
+
+        # And finally, redraw all the things!
+        self.refresh(layout=True)
 
     def _walk_children(self, root: Widget) -> Iterable[list[Widget]]:
         """Walk children depth first, generating widgets and a list of their siblings.
