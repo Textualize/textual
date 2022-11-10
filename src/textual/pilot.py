@@ -21,11 +21,7 @@ class Pilot:
 
     @property
     def app(self) -> App:
-        """Get a reference to the application.
-
-        Returns:
-            App: The App instance.
-        """
+        """App: A reference to the application."""
         return self._app
 
     async def press(self, *keys: str) -> None:
