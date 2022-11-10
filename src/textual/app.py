@@ -1585,19 +1585,27 @@ class App(Generic[ReturnType], DOMNode):
             screen (Screen): Screen instance
             renderable (RenderableType): A Rich renderable.
         """
-        if screen is not self.screen or renderable is None:
-            return
-        if self._running and not self._closed and not self.is_headless:
-            console = self.console
-            self._begin_update()
-            try:
+
+        try:
+            if screen is not self.screen or renderable is None:
+                return
+
+            if self._running and not self._closed and not self.is_headless:
+                console = self.console
+                self._begin_update()
                 try:
-                    console.print(renderable)
-                except Exception as error:
-                    self._handle_exception(error)
-            finally:
-                self._end_update()
-            console.file.flush()
+                    try:
+                        console.print(renderable)
+                    except Exception as error:
+                        self._handle_exception(error)
+                finally:
+                    self._end_update()
+                console.file.flush()
+        finally:
+            self.post_display_hook()
+
+    def post_display_hook(self) -> None:
+        """Called immediately after a display is done. Used in tests."""
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given coordinates.

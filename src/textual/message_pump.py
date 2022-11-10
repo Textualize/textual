@@ -251,7 +251,7 @@ class MessagePump(metaclass=MessagePumpMeta):
         self._timers.add(timer)
         return timer
 
-    def call_later(self, callback: Callable, *args, **kwargs) -> None:
+    def call_after_refresh(self, callback: Callable, *args, **kwargs) -> None:
         """Schedule a callback to run after all messages are processed and the screen
         has been refreshed. Positional and keyword arguments are passed to the callable.
 
@@ -261,6 +261,16 @@ class MessagePump(metaclass=MessagePumpMeta):
         # We send the InvokeLater message to ourselves first, to ensure we've cleared
         # out anything already pending in our own queue.
         message = messages.InvokeLater(self, partial(callback, *args, **kwargs))
+        self.post_message_no_wait(message)
+
+    def call_later(self, callback: Callable, *args, **kwargs) -> None:
+        """Schedule a callback to run after all messages are processed in this object.
+        Positional and keywords arguments are passed to the callable.
+
+        Args:
+            callback (Callable): Callable to call next.
+        """
+        message = events.Callback(self, callback=partial(callback, *args, **kwargs))
         self.post_message_no_wait(message)
 
     def _on_invoke_later(self, message: messages.InvokeLater) -> None:

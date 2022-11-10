@@ -333,10 +333,10 @@ class Screen(Widget):
             self._compositor.update_widgets(self._dirty_widgets)
             self.app._display(self, self._compositor.render())
             self._dirty_widgets.clear()
-
-        self.update_timer.pause()
         if self._callbacks:
             self.post_message_no_wait(events.InvokeCallbacks(self))
+
+        self.update_timer.pause()
 
     async def _on_invoke_callbacks(self, event: events.InvokeCallbacks) -> None:
         """Handle PostScreenUpdate events, which are sent after the screen is updated"""
@@ -346,6 +346,8 @@ class Screen(Widget):
         """If there are scheduled callbacks to run, call them and clear
         the callback queue."""
         if self._callbacks:
+            display_update = self._compositor.render()
+            self.app._display(self, display_update)
             callbacks = self._callbacks[:]
             self._callbacks.clear()
             for callback in callbacks:
@@ -402,8 +404,7 @@ class Screen(Widget):
             self.app._handle_exception(error)
             return
         display_update = self._compositor.render(full=full)
-        if display_update is not None:
-            self.app._display(self, display_update)
+        self.app._display(self, display_update)
 
     async def _on_update(self, message: messages.Update) -> None:
         message.stop()
