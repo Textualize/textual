@@ -346,7 +346,7 @@ class Screen(Widget):
         """If there are scheduled callbacks to run, call them and clear
         the callback queue."""
         if self._callbacks:
-            display_update = self._compositor.render(full=True)
+            display_update = self._compositor.render()
             self.app._display(self, display_update)
             callbacks = self._callbacks[:]
             self._callbacks.clear()
