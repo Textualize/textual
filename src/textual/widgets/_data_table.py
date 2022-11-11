@@ -56,7 +56,7 @@ class Column:
 
     @property
     def render_width(self) -> int:
-        """Width in cells, required to render a column."""
+        """int: Width in cells, required to render a column."""
         # +2 is to account for space padding either side of the cell
         if self.auto_width:
             return self.content_width + 2
@@ -88,22 +88,38 @@ class Coord(NamedTuple):
     column: int
 
     def left(self) -> Coord:
-        """Get coordinate to the left."""
+        """Get coordinate to the left.
+
+        Returns:
+            Coord: The coordinate.
+        """
         row, column = self
         return Coord(row, column - 1)
 
     def right(self) -> Coord:
-        """Get coordinate to the right."""
+        """Get coordinate to the right.
+
+        Returns:
+            Coord: The coordinate.
+        """
         row, column = self
         return Coord(row, column + 1)
 
     def up(self) -> Coord:
-        """Get coordinate above."""
+        """Get coordinate above.
+
+        Returns:
+            Coord: The coordinate.
+        """
         row, column = self
         return Coord(row - 1, column)
 
     def down(self) -> Coord:
-        """Get coordinate below."""
+        """Get coordinate below.
+
+        Returns:
+            Coord: The coordinate.
+        """
         row, column = self
         return Coord(row + 1, column)
 
