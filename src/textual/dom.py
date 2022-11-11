@@ -659,7 +659,7 @@ class DOMNode(MessagePump):
         nodes = list(node_generator)
         if reverse:
             nodes.reverse()
-        return cast("list[WalkType]", nodes)
+        return cast("list[DOMNode]", nodes)
 
     def get_child(self, id: str) -> DOMNode:
         """Return the first child (immediate descendent) of this node with the given ID.
