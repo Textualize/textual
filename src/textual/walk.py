@@ -36,10 +36,10 @@ def walk_depth_first(
 ) -> Iterable[DOMNode] | Iterable[WalkType]:
     """Walk the tree depth first (parents first).
 
-    !!! note:
+    !!! note
 
         Avoid changing the DOM (mounting, removing etc.) while iterating with this function.
-        Consider [Widget.walk_children] which doesn't have this limitation.
+        Consider [walk_children][textual.dom.DOMNode.walk_children] which doesn't have this limitation.
 
     Args:
         root (DOMNode): The root note (starting point).
@@ -96,10 +96,10 @@ def walk_breadth_first(
 ) -> Iterable[DOMNode] | Iterable[WalkType]:
     """Walk the tree breadth first (children first).
 
-    !!! note:
+    !!! note
 
         Avoid changing the DOM (mounting, removing etc.) while iterating with this function.
-        Consider [Widget.walk_children] which doesn't have this limitation.
+        Consider [walk_children][textual.dom.DOMNode.walk_children] which doesn't have this limitation.
 
     Args:
         root (DOMNode): The root note (starting point).

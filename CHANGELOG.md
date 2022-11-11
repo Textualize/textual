@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   `DOMNode.ancestors`.
 - Improved the speed of `DOMQuery.remove`.
 - Added DataTable.clear
+- Added low-level `textual.walk` methods.
 
 ### Changed
 

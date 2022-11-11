@@ -117,6 +117,7 @@ nav:
     - "api/screen.md"
     - "api/static.md"
     - "api/timer.md"
+    - "api/walk.md"
     - "api/widget.md"
   - "Blog":
     - blog/index.md
