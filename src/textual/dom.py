@@ -41,11 +41,12 @@ if TYPE_CHECKING:
     from .screen import Screen
     from .widget import Widget
 
-from textual._typing import Literal
+from textual._typing import Literal, TypeAlias
 
 _re_identifier = re.compile(IDENTIFIER)
 
-WalkMethod = Literal["depth", "breadth"]
+
+WalkMethod: TypeAlias = Literal["depth", "breadth"]
 
 
 class BadIdentifier(Exception):
