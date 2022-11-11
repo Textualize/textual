@@ -38,7 +38,8 @@ def walk_depth_first(
 
     !!! note:
 
-        Do not mutate the DOM while iterating. If you certain you need this, consider `Widget.walk_children`.
+        Avoid changing the DOM (mounting, removing etc.) while iterating with this function.
+        Consider [Widget.walk_children] which doesn't have this limitation.
 
     Args:
         root (DOMNode): The root note (starting point).
@@ -47,7 +48,7 @@ def walk_depth_first(
         with_root (bool, optional): Include the root in the walk. Defaults to True.
 
     Returns:
-        Iterable[DOMNode] | Iterable[WalkType]: An iterable of DOMNodes, or the type specified in `filter_type`.
+        Iterable[DOMNode] | Iterable[WalkType]: An iterable of DOMNodes, or the type specified in ``filter_type``.
 
     """
     stack: list[Iterator[DOMNode]] = [iter(root.children)]
@@ -97,7 +98,8 @@ def walk_breadth_first(
 
     !!! note:
 
-        Do not mutate the DOM while iterating. If you certain you need this, consider `Widget.walk_children`.
+        Avoid changing the DOM (mounting, removing etc.) while iterating with this function.
+        Consider [Widget.walk_children] which doesn't have this limitation.
 
     Args:
         root (DOMNode): The root note (starting point).
@@ -106,7 +108,7 @@ def walk_breadth_first(
         with_root (bool, optional): Include the root in the walk. Defaults to True.
 
     Returns:
-        Iterable[DOMNode] | Iterable[WalkType]: An iterable of DOMNodes, or the type specified in `filter_type`.
+        Iterable[DOMNode] | Iterable[WalkType]: An iterable of DOMNodes, or the type specified in ``filter_type``.
 
     """
     queue: deque[DOMNode] = deque()
