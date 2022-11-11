@@ -587,7 +587,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             filename (str | None, optional): Filename of screenshot, or None to auto-generate. Defaults to None.
-            path (str, optional): Path to directory. Defaults to "~/".
+            path (str, optional): Path to directory. Defaults to current working directory.
         """
         self.save_screenshot(filename, path)
 
