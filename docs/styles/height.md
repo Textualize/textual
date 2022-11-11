@@ -46,6 +46,6 @@ width: auto
 
 ```python
 self.styles.height = 10
-self.styles.height = "50%
+self.styles.height = "50%"
 self.styles.height = "auto"
 ```
