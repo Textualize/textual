@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-from collections import deque
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
@@ -34,6 +33,7 @@ from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
 from .timer import Timer
+from .walk import walk_breadth_first, walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App
@@ -41,11 +41,11 @@ if TYPE_CHECKING:
     from .screen import Screen
     from .widget import Widget
 
-from textual._typing import Literal, TypeAlias
+from textual._typing import Literal
 
 _re_identifier = re.compile(IDENTIFIER)
 
-WalkMethod: TypeAlias = Literal["depth", "breadth"]
+WalkMethod = Literal["depth", "breadth"]
 
 
 class BadIdentifier(Exception):
@@ -600,7 +600,7 @@ class DOMNode(MessagePump):
             node._attach(self)
             _append(node)
 
-    WalkType = TypeVar("WalkType")
+    WalkType = TypeVar("WalkType", bound="DOMNode")
 
     @overload
     def walk_children(
@@ -645,43 +645,12 @@ class DOMNode(MessagePump):
 
         """
 
-        def walk_depth_first() -> Iterable[DOMNode]:
-            """Walk the tree depth first (parents first)."""
-            stack: list[Iterator[DOMNode]] = [iter(self.children)]
-            pop = stack.pop
-            push = stack.append
-            check_type = filter_type or DOMNode
-
-            if with_self and isinstance(self, check_type):
-                yield self
-            while stack:
-                node = next(stack[-1], None)
-                if node is None:
-                    pop()
-                else:
-                    if isinstance(node, check_type):
-                        yield node
-                    if node.children:
-                        push(iter(node.children))
-
-        def walk_breadth_first() -> Iterable[DOMNode]:
-            """Walk the tree breadth first (children first)."""
-            queue: deque[DOMNode] = deque()
-            popleft = queue.popleft
-            extend = queue.extend
-            check_type = filter_type or DOMNode
-
-            if with_self and isinstance(self, check_type):
-                yield self
-            extend(self.children)
-            while queue:
-                node = popleft()
-                if isinstance(node, check_type):
-                    yield node
-                extend(node.children)
+        check_type = filter_type or DOMNode
 
         node_generator = (
-            walk_depth_first() if method == "depth" else walk_breadth_first()
+            walk_depth_first(self, check_type, with_root=with_self)
+            if method == "depth"
+            else walk_breadth_first(self, check_type, with_root=with_self)
         )
 
         # We want a snapshot of the DOM at this point So that it doesn't
@@ -689,7 +658,7 @@ class DOMNode(MessagePump):
         nodes = list(node_generator)
         if reverse:
             nodes.reverse()
-        return nodes
+        return cast("list[WalkType]", nodes)
 
     def get_child(self, id: str) -> DOMNode:
         """Return the first child (immediate descendent) of this node with the given ID.
