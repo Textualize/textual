@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   `DOMNode.ancestors`.
 - Improved the speed of `DOMQuery.remove`.
 - Added DataTable.clear
+- It is now possible to `await` a `Widget.remove`.
+  https://github.com/Textualize/textual/issues/1094
+- It is now possible to `await` a `DOMQuery.remove`. Note that this changes
+  the return value of `DOMQuery.remove`, which uses to return `self`.
+  https://github.com/Textualize/textual/issues/1094
 
 ### Changed
 
