@@ -34,6 +34,6 @@ async def test_animate_height() -> None:
         await pilot.wait_for_animation()
         elapsed = perf_counter() - start
         # Check that the full time has elapsed
-        assert elapsed > 0.5
+        assert elapsed >= 0.5
         # Check the height reached the maximum
         assert static.styles.height.value == 100
