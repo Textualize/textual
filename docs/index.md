@@ -70,7 +70,7 @@ Textual is a framework for building applications that run within your terminal. 
 ```
 
 
-```{.textual path="docs/examples/events/dictionary.py" columns="100" lines="30" press="tab,_,t,e,x,t,_,_,_,_,_,_,_,_,_,_,_,_,_"}
+```{.textual path="docs/examples/events/dictionary.py" columns="100" lines="30" press="tab,_,t,e,x,t,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_"}
 ```
 
 

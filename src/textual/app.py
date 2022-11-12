@@ -355,7 +355,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def return_value(self) -> ReturnType | None:
-        """Get the return type."""
+        """ReturnType | None: The return type of the app."""
         return self._return_value
 
     def animate(
@@ -396,32 +396,17 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def debug(self) -> bool:
-        """Check if debug mode is enabled.
-
-        Returns:
-            bool: True if debug mode is enabled.
-
-        """
+        """bool: Is debug mode is enabled?"""
         return "debug" in self.features
 
     @property
     def is_headless(self) -> bool:
-        """Check if the app is running in 'headless' mode.
-
-        Returns:
-            bool: True if the app is in headless mode.
-
-        """
+        """bool: Is the app running in 'headless' mode?"""
         return False if self._driver is None else self._driver.is_headless
 
     @property
     def screen_stack(self) -> list[Screen]:
-        """Get a *copy* of the screen stack.
-
-        Returns:
-            list[Screen]: List of screens.
-
-        """
+        """list[Screen]: A *copy* of the screen stack."""
         return self._screen_stack.copy()
 
     def exit(self, result: ReturnType | None = None) -> None:
@@ -435,7 +420,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def focused(self) -> Widget | None:
-        """Get the widget that is focused on the currently active screen."""
+        """Widget | None: the widget that is focused on the currently active screen."""
         return self.screen.focused
 
     @property
@@ -514,13 +499,10 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def screen(self) -> Screen:
-        """Get the current screen.
+        """Screen: The current screen.
 
         Raises:
             ScreenStackError: If there are no screens on the stack.
-
-        Returns:
-            Screen: The currently active screen.
         """
         try:
             return self._screen_stack[-1]
@@ -529,11 +511,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def size(self) -> Size:
-        """Get the size of the terminal.
-
-        Returns:
-            Size: Size of the terminal
-        """
+        """Size: The size of the terminal."""
         if self._driver is not None and self._driver._size is not None:
             width, height = self._driver._size
         else:
@@ -542,6 +520,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def log(self) -> Logger:
+        """Logger: The logger object."""
         return self._logger
 
     def _log(
@@ -608,7 +587,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             filename (str | None, optional): Filename of screenshot, or None to auto-generate. Defaults to None.
-            path (str, optional): Path to directory. Defaults to "~/".
+            path (str, optional): Path to directory. Defaults to current working directory.
         """
         self.save_screenshot(filename, path)
 
@@ -1606,19 +1585,27 @@ class App(Generic[ReturnType], DOMNode):
             screen (Screen): Screen instance
             renderable (RenderableType): A Rich renderable.
         """
-        if screen is not self.screen or renderable is None:
-            return
-        if self._running and not self._closed and not self.is_headless:
-            console = self.console
-            self._begin_update()
-            try:
+
+        try:
+            if screen is not self.screen or renderable is None:
+                return
+
+            if self._running and not self._closed and not self.is_headless:
+                console = self.console
+                self._begin_update()
                 try:
-                    console.print(renderable)
-                except Exception as error:
-                    self._handle_exception(error)
-            finally:
-                self._end_update()
-            console.file.flush()
+                    try:
+                        console.print(renderable)
+                    except Exception as error:
+                        self._handle_exception(error)
+                finally:
+                    self._end_update()
+                console.file.flush()
+        finally:
+            self.post_display_hook()
+
+    def post_display_hook(self) -> None:
+        """Called immediately after a display is done. Used in tests."""
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given coordinates.
@@ -1652,7 +1639,9 @@ class App(Generic[ReturnType], DOMNode):
                 (self, self._bindings),
             ]
         else:
-            namespace_bindings = [(node, node._bindings) for node in focused.ancestors]
+            namespace_bindings = [
+                (node, node._bindings) for node in focused.ancestors_with_self
+            ]
         return namespace_bindings
 
     async def check_bindings(self, key: str, universal: bool = False) -> bool:
@@ -1821,24 +1810,83 @@ class App(Generic[ReturnType], DOMNode):
         event.stop()
         await self.screen.post_message(event)
 
-    async def _on_remove(self, event: events.Remove) -> None:
-        widget = event.widget
-        parent = widget.parent
+    def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
+        """Detach a list of widgets from the DOM.
 
-        remove_widgets = widget.walk_children(
-            Widget, with_self=True, method="depth", reverse=True
-        )
+        Args:
+            widgets (list[Widget]): The list of widgets to detach from the DOM.
 
-        if self.screen.focused in remove_widgets:
-            self.screen._reset_focus(
-                self.screen.focused,
-                [to_remove for to_remove in remove_widgets if to_remove.can_focus],
+        Returns:
+            list[Widget]: The list of widgets that should be pruned.
+
+        Note:
+            A side-effect of calling this function is that each parent of
+            each affected widget will be made to forget about the affected
+            child.
+        """
+
+        # We've been given a list of widgets to remove, but removing those
+        # will also result in other (descendent) widgets being removed. So
+        # to start with let's get a list of everything that's not going to
+        # be in the DOM by the time we've finished. Note that, at this
+        # point, it's entirely possible that there will be duplicates.
+        everything_to_remove: list[Widget] = []
+        for widget in widgets:
+            everything_to_remove.extend(
+                widget.walk_children(
+                    Widget, with_self=True, method="depth", reverse=True
+                )
             )
 
-        await self._prune_node(widget)
+        # Next up, let's quickly create a deduped collection of things to
+        # remove and ensure that, if one of them is the focused widget,
+        # focus gets moved to somewhere else.
+        dedupe_to_remove = set(everything_to_remove)
+        if self.screen.focused in dedupe_to_remove:
+            self.screen._reset_focus(
+                self.screen.focused,
+                [to_remove for to_remove in dedupe_to_remove if to_remove.can_focus],
+            )
 
-        if parent is not None:
-            parent.refresh(layout=True)
+        # Next, we go through the set of widgets we've been asked to remove
+        # and try and find the minimal collection of widgets that will
+        # result in everything else that should be removed, being removed.
+        # In other words: find the smallest set of ancestors in the DOM that
+        # will remove the widgets requested for removal, and also ensure
+        # that all knock-on effects happen too.
+        request_remove = set(widgets)
+        pruned_remove = [
+            widget for widget in widgets if request_remove.isdisjoint(widget.ancestors)
+        ]
+
+        # Now that we know that minimal set of widgets, we go through them
+        # and get their parents to forget about them. This has the effect of
+        # snipping each affected branch from the DOM.
+        for widget in pruned_remove:
+            if widget.parent is not None:
+                widget.parent.children._remove(widget)
+
+        # Return the list of widgets that should end up being sent off in a
+        # prune event.
+        return pruned_remove
+
+    async def _on_prune(self, event: events.Prune) -> None:
+        """Handle a prune event.
+
+        Args:
+            event (events.Prune): The prune event.
+        """
+
+        try:
+            # Prune all the widgets.
+            for widget in event.widgets:
+                await self._prune_node(widget)
+        finally:
+            # Finally, flag that we're done.
+            event.finished_flag.set()
+
+        # Flag that the layout needs refreshing.
+        self.refresh(layout=True)
 
     def _walk_children(self, root: Widget) -> Iterable[list[Widget]]:
         """Walk children depth first, generating widgets and a list of their siblings.
