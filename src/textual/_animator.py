@@ -5,13 +5,12 @@ import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import partial
-from typing import Any, Callable, TypeVar, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from . import _clock
 from ._callback import invoke
 from ._easing import DEFAULT_EASING, EASING
 from ._types import CallbackType
-from .css.scalar import Scalar
 from .timer import Timer
 
 if sys.version_info >= (3, 8):
@@ -24,11 +23,12 @@ if TYPE_CHECKING:
 
 EasingFunction = Callable[[float], float]
 
-T = TypeVar("T")
-
 
 class AnimationError(Exception):
-    pass
+    """An issue prevented animation from starting."""
+
+
+T = TypeVar("T")
 
 
 @runtime_checkable
@@ -147,6 +147,9 @@ class BoundAnimator:
         """
         start_value = getattr(self._obj, attribute)
         if isinstance(value, str) and hasattr(start_value, "parse"):
+            # Color and Scalar have a parse method
+            # I'm exploiting a coincidence here, but I think this should be a first-class concept
+            # TODO: add a `Parsable` protocol
             value = start_value.parse(value)
         easing_function = EASING[easing] if isinstance(easing, str) else easing
         return self._animator.animate(
