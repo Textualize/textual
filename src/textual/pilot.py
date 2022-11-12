@@ -41,6 +41,7 @@ class Pilot:
             delay (float, optional): Seconds to pause. Defaults to 50ms.
         """
         await asyncio.sleep(delay)
+        await asyncio.sleep(0)
 
     async def wait_for_animation(self) -> None:
         """Wait for any animation to complete."""
