@@ -65,7 +65,7 @@ def get_box_model(
     else:
         # An explicit width
         styles_width = styles.width
-        content_width = styles_width.resolve_dimension(
+        content_width = styles_width.resolve(
             sizing_container - styles.margin.totals, viewport, width_fraction
         )
         if is_border_box and styles_width.excludes_border:
@@ -73,14 +73,14 @@ def get_box_model(
 
     if styles.min_width is not None:
         # Restrict to minimum width, if set
-        min_width = styles.min_width.resolve_dimension(
+        min_width = styles.min_width.resolve(
             content_container, viewport, width_fraction
         )
         content_width = max(content_width, min_width)
 
     if styles.max_width is not None:
         # Restrict to maximum width, if set
-        max_width = styles.max_width.resolve_dimension(
+        max_width = styles.max_width.resolve(
             content_container, viewport, width_fraction
         )
         if is_border_box:
@@ -100,7 +100,7 @@ def get_box_model(
     else:
         styles_height = styles.height
         # Explicit height set
-        content_height = styles_height.resolve_dimension(
+        content_height = styles_height.resolve(
             sizing_container - styles.margin.totals, viewport, height_fraction
         )
         if is_border_box and styles_height.excludes_border:
@@ -108,14 +108,14 @@ def get_box_model(
 
     if styles.min_height is not None:
         # Restrict to minimum height, if set
-        min_height = styles.min_height.resolve_dimension(
+        min_height = styles.min_height.resolve(
             content_container, viewport, height_fraction
         )
         content_height = max(content_height, min_height)
 
     if styles.max_height is not None:
         # Restrict maximum height, if set
-        max_height = styles.max_height.resolve_dimension(
+        max_height = styles.max_height.resolve(
             content_container, viewport, height_fraction
         )
         content_height = min(content_height, max_height)

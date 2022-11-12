@@ -11,6 +11,7 @@ from . import _clock
 from ._callback import invoke
 from ._easing import DEFAULT_EASING, EASING
 from ._types import CallbackType
+from .css.scalar import Scalar
 from .timer import Timer
 
 if sys.version_info >= (3, 8):
@@ -24,6 +25,10 @@ if TYPE_CHECKING:
 EasingFunction = Callable[[float], float]
 
 T = TypeVar("T")
+
+
+class AnimationError(Exception):
+    pass
 
 
 @runtime_checkable
@@ -118,7 +123,7 @@ class BoundAnimator:
     def __call__(
         self,
         attribute: str,
-        value: float | Animatable,
+        value: str | float | Animatable,
         *,
         final_value: object = ...,
         duration: float | None = None,
@@ -140,6 +145,9 @@ class BoundAnimator:
             on_complete (CallbackType | None, optional): A callable to invoke when the animation is finished. Defaults to None.
 
         """
+        start_value = getattr(self._obj, attribute)
+        if isinstance(value, str) and hasattr(start_value, "parse"):
+            value = start_value.parse(value)
         easing_function = EASING[easing] if isinstance(easing, str) else easing
         return self._animator.animate(
             self._obj,
@@ -270,9 +278,11 @@ class Animator:
         easing_function = EASING[easing] if isinstance(easing, str) else easing
 
         animation: Animation | None = None
+
         if hasattr(obj, "__textual_animation__"):
             animation = getattr(obj, "__textual_animation__")(
                 attribute,
+                getattr(obj, attribute),
                 value,
                 start_time,
                 duration=duration,
@@ -280,7 +290,17 @@ class Animator:
                 easing=easing_function,
                 on_complete=on_complete,
             )
+
         if animation is None:
+
+            if not isinstance(value, (int, float)) and not isinstance(
+                value, Animatable
+            ):
+                raise AnimationError(
+                    f"Don't know how to animate {value!r}; "
+                    "Can only animate <int>, <float>, or objects with a blend method"
+                )
+
             start_value = getattr(obj, attribute)
 
             if start_value == value:

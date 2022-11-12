@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed DataTable row not updating after add https://github.com/Textualize/textual/issues/1026
+- Fixed issues with animation. Now objects of different types may be animated.
 
 ## [0.4.0] - 2022-11-08
 
