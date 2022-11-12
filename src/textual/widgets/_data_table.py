@@ -201,13 +201,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
 
-        self.show_header = show_header
-        self.fixed_rows = fixed_rows
-        self.fixed_columns = fixed_columns
-        self.zebra_stripes = zebra_stripes
-        self.header_height = header_height
-        self.show_cursor = show_cursor
-
         self.columns: list[Column] = []
         self.rows: dict[int, Row] = {}
         self.data: dict[int, list[CellType]] = {}
@@ -227,6 +220,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._line_no = 0
         self._require_update_dimensions: bool = False
         self._new_rows: set[int] = set()
+
+        self.show_header = show_header
+        self.fixed_rows = fixed_rows
+        self.fixed_columns = fixed_columns
+        self.zebra_stripes = zebra_stripes
+        self.header_height = header_height
+        self.show_cursor = show_cursor
 
     @property
     def hover_row(self) -> int:
