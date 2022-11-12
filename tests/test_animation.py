@@ -32,7 +32,7 @@ async def test_animate_height() -> None:
         # Wait for half the animation
         await pilot.pause(0.25)
         # Check we reached the half way point
-        assert static.styles.height.value >= 50
+        assert abs(static.styles.height.value - 50) < 5
         elapsed = perf_counter() - start
         # Check at least that much time has elapsed
         assert 0.5 > elapsed > 0.25
