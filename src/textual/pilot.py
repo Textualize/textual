@@ -42,6 +42,10 @@ class Pilot:
         """
         await asyncio.sleep(delay)
 
+    async def wait_for_animation(self) -> None:
+        """Wait for any animation to complete."""
+        await self._app.animator.wait_for_idle()
+
     async def exit(self, result: object) -> None:
         """Exit the app with the given result.
 
