@@ -40,6 +40,9 @@ class Pilot:
         Args:
             delay (float, optional): Seconds to pause. Defaults to 50ms.
         """
+        # These sleep zeros, are to force asyncio to give up a time-slice,
+        # So that any pending coroutines have ran
+        await asyncio.sleep(0)
         await asyncio.sleep(delay)
         await asyncio.sleep(0)
 

@@ -29,6 +29,7 @@ async def test_animate_height() -> None:
         assert static.size.height == 1
         static.styles.animate("height", 100, duration=0.5, easing="linear")
         start = time()
+
         # Wait for half the animation
         await pilot.pause(0.25)
         # Check we reached the half way point
