@@ -803,9 +803,11 @@ class App(Generic[ReturnType], DOMNode):
                 terminal_size=size,
             )
         finally:
-            if auto_pilot_task is not None:
-                await auto_pilot_task
-            await app._shutdown()
+            try:
+                if auto_pilot_task is not None:
+                    await auto_pilot_task
+            finally:
+                await app._shutdown()
 
         return app.return_value
 
@@ -1291,6 +1293,10 @@ class App(Generic[ReturnType], DOMNode):
 
                 await self.animator.start()
 
+            except Exception:
+                await self.animator.stop()
+                raise
+
             finally:
                 await self._ready()
                 await invoke_ready_callback()
@@ -1303,10 +1309,11 @@ class App(Generic[ReturnType], DOMNode):
                 pass
             finally:
                 self._running = False
-                for timer in list(self._timers):
-                    await timer.stop()
-
-            await self.animator.stop()
+                try:
+                    await self.animator.stop()
+                finally:
+                    for timer in list(self._timers):
+                        await timer.stop()
 
         self._running = True
         try:
