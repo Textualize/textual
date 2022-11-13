@@ -10,5 +10,6 @@ from ._pretty import Pretty as Pretty
 from ._static import Static as Static
 from ._input import Input as Input
 from ._text_log import TextLog as TextLog
+from ._tree import Tree as Tree
 from ._tree_control import TreeControl as TreeControl
 from ._welcome import Welcome as Welcome

@@ -20,6 +20,7 @@ if typing.TYPE_CHECKING:
     from ._static import Static
     from ._input import Input
     from ._text_log import TextLog
+    from ._tree import Tree
     from ._tree_control import TreeControl
     from ._welcome import Welcome
 
@@ -30,11 +31,12 @@ __all__ = [
     "DirectoryTree",
     "Footer",
     "Header",
+    "Input",
     "Placeholder",
     "Pretty",
     "Static",
-    "Input",
     "TextLog",
+    "Tree",
     "TreeControl",
     "Welcome",
 ]
