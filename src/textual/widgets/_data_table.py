@@ -175,14 +175,32 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         "datatable--cursor",
     }
 
+    show_header = Reactive(True)
+    fixed_rows = Reactive(0)
+    fixed_columns = Reactive(0)
+    zebra_stripes = Reactive(False)
+    header_height = Reactive(1)
+    show_cursor = Reactive(True)
+    cursor_type = Reactive(CELL)
+
+    cursor_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
+    hover_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
+
     def __init__(
         self,
         *,
+        show_header: bool = True,
+        fixed_rows: int = 0,
+        fixed_columns: int = 0,
+        zebra_stripes: bool = False,
+        header_height: int = 1,
+        show_cursor: bool = True,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
+
         self.columns: list[Column] = []
         self.rows: dict[int, Row] = {}
         self.data: dict[int, list[CellType]] = {}
@@ -203,16 +221,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._require_update_dimensions: bool = False
         self._new_rows: set[int] = set()
 
-    show_header = Reactive(True)
-    fixed_rows = Reactive(0)
-    fixed_columns = Reactive(0)
-    zebra_stripes = Reactive(False)
-    header_height = Reactive(1)
-    show_cursor = Reactive(True)
-    cursor_type = Reactive(CELL)
-
-    cursor_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
-    hover_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
+        self.show_header = show_header
+        self.fixed_rows = fixed_rows
+        self.fixed_columns = fixed_columns
+        self.zebra_stripes = zebra_stripes
+        self.header_height = header_height
+        self.show_cursor = show_cursor
 
     @property
     def hover_row(self) -> int:
