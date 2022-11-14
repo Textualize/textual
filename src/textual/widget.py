@@ -1,14 +1,15 @@
 from __future__ import annotations
 
-from asyncio import Lock, wait, create_task, Event as AsyncEvent
+from asyncio import Event as AsyncEvent
+from asyncio import Lock, create_task, wait
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
 from typing import (
-    Generator,
     TYPE_CHECKING,
     ClassVar,
     Collection,
+    Generator,
     Iterable,
     NamedTuple,
     Sequence,
@@ -31,7 +32,7 @@ from rich.style import Style
 from rich.text import Text
 
 from . import errors, events, messages
-from ._animator import BoundAnimator, DEFAULT_EASING, Animatable, EasingFunction
+from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
@@ -39,7 +40,8 @@ from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
-from .binding import NoBinding
+from .await_remove import AwaitRemove
+from .binding import Binding
 from .box_model import BoxModel, get_box_model
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
@@ -49,7 +51,6 @@ from .message import Message
 from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
-from .await_remove import AwaitRemove
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
@@ -165,6 +166,11 @@ class Widget(DOMNode):
     See also [static][textual.widgets._static.Static] for starting point for your own widgets.
 
     """
+
+    BINDINGS = [
+        Binding("up", "scroll_up", "Scroll Up", show=False),
+        Binding("down", "scroll_down", "Scroll Down", show=False),
+    ]
 
     DEFAULT_CSS = """
     Widget{
@@ -2232,17 +2238,17 @@ class Widget(DOMNode):
             return True
         return False
 
-    def _key_down(self) -> bool:
-        if self.allow_vertical_scroll:
-            self.scroll_down()
-            return True
-        return False
+    # def _key_down(self) -> bool:
+    #     if self.allow_vertical_scroll:
+    #         self.scroll_down()
+    #         return True
+    #     return False
 
-    def _key_up(self) -> bool:
-        if self.allow_vertical_scroll:
-            self.scroll_up()
-            return True
-        return False
+    # def _key_up(self) -> bool:
+    #     if self.allow_vertical_scroll:
+    #         self.scroll_up()
+    #         return True
+    #     return False
 
     def _key_pagedown(self) -> bool:
         if self.allow_vertical_scroll:
@@ -2255,3 +2261,11 @@ class Widget(DOMNode):
             self.scroll_page_up()
             return True
         return False
+
+    def action_scroll_up(self) -> None:
+        if self.allow_vertical_scroll:
+            self.scroll_up()
+
+    def action_scroll_down(self) -> None:
+        if self.allow_vertical_scroll:
+            self.scroll_down()

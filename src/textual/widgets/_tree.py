@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from operator import attrgetter
 from typing import ClassVar, Generic, NewType, TypeVar
 
 import rich.repr
@@ -10,11 +11,11 @@ from rich.text import Text, TextType
 
 
 from ..binding import Binding
-from ..geometry import clamp, Region
+from ..geometry import clamp, Region, Size
 from .._loop import loop_last
 from .._cache import LRUCache
 from ..reactive import reactive
-from .._segment_tools import line_crop
+from .._segment_tools import line_crop, line_pad
 from ..scroll_view import ScrollView
 
 from .. import events
@@ -31,6 +32,10 @@ class _TreeLine:
     @property
     def node(self) -> TreeNode:
         return self.path[-1]
+
+    @property
+    def line_width(self) -> int:
+        return (len(self.path) * 4) + self.path[-1].label.cell_len - 4
 
 
 @rich.repr.auto
@@ -96,7 +101,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     DEFAULT_CSS = """
     Tree {
-        background: $surface;
+        background: $panel;
         color: $text;
     }
     Tree > .tree--label {
@@ -106,21 +111,23 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         color: $success;
     }
 
-    Tree > .tree--guides-hover {
-        color: $error;
+
+    Tree > .tree--guides-hover {  
+        color: $success;      
         text-style: uu;
     }
 
     Tree > .tree--guides-selected {
         color: $warning;
         text-style: bold;
-    }
+    }    
 
     Tree > .tree--cursor {
         background: $secondary;
         color: $text;
         text-style: bold;
     }
+
     Tree > .tree--highlight {        
         text-style: underline;
     }
@@ -258,12 +265,14 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         node = self._get_node(line)
         if node is not None:
             self._refresh_node(node)
+            self.scroll_to_line(line)
             node._selected = True
+
+    def scroll_to_line(self, line: int) -> None:
+        self.scroll_to_region(Region(0, line, self.size.width, 1))
 
     def refresh_line(self, line: int) -> None:
         region = Region(0, line - self.scroll_offset.y, self.size.width, 1)
-        if not self.window_region.overlaps(region):
-            return
         self.refresh(region)
 
     def _refresh_node_line(self, line: int) -> None:
@@ -308,6 +317,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         add_node([], root, True)
         self._tree_lines_cached = lines
 
+        width = max(lines, key=attrgetter("line_width")).line_width
+        self.virtual_size = Size(width, len(lines))
+
     def render_line(self, y: int) -> list[Segment]:
         width, height = self.size
         scroll_x, scroll_y = self.scroll_offset
@@ -324,27 +336,27 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         if y >= len(tree_lines):
             return [Segment(" " * width, base_style)]
 
-        style = base_style
-
         line = tree_lines[y]
 
-        base_guide_style = base_style + self.get_component_rich_style("tree--guides")
-
-        guide_hover_style = base_guide_style + self.get_component_rich_style(
-            "tree--guides-hover"
-        )
-        guide_selected_style = base_guide_style + self.get_component_rich_style(
-            "tree--guides-selected"
-        )
+        base_guide_style = self.get_component_rich_style("tree--guides")
+        guide_hover_style = self.get_component_rich_style("tree--guides-hover")
+        guide_selected_style = self.get_component_rich_style("tree--guides-selected")
 
         hover = self.root._hover
         selected = self.root._selected and self.has_focus
 
-        guides = Text()
+        guides = Text(style=base_style)
         guides_append = guides.append
-        guide_style = base_guide_style
 
         def get_guides(style: Style) -> tuple[str, str, str, str]:
+            """Get the guide strings for a given style.
+
+            Args:
+                style (Style): A Style object.
+
+            Returns:
+                tuple[str, str, str, str]: Strings for space, vertical, terminator and cross.
+            """
             lines = self.LINES["default"]
             if style.bold:
                 lines = self.LINES["bold"]
@@ -352,13 +364,12 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 lines = self.LINES["double"]
             return lines
 
+        guide_style = base_guide_style
         for node in line.path[1:]:
-
-            guide_style = base_guide_style
-            if hover:
-                guide_style = guide_hover_style
             if selected:
                 guide_style = guide_selected_style
+            if hover:
+                guide_style = guide_hover_style
 
             space, vertical, _, _ = get_guides(guide_style)
             guide = space if node.last else vertical
@@ -384,15 +395,20 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         guides.append(label)
 
         segments = list(guides.render(self.app.console))
-        segments = Segment.adjust_line_length(segments, width, style=style)
-        segments = list(Segment.apply_style(segments, style))
-        segments = line_crop(segments, x1, x2, width)
-        simplified_segments = list(Segment.simplify(segments))
 
-        return simplified_segments
+        segments = line_pad(segments, 0, width - guides.cell_len, base_style)
+        segments = line_crop(segments, x1, x2, width)
+
+        return segments
+
+    def _on_size(self) -> None:
+        self.invalidate()
 
     def action_cursor_up(self) -> None:
-        self.cursor_line -= 1
+        if self.cursor_line == -1:
+            self.cursor_line = len(self._tree_lines)
+        else:
+            self.cursor_line -= 1
 
     def action_cursor_down(self) -> None:
         self.cursor_line += 1
