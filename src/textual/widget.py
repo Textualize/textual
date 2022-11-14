@@ -504,41 +504,27 @@ class Widget(DOMNode):
         elif before is not None and after is not None:
             raise WidgetError("Only one of `before`or `after` can be handled.")
 
-        # Turn the child to move into a reference to the widget, doing some
-        # checks as we do so.
-        if isinstance(child, int):
-            try:
-                child = self.children[child]
-            except IndexError:
-                raise WidgetError(
-                    f"An index of {child} for the child to move is out of bounds"
-                ) from None
-        else:
-            # We got an actual widget, so let's be sure it really is one of
-            # our children.
-            try:
-                _ = self.children.index(child)
-            except ValueError:
-                raise WidgetError(f"{child!r} is not a child of {self!r}") from None
+        def _to_widget(child: int | Widget, called: str) -> Widget:
+            """Ensure a given child reference is a Widget."""
+            if isinstance(child, int):
+                try:
+                    child = self.children[child]
+                except IndexError:
+                    raise WidgetError(
+                        f"An index of {child} for the child to {called} is out of bounds"
+                    ) from None
+            else:
+                # We got an actual widget, so let's be sure it really is one of
+                # our children.
+                try:
+                    _ = self.children.index(child)
+                except ValueError:
+                    raise WidgetError(f"{child!r} is not a child of {self!r}") from None
+            return child
 
-        # Next, no matter if we're moving before or after, we just want to
-        # be sure that the target makes sense at all. So let's concentrate
-        # on that for a moment.
-        target = before if after is None else after
-        if isinstance(target, int):
-            try:
-                target = self.children[target]
-            except IndexError:
-                raise WidgetError(
-                    f"An index of {target} for the target to move towards is out of bounds"
-                ) from None
-        elif isinstance(target, Widget):
-            # If we got given a widget from the off, let's be sure it's
-            # actually one of our children.
-            try:
-                _ = self.children.index(target)
-            except ValueError:
-                raise WidgetError(f"{target!r} is not a child of {self!r}") from None
+        # Ensure the child and target are widgets.
+        child = _to_widget(child, "move")
+        target = _to_widget(before if after is None else after, "move towards")
 
         # At this point we should know what we're moving, and it should be a
         # child; where we're moving it to, which should be within the child
