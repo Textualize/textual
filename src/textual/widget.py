@@ -240,7 +240,7 @@ class Widget(DOMNode):
         self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
 
         self._styles_cache = StylesCache()
-        self._rich_style_cache: dict[str, Style] = {}
+        self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
         self._stabilized_scrollbar_size: Size | None = None
         self._lock = Lock()
 
@@ -340,7 +340,7 @@ class Widget(DOMNode):
     def offset(self, offset: Offset) -> None:
         self.styles.offset = ScalarOffset.from_offset(offset)
 
-    def get_component_rich_style(self, name: str) -> Style:
+    def get_component_rich_style(self, name: str, partial: bool = False) -> Style:
         """Get a *Rich* style for a component.
 
         Args:
@@ -349,11 +349,16 @@ class Widget(DOMNode):
         Returns:
             Style: A Rich style object.
         """
-        style = self._rich_style_cache.get(name)
-        if style is None:
-            style = self.get_component_styles(name).rich_style
-            self._rich_style_cache[name] = style
-        return style
+
+        if name not in self._rich_style_cache:
+            component_styles = self.get_component_styles(name)
+            style = component_styles.rich_style
+            node_style = component_styles.partial_rich_style
+            self._rich_style_cache[name] = (style, node_style)
+
+        style, node_style = self._rich_style_cache[name]
+
+        return node_style if partial else style
 
     def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.

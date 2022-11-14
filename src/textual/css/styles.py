@@ -551,6 +551,20 @@ class StylesBase(ABC):
             self._align_height(height, parent_height),
         )
 
+    @property
+    def partial_rich_style(self) -> Style:
+        """Get the style properties associated with this node only (not including parents in the DOM).
+
+        Returns:
+            Style: Rich Style object
+        """
+        style = Style(
+            color=self.color.rich_color if self.color is not None else None,
+            bgcolor=self.color.rich_color if self.color is not None else None,
+        )
+        style += self.text_style
+        return style
+
 
 @rich.repr.auto
 @dataclass
