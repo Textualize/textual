@@ -495,6 +495,10 @@ class Widget(DOMNode):
 
         Raises:
             WidgetError: If there is a problem with the child or target.
+
+        Note:
+            Only one of ``before`` or ``after`` can be provided. If neither
+            or both are provided a ``WidgetError`` will be raised.
         """
 
         # One or the other of before or after are required. Can't do
