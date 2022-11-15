@@ -111,7 +111,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         color: $success;
     }
 
-
     Tree > .tree--guides-hover {  
         color: $success;      
         text-style: bold;
