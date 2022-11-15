@@ -340,7 +340,7 @@ class Widget(DOMNode):
     def offset(self, offset: Offset) -> None:
         self.styles.offset = ScalarOffset.from_offset(offset)
 
-    def get_component_rich_style(self, name: str, partial: bool = False) -> Style:
+    def get_component_rich_style(self, name: str, *, partial: bool = False) -> Style:
         """Get a *Rich* style for a component.
 
         Args:
@@ -353,12 +353,12 @@ class Widget(DOMNode):
         if name not in self._rich_style_cache:
             component_styles = self.get_component_styles(name)
             style = component_styles.rich_style
-            node_style = component_styles.partial_rich_style
-            self._rich_style_cache[name] = (style, node_style)
+            partial_style = component_styles.partial_rich_style
+            self._rich_style_cache[name] = (style, partial_style)
 
-        style, node_style = self._rich_style_cache[name]
+        style, partial_style = self._rich_style_cache[name]
 
-        return node_style if partial else style
+        return partial_style if partial else style
 
     def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.

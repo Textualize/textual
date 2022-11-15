@@ -559,8 +559,10 @@ class StylesBase(ABC):
             Style: Rich Style object
         """
         style = Style(
-            color=self.color.rich_color if self.color is not None else None,
-            bgcolor=self.color.rich_color if self.color is not None else None,
+            color=(self.color.rich_color if self.has_rule("color") else None),
+            bgcolor=(
+                self.background.rich_color if self.has_rule("background") else None
+            ),
         )
         style += self.text_style
         return style

@@ -114,7 +114,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     Tree > .tree--guides-hover {  
         color: $success;      
-        text-style: uu;
+        text-style: bold;
     }
 
     Tree > .tree--guides-selected {
@@ -132,6 +132,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         text-style: underline;
     }
     
+    Tree > .tree--highlight-line {        
+        background: $boost;
+    }
+
     """
 
     show_root = reactive(True)
@@ -143,6 +147,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         "tree--guides-selected",
         "tree--cursor",
         "tree--highlight",
+        "tree--highlight-line",
     }
 
     hover_line: reactive[int] = reactive(-1, repaint=False)
@@ -338,15 +343,16 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         line = tree_lines[y]
 
-        base_guide_style = self.get_component_rich_style("tree--guides")
-        guide_hover_style = self.get_component_rich_style("tree--guides-hover")
-        guide_selected_style = self.get_component_rich_style("tree--guides-selected")
+        base_guide_style = self.get_component_rich_style("tree--guides", partial=True)
+        guide_hover_style = base_guide_style + self.get_component_rich_style(
+            "tree--guides-hover", partial=True
+        )
+        guide_selected_style = base_guide_style + self.get_component_rich_style(
+            "tree--guides-selected", partial=True
+        )
 
         hover = self.root._hover
         selected = self.root._selected and self.has_focus
-
-        guides = Text(style=base_style)
-        guides_append = guides.append
 
         def get_guides(style: Style) -> tuple[str, str, str, str]:
             """Get the guide strings for a given style.
@@ -364,12 +370,22 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 lines = self.LINES["double"]
             return lines
 
+        is_hover = self.hover_line >= 0 and any(node._hover for node in line.path)
+
+        if is_hover:
+            line_style = self.get_component_rich_style("tree--highlight-line")
+        else:
+            line_style = base_style
+
+        guides = Text(style=line_style)
+        guides_append = guides.append
+
         guide_style = base_guide_style
         for node in line.path[1:]:
-            if selected:
-                guide_style = guide_selected_style
             if hover:
                 guide_style = guide_hover_style
+            if selected:
+                guide_style = guide_selected_style
 
             space, vertical, _, _ = get_guides(guide_style)
             guide = space if node.last else vertical
@@ -385,18 +401,19 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             else:
                 guides.append(cross, style=guide_style)
         label = line.path[-1].label.copy()
-        label.stylize(self.get_component_rich_style("tree--label"))
+        label.stylize(self.get_component_rich_style("tree--label", partial=True))
         if self.hover_line == y:
-            label.stylize(self.get_component_rich_style("tree--highlight"))
+            label.stylize(
+                self.get_component_rich_style("tree--highlight", partial=True)
+            )
         if self.cursor_line == y and self.has_focus:
-            label.stylize(self.get_component_rich_style("tree--cursor"))
+            label.stylize(self.get_component_rich_style("tree--cursor", partial=False))
         label.stylize(Style(meta={"node": line.node.id, "line": y}))
 
         guides.append(label)
 
         segments = list(guides.render(self.app.console))
-
-        segments = line_pad(segments, 0, width - guides.cell_len, base_style)
+        segments = line_pad(segments, 0, width - guides.cell_len, line_style)
         segments = line_crop(segments, x1, x2, width)
 
         return segments
