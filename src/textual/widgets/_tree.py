@@ -153,7 +153,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     hover_line: reactive[int] = reactive(-1, repaint=False)
     cursor_line: reactive[int] = reactive(0, repaint=False)
-    guide_depth: reactive[int] = reactive(3, repaint=False, init=False)
+    guide_depth: reactive[int] = reactive(4, repaint=False, init=False)
 
     LINES: dict[str, tuple[str, str, str, str]] = {
         "default": (
@@ -228,7 +228,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         return clamp(value, 0, len(self._tree_lines) - 1)
 
     def validate_guide_depth(self, value: int) -> int:
-        return clamp(value, 1, 10)
+        return clamp(value, 2, 10)
 
     def invalidate(self) -> None:
         self._tree_lines_cached = None
