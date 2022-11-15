@@ -16,12 +16,15 @@ from .._loop import loop_last
 from .._cache import LRUCache
 from ..reactive import reactive
 from .._segment_tools import line_crop, line_pad
+from .._typing import TypeAlias
 from ..scroll_view import ScrollView
 
 from .. import events
 
 NodeID = NewType("NodeID", int)
 TreeDataType = TypeVar("TreeDataType")
+
+LineCacheKey: TypeAlias = tuple[int | tuple[int, ...], ...]
 
 
 @dataclass
@@ -188,10 +191,12 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         else:
             text_label = label
 
+        self._updates = 0
         self._nodes: dict[NodeID, TreeNode[TreeDataType]] = {}
         self._current_id = 0
         self.root = self._add_node(None, text_label, data)
         self.root.expanded = True
+        self._line_cache: LRUCache[LineCacheKey, list[Segment]] = LRUCache(1024)
         self._tree_lines_cached: list[_TreeLine] | None = None
 
     def _add_node(
@@ -199,6 +204,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     ) -> TreeNode[TreeDataType]:
         node = TreeNode(self, parent, self._new_id(), label, data)
         self._nodes[node.id] = node
+        self._updates += 1
         return node
 
     def clear(self) -> None:
@@ -215,6 +221,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             root_data,
             expanded=True,
         )
+        self._updates += 1
         self.refresh()
 
     def validate_cursor_line(self, value: int) -> int:
@@ -222,6 +229,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     def invalidate(self) -> None:
         self._tree_lines_cached = None
+        self._updates += 1
         self.refresh()
 
     def _on_mouse_move(self, event: events.MouseMove):
@@ -342,6 +350,21 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         line = tree_lines[y]
 
+        is_hover = self.hover_line >= 0 and any(node._hover for node in line.path)
+
+        cache_key = (
+            y,
+            width,
+            self._updates,
+            y == self.hover_line,
+            y == self.cursor_line,
+            self.has_focus,
+            tuple(node._hover for node in line.path),
+            tuple(node._selected for node in line.path),
+        )
+        if cache_key in self._line_cache:
+            return self._line_cache[cache_key]
+
         base_guide_style = self.get_component_rich_style("tree--guides", partial=True)
         guide_hover_style = base_guide_style + self.get_component_rich_style(
             "tree--guides-hover", partial=True
@@ -368,8 +391,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             elif style.underline2:
                 lines = self.LINES["double"]
             return lines
-
-        is_hover = self.hover_line >= 0 and any(node._hover for node in line.path)
 
         if is_hover:
             line_style = self.get_component_rich_style("tree--highlight-line")
@@ -415,10 +436,13 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         segments = line_pad(segments, 0, width - guides.cell_len, line_style)
         segments = line_crop(segments, x1, x2, width)
 
+        print(y, cache_key)
+        self._line_cache[cache_key] = segments
         return segments
 
-    def _on_size(self) -> None:
+    def _on_resize(self) -> None:
         self.invalidate()
+        self._line_cache.grow(self.size.height * 2)
 
     def action_cursor_up(self) -> None:
         if self.cursor_line == -1:
@@ -428,3 +452,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     def action_cursor_down(self) -> None:
         self.cursor_line += 1
+
+    def _on_click(self, event: events.Click) -> None:
+        meta = event.style.meta
+        if "line" in meta:
+            self.cursor_line = meta["line"]

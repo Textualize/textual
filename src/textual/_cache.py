@@ -59,6 +59,14 @@ class LRUCache(Generic[CacheKey, CacheValue]):
     def __len__(self) -> int:
         return len(self._cache)
 
+    def grow(self, maxsize: int) -> None:
+        """Grow the maximum size to at least `maxsize` elements.
+
+        Args:
+            maxsize (int): New maximum size.
+        """
+        self.maxsize = max(self.maxsize, maxsize)
+
     def clear(self) -> None:
         """Clear the cache."""
         with self._lock:
