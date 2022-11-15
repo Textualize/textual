@@ -36,9 +36,8 @@ class _TreeLine:
     def node(self) -> TreeNode:
         return self.path[-1]
 
-    @property
-    def line_width(self) -> int:
-        return (len(self.path) * 4) + self.path[-1].label.cell_len - 4
+    def get_line_width(self, guide_depth: int) -> int:
+        return (len(self.path)) + self.path[-1].label.cell_len - guide_depth
 
 
 @rich.repr.auto
@@ -154,25 +153,26 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     hover_line: reactive[int] = reactive(-1, repaint=False)
     cursor_line: reactive[int] = reactive(0, repaint=False)
+    guide_depth: reactive[int] = reactive(3, repaint=False, init=False)
 
     LINES: dict[str, tuple[str, str, str, str]] = {
         "default": (
-            "    ",
-            "│   ",
-            "└── ",
-            "├── ",
+            "  ",
+            "│ ",
+            "└─",
+            "├─",
         ),
         "bold": (
-            "    ",
-            "┃   ",
-            "┗━━ ",
-            "┣━━ ",
+            "  ",
+            "┃ ",
+            "┗━",
+            "┣━",
         ),
         "double": (
-            "    ",
-            "║   ",
-            "╚══ ",
-            "╠══ ",
+            "  ",
+            "║ ",
+            "╚═",
+            "╠═",
         ),
     }
 
@@ -227,6 +227,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     def validate_cursor_line(self, value: int) -> int:
         return clamp(value, 0, len(self._tree_lines) - 1)
 
+    def validate_guide_depth(self, value: int) -> int:
+        return clamp(value, 1, 10)
+
     def invalidate(self) -> None:
         self._tree_lines_cached = None
         self._updates += 1
@@ -280,6 +283,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             self.scroll_to_line(line)
             node._selected = True
 
+    def watch_guide_depth(self, guide_depth: int) -> None:
+        self.invalidate()
+
     def scroll_to_line(self, line: int) -> None:
         self.scroll_to_region(Region(0, line, self.size.width, 1))
 
@@ -329,7 +335,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         add_node([], root, True)
         self._tree_lines_cached = lines
 
-        width = max(lines, key=attrgetter("line_width")).line_width
+        guide_depth = self.guide_depth
+        width = max([line.get_line_width(guide_depth) for line in lines])
+
         self.virtual_size = Size(width, len(lines))
 
     def render_line(self, y: int) -> list[Segment]:
@@ -390,6 +398,12 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 lines = self.LINES["bold"]
             elif style.underline2:
                 lines = self.LINES["double"]
+
+            guide_depth = max(0, self.guide_depth - 2)
+            lines = tuple(
+                f"{vertical}{horizontal * guide_depth} "
+                for vertical, horizontal in lines
+            )
             return lines
 
         if is_hover:
