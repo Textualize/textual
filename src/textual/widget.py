@@ -480,6 +480,69 @@ class Widget(DOMNode):
             self.app._register(parent, *widgets, before=before, after=after)
         )
 
+    def move_child(
+        self,
+        child: int | Widget,
+        before: int | Widget | None = None,
+        after: int | Widget | None = None,
+    ) -> None:
+        """Move a child widget within its parent's list of children.
+
+        Args:
+            child (int | Widget): The child widget to move.
+            before: (int | Widget, optional): Optional location to move before.
+            after: (int | Widget, optional): Optional location to move after.
+
+        Raises:
+            WidgetError: If there is a problem with the child or target.
+
+        Note:
+            Only one of ``before`` or ``after`` can be provided. If neither
+            or both are provided a ``WidgetError`` will be raised.
+        """
+
+        # One or the other of before or after are required. Can't do
+        # neither, can't do both.
+        if before is None and after is None:
+            raise WidgetError("One of `before` or `after` is required.")
+        elif before is not None and after is not None:
+            raise WidgetError("Only one of `before`or `after` can be handled.")
+
+        def _to_widget(child: int | Widget, called: str) -> Widget:
+            """Ensure a given child reference is a Widget."""
+            if isinstance(child, int):
+                try:
+                    child = self.children[child]
+                except IndexError:
+                    raise WidgetError(
+                        f"An index of {child} for the child to {called} is out of bounds"
+                    ) from None
+            else:
+                # We got an actual widget, so let's be sure it really is one of
+                # our children.
+                try:
+                    _ = self.children.index(child)
+                except ValueError:
+                    raise WidgetError(f"{child!r} is not a child of {self!r}") from None
+            return child
+
+        # Ensure the child and target are widgets.
+        child = _to_widget(child, "move")
+        target = _to_widget(before if after is None else after, "move towards")
+
+        # At this point we should know what we're moving, and it should be a
+        # child; where we're moving it to, which should be within the child
+        # list; and how we're supposed to move it. All that's left is doing
+        # the right thing.
+        self.children._remove(child)
+        if before is not None:
+            self.children._insert(self.children.index(target), child)
+        else:
+            self.children._insert(self.children.index(target) + 1, child)
+
+        # Request a refresh.
+        self.refresh(layout=True)
+
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.
 
