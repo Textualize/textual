@@ -189,10 +189,9 @@ class Animator:
     async def stop(self) -> None:
         """Stop the animator task."""
         try:
-            try:
-                await self._timer.stop()
-            except asyncio.CancelledError:
-                pass
+            await self._timer.stop()
+        except asyncio.CancelledError:
+            pass
         finally:
             self._idle_event.set()
 
