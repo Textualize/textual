@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed DataTable row not updating after add https://github.com/Textualize/textual/issues/1026
 - Fixed issues with animation. Now objects of different types may be animated.
+- Fixed containers with transparent background not showing borders https://github.com/Textualize/textual/issues/1175
 
 ## [0.4.0] - 2022-11-08
 
