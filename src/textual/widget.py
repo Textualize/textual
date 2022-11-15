@@ -52,6 +52,7 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
 from .await_remove import AwaitRemove
+from .walk import walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
@@ -355,8 +356,7 @@ class Widget(DOMNode):
 
     def get_widget_by_id(self, id: str) -> Widget:
         """Return the first descendant widget with the given ID.
-        Performs a breadth-first search rooted at this node, but this node won't match
-        if it has a matching id.
+        Performs a depth-first search rooted at this widget.
 
         Args:
             id (str): The ID to search for in the subtree
@@ -367,7 +367,7 @@ class Widget(DOMNode):
         Raises:
             NoMatches: if no children could be found for this ID
         """
-        for child in self.walk_children(method="depth"):
+        for child in walk_depth_first(self):
             try:
                 return child.get_child_by_id(id)
             except NoMatches:
