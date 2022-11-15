@@ -107,6 +107,16 @@ class Bindings:
         key_display: str | None = None,
         universal: bool = False,
     ) -> None:
+        """Bind keys to an action.
+
+        Args:
+            keys (str): The keys to bind. Can be a comma-separated list of keys.
+            action (str): The action to bind the keys to.
+            description (str, optional): An optional description for the binding.
+            show (bool, optional): A flag to say if the binding should appear in the footer.
+            key_display (str | None, optional): Optional string to display in the footer for the key.
+            universal (bool, optional): Allow forwarding from the app to the focused widget.
+        """
         all_keys = [key.strip() for key in keys.split(",")]
         for key in all_keys:
             self.keys[key] = Binding(
