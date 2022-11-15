@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import asyncio
+from asyncio import Future
+
 from textual import events
 from textual.binding import Binding
 from textual.containers import Vertical
@@ -41,7 +44,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
             return self.children[self.index]
         return None
 
-    def validate_index(self, index: int) -> int | None:
+    def validate_index(self, index: int | None) -> int | None:
         if not self.children:
             return None
         return self._clamp_index(index)
@@ -59,17 +62,32 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         if self._is_valid_index(old_index):
             old_child = self.children[old_index]
             old_child.highlighted = False
-            old_child.set_class(False, "--highlight")
-
         if self._is_valid_index(new_index):
             new_child = self.children[new_index]
             new_child.highlighted = True
-            new_child.set_class(True, "--highlight")
         else:
             new_child = None
 
         self._scroll_highlighted_region()
         self.emit_no_wait(self.Highlighted(self, new_child))
+
+    def append(self, item: ListItem) -> None:
+        """Append a new ListItem to the end of the ListView.
+
+        Args:
+            item (ListItem): The ListItem to append.
+        """
+        self._add_child(item)
+        if len(self) > 0:
+            self.index = 1
+
+    def clear(self) -> Future:
+        """Clear all items from the ListView."""
+        self.index = None
+        await_removes = []
+        for child in reversed(self.children):
+            await_removes.append(child.remove())
+        return asyncio.gather(*await_removes)
 
     def action_select(self) -> None:
         selected_child = self.highlighted_child
