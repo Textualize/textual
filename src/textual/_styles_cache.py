@@ -53,7 +53,7 @@ def style_links(
 
 
 class StylesCache:
-    """Responsible for rendering CSS Styles and keeping a cached of rendered lines.
+    """Responsible for rendering CSS Styles and keeping a cache of rendered lines.
 
     The render method applies border, outline, and padding set in the Styles object to widget content.
 

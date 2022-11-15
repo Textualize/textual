@@ -118,6 +118,7 @@ nav:
     - "api/screen.md"
     - "api/static.md"
     - "api/timer.md"
+    - "api/walk.md"
     - "api/widget.md"
   - "Blog":
     - blog/index.md
@@ -211,3 +212,17 @@ plugins:
 
 extra_css:
   - stylesheets/custom.css
+
+
+extra:
+  social:
+    - icon: fontawesome/brands/twitter 
+      link: https://twitter.com/textualizeio
+      name: textualizeio on Twitter
+    - icon: fontawesome/brands/github 
+      link: https://github.com/textualize/textual/
+      name: Textual on Github
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/Enf6Z3qhVr
+      name: Textual Discord server
+copyright: Copyright &copy; Textualize, Inc

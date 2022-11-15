@@ -43,7 +43,7 @@ def resolve(
         (
             (scalar, None)
             if scalar.is_fraction
-            else (scalar, scalar.resolve_dimension(size, viewport))
+            else (scalar, scalar.resolve(size, viewport))
         )
         for scalar in dimensions
     ]

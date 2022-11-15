@@ -21,11 +21,7 @@ class Pilot:
 
     @property
     def app(self) -> App:
-        """Get a reference to the application.
-
-        Returns:
-            App: The App instance.
-        """
+        """App: A reference to the application."""
         return self._app
 
     async def press(self, *keys: str) -> None:
@@ -44,7 +40,12 @@ class Pilot:
         Args:
             delay (float, optional): Seconds to pause. Defaults to 50ms.
         """
+        # These sleep zeros, are to force asyncio to give up a time-slice,
         await asyncio.sleep(delay)
+
+    async def wait_for_animation(self) -> None:
+        """Wait for any animation to complete."""
+        await self._app.animator.wait_for_idle()
 
     async def exit(self, result: object) -> None:
         """Exit the app with the given result.

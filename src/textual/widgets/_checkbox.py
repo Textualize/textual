@@ -15,10 +15,6 @@ from ..scrollbar import ScrollBarRender
 class Checkbox(Widget, can_focus=True):
     """A checkbox widget. Represents a boolean value. Can be toggled by clicking
     on it or by pressing the enter key or space bar while it has focus.
-
-    Args:
-        value (bool, optional): The initial value of the checkbox. Defaults to False.
-        animate (bool, optional): True if the checkbox should animate when toggled. Defaults to True.
     """
 
     DEFAULT_CSS = """
@@ -66,13 +62,22 @@ class Checkbox(Widget, can_focus=True):
 
     def __init__(
         self,
-        value: bool = None,
+        value: bool = False,
         *,
         animate: bool = True,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
     ):
+        """Initialise the checkbox.
+
+        Args:
+            value (bool, optional): The initial value of the checkbox. Defaults to False.
+            animate (bool, optional): True if the checkbox should animate when toggled. Defaults to True.
+            name (str | None, optional): The name of the checkbox.
+            id (str | None, optional): The ID of the checkbox in the DOM.
+            classes (str | None, optional): The CSS classes of the checkbox.
+        """
         super().__init__(name=name, id=id, classes=classes)
         if value:
             self.slider_pos = 1.0

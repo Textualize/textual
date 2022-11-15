@@ -5,7 +5,7 @@ import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import partial
-from typing import Any, Callable, TypeVar, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from . import _clock
 from ._callback import invoke
@@ -22,6 +22,11 @@ if TYPE_CHECKING:
     from textual.app import App
 
 EasingFunction = Callable[[float], float]
+
+
+class AnimationError(Exception):
+    """An issue prevented animation from starting."""
+
 
 T = TypeVar("T")
 
@@ -118,7 +123,7 @@ class BoundAnimator:
     def __call__(
         self,
         attribute: str,
-        value: float | Animatable,
+        value: str | float | Animatable,
         *,
         final_value: object = ...,
         duration: float | None = None,
@@ -140,6 +145,12 @@ class BoundAnimator:
             on_complete (CallbackType | None, optional): A callable to invoke when the animation is finished. Defaults to None.
 
         """
+        start_value = getattr(self._obj, attribute)
+        if isinstance(value, str) and hasattr(start_value, "parse"):
+            # Color and Scalar have a parse method
+            # I'm exploiting a coincidence here, but I think this should be a first-class concept
+            # TODO: add a `Parsable` protocol
+            value = start_value.parse(value)
         easing_function = EASING[easing] if isinstance(easing, str) else easing
         return self._animator.animate(
             self._obj,
@@ -181,6 +192,8 @@ class Animator:
             await self._timer.stop()
         except asyncio.CancelledError:
             pass
+        finally:
+            self._idle_event.set()
 
     def bind(self, obj: object) -> BoundAnimator:
         """Bind the animator to a given objects."""
@@ -270,9 +283,11 @@ class Animator:
         easing_function = EASING[easing] if isinstance(easing, str) else easing
 
         animation: Animation | None = None
+
         if hasattr(obj, "__textual_animation__"):
             animation = getattr(obj, "__textual_animation__")(
                 attribute,
+                getattr(obj, attribute),
                 value,
                 start_time,
                 duration=duration,
@@ -280,7 +295,17 @@ class Animator:
                 easing=easing_function,
                 on_complete=on_complete,
             )
+
         if animation is None:
+
+            if not isinstance(value, (int, float)) and not isinstance(
+                value, Animatable
+            ):
+                raise AnimationError(
+                    f"Don't know how to animate {value!r}; "
+                    "Can only animate <int>, <float>, or objects with a blend method"
+                )
+
             start_value = getattr(obj, attribute)
 
             if start_value == value:
