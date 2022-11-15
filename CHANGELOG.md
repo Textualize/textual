@@ -11,10 +11,31 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Add get_child_by_id and get_widget_by_id, remove get_child https://github.com/Textualize/textual/pull/1146
 - Add easing parameter to Widget.scroll_* methods https://github.com/Textualize/textual/pull/1144
+- Added Widget.call_later which invokes a callback on idle.
+- `DOMNode.ancestors` no longer includes `self`.
+- Added `DOMNode.ancestors_with_self`, which retains the old behaviour of
+  `DOMNode.ancestors`.
+- Improved the speed of `DOMQuery.remove`.
+- Added DataTable.clear
+- Added low-level `textual.walk` methods.
+- It is now possible to `await` a `Widget.remove`.
+  https://github.com/Textualize/textual/issues/1094
+- It is now possible to `await` a `DOMQuery.remove`. Note that this changes
+  the return value of `DOMQuery.remove`, which uses to return `self`.
+  https://github.com/Textualize/textual/issues/1094
+- Added Pilot.wait_for_animation
+- Added `Widget.move_child` https://github.com/Textualize/textual/issues/1121
 
 ### Changed
 
 - Watchers are now called immediately when setting the attribute if they are synchronous. https://github.com/Textualize/textual/pull/1145
+- Widget.call_later has been renamed to Widget.call_after_refresh.
+
+### Fixed
+
+- Fixed DataTable row not updating after add https://github.com/Textualize/textual/issues/1026
+- Fixed issues with animation. Now objects of different types may be animated.
+- Fixed containers with transparent background not showing borders https://github.com/Textualize/textual/issues/1175
 
 ## [0.4.0] - 2022-11-08
 

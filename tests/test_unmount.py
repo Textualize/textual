@@ -12,7 +12,7 @@ async def test_unmount():
 
     class UnmountWidget(Container):
         def on_unmount(self, event: events.Unmount):
-            unmount_ids.append(f"{self.__class__.__name__}#{self.id}")
+            unmount_ids.append(f"{self.__class__.__name__}#{self.id}-{self.parent is not None}-{len(self.children)}")
 
     class MyScreen(Screen):
         def compose(self) -> ComposeResult:
@@ -38,13 +38,13 @@ async def test_unmount():
         await pilot.exit(None)
 
     expected = [
-        "UnmountWidget#bar1",
-        "UnmountWidget#bar2",
-        "UnmountWidget#baz1",
-        "UnmountWidget#baz2",
-        "UnmountWidget#bar",
-        "UnmountWidget#baz",
-        "UnmountWidget#top",
+        "UnmountWidget#bar1-True-0",
+        "UnmountWidget#bar2-True-0",
+        "UnmountWidget#baz1-True-0",
+        "UnmountWidget#baz2-True-0",
+        "UnmountWidget#bar-True-0",
+        "UnmountWidget#baz-True-0",
+        "UnmountWidget#top-True-0",
         "MyScreen#main",
     ]
 

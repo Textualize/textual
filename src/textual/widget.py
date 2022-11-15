@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from asyncio import Lock, wait, create_task
 from collections import Counter
+from asyncio import Lock, wait, create_task, Event as AsyncEvent
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
@@ -51,6 +51,7 @@ from .message import Message
 from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
+from .await_remove import AwaitRemove
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
@@ -472,7 +473,7 @@ class Widget(DOMNode):
         # children. We should be able to go looking for the widget's
         # location amongst its parent's children.
         try:
-            return spot.parent, spot.parent.children.index(spot)
+            return cast("Widget", spot.parent), spot.parent.children.index(spot)
         except ValueError:
             raise MountError(f"{spot!r} is not a child of {self!r}") from None
 
@@ -532,6 +533,69 @@ class Widget(DOMNode):
         return AwaitMount(
             self.app._register(parent, *widgets, before=before, after=after)
         )
+
+    def move_child(
+        self,
+        child: int | Widget,
+        before: int | Widget | None = None,
+        after: int | Widget | None = None,
+    ) -> None:
+        """Move a child widget within its parent's list of children.
+
+        Args:
+            child (int | Widget): The child widget to move.
+            before: (int | Widget, optional): Optional location to move before.
+            after: (int | Widget, optional): Optional location to move after.
+
+        Raises:
+            WidgetError: If there is a problem with the child or target.
+
+        Note:
+            Only one of ``before`` or ``after`` can be provided. If neither
+            or both are provided a ``WidgetError`` will be raised.
+        """
+
+        # One or the other of before or after are required. Can't do
+        # neither, can't do both.
+        if before is None and after is None:
+            raise WidgetError("One of `before` or `after` is required.")
+        elif before is not None and after is not None:
+            raise WidgetError("Only one of `before`or `after` can be handled.")
+
+        def _to_widget(child: int | Widget, called: str) -> Widget:
+            """Ensure a given child reference is a Widget."""
+            if isinstance(child, int):
+                try:
+                    child = self.children[child]
+                except IndexError:
+                    raise WidgetError(
+                        f"An index of {child} for the child to {called} is out of bounds"
+                    ) from None
+            else:
+                # We got an actual widget, so let's be sure it really is one of
+                # our children.
+                try:
+                    _ = self.children.index(child)
+                except ValueError:
+                    raise WidgetError(f"{child!r} is not a child of {self!r}") from None
+            return child
+
+        # Ensure the child and target are widgets.
+        child = _to_widget(child, "move")
+        target = _to_widget(before if after is None else after, "move towards")
+
+        # At this point we should know what we're moving, and it should be a
+        # child; where we're moving it to, which should be within the child
+        # list; and how we're supposed to move it. All that's left is doing
+        # the right thing.
+        self.children._remove(child)
+        if before is not None:
+            self.children._insert(self.children.index(target), child)
+        else:
+            self.children._insert(self.children.index(target) + 1, child)
+
+        # Request a refresh.
+        self.refresh(layout=True)
 
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.
@@ -1109,7 +1173,7 @@ class Widget(DOMNode):
         Returns:
             tuple[str, ...]: Tuple of layer names.
         """
-        for node in self.ancestors:
+        for node in self.ancestors_with_self:
             if not isinstance(node, Widget):
                 break
             if node.styles.has_rule("layers"):
@@ -1711,7 +1775,7 @@ class Widget(DOMNode):
         """
         parent = self.parent
         if isinstance(parent, Widget):
-            self.call_later(
+            self.call_after_refresh(
                 parent.scroll_to_widget,
                 self,
                 animate=animate,
@@ -2044,9 +2108,21 @@ class Widget(DOMNode):
 
         self.check_idle()
 
-    def remove(self) -> None:
-        """Remove the Widget from the DOM (effectively deleting it)"""
-        self.app.post_message_no_wait(events.Remove(self, widget=self))
+    def remove(self) -> AwaitRemove:
+        """Remove the Widget from the DOM (effectively deleting it)
+
+        Returns:
+            AwaitRemove: An awaitable object that waits for the widget to be removed.
+        """
+        prune_finished_event = AsyncEvent()
+        self.app.post_message_no_wait(
+            events.Prune(
+                self,
+                widgets=self.app._detach_from_dom([self]),
+                finished_flag=prune_finished_event,
+            )
+        )
+        return AwaitRemove(prune_finished_event)
 
     def render(self) -> RenderableType:
         """Get renderable for widget.
@@ -2195,14 +2271,14 @@ class Widget(DOMNode):
         self.mouse_over = True
 
     def _on_focus(self, event: events.Focus) -> None:
-        for node in self.ancestors:
+        for node in self.ancestors_with_self:
             if node._has_focus_within:
                 self.app.update_styles(node)
         self.has_focus = True
         self.refresh()
 
     def _on_blur(self, event: events.Blur) -> None:
-        if any(node._has_focus_within for node in self.ancestors):
+        if any(node._has_focus_within for node in self.ancestors_with_self):
             self.app.update_styles(self)
         self.has_focus = False
         self.refresh()
