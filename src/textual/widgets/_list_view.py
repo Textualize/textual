@@ -40,12 +40,13 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
 
     @property
     def highlighted_child(self) -> ListItem | None:
-        if 0 <= self.index < len(self.children):
+        if self.index is None:
+            return None
+        elif 0 <= self.index < len(self.children):
             return self.children[self.index]
-        return None
 
     def validate_index(self, index: int | None) -> int | None:
-        if not self.children:
+        if not self.children or index is None:
             return None
         return self._clamp_index(index)
 
@@ -71,23 +72,28 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         self._scroll_highlighted_region()
         self.emit_no_wait(self.Highlighted(self, new_child))
 
-    def append(self, item: ListItem) -> None:
+    async def append(self, item: ListItem) -> None:
         """Append a new ListItem to the end of the ListView.
 
         Args:
             item (ListItem): The ListItem to append.
         """
-        self._add_child(item)
-        if len(self) > 0:
-            self.index = 1
+        await self.mount(item)
+        if len(self) == 1:
+            self.index = 0
+        await self.emit(self.ChildrenUpdated(self, self.children))
 
-    def clear(self) -> Future:
+    async def clear(self) -> None:
         """Clear all items from the ListView."""
         self.index = None
-        await_removes = []
-        for child in reversed(self.children):
-            await_removes.append(child.remove())
-        return asyncio.gather(*await_removes)
+        # await_removes = []
+        await self.query("ListItem").remove()
+
+        # for child in self.children:
+        #     await child.remove()
+        # await_removes.append(child.remove())
+        # await asyncio.gather(*await_removes)
+        await self.emit(self.ChildrenUpdated(self, self.children))
 
     def action_select(self) -> None:
         selected_child = self.highlighted_child
@@ -124,3 +130,8 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         def __init__(self, sender: ListView, item: ListItem) -> None:
             super().__init__(sender)
             self.item = item
+
+    class ChildrenUpdated(Message, bubble=True):
+        def __init__(self, sender: ListView, children: list[ListItem]) -> None:
+            super().__init__(sender)
+            self.children = children
