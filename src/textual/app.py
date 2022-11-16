@@ -1906,7 +1906,7 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         async def prune(event: events.Prune):
-            with self._dom_lock:
+            async with self._dom_lock:
                 try:
                     # Prune all the widgets.
                     for widget in event.widgets:
