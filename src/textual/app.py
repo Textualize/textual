@@ -1905,16 +1905,20 @@ class App(Generic[ReturnType], DOMNode):
             event (events.Prune): The prune event.
         """
 
-        try:
-            # Prune all the widgets.
-            for widget in event.widgets:
-                await self._prune_node(widget)
-        finally:
-            # Finally, flag that we're done.
-            event.finished_flag.set()
+        async def prune(event: events.Prune):
+            with self._dom_lock:
+                try:
+                    # Prune all the widgets.
+                    for widget in event.widgets:
+                        await self._prune_node(widget)
+                finally:
+                    # Finally, flag that we're done.
+                    event.finished_flag.set()
 
-        # Flag that the layout needs refreshing.
-        self.refresh(layout=True)
+                # Flag that the layout needs refreshing.
+                self.refresh(layout=True)
+
+        asyncio.create_task(prune(event))
 
     def _walk_children(self, root: Widget) -> Iterable[list[Widget]]:
         """Walk children depth first, generating widgets and a list of their siblings.
