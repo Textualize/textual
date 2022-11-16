@@ -303,6 +303,8 @@ class App(Generic[ReturnType], DOMNode):
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
         self._require_stylesheet_update: set[DOMNode] = set()
 
+        self._dom_lock = asyncio.Lock()
+
         css_path = css_path or self.CSS_PATH
         if css_path is not None:
             # When value(s) are supplied for CSS_PATH, we normalise them to a list of Paths.
