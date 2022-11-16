@@ -15,18 +15,18 @@ async def test_remove_single_widget():
 async def test_many_remove_all_widgets():
     """It should be possible to remove all widgets on a multi-widget screen."""
     async with App().run_test() as pilot:
-        await pilot.app.mount(*[Static() for _ in range(1000)])
-        assert len(pilot.app.screen.children) == 1000
+        await pilot.app.mount(*[Static() for _ in range(10)])
+        assert len(pilot.app.screen.children) == 10
         await pilot.app.query(Static).remove()
         assert len(pilot.app.screen.children) == 0
 
 async def test_many_remove_some_widgets():
     """It should be possible to remove some widgets on a multi-widget screen."""
     async with App().run_test() as pilot:
-        await pilot.app.mount(*[Static(id=f"is-{n%2}") for n in range(1000)])
-        assert len(pilot.app.screen.children) == 1000
-        await pilot.app.query("#is-0").remove()
-        assert len(pilot.app.screen.children) == 500
+        await pilot.app.mount(*[Static(classes=f"is-{n%2}") for n in range(10)])
+        assert len(pilot.app.screen.children) == 10
+        await pilot.app.query(".is-0").remove()
+        assert len(pilot.app.screen.children) == 5
 
 async def test_remove_branch():
     """It should be possible to remove a whole branch in the DOM."""
