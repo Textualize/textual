@@ -25,6 +25,7 @@ from typing import (
     TypeVar,
     Union,
     cast,
+    Callable,
 )
 from weakref import WeakSet, WeakValueDictionary
 
@@ -228,7 +229,7 @@ class App(Generic[ReturnType], DOMNode):
     }
     """
 
-    SCREENS: dict[str, Screen] = {}
+    SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
     TITLE: str | None = None
@@ -330,7 +331,7 @@ class App(Generic[ReturnType], DOMNode):
         self._registry: WeakSet[DOMNode] = WeakSet()
 
         self._installed_screens: WeakValueDictionary[
-            str, Screen
+            str, Screen | Callable[[], Screen]
         ] = WeakValueDictionary()
         self._installed_screens.update(**self.SCREENS)
 
@@ -998,12 +999,15 @@ class App(Generic[ReturnType], DOMNode):
                 next_screen = self._installed_screens[screen]
             except KeyError:
                 raise KeyError(f"No screen called {screen!r} installed") from None
+            if callable(next_screen):
+                next_screen = next_screen()
+                self._installed_screens[screen] = next_screen
         else:
             next_screen = screen
         return next_screen
 
     def _get_screen(self, screen: Screen | str) -> tuple[Screen, AwaitMount]:
-        """Get an installed screen and a await mount object.
+        """Get an installed screen and an AwaitMount object.
 
         If the screen isn't running, it will be registered before it is run.
 
@@ -1558,7 +1562,7 @@ class App(Generic[ReturnType], DOMNode):
 
         # Close pre-defined screens
         for screen in self.SCREENS.values():
-            if screen._running:
+            if isinstance(screen, Screen) and screen._running:
                 await self._prune_node(screen)
 
         # Close any remaining nodes
