@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Watchers are now called immediately when setting the attribute if they are synchronous. https://github.com/Textualize/textual/pull/1145
 - Widget.call_later has been renamed to Widget.call_after_refresh.
+- Button variant values are now checked at runtime. https://github.com/Textualize/textual/issues/1189
 
 ### Fixed
 
