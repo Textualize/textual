@@ -60,7 +60,7 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
-from .widget import AwaitMount, Widget
+from .widget import AwaitMount, Widget, MountError
 
 if TYPE_CHECKING:
     from .devtools.client import DevtoolsClient
@@ -875,7 +875,7 @@ class App(Generic[ReturnType], DOMNode):
     def render(self) -> RenderableType:
         return Blank(self.styles.background)
 
-    def get_child(self, id: str) -> DOMNode:
+    def get_child_by_id(self, id: str) -> Widget:
         """Shorthand for self.screen.get_child(id: str)
         Returns the first child (immediate descendent) of this DOMNode
         with the given ID.
@@ -889,7 +889,26 @@ class App(Generic[ReturnType], DOMNode):
         Raises:
             NoMatches: if no children could be found for this ID
         """
-        return self.screen.get_child(id)
+        return self.screen.get_child_by_id(id)
+
+    def get_widget_by_id(self, id: str) -> Widget:
+        """Shorthand for self.screen.get_widget_by_id(id)
+        Return the first descendant widget with the given ID.
+
+        Performs a breadth-first search rooted at the current screen.
+        It will not return the Screen if that matches the ID.
+        To get the screen, use `self.screen`.
+
+        Args:
+            id (str): The ID to search for in the subtree
+
+        Returns:
+            DOMNode: The first descendant encountered with this ID.
+
+        Raises:
+            NoMatches: if no children could be found for this ID
+        """
+        return self.screen.get_widget_by_id(id)
 
     def update_styles(self, node: DOMNode | None = None) -> None:
         """Request update of styles.
