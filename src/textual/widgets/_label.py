@@ -4,4 +4,4 @@ from ._static import Static
 
 
 class Label(Static):
-    """A simple label widget for displaying text-oriented rendenrables."""
+    """A simple label widget for displaying text-oriented renderables."""
