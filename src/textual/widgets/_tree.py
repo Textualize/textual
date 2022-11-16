@@ -14,8 +14,10 @@ from ..binding import Binding
 from ..geometry import clamp, Region, Size
 from .._loop import loop_last
 from .._cache import LRUCache
+from ..message import Message
 from ..reactive import reactive
 from .._segment_tools import line_crop, line_pad
+from .._types import MessageTarget
 from .._typing import TypeAlias
 from ..scroll_view import ScrollView
 
@@ -23,6 +25,7 @@ from .. import events
 
 NodeID = NewType("NodeID", int)
 TreeDataType = TypeVar("TreeDataType")
+EventTreeDataType = TypeVar("EventTreeDataType")
 
 LineCacheKey: TypeAlias = tuple[int | tuple[int, ...], ...]
 
@@ -83,6 +86,16 @@ class TreeNode(Generic[TreeDataType]):
     def add(
         self, label: TextType, data: TreeDataType, expanded: bool = True
     ) -> TreeNode[TreeDataType]:
+        """Add a node to the sub-tree.
+
+        Args:
+            label (TextType): The new node's label.
+            data (TreeDataType): Data associated with the new node.
+            expanded (bool, optional): Node should be expanded. Defaults to True.
+
+        Returns:
+            TreeNode[TreeDataType]: A new Tree node
+        """
         if isinstance(label, str):
             text_label = Text.from_markup(label)
         else:
@@ -97,8 +110,9 @@ class TreeNode(Generic[TreeDataType]):
 class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     BINDINGS = [
-        Binding("up", "cursor_up", "Cursor Up"),
-        Binding("down", "cursor_down", "Cursor Down"),
+        Binding("up", "cursor_up", "Cursor Up", show=False),
+        Binding("down", "cursor_down", "Cursor Down", show=False),
+        Binding("enter", "select_cursor", "Select", show=False),
     ]
 
     DEFAULT_CSS = """
@@ -175,6 +189,13 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             "╠═",
         ),
     }
+
+    class NodeSelected(Generic[EventTreeDataType], Message, bubble=True):
+        def __init__(
+            self, sender: MessageTarget, node: TreeNode[EventTreeDataType]
+        ) -> None:
+            self.node = node
+            super().__init__(sender)
 
     def __init__(
         self,
@@ -457,6 +478,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self.invalidate()
         self._line_cache.grow(self.size.height * 2)
 
+    def _on_click(self, event: events.Click) -> None:
+        meta = event.style.meta
+        if "line" in meta:
+            self.cursor_line = meta["line"]
+
     def action_cursor_up(self) -> None:
         if self.cursor_line == -1:
             self.cursor_line = len(self._tree_lines)
@@ -466,7 +492,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     def action_cursor_down(self) -> None:
         self.cursor_line += 1
 
-    def _on_click(self, event: events.Click) -> None:
-        meta = event.style.meta
-        if "line" in meta:
-            self.cursor_line = meta["line"]
+    def action_select_cursor(self) -> None:
+        try:
+            line = self._tree_lines[self.cursor_line]
+        except IndexError:
+            pass
+        else:
+            self.emit_no_wait(self.NodeSelected(self, line.path[-1]))
+            self.app.bell()
