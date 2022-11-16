@@ -1555,7 +1555,7 @@ class App(Generic[ReturnType], DOMNode):
 
         # Close all screens on the stack
         for screen in self._screen_stack:
-            if isinstance(screen, Screen) and screen._running:
+            if screen._running:
                 await self._prune_node(screen)
 
         self._screen_stack.clear()
