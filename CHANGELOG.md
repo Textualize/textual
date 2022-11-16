@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   https://github.com/Textualize/textual/issues/1094
 - Added Pilot.wait_for_animation
 - Added `Widget.move_child` https://github.com/Textualize/textual/issues/1121
+- Added a `Label` widget https://github.com/Textualize/textual/issues/1190
 
 ### Changed
 
