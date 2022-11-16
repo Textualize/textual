@@ -4,7 +4,7 @@ from collections import deque
 from typing import Iterable, Iterator, TypeVar, overload, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from .dom import DOMNode
+    from textual.dom import DOMNode
 
     WalkType = TypeVar("WalkType", bound=DOMNode)
 
@@ -51,6 +51,8 @@ def walk_depth_first(
         Iterable[DOMNode] | Iterable[WalkType]: An iterable of DOMNodes, or the type specified in ``filter_type``.
 
     """
+    from textual.dom import DOMNode
+
     stack: list[Iterator[DOMNode]] = [iter(root.children)]
     pop = stack.pop
     push = stack.append
@@ -111,6 +113,8 @@ def walk_breadth_first(
         Iterable[DOMNode] | Iterable[WalkType]: An iterable of DOMNodes, or the type specified in ``filter_type``.
 
     """
+    from textual.dom import DOMNode
+
     queue: deque[DOMNode] = deque()
     popleft = queue.popleft
     extend = queue.extend
