@@ -28,7 +28,6 @@ from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from .css.errors import DeclarationError, StyleValueError
 from .css.parse import parse_declarations
-from .css.query import NoMatches
 from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
@@ -645,7 +644,6 @@ class DOMNode(MessagePump):
             list[DOMNode] | list[WalkType]: A list of nodes.
 
         """
-
         check_type = filter_type or DOMNode
 
         node_generator = (
@@ -660,23 +658,6 @@ class DOMNode(MessagePump):
         if reverse:
             nodes.reverse()
         return cast("list[DOMNode]", nodes)
-
-    def get_child(self, id: str) -> DOMNode:
-        """Return the first child (immediate descendent) of this node with the given ID.
-
-        Args:
-            id (str): The ID of the child.
-
-        Returns:
-            DOMNode: The first child of this node with the ID.
-
-        Raises:
-            NoMatches: if no children could be found for this ID
-        """
-        for child in self.children:
-            if child.id == id:
-                return child
-        raise NoMatches(f"No child found with id={id!r}")
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
