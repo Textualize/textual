@@ -186,7 +186,7 @@ class Button(Static, can_focus=True):
         if disabled:
             self.add_class("-disabled")
 
-        self.variant = variant
+        self.variant = self.validate_variant(variant)
 
     label: Reactive[RenderableType] = Reactive("")
     variant = Reactive.init("default")
