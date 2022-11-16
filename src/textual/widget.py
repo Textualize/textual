@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from asyncio import Lock, wait, create_task, Event as AsyncEvent
 from fractions import Fraction
 from itertools import islice
@@ -41,6 +42,7 @@ from ._styles_cache import StylesCache
 from ._types import Lines
 from .binding import NoBinding
 from .box_model import BoxModel, get_box_model
+from .css.query import NoMatches
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
@@ -50,6 +52,7 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
 from .await_remove import AwaitRemove
+from .walk import walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
@@ -334,6 +337,43 @@ class Widget(DOMNode):
     def offset(self, offset: Offset) -> None:
         self.styles.offset = ScalarOffset.from_offset(offset)
 
+    def get_child_by_id(self, id: str) -> Widget:
+        """Return the first child (immediate descendent) of this node with the given ID.
+
+        Args:
+            id (str): The ID of the child.
+
+        Returns:
+            DOMNode: The first child of this node with the ID.
+
+        Raises:
+            NoMatches: if no children could be found for this ID
+        """
+        child = self.children._get_by_id(id)
+        if child is not None:
+            return child
+        raise NoMatches(f"No child found with id={id!r}")
+
+    def get_widget_by_id(self, id: str) -> Widget:
+        """Return the first descendant widget with the given ID.
+        Performs a depth-first search rooted at this widget.
+
+        Args:
+            id (str): The ID to search for in the subtree
+
+        Returns:
+            DOMNode: The first descendant encountered with this ID.
+
+        Raises:
+            NoMatches: if no children could be found for this ID
+        """
+        for child in walk_depth_first(self):
+            try:
+                return child.get_child_by_id(id)
+            except NoMatches:
+                pass
+        raise NoMatches(f"No descendant found with id={id!r}")
+
     def get_component_rich_style(self, name: str) -> Style:
         """Get a *Rich* style for a component.
 
@@ -460,6 +500,20 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
+
+        # Check for duplicate IDs in the incoming widgets
+        ids_to_mount = [widget.id for widget in widgets if widget.id is not None]
+        unique_ids = set(ids_to_mount)
+        num_unique_ids = len(unique_ids)
+        num_widgets_with_ids = len(ids_to_mount)
+        if num_unique_ids != num_widgets_with_ids:
+            counter = Counter(widget.id for widget in widgets)
+            for widget_id, count in counter.items():
+                if count > 1:
+                    raise MountError(
+                        f"Tried to insert {count!r} widgets with the same ID {widget_id!r}. "
+                        f"Widget IDs must be unique."
+                    )
 
         # Saying you want to mount before *and* after something is an error.
         if before is not None and after is not None:

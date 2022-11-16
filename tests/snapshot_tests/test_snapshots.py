@@ -2,9 +2,11 @@ from pathlib import Path
 
 import pytest
 
+# These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
 LAYOUT_EXAMPLES_DIR = Path("../../docs/examples/guide/layout")
 STYLES_EXAMPLES_DIR = Path("../../docs/examples/styles")
+SNAPSHOT_APPS_DIR = Path("./snapshot_apps")
 
 
 # --- Layout related stuff ---
@@ -27,6 +29,10 @@ def test_layers(snap_compare):
 
 def test_horizontal_layout(snap_compare):
     assert snap_compare(LAYOUT_EXAMPLES_DIR / "horizontal_layout.py")
+
+
+def test_horizontal_layout_width_auto_dock(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "horizontal_auto_width.py")
 
 
 def test_vertical_layout(snap_compare):

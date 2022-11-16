@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.5.0] - Unreleased
 
-
 ### Added
 
+- Add get_child_by_id and get_widget_by_id, remove get_child https://github.com/Textualize/textual/pull/1146
 - Add easing parameter to Widget.scroll_* methods https://github.com/Textualize/textual/pull/1144
 - Added Widget.call_later which invokes a callback on idle.
 - `DOMNode.ancestors` no longer includes `self`.
@@ -26,11 +26,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added Pilot.wait_for_animation
 - Added `Widget.move_child` https://github.com/Textualize/textual/issues/1121
 - Added a `Label` widget https://github.com/Textualize/textual/issues/1190
+- Support lazy-instantiated Screens (callables in App.SCREENS) https://github.com/Textualize/textual/pull/1185
 
 ### Changed
 
 - Watchers are now called immediately when setting the attribute if they are synchronous. https://github.com/Textualize/textual/pull/1145
 - Widget.call_later has been renamed to Widget.call_after_refresh.
+- Button variant values are now checked at runtime. https://github.com/Textualize/textual/issues/1189
 
 ### Fixed
 

@@ -25,6 +25,7 @@ from typing import (
     TypeVar,
     Union,
     cast,
+    Callable,
 )
 from weakref import WeakSet, WeakValueDictionary
 
@@ -60,7 +61,7 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
-from .widget import AwaitMount, Widget
+from .widget import AwaitMount, Widget, MountError
 
 if TYPE_CHECKING:
     from .devtools.client import DevtoolsClient
@@ -228,7 +229,7 @@ class App(Generic[ReturnType], DOMNode):
     }
     """
 
-    SCREENS: dict[str, Screen] = {}
+    SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
     TITLE: str | None = None
@@ -330,7 +331,7 @@ class App(Generic[ReturnType], DOMNode):
         self._registry: WeakSet[DOMNode] = WeakSet()
 
         self._installed_screens: WeakValueDictionary[
-            str, Screen
+            str, Screen | Callable[[], Screen]
         ] = WeakValueDictionary()
         self._installed_screens.update(**self.SCREENS)
 
@@ -873,7 +874,7 @@ class App(Generic[ReturnType], DOMNode):
     def render(self) -> RenderableType:
         return Blank(self.styles.background)
 
-    def get_child(self, id: str) -> DOMNode:
+    def get_child_by_id(self, id: str) -> Widget:
         """Shorthand for self.screen.get_child(id: str)
         Returns the first child (immediate descendent) of this DOMNode
         with the given ID.
@@ -887,7 +888,26 @@ class App(Generic[ReturnType], DOMNode):
         Raises:
             NoMatches: if no children could be found for this ID
         """
-        return self.screen.get_child(id)
+        return self.screen.get_child_by_id(id)
+
+    def get_widget_by_id(self, id: str) -> Widget:
+        """Shorthand for self.screen.get_widget_by_id(id)
+        Return the first descendant widget with the given ID.
+
+        Performs a breadth-first search rooted at the current screen.
+        It will not return the Screen if that matches the ID.
+        To get the screen, use `self.screen`.
+
+        Args:
+            id (str): The ID to search for in the subtree
+
+        Returns:
+            DOMNode: The first descendant encountered with this ID.
+
+        Raises:
+            NoMatches: if no children could be found for this ID
+        """
+        return self.screen.get_widget_by_id(id)
 
     def update_styles(self, node: DOMNode | None = None) -> None:
         """Request update of styles.
@@ -979,12 +999,15 @@ class App(Generic[ReturnType], DOMNode):
                 next_screen = self._installed_screens[screen]
             except KeyError:
                 raise KeyError(f"No screen called {screen!r} installed") from None
+            if callable(next_screen):
+                next_screen = next_screen()
+                self._installed_screens[screen] = next_screen
         else:
             next_screen = screen
         return next_screen
 
     def _get_screen(self, screen: Screen | str) -> tuple[Screen, AwaitMount]:
-        """Get an installed screen and a await mount object.
+        """Get an installed screen and an AwaitMount object.
 
         If the screen isn't running, it will be registered before it is run.
 
@@ -1539,7 +1562,7 @@ class App(Generic[ReturnType], DOMNode):
 
         # Close pre-defined screens
         for screen in self.SCREENS.values():
-            if screen._running:
+            if isinstance(screen, Screen) and screen._running:
                 await self._prune_node(screen)
 
         # Close any remaining nodes

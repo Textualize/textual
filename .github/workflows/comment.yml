@@ -13,6 +13,6 @@ jobs:
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
-            Did we solve your problem?
-
-            Glad we could help! 
+            Don't forget to [star](https://github.com/Textualize/textual) the repository!
+            
+            Follow [@textualizeio](https://twitter.com/textualizeio) for Textual updates.
