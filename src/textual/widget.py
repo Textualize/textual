@@ -560,7 +560,7 @@ class Widget(DOMNode):
         if before is None and after is None:
             raise WidgetError("One of `before` or `after` is required.")
         elif before is not None and after is not None:
-            raise WidgetError("Only one of `before`or `after` can be handled.")
+            raise WidgetError("Only one of `before` or `after` can be handled.")
 
         def _to_widget(child: int | Widget, called: str) -> Widget:
             """Ensure a given child reference is a Widget."""
