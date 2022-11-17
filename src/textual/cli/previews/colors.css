@@ -68,7 +68,7 @@ ColorGroup.-active {
 }
 
 
-ColorLabel {
+Label {
     padding: 0 0 1 0;
     content-align: center middle;
     color: $text;
