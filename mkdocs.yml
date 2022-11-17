@@ -96,6 +96,7 @@ nav:
       - "widgets/footer.md"
       - "widgets/header.md"
       - "widgets/input.md"
+      - "widgets/label.md"
       - "widgets/static.md"
       - "widgets/tree_control.md"
   - API:
@@ -109,6 +110,7 @@ nav:
     - "api/footer.md"
     - "api/geometry.md"
     - "api/header.md"
+    - "api/label.md"
     - "api/message_pump.md"
     - "api/message.md"
     - "api/pilot.md"
