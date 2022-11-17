@@ -168,9 +168,9 @@ class Button(Static, can_focus=True):
         """Create a Button widget.
 
         Args:
-            label (str): The text that appears within the button.
-            disabled (bool): Whether the button is disabled or not.
-            variant (ButtonVariant): The variant of the button.
+            label (str, optional): The text that appears within the button.
+            disabled (bool, optional): Whether the button is disabled or not.
+            variant (ButtonVariant, optional): The variant of the button.
             name (str | None, optional): The name of the button.
             id (str | None, optional): The ID of the button in the DOM.
             classes (str | None, optional): The CSS classes of the button.
@@ -267,8 +267,8 @@ class Button(Static, can_focus=True):
         """Utility constructor for creating a success Button variant.
 
         Args:
-            label (str): The text that appears within the button.
-            disabled (bool): Whether the button is disabled or not.
+            label (str, optional): The text that appears within the button.
+            disabled (bool, optional): Whether the button is disabled or not.
             name (str | None, optional): The name of the button.
             id (str | None, optional): The ID of the button in the DOM.
             classes(str | None, optional): The CSS classes of the button.
@@ -298,8 +298,8 @@ class Button(Static, can_focus=True):
         """Utility constructor for creating a warning Button variant.
 
         Args:
-            label (str): The text that appears within the button.
-            disabled (bool): Whether the button is disabled or not.
+            label (str, optional): The text that appears within the button.
+            disabled (bool, optional): Whether the button is disabled or not.
             name (str | None, optional): The name of the button.
             id (str | None, optional): The ID of the button in the DOM.
             classes (str | None, optional): The CSS classes of the button.
@@ -329,8 +329,8 @@ class Button(Static, can_focus=True):
         """Utility constructor for creating an error Button variant.
 
         Args:
-            label (str): The text that appears within the button.
-            disabled (bool): Whether the button is disabled or not.
+            label (str, optional): The text that appears within the button.
+            disabled (bool, optional): Whether the button is disabled or not.
             name (str | None, optional): The name of the button.
             id (str | None, optional): The ID of the button in the DOM.
             classes (str | None, optional): The CSS classes of the button.
