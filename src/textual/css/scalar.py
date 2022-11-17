@@ -383,10 +383,3 @@ def percentage_string_to_float(string: str) -> float:
     else:
         float_percentage = float(string)
     return float_percentage
-
-
-if __name__ == "__main__":
-    print(Scalar.parse("3.14fr"))
-    s = Scalar.parse("23")
-    print(repr(s))
-    print(repr(s.cells))
