@@ -237,7 +237,9 @@ def _get_key_aliases(key: str) -> list[str]:
 
 
 def _get_key_display(key: str) -> str:
-    """Given a key name"""
+    """Given a key (i.e. the `key` string argument to Binding __init__),
+    return the value that should be displayed in the app when referring
+    to this key (e.g. in the Footer widget)."""
     display_alias = KEY_DISPLAY_ALIASES.get(key)
     if display_alias:
         return display_alias
