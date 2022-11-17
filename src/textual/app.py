@@ -705,7 +705,7 @@ class App(Generic[ReturnType], DOMNode):
                 #  This conditional sleep can be removed after that issue is closed.
                 if key == "tab":
                     await asyncio.sleep(0.05)
-                await asyncio.sleep(0.02)
+                await asyncio.sleep(0.025)
         await app._animator.wait_for_idle()
 
     @asynccontextmanager

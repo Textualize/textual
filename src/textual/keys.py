@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import unicodedata
 from enum import Enum
 
 
@@ -219,7 +220,33 @@ KEY_ALIASES = {
     "ctrl+j": ["newline"],
 }
 
+KEY_DISPLAY_ALIASES = {
+    "up": "↑",
+    "down": "↓",
+    "left": "←",
+    "right": "→",
+    "backspace": "⌫",
+    "escape": "ESC",
+    "enter": "⏎",
+    "tab": "⇥",
+}
+
 
 def _get_key_aliases(key: str) -> list[str]:
     """Return all aliases for the given key, including the key itself"""
     return [key] + KEY_ALIASES.get(key, [])
+
+
+def _get_key_display(key: str) -> str | None:
+    """Given a key name"""
+    display_alias = KEY_DISPLAY_ALIASES.get(key)
+    if display_alias:
+        return display_alias
+
+    original_key = REPLACED_KEYS.get(key, key)
+    try:
+        unicode_character = unicodedata.lookup(original_key.upper().replace("_", " "))
+    except KeyError:
+        return original_key.upper()
+
+    return unicode_character
