@@ -13,8 +13,8 @@ from ..css._error_tools import friendly_list
 from ..reactive import reactive
 from ..widgets import Static
 
-PlaceholderVariant = Literal["default", "state", "position", "css", "text"]
-_VALID_PLACEHOLDER_VARIANTS_ORDERED = ["default", "state", "position", "css", "text"]
+PlaceholderVariant = Literal["default", "state", "size", "css", "text"]
+_VALID_PLACEHOLDER_VARIANTS_ORDERED = ["default", "state", "size", "css", "text"]
 _VALID_PLACEHOLDER_VARIANTS = set(_VALID_PLACEHOLDER_VARIANTS_ORDERED)
 _PLACEHOLDER_BACKGROUND_COLORS = [
     "#881177",
@@ -47,9 +47,10 @@ class Placeholder(Static, can_focus=True):
     The variants available are:
         default: shows a placeholder with a solid color.
         state: shows the placeholder mouse over and focus state.
-        position: shows the size and position of the placeholder.
+        size: shows the size of the placeholder.
         css: shows the css rules that apply to the placeholder.
-        text: shows some Lorem Ipsum text on the placeholder."""
+        text: shows some Lorem Ipsum text on the placeholder.
+    """
 
     DEFAULT_CSS = """
     Placeholder {
@@ -145,10 +146,10 @@ class Placeholder(Static, can_focus=True):
             )
         )
 
-    def _update_position_variant(self) -> None:
-        """Update the placeholder with the "position" variant.
+    def _update_size_variant(self) -> None:
+        """Update the placeholder with the "size" variant.
 
-        This variant shows the position and the size of the widget.
+        This variant shows the the size of the widget.
         """
         width, height = self.size
         position_data = {
