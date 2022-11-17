@@ -222,11 +222,3 @@ def show_design(light: ColorSystem, dark: ColorSystem) -> Table:
     table.add_column("Dark", justify="center")
     table.add_row(make_shades(light), make_shades(dark))
     return table
-
-
-if __name__ == "__main__":
-    from .app import DEFAULT_COLORS
-
-    from rich import print
-
-    print(show_design(DEFAULT_COLORS["light"], DEFAULT_COLORS["dark"]))
