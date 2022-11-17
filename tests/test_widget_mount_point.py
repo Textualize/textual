@@ -1,6 +1,6 @@
 import pytest
 
-from textual.widget import Widget
+from textual.widget import Widget, MountError
 
 
 class Content(Widget):
@@ -36,5 +36,5 @@ def test_find_dom_spot():
     # Finally, let's be sure that we get an error if, for some odd reason,
     # we go looking for a widget that isn't actually part of the DOM we're
     # looking in.
-    with pytest.raises(Widget.MountError):
+    with pytest.raises(MountError):
         _ = screen._find_mount_point(Widget())

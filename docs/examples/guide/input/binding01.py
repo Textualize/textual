@@ -23,7 +23,7 @@ class BindingApp(App):
         bar = Bar(color)
         bar.styles.background = Color.parse(color).with_alpha(0.5)
         self.mount(bar)
-        self.call_later(self.screen.scroll_end, animate=False)
+        self.call_after_refresh(self.screen.scroll_end, animate=False)
 
 
 if __name__ == "__main__":

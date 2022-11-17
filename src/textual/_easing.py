@@ -128,3 +128,4 @@ EASING = {
 }
 
 DEFAULT_EASING = "in_out_cubic"
+DEFAULT_SCROLL_EASING = "out_cubic"

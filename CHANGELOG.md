@@ -5,7 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.4.0] - Unreleased
+## [0.5.0] - Unreleased
+
+### Added
+
+- Add get_child_by_id and get_widget_by_id, remove get_child https://github.com/Textualize/textual/pull/1146
+- Add easing parameter to Widget.scroll_* methods https://github.com/Textualize/textual/pull/1144
+- Added Widget.call_later which invokes a callback on idle.
+- `DOMNode.ancestors` no longer includes `self`.
+- Added `DOMNode.ancestors_with_self`, which retains the old behaviour of
+  `DOMNode.ancestors`.
+- Improved the speed of `DOMQuery.remove`.
+- Added DataTable.clear
+- Added low-level `textual.walk` methods.
+- It is now possible to `await` a `Widget.remove`.
+  https://github.com/Textualize/textual/issues/1094
+- It is now possible to `await` a `DOMQuery.remove`. Note that this changes
+  the return value of `DOMQuery.remove`, which uses to return `self`.
+  https://github.com/Textualize/textual/issues/1094
+- Added Pilot.wait_for_animation
+- Added `Widget.move_child` https://github.com/Textualize/textual/issues/1121
+- Support lazy-instantiated Screens (callables in App.SCREENS) https://github.com/Textualize/textual/pull/1185
+
+### Changed
+
+- Watchers are now called immediately when setting the attribute if they are synchronous. https://github.com/Textualize/textual/pull/1145
+- Widget.call_later has been renamed to Widget.call_after_refresh.
+- Button variant values are now checked at runtime. https://github.com/Textualize/textual/issues/1189
+
+### Fixed
+
+- Fixed DataTable row not updating after add https://github.com/Textualize/textual/issues/1026
+- Fixed issues with animation. Now objects of different types may be animated.
+- Fixed containers with transparent background not showing borders https://github.com/Textualize/textual/issues/1175
+- Fixed auto-width in horizontal containers https://github.com/Textualize/textual/pull/1155
+- Fixed Input cursor invisible when placeholder empty https://github.com/Textualize/textual/pull/1202
+
+## [0.4.0] - 2022-11-08
+
+https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 
 ### Changed
 
@@ -15,12 +53,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `DOMNode.query_one` now raises a `TooManyMatches` exception if there is
   more than one matching node.
   https://github.com/Textualize/textual/issues/1096
+- `App.mount` and `Widget.mount` have new `before` and `after` parameters https://github.com/Textualize/textual/issues/778
 
 ### Added
 
 - Added `init` param to reactive.watch
 - `CSS_PATH` can now be a list of CSS files https://github.com/Textualize/textual/pull/1079
 - Added `DOMQuery.only_one` https://github.com/Textualize/textual/issues/1096
+- Writes to stdout are now done in a thread, for smoother animation. https://github.com/Textualize/textual/pull/1104
 
 ## [0.3.0] - 2022-10-31
 
@@ -178,6 +218,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.4.0]: https://github.com/Textualize/textual/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/Textualize/textual/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/Textualize/textual/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/Textualize/textual/compare/v0.1.18...v0.2.0

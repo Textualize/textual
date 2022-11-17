@@ -6,24 +6,26 @@ import io
 import os
 import platform
 import sys
+import threading
 import unicodedata
 import warnings
 from asyncio import Task
-from contextlib import asynccontextmanager
-from contextlib import redirect_stderr, redirect_stdout
+from contextlib import asynccontextmanager, redirect_stderr, redirect_stdout
 from datetime import datetime
 from pathlib import Path, PurePath
+from queue import Queue
 from time import perf_counter
 from typing import (
+    TYPE_CHECKING,
     Any,
     Generic,
     Iterable,
-    Type,
-    TYPE_CHECKING,
-    TypeVar,
-    cast,
-    Union,
     List,
+    Type,
+    TypeVar,
+    Union,
+    cast,
+    Callable,
 )
 from weakref import WeakSet, WeakValueDictionary
 
@@ -36,14 +38,14 @@ from rich.segment import Segment, Segments
 from rich.traceback import Traceback
 
 from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
-from ._animator import Animator, DEFAULT_EASING, Animatable, EasingFunction
+from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
-from ._typing import TypeAlias
+from ._typing import TypeAlias, Final
 from .binding import Binding, Bindings
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
@@ -59,7 +61,7 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
-from .widget import AwaitMount, Widget
+from .widget import AwaitMount, Widget, MountError
 
 if TYPE_CHECKING:
     from .devtools.client import DevtoolsClient
@@ -128,11 +130,75 @@ ReturnType = TypeVar("ReturnType")
 
 
 class _NullFile:
+    """A file-like where writes go nowhere."""
+
     def write(self, text: str) -> None:
         pass
 
     def flush(self) -> None:
         pass
+
+
+MAX_QUEUED_WRITES: Final[int] = 30
+
+
+class _WriterThread(threading.Thread):
+    """A thread / file-like to do writes to stdout in the background."""
+
+    def __init__(self) -> None:
+        super().__init__(daemon=True)
+        self._queue: Queue[str | None] = Queue(MAX_QUEUED_WRITES)
+        self._file = sys.__stdout__
+
+    def write(self, text: str) -> None:
+        """Write text. Text will be enqueued for writing.
+
+        Args:
+            text (str): Text to write to the file.
+        """
+        self._queue.put(text)
+
+    def isatty(self) -> bool:
+        """Pretend to be a terminal.
+
+        Returns:
+            bool: True if this is a tty.
+        """
+        return True
+
+    def fileno(self) -> int:
+        """Get file handle number.
+
+        Returns:
+            int: File number of proxied file.
+        """
+        return self._file.fileno()
+
+    def flush(self) -> None:
+        """Flush the file (a no-op, because flush is done in the thread)."""
+        return
+
+    def run(self) -> None:
+        """Run the thread."""
+        write = self._file.write
+        flush = self._file.flush
+        get = self._queue.get
+        qsize = self._queue.qsize
+        # Read from the queue, write to the file.
+        # Flush when there is a break.
+        while True:
+            text: str | None = get()
+            empty = qsize() == 0
+            if text is None:
+                break
+            write(text)
+            if empty:
+                flush()
+
+    def stop(self) -> None:
+        """Stop the thread, and block until it finished."""
+        self._queue.put(None)
+        self.join()
 
 
 CSSPathType = Union[str, PurePath, List[Union[str, PurePath]], None]
@@ -163,7 +229,7 @@ class App(Generic[ReturnType], DOMNode):
     }
     """
 
-    SCREENS: dict[str, Screen] = {}
+    SCREENS: dict[str, Screen | Callable[[], Screen]] = {}
     _BASE_PATH: str | None = None
     CSS_PATH: CSSPathType = None
     TITLE: str | None = None
@@ -192,8 +258,17 @@ class App(Generic[ReturnType], DOMNode):
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
             self._filter = Monochrome()
+
+        self._writer_thread: _WriterThread | None = None
+        if sys.__stdout__ is None:
+            file = _NullFile()
+        else:
+            self._writer_thread = _WriterThread()
+            self._writer_thread.start()
+            file = self._writer_thread
+
         self.console = Console(
-            file=sys.__stdout__ if sys.__stdout__ is not None else _NullFile(),
+            file=file,
             markup=False,
             highlight=False,
             emoji=False,
@@ -256,7 +331,7 @@ class App(Generic[ReturnType], DOMNode):
         self._registry: WeakSet[DOMNode] = WeakSet()
 
         self._installed_screens: WeakValueDictionary[
-            str, Screen
+            str, Screen | Callable[[], Screen]
         ] = WeakValueDictionary()
         self._installed_screens.update(**self.SCREENS)
 
@@ -281,7 +356,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def return_value(self) -> ReturnType | None:
-        """Get the return type."""
+        """ReturnType | None: The return type of the app."""
         return self._return_value
 
     def animate(
@@ -322,32 +397,17 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def debug(self) -> bool:
-        """Check if debug mode is enabled.
-
-        Returns:
-            bool: True if debug mode is enabled.
-
-        """
+        """bool: Is debug mode is enabled?"""
         return "debug" in self.features
 
     @property
     def is_headless(self) -> bool:
-        """Check if the app is running in 'headless' mode.
-
-        Returns:
-            bool: True if the app is in headless mode.
-
-        """
+        """bool: Is the app running in 'headless' mode?"""
         return False if self._driver is None else self._driver.is_headless
 
     @property
     def screen_stack(self) -> list[Screen]:
-        """Get a *copy* of the screen stack.
-
-        Returns:
-            list[Screen]: List of screens.
-
-        """
+        """list[Screen]: A *copy* of the screen stack."""
         return self._screen_stack.copy()
 
     def exit(self, result: ReturnType | None = None) -> None:
@@ -361,7 +421,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def focused(self) -> Widget | None:
-        """Get the widget that is focused on the currently active screen."""
+        """Widget | None: the widget that is focused on the currently active screen."""
         return self.screen.focused
 
     @property
@@ -440,13 +500,10 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def screen(self) -> Screen:
-        """Get the current screen.
+        """Screen: The current screen.
 
         Raises:
             ScreenStackError: If there are no screens on the stack.
-
-        Returns:
-            Screen: The currently active screen.
         """
         try:
             return self._screen_stack[-1]
@@ -455,11 +512,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def size(self) -> Size:
-        """Get the size of the terminal.
-
-        Returns:
-            Size: Size of the terminal
-        """
+        """Size: The size of the terminal."""
         if self._driver is not None and self._driver._size is not None:
             width, height = self._driver._size
         else:
@@ -468,6 +521,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def log(self) -> Logger:
+        """Logger: The logger object."""
         return self._logger
 
     def _log(
@@ -534,7 +588,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             filename (str | None, optional): Filename of screenshot, or None to auto-generate. Defaults to None.
-            path (str, optional): Path to directory. Defaults to "~/".
+            path (str, optional): Path to directory. Defaults to current working directory.
         """
         self.save_screenshot(filename, path)
 
@@ -750,9 +804,11 @@ class App(Generic[ReturnType], DOMNode):
                 terminal_size=size,
             )
         finally:
-            if auto_pilot_task is not None:
-                await auto_pilot_task
-            await app._shutdown()
+            try:
+                if auto_pilot_task is not None:
+                    await auto_pilot_task
+            finally:
+                await app._shutdown()
 
         return app.return_value
 
@@ -818,7 +874,7 @@ class App(Generic[ReturnType], DOMNode):
     def render(self) -> RenderableType:
         return Blank(self.styles.background)
 
-    def get_child(self, id: str) -> DOMNode:
+    def get_child_by_id(self, id: str) -> Widget:
         """Shorthand for self.screen.get_child(id: str)
         Returns the first child (immediate descendent) of this DOMNode
         with the given ID.
@@ -832,7 +888,26 @@ class App(Generic[ReturnType], DOMNode):
         Raises:
             NoMatches: if no children could be found for this ID
         """
-        return self.screen.get_child(id)
+        return self.screen.get_child_by_id(id)
+
+    def get_widget_by_id(self, id: str) -> Widget:
+        """Shorthand for self.screen.get_widget_by_id(id)
+        Return the first descendant widget with the given ID.
+
+        Performs a breadth-first search rooted at the current screen.
+        It will not return the Screen if that matches the ID.
+        To get the screen, use `self.screen`.
+
+        Args:
+            id (str): The ID to search for in the subtree
+
+        Returns:
+            DOMNode: The first descendant encountered with this ID.
+
+        Raises:
+            NoMatches: if no children could be found for this ID
+        """
+        return self.screen.get_widget_by_id(id)
 
     def update_styles(self, node: DOMNode | None = None) -> None:
         """Request update of styles.
@@ -924,12 +999,15 @@ class App(Generic[ReturnType], DOMNode):
                 next_screen = self._installed_screens[screen]
             except KeyError:
                 raise KeyError(f"No screen called {screen!r} installed") from None
+            if callable(next_screen):
+                next_screen = next_screen()
+                self._installed_screens[screen] = next_screen
         else:
             next_screen = screen
         return next_screen
 
     def _get_screen(self, screen: Screen | str) -> tuple[Screen, AwaitMount]:
-        """Get an installed screen and a await mount object.
+        """Get an installed screen and an AwaitMount object.
 
         If the screen isn't running, it will be registered before it is run.
 
@@ -1238,6 +1316,10 @@ class App(Generic[ReturnType], DOMNode):
 
                 await self.animator.start()
 
+            except Exception:
+                await self.animator.stop()
+                raise
+
             finally:
                 await self._ready()
                 await invoke_ready_callback()
@@ -1250,10 +1332,11 @@ class App(Generic[ReturnType], DOMNode):
                 pass
             finally:
                 self._running = False
-                for timer in list(self._timers):
-                    await timer.stop()
-
-            await self.animator.stop()
+                try:
+                    await self.animator.stop()
+                finally:
+                    for timer in list(self._timers):
+                        await timer.stop()
 
         self._running = True
         try:
@@ -1479,7 +1562,7 @@ class App(Generic[ReturnType], DOMNode):
 
         # Close pre-defined screens
         for screen in self.SCREENS.values():
-            if screen._running:
+            if isinstance(screen, Screen) and screen._running:
                 await self._prune_node(screen)
 
         # Close any remaining nodes
@@ -1501,6 +1584,9 @@ class App(Generic[ReturnType], DOMNode):
         self._print_error_renderables()
         if self.devtools is not None and self.devtools.is_connected:
             await self._disconnect_devtools()
+
+        if self._writer_thread is not None:
+            self._writer_thread.stop()
 
     async def _on_exit_app(self) -> None:
         await self._message_queue.put(None)
@@ -1529,19 +1615,27 @@ class App(Generic[ReturnType], DOMNode):
             screen (Screen): Screen instance
             renderable (RenderableType): A Rich renderable.
         """
-        if screen is not self.screen or renderable is None:
-            return
-        if self._running and not self._closed and not self.is_headless:
-            console = self.console
-            self._begin_update()
-            try:
+
+        try:
+            if screen is not self.screen or renderable is None:
+                return
+
+            if self._running and not self._closed and not self.is_headless:
+                console = self.console
+                self._begin_update()
                 try:
-                    console.print(renderable)
-                except Exception as error:
-                    self._handle_exception(error)
-            finally:
-                self._end_update()
-            console.file.flush()
+                    try:
+                        console.print(renderable)
+                    except Exception as error:
+                        self._handle_exception(error)
+                finally:
+                    self._end_update()
+                console.file.flush()
+        finally:
+            self.post_display_hook()
+
+    def post_display_hook(self) -> None:
+        """Called immediately after a display is done. Used in tests."""
 
     def get_widget_at(self, x: int, y: int) -> tuple[Widget, Region]:
         """Get the widget under the given coordinates.
@@ -1575,7 +1669,9 @@ class App(Generic[ReturnType], DOMNode):
                 (self, self._bindings),
             ]
         else:
-            namespace_bindings = [(node, node._bindings) for node in focused.ancestors]
+            namespace_bindings = [
+                (node, node._bindings) for node in focused.ancestors_with_self
+            ]
         return namespace_bindings
 
     async def check_bindings(self, key: str, universal: bool = False) -> bool:
@@ -1744,24 +1840,83 @@ class App(Generic[ReturnType], DOMNode):
         event.stop()
         await self.screen.post_message(event)
 
-    async def _on_remove(self, event: events.Remove) -> None:
-        widget = event.widget
-        parent = widget.parent
+    def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
+        """Detach a list of widgets from the DOM.
 
-        remove_widgets = widget.walk_children(
-            Widget, with_self=True, method="depth", reverse=True
-        )
+        Args:
+            widgets (list[Widget]): The list of widgets to detach from the DOM.
 
-        if self.screen.focused in remove_widgets:
-            self.screen._reset_focus(
-                self.screen.focused,
-                [to_remove for to_remove in remove_widgets if to_remove.can_focus],
+        Returns:
+            list[Widget]: The list of widgets that should be pruned.
+
+        Note:
+            A side-effect of calling this function is that each parent of
+            each affected widget will be made to forget about the affected
+            child.
+        """
+
+        # We've been given a list of widgets to remove, but removing those
+        # will also result in other (descendent) widgets being removed. So
+        # to start with let's get a list of everything that's not going to
+        # be in the DOM by the time we've finished. Note that, at this
+        # point, it's entirely possible that there will be duplicates.
+        everything_to_remove: list[Widget] = []
+        for widget in widgets:
+            everything_to_remove.extend(
+                widget.walk_children(
+                    Widget, with_self=True, method="depth", reverse=True
+                )
             )
 
-        await self._prune_node(widget)
+        # Next up, let's quickly create a deduped collection of things to
+        # remove and ensure that, if one of them is the focused widget,
+        # focus gets moved to somewhere else.
+        dedupe_to_remove = set(everything_to_remove)
+        if self.screen.focused in dedupe_to_remove:
+            self.screen._reset_focus(
+                self.screen.focused,
+                [to_remove for to_remove in dedupe_to_remove if to_remove.can_focus],
+            )
 
-        if parent is not None:
-            parent.refresh(layout=True)
+        # Next, we go through the set of widgets we've been asked to remove
+        # and try and find the minimal collection of widgets that will
+        # result in everything else that should be removed, being removed.
+        # In other words: find the smallest set of ancestors in the DOM that
+        # will remove the widgets requested for removal, and also ensure
+        # that all knock-on effects happen too.
+        request_remove = set(widgets)
+        pruned_remove = [
+            widget for widget in widgets if request_remove.isdisjoint(widget.ancestors)
+        ]
+
+        # Now that we know that minimal set of widgets, we go through them
+        # and get their parents to forget about them. This has the effect of
+        # snipping each affected branch from the DOM.
+        for widget in pruned_remove:
+            if widget.parent is not None:
+                widget.parent.children._remove(widget)
+
+        # Return the list of widgets that should end up being sent off in a
+        # prune event.
+        return pruned_remove
+
+    async def _on_prune(self, event: events.Prune) -> None:
+        """Handle a prune event.
+
+        Args:
+            event (events.Prune): The prune event.
+        """
+
+        try:
+            # Prune all the widgets.
+            for widget in event.widgets:
+                await self._prune_node(widget)
+        finally:
+            # Finally, flag that we're done.
+            event.finished_flag.set()
+
+        # Flag that the layout needs refreshing.
+        self.refresh(layout=True)
 
     def _walk_children(self, root: Widget) -> Iterable[list[Widget]]:
         """Walk children depth first, generating widgets and a list of their siblings.

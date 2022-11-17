@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from asyncio import Lock, wait, create_task
+from collections import Counter
+from asyncio import Lock, wait, create_task, Event as AsyncEvent
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
@@ -34,12 +35,14 @@ from . import errors, events, messages
 from ._animator import BoundAnimator, DEFAULT_EASING, Animatable, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._context import active_app
+from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
 from .binding import NoBinding
 from .box_model import BoxModel, get_box_model
+from .css.query import NoMatches
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
@@ -48,6 +51,8 @@ from .message import Message
 from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
+from .await_remove import AwaitRemove
+from .walk import walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
@@ -147,6 +152,14 @@ class RenderCache(NamedTuple):
     lines: Lines
 
 
+class WidgetError(Exception):
+    """Base widget error."""
+
+
+class MountError(WidgetError):
+    """Error raised when there was a problem with the mount request."""
+
+
 @rich.repr.auto
 class Widget(DOMNode):
     """
@@ -233,6 +246,10 @@ class Widget(DOMNode):
             id=id,
             classes=self.DEFAULT_CLASSES if classes is None else classes,
         )
+
+        if self in children:
+            raise WidgetError("A widget can't be its own parent")
+
         self._add_children(*children)
 
     virtual_size = Reactive(Size(0, 0), layout=True)
@@ -320,6 +337,43 @@ class Widget(DOMNode):
     def offset(self, offset: Offset) -> None:
         self.styles.offset = ScalarOffset.from_offset(offset)
 
+    def get_child_by_id(self, id: str) -> Widget:
+        """Return the first child (immediate descendent) of this node with the given ID.
+
+        Args:
+            id (str): The ID of the child.
+
+        Returns:
+            DOMNode: The first child of this node with the ID.
+
+        Raises:
+            NoMatches: if no children could be found for this ID
+        """
+        child = self.children._get_by_id(id)
+        if child is not None:
+            return child
+        raise NoMatches(f"No child found with id={id!r}")
+
+    def get_widget_by_id(self, id: str) -> Widget:
+        """Return the first descendant widget with the given ID.
+        Performs a depth-first search rooted at this widget.
+
+        Args:
+            id (str): The ID to search for in the subtree
+
+        Returns:
+            DOMNode: The first descendant encountered with this ID.
+
+        Raises:
+            NoMatches: if no children could be found for this ID
+        """
+        for child in walk_depth_first(self):
+            try:
+                return child.get_child_by_id(id)
+            except NoMatches:
+                pass
+        raise NoMatches(f"No descendant found with id={id!r}")
+
     def get_component_rich_style(self, name: str) -> Style:
         """Get a *Rich* style for a component.
 
@@ -374,9 +428,6 @@ class Widget(DOMNode):
         if self._scrollbar_corner is not None:
             yield self._scrollbar_corner
 
-    class MountError(Exception):
-        """Error raised when there was a problem with the mount request."""
-
     def _find_mount_point(self, spot: int | str | "Widget") -> tuple["Widget", int]:
         """Attempt to locate the point where the caller wants to mount something.
 
@@ -387,7 +438,7 @@ class Widget(DOMNode):
             tuple[Widget, int]: The parent and the location in its child list.
 
         Raises:
-            Widget.MountError: If there was an error finding where to mount a widget.
+            MountError: If there was an error finding where to mount a widget.
 
         The rules of this method are:
 
@@ -414,7 +465,7 @@ class Widget(DOMNode):
         # have a parent? There's no way we can use it as a sibling to make
         # mounting decisions if it doesn't have a parent.
         if spot.parent is None:
-            raise self.MountError(
+            raise MountError(
                 f"Unable to find relative location of {spot!r} because it has no parent"
             )
 
@@ -422,9 +473,9 @@ class Widget(DOMNode):
         # children. We should be able to go looking for the widget's
         # location amongst its parent's children.
         try:
-            return spot.parent, spot.parent.children.index(spot)
+            return cast("Widget", spot.parent), spot.parent.children.index(spot)
         except ValueError:
-            raise self.MountError(f"{spot!r} is not a child of {self!r}") from None
+            raise MountError(f"{spot!r} is not a child of {self!r}") from None
 
     def mount(
         self,
@@ -450,9 +501,23 @@ class Widget(DOMNode):
             provided a ``MountError`` will be raised.
         """
 
+        # Check for duplicate IDs in the incoming widgets
+        ids_to_mount = [widget.id for widget in widgets if widget.id is not None]
+        unique_ids = set(ids_to_mount)
+        num_unique_ids = len(unique_ids)
+        num_widgets_with_ids = len(ids_to_mount)
+        if num_unique_ids != num_widgets_with_ids:
+            counter = Counter(widget.id for widget in widgets)
+            for widget_id, count in counter.items():
+                if count > 1:
+                    raise MountError(
+                        f"Tried to insert {count!r} widgets with the same ID {widget_id!r}. "
+                        f"Widget IDs must be unique."
+                    )
+
         # Saying you want to mount before *and* after something is an error.
         if before is not None and after is not None:
-            raise self.MountError(
+            raise MountError(
                 "Only one of `before` or `after` can be handled -- not both"
             )
 
@@ -468,6 +533,69 @@ class Widget(DOMNode):
         return AwaitMount(
             self.app._register(parent, *widgets, before=before, after=after)
         )
+
+    def move_child(
+        self,
+        child: int | Widget,
+        before: int | Widget | None = None,
+        after: int | Widget | None = None,
+    ) -> None:
+        """Move a child widget within its parent's list of children.
+
+        Args:
+            child (int | Widget): The child widget to move.
+            before: (int | Widget, optional): Optional location to move before.
+            after: (int | Widget, optional): Optional location to move after.
+
+        Raises:
+            WidgetError: If there is a problem with the child or target.
+
+        Note:
+            Only one of ``before`` or ``after`` can be provided. If neither
+            or both are provided a ``WidgetError`` will be raised.
+        """
+
+        # One or the other of before or after are required. Can't do
+        # neither, can't do both.
+        if before is None and after is None:
+            raise WidgetError("One of `before` or `after` is required.")
+        elif before is not None and after is not None:
+            raise WidgetError("Only one of `before` or `after` can be handled.")
+
+        def _to_widget(child: int | Widget, called: str) -> Widget:
+            """Ensure a given child reference is a Widget."""
+            if isinstance(child, int):
+                try:
+                    child = self.children[child]
+                except IndexError:
+                    raise WidgetError(
+                        f"An index of {child} for the child to {called} is out of bounds"
+                    ) from None
+            else:
+                # We got an actual widget, so let's be sure it really is one of
+                # our children.
+                try:
+                    _ = self.children.index(child)
+                except ValueError:
+                    raise WidgetError(f"{child!r} is not a child of {self!r}") from None
+            return child
+
+        # Ensure the child and target are widgets.
+        child = _to_widget(child, "move")
+        target = _to_widget(before if after is None else after, "move towards")
+
+        # At this point we should know what we're moving, and it should be a
+        # child; where we're moving it to, which should be within the child
+        # list; and how we're supposed to move it. All that's left is doing
+        # the right thing.
+        self.children._remove(child)
+        if before is not None:
+            self.children._insert(self.children.index(target), child)
+        else:
+            self.children._insert(self.children.index(target) + 1, child)
+
+        # Request a refresh.
+        self.refresh(layout=True)
 
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.
@@ -1045,7 +1173,7 @@ class Widget(DOMNode):
         Returns:
             tuple[str, ...]: Tuple of layer names.
         """
-        for node in self.ancestors:
+        for node in self.ancestors_with_self:
             if not isinstance(node, Widget):
                 break
             if node.styles.has_rule("layers"):
@@ -1127,6 +1255,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        easing: EasingFunction | str | None = None,
     ) -> bool:
         """Scroll to a given (absolute) coordinate, optionally animating.
 
@@ -1136,6 +1265,8 @@ class Widget(DOMNode):
             animate (bool, optional): Animate to new scroll position. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the default scrolling easing function.
 
         Returns:
             bool: True if the scroll position changed, otherwise False.
@@ -1145,6 +1276,10 @@ class Widget(DOMNode):
             # TODO: configure animation speed
             if duration is None and speed is None:
                 speed = 50
+
+            if easing is None:
+                easing = DEFAULT_SCROLL_EASING
+
             if x is not None:
                 self.scroll_target_x = x
                 if x != self.scroll_x:
@@ -1153,7 +1288,7 @@ class Widget(DOMNode):
                         self.scroll_target_x,
                         speed=speed,
                         duration=duration,
-                        easing="out_cubic",
+                        easing=easing,
                     )
                     scrolled_x = True
             if y is not None:
@@ -1164,7 +1299,7 @@ class Widget(DOMNode):
                         self.scroll_target_y,
                         speed=speed,
                         duration=duration,
-                        easing="out_cubic",
+                        easing=easing,
                     )
                     scrolled_y = True
 
@@ -1188,6 +1323,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        easing: EasingFunction | str | None = None,
     ) -> bool:
         """Scroll relative to current position.
 
@@ -1197,6 +1333,8 @@ class Widget(DOMNode):
             animate (bool, optional): Animate to new scroll position. Defaults to False.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the configured default scrolling easing function.
 
         Returns:
             bool: True if the scroll position changed, otherwise False.
@@ -1207,6 +1345,7 @@ class Widget(DOMNode):
             animate=animate,
             speed=speed,
             duration=duration,
+            easing=easing,
         )
 
     def scroll_home(
@@ -1215,6 +1354,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        easing: EasingFunction | str | None = None,
     ) -> bool:
         """Scroll to home position.
 
@@ -1222,13 +1362,17 @@ class Widget(DOMNode):
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the configured default scrolling easing function.
 
         Returns:
             bool: True if any scrolling was done.
         """
         if speed is None and duration is None:
             duration = 1.0
-        return self.scroll_to(0, 0, animate=animate, speed=speed, duration=duration)
+        return self.scroll_to(
+            0, 0, animate=animate, speed=speed, duration=duration, easing=easing
+        )
 
     def scroll_end(
         self,
@@ -1236,6 +1380,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        easing: EasingFunction | str | None = None,
     ) -> bool:
         """Scroll to the end of the container.
 
@@ -1243,6 +1388,8 @@ class Widget(DOMNode):
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the configured default scrolling easing function.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1251,7 +1398,12 @@ class Widget(DOMNode):
         if speed is None and duration is None:
             duration = 1.0
         return self.scroll_to(
-            0, self.max_scroll_y, animate=animate, speed=speed, duration=duration
+            0,
+            self.max_scroll_y,
+            animate=animate,
+            speed=speed,
+            duration=duration,
+            easing=easing,
         )
 
     def scroll_left(
@@ -1260,6 +1412,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        easing: EasingFunction | str | None = None,
     ) -> bool:
         """Scroll one cell left.
 
@@ -1267,13 +1420,19 @@ class Widget(DOMNode):
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the configured default scrolling easing function.
 
         Returns:
             bool: True if any scrolling was done.
 
         """
         return self.scroll_to(
-            x=self.scroll_target_x - 1, animate=animate, speed=speed, duration=duration
+            x=self.scroll_target_x - 1,
+            animate=animate,
+            speed=speed,
+            duration=duration,
+            easing=easing,
         )
 
     def scroll_right(
@@ -1282,6 +1441,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        easing: EasingFunction | str | None = None,
     ) -> bool:
         """Scroll on cell right.
 
@@ -1289,13 +1449,19 @@ class Widget(DOMNode):
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the configured default scrolling easing function.
 
         Returns:
             bool: True if any scrolling was done.
 
         """
         return self.scroll_to(
-            x=self.scroll_target_x + 1, animate=animate, speed=speed, duration=duration
+            x=self.scroll_target_x + 1,
+            animate=animate,
+            speed=speed,
+            duration=duration,
+            easing=easing,
         )
 
     def scroll_down(
@@ -1304,6 +1470,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        easing: EasingFunction | str | None = None,
     ) -> bool:
         """Scroll one line down.
 
@@ -1311,13 +1478,19 @@ class Widget(DOMNode):
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the configured default scrolling easing function.
 
         Returns:
             bool: True if any scrolling was done.
 
         """
         return self.scroll_to(
-            y=self.scroll_target_y + 1, animate=animate, speed=speed, duration=duration
+            y=self.scroll_target_y + 1,
+            animate=animate,
+            speed=speed,
+            duration=duration,
+            easing=easing,
         )
 
     def scroll_up(
@@ -1326,6 +1499,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        easing: EasingFunction | str | None = None,
     ) -> bool:
         """Scroll one line up.
 
@@ -1333,13 +1507,19 @@ class Widget(DOMNode):
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the configured default scrolling easing function.
 
         Returns:
             bool: True if any scrolling was done.
 
         """
         return self.scroll_to(
-            y=self.scroll_target_y - 1, animate=animate, speed=speed, duration=duration
+            y=self.scroll_target_y - 1,
+            animate=animate,
+            speed=speed,
+            duration=duration,
+            easing=easing,
         )
 
     def scroll_page_up(
@@ -1348,6 +1528,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        easing: EasingFunction | str | None = None,
     ) -> bool:
         """Scroll one page up.
 
@@ -1355,6 +1536,8 @@ class Widget(DOMNode):
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the configured default scrolling easing function.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1365,6 +1548,7 @@ class Widget(DOMNode):
             animate=animate,
             speed=speed,
             duration=duration,
+            easing=easing,
         )
 
     def scroll_page_down(
@@ -1373,6 +1557,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        easing: EasingFunction | str | None = None,
     ) -> bool:
         """Scroll one page down.
 
@@ -1380,6 +1565,8 @@ class Widget(DOMNode):
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the configured default scrolling easing function.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1390,6 +1577,7 @@ class Widget(DOMNode):
             animate=animate,
             speed=speed,
             duration=duration,
+            easing=easing,
         )
 
     def scroll_page_left(
@@ -1398,6 +1586,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        easing: EasingFunction | str | None = None,
     ) -> bool:
         """Scroll one page left.
 
@@ -1405,6 +1594,8 @@ class Widget(DOMNode):
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the configured default scrolling easing function.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1417,6 +1608,7 @@ class Widget(DOMNode):
             animate=animate,
             speed=speed,
             duration=duration,
+            easing=easing,
         )
 
     def scroll_page_right(
@@ -1425,6 +1617,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        easing: EasingFunction | str | None = None,
     ) -> bool:
         """Scroll one page right.
 
@@ -1432,6 +1625,8 @@ class Widget(DOMNode):
             animate (bool, optional): Animate scroll. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the configured default scrolling easing function.
 
         Returns:
             bool: True if any scrolling was done.
@@ -1444,6 +1639,7 @@ class Widget(DOMNode):
             animate=animate,
             speed=speed,
             duration=duration,
+            easing=easing,
         )
 
     def scroll_to_widget(
@@ -1453,6 +1649,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        easing: EasingFunction | str | None = None,
         top: bool = False,
     ) -> bool:
         """Scroll scrolling to bring a widget in to view.
@@ -1462,6 +1659,9 @@ class Widget(DOMNode):
             animate (bool, optional): True to animate, or False to jump. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the configured default scrolling easing function.
+            top (bool, optional): Scroll widget to top of container. Defaults to False.
 
         Returns:
             bool: True if any scrolling has occurred in any descendant, otherwise False.
@@ -1480,6 +1680,7 @@ class Widget(DOMNode):
                 speed=speed,
                 duration=duration,
                 top=top,
+                easing=easing,
             )
             if scroll_offset:
                 scrolled = True
@@ -1506,6 +1707,7 @@ class Widget(DOMNode):
         animate: bool = True,
         speed: float | None = None,
         duration: float | None = None,
+        easing: EasingFunction | str | None = None,
         top: bool = False,
     ) -> Offset:
         """Scrolls a given region in to view, if required.
@@ -1519,6 +1721,8 @@ class Widget(DOMNode):
             animate (bool, optional): True to animate, or False to jump. Defaults to True.
             speed (float | None, optional): Speed of scroll if animate is True. Or None to use duration.
             duration (float | None, optional): Duration of animation, if animate is True and speed is None.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the configured default scrolling easing function.
             top (bool, optional): Scroll region to top of container. Defaults to False.
 
         Returns:
@@ -1546,6 +1750,7 @@ class Widget(DOMNode):
                 animate=animate if (abs(delta_y) > 1 or delta_x) else False,
                 speed=speed,
                 duration=duration,
+                easing=easing,
             )
         return delta
 
@@ -1556,6 +1761,7 @@ class Widget(DOMNode):
         speed: float | None = None,
         duration: float | None = None,
         top: bool = False,
+        easing: EasingFunction | str | None = None,
     ) -> None:
         """Scroll the container to make this widget visible.
 
@@ -1564,16 +1770,19 @@ class Widget(DOMNode):
             speed (float | None, optional): _description_. Defaults to None.
             duration (float | None, optional): _description_. Defaults to None.
             top (bool, optional): Scroll to top of container. Defaults to False.
+            easing (EasingFunction | str | None, optional): An easing method for the scrolling animation. Defaults to "None",
+                which will result in Textual choosing the configured default scrolling easing function.
         """
         parent = self.parent
         if isinstance(parent, Widget):
-            self.call_later(
+            self.call_after_refresh(
                 parent.scroll_to_widget,
                 self,
                 animate=animate,
                 speed=speed,
                 duration=duration,
                 top=top,
+                easing=easing,
             )
 
     def __init_subclass__(
@@ -1899,9 +2108,21 @@ class Widget(DOMNode):
 
         self.check_idle()
 
-    def remove(self) -> None:
-        """Remove the Widget from the DOM (effectively deleting it)"""
-        self.app.post_message_no_wait(events.Remove(self, widget=self))
+    def remove(self) -> AwaitRemove:
+        """Remove the Widget from the DOM (effectively deleting it)
+
+        Returns:
+            AwaitRemove: An awaitable object that waits for the widget to be removed.
+        """
+        prune_finished_event = AsyncEvent()
+        self.app.post_message_no_wait(
+            events.Prune(
+                self,
+                widgets=self.app._detach_from_dom([self]),
+                finished_flag=prune_finished_event,
+            )
+        )
+        return AwaitRemove(prune_finished_event)
 
     def render(self) -> RenderableType:
         """Get renderable for widget.
@@ -2050,14 +2271,14 @@ class Widget(DOMNode):
         self.mouse_over = True
 
     def _on_focus(self, event: events.Focus) -> None:
-        for node in self.ancestors:
+        for node in self.ancestors_with_self:
             if node._has_focus_within:
                 self.app.update_styles(node)
         self.has_focus = True
         self.refresh()
 
     def _on_blur(self, event: events.Blur) -> None:
-        if any(node._has_focus_within for node in self.ancestors):
+        if any(node._has_focus_within for node in self.ancestors_with_self):
             self.app.update_styles(self)
         self.has_focus = False
         self.refresh()

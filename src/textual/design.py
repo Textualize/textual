@@ -213,7 +213,7 @@ def show_design(light: ColorSystem, dark: ColorSystem) -> Table:
             background = Color.parse(colors[name]).with_alpha(1.0)
             foreground = background + background.get_contrast_text(0.9)
 
-            text = Text(name)
+            text = Text(f"${name}")
 
             yield Padding(text, 1, style=f"{foreground.hex6} on {background.hex6}")
 
@@ -222,11 +222,3 @@ def show_design(light: ColorSystem, dark: ColorSystem) -> Table:
     table.add_column("Dark", justify="center")
     table.add_row(make_shades(light), make_shades(dark))
     return table
-
-
-if __name__ == "__main__":
-    from .app import DEFAULT_COLORS
-
-    from rich import print
-
-    print(show_design(DEFAULT_COLORS["light"], DEFAULT_COLORS["dark"]))

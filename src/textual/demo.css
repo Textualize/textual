@@ -1,5 +1,5 @@
  *  {
-    transition: background 250ms linear, color 250ms linear;
+    transition: background 500ms in_out_cubic, color 500ms in_out_cubic;
 }
 
 Screen {

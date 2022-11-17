@@ -29,7 +29,7 @@ The example below shows checkboxes in various states.
 ## Reactive Attributes
 
 | Name    | Type   | Default | Description                        |
-|---------|--------|---------|------------------------------------|
+| ------- | ------ | ------- | ---------------------------------- |
 | `value` | `bool` | `False` | The default value of the checkbox. |
 
 ## Messages
@@ -43,7 +43,7 @@ The `Checkbox.Changed` message is sent when the checkbox is toggled.
 #### Attributes
 
 | attribute | type   | purpose                        |
-|-----------|--------|--------------------------------|
+| --------- | ------ | ------------------------------ |
 | `value`   | `bool` | The new value of the checkbox. |
 
 ## Additional Notes
@@ -54,4 +54,4 @@ The `Checkbox.Changed` message is sent when the checkbox is toggled.
 
 ## See Also
 
-- [Checkbox](../reference/checkbox.md) code reference
+- [Checkbox](../api/checkbox.md) code reference

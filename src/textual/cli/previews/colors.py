@@ -52,8 +52,8 @@ class ColorsView(Vertical):
                 color = f"{color_name}-{level}" if level else color_name
                 item = ColorItem(
                     ColorBar(f"${color}", classes="text label"),
-                    ColorBar(f"$text-muted", classes="muted"),
-                    ColorBar(f"$text-disabled", classes="disabled"),
+                    ColorBar("$text-muted", classes="muted"),
+                    ColorBar("$text-disabled", classes="disabled"),
                     classes=color,
                 )
                 items.append(item)
@@ -71,7 +71,7 @@ class ColorsApp(App):
         yield Footer()
 
     def on_mount(self) -> None:
-        self.call_later(self.update_view)
+        self.call_after_refresh(self.update_view)
 
     def update_view(self) -> None:
         content = self.query_one("Content", Content)

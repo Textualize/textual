@@ -268,7 +268,7 @@ class Scalar(NamedTuple):
         return scalar
 
     @lru_cache(maxsize=4096)
-    def resolve_dimension(
+    def resolve(
         self, size: Size, viewport: Size, fraction_unit: Fraction | None = None
     ) -> Fraction:
         """Resolve scalar with units in to a dimensions.
@@ -363,8 +363,8 @@ class ScalarOffset(NamedTuple):
         """
         x, y = self
         return Offset(
-            round(x.resolve_dimension(size, viewport)),
-            round(y.resolve_dimension(size, viewport)),
+            round(x.resolve(size, viewport)),
+            round(y.resolve(size, viewport)),
         )
 
 
@@ -383,10 +383,3 @@ def percentage_string_to_float(string: str) -> float:
     else:
         float_percentage = float(string)
     return float_percentage
-
-
-if __name__ == "__main__":
-    print(Scalar.parse("3.14fr"))
-    s = Scalar.parse("23")
-    print(repr(s))
-    print(repr(s.cells))

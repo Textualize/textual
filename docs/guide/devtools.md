@@ -25,7 +25,7 @@ textual run my_app.py
 
 The `run` sub-command will first look for a `App` instance called `app` in the global scope of your Python file. If there is no `app`, it will create an instance of the first `App` class it finds and run that.
 
-Alternatively, you can add the name of an `App` instance or class after a colon to run a specific app in the Python file. Here's an example: 
+Alternatively, you can add the name of an `App` instance or class after a colon to run a specific app in the Python file. Here's an example:
 
 ```bash
 textual run my_app.py:alternative_app
@@ -119,6 +119,6 @@ class LogApp(App):
         self.log(self.tree)
 
 if __name__ == "__main__":
-    LogApp.run()
+    LogApp().run()
 
 ```
