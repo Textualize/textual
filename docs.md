@@ -1,14 +1,14 @@
 # Documentation Workflow
 
-* [Install Hatch](https://hatch.pypa.io/latest/install/)
-* Run the live-reload server using `hatch run docs:serve` from the project root
+* Ensure you're inside a *Python 3.10+* virtual environment
+* Run the live-reload server using `mkdocs serve` from the project root
 * Create new pages by adding new directories and Markdown files inside `docs/*`
 
 ## Commands
 
-- `hatch run docs:serve` - Start the live-reloading docs server.
-- `hatch run docs:build` - Build the documentation site.
-- `hatch run docs:help` - Print help message and exit.
+- `mkdocs serve` - Start the live-reloading docs server.
+- `mkdocs build` - Build the documentation site.
+- `mkdocs -h` - Print help message and exit.
 
 ## Project layout
 
