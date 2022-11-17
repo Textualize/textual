@@ -4,7 +4,7 @@ A widget which displays static content.
 Can be used for Rich renderables and can also for the base for other types of widgets.
 
 - [ ] Focusable
-- [x] Container
+- [ ] Container
 
 ## Example
 
