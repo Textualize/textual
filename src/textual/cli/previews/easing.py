@@ -8,7 +8,7 @@ from textual.containers import Container, Horizontal, Vertical
 from textual.reactive import Reactive
 from textual.scrollbar import ScrollBarRender
 from textual.widget import Widget
-from textual.widgets import Button, Footer, Static, Input
+from textual.widgets import Button, Footer, Label, Input
 
 VIRTUAL_SIZE = 100
 WINDOW_SIZE = 10
@@ -27,7 +27,7 @@ class Bar(Widget):
     animation_running = Reactive(False)
 
     DEFAULT_CSS = """
-    
+
     Bar {
         background: $surface;
         color: $error;
@@ -37,7 +37,7 @@ class Bar(Widget):
         background: $surface;
         color: $success;
     }
-    
+
     """
 
     def watch_animation_running(self, running: bool) -> None:
@@ -67,14 +67,14 @@ class EasingApp(App):
         self.animated_bar.position = START_POSITION
         duration_input = Input("1.0", placeholder="Duration", id="duration-input")
 
-        self.opacity_widget = Static(
+        self.opacity_widget = Label(
             f"[b]Welcome to Textual![/]\n\n{TEXT}", id="opacity-widget"
         )
 
         yield EasingButtons()
         yield Vertical(
             Horizontal(
-                Static("Animation Duration:", id="label"), duration_input, id="inputs"
+                Label("Animation Duration:", id="label"), duration_input, id="inputs"
             ),
             Horizontal(
                 self.animated_bar,

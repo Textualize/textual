@@ -5,6 +5,7 @@ from ._checkbox import Checkbox as Checkbox
 from ._directory_tree import DirectoryTree as DirectoryTree
 from ._footer import Footer as Footer
 from ._header import Header as Header
+from ._label import Label as Label
 from ._placeholder import Placeholder as Placeholder
 from ._pretty import Pretty as Pretty
 from ._static import Static as Static
