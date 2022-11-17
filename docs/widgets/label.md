@@ -3,7 +3,7 @@
 A widget which displays static text, but which can also contain more complex Rich renderables.
 
 - [ ] Focusable
-- [x] Container
+- [ ] Container
 
 ## Example
 
