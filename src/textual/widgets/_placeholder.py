@@ -83,6 +83,7 @@ class Placeholder(Static, can_focus=True):
         """
         super().__init__(name=name, id=id, classes=classes)
         self.color = next(Placeholder.COLORS)
+        self.styles.background = f"{self.color} 50%"
         self.variant = self.validate_variant(variant)
         # Set a cycle through the variants with the correct starting point.
         self.variants_cycle = cycle(_VALID_PLACEHOLDER_VARIANTS_ORDERED)
@@ -119,13 +120,7 @@ class Placeholder(Static, can_focus=True):
 
         This variant prints a panel with a solid color.
         """
-        self.update(
-            Panel(
-                Align.center("Placeholder"),
-                style=f"on {self.color}",
-                border_style=self.color,
-            )
-        )
+        self.update(Panel("", title="Placeholder"))
 
     def _update_state_variant(self) -> None:
         """Update the placeholder with the "state" variant.
@@ -156,18 +151,25 @@ class Placeholder(Static, can_focus=True):
             "width": width,
             "height": height,
         }
-        self.update(Panel(Align.center(Pretty(position_data)), title="Placeholder"))
+        self.update(
+            Panel(
+                Align.center(Pretty(position_data), vertical="middle"),
+                title="Placeholder",
+            )
+        )
 
     def _update_css_variant(self) -> None:
         """Update the placeholder with the "css" variant.
 
-        This variant shows all the CSS rules that are applied to this placeholder."""
+        This variant shows all the CSS rules that are applied to this placeholder.
+        """
         self.update(Panel(Pretty(self.styles), title="Placeholder"))
 
     def _update_text_variant(self) -> None:
         """Update the placeholder with the "text" variant.
 
-        This variant shows some Lorem Ipsum text."""
+        This variant shows some Lorem Ipsum text.
+        """
         self.update(
             Panel(
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam feugiat ac elit sit amet accumsan. Suspendisse bibendum nec libero quis gravida. Phasellus id eleifend ligula. Nullam imperdiet sem tellus, sed vehicula nisl faucibus sit amet. Praesent iaculis tempor ultricies. Sed lacinia, tellus id rutrum lacinia, sapien sapien congue mauris, sit amet pellentesque quam quam vel nisl. Curabitur vulputate erat pellentesque mauris posuere, non dictum risus mattis.",
