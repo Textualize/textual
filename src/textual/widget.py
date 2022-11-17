@@ -858,6 +858,18 @@ class Widget(DOMNode):
         return content_region
 
     @property
+    def scrollable_content_region(self) -> Region:
+        """Gets an absolute region containing the scrollable content (minus padding, border, and scrollbars).
+
+        Returns:
+            Region: Screen region that contains a widget's content.
+        """
+        content_region = self.region.shrink(self.styles.gutter).shrink(
+            self.scrollbar_gutter
+        )
+        return content_region
+
+    @property
     def content_offset(self) -> Offset:
         """An offset from the Widget origin where the content begins.
 
@@ -1622,7 +1634,7 @@ class Widget(DOMNode):
         Returns:
             Offset: The distance that was scrolled.
         """
-        window = self.content_region.at_offset(self.scroll_offset)
+        window = self.scrollable_content_region.at_offset(self.scroll_offset)
         if spacing is not None:
             window = window.shrink(spacing)
 

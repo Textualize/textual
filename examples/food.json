@@ -1,0 +1,1944 @@
+{
+    "code": "5060292302201",
+    "product": {
+        "_id": "5060292302201",
+        "_keywords": [
+            "snack",
+            "food",
+            "oil",
+            "anything",
+            "potato",
+            "appetizer",
+            "artificial",
+            "plant-based",
+            "cereal",
+            "and",
+            "in",
+            "popchip",
+            "preservative",
+            "barbeque",
+            "vegetarian",
+            "sunflower",
+            "chip",
+            "frie",
+            "potatoe",
+            "no",
+            "crisp",
+            "beverage",
+            "salty"
+        ],
+        "added_countries_tags": [],
+        "additives_debug_tags": [],
+        "additives_n": 2,
+        "additives_old_n": 2,
+        "additives_old_tags": [
+            "en:e330",
+            "en:e160c"
+        ],
+        "additives_original_tags": [
+            "en:e330",
+            "en:e160c"
+        ],
+        "additives_prev_original_tags": [
+            "en:e330",
+            "en:e160c"
+        ],
+        "additives_tags": [
+            "en:e160c",
+            "en:e330"
+        ],
+        "additives_tags_n": null,
+        "allergens": "en:milk",
+        "allergens_debug_tags": [],
+        "allergens_from_ingredients": "en:milk, milk",
+        "allergens_from_user": "(en) en:milk",
+        "allergens_hierarchy": [
+            "en:milk"
+        ],
+        "allergens_tags": [
+            "en:milk"
+        ],
+        "amino_acids_prev_tags": [],
+        "amino_acids_tags": [],
+        "brands": "Popchips",
+        "brands_debug_tags": [],
+        "brands_tags": [
+            "popchips"
+        ],
+        "carbon_footprint_from_known_ingredients_debug": "en:potato 54% x 0.6 = 32.4 g - ",
+        "carbon_footprint_percent_of_known_ingredients": 54,
+        "categories": "Plant-based foods and beverages, Plant-based foods, Snacks, Cereals and potatoes, Salty snacks, Appetizers, Chips and fries, Crisps, Potato crisps, Potato crisps in sunflower oil",
+        "categories_hierarchy": [
+            "en:plant-based-foods-and-beverages",
+            "en:plant-based-foods",
+            "en:snacks",
+            "en:cereals-and-potatoes",
+            "en:salty-snacks",
+            "en:appetizers",
+            "en:chips-and-fries",
+            "en:crisps",
+            "en:potato-crisps",
+            "en:potato-crisps-in-sunflower-oil"
+        ],
+        "categories_lc": "en",
+        "categories_old": "Plant-based foods and beverages, Plant-based foods, Snacks, Cereals and potatoes, Salty snacks, Appetizers, Chips and fries, Crisps, Potato crisps, Potato crisps in sunflower oil",
+        "categories_properties": {
+            "agribalyse_food_code:en": "4004",
+            "ciqual_food_code:en": "4004"
+        },
+        "categories_properties_tags": [
+            "all-products",
+            "categories-known",
+            "agribalyse-food-code-4004",
+            "agribalyse-food-code-known",
+            "agribalyse-proxy-food-code-unknown",
+            "ciqual-food-code-4004",
+            "ciqual-food-code-known",
+            "agribalyse-known",
+            "agribalyse-4004"
+        ],
+        "categories_tags": [
+            "en:plant-based-foods-and-beverages",
+            "en:plant-based-foods",
+            "en:snacks",
+            "en:cereals-and-potatoes",
+            "en:salty-snacks",
+            "en:appetizers",
+            "en:chips-and-fries",
+            "en:crisps",
+            "en:potato-crisps",
+            "en:potato-crisps-in-sunflower-oil"
+        ],
+        "category_properties": {
+            "ciqual_food_name:en": "Potato crisps",
+            "ciqual_food_name:fr": "Chips de pommes de terre, standard"
+        },
+        "checkers_tags": [],
+        "ciqual_food_name_tags": [
+            "potato-crisps"
+        ],
+        "cities_tags": [],
+        "code": "5060292302201",
+        "codes_tags": [
+            "code-13",
+            "5060292302xxx",
+            "506029230xxxx",
+            "50602923xxxxx",
+            "5060292xxxxxx",
+            "506029xxxxxxx",
+            "50602xxxxxxxx",
+            "5060xxxxxxxxx",
+            "506xxxxxxxxxx",
+            "50xxxxxxxxxxx",
+            "5xxxxxxxxxxxx"
+        ],
+        "compared_to_category": "en:potato-crisps-in-sunflower-oil",
+        "complete": 0,
+        "completeness": 0.8875,
+        "correctors_tags": [
+            "tacite",
+            "tacite-mass-editor",
+            "yuka.VjQwdU5yUUlpdmxUbjhWa3BFenc4ZGt1NDVLUFZtNm9NdWdOSWc9PQ",
+            "openfoodfacts-contributors",
+            "swipe-studio",
+            "yuka.sY2b0xO6T85zoF3NwEKvllZnctbb-gn-LDr4mHzUyem0FYPXMO5by7b5NKg",
+            "kiliweb",
+            "packbot",
+            "foodless",
+            "yuka.sY2b0xO6T85zoF3NwEKvlmBZVPXu-gnlBU3miFTQ-NeSIbDaMdUtu4fLGas"
+        ],
+        "countries": "France, United Kingdom",
+        "countries_debug_tags": [],
+        "countries_hierarchy": [
+            "en:france",
+            "en:united-kingdom"
+        ],
+        "countries_lc": "en",
+        "countries_tags": [
+            "en:france",
+            "en:united-kingdom"
+        ],
+        "created_t": 1433338177,
+        "creator": "kyzh",
+        "data_quality_bugs_tags": [],
+        "data_quality_errors_tags": [],
+        "data_quality_info_tags": [
+            "en:packaging-data-incomplete",
+            "en:ingredients-percent-analysis-ok",
+            "en:carbon-footprint-from-known-ingredients-but-not-from-meat-or-fish",
+            "en:ecoscore-extended-data-computed",
+            "en:ecoscore-extended-data-less-precise-than-agribalyse",
+            "en:food-groups-1-known",
+            "en:food-groups-2-known",
+            "en:food-groups-3-unknown"
+        ],
+        "data_quality_tags": [
+            "en:packaging-data-incomplete",
+            "en:ingredients-percent-analysis-ok",
+            "en:carbon-footprint-from-known-ingredients-but-not-from-meat-or-fish",
+            "en:ecoscore-extended-data-computed",
+            "en:ecoscore-extended-data-less-precise-than-agribalyse",
+            "en:food-groups-1-known",
+            "en:food-groups-2-known",
+            "en:food-groups-3-unknown",
+            "en:nutrition-value-very-low-for-category-energy",
+            "en:nutrition-value-very-low-for-category-fat",
+            "en:nutrition-value-very-low-for-category-carbohydrates",
+            "en:nutrition-value-very-high-for-category-sugars",
+            "en:ecoscore-origins-of-ingredients-origins-are-100-percent-unknown",
+            "en:ecoscore-production-system-no-label"
+        ],
+        "data_quality_warnings_tags": [
+            "en:nutrition-value-very-low-for-category-energy",
+            "en:nutrition-value-very-low-for-category-fat",
+            "en:nutrition-value-very-low-for-category-carbohydrates",
+            "en:nutrition-value-very-high-for-category-sugars",
+            "en:ecoscore-origins-of-ingredients-origins-are-100-percent-unknown",
+            "en:ecoscore-production-system-no-label"
+        ],
+        "data_sources": "App - yuka, Apps, App - Horizon",
+        "data_sources_tags": [
+            "app-yuka",
+            "apps",
+            "app-horizon"
+        ],
+        "debug_param_sorted_langs": [
+            "en",
+            "fr"
+        ],
+        "ecoscore_data": {
+            "adjustments": {
+                "origins_of_ingredients": {
+                    "aggregated_origins": [
+                        {
+                            "origin": "en:unknown",
+                            "percent": 100
+                        }
+                    ],
+                    "epi_score": 0,
+                    "epi_value": -5,
+                    "origins_from_origins_field": [
+                        "en:unknown"
+                    ],
+                    "transportation_scores": {
+                        "ad": 0,
+                        "al": 0,
+                        "at": 0,
+                        "ax": 0,
+                        "ba": 0,
+                        "be": 0,
+                        "bg": 0,
+                        "ch": 0,
+                        "cy": 0,
+                        "cz": 0,
+                        "de": 0,
+                        "dk": 0,
+                        "dz": 0,
+                        "ee": 0,
+                        "eg": 0,
+                        "es": 0,
+                        "fi": 0,
+                        "fo": 0,
+                        "fr": 0,
+                        "gg": 0,
+                        "gi": 0,
+                        "gr": 0,
+                        "hr": 0,
+                        "hu": 0,
+                        "ie": 0,
+                        "il": 0,
+                        "im": 0,
+                        "is": 0,
+                        "it": 0,
+                        "je": 0,
+                        "lb": 0,
+                        "li": 0,
+                        "lt": 0,
+                        "lu": 0,
+                        "lv": 0,
+                        "ly": 0,
+                        "ma": 0,
+                        "mc": 0,
+                        "md": 0,
+                        "me": 0,
+                        "mk": 0,
+                        "mt": 0,
+                        "nl": 0,
+                        "no": 0,
+                        "pl": 0,
+                        "ps": 0,
+                        "pt": 0,
+                        "ro": 0,
+                        "rs": 0,
+                        "se": 0,
+                        "si": 0,
+                        "sj": 0,
+                        "sk": 0,
+                        "sm": 0,
+                        "sy": 0,
+                        "tn": 0,
+                        "tr": 0,
+                        "ua": 0,
+                        "uk": 0,
+                        "us": 0,
+                        "va": 0,
+                        "world": 0,
+                        "xk": 0
+                    },
+                    "transportation_values": {
+                        "ad": 0,
+                        "al": 0,
+                        "at": 0,
+                        "ax": 0,
+                        "ba": 0,
+                        "be": 0,
+                        "bg": 0,
+                        "ch": 0,
+                        "cy": 0,
+                        "cz": 0,
+                        "de": 0,
+                        "dk": 0,
+                        "dz": 0,
+                        "ee": 0,
+                        "eg": 0,
+                        "es": 0,
+                        "fi": 0,
+                        "fo": 0,
+                        "fr": 0,
+                        "gg": 0,
+                        "gi": 0,
+                        "gr": 0,
+                        "hr": 0,
+                        "hu": 0,
+                        "ie": 0,
+                        "il": 0,
+                        "im": 0,
+                        "is": 0,
+                        "it": 0,
+                        "je": 0,
+                        "lb": 0,
+                        "li": 0,
+                        "lt": 0,
+                        "lu": 0,
+                        "lv": 0,
+                        "ly": 0,
+                        "ma": 0,
+                        "mc": 0,
+                        "md": 0,
+                        "me": 0,
+                        "mk": 0,
+                        "mt": 0,
+                        "nl": 0,
+                        "no": 0,
+                        "pl": 0,
+                        "ps": 0,
+                        "pt": 0,
+                        "ro": 0,
+                        "rs": 0,
+                        "se": 0,
+                        "si": 0,
+                        "sj": 0,
+                        "sk": 0,
+                        "sm": 0,
+                        "sy": 0,
+                        "tn": 0,
+                        "tr": 0,
+                        "ua": 0,
+                        "uk": 0,
+                        "us": 0,
+                        "va": 0,
+                        "world": 0,
+                        "xk": 0
+                    },
+                    "values": {
+                        "ad": -5,
+                        "al": -5,
+                        "at": -5,
+                        "ax": -5,
+                        "ba": -5,
+                        "be": -5,
+                        "bg": -5,
+                        "ch": -5,
+                        "cy": -5,
+                        "cz": -5,
+                        "de": -5,
+                        "dk": -5,
+                        "dz": -5,
+                        "ee": -5,
+                        "eg": -5,
+                        "es": -5,
+                        "fi": -5,
+                        "fo": -5,
+                        "fr": -5,
+                        "gg": -5,
+                        "gi": -5,
+                        "gr": -5,
+                        "hr": -5,
+                        "hu": -5,
+                        "ie": -5,
+                        "il": -5,
+                        "im": -5,
+                        "is": -5,
+                        "it": -5,
+                        "je": -5,
+                        "lb": -5,
+                        "li": -5,
+                        "lt": -5,
+                        "lu": -5,
+                        "lv": -5,
+                        "ly": -5,
+                        "ma": -5,
+                        "mc": -5,
+                        "md": -5,
+                        "me": -5,
+                        "mk": -5,
+                        "mt": -5,
+                        "nl": -5,
+                        "no": -5,
+                        "pl": -5,
+                        "ps": -5,
+                        "pt": -5,
+                        "ro": -5,
+                        "rs": -5,
+                        "se": -5,
+                        "si": -5,
+                        "sj": -5,
+                        "sk": -5,
+                        "sm": -5,
+                        "sy": -5,
+                        "tn": -5,
+                        "tr": -5,
+                        "ua": -5,
+                        "uk": -5,
+                        "us": -5,
+                        "va": -5,
+                        "world": -5,
+                        "xk": -5
+                    },
+                    "warning": "origins_are_100_percent_unknown"
+                },
+                "packaging": {
+                    "non_recyclable_and_non_biodegradable_materials": 1,
+                    "packagings": [
+                        {
+                            "ecoscore_material_score": 0,
+                            "ecoscore_shape_ratio": 1,
+                            "material": "en:plastic",
+                            "non_recyclable_and_non_biodegradable": "maybe",
+                            "shape": "en:pack"
+                        }
+                    ],
+                    "score": 0,
+                    "value": -10
+                },
+                "production_system": {
+                    "labels": [],
+                    "value": 0,
+                    "warning": "no_label"
+                },
+                "threatened_species": {}
+            },
+            "agribalyse": {
+                "agribalyse_food_code": "4004",
+                "co2_agriculture": 1.2992636,
+                "co2_consumption": 0,
+                "co2_distribution": 0.029120657,
+                "co2_packaging": 0.28581962,
+                "co2_processing": 0.39294234,
+                "co2_total": 2.2443641,
+                "co2_transportation": 0.23728203,
+                "code": "4004",
+                "dqr": "2.45",
+                "ef_agriculture": 0.18214682,
+                "ef_consumption": 0,
+                "ef_distribution": 0.0098990521,
+                "ef_packaging": 0.021558384,
+                "ef_processing": 0.057508389,
+                "ef_total": 0.29200269,
+                "ef_transportation": 0.020894187,
+                "is_beverage": 0,
+                "name_en": "Potato crisps",
+                "name_fr": "Chips de pommes de terre, standard",
+                "score": 78
+            },
+            "grade": "b",
+            "grades": {
+                "ad": "b",
+                "al": "b",
+                "at": "b",
+                "ax": "b",
+                "ba": "b",
+                "be": "b",
+                "bg": "b",
+                "ch": "b",
+                "cy": "b",
+                "cz": "b",
+                "de": "b",
+                "dk": "b",
+                "dz": "b",
+                "ee": "b",
+                "eg": "b",
+                "es": "b",
+                "fi": "b",
+                "fo": "b",
+                "fr": "b",
+                "gg": "b",
+                "gi": "b",
+                "gr": "b",
+                "hr": "b",
+                "hu": "b",
+                "ie": "b",
+                "il": "b",
+                "im": "b",
+                "is": "b",
+                "it": "b",
+                "je": "b",
+                "lb": "b",
+                "li": "b",
+                "lt": "b",
+                "lu": "b",
+                "lv": "b",
+                "ly": "b",
+                "ma": "b",
+                "mc": "b",
+                "md": "b",
+                "me": "b",
+                "mk": "b",
+                "mt": "b",
+                "nl": "b",
+                "no": "b",
+                "pl": "b",
+                "ps": "b",
+                "pt": "b",
+                "ro": "b",
+                "rs": "b",
+                "se": "b",
+                "si": "b",
+                "sj": "b",
+                "sk": "b",
+                "sm": "b",
+                "sy": "b",
+                "tn": "b",
+                "tr": "b",
+                "ua": "b",
+                "uk": "b",
+                "us": "b",
+                "va": "b",
+                "world": "b",
+                "xk": "b"
+            },
+            "missing": {
+                "labels": 1,
+                "origins": 1
+            },
+            "missing_data_warning": 1,
+            "score": 63,
+            "scores": {
+                "ad": 63,
+                "al": 63,
+                "at": 63,
+                "ax": 63,
+                "ba": 63,
+                "be": 63,
+                "bg": 63,
+                "ch": 63,
+                "cy": 63,
+                "cz": 63,
+                "de": 63,
+                "dk": 63,
+                "dz": 63,
+                "ee": 63,
+                "eg": 63,
+                "es": 63,
+                "fi": 63,
+                "fo": 63,
+                "fr": 63,
+                "gg": 63,
+                "gi": 63,
+                "gr": 63,
+                "hr": 63,
+                "hu": 63,
+                "ie": 63,
+                "il": 63,
+                "im": 63,
+                "is": 63,
+                "it": 63,
+                "je": 63,
+                "lb": 63,
+                "li": 63,
+                "lt": 63,
+                "lu": 63,
+                "lv": 63,
+                "ly": 63,
+                "ma": 63,
+                "mc": 63,
+                "md": 63,
+                "me": 63,
+                "mk": 63,
+                "mt": 63,
+                "nl": 63,
+                "no": 63,
+                "pl": 63,
+                "ps": 63,
+                "pt": 63,
+                "ro": 63,
+                "rs": 63,
+                "se": 63,
+                "si": 63,
+                "sj": 63,
+                "sk": 63,
+                "sm": 63,
+                "sy": 63,
+                "tn": 63,
+                "tr": 63,
+                "ua": 63,
+                "uk": 63,
+                "us": 63,
+                "va": 63,
+                "world": 63,
+                "xk": 63
+            },
+            "status": "known"
+        },
+        "ecoscore_extended_data": {
+            "impact": {
+                "ef_single_score_log_stddev": 0.0664290643574977,
+                "likeliest_impacts": {
+                    "Climate_change": 0.0835225930657116,
+                    "EF_single_score": 0.0132996566234689
+                },
+                "likeliest_recipe": {
+                    "en:Oak_smoked_sea_salti_yeast_extract": 0.103505496656251,
+                    "en:e160c": 0.10350549665625,
+                    "en:e330": 0.10350549665625,
+                    "en:flavouring": 0.10350549665625,
+                    "en:garlic_powder": 0.103505496656251,
+                    "en:milk": 1.55847864453775,
+                    "en:onion": 0.15510736429208,
+                    "en:potato": 69.2208020730349,
+                    "en:potato_starch": 10.5320407294931,
+                    "en:rice_flour": 13.8595510001351,
+                    "en:salt": 1.3345917157533,
+                    "en:spice": 0.10350549665625,
+                    "en:sugar": 10.2883618334396,
+                    "en:sunflower_oil": 14.1645835312727,
+                    "en:tomato_powder": 0.10350549665625,
+                    "en:water": 6.24510964041154,
+                    "en:yeast_powder": 0.103505496656251
+                },
+                "mass_ratio_uncharacterized": 0.0244618467395455,
+                "uncharacterized_ingredients": {
+                    "impact": [
+                        "en:yeast-powder",
+                        "en:flavouring",
+                        "en:Oak smoked sea salti yeast extract",
+                        "en:e160c",
+                        "en:e330"
+                    ],
+                    "nutrition": [
+                        "en:flavouring",
+                        "en:Oak smoked sea salti yeast extract"
+                    ]
+                },
+                "uncharacterized_ingredients_mass_proportion": {
+                    "impact": 0.0244618467395455,
+                    "nutrition": 0.0106506947223728
+                },
+                "uncharacterized_ingredients_ratio": {
+                    "impact": 0.3125,
+                    "nutrition": 0.125
+                },
+                "warnings": [
+                    "Fermentation agents are present in the product (en:yeast-powder). Carbohydrates and sugars mass balance will not be considered to estimate potential recipes",
+                    "The product has a high number of impact uncharacterized ingredients: 31%"
+                ]
+            }
+        },
+        "ecoscore_extended_data_version": "4",
+        "ecoscore_grade": "b",
+        "ecoscore_score": 63,
+        "ecoscore_tags": [
+            "b"
+        ],
+        "editors": [
+            "kyzh",
+            "tacite"
+        ],
+        "editors_tags": [
+            "yuka.VjQwdU5yUUlpdmxUbjhWa3BFenc4ZGt1NDVLUFZtNm9NdWdOSWc9PQ",
+            "yuka.sY2b0xO6T85zoF3NwEKvllZnctbb-gn-LDr4mHzUyem0FYPXMO5by7b5NKg",
+            "tacite",
+            "kyzh",
+            "foodless",
+            "packbot",
+            "openfoodfacts-contributors",
+            "kiliweb",
+            "yuka.sY2b0xO6T85zoF3NwEKvlmBZVPXu-gnlBU3miFTQ-NeSIbDaMdUtu4fLGas",
+            "ecoscore-impact-estimator",
+            "swipe-studio",
+            "tacite-mass-editor"
+        ],
+        "emb_codes": "",
+        "emb_codes_20141016": "",
+        "emb_codes_debug_tags": [],
+        "emb_codes_orig": "",
+        "emb_codes_tags": [],
+        "entry_dates_tags": [
+            "2015-06-03",
+            "2015-06",
+            "2015"
+        ],
+        "expiration_date": "11/05/2016",
+        "expiration_date_debug_tags": [],
+        "food_groups": "en:appetizers",
+        "food_groups_tags": [
+            "en:salty-snacks",
+            "en:appetizers"
+        ],
+        "fruits-vegetables-nuts_100g_estimate": 0,
+        "generic_name": "",
+        "generic_name_en": "",
+        "generic_name_en_debug_tags": [],
+        "generic_name_fr": "",
+        "generic_name_fr_debug_tags": [],
+        "id": "5060292302201",
+        "image_front_small_url": "https://images.openfoodfacts.org/images/products/506/029/230/2201/front_en.23.200.jpg",
+        "image_front_thumb_url": "https://images.openfoodfacts.org/images/products/506/029/230/2201/front_en.23.100.jpg",
+        "image_front_url": "https://images.openfoodfacts.org/images/products/506/029/230/2201/front_en.23.400.jpg",
+        "image_ingredients_small_url": "https://images.openfoodfacts.org/images/products/506/029/230/2201/ingredients_en.11.200.jpg",
+        "image_ingredients_thumb_url": "https://images.openfoodfacts.org/images/products/506/029/230/2201/ingredients_en.11.100.jpg",
+        "image_ingredients_url": "https://images.openfoodfacts.org/images/products/506/029/230/2201/ingredients_en.11.400.jpg",
+        "image_nutrition_small_url": "https://images.openfoodfacts.org/images/products/506/029/230/2201/nutrition_en.32.200.jpg",
+        "image_nutrition_thumb_url": "https://images.openfoodfacts.org/images/products/506/029/230/2201/nutrition_en.32.100.jpg",
+        "image_nutrition_url": "https://images.openfoodfacts.org/images/products/506/029/230/2201/nutrition_en.32.400.jpg",
+        "image_small_url": "https://images.openfoodfacts.org/images/products/506/029/230/2201/front_en.23.200.jpg",
+        "image_thumb_url": "https://images.openfoodfacts.org/images/products/506/029/230/2201/front_en.23.100.jpg",
+        "image_url": "https://images.openfoodfacts.org/images/products/506/029/230/2201/front_en.23.400.jpg",
+        "images": {
+            "1": {
+                "sizes": {
+                    "100": {
+                        "h": 74,
+                        "w": 100
+                    },
+                    "400": {
+                        "h": 296,
+                        "w": 400
+                    },
+                    "full": {
+                        "h": 1482,
+                        "w": 2000
+                    }
+                },
+                "uploaded_t": 1433338177,
+                "uploader": "kyzh"
+            },
+            "2": {
+                "sizes": {
+                    "100": {
+                        "h": 74,
+                        "w": 100
+                    },
+                    "400": {
+                        "h": 296,
+                        "w": 400
+                    },
+                    "full": {
+                        "h": 1482,
+                        "w": 2000
+                    }
+                },
+                "uploaded_t": 1433338194,
+                "uploader": "kyzh"
+            },
+            "3": {
+                "sizes": {
+                    "100": {
+                        "h": 74,
+                        "w": 100
+                    },
+                    "400": {
+                        "h": 296,
+                        "w": 400
+                    },
+                    "full": {
+                        "h": 1482,
+                        "w": 2000
+                    }
+                },
+                "uploaded_t": 1433338203,
+                "uploader": "kyzh"
+            },
+            "4": {
+                "sizes": {
+                    "100": {
+                        "h": 74,
+                        "w": 100
+                    },
+                    "400": {
+                        "h": 296,
+                        "w": 400
+                    },
+                    "full": {
+                        "h": 1482,
+                        "w": 2000
+                    }
+                },
+                "uploaded_t": 1433338215,
+                "uploader": "kyzh"
+            },
+            "5": {
+                "sizes": {
+                    "100": {
+                        "h": 74,
+                        "w": 100
+                    },
+                    "400": {
+                        "h": 296,
+                        "w": 400
+                    },
+                    "full": {
+                        "h": 1482,
+                        "w": 2000
+                    }
+                },
+                "uploaded_t": 1433338229,
+                "uploader": "kyzh"
+            },
+            "6": {
+                "sizes": {
+                    "100": {
+                        "h": 74,
+                        "w": 100
+                    },
+                    "400": {
+                        "h": 296,
+                        "w": 400
+                    },
+                    "full": {
+                        "h": 1482,
+                        "w": 2000
+                    }
+                },
+                "uploaded_t": 1433338245,
+                "uploader": "kyzh"
+            },
+            "7": {
+                "sizes": {
+                    "100": {
+                        "h": 43,
+                        "w": 100
+                    },
+                    "400": {
+                        "h": 171,
+                        "w": 400
+                    },
+                    "full": {
+                        "h": 846,
+                        "w": 1974
+                    }
+                },
+                "uploaded_t": "1508236270",
+                "uploader": "kiliweb"
+            },
+            "8": {
+                "sizes": {
+                    "100": {
+                        "h": 100,
+                        "w": 82
+                    },
+                    "400": {
+                        "h": 400,
+                        "w": 326
+                    },
+                    "full": {
+                        "h": 1140,
+                        "w": 930
+                    }
+                },
+                "uploaded_t": 1620505759,
+                "uploader": "kiliweb"
+            },
+            "9": {
+                "sizes": {
+                    "100": {
+                        "h": 56,
+                        "w": 100
+                    },
+                    "400": {
+                        "h": 225,
+                        "w": 400
+                    },
+                    "full": {
+                        "h": 569,
+                        "w": 1011
+                    }
+                },
+                "uploaded_t": 1656075071,
+                "uploader": "kiliweb"
+            },
+            "front": {
+                "geometry": "1421x1825-0-95",
+                "imgid": "1",
+                "normalize": "false",
+                "rev": "9",
+                "sizes": {
+                    "100": {
+                        "h": 100,
+                        "w": 78
+                    },
+                    "200": {
+                        "h": 200,
+                        "w": 156
+                    },
+                    "400": {
+                        "h": 400,
+                        "w": 311
+                    },
+                    "full": {
+                        "h": 1825,
+                        "w": 1421
+                    }
+                },
+                "white_magic": "true"
+            },
+            "front_en": {
+                "angle": 0,
+                "coordinates_image_size": "full",
+                "geometry": "0x0--1--1",
+                "imgid": "8",
+                "normalize": null,
+                "rev": "23",
+                "sizes": {
+                    "100": {
+                        "h": 100,
+                        "w": 82
+                    },
+                    "200": {
+                        "h": 200,
+                        "w": 163
+                    },
+                    "400": {
+                        "h": 400,
+                        "w": 326
+                    },
+                    "full": {
+                        "h": 1140,
+                        "w": 930
+                    }
+                },
+                "white_magic": null,
+                "x1": "-1",
+                "x2": "-1",
+                "y1": "-1",
+                "y2": "-1"
+            },
+            "ingredients": {
+                "geometry": "1730x526-125-304",
+                "imgid": "5",
+                "normalize": "false",
+                "ocr": 1,
+                "orientation": "0",
+                "rev": "11",
+                "sizes": {
+                    "100": {
+                        "h": 30,
+                        "w": 100
+                    },
+                    "200": {
+                        "h": 61,
+                        "w": 200
+                    },
+                    "400": {
+                        "h": 122,
+                        "w": 400
+                    },
+                    "full": {
+                        "h": 526,
+                        "w": 1730
+                    }
+                },
+                "white_magic": "false"
+            },
+            "ingredients_en": {
+                "geometry": "1730x526-125-304",
+                "imgid": "5",
+                "normalize": "false",
+                "ocr": 1,
+                "orientation": "0",
+                "rev": "11",
+                "sizes": {
+                    "100": {
+                        "h": 30,
+                        "w": 100
+                    },
+                    "200": {
+                        "h": 61,
+                        "w": 200
+                    },
+                    "400": {
+                        "h": 122,
+                        "w": 400
+                    },
+                    "full": {
+                        "h": 526,
+                        "w": 1730
+                    }
+                },
+                "white_magic": "false"
+            },
+            "nutrition": {
+                "geometry": "1131x920-150-794",
+                "imgid": "3",
+                "normalize": "false",
+                "ocr": 1,
+                "orientation": "0",
+                "rev": "10",
+                "sizes": {
+                    "100": {
+                        "h": 81,
+                        "w": 100
+                    },
+                    "200": {
+                        "h": 163,
+                        "w": 200
+                    },
+                    "400": {
+                        "h": 325,
+                        "w": 400
+                    },
+                    "full": {
+                        "h": 920,
+                        "w": 1131
+                    }
+                },
+                "white_magic": "false"
+            },
+            "nutrition_en": {
+                "angle": 0,
+                "coordinates_image_size": "full",
+                "geometry": "0x0--1--1",
+                "imgid": "9",
+                "normalize": null,
+                "rev": "32",
+                "sizes": {
+                    "100": {
+                        "h": 56,
+                        "w": 100
+                    },
+                    "200": {
+                        "h": 113,
+                        "w": 200
+                    },
+                    "400": {
+                        "h": 225,
+                        "w": 400
+                    },
+                    "full": {
+                        "h": 569,
+                        "w": 1011
+                    }
+                },
+                "white_magic": null,
+                "x1": "-1",
+                "x2": "-1",
+                "y1": "-1",
+                "y2": "-1"
+            }
+        },
+        "informers_tags": [
+            "kyzh",
+            "tacite",
+            "tacite-mass-editor",
+            "yuka.VjQwdU5yUUlpdmxUbjhWa3BFenc4ZGt1NDVLUFZtNm9NdWdOSWc9PQ",
+            "openfoodfacts-contributors"
+        ],
+        "ingredients": [
+            {
+                "id": "en:potato",
+                "percent": 54,
+                "percent_estimate": 54,
+                "percent_max": 54,
+                "percent_min": 54,
+                "processing": "en:dried",
+                "rank": 1,
+                "text": "potatoes",
+                "vegan": "yes",
+                "vegetarian": "yes"
+            },
+            {
+                "from_palm_oil": "no",
+                "id": "en:sunflower-oil",
+                "percent_estimate": 28.75,
+                "percent_max": 46,
+                "percent_min": 11.5,
+                "rank": 2,
+                "text": "sunflower oil",
+                "vegan": "yes",
+                "vegetarian": "yes"
+            },
+            {
+                "has_sub_ingredients": "yes",
+                "id": "en:coating",
+                "percent_estimate": 8.625,
+                "percent_max": 33.3333333333333,
+                "percent_min": 0,
+                "rank": 3,
+                "text": "seasoning",
+                "vegan": "ignore",
+                "vegetarian": "ignore"
+            },
+            {
+                "id": "en:rice-flour",
+                "percent_estimate": 4.3125,
+                "percent_max": 17.25,
+                "percent_min": 0,
+                "rank": 4,
+                "text": "rice flour",
+                "vegan": "yes",
+                "vegetarian": "yes"
+            },
+            {
+                "id": "en:potato-starch",
+                "percent_estimate": 4.3125,
+                "percent_max": 11.5,
+                "percent_min": 0,
+                "rank": 5,
+                "text": "potato starch",
+                "vegan": "yes",
+                "vegetarian": "yes"
+            },
+            {
+                "id": "en:sugar",
+                "percent_estimate": 4.3125,
+                "percent_max": 33.3333333333333,
+                "percent_min": 0,
+                "text": "sugar",
+                "vegan": "yes",
+                "vegetarian": "yes"
+            },
+            {
+                "has_sub_ingredients": "yes",
+                "id": "en:whey-powder",
+                "percent_estimate": 2.15625,
+                "percent_max": 16.6666666666667,
+                "percent_min": 0,
+                "text": "whey powder",
+                "vegan": "no",
+                "vegetarian": "maybe"
+            },
+            {
+                "id": "en:salt",
+                "percent_estimate": 1.078125,
+                "percent_max": 11.1111111111111,
+                "percent_min": 0,
+                "text": "salt",
+                "vegan": "yes",
+                "vegetarian": "yes"
+            },
+            {
+                "id": "en:onion",
+                "percent_estimate": 0.5390625,
+                "percent_max": 8.33333333333333,
+                "percent_min": 0,
+                "processing": "en:powder",
+                "text": "onion",
+                "vegan": "yes",
+                "vegetarian": "yes"
+            },
+            {
+                "id": "en:yeast-powder",
+                "percent_estimate": 0.26953125,
+                "percent_max": 6.66666666666667,
+                "percent_min": 0,
+                "text": "yeast powder",
+                "vegan": "yes",
+                "vegetarian": "yes"
+            },
+            {
+                "id": "en:garlic-powder",
+                "percent_estimate": 0.134765625,
+                "percent_max": 5.55555555555556,
+                "percent_min": 0,
+                "text": "garlic powder",
+                "vegan": "yes",
+                "vegetarian": "yes"
+            },
+            {
+                "id": "en:tomato-powder",
+                "percent_estimate": 0.0673828125,
+                "percent_max": 4.76190476190476,
+                "percent_min": 0,
+                "text": "tomato powder",
+                "vegan": "yes",
+                "vegetarian": "yes"
+            },
+            {
+                "id": "en:oak-smoked-sea-salti-yeast-extract",
+                "percent_estimate": 0.03369140625,
+                "percent_max": 4.16666666666667,
+                "percent_min": 0,
+                "text": "Oak smoked sea salti yeast extract"
+            },
+            {
+                "id": "en:flavouring",
+                "percent_estimate": 0.016845703125,
+                "percent_max": 3.7037037037037,
+                "percent_min": 0,
+                "text": "flavourings",
+                "vegan": "maybe",
+                "vegetarian": "maybe"
+            },
+            {
+                "id": "en:spice",
+                "percent_estimate": 0.0084228515625,
+                "percent_max": 3.33333333333333,
+                "percent_min": 0,
+                "text": "spices",
+                "vegan": "yes",
+                "vegetarian": "yes"
+            },
+            {
+                "has_sub_ingredients": "yes",
+                "id": "en:acid",
+                "percent_estimate": 0.00421142578125,
+                "percent_max": 3.03030303030303,
+                "percent_min": 0,
+                "text": "acid"
+            },
+            {
+                "has_sub_ingredients": "yes",
+                "id": "en:colour",
+                "percent_estimate": 0.00421142578125,
+                "percent_max": 2.77777777777778,
+                "percent_min": 0,
+                "text": "colour"
+            },
+            {
+                "id": "en:milk",
+                "percent_estimate": 2.15625,
+                "percent_max": 16.6666666666667,
+                "percent_min": 0,
+                "text": "milk",
+                "vegan": "no",
+                "vegetarian": "yes"
+            },
+            {
+                "id": "en:e330",
+                "percent_estimate": 0.00421142578125,
+                "percent_max": 3.03030303030303,
+                "percent_min": 0,
+                "text": "citric acid",
+                "vegan": "yes",
+                "vegetarian": "yes"
+            },
+            {
+                "id": "en:e160c",
+                "percent_estimate": 0.00421142578125,
+                "percent_max": 2.77777777777778,
+                "percent_min": 0,
+                "text": "paprika extract",
+                "vegan": "yes",
+                "vegetarian": "yes"
+            }
+        ],
+        "ingredients_analysis": {
+            "en:non-vegan": [
+                "en:whey-powder",
+                "en:milk"
+            ],
+            "en:palm-oil-content-unknown": [
+                "en:oak-smoked-sea-salti-yeast-extract"
+            ],
+            "en:vegan-status-unknown": [
+                "en:oak-smoked-sea-salti-yeast-extract"
+            ],
+            "en:vegetarian-status-unknown": [
+                "en:oak-smoked-sea-salti-yeast-extract"
+            ]
+        },
+        "ingredients_analysis_tags": [
+            "en:palm-oil-free",
+            "en:non-vegan",
+            "en:vegetarian"
+        ],
+        "ingredients_debug": [
+            "54% dried potatoes",
+            ",",
+            null,
+            null,
+            null,
+            " sunflower oil",
+            ",",
+            null,
+            null,
+            null,
+            " seasoning ",
+            "(",
+            "(",
+            null,
+            null,
+            "sugar",
+            ",",
+            null,
+            null,
+            null,
+            " whey powder ",
+            "[",
+            "[",
+            null,
+            null,
+            "milk]",
+            ",",
+            null,
+            null,
+            null,
+            " salt",
+            ",",
+            null,
+            null,
+            null,
+            " onion powder",
+            ",",
+            null,
+            null,
+            null,
+            " yeast powder",
+            ",",
+            null,
+            null,
+            null,
+            " garlic powder",
+            ",",
+            null,
+            null,
+            null,
+            " tomato powder",
+            ",",
+            null,
+            null,
+            null,
+            " Oak smoked sea salti yeast extract",
+            ",",
+            null,
+            null,
+            null,
+            " flavourings",
+            ",",
+            null,
+            null,
+            null,
+            " spices",
+            ",",
+            null,
+            null,
+            null,
+            " acid",
+            ":",
+            ":",
+            null,
+            null,
+            " citric acid",
+            ",",
+            null,
+            null,
+            null,
+            " colour",
+            ":",
+            ":",
+            null,
+            null,
+            " paprika extract)",
+            ",",
+            null,
+            null,
+            null,
+            " rice flour",
+            ",",
+            null,
+            null,
+            null,
+            " potato starch."
+        ],
+        "ingredients_from_or_that_may_be_from_palm_oil_n": 0,
+        "ingredients_from_palm_oil_n": 0,
+        "ingredients_from_palm_oil_tags": [],
+        "ingredients_hierarchy": [
+            "en:potato",
+            "en:vegetable",
+            "en:root-vegetable",
+            "en:sunflower-oil",
+            "en:oil-and-fat",
+            "en:vegetable-oil-and-fat",
+            "en:vegetable-oil",
+            "en:coating",
+            "en:rice-flour",
+            "en:flour",
+            "en:rice",
+            "en:potato-starch",
+            "en:starch",
+            "en:sugar",
+            "en:added-sugar",
+            "en:disaccharide",
+            "en:whey-powder",
+            "en:dairy",
+            "en:whey",
+            "en:salt",
+            "en:onion",
+            "en:yeast-powder",
+            "en:yeast",
+            "en:garlic-powder",
+            "en:garlic",
+            "en:tomato-powder",
+            "en:tomato",
+            "en:oak-smoked-sea-salti-yeast-extract",
+            "en:flavouring",
+            "en:spice",
+            "en:condiment",
+            "en:acid",
+            "en:colour",
+            "en:milk",
+            "en:e330",
+            "en:e160c"
+        ],
+        "ingredients_ids_debug": [
+            "54-dried-potatoes",
+            "sunflower-oil",
+            "seasoning",
+            "sugar",
+            "whey-powder",
+            "milk",
+            "salt",
+            "onion-powder",
+            "yeast-powder",
+            "garlic-powder",
+            "tomato-powder",
+            "oak-smoked-sea-salti-yeast-extract",
+            "flavourings",
+            "spices",
+            "acid",
+            "citric-acid",
+            "colour",
+            "paprika-extract",
+            "rice-flour",
+            "potato-starch"
+        ],
+        "ingredients_n": 20,
+        "ingredients_n_tags": [
+            "20",
+            "11-20"
+        ],
+        "ingredients_original_tags": [
+            "en:potato",
+            "en:sunflower-oil",
+            "en:coating",
+            "en:rice-flour",
+            "en:potato-starch",
+            "en:sugar",
+            "en:whey-powder",
+            "en:salt",
+            "en:onion",
+            "en:yeast-powder",
+            "en:garlic-powder",
+            "en:tomato-powder",
+            "en:oak-smoked-sea-salti-yeast-extract",
+            "en:flavouring",
+            "en:spice",
+            "en:acid",
+            "en:colour",
+            "en:milk",
+            "en:e330",
+            "en:e160c"
+        ],
+        "ingredients_percent_analysis": 1,
+        "ingredients_tags": [
+            "en:potato",
+            "en:vegetable",
+            "en:root-vegetable",
+            "en:sunflower-oil",
+            "en:oil-and-fat",
+            "en:vegetable-oil-and-fat",
+            "en:vegetable-oil",
+            "en:coating",
+            "en:rice-flour",
+            "en:flour",
+            "en:rice",
+            "en:potato-starch",
+            "en:starch",
+            "en:sugar",
+            "en:added-sugar",
+            "en:disaccharide",
+            "en:whey-powder",
+            "en:dairy",
+            "en:whey",
+            "en:salt",
+            "en:onion",
+            "en:yeast-powder",
+            "en:yeast",
+            "en:garlic-powder",
+            "en:garlic",
+            "en:tomato-powder",
+            "en:tomato",
+            "en:oak-smoked-sea-salti-yeast-extract",
+            "en:flavouring",
+            "en:spice",
+            "en:condiment",
+            "en:acid",
+            "en:colour",
+            "en:milk",
+            "en:e330",
+            "en:e160c"
+        ],
+        "ingredients_text": "54% dried potatoes, sunflower oil, seasoning (sugar, whey powder [milk], salt, onion powder, yeast powder, garlic powder, tomato powder, Oak smoked sea salti yeast extract, flavourings, spices, acid: citric acid, colour: paprika extract), rice flour, potato starch.",
+        "ingredients_text_debug": "54% dried potatoes, sunflower oil, seasoning (sugar, whey powder [milk], salt, onion powder, yeast powder, garlic powder, tomato powder, Oak smoked sea salti yeast extract, flavourings, spices, acid: citric acid, colour: paprika extract), rice flour, potato starch.",
+        "ingredients_text_debug_tags": [],
+        "ingredients_text_en": "54% dried potatoes, sunflower oil, seasoning (sugar, whey powder [milk], salt, onion powder, yeast powder, garlic powder, tomato powder, Oak smoked sea salti yeast extract, flavourings, spices, acid: citric acid, colour: paprika extract), rice flour, potato starch.",
+        "ingredients_text_fr": "",
+        "ingredients_text_fr_debug_tags": [],
+        "ingredients_text_with_allergens": "54% dried potatoes, sunflower oil, seasoning (sugar, whey powder [<span class=\"allergen\">milk</span>], salt, onion powder, yeast powder, garlic powder, tomato powder, Oak smoked sea salti yeast extract, flavourings, spices, acid: citric acid, colour: paprika extract), rice flour, potato starch.",
+        "ingredients_text_with_allergens_en": "54% dried potatoes, sunflower oil, seasoning (sugar, whey powder [<span class=\"allergen\">milk</span>], salt, onion powder, yeast powder, garlic powder, tomato powder, Oak smoked sea salti yeast extract, flavourings, spices, acid: citric acid, colour: paprika extract), rice flour, potato starch.",
+        "ingredients_that_may_be_from_palm_oil_n": 0,
+        "ingredients_that_may_be_from_palm_oil_tags": [],
+        "ingredients_with_specified_percent_n": 1,
+        "ingredients_with_specified_percent_sum": 54,
+        "ingredients_with_unspecified_percent_n": 15,
+        "ingredients_with_unspecified_percent_sum": 46,
+        "interface_version_created": "20120622",
+        "interface_version_modified": "20150316.jqm2",
+        "known_ingredients_n": 35,
+        "labels": "Vegetarian, No preservatives, No artificial anything",
+        "labels_hierarchy": [
+            "en:vegetarian",
+            "en:no-preservatives",
+            "en:No artificial anything"
+        ],
+        "labels_lc": "en",
+        "labels_old": "Vegetarian, No preservatives, No artificial anything",
+        "labels_tags": [
+            "en:vegetarian",
+            "en:no-preservatives",
+            "en:no-artificial-anything"
+        ],
+        "lang": "en",
+        "lang_debug_tags": [],
+        "languages": {
+            "en:english": 5
+        },
+        "languages_codes": {
+            "en": 5
+        },
+        "languages_hierarchy": [
+            "en:english"
+        ],
+        "languages_tags": [
+            "en:english",
+            "en:1"
+        ],
+        "last_edit_dates_tags": [
+            "2022-06-24",
+            "2022-06",
+            "2022"
+        ],
+        "last_editor": "kiliweb",
+        "last_image_dates_tags": [
+            "2022-06-24",
+            "2022-06",
+            "2022"
+        ],
+        "last_image_t": 1656075071,
+        "last_modified_by": "kiliweb",
+        "last_modified_t": 1656075071,
+        "lc": "en",
+        "link": "",
+        "link_debug_tags": [],
+        "main_countries_tags": [],
+        "manufacturing_places": "European Union",
+        "manufacturing_places_debug_tags": [],
+        "manufacturing_places_tags": [
+            "european-union"
+        ],
+        "max_imgid": "9",
+        "minerals_prev_tags": [],
+        "minerals_tags": [],
+        "misc_tags": [
+            "en:nutrition-fruits-vegetables-nuts-estimate-from-ingredients",
+            "en:nutrition-all-nutriscore-values-known",
+            "en:nutriscore-computed",
+            "en:ecoscore-extended-data-computed",
+            "en:ecoscore-extended-data-version-4",
+            "en:ecoscore-missing-data-warning",
+            "en:ecoscore-missing-data-labels",
+            "en:ecoscore-missing-data-origins",
+            "en:ecoscore-computed"
+        ],
+        "no_nutrition_data": "",
+        "nova_group": 4,
+        "nova_group_debug": "",
+        "nova_groups": "4",
+        "nova_groups_markers": {
+            "3": [
+                [
+                    "categories",
+                    "en:salty-snacks"
+                ],
+                [
+                    "ingredients",
+                    "en:salt"
+                ],
+                [
+                    "ingredients",
+                    "en:starch"
+                ],
+                [
+                    "ingredients",
+                    "en:sugar"
+                ],
+                [
+                    "ingredients",
+                    "en:vegetable-oil"
+                ]
+            ],
+            "4": [
+                [
+                    "additives",
+                    "en:e160c"
+                ],
+                [
+                    "ingredients",
+                    "en:colour"
+                ],
+                [
+                    "ingredients",
+                    "en:flavouring"
+                ],
+                [
+                    "ingredients",
+                    "en:whey"
+                ]
+            ]
+        },
+        "nova_groups_tags": [
+            "en:4-ultra-processed-food-and-drink-products"
+        ],
+        "nucleotides_prev_tags": [],
+        "nucleotides_tags": [],
+        "nutrient_levels": {
+            "fat": "moderate",
+            "salt": "high",
+            "saturated-fat": "low",
+            "sugars": "moderate"
+        },
+        "nutrient_levels_tags": [
+            "en:fat-in-moderate-quantity",
+            "en:saturated-fat-in-low-quantity",
+            "en:sugars-in-moderate-quantity",
+            "en:salt-in-high-quantity"
+        ],
+        "nutriments": {
+            "carbohydrates": 15,
+            "carbohydrates_100g": 15,
+            "carbohydrates_serving": 3.45,
+            "carbohydrates_unit": "g",
+            "carbohydrates_value": 15,
+            "carbon-footprint-from-known-ingredients_100g": 32.4,
+            "carbon-footprint-from-known-ingredients_product": 7.45,
+            "carbon-footprint-from-known-ingredients_serving": 7.45,
+            "energy": 1757,
+            "energy-kcal": 420,
+            "energy-kcal_100g": 420,
+            "energy-kcal_serving": 96.6,
+            "energy-kcal_unit": "kcal",
+            "energy-kcal_value": 420,
+            "energy_100g": 1757,
+            "energy_serving": 404,
+            "energy_unit": "kcal",
+            "energy_value": 420,
+            "fat": 15,
+            "fat_100g": 15,
+            "fat_serving": 3.45,
+            "fat_unit": "g",
+            "fat_value": 15,
+            "fiber": 3.9,
+            "fiber_100g": 3.9,
+            "fiber_serving": 0.897,
+            "fiber_unit": "g",
+            "fiber_value": 3.9,
+            "fruits-vegetables-nuts-estimate-from-ingredients_100g": 0,
+            "fruits-vegetables-nuts-estimate-from-ingredients_serving": 0,
+            "nova-group": 4,
+            "nova-group_100g": 4,
+            "nova-group_serving": 4,
+            "nutrition-score-fr": 12,
+            "nutrition-score-fr_100g": 12,
+            "proteins": 5.7,
+            "proteins_100g": 5.7,
+            "proteins_serving": 1.31,
+            "proteins_unit": "g",
+            "proteins_value": 5.7,
+            "salt": 2.1,
+            "salt_100g": 2.1,
+            "salt_serving": 0.483,
+            "salt_unit": "g",
+            "salt_value": 2.1,
+            "saturated-fat": 1.4,
+            "saturated-fat_100g": 1.4,
+            "saturated-fat_serving": 0.322,
+            "saturated-fat_unit": "g",
+            "saturated-fat_value": 1.4,
+            "sodium": 0.84,
+            "sodium_100g": 0.84,
+            "sodium_serving": 0.193,
+            "sodium_unit": "g",
+            "sodium_value": 0.84,
+            "sugars": 8.7,
+            "sugars_100g": 8.7,
+            "sugars_serving": 2,
+            "sugars_unit": "g",
+            "sugars_value": 8.7
+        },
+        "nutriscore_data": {
+            "energy": 1757,
+            "energy_points": 5,
+            "energy_value": 1757,
+            "fiber": 3.9,
+            "fiber_points": 4,
+            "fiber_value": 3.9,
+            "fruits_vegetables_nuts_colza_walnut_olive_oils": 0,
+            "fruits_vegetables_nuts_colza_walnut_olive_oils_points": 0,
+            "fruits_vegetables_nuts_colza_walnut_olive_oils_value": 0,
+            "grade": "d",
+            "is_beverage": 0,
+            "is_cheese": 0,
+            "is_fat": 0,
+            "is_water": 0,
+            "negative_points": 16,
+            "positive_points": 4,
+            "proteins": 5.7,
+            "proteins_points": 3,
+            "proteins_value": 5.7,
+            "saturated_fat": 1.4,
+            "saturated_fat_points": 1,
+            "saturated_fat_ratio": 9.33333333333333,
+            "saturated_fat_ratio_points": 0,
+            "saturated_fat_ratio_value": 9.3,
+            "saturated_fat_value": 1.4,
+            "score": 12,
+            "sodium": 840,
+            "sodium_points": 9,
+            "sodium_value": 840,
+            "sugars": 8.7,
+            "sugars_points": 1,
+            "sugars_value": 8.7
+        },
+        "nutriscore_grade": "d",
+        "nutriscore_score": 12,
+        "nutriscore_score_opposite": -12,
+        "nutrition_data": "on",
+        "nutrition_data_per": "100g",
+        "nutrition_data_prepared": "",
+        "nutrition_data_prepared_per": "100g",
+        "nutrition_data_prepared_per_debug_tags": [],
+        "nutrition_grade_fr": "d",
+        "nutrition_grades": "d",
+        "nutrition_grades_tags": [
+            "d"
+        ],
+        "nutrition_score_beverage": 0,
+        "nutrition_score_debug": "",
+        "nutrition_score_warning_fruits_vegetables_nuts_estimate_from_ingredients": 1,
+        "nutrition_score_warning_fruits_vegetables_nuts_estimate_from_ingredients_value": 0,
+        "origins": "",
+        "origins_hierarchy": [],
+        "origins_lc": "en",
+        "origins_old": "",
+        "origins_tags": [],
+        "other_nutritional_substances_tags": [],
+        "packaging": "Plastic, en:mixed plastic film-packet",
+        "packaging_hierarchy": [
+            "en:plastic",
+            "en:mixed plastic film-packet"
+        ],
+        "packaging_lc": "en",
+        "packaging_old": "Plastic, Mixed plastic-packet",
+        "packaging_old_before_taxonomization": "Plastic, en:mixed plastic-packet",
+        "packaging_tags": [
+            "en:plastic",
+            "en:mixed-plastic-film-packet"
+        ],
+        "packagings": [
+            {
+                "material": "en:plastic",
+                "shape": "en:pack"
+            }
+        ],
+        "photographers_tags": [
+            "kyzh",
+            "kiliweb"
+        ],
+        "pnns_groups_1": "Salty snacks",
+        "pnns_groups_1_tags": [
+            "salty-snacks",
+            "known"
+        ],
+        "pnns_groups_2": "Appetizers",
+        "pnns_groups_2_tags": [
+            "appetizers",
+            "known"
+        ],
+        "popularity_key": 20900000020,
+        "popularity_tags": [
+            "bottom-25-percent-scans-2019",
+            "bottom-20-percent-scans-2019",
+            "bottom-15-percent-scans-2019",
+            "top-90-percent-scans-2019",
+            "top-10000-gb-scans-2019",
+            "top-50000-gb-scans-2019",
+            "top-100000-gb-scans-2019",
+            "top-country-gb-scans-2019",
+            "bottom-25-percent-scans-2020",
+            "top-80-percent-scans-2020",
+            "top-85-percent-scans-2020",
+            "top-90-percent-scans-2020",
+            "top-5000-gb-scans-2020",
+            "top-10000-gb-scans-2020",
+            "top-50000-gb-scans-2020",
+            "top-100000-gb-scans-2020",
+            "top-country-gb-scans-2020",
+            "top-100000-scans-2021",
+            "at-least-5-scans-2021",
+            "top-75-percent-scans-2021",
+            "top-80-percent-scans-2021",
+            "top-85-percent-scans-2021",
+            "top-90-percent-scans-2021",
+            "top-5000-gb-scans-2021",
+            "top-10000-gb-scans-2021",
+            "top-50000-gb-scans-2021",
+            "top-100000-gb-scans-2021",
+            "top-country-gb-scans-2021",
+            "at-least-5-gb-scans-2021",
+            "top-5000-ie-scans-2021",
+            "top-10000-ie-scans-2021",
+            "top-50000-ie-scans-2021",
+            "top-100000-ie-scans-2021",
+            "top-1000-mu-scans-2021",
+            "top-5000-mu-scans-2021",
+            "top-10000-mu-scans-2021",
+            "top-50000-mu-scans-2021",
+            "top-100000-mu-scans-2021"
+        ],
+        "product_name": "Barbeque Potato Chips",
+        "product_name_en": "Barbeque Potato Chips",
+        "product_name_fr": "",
+        "product_name_fr_debug_tags": [],
+        "product_quantity": "23",
+        "purchase_places": "",
+        "purchase_places_debug_tags": [],
+        "purchase_places_tags": [],
+        "quantity": "23 g",
+        "quantity_debug_tags": [],
+        "removed_countries_tags": [],
+        "rev": 32,
+        "scans_n": 10,
+        "selected_images": {
+            "front": {
+                "display": {
+                    "en": "https://images.openfoodfacts.org/images/products/506/029/230/2201/front_en.23.400.jpg"
+                },
+                "small": {
+                    "en": "https://images.openfoodfacts.org/images/products/506/029/230/2201/front_en.23.200.jpg"
+                },
+                "thumb": {
+                    "en": "https://images.openfoodfacts.org/images/products/506/029/230/2201/front_en.23.100.jpg"
+                }
+            },
+            "ingredients": {
+                "display": {
+                    "en": "https://images.openfoodfacts.org/images/products/506/029/230/2201/ingredients_en.11.400.jpg"
+                },
+                "small": {
+                    "en": "https://images.openfoodfacts.org/images/products/506/029/230/2201/ingredients_en.11.200.jpg"
+                },
+                "thumb": {
+                    "en": "https://images.openfoodfacts.org/images/products/506/029/230/2201/ingredients_en.11.100.jpg"
+                }
+            },
+            "nutrition": {
+                "display": {
+                    "en": "https://images.openfoodfacts.org/images/products/506/029/230/2201/nutrition_en.32.400.jpg"
+                },
+                "small": {
+                    "en": "https://images.openfoodfacts.org/images/products/506/029/230/2201/nutrition_en.32.200.jpg"
+                },
+                "thumb": {
+                    "en": "https://images.openfoodfacts.org/images/products/506/029/230/2201/nutrition_en.32.100.jpg"
+                }
+            }
+        },
+        "serving_quantity": "23",
+        "serving_size": "23 g",
+        "serving_size_debug_tags": [],
+        "sortkey": 1535456524,
+        "states": "en:to-be-completed, en:nutrition-facts-completed, en:ingredients-completed, en:expiration-date-completed, en:packaging-code-to-be-completed, en:characteristics-to-be-completed, en:origins-to-be-completed, en:categories-completed, en:brands-completed, en:packaging-completed, en:quantity-completed, en:product-name-completed, en:photos-to-be-validated, en:packaging-photo-to-be-selected, en:nutrition-photo-selected, en:ingredients-photo-selected, en:front-photo-selected, en:photos-uploaded",
+        "states_hierarchy": [
+            "en:to-be-completed",
+            "en:nutrition-facts-completed",
+            "en:ingredients-completed",
+            "en:expiration-date-completed",
+            "en:packaging-code-to-be-completed",
+            "en:characteristics-to-be-completed",
+            "en:origins-to-be-completed",
+            "en:categories-completed",
+            "en:brands-completed",
+            "en:packaging-completed",
+            "en:quantity-completed",
+            "en:product-name-completed",
+            "en:photos-to-be-validated",
+            "en:packaging-photo-to-be-selected",
+            "en:nutrition-photo-selected",
+            "en:ingredients-photo-selected",
+            "en:front-photo-selected",
+            "en:photos-uploaded"
+        ],
+        "states_tags": [
+            "en:to-be-completed",
+            "en:nutrition-facts-completed",
+            "en:ingredients-completed",
+            "en:expiration-date-completed",
+            "en:packaging-code-to-be-completed",
+            "en:characteristics-to-be-completed",
+            "en:origins-to-be-completed",
+            "en:categories-completed",
+            "en:brands-completed",
+            "en:packaging-completed",
+            "en:quantity-completed",
+            "en:product-name-completed",
+            "en:photos-to-be-validated",
+            "en:packaging-photo-to-be-selected",
+            "en:nutrition-photo-selected",
+            "en:ingredients-photo-selected",
+            "en:front-photo-selected",
+            "en:photos-uploaded"
+        ],
+        "stores": "",
+        "stores_debug_tags": [],
+        "stores_tags": [],
+        "teams": "swipe-studio",
+        "teams_tags": [
+            "swipe-studio"
+        ],
+        "traces": "",
+        "traces_debug_tags": [],
+        "traces_from_ingredients": "",
+        "traces_from_user": "(en) ",
+        "traces_hierarchy": [],
+        "traces_tags": [],
+        "unique_scans_n": 8,
+        "unknown_ingredients_n": 1,
+        "unknown_nutrients_tags": [],
+        "update_key": "update20221107",
+        "vitamins_prev_tags": [],
+        "vitamins_tags": []
+    },
+    "status": 1,
+    "status_verbose": "product found"
+}
