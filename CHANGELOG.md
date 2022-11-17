@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - It is now possible to `await` a `Widget.remove`.
   https://github.com/Textualize/textual/issues/1094
 - It is now possible to `await` a `DOMQuery.remove`. Note that this changes
-  the return value of `DOMQuery.remove`, which uses to return `self`.
+  the return value of `DOMQuery.remove`, which used to return `self`.
   https://github.com/Textualize/textual/issues/1094
 - Added Pilot.wait_for_animation
 - Added `Widget.move_child` https://github.com/Textualize/textual/issues/1121
