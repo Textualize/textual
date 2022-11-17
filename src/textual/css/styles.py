@@ -1037,25 +1037,3 @@ class RenderStyles(StylesBase):
         styles.merge(self._inline_styles)
         combined_css = styles.css
         return combined_css
-
-
-if __name__ == "__main__":
-    styles = Styles()
-
-    styles.display = "none"
-    styles.visibility = "hidden"
-    styles.border = ("solid", "rgb(10,20,30)")
-    styles.outline_right = ("solid", "red")
-    styles.text_style = "italic"
-    styles.dock = "bar"
-    styles.layers = "foo bar"
-
-    from rich import print
-
-    print(styles.text_style)
-    print(styles.text)
-
-    print(styles)
-    print(styles.css)
-
-    print(styles.extract_rules((0, 1, 0)))
