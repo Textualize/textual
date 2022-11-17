@@ -11,13 +11,13 @@ The example below populates a table with CSV data.
 
 === "Output"
 
-    ```{.textual path="docs/examples/widgets/table.py"}
+    ```{.textual path="docs/examples/widgets/data_table.py"}
     ```
 
-=== "table.py"
+=== "data_table.py"
 
     ```python
-    --8<-- "docs/examples/widgets/table.py"
+    --8<-- "docs/examples/widgets/data_table.py"
     ```
 
 

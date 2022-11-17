@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from typing import Iterable, Iterator
 
 import rich.repr
@@ -13,17 +12,14 @@ from ._compositor import Compositor, MapGeometry
 from .timer import Timer
 from ._types import CallbackType
 from .geometry import Offset, Region, Size
+from ._typing import Final
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .widget import Widget
 
-if sys.version_info >= (3, 8):
-    from typing import Final
-else:
-    from typing_extensions import Final
 
-# Screen updates will be batched so that they don't happen more often than 60 times per second:
-UPDATE_PERIOD: Final = 1 / 60
+# Screen updates will be batched so that they don't happen more often than 120 times per second:
+UPDATE_PERIOD: Final[float] = 1 / 120
 
 
 @rich.repr.auto
@@ -38,7 +34,6 @@ class Screen(Widget):
     }
     """
 
-    dark: Reactive[bool] = Reactive(False)
     focused: Reactive[Widget | None] = Reactive(None)
 
     def __init__(
@@ -61,7 +56,12 @@ class Screen(Widget):
     @property
     def is_current(self) -> bool:
         """Check if this screen is current (i.e. visible to user)."""
-        return self.app.screen is self
+        from .app import ScreenStackError
+
+        try:
+            return self.app.screen is self
+        except ScreenStackError:
+            return False
 
     @property
     def update_timer(self) -> Timer:
@@ -169,9 +169,8 @@ class Screen(Widget):
             else:
                 if node.is_container and node.can_focus_children:
                     push(iter(node.focusable_children))
-                else:
-                    if node.can_focus:
-                        add_widget(node)
+                if node.can_focus:
+                    add_widget(node)
 
         return widgets
 
@@ -224,19 +223,57 @@ class Screen(Widget):
         """
         return self._move_focus(-1)
 
-    def _reset_focus(self, widget: Widget) -> None:
+    def _reset_focus(
+        self, widget: Widget, avoiding: list[Widget] | None = None
+    ) -> None:
         """Reset the focus when a widget is removed
 
         Args:
             widget (Widget): A widget that is removed.
+            avoiding (list[DOMNode] | None, optional): Optional list of nodes to avoid.
         """
-        if self.focused is widget:
-            for sibling in widget.siblings:
-                if sibling.can_focus:
-                    sibling.focus()
+
+        avoiding = avoiding or []
+
+        # Make this a NOP if we're being asked to deal with a widget that
+        # isn't actually the currently-focused widget.
+        if self.focused is not widget:
+            return
+
+        # Grab the list of widgets that we can set focus to.
+        focusable_widgets = self.focus_chain
+        if not focusable_widgets:
+            # If there's nothing to focus... give up now.
+            return
+
+        try:
+            # Find the location of the widget we're taking focus from, in
+            # the focus chain.
+            widget_index = focusable_widgets.index(widget)
+        except ValueError:
+            # widget is not in focusable widgets
+            # It may have been made invisible
+            # Move to a sibling if possible
+            for sibling in widget.visible_siblings:
+                if sibling not in avoiding and sibling.can_focus:
+                    self.set_focus(sibling)
                     break
             else:
-                self.focused = None
+                self.set_focus(None)
+            return
+
+        # Now go looking for something before it, that isn't about to be
+        # removed, and which can receive focus, and go focus that.
+        chosen: Widget | None = None
+        for candidate in reversed(
+            focusable_widgets[widget_index + 1 :] + focusable_widgets[:widget_index]
+        ):
+            if candidate not in avoiding:
+                chosen = candidate
+                break
+
+        # Go with the what was found.
+        self.set_focus(chosen)
 
     def set_focus(self, widget: Widget | None, scroll_visible: bool = True) -> None:
         """Focus (or un-focus) a widget. A focused widget will receive key events first.
@@ -296,10 +333,10 @@ class Screen(Widget):
             self._compositor.update_widgets(self._dirty_widgets)
             self.app._display(self, self._compositor.render())
             self._dirty_widgets.clear()
-
-        self.update_timer.pause()
         if self._callbacks:
             self.post_message_no_wait(events.InvokeCallbacks(self))
+
+        self.update_timer.pause()
 
     async def _on_invoke_callbacks(self, event: events.InvokeCallbacks) -> None:
         """Handle PostScreenUpdate events, which are sent after the screen is updated"""
@@ -309,6 +346,8 @@ class Screen(Widget):
         """If there are scheduled callbacks to run, call them and clear
         the callback queue."""
         if self._callbacks:
+            display_update = self._compositor.render()
+            self.app._display(self, display_update)
             callbacks = self._callbacks[:]
             self._callbacks.clear()
             for callback in callbacks:
@@ -336,6 +375,7 @@ class Screen(Widget):
             hidden, shown, resized = self._compositor.reflow(self, size)
             Hide = events.Hide
             Show = events.Show
+
             for widget in hidden:
                 widget.post_message_no_wait(Hide(self))
             for widget in shown:
@@ -364,8 +404,7 @@ class Screen(Widget):
             self.app._handle_exception(error)
             return
         display_update = self._compositor.render(full=full)
-        if display_update is not None:
-            self.app._display(self, display_update)
+        self.app._display(self, display_update)
 
     async def _on_update(self, message: messages.Update) -> None:
         message.stop()
@@ -387,12 +426,12 @@ class Screen(Widget):
 
     def _on_screen_resume(self) -> None:
         """Called by the App"""
-
         size = self.app.size
         self._refresh_layout(size, full=True)
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
+        self._screen_resized(event.size)
 
     async def _handle_mouse_move(self, event: events.MouseMove) -> None:
         try:

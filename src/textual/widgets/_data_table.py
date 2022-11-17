@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from dataclasses import dataclass, field
 from itertools import chain, zip_longest
 from typing import ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
@@ -14,18 +13,13 @@ from rich.text import Text, TextType
 
 from .. import events, messages
 from .._cache import LRUCache
-from .._profile import timer
 from .._segment_tools import line_crop
 from .._types import Lines
 from ..geometry import Region, Size, Spacing, clamp
 from ..reactive import Reactive
 from ..render import measure
 from ..scroll_view import ScrollView
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
+from .._typing import Literal
 
 CursorType = Literal["cell", "row", "column"]
 CELL: CursorType = "cell"
@@ -62,7 +56,7 @@ class Column:
 
     @property
     def render_width(self) -> int:
-        """Width in cells, required to render a column."""
+        """int: Width in cells, required to render a column."""
         # +2 is to account for space padding either side of the cell
         if self.auto_width:
             return self.content_width + 2
@@ -94,37 +88,52 @@ class Coord(NamedTuple):
     column: int
 
     def left(self) -> Coord:
-        """Get coordinate to the left."""
+        """Get coordinate to the left.
+
+        Returns:
+            Coord: The coordinate.
+        """
         row, column = self
         return Coord(row, column - 1)
 
     def right(self) -> Coord:
-        """Get coordinate to the right."""
+        """Get coordinate to the right.
+
+        Returns:
+            Coord: The coordinate.
+        """
         row, column = self
         return Coord(row, column + 1)
 
     def up(self) -> Coord:
-        """Get coordinate above."""
+        """Get coordinate above.
+
+        Returns:
+            Coord: The coordinate.
+        """
         row, column = self
         return Coord(row - 1, column)
 
     def down(self) -> Coord:
-        """Get coordinate below."""
+        """Get coordinate below.
+
+        Returns:
+            Coord: The coordinate.
+        """
         row, column = self
         return Coord(row + 1, column)
 
 
 class DataTable(ScrollView, Generic[CellType], can_focus=True):
-
     DEFAULT_CSS = """
     App.-dark DataTable {
         background:;
     }
     DataTable {
         background: $surface ;
-        color: $text;           
+        color: $text;
     }
-    DataTable > .datatable--header {        
+    DataTable > .datatable--header {
         text-style: bold;
         background: $primary;
         color: $text;
@@ -136,7 +145,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     }
 
     DataTable > .datatable--odd-row {
-        
+
     }
 
     DataTable > .datatable--even-row {
@@ -166,14 +175,32 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         "datatable--cursor",
     }
 
+    show_header = Reactive(True)
+    fixed_rows = Reactive(0)
+    fixed_columns = Reactive(0)
+    zebra_stripes = Reactive(False)
+    header_height = Reactive(1)
+    show_cursor = Reactive(True)
+    cursor_type = Reactive(CELL)
+
+    cursor_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
+    hover_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
+
     def __init__(
         self,
         *,
+        show_header: bool = True,
+        fixed_rows: int = 0,
+        fixed_columns: int = 0,
+        zebra_stripes: bool = False,
+        header_height: int = 1,
+        show_cursor: bool = True,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
+
         self.columns: list[Column] = []
         self.rows: dict[int, Row] = {}
         self.data: dict[int, list[CellType]] = {}
@@ -194,16 +221,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._require_update_dimensions: bool = False
         self._new_rows: set[int] = set()
 
-    show_header = Reactive(True)
-    fixed_rows = Reactive(0)
-    fixed_columns = Reactive(0)
-    zebra_stripes = Reactive(False)
-    header_height = Reactive(1)
-    show_cursor = Reactive(True)
-    cursor_type = Reactive(CELL)
-
-    cursor_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
-    hover_cell: Reactive[Coord] = Reactive(Coord(0, 0), repaint=False)
+        self.show_header = show_header
+        self.fixed_rows = fixed_rows
+        self.fixed_columns = fixed_columns
+        self.zebra_stripes = zebra_stripes
+        self.header_height = header_height
+        self.show_cursor = show_cursor
 
     @property
     def hover_row(self) -> int:
@@ -268,6 +291,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 content_width = measure(self.app.console, renderable, 1)
                 column.content_width = max(column.content_width, content_width)
 
+        self._clear_caches()
         total_width = sum(column.render_width for column in self.columns)
         header_height = self.header_height if self.show_header else 0
         self.virtual_size = Size(
@@ -287,6 +311,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             y += self.header_height
         cell_region = Region(x, y, width, height)
         return cell_region
+
+    def clear(self) -> None:
+        """Clear the table.
+
+        Args:
+            columns (bool, optional): Also clear the columns. Defaults to False.
+        """
+        self.row_count = 0
+        self._clear_caches()
+        self._y_offsets.clear()
+        self.data.clear()
+        self.rows.clear()
+        self._line_no = 0
+        self._require_update_dimensions = True
+        self.refresh()
 
     def add_columns(self, *labels: TextType) -> None:
         """Add a number of columns.
@@ -362,6 +401,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             new_rows = self._new_rows.copy()
             self._new_rows.clear()
             self._update_dimensions(new_rows)
+            self.refresh()
 
     def refresh_cell(self, row_index: int, column_index: int) -> None:
         """Refresh a cell.

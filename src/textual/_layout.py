@@ -1,21 +1,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-import sys
 from typing import ClassVar, NamedTuple, TYPE_CHECKING
 
-
 from .geometry import Region, Size, Spacing
-
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:  # pragma: no cover
-    from typing_extensions import TypeAlias
-
+from ._typing import TypeAlias
 
 if TYPE_CHECKING:
     from .widget import Widget
-
 
 ArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget]]"
 DockArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget], Spacing]"
@@ -65,17 +57,18 @@ class Layout(ABC):
             int: Width of the content.
         """
         width: int | None = None
-        widget_gutter = widget.gutter.width
+        gutter_width = widget.gutter.width
         for child in widget.displayed_children:
             if not child.is_container:
                 child_width = (
                     child.get_content_width(container, viewport)
-                    + widget_gutter
+                    + gutter_width
                     + child.gutter.width
                 )
                 width = child_width if width is None else max(width, child_width)
         if width is None:
             width = container.width
+
         return width
 
     def get_content_height(

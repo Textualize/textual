@@ -64,4 +64,4 @@ The `Input.Submitted` message is sent when you press ++enter++ with the text fie
 
 ## See Also
 
-* [Input](../reference/input.md) code reference
+* [Input](../api/input.md) code reference

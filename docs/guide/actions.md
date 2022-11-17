@@ -12,7 +12,7 @@ Action methods are methods on your app or widgets prefixed with `action_`. Aside
 
 Let's write an app with a simple action.
 
-```python title="actions01.py" hl_lines="6-8 12"
+```python title="actions01.py" hl_lines="6-7 11"
 --8<-- "docs/examples/guide/actions/actions01.py"
 ```
 
@@ -22,7 +22,7 @@ Although it is possible (and occasionally useful) to call action methods in this
 
 The following example replaces the immediate call with a call to [action()][textual.widgets.Widget.action] which parses an action string and dispatches it to the appropriate method.
 
-```python title="actions02.py" hl_lines="10-12"
+```python title="actions02.py" hl_lines="9-11"
 --8<-- "docs/examples/guide/actions/actions02.py"
 ```
 
@@ -42,7 +42,7 @@ Action strings have the following format:
 
 - The name of an action on is own will call the action method with no parameters. For example, an action string of `"bell"` will call `action_bell()`.
 - Actions may be followed by braces containing Python objects. For example, the action string `set_background("red")` will call `action_set_background("red")`.
-- Actions may be prefixed with a _namespace_ (see below) follow by a dot. 
+- Actions may be prefixed with a _namespace_ (see below) followed by a dot.
 
 <div class="excalidraw">
 --8<-- "docs/images/actions/format.excalidraw.svg"
@@ -50,7 +50,7 @@ Action strings have the following format:
 
 ### Parameters
 
-If the action strings contains parameters, these must be valid Python literals. Which means you can include numbers, strings, dicts, lists etc. but you can't include variables or references to any other python symbols.
+If the action string contains parameters, these must be valid Python literals. Which means you can include numbers, strings, dicts, lists etc. but you can't include variables or references to any other python symbol.
 
 Consequently `"set_background('blue')"` is a valid action string, but `"set_background(new_color)"` is not &mdash; because `new_color` is a variable and not a literal.
 
@@ -71,7 +71,7 @@ The following example mounts simple static text with embedded action links.
     ```{.textual path="docs/examples/guide/actions/actions03.py"}
     ```
 
-When you click any of the links, Textual runs the `"set_background"` action to change the background to the given color and plays the terminals bell.
+When you click any of the links, Textual runs the `"set_background"` action to change the background to the given color.
 
 ## Bindings
 
@@ -104,7 +104,7 @@ The following example defines a custom widget with its own `set_background` acti
 
 === "actions05.css"
 
-    ```sass title="actions05.css" 
+    ```sass title="actions05.css"
     --8<-- "docs/examples/guide/actions/actions05.css"
     ```
 

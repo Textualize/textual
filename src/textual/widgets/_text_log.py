@@ -30,6 +30,7 @@ class TextLog(ScrollView, can_focus=True):
     min_width: var[int] = var(78)
     wrap: var[bool] = var(False)
     highlight: var[bool] = var(False)
+    markup: var[bool] = var(False)
 
     def __init__(
         self,
@@ -38,11 +39,14 @@ class TextLog(ScrollView, can_focus=True):
         min_width: int = 78,
         wrap: bool = False,
         highlight: bool = False,
+        markup: bool = False,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
+        super().__init__(name=name, id=id, classes=classes)
         self.max_lines = max_lines
+        self._start_line: int = 0
         self.lines: list[list[Segment]] = []
         self._line_cache: LRUCache[tuple[int, int, int, int], list[Segment]]
         self._line_cache = LRUCache(1024)
@@ -50,8 +54,8 @@ class TextLog(ScrollView, can_focus=True):
         self.min_width = min_width
         self.wrap = wrap
         self.highlight = highlight
+        self.markup = markup
         self.highlighter = ReprHighlighter()
-        super().__init__(name=name, id=id, classes=classes)
 
     def _on_styles_updated(self) -> None:
         self._line_cache.clear()
@@ -68,6 +72,8 @@ class TextLog(ScrollView, can_focus=True):
             renderable = Pretty(content)
         else:
             if isinstance(content, str):
+                if self.markup:
+                    content = Text.from_markup(content)
                 if self.highlight:
                     renderable = self.highlighter(content)
                 else:
@@ -81,15 +87,18 @@ class TextLog(ScrollView, can_focus=True):
         render_options = console.options.update_width(width)
         if not self.wrap:
             render_options = render_options.update(overflow="ignore", no_wrap=True)
-        segments = self.app.console.render(renderable, render_options)
+        segments = self.app.console.render(renderable, render_options.update_width(80))
         lines = list(Segment.split_lines(segments))
+
         self.max_width = max(
             self.max_width,
             max(sum(segment.cell_length for segment in _line) for _line in lines),
         )
         self.lines.extend(lines)
 
-        if self.max_lines is not None:
+        if self.max_lines is not None and len(self.lines) > self.max_lines:
+            self._start_line += len(self.lines) - self.max_lines
+            self.refresh()
             self.lines = self.lines[-self.max_lines :]
         self.virtual_size = Size(self.max_width, len(self.lines))
         self.scroll_end(animate=False, speed=100)
@@ -97,12 +106,16 @@ class TextLog(ScrollView, can_focus=True):
     def clear(self) -> None:
         """Clear the text log."""
         del self.lines[:]
+        self._start_line = 0
         self.max_width = 0
         self.virtual_size = Size(self.max_width, len(self.lines))
+        self.refresh()
 
     def render_line(self, y: int) -> list[Segment]:
         scroll_x, scroll_y = self.scroll_offset
-        return self._render_line(scroll_y + y, scroll_x, self.size.width)
+        line = self._render_line(scroll_y + y, scroll_x, self.size.width)
+        line = list(Segment.apply_style(line, self.rich_style))
+        return line
 
     def render_lines(self, crop: Region) -> Lines:
         """Render the widget in to lines.
@@ -121,7 +134,7 @@ class TextLog(ScrollView, can_focus=True):
         if y >= len(self.lines):
             return [Segment(" " * width, self.rich_style)]
 
-        key = (y, scroll_x, width, self.max_width)
+        key = (y + self._start_line, scroll_x, width, self.max_width)
         if key in self._line_cache:
             return self._line_cache[key]
 

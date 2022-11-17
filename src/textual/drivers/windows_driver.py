@@ -18,9 +18,14 @@ class WindowsDriver(Driver):
     """Powers display and input for Windows."""
 
     def __init__(
-        self, console: "Console", target: "MessageTarget", debug: bool = False
+        self,
+        console: "Console",
+        target: "MessageTarget",
+        *,
+        debug: bool = False,
+        size: tuple[int, int] | None = None,
     ) -> None:
-        super().__init__(console, target, debug)
+        super().__init__(console, target, debug=debug, size=size)
         self.in_fileno = sys.stdin.fileno()
         self.out_fileno = sys.stdout.fileno()
 

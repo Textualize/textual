@@ -71,17 +71,12 @@ class StylesheetErrors:
 
                 if token.referenced_by:
                     line_idx, col_idx = token.referenced_by.location
-                    line_no, col_no = line_idx + 1, col_idx + 1
-                    path_string = (
-                        f"{path.absolute() if path else filename}:{line_no}:{col_no}"
-                    )
                 else:
                     line_idx, col_idx = token.location
-                    line_no, col_no = line_idx + 1, col_idx + 1
-                    path_string = (
-                        f"{path.absolute() if path else filename}:{line_no}:{col_no}"
-                    )
-
+                line_no, col_no = line_idx + 1, col_idx + 1
+                path_string = (
+                    f"{path.absolute() if path else filename}:{line_no}:{col_no}"
+                )
                 link_style = Style(
                     link=f"file://{path.absolute()}",
                     color="red",
@@ -192,7 +187,7 @@ class Stylesheet:
             variables (dict[str, str]): A mapping of name to variable.
         """
         self._variables = variables
-        self._variables_tokens = None
+        self.__variable_tokens = None
 
     def _parse_rules(
         self,
@@ -248,10 +243,23 @@ class Stylesheet:
             with open(filename, "rt") as css_file:
                 css = css_file.read()
             path = os.path.abspath(filename)
-        except Exception as error:
-            raise StylesheetError(f"unable to read {filename!r}; {error}")
+        except Exception:
+            raise StylesheetError(f"unable to read CSS file {filename!r}") from None
         self.source[str(path)] = CssSource(css, False, 0)
         self._require_parse = True
+
+    def read_all(self, paths: list[PurePath]) -> None:
+        """Read multiple CSS files, in order.
+
+        Args:
+            paths (list[PurePath]): The paths of the CSS files to read, in order.
+
+        Raises:
+            StylesheetError: If the CSS could not be read.
+            StylesheetParseError: If the CSS is invalid.
+        """
+        for path in paths:
+            self.read(path)
 
     def add_source(
         self,
@@ -268,6 +276,7 @@ class Stylesheet:
                 Defaults to None.
             is_default_css (bool): True if the CSS is defined in the Widget, False if the CSS is defined
                 in a user stylesheet.
+            tie_breaker (int): Integer representing the priority of this source.
 
         Raises:
             StylesheetError: If the CSS could not be read.
@@ -370,11 +379,14 @@ class Stylesheet:
 
         # Collect the rules defined in the stylesheet
         node._has_hover_style = False
+        node._has_focus_within = False
         for rule in rules:
             is_default_rules = rule.is_default_rules
             tie_breaker = rule.tie_breaker
             if ":hover" in rule.selector_names:
                 node._has_hover_style = True
+            if ":focus-within" in rule.selector_names:
+                node._has_focus_within = True
             for base_specificity in _check_rule(rule, css_path_nodes):
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker

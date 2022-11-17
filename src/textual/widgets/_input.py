@@ -85,13 +85,13 @@ class Input(Widget, can_focus=True):
         Binding("home", "home", "home", show=False),
         Binding("end", "end", "end", show=False),
         Binding("ctrl+d", "delete_right", "delete right", show=False),
-        Binding("enter", "submit", "Submit", show=False),
+        Binding("enter", "submit", "submit", show=False),
     ]
 
     COMPONENT_CLASSES = {"input--cursor", "input--placeholder"}
 
     cursor_blink = reactive(True)
-    value = reactive("", layout=True)
+    value = reactive("", layout=True, init=False)
     input_scroll_offset = reactive(0)
     cursor_position = reactive(0)
     view_position = reactive(0)
@@ -104,17 +104,20 @@ class Input(Widget, can_focus=True):
 
     def __init__(
         self,
-        value: str = "",
+        value: str | None = None,
         placeholder: str = "",
         highlighter: Highlighter | None = None,
+        password: bool = False,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
-        self.value = value
+        if value is not None:
+            self.value = value
         self.placeholder = placeholder
         self.highlighter = highlighter
+        self.password = password
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""
@@ -167,32 +170,19 @@ class Input(Widget, can_focus=True):
         return self._position_to_cell(len(self.value)) + 1
 
     def render(self) -> RenderableType:
-        self.view_position = self.view_position
         if not self.value:
-            placeholder = Text(self.placeholder)
+            placeholder = Text(self.placeholder, justify="left")
             placeholder.stylize(self.get_component_rich_style("input--placeholder"))
             if self.has_focus:
                 cursor_style = self.get_component_rich_style("input--cursor")
                 if self._cursor_visible:
+                    # If the placeholder is empty, there's no characters to stylise
+                    # to make the cursor flash, so use a single space character
+                    if len(placeholder) == 0:
+                        placeholder = Text(" ")
                     placeholder.stylize(cursor_style, 0, 1)
             return placeholder
         return _InputRenderable(self, self._cursor_visible)
-
-    class Changed(Message, bubble=True):
-        """Value was changed."""
-
-        def __init__(self, sender: Input, value: str) -> None:
-            super().__init__(sender)
-            self.value = value
-            self.input = sender
-
-    class Submitted(Message, bubble=True):
-        """Value was updated via enter key or blur."""
-
-        def __init__(self, sender: Input, value: str) -> None:
-            super().__init__(sender)
-            self.value = value
-            self.input = sender
 
     @property
     def _value(self) -> Text:
@@ -303,10 +293,15 @@ class Input(Widget, can_focus=True):
         self.cursor_position = delete_position
 
     def action_delete_left(self) -> None:
+        if self.cursor_position <= 0:
+            # Cursor at the start, so nothing to delete
+            return
         if self.cursor_position == len(self.value):
+            # Delete from end
             self.value = self.value[:-1]
             self.cursor_position = len(self.value)
         else:
+            # Cursor in the middle
             value = self.value
             delete_position = self.cursor_position - 1
             before = value[:delete_position]
@@ -316,3 +311,19 @@ class Input(Widget, can_focus=True):
 
     async def action_submit(self) -> None:
         await self.emit(self.Submitted(self, self.value))
+
+    class Changed(Message, bubble=True):
+        """Value was changed."""
+
+        def __init__(self, sender: Input, value: str) -> None:
+            super().__init__(sender)
+            self.value = value
+            self.input = sender
+
+    class Submitted(Message, bubble=True):
+        """Value was updated via enter key or blur."""
+
+        def __init__(self, sender: Input, value: str) -> None:
+            super().__init__(sender)
+            self.value = value
+            self.input = sender

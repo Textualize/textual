@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     from .timer import Timer as TimerClass
     from .timer import TimerCallback
     from .widget import Widget
+    import asyncio
 
 
 @rich.repr.auto
@@ -23,8 +24,7 @@ class Event(Message):
     """The base class for all events."""
 
     def __rich_repr__(self) -> rich.repr.Result:
-        return
-        yield
+        yield from ()
 
 
 @rich.repr.auto
@@ -119,16 +119,34 @@ class Compose(Event, bubble=False, verbose=True):
     """Sent to a widget to request it to compose and mount children."""
 
 
-class Mount(Event, bubble=False, verbose=True):
+class Mount(Event, bubble=False, verbose=False):
     """Sent when a widget is *mounted* and may receive messages."""
 
 
-class Remove(Event, bubble=False):
-    """Sent to a widget to ask it to remove itself from the DOM."""
+class Unmount(Mount, bubble=False, verbose=False):
+    """Sent when a widget is unmounted and may not longer receive messages."""
 
-    def __init__(self, sender: MessageTarget, widget: Widget) -> None:
-        self.widget = widget
+
+class Prune(Event, bubble=False):
+    """Sent to the app to ask it to prune one or more widgets from the DOM.
+
+    Attributes:
+        widgets (list[Widgets]): The list of widgets to prune.
+        finished_flag (asyncio.Event): An asyncio Event to that will be flagged when the prune is done.
+    """
+
+    def __init__(
+        self, sender: MessageTarget, widgets: list[Widget], finished_flag: asyncio.Event
+    ) -> None:
+        """Initialise the event.
+
+        Args:
+            widgets (list[Widgets]): The list of widgets to prune.
+            finished_flag (asyncio.Event): An asyncio Event to that will be flagged when the prune is done.
+        """
         super().__init__(sender)
+        self.finished_flag = finished_flag
+        self.widgets = widgets
 
 
 class Show(Event, bubble=False):
@@ -148,7 +166,7 @@ class Hide(Event, bubble=False):
 class MouseCapture(Event, bubble=False):
     """Sent when the mouse has been captured.
 
-    When a mouse has been captures, all further mouse events will be sent to the capturing widget.
+    When a mouse has been captured, all further mouse events will be sent to the capturing widget.
 
 
     Args:

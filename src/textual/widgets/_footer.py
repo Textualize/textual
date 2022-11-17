@@ -7,13 +7,14 @@ from rich.console import RenderableType
 from rich.text import Text
 
 from .. import events
+from ..keys import _get_key_display
 from ..reactive import Reactive, watch
 from ..widget import Widget
 
 
 @rich.repr.auto
 class Footer(Widget):
-    """A simple header widget which docks itself to the top of the parent container."""
+    """A simple footer widget which docks itself to the bottom of the parent container."""
 
     DEFAULT_CSS = """
     Footer {
@@ -87,7 +88,11 @@ class Footer(Widget):
         highlight_key_style = self.get_component_rich_style("footer--highlight-key")
         key_style = self.get_component_rich_style("footer--key")
 
-        bindings = self.app.bindings.shown_keys
+        bindings = [
+            binding
+            for (_namespace, binding) in self.app.namespace_bindings.values()
+            if binding.show
+        ]
 
         action_to_bindings = defaultdict(list)
         for binding in bindings:
@@ -95,11 +100,12 @@ class Footer(Widget):
 
         for action, bindings in action_to_bindings.items():
             binding = bindings[0]
-            key_display = (
-                binding.key.upper()
-                if binding.key_display is None
-                else binding.key_display
-            )
+            if binding.key_display is None:
+                key_display = _get_key_display(binding.key)
+                if key_display is None:
+                    key_display = binding.key.upper()
+            else:
+                key_display = binding.key_display
             hovered = self.highlight_key == binding.key
             key_text = Text.assemble(
                 (f" {key_display} ", highlight_key_style if hovered else key_style),
@@ -107,10 +113,17 @@ class Footer(Widget):
                     f" {binding.description} ",
                     highlight_style if hovered else base_style,
                 ),
-                meta={"@click": f"app.press('{binding.key}')", "key": binding.key},
+                meta={
+                    "@click": f"app.check_bindings('{binding.key}')",
+                    "key": binding.key,
+                },
             )
             text.append_text(key_text)
         return text
+
+    def _on_styles_updated(self) -> None:
+        self._key_text = None
+        self.refresh()
 
     def post_render(self, renderable):
         return renderable

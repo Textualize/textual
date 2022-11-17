@@ -15,23 +15,14 @@ from rich.segment import Segment
 from .._log import LogGroup, LogVerbosity
 
 
-class DevtoolsDependenciesMissingError(Exception):
-    """Raise when the required devtools dependencies are not installed in the environment"""
+import aiohttp
+import msgpack
+from aiohttp import (
+    ClientConnectorError,
+    ClientResponseError,
+    ClientWebSocketResponse,
+)
 
-
-try:
-    import aiohttp
-    import msgpack
-    from aiohttp import (
-        ClientConnectorError,
-        ClientResponseError,
-        ClientWebSocketResponse,
-    )
-except ImportError:
-    # TODO: Add link to documentation on how to install devtools
-    raise DevtoolsDependenciesMissingError(
-        "Textual Devtools requires installation of the 'dev' extra dependencies. "
-    )
 
 DEVTOOLS_PORT = 8081
 WEBSOCKET_CONNECT_TIMEOUT = 3

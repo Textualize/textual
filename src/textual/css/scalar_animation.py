@@ -2,25 +2,26 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .scalar import ScalarOffset
+from .scalar import ScalarOffset, Scalar
 from .._animator import Animation
 from .._animator import EasingFunction
 from .._types import CallbackType
-from ..geometry import Offset
+
 
 if TYPE_CHECKING:
-    from ..widget import Widget
-    from .styles import Styles
+    from ..dom import DOMNode
+
+    from .styles import StylesBase
 
 
 class ScalarAnimation(Animation):
     def __init__(
         self,
-        widget: Widget,
-        styles: Styles,
+        widget: DOMNode,
+        styles: StylesBase,
         start_time: float,
         attribute: str,
-        value: ScalarOffset,
+        value: ScalarOffset | Scalar,
         duration: float | None,
         speed: float | None,
         easing: EasingFunction,
@@ -40,8 +41,8 @@ class ScalarAnimation(Animation):
         size = widget.outer_size
         viewport = widget.app.size
 
-        self.start: Offset = getattr(styles, attribute).resolve(size, viewport)
-        self.destination: Offset = value.resolve(size, viewport)
+        self.start = getattr(styles, attribute).resolve(size, viewport)
+        self.destination = value.resolve(size, viewport)
 
         if speed is not None:
             distance = self.start.get_distance_to(self.destination)
@@ -58,10 +59,13 @@ class ScalarAnimation(Animation):
             setattr(self.styles, self.attribute, self.final_value)
             return True
 
-        offset = self.start + (self.destination - self.start) * eased_factor
-        current = self.styles._rules[self.attribute]
-        if current != offset:
-            setattr(self.styles, f"{self.attribute}", offset)
+        if hasattr(self.start, "blend"):
+            value = self.start.blend(self.destination, eased_factor)
+        else:
+            value = self.start + (self.destination - self.start) * eased_factor
+        current = self.styles.get_rule(self.attribute)
+        if current != value:
+            setattr(self.styles, f"{self.attribute}", value)
 
         return False
 

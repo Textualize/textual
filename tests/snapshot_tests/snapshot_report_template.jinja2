@@ -61,6 +61,7 @@
                                 {{ diff.path }}:{{ diff.line_number }}
                             </span>
                         </span>
+                        {% if diff.snapshot != "" %}
                         <div class="form-check form-switch mt-1">
                             <input class="form-check-input" type="checkbox" role="switch"
                                    id="flexSwitchCheckDefault" onchange="toggleOverlayCheckbox(this, {{ loop.index0 }})">
@@ -68,6 +69,7 @@
                                 Show difference
                             </label>
                         </div>
+                        {% endif %}
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -86,16 +88,37 @@
                                     </div>
                                 </div>
                                 <div class="diff-wrapper-snapshot">
-                                    {{ diff.snapshot }}
+                                    {% if diff.snapshot != "" %}
+                                        {{ diff.snapshot }}
+                                    {% else %}
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h4>No history for this test</h4>
+                                                <p class="lead">If you're happy with the content on the left,
+                                                    save it to disk by running pytest with the <code>--snapshot-update</code> flag.</p>
+                                                <h5>Unexpected?</h5>
+                                                <p class="lead">
+                                                    Snapshots are named after the name of the test you call <code>snap_compare</code> in by default.
+                                                    <br>
+                                                    If you've renamed a test, the association between the snapshot and the test is lost,
+                                                    and you'll need to run with <code>--snapshot-update</code> to associate the snapshot
+                                                    with the new test name.
+                                                    </p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
                                 </div>
+                                {% if diff.snapshot != "" %}
                                 <div class="w-100 d-flex justify-content-center mt-1">
-                                    <span class="small">Historical snapshot</span>
+                                    <span class="small">
+                                        Historical snapshot
+                                    </span>
                                 </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                 </div>
-
 
                 {# Modal with debug info: #}
                 <div class="modal modal-lg fade" id="environmentModal" tabindex="-1"

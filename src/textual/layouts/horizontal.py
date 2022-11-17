@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from fractions import Fraction
-from typing import cast
 
-from textual.geometry import Size, Region
-from textual._layout import ArrangeResult, Layout, WidgetPlacement
-
-from textual.widget import Widget
+from .._resolve import resolve_box_models
+from ..geometry import Size, Region
+from .._layout import ArrangeResult, Layout, WidgetPlacement
+from ..widget import Widget
 
 
 class HorizontalLayout(Layout):
@@ -22,20 +21,16 @@ class HorizontalLayout(Layout):
 
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
-
         x = max_height = Fraction(0)
         parent_size = parent.outer_size
 
-        styles = [child.styles for child in children if child.styles.width is not None]
-        total_fraction = sum(
-            [int(style.width.value) for style in styles if style.width.is_fraction]
+        box_models = resolve_box_models(
+            [child.styles.width for child in children],
+            children,
+            size,
+            parent_size,
+            dimension="width",
         )
-        fraction_unit = Fraction(size.width, total_fraction or 1)
-
-        box_models = [
-            widget._get_box_model(size, parent_size, fraction_unit)
-            for widget in cast("list[Widget]", children)
-        ]
 
         margins = [
             max((box1.margin.right, box2.margin.left))
@@ -64,3 +59,25 @@ class HorizontalLayout(Layout):
             x = next_x + margin
 
         return placements, set(displayed_children)
+
+    def get_content_width(self, widget: Widget, container: Size, viewport: Size) -> int:
+        """Get the width of the content. In Horizontal layout, the content width of
+        a widget is the sum of the widths of its children.
+
+        Args:
+            widget (Widget): The container widget.
+            container (Size): The container size.
+            viewport (Size): The viewport size.
+
+        Returns:
+            int: Width of the content.
+        """
+        if not widget.displayed_children:
+            width = container.width
+        else:
+            placements, *_ = widget._arrange(container)
+            width = max(
+                placement.region.right + placement.margin.right
+                for placement in placements
+            )
+        return width

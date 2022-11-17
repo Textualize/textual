@@ -17,10 +17,14 @@ a method which evaluates the query, such as first() and last().
 from __future__ import annotations
 
 from typing import cast, Generic, TYPE_CHECKING, Iterator, TypeVar, overload
+import asyncio
 
 import rich.repr
 
-from .errors import DeclarationError
+from .. import events
+from .._context import active_app
+from ..await_remove import AwaitRemove
+from .errors import DeclarationError, TokenError
 from .match import match
 from .model import SelectorSet
 from .parse import parse_declarations, parse_selectors
@@ -34,8 +38,16 @@ class QueryError(Exception):
     """Base class for a query related error."""
 
 
+class InvalidQueryFormat(QueryError):
+    """Query did not parse correctly."""
+
+
 class NoMatches(QueryError):
     """No nodes matched the query."""
+
+
+class TooManyMatches(QueryError):
+    """Too many nodes matched the query."""
 
 
 class WrongType(QueryError):
@@ -72,9 +84,17 @@ class DOMQuery(Generic[QueryType]):
             parent._excludes.copy() if parent else []
         )
         if filter is not None:
-            self._filters.append(parse_selectors(filter))
+            try:
+                self._filters.append(parse_selectors(filter))
+            except TokenError:
+                # TODO: More helpful errors
+                raise InvalidQueryFormat(f"Unable to parse filter {filter!r} as query")
+
         if exclude is not None:
-            self._excludes.append(parse_selectors(exclude))
+            try:
+                self._excludes.append(parse_selectors(exclude))
+            except TokenError:
+                raise InvalidQueryFormat(f"Unable to parse filter {filter!r} as query")
 
     @property
     def node(self) -> DOMNode:
@@ -197,6 +217,49 @@ class DOMQuery(Generic[QueryType]):
             raise NoMatches(f"No nodes match {self!r}")
 
     @overload
+    def only_one(self) -> Widget:
+        ...
+
+    @overload
+    def only_one(self, expect_type: type[ExpectType]) -> ExpectType:
+        ...
+
+    def only_one(
+        self, expect_type: type[ExpectType] | None = None
+    ) -> Widget | ExpectType:
+        """Get the *only* matching node.
+
+        Args:
+            expect_type (type[ExpectType] | None, optional): Require matched node is of this type,
+                or None for any type. Defaults to None.
+
+        Raises:
+            WrongType: If the wrong type was found.
+            TooManyMatches: If there is more than one matching node in the query.
+
+        Returns:
+            Widget | ExpectType: The matching Widget.
+        """
+        # Call on first to get the first item. Here we'll use all of the
+        # testing and checking it provides.
+        the_one = self.first(expect_type) if expect_type is not None else self.first()
+        try:
+            # Now see if we can access a subsequent item in the nodes. There
+            # should *not* be anything there, so we *should* get an
+            # IndexError. We *could* have just checked the length of the
+            # query, but the idea here is to do the check as cheaply as
+            # possible.
+            _ = self.nodes[1]
+            raise TooManyMatches(
+                "Call to only_one resulted in more than one matched node"
+            )
+        except IndexError:
+            # The IndexError was got, that's a good thing in this case. So
+            # we return what we found.
+            pass
+        return the_one
+
+    @overload
     def last(self) -> Widget:
         ...
 
@@ -220,16 +283,14 @@ class DOMQuery(Generic[QueryType]):
         Returns:
             Widget | ExpectType: The matching Widget.
         """
-        if self.nodes:
-            last = self.nodes[-1]
-            if expect_type is not None:
-                if not isinstance(last, expect_type):
-                    raise WrongType(
-                        f"Query value is wrong type; expected {expect_type}, got {type(last)}"
-                    )
-            return last
-        else:
+        if not self.nodes:
             raise NoMatches(f"No nodes match {self!r}")
+        last = self.nodes[-1]
+        if expect_type is not None and not isinstance(last, expect_type):
+            raise WrongType(
+                f"Query value is wrong type; expected {expect_type}, got {type(last)}"
+            )
+        return last
 
     @overload
     def results(self) -> Iterator[Widget]:
@@ -289,11 +350,22 @@ class DOMQuery(Generic[QueryType]):
             node.toggle_class(*class_names)
         return self
 
-    def remove(self) -> DOMQuery[QueryType]:
-        """Remove matched nodes from the DOM"""
-        for node in self:
-            node.remove()
-        return self
+    def remove(self) -> AwaitRemove:
+        """Remove matched nodes from the DOM.
+
+        Returns:
+            AwaitRemove: An awaitable object that waits for the widgets to be removed.
+        """
+        prune_finished_event = asyncio.Event()
+        app = active_app.get()
+        app.post_message_no_wait(
+            events.Prune(
+                app,
+                widgets=app._detach_from_dom(list(self)),
+                finished_flag=prune_finished_event,
+            )
+        )
+        return AwaitRemove(prune_finished_event)
 
     def set_styles(
         self, css: str | None = None, **update_styles

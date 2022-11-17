@@ -2,8 +2,9 @@ Stopwatch {
     layout: horizontal;
     background: $boost;
     height: 5;
-    padding: 1;
     margin: 1;
+    min-width: 50;
+    padding: 1;
 }
 
 TimeDisplay {

@@ -25,18 +25,59 @@ You can install Textual via PyPI.
 If you plan on developing Textual apps, then you should install `textual[dev]`. The `[dev]` part installs a few extra dependencies for development.
 
 ```
-pip install "textual[dev]==0.2.0b5"
+pip install "textual[dev]"
 ```
 
 If you only plan on _running_ Textual apps, then you can drop the `[dev]` part:
 
 ```
-pip install textual==0.2.0b5
+pip install textual
 ```
 
-!!! important
+## Demo
 
-    There may be a more recent beta version since the time of writing. Check the [release history](https://pypi.org/project/textual/#history) for a more recent version.
+Once you have Textual installed, run the following to get an impression of what it can do:
+
+```bash
+python -m textual
+```
+
+If Textual is installed you should see the following:
+
+```{.textual path="src/textual/demo.py" columns="127" lines="53" press="enter,_,_,_,_,_,_,tab,_,w,i,l,l"}
+```
+
+## Examples
+
+
+The Textual repository comes with a number of example apps. To try out the examples, first clone the Textual repository:
+
+=== "HTTPS"
+
+    ```bash
+    git clone https://github.com/Textualize/textual.git
+    ```
+
+=== "SSH"
+
+    ```bash
+    git clone git@github.com:Textualize/textual.git
+    ```
+
+=== "GitHub CLI"
+
+    ```bash
+    gh repo clone Textualize/textual
+    ```
+
+
+With the repository cloned, navigate to the `/examples/` directory where you fill find a number of Python files you can run from the command line:
+
+```bash
+cd textual/examples/
+python code_browser.py ../
+```
+
 
 ## Textual CLI
 
@@ -47,3 +88,7 @@ textual --help
 ```
 
 See [devtools](guide/devtools.md) for more about the `textual` command.
+
+## Need help?
+
+See the [help](./help.md) page for how to get help with Textual, or to report bugs.

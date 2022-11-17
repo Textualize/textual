@@ -4,7 +4,7 @@ Textual uses CSS to apply style to widgets. If you have any exposure to web deve
 
 ## Stylesheets
 
-CSS stands for _Cascading Stylesheets_. A stylesheet is a list of styles and rules about how those styles should be applied to a web page. In the case of Textual, the stylesheet applies [styles](./styles.md) to widgets but otherwise it is the same idea.
+CSS stands for _Cascading Stylesheets_. A stylesheet is a list of styles and rules about how those styles should be applied to a web page. In the case of Textual, the stylesheet applies [styles](./styles.md) to widgets, but otherwise it is the same idea.
 
 When Textual loads CSS it sets attributes on your widgets' `style` object. The effect is the same as if you had set attributes in Python.
 
@@ -48,7 +48,7 @@ Header {
 }
 ```
 
-The lines inside the curly braces contains CSS _rules_, which consist of a rule name and rule value separated by a colon and ending in a semi-colon. Such rules are typically written one per line, but you could add additional rules as long as they are separated by semi-colons.
+The lines inside the curly braces contains CSS _rules_, which consist of a rule name and rule value separated by a colon and ending in a semicolon. Such rules are typically written one per line, but you could add additional rules as long as they are separated by semicolons.
 
 The first rule in the above example reads `"dock: top;"`. The rule name is `dock` which tells Textual to place the widget on an edge of the screen. The text after the colon is `top` which tells Textual to dock to the _top_ of the screen. Other valid values for `dock` are "right", "bottom", or "left"; but "top" is most appropriate for a header.
 
@@ -82,7 +82,7 @@ With the above example, the DOM will look like the following:
 This doesn't look much like a tree yet. Let's add a header and a footer to this application, which will create more _branches_ of the tree:
 
 === "dom2.py"
-    
+
     ```python hl_lines="7 8"
     --8<-- "docs/examples/guide/dom2.py"
     ```
@@ -93,7 +93,7 @@ This doesn't look much like a tree yet. Let's add a header and a footer to this 
     ```{.textual path="docs/examples/guide/dom2.py"}
     ```
 
-With a header and a footer widget the DOM looks the this:
+With a header and a footer widget the DOM looks like this:
 
 <div class="excalidraw">
 --8<-- "docs/images/dom2.excalidraw.svg"
@@ -105,7 +105,7 @@ With a header and a footer widget the DOM looks the this:
 
 Both Header and Footer are children of the Screen object.
 
-To further explore the DOM, we're going to build a simple dialog with a question and two buttons. To do this we're going import and use a few more builtin widgets:
+To further explore the DOM, we're going to build a simple dialog with a question and two buttons. To do this we're going to import and use a few more builtin widgets:
 
 - `textual.layout.Container` For our top-level dialog.
 - `textual.layout.Horizontal` To arrange widgets left to right.
@@ -132,7 +132,7 @@ Here's the output from this example:
 
 ```
 
-You may recognize some of the elements in the above screenshot, but it doesn't quite look like a dialog. This is because we haven't added a stylesheet.
+You may recognize some elements in the above screenshot, but it doesn't quite look like a dialog. This is because we haven't added a stylesheet.
 
 ## CSS files
 
@@ -142,7 +142,8 @@ To add a stylesheet set the `CSS_PATH` classvar to a relative path:
 --8<-- "docs/examples/guide/dom4.py"
 ```
 
-You may have noticed that some of the constructors have additional keyword arguments: `id` and `classes`. These are used by the CSS to identify parts of the DOM. We will cover these in the next section.
+You may have noticed that some constructors have additional keyword arguments: `id` and `classes`.
+These are used by the CSS to identify parts of the DOM. We will cover these in the next section.
 
 Here's the CSS file we are applying:
 
@@ -157,6 +158,10 @@ With the CSS in place, the output looks very different:
 ```{.textual path="docs/examples/guide/dom4.py"}
 
 ```
+
+### Using multiple CSS files
+
+You can also set the `CSS_PATH` class variable to a list of paths. Textual will combine the rules from all of the supplied paths.
 
 ### Why CSS?
 
@@ -178,7 +183,7 @@ Being able to iterate on the design without restarting the application makes it 
 
 A selector is the text which precedes the curly braces in a set of rules. It tells Textual which widgets it should apply the rules to.
 
-Selectors can target a kind of widget or a very specific widget. For instance you could have a selector that modifies all buttons, or you could target an individual button used in one dialog. This gives you a lot of flexibility in customizing your user interface.
+Selectors can target a kind of widget or a very specific widget. For instance, you could have a selector that modifies all buttons, or you could target an individual button used in one dialog. This gives you a lot of flexibility in customizing your user interface.
 
 Let's look at the selectors supported by Textual CSS.
 
@@ -187,7 +192,7 @@ Let's look at the selectors supported by Textual CSS.
 The _type_ selector matches the name of the (Python) class. For example, the following widget can be matched with a `Button` selector:
 
 ```python
-from textual.widgets import Widget
+from textual.widgets import Static
 
 class Button(Static):
     pass
@@ -201,7 +206,7 @@ Button {
 }
 ```
 
-The type selector will also match a widget's base classes. Consequently a `Static` selector will also style the button because the `Button` Python class extends `Static`.
+The type selector will also match a widget's base classes. Consequently, a `Static` selector will also style the button because the `Button` Python class extends `Static`.
 
 ```sass
 Static {
@@ -218,7 +223,7 @@ You may have noticed that the `border` rule exists in both Static and Button. Wh
 
 ### ID selector
 
-Every Widget can have a single `id` attribute, which is set via the constructor. The ID should be unique to it's container.
+Every Widget can have a single `id` attribute, which is set via the constructor. The ID should be unique to its container.
 
 Here's an example of a widget with an ID:
 
@@ -280,7 +285,7 @@ Unlike the `id` attribute, a widget's classes can be changed after the widget wa
 - [add_class()][textual.dom.DOMNode.add_class] Adds one or more classes to a widget.
 - [remove_class()][textual.dom.DOMNode.remove_class] Removes class name(s) from a widget.
 - [toggle_class()][textual.dom.DOMNode.toggle_class] Removes a class name if it is present, or adds the name if it's not already present.
-- [has_class()][textual.dom.DOMNode.has_class] Checks if a class(es) is set on a widget.
+- [has_class()][textual.dom.DOMNode.has_class] Checks if one or more classes are set on a widget.
 - [classes][textual.dom.DOMNode.classes] Is a frozen set of the class(es) set on a widget.
 
 
@@ -369,7 +374,7 @@ It is possible that several selectors match a given widget. If the same style is
 
 - The selector with the most IDs wins. For instance `#next` beats `.button` and `#dialog #next` beats `#next`. If the selectors have the same number of IDs then move to the next rule.
 
-- The selector with the most class names wins. For instance `.button.success` beats `.success`. For the purposes of specificity, pseudo classes are treated the same as regular class names, so ".button:hover" counts as _2_ class names. If the selectors have the same number of class names then move to the next rule.
+- The selector with the most class names wins. For instance `.button.success` beats `.success`. For the purposes of specificity, pseudo classes are treated the same as regular class names, so `.button:hover` counts as _2_ class names. If the selectors have the same number of class names then move to the next rule.
 
 - The selector with the most types wins. For instance `Container Button` beats `Button`.
 
@@ -427,4 +432,3 @@ Variables can refer to other variables.
 Let's say we define a variable `$success: lime;`.
 Our `$border` variable could then be updated to `$border: wide $success;`, which will
 be translated to `$border: wide lime;`.
-

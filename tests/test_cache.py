@@ -61,6 +61,25 @@ def test_lru_cache_get():
     assert "egg" not in cache
     assert "eggegg" in cache
 
+def test_lru_cache_maxsize():
+    cache = LRUCache(3)
+
+    # Be sure that maxsize reports what we gave above.
+    assert cache.maxsize == 3, "Incorrect cache maxsize"
+
+    # Now resize the cache by setting maxsize.
+    cache.maxsize = 30
+
+    # Check that it's reporting that back.
+    assert cache.maxsize == 30, "Incorrect cache maxsize after setting it"
+
+    # Add more than maxsize items to the cache and be sure
+    for spam in range(cache.maxsize+10):
+        cache[f"spam{spam}"] = spam
+
+    # Finally, check the cache is the max size we set.
+    assert len(cache) == 30, "Cache grew too large given maxsize"
+
 
 def test_lru_cache_mapping():
     """Test cache values can be set and read back."""

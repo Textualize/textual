@@ -1,4 +1,4 @@
-from textual.app import App
+from textual.app import App, ComposeResult
 from textual.widgets import Static
 
 
@@ -7,7 +7,7 @@ class PrideApp(App):
 
     COLORS = ["red", "orange", "yellow", "green", "blue", "purple"]
 
-    def compose(self):
+    def compose(self) -> ComposeResult:
         for color in self.COLORS:
             stripe = Static()
             stripe.styles.height = "1fr"

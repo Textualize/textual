@@ -11,8 +11,37 @@ skip_py310 = pytest.mark.skipif(
 )
 
 
+async def test_installed_screens():
+    class ScreensApp(App):
+        SCREENS = {
+            "home": Screen,  # Screen type
+            "one": Screen(),  # Screen instance
+            "two": lambda: Screen()  # Callable[[], Screen]
+        }
+
+    app = ScreensApp()
+    async with app.run_test() as pilot:
+        pilot.app.push_screen("home")  # Instantiates and pushes the "home" screen
+        pilot.app.push_screen("one")   # Pushes the pre-instantiated "one" screen
+        pilot.app.push_screen("home")  # Pushes the single instance of "home" screen
+        pilot.app.push_screen("two")   # Calls the callable, pushes returned Screen instance
+
+        assert len(app.screen_stack) == 5
+        assert app.screen_stack[1] is app.screen_stack[3]
+        assert app.screen is app.screen_stack[4]
+        assert isinstance(app.screen, Screen)
+        assert app.is_screen_installed(app.screen)
+
+        assert pilot.app.pop_screen()
+        assert pilot.app.pop_screen()
+        assert pilot.app.pop_screen()
+        assert pilot.app.pop_screen()
+        with pytest.raises(ScreenStackError):
+            pilot.app.pop_screen()
+
+
+
 @skip_py310
-@pytest.mark.asyncio
 async def test_screens():
 
     app = App()
@@ -89,4 +118,4 @@ async def test_screens():
     screen1.remove()
     screen2.remove()
     screen3.remove()
-    await app.shutdown()
+    await app._shutdown()

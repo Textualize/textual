@@ -6,15 +6,11 @@ Functions and classes to manage terminal geometry (anything involving coordinate
 
 from __future__ import annotations
 
-import sys
 from functools import lru_cache
 from operator import attrgetter, itemgetter
 from typing import Any, Collection, NamedTuple, Tuple, TypeVar, Union, cast
 
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:  # pragma: no cover
-    from typing_extensions import TypeAlias
+from textual._typing import TypeAlias
 
 SpacingDimensions: TypeAlias = Union[
     int, Tuple[int], Tuple[int, int], Tuple[int, int, int, int]
@@ -307,7 +303,9 @@ class Region(NamedTuple):
         return cls(x, y, width, height)
 
     @classmethod
-    def get_scroll_to_visible(cls, window_region: Region, region: Region) -> Offset:
+    def get_scroll_to_visible(
+        cls, window_region: Region, region: Region, *, top: bool = False
+    ) -> Offset:
         """Calculate the smallest offset required to translate a window so that it contains
         another region.
 
@@ -316,6 +314,7 @@ class Region(NamedTuple):
         Args:
             window_region (Region): The window region.
             region (Region): The region to move inside the window.
+            top (bool, optional): Get offset to top of window. Defaults to False
 
         Returns:
             Offset: An offset required to add to region to move it inside window_region.
@@ -327,7 +326,7 @@ class Region(NamedTuple):
 
         window_left, window_top, window_right, window_bottom = window_region.corners
         region = region.crop_size(window_region.size)
-        left, top, right, bottom = region.corners
+        left, top_, right, bottom = region.corners
         delta_x = delta_y = 0
 
         if not (
@@ -343,15 +342,18 @@ class Region(NamedTuple):
             )
 
         if not (
-            (window_bottom > top >= window_top)
+            (window_bottom > top_ >= window_top)
             and (window_bottom > bottom >= window_top)
         ):
             # The window needs to scroll on the Y axis to bring region in to view
-            delta_y = min(
-                top - window_top,
-                top - (window_bottom - region.height),
-                key=abs,
-            )
+            if top:
+                delta_y = top_ - window_top
+            else:
+                delta_y = min(
+                    top_ - window_top,
+                    top_ - (window_bottom - region.height),
+                    key=abs,
+                )
         return Offset(delta_x, delta_y)
 
     def __bool__(self) -> bool:
@@ -421,7 +423,7 @@ class Region(NamedTuple):
             Offset: Top left offset.
 
         """
-        return Offset(self.x, self.y)
+        return Offset(*self[:2])
 
     @property
     def bottom_left(self) -> Offset:
@@ -464,7 +466,7 @@ class Region(NamedTuple):
             Size: Size of the region.
 
         """
-        return Size(self.width, self.height)
+        return Size(*self[2:])
 
     @property
     def corners(self) -> tuple[int, int, int, int]:

@@ -10,7 +10,7 @@ This chapter will discuss how to make your app respond to input in the form of k
 
 ## Keyboard input
 
-The most fundamental way to receive input in via [Key](./events/key) events. Let's write an app to show key events as you type.
+The most fundamental way to receive input is via [Key](./events/key) events. Let's write an app to show key events as you type.
 
 === "key01.py"
 
@@ -23,13 +23,13 @@ The most fundamental way to receive input in via [Key](./events/key) events. Let
     ```{.textual path="docs/examples/guide/input/key01.py", press="T,e,x,t,u,a,l,!,_"}
     ```
 
-Note the key event handler on the app which logs all key events. if you press any key it will show up on the screen.
+Note the key event handler on the app which logs all key events. If you press any key it will show up on the screen.
 
 ### Attributes
 
 There are two main attributes on a key event. The `key` attribute is the _name_ of the key which may be a single character, or a longer identifier. Textual ensures that the `key` attribute could always be used in a method name.
 
-Key events also contain a `char` attribute which contains single character if it is printable, or ``None`` if it is not printable (like a function key which has no corresponding character).
+Key events also contain a `char` attribute which contains a single character if it is printable, or ``None`` if it is not printable (like a function key which has no corresponding character).
 
 To illustrate the difference between `key` and `char`, try `key01.py` with the space key. You should see something like the following:
 
@@ -46,7 +46,7 @@ Textual offers a convenient way of handling specific keys. If you create a metho
 Let's add a key method to the example code.
 
 ```python title="key02.py" hl_lines="15-16"
---8<-- "docs/examples/guide/input/key01.py"
+--8<-- "docs/examples/guide/input/key02.py"
 ```
 
 Note the addition of a `key_space` method which is called in response to the space key, and plays the terminal bell noise.
@@ -78,7 +78,7 @@ The following example shows how focus works in practice.
     ```{.textual path="docs/examples/guide/input/key03.py", press="tab,H,e,l,l,o,tab,W,o,r,l,d,!,_"}
     ```
 
-The app splits the screen in to quarters, with a TextLog widget in each quarter. If you click any of the text logs, you should see that it is highlighted to show that thw widget has focus. Key events will be sent to the focused widget only.
+The app splits the screen in to quarters, with a `TextLog` widget in each quarter. If you click any of the text logs, you should see that it is highlighted to show that the widget has focus. Key events will be sent to the focused widget only.
 
 !!! tip
 
@@ -156,7 +156,7 @@ Coordinates may be relative to the screen, so `(0, 0)` would be the top left of 
 
 ### Mouse movements
 
-When you move the mouse cursor over a widget it will receive [MouseMove](../events/mouse_move.md) events which contain the coordinate of the mouse and information about what modified keys (++ctrl++, ++shift++ etc).
+When you move the mouse cursor over a widget it will receive [MouseMove](../events/mouse_move.md) events which contain the coordinate of the mouse and information about what modifier keys (++ctrl++, ++shift++ etc) are held down.
 
 The following example shows mouse movements being used to _attach_ a widget to the mouse cursor.
 
@@ -200,7 +200,7 @@ If you want your app to respond to a mouse click you should prefer the Click eve
 
 ### Scroll events
 
-Most mice have a scroll wheel which you can use to scroll window underneath the cursor. Scrollable containers in Textual will handle these automatically, but you can handle [MouseDown](../events/mouse_scroll_down.md) and [MouseUp](../events/mouse_scroll_up) if you want build your own scrolling functionality.
+Most mice have a scroll wheel which you can use to scroll the window underneath the cursor. Scrollable containers in Textual will handle these automatically, but you can handle [MouseScrollDown](../events/mouse_scroll_down.md) and [MouseScrollUp](../events/mouse_scroll_up) if you want build your own scrolling functionality.
 
 !!! information
 

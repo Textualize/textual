@@ -43,7 +43,16 @@ def _run_devtools(verbose: bool, exclude: list[str] | None = None) -> None:
     def noop_print(_: str):
         return None
 
-    run_app(app, port=DEVTOOLS_PORT, print=noop_print, loop=asyncio.get_event_loop())
+    try:
+        run_app(
+            app, port=DEVTOOLS_PORT, print=noop_print, loop=asyncio.get_event_loop()
+        )
+    except OSError:
+        from rich import print
+
+        print()
+        print("[bold red]Couldn't start server")
+        print("Is there another instance of [reverse]textual console[/] running?")
 
 
 def _make_devtools_aiohttp_app(

@@ -15,7 +15,7 @@ Input {
 
 #results-container {
     background: $background 50%;
-    margin: 0;
+    margin: 0 0 1 0;
     height: 100%;
     overflow: hidden auto;
     border: tall $background;

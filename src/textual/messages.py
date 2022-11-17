@@ -14,6 +14,16 @@ if TYPE_CHECKING:
 
 
 @rich.repr.auto
+class CloseMessages(Message, verbose=True):
+    """Requests message pump to close."""
+
+
+@rich.repr.auto
+class ExitApp(Message, verbose=True):
+    """Exit the app."""
+
+
+@rich.repr.auto
 class Update(Message, verbose=True):
     def __init__(self, sender: MessagePump, widget: Widget):
         super().__init__(sender)

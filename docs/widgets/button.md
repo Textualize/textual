@@ -10,7 +10,7 @@ when it has focus.
 ## Example
 
 The example below shows each button variant, and its disabled equivalent.
-Clicking any of the non-disabled buttons in the example app below will result in a ring of the terminal bell.
+Clicking any of the non-disabled buttons in the example app below will result the app exiting and the details of the selected button being printed to the console.
 
 === "Output"
 
@@ -55,4 +55,4 @@ _No other attributes_
 
 ## See Also
 
-* [Button](../reference/button.md) code reference
+* [Button](../api/button.md) code reference

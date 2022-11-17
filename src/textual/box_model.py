@@ -20,7 +20,8 @@ def get_box_model(
     styles: StylesBase,
     container: Size,
     viewport: Size,
-    fraction_unit: Fraction,
+    width_fraction: Fraction,
+    height_fraction: Fraction,
     get_content_width: Callable[[Size, Size], int],
     get_content_height: Callable[[Size, Size, int], int],
 ) -> BoxModel:
@@ -30,8 +31,10 @@ def get_box_model(
         styles (StylesBase): Styles object.
         container (Size): The size of the widget container.
         viewport (Size): The viewport size.
-        get_auto_width (Callable): A callable which accepts container size and parent size and returns a width.
-        get_auto_height (Callable): A callable which accepts container size and parent size and returns a height.
+        width_fraction (Fraction): A fraction used for 1 `fr` unit on the width dimension.
+        height_fraction (Fraction):A fraction used for 1 `fr` unit on the height dimension.
+        get_content_width (Callable[[Size, Size], int]): A callable which accepts container size and parent size and returns a width.
+        get_content_height (Callable[[Size, Size, int], int]): A callable which accepts container size and parent size and returns a height.
 
     Returns:
         BoxModel: A tuple with the size of the content area and margin.
@@ -62,24 +65,26 @@ def get_box_model(
     else:
         # An explicit width
         styles_width = styles.width
-        content_width = styles_width.resolve_dimension(
-            sizing_container - styles.margin.totals, viewport, fraction_unit
+        content_width = styles_width.resolve(
+            sizing_container - styles.margin.totals, viewport, width_fraction
         )
         if is_border_box and styles_width.excludes_border:
             content_width -= gutter.width
 
     if styles.min_width is not None:
         # Restrict to minimum width, if set
-        min_width = styles.min_width.resolve_dimension(
-            content_container, viewport, fraction_unit
+        min_width = styles.min_width.resolve(
+            content_container, viewport, width_fraction
         )
         content_width = max(content_width, min_width)
 
     if styles.max_width is not None:
         # Restrict to maximum width, if set
-        max_width = styles.max_width.resolve_dimension(
-            content_container, viewport, fraction_unit
+        max_width = styles.max_width.resolve(
+            content_container, viewport, width_fraction
         )
+        if is_border_box:
+            max_width -= gutter.width
         content_width = min(content_width, max_width)
 
     content_width = max(Fraction(0), content_width)
@@ -95,23 +100,23 @@ def get_box_model(
     else:
         styles_height = styles.height
         # Explicit height set
-        content_height = styles_height.resolve_dimension(
-            sizing_container - styles.margin.totals, viewport, fraction_unit
+        content_height = styles_height.resolve(
+            sizing_container - styles.margin.totals, viewport, height_fraction
         )
         if is_border_box and styles_height.excludes_border:
             content_height -= gutter.height
 
     if styles.min_height is not None:
         # Restrict to minimum height, if set
-        min_height = styles.min_height.resolve_dimension(
-            content_container, viewport, fraction_unit
+        min_height = styles.min_height.resolve(
+            content_container, viewport, height_fraction
         )
         content_height = max(content_height, min_height)
 
     if styles.max_height is not None:
         # Restrict maximum height, if set
-        max_height = styles.max_height.resolve_dimension(
-            content_container, viewport, fraction_unit
+        max_height = styles.max_height.resolve(
+            content_container, viewport, height_fraction
         )
         content_height = min(content_height, max_height)
 

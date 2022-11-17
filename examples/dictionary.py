@@ -23,6 +23,11 @@ class DictionaryApp(App):
         yield Input(placeholder="Search for a word")
         yield Content(Static(id="results"), id="results-container")
 
+    def on_mount(self) -> None:
+        """Called when app starts."""
+        # Give the input focus, so we can start typing straight away
+        self.query_one(Input).focus()
+
     async def on_input_changed(self, message: Input.Changed) -> None:
         """A coroutine to handle a text changed message."""
         if message.value:

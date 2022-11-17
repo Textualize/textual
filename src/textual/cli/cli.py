@@ -1,14 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 
 import click
 from importlib_metadata import version
-from textual.devtools.server import _run_devtools
-from textual._import_app import import_app, AppFail
 
-if TYPE_CHECKING:
-    from textual.app import App
+from textual.pilot import Pilot
+from textual._import_app import import_app, AppFail
 
 
 @click.group()
@@ -21,7 +18,9 @@ def run():
 @click.option("-v", "verbose", help="Enable verbose logs.", is_flag=True)
 @click.option("-x", "--exclude", "exclude", help="Exclude log group(s)", multiple=True)
 def console(verbose: bool, exclude: list[str]) -> None:
+    """Launch the textual console."""
     from rich.console import Console
+    from textual.devtools.server import _run_devtools
 
     console = Console()
     console.clear()
@@ -86,7 +85,12 @@ def run_app(import_name: str, dev: bool, press: str) -> None:
         sys.exit(1)
 
     press_keys = press.split(",") if press else None
-    result = app.run(press=press_keys)
+
+    async def run_press_keys(pilot: Pilot) -> None:
+        if press_keys is not None:
+            await pilot.press(*press_keys)
+
+    result = app.run(auto_pilot=run_press_keys)
 
     if result is not None:
         from rich.console import Console

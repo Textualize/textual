@@ -31,4 +31,4 @@ This widget sends no messages.
 
 ## See Also
 
-* [Static](../reference/static.md) code reference
+* [Static](../api/static.md) code reference

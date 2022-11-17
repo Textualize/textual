@@ -10,7 +10,6 @@ import rich.repr
 
 from rich.text import Text
 
-from .. import events
 from ..message import Message
 from .._types import MessageTarget
 from ._tree_control import TreeControl, TreeNode
@@ -93,7 +92,7 @@ class DirectoryTree(TreeControl[DirEntry]):
         self.render_tree_label.cache_clear()
 
     def on_mount(self) -> None:
-        self.call_later(self.load_directory, self.root)
+        self.call_after_refresh(self.load_directory, self.root)
 
     async def load_directory(self, node: TreeNode[DirEntry]):
         path = node.data.path
@@ -118,14 +117,3 @@ class DirectoryTree(TreeControl[DirEntry]):
                 message.node.expand()
             else:
                 message.node.toggle()
-
-
-if __name__ == "__main__":
-    from textual import events
-    from textual.app import App
-
-    class TreeApp(App):
-        async def on_mount(self, event: events.Mount) -> None:
-            await self.screen.dock(DirectoryTree("/Users/willmcgugan/projects"))
-
-    TreeApp(log_path="textual.log").run()

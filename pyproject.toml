@@ -1,21 +1,24 @@
 [tool.poetry]
 name = "textual"
-version = "0.2.0b5"
+version = "0.4.0"
 homepage = "https://github.com/Textualize/textual"
 description = "Modern Text User Interface framework"
 authors = ["Will McGugan <will@textualize.io>"]
 license = "MIT"
 readme = "README.md"
 classifiers = [
-    "Development Status :: 1 - Planning",
+    "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: Developers",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Operating System :: Microsoft :: Windows :: Windows 11",
     "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Typing :: Typed",
 ]
 include = [
@@ -33,10 +36,10 @@ importlib-metadata = "^4.11.3"
 typing-extensions = { version = "^4.0.0", python = "<3.10" }
 
 # Dependencies below are required for devtools only
-aiohttp = { version = "^3.8.1", optional = true }
-click = {version = "8.1.2", optional = true}
-msgpack = { version = "^1.0.3", optional = true }
-nanoid = "^2.0.0"
+aiohttp = { version = ">=3.8.1", optional = true }
+click = {version = ">=8.1.2", optional = true}
+msgpack = { version = ">=1.0.3", optional = true }
+nanoid = ">=2.0.0"
 
 [tool.poetry.extras]
 dev = ["aiohttp", "click", "msgpack"]
@@ -44,7 +47,7 @@ dev = ["aiohttp", "click", "msgpack"]
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.3"
 black = "^22.3.0"
-mypy = "^0.982"
+mypy = "^0.990"
 pytest-cov = "^2.12.1"
 mkdocs = "^1.3.0"
 mkdocstrings = {extras = ["python"], version = "^0.19.0"}
@@ -54,6 +57,9 @@ pytest-aiohttp = "^1.0.4"
 time-machine = "^2.6.0"
 Jinja2 = "<3.1.0"
 syrupy = "^3.0.0"
+
+[tool.poetry.group.dev.dependencies]
+mkdocs-rss-plugin = "^1.5.0"
 
 [tool.black]
 includes = "src"

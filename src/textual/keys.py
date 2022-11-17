@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import unicodedata
 from enum import Enum
 
 
@@ -14,7 +15,6 @@ class Keys(str, Enum):
 
     value: str
 
-    Space = "space"
     Escape = "escape"  # Also Control-[
     ShiftEscape = "shift+escape"
     Return = "return"
@@ -185,6 +185,7 @@ class Keys(str, Enum):
     # Some 'Key' aliases (for backwardshift+compatibility).
     ControlSpace = "ctrl-at"
     Tab = "tab"
+    Space = "space"
     Enter = "enter"
     Backspace = "backspace"
 
@@ -206,6 +207,7 @@ KEY_NAME_REPLACEMENTS = {
     "plus_sign": "plus",
     "low_line": "underscore",
 }
+REPLACED_KEYS = {value: key for key, value in KEY_NAME_REPLACEMENTS.items()}
 
 # Some keys have aliases. For example, if you press `ctrl+m` on your keyboard,
 # it's treated the same way as if you press `enter`. Key handlers `key_ctrl_m` and
@@ -218,7 +220,32 @@ KEY_ALIASES = {
     "ctrl+j": ["newline"],
 }
 
+KEY_DISPLAY_ALIASES = {
+    "up": "↑",
+    "down": "↓",
+    "left": "←",
+    "right": "→",
+    "backspace": "⌫",
+    "escape": "ESC",
+    "enter": "⏎",
+}
+
 
 def _get_key_aliases(key: str) -> list[str]:
     """Return all aliases for the given key, including the key itself"""
     return [key] + KEY_ALIASES.get(key, [])
+
+
+def _get_key_display(key: str) -> str | None:
+    """Given a key name"""
+    display_alias = KEY_DISPLAY_ALIASES.get(key)
+    if display_alias:
+        return display_alias
+
+    original_key = REPLACED_KEYS.get(key, key)
+    try:
+        unicode_character = unicodedata.lookup(original_key.upper().replace("_", " "))
+    except KeyError:
+        return original_key.upper()
+
+    return unicode_character

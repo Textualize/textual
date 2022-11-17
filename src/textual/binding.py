@@ -1,15 +1,12 @@
 from __future__ import annotations
 
-import sys
 from dataclasses import dataclass
 from typing import Iterable, MutableMapping
 
 import rich.repr
 
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:  # pragma: no cover
-    from typing_extensions import TypeAlias
+from textual._typing import TypeAlias
+from textual.keys import _get_key_display
 
 BindingType: TypeAlias = "Binding | tuple[str, str, str]"
 
@@ -25,17 +22,17 @@ class NoBinding(Exception):
 @dataclass(frozen=True)
 class Binding:
     key: str
-    """Key to bind. This can also be a comma-separated list of keys to map multiple keys to a single action."""
+    """str: Key to bind. This can also be a comma-separated list of keys to map multiple keys to a single action."""
     action: str
-    """Action to bind to."""
+    """str: Action to bind to."""
     description: str
-    """Description of action."""
+    """str: Description of action."""
     show: bool = True
-    """Show the action in Footer, or False to hide."""
+    """bool: Show the action in Footer, or False to hide."""
     key_display: str | None = None
-    """How the key should be shown in footer."""
-    allow_forward: bool = True
-    """Allow forwarding from app to focused widget."""
+    """str | None: How the key should be shown in footer."""
+    universal: bool = False
+    """bool: Allow forwarding from app to focused widget."""
 
 
 @rich.repr.auto
@@ -45,27 +42,28 @@ class Bindings:
     def __init__(self, bindings: Iterable[BindingType] | None = None) -> None:
         def make_bindings(bindings: Iterable[BindingType]) -> Iterable[Binding]:
             for binding in bindings:
-                if isinstance(binding, Binding):
-                    binding_keys = binding.key.split(",")
-                    if len(binding_keys) > 1:
-                        for key in binding_keys:
-                            new_binding = Binding(
-                                key=key,
-                                action=binding.action,
-                                description=binding.description,
-                                show=binding.show,
-                                key_display=binding.key_display,
-                                allow_forward=binding.allow_forward,
-                            )
-                            yield new_binding
-                    else:
-                        yield binding
-                else:
+                # If it's a tuple of length 3, convert into a Binding first
+                if isinstance(binding, tuple):
                     if len(binding) != 3:
                         raise BindingError(
                             f"BINDINGS must contain a tuple of three strings, not {binding!r}"
                         )
-                    yield Binding(*binding)
+                    binding = Binding(*binding)
+
+                binding_keys = binding.key.split(",")
+                if len(binding_keys) > 1:
+                    for key in binding_keys:
+                        new_binding = Binding(
+                            key=key,
+                            action=binding.action,
+                            description=binding.description,
+                            show=binding.show,
+                            key_display=binding.key_display,
+                            universal=binding.universal,
+                        )
+                        yield new_binding
+                else:
+                    yield binding
 
         self.keys: MutableMapping[str, Binding] = (
             {binding.key: binding for binding in make_bindings(bindings)}
@@ -93,6 +91,11 @@ class Bindings:
 
     @property
     def shown_keys(self) -> list[Binding]:
+        """A list of bindings for shown keys.
+
+        Returns:
+            list[Binding]: Shown bindings.
+        """
         keys = [binding for binding in self.keys.values() if binding.show]
         return keys
 
@@ -103,8 +106,18 @@ class Bindings:
         description: str = "",
         show: bool = True,
         key_display: str | None = None,
-        allow_forward: bool = True,
+        universal: bool = False,
     ) -> None:
+        """Bind keys to an action.
+
+        Args:
+            keys (str): The keys to bind. Can be a comma-separated list of keys.
+            action (str): The action to bind the keys to.
+            description (str, optional): An optional description for the binding.
+            show (bool, optional): A flag to say if the binding should appear in the footer.
+            key_display (str | None, optional): Optional string to display in the footer for the key.
+            universal (bool, optional): Allow forwarding from the app to the focused widget.
+        """
         all_keys = [key.strip() for key in keys.split(",")]
         for key in all_keys:
             self.keys[key] = Binding(
@@ -113,17 +126,22 @@ class Bindings:
                 description,
                 show=show,
                 key_display=key_display,
-                allow_forward=allow_forward,
+                universal=universal,
             )
 
     def get_key(self, key: str) -> Binding:
+        """Get a binding if it exists.
+
+        Args:
+            key (str): Key to look up.
+
+        Raises:
+            NoBinding: If the binding does not exist.
+
+        Returns:
+            Binding: A binding object for the key,
+        """
         try:
             return self.keys[key]
         except KeyError:
             raise NoBinding(f"No binding for {key}") from None
-
-    def allow_forward(self, key: str) -> bool:
-        binding = self.keys.get(key, None)
-        if binding is None:
-            return True
-        return binding.allow_forward

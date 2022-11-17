@@ -128,7 +128,7 @@ class ColorSystem:
         boost = self.boost or background.get_contrast_text(1.0).with_alpha(0.04)
 
         if self.panel is None:
-            panel = surface.blend(primary, 0.1)
+            panel = surface.blend(primary, 0.1, alpha=1)
             if dark:
                 panel += boost
         else:
@@ -154,7 +154,7 @@ class ColorSystem:
                 yield (f"{label}{'-' + str(abs(n)) if n else ''}"), n * luminosity_step
 
         # Color names and color
-        COLORS = [
+        COLORS: list[tuple[str, Color]] = [
             ("primary", primary),
             ("secondary", secondary),
             ("primary-background", primary),
@@ -178,9 +178,9 @@ class ColorSystem:
             spread = luminosity_spread
             for shade_name, luminosity_delta in luminosity_range(spread):
                 if is_dark_shade:
-                    dark_background = background.blend(color, 0.15)
+                    dark_background = background.blend(color, 0.15, alpha=1.0)
                     shade_color = dark_background.blend(
-                        WHITE, spread + luminosity_delta
+                        WHITE, spread + luminosity_delta, alpha=1.0
                     ).clamped
                     colors[f"{name}{shade_name}"] = shade_color.hex
                 else:
@@ -213,7 +213,7 @@ def show_design(light: ColorSystem, dark: ColorSystem) -> Table:
             background = Color.parse(colors[name]).with_alpha(1.0)
             foreground = background + background.get_contrast_text(0.9)
 
-            text = Text(name)
+            text = Text(f"${name}")
 
             yield Padding(text, 1, style=f"{foreground.hex6} on {background.hex6}")
 

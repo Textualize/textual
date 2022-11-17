@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import sys
 import inspect
-from typing import Callable, TYPE_CHECKING
+from typing import Callable
 
 import rich.repr
 from rich.console import RenderableType
@@ -12,14 +11,7 @@ __all__ = ["log", "panic"]
 
 from ._context import active_app
 from ._log import LogGroup, LogVerbosity
-
-if TYPE_CHECKING:
-    from .app import App
-
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:  # pragma: no cover
-    from typing_extensions import TypeAlias
+from ._typing import TypeAlias
 
 
 LogCallable: TypeAlias = "Callable"
@@ -51,8 +43,10 @@ class Logger:
         try:
             app = active_app.get()
         except LookupError:
-            raise LoggerError("Unable to log without an active app.") from None
-        if not app.devtools.is_connected:
+            print_args = (*args, *[f"{key}={value!r}" for key, value in kwargs.items()])
+            print(*print_args)
+            return
+        if app.devtools is None or not app.devtools.is_connected:
             return
 
         previous_frame = inspect.currentframe().f_back

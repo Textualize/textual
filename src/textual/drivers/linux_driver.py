@@ -30,9 +30,14 @@ class LinuxDriver(Driver):
     """Powers display and input for Linux / MacOS"""
 
     def __init__(
-        self, console: "Console", target: "MessageTarget", debug: bool = False
+        self,
+        console: "Console",
+        target: "MessageTarget",
+        *,
+        debug: bool = False,
+        size: tuple[int, int] | None = None,
     ) -> None:
-        super().__init__(console, target, debug)
+        super().__init__(console, target, debug=debug, size=size)
         self.fileno = sys.stdin.fileno()
         self.attrs_before: list[Any] | None = None
         self.exit_event = Event()

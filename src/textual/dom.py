@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from inspect import getfile
 import re
+from inspect import getfile
 from typing import (
-    cast,
+    TYPE_CHECKING,
     ClassVar,
     Iterable,
     Iterator,
     Type,
-    overload,
     TypeVar,
-    TYPE_CHECKING,
+    cast,
+    overload,
 )
 
 import rich.repr
@@ -23,16 +23,16 @@ from rich.tree import Tree
 from ._context import NoActiveAppError
 from ._node_list import NodeList
 from .binding import Bindings, BindingType
-from .color import Color, WHITE, BLACK
+from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
-from .css.errors import StyleValueError, DeclarationError
+from .css.errors import DeclarationError, StyleValueError
 from .css.parse import parse_declarations
-from .css.styles import Styles, RenderStyles
+from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
-from .css.query import NoMatches
 from .message_pump import MessagePump
 from .timer import Timer
+from .walk import walk_breadth_first, walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App
@@ -40,8 +40,12 @@ if TYPE_CHECKING:
     from .screen import Screen
     from .widget import Widget
 
+from textual._typing import Literal, TypeAlias
 
 _re_identifier = re.compile(IDENTIFIER)
+
+
+WalkMethod: TypeAlias = Literal["depth", "breadth"]
 
 
 class BadIdentifier(Exception):
@@ -93,7 +97,7 @@ class DOMNode(MessagePump):
 
     # True if this node inherits the CSS from the base class.
     _inherit_css: ClassVar[bool] = True
-    # List of names of base class (lower cased) that inherit CSS
+    # List of names of base classes that inherit CSS
     _css_type_names: ClassVar[frozenset[str]] = frozenset()
 
     def __init__(
@@ -125,6 +129,7 @@ class DOMNode(MessagePump):
         self._css_types = {cls.__name__ for cls in self._css_bases(self.__class__)}
         self._bindings = Bindings(self.BINDINGS)
         self._has_hover_style: bool = False
+        self._has_focus_within: bool = False
 
         super().__init__()
 
@@ -152,7 +157,7 @@ class DOMNode(MessagePump):
         cls._inherit_css = inherit_css
         css_type_names: set[str] = set()
         for base in cls._css_bases(cls):
-            css_type_names.add(base.__name__.lower())
+            css_type_names.add(base.__name__)
         cls._css_type_names = frozenset(css_type_names)
 
     def get_component_styles(self, name: str) -> RenderStyles:
@@ -174,11 +179,7 @@ class DOMNode(MessagePump):
 
     @property
     def _node_bases(self) -> Iterator[Type[DOMNode]]:
-        """Get the DOMNode bases classes (including self.__class__)
-
-        Returns:
-            Iterator[Type[DOMNode]]: An iterable of DOMNode classes.
-        """
+        """Iterator[Type[DOMNode]]: The DOMNode bases classes (including self.__class__)"""
         # Node bases are in reversed order so that the base class is lower priority
         return self._css_bases(self.__class__)
 
@@ -243,17 +244,16 @@ class DOMNode(MessagePump):
 
     @property
     def parent(self) -> DOMNode | None:
-        """Get the parent node.
-
-        Returns:
-            DOMNode | None: The node which is the direct parent of this node.
-        """
-
+        """DOMNode | None: The parent node."""
         return cast("DOMNode | None", self._parent)
 
     @property
     def screen(self) -> "Screen":
-        """Get the screen that this node is contained within. Note that this may not be the currently active screen within the app."""
+        """Screen: The screen that this node is contained within.
+
+        Note:
+            This may not be the currently active screen within the app.
+        """
         # Get the node by looking up a chain of parents
         # Note that self.screen may not be the same as self.app.screen
         from .screen import Screen
@@ -262,16 +262,12 @@ class DOMNode(MessagePump):
         while node and not isinstance(node, Screen):
             node = node._parent
         if not isinstance(node, Screen):
-            raise NoScreen(f"{self} has no screen")
+            raise NoScreen("node has no screen")
         return node
 
     @property
     def id(self) -> str | None:
-        """The ID of this node, or None if the node has no ID.
-
-        Returns:
-            (str | None): A Node ID or None.
-        """
+        """str | None: The ID of this node, or None if the node has no ID."""
         return self._id
 
     @id.setter
@@ -296,11 +292,12 @@ class DOMNode(MessagePump):
 
     @property
     def name(self) -> str | None:
+        """str | None: The name of the node."""
         return self._name
 
     @property
     def css_identifier(self) -> str:
-        """A CSS selector that identifies this DOM node."""
+        """str: A CSS selector that identifies this DOM node."""
         tokens = [self.__class__.__name__]
         if self.id is not None:
             tokens.append(f"#{self.id}")
@@ -308,7 +305,7 @@ class DOMNode(MessagePump):
 
     @property
     def css_identifier_styled(self) -> Text:
-        """A stylized CSS identifier."""
+        """Text: A stylized CSS identifier."""
         tokens = Text.styled(self.__class__.__name__)
         if self.id is not None:
             tokens.append(f"#{self.id}", style="bold")
@@ -321,27 +318,18 @@ class DOMNode(MessagePump):
 
     @property
     def classes(self) -> frozenset[str]:
-        """A frozenset of the current classes set on the widget.
-
-        Returns:
-            frozenset[str]: Set of class names.
-
-        """
+        """frozenset[str]: A frozenset of the current classes set on the widget."""
         return frozenset(self._classes)
 
     @property
     def pseudo_classes(self) -> frozenset[str]:
-        """Get a set of all pseudo classes"""
+        """frozenset[str]: A set of all pseudo classes"""
         pseudo_classes = frozenset({*self.get_pseudo_classes()})
         return pseudo_classes
 
     @property
     def css_path_nodes(self) -> list[DOMNode]:
-        """A list of nodes from the root to this node, forming a "path".
-
-        Returns:
-            list[DOMNode]: List of Nodes, starting with the root and ending with this node.
-        """
+        """list[DOMNode] A list of nodes from the root to this node, forming a "path"."""
         result: list[DOMNode] = [self]
         append = result.append
 
@@ -483,7 +471,7 @@ class DOMNode(MessagePump):
             Style: Rich Style object.
         """
         return Style.combine(
-            node.styles.text_style for node in reversed(self.ancestors)
+            node.styles.text_style for node in reversed(self.ancestors_with_self)
         )
 
     @property
@@ -492,7 +480,7 @@ class DOMNode(MessagePump):
         background = WHITE
         color = BLACK
         style = Style()
-        for node in reversed(self.ancestors):
+        for node in reversed(self.ancestors_with_self):
             styles = node.styles
             if styles.has_rule("background"):
                 background += styles.background
@@ -515,7 +503,7 @@ class DOMNode(MessagePump):
 
         """
         base_background = background = BLACK
-        for node in reversed(self.ancestors):
+        for node in reversed(self.ancestors_with_self):
             styles = node.styles
             if styles.has_rule("background"):
                 base_background = background
@@ -531,7 +519,7 @@ class DOMNode(MessagePump):
         """
         base_background = background = WHITE
         base_color = color = BLACK
-        for node in reversed(self.ancestors):
+        for node in reversed(self.ancestors_with_self):
             styles = node.styles
             if styles.has_rule("background"):
                 base_background = background
@@ -546,8 +534,11 @@ class DOMNode(MessagePump):
         return (base_background, base_color, background, color)
 
     @property
-    def ancestors(self) -> list[DOMNode]:
-        """Get a list of Nodes by tracing ancestors all the way back to App."""
+    def ancestors_with_self(self) -> list[DOMNode]:
+        """list[DOMNode]: A list of Nodes by tracing a path all the way back to App.
+
+        Note: This is inclusive of ``self``.
+        """
         nodes: list[MessagePump | None] = []
         add_node = nodes.append
         node: MessagePump | None = self
@@ -555,6 +546,11 @@ class DOMNode(MessagePump):
             add_node(node)
             node = node._parent
         return cast("list[DOMNode]", nodes)
+
+    @property
+    def ancestors(self) -> list[DOMNode]:
+        """list[DOMNode]: A list of ancestor nodes Nodes by tracing ancestors all the way back to App."""
+        return self.ancestors_with_self[1:]
 
     @property
     def displayed_children(self) -> list[Widget]:
@@ -593,23 +589,18 @@ class DOMNode(MessagePump):
         self.children._append(node)
         node._attach(self)
 
-    def _add_children(self, *nodes: Widget, **named_nodes: Widget) -> None:
+    def _add_children(self, *nodes: Widget) -> None:
         """Add multiple children to this node.
 
         Args:
             *nodes (DOMNode): Positional args should be new DOM nodes.
-            **named_nodes (DOMNode): Keyword args will be assigned the argument name as an ID.
         """
         _append = self.children._append
         for node in nodes:
             node._attach(self)
             _append(node)
-        for node_id, node in named_nodes.items():
-            node._attach(self)
-            _append(node)
-            node.id = node_id
 
-    WalkType = TypeVar("WalkType")
+    WalkType = TypeVar("WalkType", bound="DOMNode")
 
     @overload
     def walk_children(
@@ -617,11 +608,19 @@ class DOMNode(MessagePump):
         filter_type: type[WalkType],
         *,
         with_self: bool = True,
-    ) -> Iterable[WalkType]:
+        method: WalkMethod = "depth",
+        reverse: bool = False,
+    ) -> list[WalkType]:
         ...
 
     @overload
-    def walk_children(self, *, with_self: bool = True) -> Iterable[DOMNode]:
+    def walk_children(
+        self,
+        *,
+        with_self: bool = True,
+        method: WalkMethod = "depth",
+        reverse: bool = False,
+    ) -> list[DOMNode]:
         ...
 
     def walk_children(
@@ -629,53 +628,36 @@ class DOMNode(MessagePump):
         filter_type: type[WalkType] | None = None,
         *,
         with_self: bool = True,
-    ) -> Iterable[DOMNode | WalkType]:
+        method: WalkMethod = "depth",
+        reverse: bool = False,
+    ) -> list[DOMNode] | list[WalkType]:
         """Generate descendant nodes.
 
         Args:
             filter_type (type[WalkType] | None, optional): Filter only this type, or None for no filter.
                 Defaults to None.
             with_self (bool, optional): Also yield self in addition to descendants. Defaults to True.
+            method (Literal["breadth", "depth"], optional): One of "depth" or "breadth". Defaults to "depth".
+            reverse (bool, optional): Reverse the order (bottom up). Defaults to False.
 
         Returns:
-            Iterable[DOMNode | WalkType]: An iterable of nodes.
+            list[DOMNode] | list[WalkType]: A list of nodes.
 
         """
-
-        stack: list[Iterator[DOMNode]] = [iter(self.children)]
-        pop = stack.pop
-        push = stack.append
         check_type = filter_type or DOMNode
 
-        if with_self and isinstance(self, check_type):
-            yield self
+        node_generator = (
+            walk_depth_first(self, check_type, with_root=with_self)
+            if method == "depth"
+            else walk_breadth_first(self, check_type, with_root=with_self)
+        )
 
-        while stack:
-            node = next(stack[-1], None)
-            if node is None:
-                pop()
-            else:
-                if isinstance(node, check_type):
-                    yield node
-                if node.children:
-                    push(iter(node.children))
-
-    def get_child(self, id: str) -> DOMNode:
-        """Return the first child (immediate descendent) of this node with the given ID.
-
-        Args:
-            id (str): The ID of the child.
-
-        Returns:
-            DOMNode: The first child of this node with the ID.
-
-        Raises:
-            NoMatches: if no children could be found for this ID
-        """
-        for child in self.children:
-            if child.id == id:
-                return child
-        raise NoMatches(f"No child found with id={id!r}")
+        # We want a snapshot of the DOM at this point So that it doesn't
+        # change mid-walk
+        nodes = list(node_generator)
+        if reverse:
+            nodes.reverse()
+        return cast("list[DOMNode]", nodes)
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
@@ -743,10 +725,7 @@ class DOMNode(MessagePump):
             query_selector = selector.__name__
         query: DOMQuery[Widget] = DOMQuery(self, filter=query_selector)
 
-        if expect_type is None:
-            return query.first()
-        else:
-            return query.first(expect_type)
+        return query.only_one() if expect_type is None else query.only_one(expect_type)
 
     def set_styles(self, css: str | None = None, **update_styles) -> None:
         """Set custom styles on this object."""

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from typing import TYPE_CHECKING, Callable, Iterable, List
 
 from rich.segment import Segment
@@ -11,21 +10,15 @@ from ._filter import LineFilter
 from ._opacity import _apply_opacity
 from ._segment_tools import line_crop, line_pad, line_trim
 from ._types import Lines
+from ._typing import TypeAlias
 from .color import Color
 from .geometry import Region, Size, Spacing
 from .renderables.text_opacity import TextOpacity
 from .renderables.tint import Tint
 
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:  # pragma: no cover
-    from typing_extensions import TypeAlias
-
-
 if TYPE_CHECKING:
     from .css.styles import StylesBase
     from .widget import Widget
-
 
 RenderLineCallback: TypeAlias = Callable[[int], List[Segment]]
 
@@ -60,7 +53,7 @@ def style_links(
 
 
 class StylesCache:
-    """Responsible for rendering CSS Styles and keeping a cached of rendered lines.
+    """Responsible for rendering CSS Styles and keeping a cache of rendered lines.
 
     The render method applies border, outline, and padding set in the Styles object to widget content.
 

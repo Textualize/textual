@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import os
+import sys
 import runpy
 import shlex
+from pathlib import Path
 from typing import cast, TYPE_CHECKING
 
 
@@ -12,6 +14,23 @@ if TYPE_CHECKING:
 
 class AppFail(Exception):
     pass
+
+
+def shebang_python(candidate: Path) -> bool:
+    """Does the given file look like it's run with Python?
+
+    Args:
+        candidate (Path): The candidate file to check.
+
+    Returns:
+        bool: ``True`` if it looks to #! python, ``False`` if not.
+    """
+    try:
+        with candidate.open("rb") as source:
+            first_line = source.readline()
+    except IOError:
+        return False
+    return first_line.startswith(b"#!") and b"python" in first_line
 
 
 def import_app(import_name: str) -> App:
@@ -29,22 +48,26 @@ def import_app(import_name: str) -> App:
 
     import inspect
     import importlib
-    import sys
 
     from textual.app import App, WINDOWS
 
     import_name, *argv = shlex.split(import_name, posix=not WINDOWS)
+    drive, import_name = os.path.splitdrive(import_name)
+
     lib, _colon, name = import_name.partition(":")
 
-    if lib.endswith(".py"):
+    if drive:
+        lib = os.path.join(drive, os.sep, lib)
+
+    if lib.endswith(".py") or shebang_python(Path(lib)):
         path = os.path.abspath(lib)
+        sys.path.append(str(Path(path).parent))
         try:
             global_vars = runpy.run_path(path, {})
         except Exception as error:
             raise AppFail(str(error))
 
-        if "sys" in global_vars:
-            global_vars["sys"].argv = [path, *argv]
+        sys.argv[:] = [path, *argv]
 
         if name:
             # User has given a name, use that
@@ -61,7 +84,7 @@ def import_app(import_name: str) -> App:
                 except KeyError:
                     raise AppFail(f"App {name!r} not found in {lib!r}")
             else:
-                # Find a App class or instance that is *not* the base class
+                # Find an App class or instance that is *not* the base class
                 apps = [
                     value
                     for value in global_vars.values()
@@ -94,6 +117,8 @@ def import_app(import_name: str) -> App:
             app = getattr(module, name or "app")
         except AttributeError:
             raise AppFail(f"Unable to find {name!r} in {module!r}")
+
+        sys.argv[:] = [import_name, *argv]
 
     if inspect.isclass(app) and issubclass(app, App):
         app = app()

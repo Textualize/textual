@@ -1,13 +1,7 @@
 from __future__ import annotations
 
-import sys
 from functools import partial
 from typing import cast
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal  # pragma: no cover
 
 import rich.repr
 from rich.console import RenderableType
@@ -18,6 +12,7 @@ from ..css._error_tools import friendly_list
 from ..message import Message
 from ..reactive import Reactive
 from ..widgets import Static
+from .._typing import Literal
 
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
 _VALID_BUTTON_VARIANTS = {"default", "primary", "success", "warning", "error"}
@@ -36,12 +31,12 @@ class Button(Static, can_focus=True):
         min-width: 16;
         height: 3;
         background: $panel;
-        color: $text;      
-        border: none;        
+        color: $text;
+        border: none;
         border-top: tall $panel-lighten-2;
         border-bottom: tall $panel-darken-3;
-        content-align: center middle;        
-        text-style: bold;      
+        content-align: center middle;
+        text-style: bold;
     }
 
     Button.-disabled {
@@ -50,7 +45,7 @@ class Button(Static, can_focus=True):
     }
 
     Button:focus {
-        text-style: bold reverse;        
+        text-style: bold reverse;
     }
 
     Button:hover {
@@ -62,7 +57,7 @@ class Button(Static, can_focus=True):
     Button.-active {
         background: $panel;
         border-bottom: tall $panel-lighten-2;
-        border-top: tall $panel-darken-2;                
+        border-top: tall $panel-darken-2;
         tint: $background 30%;
     }
 
@@ -72,7 +67,7 @@ class Button(Static, can_focus=True):
         color: $text;
         border-top: tall $primary-lighten-3;
         border-bottom: tall $primary-darken-3;
-      
+
     }
 
     Button.-primary:hover {
@@ -107,7 +102,7 @@ class Button(Static, can_focus=True):
         border-top: tall $success-darken-2;
     }
 
-   
+
     /* Warning variant */
     Button.-warning {
         background: $warning;
@@ -119,7 +114,7 @@ class Button(Static, can_focus=True):
     Button.-warning:hover {
         background: $warning-darken-2;
         color: $text;
-       
+
     }
 
     Button.-warning.-active {
@@ -127,7 +122,7 @@ class Button(Static, can_focus=True):
         border-bottom: tall $warning-lighten-2;
         border-top: tall $warning-darken-2;
     }
-   
+
 
     /* Error variant */
     Button.-error {
@@ -135,7 +130,7 @@ class Button(Static, can_focus=True):
         color: $text;
         border-top: tall $error-lighten-2;
         border-bottom: tall $error-darken-3;
-     
+
     }
 
     Button.-error:hover {
@@ -176,9 +171,9 @@ class Button(Static, can_focus=True):
             label (str): The text that appears within the button.
             disabled (bool): Whether the button is disabled or not.
             variant (ButtonVariant): The variant of the button.
-            name: The name of the button.
-            id: The ID of the button in the DOM.
-            classes: The CSS classes of the button.
+            name (str | None, optional): The name of the button.
+            id (str | None, optional): The ID of the button in the DOM.
+            classes (str | None, optional): The CSS classes of the button.
         """
         super().__init__(name=name, id=id, classes=classes)
 
@@ -191,7 +186,7 @@ class Button(Static, can_focus=True):
         if disabled:
             self.add_class("-disabled")
 
-        self.variant = variant
+        self.variant = self.validate_variant(variant)
 
     label: Reactive[RenderableType] = Reactive("")
     variant = Reactive.init("default")
@@ -215,7 +210,7 @@ class Button(Static, can_focus=True):
         return variant
 
     def watch_variant(self, old_variant: str, variant: str):
-        self.remove_class(f"_{old_variant}")
+        self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
 
     def watch_disabled(self, disabled: bool) -> None:
@@ -274,9 +269,9 @@ class Button(Static, can_focus=True):
         Args:
             label (str): The text that appears within the button.
             disabled (bool): Whether the button is disabled or not.
-            name: The name of the button.
-            id: The ID of the button in the DOM.
-            classes: The CSS classes of the button.
+            name (str | None, optional): The name of the button.
+            id (str | None, optional): The ID of the button in the DOM.
+            classes(str | None, optional): The CSS classes of the button.
 
         Returns:
             Button: A Button widget of the 'success' variant.
@@ -305,9 +300,9 @@ class Button(Static, can_focus=True):
         Args:
             label (str): The text that appears within the button.
             disabled (bool): Whether the button is disabled or not.
-            name: The name of the button.
-            id: The ID of the button in the DOM.
-            classes: The CSS classes of the button.
+            name (str | None, optional): The name of the button.
+            id (str | None, optional): The ID of the button in the DOM.
+            classes (str | None, optional): The CSS classes of the button.
 
         Returns:
             Button: A Button widget of the 'warning' variant.
@@ -336,9 +331,9 @@ class Button(Static, can_focus=True):
         Args:
             label (str): The text that appears within the button.
             disabled (bool): Whether the button is disabled or not.
-            name: The name of the button.
-            id: The ID of the button in the DOM.
-            classes: The CSS classes of the button.
+            name (str | None, optional): The name of the button.
+            id (str | None, optional): The ID of the button in the DOM.
+            classes (str | None, optional): The CSS classes of the button.
 
         Returns:
             Button: A Button widget of the 'error' variant.

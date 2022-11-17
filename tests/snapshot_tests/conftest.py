@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from operator import attrgetter
 from os import PathLike
-from pathlib import Path
+from pathlib import Path, PurePath
 from typing import Union, List, Optional, Callable, Iterable
 
 import pytest
@@ -31,7 +31,7 @@ TEXTUAL_APP_KEY = pytest.StashKey[App]()
 @pytest.fixture
 def snap_compare(
     snapshot: SnapshotAssertion, request: FixtureRequest
-) -> Callable[[str], bool]:
+) -> Callable[[str | PurePath], bool]:
     """
     This fixture returns a function which can be used to compare the output of a Textual
     app with the output of the same app in the past. This is snapshot testing, and it
@@ -39,9 +39,9 @@ def snap_compare(
     """
 
     def compare(
-        app_path: str,
+        app_path: str | PurePath,
         press: Iterable[str] = ("_",),
-        terminal_size: tuple[int, int] = (24, 80),
+        terminal_size: tuple[int, int] = (80, 24),
     ) -> bool:
         """
         Compare a current screenshot of the app running at app_path, with
@@ -50,15 +50,26 @@ def snap_compare(
         the snapshot on disk will be updated to match the current screenshot.
 
         Args:
-            app_path (str): The path of the app.
+            app_path (str): The path of the app. Relative paths are relative to the location of the
+                test this function is called from.
             press (Iterable[str]): Key presses to run before taking screenshot. "_" is a short pause.
-            terminal_size (tuple[int, int]): A pair of integers (rows, columns), representing terminal size.
+            terminal_size (tuple[int, int]): A pair of integers (WIDTH, HEIGHT), representing terminal size.
 
         Returns:
             bool: True if the screenshot matches the snapshot.
         """
         node = request.node
-        app = import_app(app_path)
+        path = Path(app_path)
+        if path.is_absolute():
+            # If the user supplies an absolute path, just use it directly.
+            app = import_app(str(path.resolve()))
+        else:
+            # If a relative path is supplied by the user, it's relative to the location of the pytest node,
+            # NOT the location that `pytest` was invoked from.
+            node_path = node.path.parent
+            resolved = (node_path / app_path).resolve()
+            app = import_app(str(resolved))
+
         actual_screenshot = take_svg_screenshot(
             app=app,
             press=press,
@@ -68,7 +79,9 @@ def snap_compare(
 
         if result is False:
             # The split and join below is a mad hack, sorry...
-            node.stash[TEXTUAL_SNAPSHOT_SVG_KEY] = "\n".join(str(snapshot).splitlines()[1:-1])
+            node.stash[TEXTUAL_SNAPSHOT_SVG_KEY] = "\n".join(
+                str(snapshot).splitlines()[1:-1]
+            )
             node.stash[TEXTUAL_ACTUAL_SVG_KEY] = actual_screenshot
             node.stash[TEXTUAL_APP_KEY] = app
         else:
@@ -84,6 +97,7 @@ class SvgSnapshotDiff:
     """Model representing a diff between current screenshot of an app,
     and the snapshot on disk. This is ultimately intended to be used in
     a Jinja2 template."""
+
     snapshot: Optional[str]
     actual: Optional[str]
     test_name: str
@@ -111,16 +125,19 @@ def pytest_sessionfinish(
         actual_svg = item.stash.get(TEXTUAL_ACTUAL_SVG_KEY, None)
         app = item.stash.get(TEXTUAL_APP_KEY, None)
 
-        if snapshot_svg and actual_svg and app:
+        if app:
             path, line_index, name = item.reportinfo()
+            similarity = (
+                100
+                * difflib.SequenceMatcher(
+                    a=str(snapshot_svg), b=str(actual_svg)
+                ).ratio()
+            )
             diffs.append(
                 SvgSnapshotDiff(
                     snapshot=str(snapshot_svg),
                     actual=str(actual_svg),
-                    file_similarity=100
-                                    * difflib.SequenceMatcher(
-                        a=str(snapshot_svg), b=str(actual_svg)
-                    ).ratio(),
+                    file_similarity=similarity,
                     test_name=name,
                     path=path,
                     line_number=line_index + 1,
@@ -175,7 +192,9 @@ def pytest_terminal_summary(
     if diffs:
         snapshot_report_location = config._textual_snapshot_html_report
         console.rule("[b red]Textual Snapshot Report", style="red")
-        console.print(f"\n[black on red]{len(diffs)} mismatched snapshots[/]\n"
-                      f"\n[b]View the [link=file://{snapshot_report_location}]failure report[/].\n")
+        console.print(
+            f"\n[black on red]{len(diffs)} mismatched snapshots[/]\n"
+            f"\n[b]View the [link=file://{snapshot_report_location}]failure report[/].\n"
+        )
         console.print(f"[dim]{snapshot_report_location}\n")
         console.rule(style="red")

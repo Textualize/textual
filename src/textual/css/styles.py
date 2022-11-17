@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import lru_cache
@@ -60,11 +59,7 @@ from .types import (
     Visibility,
     TextAlign,
 )
-
-if sys.version_info >= (3, 8):
-    from typing import TypedDict
-else:
-    from typing_extensions import TypedDict
+from .._typing import TypedDict
 
 if TYPE_CHECKING:
     from .._layout import Layout
@@ -304,6 +299,44 @@ class StylesBase(ABC):
     auto_link_hover_color = BooleanProperty(False)
     link_hover_background = ColorProperty("transparent")
     link_hover_style = StyleFlagsProperty()
+
+    def __textual_animation__(
+        self,
+        attribute: str,
+        start_value: object,
+        value: object,
+        start_time: float,
+        duration: float | None,
+        speed: float | None,
+        easing: EasingFunction,
+        on_complete: CallbackType | None = None,
+    ) -> ScalarAnimation | None:
+        if self.node is None:
+            return None
+
+        # Check we are animating a Scalar or Scalar offset
+        if isinstance(start_value, (Scalar, ScalarOffset)):
+
+            # If destination is a number, we can convert that to a scalar
+            if isinstance(value, (int, float)):
+                value = Scalar(value, Unit.CELLS, Unit.CELLS)
+
+            # We can only animate to Scalar
+            if not isinstance(value, (Scalar, ScalarOffset)):
+                return None
+
+            return ScalarAnimation(
+                self.node,
+                self,
+                start_time,
+                attribute,
+                value,
+                duration=duration,
+                speed=speed,
+                easing=easing,
+                on_complete=on_complete,
+            )
+        return None
 
     def __eq__(self, styles: object) -> bool:
         """Check that Styles contains the same rules."""
@@ -561,10 +594,9 @@ class Styles(StylesBase):
         """
         if value is None:
             return self._rules.pop(rule, None) is not None
-        else:
-            current = self._rules.get(rule)
-            self._rules[rule] = value
-            return current != value
+        current = self._rules.get(rule)
+        self._rules[rule] = value
+        return current != value
 
     def get_rule(self, rule: str, default: object = None) -> object:
         return self._rules.get(rule, default)
@@ -573,7 +605,7 @@ class Styles(StylesBase):
         if self.node is not None:
             self.node.refresh(layout=layout)
             if children:
-                for child in self.node.walk_children(with_self=False):
+                for child in self.node.walk_children(with_self=False, reverse=True):
                     child.refresh(layout=layout)
 
     def reset(self) -> None:
@@ -610,7 +642,6 @@ class Styles(StylesBase):
             list[tuple[str, Specificity6, Any]]]: A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
         """
         is_important = self.important.__contains__
-
         rules = [
             (
                 rule_name,
@@ -633,33 +664,6 @@ class Styles(StylesBase):
                 yield name, getattr(self, name)
         if self.important:
             yield "important", self.important
-
-    def __textual_animation__(
-        self,
-        attribute: str,
-        value: Any,
-        start_time: float,
-        duration: float | None,
-        speed: float | None,
-        easing: EasingFunction,
-        on_complete: CallbackType | None = None,
-    ) -> ScalarAnimation | None:
-        # from ..widget import Widget
-        # node = self.node
-        # assert isinstance(self.node, Widget)
-        if isinstance(value, ScalarOffset):
-            return ScalarAnimation(
-                self.node,
-                self,
-                start_time,
-                attribute,
-                value,
-                duration=duration,
-                speed=speed,
-                easing=easing,
-                on_complete=on_complete,
-            )
-        return None
 
     def _get_border_css_lines(
         self, rules: RulesMap, name: str
@@ -945,7 +949,7 @@ class RenderStyles(StylesBase):
     def animate(
         self,
         attribute: str,
-        value: float | Animatable,
+        value: str | float | Animatable,
         *,
         final_value: object = ...,
         duration: float | None = None,

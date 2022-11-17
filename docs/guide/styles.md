@@ -1,6 +1,6 @@
 # Styles
 
-In this chapter will explore how you can apply styles to your application to create beautiful user interfaces.
+In this chapter we will explore how you can apply styles to your application to create beautiful user interfaces.
 
 ## Styles object
 
@@ -48,9 +48,9 @@ Note how the combined height of the widget is three rows in the terminal. This i
 
 ## Colors
 
-There are a number of style attribute which accept colors. The most commonly used are [color](../styles/color.md) which sets the default color of text on a widget, and [background](..styles/background/md) which sets the background color (beneath the text).
+There are a number of style attributes which accept colors. The most commonly used are [color](../styles/color.md) which sets the default color of text on a widget, and [background](..styles/background/md) which sets the background color (beneath the text).
 
-You can set a color value to one of a number of pre-defined color constants, such as "crimson", "lime", and "palegreen". You can find a full list in the [Color reference](../reference/color.md#textual.color--named-colors).
+You can set a color value to one of a number of pre-defined color constants, such as `"crimson"`, `"lime"`, and `"palegreen"`. You can find a full list in the [Color reference](../reference/color.md#textual.color--named-colors).
 
 Here's how you would set the screen background to lime:
 
@@ -88,15 +88,15 @@ There are a few ways you can set alpha on a color in Textual.
 
 - You can set the alpha value of a color by adding a fourth digit or pair of digits to a hex color. The extra digits form an alpha component which ranges from 0 for completely transparent to 255 (completely opaque). Any value between 0 and 255 will be translucent. For example `"#9932CC7f"` is a dark orchid which is roughly 50% translucent.
 - You can also set alpha with the `rgba` format, which is identical to `rgb` with the additional of a fourth value that should be between 0 and 1, where 0 is invisible and 1 is opaque. For example `"rgba(192,78,96,0.5)"`.
-- You can add the `a` parameter on a [Color][textual.color.Color] object. For example `Color(192, 78, 96, a=0.5)` creates a translucent dark orchid. 
+- You can add the `a` parameter on a [Color][textual.color.Color] object. For example `Color(192, 78, 96, a=0.5)` creates a translucent dark orchid.
 
-The following examples shows what happens when you set alpha on background colors:
+The following example shows what happens when you set alpha on background colors:
 
 ```python title="colors01.py" hl_lines="12-15"
 --8<-- "docs/examples/guide/styles/colors02.py"
 ```
 
-Notice that an alpha of 0.1 the background almost matches the screen, but at 1.0 it is a solid color. 
+Notice that at an alpha of 0.1 the background almost matches the screen, but at 1.0 it is a solid color.
 
 ```{.textual path="docs/examples/guide/styles/colors02.py"}
 ```
@@ -110,7 +110,7 @@ Widgets occupy a rectangular region of the screen, which may be as small as a si
 The following styles influence the dimensions of a widget.
 
 - [width](../styles/width.md) and [height](../styles/width.md) define the size of the widget.
-- [padding](../styles/padding.md) adds optional space around the content area. 
+- [padding](../styles/padding.md) adds optional space around the content area.
 - [border](../styles/border.md) draws an optional rectangular border around the padding and the content area.
 
 Additionally, the [margin](../styles/margin.md) style adds space around a widget's border, which isn't technically part of the widget, but provides visual separation between widgets.
@@ -138,7 +138,7 @@ Note how the text wraps in the widget, and is cropped because it doesn't fit in 
 
 #### Auto dimensions
 
-In practice, we generally want the size of a widget to adapt to it's content, which we can do by setting a dimension to `"auto"`.
+In practice, we generally want the size of a widget to adapt to its content, which we can do by setting a dimension to `"auto"`.
 
 Let's set the height to auto and see what happens.
 
@@ -195,7 +195,7 @@ Let's look at an example. We will create two widgets, one with a height of `"2fr
 --8<-- "docs/examples/guide/styles/dimensions04.py"
 ```
 
-The total `fr` units for height is 3. The first widget will have a screen height of two thirds because its height style is set to `2fr`. The second widget's height styles is `1fr` so its screen height will be one third. Here's what that looks like.
+The total `fr` units for height is 3. The first widget will have a screen height of two thirds because its height style is set to `2fr`. The second widget's height style is `1fr` so its screen height will be one third. Here's what that looks like.
 
 ```{.textual path="docs/examples/guide/styles/dimensions04.py"}
 ```
@@ -235,7 +235,7 @@ Compare the output of this example to the previous example:
 
 You can also set padding to a tuple of *four* values which applies padding to each edge individually. The first value is the padding for the top of the widget, followed by the right of the widget, then bottom, then left.
 
-### Border 
+### Border
 
 The [border](../styles/border.md) style draws a border around a widget. To add a border set `styles.border` to a tuple of two values. The first value is the border type, which should be a string. The second value is the border color which will accept any value that works with  [color](../styles/color.md) and [background](../styles/background.md).
 
@@ -301,7 +301,7 @@ The second widget sets `box_sizing` to `"content-box"`.
 --8<-- "docs/examples/guide/styles/box_sizing01.py"
 ```
 
-The padding and border of the first widget is subtracted from the height leaving only 2 lines in the content area. The second widget also has a height of 6, but the padding and border adds additional height so that the content area remains 6 lines. 
+The padding and border of the first widget is subtracted from the height leaving only 2 lines in the content area. The second widget also has a height of 6, but the padding and border adds additional height so that the content area remains 6 lines.
 
 ```{.textual path="docs/examples/guide/styles/box_sizing01.py"}
 ```

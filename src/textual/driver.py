@@ -13,13 +13,24 @@ if TYPE_CHECKING:
 
 class Driver(ABC):
     def __init__(
-        self, console: "Console", target: "MessageTarget", debug: bool = False
+        self,
+        console: "Console",
+        target: "MessageTarget",
+        *,
+        debug: bool = False,
+        size: tuple[int, int] | None = None,
     ) -> None:
         self.console = console
         self._target = target
         self._debug = debug
+        self._size = size
         self._loop = asyncio.get_running_loop()
         self._mouse_down_time = _clock.get_time_no_wait()
+
+    @property
+    def is_headless(self) -> bool:
+        """Check if the driver is 'headless'"""
+        return False
 
     def send_event(self, event: events.Event) -> None:
         asyncio.run_coroutine_threadsafe(

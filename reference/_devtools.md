@@ -2,9 +2,7 @@
 
 ## Installation
 
-Using the Textual Devtools requires installation of the `dev` extra dependency.
-
-https://python-poetry.org/docs/pyproject/#extras
+Using the Textual Devtools requires installation of the `dev` [optional dependency group](https://packaging.python.org/en/latest/specifications/declaring-project-metadata/#dependencies-optional-dependencies).
 
 ## Running
 
