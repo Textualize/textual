@@ -236,7 +236,7 @@ def _get_key_aliases(key: str) -> list[str]:
     return [key] + KEY_ALIASES.get(key, [])
 
 
-def _get_key_display(key: str) -> str | None:
+def _get_key_display(key: str) -> str:
     """Given a key name"""
     display_alias = KEY_DISPLAY_ALIASES.get(key)
     if display_alias:

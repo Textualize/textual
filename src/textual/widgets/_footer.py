@@ -101,7 +101,7 @@ class Footer(Widget):
         for action, bindings in action_to_bindings.items():
             binding = bindings[0]
             if binding.key_display is None:
-                key_display = _get_key_display(binding.key)
+                key_display = self.app.get_key_display(binding.key)
                 if key_display is None:
                     key_display = binding.key.upper()
             else:

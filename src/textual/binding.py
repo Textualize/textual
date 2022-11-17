@@ -6,7 +6,6 @@ from typing import Iterable, MutableMapping
 import rich.repr
 
 from textual._typing import TypeAlias
-from textual.keys import _get_key_display
 
 BindingType: TypeAlias = "Binding | tuple[str, str, str]"
 
