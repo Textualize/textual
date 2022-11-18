@@ -523,15 +523,19 @@ class Widget(DOMNode):
 
         # Decide the final resting place depending on what we've been asked
         # to do.
+        insert_before: int | None = None
+        insert_after: int | None = None
         if before is not None:
-            parent, before = self._find_mount_point(before)
+            parent, insert_before = self._find_mount_point(before)
         elif after is not None:
-            parent, after = self._find_mount_point(after)
+            parent, insert_after = self._find_mount_point(after)
         else:
             parent = self
 
         return AwaitMount(
-            self.app._register(parent, *widgets, before=before, after=after)
+            self.app._register(
+                parent, *widgets, before=insert_before, after=insert_after
+            )
         )
 
     def move_child(
@@ -697,7 +701,6 @@ class Widget(DOMNode):
         Returns:
             int: The height of the content.
         """
-
         if self.is_container:
             assert self._layout is not None
             height = (
@@ -2114,15 +2117,9 @@ class Widget(DOMNode):
         Returns:
             AwaitRemove: An awaitable object that waits for the widget to be removed.
         """
-        prune_finished_event = AsyncEvent()
-        self.app.post_message_no_wait(
-            events.Prune(
-                self,
-                widgets=self.app._detach_from_dom([self]),
-                finished_flag=prune_finished_event,
-            )
-        )
-        return AwaitRemove(prune_finished_event)
+
+        await_remove = self.app._remove_nodes([self])
+        return await_remove
 
     def render(self) -> RenderableType:
         """Get renderable for widget.

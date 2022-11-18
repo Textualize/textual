@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed containers with transparent background not showing borders https://github.com/Textualize/textual/issues/1175
 - Fixed auto-width in horizontal containers https://github.com/Textualize/textual/pull/1155
 - Fixed Input cursor invisible when placeholder empty https://github.com/Textualize/textual/pull/1202
+- Fixed deadlock when removing widgets from the App https://github.com/Textualize/textual/pull/1219
 
 ## [0.4.0] - 2022-11-08
 
