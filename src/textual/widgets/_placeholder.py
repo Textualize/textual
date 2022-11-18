@@ -3,9 +3,6 @@ from __future__ import annotations
 from itertools import cycle
 from typing import Literal
 
-from rich import box, repr
-from rich.align import Align
-from rich.panel import Panel
 from rich.pretty import Pretty
 
 from .. import events
@@ -36,7 +33,6 @@ class InvalidPlaceholderVariant(Exception):
     pass
 
 
-@repr.auto(angular=False)
 class Placeholder(Static, can_focus=True):
     """A simple placeholder widget to use before you build your custom widgets.
 
@@ -66,6 +62,7 @@ class Placeholder(Static, can_focus=True):
         self,
         variant: PlaceholderVariant = "default",
         *,
+        label: str | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -75,6 +72,8 @@ class Placeholder(Static, can_focus=True):
         Args:
             variant (PlaceholderVariant, optional): The variant of the placeholder.
                 Defaults to "default".
+            label (str | None, optional): The label to identify the placeholder.
+                If no label is present, uses the placeholder ID instead. Defaults to None.
             name (str | None, optional): The name of the placeholder. Defaults to None.
             id (str | None, optional): The ID of the placeholder in the DOM.
                 Defaults to None.
@@ -82,8 +81,9 @@ class Placeholder(Static, can_focus=True):
                 of the placeholder, if any. Defaults to None.
         """
         super().__init__(name=name, id=id, classes=classes)
+        self._placeholder_label = label if label else f"#{id}" if id else "Placeholder"
         self.color = next(Placeholder.COLORS)
-        self.styles.background = f"{self.color} 50%"
+        self.styles.background = f"{self.color} 70%"
         self.variant = self.validate_variant(variant)
         # Set a cycle through the variants with the correct starting point.
         self.variants_cycle = cycle(_VALID_PLACEHOLDER_VARIANTS_ORDERED)
@@ -106,21 +106,19 @@ class Placeholder(Static, can_focus=True):
     def update_on_variant_change(self, variant: str) -> None:
         """Calls the appropriate method to update the render of the placeholder."""
         update_variant_method = getattr(self, f"_update_{variant}_variant", None)
-        assert update_variant_method is not None
-        try:
-            update_variant_method()
-        except TypeError as te:  # triggered if update_variant_method is None
+        if update_variant_method is None:
             raise InvalidPlaceholderVariant(
                 "Valid placeholder variants are "
                 + f"{friendly_list(_VALID_PLACEHOLDER_VARIANTS)}"
-            ) from te
+            )
+        update_variant_method()
 
     def _update_default_variant(self) -> None:
         """Update the placeholder with the "default" variant.
 
         This variant prints a panel with a solid color.
         """
-        self.update(Panel("", title="Placeholder"))
+        self.update(self._placeholder_label)
 
     def _update_state_variant(self) -> None:
         """Update the placeholder with the "state" variant.
@@ -129,17 +127,7 @@ class Placeholder(Static, can_focus=True):
         whether the placeholder has focus and/or the mouse over it.
         """
         data = {"has_focus": self.has_focus, "mouse_over": self.mouse_over}
-        self.update(
-            Panel(
-                Align.center(
-                    Pretty(data),
-                    vertical="middle",
-                ),
-                title="Placeholder",
-                border_style="green" if self.mouse_over else "blue",
-                box=box.HEAVY if self.has_focus else box.ROUNDED,
-            )
-        )
+        self.update(Pretty(data))
 
     def _update_size_variant(self) -> None:
         """Update the placeholder with the "size" variant.
@@ -147,23 +135,18 @@ class Placeholder(Static, can_focus=True):
         This variant shows the the size of the widget.
         """
         width, height = self.size
-        position_data = {
+        size_data = {
             "width": width,
             "height": height,
         }
-        self.update(
-            Panel(
-                Align.center(Pretty(position_data), vertical="middle"),
-                title="Placeholder",
-            )
-        )
+        self.update(Pretty(size_data))
 
     def _update_css_variant(self) -> None:
         """Update the placeholder with the "css" variant.
 
         This variant shows all the CSS rules that are applied to this placeholder.
         """
-        self.update(Panel(Pretty(self.styles), title="Placeholder"))
+        self.update(self.styles.css)
 
     def _update_text_variant(self) -> None:
         """Update the placeholder with the "text" variant.
@@ -171,16 +154,13 @@ class Placeholder(Static, can_focus=True):
         This variant shows some Lorem Ipsum text.
         """
         self.update(
-            Panel(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam feugiat ac elit sit amet accumsan. Suspendisse bibendum nec libero quis gravida. Phasellus id eleifend ligula. Nullam imperdiet sem tellus, sed vehicula nisl faucibus sit amet. Praesent iaculis tempor ultricies. Sed lacinia, tellus id rutrum lacinia, sapien sapien congue mauris, sit amet pellentesque quam quam vel nisl. Curabitur vulputate erat pellentesque mauris posuere, non dictum risus mattis.",
-                title="Placeholder",
-            )
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam feugiat ac elit sit amet accumsan. Suspendisse bibendum nec libero quis gravida. Phasellus id eleifend ligula. Nullam imperdiet sem tellus, sed vehicula nisl faucibus sit amet. Praesent iaculis tempor ultricies. Sed lacinia, tellus id rutrum lacinia, sapien sapien congue mauris, sit amet pellentesque quam quam vel nisl. Curabitur vulputate erat pellentesque mauris posuere, non dictum risus mattis."
         )
 
     def on_resize(self, event: events.Resize) -> None:
         """Update the placeholder render if the current variant needs it."""
-        if self.variant == "position":
-            self._update_position_variant()
+        if self.variant == "size":
+            self._update_size_variant()
 
     def watch_has_focus(self, has_focus: bool) -> None:
         """Update the placeholder render if the current variant needs it."""
