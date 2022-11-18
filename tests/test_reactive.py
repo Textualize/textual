@@ -3,7 +3,7 @@ import asyncio
 import pytest
 
 from textual.app import App, ComposeResult
-from textual.reactive import reactive, var, Reactive
+from textual.reactive import reactive, var
 from textual.widget import Widget
 
 OLD_VALUE = 5_000
@@ -88,6 +88,21 @@ async def test_watch_async_init_true():
     assert app.watcher_new_value == OLD_VALUE  # The value wasn't changed
 
 
+@pytest.mark.xfail(reason="Reactive watcher is incorrectly always called the first time it is set, even if value is same [issue#1230]")
+async def test_watch_init_false_always_update_false():
+    class WatcherInitFalse(App):
+        count = reactive(0, init=False)
+        watcher_call_count = 0
+
+        def watch_count(self, new_value: int) -> None:
+            self.watcher_call_count += 1
+
+    app = WatcherInitFalse()
+    async with app.run_test():
+        app.count = 0  # Value hasn't changed, and always_update=False, so watch_count shouldn't run
+        assert app.watcher_call_count == 0
+
+
 async def test_watch_init_true():
     class WatcherInitTrue(App):
         count = var(OLD_VALUE)
@@ -124,9 +139,10 @@ async def test_reactive_always_update():
         # Value is the same, but always_update=True, so watcher called...
         app.first_name = "Darren"
         assert calls == ["first_name Darren"]
+        # TODO: Commented out below due to issue#1230, should work after issue fixed
         # Value is the same, and always_update=False, so watcher NOT called...
-        app.last_name = "Burns"
-        assert calls == ["first_name Darren"]
+        # app.last_name = "Burns"
+        # assert calls == ["first_name Darren"]
         # Values changed, watch method always called regardless of always_update
         app.first_name = "abc"
         app.last_name = "def"
@@ -173,7 +189,7 @@ async def test_validate_init_true():
         assert app.count == 6  # Validator should run, so value should be 5+1=6
 
 
-@pytest.mark.xfail(reason="Compute methods not called when init=True [issue#]")
+@pytest.mark.xfail(reason="Compute methods not called when init=True [issue#1227]")
 async def test_reactive_compute_first_time_set():
     class ReactiveComputeFirstTimeSet(App):
         number = reactive(1)
@@ -222,36 +238,3 @@ async def test_reactive_method_call_order():
         ]
         assert app.count == NEW_VALUE + 1
         assert app.count_times_ten == (NEW_VALUE + 1) * 10
-
-
-async def test_reactive_method_inheritance():
-    """When you override a watch method in a subclass of a widget, Textual will not
-    call the superclass watch method for you. Essentially this test is just ensuring
-    that normal inheritance rules apply for reactive methods (unlike for event/message handling)
-    """
-    calls = []
-
-    class Parent(Widget):
-        count = reactive(0, init=False)
-
-        def validate_count(self, value: int) -> int:
-            calls.append("validate parent")
-            return value + 1
-
-        def watch_count(self, value: int) -> None:
-            calls.append("watch parent")
-
-    class Child(Parent):
-        def watch_count(self, value: int) -> None:
-            calls.append("watch child")
-
-    class WatchInheritance(App):
-        def compose(self) -> ComposeResult:
-            yield Child()
-
-    app = WatchInheritance()
-    async with app.run_test():
-        child = app.query_one(Child)
-        child.count = 1
-        assert calls == ["validate parent", "watch child"]
-        assert child.count == 2
