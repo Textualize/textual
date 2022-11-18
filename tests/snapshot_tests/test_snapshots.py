@@ -118,3 +118,9 @@ def test_css_property(file_name, snap_compare):
 def test_multiple_css(snap_compare):
     # Interaction between multiple CSS files and app-level/classvar CSS
     assert snap_compare("snapshot_apps/multiple_css/multiple_css.py")
+
+
+# --- Other ---
+
+def test_key_display(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "key_display.py")

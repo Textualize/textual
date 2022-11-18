@@ -27,6 +27,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Widget.move_child` https://github.com/Textualize/textual/issues/1121
 - Added a `Label` widget https://github.com/Textualize/textual/issues/1190
 - Support lazy-instantiated Screens (callables in App.SCREENS) https://github.com/Textualize/textual/pull/1185
+- Display of keys in footer has more sensible defaults https://github.com/Textualize/textual/pull/1213
+- Add App.get_key_display, allowing custom key_display App-wide https://github.com/Textualize/textual/pull/1213
 
 ### Changed
 
