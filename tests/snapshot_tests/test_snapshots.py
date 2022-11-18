@@ -2,6 +2,8 @@ from pathlib import Path
 
 import pytest
 
+from textual.widgets import Placeholder
+
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
 LAYOUT_EXAMPLES_DIR = Path("../../docs/examples/guide/layout")
@@ -79,6 +81,7 @@ def test_buttons_render(snap_compare):
 
 def test_placeholder_render(snap_compare):
     # Testing the rendering of the multiple placeholder variants and labels.
+    Placeholder.reset_color_cycle()
     assert snap_compare(WIDGET_EXAMPLES_DIR / "placeholder.py")
 
 

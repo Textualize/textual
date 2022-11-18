@@ -74,6 +74,11 @@ class Placeholder(Static):
 
     variant: Reactive[PlaceholderVariant] = reactive("default")
 
+    @classmethod
+    def reset_color_cycle(cls) -> None:
+        """Reset the placeholder background color cycle."""
+        cls.COLORS = cycle(_PLACEHOLDER_BACKGROUND_COLORS)
+
     def __init__(
         self,
         variant: PlaceholderVariant = "default",
