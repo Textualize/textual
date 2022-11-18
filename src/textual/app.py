@@ -57,12 +57,13 @@ from .drivers.headless_driver import HeadlessDriver
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
-from .keys import REPLACED_KEYS
+from .keys import REPLACED_KEYS, _get_key_display
 from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
 from .widget import AwaitMount, MountError, Widget
+
 
 if TYPE_CHECKING:
     from .devtools.client import DevtoolsClient
@@ -102,7 +103,6 @@ DEFAULT_COLORS = {
 
 ComposeResult = Iterable[Widget]
 RenderResult = RenderableType
-
 
 AutopilotCallbackType: TypeAlias = "Callable[[Pilot], Coroutine[Any, Any, None]]"
 
@@ -670,6 +670,22 @@ class App(Generic[ReturnType], DOMNode):
             keys, action, description, show=show, key_display=key_display
         )
 
+    def get_key_display(self, key: str) -> str:
+        """For a given key, return how it should be displayed in an app
+        (e.g. in the Footer widget).
+        By key, we refer to the string used in the "key" argument for
+        a Binding instance. By overriding this method, you can ensure that
+        keys are displayed consistently throughout your app, without
+        needing to add a key_display to every binding.
+
+        Args:
+            key (str): The binding key string.
+
+        Returns:
+            str: The display string for the input key.
+        """
+        return _get_key_display(key)
+
     async def _press_keys(self, keys: Iterable[str]) -> None:
         """A task to send key events."""
         app = self
@@ -707,7 +723,7 @@ class App(Generic[ReturnType], DOMNode):
                 #  This conditional sleep can be removed after that issue is closed.
                 if key == "tab":
                     await asyncio.sleep(0.05)
-                await asyncio.sleep(0.02)
+                await asyncio.sleep(0.025)
         await app._animator.wait_for_idle()
 
     @asynccontextmanager

@@ -1,5 +1,6 @@
 # Change Log
 
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
@@ -27,12 +28,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Widget.move_child` https://github.com/Textualize/textual/issues/1121
 - Added a `Label` widget https://github.com/Textualize/textual/issues/1190
 - Support lazy-instantiated Screens (callables in App.SCREENS) https://github.com/Textualize/textual/pull/1185
+- Display of keys in footer has more sensible defaults https://github.com/Textualize/textual/pull/1213
+- Add App.get_key_display, allowing custom key_display App-wide https://github.com/Textualize/textual/pull/1213
 
 ### Changed
 
 - Watchers are now called immediately when setting the attribute if they are synchronous. https://github.com/Textualize/textual/pull/1145
 - Widget.call_later has been renamed to Widget.call_after_refresh.
 - Button variant values are now checked at runtime. https://github.com/Textualize/textual/issues/1189
+- Added caching of some properties in Styles object
 
 ### Fixed
 
