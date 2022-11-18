@@ -14,7 +14,11 @@ print(data)
 
 class TreeApp(App):
 
-    BINDINGS = [("a", "add", "Add node")]
+    BINDINGS = [
+        ("a", "add", "Add node"),
+        ("c", "clear", "Clear"),
+        ("t", "toggle_root", "Toggle root"),
+    ]
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -24,7 +28,17 @@ class TreeApp(App):
     def action_add(self) -> None:
         tree = self.query_one(Tree)
 
-        tree.add_json(data)
+        json_node = tree.root.add("JSON")
+        tree.root.expand()
+        tree.add_json(json_node, data)
+
+    def action_clear(self) -> None:
+        tree = self.query_one(Tree)
+        tree.clear()
+
+    def action_toggle_root(self) -> None:
+        tree = self.query_one(Tree)
+        tree.show_root = not tree.show_root
 
 
 if __name__ == "__main__":
