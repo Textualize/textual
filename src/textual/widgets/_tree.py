@@ -592,8 +592,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             is_hover,
             width,
             self._updates,
-            y == self.hover_line,
-            y == self.cursor_line,
             self.has_focus,
             tuple(node._updates for node in line.path),
         )
