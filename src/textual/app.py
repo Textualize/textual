@@ -39,6 +39,7 @@ from rich.traceback import Traceback
 
 from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
+from .await_remove import AwaitRemove
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._callback import invoke
 from ._context import active_app
@@ -353,6 +354,7 @@ class App(Generic[ReturnType], DOMNode):
             else None
         )
         self._screenshot: str | None = None
+        self._dom_lock = asyncio.Lock()
 
     @property
     def return_value(self) -> ReturnType | None:
@@ -1935,6 +1937,42 @@ class App(Generic[ReturnType], DOMNode):
                 yield [*widget.children, *widget._get_virtual_dom()]
             for child in widget.children:
                 push(child)
+
+    def _remove_nodes(self, widgets: list[Widget]) -> AwaitRemove:
+        """Remove nodes from DOM, and return an awaitable that awaits cleanup.
+
+        Args:
+            widgets (list[Widget]): List of nodes to remvoe.
+
+        Returns:
+            AwaitRemove: Awaitable that returns when the nodes have been fully removed.
+        """
+
+        async def remove_task(
+            widgets: list[Widget], finished_event: asyncio.Event
+        ) -> None:
+            try:
+                await self._prune_nodes(widgets)
+            finally:
+                finished_event.set()
+
+        removed_widgets = self._detach_from_dom(widgets)
+        self.refresh(layout=True)
+
+        finished_event = asyncio.Event()
+        asyncio.create_task(remove_task(removed_widgets, finished_event))
+
+        return AwaitRemove(finished_event)
+
+    async def _prune_nodes(self, widgets: list[Widget]) -> None:
+        """Remove nodes and children.
+
+        Args:
+            widgets (Widget): _description_
+        """
+        async with self._dom_lock:
+            for widget in widgets:
+                await self._prune_node(widget)
 
     async def _prune_node(self, root: Widget) -> None:
         """Remove a node and its children. Children are removed before parents.
