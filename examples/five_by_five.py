@@ -311,7 +311,7 @@ class FiveByFive(App[None]):
     CSS_PATH = "five_by_five.css"
     """The name of the stylesheet for the app."""
 
-    SCREENS = {"help": Help()}
+    SCREENS = {"help": Help}
     """The pre-loaded screens for the application."""
 
     BINDINGS = [("ctrl+d", "toggle_dark", "Toggle Dark Mode")]
