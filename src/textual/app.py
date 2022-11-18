@@ -18,6 +18,7 @@ from time import perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
+    Callable,
     Generic,
     Iterable,
     List,
@@ -25,7 +26,6 @@ from typing import (
     TypeVar,
     Union,
     cast,
-    Callable,
 )
 from weakref import WeakSet, WeakValueDictionary
 
@@ -39,14 +39,14 @@ from rich.traceback import Traceback
 
 from . import Logger, LogGroup, LogVerbosity, actions, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
-from .await_remove import AwaitRemove
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._callback import invoke
 from ._context import active_app
 from ._event_broker import NoHandler, extract_handler_actions
 from ._filter import LineFilter, Monochrome
 from ._path import _make_path_object_relative
-from ._typing import TypeAlias, Final
+from ._typing import Final, TypeAlias
+from .await_remove import AwaitRemove
 from .binding import Binding, Bindings
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
@@ -62,7 +62,7 @@ from .messages import CallbackType
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen
-from .widget import AwaitMount, Widget, MountError
+from .widget import AwaitMount, MountError, Widget
 
 if TYPE_CHECKING:
     from .devtools.client import DevtoolsClient
@@ -1948,9 +1948,15 @@ class App(Generic[ReturnType], DOMNode):
             AwaitRemove: Awaitable that returns when the nodes have been fully removed.
         """
 
-        async def remove_task(
+        async def prune_widgets_task(
             widgets: list[Widget], finished_event: asyncio.Event
         ) -> None:
+            """Prune widgets as a background task.
+
+            Args:
+                widgets (list[Widget]): Widgets to prune.
+                finished_event (asyncio.Event): Event to set when complete.
+            """
             try:
                 await self._prune_nodes(widgets)
             finally:
@@ -1960,7 +1966,7 @@ class App(Generic[ReturnType], DOMNode):
         self.refresh(layout=True)
 
         finished_event = asyncio.Event()
-        asyncio.create_task(remove_task(removed_widgets, finished_event))
+        asyncio.create_task(prune_widgets_task(removed_widgets, finished_event))
 
         return AwaitRemove(finished_event)
 
