@@ -71,6 +71,11 @@ def test_buttons_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab"])
 
 
+def test_placeholder_render(snap_compare):
+    # Testing the rendering of the multiple placeholder variants and labels.
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "placeholder.py")
+
+
 def test_datatable_render(snap_compare):
     press = ["tab", "down", "down", "right", "up", "left"]
     assert snap_compare(WIDGET_EXAMPLES_DIR / "data_table.py", press=press)

@@ -3,17 +3,21 @@ from __future__ import annotations
 from itertools import cycle
 from typing import Literal
 
-from rich.text import Text
-
 from .. import events
 from ..app import ComposeResult
 from ..css._error_tools import friendly_list
-from ..reactive import reactive
+from ..reactive import Reactive, reactive
 from ..widgets import Static
 
 PlaceholderVariant = Literal["default", "size", "text"]
-_VALID_PLACEHOLDER_VARIANTS_ORDERED = ["default", "size", "text"]
-_VALID_PLACEHOLDER_VARIANTS = set(_VALID_PLACEHOLDER_VARIANTS_ORDERED)
+_VALID_PLACEHOLDER_VARIANTS_ORDERED: list[PlaceholderVariant] = [
+    "default",
+    "size",
+    "text",
+]
+_VALID_PLACEHOLDER_VARIANTS: set[PlaceholderVariant] = set(
+    _VALID_PLACEHOLDER_VARIANTS_ORDERED
+)
 _PLACEHOLDER_BACKGROUND_COLORS = [
     "#881177",
     "#aa3355",
@@ -68,7 +72,7 @@ class Placeholder(Static):
     # Consecutive placeholders get assigned consecutive colors.
     COLORS = cycle(_PLACEHOLDER_BACKGROUND_COLORS)
 
-    variant = reactive("default")
+    variant: Reactive[PlaceholderVariant] = reactive("default")
 
     def __init__(
         self,
@@ -113,19 +117,18 @@ class Placeholder(Static):
         """Get the next variant in the cycle."""
         self.variant = next(self._variants_cycle)
 
-    def watch_variant(self, old_variant: str, variant: str) -> None:
+    def watch_variant(
+        self, old_variant: PlaceholderVariant, variant: PlaceholderVariant
+    ) -> None:
+        self.validate_variant(variant)
         self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
         self.call_variant_update()
 
     def call_variant_update(self) -> None:
         """Calls the appropriate method to update the render of the placeholder."""
-        update_variant_method = getattr(self, f"_update_{self.variant}_variant", None)
-        if update_variant_method is None:
-            raise InvalidPlaceholderVariant(
-                "Valid placeholder variants are "
-                + f"{friendly_list(_VALID_PLACEHOLDER_VARIANTS)}"
-            )
+        update_variant_method = getattr(self, f"_update_{self.variant}_variant")
+        assert update_variant_method is not None
         update_variant_method()
 
     def _update_default_variant(self) -> None:
@@ -148,7 +151,7 @@ class Placeholder(Static):
         if self.variant == "size":
             self._update_size_variant()
 
-    def validate_variant(self, variant: PlaceholderVariant) -> str:
+    def validate_variant(self, variant: PlaceholderVariant) -> PlaceholderVariant:
         """Validate the variant to which the placeholder was set."""
         if variant not in _VALID_PLACEHOLDER_VARIANTS:
             raise InvalidPlaceholderVariant(
