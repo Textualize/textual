@@ -57,15 +57,16 @@ class TreeNode(Generic[TreeDataType]):
     ) -> None:
         self._tree = tree
         self._parent = parent
-        self.id = id
+        self._id = id
         self._label = label
         self.data: TreeDataType = data if data is not None else tree._data_factory()
         self._expanded = expanded
-        self.children: list[TreeNode] = []
+        self._children: list[TreeNode] = []
 
         self._hover = False
         self._selected = False
         self._allow_expand = allow_expand
+        self._updates: int = 0
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._label.plain
@@ -74,20 +75,59 @@ class TreeNode(Generic[TreeDataType]):
     def _reset(self) -> None:
         self._hover = False
         self._selected = False
+        self._updates += 1
+
+    @property
+    def hover(self) -> bool:
+        return self._hover
+
+    @hover.setter
+    def hover(self, hover: bool) -> None:
+        self._updates += 1
+        self._hover = hover
+
+    @property
+    def selected(self) -> bool:
+        return self._selected
+
+    @hover.setter
+    def selected(self, selected: bool) -> None:
+        self._updates += 1
+        self._selected = selected
+
+    @property
+    def id(self) -> NodeID:
+        """Get the node ID."""
+        return self._id
 
     def expand(self) -> None:
         """Expand a node (show its children)."""
         self._expanded = True
-        self._tree.invalidate()
+        self._updates += 1
+        self._tree._invalidate()
 
     def collapse(self) -> None:
         """Collapse the node (hide children)."""
         self._expanded = False
-        self._tree.invalidate()
+        self._updates += 1
+        self._tree._invalidate()
 
     def toggle(self) -> None:
+        """Toggle the expanded state."""
         self._expanded = not self._expanded
-        self._tree.invalidate()
+        self._updates += 1
+        self._tree._invalidate()
+
+    def set_label(self, label: TextType) -> None:
+        """Set a new label for the node.
+
+        Args:
+            label (TextType): A str or Text object with the new label.
+        """
+        self._updates += 1
+        text_label = self._tree.process_label(label)
+        self._label = text_label
+        self._tree._invalidate()
 
     @property
     def is_expanded(self) -> bool:
@@ -104,7 +144,7 @@ class TreeNode(Generic[TreeDataType]):
         if self._parent is None:
             return True
         return bool(
-            self._parent.children and self._parent.children[-1] == self,
+            self._parent._children and self._parent._children[-1] == self,
         )
 
     def add(
@@ -132,8 +172,9 @@ class TreeNode(Generic[TreeDataType]):
         node = self._tree._add_node(self, text_label, data)
         node._expanded = expand
         node._allow_expand = allow_expand
-        self.children.append(node)
-        self._tree.invalidate()
+        self._updates += 1
+        self._children.append(node)
+        self._tree._invalidate()
         return node
 
 
@@ -253,7 +294,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     @classmethod
     def process_label(cls, label: TextType):
-        """Process a str or Text in to a label.
+        """Process a str or Text in to a label. Maybe overridden in a subclass to change modify how labels are rendered.
 
         Args:
             label (TextType): Label.
@@ -277,7 +318,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     ) -> TreeNode[TreeDataType]:
         node_data = data if data is not None else self._data_factory()
         node = TreeNode(self, parent, self._new_id(), label, node_data, expanded=expand)
-        self._nodes[node.id] = node
+        self._nodes[node._id] = node
         self._updates += 1
         return node
 
@@ -366,8 +407,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                     label = Text(repr(data))
                 node._label = label
 
-        add_node(node._label, node, json_data)
-        # self.invalidate()
+        add_node("JSON", node, json_data)
+        self._invalidate()
 
     def validate_cursor_line(self, value: int) -> int:
         return clamp(value, 0, len(self._tree_lines) - 1)
@@ -375,7 +416,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     def validate_guide_depth(self, value: int) -> int:
         return clamp(value, 2, 10)
 
-    def invalidate(self) -> None:
+    def _invalidate(self) -> None:
+        """Invalidate caches."""
         self._line_cache.clear()
         self._tree_lines_cached = None
         self._updates += 1
@@ -411,35 +453,45 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         previous_node = self._get_node(previous_hover_line)
         if previous_node is not None:
             self._refresh_node(previous_node)
-            previous_node._hover = False
+            previous_node.hover = False
 
         node = self._get_node(hover_line)
         if node is not None:
             self._refresh_node(node)
-            node._hover = True
+            node.hover = True
 
     def watch_cursor_line(self, previous_line: int, line: int) -> None:
         previous_node = self._get_node(previous_line)
         if previous_node is not None:
             self._refresh_node(previous_node)
-            previous_node._selected = False
+            previous_node.selected = False
 
         node = self._get_node(line)
         if node is not None:
             self._refresh_node(node)
             self.scroll_to_line(line)
-            node._selected = True
+            node.selected = True
 
     def watch_guide_depth(self, guide_depth: int) -> None:
-        self.invalidate()
+        self._invalidate()
 
     def watch_show_root(self, show_root: bool) -> None:
-        self.invalidate()
+        self._invalidate()
 
     def scroll_to_line(self, line: int) -> None:
+        """Scroll to the given line.
+
+        Args:
+            line (int): A line number.
+        """
         self.scroll_to_region(Region(0, line, self.size.width, 1))
 
     def refresh_line(self, line: int) -> None:
+        """Refresh (repaint) a given line in the tree.
+
+        Args:
+            line (int): Line number.
+        """
         region = Region(0, line - self.scroll_offset.y, self.size.width, 1)
         self.refresh(region)
 
@@ -479,13 +531,13 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             child_path = [*path, node]
             add_line(_TreeLine(child_path, last))
             if node._expanded:
-                for last, child in loop_last(node.children):
+                for last, child in loop_last(node._children):
                     add_node(child_path, child, last=last)
 
         if self.show_root:
             add_node([], root, True)
         else:
-            for node in self.root.children:
+            for node in self.root._children:
                 add_node([], node, True)
         self._tree_lines_cached = lines
 
@@ -531,7 +583,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             y == self.hover_line,
             y == self.cursor_line,
             self.has_focus,
-            tuple((node._hover, node._selected, node._expanded) for node in line.path),
+            tuple(node._updates for node in line.path),
         )
         if cache_key in self._line_cache:
             segments = self._line_cache[cache_key]
@@ -614,7 +666,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 )
 
             label = self.render_label(line.path[-1], line_style, label_style).copy()
-            label.stylize(Style(meta={"node": line.node.id, "line": y}))
+            label.stylize(Style(meta={"node": line.node._id, "line": y}))
             guides.append(label)
 
             segments = list(guides.render(self.app.console))
@@ -628,7 +680,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     def _on_resize(self, event: events.Resize) -> None:
         self._line_cache.grow(event.size.height)
-        self.invalidate()
+        self._invalidate()
 
     async def _on_click(self, event: events.Click) -> None:
         meta = event.style.meta
