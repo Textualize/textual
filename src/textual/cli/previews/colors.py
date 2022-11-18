@@ -2,7 +2,7 @@ from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.design import ColorSystem
 from textual.widget import Widget
-from textual.widgets import Button, Footer, Static
+from textual.widgets import Button, Footer, Static, Label
 
 
 class ColorButtons(Vertical):
@@ -28,10 +28,6 @@ class Content(Vertical):
     pass
 
 
-class ColorLabel(Static):
-    pass
-
-
 class ColorsView(Vertical):
     def compose(self) -> ComposeResult:
 
@@ -47,7 +43,7 @@ class ColorsView(Vertical):
 
         for color_name in ColorSystem.COLOR_NAMES:
 
-            items: list[Widget] = [ColorLabel(f'"{color_name}"')]
+            items: list[Widget] = [Label(f'"{color_name}"')]
             for level in LEVELS:
                 color = f"{color_name}-{level}" if level else color_name
                 item = ColorItem(

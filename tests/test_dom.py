@@ -1,7 +1,6 @@
 import pytest
 
 from textual.css.errors import StyleValueError
-from textual.css.query import NoMatches
 from textual.dom import DOMNode, BadIdentifier
 
 
@@ -24,37 +23,6 @@ def test_display_set_invalid_value():
     node = DOMNode()
     with pytest.raises(StyleValueError):
         node.display = "blah"
-
-
-@pytest.fixture
-def parent():
-    parent = DOMNode(id="parent")
-    child1 = DOMNode(id="child1")
-    child2 = DOMNode(id="child2")
-    grandchild1 = DOMNode(id="grandchild1")
-    child1._add_child(grandchild1)
-
-    parent._add_child(child1)
-    parent._add_child(child2)
-
-    yield parent
-
-
-def test_get_child_gets_first_child(parent):
-    child = parent.get_child(id="child1")
-    assert child.id == "child1"
-    assert child.get_child(id="grandchild1").id == "grandchild1"
-    assert parent.get_child(id="child2").id == "child2"
-
-
-def test_get_child_no_matching_child(parent):
-    with pytest.raises(NoMatches):
-        parent.get_child(id="doesnt-exist")
-
-
-def test_get_child_only_immediate_descendents(parent):
-    with pytest.raises(NoMatches):
-        parent.get_child(id="grandchild1")
 
 
 def test_validate():

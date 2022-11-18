@@ -197,18 +197,3 @@ def tokenize_values(values: dict[str, str]) -> dict[str, list[Token]]:
         name: list(tokenize_value(value, "__name__")) for name, value in values.items()
     }
     return value_tokens
-
-
-if __name__ == "__main__":
-    from rich import print
-
-    css = """#something {
-
-        color: rgb(10,12,23)
-    }
-    """
-    # transition: offset 500 in_out_cubic;
-    tokens = tokenize(css, __name__)
-    print(list(tokens))
-
-    print(tokenize_values({"primary": "rgb(10,20,30)", "secondary": "#ff00ff"}))

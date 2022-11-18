@@ -13,7 +13,7 @@ from textual.containers import Horizontal
 from textual.app import App, ComposeResult
 from textual.screen import Screen
 from textual.widget import Widget
-from textual.widgets import Footer, Button, Static
+from textual.widgets import Footer, Button, Label
 from textual.css.query import DOMQuery
 from textual.reactive import reactive
 from textual.binding import Binding
@@ -33,10 +33,10 @@ class Help(Screen):
         Returns:
             ComposeResult: The result of composing the help screen.
         """
-        yield Static(Markdown(Path(__file__).with_suffix(".md").read_text()))
+        yield Label(Markdown(Path(__file__).with_suffix(".md").read_text()))
 
 
-class WinnerMessage(Static):
+class WinnerMessage(Label):
     """Widget to tell the user they have won."""
 
     MIN_MOVES: Final = 14
@@ -91,9 +91,9 @@ class GameHeader(Widget):
             ComposeResult: The result of composing the game header.
         """
         yield Horizontal(
-            Static(self.app.title, id="app-title"),
-            Static(id="moves"),
-            Static(id="progress"),
+            Label(self.app.title, id="app-title"),
+            Label(id="moves"),
+            Label(id="progress"),
         )
 
     def watch_moves(self, moves: int):
@@ -102,7 +102,7 @@ class GameHeader(Widget):
         Args:
             moves (int): The number of moves made.
         """
-        self.query_one("#moves", Static).update(f"Moves: {moves}")
+        self.query_one("#moves", Label).update(f"Moves: {moves}")
 
     def watch_filled(self, filled: int):
         """Watch the on-count reactive and update when it changes.
@@ -110,7 +110,7 @@ class GameHeader(Widget):
         Args:
             filled (int): The number of cells that are currently on.
         """
-        self.query_one("#progress", Static).update(f"Filled: {filled}")
+        self.query_one("#progress", Label).update(f"Filled: {filled}")
 
 
 class GameCell(Button):
@@ -311,7 +311,7 @@ class FiveByFive(App[None]):
     CSS_PATH = "five_by_five.css"
     """The name of the stylesheet for the app."""
 
-    SCREENS = {"help": Help()}
+    SCREENS = {"help": Help}
     """The pre-loaded screens for the application."""
 
     BINDINGS = [("ctrl+d", "toggle_dark", "Toggle Dark Mode")]

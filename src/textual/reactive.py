@@ -43,7 +43,7 @@ class Reactive(Generic[ReactiveType]):
         layout (bool, optional): Perform a layout on change. Defaults to False.
         repaint (bool, optional): Perform a repaint on change. Defaults to True.
         init (bool, optional): Call watchers on initialize (post mount). Defaults to False.
-        always_update(bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
+        always_update (bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
     """
 
     def __init__(
@@ -76,7 +76,7 @@ class Reactive(Generic[ReactiveType]):
             default (ReactiveType | Callable[[], ReactiveType]): A default value or callable that returns a default.
             layout (bool, optional): Perform a layout on change. Defaults to False.
             repaint (bool, optional): Perform a repaint on change. Defaults to True.
-            always_update(bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
+            always_update (bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
 
         Returns:
             Reactive: A Reactive instance which calls watchers or initialize.
@@ -292,7 +292,7 @@ class reactive(Reactive[ReactiveType]):
         layout (bool, optional): Perform a layout on change. Defaults to False.
         repaint (bool, optional): Perform a repaint on change. Defaults to True.
         init (bool, optional): Call watchers on initialize (post mount). Defaults to True.
-        always_update(bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
+        always_update (bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
     """
 
     def __init__(
