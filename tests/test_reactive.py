@@ -2,8 +2,9 @@ import asyncio
 
 import pytest
 
-from textual.app import App
+from textual.app import App, ComposeResult
 from textual.reactive import reactive
+from textual.widget import Widget
 
 OLD_VALUE = 5_000
 NEW_VALUE = 1_000_000
@@ -105,6 +106,33 @@ async def test_watch_init_true():
         assert app.watcher_call_count == 2  # Watcher is NOT called again
 
 
+async def test_reactive_always_update():
+    calls = []
+
+    class AlwaysUpdate(App):
+        first_name = reactive("Darren", init=False, always_update=True)
+        last_name = reactive("Burns", init=False)
+
+        def watch_first_name(self, value):
+            calls.append(f"first_name {value}")
+
+        def watch_last_name(self, value):
+            calls.append(f"last_name {value}")
+
+    app = AlwaysUpdate()
+    async with app.run_test():
+        # Value is the same, but always_update=True, so watcher called...
+        app.first_name = "Darren"
+        assert calls == ["first_name Darren"]
+        # Value is the same, and always_update=False, so watcher NOT called...
+        app.last_name = "Burns"
+        assert calls == ["first_name Darren"]
+        # Values changed, watch method always called regardless of always_update
+        app.first_name = "abc"
+        app.last_name = "def"
+        assert calls == ["first_name Darren", "first_name abc", "last_name def"]
+
+
 @pytest.mark.xfail(reason="Validator methods not running when init=True [issue#1220]")
 async def test_validate_init_true():
     """When init is True for a reactive attribute, Textual should call the validator
@@ -122,7 +150,7 @@ async def test_validate_init_true():
 
 
 @pytest.mark.xfail(reason="Compute methods not called immediately [issue#1218]")
-async def test_superpower_method_call_order():
+async def test_reactive_method_call_order():
     class CallOrder(App):
         count = reactive(OLD_VALUE, init=False)
         count_times_ten = reactive(OLD_VALUE * 10)
@@ -155,3 +183,36 @@ async def test_superpower_method_call_order():
         ]
         assert app.count == NEW_VALUE + 1
         assert app.count_times_ten == (NEW_VALUE + 1) * 10
+
+
+async def test_reactive_method_inheritance():
+    """When you override a watch method in a subclass of a widget, Textual will not
+    call the superclass watch method for you. Essentially this test is just ensuring
+    that normal inheritance rules apply for reactive methods (unlike for event/message handling)
+    """
+    calls = []
+
+    class Parent(Widget):
+        count = reactive(0, init=False)
+
+        def validate_count(self, value: int) -> int:
+            calls.append("validate parent")
+            return value + 1
+
+        def watch_count(self, value: int) -> None:
+            calls.append("watch parent")
+
+    class Child(Parent):
+        def watch_count(self, value: int) -> None:
+            calls.append("watch child")
+
+    class WatchInheritance(App):
+        def compose(self) -> ComposeResult:
+            yield Child()
+
+    app = WatchInheritance()
+    async with app.run_test():
+        child = app.query_one(Child)
+        child.count = 1
+        assert calls == ["validate parent", "watch child"]
+        assert child.count == 2
