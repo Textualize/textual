@@ -488,6 +488,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self._invalidate()
 
     def watch_show_root(self, show_root: bool) -> None:
+        self.cursor_line = -1
         self._invalidate()
 
     def scroll_to_line(self, line: int) -> None:
