@@ -43,7 +43,7 @@ class Reactive(Generic[ReactiveType]):
         layout (bool, optional): Perform a layout on change. Defaults to False.
         repaint (bool, optional): Perform a repaint on change. Defaults to True.
         init (bool, optional): Call watchers on initialize (post mount). Defaults to False.
-        always_update(bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
+        always_update (bool, optional): Call watchers even when the new value equals the old value. Defaults to False.
     """
 
     def __init__(
@@ -121,7 +121,7 @@ class Reactive(Generic[ReactiveType]):
                         # Attribute has no value yet
                         default = getattr(obj, key)
                         default_value = default() if callable(default) else default
-                        # Set the default vale (calls `__set__`)
+                        # Set the default value (calls `__set__`)
                         setattr(obj, name, default_value)
         setattr(obj, "__reactive_initialized", True)
 

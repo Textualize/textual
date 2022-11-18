@@ -3,7 +3,7 @@ import asyncio
 import pytest
 
 from textual.app import App, ComposeResult
-from textual.reactive import reactive
+from textual.reactive import reactive, var, Reactive
 from textual.widget import Widget
 
 OLD_VALUE = 5_000
@@ -90,7 +90,7 @@ async def test_watch_async_init_true():
 
 async def test_watch_init_true():
     class WatcherInitTrue(App):
-        count = reactive(OLD_VALUE)
+        count = var(OLD_VALUE)
         watcher_call_count = 0
 
         def watch_count(self, new_value: int) -> None:
@@ -133,13 +133,37 @@ async def test_reactive_always_update():
         assert calls == ["first_name Darren", "first_name abc", "last_name def"]
 
 
+async def test_reactive_with_callable_default():
+    """A callable can be supplied as the default value for a reactive.
+    Textual will call it in order to retrieve the default value."""
+    called_with_app = None
+
+    def set_called(app: App) -> int:
+        nonlocal called_with_app
+        called_with_app = app
+        return OLD_VALUE
+
+    class ReactiveCallable(App):
+        value = reactive(set_called)
+        watcher_called_with = None
+
+        def watch_value(self, new_value):
+            self.watcher_called_with = new_value
+
+    app = ReactiveCallable()
+    async with app.run_test():
+        assert app.value == OLD_VALUE  # The value should be set to the return val of the callable
+    assert called_with_app is app  # Ensure the App is passed into the reactive default callable
+    assert app.watcher_called_with == OLD_VALUE
+
+
 @pytest.mark.xfail(reason="Validator methods not running when init=True [issue#1220]")
 async def test_validate_init_true():
     """When init is True for a reactive attribute, Textual should call the validator
     AND the watch method when the app starts."""
 
     class ValidatorInitTrue(App):
-        count = reactive(5, init=True)
+        count = var(5, init=True)
 
         def validate_count(self, value: int) -> int:
             return value + 1
@@ -147,6 +171,21 @@ async def test_validate_init_true():
     app = ValidatorInitTrue()
     async with app.run_test():
         assert app.count == 6  # Validator should run, so value should be 5+1=6
+
+
+@pytest.mark.xfail(reason="Compute methods not called when init=True [issue#]")
+async def test_reactive_compute_first_time_set():
+    class ReactiveComputeFirstTimeSet(App):
+        number = reactive(1)
+        double_number = reactive(None)
+
+        def compute_double_number(self):
+            return self.number * 2
+
+    app = ReactiveComputeFirstTimeSet()
+    async with app.run_test():
+        await asyncio.sleep(.2)  # TODO: We sleep here while issue#1218 is open
+        assert app.double_number == 2
 
 
 @pytest.mark.xfail(reason="Compute methods not called immediately [issue#1218]")
