@@ -44,7 +44,7 @@ class Placeholder(Static, can_focus=True):
         default: shows a placeholder with a solid color.
         state: shows the placeholder mouse over and focus state.
         size: shows the size of the placeholder.
-        css: shows the css rules that apply to the placeholder.
+        css: shows the CSS rules that apply to the placeholder.
         text: shows some Lorem Ipsum text on the placeholder.
     """
 
@@ -114,26 +114,16 @@ class Placeholder(Static, can_focus=True):
         update_variant_method()
 
     def _update_default_variant(self) -> None:
-        """Update the placeholder with the "default" variant.
-
-        This variant prints a panel with a solid color.
-        """
+        """Update the placeholder with its label."""
         self.update(self._placeholder_label)
 
     def _update_state_variant(self) -> None:
-        """Update the placeholder with the "state" variant.
-
-        This variant pretty prints the placeholder, together with information about
-        whether the placeholder has focus and/or the mouse over it.
-        """
+        """Update the placeholder with its focus and mouse over status."""
         data = {"has_focus": self.has_focus, "mouse_over": self.mouse_over}
         self.update(Pretty(data))
 
     def _update_size_variant(self) -> None:
-        """Update the placeholder with the "size" variant.
-
-        This variant shows the the size of the widget.
-        """
+        """Update the placeholder with the size of the placeholder."""
         width, height = self.size
         size_data = {
             "width": width,
@@ -142,33 +132,27 @@ class Placeholder(Static, can_focus=True):
         self.update(Pretty(size_data))
 
     def _update_css_variant(self) -> None:
-        """Update the placeholder with the "css" variant.
-
-        This variant shows all the CSS rules that are applied to this placeholder.
-        """
+        """Update the placeholder with the CSS rules applied to this placeholder."""
         self.update(self.styles.css)
 
     def _update_text_variant(self) -> None:
-        """Update the placeholder with the "text" variant.
-
-        This variant shows some Lorem Ipsum text.
-        """
+        """Update the placeholder with some Lorem Ipsum text."""
         self.update(
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam feugiat ac elit sit amet accumsan. Suspendisse bibendum nec libero quis gravida. Phasellus id eleifend ligula. Nullam imperdiet sem tellus, sed vehicula nisl faucibus sit amet. Praesent iaculis tempor ultricies. Sed lacinia, tellus id rutrum lacinia, sapien sapien congue mauris, sit amet pellentesque quam quam vel nisl. Curabitur vulputate erat pellentesque mauris posuere, non dictum risus mattis."
         )
 
     def on_resize(self, event: events.Resize) -> None:
-        """Update the placeholder render if the current variant needs it."""
+        """Update the placeholder "size" variant with the new placeholder size."""
         if self.variant == "size":
             self._update_size_variant()
 
     def watch_has_focus(self, has_focus: bool) -> None:
-        """Update the placeholder render if the current variant needs it."""
+        """Update the placeholder "state" variant with the new focus state."""
         if self.variant == "state":
             self._update_state_variant()
 
     def watch_mouse_over(self, mouse_over: bool) -> None:
-        """Update the placeholder render if the current variant needs it."""
+        """Update the placeholder "state" variant with the new mouse over state."""
         if self.variant == "state":
             self._update_state_variant()
 
