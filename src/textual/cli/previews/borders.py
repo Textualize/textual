@@ -1,6 +1,6 @@
 from textual.app import App, ComposeResult
 from textual.constants import BORDERS
-from textual.widgets import Button, Static
+from textual.widgets import Button, Label
 from textual.containers import Vertical
 
 
@@ -48,7 +48,7 @@ class BorderApp(App):
 
     def compose(self):
         yield BorderButtons()
-        self.text = Static(TEXT, id="text")
+        self.text = Label(TEXT, id="text")
         yield self.text
 
     def on_button_pressed(self, event: Button.Pressed) -> None:

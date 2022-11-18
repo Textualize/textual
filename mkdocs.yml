@@ -96,6 +96,7 @@ nav:
       - "widgets/footer.md"
       - "widgets/header.md"
       - "widgets/input.md"
+      - "widgets/label.md"
       - "widgets/static.md"
       - "widgets/tree_control.md"
   - API:
@@ -109,6 +110,7 @@ nav:
     - "api/footer.md"
     - "api/geometry.md"
     - "api/header.md"
+    - "api/label.md"
     - "api/message_pump.md"
     - "api/message.md"
     - "api/pilot.md"
@@ -185,13 +187,13 @@ plugins:
 
 - blog:
 - rss:
-    match_path: blog/posts/.* 
+    match_path: blog/posts/.*
     date_from_meta:
       as_creation: date
     categories:
       - categories
       - release
-      - tags 
+      - tags
 - search:
 - autorefs:
 - mkdocstrings:
@@ -215,10 +217,10 @@ extra_css:
 
 extra:
   social:
-    - icon: fontawesome/brands/twitter 
+    - icon: fontawesome/brands/twitter
       link: https://twitter.com/textualizeio
       name: textualizeio on Twitter
-    - icon: fontawesome/brands/github 
+    - icon: fontawesome/brands/github
       link: https://github.com/textualize/textual/
       name: Textual on Github
     - icon: fontawesome/brands/discord

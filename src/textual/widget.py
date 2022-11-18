@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from asyncio import Event as AsyncEvent
 from asyncio import Lock, create_task, wait
 from fractions import Fraction
@@ -43,6 +44,7 @@ from ._types import Lines
 from .await_remove import AwaitRemove
 from .binding import Binding
 from .box_model import BoxModel, get_box_model
+from .css.query import NoMatches
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
 from .geometry import Offset, Region, Size, Spacing, clamp
@@ -51,6 +53,8 @@ from .message import Message
 from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
+from .await_remove import AwaitRemove
+from .walk import walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
@@ -340,6 +344,43 @@ class Widget(DOMNode):
     def offset(self, offset: Offset) -> None:
         self.styles.offset = ScalarOffset.from_offset(offset)
 
+    def get_child_by_id(self, id: str) -> Widget:
+        """Return the first child (immediate descendent) of this node with the given ID.
+
+        Args:
+            id (str): The ID of the child.
+
+        Returns:
+            DOMNode: The first child of this node with the ID.
+
+        Raises:
+            NoMatches: if no children could be found for this ID
+        """
+        child = self.children._get_by_id(id)
+        if child is not None:
+            return child
+        raise NoMatches(f"No child found with id={id!r}")
+
+    def get_widget_by_id(self, id: str) -> Widget:
+        """Return the first descendant widget with the given ID.
+        Performs a depth-first search rooted at this widget.
+
+        Args:
+            id (str): The ID to search for in the subtree
+
+        Returns:
+            DOMNode: The first descendant encountered with this ID.
+
+        Raises:
+            NoMatches: if no children could be found for this ID
+        """
+        for child in walk_depth_first(self):
+            try:
+                return child.get_child_by_id(id)
+            except NoMatches:
+                pass
+        raise NoMatches(f"No descendant found with id={id!r}")
+
     def get_component_rich_style(self, name: str, *, partial: bool = False) -> Style:
         """Get a *Rich* style for a component.
 
@@ -472,6 +513,20 @@ class Widget(DOMNode):
             provided a ``MountError`` will be raised.
         """
 
+        # Check for duplicate IDs in the incoming widgets
+        ids_to_mount = [widget.id for widget in widgets if widget.id is not None]
+        unique_ids = set(ids_to_mount)
+        num_unique_ids = len(unique_ids)
+        num_widgets_with_ids = len(ids_to_mount)
+        if num_unique_ids != num_widgets_with_ids:
+            counter = Counter(widget.id for widget in widgets)
+            for widget_id, count in counter.items():
+                if count > 1:
+                    raise MountError(
+                        f"Tried to insert {count!r} widgets with the same ID {widget_id!r}. "
+                        f"Widget IDs must be unique."
+                    )
+
         # Saying you want to mount before *and* after something is an error.
         if before is not None and after is not None:
             raise MountError(
@@ -480,16 +535,83 @@ class Widget(DOMNode):
 
         # Decide the final resting place depending on what we've been asked
         # to do.
+        insert_before: int | None = None
+        insert_after: int | None = None
         if before is not None:
-            parent, before = self._find_mount_point(before)
+            parent, insert_before = self._find_mount_point(before)
         elif after is not None:
-            parent, after = self._find_mount_point(after)
+            parent, insert_after = self._find_mount_point(after)
         else:
             parent = self
 
         return AwaitMount(
-            self.app._register(parent, *widgets, before=before, after=after)
+            self.app._register(
+                parent, *widgets, before=insert_before, after=insert_after
+            )
         )
+
+    def move_child(
+        self,
+        child: int | Widget,
+        before: int | Widget | None = None,
+        after: int | Widget | None = None,
+    ) -> None:
+        """Move a child widget within its parent's list of children.
+
+        Args:
+            child (int | Widget): The child widget to move.
+            before: (int | Widget, optional): Optional location to move before.
+            after: (int | Widget, optional): Optional location to move after.
+
+        Raises:
+            WidgetError: If there is a problem with the child or target.
+
+        Note:
+            Only one of ``before`` or ``after`` can be provided. If neither
+            or both are provided a ``WidgetError`` will be raised.
+        """
+
+        # One or the other of before or after are required. Can't do
+        # neither, can't do both.
+        if before is None and after is None:
+            raise WidgetError("One of `before` or `after` is required.")
+        elif before is not None and after is not None:
+            raise WidgetError("Only one of `before` or `after` can be handled.")
+
+        def _to_widget(child: int | Widget, called: str) -> Widget:
+            """Ensure a given child reference is a Widget."""
+            if isinstance(child, int):
+                try:
+                    child = self.children[child]
+                except IndexError:
+                    raise WidgetError(
+                        f"An index of {child} for the child to {called} is out of bounds"
+                    ) from None
+            else:
+                # We got an actual widget, so let's be sure it really is one of
+                # our children.
+                try:
+                    _ = self.children.index(child)
+                except ValueError:
+                    raise WidgetError(f"{child!r} is not a child of {self!r}") from None
+            return child
+
+        # Ensure the child and target are widgets.
+        child = _to_widget(child, "move")
+        target = _to_widget(before if after is None else after, "move towards")
+
+        # At this point we should know what we're moving, and it should be a
+        # child; where we're moving it to, which should be within the child
+        # list; and how we're supposed to move it. All that's left is doing
+        # the right thing.
+        self.children._remove(child)
+        if before is not None:
+            self.children._insert(self.children.index(target), child)
+        else:
+            self.children._insert(self.children.index(target) + 1, child)
+
+        # Request a refresh.
+        self.refresh(layout=True)
 
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.
@@ -591,7 +713,6 @@ class Widget(DOMNode):
         Returns:
             int: The height of the content.
         """
-
         if self.is_container:
             assert self._layout is not None
             height = (
@@ -2020,15 +2141,9 @@ class Widget(DOMNode):
         Returns:
             AwaitRemove: An awaitable object that waits for the widget to be removed.
         """
-        prune_finished_event = AsyncEvent()
-        self.app.post_message_no_wait(
-            events.Prune(
-                self,
-                widgets=self.app._detach_from_dom([self]),
-                finished_flag=prune_finished_event,
-            )
-        )
-        return AwaitRemove(prune_finished_event)
+
+        await_remove = self.app._remove_nodes([self])
+        return await_remove
 
     def render(self) -> RenderableType:
         """Get renderable for widget.

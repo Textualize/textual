@@ -36,9 +36,3 @@ class VerticalGradient:
                 ),
             )
             yield Segment(f"{width * ' '}\n", line_color)
-
-
-if __name__ == "__main__":
-    from rich import print
-
-    print(VerticalGradient("red", "blue"))

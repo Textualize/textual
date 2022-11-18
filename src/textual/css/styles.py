@@ -573,6 +573,7 @@ class StylesBase(ABC):
 class Styles(StylesBase):
     node: DOMNode | None = None
     _rules: RulesMap = field(default_factory=dict)
+    _updates: int = 0
 
     important: set[str] = field(default_factory=set)
 
@@ -593,6 +594,7 @@ class Styles(StylesBase):
         Returns:
             bool: ``True`` if a rule was cleared, or ``False`` if it was already not set.
         """
+        self._updates += 1
         return self._rules.pop(rule, None) is not None
 
     def get_rules(self) -> RulesMap:
@@ -608,6 +610,7 @@ class Styles(StylesBase):
         Returns:
             bool: ``True`` if the rule changed, otherwise ``False``.
         """
+        self._updates += 1
         if value is None:
             return self._rules.pop(rule, None) is not None
         current = self._rules.get(rule)
@@ -626,6 +629,7 @@ class Styles(StylesBase):
 
     def reset(self) -> None:
         """Reset the rules to initial state."""
+        self._updates += 1
         self._rules.clear()
 
     def merge(self, other: Styles) -> None:
@@ -634,10 +638,11 @@ class Styles(StylesBase):
         Args:
             other (Styles): A Styles object.
         """
-
+        self._updates += 1
         self._rules.update(other._rules)
 
     def merge_rules(self, rules: RulesMap) -> None:
+        self._updates += 1
         self._rules.update(rules)
 
     def extract_rules(
@@ -945,6 +950,18 @@ class RenderStyles(StylesBase):
         self._base_styles = base
         self._inline_styles = inline_styles
         self._animate: BoundAnimator | None = None
+        self._updates: int = 0
+        self._rich_style: tuple[int, Style] | None = None
+        self._gutter: tuple[int, Spacing] | None = None
+
+    @property
+    def _cache_key(self) -> int:
+        """A key key, that changes when any style is changed.
+
+        Returns:
+            int: An opaque integer.
+        """
+        return self._updates + self._base_styles._updates + self._inline_styles._updates
 
     @property
     def base(self) -> Styles:
@@ -961,6 +978,21 @@ class RenderStyles(StylesBase):
         """Get a Rich style for this Styles object."""
         assert self.node is not None
         return self.node.rich_style
+
+    @property
+    def gutter(self) -> Spacing:
+        """Get space around widget.
+
+        Returns:
+            Spacing: Space around widget content.
+        """
+        if self._gutter is not None:
+            cache_key, gutter = self._gutter
+            if cache_key == self._updates:
+                return gutter
+        gutter = self.padding + self.border.spacing
+        self._gutter = (self._cache_key, gutter)
+        return gutter
 
     def animate(
         self,
@@ -988,6 +1020,7 @@ class RenderStyles(StylesBase):
 
         """
         if self._animate is None:
+            assert self.node is not None
             self._animate = self.node.app.animator.bind(self)
         assert self._animate is not None
         self._animate(
@@ -1019,16 +1052,19 @@ class RenderStyles(StylesBase):
 
     def merge_rules(self, rules: RulesMap) -> None:
         self._inline_styles.merge_rules(rules)
+        self._updates += 1
 
     def reset(self) -> None:
         """Reset the rules to initial state."""
         self._inline_styles.reset()
+        self._updates += 1
 
     def has_rule(self, rule: str) -> bool:
         """Check if a rule has been set."""
         return self._inline_styles.has_rule(rule) or self._base_styles.has_rule(rule)
 
     def set_rule(self, rule: str, value: object | None) -> bool:
+        self._updates += 1
         return self._inline_styles.set_rule(rule, value)
 
     def get_rule(self, rule: str, default: object = None) -> object:
@@ -1038,6 +1074,7 @@ class RenderStyles(StylesBase):
 
     def clear_rule(self, rule_name: str) -> bool:
         """Clear a rule (from inline)."""
+        self._updates += 1
         return self._inline_styles.clear_rule(rule_name)
 
     def get_rules(self) -> RulesMap:
@@ -1053,25 +1090,3 @@ class RenderStyles(StylesBase):
         styles.merge(self._inline_styles)
         combined_css = styles.css
         return combined_css
-
-
-if __name__ == "__main__":
-    styles = Styles()
-
-    styles.display = "none"
-    styles.visibility = "hidden"
-    styles.border = ("solid", "rgb(10,20,30)")
-    styles.outline_right = ("solid", "red")
-    styles.text_style = "italic"
-    styles.dock = "bar"
-    styles.layers = "foo bar"
-
-    from rich import print
-
-    print(styles.text_style)
-    print(styles.text)
-
-    print(styles)
-    print(styles.css)
-
-    print(styles.extract_rules((0, 1, 0)))

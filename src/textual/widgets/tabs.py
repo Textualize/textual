@@ -177,16 +177,16 @@ class Tabs(Widget):
     Args:
         tabs (list[Tab]): A list of Tab objects defining the tabs which should be rendered.
         active_tab (str, optional): The name of the tab that should be active on first render.
-        active_tab_style (StyleType): Style to apply to the label of the active tab.
-        active_bar_style (StyleType): Style to apply to the underline of the active tab.
-        inactive_tab_style (StyleType): Style to apply to the label of inactive tabs.
-        inactive_bar_style (StyleType): Style to apply to the underline of inactive tabs.
-        inactive_text_opacity (float): Opacity of the text labels of inactive tabs.
-        animation_duration (float): The duration of the tab change animation, in seconds.
-        animation_function (str): The easing function to use for the tab change animation.
+        active_tab_style (StyleType, optional): Style to apply to the label of the active tab.
+        active_bar_style (StyleType, optional): Style to apply to the underline of the active tab.
+        inactive_tab_style (StyleType, optional): Style to apply to the label of inactive tabs.
+        inactive_bar_style (StyleType, optional): Style to apply to the underline of inactive tabs.
+        inactive_text_opacity (float, optional): Opacity of the text labels of inactive tabs.
+        animation_duration (float, optional): The duration of the tab change animation, in seconds.
+        animation_function (str, optional): The easing function to use for the tab change animation.
         tab_padding (int, optional): The padding at the side of each tab. If None, tabs will
             automatically be padded such that they fit the  available horizontal space.
-        search_by_first_character (bool): If True, entering a character on your keyboard
+        search_by_first_character (bool, optional): If True, entering a character on your keyboard
             will activate the next tab (in left-to-right order) with a label starting with
             that character.
     """

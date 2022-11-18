@@ -366,26 +366,3 @@ def parse(
                 is_default_rules=is_default_rules,
                 tie_breaker=tie_breaker,
             )
-
-
-if __name__ == "__main__":
-    print(parse_selectors("Foo > Bar.baz { foo: bar"))
-
-    css = """#something {
-    text: on red;
-    transition: offset 5.51s in_out_cubic;
-    offset-x: 100%;
-}
-"""
-
-    from textual.css.stylesheet import Stylesheet, StylesheetParseError
-    from rich.console import Console
-
-    console = Console()
-    stylesheet = Stylesheet()
-    try:
-        stylesheet.add_source(css)
-    except StylesheetParseError as e:
-        console.print(e.errors)
-    print(stylesheet)
-    print(stylesheet.css)

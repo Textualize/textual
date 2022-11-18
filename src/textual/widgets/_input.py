@@ -176,6 +176,10 @@ class Input(Widget, can_focus=True):
             if self.has_focus:
                 cursor_style = self.get_component_rich_style("input--cursor")
                 if self._cursor_visible:
+                    # If the placeholder is empty, there's no characters to stylise
+                    # to make the cursor flash, so use a single space character
+                    if len(placeholder) == 0:
+                        placeholder = Text(" ")
                     placeholder.stylize(cursor_style, 0, 1)
             return placeholder
         return _InputRenderable(self, self._cursor_visible)

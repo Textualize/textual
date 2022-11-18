@@ -33,8 +33,8 @@ def get_box_model(
         viewport (Size): The viewport size.
         width_fraction (Fraction): A fraction used for 1 `fr` unit on the width dimension.
         height_fraction (Fraction):A fraction used for 1 `fr` unit on the height dimension.
-        get_auto_width (Callable): A callable which accepts container size and parent size and returns a width.
-        get_auto_height (Callable): A callable which accepts container size and parent size and returns a height.
+        get_content_width (Callable[[Size, Size], int]): A callable which accepts container size and parent size and returns a width.
+        get_content_height (Callable[[Size, Size, int], int]): A callable which accepts container size and parent size and returns a height.
 
     Returns:
         BoxModel: A tuple with the size of the content area and margin.

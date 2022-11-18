@@ -1,14 +1,14 @@
 # Static
 
 A widget which displays static content.
-Can be used for simple text labels, but can also contain more complex Rich renderables.
+Can be used for Rich renderables and can also for the base for other types of widgets.
 
 - [ ] Focusable
-- [x] Container
+- [ ] Container
 
 ## Example
 
-The example below shows how you can use a `Static` widget as a simple text label.
+The example below shows how you can use a `Static` widget as a simple text label (but see [Label](./label.md) as a way of displaying text).
 
 === "Output"
 
@@ -32,3 +32,4 @@ This widget sends no messages.
 ## See Also
 
 * [Static](../api/static.md) code reference
+* [Label](./label.md)
