@@ -96,6 +96,7 @@ nav:
       - "widgets/footer.md"
       - "widgets/header.md"
       - "widgets/input.md"
+      - "widgets/placeholder.md"
       - "widgets/static.md"
       - "widgets/tree_control.md"
   - API:

@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   the return value of `DOMQuery.remove`, which uses to return `self`.
   https://github.com/Textualize/textual/issues/1094
 - Added Pilot.wait_for_animation
+- Added widget `Placeholder`
 
 ### Changed
 
