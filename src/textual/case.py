@@ -22,7 +22,3 @@ def camel_to_snake(
         return f"{lower}_{upper.lower()}"
 
     return _re_snake.sub(repl, name).lower()
-
-
-if __name__ == "__main__":
-    print(camel_to_snake("HelloWorldEvent"))

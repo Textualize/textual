@@ -25,9 +25,3 @@ class Blank:
         for _ in range(height):
             yield segment
             yield line
-
-
-if __name__ == "__main__":
-    from rich import print
-
-    print(Blank("red"))

@@ -1,5 +1,6 @@
 # Change Log
 
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
@@ -21,21 +22,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - It is now possible to `await` a `Widget.remove`.
   https://github.com/Textualize/textual/issues/1094
 - It is now possible to `await` a `DOMQuery.remove`. Note that this changes
-  the return value of `DOMQuery.remove`, which uses to return `self`.
+  the return value of `DOMQuery.remove`, which used to return `self`.
   https://github.com/Textualize/textual/issues/1094
 - Added Pilot.wait_for_animation
 - Added `Widget.move_child` https://github.com/Textualize/textual/issues/1121
+- Added a `Label` widget https://github.com/Textualize/textual/issues/1190
+- Support lazy-instantiated Screens (callables in App.SCREENS) https://github.com/Textualize/textual/pull/1185
+- Display of keys in footer has more sensible defaults https://github.com/Textualize/textual/pull/1213
+- Add App.get_key_display, allowing custom key_display App-wide https://github.com/Textualize/textual/pull/1213
 
 ### Changed
 
 - Watchers are now called immediately when setting the attribute if they are synchronous. https://github.com/Textualize/textual/pull/1145
 - Widget.call_later has been renamed to Widget.call_after_refresh.
+- Button variant values are now checked at runtime. https://github.com/Textualize/textual/issues/1189
+- Added caching of some properties in Styles object
 
 ### Fixed
 
 - Fixed DataTable row not updating after add https://github.com/Textualize/textual/issues/1026
 - Fixed issues with animation. Now objects of different types may be animated.
 - Fixed containers with transparent background not showing borders https://github.com/Textualize/textual/issues/1175
+- Fixed auto-width in horizontal containers https://github.com/Textualize/textual/pull/1155
+- Fixed Input cursor invisible when placeholder empty https://github.com/Textualize/textual/pull/1202
+- Fixed deadlock when removing widgets from the App https://github.com/Textualize/textual/pull/1219
 
 ## [0.4.0] - 2022-11-08
 

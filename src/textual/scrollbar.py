@@ -320,18 +320,3 @@ class ScrollBarCorner(Widget):
         styles = self.parent.styles
         color = styles.scrollbar_corner_color
         return Blank(color)
-
-
-if __name__ == "__main__":
-    from rich.console import Console
-
-    console = Console()
-
-    thickness = 2
-    console.print(f"Bars thickness: {thickness}")
-
-    console.print("Vertical bar:")
-    console.print(ScrollBarRender.render_bar(thickness=thickness))
-
-    console.print("Horizontal bar:")
-    console.print(ScrollBarRender.render_bar(vertical=False, thickness=thickness))

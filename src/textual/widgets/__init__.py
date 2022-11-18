@@ -15,6 +15,7 @@ if typing.TYPE_CHECKING:
     from ._directory_tree import DirectoryTree
     from ._footer import Footer
     from ._header import Header
+    from ._label import Label
     from ._list_view import ListView
     from ._list_item import ListItem
     from ._pretty import Pretty
@@ -34,6 +35,7 @@ __all__ = [
     "Header",
     "ListItem",
     "ListView",
+    "Label",
     "Placeholder",
     "Pretty",
     "Static",
