@@ -38,7 +38,7 @@ class _PlaceholderLabel(Static):
     pass
 
 
-class Placeholder(Static, can_focus=True):
+class Placeholder(Static):
     """A simple placeholder widget to use before you build your custom widgets.
 
     This placeholder has a couple of variants that show different data.
