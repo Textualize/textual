@@ -28,6 +28,8 @@ EventTreeDataType = TypeVar("EventTreeDataType")
 
 LineCacheKey: TypeAlias = tuple[int | tuple[int, ...], ...]
 
+_TOGGLE_STYLE = Style.from_meta({"toggle": True})
+
 
 @dataclass
 class _TreeLine:
@@ -36,9 +38,18 @@ class _TreeLine:
 
     @property
     def node(self) -> TreeNode:
+        """The node associated with this line."""
         return self.path[-1]
 
-    def get_line_width(self, guide_depth: int) -> int:
+    def _get_line_width(self, guide_depth: int) -> int:
+        """Get the cell width of the line as rendered.
+
+        Args:
+            guide_depth (int): The guide depth (cells in the indentation).
+
+        Returns:
+            int: Width in cells.
+        """
         return (len(self.path)) + self.path[-1]._label.cell_len - guide_depth
 
 
@@ -135,7 +146,7 @@ class TreeNode(Generic[TreeDataType]):
         return self._expanded
 
     @property
-    def last(self) -> bool:
+    def is_last(self) -> bool:
         """Check if this is the last child.
 
         Returns:
@@ -160,7 +171,8 @@ class TreeNode(Generic[TreeDataType]):
         Args:
             label (TextType): The new node's label.
             data (TreeDataType): Data associated with the new node.
-            expanded (bool, optional): Node should be expanded. Defaults to True.
+            expand (bool, optional): Node should be expanded. Defaults to True.
+            allow_expand (bool, optional): Allow use to expand the node via keyboard or mouse. Defaults to True.
 
         Returns:
             TreeNode[TreeDataType]: A new Tree node
@@ -339,7 +351,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         if node._allow_expand:
             prefix = (
                 "▼ " if node.is_expanded else "▶ ",
-                base_style + Style.from_meta({"toggle": True}),
+                base_style + _TOGGLE_STYLE,
             )
         else:
             prefix = ("", base_style)
@@ -543,7 +555,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         guide_depth = self.guide_depth
         if lines:
-            width = max([line.get_line_width(guide_depth) for line in lines])
+            width = max([line._get_line_width(guide_depth) for line in lines])
         else:
             width = self.size.width
 
@@ -642,7 +654,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                     guide_style = guide_selected_style
 
                 space, vertical, _, _ = get_guides(guide_style)
-                guide = space if node.last else vertical
+                guide = space if node.is_last else vertical
                 if node != line.path[-1]:
                     guides_append(guide, style=guide_style)
                 hover = hover or node._hover
