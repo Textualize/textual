@@ -166,6 +166,11 @@ class TreeNode(Generic[TreeDataType]):
         """bool: Check if the node is allowed to expand."""
         return self._allow_expand
 
+    @allow_expand.setter
+    def allow_expand(self, allow_expand: bool) -> bool:
+        self._allow_expand = allow_expand
+        self._updates += 1
+
     def add(
         self,
         label: TextType,
