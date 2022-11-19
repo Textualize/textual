@@ -47,6 +47,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
     @property
     def maxsize(self) -> int:
+        """int: Maximum size of cache, before new values evict old values."""
         return self._maxsize
 
     @maxsize.setter
