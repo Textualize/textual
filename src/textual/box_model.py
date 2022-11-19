@@ -62,6 +62,8 @@ def get_box_model(
         content_width = Fraction(
             get_content_width(content_container - styles.margin.totals, viewport)
         )
+        if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
+            content_width += styles.scrollbar_size_vertical
     else:
         # An explicit width
         styles_width = styles.width
@@ -97,6 +99,8 @@ def get_box_model(
         content_height = Fraction(
             get_content_height(content_container, viewport, int(content_width))
         )
+        if styles.scrollbar_gutter == "stable" and styles.overflow_y == "auto":
+            content_height += styles.scrollbar_size_horizontal
     else:
         styles_height = styles.height
         # Explicit height set

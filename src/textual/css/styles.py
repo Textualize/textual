@@ -556,7 +556,7 @@ class StylesBase(ABC):
         """Get the style properties associated with this node only (not including parents in the DOM).
 
         Returns:
-            Style: Rich Style object
+            Style: Rich Style object.
         """
         style = Style(
             color=(self.color.rich_color if self.has_rule("color") else None),

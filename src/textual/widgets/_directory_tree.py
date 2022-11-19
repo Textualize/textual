@@ -5,9 +5,11 @@ from pathlib import Path
 from typing import ClassVar
 
 from rich.style import Style
-from rich.text import Text
+from rich.text import Text, TextType
 
+from ..message import Message
 from ._tree import Tree, TreeNode, TOGGLE_STYLE
+from .._types import MessageTarget
 
 
 @dataclass
@@ -51,6 +53,11 @@ class DirectoryTree(Tree[DirEntry]):
     }
     """
 
+    class FileSelected(Message, bubble=True):
+        def __init__(self, sender: MessageTarget, path: str) -> None:
+            self.path = path
+            super().__init__(sender)
+
     def __init__(
         self,
         path: str,
@@ -67,6 +74,22 @@ class DirectoryTree(Tree[DirEntry]):
             id=id,
             classes=classes,
         )
+
+    def process_label(self, label: TextType):
+        """Process a str or Text in to a label. Maybe overridden in a subclass to change modify how labels are rendered.
+
+        Args:
+            label (TextType): Label.
+
+        Returns:
+            Text: A Rich Text object.
+        """
+        if isinstance(label, str):
+            text_label = Text(label)
+        else:
+            text_label = label
+        first_line = text_label.split()[0]
+        return first_line
 
     def render_label(self, node: TreeNode[DirEntry], base_style: Style, style: Style):
         node_label = node._label.copy()
@@ -120,8 +143,20 @@ class DirectoryTree(Tree[DirEntry]):
         self.load_directory(self.root)
 
     def on_tree_node_expanded(self, event: Tree.NodeSelected) -> None:
+        event.stop()
         dir_entry = event.node.data
         if dir_entry is None:
             return
-        if dir_entry.is_dir and not dir_entry.loaded:
-            self.load_directory(event.node)
+        if dir_entry.is_dir:
+            if not dir_entry.loaded:
+                self.load_directory(event.node)
+        else:
+            self.emit_no_wait(self.FileSelected(self, dir_entry.path))
+
+    def on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
+        event.stop()
+        dir_entry = event.node.data
+        if dir_entry is None:
+            return
+        if not dir_entry.is_dir:
+            self.emit_no_wait(self.FileSelected(self, dir_entry.path))

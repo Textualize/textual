@@ -386,6 +386,7 @@ class Widget(DOMNode):
 
         Args:
             name (str): Name of component.
+            partial (bool, optional): Return a partial style (not combined with parent).
 
         Returns:
             Style: A Rich style object.
@@ -915,8 +916,6 @@ class Widget(DOMNode):
             int: Number of rows in the horizontal scrollbar.
         """
         styles = self.styles
-        if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
-            return styles.scrollbar_size_horizontal
         return styles.scrollbar_size_horizontal if self.show_horizontal_scrollbar else 0
 
     @property

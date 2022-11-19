@@ -458,6 +458,7 @@ class Compositor:
 
         # Add top level (root) widget
         add_widget(root, size.region, size.region, ((0,),), layer_order, size.region)
+        root.log(map)
         return map, widgets
 
     @property
