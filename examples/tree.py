@@ -1,7 +1,7 @@
 import json
 
 from textual.app import App, ComposeResult
-from textual.widgets import Header, Footer, Tree
+from textual.widgets import Header, Footer, Tree, DirectoryTree
 
 
 with open("food.json") as data_file:
@@ -23,7 +23,7 @@ class TreeApp(App):
     def compose(self) -> ComposeResult:
         yield Header()
         yield Footer()
-        yield Tree("Root")
+        yield DirectoryTree("../")
 
     def action_add(self) -> None:
         tree = self.query_one(Tree)
