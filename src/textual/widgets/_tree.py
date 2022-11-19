@@ -26,7 +26,7 @@ NodeID = NewType("NodeID", int)
 TreeDataType = TypeVar("TreeDataType")
 EventTreeDataType = TypeVar("EventTreeDataType")
 
-LineCacheKey: TypeAlias = tuple[int | tuple[int, ...], ...]
+LineCacheKey: TypeAlias = tuple[int | tuple, ...]
 
 TOGGLE_STYLE = Style.from_meta({"toggle": True})
 
@@ -199,9 +199,9 @@ class TreeNode(Generic[TreeDataType]):
 class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     BINDINGS = [
+        Binding("enter", "select_cursor", "Select", show=False),
         Binding("up", "cursor_up", "Cursor Up", show=False),
         Binding("down", "cursor_down", "Cursor Down", show=False),
-        Binding("enter", "select_cursor", "Select", show=False),
     ]
 
     DEFAULT_CSS = """
@@ -333,6 +333,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     def cursor_node(self) -> TreeNode[TreeDataType] | None:
         """TreeNode | Node: The currently selected node, or ``None`` if no selection."""
         return self._cursor_node
+
+    @property
+    def last_line(self) -> int:
+        return len(self._tree_lines) - 1
 
     def process_label(self, label: TextType):
         """Process a str or Text in to a label. Maybe overridden in a subclass to change modify how labels are rendered.
@@ -797,13 +801,35 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     def action_cursor_up(self) -> None:
         if self.cursor_line == -1:
-            self.cursor_line = len(self._tree_lines) - 1
+            self.cursor_line = self.last_line
         else:
             self.cursor_line -= 1
         self.scroll_to_line(self.cursor_line)
 
     def action_cursor_down(self) -> None:
+        if self.cursor_line == -1:
+            self.cursor_line = 0
         self.cursor_line += 1
+        self.scroll_to_line(self.cursor_line)
+
+    def action_page_down(self) -> None:
+        if self.cursor_line == -1:
+            self.cursor_line = 0
+        self.cursor_line += self.scrollable_content_region.height - 1
+        self.scroll_to_line(self.cursor_line)
+
+    def action_page_up(self) -> None:
+        if self.cursor_line == -1:
+            self.cursor_line = self.last_line
+        self.cursor_line -= self.scrollable_content_region.height - 1
+        self.scroll_to_line(self.cursor_line)
+
+    def action_scroll_home(self) -> None:
+        self.cursor_line = 0
+        self.scroll_to_line(self.cursor_line)
+
+    def action_scroll_end(self) -> None:
+        self.cursor_line = self.last_line
         self.scroll_to_line(self.cursor_line)
 
     def action_select_cursor(self) -> None:

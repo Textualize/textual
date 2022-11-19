@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support lazy-instantiated Screens (callables in App.SCREENS) https://github.com/Textualize/textual/pull/1185
 - Display of keys in footer has more sensible defaults https://github.com/Textualize/textual/pull/1213
 - Add App.get_key_display, allowing custom key_display App-wide https://github.com/Textualize/textual/pull/1213
+- Added "inherited bindings" -- BINDINGS classvar will be merged with base classes, unless inherit_bindings is set to False
 
 ### Changed
 

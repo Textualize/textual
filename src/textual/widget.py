@@ -174,6 +174,12 @@ class Widget(DOMNode):
     BINDINGS = [
         Binding("up", "scroll_up", "Scroll Up", show=False),
         Binding("down", "scroll_down", "Scroll Down", show=False),
+        Binding("left", "scroll_left", "Scroll Up", show=False),
+        Binding("right", "scroll_right", "Scroll Right", show=False),
+        Binding("home", "scroll_home", "Scroll Home", show=False),
+        Binding("end", "scroll_end", "Scroll End", show=False),
+        Binding("pageup", "page_up", "Page Up", show=False),
+        Binding("pagedown", "page_down", "Page Down", show=False),
     ]
 
     DEFAULT_CSS = """
@@ -1816,9 +1822,13 @@ class Widget(DOMNode):
         can_focus: bool | None = None,
         can_focus_children: bool | None = None,
         inherit_css: bool = True,
+        inherit_bindings: bool = True,
     ) -> None:
         base = cls.__mro__[0]
-        super().__init_subclass__(inherit_css=inherit_css)
+        super().__init_subclass__(
+            inherit_css=inherit_css,
+            inherit_bindings=inherit_bindings,
+        )
         if issubclass(base, Widget):
             cls.can_focus = base.can_focus if can_focus is None else can_focus
             cls.can_focus_children = (
@@ -2345,53 +2355,21 @@ class Widget(DOMNode):
     def _on_scroll_to_region(self, message: messages.ScrollToRegion) -> None:
         self.scroll_to_region(message.region, animate=True)
 
-    def _key_home(self) -> bool:
+    def action_scroll_home(self) -> None:
         if self._allow_scroll:
             self.scroll_home()
-            return True
-        return False
 
-    def _key_end(self) -> bool:
+    def action_scroll_end(self) -> None:
         if self._allow_scroll:
             self.scroll_end()
-            return True
-        return False
 
-    def _key_left(self) -> bool:
+    def action_scroll_left(self) -> None:
         if self.allow_horizontal_scroll:
             self.scroll_left()
-            return True
-        return False
 
-    def _key_right(self) -> bool:
+    def action_scroll_right(self) -> None:
         if self.allow_horizontal_scroll:
             self.scroll_right()
-            return True
-        return False
-
-    # def _key_down(self) -> bool:
-    #     if self.allow_vertical_scroll:
-    #         self.scroll_down()
-    #         return True
-    #     return False
-
-    # def _key_up(self) -> bool:
-    #     if self.allow_vertical_scroll:
-    #         self.scroll_up()
-    #         return True
-    #     return False
-
-    def _key_pagedown(self) -> bool:
-        if self.allow_vertical_scroll:
-            self.scroll_page_down()
-            return True
-        return False
-
-    def _key_pageup(self) -> bool:
-        if self.allow_vertical_scroll:
-            self.scroll_page_up()
-            return True
-        return False
 
     def action_scroll_up(self) -> None:
         if self.allow_vertical_scroll:
@@ -2400,3 +2378,11 @@ class Widget(DOMNode):
     def action_scroll_down(self) -> None:
         if self.allow_vertical_scroll:
             self.scroll_down()
+
+    def action_page_down(self) -> None:
+        if self.allow_vertical_scroll:
+            self.scroll_page_down()
+
+    def action_page_up(self) -> None:
+        if self.allow_vertical_scroll:
+            self.scroll_page_up()
