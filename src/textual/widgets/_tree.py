@@ -146,7 +146,6 @@ class TreeNode(Generic[TreeDataType]):
         self._updates += 1
         text_label = self._tree.process_label(label)
         self._label = text_label
-        self._tree._invalidate()
 
     @property
     def is_expanded(self) -> bool:

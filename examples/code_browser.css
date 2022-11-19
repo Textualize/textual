@@ -5,12 +5,10 @@ Screen {
 #tree-view {
     display: none; 
     scrollbar-gutter: stable;
-    overflow: auto;
-    overflow-y: scroll;
+    overflow: auto;    
     width: auto;    
     height: 100%;            
-    dock: left;    
-    
+    dock: left;       
 }
 
 CodeBrowser.-show-tree #tree-view {
