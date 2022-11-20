@@ -56,6 +56,8 @@ class _TreeLine:
 
 @rich.repr.auto
 class TreeNode(Generic[TreeDataType]):
+    """An object that represents a "node" in a tree control."""
+
     def __init__(
         self,
         tree: Tree[TreeDataType],
@@ -90,8 +92,9 @@ class TreeNode(Generic[TreeDataType]):
         self._selected_ = False
         self._updates += 1
 
+    @property
     def line(self) -> int:
-        """Get the line number for this node, or -1 if it is not displayed."""
+        """int: Get the line number for this node, or -1 if it is not displayed."""
         return self._line
 
     @property
@@ -116,8 +119,32 @@ class TreeNode(Generic[TreeDataType]):
 
     @property
     def id(self) -> NodeID:
-        """Get the node ID."""
+        """NodeID: Get the node ID."""
         return self._id
+
+    @property
+    def is_expanded(self) -> bool:
+        """bool: Check if the node is expanded."""
+        return self._expanded
+
+    @property
+    def is_last(self) -> bool:
+        """bool: Check if this is the last child."""
+        if self._parent is None:
+            return True
+        return bool(
+            self._parent._children and self._parent._children[-1] == self,
+        )
+
+    @property
+    def allow_expand(self) -> bool:
+        """bool: Check if the node is allowed to expand."""
+        return self._allow_expand
+
+    @allow_expand.setter
+    def allow_expand(self, allow_expand: bool) -> None:
+        self._allow_expand = allow_expand
+        self._updates += 1
 
     def expand(self) -> None:
         """Expand a node (show its children)."""
@@ -147,30 +174,6 @@ class TreeNode(Generic[TreeDataType]):
         text_label = self._tree.process_label(label)
         self._label = text_label
 
-    @property
-    def is_expanded(self) -> bool:
-        """bool: Check if the node is expanded."""
-        return self._expanded
-
-    @property
-    def is_last(self) -> bool:
-        """bool: Check if this is the last child."""
-        if self._parent is None:
-            return True
-        return bool(
-            self._parent._children and self._parent._children[-1] == self,
-        )
-
-    @property
-    def allow_expand(self) -> bool:
-        """bool: Check if the node is allowed to expand."""
-        return self._allow_expand
-
-    @allow_expand.setter
-    def allow_expand(self, allow_expand: bool) -> bool:
-        self._allow_expand = allow_expand
-        self._updates += 1
-
     def add(
         self,
         label: TextType,
@@ -197,6 +200,21 @@ class TreeNode(Generic[TreeDataType]):
         self._updates += 1
         self._children.append(node)
         self._tree._invalidate()
+        return node
+
+    def add_leaf(
+        self, label: TextType, data: TreeDataType | None = None
+    ) -> TreeNode[TreeDataType]:
+        """Add a 'leaf' node (a node that can not expand).
+
+        Args:
+            label (TextType): Label for the node.
+            data (TreeDataType | None, optional): Optional data. Defaults to None.
+
+        Returns:
+            TreeNode[TreeDataType]: New node.
+        """
+        node = self.add(label, data, expand=False, allow_expand=False)
         return node
 
 
@@ -451,36 +469,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         else:
             return line.node
 
-    def add_json(self, node: TreeNode, json_data: object) -> None:
-
-        from rich.highlighter import ReprHighlighter
-
-        highlighter = ReprHighlighter()
-
-        def add_node(name: str, node: TreeNode, data: object) -> None:
-            if isinstance(data, dict):
-                node._label = Text(f"{{}} {name}")
-                for key, value in data.items():
-                    new_node = node.add("")
-                    add_node(key, new_node, value)
-            elif isinstance(data, list):
-                node._label = Text(f"[] {name}")
-                for index, value in enumerate(data):
-                    new_node = node.add("")
-                    add_node(str(index), new_node, value)
-            else:
-                node._allow_expand = False
-                if name:
-                    label = Text.assemble(
-                        Text.from_markup(f"[b]{name}[/b]="), highlighter(repr(data))
-                    )
-                else:
-                    label = Text(repr(data))
-                node._label = label
-
-        add_node("JSON", node, json_data)
-        self._invalidate()
-
     def validate_cursor_line(self, value: int) -> int:
         return clamp(value, 0, len(self._tree_lines) - 1)
 
@@ -642,10 +630,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             width = self.size.width
 
         self.virtual_size = Size(width, len(lines))
-        if self.cursor_node is not None:
-            self.cursor_line = self.cursor_node._line
-        if self.cursor_line >= len(lines):
-            self.cursor_line = -1
+        if self.cursor_line != -1:
+            if self.cursor_node is not None:
+                self.cursor_line = self.cursor_node._line
+            if self.cursor_line >= len(lines):
+                self.cursor_line = -1
         self.refresh()
 
     def render_line(self, y: int) -> list[Segment]:
@@ -813,7 +802,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     def action_cursor_down(self) -> None:
         if self.cursor_line == -1:
             self.cursor_line = 0
-        self.cursor_line += 1
+        else:
+            self.cursor_line += 1
         self.scroll_to_line(self.cursor_line)
 
     def action_page_down(self) -> None:
