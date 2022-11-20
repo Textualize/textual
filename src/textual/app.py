@@ -2011,7 +2011,7 @@ class App(Generic[ReturnType], DOMNode):
         for children in reversed(node_children):
             # Closing children can be done asynchronously.
             close_messages = [
-                child._close_messages() for child in children if child._running
+                child._close_messages(wait=True) for child in children if child._running
             ]
             # TODO: What if a message pump refuses to exit?
             if close_messages:
@@ -2019,7 +2019,7 @@ class App(Generic[ReturnType], DOMNode):
                 for child in children:
                     self._unregister(child)
 
-        await root._close_messages()
+        await root._close_messages(wait=False)
         self._unregister(root)
 
     async def action_check_bindings(self, key: str) -> None:
