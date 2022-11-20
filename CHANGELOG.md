@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## [0.6.0]
+
+### Added
+
+- Added "inherited bindings" -- BINDINGS classvar will be merged with base classes, unless inherit_bindings is set to False
+- Added `Tree` widget which replaces `TreeControl`.
+
+### Changed
+
+- Rebuilt `DirectoryTree` with new `Tree` control.
+
 ## [0.5.0] - Unreleased
 
 ### Added
@@ -30,7 +42,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support lazy-instantiated Screens (callables in App.SCREENS) https://github.com/Textualize/textual/pull/1185
 - Display of keys in footer has more sensible defaults https://github.com/Textualize/textual/pull/1213
 - Add App.get_key_display, allowing custom key_display App-wide https://github.com/Textualize/textual/pull/1213
-- Added "inherited bindings" -- BINDINGS classvar will be merged with base classes, unless inherit_bindings is set to False
 
 ### Changed
 
