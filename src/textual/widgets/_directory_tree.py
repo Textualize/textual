@@ -14,6 +14,8 @@ from .._types import MessageTarget
 
 @dataclass
 class DirEntry:
+    """Attaches directory information ot a node."""
+
     path: str
     is_dir: bool
     loaded: bool = False

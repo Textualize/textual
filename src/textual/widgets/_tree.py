@@ -26,7 +26,7 @@ NodeID = NewType("NodeID", int)
 TreeDataType = TypeVar("TreeDataType")
 EventTreeDataType = TypeVar("EventTreeDataType")
 
-LineCacheKey: TypeAlias = tuple[int | tuple, ...]
+LineCacheKey: TypeAlias = "tuple[int | tuple, ...]"
 
 TOGGLE_STYLE = Style.from_meta({"toggle": True})
 
