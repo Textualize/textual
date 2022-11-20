@@ -67,7 +67,7 @@ Here's a quick example of its use. It works like a dictionary until you reach a 
 {'bar': 2, 'baz': 3, 'egg': 4}
 ```
 
-In Textual, we use a [LRUCache](https://github.com/Textualize/textual/search?q=LRUCache) to store the results of rendering content to the terminal. For example, in a [datatable](https://twitter.com/search?q=%23textualdatatable) it is too costly to render everything up front. So Textual renders only the lines that are currently visible on the "screen". The cache ensures that scrolling only needs to render the newly exposed lines, and lines that haven't been displayed in a while are discarded to save memory.
+In Textual, we use a [LRUCache](https://github.com/Textualize/textual/search?q=LRUCache) to store the results of rendering content to the terminal. For example, in a [datatable](https://twitter.com/search?q=%23textualdatatable&src=typed_query&f=live) it is too costly to render everything up front. So Textual renders only the lines that are currently visible on the "screen". The cache ensures that scrolling only needs to render the newly exposed lines, and lines that haven't been displayed in a while are discarded to save memory.
 
 
 ## Color
