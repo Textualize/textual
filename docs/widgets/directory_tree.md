@@ -14,12 +14,19 @@ The example below creates a simple tree to navigate the current working director
 --8<-- "docs/examples/widgets/directory_tree.py"
 ```
 
-## Events
+## Messages
 
-| Event               | Default handler                   | Description                             |
-| ------------------- | --------------------------------- | --------------------------------------- |
-| `Tree.FileSelected` | `on_directory_tree_file_selected` | Sent when the user selects a file node. |
+### FileSelected
 
+The `DirectoryTree.FileSelected` message is sent when the user selects a file in the tree
+
+- [x] Bubbles
+
+#### Attributes
+
+| attribute | type  | purpose           |
+| --------- | ----- | ----------------- |
+| `path`    | `str` | Path of the file. |
 
 ## Reactive Attributes
 

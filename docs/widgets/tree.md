@@ -23,13 +23,6 @@ The example below creates a simple tree.
 
 A each tree widget has a "root" attribute which is an instance of a [TreeNode][textual.widgets.TreeNode]. Call [add()][textual.widgets.TreeNode.add] or [add_leaf()][textual.widgets.TreeNode.add_leaf] to add new nodes underneath the root. Both these methods return a TreeNode for the child, so you can add more levels.
 
-## Events
-
-| Event                | Default handler          | Description                                      |
-| -------------------- | ------------------------ | ------------------------------------------------ |
-| `Tree.NodeSelected`  | `on_tree_node_selected`  | Sent when the user selects a tree node.          |
-| `Tree.NodeExpanded`  | `on_tree_node_expanded`  | Sent when the user expands a node in the tree.   |
-| `Tree.NodeCollapsed` | `on_tree_node_collapsed` | Sent when the user collapsed a node in the tree. |
 
 ## Reactive Attributes
 
@@ -38,6 +31,47 @@ A each tree widget has a "root" attribute which is an instance of a [TreeNode][t
 | `show_root`   | `bool` | `True`  | Show the root node.                             |
 | `show_guides` | `bool` | `True`  | Show guide lines between levels.                |
 | `guide_depth` | `int`  | `4`     | Amount of indentation between parent and child. |
+
+
+
+## Messages
+
+### NodeSelected
+
+The `Tree.NodeSelected` message is sent when the user selects a tree node.
+
+
+#### Attributes
+
+| attribute | type                                 | purpose        |
+| --------- | ------------------------------------ | -------------- |
+| `node`    | [TreeNode][textual.widgets.TreeNode] | Selected node. |
+
+
+### NodeExpanded
+
+The `Tree.NodeExpanded` message is sent when the user expands a node in the tree.
+
+#### Attributes
+
+| attribute | type                                 | purpose        |
+| --------- | ------------------------------------ | -------------- |
+| `node`    | [TreeNode][textual.widgets.TreeNode] | Expanded node. |
+
+
+### NodeCollapsed
+
+
+The `Tree.NodeCollapsed` message is sent when the user expands a node in the tree.
+
+
+#### Attributes
+
+| attribute | type                                 | purpose         |
+| --------- | ------------------------------------ | --------------- |
+| `node`    | [TreeNode][textual.widgets.TreeNode] | Collapsed node. |
+
+
 
 
 ## See Also
