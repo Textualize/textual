@@ -4,7 +4,7 @@ Screen {
 
 ListView {
     width: 30;
-    height: 3;
+    height: auto;
     margin: 2 2;
 }
 
