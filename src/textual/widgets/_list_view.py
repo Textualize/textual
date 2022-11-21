@@ -85,14 +85,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
 
     async def clear(self) -> None:
         """Clear all items from the ListView."""
-        self.index = None
-        # await_removes = []
-        await self.query("ListItem").remove()
 
-        # for child in self.children:
-        #     await child.remove()
-        # await_removes.append(child.remove())
-        # await asyncio.gather(*await_removes)
         await self.emit(self.ChildrenUpdated(self, self.children))
 
     def action_select(self) -> None:

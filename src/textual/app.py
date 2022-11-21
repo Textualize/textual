@@ -305,8 +305,6 @@ class App(Generic[ReturnType], DOMNode):
         self.stylesheet = Stylesheet(variables=self.get_css_variables())
         self._require_stylesheet_update: set[DOMNode] = set()
 
-        self._dom_lock = asyncio.Lock()
-
         css_path = css_path or self.CSS_PATH
         if css_path is not None:
             # When value(s) are supplied for CSS_PATH, we normalise them to a list of Paths.
@@ -1919,28 +1917,6 @@ class App(Generic[ReturnType], DOMNode):
         # Return the list of widgets that should end up being sent off in a
         # prune event.
         return pruned_remove
-
-    async def _on_prune(self, event: events.Prune) -> None:
-        """Handle a prune event.
-
-        Args:
-            event (events.Prune): The prune event.
-        """
-
-        async def prune(event: events.Prune):
-            async with self._dom_lock:
-                try:
-                    # Prune all the widgets.
-                    for widget in event.widgets:
-                        await self._prune_node(widget)
-                finally:
-                    # Finally, flag that we're done.
-                    event.finished_flag.set()
-
-                # Flag that the layout needs refreshing.
-                self.refresh(layout=True)
-
-        asyncio.create_task(prune(event))
 
     def _walk_children(self, root: Widget) -> Iterable[list[Widget]]:
         """Walk children depth first, generating widgets and a list of their siblings.
