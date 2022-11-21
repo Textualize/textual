@@ -37,4 +37,4 @@ of multiple `ListItem`s. The arrow keys can be used to navigate the list.
 
 ## See Also
 
-* [ListView](../api/list_view.md) code reference
+* [ListItem](../api/list_item.md) code reference

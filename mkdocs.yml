@@ -97,6 +97,8 @@ nav:
       - "widgets/header.md"
       - "widgets/input.md"
       - "widgets/label.md"
+      - "widgets/list_view.md"
+      - "widgets/list_item.md"
       - "widgets/static.md"
       - "widgets/tree_control.md"
   - API:
@@ -112,6 +114,7 @@ nav:
     - "api/header.md"
     - "api/label.md"
     - "api/list_view.md"
+    - "api/list_item.md"
     - "api/message_pump.md"
     - "api/message.md"
     - "api/pilot.md"
