@@ -85,7 +85,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
 
     async def clear(self) -> None:
         """Clear all items from the ListView."""
-
+        await self.query("ListView > ListItem").remove()
         await self.emit(self.ChildrenUpdated(self, self.children))
 
     def action_select(self) -> None:
