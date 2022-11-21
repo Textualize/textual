@@ -37,7 +37,7 @@ class SpatialMap:
         """A mapping of block coordinate on to widget placement.
 
         Returns:
-            Mapping[tuple[int, int], list[WidgetPlacement]]: Mapping.
+            Mapping[tuple[int, int], list[WidgetPlacement]]: Mapping of coord to list of placements.
         """
         if self._map is None:
             self._map = self._build_placements(self._placements)
