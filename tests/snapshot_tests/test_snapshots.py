@@ -90,6 +90,10 @@ def test_header_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "header.py")
 
 
+def test_list_view(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "list_view.py", press=["tab", "down", "down", "up"])
+
+
 def test_textlog_max_lines(snap_compare):
     assert snap_compare("snapshot_apps/textlog_max_lines.py", press=[*"abcde", "_"])
 
