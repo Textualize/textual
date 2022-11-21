@@ -40,6 +40,11 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
 
     @property
     def highlighted_child(self) -> ListItem | None:
+        """Get the currently highlighted ListItem
+
+        Returns:
+            ListItem | None: The currently highlighted ListItem, or None if nothing is highlighted.
+        """
         if self.index is None:
             return None
         elif 0 <= self.index < len(self.children):
@@ -51,10 +56,12 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         return self._clamp_index(index)
 
     def _clamp_index(self, index: int) -> int:
+        """Clamp the index to a valid value given the current list of children"""
         last_index = max(len(self.children) - 1, 0)
         return clamp(index, 0, last_index)
 
     def _is_valid_index(self, index: int | None) -> bool:
+        """Return True if the current index is valid given the current list of children"""
         if index is None:
             return False
         return 0 <= index < len(self.children)
@@ -92,7 +99,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         selected_child = self.highlighted_child
         self.emit_no_wait(self.Selected(self, selected_child))
 
-    def on_list_item_child_selected(self, event: ListItem.ChildSelected) -> None:
+    def on_list_item__child_clicked(self, event: ListItem._ChildClicked) -> None:
         self.focus()
         self.index = self.children.index(event.sender)
         self.emit_no_wait(self.Selected(self, event.sender))
@@ -108,6 +115,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         self.index += 1
 
     def _scroll_highlighted_region(self) -> None:
+        """Used to keep the highlighted index within vision"""
         if self.highlighted_child is not None:
             self.scroll_to_widget(self.highlighted_child, animate=False)
 
@@ -115,16 +123,23 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         return len(self.children)
 
     class Highlighted(Message, bubble=True):
+        """Emitted when the highlighted item changes. Highlighted item is controlled using up/down keys"""
+
         def __init__(self, sender: ListView, item: ListItem | None) -> None:
             super().__init__(sender)
             self.item = item
 
     class Selected(Message, bubble=True):
+        """Emitted when a list item is selected, e.g. when you press the enter key on it"""
+
         def __init__(self, sender: ListView, item: ListItem) -> None:
             super().__init__(sender)
             self.item = item
 
     class ChildrenUpdated(Message, bubble=True):
+        """Emitted when the elements in the `ListView` are changed (e.g. a child is
+        added, or the list is cleared)"""
+
         def __init__(self, sender: ListView, children: list[ListItem]) -> None:
             super().__init__(sender)
             self.children = children

@@ -28,10 +28,12 @@ class ListItem(Widget, can_focus=False):
     highlighted = reactive(False)
 
     def on_click(self, event: events.Click) -> None:
-        self.emit_no_wait(self.ChildSelected(self))
+        self.emit_no_wait(self._ChildClicked(self))
 
     def watch_highlighted(self, value: bool) -> None:
         self.set_class(value, "--highlight")
 
-    class ChildSelected(Message):
+    class _ChildClicked(Message):
+        """For informing with the parent ListView that we were clicked"""
+
         pass

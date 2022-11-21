@@ -1,6 +1,6 @@
 # List View
 
-Displays a vertical list of widgets which can be highlighted and selected.
+Displays a vertical list of `ListItem`s which can be highlighted and selected.
 Supports keyboard navigation.
 
 - [x] Focusable
@@ -56,6 +56,22 @@ or by clicking on it.
 | attribute | type       | purpose                     |
 |-----------|------------|-----------------------------|
 | `item`    | `ListItem` | The item that was selected. |
+
+
+### ChildrenUpdated
+
+The `ListView.ChildrenUpdated` message is emitted when the elements in the `ListView`
+are changed (e.g. a child is added, or the list is cleared)
+
+- [x] Bubbles
+
+#### Attributes
+
+| attribute  | type             | purpose                   |
+|------------|------------------|---------------------------|
+| `children` | `list[ListItem]` | The new ListView children |
+
+
 
 ## See Also
 
