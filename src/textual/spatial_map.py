@@ -77,7 +77,7 @@ class SpatialMap:
             region (Region): Container region.
 
         Returns:
-            set[WidgetPlacement]: Set of Widget placements.
+            Iterable[WidgetPlacement]: A super-set of Widget placements that may be in the screen.
         """
         x1, y1, width, height = screen_region
         x2 = x1 + width
