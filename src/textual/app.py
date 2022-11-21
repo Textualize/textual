@@ -878,8 +878,7 @@ class App(Generic[ReturnType], DOMNode):
                 stylesheet.parse()
                 elapsed = (perf_counter() - time) * 1000
                 self.log.system(
-                    f"<stylesheet> loaded {len(css_paths)} CSS files in"
-                    f" {elapsed:.0f} ms"
+                    f"<stylesheet> loaded {len(css_paths)} CSS files in {elapsed:.0f} ms"
                 )
             except Exception as error:
                 # TODO: Catch specific exceptions
@@ -1829,8 +1828,7 @@ class App(Generic[ReturnType], DOMNode):
 
         if private_method is None and public_method is None:
             log(
-                f"<action> {action_name!r} has no target. Couldn't find methods"
-                f" {public_method_name!r} or {private_method_name!r}"
+                f"<action> {action_name!r} has no target. Couldn't find methods {public_method_name!r} or {private_method_name!r}"
             )
 
         if callable(private_method):

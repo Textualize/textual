@@ -552,8 +552,8 @@ class Widget(DOMNode):
             for widget_id, count in counter.items():
                 if count > 1:
                     raise MountError(
-                        f"Tried to insert {count!r} widgets with the same ID"
-                        f" {widget_id!r}. Widget IDs must be unique."
+                        f"Tried to insert {count!r} widgets with the same ID {widget_id!r}. "
+                        "Widget IDs must be unique."
                     )
 
         # Saying you want to mount before *and* after something is an error.
@@ -614,8 +614,7 @@ class Widget(DOMNode):
                     child = self.children[child]
                 except IndexError:
                     raise WidgetError(
-                        f"An index of {child} for the child to {called} is out of"
-                        " bounds"
+                        f"An index of {child} for the child to {called} is out of bounds"
                     ) from None
             else:
                 # We got an actual widget, so let's be sure it really is one of
