@@ -70,14 +70,14 @@ class Placeholder(Static):
     }
     """
     # Consecutive placeholders get assigned consecutive colors.
-    COLORS = cycle(_PLACEHOLDER_BACKGROUND_COLORS)
+    _COLORS = cycle(_PLACEHOLDER_BACKGROUND_COLORS)
 
     variant: Reactive[PlaceholderVariant] = reactive("default")
 
     @classmethod
     def reset_color_cycle(cls) -> None:
         """Reset the placeholder background color cycle."""
-        cls.COLORS = cycle(_PLACEHOLDER_BACKGROUND_COLORS)
+        cls._COLORS = cycle(_PLACEHOLDER_BACKGROUND_COLORS)
 
     def __init__(
         self,
@@ -104,7 +104,7 @@ class Placeholder(Static):
         super().__init__(name=name, id=id, classes=classes)
         self._placeholder_text = label if label else f"#{id}" if id else "Placeholder"
         self._placeholder_label = _PlaceholderLabel()
-        self.styles.background = f"{next(Placeholder.COLORS)} 70%"
+        self.styles.background = f"{next(Placeholder._COLORS)} 70%"
         self.variant = self.validate_variant(variant)
         # Set a cycle through the variants with the correct starting point.
         self._variants_cycle = cycle(_VALID_PLACEHOLDER_VARIANTS_ORDERED)
@@ -133,7 +133,6 @@ class Placeholder(Static):
     def call_variant_update(self) -> None:
         """Calls the appropriate method to update the render of the placeholder."""
         update_variant_method = getattr(self, f"_update_{self.variant}_variant")
-        assert update_variant_method is not None
         update_variant_method()
 
     def _update_default_variant(self) -> None:
