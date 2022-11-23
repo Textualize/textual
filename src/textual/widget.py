@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 from collections import Counter
-from asyncio import Lock, wait, create_task, Event as AsyncEvent
+from asyncio import Event as AsyncEvent
+from asyncio import Lock, create_task, wait
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
 from typing import (
-    Generator,
     TYPE_CHECKING,
     ClassVar,
     Collection,
+    Generator,
     Iterable,
     NamedTuple,
     Sequence,
@@ -32,7 +33,7 @@ from rich.style import Style
 from rich.text import Text
 
 from . import errors, events, messages
-from ._animator import BoundAnimator, DEFAULT_EASING, Animatable, EasingFunction
+from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
@@ -40,7 +41,8 @@ from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import Lines
-from .binding import NoBinding
+from .await_remove import AwaitRemove
+from .binding import Binding
 from .box_model import BoxModel, get_box_model
 from .css.query import NoMatches
 from .css.scalar import ScalarOffset
@@ -169,6 +171,17 @@ class Widget(DOMNode):
 
     """
 
+    BINDINGS = [
+        Binding("up", "scroll_up", "Scroll Up", show=False),
+        Binding("down", "scroll_down", "Scroll Down", show=False),
+        Binding("left", "scroll_left", "Scroll Up", show=False),
+        Binding("right", "scroll_right", "Scroll Right", show=False),
+        Binding("home", "scroll_home", "Scroll Home", show=False),
+        Binding("end", "scroll_end", "Scroll End", show=False),
+        Binding("pageup", "page_up", "Page Up", show=False),
+        Binding("pagedown", "page_down", "Page Down", show=False),
+    ]
+
     DEFAULT_CSS = """
     Widget{
         scrollbar-background: $panel-darken-1;
@@ -237,7 +250,7 @@ class Widget(DOMNode):
         self._arrangement_cache_key: tuple[int, Size] = (-1, Size())
 
         self._styles_cache = StylesCache()
-        self._rich_style_cache: dict[str, Style] = {}
+        self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
         self._stabilized_scrollbar_size: Size | None = None
         self._lock = Lock()
 
@@ -374,20 +387,26 @@ class Widget(DOMNode):
                 pass
         raise NoMatches(f"No descendant found with id={id!r}")
 
-    def get_component_rich_style(self, name: str) -> Style:
+    def get_component_rich_style(self, name: str, *, partial: bool = False) -> Style:
         """Get a *Rich* style for a component.
 
         Args:
             name (str): Name of component.
+            partial (bool, optional): Return a partial style (not combined with parent).
 
         Returns:
             Style: A Rich style object.
         """
-        style = self._rich_style_cache.get(name)
-        if style is None:
-            style = self.get_component_styles(name).rich_style
-            self._rich_style_cache[name] = style
-        return style
+
+        if name not in self._rich_style_cache:
+            component_styles = self.get_component_styles(name)
+            style = component_styles.rich_style
+            partial_style = component_styles.partial_rich_style
+            self._rich_style_cache[name] = (style, partial_style)
+
+        style, partial_style = self._rich_style_cache[name]
+
+        return partial_style if partial else style
 
     def _arrange(self, size: Size) -> DockArrangeResult:
         """Arrange children.
@@ -903,8 +922,6 @@ class Widget(DOMNode):
             int: Number of rows in the horizontal scrollbar.
         """
         styles = self.styles
-        if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
-            return styles.scrollbar_size_horizontal
         return styles.scrollbar_size_horizontal if self.show_horizontal_scrollbar else 0
 
     @property
@@ -964,6 +981,18 @@ class Widget(DOMNode):
             Region: Screen region that contains a widget's content.
         """
         content_region = self.region.shrink(self.styles.gutter)
+        return content_region
+
+    @property
+    def scrollable_content_region(self) -> Region:
+        """Gets an absolute region containing the scrollable content (minus padding, border, and scrollbars).
+
+        Returns:
+            Region: Screen region that contains a widget's content.
+        """
+        content_region = self.region.shrink(self.styles.gutter).shrink(
+            self.scrollbar_gutter
+        )
         return content_region
 
     @property
@@ -1731,7 +1760,7 @@ class Widget(DOMNode):
         Returns:
             Offset: The distance that was scrolled.
         """
-        window = self.content_region.at_offset(self.scroll_offset)
+        window = self.scrollable_content_region.at_offset(self.scroll_offset)
         if spacing is not None:
             window = window.shrink(spacing)
 
@@ -1793,9 +1822,13 @@ class Widget(DOMNode):
         can_focus: bool | None = None,
         can_focus_children: bool | None = None,
         inherit_css: bool = True,
+        inherit_bindings: bool = True,
     ) -> None:
         base = cls.__mro__[0]
-        super().__init_subclass__(inherit_css=inherit_css)
+        super().__init_subclass__(
+            inherit_css=inherit_css,
+            inherit_bindings=inherit_bindings,
+        )
         if issubclass(base, Widget):
             cls.can_focus = base.can_focus if can_focus is None else can_focus
             cls.can_focus_children = (
@@ -2322,50 +2355,34 @@ class Widget(DOMNode):
     def _on_scroll_to_region(self, message: messages.ScrollToRegion) -> None:
         self.scroll_to_region(message.region, animate=True)
 
-    def _key_home(self) -> bool:
+    def action_scroll_home(self) -> None:
         if self._allow_scroll:
             self.scroll_home()
-            return True
-        return False
 
-    def _key_end(self) -> bool:
+    def action_scroll_end(self) -> None:
         if self._allow_scroll:
             self.scroll_end()
-            return True
-        return False
 
-    def _key_left(self) -> bool:
+    def action_scroll_left(self) -> None:
         if self.allow_horizontal_scroll:
             self.scroll_left()
-            return True
-        return False
 
-    def _key_right(self) -> bool:
+    def action_scroll_right(self) -> None:
         if self.allow_horizontal_scroll:
             self.scroll_right()
-            return True
-        return False
 
-    def _key_down(self) -> bool:
-        if self.allow_vertical_scroll:
-            self.scroll_down()
-            return True
-        return False
-
-    def _key_up(self) -> bool:
+    def action_scroll_up(self) -> None:
         if self.allow_vertical_scroll:
             self.scroll_up()
-            return True
-        return False
 
-    def _key_pagedown(self) -> bool:
+    def action_scroll_down(self) -> None:
+        if self.allow_vertical_scroll:
+            self.scroll_down()
+
+    def action_page_down(self) -> None:
         if self.allow_vertical_scroll:
             self.scroll_page_down()
-            return True
-        return False
 
-    def _key_pageup(self) -> bool:
+    def action_page_up(self) -> None:
         if self.allow_vertical_scroll:
             self.scroll_page_up()
-            return True
-        return False

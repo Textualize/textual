@@ -22,7 +22,7 @@ from rich.tree import Tree
 
 from ._context import NoActiveAppError
 from ._node_list import NodeList
-from .binding import Bindings, BindingType
+from .binding import Binding, Bindings, BindingType
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
@@ -97,8 +97,15 @@ class DOMNode(MessagePump):
 
     # True if this node inherits the CSS from the base class.
     _inherit_css: ClassVar[bool] = True
+
+    # True to inherit bindings from base class
+    _inherit_bindings: ClassVar[bool] = True
+
     # List of names of base classes that inherit CSS
     _css_type_names: ClassVar[frozenset[str]] = frozenset()
+
+    # Generated list of bindings
+    _merged_bindings: ClassVar[Bindings] | None = None
 
     def __init__(
         self,
@@ -127,7 +134,7 @@ class DOMNode(MessagePump):
         self._auto_refresh: float | None = None
         self._auto_refresh_timer: Timer | None = None
         self._css_types = {cls.__name__ for cls in self._css_bases(self.__class__)}
-        self._bindings = Bindings(self.BINDINGS)
+        self._bindings = self._merged_bindings or Bindings()
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
 
@@ -152,12 +159,16 @@ class DOMNode(MessagePump):
         """Perform an automatic refresh (set with auto_refresh property)."""
         self.refresh()
 
-    def __init_subclass__(cls, inherit_css: bool = True) -> None:
+    def __init_subclass__(
+        cls, inherit_css: bool = True, inherit_bindings: bool = True
+    ) -> None:
         super().__init_subclass__()
         cls._inherit_css = inherit_css
+        cls._inherit_bindings = inherit_bindings
         css_type_names: set[str] = set()
         for base in cls._css_bases(cls):
             css_type_names.add(base.__name__)
+        cls._merged_bindings = cls._merge_bindings()
         cls._css_type_names = frozenset(css_type_names)
 
     def get_component_styles(self, name: str) -> RenderStyles:
@@ -204,6 +215,25 @@ class DOMNode(MessagePump):
                     break
             else:
                 break
+
+    @classmethod
+    def _merge_bindings(cls) -> Bindings:
+        """Merge bindings from base classes.
+
+        Returns:
+            Bindings: Merged bindings.
+        """
+        bindings: list[Bindings] = []
+
+        for base in reversed(cls.__mro__):
+            if issubclass(base, DOMNode):
+                if not base._inherit_bindings:
+                    bindings.clear()
+                bindings.append(Bindings(base.BINDINGS))
+        keys = {}
+        for bindings_ in bindings:
+            keys.update(bindings_.keys)
+        return Bindings(keys.values())
 
     def _post_register(self, app: App) -> None:
         """Called when the widget is registered
