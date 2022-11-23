@@ -2489,17 +2489,19 @@
     
       
         
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
           
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
         
       
         
@@ -2546,8 +2548,6 @@
             Widgets
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
             
               
                 
@@ -2621,6 +2621,28 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/directory_tree/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DirectoryTree
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/footer/" class="md-nav__link">
         
   
@@ -2657,6 +2679,8 @@
     </li>
   
 
+              
+            
               
             
               
@@ -2731,11 +2755,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../widgets/tree_control/" class="md-nav__link">
+      <a href="../../widgets/tree/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    TreeControl
+    Tree
     
   </span>
   
@@ -3928,6 +3952,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widget.Widget.scrollable_content_region" class="md-nav__link">
+    <span class="md-ellipsis">
+      scrollable_content_region()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widget.Widget.scrollbar_corner" class="md-nav__link">
     <span class="md-ellipsis">
       scrollbar_corner()
@@ -4945,6 +4978,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.widget.Widget.scrollable_content_region" class="md-nav__link">
+    <span class="md-ellipsis">
+      scrollable_content_region()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.widget.Widget.scrollbar_corner" class="md-nav__link">
     <span class="md-ellipsis">
       scrollbar_corner()
@@ -5883,7 +5925,7 @@ visible. Defaults to True.</p></td>
 
 
 <h2 id="textual.widget.Widget.get_component_rich_style" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_component_rich_style</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">get_component_rich_style</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">partial</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 <a href="#textual.widget.Widget.get_component_rich_style" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -5911,6 +5953,16 @@ visible. Defaults to True.</p></td>
           <td><p>Name of component.</p></td>
           <td>
               <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>partial</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Return a partial style (not combined with parent).</p></td>
+          <td>
+                <code>False</code>
           </td>
         </tr>
     </tbody>
@@ -8855,6 +8907,46 @@ which will result in Textual choosing the configured default scrolling easing fu
           <td>
                 <code>None</code>
           </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="textual.widget.Widget.scrollable_content_region" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">scrollable_content_region</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.scrollable_content_region" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Gets an absolute region containing the scrollable content (minus padding, border, and scrollbars).</p>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>Region</code></td>          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Region" href="../geometry/#textual.geometry.Region">Region</a></code>
+          </td>
+          <td><p>Screen region that contains a widget's content.</p></td>
         </tr>
     </tbody>
   </table>
