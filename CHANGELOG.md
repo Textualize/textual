@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Rebuilt `DirectoryTree` with new `Tree` control.
+- Container widgets now have default height of `1fr`.
 
 ## [0.5.0] - 2022-11-20
 
