@@ -56,7 +56,7 @@ Another such event is the *key* event which is sent when the user presses a key.
 
 The `on_mount` handler sets the `self.screen.styles.background` attribute to `"darkblue"` which (as you can probably guess) turns the background blue. Since the mount event is sent immediately after entering application mode, you will see a blue screen when you run this code.
 
-```{.textual path="docs/examples/app/event01.py" hl_lines="23-25"}
+```{.textual path="docs/examples/app/event01.py" hl_lines="23-25" press="_"}
 ```
 
 The key event handler (`on_key`) has an `event` parameter which will receive a [Key][textual.events.Key] instance. Every event has an associated event object which will be passed to the handler method if it is present in the method's parameter list.
