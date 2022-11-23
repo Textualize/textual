@@ -15,10 +15,10 @@ class ListItem(Widget, can_focus=False):
     ListItem > Widget :hover {
         background: $boost;
     }
-    ListView ListItem.--highlight {
+    ListView > ListItem.--highlight {
         background: $accent 50%;
     }
-    ListView:focus ListItem.--highlight {
+    ListView:focus > ListItem.--highlight {
         background: $accent;
     }
     ListItem > Widget {

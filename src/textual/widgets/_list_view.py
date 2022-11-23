@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-import asyncio
-from asyncio import Future
-
 from textual import events
 from textual.binding import Binding
 from textual.containers import Vertical
@@ -15,14 +12,14 @@ from textual.widgets._list_item import ListItem
 class ListView(Vertical, can_focus=True, can_focus_children=False):
     DEFAULT_CSS = """
     ListView {
-        scrollbar-size-vertical: 1;
+        scrollbar-size-vertical: 2;
     }
     """
 
     BINDINGS = [
-        Binding("down", "down", "Down"),
-        Binding("up", "up", "Up"),
-        Binding("enter", "select", "Select"),
+        Binding("down", "cursor_down", "Down", show=False),
+        Binding("up", "cursor_up", "Up", show=False),
+        Binding("enter", "select_cursor", "Select", show=False),
     ]
 
     index = reactive(0, always_update=True)
@@ -40,10 +37,8 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
 
     @property
     def highlighted_child(self) -> ListItem | None:
-        """Get the currently highlighted ListItem
-
-        Returns:
-            ListItem | None: The currently highlighted ListItem, or None if nothing is highlighted.
+        """ListItem | None: The currently highlighted ListItem,
+        or None if nothing is highlighted.
         """
         if self.index is None:
             return None
@@ -95,7 +90,7 @@ class ListView(Vertical, can_focus=True, can_focus_children=False):
         await self.query("ListView > ListItem").remove()
         await self.emit(self.ChildrenUpdated(self, self.children))
 
-    def action_select(self) -> None:
+    def action_select_cursor(self) -> None:
         selected_child = self.highlighted_child
         self.emit_no_wait(self.Selected(self, selected_child))
 
