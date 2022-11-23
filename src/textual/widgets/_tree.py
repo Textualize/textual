@@ -364,6 +364,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     @property
     def last_line(self) -> int:
+        """int: the index of the last line."""
         return len(self._tree_lines) - 1
 
     def process_label(self, label: TextType):
