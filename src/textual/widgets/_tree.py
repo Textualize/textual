@@ -38,7 +38,7 @@ class _TreeLine:
 
     @property
     def node(self) -> TreeNode:
-        """The node associated with this line."""
+        """TreeNode: The node associated with this line."""
         return self.path[-1]
 
     def _get_guide_width(self, guide_depth: int, show_root: bool) -> int:
