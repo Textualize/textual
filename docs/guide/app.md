@@ -27,7 +27,7 @@ Apps don't get much simpler than this&mdash;don't expect it to do much.
 
 If we run this app with `python simple02.py` you will see a blank terminal, something like the following:
 
-```{.textual path="docs/examples/app/simple02.py"}
+```{.textual path="docs/examples/app/simple02.py" press="_"}
 ```
 
 When you call [App.run()][textual.app.App.run] Textual puts the terminal in to a special state called *application mode*. When in application mode the terminal will no longer echo what you type. Textual will take over responding to user input (keyboard and mouse) and will update the visible portion of the terminal (i.e. the *screen*).
