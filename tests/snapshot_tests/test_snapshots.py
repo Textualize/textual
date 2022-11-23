@@ -11,6 +11,7 @@ SNAPSHOT_APPS_DIR = Path("./snapshot_apps")
 
 # --- Layout related stuff ---
 
+
 def test_grid_layout_basic(snap_compare):
     assert snap_compare(LAYOUT_EXAMPLES_DIR / "grid_layout1.py")
 
@@ -47,6 +48,7 @@ def test_dock_layout_sidebar(snap_compare):
 # Each widget should have a canonical example that is display in the docs.
 # When adding a new widget, ideally we should also create a snapshot test
 # from these examples which test rendering and simple interactions with it.
+
 
 def test_checkboxes(snap_compare):
     """Tests checkboxes but also acts a regression test for using
@@ -98,6 +100,10 @@ def test_fr_units(snap_compare):
     assert snap_compare("snapshot_apps/fr_units.py")
 
 
+def test_tree_example(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "tree.py")
+
+
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
 # If any of these change, something has likely broken, so snapshot each of them.
@@ -121,6 +127,7 @@ def test_multiple_css(snap_compare):
 
 
 # --- Other ---
+
 
 def test_key_display(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "key_display.py")
