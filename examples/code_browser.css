@@ -3,22 +3,19 @@ Screen {
 }
 
 #tree-view {
-    display: none;
+    display: none; 
     scrollbar-gutter: stable;
-    width: auto;
+    overflow: auto;    
+    width: auto;    
+    height: 100%;            
+    dock: left;       
 }
 
 CodeBrowser.-show-tree #tree-view {
-    display: block;
-    dock: left;
-    height: 100%;            
+    display: block;        
     max-width: 50%;
-    background: #151C25;    
 }
 
-DirectoryTree {
-    padding-right: 1;   
-}
 
 #code-view {
     overflow: auto scroll;  

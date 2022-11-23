@@ -1,10 +1,21 @@
 # Change Log
 
-
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
+
+
+## [0.6.0] - Unreleased
+
+### Added
+
+- Added "inherited bindings" -- BINDINGS classvar will be merged with base classes, unless inherit_bindings is set to False
+- Added `Tree` widget which replaces `TreeControl`.
+
+### Changed
+
+- Rebuilt `DirectoryTree` with new `Tree` control.
 
 ## [0.5.0] - 2022-11-20
 
