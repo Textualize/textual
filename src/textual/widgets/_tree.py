@@ -275,11 +275,17 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     }
 
     show_root = reactive(True)
+    """bool: Show the root of the tree."""
     hover_line = var(-1)
+    """int: The line number under the mouse pointer, or -1 if not under the mouse pointer."""
     cursor_line = var(-1)
+    """int: The line with the cursor, or -1 if no cursor."""
     show_guides = reactive(True)
+    """bool: Enable display of tree guide lines."""
     guide_depth = reactive(4, init=False)
+    """int: The indent depth of tree nodes."""
     auto_expand = var(True)
+    """bool: Auto expand tree nodes when clicked."""
 
     LINES: dict[str, tuple[str, str, str, str]] = {
         "default": (
@@ -395,6 +401,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
         Args:
             node (TreeNode[TreeDataType]): A tree node.
+            base_style (Style): The base style of the widget.
+            style (Style): The additional style for the label.
 
         Returns:
             Text: A Rich Text object containing the label.
@@ -470,9 +478,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             return line.node
 
     def validate_cursor_line(self, value: int) -> int:
+        """Prevent cursor line from going outside of range."""
         return clamp(value, 0, len(self._tree_lines) - 1)
 
     def validate_guide_depth(self, value: int) -> int:
+        """Restrict guide depth to reasonable range."""
         return clamp(value, 2, 10)
 
     def _invalidate(self) -> None:
