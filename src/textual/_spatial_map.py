@@ -3,10 +3,10 @@ from __future__ import annotations
 from collections import defaultdict
 from itertools import product
 from operator import attrgetter
-from typing import Iterable, Mapping, Sequence
+from typing import Iterable, Sequence
 
 from ._layout import WidgetPlacement
-from .geometry import Region
+from .geometry import Region, Spacing
 from ._partition import partition
 
 
@@ -26,16 +26,20 @@ class SpatialMap:
     def __init__(
         self,
         placements: Sequence[WidgetPlacement],
+        *,
         block_width: int = 80,
         block_height: int = 80,
     ) -> None:
         self._placements = placements
+        self._total_region = Region()
         self._block_width = block_width
         self._block_height = block_height
         self._fixed: list[WidgetPlacement] = []
         self._map: defaultdict[tuple[int, int], list[WidgetPlacement]] | None = None
 
         self.placement_map = self._build_placements(placements)
+
+        print("SPATIAL", len(placements))
 
     def __iter__(self) -> Iterable[WidgetPlacement]:
         yield from self._placements
@@ -56,6 +60,14 @@ class SpatialMap:
 
         block_width = self._block_width
         block_height = self._block_height
+
+        self.total_region = Region.from_union(
+            [
+                placement.region.grow(placement.margin)
+                for placement in placements
+                if not placement.fixed
+            ]
+        )
 
         placements, self._fixed = partition(attrgetter("fixed"), placements)
 

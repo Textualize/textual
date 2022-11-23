@@ -384,6 +384,9 @@ class Compositor:
                     spatial_map, arranged_widgets, spacing = widget._arrange(
                         child_region.size
                     )
+                    total_region = total_region.union(
+                        spatial_map.total_region.grow(spacing)
+                    )
 
                     placements = spatial_map.get_placements(
                         child_region.reset_offset.translate(widget.scroll_offset)
@@ -402,16 +405,11 @@ class Compositor:
                     get_layer_index = layers_to_index.get
 
                     # Add all the widgets
-                    for sub_region, margin, sub_widget, z, fixed in reversed(
-                        placements
-                    ):
+                    for sub_region, _, sub_widget, z, fixed in reversed(placements):
                         # Combine regions with children to calculate the "virtual size"
                         if fixed:
                             widget_region = sub_region + placement_offset
                         else:
-                            total_region = total_region.union(
-                                sub_region.grow(spacing + margin)
-                            )
                             widget_region = sub_region + placement_scroll_offset
 
                         widget_order = order + (
