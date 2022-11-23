@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from collections import Counter
 from asyncio import Event as AsyncEvent
 from asyncio import Lock, create_task, wait
+from collections import Counter
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
@@ -39,6 +39,7 @@ from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
+from ._spatial_map import SpatialMap
 from ._styles_cache import StylesCache
 from ._types import Lines
 from .await_remove import AwaitRemove
@@ -53,7 +54,6 @@ from .message import Message
 from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
-from .await_remove import AwaitRemove
 from .walk import walk_depth_first
 
 if TYPE_CHECKING:
@@ -426,7 +426,11 @@ class Widget(DOMNode):
             return self._arrangement
 
         self._arrangement_cache_key = arrange_cache_key
-        self._arrangement = arrange(self, self.children, size, self.screen.size)
+        placements, widgets, spacing = arrange(
+            self, self.children, size, self.screen.size
+        )
+        arrange_result = SpatialMap(placements), widgets, spacing
+        self._arrangement = arrange_result
         return self._arrangement
 
     def _clear_arrangement_cache(self) -> None:

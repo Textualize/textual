@@ -381,9 +381,14 @@ class Compositor:
 
                 if widget.is_container:
                     # Arrange the layout
-                    placements, arranged_widgets, spacing = widget._arrange(
+                    spatial_map, arranged_widgets, spacing = widget._arrange(
                         child_region.size
                     )
+
+                    placements = spatial_map.get_placements(
+                        child_region.reset_offset.translate(widget.scroll_offset)
+                    )
+
                     widgets.update(arranged_widgets)
 
                     # An offset added to all placements

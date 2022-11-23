@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from collections import defaultdict
 from itertools import product
-from typing import Iterable, Mapping
+from operator import attrgetter
+from typing import Iterable, Mapping, Sequence
 
 from ._layout import WidgetPlacement
 from .geometry import Region
+from ._partition import partition
 
 
 class SpatialMap:
@@ -23,26 +25,23 @@ class SpatialMap:
 
     def __init__(
         self,
-        placements: Iterable[WidgetPlacement],
+        placements: Sequence[WidgetPlacement],
         block_width: int = 80,
         block_height: int = 80,
     ) -> None:
         self._placements = placements
         self._block_width = block_width
         self._block_height = block_height
+        self._fixed: list[WidgetPlacement] = []
         self._map: defaultdict[tuple[int, int], list[WidgetPlacement]] | None = None
 
-    @property
-    def placement_map(self) -> Mapping[tuple[int, int], list[WidgetPlacement]]:
-        """A mapping of block coordinate on to widget placement.
+        self.placement_map = self._build_placements(placements)
 
-        Returns:
-            Mapping[tuple[int, int], list[WidgetPlacement]]: Mapping of coord to list of placements.
-        """
-        if self._map is None:
-            self._map = self._build_placements(self._placements)
-            return self._map
-        return self._map
+    def __iter__(self) -> Iterable[WidgetPlacement]:
+        yield from self._placements
+
+    def __reversed__(self) -> Iterable[WidgetPlacement]:
+        yield from reversed(self._placements)
 
     def _build_placements(
         self, placements: Iterable[WidgetPlacement]
@@ -58,6 +57,8 @@ class SpatialMap:
         block_width = self._block_width
         block_height = self._block_height
 
+        placements, self._fixed = partition(attrgetter("fixed"), placements)
+
         for placement in placements:
             x1, y1, width, height = placement.region
             x2 = x1 + width
@@ -69,7 +70,7 @@ class SpatialMap:
                 get_bucket(coord).append(placement)
         return map
 
-    def get_placements(self, screen_region: Region) -> Iterable[WidgetPlacement]:
+    def get_placements(self, screen_region: Region) -> list[WidgetPlacement]:
         """Get placements that may overlap a given region. There may be false positives,
         but no false negatives.
 
@@ -85,7 +86,7 @@ class SpatialMap:
         block_width = self._block_width
         block_height = self._block_height
 
-        placements: set[WidgetPlacement] = set()
+        placements: set[WidgetPlacement] = set(self._fixed)
         extend_placements = placements.update
         map = self.placement_map
         map_get = map.get
@@ -98,4 +99,4 @@ class SpatialMap:
             if block_placements is not None:
                 extend_placements(block_placements)
 
-        return placements
+        return list(placements)
