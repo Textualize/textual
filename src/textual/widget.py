@@ -2127,12 +2127,12 @@ class Widget(DOMNode):
             layout (bool, optional): Also layout widgets in the view. Defaults to False.
         """
 
-        if layout and not self._layout_required:
+        if layout:
             self._layout_required = True
             if isinstance(self._parent, Widget):
                 self._parent._clear_arrangement_cache()
 
-        if repaint and not self._repaint_required:
+        if repaint:
             self._set_dirty(*regions)
             self._content_width_cache = (None, 0)
             self._content_height_cache = (None, 0)
