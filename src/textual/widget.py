@@ -425,11 +425,7 @@ class Widget(DOMNode):
             return self._arrangement
 
         self._arrangement_cache_key = arrange_cache_key
-        placements, widgets, spacing = arrange(
-            self, self.children, size, self.screen.size
-        )
-        arrange_result = placements, widgets, spacing
-        self._arrangement = arrange_result
+        self._arrangement = arrange(self, self.children, size, self.screen.size)
         return self._arrangement
 
     def _clear_arrangement_cache(self) -> None:
