@@ -339,7 +339,7 @@ class StylesCache:
             elif border_left:
                 line = [left, make_blank(width - 1, background_style)]
             elif border_right:
-                line = [make_blank(width, background_style), right]
+                line = [make_blank(width - 1, background_style), right]
             else:
                 line = [make_blank(width, background_style)]
         else:
