@@ -39,7 +39,6 @@ from ._context import active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
-from ._spatial_map import SpatialMap
 from ._styles_cache import StylesCache
 from ._types import Lines
 from .await_remove import AwaitRemove
@@ -429,7 +428,7 @@ class Widget(DOMNode):
         placements, widgets, spacing = arrange(
             self, self.children, size, self.screen.size
         )
-        arrange_result = SpatialMap(placements), widgets, spacing
+        arrange_result = placements, widgets, spacing
         self._arrangement = arrange_result
         return self._arrangement
 

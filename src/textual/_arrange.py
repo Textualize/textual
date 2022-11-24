@@ -50,7 +50,7 @@ def arrange(
     get_dock = attrgetter("styles.dock")
     styles = widget.styles
 
-    for index, widgets in enumerate(dock_layers.values()):
+    for widgets in dock_layers.values():
 
         layout_widgets, dock_widgets = partition(get_dock, widgets)
 

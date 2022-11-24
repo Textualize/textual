@@ -8,10 +8,9 @@ from ._typing import TypeAlias
 
 if TYPE_CHECKING:
     from .widget import Widget
-    from ._spatial_map import SpatialMap
 
 ArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget]]"
-DockArrangeResult: TypeAlias = "SpacialMap, set[Widget], Spacing]"
+DockArrangeResult: TypeAlias = "list[WidgetPlacement], set[Widget], Spacing]"
 
 
 class WidgetPlacement(NamedTuple):
