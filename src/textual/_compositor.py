@@ -384,7 +384,6 @@ class Compositor:
                     placements, arranged_widgets, spacing = widget._arrange(
                         child_region.size
                     )
-
                     widgets.update(arranged_widgets)
 
                     # An offset added to all placements
