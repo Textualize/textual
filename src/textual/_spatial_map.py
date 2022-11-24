@@ -8,6 +8,7 @@ from typing import Iterable, Sequence
 from ._layout import WidgetPlacement
 from .geometry import Region, Spacing
 from ._partition import partition
+from ._profile import timer
 
 
 class SpatialMap:
@@ -27,8 +28,8 @@ class SpatialMap:
         self,
         placements: Sequence[WidgetPlacement],
         *,
-        block_width: int = 80,
-        block_height: int = 80,
+        block_width: int = 40,
+        block_height: int = 20,
     ) -> None:
         self._placements = placements
         self._total_region = Region()
@@ -38,8 +39,6 @@ class SpatialMap:
         self._map: defaultdict[tuple[int, int], list[WidgetPlacement]] | None = None
 
         self.placement_map = self._build_placements(placements)
-
-        print("SPATIAL", len(placements))
 
     def __iter__(self) -> Iterable[WidgetPlacement]:
         yield from self._placements
@@ -92,16 +91,23 @@ class SpatialMap:
         Returns:
             Iterable[WidgetPlacement]: A super-set of Widget placements that may be in the screen.
         """
+        return [
+            placement
+            for placement in self._placements
+            if screen_region.overlaps(placement.region)
+        ]
         x1, y1, width, height = screen_region
         x2 = x1 + width
         y2 = y1 + height
         block_width = self._block_width
         block_height = self._block_height
 
-        placements: set[WidgetPlacement] = set(self._fixed)
+        placements: set[WidgetPlacement] = set()
         extend_placements = placements.update
         map = self.placement_map
         map_get = map.get
+
+        overlaps_screen = screen_region.overlaps
 
         for coord in product(
             range(x1 // block_width, x2 // block_width + 1),
@@ -111,4 +117,13 @@ class SpatialMap:
             if block_placements is not None:
                 extend_placements(block_placements)
 
-        return list(placements)
+        _placements = [
+            placement
+            for placement in self._placements
+            if placement in placements and not placement.fixed
+        ]
+
+        visible_placements = self._fixed + [
+            placement for placement in _placements if overlaps_screen(placement.region)
+        ]
+        return visible_placements

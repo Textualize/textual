@@ -388,15 +388,15 @@ class Compositor:
                         spatial_map.total_region.grow(spacing)
                     )
 
-                    placements = spatial_map.get_placements(
-                        child_region.reset_offset.translate(widget.scroll_offset)
-                    )
-
                     widgets.update(arranged_widgets)
 
                     # An offset added to all placements
                     placement_offset = container_region.offset + layout_offset
                     placement_scroll_offset = placement_offset - widget.scroll_offset
+
+                    placements = spatial_map.get_placements(
+                        (child_region.size.region).translate(widget.scroll_offset)
+                    )
 
                     _layers = widget.layers
                     layers_to_index = {

@@ -759,14 +759,12 @@ class Widget(DOMNode):
     def watch_scroll_x(self, new_value: float) -> None:
         if self.show_horizontal_scrollbar:
             self.horizontal_scrollbar.position = int(new_value)
-            self.horizontal_scrollbar.refresh()
-            self.refresh(layout=True)
+            self.refresh(layout=True, repaint=False)
 
     def watch_scroll_y(self, new_value: float) -> None:
         if self.show_vertical_scrollbar:
             self.vertical_scrollbar.position = int(new_value)
-            self.vertical_scrollbar.refresh()
-            self.refresh(layout=True)
+            self.refresh(layout=True, repaint=False)
 
     def validate_scroll_x(self, value: float) -> float:
         return clamp(value, 0, self.max_scroll_x)
@@ -2134,12 +2132,12 @@ class Widget(DOMNode):
             layout (bool, optional): Also layout widgets in the view. Defaults to False.
         """
 
-        if layout:
+        if layout and not self._layout_required:
             self._layout_required = True
             if isinstance(self._parent, Widget):
                 self._parent._clear_arrangement_cache()
 
-        if repaint:
+        if repaint and not self._repaint_required:
             self._set_dirty(*regions)
             self._content_width_cache = (None, 0)
             self._content_height_cache = (None, 0)
