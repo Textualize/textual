@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from .widget import Widget
 
 ArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget]]"
-DockArrangeResult: TypeAlias = "list[WidgetPlacement], set[Widget], Spacing]"
+DockArrangeResult: TypeAlias = "tuple[list[WidgetPlacement], set[Widget], Spacing]]"
 
 
 class WidgetPlacement(NamedTuple):
