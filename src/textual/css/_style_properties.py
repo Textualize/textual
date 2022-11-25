@@ -305,7 +305,7 @@ class BoxProperty:
             current_value: tuple[str, Color] = cast(
                 "tuple[str, Color]", obj.get_rule(self.name)
             )
-            has_edge = current_value and current_value[0]
+            has_edge = bool(current_value and current_value[0])
             new_edge = bool(_type)
             if obj.set_rule(self.name, new_value):
                 obj.refresh(layout=has_edge != new_edge)

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from collections import Counter
 from asyncio import Event as AsyncEvent
 from asyncio import Lock, create_task, wait
+from collections import Counter
 from fractions import Fraction
 from itertools import islice
 from operator import attrgetter
@@ -53,7 +53,6 @@ from .message import Message
 from .messages import CallbackType
 from .reactive import Reactive
 from .render import measure
-from .await_remove import AwaitRemove
 from .walk import walk_depth_first
 
 if TYPE_CHECKING:
@@ -755,14 +754,12 @@ class Widget(DOMNode):
     def watch_scroll_x(self, new_value: float) -> None:
         if self.show_horizontal_scrollbar:
             self.horizontal_scrollbar.position = int(new_value)
-            self.horizontal_scrollbar.refresh()
-            self.refresh(layout=True)
+            self.refresh(layout=True, repaint=False)
 
     def watch_scroll_y(self, new_value: float) -> None:
         if self.show_vertical_scrollbar:
             self.vertical_scrollbar.position = int(new_value)
-            self.vertical_scrollbar.refresh()
-            self.refresh(layout=True)
+            self.refresh(layout=True, repaint=False)
 
     def validate_scroll_x(self, value: float) -> float:
         return clamp(value, 0, self.max_scroll_x)

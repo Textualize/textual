@@ -594,8 +594,10 @@ class Styles(StylesBase):
         Returns:
             bool: ``True`` if a rule was cleared, or ``False`` if it was already not set.
         """
-        self._updates += 1
-        return self._rules.pop(rule, None) is not None
+        changed = self._rules.pop(rule, None) is not None
+        if changed:
+            self._updates += 1
+        return changed
 
     def get_rules(self) -> RulesMap:
         return self._rules.copy()
@@ -610,12 +612,17 @@ class Styles(StylesBase):
         Returns:
             bool: ``True`` if the rule changed, otherwise ``False``.
         """
-        self._updates += 1
         if value is None:
-            return self._rules.pop(rule, None) is not None
+            changed = self._rules.pop(rule, None) is not None
+            if changed:
+                self._updates += 1
+            return changed
         current = self._rules.get(rule)
         self._rules[rule] = value
-        return current != value
+        changed = current != value
+        if changed:
+            self._updates += 1
+        return changed
 
     def get_rule(self, rule: str, default: object = None) -> object:
         return self._rules.get(rule, default)
