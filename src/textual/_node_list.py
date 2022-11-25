@@ -63,7 +63,7 @@ class NodeList(Sequence):
         """
         return self._nodes.index(widget)
 
-    def get_by_id(self, widget_id: str) -> Widget | None:
+    def _get_by_id(self, widget_id: str) -> Widget | None:
         """Get the widget for the given widget_id, or None if there's no matches in this list"""
         return self._nodes_by_id.get(widget_id)
 
