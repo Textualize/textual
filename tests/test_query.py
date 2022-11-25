@@ -8,12 +8,15 @@ def test_query():
     class View(Widget):
         pass
 
+    class View2(View):
+        pass
+
     class App(Widget):
         pass
 
     app = App()
     main_view = View(id="main")
-    help_view = View(id="help")
+    help_view = View2(id="help")
     app._add_child(main_view)
     app._add_child(help_view)
 
@@ -53,6 +56,7 @@ def test_query():
         assert list(app.query("App")) == [app]
         assert list(app.query("#main")) == [main_view]
         assert list(app.query("View#main")) == [main_view]
+        assert list(app.query("View2#help")) == [help_view]
         assert list(app.query("#widget1")) == [widget1]
         assert list(app.query("#Widget1")) == [] # Note case.
         assert list(app.query("#widget2")) == [widget2]

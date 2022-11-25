@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Rebuilt `DirectoryTree` with new `Tree` control.
 
+### Fixed
+
+- Type selectors can now contain numbers https://github.com/Textualize/textual/issues/1253
+
 ## [0.5.0] - 2022-11-20
 
 ### Added

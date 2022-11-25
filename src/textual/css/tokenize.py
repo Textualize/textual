@@ -49,7 +49,7 @@ expect_root_scope = Expect(
     selector_start_id=r"\#" + IDENTIFIER,
     selector_start_class=r"\." + IDENTIFIER,
     selector_start_universal=r"\*",
-    selector_start=r"[a-zA-Z_\-]+",
+    selector_start=IDENTIFIER,
     variable_name=rf"{VARIABLE_REF}:",
 ).expect_eof(True)
 
