@@ -217,7 +217,7 @@ The following example uses a computed attribute. It displays three inputs for ea
     ```
 
     1. Combines color components in to a Color object.
-    2. The compute method is called when the _result_ of `compute_color` changes.
+    2. The watch method is called when the _result_ of `compute_color` changes.
 
 === "computed01.css"
 
