@@ -156,7 +156,6 @@ class Placeholder(Static):
 
     def validate_variant(self, variant: PlaceholderVariant) -> PlaceholderVariant:
         """Validate the variant to which the placeholder was set."""
-        print("Validating")
         if variant not in _VALID_PLACEHOLDER_VARIANTS:
             raise InvalidPlaceholderVariant(
                 "Valid placeholder variants are "
