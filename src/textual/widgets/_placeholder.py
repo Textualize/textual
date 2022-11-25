@@ -81,9 +81,9 @@ class Placeholder(Static):
 
     def __init__(
         self,
+        label: str | None = None,
         variant: PlaceholderVariant = "default",
         *,
-        label: str | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -91,10 +91,10 @@ class Placeholder(Static):
         """Create a Placeholder widget.
 
         Args:
-            variant (PlaceholderVariant, optional): The variant of the placeholder.
-                Defaults to "default".
             label (str | None, optional): The label to identify the placeholder.
                 If no label is present, uses the placeholder ID instead. Defaults to None.
+            variant (PlaceholderVariant, optional): The variant of the placeholder.
+                Defaults to "default".
             name (str | None, optional): The name of the placeholder. Defaults to None.
             id (str | None, optional): The ID of the placeholder in the DOM.
                 Defaults to None.
@@ -125,7 +125,6 @@ class Placeholder(Static):
     def watch_variant(
         self, old_variant: PlaceholderVariant, variant: PlaceholderVariant
     ) -> None:
-        self.validate_variant(variant)
         self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
         self.call_variant_update()
@@ -157,6 +156,7 @@ class Placeholder(Static):
 
     def validate_variant(self, variant: PlaceholderVariant) -> PlaceholderVariant:
         """Validate the variant to which the placeholder was set."""
+        print("Validating")
         if variant not in _VALID_PLACEHOLDER_VARIANTS:
             raise InvalidPlaceholderVariant(
                 "Valid placeholder variants are "
