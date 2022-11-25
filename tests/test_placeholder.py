@@ -6,7 +6,7 @@ from textual.widgets._placeholder import InvalidPlaceholderVariant
 
 def test_invalid_placeholder_variant():
     with pytest.raises(InvalidPlaceholderVariant):
-        Placeholder("this is clearly not a valid variant!")
+        Placeholder(variant="this is clearly not a valid variant!")
 
 
 def test_invalid_reactive_variant_change():
